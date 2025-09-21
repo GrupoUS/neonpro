@@ -1,15 +1,15 @@
 /**
  * Enhanced Session Manager Integration Tests
- * 
+ *
  * These tests validate the comprehensive session security features
  * implemented in the enhanced session manager.
- * 
+ *
  * @security_critical
  * @compliance OWASP Session Management Cheat Sheet
  * @version 1.0.0
  */
 
-import { describe, expect, it, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { EnhancedSessionManager } from '../../src/security/enhanced-session-manager';
 
 describe('Enhanced Session Manager Security Tests', () => {
@@ -31,7 +31,7 @@ describe('Enhanced Session Manager Security Tests', () => {
       enableAnomalyDetection: true,
       maxIPChangesPerHour: 3,
       enableGeolocationValidation: false,
-      cleanupInterval: 5 * 60 * 1000 // 5 minutes
+      cleanupInterval: 5 * 60 * 1000, // 5 minutes
     });
   });
 
@@ -43,12 +43,12 @@ describe('Enhanced Session Manager Security Tests', () => {
     it('should generate secure session IDs with proper format', () => {
       const sessionId = sessionManager.createSession(testUserId, {
         ipAddress: testIP,
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       // Should be 32 character hex string
       expect(sessionId).toMatch(/^[a-f0-9]{32}$/i);
-      
+
       // Should have sufficient entropy
       const session = sessionManager.getSession(sessionId);
       expect(session).toBeDefined();
@@ -58,7 +58,7 @@ describe('Enhanced Session Manager Security Tests', () => {
 
     it('should validate session ID format', () => {
       const validSessionId = sessionManager.createSession(testUserId);
-      
+
       // Test private validation method indirectly through session validation
       const result = sessionManager.validateAndUpdateSession(validSessionId, testIP, testUserAgent);
       expect(result.isValid).toBe(true);
@@ -69,7 +69,7 @@ describe('Enhanced Session Manager Security Tests', () => {
         'predictable-session-id-123',
         '',
         'invalid-session-id!',
-        '123456789012345678901234567890123' // 33 characters
+        '123456789012345678901234567890123', // 33 characters
       ];
 
       invalidFormats.forEach(invalidId => {
@@ -84,7 +84,7 @@ describe('Enhanced Session Manager Security Tests', () => {
     it('should bind sessions to IP addresses', () => {
       const sessionId = sessionManager.createSession(testUserId, {
         ipAddress: testIP,
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       // Same IP should succeed
@@ -102,11 +102,15 @@ describe('Enhanced Session Manager Security Tests', () => {
     it('should handle mobile network IP changes in same subnet', () => {
       const sessionId = sessionManager.createSession(testUserId, {
         ipAddress: '192.168.1.100',
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       // Mobile IP change in same subnet should warn but allow
-      const result = sessionManager.validateAndUpdateSession(sessionId, '192.168.1.105', testUserAgent);
+      const result = sessionManager.validateAndUpdateSession(
+        sessionId,
+        '192.168.1.105',
+        testUserAgent,
+      );
       expect(result.isValid).toBe(true);
       expect(result.action).toBe('warn');
       expect(result.warnings).toContain('Mobile network IP change detected');
@@ -121,15 +125,19 @@ describe('Enhanced Session Manager Security Tests', () => {
     it('should block excessive IP changes', () => {
       const sessionId = sessionManager.createSession(testUserId, {
         ipAddress: '192.168.1.100',
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       // Simulate multiple IP changes
       const differentIPs = ['192.168.1.101', '192.168.1.102', '192.168.1.103', '192.168.1.104'];
-      
+
       for (let i = 0; i < differentIPs.length; i++) {
-        const result = sessionManager.validateAndUpdateSession(sessionId, differentIPs[i], testUserAgent);
-        
+        const result = sessionManager.validateAndUpdateSession(
+          sessionId,
+          differentIPs[i],
+          testUserAgent,
+        );
+
         if (i < 3) { // First 3 changes should be allowed with warnings
           expect(result.isValid).toBe(true);
           expect(result.action).toBe('warn');
@@ -146,7 +154,7 @@ describe('Enhanced Session Manager Security Tests', () => {
     it('should regenerate session ID', () => {
       const originalSessionId = sessionManager.createSession(testUserId, {
         ipAddress: testIP,
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       const originalSession = sessionManager.getSession(originalSessionId);
@@ -183,7 +191,7 @@ describe('Enhanced Session Manager Security Tests', () => {
       for (let i = 0; i < maxSessions; i++) {
         const sessionId = sessionManager.createSession(testUserId, {
           ipAddress: `192.168.1.${100 + i}`,
-          userAgent: testUserAgent
+          userAgent: testUserAgent,
         });
         sessionIds.push(sessionId);
       }
@@ -196,12 +204,12 @@ describe('Enhanced Session Manager Security Tests', () => {
       // Create one more session - should remove oldest
       const newSessionId = sessionManager.createSession(testUserId, {
         ipAddress: '192.168.1.200',
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       // Oldest session should be removed
       expect(sessionManager.getSession(sessionIds[0])).toBeUndefined();
-      
+
       // New session and other sessions should exist
       expect(sessionManager.getSession(newSessionId)).toBeDefined();
       for (let i = 1; i < sessionIds.length; i++) {
@@ -213,11 +221,11 @@ describe('Enhanced Session Manager Security Tests', () => {
       // Create sessions for multiple users
       const user1Sessions = [
         sessionManager.createSession('user-1', { ipAddress: '192.168.1.1' }),
-        sessionManager.createSession('user-1', { ipAddress: '192.168.1.2' })
+        sessionManager.createSession('user-1', { ipAddress: '192.168.1.2' }),
       ];
 
       const user2Sessions = [
-        sessionManager.createSession('user-2', { ipAddress: '192.168.1.3' })
+        sessionManager.createSession('user-2', { ipAddress: '192.168.1.3' }),
       ];
 
       // Verify user sessions
@@ -241,7 +249,7 @@ describe('Enhanced Session Manager Security Tests', () => {
     it('should implement absolute session timeout', () => {
       const sessionId = sessionManager.createSession(testUserId, {
         ipAddress: testIP,
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       // Manually set creation time to exceed absolute timeout
@@ -260,7 +268,7 @@ describe('Enhanced Session Manager Security Tests', () => {
     it('should implement idle timeout', () => {
       const sessionId = sessionManager.createSession(testUserId, {
         ipAddress: testIP,
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       // Manually set last activity to exceed idle timeout
@@ -278,7 +286,7 @@ describe('Enhanced Session Manager Security Tests', () => {
     it('should provide timeout warnings', () => {
       const sessionId = sessionManager.createSession(testUserId, {
         ipAddress: testIP,
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       // Set session to expire soon (within warning threshold)
@@ -298,11 +306,15 @@ describe('Enhanced Session Manager Security Tests', () => {
     it('should detect IP address changes', () => {
       const sessionId = sessionManager.createSession(testUserId, {
         ipAddress: testIP,
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       // Change IP and user agent
-      const result = sessionManager.validateAndUpdateSession(sessionId, '192.168.2.100', 'Different Browser');
+      const result = sessionManager.validateAndUpdateSession(
+        sessionId,
+        '192.168.2.100',
+        'Different Browser',
+      );
       expect(result.isValid).toBe(false);
       expect(result.action).toBe('require_verification');
       expect(result.warnings).toContain('IP address change detected');
@@ -312,7 +324,7 @@ describe('Enhanced Session Manager Security Tests', () => {
     it('should update security level based on risk', () => {
       const sessionId = sessionManager.createSession(testUserId, {
         ipAddress: testIP,
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       const session = sessionManager.getSession(sessionId);
@@ -320,7 +332,11 @@ describe('Enhanced Session Manager Security Tests', () => {
       expect(session?.riskScore).toBe(0);
 
       // Simulate suspicious activity
-      const result = sessionManager.validateAndUpdateSession(sessionId, '192.168.2.100', 'Different Browser');
+      const result = sessionManager.validateAndUpdateSession(
+        sessionId,
+        '192.168.2.100',
+        'Different Browser',
+      );
       expect(result.isValid).toBe(false); // Should require verification due to risk
 
       const updatedSession = sessionManager.getSession(sessionId);
@@ -331,7 +347,7 @@ describe('Enhanced Session Manager Security Tests', () => {
     it('should track consecutive failures', () => {
       const sessionId = sessionManager.createSession(testUserId, {
         ipAddress: testIP,
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       const session = sessionManager.getSession(sessionId);
@@ -351,12 +367,12 @@ describe('Enhanced Session Manager Security Tests', () => {
       // Create some sessions
       const activeSessionId = sessionManager.createSession(testUserId, {
         ipAddress: testIP,
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       const expiredSessionId = sessionManager.createSession(testUserId, {
         ipAddress: testIP,
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       // Manually set expired session to be old
@@ -393,7 +409,7 @@ describe('Enhanced Session Manager Security Tests', () => {
       const sessionId = sessionManager.createSession(testUserId, {
         ipAddress: testIP,
         userAgent: testUserAgent,
-        permissions: ['read', 'write']
+        permissions: ['read', 'write'],
       });
 
       // Perform multiple validations
@@ -414,7 +430,7 @@ describe('Enhanced Session Manager Security Tests', () => {
     it('should handle session removal correctly', () => {
       const sessionId = sessionManager.createSession(testUserId, {
         ipAddress: testIP,
-        userAgent: testUserAgent
+        userAgent: testUserAgent,
       });
 
       // Verify session exists

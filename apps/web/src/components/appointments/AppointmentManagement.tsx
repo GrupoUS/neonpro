@@ -11,7 +11,6 @@
  */
 
 import { format, isPast, isToday, isTomorrow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import {
   AlertTriangle,
   Bell,
@@ -45,7 +44,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Progress } from '@/components/ui/progress';
 import { Tabs } from '@/components/ui/tabs';
 
 import {
@@ -121,7 +119,7 @@ export function AppointmentManagement({
   const handleStatusUpdate = async (appointmentId: string, status: string) => {
     try {
       await updateStatus.mutateAsync({ appointmentId, status });
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to update appointment status:', error);
     }
   };
@@ -129,7 +127,7 @@ export function AppointmentManagement({
   const handleSendReminder = async (appointmentId: string, channel: string) => {
     try {
       await sendReminder.mutateAsync({ appointmentId, channel });
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to send reminder:', error);
     }
   };

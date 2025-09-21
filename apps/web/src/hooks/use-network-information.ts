@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export interface NetworkInformation {
   effectiveType: 'slow-2g' | '2g' | '3g' | '4g';
@@ -22,9 +22,9 @@ export function useNetworkInformation(): UseNetworkInformationReturn {
   useEffect(() => {
     const updateNetworkInfo = () => {
       // Get connection information from navigator
-      const connection = (navigator as any).connection ||
-                        (navigator as any).mozConnection ||
-                        (navigator as any).webkitConnection;
+      const connection = (navigator as any).connection
+        || (navigator as any).mozConnection
+        || (navigator as any).webkitConnection;
 
       if (connection) {
         const info: NetworkInformation = {
@@ -72,7 +72,10 @@ export function useNetworkInformation(): UseNetworkInformationReturn {
 
     if (networkInfo.effectiveType === '4g' && networkInfo.rtt < 100) {
       return 'excellent';
-    } else if (networkInfo.effectiveType === '4g' || (networkInfo.effectiveType === '3g' && networkInfo.rtt < 200)) {
+    } else if (
+      networkInfo.effectiveType === '4g'
+      || (networkInfo.effectiveType === '3g' && networkInfo.rtt < 200)
+    ) {
       return 'good';
     } else if (networkInfo.effectiveType === '3g' || networkInfo.effectiveType === '2g') {
       return 'fair';
@@ -81,9 +84,10 @@ export function useNetworkInformation(): UseNetworkInformationReturn {
     }
   })();
 
-  const isSlowConnection = networkInfo ?
-    (networkInfo.effectiveType === 'slow-2g' || networkInfo.effectiveType === '2g' || networkInfo.rtt > 500) :
-    true;
+  const isSlowConnection = networkInfo
+    ? (networkInfo.effectiveType === 'slow-2g' || networkInfo.effectiveType === '2g'
+      || networkInfo.rtt > 500)
+    : true;
 
   return {
     networkInfo,

@@ -9,7 +9,7 @@
  * Must comply with LGPD, CFM guidelines, and healthcare data protection standards.
  */
 
-import { describe, expect, it } from 'bun:test';
+import { describe, expect, it } from 'vitest';
 
 describe('WebRTC Security Validation', () => {
   describe('Medical-Grade Encryption', () => {

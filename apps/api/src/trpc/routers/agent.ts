@@ -119,8 +119,6 @@ const HEALTHCARE_CONTEXTS = {
 // UTILITY FUNCTIONS
 // =====================================
 
-
-
 /**
  * Create audit trail for agent operations
  */

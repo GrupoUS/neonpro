@@ -19,12 +19,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import type {
   AgentAction,
   AgentResponse,
+  AppointmentData,
   ChatMessage,
   ChatState,
+  ClientData,
   DataAgentRequest,
   DataAgentResponse,
-  AppointmentData,
-  ClientData,
   FinancialData,
 } from '@neonpro/types';
 
@@ -66,7 +66,7 @@ export interface UseAiAgentReturn {
   isLoading: boolean;
   isLoadingSession: boolean;
   error: Error | null;
-  
+
   // Actions
   sendMessage: (query: string, options?: {
     context?: Record<string, any>;
@@ -75,7 +75,7 @@ export interface UseAiAgentReturn {
   createNewSession: (title?: string) => Promise<string>;
   clearMessages: () => void;
   retryLastMessage: () => Promise<void>;
-  
+
   // Feedback
   submitFeedback: (messageId: string, feedback: {
     rating: number;
@@ -84,11 +84,11 @@ export interface UseAiAgentReturn {
     tags?: string[];
   }) => Promise<void>;
   submitQuickFeedback: (messageId: string, helpful: boolean) => Promise<void>;
-  
+
   // Session management
   endCurrentSession: () => Promise<void>;
   loadSession: (sessionId: string) => Promise<void>;
-  
+
   // Utils
   executeAction: (action: AgentAction) => void;
   lastUserMessage: ChatMessage | null;
@@ -193,7 +193,10 @@ const submitFeedback = async (sessionId: string, feedback: FeedbackRequest): Pro
   });
 };
 
-const submitQuickFeedback = async (sessionId: string, feedback: QuickFeedbackRequest): Promise<any> => {
+const submitQuickFeedback = async (
+  sessionId: string,
+  feedback: QuickFeedbackRequest,
+): Promise<any> => {
   return apiCall(`/sessions/${sessionId}/feedback/quick`, {
     method: 'POST',
     body: JSON.stringify(feedback),
@@ -233,11 +236,11 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
   const queryClient = useQueryClient();
 
   // Load existing session
-  const { data: sessionData, isLoading: isLoadingSession, error: sessionError } = useQuery({
+  const { data: _sessionData, isLoading: isLoadingSession, error: sessionError } = useQuery({
     queryKey: ['ai-session', currentSessionId],
     queryFn: () => getSession(currentSessionId!),
     enabled: !!currentSessionId,
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data.success && data.chatState?.messages) {
         setMessages(data.chatState.messages);
       }
@@ -251,12 +254,12 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
   // Create session mutation
   const createSessionMutation = useMutation({
     mutationFn: createSession,
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data.success) {
         setCurrentSessionId(data.session.id);
         onSessionChange?.(data.session.id);
         queryClient.invalidateQueries({ queryKey: ['ai-session'] });
-        
+
         // Send pending message if any
         if (pendingMessage) {
           sendMessageMutation.mutate({
@@ -280,7 +283,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
   // Send message mutation
   const sendMessageMutation = useMutation({
     mutationFn: sendDataAgentQuery,
-    onMutate: async (variables) => {
+    onMutate: async variables => {
       // Optimistic update
       if (optimisticUpdates) {
         const userMessage: ChatMessage = {
@@ -306,10 +309,10 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
 
         setMessages(prev => {
           // Remove optimistic update if it exists
-          const filteredMessages = optimisticUpdates 
+          const filteredMessages = optimisticUpdates
             ? prev.filter(msg => !msg.id.startsWith('temp_'))
             : prev;
-          
+
           // Add user message (if not optimistic) and assistant response
           const userMessage: ChatMessage = {
             id: `user_${Date.now()}`,
@@ -318,7 +321,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
             timestamp: new Date().toISOString(),
           };
 
-          return optimisticUpdates 
+          return optimisticUpdates
             ? [...filteredMessages, userMessage, assistantMessage]
             : [...filteredMessages, userMessage, assistantMessage];
         });
@@ -340,7 +343,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
       if (optimisticUpdates) {
         setMessages(prev => prev.filter(msg => !msg.id.startsWith('temp_')));
       }
-      
+
       setError(err);
       onError?.(err);
 
@@ -357,7 +360,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
 
   // Update session mutation
   const updateSessionMutation = useMutation({
-    mutationFn: ({ sessionId, updates }: { sessionId: string; updates: any }) => 
+    mutationFn: ({ sessionId, updates }: { sessionId: string; updates: any }) =>
       updateSession(sessionId, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['ai-session', currentSessionId] });
@@ -365,7 +368,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
   });
 
   // Delete session mutation
-  const deleteSessionMutation = useMutation({
+  const _deleteSessionMutation = useMutation({
     mutationFn: deleteSession,
     onSuccess: () => {
       setCurrentSessionId(null);
@@ -392,7 +395,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
     messageOptions?: {
       context?: Record<string, any>;
       metadata?: Record<string, any>;
-    }
+    },
   ) => {
     if (!query.trim()) return;
 
@@ -425,7 +428,14 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
         ...messageOptions?.context,
       },
     });
-  }, [currentSessionId, autoCreateSession, userContext, lgpdConsent, createSessionMutation, sendMessageMutation]);
+  }, [
+    currentSessionId,
+    autoCreateSession,
+    userContext,
+    lgpdConsent,
+    createSessionMutation,
+    sendMessageMutation,
+  ]);
 
   const createNewSession = useCallback(async (title?: string): Promise<string> => {
     const response = await createSessionMutation.mutateAsync({
@@ -462,7 +472,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
       comment?: string;
       category?: string;
       tags?: string[];
-    }
+    },
   ) => {
     if (!currentSessionId) return;
 
@@ -477,7 +487,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
 
   const submitQuickFeedbackCallback = useCallback(async (
     messageId: string,
-    helpful: boolean
+    helpful: boolean,
   ) => {
     if (!currentSessionId) return;
 
@@ -515,26 +525,26 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
           window.open(`/clientes/${action.payload.clientId}`, '_blank');
         }
         break;
-      
+
       case 'create_appointment':
         window.open('/agendamentos/novo', '_blank');
         break;
-      
+
       case 'export_data':
         // Trigger data export
         console.log('Export data action:', action.payload);
         break;
-      
+
       case 'navigate':
         if (action.payload?.path) {
           window.open(action.payload.path, '_blank');
         }
         break;
-      
+
       case 'refresh':
         retryLastMessage();
         break;
-      
+
       default:
         console.log('Unknown action type:', action.type);
     }
@@ -576,21 +586,21 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
     isLoading,
     isLoadingSession,
     error,
-    
+
     // Actions
     sendMessage,
     createNewSession,
     clearMessages,
     retryLastMessage,
-    
+
     // Feedback
     submitFeedback: submitFeedbackCallback,
     submitQuickFeedback: submitQuickFeedbackCallback,
-    
+
     // Session management
     endCurrentSession,
     loadSession,
-    
+
     // Utils
     executeAction,
     lastUserMessage,

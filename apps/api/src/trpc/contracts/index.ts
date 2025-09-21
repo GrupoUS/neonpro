@@ -11,8 +11,8 @@ export { patientRouter } from './patient';
 export { professionalRouter } from './professional';
 
 // Main API router combining all contracts
-import { router } from '../trpc';
 import { agentRouter } from '../routers/agent';
+import { router } from '../trpc';
 import { aiRouter } from './ai';
 import { appointmentRouter } from './appointment';
 import { clinicRouter } from './clinic';

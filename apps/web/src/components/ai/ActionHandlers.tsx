@@ -1,7 +1,7 @@
 /**
  * Interactive Action Handlers Component
  * Provides sophisticated action handling for AI agent responses
- * 
+ *
  * This component handles complex actions like:
  * - Client details viewing with modal
  * - Appointment creation with pre-filled data
@@ -10,23 +10,23 @@
  * - Refresh with loading states
  */
 
-import React, { useState, useCallback } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
 import { Card } from '@/components/ui/card';
 import { Dialog } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select } from '@/components/ui/select';
-import { Calendar } from '@/components/ui/calendar';
-import { format } from 'date-fns';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+import { AIAgentService } from '@/services/ai-agent';
+import { AgentAction } from '@/types/ai-agent';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { ptBR } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
-import { AgentAction } from '@/types/ai-agent';
-import { AIAgentService } from '@/services/ai-agent';
-import { cn } from '@/lib/utils';
+import React, { useCallback, useState } from 'react';
 
 interface ActionHandlersProps {
   actions: AgentAction[];
@@ -59,39 +59,39 @@ const ClientDetailsModal: React.FC<{
 }> = ({ client, onClose }) => {
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className='sm:max-w-2xl max-h-[80vh] overflow-y-auto'>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
+          <DialogTitle className='flex items-center gap-2'>
+            <User className='h-5 w-5' />
             Detalhes do Cliente
           </DialogTitle>
           <DialogDescription>
             Informações completas do cliente
           </DialogDescription>
         </DialogHeader>
-        
-        <div className="space-y-4">
+
+        <div className='space-y-4'>
           {/* Basic Information */}
           <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-base">Informações Básicas</CardTitle>
+            <CardHeader className='pb-3'>
+              <CardTitle className='text-base'>Informações Básicas</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid grid-cols-2 gap-4">
+            <CardContent className='space-y-3'>
+              <div className='grid grid-cols-2 gap-4'>
                 <div>
-                  <Label className="text-xs text-muted-foreground">Nome</Label>
-                  <p className="font-medium">{client.name}</p>
+                  <Label className='text-xs text-muted-foreground'>Nome</Label>
+                  <p className='font-medium'>{client.name}</p>
                 </div>
                 <div>
-                  <Label className="text-xs text-muted-foreground">Email</Label>
-                  <p className="font-medium">{client.email}</p>
+                  <Label className='text-xs text-muted-foreground'>Email</Label>
+                  <p className='font-medium'>{client.email}</p>
                 </div>
                 <div>
-                  <Label className="text-xs text-muted-foreground">Telefone</Label>
-                  <p className="font-medium">{client.phone}</p>
+                  <Label className='text-xs text-muted-foreground'>Telefone</Label>
+                  <p className='font-medium'>{client.phone}</p>
                 </div>
                 <div>
-                  <Label className="text-xs text-muted-foreground">Status</Label>
+                  <Label className='text-xs text-muted-foreground'>Status</Label>
                   <Badge variant={client.status === 'active' ? 'default' : 'secondary'}>
                     {client.status}
                   </Badge>
@@ -103,19 +103,19 @@ const ClientDetailsModal: React.FC<{
           {/* Additional Information */}
           {client.cpf && (
             <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Documentos</CardTitle>
+              <CardHeader className='pb-3'>
+                <CardTitle className='text-base'>Documentos</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-2 gap-4">
+                <div className='grid grid-cols-2 gap-4'>
                   <div>
-                    <Label className="text-xs text-muted-foreground">CPF</Label>
-                    <p className="font-medium">{client.cpf}</p>
+                    <Label className='text-xs text-muted-foreground'>CPF</Label>
+                    <p className='font-medium'>{client.cpf}</p>
                   </div>
                   {client.rg && (
                     <div>
-                      <Label className="text-xs text-muted-foreground">RG</Label>
-                      <p className="font-medium">{client.rg}</p>
+                      <Label className='text-xs text-muted-foreground'>RG</Label>
+                      <p className='font-medium'>{client.rg}</p>
                     </div>
                   )}
                 </div>
@@ -126,19 +126,19 @@ const ClientDetailsModal: React.FC<{
           {/* Address Information */}
           {client.address && (
             <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Endereço</CardTitle>
+              <CardHeader className='pb-3'>
+                <CardTitle className='text-base'>Endereço</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2">
-                  <p className="font-medium">{client.address.street}, {client.address.number}</p>
+                <div className='space-y-2'>
+                  <p className='font-medium'>{client.address.street}, {client.address.number}</p>
                   {client.address.complement && (
-                    <p className="text-sm text-muted-foreground">{client.address.complement}</p>
+                    <p className='text-sm text-muted-foreground'>{client.address.complement}</p>
                   )}
-                  <p className="text-sm text-muted-foreground">
+                  <p className='text-sm text-muted-foreground'>
                     {client.address.neighborhood}, {client.address.city} - {client.address.state}
                   </p>
-                  <p className="text-sm text-muted-foreground">CEP: {client.address.zipCode}</p>
+                  <p className='text-sm text-muted-foreground'>CEP: {client.address.zipCode}</p>
                 </div>
               </CardContent>
             </Card>
@@ -147,24 +147,28 @@ const ClientDetailsModal: React.FC<{
           {/* Statistics */}
           {client.stats && (
             <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base">Estatísticas</CardTitle>
+              <CardHeader className='pb-3'>
+                <CardTitle className='text-base'>Estatísticas</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-primary">{client.stats.totalAppointments}</p>
-                    <p className="text-xs text-muted-foreground">Agendamentos</p>
+                <div className='grid grid-cols-3 gap-4'>
+                  <div className='text-center'>
+                    <p className='text-2xl font-bold text-primary'>
+                      {client.stats.totalAppointments}
+                    </p>
+                    <p className='text-xs text-muted-foreground'>Agendamentos</p>
                   </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-green-600">{client.stats.completedAppointments}</p>
-                    <p className="text-xs text-muted-foreground">Concluídos</p>
+                  <div className='text-center'>
+                    <p className='text-2xl font-bold text-green-600'>
+                      {client.stats.completedAppointments}
+                    </p>
+                    <p className='text-xs text-muted-foreground'>Concluídos</p>
                   </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-blue-600">
+                  <div className='text-center'>
+                    <p className='text-2xl font-bold text-blue-600'>
                       {new Date(client.stats.lastVisit).toLocaleDateString('pt-BR')}
                     </p>
-                    <p className="text-xs text-muted-foreground">Última Visita</p>
+                    <p className='text-xs text-muted-foreground'>Última Visita</p>
                   </div>
                 </div>
               </CardContent>
@@ -174,12 +178,12 @@ const ClientDetailsModal: React.FC<{
 
         <DialogFooter>
           <Button onClick={onClose}>Fechar</Button>
-          <Button 
-            variant="outline" 
+          <Button
+            variant='outline'
             onClick={() => window.open(`/clientes/${client.id}`, '_blank')}
           >
             Ver Perfil Completo
-            <ExternalLink className="h-4 w-4 ml-2" />
+            <ExternalLink className='h-4 w-4 ml-2' />
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -200,7 +204,7 @@ const DataExportModal: React.FC<{
   const [exportOptions, setExportOptions] = useState<ExportOptions>({
     format: 'csv',
     includeSummary: true,
-    filters: {}
+    filters: {},
   });
 
   const handleExport = () => {
@@ -210,19 +214,23 @@ const DataExportModal: React.FC<{
 
   const getDataTypeName = () => {
     switch (dataType) {
-      case 'clients': return 'Clientes';
-      case 'appointments': return 'Agendamentos';
-      case 'financial': return 'Financeiro';
-      default: return 'Dados';
+      case 'clients':
+        return 'Clientes';
+      case 'appointments':
+        return 'Agendamentos';
+      case 'financial':
+        return 'Financeiro';
+      default:
+        return 'Dados';
     }
   };
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className='sm:max-w-md'>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Download className="h-5 w-5" />
+          <DialogTitle className='flex items-center gap-2'>
+            <Download className='h-5 w-5' />
             Exportar Dados
           </DialogTitle>
           <DialogDescription>
@@ -230,51 +238,48 @@ const DataExportModal: React.FC<{
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className='space-y-4'>
           {/* Format Selection */}
           <div>
-            <Label htmlFor="format">Formato</Label>
-            <Select 
-              value={exportOptions.format} 
-              onValueChange={(value: any) => 
-                setExportOptions(prev => ({ ...prev, format: value }))
-              }
+            <Label htmlFor='format'>Formato</Label>
+            <Select
+              value={exportOptions.format}
+              onValueChange={(value: any) => setExportOptions(prev => ({ ...prev, format: value }))}
             >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="csv">CSV (Excel)</SelectItem>
-                <SelectItem value="json">JSON</SelectItem>
-                <SelectItem value="pdf">PDF</SelectItem>
+                <SelectItem value='csv'>CSV (Excel)</SelectItem>
+                <SelectItem value='json'>JSON</SelectItem>
+                <SelectItem value='pdf'>PDF</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           {/* Summary Option */}
-          <div className="flex items-center space-x-2">
+          <div className='flex items-center space-x-2'>
             <input
-              type="checkbox"
-              id="includeSummary"
+              type='checkbox'
+              id='includeSummary'
               checked={exportOptions.includeSummary}
-              onChange={(e) => 
-                setExportOptions(prev => ({ ...prev, includeSummary: e.target.checked }))
-              }
-              className="rounded"
+              onChange={e =>
+                setExportOptions(prev => ({ ...prev, includeSummary: e.target.checked }))}
+              className='rounded'
             />
-            <Label htmlFor="includeSummary">Incluir resumo estatístico</Label>
+            <Label htmlFor='includeSummary'>Incluir resumo estatístico</Label>
           </div>
 
           {/* Data Preview */}
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Pré-visualização</CardTitle>
+            <CardHeader className='pb-2'>
+              <CardTitle className='text-sm'>Pré-visualização</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground mb-2">
+              <p className='text-sm text-muted-foreground mb-2'>
                 {data.length} registros serão exportados
               </p>
-              <div className="bg-muted p-2 rounded text-xs font-mono max-h-20 overflow-y-auto">
+              <div className='bg-muted p-2 rounded text-xs font-mono max-h-20 overflow-y-auto'>
                 {JSON.stringify(data[0], null, 2)}
               </div>
             </CardContent>
@@ -282,10 +287,10 @@ const DataExportModal: React.FC<{
         </div>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>Cancelar</Button>
+          <Button variant='outline' onClick={onClose}>Cancelar</Button>
           <Button onClick={handleExport}>
             Exportar {getDataTypeName()}
-            <Download className="h-4 w-4 ml-2" />
+            <Download className='h-4 w-4 ml-2' />
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -307,7 +312,7 @@ const AppointmentCreationModal: React.FC<{
     serviceId: context?.serviceId || '',
     scheduledAt: context?.suggestedDate ? new Date(context.suggestedDate) : new Date(),
     duration: context?.suggestedDuration || 30,
-    notes: context?.notes || ''
+    notes: context?.notes || '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -320,10 +325,10 @@ const AppointmentCreationModal: React.FC<{
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className='sm:max-w-md'>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Plus className="h-5 w-5" />
+          <DialogTitle className='flex items-center gap-2'>
+            <Plus className='h-5 w-5' />
             Novo Agendamento
           </DialogTitle>
           <DialogDescription>
@@ -331,77 +336,69 @@ const AppointmentCreationModal: React.FC<{
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className='space-y-4'>
           <div>
-            <Label htmlFor="serviceId">Serviço</Label>
-            <Select 
-              value={formData.serviceId} 
-              onValueChange={(value) => 
-                setFormData(prev => ({ ...prev, serviceId: value }))
-              }
+            <Label htmlFor='serviceId'>Serviço</Label>
+            <Select
+              value={formData.serviceId}
+              onValueChange={value => setFormData(prev => ({ ...prev, serviceId: value }))}
               required
             >
               <SelectTrigger>
-                <SelectValue placeholder="Selecione um serviço" />
+                <SelectValue placeholder='Selecione um serviço' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="consultation">Consulta</SelectItem>
-                <SelectItem value="follow-up">Retorno</SelectItem>
-                <SelectItem value="procedure">Procedimento</SelectItem>
-                <SelectItem value="exam">Exame</SelectItem>
+                <SelectItem value='consultation'>Consulta</SelectItem>
+                <SelectItem value='follow-up'>Retorno</SelectItem>
+                <SelectItem value='procedure'>Procedimento</SelectItem>
+                <SelectItem value='exam'>Exame</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label htmlFor="duration">Duração (minutos)</Label>
+            <Label htmlFor='duration'>Duração (minutos)</Label>
             <Input
-              id="duration"
-              type="number"
+              id='duration'
+              type='number'
               value={formData.duration}
-              onChange={(e) => 
-                setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) }))
-              }
-              min="15"
-              max="180"
-              step="15"
+              onChange={e => setFormData(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
+              min='15'
+              max='180'
+              step='15'
               required
             />
           </div>
 
           <div>
             <Label>Data e Hora</Label>
-            <div className="border rounded-md p-3">
+            <div className='border rounded-md p-3'>
               <Calendar
-                mode="single"
+                mode='single'
                 selected={formData.scheduledAt}
-                onSelect={(date) => 
-                  date && setFormData(prev => ({ ...prev, scheduledAt: date }))
-                }
+                onSelect={date => date && setFormData(prev => ({ ...prev, scheduledAt: date }))}
                 locale={ptBR}
-                className="rounded-md border"
+                className='rounded-md border'
               />
             </div>
           </div>
 
           <div>
-            <Label htmlFor="notes">Observações (opcional)</Label>
+            <Label htmlFor='notes'>Observações (opcional)</Label>
             <Textarea
-              id="notes"
+              id='notes'
               value={formData.notes}
-              onChange={(e) => 
-                setFormData(prev => ({ ...prev, notes: e.target.value }))
-              }
-              placeholder="Observações sobre o agendamento..."
+              onChange={e => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              placeholder='Observações sobre o agendamento...'
               rows={3}
             />
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
-            <Button type="submit">
+            <Button type='button' variant='outline' onClick={onClose}>Cancelar</Button>
+            <Button type='submit'>
               Criar Agendamento
-              <Plus className="h-4 w-4 ml-2" />
+              <Plus className='h-4 w-4 ml-2' />
             </Button>
           </DialogFooter>
         </form>
@@ -417,10 +414,12 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
   actions,
   onActionExecuted,
   sessionId,
-  className
+  className,
 }) => {
   const [selectedClient, setSelectedClient] = useState<ClientData | null>(null);
-  const [exportData, setExportData] = useState<{ data: any[]; dataType: 'clients' | 'appointments' | 'financial' } | null>(null);
+  const [exportData, setExportData] = useState<
+    { data: any[]; dataType: 'clients' | 'appointments' | 'financial' } | null
+  >(null);
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [appointmentContext, setAppointmentContext] = useState<Record<string, any> | null>(null);
   const [isExporting, setIsExporting] = useState(false);
@@ -435,7 +434,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
       try {
         // Simulate export - in real implementation, this would call your export API
         await new Promise(resolve => setTimeout(resolve, 1000));
-        
+
         let content = '';
         let filename = '';
         let mimeType = '';
@@ -474,7 +473,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: ['ai-agent'] });
-    }
+    },
   });
 
   const handleAction = useCallback(async (_action: any) => {
@@ -485,7 +484,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
           try {
             const clientData = await aiAgentService.getClientDetails(action.payload.clientId);
             setSelectedClient(clientData);
-          } catch (_error) {
+          } catch (error) {
             console.error('Failed to fetch client details:', error);
           }
         } else if (action.payload?.client) {
@@ -503,7 +502,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
         if (action.payload?.data) {
           setExportData({
             data: action.payload.data,
-            dataType: action.payload.dataType || 'clients'
+            dataType: action.payload.dataType || 'clients',
           });
         }
         break;
@@ -532,11 +531,11 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
 
   const convertToCSV = (data: any[]): string => {
     if (data.length === 0) return '';
-    
+
     const headers = Object.keys(data[0]);
     const csvRows = [
       headers.join(','),
-      ...data.map(row => 
+      ...data.map(row =>
         headers.map(header => {
           const value = row[header];
           // Escape quotes and wrap in quotes if contains comma
@@ -545,22 +544,30 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
           }
           return value;
         }).join(',')
-      )
+      ),
     ];
-    
+
     return csvRows.join('\n');
   };
 
   const getActionIcon = (_iconName: any) => {
     switch (iconName) {
-      case 'user': return <User className="h-4 w-4" />;
-      case 'calendar': return <CalendarIcon className="h-4 w-4" />;
-      case 'download': return <Download className="h-4 w-4" />;
-      case 'refresh': return <RefreshCw className="h-4 w-4" />;
-      case 'plus': return <Plus className="h-4 w-4" />;
-      case 'file-text': return <FileText className="h-4 w-4" />;
-      case 'external-link': return <ExternalLink className="h-4 w-4" />;
-      default: return <ExternalLink className="h-4 w-4" />;
+      case 'user':
+        return <User className='h-4 w-4' />;
+      case 'calendar':
+        return <CalendarIcon className='h-4 w-4' />;
+      case 'download':
+        return <Download className='h-4 w-4' />;
+      case 'refresh':
+        return <RefreshCw className='h-4 w-4' />;
+      case 'plus':
+        return <Plus className='h-4 w-4' />;
+      case 'file-text':
+        return <FileText className='h-4 w-4' />;
+      case 'external-link':
+        return <ExternalLink className='h-4 w-4' />;
+      default:
+        return <ExternalLink className='h-4 w-4' />;
     }
   };
 
@@ -571,23 +578,23 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
   return (
     <>
       {/* Action Buttons */}
-      <div className={cn("flex flex-wrap gap-2", className)}>
-        {actions.map((action) => (
+      <div className={cn('flex flex-wrap gap-2', className)}>
+        {actions.map(action => (
           <Button
             key={action.id}
             variant={action.primary ? 'default' : 'outline'}
-            size="sm"
+            size='sm'
             onClick={() => handleAction(action)}
             disabled={isExporting}
             className={cn(
-              "flex items-center gap-2 text-xs",
-              action.primary && "shadow-sm"
+              'flex items-center gap-2 text-xs',
+              action.primary && 'shadow-sm',
             )}
           >
             {action.icon && getActionIcon(action.icon)}
             {action.label}
             {action.type === 'export_data' && isExporting && (
-              <RefreshCw className="h-3 w-3 animate-spin ml-1" />
+              <RefreshCw className='h-3 w-3 animate-spin ml-1' />
             )}
           </Button>
         ))}
@@ -607,7 +614,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
           data={exportData.data}
           dataType={exportData.dataType}
           onClose={() => setExportData(null)}
-          onExport={(options) => exportMutation.mutate({ data: exportData.data, options })}
+          onExport={options => exportMutation.mutate({ data: exportData.data, options })}
         />
       )}
 
@@ -628,9 +635,9 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
 
       {/* Export Error Handling */}
       {exportMutation.isError && (
-        <div className="mt-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-          <div className="flex items-center gap-2 text-sm text-destructive">
-            <AlertCircle className="h-4 w-4" />
+        <div className='mt-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md'>
+          <div className='flex items-center gap-2 text-sm text-destructive'>
+            <AlertCircle className='h-4 w-4' />
             Falha ao exportar dados. Tente novamente.
           </div>
         </div>

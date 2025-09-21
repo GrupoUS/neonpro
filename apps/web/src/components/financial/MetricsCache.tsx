@@ -1,7 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Database2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 export interface MetricsCacheProps {
@@ -44,7 +43,7 @@ export const MetricsCache: React.FC<MetricsCacheProps> = ({
       if (onCacheUpdate) {
         onCacheUpdate(stats);
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to refresh cache stats:', error);
     } finally {
       setIsRefreshing(false);
@@ -60,7 +59,7 @@ export const MetricsCache: React.FC<MetricsCacheProps> = ({
         keys: [],
         memory: 0,
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to clear cache:', error);
     }
   };

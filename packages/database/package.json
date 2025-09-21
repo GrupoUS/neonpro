@@ -25,6 +25,10 @@
     "clean": "rimraf dist",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:compliance": "tsx tests/test-runner.ts",
+    "test:health": "tsx tests/test-runner.ts | head -20",
+    "test:ci": "tsx tests/test-runner.ts && npm run test:coverage",
+    "test:coverage": "vitest run --coverage",
     "lint": "echo 'lint placeholder'",
     "prepare": "echo 'prepare script disabled for workspace install'",
     "prisma:generate": "prisma generate",
@@ -43,6 +47,7 @@
     "prisma": "^5.22.0"
   },
   "devDependencies": {
+    "@neonpro/domain": "0.1.0",
     "@types/node": "^20.19.13",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

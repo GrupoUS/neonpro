@@ -39,10 +39,10 @@ function isRateLimited(userKey: string, now = Date.now()) {
 // (removed unused placeholder redactPII)
 
 // Consent/role gate (stub): require role and consent header
-import { auditLog } from '../middleware/audit-log';
+import { auditLogMiddleware } from '../middleware/audit-log';
 import { chatRateLimit } from '../middleware/rate-limit';
 import {
-  sseHeaders as sseHeadersHelper,
+  sseHeaders as sseHeadersBase,
   sseStreamFromChunks as sseStreamFromChunksHelper,
 } from '../middleware/streaming';
 const ALLOWED_ROLES = new Set([
@@ -74,7 +74,7 @@ function classifyQueryType(
 }
 
 function sseStreamFromChunks(chunks: string[]): ReadableStream<Uint8Array> {
-  return sseStreamFromChunksHelper(chunks);
+  return sseStreamFromChunksHelper(chunks as any);
 }
 
 function mockAnswer(question: string): {
@@ -127,14 +127,17 @@ function mockAnswer(question: string): {
   };
 }
 
-function sseHeaders(extra?: Record<string, string>) {
-  return sseHeadersHelper(extra);
+function sseHeaders(extra?: Record<string, string>): Record<string, string> {
+  return {
+    ...sseHeadersBase,
+    ...extra,
+  };
 }
 
 app.post(
   '/query',
   chatRateLimit(),
-  auditLog('chat.query'),
+  auditLogMiddleware(),
   zValidator('json', ChatQuerySchema),
   async c => {
     const t0 = Date.now();
@@ -282,17 +285,17 @@ app.post(
       }
 
       // Real path: call AI with failover, then bridge to SSE
-      const messages: { role: 'system' | 'user'; content: string }[] = [
+      const messages = [
         {
-          role: 'system',
+          role: 'system' as const,
           content: 'Você é um assistente de clínica estética. Responda de forma segura e empática.',
         },
-        { role: 'user', content: question },
+        { role: 'user' as const, content: question },
       ];
 
       const aiResp = await streamWithFailover({
         model: DEFAULT_PRIMARY,
-        messages,
+        messages: messages as any,
       });
       const reader = aiResp.body?.getReader();
       const enc = new TextEncoder();

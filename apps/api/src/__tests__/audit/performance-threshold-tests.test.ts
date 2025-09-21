@@ -9,7 +9,7 @@
  * diagnosis accuracy, and emergency response in telemedicine.
  */
 
-import { describe, expect, it } from 'bun:test';
+import { describe, expect, it } from 'vitest';
 
 describe('WebRTC Real-Time Performance', () => {
   describe('Video Latency Requirements', () => {

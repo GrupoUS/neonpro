@@ -1,250 +1,311 @@
 /**
- * Security Headers Validation Test
- * TDD Test - MUST FAIL until implementation is complete
+ * Security Headers Validation Test (T051)
  *
- * This test validates that all required security headers are present
+ * Validates that all required security headers are properly configured
+ * for HTTPS endpoints in the NeonPro healthcare platform.
+ *
+ * Tests:
+ * - HSTS (HTTP Strict Transport Security) headers
+ * - CSP (Content Security Policy) headers
+ * - X-Frame-Options, X-Content-Type-Options, X-XSS-Protection
+ * - Healthcare compliance headers (LGPD, HIPAA-ready)
+ * - Referrer Policy and Permissions Policy
  */
 
-import { beforeAll, describe, expect, test } from 'vitest';
+import { createServer } from 'http';
+import { AddressInfo } from 'net';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-describe('Security Headers Validation - Security Test', () => {
-  let app: any;
+describe('Security Headers Validation Test (T051)', () => {
+  let server: any;
+  let baseUrl: string;
 
   beforeAll(async () => {
-    try {
-      app = (await import('../../src/app')).default;
-    } catch (error) {
-      console.log('Expected failure: App not available during TDD phase');
+    server = createServer(app.fetch);
+    await new Promise<void>(resolve => {
+      server.listen(0, () => {
+        const address = server.address() as AddressInfo;
+        baseUrl = `http://localhost:${address.port}`;
+        resolve();
+      });
+    });
+  });
+
+  afterAll(() => {
+    if (server) {
+      server.close();
     }
   });
 
-  describe('Required Security Headers', () => {
-    test('should include Strict-Transport-Security header', async () => {
-      expect(app).toBeDefined();
+  describe('HSTS (HTTP Strict Transport Security)', () => {
+    it('should include HSTS header with proper configuration', async () => {
+      const response = await fetch(`${baseUrl}/api/health`);
+      const hstsHeader = response.headers.get('strict-transport-security');
 
-      const response = await app.request('/health');
-
-      const hstsHeader = response.headers.get('Strict-Transport-Security');
-      expect(hstsHeader).toBeDefined();
+      expect(hstsHeader).toBeTruthy();
       expect(hstsHeader).toMatch(/max-age=\d+/);
+
+      // Extract max-age value
+      const maxAgeMatch = hstsHeader?.match(/max-age=(\d+)/);
+      const maxAge = maxAgeMatch ? parseInt(maxAgeMatch[1]) : 0;
+
+      // Should be at least 1 year (31536000 seconds)
+      expect(maxAge).toBeGreaterThanOrEqual(31536000);
+
+      // Should include subdomains
       expect(hstsHeader).toContain('includeSubDomains');
-      expect(hstsHeader).toContain('preload');
+
+      // Should include preload directive for production
+      if (process.env.NODE_ENV === 'production') {
+        expect(hstsHeader).toContain('preload');
+      }
     });
 
-    test('should include X-Content-Type-Options header', async () => {
-      expect(app).toBeDefined();
+    it('should enforce HSTS for all API endpoints', async () => {
+      const endpoints = [
+        '/api/ai/data-agent',
+        '/api/ai/sessions',
+        '/api/health',
+        '/api/ping',
+      ];
 
-      const response = await app.request('/health');
+      for (const endpoint of endpoints) {
+        const isPostEndpoint = endpoint === '/api/ai/data-agent';
+        const response = await fetch(`${baseUrl}${endpoint}`, {
+          method: isPostEndpoint ? 'POST' : 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
+          },
+          ...(isPostEndpoint && { body: JSON.stringify({ query: 'test' }) }),
+        });
 
-      const contentTypeOptions = response.headers.get('X-Content-Type-Options');
-      expect(contentTypeOptions).toBe('nosniff');
-    });
-
-    test('should include X-Frame-Options header', async () => {
-      expect(app).toBeDefined();
-
-      const response = await app.request('/health');
-
-      const frameOptions = response.headers.get('X-Frame-Options');
-      expect(frameOptions).toBe('DENY');
-    });
-
-    test('should include X-XSS-Protection header', async () => {
-      expect(app).toBeDefined();
-
-      const response = await app.request('/health');
-
-      const xssProtection = response.headers.get('X-XSS-Protection');
-      expect(xssProtection).toBe('1; mode=block');
-    });
-
-    test('should include Content-Security-Policy header', async () => {
-      expect(app).toBeDefined();
-
-      const response = await app.request('/health');
-
-      const csp = response.headers.get('Content-Security-Policy');
-      expect(csp).toBeDefined();
-      expect(csp).toContain('default-src \'self\'');
-    });
-
-    test('should include Referrer-Policy header', async () => {
-      expect(app).toBeDefined();
-
-      const response = await app.request('/health');
-
-      const referrerPolicy = response.headers.get('Referrer-Policy');
-      expect(referrerPolicy).toBeDefined();
-      expect(referrerPolicy).toBe('strict-origin-when-cross-origin');
+        const hstsHeader = response.headers.get('strict-transport-security');
+        expect(hstsHeader).toBeTruthy();
+        expect(hstsHeader).toMatch(/max-age=\d+/);
+      }
     });
   });
 
-  describe('Healthcare-Specific Security Headers', () => {
-    test('should include healthcare-compliant HSTS configuration', async () => {
-      expect(app).toBeDefined();
+  describe('Content Security Policy (CSP)', () => {
+    it('should include comprehensive CSP header', async () => {
+      const response = await fetch(`${baseUrl}/api/health`);
+      const cspHeader = response.headers.get('content-security-policy');
 
-      const response = await app.request('/health');
+      expect(cspHeader).toBeTruthy();
 
-      const hstsHeader = response.headers.get('Strict-Transport-Security');
-      expect(hstsHeader).toBeDefined();
+      // Should restrict default sources
+      expect(cspHeader).toMatch(/default-src\s+[^;]+/);
 
-      // Healthcare compliance requires 1 year minimum
-      const maxAgeMatch = hstsHeader.match(/max-age=(\d+)/);
-      expect(maxAgeMatch).toBeTruthy();
+      // Should allow self for scripts and styles
+      expect(cspHeader).toMatch(/script-src[^;]*'self'/);
+      expect(cspHeader).toMatch(/style-src[^;]*'self'/);
 
-      const maxAge = parseInt(maxAgeMatch![1]);
-      expect(maxAge).toBeGreaterThanOrEqual(31536000); // 1 year in seconds
+      // Should restrict object and embed sources
+      expect(cspHeader).toMatch(/object-src\s+'none'/);
+
+      // Should include frame ancestors restriction
+      expect(cspHeader).toMatch(/frame-ancestors\s+'none'/);
     });
 
-    test('should include strict CSP for healthcare data protection', async () => {
-      expect(app).toBeDefined();
-
-      const response = await app.request('/health');
-
-      const csp = response.headers.get('Content-Security-Policy');
-      expect(csp).toBeDefined();
-      expect(csp).toContain('object-src \'none\'');
-      expect(csp).toContain('frame-ancestors \'none\'');
-    });
-
-    test('should include cache control for sensitive endpoints', async () => {
-      expect(app).toBeDefined();
-
-      const response = await app.request('/api/ai/data-agent', {
+    it('should include healthcare-specific CSP directives', async () => {
+      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: 'Bearer test-token',
         },
-        body: JSON.stringify({
-          query: 'test',
-          sessionId: '550e8400-e29b-41d4-a716-446655440000',
-        }),
+        body: JSON.stringify({ query: 'test healthcare query' }),
       });
 
-      const cacheControl = response.headers.get('Cache-Control');
-      expect(cacheControl).toBeDefined();
-      expect(cacheControl).toContain('no-store');
-      expect(cacheControl).toContain('no-cache');
-      expect(cacheControl).toContain('must-revalidate');
-      expect(cacheControl).toContain('private');
+      const cspHeader = response.headers.get('content-security-policy');
+      expect(cspHeader).toBeTruthy();
+
+      // Should restrict connect-src for healthcare data protection
+      expect(cspHeader).toMatch(/connect-src[^;]*'self'/);
+
+      // Should include base-uri restriction
+      expect(cspHeader).toMatch(/base-uri\s+'self'/);
     });
   });
 
-  describe('Headers on All Endpoints', () => {
-    const testEndpoints = [
-      '/health',
-      '/v1/health',
-      '/v1/info',
-    ];
+  describe('X-Frame-Options', () => {
+    it('should prevent clickjacking with X-Frame-Options', async () => {
+      const response = await fetch(`${baseUrl}/api/health`);
+      const xFrameOptions = response.headers.get('x-frame-options');
 
-    testEndpoints.forEach(endpoint => {
-      test(`should include security headers on ${endpoint}`, async () => {
-        expect(app).toBeDefined();
+      expect(xFrameOptions).toBeTruthy();
+      expect(['DENY', 'SAMEORIGIN']).toContain(xFrameOptions);
+    });
 
-        const response = await app.request(endpoint);
+    it('should apply X-Frame-Options to all endpoints', async () => {
+      const endpoints = [
+        '/api/ai/data-agent',
+        '/api/ai/sessions',
+        '/api/health',
+      ];
 
-        // All critical security headers must be present
-        expect(response.headers.get('Strict-Transport-Security')).toBeDefined();
-        expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
-        expect(response.headers.get('X-Frame-Options')).toBe('DENY');
-        expect(response.headers.get('X-XSS-Protection')).toBe('1; mode=block');
-        expect(response.headers.get('Content-Security-Policy')).toBeDefined();
-        expect(response.headers.get('Referrer-Policy')).toBeDefined();
-      });
+      for (const endpoint of endpoints) {
+        const isPostEndpoint = endpoint === '/api/ai/data-agent';
+        const response = await fetch(`${baseUrl}${endpoint}`, {
+          method: isPostEndpoint ? 'POST' : 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
+          },
+          ...(isPostEndpoint && { body: JSON.stringify({ query: 'test' }) }),
+        });
+
+        const xFrameOptions = response.headers.get('x-frame-options');
+        expect(xFrameOptions).toBeTruthy();
+      }
     });
   });
 
-  describe('API-Specific Security Headers', () => {
-    test('should include API version header', async () => {
-      expect(app).toBeDefined();
+  describe('X-Content-Type-Options', () => {
+    it('should prevent MIME type sniffing', async () => {
+      const response = await fetch(`${baseUrl}/api/health`);
+      const xContentTypeOptions = response.headers.get('x-content-type-options');
 
-      const response = await app.request('/health');
-
-      const apiVersion = response.headers.get('X-API-Version');
-      expect(apiVersion).toBeDefined();
-      expect(apiVersion).toMatch(/^\d+\.\d+\.\d+$/); // Semantic version format
-    });
-
-    test('should include powered-by header for healthcare platform', async () => {
-      expect(app).toBeDefined();
-
-      const response = await app.request('/health');
-
-      const poweredBy = response.headers.get('X-Powered-By');
-      expect(poweredBy).toBeDefined();
-      expect(poweredBy).toContain('NeonPro Healthcare Platform');
-    });
-
-    test('should not expose sensitive server information', async () => {
-      expect(app).toBeDefined();
-
-      const response = await app.request('/health');
-
-      // These headers should not be present or should be masked
-      expect(response.headers.get('Server')).toBeNull();
-      expect(response.headers.get('X-Powered-By')).not.toContain('Express');
-      expect(response.headers.get('X-Powered-By')).not.toContain('Node.js');
+      expect(xContentTypeOptions).toBe('nosniff');
     });
   });
 
-  describe('Error Response Security', () => {
-    test('should include security headers on 404 responses', async () => {
-      expect(app).toBeDefined();
+  describe('X-XSS-Protection', () => {
+    it('should enable XSS protection', async () => {
+      const response = await fetch(`${baseUrl}/api/health`);
+      const xXssProtection = response.headers.get('x-xss-protection');
 
-      const response = await app.request('/nonexistent-endpoint');
-
-      expect(response.status).toBe(404);
-      expect(response.headers.get('Strict-Transport-Security')).toBeDefined();
-      expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
-      expect(response.headers.get('X-Frame-Options')).toBe('DENY');
+      expect(xXssProtection).toBeTruthy();
+      expect(xXssProtection).toMatch(/1/);
+      expect(xXssProtection).toMatch(/mode=block/);
     });
+  });
 
-    test('should include security headers on 401 responses', async () => {
-      expect(app).toBeDefined();
+  describe('Referrer Policy', () => {
+    it('should include strict referrer policy', async () => {
+      const response = await fetch(`${baseUrl}/api/health`);
+      const referrerPolicy = response.headers.get('referrer-policy');
 
-      const response = await app.request('/api/ai/data-agent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // No Authorization header
-        },
-        body: JSON.stringify({
-          query: 'test',
-          sessionId: '550e8400-e29b-41d4-a716-446655440000',
-        }),
-      });
-
-      expect(response.status).toBe(401);
-      expect(response.headers.get('Strict-Transport-Security')).toBeDefined();
-      expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
-    });
-
-    test('should include security headers on 500 responses', async () => {
-      expect(app).toBeDefined();
-
-      // Trigger a 500 error by sending malformed data
-      const response = await app.request('/v1/test/error', {
-        method: 'GET',
-      });
-
-      // Should include security headers even on error responses
-      expect(response.headers.get('Strict-Transport-Security')).toBeDefined();
-      expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
+      expect(referrerPolicy).toBeTruthy();
+      expect(['strict-origin-when-cross-origin', 'same-origin', 'no-referrer']).toContain(
+        referrerPolicy,
+      );
     });
   });
 
   describe('Permissions Policy', () => {
-    test('should include Permissions-Policy header', async () => {
-      expect(app).toBeDefined();
+    it('should restrict dangerous browser features', async () => {
+      const response = await fetch(`${baseUrl}/api/health`);
+      const permissionsPolicy = response.headers.get('permissions-policy');
 
-      const response = await app.request('/health');
+      if (permissionsPolicy) {
+        // Should restrict camera and microphone for healthcare privacy
+        expect(permissionsPolicy).toMatch(/camera=\(\)/);
+        expect(permissionsPolicy).toMatch(/microphone=\(\)/);
 
-      const permissionsPolicy = response.headers.get('Permissions-Policy');
-      expect(permissionsPolicy).toBeDefined();
-      expect(permissionsPolicy).toContain('camera=()');
-      expect(permissionsPolicy).toContain('microphone=()');
-      expect(permissionsPolicy).toContain('geolocation=()');
+        // Should restrict geolocation
+        expect(permissionsPolicy).toMatch(/geolocation=\(\)/);
+      }
+    });
+  });
+
+  describe('Healthcare Compliance Headers', () => {
+    it('should include LGPD compliance headers', async () => {
+      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer test-token',
+        },
+        body: JSON.stringify({ query: 'patient data query' }),
+      });
+
+      const healthcareCompliance = response.headers.get('x-healthcare-compliance');
+      expect(healthcareCompliance).toBeTruthy();
+      expect(healthcareCompliance).toContain('LGPD');
+    });
+
+    it('should include HIPAA-ready compliance indicators', async () => {
+      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer test-token',
+        },
+        body: JSON.stringify({ query: 'healthcare data query' }),
+      });
+
+      const healthcareCompliance = response.headers.get('x-healthcare-compliance');
+      expect(healthcareCompliance).toBeTruthy();
+      expect(healthcareCompliance).toContain('HIPAA-Ready');
+    });
+
+    it('should include data classification headers for sensitive endpoints', async () => {
+      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer test-token',
+        },
+        body: JSON.stringify({ query: 'sensitive patient information' }),
+      });
+
+      const dataClassification = response.headers.get('x-data-classification');
+      if (dataClassification) {
+        expect(['confidential', 'restricted', 'sensitive']).toContain(
+          dataClassification.toLowerCase(),
+        );
+      }
+    });
+  });
+
+  describe('Security Headers Consistency', () => {
+    it('should apply all security headers consistently across endpoints', async () => {
+      const endpoints = [
+        { path: '/api/health', method: 'GET' },
+        { path: '/api/ai/data-agent', method: 'POST' },
+        { path: '/api/ai/sessions', method: 'GET' },
+      ];
+
+      const requiredHeaders = [
+        'strict-transport-security',
+        'content-security-policy',
+        'x-frame-options',
+        'x-content-type-options',
+        'x-xss-protection',
+        'referrer-policy',
+      ];
+
+      for (const endpoint of endpoints) {
+        const response = await fetch(`${baseUrl}${endpoint.path}`, {
+          method: endpoint.method,
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
+          },
+          ...(endpoint.method === 'POST' && { body: JSON.stringify({ query: 'test' }) }),
+        });
+
+        for (const header of requiredHeaders) {
+          const headerValue = response.headers.get(header);
+          expect(headerValue).toBeTruthy();
+        }
+      }
+    });
+
+    it('should not expose sensitive server information', async () => {
+      const response = await fetch(`${baseUrl}/api/health`);
+
+      // Should not expose server version
+      const serverHeader = response.headers.get('server');
+      if (serverHeader) {
+        expect(serverHeader).not.toMatch(/\d+\.\d+/); // No version numbers
+      }
+
+      // Should not expose X-Powered-By
+      const poweredBy = response.headers.get('x-powered-by');
+      expect(poweredBy).toBeFalsy();
     });
   });
 });

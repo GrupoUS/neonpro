@@ -1,16 +1,16 @@
 /**
  * Token Management Service
- * 
+ *
  * Handles token blacklisting, refresh token rotation, and token lifecycle management
  * with healthcare compliance requirements.
- * 
+ *
  * Features:
  * - Token blacklisting and revocation
  * - Refresh token rotation
  * - Token binding to prevent theft
  * - Session invalidation
  * - Audit logging for token operations
- * 
+ *
  * @security_critical CVSS: 8.5
  * @compliance LGPD, ANVISA, OWASP
  * @author AI Development Agent
@@ -18,9 +18,9 @@
  */
 
 import { Context } from 'hono';
-import { jwtValidator } from '../security/jwt-validator';
-import { createAdminClient } from '../clients/supabase';
 import jwt from 'jsonwebtoken';
+import { createAdminClient } from '../clients/supabase';
+import { jwtValidator } from '../security/jwt-validator';
 
 // Token management interfaces
 interface TokenInfo {
@@ -71,21 +71,21 @@ export class TokenManagementService {
     token: string,
     reason: string,
     ttlMs: number = 24 * 60 * 60 * 1000, // 24 hours default
-    context?: Context
+    context?: Context,
   ): Promise<{ success: boolean; error?: string }> {
     try {
       // Validate token first to get payload
       const validationResult = await jwtValidator.validateToken(token, context);
-      
+
       if (validationResult.isValid && validationResult.payload) {
         const payload = validationResult.payload;
-        
+
         // Add to JWT validator blacklist
         jwtValidator.addToBlacklist(
           payload.jti,
           payload.sub,
           reason,
-          ttlMs
+          ttlMs,
         );
 
         // Add to internal token store for tracking
@@ -129,7 +129,7 @@ export class TokenManagementService {
   async blacklistUserTokens(
     userId: string,
     reason: string,
-    excludeCurrentToken?: string
+    excludeCurrentToken?: string,
   ): Promise<{ success: boolean; revokedCount: number }> {
     try {
       let revokedCount = 0;
@@ -178,7 +178,7 @@ export class TokenManagementService {
    */
   async createRefreshToken(
     userId: string,
-    context?: Context
+    context?: Context,
   ): Promise<{ token: string; expiresAt: number }> {
     try {
       const jti = crypto.randomUUID();
@@ -216,10 +216,10 @@ export class TokenManagementService {
    */
   async rotateRefreshToken(
     refreshToken: string,
-    context?: Context
-  ): Promise<{ 
-    success: boolean; 
-    newToken?: string; 
+    context?: Context,
+  ): Promise<{
+    success: boolean;
+    newToken?: string;
     error?: string;
     rotationReason?: string;
   }> {
@@ -228,9 +228,9 @@ export class TokenManagementService {
       const userId = this.refreshTokens.get(tokenHash);
 
       if (!userId) {
-        return { 
-          success: false, 
-          error: 'Invalid or expired refresh token' 
+        return {
+          success: false,
+          error: 'Invalid or expired refresh token',
         };
       }
 
@@ -243,19 +243,19 @@ export class TokenManagementService {
       if (!bindingValid) {
         // Potential token theft - blacklist all user tokens
         await this.blacklistUserTokens(
-          userId, 
-          'Suspicious activity detected - possible token theft'
+          userId,
+          'Suspicious activity detected - possible token theft',
         );
-        
-        return { 
-          success: false, 
-          error: 'Token binding validation failed' 
+
+        return {
+          success: false,
+          error: 'Token binding validation failed',
         };
       }
 
       // Check if rotation is needed (based on usage patterns)
       const rotationReason = this.shouldRotateToken(payload);
-      
+
       if (rotationReason) {
         // Create new refresh token
         const { token: newToken } = await this.createRefreshToken(userId, context);
@@ -271,26 +271,26 @@ export class TokenManagementService {
           reason: rotationReason,
         });
 
-        return { 
-          success: true, 
+        return {
+          success: true,
           newToken,
-          rotationReason 
+          rotationReason,
         };
       }
 
       return { success: true };
     } catch (error) {
       if (error instanceof jwt.JsonWebTokenError) {
-        return { 
-          success: false, 
-          error: 'Invalid refresh token' 
+        return {
+          success: false,
+          error: 'Invalid refresh token',
         };
       }
 
       console.error('Refresh token rotation error:', error);
-      return { 
-        success: false, 
-        error: 'Token rotation failed' 
+      return {
+        success: false,
+        error: 'Token rotation failed',
       };
     }
   }
@@ -333,18 +333,22 @@ export class TokenManagementService {
 
       // Check if device ID matches
       if (binding.deviceId !== deviceId && binding.deviceId !== 'unknown') {
-        console.warn(`Device ID mismatch for user ${userId}: expected ${binding.deviceId}, got ${deviceId}`);
+        console.warn(
+          `Device ID mismatch for user ${userId}: expected ${binding.deviceId}, got ${deviceId}`,
+        );
         return false;
       }
 
       // Check if fingerprint matches (with some tolerance for legitimate changes)
       const fingerprintSimilarity = this.calculateFingerprintSimilarity(
-        binding.fingerprint, 
-        currentFingerprint
+        binding.fingerprint,
+        currentFingerprint,
       );
 
       if (fingerprintSimilarity < 0.7) { // 70% similarity threshold
-        console.warn(`Fingerprint mismatch for user ${userId}: similarity ${fingerprintSimilarity}`);
+        console.warn(
+          `Fingerprint mismatch for user ${userId}: similarity ${fingerprintSimilarity}`,
+        );
         return false;
       }
 
@@ -368,7 +372,7 @@ export class TokenManagementService {
 
     // Simple fingerprint based on headers
     const fingerprintData = `${userAgent}:${acceptLanguage}:${acceptEncoding}`;
-    
+
     // Create hash (simple implementation for demo)
     let hash = 0;
     for (let i = 0; i < fingerprintData.length; i++) {
@@ -442,11 +446,11 @@ export class TokenManagementService {
   private async logTokenRevocation(
     tokenInfo: TokenInfo,
     reason: string,
-    context?: Context
+    context?: Context,
   ): Promise<void> {
     try {
       const supabase = createAdminClient();
-      
+
       await supabase
         .from('audit_events')
         .insert({
@@ -466,7 +470,6 @@ export class TokenManagementService {
           ip_address: context?.req.header('x-forwarded-for'),
           user_agent: context?.req.header('user-agent'),
         });
-
     } catch (error) {
       console.error('Audit logging error:', error);
       // Don't fail the operation if audit logging fails

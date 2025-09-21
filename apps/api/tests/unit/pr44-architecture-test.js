@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test';
+import { describe, expect, it } from 'vitest';
 
 // Test architecture fixes for PR #44
 describe('PR #44 Architecture Tests', () => {

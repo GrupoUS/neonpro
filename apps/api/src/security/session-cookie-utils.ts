@@ -1,9 +1,9 @@
 /**
  * Secure Session Cookie Utilities
- * 
+ *
  * Provides secure cookie handling for session management including
  * validation, integrity checking, and secure attribute management.
- * 
+ *
  * @security_critical
  * @compliance OWASP Session Management Cheat Sheet
  * @version 1.0.0
@@ -36,7 +36,7 @@ export class SessionCookieUtils {
     sameSite: 'strict',
     path: '/',
     maxAge: 8 * 60 * 60, // 8 hours
-    priority: 'high'
+    priority: 'high',
   };
 
   private static readonly SESSION_COOKIE_NAME = 'sessionId';
@@ -49,23 +49,23 @@ export class SessionCookieUtils {
   static generateSecureSessionCookie(
     sessionId: string,
     config: Partial<CookieConfig> = {},
-    secretKey: string
+    secretKey: string,
   ): string {
     const cookieConfig = { ...this.DEFAULT_COOKIE_CONFIG, ...config };
-    
+
     // Generate CSRF token for session
     const csrfToken = this.generateCSRFToken();
-    
+
     // Generate session signature for integrity
     const sessionSignature = this.generateSessionSignature(sessionId, secretKey);
-    
+
     // Create session cookie string
     const sessionCookie = this.formatCookie(
       this.SESSION_COOKIE_NAME,
       sessionId,
-      cookieConfig
+      cookieConfig,
     );
-    
+
     // Create CSRF cookie string
     const csrfCookie = this.formatCookie(
       this.CSRF_COOKIE_NAME,
@@ -73,10 +73,10 @@ export class SessionCookieUtils {
       {
         ...cookieConfig,
         httpOnly: false, // Allow JavaScript access for CSRF token
-        maxAge: cookieConfig.maxAge // Match session cookie lifetime
-      }
+        maxAge: cookieConfig.maxAge, // Match session cookie lifetime
+      },
     );
-    
+
     // Create signature cookie string
     const signatureCookie = this.formatCookie(
       this.SESSION_SIGNATURE_COOKIE_NAME,
@@ -84,10 +84,10 @@ export class SessionCookieUtils {
       {
         ...cookieConfig,
         httpOnly: true,
-        maxAge: cookieConfig.maxAge
-      }
+        maxAge: cookieConfig.maxAge,
+      },
     );
-    
+
     return `${sessionCookie}; ${csrfCookie}; ${signatureCookie}`;
   }
 
@@ -97,27 +97,27 @@ export class SessionCookieUtils {
   static validateSessionCookies(
     cookieHeader: string | undefined,
     secretKey: string,
-    sessionManager: EnhancedSessionManager
+    sessionManager: EnhancedSessionManager,
   ): CookieValidationResult {
     if (!cookieHeader) {
       return {
         isValid: false,
-        error: 'No session cookies found'
+        error: 'No session cookies found',
       };
     }
 
     const warnings: string[] = [];
-    
+
     try {
       // Parse cookies
       const cookies = this.parseCookieHeader(cookieHeader);
-      
+
       // Get session ID
       const sessionId = cookies[this.SESSION_COOKIE_NAME];
       if (!sessionId) {
         return {
           isValid: false,
-          error: 'Session ID cookie missing'
+          error: 'Session ID cookie missing',
         };
       }
 
@@ -125,7 +125,7 @@ export class SessionCookieUtils {
       if (!this.validateSessionIdFormat(sessionId)) {
         return {
           isValid: false,
-          error: 'Invalid session ID format'
+          error: 'Invalid session ID format',
         };
       }
 
@@ -134,7 +134,7 @@ export class SessionCookieUtils {
       if (!providedSignature) {
         return {
           isValid: false,
-          error: 'Session signature missing'
+          error: 'Session signature missing',
         };
       }
 
@@ -142,7 +142,7 @@ export class SessionCookieUtils {
       if (providedSignature !== expectedSignature) {
         return {
           isValid: false,
-          error: 'Session signature invalid'
+          error: 'Session signature invalid',
         };
       }
 
@@ -157,7 +157,7 @@ export class SessionCookieUtils {
       if (!session) {
         return {
           isValid: false,
-          error: 'Session not found or expired'
+          error: 'Session not found or expired',
         };
       }
 
@@ -167,12 +167,12 @@ export class SessionCookieUtils {
       return {
         isValid: true,
         sessionId,
-        warnings: warnings.length > 0 ? warnings : undefined
+        warnings: warnings.length > 0 ? warnings : undefined,
       };
     } catch (error) {
       return {
         isValid: false,
-        error: 'Failed to parse session cookies'
+        error: 'Failed to parse session cookies',
       };
     }
   }
@@ -200,7 +200,7 @@ export class SessionCookieUtils {
     const encoder = new TextEncoder();
     const data = encoder.encode(sessionId);
     const key = encoder.encode(secretKey);
-    
+
     return crypto.subtle
       .sign('HMAC', key, data)
       .then(signature => {
@@ -221,14 +221,14 @@ export class SessionCookieUtils {
    */
   private static parseCookieHeader(cookieHeader: string): Record<string, string> {
     const cookies: Record<string, string> = {};
-    
+
     cookieHeader.split(';').forEach(cookie => {
       const [name, ...valueParts] = cookie.trim().split('=');
       if (name && valueParts.length > 0) {
         cookies[name.trim()] = valueParts.join('=').trim();
       }
     });
-    
+
     return cookies;
   }
 
@@ -237,9 +237,9 @@ export class SessionCookieUtils {
    */
   private static formatCookie(name: string, value: string, config: CookieConfig): string {
     const attributes: string[] = [];
-    
+
     attributes.push(`${name}=${value}`);
-    
+
     if (config.httpOnly) attributes.push('HttpOnly');
     if (config.secure) attributes.push('Secure');
     if (config.sameSite) attributes.push(`SameSite=${config.sameSite}`);
@@ -248,7 +248,7 @@ export class SessionCookieUtils {
     if (config.maxAge) attributes.push(`Max-Age=${config.maxAge}`);
     if (config.expires) attributes.push(`Expires=${config.expires.toUTCString()}`);
     if (config.priority) attributes.push(`Priority=${config.priority}`);
-    
+
     return attributes.join('; ');
   }
 
@@ -293,12 +293,16 @@ export class SessionCookieUtils {
     const expiredConfig = {
       ...this.DEFAULT_COOKIE_CONFIG,
       maxAge: 0,
-      expires: new Date(0) // Expired immediately
+      expires: new Date(0), // Expired immediately
     };
 
     const sessionCookie = this.formatCookie(this.SESSION_COOKIE_NAME, '', expiredConfig);
     const csrfCookie = this.formatCookie(this.CSRF_COOKIE_NAME, '', expiredConfig);
-    const signatureCookie = this.formatCookie(this.SESSION_SIGNATURE_COOKIE_NAME, '', expiredConfig);
+    const signatureCookie = this.formatCookie(
+      this.SESSION_SIGNATURE_COOKIE_NAME,
+      '',
+      expiredConfig,
+    );
 
     return `${sessionCookie}; ${csrfCookie}; ${signatureCookie}`;
   }
@@ -338,28 +342,28 @@ export class SessionCookieUtils {
    */
   static validateCSRFRequest(
     cookieHeader: string | undefined,
-    csrfTokenHeader: string | undefined
+    csrfTokenHeader: string | undefined,
   ): { isValid: boolean; error?: string } {
     const cookieCSRFToken = this.getCSRFToken(cookieHeader);
-    
+
     if (!cookieCSRFToken) {
       return {
         isValid: false,
-        error: 'CSRF token missing from cookies'
+        error: 'CSRF token missing from cookies',
       };
     }
 
     if (!csrfTokenHeader) {
       return {
         isValid: false,
-        error: 'CSRF token missing from request headers'
+        error: 'CSRF token missing from request headers',
       };
     }
 
     if (cookieCSRFToken !== csrfTokenHeader) {
       return {
         isValid: false,
-        error: 'CSRF token mismatch'
+        error: 'CSRF token mismatch',
       };
     }
 

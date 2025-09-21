@@ -162,7 +162,6 @@ export class WebSocketAgentService {
 
       wildcardHandlers.forEach(_handler => handler(data));
     } catch (error) {
-
       console.error('Error parsing WebSocket message:', error);
     }
   }

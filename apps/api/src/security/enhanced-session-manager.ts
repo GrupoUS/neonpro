@@ -1,9 +1,9 @@
 /**
  * Enhanced Session Manager with Security Features
- * 
+ *
  * Comprehensive session management with IP binding, fixation protection,
  * concurrent session limits, timeout controls, and anomaly detection.
- * 
+ *
  * @security_critical
  * @compliance OWASP Session Management Cheat Sheet, LGPD
  * @version 2.0.0
@@ -16,25 +16,25 @@ export interface SessionSecurityConfig {
   // IP Binding
   enableIPBinding: boolean;
   allowMobileSubnetChanges: boolean;
-  
+
   // Session Fixation Protection
   regenerateSessionOnAuth: boolean;
   sessionIdEntropyBits: number;
-  
+
   // Concurrent Sessions
   maxConcurrentSessions: number;
   allowConcurrentNotification: boolean;
-  
+
   // Timeout Controls
   idleTimeout: number; // milliseconds
   absoluteTimeout: number; // milliseconds
   timeoutWarningThreshold: number; // milliseconds before timeout
-  
+
   // Anomaly Detection
   enableAnomalyDetection: boolean;
   maxIPChangesPerHour: number;
   enableGeolocationValidation: boolean;
-  
+
   // Cleanup
   cleanupInterval: number; // milliseconds
 }
@@ -46,19 +46,19 @@ export interface EnhancedSessionMetadata {
   userId: string;
   createdAt: Date;
   lastActivity: Date;
-  
+
   // Security features
   ipAddress?: string;
   originalIpAddress?: string;
   userAgent?: string;
   deviceFingerprint?: string;
-  
+
   // Session management
   isRealTimeSession: boolean;
   permissions: string[];
   healthcareProfessional?: any;
   lgpdConsent?: any;
-  
+
   // Security tracking
   securityLevel: 'normal' | 'elevated' | 'high';
   riskScore: number;
@@ -67,7 +67,7 @@ export interface EnhancedSessionMetadata {
   lastLocation?: string;
   consecutiveFailures: number;
   lastFailureTime?: Date;
-  
+
   // Timeout tracking
   lastWarningTime?: Date;
   refreshCount: number;
@@ -101,28 +101,28 @@ export class EnhancedSessionManager {
       // IP Binding
       enableIPBinding: true,
       allowMobileSubnetChanges: true,
-      
+
       // Session Fixation Protection
       regenerateSessionOnAuth: true,
       sessionIdEntropyBits: 128,
-      
+
       // Concurrent Sessions
       maxConcurrentSessions: 3,
       allowConcurrentNotification: true,
-      
+
       // Timeout Controls
       idleTimeout: 30 * 60 * 1000, // 30 minutes
       absoluteTimeout: 8 * 60 * 60 * 1000, // 8 hours
       timeoutWarningThreshold: 5 * 60 * 1000, // 5 minutes
-      
+
       // Anomaly Detection
       enableAnomalyDetection: true,
       maxIPChangesPerHour: 3,
       enableGeolocationValidation: false, // Disabled by default to avoid external dependencies
-      
+
       // Cleanup
       cleanupInterval: 5 * 60 * 1000, // 5 minutes
-      ...config
+      ...config,
     };
 
     // Start automatic cleanup
@@ -145,7 +145,10 @@ export class EnhancedSessionManager {
     const bytes = Math.ceil(this.config.sessionIdEntropyBits / 8);
     const randomBytes = new Uint8Array(bytes);
     crypto.getRandomValues(randomBytes);
-    return Array.from(randomBytes, byte => byte.toString(16).padStart(2, '0')).join('').substring(0, 32);
+    return Array.from(randomBytes, byte => byte.toString(16).padStart(2, '0')).join('').substring(
+      0,
+      32,
+    );
   }
 
   /**
@@ -154,16 +157,16 @@ export class EnhancedSessionManager {
   private calculateEntropy(str: string): number {
     const chars = str.split('');
     const charCounts: { [key: string]: number } = {};
-    
+
     chars.forEach(char => {
       charCounts[char] = (charCounts[char] || 0) + 1;
     });
-    
+
     const entropy = Object.values(charCounts).reduce((sum, count) => {
       const probability = count / chars.length;
       return sum - probability * Math.log2(probability);
     }, 0);
-    
+
     return entropy;
   }
 
@@ -210,7 +213,7 @@ export class EnhancedSessionManager {
    */
   private validateIPBinding(
     session: EnhancedSessionMetadata,
-    currentIP: string
+    currentIP: string,
   ): IPValidationResult {
     if (!this.config.enableIPBinding || !session.ipAddress) {
       return { isValid: true, action: 'allow' };
@@ -225,33 +228,33 @@ export class EnhancedSessionManager {
     if (this.config.allowMobileSubnetChanges) {
       const originalSubnet = this.extractIPSubnet(session.ipAddress);
       const currentSubnet = this.extractIPSubnet(currentIP);
-      
+
       if (originalSubnet && currentSubnet && originalSubnet === currentSubnet) {
         // Update IP for mobile networks
         session.ipAddress = currentIP;
         session.ipChangeCount++;
         session.lastIPChangeTime = new Date();
-        
+
         return {
           isValid: true,
           action: 'warn',
           reason: 'Mobile network IP change detected',
-          newIP: currentIP
+          newIP: currentIP,
         };
       }
     }
 
     // Check IP change frequency
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-    const recentIPChanges = session.lastIPChangeTime && session.lastIPChangeTime > oneHourAgo 
-      ? session.ipChangeCount 
+    const recentIPChanges = session.lastIPChangeTime && session.lastIPChangeTime > oneHourAgo
+      ? session.ipChangeCount
       : 0;
-    
+
     if (recentIPChanges >= this.config.maxIPChangesPerHour) {
       return {
         isValid: false,
         action: 'block',
-        reason: 'Too many IP changes in short period'
+        reason: 'Too many IP changes in short period',
       };
     }
 
@@ -259,7 +262,7 @@ export class EnhancedSessionManager {
     return {
       isValid: false,
       action: 'require_verification',
-      reason: 'IP address mismatch detected'
+      reason: 'IP address mismatch detected',
     };
   }
 
@@ -269,7 +272,7 @@ export class EnhancedSessionManager {
   private detectAnomalies(
     session: EnhancedSessionMetadata,
     currentIP: string,
-    userAgent?: string
+    userAgent?: string,
   ): AnomalyDetectionResult {
     if (!this.config.enableAnomalyDetection) {
       return {
@@ -277,7 +280,7 @@ export class EnhancedSessionManager {
         riskLevel: 'low',
         anomalies: [],
         recommendedAction: 'allow',
-        confidence: 1.0
+        confidence: 1.0,
       };
     }
 
@@ -333,7 +336,7 @@ export class EnhancedSessionManager {
       riskLevel,
       anomalies,
       recommendedAction,
-      confidence: Math.min(confidence, 1.0)
+      confidence: Math.min(confidence, 1.0),
     };
   }
 
@@ -354,7 +357,7 @@ export class EnhancedSessionManager {
     if (sessionAge >= this.config.absoluteTimeout) {
       return {
         isExpired: true,
-        reason: 'Session exceeded maximum duration'
+        reason: 'Session exceeded maximum duration',
       };
     }
 
@@ -362,7 +365,7 @@ export class EnhancedSessionManager {
     if (idleTime >= this.config.idleTimeout) {
       return {
         isExpired: true,
-        reason: 'Session expired due to inactivity'
+        reason: 'Session expired due to inactivity',
       };
     }
 
@@ -370,15 +373,15 @@ export class EnhancedSessionManager {
     const absoluteTimeRemaining = this.config.absoluteTimeout - sessionAge;
     const idleTimeRemaining = this.config.idleTimeout - idleTime;
     const timeRemaining = Math.min(absoluteTimeRemaining, idleTimeRemaining);
-    
-    const shouldWarn = timeRemaining <= this.config.timeoutWarningThreshold &&
-      (!session.lastWarningTime || 
-       now - session.lastWarningTime.getTime() > 60 * 1000); // Don't warn more than once per minute
+
+    const shouldWarn = timeRemaining <= this.config.timeoutWarningThreshold
+      && (!session.lastWarningTime
+        || now - session.lastWarningTime.getTime() > 60 * 1000); // Don't warn more than once per minute
 
     return {
       isExpired: false,
       timeRemaining,
-      shouldWarn
+      shouldWarn,
     };
   }
 
@@ -407,7 +410,7 @@ export class EnhancedSessionManager {
     }
 
     // Find oldest session
-    const oldestSession = userSessions.reduce((oldest, current) => 
+    const oldestSession = userSessions.reduce((oldest, current) =>
       current.createdAt < oldest.createdAt ? current : oldest
     );
 
@@ -417,10 +420,10 @@ export class EnhancedSessionManager {
 
     // Remove oldest session
     this.removeSession(oldestSession.sessionId);
-    
+
     return {
       action: 'remove_oldest',
-      removedSession: oldestSession.sessionId
+      removedSession: oldestSession.sessionId,
     };
   }
 
@@ -429,7 +432,7 @@ export class EnhancedSessionManager {
    */
   createSession(
     userId: string,
-    metadata: Partial<EnhancedSessionMetadata> = {}
+    metadata: Partial<EnhancedSessionMetadata> = {},
   ): string {
     // Generate secure session ID
     const sessionId = this.generateSecureSessionId();
@@ -437,7 +440,9 @@ export class EnhancedSessionManager {
     // Manage concurrent sessions
     const concurrentResult = this.manageConcurrentSessions(userId, sessionId);
     if (concurrentResult.action === 'remove_oldest' && concurrentResult.removedSession) {
-      console.warn(`Removed oldest session ${concurrentResult.removedSession} due to concurrent session limit`);
+      console.warn(
+        `Removed oldest session ${concurrentResult.removedSession} due to concurrent session limit`,
+      );
     }
 
     // Create enhanced session
@@ -495,7 +500,7 @@ export class EnhancedSessionManager {
   validateAndUpdateSession(
     sessionId: string,
     currentIP?: string,
-    userAgent?: string
+    userAgent?: string,
   ): {
     isValid: boolean;
     session?: EnhancedSessionMetadata;
@@ -509,7 +514,7 @@ export class EnhancedSessionManager {
       return {
         isValid: false,
         action: 'block',
-        reason: 'Invalid session ID format'
+        reason: 'Invalid session ID format',
       };
     }
 
@@ -518,7 +523,7 @@ export class EnhancedSessionManager {
       return {
         isValid: false,
         action: 'block',
-        reason: 'Session not found'
+        reason: 'Session not found',
       };
     }
 
@@ -529,7 +534,7 @@ export class EnhancedSessionManager {
       return {
         isValid: false,
         action: 'block',
-        reason: timeoutCheck.reason
+        reason: timeoutCheck.reason,
       };
     }
 
@@ -546,14 +551,14 @@ export class EnhancedSessionManager {
         return {
           isValid: false,
           action: ipValidation.action,
-          reason: ipValidation.reason
+          reason: ipValidation.reason,
         };
       }
 
       if (ipValidation.action === 'warn') {
         warnings.push(ipValidation.reason || 'IP change detected');
         finalAction = 'warn';
-        
+
         // Update IP if this was a mobile network change
         if (ipValidation.newIP) {
           session.ipAddress = ipValidation.newIP;
@@ -567,7 +572,7 @@ export class EnhancedSessionManager {
     const anomalyResult = this.detectAnomalies(session, currentIP || '', userAgent);
     if (anomalyResult.hasAnomaly) {
       warnings.push(...anomalyResult.anomalies);
-      
+
       // Escalate action based on anomaly severity
       if (anomalyResult.recommendedAction === 'block') {
         // Track failure before returning
@@ -576,7 +581,7 @@ export class EnhancedSessionManager {
         return {
           isValid: false,
           action: 'block',
-          reason: `Security anomaly detected: ${anomalyResult.anomalies.join(', ')}`
+          reason: `Security anomaly detected: ${anomalyResult.anomalies.join(', ')}`,
         };
       } else if (anomalyResult.recommendedAction === 'require_mfa') {
         finalAction = 'require_mfa';
@@ -585,13 +590,21 @@ export class EnhancedSessionManager {
       }
 
       // Update session security level and risk score
-      session.securityLevel = anomalyResult.riskLevel === 'critical' ? 'high' :
-                            anomalyResult.riskLevel === 'high' ? 'high' :
-                            anomalyResult.riskLevel === 'medium' ? 'elevated' : session.securityLevel;
-      
-      session.riskScore = anomalyResult.riskLevel === 'critical' ? 100 :
-                         anomalyResult.riskLevel === 'high' ? 80 :
-                         anomalyResult.riskLevel === 'medium' ? 50 : session.riskScore;
+      session.securityLevel = anomalyResult.riskLevel === 'critical'
+        ? 'high'
+        : anomalyResult.riskLevel === 'high'
+        ? 'high'
+        : anomalyResult.riskLevel === 'medium'
+        ? 'elevated'
+        : session.securityLevel;
+
+      session.riskScore = anomalyResult.riskLevel === 'critical'
+        ? 100
+        : anomalyResult.riskLevel === 'high'
+        ? 80
+        : anomalyResult.riskLevel === 'medium'
+        ? 50
+        : session.riskScore;
     }
 
     // Update session activity and track validation
@@ -617,7 +630,7 @@ export class EnhancedSessionManager {
       session,
       action: finalAction,
       warnings: warnings.length > 0 ? warnings : undefined,
-      timeoutWarning: timeoutCheck.timeRemaining
+      timeoutWarning: timeoutCheck.timeRemaining,
     };
   }
 
@@ -704,12 +717,12 @@ export class EnhancedSessionManager {
   } {
     const totalSessions = this.sessions.size;
     const activeUsers = this.userSessions.size;
-    
+
     const sessionsBySecurityLevel: Record<string, number> = {};
     let totalRiskScore = 0;
 
     for (const session of this.sessions.values()) {
-      sessionsBySecurityLevel[session.securityLevel] = 
+      sessionsBySecurityLevel[session.securityLevel] =
         (sessionsBySecurityLevel[session.securityLevel] || 0) + 1;
       totalRiskScore += session.riskScore;
     }
@@ -718,7 +731,7 @@ export class EnhancedSessionManager {
       totalSessions,
       activeUsers,
       sessionsBySecurityLevel,
-      averageRiskScore: totalSessions > 0 ? totalRiskScore / totalSessions : 0
+      averageRiskScore: totalSessions > 0 ? totalRiskScore / totalSessions : 0,
     };
   }
 

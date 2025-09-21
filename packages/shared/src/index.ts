@@ -22,7 +22,8 @@ export type {
 // export { validateHealthcareCompliance as validateTelemetryCompliance } from './models/telemetry-event';
 
 // Existing exports
-export * from "./types/ai-insights";
+// Temporarily commented out due to build issues
+// export * from "./types/ai-insights";
 // Export API types (names do not collide with validators)
 export * from "./types/api";
 export * from "./types/appointment";

@@ -39,6 +39,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '@': path.resolve(__dirname, './src'),
       '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src'),
       '@neonpro/database': path.resolve(
         __dirname,

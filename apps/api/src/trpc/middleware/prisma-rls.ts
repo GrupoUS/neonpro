@@ -235,7 +235,7 @@ const MODEL_RLS_CONFIG = {
   },
 } as const;
 
- /**
+/**
  * Extract operation type from Prisma call
  */
 

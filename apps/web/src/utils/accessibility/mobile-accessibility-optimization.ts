@@ -11,8 +11,6 @@
  * - Cross-device accessibility testing
  */
 
-import { generateAccessibilityReport } from './axe-core-integration';
-
 // Type guards and utilities
 function isHTMLElement(element: Element | Node): element is HTMLElement {
   return element instanceof HTMLElement;
@@ -77,7 +75,7 @@ export const MOBILE_HEALTHCARE_RULES = {
     name: 'emergency-interface-touch-targets',
     description: 'Emergency interfaces must have enhanced touch targets',
     severity: 'critical',
-    check: (_element: any) => {
+    check: (element: Element) => {
       const emergencyElements = element.querySelectorAll(
         '[data-emergency="true"], .emergency',
       );
@@ -86,11 +84,11 @@ export const MOBILE_HEALTHCARE_RULES = {
         return rect.width >= 48 && rect.height >= 48; // Enhanced size for emergencies
       });
     },
-    fix: (_element: any) => {
+    fix: (element: Element) => {
       const emergencyElements = element.querySelectorAll(
         '[data-emergency="true"], .emergency',
       );
-      emergencyElements.forEach(_el => {
+      emergencyElements.forEach(el => {
         if (isHTMLElement(el)) {
           el.style.minWidth = '48px';
           el.style.minHeight = '48px';
@@ -108,7 +106,7 @@ export const MOBILE_HEALTHCARE_RULES = {
     name: 'Medical Form Touch Targets',
     description: 'Medical form inputs must have adequate touch targets',
     severity: 'serious',
-    check: (_element: any) => {
+    check: (element: Element) => {
       const medicalForms = element.querySelectorAll(
         'form[data-medical="true"], .medical-form',
       );
@@ -120,13 +118,13 @@ export const MOBILE_HEALTHCARE_RULES = {
         });
       });
     },
-    fix: (_element: any) => {
+    fix: (element: Element) => {
       const medicalForms = element.querySelectorAll(
         'form[data-medical="true"], .medical-form',
       );
-      medicalForms.forEach(_form => {
+      medicalForms.forEach(form => {
         const inputs = form.querySelectorAll('input, select, textarea, button');
-        inputs.forEach(_input => {
+        inputs.forEach(input => {
           const rect = input.getBoundingClientRect();
           if (rect.width < 44 || rect.height < 44) {
             if (isHTMLElement(input)) {
@@ -144,7 +142,7 @@ export const MOBILE_HEALTHCARE_RULES = {
     name: 'Mobile Screen Reader Support',
     description: 'Content must be accessible to mobile screen readers',
     severity: 'critical',
-    check: (_element: any) => {
+    check: (element: Element) => {
       const interactiveElements = element.querySelectorAll(
         'button, input, select, textarea, a',
       );
@@ -156,11 +154,11 @@ export const MOBILE_HEALTHCARE_RULES = {
         );
       });
     },
-    fix: (_element: any) => {
+    fix: (element: Element) => {
       const interactiveElements = element.querySelectorAll(
         'button, input, select, textarea, a',
       );
-      interactiveElements.forEach(_el => {
+      interactiveElements.forEach(el => {
         if (
           !el.hasAttribute('aria-label')
           && !el.hasAttribute('aria-labelledby')
@@ -179,7 +177,7 @@ export const MOBILE_HEALTHCARE_RULES = {
     name: 'Responsive Medical Content',
     description: 'Medical content must be readable across all device sizes',
     severity: 'serious',
-    check: (_element: any) => {
+    check: (element: Element) => {
       const medicalContent = element.querySelectorAll(
         '[data-medical="true"], .medical-content',
       );
@@ -192,11 +190,11 @@ export const MOBILE_HEALTHCARE_RULES = {
         );
       });
     },
-    fix: (_element: any) => {
+    fix: (element: Element) => {
       const medicalContent = element.querySelectorAll(
         '[data-medical="true"], .medical-content',
       );
-      medicalContent.forEach(_content => {
+      medicalContent.forEach(content => {
         if (isHTMLElement(content)) {
           content.style.fontSize = '16px';
           content.style.lineHeight = '1.5';
@@ -210,7 +208,7 @@ export const MOBILE_HEALTHCARE_RULES = {
     name: 'Mobile Navigation Accessibility',
     description: 'Mobile navigation must be accessible and touch-friendly',
     severity: 'serious',
-    check: (_element: any) => {
+    check: (element: Element) => {
       const navElements = element.querySelectorAll('nav, [role="navigation"]');
       return Array.from(navElements).every(nav => {
         const navItems = nav.querySelectorAll('a, button');
@@ -220,11 +218,11 @@ export const MOBILE_HEALTHCARE_RULES = {
         });
       });
     },
-    fix: (_element: any) => {
+    fix: (element: Element) => {
       const navElements = element.querySelectorAll('nav, [role="navigation"]');
-      navElements.forEach(_nav => {
+      navElements.forEach(nav => {
         const navItems = nav.querySelectorAll('a, button');
-        navItems.forEach(_item => {
+        navItems.forEach(item => {
           const rect = item.getBoundingClientRect();
           if (rect.width < 44 || rect.height < 44) {
             if (isHTMLElement(item)) {
@@ -242,7 +240,7 @@ export const MOBILE_HEALTHCARE_RULES = {
     name: 'Offline Healthcare Functionality',
     description: 'Critical healthcare features must work offline',
     severity: 'critical',
-    check: (_element: any) => {
+    check: (element: Element) => {
       const offlineElements = element.querySelectorAll(
         '[data-offline="true"], .offline-capable',
       );
@@ -252,11 +250,11 @@ export const MOBILE_HEALTHCARE_RULES = {
         );
       });
     },
-    fix: (_element: any) => {
+    fix: (element: Element) => {
       const offlineElements = element.querySelectorAll(
         '[data-offline="true"], .offline-capable',
       );
-      offlineElements.forEach(_el => {
+      offlineElements.forEach(el => {
         el.setAttribute(
           'aria-label',
           el.getAttribute('aria-label') || 'Offline healthcare feature',
@@ -456,7 +454,7 @@ export class MobileAccessibilityOptimizer {
   private async testResponsiveDesign(
     context: Element,
     width: number,
-    height: number,
+    _height: number,
   ): Promise<any[]> {
     const issues = [];
 
@@ -528,7 +526,7 @@ export class MobileAccessibilityOptimizer {
     const touchElements = context.querySelectorAll(
       'button, input, select, textarea, a',
     );
-    touchElements.forEach(_element => {
+    touchElements.forEach(element => {
       const rect = element.getBoundingClientRect();
 
       if (rect.width < 44 || rect.height < 44) {
@@ -544,7 +542,7 @@ export class MobileAccessibilityOptimizer {
     const interactiveElements = context.querySelectorAll(
       'button, input, select, textarea, a',
     );
-    interactiveElements.forEach(_element => {
+    interactiveElements.forEach(element => {
       if (
         !element.hasAttribute('aria-label')
         && !element.hasAttribute('aria-labelledby')
@@ -559,7 +557,7 @@ export class MobileAccessibilityOptimizer {
 
     // Improve responsive design
     const textElements = context.querySelectorAll('p, span, label');
-    textElements.forEach(_element => {
+    textElements.forEach(element => {
       const computedStyle = window.getComputedStyle(element);
       const fontSize = parseInt(computedStyle.fontSize);
 
@@ -576,7 +574,7 @@ export class MobileAccessibilityOptimizer {
     const offlineElements = context.querySelectorAll(
       '[data-offline="true"], .offline-capable',
     );
-    offlineElements.forEach(_element => {
+    offlineElements.forEach(element => {
       if (!element.hasAttribute('aria-label')) {
         element.setAttribute('aria-label', 'Offline healthcare feature');
         stats.offlineOptimizations++;
@@ -879,7 +877,7 @@ export async function quickMobileAccessibilityCheck(
       responsiveDesign: results.summary.responsiveImprovements > 0,
       issues: results.recommendations,
     };
-  } catch (_error) {
+  } catch (error) {
     console.error('Quick mobile accessibility check failed:', error);
     return {
       passed: false,

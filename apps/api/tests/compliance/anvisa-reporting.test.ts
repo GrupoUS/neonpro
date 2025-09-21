@@ -250,8 +250,6 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
         }
       }
 
-  
-
       // Verify automatic detection
       expect(adverseEvents.length).toBeGreaterThan(0);
 
@@ -1079,7 +1077,8 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
       if (baselineVersion && updatedVersion) {
         const improvement = {
-          response_time_improvement: (baselineVersion.performance_metrics! as any).average_response_time
+          response_time_improvement:
+            (baselineVersion.performance_metrics! as any).average_response_time
             - (updatedVersion.performance_metrics! as any).average_response_time,
           accuracy_improvement: (updatedVersion.performance_metrics! as any).accuracy
             - (baselineVersion.performance_metrics! as any).accuracy,

@@ -53,8 +53,7 @@ export function useChatStreaming(opts: {
           });
         }
       } catch (error) {
-
-        setError(e instanceof Error ? e.message : 'Unknown error');
+        setError(error instanceof Error ? error.message : 'Unknown error');
       } finally {
         setStreaming(false);
       }

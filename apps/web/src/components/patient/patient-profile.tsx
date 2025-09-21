@@ -50,8 +50,10 @@ import {
 import { formatDate, formatDateTime } from '@/utils/brazilian-formatters';
 import { Patient } from '@neonpro/shared/types/patient';
 import { formatBRPhone, formatCPF } from '@neonpro/utils';
-// import { cn } from '@neonpro/ui';
+import { cn } from '@neonpro/ui';
 import { PatientCard } from './patient-card';
+import PatientDataPresentation, { PatientDataField } from './patient-data-presentation';
+import { PatientDataPresentationUtils } from './patient-data-presentation';
 
 export interface PatientProfileProps {
   /** Patient ID */
@@ -88,7 +90,7 @@ const fetchPatient = async (patientId: string): Promise<Patient> => {
   return response.json();
 };
 
-const fetchAIInsights = async (_patientId: any) => {
+const fetchAIInsights = async (patientId: string) => {
   // This calls the actual GET /api/v2/ai/insights/{patientId} endpoint (T052)
   const response = await fetch(`/api/v2/ai/insights/${patientId}`, {
     headers: {
@@ -220,14 +222,15 @@ const AIInsightsSection = ({
                 <div className='space-y-2'>
                   <span className='text-sm font-medium'>Fatores de Risco:</span>
                   <ul className='text-sm text-muted-foreground space-y-1'>
-                    {riskAssessment.factors
-                      .slice(0, 3)
-                      .map((factor: string, index: number) => (
-                        <li key={index} className='flex items-start gap-2'>
-                          <span className='w-1 h-1 bg-muted-foreground rounded-full mt-2 flex-shrink-0' />
-                          {factor}
-                        </li>
-                      ))}
+                    {riskAssessment.factors &&
+                      riskAssessment.factors
+                        .slice(0, 3)
+                        .map((factor: string, index: number) => (
+                          <li key={index} className='flex items-start gap-2'>
+                            <span className='w-1 h-1 bg-muted-foreground rounded-full mt-2 flex-shrink-0' />
+                            {factor}
+                          </li>
+                        ))}
                   </ul>
                 </div>
               )}
@@ -246,7 +249,8 @@ const AIInsightsSection = ({
           </CardHeader>
           <CardContent>
             <div className='space-y-3'>
-              {recommendations.slice(0, 4).map((rec: any, index: number) => (
+              {recommendations &&
+                recommendations.slice(0, 4).map((rec: any, index: number) => (
                 <div
                   key={index}
                   className='flex items-start gap-3 p-3 bg-muted/50 rounded-lg'
@@ -291,9 +295,10 @@ const AIInsightsSection = ({
           </CardHeader>
           <CardContent>
             <div className='grid gap-4 sm:grid-cols-2'>
-              {Object.entries(trends)
-                .slice(0, 4)
-                .map(([key, trend]: [string, any]) => (
+              {trends &&
+                Object.entries(trends)
+                  .slice(0, 4)
+                  .map(([key, trend]: [string, any]) => (
                   <div key={key} className='space-y-2'>
                     <div className='flex items-center justify-between'>
                       <span className='text-sm font-medium capitalize'>
@@ -385,6 +390,35 @@ export const PatientProfile = ({
     staleTime: 2 * 60 * 1000, // 2 minutes cache
     retry: 2,
   });
+
+  // Privacy and consent handlers
+  const handlePrivacyToggle = (fieldId: string, isVisible: boolean) => {
+    // Generate audit log for privacy actions
+    const auditLog = PatientDataPresentationUtils.generateAuditLog(
+      'privacy_toggle',
+      fieldId,
+      'current_user', // In real app, this would be the actual user ID
+      { isVisible }
+    );
+    console.log('Privacy toggle audit log:', auditLog);
+
+    // In a real implementation, this would be sent to an audit service
+    // auditService.logAction(auditLog);
+  };
+
+  const handleConsentUpdate = (consentType: string, granted: boolean) => {
+    // Generate audit log for consent changes
+    const auditLog = PatientDataPresentationUtils.generateAuditLog(
+      'consent_update',
+      consentType,
+      'current_user', // In real app, this would be the actual user ID
+      { granted }
+    );
+    console.log('Consent update audit log:', auditLog);
+
+    // In a real implementation, this would be sent to an audit service
+    // auditService.logAction(auditLog);
+  };
 
   // Memoized patient display data
   const displayData = useMemo(() => {
@@ -510,50 +544,44 @@ export const PatientProfile = ({
                     Informações de Contato
                   </CardTitle>
                 </CardHeader>
-                <CardContent className='space-y-4'>
-                  <div className='grid gap-4 sm:grid-cols-2'>
-                    <div className='flex items-center gap-3'>
-                      <Phone className='h-4 w-4 text-muted-foreground' />
-                      <div>
-                        <p className='text-sm font-medium'>Telefone</p>
-                        <p className='text-sm text-muted-foreground'>
-                          {displayData?.phone}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className='flex items-center gap-3'>
-                      <Mail className='h-4 w-4 text-muted-foreground' />
-                      <div>
-                        <p className='text-sm font-medium'>E-mail</p>
-                        <p className='text-sm text-muted-foreground'>
-                          {displayData?.email}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className='flex items-center gap-3'>
-                      <Calendar className='h-4 w-4 text-muted-foreground' />
-                      <div>
-                        <p className='text-sm font-medium'>
-                          Data de Nascimento
-                        </p>
-                        <p className='text-sm text-muted-foreground'>
-                          {displayData?.birthDate}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className='flex items-center gap-3'>
-                      <MapPin className='h-4 w-4 text-muted-foreground' />
-                      <div>
-                        <p className='text-sm font-medium'>Endereço</p>
-                        <p className='text-sm text-muted-foreground'>
-                          {displayData?.address}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                <CardContent>
+                  <PatientDataPresentation
+                    fields={[
+                      {
+                        id: 'phone',
+                        label: 'Telefone',
+                        value: patient.phone,
+                        type: 'phone',
+                        sensitivity: 'medium',
+                      },
+                      {
+                        id: 'email',
+                        label: 'E-mail',
+                        value: patient.email,
+                        type: 'email',
+                        sensitivity: 'medium',
+                      },
+                      {
+                        id: 'birthDate',
+                        label: 'Data de Nascimento',
+                        value: patient.birthDate,
+                        type: 'birth-date',
+                        sensitivity: 'medium',
+                      },
+                      {
+                        id: 'address',
+                        label: 'Endereço',
+                        value: patient.address
+                          ? `${patient.address.street}, ${patient.address.number} - ${patient.address.neighborhood}, ${patient.address.city}/${patient.address.state}`
+                          : null,
+                        type: 'address',
+                        sensitivity: 'high',
+                      },
+                    ]}
+                    showPrivacyControls={lgpdConsent.canShowFullData}
+                    onPrivacyToggle={handlePrivacyToggle}
+                    onConsentUpdate={handleConsentUpdate}
+                  />
                 </CardContent>
               </Card>
             </div>
@@ -571,51 +599,50 @@ export const PatientProfile = ({
             <CardContent>
               {lgpdConsent.canShowMedicalData
                 ? (
-                  <div className='space-y-4'>
-                    {patient.healthcareInfo?.allergies
-                      && patient.healthcareInfo.allergies.length > 0 && (
-                      <div>
-                        <h4 className='font-medium mb-2'>Alergias</h4>
-                        <div className='flex flex-wrap gap-2'>
-                          {patient.healthcareInfo.allergies.map(
-                            (allergy: string, index: number) => (
-                              <Badge key={index} variant='secondary'>
-                                {allergy}
-                              </Badge>
-                            ),
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {patient.healthcareInfo?.medications
-                      && patient.healthcareInfo.medications.length > 0 && (
-                      <div>
-                        <h4 className='font-medium mb-2'>Medicações</h4>
-                        <div className='space-y-2'>
-                          {patient.healthcareInfo.medications.map(
-                            (med: any, index: number) => (
-                              <div key={index} className='text-sm'>
-                                <span className='font-medium'>{med.name}</span>
-                                {med.dosage && (
-                                  <span className='text-muted-foreground'>
-                                    - {med.dosage}
-                                  </span>
-                                )}
-                              </div>
-                            ),
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    {!patient.healthcareInfo?.allergies?.length
-                      && !patient.healthcareInfo?.medications?.length && (
-                      <p className='text-muted-foreground'>
-                        Nenhuma informação médica registrada.
-                      </p>
-                    )}
-                  </div>
+                  <PatientDataPresentation
+                    fields={[
+                      {
+                        id: 'bloodType',
+                        label: 'Tipo Sanguíneo',
+                        value: patient.healthcareInfo?.bloodType,
+                        type: 'medical-record',
+                        sensitivity: 'medium',
+                      },
+                      {
+                        id: 'allergies',
+                        label: 'Alergias',
+                        value: patient.healthcareInfo?.allergies?.join(', ') || 'Nenhuma informada',
+                        type: 'medical-record',
+                        sensitivity: 'high',
+                      },
+                      {
+                        id: 'medications',
+                        label: 'Medicamentos',
+                        value: patient.healthcareInfo?.medications?.map((med: any) =>
+                          `${med.name}${med.dosage ? ` - ${med.dosage}` : ''}`
+                        ).join(', ') || 'Nenhum informado',
+                        type: 'medical-record',
+                        sensitivity: 'high',
+                      },
+                      {
+                        id: 'medicalHistory',
+                        label: 'Histórico Médico',
+                        value: patient.healthcareInfo?.medicalHistory,
+                        type: 'medical-record',
+                        sensitivity: 'critical',
+                      },
+                      ...(patient.healthcareInfo?.conditions?.map((condition: any, index: number) => ({
+                        id: `condition-${index}`,
+                        label: `Condição ${index + 1}`,
+                        value: `${condition.name}: ${condition.status || 'Ativa'}`,
+                        type: 'medical-record',
+                        sensitivity: 'high',
+                      })) || []),
+                    ]}
+                    showPrivacyControls={true}
+                    onPrivacyToggle={handlePrivacyToggle}
+                    onConsentUpdate={handleConsentUpdate}
+                  />
                 )
                 : (
                   <Alert>

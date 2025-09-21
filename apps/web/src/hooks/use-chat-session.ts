@@ -33,7 +33,7 @@ export function useChatSession(sessionId: string, opts?: { mock?: boolean }) {
         if (!cancelled) setData(json);
       } catch (error) {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : 'Unknown error');
+          setError(error instanceof Error ? error.message : 'Unknown error');
         }
       } finally {
         if (!cancelled) setLoading(false);

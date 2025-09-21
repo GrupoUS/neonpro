@@ -36,7 +36,7 @@ import {
   useLiveRegion,
   useScreenReaderAnnouncement,
 } from '../../hooks/useAccessibility';
-import { ACCESSIBILITY_LABELS_PT_BR, createHealthcareFormAria } from '../../utils/accessibility';
+import { ACCESSIBILITY_LABELS_PT_BR } from '../../utils/accessibility';
 
 interface MedicalFormField {
   name: string;
@@ -107,7 +107,7 @@ export function EnhancedHealthcareForm({
   className,
 }: EnhancedHealthcareFormProps) {
   const { prefersHighContrast, prefersReducedMotion } = useAccessibilityPreferences();
-  const { announce, announceFormError, announceFormSuccess } = useScreenReaderAnnouncement();
+  const { announceFormError, announceFormSuccess } = useScreenReaderAnnouncement();
   const {
     message: liveMessage,
     announce: announceLive,
@@ -271,7 +271,7 @@ export function EnhancedHealthcareForm({
         setSubmitSuccess(true);
         announceFormSuccess('Formulário de saúde enviado com sucesso');
         announceLive('Formulário de saúde enviado com sucesso!', 'polite');
-      } catch (_error) {
+      } catch (error) {
         const errorMessage = error instanceof Error
           ? error.message
           : 'Erro ao enviar formulário de saúde';

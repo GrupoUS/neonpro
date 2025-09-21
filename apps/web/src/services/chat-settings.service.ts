@@ -21,10 +21,8 @@ export async function fetchDefaultChatModel(
     }
 
     return (data as any)?.default_chat_model ?? null;
-
   } catch (error) {
-
-    console.warn('[chat-settings] fetch default model failed:', e);
+    console.warn('[chat-settings] fetch default model failed:', error);
     return null;
   }
 }
@@ -47,10 +45,8 @@ export async function updateDefaultChatModel(
       return false;
     }
     return true;
-
   } catch (error) {
-
-    console.warn('[chat-settings] update default model failed:', e);
+    console.warn('[chat-settings] update default model failed:', error);
     return false;
   }
 }

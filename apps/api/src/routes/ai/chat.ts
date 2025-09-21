@@ -8,7 +8,6 @@ import { zValidator } from '@hono/zod-validator';
 import { Context, Hono, Next } from 'hono';
 import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service';
-import { ComprehensiveAuditService } from '../../services/audit-service.js';
 import { LGPDService } from '../../services/lgpd-service.js';
 import { PatientService } from '../../services/patient-service.js';
 

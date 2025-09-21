@@ -59,7 +59,7 @@ export class AuditService {
   async createAuditLog(request: AuditLogRequest): Promise<string> {
     try {
       const { data, error } = await this.supabase
-        .from("audit_logs")
+        .from("webrtc_audit_logs")
         .insert({
           action: request.action || request.eventType || "UNKNOWN",
           user_id: request.userId,

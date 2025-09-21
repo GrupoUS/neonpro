@@ -22,12 +22,10 @@ import {
   IconAlertCircle,
   IconCamera,
   IconCheck,
-  IconCloudUpload,
   IconEye,
   IconLoader2,
   IconPhoto,
   IconTrash,
-  IconX,
 } from '@tabler/icons-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -127,7 +125,7 @@ export function PhotoUpload({
   >(new Map());
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadedPhotos, setUploadedPhotos] = useState<AestheticPhoto[]>([]);
-  const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
+  const [_selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load existing photos on mount
@@ -395,7 +393,7 @@ export function PhotoUpload({
           toast.success(`Foto "${file.name}" analisada com sucesso!`);
           onPhotosUploaded?.([photoWithAnalysis]);
           onAnalysisComplete?.(photoWithAnalysis.id, analysis);
-        } catch (_error) {
+        } catch (error) {
           console.error('Upload/Analysis error:', error);
 
           setUploadStates(prev => {
@@ -436,7 +434,7 @@ export function PhotoUpload({
       setUploadedPhotos(prev => prev.filter(p => p.id !== photoId));
       onPhotoRemoved?.(photoId);
       toast.success('Foto removida com sucesso!');
-    } catch (_error) {
+    } catch (error) {
       console.error('Error removing photo:', error);
       toast.error('Erro ao remover foto');
     }

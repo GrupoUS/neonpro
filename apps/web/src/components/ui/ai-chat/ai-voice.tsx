@@ -62,7 +62,7 @@ export default function AIVoice({
 
         mediaRecorder.start();
         setIsRecording(true);
-      } catch (_error) {
+      } catch (error) {
         console.error('Erro ao acessar microfone:', error);
       }
     }

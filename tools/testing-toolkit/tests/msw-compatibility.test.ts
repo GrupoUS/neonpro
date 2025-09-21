@@ -3,9 +3,9 @@
  * Tests if MSW can intercept fetch requests in Bun runtime
  */
 
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 describe('MSW Compatibility with Bun', () => {
   const server = setupServer(

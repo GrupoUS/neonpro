@@ -143,7 +143,7 @@ export class PerformanceOptimizer {
             }
 
             resolve(result);
-          } catch (_error) {
+          } catch (error) {
             reject(error);
           }
         }, debounceMs);
@@ -397,7 +397,7 @@ export class PerformanceOptimizer {
       });
       observer.observe({ entryTypes: ['paint'] });
       this.observers.push(observer);
-    } catch (_error) {
+    } catch (error) {
       console.warn('Paint metrics not supported');
     }
   }
@@ -415,7 +415,7 @@ export class PerformanceOptimizer {
       });
       observer.observe({ entryTypes: ['layout-shift'] });
       this.observers.push(observer);
-    } catch (_error) {
+    } catch (error) {
       console.warn('Layout shift metrics not supported');
     }
   }
@@ -433,7 +433,7 @@ export class PerformanceOptimizer {
       });
       observer.observe({ entryTypes: ['first-input'] });
       this.observers.push(observer);
-    } catch (_error) {
+    } catch (error) {
       console.warn('First input delay metrics not supported');
     }
   }
@@ -447,7 +447,7 @@ export class PerformanceOptimizer {
       });
       observer.observe({ entryTypes: ['largest-contentful-paint'] });
       this.observers.push(observer);
-    } catch (_error) {
+    } catch (error) {
       console.warn('Largest contentful paint metrics not supported');
     }
   }

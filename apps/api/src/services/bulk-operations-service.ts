@@ -12,6 +12,7 @@
  */
 
 import { logger } from '@/utils/secure-logger';
+import { createAdminClient } from '../clients/supabase';
 
 export interface BulkOperationRequest {
   operationType:
@@ -218,7 +219,7 @@ export class BulkOperationsService {
       // Log undo operation
       logger.info(
         'Bulk operation undone',
-        { undoToken, requesterUserId }
+        { undoToken, requesterUserId },
       );
 
       return true;
@@ -272,9 +273,14 @@ export class BulkOperationsService {
       throw new Error(`Invalid entity IDs: ${invalidIds.join(', ')}`);
     }
 
-    // TODO: Validate user permissions against allowedRoles
-    // TODO: Validate clinic access permissions
-    // TODO: Validate LGPD consent for data operations
+    // Validate user permissions against allowedRoles
+    await this.validateUserPermissions(request);
+
+    // Validate clinic access permissions
+    await this.validateClinicAccess(request);
+
+    // Validate LGPD consent for data operations
+    await this.validateLGPDConsent(request);
   }
 
   private enforceRateLimit(userId: string, operationType: string): void {
@@ -330,7 +336,7 @@ export class BulkOperationsService {
           await new Promise(resolve => setTimeout(resolve, delay));
           logger.warn(
             'Bulk operation attempt failed, retrying',
-            { attempt, delay, error: error.message }
+            { attempt, delay, error: error.message },
           );
         }
       }
@@ -392,7 +398,7 @@ export class BulkOperationsService {
       // In a real implementation, this would be stored in the database
       logger.info(
         'Bulk operation processed entities',
-        { processed: result.processed, failed: result.failed }
+        { processed: result.processed, failed: result.failed },
       );
     }
 
@@ -541,6 +547,208 @@ export class BulkOperationsService {
    */
   getSafetyConfiguration(operationType: string): SafetyConfiguration | null {
     return SAFETY_CONFIGURATIONS[operationType] || null;
+  }
+
+  /**
+   * Validate user permissions against allowed roles for the operation
+   */
+  private async validateUserPermissions(request: BulkOperationRequest): Promise<void> {
+    try {
+      const supabase = createAdminClient();
+      const config = SAFETY_CONFIGURATIONS[request.operationType];
+
+      // Get user details including role
+      const { data: user, error } = await supabase
+        .from('users')
+        .select('id, role, clinic_id')
+        .eq('id', request.requesterUserId)
+        .single();
+
+      if (error || !user) {
+        throw new Error(`User not found: ${request.requesterUserId}`);
+      }
+
+      // Check if user role is allowed for this operation
+      if (!config.allowedRoles.includes(user.role)) {
+        throw new Error(
+          `User role '${user.role}' is not authorized for ${request.operationType} operations. `
+            + `Allowed roles: ${config.allowedRoles.join(', ')}`,
+        );
+      }
+
+      logger.debug('User permissions validated', {
+        userId: request.requesterUserId,
+        role: user.role,
+        operationType: request.operationType,
+        allowedRoles: config.allowedRoles,
+      });
+    } catch (error) {
+      logger.error('User permission validation failed', {
+        userId: request.requesterUserId,
+        operationType: request.operationType,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Validate clinic access permissions
+   */
+  private async validateClinicAccess(request: BulkOperationRequest): Promise<void> {
+    try {
+      const supabase = createAdminClient();
+
+      // Verify user belongs to the specified clinic
+      const { data: userClinic, error } = await supabase
+        .from('users')
+        .select('clinic_id')
+        .eq('id', request.requesterUserId)
+        .single();
+
+      if (error || !userClinic) {
+        throw new Error(`User clinic assignment not found: ${request.requesterUserId}`);
+      }
+
+      // Validate clinic access
+      if (userClinic.clinic_id !== request.clinicId) {
+        throw new Error(
+          `User does not have access to clinic ${request.clinicId}. `
+            + `User's clinic: ${userClinic.clinic_id}`,
+        );
+      }
+
+      // For patient-specific operations, validate patient belongs to clinic
+      if (request.entityType === 'patient' && request.entityIds.length > 0) {
+        const { data: patients, error: patientError } = await supabase
+          .from('patients')
+          .select('id, clinic_id')
+          .in('id', request.entityIds.slice(0, 100)) // Limit to 100 for performance
+          .eq('clinic_id', request.clinicId);
+
+        if (patientError) {
+          throw new Error(`Failed to validate patient clinic access: ${patientError.message}`);
+        }
+
+        const accessiblePatients = patients?.map(p => p.id) || [];
+        const inaccessiblePatients = request.entityIds.filter(id =>
+          !accessiblePatients.includes(id)
+        );
+
+        if (inaccessiblePatients.length > 0) {
+          throw new Error(
+            `Access denied to ${inaccessiblePatients.length} patients that don't belong to the specified clinic`,
+          );
+        }
+      }
+
+      logger.debug('Clinic access validated', {
+        userId: request.requesterUserId,
+        clinicId: request.clinicId,
+        entityType: request.entityType,
+        entityCount: request.entityIds.length,
+      });
+    } catch (error) {
+      logger.error('Clinic access validation failed', {
+        userId: request.requesterUserId,
+        clinicId: request.clinicId,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
+  }
+
+  /**
+   * Validate LGPD consent for data operations
+   */
+  private async validateLGPDConsent(request: BulkOperationRequest): Promise<void> {
+    try {
+      // Skip LGPD validation for certain operation types that are legal obligations
+      const exemptOperations = ['activate', 'deactivate'];
+      if (exemptOperations.includes(request.operationType)) {
+        return;
+      }
+
+      const supabase = createAdminClient();
+
+      // For patient data operations, validate patient consent
+      if (request.entityType === 'patient' && request.entityIds.length > 0) {
+        const { data: consents, error } = await supabase
+          .from('lgpd_consents')
+          .select('*')
+          .in('patient_id', request.entityIds.slice(0, 50)) // Limit for performance
+          .eq('status', 'granted')
+          .gt('expires_at', new Date().toISOString());
+
+        if (error) {
+          throw new Error(`Failed to validate LGPD consent: ${error.message}`);
+        }
+
+        const patientsWithConsent = new Set(consents?.map(c => c.patient_id) || []);
+        const patientsWithoutConsent = request.entityIds.filter(id => !patientsWithConsent.has(id));
+
+        if (patientsWithoutConsent.length > 0) {
+          throw new Error(
+            `LGPD compliance error: ${patientsWithoutConsent.length} patients lack valid consent for bulk ${request.operationType} operation`,
+          );
+        }
+
+        // Log consent validation for audit purposes
+        logger.info('LGPD consent validated for bulk operation', {
+          userId: request.requesterUserId,
+          operationType: request.operationType,
+          entityType: request.entityType,
+          entityCount: request.entityIds.length,
+          patientsWithConsent: patientsWithConsent.size,
+        });
+      }
+
+      // For appointment operations, validate through patient consent
+      if (request.entityType === 'appointment' && request.entityIds.length > 0) {
+        const { data: appointments, error } = await supabase
+          .from('appointments')
+          .select('patient_id')
+          .in('id', request.entityIds.slice(0, 100));
+
+        if (error) {
+          throw new Error(`Failed to validate appointment consent: ${error.message}`);
+        }
+
+        const patientIds = [...new Set(appointments?.map(a => a.patient_id) || [])];
+
+        if (patientIds.length > 0) {
+          const { data: patientConsents, error: consentError } = await supabase
+            .from('lgpd_consents')
+            .select('patient_id')
+            .in('patient_id', patientIds)
+            .eq('status', 'granted')
+            .gt('expires_at', new Date().toISOString());
+
+          if (consentError) {
+            throw new Error(
+              `Failed to validate patient consent for appointments: ${consentError.message}`,
+            );
+          }
+
+          const patientsWithConsent = new Set(patientConsents?.map(c => c.patient_id) || []);
+          const patientsWithoutConsent = patientIds.filter(id => !patientsWithConsent.has(id));
+
+          if (patientsWithoutConsent.length > 0) {
+            throw new Error(
+              `LGPD compliance error: ${patientsWithoutConsent.length} patients lack valid consent for appointment bulk operations`,
+            );
+          }
+        }
+      }
+    } catch (error) {
+      logger.error('LGPD consent validation failed', {
+        userId: request.requesterUserId,
+        operationType: request.operationType,
+        entityType: request.entityType,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
   }
 
   /**

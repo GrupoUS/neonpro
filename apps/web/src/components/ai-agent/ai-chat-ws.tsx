@@ -5,8 +5,8 @@
 
 'use client';
 
-import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { useWebSocketAgent } from '@/services/websocket-agent-service';
 import { AgentAction } from '@neonpro/types';
@@ -154,7 +154,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
           domain: initialContext?.domain,
           professionalId: initialContext?.professionalId,
         });
-      } catch (error) {
+      } catch {
         console.error('WebSocket error:', _error);
 
         const errorMessage: ChatMessage = {
@@ -221,7 +221,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
           title: 'Exportação iniciada',
           description: 'Seu relatório está sendo gerado...',
         });
-      } catch (_error) {
+      } catch {
         toast({
           title: 'Erro de exportação',
           description: 'Não foi possível iniciar a exportação',

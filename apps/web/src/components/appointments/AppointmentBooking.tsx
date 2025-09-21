@@ -11,9 +11,15 @@
  * - Integration with tRPC hooks from T037-T039
  */
 
-import { addDays, endOfDay, format, isSameDay, startOfDay } from 'date-fns';
+import { endOfDay, format, isSameDay, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { AlertTriangle } from 'lucide-react';
+import {
+  AlertTriangle,
+  Calendar,
+  CheckCircle,
+  Clock,
+  User,
+} from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Alert } from '@/components/ui/alert';
@@ -36,7 +42,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -54,6 +59,7 @@ import {
 } from '@/hooks/use-appointments';
 import { usePatientsList } from '@/hooks/use-patients';
 import { cn } from '@/lib/utils';
+import { validateHealthcareFormData, HealthcareDataSensitivity } from '@/utils/healthcare-form-validation';
 
 interface AppointmentBookingProps {
   initialDate?: Date;
@@ -161,7 +167,7 @@ export function AppointmentBooking({
   const timeSlots = generateTimeSlots();
 
   // Handle appointment booking
-  const handleBookAppointment = async (_formData: any) => {
+  const handleBookAppointment = async (formData: AppointmentFormData) => {
     try {
       const appointmentData = {
         ...formData,
@@ -184,7 +190,7 @@ export function AppointmentBooking({
       onBookingComplete?.(result);
       setIsBookingDialogOpen(false);
       setSelectedTime('');
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to book appointment:', error);
     }
   };
@@ -204,7 +210,7 @@ export function AppointmentBooking({
   };
 
   // Calendar day cell renderer with appointments
-  const renderDayContent = (_date: any) => {
+  const renderDayContent = (date: Date) => {
     const dayAppointments = appointments?.filter(apt => isSameDay(new Date(apt.startTime), date))
       || [];
 
@@ -425,6 +431,23 @@ function AppointmentBookingForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Healthcare compliance validation for appointment booking
+    const healthcareValidation = validateHealthcareFormData({
+      appointmentDate: formData.date,
+      appointmentTime: formData.time,
+      patientId: formData.patientId,
+      professionalId: formData.professionalId,
+      serviceId: formData.serviceId,
+      dataSensitivity: HealthcareDataSensitivity.MEDIUM,
+    });
+
+    if (!healthcareValidation.isValid) {
+      // In a real implementation, show validation errors
+      console.warn('Healthcare validation errors:', healthcareValidation.errors);
+      return;
+    }
+
     onSubmit(formData);
   };
 

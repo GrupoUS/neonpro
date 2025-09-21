@@ -4,7 +4,6 @@ import AestheticReportPDF, {
 import { type ClinicBrandingData } from '@/components/pdf/ClinicBranding';
 import { Button } from '@/components/ui/button';
 import { generatePDFFilename, usePDFExport } from '@/hooks/usePDFExport';
-import { Download2 } from 'lucide-react';
 import React from 'react';
 import { toast } from 'sonner';
 

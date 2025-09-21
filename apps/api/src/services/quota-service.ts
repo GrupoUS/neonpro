@@ -28,8 +28,8 @@ export interface QuotaUsage {
  * Check quota limits for an API key or user
  */
 export async function checkQuota(
-  identifier: string,
-  quotaConfig: QuotaConfig,
+  _identifier: string,
+  _quotaConfig: QuotaConfig,
 ): Promise<QuotaResult> {
   // Mock implementation for contract testing
   return {
@@ -44,9 +44,9 @@ export async function checkQuota(
  * Apply quota consumption for an API key or user
  */
 export async function applyQuota(
-  identifier: string,
-  quotaConfig: QuotaConfig,
-  amount: number = 1,
+  _identifier: string,
+  _quotaConfig: QuotaConfig,
+  _amount: number = 1,
 ): Promise<QuotaResult> {
   // Mock implementation for contract testing
   return {
@@ -94,7 +94,7 @@ export async function resetQuota(
 /**
  * Get quota configuration for an API key or user
  */
-export async function getQuotaConfig(identifier: string): Promise<QuotaConfig> {
+export async function getQuotaConfig(_identifier: string): Promise<QuotaConfig> {
   // Mock implementation for contract testing
   return {
     daily: 10000,

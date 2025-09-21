@@ -2,8 +2,6 @@
 // These functions handle patient data anonymization, deletion, and export
 // in compliance with Brazilian data protection regulations
 
-
-
 // Types for LGPD operations
 export interface LGPDPatientData {
   id: string;

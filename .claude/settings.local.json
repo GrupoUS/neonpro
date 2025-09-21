@@ -64,7 +64,9 @@
       "mcp__desktop-commander__kill_process",
       "mcp__desktop-commander__list_processes",
       "mcp__supabase__list_tables",
-      "mcp__supabase__execute_sql"
+      "mcp__supabase__execute_sql",
+      "mcp__serena__think_about_collected_information",
+      "mcp__serena__think_about_task_adherence"
     ],
     "deny": [
       "Edit",

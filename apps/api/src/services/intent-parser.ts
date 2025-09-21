@@ -1,8 +1,8 @@
-import { QueryIntent, QueryParameters, DateRange, UserRole } from '@neonpro/types';
+import { DateRange, QueryIntent, QueryParameters, UserRole } from '@neonpro/types';
 
 /**
  * Intent Parser Service
- * 
+ *
  * Analyzes natural language queries to extract intent and parameters
  * for database operations. Supports Portuguese healthcare queries with
  * context-aware parameter extraction.
@@ -89,11 +89,11 @@ export class IntentParserService {
     confidence: number;
   } {
     const normalizedQuery = this.normalizeQuery(query);
-    
+
     // Determine primary intent
     const intent = this.extractIntent(normalizedQuery);
     const confidence = this.calculateConfidence(normalizedQuery, intent);
-    
+
     // Extract parameters based on intent
     const parameters = this.extractParameters(normalizedQuery, intent, userRole);
 
@@ -217,16 +217,20 @@ export class IntentParserService {
     }
 
     // Bonus for dates
-    if (Object.values(this.DATE_PATTERNS).some(patterns => 
-      patterns.some(pattern => pattern.test(query))
-    )) {
+    if (
+      Object.values(this.DATE_PATTERNS).some(patterns =>
+        patterns.some(pattern => pattern.test(query))
+      )
+    ) {
       bonus += 0.2;
     }
 
     // Bonus for financial type specification
-    if (Object.values(this.FINANCIAL_TYPE_PATTERNS).some(patterns => 
-      patterns.some(pattern => pattern.test(query))
-    )) {
+    if (
+      Object.values(this.FINANCIAL_TYPE_PATTERNS).some(patterns =>
+        patterns.some(pattern => pattern.test(query))
+      )
+    ) {
       bonus += 0.1;
     }
 
@@ -236,7 +240,11 @@ export class IntentParserService {
   /**
    * Extract parameters based on intent and query content
    */
-  private extractParameters(query: string, intent: QueryIntent, userRole: UserRole): QueryParameters {
+  private extractParameters(
+    query: string,
+    intent: QueryIntent,
+    userRole: UserRole,
+  ): QueryParameters {
     const parameters: QueryParameters = {
       rawEntities: {},
     };
@@ -245,11 +253,11 @@ export class IntentParserService {
       case 'client_data':
         parameters.clientNames = this.extractClientNames(query);
         break;
-      
+
       case 'appointments':
         parameters.dateRanges = this.extractDateRanges(query);
         break;
-      
+
       case 'financial':
         parameters.financial = this.extractFinancialParameters(query);
         break;
@@ -292,7 +300,7 @@ export class IntentParserService {
       today.setHours(0, 0, 0, 0);
       const tomorrow = new Date(today);
       tomorrow.setDate(tomorrow.getDate() + 1);
-      
+
       ranges.push({ start: today, end: tomorrow });
     }
 
@@ -302,7 +310,7 @@ export class IntentParserService {
       tomorrow.setHours(0, 0, 0, 0);
       const dayAfter = new Date(tomorrow);
       dayAfter.setDate(dayAfter.getDate() + 1);
-      
+
       ranges.push({ start: tomorrow, end: dayAfter });
     }
 
@@ -312,7 +320,7 @@ export class IntentParserService {
       weekStart.setHours(0, 0, 0, 0);
       const weekEnd = new Date(weekStart);
       weekEnd.setDate(weekEnd.getDate() + 7);
-      
+
       ranges.push({ start: weekStart, end: weekEnd });
     }
 
@@ -320,7 +328,7 @@ export class IntentParserService {
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
       const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
       monthEnd.setHours(23, 59, 59, 999);
-      
+
       ranges.push({ start: monthStart, end: monthEnd });
     }
 
@@ -338,9 +346,9 @@ export class IntentParserService {
       } else {
         // Multiple dates - create range from first to last
         const sorted = specificDates.sort((a, b) => a.getTime() - b.getTime());
-        ranges.push({ 
-          start: sorted[0], 
-          end: sorted[sorted.length - 1] 
+        ranges.push({
+          start: sorted[0],
+          end: sorted[sorted.length - 1],
         });
       }
     }
@@ -360,7 +368,7 @@ export class IntentParserService {
       const [, day, month, year] = match;
       const fullYear = year.length === 2 ? 2000 + parseInt(year) : parseInt(year);
       const date = new Date(fullYear, parseInt(month) - 1, parseInt(day));
-      
+
       if (!isNaN(date.getTime())) {
         dates.push(date);
       }
@@ -405,18 +413,18 @@ export class IntentParserService {
    */
   getSuggestedQueries(userRole: UserRole): string[] {
     const baseSuggestions = [
-      "Quais os próximos agendamentos?",
-      "Me mostre os clientes cadastrados",
-      "Como está o faturamento?",
+      'Quais os próximos agendamentos?',
+      'Me mostre os clientes cadastrados',
+      'Como está o faturamento?',
     ];
 
     // Add role-specific suggestions
     if (userRole === 'admin') {
-      baseSuggestions.push("Resumo financeiro completo");
+      baseSuggestions.push('Resumo financeiro completo');
     } else if (userRole === 'doctor') {
-      baseSuggestions.push("Me mostre informações do paciente [nome]");
+      baseSuggestions.push('Me mostre informações do paciente [nome]');
     } else if (userRole === 'receptionist') {
-      baseSuggestions.push("Agendamentos para hoje");
+      baseSuggestions.push('Agendamentos para hoje');
     }
 
     return baseSuggestions;
@@ -437,7 +445,7 @@ export class IntentParserService {
           errors.push('Too many client names specified (max 5)');
         }
         break;
-      
+
       case 'appointments':
         if (parameters.dateRanges && parameters.dateRanges.length > 3) {
           errors.push('Too many date ranges specified (max 3)');
@@ -448,9 +456,12 @@ export class IntentParserService {
           }
         }
         break;
-      
+
       case 'financial':
-        if (parameters.financial?.type && !['revenue', 'payments', 'expenses', 'all'].includes(parameters.financial.type)) {
+        if (
+          parameters.financial?.type
+          && !['revenue', 'payments', 'expenses', 'all'].includes(parameters.financial.type)
+        ) {
           errors.push('Invalid financial type specified');
         }
         break;

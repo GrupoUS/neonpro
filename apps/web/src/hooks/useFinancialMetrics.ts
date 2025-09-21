@@ -4,11 +4,7 @@
  */
 
 import { FinancialMetricsService } from '@/services/financial-metrics';
-import type {
-  FinancialMetric,
-  MetricsCalculationOptions,
-  MetricsHistory,
-} from '@/services/financial-metrics';
+import type { MetricsCalculationOptions } from '@/services/financial-metrics';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 

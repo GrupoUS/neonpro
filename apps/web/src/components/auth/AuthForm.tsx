@@ -13,6 +13,7 @@ import {
 } from '@/integrations/supabase/client';
 import { type AuthFormData, authFormSchema, emailSchema } from '@/lib/validations/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { validateHealthcareFormData, HealthcareDataSensitivity, validateBrazilianProfessionalData } from '@/utils/healthcare-form-validation';
 import { IconBrandGoogle } from '@tabler/icons-react';
 import { useRouter } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
@@ -103,10 +104,36 @@ export function AuthForm({
     }
   };
 
-  const onSubmitSignUp = async (_data: any) => {
+  const onSubmitSignUp = async (data: any) => {
     try {
       setIsLoading(true);
       setError(null);
+
+      // Healthcare compliance validation for professional registration
+      const professionalValidation = validateBrazilianProfessionalData({
+        professionalType: 'healthcare',
+        name: `${data.firstname} ${data.lastname}`,
+        email: data.email,
+        crm: data.crm || undefined,
+      });
+
+      if (!professionalValidation.isValid) {
+        setError('Dados profissionais inválidos. Verifique seu CRM.');
+        return;
+      }
+
+      // Healthcare data sensitivity validation
+      const healthcareValidation = validateHealthcareFormData({
+        professionalName: `${data.firstname} ${data.lastname}`,
+        professionalEmail: data.email,
+        dataSensitivity: HealthcareDataSensitivity.HIGH,
+      });
+
+      if (!healthcareValidation.isValid) {
+        setError('Falha na validação de dados de saúde.');
+        return;
+      }
+
       const { error } = await signUpWithEmail(
         data.email,
         data.password,

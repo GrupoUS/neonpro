@@ -387,7 +387,7 @@ export function useAIProviderRouting() {
       }
     },
 
-    onError: error => {
+    onError: _error => {
       // Implement failover logic
       const nextProvider = currentProvider === 'openai' ? 'anthropic' : 'openai';
       setCurrentProvider(nextProvider);

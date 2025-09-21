@@ -68,7 +68,7 @@ export class AIAgentService {
       }
 
       return validatedResponse.data;
-    } catch (_error) {
+    } catch (error) {
       console.error('AI Agent service error:', error);
       throw error;
     }
@@ -97,7 +97,7 @@ export class AIAgentService {
       }
 
       return await response.blob();
-    } catch (_error) {
+    } catch (error) {
       console.error('Export error:', error);
       throw error;
     }
@@ -115,7 +115,7 @@ export class AIAgentService {
       const response = await fetch(`${this.baseUrl}/ai/health`);
       const data = await response.json();
       return data;
-    } catch (_error) {
+    } catch (error) {
       console.error('Health check error:', error);
       return {
         status: 'unhealthy',
@@ -144,7 +144,7 @@ export class AIAgentService {
 
       const data = await response.json();
       return data.suggestions || [];
-    } catch (_error) {
+    } catch (error) {
       console.error('Suggestions error:', error);
       return [];
     }

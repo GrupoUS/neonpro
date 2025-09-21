@@ -8,7 +8,6 @@ import { zValidator } from '@hono/zod-validator';
 import { Context, Hono, Next } from 'hono';
 import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service.js';
-import { ComprehensiveAuditService } from '../../services/audit-service.js';
 
 // Type definitions
 interface ServiceInterface {

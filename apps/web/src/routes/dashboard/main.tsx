@@ -5,48 +5,29 @@ import { BentoGrid } from '@/components/ui/bento-grid';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { EnhancedTable } from '@/components/ui/enhanced-table';
-import { FocusCards } from '@/components/ui/focus-cards';
-import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs } from '@/components/ui/tabs';
 import { UniversalButton } from '@/components/ui/universal-button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { usePatientStats } from '@/hooks/usePatientStats';
-import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
-import { cn } from '@/lib/utils';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { format, isThisWeek, isToday, subDays } from 'date-fns';
+import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
-  Activity,
-  AlertCircle,
   AlertTriangle,
   BarChart3,
   Bell,
   Brain,
   Calendar,
   CheckCircle,
-  Clock,
   DollarSign,
   Eye,
-  FileText,
   Heart,
-  Mail,
-  MapPin,
-  Phone,
   RefreshCw,
   Shield,
-  Stethoscope,
-  Target,
-  TrendingDown,
-  TrendingUp,
   UserPlus,
   Users,
-  Zap,
 } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/dashboard/main')({
   component: DashboardMain,
@@ -117,14 +98,8 @@ interface RealTimeUpdate {
 
 function DashboardMain() {
   const { session, loading, isAuthenticated } = useAuth();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
-  const [aiInsights, setAiInsights] = useState<AIInsight[]>([]);
   const [realTimeUpdates, setRealTimeUpdates] = useState<RealTimeUpdate[]>([]);
   const [activeTab, setActiveTab] = useState('overview');
-  const { toast } = useToast();
   const navigate = useNavigate();
 
   // Redirect to login if not authenticated
@@ -346,48 +321,6 @@ function DashboardMain() {
 
   const handlePatientClick = (_patientId: any) => {
     navigate({ to: '/patients/$patientId', params: { patientId } });
-  };
-
-  const getPriorityColor = (_priority: any) => {
-    switch (priority) {
-      case 'critical':
-        return 'destructive';
-      case 'high':
-        return 'destructive';
-      case 'medium':
-        return 'warning';
-      case 'low':
-        return 'default';
-      default:
-        return 'default';
-    }
-  };
-
-  const getPriorityLabel = (_priority: any) => {
-    switch (priority) {
-      case 'critical':
-        return 'Crítico';
-      case 'high':
-        return 'Alto';
-      case 'medium':
-        return 'Médio';
-      case 'low':
-        return 'Baixo';
-      default:
-        return 'Normal';
-    }
-  };
-
-  const getRiskColor = (_riskScore: any) => {
-    if (riskScore >= 0.8) return 'destructive';
-    if (riskScore >= 0.6) return 'warning';
-    return 'default';
-  };
-
-  const getRiskLabel = (_riskScore: any) => {
-    if (riskScore >= 0.8) return 'Alto Risco';
-    if (riskScore >= 0.6) return 'Médio Risco';
-    return 'Baixo Risco';
   };
 
   const tableColumns = [

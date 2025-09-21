@@ -140,7 +140,7 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
         const crmFromUrl = params[0];
         // URL decode if necessary
         const decodedCRM = decodeURIComponent(crmFromUrl);
-        
+
         const doctor = mockCFMSystem.doctors.find(d => d.crm === decodedCRM);
         if (!doctor) {
           return new Response(
@@ -158,7 +158,7 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
           const crmFromUrl = params[0];
           // URL decode if necessary
           const decodedCRM = decodeURIComponent(crmFromUrl);
-          
+
           const doctor = mockCFMSystem.doctors.find(
             d => d.crm === decodedCRM,
           );

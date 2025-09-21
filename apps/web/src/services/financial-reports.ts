@@ -128,7 +128,7 @@ export class FinancialReportsService {
       setTimeout(() => this.processReportGeneration(reportId, type, startDate, endDate), 0);
 
       return report;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error generating report:', error);
       throw new Error('Failed to generate financial report');
     }
@@ -162,7 +162,7 @@ export class FinancialReportsService {
       await CacheService.set(cacheKey, report, this.CACHE_TTL);
 
       return report;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting report:', error);
       return null;
     }
@@ -207,7 +207,7 @@ export class FinancialReportsService {
       if (error) throw error;
 
       return (data || []).map(this.mapDatabaseToReport);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error listing reports:', error);
       return [];
     }
@@ -266,7 +266,7 @@ export class FinancialReportsService {
         ...schedule,
         nextRun,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error scheduling report:', error);
       throw new Error('Failed to schedule report');
     }
@@ -299,7 +299,7 @@ export class FinancialReportsService {
 
       // Invalidate cache
       await CacheService.invalidate(`${this.CACHE_PREFIX}_${reportId}`);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error processing report generation:', error);
 
       // Mark report as failed

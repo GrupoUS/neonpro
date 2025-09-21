@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'bun:test';
 import { readFileSync } from 'fs';
+import { describe, expect, it } from 'vitest';
 
 describe('Architecture Issues - Unit Tests', () => {
   describe('AuditTrail Misuse Detection', () => {

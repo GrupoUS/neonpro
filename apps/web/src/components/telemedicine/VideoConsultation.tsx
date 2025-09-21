@@ -235,15 +235,15 @@ export function VideoConsultation({
   }, [session, webrtcState.isConnected, webrtcState.connectionQuality]);
 
   // Format duration
-  const formatDuration = useCallback((_seconds: any) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
+  const formatDuration = useCallback((secondsParam: number) => {
+    const mins = Math.floor(secondsParam / 60);
+    const secs = secondsParam % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }, []);
 
   // Get connection quality color
-  const getQualityColor = useCallback((_quality: any) => {
-    switch (quality) {
+  const getQualityColor = useCallback((qualityParam: string) => {
+    switch (qualityParam) {
       case 'excellent':
         return 'text-green-500';
       case 'good':
@@ -264,7 +264,7 @@ export function VideoConsultation({
       endCall();
       onSessionEnd?.();
       toast.success('Sessão finalizada com sucesso');
-    } catch (_error) {
+    } catch {
       toast.error('Erro ao finalizar sessão');
     }
   }, [endSession, endCall, onSessionEnd]);
@@ -280,7 +280,7 @@ export function VideoConsultation({
         });
         toast.success('Emergência escalada com sucesso');
         setShowEmergencyDialog(false);
-      } catch (_error) {
+      } catch {
         toast.error('Erro ao escalar emergência');
       }
     },
@@ -297,7 +297,7 @@ export function VideoConsultation({
         await startScreenShare();
         toast.success('Compartilhamento de tela iniciado');
       }
-    } catch (_error) {
+    } catch {
       toast.error('Erro no compartilhamento de tela');
     }
   }, [startScreenShare, stopScreenShare, webrtcState.isScreenSharing]);
@@ -312,7 +312,7 @@ export function VideoConsultation({
         await startRecording();
         toast.success('Gravação iniciada');
       }
-    } catch (_error) {
+    } catch {
       toast.error('Erro na gravação');
     }
   }, [isRecording, startRecording, stopRecording]);
@@ -327,7 +327,7 @@ export function VideoConsultation({
         if (chatMessageRef.current) {
           chatMessageRef.current.value = '';
         }
-      } catch (_error) {
+      } catch (error) {
         toast.error('Erro ao enviar mensagem');
       }
     },
@@ -551,7 +551,7 @@ export function VideoConsultation({
         )}
 
         {/* Connection Issues Alert */}
-        {!callState.isConnected && (
+        {!webrtcState.isConnected && (
           <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50'>
             <Alert className='bg-yellow-900 border-yellow-700 text-yellow-300'>
               <Activity className='h-4 w-4 animate-spin' />
@@ -743,16 +743,16 @@ export function VideoConsultation({
               />
             </div>
             <span>Qualidade: {networkQuality}</span>
-            {callState.bandwidth > 0 && (
+            {webrtcState.bandwidth > 0 && (
               <>
                 <span>•</span>
-                <span>{Math.round(callState.bandwidth / 1000)} kbps</span>
+                <span>{Math.round(webrtcState.bandwidth / 1000)} kbps</span>
               </>
             )}
-            {callState.rtt > 0 && (
+            {webrtcState.rtt > 0 && (
               <>
                 <span>•</span>
-                <span>{callState.rtt}ms</span>
+                <span>{webrtcState.rtt}ms</span>
               </>
             )}
           </div>

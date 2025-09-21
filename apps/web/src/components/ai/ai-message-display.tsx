@@ -48,9 +48,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { Tooltip } from '@/components/ui/tooltip';
 
-import { Card } from '@/components/ui/card';
 
 import { formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
@@ -232,7 +230,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
       onCopy?.(content);
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to copy text:', error);
     }
   }, [content, onCopy]);

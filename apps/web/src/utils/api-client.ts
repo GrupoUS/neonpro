@@ -153,7 +153,7 @@ async function makeRequest<T = any>(
     }
 
     return responseData;
-  } catch (_error) {
+  } catch (error) {
     // Re-throw our custom errors
     if (error instanceof ApiError) {
       throw error;

@@ -5,8 +5,8 @@
 
 'use client';
 
-import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { CopilotChat } from '@copilotkit/react-ui';
 import { AgentAction } from '@neonpro/types';
@@ -206,7 +206,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
             description: 'Seu relatório foi baixado com sucesso',
           });
         }
-      } catch (_error) {
+      } catch {
         toast({
           title: 'Erro de exportação',
           description: 'Não foi possível exportar os dados',

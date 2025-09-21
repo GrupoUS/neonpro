@@ -6,9 +6,11 @@
 import { Hono } from 'hono';
 import analyzeRoutes from './analyze';
 import chatRoutes from './chat';
+import { copilotEndpoint } from './copilot';
 import copilotBridge from './copilot-bridge';
 import insightsRoutes from './insights';
 import modelsRoutes from './models';
+import realtimeRoutes from './realtime';
 
 const app = new Hono();
 
@@ -26,5 +28,11 @@ app.route('', analyzeRoutes);
 
 // Mount AI models routes under /models
 app.route('/models', modelsRoutes);
+
+// Mount real-time subscription routes under /realtime
+app.route('/realtime', realtimeRoutes);
+
+// Mount CopilotKit endpoint for frontend integration
+app.all('/copilot', copilotEndpoint);
 
 export default app;

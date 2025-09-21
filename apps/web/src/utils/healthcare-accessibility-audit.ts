@@ -8,8 +8,8 @@
  */
 
 import * as Axe from 'axe-core';
-import type { AxeResults } from 'axe-core';
-import type { AccessibilityIssue } from './accessibility-testing';
+import type { AxeResults, Result } from 'axe-core';
+import type { AccessibilityIssue, AccessibilityTestingOptions } from './accessibility-testing';
 
 // Healthcare-specific accessibility rule IDs
 export const HEALTHCARE_ACCESSIBILITY_RULES = {
@@ -183,17 +183,46 @@ export class HealthcareAccessibilityAuditor {
   ): Promise<HealthcareAccessibilityAuditResult> {
     const auditStart = Date.now();
 
-    // Run standard axe-core audit
-    const axeResults = await Axe.run(element, {
+    // Configure axe-core for healthcare-specific validation
+    const healthcareAxeConfig = {
       runOnly: {
         type: 'tag',
-        values: ['wcag2a', 'wcag2aa', 'best-practice'],
+        values: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'],
+      },
+      rules: {
+        // Healthcare-specific rule configurations
+        'color-contrast': { enabled: true },
+        'image-alt': { enabled: true },
+        'label': { enabled: true },
+        'button-name': { enabled: true },
+        'link-name': { enabled: true },
+        'input-button-name': { enabled: true },
+        'checkbox-label': { enabled: true },
+        'radio-label': { enabled: true },
+        'form-field-label': { enabled: true },
+        'select-name': { enabled: true },
+        'textarea-label': { enabled: true },
+        'fieldset-legend': { enabled: true },
+        'frame-title': { enabled: true },
+        'frame-title-unique': { enabled: true },
+        'frame-tested': { enabled: true },
+        'html-has-lang': { enabled: true },
+        'html-lang-valid': { enabled: true },
+        'html-xml-lang-mismatch': { enabled: true },
+        'page-title': { enabled: true },
+        'page-has-heading-one': { enabled: true },
+        'duplicate-id': { enabled: true },
+        'duplicate-id-active': { enabled: true },
+        'duplicate-id-aria': { enabled: true },
       },
       ...options,
-    });
+    };
+
+    // Run standard axe-core audit with healthcare configuration
+    const axeResults = await Axe.run(element, healthcareAxeConfig);
 
     // Process results with healthcare-specific analysis
-    const healthcareIssues = this.processHealthcareIssues(axeResults);
+    const healthcareIssues = this.processHealthcareIssues(axeResults, element);
 
     // Calculate scores based on results
     const complianceScore = this.calculateComplianceScore(healthcareIssues);
@@ -229,14 +258,15 @@ export class HealthcareAccessibilityAuditor {
    */
   private processHealthcareIssues(
     axeResults: AxeResults,
+    element: HTMLElement | Document,
   ): HealthcareAccessibilityIssue[] {
     const healthcareIssues: HealthcareAccessibilityIssue[] = [];
 
-    axeResults.violations.forEach(_violation => {
+    axeResults.violations.forEach(violation => {
       const healthcareRuleId = violation.id as HealthcareAccessibilityRuleId;
 
       if (HEALTHCARE_ACCESSIBILITY_RULES[healthcareRuleId]) {
-        violation.nodes.forEach((node, _index) => {
+        violation.nodes.forEach((node, index) => {
           const healthcareIssue: HealthcareAccessibilityIssue = {
             id: `${violation.id}-${index}`,
             impact: violation.impact as any,

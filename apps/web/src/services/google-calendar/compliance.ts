@@ -114,7 +114,7 @@ export class GoogleCalendarComplianceService {
         issues,
         recommendations,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error validating LGPD compliance:', error);
       return {
         compliant: false,
@@ -249,7 +249,7 @@ export class GoogleCalendarComplianceService {
         deletedEvents: deletedEvents.count,
         purgedIntegrations: purgedIntegrations.count,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error purging old data:', error);
       throw error;
     }
@@ -455,7 +455,7 @@ export class GoogleCalendarComplianceService {
         deletedEvents: deletedEvents.count,
         deletedConsents: deletedConsents.count,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error deleting user data:', error);
       return {
         success: false,

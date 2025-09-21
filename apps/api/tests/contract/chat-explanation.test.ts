@@ -1,6 +1,4 @@
 import { Hono } from 'hono';
-
-import { Hono } from 'hono';
 import { describe, expect, it } from 'vitest';
 
 // Contract: POST /api/v1/chat/explanation

@@ -110,7 +110,7 @@ export function useComponentPreloader() {
       if (process.env.NODE_ENV === 'development') {
         console.log(`[Performance] Preloaded component: ${cacheKey}`);
       }
-    } catch (_error) {
+    } catch (error) {
       console.error(
         `[Performance] Failed to preload component: ${cacheKey}`,
         error,
@@ -281,7 +281,7 @@ export const lazyComponents = {
         import('@/components/event-calendar/event-calendar').then(m => ({
           default: m.EventCalendar,
         })),
-      "event-calendar",
+      'event-calendar',
     ),
 
   // Chart Components

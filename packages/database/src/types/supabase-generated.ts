@@ -2,13 +2,13 @@
 // Auto-generated Supabase types from Prisma schema
 // DO NOT EDIT MANUALLY - Run 'npm run sync-types' to regenerate
 
-export type Json =
+export type SupabaseGeneratedJson =
   | string
   | number
   | boolean
   | null
-  | { [key: string]: Json | undefined }
-  | Json[];
+  | { [key: string]: SupabaseGeneratedJson | undefined }
+  | SupabaseGeneratedJson[];
 
 // Core healthcare enums
 export type AuditAction = 'VIEW' | 'CREATE' | 'READ' | 'UPDATE' | 'DELETE' | 'EXPORT' | 'LOGIN' | 'LOGOUT' | 'AI_CHAT' | 'AI_PREDICTION' | 'AI_ANALYSIS' | 'AI_RECOMMENDATION';
@@ -81,7 +81,7 @@ export interface Database {
           id: string;
           clinic_id: string;
           medical_record_number: string;
-          external_ids?: Json;
+          external_ids?: SupabaseGeneratedJson;
           given_names: string[];
           family_name: string;
           full_name: string;
@@ -114,11 +114,11 @@ export interface Database {
           data_anonymization_scheduled?: string;
           data_processing_purpose: string[];
           data_source?: string;
-          sensitive_data_consent?: Json;
+          sensitive_data_consent?: SupabaseGeneratedJson;
           lgpd_consent_given: boolean;
           lgpd_consent_version?: string;
-          lgpd_withdrawal_history: Json[];
-          data_sharing_consent?: Json;
+          lgpd_withdrawal_history: SupabaseGeneratedJson[];
+          data_sharing_consent?: SupabaseGeneratedJson;
           marketing_consent?: boolean;
           research_consent?: boolean;
           right_to_forget_requested?: boolean;
@@ -142,10 +142,10 @@ export interface Database {
           last_no_show_date?: string;
           total_no_shows?: number;
           total_appointments?: number;
-          no_show_prediction_features?: Json;
-          behavioral_patterns?: Json;
+          no_show_prediction_features?: SupabaseGeneratedJson;
+          behavioral_patterns?: SupabaseGeneratedJson;
           preferred_appointment_time: string[];
-          communication_preferences?: Json;
+          communication_preferences?: SupabaseGeneratedJson;
           language_preference?: string;
           accessibility_needs: string[];
           patient_status?: string;
@@ -165,7 +165,7 @@ export interface Database {
           id?: string;
           clinic_id: string;
           medical_record_number: string;
-          external_ids?: Json;
+          external_ids?: SupabaseGeneratedJson;
           given_names: string[];
           family_name: string;
           full_name: string;
@@ -198,11 +198,11 @@ export interface Database {
           data_anonymization_scheduled?: string;
           data_processing_purpose?: string[];
           data_source?: string;
-          sensitive_data_consent?: Json;
+          sensitive_data_consent?: SupabaseGeneratedJson;
           lgpd_consent_given?: boolean;
           lgpd_consent_version?: string;
-          lgpd_withdrawal_history?: Json[];
-          data_sharing_consent?: Json;
+          lgpd_withdrawal_history?: SupabaseGeneratedJson[];
+          data_sharing_consent?: SupabaseGeneratedJson;
           marketing_consent?: boolean;
           research_consent?: boolean;
           right_to_forget_requested?: boolean;
@@ -226,10 +226,10 @@ export interface Database {
           last_no_show_date?: string;
           total_no_shows?: number;
           total_appointments?: number;
-          no_show_prediction_features?: Json;
-          behavioral_patterns?: Json;
+          no_show_prediction_features?: SupabaseGeneratedJson;
+          behavioral_patterns?: SupabaseGeneratedJson;
           preferred_appointment_time?: string[];
-          communication_preferences?: Json;
+          communication_preferences?: SupabaseGeneratedJson;
           language_preference?: string;
           accessibility_needs?: string[];
           patient_status?: string;
@@ -249,7 +249,7 @@ export interface Database {
           id?: string;
           clinic_id?: string;
           medical_record_number?: string;
-          external_ids?: Json;
+          external_ids?: SupabaseGeneratedJson;
           given_names?: string[];
           family_name?: string;
           full_name?: string;
@@ -282,11 +282,11 @@ export interface Database {
           data_anonymization_scheduled?: string;
           data_processing_purpose?: string[];
           data_source?: string;
-          sensitive_data_consent?: Json;
+          sensitive_data_consent?: SupabaseGeneratedJson;
           lgpd_consent_given?: boolean;
           lgpd_consent_version?: string;
-          lgpd_withdrawal_history?: Json[];
-          data_sharing_consent?: Json;
+          lgpd_withdrawal_history?: SupabaseGeneratedJson[];
+          data_sharing_consent?: SupabaseGeneratedJson;
           marketing_consent?: boolean;
           research_consent?: boolean;
           right_to_forget_requested?: boolean;
@@ -310,10 +310,10 @@ export interface Database {
           last_no_show_date?: string;
           total_no_shows?: number;
           total_appointments?: number;
-          no_show_prediction_features?: Json;
-          behavioral_patterns?: Json;
+          no_show_prediction_features?: SupabaseGeneratedJson;
+          behavioral_patterns?: SupabaseGeneratedJson;
           preferred_appointment_time?: string[];
-          communication_preferences?: Json;
+          communication_preferences?: SupabaseGeneratedJson;
           language_preference?: string;
           accessibility_needs?: string[];
           patient_status?: string;
@@ -358,7 +358,7 @@ export interface Database {
           anvisa_protocol_number?: string;
           no_show_risk_score?: number;
           no_show_prediction_model?: string;
-          no_show_risk_factors?: Json;
+          no_show_risk_factors?: SupabaseGeneratedJson;
           no_show_predicted_at?: string;
           no_show_actual_outcome?: boolean;
           no_show_prevention_actions: string[];
@@ -440,7 +440,7 @@ export interface Database {
           anvisa_protocol_number?: string;
           no_show_risk_score?: number;
           no_show_prediction_model?: string;
-          no_show_risk_factors?: Json;
+          no_show_risk_factors?: SupabaseGeneratedJson;
           no_show_predicted_at?: string;
           no_show_actual_outcome?: boolean;
           no_show_prevention_actions?: string[];
@@ -522,7 +522,7 @@ export interface Database {
           anvisa_protocol_number?: string;
           no_show_risk_score?: number;
           no_show_prediction_model?: string;
-          no_show_risk_factors?: Json;
+          no_show_risk_factors?: SupabaseGeneratedJson;
           no_show_predicted_at?: string;
           no_show_actual_outcome?: boolean;
           no_show_prevention_actions?: string[];

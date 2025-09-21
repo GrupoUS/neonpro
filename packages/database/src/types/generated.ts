@@ -1,14 +1,14 @@
-export type Json =
+export type GeneratedJson =
   | string
   | number
   | boolean
   | null
-  | { [key: string]: Json | undefined }
-  | Json[]
+  | { [key: string]: GeneratedJson | undefined }
+  | GeneratedJson[]
 
-export type Database = {
+export type GeneratedDatabase = {
   // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  // instead of createClient<GeneratedDatabase, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
   }
@@ -18,7 +18,7 @@ export type Database = {
         Row: {
           accuracy: number
           clinic_id: string | null
-          confidence_interval: Json
+          confidence_interval: GeneratedJson
           created_at: string | null
           evaluation_date: string
           f1_score: number
@@ -36,7 +36,7 @@ export type Database = {
         Insert: {
           accuracy: number
           clinic_id?: string | null
-          confidence_interval?: Json
+          confidence_interval?: GeneratedJson
           created_at?: string | null
           evaluation_date?: string
           f1_score: number
@@ -54,7 +54,7 @@ export type Database = {
         Update: {
           accuracy?: number
           clinic_id?: string | null
-          confidence_interval?: Json
+          confidence_interval?: GeneratedJson
           created_at?: string | null
           evaluation_date?: string
           f1_score?: number
@@ -125,7 +125,7 @@ export type Database = {
           model_b_id: string | null
           start_date: string
           status: string
-          success_criteria: Json
+          success_criteria: GeneratedJson
           test_name: string
           traffic_split: number
           updated_at: string | null
@@ -140,7 +140,7 @@ export type Database = {
           model_b_id?: string | null
           start_date?: string
           status: string
-          success_criteria?: Json
+          success_criteria?: GeneratedJson
           test_name: string
           traffic_split: number
           updated_at?: string | null
@@ -155,7 +155,7 @@ export type Database = {
           model_b_id?: string | null
           start_date?: string
           status?: string
-          success_criteria?: Json
+          success_criteria?: GeneratedJson
           test_name?: string
           traffic_split?: number
           updated_at?: string | null
@@ -208,7 +208,7 @@ export type Database = {
       access_audit_log: {
         Row: {
           access_granted: boolean
-          action_attempted: Database["public"]["Enums"]["permission_action"]
+          action_attempted: GeneratedDatabase["public"]["Enums"]["permission_action"]
           affected_profile_id: string | null
           created_at: string
           data_exported: boolean | null
@@ -220,7 +220,7 @@ export type Database = {
           request_method: string | null
           request_path: string | null
           resource_id: string | null
-          resource_type: Database["public"]["Enums"]["resource_type"]
+          resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"]
           sensitive_data_accessed: string[] | null
           session_id: string | null
           user_agent: string | null
@@ -230,7 +230,7 @@ export type Database = {
         }
         Insert: {
           access_granted: boolean
-          action_attempted: Database["public"]["Enums"]["permission_action"]
+          action_attempted: GeneratedDatabase["public"]["Enums"]["permission_action"]
           affected_profile_id?: string | null
           created_at?: string
           data_exported?: boolean | null
@@ -242,7 +242,7 @@ export type Database = {
           request_method?: string | null
           request_path?: string | null
           resource_id?: string | null
-          resource_type: Database["public"]["Enums"]["resource_type"]
+          resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"]
           sensitive_data_accessed?: string[] | null
           session_id?: string | null
           user_agent?: string | null
@@ -252,7 +252,7 @@ export type Database = {
         }
         Update: {
           access_granted?: boolean
-          action_attempted?: Database["public"]["Enums"]["permission_action"]
+          action_attempted?: GeneratedDatabase["public"]["Enums"]["permission_action"]
           affected_profile_id?: string | null
           created_at?: string
           data_exported?: boolean | null
@@ -264,7 +264,7 @@ export type Database = {
           request_method?: string | null
           request_path?: string | null
           resource_id?: string | null
-          resource_type?: Database["public"]["Enums"]["resource_type"]
+          resource_type?: GeneratedDatabase["public"]["Enums"]["resource_type"]
           sensitive_data_accessed?: string[] | null
           session_id?: string | null
           user_agent?: string | null
@@ -277,7 +277,7 @@ export type Database = {
       access_violations: {
         Row: {
           action_attempted:
-            | Database["public"]["Enums"]["permission_action"]
+            | GeneratedDatabase["public"]["Enums"]["permission_action"]
             | null
           admin_notified: boolean | null
           auto_blocked: boolean | null
@@ -288,11 +288,11 @@ export type Database = {
           investigated_by: string | null
           investigation_notes: string | null
           ip_address: unknown
-          request_body: Json | null
-          request_headers: Json | null
+          request_body: GeneratedJson | null
+          request_headers: GeneratedJson | null
           request_method: string | null
           request_path: string | null
-          resource_type: Database["public"]["Enums"]["resource_type"] | null
+          resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"] | null
           severity: string | null
           user_agent: string | null
           user_email: string | null
@@ -301,7 +301,7 @@ export type Database = {
         }
         Insert: {
           action_attempted?:
-            | Database["public"]["Enums"]["permission_action"]
+            | GeneratedDatabase["public"]["Enums"]["permission_action"]
             | null
           admin_notified?: boolean | null
           auto_blocked?: boolean | null
@@ -312,11 +312,11 @@ export type Database = {
           investigated_by?: string | null
           investigation_notes?: string | null
           ip_address: unknown
-          request_body?: Json | null
-          request_headers?: Json | null
+          request_body?: GeneratedJson | null
+          request_headers?: GeneratedJson | null
           request_method?: string | null
           request_path?: string | null
-          resource_type?: Database["public"]["Enums"]["resource_type"] | null
+          resource_type?: GeneratedDatabase["public"]["Enums"]["resource_type"] | null
           severity?: string | null
           user_agent?: string | null
           user_email?: string | null
@@ -325,7 +325,7 @@ export type Database = {
         }
         Update: {
           action_attempted?:
-            | Database["public"]["Enums"]["permission_action"]
+            | GeneratedDatabase["public"]["Enums"]["permission_action"]
             | null
           admin_notified?: boolean | null
           auto_blocked?: boolean | null
@@ -336,11 +336,11 @@ export type Database = {
           investigated_by?: string | null
           investigation_notes?: string | null
           ip_address?: unknown
-          request_body?: Json | null
-          request_headers?: Json | null
+          request_body?: GeneratedJson | null
+          request_headers?: GeneratedJson | null
           request_method?: string | null
           request_path?: string | null
-          resource_type?: Database["public"]["Enums"]["resource_type"] | null
+          resource_type?: GeneratedDatabase["public"]["Enums"]["resource_type"] | null
           severity?: string | null
           user_agent?: string | null
           user_email?: string | null
@@ -540,13 +540,13 @@ export type Database = {
           clinic_id: string | null
           created_at: string
           data_subject_id: string | null
-          details: Json | null
+          details: GeneratedJson | null
           endpoint: string | null
           error_message: string | null
           id: string
           ip_address: unknown | null
           legal_basis: string | null
-          metadata: Json | null
+          metadata: GeneratedJson | null
           method: string | null
           profile_id: string | null
           purpose: string | null
@@ -561,13 +561,13 @@ export type Database = {
           clinic_id?: string | null
           created_at?: string
           data_subject_id?: string | null
-          details?: Json | null
+          details?: GeneratedJson | null
           endpoint?: string | null
           error_message?: string | null
           id?: string
           ip_address?: unknown | null
           legal_basis?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           method?: string | null
           profile_id?: string | null
           purpose?: string | null
@@ -582,13 +582,13 @@ export type Database = {
           clinic_id?: string | null
           created_at?: string
           data_subject_id?: string | null
-          details?: Json | null
+          details?: GeneratedJson | null
           endpoint?: string | null
           error_message?: string | null
           id?: string
           ip_address?: unknown | null
           legal_basis?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           method?: string | null
           profile_id?: string | null
           purpose?: string | null
@@ -707,12 +707,12 @@ export type Database = {
       }
       ai_chat_messages: {
         Row: {
-          compliance_flags: Json | null
+          compliance_flags: GeneratedJson | null
           confidence_score: number | null
           content: string
           created_at: string | null
           id: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           model_used: string | null
           response_time_ms: number | null
           role: string
@@ -720,12 +720,12 @@ export type Database = {
           tokens_used: number | null
         }
         Insert: {
-          compliance_flags?: Json | null
+          compliance_flags?: GeneratedJson | null
           confidence_score?: number | null
           content: string
           created_at?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           model_used?: string | null
           response_time_ms?: number | null
           role: string
@@ -733,12 +733,12 @@ export type Database = {
           tokens_used?: number | null
         }
         Update: {
-          compliance_flags?: Json | null
+          compliance_flags?: GeneratedJson | null
           confidence_score?: number | null
           content?: string
           created_at?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           model_used?: string | null
           response_time_ms?: number | null
           role?: string
@@ -758,11 +758,11 @@ export type Database = {
       ai_chat_sessions: {
         Row: {
           clinic_id: string | null
-          context: Json | null
+          context: GeneratedJson | null
           created_at: string | null
           id: string
           last_message_at: string | null
-          metadata: Json | null
+          metadata: GeneratedJson | null
           session_type: string
           status: string | null
           title: string | null
@@ -771,11 +771,11 @@ export type Database = {
         }
         Insert: {
           clinic_id?: string | null
-          context?: Json | null
+          context?: GeneratedJson | null
           created_at?: string | null
           id?: string
           last_message_at?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           session_type?: string
           status?: string | null
           title?: string | null
@@ -784,11 +784,11 @@ export type Database = {
         }
         Update: {
           clinic_id?: string | null
-          context?: Json | null
+          context?: GeneratedJson | null
           created_at?: string | null
           id?: string
           last_message_at?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           session_type?: string
           status?: string | null
           title?: string | null
@@ -814,7 +814,7 @@ export type Database = {
       }
       ai_compliance_logs: {
         Row: {
-          audit_trail: Json | null
+          audit_trail: GeneratedJson | null
           clinic_id: string | null
           consent_obtained: boolean | null
           created_at: string | null
@@ -830,7 +830,7 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
-          audit_trail?: Json | null
+          audit_trail?: GeneratedJson | null
           clinic_id?: string | null
           consent_obtained?: boolean | null
           created_at?: string | null
@@ -846,7 +846,7 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
-          audit_trail?: Json | null
+          audit_trail?: GeneratedJson | null
           clinic_id?: string | null
           consent_obtained?: boolean | null
           created_at?: string | null
@@ -881,7 +881,7 @@ export type Database = {
       ai_feature_flag_evaluations: {
         Row: {
           clinic_id: string | null
-          conditions_met: Json | null
+          conditions_met: GeneratedJson | null
           created_at: string | null
           evaluated_value: boolean
           flag_key: string
@@ -890,7 +890,7 @@ export type Database = {
         }
         Insert: {
           clinic_id?: string | null
-          conditions_met?: Json | null
+          conditions_met?: GeneratedJson | null
           created_at?: string | null
           evaluated_value: boolean
           flag_key: string
@@ -899,7 +899,7 @@ export type Database = {
         }
         Update: {
           clinic_id?: string | null
-          conditions_met?: Json | null
+          conditions_met?: GeneratedJson | null
           created_at?: string | null
           evaluated_value?: boolean
           flag_key?: string
@@ -931,10 +931,10 @@ export type Database = {
           enabled: boolean | null
           flag_key: string
           id: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           name: string
           rollout_percentage: number | null
-          target_conditions: Json | null
+          target_conditions: GeneratedJson | null
           updated_at: string | null
           updated_by: string | null
         }
@@ -945,10 +945,10 @@ export type Database = {
           enabled?: boolean | null
           flag_key: string
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           name: string
           rollout_percentage?: number | null
-          target_conditions?: Json | null
+          target_conditions?: GeneratedJson | null
           updated_at?: string | null
           updated_by?: string | null
         }
@@ -959,10 +959,10 @@ export type Database = {
           enabled?: boolean | null
           flag_key?: string
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           name?: string
           rollout_percentage?: number | null
-          target_conditions?: Json | null
+          target_conditions?: GeneratedJson | null
           updated_at?: string | null
           updated_by?: string | null
         }
@@ -970,14 +970,14 @@ export type Database = {
       }
       ai_models: {
         Row: {
-          ab_testing_config: Json | null
+          ab_testing_config: GeneratedJson | null
           accuracy: number | null
           auc_score: number | null
           clinic_id: string
           cost_per_prediction: number | null
           created_at: string | null
           deployment_date: string | null
-          drift_detection_config: Json | null
+          drift_detection_config: GeneratedJson | null
           f1_score: number | null
           features_used: string[] | null
           id: string
@@ -987,27 +987,27 @@ export type Database = {
           model_size_mb: number | null
           model_type: string
           model_version: string
-          parameters: Json | null
-          performance_metrics: Json | null
+          parameters: GeneratedJson | null
+          performance_metrics: GeneratedJson | null
           precision_score: number | null
           predictions_count: number | null
           recall_score: number | null
           status: string | null
           trained_by: string | null
-          training_data_info: Json | null
+          training_data_info: GeneratedJson | null
           training_status: string | null
           updated_at: string | null
           version: string | null
         }
         Insert: {
-          ab_testing_config?: Json | null
+          ab_testing_config?: GeneratedJson | null
           accuracy?: number | null
           auc_score?: number | null
           clinic_id: string
           cost_per_prediction?: number | null
           created_at?: string | null
           deployment_date?: string | null
-          drift_detection_config?: Json | null
+          drift_detection_config?: GeneratedJson | null
           f1_score?: number | null
           features_used?: string[] | null
           id?: string
@@ -1017,27 +1017,27 @@ export type Database = {
           model_size_mb?: number | null
           model_type: string
           model_version: string
-          parameters?: Json | null
-          performance_metrics?: Json | null
+          parameters?: GeneratedJson | null
+          performance_metrics?: GeneratedJson | null
           precision_score?: number | null
           predictions_count?: number | null
           recall_score?: number | null
           status?: string | null
           trained_by?: string | null
-          training_data_info?: Json | null
+          training_data_info?: GeneratedJson | null
           training_status?: string | null
           updated_at?: string | null
           version?: string | null
         }
         Update: {
-          ab_testing_config?: Json | null
+          ab_testing_config?: GeneratedJson | null
           accuracy?: number | null
           auc_score?: number | null
           clinic_id?: string
           cost_per_prediction?: number | null
           created_at?: string | null
           deployment_date?: string | null
-          drift_detection_config?: Json | null
+          drift_detection_config?: GeneratedJson | null
           f1_score?: number | null
           features_used?: string[] | null
           id?: string
@@ -1047,14 +1047,14 @@ export type Database = {
           model_size_mb?: number | null
           model_type?: string
           model_version?: string
-          parameters?: Json | null
-          performance_metrics?: Json | null
+          parameters?: GeneratedJson | null
+          performance_metrics?: GeneratedJson | null
           precision_score?: number | null
           predictions_count?: number | null
           recall_score?: number | null
           status?: string | null
           trained_by?: string | null
-          training_data_info?: Json | null
+          training_data_info?: GeneratedJson | null
           training_status?: string | null
           updated_at?: string | null
           version?: string | null
@@ -1082,8 +1082,8 @@ export type Database = {
           actual_outcome: boolean | null
           appointment_id: string
           clinic_id: string | null
-          confidence_interval: Json | null
-          contributing_factors: Json
+          confidence_interval: GeneratedJson | null
+          contributing_factors: GeneratedJson
           created_at: string | null
           id: string
           model_version: string
@@ -1097,8 +1097,8 @@ export type Database = {
           actual_outcome?: boolean | null
           appointment_id: string
           clinic_id?: string | null
-          confidence_interval?: Json | null
-          contributing_factors: Json
+          confidence_interval?: GeneratedJson | null
+          contributing_factors: GeneratedJson
           created_at?: string | null
           id?: string
           model_version: string
@@ -1112,8 +1112,8 @@ export type Database = {
           actual_outcome?: boolean | null
           appointment_id?: string
           clinic_id?: string | null
-          confidence_interval?: Json | null
-          contributing_factors?: Json
+          confidence_interval?: GeneratedJson | null
+          contributing_factors?: GeneratedJson
           created_at?: string | null
           id?: string
           model_version?: string
@@ -1146,7 +1146,7 @@ export type Database = {
           metric_value: number
           recorded_at: string | null
           service_name: string
-          tags: Json | null
+          tags: GeneratedJson | null
           unit: string
         }
         Insert: {
@@ -1155,7 +1155,7 @@ export type Database = {
           metric_value: number
           recorded_at?: string | null
           service_name: string
-          tags?: Json | null
+          tags?: GeneratedJson | null
           unit: string
         }
         Update: {
@@ -1164,7 +1164,7 @@ export type Database = {
           metric_value?: number
           recorded_at?: string | null
           service_name?: string
-          tags?: Json | null
+          tags?: GeneratedJson | null
           unit?: string
         }
         Relationships: []
@@ -1173,7 +1173,7 @@ export type Database = {
         Row: {
           created_at: string | null
           feature_name: string
-          feature_value: Json | null
+          feature_value: GeneratedJson | null
           id: string
           importance_score: number | null
           prediction_id: string
@@ -1181,7 +1181,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           feature_name: string
-          feature_value?: Json | null
+          feature_value?: GeneratedJson | null
           id?: string
           importance_score?: number | null
           prediction_id: string
@@ -1189,7 +1189,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           feature_name?: string
-          feature_value?: Json | null
+          feature_value?: GeneratedJson | null
           id?: string
           importance_score?: number | null
           prediction_id?: string
@@ -1210,7 +1210,7 @@ export type Database = {
           error_rate: number | null
           id: string
           last_check_at: string | null
-          metadata: Json | null
+          metadata: GeneratedJson | null
           response_time_ms: number | null
           service_name: string
           status: string
@@ -1222,7 +1222,7 @@ export type Database = {
           error_rate?: number | null
           id?: string
           last_check_at?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           response_time_ms?: number | null
           service_name: string
           status?: string
@@ -1234,7 +1234,7 @@ export type Database = {
           error_rate?: number | null
           id?: string
           last_check_at?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           response_time_ms?: number | null
           service_name?: string
           status?: string
@@ -1250,7 +1250,7 @@ export type Database = {
           error_message: string | null
           execution_time_ms: number
           id: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           operation_type: string
           service_name: string
           success: boolean | null
@@ -1263,7 +1263,7 @@ export type Database = {
           error_message?: string | null
           execution_time_ms: number
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           operation_type: string
           service_name: string
           success?: boolean | null
@@ -1276,7 +1276,7 @@ export type Database = {
           error_message?: string | null
           execution_time_ms?: number
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           operation_type?: string
           service_name?: string
           success?: boolean | null
@@ -1307,7 +1307,7 @@ export type Database = {
           acknowledged_by: string | null
           alert_type: string
           created_at: string | null
-          details: Json | null
+          details: GeneratedJson | null
           id: string
           message: string
           resolved: boolean | null
@@ -1322,7 +1322,7 @@ export type Database = {
           acknowledged_by?: string | null
           alert_type: string
           created_at?: string | null
-          details?: Json | null
+          details?: GeneratedJson | null
           id?: string
           message: string
           resolved?: boolean | null
@@ -1337,7 +1337,7 @@ export type Database = {
           acknowledged_by?: string | null
           alert_type?: string
           created_at?: string | null
-          details?: Json | null
+          details?: GeneratedJson | null
           id?: string
           message?: string
           resolved?: boolean | null
@@ -1538,10 +1538,10 @@ export type Database = {
           is_active: boolean | null
           is_favorite: boolean | null
           is_public: boolean | null
-          layout_configuration: Json | null
+          layout_configuration: GeneratedJson | null
           refresh_interval_minutes: number | null
           updated_at: string | null
-          widget_configuration: Json
+          widget_configuration: GeneratedJson
         }
         Insert: {
           allowed_roles?: string[] | null
@@ -1556,10 +1556,10 @@ export type Database = {
           is_active?: boolean | null
           is_favorite?: boolean | null
           is_public?: boolean | null
-          layout_configuration?: Json | null
+          layout_configuration?: GeneratedJson | null
           refresh_interval_minutes?: number | null
           updated_at?: string | null
-          widget_configuration?: Json
+          widget_configuration?: GeneratedJson
         }
         Update: {
           allowed_roles?: string[] | null
@@ -1574,10 +1574,10 @@ export type Database = {
           is_active?: boolean | null
           is_favorite?: boolean | null
           is_public?: boolean | null
-          layout_configuration?: Json | null
+          layout_configuration?: GeneratedJson | null
           refresh_interval_minutes?: number | null
           updated_at?: string | null
-          widget_configuration?: Json
+          widget_configuration?: GeneratedJson
         }
         Relationships: [
           {
@@ -1902,12 +1902,12 @@ export type Database = {
           confidence_score: number | null
           created_at: string | null
           created_by: string | null
-          facial_landmarks: Json | null
+          facial_landmarks: GeneratedJson | null
           id: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           patient_id: string | null
           procedure_id: string | null
-          simulation_config: Json | null
+          simulation_config: GeneratedJson | null
           simulation_quality: string | null
           updated_at: string | null
         }
@@ -1918,12 +1918,12 @@ export type Database = {
           confidence_score?: number | null
           created_at?: string | null
           created_by?: string | null
-          facial_landmarks?: Json | null
+          facial_landmarks?: GeneratedJson | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           patient_id?: string | null
           procedure_id?: string | null
-          simulation_config?: Json | null
+          simulation_config?: GeneratedJson | null
           simulation_quality?: string | null
           updated_at?: string | null
         }
@@ -1934,12 +1934,12 @@ export type Database = {
           confidence_score?: number | null
           created_at?: string | null
           created_by?: string | null
-          facial_landmarks?: Json | null
+          facial_landmarks?: GeneratedJson | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           patient_id?: string | null
           procedure_id?: string | null
-          simulation_config?: Json | null
+          simulation_config?: GeneratedJson | null
           simulation_quality?: string | null
           updated_at?: string | null
         }
@@ -1990,30 +1990,30 @@ export type Database = {
       }
       assistant_conversations: {
         Row: {
-          context: Json | null
+          context: GeneratedJson | null
           created_at: string | null
           id: string
-          preferences: Json | null
+          preferences: GeneratedJson | null
           status: string | null
           title: string
           updated_at: string | null
           user_id: string
         }
         Insert: {
-          context?: Json | null
+          context?: GeneratedJson | null
           created_at?: string | null
           id?: string
-          preferences?: Json | null
+          preferences?: GeneratedJson | null
           status?: string | null
           title?: string
           updated_at?: string | null
           user_id: string
         }
         Update: {
-          context?: Json | null
+          context?: GeneratedJson | null
           created_at?: string | null
           id?: string
-          preferences?: Json | null
+          preferences?: GeneratedJson | null
           status?: string | null
           title?: string
           updated_at?: string | null
@@ -2026,7 +2026,7 @@ export type Database = {
           action: string
           conversation_id: string | null
           created_at: string | null
-          data_accessed: Json | null
+          data_accessed: GeneratedJson | null
           error_message: string | null
           id: string
           processing_time: number | null
@@ -2040,7 +2040,7 @@ export type Database = {
           action: string
           conversation_id?: string | null
           created_at?: string | null
-          data_accessed?: Json | null
+          data_accessed?: GeneratedJson | null
           error_message?: string | null
           id?: string
           processing_time?: number | null
@@ -2054,7 +2054,7 @@ export type Database = {
           action?: string
           conversation_id?: string | null
           created_at?: string | null
-          data_accessed?: Json | null
+          data_accessed?: GeneratedJson | null
           error_message?: string | null
           id?: string
           processing_time?: number | null
@@ -2080,7 +2080,7 @@ export type Database = {
           conversation_id: string
           created_at: string | null
           id: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           processing_time: number | null
           role: string
           tokens_used: number | null
@@ -2091,7 +2091,7 @@ export type Database = {
           conversation_id: string
           created_at?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           processing_time?: number | null
           role: string
           tokens_used?: number | null
@@ -2102,7 +2102,7 @@ export type Database = {
           conversation_id?: string
           created_at?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           processing_time?: number | null
           role?: string
           tokens_used?: number | null
@@ -2169,7 +2169,7 @@ export type Database = {
           correlation_id: string | null
           device_fingerprint: string | null
           event_category: string
-          event_metadata: Json | null
+          event_metadata: GeneratedJson | null
           event_number: string
           event_subcategory: string | null
           event_type: string
@@ -2178,10 +2178,10 @@ export type Database = {
           ip_address: unknown | null
           location_city: string | null
           location_country: string | null
-          new_values: Json | null
-          old_values: Json | null
+          new_values: GeneratedJson | null
+          old_values: GeneratedJson | null
           parent_event_id: string | null
-          primary_key_values: Json | null
+          primary_key_values: GeneratedJson | null
           processed_at: string | null
           processing_time_ms: number | null
           query_complexity: number | null
@@ -2212,7 +2212,7 @@ export type Database = {
           correlation_id?: string | null
           device_fingerprint?: string | null
           event_category: string
-          event_metadata?: Json | null
+          event_metadata?: GeneratedJson | null
           event_number?: string
           event_subcategory?: string | null
           event_type: string
@@ -2221,10 +2221,10 @@ export type Database = {
           ip_address?: unknown | null
           location_city?: string | null
           location_country?: string | null
-          new_values?: Json | null
-          old_values?: Json | null
+          new_values?: GeneratedJson | null
+          old_values?: GeneratedJson | null
           parent_event_id?: string | null
-          primary_key_values?: Json | null
+          primary_key_values?: GeneratedJson | null
           processed_at?: string | null
           processing_time_ms?: number | null
           query_complexity?: number | null
@@ -2255,7 +2255,7 @@ export type Database = {
           correlation_id?: string | null
           device_fingerprint?: string | null
           event_category?: string
-          event_metadata?: Json | null
+          event_metadata?: GeneratedJson | null
           event_number?: string
           event_subcategory?: string | null
           event_type?: string
@@ -2264,10 +2264,10 @@ export type Database = {
           ip_address?: unknown | null
           location_city?: string | null
           location_country?: string | null
-          new_values?: Json | null
-          old_values?: Json | null
+          new_values?: GeneratedJson | null
+          old_values?: GeneratedJson | null
           parent_event_id?: string | null
-          primary_key_values?: Json | null
+          primary_key_values?: GeneratedJson | null
           processed_at?: string | null
           processing_time_ms?: number | null
           query_complexity?: number | null
@@ -2364,8 +2364,8 @@ export type Database = {
           id: string
           ip_address: unknown | null
           lgpd_basis: string | null
-          new_values: Json | null
-          old_values: Json | null
+          new_values: GeneratedJson | null
+          old_values: GeneratedJson | null
           resource_id: string | null
           resource_type: string
           user_agent: string | null
@@ -2378,8 +2378,8 @@ export type Database = {
           id?: string
           ip_address?: unknown | null
           lgpd_basis?: string | null
-          new_values?: Json | null
-          old_values?: Json | null
+          new_values?: GeneratedJson | null
+          old_values?: GeneratedJson | null
           resource_id?: string | null
           resource_type: string
           user_agent?: string | null
@@ -2392,8 +2392,8 @@ export type Database = {
           id?: string
           ip_address?: unknown | null
           lgpd_basis?: string | null
-          new_values?: Json | null
-          old_values?: Json | null
+          new_values?: GeneratedJson | null
+          old_values?: GeneratedJson | null
           resource_id?: string | null
           resource_type?: string
           user_agent?: string | null
@@ -2423,23 +2423,23 @@ export type Database = {
           compliance_violations: number | null
           created_at: string | null
           created_by: string | null
-          event_categories: Json | null
+          event_categories: GeneratedJson | null
           event_count: number
-          event_types: Json | null
+          event_types: GeneratedJson | null
           failed_operations: number | null
           generation_duration_seconds: number | null
           high_risk_events: number | null
           id: string
           period_end: string
           period_start: string
-          risk_summary: Json | null
+          risk_summary: GeneratedJson | null
           snapshot_date: string | null
           snapshot_file_hash: string | null
           snapshot_file_path: string | null
           snapshot_name: string
           status: string | null
           total_records_processed: number | null
-          user_activity: Json | null
+          user_activity: GeneratedJson | null
         }
         Insert: {
           clinic_id: string
@@ -2447,23 +2447,23 @@ export type Database = {
           compliance_violations?: number | null
           created_at?: string | null
           created_by?: string | null
-          event_categories?: Json | null
+          event_categories?: GeneratedJson | null
           event_count?: number
-          event_types?: Json | null
+          event_types?: GeneratedJson | null
           failed_operations?: number | null
           generation_duration_seconds?: number | null
           high_risk_events?: number | null
           id?: string
           period_end: string
           period_start: string
-          risk_summary?: Json | null
+          risk_summary?: GeneratedJson | null
           snapshot_date?: string | null
           snapshot_file_hash?: string | null
           snapshot_file_path?: string | null
           snapshot_name: string
           status?: string | null
           total_records_processed?: number | null
-          user_activity?: Json | null
+          user_activity?: GeneratedJson | null
         }
         Update: {
           clinic_id?: string
@@ -2471,23 +2471,23 @@ export type Database = {
           compliance_violations?: number | null
           created_at?: string | null
           created_by?: string | null
-          event_categories?: Json | null
+          event_categories?: GeneratedJson | null
           event_count?: number
-          event_types?: Json | null
+          event_types?: GeneratedJson | null
           failed_operations?: number | null
           generation_duration_seconds?: number | null
           high_risk_events?: number | null
           id?: string
           period_end?: string
           period_start?: string
-          risk_summary?: Json | null
+          risk_summary?: GeneratedJson | null
           snapshot_date?: string | null
           snapshot_file_hash?: string | null
           snapshot_file_path?: string | null
           snapshot_name?: string
           status?: string | null
           total_records_processed?: number | null
-          user_activity?: Json | null
+          user_activity?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -2529,15 +2529,15 @@ export type Database = {
       }
       automation_executions: {
         Row: {
-          actions_performed: Json | null
-          debug_info: Json | null
+          actions_performed: GeneratedJson | null
+          debug_info: GeneratedJson | null
           duration_seconds: number | null
           error_count: number | null
-          errors_encountered: Json | null
+          errors_encountered: GeneratedJson | null
           execution_end: string | null
           execution_log: string | null
           execution_start: string
-          execution_summary: Json | null
+          execution_summary: GeneratedJson | null
           id: string
           memory_usage_mb: number | null
           rule_id: string
@@ -2548,15 +2548,15 @@ export type Database = {
           triggered_by: string | null
         }
         Insert: {
-          actions_performed?: Json | null
-          debug_info?: Json | null
+          actions_performed?: GeneratedJson | null
+          debug_info?: GeneratedJson | null
           duration_seconds?: number | null
           error_count?: number | null
-          errors_encountered?: Json | null
+          errors_encountered?: GeneratedJson | null
           execution_end?: string | null
           execution_log?: string | null
           execution_start?: string
-          execution_summary?: Json | null
+          execution_summary?: GeneratedJson | null
           id?: string
           memory_usage_mb?: number | null
           rule_id: string
@@ -2567,15 +2567,15 @@ export type Database = {
           triggered_by?: string | null
         }
         Update: {
-          actions_performed?: Json | null
-          debug_info?: Json | null
+          actions_performed?: GeneratedJson | null
+          debug_info?: GeneratedJson | null
           duration_seconds?: number | null
           error_count?: number | null
-          errors_encountered?: Json | null
+          errors_encountered?: GeneratedJson | null
           execution_end?: string | null
           execution_log?: string | null
           execution_start?: string
-          execution_summary?: Json | null
+          execution_summary?: GeneratedJson | null
           id?: string
           memory_usage_mb?: number | null
           rule_id?: string
@@ -2618,13 +2618,13 @@ export type Database = {
       }
       automation_rules: {
         Row: {
-          action_config: Json | null
+          action_config: GeneratedJson | null
           action_type: string
           created_at: string | null
           created_by: string | null
           description: string | null
           failure_executions: number | null
-          filter_conditions: Json | null
+          filter_conditions: GeneratedJson | null
           id: string
           is_enabled: boolean | null
           last_execution: string | null
@@ -2634,26 +2634,26 @@ export type Database = {
           priority: number | null
           retry_delay_minutes: number | null
           rule_name: string
-          rule_type: Database["public"]["Enums"]["automation_trigger_type"]
+          rule_type: GeneratedDatabase["public"]["Enums"]["automation_trigger_type"]
           schedule_expression: string | null
-          status: Database["public"]["Enums"]["automation_status"] | null
+          status: GeneratedDatabase["public"]["Enums"]["automation_status"] | null
           success_executions: number | null
           target_departments: string[] | null
           target_roles: string[] | null
           timeout_minutes: number | null
           total_executions: number | null
-          trigger_conditions: Json | null
+          trigger_conditions: GeneratedJson | null
           updated_at: string | null
           updated_by: string | null
         }
         Insert: {
-          action_config?: Json | null
+          action_config?: GeneratedJson | null
           action_type: string
           created_at?: string | null
           created_by?: string | null
           description?: string | null
           failure_executions?: number | null
-          filter_conditions?: Json | null
+          filter_conditions?: GeneratedJson | null
           id?: string
           is_enabled?: boolean | null
           last_execution?: string | null
@@ -2663,26 +2663,26 @@ export type Database = {
           priority?: number | null
           retry_delay_minutes?: number | null
           rule_name: string
-          rule_type: Database["public"]["Enums"]["automation_trigger_type"]
+          rule_type: GeneratedDatabase["public"]["Enums"]["automation_trigger_type"]
           schedule_expression?: string | null
-          status?: Database["public"]["Enums"]["automation_status"] | null
+          status?: GeneratedDatabase["public"]["Enums"]["automation_status"] | null
           success_executions?: number | null
           target_departments?: string[] | null
           target_roles?: string[] | null
           timeout_minutes?: number | null
           total_executions?: number | null
-          trigger_conditions?: Json | null
+          trigger_conditions?: GeneratedJson | null
           updated_at?: string | null
           updated_by?: string | null
         }
         Update: {
-          action_config?: Json | null
+          action_config?: GeneratedJson | null
           action_type?: string
           created_at?: string | null
           created_by?: string | null
           description?: string | null
           failure_executions?: number | null
-          filter_conditions?: Json | null
+          filter_conditions?: GeneratedJson | null
           id?: string
           is_enabled?: boolean | null
           last_execution?: string | null
@@ -2692,15 +2692,15 @@ export type Database = {
           priority?: number | null
           retry_delay_minutes?: number | null
           rule_name?: string
-          rule_type?: Database["public"]["Enums"]["automation_trigger_type"]
+          rule_type?: GeneratedDatabase["public"]["Enums"]["automation_trigger_type"]
           schedule_expression?: string | null
-          status?: Database["public"]["Enums"]["automation_status"] | null
+          status?: GeneratedDatabase["public"]["Enums"]["automation_status"] | null
           success_executions?: number | null
           target_departments?: string[] | null
           target_roles?: string[] | null
           timeout_minutes?: number | null
           total_executions?: number | null
-          trigger_conditions?: Json | null
+          trigger_conditions?: GeneratedJson | null
           updated_at?: string | null
           updated_by?: string | null
         }
@@ -2757,7 +2757,7 @@ export type Database = {
           id: string
           is_active: boolean | null
           last_notification_at: string | null
-          metadata: Json | null
+          metadata: GeneratedJson | null
           notes: string | null
           notified_count: number | null
           patient_email: string
@@ -2776,7 +2776,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           last_notification_at?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           notes?: string | null
           notified_count?: number | null
           patient_email: string
@@ -2795,7 +2795,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           last_notification_at?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           notes?: string | null
           notified_count?: number | null
           patient_email?: string
@@ -2849,7 +2849,7 @@ export type Database = {
           refresh_token: string | null
           sync_direction: string | null
           sync_enabled: boolean | null
-          sync_preferences: Json | null
+          sync_preferences: GeneratedJson | null
           sync_status: string | null
           token_expires_at: string | null
           updated_at: string | null
@@ -2872,7 +2872,7 @@ export type Database = {
           refresh_token?: string | null
           sync_direction?: string | null
           sync_enabled?: boolean | null
-          sync_preferences?: Json | null
+          sync_preferences?: GeneratedJson | null
           sync_status?: string | null
           token_expires_at?: string | null
           updated_at?: string | null
@@ -2895,7 +2895,7 @@ export type Database = {
           refresh_token?: string | null
           sync_direction?: string | null
           sync_enabled?: boolean | null
-          sync_preferences?: Json | null
+          sync_preferences?: GeneratedJson | null
           sync_status?: string | null
           token_expires_at?: string | null
           updated_at?: string | null
@@ -2928,47 +2928,47 @@ export type Database = {
       calendar_providers: {
         Row: {
           auth_type: string
-          caldav_config: Json | null
+          caldav_config: GeneratedJson | null
           created_at: string | null
           display_name: string
           id: string
           is_active: boolean | null
           name: string
-          oauth_config: Json | null
+          oauth_config: GeneratedJson | null
           updated_at: string | null
         }
         Insert: {
           auth_type: string
-          caldav_config?: Json | null
+          caldav_config?: GeneratedJson | null
           created_at?: string | null
           display_name: string
           id?: string
           is_active?: boolean | null
           name: string
-          oauth_config?: Json | null
+          oauth_config?: GeneratedJson | null
           updated_at?: string | null
         }
         Update: {
           auth_type?: string
-          caldav_config?: Json | null
+          caldav_config?: GeneratedJson | null
           created_at?: string | null
           display_name?: string
           id?: string
           is_active?: boolean | null
           name?: string
-          oauth_config?: Json | null
+          oauth_config?: GeneratedJson | null
           updated_at?: string | null
         }
         Relationships: []
       }
       calendar_sync_configs: {
         Row: {
-          appointment_type_mapping: Json | null
+          appointment_type_mapping: GeneratedJson | null
           batch_size: number | null
           connection_id: string
           created_at: string | null
-          event_filters: Json | null
-          field_mappings: Json | null
+          event_filters: GeneratedJson | null
+          field_mappings: GeneratedJson | null
           id: string
           patient_privacy_mode: boolean | null
           rate_limit_per_minute: number | null
@@ -2977,12 +2977,12 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          appointment_type_mapping?: Json | null
+          appointment_type_mapping?: GeneratedJson | null
           batch_size?: number | null
           connection_id: string
           created_at?: string | null
-          event_filters?: Json | null
-          field_mappings?: Json | null
+          event_filters?: GeneratedJson | null
+          field_mappings?: GeneratedJson | null
           id?: string
           patient_privacy_mode?: boolean | null
           rate_limit_per_minute?: number | null
@@ -2991,12 +2991,12 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
-          appointment_type_mapping?: Json | null
+          appointment_type_mapping?: GeneratedJson | null
           batch_size?: number | null
           connection_id?: string
           created_at?: string | null
-          event_filters?: Json | null
-          field_mappings?: Json | null
+          event_filters?: GeneratedJson | null
+          field_mappings?: GeneratedJson | null
           id?: string
           patient_privacy_mode?: boolean | null
           rate_limit_per_minute?: number | null
@@ -3020,14 +3020,14 @@ export type Database = {
           completion_rate: number | null
           created_at: string
           description: string | null
-          entry_conditions: Json
-          exit_conditions: Json | null
+          entry_conditions: GeneratedJson
+          exit_conditions: GeneratedJson | null
           id: string
           is_active: boolean
           max_participants: number | null
           name: string
           participants_count: number | null
-          steps: Json
+          steps: GeneratedJson
           updated_at: string
         }
         Insert: {
@@ -3035,14 +3035,14 @@ export type Database = {
           completion_rate?: number | null
           created_at?: string
           description?: string | null
-          entry_conditions?: Json
-          exit_conditions?: Json | null
+          entry_conditions?: GeneratedJson
+          exit_conditions?: GeneratedJson | null
           id?: string
           is_active?: boolean
           max_participants?: number | null
           name: string
           participants_count?: number | null
-          steps?: Json
+          steps?: GeneratedJson
           updated_at?: string
         }
         Update: {
@@ -3050,14 +3050,14 @@ export type Database = {
           completion_rate?: number | null
           created_at?: string
           description?: string | null
-          entry_conditions?: Json
-          exit_conditions?: Json | null
+          entry_conditions?: GeneratedJson
+          exit_conditions?: GeneratedJson | null
           id?: string
           is_active?: boolean
           max_participants?: number | null
           name?: string
           participants_count?: number | null
-          steps?: Json
+          steps?: GeneratedJson
           updated_at?: string
         }
         Relationships: []
@@ -3072,7 +3072,7 @@ export type Database = {
           delivery_completed_at: string | null
           delivery_started_at: string | null
           delivery_status: string
-          errors: Json | null
+          errors: GeneratedJson | null
           execution_date: string
           failed_sends: number
           final_content: string
@@ -3095,7 +3095,7 @@ export type Database = {
           delivery_completed_at?: string | null
           delivery_started_at?: string | null
           delivery_status?: string
-          errors?: Json | null
+          errors?: GeneratedJson | null
           execution_date?: string
           failed_sends?: number
           final_content: string
@@ -3118,7 +3118,7 @@ export type Database = {
           delivery_completed_at?: string | null
           delivery_started_at?: string | null
           delivery_status?: string
-          errors?: Json | null
+          errors?: GeneratedJson | null
           execution_date?: string
           failed_sends?: number
           final_content?: string
@@ -3156,13 +3156,13 @@ export type Database = {
           conversion_rate: number | null
           delivered_count: number
           delivery_rate: number | null
-          device_breakdown: Json | null
+          device_breakdown: GeneratedJson | null
           id: string
-          location_breakdown: Json | null
+          location_breakdown: GeneratedJson | null
           open_count: number | null
           open_rate: number | null
           peak_engagement_hour: number | null
-          platform_breakdown: Json | null
+          platform_breakdown: GeneratedJson | null
           revenue_generated: number | null
           total_sent: number
           unique_clicks: number | null
@@ -3170,8 +3170,8 @@ export type Database = {
           unsubscribe_count: number | null
           unsubscribe_rate: number | null
           updated_at: string
-          vs_industry_benchmark: Json | null
-          vs_previous_campaign: Json | null
+          vs_industry_benchmark: GeneratedJson | null
+          vs_previous_campaign: GeneratedJson | null
         }
         Insert: {
           avg_click_time?: number | null
@@ -3186,13 +3186,13 @@ export type Database = {
           conversion_rate?: number | null
           delivered_count?: number
           delivery_rate?: number | null
-          device_breakdown?: Json | null
+          device_breakdown?: GeneratedJson | null
           id?: string
-          location_breakdown?: Json | null
+          location_breakdown?: GeneratedJson | null
           open_count?: number | null
           open_rate?: number | null
           peak_engagement_hour?: number | null
-          platform_breakdown?: Json | null
+          platform_breakdown?: GeneratedJson | null
           revenue_generated?: number | null
           total_sent?: number
           unique_clicks?: number | null
@@ -3200,8 +3200,8 @@ export type Database = {
           unsubscribe_count?: number | null
           unsubscribe_rate?: number | null
           updated_at?: string
-          vs_industry_benchmark?: Json | null
-          vs_previous_campaign?: Json | null
+          vs_industry_benchmark?: GeneratedJson | null
+          vs_previous_campaign?: GeneratedJson | null
         }
         Update: {
           avg_click_time?: number | null
@@ -3216,13 +3216,13 @@ export type Database = {
           conversion_rate?: number | null
           delivered_count?: number
           delivery_rate?: number | null
-          device_breakdown?: Json | null
+          device_breakdown?: GeneratedJson | null
           id?: string
-          location_breakdown?: Json | null
+          location_breakdown?: GeneratedJson | null
           open_count?: number | null
           open_rate?: number | null
           peak_engagement_hour?: number | null
-          platform_breakdown?: Json | null
+          platform_breakdown?: GeneratedJson | null
           revenue_generated?: number | null
           total_sent?: number
           unique_clicks?: number | null
@@ -3230,8 +3230,8 @@ export type Database = {
           unsubscribe_count?: number | null
           unsubscribe_rate?: number | null
           updated_at?: string
-          vs_industry_benchmark?: Json | null
-          vs_previous_campaign?: Json | null
+          vs_industry_benchmark?: GeneratedJson | null
+          vs_previous_campaign?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -3262,7 +3262,7 @@ export type Database = {
           open_count: number | null
           opened_at: string | null
           patient_id: string
-          personalization_data: Json | null
+          personalization_data: GeneratedJson | null
           phone: string | null
           push_token: string | null
           sent_at: string | null
@@ -3288,7 +3288,7 @@ export type Database = {
           open_count?: number | null
           opened_at?: string | null
           patient_id: string
-          personalization_data?: Json | null
+          personalization_data?: GeneratedJson | null
           phone?: string | null
           push_token?: string | null
           sent_at?: string | null
@@ -3314,7 +3314,7 @@ export type Database = {
           open_count?: number | null
           opened_at?: string | null
           patient_id?: string
-          personalization_data?: Json | null
+          personalization_data?: GeneratedJson | null
           phone?: string | null
           push_token?: string | null
           sent_at?: string | null
@@ -3341,17 +3341,17 @@ export type Database = {
           content_template: string
           created_at: string
           description: string | null
-          design_config: Json | null
+          design_config: GeneratedJson | null
           id: string
           is_active: boolean
           name: string
-          personalization_rules: Json | null
+          personalization_rules: GeneratedJson | null
           preview_text: string | null
           required_variables: string[] | null
           subject_template: string | null
           updated_at: string
           usage_count: number | null
-          variants: Json | null
+          variants: GeneratedJson | null
         }
         Insert: {
           available_variables?: string[] | null
@@ -3361,17 +3361,17 @@ export type Database = {
           content_template: string
           created_at?: string
           description?: string | null
-          design_config?: Json | null
+          design_config?: GeneratedJson | null
           id?: string
           is_active?: boolean
           name: string
-          personalization_rules?: Json | null
+          personalization_rules?: GeneratedJson | null
           preview_text?: string | null
           required_variables?: string[] | null
           subject_template?: string | null
           updated_at?: string
           usage_count?: number | null
-          variants?: Json | null
+          variants?: GeneratedJson | null
         }
         Update: {
           available_variables?: string[] | null
@@ -3381,63 +3381,63 @@ export type Database = {
           content_template?: string
           created_at?: string
           description?: string | null
-          design_config?: Json | null
+          design_config?: GeneratedJson | null
           id?: string
           is_active?: boolean
           name?: string
-          personalization_rules?: Json | null
+          personalization_rules?: GeneratedJson | null
           preview_text?: string | null
           required_variables?: string[] | null
           subject_template?: string | null
           updated_at?: string
           usage_count?: number | null
-          variants?: Json | null
+          variants?: GeneratedJson | null
         }
         Relationships: []
       }
       campaign_triggers: {
         Row: {
-          behavioral_conditions: Json | null
+          behavioral_conditions: GeneratedJson | null
           campaign_id: string
           created_at: string
           delay_minutes: number | null
-          event_conditions: Json | null
+          event_conditions: GeneratedJson | null
           event_name: string | null
           id: string
           is_active: boolean
-          max_frequency: Json | null
-          schedule_config: Json | null
-          segment_conditions: Json | null
+          max_frequency: GeneratedJson | null
+          schedule_config: GeneratedJson | null
+          segment_conditions: GeneratedJson | null
           trigger_type: string
           updated_at: string
         }
         Insert: {
-          behavioral_conditions?: Json | null
+          behavioral_conditions?: GeneratedJson | null
           campaign_id: string
           created_at?: string
           delay_minutes?: number | null
-          event_conditions?: Json | null
+          event_conditions?: GeneratedJson | null
           event_name?: string | null
           id?: string
           is_active?: boolean
-          max_frequency?: Json | null
-          schedule_config?: Json | null
-          segment_conditions?: Json | null
+          max_frequency?: GeneratedJson | null
+          schedule_config?: GeneratedJson | null
+          segment_conditions?: GeneratedJson | null
           trigger_type: string
           updated_at?: string
         }
         Update: {
-          behavioral_conditions?: Json | null
+          behavioral_conditions?: GeneratedJson | null
           campaign_id?: string
           created_at?: string
           delay_minutes?: number | null
-          event_conditions?: Json | null
+          event_conditions?: GeneratedJson | null
           event_name?: string | null
           id?: string
           is_active?: boolean
-          max_frequency?: Json | null
-          schedule_config?: Json | null
-          segment_conditions?: Json | null
+          max_frequency?: GeneratedJson | null
+          schedule_config?: GeneratedJson | null
+          segment_conditions?: GeneratedJson | null
           trigger_type?: string
           updated_at?: string
         }
@@ -3779,7 +3779,7 @@ export type Database = {
           churn_probability: number
           clinic_id: string
           confidence_score: number
-          contributing_factors: Json
+          contributing_factors: GeneratedJson
           created_at: string
           expires_at: string | null
           id: string
@@ -3787,16 +3787,16 @@ export type Database = {
           patient_id: string
           prediction_date: string
           priority_score: number
-          recommended_actions: Json
-          risk_factors: Json
-          risk_level: Database["public"]["Enums"]["churn_risk_level"]
+          recommended_actions: GeneratedJson
+          risk_factors: GeneratedJson
+          risk_level: GeneratedDatabase["public"]["Enums"]["churn_risk_level"]
           updated_at: string
         }
         Insert: {
           churn_probability: number
           clinic_id: string
           confidence_score: number
-          contributing_factors?: Json
+          contributing_factors?: GeneratedJson
           created_at?: string
           expires_at?: string | null
           id?: string
@@ -3804,16 +3804,16 @@ export type Database = {
           patient_id: string
           prediction_date?: string
           priority_score?: number
-          recommended_actions?: Json
-          risk_factors?: Json
-          risk_level: Database["public"]["Enums"]["churn_risk_level"]
+          recommended_actions?: GeneratedJson
+          risk_factors?: GeneratedJson
+          risk_level: GeneratedDatabase["public"]["Enums"]["churn_risk_level"]
           updated_at?: string
         }
         Update: {
           churn_probability?: number
           clinic_id?: string
           confidence_score?: number
-          contributing_factors?: Json
+          contributing_factors?: GeneratedJson
           created_at?: string
           expires_at?: string | null
           id?: string
@@ -3821,9 +3821,9 @@ export type Database = {
           patient_id?: string
           prediction_date?: string
           priority_score?: number
-          recommended_actions?: Json
-          risk_factors?: Json
-          risk_level?: Database["public"]["Enums"]["churn_risk_level"]
+          recommended_actions?: GeneratedJson
+          risk_factors?: GeneratedJson
+          risk_level?: GeneratedDatabase["public"]["Enums"]["churn_risk_level"]
           updated_at?: string
         }
         Relationships: [
@@ -3862,7 +3862,7 @@ export type Database = {
           authenticator_reference: string | null
           author_reference: string
           authored_time: string
-          category: Json | null
+          category: GeneratedJson | null
           confidentiality: string | null
           content: string
           content_type: string | null
@@ -3874,20 +3874,20 @@ export type Database = {
           data_retention_until: string | null
           encounter_reference: string | null
           fhir_id: string
-          fhir_meta: Json | null
-          fhir_text: Json | null
+          fhir_meta: GeneratedJson | null
+          fhir_text: GeneratedJson | null
           id: string
           patient_id: string
           procedure_id: string | null
           provider_id: string
-          relates_to: Json | null
+          relates_to: GeneratedJson | null
           replaces: string | null
-          security_label: Json | null
+          security_label: GeneratedJson | null
           status: string
           subject_reference: string
           title: string
           treatment_plan_id: string | null
-          type: Json
+          type: GeneratedJson
           updated_at: string
           updated_by: string
           version: number
@@ -3896,7 +3896,7 @@ export type Database = {
           authenticator_reference?: string | null
           author_reference: string
           authored_time?: string
-          category?: Json | null
+          category?: GeneratedJson | null
           confidentiality?: string | null
           content: string
           content_type?: string | null
@@ -3908,20 +3908,20 @@ export type Database = {
           data_retention_until?: string | null
           encounter_reference?: string | null
           fhir_id?: string
-          fhir_meta?: Json | null
-          fhir_text?: Json | null
+          fhir_meta?: GeneratedJson | null
+          fhir_text?: GeneratedJson | null
           id?: string
           patient_id: string
           procedure_id?: string | null
           provider_id: string
-          relates_to?: Json | null
+          relates_to?: GeneratedJson | null
           replaces?: string | null
-          security_label?: Json | null
+          security_label?: GeneratedJson | null
           status?: string
           subject_reference: string
           title: string
           treatment_plan_id?: string | null
-          type: Json
+          type: GeneratedJson
           updated_at?: string
           updated_by: string
           version?: number
@@ -3930,7 +3930,7 @@ export type Database = {
           authenticator_reference?: string | null
           author_reference?: string
           authored_time?: string
-          category?: Json | null
+          category?: GeneratedJson | null
           confidentiality?: string | null
           content?: string
           content_type?: string | null
@@ -3942,20 +3942,20 @@ export type Database = {
           data_retention_until?: string | null
           encounter_reference?: string | null
           fhir_id?: string
-          fhir_meta?: Json | null
-          fhir_text?: Json | null
+          fhir_meta?: GeneratedJson | null
+          fhir_text?: GeneratedJson | null
           id?: string
           patient_id?: string
           procedure_id?: string | null
           provider_id?: string
-          relates_to?: Json | null
+          relates_to?: GeneratedJson | null
           replaces?: string | null
-          security_label?: Json | null
+          security_label?: GeneratedJson | null
           status?: string
           subject_reference?: string
           title?: string
           treatment_plan_id?: string | null
-          type?: Json
+          type?: GeneratedJson
           updated_at?: string
           updated_by?: string
           version?: number
@@ -4080,7 +4080,7 @@ export type Database = {
           address_line1: string | null
           address_line2: string | null
           anvisa_license: string | null
-          business_hours: Json | null
+          business_hours: GeneratedJson | null
           business_type: string | null
           cfm_registration: string | null
           city: string | null
@@ -4096,7 +4096,7 @@ export type Database = {
           default_currency: string | null
           deleted_at: string | null
           email: string | null
-          emergency_contact: Json | null
+          emergency_contact: GeneratedJson | null
           features_enabled: string[] | null
           id: string
           is_active: boolean | null
@@ -4110,7 +4110,7 @@ export type Database = {
           max_staff: number | null
           medical_license: string | null
           municipal_registration: string | null
-          operating_hours: Json | null
+          operating_hours: GeneratedJson | null
           operating_since: string | null
           phone: string | null
           postal_code: string | null
@@ -4132,7 +4132,7 @@ export type Database = {
           address_line1?: string | null
           address_line2?: string | null
           anvisa_license?: string | null
-          business_hours?: Json | null
+          business_hours?: GeneratedJson | null
           business_type?: string | null
           cfm_registration?: string | null
           city?: string | null
@@ -4148,7 +4148,7 @@ export type Database = {
           default_currency?: string | null
           deleted_at?: string | null
           email?: string | null
-          emergency_contact?: Json | null
+          emergency_contact?: GeneratedJson | null
           features_enabled?: string[] | null
           id?: string
           is_active?: boolean | null
@@ -4162,7 +4162,7 @@ export type Database = {
           max_staff?: number | null
           medical_license?: string | null
           municipal_registration?: string | null
-          operating_hours?: Json | null
+          operating_hours?: GeneratedJson | null
           operating_since?: string | null
           phone?: string | null
           postal_code?: string | null
@@ -4184,7 +4184,7 @@ export type Database = {
           address_line1?: string | null
           address_line2?: string | null
           anvisa_license?: string | null
-          business_hours?: Json | null
+          business_hours?: GeneratedJson | null
           business_type?: string | null
           cfm_registration?: string | null
           city?: string | null
@@ -4200,7 +4200,7 @@ export type Database = {
           default_currency?: string | null
           deleted_at?: string | null
           email?: string | null
-          emergency_contact?: Json | null
+          emergency_contact?: GeneratedJson | null
           features_enabled?: string[] | null
           id?: string
           is_active?: boolean | null
@@ -4214,7 +4214,7 @@ export type Database = {
           max_staff?: number | null
           medical_license?: string | null
           municipal_registration?: string | null
-          operating_hours?: Json | null
+          operating_hours?: GeneratedJson | null
           operating_since?: string | null
           phone?: string | null
           postal_code?: string | null
@@ -4282,7 +4282,7 @@ export type Database = {
           action: string
           actor_id: string | null
           clinic_id: string
-          details: Json | null
+          details: GeneratedJson | null
           entity_id: string
           entity_type: string
           id: string
@@ -4295,7 +4295,7 @@ export type Database = {
           action: string
           actor_id?: string | null
           clinic_id: string
-          details?: Json | null
+          details?: GeneratedJson | null
           entity_id: string
           entity_type: string
           id?: string
@@ -4308,7 +4308,7 @@ export type Database = {
           action?: string
           actor_id?: string | null
           clinic_id?: string
-          details?: Json | null
+          details?: GeneratedJson | null
           entity_id?: string
           entity_type?: string
           id?: string
@@ -4356,7 +4356,7 @@ export type Database = {
           consented: boolean
           consented_at: string | null
           created_at: string | null
-          evidence_data: Json | null
+          evidence_data: GeneratedJson | null
           id: string
           ip_address: unknown | null
           patient_id: string
@@ -4371,7 +4371,7 @@ export type Database = {
           consented?: boolean
           consented_at?: string | null
           created_at?: string | null
-          evidence_data?: Json | null
+          evidence_data?: GeneratedJson | null
           id?: string
           ip_address?: unknown | null
           patient_id: string
@@ -4386,7 +4386,7 @@ export type Database = {
           consented?: boolean
           consented_at?: string | null
           created_at?: string | null
-          evidence_data?: Json | null
+          evidence_data?: GeneratedJson | null
           id?: string
           ip_address?: unknown | null
           patient_id?: string
@@ -4432,7 +4432,7 @@ export type Database = {
           created_at: string | null
           id: string
           is_active: boolean | null
-          metadata: Json | null
+          metadata: GeneratedJson | null
           participants: string[]
           patient_id: string | null
           title: string | null
@@ -4445,7 +4445,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_active?: boolean | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           participants?: string[]
           patient_id?: string | null
           title?: string | null
@@ -4458,7 +4458,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           is_active?: boolean | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           participants?: string[]
           patient_id?: string | null
           title?: string | null
@@ -4510,7 +4510,7 @@ export type Database = {
           id: string
           is_encrypted: boolean | null
           message_type: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           read_at: string | null
           recipient_id: string | null
           sender_id: string
@@ -4529,7 +4529,7 @@ export type Database = {
           id?: string
           is_encrypted?: boolean | null
           message_type?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           read_at?: string | null
           recipient_id?: string | null
           sender_id: string
@@ -4548,7 +4548,7 @@ export type Database = {
           id?: string
           is_encrypted?: boolean | null
           message_type?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           read_at?: string | null
           recipient_id?: string | null
           sender_id?: string
@@ -4571,7 +4571,7 @@ export type Database = {
           content: string
           cost_cents: number | null
           created_at: string | null
-          data: Json | null
+          data: GeneratedJson | null
           delivered_at: string | null
           error_message: string | null
           external_id: string | null
@@ -4595,7 +4595,7 @@ export type Database = {
           content: string
           cost_cents?: number | null
           created_at?: string | null
-          data?: Json | null
+          data?: GeneratedJson | null
           delivered_at?: string | null
           error_message?: string | null
           external_id?: string | null
@@ -4619,7 +4619,7 @@ export type Database = {
           content?: string
           cost_cents?: number | null
           created_at?: string | null
-          data?: Json | null
+          data?: GeneratedJson | null
           delivered_at?: string | null
           error_message?: string | null
           external_id?: string | null
@@ -4688,10 +4688,10 @@ export type Database = {
           name: string
           subject: string | null
           template_type: string
-          triggers: Json | null
+          triggers: GeneratedJson | null
           updated_at: string | null
           usage_count: number | null
-          variables: Json | null
+          variables: GeneratedJson | null
         }
         Insert: {
           active?: boolean | null
@@ -4705,10 +4705,10 @@ export type Database = {
           name: string
           subject?: string | null
           template_type: string
-          triggers?: Json | null
+          triggers?: GeneratedJson | null
           updated_at?: string | null
           usage_count?: number | null
-          variables?: Json | null
+          variables?: GeneratedJson | null
         }
         Update: {
           active?: boolean | null
@@ -4722,10 +4722,10 @@ export type Database = {
           name?: string
           subject?: string | null
           template_type?: string
-          triggers?: Json | null
+          triggers?: GeneratedJson | null
           updated_at?: string | null
           usage_count?: number | null
-          variables?: Json | null
+          variables?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -4747,49 +4747,49 @@ export type Database = {
       competitive_analysis: {
         Row: {
           clinic_id: string
-          competitive_advantages: Json | null
+          competitive_advantages: GeneratedJson | null
           competitor_name: string
-          competitor_pricing: Json
+          competitor_pricing: GeneratedJson
           confidence_score: number | null
           created_at: string
-          data_sources: Json | null
+          data_sources: GeneratedJson | null
           id: string
           last_analysis_date: string
           market_position: string | null
           market_share_estimate: number | null
-          pricing_gaps: Json | null
+          pricing_gaps: GeneratedJson | null
           service_category: string
           updated_at: string
         }
         Insert: {
           clinic_id: string
-          competitive_advantages?: Json | null
+          competitive_advantages?: GeneratedJson | null
           competitor_name: string
-          competitor_pricing: Json
+          competitor_pricing: GeneratedJson
           confidence_score?: number | null
           created_at?: string
-          data_sources?: Json | null
+          data_sources?: GeneratedJson | null
           id?: string
           last_analysis_date?: string
           market_position?: string | null
           market_share_estimate?: number | null
-          pricing_gaps?: Json | null
+          pricing_gaps?: GeneratedJson | null
           service_category: string
           updated_at?: string
         }
         Update: {
           clinic_id?: string
-          competitive_advantages?: Json | null
+          competitive_advantages?: GeneratedJson | null
           competitor_name?: string
-          competitor_pricing?: Json
+          competitor_pricing?: GeneratedJson
           confidence_score?: number | null
           created_at?: string
-          data_sources?: Json | null
+          data_sources?: GeneratedJson | null
           id?: string
           last_analysis_date?: string
           market_position?: string | null
           market_share_estimate?: number | null
-          pricing_gaps?: Json | null
+          pricing_gaps?: GeneratedJson | null
           service_category?: string
           updated_at?: string
         }
@@ -4819,12 +4819,12 @@ export type Database = {
           applies_to_requirements: string[] | null
           applies_to_roles: string[] | null
           auto_resolve: boolean | null
-          conditions: Json
+          conditions: GeneratedJson
           cooldown_minutes: number | null
           created_at: string | null
           created_by: string | null
           deadline_warning_days: number[] | null
-          delivery_channels: Json | null
+          delivery_channels: GeneratedJson | null
           delivery_timing: string | null
           description: string | null
           escalation_enabled: boolean | null
@@ -4839,7 +4839,7 @@ export type Database = {
           priority: number | null
           quiet_hours_end: string | null
           quiet_hours_start: string | null
-          recommended_actions: Json | null
+          recommended_actions: GeneratedJson | null
           recurring_check_hours: number | null
           rule_code: string
           rule_name: string
@@ -4859,12 +4859,12 @@ export type Database = {
           applies_to_requirements?: string[] | null
           applies_to_roles?: string[] | null
           auto_resolve?: boolean | null
-          conditions?: Json
+          conditions?: GeneratedJson
           cooldown_minutes?: number | null
           created_at?: string | null
           created_by?: string | null
           deadline_warning_days?: number[] | null
-          delivery_channels?: Json | null
+          delivery_channels?: GeneratedJson | null
           delivery_timing?: string | null
           description?: string | null
           escalation_enabled?: boolean | null
@@ -4879,7 +4879,7 @@ export type Database = {
           priority?: number | null
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null
-          recommended_actions?: Json | null
+          recommended_actions?: GeneratedJson | null
           recurring_check_hours?: number | null
           rule_code: string
           rule_name: string
@@ -4899,12 +4899,12 @@ export type Database = {
           applies_to_requirements?: string[] | null
           applies_to_roles?: string[] | null
           auto_resolve?: boolean | null
-          conditions?: Json
+          conditions?: GeneratedJson
           cooldown_minutes?: number | null
           created_at?: string | null
           created_by?: string | null
           deadline_warning_days?: number[] | null
-          delivery_channels?: Json | null
+          delivery_channels?: GeneratedJson | null
           delivery_timing?: string | null
           description?: string | null
           escalation_enabled?: boolean | null
@@ -4919,7 +4919,7 @@ export type Database = {
           priority?: number | null
           quiet_hours_end?: string | null
           quiet_hours_start?: string | null
-          recommended_actions?: Json | null
+          recommended_actions?: GeneratedJson | null
           recurring_check_hours?: number | null
           rule_code?: string
           rule_name?: string
@@ -5079,7 +5079,7 @@ export type Database = {
         Row: {
           acknowledged_at: string | null
           acknowledged_by: string | null
-          alert_data: Json | null
+          alert_data: GeneratedJson | null
           alert_rule_id: string | null
           auto_resolved: boolean | null
           auto_resolved_at: string | null
@@ -5087,8 +5087,8 @@ export type Database = {
           clinic_id: string
           created_at: string | null
           delivered_channels: string[] | null
-          delivery_attempts: Json | null
-          delivery_failures: Json | null
+          delivery_attempts: GeneratedJson | null
+          delivery_failures: GeneratedJson | null
           dismissal_reason: string | null
           dismissed_at: string | null
           dismissed_by: string | null
@@ -5099,7 +5099,7 @@ export type Database = {
           id: string
           message: string
           priority: number
-          recommended_actions: Json | null
+          recommended_actions: GeneratedJson | null
           related_requirement_id: string | null
           related_tracking_id: string | null
           related_violation_id: string | null
@@ -5109,14 +5109,14 @@ export type Database = {
           severity: string
           status: string | null
           title: string
-          trigger_conditions: Json | null
+          trigger_conditions: GeneratedJson | null
           triggered_by_user_id: string | null
           updated_at: string | null
         }
         Insert: {
           acknowledged_at?: string | null
           acknowledged_by?: string | null
-          alert_data?: Json | null
+          alert_data?: GeneratedJson | null
           alert_rule_id?: string | null
           auto_resolved?: boolean | null
           auto_resolved_at?: string | null
@@ -5124,8 +5124,8 @@ export type Database = {
           clinic_id: string
           created_at?: string | null
           delivered_channels?: string[] | null
-          delivery_attempts?: Json | null
-          delivery_failures?: Json | null
+          delivery_attempts?: GeneratedJson | null
+          delivery_failures?: GeneratedJson | null
           dismissal_reason?: string | null
           dismissed_at?: string | null
           dismissed_by?: string | null
@@ -5136,7 +5136,7 @@ export type Database = {
           id?: string
           message: string
           priority: number
-          recommended_actions?: Json | null
+          recommended_actions?: GeneratedJson | null
           related_requirement_id?: string | null
           related_tracking_id?: string | null
           related_violation_id?: string | null
@@ -5146,14 +5146,14 @@ export type Database = {
           severity: string
           status?: string | null
           title: string
-          trigger_conditions?: Json | null
+          trigger_conditions?: GeneratedJson | null
           triggered_by_user_id?: string | null
           updated_at?: string | null
         }
         Update: {
           acknowledged_at?: string | null
           acknowledged_by?: string | null
-          alert_data?: Json | null
+          alert_data?: GeneratedJson | null
           alert_rule_id?: string | null
           auto_resolved?: boolean | null
           auto_resolved_at?: string | null
@@ -5161,8 +5161,8 @@ export type Database = {
           clinic_id?: string
           created_at?: string | null
           delivered_channels?: string[] | null
-          delivery_attempts?: Json | null
-          delivery_failures?: Json | null
+          delivery_attempts?: GeneratedJson | null
+          delivery_failures?: GeneratedJson | null
           dismissal_reason?: string | null
           dismissed_at?: string | null
           dismissed_by?: string | null
@@ -5173,7 +5173,7 @@ export type Database = {
           id?: string
           message?: string
           priority?: number
-          recommended_actions?: Json | null
+          recommended_actions?: GeneratedJson | null
           related_requirement_id?: string | null
           related_tracking_id?: string | null
           related_violation_id?: string | null
@@ -5183,7 +5183,7 @@ export type Database = {
           severity?: string
           status?: string | null
           title?: string
-          trigger_conditions?: Json | null
+          trigger_conditions?: GeneratedJson | null
           triggered_by_user_id?: string | null
           updated_at?: string | null
         }
@@ -5355,8 +5355,8 @@ export type Database = {
           next_run_at: string | null
           notification_recipients: string[] | null
           notify_on_failure: boolean | null
-          parameters: Json | null
-          result: Json | null
+          parameters: GeneratedJson | null
+          result: GeneratedJson | null
           status: string | null
           updated_at: string
           warning_threshold: number | null
@@ -5378,8 +5378,8 @@ export type Database = {
           next_run_at?: string | null
           notification_recipients?: string[] | null
           notify_on_failure?: boolean | null
-          parameters?: Json | null
-          result?: Json | null
+          parameters?: GeneratedJson | null
+          result?: GeneratedJson | null
           status?: string | null
           updated_at?: string
           warning_threshold?: number | null
@@ -5401,8 +5401,8 @@ export type Database = {
           next_run_at?: string | null
           notification_recipients?: string[] | null
           notify_on_failure?: boolean | null
-          parameters?: Json | null
-          result?: Json | null
+          parameters?: GeneratedJson | null
+          result?: GeneratedJson | null
           status?: string | null
           updated_at?: string
           warning_threshold?: number | null
@@ -5430,16 +5430,16 @@ export type Database = {
           allow_sharing: boolean | null
           allowed_roles: string[] | null
           auto_refresh: boolean | null
-          available_filters: Json | null
+          available_filters: GeneratedJson | null
           config_code: string
           config_name: string
           created_at: string | null
           created_by: string | null
-          default_filters: Json | null
+          default_filters: GeneratedJson | null
           default_period_days: number | null
-          default_widgets: Json | null
+          default_widgets: GeneratedJson | null
           description: string | null
-          grouping_options: Json | null
+          grouping_options: GeneratedJson | null
           id: string
           is_active: boolean | null
           is_customizable: boolean | null
@@ -5451,23 +5451,23 @@ export type Database = {
           updated_at: string | null
           updated_by: string | null
           visibility_level: string | null
-          widgets: Json | null
+          widgets: GeneratedJson | null
         }
         Insert: {
           allow_export?: boolean | null
           allow_sharing?: boolean | null
           allowed_roles?: string[] | null
           auto_refresh?: boolean | null
-          available_filters?: Json | null
+          available_filters?: GeneratedJson | null
           config_code: string
           config_name: string
           created_at?: string | null
           created_by?: string | null
-          default_filters?: Json | null
+          default_filters?: GeneratedJson | null
           default_period_days?: number | null
-          default_widgets?: Json | null
+          default_widgets?: GeneratedJson | null
           description?: string | null
-          grouping_options?: Json | null
+          grouping_options?: GeneratedJson | null
           id?: string
           is_active?: boolean | null
           is_customizable?: boolean | null
@@ -5479,23 +5479,23 @@ export type Database = {
           updated_at?: string | null
           updated_by?: string | null
           visibility_level?: string | null
-          widgets?: Json | null
+          widgets?: GeneratedJson | null
         }
         Update: {
           allow_export?: boolean | null
           allow_sharing?: boolean | null
           allowed_roles?: string[] | null
           auto_refresh?: boolean | null
-          available_filters?: Json | null
+          available_filters?: GeneratedJson | null
           config_code?: string
           config_name?: string
           created_at?: string | null
           created_by?: string | null
-          default_filters?: Json | null
+          default_filters?: GeneratedJson | null
           default_period_days?: number | null
-          default_widgets?: Json | null
+          default_widgets?: GeneratedJson | null
           description?: string | null
-          grouping_options?: Json | null
+          grouping_options?: GeneratedJson | null
           id?: string
           is_active?: boolean | null
           is_customizable?: boolean | null
@@ -5507,7 +5507,7 @@ export type Database = {
           updated_at?: string | null
           updated_by?: string | null
           visibility_level?: string | null
-          widgets?: Json | null
+          widgets?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -5556,13 +5556,13 @@ export type Database = {
       }
       compliance_dashboard_snapshots: {
         Row: {
-          chart_data: Json | null
+          chart_data: GeneratedJson | null
           clinic_id: string
           compliant_requirements: number | null
           created_at: string | null
           critical_violations_count: number | null
           data_freshness_minutes: number | null
-          detailed_metrics: Json | null
+          detailed_metrics: GeneratedJson | null
           generation_duration_ms: number | null
           id: string
           overall_compliance_score: number | null
@@ -5575,18 +5575,18 @@ export type Database = {
           snapshot_type: string | null
           status: string | null
           total_requirements: number | null
-          trend_indicators: Json | null
+          trend_indicators: GeneratedJson | null
           violations_count: number | null
-          widget_data: Json | null
+          widget_data: GeneratedJson | null
         }
         Insert: {
-          chart_data?: Json | null
+          chart_data?: GeneratedJson | null
           clinic_id: string
           compliant_requirements?: number | null
           created_at?: string | null
           critical_violations_count?: number | null
           data_freshness_minutes?: number | null
-          detailed_metrics?: Json | null
+          detailed_metrics?: GeneratedJson | null
           generation_duration_ms?: number | null
           id?: string
           overall_compliance_score?: number | null
@@ -5599,18 +5599,18 @@ export type Database = {
           snapshot_type?: string | null
           status?: string | null
           total_requirements?: number | null
-          trend_indicators?: Json | null
+          trend_indicators?: GeneratedJson | null
           violations_count?: number | null
-          widget_data?: Json | null
+          widget_data?: GeneratedJson | null
         }
         Update: {
-          chart_data?: Json | null
+          chart_data?: GeneratedJson | null
           clinic_id?: string
           compliant_requirements?: number | null
           created_at?: string | null
           critical_violations_count?: number | null
           data_freshness_minutes?: number | null
-          detailed_metrics?: Json | null
+          detailed_metrics?: GeneratedJson | null
           generation_duration_ms?: number | null
           id?: string
           overall_compliance_score?: number | null
@@ -5623,9 +5623,9 @@ export type Database = {
           snapshot_type?: string | null
           status?: string | null
           total_requirements?: number | null
-          trend_indicators?: Json | null
+          trend_indicators?: GeneratedJson | null
           violations_count?: number | null
-          widget_data?: Json | null
+          widget_data?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -5666,7 +5666,7 @@ export type Database = {
           is_interactive: boolean | null
           max_width: number | null
           min_width: number | null
-          query_parameters: Json | null
+          query_parameters: GeneratedJson | null
           real_time: boolean | null
           refresh_interval_seconds: number | null
           required_permissions: string[] | null
@@ -5701,7 +5701,7 @@ export type Database = {
           is_interactive?: boolean | null
           max_width?: number | null
           min_width?: number | null
-          query_parameters?: Json | null
+          query_parameters?: GeneratedJson | null
           real_time?: boolean | null
           refresh_interval_seconds?: number | null
           required_permissions?: string[] | null
@@ -5736,7 +5736,7 @@ export type Database = {
           is_interactive?: boolean | null
           max_width?: number | null
           min_width?: number | null
-          query_parameters?: Json | null
+          query_parameters?: GeneratedJson | null
           real_time?: boolean | null
           refresh_interval_seconds?: number | null
           required_permissions?: string[] | null
@@ -5801,14 +5801,14 @@ export type Database = {
           access_type: string
           accessed_at: string | null
           denial_reason: string | null
-          device_fingerprint: Json | null
+          device_fingerprint: GeneratedJson | null
           export_job_id: string | null
           id: string
           ip_address: unknown | null
-          location_data: Json | null
+          location_data: GeneratedJson | null
           referrer_url: string | null
           risk_score: number | null
-          security_flags: Json | null
+          security_flags: GeneratedJson | null
           session_id: string | null
           shared_report_id: string | null
           user_agent: string | null
@@ -5820,14 +5820,14 @@ export type Database = {
           access_type: string
           accessed_at?: string | null
           denial_reason?: string | null
-          device_fingerprint?: Json | null
+          device_fingerprint?: GeneratedJson | null
           export_job_id?: string | null
           id?: string
           ip_address?: unknown | null
-          location_data?: Json | null
+          location_data?: GeneratedJson | null
           referrer_url?: string | null
           risk_score?: number | null
-          security_flags?: Json | null
+          security_flags?: GeneratedJson | null
           session_id?: string | null
           shared_report_id?: string | null
           user_agent?: string | null
@@ -5839,14 +5839,14 @@ export type Database = {
           access_type?: string
           accessed_at?: string | null
           denial_reason?: string | null
-          device_fingerprint?: Json | null
+          device_fingerprint?: GeneratedJson | null
           export_job_id?: string | null
           id?: string
           ip_address?: unknown | null
-          location_data?: Json | null
+          location_data?: GeneratedJson | null
           referrer_url?: string | null
           risk_score?: number | null
-          security_flags?: Json | null
+          security_flags?: GeneratedJson | null
           session_id?: string | null
           shared_report_id?: string | null
           user_agent?: string | null
@@ -5907,11 +5907,11 @@ export type Database = {
           delete_after: string | null
           download_count: number | null
           error_message: string | null
-          export_parameters: Json | null
+          export_parameters: GeneratedJson | null
           file_name: string | null
           file_path: string | null
           file_size_bytes: number | null
-          filters_applied: Json | null
+          filters_applied: GeneratedJson | null
           id: string
           is_shared: boolean | null
           job_code: string
@@ -5925,12 +5925,12 @@ export type Database = {
           retry_count: number | null
           share_expiry: string | null
           share_token: string | null
-          shared_with: Json | null
+          shared_with: GeneratedJson | null
           started_at: string | null
           status: string | null
           template_id: string
           updated_at: string | null
-          validation_errors: Json | null
+          validation_errors: GeneratedJson | null
         }
         Insert: {
           access_token?: string | null
@@ -5947,11 +5947,11 @@ export type Database = {
           delete_after?: string | null
           download_count?: number | null
           error_message?: string | null
-          export_parameters?: Json | null
+          export_parameters?: GeneratedJson | null
           file_name?: string | null
           file_path?: string | null
           file_size_bytes?: number | null
-          filters_applied?: Json | null
+          filters_applied?: GeneratedJson | null
           id?: string
           is_shared?: boolean | null
           job_code: string
@@ -5965,12 +5965,12 @@ export type Database = {
           retry_count?: number | null
           share_expiry?: string | null
           share_token?: string | null
-          shared_with?: Json | null
+          shared_with?: GeneratedJson | null
           started_at?: string | null
           status?: string | null
           template_id: string
           updated_at?: string | null
-          validation_errors?: Json | null
+          validation_errors?: GeneratedJson | null
         }
         Update: {
           access_token?: string | null
@@ -5987,11 +5987,11 @@ export type Database = {
           delete_after?: string | null
           download_count?: number | null
           error_message?: string | null
-          export_parameters?: Json | null
+          export_parameters?: GeneratedJson | null
           file_name?: string | null
           file_path?: string | null
           file_size_bytes?: number | null
-          filters_applied?: Json | null
+          filters_applied?: GeneratedJson | null
           id?: string
           is_shared?: boolean | null
           job_code?: string
@@ -6005,12 +6005,12 @@ export type Database = {
           retry_count?: number | null
           share_expiry?: string | null
           share_token?: string | null
-          shared_with?: Json | null
+          shared_with?: GeneratedJson | null
           started_at?: string | null
           status?: string | null
           template_id?: string
           updated_at?: string | null
-          validation_errors?: Json | null
+          validation_errors?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -6084,9 +6084,9 @@ export type Database = {
           created_at: string | null
           created_by: string | null
           css_styles: string | null
-          data_scope: Json | null
+          data_scope: GeneratedJson | null
           date_range_type: string | null
-          default_filters: Json | null
+          default_filters: GeneratedJson | null
           description: string | null
           export_type: string
           footer_template: string | null
@@ -6111,7 +6111,7 @@ export type Database = {
           shareable: boolean | null
           template_code: string
           template_name: string
-          template_sections: Json | null
+          template_sections: GeneratedJson | null
           updated_at: string | null
           updated_by: string | null
           watermark_text: string | null
@@ -6121,9 +6121,9 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           css_styles?: string | null
-          data_scope?: Json | null
+          data_scope?: GeneratedJson | null
           date_range_type?: string | null
-          default_filters?: Json | null
+          default_filters?: GeneratedJson | null
           description?: string | null
           export_type: string
           footer_template?: string | null
@@ -6148,7 +6148,7 @@ export type Database = {
           shareable?: boolean | null
           template_code: string
           template_name: string
-          template_sections?: Json | null
+          template_sections?: GeneratedJson | null
           updated_at?: string | null
           updated_by?: string | null
           watermark_text?: string | null
@@ -6158,9 +6158,9 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           css_styles?: string | null
-          data_scope?: Json | null
+          data_scope?: GeneratedJson | null
           date_range_type?: string | null
-          default_filters?: Json | null
+          default_filters?: GeneratedJson | null
           description?: string | null
           export_type?: string
           footer_template?: string | null
@@ -6185,7 +6185,7 @@ export type Database = {
           shareable?: boolean | null
           template_code?: string
           template_name?: string
-          template_sections?: Json | null
+          template_sections?: GeneratedJson | null
           updated_at?: string | null
           updated_by?: string | null
           watermark_text?: string | null
@@ -6245,7 +6245,7 @@ export type Database = {
           id: string
           measurement_date: string
           measurement_period: string | null
-          metadata: Json | null
+          metadata: GeneratedJson | null
           metric_name: string
           metric_type: string
           metric_unit: string | null
@@ -6266,7 +6266,7 @@ export type Database = {
           id?: string
           measurement_date: string
           measurement_period?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           metric_name: string
           metric_type: string
           metric_unit?: string | null
@@ -6287,7 +6287,7 @@ export type Database = {
           id?: string
           measurement_date?: string
           measurement_period?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           metric_name?: string
           metric_type?: string
           metric_unit?: string | null
@@ -6339,15 +6339,15 @@ export type Database = {
       }
       compliance_report_templates: {
         Row: {
-          aggregation_rules: Json | null
+          aggregation_rules: GeneratedJson | null
           auto_submit: boolean | null
-          calculation_formulas: Json | null
+          calculation_formulas: GeneratedJson | null
           compliance_level: string | null
           created_at: string | null
           created_by: string | null
-          data_sources: Json | null
+          data_sources: GeneratedJson | null
           description: string | null
-          filter_conditions: Json | null
+          filter_conditions: GeneratedJson | null
           id: string
           is_active: boolean | null
           is_scheduled: boolean | null
@@ -6355,27 +6355,27 @@ export type Database = {
           regulation_reference: string | null
           regulatory_body: string
           report_type: string
-          required_fields: Json | null
+          required_fields: GeneratedJson | null
           required_roles: string[] | null
           schedule_cron: string | null
           template_code: string
           template_file_path: string | null
           template_name: string
-          template_structure: Json
+          template_structure: GeneratedJson
           updated_at: string | null
           updated_by: string | null
-          validation_rules: Json | null
+          validation_rules: GeneratedJson | null
         }
         Insert: {
-          aggregation_rules?: Json | null
+          aggregation_rules?: GeneratedJson | null
           auto_submit?: boolean | null
-          calculation_formulas?: Json | null
+          calculation_formulas?: GeneratedJson | null
           compliance_level?: string | null
           created_at?: string | null
           created_by?: string | null
-          data_sources?: Json | null
+          data_sources?: GeneratedJson | null
           description?: string | null
-          filter_conditions?: Json | null
+          filter_conditions?: GeneratedJson | null
           id?: string
           is_active?: boolean | null
           is_scheduled?: boolean | null
@@ -6383,27 +6383,27 @@ export type Database = {
           regulation_reference?: string | null
           regulatory_body: string
           report_type: string
-          required_fields?: Json | null
+          required_fields?: GeneratedJson | null
           required_roles?: string[] | null
           schedule_cron?: string | null
           template_code: string
           template_file_path?: string | null
           template_name: string
-          template_structure?: Json
+          template_structure?: GeneratedJson
           updated_at?: string | null
           updated_by?: string | null
-          validation_rules?: Json | null
+          validation_rules?: GeneratedJson | null
         }
         Update: {
-          aggregation_rules?: Json | null
+          aggregation_rules?: GeneratedJson | null
           auto_submit?: boolean | null
-          calculation_formulas?: Json | null
+          calculation_formulas?: GeneratedJson | null
           compliance_level?: string | null
           created_at?: string | null
           created_by?: string | null
-          data_sources?: Json | null
+          data_sources?: GeneratedJson | null
           description?: string | null
-          filter_conditions?: Json | null
+          filter_conditions?: GeneratedJson | null
           id?: string
           is_active?: boolean | null
           is_scheduled?: boolean | null
@@ -6411,16 +6411,16 @@ export type Database = {
           regulation_reference?: string | null
           regulatory_body?: string
           report_type?: string
-          required_fields?: Json | null
+          required_fields?: GeneratedJson | null
           required_roles?: string[] | null
           schedule_cron?: string | null
           template_code?: string
           template_file_path?: string | null
           template_name?: string
-          template_structure?: Json
+          template_structure?: GeneratedJson
           updated_at?: string | null
           updated_by?: string | null
-          validation_rules?: Json | null
+          validation_rules?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -6477,13 +6477,13 @@ export type Database = {
           created_at: string | null
           created_by: string | null
           due_date: string | null
-          findings: Json | null
+          findings: GeneratedJson | null
           generated_date: string | null
           id: string
           overdue_notifications_sent: number | null
-          recommendations: Json | null
+          recommendations: GeneratedJson | null
           reminder_sent_at: string | null
-          report_data: Json
+          report_data: GeneratedJson
           report_file_path: string | null
           report_file_size: number | null
           report_hash: string | null
@@ -6500,7 +6500,7 @@ export type Database = {
           submission_method: string | null
           submission_reference: string | null
           submitted_to: string | null
-          summary_metrics: Json | null
+          summary_metrics: GeneratedJson | null
           template_id: string
           updated_at: string | null
           updated_by: string | null
@@ -6514,13 +6514,13 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           due_date?: string | null
-          findings?: Json | null
+          findings?: GeneratedJson | null
           generated_date?: string | null
           id?: string
           overdue_notifications_sent?: number | null
-          recommendations?: Json | null
+          recommendations?: GeneratedJson | null
           reminder_sent_at?: string | null
-          report_data?: Json
+          report_data?: GeneratedJson
           report_file_path?: string | null
           report_file_size?: number | null
           report_hash?: string | null
@@ -6537,7 +6537,7 @@ export type Database = {
           submission_method?: string | null
           submission_reference?: string | null
           submitted_to?: string | null
-          summary_metrics?: Json | null
+          summary_metrics?: GeneratedJson | null
           template_id: string
           updated_at?: string | null
           updated_by?: string | null
@@ -6551,13 +6551,13 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           due_date?: string | null
-          findings?: Json | null
+          findings?: GeneratedJson | null
           generated_date?: string | null
           id?: string
           overdue_notifications_sent?: number | null
-          recommendations?: Json | null
+          recommendations?: GeneratedJson | null
           reminder_sent_at?: string | null
-          report_data?: Json
+          report_data?: GeneratedJson
           report_file_path?: string | null
           report_file_size?: number | null
           report_hash?: string | null
@@ -6574,7 +6574,7 @@ export type Database = {
           submission_method?: string | null
           submission_reference?: string | null
           submitted_to?: string | null
-          summary_metrics?: Json | null
+          summary_metrics?: GeneratedJson | null
           template_id?: string
           updated_at?: string | null
           updated_by?: string | null
@@ -6693,13 +6693,13 @@ export type Database = {
           clinic_id: string
           created_at: string | null
           id: string
-          major_events: Json | null
+          major_events: GeneratedJson | null
           overall_score: number
           resolved_violation_count: number | null
           risk_level: string | null
           score_change_from_previous: number | null
           score_date: string
-          score_drivers: Json | null
+          score_drivers: GeneratedJson | null
           trend_direction: string | null
           violation_count: number | null
         }
@@ -6708,13 +6708,13 @@ export type Database = {
           clinic_id: string
           created_at?: string | null
           id?: string
-          major_events?: Json | null
+          major_events?: GeneratedJson | null
           overall_score: number
           resolved_violation_count?: number | null
           risk_level?: string | null
           score_change_from_previous?: number | null
           score_date: string
-          score_drivers?: Json | null
+          score_drivers?: GeneratedJson | null
           trend_direction?: string | null
           violation_count?: number | null
         }
@@ -6723,13 +6723,13 @@ export type Database = {
           clinic_id?: string
           created_at?: string | null
           id?: string
-          major_events?: Json | null
+          major_events?: GeneratedJson | null
           overall_score?: number
           resolved_violation_count?: number | null
           risk_level?: string | null
           score_change_from_previous?: number | null
           score_date?: string
-          score_drivers?: Json | null
+          score_drivers?: GeneratedJson | null
           trend_direction?: string | null
           violation_count?: number | null
         }
@@ -6757,7 +6757,7 @@ export type Database = {
           calculation_date: string | null
           calculation_duration_ms: number | null
           calculation_method: string | null
-          calculation_parameters: Json | null
+          calculation_parameters: GeneratedJson | null
           clinic_id: string
           compliant_requirements: number | null
           created_at: string | null
@@ -6767,26 +6767,26 @@ export type Database = {
           data_completeness: number | null
           high_violations: number | null
           id: string
-          improvement_recommendations: Json | null
+          improvement_recommendations: GeneratedJson | null
           is_final: boolean | null
           low_violations: number | null
           mandatory_requirements_score: number | null
-          manual_adjustments: Json | null
+          manual_adjustments: GeneratedJson | null
           medium_violations: number | null
           non_compliant_requirements: number | null
           not_assessed_requirements: number | null
           overall_score: number
           partially_compliant_requirements: number | null
           previous_score: number | null
-          priority_actions: Json | null
+          priority_actions: GeneratedJson | null
           recommended_requirements_score: number | null
-          regulatory_body_scores: Json | null
-          requirement_category_scores: Json | null
+          regulatory_body_scores: GeneratedJson | null
+          requirement_category_scores: GeneratedJson | null
           resolved_violations: number | null
-          risk_factors: Json | null
+          risk_factors: GeneratedJson | null
           risk_level: string | null
           risk_score: number | null
-          score_breakdown: Json | null
+          score_breakdown: GeneratedJson | null
           score_change: number | null
           score_confidence: number | null
           score_trend: string | null
@@ -6804,7 +6804,7 @@ export type Database = {
           calculation_date?: string | null
           calculation_duration_ms?: number | null
           calculation_method?: string | null
-          calculation_parameters?: Json | null
+          calculation_parameters?: GeneratedJson | null
           clinic_id: string
           compliant_requirements?: number | null
           created_at?: string | null
@@ -6814,26 +6814,26 @@ export type Database = {
           data_completeness?: number | null
           high_violations?: number | null
           id?: string
-          improvement_recommendations?: Json | null
+          improvement_recommendations?: GeneratedJson | null
           is_final?: boolean | null
           low_violations?: number | null
           mandatory_requirements_score?: number | null
-          manual_adjustments?: Json | null
+          manual_adjustments?: GeneratedJson | null
           medium_violations?: number | null
           non_compliant_requirements?: number | null
           not_assessed_requirements?: number | null
           overall_score: number
           partially_compliant_requirements?: number | null
           previous_score?: number | null
-          priority_actions?: Json | null
+          priority_actions?: GeneratedJson | null
           recommended_requirements_score?: number | null
-          regulatory_body_scores?: Json | null
-          requirement_category_scores?: Json | null
+          regulatory_body_scores?: GeneratedJson | null
+          requirement_category_scores?: GeneratedJson | null
           resolved_violations?: number | null
-          risk_factors?: Json | null
+          risk_factors?: GeneratedJson | null
           risk_level?: string | null
           risk_score?: number | null
-          score_breakdown?: Json | null
+          score_breakdown?: GeneratedJson | null
           score_change?: number | null
           score_confidence?: number | null
           score_trend?: string | null
@@ -6851,7 +6851,7 @@ export type Database = {
           calculation_date?: string | null
           calculation_duration_ms?: number | null
           calculation_method?: string | null
-          calculation_parameters?: Json | null
+          calculation_parameters?: GeneratedJson | null
           clinic_id?: string
           compliant_requirements?: number | null
           created_at?: string | null
@@ -6861,26 +6861,26 @@ export type Database = {
           data_completeness?: number | null
           high_violations?: number | null
           id?: string
-          improvement_recommendations?: Json | null
+          improvement_recommendations?: GeneratedJson | null
           is_final?: boolean | null
           low_violations?: number | null
           mandatory_requirements_score?: number | null
-          manual_adjustments?: Json | null
+          manual_adjustments?: GeneratedJson | null
           medium_violations?: number | null
           non_compliant_requirements?: number | null
           not_assessed_requirements?: number | null
           overall_score?: number
           partially_compliant_requirements?: number | null
           previous_score?: number | null
-          priority_actions?: Json | null
+          priority_actions?: GeneratedJson | null
           recommended_requirements_score?: number | null
-          regulatory_body_scores?: Json | null
-          requirement_category_scores?: Json | null
+          regulatory_body_scores?: GeneratedJson | null
+          requirement_category_scores?: GeneratedJson | null
           resolved_violations?: number | null
-          risk_factors?: Json | null
+          risk_factors?: GeneratedJson | null
           risk_level?: string | null
           risk_score?: number | null
-          score_breakdown?: Json | null
+          score_breakdown?: GeneratedJson | null
           score_change?: number | null
           score_confidence?: number | null
           score_trend?: string | null
@@ -6996,7 +6996,7 @@ export type Database = {
           last_execution: string | null
           next_execution: string | null
           non_compliance_penalty: number | null
-          parameters: Json | null
+          parameters: GeneratedJson | null
           poor_threshold: number | null
           rule_code: string
           rule_name: string
@@ -7029,7 +7029,7 @@ export type Database = {
           last_execution?: string | null
           next_execution?: string | null
           non_compliance_penalty?: number | null
-          parameters?: Json | null
+          parameters?: GeneratedJson | null
           poor_threshold?: number | null
           rule_code: string
           rule_name: string
@@ -7062,7 +7062,7 @@ export type Database = {
           last_execution?: string | null
           next_execution?: string | null
           non_compliance_penalty?: number | null
-          parameters?: Json | null
+          parameters?: GeneratedJson | null
           poor_threshold?: number | null
           rule_code?: string
           rule_name?: string
@@ -7120,10 +7120,10 @@ export type Database = {
       compliance_shared_reports: {
         Row: {
           access_count: number | null
-          access_log: Json | null
+          access_log: GeneratedJson | null
           access_notifications_sent: number | null
           created_at: string | null
-          device_restrictions: Json | null
+          device_restrictions: GeneratedJson | null
           expires_at: string
           export_job_id: string
           first_accessed_at: string | null
@@ -7145,10 +7145,10 @@ export type Database = {
         }
         Insert: {
           access_count?: number | null
-          access_log?: Json | null
+          access_log?: GeneratedJson | null
           access_notifications_sent?: number | null
           created_at?: string | null
-          device_restrictions?: Json | null
+          device_restrictions?: GeneratedJson | null
           expires_at: string
           export_job_id: string
           first_accessed_at?: string | null
@@ -7170,10 +7170,10 @@ export type Database = {
         }
         Update: {
           access_count?: number | null
-          access_log?: Json | null
+          access_log?: GeneratedJson | null
           access_notifications_sent?: number | null
           created_at?: string | null
-          device_restrictions?: Json | null
+          device_restrictions?: GeneratedJson | null
           expires_at?: string
           export_job_id?: string
           first_accessed_at?: string | null
@@ -7268,13 +7268,13 @@ export type Database = {
       }
       compliance_tracking: {
         Row: {
-          action_items: Json | null
+          action_items: GeneratedJson | null
           assessed_by: string | null
           assessment_method: string | null
           assessment_score: number | null
           automated_monitoring: boolean | null
           clinic_id: string
-          compliance_history: Json | null
+          compliance_history: GeneratedJson | null
           compliance_status: string
           created_at: string | null
           created_by: string | null
@@ -7282,7 +7282,7 @@ export type Database = {
           documentation_path: string | null
           escalation_level: number | null
           evidence_complete: boolean | null
-          evidence_provided: Json | null
+          evidence_provided: GeneratedJson | null
           id: string
           implementation_date: string | null
           implementation_notes: string | null
@@ -7290,7 +7290,7 @@ export type Database = {
           last_assessment_date: string | null
           last_notification_sent: string | null
           mitigation_actions: string[] | null
-          monitoring_config: Json | null
+          monitoring_config: GeneratedJson | null
           next_review_date: string | null
           notification_enabled: boolean | null
           requirement_id: string
@@ -7302,13 +7302,13 @@ export type Database = {
           updated_by: string | null
         }
         Insert: {
-          action_items?: Json | null
+          action_items?: GeneratedJson | null
           assessed_by?: string | null
           assessment_method?: string | null
           assessment_score?: number | null
           automated_monitoring?: boolean | null
           clinic_id: string
-          compliance_history?: Json | null
+          compliance_history?: GeneratedJson | null
           compliance_status?: string
           created_at?: string | null
           created_by?: string | null
@@ -7316,7 +7316,7 @@ export type Database = {
           documentation_path?: string | null
           escalation_level?: number | null
           evidence_complete?: boolean | null
-          evidence_provided?: Json | null
+          evidence_provided?: GeneratedJson | null
           id?: string
           implementation_date?: string | null
           implementation_notes?: string | null
@@ -7324,7 +7324,7 @@ export type Database = {
           last_assessment_date?: string | null
           last_notification_sent?: string | null
           mitigation_actions?: string[] | null
-          monitoring_config?: Json | null
+          monitoring_config?: GeneratedJson | null
           next_review_date?: string | null
           notification_enabled?: boolean | null
           requirement_id: string
@@ -7336,13 +7336,13 @@ export type Database = {
           updated_by?: string | null
         }
         Update: {
-          action_items?: Json | null
+          action_items?: GeneratedJson | null
           assessed_by?: string | null
           assessment_method?: string | null
           assessment_score?: number | null
           automated_monitoring?: boolean | null
           clinic_id?: string
-          compliance_history?: Json | null
+          compliance_history?: GeneratedJson | null
           compliance_status?: string
           created_at?: string | null
           created_by?: string | null
@@ -7350,7 +7350,7 @@ export type Database = {
           documentation_path?: string | null
           escalation_level?: number | null
           evidence_complete?: boolean | null
-          evidence_provided?: Json | null
+          evidence_provided?: GeneratedJson | null
           id?: string
           implementation_date?: string | null
           implementation_notes?: string | null
@@ -7358,7 +7358,7 @@ export type Database = {
           last_assessment_date?: string | null
           last_notification_sent?: string | null
           mitigation_actions?: string[] | null
-          monitoring_config?: Json | null
+          monitoring_config?: GeneratedJson | null
           next_review_date?: string | null
           notification_enabled?: boolean | null
           requirement_id?: string
@@ -7479,7 +7479,7 @@ export type Database = {
       }
       compliance_training: {
         Row: {
-          assessment_questions: Json | null
+          assessment_questions: GeneratedJson | null
           certification_required: boolean | null
           clinic_id: string | null
           content_url: string | null
@@ -7491,22 +7491,22 @@ export type Database = {
           expiry_date: string | null
           id: string
           is_active: boolean | null
-          learning_objectives: Json | null
+          learning_objectives: GeneratedJson | null
           mandatory: boolean | null
           passing_score: number | null
-          prerequisites: Json | null
+          prerequisites: GeneratedJson | null
           recurrence_period_days: number | null
           recurring: boolean | null
           regulatory_requirement: string | null
-          target_roles: Json | null
-          training_material: Json | null
+          target_roles: GeneratedJson | null
+          training_material: GeneratedJson | null
           training_name: string
           training_type: string
           updated_at: string | null
           updated_by: string | null
         }
         Insert: {
-          assessment_questions?: Json | null
+          assessment_questions?: GeneratedJson | null
           certification_required?: boolean | null
           clinic_id?: string | null
           content_url?: string | null
@@ -7518,22 +7518,22 @@ export type Database = {
           expiry_date?: string | null
           id?: string
           is_active?: boolean | null
-          learning_objectives?: Json | null
+          learning_objectives?: GeneratedJson | null
           mandatory?: boolean | null
           passing_score?: number | null
-          prerequisites?: Json | null
+          prerequisites?: GeneratedJson | null
           recurrence_period_days?: number | null
           recurring?: boolean | null
           regulatory_requirement?: string | null
-          target_roles?: Json | null
-          training_material?: Json | null
+          target_roles?: GeneratedJson | null
+          training_material?: GeneratedJson | null
           training_name: string
           training_type: string
           updated_at?: string | null
           updated_by?: string | null
         }
         Update: {
-          assessment_questions?: Json | null
+          assessment_questions?: GeneratedJson | null
           certification_required?: boolean | null
           clinic_id?: string | null
           content_url?: string | null
@@ -7545,15 +7545,15 @@ export type Database = {
           expiry_date?: string | null
           id?: string
           is_active?: boolean | null
-          learning_objectives?: Json | null
+          learning_objectives?: GeneratedJson | null
           mandatory?: boolean | null
           passing_score?: number | null
-          prerequisites?: Json | null
+          prerequisites?: GeneratedJson | null
           recurrence_period_days?: number | null
           recurring?: boolean | null
           regulatory_requirement?: string | null
-          target_roles?: Json | null
-          training_material?: Json | null
+          target_roles?: GeneratedJson | null
+          training_material?: GeneratedJson | null
           training_name?: string
           training_type?: string
           updated_at?: string | null
@@ -7640,14 +7640,14 @@ export type Database = {
           regulator_reference: string | null
           regulator_response: string | null
           regulatory_impact_level: string | null
-          remediation_actions: Json | null
+          remediation_actions: GeneratedJson | null
           remediation_plan: string | null
           remediation_required: boolean | null
           reported_to_regulator: boolean | null
           reporting_date: string | null
           requirement_id: string
           resolution_verified: boolean | null
-          resources_allocated: Json | null
+          resources_allocated: GeneratedJson | null
           responsible_for_remediation: string | null
           root_cause: string | null
           severity_level: string
@@ -7684,14 +7684,14 @@ export type Database = {
           regulator_reference?: string | null
           regulator_response?: string | null
           regulatory_impact_level?: string | null
-          remediation_actions?: Json | null
+          remediation_actions?: GeneratedJson | null
           remediation_plan?: string | null
           remediation_required?: boolean | null
           reported_to_regulator?: boolean | null
           reporting_date?: string | null
           requirement_id: string
           resolution_verified?: boolean | null
-          resources_allocated?: Json | null
+          resources_allocated?: GeneratedJson | null
           responsible_for_remediation?: string | null
           root_cause?: string | null
           severity_level: string
@@ -7728,14 +7728,14 @@ export type Database = {
           regulator_reference?: string | null
           regulator_response?: string | null
           regulatory_impact_level?: string | null
-          remediation_actions?: Json | null
+          remediation_actions?: GeneratedJson | null
           remediation_plan?: string | null
           remediation_required?: boolean | null
           reported_to_regulator?: boolean | null
           reporting_date?: string | null
           requirement_id?: string
           resolution_verified?: boolean | null
-          resources_allocated?: Json | null
+          resources_allocated?: GeneratedJson | null
           responsible_for_remediation?: string | null
           root_cause?: string | null
           severity_level?: string
@@ -7890,50 +7890,50 @@ export type Database = {
       conflict_ai_analysis: {
         Row: {
           ai_model_version: string | null
-          alternative_resolutions: Json | null
+          alternative_resolutions: GeneratedJson | null
           analysis_timestamp: string | null
           confidence_score: number | null
           conflict_id: string
           created_at: string | null
           historical_success_rate: number | null
           id: string
-          impact_analysis: Json | null
+          impact_analysis: GeneratedJson | null
           processing_time_ms: number | null
           reasoning: string | null
           recommended_resolution: string | null
-          risk_factors: Json | null
+          risk_factors: GeneratedJson | null
           similar_conflicts_found: number | null
         }
         Insert: {
           ai_model_version?: string | null
-          alternative_resolutions?: Json | null
+          alternative_resolutions?: GeneratedJson | null
           analysis_timestamp?: string | null
           confidence_score?: number | null
           conflict_id: string
           created_at?: string | null
           historical_success_rate?: number | null
           id?: string
-          impact_analysis?: Json | null
+          impact_analysis?: GeneratedJson | null
           processing_time_ms?: number | null
           reasoning?: string | null
           recommended_resolution?: string | null
-          risk_factors?: Json | null
+          risk_factors?: GeneratedJson | null
           similar_conflicts_found?: number | null
         }
         Update: {
           ai_model_version?: string | null
-          alternative_resolutions?: Json | null
+          alternative_resolutions?: GeneratedJson | null
           analysis_timestamp?: string | null
           confidence_score?: number | null
           conflict_id?: string
           created_at?: string | null
           historical_success_rate?: number | null
           id?: string
-          impact_analysis?: Json | null
+          impact_analysis?: GeneratedJson | null
           processing_time_ms?: number | null
           reasoning?: string | null
           recommended_resolution?: string | null
-          risk_factors?: Json | null
+          risk_factors?: GeneratedJson | null
           similar_conflicts_found?: number | null
         }
         Relationships: [
@@ -7948,7 +7948,7 @@ export type Database = {
       }
       conflict_resolution_actions: {
         Row: {
-          action_data: Json | null
+          action_data: GeneratedJson | null
           action_status: string | null
           action_type: string
           conflict_id: string
@@ -7959,11 +7959,11 @@ export type Database = {
           is_automated: boolean | null
           performed_at: string | null
           performed_by: string | null
-          result_data: Json | null
+          result_data: GeneratedJson | null
           retry_count: number | null
         }
         Insert: {
-          action_data?: Json | null
+          action_data?: GeneratedJson | null
           action_status?: string | null
           action_type: string
           conflict_id: string
@@ -7974,11 +7974,11 @@ export type Database = {
           is_automated?: boolean | null
           performed_at?: string | null
           performed_by?: string | null
-          result_data?: Json | null
+          result_data?: GeneratedJson | null
           retry_count?: number | null
         }
         Update: {
-          action_data?: Json | null
+          action_data?: GeneratedJson | null
           action_status?: string | null
           action_type?: string
           conflict_id?: string
@@ -7989,7 +7989,7 @@ export type Database = {
           is_automated?: boolean | null
           performed_at?: string | null
           performed_by?: string | null
-          result_data?: Json | null
+          result_data?: GeneratedJson | null
           retry_count?: number | null
         }
         Relationships: [
@@ -8004,16 +8004,16 @@ export type Database = {
       }
       conflict_resolution_rules: {
         Row: {
-          appointment_type_priority: Json | null
+          appointment_type_priority: GeneratedJson | null
           auto_resolve: boolean | null
           clinic_id: string
           conflict_type: string
           created_at: string | null
           created_by: string | null
-          custom_logic: Json | null
+          custom_logic: GeneratedJson | null
           escalation_minutes: number | null
           event_type_pattern: string | null
-          field_precedence: Json | null
+          field_precedence: GeneratedJson | null
           id: string
           is_active: boolean | null
           notification_recipients: string[] | null
@@ -8022,22 +8022,22 @@ export type Database = {
           priority: number
           provider_pattern: string | null
           resolution_strategy: string
-          resource_booking_priority: Json | null
+          resource_booking_priority: GeneratedJson | null
           rule_description: string | null
           rule_name: string
           updated_at: string | null
         }
         Insert: {
-          appointment_type_priority?: Json | null
+          appointment_type_priority?: GeneratedJson | null
           auto_resolve?: boolean | null
           clinic_id: string
           conflict_type: string
           created_at?: string | null
           created_by?: string | null
-          custom_logic?: Json | null
+          custom_logic?: GeneratedJson | null
           escalation_minutes?: number | null
           event_type_pattern?: string | null
-          field_precedence?: Json | null
+          field_precedence?: GeneratedJson | null
           id?: string
           is_active?: boolean | null
           notification_recipients?: string[] | null
@@ -8046,22 +8046,22 @@ export type Database = {
           priority?: number
           provider_pattern?: string | null
           resolution_strategy: string
-          resource_booking_priority?: Json | null
+          resource_booking_priority?: GeneratedJson | null
           rule_description?: string | null
           rule_name: string
           updated_at?: string | null
         }
         Update: {
-          appointment_type_priority?: Json | null
+          appointment_type_priority?: GeneratedJson | null
           auto_resolve?: boolean | null
           clinic_id?: string
           conflict_type?: string
           created_at?: string | null
           created_by?: string | null
-          custom_logic?: Json | null
+          custom_logic?: GeneratedJson | null
           escalation_minutes?: number | null
           event_type_pattern?: string | null
-          field_precedence?: Json | null
+          field_precedence?: GeneratedJson | null
           id?: string
           is_active?: boolean | null
           notification_recipients?: string[] | null
@@ -8070,7 +8070,7 @@ export type Database = {
           priority?: number
           provider_pattern?: string | null
           resolution_strategy?: string
-          resource_booking_priority?: Json | null
+          resource_booking_priority?: GeneratedJson | null
           rule_description?: string | null
           rule_name?: string
           updated_at?: string | null
@@ -8103,10 +8103,10 @@ export type Database = {
           id: string
           is_active: boolean | null
           medical_review_required: boolean | null
-          notification_template: Json | null
+          notification_template: GeneratedJson | null
           patient_consent_required: boolean | null
           required_approvals: string[] | null
-          resolution_steps: Json
+          resolution_steps: GeneratedJson
           success_rate: number | null
           template_description: string | null
           template_name: string
@@ -8123,10 +8123,10 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           medical_review_required?: boolean | null
-          notification_template?: Json | null
+          notification_template?: GeneratedJson | null
           patient_consent_required?: boolean | null
           required_approvals?: string[] | null
-          resolution_steps: Json
+          resolution_steps: GeneratedJson
           success_rate?: number | null
           template_description?: string | null
           template_name: string
@@ -8143,10 +8143,10 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           medical_review_required?: boolean | null
-          notification_template?: Json | null
+          notification_template?: GeneratedJson | null
           patient_consent_required?: boolean | null
           required_approvals?: string[] | null
-          resolution_steps?: Json
+          resolution_steps?: GeneratedJson
           success_rate?: number | null
           template_description?: string | null
           template_name?: string
@@ -8184,9 +8184,9 @@ export type Database = {
           id: string
           is_active: boolean | null
           legal_basis: string | null
-          optional_fields: Json | null
-          regulatory_requirements: Json | null
-          required_fields: Json | null
+          optional_fields: GeneratedJson | null
+          regulatory_requirements: GeneratedJson | null
+          required_fields: GeneratedJson | null
           retention_period_days: number | null
           updated_at: string | null
           updated_by: string | null
@@ -8204,9 +8204,9 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           legal_basis?: string | null
-          optional_fields?: Json | null
-          regulatory_requirements?: Json | null
-          required_fields?: Json | null
+          optional_fields?: GeneratedJson | null
+          regulatory_requirements?: GeneratedJson | null
+          required_fields?: GeneratedJson | null
           retention_period_days?: number | null
           updated_at?: string | null
           updated_by?: string | null
@@ -8224,9 +8224,9 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           legal_basis?: string | null
-          optional_fields?: Json | null
-          regulatory_requirements?: Json | null
-          required_fields?: Json | null
+          optional_fields?: GeneratedJson | null
+          regulatory_requirements?: GeneratedJson | null
+          required_fields?: GeneratedJson | null
           retention_period_days?: number | null
           updated_at?: string | null
           updated_by?: string | null
@@ -8299,13 +8299,13 @@ export type Database = {
           consent_type: string
           created_at: string
           data_categories: string[]
-          evidence: Json | null
+          evidence: GeneratedJson | null
           expires_at: string | null
           given_at: string | null
           id: string
           ip_address: unknown | null
           legal_basis: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           notes: string | null
           patient_id: string
           privacy_policy_version: string | null
@@ -8327,13 +8327,13 @@ export type Database = {
           consent_type: string
           created_at?: string
           data_categories: string[]
-          evidence?: Json | null
+          evidence?: GeneratedJson | null
           expires_at?: string | null
           given_at?: string | null
           id?: string
           ip_address?: unknown | null
           legal_basis: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           notes?: string | null
           patient_id: string
           privacy_policy_version?: string | null
@@ -8355,13 +8355,13 @@ export type Database = {
           consent_type?: string
           created_at?: string
           data_categories?: string[]
-          evidence?: Json | null
+          evidence?: GeneratedJson | null
           expires_at?: string | null
           given_at?: string | null
           id?: string
           ip_address?: unknown | null
           legal_basis?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           notes?: string | null
           patient_id?: string
           privacy_policy_version?: string | null
@@ -8457,10 +8457,10 @@ export type Database = {
           id: string
           last_visit_date: string | null
           next_visit_prediction: string | null
-          optimization_strategies: Json
+          optimization_strategies: GeneratedJson
           patient_id: string
           predicted_value: number | null
-          recommended_services: Json | null
+          recommended_services: GeneratedJson | null
           retention_probability: number | null
           updated_at: string
           value_tier: string
@@ -8473,10 +8473,10 @@ export type Database = {
           id?: string
           last_visit_date?: string | null
           next_visit_prediction?: string | null
-          optimization_strategies: Json
+          optimization_strategies: GeneratedJson
           patient_id: string
           predicted_value?: number | null
-          recommended_services?: Json | null
+          recommended_services?: GeneratedJson | null
           retention_probability?: number | null
           updated_at?: string
           value_tier: string
@@ -8489,10 +8489,10 @@ export type Database = {
           id?: string
           last_visit_date?: string | null
           next_visit_prediction?: string | null
-          optimization_strategies?: Json
+          optimization_strategies?: GeneratedJson
           patient_id?: string
           predicted_value?: number | null
-          recommended_services?: Json | null
+          recommended_services?: GeneratedJson | null
           retention_probability?: number | null
           updated_at?: string
           value_tier?: string
@@ -8575,7 +8575,7 @@ export type Database = {
           auto_update: boolean | null
           created_at: string | null
           created_by: string | null
-          criteria: Json
+          criteria: GeneratedJson
           customer_count: number | null
           description: string | null
           id: string
@@ -8587,7 +8587,7 @@ export type Database = {
           auto_update?: boolean | null
           created_at?: string | null
           created_by?: string | null
-          criteria: Json
+          criteria: GeneratedJson
           customer_count?: number | null
           description?: string | null
           id?: string
@@ -8599,7 +8599,7 @@ export type Database = {
           auto_update?: boolean | null
           created_at?: string | null
           created_by?: string | null
-          criteria?: Json
+          criteria?: GeneratedJson
           customer_count?: number | null
           description?: string | null
           id?: string
@@ -8685,7 +8685,7 @@ export type Database = {
           patient_id: string | null
           profile_id: string | null
           purpose: string
-          query_filters: Json | null
+          query_filters: GeneratedJson | null
           record_id: string | null
           result_count: number | null
           session_id: string | null
@@ -8708,7 +8708,7 @@ export type Database = {
           patient_id?: string | null
           profile_id?: string | null
           purpose: string
-          query_filters?: Json | null
+          query_filters?: GeneratedJson | null
           record_id?: string | null
           result_count?: number | null
           session_id?: string | null
@@ -8731,7 +8731,7 @@ export type Database = {
           patient_id?: string | null
           profile_id?: string | null
           purpose?: string
-          query_filters?: Json | null
+          query_filters?: GeneratedJson | null
           record_id?: string | null
           result_count?: number | null
           session_id?: string | null
@@ -8800,14 +8800,14 @@ export type Database = {
           clinic_id: string
           created_at: string
           data_category: string
-          data_conditions: Json | null
+          data_conditions: GeneratedJson | null
           deletion_method: string
           effective_from: string
           effective_until: string | null
           id: string
           is_active: boolean | null
           legal_basis: string
-          patient_conditions: Json | null
+          patient_conditions: GeneratedJson | null
           policy_name: string
           regulatory_requirement: string | null
           retention_period: unknown
@@ -8822,14 +8822,14 @@ export type Database = {
           clinic_id: string
           created_at?: string
           data_category: string
-          data_conditions?: Json | null
+          data_conditions?: GeneratedJson | null
           deletion_method?: string
           effective_from?: string
           effective_until?: string | null
           id?: string
           is_active?: boolean | null
           legal_basis: string
-          patient_conditions?: Json | null
+          patient_conditions?: GeneratedJson | null
           policy_name: string
           regulatory_requirement?: string | null
           retention_period: unknown
@@ -8844,14 +8844,14 @@ export type Database = {
           clinic_id?: string
           created_at?: string
           data_category?: string
-          data_conditions?: Json | null
+          data_conditions?: GeneratedJson | null
           deletion_method?: string
           effective_from?: string
           effective_until?: string | null
           id?: string
           is_active?: boolean | null
           legal_basis?: string
-          patient_conditions?: Json | null
+          patient_conditions?: GeneratedJson | null
           policy_name?: string
           regulatory_requirement?: string | null
           retention_period?: unknown
@@ -8901,7 +8901,7 @@ export type Database = {
           assigned_at: string | null
           assigned_to: string | null
           clinic_id: string
-          communication_log: Json | null
+          communication_log: GeneratedJson | null
           completed_at: string | null
           created_at: string
           description: string | null
@@ -8916,14 +8916,14 @@ export type Database = {
           processed_by: string | null
           request_type: string
           requested_data_categories: string[] | null
-          response_data: Json | null
+          response_data: GeneratedJson | null
           response_files: string[] | null
           response_method: string | null
-          specific_requests: Json | null
+          specific_requests: GeneratedJson | null
           status: string
           submitted_at: string
           updated_at: string
-          verification_documents: Json | null
+          verification_documents: GeneratedJson | null
           verification_method: string | null
           verified_at: string | null
           verified_by: string | null
@@ -8932,7 +8932,7 @@ export type Database = {
           assigned_at?: string | null
           assigned_to?: string | null
           clinic_id: string
-          communication_log?: Json | null
+          communication_log?: GeneratedJson | null
           completed_at?: string | null
           created_at?: string
           description?: string | null
@@ -8947,14 +8947,14 @@ export type Database = {
           processed_by?: string | null
           request_type: string
           requested_data_categories?: string[] | null
-          response_data?: Json | null
+          response_data?: GeneratedJson | null
           response_files?: string[] | null
           response_method?: string | null
-          specific_requests?: Json | null
+          specific_requests?: GeneratedJson | null
           status?: string
           submitted_at?: string
           updated_at?: string
-          verification_documents?: Json | null
+          verification_documents?: GeneratedJson | null
           verification_method?: string | null
           verified_at?: string | null
           verified_by?: string | null
@@ -8963,7 +8963,7 @@ export type Database = {
           assigned_at?: string | null
           assigned_to?: string | null
           clinic_id?: string
-          communication_log?: Json | null
+          communication_log?: GeneratedJson | null
           completed_at?: string | null
           created_at?: string
           description?: string | null
@@ -8978,14 +8978,14 @@ export type Database = {
           processed_by?: string | null
           request_type?: string
           requested_data_categories?: string[] | null
-          response_data?: Json | null
+          response_data?: GeneratedJson | null
           response_files?: string[] | null
           response_method?: string | null
-          specific_requests?: Json | null
+          specific_requests?: GeneratedJson | null
           status?: string
           submitted_at?: string
           updated_at?: string
-          verification_documents?: Json | null
+          verification_documents?: GeneratedJson | null
           verification_method?: string | null
           verified_at?: string | null
           verified_by?: string | null
@@ -9091,15 +9091,15 @@ export type Database = {
           clinic_id: string
           created_at: string | null
           created_by: string | null
-          external_factors: Json | null
-          feature_importance: Json | null
+          external_factors: GeneratedJson | null
+          feature_importance: GeneratedJson | null
           forecasting_scope: string
           id: string
           is_primary: boolean | null
           last_accuracy_check: string | null
           mae: number | null
           mape: number | null
-          model_config: Json | null
+          model_config: GeneratedJson | null
           model_file_path: string | null
           model_name: string
           model_status: string
@@ -9108,10 +9108,10 @@ export type Database = {
           prediction_horizon_days: number
           retrain_frequency_days: number | null
           rmse: number | null
-          seasonality_patterns: Json | null
+          seasonality_patterns: GeneratedJson | null
           service_type_id: string | null
           target_metric: string
-          training_metrics: Json | null
+          training_metrics: GeneratedJson | null
           training_window_days: number
           updated_at: string | null
           updated_by: string | null
@@ -9122,15 +9122,15 @@ export type Database = {
           clinic_id: string
           created_at?: string | null
           created_by?: string | null
-          external_factors?: Json | null
-          feature_importance?: Json | null
+          external_factors?: GeneratedJson | null
+          feature_importance?: GeneratedJson | null
           forecasting_scope: string
           id?: string
           is_primary?: boolean | null
           last_accuracy_check?: string | null
           mae?: number | null
           mape?: number | null
-          model_config?: Json | null
+          model_config?: GeneratedJson | null
           model_file_path?: string | null
           model_name: string
           model_status?: string
@@ -9139,10 +9139,10 @@ export type Database = {
           prediction_horizon_days?: number
           retrain_frequency_days?: number | null
           rmse?: number | null
-          seasonality_patterns?: Json | null
+          seasonality_patterns?: GeneratedJson | null
           service_type_id?: string | null
           target_metric: string
-          training_metrics?: Json | null
+          training_metrics?: GeneratedJson | null
           training_window_days?: number
           updated_at?: string | null
           updated_by?: string | null
@@ -9153,15 +9153,15 @@ export type Database = {
           clinic_id?: string
           created_at?: string | null
           created_by?: string | null
-          external_factors?: Json | null
-          feature_importance?: Json | null
+          external_factors?: GeneratedJson | null
+          feature_importance?: GeneratedJson | null
           forecasting_scope?: string
           id?: string
           is_primary?: boolean | null
           last_accuracy_check?: string | null
           mae?: number | null
           mape?: number | null
-          model_config?: Json | null
+          model_config?: GeneratedJson | null
           model_file_path?: string | null
           model_name?: string
           model_status?: string
@@ -9170,10 +9170,10 @@ export type Database = {
           prediction_horizon_days?: number
           retrain_frequency_days?: number | null
           rmse?: number | null
-          seasonality_patterns?: Json | null
+          seasonality_patterns?: GeneratedJson | null
           service_type_id?: string | null
           target_metric?: string
-          training_metrics?: Json | null
+          training_metrics?: GeneratedJson | null
           training_window_days?: number
           updated_at?: string | null
           updated_by?: string | null
@@ -9247,13 +9247,13 @@ export type Database = {
       demand_forecasts: {
         Row: {
           actual_demand: number | null
-          alert_thresholds: Json | null
+          alert_thresholds: GeneratedJson | null
           alert_triggered: boolean | null
           capacity_utilization_target: number | null
           clinic_id: string
           confidence_level: number
           created_at: string | null
-          external_factors: Json | null
+          external_factors: GeneratedJson | null
           forecast_accuracy: number | null
           forecast_date: string
           forecast_error: number | null
@@ -9282,13 +9282,13 @@ export type Database = {
         }
         Insert: {
           actual_demand?: number | null
-          alert_thresholds?: Json | null
+          alert_thresholds?: GeneratedJson | null
           alert_triggered?: boolean | null
           capacity_utilization_target?: number | null
           clinic_id: string
           confidence_level?: number
           created_at?: string | null
-          external_factors?: Json | null
+          external_factors?: GeneratedJson | null
           forecast_accuracy?: number | null
           forecast_date: string
           forecast_error?: number | null
@@ -9317,13 +9317,13 @@ export type Database = {
         }
         Update: {
           actual_demand?: number | null
-          alert_thresholds?: Json | null
+          alert_thresholds?: GeneratedJson | null
           alert_triggered?: boolean | null
           capacity_utilization_target?: number | null
           clinic_id?: string
           confidence_level?: number
           created_at?: string | null
-          external_factors?: Json | null
+          external_factors?: GeneratedJson | null
           forecast_accuracy?: number | null
           forecast_date?: string
           forecast_error?: number | null
@@ -9426,7 +9426,7 @@ export type Database = {
           is_active: boolean | null
           last_observed: string | null
           months_of_year: number[] | null
-          pattern_data: Json
+          pattern_data: GeneratedJson
           pattern_name: string
           pattern_scope: string
           pattern_strength: number | null
@@ -9453,7 +9453,7 @@ export type Database = {
           is_active?: boolean | null
           last_observed?: string | null
           months_of_year?: number[] | null
-          pattern_data?: Json
+          pattern_data?: GeneratedJson
           pattern_name: string
           pattern_scope: string
           pattern_strength?: number | null
@@ -9480,7 +9480,7 @@ export type Database = {
           is_active?: boolean | null
           last_observed?: string | null
           months_of_year?: number[] | null
-          pattern_data?: Json
+          pattern_data?: GeneratedJson
           pattern_name?: string
           pattern_scope?: string
           pattern_strength?: number | null
@@ -9630,7 +9630,7 @@ export type Database = {
           affected_metrics: string[]
           clinic_id: string | null
           created_at: string | null
-          details: Json
+          details: GeneratedJson
           detection_date: string
           drift_score: number
           drift_type: string
@@ -9648,7 +9648,7 @@ export type Database = {
           affected_metrics?: string[]
           clinic_id?: string | null
           created_at?: string | null
-          details?: Json
+          details?: GeneratedJson
           detection_date?: string
           drift_score: number
           drift_type: string
@@ -9666,7 +9666,7 @@ export type Database = {
           affected_metrics?: string[]
           clinic_id?: string | null
           created_at?: string | null
-          details?: Json
+          details?: GeneratedJson
           detection_date?: string
           drift_score?: number
           drift_type?: string
@@ -9726,8 +9726,8 @@ export type Database = {
           escrow_fee: number | null
           held_at: string | null
           id: string
-          milestone_requirements: Json | null
-          release_conditions: Json
+          milestone_requirements: GeneratedJson | null
+          release_conditions: GeneratedJson
           release_reason: string | null
           release_type: string
           released_at: string | null
@@ -9749,8 +9749,8 @@ export type Database = {
           escrow_fee?: number | null
           held_at?: string | null
           id?: string
-          milestone_requirements?: Json | null
-          release_conditions: Json
+          milestone_requirements?: GeneratedJson | null
+          release_conditions: GeneratedJson
           release_reason?: string | null
           release_type: string
           released_at?: string | null
@@ -9772,8 +9772,8 @@ export type Database = {
           escrow_fee?: number | null
           held_at?: string | null
           id?: string
-          milestone_requirements?: Json | null
-          release_conditions?: Json
+          milestone_requirements?: GeneratedJson | null
+          release_conditions?: GeneratedJson
           release_reason?: string | null
           release_type?: string
           released_at?: string | null
@@ -9826,14 +9826,14 @@ export type Database = {
           help_text: string | null
           id: string
           is_required: boolean | null
-          options: Json | null
+          options: GeneratedJson | null
           question_order: number
           question_text: string
           question_type: string | null
-          scale_labels: Json | null
+          scale_labels: GeneratedJson | null
           scale_max: number | null
           scale_min: number | null
-          validation_rules: Json | null
+          validation_rules: GeneratedJson | null
         }
         Insert: {
           created_at?: string | null
@@ -9841,14 +9841,14 @@ export type Database = {
           help_text?: string | null
           id?: string
           is_required?: boolean | null
-          options?: Json | null
+          options?: GeneratedJson | null
           question_order: number
           question_text: string
           question_type?: string | null
-          scale_labels?: Json | null
+          scale_labels?: GeneratedJson | null
           scale_max?: number | null
           scale_min?: number | null
-          validation_rules?: Json | null
+          validation_rules?: GeneratedJson | null
         }
         Update: {
           created_at?: string | null
@@ -9856,14 +9856,14 @@ export type Database = {
           help_text?: string | null
           id?: string
           is_required?: boolean | null
-          options?: Json | null
+          options?: GeneratedJson | null
           question_order?: number
           question_text?: string
           question_type?: string | null
-          scale_labels?: Json | null
+          scale_labels?: GeneratedJson | null
           scale_max?: number | null
           scale_min?: number | null
-          validation_rules?: Json | null
+          validation_rules?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -9880,10 +9880,10 @@ export type Database = {
           evaluation_id: string | null
           id: string
           is_final: boolean | null
-          metadata: Json | null
+          metadata: GeneratedJson | null
           patient_email: string
           question_id: string | null
-          response_json: Json | null
+          response_json: GeneratedJson | null
           response_number: number | null
           response_value: string | null
           session_id: string | null
@@ -9893,10 +9893,10 @@ export type Database = {
           evaluation_id?: string | null
           id?: string
           is_final?: boolean | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           patient_email: string
           question_id?: string | null
-          response_json?: Json | null
+          response_json?: GeneratedJson | null
           response_number?: number | null
           response_value?: string | null
           session_id?: string | null
@@ -9906,10 +9906,10 @@ export type Database = {
           evaluation_id?: string | null
           id?: string
           is_final?: boolean | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           patient_email?: string
           question_id?: string | null
-          response_json?: Json | null
+          response_json?: GeneratedJson | null
           response_number?: number | null
           response_value?: string | null
           session_id?: string | null
@@ -9977,7 +9977,7 @@ export type Database = {
           is_active: boolean | null
           kpi_name: string | null
           message: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           period_end: string | null
           period_start: string | null
           period_type: string | null
@@ -9999,7 +9999,7 @@ export type Database = {
           is_active?: boolean | null
           kpi_name?: string | null
           message: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           period_end?: string | null
           period_start?: string | null
           period_type?: string | null
@@ -10021,7 +10021,7 @@ export type Database = {
           is_active?: boolean | null
           kpi_name?: string | null
           message?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           period_end?: string | null
           period_start?: string | null
           period_type?: string | null
@@ -10101,7 +10101,7 @@ export type Database = {
           format: string
           generated_at: string | null
           id: string
-          parameters: Json | null
+          parameters: GeneratedJson | null
           period_end: string
           period_start: string
           period_type: string
@@ -10120,7 +10120,7 @@ export type Database = {
           format?: string
           generated_at?: string | null
           id?: string
-          parameters?: Json | null
+          parameters?: GeneratedJson | null
           period_end: string
           period_start: string
           period_type: string
@@ -10139,7 +10139,7 @@ export type Database = {
           format?: string
           generated_at?: string | null
           id?: string
-          parameters?: Json | null
+          parameters?: GeneratedJson | null
           period_end?: string
           period_start?: string
           period_type?: string
@@ -10190,7 +10190,7 @@ export type Database = {
       executive_dashboard_widgets: {
         Row: {
           clinic_id: string
-          configuration: Json | null
+          configuration: GeneratedJson | null
           created_at: string | null
           height: number
           id: string
@@ -10204,7 +10204,7 @@ export type Database = {
         }
         Insert: {
           clinic_id: string
-          configuration?: Json | null
+          configuration?: GeneratedJson | null
           created_at?: string | null
           height?: number
           id?: string
@@ -10218,7 +10218,7 @@ export type Database = {
         }
         Update: {
           clinic_id?: string
-          configuration?: Json | null
+          configuration?: GeneratedJson | null
           created_at?: string | null
           height?: number
           id?: string
@@ -10277,7 +10277,7 @@ export type Database = {
           id: string
           kpi_name: string
           kpi_value: number
-          metadata: Json | null
+          metadata: GeneratedJson | null
           period_end: string
           period_start: string
           period_type: string
@@ -10293,7 +10293,7 @@ export type Database = {
           id?: string
           kpi_name: string
           kpi_value: number
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           period_end: string
           period_start: string
           period_type: string
@@ -10309,7 +10309,7 @@ export type Database = {
           id?: string
           kpi_name?: string
           kpi_value?: number
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           period_end?: string
           period_start?: string
           period_type?: string
@@ -10425,8 +10425,8 @@ export type Database = {
           access_count: number | null
           api_config_id: string
           cache_key: string
-          cached_response: Json
-          call_status: Database["public"]["Enums"]["api_verification_status"]
+          cached_response: GeneratedJson
+          call_status: GeneratedDatabase["public"]["Enums"]["api_verification_status"]
           created_at: string
           expires_at: string
           id: string
@@ -10435,15 +10435,15 @@ export type Database = {
           is_valid: boolean | null
           last_accessed: string | null
           query_hash: string
-          query_parameters: Json
-          verification_result: Json | null
+          query_parameters: GeneratedJson
+          verification_result: GeneratedJson | null
         }
         Insert: {
           access_count?: number | null
           api_config_id: string
           cache_key: string
-          cached_response: Json
-          call_status: Database["public"]["Enums"]["api_verification_status"]
+          cached_response: GeneratedJson
+          call_status: GeneratedDatabase["public"]["Enums"]["api_verification_status"]
           created_at?: string
           expires_at: string
           id?: string
@@ -10452,15 +10452,15 @@ export type Database = {
           is_valid?: boolean | null
           last_accessed?: string | null
           query_hash: string
-          query_parameters: Json
-          verification_result?: Json | null
+          query_parameters: GeneratedJson
+          verification_result?: GeneratedJson | null
         }
         Update: {
           access_count?: number | null
           api_config_id?: string
           cache_key?: string
-          cached_response?: Json
-          call_status?: Database["public"]["Enums"]["api_verification_status"]
+          cached_response?: GeneratedJson
+          call_status?: GeneratedDatabase["public"]["Enums"]["api_verification_status"]
           created_at?: string
           expires_at?: string
           id?: string
@@ -10469,8 +10469,8 @@ export type Database = {
           is_valid?: boolean | null
           last_accessed?: string | null
           query_hash?: string
-          query_parameters?: Json
-          verification_result?: Json | null
+          query_parameters?: GeneratedJson
+          verification_result?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -10485,93 +10485,93 @@ export type Database = {
       external_api_calls: {
         Row: {
           api_config_id: string
-          automated_actions: Json | null
+          automated_actions: GeneratedJson | null
           call_purpose: string | null
-          call_status: Database["public"]["Enums"]["api_verification_status"]
+          call_status: GeneratedDatabase["public"]["Enums"]["api_verification_status"]
           caller_ip: unknown | null
           certification_id: string | null
           correlation_id: string | null
           created_at: string
-          data_extracted: Json | null
+          data_extracted: GeneratedJson | null
           endpoint_called: string
-          error_details: Json | null
+          error_details: GeneratedJson | null
           error_message: string | null
           http_method: string
           id: string
           manual_review_required: boolean | null
           profile_id: string | null
-          query_parameters: Json | null
+          query_parameters: GeneratedJson | null
           registration_id: string | null
-          request_body: Json | null
-          request_headers: Json | null
-          response_body: Json | null
-          response_headers: Json | null
+          request_body: GeneratedJson | null
+          request_headers: GeneratedJson | null
+          response_body: GeneratedJson | null
+          response_headers: GeneratedJson | null
           response_status_code: number | null
           response_time_ms: number | null
           session_id: string | null
           triggered_by: string | null
           user_agent: string | null
-          verification_result: Json | null
+          verification_result: GeneratedJson | null
         }
         Insert: {
           api_config_id: string
-          automated_actions?: Json | null
+          automated_actions?: GeneratedJson | null
           call_purpose?: string | null
-          call_status: Database["public"]["Enums"]["api_verification_status"]
+          call_status: GeneratedDatabase["public"]["Enums"]["api_verification_status"]
           caller_ip?: unknown | null
           certification_id?: string | null
           correlation_id?: string | null
           created_at?: string
-          data_extracted?: Json | null
+          data_extracted?: GeneratedJson | null
           endpoint_called: string
-          error_details?: Json | null
+          error_details?: GeneratedJson | null
           error_message?: string | null
           http_method?: string
           id?: string
           manual_review_required?: boolean | null
           profile_id?: string | null
-          query_parameters?: Json | null
+          query_parameters?: GeneratedJson | null
           registration_id?: string | null
-          request_body?: Json | null
-          request_headers?: Json | null
-          response_body?: Json | null
-          response_headers?: Json | null
+          request_body?: GeneratedJson | null
+          request_headers?: GeneratedJson | null
+          response_body?: GeneratedJson | null
+          response_headers?: GeneratedJson | null
           response_status_code?: number | null
           response_time_ms?: number | null
           session_id?: string | null
           triggered_by?: string | null
           user_agent?: string | null
-          verification_result?: Json | null
+          verification_result?: GeneratedJson | null
         }
         Update: {
           api_config_id?: string
-          automated_actions?: Json | null
+          automated_actions?: GeneratedJson | null
           call_purpose?: string | null
-          call_status?: Database["public"]["Enums"]["api_verification_status"]
+          call_status?: GeneratedDatabase["public"]["Enums"]["api_verification_status"]
           caller_ip?: unknown | null
           certification_id?: string | null
           correlation_id?: string | null
           created_at?: string
-          data_extracted?: Json | null
+          data_extracted?: GeneratedJson | null
           endpoint_called?: string
-          error_details?: Json | null
+          error_details?: GeneratedJson | null
           error_message?: string | null
           http_method?: string
           id?: string
           manual_review_required?: boolean | null
           profile_id?: string | null
-          query_parameters?: Json | null
+          query_parameters?: GeneratedJson | null
           registration_id?: string | null
-          request_body?: Json | null
-          request_headers?: Json | null
-          response_body?: Json | null
-          response_headers?: Json | null
+          request_body?: GeneratedJson | null
+          request_headers?: GeneratedJson | null
+          response_body?: GeneratedJson | null
+          response_headers?: GeneratedJson | null
           response_status_code?: number | null
           response_time_ms?: number | null
           session_id?: string | null
           triggered_by?: string | null
           user_agent?: string | null
-          verification_result?: Json | null
+          verification_result?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -10630,10 +10630,10 @@ export type Database = {
           client_secret_encrypted: string | null
           created_at: string | null
           created_by: string
-          default_headers: Json | null
-          default_parameters: Json | null
+          default_headers: GeneratedJson | null
+          default_parameters: GeneratedJson | null
           endpoint_path: string | null
-          field_mappings: Json | null
+          field_mappings: GeneratedJson | null
           id: string
           is_active: boolean | null
           is_production: boolean | null
@@ -10641,9 +10641,9 @@ export type Database = {
           last_successful_call: string | null
           max_batch_size: number | null
           provider_name: string
-          provider_type: Database["public"]["Enums"]["api_provider_type"]
+          provider_type: GeneratedDatabase["public"]["Enums"]["api_provider_type"]
           rate_limit_per_minute: number | null
-          response_parsing_rules: Json | null
+          response_parsing_rules: GeneratedJson | null
           retry_attempts: number | null
           retry_delay_seconds: number | null
           success_rate_24h: number | null
@@ -10664,10 +10664,10 @@ export type Database = {
           client_secret_encrypted?: string | null
           created_at?: string | null
           created_by: string
-          default_headers?: Json | null
-          default_parameters?: Json | null
+          default_headers?: GeneratedJson | null
+          default_parameters?: GeneratedJson | null
           endpoint_path?: string | null
-          field_mappings?: Json | null
+          field_mappings?: GeneratedJson | null
           id?: string
           is_active?: boolean | null
           is_production?: boolean | null
@@ -10675,9 +10675,9 @@ export type Database = {
           last_successful_call?: string | null
           max_batch_size?: number | null
           provider_name: string
-          provider_type: Database["public"]["Enums"]["api_provider_type"]
+          provider_type: GeneratedDatabase["public"]["Enums"]["api_provider_type"]
           rate_limit_per_minute?: number | null
-          response_parsing_rules?: Json | null
+          response_parsing_rules?: GeneratedJson | null
           retry_attempts?: number | null
           retry_delay_seconds?: number | null
           success_rate_24h?: number | null
@@ -10698,10 +10698,10 @@ export type Database = {
           client_secret_encrypted?: string | null
           created_at?: string | null
           created_by?: string
-          default_headers?: Json | null
-          default_parameters?: Json | null
+          default_headers?: GeneratedJson | null
+          default_parameters?: GeneratedJson | null
           endpoint_path?: string | null
-          field_mappings?: Json | null
+          field_mappings?: GeneratedJson | null
           id?: string
           is_active?: boolean | null
           is_production?: boolean | null
@@ -10709,9 +10709,9 @@ export type Database = {
           last_successful_call?: string | null
           max_batch_size?: number | null
           provider_name?: string
-          provider_type?: Database["public"]["Enums"]["api_provider_type"]
+          provider_type?: GeneratedDatabase["public"]["Enums"]["api_provider_type"]
           rate_limit_per_minute?: number | null
-          response_parsing_rules?: Json | null
+          response_parsing_rules?: GeneratedJson | null
           retry_attempts?: number | null
           retry_delay_seconds?: number | null
           success_rate_24h?: number | null
@@ -10780,7 +10780,7 @@ export type Database = {
           min_response_time_ms: number | null
           monitoring_date: string
           p95_response_time_ms: number | null
-          status_code_distribution: Json | null
+          status_code_distribution: GeneratedJson | null
           success_rate: number | null
           successful_calls: number | null
           timeout_calls: number | null
@@ -10800,7 +10800,7 @@ export type Database = {
           min_response_time_ms?: number | null
           monitoring_date?: string
           p95_response_time_ms?: number | null
-          status_code_distribution?: Json | null
+          status_code_distribution?: GeneratedJson | null
           success_rate?: number | null
           successful_calls?: number | null
           timeout_calls?: number | null
@@ -10820,7 +10820,7 @@ export type Database = {
           min_response_time_ms?: number | null
           monitoring_date?: string
           p95_response_time_ms?: number | null
-          status_code_distribution?: Json | null
+          status_code_distribution?: GeneratedJson | null
           success_rate?: number | null
           successful_calls?: number | null
           timeout_calls?: number | null
@@ -10845,7 +10845,7 @@ export type Database = {
           id: string
           is_enabled: boolean | null
           rollout_percentage: number | null
-          target_audience: Json | null
+          target_audience: GeneratedJson | null
           updated_at: string | null
         }
         Insert: {
@@ -10855,7 +10855,7 @@ export type Database = {
           id?: string
           is_enabled?: boolean | null
           rollout_percentage?: number | null
-          target_audience?: Json | null
+          target_audience?: GeneratedJson | null
           updated_at?: string | null
         }
         Update: {
@@ -10865,7 +10865,7 @@ export type Database = {
           id?: string
           is_enabled?: boolean | null
           rollout_percentage?: number | null
-          target_audience?: Json | null
+          target_audience?: GeneratedJson | null
           updated_at?: string | null
         }
         Relationships: []
@@ -11017,7 +11017,7 @@ export type Database = {
           id: string
           processed: boolean | null
           received_at: string | null
-          response_data: Json | null
+          response_data: GeneratedJson | null
           response_type: string
           response_value: string | null
           satisfaction_score: number | null
@@ -11028,7 +11028,7 @@ export type Database = {
           id?: string
           processed?: boolean | null
           received_at?: string | null
-          response_data?: Json | null
+          response_data?: GeneratedJson | null
           response_type: string
           response_value?: string | null
           satisfaction_score?: number | null
@@ -11039,7 +11039,7 @@ export type Database = {
           id?: string
           processed?: boolean | null
           received_at?: string | null
-          response_data?: Json | null
+          response_data?: GeneratedJson | null
           response_type?: string
           response_value?: string | null
           satisfaction_score?: number | null
@@ -11152,7 +11152,7 @@ export type Database = {
           acknowledged_at: string | null
           acknowledged_by: string | null
           actual_value: number | null
-          alert_data: Json | null
+          alert_data: GeneratedJson | null
           alert_message: string
           alert_status: string | null
           alert_title: string
@@ -11176,7 +11176,7 @@ export type Database = {
           acknowledged_at?: string | null
           acknowledged_by?: string | null
           actual_value?: number | null
-          alert_data?: Json | null
+          alert_data?: GeneratedJson | null
           alert_message: string
           alert_status?: string | null
           alert_title: string
@@ -11200,7 +11200,7 @@ export type Database = {
           acknowledged_at?: string | null
           acknowledged_by?: string | null
           actual_value?: number | null
-          alert_data?: Json | null
+          alert_data?: GeneratedJson | null
           alert_message?: string
           alert_status?: string | null
           alert_title?: string
@@ -11308,8 +11308,8 @@ export type Database = {
           predictions_made: number | null
           predictions_validated: number | null
           rmse: number
-          service_accuracies: Json | null
-          time_period_accuracies: Json | null
+          service_accuracies: GeneratedJson | null
+          time_period_accuracies: GeneratedJson | null
           trend_percentage: number | null
           validation_rate: number | null
         }
@@ -11334,8 +11334,8 @@ export type Database = {
           predictions_made?: number | null
           predictions_validated?: number | null
           rmse: number
-          service_accuracies?: Json | null
-          time_period_accuracies?: Json | null
+          service_accuracies?: GeneratedJson | null
+          time_period_accuracies?: GeneratedJson | null
           trend_percentage?: number | null
           validation_rate?: number | null
         }
@@ -11360,8 +11360,8 @@ export type Database = {
           predictions_made?: number | null
           predictions_validated?: number | null
           rmse?: number
-          service_accuracies?: Json | null
-          time_period_accuracies?: Json | null
+          service_accuracies?: GeneratedJson | null
+          time_period_accuracies?: GeneratedJson | null
           trend_percentage?: number | null
           validation_rate?: number | null
         }
@@ -11396,7 +11396,7 @@ export type Database = {
           id: string
           is_enabled: boolean | null
           method_id: string
-          specific_config: Json | null
+          specific_config: GeneratedJson | null
           specific_fee: number | null
         }
         Insert: {
@@ -11405,7 +11405,7 @@ export type Database = {
           id?: string
           is_enabled?: boolean | null
           method_id: string
-          specific_config?: Json | null
+          specific_config?: GeneratedJson | null
           specific_fee?: number | null
         }
         Update: {
@@ -11414,7 +11414,7 @@ export type Database = {
           id?: string
           is_enabled?: boolean | null
           method_id?: string
-          specific_config?: Json | null
+          specific_config?: GeneratedJson | null
           specific_fee?: number | null
         }
         Relationships: [
@@ -11442,8 +11442,8 @@ export type Database = {
           clinic_id: string
           cost_per_transaction: number | null
           created_at: string | null
-          decline_reasons: Json | null
-          error_breakdown: Json | null
+          decline_reasons: GeneratedJson | null
+          error_breakdown: GeneratedJson | null
           failed_transactions: number | null
           gateway_id: string
           id: string
@@ -11464,8 +11464,8 @@ export type Database = {
           clinic_id: string
           cost_per_transaction?: number | null
           created_at?: string | null
-          decline_reasons?: Json | null
-          error_breakdown?: Json | null
+          decline_reasons?: GeneratedJson | null
+          error_breakdown?: GeneratedJson | null
           failed_transactions?: number | null
           gateway_id: string
           id?: string
@@ -11486,8 +11486,8 @@ export type Database = {
           clinic_id?: string
           cost_per_transaction?: number | null
           created_at?: string | null
-          decline_reasons?: Json | null
-          error_breakdown?: Json | null
+          decline_reasons?: GeneratedJson | null
+          error_breakdown?: GeneratedJson | null
           failed_transactions?: number | null
           gateway_id?: string
           id?: string
@@ -11545,11 +11545,11 @@ export type Database = {
           report_date: string
           report_period_end: string | null
           report_period_start: string | null
-          report_summary: Json | null
+          report_summary: GeneratedJson | null
           report_type: string
           total_records: number | null
           updated_at: string | null
-          validation_errors: Json | null
+          validation_errors: GeneratedJson | null
         }
         Insert: {
           clinic_id: string
@@ -11570,11 +11570,11 @@ export type Database = {
           report_date: string
           report_period_end?: string | null
           report_period_start?: string | null
-          report_summary?: Json | null
+          report_summary?: GeneratedJson | null
           report_type: string
           total_records?: number | null
           updated_at?: string | null
-          validation_errors?: Json | null
+          validation_errors?: GeneratedJson | null
         }
         Update: {
           clinic_id?: string
@@ -11595,11 +11595,11 @@ export type Database = {
           report_date?: string
           report_period_end?: string | null
           report_period_start?: string | null
-          report_summary?: Json | null
+          report_summary?: GeneratedJson | null
           report_type?: string
           total_records?: number | null
           updated_at?: string | null
-          validation_errors?: Json | null
+          validation_errors?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -11631,7 +11631,7 @@ export type Database = {
           clinic_id: string | null
           id: string
           ip_address: string | null
-          metadata: Json | null
+          metadata: GeneratedJson | null
           resource_id: string | null
           resource_type: string | null
           timestamp: string | null
@@ -11643,7 +11643,7 @@ export type Database = {
           clinic_id?: string | null
           id?: string
           ip_address?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           resource_id?: string | null
           resource_type?: string | null
           timestamp?: string | null
@@ -11655,7 +11655,7 @@ export type Database = {
           clinic_id?: string | null
           id?: string
           ip_address?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           resource_id?: string | null
           resource_type?: string | null
           timestamp?: string | null
@@ -11690,7 +11690,7 @@ export type Database = {
           clinic_id: string
           consultation_duration_minutes: number | null
           consultation_fee: number | null
-          continuing_education: Json | null
+          continuing_education: GeneratedJson | null
           coren_number: string | null
           created_at: string
           crefito_number: string | null
@@ -11711,7 +11711,7 @@ export type Database = {
           max_daily_appointments: number | null
           medical_school: string | null
           onboarding_completed: boolean | null
-          other_license_numbers: Json | null
+          other_license_numbers: GeneratedJson | null
           professional_status: string | null
           professional_type: string
           profile_image_url: string | null
@@ -11722,7 +11722,7 @@ export type Database = {
           telemedicine_enabled: boolean | null
           updated_at: string
           user_id: string
-          working_hours: Json | null
+          working_hours: GeneratedJson | null
           years_of_experience: number | null
         }
         Insert: {
@@ -11735,7 +11735,7 @@ export type Database = {
           clinic_id: string
           consultation_duration_minutes?: number | null
           consultation_fee?: number | null
-          continuing_education?: Json | null
+          continuing_education?: GeneratedJson | null
           coren_number?: string | null
           created_at?: string
           crefito_number?: string | null
@@ -11756,7 +11756,7 @@ export type Database = {
           max_daily_appointments?: number | null
           medical_school?: string | null
           onboarding_completed?: boolean | null
-          other_license_numbers?: Json | null
+          other_license_numbers?: GeneratedJson | null
           professional_status?: string | null
           professional_type: string
           profile_image_url?: string | null
@@ -11767,7 +11767,7 @@ export type Database = {
           telemedicine_enabled?: boolean | null
           updated_at?: string
           user_id: string
-          working_hours?: Json | null
+          working_hours?: GeneratedJson | null
           years_of_experience?: number | null
         }
         Update: {
@@ -11780,7 +11780,7 @@ export type Database = {
           clinic_id?: string
           consultation_duration_minutes?: number | null
           consultation_fee?: number | null
-          continuing_education?: Json | null
+          continuing_education?: GeneratedJson | null
           coren_number?: string | null
           created_at?: string
           crefito_number?: string | null
@@ -11801,7 +11801,7 @@ export type Database = {
           max_daily_appointments?: number | null
           medical_school?: string | null
           onboarding_completed?: boolean | null
-          other_license_numbers?: Json | null
+          other_license_numbers?: GeneratedJson | null
           professional_status?: string | null
           professional_type?: string
           profile_image_url?: string | null
@@ -11812,7 +11812,7 @@ export type Database = {
           telemedicine_enabled?: boolean | null
           updated_at?: string
           user_id?: string
-          working_hours?: Json | null
+          working_hours?: GeneratedJson | null
           years_of_experience?: number | null
         }
         Relationships: [
@@ -11839,7 +11839,7 @@ export type Database = {
           effectiveness_score: number | null
           executed_at: string | null
           id: string
-          intervention_details: Json | null
+          intervention_details: GeneratedJson | null
           intervention_type: string
           prediction_id: string
           result_outcome: string | null
@@ -11852,7 +11852,7 @@ export type Database = {
           effectiveness_score?: number | null
           executed_at?: string | null
           id?: string
-          intervention_details?: Json | null
+          intervention_details?: GeneratedJson | null
           intervention_type: string
           prediction_id: string
           result_outcome?: string | null
@@ -11865,7 +11865,7 @@ export type Database = {
           effectiveness_score?: number | null
           executed_at?: string | null
           id?: string
-          intervention_details?: Json | null
+          intervention_details?: GeneratedJson | null
           intervention_type?: string
           prediction_id?: string
           result_outcome?: string | null
@@ -11905,8 +11905,8 @@ export type Database = {
           qr_code: string | null
           selling_price: number | null
           sku: string | null
-          storage_requirements: Json | null
-          supplier_info: Json | null
+          storage_requirements: GeneratedJson | null
+          supplier_info: GeneratedJson | null
           unit_of_measure: string | null
           updated_at: string | null
           updated_by: string | null
@@ -11933,8 +11933,8 @@ export type Database = {
           qr_code?: string | null
           selling_price?: number | null
           sku?: string | null
-          storage_requirements?: Json | null
-          supplier_info?: Json | null
+          storage_requirements?: GeneratedJson | null
+          supplier_info?: GeneratedJson | null
           unit_of_measure?: string | null
           updated_at?: string | null
           updated_by?: string | null
@@ -11961,8 +11961,8 @@ export type Database = {
           qr_code?: string | null
           selling_price?: number | null
           sku?: string | null
-          storage_requirements?: Json | null
-          supplier_info?: Json | null
+          storage_requirements?: GeneratedJson | null
+          supplier_info?: GeneratedJson | null
           unit_of_measure?: string | null
           updated_at?: string | null
           updated_by?: string | null
@@ -12076,11 +12076,11 @@ export type Database = {
           is_active: boolean | null
           is_required: boolean | null
           legacy_system_id: string
-          transformation_config: Json
+          transformation_config: GeneratedJson
           transformation_name: string
           transformation_type: string
           updated_at: string | null
-          validation_rules: Json | null
+          validation_rules: GeneratedJson | null
         }
         Insert: {
           applies_to_inbound?: boolean | null
@@ -12093,11 +12093,11 @@ export type Database = {
           is_active?: boolean | null
           is_required?: boolean | null
           legacy_system_id: string
-          transformation_config: Json
+          transformation_config: GeneratedJson
           transformation_name: string
           transformation_type: string
           updated_at?: string | null
-          validation_rules?: Json | null
+          validation_rules?: GeneratedJson | null
         }
         Update: {
           applies_to_inbound?: boolean | null
@@ -12110,11 +12110,11 @@ export type Database = {
           is_active?: boolean | null
           is_required?: boolean | null
           legacy_system_id?: string
-          transformation_config?: Json
+          transformation_config?: GeneratedJson
           transformation_name?: string
           transformation_type?: string
           updated_at?: string | null
-          validation_rules?: Json | null
+          validation_rules?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -12157,7 +12157,7 @@ export type Database = {
           legacy_id: string
           legacy_reference: string | null
           legacy_system_id: string
-          mapping_data: Json | null
+          mapping_data: GeneratedJson | null
           neonpro_id: string
           sync_conflicts: number | null
           sync_hash: string | null
@@ -12172,7 +12172,7 @@ export type Database = {
           legacy_id: string
           legacy_reference?: string | null
           legacy_system_id: string
-          mapping_data?: Json | null
+          mapping_data?: GeneratedJson | null
           neonpro_id: string
           sync_conflicts?: number | null
           sync_hash?: string | null
@@ -12187,7 +12187,7 @@ export type Database = {
           legacy_id?: string
           legacy_reference?: string | null
           legacy_system_id?: string
-          mapping_data?: Json | null
+          mapping_data?: GeneratedJson | null
           neonpro_id?: string
           sync_conflicts?: number | null
           sync_hash?: string | null
@@ -12210,16 +12210,16 @@ export type Database = {
           cache_misses: number | null
           completed_at: string | null
           cpu_time_seconds: number | null
-          data_samples: Json | null
-          debug_info: Json | null
+          data_samples: GeneratedJson | null
+          debug_info: GeneratedJson | null
           duration_seconds: number | null
-          errors_encountered: Json | null
+          errors_encountered: GeneratedJson | null
           execution_log: string | null
           id: string
           legacy_system_id: string
           memory_usage_mb: number | null
           network_calls: number | null
-          operation_summary: Json | null
+          operation_summary: GeneratedJson | null
           operation_type: string
           records_failed: number | null
           records_processed: number | null
@@ -12228,8 +12228,8 @@ export type Database = {
           started_at: string
           status: string | null
           success_rate: number | null
-          sync_direction: Database["public"]["Enums"]["sync_direction"]
-          warnings_generated: Json | null
+          sync_direction: GeneratedDatabase["public"]["Enums"]["sync_direction"]
+          warnings_generated: GeneratedJson | null
         }
         Insert: {
           automation_execution_id?: string | null
@@ -12237,16 +12237,16 @@ export type Database = {
           cache_misses?: number | null
           completed_at?: string | null
           cpu_time_seconds?: number | null
-          data_samples?: Json | null
-          debug_info?: Json | null
+          data_samples?: GeneratedJson | null
+          debug_info?: GeneratedJson | null
           duration_seconds?: number | null
-          errors_encountered?: Json | null
+          errors_encountered?: GeneratedJson | null
           execution_log?: string | null
           id?: string
           legacy_system_id: string
           memory_usage_mb?: number | null
           network_calls?: number | null
-          operation_summary?: Json | null
+          operation_summary?: GeneratedJson | null
           operation_type: string
           records_failed?: number | null
           records_processed?: number | null
@@ -12255,8 +12255,8 @@ export type Database = {
           started_at?: string
           status?: string | null
           success_rate?: number | null
-          sync_direction: Database["public"]["Enums"]["sync_direction"]
-          warnings_generated?: Json | null
+          sync_direction: GeneratedDatabase["public"]["Enums"]["sync_direction"]
+          warnings_generated?: GeneratedJson | null
         }
         Update: {
           automation_execution_id?: string | null
@@ -12264,16 +12264,16 @@ export type Database = {
           cache_misses?: number | null
           completed_at?: string | null
           cpu_time_seconds?: number | null
-          data_samples?: Json | null
-          debug_info?: Json | null
+          data_samples?: GeneratedJson | null
+          debug_info?: GeneratedJson | null
           duration_seconds?: number | null
-          errors_encountered?: Json | null
+          errors_encountered?: GeneratedJson | null
           execution_log?: string | null
           id?: string
           legacy_system_id?: string
           memory_usage_mb?: number | null
           network_calls?: number | null
-          operation_summary?: Json | null
+          operation_summary?: GeneratedJson | null
           operation_type?: string
           records_failed?: number | null
           records_processed?: number | null
@@ -12282,8 +12282,8 @@ export type Database = {
           started_at?: string
           status?: string | null
           success_rate?: number | null
-          sync_direction?: Database["public"]["Enums"]["sync_direction"]
-          warnings_generated?: Json | null
+          sync_direction?: GeneratedDatabase["public"]["Enums"]["sync_direction"]
+          warnings_generated?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -12315,14 +12315,14 @@ export type Database = {
           legacy_system_id: string
           max_attempts: number | null
           next_retry_at: string | null
-          operation_data: Json | null
+          operation_data: GeneratedJson | null
           operation_type: string
           priority: number | null
-          result_data: Json | null
+          result_data: GeneratedJson | null
           scheduled_at: string | null
           started_at: string | null
           status: string | null
-          sync_direction: Database["public"]["Enums"]["sync_direction"]
+          sync_direction: GeneratedDatabase["public"]["Enums"]["sync_direction"]
           updated_at: string | null
         }
         Insert: {
@@ -12337,14 +12337,14 @@ export type Database = {
           legacy_system_id: string
           max_attempts?: number | null
           next_retry_at?: string | null
-          operation_data?: Json | null
+          operation_data?: GeneratedJson | null
           operation_type: string
           priority?: number | null
-          result_data?: Json | null
+          result_data?: GeneratedJson | null
           scheduled_at?: string | null
           started_at?: string | null
           status?: string | null
-          sync_direction: Database["public"]["Enums"]["sync_direction"]
+          sync_direction: GeneratedDatabase["public"]["Enums"]["sync_direction"]
           updated_at?: string | null
         }
         Update: {
@@ -12359,14 +12359,14 @@ export type Database = {
           legacy_system_id?: string
           max_attempts?: number | null
           next_retry_at?: string | null
-          operation_data?: Json | null
+          operation_data?: GeneratedJson | null
           operation_type?: string
           priority?: number | null
-          result_data?: Json | null
+          result_data?: GeneratedJson | null
           scheduled_at?: string | null
           started_at?: string | null
           status?: string | null
-          sync_direction?: Database["public"]["Enums"]["sync_direction"]
+          sync_direction?: GeneratedDatabase["public"]["Enums"]["sync_direction"]
           updated_at?: string | null
         }
         Relationships: [
@@ -12402,22 +12402,22 @@ export type Database = {
       }
       legacy_systems: {
         Row: {
-          authentication_config: Json | null
+          authentication_config: GeneratedJson | null
           batch_size: number | null
           circuit_breaker_threshold: number | null
-          connection_config: Json | null
+          connection_config: GeneratedJson | null
           contact_email: string | null
           contact_person: string | null
           created_at: string | null
           created_by: string | null
-          data_transformations: Json | null
+          data_transformations: GeneratedJson | null
           description: string | null
           documentation_url: string | null
           endpoint_url: string | null
           failed_sync_operations: number | null
-          field_mappings: Json | null
+          field_mappings: GeneratedJson | null
           id: string
-          integration_method: Database["public"]["Enums"]["integration_method"]
+          integration_method: GeneratedDatabase["public"]["Enums"]["integration_method"]
           is_enabled: boolean | null
           last_error: string | null
           last_error_message: string | null
@@ -12426,38 +12426,38 @@ export type Database = {
           rate_limit_per_minute: number | null
           retry_attempts: number | null
           retry_delay_seconds: number | null
-          status: Database["public"]["Enums"]["integration_status"] | null
+          status: GeneratedDatabase["public"]["Enums"]["integration_status"] | null
           successful_sync_operations: number | null
-          sync_direction: Database["public"]["Enums"]["sync_direction"] | null
+          sync_direction: GeneratedDatabase["public"]["Enums"]["sync_direction"] | null
           sync_frequency_minutes: number | null
           system_code: string
           system_name: string
-          system_type: Database["public"]["Enums"]["legacy_system_type"]
+          system_type: GeneratedDatabase["public"]["Enums"]["legacy_system_type"]
           timeout_seconds: number | null
           total_sync_operations: number | null
           updated_at: string | null
           updated_by: string | null
-          validation_rules: Json | null
+          validation_rules: GeneratedJson | null
           vendor: string | null
           version: string | null
         }
         Insert: {
-          authentication_config?: Json | null
+          authentication_config?: GeneratedJson | null
           batch_size?: number | null
           circuit_breaker_threshold?: number | null
-          connection_config?: Json | null
+          connection_config?: GeneratedJson | null
           contact_email?: string | null
           contact_person?: string | null
           created_at?: string | null
           created_by?: string | null
-          data_transformations?: Json | null
+          data_transformations?: GeneratedJson | null
           description?: string | null
           documentation_url?: string | null
           endpoint_url?: string | null
           failed_sync_operations?: number | null
-          field_mappings?: Json | null
+          field_mappings?: GeneratedJson | null
           id?: string
-          integration_method: Database["public"]["Enums"]["integration_method"]
+          integration_method: GeneratedDatabase["public"]["Enums"]["integration_method"]
           is_enabled?: boolean | null
           last_error?: string | null
           last_error_message?: string | null
@@ -12466,38 +12466,38 @@ export type Database = {
           rate_limit_per_minute?: number | null
           retry_attempts?: number | null
           retry_delay_seconds?: number | null
-          status?: Database["public"]["Enums"]["integration_status"] | null
+          status?: GeneratedDatabase["public"]["Enums"]["integration_status"] | null
           successful_sync_operations?: number | null
-          sync_direction?: Database["public"]["Enums"]["sync_direction"] | null
+          sync_direction?: GeneratedDatabase["public"]["Enums"]["sync_direction"] | null
           sync_frequency_minutes?: number | null
           system_code: string
           system_name: string
-          system_type: Database["public"]["Enums"]["legacy_system_type"]
+          system_type: GeneratedDatabase["public"]["Enums"]["legacy_system_type"]
           timeout_seconds?: number | null
           total_sync_operations?: number | null
           updated_at?: string | null
           updated_by?: string | null
-          validation_rules?: Json | null
+          validation_rules?: GeneratedJson | null
           vendor?: string | null
           version?: string | null
         }
         Update: {
-          authentication_config?: Json | null
+          authentication_config?: GeneratedJson | null
           batch_size?: number | null
           circuit_breaker_threshold?: number | null
-          connection_config?: Json | null
+          connection_config?: GeneratedJson | null
           contact_email?: string | null
           contact_person?: string | null
           created_at?: string | null
           created_by?: string | null
-          data_transformations?: Json | null
+          data_transformations?: GeneratedJson | null
           description?: string | null
           documentation_url?: string | null
           endpoint_url?: string | null
           failed_sync_operations?: number | null
-          field_mappings?: Json | null
+          field_mappings?: GeneratedJson | null
           id?: string
-          integration_method?: Database["public"]["Enums"]["integration_method"]
+          integration_method?: GeneratedDatabase["public"]["Enums"]["integration_method"]
           is_enabled?: boolean | null
           last_error?: string | null
           last_error_message?: string | null
@@ -12506,18 +12506,18 @@ export type Database = {
           rate_limit_per_minute?: number | null
           retry_attempts?: number | null
           retry_delay_seconds?: number | null
-          status?: Database["public"]["Enums"]["integration_status"] | null
+          status?: GeneratedDatabase["public"]["Enums"]["integration_status"] | null
           successful_sync_operations?: number | null
-          sync_direction?: Database["public"]["Enums"]["sync_direction"] | null
+          sync_direction?: GeneratedDatabase["public"]["Enums"]["sync_direction"] | null
           sync_frequency_minutes?: number | null
           system_code?: string
           system_name?: string
-          system_type?: Database["public"]["Enums"]["legacy_system_type"]
+          system_type?: GeneratedDatabase["public"]["Enums"]["legacy_system_type"]
           timeout_seconds?: number | null
           total_sync_operations?: number | null
           updated_at?: string | null
           updated_by?: string | null
-          validation_rules?: Json | null
+          validation_rules?: GeneratedJson | null
           vendor?: string | null
           version?: string | null
         }
@@ -12578,7 +12578,7 @@ export type Database = {
           content_type: string | null
           created_at: string | null
           created_by: string | null
-          digital_signature: Json | null
+          digital_signature: GeneratedJson | null
           document_content: string
           document_type: string
           effective_date: string
@@ -12587,7 +12587,7 @@ export type Database = {
           id: string
           is_active: boolean | null
           regulatory_body: string | null
-          tags: Json | null
+          tags: GeneratedJson | null
           title: string
           updated_at: string | null
           updated_by: string | null
@@ -12604,7 +12604,7 @@ export type Database = {
           content_type?: string | null
           created_at?: string | null
           created_by?: string | null
-          digital_signature?: Json | null
+          digital_signature?: GeneratedJson | null
           document_content: string
           document_type: string
           effective_date: string
@@ -12613,7 +12613,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           regulatory_body?: string | null
-          tags?: Json | null
+          tags?: GeneratedJson | null
           title: string
           updated_at?: string | null
           updated_by?: string | null
@@ -12630,7 +12630,7 @@ export type Database = {
           content_type?: string | null
           created_at?: string | null
           created_by?: string | null
-          digital_signature?: Json | null
+          digital_signature?: GeneratedJson | null
           document_content?: string
           document_type?: string
           effective_date?: string
@@ -12639,7 +12639,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           regulatory_body?: string | null
-          tags?: Json | null
+          tags?: GeneratedJson | null
           title?: string
           updated_at?: string | null
           updated_by?: string | null
@@ -12731,7 +12731,7 @@ export type Database = {
           compliance_status: string | null
           consent_id: string | null
           data_category: string[] | null
-          details: Json | null
+          details: GeneratedJson | null
           id: string
           ip_address: unknown | null
           is_explicit: boolean | null
@@ -12751,7 +12751,7 @@ export type Database = {
           compliance_status?: string | null
           consent_id?: string | null
           data_category?: string[] | null
-          details?: Json | null
+          details?: GeneratedJson | null
           id?: string
           ip_address?: unknown | null
           is_explicit?: boolean | null
@@ -12771,7 +12771,7 @@ export type Database = {
           compliance_status?: string | null
           consent_id?: string | null
           data_category?: string[] | null
-          details?: Json | null
+          details?: GeneratedJson | null
           id?: string
           ip_address?: unknown | null
           is_explicit?: boolean | null
@@ -12795,7 +12795,7 @@ export type Database = {
           consent_version: string | null
           created_at: string | null
           data_categories: string[] | null
-          evidence: Json | null
+          evidence: GeneratedJson | null
           expires_at: string | null
           given_at: string | null
           id: string
@@ -12816,7 +12816,7 @@ export type Database = {
           consent_version?: string | null
           created_at?: string | null
           data_categories?: string[] | null
-          evidence?: Json | null
+          evidence?: GeneratedJson | null
           expires_at?: string | null
           given_at?: string | null
           id?: string
@@ -12837,7 +12837,7 @@ export type Database = {
           consent_version?: string | null
           created_at?: string | null
           data_categories?: string[] | null
-          evidence?: Json | null
+          evidence?: GeneratedJson | null
           expires_at?: string | null
           given_at?: string | null
           id?: string
@@ -12856,7 +12856,7 @@ export type Database = {
       }
       marketing_attribution_models: {
         Row: {
-          attribution_windows: Json | null
+          attribution_windows: GeneratedJson | null
           clinic_id: string
           created_at: string | null
           created_by: string | null
@@ -12868,10 +12868,10 @@ export type Database = {
           model_type: string
           updated_at: string | null
           updated_by: string | null
-          weight_configuration: Json | null
+          weight_configuration: GeneratedJson | null
         }
         Insert: {
-          attribution_windows?: Json | null
+          attribution_windows?: GeneratedJson | null
           clinic_id: string
           created_at?: string | null
           created_by?: string | null
@@ -12883,10 +12883,10 @@ export type Database = {
           model_type: string
           updated_at?: string | null
           updated_by?: string | null
-          weight_configuration?: Json | null
+          weight_configuration?: GeneratedJson | null
         }
         Update: {
-          attribution_windows?: Json | null
+          attribution_windows?: GeneratedJson | null
           clinic_id?: string
           created_at?: string | null
           created_by?: string | null
@@ -12898,7 +12898,7 @@ export type Database = {
           model_type?: string
           updated_at?: string | null
           updated_by?: string | null
-          weight_configuration?: Json | null
+          weight_configuration?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -12972,12 +12972,12 @@ export type Database = {
           created_by: string
           delivered_count: number | null
           description: string | null
-          exclude_criteria: Json | null
+          exclude_criteria: GeneratedJson | null
           id: string
-          include_criteria: Json | null
+          include_criteria: GeneratedJson | null
           name: string
           opened_count: number | null
-          personalization_data: Json | null
+          personalization_data: GeneratedJson | null
           personalization_level: string
           priority: string
           requires_consent: boolean
@@ -12991,7 +12991,7 @@ export type Database = {
           template_id: string | null
           timezone: string
           total_recipients: number | null
-          trigger_config: Json | null
+          trigger_config: GeneratedJson | null
           trigger_type: string
           unsubscribed_count: number | null
           updated_at: string
@@ -13008,12 +13008,12 @@ export type Database = {
           created_by: string
           delivered_count?: number | null
           description?: string | null
-          exclude_criteria?: Json | null
+          exclude_criteria?: GeneratedJson | null
           id?: string
-          include_criteria?: Json | null
+          include_criteria?: GeneratedJson | null
           name: string
           opened_count?: number | null
-          personalization_data?: Json | null
+          personalization_data?: GeneratedJson | null
           personalization_level?: string
           priority?: string
           requires_consent?: boolean
@@ -13027,7 +13027,7 @@ export type Database = {
           template_id?: string | null
           timezone?: string
           total_recipients?: number | null
-          trigger_config?: Json | null
+          trigger_config?: GeneratedJson | null
           trigger_type: string
           unsubscribed_count?: number | null
           updated_at?: string
@@ -13044,12 +13044,12 @@ export type Database = {
           created_by?: string
           delivered_count?: number | null
           description?: string | null
-          exclude_criteria?: Json | null
+          exclude_criteria?: GeneratedJson | null
           id?: string
-          include_criteria?: Json | null
+          include_criteria?: GeneratedJson | null
           name?: string
           opened_count?: number | null
-          personalization_data?: Json | null
+          personalization_data?: GeneratedJson | null
           personalization_level?: string
           priority?: string
           requires_consent?: boolean
@@ -13063,7 +13063,7 @@ export type Database = {
           template_id?: string | null
           timezone?: string
           total_recipients?: number | null
-          trigger_config?: Json | null
+          trigger_config?: GeneratedJson | null
           trigger_type?: string
           unsubscribed_count?: number | null
           updated_at?: string
@@ -13084,7 +13084,7 @@ export type Database = {
           last_sync_at: string | null
           platform_id: string
           refresh_token: string | null
-          sync_configuration: Json | null
+          sync_configuration: GeneratedJson | null
           sync_error_message: string | null
           sync_status: string | null
           token_expires_at: string | null
@@ -13105,7 +13105,7 @@ export type Database = {
           last_sync_at?: string | null
           platform_id: string
           refresh_token?: string | null
-          sync_configuration?: Json | null
+          sync_configuration?: GeneratedJson | null
           sync_error_message?: string | null
           sync_status?: string | null
           token_expires_at?: string | null
@@ -13126,7 +13126,7 @@ export type Database = {
           last_sync_at?: string | null
           platform_id?: string
           refresh_token?: string | null
-          sync_configuration?: Json | null
+          sync_configuration?: GeneratedJson | null
           sync_error_message?: string | null
           sync_status?: string | null
           token_expires_at?: string | null
@@ -13163,46 +13163,46 @@ export type Database = {
           api_base_url: string | null
           created_at: string | null
           documentation_url: string | null
-          features_supported: Json | null
+          features_supported: GeneratedJson | null
           id: string
           integration_complexity: string | null
-          oauth_config: Json | null
+          oauth_config: GeneratedJson | null
           platform_name: string
           platform_type: string
           pricing_model: string | null
           status: string | null
           updated_at: string | null
-          webhook_capabilities: Json | null
+          webhook_capabilities: GeneratedJson | null
         }
         Insert: {
           api_base_url?: string | null
           created_at?: string | null
           documentation_url?: string | null
-          features_supported?: Json | null
+          features_supported?: GeneratedJson | null
           id?: string
           integration_complexity?: string | null
-          oauth_config?: Json | null
+          oauth_config?: GeneratedJson | null
           platform_name: string
           platform_type: string
           pricing_model?: string | null
           status?: string | null
           updated_at?: string | null
-          webhook_capabilities?: Json | null
+          webhook_capabilities?: GeneratedJson | null
         }
         Update: {
           api_base_url?: string | null
           created_at?: string | null
           documentation_url?: string | null
-          features_supported?: Json | null
+          features_supported?: GeneratedJson | null
           id?: string
           integration_complexity?: string | null
-          oauth_config?: Json | null
+          oauth_config?: GeneratedJson | null
           platform_name?: string
           platform_type?: string
           pricing_model?: string | null
           status?: string | null
           updated_at?: string | null
-          webhook_capabilities?: Json | null
+          webhook_capabilities?: GeneratedJson | null
         }
         Relationships: []
       }
@@ -13210,7 +13210,7 @@ export type Database = {
         Row: {
           acknowledged_at: string | null
           acknowledged_by: string | null
-          alert_data: Json | null
+          alert_data: GeneratedJson | null
           alert_type: string
           campaign_id: string | null
           clinic_id: string
@@ -13231,7 +13231,7 @@ export type Database = {
         Insert: {
           acknowledged_at?: string | null
           acknowledged_by?: string | null
-          alert_data?: Json | null
+          alert_data?: GeneratedJson | null
           alert_type: string
           campaign_id?: string | null
           clinic_id: string
@@ -13252,7 +13252,7 @@ export type Database = {
         Update: {
           acknowledged_at?: string | null
           acknowledged_by?: string | null
-          alert_data?: Json | null
+          alert_data?: GeneratedJson | null
           alert_type?: string
           campaign_id?: string | null
           clinic_id?: string
@@ -13341,7 +13341,7 @@ export type Database = {
           attribution_model_id: string
           breakeven_point: number | null
           calculated_at: string | null
-          calculation_metadata: Json | null
+          calculation_metadata: GeneratedJson | null
           calculation_period_end: string
           calculation_period_start: string
           calculation_status: string | null
@@ -13370,7 +13370,7 @@ export type Database = {
           attribution_model_id: string
           breakeven_point?: number | null
           calculated_at?: string | null
-          calculation_metadata?: Json | null
+          calculation_metadata?: GeneratedJson | null
           calculation_period_end: string
           calculation_period_start: string
           calculation_status?: string | null
@@ -13399,7 +13399,7 @@ export type Database = {
           attribution_model_id?: string
           breakeven_point?: number | null
           calculated_at?: string | null
-          calculation_metadata?: Json | null
+          calculation_metadata?: GeneratedJson | null
           calculation_period_end?: string
           calculation_period_start?: string
           calculation_status?: string | null
@@ -13457,10 +13457,10 @@ export type Database = {
       }
       marketing_roi_forecasting: {
         Row: {
-          accuracy_metrics: Json | null
+          accuracy_metrics: GeneratedJson | null
           campaign_id: string | null
           clinic_id: string
-          confidence_intervals: Json | null
+          confidence_intervals: GeneratedJson | null
           created_at: string | null
           created_by: string | null
           forecast_period_end: string
@@ -13470,15 +13470,15 @@ export type Database = {
           forecasting_model: string | null
           historical_data_period: number
           id: string
-          model_parameters: Json | null
-          predicted_values: Json
+          model_parameters: GeneratedJson | null
+          predicted_values: GeneratedJson
           updated_at: string | null
         }
         Insert: {
-          accuracy_metrics?: Json | null
+          accuracy_metrics?: GeneratedJson | null
           campaign_id?: string | null
           clinic_id: string
-          confidence_intervals?: Json | null
+          confidence_intervals?: GeneratedJson | null
           created_at?: string | null
           created_by?: string | null
           forecast_period_end: string
@@ -13488,15 +13488,15 @@ export type Database = {
           forecasting_model?: string | null
           historical_data_period: number
           id?: string
-          model_parameters?: Json | null
-          predicted_values?: Json
+          model_parameters?: GeneratedJson | null
+          predicted_values?: GeneratedJson
           updated_at?: string | null
         }
         Update: {
-          accuracy_metrics?: Json | null
+          accuracy_metrics?: GeneratedJson | null
           campaign_id?: string | null
           clinic_id?: string
-          confidence_intervals?: Json | null
+          confidence_intervals?: GeneratedJson | null
           created_at?: string | null
           created_by?: string | null
           forecast_period_end?: string
@@ -13506,8 +13506,8 @@ export type Database = {
           forecasting_model?: string | null
           historical_data_period?: number
           id?: string
-          model_parameters?: Json | null
-          predicted_values?: Json
+          model_parameters?: GeneratedJson | null
+          predicted_values?: GeneratedJson
           updated_at?: string | null
         }
         Relationships: [
@@ -13565,7 +13565,7 @@ export type Database = {
           content: string | null
           created_at: string | null
           id: string
-          interaction_data: Json | null
+          interaction_data: GeneratedJson | null
           ip_address: unknown | null
           landing_page: string | null
           medium: string | null
@@ -13589,7 +13589,7 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           id?: string
-          interaction_data?: Json | null
+          interaction_data?: GeneratedJson | null
           ip_address?: unknown | null
           landing_page?: string | null
           medium?: string | null
@@ -13613,7 +13613,7 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           id?: string
-          interaction_data?: Json | null
+          interaction_data?: GeneratedJson | null
           ip_address?: unknown | null
           landing_page?: string | null
           medium?: string | null
@@ -13668,66 +13668,66 @@ export type Database = {
       }
       marketing_workflows: {
         Row: {
-          a_b_test_config: Json | null
+          a_b_test_config: GeneratedJson | null
           activated_at: string | null
           clinic_id: string
           created_at: string | null
           created_by: string
-          frequency_settings: Json | null
+          frequency_settings: GeneratedJson | null
           id: string
           last_modified_by: string | null
-          performance_stats: Json | null
-          personalization_rules: Json | null
+          performance_stats: GeneratedJson | null
+          personalization_rules: GeneratedJson | null
           status: string | null
-          success_metrics: Json | null
-          target_audience: Json | null
-          trigger_conditions: Json | null
+          success_metrics: GeneratedJson | null
+          target_audience: GeneratedJson | null
+          trigger_conditions: GeneratedJson | null
           trigger_event: string
           updated_at: string | null
           workflow_name: string
-          workflow_steps: Json
+          workflow_steps: GeneratedJson
           workflow_type: string
         }
         Insert: {
-          a_b_test_config?: Json | null
+          a_b_test_config?: GeneratedJson | null
           activated_at?: string | null
           clinic_id: string
           created_at?: string | null
           created_by: string
-          frequency_settings?: Json | null
+          frequency_settings?: GeneratedJson | null
           id?: string
           last_modified_by?: string | null
-          performance_stats?: Json | null
-          personalization_rules?: Json | null
+          performance_stats?: GeneratedJson | null
+          personalization_rules?: GeneratedJson | null
           status?: string | null
-          success_metrics?: Json | null
-          target_audience?: Json | null
-          trigger_conditions?: Json | null
+          success_metrics?: GeneratedJson | null
+          target_audience?: GeneratedJson | null
+          trigger_conditions?: GeneratedJson | null
           trigger_event: string
           updated_at?: string | null
           workflow_name: string
-          workflow_steps?: Json
+          workflow_steps?: GeneratedJson
           workflow_type: string
         }
         Update: {
-          a_b_test_config?: Json | null
+          a_b_test_config?: GeneratedJson | null
           activated_at?: string | null
           clinic_id?: string
           created_at?: string | null
           created_by?: string
-          frequency_settings?: Json | null
+          frequency_settings?: GeneratedJson | null
           id?: string
           last_modified_by?: string | null
-          performance_stats?: Json | null
-          personalization_rules?: Json | null
+          performance_stats?: GeneratedJson | null
+          personalization_rules?: GeneratedJson | null
           status?: string | null
-          success_metrics?: Json | null
-          target_audience?: Json | null
-          trigger_conditions?: Json | null
+          success_metrics?: GeneratedJson | null
+          target_audience?: GeneratedJson | null
+          trigger_conditions?: GeneratedJson | null
           trigger_event?: string
           updated_at?: string | null
           workflow_name?: string
-          workflow_steps?: Json
+          workflow_steps?: GeneratedJson
           workflow_type?: string
         }
         Relationships: [
@@ -13794,7 +13794,7 @@ export type Database = {
           auto_payout_enabled: boolean | null
           clinic_id: string
           created_at: string | null
-          default_split_rules: Json | null
+          default_split_rules: GeneratedJson | null
           id: string
           is_marketplace_enabled: boolean | null
           marketplace_name: string | null
@@ -13812,7 +13812,7 @@ export type Database = {
           auto_payout_enabled?: boolean | null
           clinic_id: string
           created_at?: string | null
-          default_split_rules?: Json | null
+          default_split_rules?: GeneratedJson | null
           id?: string
           is_marketplace_enabled?: boolean | null
           marketplace_name?: string | null
@@ -13830,7 +13830,7 @@ export type Database = {
           auto_payout_enabled?: boolean | null
           clinic_id?: string
           created_at?: string | null
-          default_split_rules?: Json | null
+          default_split_rules?: GeneratedJson | null
           id?: string
           is_marketplace_enabled?: boolean | null
           marketplace_name?: string | null
@@ -13884,7 +13884,7 @@ export type Database = {
           serial_numbers: string[] | null
           step_id: string | null
           sterility_verified: boolean | null
-          supplier_info: Json | null
+          supplier_info: GeneratedJson | null
           tracking_id: string
           unit: string
           usage_time: string
@@ -13911,7 +13911,7 @@ export type Database = {
           serial_numbers?: string[] | null
           step_id?: string | null
           sterility_verified?: boolean | null
-          supplier_info?: Json | null
+          supplier_info?: GeneratedJson | null
           tracking_id: string
           unit: string
           usage_time: string
@@ -13938,7 +13938,7 @@ export type Database = {
           serial_numbers?: string[] | null
           step_id?: string | null
           sterility_verified?: boolean | null
-          supplier_info?: Json | null
+          supplier_info?: GeneratedJson | null
           tracking_id?: string
           unit?: string
           usage_time?: string
@@ -14107,7 +14107,7 @@ export type Database = {
           symptoms: string | null
           treatment_plan: string | null
           updated_at: string | null
-          vital_signs: Json | null
+          vital_signs: GeneratedJson | null
         }
         Insert: {
           appointment_id?: string | null
@@ -14124,7 +14124,7 @@ export type Database = {
           symptoms?: string | null
           treatment_plan?: string | null
           updated_at?: string | null
-          vital_signs?: Json | null
+          vital_signs?: GeneratedJson | null
         }
         Update: {
           appointment_id?: string | null
@@ -14141,7 +14141,7 @@ export type Database = {
           symptoms?: string | null
           treatment_plan?: string | null
           updated_at?: string | null
-          vital_signs?: Json | null
+          vital_signs?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -14262,7 +14262,7 @@ export type Database = {
           id: string
           model_performance_threshold: number
           model_retention_days: number
-          notification_settings: Json | null
+          notification_settings: GeneratedJson | null
           updated_at: string | null
         }
         Insert: {
@@ -14275,7 +14275,7 @@ export type Database = {
           id?: string
           model_performance_threshold?: number
           model_retention_days?: number
-          notification_settings?: Json | null
+          notification_settings?: GeneratedJson | null
           updated_at?: string | null
         }
         Update: {
@@ -14288,7 +14288,7 @@ export type Database = {
           id?: string
           model_performance_threshold?: number
           model_retention_days?: number
-          notification_settings?: Json | null
+          notification_settings?: GeneratedJson | null
           updated_at?: string | null
         }
         Relationships: [
@@ -14317,7 +14317,7 @@ export type Database = {
           id: string
           model_a_id: string | null
           model_b_id: string | null
-          results: Json | null
+          results: GeneratedJson | null
           start_date: string | null
           status: string | null
           success_metric: string | null
@@ -14333,7 +14333,7 @@ export type Database = {
           id?: string
           model_a_id?: string | null
           model_b_id?: string | null
-          results?: Json | null
+          results?: GeneratedJson | null
           start_date?: string | null
           status?: string | null
           success_metric?: string | null
@@ -14349,7 +14349,7 @@ export type Database = {
           id?: string
           model_a_id?: string | null
           model_b_id?: string | null
-          results?: Json | null
+          results?: GeneratedJson | null
           start_date?: string | null
           status?: string | null
           success_metric?: string | null
@@ -14396,9 +14396,9 @@ export type Database = {
           detection_period: unknown | null
           drift_score: number
           drift_type: string | null
-          features_affected: Json | null
+          features_affected: GeneratedJson | null
           id: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           model_id: string | null
           reference_period: unknown | null
           threshold_breached: boolean | null
@@ -14410,9 +14410,9 @@ export type Database = {
           detection_period?: unknown | null
           drift_score: number
           drift_type?: string | null
-          features_affected?: Json | null
+          features_affected?: GeneratedJson | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           model_id?: string | null
           reference_period?: unknown | null
           threshold_breached?: boolean | null
@@ -14424,9 +14424,9 @@ export type Database = {
           detection_period?: unknown | null
           drift_score?: number
           drift_type?: string | null
-          features_affected?: Json | null
+          features_affected?: GeneratedJson | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           model_id?: string | null
           reference_period?: unknown | null
           threshold_breached?: boolean | null
@@ -14458,7 +14458,7 @@ export type Database = {
           date: string
           id: string
           interventions_executed: number
-          model_performance_metrics: Json | null
+          model_performance_metrics: GeneratedJson | null
           predicted_no_shows: number
           revenue_recovered: number
           updated_at: string
@@ -14472,7 +14472,7 @@ export type Database = {
           date: string
           id?: string
           interventions_executed?: number
-          model_performance_metrics?: Json | null
+          model_performance_metrics?: GeneratedJson | null
           predicted_no_shows?: number
           revenue_recovered?: number
           updated_at?: string
@@ -14486,7 +14486,7 @@ export type Database = {
           date?: string
           id?: string
           interventions_executed?: number
-          model_performance_metrics?: Json | null
+          model_performance_metrics?: GeneratedJson | null
           predicted_no_shows?: number
           revenue_recovered?: number
           updated_at?: string
@@ -14513,7 +14513,7 @@ export type Database = {
           actual_outcome: string | null
           appointment_id: string
           created_at: string
-          factors_analyzed: Json
+          factors_analyzed: GeneratedJson
           id: string
           intervention_recommended: boolean
           model_version: string
@@ -14528,7 +14528,7 @@ export type Database = {
           actual_outcome?: string | null
           appointment_id: string
           created_at?: string
-          factors_analyzed?: Json
+          factors_analyzed?: GeneratedJson
           id?: string
           intervention_recommended?: boolean
           model_version?: string
@@ -14543,7 +14543,7 @@ export type Database = {
           actual_outcome?: string | null
           appointment_id?: string
           created_at?: string
-          factors_analyzed?: Json
+          factors_analyzed?: GeneratedJson
           id?: string
           intervention_recommended?: boolean
           model_version?: string
@@ -14603,7 +14603,7 @@ export type Database = {
           delivery_channel: string
           delivery_duration_ms: number | null
           delivery_method: string | null
-          delivery_response: Json | null
+          delivery_response: GeneratedJson | null
           delivery_status: string
           error_message: string | null
           external_message_id: string | null
@@ -14621,7 +14621,7 @@ export type Database = {
           delivery_channel: string
           delivery_duration_ms?: number | null
           delivery_method?: string | null
-          delivery_response?: Json | null
+          delivery_response?: GeneratedJson | null
           delivery_status: string
           error_message?: string | null
           external_message_id?: string | null
@@ -14639,7 +14639,7 @@ export type Database = {
           delivery_channel?: string
           delivery_duration_ms?: number | null
           delivery_method?: string | null
-          delivery_response?: Json | null
+          delivery_response?: GeneratedJson | null
           delivery_status?: string
           error_message?: string | null
           external_message_id?: string | null
@@ -14681,7 +14681,7 @@ export type Database = {
       notification_log: {
         Row: {
           automation_execution_id: string | null
-          channel: Database["public"]["Enums"]["notification_channel"]
+          channel: GeneratedDatabase["public"]["Enums"]["notification_channel"]
           created_at: string | null
           delivered_at: string | null
           delivery_attempts: number | null
@@ -14692,7 +14692,7 @@ export type Database = {
           notification_type: string
           profile_id: string
           provider_message_id: string | null
-          provider_response: Json | null
+          provider_response: GeneratedJson | null
           recipient_address: string
           related_resource_id: string | null
           related_resource_type: string | null
@@ -14704,7 +14704,7 @@ export type Database = {
         }
         Insert: {
           automation_execution_id?: string | null
-          channel: Database["public"]["Enums"]["notification_channel"]
+          channel: GeneratedDatabase["public"]["Enums"]["notification_channel"]
           created_at?: string | null
           delivered_at?: string | null
           delivery_attempts?: number | null
@@ -14715,7 +14715,7 @@ export type Database = {
           notification_type: string
           profile_id: string
           provider_message_id?: string | null
-          provider_response?: Json | null
+          provider_response?: GeneratedJson | null
           recipient_address: string
           related_resource_id?: string | null
           related_resource_type?: string | null
@@ -14727,7 +14727,7 @@ export type Database = {
         }
         Update: {
           automation_execution_id?: string | null
-          channel?: Database["public"]["Enums"]["notification_channel"]
+          channel?: GeneratedDatabase["public"]["Enums"]["notification_channel"]
           created_at?: string | null
           delivered_at?: string | null
           delivery_attempts?: number | null
@@ -14738,7 +14738,7 @@ export type Database = {
           notification_type?: string
           profile_id?: string
           provider_message_id?: string | null
-          provider_response?: Json | null
+          provider_response?: GeneratedJson | null
           recipient_address?: string
           related_resource_id?: string | null
           related_resource_type?: string | null
@@ -14880,8 +14880,8 @@ export type Database = {
       notification_templates: {
         Row: {
           body_template: string
-          channel: Database["public"]["Enums"]["notification_channel"]
-          channel_config: Json | null
+          channel: GeneratedDatabase["public"]["Enums"]["notification_channel"]
+          channel_config: GeneratedJson | null
           created_at: string | null
           created_by: string | null
           id: string
@@ -14896,8 +14896,8 @@ export type Database = {
         }
         Insert: {
           body_template: string
-          channel: Database["public"]["Enums"]["notification_channel"]
-          channel_config?: Json | null
+          channel: GeneratedDatabase["public"]["Enums"]["notification_channel"]
+          channel_config?: GeneratedJson | null
           created_at?: string | null
           created_by?: string | null
           id?: string
@@ -14912,8 +14912,8 @@ export type Database = {
         }
         Update: {
           body_template?: string
-          channel?: Database["public"]["Enums"]["notification_channel"]
-          channel_config?: Json | null
+          channel?: GeneratedDatabase["public"]["Enums"]["notification_channel"]
+          channel_config?: GeneratedJson | null
           created_at?: string | null
           created_by?: string | null
           id?: string
@@ -15206,7 +15206,7 @@ export type Database = {
       oauth_tokens: {
         Row: {
           access_token_encrypted: string
-          client_info: Json | null
+          client_info: GeneratedJson | null
           connection_id: string
           created_at: string | null
           expires_at: string | null
@@ -15226,7 +15226,7 @@ export type Database = {
         }
         Insert: {
           access_token_encrypted: string
-          client_info?: Json | null
+          client_info?: GeneratedJson | null
           connection_id: string
           created_at?: string | null
           expires_at?: string | null
@@ -15246,7 +15246,7 @@ export type Database = {
         }
         Update: {
           access_token_encrypted?: string
-          client_info?: Json | null
+          client_info?: GeneratedJson | null
           connection_id?: string
           created_at?: string | null
           expires_at?: string | null
@@ -15284,7 +15284,7 @@ export type Database = {
       online_booking_settings: {
         Row: {
           advance_booking_days: number | null
-          available_time_slots: Json | null
+          available_time_slots: GeneratedJson | null
           blackout_dates: string[] | null
           booking_buffer_minutes: number | null
           booking_enabled: boolean | null
@@ -15304,7 +15304,7 @@ export type Database = {
         }
         Insert: {
           advance_booking_days?: number | null
-          available_time_slots?: Json | null
+          available_time_slots?: GeneratedJson | null
           blackout_dates?: string[] | null
           booking_buffer_minutes?: number | null
           booking_enabled?: boolean | null
@@ -15324,7 +15324,7 @@ export type Database = {
         }
         Update: {
           advance_booking_days?: number | null
-          available_time_slots?: Json | null
+          available_time_slots?: GeneratedJson | null
           blackout_dates?: string[] | null
           booking_buffer_minutes?: number | null
           booking_enabled?: boolean | null
@@ -15403,7 +15403,7 @@ export type Database = {
       }
       online_bookings: {
         Row: {
-          alternative_dates: Json | null
+          alternative_dates: GeneratedJson | null
           booking_status: string | null
           cancelled_at: string | null
           cancelled_by_patient: boolean | null
@@ -15416,7 +15416,7 @@ export type Database = {
           deposit_paid: boolean | null
           deposit_payment_id: string | null
           id: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           patient_email: string
           patient_name: string
           patient_phone: string | null
@@ -15430,7 +15430,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          alternative_dates?: Json | null
+          alternative_dates?: GeneratedJson | null
           booking_status?: string | null
           cancelled_at?: string | null
           cancelled_by_patient?: boolean | null
@@ -15443,7 +15443,7 @@ export type Database = {
           deposit_paid?: boolean | null
           deposit_payment_id?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           patient_email: string
           patient_name: string
           patient_phone?: string | null
@@ -15457,7 +15457,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
-          alternative_dates?: Json | null
+          alternative_dates?: GeneratedJson | null
           booking_status?: string | null
           cancelled_at?: string | null
           cancelled_by_patient?: boolean | null
@@ -15470,7 +15470,7 @@ export type Database = {
           deposit_paid?: boolean | null
           deposit_payment_id?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           patient_email?: string
           patient_name?: string
           patient_phone?: string | null
@@ -15530,12 +15530,12 @@ export type Database = {
       }
       patient_analytics: {
         Row: {
-          ai_insights: Json | null
+          ai_insights: GeneratedJson | null
           appointment_compliance_rate: number | null
           average_transaction_value: number | null
           calculation_version: number | null
           clinic_id: string
-          communication_preference: Json | null
+          communication_preference: GeneratedJson | null
           condition_complexity_score: number | null
           created_at: string | null
           engagement_level: string | null
@@ -15545,8 +15545,8 @@ export type Database = {
           last_calculated: string | null
           patient_id: string
           payment_reliability_score: number | null
-          personality_profile: Json | null
-          preference_predictions: Json | null
+          personality_profile: GeneratedJson | null
+          preference_predictions: GeneratedJson | null
           preferred_channels: string[] | null
           response_rate_email: number | null
           response_rate_phone: number | null
@@ -15560,12 +15560,12 @@ export type Database = {
           visit_frequency_score: number | null
         }
         Insert: {
-          ai_insights?: Json | null
+          ai_insights?: GeneratedJson | null
           appointment_compliance_rate?: number | null
           average_transaction_value?: number | null
           calculation_version?: number | null
           clinic_id: string
-          communication_preference?: Json | null
+          communication_preference?: GeneratedJson | null
           condition_complexity_score?: number | null
           created_at?: string | null
           engagement_level?: string | null
@@ -15575,8 +15575,8 @@ export type Database = {
           last_calculated?: string | null
           patient_id: string
           payment_reliability_score?: number | null
-          personality_profile?: Json | null
-          preference_predictions?: Json | null
+          personality_profile?: GeneratedJson | null
+          preference_predictions?: GeneratedJson | null
           preferred_channels?: string[] | null
           response_rate_email?: number | null
           response_rate_phone?: number | null
@@ -15590,12 +15590,12 @@ export type Database = {
           visit_frequency_score?: number | null
         }
         Update: {
-          ai_insights?: Json | null
+          ai_insights?: GeneratedJson | null
           appointment_compliance_rate?: number | null
           average_transaction_value?: number | null
           calculation_version?: number | null
           clinic_id?: string
-          communication_preference?: Json | null
+          communication_preference?: GeneratedJson | null
           condition_complexity_score?: number | null
           created_at?: string | null
           engagement_level?: string | null
@@ -15605,8 +15605,8 @@ export type Database = {
           last_calculated?: string | null
           patient_id?: string
           payment_reliability_score?: number | null
-          personality_profile?: Json | null
-          preference_predictions?: Json | null
+          personality_profile?: GeneratedJson | null
+          preference_predictions?: GeneratedJson | null
           preferred_channels?: string[] | null
           response_rate_email?: number | null
           response_rate_phone?: number | null
@@ -15665,11 +15665,11 @@ export type Database = {
           patient_id: string
           purpose_code: string | null
           scope_code: string | null
-          signature_data: Json | null
+          signature_data: GeneratedJson | null
           status: string
           updated_at: string | null
           withdrawn_at: string | null
-          witness_signature: Json | null
+          witness_signature: GeneratedJson | null
         }
         Insert: {
           category_code?: string | null
@@ -15685,11 +15685,11 @@ export type Database = {
           patient_id: string
           purpose_code?: string | null
           scope_code?: string | null
-          signature_data?: Json | null
+          signature_data?: GeneratedJson | null
           status?: string
           updated_at?: string | null
           withdrawn_at?: string | null
-          witness_signature?: Json | null
+          witness_signature?: GeneratedJson | null
         }
         Update: {
           category_code?: string | null
@@ -15705,11 +15705,11 @@ export type Database = {
           patient_id?: string
           purpose_code?: string | null
           scope_code?: string | null
-          signature_data?: Json | null
+          signature_data?: GeneratedJson | null
           status?: string
           updated_at?: string | null
           withdrawn_at?: string | null
-          witness_signature?: Json | null
+          witness_signature?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -15775,7 +15775,7 @@ export type Database = {
           document_type: string
           id: string
           legal_basis: string | null
-          metadata: Json
+          metadata: GeneratedJson
           notes: string | null
           patient_email: string
           reason_archived: string | null
@@ -15802,7 +15802,7 @@ export type Database = {
           document_type: string
           id?: string
           legal_basis?: string | null
-          metadata?: Json
+          metadata?: GeneratedJson
           notes?: string | null
           patient_email: string
           reason_archived?: string | null
@@ -15829,7 +15829,7 @@ export type Database = {
           document_type?: string
           id?: string
           legal_basis?: string | null
-          metadata?: Json
+          metadata?: GeneratedJson
           notes?: string | null
           patient_email?: string
           reason_archived?: string | null
@@ -15881,11 +15881,11 @@ export type Database = {
           campaign_id: string | null
           clinic_id: string
           created_at: string
-          device_info: Json
+          device_info: GeneratedJson
           engagement_score: number
-          event_data: Json
+          event_data: GeneratedJson
           event_timestamp: string
-          event_type: Database["public"]["Enums"]["engagement_event_type"]
+          event_type: GeneratedDatabase["public"]["Enums"]["engagement_event_type"]
           id: string
           interaction_duration: number | null
           patient_id: string
@@ -15897,11 +15897,11 @@ export type Database = {
           campaign_id?: string | null
           clinic_id: string
           created_at?: string
-          device_info?: Json
+          device_info?: GeneratedJson
           engagement_score?: number
-          event_data?: Json
+          event_data?: GeneratedJson
           event_timestamp?: string
-          event_type: Database["public"]["Enums"]["engagement_event_type"]
+          event_type: GeneratedDatabase["public"]["Enums"]["engagement_event_type"]
           id?: string
           interaction_duration?: number | null
           patient_id: string
@@ -15913,11 +15913,11 @@ export type Database = {
           campaign_id?: string | null
           clinic_id?: string
           created_at?: string
-          device_info?: Json
+          device_info?: GeneratedJson
           engagement_score?: number
-          event_data?: Json
+          event_data?: GeneratedJson
           event_timestamp?: string
-          event_type?: Database["public"]["Enums"]["engagement_event_type"]
+          event_type?: GeneratedDatabase["public"]["Enums"]["engagement_event_type"]
           id?: string
           interaction_duration?: number | null
           patient_id?: string
@@ -16358,7 +16358,7 @@ export type Database = {
       patient_segments: {
         Row: {
           accuracy_score: number | null
-          ai_criteria: Json | null
+          ai_criteria: GeneratedJson | null
           ai_generated: boolean | null
           ai_model_used: string | null
           auto_update: boolean | null
@@ -16366,7 +16366,7 @@ export type Database = {
           confidence_score: number | null
           created_at: string | null
           created_by: string | null
-          criteria: Json
+          criteria: GeneratedJson
           description: string | null
           id: string
           is_active: boolean | null
@@ -16379,7 +16379,7 @@ export type Database = {
         }
         Insert: {
           accuracy_score?: number | null
-          ai_criteria?: Json | null
+          ai_criteria?: GeneratedJson | null
           ai_generated?: boolean | null
           ai_model_used?: string | null
           auto_update?: boolean | null
@@ -16387,7 +16387,7 @@ export type Database = {
           confidence_score?: number | null
           created_at?: string | null
           created_by?: string | null
-          criteria: Json
+          criteria: GeneratedJson
           description?: string | null
           id?: string
           is_active?: boolean | null
@@ -16400,7 +16400,7 @@ export type Database = {
         }
         Update: {
           accuracy_score?: number | null
-          ai_criteria?: Json | null
+          ai_criteria?: GeneratedJson | null
           ai_generated?: boolean | null
           ai_model_used?: string | null
           auto_update?: boolean | null
@@ -16408,7 +16408,7 @@ export type Database = {
           confidence_score?: number | null
           created_at?: string | null
           created_by?: string | null
-          criteria?: Json
+          criteria?: GeneratedJson
           description?: string | null
           id?: string
           is_active?: boolean | null
@@ -16449,7 +16449,7 @@ export type Database = {
           id: string
           is_archived: boolean | null
           is_processed: boolean | null
-          metadata: Json | null
+          metadata: GeneratedJson | null
           patient_email: string
           processed_at: string | null
           processed_by: string | null
@@ -16468,7 +16468,7 @@ export type Database = {
           id?: string
           is_archived?: boolean | null
           is_processed?: boolean | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           patient_email: string
           processed_at?: string | null
           processed_by?: string | null
@@ -16487,7 +16487,7 @@ export type Database = {
           id?: string
           is_archived?: boolean | null
           is_processed?: boolean | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           patient_email?: string
           processed_at?: string | null
           processed_by?: string | null
@@ -16542,7 +16542,7 @@ export type Database = {
           chronic_conditions: string[] | null
           city: string | null
           clinic_id: string
-          communication_preferences: Json | null
+          communication_preferences: GeneratedJson | null
           country: string | null
           cpf: string | null
           created_at: string | null
@@ -16551,7 +16551,7 @@ export type Database = {
           data_consent_date: string | null
           data_consent_status: string | null
           data_retention_until: string | null
-          data_sharing_consent: Json | null
+          data_sharing_consent: GeneratedJson | null
           data_source: string | null
           deceased_date: string | null
           deceased_indicator: boolean | null
@@ -16559,7 +16559,7 @@ export type Database = {
           emergency_contact_name: string | null
           emergency_contact_phone: string | null
           emergency_contact_relationship: string | null
-          external_ids: Json | null
+          external_ids: GeneratedJson | null
           family_name: string
           full_name: string
           gender: string | null
@@ -16608,7 +16608,7 @@ export type Database = {
           chronic_conditions?: string[] | null
           city?: string | null
           clinic_id: string
-          communication_preferences?: Json | null
+          communication_preferences?: GeneratedJson | null
           country?: string | null
           cpf?: string | null
           created_at?: string | null
@@ -16617,7 +16617,7 @@ export type Database = {
           data_consent_date?: string | null
           data_consent_status?: string | null
           data_retention_until?: string | null
-          data_sharing_consent?: Json | null
+          data_sharing_consent?: GeneratedJson | null
           data_source?: string | null
           deceased_date?: string | null
           deceased_indicator?: boolean | null
@@ -16625,7 +16625,7 @@ export type Database = {
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
           emergency_contact_relationship?: string | null
-          external_ids?: Json | null
+          external_ids?: GeneratedJson | null
           family_name: string
           full_name: string
           gender?: string | null
@@ -16674,7 +16674,7 @@ export type Database = {
           chronic_conditions?: string[] | null
           city?: string | null
           clinic_id?: string
-          communication_preferences?: Json | null
+          communication_preferences?: GeneratedJson | null
           country?: string | null
           cpf?: string | null
           created_at?: string | null
@@ -16683,7 +16683,7 @@ export type Database = {
           data_consent_date?: string | null
           data_consent_status?: string | null
           data_retention_until?: string | null
-          data_sharing_consent?: Json | null
+          data_sharing_consent?: GeneratedJson | null
           data_source?: string | null
           deceased_date?: string | null
           deceased_indicator?: boolean | null
@@ -16691,7 +16691,7 @@ export type Database = {
           emergency_contact_name?: string | null
           emergency_contact_phone?: string | null
           emergency_contact_relationship?: string | null
-          external_ids?: Json | null
+          external_ids?: GeneratedJson | null
           family_name?: string
           full_name?: string
           gender?: string | null
@@ -16794,7 +16794,7 @@ export type Database = {
         Row: {
           analysis_date: string
           analysis_period: string
-          analytics_data: Json
+          analytics_data: GeneratedJson
           cache_key: string
           cache_type: string
           cached_at: string | null
@@ -16802,13 +16802,13 @@ export type Database = {
           expires_at: string | null
           id: string
           is_stale: boolean | null
-          metadata: Json | null
+          metadata: GeneratedJson | null
           refresh_count: number | null
         }
         Insert: {
           analysis_date: string
           analysis_period: string
-          analytics_data: Json
+          analytics_data: GeneratedJson
           cache_key: string
           cache_type: string
           cached_at?: string | null
@@ -16816,13 +16816,13 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_stale?: boolean | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           refresh_count?: number | null
         }
         Update: {
           analysis_date?: string
           analysis_period?: string
-          analytics_data?: Json
+          analytics_data?: GeneratedJson
           cache_key?: string
           cache_type?: string
           cached_at?: string | null
@@ -16830,7 +16830,7 @@ export type Database = {
           expires_at?: string | null
           id?: string
           is_stale?: boolean | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           refresh_count?: number | null
         }
         Relationships: [
@@ -16855,19 +16855,19 @@ export type Database = {
           avg_transaction_value: number | null
           clinic_id: string
           created_at: string | null
-          customer_segments: Json | null
+          customer_segments: GeneratedJson | null
           failed_transactions: number | null
-          gateway_performance: Json | null
+          gateway_performance: GeneratedJson | null
           gross_revenue: number | null
-          growth_metrics: Json | null
-          hourly_breakdown: Json | null
+          growth_metrics: GeneratedJson | null
+          hourly_breakdown: GeneratedJson | null
           id: string
           net_revenue: number | null
           new_customers: number | null
-          payment_method_breakdown: Json | null
+          payment_method_breakdown: GeneratedJson | null
           peak_hour_time: string | null
           peak_hour_volume: number | null
-          previous_period_comparison: Json | null
+          previous_period_comparison: GeneratedJson | null
           returning_customers: number | null
           snapshot_timestamp: string | null
           snapshot_type: string
@@ -16881,19 +16881,19 @@ export type Database = {
           avg_transaction_value?: number | null
           clinic_id: string
           created_at?: string | null
-          customer_segments?: Json | null
+          customer_segments?: GeneratedJson | null
           failed_transactions?: number | null
-          gateway_performance?: Json | null
+          gateway_performance?: GeneratedJson | null
           gross_revenue?: number | null
-          growth_metrics?: Json | null
-          hourly_breakdown?: Json | null
+          growth_metrics?: GeneratedJson | null
+          hourly_breakdown?: GeneratedJson | null
           id?: string
           net_revenue?: number | null
           new_customers?: number | null
-          payment_method_breakdown?: Json | null
+          payment_method_breakdown?: GeneratedJson | null
           peak_hour_time?: string | null
           peak_hour_volume?: number | null
-          previous_period_comparison?: Json | null
+          previous_period_comparison?: GeneratedJson | null
           returning_customers?: number | null
           snapshot_timestamp?: string | null
           snapshot_type: string
@@ -16907,19 +16907,19 @@ export type Database = {
           avg_transaction_value?: number | null
           clinic_id?: string
           created_at?: string | null
-          customer_segments?: Json | null
+          customer_segments?: GeneratedJson | null
           failed_transactions?: number | null
-          gateway_performance?: Json | null
+          gateway_performance?: GeneratedJson | null
           gross_revenue?: number | null
-          growth_metrics?: Json | null
-          hourly_breakdown?: Json | null
+          growth_metrics?: GeneratedJson | null
+          hourly_breakdown?: GeneratedJson | null
           id?: string
           net_revenue?: number | null
           new_customers?: number | null
-          payment_method_breakdown?: Json | null
+          payment_method_breakdown?: GeneratedJson | null
           peak_hour_time?: string | null
           peak_hour_volume?: number | null
-          previous_period_comparison?: Json | null
+          previous_period_comparison?: GeneratedJson | null
           returning_customers?: number | null
           snapshot_timestamp?: string | null
           snapshot_type?: string
@@ -16967,8 +16967,8 @@ export type Database = {
           recommended_actions: string[] | null
           reviewed_at: string | null
           reviewed_by: string | null
-          supporting_data: Json
-          time_period_analyzed: Json
+          supporting_data: GeneratedJson
+          time_period_analyzed: GeneratedJson
           title: string
           updated_at: string | null
         }
@@ -16992,8 +16992,8 @@ export type Database = {
           recommended_actions?: string[] | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          supporting_data: Json
-          time_period_analyzed: Json
+          supporting_data: GeneratedJson
+          time_period_analyzed: GeneratedJson
           title: string
           updated_at?: string | null
         }
@@ -17017,8 +17017,8 @@ export type Database = {
           recommended_actions?: string[] | null
           reviewed_at?: string | null
           reviewed_by?: string | null
-          supporting_data?: Json
-          time_period_analyzed?: Json
+          supporting_data?: GeneratedJson
+          time_period_analyzed?: GeneratedJson
           title?: string
           updated_at?: string | null
         }
@@ -17057,7 +17057,7 @@ export type Database = {
           resolved_at: string | null
           retry_count: number | null
           retry_strategy: string | null
-          suggested_alternatives: Json | null
+          suggested_alternatives: GeneratedJson | null
           transaction_id: string
           updated_at: string | null
         }
@@ -17078,7 +17078,7 @@ export type Database = {
           resolved_at?: string | null
           retry_count?: number | null
           retry_strategy?: string | null
-          suggested_alternatives?: Json | null
+          suggested_alternatives?: GeneratedJson | null
           transaction_id: string
           updated_at?: string | null
         }
@@ -17099,7 +17099,7 @@ export type Database = {
           resolved_at?: string | null
           retry_count?: number | null
           retry_strategy?: string | null
-          suggested_alternatives?: Json | null
+          suggested_alternatives?: GeneratedJson | null
           transaction_id?: string
           updated_at?: string | null
         }
@@ -17136,11 +17136,11 @@ export type Database = {
       }
       payment_gateways: {
         Row: {
-          api_credentials: Json
+          api_credentials: GeneratedJson
           clinic_id: string
-          configuration: Json | null
+          configuration: GeneratedJson | null
           created_at: string | null
-          fee_structure: Json
+          fee_structure: GeneratedJson
           gateway_name: string
           gateway_type: string
           id: string
@@ -17153,11 +17153,11 @@ export type Database = {
           webhook_url: string | null
         }
         Insert: {
-          api_credentials: Json
+          api_credentials: GeneratedJson
           clinic_id: string
-          configuration?: Json | null
+          configuration?: GeneratedJson | null
           created_at?: string | null
-          fee_structure: Json
+          fee_structure: GeneratedJson
           gateway_name: string
           gateway_type: string
           id?: string
@@ -17170,11 +17170,11 @@ export type Database = {
           webhook_url?: string | null
         }
         Update: {
-          api_credentials?: Json
+          api_credentials?: GeneratedJson
           clinic_id?: string
-          configuration?: Json | null
+          configuration?: GeneratedJson | null
           created_at?: string | null
-          fee_structure?: Json
+          fee_structure?: GeneratedJson
           gateway_name?: string
           gateway_type?: string
           id?: string
@@ -17369,7 +17369,7 @@ export type Database = {
       payment_methods: {
         Row: {
           clinic_id: string
-          configuration: Json | null
+          configuration: GeneratedJson | null
           created_at: string | null
           fixed_fee: number | null
           id: string
@@ -17384,7 +17384,7 @@ export type Database = {
         }
         Insert: {
           clinic_id: string
-          configuration?: Json | null
+          configuration?: GeneratedJson | null
           created_at?: string | null
           fixed_fee?: number | null
           id?: string
@@ -17399,7 +17399,7 @@ export type Database = {
         }
         Update: {
           clinic_id?: string
-          configuration?: Json | null
+          configuration?: GeneratedJson | null
           created_at?: string | null
           fixed_fee?: number | null
           id?: string
@@ -17436,7 +17436,7 @@ export type Database = {
           created_at: string | null
           failed_amount: number | null
           failed_transactions: number | null
-          gateway_performance: Json | null
+          gateway_performance: GeneratedJson | null
           id: string
           monitoring_date: string
           pending_transactions: number | null
@@ -17453,7 +17453,7 @@ export type Database = {
           created_at?: string | null
           failed_amount?: number | null
           failed_transactions?: number | null
-          gateway_performance?: Json | null
+          gateway_performance?: GeneratedJson | null
           id?: string
           monitoring_date?: string
           pending_transactions?: number | null
@@ -17470,7 +17470,7 @@ export type Database = {
           created_at?: string | null
           failed_amount?: number | null
           failed_transactions?: number | null
-          gateway_performance?: Json | null
+          gateway_performance?: GeneratedJson | null
           id?: string
           monitoring_date?: string
           pending_transactions?: number | null
@@ -17507,7 +17507,7 @@ export type Database = {
           email_sent_at: string | null
           id: string
           pdf_url: string | null
-          receipt_data: Json
+          receipt_data: GeneratedJson
           receipt_number: string
           receipt_type: string
           sms_sent: boolean | null
@@ -17524,7 +17524,7 @@ export type Database = {
           email_sent_at?: string | null
           id?: string
           pdf_url?: string | null
-          receipt_data: Json
+          receipt_data: GeneratedJson
           receipt_number: string
           receipt_type: string
           sms_sent?: boolean | null
@@ -17541,7 +17541,7 @@ export type Database = {
           email_sent_at?: string | null
           id?: string
           pdf_url?: string | null
-          receipt_data?: Json
+          receipt_data?: GeneratedJson
           receipt_number?: string
           receipt_type?: string
           sms_sent?: boolean | null
@@ -17587,7 +17587,7 @@ export type Database = {
           bank_statement_reference: string | null
           clinic_id: string
           created_at: string | null
-          discrepancies: Json | null
+          discrepancies: GeneratedJson | null
           discrepancy_amount: number | null
           discrepancy_count: number | null
           disputed_transactions: number | null
@@ -17622,7 +17622,7 @@ export type Database = {
           bank_statement_reference?: string | null
           clinic_id: string
           created_at?: string | null
-          discrepancies?: Json | null
+          discrepancies?: GeneratedJson | null
           discrepancy_amount?: number | null
           discrepancy_count?: number | null
           disputed_transactions?: number | null
@@ -17657,7 +17657,7 @@ export type Database = {
           bank_statement_reference?: string | null
           clinic_id?: string
           created_at?: string | null
-          discrepancies?: Json | null
+          discrepancies?: GeneratedJson | null
           discrepancy_amount?: number | null
           discrepancy_count?: number | null
           disputed_transactions?: number | null
@@ -17734,20 +17734,20 @@ export type Database = {
       }
       payment_reports: {
         Row: {
-          aggregation_rules: Json | null
+          aggregation_rules: GeneratedJson | null
           clinic_id: string
           created_at: string | null
           description: string | null
           email_recipients: string[] | null
           execution_count: number | null
-          filter_criteria: Json | null
+          filter_criteria: GeneratedJson | null
           id: string
           is_active: boolean | null
           is_scheduled: boolean | null
           last_executed_at: string | null
           next_run_date: string | null
           output_format: string | null
-          query_configuration: Json
+          query_configuration: GeneratedJson
           report_category: string
           report_name: string
           report_type: string
@@ -17758,20 +17758,20 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
-          aggregation_rules?: Json | null
+          aggregation_rules?: GeneratedJson | null
           clinic_id: string
           created_at?: string | null
           description?: string | null
           email_recipients?: string[] | null
           execution_count?: number | null
-          filter_criteria?: Json | null
+          filter_criteria?: GeneratedJson | null
           id?: string
           is_active?: boolean | null
           is_scheduled?: boolean | null
           last_executed_at?: string | null
           next_run_date?: string | null
           output_format?: string | null
-          query_configuration: Json
+          query_configuration: GeneratedJson
           report_category: string
           report_name: string
           report_type: string
@@ -17782,20 +17782,20 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
-          aggregation_rules?: Json | null
+          aggregation_rules?: GeneratedJson | null
           clinic_id?: string
           created_at?: string | null
           description?: string | null
           email_recipients?: string[] | null
           execution_count?: number | null
-          filter_criteria?: Json | null
+          filter_criteria?: GeneratedJson | null
           id?: string
           is_active?: boolean | null
           is_scheduled?: boolean | null
           last_executed_at?: string | null
           next_run_date?: string | null
           output_format?: string | null
-          query_configuration?: Json
+          query_configuration?: GeneratedJson
           report_category?: string
           report_name?: string
           report_type?: string
@@ -17840,7 +17840,7 @@ export type Database = {
           preferred_gateways: string[]
           rule_name: string
           rule_priority: number | null
-          time_conditions: Json | null
+          time_conditions: GeneratedJson | null
           updated_at: string | null
         }
         Insert: {
@@ -17860,7 +17860,7 @@ export type Database = {
           preferred_gateways: string[]
           rule_name: string
           rule_priority?: number | null
-          time_conditions?: Json | null
+          time_conditions?: GeneratedJson | null
           updated_at?: string | null
         }
         Update: {
@@ -17880,7 +17880,7 @@ export type Database = {
           preferred_gateways?: string[]
           rule_name?: string
           rule_priority?: number | null
-          time_conditions?: Json | null
+          time_conditions?: GeneratedJson | null
           updated_at?: string | null
         }
         Relationships: [
@@ -18083,10 +18083,10 @@ export type Database = {
           created_at: string | null
           error_code: string | null
           error_message: string | null
-          event_data: Json | null
+          event_data: GeneratedJson | null
           event_status: string
           event_type: string
-          gateway_response: Json | null
+          gateway_response: GeneratedJson | null
           id: string
           retry_count: number | null
           transaction_id: string
@@ -18095,10 +18095,10 @@ export type Database = {
           created_at?: string | null
           error_code?: string | null
           error_message?: string | null
-          event_data?: Json | null
+          event_data?: GeneratedJson | null
           event_status: string
           event_type: string
-          gateway_response?: Json | null
+          gateway_response?: GeneratedJson | null
           id?: string
           retry_count?: number | null
           transaction_id: string
@@ -18107,10 +18107,10 @@ export type Database = {
           created_at?: string | null
           error_code?: string | null
           error_message?: string | null
-          event_data?: Json | null
+          event_data?: GeneratedJson | null
           event_status?: string
           event_type?: string
-          gateway_response?: Json | null
+          gateway_response?: GeneratedJson | null
           id?: string
           retry_count?: number | null
           transaction_id?: string
@@ -18144,12 +18144,12 @@ export type Database = {
           fees: number | null
           gateway_fee: number | null
           gateway_id: string
-          gateway_response: Json | null
+          gateway_response: GeneratedJson | null
           gateway_status: string | null
           gateway_transaction_id: string | null
           id: string
           installment_fee: number | null
-          installment_plan: Json | null
+          installment_plan: GeneratedJson | null
           installments: number | null
           net_amount: number
           notification_sent_at: string | null
@@ -18163,7 +18163,7 @@ export type Database = {
           risk_score: number | null
           settled_at: string | null
           transaction_id: string
-          transaction_metadata: Json | null
+          transaction_metadata: GeneratedJson | null
           updated_at: string | null
           user_agent: string | null
           webhook_received_at: string | null
@@ -18179,12 +18179,12 @@ export type Database = {
           fees?: number | null
           gateway_fee?: number | null
           gateway_id: string
-          gateway_response?: Json | null
+          gateway_response?: GeneratedJson | null
           gateway_status?: string | null
           gateway_transaction_id?: string | null
           id?: string
           installment_fee?: number | null
-          installment_plan?: Json | null
+          installment_plan?: GeneratedJson | null
           installments?: number | null
           net_amount: number
           notification_sent_at?: string | null
@@ -18198,7 +18198,7 @@ export type Database = {
           risk_score?: number | null
           settled_at?: string | null
           transaction_id: string
-          transaction_metadata?: Json | null
+          transaction_metadata?: GeneratedJson | null
           updated_at?: string | null
           user_agent?: string | null
           webhook_received_at?: string | null
@@ -18214,12 +18214,12 @@ export type Database = {
           fees?: number | null
           gateway_fee?: number | null
           gateway_id?: string
-          gateway_response?: Json | null
+          gateway_response?: GeneratedJson | null
           gateway_status?: string | null
           gateway_transaction_id?: string | null
           id?: string
           installment_fee?: number | null
-          installment_plan?: Json | null
+          installment_plan?: GeneratedJson | null
           installments?: number | null
           net_amount?: number
           notification_sent_at?: string | null
@@ -18233,7 +18233,7 @@ export type Database = {
           risk_score?: number | null
           settled_at?: string | null
           transaction_id?: string
-          transaction_metadata?: Json | null
+          transaction_metadata?: GeneratedJson | null
           updated_at?: string | null
           user_agent?: string | null
           webhook_received_at?: string | null
@@ -18281,7 +18281,7 @@ export type Database = {
           duration_ms: number
           error_message: string | null
           id: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           metric_type: string
           route_path: string
           status_code: number | null
@@ -18292,7 +18292,7 @@ export type Database = {
           duration_ms: number
           error_message?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           metric_type: string
           route_path: string
           status_code?: number | null
@@ -18303,7 +18303,7 @@ export type Database = {
           duration_ms?: number
           error_message?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           metric_type?: string
           route_path?: string
           status_code?: number | null
@@ -18314,9 +18314,9 @@ export type Database = {
       }
       personalization_rules: {
         Row: {
-          actions: Json
+          actions: GeneratedJson
           clinic_id: string
-          conditions: Json
+          conditions: GeneratedJson
           created_at: string
           description: string | null
           id: string
@@ -18327,9 +18327,9 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          actions?: Json
+          actions?: GeneratedJson
           clinic_id: string
-          conditions?: Json
+          conditions?: GeneratedJson
           created_at?: string
           description?: string | null
           id?: string
@@ -18340,9 +18340,9 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          actions?: Json
+          actions?: GeneratedJson
           clinic_id?: string
-          conditions?: Json
+          conditions?: GeneratedJson
           created_at?: string
           description?: string | null
           id?: string
@@ -18470,7 +18470,7 @@ export type Database = {
           applies_to: string
           can_combine: boolean | null
           clinic_id: string
-          condition_criteria: Json | null
+          condition_criteria: GeneratedJson | null
           created_at: string | null
           current_uses: number | null
           ends_at: string | null
@@ -18493,7 +18493,7 @@ export type Database = {
           applies_to: string
           can_combine?: boolean | null
           clinic_id: string
-          condition_criteria?: Json | null
+          condition_criteria?: GeneratedJson | null
           created_at?: string | null
           current_uses?: number | null
           ends_at?: string | null
@@ -18516,7 +18516,7 @@ export type Database = {
           applies_to?: string
           can_combine?: boolean | null
           clinic_id?: string
-          condition_criteria?: Json | null
+          condition_criteria?: GeneratedJson | null
           created_at?: string | null
           current_uses?: number | null
           ends_at?: string | null
@@ -18559,7 +18559,7 @@ export type Database = {
           created_at: string
           current_price: number
           demand_elasticity: number | null
-          dynamic_adjustments: Json
+          dynamic_adjustments: GeneratedJson
           effectiveness_score: number | null
           id: string
           last_adjustment_date: string | null
@@ -18576,7 +18576,7 @@ export type Database = {
           created_at?: string
           current_price: number
           demand_elasticity?: number | null
-          dynamic_adjustments: Json
+          dynamic_adjustments: GeneratedJson
           effectiveness_score?: number | null
           id?: string
           last_adjustment_date?: string | null
@@ -18593,7 +18593,7 @@ export type Database = {
           created_at?: string
           current_price?: number
           demand_elasticity?: number | null
-          dynamic_adjustments?: Json
+          dynamic_adjustments?: GeneratedJson
           effectiveness_score?: number | null
           id?: string
           last_adjustment_date?: string | null
@@ -18634,8 +18634,8 @@ export type Database = {
           clinic_id: string
           id: string
           ip_address: unknown | null
-          new_values: Json | null
-          old_values: Json | null
+          new_values: GeneratedJson | null
+          old_values: GeneratedJson | null
           operation: string
           record_id: string
           session_id: string | null
@@ -18652,8 +18652,8 @@ export type Database = {
           clinic_id: string
           id?: string
           ip_address?: unknown | null
-          new_values?: Json | null
-          old_values?: Json | null
+          new_values?: GeneratedJson | null
+          old_values?: GeneratedJson | null
           operation: string
           record_id: string
           session_id?: string | null
@@ -18670,8 +18670,8 @@ export type Database = {
           clinic_id?: string
           id?: string
           ip_address?: unknown | null
-          new_values?: Json | null
-          old_values?: Json | null
+          new_values?: GeneratedJson | null
+          old_values?: GeneratedJson | null
           operation?: string
           record_id?: string
           session_id?: string | null
@@ -18781,10 +18781,10 @@ export type Database = {
           deviation_reason: string | null
           duration_minutes: number | null
           end_time: string | null
-          equipment_settings: Json | null
+          equipment_settings: GeneratedJson | null
           id: string
           notes: string | null
-          parameters: Json | null
+          parameters: GeneratedJson | null
           patient_response: string | null
           photos: string[] | null
           professional_id: string
@@ -18794,7 +18794,7 @@ export type Database = {
           step_name: string
           step_number: number
           tracking_id: string
-          vital_signs: Json | null
+          vital_signs: GeneratedJson | null
         }
         Insert: {
           completed?: boolean | null
@@ -18804,10 +18804,10 @@ export type Database = {
           deviation_reason?: string | null
           duration_minutes?: number | null
           end_time?: string | null
-          equipment_settings?: Json | null
+          equipment_settings?: GeneratedJson | null
           id?: string
           notes?: string | null
-          parameters?: Json | null
+          parameters?: GeneratedJson | null
           patient_response?: string | null
           photos?: string[] | null
           professional_id: string
@@ -18817,7 +18817,7 @@ export type Database = {
           step_name: string
           step_number: number
           tracking_id: string
-          vital_signs?: Json | null
+          vital_signs?: GeneratedJson | null
         }
         Update: {
           completed?: boolean | null
@@ -18827,10 +18827,10 @@ export type Database = {
           deviation_reason?: string | null
           duration_minutes?: number | null
           end_time?: string | null
-          equipment_settings?: Json | null
+          equipment_settings?: GeneratedJson | null
           id?: string
           notes?: string | null
-          parameters?: Json | null
+          parameters?: GeneratedJson | null
           patient_response?: string | null
           photos?: string[] | null
           professional_id?: string
@@ -18840,7 +18840,7 @@ export type Database = {
           step_name?: string
           step_number?: number
           tracking_id?: string
-          vital_signs?: Json | null
+          vital_signs?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -18855,7 +18855,7 @@ export type Database = {
       procedure_tracking: {
         Row: {
           appointment_id: string | null
-          baseline_measurements: Json | null
+          baseline_measurements: GeneratedJson | null
           clinic_id: string
           complications: string | null
           consent_document_id: string | null
@@ -18864,15 +18864,15 @@ export type Database = {
           duration_minutes: number | null
           end_time: string | null
           equipment_ids: string[] | null
-          final_measurements: Json | null
+          final_measurements: GeneratedJson | null
           id: string
           patient_consent_verified: boolean | null
           patient_id: string
           photos_after: string[] | null
           photos_before: string[] | null
           photos_during: string[] | null
-          post_procedure_summary: Json | null
-          pre_procedure_checklist: Json | null
+          post_procedure_summary: GeneratedJson | null
+          pre_procedure_checklist: GeneratedJson | null
           procedure_type: string
           protocol_id: string | null
           responsible_professional_id: string
@@ -18885,7 +18885,7 @@ export type Database = {
         }
         Insert: {
           appointment_id?: string | null
-          baseline_measurements?: Json | null
+          baseline_measurements?: GeneratedJson | null
           clinic_id: string
           complications?: string | null
           consent_document_id?: string | null
@@ -18894,15 +18894,15 @@ export type Database = {
           duration_minutes?: number | null
           end_time?: string | null
           equipment_ids?: string[] | null
-          final_measurements?: Json | null
+          final_measurements?: GeneratedJson | null
           id?: string
           patient_consent_verified?: boolean | null
           patient_id: string
           photos_after?: string[] | null
           photos_before?: string[] | null
           photos_during?: string[] | null
-          post_procedure_summary?: Json | null
-          pre_procedure_checklist?: Json | null
+          post_procedure_summary?: GeneratedJson | null
+          pre_procedure_checklist?: GeneratedJson | null
           procedure_type: string
           protocol_id?: string | null
           responsible_professional_id: string
@@ -18915,7 +18915,7 @@ export type Database = {
         }
         Update: {
           appointment_id?: string | null
-          baseline_measurements?: Json | null
+          baseline_measurements?: GeneratedJson | null
           clinic_id?: string
           complications?: string | null
           consent_document_id?: string | null
@@ -18924,15 +18924,15 @@ export type Database = {
           duration_minutes?: number | null
           end_time?: string | null
           equipment_ids?: string[] | null
-          final_measurements?: Json | null
+          final_measurements?: GeneratedJson | null
           id?: string
           patient_consent_verified?: boolean | null
           patient_id?: string
           photos_after?: string[] | null
           photos_before?: string[] | null
           photos_during?: string[] | null
-          post_procedure_summary?: Json | null
-          pre_procedure_checklist?: Json | null
+          post_procedure_summary?: GeneratedJson | null
+          pre_procedure_checklist?: GeneratedJson | null
           procedure_type?: string
           protocol_id?: string | null
           responsible_professional_id?: string
@@ -18948,10 +18948,10 @@ export type Database = {
       procedures: {
         Row: {
           asserter_reference: string | null
-          body_site: Json | null
-          category: Json | null
-          code: Json
-          complications: Json | null
+          body_site: GeneratedJson | null
+          category: GeneratedJson | null
+          code: GeneratedJson
+          complications: GeneratedJson | null
           created_at: string
           created_by: string
           data_consent_date: string | null
@@ -18959,39 +18959,39 @@ export type Database = {
           data_retention_until: string | null
           encounter_reference: string | null
           fhir_id: string
-          fhir_meta: Json | null
-          fhir_text: Json | null
-          follow_up: Json | null
+          fhir_meta: GeneratedJson | null
+          fhir_text: GeneratedJson | null
+          follow_up: GeneratedJson | null
           id: string
           location_reference: string | null
           notes: string | null
-          outcome: Json | null
+          outcome: GeneratedJson | null
           patient_id: string
           performed_datetime: string | null
           performed_period_end: string | null
           performed_period_start: string | null
-          performers: Json | null
+          performers: GeneratedJson | null
           provider_id: string
-          reason_code: Json | null
-          reason_reference: Json | null
+          reason_code: GeneratedJson | null
+          reason_reference: GeneratedJson | null
           recorder_reference: string | null
-          report: Json | null
+          report: GeneratedJson | null
           status: string
-          status_reason: Json | null
+          status_reason: GeneratedJson | null
           subject_reference: string
           treatment_plan_id: string | null
           updated_at: string
           updated_by: string
-          used_code: Json | null
-          used_reference: Json | null
+          used_code: GeneratedJson | null
+          used_reference: GeneratedJson | null
           version: number
         }
         Insert: {
           asserter_reference?: string | null
-          body_site?: Json | null
-          category?: Json | null
-          code: Json
-          complications?: Json | null
+          body_site?: GeneratedJson | null
+          category?: GeneratedJson | null
+          code: GeneratedJson
+          complications?: GeneratedJson | null
           created_at?: string
           created_by: string
           data_consent_date?: string | null
@@ -18999,39 +18999,39 @@ export type Database = {
           data_retention_until?: string | null
           encounter_reference?: string | null
           fhir_id?: string
-          fhir_meta?: Json | null
-          fhir_text?: Json | null
-          follow_up?: Json | null
+          fhir_meta?: GeneratedJson | null
+          fhir_text?: GeneratedJson | null
+          follow_up?: GeneratedJson | null
           id?: string
           location_reference?: string | null
           notes?: string | null
-          outcome?: Json | null
+          outcome?: GeneratedJson | null
           patient_id: string
           performed_datetime?: string | null
           performed_period_end?: string | null
           performed_period_start?: string | null
-          performers?: Json | null
+          performers?: GeneratedJson | null
           provider_id: string
-          reason_code?: Json | null
-          reason_reference?: Json | null
+          reason_code?: GeneratedJson | null
+          reason_reference?: GeneratedJson | null
           recorder_reference?: string | null
-          report?: Json | null
+          report?: GeneratedJson | null
           status?: string
-          status_reason?: Json | null
+          status_reason?: GeneratedJson | null
           subject_reference: string
           treatment_plan_id?: string | null
           updated_at?: string
           updated_by: string
-          used_code?: Json | null
-          used_reference?: Json | null
+          used_code?: GeneratedJson | null
+          used_reference?: GeneratedJson | null
           version?: number
         }
         Update: {
           asserter_reference?: string | null
-          body_site?: Json | null
-          category?: Json | null
-          code?: Json
-          complications?: Json | null
+          body_site?: GeneratedJson | null
+          category?: GeneratedJson | null
+          code?: GeneratedJson
+          complications?: GeneratedJson | null
           created_at?: string
           created_by?: string
           data_consent_date?: string | null
@@ -19039,31 +19039,31 @@ export type Database = {
           data_retention_until?: string | null
           encounter_reference?: string | null
           fhir_id?: string
-          fhir_meta?: Json | null
-          fhir_text?: Json | null
-          follow_up?: Json | null
+          fhir_meta?: GeneratedJson | null
+          fhir_text?: GeneratedJson | null
+          follow_up?: GeneratedJson | null
           id?: string
           location_reference?: string | null
           notes?: string | null
-          outcome?: Json | null
+          outcome?: GeneratedJson | null
           patient_id?: string
           performed_datetime?: string | null
           performed_period_end?: string | null
           performed_period_start?: string | null
-          performers?: Json | null
+          performers?: GeneratedJson | null
           provider_id?: string
-          reason_code?: Json | null
-          reason_reference?: Json | null
+          reason_code?: GeneratedJson | null
+          reason_reference?: GeneratedJson | null
           recorder_reference?: string | null
-          report?: Json | null
+          report?: GeneratedJson | null
           status?: string
-          status_reason?: Json | null
+          status_reason?: GeneratedJson | null
           subject_reference?: string
           treatment_plan_id?: string | null
           updated_at?: string
           updated_by?: string
-          used_code?: Json | null
-          used_reference?: Json | null
+          used_code?: GeneratedJson | null
+          used_reference?: GeneratedJson | null
           version?: number
         }
         Relationships: [
@@ -19168,7 +19168,7 @@ export type Database = {
           description: string | null
           id: string
           is_active: boolean | null
-          metadata: Json | null
+          metadata: GeneratedJson | null
           name: string
           price: number | null
           sku: string | null
@@ -19183,7 +19183,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_active?: boolean | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           name: string
           price?: number | null
           sku?: string | null
@@ -19198,7 +19198,7 @@ export type Database = {
           description?: string | null
           id?: string
           is_active?: boolean | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           name?: string
           price?: number | null
           sku?: string | null
@@ -19221,17 +19221,17 @@ export type Database = {
           action_performed: string
           assessment_id: string | null
           audit_date: string
-          audit_type: Database["public"]["Enums"]["audit_type"]
+          audit_type: GeneratedDatabase["public"]["Enums"]["audit_type"]
           auditor_id: string
           certification_id: string | null
           changes_summary: string | null
           compliance_impact: string | null
           created_at: string
-          external_system_response: Json | null
+          external_system_response: GeneratedJson | null
           id: string
           ip_address: unknown | null
-          new_values: Json | null
-          old_values: Json | null
+          new_values: GeneratedJson | null
+          old_values: GeneratedJson | null
           profile_id: string
           reason_for_change: string | null
           record_id: string | null
@@ -19240,23 +19240,23 @@ export type Database = {
           session_id: string | null
           table_affected: string | null
           user_agent: string | null
-          verification_result: Json | null
+          verification_result: GeneratedJson | null
         }
         Insert: {
           action_performed: string
           assessment_id?: string | null
           audit_date?: string
-          audit_type: Database["public"]["Enums"]["audit_type"]
+          audit_type: GeneratedDatabase["public"]["Enums"]["audit_type"]
           auditor_id: string
           certification_id?: string | null
           changes_summary?: string | null
           compliance_impact?: string | null
           created_at?: string
-          external_system_response?: Json | null
+          external_system_response?: GeneratedJson | null
           id?: string
           ip_address?: unknown | null
-          new_values?: Json | null
-          old_values?: Json | null
+          new_values?: GeneratedJson | null
+          old_values?: GeneratedJson | null
           profile_id: string
           reason_for_change?: string | null
           record_id?: string | null
@@ -19265,23 +19265,23 @@ export type Database = {
           session_id?: string | null
           table_affected?: string | null
           user_agent?: string | null
-          verification_result?: Json | null
+          verification_result?: GeneratedJson | null
         }
         Update: {
           action_performed?: string
           assessment_id?: string | null
           audit_date?: string
-          audit_type?: Database["public"]["Enums"]["audit_type"]
+          audit_type?: GeneratedDatabase["public"]["Enums"]["audit_type"]
           auditor_id?: string
           certification_id?: string | null
           changes_summary?: string | null
           compliance_impact?: string | null
           created_at?: string
-          external_system_response?: Json | null
+          external_system_response?: GeneratedJson | null
           id?: string
           ip_address?: unknown | null
-          new_values?: Json | null
-          old_values?: Json | null
+          new_values?: GeneratedJson | null
+          old_values?: GeneratedJson | null
           profile_id?: string
           reason_for_change?: string | null
           record_id?: string | null
@@ -19290,7 +19290,7 @@ export type Database = {
           session_id?: string | null
           table_affected?: string | null
           user_agent?: string | null
-          verification_result?: Json | null
+          verification_result?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -19416,7 +19416,7 @@ export type Database = {
           certificate_url: string | null
           certification_name: string
           certification_number: string | null
-          certification_type: Database["public"]["Enums"]["professional_certification_type"]
+          certification_type: GeneratedDatabase["public"]["Enums"]["professional_certification_type"]
           continuing_education: boolean | null
           created_at: string | null
           created_by: string
@@ -19438,7 +19438,7 @@ export type Database = {
           certificate_url?: string | null
           certification_name: string
           certification_number?: string | null
-          certification_type: Database["public"]["Enums"]["professional_certification_type"]
+          certification_type: GeneratedDatabase["public"]["Enums"]["professional_certification_type"]
           continuing_education?: boolean | null
           created_at?: string | null
           created_by: string
@@ -19460,7 +19460,7 @@ export type Database = {
           certificate_url?: string | null
           certification_name?: string
           certification_number?: string | null
-          certification_type?: Database["public"]["Enums"]["professional_certification_type"]
+          certification_type?: GeneratedDatabase["public"]["Enums"]["professional_certification_type"]
           continuing_education?: boolean | null
           created_at?: string | null
           created_by?: string
@@ -19705,27 +19705,27 @@ export type Database = {
           assessment_type: string
           assessor_id: string
           certifications_status:
-            | Database["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
             | null
           compliance_score: number | null
           corrective_actions_required: string[] | null
           created_at: string | null
           created_by: string
           credentials_status:
-            | Database["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
             | null
           documentation_status:
-            | Database["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
             | null
           follow_up_required: boolean | null
           id: string
           next_review_date: string | null
-          non_compliance_issues: Json | null
-          overall_status: Database["public"]["Enums"]["compliance_status"]
+          non_compliance_issues: GeneratedJson | null
+          overall_status: GeneratedDatabase["public"]["Enums"]["compliance_status"]
           profile_id: string
           recommendations: string[] | null
           regulatory_status:
-            | Database["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
             | null
           resolution_deadline: string | null
           supporting_documents: string[] | null
@@ -19737,27 +19737,27 @@ export type Database = {
           assessment_type: string
           assessor_id: string
           certifications_status?:
-            | Database["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
             | null
           compliance_score?: number | null
           corrective_actions_required?: string[] | null
           created_at?: string | null
           created_by: string
           credentials_status?:
-            | Database["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
             | null
           documentation_status?:
-            | Database["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
             | null
           follow_up_required?: boolean | null
           id?: string
           next_review_date?: string | null
-          non_compliance_issues?: Json | null
-          overall_status?: Database["public"]["Enums"]["compliance_status"]
+          non_compliance_issues?: GeneratedJson | null
+          overall_status?: GeneratedDatabase["public"]["Enums"]["compliance_status"]
           profile_id: string
           recommendations?: string[] | null
           regulatory_status?:
-            | Database["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
             | null
           resolution_deadline?: string | null
           supporting_documents?: string[] | null
@@ -19769,27 +19769,27 @@ export type Database = {
           assessment_type?: string
           assessor_id?: string
           certifications_status?:
-            | Database["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
             | null
           compliance_score?: number | null
           corrective_actions_required?: string[] | null
           created_at?: string | null
           created_by?: string
           credentials_status?:
-            | Database["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
             | null
           documentation_status?:
-            | Database["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
             | null
           follow_up_required?: boolean | null
           id?: string
           next_review_date?: string | null
-          non_compliance_issues?: Json | null
-          overall_status?: Database["public"]["Enums"]["compliance_status"]
+          non_compliance_issues?: GeneratedJson | null
+          overall_status?: GeneratedDatabase["public"]["Enums"]["compliance_status"]
           profile_id?: string
           recommendations?: string[] | null
           regulatory_status?:
-            | Database["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
             | null
           resolution_deadline?: string | null
           supporting_documents?: string[] | null
@@ -19878,7 +19878,7 @@ export type Database = {
           notes: string | null
           profile_id: string
           registration_number: string
-          registration_type: Database["public"]["Enums"]["professional_registration_type"]
+          registration_type: GeneratedDatabase["public"]["Enums"]["professional_registration_type"]
           renewal_date: string | null
           specialty: string | null
           state_code: string | null
@@ -19907,7 +19907,7 @@ export type Database = {
           notes?: string | null
           profile_id: string
           registration_number: string
-          registration_type: Database["public"]["Enums"]["professional_registration_type"]
+          registration_type: GeneratedDatabase["public"]["Enums"]["professional_registration_type"]
           renewal_date?: string | null
           specialty?: string | null
           state_code?: string | null
@@ -19936,7 +19936,7 @@ export type Database = {
           notes?: string | null
           profile_id?: string
           registration_number?: string
-          registration_type?: Database["public"]["Enums"]["professional_registration_type"]
+          registration_type?: GeneratedDatabase["public"]["Enums"]["professional_registration_type"]
           renewal_date?: string | null
           specialty?: string | null
           state_code?: string | null
@@ -20180,7 +20180,7 @@ export type Database = {
           avatar_url: string | null
           can_access_all_patients: boolean | null
           clinic_id: string | null
-          communication_consent: Json | null
+          communication_consent: GeneratedJson | null
           created_at: string | null
           data_consent_given: boolean | null
           deleted_at: string | null
@@ -20204,12 +20204,12 @@ export type Database = {
           lgpd_consent_version: string | null
           medical_license: string | null
           mfa_enabled: boolean | null
-          notification_preferences: Json | null
+          notification_preferences: GeneratedJson | null
           password_changed_at: string | null
-          permissions: Json | null
+          permissions: GeneratedJson | null
           phone: string | null
           preferred_language: string | null
-          privacy_settings: Json | null
+          privacy_settings: GeneratedJson | null
           professional_license: string | null
           professional_title: string | null
           profile_sync_status: string | null
@@ -20231,7 +20231,7 @@ export type Database = {
           avatar_url?: string | null
           can_access_all_patients?: boolean | null
           clinic_id?: string | null
-          communication_consent?: Json | null
+          communication_consent?: GeneratedJson | null
           created_at?: string | null
           data_consent_given?: boolean | null
           deleted_at?: string | null
@@ -20255,12 +20255,12 @@ export type Database = {
           lgpd_consent_version?: string | null
           medical_license?: string | null
           mfa_enabled?: boolean | null
-          notification_preferences?: Json | null
+          notification_preferences?: GeneratedJson | null
           password_changed_at?: string | null
-          permissions?: Json | null
+          permissions?: GeneratedJson | null
           phone?: string | null
           preferred_language?: string | null
-          privacy_settings?: Json | null
+          privacy_settings?: GeneratedJson | null
           professional_license?: string | null
           professional_title?: string | null
           profile_sync_status?: string | null
@@ -20282,7 +20282,7 @@ export type Database = {
           avatar_url?: string | null
           can_access_all_patients?: boolean | null
           clinic_id?: string | null
-          communication_consent?: Json | null
+          communication_consent?: GeneratedJson | null
           created_at?: string | null
           data_consent_given?: boolean | null
           deleted_at?: string | null
@@ -20306,12 +20306,12 @@ export type Database = {
           lgpd_consent_version?: string | null
           medical_license?: string | null
           mfa_enabled?: boolean | null
-          notification_preferences?: Json | null
+          notification_preferences?: GeneratedJson | null
           password_changed_at?: string | null
-          permissions?: Json | null
+          permissions?: GeneratedJson | null
           phone?: string | null
           preferred_language?: string | null
-          privacy_settings?: Json | null
+          privacy_settings?: GeneratedJson | null
           professional_license?: string | null
           professional_title?: string | null
           profile_sync_status?: string | null
@@ -20358,16 +20358,16 @@ export type Database = {
           avg_reconciliation_time_minutes: number | null
           clinic_id: string
           created_at: string | null
-          discrepancy_trends: Json | null
+          discrepancy_trends: GeneratedJson | null
           failed_reconciliations: number | null
-          fee_optimization_opportunities: Json | null
-          gateway_accuracy_rates: Json | null
+          fee_optimization_opportunities: GeneratedJson | null
+          gateway_accuracy_rates: GeneratedJson | null
           id: string
-          optimization_suggestions: Json | null
+          optimization_suggestions: GeneratedJson | null
           overall_accuracy_rate: number | null
-          performance_alerts: Json | null
-          risk_indicators: Json | null
-          settlement_timing_analysis: Json | null
+          performance_alerts: GeneratedJson | null
+          risk_indicators: GeneratedJson | null
+          settlement_timing_analysis: GeneratedJson | null
           successful_reconciliations: number | null
           total_fees: number | null
           total_reconciliations: number | null
@@ -20379,16 +20379,16 @@ export type Database = {
           avg_reconciliation_time_minutes?: number | null
           clinic_id: string
           created_at?: string | null
-          discrepancy_trends?: Json | null
+          discrepancy_trends?: GeneratedJson | null
           failed_reconciliations?: number | null
-          fee_optimization_opportunities?: Json | null
-          gateway_accuracy_rates?: Json | null
+          fee_optimization_opportunities?: GeneratedJson | null
+          gateway_accuracy_rates?: GeneratedJson | null
           id?: string
-          optimization_suggestions?: Json | null
+          optimization_suggestions?: GeneratedJson | null
           overall_accuracy_rate?: number | null
-          performance_alerts?: Json | null
-          risk_indicators?: Json | null
-          settlement_timing_analysis?: Json | null
+          performance_alerts?: GeneratedJson | null
+          risk_indicators?: GeneratedJson | null
+          settlement_timing_analysis?: GeneratedJson | null
           successful_reconciliations?: number | null
           total_fees?: number | null
           total_reconciliations?: number | null
@@ -20400,16 +20400,16 @@ export type Database = {
           avg_reconciliation_time_minutes?: number | null
           clinic_id?: string
           created_at?: string | null
-          discrepancy_trends?: Json | null
+          discrepancy_trends?: GeneratedJson | null
           failed_reconciliations?: number | null
-          fee_optimization_opportunities?: Json | null
-          gateway_accuracy_rates?: Json | null
+          fee_optimization_opportunities?: GeneratedJson | null
+          gateway_accuracy_rates?: GeneratedJson | null
           id?: string
-          optimization_suggestions?: Json | null
+          optimization_suggestions?: GeneratedJson | null
           overall_accuracy_rate?: number | null
-          performance_alerts?: Json | null
-          risk_indicators?: Json | null
-          settlement_timing_analysis?: Json | null
+          performance_alerts?: GeneratedJson | null
+          risk_indicators?: GeneratedJson | null
+          settlement_timing_analysis?: GeneratedJson | null
           successful_reconciliations?: number | null
           total_fees?: number | null
           total_reconciliations?: number | null
@@ -20439,7 +20439,7 @@ export type Database = {
           clinic_id: string
           created_at: string | null
           description: string
-          detailed_comparison: Json | null
+          detailed_comparison: GeneratedJson | null
           discrepancy_type: string
           financial_impact: number | null
           gateway_amount: number | null
@@ -20463,7 +20463,7 @@ export type Database = {
           clinic_id: string
           created_at?: string | null
           description: string
-          detailed_comparison?: Json | null
+          detailed_comparison?: GeneratedJson | null
           discrepancy_type: string
           financial_impact?: number | null
           gateway_amount?: number | null
@@ -20487,7 +20487,7 @@ export type Database = {
           clinic_id?: string
           created_at?: string | null
           description?: string
-          detailed_comparison?: Json | null
+          detailed_comparison?: GeneratedJson | null
           discrepancy_type?: string
           financial_impact?: number | null
           gateway_amount?: number | null
@@ -20843,57 +20843,57 @@ export type Database = {
           clinic_id: string
           completed_at: string | null
           created_at: string | null
-          error_details: Json | null
+          error_details: GeneratedJson | null
           error_message: string | null
           execution_duration_ms: number | null
-          execution_parameters: Json | null
+          execution_parameters: GeneratedJson | null
           execution_status: string
           execution_type: string
-          filters_applied: Json | null
+          filters_applied: GeneratedJson | null
           id: string
           records_processed: number | null
           report_id: string
           result_file_path: string | null
           result_size_bytes: number | null
-          result_summary: Json | null
+          result_summary: GeneratedJson | null
           started_at: string | null
         }
         Insert: {
           clinic_id: string
           completed_at?: string | null
           created_at?: string | null
-          error_details?: Json | null
+          error_details?: GeneratedJson | null
           error_message?: string | null
           execution_duration_ms?: number | null
-          execution_parameters?: Json | null
+          execution_parameters?: GeneratedJson | null
           execution_status?: string
           execution_type: string
-          filters_applied?: Json | null
+          filters_applied?: GeneratedJson | null
           id?: string
           records_processed?: number | null
           report_id: string
           result_file_path?: string | null
           result_size_bytes?: number | null
-          result_summary?: Json | null
+          result_summary?: GeneratedJson | null
           started_at?: string | null
         }
         Update: {
           clinic_id?: string
           completed_at?: string | null
           created_at?: string | null
-          error_details?: Json | null
+          error_details?: GeneratedJson | null
           error_message?: string | null
           execution_duration_ms?: number | null
-          execution_parameters?: Json | null
+          execution_parameters?: GeneratedJson | null
           execution_status?: string
           execution_type?: string
-          filters_applied?: Json | null
+          filters_applied?: GeneratedJson | null
           id?: string
           records_processed?: number | null
           report_id?: string
           result_file_path?: string | null
           result_size_bytes?: number | null
-          result_summary?: Json | null
+          result_summary?: GeneratedJson | null
           started_at?: string | null
         }
         Relationships: [
@@ -20926,7 +20926,7 @@ export type Database = {
           calculated_at: string
           cancelled_appointments: number
           churn_probability: number
-          churn_risk_level: Database["public"]["Enums"]["churn_risk_level"]
+          churn_risk_level: GeneratedDatabase["public"]["Enums"]["churn_risk_level"]
           clinic_id: string
           completed_appointments: number
           created_at: string
@@ -20948,7 +20948,7 @@ export type Database = {
           calculated_at?: string
           cancelled_appointments?: number
           churn_probability: number
-          churn_risk_level: Database["public"]["Enums"]["churn_risk_level"]
+          churn_risk_level: GeneratedDatabase["public"]["Enums"]["churn_risk_level"]
           clinic_id: string
           completed_appointments?: number
           created_at?: string
@@ -20970,7 +20970,7 @@ export type Database = {
           calculated_at?: string
           cancelled_appointments?: number
           churn_probability?: number
-          churn_risk_level?: Database["public"]["Enums"]["churn_risk_level"]
+          churn_risk_level?: GeneratedDatabase["public"]["Enums"]["churn_risk_level"]
           clinic_id?: string
           completed_appointments?: number
           created_at?: string
@@ -21021,7 +21021,7 @@ export type Database = {
       retention_strategies: {
         Row: {
           clinic_id: string
-          content: Json
+          content: GeneratedJson
           cost_per_execution: number
           created_at: string
           created_by: string | null
@@ -21032,19 +21032,19 @@ export type Database = {
           is_active: boolean
           last_executed_at: string | null
           name: string
-          risk_levels: Database["public"]["Enums"]["churn_risk_level"][]
-          schedule_config: Json
-          settings: Json
-          strategy_type: Database["public"]["Enums"]["retention_strategy_type"]
+          risk_levels: GeneratedDatabase["public"]["Enums"]["churn_risk_level"][]
+          schedule_config: GeneratedJson
+          settings: GeneratedJson
+          strategy_type: GeneratedDatabase["public"]["Enums"]["retention_strategy_type"]
           success_count: number
           success_rate: number | null
-          target_criteria: Json
-          trigger_conditions: Json
+          target_criteria: GeneratedJson
+          trigger_conditions: GeneratedJson
           updated_at: string
         }
         Insert: {
           clinic_id: string
-          content?: Json
+          content?: GeneratedJson
           cost_per_execution?: number
           created_at?: string
           created_by?: string | null
@@ -21055,19 +21055,19 @@ export type Database = {
           is_active?: boolean
           last_executed_at?: string | null
           name: string
-          risk_levels?: Database["public"]["Enums"]["churn_risk_level"][]
-          schedule_config?: Json
-          settings?: Json
-          strategy_type: Database["public"]["Enums"]["retention_strategy_type"]
+          risk_levels?: GeneratedDatabase["public"]["Enums"]["churn_risk_level"][]
+          schedule_config?: GeneratedJson
+          settings?: GeneratedJson
+          strategy_type: GeneratedDatabase["public"]["Enums"]["retention_strategy_type"]
           success_count?: number
           success_rate?: number | null
-          target_criteria?: Json
-          trigger_conditions?: Json
+          target_criteria?: GeneratedJson
+          trigger_conditions?: GeneratedJson
           updated_at?: string
         }
         Update: {
           clinic_id?: string
-          content?: Json
+          content?: GeneratedJson
           cost_per_execution?: number
           created_at?: string
           created_by?: string | null
@@ -21078,14 +21078,14 @@ export type Database = {
           is_active?: boolean
           last_executed_at?: string | null
           name?: string
-          risk_levels?: Database["public"]["Enums"]["churn_risk_level"][]
-          schedule_config?: Json
-          settings?: Json
-          strategy_type?: Database["public"]["Enums"]["retention_strategy_type"]
+          risk_levels?: GeneratedDatabase["public"]["Enums"]["churn_risk_level"][]
+          schedule_config?: GeneratedJson
+          settings?: GeneratedJson
+          strategy_type?: GeneratedDatabase["public"]["Enums"]["retention_strategy_type"]
           success_count?: number
           success_rate?: number | null
-          target_criteria?: Json
-          trigger_conditions?: Json
+          target_criteria?: GeneratedJson
+          trigger_conditions?: GeneratedJson
           updated_at?: string
         }
         Relationships: [
@@ -21141,10 +21141,10 @@ export type Database = {
           period_type: string
           revenue_target: number
           roi_achieved: number | null
-          top_performing_optimizations: Json | null
-          underperforming_optimizations: Json | null
+          top_performing_optimizations: GeneratedJson | null
+          underperforming_optimizations: GeneratedJson | null
           updated_at: string
-          variance_analysis: Json | null
+          variance_analysis: GeneratedJson | null
         }
         Insert: {
           actual_revenue: number
@@ -21160,10 +21160,10 @@ export type Database = {
           period_type: string
           revenue_target: number
           roi_achieved?: number | null
-          top_performing_optimizations?: Json | null
-          underperforming_optimizations?: Json | null
+          top_performing_optimizations?: GeneratedJson | null
+          underperforming_optimizations?: GeneratedJson | null
           updated_at?: string
-          variance_analysis?: Json | null
+          variance_analysis?: GeneratedJson | null
         }
         Update: {
           actual_revenue?: number
@@ -21179,10 +21179,10 @@ export type Database = {
           period_type?: string
           revenue_target?: number
           roi_achieved?: number | null
-          top_performing_optimizations?: Json | null
-          underperforming_optimizations?: Json | null
+          top_performing_optimizations?: GeneratedJson | null
+          underperforming_optimizations?: GeneratedJson | null
           updated_at?: string
-          variance_analysis?: Json | null
+          variance_analysis?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -21213,7 +21213,7 @@ export type Database = {
           optimization_type: string
           roi_percentage: number | null
           status: string
-          strategy: Json
+          strategy: GeneratedJson
           target_increase: number
           updated_at: string
         }
@@ -21228,7 +21228,7 @@ export type Database = {
           optimization_type: string
           roi_percentage?: number | null
           status?: string
-          strategy: Json
+          strategy: GeneratedJson
           target_increase?: number
           updated_at?: string
         }
@@ -21243,7 +21243,7 @@ export type Database = {
           optimization_type?: string
           roi_percentage?: number | null
           status?: string
-          strategy?: Json
+          strategy?: GeneratedJson
           target_increase?: number
           updated_at?: string
         }
@@ -21266,7 +21266,7 @@ export type Database = {
       }
       risk_factors: {
         Row: {
-          calculation_details: Json | null
+          calculation_details: GeneratedJson | null
           created_at: string
           factor_type: string
           factor_value: number
@@ -21276,7 +21276,7 @@ export type Database = {
           weight_score: number
         }
         Insert: {
-          calculation_details?: Json | null
+          calculation_details?: GeneratedJson | null
           created_at?: string
           factor_type: string
           factor_value: number
@@ -21286,7 +21286,7 @@ export type Database = {
           weight_score: number
         }
         Update: {
-          calculation_details?: Json | null
+          calculation_details?: GeneratedJson | null
           created_at?: string
           factor_type?: string
           factor_value?: number
@@ -21321,36 +21321,36 @@ export type Database = {
       }
       role_permissions: {
         Row: {
-          action: Database["public"]["Enums"]["permission_action"]
-          conditions: Json | null
+          action: GeneratedDatabase["public"]["Enums"]["permission_action"]
+          conditions: GeneratedJson | null
           created_at: string | null
           created_by: string | null
           description: string | null
           id: string
           is_granted: boolean | null
-          resource_type: Database["public"]["Enums"]["resource_type"]
+          resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"]
           role: string
         }
         Insert: {
-          action: Database["public"]["Enums"]["permission_action"]
-          conditions?: Json | null
+          action: GeneratedDatabase["public"]["Enums"]["permission_action"]
+          conditions?: GeneratedJson | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
           id?: string
           is_granted?: boolean | null
-          resource_type: Database["public"]["Enums"]["resource_type"]
+          resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"]
           role: string
         }
         Update: {
-          action?: Database["public"]["Enums"]["permission_action"]
-          conditions?: Json | null
+          action?: GeneratedDatabase["public"]["Enums"]["permission_action"]
+          conditions?: GeneratedJson | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
           id?: string
           is_granted?: boolean | null
-          resource_type?: Database["public"]["Enums"]["resource_type"]
+          resource_type?: GeneratedDatabase["public"]["Enums"]["resource_type"]
           role?: string
         }
         Relationships: [
@@ -21424,11 +21424,11 @@ export type Database = {
           opportunity_type: string
           optimal_timing: string | null
           patient_id: string
-          personalization_factors: Json | null
+          personalization_factors: GeneratedJson | null
           presented_at: string | null
           primary_service_id: string | null
           probability_score: number
-          recommended_services: Json
+          recommended_services: GeneratedJson
           response_at: string | null
           status: string
           updated_at: string
@@ -21443,11 +21443,11 @@ export type Database = {
           opportunity_type: string
           optimal_timing?: string | null
           patient_id: string
-          personalization_factors?: Json | null
+          personalization_factors?: GeneratedJson | null
           presented_at?: string | null
           primary_service_id?: string | null
           probability_score: number
-          recommended_services: Json
+          recommended_services: GeneratedJson
           response_at?: string | null
           status?: string
           updated_at?: string
@@ -21462,11 +21462,11 @@ export type Database = {
           opportunity_type?: string
           optimal_timing?: string | null
           patient_id?: string
-          personalization_factors?: Json | null
+          personalization_factors?: GeneratedJson | null
           presented_at?: string | null
           primary_service_id?: string | null
           probability_score?: number
-          recommended_services?: Json
+          recommended_services?: GeneratedJson
           response_at?: string | null
           status?: string
           updated_at?: string
@@ -21515,11 +21515,11 @@ export type Database = {
           category: string
           clinic_id: string | null
           created_at: string
-          event_data: Json | null
+          event_data: GeneratedJson | null
           event_type: string
           id: string
           ip_address: unknown | null
-          location: Json | null
+          location: GeneratedJson | null
           profile_id: string | null
           resolved_at: string | null
           resolved_by: string | null
@@ -21534,11 +21534,11 @@ export type Database = {
           category: string
           clinic_id?: string | null
           created_at?: string
-          event_data?: Json | null
+          event_data?: GeneratedJson | null
           event_type: string
           id?: string
           ip_address?: unknown | null
-          location?: Json | null
+          location?: GeneratedJson | null
           profile_id?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
@@ -21553,11 +21553,11 @@ export type Database = {
           category?: string
           clinic_id?: string | null
           created_at?: string
-          event_data?: Json | null
+          event_data?: GeneratedJson | null
           event_type?: string
           id?: string
           ip_address?: unknown | null
-          location?: Json | null
+          location?: GeneratedJson | null
           profile_id?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
@@ -21638,14 +21638,14 @@ export type Database = {
           last_updated: string | null
           last_validated: string | null
           lifetime_value_prediction: number | null
-          membership_reason: Json | null
+          membership_reason: GeneratedJson | null
           membership_score: number | null
           patient_id: string
           predicted_engagement_score: number | null
           predicted_lifetime_value: number | null
           predicted_retention_probability: number | null
           segment_id: string
-          treatment_propensity: Json | null
+          treatment_propensity: GeneratedJson | null
           updated_at: string | null
         }
         Insert: {
@@ -21659,14 +21659,14 @@ export type Database = {
           last_updated?: string | null
           last_validated?: string | null
           lifetime_value_prediction?: number | null
-          membership_reason?: Json | null
+          membership_reason?: GeneratedJson | null
           membership_score?: number | null
           patient_id: string
           predicted_engagement_score?: number | null
           predicted_lifetime_value?: number | null
           predicted_retention_probability?: number | null
           segment_id: string
-          treatment_propensity?: Json | null
+          treatment_propensity?: GeneratedJson | null
           updated_at?: string | null
         }
         Update: {
@@ -21680,14 +21680,14 @@ export type Database = {
           last_updated?: string | null
           last_validated?: string | null
           lifetime_value_prediction?: number | null
-          membership_reason?: Json | null
+          membership_reason?: GeneratedJson | null
           membership_score?: number | null
           patient_id?: string
           predicted_engagement_score?: number | null
           predicted_lifetime_value?: number | null
           predicted_retention_probability?: number | null
           segment_id?: string
-          treatment_propensity?: Json | null
+          treatment_propensity?: GeneratedJson | null
           updated_at?: string | null
         }
         Relationships: [
@@ -21836,10 +21836,10 @@ export type Database = {
       segmentation_rules: {
         Row: {
           accuracy_rate: number | null
-          ai_recommendations: Json | null
+          ai_recommendations: GeneratedJson | null
           auto_execute: boolean | null
           clinic_id: string
-          conditions: Json
+          conditions: GeneratedJson
           created_at: string | null
           created_by: string | null
           description: string | null
@@ -21849,7 +21849,7 @@ export type Database = {
           last_evaluated: string | null
           last_executed: string | null
           matches_count: number | null
-          performance_metrics: Json | null
+          performance_metrics: GeneratedJson | null
           priority: number | null
           requires_ai: boolean | null
           rule_name: string
@@ -21857,10 +21857,10 @@ export type Database = {
         }
         Insert: {
           accuracy_rate?: number | null
-          ai_recommendations?: Json | null
+          ai_recommendations?: GeneratedJson | null
           auto_execute?: boolean | null
           clinic_id: string
-          conditions: Json
+          conditions: GeneratedJson
           created_at?: string | null
           created_by?: string | null
           description?: string | null
@@ -21870,7 +21870,7 @@ export type Database = {
           last_evaluated?: string | null
           last_executed?: string | null
           matches_count?: number | null
-          performance_metrics?: Json | null
+          performance_metrics?: GeneratedJson | null
           priority?: number | null
           requires_ai?: boolean | null
           rule_name: string
@@ -21878,10 +21878,10 @@ export type Database = {
         }
         Update: {
           accuracy_rate?: number | null
-          ai_recommendations?: Json | null
+          ai_recommendations?: GeneratedJson | null
           auto_execute?: boolean | null
           clinic_id?: string
-          conditions?: Json
+          conditions?: GeneratedJson
           created_at?: string | null
           created_by?: string | null
           description?: string | null
@@ -21891,7 +21891,7 @@ export type Database = {
           last_evaluated?: string | null
           last_executed?: string | null
           matches_count?: number | null
-          performance_metrics?: Json | null
+          performance_metrics?: GeneratedJson | null
           priority?: number | null
           requires_ai?: boolean | null
           rule_name?: string
@@ -22033,7 +22033,7 @@ export type Database = {
           name: string
           price_type: string
           sort_order: number
-          template_config: Json
+          template_config: GeneratedJson
           template_type: string
           updated_at: string
           usage_count: number
@@ -22051,7 +22051,7 @@ export type Database = {
           name: string
           price_type?: string
           sort_order?: number
-          template_config?: Json
+          template_config?: GeneratedJson
           template_type?: string
           updated_at?: string
           usage_count?: number
@@ -22069,7 +22069,7 @@ export type Database = {
           name?: string
           price_type?: string
           sort_order?: number
-          template_config?: Json
+          template_config?: GeneratedJson
           template_type?: string
           updated_at?: string
           usage_count?: number
@@ -22204,7 +22204,7 @@ export type Database = {
           access_token: string | null
           account_handle: string | null
           account_id: string | null
-          account_metadata: Json | null
+          account_metadata: GeneratedJson | null
           account_name: string
           clinic_id: string
           created_at: string | null
@@ -22215,7 +22215,7 @@ export type Database = {
           refresh_token: string | null
           status: string | null
           sync_error_message: string | null
-          sync_settings: Json | null
+          sync_settings: GeneratedJson | null
           sync_status: string | null
           token_expires_at: string | null
           updated_at: string | null
@@ -22224,7 +22224,7 @@ export type Database = {
           access_token?: string | null
           account_handle?: string | null
           account_id?: string | null
-          account_metadata?: Json | null
+          account_metadata?: GeneratedJson | null
           account_name: string
           clinic_id: string
           created_at?: string | null
@@ -22235,7 +22235,7 @@ export type Database = {
           refresh_token?: string | null
           status?: string | null
           sync_error_message?: string | null
-          sync_settings?: Json | null
+          sync_settings?: GeneratedJson | null
           sync_status?: string | null
           token_expires_at?: string | null
           updated_at?: string | null
@@ -22244,7 +22244,7 @@ export type Database = {
           access_token?: string | null
           account_handle?: string | null
           account_id?: string | null
-          account_metadata?: Json | null
+          account_metadata?: GeneratedJson | null
           account_name?: string
           clinic_id?: string
           created_at?: string | null
@@ -22255,7 +22255,7 @@ export type Database = {
           refresh_token?: string | null
           status?: string | null
           sync_error_message?: string | null
-          sync_settings?: Json | null
+          sync_settings?: GeneratedJson | null
           sync_status?: string | null
           token_expires_at?: string | null
           updated_at?: string | null
@@ -22303,46 +22303,46 @@ export type Database = {
           account_id: string | null
           analytics_date: string
           analytics_type: string
-          audience_demographics: Json | null
-          benchmark_comparison: Json | null
+          audience_demographics: GeneratedJson | null
+          benchmark_comparison: GeneratedJson | null
           clinic_id: string
           created_at: string | null
-          engagement_metrics: Json | null
+          engagement_metrics: GeneratedJson | null
           id: string
-          metrics: Json
+          metrics: GeneratedJson
           performance_score: number | null
           post_id: string | null
-          reach_metrics: Json | null
+          reach_metrics: GeneratedJson | null
         }
         Insert: {
           account_id?: string | null
           analytics_date: string
           analytics_type: string
-          audience_demographics?: Json | null
-          benchmark_comparison?: Json | null
+          audience_demographics?: GeneratedJson | null
+          benchmark_comparison?: GeneratedJson | null
           clinic_id: string
           created_at?: string | null
-          engagement_metrics?: Json | null
+          engagement_metrics?: GeneratedJson | null
           id?: string
-          metrics?: Json
+          metrics?: GeneratedJson
           performance_score?: number | null
           post_id?: string | null
-          reach_metrics?: Json | null
+          reach_metrics?: GeneratedJson | null
         }
         Update: {
           account_id?: string | null
           analytics_date?: string
           analytics_type?: string
-          audience_demographics?: Json | null
-          benchmark_comparison?: Json | null
+          audience_demographics?: GeneratedJson | null
+          benchmark_comparison?: GeneratedJson | null
           clinic_id?: string
           created_at?: string | null
-          engagement_metrics?: Json | null
+          engagement_metrics?: GeneratedJson | null
           id?: string
-          metrics?: Json
+          metrics?: GeneratedJson
           performance_score?: number | null
           post_id?: string | null
-          reach_metrics?: Json | null
+          reach_metrics?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -22378,42 +22378,42 @@ export type Database = {
       social_media_platforms: {
         Row: {
           api_base_url: string | null
-          api_rate_limits: Json | null
+          api_rate_limits: GeneratedJson | null
           created_at: string | null
           id: string
-          oauth_config: Json | null
+          oauth_config: GeneratedJson | null
           platform_display_name: string
           platform_icon_url: string | null
           platform_name: string
-          supported_features: Json | null
+          supported_features: GeneratedJson | null
           updated_at: string | null
-          webhook_capabilities: Json | null
+          webhook_capabilities: GeneratedJson | null
         }
         Insert: {
           api_base_url?: string | null
-          api_rate_limits?: Json | null
+          api_rate_limits?: GeneratedJson | null
           created_at?: string | null
           id?: string
-          oauth_config?: Json | null
+          oauth_config?: GeneratedJson | null
           platform_display_name: string
           platform_icon_url?: string | null
           platform_name: string
-          supported_features?: Json | null
+          supported_features?: GeneratedJson | null
           updated_at?: string | null
-          webhook_capabilities?: Json | null
+          webhook_capabilities?: GeneratedJson | null
         }
         Update: {
           api_base_url?: string | null
-          api_rate_limits?: Json | null
+          api_rate_limits?: GeneratedJson | null
           created_at?: string | null
           id?: string
-          oauth_config?: Json | null
+          oauth_config?: GeneratedJson | null
           platform_display_name?: string
           platform_icon_url?: string | null
           platform_name?: string
-          supported_features?: Json | null
+          supported_features?: GeneratedJson | null
           updated_at?: string | null
-          webhook_capabilities?: Json | null
+          webhook_capabilities?: GeneratedJson | null
         }
         Relationships: []
       }
@@ -22425,21 +22425,21 @@ export type Database = {
           content_text: string | null
           created_at: string | null
           created_by: string
-          engagement_stats: Json | null
+          engagement_stats: GeneratedJson | null
           error_message: string | null
-          hashtags: Json | null
+          hashtags: GeneratedJson | null
           id: string
-          media_urls: Json | null
-          mentions: Json | null
+          media_urls: GeneratedJson | null
+          mentions: GeneratedJson | null
           platform_post_id: string | null
           platform_post_url: string | null
-          post_settings: Json | null
+          post_settings: GeneratedJson | null
           post_type: string
           published_by: string | null
           published_time: string | null
           scheduled_time: string | null
           status: string | null
-          targeting_settings: Json | null
+          targeting_settings: GeneratedJson | null
           updated_at: string | null
         }
         Insert: {
@@ -22449,21 +22449,21 @@ export type Database = {
           content_text?: string | null
           created_at?: string | null
           created_by: string
-          engagement_stats?: Json | null
+          engagement_stats?: GeneratedJson | null
           error_message?: string | null
-          hashtags?: Json | null
+          hashtags?: GeneratedJson | null
           id?: string
-          media_urls?: Json | null
-          mentions?: Json | null
+          media_urls?: GeneratedJson | null
+          mentions?: GeneratedJson | null
           platform_post_id?: string | null
           platform_post_url?: string | null
-          post_settings?: Json | null
+          post_settings?: GeneratedJson | null
           post_type: string
           published_by?: string | null
           published_time?: string | null
           scheduled_time?: string | null
           status?: string | null
-          targeting_settings?: Json | null
+          targeting_settings?: GeneratedJson | null
           updated_at?: string | null
         }
         Update: {
@@ -22473,21 +22473,21 @@ export type Database = {
           content_text?: string | null
           created_at?: string | null
           created_by?: string
-          engagement_stats?: Json | null
+          engagement_stats?: GeneratedJson | null
           error_message?: string | null
-          hashtags?: Json | null
+          hashtags?: GeneratedJson | null
           id?: string
-          media_urls?: Json | null
-          mentions?: Json | null
+          media_urls?: GeneratedJson | null
+          mentions?: GeneratedJson | null
           platform_post_id?: string | null
           platform_post_url?: string | null
-          post_settings?: Json | null
+          post_settings?: GeneratedJson | null
           post_type?: string
           published_by?: string | null
           published_time?: string | null
           scheduled_time?: string | null
           status?: string | null
-          targeting_settings?: Json | null
+          targeting_settings?: GeneratedJson | null
           updated_at?: string | null
         }
         Relationships: [
@@ -22568,7 +22568,7 @@ export type Database = {
           platform_engagement_id: string | null
           post_id: string
           sentiment_score: number | null
-          user_profile: Json | null
+          user_profile: GeneratedJson | null
         }
         Insert: {
           clinic_id: string
@@ -22581,7 +22581,7 @@ export type Database = {
           platform_engagement_id?: string | null
           post_id: string
           sentiment_score?: number | null
-          user_profile?: Json | null
+          user_profile?: GeneratedJson | null
         }
         Update: {
           clinic_id?: string
@@ -22594,7 +22594,7 @@ export type Database = {
           platform_engagement_id?: string | null
           post_id?: string
           sentiment_score?: number | null
-          user_profile?: Json | null
+          user_profile?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -22811,7 +22811,7 @@ export type Database = {
           acknowledged_at: string | null
           acknowledged_by: string | null
           affected_procedures: string[] | null
-          alert_data: Json | null
+          alert_data: GeneratedJson | null
           alert_message: string
           alert_severity: string | null
           alert_title: string
@@ -22859,7 +22859,7 @@ export type Database = {
           acknowledged_at?: string | null
           acknowledged_by?: string | null
           affected_procedures?: string[] | null
-          alert_data?: Json | null
+          alert_data?: GeneratedJson | null
           alert_message: string
           alert_severity?: string | null
           alert_title: string
@@ -22907,7 +22907,7 @@ export type Database = {
           acknowledged_at?: string | null
           acknowledged_by?: string | null
           affected_procedures?: string[] | null
-          alert_data?: Json | null
+          alert_data?: GeneratedJson | null
           alert_message?: string
           alert_severity?: string | null
           alert_title?: string
@@ -23059,19 +23059,19 @@ export type Database = {
           ordering_efficiency_score: number | null
           overstock_incidents: number | null
           potential_revenue_loss: number | null
-          predicted_consumption: Json | null
+          predicted_consumption: GeneratedJson | null
           products_consumed: number | null
           products_expired: number | null
           products_expiring_soon: number | null
           products_low_stock: number | null
           products_out_of_stock: number | null
-          reorder_suggestions: Json | null
+          reorder_suggestions: GeneratedJson | null
           stock_turnover_rate: number | null
           stockout_incidents: number | null
           supplier_performance_score: number | null
           total_products: number | null
           total_stock_value: number | null
-          trend_analysis: Json | null
+          trend_analysis: GeneratedJson | null
           waste_percentage: number | null
         }
         Insert: {
@@ -23094,19 +23094,19 @@ export type Database = {
           ordering_efficiency_score?: number | null
           overstock_incidents?: number | null
           potential_revenue_loss?: number | null
-          predicted_consumption?: Json | null
+          predicted_consumption?: GeneratedJson | null
           products_consumed?: number | null
           products_expired?: number | null
           products_expiring_soon?: number | null
           products_low_stock?: number | null
           products_out_of_stock?: number | null
-          reorder_suggestions?: Json | null
+          reorder_suggestions?: GeneratedJson | null
           stock_turnover_rate?: number | null
           stockout_incidents?: number | null
           supplier_performance_score?: number | null
           total_products?: number | null
           total_stock_value?: number | null
-          trend_analysis?: Json | null
+          trend_analysis?: GeneratedJson | null
           waste_percentage?: number | null
         }
         Update: {
@@ -23129,19 +23129,19 @@ export type Database = {
           ordering_efficiency_score?: number | null
           overstock_incidents?: number | null
           potential_revenue_loss?: number | null
-          predicted_consumption?: Json | null
+          predicted_consumption?: GeneratedJson | null
           products_consumed?: number | null
           products_expired?: number | null
           products_expiring_soon?: number | null
           products_low_stock?: number | null
           products_out_of_stock?: number | null
-          reorder_suggestions?: Json | null
+          reorder_suggestions?: GeneratedJson | null
           stock_turnover_rate?: number | null
           stockout_incidents?: number | null
           supplier_performance_score?: number | null
           total_products?: number | null
           total_stock_value?: number | null
-          trend_analysis?: Json | null
+          trend_analysis?: GeneratedJson | null
           waste_percentage?: number | null
         }
         Relationships: [
@@ -23344,7 +23344,7 @@ export type Database = {
       stock_reports: {
         Row: {
           access_token: string | null
-          chart_data: Json | null
+          chart_data: GeneratedJson | null
           clinic_id: string
           config_id: string | null
           created_at: string | null
@@ -23358,7 +23358,7 @@ export type Database = {
           file_size_bytes: number | null
           generation_completed_at: string | null
           generation_duration_seconds: number | null
-          generation_metadata: Json | null
+          generation_metadata: GeneratedJson | null
           generation_started_at: string | null
           generation_status: string | null
           id: string
@@ -23366,23 +23366,23 @@ export type Database = {
           last_accessed_at: string | null
           public_access: boolean | null
           recommendations: string[] | null
-          report_data: Json
+          report_data: GeneratedJson
           report_period_end: string
           report_period_start: string
           report_title: string
           report_type: string
           shared_with: string[] | null
-          summary_data: Json | null
+          summary_data: GeneratedJson | null
           total_records: number | null
           total_value: number | null
-          trend_data: Json | null
+          trend_data: GeneratedJson | null
           updated_at: string | null
-          user_feedback: Json | null
+          user_feedback: GeneratedJson | null
           view_count: number | null
         }
         Insert: {
           access_token?: string | null
-          chart_data?: Json | null
+          chart_data?: GeneratedJson | null
           clinic_id: string
           config_id?: string | null
           created_at?: string | null
@@ -23396,7 +23396,7 @@ export type Database = {
           file_size_bytes?: number | null
           generation_completed_at?: string | null
           generation_duration_seconds?: number | null
-          generation_metadata?: Json | null
+          generation_metadata?: GeneratedJson | null
           generation_started_at?: string | null
           generation_status?: string | null
           id?: string
@@ -23404,23 +23404,23 @@ export type Database = {
           last_accessed_at?: string | null
           public_access?: boolean | null
           recommendations?: string[] | null
-          report_data: Json
+          report_data: GeneratedJson
           report_period_end: string
           report_period_start: string
           report_title: string
           report_type: string
           shared_with?: string[] | null
-          summary_data?: Json | null
+          summary_data?: GeneratedJson | null
           total_records?: number | null
           total_value?: number | null
-          trend_data?: Json | null
+          trend_data?: GeneratedJson | null
           updated_at?: string | null
-          user_feedback?: Json | null
+          user_feedback?: GeneratedJson | null
           view_count?: number | null
         }
         Update: {
           access_token?: string | null
-          chart_data?: Json | null
+          chart_data?: GeneratedJson | null
           clinic_id?: string
           config_id?: string | null
           created_at?: string | null
@@ -23434,7 +23434,7 @@ export type Database = {
           file_size_bytes?: number | null
           generation_completed_at?: string | null
           generation_duration_seconds?: number | null
-          generation_metadata?: Json | null
+          generation_metadata?: GeneratedJson | null
           generation_started_at?: string | null
           generation_status?: string | null
           id?: string
@@ -23442,18 +23442,18 @@ export type Database = {
           last_accessed_at?: string | null
           public_access?: boolean | null
           recommendations?: string[] | null
-          report_data?: Json
+          report_data?: GeneratedJson
           report_period_end?: string
           report_period_start?: string
           report_title?: string
           report_type?: string
           shared_with?: string[] | null
-          summary_data?: Json | null
+          summary_data?: GeneratedJson | null
           total_records?: number | null
           total_value?: number | null
-          trend_data?: Json | null
+          trend_data?: GeneratedJson | null
           updated_at?: string | null
-          user_feedback?: Json | null
+          user_feedback?: GeneratedJson | null
           view_count?: number | null
         }
         Relationships: [
@@ -23728,13 +23728,13 @@ export type Database = {
           engagement_score: number | null
           error_message: string | null
           executed_by: string | null
-          execution_status: Database["public"]["Enums"]["execution_status"]
+          execution_status: GeneratedDatabase["public"]["Enums"]["execution_status"]
           follow_up_completed: boolean
           follow_up_date: string | null
           follow_up_required: boolean
           id: string
-          input_data: Json
-          output_data: Json
+          input_data: GeneratedJson
+          output_data: GeneratedJson
           patient_id: string
           started_at: string
           strategy_id: string
@@ -23750,13 +23750,13 @@ export type Database = {
           engagement_score?: number | null
           error_message?: string | null
           executed_by?: string | null
-          execution_status?: Database["public"]["Enums"]["execution_status"]
+          execution_status?: GeneratedDatabase["public"]["Enums"]["execution_status"]
           follow_up_completed?: boolean
           follow_up_date?: string | null
           follow_up_required?: boolean
           id?: string
-          input_data?: Json
-          output_data?: Json
+          input_data?: GeneratedJson
+          output_data?: GeneratedJson
           patient_id: string
           started_at?: string
           strategy_id: string
@@ -23772,13 +23772,13 @@ export type Database = {
           engagement_score?: number | null
           error_message?: string | null
           executed_by?: string | null
-          execution_status?: Database["public"]["Enums"]["execution_status"]
+          execution_status?: GeneratedDatabase["public"]["Enums"]["execution_status"]
           follow_up_completed?: boolean
           follow_up_date?: string | null
           follow_up_required?: boolean
           id?: string
-          input_data?: Json
-          output_data?: Json
+          input_data?: GeneratedJson
+          output_data?: GeneratedJson
           patient_id?: string
           started_at?: string
           strategy_id?: string
@@ -24048,8 +24048,8 @@ export type Database = {
           created_at: string | null
           id: string
           ip_address: unknown | null
-          new_values: Json | null
-          old_values: Json | null
+          new_values: GeneratedJson | null
+          old_values: GeneratedJson | null
           record_id: string | null
           supplier_id: string | null
           table_name: string
@@ -24064,8 +24064,8 @@ export type Database = {
           created_at?: string | null
           id?: string
           ip_address?: unknown | null
-          new_values?: Json | null
-          old_values?: Json | null
+          new_values?: GeneratedJson | null
+          old_values?: GeneratedJson | null
           record_id?: string | null
           supplier_id?: string | null
           table_name: string
@@ -24080,8 +24080,8 @@ export type Database = {
           created_at?: string | null
           id?: string
           ip_address?: unknown | null
-          new_values?: Json | null
-          old_values?: Json | null
+          new_values?: GeneratedJson | null
+          old_values?: GeneratedJson | null
           record_id?: string | null
           supplier_id?: string | null
           table_name?: string
@@ -24136,7 +24136,7 @@ export type Database = {
       }
       supplier_communications: {
         Row: {
-          attachments: Json | null
+          attachments: GeneratedJson | null
           clinic_id: string
           communication_type: string
           contact_method: string | null
@@ -24160,7 +24160,7 @@ export type Database = {
           updated_by: string | null
         }
         Insert: {
-          attachments?: Json | null
+          attachments?: GeneratedJson | null
           clinic_id: string
           communication_type: string
           contact_method?: string | null
@@ -24184,7 +24184,7 @@ export type Database = {
           updated_by?: string | null
         }
         Update: {
-          attachments?: Json | null
+          attachments?: GeneratedJson | null
           clinic_id?: string
           communication_type?: string
           contact_method?: string | null
@@ -24422,7 +24422,7 @@ export type Database = {
           description: string | null
           end_date: string | null
           id: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           payment_terms: string | null
           quality_terms: string | null
           renewal_date: string | null
@@ -24448,7 +24448,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           payment_terms?: string | null
           quality_terms?: string | null
           renewal_date?: string | null
@@ -24474,7 +24474,7 @@ export type Database = {
           description?: string | null
           end_date?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           payment_terms?: string | null
           quality_terms?: string | null
           renewal_date?: string | null
@@ -24713,7 +24713,7 @@ export type Database = {
         Row: {
           availability_status: string | null
           category: string | null
-          certifications: Json | null
+          certifications: GeneratedJson | null
           clinic_id: string
           created_at: string | null
           created_by: string | null
@@ -24725,7 +24725,7 @@ export type Database = {
           minimum_order_quantity: number | null
           product_code: string | null
           product_name: string
-          quality_specifications: Json | null
+          quality_specifications: GeneratedJson | null
           subcategory: string | null
           supplier_id: string
           unit_of_measure: string | null
@@ -24736,7 +24736,7 @@ export type Database = {
         Insert: {
           availability_status?: string | null
           category?: string | null
-          certifications?: Json | null
+          certifications?: GeneratedJson | null
           clinic_id: string
           created_at?: string | null
           created_by?: string | null
@@ -24748,7 +24748,7 @@ export type Database = {
           minimum_order_quantity?: number | null
           product_code?: string | null
           product_name: string
-          quality_specifications?: Json | null
+          quality_specifications?: GeneratedJson | null
           subcategory?: string | null
           supplier_id: string
           unit_of_measure?: string | null
@@ -24759,7 +24759,7 @@ export type Database = {
         Update: {
           availability_status?: string | null
           category?: string | null
-          certifications?: Json | null
+          certifications?: GeneratedJson | null
           clinic_id?: string
           created_at?: string | null
           created_by?: string | null
@@ -24771,7 +24771,7 @@ export type Database = {
           minimum_order_quantity?: number | null
           product_code?: string | null
           product_name?: string
-          quality_specifications?: Json | null
+          quality_specifications?: GeneratedJson | null
           subcategory?: string | null
           supplier_id?: string
           unit_of_measure?: string | null
@@ -24851,7 +24851,7 @@ export type Database = {
           address_line2: string | null
           business_type: string | null
           category: string | null
-          certifications: Json | null
+          certifications: GeneratedJson | null
           city: string | null
           clinic_id: string
           compliance_status: string | null
@@ -24867,7 +24867,7 @@ export type Database = {
           email: string | null
           id: string
           industry: string | null
-          metadata: Json | null
+          metadata: GeneratedJson | null
           name: string
           notes: string | null
           overall_rating: number | null
@@ -24892,7 +24892,7 @@ export type Database = {
           address_line2?: string | null
           business_type?: string | null
           category?: string | null
-          certifications?: Json | null
+          certifications?: GeneratedJson | null
           city?: string | null
           clinic_id: string
           compliance_status?: string | null
@@ -24908,7 +24908,7 @@ export type Database = {
           email?: string | null
           id?: string
           industry?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           name: string
           notes?: string | null
           overall_rating?: number | null
@@ -24933,7 +24933,7 @@ export type Database = {
           address_line2?: string | null
           business_type?: string | null
           category?: string | null
-          certifications?: Json | null
+          certifications?: GeneratedJson | null
           city?: string | null
           clinic_id?: string
           compliance_status?: string | null
@@ -24949,7 +24949,7 @@ export type Database = {
           email?: string | null
           id?: string
           industry?: string | null
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           name?: string
           notes?: string | null
           overall_rating?: number | null
@@ -25179,7 +25179,7 @@ export type Database = {
           auto_resolved: boolean | null
           clinic_id: string
           conflict_description: string | null
-          conflict_details: Json | null
+          conflict_details: GeneratedJson | null
           conflict_fields: string[] | null
           conflict_severity: string | null
           conflict_title: string
@@ -25190,17 +25190,17 @@ export type Database = {
           escalated: boolean | null
           escalated_at: string | null
           escalated_to: string | null
-          external_data: Json | null
+          external_data: GeneratedJson | null
           external_event_id: string | null
           id: string
-          internal_data: Json | null
+          internal_data: GeneratedJson | null
           internal_event_id: string | null
           last_notification_at: string | null
           notifications_sent: number | null
           patient_impact_level: string | null
           primary_event_id: string | null
           provider_involved: string | null
-          resolution_data: Json | null
+          resolution_data: GeneratedJson | null
           resolution_method: string | null
           resolution_notes: string | null
           resolution_rule_id: string | null
@@ -25218,7 +25218,7 @@ export type Database = {
           auto_resolved?: boolean | null
           clinic_id: string
           conflict_description?: string | null
-          conflict_details?: Json | null
+          conflict_details?: GeneratedJson | null
           conflict_fields?: string[] | null
           conflict_severity?: string | null
           conflict_title: string
@@ -25229,17 +25229,17 @@ export type Database = {
           escalated?: boolean | null
           escalated_at?: string | null
           escalated_to?: string | null
-          external_data?: Json | null
+          external_data?: GeneratedJson | null
           external_event_id?: string | null
           id?: string
-          internal_data?: Json | null
+          internal_data?: GeneratedJson | null
           internal_event_id?: string | null
           last_notification_at?: string | null
           notifications_sent?: number | null
           patient_impact_level?: string | null
           primary_event_id?: string | null
           provider_involved?: string | null
-          resolution_data?: Json | null
+          resolution_data?: GeneratedJson | null
           resolution_method?: string | null
           resolution_notes?: string | null
           resolution_rule_id?: string | null
@@ -25257,7 +25257,7 @@ export type Database = {
           auto_resolved?: boolean | null
           clinic_id?: string
           conflict_description?: string | null
-          conflict_details?: Json | null
+          conflict_details?: GeneratedJson | null
           conflict_fields?: string[] | null
           conflict_severity?: string | null
           conflict_title?: string
@@ -25268,17 +25268,17 @@ export type Database = {
           escalated?: boolean | null
           escalated_at?: string | null
           escalated_to?: string | null
-          external_data?: Json | null
+          external_data?: GeneratedJson | null
           external_event_id?: string | null
           id?: string
-          internal_data?: Json | null
+          internal_data?: GeneratedJson | null
           internal_event_id?: string | null
           last_notification_at?: string | null
           notifications_sent?: number | null
           patient_impact_level?: string | null
           primary_event_id?: string | null
           provider_involved?: string | null
-          resolution_data?: Json | null
+          resolution_data?: GeneratedJson | null
           resolution_method?: string | null
           resolution_notes?: string | null
           resolution_rule_id?: string | null
@@ -25335,12 +25335,12 @@ export type Database = {
           clinic_id: string
           created_at: string | null
           dashboard_name: string
-          default_filters: Json | null
+          default_filters: GeneratedJson | null
           favorite_metrics: string[] | null
           id: string
           is_default: boolean | null
           is_shared: boolean | null
-          layout_config: Json
+          layout_config: GeneratedJson
           notification_methods: string[] | null
           preferred_time_range: string | null
           refresh_interval_seconds: number | null
@@ -25353,12 +25353,12 @@ export type Database = {
           clinic_id: string
           created_at?: string | null
           dashboard_name: string
-          default_filters?: Json | null
+          default_filters?: GeneratedJson | null
           favorite_metrics?: string[] | null
           id?: string
           is_default?: boolean | null
           is_shared?: boolean | null
-          layout_config: Json
+          layout_config: GeneratedJson
           notification_methods?: string[] | null
           preferred_time_range?: string | null
           refresh_interval_seconds?: number | null
@@ -25371,12 +25371,12 @@ export type Database = {
           clinic_id?: string
           created_at?: string | null
           dashboard_name?: string
-          default_filters?: Json | null
+          default_filters?: GeneratedJson | null
           favorite_metrics?: string[] | null
           id?: string
           is_default?: boolean | null
           is_shared?: boolean | null
-          layout_config?: Json
+          layout_config?: GeneratedJson
           notification_methods?: string[] | null
           preferred_time_range?: string | null
           refresh_interval_seconds?: number | null
@@ -25403,7 +25403,7 @@ export type Database = {
       }
       sync_events: {
         Row: {
-          conflict_details: Json | null
+          conflict_details: GeneratedJson | null
           conflict_detected: boolean | null
           conflict_resolution: string | null
           connection_id: string
@@ -25411,11 +25411,11 @@ export type Database = {
           error_code: string | null
           error_message: string | null
           event_type: string | null
-          external_data: Json | null
+          external_data: GeneratedJson | null
           external_event_id: string
-          field_mappings: Json | null
+          field_mappings: GeneratedJson | null
           id: string
-          internal_data: Json | null
+          internal_data: GeneratedJson | null
           internal_event_id: string | null
           last_modified_external: string | null
           last_modified_internal: string | null
@@ -25430,7 +25430,7 @@ export type Database = {
           version_internal: number | null
         }
         Insert: {
-          conflict_details?: Json | null
+          conflict_details?: GeneratedJson | null
           conflict_detected?: boolean | null
           conflict_resolution?: string | null
           connection_id: string
@@ -25438,11 +25438,11 @@ export type Database = {
           error_code?: string | null
           error_message?: string | null
           event_type?: string | null
-          external_data?: Json | null
+          external_data?: GeneratedJson | null
           external_event_id: string
-          field_mappings?: Json | null
+          field_mappings?: GeneratedJson | null
           id?: string
-          internal_data?: Json | null
+          internal_data?: GeneratedJson | null
           internal_event_id?: string | null
           last_modified_external?: string | null
           last_modified_internal?: string | null
@@ -25457,7 +25457,7 @@ export type Database = {
           version_internal?: number | null
         }
         Update: {
-          conflict_details?: Json | null
+          conflict_details?: GeneratedJson | null
           conflict_detected?: boolean | null
           conflict_resolution?: string | null
           connection_id?: string
@@ -25465,11 +25465,11 @@ export type Database = {
           error_code?: string | null
           error_message?: string | null
           event_type?: string | null
-          external_data?: Json | null
+          external_data?: GeneratedJson | null
           external_event_id?: string
-          field_mappings?: Json | null
+          field_mappings?: GeneratedJson | null
           id?: string
-          internal_data?: Json | null
+          internal_data?: GeneratedJson | null
           internal_event_id?: string | null
           last_modified_external?: string | null
           last_modified_internal?: string | null
@@ -25513,13 +25513,13 @@ export type Database = {
           data_quality_score: number | null
           days_since_last_issue: number | null
           id: string
-          improvement_recommendations: Json | null
+          improvement_recommendations: GeneratedJson | null
           oauth_health_score: number | null
           overall_health_score: number
           performance_score: number
           previous_score: number | null
           reliability_score: number
-          score_details: Json | null
+          score_details: GeneratedJson | null
           score_trend: string | null
           security_score: number
           sync_frequency_score: number | null
@@ -25536,13 +25536,13 @@ export type Database = {
           data_quality_score?: number | null
           days_since_last_issue?: number | null
           id?: string
-          improvement_recommendations?: Json | null
+          improvement_recommendations?: GeneratedJson | null
           oauth_health_score?: number | null
           overall_health_score: number
           performance_score: number
           previous_score?: number | null
           reliability_score: number
-          score_details?: Json | null
+          score_details?: GeneratedJson | null
           score_trend?: string | null
           security_score: number
           sync_frequency_score?: number | null
@@ -25559,13 +25559,13 @@ export type Database = {
           data_quality_score?: number | null
           days_since_last_issue?: number | null
           id?: string
-          improvement_recommendations?: Json | null
+          improvement_recommendations?: GeneratedJson | null
           oauth_health_score?: number | null
           overall_health_score?: number
           performance_score?: number
           previous_score?: number | null
           reliability_score?: number
-          score_details?: Json | null
+          score_details?: GeneratedJson | null
           score_trend?: string | null
           security_score?: number
           sync_frequency_score?: number | null
@@ -25598,7 +25598,7 @@ export type Database = {
         Row: {
           acknowledged_at: string | null
           acknowledged_by: string | null
-          alert_data: Json | null
+          alert_data: GeneratedJson | null
           alert_message: string
           alert_severity: string
           alert_title: string
@@ -25612,7 +25612,7 @@ export type Database = {
           last_notification_at: string | null
           metric_value: number | null
           notifications_sent: number | null
-          resolution_action: Json | null
+          resolution_action: GeneratedJson | null
           resolution_notes: string | null
           resolved_at: string | null
           resolved_by: string | null
@@ -25624,7 +25624,7 @@ export type Database = {
         Insert: {
           acknowledged_at?: string | null
           acknowledged_by?: string | null
-          alert_data?: Json | null
+          alert_data?: GeneratedJson | null
           alert_message: string
           alert_severity: string
           alert_title: string
@@ -25638,7 +25638,7 @@ export type Database = {
           last_notification_at?: string | null
           metric_value?: number | null
           notifications_sent?: number | null
-          resolution_action?: Json | null
+          resolution_action?: GeneratedJson | null
           resolution_notes?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
@@ -25650,7 +25650,7 @@ export type Database = {
         Update: {
           acknowledged_at?: string | null
           acknowledged_by?: string | null
-          alert_data?: Json | null
+          alert_data?: GeneratedJson | null
           alert_message?: string
           alert_severity?: string
           alert_title?: string
@@ -25664,7 +25664,7 @@ export type Database = {
           last_notification_at?: string | null
           metric_value?: number | null
           notifications_sent?: number | null
-          resolution_action?: Json | null
+          resolution_action?: GeneratedJson | null
           resolution_notes?: string | null
           resolved_at?: string | null
           resolved_by?: string | null
@@ -25705,7 +25705,7 @@ export type Database = {
           avg_sync_success_rate: number | null
           benchmark_period_end: string
           benchmark_period_start: string
-          benchmark_recommendations: Json | null
+          benchmark_recommendations: GeneratedJson | null
           benchmark_type: string
           best_practice_compliance: number | null
           clinic_id: string
@@ -25715,7 +25715,7 @@ export type Database = {
           id: string
           optimization_potential: number | null
           percentile_ranking: number | null
-          top_improvement_areas: Json | null
+          top_improvement_areas: GeneratedJson | null
         }
         Insert: {
           avg_api_response_time_ms?: number | null
@@ -25724,7 +25724,7 @@ export type Database = {
           avg_sync_success_rate?: number | null
           benchmark_period_end: string
           benchmark_period_start: string
-          benchmark_recommendations?: Json | null
+          benchmark_recommendations?: GeneratedJson | null
           benchmark_type: string
           best_practice_compliance?: number | null
           clinic_id: string
@@ -25734,7 +25734,7 @@ export type Database = {
           id?: string
           optimization_potential?: number | null
           percentile_ranking?: number | null
-          top_improvement_areas?: Json | null
+          top_improvement_areas?: GeneratedJson | null
         }
         Update: {
           avg_api_response_time_ms?: number | null
@@ -25743,7 +25743,7 @@ export type Database = {
           avg_sync_success_rate?: number | null
           benchmark_period_end?: string
           benchmark_period_start?: string
-          benchmark_recommendations?: Json | null
+          benchmark_recommendations?: GeneratedJson | null
           benchmark_type?: string
           best_practice_compliance?: number | null
           clinic_id?: string
@@ -25753,7 +25753,7 @@ export type Database = {
           id?: string
           optimization_potential?: number | null
           percentile_ranking?: number | null
-          top_improvement_areas?: Json | null
+          top_improvement_areas?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -25868,12 +25868,12 @@ export type Database = {
           priority: number | null
           processed_at: string | null
           queue_type: string
-          request_data: Json
-          result_data: Json | null
+          request_data: GeneratedJson
+          result_data: GeneratedJson | null
           scheduled_for: string | null
           session_id: string | null
           status: string | null
-          trigger_metadata: Json | null
+          trigger_metadata: GeneratedJson | null
           trigger_source: string | null
           updated_at: string | null
         }
@@ -25891,12 +25891,12 @@ export type Database = {
           priority?: number | null
           processed_at?: string | null
           queue_type: string
-          request_data: Json
-          result_data?: Json | null
+          request_data: GeneratedJson
+          result_data?: GeneratedJson | null
           scheduled_for?: string | null
           session_id?: string | null
           status?: string | null
-          trigger_metadata?: Json | null
+          trigger_metadata?: GeneratedJson | null
           trigger_source?: string | null
           updated_at?: string | null
         }
@@ -25914,12 +25914,12 @@ export type Database = {
           priority?: number | null
           processed_at?: string | null
           queue_type?: string
-          request_data?: Json
-          result_data?: Json | null
+          request_data?: GeneratedJson
+          result_data?: GeneratedJson | null
           scheduled_for?: string | null
           session_id?: string | null
           status?: string | null
-          trigger_metadata?: Json | null
+          trigger_metadata?: GeneratedJson | null
           trigger_source?: string | null
           updated_at?: string | null
         }
@@ -25948,9 +25948,9 @@ export type Database = {
           connection_id: string
           created_at: string | null
           duration_ms: number | null
-          error_details: Json | null
+          error_details: GeneratedJson | null
           errors_count: number | null
-          event_filters: Json | null
+          event_filters: GeneratedJson | null
           events_created: number | null
           events_deleted: number | null
           events_processed: number | null
@@ -25976,9 +25976,9 @@ export type Database = {
           connection_id: string
           created_at?: string | null
           duration_ms?: number | null
-          error_details?: Json | null
+          error_details?: GeneratedJson | null
           errors_count?: number | null
-          event_filters?: Json | null
+          event_filters?: GeneratedJson | null
           events_created?: number | null
           events_deleted?: number | null
           events_processed?: number | null
@@ -26004,9 +26004,9 @@ export type Database = {
           connection_id?: string
           created_at?: string | null
           duration_ms?: number | null
-          error_details?: Json | null
+          error_details?: GeneratedJson | null
           errors_count?: number | null
-          event_filters?: Json | null
+          event_filters?: GeneratedJson | null
           events_created?: number | null
           events_deleted?: number | null
           events_processed?: number | null
@@ -26130,14 +26130,14 @@ export type Database = {
       }
       system_access_log: {
         Row: {
-          access_metadata: Json | null
+          access_metadata: GeneratedJson | null
           access_method: string | null
           access_result: string
           access_type: string
           accessed_features: string[] | null
           api_calls_made: number | null
           blocked_by_policy: boolean | null
-          browser_info: Json | null
+          browser_info: GeneratedJson | null
           clinic_id: string | null
           device_fingerprint: string | null
           failure_reason: string | null
@@ -26163,14 +26163,14 @@ export type Database = {
           user_role: string | null
         }
         Insert: {
-          access_metadata?: Json | null
+          access_metadata?: GeneratedJson | null
           access_method?: string | null
           access_result: string
           access_type: string
           accessed_features?: string[] | null
           api_calls_made?: number | null
           blocked_by_policy?: boolean | null
-          browser_info?: Json | null
+          browser_info?: GeneratedJson | null
           clinic_id?: string | null
           device_fingerprint?: string | null
           failure_reason?: string | null
@@ -26196,14 +26196,14 @@ export type Database = {
           user_role?: string | null
         }
         Update: {
-          access_metadata?: Json | null
+          access_metadata?: GeneratedJson | null
           access_method?: string | null
           access_result?: string
           access_type?: string
           accessed_features?: string[] | null
           api_calls_made?: number | null
           blocked_by_policy?: boolean | null
-          browser_info?: Json | null
+          browser_info?: GeneratedJson | null
           clinic_id?: string | null
           device_fingerprint?: string | null
           failure_reason?: string | null
@@ -26270,9 +26270,9 @@ export type Database = {
         Row: {
           component: string
           created_at: string | null
-          dimensions: Json | null
+          dimensions: GeneratedJson | null
           id: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           metric_name: string
           metric_unit: string | null
           metric_value: number
@@ -26282,9 +26282,9 @@ export type Database = {
         Insert: {
           component: string
           created_at?: string | null
-          dimensions?: Json | null
+          dimensions?: GeneratedJson | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           metric_name: string
           metric_unit?: string | null
           metric_value: number
@@ -26294,9 +26294,9 @@ export type Database = {
         Update: {
           component?: string
           created_at?: string | null
-          dimensions?: Json | null
+          dimensions?: GeneratedJson | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           metric_name?: string
           metric_unit?: string | null
           metric_value?: number
@@ -26309,7 +26309,7 @@ export type Database = {
         Row: {
           created_at: string | null
           id: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           metric_name: string
           metric_type: string
           metric_unit: string | null
@@ -26319,7 +26319,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           metric_name: string
           metric_type: string
           metric_unit?: string | null
@@ -26329,7 +26329,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           metric_name?: string
           metric_type?: string
           metric_unit?: string | null
@@ -26340,7 +26340,7 @@ export type Database = {
       }
       tenants: {
         Row: {
-          address: Json | null
+          address: GeneratedJson | null
           contact_email: string | null
           contact_phone: string | null
           created_at: string | null
@@ -26348,7 +26348,7 @@ export type Database = {
           id: string
           logo_url: string | null
           name: string
-          settings: Json | null
+          settings: GeneratedJson | null
           slug: string
           subscription_plan: string | null
           subscription_status: string | null
@@ -26357,7 +26357,7 @@ export type Database = {
           website_url: string | null
         }
         Insert: {
-          address?: Json | null
+          address?: GeneratedJson | null
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string | null
@@ -26365,7 +26365,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name: string
-          settings?: Json | null
+          settings?: GeneratedJson | null
           slug: string
           subscription_plan?: string | null
           subscription_status?: string | null
@@ -26374,7 +26374,7 @@ export type Database = {
           website_url?: string | null
         }
         Update: {
-          address?: Json | null
+          address?: GeneratedJson | null
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string | null
@@ -26382,7 +26382,7 @@ export type Database = {
           id?: string
           logo_url?: string | null
           name?: string
-          settings?: Json | null
+          settings?: GeneratedJson | null
           slug?: string
           subscription_plan?: string | null
           subscription_status?: string | null
@@ -26402,7 +26402,7 @@ export type Database = {
           completed_at: string | null
           created_at: string | null
           id: string
-          metadata: Json | null
+          metadata: GeneratedJson | null
           notes: string | null
           passed: boolean | null
           profile_id: string | null
@@ -26422,7 +26422,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           notes?: string | null
           passed?: boolean | null
           profile_id?: string | null
@@ -26442,7 +26442,7 @@ export type Database = {
           completed_at?: string | null
           created_at?: string | null
           id?: string
-          metadata?: Json | null
+          metadata?: GeneratedJson | null
           notes?: string | null
           passed?: boolean | null
           profile_id?: string | null
@@ -26617,10 +26617,10 @@ export type Database = {
       }
       treatment_plans: {
         Row: {
-          activities: Json | null
-          addresses: Json | null
-          care_team: Json | null
-          category: Json | null
+          activities: GeneratedJson | null
+          addresses: GeneratedJson | null
+          care_team: GeneratedJson | null
+          category: GeneratedJson | null
           created_at: string
           created_by: string
           data_consent_date: string | null
@@ -26629,9 +26629,9 @@ export type Database = {
           description: string | null
           encounter_reference: string | null
           fhir_id: string
-          fhir_meta: Json | null
-          fhir_text: Json | null
-          goals: Json | null
+          fhir_meta: GeneratedJson | null
+          fhir_text: GeneratedJson | null
+          goals: GeneratedJson | null
           id: string
           intent: string
           patient_id: string
@@ -26641,17 +26641,17 @@ export type Database = {
           replaces: string | null
           status: string
           subject_reference: string
-          supporting_info: Json | null
+          supporting_info: GeneratedJson | null
           title: string
           updated_at: string
           updated_by: string
           version: number
         }
         Insert: {
-          activities?: Json | null
-          addresses?: Json | null
-          care_team?: Json | null
-          category?: Json | null
+          activities?: GeneratedJson | null
+          addresses?: GeneratedJson | null
+          care_team?: GeneratedJson | null
+          category?: GeneratedJson | null
           created_at?: string
           created_by: string
           data_consent_date?: string | null
@@ -26660,9 +26660,9 @@ export type Database = {
           description?: string | null
           encounter_reference?: string | null
           fhir_id?: string
-          fhir_meta?: Json | null
-          fhir_text?: Json | null
-          goals?: Json | null
+          fhir_meta?: GeneratedJson | null
+          fhir_text?: GeneratedJson | null
+          goals?: GeneratedJson | null
           id?: string
           intent?: string
           patient_id: string
@@ -26672,17 +26672,17 @@ export type Database = {
           replaces?: string | null
           status?: string
           subject_reference: string
-          supporting_info?: Json | null
+          supporting_info?: GeneratedJson | null
           title: string
           updated_at?: string
           updated_by: string
           version?: number
         }
         Update: {
-          activities?: Json | null
-          addresses?: Json | null
-          care_team?: Json | null
-          category?: Json | null
+          activities?: GeneratedJson | null
+          addresses?: GeneratedJson | null
+          care_team?: GeneratedJson | null
+          category?: GeneratedJson | null
           created_at?: string
           created_by?: string
           data_consent_date?: string | null
@@ -26691,9 +26691,9 @@ export type Database = {
           description?: string | null
           encounter_reference?: string | null
           fhir_id?: string
-          fhir_meta?: Json | null
-          fhir_text?: Json | null
-          goals?: Json | null
+          fhir_meta?: GeneratedJson | null
+          fhir_text?: GeneratedJson | null
+          goals?: GeneratedJson | null
           id?: string
           intent?: string
           patient_id?: string
@@ -26703,7 +26703,7 @@ export type Database = {
           replaces?: string | null
           status?: string
           subject_reference?: string
-          supporting_info?: Json | null
+          supporting_info?: GeneratedJson | null
           title?: string
           updated_at?: string
           updated_by?: string
@@ -26810,8 +26810,8 @@ export type Database = {
           created_at: string | null
           created_by: string | null
           id: string
-          measurements_after: Json | null
-          measurements_before: Json | null
+          measurements_after: GeneratedJson | null
+          measurements_before: GeneratedJson | null
           milestone_date: string | null
           milestone_reached: boolean | null
           next_appointment_date: string | null
@@ -26819,8 +26819,8 @@ export type Database = {
           patient_feedback: string | null
           patient_id: string | null
           patient_satisfaction_score: number | null
-          photos_after: Json | null
-          photos_before: Json | null
+          photos_after: GeneratedJson | null
+          photos_before: GeneratedJson | null
           professional_notes: string | null
           progress_percentage: number | null
           side_effects: string | null
@@ -26836,8 +26836,8 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           id?: string
-          measurements_after?: Json | null
-          measurements_before?: Json | null
+          measurements_after?: GeneratedJson | null
+          measurements_before?: GeneratedJson | null
           milestone_date?: string | null
           milestone_reached?: boolean | null
           next_appointment_date?: string | null
@@ -26845,8 +26845,8 @@ export type Database = {
           patient_feedback?: string | null
           patient_id?: string | null
           patient_satisfaction_score?: number | null
-          photos_after?: Json | null
-          photos_before?: Json | null
+          photos_after?: GeneratedJson | null
+          photos_before?: GeneratedJson | null
           professional_notes?: string | null
           progress_percentage?: number | null
           side_effects?: string | null
@@ -26862,8 +26862,8 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           id?: string
-          measurements_after?: Json | null
-          measurements_before?: Json | null
+          measurements_after?: GeneratedJson | null
+          measurements_before?: GeneratedJson | null
           milestone_date?: string | null
           milestone_reached?: boolean | null
           next_appointment_date?: string | null
@@ -26871,8 +26871,8 @@ export type Database = {
           patient_feedback?: string | null
           patient_id?: string | null
           patient_satisfaction_score?: number | null
-          photos_after?: Json | null
-          photos_before?: Json | null
+          photos_after?: GeneratedJson | null
+          photos_before?: GeneratedJson | null
           professional_notes?: string | null
           progress_percentage?: number | null
           side_effects?: string | null
@@ -26950,7 +26950,7 @@ export type Database = {
           created_by: string | null
           description: string | null
           expected_results: string | null
-          followup_schedule: Json
+          followup_schedule: GeneratedJson
           id: string
           next_appointment_suggestion: number | null
           protocol_name: string
@@ -26966,7 +26966,7 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           expected_results?: string | null
-          followup_schedule?: Json
+          followup_schedule?: GeneratedJson
           id?: string
           next_appointment_suggestion?: number | null
           protocol_name: string
@@ -26982,7 +26982,7 @@ export type Database = {
           created_by?: string | null
           description?: string | null
           expected_results?: string | null
-          followup_schedule?: Json
+          followup_schedule?: GeneratedJson
           id?: string
           next_appointment_suggestion?: number | null
           protocol_name?: string
@@ -27047,13 +27047,13 @@ export type Database = {
           referral_rate: number | null
           repeat_customer_rate: number | null
           roi_percentage: number | null
-          seasonality_data: Json | null
+          seasonality_data: GeneratedJson | null
           total_cost: number | null
           total_marketing_investment: number | null
           total_revenue: number | null
           total_treatments_count: number | null
           treatment_type: string
-          trends_data: Json | null
+          trends_data: GeneratedJson | null
           updated_at: string | null
         }
         Insert: {
@@ -27074,13 +27074,13 @@ export type Database = {
           referral_rate?: number | null
           repeat_customer_rate?: number | null
           roi_percentage?: number | null
-          seasonality_data?: Json | null
+          seasonality_data?: GeneratedJson | null
           total_cost?: number | null
           total_marketing_investment?: number | null
           total_revenue?: number | null
           total_treatments_count?: number | null
           treatment_type: string
-          trends_data?: Json | null
+          trends_data?: GeneratedJson | null
           updated_at?: string | null
         }
         Update: {
@@ -27101,13 +27101,13 @@ export type Database = {
           referral_rate?: number | null
           repeat_customer_rate?: number | null
           roi_percentage?: number | null
-          seasonality_data?: Json | null
+          seasonality_data?: GeneratedJson | null
           total_cost?: number | null
           total_marketing_investment?: number | null
           total_revenue?: number | null
           total_treatments_count?: number | null
           treatment_type?: string
-          trends_data?: Json | null
+          trends_data?: GeneratedJson | null
           updated_at?: string | null
         }
         Relationships: [
@@ -27130,7 +27130,7 @@ export type Database = {
       user_analytics: {
         Row: {
           created_at: string | null
-          event_data: Json | null
+          event_data: GeneratedJson | null
           event_type: string
           id: string
           page_url: string | null
@@ -27141,7 +27141,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
-          event_data?: Json | null
+          event_data?: GeneratedJson | null
           event_type: string
           id?: string
           page_url?: string | null
@@ -27152,7 +27152,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
-          event_data?: Json | null
+          event_data?: GeneratedJson | null
           event_type?: string
           id?: string
           page_url?: string | null
@@ -27165,11 +27165,11 @@ export type Database = {
       }
       user_dashboard_preferences: {
         Row: {
-          alert_preferences: Json | null
+          alert_preferences: GeneratedJson | null
           clinic_id: string | null
           config_id: string | null
           created_at: string | null
-          custom_layout: Json | null
+          custom_layout: GeneratedJson | null
           default_date_range: string | null
           density: string | null
           email_notifications: boolean | null
@@ -27180,18 +27180,18 @@ export type Database = {
           last_accessed: string | null
           preferred_export_format: string | null
           push_notifications: boolean | null
-          saved_filters: Json | null
+          saved_filters: GeneratedJson | null
           theme: string | null
           updated_at: string | null
           user_id: string
-          widget_positions: Json | null
+          widget_positions: GeneratedJson | null
         }
         Insert: {
-          alert_preferences?: Json | null
+          alert_preferences?: GeneratedJson | null
           clinic_id?: string | null
           config_id?: string | null
           created_at?: string | null
-          custom_layout?: Json | null
+          custom_layout?: GeneratedJson | null
           default_date_range?: string | null
           density?: string | null
           email_notifications?: boolean | null
@@ -27202,18 +27202,18 @@ export type Database = {
           last_accessed?: string | null
           preferred_export_format?: string | null
           push_notifications?: boolean | null
-          saved_filters?: Json | null
+          saved_filters?: GeneratedJson | null
           theme?: string | null
           updated_at?: string | null
           user_id: string
-          widget_positions?: Json | null
+          widget_positions?: GeneratedJson | null
         }
         Update: {
-          alert_preferences?: Json | null
+          alert_preferences?: GeneratedJson | null
           clinic_id?: string | null
           config_id?: string | null
           created_at?: string | null
-          custom_layout?: Json | null
+          custom_layout?: GeneratedJson | null
           default_date_range?: string | null
           density?: string | null
           email_notifications?: boolean | null
@@ -27224,11 +27224,11 @@ export type Database = {
           last_accessed?: string | null
           preferred_export_format?: string | null
           push_notifications?: boolean | null
-          saved_filters?: Json | null
+          saved_filters?: GeneratedJson | null
           theme?: string | null
           updated_at?: string | null
           user_id?: string
-          widget_positions?: Json | null
+          widget_positions?: GeneratedJson | null
         }
         Relationships: [
           {
@@ -27410,7 +27410,7 @@ export type Database = {
           is_active: boolean
           last_login_at: string | null
           mfa_enabled: boolean
-          permissions: Json
+          permissions: GeneratedJson
           role: string
           updated_at: string
         }
@@ -27422,7 +27422,7 @@ export type Database = {
           is_active?: boolean
           last_login_at?: string | null
           mfa_enabled?: boolean
-          permissions?: Json
+          permissions?: GeneratedJson
           role?: string
           updated_at?: string
         }
@@ -27434,7 +27434,7 @@ export type Database = {
           is_active?: boolean
           last_login_at?: string | null
           mfa_enabled?: boolean
-          permissions?: Json
+          permissions?: GeneratedJson
           role?: string
           updated_at?: string
         }
@@ -27518,9 +27518,9 @@ export type Database = {
           clinic_id: string | null
           command_text: string
           confidence_score: number | null
-          context: Json | null
+          context: GeneratedJson | null
           created_at: string | null
-          entities_extracted: Json | null
+          entities_extracted: GeneratedJson | null
           error_message: string | null
           id: string
           intent_recognized: string | null
@@ -27534,9 +27534,9 @@ export type Database = {
           clinic_id?: string | null
           command_text: string
           confidence_score?: number | null
-          context?: Json | null
+          context?: GeneratedJson | null
           created_at?: string | null
-          entities_extracted?: Json | null
+          entities_extracted?: GeneratedJson | null
           error_message?: string | null
           id?: string
           intent_recognized?: string | null
@@ -27550,9 +27550,9 @@ export type Database = {
           clinic_id?: string | null
           command_text?: string
           confidence_score?: number | null
-          context?: Json | null
+          context?: GeneratedJson | null
           created_at?: string | null
-          entities_extracted?: Json | null
+          entities_extracted?: GeneratedJson | null
           error_message?: string | null
           id?: string
           intent_recognized?: string | null
@@ -27582,8 +27582,8 @@ export type Database = {
         Row: {
           clinic_id: string | null
           created_at: string | null
-          custom_commands: Json | null
-          enabled_features: Json | null
+          custom_commands: GeneratedJson | null
+          enabled_features: GeneratedJson | null
           id: string
           language: string | null
           updated_at: string | null
@@ -27593,8 +27593,8 @@ export type Database = {
         Insert: {
           clinic_id?: string | null
           created_at?: string | null
-          custom_commands?: Json | null
-          enabled_features?: Json | null
+          custom_commands?: GeneratedJson | null
+          enabled_features?: GeneratedJson | null
           id?: string
           language?: string | null
           updated_at?: string | null
@@ -27604,8 +27604,8 @@ export type Database = {
         Update: {
           clinic_id?: string | null
           created_at?: string | null
-          custom_commands?: Json | null
-          enabled_features?: Json | null
+          custom_commands?: GeneratedJson | null
+          enabled_features?: GeneratedJson | null
           id?: string
           language?: string | null
           updated_at?: string | null
@@ -27804,10 +27804,10 @@ export type Database = {
           endpoint_id: string
           error_code: string | null
           error_message: string | null
-          event_data: Json
+          event_data: GeneratedJson
           event_duplicate: boolean | null
           event_type: string
-          headers: Json | null
+          headers: GeneratedJson | null
           id: string
           processed_at: string | null
           provider_event_id: string | null
@@ -27827,10 +27827,10 @@ export type Database = {
           endpoint_id: string
           error_code?: string | null
           error_message?: string | null
-          event_data: Json
+          event_data: GeneratedJson
           event_duplicate?: boolean | null
           event_type: string
-          headers?: Json | null
+          headers?: GeneratedJson | null
           id?: string
           processed_at?: string | null
           provider_event_id?: string | null
@@ -27850,10 +27850,10 @@ export type Database = {
           endpoint_id?: string
           error_code?: string | null
           error_message?: string | null
-          event_data?: Json
+          event_data?: GeneratedJson
           event_duplicate?: boolean | null
           event_type?: string
-          headers?: Json | null
+          headers?: GeneratedJson | null
           id?: string
           processed_at?: string | null
           provider_event_id?: string | null
@@ -27898,12 +27898,12 @@ export type Database = {
           contact_type: string | null
           created_at: string | null
           current_step_index: number | null
-          error_log: Json | null
-          execution_data: Json | null
+          error_log: GeneratedJson | null
+          execution_data: GeneratedJson | null
           execution_status: string | null
           id: string
           next_action_at: string | null
-          performance_metrics: Json | null
+          performance_metrics: GeneratedJson | null
           started_at: string | null
           steps_completed: number | null
           target_contact_id: string | null
@@ -27917,12 +27917,12 @@ export type Database = {
           contact_type?: string | null
           created_at?: string | null
           current_step_index?: number | null
-          error_log?: Json | null
-          execution_data?: Json | null
+          error_log?: GeneratedJson | null
+          execution_data?: GeneratedJson | null
           execution_status?: string | null
           id?: string
           next_action_at?: string | null
-          performance_metrics?: Json | null
+          performance_metrics?: GeneratedJson | null
           started_at?: string | null
           steps_completed?: number | null
           target_contact_id?: string | null
@@ -27936,12 +27936,12 @@ export type Database = {
           contact_type?: string | null
           created_at?: string | null
           current_step_index?: number | null
-          error_log?: Json | null
-          execution_data?: Json | null
+          error_log?: GeneratedJson | null
+          execution_data?: GeneratedJson | null
           execution_status?: string | null
           id?: string
           next_action_at?: string | null
-          performance_metrics?: Json | null
+          performance_metrics?: GeneratedJson | null
           started_at?: string | null
           steps_completed?: number | null
           target_contact_id?: string | null
@@ -28015,7 +28015,7 @@ export type Database = {
           churn_probability: number | null
           clinic_id: string | null
           confidence_score: number | null
-          contributing_factors: Json | null
+          contributing_factors: GeneratedJson | null
           created_at: string | null
           expires_at: string | null
           id: string | null
@@ -28023,16 +28023,16 @@ export type Database = {
           patient_id: string | null
           prediction_date: string | null
           priority_score: number | null
-          recommended_actions: Json | null
-          risk_factors: Json | null
-          risk_level: Database["public"]["Enums"]["churn_risk_level"] | null
+          recommended_actions: GeneratedJson | null
+          risk_factors: GeneratedJson | null
+          risk_level: GeneratedDatabase["public"]["Enums"]["churn_risk_level"] | null
           updated_at: string | null
         }
         Insert: {
           churn_probability?: number | null
           clinic_id?: string | null
           confidence_score?: number | null
-          contributing_factors?: Json | null
+          contributing_factors?: GeneratedJson | null
           created_at?: string | null
           expires_at?: string | null
           id?: string | null
@@ -28040,16 +28040,16 @@ export type Database = {
           patient_id?: string | null
           prediction_date?: string | null
           priority_score?: number | null
-          recommended_actions?: Json | null
-          risk_factors?: Json | null
-          risk_level?: Database["public"]["Enums"]["churn_risk_level"] | null
+          recommended_actions?: GeneratedJson | null
+          risk_factors?: GeneratedJson | null
+          risk_level?: GeneratedDatabase["public"]["Enums"]["churn_risk_level"] | null
           updated_at?: string | null
         }
         Update: {
           churn_probability?: number | null
           clinic_id?: string | null
           confidence_score?: number | null
-          contributing_factors?: Json | null
+          contributing_factors?: GeneratedJson | null
           created_at?: string | null
           expires_at?: string | null
           id?: string | null
@@ -28057,9 +28057,9 @@ export type Database = {
           patient_id?: string | null
           prediction_date?: string | null
           priority_score?: number | null
-          recommended_actions?: Json | null
-          risk_factors?: Json | null
-          risk_level?: Database["public"]["Enums"]["churn_risk_level"] | null
+          recommended_actions?: GeneratedJson | null
+          risk_factors?: GeneratedJson | null
+          risk_level?: GeneratedDatabase["public"]["Enums"]["churn_risk_level"] | null
           updated_at?: string | null
         }
         Relationships: [
@@ -28596,7 +28596,7 @@ export type Database = {
           last_failed_call: string | null
           last_successful_call: string | null
           provider_name: string | null
-          provider_type: Database["public"]["Enums"]["api_provider_type"] | null
+          provider_type: GeneratedDatabase["public"]["Enums"]["api_provider_type"] | null
           success_rate_24h: number | null
           success_rate_week: number | null
           total_calls_today: number | null
@@ -28780,7 +28780,7 @@ export type Database = {
           cancelled_appointments: number | null
           churn_probability: number | null
           churn_risk_level:
-            | Database["public"]["Enums"]["churn_risk_level"]
+            | GeneratedDatabase["public"]["Enums"]["churn_risk_level"]
             | null
           clinic_id: string | null
           completed_appointments: number | null
@@ -28929,7 +28929,7 @@ export type Database = {
           certifications_expiring_soon: number | null
           compliance_score: number | null
           compliance_status:
-            | Database["public"]["Enums"]["compliance_status"]
+            | GeneratedDatabase["public"]["Enums"]["compliance_status"]
             | null
           created_at: string | null
           critical_alerts: number | null
@@ -28954,7 +28954,7 @@ export type Database = {
         Row: {
           avg_engagement_score: number | null
           clinic_id: string | null
-          content: Json | null
+          content: GeneratedJson | null
           cost_per_execution: number | null
           created_at: string | null
           created_by: string | null
@@ -28967,19 +28967,19 @@ export type Database = {
           last_executed_at: string | null
           last_execution: string | null
           name: string | null
-          risk_levels: Database["public"]["Enums"]["churn_risk_level"][] | null
-          schedule_config: Json | null
-          settings: Json | null
+          risk_levels: GeneratedDatabase["public"]["Enums"]["churn_risk_level"][] | null
+          schedule_config: GeneratedJson | null
+          settings: GeneratedJson | null
           strategy_type:
-            | Database["public"]["Enums"]["retention_strategy_type"]
+            | GeneratedDatabase["public"]["Enums"]["retention_strategy_type"]
             | null
           success_count: number | null
           success_rate: number | null
           successful_executions: number | null
-          target_criteria: Json | null
+          target_criteria: GeneratedJson | null
           total_cost: number | null
           total_executions: number | null
-          trigger_conditions: Json | null
+          trigger_conditions: GeneratedJson | null
           updated_at: string | null
         }
         Relationships: [
@@ -29031,8 +29031,8 @@ export type Database = {
     }
     Functions: {
       anonymize_patient_data: {
-        Args: { patient_data: Json }
-        Returns: Json
+        Args: { patient_data: GeneratedJson }
+        Returns: GeneratedJson
       }
       auto_resolve_conflict: {
         Args: { p_conflict_id: string }
@@ -29115,9 +29115,9 @@ export type Database = {
       }
       check_user_permission: {
         Args: {
-          p_action: Database["public"]["Enums"]["permission_action"]
+          p_action: GeneratedDatabase["public"]["Enums"]["permission_action"]
           p_resource_id?: string
-          p_resource_type: Database["public"]["Enums"]["resource_type"]
+          p_resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"]
           p_user_id: string
         }
         Returns: boolean
@@ -29140,7 +29140,7 @@ export type Database = {
           p_date_end: string
           p_date_start: string
           p_output_format?: string
-          p_parameters?: Json
+          p_parameters?: GeneratedJson
           p_template_code: string
         }
         Returns: string
@@ -29257,7 +29257,7 @@ export type Database = {
           p_period_end?: string
           p_period_start?: string
         }
-        Returns: Json
+        Returns: GeneratedJson
       }
       get_next_sync_queue_item: {
         Args: Record<PropertyKey, never>
@@ -29265,7 +29265,7 @@ export type Database = {
       }
       get_patient_stats: {
         Args: Record<PropertyKey, never>
-        Returns: Json
+        Returns: GeneratedJson
       }
       get_professional_services_detailed: {
         Args: { p_clinic_id: string }
@@ -29328,11 +29328,11 @@ export type Database = {
           id: string
           is_active: boolean
           is_featured: boolean
-          items: Json
+          items: GeneratedJson
           name: string
           price_type: string
           sort_order: number
-          template_config: Json
+          template_config: GeneratedJson
           template_type: string
           updated_at: string
           usage_count: number
@@ -29392,12 +29392,12 @@ export type Database = {
       log_access_attempt: {
         Args: {
           p_access_granted?: boolean
-          p_action: Database["public"]["Enums"]["permission_action"]
+          p_action: GeneratedDatabase["public"]["Enums"]["permission_action"]
           p_affected_profile_id?: string
           p_denial_reason?: string
           p_ip_address?: unknown
           p_resource_id?: string
-          p_resource_type: Database["public"]["Enums"]["resource_type"]
+          p_resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"]
           p_user_agent?: string
           p_user_id: string
         }
@@ -29409,15 +29409,15 @@ export type Database = {
           p_clinic_id?: string
           p_event_category: string
           p_event_type: string
-          p_new_values?: Json
-          p_old_values?: Json
+          p_new_values?: GeneratedJson
+          p_old_values?: GeneratedJson
           p_record_id?: string
           p_table_name?: string
         }
         Returns: string
       }
       log_document_access: {
-        Args: { action_type: string; details?: Json; document_id: string }
+        Args: { action_type: string; details?: GeneratedJson; document_id: string }
         Returns: undefined
       }
       move_services_to_category: {
@@ -29446,7 +29446,7 @@ export type Database = {
         Returns: string
       }
       reorder_service_categories: {
-        Args: { p_category_orders: Json; p_clinic_id: string }
+        Args: { p_category_orders: GeneratedJson; p_clinic_id: string }
         Returns: boolean
       }
       set_lgpd_clinic_context: {
@@ -29474,16 +29474,16 @@ export type Database = {
         Returns: string
       }
       sync_google_profile_data: {
-        Args: { raw_user_metadata: Json; user_id: string }
+        Args: { raw_user_metadata: GeneratedJson; user_id: string }
         Returns: undefined
       }
       sync_legacy_system: {
         Args: { system_id: string }
-        Returns: Json
+        Returns: GeneratedJson
       }
       trigger_compliance_alert: {
         Args: {
-          p_alert_data?: Json
+          p_alert_data?: GeneratedJson
           p_clinic_id: string
           p_related_requirement_id?: string
           p_related_violation_id?: string
@@ -29664,9 +29664,9 @@ export type Database = {
   }
 }
 
-type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+type DatabaseWithoutInternals = Omit<GeneratedDatabase, "__InternalSupabase">
 
-type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof GeneratedDatabase, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends

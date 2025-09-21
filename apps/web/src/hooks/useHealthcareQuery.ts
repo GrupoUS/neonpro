@@ -41,7 +41,7 @@ async function logHealthcareAction(
       user_id: userId,
       details: details ? JSON.stringify(details) : null,
     });
-  } catch (_error) {
+  } catch (error) {
     console.error('Failed to log healthcare action:', error);
   }
 }

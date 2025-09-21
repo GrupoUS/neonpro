@@ -33,7 +33,7 @@ export const Route = createFileRoute('/api/google-calendar/connect')({
       const authUrl = service.client.getAuthUrl(state);
 
       return json({ authUrl });
-    } catch (_error) {
+    } catch (error) {
       console.error('Error generating auth URL:', error);
       return json({ error: 'Failed to generate auth URL' }, { status: 500 });
     }

@@ -178,8 +178,8 @@ export interface RateLimitResult {
  * Apply rate limiting to API key
  */
 export async function applyRateLimit(
-  key: string,
-  config?: RateLimitConfig,
+  _key: string,
+  _config?: RateLimitConfig,
 ): Promise<RateLimitResult> {
   // TDD placeholder - will implement proper rate limiting
   return {

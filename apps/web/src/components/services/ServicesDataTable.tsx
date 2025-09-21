@@ -1,22 +1,10 @@
 /**
  * Services Data Table Component
- * Enhanced data table following experiment-01 patterns
+ * Enhanced data table following experiment-01 patterns with lazy loading
  */
 
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  SortingState,
-  useReactTable,
-  VisibilityState,
-} from '@tanstack/react-table';
-import { ArrowUpDown } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowUpDown, ChevronDown, MoreHorizontal, Search } from 'lucide-react';
+import { lazy, Suspense, useState } from 'react';
 
 import {
   Badge,
@@ -39,6 +27,17 @@ import {
 
 import type { Service } from '@/types/service';
 import { formatBRL } from '@neonpro/utils';
+import { TableLoading } from '@/lib/utils';
+
+// Lazy load TanStack Table for better bundle splitting
+const TanStackTable = lazy(() => import('@tanstack/react-table'));
+
+// Import types from lazy-loaded module
+type ColumnDef<T> = any;
+type ColumnFiltersState = any;
+type SortingState = any;
+type VisibilityState = any;
+type FlexRender = any;
 
 interface ServicesDataTableProps {
   data: Service[];
@@ -162,6 +161,55 @@ export function ServicesDataTable({
       },
     },
   ];
+
+  return (
+    <Suspense fallback={<TableLoading />}>
+      <ServicesDataTableContent
+        data={data}
+        loading={loading}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        columns={columns}
+        sorting={sorting}
+        setSorting={setSorting}
+        columnFilters={columnFilters}
+        setColumnFilters={setColumnFilters}
+        columnVisibility={columnVisibility}
+        setColumnVisibility={setColumnVisibility}
+      />
+    </Suspense>
+  );
+}
+
+// Content component that uses TanStack Table
+function ServicesDataTableContent({
+  data,
+  loading,
+  onEdit,
+  onDelete,
+  columns,
+  sorting,
+  setSorting,
+  columnFilters,
+  setColumnFilters,
+  columnVisibility,
+  setColumnVisibility,
+}: {
+  data: Service[];
+  loading?: boolean;
+  onEdit: (service: Service) => void;
+  onDelete: (service: Service) => void;
+  columns: ColumnDef<Service>[];
+  sorting: SortingState;
+  setSorting: (sorting: SortingState) => void;
+  columnFilters: ColumnFiltersState;
+  setColumnFilters: (filters: ColumnFiltersState) => void;
+  columnVisibility: VisibilityState;
+  setColumnVisibility: (visibility: VisibilityState) => void;
+}) {
+  // Dynamically import TanStack Table hooks
+  const { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, flexRender } =
+    TanStackTable as any;
 
   const table = useReactTable({
     data,

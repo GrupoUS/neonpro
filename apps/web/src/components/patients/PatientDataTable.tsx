@@ -2,21 +2,6 @@
 
 import { useNavigate } from '@tanstack/react-router';
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  FilterFn,
-  getCoreRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  PaginationState,
-  Row,
-  SortingState,
-  useReactTable,
-  VisibilityState,
-} from '@tanstack/react-table';
-import {
   Calendar,
   ChevronFirstIcon,
   ChevronLastIcon,
@@ -39,7 +24,7 @@ import {
   User,
   UserCheck,
 } from 'lucide-react';
-import { useId, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useId, useMemo, useRef, useState } from 'react';
 
 import { cn } from '@neonpro/ui';
 import {
@@ -90,6 +75,19 @@ import {
 import { toast } from 'sonner';
 import { AdvancedSearchDialog } from './AdvancedSearchDialog';
 import { PatientCreationForm } from './PatientCreationForm';
+import { TableLoading } from '@/lib/utils';
+
+// Lazy load TanStack Table for better bundle splitting
+const TanStackTable = lazy(() => import('@tanstack/react-table'));
+
+// Import types from lazy-loaded module
+type ColumnDef<T> = any;
+type ColumnFiltersState = any;
+type FilterFn = any;
+type PaginationState = any;
+type Row<T> = any;
+type SortingState = any;
+type VisibilityState = any;
 
 interface PatientDataTableProps {
   clinicId: string;
@@ -153,11 +151,86 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
 
   // Advanced search dialog state
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
-  // Removed unused advancedFilters state after removing prop from AdvancedSearchDialog
 
   // Search and filter state
   const searchFilter = (columnFilters.find(f => f.id === 'fullName')?.value as string) || '';
   const statusFilter = (columnFilters.find(f => f.id === 'status')?.value as string[]) || [];
+
+  return (
+    <Suspense fallback={<TableLoading />}>
+      <PatientDataTableContent
+        clinicId={clinicId}
+        id={id}
+        navigate={navigate}
+        inputRef={inputRef}
+        columnFilters={columnFilters}
+        setColumnFilters={setColumnFilters}
+        columnVisibility={columnVisibility}
+        setColumnVisibility={setColumnVisibility}
+        pagination={pagination}
+        setPagination={setPagination}
+        sorting={sorting}
+        setSorting={setSorting}
+        showCreateDialog={showCreateDialog}
+        setShowCreateDialog={setShowCreateDialog}
+        showAdvancedSearch={showAdvancedSearch}
+        setShowAdvancedSearch={setShowAdvancedSearch}
+        searchFilter={searchFilter}
+        statusFilter={statusFilter}
+      />
+    </Suspense>
+  );
+}
+
+function PatientDataTableContent({
+  clinicId,
+  id,
+  navigate,
+  inputRef,
+  columnFilters,
+  setColumnFilters,
+  columnVisibility,
+  setColumnVisibility,
+  pagination,
+  setPagination,
+  sorting,
+  setSorting,
+  showCreateDialog,
+  setShowCreateDialog,
+  showAdvancedSearch,
+  setShowAdvancedSearch,
+  searchFilter,
+  statusFilter,
+}: {
+  clinicId: string;
+  id: string;
+  navigate: any;
+  inputRef: React.RefObject<HTMLInputElement>;
+  columnFilters: ColumnFiltersState;
+  setColumnFilters: (filters: ColumnFiltersState) => void;
+  columnVisibility: VisibilityState;
+  setColumnVisibility: (visibility: VisibilityState) => void;
+  pagination: PaginationState;
+  setPagination: (pagination: PaginationState) => void;
+  sorting: SortingState;
+  setSorting: (sorting: SortingState) => void;
+  showCreateDialog: boolean;
+  setShowCreateDialog: (show: boolean) => void;
+  showAdvancedSearch: boolean;
+  setShowAdvancedSearch: (show: boolean) => void;
+  searchFilter: string;
+  statusFilter: string[];
+}) {
+  // Dynamically import TanStack Table hooks
+  const { 
+    useReactTable, 
+    getCoreRowModel, 
+    getFacetedUniqueValues, 
+    getFilteredRowModel, 
+    getPaginationRowModel, 
+    getSortedRowModel, 
+    flexRender 
+  } = TanStackTable as any;
 
   // Fetch patients data with real-time updates
   const {
@@ -396,7 +469,7 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
   };
 
   const handlePatientCreated = (_patient: any) => {
-    toast.success(`Paciente ${patient.fullName} criado com sucesso!`);
+    toast.success(`Paciente criado com sucesso!`);
     // The real-time subscription will automatically update the table
   };
 
@@ -456,22 +529,22 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
   // Advanced search handlers (FR-005)
   const handleApplyAdvancedFilters = (_filters: any) => {
     // Apply filters to the table
-    if (filters.query) {
-      table.getColumn('fullName')?.setFilterValue(filters.query);
+    if (_filters.query) {
+      table.getColumn('fullName')?.setFilterValue(_filters.query);
     }
 
-    if (filters.status && filters.status.length > 0) {
-      table.getColumn('status')?.setFilterValue(filters.status);
+    if (_filters.status && _filters.status.length > 0) {
+      table.getColumn('status')?.setFilterValue(_filters.status);
     }
 
     // Note: CPF, phone, email, and date range filters would need backend support
     // For now, we'll show a toast indicating advanced search is applied
     if (
-      filters.cpf
-      || filters.phone
-      || filters.email
-      || filters.dateRange?.start
-      || filters.dateRange?.end
+      _filters.cpf
+      || _filters.phone
+      || _filters.email
+      || _filters.dateRange?.start
+      || _filters.dateRange?.end
     ) {
       toast.success(
         'Filtros avançados aplicados! Funcionalidade completa em desenvolvimento.',

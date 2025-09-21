@@ -183,7 +183,7 @@ export function useAIChat(clientId?: string) {
 
         // Log interaction for compliance
         logAIInteraction(sessionId, userMessage.content, aiContent, clientId);
-      } catch (_error) {
+      } catch (error) {
         console.error('Error processing AI stream:', error);
         setChatState(prev => ({
           ...prev,

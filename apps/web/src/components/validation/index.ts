@@ -12,8 +12,8 @@ export { default as MobileResponsiveValidator } from './MobileResponsiveValidato
 export { default as PerformanceTester } from './PerformanceTester';
 
 // Re-export for convenience
-export { 
+export {
   HealthcareUIValidationDashboard as ValidationDashboard,
   MobileResponsiveValidator as ResponsiveValidator,
-  PerformanceTester as PerformanceValidator
+  PerformanceTester as PerformanceValidator,
 };

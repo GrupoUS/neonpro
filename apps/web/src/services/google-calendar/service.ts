@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { CalendarEvent2Tokens } from './client';
+import { CalendarEvent, GoogleCalendarClient, OAuth2Tokens } from './client';
 
 export interface GoogleCalendarIntegrationConfig {
   clientId: string;
@@ -89,7 +89,7 @@ export class GoogleCalendarService {
         integration,
         calendarId: primaryCalendar.id,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error initializing Google Calendar integration:', error);
       throw error;
     }
@@ -229,7 +229,7 @@ export class GoogleCalendarService {
         success: true,
         googleEventId: result.id,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error(
         `Error ${operation} appointment in Google Calendar:`,
         error,
@@ -336,7 +336,7 @@ export class GoogleCalendarService {
         nextSyncToken: result.nextSyncToken,
         changes,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error syncing from Google Calendar:', error);
       throw error;
     }
@@ -450,9 +450,11 @@ export class GoogleCalendarService {
           userAgent: 'neonpro-service', // In real app, get from request
         },
       });
-    } catch (_logError) {
-      console.error('Error logging sync operation:', logError);
-      // Don't throw error for logging failures
+    } catch (logError) {
+      // Log the logging failure without throwing to avoid breaking the main flow
+      const message = logError instanceof Error ? logError.message : String(logError);
+      console.error('Error logging sync operation:', message);
+      // ...don't rethrow—logging failures are non-fatal
     }
   }
 
@@ -487,7 +489,7 @@ export class GoogleCalendarService {
       });
 
       return true;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error disconnecting Google Calendar:', error);
       return false;
     }

@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { useCreateService, useUpdateService } from '@/hooks/useServices';
 import type { Service } from '@/types/service';
 import { toast } from 'sonner';
+import { validateHealthcareFormData, HealthcareDataSensitivity } from '@/utils/healthcare-form-validation';
 
 interface ServiceFormProps {
   service?: Service; // If provided, form is in edit mode
@@ -83,9 +84,23 @@ export function ServiceForm({
       newErrors.duration_minutes = 'Duração não pode ser maior que 8 horas (480 minutos)';
     }
 
-    // Price validation
+    // Price validation with healthcare compliance
     if (formData.price < 0) {
       newErrors.price = 'Preço não pode ser negativo';
+    }
+
+    // Healthcare compliance validation
+    const healthcareValidation = validateHealthcareFormData({
+      serviceName: formData.name,
+      serviceDescription: formData.description,
+      servicePrice: formData.price,
+      serviceDuration: formData.duration_minutes,
+      dataSensitivity: HealthcareDataSensitivity.LOW,
+    });
+
+    if (!healthcareValidation.isValid) {
+      // Merge healthcare validation errors
+      Object.assign(newErrors, healthcareValidation.errors);
     }
 
     setErrors(newErrors);
@@ -127,7 +142,7 @@ export function ServiceForm({
       }
 
       onSuccess();
-    } catch (_error) {
+    } catch (error) {
       console.error('Error saving service:', error);
       toast.error(
         isEditMode ? 'Erro ao atualizar serviço' : 'Erro ao criar serviço',
@@ -147,7 +162,7 @@ export function ServiceForm({
   };
 
   // Price input handler: keep numeric value in state and formatted BRL string for UX
-  const handlePriceChange = (_raw: any) => {
+  const handlePriceChange = (raw: any) => {
     const { formatted, value } = maskBRLInput(raw);
     setPriceInput(formatted);
     handleInputChange('price', value);

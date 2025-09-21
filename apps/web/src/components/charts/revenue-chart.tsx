@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useId } from 'react';
 import { Bar } from 'recharts';
 
 import { Badge } from '@/components/ui/badge';
@@ -33,8 +33,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function RevenueChart() {
-  const id = useId();
-
   return (
     <Card>
       <CardHeader>

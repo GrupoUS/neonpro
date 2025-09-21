@@ -42,7 +42,7 @@ export function usePerformance(componentName: string) {
             end - start,
           );
           return result as ReturnType<T>;
-        } catch (_error) {
+        } catch (error) {
           const end = performance.now();
           (performanceMonitor as any).handleCustomMetric(
             `${componentName}-${operationName}-error`,

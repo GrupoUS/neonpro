@@ -27,11 +27,6 @@ export function EventFilterPanel({ className }: EventFilterPanelProps) {
     applyFilters,
     clearFilters,
     applyQuickFilter,
-    filterByStatus,
-    filterByPriority,
-    filterByColor,
-    filterByDateRange,
-    filterBySearchTerm,
   } = useEventFilters();
 
   const [searchTerm, setSearchTerm] = useState(filters?.searchTerm || '');

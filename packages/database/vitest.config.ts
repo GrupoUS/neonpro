@@ -5,7 +5,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "node",
-    include: ["src/**/*.{test,spec}.{js,ts}"],
+    include: ["src/**/*.{test,spec}.{js,ts}", "tests/**/*.{test,spec}.{js,ts}"],
     exclude: ["node_modules/**", "dist/**"],
     testTimeout: 10000, // 10 seconds for unit tests
     bail: 1,
@@ -13,7 +13,7 @@ export default defineConfig({
     env: {
       NODE_ENV: "test",
     },
-    setupFiles: ["./src/test-setup.ts"],
+    setupFiles: ["./tests/test-setup.ts"],
   },
   resolve: {
     alias: {

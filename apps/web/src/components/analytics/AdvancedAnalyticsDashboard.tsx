@@ -13,9 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import {
   Activity,
   AlertTriangle,
-  BarChart3,
   Brain,
-  Calendar,
   CheckCircle,
   Clock,
   DollarSign,

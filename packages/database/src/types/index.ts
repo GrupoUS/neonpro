@@ -1,7 +1,7 @@
 // Type definitions for database services
 
 // Re-export audit types
-export type * from './audit.types.js';
+export type * from './audit.types';
 
 // Basic data interfaces
 export interface PatientData {

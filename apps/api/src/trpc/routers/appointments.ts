@@ -17,6 +17,7 @@ import { TRPCError } from '@trpc/server';
 import * as v from 'valibot';
 // Removed unused AppointmentReminderValibot import per linter
 
+import { weatherService } from '../../services/weather-service';
 import {
   CreateAppointmentSchema,
   GetAppointmentSchema,
@@ -672,11 +673,32 @@ export const appointmentsRouter = router({
           });
         }
 
-        // Step 3: Predict no-show risk with advanced AI
+        // Step 3: Get weather data for appointment location
+        let weatherData = null;
+        try {
+          // Get clinic location for weather data
+          const clinic = await ctx.prisma.clinic.findUnique({
+            where: { id: ctx.clinicId },
+            select: { latitude: true, longitude: true, city: true, state: true },
+          });
+
+          if (clinic?.latitude && clinic?.longitude) {
+            weatherData = await weatherService.getWeatherForecast(
+              clinic.latitude,
+              clinic.longitude,
+              input.startTime,
+            );
+          }
+        } catch (error) {
+          console.warn('Weather service integration failed:', error);
+          // Continue without weather data - non-critical feature
+        }
+
+        // Step 4: Predict no-show risk with advanced AI (including weather)
         const riskPrediction = await predictNoShowRiskAdvanced(
           input.patientId,
           input.startTime,
-          null, // TODO: Integrate weather API
+          weatherData,
           ctx.prisma,
         );
 
@@ -864,10 +886,33 @@ export const appointmentsRouter = router({
     )
     .query(async ({ ctx, input }) => {
       try {
+        // Get weather data if requested
+        let weatherData = null;
+        if (input.includeWeather) {
+          try {
+            // Get clinic location for weather data
+            const clinic = await ctx.prisma.clinic.findUnique({
+              where: { id: ctx.clinicId },
+              select: { latitude: true, longitude: true, city: true, state: true },
+            });
+
+            if (clinic?.latitude && clinic?.longitude) {
+              weatherData = await weatherService.getWeatherForecast(
+                clinic.latitude,
+                clinic.longitude,
+                input.appointmentTime,
+              );
+            }
+          } catch (error) {
+            console.warn('Weather service integration failed:', error);
+            // Continue without weather data - non-critical feature
+          }
+        }
+
         const prediction = await predictNoShowRiskAdvanced(
           input.patientId,
           input.appointmentTime,
-          null, // TODO: Weather API integration
+          weatherData,
           ctx.prisma,
         );
 

@@ -11,24 +11,25 @@ export {
   supabase,
   supabaseBrowser,
   prisma,
-} from "./client.js";
+} from "./client";
 
 // Database types
 export type { Database } from "./types/supabase";
 export type { SupabaseClient } from "./client";
-export type * from "./types/audit.types.js";
-export type * from "./types/index.js";
+export type * from "./types/audit.types";
+export type * from "./types/index";
 
 // Service implementations - only existing ones
 export { AuditService } from "./services/audit-service";
 export { ConsentService } from "./services/consent-service";
 export { BaseService } from "./services/base.service";
+export { WebRTCSessionService } from "./services/webrtc-session.service";
 
 // Export types from services
 export type { 
   ConsentRequest, 
   ConsentRecord 
-} from "./services/consent-service.js";
+} from "./services/consent-service";
 
 export type {
   AuditLogRequest,
@@ -40,8 +41,26 @@ export type {
   AuditStatusType
 } from "./services/audit-service";
 
+export type {
+  WebRTCConfig,
+  SessionParticipant,
+  SessionQualityMetrics,
+  SessionRecording
+} from "./services/webrtc-session.service";
+
+// Application services using repository pattern
+export { PatientService } from "./application";
+
+// Repository implementations with dependency injection
+export {
+  PatientRepository,
+  ConsentRepository,
+  AppointmentRepository,
+  RepositoryContainer
+} from "./repositories";
+
 // Utility functions
 export {
   checkDatabaseHealth,
   closeDatabaseConnections,
-} from "./client.js";
+} from "./client";

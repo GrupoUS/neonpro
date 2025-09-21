@@ -1,19 +1,18 @@
-import {
-  ColumnDef,
-  ColumnFiltersState,
-  FilterFn,
-  flexRender,
-  getCoreRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  PaginationState,
-  Row,
-  SortingState,
-  useReactTable,
-  VisibilityState,
-} from '@tanstack/react-table';
+import { Suspense, lazy } from 'react';
+import { Loader2 } from 'lucide-react';
+
+// Lazy load TanStack Table for better bundle splitting
+const TanStackTable = lazy(() => import('@tanstack/react-table'));
+
+// Loading component for table
+const TableLoading = () => (
+  <div className="flex items-center justify-center p-8">
+    <div className="text-center space-y-2">
+      <Loader2 className="h-6 w-6 animate-spin mx-auto text-blue-600" />
+      <p className="text-sm text-muted-foreground">Carregando tabela...</p>
+    </div>
+  </div>
+);
 import {
   ChevronDownIcon,
   ChevronFirstIcon,
@@ -88,116 +87,175 @@ type Item = {
   balance: number;
 };
 
-// Custom filter function for multi-column searching
-const multiColumnFilterFn: FilterFn<Item> = (
-  row,
-  _columnId,
-  filterValue: string,
-) => {
-  const searchableRowContent = `${row.original.name} ${row.original.email}`.toLowerCase();
-  const searchTerm = (filterValue ?? '').toLowerCase();
-  return searchableRowContent.includes(searchTerm);
-};
+// Lazy-loaded table component with TanStack Table
+function LazyDataTable() {
+  const {
+    ColumnDef,
+    ColumnFiltersState,
+    FilterFn,
+    flexRender,
+    getCoreRowModel,
+    getFacetedUniqueValues,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    PaginationState,
+    Row,
+    SortingState,
+    useReactTable,
+    VisibilityState,
+  } = TanStackTable;
 
-const statusFilterFn: FilterFn<Item> = (
-  row,
-  columnId,
-  filterValue: string[],
-) => {
-  if (!filterValue?.length) return true;
-  const status = row.getValue(columnId) as string;
-  return filterValue.includes(status);
-};
+  // Custom filter function for multi-column searching
+  const multiColumnFilterFn: FilterFn<Item> = (
+    row,
+    _columnId,
+    filterValue: string,
+  ) => {
+    const searchableRowContent = `${row.original.name} ${row.original.email}`.toLowerCase();
+    const searchTerm = (filterValue ?? '').toLowerCase();
+    return searchableRowContent.includes(searchTerm);
+  };
 
-const columns: ColumnDef<Item>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()
-          || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-        onCheckedChange={(value: boolean | 'indeterminate') =>
-          table.toggleAllPageRowsSelected(Boolean(value))}
-        aria-label='Select all'
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value: boolean | 'indeterminate') => row.toggleSelected(Boolean(value))}
-        aria-label='Select row'
-      />
-    ),
-    size: 28,
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    header: 'Name',
-    accessorKey: 'name',
-    cell: ({ row }) => <div className='font-medium'>{row.getValue('name')}</div>,
-    size: 180,
-    filterFn: multiColumnFilterFn,
-    enableHiding: false,
-  },
-  {
-    header: 'Email',
-    accessorKey: 'email',
-    size: 220,
-  },
-  {
-    header: 'Location',
-    accessorKey: 'location',
-    cell: ({ row }) => (
-      <div>
-        <span className='text-lg leading-none'>{row.original.flag}</span> {row.getValue('location')}
-      </div>
-    ),
-    size: 180,
-  },
-  {
-    header: 'Status',
-    accessorKey: 'status',
-    cell: ({ row }) => (
-      <Badge
-        className={cn(
-          row.getValue('status') === 'Inactive'
-            && 'bg-muted-foreground/60 text-primary-foreground',
-        )}
-      >
-        {row.getValue('status')}
-      </Badge>
-    ),
-    size: 100,
-    filterFn: statusFilterFn,
-  },
-  {
-    header: 'Performance',
-    accessorKey: 'performance',
-  },
-  {
-    header: 'Balance',
-    accessorKey: 'balance',
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('balance'));
-      const formatted = new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-      }).format(amount);
-      return formatted;
+  const statusFilterFn: FilterFn<Item> = (
+    row,
+    columnId,
+    filterValue: string[],
+  ) => {
+    if (!filterValue?.length) return true;
+    const status = row.getValue(columnId) as string;
+    return filterValue.includes(status);
+  };
+
+  const columns: ColumnDef<Item>[] = [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected()
+            || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+          onCheckedChange={(value: boolean | 'indeterminate') =>
+            table.toggleAllPageRowsSelected(Boolean(value))}
+          aria-label='Select all'
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value: boolean | 'indeterminate') => row.toggleSelected(Boolean(value))}
+          aria-label='Select row'
+        />
+      ),
+      size: 28,
+      enableSorting: false,
+      enableHiding: false,
     },
-    size: 120,
-  },
-  {
-    id: 'actions',
-    header: () => <span className='sr-only'>Actions</span>,
-    cell: ({ row }) => <RowActions row={row} />,
-    size: 60,
-    enableHiding: false,
-  },
-];
+    {
+      header: 'Name',
+      accessorKey: 'name',
+      cell: ({ row }) => <div className='font-medium'>{row.getValue('name')}</div>,
+      size: 180,
+      filterFn: multiColumnFilterFn,
+      enableHiding: false,
+    },
+    {
+      header: 'Email',
+      accessorKey: 'email',
+      size: 220,
+    },
+    {
+      header: 'Location',
+      accessorKey: 'location',
+      cell: ({ row }) => (
+        <div>
+          <span className='text-lg leading-none'>{row.original.flag}</span> {row.getValue('location')}
+        </div>
+      ),
+      size: 180,
+    },
+    {
+      header: 'Status',
+      accessorKey: 'status',
+      cell: ({ row }) => (
+        <Badge
+          className={cn(
+            row.getValue('status') === 'Inactive'
+              && 'bg-muted-foreground/60 text-primary-foreground',
+          )}
+        >
+          {row.getValue('status')}
+        </Badge>
+      ),
+      size: 100,
+      filterFn: statusFilterFn,
+    },
+    {
+      header: 'Performance',
+      accessorKey: 'performance',
+    },
+    {
+      header: 'Balance',
+      accessorKey: 'balance',
+      cell: ({ row }) => {
+        const amount = parseFloat(row.getValue('balance'));
+        const formatted = new Intl.NumberFormat('en-US', {
+          style: 'currency',
+          currency: 'USD',
+        }).format(amount);
+        return formatted;
+      },
+      size: 120,
+    },
+    {
+      id: 'actions',
+      header: () => <span className='sr-only'>Actions</span>,
+      cell: ({ row }) => <RowActions row={row} />,
+      size: 60,
+      enableHiding: false,
+    },
+  ];
 
-export default function Component() {
+  return (
+    <Suspense fallback={<TableLoading />}>
+      <DataTableContent
+        columns={columns}
+        ColumnDef={ColumnDef}
+        ColumnFiltersState={ColumnFiltersState}
+        FilterFn={FilterFn}
+        flexRender={flexRender}
+        getCoreRowModel={getCoreRowModel}
+        getFacetedUniqueValues={getFacetedUniqueValues}
+        getFilteredRowModel={getFilteredRowModel}
+        getPaginationRowModel={getPaginationRowModel}
+        getSortedRowModel={getSortedRowModel}
+        PaginationState={PaginationState}
+        Row={Row}
+        SortingState={SortingState}
+        useReactTable={useReactTable}
+        VisibilityState={VisibilityState}
+      />
+    </Suspense>
+  );
+}
+
+// Extract table content to avoid re-rendering the lazy component
+function DataTableContent({
+  columns,
+  ColumnDef,
+  ColumnFiltersState,
+  FilterFn,
+  flexRender,
+  getCoreRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  PaginationState,
+  Row,
+  SortingState,
+  useReactTable,
+  VisibilityState,
+}: any) {
   const id = useId();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -697,6 +755,10 @@ export default function Component() {
       </p>
     </div>
   );
+}
+
+export default function Component() {
+  return <LazyDataTable />;
 }
 
 function RowActions(_props: { row: Row<Item> }) {

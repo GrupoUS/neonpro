@@ -16,15 +16,12 @@ import {
 
 // Import services
 import { CFMComplianceService } from '../../services/cfm-compliance';
-// import { MedicalLicenseService } from '@neonpro/database/src/services/medical-license.service';
+import { telemedicineService } from '../../services/telemedicine-service';
 // import { PatientIdentityService } from '@neonpro/database/src/services/patient-identity.service';
-// import { WebRTCSessionService } from '@neonpro/database/src/services/webrtc-session.service';
 
 // Initialize services
 const cfmService = new CFMComplianceService();
-// const webrtcService = new WebRTCSessionService();
 // const identityService = new PatientIdentityService();
-// const licenseService = new MedicalLicenseService();
 
 // Input validation schemas
 const createSessionSchema = z.object({
@@ -128,18 +125,11 @@ export const telemedicineRouter = router({
           });
         }
 
-        // TODO: Verify medical license when service is available
-        // const licenseVerification = await licenseService.verifyMedicalLicense(
-        //   physician.cfm_number,
-        //   physician.state,
-        //   input.specialty,
-        // );
-
-        // Temporary bypass until service is available
-        const licenseVerification = {
-          complianceStatus: { telemedicineCompliant: true },
-          telemedicineAuth: { restrictions: [] }
-        };
+        // Verify medical license using telemedicine service
+        const licenseVerification = await telemedicineService['verifyPhysicianLicense'](
+          input.physicianId,
+          input.specialty || physician.specialty,
+        );
 
         if (!licenseVerification.complianceStatus.telemedicineCompliant) {
           throw new TRPCError({
@@ -149,26 +139,17 @@ export const telemedicineRouter = router({
           });
         }
 
-        // Create WebRTC session - TODO: Implement when service available
-        // const session = await webrtcService.createSession({
-        //   patientId: input.patientId,
-        //   physicianId: input.physicianId,
-        //   sessionType: input.sessionType,
-        //   specialty: input.specialty,
-        //   scheduledFor: input.scheduledFor,
-        //   estimatedDuration: input.estimatedDuration,
-        //   notes: input.notes,
-        // });
-
-        // Temporary session object for testing
-        const session = {
-          sessionId: `session-${Date.now()}`,
+        // Create WebRTC session using telemedicine service
+        const session = await telemedicineService.createSession({
           patientId: input.patientId,
           physicianId: input.physicianId,
           sessionType: input.sessionType,
-          status: 'scheduled',
-          createdAt: new Date(),
-        };
+          specialty: input.specialty || physician.specialty,
+          scheduledFor: input.scheduledFor || new Date(),
+          estimatedDuration: input.estimatedDuration,
+          notes: input.notes,
+          clinicId: physician.clinic_id,
+        });
 
         // Create CFM compliance record
         const complianceRecord = await cfmService.createComplianceRecord({
@@ -262,20 +243,20 @@ export const telemedicineRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       try {
-        // const sessionSummary = await webrtcService.endSession(
-        //   input.sessionId,
-        //   ctx.userId!,
-        //   input.endReason,
-        //   input.notes,
-        // );
-
-        // Temporary session summary for testing
-        const sessionSummary = {
+        // Calculate actual duration using telemedicine service
+        const sessionResult = await telemedicineService.endSession({
           sessionId: input.sessionId,
           endReason: input.endReason,
-          endedBy: ctx.userId,
-          endedAt: new Date(),
-          duration: 0, // TODO: Calculate actual duration
+          endedBy: ctx.userId!,
+          recordingStopped: true,
+        });
+
+        const sessionSummary = {
+          sessionId: sessionResult.sessionId,
+          endReason: input.endReason,
+          endedBy: ctx.userId!,
+          endedAt: sessionResult.endedAt,
+          duration: sessionResult.duration,
         };
 
         // Complete compliance record
@@ -301,14 +282,17 @@ export const telemedicineRouter = router({
     .input(z.object({ sessionId: z.string().uuid() }))
     .query(async ({ input }) => {
       try {
-        // return await webrtcService.getSessionStatus(input.sessionId);
+        // Get session status using telemedicine service
+        const sessionStatus = await telemedicineService.getSessionStatus(input.sessionId);
 
-        // Temporary session status for testing
         return {
-          sessionId: input.sessionId,
-          status: 'scheduled',
-          participants: [],
-          createdAt: new Date(),
+          sessionId: sessionStatus.session.sessionId,
+          status: sessionStatus.session.status,
+          participants: sessionStatus.participants,
+          webrtcStatus: sessionStatus.webrtcStatus,
+          qualityMetrics: sessionStatus.qualityMetrics,
+          recording: sessionStatus.recording,
+          createdAt: sessionStatus.session.scheduledFor,
         };
       } catch (error) {
         console.error('Error getting session status:', error);
@@ -694,14 +678,14 @@ export const telemedicineRouter = router({
     .input(z.object({ sessionId: z.string().uuid() }))
     .mutation(async ({ input, ctx }) => {
       try {
-        // return await webrtcService.stopRecording(input.sessionId, ctx.userId!);
+        // Stop recording using telemedicine service
+        const recordingResult = await telemedicineService.stopRecording(input.sessionId);
 
-        // Temporary recording stop for testing
         return {
           sessionId: input.sessionId,
           isRecording: false,
           stoppedAt: new Date(),
-          duration: 0, // TODO: Calculate actual duration
+          duration: recordingResult.duration,
         };
       } catch (error) {
         console.error('Error stopping recording:', error);

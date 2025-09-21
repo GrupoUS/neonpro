@@ -82,7 +82,7 @@ export class ExportService {
         format: options.format,
         metadata: completeMetadata,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error exporting financial metrics:', error);
       throw new Error('Falha ao exportar relatório financeiro');
     }
@@ -126,7 +126,7 @@ export class ExportService {
         format: options.format,
         metadata: completeMetadata,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error exporting dashboard:', error);
       throw new Error('Falha ao exportar dashboard');
     }

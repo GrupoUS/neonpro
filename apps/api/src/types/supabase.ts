@@ -7,7 +7,7 @@
 
 import type {
   Database as DatabaseType,
-  Json as JsonType
+  Json as JsonType,
 } from '../../../../packages/database/src/types/supabase';
 
 // Re-export the main types with explicit aliases to avoid conflicts

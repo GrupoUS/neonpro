@@ -1,8 +1,8 @@
+import { AgentQueryRequest, AgentResponse, InteractiveAction, QueryIntent, UserRole } from '@neonpro/types';
 import { Hono } from 'hono';
-import { handle } from 'hono/vercel';
 import { cors } from 'hono/cors';
 import { jwt } from 'hono/jwt';
-import { AgentQueryRequest, AgentResponse, InteractiveAction, UserRole } from '@neonpro/types';
+import { handle } from 'hono/vercel';
 import { AIDataService } from '../../services/ai-data-service';
 import { IntentParserService } from '../../services/intent-parser';
 
@@ -10,12 +10,15 @@ import { IntentParserService } from '../../services/intent-parser';
 const app = new Hono().basePath('/api');
 
 // Enable CORS for frontend integration
-app.use('*', cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  maxAge: 86400, // 24 hours
-}));
+app.use(
+  '*',
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    maxAge: 86400, // 24 hours
+  }),
+);
 
 // JWT middleware for authentication
 app.use('*', async (c, next) => {
@@ -29,13 +32,13 @@ app.use('*', async (c, next) => {
  * POST /api/ai/data-agent
  * Process natural language queries and return structured responses
  */
-app.post('/ai/data-agent', async (c) => {
+app.post('/ai/data-agent', async c => {
   const startTime = Date.now();
-  
+
   try {
     // Parse and validate request
     const body = await c.req.json() as AgentQueryRequest;
-    
+
     if (!body.query || body.query.trim().length === 0) {
       return c.json({
         success: false,
@@ -48,17 +51,18 @@ app.post('/ai/data-agent', async (c) => {
             error: {
               code: 'INVALID_QUERY',
               message: 'Query cannot be empty',
-              suggestion: 'Por favor, digite uma pergunta sobre clientes, agendamentos ou dados financeiros.'
-            }
+              suggestion:
+                'Por favor, digite uma pergunta sobre clientes, agendamentos ou dados financeiros.',
+            },
           },
           metadata: {
             processingTime: Date.now() - startTime,
             confidence: 0,
-            sources: []
+            sources: [],
           },
           timestamp: new Date(),
-          processingTime: Date.now() - startTime
-        }
+          processingTime: Date.now() - startTime,
+        },
       }, 400);
     }
 
@@ -74,17 +78,17 @@ app.post('/ai/data-agent', async (c) => {
             error: {
               code: 'INVALID_SESSION',
               message: 'Session ID is required',
-              suggestion: 'Por favor, recarregue a página e tente novamente.'
-            }
+              suggestion: 'Por favor, recarregue a página e tente novamente.',
+            },
           },
           metadata: {
             processingTime: Date.now() - startTime,
             confidence: 0,
-            sources: []
+            sources: [],
           },
           timestamp: new Date(),
-          processingTime: Date.now() - startTime
-        }
+          processingTime: Date.now() - startTime,
+        },
       }, 400);
     }
 
@@ -126,17 +130,17 @@ app.post('/ai/data-agent', async (c) => {
             error: {
               code: 'INVALID_PARAMETERS',
               message: 'Invalid query parameters',
-              suggestion: validation.errors.join(', ')
-            }
+              suggestion: validation.errors.join(', '),
+            },
           },
           metadata: {
             processingTime: Date.now() - startTime,
             confidence: confidence,
-            sources: []
+            sources: [],
           },
           timestamp: new Date(),
-          processingTime: Date.now() - startTime
-        }
+          processingTime: Date.now() - startTime,
+        },
       }, 400);
     }
 
@@ -162,15 +166,77 @@ app.post('/ai/data-agent', async (c) => {
           metadata: {
             processingTime: Date.now() - startTime,
             confidence,
-            sources: []
+            sources: [],
           },
           timestamp: new Date(),
-          processingTime: Date.now() - startTime
-        }
+          processingTime: Date.now() - startTime,
+        },
       }, 200);
     }
 
-    // Process the query based on intent
+    // Try ottomator-agents integration first
+    try {
+      const ottomatorResponse = await dataService.processNaturalLanguageQuery(
+        body.query,
+        body.sessionId || crypto.randomUUID(),
+        {
+          patientId: body.patientId,
+          previousQueries: body.context?.previousQueries,
+        },
+      );
+
+      if (ottomatorResponse.success && ottomatorResponse.response) {
+        // Use ottomator-agents response
+        const formattedResponse = {
+          id: crypto.randomUUID(),
+          type: ottomatorResponse.response.type === 'structured' ? 'table' : 'text',
+          content: {
+            title: 'Resultado da Consulta',
+            text: ottomatorResponse.response.content,
+            data: ottomatorResponse.response.type === 'structured'
+              ? JSON.parse(ottomatorResponse.response.content)
+              : null,
+          },
+          metadata: {
+            processingTime: ottomatorResponse.metadata?.processingTimeMs
+              || (Date.now() - startTime),
+            confidence: ottomatorResponse.response.sources?.[0]?.confidence || 0.8,
+            sources: ottomatorResponse.response.sources?.map(s => s.title) || ['NeonPro AI Agent'],
+          },
+          timestamp: new Date(),
+          processingTime: ottomatorResponse.metadata?.processingTimeMs || (Date.now() - startTime),
+        };
+
+        // Add actions from ottomator response
+        let ottomatorActions: InteractiveAction[] = [];
+        if (ottomatorResponse.response.actions) {
+          ottomatorActions = ottomatorResponse.response.actions.map(action => ({
+            id: crypto.randomUUID(),
+            type: action.type as 'button' | 'link' | 'form',
+            label: action.label,
+            action: action.action,
+            parameters: action.data,
+          }));
+        }
+
+        return c.json({
+          success: true,
+          response: formattedResponse,
+          actions: ottomatorActions,
+          metadata: {
+            intent,
+            confidence,
+            parameters,
+            processingTime: Date.now() - startTime,
+            model: ottomatorResponse.metadata?.model || 'ottomator-agents',
+          },
+        });
+      }
+    } catch (ottomatorError) {
+      console.warn('Ottomator-agents failed, falling back to direct processing:', ottomatorError);
+    }
+
+    // Fallback to original intent-based processing
     let responseData: any;
     let actions: InteractiveAction[] = [];
     let sources: string[] = [];
@@ -180,7 +246,7 @@ app.post('/ai/data-agent', async (c) => {
         case 'client_data':
           responseData = await dataService.getClientsByName(parameters);
           sources = ['clients'];
-          
+
           if (parameters.clientNames && parameters.clientNames.length > 0) {
             // If specific client names, provide drill-down actions
             responseData.forEach((client: any) => {
@@ -198,7 +264,7 @@ app.post('/ai/data-agent', async (c) => {
         case 'appointments':
           responseData = await dataService.getAppointmentsByDate(parameters);
           sources = ['appointments'];
-          
+
           // Add actions for appointments
           responseData.forEach((appointment: any) => {
             actions.push({
@@ -214,7 +280,7 @@ app.post('/ai/data-agent', async (c) => {
         case 'financial':
           responseData = await dataService.getFinancialSummary(parameters);
           sources = ['financial_records'];
-          
+
           // Add drill-down actions for financial data
           actions.push({
             id: 'view_detailed_financial',
@@ -230,7 +296,7 @@ app.post('/ai/data-agent', async (c) => {
       }
 
       // Format response based on data type
-      const response = this.formatResponse(responseData, intent, actions);
+      const response = formatResponse(responseData, intent, actions);
       const processingTime = Date.now() - startTime;
 
       return c.json({
@@ -244,12 +310,11 @@ app.post('/ai/data-agent', async (c) => {
           },
           timestamp: new Date(),
           processingTime,
-        }
+        },
       }, 200);
-
     } catch (error) {
       console.error('Error processing query:', error);
-      
+
       return c.json({
         success: false,
         response: {
@@ -261,23 +326,22 @@ app.post('/ai/data-agent', async (c) => {
             error: {
               code: 'PROCESSING_ERROR',
               message: error instanceof Error ? error.message : 'Unknown error',
-              suggestion: 'Por favor, tente novamente com uma consulta diferente.'
-            }
+              suggestion: 'Por favor, tente novamente com uma consulta diferente.',
+            },
           },
           metadata: {
             processingTime: Date.now() - startTime,
             confidence: confidence,
-            sources: []
+            sources: [],
           },
           timestamp: new Date(),
-          processingTime: Date.now() - startTime
-        }
+          processingTime: Date.now() - startTime,
+        },
       }, 500);
     }
-
   } catch (error) {
     console.error('Data-agent endpoint error:', error);
-    
+
     return c.json({
       success: false,
       response: {
@@ -289,17 +353,17 @@ app.post('/ai/data-agent', async (c) => {
           error: {
             code: 'INTERNAL_ERROR',
             message: 'Internal server error',
-            suggestion: 'Por favor, tente novamente mais tarde.'
-          }
+            suggestion: 'Por favor, tente novamente mais tarde.',
+          },
         },
         metadata: {
           processingTime: Date.now() - startTime,
           confidence: 0,
-          sources: []
+          sources: [],
         },
         timestamp: new Date(),
-        processingTime: Date.now() - startTime
-      }
+        processingTime: Date.now() - startTime,
+      },
     }, 500);
   }
 });

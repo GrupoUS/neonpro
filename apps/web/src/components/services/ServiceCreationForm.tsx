@@ -148,7 +148,7 @@ export function ServiceCreationForm({
       onOpenChange(false);
 
       toast.success('Serviço criado com sucesso!');
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating service:', error);
       toast.error('Erro ao criar serviço. Tente novamente.');
     } finally {

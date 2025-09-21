@@ -10,7 +10,6 @@
  * Compliance: LGPD, CFM Resolution 2,314/2022, ANVISA, NGS2
  */
 
-import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { initTRPC, TRPCError } from '@trpc/server';
 import superjson from 'superjson';
 import { Context } from './context';
