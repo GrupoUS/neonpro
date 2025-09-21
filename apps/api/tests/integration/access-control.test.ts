@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { createServer } from 'http';
 import { fetch } from 'undici';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 // Import the agent endpoint
 import { agentRouter } from '../../src/routes/ai/data-agent';

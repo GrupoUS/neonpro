@@ -50,8 +50,8 @@ interface QueryOptimizationConfig {
 
 // Cache interface for query results
 interface QueryCache {
-  get(key: string): Promise<any | null>;
-  set(key: string, value: any, ttl?: number): Promise<void>;
+  get(key: string): Promise<unknown | null>;
+  set(key: string, value: unknown, ttl?: number): Promise<void>;
   delete(key: string): Promise<void>;
   clear(): Promise<void>;
   getStats(): { hits: number; misses: number; size: number };
@@ -59,10 +59,10 @@ interface QueryCache {
 
 // Simple in-memory cache implementation
 class InMemoryQueryCache implements QueryCache {
-  private cache = new Map<string, { value: any; expires: number }>();
+  private cache = new Map<string, { value: unknown; expires: number }>();
   private stats = { hits: 0, misses: 0 };
 
-  async get(key: string): Promise<any | null> {
+  async get(key: string): Promise<unknown | null> {
     const entry = this.cache.get(key);
 
     if (!entry) {
@@ -80,7 +80,7 @@ class InMemoryQueryCache implements QueryCache {
     return entry.value;
   }
 
-  async set(key: string, value: any, ttl = 300): Promise<void> {
+  async set(key: string, value: unknown, ttl = 300): Promise<void> {
     this.cache.set(key, {
       value,
       expires: Date.now() + ttl * 1000,
@@ -165,10 +165,10 @@ export class HealthcareQueryOptimizer {
       limit?: number;
       sortBy?: string;
       sortOrder?: 'asc' | 'desc';
-      filters?: Record<string, any>;
+      filters?: Record<string, unknown>;
     },
   ): Promise<{
-    patients: any[];
+    patients: Array<Record<string, unknown>>;
     total: number;
     page: number;
     totalPages: number;
@@ -198,11 +198,15 @@ export class HealthcareQueryOptimizer {
 
     try {
       // Build optimized query
-      const whereClause: any = {
+      const whereClause: Record<string, unknown> = {
         clinicId,
         isActive: true,
-        ...filters,
       };
+
+      // Add filters if they exist
+      if (filters && typeof filters === 'object') {
+        Object.assign(whereClause, filters);
+      }
 
       // Add search conditions
       if (query) {
@@ -277,7 +281,7 @@ export class HealthcareQueryOptimizer {
       limit?: number;
     },
   ): Promise<{
-    appointments: any[];
+    appointments: Array<Record<string, unknown>>;
     total: number;
     fromCache: boolean;
   }> {
@@ -306,20 +310,18 @@ export class HealthcareQueryOptimizer {
     }
 
     try {
-      const whereClause: any = { clinicId };
+      const whereClause = {
+        clinicId,
+        isActive: true,
+      };
 
-      if (professionalId) whereClause.professionalId = professionalId;
-      if (patientId) whereClause.patientId = patientId;
-      if (status && status.length > 0) whereClause.status = { in: status };
-
-      if (startDate || endDate) {
-        whereClause.startTime = {};
-        if (startDate) whereClause.startTime.gte = startDate;
-        if (endDate) whereClause.startTime.lte = endDate;
+      // Add filters if they exist
+      if (filters && typeof filters === 'object') {
+        Object.assign(whereClause, filters);
       }
 
       // Build optimized include clause
-      const include: any = {
+      const include: Record<string, unknown> = {
         serviceType: {
           select: {
             id: true,
@@ -385,7 +387,7 @@ export class HealthcareQueryOptimizer {
    */
   async batchCreatePatients(
     clinicId: string,
-    patientsData: Array<Record<string, any>>,
+    patientsData: Array<Record<string, unknown>>,
   ): Promise<{
     created: number;
     errors: Array<{ index: number; error: string }>;
@@ -406,9 +408,15 @@ export class HealthcareQueryOptimizer {
           batch.map(async (patientData, batchIndex) => {
             const actualIndex = i + batchIndex;
             try {
+              // Ensure patientData is a valid object before spreading
+              const validPatientData: Record<string, unknown> = {};
+              if (patientData && typeof patientData === 'object') {
+                Object.assign(validPatientData, patientData);
+              }
+
               await this.prisma.patient.create({
                 data: {
-                  ...patientData,
+                  ...validPatientData,
                   clinicId,
                 },
               });
@@ -455,7 +463,7 @@ export class HealthcareQueryOptimizer {
    * Optimized dashboard metrics calculation
    */
   async getDashboardMetricsOptimized(clinicId: string): Promise<{
-    metrics: Record<string, any>;
+    metrics: Record<string, unknown>;
     fromCache: boolean;
   }> {
     const startTime = Date.now();

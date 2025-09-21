@@ -578,7 +578,7 @@ export function createValidationSchema(fields: Record<string, any>): {
 export function validateCRM(crm: string, state?: string): boolean {
   if (!crm) return false;
 
-  const cleanCRM = crm.replace(/[^\d\/]/g, "");
+  const cleanCRM = crm.replace(/[^\d/]/g, "");
   const parts = cleanCRM.split("/");
 
   if (parts.length !== 2) return false;
@@ -606,7 +606,7 @@ export function validateCRM(crm: string, state?: string): boolean {
 export function validateCRMV(crmv: string, state?: string): boolean {
   if (!crmv) return false;
 
-  const cleanCRMV = crmv.replace(/[^\d\/]/g, "");
+  const cleanCRMV = crmv.replace(/[^\d/]/g, "");
   const parts = cleanCRMV.split("/");
 
   if (parts.length !== 2) return false;
@@ -688,7 +688,7 @@ function validateCNSType2(cns: string): boolean {
 export function validateANVISACode(code: string): boolean {
   if (!code) return false;
 
-  const cleanCode = code.replace(/[^\d\-]/g, "");
+  const cleanCode = code.replace(/[^\d-]/g, "");
   const parts = cleanCode.split("-");
 
   if (parts.length !== 2) return false;
@@ -723,8 +723,8 @@ export function validateMedicalProcedureCode(
   }
 
   if (type === "CBHPM") {
-    const cleanCode = code.replace(/[^\d\.\-]/g, "");
-    return /^\d\.\d{2}\.\d{2}\.\d{2}\-\d$/.test(cleanCode);
+    const cleanCode = code.replace(/[^\d.-]/g, "");
+    return /^\d\.\d{2}\.\d{2}\.\d{2}-\d$/.test(cleanCode);
   }
 
   return false;

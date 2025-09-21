@@ -6,13 +6,10 @@ import {
   AlertTriangle,
   BarChart3,
   Calendar,
-  CheckCircle,
-  Clock,
   DollarSign,
   FileText,
   Shield,
   Star,
-  TrendingUp,
   UserCheck,
   Users,
   Zap,
@@ -20,7 +17,6 @@ import {
 import React from 'react';
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
-import { Tabs } from '../ui/tabs';
 
 export interface DashboardMetrics {
   patientsToday: number;
@@ -103,7 +99,7 @@ export function ProfessionalDashboard({
   onNavigateToPatients,
   onNavigateToSchedule,
   onNavigateToCompliance,
-  onViewActivity,
+  _onViewActivity,
 }: ProfessionalDashboardProps) {
   const formatCurrency = (amount: number, currency: string) => {
     return `${currency} ${amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;

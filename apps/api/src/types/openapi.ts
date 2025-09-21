@@ -107,7 +107,7 @@ export interface ParameterObject {
   explode?: boolean;
   allowReserved?: boolean;
   schema: SchemaObject | ReferenceObject;
-  example?: any;
+  example?: unknown;
   examples?: ExampleObject[] | ReferenceObject;
   content?: ContentObject;
 }
@@ -127,7 +127,7 @@ export interface ContentObject {
 // Media Type Object
 export interface MediaTypeObject {
   schema?: SchemaObject | ReferenceObject;
-  example?: any;
+  example?: unknown;
   examples?: ExampleObject[] | ReferenceObject;
   encoding?: EncodingObject;
 }
@@ -164,7 +164,7 @@ export interface HeaderObject {
   explode?: boolean;
   allowReserved?: boolean;
   schema: SchemaObject | ReferenceObject;
-  example?: any;
+  example?: unknown;
   examples?: ExampleObject[] | ReferenceObject;
 }
 
@@ -172,7 +172,7 @@ export interface HeaderObject {
 export interface ExampleObject {
   summary?: string;
   description?: string;
-  value?: any;
+  value?: unknown;
   externalValue?: string;
 }
 
@@ -181,14 +181,14 @@ export interface LinkObject {
   operationRef?: string;
   operationId?: string;
   parameters?: LinkParametersObject;
-  requestBody?: any | string;
+  requestBody?: unknown | string;
   description?: string;
   server?: ServerObject;
 }
 
 // Link Parameters Object
 export interface LinkParametersObject {
-  [parameter: string]: any | string;
+  [parameter: string]: unknown | string;
 }
 
 // Callback Object
@@ -281,7 +281,7 @@ export interface SchemaObject {
   maxProperties?: number;
   minProperties?: number;
   required?: string[];
-  enum?: any[];
+  enum?: unknown[];
   type?: string | string[];
   allOf?: SchemaObject[] | ReferenceObject[];
   anyOf?: SchemaObject[] | ReferenceObject[];
@@ -292,14 +292,14 @@ export interface SchemaObject {
   additionalProperties?: SchemaObject | ReferenceObject | boolean;
   description?: string;
   format?: string;
-  default?: any;
+  default?: unknown;
   nullable?: boolean;
   discriminator?: DiscriminatorObject;
   readOnly?: boolean;
   writeOnly?: boolean;
   xml?: XmlObject;
   externalDocs?: ExternalDocumentationObject;
-  example?: any;
+  example?: unknown;
   deprecated?: boolean;
 }
 

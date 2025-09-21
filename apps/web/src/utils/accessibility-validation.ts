@@ -10,7 +10,6 @@
  * - Automated compliance reporting
  */
 
-import type { AccessibilityIssue } from './accessibility-testing';
 import {
   HealthcareAccessibilityAuditor,
   type HealthcareAccessibilityAuditResult,
@@ -619,7 +618,7 @@ export class AccessibilityValidator {
       context = 'registration',
     } = options;
 
-    const validationStart = Date.now();
+    const _validationStart = Date.now();
 
     // Run healthcare accessibility audit
     let healthcareAuditResult: HealthcareAccessibilityAuditResult | null = null;
@@ -647,7 +646,7 @@ export class AccessibilityValidator {
   /**
    * Validate specific WCAG criteria
    */
-  private async validateWCAGCriteria(element: HTMLElement | Document): Promise<{
+  private async validateWCAGCriteria(_element: HTMLElement | Document): Promise<{
     passedCriteria: string[];
     failedCriteria: string[];
     score: number;
@@ -685,8 +684,8 @@ export class AccessibilityValidator {
       failedCriteria: string[];
       score: number;
     } | null,
-    includeHealthcareAudit: boolean,
-    includeWCAG: boolean,
+    _includeHealthcareAudit: boolean,
+    _includeWCAG: boolean,
   ): ValidationReport {
     const timestamp = new Date().toISOString();
 
@@ -828,7 +827,7 @@ export class AccessibilityValidator {
    */
   async validateComponent(
     componentName: string,
-    element: HTMLElement,
+    _element: HTMLElement,
   ): Promise<{
     component: string;
     score: number;

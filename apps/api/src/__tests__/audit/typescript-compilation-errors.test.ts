@@ -8,7 +8,7 @@
  * and regulatory compliance (LGPD, CFM guidelines).
  */
 
-import { describe, expect, it } from 'bun:test';
+import { describe, expect, it } from 'vitest';
 
 describe('TypeScript Compilation Error Detection', () => {
   describe('Database Type Conflicts', () => {

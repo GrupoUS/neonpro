@@ -1,10 +1,11 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Database } from '@neonpro/database';
-import { PermissionContext, QueryIntent, QueryParameters, DateRange } from '@neonpro/types';
+import { DateRange, PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { getOttomatorBridge, OttomatorQuery, OttomatorResponse } from './ottomator-agent-bridge';
 
 /**
  * AI Data Service - Base class for AI agent database operations
- * 
+ *
  * Provides secure data access with Row Level Security (RLS) enforcement,
  * permission validation, and audit logging for all AI agent queries.
  */
@@ -14,7 +15,7 @@ export class AIDataService {
 
   constructor(permissionContext: PermissionContext) {
     this.permissionContext = permissionContext;
-    
+
     // Initialize Supabase client with service role key for RLS enforcement
     this.supabase = createClient<Database>(
       process.env.SUPABASE_URL!,
@@ -23,7 +24,7 @@ export class AIDataService {
         auth: {
           persistSession: false,
         },
-      }
+      },
     );
   }
 
@@ -67,7 +68,7 @@ export class AIDataService {
     intent: QueryIntent,
     parameters: QueryParameters,
     recordCount: number,
-    success: boolean = true
+    success: boolean = true,
   ): Promise<void> {
     try {
       await this.supabase
@@ -101,7 +102,8 @@ export class AIDataService {
   async getClientsByName(parameters: QueryParameters): Promise<any[]> {
     this.validatePermission('client_data');
 
-    const { clientNames = [], domain } = this.permissionContext;
+    const { domain } = this.permissionContext;
+    const clientNames = parameters.clientNames || [];
     let query = this.supabase
       .from('clients')
       .select(`
@@ -121,9 +123,7 @@ export class AIDataService {
     // Filter by client names if specified
     if (clientNames.length > 0) {
       // Use ILIKE for case-insensitive search
-      const nameConditions = clientNames.map(name => 
-        `name.ilike.%${name}%`
-      ).join(',');
+      const nameConditions = clientNames.map(name => `name.ilike.%${name}%`).join(',');
       query = query.or(nameConditions);
     }
 
@@ -258,7 +258,7 @@ export class AIDataService {
       .rpc('get_financial_summary', {
         domain_filter: domain,
         date_filter: dateFilter,
-        type_filter: financial?.type || 'all'
+        type_filter: financial?.type || 'all',
       });
 
     if (error) {
@@ -430,5 +430,209 @@ export class AIDataService {
    */
   getPermissionContext(): PermissionContext {
     return { ...this.permissionContext };
+  }
+
+  /**
+   * Process natural language query through ottomator-agents
+   */
+  async processNaturalLanguageQuery(
+    query: string,
+    sessionId: string,
+    context?: {
+      patientId?: string;
+      previousQueries?: string[];
+    },
+  ): Promise<OttomatorResponse> {
+    try {
+      const ottomatorBridge = getOttomatorBridge();
+
+      if (!ottomatorBridge.isAgentHealthy()) {
+        // Fallback to direct database queries if ottomator agent is not available
+        return this.fallbackQueryProcessing(query, sessionId, context);
+      }
+
+      const ottomatorQuery: OttomatorQuery = {
+        query,
+        sessionId,
+        userId: this.permissionContext.userId,
+        context: {
+          patientId: context?.patientId,
+          clinicId: this.permissionContext.domain,
+          previousQueries: context?.previousQueries,
+          userRole: this.permissionContext.role,
+        },
+      };
+
+      const response = await ottomatorBridge.processQuery(ottomatorQuery);
+
+      // Log the query for audit purposes
+      await this.logAccess('general', { query, sessionId }, 1);
+
+      return response;
+    } catch (error) {
+      console.error('Ottomator agent query failed:', error);
+
+      // Fallback to direct processing
+      return this.fallbackQueryProcessing(query, sessionId, context);
+    }
+  }
+
+  /**
+   * Fallback query processing when ottomator-agents is not available
+   */
+  private async fallbackQueryProcessing(
+    query: string,
+    sessionId: string,
+    context?: {
+      patientId?: string;
+      previousQueries?: string[];
+    },
+  ): Promise<OttomatorResponse> {
+    const startTime = Date.now();
+
+    try {
+      // Simple intent detection based on keywords
+      const intent = this.detectQueryIntent(query);
+      let result: any = null;
+
+      switch (intent) {
+        case 'client_data':
+          try {
+            result = await this.getClientsByName({ clientNames: [query] });
+          } catch (error) {
+            result = {
+              message: 'Erro ao buscar clientes: '
+                + (error instanceof Error ? error.message : 'Erro desconhecido'),
+            };
+          }
+          break;
+        case 'appointments':
+          try {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            result = await this.getAppointmentsByDate({
+              dateRanges: [{ start: today, end: tomorrow }],
+            });
+          } catch (error) {
+            result = {
+              message: 'Erro ao buscar agendamentos: '
+                + (error instanceof Error ? error.message : 'Erro desconhecido'),
+            };
+          }
+          break;
+        case 'financial':
+          try {
+            result = await this.getFinancialSummary({
+              financial: { period: 'today', type: 'all' },
+            });
+          } catch (error) {
+            result = {
+              message: 'Erro ao buscar dados financeiros: '
+                + (error instanceof Error ? error.message : 'Erro desconhecido'),
+            };
+          }
+          break;
+        default:
+          result = {
+            message: 'Desculpe, não consegui entender sua consulta. Tente ser mais específico.',
+          };
+      }
+
+      return {
+        success: true,
+        response: {
+          content: this.formatFallbackResponse(result, intent),
+          type: 'text',
+          sources: [{
+            title: 'Sistema NeonPro',
+            confidence: 0.8,
+          }],
+        },
+        metadata: {
+          processingTimeMs: Date.now() - startTime,
+          model: 'fallback',
+        },
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: {
+          code: 'FALLBACK_ERROR',
+          message: 'Erro ao processar consulta',
+          details: error instanceof Error ? error.message : 'Unknown error',
+        },
+        metadata: {
+          processingTimeMs: Date.now() - startTime,
+          model: 'fallback',
+        },
+      };
+    }
+  }
+
+  /**
+   * Simple intent detection for fallback processing
+   */
+  private detectQueryIntent(query: string): QueryIntent {
+    const lowerQuery = query.toLowerCase();
+
+    if (lowerQuery.includes('cliente') || lowerQuery.includes('paciente')) {
+      return 'client_data';
+    }
+    if (
+      lowerQuery.includes('agendamento') || lowerQuery.includes('consulta')
+      || lowerQuery.includes('horário')
+    ) {
+      return 'appointments';
+    }
+    if (
+      lowerQuery.includes('financeiro') || lowerQuery.includes('pagamento')
+      || lowerQuery.includes('valor')
+    ) {
+      return 'financial';
+    }
+
+    return 'general';
+  }
+
+  /**
+   * Format fallback response for display
+   */
+  private formatFallbackResponse(result: any, intent: QueryIntent): string {
+    if (!result || (Array.isArray(result) && result.length === 0)) {
+      return 'Nenhum resultado encontrado para sua consulta.';
+    }
+
+    switch (intent) {
+      case 'client_data':
+        if (Array.isArray(result)) {
+          return `Encontrei ${result.length} cliente(s):\n${
+            result.map(c => `• ${c.name} (${c.email})`).join('\n')
+          }`;
+        } else if (result?.message) {
+          return `Consulta de clientes: ${result.message}`;
+        }
+        return 'Nenhum cliente encontrado.';
+      case 'appointments':
+        if (Array.isArray(result)) {
+          return `Encontrei ${result.length} agendamento(s) para hoje:\n${
+            result.map(a => `• ${a.clients?.name} - ${new Date(a.datetime).toLocaleTimeString()}`)
+              .join('\n')
+          }`;
+        } else if (result?.message) {
+          return `Consulta de agendamentos: ${result.message}`;
+        }
+        return 'Nenhum agendamento encontrado.';
+      case 'financial':
+        if (result?.message) {
+          return `Consulta financeira: ${result.message}`;
+        }
+        return `Resumo financeiro: ${JSON.stringify(result, null, 2)}`;
+      default:
+        if (result?.message) {
+          return result.message;
+        }
+        return JSON.stringify(result, null, 2);
+    }
   }
 }

@@ -144,6 +144,21 @@ app.use('*', rateLimitMiddleware());
 // Healthcare-compliant Content Security Policy (T006)
 app.use('*', healthcareCSPMiddleware());
 
+// Query timeout middleware for <2s healthcare compliance (T064)
+import { createHealthcareTimeoutMiddleware } from './middleware/query-timeout-middleware';
+const queryTimeoutMiddleware = createHealthcareTimeoutMiddleware();
+app.use('*', queryTimeoutMiddleware.middleware);
+
+// Compression and optimization middleware for HTTPS responses (T065)
+import { CompressionMiddleware } from './middleware/compression-middleware';
+const compressionMiddleware = new CompressionMiddleware();
+app.use('*', compressionMiddleware.middleware);
+
+// HTTPS handshake performance monitoring middleware (T066)
+import { httpsMonitoringMiddleware } from './middleware/https-monitoring-middleware';
+import { httpsMonitoringService } from './services/monitoring/https-monitoring-service';
+app.use('*', httpsMonitoringMiddleware.middleware);
+
 // Sensitive data exposure monitoring
 app.use('*', sensitiveDataExposureMiddleware());
 
@@ -344,6 +359,44 @@ app.get('/v1/info', c => {
   );
 
   return c.json(infoData);
+});
+
+// HTTPS monitoring endpoint (T066)
+app.get('/v1/monitoring/https', c => {
+  const requestId = c.get('requestId');
+  
+  logger.info('https_monitoring_endpoint', 'HTTPS monitoring status requested', { requestId });
+
+  const monitoringService = httpsMonitoringService.getStatus();
+  const performanceSummary = httpsMonitoringService.getPerformanceSummary();
+  const activeAlerts = httpsMonitoringService.getActiveAlerts();
+
+  const monitoringData = {
+    status: 'active',
+    configuration: monitoringService.config,
+    performance: performanceSummary,
+    alerts: {
+      total: monitoringService.alertsCount,
+      active: monitoringService.activeAlertsCount,
+      recent: activeAlerts.slice(0, 10) // Last 10 alerts
+    },
+    compliance: {
+      handshakeTimeRequirementMs: monitoringService.config.maxHandshakeTimeMs,
+      currentComplianceRate: performanceSummary.complianceRate,
+      isCompliant: performanceSummary.complianceRate >= 99.0 // 99% compliance target
+    },
+    timestamp: new Date().toISOString(),
+    requestId
+  };
+
+  logger.audit(
+    'https_monitoring_access',
+    'HTTPS monitoring status retrieved',
+    { requestId },
+    monitoringData
+  );
+
+  return c.json(monitoringData);
 });
 
 // Security endpoints (protected)

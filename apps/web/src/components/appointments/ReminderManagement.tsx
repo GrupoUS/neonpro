@@ -16,31 +16,17 @@
 
 import {
   AlertCircle,
-  BarChart3,
   Bell,
-  Calendar,
-  Check,
   Clock,
-  Copy,
   Edit,
-  Eye,
   Mail,
   MessageSquare,
-  Pause,
   Phone,
-  Play,
   Plus,
-  RotateCcw,
   Send,
-  Settings,
   Smartphone,
-  Target,
-  Trash2,
-  Users,
-  X,
-  Zap,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -55,7 +41,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
 import {
   Select,
   SelectContent,
@@ -63,12 +48,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
+import { Separator } from '@/components/ui/separator';
 import { Tabs } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 
 import {
-  useAppointmentReminderTemplates,
   useSendAppointmentReminder,
 } from '@/hooks/use-appointments';
 import { useLGPDConsent } from '@/hooks/useLGPDConsent';
@@ -345,7 +329,7 @@ export function ReminderManagement({
       .replace(/{CLINIC_PHONE}/g, '(11) 99999-9999');
   };
 
-  const handleSaveTemplate = (_template: any) => {
+  const _handleSaveTemplate = (_template: any) => {
     if (editingTemplate) {
       setTemplates(prev => prev.map(t => (t.id === template.id ? template : t)));
     } else {

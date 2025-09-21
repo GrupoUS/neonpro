@@ -11,8 +11,6 @@
  * - Cross-device accessibility testing
  */
 
-import { generateAccessibilityReport } from './axe-core-integration';
-
 // Type guards and utilities
 function isHTMLElement(element: Element | Node): element is HTMLElement {
   return element instanceof HTMLElement;
@@ -456,7 +454,7 @@ export class MobileAccessibilityOptimizer {
   private async testResponsiveDesign(
     context: Element,
     width: number,
-    height: number,
+    _height: number,
   ): Promise<any[]> {
     const issues = [];
 

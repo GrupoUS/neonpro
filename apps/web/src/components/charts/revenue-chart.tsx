@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useId } from 'react';
 import { Bar } from 'recharts';
 
 import { Badge } from '@/components/ui/badge';

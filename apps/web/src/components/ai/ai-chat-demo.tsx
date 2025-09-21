@@ -20,7 +20,6 @@ import {
 import { Tabs } from '@/components/ui/tabs';
 import { Brain } from 'lucide-react';
 import React, { useState } from 'react';
-import { ChatSession } from './index';
 
 export interface AIChatDemoProps {
   /** Show different demo scenarios */

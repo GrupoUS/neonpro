@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, jest } from 'bun:test';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ConsentService } from '../consent-service';
 
 // Set up environment variables
