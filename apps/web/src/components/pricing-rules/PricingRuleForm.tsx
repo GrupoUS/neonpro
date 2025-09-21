@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -12,7 +12,7 @@ import { useCreatePricingRule, useUpdatePricingRule } from '@/hooks/usePricingRu
 import type { PricingRule } from '@/types/pricing-rules';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Switch } from '@neonpro/ui';
-import { Input, Label } from '@neonpro/ui';
+import { Input } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 
 import { useForm } from 'react-hook-form';
@@ -109,7 +109,7 @@ export function PricingRuleForm({
   const ruleType = watch('rule_type');
   const adjustmentType = watch('adjustment_type');
 
-  const onSubmit = async (data: PricingRuleFormData) => {
+  const onSubmit = async (_data: any) => {
     if (!clinicId) {
       toast.error('Clínica não identificada');
       return;

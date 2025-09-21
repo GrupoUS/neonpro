@@ -5,7 +5,7 @@ import { MobilePatientCard } from '@/components/patients/MobilePatientCard';
 import { AnimatedModal } from '@/components/ui/animated-modal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { EnhancedTable } from '@/components/ui/enhanced-table';
 import { FocusCards } from '@/components/ui/focus-cards';
 import { Input } from '@/components/ui/input';
@@ -114,13 +114,13 @@ function PatientCard({
   patient: Patient;
   onClick: (patientId: string) => void;
 }) {
-  const getRiskColor = (riskScore: number) => {
+  const getRiskColor = (_riskScore: any) => {
     if (riskScore >= 0.8) return 'destructive';
     if (riskScore >= 0.6) return 'warning';
     return 'default';
   };
 
-  const getRiskLabel = (riskScore: number) => {
+  const getRiskLabel = (_riskScore: any) => {
     if (riskScore >= 0.8) return 'Alto Risco';
     if (riskScore >= 0.6) return 'Médio Risco';
     return 'Baixo Risco';
@@ -408,11 +408,11 @@ function PatientDashboard() {
     },
   ];
 
-  const handlePatientClick = (patientId: string) => {
+  const handlePatientClick = (_patientId: any) => {
     navigate({ to: '/patients/$patientId', params: { patientId } });
   };
 
-  const handleDeletePatient = (patient: Patient) => {
+  const handleDeletePatient = (_patient: any) => {
     setSelectedPatient(patient);
     setIsModalOpen(true);
   };
@@ -426,14 +426,14 @@ function PatientDashboard() {
     setSelectedPatient(null);
   };
 
-  const handleAIInsightAction = (insight: AIInsight) => {
+  const handleAIInsightAction = (_insight: any) => {
     toast({
       title: 'Ação de IA executada',
       description: `${insight.actionLabel} para ${insight.patientName}`,
     });
   };
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColor = (_priority: any) => {
     switch (priority) {
       case 'critical':
         return 'destructive';
@@ -448,7 +448,7 @@ function PatientDashboard() {
     }
   };
 
-  const getPriorityLabel = (priority: string) => {
+  const getPriorityLabel = (_priority: any) => {
     switch (priority) {
       case 'critical':
         return 'Crítico';
@@ -488,7 +488,7 @@ function PatientDashboard() {
     {
       accessorKey: 'riskScore',
       header: 'Risco',
-      cell: (info: any) => {
+      cell: (_info: any) => {
         const score = info.getValue();
         let variant: 'default' | 'destructive' | 'outline' | 'secondary' = 'default';
         let label = 'Baixo';
@@ -507,7 +507,7 @@ function PatientDashboard() {
     {
       accessorKey: 'lastVisit',
       header: 'Última Consulta',
-      cell: (info: any) => {
+      cell: (_info: any) => {
         const date = info.getValue();
         return date
           ? format(new Date(date), 'dd/MM/yyyy', { locale: ptBR })
@@ -517,7 +517,7 @@ function PatientDashboard() {
     {
       id: 'actions',
       header: 'Ações',
-      cell: (info: any) => {
+      cell: (_info: any) => {
         const patient = info.row.original;
         return (
           <div className='flex gap-2'>

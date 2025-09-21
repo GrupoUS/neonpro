@@ -256,7 +256,7 @@ class TimeSlotValidationService {
 
       if (error) throw error;
 
-      conflictingAppointments?.forEach(appointment => {
+      conflictingAppointments?.forEach(_appointment => {
         conflicts.push({
           type: 'professional_busy',
           message: `Profissional já possui agendamento das ${

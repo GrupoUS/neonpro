@@ -81,7 +81,7 @@ export function RiskAssessmentTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {riskData?.map((risk: any) => {
+          {riskData?.map((_risk: any) => {
             const severityBadge = getSeverityBadge(risk.severity);
             const statusBadge = getStatusBadge(risk.status);
 

@@ -75,7 +75,7 @@ export function TreatmentSuggestions({
 
   const displayedSuggestions = suggestions.slice(0, maxSuggestions);
 
-  const handleTreatmentToggle = (treatmentId: string) => {
+  const handleTreatmentToggle = (_treatmentId: any) => {
     setSelectedForComparison(prev => {
       const newSelection = prev.includes(treatmentId)
         ? prev.filter(id => id !== treatmentId)
@@ -89,7 +89,7 @@ export function TreatmentSuggestions({
     });
   };
 
-  const getConfidenceColor = (confidence: number) => {
+  const getConfidenceColor = (_confidence: any) => {
     if (confidence >= 0.9) return 'text-green-600';
     if (confidence >= 0.7) return 'text-yellow-600';
     return 'text-red-600';

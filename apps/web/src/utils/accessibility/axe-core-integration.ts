@@ -74,7 +74,7 @@ export function initializeAxeCore(): void {
     checks: [
       {
         id: 'healthcare-data-sensitivity',
-        evaluate: (node: Element) => {
+        evaluate: (_node: any) => {
           // Check if sensitive healthcare data has proper ARIA labeling
           const sensitiveSelectors = [
             '[data-sensitive="medical"]',

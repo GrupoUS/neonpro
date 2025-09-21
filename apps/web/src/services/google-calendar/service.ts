@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { CalendarEvent, GoogleCalendarClient, OAuth2Tokens } from './client';
+import { CalendarEvent2Tokens } from './client';
 
 export interface GoogleCalendarIntegrationConfig {
   clientId: string;
@@ -450,7 +450,7 @@ export class GoogleCalendarService {
           userAgent: 'neonpro-service', // In real app, get from request
         },
       });
-    } catch (logError) {
+    } catch (_logError) {
       console.error('Error logging sync operation:', logError);
       // Don't throw error for logging failures
     }

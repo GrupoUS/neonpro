@@ -7,7 +7,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useToast } from '@/hooks/useToast';
 import { cn } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
-import { Brain, Check, Crown, ExternalLink, Shield, Zap } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import { useState } from 'react';
 
 interface SubscriptionUpgradeProps {

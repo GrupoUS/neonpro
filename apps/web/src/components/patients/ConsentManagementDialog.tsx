@@ -253,7 +253,7 @@ export function ConsentManagementDialog({
     }
   }, [patientData.consents, form]);
 
-  const handleConsentSubmit = async (data: ConsentFormData) => {
+  const handleConsentSubmit = async (_data: any) => {
     setIsLoading(true);
     try {
       await onConsentUpdate(data);

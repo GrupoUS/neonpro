@@ -8,7 +8,7 @@ import {
   useUpdateNotificationPreferences,
 } from '@/hooks/useNotifications';
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Switch } from '@neonpro/ui';
 import { Label } from '@neonpro/ui';
 import { Separator } from '@neonpro/ui';
@@ -63,7 +63,7 @@ export function NotificationSettings({
     setHasChanges(true);
   };
 
-  const handleLgpdConsent = (consent: boolean) => {
+  const handleLgpdConsent = (_consent: any) => {
     setLocalPreferences(prev =>
       prev
         ? {

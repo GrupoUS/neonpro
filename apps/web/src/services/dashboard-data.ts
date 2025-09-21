@@ -5,7 +5,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { FinancialMetricsService } from './financial-metrics';
-import type { FinancialMetric, MetricsCalculationOptions } from './financial-metrics';
+import type { FinancialMetric } from './financial-metrics';
 
 export interface DashboardData {
   id: string;

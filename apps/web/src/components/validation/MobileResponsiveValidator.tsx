@@ -6,12 +6,12 @@
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { 
   Smartphone, 
   Tablet, 
@@ -145,7 +145,7 @@ export const MobileResponsiveValidator: React.FC = () => {
     // Monitor CLS (Cumulative Layout Shift)
     const clsObserver = new PerformanceObserver((entryList) => {
       const entries = entryList.getEntries();
-      entries.forEach((entry: any) => {
+      entries.forEach((_entry: any) => {
         if (!entry.hadRecentInput) {
           layoutShiftRef.current += entry.value;
           setPerformanceMetrics(prev => ({ ...prev, cls: layoutShiftRef.current }));

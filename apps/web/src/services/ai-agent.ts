@@ -268,7 +268,7 @@ class HttpClient {
     const controller = new AbortController();
 
     const onAbort = () => controller.abort();
-    signals.forEach(signal => {
+    signals.forEach(_signal => {
       if (signal.aborted) {
         controller.abort();
         return;
@@ -278,7 +278,7 @@ class HttpClient {
 
     // Cleanup
     controller.signal.addEventListener('abort', () => {
-      signals.forEach(signal => signal.removeEventListener('abort', onAbort));
+      signals.forEach(_signal => signal.removeEventListener('abort', onAbort));
     });
 
     return controller.signal;

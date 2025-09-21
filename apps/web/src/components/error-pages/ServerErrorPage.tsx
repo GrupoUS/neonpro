@@ -5,9 +5,9 @@
  */
 
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Link } from '@tanstack/react-router';
-import { AlertTriangle, Home, Phone, RefreshCw } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 
 interface ServerErrorPageProps {

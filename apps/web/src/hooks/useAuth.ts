@@ -1,6 +1,6 @@
 import { getCurrentSession, supabase } from '@/integrations/supabase/client';
 import { type UserProfile, userProfileService } from '@/services/user-profile.service';
-import type { Session, User } from '@supabase/supabase-js';
+import type { Session } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 
 export interface AuthState {
@@ -67,7 +67,7 @@ export function useAuth(): AuthState {
               userProfile ? 'Success' : 'Failed',
             );
             setProfile(userProfile);
-          } catch (profileError) {
+          } catch (_profileError) {
             console.error(
               '❌ useAuth: Error loading user profile:',
               profileError,
@@ -122,7 +122,7 @@ export function useAuth(): AuthState {
             profileTimeoutPromise,
           ])) as any;
           setProfile(userProfile);
-        } catch (profileError) {
+        } catch (_profileError) {
           console.error('Error loading user profile:', profileError);
           setProfile(null);
         }

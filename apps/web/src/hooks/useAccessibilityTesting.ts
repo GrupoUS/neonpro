@@ -128,7 +128,7 @@ export function useAccessibilityTesting(
         && result.violations.length > 0
       ) {
         console.group('🔍 Accessibility Issues Found');
-        result.violations.forEach(violation => {
+        result.violations.forEach(_violation => {
           console.warn(
             `[${violation.impact.toUpperCase()}] ${violation.description}`,
           );
@@ -410,7 +410,7 @@ export function useKeyboardNavigationTest() {
 
       if (issues.length > 0) {
         console.warn('Issues found:');
-        issues.forEach(issue => console.warn(`  ❌ ${issue}`));
+        issues.forEach(_issue => console.warn(`  ❌ ${issue}`));
       } else {
         console.log('✅ No keyboard navigation issues found');
       }

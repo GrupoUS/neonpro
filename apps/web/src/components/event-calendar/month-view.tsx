@@ -28,7 +28,7 @@ import {
   useEventVisibility,
 } from '@/components/event-calendar/index';
 import { DefaultStartHour } from '@/components/event-calendar/index';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Popover } from '@/components/ui/popover';
 
 interface MonthViewProps {
   currentDate: Date;

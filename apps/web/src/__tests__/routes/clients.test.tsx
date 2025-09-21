@@ -2,8 +2,8 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { ConsentProvider } from '@/contexts/ConsentContext';
 import { routeTree } from '@/routeTree.gen';
 import { createMemoryHistory } from '@tanstack/history';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { QueryClient } from '@tanstack/react-query';
+import { createRouter } from '@tanstack/react-router';
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
@@ -23,7 +23,7 @@ vi.mock('@/hooks/useAuth', () => ({
 
 // Mock supabase patients query to return empty data
 vi.mock('@/integrations/supabase/client', () => {
-  const makeChain = (result: any) => {
+  const makeChain = (_result: any) => {
     const p: any = Promise.resolve(result);
     p.select = () => p;
     p.order = () => p;

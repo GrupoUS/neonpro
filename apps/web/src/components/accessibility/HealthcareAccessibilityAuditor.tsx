@@ -17,13 +17,13 @@ import {
   HealthcareAccessibilityAuditResult,
   HealthcareAccessibilityRecommendation,
 } from '../../utils/healthcare-accessibility-audit';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { Alert } from '../ui/alert';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Card } from '../ui/card';
 import { Progress } from '../ui/progress';
 import { ScrollArea } from '../ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Tabs } from '../ui/tabs';
 
 interface HealthcareAccessibilityAuditorProps {
   targetElement?: HTMLElement | null;
@@ -130,7 +130,7 @@ export function HealthcareAccessibilityAuditor({
   }
 
   // Compliance status colors
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (_status: any) => {
     switch (status) {
       case 'excellent':
         return 'bg-green-500';
@@ -146,7 +146,7 @@ export function HealthcareAccessibilityAuditor({
   };
 
   // Priority badge colors
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColor = (_priority: any) => {
     switch (priority) {
       case 'immediate':
         return 'destructive';

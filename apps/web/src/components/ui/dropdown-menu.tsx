@@ -1,7 +1,7 @@
 'use client';
 
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
-import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react';
+import { CheckIcon } from 'lucide-react';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
@@ -49,7 +49,7 @@ function DropdownMenuContent({
   const isCloseFromMouse = React.useRef<boolean>(false);
 
   const handlePointerDown = React.useCallback(
-    (e: PointerDownEvent) => {
+    (_e: any) => {
       isCloseFromMouse.current = true;
       onPointerDown?.(e);
     },
@@ -57,7 +57,7 @@ function DropdownMenuContent({
   );
 
   const handlePointerDownOutside = React.useCallback(
-    (e: PointerDownOutsideEvent) => {
+    (_e: any) => {
       isCloseFromMouse.current = true;
       onPointerDownOutside?.(e);
     },
@@ -65,7 +65,7 @@ function DropdownMenuContent({
   );
 
   const handleCloseAutoFocus = React.useCallback(
-    (e: Event) => {
+    (_e: any) => {
       if (onCloseAutoFocus) {
         return onCloseAutoFocus(e);
       }

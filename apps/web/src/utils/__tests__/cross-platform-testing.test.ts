@@ -96,7 +96,7 @@ describe('Cross-Platform Testing Service', () => {
       );
       expect(compatibilityResults.length).toBeGreaterThan(0);
 
-      compatibilityResults.forEach(result => {
+      compatibilityResults.forEach(_result => {
         expect(result.platform).toBeDefined();
         expect(result.browser).toMatch(/^(chrome|firefox|safari|edge)$/);
         expect(result.device).toMatch(/^(desktop|tablet|mobile)$/);
@@ -116,7 +116,7 @@ describe('Cross-Platform Testing Service', () => {
       );
       expect(accessibilityResults.length).toBeGreaterThan(0);
 
-      accessibilityResults.forEach(result => {
+      accessibilityResults.forEach(_result => {
         expect(result.testType).toBe('accessibility');
         expect(
           result.performanceMetrics.accessibilityScore,
@@ -138,7 +138,7 @@ describe('Cross-Platform Testing Service', () => {
       );
       expect(performanceResults.length).toBeGreaterThan(0);
 
-      performanceResults.forEach(result => {
+      performanceResults.forEach(_result => {
         expect(result.testType).toBe('performance');
         expect(result.performanceMetrics.loadTime).toBeGreaterThan(0);
         expect(result.performanceMetrics.interactionDelay).toBeGreaterThan(0);
@@ -250,7 +250,7 @@ describe('Cross-Platform Testing Service', () => {
       expect(report.criticalIssues).toBeInstanceOf(Array);
 
       // Validate critical issue structure if any exist
-      report.criticalIssues.forEach(issue => {
+      report.criticalIssues.forEach(_issue => {
         expect(issue.severity).toMatch(/^(critical|high|medium|low)$/);
         expect(issue.category).toBeDefined();
         expect(issue.issue).toBeDefined();
@@ -267,9 +267,9 @@ describe('Cross-Platform Testing Service', () => {
       expect(typeof report.platformMatrix).toBe('object');
 
       // Validate matrix structure
-      Object.keys(report.platformMatrix).forEach(browser => {
+      Object.keys(report.platformMatrix).forEach(_browser => {
         expect(config.browsers).toContain(browser);
-        Object.keys(report.platformMatrix[browser]).forEach(device => {
+        Object.keys(report.platformMatrix[browser]).forEach(_device => {
           expect(config.devices).toContain(device);
           expect(report.platformMatrix[browser][device]).toMatch(
             /^(passed|failed|warning)$/,

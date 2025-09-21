@@ -33,7 +33,7 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -45,7 +45,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { cn } from '@neonpro/ui';
 
 export interface AIChatInputProps {
@@ -114,7 +114,7 @@ export interface AIChatInputProps {
 }
 
 // File type icons
-const getFileIcon = (type: string) => {
+const getFileIcon = (_type: any) => {
   if (type.startsWith('image/')) return <Image className='h-4 w-4' />;
   if (type.startsWith('video/')) return <Video className='h-4 w-4' />;
   if (type.startsWith('audio/')) return <Music className='h-4 w-4' />;
@@ -122,7 +122,7 @@ const getFileIcon = (type: string) => {
 };
 
 // Format file size
-const formatFileSize = (bytes: number) => {
+const formatFileSize = (_bytes: any) => {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -227,7 +227,7 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
 
   // Remove attachment
   const handleRemoveAttachment = useCallback(
-    (fileId: string) => {
+    (_fileId: any) => {
       if (onFileRemove) {
         onFileRemove(fileId);
       }

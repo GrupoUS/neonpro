@@ -1,8 +1,8 @@
 // import React from 'react'; // Not needed in this component
-import { Badge, Button } from '@neonpro/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+import { Badge } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Link } from '@tanstack/react-router';
-import { CheckCircle, Settings, Shield } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useConsent } from '../contexts/ConsentContext';
 

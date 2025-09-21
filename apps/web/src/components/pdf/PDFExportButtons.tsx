@@ -4,7 +4,7 @@ import AestheticReportPDF, {
 import { type ClinicBrandingData } from '@/components/pdf/ClinicBranding';
 import { Button } from '@/components/ui/button';
 import { generatePDFFilename, usePDFExport } from '@/hooks/usePDFExport';
-import { Download, Eye, FileText, Loader2 } from 'lucide-react';
+import { Download2 } from 'lucide-react';
 import React from 'react';
 import { toast } from 'sonner';
 
@@ -55,8 +55,8 @@ export const PDFExportButtons: React.FC<PDFExportButtonsProps> = ({
       );
 
       toast.success('Relatório PDF gerado com sucesso!');
-    } catch (err) {
-      console.error('Error downloading PDF:', err);
+    } catch (error) {
+      console.error(error);
       toast.error('Erro ao baixar o PDF. Tente novamente.');
     }
   };
@@ -70,8 +70,8 @@ export const PDFExportButtons: React.FC<PDFExportButtonsProps> = ({
           generatedAt={new Date()}
         />,
       );
-    } catch (err) {
-      console.error('Error previewing PDF:', err);
+    } catch (error) {
+      console.error(error);
       toast.error('Erro ao visualizar o PDF. Tente novamente.');
     }
   };

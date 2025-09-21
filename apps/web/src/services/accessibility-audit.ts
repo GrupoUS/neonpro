@@ -143,7 +143,7 @@ export class AccessibilityAuditService {
   private async auditColorContrast(element: HTMLElement): Promise<void> {
     const textElements = element.querySelectorAll('*');
 
-    textElements.forEach(el => {
+    textElements.forEach(_el => {
       const htmlEl = el as HTMLElement;
       const styles = window.getComputedStyle(htmlEl);
       const color = styles.color;
@@ -197,7 +197,7 @@ export class AccessibilityAuditService {
       'button, a, input, select, textarea, [tabindex], [role="button"], [role="link"]',
     );
 
-    interactiveElements.forEach(el => {
+    interactiveElements.forEach(_el => {
       const htmlEl = el as HTMLElement;
       const tabIndex = htmlEl.getAttribute('tabindex');
 
@@ -252,7 +252,7 @@ export class AccessibilityAuditService {
       'input:not([type="hidden"]), select, textarea, button:not([aria-label]):not([aria-labelledby])',
     );
 
-    elementsNeedingLabels.forEach(el => {
+    elementsNeedingLabels.forEach(_el => {
       const htmlEl = el as HTMLElement;
       const hasLabel = htmlEl.hasAttribute('aria-label')
         || htmlEl.hasAttribute('aria-labelledby')
@@ -287,7 +287,7 @@ export class AccessibilityAuditService {
     const headings = element.querySelectorAll('h1, h2, h3, h4, h5, h6');
     let previousLevel = 0;
 
-    headings.forEach(heading => {
+    headings.forEach(_heading => {
       const level = parseInt(heading.tagName.charAt(1));
 
       if (level > previousLevel + 1) {
@@ -320,7 +320,7 @@ export class AccessibilityAuditService {
     // Check for images without alt text
     const images = element.querySelectorAll('img');
 
-    images.forEach(img => {
+    images.forEach(_img => {
       if (!img.hasAttribute('alt') && !img.hasAttribute('aria-hidden')) {
         this.testResults.screenReaderSupport = false;
         this.addIssue({

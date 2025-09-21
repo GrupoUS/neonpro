@@ -30,8 +30,8 @@ export function usePerformance(componentName: string) {
     }
   });
 
-  const measureAsyncOperation = (operationName: string) => {
-    return <T extends (...args: any[]) => Promise<any>>(fn: T) => {
+  const measureAsyncOperation = (_operationName: any) => {
+    return <T extends (...args: any[]) => Promise<any>>(_fn: any) => {
       return async (...args: Parameters<T>): Promise<ReturnType<T>> => {
         const start = performance.now();
         try {

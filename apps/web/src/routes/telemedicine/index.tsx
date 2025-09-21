@@ -4,7 +4,7 @@
  * Enhanced with real tRPC integration, real-time updates, and comprehensive features
  */
 
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import {
   Activity,
   AlertTriangle,
@@ -33,11 +33,11 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert } from '@/components/ui/alert';
+import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -49,12 +49,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 
 // Import tRPC client and types
 import { trpc } from '@/lib/trpc';
-import type { ScheduledSession, Session, SessionStats } from '@neonpro/types';
+import type { ScheduledSession } from '@neonpro/types';
 
 // Import telemedicine components
 import { RealTimeChat } from '@/components/telemedicine/RealTimeChat';
@@ -193,7 +193,7 @@ function TelemedicineDashboard() {
   }, [state.autoRefresh, refetchSessions, refetchStats]);
 
   // Handle session start
-  const handleStartSession = async (appointmentId: string) => {
+  const handleStartSession = async (_appointmentId: any) => {
     try {
       await startSessionMutation.mutateAsync({
         appointmentId,
@@ -210,7 +210,7 @@ function TelemedicineDashboard() {
   };
 
   // Handle session join
-  const handleJoinSession = async (sessionId: string) => {
+  const handleJoinSession = async (_sessionId: any) => {
     try {
       await joinSessionMutation.mutateAsync({ sessionId });
     } catch (_error) {
@@ -244,7 +244,7 @@ function TelemedicineDashboard() {
   }) || [];
 
   // Get status color
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (_status: any) => {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-800 border-green-300';
@@ -262,7 +262,7 @@ function TelemedicineDashboard() {
   };
 
   // Get urgency color
-  const getUrgencyColor = (urgency: string) => {
+  const getUrgencyColor = (_urgency: any) => {
     switch (urgency) {
       case 'critical':
         return 'text-red-600';
@@ -278,7 +278,7 @@ function TelemedicineDashboard() {
   };
 
   // Format time for display
-  const formatTime = (date: Date) => {
+  const formatTime = (_date: any) => {
     return new Intl.DateTimeFormat('pt-BR', {
       hour: '2-digit',
       minute: '2-digit',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
+import { Table } from './table';
 
 // Minimal EnhancedTable to unblock build; supports columns + data
 export interface Column<T> {

@@ -17,7 +17,7 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
-import { Button, Progress } from '@neonpro/ui';
+import { Button } from '@neonpro/ui';
 import {
   IconAlertCircle,
   IconCamera,
@@ -301,7 +301,7 @@ export function PhotoUpload({
 
   // Handle photo selection
   const handlePhotos = useCallback(
-    async (files: FileList) => {
+    async (_files: any) => {
       if (disabled) return;
 
       const fileArray = Array.from(files);
@@ -430,7 +430,7 @@ export function PhotoUpload({
   );
 
   // Handle photo removal
-  const handleRemovePhoto = async (photoId: string) => {
+  const handleRemovePhoto = async (_photoId: any) => {
     try {
       // TODO: Implement actual photo removal from Supabase storage
       setUploadedPhotos(prev => prev.filter(p => p.id !== photoId));

@@ -4,7 +4,7 @@
  */
 
 import { WebSocketService } from '@/lib/websocket';
-import { AgentAction, AgentResponse, ChatMessage } from '@neonpro/types';
+import { AgentAction } from '@neonpro/types';
 import React from 'react';
 
 export interface WebSocketAgentConfig {
@@ -145,7 +145,7 @@ export class WebSocketAgentService {
     }
 
     // Notify connection handlers
-    this.connectionHandlers.forEach(handler => handler());
+    this.connectionHandlers.forEach(_handler => handler());
   }
 
   private handleMessage(event: MessageEvent) {
@@ -155,12 +155,14 @@ export class WebSocketAgentService {
 
       // Emit to specific handlers
       const handlers = this.messageHandlers.get(messageType) || [];
-      handlers.forEach(handler => handler(data));
+      handlers.forEach(_handler => handler(data));
 
       // Emit to wildcard handlers
       const wildcardHandlers = this.messageHandlers.get('*') || [];
-      wildcardHandlers.forEach(handler => handler(data));
-    } catch (_error) {
+
+      wildcardHandlers.forEach(_handler => handler(data));
+    } catch (error) {
+
       console.error('Error parsing WebSocket message:', error);
     }
   }
@@ -170,7 +172,7 @@ export class WebSocketAgentService {
     this.isConnected = false;
 
     // Notify disconnection handlers
-    this.disconnectionHandlers.forEach(handler => handler(event));
+    this.disconnectionHandlers.forEach(_handler => handler(event));
 
     // Attempt to reconnect
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
@@ -206,7 +208,7 @@ export class WebSocketAgentService {
         reject(new Error('Request timeout'));
       }, 30000); // 30 second timeout
 
-      const responseHandler = (response: any) => {
+      const responseHandler = (_response: any) => {
         if (response.id === messageId || response.in_reply_to === messageId) {
           clearTimeout(timeout);
           this.off('response', responseHandler);

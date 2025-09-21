@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './dialog';
+import { Dialog } from './dialog';
 
 // Minimal shim to satisfy existing imports and unblock build
 export interface AnimatedModalProps {

@@ -12,7 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { Button } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
-import { Crown, ExternalLink, RefreshCw } from 'lucide-react';
+import { Crown } from 'lucide-react';
 
 export const Route = createFileRoute('/financial/subscription')({
   component: SubscriptionPage,

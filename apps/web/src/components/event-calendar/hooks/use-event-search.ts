@@ -28,7 +28,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   // Debounced search function
   const debouncedSearch = useMemo(
     () =>
-      debounce(async (options: EventSearchOptions) => {
+      debounce(async (_options: any) => {
         try {
           setIsSearching(true);
           const result = await searchEvents(options);
@@ -48,7 +48,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   );
 
   // Perform search
-  const performSearch = useCallback(async (options: EventSearchOptions) => {
+  const performSearch = useCallback(async (_options: any) => {
     setSearchOptions(options);
     setCurrentPage(0);
     await debouncedSearch(options);
@@ -115,7 +115,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   }, [performSearch, defaultLimit]);
 
   // Search with custom filters
-  const searchWithFilters = useCallback(async (options: EventSearchOptions) => {
+  const searchWithFilters = useCallback(async (_options: any) => {
     await performSearch({
       ...options,
       limit: options.limit || defaultLimit,

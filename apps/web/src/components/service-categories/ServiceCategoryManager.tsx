@@ -11,7 +11,7 @@ import {
 import type { ServiceCategory } from '@/types/service-categories';
 import { cn } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
 import {
@@ -79,7 +79,7 @@ export function ServiceCategoryManager({
       || category.description?.toLowerCase().includes(searchQuery.toLowerCase()),
   ) || [];
 
-  const handleDeleteCategory = async (category: ServiceCategory) => {
+  const handleDeleteCategory = async (_category: any) => {
     if (
       window.confirm(
         `Tem certeza que deseja excluir a categoria "${category.name}"?`,

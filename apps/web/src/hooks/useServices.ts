@@ -276,7 +276,7 @@ export function useCheckAvailability() {
 
         // Add conflicts for existing appointments
         if (existingAppointments && existingAppointments.length > 0) {
-          existingAppointments.forEach(appointment => {
+          existingAppointments.forEach(_appointment => {
             const patient = appointment.patients as any;
             const service = appointment.service_types as any;
             conflicts.push({

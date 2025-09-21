@@ -138,7 +138,7 @@ export function useCreatePatient() {
       });
 
       // Optimistically update to the new value
-      queryClient.setQueryData(patientKeys.lists(), (old: any) => {
+      queryClient.setQueryData(patientKeys.lists(), (_old: any) => {
         if (!old) return old;
 
         const optimisticPatient = {
@@ -221,7 +221,7 @@ export function useUpdatePatient() {
       });
 
       // Optimistically update
-      queryClient.setQueryData(patientKeys.detail(id), (old: any) => {
+      queryClient.setQueryData(patientKeys.detail(id), (_old: any) => {
         if (!old) return old;
         return {
           ...old,
@@ -394,7 +394,7 @@ export function usePrefetchPatients() {
   const queryClient = useQueryClient();
 
   const prefetchPatient = React.useCallback(
-    (patientId: string) => {
+    (_patientId: any) => {
       queryClient.prefetchQuery({
         queryKey: patientKeys.detail(patientId),
         queryFn: () => trpc.patients.get.fetch({ id: patientId }),
@@ -444,7 +444,7 @@ export function useBulkPatientOperations() {
 
     onSuccess: (data, _variables) => {
       // Invalidate affected patients
-      variables.patientIds.forEach(id => {
+      variables.patientIds.forEach(_id => {
         queryClient.invalidateQueries({ queryKey: patientKeys.detail(id) });
       });
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
@@ -483,7 +483,7 @@ export function usePatientRealTimeUpdates(patientId?: string) {
           // Update patient cache with real-time data
           queryClient.setQueryData(
             patientKeys.detail(patientId),
-            (old: any) => {
+            (_old: any) => {
               if (!old) return old;
               return {
                 ...old,
@@ -567,21 +567,21 @@ export function usePatientPerformanceMetrics() {
 
 // Export helper functions for component usage
 export const patientUtils = {
-  formatCPF: (cpf: string) => {
+  formatCPF: (_cpf: any) => {
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   },
 
-  formatPhone: (phone: string) => {
+  formatPhone: (_phone: any) => {
     return phone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
   },
 
-  validateCPF: (cpf: string) => {
+  validateCPF: (_cpf: any) => {
     // Basic CPF validation (should be enhanced for production)
     const cleanCPF = cpf.replace(/\D/g, '');
     return cleanCPF.length === 11;
   },
 
-  getConsentStatusColor: (status: string) => {
+  getConsentStatusColor: (_status: any) => {
     switch (status) {
       case 'granted':
         return 'green';

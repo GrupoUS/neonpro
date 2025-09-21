@@ -9,7 +9,7 @@ import {
   usePatientAppointments,
   useUpdatePatient,
 } from '@/hooks/useHealthcareQuery';
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Badge } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { toast } from 'sonner';

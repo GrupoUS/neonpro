@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import type { MedicalDataClassification } from '@neonpro/types';
-import { AlertTriangle, Eye, FileText, Shield } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 export interface ConsentDialogProps {

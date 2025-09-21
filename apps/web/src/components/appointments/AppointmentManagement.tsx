@@ -28,10 +28,10 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -46,7 +46,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 
 import {
   useAppointmentAnalytics,
@@ -285,7 +285,7 @@ function AppointmentCard({
   const isOverdue = isPast(appointmentDate) && appointment.status === 'scheduled';
   const riskLevel = appointment.noShowRisk?.level;
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (_status: any) => {
     switch (status) {
       case 'scheduled':
         return <Badge variant='default'>Agendada</Badge>;

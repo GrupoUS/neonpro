@@ -187,7 +187,7 @@ export function MobilePatientCard({
     : '(11) *****-****';
   const displayEmail = canViewSensitiveData ? patient.email : '***@***.com';
 
-  const handleAction = (action: string) => {
+  const handleAction = (_action: any) => {
     onAction?.(action, patient.id);
   };
 

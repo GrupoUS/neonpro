@@ -7,7 +7,7 @@ import { useCalendarContext } from '@/components/event-calendar/calendar-context
 import { EventCalendar } from '@/components/event-calendar/event-calendar';
 import { type CalendarEvent, type EventColor } from '@/components/event-calendar/types';
 import { type CalendarAppointment } from '@/services/appointments.service';
-import { calendarLGPDAuditService, LGPDAuditAction } from '@/services/lgpd/audit-logging.service';
+import { calendarLGPDAuditService } from '@/services/lgpd/audit-logging.service';
 import {
   calendarLGPDConsentService,
   type ConsentValidationResult,
@@ -161,7 +161,7 @@ export function Experiment06CalendarIntegration({
             })),
           });
         }
-      } catch (err) {
+      } catch (error) {
         console.error(
           'LGPD: Error processing appointments with compliance:',
           err,
@@ -200,7 +200,7 @@ export function Experiment06CalendarIntegration({
   const calendarEvents = useMemo(() => {
     try {
       return minimizedAppointments.map(mapMinimizedAppointmentToCalendarEvent);
-    } catch (err) {
+    } catch (error) {
       setError('Erro ao converter agendamentos para eventos do calendário');
       console.error(
         'Error mapping minimized appointments to calendar events:',
@@ -254,16 +254,16 @@ export function Experiment06CalendarIntegration({
 
       // Proceed with update
       onEventUpdate(event, updates);
-    } catch (err) {
-      console.error('Error in LGPD-compliant event update:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao atualizar evento');
+    } catch (error) {
+      console.error(error);
+      setError(error instanceof Error ? error.message : 'Erro ao atualizar evento');
     } finally {
       setIsLoading(false);
     }
   };
 
   // Handle event deletions with LGPD compliance
-  const handleEventDelete = async (eventId: string) => {
+  const handleEventDelete = async (_eventId: any) => {
     setIsLoading(true);
 
     try {
@@ -303,9 +303,9 @@ export function Experiment06CalendarIntegration({
 
       // Proceed with deletion
       onEventDelete(eventId);
-    } catch (err) {
-      console.error('Error in LGPD-compliant event deletion:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao excluir evento');
+    } catch (error) {
+      console.error(error);
+      setError(error instanceof Error ? error.message : 'Erro ao excluir evento');
     } finally {
       setIsLoading(false);
     }
@@ -330,8 +330,8 @@ export function Experiment06CalendarIntegration({
         );
 
         onNewConsultation();
-      } catch (err) {
-        console.error('Error logging new consultation audit:', err);
+      } catch (error) {
+        console.error(error);
         // Don't block the action for audit logging failures
         onNewConsultation();
       } finally {

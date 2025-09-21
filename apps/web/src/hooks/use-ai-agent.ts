@@ -5,7 +5,7 @@
 
 'use client';
 
-import { AgentAction, ChatMessage, DataAgentRequest, DataAgentResponse } from '@neonpro/types';
+import { AgentAction } from '@neonpro/types';
 import { useCallback, useState } from 'react';
 import { useAuth } from './use-auth';
 import { useToast } from './use-toast';
@@ -35,7 +35,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
 
   // Send message to AI agent
   const sendMessage = useCallback(
-    async (message: string) => {
+    async (_message: any) => {
       if (!user) {
         setError('Usuário não autenticado');
         return;
@@ -97,8 +97,8 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
         if (data.response?.actions && data.response.actions.length > 0) {
           handleActions(data.response.actions);
         }
-      } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
         setError(errorMessage);
 
         // Add error message to chat
@@ -126,7 +126,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
 
   // Handle agent actions
   const handleActions = useCallback((actions: AgentAction[]) => {
-    actions.forEach(action => {
+    actions.forEach(_action => {
       switch (action.type) {
         case 'view_details':
           if (action.payload?.clientId) {
@@ -153,7 +153,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
 
   // Export data functionality
   const exportData = useCallback(
-    async (payload: any) => {
+    async (_payload: any) => {
       try {
         const response = await fetch('/api/ai/export', {
           method: 'POST',

@@ -14,9 +14,9 @@ import {
   type AppointmentTemplateCategory,
 } from '@/types/appointment-templates';
 import { cn } from '@neonpro/ui';
-import { Badge, Button, Card, CardContent, Input, ScrollArea } from '@neonpro/ui';
+import { Badge } from '@neonpro/ui';
 import { formatBRL } from '@neonpro/utils';
-import { Clock, DollarSign, Search, Star } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface AppointmentTemplateSelectorProps {
@@ -77,11 +77,11 @@ export function AppointmentTemplateSelector({
     return uniqueCategories.sort();
   }, [allTemplates]);
 
-  const formatPrice = (price: number) => {
+  const formatPrice = (_price: any) => {
     return formatBRL(price);
   };
 
-  const formatDuration = (minutes: number) => {
+  const formatDuration = (_minutes: any) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (hours > 0) {

@@ -1,4 +1,4 @@
-import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid';
+import { BentoGrid } from '@/components/ui/bento-grid';
 import { Badge } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import {

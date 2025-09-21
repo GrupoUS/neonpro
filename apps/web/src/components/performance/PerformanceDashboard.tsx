@@ -19,7 +19,7 @@ import {
   usePerformanceMonitor,
 } from '@/hooks/usePerformanceMonitor';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Progress } from '@neonpro/ui';
 import {
@@ -85,7 +85,7 @@ export function PerformanceDashboard({
   const analytics = getAnalytics();
 
   // Format time values
-  const formatTime = (ms: number) => {
+  const formatTime = (_ms: any) => {
     if (ms < 1000) return `${Math.round(ms)}ms`;
     return `${(ms / 1000).toFixed(1)}s`;
   };

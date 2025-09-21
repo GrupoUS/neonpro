@@ -3,7 +3,7 @@ import { MobilePatientCard } from '@/components/patients/MobilePatientCard';
 import { AnimatedModal } from '@/components/ui/animated-modal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { EnhancedTable } from '@/components/ui/enhanced-table';
 import { FocusCards } from '@/components/ui/focus-cards';
 import { Input } from '@/components/ui/input';
@@ -103,13 +103,13 @@ interface PatientCardProps {
 }
 
 function PatientCard({ patient, onClick }: PatientCardProps) {
-  const getRiskColor = (riskScore: number) => {
+  const getRiskColor = (_riskScore: any) => {
     if (riskScore >= 0.8) return 'destructive';
     if (riskScore >= 0.6) return 'warning';
     return 'default';
   };
 
-  const getRiskLabel = (riskScore: number) => {
+  const getRiskLabel = (_riskScore: any) => {
     if (riskScore >= 0.8) return 'Alto Risco';
     if (riskScore >= 0.6) return 'Médio Risco';
     return 'Baixo Risco';
@@ -292,11 +292,11 @@ function PatientDashboard() {
       || patient.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const handlePatientClick = (patientId: string) => {
+  const handlePatientClick = (_patientId: any) => {
     navigate({ to: '/patients/$patientId', params: { patientId } });
   };
 
-  const handleDeletePatient = (patient: Patient) => {
+  const handleDeletePatient = (_patient: any) => {
     setSelectedPatient(patient);
     setIsModalOpen(true);
   };
@@ -334,7 +334,7 @@ function PatientDashboard() {
     {
       accessorKey: 'riskScore',
       header: 'Risco',
-      cell: (info: any) => {
+      cell: (_info: any) => {
         const score = info.getValue();
         let variant: 'default' | 'destructive' | 'outline' = 'default';
         let label = 'Baixo';
@@ -353,7 +353,7 @@ function PatientDashboard() {
     {
       accessorKey: 'lastVisit',
       header: 'Última Consulta',
-      cell: (info: any) => {
+      cell: (_info: any) => {
         const date = info.getValue();
         return date
           ? format(new Date(date), 'dd/MM/yyyy', { locale: ptBR })
@@ -363,7 +363,7 @@ function PatientDashboard() {
     {
       id: 'actions',
       header: 'Ações',
-      cell: (info: any) => {
+      cell: (_info: any) => {
         const patient = info.row.original;
         return (
           <div className='flex gap-2'>

@@ -179,7 +179,7 @@ export class MobileResponsiveAccessibility {
     const compliantBreakpoints: number[] = [];
     const issues: ResponsiveAccessibilityIssue[] = [];
 
-    testedBreakpoints.forEach(breakpoint => {
+    testedBreakpoints.forEach(_breakpoint => {
       const elementsAtBreakpoint = elements.filter(
         el => el.breakpoint === breakpoint,
       );
@@ -255,7 +255,7 @@ export class MobileResponsiveAccessibility {
     // Test zoom levels: 100%, 150%, 200%
     const zoomLevels = [100, 150, 200];
 
-    zoomLevels.forEach(zoomLevel => {
+    zoomLevels.forEach(_zoomLevel => {
       const scaledElements = elements.map(el => ({
         ...el,
         fontSize: el.fontSize * (zoomLevel / 100),

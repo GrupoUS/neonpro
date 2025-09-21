@@ -5,11 +5,11 @@
 
 import { ServiceTemplateManager } from '@/components/service-templates/ServiceTemplateManager';
 import { useAuth } from '@/hooks/useAuth';
-import { Card, CardContent } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
-import { AlertTriangle, ArrowLeft } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 function ServiceTemplatesPage() {
   const { profile } = useAuth();

@@ -10,8 +10,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@neonpro/ui';
-import { AlertTriangle, FileText, Home, Phone, RefreshCw } from 'lucide-react';
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { AlertTriangle } from 'lucide-react';
+import React, { Component } from 'react';
 
 interface PatientErrorBoundaryProps {
   children: ReactNode;

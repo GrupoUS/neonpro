@@ -172,7 +172,7 @@ export class PerformanceOptimizer {
 
     return new IntersectionObserver(
       entries => {
-        entries.forEach(entry => {
+        entries.forEach(_entry => {
           if (entry.isIntersecting) {
             const element = entry.target as HTMLElement;
 
@@ -391,7 +391,7 @@ export class PerformanceOptimizer {
   private observePaintMetrics(): void {
     try {
       const observer = new PerformanceObserver(list => {
-        list.getEntries().forEach(entry => {
+        list.getEntries().forEach(_entry => {
           this.metrics.set(entry.name, entry.startTime);
         });
       });
@@ -406,7 +406,7 @@ export class PerformanceOptimizer {
     try {
       const observer = new PerformanceObserver(list => {
         let clsValue = 0;
-        list.getEntries().forEach((entry: any) => {
+        list.getEntries().forEach((_entry: any) => {
           if (!entry.hadRecentInput) {
             clsValue += entry.value;
           }
@@ -423,7 +423,7 @@ export class PerformanceOptimizer {
   private observeFirstInputDelay(): void {
     try {
       const observer = new PerformanceObserver(list => {
-        list.getEntries().forEach(entry => {
+        list.getEntries().forEach(_entry => {
           const processingStart = (entry as any).processingStart || entry.startTime;
           this.metrics.set(
             'first-input-delay',
@@ -456,7 +456,7 @@ export class PerformanceOptimizer {
    * Cleanup observers
    */
   destroy(): void {
-    this.observers.forEach(observer => observer.disconnect());
+    this.observers.forEach(_observer => observer.disconnect());
     this.observers = [];
     this.metrics.clear();
   }

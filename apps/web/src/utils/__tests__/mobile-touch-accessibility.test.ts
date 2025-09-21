@@ -226,7 +226,7 @@ describe('Mobile Touch Accessibility', () => {
     it('should provide healthcare-specific gesture recommendations', () => {
       const result = mobileTouchAccessibility.validateGestureAccessibility();
 
-      result.issues.forEach(issue => {
+      result.issues.forEach(_issue => {
         if (issue.type === 'gesture') {
           expect(issue.healthcareImpact).toContain('funcionalidades médicas');
           expect(issue.wcagReference).toContain('WCAG 2.1 AA');
@@ -267,7 +267,7 @@ describe('Mobile Touch Accessibility', () => {
     it('should provide healthcare-specific feedback recommendations', () => {
       const result = mobileTouchAccessibility.validateTouchFeedback();
 
-      result.issues.forEach(issue => {
+      result.issues.forEach(_issue => {
         if (issue.type === 'feedback') {
           expect(issue.healthcareImpact).toContain(
             'usuários com deficiências visuais',
@@ -440,7 +440,7 @@ describe('Mobile Touch Accessibility', () => {
 
       expect(report.recommendations.length).toBeGreaterThan(0);
 
-      report.recommendations.forEach(recommendation => {
+      report.recommendations.forEach(_recommendation => {
         expect(typeof recommendation).toBe('string');
         expect(recommendation.length).toBeGreaterThan(0);
       });
@@ -476,7 +476,7 @@ describe('Mobile Touch Accessibility', () => {
 
       const result = mobileTouchAccessibility.validateTouchTargets(undersizedTargets);
 
-      result.issues.forEach(issue => {
+      result.issues.forEach(_issue => {
         expect(issue.wcagReference).toContain('WCAG 2.1 AA');
       });
     });
@@ -525,7 +525,7 @@ describe('Mobile Touch Accessibility', () => {
 
       const result = mobileTouchAccessibility.validateTouchTargets(undersizedTargets);
 
-      result.issues.forEach(issue => {
+      result.issues.forEach(_issue => {
         expect(issue.title).toMatch(/[áéíóúâêîôûãõçÁÉÍÓÚÂÊÎÔÛÃÕÇ]/); // Contains Portuguese characters
         expect(issue.description).toMatch(/[áéíóúâêîôûãõçÁÉÍÓÚÂÊÎÔÛÃÕÇ]/);
         expect(issue.recommendation).toMatch(/[áéíóúâêîôûãõçÁÉÍÓÚÂÊÎÔÛÃÕÇ]/);
@@ -550,7 +550,7 @@ describe('Mobile Touch Accessibility', () => {
 
       const result = mobileTouchAccessibility.validateTouchTargets(mockTargets);
 
-      result.issues.forEach(issue => {
+      result.issues.forEach(_issue => {
         expect(issue.healthcareImpact).toBeDefined();
         expect(issue.healthcareImpact.length).toBeGreaterThan(0);
       });

@@ -9,7 +9,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -17,10 +17,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Brain, MessageSquare, Settings, Stethoscope, User } from 'lucide-react';
+import { Tabs } from '@/components/ui/tabs';
+import { Brain } from 'lucide-react';
 import React, { useState } from 'react';
-import { ChatSession, EnhancedAIChat, PatientInfo, ProfessionalInfo } from './index';
+import { ChatSession } from './index';
 
 export interface AIChatDemoProps {
   /** Show different demo scenarios */
@@ -169,7 +169,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
   const currentScenario = demoScenarios.find(s => s.id === selectedScenario) || demoScenarios[0];
 
   // Handle scenario change
-  const handleScenarioChange = (scenarioId: string) => {
+  const handleScenarioChange = (_scenarioId: any) => {
     const scenario = demoScenarios.find(s => s.id === scenarioId);
     if (scenario) {
       setSelectedScenario(scenarioId);
@@ -180,7 +180,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
   };
 
   // Handle manual patient selection
-  const handlePatientChange = (patientId: string) => {
+  const handlePatientChange = (_patientId: any) => {
     const patient = patientId === 'none'
       ? undefined
       : demoPatients.find(p => p.id === patientId);
@@ -188,7 +188,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
   };
 
   // Handle manual professional selection
-  const handleProfessionalChange = (professionalId: string) => {
+  const handleProfessionalChange = (_professionalId: any) => {
     const professional = professionalId === 'none'
       ? undefined
       : demoProfessionals.find(p => p.id === professionalId);
@@ -196,7 +196,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
   };
 
   // Handle session type change
-  const handleSessionTypeChange = (type: string) => {
+  const handleSessionTypeChange = (_type: any) => {
     setSessionType(type as any);
   };
 

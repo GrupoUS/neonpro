@@ -241,7 +241,7 @@ export function useSupabaseMutation(
     onSuccess: (data, _variables) => {
       // Invalidar queries relacionadas
       if (options.invalidateQueries) {
-        options.invalidateQueries.forEach(queryKey => {
+        options.invalidateQueries.forEach(_queryKey => {
           queryClient.invalidateQueries({ queryKey });
         });
       }
@@ -257,7 +257,7 @@ export function useSupabaseMutation(
 
       options.onSuccess?.(data);
     },
-    onError: (error: any) => {
+    onError: (_error: any) => {
       console.error(`Error in ${table} mutation:`, error);
 
       // Mostrar toast de erro

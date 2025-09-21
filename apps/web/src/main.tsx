@@ -1,4 +1,4 @@
-import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { createRouter } from '@tanstack/react-router';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import ErrorBoundary from './components/error-pages/ErrorBoundary';
@@ -39,7 +39,7 @@ function showErrorBanner(message: string) {
 
 if ((import.meta as any).env?.DEV) {
   window.addEventListener('error', e => showErrorBanner(e.message));
-  window.addEventListener('unhandledrejection', (e: PromiseRejectionEvent) => {
+  window.addEventListener('unhandledrejection', (_e: any) => {
     const reason: any = (e as any).reason;
     showErrorBanner(
       typeof reason === 'string' ? reason : (reason?.message ?? String(reason)),
@@ -219,7 +219,7 @@ async function bootstrap() {
       }, 2000);
     }
   } catch (err: any) {
-    console.error('[NeonPro] Boot error:', err);
+    console.error(error);
     if ((import.meta as any).env?.DEV) {
       showErrorBanner(err?.message ?? String(err));
     }

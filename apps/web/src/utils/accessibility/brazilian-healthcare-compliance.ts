@@ -26,7 +26,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         name: 'Data Protection',
         description: 'Implement technical and organizational measures to protect personal data',
         critical: true,
-        validation: (context: Element) => {
+        validation: (_context: any) => {
           const sensitiveData = context.querySelectorAll(
             '[data-sensitive="personal"], [data-lgpd="true"]',
           );
@@ -44,7 +44,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         name: 'Consent Management',
         description: 'Ensure clear and accessible consent management interfaces',
         critical: true,
-        validation: (context: Element) => {
+        validation: (_context: any) => {
           const consentElements = context.querySelectorAll(
             '[data-consent="true"], .consent-management',
           );
@@ -63,7 +63,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         name: 'Data Subject Rights',
         description: 'Provide accessible interfaces for data subject rights',
         critical: true,
-        validation: (context: Element) => {
+        validation: (_context: any) => {
           const rightsElements = context.querySelectorAll(
             '[data-rights="true"], .data-rights',
           );
@@ -80,7 +80,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         name: 'Incident Reporting',
         description: 'Accessible incident reporting mechanisms',
         critical: false,
-        validation: (context: Element) => {
+        validation: (_context: any) => {
           const incidentElements = context.querySelectorAll(
             '[data-incident="true"], .incident-reporting',
           );
@@ -104,7 +104,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         name: 'Medical Device Software',
         description: 'Medical device software accessibility requirements',
         critical: true,
-        validation: (context: Element) => {
+        validation: (_context: any) => {
           const medicalDeviceElements = context.querySelectorAll(
             '[data-medical-device="true"], [data-anvisa="device"]',
           );
@@ -123,7 +123,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         name: 'Risk Management',
         description: 'Risk management accessibility controls',
         critical: true,
-        validation: (context: Element) => {
+        validation: (_context: any) => {
           const riskElements = context.querySelectorAll(
             '[data-risk="true"], .risk-management',
           );
@@ -140,7 +140,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         name: 'Clinical Evaluation',
         description: 'Clinical evaluation interface accessibility',
         critical: true,
-        validation: (context: Element) => {
+        validation: (_context: any) => {
           const clinicalElements = context.querySelectorAll(
             '[data-clinical="true"], .clinical-evaluation',
           );
@@ -158,7 +158,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         name: 'Labeling Requirements',
         description: 'Medical product labeling accessibility',
         critical: true,
-        validation: (context: Element) => {
+        validation: (_context: any) => {
           const labelingElements = context.querySelectorAll(
             '[data-labeling="true"], .product-labeling',
           );
@@ -185,7 +185,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         name: 'Professional Authentication',
         description: 'Healthcare professional authentication accessibility',
         critical: true,
-        validation: (context: Element) => {
+        validation: (_context: any) => {
           const authElements = context.querySelectorAll(
             '[data-auth="professional"], [data-cfm="auth"]',
           );
@@ -205,7 +205,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         name: 'Patient Confidentiality',
         description: 'Patient confidentiality protection accessibility',
         critical: true,
-        validation: (context: Element) => {
+        validation: (_context: any) => {
           const confidentialityElements = context.querySelectorAll(
             '[data-confidential="true"], [data-cfm="confidential"]',
           );
@@ -225,7 +225,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         name: 'Medical Records',
         description: 'Medical records management accessibility',
         critical: true,
-        validation: (context: Element) => {
+        validation: (_context: any) => {
           const recordElements = context.querySelectorAll(
             '[data-records="medical"], [data-cfm="records"]',
           );
@@ -243,7 +243,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         name: 'Telemedicine Standards',
         description: 'Telemedicine service accessibility standards',
         critical: true,
-        validation: (context: Element) => {
+        validation: (_context: any) => {
           const telemedicineElements = context.querySelectorAll(
             '[data-telemedicine="true"], [data-cfm="telemedicine"]',
           );
@@ -261,7 +261,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
         name: 'Informed Consent',
         description: 'Informed consent process accessibility',
         critical: true,
-        validation: (context: Element) => {
+        validation: (_context: any) => {
           const consentElements = context.querySelectorAll(
             '[data-consent="informed"], [data-cfm="consent"]',
           );

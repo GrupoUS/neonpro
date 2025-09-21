@@ -10,7 +10,7 @@
  * - Keyboard navigation validation
  */
 
-import { AxeResults, Result } from 'axe-core';
+import { AxeResults } from 'axe-core';
 import {
   calculateContrastRatio,
   meetsContrastRequirement,
@@ -144,7 +144,7 @@ export function convertAxeResults(
 ): AccessibilityIssue[] {
   const violations: AccessibilityIssue[] = [];
 
-  axeResults.violations.forEach((violation: Result) => {
+  axeResults.violations.forEach((_violation: any) => {
     const accessibilityIssue: AccessibilityIssue = {
       id: violation.id,
       impact: violation.impact as AccessibilityIssue['impact'],
@@ -265,7 +265,7 @@ export async function runAccessibilityTest(
 function runHealthcareRules(element: HTMLElement): AccessibilityIssue[] {
   const violations: AccessibilityIssue[] = [];
 
-  HEALTHCARE_ACCESSIBILITY_RULES.forEach(rule => {
+  HEALTHCARE_ACCESSIBILITY_RULES.forEach(_rule => {
     if (!rule.check(element)) {
       violations.push({
         id: rule.id,
@@ -349,7 +349,7 @@ export function validateHealthcareColorContrast(): ColorContrastResult {
   healthcareElements.forEach(({ selector, name }) => {
     const elements = document.querySelectorAll(selector);
 
-    elements.forEach(element => {
+    elements.forEach(_element => {
       const computedStyle = window.getComputedStyle(element);
       const foreground = rgbToHex(computedStyle.color);
       const background = rgbToHex(computedStyle.backgroundColor);
@@ -426,7 +426,7 @@ URL: ${result.url}
   if (violations.length > 0) {
     report += '\n## Violations\n\n';
 
-    violations.forEach(violation => {
+    violations.forEach(_violation => {
       report += `### ${violation.impact.toUpperCase()}: ${violation.id}\n`;
       report += `**Description:** ${violation.description}\n`;
       report += `**Help:** ${violation.help}\n`;

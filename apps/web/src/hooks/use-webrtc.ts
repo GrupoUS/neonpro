@@ -270,7 +270,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
 
       // Add tracks to peer connection if initialized
       if (peerConnectionRef.current) {
-        stream.getTracks().forEach(track => {
+        stream.getTracks().forEach(_track => {
           peerConnectionRef.current!.addTrack(track, stream);
         });
       }
@@ -622,7 +622,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
 
       // Stop local media tracks
       if (state.localStream) {
-        state.localStream.getTracks().forEach(track => track.stop());
+        state.localStream.getTracks().forEach(_track => track.stop());
       }
 
       // Close peer connection
@@ -744,7 +744,7 @@ function parseWebRTCStats(stats: RTCStatsReport) {
   let packetsLost = 0;
   let jitter = 0;
 
-  stats.forEach(report => {
+  stats.forEach(_report => {
     if (report.type === 'inbound-rtp' && report.mediaType === 'video') {
       bandwidth = report.bytesReceived ? (report.bytesReceived * 8) / 1024 : 0;
       packetsLost = report.packetsLost || 0;

@@ -16,7 +16,7 @@ import {
 import { addMinutes, differenceInMinutes } from 'date-fns';
 import { createContext, type ReactNode, useContext, useId, useRef, useState } from 'react';
 
-import { type CalendarEvent, EventItem } from '@/components/event-calendar/index';
+import { type CalendarEvent } from '@/components/event-calendar/index';
 
 // Define the context type
 type CalendarDndContextType = {
@@ -111,7 +111,7 @@ export function CalendarDndProvider({
   // Generate a stable ID for the DndContext
   const dndContextId = useId();
 
-  const handleDragStart = (event: DragStartEvent) => {
+  const handleDragStart = (_event: any) => {
     const { active } = event;
 
     // Add safety check for data.current
@@ -158,7 +158,7 @@ export function CalendarDndProvider({
     }
   };
 
-  const handleDragOver = (event: DragOverEvent) => {
+  const handleDragOver = (_event: any) => {
     const { over } = event;
 
     if (over && activeEvent && over.data.current) {
@@ -217,7 +217,7 @@ export function CalendarDndProvider({
     }
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = (_event: any) => {
     const { active, over } = event;
 
     // Add robust error checking

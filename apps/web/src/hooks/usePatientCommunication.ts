@@ -76,7 +76,7 @@ export function useCreateCommunicationTemplate() {
       toast.success('Template de comunicação criado com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       console.error('Error creating communication template:', error);
       toast.error(`Erro ao criar template: ${error.message}`);
     },
@@ -107,7 +107,7 @@ export function useUpdateCommunicationTemplate() {
       toast.success('Template de comunicação atualizado com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       console.error('Error updating communication template:', error);
       toast.error(`Erro ao atualizar template: ${error.message}`);
     },
@@ -132,7 +132,7 @@ export function useDeleteCommunicationTemplate() {
       toast.success('Template de comunicação excluído com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       console.error('Error deleting communication template:', error);
       toast.error(`Erro ao excluir template: ${error.message}`);
     },
@@ -163,7 +163,7 @@ export function useSendMessage() {
       toast.success('Mensagem enviada com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       console.error('Error sending message:', error);
       toast.error(`Erro ao enviar mensagem: ${error.message}`);
     },
@@ -225,7 +225,7 @@ export function useUpdateCommunicationSettings() {
       toast.success('Configurações de comunicação atualizadas com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       console.error('Error updating communication settings:', error);
       toast.error(`Erro ao atualizar configurações: ${error.message}`);
     },
@@ -272,7 +272,7 @@ export function useUpdatePatientCommunicationPreferences() {
       toast.success('Preferências de comunicação atualizadas com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       console.error('Error updating patient communication preferences:', error);
       toast.error(`Erro ao atualizar preferências: ${error.message}`);
     },
@@ -328,7 +328,7 @@ export function useScheduleAppointmentReminders() {
       toast.success(`${data.scheduled_count} lembretes agendados com sucesso!`);
     },
 
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       console.error('Error scheduling appointment reminders:', error);
       toast.error(`Erro ao agendar lembretes: ${error.message}`);
     },
@@ -365,7 +365,7 @@ export function useCancelScheduledMessages() {
       );
     },
 
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       console.error('Error cancelling scheduled messages:', error);
       toast.error(`Erro ao cancelar mensagens: ${error.message}`);
     },

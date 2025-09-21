@@ -293,7 +293,7 @@ export class AestheticAIAnalysisService {
     const suggestions: TreatmentSuggestion[] = [];
 
     // Analyze concerns and match with treatments
-    analysis.concerns.forEach(concern => {
+    analysis.concerns.forEach(_concern => {
       const concernLower = concern.toLowerCase();
 
       // Match treatments based on concerns

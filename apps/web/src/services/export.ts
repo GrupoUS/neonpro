@@ -223,7 +223,7 @@ export class ExportService {
     content += 'MÉTRICAS FINANCEIRAS:\n';
     content += '=' + '='.repeat(50) + '\n\n';
 
-    metrics.forEach(metric => {
+    metrics.forEach(_metric => {
       content += `${metric.name}: ${metric.formattedValue}\n`;
       content += `  Mudança: ${this.formatCurrency(metric.change, locale)} (${
         this.formatPercentage(metric.changePercentage, locale)
@@ -291,7 +291,7 @@ export class ExportService {
         content += `   ${insight.description}\n`;
         if (insight.recommendations && insight.recommendations.length > 0) {
           content += `   Recomendações:\n`;
-          insight.recommendations.forEach(rec => {
+          insight.recommendations.forEach(_rec => {
             content += `   • ${rec}\n`;
           });
         }

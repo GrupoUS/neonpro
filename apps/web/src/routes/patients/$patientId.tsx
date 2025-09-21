@@ -8,9 +8,9 @@ import { ErrorBoundary } from '@/components/error-pages/ErrorBoundary';
 import { useAuth } from '@/hooks/useAuth';
 import { usePatient } from '@/hooks/usePatients';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
-import { Badge, Button } from '@neonpro/ui';
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { Card } from '@neonpro/ui';
+import { Badge } from '@neonpro/ui';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   AlertCircle,
   AlertTriangle,

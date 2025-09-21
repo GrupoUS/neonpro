@@ -4,7 +4,7 @@ import { AIBrandIcon } from '@/components/atoms/ai-brand-icon';
 import type { ChatMessage } from '@/components/ui/ai-chat/types';
 import { useAIChat } from '@/hooks/useAIChat';
 import { cn } from '@/lib/utils';
-import { Send, Sparkles, X } from 'lucide-react';
+import { Send } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface FloatingAIChatSimpleProps {
@@ -46,7 +46,7 @@ export default function FloatingAIChatSimple({
 
   // Handle escape key to close chat
   useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
+    const handleEscape = (_event: any) => {
       if (event.key === 'Escape' && isOpen) {
         setIsOpen(false);
       }

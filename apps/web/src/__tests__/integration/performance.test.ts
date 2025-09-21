@@ -182,7 +182,7 @@ describe('Performance Integration Tests', () => {
       };
 
       // Verify CDN configuration
-      Object.values(cdnConfiguration).forEach(url => {
+      Object.values(cdnConfiguration).forEach(_url => {
         expect(url).toMatch(/^https:\/\/.*\.neonpro\.com\.br/);
       });
 
@@ -252,13 +252,13 @@ describe('Performance Integration Tests', () => {
       };
 
       // Verify compression configuration
-      Object.values(compressionConfig).forEach(config => {
+      Object.values(compressionConfig).forEach(_config => {
         expect(config.enabled).toBe(true);
         expect(config.level).toBeGreaterThanOrEqual(1);
         expect(config.level).toBeLessThanOrEqual(9);
       });
 
-      Object.values(compressionRatios).forEach(ratio => {
+      Object.values(compressionRatios).forEach(_ratio => {
         expect(ratio).toBeGreaterThan(0);
         expect(ratio).toBeLessThan(1);
       });
@@ -483,8 +483,8 @@ describe('Performance Integration Tests', () => {
       };
 
       // Verify complete pipeline
-      Object.values(performancePipeline).forEach(stage => {
-        Object.values(stage).forEach(feature => {
+      Object.values(performancePipeline).forEach(_stage => {
+        Object.values(stage).forEach(_feature => {
           expect(feature).toBe(true);
         });
       });

@@ -17,7 +17,7 @@ import {
 import type { ProfessionalServiceDetailed } from '@/types/professional-services';
 import { cn } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
 import {
@@ -28,7 +28,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@neonpro/ui';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@neonpro/ui';
+import { Select } from '@neonpro/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -114,7 +114,7 @@ export function ProfessionalServiceManager({
     }
   };
 
-  const handleSetPrimary = async (assignment: ProfessionalServiceDetailed) => {
+  const handleSetPrimary = async (_assignment: any) => {
     try {
       await setPrimaryProfessional.mutateAsync({
         service_id: assignment.service_id,

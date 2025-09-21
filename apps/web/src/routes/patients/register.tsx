@@ -3,7 +3,7 @@
 import { PatientRegistrationWizard } from '@/components/patients/PatientRegistrationWizard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
@@ -47,7 +47,7 @@ function PatientRegister() {
   const navigate = useNavigate();
 
   // Handle successful patient creation
-  const handlePatientCreated = (patient: any) => {
+  const handlePatientCreated = (_patient: any) => {
     setRecentlyCreated(patient.id);
     setIsWizardOpen(false);
 

@@ -131,7 +131,7 @@ export function useDebouncedPatientSearch(
 export function usePrefetchPatients() {
   const queryClient = useQueryClient();
 
-  const prefetchPatient = (patientId: string) => {
+  const prefetchPatient = (_patientId: any) => {
     queryClient.prefetchQuery({
       queryKey: patientKeys.detail(patientId),
       queryFn: () => patientService.getPatient(patientId),
@@ -541,7 +541,7 @@ export function useBulkDeletePatients() {
 
     onSuccess: (_, { patientIds, clinicId }) => {
       // Remove from cache
-      patientIds.forEach(id => {
+      patientIds.forEach(_id => {
         queryClient.removeQueries({ queryKey: patientKeys.detail(id) });
       });
 

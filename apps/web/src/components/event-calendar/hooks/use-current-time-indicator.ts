@@ -1,6 +1,6 @@
 'use client';
 
-import { EndHour, StartHour } from '@/components/event-calendar/constants';
+import { EndHour } from '@/components/event-calendar/constants';
 import { endOfWeek, isSameDay, isWithinInterval, startOfWeek } from 'date-fns';
 import { useEffect, useState } from 'react';
 

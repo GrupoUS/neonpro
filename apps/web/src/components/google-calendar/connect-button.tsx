@@ -1,10 +1,10 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { useMutation } from '@tanstack/react-query';
-import { AlertTriangle, Calendar, CheckCircle, Loader2 } from 'lucide-react';
+import { AlertTriangle2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface GoogleCalendarConnectButtonProps {

@@ -1,10 +1,10 @@
 'use client';
 
-import { RiCalendarLine, RiDeleteBinLine } from '@remixicon/react';
+import { RiCalendarLine } from '@remixicon/react';
 import { format, isBefore } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 
-import type { CalendarEvent, EventColor } from '@/components/event-calendar/index';
+import type { CalendarEvent } from '@/components/event-calendar/index';
 import {
   DefaultEndHour,
   DefaultStartHour,
@@ -24,8 +24,8 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Popover } from '@/components/ui/popover';
+import { RadioGroup } from '@/components/ui/radio-group';
 import {
   Select,
   SelectContent,
@@ -103,7 +103,7 @@ export function EventDialog({
     setError(null);
   };
 
-  const formatTimeForInput = (date: Date) => {
+  const formatTimeForInput = (_date: any) => {
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = Math.floor(date.getMinutes() / 15) * 15;
     return `${hours}:${minutes.toString().padStart(2, '0')}`;

@@ -352,7 +352,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
 
   // Search functionality
   const handleSearch = useCallback(
-    async (query: string) => {
+    async (_query: any) => {
       if (!query.trim()) {
         setSearchResults([]);
         return;
@@ -484,7 +484,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   );
 
   // Render message content with markdown support
-  const renderMessageContent = useCallback((content: string) => {
+  const renderMessageContent = useCallback((_content: any) => {
     return (
       <div className='prose prose-sm max-w-none dark:prose-invert'>
         {content.split('\n').map((line, _index) => (

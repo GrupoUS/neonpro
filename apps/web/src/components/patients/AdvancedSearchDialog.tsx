@@ -19,7 +19,7 @@ import {
   Input,
   Label,
 } from '@neonpro/ui';
-import { Activity, Calendar, Filter, Search, X } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import { useState } from 'react';
 
 interface AdvancedSearchDialogProps {
@@ -64,12 +64,12 @@ export function AdvancedSearchDialog({
     onApplyFilters({});
   };
 
-  const handleCPFChange = (value: string) => {
+  const handleCPFChange = (_value: any) => {
     const formatted = formatCPF(value);
     setLocalFilters(prev => ({ ...prev, cpf: formatted }));
   };
 
-  const handlePhoneChange = (value: string) => {
+  const handlePhoneChange = (_value: any) => {
     const formatted = formatPhone(value);
     setLocalFilters(prev => ({ ...prev, phone: formatted }));
   };

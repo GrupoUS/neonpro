@@ -242,7 +242,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
         setMessages(data.chatState.messages);
       }
     },
-    onError: (err: Error) => {
+    onError: (_err: any) => {
       setError(err);
       onError?.(err);
     },
@@ -270,7 +270,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
         }
       }
     },
-    onError: (err: Error) => {
+    onError: (_err: any) => {
       setError(err);
       onError?.(err);
       setPendingMessage(null);
@@ -502,13 +502,13 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
     }
   }, [currentSessionId, updateSessionMutation, onSessionChange]);
 
-  const loadSession = useCallback(async (sessionId: string) => {
+  const loadSession = useCallback(async (_sessionId: any) => {
     setCurrentSessionId(sessionId);
     onSessionChange?.(sessionId);
     // The useQuery will automatically load the session data
   }, [onSessionChange]);
 
-  const executeAction = useCallback((action: AgentAction) => {
+  const executeAction = useCallback((_action: any) => {
     switch (action.type) {
       case 'view_details':
         if (action.payload?.clientId) {

@@ -11,7 +11,7 @@
 import React from 'react';
 import { AppShellWithSidebar } from './AppShellWithSidebar';
 import { BreadcrumbNavigation } from './BreadcrumbNavigation';
-import { EnhancedAppShell, EnhancedSidebar } from './EnhancedSidebar';
+import { EnhancedAppShell } from './EnhancedSidebar';
 
 /**
  * Example 1: Basic Enhanced Sidebar Usage

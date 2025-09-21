@@ -1,5 +1,5 @@
-import { Document, Page, Text, View } from '@react-pdf/renderer';
-import { type ClinicBrandingData, ClinicHeader, DocumentInfo } from './ClinicBranding';
+import { Document } from '@react-pdf/renderer';
+import { type ClinicBrandingData } from './ClinicBranding';
 import styles from './pdf-styles';
 
 // Tipos baseados no schema do formulário

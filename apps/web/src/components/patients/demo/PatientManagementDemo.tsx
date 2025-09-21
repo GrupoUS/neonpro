@@ -105,7 +105,7 @@ export function PatientManagementDemo() {
   const [isConsentOpen, setIsConsentOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState('list');
 
-  const handlePatientSelect = (patientId: string) => {
+  const handlePatientSelect = (_patientId: any) => {
     setSelectedPatient(patientId);
     console.log('Selected patient:', patientId);
   };
@@ -119,14 +119,14 @@ export function PatientManagementDemo() {
     alert('Paciente cadastrado com sucesso!');
   };
 
-  const handleConsentUpdate = async (consents: any) => {
+  const handleConsentUpdate = async (_consents: any) => {
     console.log('Consent updates:', consents);
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
     alert('Consentimentos atualizados!');
   };
 
-  const handleDataExport = async (patientId: string) => {
+  const handleDataExport = async (_patientId: any) => {
     console.log('Data export requested for patient:', patientId);
     // Simulate data export
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -135,7 +135,7 @@ export function PatientManagementDemo() {
     );
   };
 
-  const handleDataErasure = async (patientId: string) => {
+  const handleDataErasure = async (_patientId: any) => {
     console.log('Data erasure requested for patient:', patientId);
     // Simulate data erasure request
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -144,7 +144,7 @@ export function PatientManagementDemo() {
     );
   };
 
-  const handleSearchSelect = (patient: PatientSearchResult) => {
+  const handleSearchSelect = (_patient: any) => {
     console.log('Search result selected:', patient);
     setSelectedPatient(patient.id);
   };

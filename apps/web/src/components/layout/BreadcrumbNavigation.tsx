@@ -16,7 +16,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { IconChevronRight, IconHome } from '@tabler/icons-react';
+import { IconChevronRight } from '@tabler/icons-react';
 import { Link, useLocation } from '@tanstack/react-router';
 import { useMemo } from 'react';
 

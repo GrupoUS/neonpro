@@ -12,7 +12,7 @@ import { useAIChat } from '@/hooks/useAIChat';
 import { useSubscription } from '@/hooks/useSubscription';
 import { cn } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
-import { Crown, ExternalLink } from 'lucide-react';
+import { Crown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react'; // React import not needed
 // import type { AIAssistantProps } from '@/components/healthcare/types';
 
@@ -93,7 +93,7 @@ export default function AIChatContainer({
 
   // Model comes from hook state; default is gpt-5-mini
 
-  const handleSendMessage = (content: string) => {
+  const handleSendMessage = (_content: any) => {
     if (!content.trim()) return;
 
     // Check if user has access to current model
@@ -142,13 +142,13 @@ export default function AIChatContainer({
 
   // Model is managed by the hook; no extra sync needed here
 
-  const handleSearch = (query: string) => {
+  const handleSearch = (_query: any) => {
     if (query.trim()) {
       handleSendMessage(query);
     }
   };
 
-  const handleVoiceInput = (audioBlob: Blob) => {
+  const handleVoiceInput = (_audioBlob: any) => {
     setIsVoiceMode(true);
     processVoice(audioBlob);
   };

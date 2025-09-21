@@ -1,7 +1,7 @@
 import { addDays, setHours, setMinutes, subDays } from 'date-fns';
 import { useState } from 'react';
 
-import { type CalendarEvent, EventCalendar } from './event-calendar';
+import { type CalendarEvent } from './event-calendar';
 
 // Sample events data with hardcoded times
 const sampleEvents: CalendarEvent[] = [
@@ -130,17 +130,17 @@ const sampleEvents: CalendarEvent[] = [
 export default function Component() {
   const [events, setEvents] = useState<CalendarEvent[]>(sampleEvents);
 
-  const handleEventAdd = (event: CalendarEvent) => {
+  const handleEventAdd = (_event: any) => {
     setEvents([...events, event]);
   };
 
-  const handleEventUpdate = (updatedEvent: CalendarEvent) => {
+  const handleEventUpdate = (_updatedEvent: any) => {
     setEvents(
       events.map(event => event.id === updatedEvent.id ? updatedEvent : event),
     );
   };
 
-  const handleEventDelete = (eventId: string) => {
+  const handleEventDelete = (_eventId: any) => {
     setEvents(events.filter(event => event.id !== eventId));
   };
 

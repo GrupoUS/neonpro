@@ -207,7 +207,7 @@ export function useVideoCall(sessionId: string) {
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
       });
 
-      stream.getTracks().forEach(track => {
+      stream.getTracks().forEach(_track => {
         peerConnection.addTrack(track, stream);
       });
 
@@ -271,7 +271,7 @@ export function useVideoCall(sessionId: string) {
 
   const endCall = useCallback(() => {
     if (callState.localStream) {
-      callState.localStream.getTracks().forEach(track => track.stop());
+      callState.localStream.getTracks().forEach(_track => track.stop());
     }
 
     if (peerConnectionRef.current) {

@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -83,7 +83,7 @@ export function ServiceAnalyticsDashboard() {
 
   const formatCurrency = (value: number) => formatBRL(value);
 
-  const formatPercentage = (value: number) => {
+  const formatPercentage = (_value: any) => {
     return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
   };
 

@@ -11,7 +11,7 @@ import {
   subMonths,
   subWeeks,
 } from 'date-fns';
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { ChevronDownIcon } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { useCalendarContext } from './calendar-context';
@@ -90,7 +90,7 @@ export function EventCalendar({
 
   // Add keyboard shortcuts for view switching
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handleKeyDown = (_e: any) => {
       // Skip if user is typing in an input, textarea or contentEditable element
       // or if the event dialog is open
       if (
@@ -137,12 +137,12 @@ export function EventCalendar({
     navigateToToday();
   };
 
-  const handleEventSelect = (event: CalendarEvent) => {
+  const handleEventSelect = (_event: any) => {
     setSelectedEvent(event);
     setIsEventDialogOpen(true);
   };
 
-  const handleEventCreate = (startTime: Date) => {
+  const handleEventCreate = (_startTime: any) => {
     // Snap to 15-minute intervals
     const minutes = startTime.getMinutes();
     const remainder = minutes % 15;
@@ -169,7 +169,7 @@ export function EventCalendar({
     setIsEventDialogOpen(true);
   };
 
-  const handleEventSave = async (event: CalendarEvent) => {
+  const handleEventSave = async (_event: any) => {
     try {
       if (event.id) {
         await updateEvent({
@@ -202,7 +202,7 @@ export function EventCalendar({
     }
   };
 
-  const handleEventDelete = async (eventId: string) => {
+  const handleEventDelete = async (_eventId: any) => {
     try {
       await deleteEvent(eventId);
       setIsEventDialogOpen(false);
@@ -213,7 +213,7 @@ export function EventCalendar({
     }
   };
 
-  const handleEventUpdate = async (updatedEvent: CalendarEvent) => {
+  const handleEventUpdate = async (_updatedEvent: any) => {
     try {
       await updateEvent({
         id: updatedEvent.id,

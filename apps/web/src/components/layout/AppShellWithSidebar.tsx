@@ -123,7 +123,7 @@ const useAppointmentRealtimeSubscription = () => {
 
   // Monitorar conexão do Supabase
   useEffect(() => {
-    const handleConnectionChange = (status: string) => {
+    const handleConnectionChange = (_status: any) => {
       if (status === 'SUBSCRIBED') {
         console.log('Real-time connection established');
         toast.success('Conexão em tempo real ativada!');

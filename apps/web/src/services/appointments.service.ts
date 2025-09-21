@@ -5,7 +5,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/lib/supabase/types/database';
-import { calendarLGPDAuditService, LGPDAuditAction } from '@/services/lgpd/audit-logging.service';
+import { calendarLGPDAuditService } from '@/services/lgpd/audit-logging.service';
 import {
   calendarLGPDConsentService,
   type ConsentValidationResult,
@@ -869,7 +869,7 @@ class AppointmentService {
           timestamp: new Date().toISOString(),
         },
       );
-    } catch (logError) {
+    } catch (_logError) {
       console.error('Error logging compliance failure:', logError);
     }
   }

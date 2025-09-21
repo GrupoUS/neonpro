@@ -33,11 +33,11 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert } from '@/components/ui/alert';
+import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -46,7 +46,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Popover } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Select,
@@ -198,7 +198,7 @@ export function RealTimeChat({
     );
 
     if (unreadMessages.length > 0) {
-      unreadMessages.forEach(message => markAsRead(message.id));
+      unreadMessages.forEach(_message => markAsRead(message.id));
     }
   }, [messages, participantRole, markAsRead]);
 
@@ -222,7 +222,7 @@ export function RealTimeChat({
     ];
 
     const terms: string[] = [];
-    medicalPatterns.forEach(pattern => {
+    medicalPatterns.forEach(_pattern => {
       const matches = text.match(pattern);
       if (matches) {
         terms.push(...matches);
@@ -417,7 +417,7 @@ export function RealTimeChat({
 
   // Handle AI suggestion application
   const handleApplySuggestion = useCallback(
-    async (suggestion: AISuggestion) => {
+    async (_suggestion: any) => {
       try {
         await sendMessage(suggestion.content, {
           messageType: 'text',
@@ -445,7 +445,7 @@ export function RealTimeChat({
   }, [exportChatHistory]);
 
   // Get message status icon
-  const getMessageStatusIcon = useCallback((message: ChatMessage) => {
+  const getMessageStatusIcon = useCallback((_message: any) => {
     if (message.metadata?.urgencyLevel === 'critical') {
       return <AlertTriangle className='h-3 w-3 text-red-500' />;
     }
@@ -456,7 +456,7 @@ export function RealTimeChat({
   }, []);
 
   // Get sender avatar
-  const getSenderAvatar = useCallback((message: ChatMessage) => {
+  const getSenderAvatar = useCallback((_message: any) => {
     switch (message.senderType) {
       case 'ai_assistant':
         return <Bot className='h-4 w-4' />;
@@ -473,7 +473,7 @@ export function RealTimeChat({
 
   // Get message background color
   const getMessageBgColor = useCallback(
-    (message: ChatMessage) => {
+    (_message: any) => {
       if (message.senderType === participantRole) {
         return 'bg-blue-600 text-white';
       }

@@ -16,11 +16,11 @@ import type { TimeSlot } from '@/types/service';
 import { Button } from '@neonpro/ui';
 import { Calendar } from '@neonpro/ui';
 import { ScrollArea } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
 import { Label } from '@neonpro/ui';
 import { Textarea } from '@neonpro/ui';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@neonpro/ui';
+import { Select } from '@neonpro/ui';
 import {
   Dialog,
   DialogContent,
@@ -30,7 +30,7 @@ import {
   DialogTitle,
 } from '@neonpro/ui';
 import { format } from 'date-fns';
-import { Clock, Phone, Plus, Search, User } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface AppointmentBookingProps {

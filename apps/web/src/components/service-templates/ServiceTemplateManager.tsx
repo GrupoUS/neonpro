@@ -18,7 +18,7 @@ import {
 } from '@/types/service-templates';
 import type { ServiceTemplateWithItems } from '@/types/service-templates';
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
 import {
@@ -29,7 +29,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@neonpro/ui';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@neonpro/ui';
+import { Select } from '@neonpro/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -99,7 +99,7 @@ export function ServiceTemplateManager({
     return matchesSearch && matchesType && matchesStatus;
   }) || [];
 
-  const handleDeleteTemplate = async (template: ServiceTemplateWithItems) => {
+  const handleDeleteTemplate = async (_template: any) => {
     if (
       window.confirm(
         `Tem certeza que deseja excluir o template "${template.name}"?`,
@@ -113,7 +113,7 @@ export function ServiceTemplateManager({
     }
   };
 
-  const handleToggleFeatured = async (template: ServiceTemplateWithItems) => {
+  const handleToggleFeatured = async (_template: any) => {
     try {
       await toggleFeatured.mutateAsync({
         id: template.id,
@@ -124,7 +124,7 @@ export function ServiceTemplateManager({
     }
   };
 
-  const handleToggleActive = async (template: ServiceTemplateWithItems) => {
+  const handleToggleActive = async (_template: any) => {
     try {
       await toggleActive.mutateAsync({
         id: template.id,
@@ -135,7 +135,7 @@ export function ServiceTemplateManager({
     }
   };
 
-  const handleDuplicate = async (template: ServiceTemplateWithItems) => {
+  const handleDuplicate = async (_template: any) => {
     const newName = `${template.name} (Cópia)`;
     try {
       await duplicateTemplate.mutateAsync({

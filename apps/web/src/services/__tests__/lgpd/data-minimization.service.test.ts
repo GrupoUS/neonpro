@@ -658,7 +658,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
         'LGPDDataCategory',
       ];
 
-      types.forEach(type => {
+      types.forEach(_type => {
         expect(true).toBe(false); // Force failure to indicate type validation needed
       });
     });

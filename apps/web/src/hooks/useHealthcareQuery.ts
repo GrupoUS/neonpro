@@ -5,7 +5,7 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
 // Healthcare-specific query keys factory
@@ -444,7 +444,7 @@ export function useEmergencyDetection() {
       return data;
     },
 
-    onSuccess: (data: any) => {
+    onSuccess: (_data: any) => {
       toast.warning(
         `Emergência detectada: ${String((data as any)?.severity ?? 'ALTA').toUpperCase()}`,
         {
@@ -474,7 +474,7 @@ export function useEmergencyDetection() {
 export function usePrefetchHealthcareData() {
   const queryClient = useQueryClient();
 
-  const prefetchPatient = (patientId: string) => {
+  const prefetchPatient = (_patientId: any) => {
     queryClient.prefetchQuery({
       queryKey: healthcareKeys.patient(patientId),
       queryFn: async () => {
@@ -489,7 +489,7 @@ export function usePrefetchHealthcareData() {
     });
   };
 
-  const prefetchPatientAppointments = (patientId: string) => {
+  const prefetchPatientAppointments = (_patientId: any) => {
     queryClient.prefetchQuery({
       queryKey: healthcareKeys.patientAppointments(patientId),
       queryFn: async () => {

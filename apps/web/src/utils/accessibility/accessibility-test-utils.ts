@@ -54,7 +54,7 @@ export const WCAG_HEALTHCARE_REQUIREMENTS = {
     title: 'Non-text Content',
     description: 'All non-text content has text alternative',
     critical: true,
-    test: (element: Element) => {
+    test: (_element: any) => {
       if (element.tagName === 'IMG') {
         return (
           element.hasAttribute('alt')
@@ -69,7 +69,7 @@ export const WCAG_HEALTHCARE_REQUIREMENTS = {
     title: 'Info and Relationships',
     description: 'Information structure and relationships can be programmatically determined',
     critical: true,
-    test: (element: Element) => {
+    test: (_element: any) => {
       const forms = element.querySelectorAll('form');
       return Array.from(forms).every(form => {
         const inputs = form.querySelectorAll('input, select, textarea');
@@ -93,7 +93,7 @@ export const WCAG_HEALTHCARE_REQUIREMENTS = {
     title: 'Headings and Labels',
     description: 'Headings and labels describe topic or purpose',
     critical: true,
-    test: (element: Element) => {
+    test: (_element: any) => {
       const headings = element.querySelectorAll('h1, h2, h3, h4, h5, h6');
       const labels = element.querySelectorAll('label');
 
@@ -111,7 +111,7 @@ export const WCAG_HEALTHCARE_REQUIREMENTS = {
     title: 'Labels or Instructions',
     description: 'Labels or instructions provided when content requires user input',
     critical: true,
-    test: (element: Element) => {
+    test: (_element: any) => {
       const inputs = element.querySelectorAll('input, select, textarea');
       return Array.from(inputs).every(input => {
         const label = document.querySelector(`label[for="${input.id}"]`);
@@ -127,7 +127,7 @@ export const WCAG_HEALTHCARE_REQUIREMENTS = {
     title: 'Name, Role, Value',
     description: 'Name, role, value can be programmatically determined',
     critical: true,
-    test: (element: Element) => {
+    test: (_element: any) => {
       const interactive = element.querySelectorAll(
         'button, input, select, textarea, a',
       );
@@ -298,7 +298,7 @@ export class HealthcareAccessibilityTester {
 
     for (const selector of scenario.selectors) {
       const found = document.querySelectorAll(selector);
-      found.forEach(el => elements.push(el));
+      found.forEach(_el => elements.push(el));
     }
 
     return elements;

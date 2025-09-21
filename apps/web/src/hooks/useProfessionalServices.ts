@@ -151,7 +151,7 @@ export function useCreateProfessionalService() {
 
       toast.success('Serviço atribuído ao profissional com sucesso!');
     },
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       toast.error(`Erro ao atribuir serviço: ${error.message}`);
     },
   });
@@ -172,7 +172,7 @@ export function useUpdateProfessionalService() {
 
       toast.success('Atribuição de serviço atualizada com sucesso!');
     },
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       toast.error(`Erro ao atualizar atribuição: ${error.message}`);
     },
   });
@@ -192,7 +192,7 @@ export function useDeleteProfessionalService() {
 
       toast.success('Atribuição de serviço removida com sucesso!');
     },
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       toast.error(`Erro ao remover atribuição: ${error.message}`);
     },
   });
@@ -213,7 +213,7 @@ export function useBulkAssignServices() {
 
       toast.success(`${count} serviços atribuídos com sucesso!`);
     },
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       toast.error(`Erro ao atribuir serviços: ${error.message}`);
     },
   });
@@ -234,7 +234,7 @@ export function useSetPrimaryProfessional() {
 
       toast.success('Profissional principal definido com sucesso!');
     },
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       toast.error(`Erro ao definir profissional principal: ${error.message}`);
     },
   });
@@ -274,7 +274,7 @@ export function useToggleProfessionalService() {
         : 'Atribuição removida com sucesso!';
       toast.success(message);
     },
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       toast.error(`Erro na operação: ${error.message}`);
     },
   });

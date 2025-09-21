@@ -16,10 +16,10 @@
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import {
   AlertTriangle,
   BarChart3,
@@ -100,11 +100,11 @@ export function AgentDashboard({
     };
   }, [currentSessionId, endCurrentSession]);
 
-  const handleAgentSelect = (agentType: AgentType) => {
+  const handleAgentSelect = (_agentType: any) => {
     setSelectedAgent(agentType);
   };
 
-  const getAgentStats = (agentType: AgentType) => {
+  const getAgentStats = (_agentType: any) => {
     const agentAnalytics = analytics?.data?.agent_usage?.find(
       usage => usage.agent_type === agentType,
     );

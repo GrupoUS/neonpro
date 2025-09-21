@@ -6,7 +6,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import { usePatient, useUpdatePatient } from '@/hooks/usePatients';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
 import { Label } from '@neonpro/ui';
@@ -15,7 +15,7 @@ import { Checkbox } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Separator } from '@neonpro/ui';
 import { formatBRPhone, formatCPF, validateCPFMask } from '@neonpro/utils';
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   AlertCircle,
   Eye,
@@ -207,7 +207,7 @@ function PatientEditPage() {
   }, [patient, resetForm]);
 
   // Form submission handler
-  const onSubmit = async (data: PatientFormData) => {
+  const onSubmit = async (_data: any) => {
     try {
       if (
         !(user as any)?.user_metadata?.clinic_id

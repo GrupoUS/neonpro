@@ -5,11 +5,11 @@
 
 import { ProfessionalServiceManager } from '@/components/professional-services/ProfessionalServiceManager';
 import { useAuth } from '@/hooks/useAuth';
-import { Card, CardContent } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
-import { AlertTriangle, ArrowLeft } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 
 function ProfessionalServicesPage() {
   const { profile } = useAuth();

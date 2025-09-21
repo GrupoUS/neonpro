@@ -53,7 +53,7 @@ export function useLongTasks(): UseLongTasksReturn {
     );
   }, []);
 
-  const removeTask = useCallback((id: string) => {
+  const removeTask = useCallback((_id: any) => {
     setTasks(prev => prev.filter(task => task.id !== id));
   }, []);
 
@@ -61,11 +61,11 @@ export function useLongTasks(): UseLongTasksReturn {
     setTasks(prev => prev.filter(task => task.status !== 'completed' && task.status !== 'failed'));
   }, []);
 
-  const getTask = useCallback((id: string) => {
+  const getTask = useCallback((_id: any) => {
     return tasks.find(task => task.id === id);
   }, [tasks]);
 
-  const isRunning = useCallback((id: string) => {
+  const isRunning = useCallback((_id: any) => {
     const task = tasks.find(t => t.id === id);
     return task?.status === 'running';
   }, [tasks]);

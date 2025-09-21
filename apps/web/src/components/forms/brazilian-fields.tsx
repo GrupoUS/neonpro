@@ -13,10 +13,10 @@
 
 'use client';
 
-import { MapPin, Phone, User } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { forwardRef, useCallback, useEffect, useState } from 'react';
 
-import { Input, Label } from '@/components/ui';
+import { Input } from '@/components/ui';
 import {
   formatCEP,
   formatCNPJ,
