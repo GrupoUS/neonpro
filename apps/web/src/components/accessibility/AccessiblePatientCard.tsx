@@ -304,7 +304,7 @@ export function AccessiblePatientList({
       role='list'
       aria-label={`Lista de pacientes. ${patients.length} pacientes encontrados.`}
     >
-      {patients.map((patient, index) => (
+      {patients.map((patient, _index) => (
         <div
           key={patient.id}
           role='listitem'

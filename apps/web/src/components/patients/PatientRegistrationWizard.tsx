@@ -361,7 +361,7 @@ export function PatientRegistrationWizard({
       autoSave.clearSavedData();
 
       toast.success('Paciente cadastrado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error creating patient:', error);
       toast.error('Erro ao cadastrar paciente. Tente novamente.');
     } finally {

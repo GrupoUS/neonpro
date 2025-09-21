@@ -305,7 +305,7 @@ export function AppointmentBooking({
       setSelectedPatientId(null);
       setNotes('');
       onOpenChange(false);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error during booking process:', error);
       // The error will be handled by the mutation's onError callback
     }
@@ -412,7 +412,7 @@ export function AppointmentBooking({
 
                 {validation && hasConflicts && (
                   <div className='space-y-2'>
-                    {validation.conflicts.map((conflict, index) => (
+                    {validation.conflicts.map((conflict, _index) => (
                       <div
                         key={index}
                         className='flex items-start gap-2 p-3 bg-destructive/10 border border-destructive/20 rounded-md'
@@ -430,7 +430,7 @@ export function AppointmentBooking({
 
                 {validation && hasWarnings && (
                   <div className='space-y-2'>
-                    {validation.warnings.map((warning, index) => (
+                    {validation.warnings.map((warning, _index) => (
                       <div
                         key={index}
                         className='flex items-start gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-md'
@@ -455,7 +455,7 @@ export function AppointmentBooking({
                     </p>
                     <div className='flex flex-wrap gap-2'>
                       {validation.suggestedAlternatives.map(
-                        (alternative, index) => (
+                        (alternative, _index) => (
                           <Button
                             key={index}
                             variant='outline'

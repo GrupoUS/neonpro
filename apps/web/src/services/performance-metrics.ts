@@ -110,7 +110,7 @@ export class PerformanceMetricsService {
       console.log(
         '[PerformanceMetrics] Service initialized with healthcare compliance',
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('[PerformanceMetrics] Failed to initialize:', error);
     }
   }
@@ -759,7 +759,7 @@ export class PerformanceMetricsService {
         },
         body: JSON.stringify(alert),
       });
-    } catch (error) {
+    } catch (_error) {
       console.error(
         '[PerformanceMetrics] Failed to send critical alert:',
         error,
@@ -822,7 +822,7 @@ export class PerformanceMetricsService {
       console.log(
         `[PerformanceMetrics] Reported ${batch.length} metrics successfully`,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('[PerformanceMetrics] Failed to report metrics:', error);
       // Re-queue failed metrics
       this.metricsQueue.unshift(...batch);

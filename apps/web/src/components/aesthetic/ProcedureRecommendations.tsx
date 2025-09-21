@@ -151,7 +151,7 @@ export function ProcedureRecommendations({
       {(criticalContraindications.length > 0
         || warningContraindications.length > 0) && (
         <div className='space-y-3'>
-          {criticalContraindications.map((alert, index) => (
+          {criticalContraindications.map((alert, _index) => (
             <Alert key={index} variant='destructive'>
               <XCircle className='h-4 w-4' />
               <AlertTitle>
@@ -178,7 +178,7 @@ export function ProcedureRecommendations({
             </Alert>
           ))}
 
-          {warningContraindications.map((alert, index) => (
+          {warningContraindications.map((alert, _index) => (
             <Alert key={index}>
               <AlertTriangle className='h-4 w-4' />
               <AlertTitle>Atenção: {alert.condition}</AlertTitle>

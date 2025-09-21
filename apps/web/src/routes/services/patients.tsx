@@ -108,7 +108,7 @@ function PatientsPage() {
         const result = await testSupabaseConnection();
         setConnectionTest(result);
         console.log('🔧 Connection test result:', result);
-      } catch (error) {
+      } catch (_error) {
         console.error('🔧 Connection test failed:', error);
         setConnectionTest({ success: false, error: 'Test failed to run' });
       }
@@ -332,7 +332,7 @@ function PatientsStatistics({ clinicId }: { clinicId: string }) {
 
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
-      {statisticsCards.map((stat, index) => (
+      {statisticsCards.map((stat, _index) => (
         <Card key={index} className='relative overflow-hidden'>
           <CardContent className='p-4'>
             <div className='flex items-center justify-between'>

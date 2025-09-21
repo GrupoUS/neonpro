@@ -390,7 +390,7 @@ export function HealthcareAccessibilityAuditor({
               <CardContent>
                 <ScrollArea className='h-96'>
                   <div className='space-y-4'>
-                    {result.issues.map((issue, index) => (
+                    {result.issues.map((issue, _index) => (
                       <Card
                         key={index}
                         className={issue.impact === 'critical' ? 'border-red-500' : ''}
@@ -466,7 +466,7 @@ export function HealthcareAccessibilityAuditor({
               <CardContent>
                 <ScrollArea className='h-96'>
                   <div className='space-y-4'>
-                    {result.recommendations.map((rec, index) => (
+                    {result.recommendations.map((rec, _index) => (
                       <Card key={index}>
                         <CardContent className='pt-4'>
                           <div className='flex items-start justify-between mb-2'>

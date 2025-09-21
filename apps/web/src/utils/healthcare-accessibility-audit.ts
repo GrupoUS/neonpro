@@ -236,7 +236,7 @@ export class HealthcareAccessibilityAuditor {
       const healthcareRuleId = violation.id as HealthcareAccessibilityRuleId;
 
       if (HEALTHCARE_ACCESSIBILITY_RULES[healthcareRuleId]) {
-        violation.nodes.forEach((node, index) => {
+        violation.nodes.forEach((node, _index) => {
           const healthcareIssue: HealthcareAccessibilityIssue = {
             id: `${violation.id}-${index}`,
             impact: violation.impact as any,

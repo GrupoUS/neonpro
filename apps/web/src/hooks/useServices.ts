@@ -178,7 +178,7 @@ export function useUpdateService() {
         message: 'Serviço atualizado com sucesso!',
       };
     },
-    onSuccess: (_, variables) => {
+    onSuccess: (_, _variables) => {
       // Invalidate and refetch services
       queryClient.invalidateQueries({ queryKey: serviceKeys.lists() });
       queryClient.invalidateQueries({
@@ -329,7 +329,7 @@ export function useCheckAvailability() {
           conflicts,
           warnings,
         };
-      } catch (error) {
+      } catch (_error) {
         console.error('Error in availability check:', error);
         throw error;
       }
@@ -439,7 +439,7 @@ export function useServiceTimeSlots(
         }
 
         return slots;
-      } catch (error) {
+      } catch (_error) {
         console.error('Error generating time slots:', error);
         throw error;
       }

@@ -160,7 +160,7 @@ export class WebSocketAgentService {
       // Emit to wildcard handlers
       const wildcardHandlers = this.messageHandlers.get('*') || [];
       wildcardHandlers.forEach(handler => handler(data));
-    } catch (error) {
+    } catch (_error) {
       console.error('Error parsing WebSocket message:', error);
     }
   }

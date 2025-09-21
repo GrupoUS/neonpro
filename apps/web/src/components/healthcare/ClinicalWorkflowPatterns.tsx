@@ -266,7 +266,7 @@ export const ClinicalWorkflowStepper: React.FC<{
   steps: ClinicalStep[];
   currentStep: number;
   onStepChange: (stepIndex: number) => void;
-  onStepComplete: (stepIndex: number, data?: any) => void;
+  onStepComplete: (stepIndex: number, _data?: any) => void;
   onWorkflowComplete: (data: any) => void;
   allowSkipping?: boolean;
   showProgress?: boolean;
@@ -389,7 +389,7 @@ export const ClinicalWorkflowStepper: React.FC<{
 
       {/* Steps */}
       <div className="space-y-4">
-        {steps.map((step, index) => {
+        {steps.map((step, _index) => {
           const isActive = index === currentStep;
           const isCompleted = step.status === 'completed';
           const hasErrors = errors[index]?.length > 0;

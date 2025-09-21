@@ -189,7 +189,7 @@ function PatientDetailPage() {
               accessed_at: new Date().toISOString(),
             }),
           });
-        } catch (error) {
+        } catch (_error) {
           console.warn('Failed to log patient access:', error);
         }
       };
@@ -778,7 +778,7 @@ function MedicalInfoSection({
       {items && items.length > 0
         ? (
           <ul className='list-disc list-inside space-y-1 ml-6'>
-            {items.map((item, index) => (
+            {items.map((item, _index) => (
               <li key={index} className={`text-sm ${variantStyles[variant]}`}>
                 {item}
               </li>

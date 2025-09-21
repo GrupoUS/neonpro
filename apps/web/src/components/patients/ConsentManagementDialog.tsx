@@ -258,7 +258,7 @@ export function ConsentManagementDialog({
     try {
       await onConsentUpdate(data);
       onOpenChange(false);
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro ao atualizar consentimentos:', error);
     } finally {
       setIsLoading(false);
@@ -269,7 +269,7 @@ export function ConsentManagementDialog({
     setIsLoading(true);
     try {
       await onDataExport(patientData.patientId);
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro ao exportar dados:', error);
     } finally {
       setIsLoading(false);
@@ -285,7 +285,7 @@ export function ConsentManagementDialog({
       setIsLoading(true);
       try {
         await onDataErasure(patientData.patientId);
-      } catch (error) {
+      } catch (_error) {
         console.error('Erro ao solicitar exclusão:', error);
       } finally {
         setIsLoading(false);
@@ -416,7 +416,7 @@ export function ConsentManagementDialog({
                             </p>
                             <div className='flex flex-wrap gap-1'>
                               {consent.dataCategories.map(
-                                (category, index) => (
+                                (category, _index) => (
                                   <Badge
                                     key={index}
                                     variant='outline'

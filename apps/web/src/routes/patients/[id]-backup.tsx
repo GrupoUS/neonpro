@@ -538,7 +538,7 @@ function PatientDetailPage() {
                   <div>
                     <h4 className='font-medium mb-2'>Alergias</h4>
                     <div className='flex flex-wrap gap-2'>
-                      {patient.allergies.map((allergy, index) => (
+                      {patient.allergies.map((allergy, _index) => (
                         <Badge key={index} variant='destructive'>
                           {allergy}
                         </Badge>
@@ -549,7 +549,7 @@ function PatientDetailPage() {
                   <div>
                     <h4 className='font-medium mb-2'>Medicamentos em Uso</h4>
                     <div className='flex flex-wrap gap-2'>
-                      {patient.medications.map((medication, index) => (
+                      {patient.medications.map((medication, _index) => (
                         <Badge key={index} variant='outline'>
                           {medication}
                         </Badge>
@@ -560,7 +560,7 @@ function PatientDetailPage() {
                   <div>
                     <h4 className='font-medium mb-2'>Condições Crônicas</h4>
                     <div className='flex flex-wrap gap-2'>
-                      {patient.chronicConditions.map((condition, index) => (
+                      {patient.chronicConditions.map((condition, _index) => (
                         <Badge key={index} variant='secondary'>
                           {condition}
                         </Badge>
@@ -686,7 +686,7 @@ function PatientDetailPage() {
                               <div>
                                 <p className='text-sm font-medium'>Prescrição:</p>
                                 <ul className='text-sm list-disc list-inside'>
-                                  {record.prescription.map((med, index) => (
+                                  {record.prescription.map((med, _index) => (
                                     <li key={index}>{med}</li>
                                   ))}
                                 </ul>
@@ -823,7 +823,7 @@ function PatientDetailPage() {
                             </p>
                             <ul className='text-sm list-disc list-inside space-y-1'>
                               {insight.recommendations.map(
-                                (recommendation, index) => <li key={index}>{recommendation}</li>,
+                                (recommendation, _index) => <li key={index}>{recommendation}</li>,
                               )}
                             </ul>
                           </div>

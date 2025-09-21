@@ -293,7 +293,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
       }
       setError(null);
     },
-    onSuccess: (response, variables) => {
+    onSuccess: (response, _variables) => {
       if (response.success && response.response) {
         const assistantMessage: ChatMessage = {
           id: response.response.id,
@@ -335,7 +335,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
         }
       }
     },
-    onError: (err: Error, variables) => {
+    onError: (err: Error, _variables) => {
       // Remove optimistic update on error
       if (optimisticUpdates) {
         setMessages(prev => prev.filter(msg => !msg.id.startsWith('temp_')));

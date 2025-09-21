@@ -209,7 +209,7 @@ export function useCreateAppointment() {
       return { previousAppointments };
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Update cache with real appointment data
       queryClient.setQueryData(appointmentKeys.detail(data.id), data);
 
@@ -242,7 +242,7 @@ export function useCreateAppointment() {
       }
     },
 
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       // Rollback optimistic update
       if (context?.previousAppointments) {
         queryClient.setQueryData(
@@ -345,7 +345,7 @@ export function useUpdateAppointmentStatus() {
       return { previousAppointment };
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Update cache with server response
       queryClient.setQueryData(appointmentKeys.detail(data.id), data);
 
@@ -367,7 +367,7 @@ export function useUpdateAppointmentStatus() {
       );
     },
 
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       // Rollback optimistic update
       if (context?.previousAppointment) {
         queryClient.setQueryData(
@@ -436,7 +436,7 @@ export function useSendAppointmentReminder() {
       });
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Update appointment cache with reminder info
       queryClient.setQueryData(
         appointmentKeys.detail(variables.appointmentId),
@@ -465,7 +465,7 @@ export function useSendAppointmentReminder() {
       toast.success(`Lembrete enviado via ${channelList}!`);
     },
 
-    onError: (error, variables) => {
+    onError: (error, _variables) => {
       console.error('[Send Reminder Error]', error);
 
       if (error.message.includes('consent')) {

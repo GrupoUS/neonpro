@@ -225,7 +225,7 @@ export function DayView({
 
       <div className='border-border/70 grid flex-1 grid-cols-[3rem_1fr] border-t sm:grid-cols-[4rem_1fr] overflow-hidden'>
         <div>
-          {hours.map((hour, index) => (
+          {hours.map((hour, _index) => (
             <div
               key={hour.toString()}
               className='border-border/70 relative h-[var(--week-cells-height)] border-b last:border-b-0'

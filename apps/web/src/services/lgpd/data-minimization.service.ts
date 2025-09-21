@@ -179,7 +179,7 @@ export class CalendarDataMinimizationService {
         dataCategoriesShared,
         legalBasis,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in minimizeAppointmentWithCompliance:', error);
       // Return minimal data on error
       return {
@@ -255,7 +255,7 @@ export class CalendarDataMinimizationService {
           dataCategoriesShared,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in batch minimization:', error);
       return {
         minimizedAppointments: appointments.map(apt => this.getMinimalFallback(apt)),

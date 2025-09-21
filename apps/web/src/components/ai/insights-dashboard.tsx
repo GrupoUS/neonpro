@@ -504,7 +504,7 @@ export const AIInsightsDashboard = ({
             )
             : (
               <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
-                {metricCards.map((card, index) => <MetricCard key={index} {...card} />)}
+                {metricCards.map((card, _index) => <MetricCard key={index} {...card} />)}
               </div>
             )}
 

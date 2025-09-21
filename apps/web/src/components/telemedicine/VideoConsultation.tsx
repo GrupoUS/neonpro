@@ -264,7 +264,7 @@ export function VideoConsultation({
       endCall();
       onSessionEnd?.();
       toast.success('Sessão finalizada com sucesso');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro ao finalizar sessão');
     }
   }, [endSession, endCall, onSessionEnd]);
@@ -280,7 +280,7 @@ export function VideoConsultation({
         });
         toast.success('Emergência escalada com sucesso');
         setShowEmergencyDialog(false);
-      } catch (error) {
+      } catch (_error) {
         toast.error('Erro ao escalar emergência');
       }
     },
@@ -297,7 +297,7 @@ export function VideoConsultation({
         await startScreenShare();
         toast.success('Compartilhamento de tela iniciado');
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro no compartilhamento de tela');
     }
   }, [startScreenShare, stopScreenShare, webrtcState.isScreenSharing]);
@@ -312,7 +312,7 @@ export function VideoConsultation({
         await startRecording();
         toast.success('Gravação iniciada');
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro na gravação');
     }
   }, [isRecording, startRecording, stopRecording]);
@@ -327,7 +327,7 @@ export function VideoConsultation({
         if (chatMessageRef.current) {
           chatMessageRef.current.value = '';
         }
-      } catch (error) {
+      } catch (_error) {
         toast.error('Erro ao enviar mensagem');
       }
     },

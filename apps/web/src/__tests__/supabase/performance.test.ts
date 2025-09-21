@@ -288,7 +288,7 @@ describe('Supabase Performance Tests', () => {
         const results = await Promise.all(operationPromises);
 
         // All operations should succeed
-        results.forEach((result, index) => {
+        results.forEach((result, _index) => {
           expect(result.error).toBeNull();
           recordMetrics(
             `Connection Pool - ${connectionCount} concurrent - Op ${index}`,
@@ -688,7 +688,7 @@ describe('Supabase Performance Tests', () => {
 
       const results = await Promise.all(operationPromises);
 
-      results.forEach((result, index) => {
+      results.forEach((result, _index) => {
         recordMetrics(
           `Concurrent Real-time Op ${index}`,
           result.responseTime,

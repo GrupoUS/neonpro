@@ -289,7 +289,7 @@ export function BulkOperationsManager({
 
         onOperationComplete?.(currentOp);
         toast.success(`Operação concluída: ${currentOp.title}`);
-      } catch (error) {
+      } catch (_error) {
         console.error('Bulk operation failed:', error);
         setQueue(prev => ({
           ...prev,
@@ -487,7 +487,7 @@ export function BulkOperationsManager({
 
           toast.success(`Operação desfeita: ${operation.title}`);
         });
-      } catch (error) {
+      } catch (_error) {
         console.error('Undo operation failed:', error);
         toast.error(`Falha ao desfazer operação: ${operation.title}`);
       }

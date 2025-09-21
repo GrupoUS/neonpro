@@ -724,7 +724,7 @@ export class E2ETestingService {
       // Calculate averages
       overallAccessibilityScore = overallAccessibilityScore / scenario.steps.length;
       overallPerformanceScore = overallPerformanceScore / scenario.steps.length;
-    } catch (error) {
+    } catch (_error) {
       errors.push(`Scenario execution failed: ${error}`);
     }
 

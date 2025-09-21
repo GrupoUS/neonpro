@@ -409,7 +409,7 @@ function PatientAIInsights() {
         setPredictions(mockPredictions);
         setModels(mockModels);
         setTreatments(mockTreatments);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error loading AI insights:', error);
       } finally {
         setLoading(false);
@@ -831,7 +831,7 @@ function PatientAIInsights() {
                         Fatores:
                       </p>
                       <ul className='text-sm text-gray-600 list-disc list-inside'>
-                        {prediction.factors.map((factor, index) => <li key={index}>{factor}</li>)}
+                        {prediction.factors.map((factor, _index) => <li key={index}>{factor}</li>)}
                       </ul>
                     </div>
                     <div className='mt-3 p-3 bg-blue-50 rounded'>
@@ -1011,7 +1011,7 @@ function PatientAIInsights() {
             <div>
               <h3 className='font-medium mb-2'>Recomendações</h3>
               <ul className='space-y-1 text-sm'>
-                {selectedInsight.recommendations.map((rec, index) => (
+                {selectedInsight.recommendations.map((rec, _index) => (
                   <li key={index} className='flex items-start gap-2'>
                     <CheckCircle className='h-4 w-4 text-green-600 mt-0.5 flex-shrink-0' />
                     <span>{rec}</span>
@@ -1024,7 +1024,7 @@ function PatientAIInsights() {
               <div>
                 <h3 className='font-medium mb-2'>Ações Necessárias</h3>
                 <div className='space-y-2'>
-                  {selectedInsight.actionItems.map((action, index) => (
+                  {selectedInsight.actionItems.map((action, _index) => (
                     <div key={index} className='border rounded p-3'>
                       <div className='flex items-center justify-between mb-1'>
                         <h4 className='font-medium text-sm'>{action.title}</h4>

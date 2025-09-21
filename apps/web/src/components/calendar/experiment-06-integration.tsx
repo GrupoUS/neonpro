@@ -440,7 +440,7 @@ export function Experiment06CalendarIntegration({
           <div className='space-y-1'>
             {complianceStatus.consentValidations
               .slice(0, 3)
-              .map((issue, index) => (
+              .map((issue, _index) => (
                 <div key={index} className='text-yellow-700 text-xs'>
                   • {issue.error || 'Issue sem descrição'}
                 </div>

@@ -102,7 +102,7 @@ export class GoogleCalendarSyncService {
               error: syncResult.error || 'Unknown error',
             });
           }
-        } catch (error) {
+        } catch (_error) {
           result.errors.push({
             appointmentId: appointment.id,
             error: error instanceof Error ? error.message : String(error),
@@ -124,7 +124,7 @@ export class GoogleCalendarSyncService {
           lastError: result.errors.length > 0 ? result.errors[0].error : null,
         },
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error syncing appointments:', error);
       result.success = false;
       result.errors.push({
@@ -318,7 +318,7 @@ export class GoogleCalendarSyncService {
           }
         }
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error syncing from Google:', error);
       result.errors.push({
         error: `Sync from Google failed: ${error instanceof Error ? error.message : String(error)}`,

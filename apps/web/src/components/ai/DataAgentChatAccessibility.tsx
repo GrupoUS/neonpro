@@ -566,7 +566,7 @@ const AccessibleDataSummaryCard: React.FC<{
           role="list"
           aria-label={`Lista de ${data.length} ${data.length === 1 ? 'item' : 'itens'}`}
         >
-          {data.slice(0, expanded ? data.length : displayLimit).map((item, index) => (
+          {data.slice(0, expanded ? data.length : displayLimit).map((item, _index) => (
             <div key={index} role="listitem">
               {renderItem(item, index)}
             </div>

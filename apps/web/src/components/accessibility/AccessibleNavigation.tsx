@@ -319,7 +319,7 @@ export function AccessibleNavigation({
                 role='menubar'
                 aria-label='Menu principal'
               >
-                {items.map((item, index) => renderNavigationItem(item, index, false))}
+                {items.map((item, _index) => renderNavigationItem(item, index, false))}
               </ul>
             </div>
 
@@ -367,7 +367,7 @@ export function AccessibleNavigation({
           >
             <div className='px-4 py-4 space-y-2'>
               <ul className='space-y-1' role='none'>
-                {items.map((item, index) => renderNavigationItem(item, index, true))}
+                {items.map((item, _index) => renderNavigationItem(item, index, true))}
               </ul>
 
               {/* Mobile User Menu */}

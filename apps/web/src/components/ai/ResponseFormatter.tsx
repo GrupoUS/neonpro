@@ -95,7 +95,7 @@ export interface ResponseFormatterProps {
   /** Custom click handlers */
   onItemClick?: (type: 'client' | 'appointment' | 'financial', item: any) => void;
   /** Export handler */
-  onExport?: (type: 'client' | 'appointment' | 'financial', data: any[]) => void;
+  onExport?: (type: 'client' | 'appointment' | 'financial', _data: any[]) => void;
   /** Test ID */
   testId?: string;
 }
@@ -694,7 +694,7 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
         'grid gap-4',
         compact ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
       )}>
-        {paginatedData.map((item, index) => {
+        {paginatedData.map((item, _index) => {
           switch (activeTab) {
             case 'clients':
               return (

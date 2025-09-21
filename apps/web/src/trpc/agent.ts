@@ -101,7 +101,7 @@ export function useAgentSendMessage() {
   const queryClient = agentTRPC.useUtils();
 
   return agentTRPC.agent.sendMessage.useMutation({
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Invalidate session queries to get fresh messages
       queryClient.agent.getSession.invalidate({
         session_id: variables.session_id,

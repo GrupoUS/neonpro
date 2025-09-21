@@ -178,7 +178,7 @@ export function PatientDocumentUpload({
       console.log('Loading existing documents for patient:', patientId);
       // Mock data for now
       setExistingDocuments([]);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error loading existing documents:', error);
       toast.error('Erro ao carregar documentos existentes');
     }
@@ -292,7 +292,7 @@ export function PatientDocumentUpload({
       updateProgress(100);
 
       return result.document as PatientDocument;
-    } catch (error) {
+    } catch (_error) {
       console.error('Upload error:', error);
       throw error;
     }
@@ -355,7 +355,7 @@ export function PatientDocumentUpload({
 
           toast.success(`Documento "${file.name}" enviado com sucesso!`);
           onDocumentsUploaded?.([uploadedDocument]);
-        } catch (error) {
+        } catch (_error) {
           console.error('Upload error:', error);
 
           setUploadQueue(prev => {
@@ -454,7 +454,7 @@ export function PatientDocumentUpload({
       setExistingDocuments(prev => prev.filter(doc => doc.id !== documentId));
       onDocumentRemoved?.(documentId);
       toast.success('Documento removido com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error removing document:', error);
       toast.error('Erro ao remover documento');
     }

@@ -613,7 +613,7 @@ function PatientDashboard() {
             </span>
           </div>
           <div className='space-y-1'>
-            {realTimeUpdates.slice(0, 2).map((update, index) => (
+            {realTimeUpdates.slice(0, 2).map((update, _index) => (
               <div
                 key={index}
                 className='text-xs sm:text-sm text-green-700 flex items-center gap-1'
@@ -635,7 +635,7 @@ function PatientDashboard() {
           Estatísticas do dashboard
         </h2>
         <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
-          {statsCards.map((stat, index) => (
+          {statsCards.map((stat, _index) => (
             <Card
               key={stat.title}
               className='transition-all hover:shadow-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'

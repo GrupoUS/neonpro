@@ -89,7 +89,7 @@ export class GoogleCalendarService {
         integration,
         calendarId: primaryCalendar.id,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error initializing Google Calendar integration:', error);
       throw error;
     }
@@ -229,7 +229,7 @@ export class GoogleCalendarService {
         success: true,
         googleEventId: result.id,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error(
         `Error ${operation} appointment in Google Calendar:`,
         error,
@@ -336,7 +336,7 @@ export class GoogleCalendarService {
         nextSyncToken: result.nextSyncToken,
         changes,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error syncing from Google Calendar:', error);
       throw error;
     }
@@ -487,7 +487,7 @@ export class GoogleCalendarService {
       });
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error disconnecting Google Calendar:', error);
       return false;
     }

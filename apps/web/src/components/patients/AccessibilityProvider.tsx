@@ -398,7 +398,7 @@ export function AccessibilityProvider({
       try {
         const parsed = JSON.parse(savedPreferences);
         setPreferences({ ...defaultPreferences, ...parsed });
-      } catch (error) {
+      } catch (_error) {
         console.error('Error loading accessibility preferences:', error);
       }
     }

@@ -41,7 +41,7 @@ async function logHealthcareAction(
       user_id: userId,
       details: details ? JSON.stringify(details) : null,
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Failed to log healthcare action:', error);
   }
 }
@@ -96,7 +96,7 @@ export function usePatient(
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
-    retry: (failureCount, error) => {
+    retry: (failureCount, _error) => {
       // Don't retry on permission errors
       if (
         error.message.includes('permission')
@@ -344,7 +344,7 @@ export function useCreateAppointment() {
       return { previousAppointments, optimisticAppointment };
     },
 
-    onSuccess: (data, variables, context) => {
+    onSuccess: (data, _variables, context) => {
       const patientId = variables.patient_id;
 
       // Replace optimistic appointment with real data
@@ -361,7 +361,7 @@ export function useCreateAppointment() {
       toast.success('Agendamento criado com sucesso');
     },
 
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       const patientId = variables.patient_id;
 
       // Rollback optimistic update

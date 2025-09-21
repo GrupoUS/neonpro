@@ -914,7 +914,7 @@ export function EnhancedPatientRegistrationForm({
       onOpenChange(false);
       form.reset();
       setCurrentStep(0);
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro ao cadastrar paciente:', error);
     } finally {
       setIsSubmitting(false);
@@ -985,7 +985,7 @@ export function EnhancedPatientRegistrationForm({
 
         {/* Step Navigation */}
         <div className='flex justify-between'>
-          {REGISTRATION_STEPS.map((step, index) => {
+          {REGISTRATION_STEPS.map((step, _index) => {
             const Icon = step.icon;
             const isActive = index === currentStep;
             const isCompleted = index < currentStep;

@@ -156,7 +156,7 @@ export class CalendarLGPDConsentService {
         isExplicit,
         legalBasis: matchingConsent.legal_basis || 'consent',
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in validateCalendarConsent:', error);
       return {
         isValid: false,
@@ -202,7 +202,7 @@ export class CalendarLGPDConsentService {
       } else {
         return DataMinimizationLevel.RESTRICTED;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error determining data minimization level:', error);
       return DataMinimizationLevel.MINIMAL; // Fail safely
     }
@@ -270,7 +270,7 @@ export class CalendarLGPDConsentService {
         default:
           return baseMinimized;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error minimizing appointment data:', error);
       // Return minimal data on error
       return {
@@ -337,7 +337,7 @@ export class CalendarLGPDConsentService {
               timestamp: new Date().toISOString(),
             });
           }
-        } catch (error) {
+        } catch (_error) {
           console.error(
             `Error processing appointment ${appointment.id}:`,
             error,
@@ -366,7 +366,7 @@ export class CalendarLGPDConsentService {
         consentIssues,
         auditLogId,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in batch processing:', error);
       return {
         compliantAppointments: [],
@@ -445,7 +445,7 @@ export class CalendarLGPDConsentService {
           validation_method: 'calendar_service',
         },
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error logging consent validation:', error);
       // Don't throw error for audit logging failures
     }
@@ -480,7 +480,7 @@ export class CalendarLGPDConsentService {
         .single();
 
       return log?.id;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error logging batch processing:', error);
       return undefined;
     }

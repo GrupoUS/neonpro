@@ -793,7 +793,7 @@ function AIInsightsPage() {
 
                           {/* Data Visualization */}
                           <div className='grid grid-cols-2 md:grid-cols-5 gap-2'>
-                            {insight.data.labels.map((label, index) => (
+                            {insight.data.labels.map((label, _index) => (
                               <div key={index} className='text-center'>
                                 <div className='text-xs text-muted-foreground'>
                                   {label}
@@ -812,7 +812,7 @@ function AIInsightsPage() {
                             </h4>
                             <ul className='text-sm space-y-1'>
                               {insight.recommendations.map(
-                                (recommendation, index) => (
+                                (recommendation, _index) => (
                                   <li
                                     key={index}
                                     className='flex items-start gap-2'
@@ -935,7 +935,7 @@ function AIInsightsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className='space-y-2'>
-                    {trends.map((trend, index) => (
+                    {trends.map((trend, _index) => (
                       <div
                         key={index}
                         className='flex items-center justify-between'

@@ -72,7 +72,7 @@ export function useDataExport(): UseDataExportReturn {
       }
 
       // Add data rows
-      data.forEach((row, index) => {
+      data.forEach((row, _index) => {
         const values = headers.map(header => {
           let value = row[header];
 
@@ -176,7 +176,7 @@ export function useDataExport(): UseDataExportReturn {
           <tbody>
     `;
 
-      data.forEach((row, index) => {
+      data.forEach((row, _index) => {
         html += '<tr>';
         headers.forEach(header => {
           let value = row[header];

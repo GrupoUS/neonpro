@@ -510,7 +510,7 @@ const DataSummaryCard: React.FC<{
       </CardHeader>
       <CardContent className='pt-0'>
         <div className='space-y-2'>
-          {data.slice(0, expanded ? data.length : displayLimit).map((item, index) =>
+          {data.slice(0, expanded ? data.length : displayLimit).map((item, _index) =>
             renderItem(item, index)
           )}
 
@@ -767,7 +767,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
           userContext,
         });
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error sending message via AG-UI Protocol, falling back to HTTP:', error);
       // Fallback to HTTP API
       sendMessageMutation.mutate({

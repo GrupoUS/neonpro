@@ -99,7 +99,7 @@ export const useLGPDCompliance = () => {
         legalBasis: 'consent',
       };
     },
-    minimizeData: async (data: any, level: string) => {
+    minimizeData: async (data: any, _level: string) => {
       // Implementation would call the actual minimization service
       return data;
     },

@@ -110,7 +110,7 @@ export function useComponentPreloader() {
       if (process.env.NODE_ENV === 'development') {
         console.log(`[Performance] Preloaded component: ${cacheKey}`);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error(
         `[Performance] Failed to preload component: ${cacheKey}`,
         error,

@@ -340,7 +340,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
       };
 
       recognition.start();
-    } catch (error) {
+    } catch (_error) {
       console.error('Voice recognition error:', error);
       setVoiceState('error');
     }
@@ -373,7 +373,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
             limit: 5,
           });
 
-          const knowledgeMessages: ChatMessage[] = knowledgeResults.data?.map((entry, index) => ({
+          const knowledgeMessages: ChatMessage[] = knowledgeResults.data?.map((entry, _index) => ({
             id: `knowledge-${index}`,
             role: 'system',
             content: entry.content,
@@ -394,7 +394,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
         } else {
           setSearchResults(filteredMessages);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Search error:', error);
         setSearchResults([]);
       } finally {
@@ -441,7 +441,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
           // Send through AI SDK for general chats
           handleAIChatSubmit(e);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Message send error:', error);
       }
     },
@@ -487,7 +487,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   const renderMessageContent = useCallback((content: string) => {
     return (
       <div className='prose prose-sm max-w-none dark:prose-invert'>
-        {content.split('\n').map((line, index) => (
+        {content.split('\n').map((line, _index) => (
           <p key={index} className='mb-2 last:mb-0'>
             {line}
           </p>
@@ -735,7 +735,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
 
             {searchResults.length > 0 && (
               <div className='mt-3 space-y-2 max-h-32 overflow-y-auto'>
-                {searchResults.map((result, index) => (
+                {searchResults.map((result, _index) => (
                   <div
                     key={index}
                     className='p-2 rounded bg-muted text-xs cursor-pointer hover:bg-muted/80'

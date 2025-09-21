@@ -149,7 +149,7 @@ export const HEALTHCARE_AUDIT_RULES = {
       );
       medicalForms.forEach(form => {
         const inputs = form.querySelectorAll('input, select, textarea');
-        inputs.forEach((input, index) => {
+        inputs.forEach((input, _index) => {
           if (!input.hasAttribute('id')) {
             input.setAttribute('id', `medical-input-${index}`);
           }
@@ -431,7 +431,7 @@ export class HealthcareAccessibilityAuditor {
         if (passed) {
           passedChecks++;
         }
-      } catch (error) {
+      } catch (_error) {
         console.error(`Audit rule ${ruleId} failed:`, error);
 
         issues.push({
@@ -670,7 +670,7 @@ export class HealthcareAccessibilityAuditor {
           message: `Applied fix for ${rule.name}`,
         });
         fixed++;
-      } catch (error) {
+      } catch (_error) {
         fixes.push({
           rule: rule.id,
           element: 'document',
@@ -771,7 +771,7 @@ export async function quickHealthcareAccessibilityCheck(
       issues: results.categoryResults.flatMap((cat: any) => cat.issues),
       healthcareCompliance: results.summary.healthcareCompliance,
     };
-  } catch (error) {
+  } catch (_error) {
     console.error('Quick healthcare accessibility check failed:', error);
     return {
       passed: false,

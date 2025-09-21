@@ -304,7 +304,7 @@ export function RealTimeChat({
           'Mensagem de urgência detectada. Considerando escalação.',
         );
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro ao enviar mensagem');
     }
   }, [
@@ -357,7 +357,7 @@ export function RealTimeChat({
         setEditingMessageId(null);
         setEditingContent('');
         toast.success('Mensagem editada');
-      } catch (error) {
+      } catch (_error) {
         toast.error('Erro ao editar mensagem');
       }
     },
@@ -408,7 +408,7 @@ export function RealTimeChat({
         });
 
         toast.success('Arquivo enviado com sucesso');
-      } catch (error) {
+      } catch (_error) {
         toast.error('Erro ao enviar arquivo');
       }
     },
@@ -427,7 +427,7 @@ export function RealTimeChat({
           },
         });
         toast.success('Sugestão aplicada');
-      } catch (error) {
+      } catch (_error) {
         toast.error('Erro ao aplicar sugestão');
       }
     },
@@ -439,7 +439,7 @@ export function RealTimeChat({
     try {
       const exportData = await exportChatHistory('pdf');
       toast.success('Histórico exportado com sucesso');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro ao exportar histórico');
     }
   }, [exportChatHistory]);
@@ -752,7 +752,7 @@ export function RealTimeChat({
                           && message.metadata.medicalTerms.length > 0 && (
                           <div className='mt-2 flex flex-wrap gap-1'>
                             {message.metadata.medicalTerms.map(
-                              (term, index) => (
+                              (term, _index) => (
                                 <Badge
                                   key={index}
                                   variant='secondary'
@@ -1011,7 +1011,7 @@ export function RealTimeChat({
             <div>
               <h4 className='font-medium mb-2'>Atividades Recentes</h4>
               <ScrollArea className='h-48'>
-                {auditLog.slice(0, 10).map((entry, index) => (
+                {auditLog.slice(0, 10).map((entry, _index) => (
                   <div
                     key={index}
                     className='flex justify-between text-xs text-gray-600 py-1'

@@ -112,7 +112,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
     try {
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
+    } catch (_error) {
       console.warn(`Error reading localStorage key "${key}":`, error);
       return initialValue;
     }
@@ -126,7 +126,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
         if (typeof window !== 'undefined') {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
         }
-      } catch (error) {
+      } catch (_error) {
         console.warn(`Error setting localStorage key "${key}":`, error);
       }
     },
@@ -328,7 +328,7 @@ export function GlobalPatientSearch({
               : undefined,
           },
         }));
-      } catch (error) {
+      } catch (_error) {
         console.error('Search error:', error);
         throw error;
       }
@@ -654,7 +654,7 @@ export function GlobalPatientSearch({
                 filteredResults.length > 0
                   ? (
                     <div className='divide-y'>
-                      {filteredResults.map((patient, index) => (
+                      {filteredResults.map((patient, _index) => (
                         <SearchResultItem
                           key={patient.id}
                           patient={patient}
@@ -693,7 +693,7 @@ export function GlobalPatientSearch({
                       </Button>
                     </div>
                     <div className='space-y-1'>
-                      {searchHistory.slice(0, 5).map((item, index) => (
+                      {searchHistory.slice(0, 5).map((item, _index) => (
                         <div
                           key={index}
                           className='flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded cursor-pointer'

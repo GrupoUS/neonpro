@@ -80,7 +80,7 @@ function ServicesPage() {
       try {
         await deleteServiceMutation.mutateAsync(service.id);
         toast.success('Serviço excluído com sucesso!');
-      } catch (error) {
+      } catch (_error) {
         console.error('Error deleting service:', error);
         toast.error('Erro ao excluir serviço. Tente novamente.');
       }

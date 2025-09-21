@@ -20,7 +20,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       const item = window.localStorage.getItem(key);
       // Parse stored json or return initialValue
       return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
+    } catch (_error) {
       // If error also return initialValue
       console.warn(`Error reading localStorage key "${key}":`, error);
       return initialValue;
@@ -42,7 +42,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
         if (typeof window !== 'undefined') {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
         }
-      } catch (error) {
+      } catch (_error) {
         // A more advanced implementation would handle the error case
         console.warn(`Error setting localStorage key "${key}":`, error);
       }
@@ -56,7 +56,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       if (e.key === key && e.newValue) {
         try {
           setStoredValue(JSON.parse(e.newValue));
-        } catch (error) {
+        } catch (_error) {
           console.warn(`Error parsing localStorage key "${key}":`, error);
         }
       }
@@ -92,7 +92,7 @@ export function useSecureLocalStorage<T>(key: string, initialValue: T) {
         // Fall back to plain JSON if not encrypted
         return JSON.parse(item);
       }
-    } catch (error) {
+    } catch (_error) {
       console.warn(`Error reading secure localStorage key "${key}":`, error);
       return initialValue;
     }
@@ -111,7 +111,7 @@ export function useSecureLocalStorage<T>(key: string, initialValue: T) {
           const encryptedValue = btoa(stringValue); // Base64 encoding (not encryption)
           window.localStorage.setItem(key, encryptedValue);
         }
-      } catch (error) {
+      } catch (_error) {
         console.warn(`Error setting secure localStorage key "${key}":`, error);
       }
     },
@@ -131,7 +131,7 @@ export function useSessionStorage<T>(key: string, initialValue: T) {
     try {
       const item = window.sessionStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
+    } catch (_error) {
       console.warn(`Error reading sessionStorage key "${key}":`, error);
       return initialValue;
     }
@@ -147,7 +147,7 @@ export function useSessionStorage<T>(key: string, initialValue: T) {
         if (typeof window !== 'undefined') {
           window.sessionStorage.setItem(key, JSON.stringify(valueToStore));
         }
-      } catch (error) {
+      } catch (_error) {
         console.warn(`Error setting sessionStorage key "${key}":`, error);
       }
     },
@@ -194,7 +194,7 @@ export function useCompliantLocalStorage<T>(
       }
 
       return isSensitiveData ? parsedItem.data : parsedItem.value || parsedItem;
-    } catch (error) {
+    } catch (_error) {
       console.warn(`Error reading compliant localStorage key "${key}":`, error);
       return initialValue;
     }
@@ -224,7 +224,7 @@ export function useCompliantLocalStorage<T>(
 
           window.localStorage.setItem(key, JSON.stringify(itemToStore));
         }
-      } catch (error) {
+      } catch (_error) {
         console.warn(
           `Error setting compliant localStorage key "${key}":`,
           error,
