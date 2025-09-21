@@ -53,8 +53,8 @@ vi.mock('@/services/lgpd/audit-logging.service', () => ({
 // Mock EventCalendar component
 vi.mock('@/components/event-calendar/event-calendar', () => ({
   EventCalendar: vi.fn(({ events, onEventUpdate, onEventDelete, onEventAdd, className }) => (
-    <div data-testid='event-calendar' className={className}>
-      <div data-testid='calendar-events'>
+    <div data-testid="event-calendar" className={className}>
+      <div data-testid="calendar-events">
         {events.map((event: any) => (
           <div key={event.id} data-event-id={event.id}>
             {event.title}
