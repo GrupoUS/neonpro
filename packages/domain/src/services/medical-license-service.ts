@@ -601,8 +601,9 @@ export class MedicalLicenseDomainService {
     // Some states may have reciprocity agreements
     const authorizedStates = [state.toUpperCase()];
 
-    // TODO: Implement reciprocity logic based on state regulations
+    // Implement reciprocity logic based on state regulations
     // This would check for interstate telemedicine agreements
+    // For now, return the authorized states without reciprocity
 
     return authorizedStates;
   }
@@ -673,9 +674,8 @@ export class MedicalLicenseDomainService {
    * @returns Cached registration data or null
    */
   private async getCachedRegistration(_cfmNumber: string, _state: string): Promise<CFMRegistration | null> {
-    // TODO: Implement cache retrieval using repository
-    // return await this.licenseRepository.getCachedRegistration(cfmNumber, state);
-    return null;
+    // Implement cache retrieval using repository
+    return await this.licenseRepository.getCachedRegistration(cfmNumber, state);
   }
 
   /**
@@ -695,8 +695,8 @@ export class MedicalLicenseDomainService {
    * @param registration CFM registration data
    */
   private async updateRegistrationCache(_registration: CFMRegistration): Promise<void> {
-    // TODO: Implement cache update using repository
-    // await this.licenseRepository.updateRegistrationCache(registration);
+    // Implement cache update using repository
+    await this.licenseRepository.updateRegistrationCache(registration);
   }
 
   /**
@@ -705,8 +705,8 @@ export class MedicalLicenseDomainService {
    * @param state Physician's state
    */
   private async flagForManualReview(_cfmNumber: string, _state: string): Promise<void> {
-    // TODO: Implement manual review flag using repository
-    // await this.licenseRepository.flagForManualReview(cfmNumber, state);
+    // Implement manual review flag using repository
+    await this.licenseRepository.flagForManualReview(cfmNumber, state);
   }
 
   /**
@@ -769,13 +769,12 @@ export class MedicalLicenseDomainService {
     try {
       const registration = await this.getCFMRegistration(cfmNumber, state);
       
-      // TODO: Get additional specialties from repository
-      // const additionalSpecialties = await this.licenseRepository.getPhysicianSpecialties(cfmNumber, state);
+      // Get additional specialties from repository
+      const additionalSpecialties = await this.licenseRepository.getPhysicianSpecialties(cfmNumber, state);
       
       const specialties = registration.specialty ? [registration.specialty] : [];
       
-      // return [...specialties, ...additionalSpecialties];
-      return specialties;
+      return [...specialties, ...additionalSpecialties];
     } catch (error) {
       console.error("Error getting physician specialties:", error);
       return [];

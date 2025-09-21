@@ -71,7 +71,7 @@ export class ConsentDomainService {
     const consents = await this.repository.findByPatientId(patientId, includeExpired);
     
     // Log access for audit trail
-    void ConsentFactory.createAuditEvent(
+    const accessEvent = ConsentFactory.createAuditEvent(
       ConsentAction.ACCESSED,
       patientId,
       'system',
@@ -82,8 +82,8 @@ export class ConsentDomainService {
       }
     );
 
-    // TODO: Add audit event to repository when we implement audit logging
-    // await this.repository.addAuditEvent(patientId, accessEvent);
+    // Add audit event to repository when we implement audit logging
+    await this.repository.addAuditEvent(patientId, accessEvent);
 
     return consents;
   }
@@ -111,7 +111,7 @@ export class ConsentDomainService {
     const revokedConsent = await this.repository.revoke(consentId, revokedBy, reason);
 
     // Create audit trail entry
-    void ConsentFactory.createAuditEvent(
+    const auditEvent = ConsentFactory.createAuditEvent(
       ConsentAction.REVOKED,
       revokedConsent.patientId,
       revokedBy,
@@ -122,9 +122,9 @@ export class ConsentDomainService {
       }
     );
 
-    // TODO: Add audit event to repository
-    // revokedConsent.auditTrail.push(auditEvent);
-    // await this.repository.update(consentId, { auditTrail: revokedConsent.auditTrail });
+    // Add audit event to repository
+    revokedConsent.auditTrail.push(auditEvent);
+    await this.repository.update(consentId, { auditTrail: revokedConsent.auditTrail });
 
     return revokedConsent;
   }
@@ -287,7 +287,7 @@ export class ConsentDomainService {
     });
 
     // Add renewal audit event
-    void ConsentFactory.createAuditEvent(
+    const renewalEvent = ConsentFactory.createAuditEvent(
       ConsentAction.UPDATED,
       existingConsent.patientId,
       renewedBy,
@@ -299,8 +299,8 @@ export class ConsentDomainService {
       }
     );
 
-    // TODO: Add audit event to repository
-    // updatedConsent.auditTrail.push(renewalEvent);
+    // Add audit event to repository
+    updatedConsent.auditTrail.push(renewalEvent);
 
     return updatedConsent;
   }

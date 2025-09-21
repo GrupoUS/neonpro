@@ -13,6 +13,7 @@
 
 'use client';
 
+import { useScreenReaderAnnouncer } from '@/hooks/accessibility/use-focus-management';
 import { useNavigate } from '@tanstack/react-router';
 import {
   Calendar,
@@ -27,7 +28,6 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
-import { useScreenReaderAnnouncer } from '@/hooks/accessibility/use-focus-management';
 
 import {
   Badge,
@@ -100,7 +100,7 @@ export const PatientCard = memo<PatientCardProps>(
     error = null,
     ariaLabel,
     testId = 'patient-card',
-  ) => {
+  }) => {
     const navigate = useNavigate();
     const { announcePolite } = useScreenReaderAnnouncer();
 
