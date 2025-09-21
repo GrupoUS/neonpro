@@ -207,7 +207,7 @@ export function useAdvancedAnalytics(
   }, [enableLGPDCompliance]);
 
   // Fetch all analytics data
-  const fetchAnalyticsData = useCallback(async () => {
+  const fetchAnalyticsData = useCallback(_async () => {
     setIsLoading(true);
     setError(null);
 
@@ -226,7 +226,7 @@ export function useAdvancedAnalytics(
       setBrazilianKPIs(newBrazilianKPIs);
       setComplianceAudit(newComplianceAudit);
       setLastUpdate(new Date());
-    } catch (error) {
+    } catch (_error) {
       setError(
         error instanceof Error ? error.message : 'Erro ao carregar analytics',
       );
@@ -241,12 +241,12 @@ export function useAdvancedAnalytics(
   ]);
 
   // Manual refresh
-  const refresh = useCallback(() => {
+  const refresh = useCallback(_() => {
     fetchAnalyticsData();
   }, [fetchAnalyticsData]);
 
   // Auto-refresh effect
-  useEffect(() => {
+  useEffect(_() => {
     fetchAnalyticsData();
 
     if (autoRefresh && refreshInterval > 0) {
@@ -256,9 +256,9 @@ export function useAdvancedAnalytics(
   }, [fetchAnalyticsData, autoRefresh, refreshInterval]);
 
   // Real-time updates (WebSocket simulation)
-  useEffect(() => {
+  useEffect(_() => {
     if (enableRealTime) {
-      const interval = setInterval(() => {
+      const interval = setInterval(_() => {
         // Simulate real-time metric updates
         setMetrics(prev =>
           prev
@@ -302,7 +302,7 @@ export function useAdvancedAnalytics(
     // Computed values
     hasHighRiskInsights: insights.filter(i => i.impact === 'high').length > 0,
     averageConfidence: insights.length > 0
-      ? insights.reduce((sum, i) => sum + i.confidence, 0) / insights.length
+      ? insights.reduce(_(sum,_i) => sum + i.confidence, 0) / insights.length
       : 0,
     isCompliant: complianceAudit?.lgpdCompliant
       && complianceAudit?.anvisaCompliant

@@ -7,13 +7,11 @@
 import { trpcServer } from '@hono/trpc-server';
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
-import { z } from 'zod';
 import { appRouter } from '../../../trpc/router';
 
 // Import middleware and utilities
 import { requireAIAccess, requireAuth } from '../../../middleware/auth';
 import { getServices } from '../../../services/shared-services';
-import { mockAuthMiddleware } from '../../../test-setup';
 
 // Request validation schema - matches the 3-step flow
 const crudRequestSchema = z.object({
@@ -63,9 +61,9 @@ const tRPCHandle = trpcServer({
       userId,
       clinicId,
       auditMeta: {
-        ipAddress: headers.get('x-forwarded-for') || 'unknown',
-        userAgent: headers.get('user-agent') || 'unknown',
-        sessionId: headers.get('x-session-id') || 'session-789',
+        ipAddress: headers.get('x-forwarded-for'),
+        userAgent: headers.get('user-agent'),
+        sessionId: headers.get('x-session-id'),
       },
       // Add other necessary context properties
       prisma: null, // Will be handled by tRPC context
@@ -121,7 +119,7 @@ app.post(
       let responseData;
       try {
         responseData = await tRPCResponse.json();
-      } catch (parseError) {
+      } catch (_parseError) {
         console.error('Error parsing tRPC response:', parseError);
         return c.json({
           success: false,
@@ -233,7 +231,7 @@ app.post(
 );
 
 // GET endpoint to check CRUD operation status
-app.get('/crud/status/:operationId', mockAuthMiddleware, async c => {
+app.get('/crud/status/:operationId', requireAuth, requireAIAccess, async c => {
   const operationId = c.req.param('operationId');
   const user = c.get('user');
   const userId = c.get('userId');
@@ -285,7 +283,7 @@ app.get('/crud/status/:operationId', mockAuthMiddleware, async c => {
 });
 
 // GET endpoint to list supported entities
-app.get('/crud/entities', mockAuthMiddleware, async c => {
+app.get('/crud/entities', requireAuth, requireAIAccess, async c => {
   const user = c.get('user');
   const userId = c.get('userId');
   const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';

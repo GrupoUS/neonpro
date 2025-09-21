@@ -31,7 +31,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = createTestClient({ role: 'admin' });
+    testClient = createTestClient({ _role: 'admin' });
     patientId = 'test-patient-lgpd-123';
     recordId = 'test-record-456';
   });

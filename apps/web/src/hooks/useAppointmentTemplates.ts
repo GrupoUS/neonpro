@@ -89,13 +89,11 @@ export function useCreateAppointmentTemplate() {
 
   return useMutation({
     mutationFn: async ({
-      templateData,
-      clinicId,
-      userId,
+      templateData,_clinicId,_userId,
     }: {
       templateData: CreateAppointmentTemplateData;
       clinicId: string;
-      userId: string;
+      _userId: string;
     }) => {
       return appointmentTemplatesService.createAppointmentTemplate(
         templateData,
@@ -128,13 +126,11 @@ export function useUpdateAppointmentTemplate() {
 
   return useMutation({
     mutationFn: async ({
-      templateId,
-      updateData,
-      userId,
+      templateId,_updateData,_userId,
     }: {
       templateId: string;
       updateData: UpdateAppointmentTemplateData;
-      userId: string;
+      _userId: string;
     }) => {
       return appointmentTemplatesService.updateAppointmentTemplate(
         templateId,
@@ -177,7 +173,7 @@ export function useDeleteAppointmentTemplate() {
     mutationFn: async (_templateId: any) => {
       return appointmentTemplatesService.deleteAppointmentTemplate(templateId);
     },
-    onSuccess: (_, templateId) => {
+    onSuccess: (_,_templateId) => {
       // Remove from cache
       queryClient.removeQueries({
         queryKey: appointmentTemplateKeys.detail(templateId),
@@ -241,8 +237,7 @@ export function useAppointmentTemplateCategories(clinicId?: string) {
 
   return {
     data: templates
-      ? templates.reduce(
-        (acc, template) => {
+      ? templates.reduce(_(acc,_template) => {
           const category = template.category;
           acc[category] = (acc[category] || 0) + 1;
           return acc;

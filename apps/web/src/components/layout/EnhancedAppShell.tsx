@@ -36,9 +36,8 @@ const LoadingFallback = () => (
 );
 
 // Error fallback component
-const ErrorFallback = ({
-  error,
-  resetError,
+const ErrorFallback = (_{
+  error,_resetError,
 }: {
   error: Error;
   resetError: () => void;
@@ -77,7 +76,7 @@ const ConnectionStatus = () => {
   >('connecting');
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
-  useEffect(() => {
+  useEffect(_() => {
     // Monitor Supabase connection
     const channel = supabase.channel('connection-status');
 
@@ -161,7 +160,7 @@ const PerformanceMetrics = () => {
 const useHealthcareRealtimeSubscriptions = () => {
   const { user } = useAuth();
 
-  useEffect(() => {
+  useEffect(_() => {
     if (!user) return;
 
     // Patient data changes
@@ -176,7 +175,7 @@ const useHealthcareRealtimeSubscriptions = () => {
           filter: `clinic_id=eq.${user.id}`,
         },
         payload => {
-          console.log('Patient healthcare update:', payload);
+          console.log('Patient healthcare update:', _payload);
 
           // Invalidate relevant queries
           queryClient.invalidateQueries({ queryKey: ['patients'] });
@@ -212,7 +211,7 @@ const useHealthcareRealtimeSubscriptions = () => {
           filter: `clinic_id=eq.${user.id}`,
         },
         payload => {
-          console.log('Appointment healthcare update:', payload);
+          console.log('Appointment healthcare update:', _payload);
 
           queryClient.invalidateQueries({ queryKey: ['appointments'] });
           queryClient.invalidateQueries({ queryKey: ['appointment-stats'] });
@@ -255,7 +254,7 @@ const useHealthcareRealtimeSubscriptions = () => {
           filter: `clinic_id=eq.${user.id}`,
         },
         payload => {
-          console.log('Medical records update:', payload);
+          console.log('Medical records update:', _payload);
 
           // Sensitive data - invalidate with compliance
           queryClient.invalidateQueries({ queryKey: ['medical-records'] });
@@ -285,12 +284,12 @@ const useHealthcareRealtimeSubscriptions = () => {
 const useHealthcareRoutePrefetch = () => {
   const location = window.location.pathname;
 
-  useEffect(() => {
+  useEffect(_() => {
     // Prefetch based on healthcare-specific routes
     if (location.startsWith('/patients')) {
       // Prefetch patient-related data
       queryClient.prefetchQuery({
-        queryKey: ['patients', 'health-stats'],
+        queryKey: ['patients',_'health-stats'],
         queryFn: async () => {
           const { data } = await supabase
             .from('patient_health_stats')
@@ -305,7 +304,7 @@ const useHealthcareRoutePrefetch = () => {
     if (location.startsWith('/appointments')) {
       // Prefetch appointment data
       queryClient.prefetchQuery({
-        queryKey: ['appointments', 'healthcare-metrics'],
+        queryKey: ['appointments',_'healthcare-metrics'],
         queryFn: async () => {
           const today = new Date().toISOString().split('T')[0];
           const { data } = await supabase
@@ -322,7 +321,7 @@ const useHealthcareRoutePrefetch = () => {
     if (location.startsWith('/services')) {
       // Prefetch healthcare services
       queryClient.prefetchQuery({
-        queryKey: ['services', 'healthcare-procedures'],
+        queryKey: ['services',_'healthcare-procedures'],
         queryFn: async () => {
           const { data } = await supabase
             .from('healthcare_services')
@@ -345,7 +344,7 @@ const useSessionMonitoring = () => {
     { retentionDays: 30, isSensitiveData: true },
   );
 
-  useEffect(() => {
+  useEffect(_() => {
     if (!user) return;
 
     // Update activity timestamp

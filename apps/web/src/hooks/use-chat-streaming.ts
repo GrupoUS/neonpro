@@ -12,11 +12,11 @@ export function useChatStreaming(opts: {
   const [error, setError] = useState<string | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
 
-  useEffect(() => {
+  useEffect(_() => {
     if (!auto || !question) return;
     const controller = new AbortController();
     controllerRef.current = controller;
-    (async () => {
+    (_async () => {
       try {
         setStreaming(true);
         const url = new URL('/api/v1/chat/query', window.location.origin);
@@ -42,7 +42,7 @@ export function useChatStreaming(opts: {
             if (line.startsWith('data:')) {
               const payload = line.slice(5).trim();
               try {
-                const evt = JSON.parse(payload);
+                const evt = JSON.parse(_payload);
                 if (evt?.type === 'text' && typeof evt.delta === 'string') {
                   onDelta?.(evt.delta);
                 }
@@ -52,7 +52,7 @@ export function useChatStreaming(opts: {
             }
           });
         }
-      } catch (error) {
+      } catch (_error) {
         setError(error instanceof Error ? error.message : 'Unknown error');
       } finally {
         setStreaming(false);

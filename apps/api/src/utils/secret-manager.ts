@@ -76,7 +76,7 @@ class SecretManager {
         provider: this.config.provider,
         secretCount: this.secrets.size,
       });
-    } catch (error) {
+    } catch (_error) {
       logger.error('Failed to load secrets', error as Error, {
         provider: this.config.provider,
       });
@@ -174,7 +174,7 @@ class SecretManager {
 
     if (audit && this.config.auditTrail) {
       logger.auditDataModification({
-        userId: 'system',
+        _userId: 'system',
         operation: 'CREATE',
         dataType: 'secret',
         recordId: name,
@@ -200,7 +200,7 @@ class SecretManager {
     // Audit access
     if (this.config.auditTrail) {
       logger.auditDataAccess({
-        userId: accessedBy || 'unknown',
+        _userId: accessedBy || 'unknown',
         operation: 'READ',
         dataType: 'secret',
         endpoint: 'secret-manager',
@@ -211,7 +211,7 @@ class SecretManager {
 
     try {
       return this.decrypt(encryptedValue);
-    } catch (error) {
+    } catch (_error) {
       logger.error('Failed to decrypt secret', error as Error, {
         secretName: name,
         accessedBy,
@@ -241,7 +241,7 @@ class SecretManager {
 
     if (this.config.auditTrail) {
       logger.auditDataModification({
-        userId: rotatedBy || 'system',
+        _userId: rotatedBy || 'system',
         operation: 'UPDATE',
         dataType: 'secret',
         recordId: name,
@@ -261,7 +261,7 @@ class SecretManager {
 
     if (existed && this.config.auditTrail) {
       logger.auditDataModification({
-        userId: deletedBy || 'system',
+        _userId: deletedBy || 'system',
         operation: 'DELETE',
         dataType: 'secret',
         recordId: name,
@@ -280,7 +280,7 @@ class SecretManager {
     return this.getSecret('JWT_SECRET', 'jwt-service');
   }
 
-  public getApiKey(service: string): string | undefined {
+  public getApiKey(_service: string): string | undefined {
     return this.getSecret(`${service.toUpperCase()}_API_KEY`, `${service}-service`);
   }
 

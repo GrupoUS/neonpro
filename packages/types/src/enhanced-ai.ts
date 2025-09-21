@@ -167,7 +167,7 @@ export interface AIUsageRecord {
 
   // User and Context
   readonly clinicId: string;
-  readonly userId: string;
+  readonly _userId: string;
   readonly sessionId?: string;
 
   // Model and Request Details
@@ -251,7 +251,7 @@ export interface BillingMetrics {
 export interface AuditTrail {
   readonly action: string;
   readonly timestamp: Date;
-  readonly userId: string;
+  readonly _userId: string;
   readonly userRole?: string;
   readonly ipAddress?: string;
   readonly userAgent?: string;
@@ -333,7 +333,7 @@ export type SubscriptionStatus = "active" | "suspended" | "cancelled" | "trial";
 export interface UserSubscription {
   readonly id: string;
   readonly clinicId: string;
-  readonly userId: string;
+  readonly _userId: string;
   readonly planCode: SubscriptionTier;
 
   // Subscription Details
@@ -373,7 +373,7 @@ export interface UserSubscription {
 export interface EnhancedAIRequest extends GenerateAnswerInput {
   readonly modelCode: EnhancedAIModel;
   readonly clinicId: string;
-  readonly userId: string;
+  readonly _userId: string;
   readonly sessionId?: string;
 
   // Healthcare Context

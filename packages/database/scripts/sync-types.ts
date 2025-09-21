@@ -14,7 +14,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Read Prisma schema and generate basic Supabase types
-const prismaSchemaPath = path.join(__dirname, '..', 'prisma', 'schema.prisma');
+const _prismaSchemaPath = path.join(__dirname, '..', 'prisma', 'schema.prisma');
 const typesOutputPath = path.join(__dirname, '..', 'src', 'types', 'supabase-generated.ts');
 
 function generateSupabaseTypes() {

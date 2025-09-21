@@ -5,7 +5,6 @@ import { zValidator } from '@hono/zod-validator';
 import { type AIMessage, AIProviderFactory } from '@neonpro/core-services';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { z } from 'zod';
 import { endTimerMs, logMetric, startTimer } from '../services/metrics';
 
 // Import semantic caching components
@@ -24,7 +23,7 @@ import { SpanStatusCode, trace } from '@opentelemetry/api';
 
 // Request validation schemas
 const ChatMessageSchema = z.object({
-  role: z.enum(['user', 'assistant', 'system']),
+  _role: z.enum(['user', 'assistant', 'system']),
   content: z.string().min(1),
 });
 
@@ -124,19 +123,19 @@ Responda sempre de forma útil, segura e focada em estética.`;
 
 // Cache key generator for healthcare AI conversations
 class HealthcareCacheKeyGenerator implements CacheKeyGenerator {
-  generateKey(messages: AIMessage[], context: any): string {
+  generateKey(messages: AIMessage[], _context: any): string {
     const normalizedMessages = messages.map(msg => ({
-      role: msg.role,
+      _role: msg.role,
       content: piiSanitizer.sanitize(msg.content),
     }));
 
-    const contextHash = this.hashContext(context);
+    const contextHash = this.hashContext(_context);
     const messagesHash = this.hashMessages(normalizedMessages);
 
     return `healthcare-ai-chat:${contextHash}:${messagesHash}`;
   }
 
-  private hashContext(context: any): string {
+  private hashContext(_context: any): string {
     const relevantContext = {
       locale: context.locale,
       presetId: context.presetId,
@@ -200,7 +199,7 @@ app.post(
 
       // Build AI messages with compliance validation
       const aiMessages: AIMessage[] = [
-        { role: 'system', content: SYSTEM_PROMPT },
+        { _role: 'system', content: SYSTEM_PROMPT },
       ];
 
       // Add existing conversation messages with PII redaction
@@ -208,7 +207,7 @@ app.post(
         for (const msg of messages) {
           const sanitizedContent = piiSanitizer.sanitize(msg.content);
           aiMessages.push({
-            role: msg.role,
+            _role: msg.role,
             content: sanitizedContent,
           });
         }
@@ -217,7 +216,7 @@ app.post(
       // Add new text message if provided
       if (text && text.trim().length > 0) {
         const sanitizedText = piiSanitizer.sanitize(text.trim());
-        aiMessages.push({ role: 'user', content: sanitizedText });
+        aiMessages.push({ _role: 'user', content: sanitizedText });
       }
 
       // Validate LGPD compliance for healthcare context
@@ -288,7 +287,7 @@ app.post(
                   controller.enqueue(encoder.encode(chunk));
                 }
                 controller.close();
-              } catch (error) {
+              } catch (_error) {
                 controller.error(error);
               }
             },
@@ -333,7 +332,7 @@ app.post(
             try {
               controller.enqueue(encoder.encode(mockResponse.content));
               controller.close();
-            } catch (error) {
+            } catch (_error) {
               controller.error(error);
             }
           },
@@ -374,7 +373,7 @@ app.post(
               controller.enqueue(encoder.encode(chunk));
             }
             controller.close();
-          } catch (error) {
+          } catch (_error) {
             console.error('Streaming error:', error);
             controller.error(error);
           }
@@ -430,7 +429,7 @@ app.post(
           'X-Chat-Started-At': new Date().toISOString(),
         },
       });
-    } catch (error) {
+    } catch (_error) {
       const ms = endTimerMs(t0);
       logMetric({ route: '/v1/ai-chat/stream', ms, ok: false });
 
@@ -478,10 +477,9 @@ app.get('/health', c => {
 
   return c.json({
     status: 'ok',
-    service: 'neonpro-ai-chat-enhanced',
+    _service: 'neonpro-ai-chat-enhanced',
     timestamp: new Date().toISOString(),
-    providers: availableProviders.reduce(
-      (acc, provider) => {
+    providers: availableProviders.reduce(_(acc,_provider) => {
         acc[provider] = 'available';
         return acc;
       },

@@ -7,7 +7,6 @@
 
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { validateBrazilianPhone as validatePhone, validateCEP, validateCPF } from '@neonpro/shared';
-import { z } from 'zod';
 import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
@@ -94,7 +93,7 @@ const createPatientRoute = createHealthcareRoute({
   description: 'Create a new patient record with comprehensive validation and LGPD compliance',
   dataClassification: 'medical',
   auditRequired: true,
-  request: {
+  _request: {
     body: {
       content: {
         'application/json': {
@@ -282,7 +281,7 @@ app.openapi(
         },
         201,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Error creating patient:', error);
 
       return c.json(

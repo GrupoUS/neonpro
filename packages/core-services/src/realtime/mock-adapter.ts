@@ -228,7 +228,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
     console.log(`[MOCK] Subscribed to channel: ${channelId}`);
 
     // Simulate presence sync after subscription
-    setTimeout(() => {
+    setTimeout(_() => {
       this.simulatePresenceSync(channelId);
     }, 100);
   }
@@ -245,8 +245,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
       status: "healthy" as const,
       latency: this.simulatedLatency,
       activeChannels: this.channelStates.size,
-      totalParticipants: Array.from(this.channelStates.values()).reduce(
-        (total, state) => total + state.participants.size,
+      totalParticipants: Array.from(this.channelStates.values()).reduce(_(total,_state) => total + state.participants.size,
         0,
       ),
       lastHeartbeat: new Date().toISOString(),
@@ -289,7 +288,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
     );
 
     // Simulate automatic leave after disconnection
-    setTimeout(() => {
+    setTimeout(_() => {
       this.leaveChannel(channelId, participantId, "Connection lost");
     }, 5000);
   }
@@ -305,7 +304,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
       "reconnecting",
     );
 
-    setTimeout(async () => {
+    setTimeout(_async () => {
       await this.updateParticipantStatus(channelId, participantId, "connected");
     }, 2000);
   }
@@ -318,7 +317,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
 
     return {
       id,
-      role: "patient",
+      _role: "patient",
       name: `Mock User ${id.slice(-4)}`,
       status: "connected",
       capabilities: {
@@ -343,11 +342,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
   // Private Helper Methods
   // ============================================================================
 
-  private createRealtimeEvent: typeof createRealtimeEvent = (
-    type,
-    channelId,
-    participant,
-    data,
+  private createRealtimeEvent: typeof createRealtimeEvent = (_type,_channelId,_participant,_data,
   ) => {
     return {
       type,
@@ -383,7 +378,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
           await this.eventHandlers.onPresenceSync?.(event);
           break;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error(`[MOCK] Error emitting event ${event.type}:`, error);
     }
   }
@@ -398,7 +393,7 @@ export class MockRealtimeAdapter implements RealtimeEventAdapter {
   }
 
   private async delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(_(resolve) => setTimeout(resolve, ms));
   }
 
   private throwRandomError(code: string): void {

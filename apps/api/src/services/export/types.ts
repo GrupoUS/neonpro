@@ -50,7 +50,7 @@ export interface ExportConfig {
 
 export interface ExportJob {
   id: string;
-  userId: string;
+  _userId: string;
   format: 'csv' | 'xlsx';
   filters: ExportFilter;
   pagination: ExportPagination;

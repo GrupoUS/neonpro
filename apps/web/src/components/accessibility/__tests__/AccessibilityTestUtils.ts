@@ -137,7 +137,7 @@ export function testKeyboardNavigation(component: React.ReactElement): {
   const tabOrder: string[] = [];
   const issues: string[] = [];
 
-  focusableElements.forEach((element, _index) => {
+  focusableElements.forEach(_(element, _index) => {
     const tagName = element.tagName.toLowerCase();
     const hasLabel = element.hasAttribute('aria-label')
       || element.hasAttribute('aria-labelledby')

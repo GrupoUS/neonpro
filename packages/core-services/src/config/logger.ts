@@ -21,9 +21,9 @@ export interface LogEntry {
   timestamp: string;
   level: LogLevelName;
   message: string;
-  context?: Record<string, any>;
+  _context?: Record<string, any>;
   sessionId?: string;
-  userId?: string;
+  _userId?: string;
   provider?: string;
   model?: string;
   requestId?: string;
@@ -77,8 +77,8 @@ export class Logger {
     // Text format
     const parts = [entry.timestamp, `[${entry.level}]`, entry.message];
 
-    if (entry.context && Object.keys(entry.context).length > 0) {
-      parts.push(`Context: ${JSON.stringify(entry.context)}`);
+    if (entry.context && Object.keys(entry._context).length > 0) {
+      parts.push(`Context: ${JSON.stringify(entry._context)}`);
     }
 
     if (entry.error) {
@@ -128,7 +128,7 @@ export class Logger {
     if (typeof obj === "object" && obj !== null) {
       const redacted = { ...obj };
       for (const key of Object.keys(redacted)) {
-        if (piiFields.some((field) => key.toLowerCase().includes(field))) {
+        if (_piiFields.some((field) => key.toLowerCase().includes(field))) {
           redacted[key] = "[REDACTED]";
         } else if (typeof redacted[key] === "object") {
           redacted[key] = this.redactPII(redacted[key]);
@@ -143,52 +143,52 @@ export class Logger {
   private createLogEntry(
     level: LogLevelName,
     message: string,
-    context?: Record<string, any>,
+    _context?: Record<string, any>,
     error?: Error,
   ): LogEntry {
     return {
       timestamp: new Date().toISOString(),
       level,
       message,
-      context: context ? this.redactPII(context) : undefined,
+      _context: context ? this.redactPII(_context) : undefined,
       error,
     };
   }
 
-  debug(message: string, context?: Record<string, any>): void {
+  debug(message: string, _context?: Record<string, any>): void {
     if (!this.shouldLog("DEBUG")) return;
-    const entry = this.createLogEntry("DEBUG", message, context);
+    const entry = this.createLogEntry("DEBUG", message, _context);
     this.writeLog(entry);
   }
 
-  info(message: string, context?: Record<string, any>): void {
+  info(message: string, _context?: Record<string, any>): void {
     if (!this.shouldLog("INFO")) return;
-    const entry = this.createLogEntry("INFO", message, context);
+    const entry = this.createLogEntry("INFO", message, _context);
     this.writeLog(entry);
   }
 
-  warn(message: string, context?: Record<string, any>, error?: Error): void {
+  warn(message: string, _context?: Record<string, any>, error?: Error): void {
     if (!this.shouldLog("WARN")) return;
     const entry = this.createLogEntry("WARN", message, context, error);
     this.writeLog(entry);
   }
 
-  error(message: string, context?: Record<string, any>, error?: Error): void {
+  error(message: string, _context?: Record<string, any>, error?: Error): void {
     if (!this.shouldLog("ERROR")) return;
     const entry = this.createLogEntry("ERROR", message, context, error);
     this.writeLog(entry);
   }
 
-  fatal(message: string, context?: Record<string, any>, error?: Error): void {
+  fatal(message: string, _context?: Record<string, any>, error?: Error): void {
     if (!this.shouldLog("FATAL")) return;
     const entry = this.createLogEntry("FATAL", message, context, error);
     this.writeLog(entry);
   }
 
   // Specialized logging methods for AI operations
-  logAIRequest(context: {
+  logAIRequest(_context: {
     sessionId: string;
-    userId: string;
+    _userId: string;
     provider: string;
     model: string;
     requestId: string;
@@ -196,7 +196,7 @@ export class Logger {
   }): void {
     this.info("AI request initiated", {
       sessionId: context.sessionId,
-      userId: context.userId,
+      _userId: context.userId,
       provider: context.provider,
       model: context.model,
       requestId: context.requestId,
@@ -204,9 +204,9 @@ export class Logger {
     });
   }
 
-  logAIResponse(context: {
+  logAIResponse(_context: {
     sessionId: string;
-    userId: string;
+    _userId: string;
     provider: string;
     model: string;
     requestId: string;
@@ -224,9 +224,9 @@ export class Logger {
       timestamp: new Date().toISOString(),
       level,
       message,
-      context: {
+      _context: {
         sessionId: context.sessionId,
-        userId: context.userId,
+        _userId: context.userId,
         provider: context.provider,
         model: context.model,
         requestId: context.requestId,
@@ -240,19 +240,19 @@ export class Logger {
     this.writeLog(entry);
   }
 
-  logRateLimit(context: {
+  logRateLimit(_context: {
     provider: string;
     limit: string;
     current: number;
     max: number;
   }): void {
-    this.warn("Rate limit approached", context);
+    this.warn("Rate limit approached", _context);
   }
 
-  logSecurityEvent(context: {
+  logSecurityEvent(_context: {
     event: string;
     sessionId?: string;
-    userId?: string;
+    _userId?: string;
     severity: "low" | "medium" | "high" | "critical";
     details: Record<string, any>;
   }): void {
@@ -267,10 +267,10 @@ export class Logger {
       timestamp: new Date().toISOString(),
       level,
       message: `Security event: ${context.event}`,
-      context: {
+      _context: {
         event: context.event,
         sessionId: context.sessionId,
-        userId: context.userId,
+        _userId: context.userId,
         severity: context.severity,
         details: this.redactPII(context.details),
       },

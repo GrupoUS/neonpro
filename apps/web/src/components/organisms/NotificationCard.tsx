@@ -60,7 +60,7 @@ export default function NotificationCard({
   maxItems = 8,
 }: NotificationCardProps) {
   const navigate = useNavigate();
-  const [readIds, setReadIds] = React.useState<Set<string>>(() => getReadStore());
+  const [readIds, setReadIds] = React.useState<Set<string>>(_() => getReadStore());
 
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['dashboardNotifications'],
@@ -141,7 +141,7 @@ export default function NotificationCard({
 
       return [...appt, ...patients, ...fins]
         .filter(n => !!n.createdAt)
-        .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+        .sort(_(a,_b) => (a.createdAt < b.createdAt ? 1 : -1))
         .slice(0, maxItems);
     },
     refetchInterval: pollIntervalMs === false ? false : pollIntervalMs,
@@ -163,8 +163,7 @@ export default function NotificationCard({
     }
   };
 
-  return (
-    <ExpandableCardProvider className='grid-cols-1'>
+  return (_<ExpandableCardProvider className='grid-cols-1'>
       <ExpandableCard
         id='notifications-main'
         className='w-full h-full'
@@ -172,7 +171,7 @@ export default function NotificationCard({
           <div className='space-y-4'>
             <h3 className='text-lg font-semibold'>Todas as Notificações</h3>
             <div className='max-h-96 overflow-y-auto space-y-3'>
-              {items.map((n, idx) => (
+              {items.map((n,_idx) => (
                 <div
                   key={`${n.id}-${idx}`}
                   className={`p-3 rounded-lg border transition-all duration-200 hover:shadow-md ${
@@ -243,7 +242,7 @@ export default function NotificationCard({
           </CardHeader>
           <CardContent>
             <div className='space-y-2'>
-              {items.slice(0, 3).map((n, idx) => (
+              {items.slice(0, 3).map(_(n,_idx) => (
                 <div
                   key={`${n.id}-preview-${idx}`}
                   className={`p-2 rounded transition-all duration-200 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer ${

@@ -14,8 +14,6 @@
 
 import type { PrismaClient } from '@prisma/client';
 import * as crypto from 'crypto';
-import { z } from 'zod';
-
 // Data Lifecycle Stages
 export const DATA_LIFECYCLE_STAGES = {
   COLLECTION: 'collection',
@@ -113,7 +111,7 @@ export const DataProcessingRecordSchema = z.object({
     z.object({
       action: z.string(),
       timestamp: z.date(),
-      userId: z.string(),
+      _userId: z.string(),
       details: z.record(z.any()),
     }),
   ),
@@ -160,7 +158,7 @@ export const ConsentWithdrawalRecordSchema = z.object({
     z.object({
       action: z.string(),
       timestamp: z.date(),
-      userId: z.string(),
+      _userId: z.string(),
       details: z.record(z.any()),
     }),
   ),
@@ -344,7 +342,7 @@ export class EnhancedLGPDLifecycleService {
         {
           action: 'record_created',
           timestamp: processingDate,
-          userId: 'system',
+          _userId: 'system',
           details: { legalBasis, processingPurpose },
         },
       ],
@@ -451,7 +449,7 @@ export class EnhancedLGPDLifecycleService {
         {
           action: 'consent_withdrawn',
           timestamp: withdrawalDate,
-          userId: patientId,
+          _userId: patientId,
           details: { method: withdrawalMethod, reason: withdrawalReason },
         },
       ],
@@ -507,13 +505,13 @@ export class EnhancedLGPDLifecycleService {
           record.auditTrail.push({
             action: 'data_anonymized',
             timestamp: new Date(),
-            userId: 'system',
+            _userId: 'system',
             details: { method, success: true },
           });
 
           this.processingRecords.set(record.id, record);
           anonymizedRecords++;
-        } catch (error) {
+        } catch (_error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
           errors.push(
             `Failed to anonymize record ${record.id}: ${errorMessage}`,
@@ -535,7 +533,7 @@ export class EnhancedLGPDLifecycleService {
         anonymizedRecords,
         errors,
       };
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       errors.push(`Anonymization process failed: ${errorMessage}`);
       return {
@@ -562,7 +560,7 @@ export class EnhancedLGPDLifecycleService {
       errors: [] as string[],
     };
 
-    const now = new Date();
+    const _now = new Date();
 
     try {
       // Process all data processing records
@@ -608,14 +606,14 @@ export class EnhancedLGPDLifecycleService {
               results.notificationsSent++;
             }
           }
-        } catch (error) {
+        } catch (_error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
           results.errors.push(
             `Failed to process record ${recordId}: ${errorMessage}`,
           );
         }
       }
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       results.errors.push(`Retention enforcement failed: ${errorMessage}`);
     }
@@ -644,23 +642,21 @@ export class EnhancedLGPDLifecycleService {
       record => !patientId || record.patientId === patientId,
     );
 
-    const recordsByStage = records.reduce(
-      (acc, record) => {
+    const recordsByStage = records.reduce(_(acc,_record) => {
         acc[record.lifecycleStage] = (acc[record.lifecycleStage] || 0) + 1;
         return acc;
       },
       {} as Record<DataLifecycleStage, number>,
     );
 
-    const recordsByCategory = records.reduce(
-      (acc, record) => {
+    const recordsByCategory = records.reduce(_(acc,_record) => {
         acc[record.dataCategory] = (acc[record.dataCategory] || 0) + 1;
         return acc;
       },
       {} as Record<DataCategory, number>,
     );
 
-    const now = new Date();
+    const _now = new Date();
     const thirtyDaysFromNow = new Date(
       now.getTime() + 30 * 24 * 60 * 60 * 1000,
     );
@@ -906,7 +902,7 @@ export class EnhancedLGPDLifecycleService {
       record.auditTrail.push({
         action: 'data_deleted',
         timestamp: new Date(),
-        userId: 'system',
+        _userId: 'system',
         details: { reason: 'retention_period_expired' },
       });
 

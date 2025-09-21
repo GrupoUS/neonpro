@@ -38,7 +38,7 @@ export function TimeSlotPicker({
   id,
   ...rest
 }: TimeSlotPickerProps) {
-  const options = React.useMemo(() => {
+  const options = React.useMemo(_() => {
     const out: number[] = [];
     for (let v = min; v <= max; v += step) out.push(v);
     return out;
@@ -47,13 +47,13 @@ export function TimeSlotPicker({
   return (
     <Select
       value={String(value)}
-      onValueChange={(v) => onChange(parseInt(v, 10))}
+      onValueChange={(_v) => onChange(parseInt(v, 10))}
     >
       <SelectTrigger id={id} aria-describedby={rest["aria-describedby"]}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        {options.map((v) => (
+        {options.map(_(v) => (
           <SelectItem key={v} value={String(v)}>
             {labelFor(v)}
           </SelectItem>

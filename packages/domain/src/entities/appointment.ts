@@ -211,7 +211,7 @@ export class AppointmentFactory {
    * Create a new appointment
    */
   static create(data: Omit<Appointment, 'id' | 'createdAt' | 'updatedAt'>): Appointment {
-    const now = new Date().toISOString();
+    const _now = new Date().toISOString();
     
     return {
       ...data,

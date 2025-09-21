@@ -21,11 +21,11 @@ const CHAT_SESSION_KEY = 'neonpro-ai-chat-session';
  */
 export function useAIChat(clientId?: string) {
   const queryClient = useQueryClient();
-  const [sessionId] = useState(() => nanoid());
+  const [sessionId] = useState(_() => nanoid());
   const { user } = useAuth();
 
   // Chat state management
-  const [chatState, setChatState] = useState<ChatState>(() => {
+  const [chatState, setChatState] = useState<ChatState>(_() => {
     // Load from session storage on mount
     if (typeof window !== 'undefined') {
       const saved = sessionStorage.getItem(CHAT_SESSION_KEY);
@@ -54,8 +54,8 @@ export function useAIChat(clientId?: string) {
   });
 
   // Hydrate model from server when user is known
-  useEffect(() => {
-    (async () => {
+  useEffect(_() => {
+    (_async () => {
       if (!user?.id) return;
       const serverModel = await fetchDefaultChatModel(user.id);
       if (serverModel) {
@@ -102,7 +102,7 @@ export function useAIChat(clientId?: string) {
     mutationFn: async (_content: any) => {
       const userMessage: ChatMessage = {
         id: nanoid(),
-        role: 'user',
+        _role: 'user',
         content,
         timestamp: new Date(),
         clientId,
@@ -131,7 +131,7 @@ export function useAIChat(clientId?: string) {
 
       return { userMessage, stream };
     },
-    onSuccess: async ({ userMessage, stream }) => {
+    onSuccess: async (_{ userMessage,_stream }) => {
       // Process streaming response
       const reader = stream.getReader();
       let aiContent = '';
@@ -148,7 +148,7 @@ export function useAIChat(clientId?: string) {
           // Update UI with partial response
           const aiMessage: ChatMessage = {
             id: nanoid(),
-            role: 'assistant',
+            _role: 'assistant',
             content: aiContent,
             timestamp: new Date(),
             clientId,
@@ -165,7 +165,7 @@ export function useAIChat(clientId?: string) {
         // Final state when streaming is complete
         const finalAiMessage: ChatMessage = {
           id: nanoid(),
-          role: 'assistant',
+          _role: 'assistant',
           content: aiContent,
           timestamp: new Date(),
           clientId,
@@ -183,7 +183,7 @@ export function useAIChat(clientId?: string) {
 
         // Log interaction for compliance
         logAIInteraction(sessionId, userMessage.content, aiContent, clientId);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error processing AI stream:', error);
         setChatState(prev => ({
           ...prev,
@@ -204,7 +204,7 @@ export function useAIChat(clientId?: string) {
 
   // Search suggestions query
   const { data: searchSuggestions = [], isLoading: suggestionsLoading } = useQuery({
-    queryKey: ['search-suggestions', chatState.messages.length],
+    queryKey: ['search-suggestions',_chatState.messages.length],
     queryFn: async () => {
       const lastUserMessage = chatState.messages
         .filter(m => m.role === 'user')
@@ -232,7 +232,7 @@ export function useAIChat(clientId?: string) {
   });
 
   // Clear chat history
-  const clearChat = useCallback(() => {
+  const clearChat = useCallback(_() => {
     const clearedState: ChatState = {
       messages: [],
       isLoading: false,
@@ -246,7 +246,7 @@ export function useAIChat(clientId?: string) {
   }, [queryClient, persistChatState]);
 
   // Retry last message
-  const retryLastMessage = useCallback(() => {
+  const retryLastMessage = useCallback(_() => {
     const lastUserMessage = chatState.messages
       .filter(m => m.role === 'user')
       .pop();

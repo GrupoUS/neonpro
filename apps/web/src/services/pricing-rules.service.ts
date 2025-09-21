@@ -78,7 +78,7 @@ export class PricingRulesService {
    */
   static async createPricingRule(
     clinicId: string,
-    request: CreatePricingRuleRequest,
+    _request: CreatePricingRuleRequest,
   ): Promise<PricingRule> {
     const { data, error } = await this.sb
       .from('pricing_rules')
@@ -102,7 +102,7 @@ export class PricingRulesService {
    */
   static async updatePricingRule(
     id: string,
-    request: UpdatePricingRuleRequest,
+    _request: UpdatePricingRuleRequest,
   ): Promise<PricingRule> {
     const { data, error } = await this.sb
       .from('pricing_rules')
@@ -153,7 +153,7 @@ export class PricingRulesService {
   static async calculateServicePricing(
     clinicId: string,
     serviceId: string,
-    context: {
+    _context: {
       professional_id?: string;
       appointment_date?: Date;
       client_id?: string;
@@ -286,4 +286,4 @@ export class PricingRulesService {
   }
 }
 
-export const pricingRulesService = PricingRulesService;
+export const _pricingRulesService = PricingRulesService;

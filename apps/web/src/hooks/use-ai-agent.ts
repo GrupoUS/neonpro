@@ -23,7 +23,7 @@ interface UseAIAgentReturn {
   error: string | null;
   messages: ChatMessage[];
   clearChat: () => void;
-  exportData: (payload: any) => Promise<void>;
+  exportData: (_payload: any) => Promise<void>;
 }
 
 export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
@@ -47,7 +47,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
       // Add user message to chat
       const userMessage: ChatMessage = {
         id: `msg_${Date.now()}_user`,
-        role: 'user',
+        _role: 'user',
         content: message,
         timestamp: new Date().toISOString(),
       };
@@ -55,10 +55,10 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
       setMessages(prev => [...prev, userMessage]);
 
       try {
-        const request: DataAgentRequest = {
-          query: message,
-          context: {
-            userId: user.id,
+        const _request: DataAgentRequest = {
+          _query: message,
+          _context: {
+            _userId: user.id,
             userRole: user.role,
             domain: options.initialContext?.domain,
           },
@@ -70,7 +70,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${await user.getIdToken()}`,
           },
-          body: JSON.stringify(request),
+          body: JSON.stringify(_request),
         });
 
         const data: DataAgentResponse = await response.json();
@@ -84,7 +84,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
         // Add assistant response to chat
         const assistantMessage: ChatMessage = {
           id: `msg_${Date.now()}_assistant`,
-          role: 'assistant',
+          _role: 'assistant',
           content: data.response!.message,
           timestamp: new Date().toISOString(),
           data: data.response!.data,
@@ -97,14 +97,14 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
         if (data.response?.actions && data.response.actions.length > 0) {
           handleActions(data.response.actions);
         }
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
         setError(errorMessage);
 
         // Add error message to chat
         const errorMessageObj: ChatMessage = {
           id: `msg_${Date.now()}_error`,
-          role: 'assistant',
+          _role: 'assistant',
           content:
             'Desculpe, ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.',
           timestamp: new Date().toISOString(),
@@ -142,7 +142,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
           }
           break;
         case 'export_data':
-          exportData(action.payload);
+          exportData(action._payload);
           break;
         case 'refresh':
           window.location.reload();
@@ -161,7 +161,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${await user?.getIdToken()}`,
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(_payload),
         });
 
         if (response.ok) {
@@ -192,7 +192,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
   );
 
   // Clear chat history
-  const clearChat = useCallback(() => {
+  const clearChat = useCallback(_() => {
     setMessages([]);
     setError(null);
   }, []);
@@ -218,7 +218,7 @@ export function useAIAgentConfig() {
     setContext(prev => ({ ...prev, ...newContext }));
   }, []);
 
-  const clearContext = useCallback(() => {
+  const clearContext = useCallback(_() => {
     setContext({});
   }, []);
 
@@ -230,7 +230,7 @@ export function useAIAgentConfig() {
 }
 
 // Hook for AI agent suggestions
-export function useAIAgentSuggestions(query: string): string[] {
+export function useAIAgentSuggestions(_query: string): string[] {
   const suggestions = [
     'Quais meus agendamentos para hoje?',
     'Buscar paciente João Silva',

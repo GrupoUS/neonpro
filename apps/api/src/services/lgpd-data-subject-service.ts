@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma';
 import { type ExportOptions, type LGPDOperationResult } from '../types/lgpd.js';
 import { createHealthcareError } from './createHealthcareError.js';
@@ -110,7 +109,7 @@ export class LGPDDataSubjectService {
       // Create request record
       const requestEntry = await this.prisma.auditTrail.create({
         data: {
-          userId: patientId,
+          _userId: patientId,
           action: 'DATA_SUBJECT_REQUEST_CREATED',
           entityType: 'DATA_SUBJECT_RIGHTS',
           entityId: requestId,
@@ -157,7 +156,7 @@ export class LGPDDataSubjectService {
         requestId,
         estimatedCompletion,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -232,7 +231,7 @@ export class LGPDDataSubjectService {
         timestamp: new Date().toISOString(),
         accessData: accessReport,
       };
-    } catch (error) {
+    } catch (_error) {
       await this.handleRequestError(requestId, error);
       return {
         success: false,
@@ -321,7 +320,7 @@ export class LGPDDataSubjectService {
         operationId: `deletion_${requestId}`,
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch (_error) {
       await this.handleRequestError(requestId, error);
       return {
         success: false,
@@ -392,7 +391,7 @@ export class LGPDDataSubjectService {
         exportData: exportResult.exportData,
         exportUrl: exportResult.exportUrl,
       };
-    } catch (error) {
+    } catch (_error) {
       await this.handleRequestError(requestId, error);
       return {
         success: false,
@@ -476,7 +475,7 @@ export class LGPDDataSubjectService {
         timestamp: new Date().toISOString(),
         explanation: explanationReport,
       };
-    } catch (error) {
+    } catch (_error) {
       await this.handleRequestError(requestId, error);
       return {
         success: false,
@@ -494,12 +493,12 @@ export class LGPDDataSubjectService {
   async getRequestStatus(
     requestId: string,
     patientId: string,
-  ): Promise<LGPDOperationResult & { request?: DataSubjectRequest }> {
+  ): Promise<LGPDOperationResult & { _request?: DataSubjectRequest }> {
     try {
       const requestEntry = await this.prisma.auditTrail.findFirst({
         where: {
           entityId: requestId,
-          userId: patientId,
+          _userId: patientId,
           action: 'DATA_SUBJECT_REQUEST_CREATED',
         },
       });
@@ -521,7 +520,7 @@ export class LGPDDataSubjectService {
         timestamp: new Date().toISOString(),
         request,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -547,7 +546,7 @@ export class LGPDDataSubjectService {
       const { status, requestType, limit = 50 } = options;
 
       const whereClause: any = {
-        userId: patientId,
+        _userId: patientId,
         action: 'DATA_SUBJECT_REQUEST_CREATED',
       };
 
@@ -567,7 +566,7 @@ export class LGPDDataSubjectService {
         take: limit,
       });
 
-      const formattedRequests = requests.map(request => this.mapToDataSubjectRequest(request));
+      const formattedRequests = requests.map(request => this.mapToDataSubjectRequest(_request));
 
       return {
         success: true,
@@ -576,7 +575,7 @@ export class LGPDDataSubjectService {
         timestamp: new Date().toISOString(),
         requests: formattedRequests,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -596,12 +595,12 @@ export class LGPDDataSubjectService {
     const request = await this.prisma.auditTrail.findFirst({
       where: {
         entityId: requestId,
-        userId: patientId,
+        _userId: patientId,
         action: 'DATA_SUBJECT_REQUEST_CREATED',
       },
     });
 
-    if (!request) {
+    if (!_request) {
       throw createHealthcareError(
         'REQUEST_NOT_FOUND',
         `Request not found: ${requestId}`,
@@ -725,7 +724,7 @@ export class LGPDDataSubjectService {
     // Check for ongoing legal proceedings
     const hasLegalProceedings = await this.prisma.auditTrail.findFirst({
       where: {
-        userId: patientId,
+        _userId: patientId,
         action: 'LEGAL_PROCEEDING',
         metadata: { path: ['status'], equals: 'ACTIVE' },
       },
@@ -780,7 +779,7 @@ export class LGPDDataSubjectService {
     decisionId?: string,
   ): Promise<any[]> {
     const whereClause: any = {
-      userId: patientId,
+      _userId: patientId,
       metadata: { path: ['automatedDecision'], equals: true },
     };
 
@@ -837,7 +836,7 @@ export class LGPDDataSubjectService {
         },
       });
       deletedCount++;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error deleting personal data:', error);
     }
 
@@ -859,7 +858,7 @@ export class LGPDDataSubjectService {
       console.log(
         `Would process ${appointments.length} health records for deletion`,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Error deleting health data:', error);
     }
 
@@ -962,4 +961,4 @@ export class LGPDDataSubjectService {
 }
 
 // Export singleton instance
-export const lgpdDataSubjectService = new LGPDDataSubjectService();
+export const _lgpdDataSubjectService = new LGPDDataSubjectService();

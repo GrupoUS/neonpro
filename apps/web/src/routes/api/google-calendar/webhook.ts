@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/api/google-calendar/webhook')({
+export const _Route = createFileRoute('/api/google-calendar/webhook')({
   POST: async ({ request }) => {
     try {
       const headers = request.headers;
@@ -37,14 +37,14 @@ export const Route = createFileRoute('/api/google-calendar/webhook')({
       }
 
       return json({ status: 'unhandled_state' });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error handling webhook:', error);
       return json({ error: 'Internal server error' }, { status: 500 });
     }
   },
 
   // Google requires a GET request for webhook verification
-  GET: async ({ request }) => {
+  GET: async (_{ request }) => {
     try {
       const url = new URL(request.url);
       const challenge = url.searchParams.get('challenge');
@@ -59,7 +59,7 @@ export const Route = createFileRoute('/api/google-calendar/webhook')({
       }
 
       return json({ error: 'Missing challenge' }, { status: 400 });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error verifying webhook:', error);
       return json({ error: 'Verification failed' }, { status: 500 });
     }

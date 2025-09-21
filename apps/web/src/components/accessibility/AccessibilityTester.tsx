@@ -121,8 +121,7 @@ export function AccessibilityTester({
 
   if (!enabled) return null;
 
-  return (
-    <>
+  return (_<>
       {/* Toggle Button */}
       <div
         className={`fixed z-50 ${positionClasses[position]}`}
@@ -245,7 +244,7 @@ export function AccessibilityTester({
                   },
                   { id: 'contrast', label: 'Colors', icon: Palette },
                   { id: 'keyboard', label: 'Keyboard', icon: Keyboard },
-                ].map(({ id, label, icon: Icon }) => (
+                ].map(_({ id,_label, icon: Icon }) => (
                   <Button
                     key={id}
                     variant={activeTab === id ? 'default' : 'ghost'}
@@ -357,8 +356,7 @@ export function AccessibilityTester({
                           </p>
                         </div>
                       )
-                      : (
-                        issues.map((issue, _index) => (
+                      : (_issues.map((issue, _index) => (
                           <div
                             key={`${issue.id}-${index}`}
                             className='p-3 rounded-lg border-l-4 bg-white'
@@ -443,8 +441,7 @@ export function AccessibilityTester({
                           </p>
                         </div>
                       )
-                      : (
-                        colorContrast.elements.map((element, _index) => (
+                      : (_colorContrast.elements.map((element, _index) => (
                           <div
                             key={index}
                             className='p-3 rounded-lg border bg-white'
@@ -556,8 +553,7 @@ export function AccessibilityTester({
       )}
 
       {/* Backdrop */}
-      {isVisible && (
-        <div
+      {isVisible && (_<div
           className='fixed inset-0 bg-black bg-opacity-25 z-30'
           onClick={() => setIsVisible(false)}
           aria-hidden='true'

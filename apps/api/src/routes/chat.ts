@@ -1,7 +1,6 @@
 import { zValidator } from '@hono/zod-validator';
 import { supabase } from '@neonpro/database';
 import { Hono } from 'hono';
-import { z } from 'zod';
 import { DEFAULT_PRIMARY, streamWithFailover } from '../config/ai';
 
 // OpenAPI contract reference (specs/002-phase-1-ai/contracts/chat-query.openapi.json)
@@ -54,7 +53,7 @@ const ALLOWED_ROLES = new Set([
 function checkConsentAndRole(req: Request) {
   const role = req.headers.get('x-role') || 'ANONYMOUS';
   const consent = (req.headers.get('x-consent') || '').toLowerCase();
-  const hasRole = ALLOWED_ROLES.has(role);
+  const hasRole = ALLOWED_ROLES.has(_role);
   const consentStatus = consent === 'true' || consent === 'valid' ? 'valid' : 'missing';
   return { ok: hasRole && consentStatus === 'valid', consentStatus, role };
 }
@@ -146,7 +145,7 @@ app.post(
     const clinicId = c.req.header('x-clinic-id') || 'unknown';
 
     // Rate limit first
-    if (isRateLimited(userId)) {
+    if (isRateLimited(_userId)) {
       // Audit (limit)
       const auditEvent = {
         eventId: crypto.randomUUID(),
@@ -287,10 +286,10 @@ app.post(
       // Real path: call AI with failover, then bridge to SSE
       const messages = [
         {
-          role: 'system' as const,
+          _role: 'system' as const,
           content: 'Você é um assistente de clínica estética. Responda de forma segura e empática.',
         },
-        { role: 'user' as const, content: question },
+        { _role: 'user' as const, content: question },
       ];
 
       const aiResp = await streamWithFailover({
@@ -367,7 +366,7 @@ app.post(
       }
 
       return new Response(stream, { headers });
-    } catch (err) {
+    } catch (_err) {
       console.error('Chat query error:', err);
       if (process.env.AI_AUDIT_DB === 'true') {
         try {
@@ -428,7 +427,7 @@ app.get('/session/:id', async c => {
         return c.json(
           {
             id: data.id,
-            userId: data.user_id,
+            _userId: data.user_id,
             clinicId: data.clinic_id,
             locale: data.locale
               || (c.req.header('x-locale') as 'pt-BR' | 'en-US')
@@ -440,7 +439,7 @@ app.get('/session/:id', async c => {
         );
       }
       // create minimal session row if not found
-      const now = new Date().toISOString();
+      const _now = new Date().toISOString();
       const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR';
       const ins = await supabase
         .from('ai_chat_sessions')
@@ -458,7 +457,7 @@ app.get('/session/:id', async c => {
       return c.json(
         {
           id: ins.data.id,
-          userId: ins.data.user_id,
+          _userId: ins.data.user_id,
           clinicId: ins.data.clinic_id,
           locale: ins.data.locale,
           startedAt: ins.data.started_at,
@@ -473,7 +472,7 @@ app.get('/session/:id', async c => {
 
   // Mock fallback
   const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR';
-  const now = new Date().toISOString();
+  const _now = new Date().toISOString();
   return c.json(
     { id, userId, locale, startedAt: now, lastActivityAt: now },
     200,
@@ -489,7 +488,7 @@ app.post('/explanation', async c => {
     || process.env.AI_MOCK === 'true';
 
   // Parse and validate payload
-  let payload: any = {};
+  let _payload: any = {};
   try {
     payload = await c.req.json();
   } catch {}
@@ -497,7 +496,7 @@ app.post('/explanation', async c => {
     text: z.string().min(1).max(8000),
     locale: z.string().default('pt-BR'),
   });
-  const parsed = BodySchema.safeParse(payload);
+  const parsed = BodySchema.safeParse(_payload);
   if (!parsed.success) return c.json({ message: 'Invalid payload' }, 422);
   const { text, locale } = parsed.data;
 
@@ -565,7 +564,7 @@ app.post('/explanation', async c => {
     }
 
     return c.json({ explanation, traceId }, 200);
-  } catch (err) {
+  } catch (_err) {
     console.error('Explanation error:', err);
     return c.json(
       {

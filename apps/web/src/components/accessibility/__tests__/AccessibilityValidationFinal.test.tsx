@@ -6,8 +6,8 @@
 import { describe, expect, it } from 'vitest';
 import { AccessibilityValidator } from '../../../utils/accessibility-validation';
 
-describe('Accessibility Validation Final Test', () => {
-  it('should have comprehensive WCAG validation criteria', () => {
+describe(_'Accessibility Validation Final Test',_() => {
+  it(_'should have comprehensive WCAG validation criteria',_() => {
     const {
       WCAG_21_AA_VALIDATION_CRITERIA,
     } = require('../../../utils/accessibility-validation');
@@ -41,7 +41,7 @@ describe('Accessibility Validation Final Test', () => {
     });
   });
 
-  it('should validate key healthcare accessibility requirements', () => {
+  it(_'should validate key healthcare accessibility requirements',_() => {
     const {
       WCAG_21_AA_VALIDATION_CRITERIA,
     } = require('../../../utils/accessibility-validation');
@@ -70,7 +70,7 @@ describe('Accessibility Validation Final Test', () => {
     });
   });
 
-  it('should have emergency-specific accessibility criteria', () => {
+  it(_'should have emergency-specific accessibility criteria',_() => {
     const {
       WCAG_21_AA_VALIDATION_CRITERIA,
     } = require('../../../utils/accessibility-validation');
@@ -92,7 +92,7 @@ describe('Accessibility Validation Final Test', () => {
     });
   });
 
-  it('should have medical information accessibility criteria', () => {
+  it(_'should have medical information accessibility criteria',_() => {
     const {
       WCAG_21_AA_VALIDATION_CRITERIA,
     } = require('../../../utils/accessibility-validation');
@@ -114,7 +114,7 @@ describe('Accessibility Validation Final Test', () => {
     });
   });
 
-  it('should generate compliance certificate with correct format', () => {
+  it(_'should generate compliance certificate with correct format',_() => {
     const validator = new AccessibilityValidator();
     const mockReport = {
       timestamp: new Date().toISOString(),
@@ -162,7 +162,7 @@ describe('Accessibility Validation Final Test', () => {
     );
   });
 
-  it('should generate certificate with failure status', () => {
+  it(_'should generate certificate with failure status',_() => {
     const validator = new AccessibilityValidator();
     const mockReport = {
       timestamp: new Date().toISOString(),
@@ -202,7 +202,7 @@ describe('Accessibility Validation Final Test', () => {
     expect(certificate).toContain('**Critical Issues:** 2');
   });
 
-  it('should create accessibility validator instance', () => {
+  it(_'should create accessibility validator instance',_() => {
     const validator = new AccessibilityValidator();
     expect(validator).toBeDefined();
     expect(typeof validator.validateAccessibility).toBe('function');
@@ -210,7 +210,7 @@ describe('Accessibility Validation Final Test', () => {
     expect(typeof validator.generateComplianceCertificate).toBe('function');
   });
 
-  it('should validate WCAG 2.1 AA+ compliance thresholds', () => {
+  it(_'should validate WCAG 2.1 AA+ compliance thresholds',_() => {
     const {
       WCAG_21_AA_VALIDATION_CRITERIA,
     } = require('../../../utils/accessibility-validation');

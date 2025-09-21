@@ -69,16 +69,16 @@ const _MockChart = (props: any) => {
 };
 
 // Continue with rest of the test file...
-describe('UI Components Contract Tests', () => {
-  beforeEach(() => {
+describe(_'UI Components Contract Tests',_() => {
+  beforeEach(_() => {
     // Setup
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     cleanup();
   });
 
-  it('should render MockButton correctly', () => {
+  it(_'should render MockButton correctly',_() => {
     render(React.createElement(MockButton, {
       onClick: vi.fn(),
     }, 'Test Button'));

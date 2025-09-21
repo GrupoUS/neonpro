@@ -13,8 +13,8 @@
 
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
-describe('Performance Contracts', () => {
-  beforeEach(() => {
+describe(_'Performance Contracts',_() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
     global.window = {
       performance: {
@@ -22,18 +22,18 @@ describe('Performance Contracts', () => {
         measure: vi.fn(),
         getEntriesByType: vi.fn(),
         getEntriesByName: vi.fn(),
-        now: vi.fn(() => 123.456),
+        now: vi.fn(_() => 123.456),
       },
       PerformanceObserver: vi.fn(),
     } as any;
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.restoreAllMocks();
   });
 
-  describe('Core Web Vitals Contract', () => {
-    test('should define Core Web Vitals thresholds for healthcare applications', () => {
+  describe(_'Core Web Vitals Contract',_() => {
+    test(_'should define Core Web Vitals thresholds for healthcare applications',_() => {
       // Contract: Core Web Vitals thresholds optimized for healthcare workflows
       const coreWebVitalsThresholds = {
         LCP: {
@@ -65,7 +65,7 @@ describe('Performance Contracts', () => {
       expect(coreWebVitalsThresholds.INP.good).toBe(200);
     });
 
-    test('should provide Core Web Vitals measurement interface', () => {
+    test(_'should provide Core Web Vitals measurement interface',_() => {
       // Contract: Interface for measuring Core Web Vitals
       interface CoreWebVitalsMeasurement {
         metric: 'LCP' | 'FID' | 'CLS' | 'INP';
@@ -104,7 +104,7 @@ describe('Performance Contracts', () => {
       );
     });
 
-    test('should categorize performance by healthcare workflow criticality', () => {
+    test(_'should categorize performance by healthcare workflow criticality',_() => {
       // Contract: Performance categorization by medical workflow importance
       const performanceCriteria = {
         emergency_workflows: {
@@ -133,7 +133,7 @@ describe('Performance Contracts', () => {
       expect(performanceCriteria.administrative_tasks.max_lcp).toBe(3.0);
     });
 
-    test('should provide performance monitoring for medical charts', () => {
+    test(_'should provide performance monitoring for medical charts',_() => {
       // Contract: Medical chart rendering performance monitoring
       const chartPerformanceMetrics = {
         chart_types: {
@@ -164,8 +164,8 @@ describe('Performance Contracts', () => {
     });
   });
 
-  describe('Bundle Size Optimization Contract', () => {
-    test('should define bundle size limits for healthcare application', () => {
+  describe(_'Bundle Size Optimization Contract',_() => {
+    test(_'should define bundle size limits for healthcare application',_() => {
       // Contract: Bundle size limits optimized for clinic internet connections
       const bundleSizeLimits = {
         total_bundle: {
@@ -197,7 +197,7 @@ describe('Performance Contracts', () => {
       expect(bundleSizeLimits.app_bundle.max).toBe(250);
     });
 
-    test('should provide bundle analysis interface', () => {
+    test(_'should provide bundle analysis interface',_() => {
       // Contract: Interface for bundle size analysis
       interface BundleAnalysis {
         name: string;
@@ -241,7 +241,7 @@ describe('Performance Contracts', () => {
       expect(sampleBundleAnalysis.healthcareModules.medicalCharts).toBe(75000);
     });
 
-    test('should track critical healthcare dependencies', () => {
+    test(_'should track critical healthcare dependencies',_() => {
       // Contract: Critical healthcare dependencies that should be optimized
       const criticalDependencies = {
         medical_charts: ['chart.js', 'd3', 'recharts'],
@@ -269,7 +269,7 @@ describe('Performance Contracts', () => {
       expect(dependencySizeLimits['antd']).toBe(150000);
     });
 
-    test('should provide code splitting strategy for healthcare modules', () => {
+    test(_'should provide code splitting strategy for healthcare modules',_() => {
       // Contract: Code splitting strategy optimized for healthcare workflows
       const codeSplittingStrategy = {
         immediate_load: ['authentication', 'navigation', 'emergency-alerts'],
@@ -303,8 +303,8 @@ describe('Performance Contracts', () => {
     });
   });
 
-  describe('Resource Loading Performance Contract', () => {
-    test('should define resource loading priorities for healthcare', () => {
+  describe(_'Resource Loading Performance Contract',_() => {
+    test(_'should define resource loading priorities for healthcare',_() => {
       // Contract: Resource loading priorities for medical workflows
       const resourceLoadingPriorities = {
         critical: {
@@ -340,7 +340,7 @@ describe('Performance Contracts', () => {
       expect(resourceLoadingPriorities.important.priority).toBe('medium');
     });
 
-    test('should provide resource timing measurement interface', () => {
+    test(_'should provide resource timing measurement interface',_() => {
       // Contract: Interface for measuring resource loading performance
       interface ResourceTimingMeasurement {
         name: string;
@@ -368,7 +368,7 @@ describe('Performance Contracts', () => {
       expect(sampleResourceTiming.cache_status).toBe('miss');
     });
 
-    test('should monitor CDN and external resource performance', () => {
+    test(_'should monitor CDN and external resource performance',_() => {
       // Contract: CDN and external resource performance monitoring
       const externalResourceMonitoring = {
         cdn_endpoints: {
@@ -406,8 +406,8 @@ describe('Performance Contracts', () => {
     });
   });
 
-  describe('Healthcare Workflow Performance Contract', () => {
-    test('should define performance SLAs for medical workflows', () => {
+  describe(_'Healthcare Workflow Performance Contract',_() => {
+    test(_'should define performance SLAs for medical workflows',_() => {
       // Contract: Performance SLAs specific to healthcare workflows
       const healthcareWorkflowSLAs = {
         emergency_patient_registration: {
@@ -440,7 +440,7 @@ describe('Performance Contracts', () => {
       );
     });
 
-    test('should provide workflow performance measurement', () => {
+    test(_'should provide workflow performance measurement',_() => {
       // Contract: Interface for measuring healthcare workflow performance
       interface WorkflowPerformanceMeasurement {
         workflow_name: string;
@@ -487,7 +487,7 @@ describe('Performance Contracts', () => {
       );
     });
 
-    test('should monitor database query performance for patient data', () => {
+    test(_'should monitor database query performance for patient data',_() => {
       // Contract: Database query performance monitoring for patient operations
       const databasePerformanceThresholds = {
         patient_queries: {
@@ -521,8 +521,8 @@ describe('Performance Contracts', () => {
     });
   });
 
-  describe('Performance Regression Prevention Contract', () => {
-    test('should provide performance regression detection', () => {
+  describe(_'Performance Regression Prevention Contract',_() => {
+    test(_'should provide performance regression detection',_() => {
       // Contract: Performance regression detection for healthcare application
       const performanceRegressionThresholds = {
         core_web_vitals: {
@@ -553,7 +553,7 @@ describe('Performance Contracts', () => {
       ).toBe(15);
     });
 
-    test('should provide performance baseline management', () => {
+    test(_'should provide performance baseline management',_() => {
       // Contract: Performance baseline management for comparison
       interface PerformanceBaseline {
         version: string;
@@ -616,7 +616,7 @@ describe('Performance Contracts', () => {
       );
     });
 
-    test('should provide automated performance testing integration', () => {
+    test(_'should provide automated performance testing integration',_() => {
       // Contract: Automated performance testing integration
       const performanceTestingConfig = {
         lighthouse_config: {

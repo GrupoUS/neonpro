@@ -31,7 +31,7 @@ export type EscalationStatus =
   | "CLOSED";
 export interface AuditTrailEntry {
   id: string;
-  userId: string;
+  _userId: string;
   clinicId?: string;
   patientId?: string;
   action: AuditAction;
@@ -48,7 +48,7 @@ export interface AuditTrailEntry {
   encryptedDetails?: Record<string, unknown>;
 }
 export interface CreateAuditTrailEntry {
-  userId: string;
+  _userId: string;
   clinicId?: string;
   patientId?: string;
   action: AuditAction;
@@ -215,7 +215,7 @@ export interface CreatePolicyManagement {
 }
 export interface EscalationWorkflow {
   id: string;
-  userId: string;
+  _userId: string;
   title: string;
   description: string;
   category: string;
@@ -234,7 +234,7 @@ export interface EscalationWorkflow {
   updatedAt: Date;
 }
 export interface CreateEscalationWorkflow {
-  userId: string;
+  _userId: string;
   title: string;
   description: string;
   category: string;
@@ -325,7 +325,7 @@ export interface GovernanceService {
   ): Promise<EscalationWorkflow>;
 }
 export interface AuditTrailFilters {
-  userId?: string;
+  _userId?: string;
   clinicId?: string;
   action?: AuditAction;
   status?: AuditStatus;

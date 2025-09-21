@@ -11,7 +11,7 @@ import { EventCalendar } from '../event-calendar';
 import { CalendarEvent } from '../types';
 
 // Mock performance utilities
-vi.mock('@/utils/performance-optimizer', () => ({
+vi.mock(_'@/utils/performance-optimizer',_() => ({
   measureComponentRender: vi.fn().mockResolvedValue({
     duration: 45,
     score: 0.92,
@@ -36,13 +36,13 @@ vi.mock('@/utils/performance-optimizer', () => ({
 }));
 
 // Mock React Profiler
-vi.mock('react', async () => {
+vi.mock(_'react',_async () => {
   const actual = await vi.importActual('react');
   return {
     ...actual,
-    Profiler: ({ children, onRender }) => {
+    Profiler: (_{ children,_onRender }) => {
       // Simulate Profiler behavior
-      setTimeout(() => {
+      setTimeout(_() => {
         onRender(
           'EventCalendar',
           0, // phase
@@ -58,7 +58,7 @@ vi.mock('react', async () => {
   };
 });
 
-describe('Performance Benchmark Suite - Calendar Optimization', () => {
+describe(_'Performance Benchmark Suite - Calendar Optimization',_() => {
   const performanceEvents: CalendarEvent[] = [
     {
       id: 'performance-1',
@@ -82,18 +82,18 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
     onEventDelete: vi.fn(),
   };
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.useRealTimers();
   });
 
   // RENDERING PERFORMANCE
-  describe('Rendering Performance', () => {
-    it('should render calendar within 50ms threshold', async () => {
+  describe(_'Rendering Performance',_() => {
+    it(_'should render calendar within 50ms threshold',_async () => {
       const {
         measureComponentRender,
       } = require('@/utils/performance-optimizer');
@@ -106,13 +106,13 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
 
       expect(renderTime).toBeLessThan(50);
 
-      await waitFor(() => {
+      await waitFor(_() => {
         expect(measureComponentRender).toHaveBeenCalled();
       });
     });
 
-    it('should handle large datasets efficiently', () => {
-      const largeEventSet = Array.from({ length: 100 }, (_, i) => ({
+    it(_'should handle large datasets efficiently',_() => {
+      const largeEventSet = Array.from({ length: 100 },_(_,_i) => ({
         id: `large-event-${i}`,
         title: `Evento ${i}`,
         start: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T10:00:00`),
@@ -133,8 +133,8 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(calendar).toBeInTheDocument();
     });
 
-    it('should implement virtual scrolling for performance', () => {
-      const hugeEventSet = Array.from({ length: 1000 }, (_, i) => ({
+    it(_'should implement virtual scrolling for performance',_() => {
+      const hugeEventSet = Array.from({ length: 1000 },_(_,_i) => ({
         id: `huge-event-${i}`,
         title: `Evento ${i}`,
         start: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T10:00:00`),
@@ -152,7 +152,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(renderTime).toBeLessThan(200);
     });
 
-    it('should optimize re-renders with React.memo', () => {
+    it(_'should optimize re-renders with React.memo',_() => {
       const { rerender } = render(
         <EventCalendar events={performanceEvents} {...mockCallbacks} />,
       );
@@ -169,8 +169,8 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
   });
 
   // INTERACTION PERFORMANCE
-  describe('Interaction Performance', () => {
-    it('should handle event clicks within 100ms', () => {
+  describe(_'Interaction Performance',_() => {
+    it(_'should handle event clicks within 100ms',_() => {
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
 
       const eventElement = screen.getByText('Consulta Performance');
@@ -184,7 +184,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(interactionTime).toBeLessThan(100);
     });
 
-    it('should handle navigation within 50ms', () => {
+    it(_'should handle navigation within 50ms',_() => {
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
 
       const nextButton = screen.getByRole('button', { name: /próximo/i });
@@ -198,7 +198,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(navigationTime).toBeLessThan(50);
     });
 
-    it('should handle view switching within 100ms', () => {
+    it(_'should handle view switching within 100ms',_() => {
       render(
         <EventCalendar
           events={performanceEvents}
@@ -218,7 +218,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(switchTime).toBeLessThan(100);
     });
 
-    it('should handle rapid consecutive interactions', () => {
+    it(_'should handle rapid consecutive interactions',_() => {
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
 
       const eventElement = screen.getByText('Consulta Performance');
@@ -240,8 +240,8 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
   });
 
   // MEMORY PERFORMANCE
-  describe('Memory Performance', () => {
-    it('should maintain stable memory usage with multiple renders', () => {
+  describe(_'Memory Performance',_() => {
+    it(_'should maintain stable memory usage with multiple renders',_() => {
       const {
         measureComponentRender,
       } = require('@/utils/performance-optimizer');
@@ -261,7 +261,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(measureComponentRender).toHaveBeenCalled();
     });
 
-    it('should clean up event listeners properly', () => {
+    it(_'should clean up event listeners properly',_() => {
       const { rerender, unmount } = render(
         <EventCalendar events={performanceEvents} {...mockCallbacks} />,
       );
@@ -274,13 +274,13 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       unmount();
 
       // Should clean up properly
-      expect(() => {
+      expect(_() => {
         fireEvent.click(eventElement);
       }).toThrow();
     });
 
-    it('should prevent memory leaks with large datasets', () => {
-      const largeEventSet = Array.from({ length: 500 }, (_, i) => ({
+    it(_'should prevent memory leaks with large datasets',_() => {
+      const largeEventSet = Array.from({ length: 500 },_(_,_i) => ({
         id: `memory-test-${i}`,
         title: `Evento ${i}`,
         start: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T10:00:00`),
@@ -298,15 +298,15 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       }
 
       // Should handle unmounting gracefully
-      expect(() => {
+      expect(_() => {
         unmount();
       }).not.toThrow();
     });
   });
 
   // FRAME RATE PERFORMANCE
-  describe('Frame Rate Performance', () => {
-    it('should maintain 60 FPS during interactions', async () => {
+  describe(_'Frame Rate Performance',_() => {
+    it(_'should maintain 60 FPS during interactions',_async () => {
       const {
         measureCalendarPerformance,
       } = require('@/utils/performance-optimizer');
@@ -321,12 +321,12 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
         vi.advanceTimersByTime(16); // 60 FPS
       }
 
-      await waitFor(() => {
+      await waitFor(_() => {
         expect(measureCalendarPerformance).toHaveBeenCalled();
       });
     });
 
-    it('should handle animations smoothly', () => {
+    it(_'should handle animations smoothly',_() => {
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
 
       // Simulate animation frames
@@ -344,7 +344,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(frameCount).toBe(60);
     });
 
-    it('should prevent layout thrashing', () => {
+    it(_'should prevent layout thrashing',_() => {
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
 
       const startTime = performance.now();
@@ -366,8 +366,8 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
   });
 
   // MOBILE PERFORMANCE
-  describe('Mobile Performance', () => {
-    beforeEach(() => {
+  describe(_'Mobile Performance',_() => {
+    beforeEach(_() => {
       // Mock mobile device
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -382,7 +382,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       });
     });
 
-    it('should render efficiently on mobile devices', () => {
+    it(_'should render efficiently on mobile devices',_() => {
       const startTime = performance.now();
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
       const endTime = performance.now();
@@ -393,7 +393,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(renderTime).toBeLessThan(75);
     });
 
-    it('should handle touch interactions efficiently', () => {
+    it(_'should handle touch interactions efficiently',_() => {
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
 
       const eventElement = screen.getByText('Consulta Performance');
@@ -408,7 +408,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(touchTime).toBeLessThan(100);
     });
 
-    it('should optimize mobile scrolling', () => {
+    it(_'should optimize mobile scrolling',_() => {
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
 
       const calendar = screen.getByRole('application');
@@ -430,12 +430,11 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
   });
 
   // NETWORK PERFORMANCE
-  describe('Network Performance', () => {
-    it('should handle slow network conditions gracefully', () => {
+  describe(_'Network Performance',_() => {
+    it(_'should handle slow network conditions gracefully',_() => {
       // Mock slow network
-      global.fetch = vi.fn(
-        () =>
-          new Promise(resolve => {
+      global.fetch = vi.fn(_() =>
+          new Promise(_resolve => {
             setTimeout(() => {
               resolve({
                 ok: true,
@@ -453,8 +452,8 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       // Should handle slow loading gracefully
     });
 
-    it('should implement efficient data loading', () => {
-      const optimizedEvents = Array.from({ length: 50 }, (_, i) => ({
+    it(_'should implement efficient data loading',_() => {
+      const optimizedEvents = Array.from({ length: 50 },_(_,_i) => ({
         id: `optimized-${i}`,
         title: `Evento Otimizado ${i}`,
         start: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T10:00:00`),
@@ -471,7 +470,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(renderTime).toBeLessThan(60);
     });
 
-    it('should cache calendar data efficiently', () => {
+    it(_'should cache calendar data efficiently',_() => {
       const { rerender } = render(
         <EventCalendar events={performanceEvents} {...mockCallbacks} />,
       );
@@ -495,20 +494,20 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
   });
 
   // BENCHMARKING AND METRICS
-  describe('Benchmarking and Metrics', () => {
-    it('should meet Core Web Vitals thresholds', async () => {
+  describe(_'Benchmarking and Metrics',_() => {
+    it(_'should meet Core Web Vitals thresholds',_async () => {
       const {
         validatePerformanceBudget,
       } = require('@/utils/performance-optimizer');
 
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
 
-      await waitFor(() => {
+      await waitFor(_() => {
         expect(validatePerformanceBudget).toHaveBeenCalled();
       });
     });
 
-    it('should track performance metrics over time', () => {
+    it(_'should track performance metrics over time',_() => {
       const metrics = [];
 
       for (let i = 0; i < 5; i++) {
@@ -526,7 +525,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       }
 
       // Should maintain consistent performance
-      const averageTime = metrics.reduce((sum, m) => sum + m.renderTime, 0) / metrics.length;
+      const averageTime = metrics.reduce(_(sum,_m) => sum + m.renderTime, 0) / metrics.length;
       const maxTime = Math.max(...metrics.map(m => m.renderTime));
       const minTime = Math.min(...metrics.map(m => m.renderTime));
 
@@ -534,7 +533,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(maxTime - minTime).toBeLessThan(20); // Consistency threshold
     });
 
-    it('should provide performance debugging information', () => {
+    it(_'should provide performance debugging information',_() => {
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
 
       // Should provide performance metrics
@@ -545,7 +544,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(measureComponentRender).toHaveBeenCalled();
     });
 
-    it('should optimize based on device capabilities', () => {
+    it(_'should optimize based on device capabilities',_() => {
       // Mock low-end device
       Object.defineProperty(navigator, 'hardwareConcurrency', {
         writable: true,
@@ -567,10 +566,10 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       // Should adapt to low-end devices
     });
 
-    it('should handle performance degradation gracefully', () => {
+    it(_'should handle performance degradation gracefully',_() => {
       // Mock performance degradation
       const originalNow = performance.now;
-      performance.now = vi.fn(() => Date.now() + 100); // Simulate slow operations
+      performance.now = vi.fn(_() => Date.now() + 100); // Simulate slow operations
 
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
 
@@ -584,8 +583,8 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
   });
 
   // ACCESSIBILITY PERFORMANCE
-  describe('Accessibility Performance', () => {
-    it('should maintain performance with accessibility features', () => {
+  describe(_'Accessibility Performance',_() => {
+    it(_'should maintain performance with accessibility features',_() => {
       const accessibleEvents = performanceEvents.map(event => ({
         ...event,
         accessibility: {
@@ -604,7 +603,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(renderTime).toBeLessThan(60);
     });
 
-    it('should handle screen reader announcements efficiently', () => {
+    it(_'should handle screen reader announcements efficiently',_() => {
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
 
       const eventElement = screen.getByText('Consulta Performance');
@@ -618,7 +617,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(announcementTime).toBeLessThan(100);
     });
 
-    it('should provide accessible performance feedback', () => {
+    it(_'should provide accessible performance feedback',_() => {
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
 
       // Should provide performance feedback to assistive technologies
@@ -628,9 +627,9 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
   });
 
   // SCALABILITY PERFORMANCE
-  describe('Scalability Performance', () => {
-    it('should scale with user count', () => {
-      const userEvents = Array.from({ length: 1000 }, (_, i) => ({
+  describe(_'Scalability Performance',_() => {
+    it(_'should scale with user count',_() => {
+      const userEvents = Array.from({ length: 1000 },_(_,_i) => ({
         id: `user-${i}`,
         title: `Evento Usuário ${i}`,
         start: new Date(
@@ -644,7 +643,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
           }:00`,
         ),
         color: ['blue', 'emerald', 'violet', 'rose'][i % 4] as EventColor,
-        userId: `user-${i}`,
+        _userId: `user-${i}`,
       }));
 
       const startTime = performance.now();
@@ -656,7 +655,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(renderTime).toBeLessThan(300);
     });
 
-    it('should handle concurrent operations', () => {
+    it(_'should handle concurrent operations',_() => {
       render(<EventCalendar events={performanceEvents} {...mockCallbacks} />);
 
       const eventElement = screen.getByText('Consulta Performance');
@@ -678,7 +677,7 @@ describe('Performance Benchmark Suite - Calendar Optimization', () => {
       expect(concurrentTime).toBeLessThan(150);
     });
 
-    it('should maintain performance over time', () => {
+    it(_'should maintain performance over time',_() => {
       const renderTimes = [];
 
       for (let i = 0; i < 10; i++) {

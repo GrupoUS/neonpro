@@ -105,7 +105,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
   const [benchmarks, setBenchmarks] = useState<HealthcareBenchmark[]>([]);
 
   // Initialize healthcare benchmarks
-  useEffect(() => {
+  useEffect(_() => {
     initializeHealthcareBenchmarks();
   }, []);
 
@@ -194,7 +194,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
 
       setValidationResult(result);
       updateBenchmarkComparison(result.percentage);
-    } catch (error) {
+    } catch (_error) {
       console.error('Validation failed:', error);
     } finally {
       setIsValidating(false);
@@ -470,7 +470,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
 
     return (
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6'>
-        {validationResult.categoryScores.map((score, index) => {
+        {validationResult.categoryScores.map((score,_index) => {
           const category = VALIDATION_CATEGORIES[score.category];
           const IconComponent = category.icon;
 
@@ -508,7 +508,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
                   <div className='mt-3'>
                     <div className='text-sm font-medium mb-1'>Issues:</div>
                     <ul className='text-xs text-muted-foreground space-y-1'>
-                      {score.issues.slice(0, 2).map((issue, index) => (
+                      {score.issues.slice(0, 2).map(_(issue,_index) => (
                         <li key={index}>• {issue}</li>
                       ))}
                       {score.issues.length > 2 && <li>• ... and {score.issues.length - 2} more</li>}
@@ -524,8 +524,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
   };
 
   // Render benchmarks comparison
-  const renderBenchmarks = () => (
-    <Card className='mb-6'>
+  const renderBenchmarks = () => (_<Card className='mb-6'>
       <CardHeader>
         <CardTitle className='flex items-center gap-2'>
           <BarChart3 className='w-5 h-5' />
@@ -537,7 +536,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className='space-y-4'>
-          {benchmarks.map((benchmark, index) => (
+          {benchmarks.map((benchmark,_index) => (
             <div key={index} className='flex items-center justify-between p-3 border rounded-lg'>
               <div className='flex items-center gap-3'>
                 {benchmark.isBeaten
@@ -630,7 +629,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <ul className='space-y-2'>
-                    {validationResult.criticalIssues.map((issue, index) => (
+                    {validationResult.criticalIssues.map((issue,_index) => (
                       <li key={index} className='flex items-start gap-2'>
                         <XCircle className='w-4 h-4 text-red-500 mt-0.5 flex-shrink-0' />
                         <span className='text-sm'>{issue}</span>
@@ -641,8 +640,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
               </Card>
             )}
 
-            {validationResult.topRecommendations.length > 0 && (
-              <Card>
+            {validationResult.topRecommendations.length > 0 && (_<Card>
                 <CardHeader>
                   <CardTitle className='flex items-center gap-2 text-blue-600'>
                     <TrendingUp className='w-5 h-5' />
@@ -651,7 +649,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <ul className='space-y-2'>
-                    {validationResult.topRecommendations.map((rec, index) => (
+                    {validationResult.topRecommendations.map((rec,_index) => (
                       <li key={index} className='flex items-start gap-2'>
                         <CheckCircle className='w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0' />
                         <span className='text-sm'>{rec}</span>

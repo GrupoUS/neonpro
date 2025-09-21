@@ -64,7 +64,7 @@ export interface AuditLogEntry {
   id: string;
   timestamp: string;
   eventType: AuditEventType;
-  userId: string;
+  _userId: string;
   userRole: string;
   resourceType: string;
   resourceId?: string | undefined;
@@ -141,7 +141,7 @@ export class AuditDomainService {
    * @param metadata Additional metadata
    */
   async logPatientAccess(
-    userId: string,
+    _userId: string,
     userRole: string,
     patientId: string,
     reason: string,
@@ -215,7 +215,7 @@ export class AuditDomainService {
     eventType: string,
     severity: AuditSeverity,
     description: string,
-    userId: string | null,
+    _userId: string | null,
     metadata?: {
       ipAddress?: string;
       userAgent?: string;
@@ -228,7 +228,7 @@ export class AuditDomainService {
       id: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date().toISOString(),
       eventType: AuditEventType.SECURITY_EVENT,
-      userId: userId || 'system',
+      _userId: userId || 'system',
       userRole: 'system',
       resourceType: 'SYSTEM',
       action: eventType,
@@ -281,7 +281,7 @@ export class AuditDomainService {
    * @param metadata Additional metadata
    */
   async logDataExport(
-    userId: string,
+    _userId: string,
     userRole: string,
     dataType: string,
     recordCount: number,
@@ -353,7 +353,7 @@ export class AuditDomainService {
    * @param metadata Additional metadata
    */
   async logDataAnonymization(
-    userId: string,
+    _userId: string,
     patientId: string,
     reason: 'gdpr_request' | 'data_retention' | 'other',
     metadata?: {
@@ -429,7 +429,7 @@ export class AuditDomainService {
     _clinicId?: string
   ): Promise<ComplianceReport> {
     // Generate report using audit repository
-    const auditLogs = await this.auditRepository.findByDateRange(startDate, endDate, clinicId);
+    const _auditLogs = await this.auditRepository.findByDateRange(startDate, endDate, clinicId);
     
     // Create a comprehensive report structure based on audit logs
     const report: ComplianceReport = {
@@ -473,7 +473,7 @@ export class AuditDomainService {
    * @returns True if access is compliant
    */
   private async checkAccessCompliance(
-    userId: string,
+    _userId: string,
     patientId: string,
     legalBasis?: string
   ): Promise<boolean> {
@@ -493,7 +493,7 @@ export class AuditDomainService {
    * @returns True if export is compliant
    */
   private async checkExportCompliance(
-    userId: string,
+    _userId: string,
     dataType: string,
     recordCount: number,
     legalBasis?: string
@@ -518,7 +518,7 @@ export class AuditDomainService {
     
     console.warn(`SECURITY ALERT: ${auditEvent.description}`, {
       severity: auditEvent.severity,
-      userId: auditEvent.userId,
+      _userId: auditEvent.userId,
       timestamp: auditEvent.timestamp,
       metadata: auditEvent.metadata
     });

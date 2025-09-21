@@ -286,7 +286,7 @@ export class BrazilianHealthcareComplianceValidator {
   /**
    * Perform comprehensive compliance validation
    */
-  async validateCompliance(context?: Element | string): Promise<{
+  async validateCompliance(_context?: Element | string): Promise<{
     overallScore: number;
     standards: {
       lgpd: {
@@ -340,7 +340,7 @@ export class BrazilianHealthcareComplianceValidator {
     }>;
   }> {
     const auditContext = typeof context === 'string'
-      ? document.querySelector(context)
+      ? document.querySelector(_context)
       : context || document;
 
     if (!auditContext) {
@@ -423,12 +423,10 @@ export class BrazilianHealthcareComplianceValidator {
     }
 
     // Calculate overall score
-    const totalRequirements = Object.values(results.standards).reduce(
-      (sum, std) => sum + std.requirements.length,
+    const totalRequirements = Object.values(results.standards).reduce(_(sum,_std) => sum + std.requirements.length,
       0,
     );
-    const passedRequirements = Object.values(results.standards).reduce(
-      (sum, std) => sum + std.requirements.filter(req => req.passed).length,
+    const passedRequirements = Object.values(results.standards).reduce(_(sum,_std) => sum + std.requirements.filter(req => req.passed).length,
       0,
     );
 
@@ -448,7 +446,7 @@ export class BrazilianHealthcareComplianceValidator {
   private async validateStandard(
     standardId: string,
     standard: any,
-    context: Element,
+    _context: Element,
   ): Promise<{
     score: number;
     requirements: Array<{
@@ -482,7 +480,7 @@ export class BrazilianHealthcareComplianceValidator {
     for (const [_reqId, requirement] of Object.entries(standard.requirements)) {
       try {
         const req = requirement as any; // Type assertion to handle unknown type
-        const passed = req.validation(context);
+        const passed = req.validation(_context);
         const violations = passed
           ? []
           : this.generateRequirementViolations(req);
@@ -516,7 +514,7 @@ export class BrazilianHealthcareComplianceValidator {
             ? 'Requirement validated successfully'
             : `Validation failed: ${req.description}`,
         });
-      } catch (error: unknown) {
+      } catch (_error: unknown) {
         const req = requirement as any;
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         console.error(`Validation failed for ${req.id}:`, error);
@@ -762,7 +760,7 @@ export async function quickBrazilianComplianceCheck(
 }> {
   const context = selector ? document.querySelector(selector) : document;
 
-  if (!context) {
+  if (!_context) {
     return {
       passed: false,
       score: 0,
@@ -791,7 +789,7 @@ export async function quickBrazilianComplianceCheck(
         (issue: any) => `${issue.standard}: ${issue.requirement} - ${issue.description}`,
       ),
     };
-  } catch (error) {
+  } catch (_error) {
     console.error('Quick compliance check failed:', error);
     return {
       passed: false,

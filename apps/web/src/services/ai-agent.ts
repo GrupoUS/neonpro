@@ -49,7 +49,7 @@ export interface RequestOptions {
 
 export interface SessionInfo {
   id: string;
-  userId: string;
+  _userId: string;
   title: string;
   createdAt: string;
   updatedAt: string;
@@ -93,8 +93,8 @@ export interface QuickFeedbackRequest {
 }
 
 export interface AgentQueryOptions {
-  context?: {
-    userId?: string;
+  _context?: {
+    _userId?: string;
     domain?: string;
     limit?: number;
     filters?: Record<string, any>;
@@ -135,7 +135,7 @@ export interface HealthResponse {
   status: 'healthy' | 'unhealthy';
   timestamp: string;
   version: string;
-  service?: string;
+  _service?: string;
   error?: string;
 }
 
@@ -218,7 +218,7 @@ class HttpClient {
 
     // Create timeout signal
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
+    const timeoutId = setTimeout(_() => controller.abort(), timeout);
 
     // Combine signals
     const combinedSignal = signal
@@ -238,13 +238,13 @@ class HttpClient {
         clearTimeout(timeoutId);
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
+          const errorData = await response.json().catch(_() => ({}));
           throw AIAgentError.fromResponse(errorData, response.status);
         }
 
         const data = await response.json();
         return data as T;
-      } catch (error) {
+      } catch (_error) {
         lastError = error as Error;
 
         // Don't retry on certain errors
@@ -283,7 +283,7 @@ class HttpClient {
     });
 
     // Cleanup
-    controller.signal.addEventListener('abort', () => {
+    controller.signal.addEventListener(_'abort',_() => {
       signals.forEach(_signal => signal.removeEventListener('abort', onAbort));
     });
 
@@ -299,22 +299,22 @@ export class AIAgentService {
    * Send query to data agent for processing
    */
   static async queryDataAgent(
-    query: string,
+    _query: string,
     options: AgentQueryOptions = {},
   ): Promise<DataAgentResponse> {
     if (!query.trim()) {
       throw new AIAgentError('Query cannot be empty', 'EMPTY_QUERY');
     }
 
-    const request: DataAgentRequest = {
-      query: query.trim(),
-      context: options.context,
+    const _request: DataAgentRequest = {
+      _query: query.trim(),
+      _context: options.context,
     };
 
     try {
       const response = await HttpClient.request<DataAgentResponse>('/data-agent', {
         method: 'POST',
-        body: JSON.stringify(request),
+        body: JSON.stringify(_request),
         timeout: options.timeout,
       });
 
@@ -324,7 +324,7 @@ export class AIAgentService {
       }
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -341,18 +341,18 @@ export class AIAgentService {
    * Create a new conversation session
    */
   static async createSession(
-    request: SessionCreateRequest,
+    _request: SessionCreateRequest,
     options: RequestOptions = {},
   ): Promise<SessionResponse> {
     try {
       const response = await HttpClient.request<SessionResponse>('/sessions', {
         method: 'POST',
-        body: JSON.stringify(request),
+        body: JSON.stringify(_request),
         ...options,
       });
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -383,7 +383,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -416,7 +416,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -440,7 +440,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -471,7 +471,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -511,7 +511,7 @@ export class AIAgentService {
       );
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -547,7 +547,7 @@ export class AIAgentService {
       );
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -578,7 +578,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -602,7 +602,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -619,7 +619,7 @@ export class AIAgentService {
    * Health check for AI agent services
    */
   static async healthCheck(
-    service?: 'data-agent' | 'sessions' | 'feedback',
+    _service?: 'data-agent' | 'sessions' | 'feedback',
   ): Promise<HealthResponse> {
     const endpoint = service ? `/${service}/health` : '/data-agent/health';
 
@@ -631,13 +631,13 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       // Return unhealthy status instead of throwing
       return {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
         version: '1.0.0',
-        service: service || 'ai-agent',
+        _service: service || 'ai-agent',
         error: error instanceof Error ? error.message : 'Unknown error',
       };
     }

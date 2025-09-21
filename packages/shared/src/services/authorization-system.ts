@@ -14,7 +14,6 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { z } from "zod";
 import { nanoid } from "nanoid";
 import type { Context } from "hono";
 import type {
@@ -123,8 +122,8 @@ export const AuthorizationContextSchema = z.object({
   // Subject (who is requesting access)
   subject: z
     .object({
-      userId: z.string().describe("User identifier"),
-      role: z.string().describe("User healthcare role"),
+      _userId: z.string().describe("User identifier"),
+      _role: z.string().describe("User healthcare role"),
       permissions: z.array(z.string()).describe("User permissions"),
       attributes: z.record(z.any()).describe("User attributes"),
       facilityId: z.string().optional().describe("User facility"),
@@ -148,7 +147,7 @@ export const AuthorizationContextSchema = z.object({
       ),
       owner: z
         .object({
-          userId: z.string().optional().describe("Resource owner"),
+          _userId: z.string().optional().describe("Resource owner"),
           facilityId: z.string().optional().describe("Owner facility"),
           departmentId: z.string().optional().describe("Owner department"),
         })
@@ -184,7 +183,7 @@ export const AuthorizationContextSchema = z.object({
         ])
         .describe("Operation type"),
       scope: z.enum(["basic", "full", "admin"]).describe("Operation scope"),
-      context: z.string().optional().describe("Operation context"),
+      _context: z.string().optional().describe("Operation context"),
       urgency: z
         .enum(["routine", "urgent", "critical", "emergency"])
         .describe("Operation urgency"),
@@ -192,7 +191,7 @@ export const AuthorizationContextSchema = z.object({
     })
     .describe("Authorization action"),
 
-  // Environment (context of the request)
+  // Environment (context of the _request)
   environment: z
     .object({
       timestamp: z.string().datetime().describe("Request timestamp"),
@@ -590,7 +589,7 @@ export class HealthcareAuthorizationRules {
    * Patient data access rules
    */
   static evaluatePatientDataAccess(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
     const { subject, resource, action, environment } = context;
     const reasons: string[] = [];
@@ -625,10 +624,10 @@ export class HealthcareAuthorizationRules {
     }
 
     // Healthcare provider access to assigned patients
-    if (["doctor", "nurse", "specialist"].includes(subject.role)) {
+    if (["doctor", "nurse", "specialist"].includes(subject._role)) {
       if (
         resource.attributes.assignedProvider === subject.userId ||
-        resource.attributes.careTeam?.includes(subject.userId)
+        resource.attributes.careTeam?.includes(subject._userId)
       ) {
         decision = "permit";
         reasons.push("Assigned healthcare provider access");
@@ -637,7 +636,7 @@ export class HealthcareAuthorizationRules {
 
     // Department-based access
     if (subject.departmentId === resource.owner?.departmentId) {
-      if (["doctor", "nurse", "technician"].includes(subject.role)) {
+      if (["doctor", "nurse", "technician"].includes(subject._role)) {
         decision = "permit";
         reasons.push("Department-based access authorization");
       }
@@ -645,7 +644,7 @@ export class HealthcareAuthorizationRules {
 
     // Facility-based access for administrative roles
     if (subject.facilityId === resource.owner?.facilityId) {
-      if (["department_head", "compliance_officer"].includes(subject.role)) {
+      if (["department_head", "compliance_officer"].includes(subject._role)) {
         decision = "permit";
         reasons.push("Facility-based administrative access");
       }
@@ -653,7 +652,7 @@ export class HealthcareAuthorizationRules {
 
     // Minor patient protection
     if (resource.attributes.patientAge && resource.attributes.patientAge < 18) {
-      if (!["patient", "caregiver"].includes(subject.role)) {
+      if (!["patient", "caregiver"].includes(subject._role)) {
         obligations.push({
           type: "consent",
           description:
@@ -670,7 +669,7 @@ export class HealthcareAuthorizationRules {
    * Medication access rules
    */
   static evaluateMedicationAccess(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
     const { subject, action } = context;
     const reasons: string[] = [];
@@ -679,7 +678,7 @@ export class HealthcareAuthorizationRules {
 
     // Prescribing privileges
     if (action.operation === "create" || action.operation === "write") {
-      if (["doctor", "specialist"].includes(subject.role)) {
+      if (["doctor", "specialist"].includes(subject._role)) {
         decision = "permit";
         reasons.push("Prescribing privileges for medical provider");
         obligations.push({
@@ -692,7 +691,7 @@ export class HealthcareAuthorizationRules {
 
     // Medication administration
     if (action.operation === "execute") {
-      if (["nurse", "pharmacist"].includes(subject.role)) {
+      if (["nurse", "pharmacist"].includes(subject._role)) {
         decision = "permit";
         reasons.push("Medication administration authorization");
         obligations.push({
@@ -716,7 +715,7 @@ export class HealthcareAuthorizationRules {
    * Laboratory data access rules
    */
   static evaluateLabDataAccess(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
     const { subject, action } = context;
     const reasons: string[] = [];
@@ -733,7 +732,7 @@ export class HealthcareAuthorizationRules {
 
     // Healthcare providers can read results
     if (
-      ["doctor", "nurse", "specialist"].includes(subject.role) &&
+      ["doctor", "nurse", "specialist"].includes(subject._role) &&
       action.operation === "read"
     ) {
       decision = "permit";
@@ -753,7 +752,7 @@ export class HealthcareAuthorizationRules {
    * Administrative function access rules
    */
   static evaluateAdminAccess(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
     const { subject, action } = context;
     const reasons: string[] = [];
@@ -797,7 +796,7 @@ export class HealthcareAuthorizationRules {
    * Emergency access rules
    */
   static evaluateEmergencyAccess(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
     const { subject, environment } = context;
     const reasons: string[] = [];
@@ -839,7 +838,7 @@ export class HealthcareAuthorizationRules {
    * LGPD compliance rules
    */
   static evaluateLGPDCompliance(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
     const { subject, resource, action, compliance } = context;
     const reasons: string[] = [];
@@ -964,7 +963,7 @@ export class HealthcareAuthorizationEngine {
       console.log(
         "🛡️ [HealthcareAuthorizationEngine] Healthcare authorization engine initialized",
       );
-    } catch (error) {
+    } catch (_error) {
       console.error(
         "Failed to initialize healthcare authorization engine:",
         error,
@@ -987,7 +986,7 @@ export class HealthcareAuthorizationEngine {
    */
   private setupCacheManagement(): void {
     if (this.config.decisionEngine.enableCaching) {
-      setInterval(() => {
+      setInterval(_() => {
         this.cleanupExpiredCacheEntries();
       }, 60000); // Every minute
     }
@@ -998,7 +997,7 @@ export class HealthcareAuthorizationEngine {
    */
   private setupPerformanceMonitoring(): void {
     if (this.config.performance.enableMetrics) {
-      setInterval(() => {
+      setInterval(_() => {
         this.collectPerformanceMetrics();
       }, this.config.performance.metricsInterval);
     }
@@ -1072,7 +1071,7 @@ export class HealthcareAuthorizationEngine {
    * Main authorization decision method
    */
   async authorize(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Promise<AuthorizationDecision> {
     const startTime = Date.now();
     const contextId = `authz_${nanoid(12)}`;
@@ -1080,7 +1079,7 @@ export class HealthcareAuthorizationEngine {
     try {
       // Check cache first
       if (this.config.decisionEngine.enableCaching) {
-        const cached = this.getCachedDecision(context);
+        const cached = this.getCachedDecision(_context);
         if (cached) {
           return cached;
         }
@@ -1103,7 +1102,7 @@ export class HealthcareAuthorizationEngine {
       }
 
       return decision;
-    } catch (error) {
+    } catch (_error) {
       console.error("Authorization evaluation error:", error);
 
       return {
@@ -1140,7 +1139,7 @@ export class HealthcareAuthorizationEngine {
    * Evaluate authorization decision
    */
   private async evaluateAuthorization(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
     contextId: string,
   ): Promise<AuthorizationDecision> {
     const startTime = Date.now();
@@ -1154,10 +1153,10 @@ export class HealthcareAuthorizationEngine {
     const conditions: any[] = [];
 
     // Risk assessment
-    const riskScore = await this.assessRisk(context);
+    const riskScore = await this.assessRisk(_context);
 
     // Evaluate resource-specific rules
-    const resourceDecision = await this.evaluateResourceSpecificRules(context);
+    const resourceDecision = await this.evaluateResourceSpecificRules(_context);
     if (resourceDecision.decision) {
       finalDecision = resourceDecision.decision;
       allReasons.push(...(resourceDecision.reasons || []));
@@ -1171,7 +1170,7 @@ export class HealthcareAuthorizationEngine {
       finalDecision !== "permit"
     ) {
       const lgpdDecision =
-        HealthcareAuthorizationRules.evaluateLGPDCompliance(context);
+        HealthcareAuthorizationRules.evaluateLGPDCompliance(_context);
       if (lgpdDecision.decision === "deny") {
         finalDecision = "deny";
       }
@@ -1183,7 +1182,7 @@ export class HealthcareAuthorizationEngine {
     // Emergency access evaluation
     if (context.environment.workflow?.emergencyFlag) {
       const emergencyDecision =
-        HealthcareAuthorizationRules.evaluateEmergencyAccess(context);
+        HealthcareAuthorizationRules.evaluateEmergencyAccess(_context);
       if (emergencyDecision.decision === "permit") {
         finalDecision = "permit";
       }
@@ -1246,7 +1245,7 @@ export class HealthcareAuthorizationEngine {
    * Evaluate resource-specific authorization rules
    */
   private async evaluateResourceSpecificRules(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Promise<Partial<AuthorizationDecision>> {
     const resourceType = context.resource.type;
 
@@ -1262,20 +1261,20 @@ export class HealthcareAuthorizationEngine {
       case "vital_signs":
       case "progress_note":
       case "allergy_record":
-        return HealthcareAuthorizationRules.evaluatePatientDataAccess(context);
+        return HealthcareAuthorizationRules.evaluatePatientDataAccess(_context);
 
       case "prescription":
       case "medication_order":
       case "medication_administration":
       case "medication_reconciliation":
       case "pharmacy_order":
-        return HealthcareAuthorizationRules.evaluateMedicationAccess(context);
+        return HealthcareAuthorizationRules.evaluateMedicationAccess(_context);
 
       case "lab_order":
       case "lab_result":
       case "lab_report":
       case "specimen":
-        return HealthcareAuthorizationRules.evaluateLabDataAccess(context);
+        return HealthcareAuthorizationRules.evaluateLabDataAccess(_context);
 
       case "user_account":
       case "role_assignment":
@@ -1284,13 +1283,13 @@ export class HealthcareAuthorizationEngine {
       case "system_config":
       case "backup_data":
       case "compliance_report":
-        return HealthcareAuthorizationRules.evaluateAdminAccess(context);
+        return HealthcareAuthorizationRules.evaluateAdminAccess(_context);
 
       case "emergency_contact":
       case "emergency_procedure":
       case "emergency_alert":
       case "disaster_plan":
-        return HealthcareAuthorizationRules.evaluateEmergencyAccess(context);
+        return HealthcareAuthorizationRules.evaluateEmergencyAccess(_context);
 
       default:
         return {
@@ -1303,7 +1302,7 @@ export class HealthcareAuthorizationEngine {
   /**
    * Assess risk for authorization decision
    */
-  private async assessRisk(context: AuthorizationContext): Promise<number> {
+  private async assessRisk(_context: AuthorizationContext): Promise<number> {
     if (!this.config.security.enableRiskAssessment) {
       return 0;
     }
@@ -1387,8 +1386,8 @@ export class HealthcareAuthorizationEngine {
       correlationId,
 
       subject: {
-        userId: authSession.userId,
-        role: authSession.userProfile.role,
+        _userId: authSession.userId,
+        _role: authSession.userProfile.role,
         permissions: authSession.userProfile.permissions,
         attributes: {
           facilityId: authSession.userProfile.facilityId,
@@ -1602,9 +1601,9 @@ export class HealthcareAuthorizationEngine {
    * Get cached authorization decision
    */
   private getCachedDecision(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): AuthorizationDecision | null {
-    const cacheKey = this.generateCacheKey(context);
+    const cacheKey = this.generateCacheKey(_context);
     const cached = this.decisionCache.get(cacheKey);
 
     if (cached && cached.expiry > Date.now()) {
@@ -1618,10 +1617,10 @@ export class HealthcareAuthorizationEngine {
    * Cache authorization decision
    */
   private cacheDecision(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
     decision: AuthorizationDecision,
   ): void {
-    const cacheKey = this.generateCacheKey(context);
+    const cacheKey = this.generateCacheKey(_context);
     const expiry = Date.now() + this.config.decisionEngine.cacheTimeout * 1000;
 
     this.decisionCache.set(cacheKey, { decision, expiry });
@@ -1630,7 +1629,7 @@ export class HealthcareAuthorizationEngine {
   /**
    * Generate cache key for context
    */
-  private generateCacheKey(context: AuthorizationContext): string {
+  private generateCacheKey(_context: AuthorizationContext): string {
     const key = `${context.subject.userId}:${context.subject.role}:${context.resource.type}:${context.resource.id}:${context.action.operation}:${context.action.scope}`;
     return Buffer.from(key).toString("base64");
   }
@@ -1639,7 +1638,7 @@ export class HealthcareAuthorizationEngine {
    * Clean up expired cache entries
    */
   private cleanupExpiredCacheEntries(): void {
-    const now = Date.now();
+    const _now = Date.now();
     let cleanedCount = 0;
 
     for (const [key, cached] of this.decisionCache.entries()) {
@@ -1676,7 +1675,7 @@ export class HealthcareAuthorizationEngine {
    * Log authorization decision
    */
   private async logAuthorizationDecision(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
     decision: AuthorizationDecision,
     startTime: number,
   ): Promise<void> {
@@ -1684,8 +1683,8 @@ export class HealthcareAuthorizationEngine {
       contextId: decision.contextId,
       requestId: context.requestId,
       sessionId: context.sessionId,
-      userId: context.subject.userId,
-      role: context.subject.role,
+      _userId: context.subject.userId,
+      _role: context.subject.role,
       resourceType: context.resource.type,
       resourceId: context.resource.id,
       operation: context.action.operation,
@@ -1743,7 +1742,7 @@ export class HealthcareAuthorizationEngine {
 /**
  * Default healthcare authorization engine instance
  */
-export const healthcareAuthorizationEngine = new HealthcareAuthorizationEngine({
+export const _healthcareAuthorizationEngine = new HealthcareAuthorizationEngine({
   enabled: true,
   environment: (process.env.NODE_ENV as any) || "development",
 

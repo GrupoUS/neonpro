@@ -83,12 +83,12 @@ export function EventCalendar({
   const { open } = useSidebar();
 
   // Sync view state with context
-  React.useEffect(() => {
+  React.useEffect(_() => {
     setView(currentView);
   }, [currentView]);
 
   // Add keyboard shortcuts for view switching
-  useEffect(() => {
+  useEffect(_() => {
     const handleKeyDown = (_e: any) => {
       // Skip if user is typing in an input, textarea or contentEditable element
       // or if the event dialog is open
@@ -195,7 +195,7 @@ export function EventCalendar({
       }
       setIsEventDialogOpen(false);
       setSelectedEvent(null);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to save event:', error);
       // Error is already handled by the context with toast
     }
@@ -206,7 +206,7 @@ export function EventCalendar({
       await deleteEvent(eventId);
       setIsEventDialogOpen(false);
       setSelectedEvent(null);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to delete event:', error);
       // Error is already handled by the context with toast
     }
@@ -219,13 +219,13 @@ export function EventCalendar({
         start: updatedEvent.start,
         end: updatedEvent.end,
       } as any);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to update event:', error);
       // Error is already handled by the context with toast
     }
   };
 
-  const viewTitle = useMemo(() => {
+  const viewTitle = useMemo(_() => {
     if (view === 'month') {
       return format(currentDate, 'MMMM yyyy');
     } else if (view === 'week') {

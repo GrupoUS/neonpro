@@ -9,7 +9,7 @@ import { useConsent } from '../contexts/ConsentContext';
 export function useAnalytics() {
   const { hasConsent, consentSettings: _consentSettings } = useConsent();
 
-  useEffect(() => {
+  useEffect(_() => {
     // Initialize analytics if user has granted analytics consent
     if (hasConsent('analytics')) {
       analytics.initialize().catch((_error: any) => {
@@ -18,7 +18,7 @@ export function useAnalytics() {
     }
   }, [hasConsent]);
 
-  useEffect(() => {
+  useEffect(_() => {
     // Listen for consent changes to handle analytics initialization/cleanup
     const handleConsentChange = (_event: any) => {
       const { category, granted } = event.detail;
@@ -62,7 +62,7 @@ export function useAnalytics() {
         analytics.trackPageView(data);
       }
     },
-    trackEvent: (data: { name: string; properties?: Record<string, any> }) => {
+    trackEvent: (data: { name: string; properties?: Record<string,_any> }) => {
       if (hasConsent('analytics')) {
         analytics.trackEvent(data);
       }
@@ -80,7 +80,7 @@ export function useAnalytics() {
     },
     setUserId: (_userId: any) => {
       if (hasConsent('analytics')) {
-        analytics.setUserId(userId);
+        analytics.setUserId(_userId);
       }
     },
     isInitialized: hasConsent('analytics'),
@@ -135,7 +135,7 @@ export function useInteractionTracking() {
     });
   };
 
-  const trackSearch = (query: string, resultsCount?: number) => {
+  const trackSearch = (_query: string, resultsCount?: number) => {
     trackInteraction({
       element: 'search',
       action: 'search',

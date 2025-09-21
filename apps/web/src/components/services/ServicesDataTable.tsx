@@ -30,7 +30,7 @@ import type { Service } from '@/types/service';
 import { formatBRL } from '@neonpro/utils';
 
 // Lazy load TanStack Table for better bundle splitting
-const TanStackTable = lazy(() => import('@tanstack/react-table'));
+const TanStackTable = lazy(_() => import('@tanstack/react-table'));
 
 // Import types from lazy-loaded module
 type ColumnDef<T> = any;
@@ -42,8 +42,8 @@ type FlexRender = any;
 interface ServicesDataTableProps {
   data: Service[];
   loading?: boolean;
-  onEdit: (service: Service) => void;
-  onDelete: (service: Service) => void;
+  onEdit: (_service: Service) => void;
+  onDelete: (_service: Service) => void;
 }
 
 export function ServicesDataTable({
@@ -59,8 +59,7 @@ export function ServicesDataTable({
   const columns: ColumnDef<Service>[] = [
     {
       accessorKey: 'name',
-      header: ({ column }) => (
-        <Button
+      header: (_{ column }) => (_<Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className='h-auto p-0 font-semibold'
@@ -69,12 +68,12 @@ export function ServicesDataTable({
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       ),
-      cell: ({ row }) => <div className='font-medium'>{row.getValue('name')}</div>,
+      cell: (_{ row }) => <div className='font-medium'>{row.getValue('name')}</div>,
     },
     {
       accessorKey: 'description',
       header: 'Descrição',
-      cell: ({ row }) => {
+      cell: (_{ row }) => {
         const description = row.getValue('description') as string | null;
         return (
           <div className='max-w-[260px] truncate text-sm text-muted-foreground'>
@@ -85,8 +84,7 @@ export function ServicesDataTable({
     },
     {
       accessorKey: 'duration_minutes',
-      header: ({ column }) => (
-        <Button
+      header: (_{ column }) => (_<Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className='h-auto p-0 font-semibold'
@@ -95,15 +93,14 @@ export function ServicesDataTable({
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       ),
-      cell: ({ row }) => {
+      cell: (_{ row }) => {
         const minutes = row.getValue('duration_minutes') as number;
         return <div className='text-center'>{minutes} min</div>;
       },
     },
     {
       accessorKey: 'price',
-      header: ({ column }) => (
-        <Button
+      header: (_{ column }) => (_<Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className='h-auto p-0 font-semibold'
@@ -112,7 +109,7 @@ export function ServicesDataTable({
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       ),
-      cell: ({ row }) => {
+      cell: (_{ row }) => {
         const price = row.getValue('price') as number;
         const formatted = formatBRL(price);
         return <div className='text-right font-medium'>{formatted}</div>;
@@ -121,7 +118,7 @@ export function ServicesDataTable({
     {
       accessorKey: 'is_active',
       header: 'Status',
-      cell: ({ row }) => {
+      cell: (_{ row }) => {
         const isActive = row.getValue('is_active') as boolean;
         return (
           <Badge variant={isActive ? 'default' : 'secondary'}>
@@ -133,10 +130,9 @@ export function ServicesDataTable({
     {
       id: 'actions',
       header: 'Ações',
-      cell: ({ row }) => {
+      cell: (_{ row }) => {
         const service = row.original;
-        return (
-          <DropdownMenu>
+        return (_<DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='ghost' className='h-8 w-8 p-0'>
                 <span className='sr-only'>Abrir menu</span>
@@ -145,12 +141,12 @@ export function ServicesDataTable({
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
               <DropdownMenuLabel>Ações</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => onEdit(service)}>
+              <DropdownMenuItem onClick={() => onEdit(_service)}>
                 Editar serviço
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => onDelete(service)}
+                onClick={() => onDelete(_service)}
                 className='text-destructive'
               >
                 Excluir serviço
@@ -182,23 +178,13 @@ export function ServicesDataTable({
 }
 
 // Content component that uses TanStack Table
-function ServicesDataTableContent({
-  data,
-  loading,
-  onEdit,
-  onDelete,
-  columns,
-  sorting,
-  setSorting,
-  columnFilters,
-  setColumnFilters,
-  columnVisibility,
-  setColumnVisibility,
+function ServicesDataTableContent(_{
+  data,_loading,_onEdit,_onDelete,_columns,_sorting,_setSorting,_columnFilters,_setColumnFilters,_columnVisibility,_setColumnVisibility,
 }: {
   data: Service[];
   loading?: boolean;
-  onEdit: (service: Service) => void;
-  onDelete: (service: Service) => void;
+  onEdit: (_service: Service) => void;
+  onDelete: (_service: Service) => void;
   columns: ColumnDef<Service>[];
   sorting: SortingState;
   setSorting: (sorting: SortingState) => void;

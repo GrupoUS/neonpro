@@ -62,7 +62,7 @@ class ServiceTypeService {
         color: service.color || '#3b82f6',
         isActive: service.is_active || false,
       }));
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in getServiceTypes:', error);
       throw error;
     }
@@ -72,7 +72,7 @@ class ServiceTypeService {
    * Search service types by name or category
    */
   async searchServiceTypes(
-    query: string,
+    _query: string,
     clinicId?: string,
     limit = 10,
   ): Promise<ServiceType[]> {
@@ -116,7 +116,7 @@ class ServiceTypeService {
         color: service.color || '#3b82f6',
         isActive: service.is_active || false,
       }));
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in searchServiceTypes:', error);
       throw error;
     }
@@ -161,7 +161,7 @@ class ServiceTypeService {
         color: data.color || '#3b82f6',
         isActive: data.is_active || false,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in getServiceType:', error);
       throw error;
     }
@@ -179,7 +179,7 @@ class ServiceTypeService {
       // Since there's no category column in the current schema,
       // we'll return an empty array for now
       return [];
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in getServiceTypesByCategory:', error);
       throw error;
     }
@@ -194,11 +194,11 @@ class ServiceTypeService {
       // Since there's no category column in the current schema,
       // we'll return an empty array for now
       return [];
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in getServiceCategories:', error);
       throw error;
     }
   }
 }
 
-export const serviceTypeService = new ServiceTypeService();
+export const _serviceTypeService = new ServiceTypeService();

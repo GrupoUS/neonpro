@@ -90,7 +90,7 @@ export function CalendarProvider({
   const [currentView, setCurrentView] = useState<CalendarView>('month');
 
   // Initialize visibleColors based on the isActive property in etiquettes
-  const [visibleColors, setVisibleColors] = useState<string[]>(() => {
+  const [visibleColors, setVisibleColors] = useState<string[]>(_() => {
     return etiquettes
       .filter(etiquette => etiquette.isActive)
       .map(etiquette => etiquette.color);
@@ -104,7 +104,7 @@ export function CalendarProvider({
   const [filteredEvents, setFilteredEvents] = useState<CalendarEventExtended[]>(initialEvents);
 
   // Load events for current date range
-  const loadEventsForCurrentView = useCallback(async () => {
+  const loadEventsForCurrentView = useCallback(_async () => {
     setLoading(true);
     setError(null);
 
@@ -156,7 +156,7 @@ export function CalendarProvider({
       const fetchedEvents = await EventService.getEvents(filters);
       setEvents(fetchedEvents);
       setFilteredEvents(fetchedEvents);
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to load events';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -166,7 +166,7 @@ export function CalendarProvider({
   }, [currentDate, currentView, defaultClinicId, currentFilters]);
 
   // Auto-refresh events when date or view changes
-  useEffect(() => {
+  useEffect(_() => {
     loadEventsForCurrentView();
   }, [loadEventsForCurrentView]);
 
@@ -212,7 +212,7 @@ export function CalendarProvider({
       }
 
       toast.success(`Event "${newEvent.title}" created successfully`);
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to create event';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -237,7 +237,7 @@ export function CalendarProvider({
       );
 
       toast.success(`Event "${updatedEvent.title}" updated successfully`);
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to update event';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -262,7 +262,7 @@ export function CalendarProvider({
       if (eventToDelete) {
         toast.success(`Event "${eventToDelete.title}" deleted successfully`);
       }
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete event';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -272,7 +272,7 @@ export function CalendarProvider({
     }
   }, [events]);
 
-  const refreshEvents = useCallback(async () => {
+  const refreshEvents = useCallback(_async () => {
     await loadEventsForCurrentView();
   }, [loadEventsForCurrentView]);
 
@@ -282,7 +282,7 @@ export function CalendarProvider({
     // The actual filtering will happen in the loadEventsForCurrentView effect
   }, []);
 
-  const clearFilters = useCallback(() => {
+  const clearFilters = useCallback(_() => {
     setCurrentFilters(null);
   }, []);
 
@@ -290,7 +290,7 @@ export function CalendarProvider({
     try {
       const result = await EventService.searchEvents(options);
       return result;
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : 'Failed to search events';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -303,11 +303,11 @@ export function CalendarProvider({
     setCurrentDate(date);
   }, []);
 
-  const navigateToToday = useCallback(() => {
+  const navigateToToday = useCallback(_() => {
     setCurrentDate(new Date());
   }, []);
 
-  const navigatePrevious = useCallback(() => {
+  const navigatePrevious = useCallback(_() => {
     const newDate = new Date(currentDate);
     switch (currentView) {
       case 'day':
@@ -326,7 +326,7 @@ export function CalendarProvider({
     setCurrentDate(newDate);
   }, [currentDate, currentView]);
 
-  const navigateNext = useCallback(() => {
+  const navigateNext = useCallback(_() => {
     const newDate = new Date(currentDate);
     switch (currentView) {
       case 'day':

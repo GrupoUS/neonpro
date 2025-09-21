@@ -22,7 +22,7 @@ export interface ProfessionalAuthorizationResult {
   crmState: string;
   specialties: string[];
   status: 'active' | 'suspended' | 'cancelled' | 'inactive';
-  role: ProfessionalRole;
+  _role: ProfessionalRole;
   permissions: Permission[];
   restrictions: string[];
   telemedicineAuthorized: boolean;
@@ -241,7 +241,7 @@ export class HealthcareProfessionalAuthorizationService {
     professionalId: string,
     operation: string,
     entityType?: string,
-    context?: {
+    _context?: {
       patientId?: string;
       clinicId?: string;
       emergency?: boolean;
@@ -250,7 +250,7 @@ export class HealthcareProfessionalAuthorizationService {
     // Check cache first
     const cachedResult = this.getCachedAuthorization(professionalId);
     if (cachedResult) {
-      return this.validateOperationPermissions(cachedResult, operation, entityType, context);
+      return this.validateOperationPermissions(cachedResult, operation, entityType, _context);
     }
 
     // Get professional data from database
@@ -259,7 +259,7 @@ export class HealthcareProfessionalAuthorizationService {
       include: {
         user: {
           select: {
-            role: true,
+            _role: true,
             status: true,
           },
         },
@@ -341,7 +341,7 @@ export class HealthcareProfessionalAuthorizationService {
     // Cache the result
     this.setCachedAuthorization(professionalId, authorizationResult);
 
-    return this.validateOperationPermissions(authorizationResult, operation, entityType, context);
+    return this.validateOperationPermissions(authorizationResult, operation, entityType, _context);
   }
 
   /**
@@ -409,7 +409,7 @@ export class HealthcareProfessionalAuthorizationService {
         ethicsCompliant: professional.ethicsCompliant,
         expirationDate: professional.licenseExpiration,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('CFM validation error:', error);
       return {
         isValid: false,
@@ -451,9 +451,9 @@ export class HealthcareProfessionalAuthorizationService {
     authorization: ProfessionalAuthorizationResult,
     operation: string,
     entityType?: string,
-    context?: { patientId?: string; clinicId?: string; emergency?: boolean },
+    _context?: { patientId?: string; clinicId?: string; emergency?: boolean },
   ): ProfessionalAuthorizationResult {
-    const { permissions, restrictions, role: _role } = authorization;
+    const { permissions, restrictions, _role: _role } = authorization;
 
     // Emergency access override
     if (context?.emergency && permissions.includes('emergency_access')) {
@@ -547,7 +547,7 @@ export class HealthcareProfessionalAuthorizationService {
 
       // Fallback to database validation with business rules
       return await this.validateWithDatabaseRules(professional);
-    } catch (error) {
+    } catch (_error) {
       logger.error('CFM license validation failed', {
         professionalId: professional.id,
         crmNumber: professional.crmNumber,
@@ -637,7 +637,7 @@ export class HealthcareProfessionalAuthorizationService {
           errorMessage: `Unknown status: ${cfmData.situacao}`,
         };
       }
-    } catch (error) {
+    } catch (_error) {
       logger.warn('CFM API validation failed, falling back to database rules', {
         professionalId: professional.id,
         error: error instanceof Error ? error.message : String(error),
@@ -659,7 +659,7 @@ export class HealthcareProfessionalAuthorizationService {
   }> {
     try {
       // Check license expiration
-      const now = new Date();
+      const _now = new Date();
       const licenseExpiration = professional.licenseExpiration
         ? new Date(professional.licenseExpiration)
         : null;
@@ -752,7 +752,7 @@ export class HealthcareProfessionalAuthorizationService {
         status: 'active',
         ethicsCompliant: professional.ethicsCompliant !== false,
       };
-    } catch (error) {
+    } catch (_error) {
       logger.error('Database validation failed', {
         professionalId: professional.id,
         error: error instanceof Error ? error.message : String(error),
@@ -774,7 +774,7 @@ export class HealthcareProfessionalAuthorizationService {
     isAuthorized: boolean;
     lastValidated: Date;
     validationSource: string;
-    role: ProfessionalRole;
+    _role: ProfessionalRole;
     permissions: Permission[];
     restrictions: string[];
   }> {
@@ -783,7 +783,7 @@ export class HealthcareProfessionalAuthorizationService {
       isAuthorized: result.isAuthorized,
       lastValidated: result.lastValidated,
       validationSource: result.validationSource,
-      role: result.role,
+      _role: result.role,
       permissions: result.permissions,
       restrictions: result.restrictions,
     };

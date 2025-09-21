@@ -68,7 +68,7 @@ function ServicesPage() {
   const deleteServiceMutation = useDeleteService();
 
   const handleEdit = (_service: any) => {
-    setEditingService(service);
+    setEditingService(_service);
   };
 
   const handleDelete = async (_service: any) => {
@@ -80,8 +80,8 @@ function ServicesPage() {
       try {
         await deleteServiceMutation.mutateAsync(service.id);
         toast.success('Serviço excluído com sucesso!');
-      } catch (error) {
-        console.error('Error deleting service:', error);
+      } catch (_error) {
+        console.error('Error deleting _service:', error);
         toast.error('Erro ao excluir serviço. Tente novamente.');
       }
     }
@@ -107,8 +107,7 @@ function ServicesPage() {
     );
   }
 
-  return (
-    <div className='container mx-auto py-8 space-y-8'>
+  return (_<div className='container mx-auto py-8 space-y-8'>
       {/* Header */}
       <div className='flex items-center justify-between'>
         <div>
@@ -183,6 +182,6 @@ function ServicesPage() {
   );
 }
 
-export const Route = createFileRoute('/services/')({
+export const _Route = createFileRoute('/services/')({
   component: ServicesPage,
 });

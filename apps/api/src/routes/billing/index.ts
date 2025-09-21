@@ -7,7 +7,6 @@
 
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
-import { z } from 'zod';
 import { auditLog } from '../../middleware/audit-log';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
@@ -69,7 +68,7 @@ const searchInvoicesSchema = z.object({
   status: z.nativeEnum(PaymentStatus).optional(),
   dateFrom: z.string().datetime().optional(),
   dateTo: z.string().datetime().optional(),
-  query: z.string().optional(),
+  _query: z.string().optional(),
   page: z.string().transform(Number).default('1'),
   limit: z.string().transform(Number).default('20'),
   sortBy: z.string().optional(),
@@ -96,7 +95,7 @@ billing.post(
       const invoiceData = c.req.valid('json');
       const userId = c.get('userId');
 
-      const result = await billingService.createInvoice(invoiceData, userId);
+      const result = await billingService.createInvoice(invoiceData, _userId);
 
       if (!result.success) {
         return badRequest(
@@ -107,7 +106,7 @@ billing.post(
       }
 
       return created(c, result.data, result.message);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error creating invoice:', error);
       return serverError(c, 'Erro interno do servidor');
     }
@@ -127,7 +126,7 @@ billing.get('/invoices/:id', async c => {
       return badRequest(c, 'ID da fatura é obrigatório');
     }
 
-    const result = await billingService.getInvoice(invoiceId, userId);
+    const result = await billingService.getInvoice(invoiceId, _userId);
 
     if (!result.success) {
       if (result.error?.includes('não encontrada')) {
@@ -140,7 +139,7 @@ billing.get('/invoices/:id', async c => {
     }
 
     return ok(c, result.data);
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching invoice:', error);
     return serverError(c, 'Erro interno do servidor');
   }
@@ -167,14 +166,14 @@ billing.get(
         dateTo: searchParams.dateTo ? new Date(searchParams.dateTo) : undefined,
       };
 
-      const result = await billingService.searchInvoices(options, userId);
+      const result = await billingService.searchInvoices(options, _userId);
 
       if (!result.success) {
         return badRequest(c, result.error || 'Erro ao buscar faturas');
       }
 
       return ok(c, result.data);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error searching invoices:', error);
       return serverError(c, 'Erro interno do servidor');
     }
@@ -219,7 +218,7 @@ billing.put(
       }
 
       return ok(c, result.data, result.message);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error updating invoice:', error);
       return serverError(c, 'Erro interno do servidor');
     }
@@ -239,7 +238,7 @@ billing.delete('/invoices/:id', async c => {
       return badRequest(c, 'ID da fatura é obrigatório');
     }
 
-    const result = await billingService.cancelInvoice(invoiceId, userId);
+    const result = await billingService.cancelInvoice(invoiceId, _userId);
 
     if (!result.success) {
       if (result.error?.includes('não encontrada')) {
@@ -252,7 +251,7 @@ billing.delete('/invoices/:id', async c => {
     }
 
     return ok(c, { cancelled: true }, result.message);
-  } catch (error) {
+  } catch (_error) {
     console.error('Error cancelling invoice:', error);
     return serverError(c, 'Erro interno do servidor');
   }
@@ -293,7 +292,7 @@ billing.post(
       }
 
       return created(c, result.data, result.message);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error processing payment:', error);
       return serverError(c, 'Erro interno do servidor');
     }
@@ -313,7 +312,7 @@ billing.get('/invoices/:id/payments', async c => {
       return badRequest(c, 'ID da fatura é obrigatório');
     }
 
-    const result = await billingService.getPaymentHistory(invoiceId, userId);
+    const result = await billingService.getPaymentHistory(invoiceId, _userId);
 
     if (!result.success) {
       if (result.error?.includes('não encontrada')) {
@@ -326,7 +325,7 @@ billing.get('/invoices/:id/payments', async c => {
     }
 
     return ok(c, result.data);
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching payment history:', error);
     return serverError(c, 'Erro interno do servidor');
   }
@@ -364,7 +363,7 @@ billing.get(
       }
 
       return ok(c, result.data);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error generating financial report:', error);
       return serverError(c, 'Erro interno do servidor');
     }
@@ -392,7 +391,7 @@ billing.get('/dashboard/stats', async c => {
     }
 
     return ok(c, result.data);
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching billing stats:', error);
     return serverError(c, 'Erro interno do servidor');
   }
@@ -414,7 +413,7 @@ billing.get('/sus/procedures', async c => {
     }
 
     return ok(c, result.data);
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching SUS procedures:', error);
     return serverError(c, 'Erro interno do servidor');
   }
@@ -446,7 +445,7 @@ billing.post('/insurance/verify', async c => {
     }
 
     return ok(c, result.data);
-  } catch (error) {
+  } catch (_error) {
     console.error('Error verifying insurance coverage:', error);
     return serverError(c, 'Erro interno do servidor');
   }
@@ -472,7 +471,7 @@ billing.get('/tax/calculation', async c => {
     }
 
     return ok(c, result.data);
-  } catch (error) {
+  } catch (_error) {
     console.error('Error calculating taxes:', error);
     return serverError(c, 'Erro interno do servidor');
   }

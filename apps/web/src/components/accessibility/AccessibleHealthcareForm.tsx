@@ -48,7 +48,7 @@ interface AccessibleHealthcareFormProps {
   title: string;
   description?: string;
   fields: FormField[];
-  onSubmit: (data: Record<string, string>) => Promise<void>;
+  onSubmit: (data: Record<string,_string>) => Promise<void>;
   submitLabel?: string;
   isLoading?: boolean;
   className?: string;
@@ -76,8 +76,7 @@ export function AccessibleHealthcareForm({
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   // Create accessible field hooks for each form field
-  const fieldHooks = fields.reduce(
-    (acc, field) => {
+  const fieldHooks = fields.reduce(_(acc,_field) => {
       acc[field.name] = useAccessibleField(field.name, {
         required: field.required,
         validate: field.validate,
@@ -87,7 +86,7 @@ export function AccessibleHealthcareForm({
     {} as Record<string, ReturnType<typeof useAccessibleField>>,
   );
 
-  const validateForm = useCallback(() => {
+  const validateForm = useCallback(_() => {
     let isValid = true;
     const errors: string[] = [];
 
@@ -136,8 +135,7 @@ export function AccessibleHealthcareForm({
 
       try {
         // Collect form data
-        const formData = fields.reduce(
-          (acc, field) => {
+        const formData = fields.reduce(_(acc,_field) => {
             acc[field.name] = fieldHooks[field.name].value;
             return acc;
           },
@@ -149,7 +147,7 @@ export function AccessibleHealthcareForm({
         setSubmitSuccess(true);
         announceFormSuccess('Formulário enviado com sucesso');
         announceLive('Formulário enviado com sucesso!', 'polite');
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error ? error.message : 'Erro ao enviar formulário';
         setSubmitError(errorMessage);
         announceFormError('envio', errorMessage);

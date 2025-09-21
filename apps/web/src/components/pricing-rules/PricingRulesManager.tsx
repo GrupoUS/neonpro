@@ -68,7 +68,7 @@ export function PricingRulesManager() {
     try {
       await deleteRule.mutateAsync(rule.id);
       toast.success('Regra de preço excluída com sucesso');
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to delete pricing rule:', error);
       toast.error('Erro ao excluir regra de preço');
     }
@@ -80,7 +80,7 @@ export function PricingRulesManager() {
       toast.success(
         `Regra ${rule.is_active ? 'desativada' : 'ativada'} com sucesso`,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to toggle pricing rule:', error);
       toast.error('Erro ao alterar status da regra');
     }
@@ -286,8 +286,7 @@ export function PricingRulesManager() {
               Modifique as configurações da regra de preço
             </DialogDescription>
           </DialogHeader>
-          {editingRule && (
-            <PricingRuleForm
+          {editingRule && (_<PricingRuleForm
               rule={editingRule}
               onSuccess={() => setEditingRule(null)}
               onCancel={() => setEditingRule(null)}

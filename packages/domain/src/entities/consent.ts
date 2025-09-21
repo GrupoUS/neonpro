@@ -123,7 +123,7 @@ export class ConsentValidator {
   /**
    * Validate consent request
    */
-  static validateRequest(request: ConsentRequest): string[] {
+  static validateRequest(_request: ConsentRequest): string[] {
     const errors: string[] = [];
     
     if (!request.patientId) errors.push('Patient ID is required');
@@ -148,7 +148,7 @@ export class ConsentValidator {
    * Check if consent is currently valid
    */
   static isValid(consent: ConsentRecord): boolean {
-    const now = new Date();
+    const _now = new Date();
     
     // Check status
     if (consent.status !== ConsentStatus.ACTIVE) {
@@ -181,7 +181,7 @@ export class ConsentValidator {
   static getRemainingDays(consent: ConsentRecord): number {
     if (!consent.expiresAt) return Infinity;
     
-    const now = new Date();
+    const _now = new Date();
     const expirationDate = new Date(consent.expiresAt);
     const diffTime = expirationDate.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -197,8 +197,8 @@ export class ConsentFactory {
   /**
    * Create a new consent record from request
    */
-  static createFromRequest(request: ConsentRequest, grantedBy: string): ConsentRecord {
-    const now = new Date().toISOString();
+  static createFromRequest(_request: ConsentRequest, grantedBy: string): ConsentRecord {
+    const _now = new Date().toISOString();
     
     return {
       id: `consent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -254,7 +254,7 @@ export class ConsentFactory {
   private static hashPatientId(patientId: string): string {
     // Simple hash for demo - in production use proper crypto hash
     const hash = Array.from(patientId)
-      .reduce((acc, char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0)
+      .reduce(_(acc,_char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0)
       .toString(16);
     return `patient_${hash.slice(-8)}`;
   }

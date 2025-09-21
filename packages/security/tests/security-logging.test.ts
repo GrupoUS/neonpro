@@ -8,22 +8,22 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock console methods to capture logging output
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
+const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(_() => {});
+const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(_() => {});
+const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(_() => {});
+const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(_() => {});
 
-describe('Security Logging - Vulnerability Prevention', () => {
-  beforeEach(() => {
+describe(_'Security Logging - Vulnerability Prevention',_() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.restoreAllMocks();
   });
 
-  describe('SQL Injection Prevention Logging', () => {
-    it('should NOT log raw SQL queries with parameters', () => {
+  describe(_'SQL Injection Prevention Logging',_() => {
+    it(_'should NOT log raw SQL queries with parameters',_() => {
       const maliciousQueries = [
         'SELECT * FROM patients WHERE name = \'Robert\'); DROP TABLE patients; --',
         'SELECT * FROM users WHERE email = \'admin@test.com\' OR \'1\'=\'1\'',
@@ -32,9 +32,9 @@ describe('Security Logging - Vulnerability Prevention', () => {
 
       maliciousQueries.forEach(query => {
         try {
-          console.log(`Executing query: ${query}`);
+          console.log(`Executing _query: ${query}`);
           console.error(`Query validation failed for: ${query}`);
-        } catch (error) {
+        } catch (_error) {
           console.error('SQL execution error:', { query, error });
         }
       });
@@ -51,7 +51,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
       expect(hasRawSql).toBe(false);
     });
 
-    it('should NOT log database connection strings or credentials', () => {
+    it(_'should NOT log database connection strings or credentials',_() => {
       const connectionStrings = [
         'postgresql://user:password@localhost:5432/neonpro',
         'mysql://root:supersecret@db.prod.neonpro.com:3306/healthcare',
@@ -62,7 +62,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
         try {
           console.log(`Connecting to database: ${connStr}`);
           console.error(`Connection failed: ${connStr}`);
-        } catch (error) {
+        } catch (_error) {
           console.error('Database connection error:', { connectionString: connStr, error });
         }
       });
@@ -81,8 +81,8 @@ describe('Security Logging - Vulnerability Prevention', () => {
     });
   });
 
-  describe('XSS Prevention Logging', () => {
-    it('should NOT log raw user input that could contain XSS payloads', () => {
+  describe(_'XSS Prevention Logging',_() => {
+    it(_'should NOT log raw user input that could contain XSS payloads',_() => {
       const xssPayloads = [
         '<script>alert("XSS")</script>',
         'javascript:alert("XSS")',
@@ -96,7 +96,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
           console.log(`Processing user input: ${payload}`);
           console.error(`Input validation failed for: ${payload}`);
           console.warn(`Sanitizing input: ${payload}`);
-        } catch (error) {
+        } catch (_error) {
           console.error('XSS processing error:', { input: payload, error });
         }
       });
@@ -118,7 +118,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
       expect(hasXssPayloads).toBe(false);
     });
 
-    it('should NOT log HTML content that could expose DOM structure', () => {
+    it(_'should NOT log HTML content that could expose DOM structure',_() => {
       const htmlContent = `
         <form id="patient-form" action="/api/patients" method="POST">
           <input type="hidden" name="csrf_token" value="abc123def456">
@@ -150,13 +150,13 @@ describe('Security Logging - Vulnerability Prevention', () => {
     });
   });
 
-  describe('CSRF Protection Logging', () => {
-    it('should NOT log CSRF tokens or session identifiers', () => {
+  describe(_'CSRF Protection Logging',_() => {
+    it(_'should NOT log CSRF tokens or session identifiers',_() => {
       const csrfData = {
         token: 'csrf-token-1234567890abcdef',
         sessionId: 'sess-9876543210fedcba',
         formId: 'patient-update-form',
-        userId: 'user-123',
+        _userId: 'user-123',
       };
 
       // Simulate CSRF validation logging
@@ -180,7 +180,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
       expect(hasCsrfData).toBe(false);
     });
 
-    it('should NOT log request details that could expose application structure', () => {
+    it(_'should NOT log request details that could expose application structure',_() => {
       const requestData = {
         method: 'POST',
         url: '/api/v1/patients/123456/update',
@@ -197,7 +197,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
       };
 
       // Simulate request logging
-      console.log('Incoming request:', requestData);
+      console.log('Incoming _request:', requestData);
       console.error('Request validation failed:', requestData);
       console.info('Request URL:', requestData.url);
 
@@ -218,15 +218,15 @@ describe('Security Logging - Vulnerability Prevention', () => {
     });
   });
 
-  describe('File Upload Security Logging', () => {
-    it('should NOT log file contents or sensitive file metadata', () => {
+  describe(_'File Upload Security Logging',_() => {
+    it(_'should NOT log file contents or sensitive file metadata',_() => {
       const fileUploads = [
         {
           filename: 'patient-report.pdf',
           contentType: 'application/pdf',
           size: 2048576, // 2MB
           content: 'Sensitive patient medical report content...',
-          userId: 'user-789',
+          _userId: 'user-789',
         },
         {
           filename: 'medical-image.dcm',
@@ -242,7 +242,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
           console.log(`Processing file upload: ${file.filename}`);
           console.error(`File validation failed for: ${file.filename}`, file);
           console.warn(`Large file detected: ${file.size} bytes`);
-        } catch (error) {
+        } catch (_error) {
           console.error('File upload error:', { file, error });
         }
       });
@@ -265,7 +265,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
       expect(hasFileData).toBe(false);
     });
 
-    it('should NOT log file system paths that could expose directory structure', () => {
+    it(_'should NOT log file system paths that could expose directory structure',_() => {
       const filePaths = [
         '/var/www/neonpro/uploads/patient-reports/',
         '/home/neonpro/storage/private/medical-records/',
@@ -298,8 +298,8 @@ describe('Security Logging - Vulnerability Prevention', () => {
     });
   });
 
-  describe('Rate Limiting and DDoS Protection Logging', () => {
-    it('should NOT log IP addresses or detailed request patterns', () => {
+  describe(_'Rate Limiting and DDoS Protection Logging',_() => {
+    it(_'should NOT log IP addresses or detailed request patterns',_() => {
       const securityEvents = [
         {
           eventType: 'rate_limit_exceeded',
@@ -344,7 +344,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
       expect(hasSecurityData).toBe(false);
     });
 
-    it('should NOT log rate limiting configuration details', () => {
+    it(_'should NOT log rate limiting configuration details',_() => {
       const rateLimitConfig = {
         endpoints: {
           '/api/v1/auth/login': { requests: 5, window: 60000 },
@@ -387,12 +387,12 @@ describe('Security Logging - Vulnerability Prevention', () => {
     });
   });
 
-  describe('Security Audit Trail Protection', () => {
-    it('should NOT log sensitive audit trail details with PII', () => {
+  describe(_'Security Audit Trail Protection',_() => {
+    it(_'should NOT log sensitive audit trail details with PII',_() => {
       const auditEvents = [
         {
           eventType: 'patient_record_access',
-          userId: 'doctor-123',
+          _userId: 'doctor-123',
           patientId: 'patient-456',
           action: 'view_medical_history',
           timestamp: '2024-01-15T14:30:00Z',
@@ -432,11 +432,11 @@ describe('Security Logging - Vulnerability Prevention', () => {
       expect(hasAuditData).toBe(false);
     });
 
-    it('should NOT log security breach notifications with exploit details', () => {
+    it(_'should NOT log security breach notifications with exploit details',_() => {
       const breachDetails = {
         breachType: 'SQL_injection_attempt',
         vulnerableEndpoint: '/api/v1/patients/search',
-        payload: 'SELECT * FROM patients WHERE name = \'test\' OR 1=1--',
+        _payload: 'SELECT * FROM patients WHERE name = \'test\' OR 1=1--',
         attackerIp: '192.168.1.100',
         timestamp: '2024-01-15T15:45:00Z',
         affectedRecords: 150,
@@ -466,8 +466,8 @@ describe('Security Logging - Vulnerability Prevention', () => {
     });
   });
 
-  describe('Encryption and Key Management Logging', () => {
-    it('should NOT log encryption keys or algorithm details', () => {
+  describe(_'Encryption and Key Management Logging',_() => {
+    it(_'should NOT log encryption keys or algorithm details',_() => {
       const encryptionData = {
         algorithm: 'AES-256-GCM',
         key: 'encryption-key-256bit-1234567890abcdef',
@@ -497,7 +497,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
       expect(hasEncryptionData).toBe(false);
     });
 
-    it('should NOT log certificate or private key information', () => {
+    it(_'should NOT log certificate or private key information',_() => {
       const certificateData = {
         certPath: '/etc/ssl/certs/neonpro.crt',
         keyPath: '/etc/ssl/private/neonpro.key',
@@ -529,8 +529,8 @@ describe('Security Logging - Vulnerability Prevention', () => {
     });
   });
 
-  describe('Network Security Logging', () => {
-    it('should NOT log network traffic details or packet contents', () => {
+  describe(_'Network Security Logging',_() => {
+    it(_'should NOT log network traffic details or packet contents',_() => {
       const networkData = {
         sourceIp: '10.0.1.100',
         destinationIp: '10.0.1.200',
@@ -566,7 +566,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
       expect(hasNetworkData).toBe(false);
     });
 
-    it('should NOT log firewall rules or security group configurations', () => {
+    it(_'should NOT log firewall rules or security group configurations',_() => {
       const firewallConfig = {
         rules: [
           {

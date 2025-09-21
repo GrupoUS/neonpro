@@ -10,7 +10,7 @@ export interface AuditLogEntry {
   timestamp: string;
   eventType: string;
   eventData: any;
-  userId?: string;
+  _userId?: string;
   clinicId?: string;
   ipAddress?: string;
   userAgent?: string;
@@ -60,8 +60,8 @@ export class CryptographicAuditLogger {
   async createAuditEntry(
     eventType: string,
     eventData: any,
-    context: {
-      userId?: string;
+    _context: {
+      _userId?: string;
       clinicId?: string;
       ipAddress?: string;
       userAgent?: string;
@@ -80,7 +80,7 @@ export class CryptographicAuditLogger {
         timestamp,
         eventType,
         eventData: this.sanitizeEventData(eventData),
-        userId: context.userId,
+        _userId: context.userId,
         clinicId: context.clinicId,
         ipAddress: context.ipAddress,
         userAgent: context.userAgent,
@@ -114,7 +114,7 @@ export class CryptographicAuditLogger {
       this.lastHash = dataHash;
 
       return auditEntry;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error creating audit entry:', error);
       throw new Error('Failed to create secure audit entry');
     }
@@ -135,7 +135,7 @@ export class CryptographicAuditLogger {
           timestamp: entry.timestamp,
           eventType: entry.eventType,
           eventData: entry.eventData,
-          userId: entry.userId,
+          _userId: entry.userId,
           clinicId: entry.clinicId,
           ipAddress: entry.ipAddress,
           userAgent: entry.userAgent,
@@ -156,7 +156,7 @@ export class CryptographicAuditLogger {
           timestamp: entry.timestamp,
           eventType: entry.eventType,
           eventData: entry.eventData,
-          userId: entry.userId,
+          _userId: entry.userId,
           clinicId: entry.clinicId,
           ipAddress: entry.ipAddress,
           userAgent: entry.userAgent,
@@ -184,7 +184,7 @@ export class CryptographicAuditLogger {
       }
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error validating audit entry:', error);
       return false;
     }
@@ -208,8 +208,7 @@ export class CryptographicAuditLogger {
     }
 
     // Sort entries by sequence number
-    const sortedEntries = entries.sort(
-      (a, b) => a.sequenceNumber - b.sequenceNumber,
+    const sortedEntries = entries.sort(_(a,_b) => a.sequenceNumber - b.sequenceNumber,
     );
 
     for (let i = 0; i < sortedEntries.length; i++) {
@@ -270,7 +269,7 @@ export class CryptographicAuditLogger {
    * Create audit retention policy compliance report
    */
   generateRetentionReport(entries: AuditLogEntry[]): any {
-    const now = new Date();
+    const _now = new Date();
     const retentionPeriods = {
       emergency_access: 365 * 10, // 10 years for emergency access
       patient_data: 365 * 20, // 20 years for patient data access
@@ -358,7 +357,7 @@ export class CryptographicAuditLogger {
 
   private createSignature(data: any, dataHash: string): string {
     const payload = JSON.stringify(data) + dataHash;
-    return createHmac('sha256', this.secretKey).update(payload).digest('hex');
+    return createHmac('sha256', this.secretKey).update(_payload).digest('hex');
   }
 
   private signReport(reportData: any): string {
@@ -439,7 +438,7 @@ export class CryptographicAuditLogger {
     const emergencyAccess = [];
 
     for (const entry of entries) {
-      if (entry.userId) {
+      if (entry._userId) {
         userAccess[entry.userId] = (userAccess[entry.userId] || 0) + 1;
       }
 
@@ -450,14 +449,14 @@ export class CryptographicAuditLogger {
       if (entry.complianceFlags.emergency_access) {
         emergencyAccess.push({
           timestamp: entry.timestamp,
-          userId: entry.userId,
+          _userId: entry.userId,
           eventType: entry.eventType,
         });
       }
     }
 
     // Flag users with excessive access
-    const averageUserAccess = Object.values(userAccess).reduce((a, b) => a + b, 0)
+    const averageUserAccess = Object.values(userAccess).reduce(_(a,_b) => a + b, 0)
       / Object.keys(userAccess).length;
     for (const [userId, count] of Object.entries(userAccess)) {
       if (count > averageUserAccess * 3) {
@@ -471,7 +470,7 @@ export class CryptographicAuditLogger {
     }
 
     // Flag IPs with excessive access
-    const averageIpAccess = Object.values(ipAccess).reduce((a, b) => a + b, 0)
+    const averageIpAccess = Object.values(ipAccess).reduce(_(a,_b) => a + b, 0)
       / Object.keys(ipAccess).length;
     for (const [ip, count] of Object.entries(ipAccess)) {
       if (count > averageIpAccess * 5) {
@@ -516,4 +515,4 @@ export class CryptographicAuditLogger {
 }
 
 // Export singleton instance
-export const cryptographicAuditLogger = CryptographicAuditLogger.getInstance();
+export const _cryptographicAuditLogger = CryptographicAuditLogger.getInstance();

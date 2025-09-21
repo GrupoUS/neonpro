@@ -1,7 +1,5 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
-import { z } from 'zod';
-
 const metricsApi = new Hono();
 
 // In-memory storage for metrics (use Redis in production)
@@ -76,9 +74,9 @@ metricsApi.post(
 
 // Get performance dashboard data
 metricsApi.get('/dashboard', async c => {
-  const now = Date.now();
+  const _now = Date.now();
   const last24Hours = now - 24 * 60 * 60 * 1000;
-  // const last1Hour = now - (60 * 60 * 1000); // unused
+  // const _last1Hour = now - (60 * 60 * 1000); // unused
 
   // Filter recent metrics
   const recentWebVitals = metrics.webVitals.filter(
@@ -89,8 +87,7 @@ metricsApi.get('/dashboard', async c => {
   );
 
   // Calculate Core Web Vitals averages
-  const webVitalsByName = recentWebVitals.reduce(
-    (acc, metric) => {
+  const webVitalsByName = recentWebVitals.reduce(_(acc,_metric) => {
       if (!acc[metric.name]) acc[metric.name] = [];
       acc[metric.name].push(metric.value);
       return acc;
@@ -98,10 +95,9 @@ metricsApi.get('/dashboard', async c => {
     {} as Record<string, number[]>,
   );
 
-  const webVitalsAverages = Object.entries(webVitalsByName).reduce(
-    (acc, [name, values]) => {
+  const webVitalsAverages = Object.entries(webVitalsByName).reduce(_(acc,_[name,_values]) => {
       acc[name] = {
-        average: values.reduce((sum, val) => sum + val, 0) / values.length,
+        average: values.reduce(_(sum,_val) => sum + val, 0) / values.length,
         p95: percentile(values, 95),
         p99: percentile(values, 99),
         count: values.length,
@@ -153,7 +149,7 @@ metricsApi.get('/dashboard', async c => {
 
 // Get real-time metrics (last 5 minutes)
 metricsApi.get('/realtime', async c => {
-  const now = Date.now();
+  const _now = Date.now();
   const last5Minutes = now - 5 * 60 * 1000;
 
   const recentMetrics = {
@@ -175,21 +171,21 @@ metricsApi.get('/realtime', async c => {
 // Helper functions
 function percentile(values: number[], p: number): number {
   if (values.length === 0) return 0;
-  const sorted = [...values].sort((a, b) => a - b);
+  const sorted = [...values].sort(_(a,_b) => a - b);
   const index = Math.ceil((p / 100) * sorted.length) - 1;
   return sorted[index] || 0;
 }
 
 function average(values: number[]): number {
   if (values.length === 0) return 0;
-  return values.reduce((sum, val) => sum + val, 0) / values.length;
+  return values.reduce(_(sum,_val) => sum + val, 0) / values.length;
 }
 
 function generateAlerts(webVitals: any, serverMetrics: any[]) {
   const alerts = [];
 
   // Web Vitals alerts
-  Object.entries(webVitals).forEach(([name, data]: [string, any]) => {
+  Object.entries(webVitals).forEach(_([name, data]: [string,_any]) => {
     if (name === 'LCP' && data.average > 2500) {
       alerts.push({
         type: 'warning',
@@ -227,8 +223,7 @@ function generateAlerts(webVitals: any, serverMetrics: any[]) {
 
 function calculateAverageRating(metrics: any[]): number {
   const ratings = { good: 3, 'needs-improvement': 2, poor: 1 };
-  const total = metrics.reduce(
-    (sum, metric) => sum + (ratings[metric.rating] || 0),
+  const total = metrics.reduce(_(sum,_metric) => sum + (ratings[metric.rating] || 0),
     0,
   );
   return total / metrics.length || 0;

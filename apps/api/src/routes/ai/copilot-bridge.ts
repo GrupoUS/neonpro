@@ -37,7 +37,7 @@ copilotBridge.use(
 );
 
 // Security headers middleware
-copilotBridge.use('*', async (c: Context, next: Next) => {
+copilotBridge.use(_'*', async (c: Context, next: Next) => {
   // Apply healthcare security headers
   c.header('X-Healthcare-Platform', 'NeonPro');
   c.header('X-LGPD-Compliance', 'true');
@@ -75,9 +75,9 @@ copilotBridge.post('/chat/completions', async c => {
 
     // Extract user context from headers or default
     const userContext = {
-      userId: c.req.header('X-User-ID') || 'anonymous',
+      _userId: c.req.header('X-User-ID') || 'anonymous',
       domain: c.req.header('X-User-Domain') || 'default',
-      role: c.req.header('X-User-Role') || 'receptionist',
+      _role: c.req.header('X-User-Role') || 'receptionist',
       sessionId: c.req.header('X-Session-ID') || requestId,
     };
 
@@ -108,7 +108,7 @@ copilotBridge.post('/chat/completions', async c => {
             choices: [{
               index: 0,
               delta: {
-                role: 'assistant',
+                _role: 'assistant',
                 content: `\n\n**Ações disponíveis:**`,
                 actions: agentResponse.actions,
               },
@@ -138,7 +138,7 @@ copilotBridge.post('/chat/completions', async c => {
       const response = formatCopilotResponse(agentResponse, requestId, startTime);
       return c.json(response);
     }
-  } catch (error) {
+  } catch (_error) {
     logger.error('CopilotKit bridge error', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -159,7 +159,7 @@ copilotBridge.post('/chat/completions', async c => {
 /**
  * Call AG-UI Agent Backend
  */
-async function callAGUIAgent(query: string, userContext: any, requestId: string) {
+async function callAGUIAgent(_query: string, userContext: any, requestId: string) {
   const agentUrl = process.env.AGUI_AGENT_URL || 'http://127.0.0.1:8000';
 
   try {
@@ -184,7 +184,7 @@ async function callAGUIAgent(query: string, userContext: any, requestId: string)
           session: {
             id: userContext.sessionId,
             user_id: userContext.userId,
-            context: userContext,
+            _context: userContext,
           },
         },
       }),
@@ -196,7 +196,7 @@ async function callAGUIAgent(query: string, userContext: any, requestId: string)
 
     const agentData = await response.json();
     return agentData;
-  } catch (error) {
+  } catch (_error) {
     logger.error('AG-UI Agent call failed', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -279,7 +279,7 @@ function formatCopilotResponse(agentResponse: any, requestId: string, startTime:
     choices: [{
       index: 0,
       message: {
-        role: 'assistant',
+        _role: 'assistant',
         content: content,
         // Include structured data for rich UI rendering
         healthcare_data: agentResponse.data,
@@ -311,7 +311,7 @@ function formatCopilotResponse(agentResponse: any, requestId: string, startTime:
 copilotBridge.get('/health', c => {
   return c.json({
     status: 'healthy',
-    service: 'copilot-bridge',
+    _service: 'copilot-bridge',
     version: '1.0.0',
     healthcare_compliance: {
       lgpd: true,

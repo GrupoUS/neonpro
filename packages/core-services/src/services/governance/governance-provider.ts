@@ -42,6 +42,6 @@ export function resetGovernanceService(): void {
 /**
  * Set custom governance service instance (useful for testing)
  */
-export function setGovernanceService(service: GovernanceService): void {
+export function setGovernanceService(_service: GovernanceService): void {
   governanceServiceInstance = service;
 }

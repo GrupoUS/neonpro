@@ -11,9 +11,8 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "../../utils";
 
-export const DraggableCardBody = ({
-  className,
-  children,
+export const _DraggableCardBody = (_{
+  className,_children,
 }: {
   className?: string;
   children?: React.ReactNode;
@@ -58,7 +57,7 @@ export const DraggableCardBody = ({
     springConfig,
   );
 
-  useEffect(() => {
+  useEffect(_() => {
     // Update constraints when component mounts or window resizes
     const updateConstraints = () => {
       if (typeof window !== "undefined") {
@@ -104,15 +103,14 @@ export const DraggableCardBody = ({
     mouseY.set(0);
   };
 
-  return (
-    <motion.div
+  return (_<motion.div
       ref={cardRef}
       drag
       dragConstraints={constraints}
       onDragStart={() => {
         document.body.style.cursor = "grabbing";
       }}
-      onDragEnd={(_event, info) => {
+      onDragEnd={(_event,_info) => {
         document.body.style.cursor = "default";
 
         controls.start({
@@ -178,9 +176,8 @@ export const DraggableCardBody = ({
   );
 };
 
-export const DraggableCardContainer = ({
-  className,
-  children,
+export const _DraggableCardContainer = (_{
+  className,_children,
 }: {
   className?: string;
   children?: React.ReactNode;

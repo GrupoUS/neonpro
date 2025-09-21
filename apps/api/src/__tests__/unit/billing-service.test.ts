@@ -14,20 +14,20 @@ import {
   PaymentStatus,
 } from '../../services/billing-service';
 
-describe('BillingService', () => {
-  let service: BillingService;
+describe(_'BillingService',_() => {
+  let _service: BillingService;
 
-  beforeAll(() => {
+  beforeAll(_() => {
     service = new BillingService();
   });
 
-  describe('Service Initialization', () => {
-    it('should initialize without errors', () => {
-      expect(service).toBeDefined();
-      expect(service).toBeInstanceOf(BillingService);
+  describe(_'Service Initialization',_() => {
+    it(_'should initialize without errors',_() => {
+      expect(_service).toBeDefined();
+      expect(_service).toBeInstanceOf(BillingService);
     });
 
-    it('should have required methods', () => {
+    it(_'should have required methods',_() => {
       expect(typeof service.createBilling).toBe('function');
       expect(typeof service.getBilling).toBe('function');
       expect(typeof service.searchBillings).toBe('function');
@@ -36,8 +36,8 @@ describe('BillingService', () => {
     });
   });
 
-  describe('createBilling', () => {
-    it('should create a billing successfully', async () => {
+  describe(_'createBilling',_() => {
+    it(_'should create a billing successfully',_async () => {
       const billingData = {
         patientId: randomUUID(),
         clinicId: randomUUID(),
@@ -73,7 +73,7 @@ describe('BillingService', () => {
       expect(result.data?.total).toBe(157.5); // 150 + 5% ISS tax
     });
 
-    it('should fail when required fields are missing', async () => {
+    it(_'should fail when required fields are missing',_async () => {
       const invalidData = {
         // Missing required fields
         items: [],
@@ -86,8 +86,8 @@ describe('BillingService', () => {
     });
   });
 
-  describe('getBilling', () => {
-    it('should return billing by ID', async () => {
+  describe(_'getBilling',_() => {
+    it(_'should return billing by ID',_async () => {
       // First create a billing
       const billingData = {
         patientId: randomUUID(),
@@ -123,7 +123,7 @@ describe('BillingService', () => {
       expect(result.data?.id).toBe(createResult.data!.id);
     });
 
-    it('should return error for non-existent billing', async () => {
+    it(_'should return error for non-existent billing',_async () => {
       const result = await service.getBilling('non-existent-id');
 
       expect(result.success).toBe(false);
@@ -131,8 +131,8 @@ describe('BillingService', () => {
     });
   });
 
-  describe('searchBillings', () => {
-    it('should search billings with filters', async () => {
+  describe(_'searchBillings',_() => {
+    it(_'should search billings with filters',_async () => {
       const result = await service.searchBillings({
         patientId: randomUUID(),
         page: 1,
@@ -146,8 +146,8 @@ describe('BillingService', () => {
     });
   });
 
-  describe('processPayment', () => {
-    it('should process payment successfully', async () => {
+  describe(_'processPayment',_() => {
+    it(_'should process payment successfully',_async () => {
       // First create a billing
       const billingData = {
         patientId: randomUUID(),
@@ -191,8 +191,8 @@ describe('BillingService', () => {
     });
   });
 
-  describe('getFinancialSummary', () => {
-    it('should generate financial summary', async () => {
+  describe(_'getFinancialSummary',_() => {
+    it(_'should generate financial summary',_async () => {
       const result = await service.getFinancialSummary(randomUUID());
 
       expect(result.success).toBe(true);
@@ -203,8 +203,8 @@ describe('BillingService', () => {
     });
   });
 
-  describe('Enums', () => {
-    it('should have all required payment statuses', () => {
+  describe(_'Enums',_() => {
+    it(_'should have all required payment statuses',_() => {
       const expectedStatuses = [
         'pending',
         'authorized',
@@ -220,7 +220,7 @@ describe('BillingService', () => {
       });
     });
 
-    it('should have all required payment methods', () => {
+    it(_'should have all required payment methods',_() => {
       const expectedMethods = [
         'cash',
         'debit_card',
@@ -237,7 +237,7 @@ describe('BillingService', () => {
       });
     });
 
-    it('should have all required billing types', () => {
+    it(_'should have all required billing types',_() => {
       const expectedTypes = ['sus', 'health_plan', 'private', 'mixed'];
 
       expectedTypes.forEach(type => {

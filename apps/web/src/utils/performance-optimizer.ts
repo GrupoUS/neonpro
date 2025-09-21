@@ -100,30 +100,30 @@ export class PerformanceOptimizer {
    * Optimize search performance with debouncing and caching
    */
   optimizeSearch<T>(
-    searchFn: (query: string) => Promise<T>,
+    searchFn: (_query: string) => Promise<T>,
     debounceMs: number = 150,
-  ): (query: string) => Promise<T> {
+  ): (_query: string) => Promise<T> {
     let timeoutId: NodeJS.Timeout;
     const cache = new Map<string, { data: T; timestamp: number }>();
     const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-    return (query: string): Promise<T> => {
-      return new Promise((resolve, reject) => {
+    return (_query: string): Promise<T> => {
+      return new Promise(_(resolve,_reject) => {
         // Clear previous timeout
         clearTimeout(timeoutId);
 
         // Check cache first
-        const cached = cache.get(query);
+        const cached = cache.get(_query);
         if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
           resolve(cached.data);
           return;
         }
 
         // Debounced search
-        timeoutId = setTimeout(async () => {
+        timeoutId = setTimeout(_async () => {
           try {
             const startTime = performance.now();
-            const result = await searchFn(query);
+            const result = await searchFn(_query);
             const responseTime = performance.now() - startTime;
 
             // Cache result
@@ -143,7 +143,7 @@ export class PerformanceOptimizer {
             }
 
             resolve(result);
-          } catch (error) {
+          } catch (_error) {
             reject(error);
           }
         }, debounceMs);
@@ -490,7 +490,7 @@ export function debounce<T extends (...args: any[]) => any>(
 
   return (...args: Parameters<T>) => {
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func(...args), delay);
+    timeoutId = setTimeout(_() => func(...args), delay);
   };
 }
 
@@ -504,7 +504,7 @@ export function throttle<T extends (...args: any[]) => any>(
   let lastCall = 0;
 
   return (...args: Parameters<T>) => {
-    const now = Date.now();
+    const _now = Date.now();
     if (now - lastCall >= delay) {
       lastCall = now;
       func(...args);
@@ -513,6 +513,6 @@ export function throttle<T extends (...args: any[]) => any>(
 }
 
 // Export singleton instance
-export const performanceOptimizer = PerformanceOptimizer.getInstance();
+export const _performanceOptimizer = PerformanceOptimizer.getInstance();
 
 // PERFORMANCE_TARGETS already exported above

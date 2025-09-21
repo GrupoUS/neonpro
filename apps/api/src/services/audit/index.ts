@@ -8,7 +8,7 @@ export { AgentAuditService } from './agent-audit-service';
 export type { AuditEvent, AuditQueryOptions } from './agent-audit-service';
 
 // Audit event types
-export const AUDIT_EVENTS = {
+export const _AUDIT_EVENTS = {
   DATA_ACCESS: 'data_access',
   AI_QUERY: 'ai_query',
   SESSION_CREATE: 'session_create',
@@ -19,7 +19,7 @@ export const AUDIT_EVENTS = {
 } as const;
 
 // Sensitivity levels
-export const SENSITIVITY_LEVELS = {
+export const _SENSITIVITY_LEVELS = {
   LOW: 'low',
   MEDIUM: 'medium',
   HIGH: 'high',
@@ -27,7 +27,7 @@ export const SENSITIVITY_LEVELS = {
 } as const;
 
 // Data retention policies
-export const RETENTION_POLICIES = {
+export const _RETENTION_POLICIES = {
   PATIENT_DATA: '25_years',
   FINANCIAL_DATA: '7_years',
   AGENT_DATA: '30_days',
@@ -36,7 +36,7 @@ export const RETENTION_POLICIES = {
 } as const;
 
 // Compliance categories
-export const COMPLIANCE_CATEGORIES = {
+export const _COMPLIANCE_CATEGORIES = {
   LGPD: 'lgpd',
   HIPAA: 'hipaa',
   GDPR: 'gdpr',
@@ -45,7 +45,7 @@ export const COMPLIANCE_CATEGORIES = {
 } as const;
 
 // Helper functions for audit logging
-export const createAuditContext = (request: any): {
+export const _createAuditContext = (_request: any): {
   ipAddress: string;
   userAgent: string;
 } => {
@@ -87,7 +87,7 @@ export const sanitizeForAudit = (data: any): any => {
   return sanitized;
 };
 
-export const formatAuditMetadata = (metadata: Record<string, any>): string => {
+export const _formatAuditMetadata = (metadata: Record<string, any>): string => {
   try {
     return JSON.stringify(sanitizeForAudit(metadata));
   } catch {

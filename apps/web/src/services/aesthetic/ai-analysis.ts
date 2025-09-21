@@ -244,7 +244,7 @@ export class AestheticAIAnalysisService {
             model: this.config.model,
             messages: [
               {
-                role: 'user',
+                _role: 'user',
                 content: [
                   {
                     type: 'text',
@@ -277,7 +277,7 @@ export class AestheticAIAnalysisService {
 
       // Validate and normalize the analysis result
       return this.validateAnalysis(analysisResult);
-    } catch (error) {
+    } catch (_error) {
       console.error('AI Analysis error:', error);
       // Fallback to mock analysis in case of API failure
       return this.getMockAnalysis(analysisType);
@@ -344,8 +344,7 @@ export class AestheticAIAnalysisService {
     });
 
     // Remove duplicates and add unique IDs
-    const uniqueSuggestions = suggestions.filter(
-      (suggestion, index, self) => index === self.findIndex(s => s.id === suggestion.id),
+    const uniqueSuggestions = suggestions.filter(_(suggestion,_index,_self) => index === self.findIndex(s => s.id === suggestion.id),
     );
 
     // Sort by priority and confidence
@@ -354,7 +353,7 @@ export class AestheticAIAnalysisService {
         ...suggestion,
         id: `${suggestion.id}-${Date.now()}-${Math.random().toString(36).substring(2)}`,
       }))
-      .sort((a, b) => {
+      .sort(_(a,_b) => {
         // Priority sorting: high > medium > low
         const priorityOrder = { high: 3, medium: 2, low: 1 };
         const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
@@ -517,8 +516,7 @@ export class AestheticAIAnalysisService {
 
     // Aggregate results
     const allConcerns = analyses.flatMap(a => a.concerns);
-    const concernCounts = allConcerns.reduce(
-      (acc, concern) => {
+    const concernCounts = allConcerns.reduce(_(acc,_concern) => {
         acc[concern] = (acc[concern] || 0) + 1;
         return acc;
       },
@@ -526,17 +524,16 @@ export class AestheticAIAnalysisService {
     );
 
     const primaryConcerns = Object.entries(concernCounts)
-      .sort(([, a], [, b]) => b - a)
+      .sort(_([,_a],_[,_b]) => b - a)
       .slice(0, 5)
-      .map(([concern]) => concern);
+      .map(_([concern]) => concern);
 
-    const averageSeverity = analyses.reduce((sum, a) => sum + a.severity.overall, 0)
+    const averageSeverity = analyses.reduce(_(sum,_a) => sum + a.severity.overall, 0)
       / analyses.length;
 
     // Generate combined treatment suggestions
     const allSuggestions = analyses.flatMap(a => this.generateTreatmentSuggestions(a));
-    const uniqueSuggestions = allSuggestions.filter(
-      (suggestion, index, self) => index === self.findIndex(s => s.id === suggestion.id),
+    const uniqueSuggestions = allSuggestions.filter(_(suggestion,_index,_self) => index === self.findIndex(s => s.id === suggestion.id),
     );
 
     return {
@@ -545,7 +542,7 @@ export class AestheticAIAnalysisService {
         primaryConcerns,
         averageSeverity,
         treatmentRecommendations: uniqueSuggestions
-          .sort((a, b) => b.confidence - a.confidence)
+          .sort(_(a,_b) => b.confidence - a.confidence)
           .slice(0, 8),
       },
     };
@@ -553,7 +550,7 @@ export class AestheticAIAnalysisService {
 }
 
 // Create default instance
-export const aestheticAIAnalysisService = new AestheticAIAnalysisService({
+export const _aestheticAIAnalysisService = new AestheticAIAnalysisService({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY || '',
   model: 'gpt-4-vision-preview',
   maxTokens: 1000,

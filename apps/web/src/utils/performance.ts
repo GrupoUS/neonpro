@@ -20,7 +20,7 @@ declare global {
     gtag?: (
       command: 'event' | string,
       action: string,
-      params?: Record<string, any>,
+      params?: Record<string,_any>,
     ) => void;
   }
 }
@@ -121,7 +121,7 @@ export class PerformanceMonitor {
 }
 
 // Image lazy loading utility
-export const createIntersectionObserver = (
+export const _createIntersectionObserver = (
   callback: (entries: IntersectionObserverEntry[]) => void,
   options: IntersectionObserverInit = {},
 ): IntersectionObserver | null => {
@@ -137,7 +137,7 @@ export const createIntersectionObserver = (
 };
 
 // Resource preloading utilities
-export const preloadResource = (
+export const _preloadResource = (
   href: string,
   as: string,
   crossorigin?: string,
@@ -153,7 +153,7 @@ export const preloadResource = (
   document.head.appendChild(link);
 };
 
-export const prefetchResource = (_href: any) => {
+export const _prefetchResource = (_href: any) => {
   if (typeof document === 'undefined') return;
 
   const link = document.createElement('link');
@@ -164,7 +164,7 @@ export const prefetchResource = (_href: any) => {
 };
 
 // Bundle size monitoring
-export const logBundleSize = () => {
+export const _logBundleSize = () => {
   if (typeof window === 'undefined' || process.env.NODE_ENV !== 'development') {
     return;
   }
@@ -181,7 +181,7 @@ export const logBundleSize = () => {
 };
 
 // Memory usage monitoring
-export const monitorMemoryUsage = ():
+export const _monitorMemoryUsage = ():
   | { used: number; total: number; limit: number }
   | undefined =>
 {
@@ -211,7 +211,7 @@ export const performanceMonitor = new PerformanceMonitor();
 
 // Cleanup on page unload
 if (typeof window !== 'undefined') {
-  window.addEventListener('beforeunload', () => {
+  window.addEventListener(_'beforeunload',_() => {
     performanceMonitor.destroy();
   });
 }

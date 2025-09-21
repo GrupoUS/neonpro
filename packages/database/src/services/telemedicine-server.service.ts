@@ -138,7 +138,7 @@ export class TelemedicineServer {
     this.app.use(express.urlencoded({ extended: true }));
 
     // Request logging for compliance
-    this.app.use((req, _res, next) => {
+    this.app.use(_(req, _res,_next) => {
       const sessionId = req.headers["x-session-id"] as string;
 
       if (sessionId) {
@@ -156,7 +156,7 @@ export class TelemedicineServer {
               timestamp: new Date().toISOString(),
             },
           })
-          .catch((error) => {
+          .catch(_(error) => {
             console.error("Error logging compliance event:", error);
           });
       }
@@ -170,7 +170,7 @@ export class TelemedicineServer {
    */
   private setupRoutes(): void {
     // Health check
-    this.app.get("/health", (_req, res) => {
+    this.app.get(_"/health",_(_req,_res) => {
       res.json({
         status: "healthy",
         timestamp: new Date().toISOString(),
@@ -328,7 +328,7 @@ export class TelemedicineServer {
       }
 
       res.json(result);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error validating session:", error);
       res.status(500).json({
         error: "Session validation failed",
@@ -388,7 +388,7 @@ export class TelemedicineServer {
           anvisa: true,
         },
       });
-    } catch (error) {
+    } catch (_error) {
       console.error("Error creating session:", error);
       res.status(500).json({
         error: "Failed to create session",
@@ -422,7 +422,7 @@ export class TelemedicineServer {
         complianceStatus: await this.getSessionComplianceStatus(sessionId),
         ...(activeSession && { requestDetails: activeSession }),
       });
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting session:", error);
       res.status(500).json({
         error: "Failed to get session",
@@ -455,7 +455,7 @@ export class TelemedicineServer {
       });
 
       res.json(result);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error starting session:", error);
       res.status(500).json({
         error: "Failed to start session",
@@ -497,7 +497,7 @@ export class TelemedicineServer {
       });
 
       res.json(result);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error ending session:", error);
       res.status(500).json({
         error: "Failed to end session",
@@ -535,7 +535,7 @@ export class TelemedicineServer {
       });
 
       res.json(result);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error cancelling session:", error);
       res.status(500).json({
         error: "Failed to cancel session",
@@ -557,7 +557,7 @@ export class TelemedicineServer {
       const complianceStatus = await this.getSessionComplianceStatus(sessionId);
 
       res.json(complianceStatus);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting compliance status:", error);
       res.status(500).json({
         error: "Failed to get compliance status",
@@ -580,7 +580,7 @@ export class TelemedicineServer {
         await this.webrtcService.getQualityMetrics(sessionId);
 
       res.json(qualityMetrics);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting quality metrics:", error);
       res.status(500).json({
         error: "Failed to get quality metrics",
@@ -619,7 +619,7 @@ export class TelemedicineServer {
         sessionId,
         consentGiven: granted === true,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error("Error updating consent:", error);
       res.status(500).json({
         error: "Failed to update consent",
@@ -645,7 +645,7 @@ export class TelemedicineServer {
       );
 
       res.json(verification);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error verifying patient identity:", error);
       res.status(500).json({
         error: "Identity verification failed",
@@ -671,7 +671,7 @@ export class TelemedicineServer {
       );
 
       res.json(verification);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error verifying physician identity:", error);
       res.status(500).json({
         error: "Identity verification failed",
@@ -697,7 +697,7 @@ export class TelemedicineServer {
       );
 
       res.json(validation);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error validating medical license:", error);
       res.status(500).json({
         error: "License validation failed",
@@ -735,7 +735,7 @@ export class TelemedicineServer {
       };
 
       res.json(config);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting WebRTC config:", error);
       res.status(500).json({
         error: "Failed to get WebRTC config",
@@ -754,7 +754,7 @@ export class TelemedicineServer {
     try {
       const iceServers = await this.getIceServersConfig();
       res.json({ iceServers });
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting ICE servers:", error);
       res.status(500).json({
         error: "Failed to get ICE servers",
@@ -779,7 +779,7 @@ export class TelemedicineServer {
       );
 
       res.json(result);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error starting recording:", error);
       res.status(500).json({
         error: "Failed to start recording",
@@ -801,7 +801,7 @@ export class TelemedicineServer {
       const result = await this.webrtcService.stopRecording(sessionId);
 
       res.json(result);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error stopping recording:", error);
       res.status(500).json({
         error: "Failed to stop recording",
@@ -822,7 +822,7 @@ export class TelemedicineServer {
 
       // This would implement secure recording download
       res.status(501).json({ error: "Recording download not implemented" });
-    } catch (error) {
+    } catch (_error) {
       console.error("Error downloading recording:", error);
       res.status(500).json({
         error: "Failed to download recording",
@@ -844,7 +844,7 @@ export class TelemedicineServer {
       const auditTrail = await this.cfmService.getSessionAuditTrail(sessionId);
 
       res.json(auditTrail);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting audit trail:", error);
       res.status(500).json({
         error: "Failed to get audit trail",
@@ -927,7 +927,7 @@ export class TelemedicineServer {
    * Starts the telemedicine server
    */
   public start(): void {
-    this.httpServer.listen(this.config.port, () => {
+    this.httpServer.listen(_this.config.port,_() => {
       console.log(`Telemedicine Server listening on port ${this.config.port}`);
       console.log(
         `Signaling Server listening on port ${this.config.signalingPort}`,
@@ -989,12 +989,12 @@ if (require.main === module) {
   telemedicineServer.start();
 
   // Graceful shutdown
-  process.on("SIGTERM", async () => {
+  process.on(_"SIGTERM",_async () => {
     await telemedicineServer.stop();
     process.exit(0);
   });
 
-  process.on("SIGINT", async () => {
+  process.on(_"SIGINT",_async () => {
     await telemedicineServer.stop();
     process.exit(0);
   });

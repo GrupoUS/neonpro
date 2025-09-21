@@ -19,7 +19,7 @@ interface PerformanceMetrics {
   avgQueryTime: number;
   totalQueryTime: number;
   slowQueries: Array<{
-    query: string;
+    _query: string;
     duration: number;
     timestamp: Date;
   }>;
@@ -160,7 +160,7 @@ export class HealthcareQueryOptimizer {
   async searchPatientsOptimized(
     clinicId: string,
     searchParams: {
-      query?: string;
+      _query?: string;
       page?: number;
       limit?: number;
       sortBy?: string;
@@ -209,7 +209,7 @@ export class HealthcareQueryOptimizer {
       }
 
       // Add search conditions
-      if (query) {
+      if (_query) {
         whereClause.OR = [
           { fullName: { contains: query, mode: 'insensitive' } },
           { email: { contains: query, mode: 'insensitive' } },
@@ -258,7 +258,7 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return result;
-    } catch (error) {
+    } catch (_error) {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
     }
@@ -376,7 +376,7 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return result;
-    } catch (error) {
+    } catch (_error) {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
     }
@@ -404,8 +404,7 @@ export class HealthcareQueryOptimizer {
       for (let i = 0; i < patientsData.length; i += batchSize) {
         const batch = patientsData.slice(i, i + batchSize);
 
-        const batchResults = await Promise.allSettled(
-          batch.map(async (patientData, batchIndex) => {
+        const batchResults = await Promise.allSettled(_batch.map(async (patientData,_batchIndex) => {
             const actualIndex = i + batchIndex;
             try {
               // Ensure patientData is a valid object before spreading
@@ -421,7 +420,7 @@ export class HealthcareQueryOptimizer {
                 },
               });
               return { success: true, index: actualIndex };
-            } catch (error) {
+            } catch (_error) {
               return {
                 success: false,
                 index: actualIndex,
@@ -453,7 +452,7 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return results;
-    } catch (error) {
+    } catch (_error) {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
     }
@@ -583,7 +582,7 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return { metrics, fromCache: false };
-    } catch (error) {
+    } catch (_error) {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
     }
@@ -608,7 +607,7 @@ export class HealthcareQueryOptimizer {
       // Track slow queries
       if (duration > this.config.slowQueryThreshold) {
         this.metrics.slowQueries.push({
-          query: 'Query details would be captured here',
+          _query: 'Query details would be captured here',
           duration,
           timestamp: new Date(),
         });
@@ -683,7 +682,7 @@ export class ConnectionPoolMonitor {
    * Start monitoring connection pool
    */
   startMonitoring(intervalMs = 30000): void {
-    this.monitoringInterval = setInterval(async () => {
+    this.monitoringInterval = setInterval(_async () => {
       try {
         const metrics = await this.getConnectionMetrics();
 
@@ -697,7 +696,7 @@ export class ConnectionPoolMonitor {
             metrics.utilization + '%',
           );
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Connection pool monitoring failed:', error);
       }
     }, intervalMs);

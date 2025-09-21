@@ -54,13 +54,13 @@ export const DEFAULT_LGPD_CONFIG = {
 };
 
 // Utility functions
-export const isHealthcareRole = (userRole: string): boolean => {
+export const _isHealthcareRole = (userRole: string): boolean => {
   return DEFAULT_LGPD_CONFIG.healthcareRoles.some(role =>
     userRole.toLowerCase().includes(role.toLowerCase())
   );
 };
 
-export const getLegalBasisText = (basis: string): string => {
+export const _getLegalBasisText = (basis: string): string => {
   const legalBases: Record<string, string> = {
     consent: 'LGPD Art. 7º, I - Consentimento do titular',
     contract: 'LGPD Art. 7º, V - Execução de contrato',
@@ -73,7 +73,7 @@ export const getLegalBasisText = (basis: string): string => {
   return legalBases[basis] || 'LGPD Art. 7º';
 };
 
-export const formatComplianceScore = (score: number): string => {
+export const _formatComplianceScore = (score: number): string => {
   if (score >= 95) return 'Excelente';
   if (score >= 80) return 'Bom';
   if (score >= 60) return 'Regular';
@@ -82,7 +82,7 @@ export const formatComplianceScore = (score: number): string => {
 };
 
 // React hooks for easy integration
-export const useLGPDCompliance = () => {
+export const _useLGPDCompliance = () => {
   // This would typically use React context for LGPD compliance state
   // For now, it's a placeholder for future React hook implementation
   return {

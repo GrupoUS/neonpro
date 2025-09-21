@@ -112,7 +112,7 @@ export function WaitingRoom({
   const [waitingTime, setWaitingTime] = useState(0);
 
   // Effects
-  useEffect(() => {
+  useEffect(_() => {
     if (appointmentId && patientId) {
       joinWaitingRoom();
     }
@@ -123,9 +123,9 @@ export function WaitingRoom({
   }, [appointmentId, patientId, joinWaitingRoom, leaveWaitingRoom]);
 
   // Waiting time counter
-  useEffect(() => {
+  useEffect(_() => {
     if (waitingRoom?.joinedAt) {
-      const interval = setInterval(() => {
+      const interval = setInterval(_() => {
         const joinTime = new Date(waitingRoom.joinedAt!).getTime();
         const currentTime = Date.now();
         setWaitingTime(Math.floor((currentTime - joinTime) / 1000));
@@ -136,14 +136,14 @@ export function WaitingRoom({
   }, [waitingRoom?.joinedAt]);
 
   // Auto-perform pre-consultation check
-  useEffect(() => {
+  useEffect(_() => {
     if (waitingRoom && !checkResults) {
       performCheck();
     }
   }, [waitingRoom, checkResults, performCheck]);
 
   // Check if ready for consultation
-  useEffect(() => {
+  useEffect(_() => {
     const isReady = Boolean(
       checkResults?.systemCheck
         && checkResults?.connectionCheck
@@ -171,7 +171,7 @@ export function WaitingRoom({
   }, []);
 
   // Handle emergency escalation
-  const handleEmergencyEscalation = useCallback(async () => {
+  const handleEmergencyEscalation = useCallback(_async () => {
     try {
       const assessment = await performTriage({
         symptoms: preConsultationData.symptoms,
@@ -191,7 +191,7 @@ export function WaitingRoom({
   }, [preConsultationData, performTriage, onEmergencyEscalation]);
 
   // Handle consultation start
-  const handleConsultationStart = useCallback(async () => {
+  const handleConsultationStart = useCallback(_async () => {
     if (!isPreparationComplete) {
       toast.error('Complete a preparação antes de iniciar');
       return;
@@ -229,7 +229,7 @@ export function WaitingRoom({
 
   // Handle symptoms update
   // Handle consent completion
-  const handleConsentComplete = useCallback(async () => {
+  const handleConsentComplete = useCallback(_async () => {
     try {
       await updateConsent({
         given: true,
@@ -449,8 +449,7 @@ export function WaitingRoom({
                         </div>
                       </div>
                     </div>
-                    {!consent?.given && (
-                      <Button
+                    {!consent?.given && (_<Button
                         size='sm'
                         onClick={() => setShowConsentDialog(true)}
                         className='ml-2'

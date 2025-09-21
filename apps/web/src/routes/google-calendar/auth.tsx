@@ -59,7 +59,7 @@ function GoogleCalendarAuth() {
     },
   });
 
-  useEffect(() => {
+  useEffect(_() => {
     if (error) {
       // Handle OAuth error
       navigate({
@@ -92,8 +92,7 @@ function GoogleCalendarAuth() {
   }
 
   if (callbackMutation.isError) {
-    return (
-      <div className='flex items-center justify-center min-h-screen'>
+    return (_<div className='flex items-center justify-center min-h-screen'>
         <div className='text-center max-w-md'>
           <div className='text-red-500 mb-4'>
             <svg
@@ -114,7 +113,7 @@ function GoogleCalendarAuth() {
             Erro na Conexão
           </h2>
           <p className='text-gray-600 mb-4'>
-            Não foi possível conectar sua conta do Google Calendar. Por favor, tente novamente.
+            Não foi possível conectar sua conta do Google Calendar. Por favor,_tente novamente.
           </p>
           <button
             onClick={() => navigate({ to: '/settings/calendar' })}

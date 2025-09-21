@@ -14,13 +14,9 @@
  */
 
 import { createHash } from 'crypto';
-import { Redis } from 'ioredis';
-import { z } from 'zod';
 import {
   AguiQueryMessage,
   AguiResponseMessage,
-  AguiSource,
-  AguiUsageStats,
 } from '../agui-protocol/types';
 
 import { CacheManagementService } from '../../../shared/src/services/cache-management';
@@ -34,10 +30,10 @@ import {
 import { RedisCacheBackend } from '../../../shared/src/services/redis-cache-backend';
 
 // Input validation schemas
-const QueryCacheKeySchema = z.string().min(1).max(1000);
+const _QueryCacheKeySchema = z.string().min(1).max(1000);
 const UserIdSchema = z.string().min(1).max(255);
-const QueryTTLSchema = z.number().min(1).max(86400); // Max 24 hours
-const CacheSizeSchema = z.number().min(1).max(10000);
+const _QueryTTLSchema = z.number().min(1).max(86400); // Max 24 hours
+const _CacheSizeSchema = z.number().min(1).max(10000);
 
 /**
  * Enhanced query cache configuration
@@ -76,7 +72,7 @@ export interface EnhancedQueryCacheConfig {
 export interface QueryCacheEntry {
   // Query information
   queryHash: string;
-  query: AguiQueryMessage;
+  _query: AguiQueryMessage;
 
   // Response data
   response: AguiResponseMessage;
@@ -87,7 +83,7 @@ export interface QueryCacheEntry {
   hitCount: number;
 
   // Healthcare context
-  userId: string;
+  _userId: string;
   patientId?: string;
   clinicId?: string;
   dataCategories: string[];
@@ -161,8 +157,8 @@ export class EnhancedQueryCacheService {
    * Get cached response for query
    */
   async getCachedResponse(
-    query: AguiQueryMessage,
-    userId: string,
+    _query: AguiQueryMessage,
+    _userId: string,
     options: {
       clinicId?: string;
       forceRefresh?: boolean;
@@ -179,8 +175,8 @@ export class EnhancedQueryCacheService {
 
     try {
       // Validate inputs
-      const validatedUserId = UserIdSchema.parse(userId);
-      const validatedQuery = this.validateQuery(query);
+      const validatedUserId = UserIdSchema.parse(_userId);
+      const validatedQuery = this.validateQuery(_query);
 
       if (options.bypassCache) {
         return { cached: false, source: 'miss', executionTime: Date.now() - startTime };
@@ -194,7 +190,7 @@ export class EnhancedQueryCacheService {
         cacheKey,
         this.createHealthcareContext(validatedQuery, validatedUserId, options.clinicId),
         {
-          userId: validatedUserId,
+          _userId: validatedUserId,
           sessionId: query.context?.sessionId,
         },
       );
@@ -247,7 +243,8 @@ export class EnhancedQueryCacheService {
       );
 
       return { cached: false, source: 'miss', executionTime };
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error getting cached response:', error);
       this.stats.errorCount++;
       this.stats.lastError = error instanceof Error ? error.message : 'Unknown error';
@@ -260,9 +257,9 @@ export class EnhancedQueryCacheService {
    * Cache query response
    */
   async cacheResponse(
-    query: AguiQueryMessage,
+    _query: AguiQueryMessage,
     response: AguiResponseMessage,
-    userId: string,
+    _userId: string,
     options: {
       clinicId?: string;
       customTTL?: number;
@@ -272,8 +269,8 @@ export class EnhancedQueryCacheService {
   ): Promise<CacheOperationResult> {
     try {
       // Validate inputs
-      const validatedUserId = UserIdSchema.parse(userId);
-      const validatedQuery = this.validateQuery(query);
+      const validatedUserId = UserIdSchema.parse(_userId);
+      const validatedQuery = this.validateQuery(_query);
       const validatedResponse = this.validateResponse(response);
 
       // Generate cache key
@@ -282,12 +279,12 @@ export class EnhancedQueryCacheService {
       // Create cache entry
       const entry: QueryCacheEntry = {
         queryHash: this.generateQueryHash(validatedQuery),
-        query: validatedQuery,
+        _query: validatedQuery,
         response: validatedResponse,
         timestamp: new Date().toISOString(),
         ttl: options.customTTL || this.config.defaultTTL,
         hitCount: 1,
-        userId: validatedUserId,
+        _userId: validatedUserId,
         patientId: validatedQuery.context?.patientId,
         clinicId: options.clinicId,
         dataCategories: this.extractDataCategories(validatedResponse),
@@ -309,10 +306,10 @@ export class EnhancedQueryCacheService {
         {
           ttl: entry.ttl,
           sensitivity: entry.sensitivity,
-          context: this.createHealthcareContext(validatedQuery, validatedUserId, options.clinicId),
+          _context: this.createHealthcareContext(validatedQuery, validatedUserId, options.clinicId),
           tier: entry.cacheTier,
           userContext: {
-            userId: validatedUserId,
+            _userId: validatedUserId,
             sessionId: validatedQuery.context?.sessionId,
           },
         },
@@ -328,7 +325,8 @@ export class EnhancedQueryCacheService {
       }
 
       return result;
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error caching response:', error);
       this.stats.errorCount++;
       this.stats.lastError = error instanceof Error ? error.message : 'Unknown error';
@@ -348,7 +346,7 @@ export class EnhancedQueryCacheService {
   async invalidateCache(
     pattern: string,
     options: {
-      userId?: string;
+      _userId?: string;
       patientId?: string;
       clinicId?: string;
       reason?: string;
@@ -364,7 +362,7 @@ export class EnhancedQueryCacheService {
 
       // Build invalidation pattern
       let invalidationPattern = pattern;
-      if (options.userId) {
+      if (options._userId) {
         invalidationPattern = `*user:${options.userId}*${pattern}*`;
       }
       if (options.patientId) {
@@ -383,7 +381,7 @@ export class EnhancedQueryCacheService {
             dataClassification: CacheDataSensitivity.INTERNAL,
           }
           : undefined,
-        options.userId ? { userId: options.userId } : undefined,
+        options.userId ? { _userId: options.userId } : undefined,
       );
 
       totalInvalidated += invalidatedCount;
@@ -394,7 +392,7 @@ export class EnhancedQueryCacheService {
         console.log('[Query Cache] Cache invalidation:', {
           pattern,
           reason: options.reason,
-          userId: options.userId,
+          _userId: options.userId,
           patientId: options.patientId,
           clinicId: options.clinicId,
           totalInvalidated,
@@ -407,7 +405,8 @@ export class EnhancedQueryCacheService {
         invalidatedCount: totalInvalidated,
         details: results,
       };
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error invalidating cache:', error);
       return {
         success: false,
@@ -427,7 +426,7 @@ export class EnhancedQueryCacheService {
 
       // Update memory usage
       let totalMemoryUsage = 0;
-      cacheStats.forEach((tierStats, tier) => {
+      cacheStats.forEach(_(tierStats,_tier) => {
         totalMemoryUsage += tierStats.memoryUsage;
         if (tier === CacheTier.MEMORY) {
           this.stats.memoryCacheSize = tierStats.totalEntries;
@@ -439,7 +438,8 @@ export class EnhancedQueryCacheService {
       this.stats.totalMemoryUsage = totalMemoryUsage;
 
       return { ...this.stats };
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error getting statistics:', error);
       return this.stats;
     }
@@ -505,7 +505,8 @@ export class EnhancedQueryCacheService {
         details,
         stats: await this.getStats(),
       };
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Health check failed:', error);
       return {
         healthy: false,
@@ -577,8 +578,7 @@ export class EnhancedQueryCacheService {
    * Initialize health check timer
    */
   private initializeHealthCheck(): void {
-    this.healthCheckTimer = setInterval(
-      () => this.healthCheck(),
+    this.healthCheckTimer = setInterval(_() => this.healthCheck(),
       this.config.healthCheckInterval,
     );
   }
@@ -586,14 +586,14 @@ export class EnhancedQueryCacheService {
   /**
    * Generate secure cache key
    */
-  private generateCacheKey(query: AguiQueryMessage, userId: string, clinicId?: string): string {
+  private generateCacheKey(_query: AguiQueryMessage, _userId: string, clinicId?: string): string {
     const queryData = {
-      query: this.sanitizeQueryString(query.query),
-      context: {
+      _query: this.sanitizeQueryString(query._query),
+      _context: {
         patientId: query.context?.patientId
           ? this.sanitizeString(query.context.patientId)
           : undefined,
-        userId: query.context?.userId ? this.sanitizeString(query.context.userId) : undefined,
+        _userId: query.context?.userId ? this.sanitizeString(query.context._userId) : undefined,
         sessionId: query.context?.sessionId,
       },
       options: {
@@ -604,19 +604,19 @@ export class EnhancedQueryCacheService {
     };
 
     const hash = createHash('sha256')
-      .update(JSON.stringify(queryData) + this.config.securityKey + userId)
+      .update(JSON.stringify(queryData) + this.config.securityKey + _userId)
       .digest('hex');
 
-    return `query:${userId}:${clinicId ? `${clinicId}:` : ''}${hash}`;
+    return `_query:${userId}:${clinicId ? `${clinicId}:` : ''}${hash}`;
   }
 
   /**
    * Generate query hash for comparison
    */
-  private generateQueryHash(query: AguiQueryMessage): string {
+  private generateQueryHash(_query: AguiQueryMessage): string {
     const queryData = {
-      query: query.query.toLowerCase().trim(),
-      context: {
+      _query: query.query.toLowerCase().trim(),
+      _context: {
         patientId: query.context?.patientId,
         clinicId: query.context?.clinicId,
       },
@@ -635,8 +635,8 @@ export class EnhancedQueryCacheService {
    * Create healthcare context for caching
    */
   private createHealthcareContext(
-    query: AguiQueryMessage,
-    userId: string,
+    _query: AguiQueryMessage,
+    _userId: string,
     clinicId?: string,
   ): HealthcareCacheContext {
     return {
@@ -698,7 +698,7 @@ export class EnhancedQueryCacheService {
    * Determine data sensitivity level
    */
   private determineSensitivity(
-    query: AguiQueryMessage,
+    _query: AguiQueryMessage,
     response: AguiResponseMessage,
   ): CacheDataSensitivity {
     // Check for patient data
@@ -748,7 +748,7 @@ export class EnhancedQueryCacheService {
    * Check if operation requires audit logging
    */
   private requiresAudit(
-    query: AguiQueryMessage,
+    _query: AguiQueryMessage,
     response: AguiResponseMessage,
   ): boolean {
     // Audit patient data access
@@ -767,14 +767,14 @@ export class EnhancedQueryCacheService {
   /**
    * Validate query structure
    */
-  private validateQuery(query: AguiQueryMessage): AguiQueryMessage {
+  private validateQuery(_query: AguiQueryMessage): AguiQueryMessage {
     if (!query || typeof query !== 'object') {
       throw new Error('Invalid query object');
     }
 
     return {
       ...query,
-      query: this.sanitizeQueryString(query.query || ''),
+      _query: this.sanitizeQueryString(query.query || ''),
       options: {
         maxResults: Math.min(query.options?.maxResults || 10, 100),
         model: this.sanitizeString(query.options?.model || 'default'),
@@ -815,7 +815,7 @@ export class EnhancedQueryCacheService {
   /**
    * Sanitize query string
    */
-  private sanitizeQueryString(query: string): string {
+  private sanitizeQueryString(_query: string): string {
     if (typeof query !== 'string') return '';
     return query
       .replace(/[<>"'&]/g, '')

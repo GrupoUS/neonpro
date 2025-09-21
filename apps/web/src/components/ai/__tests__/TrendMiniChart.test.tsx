@@ -5,13 +5,13 @@ import { describe, expect, it } from 'vitest';
 // The chart is defined inside insights-dashboard; import named export
 import { TrendMiniChart } from '../insights-dashboard';
 
-describe('TrendMiniChart', () => {
-  it('renders fallback when no data', () => {
+describe(_'TrendMiniChart',_() => {
+  it(_'renders fallback when no data',_() => {
     render(<TrendMiniChart data={[]} ariaLabel='Trends' />);
     expect(screen.getByText(/Sem dados de tendências/i)).toBeInTheDocument();
   });
 
-  it('renders accessible svg with role and label', () => {
+  it(_'renders accessible svg with role and label',_() => {
     const data = [{ value: 1 }, { value: 3 }, { value: 2 }];
     render(
       <TrendMiniChart
@@ -33,7 +33,7 @@ describe('TrendMiniChart', () => {
     expect(screen.getByText(/Mini gráfico/i)).toBeInTheDocument();
   });
 
-  it('renders a path element to draw the line', () => {
+  it(_'renders a path element to draw the line',_() => {
     const data = [{ value: 2 }, { value: 4 }, { value: 6 }];
     const { container } = render(
       <TrendMiniChart data={data} ariaLabel='Line' />,

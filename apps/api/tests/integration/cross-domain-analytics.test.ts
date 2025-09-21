@@ -25,7 +25,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = createTestClient({ role: 'admin' });
+    testClient = createTestClient({ _role: 'admin' });
     clinicNetwork = [
       'clinic-sp-001',
       'clinic-rj-002',

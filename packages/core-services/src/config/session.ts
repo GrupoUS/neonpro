@@ -15,9 +15,9 @@ export interface SessionConfig {
 
 export interface UserSession {
   id: string;
-  userId: string;
+  _userId: string;
   email?: string;
-  role?: string;
+  _role?: string;
   permissions?: string[];
   metadata?: Record<string, any>;
   createdAt: string;
@@ -37,7 +37,7 @@ export class MemorySessionStore implements SessionStore {
   private cleanupInterval: NodeJS.Timeout;
 
   constructor(cleanupIntervalMs = 60000) {
-    this.cleanupInterval = setInterval(() => {
+    this.cleanupInterval = setInterval(_() => {
       void this.cleanup();
     }, cleanupIntervalMs);
   }
@@ -63,7 +63,7 @@ export class MemorySessionStore implements SessionStore {
   }
 
   async cleanup(): Promise<void> {
-    const now = new Date();
+    const _now = new Date();
     for (const [sessionId, session] of this.sessions.entries()) {
       if (new Date(session.expiresAt) < now) {
         this.sessions.delete(sessionId);
@@ -91,21 +91,21 @@ export class SessionManager {
   }
 
   async createSession(userData: {
-    userId: string;
+    _userId: string;
     email?: string;
-    role?: string;
+    _role?: string;
     permissions?: string[];
     metadata?: Record<string, any>;
   }): Promise<{ sessionId: string; session: UserSession }> {
     const sessionId = this.generateSessionId();
-    const now = new Date();
+    const _now = new Date();
     const expiresAt = new Date(now.getTime() + this.config.maxAge * 1000);
 
     const session: UserSession = {
       id: sessionId,
-      userId: userData.userId,
+      _userId: userData.userId,
       email: userData.email,
-      role: userData.role || "user",
+      _role: userData.role || "user",
       permissions: userData.permissions || [],
       metadata: userData.metadata || {},
       createdAt: now.toISOString(),
@@ -142,7 +142,7 @@ export class SessionManager {
     const session = await this.store.get(sessionId);
     if (!session) return null;
 
-    const now = new Date();
+    const _now = new Date();
     const expiresAt = new Date(now.getTime() + this.config.maxAge * 1000);
 
     const renewedSession: UserSession = {
@@ -160,7 +160,7 @@ export class SessionManager {
   }
 
   shouldRenewSession(session: UserSession): boolean {
-    const now = new Date();
+    const _now = new Date();
     const expiresAt = new Date(session.expiresAt);
     const timeRemaining = (expiresAt.getTime() - now.getTime()) / 1000;
     return timeRemaining < this.config.renewThreshold;
@@ -264,14 +264,14 @@ export function sessionMiddleware(options?: {
     }
 
     if (session && options?.roles && options.roles.length > 0) {
-      if (!session.role || !options.roles.includes(session.role)) {
+      if (!session.role || !options.roles.includes(session._role)) {
         return c.json({ error: "Insufficient permissions" }, 403);
       }
     }
 
     if (session && options?.permissions && options.permissions.length > 0) {
       const userPermissions = session.permissions || [];
-      const hasAllPermissions = options.permissions.every((permission) =>
+      const hasAllPermissions = options.permissions.every(_(permission) =>
         userPermissions.includes(permission),
       );
 
@@ -287,7 +287,7 @@ export function sessionMiddleware(options?: {
         ? {
             id: session.userId,
             email: session.email,
-            role: session.role,
+            _role: session.role,
             permissions: session.permissions,
           }
         : null,
@@ -298,7 +298,7 @@ export function sessionMiddleware(options?: {
 }
 
 function getCookieValue(cookieHeader: string, name: string): string | null {
-  const cookies = cookieHeader.split(";").map((cookie) => cookie.trim());
+  const cookies = cookieHeader.split(";").map(_(cookie) => cookie.trim());
   for (const cookie of cookies) {
     const [cookieName, cookieValue] = cookie.split("=");
     if (cookieName === name) {

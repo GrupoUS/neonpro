@@ -1,7 +1,7 @@
 // Consent validation service (Phase 1)
 
 export interface ConsentContext {
-  userId: string;
+  _userId: string;
   clinicId: string;
   consentStatus: "valid" | "missing" | "invalid";
 }

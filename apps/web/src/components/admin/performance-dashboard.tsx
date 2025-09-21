@@ -134,10 +134,10 @@ const PerformanceDashboard: React.FC = () => {
   const [autoRefresh, setAutoRefresh] = useState(true);
 
   // Auto-refresh metrics every 30 seconds
-  useEffect(() => {
+  useEffect(_() => {
     if (!autoRefresh) return;
 
-    const interval = setInterval(() => {
+    const interval = setInterval(_() => {
       setMetrics(generateMockMetrics());
     }, 30000);
 
@@ -145,7 +145,7 @@ const PerformanceDashboard: React.FC = () => {
   }, [autoRefresh]);
 
   // Generate alerts based on performance thresholds
-  useEffect(() => {
+  useEffect(_() => {
     const newAlerts: PerformanceAlert[] = [];
 
     // Core Web Vitals alerts
@@ -225,7 +225,7 @@ const PerformanceDashboard: React.FC = () => {
     setIsRefreshing(false);
   };
 
-  const getStatusColor = (
+  const _getStatusColor = (
     value: number,
     thresholds: { good: number; warning: number },
   ) => {
@@ -243,7 +243,7 @@ const PerformanceDashboard: React.FC = () => {
     return 'Needs Attention';
   };
 
-  const webVitalsStatus = useMemo(() => {
+  const webVitalsStatus = useMemo(_() => {
     const lcp = metrics.webVitals.lcp;
     const inp = metrics.webVitals.inp;
     const cls = metrics.webVitals.cls;
@@ -268,8 +268,7 @@ const PerformanceDashboard: React.FC = () => {
     };
   }, [metrics.webVitals]);
 
-  return (
-    <div className='space-y-6 p-6'>
+  return (_<div className='space-y-6 p-6'>
       {/* Header */}
       <div className='flex items-center justify-between'>
         <div>

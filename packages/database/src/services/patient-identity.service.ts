@@ -168,7 +168,7 @@ export class PatientIdentityService {
       await this.updatePatientVerificationStatus(patientId, verificationResult);
 
       return verificationResult;
-    } catch (error) {
+    } catch (_error) {
       console.error("Error verifying patient identity:", error);
       throw new Error(
         `Identity verification failed: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -236,7 +236,7 @@ export class PatientIdentityService {
       };
 
       return { valid, document: verifiedDocument, reason };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error verifying document:", error);
       return {
         valid: false,
@@ -281,7 +281,7 @@ export class PatientIdentityService {
       await this.storeBiometricRecord(patientId, simulatedVerification);
 
       return simulatedVerification;
-    } catch (error) {
+    } catch (_error) {
       console.error("Error performing biometric verification:", error);
 
       return {
@@ -303,14 +303,13 @@ export class PatientIdentityService {
     documents: PatientIdentityDocument[],
     biometric?: BiometricVerification,
   ): "basic" | "enhanced" | "biometric" {
-    const verifiedDocs = documents.filter((doc) => doc.verified);
+    const verifiedDocs = documents.filter(_(doc) => doc.verified);
 
     if (biometric && biometric.faceMatch && biometric.livenessDetected) {
       return "biometric";
     }
 
-    if (
-      verifiedDocs.length >= 2 &&
+    if (_verifiedDocs.length >= 2 &&
       verifiedDocs.some((doc) => doc.type === "cpf")
     ) {
       return "enhanced";
@@ -329,19 +328,19 @@ export class PatientIdentityService {
     const inconsistencies: string[] = [];
 
     // Check CPF consistency
-    const cpfDoc = documents.find((doc) => doc.type === "cpf" && doc.verified);
+    const cpfDoc = documents.find(_(doc) => doc.type === "cpf" && doc.verified);
     if (cpfDoc && patient.cpf && patient.cpf !== cpfDoc.number) {
       inconsistencies.push("CPF mismatch between document and patient record");
     }
 
     // Check RG consistency
-    const rgDoc = documents.find((doc) => doc.type === "rg" && doc.verified);
+    const rgDoc = documents.find(_(doc) => doc.type === "rg" && doc.verified);
     if (rgDoc && patient.rg && patient.rg !== rgDoc.number) {
       inconsistencies.push("RG mismatch between document and patient record");
     }
 
     // Check CNS consistency
-    const cnsDoc = documents.find((doc) => doc.type === "cns" && doc.verified);
+    const cnsDoc = documents.find(_(doc) => doc.type === "cns" && doc.verified);
     if (cnsDoc && patient.cns && patient.cns !== cnsDoc.number) {
       inconsistencies.push("CNS mismatch between document and patient record");
     }
@@ -357,11 +356,10 @@ export class PatientIdentityService {
    */
   private checkCFMCompliance(documents: PatientIdentityDocument[]): boolean {
     // CFM Resolution 2314/2022 Article 6 requires secure and reliable identification
-    const verifiedDocs = documents.filter((doc) => doc.verified);
+    const verifiedDocs = documents.filter(_(doc) => doc.verified);
 
     // Must have at least one verified primary document (CPF or RG)
-    const hasPrimaryDoc = verifiedDocs.some(
-      (doc) => doc.type === "cpf" || doc.type === "rg",
+    const hasPrimaryDoc = verifiedDocs.some(_(doc) => doc.type === "cpf" || doc.type === "rg",
     );
 
     // Must have adequate verification level
@@ -417,7 +415,7 @@ export class PatientIdentityService {
       if (error) {
         console.error("Failed to store verification record:", error);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error("Error storing verification record:", error);
     }
   }
@@ -445,7 +443,7 @@ export class PatientIdentityService {
       if (error) {
         console.error("Failed to store biometric record:", error);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error("Error storing biometric record:", error);
     }
   }
@@ -471,7 +469,7 @@ export class PatientIdentityService {
       if (error) {
         console.error("Failed to update patient verification status:", error);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error("Error updating patient verification status:", error);
     }
   }
@@ -604,7 +602,7 @@ export class PatientIdentityService {
       }
 
       return { verified, confidence, method };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error verifying patient address:", error);
       return { verified: false, confidence: 0, method: "error" };
     }
@@ -681,7 +679,7 @@ export class PatientIdentityService {
         documentsVerified,
         errors,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error verifying physician identity:", error);
       return {
         isValid: false,

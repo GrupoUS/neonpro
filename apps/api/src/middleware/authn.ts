@@ -8,7 +8,7 @@ import { jwtValidator } from '../security/jwt-validator';
 interface ValidatedUser {
   id: string;
   email: string;
-  role: string;
+  _role: string;
   clinicId: string;
   name: string;
 }
@@ -75,14 +75,14 @@ export function authenticationMiddleware() {
       c.set('clinicId', user.clinicId);
 
       logger.debug('User authenticated successfully', {
-        userId: user.id,
+        _userId: user.id,
         clinicId: user.clinicId,
         path: c.req.path,
         method: c.req.method,
       });
 
       await next();
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof HTTPException) {
         throw error;
       }
@@ -113,9 +113,9 @@ export function authorizationMiddleware(allowedRoles: string[] = []) {
       });
     }
 
-    if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+    if (allowedRoles.length > 0 && !allowedRoles.includes(user._role)) {
       logger.warn('Access denied - insufficient permissions', {
-        userId: user.id,
+        _userId: user.id,
         userRole: user.role,
         allowedRoles,
         path: c.req.path,
@@ -128,7 +128,7 @@ export function authorizationMiddleware(allowedRoles: string[] = []) {
     }
 
     logger.debug('User authorized successfully', {
-      userId: user.id,
+      _userId: user.id,
       userRole: user.role,
       path: c.req.path,
       method: c.req.method,
@@ -154,7 +154,7 @@ export function clinicAccessMiddleware() {
 
     if (requestedClinicId && requestedClinicId !== user.clinicId) {
       logger.warn('Access denied - clinic mismatch', {
-        userId: user.id,
+        _userId: user.id,
         userClinicId: user.clinicId,
         requestedClinicId,
         path: c.req.path,
@@ -173,12 +173,12 @@ export function clinicAccessMiddleware() {
 /**
  * Validate user from JWT token payload and fetch user data
  */
-async function validateUserFromToken(payload: any): Promise<ValidatedUser | null> {
+async function validateUserFromToken(_payload: any): Promise<ValidatedUser | null> {
   try {
     const { sub: userId, email, role, clinic_id: clinicId, name } = payload;
 
     if (!userId || !email) {
-      logger.error('Invalid token payload: missing required fields', { payload });
+      logger.error('Invalid token _payload: missing required fields', { payload });
       return null;
     }
 
@@ -187,7 +187,7 @@ async function validateUserFromToken(payload: any): Promise<ValidatedUser | null
       return {
         id: userId,
         email,
-        role: role || 'admin',
+        _role: role || 'admin',
         clinicId: clinicId || 'test-clinic-id',
         name: name || 'Test User',
       };
@@ -198,7 +198,7 @@ async function validateUserFromToken(payload: any): Promise<ValidatedUser | null
     const { data: user, error } = await supabase
       .from('users')
       .select('id, email, role, clinic_id, name')
-      .eq('id', userId)
+      .eq('id', _userId)
       .eq('email', email)
       .single();
 
@@ -210,11 +210,11 @@ async function validateUserFromToken(payload: any): Promise<ValidatedUser | null
     return {
       id: user.id,
       email: user.email,
-      role: user.role,
+      _role: user.role,
       clinicId: user.clinic_id,
       name: user.name,
     };
-  } catch (error) {
+  } catch (_error) {
     logger.error('User validation from token failed', {
       error: error instanceof Error ? error.message : String(error),
     });
@@ -228,11 +228,11 @@ async function validateUserFromToken(payload: any): Promise<ValidatedUser | null
 export function requireAuth(allowedRoles: string[] = []) {
   return async (c: Context, next: Next) => {
     // Apply authentication first
-    await authenticationMiddleware()(c, async () => {});
+    await authenticationMiddleware()(_c,_async () => {});
 
     // Then apply authorization if roles are specified
     if (allowedRoles.length > 0) {
-      await authorizationMiddleware(allowedRoles)(c, async () => {});
+      await authorizationMiddleware(allowedRoles)(_c,_async () => {});
     }
 
     // Finally continue to the actual handler
@@ -254,8 +254,8 @@ export function optionalAuth() {
         // Validate token using comprehensive security validator
         const validationResult = await jwtValidator.validateToken(token, c);
 
-        if (validationResult.isValid && validationResult.payload) {
-          const user = await validateUserFromToken(validationResult.payload);
+        if (validationResult.isValid && validationResult._payload) {
+          const user = await validateUserFromToken(validationResult._payload);
 
           if (user) {
             c.set('user', user);
@@ -263,7 +263,7 @@ export function optionalAuth() {
             c.set('clinicId', user.clinicId);
 
             logger.debug('Optional authentication succeeded', {
-              userId: user.id,
+              _userId: user.id,
               clinicId: user.clinicId,
               path: c.req.path,
               method: c.req.method,
@@ -277,7 +277,7 @@ export function optionalAuth() {
           });
         }
       }
-    } catch (error) {
+    } catch (_error) {
       // Silently fail for optional auth
       logger.debug('Optional authentication failed', {
         error: error instanceof Error ? error.message : String(error),

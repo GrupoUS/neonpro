@@ -84,7 +84,7 @@ export class RedisCacheBackend implements CacheBackend {
       const secureKey = this.generateSecureKey(key);
       
       // Get value from Redis with timeout
-      const result = await this.safeRedisOperation(() => this.redis.get(secureKey));
+      const result = await this.safeRedisOperation(_() => this.redis.get(secureKey));
       
       if (!result) {
         this.stats.missRate = this.updateRate(this.stats.missRate, false);
@@ -120,7 +120,7 @@ export class RedisCacheBackend implements CacheBackend {
       entry.accessCount++;
       
       // Update the entry in Redis
-      await this.safeRedisOperation(() => 
+      await this.safeRedisOperation(_() => 
         this.redis.setex(secureKey, entry.ttl || this.config.defaultTTL, JSON.stringify(entry))
       );
 
@@ -130,7 +130,7 @@ export class RedisCacheBackend implements CacheBackend {
 
       return entry;
 
-    } catch (error) {
+    } catch (_error) {
       console.error('[Redis Cache] Error getting cache entry:', error);
       this.stats.missRate = this.updateRate(this.stats.missRate, false);
       throw error;
@@ -153,14 +153,14 @@ export class RedisCacheBackend implements CacheBackend {
       const secureKey = this.generateSecureKey(key);
       
       // Set in Redis with TTL
-      await this.safeRedisOperation(() => 
+      await this.safeRedisOperation(_() => 
         this.redis.setex(secureKey, validatedEntry.ttl || this.config.defaultTTL, JSON.stringify(validatedEntry))
       );
 
       // Update statistics
       this.stats.totalEntries = await this.getRedisSize();
 
-    } catch (error) {
+    } catch (_error) {
       console.error('[Redis Cache] Error setting cache entry:', error);
       throw error;
     }
@@ -176,12 +176,12 @@ export class RedisCacheBackend implements CacheBackend {
       }
 
       const secureKey = this.generateSecureKey(key);
-      const result = await this.safeRedisOperation(() => this.redis.del(secureKey));
+      const result = await this.safeRedisOperation(_() => this.redis.del(secureKey));
       
       this.stats.totalEntries = await this.getRedisSize();
       return result > 0;
 
-    } catch (error) {
+    } catch (_error) {
       console.error('[Redis Cache] Error deleting cache entry:', error);
       return false;
     }
@@ -197,7 +197,7 @@ export class RedisCacheBackend implements CacheBackend {
       }
 
       const secureKey = this.generateSecureKey(key);
-      const exists = await this.safeRedisOperation(() => this.redis.exists(secureKey));
+      const exists = await this.safeRedisOperation(_() => this.redis.exists(secureKey));
       
       if (!exists) {
         return false;
@@ -207,7 +207,7 @@ export class RedisCacheBackend implements CacheBackend {
       const entry = await this.get(key);
       return entry !== null;
 
-    } catch (error) {
+    } catch (_error) {
       console.error('[Redis Cache] Error checking cache entry:', error);
       return false;
     }
@@ -224,21 +224,21 @@ export class RedisCacheBackend implements CacheBackend {
 
       // Clear only keys with our prefix
       const prefix = this.redisConfig.keyPrefix || 'healthcare_cache:';
-      const keys = await this.safeRedisOperation(() => this.redis.keys(`${prefix}*`));
+      const keys = await this.safeRedisOperation(_() => this.redis.keys(`${prefix}*`));
       
       if (keys.length > 0) {
         // Delete in batches to avoid blocking
         const batchSize = 100;
         for (let i = 0; i < keys.length; i += batchSize) {
           const batch = keys.slice(i, i + batchSize);
-          await this.safeRedisOperation(() => this.redis.del(...batch));
+          await this.safeRedisOperation(_() => this.redis.del(...batch));
         }
       }
 
       // Reset statistics
       this.stats = this.initializeStats();
 
-    } catch (error) {
+    } catch (_error) {
       console.error('[Redis Cache] Error clearing cache:', error);
       throw error;
     }
@@ -251,7 +251,7 @@ export class RedisCacheBackend implements CacheBackend {
     try {
       if (this.isConnected && this.redis) {
         // Get Redis info
-        const redisInfo = await this.safeRedisOperation(() => this.redis.info('memory'));
+        const redisInfo = await this.safeRedisOperation(_() => this.redis.info('memory'));
         const memoryMatch = redisInfo.match(/used_memory_human:([^\r\n]+)/);
         const keyCount = await this.getRedisSize();
 
@@ -260,7 +260,7 @@ export class RedisCacheBackend implements CacheBackend {
         this.stats.tierDistribution[CacheTier.REDIS] = keyCount;
 
         // Get performance metrics
-        const performanceInfo = await this.safeRedisOperation(() => this.redis.info('stats'));
+        const performanceInfo = await this.safeRedisOperation(_() => this.redis.info('stats'));
         const _totalCommands = performanceInfo.match(/total_commands_processed:([^\r\n]+)/);
         const keyspaceHits = performanceInfo.match(/keyspace_hits:([^\r\n]+)/);
         const keyspaceMisses = performanceInfo.match(/keyspace_misses:([^\r\n]+)/);
@@ -274,7 +274,7 @@ export class RedisCacheBackend implements CacheBackend {
 
       return { ...this.stats };
 
-    } catch (error) {
+    } catch (_error) {
       console.error('[Redis Cache] Error getting statistics:', error);
       return this.stats;
     }
@@ -290,13 +290,13 @@ export class RedisCacheBackend implements CacheBackend {
       }
 
       const searchPattern = pattern ? `${this.redisConfig.keyPrefix || ''}${pattern}` : '*';
-      const keys = await this.safeRedisOperation(() => this.redis.keys(searchPattern));
+      const keys = await this.safeRedisOperation(_() => this.redis.keys(searchPattern));
       
       // Remove prefix from returned keys
       const prefix = this.redisConfig.keyPrefix || '';
       return keys.map(key => key.startsWith(prefix) ? key.substring(prefix.length) : key);
 
-    } catch (error) {
+    } catch (_error) {
       console.error('[Redis Cache] Error getting keys:', error);
       return [];
     }
@@ -323,7 +323,7 @@ export class RedisCacheBackend implements CacheBackend {
 
       return entries;
 
-    } catch (error) {
+    } catch (_error) {
       console.error('[Redis Cache] Error getting entries by sensitivity:', error);
       return [];
     }
@@ -353,7 +353,7 @@ export class RedisCacheBackend implements CacheBackend {
       this.stats.totalEntries = await this.getRedisSize();
       return cleanedCount;
 
-    } catch (error) {
+    } catch (_error) {
       console.error('[Redis Cache] Error during cleanup:', error);
       return 0;
     }
@@ -385,24 +385,24 @@ export class RedisCacheBackend implements CacheBackend {
       this.redis = new Redis(this.redisConfig.url, redisOptions);
 
       // Setup event handlers
-      this.redis.on('connect', () => {
+      this.redis.on(_'connect',_() => {
         this.isConnected = true;
         this.connectionRetries = 0;
         console.log('[Redis Cache] Connected to Redis securely');
       });
 
-      this.redis.on('error', (error) => {
+      this.redis.on(_'error',_(error) => {
         console.error('[Redis Cache] Redis connection error:', error);
         this.isConnected = false;
         this.handleConnectionError();
       });
 
-      this.redis.on('close', () => {
+      this.redis.on(_'close',_() => {
         this.isConnected = false;
         console.warn('[Redis Cache] Redis connection closed');
       });
 
-      this.redis.on('ready', () => {
+      this.redis.on(_'ready',_() => {
         console.log('[Redis Cache] Redis connection ready');
       });
 
@@ -412,7 +412,7 @@ export class RedisCacheBackend implements CacheBackend {
         this.isConnected = false;
       });
 
-    } catch (error) {
+    } catch (_error) {
       console.error('[Redis Cache] Redis initialization error:', error);
       this.isConnected = false;
     }
@@ -426,7 +426,7 @@ export class RedisCacheBackend implements CacheBackend {
       this.connectionRetries++;
       const delay = Math.pow(2, this.connectionRetries) * 1000; // Exponential backoff
 
-      setTimeout(() => {
+      setTimeout(_() => {
         console.log(`[Redis Cache] Retrying connection (attempt ${this.connectionRetries}/${this.maxRetries})`);
         this.redis.connect().catch(error => {
           console.error('[Redis Cache] Redis retry failed:', error);
@@ -441,8 +441,7 @@ export class RedisCacheBackend implements CacheBackend {
    * Initialize health check timer
    */
   private initializeHealthCheck(): void {
-    this.healthCheckTimer = setInterval(
-      () => this.healthCheck(),
+    this.healthCheckTimer = setInterval(_() => this.healthCheck(),
       60000 // Check every minute
     );
   }
@@ -453,9 +452,9 @@ export class RedisCacheBackend implements CacheBackend {
   private async healthCheck(): Promise<void> {
     try {
       if (this.isConnected && this.redis) {
-        await this.safeRedisOperation(() => this.redis.ping());
+        await this.safeRedisOperation(_() => this.redis.ping());
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('[Redis Cache] Health check failed:', error);
       this.isConnected = false;
     }
@@ -472,11 +471,11 @@ export class RedisCacheBackend implements CacheBackend {
     try {
       return await Promise.race([
         operation(),
-        new Promise<never>((_, reject) => 
-          setTimeout(() => reject(new Error('Redis operation timeout')), 5000)
+        new Promise<never>(_(_,_reject) => 
+          setTimeout(_() => reject(new Error('Redis operation timeout')), 5000)
         )
       ]);
-    } catch (error) {
+    } catch (_error) {
       console.error('[Redis Cache] Redis operation failed:', error);
       this.isConnected = false;
       throw error;
@@ -530,7 +529,7 @@ export class RedisCacheBackend implements CacheBackend {
   private safeJSONParse(jsonString: string): CacheEntry | null {
     try {
       // First, basic JSON parsing with reviver to prevent prototype pollution
-      const parsed = JSON.parse(jsonString, (key, value) => {
+      const parsed = JSON.parse(_jsonString,_(key,_value) => {
         // Prevent prototype pollution
         if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
           return undefined;
@@ -547,7 +546,7 @@ export class RedisCacheBackend implements CacheBackend {
 
       // Convert date strings to Date objects
       return this.normalizeDates(validationResult.data);
-    } catch (error) {
+    } catch (_error) {
       console.warn('[Redis Cache] JSON parsing failed:', error);
       return null;
     }
@@ -617,7 +616,7 @@ export class RedisCacheBackend implements CacheBackend {
       if (!this.isConnected || !this.redis) {
         return 0;
       }
-      return await this.safeRedisOperation(() => this.redis.dbsize());
+      return await this.safeRedisOperation(_() => this.redis.dbsize());
     } catch {
       return 0;
     }

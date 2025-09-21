@@ -233,7 +233,7 @@ export function PerformanceDashboard({
           </CardHeader>
           <CardContent>
             <div className='space-y-3'>
-              {alerts.slice(-5).map((alert, _index) => (
+              {alerts.slice(-5).map(_(alert, _index) => (
                 <div
                   key={index}
                   className={cn(
@@ -288,8 +288,7 @@ export function PerformanceDashboard({
       )}
 
       {/* Performance Analytics */}
-      {analytics && (
-        <Card>
+      {analytics && (_<Card>
           <CardHeader>
             <CardTitle className='flex items-center justify-between'>
               <span className='flex items-center gap-2'>

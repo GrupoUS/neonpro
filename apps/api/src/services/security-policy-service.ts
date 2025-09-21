@@ -7,8 +7,6 @@
  * @compliance LGPD, ANVISA, CFM
  */
 
-import { z } from 'zod';
-
 // Security Policy Schema
 export const SecurityPolicySchema = z.object({
   id: z.string(),
@@ -33,8 +31,8 @@ export const SecurityPolicySchema = z.object({
   metadata: z.object({
     clinicId: z.string().optional(),
     createdBy: z.string(),
-    createdAt: z.date().default(() => new Date()),
-    updatedAt: z.date().default(() => new Date()),
+    createdAt: z.date().default(_() => new Date()),
+    updatedAt: z.date().default(_() => new Date()),
     version: z.number().default(1),
   }),
 });
@@ -141,8 +139,8 @@ export async function listSecurityPolicies(): Promise<SecurityPolicy[]> {
 /**
  * Evaluate security policies for a given context
  */
-export async function evaluateSecurityPolicies(context: {
-  userId?: string;
+export async function evaluateSecurityPolicies(_context: {
+  _userId?: string;
   patientId?: string;
   clinicId?: string;
   action: string;

@@ -35,19 +35,19 @@ const mockSupabase = {
   rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
 } as unknown as SupabaseClient;
 
-describe("ConsentService", () => {
+describe(_"ConsentService",_() => {
   let consentService: ConsentService;
   let queryBuilder: ReturnType<typeof createSupabaseQueryBuilder>;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
     queryBuilder = createSupabaseQueryBuilder();
     (mockSupabase.from as any).mockReturnValue(queryBuilder);
     consentService = new ConsentService(mockSupabase);
   });
 
-  describe("requestConsent", () => {
-    it("should request consent successfully", async () => {
+  describe(_"requestConsent",_() => {
+    it(_"should request consent successfully",_async () => {
       queryBuilder.insert.mockResolvedValueOnce({ data: { id: "consent-1" }, error: null });
 
       const result = await consentService.requestConsent(
@@ -69,7 +69,7 @@ describe("ConsentService", () => {
       });
     });
 
-    it("should handle request consent error", async () => {
+    it(_"should handle request consent error",_async () => {
       queryBuilder.insert.mockResolvedValueOnce({ data: null, error: new Error("DB error") });
 
       const result = await consentService.requestConsent(
@@ -83,8 +83,8 @@ describe("ConsentService", () => {
     });
   });
 
-  describe("verifyConsent", () => {
-    it("should verify consent successfully", async () => {
+  describe(_"verifyConsent",_() => {
+    it(_"should verify consent successfully",_async () => {
       queryBuilder.eq.mockReturnThis();
       queryBuilder.single.mockResolvedValueOnce({
         data: { status: "granted" },
@@ -99,7 +99,7 @@ describe("ConsentService", () => {
       expect(queryBuilder.eq).toHaveBeenCalledWith("session_id", "session-1");
     });
 
-    it("should return false for non-granted consent", async () => {
+    it(_"should return false for non-granted consent",_async () => {
       queryBuilder.single.mockResolvedValueOnce({
         data: { status: "pending" },
         error: null,
@@ -111,8 +111,8 @@ describe("ConsentService", () => {
     });
   });
 
-  describe("revokeConsent", () => {
-    it("should revoke consent successfully", async () => {
+  describe(_"revokeConsent",_() => {
+    it(_"should revoke consent successfully",_async () => {
       queryBuilder.update.mockResolvedValueOnce({ data: {}, error: null });
 
       const result = await consentService.revokeConsent("patient-1", "session-1");
@@ -125,7 +125,7 @@ describe("ConsentService", () => {
       });
     });
 
-    it("should handle revoke consent error", async () => {
+    it(_"should handle revoke consent error",_async () => {
       queryBuilder.update.mockResolvedValueOnce({ data: null, error: new Error("DB error") });
 
       const result = await consentService.revokeConsent("patient-1", "session-1");
@@ -134,8 +134,8 @@ describe("ConsentService", () => {
     });
   });
 
-  describe("getConsentHistory", () => {
-    it("should get consent history successfully", async () => {
+  describe(_"getConsentHistory",_() => {
+    it(_"should get consent history successfully",_async () => {
       const mockHistory = [
         { id: "1", status: "granted", created_at: "2023-01-01" },
         { id: "2", status: "revoked", created_at: "2023-01-02" },
@@ -151,7 +151,7 @@ describe("ConsentService", () => {
       expect(queryBuilder.order).toHaveBeenCalledWith("created_at", { ascending: false });
     });
 
-    it("should handle get consent history error", async () => {
+    it(_"should handle get consent history error",_async () => {
       queryBuilder.order.mockResolvedValueOnce({ data: null, error: new Error("DB error") });
 
       const result = await consentService.getConsentHistory("patient-1");
@@ -160,8 +160,8 @@ describe("ConsentService", () => {
     });
   });
 
-  describe("grantConsent", () => {
-    it("should grant consent successfully", async () => {
+  describe(_"grantConsent",_() => {
+    it(_"should grant consent successfully",_async () => {
       // Mock the chained calls: update().eq().eq()
       const secondEqMock = vi.fn().mockResolvedValue({ data: {}, error: null });
       const firstEqMock = vi.fn().mockReturnValue({ eq: secondEqMock });
@@ -179,7 +179,7 @@ describe("ConsentService", () => {
       expect(secondEqMock).toHaveBeenCalledWith("patient_id", "patient-1");
     });
 
-    it("should handle grant consent error", async () => {
+    it(_"should handle grant consent error",_async () => {
       const secondEqMock = vi.fn().mockResolvedValue({ data: null, error: new Error("DB error") });
       const firstEqMock = vi.fn().mockReturnValue({ eq: secondEqMock });
       queryBuilder.update.mockReturnValue({ eq: firstEqMock });
@@ -190,8 +190,8 @@ describe("ConsentService", () => {
     });
   });
 
-  describe("getPendingConsents", () => {
-    it("should get pending consents successfully", async () => {
+  describe(_"getPendingConsents",_() => {
+    it(_"should get pending consents successfully",_async () => {
       const mockConsents = [
         { id: "1", status: "pending", created_at: "2023-01-01" },
         { id: "2", status: "pending", created_at: "2023-01-02" },
@@ -208,7 +208,7 @@ describe("ConsentService", () => {
       expect(queryBuilder.order).toHaveBeenCalledWith("created_at", { ascending: false });
     });
 
-    it("should handle get pending consents error", async () => {
+    it(_"should handle get pending consents error",_async () => {
       queryBuilder.order.mockResolvedValueOnce({ data: null, error: new Error("DB error") });
 
       const result = await consentService.getPendingConsents("patient-1");
@@ -217,8 +217,8 @@ describe("ConsentService", () => {
     });
   });
 
-  describe("exportUserData", () => {
-    it("should export user data successfully", async () => {
+  describe(_"exportUserData",_() => {
+    it(_"should export user data successfully",_async () => {
       const mockPatient = { id: "patient-1", user_id: "user-1", name: "John Doe" };
       const mockConsentRecords = [{ id: "consent-1", status: "granted" }];
       const mockWebrtcLogs = [{ id: "log-1", event_type: "call_started" }];
@@ -268,7 +268,7 @@ describe("ConsentService", () => {
       expect(mockSupabase.from).toHaveBeenCalledWith("audit_logs");
     });
 
-    it("should handle export user data error when patient not found", async () => {
+    it(_"should handle export user data error when patient not found",_async () => {
       const patientsQueryBuilder = createSupabaseQueryBuilder();
       patientsQueryBuilder.single.mockResolvedValueOnce({ data: null, error: new Error("Not found") });
       
@@ -278,8 +278,8 @@ describe("ConsentService", () => {
     });
   });
 
-  describe("deleteUserData", () => {
-    it("should delete user data successfully", async () => {
+  describe(_"deleteUserData",_() => {
+    it(_"should delete user data successfully",_async () => {
       const mockPatient = { id: "patient-1", clinic_id: "clinic-1" };
 
       // Mock patients table query
@@ -308,7 +308,7 @@ describe("ConsentService", () => {
       expect(mockSupabase.rpc).toHaveBeenCalledWith("create_webrtc_audit_log", expect.any(Object));
     });
 
-    it("should delete session-specific user data successfully", async () => {
+    it(_"should delete session-specific user data successfully",_async () => {
       const mockPatient = { id: "patient-1", clinic_id: "clinic-1" };
 
       // Mock patients table query
@@ -339,7 +339,7 @@ describe("ConsentService", () => {
       expect(mockSupabase.rpc).toHaveBeenCalledWith("create_webrtc_audit_log", expect.any(Object));
     });
 
-    it("should handle delete user data error when patient not found", async () => {
+    it(_"should handle delete user data error when patient not found",_async () => {
       const patientsQueryBuilder = createSupabaseQueryBuilder();
       patientsQueryBuilder.single.mockResolvedValueOnce({ data: null, error: new Error("Not found") });
       

@@ -10,8 +10,6 @@
  * - Integration with T081-T083 accessibility and compliance systems
  */
 
-import { z } from 'zod';
-
 // Component Documentation Types
 export const COMPONENT_TYPES = {
   FUNCTIONAL: 'functional',
@@ -173,7 +171,7 @@ export interface ComponentDocumentationReport {
 }
 
 // Brazilian Portuguese Component Labels
-export const COMPONENT_LABELS_PT_BR = {
+export const _COMPONENT_LABELS_PT_BR = {
   // Component Types
   [COMPONENT_TYPES.FUNCTIONAL]: 'Componente Funcional',
   [COMPONENT_TYPES.CLASS]: 'Componente de Classe',
@@ -250,13 +248,10 @@ export class ComponentDocumentationGenerator {
               id: 'pat_123',
               name: 'João Silva',
               cpf: '123.456.789-00',
-              birthDate: '1985-03-15',
-            },
-          ],
+              birthDate: '1985-03-15',_},_],
           healthcareContext: 'Contains sensitive patient data requiring LGPD compliance',
           accessibilityNotes: 'Patient name is announced by screen readers',
-          mobileNotes: 'Optimized for touch interaction on mobile devices',
-        },
+          mobileNotes: 'Optimized for touch interaction on mobile devices',_},
         {
           name: 'accessibilityLevel',
           type: '\'AA\' | \'AAA\'',
@@ -264,9 +259,8 @@ export class ComponentDocumentationGenerator {
           defaultValue: 'AA',
           description: 'WCAG compliance level for accessibility features',
           descriptionPtBr: 'Nível de conformidade WCAG para recursos de acessibilidade',
-          examples: ['AA', 'AAA'],
-          accessibilityNotes: 'Determines the level of accessibility enhancements applied',
-        },
+          examples: ['AA',_'AAA'],
+          accessibilityNotes: 'Determines the level of accessibility enhancements applied',_},
         {
           name: 'mobileOptimized',
           type: 'boolean',
@@ -274,9 +268,8 @@ export class ComponentDocumentationGenerator {
           defaultValue: true,
           description: 'Enable mobile-specific optimizations',
           descriptionPtBr: 'Habilitar otimizações específicas para móvel',
-          examples: [true, false],
-          mobileNotes: 'Enables touch-friendly interactions and responsive layout',
-        },
+          examples: [true,_false],
+          mobileNotes: 'Enables touch-friendly interactions and responsive layout',_},
         {
           name: 'lgpdCompliant',
           type: 'boolean',
@@ -284,9 +277,8 @@ export class ComponentDocumentationGenerator {
           defaultValue: true,
           description: 'Enable LGPD compliance features for patient data',
           descriptionPtBr: 'Habilitar recursos de conformidade LGPD para dados do paciente',
-          examples: [true, false],
-          healthcareContext: 'Ensures patient data is handled according to LGPD regulations',
-        },
+          examples: [true,_false],
+          healthcareContext: 'Ensures patient data is handled according to LGPD regulations',_},
         {
           name: 'onEmergencyContact',
           type: '() => void',
@@ -434,8 +426,7 @@ const patient = {
           descriptionPtBr: 'Array de horários disponíveis para consultas',
           healthcareContext: 'Medical appointment scheduling system',
           accessibilityNotes: 'Time slots are announced with date and time information',
-          mobileNotes: 'Touch-optimized time slot selection',
-        },
+          mobileNotes: 'Touch-optimized time slot selection',_},
         {
           name: 'onSchedule',
           type: '(appointment: Appointment) => void',
@@ -508,7 +499,7 @@ const availableSlots = [
 
 <AppointmentScheduler
   availableSlots={availableSlots}
-  onSchedule={(appointment) => handleSchedule(appointment)}
+  onSchedule={(_appointment) => handleSchedule(appointment)}
   accessibilityFeatures={{
     wheelchairAccess: true,
     largeTextDisplay: true,

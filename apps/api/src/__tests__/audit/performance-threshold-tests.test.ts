@@ -11,9 +11,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-describe('WebRTC Real-Time Performance', () => {
-  describe('Video Latency Requirements', () => {
-    it('should maintain end-to-end latency under 200ms for video', async () => {
+describe(_'WebRTC Real-Time Performance',_() => {
+  describe(_'Video Latency Requirements',_() => {
+    it(_'should maintain end-to-end latency under 200ms for video',_async () => {
       // RED: Medical video consultation requires low latency
       const latencyTest = async () => {
         // Simulate video transmission latency measurement
@@ -30,7 +30,7 @@ describe('WebRTC Real-Time Performance', () => {
       expect(latency).toBeLessThanOrEqual(200); // Should be ≤200ms
     });
 
-    it('should ensure audio latency under 150ms for real-time communication', async () => {
+    it(_'should ensure audio latency under 150ms for real-time communication',_async () => {
       // RED: Audio latency more critical than video for medical consultations
       const audioLatencyTest = async () => {
         const startTime = Date.now();
@@ -46,8 +46,8 @@ describe('WebRTC Real-Time Performance', () => {
     });
   });
 
-  describe('Connection Quality Metrics', () => {
-    it('should maintain packet loss below 1% for medical video', () => {
+  describe(_'Connection Quality Metrics',_() => {
+    it(_'should maintain packet loss below 1% for medical video',_() => {
       // RED: Packet loss affects medical diagnosis accuracy
       const networkStats = {
         packetsSent: 1000,
@@ -60,7 +60,7 @@ describe('WebRTC Real-Time Performance', () => {
       expect(packetLossPercentage).toBeLessThanOrEqual(1); // Should be ≤1%
     });
 
-    it('should control jitter below 30ms for stable audio', () => {
+    it(_'should control jitter below 30ms for stable audio',_() => {
       // RED: High jitter causes audio quality issues in medical consultations
       const jitterMeasurement = {
         currentJitter: 45, // ms - too high
@@ -72,7 +72,7 @@ describe('WebRTC Real-Time Performance', () => {
       expect(jitterMeasurement.quality).toBe('GOOD');
     });
 
-    it('should monitor and respond to network degradation', () => {
+    it(_'should monitor and respond to network degradation',_() => {
       // RED: Automatic quality adjustment for poor networks
       const networkConditions = {
         bandwidth: 500, // kbps - low
@@ -88,8 +88,8 @@ describe('WebRTC Real-Time Performance', () => {
     });
   });
 
-  describe('Media Quality Adaptation', () => {
-    it('should dynamically adjust video quality based on network', () => {
+  describe(_'Media Quality Adaptation',_() => {
+    it(_'should dynamically adjust video quality based on network',_() => {
       // RED: Adaptive bitrate for medical video streaming
       const networkBandwidth = 800; // kbps
       let videoQuality = '1080p'; // Current setting
@@ -105,7 +105,7 @@ describe('WebRTC Real-Time Performance', () => {
       expect(videoQuality).toBe('720p');
     });
 
-    it('should prioritize audio quality over video in poor conditions', () => {
+    it(_'should prioritize audio quality over video in poor conditions',_() => {
       // RED: Medical audio communication is priority
       const qualitySettings = {
         audioBitrate: 128, // kbps
@@ -123,8 +123,8 @@ describe('WebRTC Real-Time Performance', () => {
     });
   });
 
-  describe('Emergency Response Performance', () => {
-    it('should establish emergency connection within 5 seconds', async () => {
+  describe(_'Emergency Response Performance',_() => {
+    it(_'should establish emergency connection within 5 seconds',_async () => {
       // RED: Emergency telemedicine requires rapid connection
       const emergencyConnection = async () => {
         const startTime = Date.now();
@@ -139,7 +139,7 @@ describe('WebRTC Real-Time Performance', () => {
       expect(connectionTime).toBeLessThanOrEqual(5000); // Should be ≤5s
     });
 
-    it('should maintain minimum quality for emergency calls', () => {
+    it(_'should maintain minimum quality for emergency calls',_() => {
       // RED: Emergency calls have minimum quality requirements
       const emergencyQuality = {
         videoResolution: '360p', // Minimum acceptable
@@ -155,9 +155,9 @@ describe('WebRTC Real-Time Performance', () => {
   });
 });
 
-describe('AI Processing Performance', () => {
-  describe('Response Time Requirements', () => {
-    it('should process AI medical queries within 3 seconds', async () => {
+describe(_'AI Processing Performance',_() => {
+  describe(_'Response Time Requirements',_() => {
+    it(_'should process AI medical queries within 3 seconds',_async () => {
       // RED: Medical AI assistance needs quick response
       const aiProcessing = async () => {
         const startTime = Date.now();
@@ -172,7 +172,7 @@ describe('AI Processing Performance', () => {
       expect(processingTime).toBeLessThanOrEqual(3000); // Should be ≤3s
     });
 
-    it('should provide real-time symptom analysis within 2 seconds', async () => {
+    it(_'should provide real-time symptom analysis within 2 seconds',_async () => {
       // RED: Real-time symptom checking for telemedicine
       const symptomAnalysis = async () => {
         const startTime = Date.now();
@@ -188,28 +188,28 @@ describe('AI Processing Performance', () => {
     });
   });
 
-  describe('Throughput and Scalability', () => {
-    it('should handle 100 concurrent AI requests without degradation', async () => {
+  describe(_'Throughput and Scalability',_() => {
+    it(_'should handle 100 concurrent AI requests without degradation',_async () => {
       // RED: Healthcare system must handle peak loads
       const concurrentRequests = 100;
-      const responseTimes = [];
+      const _responseTimes = [];
 
       // Simulate concurrent processing
       const requests = Array(concurrentRequests)
         .fill(0)
-        .map(async (_, i) => {
+        .map(_async (_,_i) => {
           const startTime = Date.now();
           await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200));
           return Date.now() - startTime;
         });
 
       const results = await Promise.all(requests);
-      const averageResponseTime = results.reduce((a, b) => a + b, 0) / results.length;
+      const averageResponseTime = results.reduce(_(a,_b) => a + b, 0) / results.length;
 
       expect(averageResponseTime).toBeLessThanOrEqual(500); // Should be ≤500ms average
     });
 
-    it('should maintain accuracy under load', () => {
+    it(_'should maintain accuracy under load',_() => {
       // RED: AI accuracy must not degrade under load
       const loadTesting = {
         concurrentUsers: 50,
@@ -226,9 +226,9 @@ describe('AI Processing Performance', () => {
   });
 });
 
-describe('Database Performance', () => {
-  describe('Query Performance', () => {
-    it('should return patient records within 100ms', async () => {
+describe(_'Database Performance',_() => {
+  describe(_'Query Performance',_() => {
+    it(_'should return patient records within 100ms',_async () => {
       // RED: Patient data access must be fast for medical care
       const patientQuery = async () => {
         const startTime = Date.now();
@@ -243,7 +243,7 @@ describe('Database Performance', () => {
       expect(queryTime).toBeLessThanOrEqual(100); // Should be ≤100ms
     });
 
-    it('should handle appointment scheduling queries within 50ms', async () => {
+    it(_'should handle appointment scheduling queries within 50ms',_async () => {
       // RED: Appointment scheduling needs to be responsive
       const schedulingQuery = async () => {
         const startTime = Date.now();
@@ -259,8 +259,8 @@ describe('Database Performance', () => {
     });
   });
 
-  describe('Real-Time Data Sync', () => {
-    it('should sync telemedicine session data within 500ms', async () => {
+  describe(_'Real-Time Data Sync',_() => {
+    it(_'should sync telemedicine session data within 500ms',_async () => {
       // RED: Real-time session data synchronization
       const dataSync = async () => {
         const startTime = Date.now();
@@ -275,7 +275,7 @@ describe('Database Performance', () => {
       expect(syncTime).toBeLessThanOrEqual(500); // Should be ≤500ms
     });
 
-    it('should broadcast session events to all participants within 200ms', async () => {
+    it(_'should broadcast session events to all participants within 200ms',_async () => {
       // RED: Event broadcasting for real-time collaboration
       const eventBroadcast = async () => {
         const startTime = Date.now();
@@ -292,9 +292,9 @@ describe('Database Performance', () => {
   });
 });
 
-describe('Mobile Performance', () => {
-  describe('Responsive UI', () => {
-    it('should load telemedicine interface within 3 seconds on mobile', async () => {
+describe(_'Mobile Performance',_() => {
+  describe(_'Responsive UI',_() => {
+    it(_'should load telemedicine interface within 3 seconds on mobile',_async () => {
       // RED: Mobile interface loading time
       const mobileLoadTime = async () => {
         const startTime = Date.now();
@@ -309,7 +309,7 @@ describe('Mobile Performance', () => {
       expect(loadTime).toBeLessThanOrEqual(3000); // Should be ≤3s
     });
 
-    it('should maintain 60fps for critical UI animations', () => {
+    it(_'should maintain 60fps for critical UI animations',_() => {
       // RED: Smooth animations for medical interface
       const frameRate = {
         current: 45, // fps - too low
@@ -322,8 +322,8 @@ describe('Mobile Performance', () => {
     });
   });
 
-  describe('Battery Efficiency', () => {
-    it('should limit CPU usage during video calls to prevent overheating', () => {
+  describe(_'Battery Efficiency',_() => {
+    it(_'should limit CPU usage during video calls to prevent overheating',_() => {
       // RED: Battery efficiency for long telemedicine sessions
       const resourceUsage = {
         cpuDuringVideoCall: 85, // % - too high
@@ -337,9 +337,9 @@ describe('Mobile Performance', () => {
   });
 });
 
-describe('Network Resilience', () => {
-  describe('Offline Capability', () => {
-    it('should maintain essential functionality during network interruptions', () => {
+describe(_'Network Resilience',_() => {
+  describe(_'Offline Capability',_() => {
+    it(_'should maintain essential functionality during network interruptions',_() => {
       // RED: Critical features must work offline
       const offlineCapabilities = {
         patientDataAccess: false, // Should work offline
@@ -352,7 +352,7 @@ describe('Network Resilience', () => {
       expect(offlineCapabilities.appointmentCalendar).toBe(true);
     });
 
-    it('should resume and sync data when reconnected', async () => {
+    it(_'should resume and sync data when reconnected',_async () => {
       // RED: Data synchronization after reconnection
       const syncProcess = async () => {
         const startTime = Date.now();
@@ -368,8 +368,8 @@ describe('Network Resilience', () => {
     });
   });
 
-  describe('Graceful Degradation', () => {
-    it('should switch to audio-only when video bandwidth is insufficient', () => {
+  describe(_'Graceful Degradation',_() => {
+    it(_'should switch to audio-only when video bandwidth is insufficient',_() => {
       // RED: Graceful degradation for poor networks
       const networkConditions = {
         bandwidth: 300, // kbps - very low
@@ -386,7 +386,7 @@ describe('Network Resilience', () => {
       expect(networkConditions.supportsVideo).toBe(false);
     });
 
-    it('should provide clear feedback about connection quality', () => {
+    it(_'should provide clear feedback about connection quality',_() => {
       // RED: User feedback for connection issues
       const connectionFeedback = {
         quality: 'POOR',

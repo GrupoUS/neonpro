@@ -15,7 +15,7 @@ import type {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Supabase client
-vi.mock('@/integrations/supabase/client', () => ({
+vi.mock(_'@/integrations/supabase/client',_() => ({
   supabase: {
     from: vi.fn(() => ({
       select: vi.fn(() => ({
@@ -36,7 +36,7 @@ vi.mock('@/integrations/supabase/client', () => ({
           })),
         })),
       })),
-      insert: vi.fn(() => ({
+      insert: vi.fn(_() => ({
         select: vi.fn(() => ({
           single: vi.fn(() => ({
             then: vi.fn(resolve =>
@@ -52,13 +52,13 @@ vi.mock('@/integrations/supabase/client', () => ({
   },
 }));
 
-describe('CalendarLGPDAuditService - RED Phase Tests', () => {
+describe(_'CalendarLGPDAuditService - RED Phase Tests',_() => {
   let mockAppointment: CalendarAppointment;
   let mockUserId: string;
   let mockUserRole: string;
   let mockConsentResult: ConsentValidationResult;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
 
     mockAppointment = {
@@ -89,12 +89,12 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
     };
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.restoreAllMocks();
   });
 
-  describe('Service Existence and Structure', () => {
-    it('should FAIL - service should be properly instantiated', () => {
+  describe(_'Service Existence and Structure',_() => {
+    it(_'should FAIL - service should be properly instantiated',_() => {
       // RED: This test fails if service doesn't exist or is malformed
       expect(calendarLGPDAuditService).toBeDefined();
       expect(typeof calendarLGPDAuditService.logAppointmentAccess).toBe(
@@ -117,7 +117,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       );
     });
 
-    it('should FAIL - LGPD audit actions should be defined', () => {
+    it(_'should FAIL - LGPD audit actions should be defined',_() => {
       // RED: This test fails if audit actions are incomplete
       expect(LGPDAuditAction.CONSENT_VALIDATED).toBe('consent_validated');
       expect(LGPDAuditAction.CONSENT_DENIED).toBe('consent_denied');
@@ -129,15 +129,15 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(LGPDAuditAction.BATCH_PROCESSED).toBe('batch_processed');
     });
 
-    it('should FAIL - should have proper default retention period', () => {
+    it(_'should FAIL - should have proper default retention period',_() => {
       // RED: This test fails if default retention is incorrect
       const defaultRetention = calendarLGPDAuditService['DEFAULT_RETENTION_DAYS'];
       expect(defaultRetention).toBe(2555); // 7 years for medical data
     });
   });
 
-  describe('Appointment Access Logging - LGPD Art. 37º', () => {
-    it('should FAIL - should log appointment access with full compliance data', async () => {
+  describe(_'Appointment Access Logging - LGPD Art. 37º',_() => {
+    it(_'should FAIL - should log appointment access with full compliance data',_async () => {
       // RED: This test fails if appointment access logging is incomplete
       const auditLogId = await calendarLGPDAuditService.logAppointmentAccess(
         mockAppointment,
@@ -153,7 +153,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(auditLogId.length).toBeGreaterThan(0);
     });
 
-    it('should FAIL - should include required audit log fields', async () => {
+    it(_'should FAIL - should include required audit log fields',_async () => {
       // RED: This test fails if required fields are missing
       await calendarLGPDAuditService.logAppointmentAccess(
         mockAppointment,
@@ -177,7 +177,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(auditLog.action).toBeDefined();
       expect(Array.isArray(auditLog.dataCategory)).toBe(true);
       expect(auditLog.purpose).toBeDefined();
-      expect(auditLog.userId).toBe(mockUserId);
+      expect(auditLog._userId).toBe(mockUserId);
       expect(auditLog.userRole).toBe(mockUserRole);
       expect(auditLog.timestamp).toBeInstanceOf(Date);
       expect(auditLog.details).toBeDefined();
@@ -187,7 +187,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(auditLog.riskLevel).toBeDefined();
     });
 
-    it('should FAIL - should determine correct action based on context', async () => {
+    it(_'should FAIL - should determine correct action based on context',_async () => {
       // RED: This test fails if action determination is incorrect
       await calendarLGPDAuditService.logAppointmentAccess(
         mockAppointment,
@@ -225,7 +225,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
             })),
           })),
         })),
-        insert: vi.fn(() => ({
+        insert: vi.fn(_() => ({
           select: vi.fn(() => ({
             single: vi.fn(() => ({
               then: vi.fn(resolve =>
@@ -255,7 +255,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(editAuditLog.action).toBe(LGPDAuditAction.APPOINTMENT_UPDATED);
     });
 
-    it('should FAIL - should include metadata in audit details', async () => {
+    it(_'should FAIL - should include metadata in audit details',_async () => {
       // RED: This test fails if metadata inclusion is missing
       const metadata = {
         customField: 'test-value',
@@ -281,8 +281,8 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
     });
   });
 
-  describe('Batch Operation Logging', () => {
-    it('should FAIL - should log batch operations with comprehensive audit trail', async () => {
+  describe(_'Batch Operation Logging',_() => {
+    it(_'should FAIL - should log batch operations with comprehensive audit trail',_async () => {
       // RED: This test fails if batch operation logging is incomplete
       const appointments = [
         mockAppointment,
@@ -310,7 +310,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(typeof auditLogId).toBe('string');
     });
 
-    it('should FAIL - should include batch-specific audit fields', async () => {
+    it(_'should FAIL - should include batch-specific audit fields',_async () => {
       // RED: This test fails if batch-specific fields are missing
       await calendarLGPDAuditService.logBatchOperation(
         [mockAppointment],
@@ -338,7 +338,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       ).toBe(true);
     });
 
-    it('should FAIL - should assess batch compliance status', async () => {
+    it(_'should FAIL - should assess batch compliance status',_async () => {
       // RED: This test fails if batch compliance assessment is missing
       const validConsents = [mockConsentResult];
       const mixedConsents = [
@@ -367,8 +367,8 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
     });
   });
 
-  describe('Consent Validation Logging', () => {
-    it('should FAIL - should log consent validation events', async () => {
+  describe(_'Consent Validation Logging',_() => {
+    it(_'should FAIL - should log consent validation events',_async () => {
       // RED: This test fails if consent validation logging is missing
       const auditLogId = await calendarLGPDAuditService.logConsentValidation(
         'patient-123',
@@ -383,7 +383,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(typeof auditLogId).toBe('string');
     });
 
-    it('should FAIL - should log different actions for valid vs invalid consent', async () => {
+    it(_'should FAIL - should log different actions for valid vs invalid consent',_async () => {
       // RED: This test fails if action differentiation is missing
 
       // Test valid consent
@@ -425,7 +425,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
             })),
           })),
         })),
-        insert: vi.fn(() => ({
+        insert: vi.fn(_() => ({
           select: vi.fn(() => ({
             single: vi.fn(() => ({
               then: vi.fn(resolve =>
@@ -461,8 +461,8 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
     });
   });
 
-  describe('Data Minimization Logging', () => {
-    it('should FAIL - should log data minimization operations', async () => {
+  describe(_'Data Minimization Logging',_() => {
+    it(_'should FAIL - should log data minimization operations',_async () => {
       // RED: This test fails if data minimization logging is missing
       const auditLogId = await calendarLGPDAuditService.logDataMinimization(
         'patient-123',
@@ -478,7 +478,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(typeof auditLogId).toBe('string');
     });
 
-    it('should FAIL - should include minimization-specific details', async () => {
+    it(_'should FAIL - should include minimization-specific details',_async () => {
       // RED: This test fails if minimization details are incomplete
       await calendarLGPDAuditService.logDataMinimization(
         'patient-123',
@@ -504,8 +504,8 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
     });
   });
 
-  describe('Compliance Reporting', () => {
-    it('should FAIL - should generate comprehensive compliance reports', async () => {
+  describe(_'Compliance Reporting',_() => {
+    it(_'should FAIL - should generate comprehensive compliance reports',_async () => {
       // RED: This test fails if compliance reporting is incomplete
       const report = await calendarLGPDAuditService.generateComplianceReport();
 
@@ -523,11 +523,11 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(report.generatedAt).toBeInstanceOf(Date);
     });
 
-    it('should FAIL - should apply filters correctly', async () => {
+    it(_'should FAIL - should apply filters correctly',_async () => {
       // RED: This test fails if filtering is not applied correctly
       const filter: AuditFilter = {
         patientId: 'patient-123',
-        userId: 'user-123',
+        _userId: 'user-123',
         action: [
           LGPDAuditAction.APPOINTMENT_ACCESSED,
           LGPDAuditAction.APPOINTMENT_CREATED,
@@ -547,7 +547,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       // In a real test, we'd verify the actual SQL constraints
     });
 
-    it('should FAIL - should handle date range filtering', async () => {
+    it(_'should FAIL - should handle date range filtering',_async () => {
       // RED: This test fails if date range filtering is missing
       const dateRange = {
         start: new Date('2024-01-01'),
@@ -566,8 +566,8 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
     });
   });
 
-  describe('Patient Data Subject Rights', () => {
-    it('should FAIL - should retrieve audit logs for specific patients', async () => {
+  describe(_'Patient Data Subject Rights',_() => {
+    it(_'should FAIL - should retrieve audit logs for specific patients',_async () => {
       // RED: This test fails if patient-specific log retrieval is missing
       const patientLogs = await calendarLGPDAuditService.getPatientAuditLogs('patient-123');
 
@@ -581,7 +581,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       }
     });
 
-    it('should FAIL - should filter patient logs by date range', async () => {
+    it(_'should FAIL - should filter patient logs by date range',_async () => {
       // RED: This test fails if date range filtering for patient logs is missing
       const dateRange = {
         start: new Date('2024-01-01'),
@@ -597,7 +597,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       // In a real implementation, we'd verify the date filtering worked correctly
     });
 
-    it('should FAIL - should return logs in chronological order', async () => {
+    it(_'should FAIL - should return logs in chronological order',_async () => {
       // RED: This test fails if chronological ordering is missing
       const patientLogs = await calendarLGPDAuditService.getPatientAuditLogs('patient-123');
 
@@ -610,8 +610,8 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
     });
   });
 
-  describe('Data Category Determination', () => {
-    it('should FAIL - should determine data categories based on minimization level', () => {
+  describe(_'Data Category Determination',_() => {
+    it(_'should FAIL - should determine data categories based on minimization level',_() => {
       // RED: This test fails if data category determination is incorrect
       const minimalCategories = calendarLGPDAuditService[
         'determineDataCategories'
@@ -635,7 +635,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(fullCategories).toContain('sensitive_health_data');
     });
 
-    it('should FAIL - should track accessed data elements', () => {
+    it(_'should FAIL - should track accessed data elements',_() => {
       // RED: This test fails if data element tracking is incomplete
       const minimalElements = calendarLGPDAuditService[
         'getAccessedDataElements'
@@ -655,8 +655,8 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
     });
   });
 
-  describe('Compliance Status Determination', () => {
-    it('should FAIL - should determine compliance status correctly', () => {
+  describe(_'Compliance Status Determination',_() => {
+    it(_'should FAIL - should determine compliance status correctly',_() => {
       // RED: This test fails if compliance status determination is incorrect
       // Valid consent with full access
       let status = calendarLGPDAuditService['determineComplianceStatus'](
@@ -680,7 +680,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(status).toBe('unknown');
     });
 
-    it('should FAIL - should calculate appropriate retention periods', () => {
+    it(_'should FAIL - should calculate appropriate retention periods',_() => {
       // RED: This test fails if retention period calculation is incorrect
       const cancelledRetention = calendarLGPDAuditService['calculateRetentionPeriod']('cancelled');
       expect(cancelledRetention).toBe(90);
@@ -696,8 +696,8 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
     });
   });
 
-  describe('Risk Assessment', () => {
-    it('should FAIL - should assess risk level accurately', () => {
+  describe(_'Risk Assessment',_() => {
+    it(_'should FAIL - should assess risk level accurately',_() => {
       // RED: This test fails if risk assessment is inaccurate
       // Invalid consent - high risk
       let risk = calendarLGPDAuditService['assessRiskLevel'](
@@ -724,7 +724,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(risk).toBe('low');
     });
 
-    it('should FAIL - should identify batch processing risks', () => {
+    it(_'should FAIL - should identify batch processing risks',_() => {
       // RED: This test fails if batch risk identification is missing
       const validConsents = [mockConsentResult, mockConsentResult];
       const invalidConsents = [{ ...mockConsentResult, isValid: false }];
@@ -744,7 +744,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       );
     });
 
-    it('should FAIL - should calculate batch residual risk', () => {
+    it(_'should FAIL - should calculate batch residual risk',_() => {
       // RED: This test fails if batch residual risk calculation is incorrect
       const allValid = [mockConsentResult, mockConsentResult];
       const someValid = [
@@ -764,8 +764,8 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
     });
   });
 
-  describe('Report Analysis and Recommendations', () => {
-    it('should FAIL - should analyze audit logs correctly', () => {
+  describe(_'Report Analysis and Recommendations',_() => {
+    it(_'should FAIL - should analyze audit logs correctly',_() => {
       // RED: This test fails if audit log analysis is incorrect
       const mockLogs = [
         {
@@ -790,7 +790,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(Array.isArray(report.recommendations)).toBe(true);
     });
 
-    it('should FAIL - should generate appropriate recommendations', () => {
+    it(_'should FAIL - should generate appropriate recommendations',_() => {
       // RED: This test fails if recommendation generation is inadequate
       const mockLogs = [
         {
@@ -811,7 +811,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       );
     });
 
-    it('should FAIL - should provide positive recommendations for high compliance', () => {
+    it(_'should FAIL - should provide positive recommendations for high compliance',_() => {
       // RED: This test fails if positive recommendations are missing
       const mockLogs = [
         {
@@ -830,8 +830,8 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should FAIL - should handle Supabase errors gracefully', async () => {
+  describe(_'Error Handling',_() => {
+    it(_'should FAIL - should handle Supabase errors gracefully',_async () => {
       // RED: This test fails if Supabase error handling is missing
       const mockSupabase = require('@/integrations/supabase/client').supabase;
       mockSupabase.from.mockReturnValue({
@@ -853,7 +853,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
             })),
           })),
         })),
-        insert: vi.fn(() => ({
+        insert: vi.fn(_() => ({
           select: vi.fn(() => ({
             single: vi.fn(() => ({
               then: vi.fn(resolve =>
@@ -879,7 +879,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       ).rejects.toThrow('Failed to log audit');
     });
 
-    it('should FAIL - should handle query errors in report generation', async () => {
+    it(_'should FAIL - should handle query errors in report generation',_async () => {
       // RED: This test fails if query error handling is missing
       const mockSupabase = require('@/integrations/supabase/client').supabase;
       mockSupabase.from.mockReturnValue({
@@ -909,8 +909,8 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
     });
   });
 
-  describe('Integration with Calendar Component', () => {
-    it('should FAIL - should provide types needed by calendar integration', () => {
+  describe(_'Integration with Calendar Component',_() => {
+    it(_'should FAIL - should provide types needed by calendar integration',_() => {
       // RED: This test fails if required types are missing
       const types = [
         'LGPDAuditLog',
@@ -925,7 +925,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       });
     });
 
-    it('should FAIL - should export service instance correctly', () => {
+    it(_'should FAIL - should export service instance correctly',_() => {
       // RED: This test fails if export is incorrect
       const exported = require('@/services/lgpd/audit-logging.service');
 
@@ -933,7 +933,7 @@ describe('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(exported.calendarLGPDAuditService).toBe(calendarLGPDAuditService);
     });
 
-    it('should FAIL - should export CALENDAR_LGPD_PURPOSES constant', () => {
+    it(_'should FAIL - should export CALENDAR_LGPD_PURPOSES constant',_() => {
       // RED: This test fails if purpose constants are not exported
       const exported = require('@/services/lgpd/audit-logging.service');
 

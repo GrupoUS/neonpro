@@ -145,7 +145,7 @@ export class PatientDocumentService {
     if (this.audit) {
       this.audit
         .logActivity({
-          userId: params.uploadedBy,
+          _userId: params.uploadedBy,
           action: 'upload',
           resourceType: 'patient_document',
           resourceId: documentId,

@@ -210,7 +210,7 @@ export function ServiceAnalyticsDashboard() {
           <div className='space-y-4'>
             {dashboard?.service_performance
               ?.slice(0, 5)
-              .map((service, _index) => (
+              .map(_(service, _index) => (
                 <div
                   key={service.service_id}
                   className='flex items-center justify-between'
@@ -304,7 +304,7 @@ export function ServiceAnalyticsDashboard() {
             <div className='space-y-4'>
               {dashboard?.professional_performance
                 ?.slice(0, 5)
-                .map((professional, _index) => (
+                .map(_(professional, _index) => (
                   <div
                     key={professional.professional_id}
                     className='flex items-center justify-between'
@@ -342,8 +342,7 @@ export function ServiceAnalyticsDashboard() {
       </div>
 
       {/* Insights */}
-      {dashboard?.insights && dashboard.insights.length > 0 && (
-        <Card>
+      {dashboard?.insights && dashboard.insights.length > 0 && (_<Card>
           <CardHeader>
             <CardTitle>Insights e Recomendações</CardTitle>
             <CardDescription>

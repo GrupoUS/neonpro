@@ -26,8 +26,8 @@ export function AIChat({ className, initialContext }: AIChatProps) {
   const [chatState, setChatState] = useState<ChatState>({
     messages: [],
     isLoading: false,
-    context: {
-      userId: user?.id || '',
+    _context: {
+      _userId: user?.id || '',
       userRole: user?.role || '',
       domain: initialContext?.domain,
     },
@@ -82,9 +82,9 @@ export function AIChat({ className, initialContext }: AIChatProps) {
             Authorization: `Bearer ${await user.getIdToken()}`,
           },
           body: JSON.stringify({
-            query: message,
-            context: {
-              userId: user.id,
+            _query: message,
+            _context: {
+              _userId: user.id,
               userRole: user.role,
               domain: initialContext?.domain,
             },
@@ -102,7 +102,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
         // Add assistant response to chat
         const assistantMessage: ChatMessage = {
           id: `msg_${Date.now()}_assistant`,
-          role: 'assistant',
+          _role: 'assistant',
           content: data.response.message,
           timestamp: new Date().toISOString(),
           data: data.response.data,
@@ -119,7 +119,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
         if (data.response.actions && data.response.actions.length > 0) {
           handleActions(data.response.actions);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Chat error:', _error);
         toast({
           title: 'Erro',
@@ -131,7 +131,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
         const errorMessage: ChatMessage = {
           id: `msg_${Date.now()}_error`,
-          role: 'assistant',
+          _role: 'assistant',
           content:
             'Desculpe, ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.',
           timestamp: new Date().toISOString(),
@@ -167,7 +167,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
           }
           break;
         case 'export_data':
-          handleExportData(action.payload);
+          handleExportData(action._payload);
           break;
         case 'refresh':
           // Refresh current view
@@ -187,7 +187,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${await user?.getIdToken()}`,
           },
-          body: JSON.stringify(payload),
+          body: JSON.stringify(_payload),
         });
 
         if (response.ok) {
@@ -289,8 +289,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
             )}
 
             {/* Render action buttons */}
-            {message.actions && message.actions.length > 0 && (
-              <div className='flex gap-2 mt-3'>
+            {message.actions && message.actions.length > 0 && (_<div className='flex gap-2 mt-3'>
                 {message.actions.map(action => (
                   <button
                     key={action.id}
@@ -319,7 +318,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
   );
 
   // Auto-scroll to bottom
-  React.useEffect(() => {
+  React.useEffect(_() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatState.messages]);
 

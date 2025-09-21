@@ -100,8 +100,7 @@ export function EnhancedTable(props: EnhancedTableProps) {
                 className={onRowClick ? "cursor-pointer" : undefined}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
-                {row.getVisibleCells().map((cell: any) => (
-                  <TableCell
+                {row.getVisibleCells().map((cell: any) => (_<TableCell
                     key={cell.id}
                     onClick={(e) => {
                       if (

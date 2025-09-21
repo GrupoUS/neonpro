@@ -8,7 +8,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AccessiblePatientCard } from '../AccessiblePatientCard';
 
 // Mock the accessibility hooks
-vi.mock('../../hooks/useAccessibility', () => ({
+vi.mock(_'../../hooks/useAccessibility',_() => ({
   useAccessibilityPreferences: () => ({
     prefersHighContrast: false,
     prefersReducedMotion: false,
@@ -29,15 +29,15 @@ const mockPatient = {
   lgpdConsent: true,
 };
 
-describe('AccessiblePatientCard', () => {
+describe(_'AccessiblePatientCard',_() => {
   const mockOnClick = vi.fn();
   const mockOnKeyboardSelect = vi.fn();
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
   });
 
-  it('should render patient information correctly', () => {
+  it(_'should render patient information correctly',_() => {
     render(
       <AccessiblePatientCard
         patient={mockPatient}
@@ -52,7 +52,7 @@ describe('AccessiblePatientCard', () => {
     expect(screen.getByText(/\d+ anos/)).toBeInTheDocument();
   });
 
-  it('should have proper ARIA attributes', () => {
+  it(_'should have proper ARIA attributes',_() => {
     render(
       <AccessiblePatientCard
         patient={mockPatient}
@@ -66,7 +66,7 @@ describe('AccessiblePatientCard', () => {
     expect(card).toHaveAttribute('tabIndex', '0');
   });
 
-  it('should indicate selected state correctly', () => {
+  it(_'should indicate selected state correctly',_() => {
     render(
       <AccessiblePatientCard
         patient={mockPatient}
@@ -80,7 +80,7 @@ describe('AccessiblePatientCard', () => {
     expect(card).toHaveClass('ring-2', 'ring-primary');
   });
 
-  it('should show LGPD consent status', () => {
+  it(_'should show LGPD consent status',_() => {
     render(
       <AccessiblePatientCard
         patient={mockPatient}
@@ -93,7 +93,7 @@ describe('AccessiblePatientCard', () => {
     expect(consentIndicator).toHaveClass('bg-green-500');
   });
 
-  it('should show LGPD consent denied status', () => {
+  it(_'should show LGPD consent denied status',_() => {
     const patientWithoutConsent = { ...mockPatient, lgpdConsent: false };
 
     render(
@@ -108,7 +108,7 @@ describe('AccessiblePatientCard', () => {
     expect(consentIndicator).toHaveClass('bg-red-500');
   });
 
-  it('should hide sensitive data when showSensitiveData is false', () => {
+  it(_'should hide sensitive data when showSensitiveData is false',_() => {
     render(
       <AccessiblePatientCard
         patient={mockPatient}
@@ -120,7 +120,7 @@ describe('AccessiblePatientCard', () => {
     expect(screen.queryByText('(11) 99999-9999')).not.toBeInTheDocument();
   });
 
-  it('should handle click events', () => {
+  it(_'should handle click events',_() => {
     render(
       <AccessiblePatientCard
         patient={mockPatient}
@@ -134,7 +134,7 @@ describe('AccessiblePatientCard', () => {
     expect(mockOnClick).toHaveBeenCalledWith(mockPatient);
   });
 
-  it('should handle keyboard events', () => {
+  it(_'should handle keyboard events',_() => {
     render(
       <AccessiblePatientCard
         patient={mockPatient}
@@ -153,7 +153,7 @@ describe('AccessiblePatientCard', () => {
     expect(mockOnKeyboardSelect).toHaveBeenCalledTimes(2);
   });
 
-  it('should display different status colors', () => {
+  it(_'should display different status colors',_() => {
     const inactivePatient = { ...mockPatient, status: 'inactive' as const };
 
     const { rerender } = render(
@@ -175,7 +175,7 @@ describe('AccessiblePatientCard', () => {
     expect(screen.getByText('Inativo')).toHaveClass('text-gray-600');
   });
 
-  it('should calculate age correctly', () => {
+  it(_'should calculate age correctly',_() => {
     const youngPatient = {
       ...mockPatient,
       birthDate: new Date('2000-06-15'),
@@ -192,7 +192,7 @@ describe('AccessiblePatientCard', () => {
     expect(screen.getByText(/\d+ anos/)).toBeInTheDocument();
   });
 
-  it('should format last appointment date', () => {
+  it(_'should format last appointment date',_() => {
     render(
       <AccessiblePatientCard
         patient={mockPatient}
@@ -203,7 +203,7 @@ describe('AccessiblePatientCard', () => {
     expect(screen.getByText(/Último agendamento: \d{2}\/\d{2}\/\d{4}/)).toBeInTheDocument();
   });
 
-  it('should have screen reader friendly content', () => {
+  it(_'should have screen reader friendly content',_() => {
     render(
       <AccessiblePatientCard
         patient={mockPatient}
@@ -222,7 +222,7 @@ describe('AccessiblePatientCard', () => {
   });
 });
 
-describe('AccessiblePatientList', () => {
+describe(_'AccessiblePatientList',_() => {
   const mockPatients = [
     mockPatient,
     {
@@ -235,11 +235,11 @@ describe('AccessiblePatientList', () => {
 
   const mockOnPatientSelect = vi.fn();
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
   });
 
-  it('should render list of patients', () => {
+  it(_'should render list of patients',_() => {
     render(
       <AccessiblePatientList
         patients={mockPatients}
@@ -251,7 +251,7 @@ describe('AccessiblePatientList', () => {
     expect(screen.getByText('Maria Santos')).toBeInTheDocument();
   });
 
-  it('should have proper list ARIA attributes', () => {
+  it(_'should have proper list ARIA attributes',_() => {
     render(
       <AccessiblePatientList
         patients={mockPatients}
@@ -270,7 +270,7 @@ describe('AccessiblePatientList', () => {
     expect(listItems[1]).toHaveAttribute('aria-posinset', '2');
   });
 
-  it('should handle patient selection', () => {
+  it(_'should handle patient selection',_() => {
     render(
       <AccessiblePatientList
         patients={mockPatients}
@@ -285,7 +285,7 @@ describe('AccessiblePatientList', () => {
     expect(mockOnPatientSelect).toHaveBeenCalledWith(mockPatient);
   });
 
-  it('should show selected patient correctly', () => {
+  it(_'should show selected patient correctly',_() => {
     render(
       <AccessiblePatientList
         patients={mockPatients}
@@ -299,7 +299,7 @@ describe('AccessiblePatientList', () => {
     expect(selectedCard).toHaveClass('ring-2', 'ring-primary');
   });
 
-  it('should show empty state when no patients', () => {
+  it(_'should show empty state when no patients',_() => {
     render(
       <AccessiblePatientList
         patients={[]}
@@ -312,7 +312,7 @@ describe('AccessiblePatientList', () => {
     expect(emptyMessage).toHaveAttribute('aria-live', 'polite');
   });
 
-  it('should pass showSensitiveData prop to cards', () => {
+  it(_'should pass showSensitiveData prop to cards',_() => {
     render(
       <AccessiblePatientList
         patients={mockPatients}
@@ -325,7 +325,7 @@ describe('AccessiblePatientList', () => {
     expect(screen.getByText('(11) 99999-9999')).toBeInTheDocument();
   });
 
-  it('should hide sensitive data when showSensitiveData is false', () => {
+  it(_'should hide sensitive data when showSensitiveData is false',_() => {
     render(
       <AccessiblePatientList
         patients={mockPatients}

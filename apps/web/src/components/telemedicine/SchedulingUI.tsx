@@ -95,7 +95,7 @@ interface _TimeSlot {
 interface SchedulingUIProps {
   appointments?: TelemedicineAppointment[];
   onAppointmentCreate?: (
-    appointment: Omit<TelemedicineAppointment, 'id'>,
+    appointment: Omit<TelemedicineAppointment,_'id'>,
   ) => void;
   onAppointmentUpdate?: (appointment: TelemedicineAppointment) => void;
   onAppointmentCancel?: (appointmentId: string) => void;
@@ -251,7 +251,7 @@ export function SchedulingUI({
   const professionals = generateMockProfessionals();
 
   // Filter appointments based on search and filters
-  const filteredAppointments = useMemo(() => {
+  const filteredAppointments = useMemo(_() => {
     return appointments.filter(appointment => {
       const matchesSearch = appointment.patientName
         .toLowerCase()
@@ -267,13 +267,13 @@ export function SchedulingUI({
   }, [appointments, searchTerm, statusFilter]);
 
   // Get appointments for selected date
-  const dailyAppointments = useMemo(() => {
+  const dailyAppointments = useMemo(_() => {
     return filteredAppointments.filter(appointment => isSameDay(appointment.date, selectedDate));
   }, [filteredAppointments, selectedDate]);
 
   // Generate week view data
   const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 });
-  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+  const weekDays = Array.from({ length: 7 },_(_,_i) => addDays(weekStart, i));
 
   const handleDateSelect = (_date: any) => {
     setSelectedDate(date);
@@ -461,8 +461,7 @@ export function SchedulingUI({
                 </CardHeader>
                 <CardContent>
                   {dailyAppointments.length === 0
-                    ? (
-                      <div className='text-center py-12'>
+                    ? (_<div className='text-center py-12'>
                         <Calendar className='h-12 w-12 mx-auto text-muted-foreground mb-4' />
                         <p className='text-muted-foreground'>
                           Nenhuma consulta agendada para este dia
@@ -477,10 +476,9 @@ export function SchedulingUI({
                         </Button>
                       </div>
                     )
-                    : (
-                      <div className='space-y-4'>
+                    : (_<div className='space-y-4'>
                         {dailyAppointments
-                          .sort((a, b) => a.date.getTime() - b.date.getTime())
+                          .sort((a,_b) => a.date.getTime() - b.date.getTime())
                           .map(appointment => (
                             <AppointmentCard
                               key={appointment.id}
@@ -519,9 +517,8 @@ export function SchedulingUI({
                       </p>
                     </div>
                   )
-                  : (
-                    filteredAppointments
-                      .sort((a, b) => a.date.getTime() - b.date.getTime())
+                  : (_filteredAppointments
+                      .sort((a,_b) => a.date.getTime() - b.date.getTime())
                       .map(appointment => (
                         <AppointmentCard
                           key={appointment.id}
@@ -618,8 +615,7 @@ function AppointmentCard({
             Editar
           </Button>
 
-          {appointment.status === 'scheduled' && (
-            <Button
+          {appointment.status === 'scheduled' && (_<Button
               variant='destructive'
               size='sm'
               onClick={() => onCancel?.(appointment.id)}
@@ -635,7 +631,7 @@ function AppointmentCard({
 interface NewAppointmentFormProps {
   patients: Patient[];
   professionals: Professional[];
-  onSave: (appointment: Omit<TelemedicineAppointment, 'id'>) => void;
+  onSave: (appointment: Omit<TelemedicineAppointment,_'id'>) => void;
   onCancel: () => void;
 }
 

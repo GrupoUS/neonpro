@@ -6,7 +6,6 @@
 
 import { zValidator } from '@hono/zod-validator';
 import { Context, Hono, Next } from 'hono';
-import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service.js';
 
 // Type definitions
@@ -27,7 +26,7 @@ const mockAuthMiddleware = (c: Context, next: Next) => {
       401,
     );
   }
-  c.set('user', { id: 'user-123', role: 'healthcare_professional' });
+  c.set('user', { id: 'user-123', _role: 'healthcare_professional' });
   return next();
 };
 
@@ -69,7 +68,7 @@ const modelsQuerySchema = z.object({
 let services: ServiceInterface | null = null;
 
 // Function to set services (used by tests)
-export const setServices = (injectedServices: ServiceInterface) => {
+export const _setServices = (injectedServices: ServiceInterface) => {
   services = injectedServices;
 };
 
@@ -152,7 +151,7 @@ app.get(
 
       // Prepare models request
       const modelsRequest: any = {
-        userId: user.id,
+        _userId: user.id,
       };
 
       // Add filters if provided
@@ -230,7 +229,7 @@ app.get(
       // Log activity for audit trail
       const processingTime = Date.now() - startTime;
       await currentServices.auditService.logActivity({
-        userId: user.id,
+        _userId: user.id,
         action: 'ai_models_access',
         resourceType: 'ai_models',
         resourceId: 'models_list',
@@ -277,7 +276,7 @@ app.get(
       }
 
       // Set all headers
-      Object.entries(responseHeaders).forEach(([key, value]) => {
+      Object.entries(responseHeaders).forEach(_([key,_value]) => {
         c.header(key, value);
       });
 
@@ -296,13 +295,13 @@ app.get(
       }
 
       return c.json(finalResponse);
-    } catch (error) {
+    } catch (_error) {
       console.error('AI Models endpoint error:', error);
 
       // Log error for audit
       const currentServices = getServices();
       await currentServices.auditService.logActivity({
-        userId: user.id,
+        _userId: user.id,
         action: 'ai_models_error',
         resourceType: 'ai_models',
         resourceId: 'error',

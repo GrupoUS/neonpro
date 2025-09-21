@@ -16,7 +16,7 @@ export function WCAGCompliance({ children }: WCAGProps) {
   const location = useLocation();
   const skipLinkRef = useRef<HTMLAnchorElement>(null);
 
-  useEffect(() => {
+  useEffect(_() => {
     // Set up keyboard navigation
     const handleFirstTab = (_e: any) => {
       if (e.key === 'Tab') {
@@ -136,7 +136,7 @@ export function WCAGCompliance({ children }: WCAGProps) {
 }
 
 // Accessibility utilities
-export const ariaLabels = {
+export const _ariaLabels = {
   patientSearch: 'Buscar pacientes',
   patientCard: {
     viewDetails: 'Ver detalhes do paciente',
@@ -203,7 +203,7 @@ export function useKeyboardNavigation(
 
 // Focus trap utility for modals
 export function useFocusTrap(containerRef: React.RefObject<HTMLElement>) {
-  useEffect(() => {
+  useEffect(_() => {
     const container = containerRef.current;
     if (!container) return;
 
@@ -245,7 +245,7 @@ export function announceToScreenReader(message: string) {
   const announcement = document.getElementById('sr-announcements');
   if (announcement) {
     announcement.textContent = message;
-    setTimeout(() => {
+    setTimeout(_() => {
       announcement.textContent = '';
     }, 1000);
   }
@@ -266,7 +266,7 @@ export function checkColorContrast(
 export function useReducedMotion() {
   const [prefersReduced, setPrefersReduced] = React.useState(false);
 
-  useEffect(() => {
+  useEffect(_() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReduced(mediaQuery.matches);
 

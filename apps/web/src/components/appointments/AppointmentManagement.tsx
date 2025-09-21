@@ -119,7 +119,7 @@ export function AppointmentManagement({
   const handleStatusUpdate = async (appointmentId: string, status: string) => {
     try {
       await updateStatus.mutateAsync({ appointmentId, status });
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to update appointment status:', error);
     }
   };
@@ -127,7 +127,7 @@ export function AppointmentManagement({
   const handleSendReminder = async (appointmentId: string, channel: string) => {
     try {
       await sendReminder.mutateAsync({ appointmentId, channel });
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to send reminder:', error);
     }
   };
@@ -431,8 +431,7 @@ function AppointmentCard({
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
               {/* Status Updates */}
-              {appointment.status === 'scheduled' && (
-                <>
+              {appointment.status === 'scheduled' && (_<>
                   <DropdownMenuItem
                     onClick={() => onStatusUpdate(appointment.id, 'confirmed')}
                   >

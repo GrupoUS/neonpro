@@ -35,7 +35,7 @@ export function useAutoResizeTextarea({
     [minHeight, maxHeight],
   );
 
-  useEffect(() => {
+  useEffect(_() => {
     // Set initial height
     const textarea = textareaRef.current;
     if (textarea) {
@@ -44,7 +44,7 @@ export function useAutoResizeTextarea({
   }, [minHeight]);
 
   // Adjust height on window resize
-  useEffect(() => {
+  useEffect(_() => {
     const handleResize = () => adjustHeight();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);

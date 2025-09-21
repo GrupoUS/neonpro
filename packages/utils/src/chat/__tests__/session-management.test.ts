@@ -21,26 +21,26 @@ import {
   getSessionMetrics,
 } from "../session-management";
 
-describe("T010: Session Management for AI Chat", () => {
+describe("T010: Session Management for AI Chat",_() => {
   let mockSessionStore: Map<string, ChatSession>;
   let mockTimestamp: number;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     mockSessionStore = new Map();
     mockTimestamp = Date.now();
     vi.useFakeTimers();
     vi.setSystemTime(mockTimestamp);
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.useRealTimers();
     vi.clearAllMocks();
   });
 
-  describe("Session Creation", () => {
-    it("should create new session with valid parameters", async () => {
+  describe(_"Session Creation",_() => {
+    it(_"should create new session with valid parameters",_async () => {
       const sessionConfig: SessionConfig = {
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "clinic-456",
         locale: "pt-BR",
         sessionType: "general",
@@ -51,7 +51,7 @@ describe("T010: Session Management for AI Chat", () => {
 
       expect(session).toMatchObject({
         id: expect.any(String),
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "clinic-456",
         status: "active",
         startedAt: expect.any(Date),
@@ -62,9 +62,9 @@ describe("T010: Session Management for AI Chat", () => {
       });
     });
 
-    it("should generate unique session IDs", async () => {
+    it(_"should generate unique session IDs",_async () => {
       const config: SessionConfig = {
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "clinic-456",
       };
 
@@ -74,9 +74,9 @@ describe("T010: Session Management for AI Chat", () => {
       expect(session1.id).not.toBe(session2.id);
     });
 
-    it("should set default values for optional parameters", async () => {
+    it(_"should set default values for optional parameters",_async () => {
       const config: SessionConfig = {
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "clinic-456",
       };
 
@@ -88,11 +88,11 @@ describe("T010: Session Management for AI Chat", () => {
       expect(session.consentStatus).toBe("pending");
     });
 
-    it("should validate required parameters", async () => {
+    it(_"should validate required parameters",_async () => {
       const invalidConfigs = [
-        { userId: "", clinicId: "clinic-456" },
-        { userId: "user-123", clinicId: "" },
-        { userId: "user-123" }, // Missing clinicId
+        { _userId: "", clinicId: "clinic-456" },
+        { _userId: "user-123", clinicId: "" },
+        { _userId: "user-123" }, // Missing clinicId
         {}, // Missing both
       ];
 
@@ -103,9 +103,9 @@ describe("T010: Session Management for AI Chat", () => {
       }
     });
 
-    it("should enforce clinic user relationship", async () => {
+    it(_"should enforce clinic user relationship",_async () => {
       const config: SessionConfig = {
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "invalid-clinic",
       };
 
@@ -115,18 +115,18 @@ describe("T010: Session Management for AI Chat", () => {
     });
   });
 
-  describe("Session Retrieval", () => {
+  describe(_"Session Retrieval",_() => {
     let testSession: ChatSession;
 
-    beforeEach(async () => {
+    beforeEach(_async () => {
       const config: SessionConfig = {
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "clinic-456",
       };
       testSession = await createChatSession(config);
     });
 
-    it("should retrieve existing session", async () => {
+    it(_"should retrieve existing session",_async () => {
       const retrieved = await getChatSession(
         testSession.id,
         "user-123",
@@ -136,13 +136,13 @@ describe("T010: Session Management for AI Chat", () => {
       expect(retrieved).toEqual(testSession);
     });
 
-    it("should throw error for non-existent session", async () => {
+    it(_"should throw error for non-existent session",_async () => {
       await expect(
         getChatSession("invalid-id", "user-123", "clinic-456"),
       ).rejects.toThrow(/not found/i);
     });
 
-    it("should enforce tenant isolation", async () => {
+    it(_"should enforce tenant isolation",_async () => {
       await expect(
         getChatSession(testSession.id, "user-123", "other-clinic"),
       ).rejects.toThrow(/not authorized/i);
@@ -152,7 +152,7 @@ describe("T010: Session Management for AI Chat", () => {
       ).rejects.toThrow(/not authorized/i);
     });
 
-    it("should update last accessed timestamp on retrieval", async () => {
+    it(_"should update last accessed timestamp on retrieval",_async () => {
       const originalAccessed = testSession.lastAccessedAt;
 
       vi.advanceTimersByTime(5000); // 5 seconds later
@@ -169,18 +169,18 @@ describe("T010: Session Management for AI Chat", () => {
     });
   });
 
-  describe("Session Activity Management", () => {
+  describe(_"Session Activity Management",_() => {
     let testSession: ChatSession;
 
-    beforeEach(async () => {
+    beforeEach(_async () => {
       const config: SessionConfig = {
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "clinic-456",
       };
       testSession = await createChatSession(config);
     });
 
-    it("should update session activity", async () => {
+    it(_"should update session activity",_async () => {
       const activityData = {
         messageCount: 5,
         lastMessageAt: new Date(),
@@ -194,7 +194,7 @@ describe("T010: Session Management for AI Chat", () => {
       expect(updated.metadata?.totalTokens).toBe(150);
     });
 
-    it("should track session metrics", async () => {
+    it(_"should track session metrics",_async () => {
       await updateSessionActivity(testSession.id, { messageCount: 3 });
       await updateSessionActivity(testSession.id, { messageCount: 5 }); // +2 messages
 
@@ -207,10 +207,10 @@ describe("T010: Session Management for AI Chat", () => {
       expect(session.totalMessages).toBe(5);
     });
 
-    it("should handle concurrent updates safely", async () => {
+    it(_"should handle concurrent updates safely",_async () => {
       const updates = Array(10)
         .fill(null)
-        .map((_, i) =>
+        .map(_(_,_i) =>
           updateSessionActivity(testSession.id, { messageCount: i + 1 }),
         );
 
@@ -225,19 +225,19 @@ describe("T010: Session Management for AI Chat", () => {
     });
   });
 
-  describe("Session Timeout and Expiration", () => {
+  describe(_"Session Timeout and Expiration",_() => {
     let testSession: ChatSession;
 
-    beforeEach(async () => {
+    beforeEach(_async () => {
       const config: SessionConfig = {
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "clinic-456",
         maxDurationMinutes: 30, // 30 minutes for testing
       };
       testSession = await createChatSession(config);
     });
 
-    it("should detect expired sessions", async () => {
+    it(_"should detect expired sessions",_async () => {
       // Advance time beyond max duration
       vi.advanceTimersByTime(31 * 60 * 1000); // 31 minutes
 
@@ -247,7 +247,7 @@ describe("T010: Session Management for AI Chat", () => {
       expect(isExpired.reason).toContain("expired");
     });
 
-    it("should detect inactive sessions", async () => {
+    it(_"should detect inactive sessions",_async () => {
       // Advance time beyond inactivity threshold (default 15 minutes)
       vi.advanceTimersByTime(16 * 60 * 1000); // 16 minutes
 
@@ -257,7 +257,7 @@ describe("T010: Session Management for AI Chat", () => {
       expect(isValid.reason).toContain("inactive");
     });
 
-    it("should allow extending session if not expired", async () => {
+    it(_"should allow extending session if not expired",_async () => {
       // Update activity before expiration
       vi.advanceTimersByTime(10 * 60 * 1000); // 10 minutes
       await updateSessionActivity(testSession.id, { messageCount: 1 });
@@ -267,7 +267,7 @@ describe("T010: Session Management for AI Chat", () => {
       expect(isValid.isValid).toBe(true);
     });
 
-    it("should prevent extension of expired sessions", async () => {
+    it(_"should prevent extension of expired sessions",_async () => {
       // Let session expire
       vi.advanceTimersByTime(31 * 60 * 1000); // 31 minutes
 
@@ -277,26 +277,26 @@ describe("T010: Session Management for AI Chat", () => {
     });
   });
 
-  describe("Session Cleanup", () => {
+  describe(_"Session Cleanup",_() => {
     let activeSessions: ChatSession[];
     let expiredSessions: ChatSession[];
 
-    beforeEach(async () => {
+    beforeEach(_async () => {
       // Create active sessions
       activeSessions = await Promise.all([
-        createChatSession({ userId: "user-1", clinicId: "clinic-456" }),
-        createChatSession({ userId: "user-2", clinicId: "clinic-456" }),
+        createChatSession({ _userId: "user-1", clinicId: "clinic-456" }),
+        createChatSession({ _userId: "user-2", clinicId: "clinic-456" }),
       ]);
 
       // Create expired sessions
       expiredSessions = await Promise.all([
         createChatSession({
-          userId: "user-3",
+          _userId: "user-3",
           clinicId: "clinic-456",
           maxDurationMinutes: 10,
         }),
         createChatSession({
-          userId: "user-4",
+          _userId: "user-4",
           clinicId: "clinic-456",
           maxDurationMinutes: 10,
         }),
@@ -306,7 +306,7 @@ describe("T010: Session Management for AI Chat", () => {
       vi.advanceTimersByTime(11 * 60 * 1000); // 11 minutes
     });
 
-    it("should clean up expired sessions", async () => {
+    it(_"should clean up expired sessions",_async () => {
       const result = await cleanupExpiredSessions();
 
       expect(result.cleanedCount).toBe(2);
@@ -314,14 +314,14 @@ describe("T010: Session Management for AI Chat", () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    it("should archive inactive sessions before cleanup", async () => {
+    it(_"should archive inactive sessions before cleanup",_async () => {
       const archiveResult = await archiveInactiveSessions();
 
       expect(archiveResult.archivedCount).toBeGreaterThan(0);
       expect(archiveResult.totalProcessed).toBe(4);
     });
 
-    it("should preserve session data for audit", async () => {
+    it(_"should preserve session data for audit",_async () => {
       const sessionId = expiredSessions[0].id;
       await cleanupExpiredSessions();
 
@@ -334,9 +334,9 @@ describe("T010: Session Management for AI Chat", () => {
       expect(archived.archivedAt).toBeDefined();
     });
 
-    it("should handle cleanup errors gracefully", async () => {
+    it(_"should handle cleanup errors gracefully",_async () => {
       // Mock cleanup failure for one session
-      const mockError = vi
+      const _mockError = vi
         .fn()
         .mockRejectedValueOnce(new Error("Database error"));
 
@@ -347,22 +347,22 @@ describe("T010: Session Management for AI Chat", () => {
     });
   });
 
-  describe("Session Security and Access Control", () => {
+  describe(_"Session Security and Access Control",_() => {
     let testSession: ChatSession;
 
-    beforeEach(async () => {
+    beforeEach(_async () => {
       const config: SessionConfig = {
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "clinic-456",
       };
       testSession = await createChatSession(config);
     });
 
-    it("should validate user access permissions", async () => {
+    it(_"should validate user access permissions",_async () => {
       const access = await validateSessionAccess(testSession.id, {
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "clinic-456",
-        role: "patient",
+        _role: "patient",
       });
 
       expect(access.isValid).toBe(true);
@@ -370,11 +370,11 @@ describe("T010: Session Management for AI Chat", () => {
       expect(access.permissions).toContain("write");
     });
 
-    it("should allow healthcare professionals to access patient sessions", async () => {
+    it(_"should allow healthcare professionals to access patient sessions",_async () => {
       const access = await validateSessionAccess(testSession.id, {
-        userId: "doctor-456",
+        _userId: "doctor-456",
         clinicId: "clinic-456",
-        role: "doctor",
+        _role: "doctor",
       });
 
       expect(access.isValid).toBe(true);
@@ -382,31 +382,31 @@ describe("T010: Session Management for AI Chat", () => {
       expect(access.permissions).not.toContain("write"); // Read-only for care providers
     });
 
-    it("should deny cross-clinic access", async () => {
+    it(_"should deny cross-clinic access",_async () => {
       const access = await validateSessionAccess(testSession.id, {
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "other-clinic",
-        role: "patient",
+        _role: "patient",
       });
 
       expect(access.isValid).toBe(false);
       expect(access.reason).toContain("clinic access");
     });
 
-    it("should log access attempts for audit", async () => {
-      const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    it(_"should log access attempts for audit",_async () => {
+      const logSpy = vi.spyOn(console, "log").mockImplementation(_() => {});
 
       await validateSessionAccess(testSession.id, {
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "clinic-456",
-        role: "patient",
+        _role: "patient",
       });
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({
           event: "session_access",
           sessionId: testSession.id,
-          userId: "user-123",
+          _userId: "user-123",
           result: "allowed",
         }),
       );
@@ -415,18 +415,18 @@ describe("T010: Session Management for AI Chat", () => {
     });
   });
 
-  describe("Session End and Finalization", () => {
+  describe(_"Session End and Finalization",_() => {
     let testSession: ChatSession;
 
-    beforeEach(async () => {
+    beforeEach(_async () => {
       const config: SessionConfig = {
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "clinic-456",
       };
       testSession = await createChatSession(config);
     });
 
-    it("should properly end active session", async () => {
+    it(_"should properly end active session",_async () => {
       const endResult = await endChatSession(testSession.id, {
         reason: "user_ended",
         finalMessageCount: 10,
@@ -439,7 +439,7 @@ describe("T010: Session Management for AI Chat", () => {
       expect(endResult.metadata?.endReason).toBe("user_ended");
     });
 
-    it("should calculate session statistics on end", async () => {
+    it(_"should calculate session statistics on end",_async () => {
       // Add some activity
       await updateSessionActivity(testSession.id, {
         messageCount: 15,
@@ -455,7 +455,7 @@ describe("T010: Session Management for AI Chat", () => {
       expect(endResult.metadata?.duration).toBeGreaterThan(0);
     });
 
-    it("should prevent operations on ended sessions", async () => {
+    it(_"should prevent operations on ended sessions",_async () => {
       await endChatSession(testSession.id, { reason: "user_ended" });
 
       await expect(
@@ -463,7 +463,7 @@ describe("T010: Session Management for AI Chat", () => {
       ).rejects.toThrow(/ended|closed/i);
     });
 
-    it("should handle double-end gracefully", async () => {
+    it(_"should handle double-end gracefully",_async () => {
       await endChatSession(testSession.id, { reason: "user_ended" });
 
       // Second end should not throw but return existing end state
@@ -476,17 +476,17 @@ describe("T010: Session Management for AI Chat", () => {
     });
   });
 
-  describe("Session Metrics and Analytics", () => {
-    beforeEach(async () => {
+  describe(_"Session Metrics and Analytics",_() => {
+    beforeEach(_async () => {
       // Create multiple sessions for metrics testing
       await Promise.all([
-        createChatSession({ userId: "user-1", clinicId: "clinic-456" }),
-        createChatSession({ userId: "user-2", clinicId: "clinic-456" }),
-        createChatSession({ userId: "user-3", clinicId: "clinic-789" }),
+        createChatSession({ _userId: "user-1", clinicId: "clinic-456" }),
+        createChatSession({ _userId: "user-2", clinicId: "clinic-456" }),
+        createChatSession({ _userId: "user-3", clinicId: "clinic-789" }),
       ]);
     });
 
-    it("should calculate clinic session metrics", async () => {
+    it(_"should calculate clinic session metrics",_async () => {
       const metrics = await getSessionMetrics("clinic-456");
 
       expect(metrics).toMatchObject({
@@ -498,7 +498,7 @@ describe("T010: Session Management for AI Chat", () => {
       });
     });
 
-    it("should track session usage patterns", async () => {
+    it(_"should track session usage patterns",_async () => {
       const metrics = await getSessionMetrics("clinic-456", {
         includeHourlyDistribution: true,
         includeDurationHistogram: true,
@@ -508,7 +508,7 @@ describe("T010: Session Management for AI Chat", () => {
       expect(metrics.durationHistogram).toBeDefined();
     });
 
-    it("should provide performance insights", async () => {
+    it(_"should provide performance insights",_async () => {
       const metrics = await getSessionMetrics("clinic-456", {
         includePerformance: true,
       });
@@ -521,24 +521,24 @@ describe("T010: Session Management for AI Chat", () => {
     });
   });
 
-  describe("LGPD Compliance Features", () => {
+  describe(_"LGPD Compliance Features",_() => {
     let testSession: ChatSession;
 
-    beforeEach(async () => {
+    beforeEach(_async () => {
       const config: SessionConfig = {
-        userId: "user-123",
+        _userId: "user-123",
         clinicId: "clinic-456",
         consentStatus: "granted",
       };
       testSession = await createChatSession(config);
     });
 
-    it("should track data processing consent", async () => {
+    it(_"should track data processing consent",_async () => {
       expect(testSession.consentStatus).toBe("granted");
       expect(testSession.consentTimestamp).toBeDefined();
     });
 
-    it("should handle consent revocation", async () => {
+    it(_"should handle consent revocation",_async () => {
       const updated = await updateSessionActivity(testSession.id, {
         consentStatus: "revoked",
       });
@@ -547,7 +547,7 @@ describe("T010: Session Management for AI Chat", () => {
       expect(updated.isActive).toBe(false); // Should auto-deactivate
     });
 
-    it("should provide data export for portability", async () => {
+    it(_"should provide data export for portability",_async () => {
       const exportData = await getChatSession(
         testSession.id,
         "user-123",
@@ -565,7 +565,7 @@ describe("T010: Session Management for AI Chat", () => {
       });
     });
 
-    it("should support data deletion requests", async () => {
+    it(_"should support data deletion requests",_async () => {
       const deleteResult = await endChatSession(testSession.id, {
         reason: "data_deletion_request",
         deleteData: true,

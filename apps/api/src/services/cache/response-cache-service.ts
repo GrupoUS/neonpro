@@ -5,7 +5,6 @@
 
 import { createHash } from 'crypto';
 import { Redis } from 'ioredis';
-import { z } from 'zod';
 import { AguiQueryMessage, AguiResponseMessage, AguiSource } from '../agui-protocol/types';
 
 // Input validation schemas
@@ -28,7 +27,7 @@ export interface CacheEntry<T = any> {
   hitCount: number;
   metadata: {
     queryHash: string;
-    userId: string;
+    _userId: string;
     patientId?: string;
     dataCategories: string[];
     confidenceScore?: number;
@@ -84,17 +83,17 @@ export class ResponseCacheService {
   /**
    * Generate secure cache key for query
    */
-  private generateCacheKey(query: AguiQueryMessage, userId: string): string {
+  private generateCacheKey(_query: AguiQueryMessage, _userId: string): string {
     // Validate inputs
-    const validatedUserId = UserIdSchema.parse(userId);
+    const validatedUserId = UserIdSchema.parse(_userId);
 
     const queryData = {
-      query: this.sanitizeQueryString(query.query),
-      context: {
+      _query: this.sanitizeQueryString(query._query),
+      _context: {
         patientId: query.context?.patientId
           ? this.sanitizeString(query.context.patientId)
           : undefined,
-        userId: query.context?.userId ? this.sanitizeString(query.context.userId) : undefined,
+        _userId: query.context?.userId ? this.sanitizeString(query.context._userId) : undefined,
         previousTopics: query.context?.previousTopics?.map(t => this.sanitizeString(t)) || [],
       },
       options: {
@@ -184,14 +183,14 @@ export class ResponseCacheService {
    * Get cached response with security validation
    */
   async getCachedResponse(
-    query: AguiQueryMessage,
-    userId: string,
+    _query: AguiQueryMessage,
+    _userId: string,
   ): Promise<AguiResponseMessage | null> {
     const startTime = Date.now();
 
     try {
       // Validate inputs and check rate limits
-      const validatedUserId = UserIdSchema.parse(userId);
+      const validatedUserId = UserIdSchema.parse(_userId);
 
       if (!(await this.checkCacheRateLimit(validatedUserId))) {
         console.warn(`[Cache] Rate limit exceeded for user: ${validatedUserId}`);
@@ -214,7 +213,7 @@ export class ResponseCacheService {
 
       // Check Redis cache if connected
       if (this.isConnected && this.redis) {
-        const redisData = await this.safeRedisOperation(() => this.redis.get(cacheKey));
+        const redisData = await this.safeRedisOperation(_() => this.redis.get(cacheKey));
         if (redisData) {
           const entry: CacheEntry = JSON.parse(redisData);
 
@@ -237,7 +236,7 @@ export class ResponseCacheService {
             }
           } else {
             // Remove expired entry
-            await this.safeRedisOperation(() => this.redis.del(cacheKey));
+            await this.safeRedisOperation(_() => this.redis.del(cacheKey));
           }
         }
       }
@@ -245,7 +244,7 @@ export class ResponseCacheService {
       this.stats.totalMisses++;
       this.updateHitRate();
       return null;
-    } catch (error) {
+    } catch (_error) {
       console.error('[Cache] Error retrieving cached response:', error);
       this.stats.totalMisses++;
       this.updateHitRate();
@@ -257,9 +256,9 @@ export class ResponseCacheService {
    * Cache response with security validation
    */
   async cacheResponse(
-    query: AguiQueryMessage,
+    _query: AguiQueryMessage,
     response: AguiResponseMessage,
-    userId: string,
+    _userId: string,
     options: {
       customTTL?: number;
       skipCache?: boolean;
@@ -271,7 +270,7 @@ export class ResponseCacheService {
 
     try {
       // Validate inputs
-      const validatedUserId = UserIdSchema.parse(userId);
+      const validatedUserId = UserIdSchema.parse(_userId);
       const validatedTTL = TTLSchema.parse(options.customTTL || this.config.defaultTTL);
 
       // Validate response before caching
@@ -295,7 +294,7 @@ export class ResponseCacheService {
         hitCount: 1,
         metadata: {
           queryHash: this.sanitizeHash(cacheKey.split(':').pop()!),
-          userId: validatedUserId,
+          _userId: validatedUserId,
           patientId,
           dataCategories: this.extractDataCategories(validatedResponse),
           confidenceScore: Math.max(0, Math.min(1, validatedResponse.confidence || 0)),
@@ -311,7 +310,7 @@ export class ResponseCacheService {
 
       // Store in Redis if connected
       if (this.isConnected && this.redis) {
-        await this.safeRedisOperation(() =>
+        await this.safeRedisOperation(_() =>
           this.redis.setex(cacheKey, validatedTTL, JSON.stringify(entry))
         );
       }
@@ -323,7 +322,7 @@ export class ResponseCacheService {
       }
 
       this.stats.cacheSize++;
-    } catch (error) {
+    } catch (_error) {
       console.error('[Cache] Error caching response:', error);
     }
   }
@@ -332,7 +331,7 @@ export class ResponseCacheService {
    * Check if cache entry is expired
    */
   private isExpired(entry: CacheEntry): boolean {
-    const now = new Date();
+    const _now = new Date();
     const expiresAt = new Date(entry.timestamp);
     expiresAt.setSeconds(expiresAt.getSeconds() + entry.ttl);
 
@@ -346,10 +345,10 @@ export class ResponseCacheService {
     if (this.localCache.size > this.config.maxSize) {
       // Simple LRU eviction
       const entries = Array.from(this.localCache.entries());
-      entries.sort((a, b) => a[1].hitCount - b[1].hitCount);
+      entries.sort(_(a,_b) => a[1].hitCount - b[1].hitCount);
 
       const toRemove = entries.slice(0, Math.floor(this.config.maxSize * 0.2));
-      toRemove.forEach(([key]) => {
+      toRemove.forEach(_([key]) => {
         this.localCache.delete(key);
         this.stats.evictionCount++;
       });
@@ -379,13 +378,13 @@ export class ResponseCacheService {
 
       // Clear Redis cache if connected
       if (this.isConnected && this.redis) {
-        const keys = await this.safeRedisOperation(() => this.redis.keys(sanitizedPattern));
+        const keys = await this.safeRedisOperation(_() => this.redis.keys(sanitizedPattern));
         if (keys.length > 0) {
           // Limit batch size to prevent Redis overload
           const batchSize = 100;
           for (let i = 0; i < keys.length; i += batchSize) {
             const batch = keys.slice(i, i + batchSize);
-            await this.safeRedisOperation(() => this.redis.del(...batch));
+            await this.safeRedisOperation(_() => this.redis.del(...batch));
           }
           invalidatedCount += keys.length;
         }
@@ -401,7 +400,7 @@ export class ResponseCacheService {
 
       this.stats.evictionCount += invalidatedCount;
       return invalidatedCount;
-    } catch (error) {
+    } catch (_error) {
       console.error('[Cache] Error invalidating cache:', error);
       return 0;
     }
@@ -420,7 +419,7 @@ export class ResponseCacheService {
       // Get cache size
       const cacheSize = await this.redis.dbsize();
       this.stats.cacheSize = cacheSize;
-    } catch (error) {
+    } catch (_error) {
       console.error('[Cache] Error getting cache stats:', error);
     }
 
@@ -442,7 +441,7 @@ export class ResponseCacheService {
           this.stats.evictionCount++;
         }
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('[Cache] Health check failed:', error);
     }
   }
@@ -451,8 +450,7 @@ export class ResponseCacheService {
    * Initialize health check timer
    */
   private initializeHealthCheck(): void {
-    this.healthCheckTimer = setInterval(
-      () => this.healthCheck(),
+    this.healthCheckTimer = setInterval(_() => this.healthCheck(),
       this.config.healthCheckInterval,
     );
   }
@@ -499,7 +497,7 @@ export function createHealthcareCacheConfig(): CacheConfig {
 /**
  * Cache strategies for different data types
  */
-export const CacheStrategies = {
+export const _CacheStrategies = {
   // Patient data - longer TTL, high priority
   patientData: {
     ttl: 7200, // 2 hours

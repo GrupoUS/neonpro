@@ -15,7 +15,7 @@ import type {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Supabase client
-vi.mock('@/integrations/supabase/client', () => ({
+vi.mock(_'@/integrations/supabase/client',_() => ({
   supabase: {
     from: vi.fn(() => ({
       select: vi.fn(() => ({
@@ -34,7 +34,7 @@ vi.mock('@/integrations/supabase/client', () => ({
           })),
         })),
       })),
-      insert: vi.fn(() => ({
+      insert: vi.fn(_() => ({
         select: vi.fn(() => ({
           single: vi.fn(() => ({
             then: vi.fn(resolve =>
@@ -50,12 +50,12 @@ vi.mock('@/integrations/supabase/client', () => ({
   },
 }));
 
-describe('CalendarLGPDConsentService - RED Phase Tests', () => {
+describe(_'CalendarLGPDConsentService - RED Phase Tests',_() => {
   let mockAppointment: CalendarAppointment;
   let mockUserId: string;
   let mockUserRole: string;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
 
     mockAppointment = {
@@ -77,12 +77,12 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
     mockUserRole = 'doctor';
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.restoreAllMocks();
   });
 
-  describe('Service Existence and Structure', () => {
-    it('should FAIL - service should be properly instantiated', () => {
+  describe(_'Service Existence and Structure',_() => {
+    it(_'should FAIL - service should be properly instantiated',_() => {
       // RED: This test fails if service doesn't exist or is malformed
       expect(calendarLGPDConsentService).toBeDefined();
       expect(typeof calendarLGPDConsentService.validateCalendarConsent).toBe(
@@ -99,7 +99,7 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
       ).toBe('function');
     });
 
-    it('should FAIL - Calendar LGPD purposes should be defined', () => {
+    it(_'should FAIL - Calendar LGPD purposes should be defined',_() => {
       // RED: This test fails if purposes are not properly exported
       const {
         CALENDAR_LGPD_PURPOSES,
@@ -120,7 +120,7 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
       );
     });
 
-    it('should FAIL - DataMinimizationLevel enum should have all required levels', () => {
+    it(_'should FAIL - DataMinimizationLevel enum should have all required levels',_() => {
       // RED: This test fails if enum is incomplete
       expect(DataMinimizationLevel.MINIMAL).toBe('minimal');
       expect(DataMinimizationLevel.RESTRICTED).toBe('restricted');
@@ -129,8 +129,8 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
     });
   });
 
-  describe('Consent Validation - LGPD Art. 7º Compliance', () => {
-    it('should FAIL - should validate consent for calendar access', async () => {
+  describe(_'Consent Validation - LGPD Art. 7º Compliance',_() => {
+    it(_'should FAIL - should validate consent for calendar access',_async () => {
       // RED: This test fails if consent validation is not properly implemented
       const result = await calendarLGPDConsentService.validateCalendarConsent(
         'patient-123',
@@ -146,7 +146,7 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
       expect(result.legalBasis).toBeDefined();
     });
 
-    it('should FAIL - should handle expired consent', async () => {
+    it(_'should FAIL - should handle expired consent',_async () => {
       // RED: This test fails if expired consent handling is not implemented
       // Mock expired consent response
       const mockSupabase = require('@/integrations/supabase/client').supabase;
@@ -187,7 +187,7 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
       expect(result.error).toContain('expired');
     });
 
-    it('should FAIL - should require explicit consent for healthcare data', async () => {
+    it(_'should FAIL - should require explicit consent for healthcare data',_async () => {
       // RED: This test fails if explicit consent requirement is not enforced
       // Mock implicit consent response
       const mockSupabase = require('@/integrations/supabase/client').supabase;
@@ -228,7 +228,7 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
       expect(result.error).toContain('explicit');
     });
 
-    it('should FAIL - should validate consent covers appointment data category', async () => {
+    it(_'should FAIL - should validate consent covers appointment data category',_async () => {
       // RED: This test fails if data category validation is missing
       // Mock consent without appointment data coverage
       const mockSupabase = require('@/integrations/supabase/client').supabase;
@@ -270,8 +270,8 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
     });
   });
 
-  describe('Data Minimization - LGPD Art. 6º, VII', () => {
-    it('should FAIL - should determine minimization level based on consent', async () => {
+  describe(_'Data Minimization - LGPD Art. 6º,_VII',_() => {
+    it(_'should FAIL - should determine minimization level based on consent',_async () => {
       // RED: This test fails if minimization level determination is incorrect
       const level = await calendarLGPDConsentService.getDataMinimizationLevel(
         'patient-123',
@@ -283,7 +283,7 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
       expect(level).toBe(DataMinimizationLevel.MINIMAL);
     });
 
-    it('should FAIL - should apply data minimization rules correctly', async () => {
+    it(_'should FAIL - should apply data minimization rules correctly',_async () => {
       // RED: This test fails if data minimization is not properly applied
       const minimized = await calendarLGPDConsentService.minimizeAppointmentData(
         mockAppointment,
@@ -299,7 +299,7 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
       expect(minimized.requiresConsent).toBeDefined();
     });
 
-    it('should FAIL - should return minimal data for restricted access', async () => {
+    it(_'should FAIL - should return minimal data for restricted access',_async () => {
       // RED: This test fails if fallback to minimal data is not working
       const minimized = await calendarLGPDConsentService.minimizeAppointmentData(
         mockAppointment,
@@ -312,11 +312,11 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
       expect(minimized.consentLevel).toBe(DataMinimizationLevel.MINIMAL);
     });
 
-    it('should FAIL - should handle errors gracefully with fallback data', async () => {
+    it(_'should FAIL - should handle errors gracefully with fallback data',_async () => {
       // RED: This test fails if error handling is not robust
       // Force an error
       const mockSupabase = require('@/integrations/supabase/client').supabase;
-      mockSupabase.from.mockImplementation(() => {
+      mockSupabase.from.mockImplementation(_() => {
         throw new Error('Database connection failed');
       });
 
@@ -333,8 +333,8 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
     });
   });
 
-  describe('Batch Processing Compliance', () => {
-    it('should FAIL - should process multiple appointments with compliance', async () => {
+  describe(_'Batch Processing Compliance',_() => {
+    it(_'should FAIL - should process multiple appointments with compliance',_async () => {
       // RED: This test fails if batch processing is not implemented
       const appointments = [
         mockAppointment,
@@ -357,7 +357,7 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
       expect(Array.isArray(result.consentIssues)).toBe(true);
     });
 
-    it('should FAIL - should track consent issues in batch processing', async () => {
+    it(_'should FAIL - should track consent issues in batch processing',_async () => {
       // RED: This test fails if consent issue tracking is missing
       const appointments = [mockAppointment];
 
@@ -373,7 +373,7 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
       expect(result.consentIssues[0].patientId).toBe(mockAppointment.id);
     });
 
-    it('should FAIL - should generate audit log for batch processing', async () => {
+    it(_'should FAIL - should generate audit log for batch processing',_async () => {
       // RED: This test fails if audit logging is not implemented
       const appointments = [mockAppointment];
 
@@ -389,22 +389,22 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
     });
   });
 
-  describe('Healthcare Role Validation', () => {
-    it('should FAIL - should recognize healthcare professional roles', () => {
+  describe(_'Healthcare Role Validation',_() => {
+    it(_'should FAIL - should recognize healthcare professional roles',_() => {
       // RED: This test fails if role validation is incorrect
       // This would need to be tested via private method access or refactoring
       expect(true).toBe(false); // Force failure to indicate test needs implementation
     });
 
-    it('should FAIL - should provide higher access level for healthcare professionals', async () => {
+    it(_'should FAIL - should provide higher access level for healthcare professionals',_async () => {
       // RED: This test fails if role-based access is not implemented
-      const healthcareLevel = await calendarLGPDConsentService.getDataMinimizationLevel(
+      const _healthcareLevel = await calendarLGPDConsentService.getDataMinimizationLevel(
         'patient-123',
         'doctor',
         'healthcare_professional',
       );
 
-      const nonHealthcareLevel = await calendarLGPDConsentService.getDataMinimizationLevel(
+      const _nonHealthcareLevel = await calendarLGPDConsentService.getDataMinimizationLevel(
         'patient-123',
         'user',
         'patient',
@@ -415,13 +415,13 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
     });
   });
 
-  describe('LGPD Compliance Validation', () => {
-    it('should FAIL - should enforce data retention policies', () => {
+  describe(_'LGPD Compliance Validation',_() => {
+    it(_'should FAIL - should enforce data retention policies',_() => {
       // RED: This test fails if retention policy enforcement is missing
       expect(true).toBe(false); // Test needs implementation
     });
 
-    it('should FAIL - should validate legal basis for data processing', async () => {
+    it(_'should FAIL - should validate legal basis for data processing',_async () => {
       // RED: This test fails if legal basis validation is missing
       const result = await calendarLGPDConsentService.validateCalendarConsent(
         'patient-123',
@@ -439,7 +439,7 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
       ]).toContain(result.legalBasis);
     });
 
-    it('should FAIL - should provide recommendations for compliance issues', async () => {
+    it(_'should FAIL - should provide recommendations for compliance issues',_async () => {
       // RED: This test fails if recommendation system is missing
       const result = await calendarLGPDConsentService.validateCalendarConsent(
         'patient-123',
@@ -455,8 +455,8 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
     });
   });
 
-  describe('Integration with Calendar Component', () => {
-    it('should FAIL - should provide types needed by calendar integration', () => {
+  describe(_'Integration with Calendar Component',_() => {
+    it(_'should FAIL - should provide types needed by calendar integration',_() => {
       // RED: This test fails if required types are missing
       const types = [
         'ConsentValidationResult',
@@ -470,7 +470,7 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
       });
     });
 
-    it('should FAIL - should export service instance correctly', () => {
+    it(_'should FAIL - should export service instance correctly',_() => {
       // RED: This test fails if export is incorrect
       const exported = require('@/services/lgpd/calendar-consent.service');
 

@@ -14,18 +14,9 @@ import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/clien
 import { TRPCError } from '@trpc/server';
 import * as v from 'valibot';
 import {
-  ConsentVerificationValibot,
-  ConsentWithdrawalValibot,
-  CreateLGPDConsentValibot,
-} from '../../../../../../packages/types/src/lgpd.valibot';
-import {
-  CreatePatientValibot,
-  PatientConsentWithdrawalValibot,
-  PatientExportValibot,
-  PatientSearchValibot,
+  Patient
 } from '../../../../../../packages/types/src/patient.valibot';
 import {
-  CreateConsentSchema,
   CreatePatientSchema,
   GetPatientSchema,
   ListPatientsSchema,
@@ -174,14 +165,14 @@ async function anonymizePatientData(patientId: string, prisma: any) {
 // TRPC ROUTER IMPLEMENTATION
 // =====================================
 
-export const patientsRouter = router({
+export const _patientsRouter = router({
   /**
    * Create Patient with LGPD Compliance
    * Includes cryptographic consent management and audit logging
    */
   create: healthcareProcedure
     .input(CreatePatientSchema)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(_async ({ ctx,_input }) => {
       try {
         // Validate LGPD consent is properly provided
         if (!input.lgpdConsentGiven || !input.lgpdConsentVersion) {
@@ -253,7 +244,7 @@ export const patientsRouter = router({
         // Create audit trail
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             patientId: patient.id,
             action: AuditAction.CREATE,
@@ -282,11 +273,11 @@ export const patientsRouter = router({
           consentStatus: 'active',
           consentProof: consentProof.integrity,
         };
-      } catch (error) {
+      } catch (_error) {
         // Log failed attempt
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             action: AuditAction.CREATE,
             resource: 'patient',
@@ -315,7 +306,7 @@ export const patientsRouter = router({
    */
   get: patientProcedure
     .input(GetPatientSchema)
-    .query(async ({ ctx, input }) => {
+    .query(_async ({ ctx,_input }) => {
       try {
         // Validate consent for data access
         const consent = await validateConsent(input.id, 'view', ctx.prisma);
@@ -353,7 +344,7 @@ export const patientsRouter = router({
         // Create audit trail for data access
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             patientId: patient.id,
             action: AuditAction.READ,
@@ -381,11 +372,11 @@ export const patientsRouter = router({
           consentExpiresAt: consent.expirationDate,
           dataMinimizationApplied: true,
         };
-      } catch (error) {
+      } catch (_error) {
         // Log access attempt failure
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             patientId: input.id,
             action: AuditAction.READ,
@@ -412,7 +403,7 @@ export const patientsRouter = router({
    */
   list: protectedProcedure
     .input(ListPatientsSchema)
-    .query(async ({ ctx, input }) => {
+    .query(_async ({ ctx,_input }) => {
       const { limit = 20, offset = 0, search, isActive = true } = input;
 
       try {
@@ -462,7 +453,7 @@ export const patientsRouter = router({
         // Create audit trail for search operation
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             action: AuditAction.READ,
             resource: 'patient_list',
@@ -495,7 +486,7 @@ export const patientsRouter = router({
             auditLogged: true,
           },
         };
-      } catch (error) {
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to retrieve patient list',
@@ -508,7 +499,7 @@ export const patientsRouter = router({
    */
   update: patientProcedure
     .input(UpdatePatientSchema)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(_async ({ ctx,_input }) => {
       const { id, ...updateData } = input;
 
       try {
@@ -535,7 +526,7 @@ export const patientsRouter = router({
         // Create audit trail for update
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             patientId: id,
             action: AuditAction.UPDATE,
@@ -560,7 +551,7 @@ export const patientsRouter = router({
           ...updatedPatient,
           updateProof: updateProof.integrity,
         };
-      } catch (error) {
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update patient',
@@ -583,7 +574,7 @@ export const patientsRouter = router({
         digitalSignature: v.optional(v.string()),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(_async ({ ctx,_input }) => {
       try {
         const { patientId, reason, digitalSignature } = input;
 
@@ -593,7 +584,7 @@ export const patientsRouter = router({
           {
             patientId,
             reason,
-            userId: ctx.userId,
+            _userId: ctx.userId,
           },
         );
 
@@ -625,7 +616,7 @@ export const patientsRouter = router({
         // Create audit trail for consent withdrawal
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             patientId,
             action: AuditAction.DELETE, // Represents data anonymization
@@ -653,7 +644,7 @@ export const patientsRouter = router({
           withdrawalProof: withdrawalProof.integrity,
           message: 'Consent withdrawn and patient data anonymized per LGPD compliance',
         };
-      } catch (error) {
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to withdraw consent and anonymize data',
@@ -668,7 +659,7 @@ export const patientsRouter = router({
    */
   getConsentStatus: patientProcedure
     .input(GetPatientSchema)
-    .query(async ({ ctx, input }) => {
+    .query(_async ({ ctx,_input }) => {
       const consents = await ctx.prisma.lGPDConsent.findMany({
         where: {
           patientId: input.id,

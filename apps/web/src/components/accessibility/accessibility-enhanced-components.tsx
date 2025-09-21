@@ -16,22 +16,19 @@ export const AccessibleForm = React.forwardRef<
     'aria-describedby'?: string;
     'data-medical'?: boolean;
   }
->(
-  (
+>(_(
     {
       className,
       'aria-label': ariaLabel,
       'aria-describedby': ariaDescribedBy,
-      'data-medical': isMedical,
-      ...props
-    },
-    ref,
+      'data-medical': isMedical,_...props
+    },_ref,
   ) => {
     const accessibilityProps = {
       'aria-label': ariaLabel
         || (isMedical ? 'Medical information form' : 'Information form'),
       'aria-describedby': ariaDescribedBy,
-      role: 'form',
+      _role: 'form',
     };
 
     return (
@@ -61,20 +58,13 @@ export const AccessibleInput = React.forwardRef<
     'data-sensitive'?: boolean;
     'data-medical'?: boolean;
   }
->(
-  (
+>(_(
     {
-      className,
-      label,
-      error,
-      description,
-      required = false,
+      className,_label,_error,_description,_required = false,
       'data-sensitive': isSensitive,
       'data-medical': isMedical,
-      id: propId,
-      ...props
-    },
-    ref,
+      id: propId,_...props
+    },_ref,
   ) => {
     const inputId = propId || React.useId();
     const errorId = error ? `${inputId}-error` : undefined;
@@ -154,20 +144,12 @@ export const AccessibleSelect = React.forwardRef<
     required?: boolean;
     'data-medical'?: boolean;
   }
->(
-  (
+>(_(
     {
-      className,
-      label,
-      options,
-      error,
-      description,
-      required = false,
+      className,_label,_options,_error,_description,_required = false,
       'data-medical': isMedical,
-      id: propId,
-      ...props
-    },
-    ref,
+      id: propId,_...props
+    },_ref,
   ) => {
     const selectId = propId || React.useId();
     const errorId = error ? `${selectId}-error` : undefined;
@@ -261,27 +243,18 @@ export const AccessibleButton = React.forwardRef<
     'data-medical'?: boolean;
     icon?: React.ReactNode;
   }
->(
-  (
+>(_(
     {
-      className,
-      variant = 'default',
-      size = 'default',
-      loading = false,
+      className,_variant = 'default',_size = 'default',_loading = false,
       'data-emergency': isEmergency,
-      'data-medical': isMedical,
-      icon,
-      children,
-      disabled,
-      ...props
-    },
-    ref,
+      'data-medical': isMedical,_icon,_children,_disabled,_...props
+    },_ref,
   ) => {
     const accessibilityProps = {
       'aria-label': props['aria-label'] || props.title,
       'aria-describedby': props['aria-describedby'],
       'aria-busy': loading ? 'true' : undefined,
-      role: props.role || (variant === 'link' ? 'link' : 'button'),
+      _role: props.role || (variant === 'link' ? 'link' : 'button'),
     };
 
     const variants = {
@@ -337,18 +310,10 @@ export const AccessibleAlert = React.forwardRef<
     dismissible?: boolean;
     onDismiss?: () => void;
   }
->(
-  (
+>(_(
     {
-      className,
-      variant = 'info',
-      title,
-      dismissible = false,
-      onDismiss,
-      children,
-      ...props
-    },
-    ref,
+      className,_variant = 'info',_title,_dismissible = false,_onDismiss,_children,_...props
+    },_ref,
   ) => {
     const alertId = React.useId();
 
@@ -369,7 +334,7 @@ export const AccessibleAlert = React.forwardRef<
     };
 
     const accessibilityProps = {
-      role: variant === 'emergency' ? 'alert' : 'alertdialog',
+      _role: variant === 'emergency' ? 'alert' : 'alertdialog',
       'aria-live': variant === 'emergency' ? 'assertive' : 'polite',
       'aria-atomic': 'true',
       'aria-labelledby': title ? `${alertId}-title` : undefined,
@@ -439,20 +404,11 @@ export const AccessibleModal = React.forwardRef<
     size?: 'sm' | 'md' | 'lg' | 'xl';
     'data-medical'?: boolean;
   }
->(
-  (
+>(_(
     {
-      className,
-      isOpen,
-      onClose,
-      title,
-      description,
-      size = 'md',
-      'data-medical': isMedical,
-      children,
-      ...props
-    },
-    ref,
+      className,_isOpen,_onClose,_title,_description,_size = 'md',
+      'data-medical': isMedical,_children,_...props
+    },_ref,
   ) => {
     const modalId = React.useId();
     const titleId = title ? `${modalId}-title` : undefined;
@@ -468,7 +424,7 @@ export const AccessibleModal = React.forwardRef<
     if (!isOpen) return null;
 
     const accessibilityProps = {
-      role: 'dialog',
+      _role: 'dialog',
       'aria-modal': 'true',
       'aria-labelledby': titleId,
       'aria-describedby': descriptionId,
@@ -537,17 +493,11 @@ export const AccessibleTable = React.forwardRef<
       align?: 'left' | 'center' | 'right';
     }>;
   }
->(
-  (
+>(_(
     {
-      className,
-      caption,
-      'data-medical': isMedical,
-      columns,
-      children,
-      ...props
-    },
-    ref,
+      className,_caption,
+      'data-medical': isMedical,_columns,_children,_...props
+    },_ref,
   ) => {
     const tableId = React.useId();
     const captionId = caption ? `${tableId}-caption` : undefined;
@@ -555,7 +505,7 @@ export const AccessibleTable = React.forwardRef<
     const accessibilityProps = {
       'aria-describedby': captionId,
       'aria-label': props['aria-label'] || caption,
-      role: 'table',
+      _role: 'table',
     };
 
     return (

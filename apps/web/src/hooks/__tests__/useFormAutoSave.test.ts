@@ -29,16 +29,16 @@ const mockFormData = {
   cpf: '123.456.789-01',
 };
 
-describe('useFormAutoSave', () => {
-  beforeEach(() => {
+describe(_'useFormAutoSave',_() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
   });
 
-  it('should save form data to localStorage after debounce delay', async () => {
+  it(_'should save form data to localStorage after debounce delay',_async () => {
     const formKey = 'patient-registration-form';
-    const { result } = renderHook(() => useFormAutoSave(formKey));
+    const { result } = renderHook(_() => useFormAutoSave(formKey));
 
-    act(() => {
+    act(_() => {
       result.current.saveFormData(mockFormData);
     });
 
@@ -58,7 +58,7 @@ describe('useFormAutoSave', () => {
     );
   });
 
-  it('should load saved form data from localStorage', () => {
+  it(_'should load saved form data from localStorage',_() => {
     const formKey = 'patient-registration-form';
     const savedData = {
       data: mockFormData,
@@ -68,18 +68,18 @@ describe('useFormAutoSave', () => {
 
     mockLocalStorage.getItem.mockReturnValue(JSON.stringify(savedData));
 
-    const { result } = renderHook(() => useFormAutoSave(formKey));
+    const { result } = renderHook(_() => useFormAutoSave(formKey));
 
     expect(result.current.savedData).toEqual(mockFormData);
     expect(result.current.hasSavedData).toBe(true);
     expect(result.current.lastSaved).toEqual(new Date(savedData.timestamp));
   });
 
-  it('should clear saved form data', () => {
+  it(_'should clear saved form data',_() => {
     const formKey = 'patient-registration-form';
-    const { result } = renderHook(() => useFormAutoSave(formKey));
+    const { result } = renderHook(_() => useFormAutoSave(formKey));
 
-    act(() => {
+    act(_() => {
       result.current.clearSavedData();
     });
 
@@ -88,32 +88,32 @@ describe('useFormAutoSave', () => {
     );
   });
 
-  it('should handle corrupted localStorage data gracefully', () => {
+  it(_'should handle corrupted localStorage data gracefully',_() => {
     const formKey = 'patient-registration-form';
     mockLocalStorage.getItem.mockReturnValue('invalid-json');
 
-    const { result } = renderHook(() => useFormAutoSave(formKey));
+    const { result } = renderHook(_() => useFormAutoSave(formKey));
 
     expect(result.current.savedData).toBeNull();
     expect(result.current.hasSavedData).toBe(false);
   });
 
-  it('should not save data if form data is empty', () => {
+  it(_'should not save data if form data is empty',_() => {
     const formKey = 'patient-registration-form';
-    const { result } = renderHook(() => useFormAutoSave(formKey));
+    const { result } = renderHook(_() => useFormAutoSave(formKey));
 
-    act(() => {
+    act(_() => {
       result.current.saveFormData({});
     });
 
-    act(() => {
+    act(_() => {
       vi.advanceTimersByTime(1000);
     });
 
     expect(mockLocalStorage.setItem).not.toHaveBeenCalled();
   });
 
-  it('should provide form recovery status', () => {
+  it(_'should provide form recovery status',_() => {
     const formKey = 'patient-registration-form';
     const savedData = {
       data: mockFormData,
@@ -123,13 +123,13 @@ describe('useFormAutoSave', () => {
 
     mockLocalStorage.getItem.mockReturnValue(JSON.stringify(savedData));
 
-    const { result } = renderHook(() => useFormAutoSave(formKey));
+    const { result } = renderHook(_() => useFormAutoSave(formKey));
 
     expect(result.current.canRecover).toBe(true);
     expect(result.current.recoveryAge).toBeLessThan(60000); // Less than 1 minute
   });
 
-  it('should expire old saved data', () => {
+  it(_'should expire old saved data',_() => {
     const formKey = 'patient-registration-form';
     const oldData = {
       data: mockFormData,
@@ -139,7 +139,7 @@ describe('useFormAutoSave', () => {
 
     mockLocalStorage.getItem.mockReturnValue(JSON.stringify(oldData));
 
-    const { result } = renderHook(() => useFormAutoSave(formKey));
+    const { result } = renderHook(_() => useFormAutoSave(formKey));
 
     expect(result.current.savedData).toBeNull();
     expect(result.current.hasSavedData).toBe(false);

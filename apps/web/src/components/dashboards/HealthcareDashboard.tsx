@@ -97,7 +97,7 @@ interface Appointment {
   patientName: string;
   patientPhone: string;
   providerName: string;
-  service: string;
+  _service: string;
   date: string;
   time: string;
   status: 'scheduled' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'no-show';
@@ -122,7 +122,7 @@ interface Treatment {
 interface FinancialData {
   dailyRevenue: Array<{ date: string; revenue: number }>;
   monthlyRevenue: Array<{ month: string; revenue: number; projection: number }>;
-  serviceBreakdown: Array<{ service: string; revenue: number; count: number }>;
+  serviceBreakdown: Array<{ _service: string; revenue: number; count: number }>;
   expenses: Array<{ category: string; amount: number; budget: number }>;
 }
 
@@ -150,14 +150,8 @@ interface HealthcareDashboardProps {
 type TimeRange = 'today' | 'week' | 'month' | 'quarter' | 'year';
 type ViewMode = 'overview' | 'patients' | 'appointments' | 'treatments' | 'financial' | 'staff';
 
-export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
-  className,
-  onRefresh,
-  onViewPatient,
-  onViewAppointment,
-  onViewTreatment,
-  testId = 'healthcare-dashboard',
-}) => {
+export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = (_{
+  className,_onRefresh,_onViewPatient,_onViewAppointment,_onViewTreatment,_testId = 'healthcare-dashboard',_}) => {
   const [currentTimeRange, setCurrentTimeRange] = useState<TimeRange>('today');
   const [currentView, setCurrentView] = useState<ViewMode>('overview');
   const [isLoading, setIsLoading] = useState(false);
@@ -193,7 +187,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
       patientName: 'Ana Silva Santos',
       patientPhone: '(11) 98765-4321',
       providerName: 'Dra. Ana Silva',
-      service: 'Botox',
+      _service: 'Botox',
       date: new Date().toISOString(),
       time: '09:00',
       status: 'confirmed',
@@ -206,7 +200,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
       patientName: 'Carla Oliveira',
       patientPhone: '(11) 91234-5678',
       providerName: 'Dr. Carlos Santos',
-      service: 'Preenchimento Facial',
+      _service: 'Preenchimento Facial',
       date: new Date().toISOString(),
       time: '10:30',
       status: 'in-progress',
@@ -219,7 +213,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
       patientName: 'Mariana Costa',
       patientPhone: '(11) 99876-5432',
       providerName: 'Dra. Maria Costa',
-      service: 'Consulta de Retorno',
+      _service: 'Consulta de Retorno',
       date: new Date().toISOString(),
       time: '14:00',
       status: 'scheduled',
@@ -232,7 +226,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
       patientName: 'Roberto Ferreira',
       patientPhone: '(11) 97654-3210',
       providerName: 'Dra. Ana Silva',
-      service: 'Tratamento a Laser',
+      _service: 'Tratamento a Laser',
       date: new Date().toISOString(),
       time: '15:30',
       status: 'completed',
@@ -282,21 +276,21 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
   ]);
 
   const [financialData, setFinancialData] = useState<FinancialData>({
-    dailyRevenue: Array.from({ length: 7 }, (_, i) => ({
+    dailyRevenue: Array.from({ length: 7 },_(_,_i) => ({
       date: format(subDays(new Date(), 6 - i), 'yyyy-MM-dd'),
       revenue: Math.floor(Math.random() * 15000) + 8000,
     })),
-    monthlyRevenue: Array.from({ length: 12 }, (_, i) => ({
+    monthlyRevenue: Array.from({ length: 12 },_(_,_i) => ({
       month: format(new Date(2024, i, 1), 'MMM', { locale: ptBR }),
       revenue: Math.floor(Math.random() * 300000) + 200000,
       projection: Math.floor(Math.random() * 350000) + 250000,
     })),
     serviceBreakdown: [
-      { service: 'Botox', revenue: 85000, count: 85 },
-      { service: 'Preenchimento', revenue: 95000, count: 65 },
-      { service: 'Laser', revenue: 65000, count: 95 },
-      { service: 'Peeling', revenue: 25000, count: 45 },
-      { service: 'Outros', revenue: 15400, count: 28 },
+      { _service: 'Botox', revenue: 85000, count: 85 },
+      { _service: 'Preenchimento', revenue: 95000, count: 65 },
+      { _service: 'Laser', revenue: 65000, count: 95 },
+      { _service: 'Peeling', revenue: 25000, count: 45 },
+      { _service: 'Outros', revenue: 15400, count: 28 },
     ],
     expenses: [
       { category: 'Salários', amount: 85000, budget: 90000 },
@@ -308,7 +302,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
   });
 
   // Initialize alerts
-  useEffect(() => {
+  useEffect(_() => {
     setAlerts([
       {
         id: '1',
@@ -339,14 +333,14 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
   }, []);
 
   // Handle refresh
-  const handleRefresh = useCallback(async () => {
+  const handleRefresh = useCallback(_async () => {
     setIsLoading(true);
     try {
       announcePolite('Atualizando dados do dashboard...');
       await onRefresh?.();
       setLastRefresh(new Date());
       announcePolite('Dashboard atualizado com sucesso');
-    } catch (error) {
+    } catch (_error) {
       announcePolite('Erro ao atualizar dashboard');
     } finally {
       setIsLoading(false);
@@ -356,7 +350,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
   // Filter appointments based on current time range
   const filteredAppointments = appointments.filter(appointment => {
     const appointmentDate = parseISO(appointment.date);
-    const now = new Date();
+    const _now = new Date();
 
     switch (currentTimeRange) {
       case 'today':
@@ -506,7 +500,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
         <div className='bg-white border rounded-lg p-6'>
           <h3 className='text-lg font-semibold mb-4'>Serviços Mais Vendidos</h3>
           <div className='space-y-3'>
-            {financialData.serviceBreakdown.slice(0, 4).map((service, index) => (
+            {financialData.serviceBreakdown.slice(0, 4).map(_(service,_index) => (
               <div key={service.service} className='flex items-center justify-between'>
                 <div className='flex items-center space-x-3'>
                   <div
@@ -573,8 +567,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
   );
 
   // Render appointments view
-  const renderAppointmentsView = () => (
-    <div className='space-y-6'>
+  const renderAppointmentsView = () => (_<div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <h3 className='text-lg font-semibold'>Agendamentos</h3>
         <div className='flex space-x-2'>
@@ -590,7 +583,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
       </div>
 
       <div className='grid grid-cols-1 md:grid-cols-6 gap-4 mb-6'>
-        {Object.entries(appointmentsByStatus).map(([status, appointments]) => {
+        {Object.entries(appointmentsByStatus).map(_([status,_appointments]) => {
           const config = {
             scheduled: { color: 'blue', label: 'Agendados' },
             confirmed: { color: 'green', label: 'Confirmados' },
@@ -689,8 +682,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
   );
 
   // Render treatments view
-  const renderTreatmentsView = () => (
-    <div className='space-y-6'>
+  const renderTreatmentsView = () => (_<div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <h3 className='text-lg font-semibold'>Tratamentos em Andamento</h3>
         <HealthcareButton onClick={() => {}} size='sm'>
@@ -1016,7 +1008,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
               { id: 'appointments', label: 'Agendamentos', icon: Calendar },
               { id: 'treatments', label: 'Tratamentos', icon: Activity },
               { id: 'financial', label: 'Financeiro', icon: DollarSign },
-            ].map(tab => {
+            ].map(_tab => {
               const Icon = tab.icon;
               return (
                 <button

@@ -7,8 +7,6 @@
  */
 
 import { Hono } from 'hono';
-import { z } from 'zod';
-
 // Mock middleware for testing - will be replaced with actual middleware
 const requireAuth = async (c: any, next: any) => {
   c.set('user', { id: 'user-123' });
@@ -36,9 +34,9 @@ const AuditService = {
             category: 'data_change',
             severity: 'info',
             actor: {
-              userId: 'user-456',
+              _userId: 'user-456',
               name: 'Dr. João Silva',
-              role: 'healthcare_professional',
+              _role: 'healthcare_professional',
               crm: 'CRM-SP-123456',
             },
             details: {
@@ -63,9 +61,9 @@ const AuditService = {
             category: 'data_change',
             severity: 'info',
             actor: {
-              userId: 'user-456',
+              _userId: 'user-456',
               name: 'Dr. João Silva',
-              role: 'healthcare_professional',
+              _role: 'healthcare_professional',
               crm: 'CRM-SP-123456',
             },
             details: {
@@ -95,9 +93,9 @@ const AuditService = {
             category: 'consent_change',
             severity: 'high',
             actor: {
-              userId: 'patient-123',
+              _userId: 'patient-123',
               name: 'Maria Santos',
-              role: 'data_subject',
+              _role: 'data_subject',
             },
             details: {
               action: 'consent_update',
@@ -347,7 +345,7 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
         summary: historyResult.data.summary,
       },
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('History endpoint error:', error);
 
     // Handle validation errors

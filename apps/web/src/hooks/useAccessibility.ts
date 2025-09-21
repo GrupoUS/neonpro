@@ -27,7 +27,7 @@ export function useFocusTrap(isActive: boolean = false) {
   const containerRef = useRef<HTMLDivElement>(null);
   const restoreFocusRef = useRef<() => void | undefined>(undefined);
 
-  useEffect(() => {
+  useEffect(_() => {
     if (!isActive || !containerRef.current) return;
 
     // Save current focus
@@ -191,14 +191,14 @@ export function useLiveRegion() {
       setPriority(newPriority);
 
       // Clear message after announcement
-      timeoutRef.current = setTimeout(() => {
+      timeoutRef.current = setTimeout(_() => {
         setMessage('');
       }, 1000);
     },
     [],
   );
 
-  useEffect(() => {
+  useEffect(_() => {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -209,7 +209,7 @@ export function useLiveRegion() {
   const liveRegionProps = {
     'aria-live': priority,
     'aria-atomic': true,
-    role: 'status',
+    _role: 'status',
     className: 'sr-only',
   };
 
@@ -268,7 +268,7 @@ export function useAccessibleField(
     [touched, validateField],
   );
 
-  const handleBlur = useCallback(() => {
+  const handleBlur = useCallback(_() => {
     setTouched(true);
     const validationError = validateField(value);
     setError(validationError);
@@ -290,7 +290,7 @@ export function useAccessibleField(
   const errorProps = error
     ? {
       id: errorId.current,
-      role: 'alert',
+      _role: 'alert',
       'aria-live': 'assertive' as const,
       'aria-atomic': true,
     }
@@ -325,7 +325,7 @@ export function useAccessibilityPreferences() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
 
-  useEffect(() => {
+  useEffect(_() => {
     // Initial values
     setReducedMotion(prefersReducedMotion());
     setHighContrast(prefersHighContrast());
@@ -363,7 +363,7 @@ export function useSkipLinks() {
     { href: '#search', label: 'Pular para a busca' },
   ]);
 
-  const focusMainContent = useCallback(() => {
+  const focusMainContent = useCallback(_() => {
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
       mainContent.focus();
@@ -406,10 +406,10 @@ export function useAccessibleTable<T>(
     [sortColumn],
   );
 
-  const sortedData = useCallback(() => {
+  const sortedData = useCallback(_() => {
     if (!sortColumn) return data;
 
-    return [...data].sort((a, b) => {
+    return [...data].sort(_(a,_b) => {
       const aValue = a[sortColumn];
       const bValue = b[sortColumn];
 
@@ -421,7 +421,7 @@ export function useAccessibleTable<T>(
 
   const getColumnHeaderProps = useCallback(
     (column: (typeof columns)[0]) => ({
-      role: 'columnheader',
+      _role: 'columnheader',
       scope: 'col' as const,
       tabIndex: column.sortable ? 0 : undefined,
       onClick: column.sortable ? () => handleSort(column.key) : undefined,
@@ -446,7 +446,7 @@ export function useAccessibleTable<T>(
 
   const tableProps = {
     id: tableId.current,
-    role: 'table',
+    _role: 'table',
     'aria-labelledby': captionId.current,
   };
 

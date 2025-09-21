@@ -29,7 +29,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
 
 export const useModal = () => {
   const context = useContext(ModalContext);
-  if (!context) {
+  if (!_context) {
     throw new Error("useModal must be used within a ModalProvider");
   }
   return context;
@@ -39,9 +39,8 @@ export function Modal({ children }: { children: ReactNode }) {
   return <ModalProvider>{children}</ModalProvider>;
 }
 
-export const ModalTrigger = ({
-  children,
-  className,
+export const _ModalTrigger = (_{
+  children,_className,
 }: {
   children: ReactNode;
   className?: string;
@@ -60,16 +59,15 @@ export const ModalTrigger = ({
   );
 };
 
-export const ModalBody = ({
-  children,
-  className,
+export const _ModalBody = (_{
+  children,_className,
 }: {
   children: ReactNode;
   className?: string;
 }) => {
   const { open } = useModal();
 
-  useEffect(() => {
+  useEffect(_() => {
     if (open) {
       document.body.style.overflow = "hidden";
     } else {
@@ -79,7 +77,7 @@ export const ModalBody = ({
 
   const modalRef = useRef<HTMLDivElement>(null);
   const { setOpen } = useModal();
-  useOutsideClick(modalRef, () => setOpen(false));
+  useOutsideClick(_modalRef,_() => setOpen(false));
 
   return (
     <AnimatePresence>
@@ -138,9 +136,8 @@ export const ModalBody = ({
   );
 };
 
-export const ModalContent = ({
-  children,
-  className,
+export const _ModalContent = (_{
+  children,_className,
 }: {
   children: ReactNode;
   className?: string;
@@ -152,9 +149,8 @@ export const ModalContent = ({
   );
 };
 
-export const ModalFooter = ({
-  children,
-  className,
+export const _ModalFooter = (_{
+  children,_className,
 }: {
   children: ReactNode;
   className?: string;
@@ -192,8 +188,7 @@ const Overlay = ({ className }: { className?: string }) => {
 
 const CloseIcon = () => {
   const { setOpen } = useModal();
-  return (
-    <button
+  return (_<button
       onClick={() => setOpen(false)}
       className="absolute top-4 right-4 group"
     >
@@ -223,7 +218,7 @@ export const useOutsideClick = (
   ref: React.RefObject<HTMLDivElement | null>,
   callback: Function,
 ) => {
-  useEffect(() => {
+  useEffect(_() => {
     const listener = (event: any) => {
       // DO NOTHING if the element being clicked is the target element or their children
       if (!ref.current || ref.current.contains(event.target)) {

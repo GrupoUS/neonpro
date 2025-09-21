@@ -141,9 +141,8 @@ export function NoShowRiskDisplay({
   const { mutate: getInsights, isPending: gettingInsights } = useAIHealthcareInsights();
 
   // Auto-refresh risk data every 30 minutes
-  useEffect(() => {
-    const interval = setInterval(
-      () => {
+  useEffect(_() => {
+    const interval = setInterval(_() => {
         refetchRisk();
       },
       30 * 60 * 1000,
@@ -196,7 +195,7 @@ export function NoShowRiskDisplay({
   };
 
   const formatTimeUntilAppointment = () => {
-    const now = new Date();
+    const _now = new Date();
     const appointment = new Date(scheduledFor);
     const diffHours = Math.floor(
       (appointment.getTime() - now.getTime()) / (1000 * 60 * 60),
@@ -332,7 +331,7 @@ export function NoShowRiskDisplay({
                 Principais Fatores de Risco:
               </h4>
               <div className='space-y-1'>
-                {riskData.riskFactors.slice(0, 3).map((factor, _index) => (
+                {riskData.riskFactors.slice(0, 3).map(_(factor, _index) => (
                   <div
                     key={index}
                     className='flex items-center justify-between text-xs'
@@ -364,7 +363,7 @@ export function NoShowRiskDisplay({
                 Intervenções Recomendadas:
               </h4>
               <div className='grid grid-cols-2 gap-2'>
-                {riskData.recommendations.slice(0, 4).map(rec => (
+                {riskData.recommendations.slice(0, 4).map(_rec => (
                   <Button
                     key={rec.id}
                     variant='outline'
@@ -471,7 +470,7 @@ export function NoShowRiskDisplay({
                           Impacto climático: {Math.round(riskData.weatherImpact * 100)}%
                         </div>
                       )}
-                      {riskData.culturalFactors?.map((factor, _index) => (
+                      {riskData.culturalFactors?.map(_(factor, _index) => (
                         <div key={index}>
                           {factor.description}: {Math.round(factor.impact * 100)}%
                         </div>
@@ -483,7 +482,7 @@ export function NoShowRiskDisplay({
             </TabsContent>
 
             <TabsContent value='factors' className='space-y-4'>
-              {riskData.riskFactors?.map((factor, _index) => (
+              {riskData.riskFactors?.map(_(factor, _index) => (
                 <Card key={index}>
                   <CardContent className='p-4'>
                     <div className='flex items-center justify-between'>
@@ -573,7 +572,7 @@ export function NoShowRiskDisplay({
                     getInsights({
                       patientId,
                       appointmentId,
-                      context: 'no_show_prevention',
+                      _context: 'no_show_prevention',
                     })}
                   disabled={gettingInsights}
                   className='mb-4'

@@ -5,9 +5,9 @@
 import { describe, it, expect } from "vitest";
 import { validateExitResult, type ExitResult } from "../exitHelper.js";
 
-describe("exitHelper", () => {
-  describe("validateExitResult", () => {
-    it("should validate correct ExitResult objects", () => {
+describe(_"exitHelper",_() => {
+  describe(_"validateExitResult",_() => {
+    it(_"should validate correct ExitResult objects",_() => {
       const validResults: ExitResult[] = [
         { status: "ok", code: 0 },
         { status: "error", code: 1, message: "Error" },
@@ -19,12 +19,12 @@ describe("exitHelper", () => {
         },
       ];
 
-      validResults.forEach((result) => {
+      validResults.forEach(_(result) => {
         expect(validateExitResult(result)).toBe(true);
       });
     });
 
-    it("should reject invalid objects", () => {
+    it(_"should reject invalid objects",_() => {
       const invalidResults = [
         null,
         undefined,
@@ -37,15 +37,15 @@ describe("exitHelper", () => {
         { status: "ok", code: 0, message: 123 }, // wrong type for message
       ];
 
-      invalidResults.forEach((result) => {
+      invalidResults.forEach(_(result) => {
         expect(validateExitResult(result)).toBe(false);
       });
     });
   });
 
   // Test JSON schema compliance without process mocking
-  describe("JSON schema", () => {
-    it("should define proper ExitResult interface", () => {
+  describe(_"JSON schema",_() => {
+    it(_"should define proper ExitResult interface",_() => {
       const okResult: ExitResult = {
         status: "ok",
         code: 0,
@@ -65,7 +65,7 @@ describe("exitHelper", () => {
       expect(typeof errorResult.code).toBe("number");
     });
 
-    it("should allow optional message and details", () => {
+    it(_"should allow optional message and details",_() => {
       const minimalOk: ExitResult = { status: "ok", code: 0 };
       const minimalError: ExitResult = { status: "error", code: 1 };
 

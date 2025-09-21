@@ -4,7 +4,6 @@
  * Healthcare-specific retention policies and cleanup automation
  */
 
-import { z } from 'zod';
 import { createAdminClient } from '../clients/supabase';
 import { LGPDDataCategory } from '../middleware/lgpd-compliance';
 
@@ -306,7 +305,7 @@ export class DataRetentionService {
       }
 
       return data;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error scheduling cleanup:', error);
       throw error;
     }
@@ -381,7 +380,7 @@ export class DataRetentionService {
 
         // Send completion notification
         await this.sendCompletionNotification(job, execution, policy);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error executing cleanup job:', error);
 
         execution.status = 'failed';
@@ -407,7 +406,7 @@ export class DataRetentionService {
       this.activeJobs.delete(jobId);
 
       return execution;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in executeCleanupJob:', error);
       throw error;
     }
@@ -468,7 +467,7 @@ export class DataRetentionService {
         affectedCount,
         hasErrors: affectedCount < job.estimatedRecordCount * 0.95, // 95% success threshold
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in executeDeletion:', error);
       execution.errors.push({
         recordId: 'system',
@@ -509,7 +508,7 @@ export class DataRetentionService {
         affectedCount,
         hasErrors: false,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in executeAnonymization:', error);
       execution.errors.push({
         recordId: 'system',
@@ -548,7 +547,7 @@ export class DataRetentionService {
         affectedCount,
         hasErrors: false,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in executeArchival:', error);
       execution.errors.push({
         recordId: 'system',
@@ -587,7 +586,7 @@ export class DataRetentionService {
         affectedCount,
         hasErrors: false,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in executeFlagging:', error);
       execution.errors.push({
         recordId: 'system',
@@ -819,7 +818,7 @@ export class DataRetentionService {
             results.jobsProcessed++;
             results.jobsCompleted++;
             results.totalRecordsProcessed += execution.recordsProcessed;
-          } catch (error) {
+          } catch (_error) {
             results.jobsProcessed++;
             results.jobsFailed++;
             console.error(`Job ${job.id} failed:`, error);
@@ -830,7 +829,7 @@ export class DataRetentionService {
       }
 
       return results;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in runScheduledCleanup:', error);
       throw error;
     }
@@ -850,7 +849,7 @@ export class DataRetentionService {
     policiesByCategory: Record<LGPDDataCategory, number>;
   }> {
     try {
-      const now = new Date();
+      const _now = new Date();
       const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
       // Get job statistics
@@ -877,7 +876,7 @@ export class DataRetentionService {
         .select('recordsProcessed')
         .gte('startTime', yesterday.toISOString());
 
-      const totalRecordsProcessed24h = executions?.reduce((sum, exec) =>
+      const totalRecordsProcessed24h = executions?.reduce(_(sum,_exec) =>
         sum + exec.recordsProcessed, 0) || 0;
 
       // Calculate policies by category
@@ -897,7 +896,7 @@ export class DataRetentionService {
         totalRecordsProcessed24h,
         policiesByCategory,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting retention statistics:', error);
       throw error;
     }

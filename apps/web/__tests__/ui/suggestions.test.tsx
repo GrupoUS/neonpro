@@ -32,7 +32,7 @@ describe('Suggestions (T015)', () => {
     ];
 
     const filter = ({ item, role, clinic }: any) =>
-      item.safe && item.roles.includes(role) && item.clinics.includes(clinic);
+      item.safe && item.roles.includes(_role) && item.clinics.includes(clinic);
 
     const onPick = vi.fn();
     render(

@@ -6,7 +6,6 @@
  */
 
 import { OpenAPIHono } from '@hono/zod-openapi';
-import { z } from 'zod';
 import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
@@ -52,8 +51,8 @@ const listPatientsRoute = createHealthcareRoute({
     'List patients with pagination, filtering, and search capabilities. Includes LGPD compliance and audit logging.',
   dataClassification: 'medical',
   auditRequired: true,
-  request: {
-    query: ListPatientsQuerySchema,
+  _request: {
+    _query: ListPatientsQuerySchema,
   },
   responses: {
     200: {
@@ -185,7 +184,7 @@ app.openapi(
             sensitivityLevel: 'high',
           },
         );
-      } catch (auditError) {
+      } catch (_auditError) {
         console.error('Enhanced audit logging failed:', auditError);
 
         // Fallback to legacy audit service
@@ -212,7 +211,7 @@ app.openapi(
               },
             },
           );
-        } catch (legacyAuditError) {
+        } catch (_legacyAuditError) {
           console.error('Legacy audit logging also failed:', legacyAuditError);
         }
       }
@@ -226,7 +225,7 @@ app.openapi(
         'X-Healthcare-Context',
         JSON.stringify({
           clinicId,
-          role: healthcareContext.role,
+          _role: healthcareContext.role,
           cfmValidated: healthcareContext.cfmValidated,
         }),
       );
@@ -265,7 +264,7 @@ app.openapi(
           cfmValidated: healthcareContext.cfmValidated,
         },
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error listing patients:', error);
 
       // Enhanced error handling for healthcare compliance errors

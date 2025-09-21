@@ -126,7 +126,7 @@ export class CacheService {
     if (!this.cleanupScheduled) {
       this.cleanupScheduled = true;
 
-      setTimeout(() => {
+      setTimeout(_() => {
         this.cleanup();
         this.cleanupScheduled = false;
       }, 5 * 60 * 1000);
@@ -139,7 +139,7 @@ export class CacheService {
    * Clean up expired cache entries
    */
   private static cleanup(): void {
-    const now = Date.now();
+    const _now = Date.now();
     const keysToDelete: string[] = [];
 
     for (const [key, entry] of this.cache.entries()) {

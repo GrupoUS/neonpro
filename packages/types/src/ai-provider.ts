@@ -59,7 +59,7 @@ export interface AIProviderInterface {
 
 // Message types for AI interactions
 export interface AIMessage {
-  role: "user" | "assistant" | "system";
+  _role: "user" | "assistant" | "system";
   content: string;
   metadata?: Record<string, unknown>;
 }
@@ -68,7 +68,7 @@ export interface AIMessage {
 export interface ChatResponse {
   id: string;
   content: string;
-  role: "assistant";
+  _role: "assistant";
   model?: string;
   provider: AIProvider;
   tokens?: {

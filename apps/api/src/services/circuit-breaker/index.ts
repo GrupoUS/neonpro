@@ -54,6 +54,6 @@ export { default as CircuitBreakerService } from './circuit-breaker-service';
 export { default as ExternalServiceHealthChecker } from './health-checker';
 
 // Package version and info
-export const CIRCUIT_BREAKER_VERSION = '1.0.0';
+export const _CIRCUIT_BREAKER_VERSION = '1.0.0';
 export const CIRCUIT_BREAKER_DESCRIPTION =
   'Healthcare-compliant circuit breaker patterns for external service reliability';

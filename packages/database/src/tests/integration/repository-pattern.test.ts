@@ -57,46 +57,46 @@ const createMockSupabaseClient = () => {
   } as unknown as SupabaseClient;
 };
 
-describe("Repository Pattern Integration Tests", () => {
+describe(_"Repository Pattern Integration Tests",_() => {
   let container: RepositoryContainer;
   let mockSupabase: SupabaseClient;
   let patientService: PatientService;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     mockSupabase = createMockSupabaseClient();
     container = RepositoryContainer.initialize(mockSupabase);
     patientService = new PatientService(container.getPatientRepository());
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     container.reset();
   });
 
-  describe("RepositoryContainer", () => {
-    it("should initialize with Supabase client", () => {
+  describe(_"RepositoryContainer",_() => {
+    it(_"should initialize with Supabase client",_() => {
       expect(container).toBeInstanceOf(RepositoryContainer);
     });
 
-    it("should provide singleton instance", () => {
+    it(_"should provide singleton instance",_() => {
       const instance1 = RepositoryContainer.getInstance();
       const instance2 = RepositoryContainer.getInstance();
       expect(instance1).toBe(instance2);
     });
 
-    it("should provide all repositories", () => {
+    it(_"should provide all repositories",_() => {
       const repositories = container.getRepositories();
       expect(repositories).toHaveProperty("patient");
       expect(repositories).toHaveProperty("consent");
       expect(repositories).toHaveProperty("appointment");
     });
 
-    it("should provide all services", () => {
+    it(_"should provide all services",_() => {
       const services = container.getServices();
       expect(services).toHaveProperty("audit");
       expect(services).toHaveProperty("consent");
     });
 
-    it("should reset all instances", () => {
+    it(_"should reset all instances",_() => {
       const repo1 = container.getPatientRepository();
       container.reset();
       const repo2 = container.getPatientRepository();
@@ -104,9 +104,9 @@ describe("Repository Pattern Integration Tests", () => {
     });
   });
 
-  describe("PatientService with Repository Pattern", () => {
-    it("should create patient with validation", async () => {
-      const request: CreatePatientRequest = {
+  describe(_"PatientService with Repository Pattern",_() => {
+    it(_"should create patient with validation",_async () => {
+      const _request: CreatePatientRequest = {
         clinicId: "test-clinic-id",
         medicalRecordNumber: "MRN-001",
         givenNames: ["John"],
@@ -116,12 +116,12 @@ describe("Repository Pattern Integration Tests", () => {
         lgpdConsentGiven: true
       };
 
-      const patient = await patientService.createPatient(request);
+      const patient = await patientService.createPatient(_request);
       expect(patient).toBeDefined();
       expect(patient.id).toBe("test-patient-id");
     });
 
-    it("should validate required fields for patient creation", async () => {
+    it(_"should validate required fields for patient creation",_async () => {
       const invalidRequest: CreatePatientRequest = {
         clinicId: "",
         medicalRecordNumber: "",
@@ -136,8 +136,8 @@ describe("Repository Pattern Integration Tests", () => {
         .rejects.toThrow(PatientValidationError);
     });
 
-    it("should validate CPF format", async () => {
-      const request: CreatePatientRequest = {
+    it(_"should validate CPF format",_async () => {
+      const _request: CreatePatientRequest = {
         clinicId: "test-clinic-id",
         medicalRecordNumber: "MRN-002",
         givenNames: ["Jane"],
@@ -148,12 +148,12 @@ describe("Repository Pattern Integration Tests", () => {
         lgpdConsentGiven: true
       };
 
-      await expect(patientService.createPatient(request))
+      await expect(patientService.createPatient(_request))
         .rejects.toThrow("Invalid CPF format");
     });
 
-    it("should validate Brazilian phone format", async () => {
-      const request: CreatePatientRequest = {
+    it(_"should validate Brazilian phone format",_async () => {
+      const _request: CreatePatientRequest = {
         clinicId: "test-clinic-id",
         medicalRecordNumber: "MRN-003",
         givenNames: "Bob".split(" "),
@@ -164,12 +164,12 @@ describe("Repository Pattern Integration Tests", () => {
         lgpdConsentGiven: true
       };
 
-      await expect(patientService.createPatient(request))
+      await expect(patientService.createPatient(_request))
         .rejects.toThrow("Invalid primary phone number format");
     });
 
-    it("should validate email format", async () => {
-      const request: CreatePatientRequest = {
+    it(_"should validate email format",_async () => {
+      const _request: CreatePatientRequest = {
         clinicId: "test-clinic-id",
         medicalRecordNumber: "MRN-004",
         givenNames: "Alice".split(" "),
@@ -180,11 +180,11 @@ describe("Repository Pattern Integration Tests", () => {
         lgpdConsentGiven: true
       };
 
-      await expect(patientService.createPatient(request))
+      await expect(patientService.createPatient(_request))
         .rejects.toThrow("Invalid email format");
     });
 
-    it("should update patient with validation", async () => {
+    it(_"should update patient with validation",_async () => {
       const updateRequest: UpdatePatientRequest = {
         familyName: "Smith-Johnson",
         email: "alice.smith@example.com"
@@ -194,7 +194,7 @@ describe("Repository Pattern Integration Tests", () => {
       expect(patient).toBeDefined();
     });
 
-    it("should get patients by clinic", async () => {
+    it(_"should get patients by clinic",_async () => {
       const result = await patientService.getPatientsByClinic("test-clinic-id");
       expect(result).toHaveProperty("patients");
       expect(result).toHaveProperty("total");
@@ -202,14 +202,14 @@ describe("Repository Pattern Integration Tests", () => {
       expect(typeof result.total).toBe("number");
     });
 
-    it("should search patients", async () => {
+    it(_"should search patients",_async () => {
       const result = await patientService.searchPatients("John", "test-clinic-id");
       expect(result).toHaveProperty("patients");
       expect(result).toHaveProperty("total");
       expect(Array.isArray(result.patents)).toBe(true);
     });
 
-    it("should count patients", async () => {
+    it(_"should count patients",_async () => {
       const filter: PatientFilter = { clinicId: "test-clinic-id" };
       const count = await patientService.countPatients(filter);
       expect(typeof count).toBe("number");
@@ -217,8 +217,8 @@ describe("Repository Pattern Integration Tests", () => {
     });
   });
 
-  describe("Error Handling", () => {
-    it("should handle database errors gracefully", async () => {
+  describe(_"Error Handling",_() => {
+    it(_"should handle database errors gracefully",_async () => {
       // Mock a database error
       const errorSupabase = {
         from: () => ({
@@ -240,11 +240,11 @@ describe("Repository Pattern Integration Tests", () => {
         .rejects.toThrow(PatientError);
     });
 
-    it("should validate birth date", async () => {
+    it(_"should validate birth date",_async () => {
       const futureDate = new Date();
       futureDate.setFullYear(futureDate.getFullYear() + 1);
 
-      const request: CreatePatientRequest = {
+      const _request: CreatePatientRequest = {
         clinicId: "test-clinic-id",
         medicalRecordNumber: "MRN-005",
         givenNames: ["Future"],
@@ -255,11 +255,11 @@ describe("Repository Pattern Integration Tests", () => {
         lgpdConsentGiven: true
       };
 
-      await expect(patientService.createPatient(request))
+      await expect(patientService.createPatient(_request))
         .rejects.toThrow("Birth date cannot be in the future");
     });
 
-    it("should handle missing patient for update", async () => {
+    it(_"should handle missing patient for update",_async () => {
       const updateRequest: UpdatePatientRequest = {
         familyName: "Updated"
       };
@@ -268,14 +268,14 @@ describe("Repository Pattern Integration Tests", () => {
         .rejects.toThrow("Patient not found");
     });
 
-    it("should handle missing patient for deletion", async () => {
+    it(_"should handle missing patient for deletion",_async () => {
       await expect(patientService.deletePatient("non-existent-id"))
         .rejects.toThrow("Patient not found");
     });
   });
 
-  describe("Repository Pattern Benefits", () => {
-    it("should provide clean separation of concerns", () => {
+  describe(_"Repository Pattern Benefits",_() => {
+    it(_"should provide clean separation of concerns",_() => {
       const repository = container.getPatientRepository();
       expect(repository).toHaveProperty("findById");
       expect(repository).toHaveProperty("create");
@@ -283,14 +283,14 @@ describe("Repository Pattern Integration Tests", () => {
       expect(repository).toHaveProperty("delete");
     });
 
-    it("should enable easy testing with dependency injection", () => {
+    it(_"should enable easy testing with dependency injection",_() => {
       // The fact that we can inject a mock Supabase client
       // demonstrates the benefit of dependency injection
       expect(container).toBeDefined();
       expect(patientService).toBeDefined();
     });
 
-    it("should provide consistent interface across repositories", () => {
+    it(_"should provide consistent interface across repositories",_() => {
       const patientRepo = container.getPatientRepository();
       const consentRepo = container.getConsentRepository();
       const appointmentRepo = container.getAppointmentRepository();

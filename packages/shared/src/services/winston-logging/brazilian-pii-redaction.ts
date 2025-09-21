@@ -91,7 +91,7 @@ const BRAZILIAN_PATTERNS = {
       if (digits.length !== 15) return false;
       
       // SUS validation algorithm
-      const sum = digits.split('').reduce((acc, digit, index) => {
+      const sum = digits.split('').reduce(_(acc,_digit,_index) => {
         return acc + parseInt(digit) * (15 - index);
       }, 0);
       
@@ -226,8 +226,8 @@ export class BrazilianPIIRedactionService {
     let redactedText = text;
 
     // Apply Brazilian identifier patterns
-    Object.entries(BRAZILIAN_PATTERNS).forEach(([type, config]) => {
-      redactedText = redactedText.replace(config.pattern, (match, ...args) => {
+    Object.entries(BRAZILIAN_PATTERNS).forEach(_([type,_config]) => {
+      redactedText = redactedText.replace(_config.pattern,_(match,_...args) => {
         const fullMatch = args[args.length - 2]; // Full match is the second to last argument
         
         // Validate if validation is enabled
@@ -242,12 +242,12 @@ export class BrazilianPIIRedactionService {
     });
 
     // Apply healthcare patterns
-    Object.entries(HEALTHCARE_PATTERNS).forEach(([type, config]) => {
+    Object.entries(HEALTHCARE_PATTERNS).forEach(_([type,_config]) => {
       redactedText = redactedText.replace(config.pattern, config.mask);
     });
 
     // Apply custom patterns
-    this.customPatterns.forEach((pattern, type) => {
+    this.customPatterns.forEach(_(pattern,_type) => {
       redactedText = redactedText.replace(pattern, `[CUSTOM-REDACTED:${type}]`);
     });
 
@@ -293,7 +293,7 @@ export class BrazilianPIIRedactionService {
   extractBrazilianIdentifiers(text: string): BrazilianIdentifier[] {
     const identifiers: BrazilianIdentifier[] = [];
 
-    Object.entries(BRAZILIAN_PATTERNS).forEach(([type, config]) => {
+    Object.entries(BRAZILIAN_PATTERNS).forEach(_([type,_config]) => {
       const matches = text.match(config.pattern);
       
       if (matches) {
@@ -377,13 +377,13 @@ export class BrazilianPIIRedactionService {
   getDetectedPIITypes(text: string): string[] {
     const types: string[] = [];
 
-    Object.entries(BRAZILIAN_PATTERNS).forEach(([type, config]) => {
+    Object.entries(BRAZILIAN_PATTERNS).forEach(_([type,_config]) => {
       if (config.pattern.test(text)) {
         types.push(type);
       }
     });
 
-    Object.entries(HEALTHCARE_PATTERNS).forEach(([type, config]) => {
+    Object.entries(HEALTHCARE_PATTERNS).forEach(_([type,_config]) => {
       if (config.pattern.test(text)) {
         types.push(type);
       }
@@ -423,7 +423,7 @@ export class BrazilianPIIRedactionService {
     const identifiers = this.extractBrazilianIdentifiers(text);
     const totalIdentifiers = identifiers.length;
     
-    const identifiersByType = identifiers.reduce((acc, id) => {
+    const identifiersByType = identifiers.reduce(_(acc,_id) => {
       acc[id.type] = (acc[id.type] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
@@ -442,4 +442,4 @@ export class BrazilianPIIRedactionService {
 }
 
 // Export singleton instance
-export const brazilianPIIRedactionService = new BrazilianPIIRedactionService();
+export const _brazilianPIIRedactionService = new BrazilianPIIRedactionService();

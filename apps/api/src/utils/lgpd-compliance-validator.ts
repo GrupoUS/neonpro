@@ -113,7 +113,7 @@ export interface LGPDAuditEvent {
     | 'data_export'
     | 'data_deletion';
   dataSubjectId: string;
-  userId: string;
+  _userId: string;
   clinicId: string;
   purpose: LGPDProcessingPurpose;
   legalBasis: LGPDLegalBasis;
@@ -218,7 +218,7 @@ export class LGPDComplianceValidator {
         missingConsents: missingConsents.length > 0 ? missingConsents : undefined,
         violations: violations.length > 0 ? violations : undefined,
       };
-    } catch (error) {
+    } catch (_error) {
       throw new LGPDComplianceError(
         'LGPD compliance validation failed',
         'Art. 6',
@@ -264,7 +264,7 @@ export class LGPDComplianceValidator {
       const isSpecific = consent.purpose && consent.legalBasis;
 
       return isGranular && isSpecific;
-    } catch (error) {
+    } catch (_error) {
       console.error('Consent validation failed:', error);
       return false;
     }
@@ -318,7 +318,7 @@ export class LGPDComplianceValidator {
       );
 
       return isOriginalPurpose || isCompatiblePurpose;
-    } catch (error) {
+    } catch (_error) {
       console.error('Purpose validation failed:', error);
       return false;
     }
@@ -424,7 +424,7 @@ export class LGPDComplianceValidator {
         eventId: auditEventId,
         eventType: 'data_access', // This would vary based on the right
         dataSubjectId,
-        userId: requestDetails.requestedBy,
+        _userId: requestDetails.requestedBy,
         clinicId: this.prisma.currentContext?.clinicId || '',
         purpose: LGPDProcessingPurpose.REGULATORY_COMPLIANCE,
         legalBasis: LGPDLegalBasis.LEGAL_OBLIGATION,
@@ -445,13 +445,13 @@ export class LGPDComplianceValidator {
         message,
         auditEventId,
       };
-    } catch (error) {
+    } catch (_error) {
       // Create audit event for failed request
       await this.createLGPDAuditEvent({
         eventId: auditEventId,
         eventType: 'data_access',
         dataSubjectId,
-        userId: requestDetails.requestedBy,
+        _userId: requestDetails.requestedBy,
         clinicId: this.prisma.currentContext?.clinicId || '',
         purpose: LGPDProcessingPurpose.REGULATORY_COMPLIANCE,
         legalBasis: LGPDLegalBasis.LEGAL_OBLIGATION,
@@ -659,7 +659,7 @@ export class LGPDComplianceValidator {
           'Update privacy notices as needed',
         ],
       };
-    } catch (error) {
+    } catch (_error) {
       throw new LGPDComplianceError(
         'Failed to generate LGPD compliance report',
         'Art. 37',

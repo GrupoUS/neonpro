@@ -117,7 +117,7 @@ export interface EnhancedAIChatProps {
 
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
   model?: string;
@@ -193,24 +193,12 @@ type VoiceRecognitionState = 'idle' | 'listening' | 'processing' | 'error';
 /**
  * Enhanced AI Chat Component
  */
-export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
-  patientContext,
-  healthcareProfessional,
-  defaultModel = 'gpt-4o',
-  showModelSelection = true,
-  showVoiceInput = true,
-  showFileAttachment = false,
-  showSearch = true,
+export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = (_{
+  patientContext,_healthcareProfessional,_defaultModel = 'gpt-4o',_showModelSelection = true,_showVoiceInput = true,_showFileAttachment = false,_showSearch = true,
   lgpdConsent = {
     canStoreHistory: true,
     dataRetentionDays: 30,
-    requiresExplicitConsent: false,
-  },
-  mobileOptimized = true,
-  maxHeight = '600px',
-  testId = 'enhanced-ai-chat',
-  sessionType = 'general',
-}) => {
+    requiresExplicitConsent: false,_},_mobileOptimized = true,_maxHeight = '600px',_testId = 'enhanced-ai-chat',_sessionType = 'general',_}) => {
   // State management
   const [selectedModel, setSelectedModel] = useState(defaultModel);
   const [voiceState, setVoiceState] = useState<VoiceRecognitionState>('idle');
@@ -277,16 +265,16 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   const { searchEntries, isSearching: _isKnowledgeSearching } = useKnowledgeBaseManager();
 
   // Auto-scroll to bottom
-  const scrollToBottom = useCallback(() => {
+  const scrollToBottom = useCallback(_() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
-  useEffect(() => {
+  useEffect(_() => {
     scrollToBottom();
   }, [messages, agentMessages, scrollToBottom]);
 
   // Voice recognition implementation
-  const startVoiceRecognition = useCallback(async () => {
+  const startVoiceRecognition = useCallback(_async () => {
     if (
       !('webkitSpeechRecognition' in window)
       && !('SpeechRecognition' in window)
@@ -324,13 +312,13 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
       };
 
       recognition.start();
-    } catch (error) {
+    } catch (_error) {
       console.error('Voice recognition error:', error);
       setVoiceState('error');
     }
   }, [setInput]);
 
-  const stopVoiceRecognition = useCallback(() => {
+  const stopVoiceRecognition = useCallback(_() => {
     setVoiceState('idle');
   }, []);
 
@@ -357,9 +345,9 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
             limit: 5,
           });
 
-          const knowledgeMessages: ChatMessage[] = knowledgeResults.data?.map((entry, _index) => ({
+          const knowledgeMessages: ChatMessage[] = knowledgeResults.data?.map(_(entry, _index) => ({
             id: `knowledge-${index}`,
-            role: 'system',
+            _role: 'system',
             content: entry.content,
             timestamp: new Date(),
             metadata: {
@@ -378,7 +366,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
         } else {
           setSearchResults(filteredMessages);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Search error:', error);
         setSearchResults([]);
       } finally {
@@ -425,7 +413,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
           // Send through AI SDK for general chats
           handleAIChatSubmit(e);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Message send error:', error);
       }
     },
@@ -457,7 +445,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   );
 
   // Clear chat
-  const handleClearChat = useCallback(() => {
+  const handleClearChat = useCallback(_() => {
     setMessages([]);
     setData(undefined);
   }, [setMessages, setData]);
@@ -471,7 +459,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   const renderMessageContent = useCallback((_content: any) => {
     return (
       <div className='prose prose-sm max-w-none dark:prose-invert'>
-        {content.split('\n').map((line, _index) => (
+        {content.split('\n').map(_(line, _index) => (
           <p key={index} className='mb-2 last:mb-0'>
             {line}
           </p>
@@ -556,8 +544,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
           </div>
 
           <div className='flex items-center gap-2'>
-            {showSearch && (
-              <TooltipProvider>
+            {showSearch && (_<TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -717,8 +704,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
               </div>
             )}
 
-            {searchResults.length > 0 && (
-              <div className='mt-3 space-y-2 max-h-32 overflow-y-auto'>
+            {searchResults.length > 0 && (_<div className='mt-3 space-y-2 max-h-32 overflow-y-auto'>
                 {searchResults.map((result, _index) => (
                   <div
                     key={index}

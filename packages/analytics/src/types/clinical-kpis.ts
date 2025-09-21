@@ -517,7 +517,7 @@ export function validateClinicalCompliance(kpi: ClinicalKPI): {
 export function createQualityOfCareKPI(
   options: Partial<QualityOfCareKPI>,
 ): QualityOfCareKPI {
-  const now = new Date();
+  const _now = new Date();
 
   return {
     id: options.id || "qoc_" + Math.random().toString(36).substr(2, 9),
@@ -556,7 +556,7 @@ export function createQualityOfCareKPI(
 export function createPatientOutcomeKPI(
   options: Partial<PatientOutcomeKPI>,
 ): PatientOutcomeKPI {
-  const now = new Date();
+  const _now = new Date();
 
   return {
     id: options.id || "outcome_" + Math.random().toString(36).substr(2, 9),
@@ -611,7 +611,7 @@ export function calculateClinicalRiskScore(kpis: ClinicalKPI[]): {
   const criticalAreas: string[] = [];
   const recommendations: string[] = [];
 
-  kpis.forEach((kpi) => {
+  kpis.forEach(_(kpi) => {
     let kpiScore = 0;
 
     // Calculate score based on risk level

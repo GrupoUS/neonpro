@@ -21,7 +21,7 @@ app.use(
 );
 
 // JWT middleware for authentication
-app.use('*', async (c, next) => {
+app.use(_'*',_async (c,_next) => {
   const jwtMiddleware = jwt({
     secret: process.env.JWT_SECRET!,
   });
@@ -102,7 +102,7 @@ app.post('/ai/data-agent', async c => {
     const permissionContext = {
       userId,
       domain: userDomain,
-      role: userRole,
+      _role: userRole,
       permissions: payload.permissions || [],
       dataScope: payload.dataScope || 'own_clients',
       lastAccess: new Date(),
@@ -161,7 +161,7 @@ app.post('/ai/data-agent', async c => {
             label: suggestion,
             type: 'button' as const,
             action: 'suggest_query',
-            parameters: { query: suggestion },
+            parameters: { _query: suggestion },
           })),
           metadata: {
             processingTime: Date.now() - startTime,
@@ -232,7 +232,7 @@ app.post('/ai/data-agent', async c => {
           },
         });
       }
-    } catch (ottomatorError) {
+    } catch (_ottomatorError) {
       console.warn('Ottomator-agents failed, falling back to direct processing:', ottomatorError);
     }
 
@@ -312,8 +312,8 @@ app.post('/ai/data-agent', async c => {
           processingTime,
         },
       }, 200);
-    } catch (error) {
-      console.error('Error processing query:', error);
+    } catch (_error) {
+      console.error('Error processing _query:', error);
 
       return c.json({
         success: false,
@@ -339,7 +339,7 @@ app.post('/ai/data-agent', async c => {
         },
       }, 500);
     }
-  } catch (error) {
+  } catch (_error) {
     console.error('Data-agent endpoint error:', error);
 
     return c.json({

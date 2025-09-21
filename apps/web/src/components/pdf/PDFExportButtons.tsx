@@ -27,14 +27,8 @@ const defaultClinicData: ClinicBrandingData = {
   website: 'www.clinicaestetica.com.br',
 };
 
-export const PDFExportButtons: React.FC<PDFExportButtonsProps> = ({
-  assessmentData,
-  clinicData = defaultClinicData,
-  variant = 'default',
-  size = 'default',
-  showPreview = true,
-  className = '',
-}) => {
+export const PDFExportButtons: React.FC<PDFExportButtonsProps> = (_{
+  assessmentData,_clinicData = defaultClinicData,_variant = 'default',_size = 'default',_showPreview = true,_className = '',_}) => {
   const { isGenerating, downloadPDF, previewPDF, error } = usePDFExport();
 
   const handleDownload = async () => {
@@ -54,7 +48,7 @@ export const PDFExportButtons: React.FC<PDFExportButtonsProps> = ({
       );
 
       toast.success('Relatório PDF gerado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error(error);
       toast.error('Erro ao baixar o PDF. Tente novamente.');
     }
@@ -69,7 +63,7 @@ export const PDFExportButtons: React.FC<PDFExportButtonsProps> = ({
           generatedAt={new Date()}
         />,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error(error);
       toast.error('Erro ao visualizar o PDF. Tente novamente.');
     }

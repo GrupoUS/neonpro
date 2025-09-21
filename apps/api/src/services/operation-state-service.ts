@@ -20,7 +20,7 @@ export interface OperationStateData {
   status: 'pending' | 'processing' | 'completed' | 'failed';
   entity: string;
   operation: string;
-  userId: string;
+  _userId: string;
   clinicId?: string;
   sessionId?: string;
   data?: any;
@@ -37,7 +37,7 @@ export interface OperationState {
   status: 'pending' | 'processing' | 'completed' | 'failed';
   entity: string;
   operation: string;
-  userId: string;
+  _userId: string;
   clinicId?: string;
   sessionId?: string;
   data: any;
@@ -156,7 +156,7 @@ export class OperationStateService {
   /**
    * Get states by user ID
    */
-  async getStatesByUserId(userId: string, limit: number = 50): Promise<OperationState[]> {
+  async getStatesByUserId(_userId: string, limit: number = 50): Promise<OperationState[]> {
     const states = await this.prisma.operationState.findMany({
       where: {
         user_id: userId,
@@ -258,15 +258,15 @@ export class OperationStateService {
 
     return {
       total,
-      byStatus: statusStats.reduce((acc, stat) => {
+      byStatus: statusStats.reduce(_(acc,_stat) => {
         acc[stat.status] = stat._count.status;
         return acc;
       }, {} as Record<string, number>),
-      byStep: stepStats.reduce((acc, stat) => {
+      byStep: stepStats.reduce(_(acc,_stat) => {
         acc[stat.step] = stat._count.step;
         return acc;
       }, {} as Record<string, number>),
-      byEntity: entityStats.reduce((acc, stat) => {
+      byEntity: entityStats.reduce(_(acc,_stat) => {
         acc[stat.entity] = stat._count.entity;
         return acc;
       }, {} as Record<string, number>),
@@ -284,7 +284,7 @@ export class OperationStateService {
       status: record.status,
       entity: record.entity,
       operation: record.operation,
-      userId: record.user_id,
+      _userId: record.user_id,
       clinicId: record.clinic_id,
       sessionId: record.session_id,
       data: record.data,

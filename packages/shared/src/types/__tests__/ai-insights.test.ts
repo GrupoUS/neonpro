@@ -6,14 +6,14 @@
 import { describe, expect, it } from "vitest";
 
 describe("AI Insights Model (T035)", () => {
-  it("should export AIInsight type", () => {
-    expect(() => {
+  it(_"should export AIInsight type",_() => {
+    expect(_() => {
       const module = require("../ai-insights");
       expect(module.createAIInsight).toBeDefined();
     }).not.toThrow();
   });
 
-  it("should have required AI insight fields", () => {
+  it(_"should have required AI insight fields",_() => {
     const { AIInsight } = require("../ai-insights");
     const insight: AIInsight = {
       id: "insight-123",
@@ -43,7 +43,7 @@ describe("AI Insights Model (T035)", () => {
     expect(insight.confidence).toBe(0.85);
   });
 
-  it("should support AI insight types", () => {
+  it(_"should support AI insight types",_() => {
     const { AIInsightType } = require("../ai-insights");
     expect(AIInsightType.HEALTH_ANALYSIS).toBe("health_analysis");
     expect(AIInsightType.RISK_ASSESSMENT).toBe("risk_assessment");
@@ -56,7 +56,7 @@ describe("AI Insights Model (T035)", () => {
     expect(AIInsightType.MEDICATION_REVIEW).toBe("medication_review");
   });
 
-  it("should support AI providers", () => {
+  it(_"should support AI providers",_() => {
     const { AIProvider } = require("../ai-insights");
     expect(AIProvider.OPENAI).toBe("openai");
     expect(AIProvider.ANTHROPIC).toBe("anthropic");
@@ -65,7 +65,7 @@ describe("AI Insights Model (T035)", () => {
     expect(AIProvider.AZURE).toBe("azure");
   });
 
-  it("should support insight status", () => {
+  it(_"should support insight status",_() => {
     const { InsightStatus } = require("../ai-insights");
     expect(InsightStatus.GENERATED).toBe("generated");
     expect(InsightStatus.VALIDATED).toBe("validated");
@@ -73,7 +73,7 @@ describe("AI Insights Model (T035)", () => {
     expect(InsightStatus.ARCHIVED).toBe("archived");
   });
 
-  it("should validate confidence scores", () => {
+  it(_"should validate confidence scores",_() => {
     const { validateConfidenceScore } = require("../ai-insights");
     expect(validateConfidenceScore(0.85)).toBe(true);
     expect(validateConfidenceScore(1.0)).toBe(true);
@@ -82,7 +82,7 @@ describe("AI Insights Model (T035)", () => {
     expect(validateConfidenceScore(1.1)).toBe(false);
   });
 
-  it("should support multi-model AI configuration", () => {
+  it(_"should support multi-model AI configuration",_() => {
     const { AIModelConfig } = require("../ai-insights");
     const config: AIModelConfig = {
       provider: "openai",
@@ -100,7 +100,7 @@ describe("AI Insights Model (T035)", () => {
     expect(config.healthcareContext).toBe(true);
   });
 
-  it("should generate patient analysis", () => {
+  it(_"should generate patient analysis",_() => {
     const { generatePatientAnalysis } = require("../ai-insights");
 
     const patientData = {
@@ -122,7 +122,7 @@ describe("AI Insights Model (T035)", () => {
     expect(analysis.confidence).toBeGreaterThan(0);
   });
 
-  it("should validate AI insights", () => {
+  it(_"should validate AI insights",_() => {
     const { validateAIInsight } = require("../ai-insights");
 
     const validInsight = {
@@ -143,9 +143,9 @@ describe("AI Insights Model (T035)", () => {
     expect(validateAIInsight(invalidInsight)).toBe(false);
   });
 
-  it("should support Brazilian healthcare context", () => {
+  it(_"should support Brazilian healthcare context",_() => {
     const { BrazilianHealthcareContext } = require("../ai-insights");
-    const context: BrazilianHealthcareContext = {
+    const _context: BrazilianHealthcareContext = {
       anvisa: {
         medicationCodes: ["123456789"],
         deviceCodes: ["987654321"],
@@ -168,7 +168,7 @@ describe("AI Insights Model (T035)", () => {
     expect(context.lgpd.legalBasis).toBe("consent");
   });
 
-  it("should handle insight approval workflow", () => {
+  it(_"should handle insight approval workflow",_() => {
     const { approveInsight, rejectInsight } = require("../ai-insights");
 
     const insight = {
@@ -192,7 +192,7 @@ describe("AI Insights Model (T035)", () => {
     expect(rejected.rejectionReason).toBe("Análise imprecisa");
   });
 
-  it("should support LGPD compliance for AI data", () => {
+  it(_"should support LGPD compliance for AI data",_() => {
     const { anonymizeAIInsight } = require("../ai-insights");
 
     const insight = {
@@ -211,7 +211,7 @@ describe("AI Insights Model (T035)", () => {
     expect(anonymized.content.summary).toMatch(/^RESUMO ANONIMIZADO/);
   });
 
-  it("should calculate insight reliability score", () => {
+  it(_"should calculate insight reliability score",_() => {
     const { calculateReliabilityScore } = require("../ai-insights");
 
     const insight = {
@@ -228,7 +228,7 @@ describe("AI Insights Model (T035)", () => {
     expect(score).toBeLessThanOrEqual(1);
   });
 
-  it("should support insight templates", () => {
+  it(_"should support insight templates",_() => {
     const { InsightTemplate } = require("../ai-insights");
     const template: InsightTemplate = {
       id: "template-health-analysis",
@@ -249,7 +249,7 @@ describe("AI Insights Model (T035)", () => {
     expect(template.healthcareSpecific).toBe(true);
   });
 
-  it("should track AI model performance", () => {
+  it(_"should track AI model performance",_() => {
     const { AIModelPerformance } = require("../ai-insights");
     const performance: AIModelPerformance = {
       modelId: "gpt-4-healthcare",

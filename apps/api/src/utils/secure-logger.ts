@@ -45,11 +45,11 @@ interface LoggerConfig {
   maskSensitiveData?: boolean;
   lgpdCompliant?: boolean;
   auditTrail?: boolean;
-  service?: string;
+  _service?: string;
 }
 
 interface LogContext {
-  userId?: string;
+  _userId?: string;
   patientId?: string;
   operation?: string;
   endpoint?: string;
@@ -70,16 +70,16 @@ class SecureLogger {
       maskSensitiveData: config.maskSensitiveData ?? true,
       lgpdCompliant: config.lgpdCompliant ?? true,
       auditTrail: config.auditTrail ?? true,
-      service: config.service || 'neonpro-api',
+      _service: config.service || 'neonpro-api',
     };
   }
 
-  private formatLog(level: string, message: string, context?: LogContext): void {
+  private formatLog(level: string, message: string, _context?: LogContext): void {
     const timestamp = new Date().toISOString();
     const logEntry = {
       timestamp,
       level,
-      service: this.config.service,
+      _service: this.config.service,
       environment: process.env.NODE_ENV || 'development',
       message: this.config.maskSensitiveData ? this.maskSensitiveData(message) : message,
       ...this.maskObjectData(context || {}),
@@ -113,7 +113,7 @@ class SecureLogger {
     let maskedText = text;
 
     // Apply pattern-based masking
-    Object.entries(SENSITIVE_PATTERNS).forEach(([, pattern]) => {
+    Object.entries(SENSITIVE_PATTERNS).forEach(_([,_pattern]) => {
       maskedText = maskedText.replace(pattern, match => {
         const visibleChars = Math.min(3, Math.floor(match.length * 0.3));
         return match.substring(0, visibleChars) + '*'.repeat(match.length - visibleChars);
@@ -134,7 +134,7 @@ class SecureLogger {
 
     const masked: any = {};
 
-    Object.entries(obj).forEach(([key, value]) => {
+    Object.entries(obj).forEach(_([key,_value]) => {
       const lowerKey = key.toLowerCase();
 
       if (SENSITIVE_KEYS.some(sensitiveKey => lowerKey.includes(sensitiveKey))) {
@@ -165,26 +165,26 @@ class SecureLogger {
   }
 
   // Public logging methods
-  debug(message: string, context?: LogContext): void {
+  debug(message: string, _context?: LogContext): void {
     if (this.shouldLog('debug')) {
-      this.formatLog('debug', message, this.enrichContext(context));
+      this.formatLog('debug', message, this.enrichContext(_context));
     }
   }
 
-  info(message: string, context?: LogContext): void {
+  info(message: string, _context?: LogContext): void {
     if (this.shouldLog('info')) {
-      this.formatLog('info', message, this.enrichContext(context));
+      this.formatLog('info', message, this.enrichContext(_context));
     }
   }
 
-  warn(message: string, context?: LogContext): void {
+  warn(message: string, _context?: LogContext): void {
     if (this.shouldLog('warn')) {
-      this.formatLog('warn', message, this.enrichContext(context));
+      this.formatLog('warn', message, this.enrichContext(_context));
     }
   }
 
-  error(message: string, error?: Error, context?: LogContext): void {
-    const enrichedContext = this.enrichContext(context);
+  error(message: string, error?: Error, _context?: LogContext): void {
+    const enrichedContext = this.enrichContext(_context);
 
     if (error) {
       (enrichedContext as any).error = {
@@ -207,8 +207,8 @@ class SecureLogger {
   }
 
   // LGPD Compliance Methods
-  auditDataAccess(context: {
-    userId: string;
+  auditDataAccess(_context: {
+    _userId: string;
     patientId?: string;
     operation: string;
     dataType: string;
@@ -226,8 +226,8 @@ class SecureLogger {
     });
   }
 
-  auditDataModification(context: {
-    userId: string;
+  auditDataModification(_context: {
+    _userId: string;
     patientId?: string;
     operation: 'CREATE' | 'UPDATE' | 'DELETE';
     dataType: string;
@@ -244,7 +244,7 @@ class SecureLogger {
     });
   }
 
-  auditConsentChange(context: {
+  auditConsentChange(_context: {
     patientId: string;
     consentType: string;
     previousValue: boolean;
@@ -261,7 +261,7 @@ class SecureLogger {
     });
   }
 
-  private enrichContext(context?: LogContext): LogContext {
+  private enrichContext(_context?: LogContext): LogContext {
     return {
       ...context,
       timestamp: new Date().toISOString(),
@@ -281,14 +281,14 @@ export function createLogger(config?: LoggerConfig): SecureLogger {
 
 // Default logger instance
 export const logger = createLogger({
-  service: 'neonpro-api',
+  _service: 'neonpro-api',
   maskSensitiveData: true,
   lgpdCompliant: true,
   auditTrail: true,
 });
 
 // Export with alternative name for compatibility
-export const secureLogger = logger;
+export const _secureLogger = logger;
 
 // Export types for TypeScript support
 export type { LogContext, LoggerConfig };

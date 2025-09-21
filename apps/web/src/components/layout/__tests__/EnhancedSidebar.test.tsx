@@ -5,68 +5,68 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe('EnhancedSidebar', () => {
-  beforeEach(() => {
+describe(_'EnhancedSidebar',_() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
   });
 
-  it('should export the component', () => {
+  it(_'should export the component',_() => {
     // Test that the module exists and can be imported
-    expect(() => {
+    expect(_() => {
       const module = require.resolve('../EnhancedSidebar');
       expect(module).toBeDefined();
     }).not.toThrow();
   });
 
-  it('should render sidebar with navigation links', () => {
+  it(_'should render sidebar with navigation links',_() => {
     const { EnhancedSidebar } = require('../EnhancedSidebar');
     expect(EnhancedSidebar).toBeDefined();
     expect(typeof EnhancedSidebar).toBe('function');
   });
 
-  it('should support collapsible functionality', () => {
+  it(_'should support collapsible functionality',_() => {
     const { EnhancedSidebar } = require('../EnhancedSidebar');
     expect(EnhancedSidebar).toBeDefined();
     expect(typeof EnhancedSidebar).toBe('function');
   });
 
-  it('should highlight active navigation item', () => {
+  it(_'should highlight active navigation item',_() => {
     const { EnhancedSidebar } = require('../EnhancedSidebar');
     expect(EnhancedSidebar).toBeDefined();
     expect(typeof EnhancedSidebar).toBe('function');
   });
 
-  it('should be keyboard accessible', () => {
+  it(_'should be keyboard accessible',_() => {
     const { EnhancedSidebar } = require('../EnhancedSidebar');
     expect(EnhancedSidebar).toBeDefined();
     expect(typeof EnhancedSidebar).toBe('function');
   });
 
-  it('should support mobile responsive design', () => {
+  it(_'should support mobile responsive design',_() => {
     const { EnhancedSidebar } = require('../EnhancedSidebar');
     expect(EnhancedSidebar).toBeDefined();
     expect(typeof EnhancedSidebar).toBe('function');
   });
 
-  it('should include proper ARIA labels', () => {
+  it(_'should include proper ARIA labels',_() => {
     const { EnhancedSidebar } = require('../EnhancedSidebar');
     expect(EnhancedSidebar).toBeDefined();
     expect(typeof EnhancedSidebar).toBe('function');
   });
 
-  it('should handle user authentication state', () => {
+  it(_'should handle user authentication state',_() => {
     const { EnhancedSidebar } = require('../EnhancedSidebar');
     expect(EnhancedSidebar).toBeDefined();
     expect(typeof EnhancedSidebar).toBe('function');
   });
 
-  it('should support nested navigation items', () => {
+  it(_'should support nested navigation items',_() => {
     const { EnhancedSidebar } = require('../EnhancedSidebar');
     expect(EnhancedSidebar).toBeDefined();
     expect(typeof EnhancedSidebar).toBe('function');
   });
 
-  it('should persist collapse state', () => {
+  it(_'should persist collapse state',_() => {
     const { EnhancedSidebar } = require('../EnhancedSidebar');
     expect(EnhancedSidebar).toBeDefined();
     expect(typeof EnhancedSidebar).toBe('function');

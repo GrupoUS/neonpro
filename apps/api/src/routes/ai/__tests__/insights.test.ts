@@ -28,7 +28,7 @@ const mockLGPDService = {
 };
 
 describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
-  beforeEach(async () => {
+  beforeEach(_async () => {
     vi.clearAllMocks();
 
     // Inject mocked services into the endpoint
@@ -157,17 +157,17 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     mockLGPDService.maskSensitiveData.mockImplementation(data => data);
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.restoreAllMocks();
   });
 
-  it('should export AI insights route handler', async () => {
+  it(_'should export AI insights route handler',_async () => {
     const module = await import('../insights');
     expect(module.default).toBeDefined();
   });
 
-  describe('Successful AI Insights Generation', () => {
-    it('should generate comprehensive patient insights', async () => {
+  describe(_'Successful AI Insights Generation',_() => {
+    it(_'should generate comprehensive patient insights',_async () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
@@ -191,7 +191,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(data.data.insights.predictiveAnalysis).toBeDefined();
     });
 
-    it('should generate insights with specific analysis type', async () => {
+    it(_'should generate insights with specific analysis type',_async () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
@@ -213,13 +213,13 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(data.success).toBe(true);
       expect(mockAIChatService.generatePatientInsights).toHaveBeenCalledWith({
         patientId: 'patient-123',
-        userId: 'user-123',
+        _userId: 'user-123',
         analysisType: 'risk_assessment',
         includeRecommendations: true,
       });
     });
 
-    it('should generate insights with time range filter', async () => {
+    it(_'should generate insights with time range filter',_async () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
@@ -241,14 +241,14 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(data.success).toBe(true);
       expect(mockAIChatService.generatePatientInsights).toHaveBeenCalledWith({
         patientId: 'patient-123',
-        userId: 'user-123',
+        _userId: 'user-123',
         timeRange: '6months',
         includeHistory: true,
         includeRecommendations: true,
       });
     });
 
-    it('should include AI insights performance headers', async () => {
+    it(_'should include AI insights performance headers',_async () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
@@ -269,7 +269,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(response.headers.get('X-Analysis-Version')).toBe('2.1');
     });
 
-    it('should generate insights with healthcare professional context', async () => {
+    it(_'should generate insights with healthcare professional context',_async () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
@@ -296,7 +296,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       );
     });
 
-    it('should cache insights for performance optimization', async () => {
+    it(_'should cache insights for performance optimization',_async () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
@@ -317,8 +317,8 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     });
   });
 
-  describe('LGPD Compliance and Data Access', () => {
-    it('should validate LGPD data access for patient insights', async () => {
+  describe(_'LGPD Compliance and Data Access',_() => {
+    it(_'should validate LGPD data access for patient insights',_async () => {
       const { default: insightsRoute } = await import('../insights');
 
       await insightsRoute.request(
@@ -332,7 +332,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       );
 
       expect(mockLGPDService.validateDataAccess).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         patientId: 'patient-123',
         dataType: 'ai_patient_insights',
         purpose: 'healthcare_analysis',
@@ -340,7 +340,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       });
     });
 
-    it('should log insights access for audit trail', async () => {
+    it(_'should log insights access for audit trail',_async () => {
       const { default: insightsRoute } = await import('../insights');
 
       await insightsRoute.request(
@@ -359,7 +359,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       );
 
       expect(mockAuditService.logActivity).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         action: 'ai_patient_insights_access',
         resourceType: 'ai_insights',
         resourceId: 'patient-123',
@@ -377,7 +377,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       });
     });
 
-    it('should handle LGPD access denial for insights', async () => {
+    it(_'should handle LGPD access denial for insights',_async () => {
       mockLGPDService.validateDataAccess.mockResolvedValue({
         success: false,
         error: 'Acesso negado para insights de IA por política LGPD',
@@ -404,7 +404,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(data.code).toBe('LGPD_AI_INSIGHTS_DENIED');
     });
 
-    it('should mask sensitive data in insights based on access level', async () => {
+    it(_'should mask sensitive data in insights based on access level',_async () => {
       mockLGPDService.validateDataAccess.mockResolvedValue({
         success: true,
         data: { canAccess: true, accessLevel: 'limited' },
@@ -452,8 +452,8 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle authentication errors', async () => {
+  describe(_'Error Handling',_() => {
+    it(_'should handle authentication errors',_async () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
@@ -472,7 +472,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(data.error).toContain('Não autorizado');
     });
 
-    it('should handle patient not found errors', async () => {
+    it(_'should handle patient not found errors',_async () => {
       mockPatientService.validatePatientExists.mockResolvedValue({
         success: false,
         error: 'Paciente não encontrado',
@@ -499,7 +499,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(data.code).toBe('PATIENT_NOT_FOUND');
     });
 
-    it('should handle AI service errors gracefully', async () => {
+    it(_'should handle AI service errors gracefully',_async () => {
       mockAIChatService.generatePatientInsights.mockResolvedValue({
         success: false,
         error: 'Erro interno do serviço de insights de IA',
@@ -524,7 +524,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(data.error).toContain('Erro interno');
     });
 
-    it('should handle insufficient patient data', async () => {
+    it(_'should handle insufficient patient data',_async () => {
       mockPatientService.getPatientData.mockResolvedValue({
         success: true,
         data: {
@@ -561,8 +561,8 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     });
   });
 
-  describe('Brazilian Healthcare Compliance', () => {
-    it('should include CFM compliance headers', async () => {
+  describe(_'Brazilian Healthcare Compliance',_() => {
+    it(_'should include CFM compliance headers',_async () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
@@ -581,7 +581,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(response.headers.get('X-Medical-AI-Logged')).toBe('true');
     });
 
-    it('should validate healthcare professional context for medical insights', async () => {
+    it(_'should validate healthcare professional context for medical insights',_async () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
@@ -608,7 +608,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       );
     });
 
-    it('should include data retention policy information', async () => {
+    it(_'should include data retention policy information',_async () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
@@ -630,8 +630,8 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     });
   });
 
-  describe('Performance and Caching', () => {
-    it('should include performance headers', async () => {
+  describe(_'Performance and Caching',_() => {
+    it(_'should include performance headers',_async () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
@@ -650,7 +650,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(response.headers.get('X-Database-Queries')).toBeDefined();
     });
 
-    it('should handle large datasets efficiently', async () => {
+    it(_'should handle large datasets efficiently',_async () => {
       mockAIChatService.generatePatientInsights.mockResolvedValue({
         success: true,
         data: {
@@ -658,7 +658,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
           insights: {
             // Large dataset simulation
             riskAssessment: { overallRisk: 'medium' },
-            treatmentRecommendations: Array.from({ length: 20 }, (_, i) => ({
+            treatmentRecommendations: Array.from({ length: 20 },_(_,_i) => ({
               treatment: `Tratamento ${i + 1}`,
               priority: 'medium',
               confidence: 0.8,

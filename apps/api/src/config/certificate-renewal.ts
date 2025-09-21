@@ -38,7 +38,7 @@ function parseCertificate(certPath: string): CertificateInfo | null {
     const cert = new crypto.X509Certificate(certContent);
 
     const expiryDate = new Date(cert.validTo);
-    const now = new Date();
+    const _now = new Date();
     const daysUntilExpiry = Math.floor(
       (expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
     );
@@ -52,7 +52,7 @@ function parseCertificate(certPath: string): CertificateInfo | null {
       daysUntilExpiry,
       serialNumber: cert.serialNumber,
     };
-  } catch (error) {
+  } catch (_error) {
     logger.error('Failed to parse certificate', { error: error.message });
     return null;
   }
@@ -113,7 +113,7 @@ async function triggerCertificateRenewal(config: RenewalConfig): Promise<void> {
       logger.warn('Manual certificate renewal required');
       await notifyManualRenewalRequired(config);
     }
-  } catch (error) {
+  } catch (_error) {
     logger.error('Certificate renewal failed', { error: error.message });
     await notifyRenewalFailure(error as Error);
   }
@@ -138,10 +138,10 @@ async function renewLetsEncryptCertificate(config: RenewalConfig): Promise<void>
     certbotArgs.push('--staging');
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise(_(resolve,_reject) => {
     const certbot = spawn('certbot', certbotArgs);
 
-    certbot.on('close', (code: number) => {
+    certbot.on(_'close', (code: number) => {
       if (code === 0) {
         logger.info('Certificate renewal successful');
         notifyRenewalSuccess();
@@ -153,7 +153,7 @@ async function renewLetsEncryptCertificate(config: RenewalConfig): Promise<void>
       }
     });
 
-    certbot.on('error', (error: Error) => {
+    certbot.on(_'error', (error: Error) => {
       logger.error('Certbot spawn error', { error: error.message });
       reject(error);
     });
@@ -190,7 +190,7 @@ export function startCertificateMonitoring(): void {
   checkCertificateExpiry();
 
   // Schedule periodic checks
-  setInterval(() => {
+  setInterval(_() => {
     checkCertificateExpiry();
   }, intervalMs);
 }
@@ -276,7 +276,7 @@ export function getCertificateHealth(): {
       daysUntilExpiry: certInfo.daysUntilExpiry,
       expiryDate: certInfo.expiryDate,
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       status: 'critical',
       daysUntilExpiry: 0,

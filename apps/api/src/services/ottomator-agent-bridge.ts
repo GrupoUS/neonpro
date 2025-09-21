@@ -12,10 +12,10 @@ import * as path from 'path';
 import { logger } from '../lib/logger';
 
 export interface OttomatorQuery {
-  query: string;
+  _query: string;
   sessionId: string;
-  userId: string;
-  context?: {
+  _userId: string;
+  _context?: {
     patientId?: string;
     clinicId?: string;
     previousQueries?: string[];
@@ -66,7 +66,7 @@ export class OttomatorAgentBridge extends EventEmitter {
   private agentProcess: ChildProcess | null = null;
   private isHealthy = false;
   private queryQueue: Array<{
-    query: OttomatorQuery;
+    _query: OttomatorQuery;
     resolve: (response: OttomatorResponse) => void;
     reject: (error: Error) => void;
     timestamp: number;
@@ -113,7 +113,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       this.emit('ready');
 
       logger.info('Ottomator Agent Bridge initialized successfully');
-    } catch (error) {
+    } catch (_error) {
       logger.error('Failed to initialize Ottomator Agent Bridge', { error });
       throw error;
     }
@@ -122,7 +122,7 @@ export class OttomatorAgentBridge extends EventEmitter {
   /**
    * Process a query through the ottomator agent
    */
-  async processQuery(query: OttomatorQuery): Promise<OttomatorResponse> {
+  async processQuery(_query: OttomatorQuery): Promise<OttomatorResponse> {
     if (!this.isHealthy) {
       throw new Error('Ottomator agent is not healthy');
     }
@@ -131,9 +131,9 @@ export class OttomatorAgentBridge extends EventEmitter {
       throw new Error('Maximum concurrent queries exceeded');
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise(_(resolve,_reject) => {
       const queryId = `query_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const timeout = setTimeout(() => {
+      const timeout = setTimeout(_() => {
         this.activeQueries.delete(queryId);
         reject(new Error('Query timeout'));
       }, this.config.queryTimeout);
@@ -141,7 +141,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       this.activeQueries.set(queryId, { resolve, reject, timeout });
 
       // Send query to Python agent
-      this.sendQueryToAgent(queryId, query).catch(error => {
+      this.sendQueryToAgent(queryId, _query).catch(error => {
         clearTimeout(timeout);
         this.activeQueries.delete(queryId);
         reject(error);
@@ -170,7 +170,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       this.agentProcess.kill('SIGTERM');
 
       // Wait for graceful shutdown
-      await new Promise(resolve => {
+      await new Promise(_resolve => {
         const timeout = setTimeout(() => {
           if (this.agentProcess) {
             this.agentProcess.kill('SIGKILL');
@@ -178,7 +178,7 @@ export class OttomatorAgentBridge extends EventEmitter {
           resolve(void 0);
         }, 5000);
 
-        this.agentProcess?.on('exit', () => {
+        this.agentProcess?.on(_'exit',_() => {
           clearTimeout(timeout);
           resolve(void 0);
         });
@@ -205,7 +205,7 @@ export class OttomatorAgentBridge extends EventEmitter {
   }
 
   private async startAgentProcess(): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise(_(resolve,_reject) => {
       const args = [path.join(this.config.agentPath, 'main.py')];
 
       logger.info('Starting Python agent process', {
@@ -231,7 +231,7 @@ export class OttomatorAgentBridge extends EventEmitter {
         reject(error);
       });
 
-      this.agentProcess.on('exit', (code, signal) => {
+      this.agentProcess.on(_'exit',_(code,_signal) => {
         logger.warn('Agent process exited', { code, signal });
         this.isHealthy = false;
         this.emit('exit', { code, signal });
@@ -250,7 +250,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       }
 
       // Give the process time to start
-      setTimeout(() => {
+      setTimeout(_() => {
         if (this.agentProcess && !this.agentProcess.killed) {
           resolve();
         } else {
@@ -266,7 +266,7 @@ export class OttomatorAgentBridge extends EventEmitter {
     return Promise.resolve();
   }
 
-  private async sendQueryToAgent(queryId: string, query: OttomatorQuery): Promise<void> {
+  private async sendQueryToAgent(queryId: string, _query: OttomatorQuery): Promise<void> {
     if (!this.agentProcess || !this.agentProcess.stdin) {
       throw new Error('Agent process not available');
     }
@@ -289,7 +289,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       try {
         const message = JSON.parse(line);
         this.handleAgentMessage(message);
-      } catch (error) {
+      } catch (_error) {
         if (this.config.enableLogging) {
           logger.info('Agent output (non-JSON)', { output: line });
         }
@@ -318,7 +318,7 @@ export class OttomatorAgentBridge extends EventEmitter {
   }
 
   private startHealthCheck(): void {
-    this.healthCheckTimer = setInterval(() => {
+    this.healthCheckTimer = setInterval(_() => {
       this.performHealthCheck();
     }, this.config.healthCheckInterval);
   }
@@ -340,7 +340,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       if (this.agentProcess.stdin) {
         this.agentProcess.stdin.write(JSON.stringify(healthMessage) + '\n');
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('Health check failed', { error });
       this.isHealthy = false;
     }

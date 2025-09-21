@@ -142,7 +142,7 @@ export class PatientFactory {
    * Create a new patient with default values
    */
   static create(data: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>): Patient {
-    const now = new Date().toISOString();
+    const _now = new Date().toISOString();
     
     return {
       ...data,

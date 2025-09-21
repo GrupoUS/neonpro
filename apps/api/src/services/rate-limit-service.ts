@@ -3,8 +3,6 @@
  * Provides rate limiting functionality for API endpoints with healthcare compliance
  */
 
-import { z } from 'zod';
-
 /**
  * Rate limit rule schema for validation
  */
@@ -54,7 +52,7 @@ export interface RateLimitEvaluation {
 export function createRateLimitRule(
   data: Partial<RateLimitRule>,
 ): RateLimitRule {
-  const now = new Date().toISOString();
+  const _now = new Date().toISOString();
 
   const ruleData = {
     id: crypto.randomUUID(),
@@ -173,7 +171,7 @@ export const HealthcareRateLimitPresets = {
 /**
  * Default rate limit rules for healthcare API
  */
-export const defaultHealthcareRules = [
+export const _defaultHealthcareRules = [
   createRateLimitRule({
     name: 'Patient Data Access',
     endpoint: '/api/v2/patients/*',

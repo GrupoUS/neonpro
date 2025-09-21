@@ -11,7 +11,6 @@
  */
 
 import { TRPCError } from '@trpc/server';
-import { z } from 'zod';
 import EnhancedTelemedicineRealtime, {
   PresenceState,
 } from '../../services/enhanced-realtime-telemedicine';
@@ -51,7 +50,7 @@ const SendMessageSchema = z.object({
 
 const UpdatePresenceSchema = z.object({
   sessionId: z.string().uuid(),
-  userId: z.string().uuid(),
+  _userId: z.string().uuid(),
   userRole: z.enum(['patient', 'doctor', 'nurse', 'technician', 'admin']),
   status: z.enum(['online', 'away', 'busy', 'offline', 'in_consultation']),
   connectionQuality: z
@@ -78,7 +77,7 @@ const UpdatePresenceSchema = z.object({
 
 const MonitorQualitySchema = z.object({
   sessionId: z.string().uuid(),
-  userId: z.string().uuid().optional(),
+  _userId: z.string().uuid().optional(),
   thresholds: z
     .object({
       maxLatency: z.number().default(200), // ms
@@ -110,19 +109,19 @@ async function initializeRealtimeService() {
   return realtimeService;
 }
 
-export const realtimeTelemedicineRouter = router({
+export const _realtimeTelemedicineRouter = router({
   /**
    * Create a new telemedicine real-time session
    */
   createSession: telemedicineProcedure
     .input(CreateSessionSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
         // Verify user has access to create sessions
         const userId = ctx.user?.id;
-        if (!userId) {
+        if (!_userId) {
           throw new TRPCError({
             code: 'UNAUTHORIZED',
             message: 'User authentication required for telemedicine sessions',
@@ -130,7 +129,7 @@ export const realtimeTelemedicineRouter = router({
         }
 
         // Verify participants are valid and accessible
-        if (!input.participants.includes(userId)) {
+        if (!input.participants.includes(_userId)) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'User must be a participant in the telemedicine session',
@@ -169,7 +168,7 @@ export const realtimeTelemedicineRouter = router({
             emergencyProtocolsEnabled: true,
           },
         };
-      } catch (error: any) {
+      } catch (_error: any) {
         console.error('❌ Failed to create telemedicine session:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -183,7 +182,7 @@ export const realtimeTelemedicineRouter = router({
    */
   sendMessage: telemedicineProcedure
     .input(SendMessageSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -222,7 +221,7 @@ export const realtimeTelemedicineRouter = router({
           priority: input.priority,
           requiresAcknowledgment: input.requiresAcknowledgment,
         };
-      } catch (error: any) {
+      } catch (_error: any) {
         console.error('❌ Failed to send message:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -236,12 +235,12 @@ export const realtimeTelemedicineRouter = router({
    */
   updatePresence: telemedicineProcedure
     .input(UpdatePresenceSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
         const userId = ctx.user?.id;
-        if (!userId || userId !== input.userId) {
+        if (!userId || userId !== input._userId) {
           throw new TRPCError({
             code: 'UNAUTHORIZED',
             message: 'User can only update their own presence',
@@ -265,7 +264,7 @@ export const realtimeTelemedicineRouter = router({
         }
 
         const presenceData: Partial<PresenceState> = {
-          userId: input.userId,
+          _userId: input.userId,
           sessionId: input.sessionId,
           userRole: input.userRole,
           status: input.status,
@@ -295,13 +294,13 @@ export const realtimeTelemedicineRouter = router({
 
         return {
           success: true,
-          userId: input.userId,
+          _userId: input.userId,
           status: input.status,
           connectionQuality: quality,
           updated: new Date().toISOString(),
           alertsTriggered: quality === 'poor' ? ['poor_connection_quality'] : [],
         };
-      } catch (error: any) {
+      } catch (_error: any) {
         console.error('❌ Failed to update presence:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -315,7 +314,7 @@ export const realtimeTelemedicineRouter = router({
    */
   monitorQuality: telemedicineProcedure
     .input(MonitorQualitySchema)
-    .query(async ({ input, ctx }) => {
+    .query(_async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -363,7 +362,7 @@ export const realtimeTelemedicineRouter = router({
             emergency_protocol_ready: true,
           },
         };
-      } catch (error: any) {
+      } catch (_error: any) {
         console.error('❌ Failed to monitor quality:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -381,7 +380,7 @@ export const realtimeTelemedicineRouter = router({
         sessionId: z.string().uuid(),
       }),
     )
-    .query(async ({ input, ctx }) => {
+    .query(_async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -405,7 +404,7 @@ export const realtimeTelemedicineRouter = router({
             emergencyProtocolsActive: true,
           },
         };
-      } catch (error: any) {
+      } catch (_error: any) {
         console.error('❌ Failed to get session info:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -432,7 +431,7 @@ export const realtimeTelemedicineRouter = router({
         summary: z.string().max(1000).optional(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -466,7 +465,7 @@ export const realtimeTelemedicineRouter = router({
             dataRetentionCompliant: true,
           },
         };
-      } catch (error: any) {
+      } catch (_error: any) {
         console.error('❌ Failed to end session:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -478,7 +477,7 @@ export const realtimeTelemedicineRouter = router({
   /**
    * Get real-time connection health check
    */
-  healthCheck: protectedProcedure.query(async ({ ctx }) => {
+  healthCheck: protectedProcedure.query(_async ({ ctx }) => {
     try {
       // Check if service is initialized and working
       const service = await initializeRealtimeService();
@@ -505,7 +504,7 @@ export const realtimeTelemedicineRouter = router({
           audit_logging: true,
         },
       };
-    } catch (error: any) {
+    } catch (_error: any) {
       console.error('❌ Realtime service health check failed:', error);
       return {
         status: 'unhealthy',
@@ -533,7 +532,7 @@ export const realtimeTelemedicineRouter = router({
         requiredActions: z.array(z.string()).optional(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -567,7 +566,7 @@ export const realtimeTelemedicineRouter = router({
           ],
           estimatedResponseTime: input.severity === 'critical' ? '< 30 seconds' : '< 2 minutes',
         };
-      } catch (error: any) {
+      } catch (_error: any) {
         console.error('❌ Failed to send emergency alert:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',

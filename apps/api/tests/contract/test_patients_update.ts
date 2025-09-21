@@ -12,7 +12,6 @@
 
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { z } from 'zod';
 import { app } from '../../src/app';
 
 // Request schema for updates (all fields optional except ID)

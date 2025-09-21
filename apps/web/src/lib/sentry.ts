@@ -129,8 +129,7 @@ function resolveEnvironment(): NodeEnvironment {
 
 function sanitizeString(value: unknown): unknown {
   if (typeof value !== 'string') return value;
-  return STRING_PATTERNS.reduce(
-    (current, [pattern, replacement]) => current.replace(pattern, replacement),
+  return STRING_PATTERNS.reduce(_(current,_[pattern,_replacement]) => current.replace(pattern, replacement),
     value,
   );
 }
@@ -276,7 +275,7 @@ export function initializeHealthcareErrorTracking(
   initialized = true;
 }
 
-export const initializeSentry = initializeHealthcareErrorTracking;
+export const _initializeSentry = initializeHealthcareErrorTracking;
 
 function ensureInitialized() {
   if (!initialized) {
@@ -286,7 +285,7 @@ function ensureInitialized() {
 
 function categorizeError(
   error: Error,
-  context?: HealthcareErrorContext,
+  _context?: HealthcareErrorContext,
 ): HealthcareErrorCategory {
   const message = error.message.toLowerCase();
   const stack = (error.stack ?? '').toLowerCase();
@@ -320,11 +319,11 @@ function categorizeError(
 
 export function trackHealthcareError(
   error: Error,
-  context: HealthcareErrorContext = {},
+  _context: HealthcareErrorContext = {},
 ) {
   ensureInitialized();
 
-  const category = categorizeError(error, context);
+  const category = categorizeError(error, _context);
 
   Sentry.withScope(scope => {
     scope.setTag('healthcare.error.category', category);
@@ -372,7 +371,7 @@ export function trackHealthcareError(
 export async function trackHealthcarePerformance<T>(
   operationName: string,
   operation: () => Promise<T>,
-  context: HealthcareErrorContext = {},
+  _context: HealthcareErrorContext = {},
 ): Promise<T> {
   ensureInitialized();
 
@@ -382,10 +381,7 @@ export async function trackHealthcarePerformance<T>(
       op: 'healthcare_operation',
       attributes: {
         healthcare_context: 'true',
-        medical_context: context.medicalContext ?? 'unknown',
-      },
-    },
-    async () => {
+        medical_context: context.medicalContext ?? 'unknown',_},_},_async () => {
       try {
         const result = await operation();
         Sentry.withScope(scope => {
@@ -403,7 +399,7 @@ export async function trackHealthcarePerformance<T>(
           );
         });
         return result;
-      } catch (error) {
+      } catch (_error) {
         trackHealthcareError(error as Error, {
           ...context,
           feature: operationName,
@@ -416,7 +412,7 @@ export async function trackHealthcarePerformance<T>(
 
 export function captureHealthcareError(
   error: Error,
-  context: HealthcareErrorContext = {},
+  _context: HealthcareErrorContext = {},
 ) {
-  trackHealthcareError(error, context);
+  trackHealthcareError(error, _context);
 }

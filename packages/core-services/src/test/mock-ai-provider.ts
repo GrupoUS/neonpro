@@ -163,7 +163,7 @@ export class MockAIProvider {
   private async simulateLatency(): Promise<void> {
     const latency = this.config.latency!;
     const delay = Math.random() * (latency.max - latency.min) + latency.min;
-    await new Promise((resolve) => setTimeout(resolve, delay));
+    await new Promise(_(resolve) => setTimeout(resolve, delay));
   }
 
   private estimateTokens(text: string): number {
@@ -179,7 +179,7 @@ export class MockAIProvider {
     return {
       id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       content: mockResponse.response,
-      role: "assistant" as const,
+      _role: "assistant" as const,
       model: this.config.models?.default || "mock-model",
       provider: "mock" as AIProvider,
       usage: {
@@ -218,12 +218,12 @@ export class MockAIProvider {
       async start(controller) {
         try {
           for (const chunk of chunks) {
-            await new Promise((resolve) => setTimeout(resolve, delay));
+            await new Promise(_(resolve) => setTimeout(resolve, delay));
 
             const streamChunk = {
               id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
               content: chunk,
-              role: "assistant" as const,
+              _role: "assistant" as const,
               model: "mock-model",
               provider: "mock" as AIProvider,
               isComplete: false,
@@ -241,7 +241,7 @@ export class MockAIProvider {
           const completionChunk = {
             id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
             content: "",
-            role: "assistant" as const,
+            _role: "assistant" as const,
             model: "mock-model",
             provider: "mock" as AIProvider,
             isComplete: true,
@@ -259,7 +259,7 @@ export class MockAIProvider {
 
           controller.enqueue(JSON.stringify(completionChunk) + "\n");
           controller.close();
-        } catch (error) {
+        } catch (_error) {
           controller.error(error);
         }
       },
@@ -334,7 +334,7 @@ export function createMockAIProvider(
 }
 
 // Predefined mock providers for different testing scenarios
-export const testProviders = {
+export const _testProviders = {
   // Fast, reliable provider for unit tests
   fast: () =>
     createMockAIProvider({

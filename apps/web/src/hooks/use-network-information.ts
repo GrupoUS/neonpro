@@ -19,7 +19,7 @@ export function useNetworkInformation(): UseNetworkInformationReturn {
   const [networkInfo, setNetworkInfo] = useState<NetworkInformation | null>(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
 
-  useEffect(() => {
+  useEffect(_() => {
     const updateNetworkInfo = () => {
       // Get connection information from navigator
       const connection = (navigator as any).connection
@@ -67,7 +67,7 @@ export function useNetworkInformation(): UseNetworkInformationReturn {
   }, []);
 
   // Calculate connection quality based on network info
-  const connectionQuality = (() => {
+  const connectionQuality = (_() => {
     if (!networkInfo) return 'poor';
 
     if (networkInfo.effectiveType === '4g' && networkInfo.rtt < 100) {

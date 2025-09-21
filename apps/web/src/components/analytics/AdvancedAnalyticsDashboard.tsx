@@ -69,7 +69,7 @@ export function AdvancedAnalyticsDashboard({
   const [lastUpdate, setLastUpdate] = useState(new Date());
 
   // Mock data for demonstration (in production, this would fetch from API)
-  useEffect(() => {
+  useEffect(_() => {
     loadAnalyticsData();
   }, []);
 
@@ -77,7 +77,7 @@ export function AdvancedAnalyticsDashboard({
     setIsLoading(true);
 
     // Simulate API call
-    setTimeout(() => {
+    setTimeout(_() => {
       setMetrics({
         attendanceRate: 0.84,
         revenuePerPatient: 312.75,
@@ -111,7 +111,7 @@ export function AdvancedAnalyticsDashboard({
           impact: 'high',
           recommendation:
             'Oferecer pacotes de 3 sessões com desconto de 20% no momento do agendamento.',
-          data: { returnRate: 0.52, avgDays: 21, service: 'Hidratação Facial' },
+          data: { returnRate: 0.52, avgDays: 21, _service: 'Hidratação Facial' },
           createdAt: new Date(),
         },
         {

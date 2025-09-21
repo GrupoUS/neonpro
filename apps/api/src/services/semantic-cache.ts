@@ -66,7 +66,7 @@ export class SemanticCacheService {
       clearInterval(this.cleanupInterval);
     }
 
-    this.cleanupInterval = setInterval(() => {
+    this.cleanupInterval = setInterval(_() => {
       this.cleanup();
     }, this.config.cleanupIntervalMs);
   }
@@ -95,7 +95,7 @@ export class SemanticCacheService {
       }
 
       return embedding;
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro ao gerar embedding:', error);
       // Fallback para embedding aleatório em caso de erro
       return this.generateMockEmbedding(text);
@@ -123,8 +123,7 @@ export class SemanticCacheService {
     }
 
     // Normalizar embedding
-    const magnitude = Math.sqrt(
-      embedding.reduce((sum, val) => sum + val * val, 0),
+    const magnitude = Math.sqrt(_embedding.reduce((sum,_val) => sum + val * val, 0),
     );
     return embedding.map(val => val / magnitude);
   }
@@ -165,7 +164,7 @@ export class SemanticCacheService {
    */
   async findSimilarEntry(
     prompt: string,
-    context: HealthcareAIContext,
+    _context: HealthcareAIContext,
   ): Promise<SemanticCacheEntry | null> {
     if (!this.config.enabled) {
       return null;
@@ -192,7 +191,7 @@ export class SemanticCacheService {
       return null;
     }
 
-    const startTime = Date.now();
+    const _startTime = Date.now();
     this.stats.totalRequests++;
 
     try {
@@ -257,7 +256,7 @@ export class SemanticCacheService {
 
       if (bestMatch) {
         // 🚨 SECURITY FIX: Final validation before returning sensitive data
-        if (!this.validatePatientAccess(bestMatch, context)) {
+        if (!this.validatePatientAccess(bestMatch, _context)) {
           console.error(
             'LGPD Violation Prevented: Unauthorized patient data access attempt',
           );
@@ -286,7 +285,7 @@ export class SemanticCacheService {
       this.updateStats();
 
       return bestMatch;
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro na busca semântica:', error);
       this.stats.cacheMisses++;
       this.updateStats();
@@ -386,7 +385,7 @@ export class SemanticCacheService {
         `Entrada adicionada ao cache. ID: ${id}, Patient: ${metadata.patientId}, Tamanho: ${this.cache.size}`,
       );
       return id;
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro ao adicionar entrada ao cache:', error);
       throw error;
     }
@@ -423,7 +422,7 @@ export class SemanticCacheService {
    * Limpa entradas expiradas do cache
    */
   cleanup(): void {
-    const now = new Date();
+    const _now = new Date();
     let cleanedCount = 0;
 
     for (const [id, entry] of this.cache.entries()) {
@@ -565,7 +564,7 @@ export class SemanticCacheService {
       }
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error validating cache entry integrity:', error);
       return false;
     }
@@ -576,7 +575,7 @@ export class SemanticCacheService {
    */
   private validatePatientAccess(
     entry: SemanticCacheEntry,
-    context: HealthcareAIContext,
+    _context: HealthcareAIContext,
   ): boolean {
     // Verificar se o patient ID do contexto bate com a entrada
     if (!context.patientId || !entry.metadata.patientId) {
@@ -655,10 +654,10 @@ export class SemanticCacheService {
   /**
    * Otimiza consultas de saúde
    */
-  optimizeHealthcareQuery(query: {
+  optimizeHealthcareQuery(_query: {
     prompt: string;
     patientId?: string;
-    context: HealthcareAIContext;
+    _context: HealthcareAIContext;
     maxAgeMs?: number;
   }): {
     cacheKey: string;
@@ -697,7 +696,7 @@ export class SemanticCacheService {
     prompt: string;
     patientId?: string;
     strategy: string;
-    context: HealthcareAIContext;
+    _context: HealthcareAIContext;
   }): string {
     const { prompt, patientId, strategy, context } = params;
 
@@ -806,7 +805,7 @@ export class SemanticCacheService {
           this.cache.set(entry.id, entry);
           imported++;
         }
-      } catch (error) {
+      } catch (_error) {
         console.warn(`Falha ao importar entrada ${entry.id}:`, error);
       }
     }

@@ -15,7 +15,7 @@ export const serviceTypeKeys = {
     [...serviceTypeKeys.lists(), clinicId, filters] as const,
   details: () => [...serviceTypeKeys.all, 'detail'] as const,
   detail: (id: string) => [...serviceTypeKeys.details(), id] as const,
-  search: (query: string, clinicId?: string) =>
+  search: (_query: string, clinicId?: string) =>
     [...serviceTypeKeys.all, 'search', query, clinicId] as const,
   categories: (clinicId?: string) => [...serviceTypeKeys.all, 'categories', clinicId] as const,
   byCategory: (category: string, clinicId?: string) =>
@@ -42,7 +42,7 @@ export function useServiceTypes(
  * Hook to search service types
  */
 export function useSearchServiceTypes(
-  query: string,
+  _query: string,
   clinicId?: string,
   options?: Omit<UseQueryOptions<ServiceType[], Error>, 'queryKey' | 'queryFn'>,
 ) {
@@ -130,11 +130,10 @@ export function useServicesByCategory(clinicId?: string) {
   const { data: services } = useServiceTypes(clinicId);
   const { data: categories } = useServiceCategories(clinicId);
 
-  const servicesByCategory = React.useMemo(() => {
+  const servicesByCategory = React.useMemo(_() => {
     if (!services || !categories) return {};
 
-    return categories.reduce(
-      (acc, category) => {
+    return categories.reduce(_(acc,_category) => {
         acc[category] = services.filter(
           service => service.category === category,
         );

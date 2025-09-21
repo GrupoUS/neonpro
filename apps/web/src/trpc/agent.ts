@@ -183,7 +183,7 @@ export function useAgentRAGQuery() {
       console.log(`RAG query completed with ${data.results.length} results`);
     },
     onError: error => {
-      console.error('Failed to perform RAG query:', error);
+      console.error('Failed to perform RAG _query:', error);
     },
   });
 }
@@ -246,7 +246,7 @@ export function useAgentSessionManager() {
     async (params: {
       agent_type: 'client' | 'financial' | 'appointment';
       initial_context?: string;
-      metadata?: Record<string, unknown>;
+      metadata?: Record<string,_unknown>;
     }) => {
       const result = await createSession.mutateAsync(params);
       setCurrentSessionId(result.data.id);
@@ -298,7 +298,7 @@ export function useAgentChat(sessionId?: string) {
 
       await sendMessage.mutateAsync({
         session_id: sessionId,
-        role: 'user',
+        _role: 'user',
         content,
         metadata: options?.metadata,
         attachments: options?.attachments,
@@ -308,7 +308,7 @@ export function useAgentChat(sessionId?: string) {
   );
 
   const performRAGSearch = useCallback(
-    async (query: string, maxResults: number = 10) => {
+    async (_query: string, maxResults: number = 10) => {
       if (!sessionId) return;
 
       return ragQuery.mutateAsync({
@@ -344,7 +344,7 @@ export function useKnowledgeBaseManager() {
       content: string;
       source: string;
       tags?: string[];
-      metadata?: Record<string, unknown>;
+      metadata?: Record<string,_unknown>;
     }) => {
       return addKnowledge.mutateAsync(params);
     },
@@ -354,12 +354,12 @@ export function useKnowledgeBaseManager() {
   const searchEntries = useCallback(
     async (params: {
       agent_type: 'client' | 'financial' | 'appointment';
-      query: string;
+      _query: string;
       limit?: number;
     }) => {
       return searchKnowledge.mutateAsync({
         agent_type: params.agent_type,
-        query: params.query,
+        _query: params.query,
         limit: params.limit || 10,
       });
     },

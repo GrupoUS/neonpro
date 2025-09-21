@@ -286,7 +286,7 @@ export class ComplianceValidator {
     }
 
     // Add audit event ID to all violations
-    violations.forEach((violation) => {
+    violations.forEach(_(violation) => {
       violation.auditEventId = auditEvent.id;
     });
 
@@ -318,9 +318,9 @@ export class ComplianceValidator {
   private static getViolationRiskLevel(
     violations: ComplianceViolation[],
   ): RiskLevel {
-    if (violations.some((v) => v.severity === "CRITICAL")) return "CRITICAL";
-    if (violations.some((v) => v.severity === "HIGH")) return "HIGH";
-    if (violations.some((v) => v.severity === "MEDIUM")) return "MEDIUM";
+    if (_violations.some((v) => v.severity === "CRITICAL")) return "CRITICAL";
+    if (_violations.some((v) => v.severity === "HIGH")) return "HIGH";
+    if (_violations.some((v) => v.severity === "MEDIUM")) return "MEDIUM";
     return "LOW";
   }
 
@@ -339,7 +339,7 @@ export class ComplianceValidator {
     action: AuditAction,
     frameworks: ComplianceFramework[],
   ): boolean {
-    return frameworks.some((framework) => {
+    return frameworks.some(_(framework) => {
       switch (framework) {
         case "LGPD":
         case "GDPR":

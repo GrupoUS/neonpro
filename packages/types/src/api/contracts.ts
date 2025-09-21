@@ -4,8 +4,6 @@
  */
 
 import { TRPCError } from '@trpc/server';
-import { z } from 'zod';
-
 // =======================
 // Base API Response Types
 // =======================
@@ -18,8 +16,8 @@ export const BaseResponseSchema = z.object({
 });
 
 // Request schemas for professionals
-export const CreateProfessionalRequestSchema = z.object({
-  userId: z.string().uuid(),
+export const _CreateProfessionalRequestSchema = z.object({
+  _userId: z.string().uuid(),
   clinicId: z.string().uuid(),
 
   // Professional Details
@@ -43,7 +41,7 @@ export const CreateProfessionalRequestSchema = z.object({
   ).optional(),
 });
 
-export const UpdateProfessionalRequestSchema = z.object({
+export const _UpdateProfessionalRequestSchema = z.object({
   fullName: z.string().min(2).max(100).optional(),
   specialization: z.string().min(2).max(100).optional(),
   licenseNumber: z.string().min(5).max(20).optional(),
@@ -143,7 +141,7 @@ export const AppointmentContractSchema = z.object({
 
 export const ProfessionalContractSchema = z.object({
   id: z.string().uuid(),
-  userId: z.string().uuid(),
+  _userId: z.string().uuid(),
   clinicId: z.string().uuid(),
 
   // Professional Details
@@ -171,12 +169,12 @@ export const ProfessionalContractSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 // Response schemas for professionals
-export const ProfessionalResponseSchema = BaseResponseSchema.extend({
+export const _ProfessionalResponseSchema = BaseResponseSchema.extend({
   data: ProfessionalContractSchema,
   success: z.literal(true),
 });
 
-export const ProfessionalsListResponseSchema = BaseResponseSchema.extend({
+export const _ProfessionalsListResponseSchema = BaseResponseSchema.extend({
   data: z.object({
     professionals: z.array(ProfessionalContractSchema),
     pagination: PaginationSchema,
@@ -194,12 +192,12 @@ export const AIChatContractSchema = z.object({
 
   // Message Content
   content: z.string().min(1).max(4000),
-  role: z.enum(['user', 'assistant', 'system']),
+  _role: z.enum(['user', 'assistant', 'system']),
 
   // Healthcare Context
   patientId: z.string().uuid().optional(),
   clinicId: z.string().uuid(),
-  userId: z.string().uuid(),
+  _userId: z.string().uuid(),
 
   // AI Metadata
   model: z.string(),
@@ -219,16 +217,16 @@ export const AIChatContractSchema = z.object({
 // AI Request/Response Schemas
 // =======================
 
-export const AIRequestSchema = z.object({
+export const _AIRequestSchema = z.object({
   message: z.string().min(1).max(4000),
   sessionId: z.string().uuid().optional(),
-  context: z.object({
+  _context: z.object({
     patientId: z.string().uuid().optional(),
     clinicId: z.string().uuid(),
     conversationHistory: z
       .array(
         z.object({
-          role: z.enum(['user', 'assistant', 'system']),
+          _role: z.enum(['user', 'assistant', 'system']),
           content: z.string(),
           timestamp: z.string().datetime(),
         }),
@@ -244,7 +242,7 @@ export const AIRequestSchema = z.object({
     .optional(),
 });
 
-export const AIResponseSchema = BaseResponseSchema.extend({
+export const _AIResponseSchema = BaseResponseSchema.extend({
   data: z.object({
     message: z.string(),
     sessionId: z.string().uuid(),
@@ -258,7 +256,7 @@ export const AIResponseSchema = BaseResponseSchema.extend({
   }),
 });
 
-export const AIChatResponseSchema = BaseResponseSchema.extend({
+export const _AIChatResponseSchema = BaseResponseSchema.extend({
   data: z.object({
     messages: z.array(AIChatContractSchema),
     sessionId: z.string().uuid(),
@@ -267,7 +265,7 @@ export const AIChatResponseSchema = BaseResponseSchema.extend({
   }),
 });
 
-export const AIHealthcheckResponseSchema = BaseResponseSchema.extend({
+export const _AIHealthcheckResponseSchema = BaseResponseSchema.extend({
   data: z.object({
     status: z.enum(['healthy', 'degraded', 'unhealthy']),
     version: z.string(),
@@ -489,12 +487,12 @@ export type HealthcareErrorCode = z.infer<typeof HealthcareErrorCodes>;
 // Expand these in the types package as the real domain models evolve.
 // =======================
 
-export const MinimalPaginationSchema = z.object({
+export const _MinimalPaginationSchema = z.object({
   page: z.number().min(1).default(1),
   limit: z.number().min(1).default(20),
 });
 
-export const CreateClinicRequestSchema = z.object({
+export const _CreateClinicRequestSchema = z.object({
   name: z.string(),
   cnpj: z.string(),
   healthLicenseNumber: z.string(),
@@ -508,7 +506,7 @@ export const CreateClinicRequestSchema = z.object({
   settings: z.record(z.any()).optional(),
 });
 
-export const UpdateClinicRequestSchema = z
+export const _UpdateClinicRequestSchema = z
   .object({
     id: z.string().uuid(),
     name: z.string().optional(),
@@ -527,7 +525,7 @@ export const UpdateClinicRequestSchema = z
   })
   .strict();
 
-export const ClinicResponseSchema = z.object({
+export const _ClinicResponseSchema = z.object({
   success: z.literal(true),
   data: z.any(),
   message: z.string().optional(),
@@ -535,7 +533,7 @@ export const ClinicResponseSchema = z.object({
   requestId: z.string().optional(),
 });
 
-export const ClinicsListResponseSchema = z.object({
+export const _ClinicsListResponseSchema = z.object({
   success: z.literal(true),
   data: z.object({
     clinics: z.array(z.any()),

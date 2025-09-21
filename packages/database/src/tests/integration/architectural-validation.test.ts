@@ -12,9 +12,9 @@ import {
   PatientValidationError
 } from "@neonpro/domain";
 
-describe("Architectural Validation Tests", () => {
-  describe("Clean Architecture Principles", () => {
-    it("should enforce dependency inversion - repositories depend on abstractions", () => {
+describe(_"Architectural Validation Tests",_() => {
+  describe(_"Clean Architecture Principles",_() => {
+    it(_"should enforce dependency inversion - repositories depend on abstractions",_() => {
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);
       
@@ -42,7 +42,7 @@ describe("Architectural Validation Tests", () => {
       expect(typeof appointmentRepo.findByDateRange).toBe("function");
     });
 
-    it("should separate concerns between layers", () => {
+    it(_"should separate concerns between layers",_() => {
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);
       const patientService = new PatientService(container.getPatientRepository());
@@ -55,14 +55,14 @@ describe("Architectural Validation Tests", () => {
       expect(patientService["supabase"]).toBeUndefined(); // Should not have direct DB access
     });
 
-    it("should provide consistent error handling across layers", () => {
+    it(_"should provide consistent error handling across layers",_() => {
       // Domain errors should be properly defined
       expect(PatientError).toBeDefined();
       expect(PatientValidationError).toBeDefined();
       expect(PatientValidationError.prototype).toBeInstanceOf(Error);
     });
 
-    it("should maintain domain model purity", () => {
+    it(_"should maintain domain model purity",_() => {
       // Domain models should not depend on infrastructure
       const patientPrototype = Patient.prototype;
       const consentPrototype = ConsentRecord.prototype;
@@ -81,8 +81,8 @@ describe("Architectural Validation Tests", () => {
     });
   });
 
-  describe("Repository Pattern Implementation", () => {
-    it("should provide abstraction over data access", () => {
+  describe(_"Repository Pattern Implementation",_() => {
+    it(_"should provide abstraction over data access",_() => {
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);
       
@@ -97,7 +97,7 @@ describe("Architectural Validation Tests", () => {
       });
     });
 
-    it("should enable easy testing with mocks", () => {
+    it(_"should enable easy testing with mocks",_() => {
       // The ability to create a container with mock dependencies
       // demonstrates the testability benefits of the pattern
       const mockSupabase = {} as any;
@@ -109,7 +109,7 @@ describe("Architectural Validation Tests", () => {
       expect(container.getAppointmentRepository()).toBeDefined();
     });
 
-    it("should provide consistent query interfaces", () => {
+    it(_"should provide consistent query interfaces",_() => {
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);
       
@@ -122,8 +122,8 @@ describe("Architectural Validation Tests", () => {
     });
   });
 
-  describe("Dependency Injection Benefits", () => {
-    it("should manage dependencies centrally", () => {
+  describe(_"Dependency Injection Benefits",_() => {
+    it(_"should manage dependencies centrally",_() => {
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);
       
@@ -137,7 +137,7 @@ describe("Architectural Validation Tests", () => {
       expect(dependencies.repositories).toHaveProperty("appointment");
     });
 
-    it("should provide singleton instances", () => {
+    it(_"should provide singleton instances",_() => {
       const mockSupabase = {} as any;
       const container1 = RepositoryContainer.initialize(mockSupabase);
       const container2 = RepositoryContainer.getInstance();
@@ -149,7 +149,7 @@ describe("Architectural Validation Tests", () => {
       expect(repo1).toBe(repo2);
     });
 
-    it("should allow resetting instances for testing", () => {
+    it(_"should allow resetting instances for testing",_() => {
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);
       
@@ -161,8 +161,8 @@ describe("Architectural Validation Tests", () => {
     });
   });
 
-  describe("Domain Services Implementation", () => {
-    it("should encapsulate business logic", () => {
+  describe(_"Domain Services Implementation",_() => {
+    it(_"should encapsulate business logic",_() => {
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);
       
@@ -178,7 +178,7 @@ describe("Architectural Validation Tests", () => {
       expect(typeof services.consent.checkCompliance).toBe("function");
     });
 
-    it("should integrate with repositories properly", () => {
+    it(_"should integrate with repositories properly",_() => {
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);
       
@@ -188,8 +188,8 @@ describe("Architectural Validation Tests", () => {
     });
   });
 
-  describe("Architectural Benefits Validation", () => {
-    it("should enable modular development", () => {
+  describe(_"Architectural Benefits Validation",_() => {
+    it(_"should enable modular development",_() => {
       // Each component should be independently usable
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);
@@ -202,7 +202,7 @@ describe("Architectural Validation Tests", () => {
       expect(patientService).toBeDefined();
     });
 
-    it("should support easy testing", () => {
+    it(_"should support easy testing",_() => {
       // The architecture should make testing easy
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);
@@ -215,7 +215,7 @@ describe("Architectural Validation Tests", () => {
       expect(typeof patientService.getPatient).toBe("function");
     });
 
-    it("should provide clear separation of concerns", () => {
+    it(_"should provide clear separation of concerns",_() => {
       // Domain layer should be pure
       expect(Patient).toBeDefined();
       expect(ConsentRecord).toBeDefined();
@@ -228,7 +228,7 @@ describe("Architectural Validation Tests", () => {
       expect(RepositoryContainer).toBeDefined();
     });
 
-    it("should be maintainable and extensible", () => {
+    it(_"should be maintainable and extensible",_() => {
       // Should be easy to add new functionality
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);
@@ -240,8 +240,8 @@ describe("Architectural Validation Tests", () => {
     });
   });
 
-  describe("Compliance with Requirements", () => {
-    it("should implement repository pattern correctly", () => {
+  describe(_"Compliance with Requirements",_() => {
+    it(_"should implement repository pattern correctly",_() => {
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);
       
@@ -255,7 +255,7 @@ describe("Architectural Validation Tests", () => {
       expect(patientRepo["client"]).toBeUndefined();
     });
 
-    it("should provide proper dependency injection", () => {
+    it(_"should provide proper dependency injection",_() => {
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);
       
@@ -267,7 +267,7 @@ describe("Architectural Validation Tests", () => {
       expect(patientService["patientRepository"]).toBeDefined();
     });
 
-    it("should maintain backward compatibility", () => {
+    it(_"should maintain backward compatibility",_() => {
       // New architecture should work with existing code
       const mockSupabase = {} as any;
       const container = RepositoryContainer.initialize(mockSupabase);

@@ -32,7 +32,7 @@ const mockBrazilianValidator = {
 };
 
 describe('POST /api/v2/patients endpoint (T044)', () => {
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
 
     // Mock successful service responses by default
@@ -82,19 +82,19 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     mockBrazilianValidator.validateCEP.mockReturnValue(true);
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.restoreAllMocks();
   });
 
-  it('should export create patient route handler', async () => {
-    expect(async () => {
+  it(_'should export create patient route handler',_async () => {
+    expect(_async () => {
       const module = await import('../create');
       expect(module.default).toBeDefined();
     }).not.toThrow();
   });
 
-  describe('Successful Patient Creation', () => {
-    it('should create a new patient with complete data', async () => {
+  describe(_'Successful Patient Creation',_() => {
+    it(_'should create a new patient with complete data',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {
@@ -142,7 +142,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       expect(data.data.cpf).toBe('123.456.789-00');
     });
 
-    it('should create patient with minimal required data', async () => {
+    it(_'should create patient with minimal required data',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {
@@ -169,7 +169,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       expect(response.status).toBe(201);
       expect(data.success).toBe(true);
       expect(mockPatientService.createPatient).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         patientData: expect.objectContaining({
           name: 'Maria Santos',
           email: 'maria@example.com',
@@ -177,7 +177,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       });
     });
 
-    it('should include Location header with created patient URL', async () => {
+    it(_'should include Location header with created patient URL',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {
@@ -204,7 +204,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       );
     });
 
-    it('should send welcome notification after patient creation', async () => {
+    it(_'should send welcome notification after patient creation',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {
@@ -240,8 +240,8 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     });
   });
 
-  describe('Brazilian Data Validation', () => {
-    it('should validate CPF format', async () => {
+  describe(_'Brazilian Data Validation',_() => {
+    it(_'should validate CPF format',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {
@@ -268,7 +268,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       );
     });
 
-    it('should reject invalid CPF', async () => {
+    it(_'should reject invalid CPF',_async () => {
       mockBrazilianValidator.validateCPF.mockReturnValue(false);
 
       const { default: createRoute } = await import('../create');
@@ -303,7 +303,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       );
     });
 
-    it('should validate Brazilian phone number format', async () => {
+    it(_'should validate Brazilian phone number format',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {
@@ -330,7 +330,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       );
     });
 
-    it('should validate CEP format in address', async () => {
+    it(_'should validate CEP format in address',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {
@@ -363,8 +363,8 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     });
   });
 
-  describe('LGPD Consent Handling', () => {
-    it('should validate LGPD consent before creation', async () => {
+  describe(_'LGPD Consent Handling',_() => {
+    it(_'should validate LGPD consent before creation',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {
@@ -395,7 +395,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       });
     });
 
-    it('should reject creation without required LGPD consent', async () => {
+    it(_'should reject creation without required LGPD consent',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {
@@ -427,7 +427,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       );
     });
 
-    it('should create consent record after patient creation', async () => {
+    it(_'should create consent record after patient creation',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {
@@ -460,8 +460,8 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     });
   });
 
-  describe('Audit Trail Logging', () => {
-    it('should log patient creation activity', async () => {
+  describe(_'Audit Trail Logging',_() => {
+    it(_'should log patient creation activity',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {
@@ -483,7 +483,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       await createRoute.request(mockRequest);
 
       expect(mockAuditService.logActivity).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         action: 'patient_create',
         resourceType: 'patient',
         resourceId: 'patient-123',
@@ -497,7 +497,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       });
     });
 
-    it('should include LGPD compliance in audit log', async () => {
+    it(_'should include LGPD compliance in audit log',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {
@@ -527,8 +527,8 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle authentication errors', async () => {
+  describe(_'Error Handling',_() => {
+    it(_'should handle authentication errors',_async () => {
       const { default: createRoute } = await import('../create');
 
       const mockRequest = {
@@ -548,7 +548,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       expect(data.error).toContain('Não autorizado');
     });
 
-    it('should handle validation errors', async () => {
+    it(_'should handle validation errors',_async () => {
       const { default: createRoute } = await import('../create');
 
       const invalidData = {
@@ -576,7 +576,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       expect(data.errors.length).toBeGreaterThan(0);
     });
 
-    it('should handle service errors gracefully', async () => {
+    it(_'should handle service errors gracefully',_async () => {
       mockPatientService.createPatient.mockResolvedValue({
         success: false,
         error: 'Erro interno do serviço',
@@ -608,7 +608,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       expect(data.error).toContain('Erro interno');
     });
 
-    it('should handle duplicate patient errors', async () => {
+    it(_'should handle duplicate patient errors',_async () => {
       mockPatientService.createPatient.mockResolvedValue({
         success: false,
         error: 'Paciente já existe com este CPF',
@@ -644,8 +644,8 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
     });
   });
 
-  describe('Brazilian Healthcare Compliance', () => {
-    it('should include CFM compliance headers', async () => {
+  describe(_'Brazilian Healthcare Compliance',_() => {
+    it(_'should include CFM compliance headers',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {
@@ -671,7 +671,7 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       expect(response.headers.get('X-LGPD-Compliant')).toBe('true');
     });
 
-    it('should validate healthcare professional context', async () => {
+    it(_'should validate healthcare professional context',_async () => {
       const { default: createRoute } = await import('../create');
 
       const patientData = {

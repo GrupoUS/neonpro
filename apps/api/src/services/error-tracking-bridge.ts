@@ -42,7 +42,7 @@ class LegacyErrorTracker {
    */
   captureException(
     error: Error,
-    context: Partial<LegacyErrorContext> = {},
+    _context: Partial<LegacyErrorContext> = {},
     extra?: Record<string, any>,
   ): string {
     if (!this.config.enabled) {
@@ -50,7 +50,7 @@ class LegacyErrorTracker {
     }
 
     // Convert legacy context to healthcare context
-    const healthcareContext = this.convertContext(context);
+    const healthcareContext = this.convertContext(_context);
 
     // Use healthcare tracker
     return this.healthcareTracker.captureException(
@@ -66,7 +66,7 @@ class LegacyErrorTracker {
   captureMessage(
     message: string,
     level: LegacyErrorEvent['level'] = 'info',
-    context: Partial<LegacyErrorContext> = {},
+    _context: Partial<LegacyErrorContext> = {},
     extra?: Record<string, any>,
   ): string {
     if (!this.config.enabled) {
@@ -74,7 +74,7 @@ class LegacyErrorTracker {
     }
 
     // Convert legacy context to healthcare context
-    const healthcareContext = this.convertContext(context);
+    const healthcareContext = this.convertContext(_context);
 
     // Map level to severity
     const severity = level === 'error' ? 'high' : level === 'warning' ? 'medium' : 'low';
@@ -127,12 +127,12 @@ class LegacyErrorTracker {
    */
   async trackError(
     error: Error,
-    context: Partial<LegacyErrorContext> = {},
+    _context: Partial<LegacyErrorContext> = {},
   ): Promise<string> {
     if (!this.config.enabled) {
       return 'disabled';
     }
-    const healthcareContext = this.convertContext(context);
+    const healthcareContext = this.convertContext(_context);
     return await this.healthcareTracker.trackError(error, healthcareContext);
   }
 
@@ -141,7 +141,7 @@ class LegacyErrorTracker {
    */
   async logAuditEvent(
     event: { action: string; subject?: string; metadata?: Record<string, any> },
-    context: Partial<LegacyErrorContext> = {},
+    _context: Partial<LegacyErrorContext> = {},
   ): Promise<void> {
     if (!this.config.enabled) return;
     // Map to breadcrumb + structured context; defer to healthcare tracker if audit API exists later
@@ -166,7 +166,7 @@ class LegacyErrorTracker {
    * Extract context from Hono request (legacy compatibility)
    */
   extractContextFromHono(c: any): LegacyErrorContext {
-    const context: LegacyErrorContext = {
+    const _context: LegacyErrorContext = {
       requestId: c.get('requestId'),
       method: c.req.method,
       endpoint: c.req.path,
@@ -200,7 +200,7 @@ class LegacyErrorTracker {
    * Set user context (legacy compatibility)
    */
   setUserContext(user: { id: string; email?: string; name?: string }): void {
-    this.addBreadcrumb('User context set', 'info', { userId: user.id });
+    this.addBreadcrumb('User context set', 'info', { _userId: user.id });
     this.healthcareTracker.setUserContext(user.id);
   }
 
@@ -284,7 +284,7 @@ class LegacyErrorTracker {
   private convertContext(legacyContext: Partial<LegacyErrorContext>) {
     return {
       requestId: legacyContext.requestId,
-      userId: legacyContext.userId,
+      _userId: legacyContext.userId,
       userAgent: legacyContext.userAgent,
       ip: legacyContext.ip,
       endpoint: legacyContext.endpoint,
@@ -314,7 +314,7 @@ export function getLegacyErrorTracker(
 export function initializeLegacyErrorTracking(
   config?: Partial<LegacyConfig>,
 ): Promise<void> {
-  return new Promise((resolve, reject) => {
+  return new Promise(_(resolve,_reject) => {
     try {
       const tracker = getLegacyErrorTracker(config);
 
@@ -327,7 +327,7 @@ export function initializeLegacyErrorTracking(
 
       console.log('[Legacy Error Tracker] Initialized successfully');
       resolve();
-    } catch (error) {
+    } catch (_error) {
       console.error('[Legacy Error Tracker] Failed to initialize:', error);
       reject(error);
     }
@@ -335,7 +335,7 @@ export function initializeLegacyErrorTracking(
 }
 
 // Export singleton instance for backward compatibility
-export const errorTracker = getLegacyErrorTracker();
+export const _errorTracker = getLegacyErrorTracker();
 // Import the missing healthcare error factory
 import { createHealthcareError, ErrorCategory, ErrorSeverity } from './createHealthcareError';
 

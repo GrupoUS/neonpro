@@ -132,10 +132,10 @@ export class MedicalLicenseDomainService {
    * @param request License verification request
    * @returns License verification result
    */
-  async verifyMedicalLicense(request: LicenseVerificationRequest): Promise<LicenseVerificationResult> {
+  async verifyMedicalLicense(_request: LicenseVerificationRequest): Promise<LicenseVerificationResult> {
     try {
       // Validate request
-      this.validateVerificationRequest(request);
+      this.validateVerificationRequest(_request);
 
       // Get CFM registration data
       const cfmRegistration = await this.getCFMRegistration(
@@ -181,10 +181,10 @@ export class MedicalLicenseDomainService {
       };
 
       // Store verification record for audit trail
-      await this.storeVerificationRecord(result, request);
+      await this.storeVerificationRecord(result, _request);
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       console.error("Error verifying medical license:", error);
       throw new Error(
         `License verification failed: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -196,7 +196,7 @@ export class MedicalLicenseDomainService {
    * Validates verification request
    * @param request Verification request
    */
-  private validateVerificationRequest(request: LicenseVerificationRequest): void {
+  private validateVerificationRequest(_request: LicenseVerificationRequest): void {
     if (!request.cfmNumber || !request.cfmNumber.trim()) {
       throw new Error("CFM number is required");
     }
@@ -251,7 +251,7 @@ export class MedicalLicenseDomainService {
       await this.updateRegistrationCache(registration);
 
       return registration;
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting CFM registration:", error);
       throw new Error(
         `Failed to retrieve CFM registration: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -299,7 +299,7 @@ export class MedicalLicenseDomainService {
       };
 
       return registration;
-    } catch (error) {
+    } catch (_error) {
       console.error("Error fetching from CFM API:", error);
       return null; // Fall back to manual verification
     }
@@ -314,7 +314,7 @@ export class MedicalLicenseDomainService {
   private async performManualVerification(cfmNumber: string, state: string): Promise<CFMRegistration> {
     try {
       // Implement manual verification using repository
-      const manualData = await this.licenseRepository.getManualVerification(cfmNumber, state);
+      const _manualData = await this.licenseRepository.getManualVerification(cfmNumber, state);
 
       // For now, create a pending verification record
       const pendingRegistration: CFMRegistration = {
@@ -332,7 +332,7 @@ export class MedicalLicenseDomainService {
       await this.flagForManualReview(cfmNumber, state);
 
       return pendingRegistration;
-    } catch (error) {
+    } catch (_error) {
       console.error("Error in manual verification:", error);
       throw new Error("Manual verification failed");
     }
@@ -352,8 +352,7 @@ export class MedicalLicenseDomainService {
   ): Promise<TelemedicineAuthorization> {
     try {
       // Check state-specific telemedicine regulations
-      const stateCouncil = this.stateCouncils.find(
-        (council) => council.state === state,
+      const stateCouncil = this.stateCouncils.find(_(council) => council.state === state,
       );
 
       if (!stateCouncil) {
@@ -385,7 +384,7 @@ export class MedicalLicenseDomainService {
       // }
 
       return authorization;
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting telemedicine authorization:", error);
       throw new Error("Failed to get telemedicine authorization");
     }
@@ -685,7 +684,7 @@ export class MedicalLicenseDomainService {
    */
   private isCacheValid(lastVerification: Date): boolean {
     const cacheValidityHours = 24; // Cache is valid for 24 hours
-    const now = new Date();
+    const _now = new Date();
     const diffHours = (now.getTime() - lastVerification.getTime()) / (1000 * 60 * 60);
     return diffHours < cacheValidityHours;
   }
@@ -714,7 +713,7 @@ export class MedicalLicenseDomainService {
    * @param request License verification request
    * @returns Authorization status
    */
-  async isAuthorizedForTelemedicine(request: LicenseVerificationRequest): Promise<{
+  async isAuthorizedForTelemedicine(_request: LicenseVerificationRequest): Promise<{
     authorized: boolean;
     restrictions: string[];
     requiresSupervision: boolean;
@@ -727,7 +726,7 @@ export class MedicalLicenseDomainService {
     };
   }> {
     try {
-      const verification = await this.verifyMedicalLicense(request);
+      const verification = await this.verifyMedicalLicense(_request);
 
       const authorized =
         verification.complianceStatus.cfmCompliant &&
@@ -742,7 +741,7 @@ export class MedicalLicenseDomainService {
         emergencyOnly: verification.telemedicineAuth.emergencyOnly,
         complianceDetails: verification.complianceStatus
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error checking telemedicine authorization:", error);
       return {
         authorized: false,
@@ -775,7 +774,7 @@ export class MedicalLicenseDomainService {
       const specialties = registration.specialty ? [registration.specialty] : [];
       
       return [...specialties, ...additionalSpecialties];
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting physician specialties:", error);
       return [];
     }

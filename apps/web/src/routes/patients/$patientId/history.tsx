@@ -26,8 +26,6 @@ import {
   User,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { z } from 'zod';
-
 // Type-safe params schema
 const patientParamsSchema = z.object({
   patientId: z.string().min(1),
@@ -80,12 +78,12 @@ export const Route = createFileRoute('/patients/$patientId/history')({
       <div className='animate-pulse space-y-6'>
         <div className='h-8 bg-muted rounded w-1/3'></div>
         <div className='flex gap-2'>
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: 4 }).map(_(_,_i) => (
             <div key={i} className='h-10 bg-muted rounded w-20'></div>
           ))}
         </div>
         <div className='space-y-4'>
-          {Array.from({ length: 5 }).map((_, i) => (
+          {Array.from({ length: 5 }).map(_(_,_i) => (
             <div key={i} className='h-32 bg-muted rounded-lg'></div>
           ))}
         </div>
@@ -94,7 +92,7 @@ export const Route = createFileRoute('/patients/$patientId/history')({
   ),
 
   // Error boundary
-  errorComponent: ({ error, reset }) => (
+  errorComponent: (_{ error,_reset }) => (
     <div className='container mx-auto p-4 md:p-6'>
       <Card className='max-w-lg mx-auto text-center'>
         <CardHeader>
@@ -189,7 +187,7 @@ function PatientHistoryPage() {
   ];
 
   // Filter and sort history data
-  const filteredHistory = useMemo(() => {
+  const filteredHistory = useMemo(_() => {
     let filtered = mockHistoryData;
 
     // Apply type filter
@@ -204,7 +202,7 @@ function PatientHistoryPage() {
 
     // Apply period filter
     if ((search as any).period !== 'all') {
-      const now = new Date();
+      const _now = new Date();
       const periodDays: Record<string, number> = {
         '7d': 7,
         '30d': 30,
@@ -224,14 +222,14 @@ function PatientHistoryPage() {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         item =>
-          item.title.toLowerCase().includes(query)
-          || item.description?.toLowerCase().includes(query)
-          || item.professional?.toLowerCase().includes(query),
+          item.title.toLowerCase().includes(_query)
+          || item.description?.toLowerCase().includes(_query)
+          || item.professional?.toLowerCase().includes(_query),
       );
     }
 
     // Apply sorting
-    filtered.sort((a, b) => {
+    filtered.sort(_(a,_b) => {
       let comparison = 0;
 
       switch ((search as any).sortBy) {
@@ -297,7 +295,7 @@ function PatientHistoryPage() {
         <div className='animate-pulse space-y-6'>
           <div className='h-8 bg-muted rounded w-1/3'></div>
           <div className='space-y-4'>
-            {Array.from({ length: 5 }).map((_, i) => (
+            {Array.from({ length: 5 }).map(_(_,_i) => (
               <div key={i} className='h-32 bg-muted rounded-lg'></div>
             ))}
           </div>
@@ -436,8 +434,7 @@ function PatientHistoryPage() {
       {/* History Timeline */}
       <div className='space-y-6'>
         {filteredHistory.length > 0
-          ? (
-            <div className='space-y-4'>
+          ? (_<div className='space-y-4'>
               {filteredHistory.map((item, _index) => (
                 <HistoryItemCard
                   key={item.id}

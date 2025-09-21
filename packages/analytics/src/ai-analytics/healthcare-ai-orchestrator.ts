@@ -46,11 +46,11 @@ export class HealthcareAIOrchestrator {
    * Generate comprehensive healthcare insights
    */
   async generateHealthcareInsights(
-    request: PredictiveRequest = { timeframe: "month" },
+    _request: PredictiveRequest = { timeframe: "month" },
   ): Promise<HealthcareInsights> {
     try {
       // Generate insights using the predictive service
-      const insights = await this.predictiveService.generateInsights(request);
+      const insights = await this.predictiveService.generateInsights(_request);
 
       // Get analytics metrics
       const metrics = await this.predictiveService.getAnalyticsMetrics();
@@ -65,7 +65,7 @@ export class HealthcareAIOrchestrator {
         complianceStatus,
         generatedAt: new Date(),
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error generating healthcare insights:", error);
       throw new Error("Failed to generate healthcare insights");
     }
@@ -106,7 +106,7 @@ export class HealthcareAIOrchestrator {
         lastAuditDate: new Date(),
         nextAuditDue: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error performing compliance audit:", error);
       // Return default compliant status for graceful error handling with proper Brazilian terms
       return {
@@ -192,8 +192,7 @@ export class HealthcareAIOrchestrator {
     insights: PredictiveInsight[],
   ): Promise<"compliant" | "warning" | "violation"> {
     // Check if all insights are generated with compliance
-    const hasCompliantInsights = insights.every(
-      (insight) => insight.metadata.complianceStatus === "compliant",
+    const hasCompliantInsights = insights.every(_(insight) => insight.metadata.complianceStatus === "compliant",
     );
 
     return hasCompliantInsights ? "compliant" : "warning";
@@ -205,8 +204,7 @@ export class HealthcareAIOrchestrator {
   ): "healthy" | "warning" | "critical" {
     // Determine status based on insights and compliance
     const hasIssues = compliance.issues.length > 0;
-    const hasLowConfidenceInsights = insights.insights.some(
-      (insight) => insight.confidence < 0.5,
+    const hasLowConfidenceInsights = insights.insights.some(_(insight) => insight.confidence < 0.5,
     );
     const complianceScore = compliance.overallScore;
 

@@ -1,7 +1,7 @@
 import { PricingRulesManager } from '@/components/pricing-rules/PricingRulesManager';
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/financial/pricing-rules')({
+export const _Route = createFileRoute('/financial/pricing-rules')({
   component: PricingRulesPage,
 });
 

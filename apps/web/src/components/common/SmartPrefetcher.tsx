@@ -66,7 +66,7 @@ export function SmartPrefetcher({
   const timeoutRef = React.useRef<NodeJS.Timeout>();
   const [hasPrefetched, setHasPrefetched] = React.useState(false);
 
-  const executePrefetch = React.useCallback(() => {
+  const executePrefetch = React.useCallback(_() => {
     if (hasPrefetched) return;
 
     switch (type) {
@@ -110,27 +110,27 @@ export function SmartPrefetcher({
     setHasPrefetched(true);
   }, [type, patientId, appointmentId, includeRelated, hasPrefetched]);
 
-  const handleMouseEnter = React.useCallback(() => {
+  const handleMouseEnter = React.useCallback(_() => {
     if (trigger === 'hover' && !hasPrefetched) {
       timeoutRef.current = setTimeout(executePrefetch, delay);
     }
   }, [trigger, hasPrefetched, delay, executePrefetch]);
 
-  const handleMouseLeave = React.useCallback(() => {
+  const handleMouseLeave = React.useCallback(_() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
   }, []);
 
   // Prefetch imediato quando o componente é montado
-  useEffect(() => {
+  useEffect(_() => {
     if (trigger === 'immediate' && !hasPrefetched) {
       executePrefetch();
     }
   }, [trigger, hasPrefetched, executePrefetch]);
 
   // Prefetch baseado em visibilidade (Intersection Observer)
-  useEffect(() => {
+  useEffect(_() => {
     if (trigger === 'visible' && !hasPrefetched) {
       const element = document.currentScript?.previousElementSibling;
       if (!element) return;
@@ -243,10 +243,8 @@ export function AppointmentLink({
 /**
  * Componente para prefetching baseado em scroll
  */
-export function ScrollPrefetcher({
-  children,
-  prefetchData,
-  threshold = 0.8,
+export function ScrollPrefetcher(_{
+  children,_prefetchData,_threshold = 0.8,
 }: {
   children: React.ReactNode;
   prefetchData: () => void;
@@ -254,7 +252,7 @@ export function ScrollPrefetcher({
 }) {
   const [hasPrefetched, setHasPrefetched] = React.useState(false);
 
-  useEffect(() => {
+  useEffect(_() => {
     if (hasPrefetched) return;
 
     const handleScroll = () => {
@@ -286,7 +284,7 @@ export function useConditionalPrefetch<T>(
   prefetchFn: (data: T) => void,
   deps: React.DependencyList = [],
 ) {
-  useEffect(() => {
+  useEffect(_() => {
     if (condition) {
       prefetchFn(condition);
     }

@@ -44,7 +44,7 @@ export interface AgentAction {
     type: 'navigate' | 'api' | 'modal' | 'external';
     destination?: string;
     method?: string;
-    payload?: any;
+    _payload?: any;
   };
 }
 
@@ -73,7 +73,7 @@ export enum AGUIConnectionState {
 export interface AGUIProtocolConfig {
   websocketUrl: string;
   httpUrl: string;
-  userId: string;
+  _userId: string;
   authToken?: string;
   enableEncryption: boolean;
   heartbeatInterval: number;
@@ -89,7 +89,7 @@ export interface AGUISession {
   created_at: Date;
   last_activity: Date;
   message_count: number;
-  context: any;
+  _context: any;
 }
 
 export class AGUIProtocolClient extends EventEmitter {
@@ -143,12 +143,12 @@ export class AGUIProtocolClient extends EventEmitter {
       this.websocket.onerror = this.handleError.bind(this);
 
       // Set timeout for connection
-      setTimeout(() => {
+      setTimeout(_() => {
         if (this.state === AGUIConnectionState.CONNECTING) {
           this.handleError(new Error('Connection timeout'));
         }
       }, this.config.timeout);
-    } catch (error) {
+    } catch (_error) {
       this.handleError(error);
       throw error;
     }
@@ -224,7 +224,7 @@ export class AGUIProtocolClient extends EventEmitter {
   /**
    * Send session context update
    */
-  async updateSessionContext(context: any): Promise<void> {
+  async updateSessionContext(_context: any): Promise<void> {
     if (!this.session) {
       throw new Error('No active session');
     }
@@ -291,7 +291,7 @@ export class AGUIProtocolClient extends EventEmitter {
       }
 
       this.handleAGUIEvent(aguiEvent);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error handling WebSocket message:', error);
       this.emit('error', error);
     }
@@ -349,7 +349,7 @@ export class AGUIProtocolClient extends EventEmitter {
       created_at: new Date(),
       last_activity: new Date(),
       message_count: 0,
-      context: {},
+      _context: {},
     };
 
     this.setState(AGUIConnectionState.AUTHENTICATED);
@@ -394,7 +394,7 @@ export class AGUIProtocolClient extends EventEmitter {
       throw new Error('WebSocket not connected');
     }
 
-    return new Promise((resolve, reject) => {
+    return new Promise(_(resolve,_reject) => {
       try {
         // Store pending request
         this.pendingRequests.set(event.id, { resolve, reject });
@@ -408,13 +408,13 @@ export class AGUIProtocolClient extends EventEmitter {
         this.websocket.send(JSON.stringify(event));
 
         // Set timeout
-        setTimeout(() => {
+        setTimeout(_() => {
           if (this.pendingRequests.has(event.id)) {
             this.pendingRequests.delete(event.id);
             reject(new Error('Request timeout'));
           }
         }, this.config.timeout);
-      } catch (error) {
+      } catch (_error) {
         this.pendingRequests.delete(event.id);
         reject(error);
       }
@@ -433,7 +433,7 @@ export class AGUIProtocolClient extends EventEmitter {
   }
 
   private startHeartbeat(): void {
-    this.heartbeatTimer = setInterval(() => {
+    this.heartbeatTimer = setInterval(_() => {
       if (this.session && this.websocket?.readyState === WebSocket.OPEN) {
         const event: AGUIEvent = {
           id: this.generateId(),
@@ -467,7 +467,7 @@ export class AGUIProtocolClient extends EventEmitter {
     if (this.reconnectCount <= this.config.reconnectAttempts) {
       const delay = this.config.reconnectDelay * this.reconnectCount;
 
-      this.reconnectTimer = setTimeout(() => {
+      this.reconnectTimer = setTimeout(_() => {
         console.log(
           `Attempting reconnection (${this.reconnectCount}/${this.config.reconnectAttempts})`,
         );
@@ -526,14 +526,14 @@ export function createAGUIProtocolClient(config: AGUIProtocolConfig): AGUIProtoc
 
 // React hook for AG-UI Protocol
 export function useAGUIProtocol(config: AGUIProtocolConfig) {
-  const [client] = useState(() => createAGUIProtocolClient(config));
+  const [client] = useState(_() => createAGUIProtocolClient(config));
   const [state, setState] = useState(client.getState());
   const [session, setSession] = useState(client.getSession());
 
-  useEffect(() => {
+  useEffect(_() => {
     client.on('stateChange', setState);
     client.on('authenticated', setSession);
-    client.on('disconnected', () => setSession(null));
+    client.on(_'disconnected',_() => setSession(null));
 
     return () => {
       client.removeAllListeners();

@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-export const Route = createFileRoute('/dashboard/main')({
+export const _Route = createFileRoute('/dashboard/main')({
   component: DashboardMain,
 });
 
@@ -103,7 +103,7 @@ function DashboardMain() {
   const navigate = useNavigate();
 
   // Redirect to login if not authenticated
-  useEffect(() => {
+  useEffect(_() => {
     if (!loading && !isAuthenticated) {
       navigate({ to: '/auth/login' });
     }
@@ -248,7 +248,7 @@ function DashboardMain() {
   ];
 
   // Initialize data
-  useEffect(() => {
+  useEffect(_() => {
     setAiInsights(mockAIInsights);
     setRealTimeUpdates(mockRealTimeUpdates);
   }, []);
@@ -363,8 +363,7 @@ function DashboardMain() {
       header: 'Ações',
       cell: (_info: any) => {
         const patient = info.row.original;
-        return (
-          <div className='flex gap-2'>
+        return (_<div className='flex gap-2'>
             <Button
               variant='outline'
               size='sm'
@@ -443,7 +442,7 @@ function DashboardMain() {
             </span>
           </div>
           <div className='space-y-1'>
-            {realTimeUpdates.slice(0, 2).map((update, _index) => (
+            {realTimeUpdates.slice(0, 2).map(_(update, _index) => (
               <div
                 key={index}
                 className='text-xs sm:text-sm text-green-700 flex items-center gap-1'
@@ -487,7 +486,7 @@ function DashboardMain() {
               Métricas principais
             </h2>
             <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
-              {metricsCards.map((metric, _index) => (
+              {metricsCards.map(_(metric, _index) => (
                 <Card
                   key={metric.title}
                   className='transition-all hover:shadow-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'

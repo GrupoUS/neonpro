@@ -20,7 +20,7 @@ export type PermissionResource =
 export type UserRoleType = 'admin' | 'clinic_admin' | 'professional' | 'staff' | 'patient';
 
 // Permission constants for easy reference
-export const PERMISSIONS = {
+export const _PERMISSIONS = {
   ACTIONS: {
     READ: 'read',
     WRITE: 'write',
@@ -47,7 +47,7 @@ export const PERMISSIONS = {
 } as const;
 
 // Common permission combinations
-export const PERMISSION_TEMPLATES = {
+export const _PERMISSION_TEMPLATES = {
   // Admin permissions
   ADMIN: [
     '*:*',
@@ -98,14 +98,14 @@ export const hasPermission = (
   return userPermissions.includes('*:*') || userPermissions.includes(requiredPermission);
 };
 
-export const hasAnyPermission = (
+export const _hasAnyPermission = (
   userPermissions: string[],
   requiredPermissions: string[],
 ): boolean => {
   return requiredPermissions.some(perm => hasPermission(userPermissions, perm));
 };
 
-export const hasAllPermissions = (
+export const _hasAllPermissions = (
   userPermissions: string[],
   requiredPermissions: string[],
 ): boolean => {

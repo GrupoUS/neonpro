@@ -39,7 +39,7 @@ interface HealthcareErrorDetails {
   severity: HealthcareErrorSeverity;
   message: string;
   details?: Record<string, any>;
-  userId?: string;
+  _userId?: string;
   clinicId?: string;
   patientId?: string;
   resourceType?: string;
@@ -57,7 +57,7 @@ export class HealthcareError extends Error {
   public readonly category: HealthcareErrorCategory;
   public readonly severity: HealthcareErrorSeverity;
   public readonly details: Record<string, any>;
-  public readonly userId?: string;
+  public readonly _userId?: string;
   public readonly clinicId?: string;
   public readonly patientId?: string;
   public readonly resourceType?: string;
@@ -101,7 +101,7 @@ export class HealthcareError extends Error {
       severity: this.severity,
       message: this.message,
       details: this.details,
-      userId: this.userId,
+      _userId: this.userId,
       clinicId: this.clinicId,
       patientId: this.patientId,
       resourceType: this.resourceType,
@@ -147,7 +147,7 @@ export class HealthcareAuthenticationError extends HealthcareError {
   constructor(
     message: string,
     details?: Record<string, any>,
-    context?: Partial<HealthcareErrorDetails>,
+    _context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code: 'HEALTHCARE_AUTH_ERROR',
@@ -168,7 +168,7 @@ export class HealthcareAuthorizationError extends HealthcareError {
     message: string,
     resourceType?: string,
     resourceId?: string,
-    context?: Partial<HealthcareErrorDetails>,
+    _context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code: 'HEALTHCARE_AUTHZ_ERROR',
@@ -193,7 +193,7 @@ export class LGPDComplianceError extends HealthcareError {
     message: string,
     lgpdArticle?: string,
     dataCategory?: string,
-    context?: Partial<HealthcareErrorDetails>,
+    _context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code: 'LGPD_COMPLIANCE_ERROR',
@@ -219,7 +219,7 @@ export class BrazilianRegulatoryError extends HealthcareError {
     message: string,
     regulatoryBody: 'ANVISA' | 'CFM' | 'CFF' | 'CREF',
     regulation?: string,
-    context?: Partial<HealthcareErrorDetails>,
+    _context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code: `${regulatoryBody}_COMPLIANCE_ERROR`,
@@ -246,7 +246,7 @@ export class PatientDataValidationError extends HealthcareError {
 
   constructor(
     validationErrors: Array<{ field: string; message: string; value?: any }>,
-    context?: Partial<HealthcareErrorDetails>,
+    _context?: Partial<HealthcareErrorDetails>,
   ) {
     const message = `Patient data validation failed: ${
       validationErrors
@@ -281,7 +281,7 @@ export class AppointmentSchedulingError extends HealthcareError {
       | 'time_conflict'
       | 'resource_unavailable'
       | 'policy_violation',
-    context?: Partial<HealthcareErrorDetails>,
+    _context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code: 'APPOINTMENT_SCHEDULING_ERROR',
@@ -302,7 +302,7 @@ export class HealthcareDataIntegrityError extends HealthcareError {
   constructor(
     message: string,
     operation?: string,
-    context?: Partial<HealthcareErrorDetails>,
+    _context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code: 'HEALTHCARE_DATA_INTEGRITY_ERROR',
@@ -326,7 +326,7 @@ export class ExternalHealthcareServiceError extends HealthcareError {
     message: string,
     serviceName: string,
     serviceResponse?: any,
-    context?: Partial<HealthcareErrorDetails>,
+    _context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code: 'EXTERNAL_HEALTHCARE_SERVICE_ERROR',
@@ -370,7 +370,7 @@ export class HealthcareLogger {
       });
 
       // Log to database audit trail if Prisma client available
-      if (this.prisma && error.userId) {
+      if (this.prisma && error._userId) {
         await this.prisma.createAuditLog(
           'ERROR',
           error.resourceType || 'SYSTEM',
@@ -394,7 +394,7 @@ export class HealthcareLogger {
       if (error.severity === HealthcareErrorSeverity.CRITICAL) {
         await this.sendCriticalAlert(error);
       }
-    } catch (loggingError) {
+    } catch (_loggingError) {
       console.error('Failed to log healthcare error:', loggingError);
     }
   }
@@ -406,8 +406,8 @@ export class HealthcareLogger {
     operation: string,
     resourceType: string,
     resourceId: string,
-    context?: {
-      userId?: string;
+    _context?: {
+      _userId?: string;
       clinicId?: string;
       details?: Record<string, any>;
       duration?: number;
@@ -423,14 +423,14 @@ export class HealthcareLogger {
         duration: context?.duration,
       });
 
-      if (this.prisma && context?.userId) {
+      if (this.prisma && context?._userId) {
         await this.prisma.createAuditLog('SUCCESS', resourceType, resourceId, {
           operation,
           duration: context.duration,
           details: context.details,
         });
       }
-    } catch (loggingError) {
+    } catch (_loggingError) {
       console.error('Failed to log healthcare success:', loggingError);
     }
   }
@@ -473,7 +473,7 @@ export class HealthcareLogger {
         //   extra: error.toSanitizedJSON(),
         // });
       }
-    } catch (monitoringError) {
+    } catch (_monitoringError) {
       console.error('Failed to send to monitoring:', monitoringError);
     }
   }
@@ -499,7 +499,7 @@ Time: ${error.timestamp.toISOString()}
       console.error('CRITICAL ALERT:', alertMessage);
 
       // Email/Slack notification would be implemented here
-    } catch (alertError) {
+    } catch (_alertError) {
       console.error('Failed to send critical alert:', alertError);
     }
   }
@@ -518,7 +518,7 @@ export class HealthcareErrorHandler {
    */
   async handleError(
     error: unknown,
-    context?: Partial<HealthcareErrorDetails>,
+    _context?: Partial<HealthcareErrorDetails>,
   ): Promise<HealthcareError> {
     let healthcareError: HealthcareError;
 
@@ -591,7 +591,7 @@ export class HealthcareErrorHandler {
 }
 
 // Export singleton instance
-export const healthcareErrorHandler = new HealthcareErrorHandler();
+export const _healthcareErrorHandler = new HealthcareErrorHandler();
 
 /**
  * tRPC-specific healthcare error class
@@ -603,7 +603,7 @@ export class HealthcareTRPCError extends HealthcareError {
     message: string,
     category: HealthcareErrorCategory = HealthcareErrorCategory.SYSTEM,
     severity: HealthcareErrorSeverity = HealthcareErrorSeverity.MEDIUM,
-    context?: Partial<HealthcareErrorDetails>,
+    _context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code,
@@ -626,7 +626,7 @@ export class HealthcareTRPCError extends HealthcareError {
       severity: string;
       timestamp: string;
       requestId?: string;
-      userId?: string;
+      _userId?: string;
       clinicId?: string;
       patientId?: string;
     };
@@ -639,7 +639,7 @@ export class HealthcareTRPCError extends HealthcareError {
         severity: this.severity,
         timestamp: this.timestamp.toISOString(),
         requestId: this.requestId,
-        userId: this.userId,
+        _userId: this.userId,
         clinicId: this.clinicId,
         patientId: this.patientId,
       },

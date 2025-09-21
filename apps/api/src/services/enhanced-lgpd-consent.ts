@@ -4,7 +4,6 @@
  * Implements LGPD Articles 7º, 11º, 18º with Brazilian healthcare compliance
  */
 
-import { z } from 'zod';
 import { createAdminClient } from '../clients/supabase';
 import { LGPDDataCategory, LGPDLegalBasis } from '../middleware/lgpd-compliance';
 
@@ -307,7 +306,7 @@ export class EnhancedLGPDConsentService {
       }
 
       return data;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in createConsent:', error);
       throw error;
     }
@@ -409,7 +408,7 @@ export class EnhancedLGPDConsentService {
       );
 
       return withdrawal;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in withdrawConsent:', error);
       throw error;
     }
@@ -474,7 +473,7 @@ export class EnhancedLGPDConsentService {
       });
 
       return migratedConsent;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in migrateConsentVersion:', error);
       throw error;
     }
@@ -499,7 +498,7 @@ export class EnhancedLGPDConsentService {
       }
 
       return data || [];
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in getPatientActiveConsents:', error);
       throw error;
     }
@@ -521,7 +520,7 @@ export class EnhancedLGPDConsentService {
       }
 
       return data;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in getConsentById:', error);
       throw error;
     }
@@ -587,7 +586,7 @@ export class EnhancedLGPDConsentService {
         consented: false,
         missingRequirements,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in isProcessingConsented:', error);
       throw error;
     }
@@ -612,7 +611,7 @@ export class EnhancedLGPDConsentService {
           await this.scheduleRetentionPeriodDeletion(consent);
           break;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error executing data action:', error);
       throw error;
     }
@@ -713,7 +712,7 @@ export class EnhancedLGPDConsentService {
       };
 
       await this.supabase.from('lgpd_consent_audit_trail').insert(auditTrail);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error logging consent activity:', error);
     }
   }
@@ -754,7 +753,7 @@ export class EnhancedLGPDConsentService {
       }
 
       return data || [];
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in getConsentAuditTrail:', error);
       throw error;
     }
@@ -816,7 +815,7 @@ export class EnhancedLGPDConsentService {
       });
 
       return statistics;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in getConsentStatistics:', error);
       throw error;
     }

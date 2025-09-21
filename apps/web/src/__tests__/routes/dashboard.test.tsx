@@ -9,7 +9,7 @@ import React from 'react';
 import { vi } from 'vitest';
 
 // Mock auth to appear authenticated in tests
-vi.mock('@/hooks/useAuth', () => ({
+vi.mock(_'@/hooks/useAuth',_() => ({
   useAuth: () => ({
     user: { id: 'test-user', email: 'test@example.com' },
     session: { user: { id: 'test-user', email: 'test@example.com' } },
@@ -22,7 +22,7 @@ vi.mock('@/hooks/useAuth', () => ({
 }));
 
 // Mock supabase queries used by the dashboard to return empty results quickly
-vi.mock('@/integrations/supabase/client', () => {
+vi.mock(_'@/integrations/supabase/client',_() => {
   const makeChain = (_result: any) => {
     const p: any = Promise.resolve(result);
     p.select = () => p;
@@ -68,8 +68,8 @@ function Wrapper() {
   );
 }
 
-describe('Dashboard route', () => {
-  it('renders cards and metrics placeholders without crashing', async () => {
+describe(_'Dashboard route',_() => {
+  it(_'renders cards and metrics placeholders without crashing',_async () => {
     render(<Wrapper />);
 
     // Headings (wait for auth + data to settle)
@@ -87,7 +87,7 @@ describe('Dashboard route', () => {
     expect(screen.getByText(/Atividade Recente/i)).toBeInTheDocument();
 
     // Wait a tick for react-query (mocked supabase returns empty arrays)
-    await waitFor(() => {
+    await waitFor(_() => {
       expect(screen.getByText('Hoje')).toBeInTheDocument();
     });
   });

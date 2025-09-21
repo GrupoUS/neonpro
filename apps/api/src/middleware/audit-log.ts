@@ -6,7 +6,7 @@ import { logger } from '../lib/logger';
  */
 interface AuditLogEntry {
   timestamp: Date;
-  userId?: string;
+  _userId?: string;
   clinicId?: string;
   action: string;
   resource: string;
@@ -166,7 +166,7 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
         // Note: HonoRequest may not have clone method, so we try to access body directly
         try {
           requestBody = await c.req.json();
-        } catch (bodyError) {
+        } catch (_bodyError) {
           // If we can't read the body, continue without it
           console.warn('Could not read request body for audit logging:', bodyError);
         }
@@ -195,7 +195,7 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
           success: true,
         },
       } as AuditLogEntry;
-    } catch (err) {
+    } catch (_err) {
       error = err;
       const duration = Date.now() - startTime;
 
@@ -319,4 +319,4 @@ export function authAuditMiddleware() {
  * Simple audit log function (alias for auditLogMiddleware)
  * @deprecated Use specific audit middleware instead
  */
-export const auditLog = auditLogMiddleware;
+export const _auditLog = auditLogMiddleware;

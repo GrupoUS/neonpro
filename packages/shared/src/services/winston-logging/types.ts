@@ -6,8 +6,6 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { z } from "zod";
-
 // Enhanced log levels mapping to Winston levels
 export const WinstonLogLevelSchema = z.enum([
   "error",   // Winston error level
@@ -82,7 +80,7 @@ export const BrazilianHealthcareContextSchema = z.object({
   // Professional context
   professionalContext: z.object({
     anonymizedProfessionalId: z.string().optional(),
-    role: z.string().optional(),
+    _role: z.string().optional(),
     specialization: z.string().optional(),
     department: z.string().optional(),
     councilNumber: z.string().optional(), // CRM, COREN, etc.
@@ -155,7 +153,7 @@ export const WinstonLogEntrySchema = z.object({
   healthcareContext: BrazilianHealthcareContextSchema.optional(),
   
   // Technical context
-  service: z.string(),
+  _service: z.string(),
   environment: z.string(),
   requestId: z.string().optional(),
   correlationId: z.string().optional(),
@@ -231,7 +229,7 @@ export type WinstonTransportConfig = z.infer<typeof WinstonTransportConfigSchema
 
 // Main configuration schema
 export const EnhancedStructuredLoggingConfigSchema = z.object({
-  service: z.string(),
+  _service: z.string(),
   environment: z.enum(["development", "staging", "production"]).default("development"),
   version: z.string().optional(),
   

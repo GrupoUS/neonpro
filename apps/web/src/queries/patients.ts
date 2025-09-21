@@ -16,13 +16,8 @@ type PatientInsert = Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>;
 type PatientUpdate = Partial<PatientInsert> & { id: string };
 
 // Query options para listar pacientes com filtros
-export const patientsQueryOptions = ({
-  page = 1,
-  pageSize = 10,
-  search = '',
-  status,
-  sortBy = 'created_at',
-  sortOrder = 'desc',
+export const _patientsQueryOptions = (_{
+  page = 1,_pageSize = 10,_search = '',_status,_sortBy = 'created_at',_sortOrder = 'desc',
 }: {
   page?: number;
   pageSize?: number;
@@ -33,10 +28,7 @@ export const patientsQueryOptions = ({
 } = {}) =>
   queryOptions({
     queryKey: [
-      'patients',
-      'list',
-      { page, pageSize, search, status, sortBy, sortOrder },
-    ],
+      'patients',_'list',_{ page,_pageSize,_search,_status,_sortBy,_sortOrder },_],
     queryFn: async () => {
       let query = supabase.from('patients').select('*', { count: 'exact' });
 
@@ -76,9 +68,9 @@ export const patientsQueryOptions = ({
   });
 
 // Query options para buscar um paciente específico
-export const patientQueryOptions = (id: string) =>
+export const _patientQueryOptions = (id: string) =>
   queryOptions({
-    queryKey: ['patients', 'detail', id],
+    queryKey: ['patients',_'detail',_id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('patients')
@@ -109,7 +101,7 @@ export const patientQueryOptions = (id: string) =>
 // Query options para buscar pacientes com LGPD compliance
 export const patientsLGDPQueryOptions: any = () =>
   queryOptions({
-    queryKey: ['patients', 'lgpd', 'compliance'],
+    queryKey: ['patients',_'lgpd',_'compliance'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('patients')
@@ -124,9 +116,9 @@ export const patientsLGDPQueryOptions: any = () =>
   });
 
 // Query options para estatísticas de pacientes
-export const patientStatsQueryOptions = () =>
+export const _patientStatsQueryOptions = () =>
   queryOptions({
-    queryKey: ['patients', 'stats'],
+    queryKey: ['patients',_'stats'],
     queryFn: async () => {
       const [
         { count: totalPatients },
@@ -171,7 +163,7 @@ export const patientStatsQueryOptions = () =>
   });
 
 // Mutation options para criar paciente
-export const createPatientMutationOptions = {
+export const _createPatientMutationOptions = {
   mutationFn: async (_patients: any) => {
     const patientsArray = Array.isArray(patients) ? patients : [patients];
     const { data, error } = await (supabase as any)
@@ -192,8 +184,8 @@ export const createPatientMutationOptions = {
 };
 
 // Mutation options para atualizar paciente
-export const updatePatientMutationOptions = {
-  mutationFn: async ({ id, ...patient }: PatientUpdate & { id: string }) => {
+export const _updatePatientMutationOptions = {
+  mutationFn: async (_{ id, ...patient }: PatientUpdate & { id: string }) => {
     const { data, error } = await supabase
       .from('patients')
       .update(patient)
@@ -216,7 +208,7 @@ export const updatePatientMutationOptions = {
 };
 
 // Mutation options para deletar paciente
-export const deletePatientMutationOptions = {
+export const _deletePatientMutationOptions = {
   mutationFn: async (_id: any) => {
     const { error } = await supabase.from('patients').delete().eq('id', id);
 

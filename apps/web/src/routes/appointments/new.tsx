@@ -48,8 +48,7 @@ function NewAppointmentPage() {
   }
 
   if (!canCreateAppointments) {
-    return (
-      <div className='container mx-auto px-4 py-8'>
+    return (_<div className='container mx-auto px-4 py-8'>
         <div className='flex items-center justify-between mb-6'>
           <div className='flex items-center gap-4'>
             <Button
@@ -94,8 +93,7 @@ function NewAppointmentPage() {
     );
   }
 
-  return (
-    <div className='container mx-auto px-4 py-8'>
+  return (_<div className='container mx-auto px-4 py-8'>
       <div className='flex items-center justify-between mb-6'>
         <div className='flex items-center gap-4'>
           <Button
@@ -237,6 +235,6 @@ function NewAppointmentPage() {
   );
 }
 
-export const Route = createFileRoute('/appointments/new')({
+export const _Route = createFileRoute('/appointments/new')({
   component: NewAppointmentPage,
 });

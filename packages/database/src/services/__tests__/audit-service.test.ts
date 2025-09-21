@@ -26,7 +26,7 @@ const mockIlike = vi.fn();
 const mockAuditLogData = {
   sessionId: "session-123",
   eventType: "video-call-start" as const,
-  userId: "user-123",
+  _userId: "user-123",
   userRole: "patient" as const,
   dataClassification: "general-medical" as const,
   metadata: { test: "data" },
@@ -43,10 +43,10 @@ const mockAuditLog = {
   created_at: "2024-01-01T00:00:00Z",
 };
 
-describe("AuditService", () => {
+describe(_"AuditService",_() => {
   let auditService: AuditService;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
 
     // Setup mock chain
@@ -153,12 +153,12 @@ describe("AuditService", () => {
     auditService = new AuditService(mockSupabaseClient);
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.clearAllMocks();
   });
 
-  describe("createAuditLog", () => {
-    it("should create audit log successfully", async () => {
+  describe(_"createAuditLog",_() => {
+    it(_"should create audit log successfully",_async () => {
       mockSingle.mockResolvedValueOnce({
         data: { id: "audit-123" },
         error: null,
@@ -178,7 +178,7 @@ describe("AuditService", () => {
       });
     });
 
-    it("should throw error when insert fails", async () => {
+    it(_"should throw error when insert fails",_async () => {
       mockSingle.mockResolvedValueOnce({
         data: null,
         error: { message: "Insert failed" },
@@ -190,8 +190,8 @@ describe("AuditService", () => {
     });
   });
 
-  describe("logSessionStart", () => {
-    it("should log session start successfully", async () => {
+  describe(_"logSessionStart",_() => {
+    it(_"should log session start successfully",_async () => {
       mockSingle.mockResolvedValueOnce({
         data: { id: "audit-123" },
         error: null,
@@ -210,8 +210,8 @@ describe("AuditService", () => {
     });
   });
 
-  describe("logSessionEnd", () => {
-    it("should log session end successfully", async () => {
+  describe(_"logSessionEnd",_() => {
+    it(_"should log session end successfully",_async () => {
       mockSingle.mockResolvedValueOnce({
         data: { id: "audit-123" },
         error: null,
@@ -230,8 +230,8 @@ describe("AuditService", () => {
     });
   });
 
-  describe("logDataAccess", () => {
-    it("should log data access successfully", async () => {
+  describe(_"logDataAccess",_() => {
+    it(_"should log data access successfully",_async () => {
       mockSingle.mockResolvedValueOnce({
         data: { id: "audit-123" },
         error: null,
@@ -250,8 +250,8 @@ describe("AuditService", () => {
     });
   });
 
-  describe("logConsentVerification", () => {
-    it("should log consent verification successfully", async () => {
+  describe(_"logConsentVerification",_() => {
+    it(_"should log consent verification successfully",_async () => {
       mockSingle.mockResolvedValueOnce({
         data: { id: "audit-123" },
         error: null,
@@ -270,8 +270,8 @@ describe("AuditService", () => {
     });
   });
 
-  describe("logSecurityEvent", () => {
-    it("should log security event successfully", async () => {
+  describe(_"logSecurityEvent",_() => {
+    it(_"should log security event successfully",_async () => {
       mockSingle.mockResolvedValueOnce({
         data: { id: "audit-123" },
         error: null,
@@ -290,8 +290,8 @@ describe("AuditService", () => {
     });
   });
 
-  describe("getSessionAuditLogs", () => {
-    it("should return session audit logs", async () => {
+  describe(_"getSessionAuditLogs",_() => {
+    it(_"should return session audit logs",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [mockAuditLog],
         error: null,
@@ -304,14 +304,14 @@ describe("AuditService", () => {
         id: "audit-123",
         sessionId: "session-123",
         eventType: "video-call-start",
-        userId: "user-123",
+        _userId: "user-123",
         userRole: "patient",
         dataClassification: "general-medical",
       });
       expect(mockSupabaseClient.from).toHaveBeenCalledWith("webrtc_audit_logs");
     });
 
-    it("should return empty array when no logs found", async () => {
+    it(_"should return empty array when no logs found",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [],
         error: null,
@@ -322,7 +322,7 @@ describe("AuditService", () => {
       expect(result).toEqual([]);
     });
 
-    it("should return empty array when query fails", async () => {
+    it(_"should return empty array when query fails",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: null,
         error: { message: "Query failed" },
@@ -334,8 +334,8 @@ describe("AuditService", () => {
     });
   });
 
-  describe("getUserAuditLogs", () => {
-    it("should return user audit logs", async () => {
+  describe(_"getUserAuditLogs",_() => {
+    it(_"should return user audit logs",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [mockAuditLog],
         error: null,
@@ -348,14 +348,14 @@ describe("AuditService", () => {
         id: "audit-123",
         sessionId: "session-123",
         eventType: "video-call-start",
-        userId: "user-123",
+        _userId: "user-123",
         userRole: "patient",
         dataClassification: "general-medical",
       });
       expect(mockSupabaseClient.from).toHaveBeenCalledWith("webrtc_audit_logs");
     });
 
-    it("should return empty array when no logs found", async () => {
+    it(_"should return empty array when no logs found",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [],
         error: null,
@@ -366,7 +366,7 @@ describe("AuditService", () => {
       expect(result).toEqual([]);
     });
 
-    it("should return empty array when query fails", async () => {
+    it(_"should return empty array when query fails",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: null,
         error: { message: "Query failed" },
@@ -378,8 +378,8 @@ describe("AuditService", () => {
     });
   });
 
-  describe("getAuditLogsByDateRange", () => {
-    it("should return audit logs within date range", async () => {
+  describe(_"getAuditLogsByDateRange",_() => {
+    it(_"should return audit logs within date range",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [mockAuditLog],
         error: null,
@@ -396,7 +396,7 @@ describe("AuditService", () => {
       expect(mockSupabaseClient.from).toHaveBeenCalledWith("webrtc_audit_logs");
     });
 
-    it("should return empty array when no logs in range", async () => {
+    it(_"should return empty array when no logs in range",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [],
         error: null,
@@ -412,7 +412,7 @@ describe("AuditService", () => {
       expect(result).toEqual([]);
     });
 
-    it("should return empty array when query fails", async () => {
+    it(_"should return empty array when query fails",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: null,
         error: { message: "Query failed" },
@@ -429,8 +429,8 @@ describe("AuditService", () => {
     });
   });
 
-  describe("getComplianceReport", () => {
-    it("should return compliance report", async () => {
+  describe(_"getComplianceReport",_() => {
+    it(_"should return compliance report",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [mockAuditLog],
         error: null,
@@ -453,7 +453,7 @@ describe("AuditService", () => {
       });
     });
 
-    it("should return empty report when no data", async () => {
+    it(_"should return empty report when no data",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [],
         error: null,
@@ -466,7 +466,7 @@ describe("AuditService", () => {
       expect(result.totalEvents).toBe(0);
     });
 
-    it("should return empty report when query fails", async () => {
+    it(_"should return empty report when query fails",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: null,
         error: { message: "Query failed" },
@@ -480,15 +480,15 @@ describe("AuditService", () => {
     });
   });
 
-  describe("searchAuditLogs", () => {
-    it("should search audit logs by criteria", async () => {
+  describe(_"searchAuditLogs",_() => {
+    it(_"should search audit logs by criteria",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [mockAuditLog],
         error: null,
       });
 
       const result = await auditService.searchAuditLogs({
-        userId: "user-123",
+        _userId: "user-123",
         eventType: "video-call-start",
         startDate: new Date("2024-01-01"),
         endDate: new Date("2024-01-31"),
@@ -498,49 +498,49 @@ describe("AuditService", () => {
       expect(mockSupabaseClient.from).toHaveBeenCalledWith("webrtc_audit_logs");
     });
 
-    it("should limit results when specified", async () => {
+    it(_"should limit results when specified",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [mockAuditLog],
         error: null,
       });
 
       const result = await auditService.searchAuditLogs({
-        userId: "user-123",
+        _userId: "user-123",
         limit: 10,
       });
 
       expect(mockLimit).toHaveBeenCalledWith(10);
     });
 
-    it("should return empty array when no matches found", async () => {
+    it(_"should return empty array when no matches found",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [],
         error: null,
       });
 
       const result = await auditService.searchAuditLogs({
-        userId: "nonexistent-user",
+        _userId: "nonexistent-user",
       });
 
       expect(result).toEqual([]);
     });
 
-    it("should return empty array when query fails", async () => {
+    it(_"should return empty array when query fails",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: null,
         error: { message: "Query failed" },
       });
 
       const result = await auditService.searchAuditLogs({
-        userId: "user-123",
+        _userId: "user-123",
       });
 
       expect(result).toEqual([]);
     });
   });
 
-  describe("edge cases and error handling", () => {
-    it("should handle malformed compliance check data", async () => {
+  describe(_"edge cases and error handling",_() => {
+    it(_"should handle malformed compliance check data",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [
           {
@@ -558,8 +558,8 @@ describe("AuditService", () => {
       expect(result.totalEvents).toBe(1);
     });
 
-    it("should handle large datasets efficiently", async () => {
-      const largeMockData = Array.from({ length: 1000 }, (_, i) => ({
+    it(_"should handle large datasets efficiently",_async () => {
+      const largeMockData = Array.from({ length: 1000 },_(_,_i) => ({
         ...mockAuditLog,
         id: `audit-${i}`,
       }));
@@ -576,7 +576,7 @@ describe("AuditService", () => {
       expect(result.totalEvents).toBe(1000);
     });
 
-    it("should handle network timeouts gracefully", async () => {
+    it(_"should handle network timeouts gracefully",_async () => {
       mockSupabaseClient.from = vi.fn().mockReturnValue({
         insert: vi.fn().mockReturnValue({
           select: vi.fn().mockReturnValue({

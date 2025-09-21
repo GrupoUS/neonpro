@@ -14,7 +14,6 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { z } from "zod";
 import { nanoid } from "nanoid";
 import type { Context, Next, MiddlewareHandler } from "hono";
 import { verify } from "hono/jwt";
@@ -28,7 +27,7 @@ import { verify } from "hono/jwt";
  */
 export interface JWTPayload {
   /** User identifier */
-  userId: string;
+  _userId: string;
   /** Session identifier (optional) */
   sessionId?: string;
   /** Token issuer */
@@ -54,7 +53,7 @@ export interface JWTPayload {
  */
 export interface UserProfile {
   /** Healthcare role */
-  role: HealthcareRole;
+  _role: HealthcareRole;
   /** Healthcare facility ID */
   facilityId: string;
   /** Department ID */
@@ -199,14 +198,14 @@ export type HealthcarePermission = z.infer<typeof HealthcarePermissionSchema>;
 export const AuthSessionSchema = z.object({
   // Session identification
   sessionId: z.string().describe("Unique session identifier"),
-  userId: z.string().describe("User identifier"),
+  _userId: z.string().describe("User identifier"),
   correlationId: z.string().describe("Request correlation ID"),
 
   // User information
   userProfile: z
     .object({
       anonymizedId: z.string().describe("LGPD-compliant anonymized ID"),
-      role: HealthcareRoleSchema.describe("User healthcare role"),
+      _role: HealthcareRoleSchema.describe("User healthcare role"),
       permissions: z
         .array(HealthcarePermissionSchema)
         .describe("User permissions"),
@@ -783,14 +782,14 @@ export class HealthcareRBAC {
   /**
    * Get all permissions for a role
    */
-  static getRolePermissions(role: HealthcareRole): HealthcarePermission[] {
+  static getRolePermissions(_role: HealthcareRole): HealthcarePermission[] {
     return this.rolePermissions[role] || [];
   }
 
   /**
    * Get role access level
    */
-  static getRoleLevel(role: HealthcareRole): number {
+  static getRoleLevel(_role: HealthcareRole): number {
     return this.roleHierarchy[role] || 0;
   }
 
@@ -887,7 +886,7 @@ export class HealthcareAuthMiddleware {
       console.log(
         "🔐 [HealthcareAuthMiddleware] Healthcare authentication middleware initialized",
       );
-    } catch (error) {
+    } catch (_error) {
       console.error(
         "Failed to initialize healthcare authentication middleware:",
         error,
@@ -900,13 +899,13 @@ export class HealthcareAuthMiddleware {
    */
   private setupSessionManagement(): void {
     // Session cleanup interval
-    setInterval(() => {
+    setInterval(_() => {
       this.cleanupExpiredSessions();
     }, 60000); // Every minute
 
     // Session rotation interval
     if (this.config.session.enableSessionRotation) {
-      setInterval(() => {
+      setInterval(_() => {
         this.rotateActiveSessions();
       }, this.config.session.sessionRotationInterval * 1000);
     }
@@ -917,7 +916,7 @@ export class HealthcareAuthMiddleware {
    */
   private setupSecurityMonitoring(): void {
     if (this.config.security.enableAnomalyDetection) {
-      setInterval(() => {
+      setInterval(_() => {
         this.detectSessionAnomalies();
       }, 300000); // Every 5 minutes
     }
@@ -1040,7 +1039,7 @@ export class HealthcareAuthMiddleware {
         // Add authentication headers
         if (authResult.session) {
           c.header("x-session-id", authResult.session.sessionId);
-          c.header("x-user-role", authResult.session.userProfile.role);
+          c.header("x-user-role", authResult.session.userProfile._role);
           c.header(
             "x-access-level",
             authResult.session.userProfile.accessLevel.toString(),
@@ -1059,7 +1058,7 @@ export class HealthcareAuthMiddleware {
         if (authResult.session) {
           await this.logSessionActivity(c, authResult.session);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error("Authentication middleware error:", error);
         return this.handleAuthError(c, error);
       }
@@ -1275,7 +1274,7 @@ export class HealthcareAuthMiddleware {
         false,
         riskScore,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error("Authentication error:", error);
       return this.createAuthResult(
         false,
@@ -1300,7 +1299,7 @@ export class HealthcareAuthMiddleware {
     const cookieToken = c.req
       .header("cookie")
       ?.split(";")
-      .find((cookie) => cookie.trim().startsWith("auth_token="))
+      .find(_(cookie) => cookie.trim().startsWith("auth_token="))
       ?.split("=")[1];
 
     if (cookieToken) {
@@ -1350,7 +1349,7 @@ export class HealthcareAuthMiddleware {
 
       // Cast to our JWTPayload interface
       const jwtPayload: JWTPayload = {
-        userId: (decoded.sub || decoded.userId || "") as string,
+        _userId: (decoded.sub || decoded.userId || "") as string,
         sessionId: decoded.sessionId as string,
         iss: decoded.iss as string,
         aud: decoded.aud as string,
@@ -1363,7 +1362,7 @@ export class HealthcareAuthMiddleware {
       };
 
       return jwtPayload;
-    } catch (error) {
+    } catch (_error) {
       console.error("Token validation error:", error);
       return null;
     }
@@ -1392,7 +1391,7 @@ export class HealthcareAuthMiddleware {
       }
 
       return session;
-    } catch (error) {
+    } catch (_error) {
       console.error("Session creation error:", error);
       return null;
     }
@@ -1407,10 +1406,10 @@ export class HealthcareAuthMiddleware {
   ): Promise<AuthSession | null> {
     try {
       const sessionId = decoded.sessionId || `sess_${nanoid(16)}`;
-      const now = new Date().toISOString();
+      const _now = new Date().toISOString();
 
       // TODO: Get user profile from database based on decoded.userId
-      const userProfile = await this.getUserProfile(decoded.userId);
+      const userProfile = await this.getUserProfile(decoded._userId);
 
       if (!userProfile) {
         return null;
@@ -1418,12 +1417,12 @@ export class HealthcareAuthMiddleware {
 
       const session: AuthSession = {
         sessionId,
-        userId: decoded.userId,
+        _userId: decoded.userId,
         correlationId: `corr_${nanoid(8)}`,
 
         userProfile: {
           anonymizedId: `user_${nanoid(8)}`,
-          role: userProfile.role || "guest",
+          _role: userProfile.role || "guest",
           permissions: HealthcareRBAC.getRolePermissions(
             userProfile.role || "guest",
           ),
@@ -1480,7 +1479,7 @@ export class HealthcareAuthMiddleware {
       };
 
       return session;
-    } catch (error) {
+    } catch (_error) {
       console.error("New session creation error:", error);
       return null;
     }
@@ -1489,11 +1488,11 @@ export class HealthcareAuthMiddleware {
   /**
    * Get user profile from database
    */
-  private async getUserProfile(userId: string): Promise<UserProfile | null> {
+  private async getUserProfile(_userId: string): Promise<UserProfile | null> {
     // TODO: Implement actual database lookup
     // This is a mock implementation
     return {
-      role: "doctor" as HealthcareRole,
+      _role: "doctor" as HealthcareRole,
       facilityId: "facility_001",
       departmentId: "dept_cardiology",
       licenseNumber: "CRM-SP-123456",
@@ -1518,7 +1517,7 @@ export class HealthcareAuthMiddleware {
     session: AuthSession,
     c: Context,
   ): Promise<boolean> {
-    const now = Date.now();
+    const _now = Date.now();
 
     // Check absolute expiration
     if (new Date(session.sessionMetadata.expiresAt).getTime() < now) {
@@ -1538,14 +1537,12 @@ export class HealthcareAuthMiddleware {
     }
 
     // Check concurrent session limit
-    const userSessions = Array.from(this.activeSessions.values()).filter(
-      (s) => s.userId === session.userId,
+    const userSessions = Array.from(this.activeSessions.values()).filter(_(s) => s.userId === session.userId,
     );
 
     if (userSessions.length > this.config.session.maxConcurrentSessions) {
       // Remove oldest session
-      const oldestSession = userSessions.sort(
-        (a, b) =>
+      const oldestSession = userSessions.sort(_(a,_b) =>
           new Date(a.sessionMetadata.lastActivity).getTime() -
           new Date(b.sessionMetadata.lastActivity).getTime(),
       )[0];
@@ -1616,7 +1613,7 @@ export class HealthcareAuthMiddleware {
       "super_admin",
     ];
 
-    if (highRiskRoles.includes(session.userProfile.role)) {
+    if (highRiskRoles.includes(session.userProfile._role)) {
       riskScore += 1;
     }
 
@@ -1670,7 +1667,7 @@ export class HealthcareAuthMiddleware {
    * Update session with current request information
    */
   private async updateSession(session: AuthSession, c: Context): Promise<void> {
-    const now = new Date().toISOString();
+    const _now = new Date().toISOString();
 
     // Update activity timestamp
     session.sessionMetadata.lastActivity = now;
@@ -1791,8 +1788,8 @@ export class HealthcareAuthMiddleware {
 
     const activityLog = {
       sessionId: session.sessionId,
-      userId: session.userProfile.anonymizedId,
-      role: session.userProfile.role,
+      _userId: session.userProfile.anonymizedId,
+      _role: session.userProfile.role,
       endpoint: c.req.path,
       method: c.req.method,
       userAgent: session.sessionMetadata.userAgent,
@@ -1814,8 +1811,8 @@ export class HealthcareAuthMiddleware {
   ): Promise<void> {
     const failureLog = {
       sessionId: session.sessionId,
-      userId: session.userProfile.anonymizedId,
-      role: session.userProfile.role,
+      _userId: session.userProfile.anonymizedId,
+      _role: session.userProfile.role,
       endpoint: c.req.path,
       method: c.req.method,
       requirement,
@@ -1841,8 +1838,8 @@ export class HealthcareAuthMiddleware {
 
     const authLog = {
       sessionId: session.sessionId,
-      userId: session.userProfile.anonymizedId,
-      role: session.userProfile.role,
+      _userId: session.userProfile.anonymizedId,
+      _role: session.userProfile.role,
       endpoint: c.req.path,
       method: c.req.method,
       requirements,
@@ -1901,8 +1898,8 @@ export class HealthcareAuthMiddleware {
       // Log session expiration
       const expirationLog = {
         sessionId,
-        userId: session.userProfile.anonymizedId,
-        role: session.userProfile.role,
+        _userId: session.userProfile.anonymizedId,
+        _role: session.userProfile.role,
         reason,
         duration:
           Date.now() - new Date(session.sessionMetadata.createdAt).getTime(),
@@ -1923,7 +1920,7 @@ export class HealthcareAuthMiddleware {
    * Cleanup expired sessions
    */
   private cleanupExpiredSessions(): void {
-    const now = Date.now();
+    const _now = Date.now();
     const expiredSessions: string[] = [];
 
     for (const [sessionId, session] of this.activeSessions.entries()) {
@@ -1998,7 +1995,7 @@ export class HealthcareAuthMiddleware {
           return parts.slice(0, 4).join(":") + "::";
         }
       }
-    } catch (error) {
+    } catch (_error) {
       console.warn(`IP anonymization failed for value: ${ip}`);
     }
 
@@ -2056,7 +2053,7 @@ export class HealthcareAuthMiddleware {
    * Check if device is known
    */
   private async isKnownDevice(
-    userId: string,
+    _userId: string,
     fingerprint: string,
   ): Promise<boolean> {
     // TODO: Implement device recognition
@@ -2099,7 +2096,7 @@ export class HealthcareAuthMiddleware {
 /**
  * Default healthcare authentication middleware instance
  */
-export const healthcareAuthMiddleware = new HealthcareAuthMiddleware({
+export const _healthcareAuthMiddleware = new HealthcareAuthMiddleware({
   enabled: true,
   environment: (process.env.NODE_ENV as Environment) || "development",
 

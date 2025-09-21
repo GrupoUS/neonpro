@@ -14,8 +14,6 @@
 import { createClient, RealtimeChannel, RealtimeClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
-import { z } from 'zod';
-
 // Enhanced telemedicine subscription schemas
 const TelemedicineMessageSchema = z.object({
   id: z.string().uuid(),
@@ -34,7 +32,7 @@ const TelemedicineMessageSchema = z.object({
 });
 
 const PresenceStateSchema = z.object({
-  userId: z.string().uuid(),
+  _userId: z.string().uuid(),
   sessionId: z.string().uuid(),
   userRole: z.enum(['patient', 'doctor', 'nurse', 'technician', 'admin']),
   status: z.enum(['online', 'away', 'busy', 'offline', 'in_consultation']),
@@ -253,7 +251,7 @@ export class EnhancedTelemedicineRealtime {
     const response = await channel.send({
       type: 'broadcast',
       event: 'encrypted_message',
-      payload: validatedMessage,
+      _payload: validatedMessage,
     });
 
     // Log for LGPD audit compliance
@@ -324,7 +322,7 @@ export class EnhancedTelemedicineRealtime {
               encryptedData,
               encryptionKey,
             );
-          } catch (error) {
+          } catch (_error) {
             console.error('❌ Failed to decrypt message:', error);
             return;
           }
@@ -379,7 +377,7 @@ export class EnhancedTelemedicineRealtime {
     channel: RealtimeChannel,
     sessionId: string,
   ): void {
-    channel.on('presence', { event: 'sync' }, () => {
+    channel.on(_'presence', { event: 'sync' },_() => {
       const state = channel.presenceState();
       console.log(
         `👥 Presence sync for session ${sessionId}:`,
@@ -388,16 +386,16 @@ export class EnhancedTelemedicineRealtime {
       );
     });
 
-    channel.on('presence', { event: 'join' }, ({ key, newPresences }) => {
+    channel.on(_'presence', { event: 'join' },_({ key,_newPresences }) => {
       console.log(`👋 User joined session ${sessionId}:`, key, newPresences);
     });
 
-    channel.on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
+    channel.on(_'presence', { event: 'leave' },_({ key,_leftPresences }) => {
       console.log(`👋 User left session ${sessionId}:`, key, leftPresences);
 
       // Clean up local presence state
       leftPresences.forEach((presence: any) => {
-        this.presenceStates.delete(presence.userId);
+        this.presenceStates.delete(presence._userId);
       });
     });
   }
@@ -462,7 +460,7 @@ export class EnhancedTelemedicineRealtime {
       clearInterval(this.connectionQualityMonitor);
     }
 
-    this.connectionQualityMonitor = setInterval(async () => {
+    this.connectionQualityMonitor = setInterval(_async () => {
       await this.monitorConnectionQuality(sessionId);
     }, 5000); // Monitor every 5 seconds
   }
@@ -568,7 +566,7 @@ export class EnhancedTelemedicineRealtime {
    */
   private async sendQualityAlert(
     sessionId: string,
-    userId: string,
+    _userId: string,
     quality: PresenceState['connectionQuality'],
   ): Promise<void> {
     const channel = this.channels.get(sessionId);
@@ -577,7 +575,7 @@ export class EnhancedTelemedicineRealtime {
     await channel.send({
       type: 'broadcast',
       event: 'quality_alert',
-      payload: {
+      _payload: {
         type: 'poor_connection_quality',
         userId,
         quality,
@@ -597,7 +595,7 @@ export class EnhancedTelemedicineRealtime {
    */
   private async sendQualityImprovementSuggestions(
     sessionId: string,
-    userId: string,
+    _userId: string,
     quality: PresenceState['connectionQuality'],
   ): Promise<void> {
     const channel = this.channels.get(sessionId);
@@ -624,7 +622,7 @@ export class EnhancedTelemedicineRealtime {
     await channel.send({
       type: 'broadcast',
       event: 'quality_suggestions',
-      payload: {
+      _payload: {
         userId,
         suggestions,
         currentQuality: quality,
@@ -648,7 +646,7 @@ export class EnhancedTelemedicineRealtime {
       await channel.send({
         type: 'broadcast',
         event: 'emergency_alert',
-        payload: {
+        _payload: {
           originalMessage: message,
           alertLevel: 'critical',
           timestamp: new Date().toISOString(),
@@ -676,7 +674,7 @@ export class EnhancedTelemedicineRealtime {
     await channel.send({
       type: 'broadcast',
       event: 'message_acknowledgment',
-      payload: {
+      _payload: {
         messageId,
         acknowledgedBy: recipientId,
         timestamp: new Date().toISOString(),
@@ -735,7 +733,7 @@ export class EnhancedTelemedicineRealtime {
       // Clear presence states for this session
       for (const [userId, presence] of this.presenceStates.entries()) {
         if (presence.sessionId === sessionId) {
-          this.presenceStates.delete(userId);
+          this.presenceStates.delete(_userId);
         }
       }
 

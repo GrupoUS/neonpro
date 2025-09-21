@@ -65,11 +65,11 @@ export function EventDialog({
   const [endDateOpen, setEndDateOpen] = useState(false);
 
   // Debug log to check what event is being passed
-  useEffect(() => {
+  useEffect(_() => {
     console.log('EventDialog received event:', event);
   }, [event]);
 
-  useEffect(() => {
+  useEffect(_() => {
     if (event) {
       setTitle(event.title || '');
       setDescription(event.description || '');
@@ -110,7 +110,7 @@ export function EventDialog({
   };
 
   // Memoize time options so they're only calculated once
-  const timeOptions = useMemo(() => {
+  const timeOptions = useMemo(_() => {
     const options = [];
     for (let hour = StartHour; hour <= EndHour; hour++) {
       for (let minute = 0; minute < 60; minute += 15) {

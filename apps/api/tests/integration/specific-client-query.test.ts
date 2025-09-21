@@ -35,8 +35,8 @@ describe('Specific Client Query - Integration Test', () => {
         body: JSON.stringify({
           query,
           sessionId,
-          context: {
-            userId: 'doctor-user-id',
+          _context: {
+            _userId: 'doctor-user-id',
           },
         }),
       });
@@ -69,8 +69,8 @@ describe('Specific Client Query - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-${Math.random()}`,
-            context: {
-              userId: 'doctor-user-id',
+            _context: {
+              _userId: 'doctor-user-id',
             },
           }),
         });
@@ -93,10 +93,10 @@ describe('Specific Client Query - Integration Test', () => {
           Authorization: 'Bearer valid-doctor-token',
         },
         body: JSON.stringify({
-          query: 'Informações completas da Maria Silva',
+          _query: 'Informações completas da Maria Silva',
           sessionId: 'test-session-comprehensive',
-          context: {
-            userId: 'doctor-user-id',
+          _context: {
+            _userId: 'doctor-user-id',
           },
         }),
       });
@@ -122,10 +122,10 @@ describe('Specific Client Query - Integration Test', () => {
           Authorization: 'Bearer valid-doctor-token',
         },
         body: JSON.stringify({
-          query: 'Histórico completo da Maria Silva',
+          _query: 'Histórico completo da Maria Silva',
           sessionId: 'test-session-history',
-          context: {
-            userId: 'doctor-user-id',
+          _context: {
+            _userId: 'doctor-user-id',
           },
         }),
       });
@@ -143,9 +143,9 @@ describe('Specific Client Query - Integration Test', () => {
       expect(app).toBeDefined();
 
       const roles = [
-        { token: 'valid-doctor-token', role: 'doctor', fullAccess: true },
-        { token: 'valid-nurse-token', role: 'nurse', fullAccess: false },
-        { token: 'valid-receptionist-token', role: 'receptionist', fullAccess: false },
+        { token: 'valid-doctor-token', _role: 'doctor', fullAccess: true },
+        { token: 'valid-nurse-token', _role: 'nurse', fullAccess: false },
+        { token: 'valid-receptionist-token', _role: 'receptionist', fullAccess: false },
       ];
 
       for (const { token, role, fullAccess } of roles) {
@@ -156,11 +156,11 @@ describe('Specific Client Query - Integration Test', () => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            query: 'Dados da Maria Silva',
+            _query: 'Dados da Maria Silva',
             sessionId: `test-session-${role}`,
-            context: {
-              userId: `${role}-user-id`,
-              role: role,
+            _context: {
+              _userId: `${role}-user-id`,
+              _role: role,
             },
           }),
         });
@@ -183,10 +183,10 @@ describe('Specific Client Query - Integration Test', () => {
           Authorization: 'Bearer valid-doctor-token',
         },
         body: JSON.stringify({
-          query: 'Informações do Pedro Inexistente',
+          _query: 'Informações do Pedro Inexistente',
           sessionId: 'test-session-nonexistent',
-          context: {
-            userId: 'doctor-user-id',
+          _context: {
+            _userId: 'doctor-user-id',
           },
         }),
       });
@@ -211,10 +211,10 @@ describe('Specific Client Query - Integration Test', () => {
           Authorization: 'Bearer valid-doctor-token',
         },
         body: JSON.stringify({
-          query: 'Informações da Maria Silva',
+          _query: 'Informações da Maria Silva',
           sessionId: 'test-session-performance',
-          context: {
-            userId: 'doctor-user-id',
+          _context: {
+            _userId: 'doctor-user-id',
           },
         }),
       });

@@ -11,7 +11,6 @@ import { createMiddleware } from 'hono/factory';
 // import removed: jwt was unused
 import { logger } from 'hono/logger';
 import { timing } from 'hono/timing';
-import { z } from 'zod';
 import { supabase } from '../lib/supabase';
 
 // Healthcare-specific types
@@ -19,7 +18,7 @@ type HealthcareEnv = {
   Variables: {
     user: {
       id: string;
-      role: 'admin' | 'professional' | 'coordinator';
+      _role: 'admin' | 'professional' | 'coordinator';
       permissions: string[];
     };
     auditContext: {
@@ -38,8 +37,7 @@ type HealthcareEnv = {
 const healthcare = new Hono<HealthcareEnv>();
 
 // Performance monitoring middleware
-const performanceMiddleware = createMiddleware<HealthcareEnv>(
-  async (c, next) => {
+const performanceMiddleware = createMiddleware<HealthcareEnv>(_async (c,_next) => {
     const startTime = Date.now();
     c.set('performanceMetrics', { startTime, dbQueries: 0 });
 
@@ -61,7 +59,7 @@ const performanceMiddleware = createMiddleware<HealthcareEnv>(
 );
 
 // LGPD compliance audit middleware
-const auditMiddleware = createMiddleware<HealthcareEnv>(async (c, next) => {
+const auditMiddleware = createMiddleware<HealthcareEnv>(_async (c,_next) => {
   const user = c.get('user');
   const method = c.req.method;
   const path = c.req.path;
@@ -104,14 +102,13 @@ const auditMiddleware = createMiddleware<HealthcareEnv>(async (c, next) => {
         ip: c.req.header('CF-Connecting-IP') || c.req.header('X-Forwarded-For'),
       },
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Failed to log audit trail:', error);
   }
 });
 
 // Healthcare role-based authorization middleware
-const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(
-  async (c, next) => {
+const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(_async (c,_next) => {
     const token = c.req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {
@@ -142,12 +139,12 @@ const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(
 
       c.set('user', {
         id: user.id,
-        role: profile.role,
+        _role: profile.role,
         permissions: profile.permissions || [],
       });
 
       await next();
-    } catch (error) {
+    } catch (_error) {
       console.error('Authentication error:', error);
       return c.json({ error: 'Erro de autenticação' }, 401);
     }
@@ -256,7 +253,7 @@ healthcare.get(
           cached: false,
         },
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching patients:', error);
       return c.json(
         {
@@ -311,7 +308,7 @@ healthcare.get('/patients/:id', async c => {
       success: true,
       data: patient,
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching patient:', error);
     return c.json(
       {
@@ -356,7 +353,7 @@ healthcare.post('/patients', zValidator('json', patientSchema), async c => {
       },
       201,
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Error creating patient:', error);
     return c.json(
       {
@@ -407,7 +404,7 @@ healthcare.put(
         data: patient,
         message: 'Paciente atualizado com sucesso',
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error updating patient:', error);
       return c.json(
         {
@@ -457,7 +454,7 @@ healthcare.get('/patients/:id/appointments', async c => {
       success: true,
       data: appointments || [],
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching appointments:', error);
     return c.json(
       {
@@ -483,7 +480,7 @@ healthcare.post(
 
     // Healthcare-specific validation
     const scheduledDate = new Date(appointmentData.scheduled_at);
-    const now = new Date();
+    const _now = new Date();
 
     if (scheduledDate <= now) {
       return c.json(
@@ -537,7 +534,7 @@ healthcare.post(
         },
         201,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Error creating appointment:', error);
       return c.json(
         {
@@ -585,7 +582,7 @@ healthcare.get(
         totalPatients: patientsResult.count || 0,
         totalAppointments: appointmentsResult.count || 0,
         totalProcedures: proceduresResult.count || 0,
-        appointmentsByStatus: appointmentsResult.data?.reduce((acc: any, apt) => {
+        appointmentsByStatus: appointmentsResult.data?.reduce((acc: any,_apt) => {
           acc[apt.status] = (acc[apt.status] || 0) + 1;
           return acc;
         }, {}) || {},
@@ -596,7 +593,7 @@ healthcare.get(
         success: true,
         data: analytics,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching analytics:', error);
       return c.json(
         {

@@ -11,14 +11,14 @@ const mockSupabase = {
   from: vi.fn(),
 };
 
-vi.mock('@supabase/supabase-js', () => ({
+vi.mock(_'@supabase/supabase-js',_() => ({
   createClient: vi.fn(() => mockSupabase),
 }));
 
-describe('Usage Counter Repository Security Tests', () => {
+describe(_'Usage Counter Repository Security Tests',_() => {
   let repository: UsageCounterRepository;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
     
     // Mock successful database operations
@@ -67,7 +67,7 @@ describe('Usage Counter Repository Security Tests', () => {
     );
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.clearAllMocks();
   });
 
@@ -85,7 +85,7 @@ describe('Usage Counter Repository Security Tests', () => {
       date: '2024-01-01',
       month: '2024-01',
       metadata: {
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium',
         concurrentRequests: 5,
         totalRequests: 1000,
@@ -106,10 +106,10 @@ describe('Usage Counter Repository Security Tests', () => {
     };
   }
 
-  describe('Type Safety', () => {
-    it('should enforce strict TypeScript interfaces', () => {
+  describe(_'Type Safety',_() => {
+    it(_'should enforce strict TypeScript interfaces',_() => {
       const metadata: UsageMetadata = {
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium',
         concurrentRequests: 5,
         totalRequests: 1000,
@@ -126,15 +126,15 @@ describe('Usage Counter Repository Security Tests', () => {
         securityEvents: 0,
       };
 
-      expect(metadata.userId).toBe('user123');
+      expect(metadata._userId).toBe('user123');
       expect(metadata.planCode).toBe('premium');
       expect(metadata.healthcareComplianceScore).toBe(0.95);
     });
 
-    it('should validate healthcare-specific metadata fields', async () => {
+    it(_'should validate healthcare-specific metadata fields',_async () => {
       const createData = {
         clinicId: 'clinic123',
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -155,9 +155,9 @@ describe('Usage Counter Repository Security Tests', () => {
       expect(result.metadata?.healthcareComplianceScore).toBeDefined();
     });
 
-    it('should handle optional healthcare security fields', async () => {
+    it(_'should handle optional healthcare security fields',_async () => {
       const metadata: Partial<UsageMetadata> = {
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium',
         concurrentRequests: 5,
         totalRequests: 1000,
@@ -178,14 +178,14 @@ describe('Usage Counter Repository Security Tests', () => {
     });
   });
 
-  describe('Database Operations Security', () => {
-    it('should safely handle database row mapping', async () => {
-      const mockRow = createMockDatabaseRow();
+  describe(_'Database Operations Security',_() => {
+    it(_'should safely handle database row mapping',_async () => {
+      const _mockRow = createMockDatabaseRow();
       
       // Mock the findByUserAndClinic method to return our test data
       vi.spyOn(repository, 'findByUserAndClinic' as any).mockResolvedValue({
         clinicId: 'clinic123',
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium',
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -205,7 +205,7 @@ describe('Usage Counter Repository Security Tests', () => {
 
       const result = await repository.dailyUpsert({
         clinicId: 'clinic123',
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium',
         increment: {
           monthlyQueries: 10,
@@ -227,7 +227,7 @@ describe('Usage Counter Repository Security Tests', () => {
       expect(result.clinicId).toBe('clinic123');
     });
 
-    it('should handle database errors gracefully', async () => {
+    it(_'should handle database errors gracefully',_async () => {
       mockSupabase.from.mockReturnValue({
         insert: vi.fn().mockReturnValue({
           select: vi.fn().mockReturnValue({
@@ -238,7 +238,7 @@ describe('Usage Counter Repository Security Tests', () => {
 
       const createData = {
         clinicId: 'clinic123',
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -248,7 +248,7 @@ describe('Usage Counter Repository Security Tests', () => {
       await expect(repository.create(createData)).rejects.toThrow('Database connection failed');
     });
 
-    it('should validate numeric field parsing', async () => {
+    it(_'should validate numeric field parsing',_async () => {
       const rowWithStrings: UsageCounterDatabaseRow = {
         ...createMockDatabaseRow(),
         current_cost_usd: '0.05' as any, // Test string to number conversion
@@ -265,11 +265,11 @@ describe('Usage Counter Repository Security Tests', () => {
     });
   });
 
-  describe('Healthcare Data Security', () => {
-    it('should track patient data access count', async () => {
+  describe(_'Healthcare Data Security',_() => {
+    it(_'should track patient data access count',_async () => {
       const createData = {
         clinicId: 'clinic123',
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -285,10 +285,10 @@ describe('Usage Counter Repository Security Tests', () => {
       expect(result.metadata?.healthcareComplianceScore).toBe(0.95);
     });
 
-    it('should validate healthcare compliance score range', async () => {
+    it(_'should validate healthcare compliance score range',_async () => {
       const createData = {
         clinicId: 'clinic123',
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -301,10 +301,10 @@ describe('Usage Counter Repository Security Tests', () => {
       expect(result).toBeDefined();
     });
 
-    it('should track security events in healthcare context', async () => {
+    it(_'should track security events in healthcare context',_async () => {
       const createData = {
         clinicId: 'clinic123',
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -320,11 +320,11 @@ describe('Usage Counter Repository Security Tests', () => {
     });
   });
 
-  describe('Input Validation', () => {
-    it('should validate numeric inputs', async () => {
+  describe(_'Input Validation',_() => {
+    it(_'should validate numeric inputs',_async () => {
       const invalidData = {
         clinicId: 'clinic123',
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium' as const,
         monthlyQueries: -100, // Invalid negative value
         dailyQueries: -10, // Invalid negative value
@@ -336,10 +336,10 @@ describe('Usage Counter Repository Security Tests', () => {
       expect(result).toBeDefined();
     });
 
-    it('should handle extremely large values', async () => {
+    it(_'should handle extremely large values',_async () => {
       const largeValueData = {
         clinicId: 'clinic123',
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium' as const,
         monthlyQueries: Number.MAX_SAFE_INTEGER,
         dailyQueries: Number.MAX_SAFE_INTEGER,
@@ -352,10 +352,10 @@ describe('Usage Counter Repository Security Tests', () => {
       expect(result).toBeDefined();
     });
 
-    it('should validate date strings', async () => {
+    it(_'should validate date strings',_async () => {
       const createData = {
         clinicId: 'clinic123',
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -372,8 +372,8 @@ describe('Usage Counter Repository Security Tests', () => {
     });
   });
 
-  describe('Privacy and Compliance', () => {
-    it('should not expose sensitive data in error messages', async () => {
+  describe(_'Privacy and Compliance',_() => {
+    it(_'should not expose sensitive data in error messages',_async () => {
       mockSupabase.from.mockReturnValue({
         insert: vi.fn().mockReturnValue({
           select: vi.fn().mockReturnValue({
@@ -384,7 +384,7 @@ describe('Usage Counter Repository Security Tests', () => {
 
       const sensitiveData = {
         clinicId: 'clinic123',
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium' as const,
         monthlyQueries: 100,
         patientData: 'sensitive_health_information', // This should not appear in errors
@@ -395,10 +395,10 @@ describe('Usage Counter Repository Security Tests', () => {
       );
     });
 
-    it('should maintain data retention policies', async () => {
+    it(_'should maintain data retention policies',_async () => {
       const createData = {
         clinicId: 'clinic123',
-        userId: 'user123',
+        _userId: 'user123',
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,

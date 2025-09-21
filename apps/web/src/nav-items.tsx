@@ -4,7 +4,7 @@ import Index from './pages/Index';
 /**
  * Central place for defining the navigation items. Used for navigation components and routing.
  */
-export const navItems = [
+export const _navItems = [
   {
     title: 'Home',
     to: '/',

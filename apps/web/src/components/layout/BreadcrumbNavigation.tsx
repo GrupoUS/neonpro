@@ -80,7 +80,7 @@ const generateBreadcrumbs = (
 
   // Generate breadcrumbs for each segment
   let currentPath = '';
-  segments.forEach((segment, _index) => {
+  segments.forEach(_(segment, _index) => {
     currentPath += `/${segment}`;
     const isLast = index === segments.length - 1;
 
@@ -113,7 +113,7 @@ export function BreadcrumbNavigation({
 }: BreadcrumbNavigationProps) {
   const location = useLocation();
 
-  const breadcrumbs = useMemo(() => {
+  const breadcrumbs = useMemo(_() => {
     const items = generateBreadcrumbs(
       location.pathname,
       customLabels,
@@ -149,7 +149,7 @@ export function BreadcrumbNavigation({
       role='navigation'
     >
       <ol className='flex items-center space-x-1 min-w-0' role='list'>
-        {breadcrumbs.map((item, _index) => (
+        {breadcrumbs.map(_(item, _index) => (
           <li
             key={`${item.href}-${index}`}
             className='flex items-center space-x-1'
@@ -208,7 +208,7 @@ export function BreadcrumbNavigation({
 export function useBreadcrumbs(customLabels?: Record<string, string>) {
   const location = useLocation();
 
-  return useMemo(() => {
+  return useMemo(_() => {
     return generateBreadcrumbs(location.pathname, customLabels);
   }, [location.pathname, customLabels]);
 }

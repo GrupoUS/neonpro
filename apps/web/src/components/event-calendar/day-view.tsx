@@ -47,7 +47,7 @@ export function DayView({
   onEventSelect,
   onEventCreate,
 }: DayViewProps) {
-  const hours = useMemo(() => {
+  const hours = useMemo(_() => {
     const dayStart = startOfDay(currentDate);
     return eachHourOfInterval({
       start: addHours(dayStart, StartHour),
@@ -55,7 +55,7 @@ export function DayView({
     });
   }, [currentDate]);
 
-  const dayEvents = useMemo(() => {
+  const dayEvents = useMemo(_() => {
     return events
       .filter(event => {
         const eventStart = new Date(event.start);
@@ -66,13 +66,12 @@ export function DayView({
           || (currentDate > eventStart && currentDate < eventEnd)
         );
       })
-      .sort(
-        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+      .sort(_(a,_b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
       );
   }, [currentDate, events]);
 
   // Filter all-day events
-  const allDayEvents = useMemo(() => {
+  const allDayEvents = useMemo(_() => {
     return dayEvents.filter(event => {
       // Include explicitly marked all-day events or multi-day events
       return event.allDay || isMultiDayEvent(event);
@@ -80,7 +79,7 @@ export function DayView({
   }, [dayEvents]);
 
   // Get only single-day time-based events
-  const timeEvents = useMemo(() => {
+  const timeEvents = useMemo(_() => {
     return dayEvents.filter(event => {
       // Exclude all-day events and multi-day events
       return !event.allDay && !isMultiDayEvent(event);
@@ -88,12 +87,12 @@ export function DayView({
   }, [dayEvents]);
 
   // Process events to calculate positions
-  const positionedEvents = useMemo(() => {
+  const positionedEvents = useMemo(_() => {
     const result: PositionedEvent[] = [];
     const dayStart = startOfDay(currentDate);
 
     // Sort events by start time and duration
-    const sortedEvents = [...timeEvents].sort((a, b) => {
+    const sortedEvents = [...timeEvents].sort(_(a,_b) => {
       const aStart = new Date(a.start);
       const bStart = new Date(b.start);
       const aEnd = new Date(a.end);
@@ -225,7 +224,7 @@ export function DayView({
 
       <div className='border-border/70 grid flex-1 grid-cols-[3rem_1fr] border-t sm:grid-cols-[4rem_1fr] overflow-hidden'>
         <div>
-          {hours.map((hour, _index) => (
+          {hours.map(_(hour, _index) => (
             <div
               key={hour.toString()}
               className='border-border/70 relative h-[var(--week-cells-height)] border-b last:border-b-0'

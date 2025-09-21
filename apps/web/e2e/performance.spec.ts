@@ -47,7 +47,7 @@ test.describe('Performance Requirements Validation', () => {
 
       const response = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
         data: {
-          query: 'Próximos agendamentos',
+          _query: 'Próximos agendamentos',
           sessionId: 'test-session',
         },
       });
@@ -204,7 +204,7 @@ test.describe('Performance Requirements Validation', () => {
       // Test session creation and access
       const sessionResponse = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
         data: {
-          query: 'Test session',
+          _query: 'Test session',
           sessionId: 'performance-test-session',
         },
       });
@@ -297,7 +297,7 @@ test.describe('Performance Requirements Validation', () => {
       const queries = Array(concurrentQueries).fill(0).map((_, index) =>
         request.post(`${baseUrl}/api/v2/ai/data-agent`, {
           data: {
-            query: `Test query ${index}`,
+            _query: `Test query ${index}`,
             sessionId: `concurrent-session-${index}`,
           },
         })

@@ -14,12 +14,12 @@ import type {
 } from '@/services/lgpd/data-minimization.service';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe('CalendarDataMinimizationService - RED Phase Tests', () => {
+describe(_'CalendarDataMinimizationService - RED Phase Tests',_() => {
   let mockAppointment: CalendarAppointment;
   let mockUserId: string;
   let mockUserRole: string;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
 
     mockAppointment = {
@@ -41,12 +41,12 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
     mockUserRole = 'doctor';
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.restoreAllMocks();
   });
 
-  describe('Service Existence and Structure', () => {
-    it('should FAIL - service should be properly instantiated', () => {
+  describe(_'Service Existence and Structure',_() => {
+    it(_'should FAIL - service should be properly instantiated',_() => {
       // RED: This test fails if service doesn't exist or is malformed
       expect(calendarDataMinimizationService).toBeDefined();
       expect(typeof calendarDataMinimizationService.getMinimizationConfig).toBe(
@@ -60,7 +60,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       ).toBe('function');
     });
 
-    it('should FAIL - enums and types should be properly defined', () => {
+    it(_'should FAIL - enums and types should be properly defined',_() => {
       // RED: This test fails if enums are incomplete
       expect(PatientDataSensitivity.HIGH).toBe('high');
       expect(PatientDataSensitivity.MEDIUM).toBe('medium');
@@ -77,7 +77,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       );
     });
 
-    it('should FAIL - should have proper default configuration', () => {
+    it(_'should FAIL - should have proper default configuration',_() => {
       // RED: This test fails if default configuration is incorrect
       const config = calendarDataMinimizationService['defaultConfig'];
 
@@ -92,8 +92,8 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
     });
   });
 
-  describe('Data Minimization Configuration - LGPD Art. 6º, VII', () => {
-    it('should FAIL - should return minimal config for minimal consent level', () => {
+  describe(_'Data Minimization Configuration - LGPD Art. 6º,_VII',_() => {
+    it(_'should FAIL - should return minimal config for minimal consent level',_() => {
       // RED: This test fails if minimal configuration is not properly set
       const config = calendarDataMinimizationService.getMinimizationConfig(
         DataMinimizationLevel.MINIMAL,
@@ -110,7 +110,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(config.anonymizationMethod).toBe('none');
     });
 
-    it('should FAIL - should return restricted config for restricted consent level', () => {
+    it(_'should FAIL - should return restricted config for restricted consent level',_() => {
       // RED: This test fails if restricted configuration is incorrect
       const config = calendarDataMinimizationService.getMinimizationConfig(
         DataMinimizationLevel.RESTRICTED,
@@ -126,9 +126,9 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(config.anonymizationMethod).toBe('initials');
     });
 
-    it('should FAIL - should provide enhanced access for healthcare professionals', () => {
+    it(_'should FAIL - should provide enhanced access for healthcare professionals',_() => {
       // RED: This test fails if healthcare professional access is not enhanced
-      const standardConfig = calendarDataMinimizationService.getMinimizationConfig(
+      const _standardConfig = calendarDataMinimizationService.getMinimizationConfig(
         DataMinimizationLevel.STANDARD,
         'user',
         PatientDataSensitivity.MEDIUM,
@@ -146,11 +146,11 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(healthcareConfig.allowExport).toBe(true);
     });
 
-    it('should FAIL - should adjust configuration for emergency context', () => {
+    it(_'should FAIL - should adjust configuration for emergency context',_() => {
       // RED: This test fails if emergency context adjustments are missing
       // Mock emergency context
       const originalIsEmergency = calendarDataMinimizationService['isEmergencyContext'];
-      calendarDataMinimizationService['isEmergencyContext'] = vi.fn(() => true);
+      calendarDataMinimizationService['isEmergencyContext'] = vi.fn(_() => true);
 
       const config = calendarDataMinimizationService.getMinimizationConfig(
         DataMinimizationLevel.STANDARD,
@@ -166,8 +166,8 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
     });
   });
 
-  describe('Data Minimization Processing', () => {
-    it('should FAIL - should minimize appointment data with compliance scoring', async () => {
+  describe(_'Data Minimization Processing',_() => {
+    it(_'should FAIL - should minimize appointment data with compliance scoring',_async () => {
       // RED: This test fails if minimization processing is not implemented
       const result = await calendarDataMinimizationService.minimizeAppointmentWithCompliance(
         mockAppointment,
@@ -186,7 +186,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(result.legalBasis).toBeDefined();
     });
 
-    it('should FAIL - should apply minimal data restrictions correctly', async () => {
+    it(_'should FAIL - should apply minimal data restrictions correctly',_async () => {
       // RED: This test fails if minimal data restrictions are not applied
       const result = await calendarDataMinimizationService.minimizeAppointmentWithCompliance(
         mockAppointment,
@@ -204,7 +204,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(minimized.requiresConsent).toBe(true);
     });
 
-    it('should FAIL - should preserve essential appointment information', async () => {
+    it(_'should FAIL - should preserve essential appointment information',_async () => {
       // RED: This test fails if essential information is not preserved
       const result = await calendarDataMinimizationService.minimizeAppointmentWithCompliance(
         mockAppointment,
@@ -222,7 +222,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(minimized.color).toBe(mockAppointment.color);
     });
 
-    it('should FAIL - should handle export context restrictions', async () => {
+    it(_'should FAIL - should handle export context restrictions',_async () => {
       // RED: This test fails if export restrictions are not applied
       const result = await calendarDataMinimizationService.minimizeAppointmentWithCompliance(
         mockAppointment,
@@ -241,8 +241,8 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
     });
   });
 
-  describe('Data Sensitivity Assessment', () => {
-    it('should FAIL - should identify high sensitivity for sensitive medical terms', () => {
+  describe(_'Data Sensitivity Assessment',_() => {
+    it(_'should FAIL - should identify high sensitivity for sensitive medical terms',_() => {
       // RED: This test fails if sensitivity assessment is not accurate
       const sensitiveAppointment = {
         ...mockAppointment,
@@ -257,7 +257,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(sensitivity).toBe(PatientDataSensitivity.HIGH);
     });
 
-    it('should FAIL - should identify medium sensitivity for routine care', () => {
+    it(_'should FAIL - should identify medium sensitivity for routine care',_() => {
       // RED: This test fails if routine care sensitivity is incorrect
       const routineAppointment = {
         ...mockAppointment,
@@ -272,7 +272,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(sensitivity).toBe(PatientDataSensitivity.LOW);
     });
 
-    it('should FAIL - should identify emergency status as higher sensitivity', () => {
+    it(_'should FAIL - should identify emergency status as higher sensitivity',_() => {
       // RED: This test fails if emergency status sensitivity is not elevated
       const emergencyAppointment = {
         ...mockAppointment,
@@ -287,8 +287,8 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
     });
   });
 
-  describe('Compliance Scoring', () => {
-    it('should FAIL - should calculate compliance score based on configuration', () => {
+  describe(_'Compliance Scoring',_() => {
+    it(_'should FAIL - should calculate compliance score based on configuration',_() => {
       // RED: This test fails if compliance scoring is not implemented
       const config: DataMinimizationConfig = {
         level: DataMinimizationLevel.MINIMAL,
@@ -311,7 +311,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(score).toBeLessThanOrEqual(100);
     });
 
-    it('should FAIL - should reduce score for unnecessary data exposure', () => {
+    it(_'should FAIL - should reduce score for unnecessary data exposure',_() => {
       // RED: This test fails if unnecessary data exposure is not penalized
       const config: DataMinimizationConfig = {
         level: DataMinimizationLevel.FULL,
@@ -332,7 +332,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(score).toBeLessThan(100);
     });
 
-    it('should FAIL - should heavily penalize inappropriate export permissions', () => {
+    it(_'should FAIL - should heavily penalize inappropriate export permissions',_() => {
       // RED: This test fails if export permissions are not properly penalized
       const config: DataMinimizationConfig = {
         level: DataMinimizationLevel.FULL,
@@ -356,8 +356,8 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
     });
   });
 
-  describe('Risk Identification', () => {
-    it('should FAIL - should identify risks for sensitive data exposure', () => {
+  describe(_'Risk Identification',_() => {
+    it(_'should FAIL - should identify risks for sensitive data exposure',_() => {
       // RED: This test fails if risk identification is not implemented
       const config: DataMinimizationConfig = {
         level: DataMinimizationLevel.FULL,
@@ -380,7 +380,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(risks.some(risk => risk.includes('sensíveis'))).toBe(true);
     });
 
-    it('should FAIL - should identify export permission risks', () => {
+    it(_'should FAIL - should identify export permission risks',_() => {
       // RED: This test fails if export risks are not identified
       const config: DataMinimizationConfig = {
         level: DataMinimizationLevel.STANDARD,
@@ -401,7 +401,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(risks.some(risk => risk.includes('exportação'))).toBe(true);
     });
 
-    it('should FAIL - should identify excessive retention risks', () => {
+    it(_'should FAIL - should identify excessive retention risks',_() => {
       // RED: This test fails if retention risks are not identified
       const config: DataMinimizationConfig = {
         level: DataMinimizationLevel.STANDARD,
@@ -423,8 +423,8 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
     });
   });
 
-  describe('Batch Processing', () => {
-    it('should FAIL - should process multiple appointments with aggregate compliance', async () => {
+  describe(_'Batch Processing',_() => {
+    it(_'should FAIL - should process multiple appointments with aggregate compliance',_async () => {
       // RED: This test fails if batch processing is not implemented
       const appointments = [
         mockAppointment,
@@ -454,7 +454,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       );
     });
 
-    it('should FAIL - should calculate aggregate compliance metrics', async () => {
+    it(_'should FAIL - should calculate aggregate compliance metrics',_async () => {
       // RED: This test fails if aggregate compliance calculation is incorrect
       const appointments = [mockAppointment];
 
@@ -474,7 +474,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(compliance.totalScore).toBe(Math.round(compliance.averageScore));
     });
 
-    it('should FAIL - should identify critical risks across batch', async () => {
+    it(_'should FAIL - should identify critical risks across batch',_async () => {
       // RED: This test fails if critical risk identification is missing
       const appointments = [mockAppointment];
 
@@ -492,20 +492,20 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
     });
   });
 
-  describe('Data Anonymization', () => {
-    it('should FAIL - should anonymize patient names using initials', () => {
+  describe(_'Data Anonymization',_() => {
+    it(_'should FAIL - should anonymize patient names using initials',_() => {
       // RED: This test fails if name anonymization is incorrect
       const initials = calendarDataMinimizationService['getInitials']('João Silva Santos');
       expect(initials).toBe('J.S');
     });
 
-    it('should FAIL - should handle single name anonymization', () => {
+    it(_'should FAIL - should handle single name anonymization',_() => {
       // RED: This test fails if single name handling is incorrect
       const initials = calendarDataMinimizationService['getInitials']('Maria');
       expect(initials).toBe('M');
     });
 
-    it('should FAIL - should apply partial anonymization method', () => {
+    it(_'should FAIL - should apply partial anonymization method',_() => {
       // RED: This test fails if partial anonymization is incorrect
       const anonymized = calendarDataMinimizationService[
         'anonymizePatientName'
@@ -514,7 +514,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(anonymized).toMatch(/J\.\s+S\.\*\*\*/);
     });
 
-    it('should FAIL - should apply pseudonym anonymization method', () => {
+    it(_'should FAIL - should apply pseudonym anonymization method',_() => {
       // RED: This test fails if pseudonym anonymization is incorrect
       const anonymized = calendarDataMinimizationService[
         'anonymizePatientName'
@@ -524,8 +524,8 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
     });
   });
 
-  describe('Medical Information Sanitization', () => {
-    it('should FAIL - should sanitize sensitive medical terms', () => {
+  describe(_'Medical Information Sanitization',_() => {
+    it(_'should FAIL - should sanitize sensitive medical terms',_() => {
       // RED: This test fails if medical term sanitization is missing
       const sanitized = calendarDataMinimizationService['sanitizeMedicalInfo'](
         'Paciente com HIV e diagnóstico de depressão',
@@ -536,7 +536,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(sanitized).not.toContain('depressão');
     });
 
-    it('should FAIL - should preserve non-sensitive medical information', () => {
+    it(_'should FAIL - should preserve non-sensitive medical information',_() => {
       // RED: This test fails if non-sensitive info is incorrectly sanitized
       const sanitized = calendarDataMinimizationService['sanitizeMedicalInfo'](
         'Consulta de rotina, pressão arterial normal',
@@ -547,12 +547,12 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should FAIL - should handle errors gracefully with fallback data', async () => {
+  describe(_'Error Handling',_() => {
+    it(_'should FAIL - should handle errors gracefully with fallback data',_async () => {
       // RED: This test fails if error handling is not robust
       // Force an error by mocking the sensitivity assessment to throw
       const originalAssessSensitivity = calendarDataMinimizationService['assessDataSensitivity'];
-      calendarDataMinimizationService['assessDataSensitivity'] = vi.fn(() => {
+      calendarDataMinimizationService['assessDataSensitivity'] = vi.fn(_() => {
         throw new Error('Sensitivity assessment failed');
       });
 
@@ -573,7 +573,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       calendarDataMinimizationService['assessDataSensitivity'] = originalAssessSensitivity;
     });
 
-    it('should FAIL - should provide minimal fallback data', () => {
+    it(_'should FAIL - should provide minimal fallback data',_() => {
       // RED: This test fails if fallback data is not minimal
       const fallback = calendarDataMinimizationService['getMinimalFallback'](mockAppointment);
 
@@ -586,8 +586,8 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
     });
   });
 
-  describe('LGPD Compliance Validation', () => {
-    it('should FAIL - should generate appropriate legal basis descriptions', () => {
+  describe(_'LGPD Compliance Validation',_() => {
+    it(_'should FAIL - should generate appropriate legal basis descriptions',_() => {
       // RED: This test fails if legal basis determination is incorrect
       const fullConsentBasis = calendarDataMinimizationService['getLegalBasis'](
         DataMinimizationLevel.FULL,
@@ -608,7 +608,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(editBasis).toContain('Legítimo interesse');
     });
 
-    it('should FAIL - should determine shared data categories correctly', () => {
+    it(_'should FAIL - should determine shared data categories correctly',_() => {
       // RED: This test fails if data category determination is incorrect
       const config: DataMinimizationConfig = {
         level: DataMinimizationLevel.STANDARD,
@@ -629,7 +629,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       expect(categories).toContain(LGPDDataCategory.HEALTH_DATA);
     });
 
-    it('should FAIL - should apply proper retention periods', () => {
+    it(_'should FAIL - should apply proper retention periods',_() => {
       // RED: This test fails if retention period calculation is incorrect
       const cancelledRetention = calendarDataMinimizationService['calculateRetentionPeriod'](
         'cancelled',
@@ -648,8 +648,8 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
     });
   });
 
-  describe('Integration with Calendar Component', () => {
-    it('should FAIL - should provide types needed by calendar integration', () => {
+  describe(_'Integration with Calendar Component',_() => {
+    it(_'should FAIL - should provide types needed by calendar integration',_() => {
       // RED: This test fails if required types are missing
       const types = [
         'DataMinimizationConfig',
@@ -663,7 +663,7 @@ describe('CalendarDataMinimizationService - RED Phase Tests', () => {
       });
     });
 
-    it('should FAIL - should export service instance correctly', () => {
+    it(_'should FAIL - should export service instance correctly',_() => {
       // RED: This test fails if export is incorrect
       const exported = require('@/services/lgpd/data-minimization.service');
 

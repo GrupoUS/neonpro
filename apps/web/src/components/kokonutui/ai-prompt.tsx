@@ -231,7 +231,7 @@ export default function AI_Prompt() {
                         'bg-gradient-to-b from-white via-white to-neutral-100 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-800',
                       )}
                     >
-                      {AI_MODELS.map(model => (
+                      {AI_MODELS.map(_model => (
                         <DropdownMenuItem
                           key={model}
                           onSelect={() => setSelectedModel(model)}

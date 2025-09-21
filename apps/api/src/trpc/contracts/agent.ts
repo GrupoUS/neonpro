@@ -5,8 +5,6 @@
  * Following healthcare compliance standards (LGPD/ANVISA/CFM)
  */
 
-import { z } from 'zod';
-
 /**
  * Core Agent Types
  */
@@ -43,7 +41,7 @@ export type AgentMessageRole = z.infer<typeof AgentMessageRoleSchema>;
 
 export const CreateAgentMessageSchema = z.object({
   session_id: z.string().uuid(),
-  role: AgentMessageRoleSchema,
+  _role: AgentMessageRoleSchema,
   content: z.string(),
   metadata: z.record(z.unknown()).optional(),
   attachments: z
@@ -61,7 +59,7 @@ export const CreateAgentMessageSchema = z.object({
 export const AgentMessageResponseSchema = z.object({
   id: z.string().uuid(),
   session_id: z.string().uuid(),
-  role: AgentMessageRoleSchema,
+  _role: AgentMessageRoleSchema,
   content: z.string(),
   metadata: z.record(z.unknown()),
   attachments: z.array(
@@ -103,7 +101,7 @@ export const KnowledgeEntryResponseSchema = z.object({
 /**
  * Agent Analytics Schemas
  */
-export const AgentAnalyticsSchema = z.object({
+export const _AgentAnalyticsSchema = z.object({
   session_id: z.string().uuid(),
   user_id: z.string().uuid(),
   agent_type: AgentTypeSchema,
@@ -133,12 +131,12 @@ export const ListAgentMessagesSchema = z.object({
   session_id: z.string().uuid(),
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(100).default(50),
-  role: AgentMessageRoleSchema.optional(),
+  _role: AgentMessageRoleSchema.optional(),
 });
 
 export const SearchKnowledgeBaseSchema = z.object({
   agent_type: AgentTypeSchema,
-  query: z.string().min(1),
+  _query: z.string().min(1),
   limit: z.number().int().min(1).max(20).default(10),
   threshold: z.number().min(0).max(1).default(0.7),
 });
@@ -148,7 +146,7 @@ export const SearchKnowledgeBaseSchema = z.object({
  */
 export const RAGQuerySchema = z.object({
   session_id: z.string().uuid(),
-  query: z.string().min(1),
+  _query: z.string().min(1),
   context_filter: z
     .object({
       date_range: z
@@ -164,8 +162,8 @@ export const RAGQuerySchema = z.object({
   max_results: z.number().int().min(1).max(50).default(10),
 });
 
-export const RAGResponseSchema = z.object({
-  query: z.string(),
+export const _RAGResponseSchema = z.object({
+  _query: z.string(),
   results: z.array(
     z.object({
       id: z.string(),
@@ -175,7 +173,7 @@ export const RAGResponseSchema = z.object({
       metadata: z.record(z.unknown()),
     }),
   ),
-  context: z.string(),
+  _context: z.string(),
   response: z.string(),
   tokens_used: z.number().int().min(0),
   processing_time: z.number().min(0),
@@ -186,7 +184,7 @@ export const RAGResponseSchema = z.object({
  */
 export const AgentActionSchema = z.object({
   type: z.enum(['message', 'action', 'navigation', 'data_request']),
-  payload: z.record(z.unknown()),
+  _payload: z.record(z.unknown()),
   timestamp: z.date(),
 });
 
@@ -200,7 +198,7 @@ export const AgentEventSchema = z.object({
 /**
  * Response Wrappers
  */
-export const AgentSessionListResponseSchema = z.object({
+export const _AgentSessionListResponseSchema = z.object({
   success: z.literal(true),
   data: z.object({
     sessions: z.array(AgentSessionResponseSchema),
@@ -215,7 +213,7 @@ export const AgentSessionListResponseSchema = z.object({
   requestId: z.string().optional(),
 });
 
-export const AgentMessageListResponseSchema = z.object({
+export const _AgentMessageListResponseSchema = z.object({
   success: z.literal(true),
   data: z.object({
     messages: z.array(AgentMessageResponseSchema),
@@ -230,7 +228,7 @@ export const AgentMessageListResponseSchema = z.object({
   requestId: z.string().optional(),
 });
 
-export const KnowledgeBaseListResponseSchema = z.object({
+export const _KnowledgeBaseListResponseSchema = z.object({
   success: z.literal(true),
   data: z.object({
     entries: z.array(KnowledgeEntryResponseSchema),
@@ -248,7 +246,7 @@ export const KnowledgeBaseListResponseSchema = z.object({
 /**
  * Error Response Schema
  */
-export const AgentErrorResponseSchema = z.object({
+export const _AgentErrorResponseSchema = z.object({
   success: z.literal(false),
   error: z.object({
     code: z.string(),

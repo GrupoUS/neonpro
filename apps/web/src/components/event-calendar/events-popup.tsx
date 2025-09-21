@@ -24,7 +24,7 @@ export function EventsPopup({
   const popupRef = useRef<HTMLDivElement>(null);
 
   // Handle click outside to close popup
-  useEffect(() => {
+  useEffect(_() => {
     const handleClickOutside = (_event: any) => {
       if (
         popupRef.current
@@ -41,7 +41,7 @@ export function EventsPopup({
   }, [onClose]);
 
   // Handle escape key to close popup
-  useEffect(() => {
+  useEffect(_() => {
     const handleEscKey = (_event: any) => {
       if (event.key === 'Escape') {
         onClose();
@@ -60,7 +60,7 @@ export function EventsPopup({
   };
 
   // Adjust position to ensure popup stays within viewport
-  const adjustedPosition = useMemo(() => {
+  const adjustedPosition = useMemo(_() => {
     const positionCopy = { ...position };
 
     // Check if we need to adjust the position to fit in the viewport
@@ -113,8 +113,7 @@ export function EventsPopup({
               const isFirstDay = isSameDay(date, eventStart);
               const isLastDay = isSameDay(date, eventEnd);
 
-              return (
-                <div
+              return (_<div
                   key={event.id}
                   className='cursor-pointer'
                   onClick={() => handleEventClick(event)}

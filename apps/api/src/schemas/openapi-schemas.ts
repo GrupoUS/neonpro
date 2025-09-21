@@ -25,7 +25,7 @@ export const ErrorResponseSchema = z
   })
   .openapi('ErrorResponse');
 
-export const HealthResponseSchema = z
+export const _HealthResponseSchema = z
   .object({
     status: z.literal('ok').openapi({
       description: 'Health status indicator',
@@ -34,7 +34,7 @@ export const HealthResponseSchema = z
   })
   .openapi('HealthResponse');
 
-export const DetailedHealthResponseSchema = z
+export const _DetailedHealthResponseSchema = z
   .object({
     status: z.literal('healthy').openapi({
       description: 'Detailed health status',
@@ -66,7 +66,7 @@ export const DetailedHealthResponseSchema = z
   })
   .openapi('DetailedHealthResponse');
 
-export const ApiInfoResponseSchema = z
+export const _ApiInfoResponseSchema = z
   .object({
     name: z.string().openapi({
       description: 'API service name',
@@ -199,7 +199,7 @@ export const AppointmentSchema = z
   .openapi('Appointment');
 
 // Request parameter schemas
-export const ClientIdParamSchema = z
+export const _ClientIdParamSchema = z
   .object({
     clientId: z
       .string()
@@ -217,7 +217,7 @@ export const ClientIdParamSchema = z
   .openapi('ClientIdParam');
 
 // Response collections
-export const ClientsListResponseSchema = z
+export const _ClientsListResponseSchema = z
   .object({
     items: z.array(ClientSchema).openapi({
       description: 'List of clients with LGPD consent (max 10 items)',
@@ -226,7 +226,7 @@ export const ClientsListResponseSchema = z
   })
   .openapi('ClientsListResponse');
 
-export const ClientDetailResponseSchema = z
+export const _ClientDetailResponseSchema = z
   .object({
     client: ClientSchema.openapi({
       description: 'Client details (requires LGPD consent)',
@@ -234,7 +234,7 @@ export const ClientDetailResponseSchema = z
   })
   .openapi('ClientDetailResponse');
 
-export const AppointmentsListResponseSchema = z
+export const _AppointmentsListResponseSchema = z
   .object({
     items: z.array(AppointmentSchema).openapi({
       description: 'List of appointments (max 10 items, LGPD consent validated)',
@@ -243,7 +243,7 @@ export const AppointmentsListResponseSchema = z
   })
   .openapi('AppointmentsListResponse');
 
-export const AuthStatusResponseSchema = z
+export const _AuthStatusResponseSchema = z
   .object({
     feature: z.literal('auth').openapi({
       description: 'Feature identifier',
@@ -257,7 +257,7 @@ export const AuthStatusResponseSchema = z
   .openapi('AuthStatusResponse');
 
 // Common response status codes for healthcare API
-export const CommonResponses = {
+export const _CommonResponses = {
   400: {
     description: 'Bad Request - Invalid request parameters',
     content: {

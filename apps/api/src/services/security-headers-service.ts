@@ -201,10 +201,10 @@ export class SecurityHeadersService {
    * Generate security headers based on healthcare context
    */
   generateSecurityHeaders(
-    context: HealthcareSecurityContext,
+    _context: HealthcareSecurityContext,
   ): SecurityHeadersResult {
     try {
-      const config = this.selectConfig(context);
+      const config = this.selectConfig(_context);
       const headers: Record<string, string> = {};
       const appliedHeaders: string[] = [];
       const missingHeaders: string[] = [];
@@ -291,7 +291,7 @@ export class SecurityHeadersService {
       );
 
       // Generate context-specific recommendations
-      const contextRecommendations = this.generateContextRecommendations(context);
+      const contextRecommendations = this.generateContextRecommendations(_context);
       recommendations.push(...contextRecommendations);
 
       return {
@@ -303,7 +303,7 @@ export class SecurityHeadersService {
         missingHeaders,
         warnings,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error generating security headers:', error);
       return {
         headers: {},
@@ -320,7 +320,7 @@ export class SecurityHeadersService {
    * Select appropriate security configuration based on context
    */
   private selectConfig(
-    context: HealthcareSecurityContext,
+    _context: HealthcareSecurityContext,
   ): SecurityHeaderConfig {
     if (context.sensitivityLevel === 'critical' || context.handlesMedicalData) {
       return this.configs.medical_data;
@@ -434,7 +434,7 @@ export class SecurityHeadersService {
   private calculateSecurityScore(
     appliedHeaders: string[],
     missingHeaders: string[],
-    context: HealthcareSecurityContext,
+    _context: HealthcareSecurityContext,
   ): number {
     let score = 100;
 
@@ -478,7 +478,7 @@ export class SecurityHeadersService {
    * Generate context-specific security recommendations
    */
   private generateContextRecommendations(
-    context: HealthcareSecurityContext,
+    _context: HealthcareSecurityContext,
   ): string[] {
     const recommendations: string[] = [];
 
@@ -521,7 +521,7 @@ export class SecurityHeadersService {
         referrer: string;
       };
     },
-    request: {
+    _request: {
       headers: Record<string, string>;
       ip: string;
     },
@@ -552,7 +552,7 @@ export class SecurityHeadersService {
       if (this.isHighRiskViolation(violation)) {
         await this.triggerSecurityAlert(violation);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error handling CSP violation:', error);
     }
   }
@@ -602,7 +602,7 @@ export class SecurityHeadersService {
     topBlockedUris: Array<{ uri: string; count: number }>;
     riskLevel: 'low' | 'medium' | 'high';
   } {
-    const now = new Date();
+    const _now = new Date();
     const yesterday = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
     const violationsLast24h = this.cspReports.filter(
@@ -616,9 +616,9 @@ export class SecurityHeadersService {
     });
 
     const topViolatedDirectives = Object.entries(directiveCounts)
-      .sort(([, a], [, b]) => b - a)
+      .sort(_([,_a],_[,_b]) => b - a)
       .slice(0, 5)
-      .map(([directive, count]) => ({ directive, count }));
+      .map(_([directive,_count]) => ({ directive, count }));
 
     // Count blocked URIs
     const uriCounts: Record<string, number> = {};
@@ -627,9 +627,9 @@ export class SecurityHeadersService {
     });
 
     const topBlockedUris = Object.entries(uriCounts)
-      .sort(([, a], [, b]) => b - a)
+      .sort(_([,_a],_[,_b]) => b - a)
       .slice(0, 5)
-      .map(([uri, count]) => ({ uri, count }));
+      .map(_([uri,_count]) => ({ uri, count }));
 
     // Determine risk level
     let riskLevel: 'low' | 'medium' | 'high' = 'low';
@@ -722,7 +722,7 @@ export class SecurityHeadersService {
     return async (c: any, next: any) => {
       try {
         // Extract healthcare context from request
-        const context: HealthcareSecurityContext = {
+        const _context: HealthcareSecurityContext = {
           isHealthcareEndpoint: this.isHealthcareEndpoint(c.req.url),
           handlesMedicalData: this.handlesMedicalData(c.req.url),
           requiresPatientAuth: this.requiresPatientAuth(c.req.url),
@@ -736,10 +736,10 @@ export class SecurityHeadersService {
         };
 
         // Generate security headers
-        const securityResult = this.generateSecurityHeaders(context);
+        const securityResult = this.generateSecurityHeaders(_context);
 
         // Apply headers to response
-        Object.entries(securityResult.headers).forEach(([key, value]) => {
+        Object.entries(securityResult.headers).forEach(_([key,_value]) => {
           c.header(key, value);
         });
 
@@ -747,7 +747,7 @@ export class SecurityHeadersService {
         c.header('X-Security-Score', securityResult.securityScore.toString());
 
         await next();
-      } catch (error) {
+      } catch (_error) {
         console.error('Error in security headers middleware:', error);
         // Don't block requests on security header errors
         await next();

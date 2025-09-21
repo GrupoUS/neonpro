@@ -6,8 +6,6 @@
  * Based on 002-platform-architecture-improvements data-model.md specification
  */
 
-import { z } from "zod";
-
 // ============================================================================
 // Core Security Policy Types
 // ============================================================================
@@ -603,7 +601,7 @@ export interface AuditPolicy {
     // Log data requirements
     logData: {
       timestamp: boolean;
-      userId: boolean;
+      _userId: boolean;
       sessionId: boolean;
       ipAddress: boolean;
       userAgent: boolean;
@@ -935,7 +933,7 @@ export const HealthcareCompliancePolicySchema = z.object({
 });
 
 // Password Policy Schema
-export const PasswordPolicySchema = z.object({
+export const _PasswordPolicySchema = z.object({
   minLength: z.number().min(8).max(128),
   maxLength: z.number().min(8).max(256),
   requireUppercase: z.boolean(),

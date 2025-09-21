@@ -13,10 +13,10 @@ import type {
   ComplianceFramework,
 } from "../types";
 
-describe("Compliance Validators", () => {
-  describe("LGPDValidator", () => {
-    describe("requiresConsent", () => {
-      it("should require consent for data operations", () => {
+describe(_"Compliance Validators",_() => {
+  describe(_"LGPDValidator",_() => {
+    describe(_"requiresConsent",_() => {
+      it(_"should require consent for data operations",_() => {
         expect(LGPDValidator.requiresConsent("READ")).toBe(true);
         expect(LGPDValidator.requiresConsent("CREATE")).toBe(true);
         expect(LGPDValidator.requiresConsent("UPDATE")).toBe(true);
@@ -26,15 +26,15 @@ describe("Compliance Validators", () => {
         expect(LGPDValidator.requiresConsent("DIAGNOSE")).toBe(true);
       });
 
-      it("should not require consent for non-data operations", () => {
+      it(_"should not require consent for non-data operations",_() => {
         expect(LGPDValidator.requiresConsent("LOGIN")).toBe(false);
         expect(LGPDValidator.requiresConsent("LOGOUT")).toBe(false);
         expect(LGPDValidator.requiresConsent("BACKUP")).toBe(false);
       });
     });
 
-    describe("validateConsent", () => {
-      it("should return violation when no consent provided", () => {
+    describe(_"validateConsent",_() => {
+      it(_"should return violation when no consent provided",_() => {
         const violations = LGPDValidator.validateConsent();
         expect(violations).toHaveLength(1);
         expect(violations[0].framework).toBe("LGPD");
@@ -44,7 +44,7 @@ describe("Compliance Validators", () => {
         );
       });
 
-      it("should return violation for inactive consent", () => {
+      it(_"should return violation for inactive consent",_() => {
         const consentRef: ConsentReference = {
           id: "consent-123",
           type: "data_processing",
@@ -61,7 +61,7 @@ describe("Compliance Validators", () => {
         );
       });
 
-      it("should return violation for expired consent", () => {
+      it(_"should return violation for expired consent",_() => {
         const consentRef: ConsentReference = {
           id: "consent-123",
           type: "data_processing",
@@ -77,7 +77,7 @@ describe("Compliance Validators", () => {
         expect(violations[0].description).toContain("Consent has expired");
       });
 
-      it("should return no violations for valid consent", () => {
+      it(_"should return no violations for valid consent",_() => {
         const consentRef: ConsentReference = {
           id: "consent-123",
           type: "data_processing",
@@ -92,8 +92,8 @@ describe("Compliance Validators", () => {
       });
     });
 
-    describe("assessRisk", () => {
-      it("should assess CRITICAL risk for DELETE actions", () => {
+    describe(_"assessRisk",_() => {
+      it(_"should assess CRITICAL risk for DELETE actions",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "DELETE",
@@ -109,7 +109,7 @@ describe("Compliance Validators", () => {
         expect(LGPDValidator.assessRisk(auditEvent)).toBe("CRITICAL");
       });
 
-      it("should assess HIGH risk for medical actions", () => {
+      it(_"should assess HIGH risk for medical actions",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "PRESCRIBE",
@@ -125,7 +125,7 @@ describe("Compliance Validators", () => {
         expect(LGPDValidator.assessRisk(auditEvent)).toBe("HIGH");
       });
 
-      it("should assess HIGH risk for system actors", () => {
+      it(_"should assess HIGH risk for system actors",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "READ",
@@ -141,7 +141,7 @@ describe("Compliance Validators", () => {
         expect(LGPDValidator.assessRisk(auditEvent)).toBe("HIGH");
       });
 
-      it("should assess MEDIUM risk for admin actors", () => {
+      it(_"should assess MEDIUM risk for admin actors",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "READ",
@@ -157,7 +157,7 @@ describe("Compliance Validators", () => {
         expect(LGPDValidator.assessRisk(auditEvent)).toBe("MEDIUM");
       });
 
-      it("should assess LOW risk for normal patient actions", () => {
+      it(_"should assess LOW risk for normal patient actions",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "READ",
@@ -175,23 +175,23 @@ describe("Compliance Validators", () => {
     });
   });
 
-  describe("ANVISAValidator", () => {
-    describe("requiresTracking", () => {
-      it("should require tracking for medical actions", () => {
+  describe(_"ANVISAValidator",_() => {
+    describe(_"requiresTracking",_() => {
+      it(_"should require tracking for medical actions",_() => {
         expect(ANVISAValidator.requiresTracking("PRESCRIBE")).toBe(true);
         expect(ANVISAValidator.requiresTracking("DIAGNOSE")).toBe(true);
         expect(ANVISAValidator.requiresTracking("MODIFY")).toBe(true);
         expect(ANVISAValidator.requiresTracking("DELETE")).toBe(true);
       });
 
-      it("should not require tracking for non-medical actions", () => {
+      it(_"should not require tracking for non-medical actions",_() => {
         expect(ANVISAValidator.requiresTracking("READ")).toBe(false);
         expect(ANVISAValidator.requiresTracking("LOGIN")).toBe(false);
       });
     });
 
-    describe("validateMedicalAction", () => {
-      it("should return violation for unauthorized medical action", () => {
+    describe(_"validateMedicalAction",_() => {
+      it(_"should return violation for unauthorized medical action",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "PRESCRIBE",
@@ -213,7 +213,7 @@ describe("Compliance Validators", () => {
         );
       });
 
-      it("should return violation for incomplete identification", () => {
+      it(_"should return violation for incomplete identification",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "PRESCRIBE",
@@ -234,7 +234,7 @@ describe("Compliance Validators", () => {
         );
       });
 
-      it("should return no violations for valid medical action", () => {
+      it(_"should return no violations for valid medical action",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "PRESCRIBE",
@@ -258,9 +258,9 @@ describe("Compliance Validators", () => {
     });
   });
 
-  describe("CFMValidator", () => {
-    describe("validateTelemedicine", () => {
-      it("should return violation for unauthorized telemedicine diagnosis", () => {
+  describe(_"CFMValidator",_() => {
+    describe(_"validateTelemedicine",_() => {
+      it(_"should return violation for unauthorized telemedicine diagnosis",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "DIAGNOSE",
@@ -282,7 +282,7 @@ describe("Compliance Validators", () => {
         );
       });
 
-      it("should return violation for telemedicine without consent", () => {
+      it(_"should return violation for telemedicine without consent",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "DIAGNOSE",
@@ -304,7 +304,7 @@ describe("Compliance Validators", () => {
         );
       });
 
-      it("should return no violations for valid telemedicine", () => {
+      it(_"should return no violations for valid telemedicine",_() => {
         const consentRef: ConsentReference = {
           id: "consent-tele",
           type: "telemedicine",
@@ -332,8 +332,8 @@ describe("Compliance Validators", () => {
       });
     });
 
-    describe("validatePrescription", () => {
-      it("should return violation for prescription by non-doctor", () => {
+    describe(_"validatePrescription",_() => {
+      it(_"should return violation for prescription by non-doctor",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "PRESCRIBE",
@@ -354,7 +354,7 @@ describe("Compliance Validators", () => {
         );
       });
 
-      it("should return violation for incomplete prescription documentation", () => {
+      it(_"should return violation for incomplete prescription documentation",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "PRESCRIBE",
@@ -376,7 +376,7 @@ describe("Compliance Validators", () => {
         );
       });
 
-      it("should return no violations for valid prescription", () => {
+      it(_"should return no violations for valid prescription",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "PRESCRIBE",
@@ -399,9 +399,9 @@ describe("Compliance Validators", () => {
     });
   });
 
-  describe("ComplianceValidator", () => {
-    describe("validateEvent", () => {
-      it("should validate event against LGPD framework", () => {
+  describe(_"ComplianceValidator",_() => {
+    describe(_"validateEvent",_() => {
+      it(_"should validate event against LGPD framework",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "READ",
@@ -423,7 +423,7 @@ describe("Compliance Validators", () => {
         expect(result.riskLevel).toBeDefined();
       });
 
-      it("should validate event against multiple frameworks", () => {
+      it(_"should validate event against multiple frameworks",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-1",
           action: "PRESCRIBE",
@@ -442,13 +442,13 @@ describe("Compliance Validators", () => {
         expect(result.violations.length).toBeGreaterThan(1);
 
         // Should have violations from multiple frameworks
-        const frameworks = result.violations.map((v) => v.framework);
+        const frameworks = result.violations.map(_(v) => v.framework);
         expect(frameworks).toContain("LGPD");
         expect(frameworks).toContain("ANVISA");
         expect(frameworks).toContain("CFM");
       });
 
-      it("should return compliant status for valid event", () => {
+      it(_"should return compliant status for valid event",_() => {
         const consentRef: ConsentReference = {
           id: "consent-valid",
           type: "data_processing",
@@ -476,7 +476,7 @@ describe("Compliance Validators", () => {
         expect(result.violations).toHaveLength(0);
       });
 
-      it("should add audit event ID to violations", () => {
+      it(_"should add audit event ID to violations",_() => {
         const auditEvent: GenericAuditEvent = {
           id: "audit-specific-id",
           action: "READ",
@@ -492,14 +492,14 @@ describe("Compliance Validators", () => {
         const result = ComplianceValidator.validateEvent(auditEvent);
 
         expect(result.violations.length).toBeGreaterThan(0);
-        result.violations.forEach((violation) => {
+        result.violations.forEach(_(violation) => {
           expect(violation.auditEventId).toBe("audit-specific-id");
         });
       });
     });
 
-    describe("requiresConsent", () => {
-      it("should require consent for LGPD framework", () => {
+    describe(_"requiresConsent",_() => {
+      it(_"should require consent for LGPD framework",_() => {
         expect(ComplianceValidator.requiresConsent("READ", ["LGPD"])).toBe(
           true,
         );
@@ -508,7 +508,7 @@ describe("Compliance Validators", () => {
         );
       });
 
-      it("should require consent for GDPR framework", () => {
+      it(_"should require consent for GDPR framework",_() => {
         expect(ComplianceValidator.requiresConsent("READ", ["GDPR"])).toBe(
           true,
         );
@@ -517,7 +517,7 @@ describe("Compliance Validators", () => {
         );
       });
 
-      it("should not require consent for other frameworks", () => {
+      it(_"should not require consent for other frameworks",_() => {
         expect(ComplianceValidator.requiresConsent("READ", ["ANVISA"])).toBe(
           false,
         );
@@ -526,7 +526,7 @@ describe("Compliance Validators", () => {
         );
       });
 
-      it("should require consent if any framework requires it", () => {
+      it(_"should require consent if any framework requires it",_() => {
         expect(
           ComplianceValidator.requiresConsent("READ", ["LGPD", "ANVISA"]),
         ).toBe(true);

@@ -15,20 +15,10 @@ const Card = React.forwardRef<
     shineColor?: string | string[];
     borderWidth?: number;
   }
->(
-  (
+>(_(
     {
-      className,
-      magic = false,
-      disableShine = false,
-      enableShineBorder,
-      shineDuration = 8,
-      shineColor = "#AC9469",
-      borderWidth = 1,
-      children,
-      ...props
-    },
-    ref,
+      className,_magic = false,_disableShine = false,_enableShineBorder,_shineDuration = 8,_shineColor = "#AC9469",_borderWidth = 1,_children,_...props
+    },_ref,
   ) => {
     const __show = enableShineBorder ?? (magic || !disableShine);
     if (__show) {
@@ -91,7 +81,7 @@ Card.displayName = "Card";
 const CardHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(_({ className,_...props },_ref) => (
   <div
     ref={ref}
     className={cn("flex flex-col space-y-1.5 p-6", className)}
@@ -103,7 +93,7 @@ CardHeader.displayName = "CardHeader";
 const CardTitle = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(_({ className,_...props },_ref) => (
   <div
     ref={ref}
     className={cn("font-semibold leading-none tracking-tight", className)}
@@ -115,7 +105,7 @@ CardTitle.displayName = "CardTitle";
 const CardDescription = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(_({ className,_...props },_ref) => (
   <div
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}
@@ -127,7 +117,7 @@ CardDescription.displayName = "CardDescription";
 const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(_({ className,_...props },_ref) => (
   <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
 ));
 CardContent.displayName = "CardContent";
@@ -135,7 +125,7 @@ CardContent.displayName = "CardContent";
 const CardFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
+>(_({ className,_...props },_ref) => (
   <div
     ref={ref}
     className={cn("flex items-center p-6 pt-0", className)}

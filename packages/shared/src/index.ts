@@ -3,7 +3,7 @@
 // ============================================================================
 
 // Core library
-export const shared = { version: "1.0.0" };
+export const _shared = { version: "1.0.0" };
 
 // Telemetry and observability models
 // Export only types to avoid function name collisions; alias helper if needed

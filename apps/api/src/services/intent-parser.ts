@@ -83,12 +83,12 @@ export class IntentParserService {
   /**
    * Parse natural language query to extract intent and parameters
    */
-  parseQuery(query: string, userRole: UserRole): {
+  parseQuery(_query: string, userRole: UserRole): {
     intent: QueryIntent;
     parameters: QueryParameters;
     confidence: number;
   } {
-    const normalizedQuery = this.normalizeQuery(query);
+    const normalizedQuery = this.normalizeQuery(_query);
 
     // Determine primary intent
     const intent = this.extractIntent(normalizedQuery);
@@ -107,7 +107,7 @@ export class IntentParserService {
   /**
    * Normalize query text for better matching
    */
-  private normalizeQuery(query: string): string {
+  private normalizeQuery(_query: string): string {
     return query
       .toLowerCase()
       .trim()
@@ -146,8 +146,8 @@ export class IntentParserService {
     }
 
     const bestIntents = Object.entries(intentScores)
-      .filter(([_, score]) => score === maxScore)
-      .map(([intent]) => intent as QueryIntent);
+      .filter(_([_,_score]) => score === maxScore)
+      .map(_([intent]) => intent as QueryIntent);
 
     // If tie, prioritize based on query content
     if (bestIntents.length > 1) {
@@ -160,7 +160,7 @@ export class IntentParserService {
   /**
    * Resolve ties between multiple matching intents
    */
-  private resolveIntentTie(query: string, intents: QueryIntent[]): QueryIntent {
+  private resolveIntentTie(_query: string, intents: QueryIntent[]): QueryIntent {
     // Priority order for tie-breaking
     const priorityOrder: QueryIntent[] = [
       'financial',
@@ -181,7 +181,7 @@ export class IntentParserService {
   /**
    * Calculate confidence score for intent detection
    */
-  private calculateConfidence(query: string, intent: QueryIntent): number {
+  private calculateConfidence(_query: string, intent: QueryIntent): number {
     if (intent === 'unknown') {
       return 0.3;
     }
@@ -190,7 +190,7 @@ export class IntentParserService {
     let matchCount = 0;
 
     for (const pattern of patterns) {
-      if (pattern.test(query)) {
+      if (pattern.test(_query)) {
         matchCount++;
       }
     }
@@ -200,7 +200,7 @@ export class IntentParserService {
 
     // Adjust based on query length and specificity
     const queryLengthBonus = Math.min(query.length / 50, 0.2);
-    const specificityBonus = this.calculateSpecificityBonus(query);
+    const specificityBonus = this.calculateSpecificityBonus(_query);
 
     return Math.min(baseConfidence + queryLengthBonus + specificityBonus, 1.0);
   }
@@ -208,18 +208,18 @@ export class IntentParserService {
   /**
    * Calculate bonus based on query specificity
    */
-  private calculateSpecificityBonus(query: string): number {
+  private calculateSpecificityBonus(_query: string): number {
     let bonus = 0;
 
     // Bonus for specific names
-    if (this.CLIENT_NAME_PATTERNS.some(pattern => pattern.test(query))) {
+    if (this.CLIENT_NAME_PATTERNS.some(pattern => pattern.test(_query))) {
       bonus += 0.2;
     }
 
     // Bonus for dates
     if (
       Object.values(this.DATE_PATTERNS).some(patterns =>
-        patterns.some(pattern => pattern.test(query))
+        patterns.some(pattern => pattern.test(_query))
       )
     ) {
       bonus += 0.2;
@@ -228,7 +228,7 @@ export class IntentParserService {
     // Bonus for financial type specification
     if (
       Object.values(this.FINANCIAL_TYPE_PATTERNS).some(patterns =>
-        patterns.some(pattern => pattern.test(query))
+        patterns.some(pattern => pattern.test(_query))
       )
     ) {
       bonus += 0.1;
@@ -241,7 +241,7 @@ export class IntentParserService {
    * Extract parameters based on intent and query content
    */
   private extractParameters(
-    query: string,
+    _query: string,
     intent: QueryIntent,
     userRole: UserRole,
   ): QueryParameters {
@@ -251,15 +251,15 @@ export class IntentParserService {
 
     switch (intent) {
       case 'client_data':
-        parameters.clientNames = this.extractClientNames(query);
+        parameters.clientNames = this.extractClientNames(_query);
         break;
 
       case 'appointments':
-        parameters.dateRanges = this.extractDateRanges(query);
+        parameters.dateRanges = this.extractDateRanges(_query);
         break;
 
       case 'financial':
-        parameters.financial = this.extractFinancialParameters(query);
+        parameters.financial = this.extractFinancialParameters(_query);
         break;
     }
 
@@ -269,7 +269,7 @@ export class IntentParserService {
   /**
    * Extract client names from query
    */
-  private extractClientNames(query: string): string[] {
+  private extractClientNames(_query: string): string[] {
     const names: string[] = [];
 
     for (const pattern of this.CLIENT_NAME_PATTERNS) {
@@ -290,12 +290,12 @@ export class IntentParserService {
   /**
    * Extract date ranges from query
    */
-  private extractDateRanges(query: string): DateRange[] {
+  private extractDateRanges(_query: string): DateRange[] {
     const ranges: DateRange[] = [];
-    const now = new Date();
+    const _now = new Date();
 
     // Check for relative date patterns
-    if (this.DATE_PATTERNS.today.some(pattern => pattern.test(query))) {
+    if (this.DATE_PATTERNS.today.some(pattern => pattern.test(_query))) {
       const today = new Date(now);
       today.setHours(0, 0, 0, 0);
       const tomorrow = new Date(today);
@@ -304,7 +304,7 @@ export class IntentParserService {
       ranges.push({ start: today, end: tomorrow });
     }
 
-    if (this.DATE_PATTERNS.tomorrow.some(pattern => pattern.test(query))) {
+    if (this.DATE_PATTERNS.tomorrow.some(pattern => pattern.test(_query))) {
       const tomorrow = new Date(now);
       tomorrow.setDate(tomorrow.getDate() + 1);
       tomorrow.setHours(0, 0, 0, 0);
@@ -314,7 +314,7 @@ export class IntentParserService {
       ranges.push({ start: tomorrow, end: dayAfter });
     }
 
-    if (this.DATE_PATTERNS.this_week.some(pattern => pattern.test(query))) {
+    if (this.DATE_PATTERNS.this_week.some(pattern => pattern.test(_query))) {
       const weekStart = new Date(now);
       weekStart.setDate(now.getDate() - now.getDay());
       weekStart.setHours(0, 0, 0, 0);
@@ -324,7 +324,7 @@ export class IntentParserService {
       ranges.push({ start: weekStart, end: weekEnd });
     }
 
-    if (this.DATE_PATTERNS.this_month.some(pattern => pattern.test(query))) {
+    if (this.DATE_PATTERNS.this_month.some(pattern => pattern.test(_query))) {
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
       const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
       monthEnd.setHours(23, 59, 59, 999);
@@ -333,7 +333,7 @@ export class IntentParserService {
     }
 
     // Extract specific dates
-    const specificDates = this.extractSpecificDates(query);
+    const specificDates = this.extractSpecificDates(_query);
     if (specificDates.length > 0) {
       if (specificDates.length === 1) {
         // Single date - create a day range
@@ -345,7 +345,7 @@ export class IntentParserService {
         ranges.push({ start, end });
       } else {
         // Multiple dates - create range from first to last
-        const sorted = specificDates.sort((a, b) => a.getTime() - b.getTime());
+        const sorted = specificDates.sort(_(a,_b) => a.getTime() - b.getTime());
         ranges.push({
           start: sorted[0],
           end: sorted[sorted.length - 1],
@@ -359,7 +359,7 @@ export class IntentParserService {
   /**
    * Extract specific dates from query
    */
-  private extractSpecificDates(query: string): Date[] {
+  private extractSpecificDates(_query: string): Date[] {
     const dates: Date[] = [];
 
     // DD/MM/YYYY pattern
@@ -380,7 +380,7 @@ export class IntentParserService {
   /**
    * Extract financial parameters from query
    */
-  private extractFinancialParameters(query: string): QueryParameters['financial'] {
+  private extractFinancialParameters(_query: string): QueryParameters['financial'] {
     const financial: QueryParameters['financial'] = {
       type: 'all',
       period: 'month',
@@ -388,18 +388,18 @@ export class IntentParserService {
 
     // Extract financial type
     for (const [type, patterns] of Object.entries(this.FINANCIAL_TYPE_PATTERNS)) {
-      if (patterns.some(pattern => pattern.test(query))) {
+      if (patterns.some(pattern => pattern.test(_query))) {
         financial.type = type as 'revenue' | 'payments' | 'expenses';
         break;
       }
     }
 
     // Extract period
-    if (this.DATE_PATTERNS.today.some(pattern => pattern.test(query))) {
+    if (this.DATE_PATTERNS.today.some(pattern => pattern.test(_query))) {
       financial.period = 'today';
-    } else if (this.DATE_PATTERNS.this_week.some(pattern => pattern.test(query))) {
+    } else if (this.DATE_PATTERNS.this_week.some(pattern => pattern.test(_query))) {
       financial.period = 'week';
-    } else if (this.DATE_PATTERNS.this_month.some(pattern => pattern.test(query))) {
+    } else if (this.DATE_PATTERNS.this_month.some(pattern => pattern.test(_query))) {
       financial.period = 'month';
     } else if (query.includes('ano') || query.includes('year')) {
       financial.period = 'year';

@@ -45,7 +45,7 @@ export interface MetricsCollectionOptions {
   dataClassification: LGPDDataClassification;
   healthcareContext?: Partial<HealthcareContext>;
   sessionId?: string;
-  userId?: string;
+  _userId?: string;
 }
 
 export interface PerformanceAlert {
@@ -110,7 +110,7 @@ export class PerformanceMetricsService {
       console.log(
         '[PerformanceMetrics] Service initialized with healthcare compliance',
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('[PerformanceMetrics] Failed to initialize:', error);
     }
   }
@@ -287,8 +287,8 @@ export class PerformanceMetricsService {
         observer.observe({ entryTypes: ['longtask'] });
 
         // Simplified TTI estimation
-        window.addEventListener('load', () => {
-          setTimeout(() => {
+        window.addEventListener(_'load',_() => {
+          setTimeout(_() => {
             const navigationEntry = performance.getEntriesByType(
               'navigation',
             )[0] as PerformanceNavigationTiming;
@@ -349,7 +349,7 @@ export class PerformanceMetricsService {
           entry.name.includes('/patients/')
           || entry.name.includes('/patient-data/'),
       )
-      .sort((a, b) => b.startTime - a.startTime);
+      .sort(_(a,_b) => b.startTime - a.startTime);
 
     return entries.length > 0 ? entries[0].duration : 0;
   }
@@ -381,8 +381,7 @@ export class PerformanceMetricsService {
 
     if (appointmentEntries.length === 0) return 0;
 
-    const latestEntry = appointmentEntries.sort(
-      (a, b) => b.startTime - a.startTime,
+    const latestEntry = appointmentEntries.sort(_(a,_b) => b.startTime - a.startTime,
     )[0];
     return latestEntry.duration;
   }
@@ -400,7 +399,7 @@ export class PerformanceMetricsService {
 
     if (aiEntries.length === 0) return undefined;
 
-    const latestEntry = aiEntries.sort((a, b) => b.startTime - a.startTime)[0];
+    const latestEntry = aiEntries.sort(_(a,_b) => b.startTime - a.startTime)[0];
     return latestEntry.duration;
   }
 
@@ -423,8 +422,7 @@ export class PerformanceMetricsService {
 
     if (emergencyEntries.length === 0) return undefined;
 
-    const latestEntry = emergencyEntries.sort(
-      (a, b) => b.startTime - a.startTime,
+    const latestEntry = emergencyEntries.sort(_(a,_b) => b.startTime - a.startTime,
     )[0];
     return latestEntry.duration;
   }
@@ -440,8 +438,7 @@ export class PerformanceMetricsService {
 
     if (prescriptionEntries.length === 0) return undefined;
 
-    const latestEntry = prescriptionEntries.sort(
-      (a, b) => b.startTime - a.startTime,
+    const latestEntry = prescriptionEntries.sort(_(a,_b) => b.startTime - a.startTime,
     )[0];
     return latestEntry.duration;
   }
@@ -455,8 +452,7 @@ export class PerformanceMetricsService {
 
     if (auditEntries.length === 0) return undefined;
 
-    const latestEntry = auditEntries.sort(
-      (a, b) => b.startTime - a.startTime,
+    const latestEntry = auditEntries.sort(_(a,_b) => b.startTime - a.startTime,
     )[0];
     return latestEntry.duration;
   }
@@ -505,7 +501,7 @@ export class PerformanceMetricsService {
         entry => entry.name.endsWith('.js') || entry.name.endsWith('.css'),
       );
 
-    const totalSize = scriptEntries.reduce((sum, entry) => {
+    const totalSize = scriptEntries.reduce(_(sum,_entry) => {
       return sum + (entry.transferSize || 0);
     }, 0);
 
@@ -525,7 +521,7 @@ export class PerformanceMetricsService {
 
     if (dbEntries.length === 0) return undefined;
 
-    const avgQueryTime = dbEntries.reduce((sum, entry) => sum + entry.duration, 0)
+    const avgQueryTime = dbEntries.reduce(_(sum,_entry) => sum + entry.duration, 0)
       / dbEntries.length;
     return avgQueryTime;
   }
@@ -607,7 +603,7 @@ export class PerformanceMetricsService {
       id: crypto.randomUUID(),
       timestamp: new Date().toISOString(),
       sessionId: options.sessionId || this.sessionId,
-      userId: options.userId,
+      _userId: options.userId,
       webVitals: options.includeWebVitals
         ? this.collectWebVitals()
         : this.getDefaultWebVitals(),
@@ -696,7 +692,7 @@ export class PerformanceMetricsService {
 
   private checkEmergencyThresholds(
     metrics: HealthcareMetrics,
-    context?: Partial<HealthcareContext>,
+    _context?: Partial<HealthcareContext>,
   ): void {
     const alerts: PerformanceAlert[] = [];
 
@@ -759,7 +755,7 @@ export class PerformanceMetricsService {
         },
         body: JSON.stringify(alert),
       });
-    } catch (error) {
+    } catch (_error) {
       console.error(
         '[PerformanceMetrics] Failed to send critical alert:',
         error,
@@ -822,7 +818,7 @@ export class PerformanceMetricsService {
       console.log(
         `[PerformanceMetrics] Reported ${batch.length} metrics successfully`,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('[PerformanceMetrics] Failed to report metrics:', error);
       // Re-queue failed metrics
       this.metricsQueue.unshift(...batch);
@@ -830,7 +826,7 @@ export class PerformanceMetricsService {
   }
 
   private setupReportingInterval(): void {
-    setInterval(() => {
+    setInterval(_() => {
       if (this.metricsQueue.length > 0) {
         this.reportMetrics();
       }
@@ -921,7 +917,7 @@ export class PerformanceMetricsService {
   private setupPerformanceObserver(): void {
     // Additional performance observations can be set up here
     if ('PerformanceObserver' in window) {
-      this.observer = new PerformanceObserver(() => {
+      this.observer = new PerformanceObserver(_() => {
         // Handle additional performance entries as needed
       });
     }
@@ -980,7 +976,7 @@ export function getPerformanceMetricsService(): PerformanceMetricsService | null
 }
 
 // Export default instance
-export const performanceMetrics = createPerformanceMetricsService();
+export const _performanceMetrics = createPerformanceMetricsService();
 
 // Type definitions for external use
 declare global {

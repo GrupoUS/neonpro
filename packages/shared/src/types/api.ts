@@ -86,7 +86,7 @@ export interface AppointmentQueryParams extends PaginationParams {
 // Professional API types
 export interface ProfessionalCreateRequest {
   clinicId: string;
-  userId: string;
+  _userId: string;
   fullName: string;
   specialization: string;
   licenseNumber: string;
@@ -122,7 +122,7 @@ export interface ConsentRequest {
 
 export interface AuditLogEntry {
   operation: string;
-  userId: string;
+  _userId: string;
   tableName: string;
   recordId: string;
   oldValues?: Record<string, any>;
@@ -153,7 +153,7 @@ export interface ValidationError extends ApiError {
 export interface HealthCheckResponse {
   status: "healthy" | "unhealthy" | "degraded";
   timestamp: string;
-  service: string;
+  _service: string;
   version: string;
   checks: {
     database: boolean;
@@ -172,7 +172,7 @@ export interface AuthUser {
   id: string;
   email: string;
   fullName: string;
-  role: "admin" | "professional" | "receptionist";
+  _role: "admin" | "professional" | "receptionist";
   clinicAccess: string[];
   permissions: string[];
 }

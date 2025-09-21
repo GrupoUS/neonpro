@@ -98,7 +98,7 @@ export function HealthcareThemeProvider({
   persistTheme = true,
 }: HealthcareThemeProviderProps) {
   // Initialize theme from localStorage or defaults
-  const [theme, setTheme] = useState<HealthcareThemeConfig>(() => {
+  const [theme, setTheme] = useState<HealthcareThemeConfig>(_() => {
     if (typeof window === "undefined") {
       return { ...defaultHealthcareTheme, ...initialTheme };
     }
@@ -130,7 +130,7 @@ export function HealthcareThemeProvider({
     if (persistTheme && typeof window !== "undefined") {
       try {
         localStorage.setItem("healthcare-theme", JSON.stringify(newTheme));
-      } catch (error) {
+      } catch (_error) {
         console.warn("Failed to persist healthcare theme:", error);
       }
     }
@@ -194,7 +194,7 @@ export function HealthcareThemeProvider({
   };
 
   // Apply theme to document element
-  useEffect(() => {
+  useEffect(_() => {
     if (typeof document === "undefined") return;
 
     const root = document.documentElement;
@@ -238,7 +238,7 @@ export function HealthcareThemeProvider({
   }, [theme]);
 
   // Listen for system preference changes
-  useEffect(() => {
+  useEffect(_() => {
     if (typeof window === "undefined") return;
 
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -275,7 +275,7 @@ export function HealthcareThemeProvider({
 export function useHealthcareTheme(): HealthcareThemeContextValue {
   const context = useContext(HealthcareThemeContext);
 
-  if (!context) {
+  if (!_context) {
     throw new Error(
       "useHealthcareTheme must be used within a HealthcareThemeProvider",
     );

@@ -202,7 +202,7 @@ export const PerformanceTester: React.FC = () => {
   const metricsRef = useRef<Map<string, PerformanceMetric>>(new Map());
 
   // Initialize performance monitoring
-  useEffect(() => {
+  useEffect(_() => {
     initializeMetrics();
     setupPerformanceObservers();
     getNetworkInfo();
@@ -213,7 +213,7 @@ export const PerformanceTester: React.FC = () => {
       observersRef.current.forEach(observer => {
         try {
           observer.disconnect();
-        } catch (error) {
+        } catch (_error) {
           console.warn('Error disconnecting observer:', error);
         }
       });
@@ -221,10 +221,10 @@ export const PerformanceTester: React.FC = () => {
     };
   }, []);
 
-  const initializeMetrics = useCallback(() => {
+  const initializeMetrics = useCallback(_() => {
     const initialMetrics = new Map<string, PerformanceMetric>();
 
-    Object.entries(HEALTHCARE_PERFORMANCE_TARGETS).forEach(([key, config]) => {
+    Object.entries(HEALTHCARE_PERFORMANCE_TARGETS).forEach(_([key,_config]) => {
       initialMetrics.set(key, {
         name: config.name,
         value: null,
@@ -241,7 +241,7 @@ export const PerformanceTester: React.FC = () => {
     metricsRef.current = initialMetrics;
   }, []);
 
-  const setupPerformanceObservers = useCallback(() => {
+  const setupPerformanceObservers = useCallback(_() => {
     if (!window.PerformanceObserver) {
       console.warn('PerformanceObserver not supported in this browser');
       return;
@@ -318,7 +318,7 @@ export const PerformanceTester: React.FC = () => {
         // Try to observe interaction events - this may fail in browsers that don't support INP
         inpObserver.observe({ entryTypes: ['event'] });
         observers.push(inpObserver);
-      } catch (error) {
+      } catch (_error) {
         console.warn('INP observation not supported:', error);
       }
 
@@ -338,13 +338,13 @@ export const PerformanceTester: React.FC = () => {
 
       // Store all observers for cleanup
       observersRef.current = observers;
-    } catch (error) {
+    } catch (_error) {
       console.warn('Performance observers setup failed:', error);
       // Clean up any observers that were created before the error
       observers.forEach(observer => {
         try {
           observer.disconnect();
-        } catch (error) {
+        } catch (_error) {
           console.warn('Error disconnecting observer during cleanup:', error);
         }
       });
@@ -377,7 +377,7 @@ export const PerformanceTester: React.FC = () => {
     return 'poor';
   };
 
-  const getNetworkInfo = useCallback(() => {
+  const getNetworkInfo = useCallback(_() => {
     if ('connection' in navigator) {
       const connection = (navigator as any).connection;
       setNetworkInfo({
@@ -388,7 +388,7 @@ export const PerformanceTester: React.FC = () => {
     }
   }, []);
 
-  const getMemoryInfo = useCallback(() => {
+  const getMemoryInfo = useCallback(_() => {
     if ('memory' in performance) {
       const memory = (performance as any).memory;
       setMemoryInfo({
@@ -399,7 +399,7 @@ export const PerformanceTester: React.FC = () => {
     }
   }, []);
 
-  const runCriticalScenarios = useCallback(async () => {
+  const runCriticalScenarios = useCallback(_async () => {
     setIsRunning(true);
     setProgress(0);
     setTestStartTime(new Date());
@@ -436,7 +436,7 @@ export const PerformanceTester: React.FC = () => {
         } else if (scenario.id === 'patient_data_load') {
           updateMetric('DATA_LOAD', duration);
         }
-      } catch (error) {
+      } catch (_error) {
         results.push({
           id: scenario.id,
           name: scenario.name,
@@ -487,7 +487,7 @@ export const PerformanceTester: React.FC = () => {
 
   const renderMetricsGrid = () => (
     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-      {Array.from(metrics.entries()).map(([key, metric]) => (
+      {Array.from(metrics.entries()).map(_([key,_metric]) => (
         <Card key={key} className='p-4'>
           <div className='flex items-center justify-between mb-2'>
             <span className='font-medium text-sm'>{metric.name}</span>

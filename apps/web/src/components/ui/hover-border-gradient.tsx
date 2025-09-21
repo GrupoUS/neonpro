@@ -48,9 +48,9 @@ export function HoverBorderGradient({
   const highlight =
     'radial-gradient(75% 181.15942028985506% at 50% 50%, #3275F8 0%, rgba(255, 255, 255, 0) 100%)';
 
-  useEffect(() => {
+  useEffect(_() => {
     if (!hovered) {
-      const interval = setInterval(() => {
+      const interval = setInterval(_() => {
         setDirection(prevState => rotateDirection(prevState));
       }, duration * 1000);
       return () => clearInterval(interval);
@@ -58,8 +58,7 @@ export function HoverBorderGradient({
     // Return undefined explicitly when hovered is true
     return undefined;
   }, [hovered, duration, clockwise, rotateDirection]); // Add clockwise and rotateDirection to dependencies
-  return (
-    <Tag
+  return (_<Tag
       onMouseEnter={() => {
         setHovered(true);
       }}

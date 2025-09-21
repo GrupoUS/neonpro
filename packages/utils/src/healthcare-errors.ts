@@ -294,7 +294,7 @@ export function sanitizeErrorMessage(message: string): string {
   let sanitized = message;
 
   // Replace personal data patterns with placeholders
-  PERSONAL_DATA_PATTERNS.forEach((pattern, index) => {
+  PERSONAL_DATA_PATTERNS.forEach(_(pattern,_index) => {
     sanitized = sanitized.replace(pattern, `[REDACTED_${index}]`);
   });
 
@@ -334,7 +334,7 @@ export function validateErrorCompliance(
 /**
  * Healthcare-specific error factory functions
  */
-export const HealthcareErrors = {
+export const _HealthcareErrors = {
   patientNotFound: (patientId?: string) =>
     new HealthcareError(
       'Patient not found',

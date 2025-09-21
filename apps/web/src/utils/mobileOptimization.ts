@@ -37,14 +37,14 @@ export const isSlowConnection = (): boolean => {
 };
 
 // Lazy loading utility
-export const createLazyComponent = <T extends any>(
+export const _createLazyComponent = <T extends any>(
   importFn: () => Promise<{ default: T }>,
 ) => {
   return importFn;
 };
 
 // Image optimization utilities
-export const getOptimizedImageSrc = (
+export const _getOptimizedImageSrc = (
   src: string,
   options: {
     quality?: number;
@@ -82,7 +82,7 @@ export const getOptimizedImageSrc = (
 };
 
 // Preload critical resources
-export const preloadCriticalResources = (resources: string[]) => {
+export const _preloadCriticalResources = (resources: string[]) => {
   if (typeof document === 'undefined') return;
 
   resources.forEach(_resource => {
@@ -128,12 +128,12 @@ export const deferNonCriticalResources = () => {
 };
 
 // Performance-aware component loading hook
-export const usePerformanceAwareLoading = () => {
+export const _usePerformanceAwareLoading = () => {
   return true; // Simplified for utility functions
 };
 
 // Bundle size monitoring
-export const getBundleSize = async (): Promise<number> => {
+export const _getBundleSize = async (): Promise<number> => {
   if (typeof navigator === 'undefined' || !('storage' in navigator)) {
     return 0;
   }
@@ -147,7 +147,7 @@ export const getBundleSize = async (): Promise<number> => {
 };
 
 // Memory usage monitoring
-export const getMemoryUsage = (): number => {
+export const _getMemoryUsage = (): number => {
   if (typeof performance === 'undefined' || !('memory' in performance)) {
     return 0;
   }
@@ -206,12 +206,12 @@ export const applyMobileOptimizations = () => {
 };
 
 // Initialize mobile optimizations
-export const initializeMobileOptimizations = () => {
+export const _initializeMobileOptimizations = () => {
   if (typeof window === 'undefined') return;
 
   // Apply optimizations when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener(_'DOMContentLoaded',_() => {
       addResourceHints();
       applyMobileOptimizations();
       deferNonCriticalResources();

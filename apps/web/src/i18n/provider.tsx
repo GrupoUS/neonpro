@@ -3,7 +3,7 @@ import React, { createContext, useContext, useState } from 'react';
 interface I18nContextType {
   locale: string;
   setLocale: (locale: string) => void;
-  t: (key: string, params?: Record<string, string>) => string;
+  t: (key: string, params?: Record<string,_string>) => string;
 }
 
 const I18nContext = createContext<I18nContextType | undefined>(undefined);
@@ -57,13 +57,13 @@ const translations = {
 export function I18nProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocale] = useState('pt-BR');
 
-  const t = (key: string, params?: Record<string, string>) => {
+  const t = (key: string, params?: Record<string,_string>) => {
     const translation = translations[locale as keyof typeof translations]?.[
       key as keyof (typeof translations)['pt-BR']
     ] || key;
 
     if (params) {
-      return Object.entries(params).reduce((acc, [param, value]) => {
+      return Object.entries(params).reduce(_(acc,_[param,_value]) => {
         return acc.replace(`{{${param}}}`, value);
       }, translation);
     }
@@ -80,7 +80,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
 export function useI18n() {
   const context = useContext(I18nContext);
-  if (!context) {
+  if (!_context) {
     throw new Error('useI18n must be used within an I18nProvider');
   }
   return context;

@@ -74,10 +74,9 @@ const app = createHealthcareOpenAPIApp();
 // Apply security middleware stack
 // app.use('*', ...getSecurityMiddlewareStack());
 
-app.use(
-  '*',
+app.use(_'*',
   cors({
-    origin: (origin, callback) => {
+    origin: (origin,_callback) => {
       // Allow same-origin requests (no origin header)
       if (!origin) return callback(null, true);
 
@@ -199,7 +198,7 @@ app.use('*', async (c, next) => {
       duration,
       requestId,
     });
-  } catch (error) {
+  } catch (_error) {
     const duration = Date.now() - startTime;
 
     // Capture error with context
@@ -408,7 +407,7 @@ app.get(
 
     logger.security('security_status', 'Security status accessed', {
       requestId,
-      userId: user?.id,
+      _userId: user?.id,
     });
 
     const securityStatus = {
@@ -460,7 +459,7 @@ app.get(
 
     logger.lgpd('compliance_check', 'LGPD compliance status requested', {
       requestId,
-      userId: user?.id,
+      _userId: user?.id,
     });
 
     const complianceData = {
@@ -516,7 +515,7 @@ if (process.env.NODE_ENV !== 'production') {
     // Test error tracking
     try {
       throw new Error('This is a test error for error tracking');
-    } catch (error) {
+    } catch (_error) {
       errorTracker.captureException(error as Error, {
         requestId,
         endpoint: 'test',

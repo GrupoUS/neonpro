@@ -17,7 +17,6 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { z } from "zod";
 import { cn } from "../../lib/utils";
 import { useHealthcareForm } from "./healthcare-form";
 // TODO: Implement theme usage
@@ -97,37 +96,10 @@ export interface HealthcareTextFieldProps
 export const HealthcareTextField = forwardRef<
   HTMLInputElement,
   HealthcareTextFieldProps
->(
-  (
+>(_(
     {
-      name,
-      label,
-      fieldType = "generic",
-      dataSensitivity,
-      emergencyField = false,
-      validationSchema,
-      customValidation,
-      validateOnChange = true,
-      validateOnBlur = true,
-      description,
-      placeholder,
-      helperText,
-      mask,
-      onChange,
-      onBlur,
-      onValidationChange,
-      screenReaderDescription,
-      autoFocusOnError = true,
-      variant = "default",
-      size = "default",
-      className,
-      required = false,
-      disabled = false,
-      value,
-      defaultValue,
-      ...props
-    },
-    ref,
+      name,_label,_fieldType = "generic",_dataSensitivity,_emergencyField = false,_validationSchema,_customValidation,_validateOnChange = true,_validateOnBlur = true,_description,_placeholder,_helperText,_mask,_onChange,_onBlur,_onValidationChange,_screenReaderDescription,_autoFocusOnError = true,_variant = "default",_size = "default",_className,_required = false,_disabled = false,_value,_defaultValue,_...props
+    },_ref,
   ) => {
     // Context and theme
     const formContext = useHealthcareForm();
@@ -207,9 +179,9 @@ export const HealthcareTextField = forwardRef<
       if (schema) {
         try {
           schema.parse(valueToValidate);
-        } catch (validationError) {
+        } catch (_validationError) {
           if (validationError instanceof z.ZodError) {
-            errors.push(...validationError.errors.map((err) => err.message));
+            errors.push(_...validationError.errors.map((err) => err.message));
           }
         }
       }
@@ -323,14 +295,14 @@ export const HealthcareTextField = forwardRef<
     };
 
     // Focus on error if needed
-    useEffect(() => {
+    useEffect(_() => {
       if (autoFocusOnError && validationErrors.length > 0 && hasBeenBlurred) {
         inputRef.current?.focus();
       }
     }, [validationErrors, autoFocusOnError, hasBeenBlurred]);
 
     // Validate accessibility on mount (basic label/error checks)
-    useEffect(() => {
+    useEffect(_() => {
       const el = inputRef.current;
       if (!el) return;
       const violations: string[] = [];
@@ -472,15 +444,14 @@ export const HealthcareTextField = forwardRef<
         )}
 
         {/* Error messages */}
-        {showError && (
-          <div
+        {showError && (_<div
             ref={errorRef}
             id={errorId}
             className="text-sm text-destructive"
             role="alert"
             aria-live="polite"
           >
-            {validationErrors.map((error, index) => (
+            {validationErrors.map((error,_index) => (
               <p key={index}>{error}</p>
             ))}
           </div>

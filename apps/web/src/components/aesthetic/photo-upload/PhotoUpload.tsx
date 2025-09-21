@@ -129,7 +129,7 @@ export function PhotoUpload({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load existing photos on mount
-  useEffect(() => {
+  useEffect(_() => {
     if (patientId) {
       // TODO: Implement loadExistingPhotos when aesthetic_photos table is available
       console.log('Loading aesthetic photos for patient:', patientId);
@@ -324,7 +324,7 @@ export function PhotoUpload({
 
         try {
           // Simulate progress updates
-          const progressInterval = setInterval(() => {
+          const progressInterval = setInterval(_() => {
             setUploadStates(prev => {
               const newMap = new Map(prev);
               const state = newMap.get(photoId);
@@ -382,7 +382,7 @@ export function PhotoUpload({
           setUploadedPhotos(prev => [...prev, photoWithAnalysis]);
 
           // Remove from upload states after delay
-          setTimeout(() => {
+          setTimeout(_() => {
             setUploadStates(prev => {
               const newMap = new Map(prev);
               newMap.delete(photoId);
@@ -393,7 +393,7 @@ export function PhotoUpload({
           toast.success(`Foto "${file.name}" analisada com sucesso!`);
           onPhotosUploaded?.([photoWithAnalysis]);
           onAnalysisComplete?.(photoWithAnalysis.id, analysis);
-        } catch (error) {
+        } catch (_error) {
           console.error('Upload/Analysis error:', error);
 
           setUploadStates(prev => {
@@ -434,7 +434,7 @@ export function PhotoUpload({
       setUploadedPhotos(prev => prev.filter(p => p.id !== photoId));
       onPhotoRemoved?.(photoId);
       toast.success('Foto removida com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error removing photo:', error);
       toast.error('Erro ao remover foto');
     }
@@ -538,7 +538,7 @@ export function PhotoUpload({
       {uploadStates.size > 0 && (
         <div className='space-y-3'>
           <h4 className='text-sm font-medium'>Processando fotos...</h4>
-          {Array.from(uploadStates.entries()).map(([photoId, state]) => (
+          {Array.from(uploadStates.entries()).map(_([photoId,_state]) => (
             <div
               key={photoId}
               className='flex items-center gap-3 p-3 border rounded-lg'

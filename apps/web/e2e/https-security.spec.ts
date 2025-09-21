@@ -113,7 +113,7 @@ test.describe('HTTPS Security Validation', () => {
     // Test data-agent endpoint security
     const response = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
       data: {
-        query: 'test query',
+        _query: 'test query',
         sessionId: 'test-session',
       },
     });

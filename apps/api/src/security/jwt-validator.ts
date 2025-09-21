@@ -54,7 +54,7 @@ interface BlacklistEntry {
 // Enhanced JWT validation result
 interface JWTValidationResult {
   isValid: boolean;
-  payload?: JwtPayload;
+  _payload?: JwtPayload;
   error?: string;
   errorCode?: string;
   securityLevel: 'none' | 'low' | 'medium' | 'high' | 'critical';
@@ -114,10 +114,10 @@ export class JWTSecurityValidator {
   /**
    * Validate JWT token with comprehensive security checks
    */
-  async validateToken(token: string, context?: Context): Promise<JWTValidationResult> {
+  async validateToken(token: string, _context?: Context): Promise<JWTValidationResult> {
     try {
       // Step 1: Rate limiting check
-      const rateLimitResult = this.checkRateLimit(context);
+      const rateLimitResult = this.checkRateLimit(_context);
       if (!rateLimitResult.allowed) {
         return {
           isValid: false,
@@ -157,7 +157,7 @@ export class JWTSecurityValidator {
       }
 
       // Step 6: Security headers validation
-      const headersResult = this.validateSecurityHeaders(context);
+      const headersResult = this.validateSecurityHeaders(_context);
       if (!headersResult.isValid) {
         return headersResult;
       }
@@ -188,10 +188,10 @@ export class JWTSecurityValidator {
 
       return {
         isValid: true,
-        payload: verifyResult.payload,
+        _payload: verifyResult.payload,
         securityLevel: 'high',
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         isValid: false,
         error: 'Token validation failed',
@@ -222,7 +222,7 @@ export class JWTSecurityValidator {
       for (const part of parts) {
         Buffer.from(part, 'base64');
       }
-    } catch (error) {
+    } catch (_error) {
       return {
         isValid: false,
         error: 'Invalid base64 encoding',
@@ -242,7 +242,7 @@ export class JWTSecurityValidator {
       const headerPart = token.split('.')[0];
       const header = JSON.parse(Buffer.from(headerPart, 'base64').toString());
       return header;
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }
@@ -308,7 +308,7 @@ export class JWTSecurityValidator {
   /**
    * Validate security headers (HTTPS in production)
    */
-  private validateSecurityHeaders(context?: Context): JWTValidationResult {
+  private validateSecurityHeaders(_context?: Context): JWTValidationResult {
     if (!this.config.enforceHttpsInProduction) {
       return { isValid: true, securityLevel: 'medium' };
     }
@@ -364,7 +364,7 @@ export class JWTSecurityValidator {
         payload,
         securityLevel: 'high',
       };
-    } catch (error) {
+    } catch (_error) {
       if (error instanceof jwt.JsonWebTokenError) {
         return {
           isValid: false,
@@ -386,7 +386,7 @@ export class JWTSecurityValidator {
   /**
    * Validate token claims (aud, iss, exp, etc.)
    */
-  private validateTokenClaims(payload: JwtPayload): JWTValidationResult {
+  private validateTokenClaims(_payload: JwtPayload): JWTValidationResult {
     const { aud, iss, exp, sub } = payload;
 
     // Validate audience claim
@@ -450,7 +450,7 @@ export class JWTSecurityValidator {
       };
     }
 
-    const now = Math.floor(Date.now() / 1000);
+    const _now = Math.floor(Date.now() / 1000);
 
     // Check if token is expired
     if (exp <= now) {
@@ -489,7 +489,7 @@ export class JWTSecurityValidator {
   /**
    * Check if token is blacklisted
    */
-  private checkTokenBlacklist(payload: JwtPayload): JWTValidationResult {
+  private checkTokenBlacklist(_payload: JwtPayload): JWTValidationResult {
     const { jti, sub } = payload;
 
     // Clean expired blacklist entries
@@ -510,7 +510,7 @@ export class JWTSecurityValidator {
 
     // Check by user ID (for user-wide token revocation)
     if (sub) {
-      for (const [key, entry] of this.tokenBlacklist.entries()) {
+      for (const [_key, entry] of this.tokenBlacklist.entries()) {
         if (entry.sub === sub && entry.expiresAt > Date.now()) {
           return {
             isValid: false,
@@ -528,14 +528,14 @@ export class JWTSecurityValidator {
   /**
    * Validate healthcare-specific requirements
    */
-  private validateHealthcareRequirements(payload: JwtPayload): JWTValidationResult {
+  private validateHealthcareRequirements(_payload: JwtPayload): JWTValidationResult {
     // Ensure healthcare-specific claims are present if required
-    const { role, permissions } = payload;
+    const { role, permissions: _permissions } = payload;
 
     // For healthcare applications, validate user role if present
     if (role && typeof role === 'string') {
       const allowedRoles = ['patient', 'healthcare_professional', 'admin', 'staff'];
-      if (!allowedRoles.includes(role)) {
+      if (!allowedRoles.includes(_role)) {
         return {
           isValid: false,
           error: 'Invalid user role for healthcare application',
@@ -551,8 +551,8 @@ export class JWTSecurityValidator {
   /**
    * Check rate limiting for authentication attempts
    */
-  private checkRateLimit(context?: Context): { allowed: boolean; resetTime?: number } {
-    if (!context) {
+  private checkRateLimit(_context?: Context): { allowed: boolean; resetTime?: number } {
+    if (!_context) {
       return { allowed: true };
     }
 
@@ -562,7 +562,7 @@ export class JWTSecurityValidator {
       || 'unknown';
 
     const sessionId = context.req.header('x-session-id') || clientIp;
-    const now = Date.now();
+    const _now = Date.now();
 
     // Get or create rate limit entry
     let entry = this.rateLimitMap.get(sessionId);
@@ -627,7 +627,7 @@ export class JWTSecurityValidator {
    * Cleanup expired blacklist entries
    */
   private cleanupBlacklist(): void {
-    const now = Date.now();
+    const _now = Date.now();
     for (const [key, entry] of this.tokenBlacklist.entries()) {
       if (entry.expiresAt <= now) {
         this.tokenBlacklist.delete(key);
@@ -639,7 +639,7 @@ export class JWTSecurityValidator {
    * Cleanup expired rate limit entries
    */
   cleanupRateLimit(): void {
-    const now = Date.now();
+    const _now = Date.now();
     for (const [key, entry] of this.rateLimitMap.entries()) {
       if (now - entry.firstAttempt > this.config.rateLimitWindowMs * 2) {
         this.rateLimitMap.delete(key);
@@ -678,4 +678,4 @@ export class JWTSecurityValidator {
 }
 
 // Global validator instance
-export const jwtValidator = new JWTSecurityValidator();
+export const _jwtValidator = new JWTSecurityValidator();

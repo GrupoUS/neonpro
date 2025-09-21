@@ -96,7 +96,7 @@ export interface AIChatInputProps {
   /** On file remove */
   onFileRemove?: (fileId: string) => void;
   /** On search */
-  onSearch?: (query: string) => void;
+  onSearch?: (_query: string) => void;
   /** Healthcare compliance */
   healthcareCompliance?: {
     lgpdCompliant: boolean;
@@ -133,31 +133,8 @@ const formatFileSize = (_bytes: any) => {
 /**
  * AI Chat Input Component
  */
-export const AIChatInput: React.FC<AIChatInputProps> = ({
-  value,
-  onChange,
-  onSubmit,
-  placeholder = 'Digite sua mensagem...',
-  disabled = false,
-  showVoiceInput = true,
-  showFileAttachment = true,
-  showSearch = true,
-  showModelSelection = true,
-  selectedModel = 'gpt-4o',
-  onModelChange,
-  availableModels = [],
-  voiceState = 'idle',
-  onVoiceToggle,
-  attachments = [],
-  onFileAttach,
-  onFileRemove,
-  onSearch,
-  healthcareCompliance,
-  isLoading = false,
-  minHeight = 44,
-  maxHeight = 200,
-  testId = 'ai-chat-input',
-}) => {
+export const AIChatInput: React.FC<AIChatInputProps> = (_{
+  value,_onChange,_onSubmit,_placeholder = 'Digite sua mensagem...',_disabled = false,_showVoiceInput = true,_showFileAttachment = true,_showSearch = true,_showModelSelection = true,_selectedModel = 'gpt-4o',_onModelChange,_availableModels = [],_voiceState = 'idle',_onVoiceToggle,_attachments = [],_onFileAttach,_onFileRemove,_onSearch,_healthcareCompliance,_isLoading = false,_minHeight = 44,_maxHeight = 200,_testId = 'ai-chat-input',_}) => {
   // State
   const [isFocused, setIsFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -170,7 +147,7 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
   const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-resize textarea
-  useEffect(() => {
+  useEffect(_() => {
     const textarea = textareaRef.current;
     if (!textarea) return;
 
@@ -208,7 +185,7 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
   );
 
   // Handle search
-  const handleSearch = useCallback(() => {
+  const handleSearch = useCallback(_() => {
     if (searchQuery.trim() && onSearch) {
       onSearch(searchQuery);
     }
@@ -400,8 +377,7 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
             )}
 
             {/* Search Button */}
-            {showSearch && (
-              <TooltipProvider>
+            {showSearch && (_<TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button

@@ -35,7 +35,7 @@ export function showToast(
 export function useToastListener(
   cb: (message: string, variant?: 'success' | 'error' | 'info') => void,
 ) {
-  useEffect(() => {
+  useEffect(_() => {
     listeners.push(cb);
     return () => {
       listeners = listeners.filter(x => x !== cb);

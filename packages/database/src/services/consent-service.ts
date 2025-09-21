@@ -41,7 +41,7 @@ export class ConsentService {
    * @param request Consent creation request
    * @returns Created consent record
    */
-  async createConsent(request: ConsentRequest): Promise<ConsentRecord> {
+  async createConsent(_request: ConsentRequest): Promise<ConsentRecord> {
     try {
       const consent: ConsentRecord = {
         id: `consent-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -80,7 +80,7 @@ export class ConsentService {
       await this.persistConsent(consent);
 
       return consent;
-    } catch (error) {
+    } catch (_error) {
       // Log error without exposing patient data
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
@@ -121,7 +121,7 @@ export class ConsentService {
       // Query consents from database
       const consents = await this.queryConsentsByPatient(patientId);
       return consents;
-    } catch (error) {
+    } catch (_error) {
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
@@ -179,7 +179,7 @@ export class ConsentService {
       this.auditLogger(auditEvent);
 
       return revokedConsent;
-    } catch (error) {
+    } catch (_error) {
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
@@ -218,7 +218,7 @@ export class ConsentService {
       // Perform comprehensive LGPD compliance checking
       const complianceResult = await this.performComplianceCheck(patientId);
       return complianceResult;
-    } catch (error) {
+    } catch (_error) {
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
@@ -242,7 +242,7 @@ export class ConsentService {
   private hashPatientId(patientId: string): string {
     // Simple hash for demo - in production use proper crypto hash
     const hash = Array.from(patientId)
-      .reduce((acc, char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0)
+      .reduce(_(acc,_char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0)
       .toString(16);
     return `patient_${hash.slice(-8)}`;
   }
@@ -322,7 +322,7 @@ export class ConsentService {
           consentType: consent.consentType,
         },
       });
-    } catch (error) {
+    } catch (_error) {
       // Use ErrorMapper for consistent error handling
       const mappedError = ErrorMapper.mapError(error, {
         action: 'persist_consent',
@@ -381,7 +381,7 @@ export class ConsentService {
       }));
 
       return consents;
-    } catch (error) {
+    } catch (_error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'query_consents',
         timestamp: new Date().toISOString(),
@@ -440,7 +440,7 @@ export class ConsentService {
         metadata: _data.metadata,
         auditTrail: _data.audit_trail || [],
       };
-    } catch (error) {
+    } catch (_error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'find_consent',
         timestamp: new Date().toISOString(),
@@ -497,7 +497,7 @@ export class ConsentService {
           newStatus: consent.status,
         },
       });
-    } catch (error) {
+    } catch (_error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'update_consent',
         timestamp: new Date().toISOString(),
@@ -532,7 +532,7 @@ export class ConsentService {
       const consents = await this.queryConsentsByPatient(patientId);
 
       const violations: string[] = [];
-      const now = new Date();
+      const _now = new Date();
 
       // Check for expired consents
       const expiredConsents = consents.filter(consent =>
@@ -606,7 +606,7 @@ export class ConsentService {
           'Implement additional safeguards for sensitive data'
         ] : [],
       };
-    } catch (error) {
+    } catch (_error) {
       const mappedError = ErrorMapper.mapError(error, {
         action: 'compliance_check',
         timestamp: new Date().toISOString(),
@@ -630,7 +630,7 @@ export class ConsentService {
 }
 
 // Export utility functions for creating consent service instances
-export const createConsentService = (auditLogger?: (event: AuditEvent) => void) => {
+export const _createConsentService = (auditLogger?: (event: AuditEvent) => void) => {
   return new ConsentService(auditLogger);
 };
 

@@ -18,7 +18,7 @@ export interface LGPDConsent {
  * Audit log entry for LGPD compliance
  */
 export interface AuditLogEntry {
-  userId: string;
+  _userId: string;
   action: "create" | "read" | "update" | "delete" | "export" | "anonymize";
   timestamp: Date;
   ipAddress: string;

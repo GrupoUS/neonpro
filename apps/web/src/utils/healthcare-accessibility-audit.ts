@@ -117,7 +117,7 @@ export interface HealthcareAuditContext {
 // Healthcare accessibility audit result
 export interface HealthcareAccessibilityAuditResult {
   timestamp: string;
-  context: HealthcareAuditContext;
+  _context: HealthcareAuditContext;
   issues: HealthcareAccessibilityIssue[];
   complianceScore: number;
   accessibilityScore: number;
@@ -159,10 +159,10 @@ export const healthcareAccessibilityRules = {
 
 // Healthcare accessibility audit main class
 export class HealthcareAccessibilityAuditor {
-  private context: HealthcareAuditContext;
+  private _context: HealthcareAuditContext;
   private customRules: any;
 
-  constructor(context: Partial<HealthcareAuditContext> = {}) {
+  constructor(_context: Partial<HealthcareAuditContext> = {}) {
     this.context = {
       patientJourney: 'registration',
       dataSensitivity: 'medium',
@@ -181,7 +181,7 @@ export class HealthcareAccessibilityAuditor {
     element: HTMLElement | Document = document,
     options: AccessibilityTestingOptions = {},
   ): Promise<HealthcareAccessibilityAuditResult> {
-    const auditStart = Date.now();
+    const _auditStart = Date.now();
 
     // Configure axe-core for healthcare-specific validation
     const healthcareAxeConfig = {
@@ -236,7 +236,7 @@ export class HealthcareAccessibilityAuditor {
 
     const result: HealthcareAccessibilityAuditResult = {
       timestamp: new Date().toISOString(),
-      context: this.context,
+      _context: this.context,
       issues: healthcareIssues,
       complianceScore,
       accessibilityScore,
@@ -266,7 +266,7 @@ export class HealthcareAccessibilityAuditor {
       const healthcareRuleId = violation.id as HealthcareAccessibilityRuleId;
 
       if (HEALTHCARE_ACCESSIBILITY_RULES[healthcareRuleId]) {
-        violation.nodes.forEach((node, index) => {
+        violation.nodes.forEach(_(node,_index) => {
           const healthcareIssue: HealthcareAccessibilityIssue = {
             id: `${violation.id}-${index}`,
             impact: violation.impact as any,
@@ -429,8 +429,7 @@ export class HealthcareAccessibilityAuditor {
    * Calculate overall accessibility score
    */
   private calculateAccessibilityScore(axeResults: AxeResults): number {
-    const totalViolations = axeResults.violations.reduce(
-      (sum, violation) => sum + violation.nodes.length,
+    const _totalViolations = axeResults.violations.reduce(_(sum,_violation) => sum + violation.nodes.length,
       0,
     );
 
@@ -460,7 +459,7 @@ export class HealthcareAccessibilityAuditor {
   ): number {
     if (issues.length === 0) return 100;
 
-    const totalWeight = issues.reduce((sum, issue) => {
+    const totalWeight = issues.reduce(_(sum,_issue) => {
       return (
         sum
         + (issue.emergencyRelevant
@@ -475,7 +474,7 @@ export class HealthcareAccessibilityAuditor {
 
     const resolvedWeight = issues
       .filter(issue => issue.remediationPriority === 'low')
-      .reduce((sum, issue) => {
+      .reduce(_(sum,_issue) => {
         return (
           sum
           + (issue.emergencyRelevant
@@ -500,8 +499,7 @@ export class HealthcareAccessibilityAuditor {
     const recommendations: HealthcareAccessibilityRecommendation[] = [];
 
     // Group issues by type
-    const issueGroups = issues.reduce(
-      (groups, issue) => {
+    const issueGroups = issues.reduce(_(groups,_issue) => {
         const key = issue.healthcareRuleId;
         if (!groups[key]) groups[key] = [];
         groups[key].push(issue);
@@ -511,7 +509,7 @@ export class HealthcareAccessibilityAuditor {
     );
 
     // Generate recommendation for each group
-    Object.entries(issueGroups).forEach(([ruleId, issueGroup]) => {
+    Object.entries(issueGroups).forEach(_([ruleId,_issueGroup]) => {
       const recommendation: HealthcareAccessibilityRecommendation = {
         id: `rec-${ruleId}`,
         title: `Improve ${HEALTHCARE_ACCESSIBILITY_RULES[ruleId as HealthcareAccessibilityRuleId]}`,
@@ -533,7 +531,7 @@ export class HealthcareAccessibilityAuditor {
       recommendations.push(recommendation);
     });
 
-    return recommendations.sort((a, b) => {
+    return recommendations.sort(_(a,_b) => {
       const priorityOrder = { immediate: 4, high: 3, medium: 2, low: 1 };
       return priorityOrder[b.priority] - priorityOrder[a.priority];
     });
@@ -544,7 +542,7 @@ export class HealthcareAccessibilityAuditor {
   ): 'immediate' | 'high' | 'medium' | 'low' {
     const priorityOrder = { immediate: 4, high: 3, medium: 2, low: 1 };
     const highestPriority = issues.reduce(
-      (highest: 'immediate' | 'high' | 'medium' | 'low', issue) => {
+      (highest: 'immediate' | 'high' | 'medium' | 'low',_issue) => {
         const currentPriority = priorityOrder[issue.remediationPriority];
         const highestPriorityValue = priorityOrder[highest];
         return currentPriority > highestPriorityValue
@@ -684,7 +682,7 @@ export class HealthcareAccessibilityAuditor {
   /**
    * Set audit context for specific healthcare scenarios
    */
-  setContext(context: Partial<HealthcareAuditContext>): void {
+  setContext(_context: Partial<HealthcareAuditContext>): void {
     this.context = { ...this.context, ...context };
   }
 
@@ -739,9 +737,9 @@ ${
 
 // Factory function for easy auditor creation
 export function createHealthcareAuditor(
-  context?: Partial<HealthcareAuditContext>,
+  _context?: Partial<HealthcareAuditContext>,
 ): HealthcareAccessibilityAuditor {
-  return new HealthcareAccessibilityAuditor(context);
+  return new HealthcareAccessibilityAuditor(_context);
 }
 
 // Export types and utilities

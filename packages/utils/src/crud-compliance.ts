@@ -37,7 +37,7 @@ export interface LGPDCRUDOptions {
  */
 export interface DataProcessingContext {
   readonly clinicId: string;
-  readonly userId: string;
+  readonly _userId: string;
   readonly sessionId?: string;
   readonly patientId?: string;
   readonly professionalId?: string;
@@ -143,7 +143,7 @@ export class LGPDComplianceService {
    */
   async createAIUsageRecord(
     usageData: Omit<AIUsageRecord, "id" | "createdAt" | "auditTrail">,
-    context: DataProcessingContext,
+    _context: DataProcessingContext,
     options: LGPDCRUDOptions,
   ): Promise<{
     success: boolean;
@@ -190,14 +190,14 @@ export class LGPDComplianceService {
    */
   createAuditTrail(
     action: string,
-    context: DataProcessingContext,
+    _context: DataProcessingContext,
     options: LGPDCRUDOptions,
     metadata: Record<string, unknown> = {},
   ): AuditTrail {
     return {
       action,
       timestamp: new Date(),
-      userId: context.userId,
+      _userId: context.userId,
       userRole: typeof metadata.userRole === 'string' ? metadata.userRole : undefined,
       ipAddress: context.ipAddress,
       userAgent: context.userAgent,
@@ -262,12 +262,12 @@ export class LGPDComplianceService {
     const result = { ...data } as Record<string, unknown>;
 
     // Remove redacted fields
-    this.anonymizationConfig.redactFields?.forEach((field) => {
+    this.anonymizationConfig.redactFields?.forEach(_(field) => {
       delete result[field];
     });
 
     // Aggregate numeric fields
-    this.anonymizationConfig.aggregateFields?.forEach((field) => {
+    this.anonymizationConfig.aggregateFields?.forEach(_(field) => {
       if (typeof result[field] === "number") {
         result[field] = Math.round(result[field]); // Simple aggregation
       }

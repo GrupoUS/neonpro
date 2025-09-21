@@ -8,7 +8,7 @@ import { cn } from '@neonpro/ui';
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
->(({ className, value, ...props }, ref) => (
+>(_({ className,_value,_...props },_ref) => (
   <ProgressPrimitive.Root
     ref={ref}
     className={cn(

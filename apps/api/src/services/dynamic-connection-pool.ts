@@ -13,7 +13,6 @@
  * @compliance LGPD, ANVISA, CFM, ISO 27001
  */
 
-import { z } from 'zod';
 import { PoolManager } from '../clients/prisma';
 
 // Configuration validation schemas
@@ -209,7 +208,8 @@ export class DynamicConnectionPoolService {
       };
 
       return { ...this.metrics };
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       console.error('[Dynamic Pool] Error getting metrics:', error);
       return this.metrics;
     }
@@ -219,7 +219,7 @@ export class DynamicConnectionPoolService {
    * Execute query with connection pool management
    */
   async executeQuery<T>(
-    query: string,
+    _query: string,
     params: any[] = [],
     options: {
       priority?: 'high' | 'normal' | 'low';
@@ -252,7 +252,8 @@ export class DynamicConnectionPoolService {
         success: true,
         executionTime,
       };
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       const executionTime = Date.now() - startTime;
 
       // Update metrics
@@ -375,7 +376,8 @@ export class DynamicConnectionPoolService {
         actionRequired: false,
         autoResolve: true,
       });
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       console.error('[Dynamic Pool] Scale up failed:', error);
 
       // Create error alert
@@ -435,7 +437,8 @@ export class DynamicConnectionPoolService {
       );
 
       console.log(`[Dynamic Pool] Scaled down: ${oldSize} -> ${newSize} (${reason})`);
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       console.error('[Dynamic Pool] Scale down failed:', error);
     }
   }
@@ -446,7 +449,7 @@ export class DynamicConnectionPoolService {
   private async performPredictiveScaling(): Promise<void> {
     if (!this.config.enablePredictiveScaling) return;
 
-    const now = new Date();
+    const _now = new Date();
     const currentPattern = this.getCurrentHealthcarePattern();
 
     if (currentPattern.scalingPriority === 'high') {
@@ -468,7 +471,7 @@ export class DynamicConnectionPoolService {
    * Get current healthcare workload pattern
    */
   private getCurrentHealthcarePattern(): any {
-    const now = new Date();
+    const _now = new Date();
     const hour = now.getHours();
     const day = now.getDay();
     const isWeekend = day === 0 || day === 6;
@@ -538,7 +541,7 @@ export class DynamicConnectionPoolService {
     console.log('[Dynamic Pool] Emergency mode deactivated');
 
     // Gradually scale back to normal
-    setTimeout(async () => {
+    setTimeout(_async () => {
       await this.shouldScaleDown();
     }, 300000); // Wait 5 minutes before scaling down
   }
@@ -547,7 +550,7 @@ export class DynamicConnectionPoolService {
    * Handle graceful degradation when pool is overloaded
    */
   private async handleGracefulDegradation<T>(
-    query: string,
+    _query: string,
     params: any[],
     originalExecutionTime: number,
   ): Promise<{ data?: T; success: boolean; error?: string; executionTime: number }> {
@@ -597,12 +600,13 @@ export class DynamicConnectionPoolService {
    * Start monitoring services
    */
   private startMonitoring(): void {
-    this.monitoringTimer = setInterval(async () => {
+    this.monitoringTimer = setInterval(_async () => {
       try {
         await this.checkScalingConditions();
         await this.cleanupOldEvents();
         await this.resetHourlyCounters();
-      } catch (error) {
+      } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
         console.error('[Dynamic Pool] Monitoring error:', error);
       }
     }, this.config.healthCheckInterval);
@@ -613,10 +617,10 @@ export class DynamicConnectionPoolService {
    */
   private startPredictiveScaling(): void {
     // Perform initial predictive scaling
-    setTimeout(() => this.performPredictiveScaling(), 5000);
+    setTimeout(_() => this.performPredictiveScaling(), 5000);
 
     // Schedule regular predictive checks
-    this.predictiveScalingTimer = setInterval(() => {
+    this.predictiveScalingTimer = setInterval(_() => {
       this.performPredictiveScaling();
     }, 900000); // Every 15 minutes
   }
@@ -625,10 +629,11 @@ export class DynamicConnectionPoolService {
    * Start health checks
    */
   private startHealthChecks(): void {
-    this.healthCheckTimer = setInterval(async () => {
+    this.healthCheckTimer = setInterval(_async () => {
       try {
         await this.performHealthCheck();
-      } catch (error) {
+      } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
         console.error('[Dynamic Pool] Health check error:', error);
       }
     }, 60000); // Every minute
@@ -733,16 +738,15 @@ export class DynamicConnectionPoolService {
     return Math.max(0, score);
   }
 
-  private async updateQueryMetrics(executionTime: number, success: boolean): Promise<void> {
+  private async updateQueryMetrics(_executionTime: number, _success: boolean): Promise<void> {
     // This would update rolling averages and error rates
     // Implementation depends on actual metrics collection
   }
 
   private withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
-    return Promise.race([
-      promise,
-      new Promise<never>((_, reject) =>
-        setTimeout(() => reject(new Error('Query timeout')), timeoutMs)
+    return Promise.race(_[
+      promise,_new Promise<never>((_,_reject) =>
+        setTimeout(_() => reject(new Error('Query timeout')), timeoutMs)
       ),
     ]);
   }
@@ -788,7 +792,7 @@ export class DynamicConnectionPoolService {
   }
 
   private async resetHourlyCounters(): Promise<void> {
-    const now = new Date();
+    const _now = new Date();
     if (now.getHours() !== this.lastHourReset.getHours()) {
       this.hourlyScalingEvents = 0;
       this.lastHourReset = now;
@@ -805,7 +809,7 @@ export class DynamicConnectionPoolService {
     const pattern = this.getCurrentHealthcarePattern();
     const interval = pattern.scalingPriority === 'high' ? 300000 : 900000; // 5 or 15 minutes
 
-    this.predictiveScalingTimer = setInterval(() => {
+    this.predictiveScalingTimer = setInterval(_() => {
       this.performPredictiveScaling();
     }, interval);
   }

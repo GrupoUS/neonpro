@@ -47,7 +47,7 @@ export {
  *
  * <AppointmentBooking
  *   professionalId="prof-123"
- *   onBookingComplete={(appointment) => console.log('Booked:', appointment)}
+ *   onBookingComplete={(_appointment) => console.log('Booked:', appointment)}
  * />
  *
  * // Appointment management dashboard

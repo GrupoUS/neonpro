@@ -26,7 +26,7 @@ interface Experiment06CalendarIntegrationProps {
   onEventDelete: (eventId: string) => void;
   onNewConsultation?: () => void;
   className?: string;
-  userId?: string;
+  _userId?: string;
   userRole?: string;
   clinicId?: string;
 }
@@ -101,7 +101,7 @@ export function Experiment06CalendarIntegration({
   >([]);
 
   // Process appointments with LGPD compliance
-  useEffect(() => {
+  useEffect(_() => {
     const processAppointmentsWithCompliance = async () => {
       if (!appointments.length) {
         setMinimizedAppointments([]);
@@ -161,7 +161,7 @@ export function Experiment06CalendarIntegration({
             })),
           });
         }
-      } catch (error) {
+      } catch (_error) {
         console.error(
           'LGPD: Error processing appointments with compliance:',
           err,
@@ -197,10 +197,10 @@ export function Experiment06CalendarIntegration({
   }, [appointments, userId, userRole]);
 
   // Convert minimized appointments to calendar events
-  const calendarEvents = useMemo(() => {
+  const calendarEvents = useMemo(_() => {
     try {
       return minimizedAppointments.map(mapMinimizedAppointmentToCalendarEvent);
-    } catch (error) {
+    } catch (_error) {
       setError('Erro ao converter agendamentos para eventos do calendário');
       console.error(
         'Error mapping minimized appointments to calendar events:',
@@ -254,7 +254,7 @@ export function Experiment06CalendarIntegration({
 
       // Proceed with update
       onEventUpdate(event, updates);
-    } catch (error) {
+    } catch (_error) {
       console.error(error);
       setError(error instanceof Error ? error.message : 'Erro ao atualizar evento');
     } finally {
@@ -303,7 +303,7 @@ export function Experiment06CalendarIntegration({
 
       // Proceed with deletion
       onEventDelete(eventId);
-    } catch (error) {
+    } catch (_error) {
       console.error(error);
       setError(error instanceof Error ? error.message : 'Erro ao excluir evento');
     } finally {
@@ -330,7 +330,7 @@ export function Experiment06CalendarIntegration({
         );
 
         onNewConsultation();
-      } catch (error) {
+      } catch (_error) {
         console.error(error);
         // Don't block the action for audit logging failures
         onNewConsultation();
@@ -365,7 +365,7 @@ export function Experiment06CalendarIntegration({
   const { isColorVisible } = useCalendarContext();
 
   // Filter events based on visible colors
-  const visibleEvents = useMemo(() => {
+  const visibleEvents = useMemo(_() => {
     return calendarEvents.filter(event => isColorVisible(event.color));
   }, [calendarEvents, isColorVisible]);
 
@@ -440,7 +440,7 @@ export function Experiment06CalendarIntegration({
           <div className='space-y-1'>
             {complianceStatus.consentValidations
               .slice(0, 3)
-              .map((issue, _index) => (
+              .map(_(issue, _index) => (
                 <div key={index} className='text-yellow-700 text-xs'>
                   • {issue.error || 'Issue sem descrição'}
                 </div>

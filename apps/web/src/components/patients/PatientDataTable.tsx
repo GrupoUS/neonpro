@@ -78,7 +78,7 @@ import { AdvancedSearchDialog } from './AdvancedSearchDialog';
 import { PatientCreationForm } from './PatientCreationForm';
 
 // Lazy load TanStack Table for better bundle splitting
-const TanStackTable = lazy(() => import('@tanstack/react-table'));
+const TanStackTable = lazy(_() => import('@tanstack/react-table'));
 
 // Import types from lazy-loaded module
 type ColumnDef<T> = any;
@@ -94,8 +94,7 @@ interface PatientDataTableProps {
 }
 
 // Custom filter function for multi-column searching
-const multiColumnFilterFn: FilterFn<PatientTableData> = (
-  row,
+const multiColumnFilterFn: FilterFn<PatientTableData> = (_row,
   _columnId,
   filterValue: string,
 ) => {
@@ -106,9 +105,7 @@ const multiColumnFilterFn: FilterFn<PatientTableData> = (
   return searchableRowContent.includes(searchTerm);
 };
 
-const statusFilterFn: FilterFn<PatientTableData> = (
-  row,
-  columnId,
+const statusFilterFn: FilterFn<PatientTableData> = (_row,_columnId,
   filterValue: string[],
 ) => {
   if (!filterValue?.length) return true;
@@ -182,25 +179,8 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
   );
 }
 
-function PatientDataTableContent({
-  clinicId,
-  id,
-  navigate,
-  inputRef,
-  columnFilters,
-  setColumnFilters,
-  columnVisibility,
-  setColumnVisibility,
-  pagination,
-  setPagination,
-  sorting,
-  setSorting,
-  showCreateDialog,
-  setShowCreateDialog,
-  showAdvancedSearch,
-  setShowAdvancedSearch,
-  searchFilter,
-  statusFilter,
+function PatientDataTableContent(_{
+  clinicId,_id,_navigate,_inputRef,_columnFilters,_setColumnFilters,_columnVisibility,_setColumnVisibility,_pagination,_setPagination,_sorting,_setSorting,_showCreateDialog,_setShowCreateDialog,_showAdvancedSearch,_setShowAdvancedSearch,_searchFilter,_statusFilter,
 }: {
   clinicId: string;
   id: string;
@@ -257,11 +237,10 @@ function PatientDataTableContent({
   const totalCount = patientsData?.count || 0;
 
   // Define table columns
-  const columns: ColumnDef<PatientTableData>[] = useMemo(
-    () => [
+  const columns: ColumnDef<PatientTableData>[] = useMemo(_() => [
       {
         id: 'select',
-        header: ({ table }) => (
+        header: (_{ table }) => (
           <Checkbox
             checked={table.getIsAllPageRowsSelected()
               || (table.getIsSomePageRowsSelected() && 'indeterminate')}
@@ -270,7 +249,7 @@ function PatientDataTableContent({
             aria-label='Selecionar todos'
           />
         ),
-        cell: ({ row }) => (
+        cell: (_{ row }) => (
           <Checkbox
             checked={row.getIsSelected()}
             onCheckedChange={(value: boolean | 'indeterminate') =>
@@ -285,7 +264,7 @@ function PatientDataTableContent({
       {
         header: 'Nome',
         accessorKey: 'fullName',
-        cell: ({ row }) => (
+        cell: (_{ row }) => (
           <div className='flex items-center gap-3'>
             <div className='flex size-8 shrink-0 items-center justify-center rounded-full bg-muted'>
               <User className='size-4' />
@@ -307,7 +286,7 @@ function PatientDataTableContent({
       {
         header: 'Contato',
         id: 'contact',
-        cell: ({ row }) => (
+        cell: (_{ row }) => (
           <div className='space-y-1'>
             {row.original.email && (
               <div className='flex items-center gap-2 text-sm'>
@@ -328,7 +307,7 @@ function PatientDataTableContent({
       {
         header: 'CPF',
         accessorKey: 'cpf',
-        cell: ({ row }) => {
+        cell: (_{ row }) => {
           const cpf = row.getValue('cpf') as string;
           if (!cpf) return <span className='text-muted-foreground'>—</span>;
 
@@ -345,7 +324,7 @@ function PatientDataTableContent({
       {
         header: 'Status',
         accessorKey: 'status',
-        cell: ({ row }) => {
+        cell: (_{ row }) => {
           const status = row.getValue('status') as string;
           return (
             <Badge
@@ -372,7 +351,7 @@ function PatientDataTableContent({
       {
         header: 'Última Visita',
         accessorKey: 'lastVisit',
-        cell: ({ row }) => {
+        cell: (_{ row }) => {
           const lastVisit = row.getValue('lastVisit') as string;
           return lastVisit
             ? (
@@ -388,7 +367,7 @@ function PatientDataTableContent({
       {
         header: 'Consultas',
         accessorKey: 'totalAppointments',
-        cell: ({ row }) => {
+        cell: (_{ row }) => {
           const total = row.getValue('totalAppointments') as number;
           return (
             <div className='flex items-center gap-2'>
@@ -402,7 +381,7 @@ function PatientDataTableContent({
       {
         id: 'actions',
         header: () => <span className='sr-only'>Ações</span>,
-        cell: ({ row }) => <PatientRowActions row={row} onNavigate={navigate} />,
+        cell: (_{ row }) => <PatientRowActions row={row} onNavigate={navigate} />,
         size: 60,
         enableHiding: false,
       },
@@ -435,12 +414,11 @@ function PatientDataTableContent({
   });
 
   // Get unique status values for filter
-  const uniqueStatusValues = useMemo(
-    () => ['Active', 'Inactive', 'Pending'],
+  const uniqueStatusValues = useMemo(_() => ['Active', 'Inactive', 'Pending'],
     [],
   );
 
-  const selectedStatuses = useMemo(() => {
+  const selectedStatuses = useMemo(_() => {
     return statusFilter;
   }, [statusFilter]);
 
@@ -458,8 +436,7 @@ function PatientDataTableContent({
     const selectedRows = table.getSelectedRowModel().rows;
     const patientIds = selectedRows.map(row => row.original.id);
 
-    bulkDeleteMutation.mutate(
-      { patientIds, clinicId },
+    bulkDeleteMutation.mutate(_{ patientIds,_clinicId },
       {
         onSuccess: () => {
           table.resetRowSelection();
@@ -529,8 +506,8 @@ function PatientDataTableContent({
   // Advanced search handlers (FR-005)
   const handleApplyAdvancedFilters = (_filters: any) => {
     // Apply filters to the table
-    if (_filters.query) {
-      table.getColumn('fullName')?.setFilterValue(_filters.query);
+    if (_filters._query) {
+      table.getColumn('fullName')?.setFilterValue(_filters._query);
     }
 
     if (_filters.status && _filters.status.length > 0) {
@@ -553,8 +530,7 @@ function PatientDataTableContent({
   };
 
   if (error) {
-    return (
-      <div className='flex items-center justify-center p-8'>
+    return (_<div className='flex items-center justify-center p-8'>
         <div className='text-center'>
           <CircleAlertIcon className='mx-auto mb-4 size-12 text-muted-foreground' />
           <h3 className='mb-2 text-lg font-semibold'>
@@ -658,7 +634,7 @@ function PatientDataTableContent({
                   Filtros
                 </div>
                 <div className='space-y-3'>
-                  {uniqueStatusValues.map((value, i) => (
+                  {uniqueStatusValues.map(_(value,_i) => (
                     <div key={value} className='flex items-center gap-2'>
                       <Checkbox
                         id={`${id}-${i}`}
@@ -953,8 +929,7 @@ function PatientRowActions({
   row: Row<PatientTableData>;
   onNavigate: any;
 }) {
-  return (
-    <DropdownMenu>
+  return (_<DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className='flex justify-end'>
           <Button

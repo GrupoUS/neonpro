@@ -10,7 +10,7 @@ export interface AuthState {
   loading: boolean;
   isAuthenticated: boolean;
   hasPermission: (permission: keyof UserProfile['permissions']) => boolean;
-  isRole: (role: UserProfile['role']) => boolean;
+  isRole: (_role: UserProfile['role']) => boolean;
 }
 
 export function useAuth(): AuthState {
@@ -19,15 +19,15 @@ export function useAuth(): AuthState {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  useEffect(_() => {
     // Get initial session and profile
     const getInitialSession = async () => {
       console.log('🔍 useAuth: Getting initial session...');
       try {
         // Add timeout to prevent hanging
         const sessionPromise = getCurrentSession();
-        const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Session timeout')), 3000)
+        const timeoutPromise = new Promise(_(_,_reject) =>
+          setTimeout(_() => reject(new Error('Session timeout')), 3000)
         );
 
         const currentSession = (await Promise.race([
@@ -51,9 +51,8 @@ export function useAuth(): AuthState {
             const profilePromise = userProfileService.getUserProfile(
               currentSession.user.id,
             );
-            const profileTimeoutPromise = new Promise((_, reject) =>
-              setTimeout(
-                () => reject(new Error('Profile loading timeout')),
+            const profileTimeoutPromise = new Promise(_(_,_reject) =>
+              setTimeout(_() => reject(new Error('Profile loading timeout')),
                 3000,
               )
             );
@@ -67,7 +66,7 @@ export function useAuth(): AuthState {
               userProfile ? 'Success' : 'Failed',
             );
             setProfile(userProfile);
-          } catch (profileError) {
+          } catch (_profileError) {
             console.error(
               '❌ useAuth: Error loading user profile:',
               profileError,
@@ -82,7 +81,7 @@ export function useAuth(): AuthState {
           // Don't create fallback profile - just set null to allow app to work
           setProfile(null);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('❌ useAuth: Error getting initial session:', error);
         setSession(null);
         setUser(null);
@@ -98,7 +97,7 @@ export function useAuth(): AuthState {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(_async (event,_session) => {
       console.log('Auth state changed:', event, session?.user?.email);
 
       setSession(session);
@@ -110,9 +109,8 @@ export function useAuth(): AuthState {
           const profilePromise = userProfileService.getUserProfile(
             session.user.id,
           );
-          const profileTimeoutPromise = new Promise((_, reject) =>
-            setTimeout(
-              () => reject(new Error('Profile loading timeout')),
+          const profileTimeoutPromise = new Promise(_(_,_reject) =>
+            setTimeout(_() => reject(new Error('Profile loading timeout')),
               3000,
             )
           );
@@ -122,7 +120,7 @@ export function useAuth(): AuthState {
             profileTimeoutPromise,
           ])) as any;
           setProfile(userProfile);
-        } catch (profileError) {
+        } catch (_profileError) {
           console.error('Error loading user profile:', profileError);
           setProfile(null);
         }
@@ -162,7 +160,7 @@ export function useAuth(): AuthState {
     return profile?.permissions[permission] || false;
   };
 
-  const isRole = (role: UserProfile['role']): boolean => {
+  const isRole = (_role: UserProfile['role']): boolean => {
     return profile?.role === role;
   };
 

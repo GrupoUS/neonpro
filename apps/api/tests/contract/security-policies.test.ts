@@ -248,7 +248,7 @@ describe('Contract: Security Policies API', () => {
         },
         body: JSON.stringify({
           policy_id: 'test-policy-id',
-          context: {
+          _context: {
             data_type: 'patient_records',
             access_level: 'restricted',
             user_role: 'healthcare_provider',
@@ -284,7 +284,7 @@ describe('Contract: Security Policies API', () => {
         },
         body: JSON.stringify({
           token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...',
-          context: {
+          _context: {
             endpoint: '/api/v1/patients',
             method: 'GET',
           },
@@ -319,7 +319,7 @@ describe('Contract: Security Policies API', () => {
           user_id: 'test-user-id',
           resource: '/api/v1/patients/123',
           action: 'read',
-          context: {
+          _context: {
             patient_id: '123',
             emergency_access: false,
           },

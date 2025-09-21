@@ -126,7 +126,7 @@ class NotificationService {
       );
 
       return results;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error sending appointment confirmation:', error);
       return [
         {
@@ -183,7 +183,7 @@ class NotificationService {
         results,
       );
       return results;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error sending appointment reminder:', error);
       return [];
     }
@@ -227,7 +227,7 @@ class NotificationService {
         results,
       );
       return results;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error sending appointment cancellation:', error);
       return [];
     }
@@ -269,7 +269,7 @@ class NotificationService {
         channel: 'email',
         sentAt: new Date(),
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Email sending failed',
@@ -309,7 +309,7 @@ class NotificationService {
         channel: 'sms',
         sentAt: new Date(),
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'SMS sending failed',
@@ -349,7 +349,7 @@ class NotificationService {
         channel: 'whatsapp',
         sentAt: new Date(),
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         error: error instanceof Error ? error.message : 'WhatsApp sending failed',
@@ -406,7 +406,7 @@ class NotificationService {
           ? new Date(anyData.lgpd_consent_date)
           : new Date(),
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting notification preferences:', error);
       // Return safe defaults
       return {
@@ -592,10 +592,10 @@ Nos vemos em breve! ✨`,
       if (error) {
         console.error('Error logging notification activity:', error);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error logging notification activity:', error);
     }
   }
 }
 
-export const notificationService = new NotificationService();
+export const _notificationService = new NotificationService();

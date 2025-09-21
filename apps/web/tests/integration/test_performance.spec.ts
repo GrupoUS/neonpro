@@ -87,7 +87,7 @@ describe('Performance Targets Tests (T030)', () => {
           user: {
             id: 'performance-test-user',
             email: 'performance.test@professional.com',
-            role: 'healthcare_professional',
+            _role: 'healthcare_professional',
           },
         }),
       );
@@ -1017,10 +1017,10 @@ class PerformanceTestUtils {
   static async measureSearchResponse(
     page: Page,
     searchSelector: string,
-    query: string,
+    _query: string,
   ): Promise<number> {
     const startTime = Date.now();
-    await page.fill(searchSelector, query);
+    await page.fill(searchSelector, _query);
     await page.press(searchSelector, 'Enter');
     await page.waitForSelector('[data-testid="search-results"]');
     return Date.now() - startTime;

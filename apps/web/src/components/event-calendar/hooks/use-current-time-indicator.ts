@@ -11,9 +11,9 @@ export function useCurrentTimeIndicator(
   const [currentTimePosition, setCurrentTimePosition] = useState<number>(0);
   const [currentTimeVisible, setCurrentTimeVisible] = useState<boolean>(false);
 
-  useEffect(() => {
+  useEffect(_() => {
     const calculateTimePosition = () => {
-      const now = new Date();
+      const _now = new Date();
       const hours = now.getHours();
       const minutes = now.getMinutes();
       const totalMinutes = (hours - StartHour) * 60 + minutes;

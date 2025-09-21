@@ -254,23 +254,23 @@ export class HTTPSMonitoringService {
       m.handshakeTimeMs <= this.config.maxHandshakeTimeMs
     );
 
-    const protocolDistribution = allMetrics.reduce((acc, m) => {
+    const protocolDistribution = allMetrics.reduce(_(acc,_m) => {
       acc[m.tlsVersion] = (acc[m.tlsVersion] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-    const cipherSuiteDistribution = allMetrics.reduce((acc, m) => {
+    const cipherSuiteDistribution = allMetrics.reduce(_(acc,_m) => {
       acc[m.cipherSuite] = (acc[m.cipherSuite] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
     const recentAlerts = this.alerts
       .filter(a => !a.resolved && Date.now() - new Date(a.timestamp).getTime() < 3600000)
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      .sort(_(a,_b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     return {
       totalHandshakes: allMetrics.length,
-      averageHandshakeTime: handshakeTimes.reduce((a, b) => a + b, 0) / handshakeTimes.length,
+      averageHandshakeTime: handshakeTimes.reduce(_(a,_b) => a + b, 0) / handshakeTimes.length,
       minHandshakeTime: Math.min(...handshakeTimes),
       maxHandshakeTime: Math.max(...handshakeTimes),
       complianceRate: (compliantHandshakes.length / allMetrics.length) * 100,
@@ -326,7 +326,7 @@ export class HTTPSMonitoringService {
    * Start background monitoring
    */
   private startMonitoring(): void {
-    this.monitoringInterval = setInterval(() => {
+    this.monitoringInterval = setInterval(_() => {
       this.performHealthCheck();
     }, this.config.monitoringInterval);
   }
@@ -367,7 +367,7 @@ export class HTTPSMonitoringService {
           summary,
         );
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('https_monitoring_health_check', 'Health check failed', {
         error: (error as Error).message,
       });
@@ -405,4 +405,4 @@ export class HTTPSMonitoringService {
 }
 
 // Global instance
-export const httpsMonitoringService = new HTTPSMonitoringService();
+export const _httpsMonitoringService = new HTTPSMonitoringService();

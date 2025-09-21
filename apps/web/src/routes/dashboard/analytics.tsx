@@ -9,6 +9,6 @@ function AnalyticsDashboardPage() {
   );
 }
 
-export const Route = createFileRoute('/dashboard/analytics')({
+export const _Route = createFileRoute('/dashboard/analytics')({
   component: AnalyticsDashboardPage,
 });

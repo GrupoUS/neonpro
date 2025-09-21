@@ -6,7 +6,6 @@
 
 import { zValidator } from '@hono/zod-validator';
 import { Context, Hono, Next } from 'hono';
-import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service';
 import { LGPDService } from '../../services/lgpd-service.js';
 import { PatientService } from '../../services/patient-service.js';
@@ -21,7 +20,7 @@ interface ServiceInterface {
 
 interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
   metadata?: Record<string, any>;
@@ -60,7 +59,7 @@ const mockAuthMiddleware = (c: Context, next: Next) => {
       401,
     );
   }
-  c.set('user', { id: 'user-123', role: 'healthcare_professional' });
+  c.set('user', { id: 'user-123', _role: 'healthcare_professional' });
   return next();
 };
 
@@ -78,7 +77,7 @@ const chatRequestSchema = z.object({
   modelPreference: z.string().optional(),
   streaming: z.boolean().optional().default(false),
   patientId: z.string().optional(),
-  context: z
+  _context: z
     .object({
       healthcareContext: z.boolean().optional().default(true),
       medicalContext: z.boolean().optional().default(false),
@@ -94,7 +93,7 @@ const chatRequestSchema = z.object({
 let services: ServiceInterface | null = null;
 
 // Function to set services (used by tests)
-export const setServices = (injectedServices: ServiceInterface) => {
+export const _setServices = (injectedServices: ServiceInterface) => {
   services = injectedServices;
 };
 
@@ -129,7 +128,7 @@ app.post(
       // Validate LGPD data access for AI chat
       const currentServices = getServices();
       const lgpdValidation = await currentServices.lgpdService.validateDataAccess({
-        userId: _user.id,
+        _userId: _user.id,
         dataType: 'ai_chat',
         purpose: 'healthcare_assistance',
         legalBasis: 'legitimate_interest',
@@ -152,7 +151,7 @@ app.post(
       if (requestData.patientId && requestData.context?.includePatientHistory) {
         const patientData = await currentServices.patientService.getPatientContext({
           patientId: requestData.patientId,
-          userId: _user.id,
+          _userId: _user.id,
           includeHistory: true,
         });
 
@@ -163,12 +162,12 @@ app.post(
 
       // Prepare AI chat request
       const _aiChatRequest = {
-        userId: _user.id,
+        _userId: _user.id,
         message: requestData.message,
         conversationId: requestData.conversationId,
         modelPreference: requestData.modelPreference,
         streaming: requestData.streaming,
-        context: {
+        _context: {
           ...requestData.context,
           patientContext,
           healthcareProfessional,
@@ -181,12 +180,12 @@ app.post(
       if (requestData.streaming) {
         // Use streamMessage for streaming requests
         aiResponse = await currentServices.aiChatService.streamMessage({
-          userId: _user.id,
+          _userId: _user.id,
           message: requestData.message,
           conversationId: requestData.conversationId,
           modelPreference: requestData.modelPreference,
           streaming: true,
-          context: {
+          _context: {
             ...requestData.context,
             patientContext,
             healthcareProfessional,
@@ -198,7 +197,7 @@ app.post(
         aiResponse = await currentServices.aiChatService.generateResponse({
           provider: requestData.modelPreference || 'openai',
           model: 'gpt-4o',
-          messages: [{ role: 'user', content: requestData.message }],
+          messages: [{ _role: 'user', content: requestData.message }],
           patientId: requestData.patientId,
           temperature: 0.7,
           maxTokens: 1000,
@@ -243,7 +242,7 @@ app.post(
         };
 
       await currentServices.auditService.logActivity({
-        userId: _user.id,
+        _userId: _user.id,
         action: 'ai_chat_message',
         resourceType: 'ai_conversation',
         resourceId: requestData.streaming
@@ -298,7 +297,7 @@ app.post(
       }
 
       // Set all headers
-      Object.entries(responseHeaders).forEach(([key, value]) => {
+      Object.entries(responseHeaders).forEach(_([key,_value]) => {
         c.header(key, value);
       });
 
@@ -306,13 +305,13 @@ app.post(
         success: true,
         data: responseData,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('AI Chat endpoint error:', error);
 
       // Log error for audit
       const currentServices = getServices();
       await currentServices.auditService.logActivity({
-        userId: _user.id,
+        _userId: _user.id,
         action: 'ai_chat_error',
         resourceType: 'ai_conversation',
         resourceId: 'error',
@@ -368,7 +367,7 @@ const sessionRequestSchema = z.object({
       }),
     ])
     .optional(),
-  context: z
+  _context: z
     .object({
       healthcareProfessional: z
         .object({
@@ -429,7 +428,7 @@ const messageRequestSchema = z.object({
       language: z.string().optional(),
     })
     .optional(),
-  context: z
+  _context: z
     .object({
       specialty: z.string().optional(),
       urgency: z.string().optional(),
@@ -529,7 +528,7 @@ app.post(
         },
         201,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Chat request failed:', error);
       return c.json(
         {
@@ -709,7 +708,7 @@ app.post(
         c.header('Connection', 'keep-alive');
 
         // Set other headers
-        Object.entries(headers).forEach(([key, value]) => {
+        Object.entries(headers).forEach(_([key,_value]) => {
           c.header(key, value);
         });
 
@@ -725,7 +724,7 @@ app.post(
         });
       } else {
         // Set headers for regular response
-        Object.entries(headers).forEach(([key, value]) => {
+        Object.entries(headers).forEach(_([key,_value]) => {
           c.header(key, value);
         });
 
@@ -738,7 +737,7 @@ app.post(
           201,
         );
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Chat request failed:', error);
       return c.json(
         {

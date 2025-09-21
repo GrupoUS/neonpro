@@ -21,7 +21,7 @@ export function useMobileOptimization() {
     desktop: 1024, // Desktop and landscape tablets
   };
 
-  useEffect(() => {
+  useEffect(_() => {
     if (typeof window === 'undefined') return;
 
     // Check touch support
@@ -56,7 +56,7 @@ export function useMobileOptimization() {
    * Get touch target size based on device type
    * WCAG 2.1 recommends minimum 44x44px for touch targets
    */
-  const getTouchTargetSize = useCallback(() => {
+  const getTouchTargetSize = useCallback(_() => {
     if (isMobile) return 44; // Minimum for mobile
     if (isTablet) return 48; // Larger for tablets
     return 40; // Standard for desktop
@@ -65,7 +65,7 @@ export function useMobileOptimization() {
   /**
    * Get font size based on device type for better readability
    */
-  const getFontSize = useCallback(() => {
+  const getFontSize = useCallback(_() => {
     if (isMobile) return 'base'; // 16px base
     if (isTablet) return 'lg'; // 18px for tablets
     return 'base'; // 16px for desktop
@@ -74,7 +74,7 @@ export function useMobileOptimization() {
   /**
    * Get spacing based on device type
    */
-  const getSpacing = useCallback(() => {
+  const getSpacing = useCallback(_() => {
     if (isMobile) return 'tight'; // Less spacing on mobile
     if (isTablet) return 'normal'; // Normal spacing on tablets
     return 'normal'; // Normal spacing on desktop
@@ -83,14 +83,14 @@ export function useMobileOptimization() {
   /**
    * Check if device should use touch interactions
    */
-  const shouldUseTouchInteractions = useCallback(() => {
+  const shouldUseTouchInteractions = useCallback(_() => {
     return touchSupported && (isMobile || isTablet);
   }, [touchSupported, isMobile, isTablet]);
 
   /**
    * Get optimized interaction delay for touch devices
    */
-  const getInteractionDelay = useCallback(() => {
+  const getInteractionDelay = useCallback(_() => {
     if (shouldUseTouchInteractions()) {
       return 300; // 300ms delay for touch devices
     }
@@ -100,7 +100,7 @@ export function useMobileOptimization() {
   /**
    * Get viewport orientation
    */
-  const getOrientation = useCallback(() => {
+  const getOrientation = useCallback(_() => {
     if (typeof window === 'undefined') return 'portrait';
     return window.innerHeight > window.innerWidth ? 'portrait' : 'landscape';
   }, []);
@@ -108,21 +108,21 @@ export function useMobileOptimization() {
   /**
    * Check if device is in landscape mode
    */
-  const isLandscape = useCallback(() => {
+  const isLandscape = useCallback(_() => {
     return getOrientation() === 'landscape';
   }, [getOrientation]);
 
   /**
    * Check if device is in portrait mode
    */
-  const isPortrait = useCallback(() => {
+  const isPortrait = useCallback(_() => {
     return getOrientation() === 'portrait';
   }, [getOrientation]);
 
   /**
    * Get safe area insets for mobile devices (notch, home indicator)
    */
-  const getSafeAreaInsets = useCallback(() => {
+  const getSafeAreaInsets = useCallback(_() => {
     if (typeof window === 'undefined' || !CSS.supports('padding', 'env(safe-area-inset-top)')) {
       return { top: 0, right: 0, bottom: 0, left: 0 };
     }
@@ -140,7 +140,7 @@ export function useMobileOptimization() {
   /**
    * Generate CSS classes for mobile optimization
    */
-  const getMobileOptimizedClasses = useCallback(() => {
+  const getMobileOptimizedClasses = useCallback(_() => {
     const classes = [];
 
     if (isMobile) {
@@ -162,21 +162,21 @@ export function useMobileOptimization() {
   /**
    * Check if viewport is narrow (good for column layouts)
    */
-  const isNarrowViewport = useCallback(() => {
+  const isNarrowViewport = useCallback(_() => {
     return viewportSize.width < breakpoints.mobile;
   }, [viewportSize.width, breakpoints.mobile]);
 
   /**
    * Check if viewport is medium (good for grid layouts)
    */
-  const isMediumViewport = useCallback(() => {
+  const isMediumViewport = useCallback(_() => {
     return viewportSize.width >= breakpoints.mobile && viewportSize.width < breakpoints.desktop;
   }, [viewportSize.width, breakpoints.mobile, breakpoints.desktop]);
 
   /**
    * Check if viewport is wide (good for side-by-side layouts)
    */
-  const isWideViewport = useCallback(() => {
+  const isWideViewport = useCallback(_() => {
     return viewportSize.width >= breakpoints.desktop;
   }, [viewportSize.width, breakpoints.desktop]);
 

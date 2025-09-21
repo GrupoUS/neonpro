@@ -19,9 +19,9 @@ import {
   validateClinicalCompliance,
 } from "../types/clinical-kpis";
 
-describe("Clinical KPIs", () => {
-  describe("ClinicalKPI type guards", () => {
-    it("should identify valid clinical KPIs", () => {
+describe(_"Clinical KPIs",_() => {
+  describe(_"ClinicalKPI type guards",_() => {
+    it(_"should identify valid clinical KPIs",_() => {
       const kpi = createPatientSafetyKPI({
         name: "medication_error_rate",
         value: 2.5,
@@ -35,17 +35,17 @@ describe("Clinical KPIs", () => {
       expect(isPatientSafetyKPI(kpi)).toBe(true);
     });
 
-    it("should reject invalid clinical KPIs", () => {
+    it(_"should reject invalid clinical KPIs",_() => {
       expect(isClinicalKPI({})).toBe(false);
       expect(isClinicalKPI(null)).toBe(false);
       expect(isClinicalKPI({ id: "test", name: "test" })).toBe(false);
     });
   });
 
-  describe("Patient Safety KPI", () => {
+  describe(_"Patient Safety KPI",_() => {
     let safetyKPI: PatientSafetyKPI;
 
-    beforeEach(() => {
+    beforeEach(_() => {
       safetyKPI = createPatientSafetyKPI({
         name: "fall_rate",
         value: 1.2,
@@ -56,7 +56,7 @@ describe("Clinical KPIs", () => {
       });
     });
 
-    it("should create a valid patient safety KPI", () => {
+    it(_"should create a valid patient safety KPI",_() => {
       expect(safetyKPI.category).toBe("patient_safety");
       expect(safetyKPI.name).toBe("fall_rate");
       expect(safetyKPI.value).toBe(1.2);
@@ -65,25 +65,25 @@ describe("Clinical KPIs", () => {
       expect(safetyKPI.totalEvents).toBe(250);
     });
 
-    it("should calculate safety rate correctly", () => {
+    it(_"should calculate safety rate correctly",_() => {
       expect(safetyKPI.safetyRate).toBeCloseTo(1.2, 1);
     });
 
-    it("should include incident details", () => {
+    it(_"should include incident details",_() => {
       expect(safetyKPI.incidentDetails).toBeDefined();
       expect(safetyKPI.incidentDetails.reportingMechanism).toBe("electronic");
       expect(safetyKPI.incidentDetails.investigationRequired).toBe(true);
     });
 
-    it("should have appropriate risk level for safety incidents", () => {
+    it(_"should have appropriate risk level for safety incidents",_() => {
       expect(["MEDIUM", "HIGH"]).toContain(safetyKPI.riskLevel);
     });
   });
 
-  describe("Quality of Care KPI", () => {
+  describe(_"Quality of Care KPI",_() => {
     let qualityKPI: QualityOfCareKPI;
 
-    beforeEach(() => {
+    beforeEach(_() => {
       qualityKPI = createQualityOfCareKPI({
         name: "care_coordination_score",
         value: 4.5,
@@ -93,13 +93,13 @@ describe("Clinical KPIs", () => {
       });
     });
 
-    it("should create a valid quality of care KPI", () => {
+    it(_"should create a valid quality of care KPI",_() => {
       expect(qualityKPI.category).toBe("quality_of_care");
       expect(qualityKPI.qualityDimension).toBe("care_coordination");
       expect(qualityKPI.measurementStandard).toBe("CFM");
     });
 
-    it("should include evidence-based practice tracking", () => {
+    it(_"should include evidence-based practice tracking",_() => {
       expect(qualityKPI.evidenceBasedPractice).toBeDefined();
       expect(
         qualityKPI.evidenceBasedPractice.guidelineCompliance,
@@ -109,7 +109,7 @@ describe("Clinical KPIs", () => {
       ).toBeLessThanOrEqual(100);
     });
 
-    it("should track patient-centered care metrics", () => {
+    it(_"should track patient-centered care metrics",_() => {
       expect(qualityKPI.patientCenteredCare).toBeDefined();
       expect(
         qualityKPI.patientCenteredCare.sharedDecisionMaking,
@@ -120,10 +120,10 @@ describe("Clinical KPIs", () => {
     });
   });
 
-  describe("Patient Outcome KPI", () => {
+  describe(_"Patient Outcome KPI",_() => {
     let outcomeKPI: PatientOutcomeKPI;
 
-    beforeEach(() => {
+    beforeEach(_() => {
       outcomeKPI = createPatientOutcomeKPI({
         name: "recovery_rate",
         value: 92.5,
@@ -138,20 +138,20 @@ describe("Clinical KPIs", () => {
       });
     });
 
-    it("should create a valid patient outcome KPI", () => {
+    it(_"should create a valid patient outcome KPI",_() => {
       expect(outcomeKPI.category).toBe("patient_outcomes");
       expect(outcomeKPI.outcomeType).toBe("clinical_outcome");
       expect(outcomeKPI.measurement.current).toBe(92.5);
       expect(outcomeKPI.measurement.trend).toBe("improving");
     });
 
-    it("should calculate outcome improvement correctly", () => {
+    it(_"should calculate outcome improvement correctly",_() => {
       const improvement =
         outcomeKPI.measurement.current - outcomeKPI.measurement.baseline;
       expect(improvement).toBe(7.5);
     });
 
-    it("should track progress toward target", () => {
+    it(_"should track progress toward target",_() => {
       const progressToTarget =
         (outcomeKPI.measurement.current - outcomeKPI.measurement.baseline) /
         (outcomeKPI.measurement.target - outcomeKPI.measurement.baseline);
@@ -159,8 +159,8 @@ describe("Clinical KPIs", () => {
     });
   });
 
-  describe("Infection Control KPI", () => {
-    it("should track infection rates and prevention measures", () => {
+  describe(_"Infection Control KPI",_() => {
+    it(_"should track infection rates and prevention measures",_() => {
       const infectionKPI: InfectionControlKPI = {
         id: "inf_001",
         name: "healthcare_associated_infections",
@@ -202,8 +202,8 @@ describe("Clinical KPIs", () => {
     });
   });
 
-  describe("Patient Satisfaction KPI", () => {
-    it("should track patient experience metrics", () => {
+  describe(_"Patient Satisfaction KPI",_() => {
+    it(_"should track patient experience metrics",_() => {
       const satisfactionKPI: PatientSatisfactionKPI = {
         id: "sat_001",
         name: "patient_satisfaction_score",
@@ -248,8 +248,8 @@ describe("Clinical KPIs", () => {
     });
   });
 
-  describe("Clinical Quality Score Calculation", () => {
-    it("should calculate comprehensive clinical quality score", () => {
+  describe(_"Clinical Quality Score Calculation",_() => {
+    it(_"should calculate comprehensive clinical quality score",_() => {
       const clinicalKPIs: ClinicalKPI[] = [
         createPatientSafetyKPI({
           name: "medication_error_rate",
@@ -291,7 +291,7 @@ describe("Clinical KPIs", () => {
       expect(qualityScore.dimensions.length).toBeGreaterThan(0);
     });
 
-    it("should handle empty KPI array gracefully", () => {
+    it(_"should handle empty KPI array gracefully",_() => {
       const qualityScore = calculateClinicalQualityScore([]);
 
       expect(qualityScore.score).toBe(0);
@@ -300,8 +300,8 @@ describe("Clinical KPIs", () => {
     });
   });
 
-  describe("Clinical Compliance Validation", () => {
-    it("should validate ANVISA compliance for clinical metrics", () => {
+  describe(_"Clinical Compliance Validation",_() => {
+    it(_"should validate ANVISA compliance for clinical metrics",_() => {
       const clinicalKPI = createPatientSafetyKPI({
         name: "adverse_drug_reactions",
         value: 3.2,
@@ -318,7 +318,7 @@ describe("Clinical KPIs", () => {
       expect(compliance.recommendations).toBeInstanceOf(Array);
     });
 
-    it("should validate CFM compliance for medical practice", () => {
+    it(_"should validate CFM compliance for medical practice",_() => {
       const qualityKPI = createQualityOfCareKPI({
         name: "diagnostic_accuracy",
         value: 94.2,
@@ -337,7 +337,7 @@ describe("Clinical KPIs", () => {
       );
     });
 
-    it("should validate LGPD compliance for patient data", () => {
+    it(_"should validate LGPD compliance for patient data",_() => {
       const outcomeKPI = createPatientOutcomeKPI({
         name: "patient_recovery",
         value: 87.3,
@@ -362,8 +362,8 @@ describe("Clinical KPIs", () => {
     });
   });
 
-  describe("Clinical Category Validation", () => {
-    it("should validate all clinical categories", () => {
+  describe(_"Clinical Category Validation",_() => {
+    it(_"should validate all clinical categories",_() => {
       const categories: ClinicalCategory[] = [
         "patient_safety",
         "quality_of_care",
@@ -379,14 +379,14 @@ describe("Clinical KPIs", () => {
         "emergency_response",
       ];
 
-      categories.forEach((category) => {
+      categories.forEach(_(category) => {
         expect(typeof category).toBe("string");
         expect(category.length).toBeGreaterThan(0);
       });
     });
   });
 
-  describe("Brazilian Healthcare Context", () => {
+  describe(_"Brazilian Healthcare Context",_() => {
     it("should handle SUS (Sistema Único de Saúde) metrics", () => {
       const susKPI = createQualityOfCareKPI({
         name: "sus_access_time",

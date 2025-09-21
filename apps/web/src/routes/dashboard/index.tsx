@@ -16,14 +16,14 @@ import { formatBRL } from '@neonpro/utils';
 function DashboardComponent() {
   const { session, loading, isAuthenticated } = useAuth();
   const navigate = useNavigate(); // Redirect to login if not authenticated
-  useEffect(() => {
+  useEffect(_() => {
     if (!loading && !isAuthenticated) {
       navigate({ to: '/' as const });
     }
   }, [loading, isAuthenticated, navigate]);
 
   // Clean OAuth hash when session established
-  useEffect(() => {
+  useEffect(_() => {
     const searchParams = new URLSearchParams(window.location.search);
     const nextUrl = searchParams.get('next');
     const hashParams = new URLSearchParams(window.location.hash.substring(1));
@@ -36,7 +36,7 @@ function DashboardComponent() {
   }, [session]);
 
   // Data queries
-  const todayRange = useMemo(() => {
+  const todayRange = useMemo(_() => {
     const start = new Date();
     start.setHours(0, 0, 0, 0);
     const end = new Date();
@@ -45,7 +45,7 @@ function DashboardComponent() {
   }, []);
 
   const { data: appointmentsTodayCount, isLoading: loadingAppt } = useQuery({
-    queryKey: ['appointmentsTodayCount', todayRange],
+    queryKey: ['appointmentsTodayCount',_todayRange],
     queryFn: async () => {
       const { count, error } = await supabase
         .from('appointments')
@@ -88,15 +88,14 @@ function DashboardComponent() {
         .lte('transaction_date', end.toISOString())
         .eq('transaction_type', 'income');
       if (error) throw error;
-      const total = (data ?? []).reduce(
-        (sum, t: any) => sum + (t?.amount ?? 0),
+      const total = (data ?? []).reduce(_(sum, t: any) => sum + (t?.amount ?? 0),
         0,
       );
       return total;
     },
   });
 
-  const sevenDays = useMemo(() => {
+  const sevenDays = useMemo(_() => {
     const end = new Date();
     end.setHours(23, 59, 59, 999);
     const start = new Date();
@@ -106,7 +105,7 @@ function DashboardComponent() {
   }, []);
 
   const { data: showRate = 0, isLoading: showRateLoading } = useQuery({
-    queryKey: ['showRate7d', sevenDays],
+    queryKey: ['showRate7d',_sevenDays],
     queryFn: async () => {
       // Try analytics_appointments first if exists, else compute from appointments
       const { data: analytics, error: aErr } = await supabase
@@ -194,7 +193,7 @@ function DashboardComponent() {
       ];
       return items
         .filter(x => !!x.created_at)
-        .sort((a, b) => (a.created_at! < b.created_at! ? 1 : -1))
+        .sort(_(a,_b) => (a.created_at! < b.created_at! ? 1 : -1))
         .slice(0, 5);
     },
   });
@@ -323,7 +322,7 @@ function DashboardComponent() {
                   </p>
                 )}
                 {!loadingActivity
-                  && (recentActivity ?? []).map((item, idx) => (
+                  && (recentActivity ?? []).map(_(item,_idx) => (
                     <div
                       key={item.id + idx}
                       className='flex items-center space-x-4'
@@ -427,6 +426,6 @@ function DashboardComponent() {
   );
 }
 
-export const Route = createFileRoute('/dashboard/')({
+export const _Route = createFileRoute('/dashboard/')({
   component: DashboardComponent,
 });

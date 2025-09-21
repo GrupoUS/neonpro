@@ -147,7 +147,7 @@ export class TLSConfigManager {
         sessionTimeout: TLS_CONSTANTS.SECURITY.SESSION_TIMEOUT,
         ticketKeys: crypto.getRandomValues(new Uint8Array(TLS_CONSTANTS.SECURITY.TICKET_KEY_SIZE)),
       };
-    } catch (error) {
+    } catch (_error) {
       throw new Error(
         `Failed to load TLS certificates: ${
           error instanceof Error ? error.message : 'Unknown error'
@@ -195,7 +195,7 @@ export class TLSConfigManager {
         ),
         fingerprint: this.generateCertificateFingerprint(cert),
       };
-    } catch (error) {
+    } catch (_error) {
       // Log certificate parsing error securely
       console.error(
         'Certificate parsing failed:',

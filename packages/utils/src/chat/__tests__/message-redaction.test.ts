@@ -14,9 +14,9 @@ import {
   redactBrazilianData,
 } from "../message-redaction";
 
-describe("T009: Message Redaction for AI Chat", () => {
-  describe("PII Detection", () => {
-    it("should detect Brazilian CPF numbers", () => {
+describe("T009: Message Redaction for AI Chat",_() => {
+  describe(_"PII Detection",_() => {
+    it(_"should detect Brazilian CPF numbers",_() => {
       const message = "Meu CPF é 123.456.789-00 para consulta";
       const result = detectPII(message);
 
@@ -31,7 +31,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       });
     });
 
-    it("should detect Brazilian CNPJ numbers", () => {
+    it(_"should detect Brazilian CNPJ numbers",_() => {
       const message = "A clínica tem CNPJ 12.345.678/0001-90";
       const result = detectPII(message);
 
@@ -39,7 +39,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.patterns).toContain("cnpj");
     });
 
-    it("should detect email addresses", () => {
+    it(_"should detect email addresses",_() => {
       const message = "Entre em contato: paciente@clinica.com.br";
       const result = detectPII(message);
 
@@ -47,7 +47,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.patterns).toContain("email");
     });
 
-    it("should detect phone numbers", () => {
+    it(_"should detect phone numbers",_() => {
       const cases = [
         "Telefone: (11) 99999-8888",
         "Cel: 11 9 9999-8888",
@@ -55,14 +55,14 @@ describe("T009: Message Redaction for AI Chat", () => {
         "Fone: 11-99999-8888",
       ];
 
-      cases.forEach((message) => {
+      cases.forEach(_(message) => {
         const result = detectPII(message);
         expect(result.hasPII).toBe(true);
         expect(result.patterns).toContain("phone");
       });
     });
 
-    it("should detect RG numbers", () => {
+    it(_"should detect RG numbers",_() => {
       const message = "RG: 12.345.678-9 SSP/SP";
       const result = detectPII(message);
 
@@ -70,7 +70,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.patterns).toContain("rg");
     });
 
-    it("should detect credit card numbers", () => {
+    it(_"should detect credit card numbers",_() => {
       const message = "Cartão: 1234 5678 9012 3456";
       const result = detectPII(message);
 
@@ -78,7 +78,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.patterns).toContain("credit_card");
     });
 
-    it("should detect addresses", () => {
+    it(_"should detect addresses",_() => {
       const message =
         "Moro na Rua das Flores, 123, apto 45, São Paulo-SP, CEP 01234-567";
       const result = detectPII(message);
@@ -87,7 +87,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.patterns).toContain("address");
     });
 
-    it("should handle multiple PII types in single message", () => {
+    it(_"should handle multiple PII types in single message",_() => {
       const message =
         "João Silva, CPF 123.456.789-00, telefone (11) 99999-8888, email joao@email.com";
       const result = detectPII(message);
@@ -99,7 +99,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.matches.length).toBeGreaterThan(2);
     });
 
-    it("should not flag common medical terms as PII", () => {
+    it(_"should not flag common medical terms as PII",_() => {
       const message =
         "Paciente com diabetes tipo 2, pressão 120/80, temperatura 36.5°C";
       const result = detectPII(message);
@@ -108,7 +108,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.patterns).toHaveLength(0);
     });
 
-    it("should not flag partial numbers as PII", () => {
+    it(_"should not flag partial numbers as PII",_() => {
       const message = "Consulta marcada para as 14:30, sala 123";
       const result = detectPII(message);
 
@@ -116,8 +116,8 @@ describe("T009: Message Redaction for AI Chat", () => {
     });
   });
 
-  describe("Message Redaction", () => {
-    it("should redact CPF with appropriate mask", () => {
+  describe(_"Message Redaction",_() => {
+    it(_"should redact CPF with appropriate mask",_() => {
       const message = "Paciente João, CPF 123.456.789-00, necessita consulta";
       const result = redactMessage(message);
 
@@ -127,7 +127,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.redactionCount).toBe(1);
     });
 
-    it("should redact email addresses", () => {
+    it(_"should redact email addresses",_() => {
       const message = "Contato do paciente: joao.silva@email.com.br";
       const result = redactMessage(message);
 
@@ -135,7 +135,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.redactedContent).not.toContain("joao.silva@email.com.br");
     });
 
-    it("should redact phone numbers with context preservation", () => {
+    it(_"should redact phone numbers with context preservation",_() => {
       const message = "Emergência: (11) 99999-8888 ou (11) 3333-4444";
       const result = redactMessage(message);
 
@@ -144,7 +144,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.redactionCount).toBe(2);
     });
 
-    it("should preserve medical context while redacting PII", () => {
+    it(_"should preserve medical context while redacting PII",_() => {
       const message =
         "Paciente João Silva (CPF 123.456.789-00) apresenta hipertensão, contato: (11) 99999-8888";
       const result = redactMessage(message);
@@ -155,7 +155,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.redactedContent).not.toContain("João Silva");
     });
 
-    it("should handle edge cases gracefully", () => {
+    it(_"should handle edge cases gracefully",_() => {
       const cases = [
         "",
         "   ",
@@ -163,7 +163,7 @@ describe("T009: Message Redaction for AI Chat", () => {
         "Números não-PII: 123, 456, 789",
       ];
 
-      cases.forEach((message) => {
+      cases.forEach(_(message) => {
         const result = redactMessage(message);
         expect(result.redactedContent).toBe(message);
         expect(result.hasPII).toBe(false);
@@ -171,7 +171,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       });
     });
 
-    it("should maintain message readability after redaction", () => {
+    it(_"should maintain message readability after redaction",_() => {
       const message =
         "Dr. Silva atendeu paciente João (CPF 123.456.789-00) com sintomas de gripe";
       const result = redactMessage(message);
@@ -182,12 +182,12 @@ describe("T009: Message Redaction for AI Chat", () => {
     });
   });
 
-  describe("Storage Sanitization", () => {
-    it("should create safe version for storage", () => {
+  describe(_"Storage Sanitization",_() => {
+    it(_"should create safe version for storage",_() => {
       const message: ChatMessage = {
         id: "msg-1",
         sessionId: "session-1",
-        role: "user",
+        _role: "user",
         content:
           "Meu nome é João Silva, CPF 123.456.789-00, telefone (11) 99999-8888",
         createdAt: new Date(),
@@ -204,11 +204,11 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.content).toBe(message.content); // Original preserved
     });
 
-    it("should handle messages without PII", () => {
+    it(_"should handle messages without PII",_() => {
       const message: ChatMessage = {
         id: "msg-2",
         sessionId: "session-1",
-        role: "assistant",
+        _role: "assistant",
         content: "Olá! Como posso ajudá-lo hoje com suas dúvidas sobre saúde?",
         createdAt: new Date(),
         sequenceNumber: 2,
@@ -221,11 +221,11 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.redactedContent).toBeUndefined();
     });
 
-    it("should generate appropriate metadata", () => {
+    it(_"should generate appropriate metadata",_() => {
       const message: ChatMessage = {
         id: "msg-3",
         sessionId: "session-1",
-        role: "user",
+        _role: "user",
         content: "Email: test@example.com, CPF: 123.456.789-00",
         createdAt: new Date(),
         sequenceNumber: 3,
@@ -243,8 +243,8 @@ describe("T009: Message Redaction for AI Chat", () => {
     });
   });
 
-  describe("Message Safety Validation", () => {
-    it("should validate safe messages", () => {
+  describe(_"Message Safety Validation",_() => {
+    it(_"should validate safe messages",_() => {
       const message =
         "Como está se sentindo hoje? Pode me contar sobre seus sintomas?";
       const result = validateMessageSafety(message);
@@ -254,7 +254,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.recommendations).toHaveLength(0);
     });
 
-    it("should flag messages with PII as unsafe", () => {
+    it(_"should flag messages with PII as unsafe",_() => {
       const message = "Meu CPF é 123.456.789-00 e moro na Rua A, 123";
       const result = validateMessageSafety(message);
 
@@ -263,7 +263,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.recommendations).toContain("redact_before_storage");
     });
 
-    it("should provide specific recommendations", () => {
+    it(_"should provide specific recommendations",_() => {
       const message =
         "João Silva, email: joao@test.com, telefone: (11) 99999-8888";
       const result = validateMessageSafety(message);
@@ -277,8 +277,8 @@ describe("T009: Message Redaction for AI Chat", () => {
     });
   });
 
-  describe("Brazilian Data Redaction", () => {
-    it("should redact SUS numbers", () => {
+  describe(_"Brazilian Data Redaction",_() => {
+    it(_"should redact SUS numbers",_() => {
       const message = "Número do SUS: 123 4567 8901 2345";
       const result = redactBrazilianData(message);
 
@@ -294,7 +294,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result).not.toMatch(/\d{5}-\d{3}/);
     });
 
-    it("should handle state abbreviations carefully", () => {
+    it(_"should handle state abbreviations carefully",_() => {
       const message = "Paciente de SP com sintomas";
       const result = redactBrazilianData(message);
 
@@ -302,7 +302,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result).toContain("SP");
     });
 
-    it("should redact full addresses", () => {
+    it(_"should redact full addresses",_() => {
       const message =
         "Endereço: Av. Paulista, 1000, Bela Vista, São Paulo-SP, CEP 01310-100";
       const result = redactBrazilianData(message);
@@ -312,8 +312,8 @@ describe("T009: Message Redaction for AI Chat", () => {
     });
   });
 
-  describe("Performance and Edge Cases", () => {
-    it("should handle large messages efficiently", () => {
+  describe(_"Performance and Edge Cases",_() => {
+    it(_"should handle large messages efficiently",_() => {
       const largeMessage =
         "Texto normal ".repeat(1000) + " CPF: 123.456.789-00";
       const startTime = performance.now();
@@ -325,7 +325,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.hasPII).toBe(true);
     });
 
-    it("should handle unicode and special characters", () => {
+    it(_"should handle unicode and special characters",_() => {
       const message =
         "Paciente João César (CPF: 123.456.789-00) tem consulta às 14h30";
       const result = redactMessage(message);
@@ -334,7 +334,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       expect(result.redactedContent).toContain("[CPF_REDACTED]");
     });
 
-    it("should preserve line breaks and formatting", () => {
+    it(_"should preserve line breaks and formatting",_() => {
       const message = `Paciente: João Silva
 CPF: 123.456.789-00
 Telefone: (11) 99999-8888
@@ -350,9 +350,9 @@ Sintomas:
     });
   });
 
-  describe("Audit and Compliance", () => {
-    it("should log redaction events for audit", () => {
-      const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+  describe(_"Audit and Compliance",_() => {
+    it(_"should log redaction events for audit",_() => {
+      const logSpy = vi.spyOn(console, "log").mockImplementation(_() => {});
 
       const message = "CPF: 123.456.789-00";
       redactMessage(message, { auditLog: true });
@@ -368,7 +368,7 @@ Sintomas:
       logSpy.mockRestore();
     });
 
-    it("should provide LGPD compliance report", () => {
+    it(_"should provide LGPD compliance report",_() => {
       const message = "João (CPF: 123.456.789-00) email: joao@test.com";
       const result = redactMessage(message, { generateReport: true });
 

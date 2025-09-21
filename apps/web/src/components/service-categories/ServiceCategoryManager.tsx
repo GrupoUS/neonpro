@@ -87,7 +87,7 @@ export function ServiceCategoryManager({
     ) {
       try {
         await deleteCategory.mutateAsync(category.id);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error deleting category:', error);
       }
     }
@@ -101,7 +101,7 @@ export function ServiceCategoryManager({
     ) {
       try {
         await initializeDefaults.mutateAsync(clinicId);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error initializing default categories:', error);
       }
     }
@@ -118,7 +118,7 @@ export function ServiceCategoryManager({
         </CardHeader>
         <CardContent>
           <div className='animate-pulse space-y-4'>
-            {Array.from({ length: 3 }).map((_, i) => (
+            {Array.from({ length: 3 }).map(_(_,_i) => (
               <div key={i} className='h-16 bg-muted rounded'></div>
             ))}
           </div>
@@ -349,8 +349,7 @@ export function ServiceCategoryManager({
               Atualize as informações da categoria
             </DialogDescription>
           </DialogHeader>
-          {editingCategory && (
-            <ServiceCategoryForm
+          {editingCategory && (_<ServiceCategoryForm
               category={editingCategory}
               clinicId={clinicId}
               onSuccess={() => setEditingCategory(null)}

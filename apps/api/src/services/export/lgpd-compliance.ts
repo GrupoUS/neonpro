@@ -26,11 +26,11 @@ export class ExportLGPDCompliance {
   ];
 
   static async validateExportRequest(
-    userId: string,
+    _userId: string,
     options: LGPDComplianceOptions,
     patientCount: number,
   ): Promise<{ valid: boolean; error?: string }> {
-    if (!userId) {
+    if (!_userId) {
       return { valid: false, error: 'ID do usuário é obrigatório' };
     }
 
@@ -55,7 +55,7 @@ export class ExportLGPDCompliance {
   }
 
   static async checkUserConsent(
-    userId: string,
+    _userId: string,
     purpose: string,
   ): Promise<boolean> {
     try {
@@ -63,7 +63,7 @@ export class ExportLGPDCompliance {
         userId,
         purpose,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro ao verificar consentimento LGPD:', error);
       return false;
     }
@@ -110,7 +110,7 @@ export class ExportLGPDCompliance {
       case 'number':
         return this.anonymizeNumber(value);
       case 'array':
-        return Array.isArray(value) ? value.map(() => '[REDACTED]') : value;
+        return Array.isArray(value) ? value.map(_() => '[REDACTED]') : value;
       default:
         return '[REDACTED]';
     }
@@ -142,7 +142,7 @@ export class ExportLGPDCompliance {
   }
 
   static generateAuditTrail(
-    userId: string,
+    _userId: string,
     exportId: string,
     recordCount: number,
     purpose: string,
@@ -173,7 +173,7 @@ export class ExportLGPDCompliance {
   }
 
   static async logDataAccess(
-    userId: string,
+    _userId: string,
     exportId: string,
     fields: PatientExportField[],
     recordCount: number,
@@ -197,7 +197,7 @@ export class ExportLGPDCompliance {
         legalBasis: 'CONSENT',
         timestamp: new Date(),
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro ao registrar acesso de dados LGPD:', error);
     }
   }

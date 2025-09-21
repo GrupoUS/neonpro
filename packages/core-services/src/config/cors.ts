@@ -32,7 +32,7 @@ export interface SecurityHeadersConfig {
 export function createCORSConfig(): CORSConfig {
   const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || "")
     .split(",")
-    .map((origin) => origin.trim())
+    .map(_(origin) => origin.trim())
     .filter(Boolean);
 
   return {
@@ -95,7 +95,7 @@ export function createSecurityHeadersConfig(): SecurityHeadersConfig {
 export function corsMiddleware(config?: CORSConfig): MiddlewareHandler {
   const corsConfig = config || createCORSConfig();
 
-  return async (c, next) => {
+  return async (_c,_next) => {
     const origin = c.req.header("Origin");
 
     // Handle preflight requests
@@ -158,12 +158,12 @@ export function securityHeadersMiddleware(
 ): MiddlewareHandler {
   const securityConfig = config || createSecurityHeadersConfig();
 
-  return async (c, next) => {
+  return async (_c,_next) => {
     if (securityConfig.contentSecurityPolicy.enabled) {
       const cspDirectives = Object.entries(
         securityConfig.contentSecurityPolicy.directives,
       )
-        .map(([directive, values]) => {
+        .map(_([directive,_values]) => {
           const valueString = Array.isArray(values) ? values.join(" ") : values;
           return `${directive} ${valueString}`;
         })
@@ -197,7 +197,7 @@ export function securityHeadersMiddleware(
     const permissionsPolicyDirectives = Object.entries(
       securityConfig.permissionsPolicy,
     )
-      .map(([directive, allowlist]) => {
+      .map(_([directive,_allowlist]) => {
         if (allowlist.length === 0) {
           return `${directive}=()`;
         }
@@ -217,7 +217,7 @@ export function securityHeadersMiddleware(
 }
 
 export function rateLimitHeadersMiddleware(): MiddlewareHandler {
-  return async (c, next) => {
+  return async (_c,_next) => {
     await next();
 
     const rateLimit = c.get("rateLimit");
@@ -230,7 +230,7 @@ export function rateLimitHeadersMiddleware(): MiddlewareHandler {
 }
 
 export function requestIdMiddleware(): MiddlewareHandler {
-  return async (c, next) => {
+  return async (_c,_next) => {
     const requestId = c.req.header("X-Request-ID") || generateRequestId();
     c.set("requestId", requestId);
     c.header("X-Request-ID", requestId);
@@ -248,7 +248,7 @@ export function securityMiddleware(options?: {
   enableRateLimit?: boolean;
   enableRequestId?: boolean;
 }): MiddlewareHandler {
-  return async (c, next) => {
+  return async (_c,_next) => {
     // Apply request ID middleware
     if (options?.enableRequestId !== false) {
       const requestId = c.req.header("X-Request-ID") || generateRequestId();
@@ -318,7 +318,7 @@ export function securityMiddleware(options?: {
       const cspDirectives = Object.entries(
         securityConfig.contentSecurityPolicy.directives,
       )
-        .map(([directive, values]) => {
+        .map(_([directive,_values]) => {
           const valueString = Array.isArray(values) ? values.join(" ") : values;
           return `${directive} ${valueString}`;
         })
@@ -352,7 +352,7 @@ export function securityMiddleware(options?: {
     const permissionsPolicyDirectives = Object.entries(
       securityConfig.permissionsPolicy,
     )
-      .map(([directive, allowlist]) => {
+      .map(_([directive,_allowlist]) => {
         if (allowlist.length === 0) {
           return `${directive}=()`;
         }

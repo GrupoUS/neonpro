@@ -29,8 +29,6 @@ import { ptBR } from 'date-fns/locale';
 import { AlertTriangle, Calendar, CheckCircle, Clock, MapPin, Phone, User } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
 import { HealthcareButton } from '@/components/ui/healthcare/healthcare-button';
 import { HealthcareInput } from '@/components/ui/healthcare/healthcare-input';
 import { HealthcareLoading } from '@/components/ui/healthcare/healthcare-loading';
@@ -118,7 +116,7 @@ const timeSlots = [
 // Generate mock weekly availability
 function generateWeeklyAvailability() {
   const days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-  return days.reduce((acc, day) => {
+  return days.reduce(_(acc,_day) => {
     acc[day] = {
       morning: day !== 'Sábado',
       afternoon: day !== 'Sábado',
@@ -166,14 +164,8 @@ interface CalendarDay {
   isAvailable: boolean;
 }
 
-export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemProps> = ({
-  patients,
-  onSchedule,
-  onCancel,
-  existingAppointments = [],
-  className,
-  testId = 'appointment-scheduling-system',
-}) => {
+export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemProps> = (_{
+  patients,_onSchedule,_onCancel,_existingAppointments = [],_className,_testId = 'appointment-scheduling-system',_}) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -208,7 +200,7 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
   const watchedValues = form.watch(['providerId', 'appointmentType', 'date']);
 
   // Update available slots when provider, appointment type, or date changes
-  useEffect(() => {
+  useEffect(_() => {
     const [providerId, appointmentType, date] = watchedValues;
     if (providerId && appointmentType && date) {
       calculateAvailableSlots(providerId, date, appointmentType);
@@ -286,7 +278,7 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
     const firstDay = new Date(year, month, 1);
-    const lastDay = new Date(year, month + 1, 0);
+    const _lastDay = new Date(year, month + 1, 0);
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
 
@@ -363,7 +355,7 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
       announcePolite('Consulta agendada com sucesso');
 
       // Reset form after successful submission
-      setTimeout(() => {
+      setTimeout(_() => {
         form.reset();
         setSelectedDate(null);
         setSelectedTime(null);
@@ -372,7 +364,7 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
         setSuccess(false);
         if (onCancel) onCancel();
       }, 3000);
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro ao agendar consulta';
       setError(errorMessage);
       announcePolite(`Erro no agendamento: ${errorMessage}`);
@@ -381,12 +373,12 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
     }
   }, [onSchedule, form, announcePolite, onCancel]);
 
-  const handleShowConfirmation = useCallback(() => {
+  const handleShowConfirmation = useCallback(_() => {
     setShowConfirmation(true);
     announcePolite('Confirmação de agendamento');
   }, [announcePolite]);
 
-  const handleCancelConfirmation = useCallback(() => {
+  const handleCancelConfirmation = useCallback(_() => {
     setShowConfirmation(false);
     announcePolite('Confirmação cancelada');
   }, [announcePolite]);
@@ -546,7 +538,7 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
                 Profissional de Saúde *
               </label>
               <div className='grid grid-cols-1 gap-2'>
-                {healthcareProviders.map(provider => (
+                {healthcareProviders.map(_provider => (
                   <button
                     key={provider.id}
                     type='button'
@@ -581,7 +573,7 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
                 Tipo de Consulta *
               </label>
               <div className='grid grid-cols-1 gap-2'>
-                {brazilianAppointmentTypes.map(type => (
+                {brazilianAppointmentTypes.map(_type => (
                   <button
                     key={type.id}
                     type='button'
@@ -664,8 +656,7 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
                   ))}
 
                   {/* Calendar Days */}
-                  {generateCalendarDays().map((day, index) => (
-                    <button
+                  {generateCalendarDays().map(_(day,_index) => (_<button
                       key={index}
                       type='button'
                       onClick={() => handleDateSelect(day.date)}

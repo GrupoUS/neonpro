@@ -104,7 +104,7 @@ export function useAccessibilityTesting(
   /**
    * Run accessibility test
    */
-  const testAccessibility = useCallback(async () => {
+  const testAccessibility = useCallback(_async () => {
     if (!optionsRef.current.enabled) return;
 
     setIsTesting(true);
@@ -162,7 +162,7 @@ export function useAccessibilityTesting(
           `Critical issues threshold exceeded: ${criticalIssues} critical issues (max: ${threshold.maxCriticalIssues})`,
         );
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Accessibility testing failed:', error);
     } finally {
       setIsTesting(false);
@@ -172,12 +172,12 @@ export function useAccessibilityTesting(
   /**
    * Debounced test runner
    */
-  const debouncedTest = useCallback(() => {
+  const debouncedTest = useCallback(_() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
-    timeoutRef.current = setTimeout(() => {
+    timeoutRef.current = setTimeout(_() => {
       testAccessibility();
     }, optionsRef.current.debounceMs);
   }, [testAccessibility]);
@@ -185,7 +185,7 @@ export function useAccessibilityTesting(
   /**
    * Clear test results
    */
-  const clearResults = useCallback(() => {
+  const clearResults = useCallback(_() => {
     setTestResult(null);
     setLastTested(null);
     setColorContrast({
@@ -197,7 +197,7 @@ export function useAccessibilityTesting(
   }, []);
 
   // Run test on mount
-  useEffect(() => {
+  useEffect(_() => {
     if (optionsRef.current.runOnMount && optionsRef.current.enabled) {
       testAccessibility();
     }
@@ -210,10 +210,10 @@ export function useAccessibilityTesting(
   }, [testAccessibility]);
 
   // Watch for DOM changes and re-run tests
-  useEffect(() => {
+  useEffect(_() => {
     if (!optionsRef.current.runOnChanges || !optionsRef.current.enabled) return;
 
-    const observer = new MutationObserver(() => {
+    const observer = new MutationObserver(_() => {
       debouncedTest();
     });
 
@@ -254,7 +254,7 @@ export function useComponentAccessibility<T extends HTMLElement>(
 ) {
   const [element, setElement] = useState<T | null>(null);
 
-  useEffect(() => {
+  useEffect(_() => {
     if (componentRef.current) {
       setElement(componentRef.current);
     }
@@ -280,7 +280,7 @@ export function useAccessibilityMonitor() {
     lgpdViolations: 0,
   });
 
-  const startMonitoring = useCallback(() => {
+  const startMonitoring = useCallback(_() => {
     setIsActive(true);
 
     // Run initial test
@@ -306,7 +306,7 @@ export function useAccessibilityMonitor() {
           healthcareViolations,
           lgpdViolations,
         });
-      } catch (error) {
+      } catch (_error) {
         console.error('Accessibility monitoring failed:', error);
       }
     };
@@ -319,7 +319,7 @@ export function useAccessibilityMonitor() {
     return () => clearInterval(interval);
   }, []);
 
-  const stopMonitoring = useCallback(() => {
+  const stopMonitoring = useCallback(_() => {
     setIsActive(false);
   }, []);
 
@@ -345,7 +345,7 @@ export function useKeyboardNavigationTest() {
     issues: [],
   });
 
-  const testKeyboardNavigation = useCallback(() => {
+  const testKeyboardNavigation = useCallback(_() => {
     const focusableElements = document.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
@@ -354,7 +354,7 @@ export function useKeyboardNavigationTest() {
     const issues: string[] = [];
 
     // Check each focusable element
-    focusableElements.forEach((element, _index) => {
+    focusableElements.forEach(_(element, _index) => {
       const tabIndex = element.getAttribute('tabindex');
       const ariaLabel = element.getAttribute('aria-label');
       const role = element.getAttribute('role');
@@ -379,7 +379,7 @@ export function useKeyboardNavigationTest() {
       }
 
       // Check for interactive elements with proper roles
-      if (element.tagName === 'BUTTON' && !role) {
+      if (element.tagName === 'BUTTON' && !_role) {
         // Buttons don't need explicit roles, but we should check they're accessible
         if (!element.textContent?.trim() && !ariaLabel) {
           issues.push(`Button ${index} lacks accessible name`);

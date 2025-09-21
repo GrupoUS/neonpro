@@ -12,7 +12,7 @@ import { Database } from '../../../packages/database/src/types/database';
 export interface ConversationMessage {
   id: string;
   sessionId: string;
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   content: string;
   type: 'text' | 'structured' | 'error';
   metadata?: {
@@ -30,7 +30,7 @@ export interface ConversationMessage {
     entitiesExtracted?: string[];
   };
   timestamp: string;
-  userId: string;
+  _userId: string;
   patientId?: string;
   encryptionKey?: string; // For sensitive healthcare data
   dataClassification: 'public' | 'internal' | 'confidential' | 'restricted';
@@ -38,7 +38,7 @@ export interface ConversationMessage {
 
 export interface ConversationContext {
   sessionId: string;
-  userId: string;
+  _userId: string;
   messages: ConversationMessage[];
   contextSummary?: {
     topics: string[];
@@ -70,7 +70,7 @@ export interface ConversationContext {
 
 export interface ContextSearchOptions {
   sessionId?: string;
-  userId?: string;
+  _userId?: string;
   patientId?: string;
   dateRange?: {
     start: string;
@@ -137,7 +137,7 @@ export class ConversationContextService {
         session_id: message.sessionId,
         user_id: message.userId,
         patient_id: message.patientId || null,
-        role: message.role,
+        _role: message.role,
         content: sanitizedContent,
         message_type: message.type,
         metadata: message.metadata || {},
@@ -165,7 +165,7 @@ export class ConversationContextService {
       this.invalidateCache(message.sessionId);
 
       return messageId;
-    } catch (error) {
+    } catch (_error) {
       console.error('[ConversationContext] Error storing message:', error);
       throw error;
     }
@@ -225,12 +225,12 @@ export class ConversationContextService {
       const conversationMessages: ConversationMessage[] = (messages || []).map(msg => ({
         id: msg.id,
         sessionId: msg.session_id,
-        role: msg.role,
+        _role: msg.role,
         content: msg.content,
         type: msg.message_type,
         metadata: msg.metadata as ConversationMessage['metadata'],
         timestamp: msg.timestamp,
-        userId: msg.user_id,
+        _userId: msg.user_id,
         patientId: msg.patient_id || undefined,
         encryptionKey: msg.encryption_key || undefined,
         dataClassification: msg.data_classification,
@@ -240,9 +240,9 @@ export class ConversationContextService {
       const contextSummary = this.generateContextSummary(conversationMessages);
 
       // Build conversation context
-      const context: ConversationContext = {
+      const _context: ConversationContext = {
         sessionId,
-        userId: session.user_id,
+        _userId: session.user_id,
         messages: conversationMessages,
         contextSummary,
         userPreferences: session.context?.userPreferences || {},
@@ -261,11 +261,11 @@ export class ConversationContextService {
       };
 
       // Cache the result
-      this.setCache(sessionId, context);
+      this.setCache(sessionId, _context);
 
       return context;
-    } catch (error) {
-      console.error('[ConversationContext] Error retrieving context:', error);
+    } catch (_error) {
+      console.error('[ConversationContext] Error retrieving _context:', error);
       throw error;
     }
   }
@@ -287,8 +287,8 @@ export class ConversationContextService {
       if (options.sessionId) {
         query = query.eq('session_id', options.sessionId);
       }
-      if (options.userId) {
-        query = query.eq('user_id', options.userId);
+      if (options._userId) {
+        query = query.eq('user_id', options._userId);
       }
       if (options.patientId) {
         query = query.eq('patient_id', options.patientId);
@@ -325,12 +325,12 @@ export class ConversationContextService {
       const messages: ConversationMessage[] = (data || []).map(msg => ({
         id: msg.id,
         sessionId: msg.session_id,
-        role: msg.role,
+        _role: msg.role,
         content: msg.content,
         type: msg.message_type,
         metadata: msg.metadata as ConversationMessage['metadata'],
         timestamp: msg.timestamp,
-        userId: msg.user_id,
+        _userId: msg.user_id,
         patientId: msg.patient_id || undefined,
         encryptionKey: msg.encryption_key || undefined,
         dataClassification: msg.data_classification,
@@ -341,7 +341,7 @@ export class ConversationContextService {
         totalCount: count || 0,
         hasMore: (options.limit || 10) === messages.length,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('[ConversationContext] Error searching conversations:', error);
       throw error;
     }
@@ -369,7 +369,7 @@ export class ConversationContextService {
 
       // Invalidate cache
       this.invalidateCache(sessionId);
-    } catch (error) {
+    } catch (_error) {
       console.error('[ConversationContext] Error updating context summary:', error);
       throw error;
     }
@@ -380,7 +380,7 @@ export class ConversationContextService {
    */
   async generateAnalytics(
     options: {
-      userId?: string;
+      _userId?: string;
       dateRange?: { start: string; end: string };
       patientId?: string;
     } = {},
@@ -390,8 +390,8 @@ export class ConversationContextService {
         .from('agent_messages')
         .select('*');
 
-      if (options.userId) {
-        query = query.eq('user_id', options.userId);
+      if (options._userId) {
+        query = query.eq('user_id', options._userId);
       }
       if (options.patientId) {
         query = query.eq('patient_id', options.patientId);
@@ -410,8 +410,8 @@ export class ConversationContextService {
 
       // Get sessions count
       let sessionsQuery = this.supabase.from('agent_sessions').select('*', { count: 'exact' });
-      if (options.userId) {
-        sessionsQuery = sessionsQuery.eq('user_id', options.userId);
+      if (options._userId) {
+        sessionsQuery = sessionsQuery.eq('user_id', options._userId);
       }
       if (options.dateRange) {
         sessionsQuery = sessionsQuery
@@ -421,7 +421,7 @@ export class ConversationContextService {
       const { count: sessionCount } = await sessionsQuery;
 
       return this.calculateAnalytics(messages || [], sessionCount || 0);
-    } catch (error) {
+    } catch (_error) {
       console.error('[ConversationContext] Error generating analytics:', error);
       throw error;
     }
@@ -483,7 +483,7 @@ export class ConversationContextService {
         deletedMessages,
         archivedSessions,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('[ConversationContext] Error applying retention policies:', error);
       throw error;
     }
@@ -505,7 +505,7 @@ export class ConversationContextService {
       if (error) {
         throw new Error(`Failed to archive session: ${error.message}`);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('[ConversationContext] Error archiving session:', error);
       throw error;
     }
@@ -675,7 +675,7 @@ export class ConversationContextService {
       return undefined;
     }
 
-    return responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
+    return responseTimes.reduce(_(sum,_time) => sum + time, 0) / responseTimes.length;
   }
 
   /**
@@ -688,7 +688,7 @@ export class ConversationContextService {
     // Calculate response time analytics
     const responseTimes = this.extractResponseTimes(messages);
     const avgResponseTime = responseTimes.length > 0
-      ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
+      ? responseTimes.reduce(_(sum,_time) => sum + time, 0) / responseTimes.length
       : 0;
 
     // Calculate topics frequency
@@ -701,9 +701,9 @@ export class ConversationContextService {
     });
 
     const topTopics = Array.from(topicCounts.entries())
-      .sort((a, b) => b[1] - a[1])
+      .sort(_(a,_b) => b[1] - a[1])
       .slice(0, 10)
-      .map(([topic, count]) => ({ topic, count }));
+      .map(_([topic,_count]) => ({ topic, count }));
 
     return {
       totalSessions: sessionCount,
@@ -751,7 +751,7 @@ export class ConversationContextService {
   private calculatePercentile(numbers: number[], percentile: number): number {
     if (numbers.length === 0) return 0;
 
-    const sorted = numbers.slice().sort((a, b) => a - b);
+    const sorted = numbers.slice().sort(_(a,_b) => a - b);
     const index = Math.ceil((percentile / 100) * sorted.length) - 1;
     return sorted[Math.max(0, Math.min(index, sorted.length - 1))];
   }
@@ -772,7 +772,7 @@ export class ConversationContextService {
       if (error) {
         console.error('[ConversationContext] Error updating session activity:', error);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('[ConversationContext] Error updating session activity:', error);
     }
   }
@@ -780,8 +780,8 @@ export class ConversationContextService {
   /**
    * Cache management methods
    */
-  private setCache(sessionId: string, context: ConversationContext): void {
-    this.cache.set(sessionId, context);
+  private setCache(sessionId: string, _context: ConversationContext): void {
+    this.cache.set(sessionId, _context);
     this.cacheExpiry.set(sessionId, Date.now() + this.CACHE_TTL_MS);
   }
 

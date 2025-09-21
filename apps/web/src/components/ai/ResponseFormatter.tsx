@@ -113,7 +113,7 @@ const ClientCard: React.FC<{
   client: ClientData;
   onClick?: () => void;
   compact?: boolean;
-}> = ({ client, onClick, compact }) => {
+}> = (_{ client,_onClick,_compact }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -215,7 +215,7 @@ const AppointmentCard: React.FC<{
   appointment: AppointmentData;
   onClick?: () => void;
   compact?: boolean;
-}> = ({ appointment, onClick, compact }) => {
+}> = (_{ appointment,_onClick,_compact }) => {
   const getStatusColor = (_status: any) => {
     switch (status) {
       case 'confirmed':
@@ -302,7 +302,7 @@ const FinancialCard: React.FC<{
   financial: FinancialData;
   onClick?: () => void;
   compact?: boolean;
-}> = ({ financial, onClick, compact }) => {
+}> = (_{ financial,_onClick,_compact }) => {
   const getStatusColor = (_status: any) => {
     switch (status) {
       case 'paid':
@@ -406,7 +406,7 @@ const DataTable: React.FC<{
   type: 'clients' | 'appointments' | 'financial';
   onItemClick?: (item: any) => void;
   compact?: boolean;
-}> = ({ data, type, onItemClick, compact }) => {
+}> = (_{ data,_type,_onItemClick,_compact }) => {
   const renderTableHeaders = () => {
     switch (type) {
       case 'clients':
@@ -536,16 +536,8 @@ const DataTable: React.FC<{
 /**
  * Main ResponseFormatter Component
  */
-export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
-  response,
-  showExport = true,
-  itemsPerPage = 10,
-  compact = false,
-  enableFilters = true,
-  onItemClick,
-  onExport,
-  testId = 'response-formatter',
-}) => {
+export const ResponseFormatter: React.FC<ResponseFormatterProps> = (_{
+  response,_showExport = true,_itemsPerPage = 10,_compact = false,_enableFilters = true,_onItemClick,_onExport,_testId = 'response-formatter',_}) => {
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<FilterState>({
@@ -583,7 +575,7 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
   };
 
   // Filter and sort data
-  const filteredData = useMemo(() => {
+  const filteredData = useMemo(_() => {
     let data = getActiveData();
 
     // Apply search filter
@@ -604,7 +596,7 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
   }, [activeTab, filters, clients, appointments, financial]);
 
   // Paginated data
-  const paginatedData = useMemo(() => {
+  const paginatedData = useMemo(_() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return filteredData.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredData, currentPage, itemsPerPage]);
@@ -617,7 +609,7 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
   }, [activeTab, onItemClick]);
 
   // Handle export
-  const handleExport = useCallback(() => {
+  const handleExport = useCallback(_() => {
     onExport?.(activeTab as any, filteredData);
   }, [activeTab, filteredData, onExport]);
 
@@ -733,11 +725,10 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
           compact ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
         )}
       >
-        {paginatedData.map((item, _index) => {
+        {paginatedData.map(_(item, _index) => {
           switch (activeTab) {
             case 'clients':
-              return (
-                <ClientCard
+              return (_<ClientCard
                   key={index}
                   client={item}
                   onClick={() => handleItemClick(item)}
@@ -745,8 +736,7 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
                 />
               );
             case 'appointments':
-              return (
-                <AppointmentCard
+              return (_<AppointmentCard
                   key={index}
                   appointment={item}
                   onClick={() => handleItemClick(item)}
@@ -754,8 +744,7 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
                 />
               );
             case 'financial':
-              return (
-                <FinancialCard
+              return (_<FinancialCard
                   key={index}
                   financial={item}
                   onClick={() => handleItemClick(item)}

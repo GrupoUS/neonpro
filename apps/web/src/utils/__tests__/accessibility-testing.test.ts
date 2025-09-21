@@ -13,11 +13,11 @@ import AccessibilityTestingService, {
   SCREEN_READERS,
 } from '../accessibility-testing';
 
-describe('Accessibility Testing Service', () => {
-  let service: AccessibilityTestingService;
+describe(_'Accessibility Testing Service',_() => {
+  let _service: AccessibilityTestingService;
   let mockConfig: Partial<AccessibilityTestConfig>;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     mockConfig = {
       standards: [
         ACCESSIBILITY_STANDARDS.WCAG_2_1_AA,
@@ -49,8 +49,8 @@ describe('Accessibility Testing Service', () => {
     service = new AccessibilityTestingService(mockConfig);
   });
 
-  describe('Configuration Validation', () => {
-    it('should validate valid accessibility test configuration', () => {
+  describe(_'Configuration Validation',_() => {
+    it(_'should validate valid accessibility test configuration',_() => {
       const validConfig = {
         standards: [ACCESSIBILITY_STANDARDS.WCAG_2_1_AA],
         testTypes: [ACCESSIBILITY_TEST_TYPES.AUTOMATED_SCAN],
@@ -69,7 +69,7 @@ describe('Accessibility Testing Service', () => {
       expect(service.validateConfig(validConfig)).toBe(true);
     });
 
-    it('should use default values for optional configuration', () => {
+    it(_'should use default values for optional configuration',_() => {
       const minimalConfig = {};
       const parsedConfig = AccessibilityTestConfigSchema.parse(minimalConfig);
 
@@ -110,7 +110,7 @@ describe('Accessibility Testing Service', () => {
       expect(parsedConfig.strictMode).toBe(true);
     });
 
-    it('should validate accessibility standards and test types', () => {
+    it(_'should validate accessibility standards and test types',_() => {
       const configWithStandards = {
         standards: [
           ACCESSIBILITY_STANDARDS.WCAG_2_1_A,
@@ -137,8 +137,8 @@ describe('Accessibility Testing Service', () => {
     });
   });
 
-  describe('Accessibility Test Execution', () => {
-    it('should execute comprehensive accessibility testing', async () => {
+  describe(_'Accessibility Test Execution',_() => {
+    it(_'should execute comprehensive accessibility testing',_async () => {
       const report = await service.executeAccessibilityTests();
 
       expect(report).toBeDefined();
@@ -157,7 +157,7 @@ describe('Accessibility Testing Service', () => {
       expect(report.healthcareConsiderations).toBeInstanceOf(Array);
     });
 
-    it('should execute WCAG 2.1 AA automated scan test', async () => {
+    it(_'should execute WCAG 2.1 AA automated scan test',_async () => {
       const report = await service.executeAccessibilityTests();
       const wcagResult = report.results.find(
         r => r.testCaseId === 'wcag-automated-scan',
@@ -175,7 +175,7 @@ describe('Accessibility Testing Service', () => {
       expect(wcagResult?.healthcareImpact).toBeInstanceOf(Array);
     });
 
-    it('should execute keyboard navigation accessibility test', async () => {
+    it(_'should execute keyboard navigation accessibility test',_async () => {
       const report = await service.executeAccessibilityTests();
       const keyboardResult = report.results.find(
         r => r.testCaseId === 'keyboard-navigation',
@@ -190,7 +190,7 @@ describe('Accessibility Testing Service', () => {
       expect(keyboardResult?.passes).toBeInstanceOf(Array);
     });
 
-    it('should execute screen reader compatibility test', async () => {
+    it(_'should execute screen reader compatibility test',_async () => {
       const report = await service.executeAccessibilityTests();
       const screenReaderResult = report.results.find(
         r => r.testCaseId === 'screen-reader-compatibility',
@@ -206,7 +206,7 @@ describe('Accessibility Testing Service', () => {
       expect(screenReaderResult?.healthcareImpact).toBeInstanceOf(Array);
     });
 
-    it('should execute mobile accessibility test', async () => {
+    it(_'should execute mobile accessibility test',_async () => {
       const report = await service.executeAccessibilityTests();
       const mobileResult = report.results.find(
         r => r.testCaseId === 'mobile-accessibility',
@@ -220,7 +220,7 @@ describe('Accessibility Testing Service', () => {
       expect(mobileResult?.healthcareImpact).toBeInstanceOf(Array);
     });
 
-    it('should execute healthcare accessibility patterns test', async () => {
+    it(_'should execute healthcare accessibility patterns test',_async () => {
       const report = await service.executeAccessibilityTests();
       const healthcareResult = report.results.find(
         r => r.testCaseId === 'healthcare-accessibility-patterns',
@@ -237,8 +237,8 @@ describe('Accessibility Testing Service', () => {
     });
   });
 
-  describe('Accessibility Statistics', () => {
-    it('should generate accurate accessibility statistics', async () => {
+  describe(_'Accessibility Statistics',_() => {
+    it(_'should generate accurate accessibility statistics',_async () => {
       const report = await service.executeAccessibilityTests();
 
       expect(report.summary.totalTests).toBeGreaterThan(0);
@@ -258,7 +258,7 @@ describe('Accessibility Testing Service', () => {
       expect(report.summary.healthcareImpactIssues).toBeGreaterThanOrEqual(0);
     });
 
-    it('should calculate WCAG compliance levels', async () => {
+    it(_'should calculate WCAG compliance levels',_async () => {
       const report = await service.executeAccessibilityTests();
 
       // Verify WCAG A compliance
@@ -292,7 +292,7 @@ describe('Accessibility Testing Service', () => {
       expect(report.wcagCompliance.AAA.warnings).toBeGreaterThanOrEqual(0);
     });
 
-    it('should validate healthcare accessibility coverage', async () => {
+    it(_'should validate healthcare accessibility coverage',_async () => {
       const report = await service.executeAccessibilityTests();
 
       // Verify healthcare pattern tests are included
@@ -314,8 +314,8 @@ describe('Accessibility Testing Service', () => {
     });
   });
 
-  describe('Accessibility Validation', () => {
-    it('should validate accessibility test quality', async () => {
+  describe(_'Accessibility Validation',_() => {
+    it(_'should validate accessibility test quality',_async () => {
       const report = await service.executeAccessibilityTests();
 
       // Validate overall accessibility quality (adjusted for realistic mock values)
@@ -331,7 +331,7 @@ describe('Accessibility Testing Service', () => {
       }
     });
 
-    it('should generate recommendations based on accessibility results', async () => {
+    it(_'should generate recommendations based on accessibility results',_async () => {
       const report = await service.executeAccessibilityTests();
 
       expect(report.recommendations).toBeInstanceOf(Array);
@@ -350,7 +350,7 @@ describe('Accessibility Testing Service', () => {
       expect(hasAccessibilityRecommendations).toBe(true);
     });
 
-    it('should identify priority fixes for accessibility', async () => {
+    it(_'should identify priority fixes for accessibility',_async () => {
       const report = await service.executeAccessibilityTests();
 
       expect(report.priorityFixes).toBeInstanceOf(Array);
@@ -363,7 +363,7 @@ describe('Accessibility Testing Service', () => {
       });
     });
 
-    it('should provide healthcare considerations', async () => {
+    it(_'should provide healthcare considerations',_async () => {
       const report = await service.executeAccessibilityTests();
 
       expect(report.healthcareConsiderations).toBeInstanceOf(Array);
@@ -385,8 +385,8 @@ describe('Accessibility Testing Service', () => {
     });
   });
 
-  describe('Brazilian Portuguese Localization', () => {
-    it('should provide Brazilian Portuguese accessibility recommendations', async () => {
+  describe(_'Brazilian Portuguese Localization',_() => {
+    it(_'should provide Brazilian Portuguese accessibility recommendations',_async () => {
       const report = await service.executeAccessibilityTests();
 
       // Check for Portuguese content in recommendations (more flexible matching)
@@ -414,7 +414,7 @@ describe('Accessibility Testing Service', () => {
       }
     });
 
-    it('should include Portuguese translations in priority fixes', async () => {
+    it(_'should include Portuguese translations in priority fixes',_async () => {
       const report = await service.executeAccessibilityTests();
 
       // Check for Portuguese content in priority fixes
@@ -434,7 +434,7 @@ describe('Accessibility Testing Service', () => {
       expect(hasPortugueseFixes).toBe(true);
     });
 
-    it('should include Portuguese translations in healthcare considerations', async () => {
+    it(_'should include Portuguese translations in healthcare considerations',_async () => {
       const report = await service.executeAccessibilityTests();
 
       // Check for Portuguese content in healthcare considerations
@@ -457,8 +457,8 @@ describe('Accessibility Testing Service', () => {
     });
   });
 
-  describe('Healthcare Accessibility Integration', () => {
-    it('should include healthcare-specific accessibility patterns', async () => {
+  describe(_'Healthcare Accessibility Integration',_() => {
+    it(_'should include healthcare-specific accessibility patterns',_async () => {
       const report = await service.executeAccessibilityTests();
 
       const healthcareResults = report.results.filter(r =>
@@ -477,7 +477,7 @@ describe('Accessibility Testing Service', () => {
       });
     });
 
-    it('should include emergency accessibility features testing', async () => {
+    it(_'should include emergency accessibility features testing',_async () => {
       const report = await service.executeAccessibilityTests();
 
       // Check for emergency-related test results or healthcare patterns
@@ -504,7 +504,7 @@ describe('Accessibility Testing Service', () => {
       }
     });
 
-    it('should include medical terminology accessibility testing', async () => {
+    it(_'should include medical terminology accessibility testing',_async () => {
       const report = await service.executeAccessibilityTests();
 
       // Check for medical terminology considerations
@@ -522,8 +522,8 @@ describe('Accessibility Testing Service', () => {
     });
   });
 
-  describe('Accessibility Test Cases', () => {
-    it('should include WCAG 2.1 AA automated scan test cases', () => {
+  describe(_'Accessibility Test Cases',_() => {
+    it(_'should include WCAG 2.1 AA automated scan test cases',_() => {
       const wcagTestCases = service.getTestCasesByStandard(
         ACCESSIBILITY_STANDARDS.WCAG_2_1_AA,
       );
@@ -542,7 +542,7 @@ describe('Accessibility Testing Service', () => {
       expect(automatedScanCase?.medicalTerminology).toBeDefined();
     });
 
-    it('should include keyboard navigation test cases', () => {
+    it(_'should include keyboard navigation test cases',_() => {
       const keyboardTestCases = service.getTestCasesByType(
         ACCESSIBILITY_TEST_TYPES.KEYBOARD_NAVIGATION,
       );
@@ -560,7 +560,7 @@ describe('Accessibility Testing Service', () => {
       expect(keyboardCase?.emergencyFeatures).toBe(true);
     });
 
-    it('should include screen reader compatibility test cases', () => {
+    it(_'should include screen reader compatibility test cases',_() => {
       const screenReaderTestCases = service.getTestCasesByType(
         ACCESSIBILITY_TEST_TYPES.SCREEN_READER,
       );
@@ -578,7 +578,7 @@ describe('Accessibility Testing Service', () => {
       expect(screenReaderCase?.medicalTerminology).toBeDefined();
     });
 
-    it('should include mobile accessibility test cases', () => {
+    it(_'should include mobile accessibility test cases',_() => {
       const mobileTestCases = service.getTestCasesByType(
         ACCESSIBILITY_TEST_TYPES.MOBILE_ACCESSIBILITY,
       );
@@ -596,7 +596,7 @@ describe('Accessibility Testing Service', () => {
       expect(mobileCase?.emergencyFeatures).toBe(true);
     });
 
-    it('should include healthcare accessibility patterns test cases', () => {
+    it(_'should include healthcare accessibility patterns test cases',_() => {
       const healthcareTestCases = service.getTestCasesByType(
         ACCESSIBILITY_TEST_TYPES.HEALTHCARE_PATTERNS,
       );
@@ -616,8 +616,8 @@ describe('Accessibility Testing Service', () => {
     });
   });
 
-  describe('Accessibility Test Filtering', () => {
-    it('should filter test cases by accessibility standard', () => {
+  describe(_'Accessibility Test Filtering',_() => {
+    it(_'should filter test cases by accessibility standard',_() => {
       const wcagAATestCases = service.getTestCasesByStandard(
         ACCESSIBILITY_STANDARDS.WCAG_2_1_AA,
       );
@@ -641,7 +641,7 @@ describe('Accessibility Testing Service', () => {
       });
     });
 
-    it('should filter test cases by test type', () => {
+    it(_'should filter test cases by test type',_() => {
       const automatedScanCases = service.getTestCasesByType(
         ACCESSIBILITY_TEST_TYPES.AUTOMATED_SCAN,
       );

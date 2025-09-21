@@ -64,11 +64,11 @@ function checkUnusedImports(
   };
 }
 
-describe('TDD Orchestrator - Code Quality: Unused Imports', () => {
+describe('TDD Orchestrator - Code Quality: Unused Imports',_() => {
   const webSrcPath = join(process.cwd(), 'src');
 
-  describe('Phase 1: RED - Failing Tests for Clean Imports', () => {
-    it('should have no unused imports in useFinancialMetrics.ts', () => {
+  describe('Phase 1: RED - Failing Tests for Clean Imports',_() => {
+    it(_'should have no unused imports in useFinancialMetrics.ts',_() => {
       const filePath = join(webSrcPath, 'hooks/useFinancialMetrics.ts');
       const result = checkUnusedImports(filePath);
 
@@ -81,7 +81,7 @@ describe('TDD Orchestrator - Code Quality: Unused Imports', () => {
       expect(result.unusedImports).toHaveLength(0);
     });
 
-    it('should have no unused imports in insights-enhanced.tsx', () => {
+    it(_'should have no unused imports in insights-enhanced.tsx',_() => {
       const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
       const result = checkUnusedImports(filePath);
 
@@ -94,7 +94,7 @@ describe('TDD Orchestrator - Code Quality: Unused Imports', () => {
       }
     });
 
-    it('should have no unused imports in insights.tsx', () => {
+    it(_'should have no unused imports in insights.tsx',_() => {
       const filePath = join(webSrcPath, 'routes/ai/insights.tsx');
       const result = checkUnusedImports(filePath);
 
@@ -107,7 +107,7 @@ describe('TDD Orchestrator - Code Quality: Unused Imports', () => {
       }
     });
 
-    it('should have no unused imports in dashboard/main.tsx', () => {
+    it(_'should have no unused imports in dashboard/main.tsx',_() => {
       const filePath = join(webSrcPath, 'routes/dashboard/main.tsx');
       const result = checkUnusedImports(filePath);
 
@@ -121,8 +121,8 @@ describe('TDD Orchestrator - Code Quality: Unused Imports', () => {
     });
   });
 
-  describe('Code Quality Standards', () => {
-    it('should validate import organization patterns', () => {
+  describe(_'Code Quality Standards',_() => {
+    it(_'should validate import organization patterns',_() => {
       // This test establishes standards for import organization
       const testFile = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
       const content = readFileSync(testFile, 'utf-8');

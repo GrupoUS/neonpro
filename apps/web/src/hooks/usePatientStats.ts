@@ -44,7 +44,7 @@ async function countUpcomingAppointments(clinicId: string, fromISO: string, toIS
 
 export function usePatientStats(clinicId?: string) {
   return useQuery({
-    queryKey: ['patient-stats', clinicId],
+    queryKey: ['patient-stats',_clinicId],
     queryFn: async () => {
       // Since the RPC function is not available, we perform the queries separately
       const today = new Date();
@@ -95,8 +95,7 @@ export function usePatientStats(clinicId?: string) {
       const activePatients = patientsResult.data?.filter(p => p.is_active)?.length || 0;
       const newThisMonth = newPatientsResult.data?.length || 0;
       const upcomingAppointments = appointmentsResult.data?.length || 0;
-      const revenueToday = revenueResult.data?.reduce(
-        (sum, t) => sum + (Number(t.amount) || 0),
+      const revenueToday = revenueResult.data?.reduce(_(sum,_t) => sum + (Number(t.amount) || 0),
         0,
       ) || 0;
 

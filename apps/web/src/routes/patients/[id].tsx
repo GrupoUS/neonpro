@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-export const Route = createFileRoute('/patients/id')({
+export const _Route = createFileRoute('/patients/id')({
   component: PatientDetailPage,
 });
 
@@ -377,11 +377,11 @@ function PatientDetailPage() {
   const [activeTab, setActiveTab] = useState('overview');
 
   // Initialize mock data
-  useEffect(() => {
+  useEffect(_() => {
     setLoading(true);
 
     // Simulate API call
-    setTimeout(() => {
+    setTimeout(_() => {
       if (patientId) {
         setPatient(generateMockPatient(patientId));
         setAppointments(generateMockAppointments(patientId));
@@ -796,7 +796,7 @@ function PatientDetailPage() {
                         Condições Crônicas
                       </h4>
                       <div className='space-y-1'>
-                        {patient.chronicConditions.map((condition, _index) => (
+                        {patient.chronicConditions.map(_(condition, _index) => (
                           <Badge
                             key={index}
                             variant='outline'
@@ -811,7 +811,7 @@ function PatientDetailPage() {
                     <div>
                       <h4 className='font-medium text-sm mb-2'>Alergias</h4>
                       <div className='space-y-1'>
-                        {patient.allergies.map((allergy, _index) => (
+                        {patient.allergies.map(_(allergy, _index) => (
                           <Badge
                             key={index}
                             variant='destructive'
@@ -829,7 +829,7 @@ function PatientDetailPage() {
                       Medicações Atuais
                     </h4>
                     <div className='space-y-2'>
-                      {patient.medications.map((medication, _index) => (
+                      {patient.medications.map(_(medication, _index) => (
                         <div
                           key={index}
                           className='flex items-center justify-between p-2 bg-gray-50 rounded text-sm'
@@ -954,8 +954,7 @@ function PatientDetailPage() {
                         )}
                       </div>
                     ))}
-                    {aiInsights.length > 2 && (
-                      <Button
+                    {aiInsights.length > 2 && (_<Button
                         variant='outline'
                         size='sm'
                         onClick={() => setActiveTab('insights')}
@@ -1158,8 +1157,7 @@ function PatientDetailPage() {
                                 </div>
                               </div>
 
-                              {record.prescription.length > 0 && (
-                                <div>
+                              {record.prescription.length > 0 && (_<div>
                                   <div className='text-sm font-medium mb-1'>
                                     Prescrição
                                   </div>
@@ -1310,8 +1308,7 @@ function PatientDetailPage() {
                                 </div>
                               </div>
 
-                              {insight.actionable && (
-                                <Button
+                              {insight.actionable && (_<Button
                                   variant='outline'
                                   size='sm'
                                   onClick={() => handleAIInsightAction(insight)}

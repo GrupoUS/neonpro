@@ -20,8 +20,8 @@ const mockIntentRequest = {
     email: 'test@example.com',
     phone: '+5511999999999',
   },
-  context: {
-    userId: 'user-123',
+  _context: {
+    _userId: 'user-123',
     sessionId: 'session-456',
     timestamp: new Date().toISOString(),
   },
@@ -31,7 +31,7 @@ const invalidIntentRequest = {
   entity: 'invalid_entity',
   operation: 'invalid_operation',
   data: {},
-  context: {},
+  _context: {},
 };
 
 describe('AI CRUD Intent Phase - Contract Tests', () => {
@@ -86,8 +86,8 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
           );
         }
 
-        // Check for authentication context (userId) - this should come after session but before full validation
-        if (!body.context.userId) {
+        // Check for authentication context (_userId) - this should come after session but before full validation
+        if (!body.context._userId) {
           return new HttpResponse(
             JSON.stringify({
               error: 'Authentication required',
@@ -251,7 +251,7 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       // RED: Test expects expiration timestamp
       const response = await createCrudIntent(mockIntentRequest);
       const expiresAt = new Date(response.expiresAt);
-      const now = new Date();
+      const _now = new Date();
 
       expect(expiresAt.getTime()).toBeGreaterThan(now.getTime());
       expect(expiresAt.getTime() - now.getTime()).toBeLessThanOrEqual(300000); // 5 minutes
@@ -263,7 +263,7 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       // RED: Test expects authentication validation
       const requestWithoutAuth = {
         ...mockIntentRequest,
-        context: { ...mockIntentRequest.context },
+        _context: { ...mockIntentRequest.context },
       };
       delete requestWithoutAuth.context.userId;
 
@@ -274,7 +274,7 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       // RED: Test expects session tracking
       const requestWithoutSession = {
         ...mockIntentRequest,
-        context: { ...mockIntentRequest.context },
+        _context: { ...mockIntentRequest.context },
       };
       delete requestWithoutSession.context.sessionId;
 

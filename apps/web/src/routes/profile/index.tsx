@@ -7,7 +7,7 @@ import { Card } from '@neonpro/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Camera } from 'lucide-react';
 
-export const Route = createFileRoute('/profile/')({
+export const _Route = createFileRoute('/profile/')({
   beforeLoad: async () => {
     const session = await getCurrentSession();
     if (!session) {

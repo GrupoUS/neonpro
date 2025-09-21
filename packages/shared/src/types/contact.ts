@@ -118,7 +118,7 @@ export interface Contact {
   consentToContact?: boolean;
   consentDate?: Date;
   accessLog?: Array<{
-    userId: string;
+    _userId: string;
     action: string;
     timestamp: Date;
     ipAddress?: string;
@@ -294,7 +294,7 @@ export function validateContactCompleteness(
 export function createContact(
   data: Omit<Contact, "id" | "createdAt" | "updatedAt">,
 ): Contact {
-  const now = new Date();
+  const _now = new Date();
 
   return {
     ...data,
@@ -306,15 +306,14 @@ export function createContact(
 
 // Get primary contact
 export function getPrimaryContact(contacts: Contact[]): Contact | undefined {
-  return contacts.find((contact) => contact.isPrimary);
+  return contacts.find(_(contact) => contact.isPrimary);
 }
 
 // Get emergency contacts sorted by priority
 export function getEmergencyContacts(contacts: Contact[]): Contact[] {
   return contacts
-    .filter((contact) => contact.isEmergency)
-    .sort(
-      (a, b) => (a.emergencyPriority || 999) - (b.emergencyPriority || 999),
+    .filter(_(contact) => contact.isEmergency)
+    .sort(_(a,_b) => (a.emergencyPriority || 999) - (b.emergencyPriority || 999),
     );
 }
 
@@ -339,7 +338,7 @@ export function canContactNow(contact: Contact): boolean {
     return true;
   }
 
-  const now = new Date();
+  const _now = new Date();
   const currentTime = now.toTimeString().substring(0, 5); // HH:MM format
 
   const dnd = contact.preferences.doNotDisturb;
@@ -361,7 +360,7 @@ export function getContactsByType(
   contacts: Contact[],
   type: ContactType,
 ): Contact[] {
-  return contacts.filter((contact) => contact.type === type);
+  return contacts.filter(_(contact) => contact.type === type);
 }
 
 // Update contact verification status
@@ -396,7 +395,7 @@ export function getContactStatistics(contacts: Contact[]): {
     emergency: 0,
   };
 
-  contacts.forEach((contact) => {
+  contacts.forEach(_(contact) => {
     // Count by type
     stats.byType[contact.type] = (stats.byType[contact.type] || 0) + 1;
 

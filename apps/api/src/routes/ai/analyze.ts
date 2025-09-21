@@ -6,7 +6,6 @@
 
 import { zValidator } from '@hono/zod-validator';
 import { Context, Hono, Next } from 'hono';
-import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service.js';
 import { ComprehensiveAuditService } from '../../services/audit-service.js';
 import { LGPDService } from '../../services/lgpd-service.js';
@@ -32,7 +31,7 @@ const mockAuthMiddleware = (c: Context, next: Next) => {
       401,
     );
   }
-  c.set('user', { id: 'user-123', role: 'healthcare_professional' });
+  c.set('user', { id: 'user-123', _role: 'healthcare_professional' });
   return next();
 };
 
@@ -54,7 +53,7 @@ const analyzeRequestSchema = z.object({
     imageUrl: z.string().optional(),
     imageType: z.string().optional(),
     text: z.string().optional(),
-    context: z.string().optional(),
+    _context: z.string().optional(),
     treatmentHistory: z.array(z.any()).optional(),
     vitals: z.object({}).optional(),
     image: z.string().optional(),
@@ -79,7 +78,7 @@ const analyzeRequestSchema = z.object({
 let services: ServiceInterface | null = null;
 
 // Function to set services (used by tests)
-export const setServices = (injectedServices: ServiceInterface) => {
+export const _setServices = (injectedServices: ServiceInterface) => {
   services = injectedServices;
 };
 
@@ -134,7 +133,7 @@ app.post(
 
       // Validate LGPD data access for AI analysis
       const lgpdValidation = await currentServices.lgpdService.validateDataAccess({
-        userId: user.id,
+        _userId: user.id,
         dataType: 'ai_data_analysis',
         purpose: 'healthcare_analysis',
         legalBasis: 'legitimate_interest',
@@ -154,7 +153,7 @@ app.post(
 
       // Prepare analysis request
       const analysisRequest = {
-        userId: user.id,
+        _userId: user.id,
         analysisType: requestData.analysisType,
         data: requestData.data,
         options: requestData.options,
@@ -207,7 +206,7 @@ app.post(
       // Log activity for audit trail
       const processingTime = Date.now() - startTime;
       await currentServices.auditService.logActivity({
-        userId: user.id,
+        _userId: user.id,
         action: 'ai_data_analysis',
         resourceType: 'ai_analysis',
         resourceId: analysisResponse.data.analysisId,
@@ -252,7 +251,7 @@ app.post(
       }
 
       // Set all headers
-      Object.entries(responseHeaders).forEach(([key, value]) => {
+      Object.entries(responseHeaders).forEach(_([key,_value]) => {
         c.header(key, value);
       });
 
@@ -260,13 +259,13 @@ app.post(
         success: true,
         data: analysisResponse.data,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('AI Analyze endpoint error:', error);
 
       // Log error for audit
       const currentServices = getServices();
       await currentServices.auditService.logActivity({
-        userId: user.id,
+        _userId: user.id,
         action: 'ai_analysis_error',
         resourceType: 'ai_analysis',
         resourceId: 'error',

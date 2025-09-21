@@ -17,7 +17,7 @@ import {
 } from '../../middleware/auth';
 
 // Mock Supabase client
-vi.mock('../../clients/supabase', () => ({
+vi.mock(_'../../clients/supabase',_() => ({
   createAdminClient: vi.fn(),
   createServerClient: vi.fn(),
 }));
@@ -27,12 +27,12 @@ vi.stubEnv('SUPABASE_URL', 'https://test.supabase.co');
 vi.stubEnv('SUPABASE_ANON_KEY', 'test-anon-key');
 vi.stubEnv('SUPABASE_SERVICE_ROLE_KEY', 'test-service-key');
 
-describe('Authentication Middleware - Real Database Integration', () => {
+describe(_'Authentication Middleware - Real Database Integration',_() => {
   let mockSupabaseClient: any;
   let mockContext: Context;
   let mockNext: Next;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
 
     // Mock Supabase client
@@ -40,7 +40,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
       auth: {
         getUser: vi.fn(),
       },
-      from: vi.fn(() => ({
+      from: vi.fn(_() => ({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn(),
@@ -65,12 +65,12 @@ describe('Authentication Middleware - Real Database Integration', () => {
     mockNext = vi.fn();
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.unstubAllEnvs();
   });
 
-  describe('requireAuth', () => {
-    it('should authenticate user with valid token', async () => {
+  describe(_'requireAuth',_() => {
+    it(_'should authenticate user with valid token',_async () => {
       // Arrange
       const mockUser = {
         id: 'user-123',
@@ -101,7 +101,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
       expect(mockNext).toHaveBeenCalled();
     });
 
-    it('should reject request without token', async () => {
+    it(_'should reject request without token',_async () => {
       // Arrange
       mockContext.req.header = vi.fn().mockReturnValue(undefined);
 
@@ -115,7 +115,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
       expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it('should reject request with invalid token', async () => {
+    it(_'should reject request with invalid token',_async () => {
       // Arrange
       mockContext.req.header = vi.fn().mockReturnValue('Bearer invalid-token');
 
@@ -134,8 +134,8 @@ describe('Authentication Middleware - Real Database Integration', () => {
     });
   });
 
-  describe('requireHealthcareProfessional', () => {
-    it('should validate healthcare professional with real database data', async () => {
+  describe(_'requireHealthcareProfessional',_() => {
+    it(_'should validate healthcare professional with real database data',_async () => {
       // Arrange
       const userId = 'user-123';
       const mockHealthcareProfessional = {
@@ -152,7 +152,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
         },
       };
 
-      mockContext.get = vi.fn().mockReturnValue(userId);
+      mockContext.get = vi.fn().mockReturnValue(_userId);
 
       // Mock database query for healthcare professional
       const mockQueryBuilder = {
@@ -187,7 +187,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
       expect(mockNext).toHaveBeenCalled();
     });
 
-    it('should reject healthcare professional with inactive license', async () => {
+    it(_'should reject healthcare professional with inactive license',_async () => {
       // Arrange
       const userId = 'user-123';
       const mockInactiveProfessional = {
@@ -204,7 +204,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
         },
       };
 
-      mockContext.get = vi.fn().mockReturnValue(userId);
+      mockContext.get = vi.fn().mockReturnValue(_userId);
 
       // Mock database query for healthcare professional
       const mockQueryBuilder = {
@@ -228,10 +228,10 @@ describe('Authentication Middleware - Real Database Integration', () => {
       expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it('should reject when healthcare professional not found in database', async () => {
+    it(_'should reject when healthcare professional not found in database',_async () => {
       // Arrange
       const userId = 'user-123';
-      mockContext.get = vi.fn().mockReturnValue(userId);
+      mockContext.get = vi.fn().mockReturnValue(_userId);
 
       // Mock database query returning no results
       const mockQueryBuilder = {
@@ -256,8 +256,8 @@ describe('Authentication Middleware - Real Database Integration', () => {
     });
   });
 
-  describe('requireLGPDConsent', () => {
-    it('should validate LGPD consent with real database data', async () => {
+  describe(_'requireLGPDConsent',_() => {
+    it(_'should validate LGPD consent with real database data',_async () => {
       // Arrange
       const userId = 'user-123';
       const mockLGPDConsent = {
@@ -272,7 +272,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
         is_active: true,
       };
 
-      mockContext.get = vi.fn().mockReturnValue(userId);
+      mockContext.get = vi.fn().mockReturnValue(_userId);
 
       // Mock database query for LGPD consent
       const mockQueryBuilder = {
@@ -309,7 +309,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
       expect(mockNext).toHaveBeenCalled();
     });
 
-    it('should reject when required consent purposes are missing', async () => {
+    it(_'should reject when required consent purposes are missing',_async () => {
       // Arrange
       const userId = 'user-123';
       const mockInsufficientConsent = {
@@ -324,7 +324,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
         is_active: true,
       };
 
-      mockContext.get = vi.fn().mockReturnValue(userId);
+      mockContext.get = vi.fn().mockReturnValue(_userId);
 
       // Mock database query for LGPD consent
       const mockQueryBuilder = {
@@ -352,7 +352,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
       expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it('should reject when consent is inactive', async () => {
+    it(_'should reject when consent is inactive',_async () => {
       // Arrange
       const userId = 'user-123';
       const mockInactiveConsent = {
@@ -367,7 +367,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
         is_active: false, // Inactive consent
       };
 
-      mockContext.get = vi.fn().mockReturnValue(userId);
+      mockContext.get = vi.fn().mockReturnValue(_userId);
 
       // Mock database query for LGPD consent
       const mockQueryBuilder = {
@@ -396,8 +396,8 @@ describe('Authentication Middleware - Real Database Integration', () => {
     });
   });
 
-  describe('requireAIAccess', () => {
-    it('should grant AI access with valid healthcare professional and LGPD consent', async () => {
+  describe(_'requireAIAccess',_() => {
+    it(_'should grant AI access with valid healthcare professional and LGPD consent',_async () => {
       // Arrange
       const userId = 'user-123';
       const mockHealthcareProfessional = {
@@ -423,7 +423,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
 
       mockContext.get = vi
         .fn()
-        .mockReturnValueOnce(userId)
+        .mockReturnValueOnce(_userId)
         .mockReturnValueOnce('session-123')
         .mockReturnValueOnce(mockHealthcareProfessional)
         .mockReturnValueOnce(mockLGPDConsent);
@@ -455,7 +455,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
       expect(mockNext).toHaveBeenCalled();
     });
 
-    it('should reject AI access when healthcare professional lacks AI permission', async () => {
+    it(_'should reject AI access when healthcare professional lacks AI permission',_async () => {
       // Arrange
       const userId = 'user-123';
       const mockHealthcareProfessional = {
@@ -481,7 +481,7 @@ describe('Authentication Middleware - Real Database Integration', () => {
 
       mockContext.get = vi
         .fn()
-        .mockReturnValueOnce(userId)
+        .mockReturnValueOnce(_userId)
         .mockReturnValueOnce('session-123')
         .mockReturnValueOnce(mockHealthcareProfessional)
         .mockReturnValueOnce(mockLGPDConsent);

@@ -107,7 +107,7 @@ export class CompressionMiddleware {
 
     // Override res.end to apply compression and metrics
     const originalEnd = res.end;
-    const originalWrite = res.write;
+    const _originalWrite = res.write;
 
     let responseBuffer: Buffer[] = [];
     let originalSize = 0;
@@ -374,7 +374,7 @@ export class CompressionMiddleware {
 
     // Update average compression ratio
     if (this.compressionStats.compressedResponses > 0) {
-      const totalRatio = this.metrics.reduce((sum, m) => sum + m.compressionRatio, 0);
+      const totalRatio = this.metrics.reduce(_(sum,_m) => sum + m.compressionRatio, 0);
       this.compressionStats.averageCompressionRatio = totalRatio / this.metrics.length;
     }
   }
@@ -389,10 +389,10 @@ export class CompressionMiddleware {
         ? (this.compressionStats.compressedResponses / this.compressionStats.totalRequests) * 100
         : 0,
       averageResponseSize: this.metrics.length > 0
-        ? this.metrics.reduce((sum, m) => sum + m.originalSize, 0) / this.metrics.length
+        ? this.metrics.reduce(_(sum,_m) => sum + m.originalSize, 0) / this.metrics.length
         : 0,
       averageCompressedSize: this.metrics.length > 0
-        ? this.metrics.reduce((sum, m) => sum + m.compressedSize, 0) / this.metrics.length
+        ? this.metrics.reduce(_(sum,_m) => sum + m.compressedSize, 0) / this.metrics.length
         : 0,
       topCompressedRoutes: this.getTopCompressedRoutes(5),
       compressionMethodDistribution: Object.fromEntries(this.compressionStats.compressionMethods),
@@ -416,9 +416,9 @@ export class CompressionMiddleware {
     });
 
     return Object.entries(routeStats)
-      .sort((a, b) => b[1].bytesSaved - a[1].bytesSaved)
+      .sort(_(a,_b) => b[1].bytesSaved - a[1].bytesSaved)
       .slice(0, limit)
-      .map(([route, stats]) => ({
+      .map(_([route,_stats]) => ({
         route,
         requestsCompressed: stats.count,
         bytesSaved: stats.bytesSaved,
@@ -524,7 +524,7 @@ function compressResponse(
     }
 
     return null;
-  } catch (error) {
+  } catch (_error) {
     console.error('Compression failed:', error);
     return null;
   }

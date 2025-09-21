@@ -79,7 +79,7 @@ interface EnhancedHealthcareFormProps {
   description?: string;
   fields: MedicalFormField[];
   validationRules?: HealthcareValidationRule[];
-  onSubmit: (data: Record<string, string>) => Promise<void>;
+  onSubmit: (data: Record<string,_string>) => Promise<void>;
   submitLabel?: string;
   isLoading?: boolean;
   enableHealthcareAudit?: boolean;
@@ -122,8 +122,7 @@ export function EnhancedHealthcareForm({
   >({});
 
   // Create accessible field hooks for each form field
-  const fieldHooks = fields.reduce(
-    (acc, field) => {
+  const fieldHooks = fields.reduce(_(acc,_field) => {
       acc[field.name] = useAccessibleField(field.name, {
         required: field.required,
         validate: field.validate,
@@ -151,7 +150,7 @@ export function EnhancedHealthcareForm({
     [],
   );
 
-  const validateForm = useCallback(() => {
+  const validateForm = useCallback(_() => {
     let isValid = true;
     const errors: string[] = [];
     const warnings: Record<string, string> = {};
@@ -258,8 +257,7 @@ export function EnhancedHealthcareForm({
 
       try {
         // Collect form data
-        const formData = fields.reduce(
-          (acc, field) => {
+        const formData = fields.reduce(_(acc,_field) => {
             acc[field.name] = fieldHooks[field.name].value;
             return acc;
           },
@@ -271,7 +269,7 @@ export function EnhancedHealthcareForm({
         setSubmitSuccess(true);
         announceFormSuccess('Formulário de saúde enviado com sucesso');
         announceLive('Formulário de saúde enviado com sucesso!', 'polite');
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error
           ? error.message
           : 'Erro ao enviar formulário de saúde';

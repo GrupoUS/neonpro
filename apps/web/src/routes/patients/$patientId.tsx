@@ -30,8 +30,6 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { Suspense, useEffect } from 'react';
-import { z } from 'zod';
-
 // Type-safe search params schema with tab navigation
 const patientSearchSchema = z.object({
   tab: z
@@ -100,14 +98,14 @@ export const Route = createFileRoute('/patients/$patientId')({
 
         {/* Tab navigation skeleton */}
         <div className='flex space-x-8 border-b'>
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: 4 }).map(_(_,_i) => (
             <div key={i} className='h-10 bg-muted rounded w-20'></div>
           ))}
         </div>
 
         {/* Content skeleton */}
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-          {Array.from({ length: 4 }).map((_, i) => (
+          {Array.from({ length: 4 }).map(_(_,_i) => (
             <div key={i} className='h-64 bg-muted rounded-lg'></div>
           ))}
         </div>
@@ -121,7 +119,7 @@ export const Route = createFileRoute('/patients/$patientId')({
   ),
 
   // Enhanced error boundary with accessibility
-  errorComponent: ({ error, reset }) => (
+  errorComponent: (_{ error,_reset }) => (
     <div className='container mx-auto p-4 md:p-6' role='main'>
       <Card className='max-w-2xl mx-auto'>
         <CardHeader className='text-center'>
@@ -174,7 +172,7 @@ function PatientDetailPage() {
   const { data: patient, isLoading, error, refetch } = usePatient(patientId);
 
   // Log access for LGPD compliance
-  useEffect(() => {
+  useEffect(_() => {
     if (patient && user?.id) {
       const logAccess = async () => {
         try {
@@ -189,7 +187,7 @@ function PatientDetailPage() {
               accessed_at: new Date().toISOString(),
             }),
           });
-        } catch (error) {
+        } catch (_error) {
           console.warn('Failed to log patient access:', error);
         }
       };
@@ -240,12 +238,12 @@ function PatientDetailPage() {
             </div>
           </div>
           <div className='flex space-x-8 border-b'>
-            {Array.from({ length: 4 }).map((_, i) => (
+            {Array.from({ length: 4 }).map(_(_,_i) => (
               <div key={i} className='h-10 bg-muted rounded w-20'></div>
             ))}
           </div>
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-            {Array.from({ length: 4 }).map((_, i) => (
+            {Array.from({ length: 4 }).map(_(_,_i) => (
               <div key={i} className='h-64 bg-muted rounded-lg'></div>
             ))}
           </div>
@@ -422,8 +420,7 @@ function PatientDetailPage() {
             { key: 'history', label: 'Histórico', icon: History },
             { key: 'appointments', label: 'Consultas', icon: Calendar },
             { key: 'documents', label: 'Documentos', icon: FileText },
-          ].map(({ key, label, icon: Icon }) => (
-            <button
+          ].map(_({ key,_label, icon: Icon }) => (_<button
               key={key}
               onClick={() => handleTabChange(key as typeof tab)}
               className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors ${
@@ -451,8 +448,7 @@ function PatientDetailPage() {
         aria-labelledby={`tab-${tab}`}
       >
         <ErrorBoundary
-          fallback={(error: Error) => (
-            <Card>
+          fallback={(error: Error) => (_<Card>
               <CardContent className='p-6 text-center'>
                 <AlertCircle className='w-8 h-8 text-destructive mx-auto mb-2' />
                 <h3 className='font-semibold text-destructive mb-2'>
@@ -794,7 +790,7 @@ function MedicalInfoSection({
 function TabContentSkeleton() {
   return (
     <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-      {Array.from({ length: 4 }).map((_, i) => (
+      {Array.from({ length: 4 }).map(_(_,_i) => (
         <div key={i} className='h-64 bg-muted rounded-lg animate-pulse'></div>
       ))}
     </div>

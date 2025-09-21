@@ -126,7 +126,7 @@ export class CalendarDataMinimizationService {
     appointment: CalendarAppointment,
     consentLevel: DataMinimizationLevel,
     userRole: string,
-    context: 'view' | 'edit' | 'export' = 'view',
+    _context: 'view' | 'edit' | 'export' = 'view',
   ): Promise<MinimizationResult> {
     try {
       // Determine data sensitivity
@@ -154,7 +154,7 @@ export class CalendarDataMinimizationService {
       );
 
       // Identify risks
-      const risksIdentified = this.identifyRisks(config, sensitivity, context);
+      const risksIdentified = this.identifyRisks(config, sensitivity, _context);
 
       // Generate recommendations
       const recommendations = this.generateRecommendations(
@@ -169,7 +169,7 @@ export class CalendarDataMinimizationService {
       );
 
       // Get legal basis
-      const legalBasis = this.getLegalBasis(consentLevel, context);
+      const legalBasis = this.getLegalBasis(consentLevel, _context);
 
       return {
         minimizedData,
@@ -179,7 +179,7 @@ export class CalendarDataMinimizationService {
         dataCategoriesShared,
         legalBasis,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in minimizeAppointmentWithCompliance:', error);
       // Return minimal data on error
       return {
@@ -200,7 +200,7 @@ export class CalendarDataMinimizationService {
     appointments: CalendarAppointment[],
     consentLevel: DataMinimizationLevel,
     userRole: string,
-    context: 'view' | 'edit' | 'export' = 'view',
+    _context: 'view' | 'edit' | 'export' = 'view',
   ): Promise<{
     minimizedAppointments: MinimizedCalendarAppointment[];
     aggregateCompliance: {
@@ -234,7 +234,7 @@ export class CalendarDataMinimizationService {
         result.dataCategoriesShared.forEach(_category => dataCategoriesShared.add(category));
       }
 
-      const averageScore = allScores.reduce((sum, score) => sum + score, 0) / allScores.length;
+      const averageScore = allScores.reduce(_(sum,_score) => sum + score, 0) / allScores.length;
       const totalScore = Math.min(100, Math.round(averageScore));
 
       // Identify critical risks
@@ -255,7 +255,7 @@ export class CalendarDataMinimizationService {
           dataCategoriesShared,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in batch minimization:', error);
       return {
         minimizedAppointments: appointments.map(apt => this.getMinimalFallback(apt)),
@@ -322,7 +322,7 @@ export class CalendarDataMinimizationService {
   private applyMinimizationRules(
     appointment: CalendarAppointment,
     config: DataMinimizationConfig,
-    context: 'view' | 'edit' | 'export',
+    _context: 'view' | 'edit' | 'export',
   ): MinimizedCalendarAppointment {
     const minimized: MinimizedCalendarAppointment = {
       id: appointment.id,
@@ -424,7 +424,7 @@ export class CalendarDataMinimizationService {
   private calculateComplianceScore(
     config: DataMinimizationConfig,
     sensitivity: PatientDataSensitivity,
-    context: 'view' | 'edit' | 'export',
+    _context: 'view' | 'edit' | 'export',
   ): number {
     let score = 100;
 
@@ -475,7 +475,7 @@ export class CalendarDataMinimizationService {
   private identifyRisks(
     config: DataMinimizationConfig,
     sensitivity: PatientDataSensitivity,
-    context: 'view' | 'edit' | 'export',
+    _context: 'view' | 'edit' | 'export',
   ): string[] {
     const risks: string[] = [];
 
@@ -579,7 +579,7 @@ export class CalendarDataMinimizationService {
    */
   private getLegalBasis(
     consentLevel: DataMinimizationLevel,
-    context: 'view' | 'edit' | 'export',
+    _context: 'view' | 'edit' | 'export',
   ): string {
     if (consentLevel === DataMinimizationLevel.FULL) {
       return 'LGPD Art. 7º, I - Consentimento explícito do titular';
@@ -649,4 +649,4 @@ export class CalendarDataMinimizationService {
   }
 }
 
-export const calendarDataMinimizationService = new CalendarDataMinimizationService();
+export const _calendarDataMinimizationService = new CalendarDataMinimizationService();

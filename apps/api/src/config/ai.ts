@@ -81,7 +81,7 @@ export async function streamWithFailover(opts: {
           'Como posso ajudar você hoje?',
         ];
         let i = 0;
-        const id = setInterval(() => {
+        const id = setInterval(_() => {
           controller.enqueue(new TextEncoder().encode(chunks[i]));
           i++;
           if (i >= chunks.length) {
@@ -114,7 +114,7 @@ export async function streamWithFailover(opts: {
         'X-Data-Freshness': 'as-of-now',
       },
     });
-  } catch (primaryError) {
+  } catch (_primaryError) {
     console.error('Primary AI provider failed:', primaryError);
     try {
       const { adapter } = resolveProvider(DEFAULT_SECONDARY);
@@ -127,7 +127,7 @@ export async function streamWithFailover(opts: {
       return result.toTextStreamResponse({
         headers: { 'X-Chat-Model': `google:${DEFAULT_SECONDARY}` },
       });
-    } catch (fallbackError) {
+    } catch (_fallbackError) {
       console.error('Secondary AI provider failed:', fallbackError);
       throw new Error('Serviço de IA temporariamente indisponível');
     }
@@ -179,7 +179,7 @@ export async function generateWithFailover(opts: {
         'X-Chat-Model': `${MODEL_REGISTRY[chosen].provider}:${chosen}`,
       }),
     };
-  } catch (primaryError) {
+  } catch (_primaryError) {
     console.error('Primary AI provider failed:', primaryError);
     try {
       const { adapter } = resolveProvider(DEFAULT_SECONDARY);
@@ -193,14 +193,14 @@ export async function generateWithFailover(opts: {
         text: result.text,
         headers: new Headers({ 'X-Chat-Model': `google:${DEFAULT_SECONDARY}` }),
       };
-    } catch (fallbackError) {
+    } catch (_fallbackError) {
       console.error('Secondary AI provider failed:', fallbackError);
       throw new Error('Serviço de IA temporariamente indisponível');
     }
   }
 }
 
-export async function getSuggestionsFromAI(query: string, webHints: string[]) {
+export async function getSuggestionsFromAI(_query: string, webHints: string[]) {
   const result = await generateText({
     model: openai(DEFAULT_PRIMARY),
     prompt:

@@ -24,7 +24,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = createTestClient({ role: 'admin' });
+    testClient = createTestClient({ _role: 'admin' });
     clinicId = 'clinic-br-001';
     professionalCRM = 'CRM/SP 123456';
   });

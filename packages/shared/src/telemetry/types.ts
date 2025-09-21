@@ -40,7 +40,7 @@ export interface HealthcareTelemetryConfig {
 
 export interface TelemetryContext {
   clinicId?: string;
-  userId?: string;
+  _userId?: string;
   sessionId?: string;
   requestId?: string;
   feature?: string;
@@ -68,7 +68,7 @@ export interface HealthcareMetrics {
 export interface ComplianceEvent {
   eventType: "data_access" | "data_export" | "data_deletion" | "consent_update";
   timestamp: string;
-  userId: string;
+  _userId: string;
   clinicId: string;
   dataClassification: string;
   complianceNotes: string;
@@ -143,7 +143,7 @@ export enum HealthcareOperationType {
 }
 
 // Sensitive data patterns for redaction
-export const SENSITIVE_DATA_PATTERNS = [
+export const _SENSITIVE_DATA_PATTERNS = [
   // Brazilian documents
   /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, // CPF
   /\b\d{2}\.\d{3}\.\d{3}-\d{1}\b/g, // RG
@@ -164,7 +164,7 @@ export const SENSITIVE_DATA_PATTERNS = [
 ];
 
 // Field names that contain sensitive data
-export const SENSITIVE_FIELD_NAMES = [
+export const _SENSITIVE_FIELD_NAMES = [
   "cpf",
   "rg",
   "cnpj",

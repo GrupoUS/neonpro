@@ -70,7 +70,7 @@ export interface EventFilterOptions {
 
 // Event search options
 export interface EventSearchOptions {
-  query: string;
+  _query: string;
   searchIn?: ['title' | 'description' | 'notes' | 'patient' | 'professional'];
   dateRange?: {
     start: Date;
@@ -504,7 +504,7 @@ export class EventService {
    * Get upcoming events (from now onwards)
    */
   static async getUpcomingEvents(limit: number = 10): Promise<CalendarEventExtended[]> {
-    const now = new Date();
+    const _now = new Date();
     const events = await this.getEvents({
       dateRange: { start: now, end: addMonths(now, 3) },
     });

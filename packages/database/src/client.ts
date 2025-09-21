@@ -183,7 +183,7 @@ export const createServiceSupabaseClient = (): SupabaseClient => {
 
 // Export generic createClient for backwards compatibility
 export const createClient = createNodeSupabaseClient;
-export const createServiceClient = createServiceSupabaseClient;
+export const _createServiceClient = createServiceSupabaseClient;
 
 // Global instances - lazy loaded to handle test environment
 let _supabase: SupabaseClient | null = null;
@@ -199,7 +199,7 @@ export const supabase = new Proxy({} as SupabaseClient, {
   }
 });
 
-export const supabaseBrowser = new Proxy({} as SupabaseClient, {
+export const _supabaseBrowser = new Proxy({} as SupabaseClient, {
   get(_target, prop) {
     if (!_supabaseBrowser) {
       _supabaseBrowser = createBrowserSupabaseClient();
@@ -218,7 +218,7 @@ export const prisma = new Proxy({} as PrismaClient, {
 });
 
 // Connection health check
-export const checkDatabaseHealth = async () => {
+export const _checkDatabaseHealth = async () => {
   try {
     // Test Prisma connection
     await prisma.$queryRaw`SELECT 1`;
@@ -234,7 +234,7 @@ export const checkDatabaseHealth = async () => {
       supabase: true,
       timestamp: new Date().toISOString(),
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       status: "unhealthy",
       error: error instanceof Error ? error.message : "Unknown error",
@@ -248,7 +248,7 @@ export const closeDatabaseConnections = async () => {
   try {
     await prisma.$disconnect();
     console.log("Database connections closed successfully");
-  } catch (error) {
+  } catch (_error) {
     console.error("Error closing database connections", error instanceof Error ? error : new Error(String(error)));
   }
 };

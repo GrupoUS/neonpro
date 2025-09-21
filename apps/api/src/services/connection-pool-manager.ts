@@ -377,8 +377,7 @@ export class ConnectionPoolManager {
       return this.metrics.utilization;
     }
 
-    const sum = this.metricsHistory.reduce(
-      (acc, metrics) => acc + metrics.utilization,
+    const sum = this.metricsHistory.reduce(_(acc,_metrics) => acc + metrics.utilization,
       0,
     );
     return sum / this.metricsHistory.length;
@@ -400,7 +399,7 @@ export class ConnectionPoolManager {
    */
   startMonitoring(intervalMs: number = 300000): void {
     // 5 minutes default
-    this.monitoringInterval = setInterval(() => {
+    this.monitoringInterval = setInterval(_() => {
       // In a real implementation, this would collect actual metrics from the pool
       this.simulateMetricsUpdate();
     }, intervalMs);

@@ -34,7 +34,7 @@ export const aiChatKeys = {
 export interface ChatMessage {
   id: string;
   content: string;
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   timestamp: Date;
   metadata?: {
     provider?: 'openai' | 'anthropic';
@@ -54,7 +54,7 @@ export interface Conversation {
   createdAt: Date;
   updatedAt: Date;
   patientId?: string;
-  context:
+  _context:
     | 'general'
     | 'patient_analysis'
     | 'appointment_booking'
@@ -89,7 +89,7 @@ export function useAIChat(conversationId?: string) {
     {
       conversationId: conversationId || 'new',
       language: 'pt',
-      context: 'general',
+      _context: 'general',
     },
     {
       enabled: true,
@@ -111,7 +111,7 @@ export function useAIChat(conversationId?: string) {
 
   // Send message with healthcare context
   const sendMessage = trpc.ai.chat.useMutation({
-    onMutate: async ({ message, conversationId: targetConvId, context }) => {
+    onMutate: async ({ message, conversationId: targetConvId,_context }) => {
       // Cancel outgoing refetches
       const convId = targetConvId || conversation.data?.id;
       if (convId) {
@@ -136,7 +136,7 @@ export function useAIChat(conversationId?: string) {
       const optimisticMessage: ChatMessage = {
         id: `temp-${Date.now()}`,
         content: message,
-        role: 'user',
+        _role: 'user',
         timestamp: new Date(),
         metadata: {
           language: 'pt',
@@ -162,7 +162,7 @@ export function useAIChat(conversationId?: string) {
       return { optimisticMessage, conversationId: convId };
     },
 
-    onSuccess: (data, _variables, context) => {
+    onSuccess: (_data, _variables,_context) => {
       // Update conversation with real response
       const convId = context?.conversationId || data.conversationId;
       if (convId) {
@@ -186,7 +186,7 @@ export function useAIChat(conversationId?: string) {
                 {
                   id: data.aiMessageId,
                   content: data.response,
-                  role: 'assistant' as const,
+                  _role: 'assistant' as const,
                   timestamp: new Date(),
                   metadata: {
                     provider: data.provider,
@@ -217,7 +217,7 @@ export function useAIChat(conversationId?: string) {
       }
     },
 
-    onError: (error, _variables, context) => {
+    onError: (_error, _variables,_context) => {
       // Remove optimistic message
       const convId = context?.conversationId;
       if (convId) {
@@ -266,7 +266,7 @@ export function useAINoShowPrediction() {
   const queryClient = useQueryClient();
 
   return trpc.ai.predictNoShow.useMutation({
-    onMutate: async ({ patientId, appointmentData }) => {
+    onMutate: async ({ patientId,_appointmentData }) => {
       // LGPD Compliance: Log prediction request
       console.log('[LGPD Audit] No-show prediction requested', {
         patientId,
@@ -276,7 +276,7 @@ export function useAINoShowPrediction() {
       });
     },
 
-    onSuccess: (data, _variables) => {
+    onSuccess: (_data, _variables) => {
       // Cache prediction result
       queryClient.setQueryData(aiChatKeys.predictions(), (_old: any) => {
         const predictions = old || [];
@@ -318,7 +318,7 @@ export function useAINoShowPrediction() {
  */
 export function useAIHealthcareInsights() {
   return trpc.ai.generateInsights.useMutation({
-    onMutate: async ({ data, type, context }) => {
+    onMutate: async ({ data,_type,_context }) => {
       // LGPD Compliance: Log insight generation
       console.log('[LGPD Audit] Healthcare insights requested', {
         insightType: type,
@@ -329,7 +329,7 @@ export function useAIHealthcareInsights() {
       });
     },
 
-    onSuccess: (data, _variables) => {
+    onSuccess: (_data, _variables) => {
       // Cache insights
       const queryClient = useQueryClient();
       queryClient.setQueryData(
@@ -363,7 +363,7 @@ export function useAIProviderRouting() {
   const [failoverCount, setFailoverCount] = React.useState(0);
 
   const routeProvider = trpc.ai.routeProvider.useMutation({
-    onMutate: async ({ preferredProvider, operation, estimatedCost }) => {
+    onMutate: async ({ preferredProvider,_operation,_estimatedCost }) => {
       // Log provider routing decision
       console.log('[AI Provider Routing]', {
         currentProvider,
@@ -438,7 +438,7 @@ export function useAIUsageMonitoring() {
   );
 
   // Show warnings for high usage
-  React.useEffect(() => {
+  React.useEffect(_() => {
     if (usage.data?.isNearLimit) {
       toast.warning(
         `⚠️ Uso de IA próximo do limite: R$ ${usage.data.currentCost.toFixed(2)} / R$ ${
@@ -564,7 +564,7 @@ export function useAIStreamingChat(conversationId: string) {
   const [streamingMessage, setStreamingMessage] = React.useState<string>('');
   const [isStreaming, setIsStreaming] = React.useState(false);
 
-  React.useEffect(() => {
+  React.useEffect(_() => {
     if (!conversationId) return;
 
     // Subscribe to streaming responses
@@ -664,7 +664,7 @@ export function useAIConversationHistory() {
 /**
  * Utility functions for AI chat functionality
  */
-export const aiChatUtils = {
+export const _aiChatUtils = {
   // Anonymize patient data before sending to AI
   anonymizePatientData: (text: string): string => {
     return text

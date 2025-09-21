@@ -9,7 +9,7 @@ describe('Patients AI Integration API', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = await createTestClient({ role: 'admin' });
+    testClient = await createTestClient({ _role: 'admin' });
 
     // Create a test patient first
     const patientData = {
@@ -442,7 +442,7 @@ describe('Patients AI Integration API', () => {
   describe('POST /api/v2/patients/{id}/ai-recommendations', () => {
     it('should return 200 for successful AI recommendations', async () => {
       const recommendationRequest = {
-        context: 'appointment_scheduling',
+        _context: 'appointment_scheduling',
         preferences: {
           time_slots: ['morning', 'afternoon'],
           location_preference: 'nearby',
@@ -473,7 +473,7 @@ describe('Patients AI Integration API', () => {
         success: true,
         recommendations: expect.objectContaining({
           patient_id: patientId,
-          context: 'appointment_scheduling',
+          _context: 'appointment_scheduling',
           generated_at: expect.any(String),
           recommendations: expect.any(Array),
           reasoning: expect.any(Object),
@@ -483,7 +483,7 @@ describe('Patients AI Integration API', () => {
 
     it('should provide personalized recommendations based on patient history', async () => {
       const recommendationRequest = {
-        context: 'treatment_adherence',
+        _context: 'treatment_adherence',
         include_historical_data: true,
       };
 
@@ -514,7 +514,7 @@ describe('Patients AI Integration API', () => {
 
     it('should include cultural and regional adaptations for Brazilian patients', async () => {
       const recommendationRequest = {
-        context: 'health_education',
+        _context: 'health_education',
         target_demographic: 'brazilian_adult',
         cultural_context: 'urban_sao_paulo',
       };
@@ -546,7 +546,7 @@ describe('Patients AI Integration API', () => {
 
     it('should validate recommendation safety and appropriateness', async () => {
       const recommendationRequest = {
-        context: 'treatment_planning',
+        _context: 'treatment_planning',
         include_safety_validation: true,
       };
 
@@ -580,7 +580,7 @@ describe('Patients AI Integration API', () => {
     it('should return 200 for successful AI chat interaction', async () => {
       const chatRequest = {
         message: 'Qual é o horário de funcionamento da clínica?',
-        context: 'general_inquiry',
+        _context: 'general_inquiry',
         include_medical_context: false,
         language: 'pt-BR',
       };
@@ -615,7 +615,7 @@ describe('Patients AI Integration API', () => {
     it('should handle medical inquiries with appropriate disclaimers', async () => {
       const medicalInquiryRequest = {
         message: 'Estes sintomas indicam algo grave?',
-        context: 'medical_inquiry',
+        _context: 'medical_inquiry',
         include_medical_context: true,
         language: 'pt-BR',
       };
@@ -648,7 +648,7 @@ describe('Patients AI Integration API', () => {
     it('should prevent inappropriate AI chat usage', async () => {
       const inappropriateRequest = {
         message: 'Como falsificar receita médica?',
-        context: 'malicious_request',
+        _context: 'malicious_request',
       };
 
       const response = await app.request(
@@ -676,7 +676,7 @@ describe('Patients AI Integration API', () => {
       // First message
       const firstMessage = {
         message: 'Oi, preciso de ajuda',
-        context: 'general_inquiry',
+        _context: 'general_inquiry',
         save_to_history: true,
       };
 
@@ -697,7 +697,7 @@ describe('Patients AI Integration API', () => {
       // Second message referencing history
       const secondMessage = {
         message: 'Você pode repetir o que disse antes?',
-        context: 'follow_up',
+        _context: 'follow_up',
         reference_previous: true,
       };
 
@@ -725,7 +725,7 @@ describe('Patients AI Integration API', () => {
     it('should provide real-time chat for urgent inquiries', async () => {
       const urgentRequest = {
         message: 'Estou sentindo dor no peito',
-        context: 'urgent_medical',
+        _context: 'urgent_medical',
         priority: 'high',
         include_emergency_guidance: true,
       };

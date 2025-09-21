@@ -14,8 +14,6 @@
  * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
  */
 
-import { z } from "zod";
-
 // ============================================================================
 // TYPES & SCHEMAS
 // ============================================================================
@@ -142,7 +140,7 @@ export const JobDataSchema = z.object({
   status: z.nativeEnum(JobStatus).default(JobStatus.PENDING),
 
   // Job payload
-  payload: z.record(z.any()).default({}),
+  _payload: z.record(z.any()).default({}),
 
   // Timing information
   createdAt: z.date(),
@@ -197,7 +195,7 @@ export type JobData = z.infer<typeof JobDataSchema>;
 export const CreateJobRequestSchema = z.object({
   type: z.nativeEnum(HealthcareJobType),
   priority: z.nativeEnum(JobPriority).default(JobPriority.MEDIUM),
-  payload: z.record(z.any()).default({}),
+  _payload: z.record(z.any()).default({}),
   healthcareContext: HealthcareJobContextSchema.optional(),
   config: JobConfigSchema.optional(),
   scheduledAt: z.date().optional(),
@@ -306,7 +304,7 @@ export const QueueStatisticsSchema = z.object({
   idleWorkers: z.number().default(0),
 
   // Time-based metrics
-  lastUpdateTime: z.date().default(() => new Date()),
+  lastUpdateTime: z.date().default(_() => new Date()),
   uptime: z.number().default(0),
 });
 
@@ -333,12 +331,12 @@ export interface JobHandler {
   /**
    * Validate job payload
    */
-  validatePayload(payload: Record<string, any>): Promise<boolean>;
+  validatePayload(_payload: Record<string, any>): Promise<boolean>;
 
   /**
    * Get estimated execution time
    */
-  getEstimatedExecutionTime(payload: Record<string, any>): Promise<number>;
+  getEstimatedExecutionTime(_payload: Record<string, any>): Promise<number>;
 }
 
 // ============================================================================
@@ -497,7 +495,7 @@ export function calculateRetryDelay(
  * Validate healthcare context
  */
 export function validateHealthcareContext(
-  context: HealthcareJobContext,
+  _context: HealthcareJobContext,
   jobType: HealthcareJobType,
 ): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
@@ -552,7 +550,7 @@ export function validateHealthcareContext(
  */
 export function requiresEmergencyProcessing(
   jobType: HealthcareJobType,
-  context?: HealthcareJobContext,
+  _context?: HealthcareJobContext,
 ): boolean {
   // Emergency notification jobs are always urgent
   if (jobType === HealthcareJobType.EMERGENCY_NOTIFICATION) {
@@ -669,7 +667,7 @@ export class InMemoryJobQueue implements JobQueue {
 
   constructor() {
     // Initialize priority queues
-    Object.values(JobPriority).forEach((priority) => {
+    Object.values(JobPriority).forEach(_(priority) => {
       this.priorityQueues.set(priority, []);
     });
 
@@ -686,7 +684,7 @@ export class InMemoryJobQueue implements JobQueue {
     // Handle scheduling
     if (validatedJob.scheduledAt && validatedJob.scheduledAt > new Date()) {
       const delay = validatedJob.scheduledAt.getTime() - Date.now();
-      const timeout = setTimeout(() => {
+      const timeout = setTimeout(_() => {
         this.moveToQueue(validatedJob.jobId, validatedJob.priority);
         this.scheduledJobs.delete(validatedJob.jobId);
       }, delay);
@@ -716,7 +714,7 @@ export class InMemoryJobQueue implements JobQueue {
       const queue = this.priorityQueues.get(pri);
       if (queue && queue.length > 0) {
         // Sort by priority score
-        queue.sort((a, b) => {
+        queue.sort(_(a,_b) => {
           const jobA = this.jobs.get(a);
           const jobB = this.jobs.get(b);
           if (!jobA || !jobB) return 0;
@@ -795,9 +793,9 @@ export class InMemoryJobQueue implements JobQueue {
 
   async getJobsByStatus(status: JobStatus, limit = 100): Promise<JobData[]> {
     return Array.from(this.jobs.values())
-      .filter((job) => job.status === status)
+      .filter(_(job) => job.status === status)
       .slice(0, limit)
-      .map((job) => ({ ...job }));
+      .map(_(job) => ({ ...job }));
   }
 
   async getStatistics(): Promise<QueueStatistics> {
@@ -837,28 +835,24 @@ export class InMemoryJobQueue implements JobQueue {
 
     this.statistics = {
       totalJobs: allJobs.length,
-      pendingJobs: allJobs.filter((j) => j.status === JobStatus.PENDING).length,
-      runningJobs: allJobs.filter((j) => j.status === JobStatus.RUNNING).length,
-      completedJobs: allJobs.filter((j) => j.status === JobStatus.COMPLETED)
+      pendingJobs: allJobs.filter(_(j) => j.status === JobStatus.PENDING).length,
+      runningJobs: allJobs.filter(_(j) => j.status === JobStatus.RUNNING).length,
+      completedJobs: allJobs.filter(_(j) => j.status === JobStatus.COMPLETED)
         .length,
-      failedJobs: allJobs.filter((j) => j.status === JobStatus.FAILED).length,
-      deadLetterJobs: allJobs.filter((j) => j.status === JobStatus.DEAD_LETTER)
+      failedJobs: allJobs.filter(_(j) => j.status === JobStatus.FAILED).length,
+      deadLetterJobs: allJobs.filter(_(j) => j.status === JobStatus.DEAD_LETTER)
         .length,
 
       priorityDistribution: {
-        [JobPriority.CRITICAL]: allJobs.filter(
-          (j) => j.priority === JobPriority.CRITICAL,
+        [JobPriority.CRITICAL]: allJobs.filter(_(j) => j.priority === JobPriority.CRITICAL,
         ).length,
-        [JobPriority.HIGH]: allJobs.filter(
-          (j) => j.priority === JobPriority.HIGH,
+        [JobPriority.HIGH]: allJobs.filter(_(j) => j.priority === JobPriority.HIGH,
         ).length,
-        [JobPriority.MEDIUM]: allJobs.filter(
-          (j) => j.priority === JobPriority.MEDIUM,
+        [JobPriority.MEDIUM]: allJobs.filter(_(j) => j.priority === JobPriority.MEDIUM,
         ).length,
-        [JobPriority.LOW]: allJobs.filter((j) => j.priority === JobPriority.LOW)
+        [JobPriority.LOW]: allJobs.filter(_(j) => j.priority === JobPriority.LOW)
           .length,
-        [JobPriority.BACKGROUND]: allJobs.filter(
-          (j) => j.priority === JobPriority.BACKGROUND,
+        [JobPriority.BACKGROUND]: allJobs.filter(_(j) => j.priority === JobPriority.BACKGROUND,
         ).length,
       },
 
@@ -866,14 +860,11 @@ export class InMemoryJobQueue implements JobQueue {
       throughputPerMinute: this.calculateThroughput(allJobs),
       errorRate: this.calculateErrorRate(allJobs),
 
-      emergencyJobsProcessed: allJobs.filter(
-        (j) => j.healthcareContext?.urgencyLevel === "emergency",
+      emergencyJobsProcessed: allJobs.filter(_(j) => j.healthcareContext?.urgencyLevel === "emergency",
       ).length,
-      patientSafetyJobsProcessed: allJobs.filter(
-        (j) => j.config.patientSafetyRelevant,
+      patientSafetyJobsProcessed: allJobs.filter(_(j) => j.config.patientSafetyRelevant,
       ).length,
-      complianceJobsCompleted: allJobs.filter(
-        (j) =>
+      complianceJobsCompleted: allJobs.filter(_(j) =>
           j.type === HealthcareJobType.COMPLIANCE_AUDIT ||
           j.type === HealthcareJobType.ANVISA_REPORTING ||
           j.type === HealthcareJobType.LGPD_DATA_PROCESSING,
@@ -888,11 +879,10 @@ export class InMemoryJobQueue implements JobQueue {
   }
 
   private calculateAverageExecutionTime(jobs: JobData[]): number {
-    const completedJobs = jobs.filter((j) => j.executionTime);
+    const completedJobs = jobs.filter(_(j) => j.executionTime);
     if (completedJobs.length === 0) return 0;
 
-    const totalTime = completedJobs.reduce(
-      (sum, job) => sum + (job.executionTime || 0),
+    const totalTime = completedJobs.reduce(_(sum,_job) => sum + (job.executionTime || 0),
       0,
     );
     return totalTime / completedJobs.length;
@@ -900,16 +890,14 @@ export class InMemoryJobQueue implements JobQueue {
 
   private calculateThroughput(jobs: JobData[]): number {
     const lastHour = new Date(Date.now() - 60 * 60 * 1000);
-    const recentJobs = jobs.filter(
-      (j) => j.completedAt && j.completedAt > lastHour,
+    const recentJobs = jobs.filter(_(j) => j.completedAt && j.completedAt > lastHour,
     );
 
     return recentJobs.length;
   }
 
   private calculateErrorRate(jobs: JobData[]): number {
-    const totalJobs = jobs.filter(
-      (j) =>
+    const totalJobs = jobs.filter(_(j) =>
         j.status === JobStatus.COMPLETED ||
         j.status === JobStatus.FAILED ||
         j.status === JobStatus.DEAD_LETTER,
@@ -917,8 +905,7 @@ export class InMemoryJobQueue implements JobQueue {
 
     if (totalJobs === 0) return 0;
 
-    const failedJobs = jobs.filter(
-      (j) =>
+    const failedJobs = jobs.filter(_(j) =>
         j.status === JobStatus.FAILED || j.status === JobStatus.DEAD_LETTER,
     ).length;
 
@@ -960,7 +947,7 @@ export class JobScheduler {
         priority: jobTemplate.priority || JobPriority.MEDIUM,
         status: JobStatus.PENDING,
         progress: 0,
-        payload: jobTemplate.payload,
+        _payload: jobTemplate.payload,
         createdAt: new Date(),
         attemptCount: 0,
         maxRetries: jobTemplate.config?.maxRetries || 3,

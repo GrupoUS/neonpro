@@ -26,8 +26,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   const [searchOptions, setSearchOptions] = useState<EventSearchOptions | null>(null);
 
   // Debounced search function
-  const debouncedSearch = useMemo(
-    () =>
+  const debouncedSearch = useMemo(_() =>
       debounce(async (_options: any) => {
         try {
           setIsSearching(true);
@@ -35,7 +34,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
           setSearchResults(result.events);
           setTotalCount(result.totalCount);
           setHasMore(result.hasMore);
-        } catch (error) {
+        } catch (_error) {
           console.error('Search failed:', error);
           setSearchResults([]);
           setTotalCount(0);
@@ -55,7 +54,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   }, [debouncedSearch]);
 
   // Load more results (pagination)
-  const loadMore = useCallback(async () => {
+  const loadMore = useCallback(_async () => {
     if (!hasMore || isSearching || !searchOptions) return;
 
     const newPage = currentPage + 1;
@@ -73,7 +72,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
       setSearchResults(prev => [...prev, ...result.events]);
       setCurrentPage(newPage);
       setHasMore(result.hasMore);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load more results:', error);
     } finally {
       setIsSearching(false);
@@ -83,7 +82,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   // Quick search with common search patterns
   const quickSearch = useCallback(
     async (
-      query: string,
+      _query: string,
       searchIn?: ('title' | 'description' | 'notes' | 'patient' | 'professional')[],
     ) => {
       const searchOptions: EventSearchOptions = {
@@ -99,7 +98,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
 
   // Search by date range
   const searchByDateRange = useCallback(async (
-    query: string,
+    _query: string,
     startDate: Date,
     endDate: Date,
     searchIn?: ('title' | 'description' | 'notes' | 'patient' | 'professional')[],
@@ -124,7 +123,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   }, [performSearch, defaultLimit]);
 
   // Clear search results
-  const clearSearch = useCallback(() => {
+  const clearSearch = useCallback(_() => {
     setSearchQuery('');
     setSearchResults([]);
     setTotalCount(0);
@@ -135,7 +134,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   }, [debouncedSearch]);
 
   // Search suggestions based on query
-  const searchSuggestions = useMemo(() => {
+  const searchSuggestions = useMemo(_() => {
     if (!searchQuery.trim()) return [];
 
     // Simple suggestions based on common search patterns
@@ -185,7 +184,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   }, [searchQuery]);
 
   // Search statistics
-  const searchStats = useMemo(() => ({
+  const searchStats = useMemo(_() => ({
     totalResults: totalCount,
     displayedResults: searchResults.length,
     hasMoreResults: hasMore,
@@ -248,7 +247,7 @@ export function useAdvancedEventSearch() {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [totalCount, setTotalCount] = useState<number>(0);
 
-  const performAdvancedSearch = useCallback(async () => {
+  const performAdvancedSearch = useCallback(_async () => {
     setIsSearching(true);
 
     try {
@@ -259,7 +258,7 @@ export function useAdvancedEventSearch() {
       if (advancedFilters.notes) searchTerms.push(advancedFilters.notes);
 
       const searchOptions: any = {
-        query: searchTerms.join(' '),
+        _query: searchTerms.join(' '),
         limit: 50,
       };
 
@@ -274,7 +273,7 @@ export function useAdvancedEventSearch() {
       const result = await searchEvents(searchOptions);
       setSearchResults(result.events);
       setTotalCount(result.totalCount);
-    } catch (error) {
+    } catch (_error) {
       console.error('Advanced search failed:', error);
       setSearchResults([]);
       setTotalCount(0);
@@ -290,7 +289,7 @@ export function useAdvancedEventSearch() {
     }));
   }, []);
 
-  const resetFilters = useCallback(() => {
+  const resetFilters = useCallback(_() => {
     setAdvancedFilters({
       title: '',
       description: '',

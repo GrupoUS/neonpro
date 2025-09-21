@@ -42,8 +42,6 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { z } from 'zod';
-
 // Type-safe params schema
 const patientParamsSchema = z.object({
   patientId: z.string().min(1),
@@ -92,12 +90,12 @@ export const Route = createFileRoute('/patients/$patientId/documents')({
       <div className='animate-pulse space-y-6'>
         <div className='h-8 bg-muted rounded w-1/3'></div>
         <div className='flex gap-2'>
-          {Array.from({ length: 3 }).map((_, i) => (
+          {Array.from({ length: 3 }).map(_(_,_i) => (
             <div key={i} className='h-10 bg-muted rounded w-32'></div>
           ))}
         </div>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: 6 }).map(_(_,_i) => (
             <div key={i} className='h-48 bg-muted rounded-lg'></div>
           ))}
         </div>
@@ -106,7 +104,7 @@ export const Route = createFileRoute('/patients/$patientId/documents')({
   ),
 
   // Error boundary
-  errorComponent: ({ error, reset }) => (
+  errorComponent: (_{ error,_reset }) => (
     <div className='container mx-auto p-4 md:p-6'>
       <Card className='max-w-lg mx-auto text-center'>
         <CardHeader>
@@ -227,7 +225,7 @@ function PatientDocumentsPage() {
       await deleteMutation.mutateAsync({ patientId, documentId });
       setSelectedDocuments(prev => prev.filter(id => id !== documentId));
       toast.success('Documento excluído com sucesso');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error deleting document:', error);
       toast.error('Erro ao excluir documento');
     }
@@ -248,13 +246,13 @@ function PatientDocumentsPage() {
         tags,
       });
       toast.success('Documento enviado com sucesso');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error uploading document:', error);
       toast.error('Erro ao enviar documento');
     }
   };
 
-  // Filter documents based on search (now handled by query)
+  // Filter documents based on search (now handled by _query)
   const filteredDocuments = documents.filter(doc => {
     const matchesSearch = searchQuery === ''
       || doc.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -265,7 +263,7 @@ function PatientDocumentsPage() {
   });
 
   // Sort documents
-  const sortedDocuments = [...filteredDocuments].sort((a, b) => {
+  const sortedDocuments = [...filteredDocuments].sort(_(a,_b) => {
     let comparison = 0;
 
     switch (sortBy) {
@@ -292,7 +290,7 @@ function PatientDocumentsPage() {
         <div className='animate-pulse space-y-6'>
           <div className='h-8 bg-muted rounded w-1/3'></div>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {Array.from({ length: 6 }).map((_, i) => (
+            {Array.from({ length: 6 }).map(_(_,_i) => (
               <div key={i} className='h-48 bg-muted rounded-lg'></div>
             ))}
           </div>
@@ -566,11 +564,8 @@ function PatientDocumentsPage() {
 /**
  * Document Card Component
  */
-function DocumentCard({
-  document,
-  isSelected,
-  onSelect,
-  onDelete,
+function DocumentCard(_{
+  document,_isSelected,_onSelect,_onDelete,
 }: {
   document: PatientDocument;
   isSelected: boolean;
@@ -586,7 +581,7 @@ function DocumentCard({
       setIsDownloading(true);
       await downloadDocument(patientId, document.id, document.name);
       toast.success('Download concluído');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error downloading document:', error);
       toast.error('Erro ao baixar documento');
     } finally {
@@ -605,7 +600,7 @@ function DocumentCard({
     try {
       setIsDeleting(true);
       onDelete(document.id);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error deleting document:', error);
       toast.error('Erro ao excluir documento');
     } finally {

@@ -83,7 +83,7 @@ export function useSignalingClient(
   /**
    * Connect to WebSocket signaling server
    */
-  const connect = useCallback(() => {
+  const connect = useCallback(_() => {
     if (websocketRef.current?.readyState === WebSocket.OPEN) {
       return; // Already connected
     }
@@ -134,7 +134,7 @@ export function useSignalingClient(
         try {
           const message: SignalingMessage = JSON.parse(event.data);
           handleIncomingMessage(message);
-        } catch (error) {
+        } catch (_error) {
           console.error('Error parsing signaling message:', error);
         }
       };
@@ -169,7 +169,7 @@ export function useSignalingClient(
         console.error('WebRTC signaling error:', error);
         toast.error('Erro na sinalização WebRTC');
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error creating WebSocket connection:', error);
       setState(prev => ({ ...prev, isConnecting: false }));
       callbacks.onConnectionStateChange('disconnected');
@@ -180,7 +180,7 @@ export function useSignalingClient(
   /**
    * Disconnect from signaling server
    */
-  const disconnect = useCallback(() => {
+  const disconnect = useCallback(_() => {
     if (websocketRef.current) {
       // Send leave message before closing
       sendMessage({
@@ -244,7 +244,7 @@ export function useSignalingClient(
 
         websocketRef.current.send(JSON.stringify(completeMessage));
         return true;
-      } catch (error) {
+      } catch (_error) {
         console.error('Error sending signaling message:', error);
         toast.error('Erro ao enviar mensagem de sinalização');
         return false;
@@ -314,7 +314,7 @@ export function useSignalingClient(
   /**
    * Schedule reconnection with exponential backoff
    */
-  const scheduleReconnect = useCallback(() => {
+  const scheduleReconnect = useCallback(_() => {
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
     }
@@ -337,7 +337,7 @@ export function useSignalingClient(
       }s... (tentativa ${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})`,
     );
 
-    reconnectTimeoutRef.current = setTimeout(() => {
+    reconnectTimeoutRef.current = setTimeout(_() => {
       connect();
     }, delay);
   }, [connect, callbacks]);
@@ -345,12 +345,12 @@ export function useSignalingClient(
   /**
    * Start ping interval to keep connection alive
    */
-  const startPingInterval = useCallback(() => {
+  const startPingInterval = useCallback(_() => {
     if (pingIntervalRef.current) {
       clearInterval(pingIntervalRef.current);
     }
 
-    pingIntervalRef.current = setInterval(() => {
+    pingIntervalRef.current = setInterval(_() => {
       if (websocketRef.current?.readyState === WebSocket.OPEN) {
         sendMessage({
           type: 'connection-quality',
@@ -487,7 +487,7 @@ export function useSignalingClient(
   /**
    * End session for all participants
    */
-  const endSession = useCallback(() => {
+  const endSession = useCallback(_() => {
     return sendMessage({
       type: 'session-end',
       sessionId,
@@ -504,7 +504,7 @@ export function useSignalingClient(
   }, [sessionId, participantId, sendMessage]);
 
   // Auto-connect on mount
-  useEffect(() => {
+  useEffect(_() => {
     connect();
 
     return () => {
@@ -513,7 +513,7 @@ export function useSignalingClient(
   }, [connect, disconnect]);
 
   // Cleanup on unmount
-  useEffect(() => {
+  useEffect(_() => {
     return () => {
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);

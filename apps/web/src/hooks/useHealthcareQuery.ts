@@ -28,11 +28,11 @@ async function logHealthcareAction(
   action: string,
   resourceType: string,
   resourceId: string,
-  userId?: string,
+  _userId?: string,
   details?: Record<string, any>,
 ) {
   try {
-    if (!userId) return; // ensure required field
+    if (!_userId) return; // ensure required field
     await supabase.from('audit_logs').insert({
       table_name: resourceType,
       action,
@@ -41,7 +41,7 @@ async function logHealthcareAction(
       user_id: userId,
       details: details ? JSON.stringify(details) : null,
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Failed to log healthcare action:', error);
   }
 }
@@ -96,7 +96,7 @@ export function usePatient(
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
-    retry: (failureCount, _error) => {
+    retry: (_failureCount, _error) => {
       // Don't retry on permission errors
       if (
         error.message.includes('permission')
@@ -161,8 +161,7 @@ export function useUpdatePatient() {
 
   return useMutation({
     mutationFn: async ({
-      patientId,
-      updates,
+      patientId,_updates,
     }: {
       patientId: string;
       updates: any;
@@ -191,7 +190,7 @@ export function useUpdatePatient() {
     },
 
     // Optimistic update
-    onMutate: async ({ patientId, updates }) => {
+    onMutate: async (_{ patientId,_updates }) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({
         queryKey: healthcareKeys.patient(patientId),
@@ -216,13 +215,13 @@ export function useUpdatePatient() {
     },
 
     // On success, replace optimistic data with server data
-    onSuccess: (data, { patientId }) => {
+    onSuccess: (_data,_{ patientId }) => {
       queryClient.setQueryData(healthcareKeys.patient(patientId), data);
       toast.success('Dados do paciente atualizados com sucesso');
     },
 
     // On error, rollback to previous data
-    onError: (error, { patientId }, context) => {
+    onError: (_error,_{ patientId },_context) => {
       if (context?.previousPatient) {
         queryClient.setQueryData(
           healthcareKeys.patient(patientId),
@@ -235,7 +234,7 @@ export function useUpdatePatient() {
     },
 
     // Always refetch after mutation
-    onSettled: (_data, _error, { patientId }) => {
+    onSettled: (_data, _error,_{ patientId }) => {
       queryClient.invalidateQueries({
         queryKey: healthcareKeys.patient(patientId),
       });
@@ -258,7 +257,7 @@ export function useCreateAppointment() {
     }) => {
       // Healthcare-specific validation
       const scheduledDate = new Date(appointmentData.scheduled_at);
-      const now = new Date();
+      const _now = new Date();
 
       if (scheduledDate <= now) {
         throw new Error('Agendamento deve ser para uma data futura');
@@ -344,7 +343,7 @@ export function useCreateAppointment() {
       return { previousAppointments, optimisticAppointment };
     },
 
-    onSuccess: (data, _variables, context) => {
+    onSuccess: (_data, _variables,_context) => {
       const patientId = variables.patient_id;
 
       // Replace optimistic appointment with real data
@@ -361,7 +360,7 @@ export function useCreateAppointment() {
       toast.success('Agendamento criado com sucesso');
     },
 
-    onError: (error, _variables, context) => {
+    onError: (_error, _variables,_context) => {
       const patientId = variables.patient_id;
 
       // Rollback optimistic update
@@ -375,7 +374,7 @@ export function useCreateAppointment() {
       toast.error(`Erro ao criar agendamento: ${error.message}`);
     },
 
-    onSettled: (_data, _error, variables) => {
+    onSettled: (_data, _error,_variables) => {
       const patientId = variables.patient_id;
 
       // Invalidate related queries
@@ -395,10 +394,7 @@ export function useEmergencyDetection() {
 
   return useMutation({
     mutationFn: async ({
-      patientId,
-      severity,
-      description,
-      symptoms,
+      patientId,_severity,_description,_symptoms,
     }: {
       patientId: string;
       severity: 'low' | 'medium' | 'high' | 'critical';

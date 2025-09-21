@@ -66,7 +66,7 @@ export async function migrateData(): Promise<void> {
     console.log("Data migration completed successfully");
 
     await prisma.$disconnect();
-  } catch (error) {
+  } catch (_error) {
     console.error("Data migration error:", error);
     throw error;
   }
@@ -138,7 +138,7 @@ export async function backupData(): Promise<string> {
 
     await prisma.$disconnect();
     return backupPath;
-  } catch (error) {
+  } catch (_error) {
     console.error("Backup error:", error);
     throw error;
   }
@@ -169,7 +169,7 @@ async function ensureMigrationsTable(prisma: PrismaClient): Promise<void> {
       `;
       console.log("Created migrations table");
     }
-  } catch (error) {
+  } catch (_error) {
     console.error("Error ensuring migrations table:", error);
     throw error;
   }
@@ -184,7 +184,7 @@ async function getCurrentSchemaVersion(prisma: PrismaClient): Promise<string> {
     `) as any[];
 
     return result[0]?.version || "0.0.0";
-  } catch (error) {
+  } catch (_error) {
     console.error("Error getting current schema version:", error);
     return "0.0.0";
   }
@@ -208,7 +208,7 @@ async function recordMigration(
       INSERT INTO ${MIGRATION_TABLE} (version, description)
       VALUES (${version}, ${description})
     `;
-  } catch (error) {
+  } catch (_error) {
     console.error("Error recording migration:", error);
     throw error;
   }

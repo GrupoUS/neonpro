@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { ANVISAComplianceService } from './anvisa-compliance';
 import { LGPDService } from './lgpd-service';
 
@@ -38,7 +37,7 @@ export class HealthcareValidationService {
     operation: 'create' | 'update' | 'delete' | 'read',
     entity: string,
     data: any,
-    context?: {
+    _context?: {
       professionalId?: string;
       patientId?: string;
       organizationId?: string;
@@ -92,7 +91,7 @@ export class HealthcareValidationService {
           warnings.push(...lgpdValidation.warnings);
           aiScore -= lgpdValidation.warnings.length * 0.05;
         }
-      } catch (error) {
+      } catch (_error) {
         errors.push('Erro na validação LGPD');
         result.isValid = false;
         aiScore -= 0.2;
@@ -125,7 +124,7 @@ export class HealthcareValidationService {
             warnings.push('Conformidade ANVISA requer atenção');
             aiScore -= 0.1;
           }
-        } catch (error) {
+        } catch (_error) {
           warnings.push('Não foi possível validar conformidade ANVISA');
           aiScore -= 0.1;
         }
@@ -156,7 +155,7 @@ export class HealthcareValidationService {
       result.isValid = result.isValid && result.aiScore >= 0.7;
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       console.error('Healthcare validation error:', error);
       return {
         isValid: false,
@@ -198,7 +197,7 @@ export class HealthcareValidationService {
         authorized,
         licenseInfo: authorized ? licenseInfo : undefined,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Professional authorization error:', error);
       return { authorized: false };
     }
@@ -244,7 +243,7 @@ export class HealthcareValidationService {
         errors,
         warnings,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         isValid: false,
         errors: ['Erro na validação LGPD'],
@@ -368,7 +367,7 @@ export class HealthcareValidationService {
         errors.push('Horário de início é obrigatório');
       } else {
         const startTime = new Date(data.startTime);
-        const now = new Date();
+        const _now = new Date();
 
         if (startTime < now) {
           errors.push('Horário da consulta não pode estar no passado');

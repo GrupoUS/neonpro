@@ -39,7 +39,7 @@ export interface PatientRepository {
    * @param clinicId Optional clinic ID to scope search
    * @returns Array of matching patients
    */
-  search(query: string, clinicId?: string): Promise<Patient[]>;
+  search(_query: string, clinicId?: string): Promise<Patient[]>;
 
   /**
    * Find active patients

@@ -25,7 +25,7 @@ describe('Integration Test T013: Quota Enforcement', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = createTestClient({ role: 'admin' });
+    testClient = createTestClient({ _role: 'admin' });
     clinicId = 'clinic-quota-test-001';
     professionalCRM = 'CRM/SP 123456';
   });

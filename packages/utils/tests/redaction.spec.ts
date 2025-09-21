@@ -5,9 +5,9 @@
 import { describe, expect, it } from "vitest";
 import { redactPII } from "../src/redaction/pii";
 
-describe("T009: Redaction Regex Corpus", () => {
-  describe("Brazilian Document Numbers", () => {
-    it("should redact CPF numbers in various formats", () => {
+describe("T009: Redaction Regex Corpus",_() => {
+  describe(_"Brazilian Document Numbers",_() => {
+    it(_"should redact CPF numbers in various formats",_() => {
       const testCases = [
         "Meu CPF é 123.456.789-00",
         "CPF: 12345678900",
@@ -15,7 +15,7 @@ describe("T009: Redaction Regex Corpus", () => {
         "CPF número 123.456.789/00",
       ];
 
-      testCases.forEach((input) => {
+      testCases.forEach(_(input) => {
         const result = redactPII(input);
         expect(result.text).not.toContain("123");
         expect(result.text).not.toContain("456");
@@ -24,28 +24,28 @@ describe("T009: Redaction Regex Corpus", () => {
       });
     });
 
-    it("should redact CNPJ numbers in various formats", () => {
+    it(_"should redact CNPJ numbers in various formats",_() => {
       const testCases = [
         "CNPJ da clínica: 12.345.678/0001-90",
         "CNPJ 12345678000190",
         "Empresa CNPJ 12 345 678 0001 90",
       ];
 
-      testCases.forEach((input) => {
+      testCases.forEach(_(input) => {
         const result = redactPII(input);
         expect(result.text).not.toContain("12345678");
         expect(result.flags).toContain("lgpd");
       });
     });
 
-    it("should redact RG numbers", () => {
+    it(_"should redact RG numbers",_() => {
       const testCases = [
         "RG: 12.345.678-9",
         "RG 123456789",
         "Documento RG 12 345 678 9",
       ];
 
-      testCases.forEach((input) => {
+      testCases.forEach(_(input) => {
         const result = redactPII(input);
         expect(result.text).not.toContain("12345678");
         expect(result.flags).toContain("lgpd");
@@ -59,7 +59,7 @@ describe("T009: Redaction Regex Corpus", () => {
         "CNS número 123.4567.8901.2345",
       ];
 
-      testCases.forEach((input) => {
+      testCases.forEach(_(input) => {
         const result = redactPII(input);
         expect(result.text).not.toContain("123456789");
         expect(result.flags).toContain("lgpd");
@@ -67,22 +67,22 @@ describe("T009: Redaction Regex Corpus", () => {
     });
   });
 
-  describe("Contact Information", () => {
-    it("should redact email addresses", () => {
+  describe(_"Contact Information",_() => {
+    it(_"should redact email addresses",_() => {
       const testCases = [
         "Email: paciente@clinica.com.br",
         "Contato: dr.silva@hospital.org",
         "Envie para usuario+tag@dominio.co.uk",
       ];
 
-      testCases.forEach((input) => {
+      testCases.forEach(_(input) => {
         const result = redactPII(input);
         expect(result.text).not.toContain("@");
         expect(result.flags).toContain("lgpd");
       });
     });
 
-    it("should redact phone numbers", () => {
+    it(_"should redact phone numbers",_() => {
       const testCases = [
         "Telefone: (11) 99999-8888",
         "Celular 11999998888",
@@ -90,7 +90,7 @@ describe("T009: Redaction Regex Corpus", () => {
         "WhatsApp: 55 11 99999 8888",
       ];
 
-      testCases.forEach((input) => {
+      testCases.forEach(_(input) => {
         const result = redactPII(input);
         expect(result.text).not.toContain("99999");
         expect(result.text).not.toContain("8888");
@@ -99,7 +99,7 @@ describe("T009: Redaction Regex Corpus", () => {
     });
   });
 
-  describe("Medical Information", () => {
+  describe(_"Medical Information",_() => {
     it("should redact CRM (medical license) numbers", () => {
       const testCases = [
         "Dr. João Silva - CRM/SP 123456",
@@ -107,7 +107,7 @@ describe("T009: Redaction Regex Corpus", () => {
         "Médico CRM 789012/MG",
       ];
 
-      testCases.forEach((input) => {
+      testCases.forEach(_(input) => {
         const result = redactPII(input);
         expect(result.text).not.toContain("123456");
         expect(result.text).not.toContain("654321");
@@ -116,14 +116,14 @@ describe("T009: Redaction Regex Corpus", () => {
       });
     });
 
-    it("should redact prescription numbers", () => {
+    it(_"should redact prescription numbers",_() => {
       const testCases = [
         "Receita nº 2023001234",
         "Prescrição REF-2023-5678",
         "Número da receita: RX123456789",
       ];
 
-      testCases.forEach((input) => {
+      testCases.forEach(_(input) => {
         const result = redactPII(input);
         expect(result.text).not.toContain("2023001234");
         expect(result.text).not.toContain("5678");
@@ -133,15 +133,15 @@ describe("T009: Redaction Regex Corpus", () => {
     });
   });
 
-  describe("Financial Information", () => {
-    it("should redact credit card numbers", () => {
+  describe(_"Financial Information",_() => {
+    it(_"should redact credit card numbers",_() => {
       const testCases = [
         "Cartão: 4532 1234 5678 9012",
         "CC 4532123456789012",
         "Número do cartão: 4532-1234-5678-9012",
       ];
 
-      testCases.forEach((input) => {
+      testCases.forEach(_(input) => {
         const result = redactPII(input);
         expect(result.text).not.toContain("4532");
         expect(result.text).not.toContain("1234");
@@ -151,14 +151,14 @@ describe("T009: Redaction Regex Corpus", () => {
       });
     });
 
-    it("should redact bank account numbers", () => {
+    it(_"should redact bank account numbers",_() => {
       const testCases = [
         "Conta: 12345-6 Agência: 0001",
         "Banco 001 Ag 1234 Conta 567890-1",
         "PIX: 123.456.789-00",
       ];
 
-      testCases.forEach((input) => {
+      testCases.forEach(_(input) => {
         const result = redactPII(input);
         expect(result.text).not.toContain("12345");
         expect(result.text).not.toContain("567890");
@@ -167,7 +167,7 @@ describe("T009: Redaction Regex Corpus", () => {
     });
   });
 
-  describe("Address Information", () => {
+  describe(_"Address Information",_() => {
     it("should redact CEP (postal codes)", () => {
       const testCases = [
         "CEP: 01234-567",
@@ -175,7 +175,7 @@ describe("T009: Redaction Regex Corpus", () => {
         "CEP 01 234-567",
       ];
 
-      testCases.forEach((input) => {
+      testCases.forEach(_(input) => {
         const result = redactPII(input);
         expect(result.text).not.toContain("01234");
         expect(result.text).not.toContain("567");
@@ -183,7 +183,7 @@ describe("T009: Redaction Regex Corpus", () => {
       });
     });
 
-    it("should preserve non-sensitive address parts", () => {
+    it(_"should preserve non-sensitive address parts",_() => {
       const input = "Rua das Flores, Bairro Centro";
       const result = redactPII(input);
 
@@ -193,8 +193,8 @@ describe("T009: Redaction Regex Corpus", () => {
     });
   });
 
-  describe("Edge Cases and Complex Patterns", () => {
-    it("should handle mixed PII in single message", () => {
+  describe(_"Edge Cases and Complex Patterns",_() => {
+    it(_"should handle mixed PII in single message",_() => {
       const input =
         "Paciente João Silva, CPF 123.456.789-00, telefone (11) 99999-8888, email joao@clinica.com";
       const result = redactPII(input);
@@ -205,7 +205,7 @@ describe("T009: Redaction Regex Corpus", () => {
       expect(result.flags).toContain("lgpd");
     });
 
-    it("should handle false positives carefully", () => {
+    it(_"should handle false positives carefully",_() => {
       const input = "Data: 12/03/2023, valor R$ 123,45";
       const result = redactPII(input);
 
@@ -214,12 +214,12 @@ describe("T009: Redaction Regex Corpus", () => {
       expect(result.text).toContain("123,45");
     });
 
-    it("should handle empty and null inputs", () => {
+    it(_"should handle empty and null inputs",_() => {
       expect(redactPII("").text).toBe("");
       expect(redactPII("").flags).toEqual([]);
     });
 
-    it("should handle non-PII medical terms", () => {
+    it(_"should handle non-PII medical terms",_() => {
       const input =
         "Paciente apresenta hipertensão arterial, glicemia 120mg/dl";
       const result = redactPII(input);
@@ -230,8 +230,8 @@ describe("T009: Redaction Regex Corpus", () => {
     });
   });
 
-  describe("Regex Pattern Validation", () => {
-    it("should have consistent redaction markers", () => {
+  describe(_"Regex Pattern Validation",_() => {
+    it(_"should have consistent redaction markers",_() => {
       const input = "CPF: 123.456.789-00";
       const result = redactPII(input);
 
@@ -239,7 +239,7 @@ describe("T009: Redaction Regex Corpus", () => {
       expect(result.text).toMatch(/\[REDACTED\]|\*+|XXX/);
     });
 
-    it("should maintain message structure", () => {
+    it(_"should maintain message structure",_() => {
       const input = "Paciente com CPF 123.456.789-00 tem consulta agendada";
       const result = redactPII(input);
 
@@ -249,7 +249,7 @@ describe("T009: Redaction Regex Corpus", () => {
       expect(result.text.split(" ").length).toBeGreaterThanOrEqual(4);
     });
 
-    it("should handle Unicode and special characters", () => {
+    it(_"should handle Unicode and special characters",_() => {
       const input =
         "Paciente José André, CPF 123.456.789-00, telefone (11) 99999-8888";
       const result = redactPII(input);
@@ -260,8 +260,8 @@ describe("T009: Redaction Regex Corpus", () => {
     });
   });
 
-  describe("Performance and Security", () => {
-    it("should process large texts efficiently", () => {
+  describe(_"Performance and Security",_() => {
+    it(_"should process large texts efficiently",_() => {
       const largeText = "Paciente com CPF 123.456.789-00. ".repeat(1000);
       const startTime = Date.now();
 
@@ -272,7 +272,7 @@ describe("T009: Redaction Regex Corpus", () => {
       expect(result.flags).toContain("lgpd");
     });
 
-    it("should not expose original patterns in intermediate steps", () => {
+    it(_"should not expose original patterns in intermediate steps",_() => {
       const input = "CPF: 123.456.789-00";
       const result = redactPII(input);
 

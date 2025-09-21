@@ -5,127 +5,127 @@
 
 import { describe, expect, it } from 'vitest';
 
-describe('Missing Module Imports - TDD RED Phase', () => {
-  describe('@neonpro/shared/models/api-contract', () => {
-    it('should fail to import APIContract types', () => {
+describe(_'Missing Module Imports - TDD RED Phase',_() => {
+  describe(_'@neonpro/shared/models/api-contract',_() => {
+    it(_'should fail to import APIContract types',_() => {
       // This should fail initially - module doesn't exist
-      expect(() => {
+      expect(_() => {
         require('@neonpro/shared/models/api-contract');
       }).toThrow();
     });
 
-    it('should not have required exports', () => {
+    it(_'should not have required exports',_() => {
       // This should fail initially - exports don't exist
-      expect(() => {
+      expect(_() => {
         const module = require('@neonpro/shared/models/api-contract');
         expect(module.APIContract).toBeDefined();
       }).toThrow();
     });
   });
 
-  describe('openapi-types', () => {
-    it('should fail to import OpenAPIV3_1 types', () => {
+  describe(_'openapi-types',_() => {
+    it(_'should fail to import OpenAPIV3_1 types',_() => {
       // This should fail initially - module not installed
-      expect(() => {
+      expect(_() => {
         require('openapi-types');
       }).toThrow();
     });
 
-    it('should not have OpenAPIV3_1 export', () => {
+    it(_'should not have OpenAPIV3_1 export',_() => {
       // This should fail initially - export doesn't exist
-      expect(() => {
+      expect(_() => {
         const openapi = require('openapi-types');
         expect(openapi.OpenAPIV3_1).toBeDefined();
       }).toThrow();
     });
   });
 
-  describe('../services/structured-logging', () => {
-    it('should fail to import structuredLogger', () => {
+  describe(_'../services/structured-logging',_() => {
+    it(_'should fail to import structuredLogger',_() => {
       // This should fail initially - service doesn't exist
-      expect(() => {
+      expect(_() => {
         require('../services/structured-logging');
       }).toThrow();
     });
 
-    it('should not export structuredLogger', () => {
+    it(_'should not export structuredLogger',_() => {
       // This should fail initially - export doesn't exist
-      expect(() => {
+      expect(_() => {
         const logging = require('../services/structured-logging');
         expect(logging.structuredLogger).toBeDefined();
       }).toThrow();
     });
   });
 
-  describe('../services/error-tracking-bridge', () => {
-    it('should fail to import error tracking bridge', () => {
+  describe(_'../services/error-tracking-bridge',_() => {
+    it(_'should fail to import error tracking bridge',_() => {
       // This should fail initially - service doesn't exist
-      expect(() => {
+      expect(_() => {
         require('../services/error-tracking-bridge');
       }).toThrow();
     });
 
-    it('should not export createHealthcareError', () => {
+    it(_'should not export createHealthcareError',_() => {
       // This should fail initially - export doesn't exist
-      expect(() => {
+      expect(_() => {
         const errorTracking = require('../services/error-tracking-bridge');
         expect(errorTracking.createHealthcareError).toBeDefined();
       }).toThrow();
     });
 
-    it('should not export ErrorCategory', () => {
+    it(_'should not export ErrorCategory',_() => {
       // This should fail initially - export doesn't exist
-      expect(() => {
+      expect(_() => {
         const errorTracking = require('../services/error-tracking-bridge');
         expect(errorTracking.ErrorCategory).toBeDefined();
       }).toThrow();
     });
 
-    it('should not export ErrorSeverity', () => {
+    it(_'should not export ErrorSeverity',_() => {
       // This should fail initially - export doesn't exist
-      expect(() => {
+      expect(_() => {
         const errorTracking = require('../services/error-tracking-bridge');
         expect(errorTracking.ErrorSeverity).toBeDefined();
       }).toThrow();
     });
   });
 
-  describe('Database types import', () => {
-    it('should fail to import Database type from packages/database', () => {
+  describe(_'Database types import',_() => {
+    it(_'should fail to import Database type from packages/database',_() => {
       // This should fail initially - path or type doesn't exist
-      expect(() => {
+      expect(_() => {
         require('../../../../../packages/database/src/types/supabase');
       }).toThrow();
     });
 
-    it('should not export Database type', () => {
+    it(_'should not export Database type',_() => {
       // This should fail initially - export doesn't exist
-      expect(() => {
+      expect(_() => {
         const dbTypes = require('../../../../../packages/database/src/types/supabase');
         expect(dbTypes.Database).toBeDefined();
       }).toThrow();
     });
   });
 
-  describe('Appointment valibot types import', () => {
-    it('should fail to import appointment valibot types', () => {
+  describe(_'Appointment valibot types import',_() => {
+    it(_'should fail to import appointment valibot types',_() => {
       // This should fail initially - path or types don't exist
-      expect(() => {
+      expect(_() => {
         require('../../../../../../packages/types/src/appointment.valibot');
       }).toThrow();
     });
 
-    it('should not export required valibot schemas', () => {
+    it(_'should not export required valibot schemas',_() => {
       // This should fail initially - exports don't exist
-      expect(() => {
+      expect(_() => {
         const valibot = require('../../../../../../packages/types/src/appointment.valibot');
         expect(valibot.AppointmentReminderValibot).toBeDefined();
       }).toThrow();
     });
   });
 
-  describe('Integration test - all imports together', () => {
-    it('should fail to import all missing modules', () => {
+  describe(_'Integration test - all imports together',_() => {
+    it(_'should fail to import all missing modules',_() => {
       // This test demonstrates the cumulative impact of missing modules
       const modules = [
         '@neonpro/shared/models/api-contract',

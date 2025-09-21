@@ -14,11 +14,11 @@ import {
   createMockAnalyticsEvent,
 } from "../types/base-metrics";
 
-describe("Base Metrics", () => {
-  describe("BaseMetric interface and type guards", () => {
+describe(_"Base Metrics",_() => {
+  describe(_"BaseMetric interface and type guards",_() => {
     let validMetric: BaseMetric;
 
-    beforeEach(() => {
+    beforeEach(_() => {
       validMetric = createMockMetric({
         name: "test_metric",
         value: 100,
@@ -26,7 +26,7 @@ describe("Base Metrics", () => {
       });
     });
 
-    it("should create a valid BaseMetric", () => {
+    it(_"should create a valid BaseMetric",_() => {
       expect(isBaseMetric(validMetric)).toBe(true);
       expect(validMetric.id).toBeDefined();
       expect(validMetric.name).toBe("test_metric");
@@ -35,7 +35,7 @@ describe("Base Metrics", () => {
       expect(validMetric.complianceFrameworks).toContain("LGPD");
     });
 
-    it("should validate required fields in isBaseMetric", () => {
+    it(_"should validate required fields in isBaseMetric",_() => {
       expect(isBaseMetric({})).toBe(false);
       expect(isBaseMetric({ id: "test" })).toBe(false);
       expect(isBaseMetric({ id: "test", name: "test" })).toBe(false);
@@ -43,7 +43,7 @@ describe("Base Metrics", () => {
       expect(isBaseMetric(undefined)).toBe(false);
     });
 
-    it("should handle different data types", () => {
+    it(_"should handle different data types",_() => {
       const metrics = [
         createMockMetric({ dataType: "string", value: "test" }),
         createMockMetric({ dataType: "boolean", value: true }),
@@ -55,33 +55,33 @@ describe("Base Metrics", () => {
         }),
       ];
 
-      metrics.forEach((metric) => {
+      metrics.forEach(_(metric) => {
         expect(isBaseMetric(metric)).toBe(true);
       });
     });
   });
 
-  describe("AnalyticsEvent interface and type guards", () => {
+  describe(_"AnalyticsEvent interface and type guards",_() => {
     let validEvent: AnalyticsEvent;
 
-    beforeEach(() => {
+    beforeEach(_() => {
       validEvent = createMockAnalyticsEvent({
         eventType: "metric_created",
         clinicId: "clinic_123",
-        userId: "user_456",
+        _userId: "user_456",
       });
     });
 
-    it("should create a valid AnalyticsEvent", () => {
+    it(_"should create a valid AnalyticsEvent",_() => {
       expect(isAnalyticsEvent(validEvent)).toBe(true);
       expect(validEvent.id).toBeDefined();
       expect(validEvent.eventType).toBe("metric_created");
       expect(validEvent.clinicId).toBe("clinic_123");
-      expect(validEvent.userId).toBe("user_456");
+      expect(validEvent._userId).toBe("user_456");
       expect(validEvent.timestamp).toBeInstanceOf(Date);
     });
 
-    it("should validate required fields in isAnalyticsEvent", () => {
+    it(_"should validate required fields in isAnalyticsEvent",_() => {
       expect(isAnalyticsEvent({})).toBe(false);
       expect(isAnalyticsEvent({ id: "test", eventType: "test" })).toBe(false);
       expect(isAnalyticsEvent(null)).toBe(false);
@@ -89,8 +89,8 @@ describe("Base Metrics", () => {
     });
   });
 
-  describe("anonymizeMetric function", () => {
-    it("should anonymize personal data in metrics", () => {
+  describe(_"anonymizeMetric function",_() => {
+    it(_"should anonymize personal data in metrics",_() => {
       const metric = createMockMetric({
         name: "patient_age",
         value: 45,
@@ -111,7 +111,7 @@ describe("Base Metrics", () => {
       expect(anonymized.metadata?.anonymized).toBe(true);
     });
 
-    it("should preserve non-personal data", () => {
+    it(_"should preserve non-personal data",_() => {
       const metric = createMockMetric({
         name: "total_patients",
         value: 150,
@@ -129,8 +129,8 @@ describe("Base Metrics", () => {
     });
   });
 
-  describe("validateMetricCompliance function", () => {
-    it("should validate LGPD compliance", () => {
+  describe(_"validateMetricCompliance function",_() => {
+    it(_"should validate LGPD compliance",_() => {
       const metric = createMockMetric({
         name: "patient_satisfaction",
         complianceFrameworks: ["LGPD"],
@@ -148,7 +148,7 @@ describe("Base Metrics", () => {
       );
     });
 
-    it("should validate ANVISA compliance for clinical data", () => {
+    it(_"should validate ANVISA compliance for clinical data",_() => {
       const metric = createMockMetric({
         name: "medication_effectiveness",
         complianceFrameworks: ["ANVISA"],
@@ -165,7 +165,7 @@ describe("Base Metrics", () => {
       );
     });
 
-    it("should validate CFM compliance for medical practice data", () => {
+    it(_"should validate CFM compliance for medical practice data",_() => {
       const metric = createMockMetric({
         name: "diagnosis_accuracy",
         complianceFrameworks: ["CFM"],
@@ -182,7 +182,7 @@ describe("Base Metrics", () => {
       );
     });
 
-    it("should pass validation for compliant metrics", () => {
+    it(_"should pass validation for compliant metrics",_() => {
       const metric = createMockMetric({
         name: "clinic_capacity",
         complianceFrameworks: ["LGPD"],
@@ -200,8 +200,8 @@ describe("Base Metrics", () => {
     });
   });
 
-  describe("aggregateMetrics function", () => {
-    it("should aggregate metrics by sum", () => {
+  describe(_"aggregateMetrics function",_() => {
+    it(_"should aggregate metrics by sum",_() => {
       const metrics = [
         createMockMetric({
           name: "revenue",
@@ -224,7 +224,7 @@ describe("Base Metrics", () => {
       expect(aggregated.metadata?.sourceMetricCount).toBe(3);
     });
 
-    it("should aggregate metrics by average", () => {
+    it(_"should aggregate metrics by average",_() => {
       const metrics = [
         createMockMetric({
           name: "satisfaction",
@@ -249,7 +249,7 @@ describe("Base Metrics", () => {
       expect(aggregated.metadata?.aggregationType).toBe("average");
     });
 
-    it("should aggregate metrics by count", () => {
+    it(_"should aggregate metrics by count",_() => {
       const metrics = [
         createMockMetric({ name: "patient_visit", value: 1 }),
         createMockMetric({ name: "patient_visit", value: 1 }),
@@ -263,7 +263,7 @@ describe("Base Metrics", () => {
       expect(aggregated.metadata?.aggregationType).toBe("count");
     });
 
-    it("should find minimum and maximum values", () => {
+    it(_"should find minimum and maximum values",_() => {
       const metrics = [
         createMockMetric({ name: "wait_time", value: 15 }),
         createMockMetric({ name: "wait_time", value: 25 }),
@@ -278,7 +278,7 @@ describe("Base Metrics", () => {
       expect(max.value).toBe(30);
     });
 
-    it("should handle empty metrics array", () => {
+    it(_"should handle empty metrics array",_() => {
       const aggregated = aggregateMetrics([], "sum");
 
       expect(aggregated.value).toBe(0);
@@ -286,8 +286,8 @@ describe("Base Metrics", () => {
     });
   });
 
-  describe("Risk level assessment", () => {
-    it("should correctly identify risk levels", () => {
+  describe(_"Risk level assessment",_() => {
+    it(_"should correctly identify risk levels",_() => {
       const lowRisk = createMockMetric({ riskLevel: "LOW" });
       const mediumRisk = createMockMetric({ riskLevel: "MEDIUM" });
       const highRisk = createMockMetric({ riskLevel: "HIGH" });
@@ -300,8 +300,8 @@ describe("Base Metrics", () => {
     });
   });
 
-  describe("Compliance frameworks", () => {
-    it("should support multiple compliance frameworks", () => {
+  describe(_"Compliance frameworks",_() => {
+    it(_"should support multiple compliance frameworks",_() => {
       const metric = createMockMetric({
         complianceFrameworks: ["LGPD", "ANVISA", "CFM"],
       });
@@ -312,8 +312,8 @@ describe("Base Metrics", () => {
     });
   });
 
-  describe("Currency and localization", () => {
-    it("should handle Brazilian Real currency", () => {
+  describe(_"Currency and localization",_() => {
+    it(_"should handle Brazilian Real currency",_() => {
       const metric = createMockMetric({
         dataType: "currency",
         value: 1500.75,
@@ -324,7 +324,7 @@ describe("Base Metrics", () => {
       expect(typeof metric.value).toBe("number");
     });
 
-    it("should handle percentage values", () => {
+    it(_"should handle percentage values",_() => {
       const metric = createMockMetric({
         dataType: "percentage",
         value: 85.5,
@@ -336,8 +336,8 @@ describe("Base Metrics", () => {
     });
   });
 
-  describe("Timestamp handling", () => {
-    it("should track creation and update timestamps", () => {
+  describe(_"Timestamp handling",_() => {
+    it(_"should track creation and update timestamps",_() => {
       const metric = createMockMetric({});
 
       expect(metric.timestamp).toBeInstanceOf(Date);
@@ -345,9 +345,9 @@ describe("Base Metrics", () => {
       expect(metric.createdAt).toBeInstanceOf(Date);
     });
 
-    it("should handle timezone considerations", () => {
+    it(_"should handle timezone considerations",_() => {
       const metric = createMockMetric({});
-      const now = new Date();
+      const _now = new Date();
 
       // Timestamps should be recent (within last few seconds)
       expect(metric.timestamp.getTime()).toBeCloseTo(now.getTime(), -3);

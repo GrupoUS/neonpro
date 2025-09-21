@@ -154,7 +154,7 @@ export interface NotificationAuditLog {
   templateId: string;
   status: string;
   auditContext: {
-    userId: string;
+    _userId: string;
     action: string;
     ipAddress: string;
   };
@@ -855,7 +855,7 @@ export class NotificationService {
 
       // Add to queue
       this.notificationQueue.push({ notification: params, priority });
-      this.notificationQueue.sort((a, b) => b.priority - a.priority);
+      this.notificationQueue.sort(_(a,_b) => b.priority - a.priority);
 
       const queuePosition = params.priority === 'critical' ? 1 : this.notificationQueue.length;
       const estimatedDelivery = new Date(Date.now() + queuePosition * 1000);

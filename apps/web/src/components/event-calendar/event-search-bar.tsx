@@ -49,7 +49,7 @@ export function EventSearchBar({
 
     if (value.trim()) {
       performSearch({
-        query: value,
+        _query: value,
         limit: 8,
         offset: 0,
       });
@@ -107,7 +107,7 @@ export function EventSearchBar({
   };
 
   // Close results when clicking outside
-  useEffect(() => {
+  useEffect(_() => {
     const handleClickOutside = (_event: any) => {
       if (
         inputRef.current && !inputRef.current.contains(event.target as Node)
@@ -123,12 +123,12 @@ export function EventSearchBar({
   }, []);
 
   // Show results when searching
-  useEffect(() => {
+  useEffect(_() => {
     setShowResults(searchQuery.trim().length > 0);
   }, [searchQuery]);
 
   // Reset selection when results change
-  useEffect(() => {
+  useEffect(_() => {
     setSelectedSuggestion(-1);
   }, [searchResults, searchSuggestions]);
 
@@ -178,8 +178,7 @@ export function EventSearchBar({
         />
 
         {/* Clear button */}
-        {searchQuery && (
-          <Button
+        {searchQuery && (_<Button
             variant='ghost'
             size='sm'
             className='absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0'
@@ -245,8 +244,7 @@ export function EventSearchBar({
           )}
 
           {/* Suggestions */}
-          {!isSearching && searchSuggestions.length > 0 && searchResults.length === 0 && (
-            <div className='p-2'>
+          {!isSearching && searchSuggestions.length > 0 && searchResults.length === 0 && (_<div className='p-2'>
               <p className='text-xs font-medium text-muted-foreground px-2 py-1'>Suggestions</p>
               {searchSuggestions.map((suggestion, _index) => (
                 <button
@@ -267,8 +265,7 @@ export function EventSearchBar({
           )}
 
           {/* Search Results */}
-          {!isSearching && searchResults.length > 0 && (
-            <div className='p-2'>
+          {!isSearching && searchResults.length > 0 && (_<div className='p-2'>
               <div className='flex items-center justify-between px-3 py-1'>
                 <p className='text-xs font-medium text-muted-foreground'>
                   Search Results

@@ -105,7 +105,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
 
       this.isInitialized = true;
       console.log("SupabaseRealtimeAdapter initialized successfully");
-    } catch (error) {
+    } catch (_error) {
       throw new Error(`Failed to initialize SupabaseRealtimeAdapter: ${error}`);
     }
   }
@@ -189,7 +189,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       console.log(
         `Participant ${fullParticipant.id} joined channel ${channelId}`,
       );
-    } catch (error) {
+    } catch (_error) {
       await this.handleError({
         code: "JOIN_CHANNEL_FAILED",
         message: `Failed to join channel ${channelId}: ${error}`,
@@ -260,7 +260,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       }
 
       console.log(`Participant ${participantId} left channel ${channelId}`);
-    } catch (error) {
+    } catch (_error) {
       await this.handleError({
         code: "LEAVE_CHANNEL_FAILED",
         message: `Failed to leave channel ${channelId}: ${error}`,
@@ -338,7 +338,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     // Set up presence tracking - simplified for compatibility
     try {
       // Use type assertion to bypass strict typing
-      (channel as any).on("presence", () => {
+      (channel as any).on(_"presence",_() => {
         this.handlePresenceSync(channelId, channel as any);
       });
     } catch (e) {
@@ -376,13 +376,13 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
   }
 
   async getHealth() {
-    const now = new Date().toISOString();
+    const _now = new Date().toISOString();
 
     // Update metrics
     this.healthStatus.activeChannels = this.channels.size;
     this.healthStatus.totalParticipants = Array.from(
       this.channelStates.values(),
-    ).reduce((total, state) => total + state.participants.size, 0);
+    ).reduce(_(total,_state) => total + state.participants.size, 0);
     this.healthStatus.lastHeartbeat = now;
 
     // Simple latency check - simplified for compatibility
@@ -392,7 +392,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       if (result.error) throw result.error;
       this.healthStatus.latency = Date.now() - start;
       this.healthStatus.status = "healthy";
-    } catch (error) {
+    } catch (_error) {
       this.healthStatus.latency = -1;
       this.healthStatus.status = "unhealthy";
     }
@@ -404,11 +404,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
   // Private Helper Methods
   // ============================================================================
 
-  private createRealtimeEvent: typeof createRealtimeEvent = (
-    type,
-    channelId,
-    participant,
-    data,
+  private createRealtimeEvent: typeof createRealtimeEvent = (_type,_channelId,_participant,_data,
   ) => {
     return {
       type,
@@ -463,7 +459,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
           await this.eventHandlers.onPresenceSync?.(event);
           break;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error(`Error emitting event ${event.type}:`, error);
     }
   }
@@ -472,7 +468,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     try {
       // Note: Replace with actual audit service when available
       console.log("Audit event logged:", {
-        userId: event.participant.id,
+        _userId: event.participant.id,
         action: event.type,
         resource: "realtime_channel",
         resourceId: event.channelId,
@@ -485,7 +481,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
 
       // Mark as logged for compliance
       event.metadata.compliance.lgpdLogged = true;
-    } catch (error) {
+    } catch (_error) {
       console.error("Failed to log audit event:", error);
     }
   }
@@ -510,7 +506,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     const participants: RealtimeParticipant[] = [];
 
     Object.values(presenceState).forEach((presences: any[]) => {
-      presences.forEach((presence) => {
+      presences.forEach(_(presence) => {
         if (presence.participant) {
           participants.push(presence.participant);
         }
@@ -531,7 +527,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
   }
 
   private startHealthMonitoring(): void {
-    setInterval(async () => {
+    setInterval(_async () => {
       await this.getHealth();
     }, this.config.connection.heartbeatInterval);
   }

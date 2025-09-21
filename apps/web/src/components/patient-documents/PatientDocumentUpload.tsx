@@ -166,7 +166,7 @@ export function PatientDocumentUpload({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load existing documents on mount
-  useEffect(() => {
+  useEffect(_() => {
     if (patientId && showExisting) {
       loadExistingDocuments();
     }
@@ -178,7 +178,7 @@ export function PatientDocumentUpload({
       console.log('Loading existing documents for patient:', patientId);
       // Mock data for now
       setExistingDocuments([]);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error loading existing documents:', error);
       toast.error('Erro ao carregar documentos existentes');
     }
@@ -292,7 +292,7 @@ export function PatientDocumentUpload({
       updateProgress(100);
 
       return result.document as PatientDocument;
-    } catch (error) {
+    } catch (_error) {
       console.error('Upload error:', error);
       throw error;
     }
@@ -345,7 +345,7 @@ export function PatientDocumentUpload({
           setExistingDocuments(prev => [...prev, uploadedDocument]);
 
           // Remove from upload queue after delay
-          setTimeout(() => {
+          setTimeout(_() => {
             setUploadQueue(prev => {
               const newMap = new Map(prev);
               newMap.delete(uploadId);
@@ -355,7 +355,7 @@ export function PatientDocumentUpload({
 
           toast.success(`Documento "${file.name}" enviado com sucesso!`);
           onDocumentsUploaded?.([uploadedDocument]);
-        } catch (error) {
+        } catch (_error) {
           console.error('Upload error:', error);
 
           setUploadQueue(prev => {
@@ -454,7 +454,7 @@ export function PatientDocumentUpload({
       setExistingDocuments(prev => prev.filter(doc => doc.id !== documentId));
       onDocumentRemoved?.(documentId);
       toast.success('Documento removido com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error removing document:', error);
       toast.error('Erro ao remover documento');
     }
@@ -480,8 +480,7 @@ export function PatientDocumentUpload({
   const totalDocuments = existingDocuments.length + uploadQueue.size;
   const canUpload = !disabled && totalDocuments < maxFiles;
 
-  return (
-    <DndContext
+  return (_<DndContext
       onDragStart={({ active }) => setActiveId(active.id)}
       onDragEnd={() => setActiveId(null)}
     >
@@ -631,8 +630,7 @@ export function PatientDocumentUpload({
                     )}
                   </div>
 
-                  {state.status === 'error' && (
-                    <Button
+                  {state.status === 'error' && (_<Button
                       variant='ghost'
                       size='sm'
                       onClick={() => {

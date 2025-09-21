@@ -41,8 +41,8 @@ const t = initTRPC.context<Context>().create({
  * Enhanced Authentication middleware
  * Ensures user is authenticated for protected procedures
  */
-const authMiddleware = t.middleware(async ({ ctx, next }) => {
-  if (!ctx.userId) {
+const authMiddleware = t.middleware(_async ({ ctx,_next }) => {
+  if (!ctx._userId) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
       message: 'Authentication required',
@@ -56,7 +56,7 @@ const authMiddleware = t.middleware(async ({ ctx, next }) => {
  * Enhanced LGPD Consent middleware
  * Verifies patient consent before data operations with improved validation
  */
-const consentMiddleware = t.middleware(async ({ ctx, next, input }) => {
+const consentMiddleware = t.middleware(_async ({ ctx,_next,_input }) => {
   // For patient data operations, verify LGPD consent
   if (input && typeof input === 'object' && 'patientId' in input) {
     const patientId = input.patientId as string;
@@ -101,39 +101,39 @@ export const router = t.router;
 export const middleware = t.middleware;
 
 // Public procedures (minimal middleware for performance)
-export const publicProcedure = t.procedure.use(
+export const _publicProcedure = t.procedure.use(
   t.middleware(lgpdAuditMiddleware),
 );
 
 // Protected procedures (authenticated users)
-export const protectedProcedure = t.procedure
+export const _protectedProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
   .use(t.middleware(lgpdAuditMiddleware));
 
 // Healthcare procedures (medical professionals with CFM validation)
-export const healthcareProcedure = t.procedure
+export const _healthcareProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
   .use(t.middleware(cfmValidationMiddleware))
   .use(t.middleware(lgpdAuditMiddleware));
 
 // Patient procedures (patient data operations with consent validation)
-export const patientProcedure = t.procedure
+export const _patientProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
   .use(t.middleware(lgpdAuditMiddleware))
   .use(consentMiddleware);
 
 // Emergency procedures (emergency medical access with enhanced logging)
-export const emergencyProcedure = t.procedure
+export const _emergencyProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
   .use(t.middleware(cfmValidationMiddleware))
   .use(t.middleware(lgpdAuditMiddleware));
 
 // Telemedicine procedures (full compliance stack for remote healthcare)
-export const telemedicineProcedure = t.procedure
+export const _telemedicineProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
   .use(t.middleware(cfmValidationMiddleware))

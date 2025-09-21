@@ -8,11 +8,11 @@ export type SuggestionItem = {
 
 export type SuggestionsProps = {
   items: SuggestionItem[];
-  role: string;
+  _role: string;
   clinic: string;
   filter?: (args: {
     item: SuggestionItem;
-    role: string;
+    _role: string;
     clinic: string;
   }) => boolean;
   onPick?: (item: SuggestionItem) => void;
@@ -29,8 +29,7 @@ export function Suggestions({
 
   if (!visible.length) return null;
 
-  return (
-    <div aria-label='suggestions-list' role='list'>
+  return (_<div aria-label='suggestions-list' role='list'>
       {visible.map(item => (
         <button
           key={item.id}

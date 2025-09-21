@@ -10,7 +10,7 @@ import * as dotenv from 'dotenv';
 import * as path from 'path';
 
 // Load test environment variables
-beforeAll(() => {
+beforeAll(_() => {
   // Set NODE_ENV first to ensure test environment is detected
   process.env.NODE_ENV = 'test';
   
@@ -25,12 +25,12 @@ beforeAll(() => {
   mockExternalServices();
 });
 
-afterAll(() => {
+afterAll(_() => {
   // Clean up any global mocks or connections
   cleanupTestEnvironment();
 });
 
-beforeEach(() => {
+beforeEach(_() => {
   // Reset all mocks before each test
   vi.clearAllMocks();
   
@@ -38,7 +38,7 @@ beforeEach(() => {
   resetTestState();
 });
 
-afterEach(() => {
+afterEach(_() => {
   // Clean up after each test
   cleanupTestConnections();
 });
@@ -80,7 +80,7 @@ function setDefaultTestEnvVars() {
     SANITIZE_LOGS: 'true',
   };
 
-  Object.entries(defaults).forEach(([key, value]) => {
+  Object.entries(defaults).forEach(_([key,_value]) => {
     if (!process.env[key]) {
       process.env[key] = value;
     }
@@ -92,24 +92,24 @@ function setDefaultTestEnvVars() {
  */
 function mockExternalServices() {
   // Mock console methods to capture logging output
-  vi.spyOn(console, 'log').mockImplementation(() => {});
-  vi.spyOn(console, 'error').mockImplementation(() => {});
-  vi.spyOn(console, 'warn').mockImplementation(() => {});
-  vi.spyOn(console, 'info').mockImplementation(() => {});
-  vi.spyOn(console, 'debug').mockImplementation(() => {});
+  vi.spyOn(console, 'log').mockImplementation(_() => {});
+  vi.spyOn(console, 'error').mockImplementation(_() => {});
+  vi.spyOn(console, 'warn').mockImplementation(_() => {});
+  vi.spyOn(console, 'info').mockImplementation(_() => {});
+  vi.spyOn(console, 'debug').mockImplementation(_() => {});
   
   // Mock external API calls
-  vi.mock('@supabase/supabase-js', () => ({
+  vi.mock(_'@supabase/supabase-js',_() => ({
     createClient: vi.fn(),
   }));
 
-  vi.mock('@supabase/ssr', () => ({
+  vi.mock(_'@supabase/ssr',_() => ({
     createBrowserClient: vi.fn(),
     createServerClient: vi.fn(),
   }));
   
   // Mock database connections
-  vi.mock('../src/client', () => ({
+  vi.mock(_'../src/client',_() => ({
     createClient: vi.fn(() => ({
       from: vi.fn(),
       select: vi.fn(),
@@ -118,7 +118,7 @@ function mockExternalServices() {
       delete: vi.fn(),
       rpc: vi.fn(),
     })),
-    createAdminClient: vi.fn(() => ({
+    createAdminClient: vi.fn(_() => ({
       from: vi.fn(),
       select: vi.fn(),
       insert: vi.fn(),
@@ -288,10 +288,10 @@ export const loggingTestUtils = {
     const originalWarn = console.warn;
     const originalInfo = console.info;
 
-    console.log = (...args) => logs.push(JSON.stringify(args));
-    console.error = (...args) => errors.push(JSON.stringify(args));
-    console.warn = (...args) => warnings.push(JSON.stringify(args));
-    console.info = (...args) => info.push(JSON.stringify(args));
+    console.log = (_...args) => logs.push(JSON.stringify(args));
+    console.error = (_...args) => errors.push(JSON.stringify(args));
+    console.warn = (_...args) => warnings.push(JSON.stringify(args));
+    console.info = (_...args) => info.push(JSON.stringify(args));
 
     return {
       getOutput: () => ({ logs, errors, warnings, info }),
@@ -352,7 +352,7 @@ export const complianceTestUtils = {
    * Generate LGPD-compliant test data
    */
   generateLGPDCompliantData: () => ({
-    userId: 'test-user-123',
+    _userId: 'test-user-123',
     purpose: 'healthcare_analysis',
     legalBasis: 'legitimate_interest',
     retentionPeriod: 365,

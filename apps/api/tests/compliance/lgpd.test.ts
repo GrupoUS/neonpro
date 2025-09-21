@@ -380,7 +380,7 @@ describe('LGPD Compliance for Healthcare Data', () => {
       const auditLogEntry = {
         timestamp: new Date().toISOString(),
         action: 'patient_data_access',
-        userId: mockHealthcareProvider.id,
+        _userId: mockHealthcareProvider.id,
         userType: 'healthcare_provider',
         patientId: mockPatient.id,
         dataAccessed: ['name', 'medical_history', 'contact_info'],

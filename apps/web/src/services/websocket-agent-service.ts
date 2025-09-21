@@ -58,7 +58,7 @@ export class WebSocketAgentService {
   }
 
   // Send query to agent
-  async sendQuery(query: string, context?: any): Promise<AgentResponse> {
+  async sendQuery(_query: string, _context?: any): Promise<AgentResponse> {
     if (!this.isConnected) {
       throw new Error('WebSocket not connected');
     }
@@ -74,7 +74,7 @@ export class WebSocketAgentService {
   }
 
   // Send action to agent
-  async sendAction(actionType: string, payload: any): Promise<any> {
+  async sendAction(actionType: string, _payload: any): Promise<any> {
     if (!this.isConnected) {
       throw new Error('WebSocket not connected');
     }
@@ -161,7 +161,7 @@ export class WebSocketAgentService {
       const wildcardHandlers = this.messageHandlers.get('*') || [];
 
       wildcardHandlers.forEach(_handler => handler(data));
-    } catch (error) {
+    } catch (_error) {
       console.error('Error parsing WebSocket message:', error);
     }
   }
@@ -180,7 +180,7 @@ export class WebSocketAgentService {
         `Attempting to reconnect... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`,
       );
 
-      setTimeout(() => {
+      setTimeout(_() => {
         this.connect();
       }, this.reconnectInterval);
     }
@@ -191,7 +191,7 @@ export class WebSocketAgentService {
   }
 
   private sendMessageWithResponse(message: any): Promise<any> {
-    return new Promise((resolve, reject) => {
+    return new Promise(_(resolve,_reject) => {
       if (!this.isConnected) {
         reject(new Error('WebSocket not connected'));
         return;
@@ -202,7 +202,7 @@ export class WebSocketAgentService {
       message.id = messageId;
 
       // Set up response handler
-      const timeout = setTimeout(() => {
+      const timeout = setTimeout(_() => {
         this.off('response', responseHandler);
         reject(new Error('Request timeout'));
       }, 30000); // 30 second timeout
@@ -242,7 +242,7 @@ export function useWebSocketAgent(config?: WebSocketAgentConfig) {
   const [isConnected, setIsConnected] = React.useState(false);
   const [lastMessage, setLastMessage] = React.useState<any>(null);
 
-  React.useEffect(() => {
+  React.useEffect(_() => {
     const service = getWebSocketAgentService(config);
 
     const handleConnect = () => setIsConnected(true);
@@ -265,14 +265,14 @@ export function useWebSocketAgent(config?: WebSocketAgentConfig) {
     };
   }, [config]);
 
-  const sendQuery = React.useCallback(async (query: string, context?: any) => {
+  const sendQuery = React.useCallback(async (_query: string, _context?: any) => {
     const service = getWebSocketAgentService(config);
-    return service.sendQuery(query, context);
+    return service.sendQuery(query, _context);
   }, [config]);
 
-  const sendAction = React.useCallback(async (actionType: string, payload: any) => {
+  const sendAction = React.useCallback(async (actionType: string, _payload: any) => {
     const service = getWebSocketAgentService(config);
-    return service.sendAction(actionType, payload);
+    return service.sendAction(actionType, _payload);
   }, [config]);
 
   const sendFeedback = React.useCallback((feedbackType: string, data: any) => {

@@ -118,7 +118,7 @@ export interface PlanData {
 export interface UsageCounter {
   readonly id: string;
   readonly clinicId: string;
-  readonly userId: string;
+  readonly _userId: string;
   readonly planCode: SubscriptionTier;
 
   // Usage metrics
@@ -152,7 +152,7 @@ export interface UsageCounter {
  */
 export interface UsageCounterData {
   clinicId: string;
-  userId: string;
+  _userId: string;
   planCode: SubscriptionTier;
   monthlyQueries: number;
   dailyQueries: number;
@@ -191,7 +191,7 @@ export interface UsageAggregation {
 export interface Recommendation {
   readonly id: string;
   readonly clinicId: string;
-  readonly userId: string;
+  readonly _userId: string;
 
   // Recommendation details
   readonly recommendationType: RecommendationType;
@@ -346,11 +346,11 @@ export type AIFeatureCode =
  * Request types for AI enhanced endpoints
  */
 export interface AIAnalyzeRequest {
-  readonly query: string;
+  readonly _query: string;
   readonly specialty?: MedicalSpecialty;
   readonly preferredModel?: EnhancedAIModel;
-  readonly context?: Record<string, unknown>;
-  readonly userId: string;
+  readonly _context?: Record<string, unknown>;
+  readonly _userId: string;
   readonly clinicId: string;
 }
 
@@ -359,12 +359,12 @@ export interface AICrudRequest {
   readonly intent: string;
   readonly entity?: string;
   readonly data?: Record<string, unknown>;
-  readonly userId: string;
+  readonly _userId: string;
   readonly clinicId: string;
 }
 
 export interface AIUsageRequest {
-  readonly userId?: string;
+  readonly _userId?: string;
   readonly clinicId?: string;
   readonly startDate?: Date;
   readonly endDate?: Date;
@@ -372,7 +372,7 @@ export interface AIUsageRequest {
 }
 
 export interface AIRecommendationsRequest {
-  readonly userId: string;
+  readonly _userId: string;
   readonly clinicId: string;
   readonly category?: RecommendationCategory;
   readonly status?: RecommendationStatus;

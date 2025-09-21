@@ -1,4 +1,4 @@
-import { Express, Request, Response } from 'express';
+import { Express, Response } from 'express';
 import http from 'http';
 import https from 'https';
 import { HealthcareLogger } from '../logging/healthcare-logger';
@@ -94,7 +94,7 @@ export class HTTPSServerManager {
    * Setup periodic metrics reset to prevent memory leaks
    */
   private setupMetricsReset(): void {
-    setInterval(() => {
+    setInterval(_() => {
       this.resetMetrics();
     }, HTTPS_CONSTANTS.METRICS.METRICS_RESET_INTERVAL);
   }
@@ -163,7 +163,7 @@ export class HTTPSServerManager {
         validation: validation,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch (_error) {
       this.logger.logError('tls_initialization_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         config: {
@@ -199,11 +199,11 @@ export class HTTPSServerManager {
         });
       });
 
-      this.httpsServer.on('close', () => {
+      this.httpsServer.on(_'close',_() => {
         this.metrics.activeConnections--;
       });
 
-      this.httpsServer.on('request', (req, res) => {
+      this.httpsServer.on(_'request',_(req,_res) => {
         this.metrics.httpsRequests++;
         const startTime = Date.now();
 
@@ -215,7 +215,7 @@ export class HTTPSServerManager {
         // Add security headers
         this.addSecurityHeaders(res);
 
-        res.on('finish', () => {
+        res.on(_'finish',_() => {
           const responseTime = Date.now() - startTime;
           this.updateAverageResponseTime(responseTime);
         });
@@ -235,7 +235,7 @@ export class HTTPSServerManager {
       });
 
       return this.httpsServer;
-    } catch (error) {
+    } catch (_error) {
       this.logger.logError('https_server_creation_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         port: this.config.port,
@@ -250,7 +250,7 @@ export class HTTPSServerManager {
       return;
     }
 
-    this.httpServer = http.createServer((req, res) => {
+    this.httpServer = http.createServer(_(req,_res) => {
       this.metrics.httpRedirects++;
 
       // Get the host header
@@ -274,7 +274,7 @@ export class HTTPSServerManager {
       });
     });
 
-    this.httpServer.listen(this.config.httpPort, this.config.host, () => {
+    this.httpServer.listen(_this.config.httpPort,_this.config.host,_() => {
       this.logger.logSystemEvent('http_redirect_server_started', {
         port: this.config.httpPort,
         redirectingTo: this.config.port,
@@ -311,7 +311,7 @@ export class HTTPSServerManager {
     });
 
     // Handle client errors
-    server.on('clientError', (error, socket) => {
+    server.on(_'clientError',_(error,_socket) => {
       this.logger.logError(LOGGING_CONSTANTS.EVENTS.CLIENT_ERROR, {
         error: error instanceof Error ? error.message : 'Unknown error',
         remoteAddress: socket.remoteAddress,
@@ -340,13 +340,13 @@ export class HTTPSServerManager {
   }
 
   public start(): Promise<void> {
-    return new Promise((resolve, reject) => {
+    return new Promise(_(resolve,_reject) => {
       if (!this.httpsServer) {
         reject(new Error('HTTPS server not created. Call createServer() first.'));
         return;
       }
 
-      this.httpsServer.listen(this.config.port, this.config.host, () => {
+      this.httpsServer.listen(_this.config.port,_this.config.host,_() => {
         this.logger.logSystemEvent(LOGGING_CONSTANTS.EVENTS.HTTPS_SERVER_STARTED, {
           port: this.config.port,
           host: this.config.host,
@@ -367,8 +367,7 @@ export class HTTPSServerManager {
       const stopPromises: Promise<void>[] = [];
 
       if (this.httpsServer) {
-        stopPromises.push(
-          new Promise<void>(closeResolve => {
+        stopPromises.push(_new Promise<void>(closeResolve => {
             this.httpsServer!.close(() => {
               this.logger.logSystemEvent(LOGGING_CONSTANTS.EVENTS.HTTPS_SERVER_STOPPED, {
                 port: this.config.port,
@@ -381,8 +380,7 @@ export class HTTPSServerManager {
       }
 
       if (this.httpServer) {
-        stopPromises.push(
-          new Promise<void>(closeResolve => {
+        stopPromises.push(_new Promise<void>(closeResolve => {
             this.httpServer!.close(() => {
               this.logger.logSystemEvent('http_redirect_server_stopped', {
                 port: this.config.httpPort,
@@ -394,7 +392,7 @@ export class HTTPSServerManager {
         );
       }
 
-      Promise.all(stopPromises).then(() => {
+      Promise.all(stopPromises).then(_() => {
         this.cleanupEventListeners();
         resolve();
       });
@@ -479,7 +477,7 @@ export class HTTPSServerManager {
       try {
         await this.stop();
         process.exit(0);
-      } catch (error) {
+      } catch (_error) {
         this.logger.logError('graceful_shutdown_failed', {
           error: error instanceof Error ? error.message : 'Unknown error',
           signal,
@@ -489,7 +487,7 @@ export class HTTPSServerManager {
       }
     };
 
-    process.on('SIGTERM', () => shutdown('SIGTERM'));
-    process.on('SIGINT', () => shutdown('SIGINT'));
+    process.on(_'SIGTERM',_() => shutdown('SIGTERM'));
+    process.on(_'SIGINT',_() => shutdown('SIGINT'));
   }
 }

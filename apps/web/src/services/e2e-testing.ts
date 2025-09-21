@@ -11,8 +11,6 @@
  * - Security testing for healthcare data protection
  */
 
-import { z } from 'zod';
-
 // E2E Testing Types
 export const E2E_TEST_TYPES = {
   HEALTHCARE_WORKFLOW: 'healthcare_workflow',
@@ -222,7 +220,7 @@ export interface E2ETestReport {
 }
 
 // Brazilian Portuguese E2E Labels
-export const E2E_LABELS_PT_BR = {
+export const _E2E_LABELS_PT_BR = {
   // Test Types
   [E2E_TEST_TYPES.HEALTHCARE_WORKFLOW]: 'Fluxo de Trabalho de Saúde',
   [E2E_TEST_TYPES.ACCESSIBILITY]: 'Acessibilidade',
@@ -724,7 +722,7 @@ export class E2ETestingService {
       // Calculate averages
       overallAccessibilityScore = overallAccessibilityScore / scenario.steps.length;
       overallPerformanceScore = overallPerformanceScore / scenario.steps.length;
-    } catch (error) {
+    } catch (_error) {
       errors.push(`Scenario execution failed: ${error}`);
     }
 
@@ -833,9 +831,9 @@ export class E2ETestingService {
 
     const overallSuccessRate = totalScenarios > 0 ? (passedScenarios / totalScenarios) * 100 : 0;
     const averageAccessibilityScore =
-      results.reduce((sum, r) => sum + r.overallAccessibilityScore, 0)
+      results.reduce(_(sum,_r) => sum + r.overallAccessibilityScore, 0)
       / totalScenarios;
-    const averagePerformanceScore = results.reduce((sum, r) => sum + r.overallPerformanceScore, 0)
+    const averagePerformanceScore = results.reduce(_(sum,_r) => sum + r.overallPerformanceScore, 0)
       / totalScenarios;
 
     const complianceValidation = {
@@ -871,7 +869,7 @@ export class E2ETestingService {
   private generateRecommendations(results: E2ETestExecutionResult[]): string[] {
     const recommendations = [];
 
-    const avgAccessibilityScore = results.reduce((sum, r) => sum + r.overallAccessibilityScore, 0)
+    const avgAccessibilityScore = results.reduce(_(sum,_r) => sum + r.overallAccessibilityScore, 0)
       / results.length;
     if (avgAccessibilityScore < 95) {
       recommendations.push(
@@ -879,7 +877,7 @@ export class E2ETestingService {
       );
     }
 
-    const avgPerformanceScore = results.reduce((sum, r) => sum + r.overallPerformanceScore, 0)
+    const avgPerformanceScore = results.reduce(_(sum,_r) => sum + r.overallPerformanceScore, 0)
       / results.length;
     if (avgPerformanceScore < 90) {
       recommendations.push('Otimizar performance para dispositivos móveis');
@@ -965,7 +963,7 @@ export class E2ETestingService {
   /**
    * Validate test configuration
    */
-  validateConfig(config: any): boolean {
+  validateConfig(_config: any): boolean {
     try {
       E2ETestConfigSchema.parse(config);
       return true;

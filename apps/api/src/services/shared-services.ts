@@ -20,12 +20,12 @@ export interface ServiceInterface {
 let services: ServiceInterface | null = null;
 
 // Function to set services (used by tests)
-export const setServices = (injectedServices: ServiceInterface) => {
+export const _setServices = (injectedServices: ServiceInterface) => {
   services = injectedServices;
 };
 
 // Default services for production
-export const getServices = (): ServiceInterface => {
+export const _getServices = (): ServiceInterface => {
   if (services) return services;
 
   // Use real service instances in production

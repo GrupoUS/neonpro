@@ -266,9 +266,9 @@ export function EmergencyEscalation({
   const intervalRef = useRef<NodeJS.Timeout>();
 
   // Recording timer
-  useEffect(() => {
+  useEffect(_() => {
     if (isRecording) {
-      intervalRef.current = setInterval(() => {
+      intervalRef.current = setInterval(_() => {
         setRecordingDuration(prev => prev + 1);
       }, 1000);
     } else {
@@ -378,8 +378,7 @@ export function EmergencyEscalation({
 
     // Start contacting emergency services
     for (const contact of contacts) {
-      setTimeout(
-        () => {
+      setTimeout(_() => {
           contactEmergencyService(contact);
         },
         contact.type === 'samu' ? 0 : 5000,
@@ -401,7 +400,7 @@ export function EmergencyEscalation({
     addTimelineEvent('contact', `Contato estabelecido com ${contact.name}`);
 
     // Simulate dispatch time
-    setTimeout(() => {
+    setTimeout(_() => {
       setContacts(prev =>
         prev.map(c =>
           c.type === contact.type
@@ -848,7 +847,7 @@ export function EmergencyEscalation({
                     <CardContent>
                       <ScrollArea className='h-[200px]'>
                         <div className='space-y-2'>
-                          {timeline.map((event, _index) => (
+                          {timeline.map(_(event, _index) => (
                             <div
                               key={index}
                               className='flex items-start space-x-2 text-sm'
@@ -918,8 +917,7 @@ export function EmergencyEscalation({
           </div>
 
           <div className='flex space-x-2'>
-            {!isEmergencyActive && (
-              <>
+            {!isEmergencyActive && (_<>
                 <Button variant='outline' onClick={onClose}>
                   Cancelar
                 </Button>

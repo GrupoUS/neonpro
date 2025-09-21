@@ -3,7 +3,7 @@ import React, { lazy } from 'react';
 
 // Lazy-load ONLY in dev to avoid top-level await in prod bundles
 const LazyReport: React.ComponentType = (import.meta as any).env?.DEV
-  ? lazy(async () => {
+  ? lazy(_async () => {
     try {
       const mod = await import(
         '@/test-results/advanced-animation-production-validation-report'
@@ -26,6 +26,6 @@ function ValidationReportRoute() {
   );
 }
 
-export const Route = createFileRoute('/__tests/validation-report')({
+export const _Route = createFileRoute('/__tests/validation-report')({
   component: ValidationReportRoute,
 });

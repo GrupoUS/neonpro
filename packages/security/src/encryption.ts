@@ -152,7 +152,7 @@ export class EncryptionManager {
       if (result[field] && typeof result[field] === 'string') {
         try {
           (result as Record<string, unknown>)[field] = this.decryptData(result[field], key);
-        } catch (error) {
+        } catch (_error) {
           // Field might not be encrypted, leave as is
           console.warn(`Failed to decrypt field ${field}:`, error);
         }
@@ -280,7 +280,7 @@ export class KeyManager {
    * Clean up expired keys
    */
   cleanup(): void {
-    const now = new Date();
+    const _now = new Date();
     for (const [keyId, metadata] of this.keyMetadata.entries()) {
       if (metadata.expiresAt && now > metadata.expiresAt) {
         this.removeKey(keyId);
@@ -290,5 +290,5 @@ export class KeyManager {
 }
 
 // Export singleton instances
-export const encryptionManager = new EncryptionManager();
-export const keyManager = KeyManager.getInstance();
+export const _encryptionManager = new EncryptionManager();
+export const _keyManager = KeyManager.getInstance();

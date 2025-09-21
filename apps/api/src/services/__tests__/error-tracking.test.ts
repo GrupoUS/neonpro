@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ErrorSeveritySchema, errorTracker, HealthcareErrorTypeSchema } from '../error-tracking';
 
 // Mock Sentry and OpenTelemetry
-vi.mock('@sentry/node', () => ({
+vi.mock(_'@sentry/node',_() => ({
   captureException: vi.fn(),
   addBreadcrumb: vi.fn(),
   setUser: vi.fn(),
@@ -17,7 +17,7 @@ vi.mock('@sentry/node', () => ({
   ),
 }));
 
-vi.mock('@opentelemetry/api', () => ({
+vi.mock(_'@opentelemetry/api',_() => ({
   trace: {
     getTracer: vi.fn(() => ({
       startSpan: vi.fn(() => ({
@@ -33,35 +33,35 @@ vi.mock('@opentelemetry/api', () => ({
   },
 }));
 
-describe('HealthcareErrorTracker', () => {
-  beforeEach(() => {
+describe(_'HealthcareErrorTracker',_() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     // Reset metrics
     errorTracker['resetMetrics']();
   });
 
-  it('should redact sensitive healthcare data from error messages', async () => {
+  it(_'should redact sensitive healthcare data from error messages',_async () => {
     const error = new Error('Patient CPF 123.456.789-00 access denied');
     const context = {
-      userId: 'test-user',
+      _userId: 'test-user',
       patientId: 'test-patient',
       action: 'data_access' as const,
     };
 
-    await errorTracker.trackError(error, context);
+    await errorTracker.trackError(error, _context);
 
     // Check that metrics were updated
     const metrics = errorTracker.getMetrics();
     expect(metrics.totalErrors).toBe(1);
   });
 
-  it('should classify healthcare errors correctly', async () => {
+  it(_'should classify healthcare errors correctly',_async () => {
     const unauthorizedError = new Error('Unauthorized access to patient data');
     await errorTracker.trackError(unauthorizedError, {
-      userId: 'test-user',
+      _userId: 'test-user',
       action: 'data_access',
     });
 
@@ -69,10 +69,10 @@ describe('HealthcareErrorTracker', () => {
     expect(metrics.totalErrors).toBe(1);
   });
 
-  it('should handle different error severities', async () => {
+  it(_'should handle different error severities',_async () => {
     const criticalError = new Error('Database connection failed');
     await errorTracker.trackError(criticalError, {
-      userId: 'test-user',
+      _userId: 'test-user',
       action: 'database_query',
     });
 
@@ -80,7 +80,7 @@ describe('HealthcareErrorTracker', () => {
     expect(metrics.totalErrors).toBe(1);
   });
 
-  it('should export correct types and schemas', () => {
+  it(_'should export correct types and schemas',_() => {
     expect(HealthcareErrorTypeSchema).toBeDefined();
     expect(ErrorSeveritySchema).toBeDefined();
 
@@ -91,7 +91,7 @@ describe('HealthcareErrorTracker', () => {
     expect(ErrorSeveritySchema.enum.critical).toBe('critical');
   });
 
-  it('should provide error metrics', () => {
+  it(_'should provide error metrics',_() => {
     const metrics = errorTracker.getMetrics();
     expect(metrics).toHaveProperty('totalErrors');
     expect(metrics).toHaveProperty('errorsByType');

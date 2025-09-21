@@ -6,27 +6,27 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { HEALTHCARE_POOL_CONFIG, QueryPerformanceMonitor } from '../query-optimizer';
 
-describe('Query Optimizer', () => {
+describe(_'Query Optimizer',_() => {
   let monitor: QueryPerformanceMonitor;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     monitor = new QueryPerformanceMonitor();
     vi.clearAllMocks();
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     monitor.clearMetrics();
   });
 
-  describe('QueryPerformanceMonitor', () => {
-    it('should record query metrics', () => {
+  describe(_'QueryPerformanceMonitor',_() => {
+    it(_'should record query metrics',_() => {
       const metrics = {
-        query: 'SELECT * FROM patients WHERE id = $1',
+        _query: 'SELECT * FROM patients WHERE id = $1',
         duration: 45,
         rowsAffected: 1,
         timestamp: new Date(),
         endpoint: '/api/patients/123',
-        userId: 'user123',
+        _userId: 'user123',
         clinicId: 'clinic456',
       };
 
@@ -38,14 +38,14 @@ describe('Query Optimizer', () => {
       expect(stats.slowQueries).toBe(0);
     });
 
-    it('should identify slow queries', () => {
+    it(_'should identify slow queries',_() => {
       const slowQuery = {
-        query: 'SELECT * FROM appointments WHERE date > $1',
+        _query: 'SELECT * FROM appointments WHERE date > $1',
         duration: 1500, // Above slow query threshold (1000ms)
         rowsAffected: 100,
         timestamp: new Date(),
         endpoint: '/api/appointments',
-        userId: 'user123',
+        _userId: 'user123',
         clinicId: 'clinic456',
       };
 
@@ -57,10 +57,10 @@ describe('Query Optimizer', () => {
       expect(stats.slowQueryRate).toBe(100);
     });
 
-    it('should track query frequency', () => {
+    it(_'should track query frequency',_() => {
       // Add multiple queries
       monitor.recordQuery({
-        query: 'SELECT * FROM services',
+        _query: 'SELECT * FROM services',
         duration: 10,
         rowsAffected: 5,
         timestamp: new Date(),
@@ -68,7 +68,7 @@ describe('Query Optimizer', () => {
       });
 
       monitor.recordQuery({
-        query: 'SELECT * FROM patients WHERE id = $1',
+        _query: 'SELECT * FROM patients WHERE id = $1',
         duration: 45,
         rowsAffected: 1,
         timestamp: new Date(),
@@ -81,13 +81,13 @@ describe('Query Optimizer', () => {
       expect(Object.keys(stats.queryFrequency).length).toBeGreaterThan(0);
     });
 
-    it('should calculate average duration correctly', () => {
+    it(_'should calculate average duration correctly',_() => {
       const baseTime = new Date();
 
       // Add multiple metrics with different durations
       for (let i = 0; i < 5; i++) {
         monitor.recordQuery({
-          query: `SELECT * FROM test_table_${i}`,
+          _query: `SELECT * FROM test_table_${i}`,
           duration: 100 + i * 20, // 100, 120, 140, 160, 180
           rowsAffected: 1,
           timestamp: new Date(baseTime.getTime() + i * 1000),
@@ -100,14 +100,14 @@ describe('Query Optimizer', () => {
       expect(stats.averageDuration).toBe(140); // Average of 100, 120, 140, 160, 180
     });
 
-    it('should identify top slow queries', () => {
+    it(_'should identify top slow queries',_() => {
       const baseTime = new Date();
 
       // Add queries with different durations
       const durations = [100, 2000, 500, 1500, 300];
-      durations.forEach((duration, i) => {
+      durations.forEach(_(duration,_i) => {
         monitor.recordQuery({
-          query: `SELECT * FROM table_${i}`,
+          _query: `SELECT * FROM table_${i}`,
           duration,
           rowsAffected: 1,
           timestamp: new Date(baseTime.getTime() + i * 1000),
@@ -128,9 +128,9 @@ describe('Query Optimizer', () => {
       }
     });
 
-    it('should clear metrics history', () => {
+    it(_'should clear metrics history',_() => {
       monitor.recordQuery({
-        query: 'SELECT 1',
+        _query: 'SELECT 1',
         duration: 10,
         rowsAffected: 1,
         timestamp: new Date(),
@@ -146,11 +146,11 @@ describe('Query Optimizer', () => {
       expect(stats.totalQueries).toBe(0);
     });
 
-    it('should limit metrics history to prevent memory issues', () => {
+    it(_'should limit metrics history to prevent memory issues',_() => {
       // Add more than the max history limit (1000)
       for (let i = 0; i < 1100; i++) {
         monitor.recordQuery({
-          query: `SELECT * FROM table WHERE id = ${i}`,
+          _query: `SELECT * FROM table WHERE id = ${i}`,
           duration: 50,
           rowsAffected: 1,
           timestamp: new Date(),
@@ -164,15 +164,15 @@ describe('Query Optimizer', () => {
     });
   });
 
-  describe('HEALTHCARE_POOL_CONFIG', () => {
-    it('should have appropriate pool configuration for healthcare workloads', () => {
+  describe(_'HEALTHCARE_POOL_CONFIG',_() => {
+    it(_'should have appropriate pool configuration for healthcare workloads',_() => {
       expect(HEALTHCARE_POOL_CONFIG.min).toBe(2);
       expect(HEALTHCARE_POOL_CONFIG.max).toBe(20);
       expect(HEALTHCARE_POOL_CONFIG.acquireTimeoutMillis).toBe(30000);
       expect(HEALTHCARE_POOL_CONFIG.idleTimeoutMillis).toBe(300000);
     });
 
-    it('should have healthcare-appropriate timeout settings', () => {
+    it(_'should have healthcare-appropriate timeout settings',_() => {
       // Healthcare systems need reliable connections
       expect(HEALTHCARE_POOL_CONFIG.createTimeoutMillis).toBe(30000);
       expect(HEALTHCARE_POOL_CONFIG.destroyTimeoutMillis).toBe(5000);

@@ -70,11 +70,11 @@ export const usePDFExport = (): UsePDFExportReturn => {
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
         // Cleanup URL após um tempo
-        setTimeout(() => URL.revokeObjectURL(url), 10000);
+        setTimeout(_() => URL.revokeObjectURL(url), 10000);
       }
 
       return blob;
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error
         ? error.message
         : 'Erro desconhecido na geração do PDF';
@@ -123,12 +123,12 @@ const normalizeNameForFilename = (name: string): string => {
     .toLowerCase();
 };
 
-export const generatePDFFilename = (
+export const _generatePDFFilename = (
   type: 'assessment' | 'treatment' | 'consent',
   patientName: string,
   date?: Date,
 ): string => {
-  const now = date || new Date();
+  const _now = date || new Date();
   const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
   const cleanName = normalizeNameForFilename(patientName);
 

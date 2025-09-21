@@ -47,7 +47,7 @@ const CalendarDndContext = createContext<CalendarDndContextType>({
 });
 
 // Hook to use the context
-export const useCalendarDnd = () => useContext(CalendarDndContext);
+export const _useCalendarDnd = () => useContext(CalendarDndContext);
 
 // Props for the provider
 interface CalendarDndProviderProps {
@@ -299,7 +299,7 @@ export function CalendarDndProvider({
           end: newEnd,
         });
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in drag end handler:', error);
     } finally {
       // Always reset state

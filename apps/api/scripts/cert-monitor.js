@@ -41,7 +41,7 @@ async function runCertificateCheck() {
     } else {
       process.exit(0);
     }
-  } catch (error) {
+  } catch (_error) {
     console.error(`[${new Date().toISOString()}] Certificate monitoring failed:`, error.message);
     process.exit(3);
   }
@@ -63,7 +63,7 @@ async function startMonitoring() {
     setInterval(async () => {
       try {
         await runCertificateCheck();
-      } catch (error) {
+      } catch (_error) {
         console.error(`[${new Date().toISOString()}] Monitoring error:`, error.message);
       }
     }, CHECK_INTERVAL);

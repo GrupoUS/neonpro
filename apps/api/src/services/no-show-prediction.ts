@@ -13,7 +13,6 @@
  */
 
 import type { PrismaClient } from '@prisma/client';
-import { z } from 'zod';
 import { generateWithFailover } from '../config/ai';
 
 // No-Show Risk Levels
@@ -208,7 +207,7 @@ export const NoShowPredictionSchema = z.object({
       z.object({
         action: z.string(),
         timestamp: z.date(),
-        userId: z.string(),
+        _userId: z.string(),
       }),
     ),
   }),
@@ -295,7 +294,7 @@ export class NoShowPredictionService {
             {
               action: 'prediction_generated',
               timestamp: new Date(),
-              userId: 'system',
+              _userId: 'system',
             },
           ],
         },
@@ -309,7 +308,7 @@ export class NoShowPredictionService {
       await this.logPredictionAudit(prediction);
 
       return prediction;
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(`No-show prediction failed: ${errorMessage}`);
     }
@@ -422,7 +421,7 @@ export class NoShowPredictionService {
         confidence: analysis.confidence,
         factors: this.identifyTopFactors(behaviorFactors, analysis),
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('AI prediction failed, using fallback:', error);
       return this.generateFallbackPrediction(profile, behaviorFactors);
     }
@@ -518,7 +517,7 @@ export class NoShowPredictionService {
       });
     }
 
-    return interventions.sort((a, b) => {
+    return interventions.sort(_(a,_b) => {
       const priorityOrder: Record<string, number> = {
         high: 3,
         medium: 2,
@@ -610,7 +609,7 @@ export class NoShowPredictionService {
 
       this.behaviorProfiles.set(patientId, profile);
       return profile;
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(`Failed to get behavior profile: ${errorMessage}`);
     }
@@ -646,7 +645,7 @@ CONSULTA:
 FATORES COMPORTAMENTAIS BRASILEIROS:
 ${
       Object.entries(behaviorFactors)
-        .map(([factor, value]) => `- ${factor}: ${(value * 100).toFixed(1)}%`)
+        .map(_([factor,_value]) => `- ${factor}: ${(value * 100).toFixed(1)}%`)
         .join('\n')
     }
 
@@ -693,7 +692,7 @@ Responda APENAS em formato JSON:
           : [],
         reasoning: parsed.reasoning || 'Análise baseada em fatores comportamentais',
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to parse AI response:', error);
       return {
         aiRiskScore: 0.5,
@@ -913,10 +912,10 @@ Responda APENAS em formato JSON:
   }> {
     // Sort factors by impact and select top 5
     const sortedFactors = Object.entries(behaviorFactors)
-      .sort(([, a], [, b]) => b - a)
+      .sort(_([,_a],_[,_b]) => b - a)
       .slice(0, 5);
 
-    return sortedFactors.map(([factor, impact]) => ({
+    return sortedFactors.map(_([factor,_impact]) => ({
       factor: factor as BrazilianBehaviorFactor,
       impact: impact * 2 - 1, // Convert to -1 to 1 scale
       confidence: 0.8, // High confidence for behavior factors
@@ -1097,8 +1096,7 @@ Responda APENAS em formato JSON:
     };
     recommendations: string[];
   }> {
-    const models = Array.from(this.modelPerformanceMetrics.entries()).map(
-      ([key, metrics]) => {
+    const models = Array.from(this.modelPerformanceMetrics.entries()).map(_([key,_metrics]) => {
         const [modelType, version] = key.split('_');
         return {
           modelType: modelType as AIModelType,
@@ -1108,13 +1106,11 @@ Responda APENAS em formato JSON:
       },
     );
 
-    const totalPredictions = models.reduce(
-      (sum, model) => sum + model.metrics.totalPredictions,
+    const totalPredictions = models.reduce(_(sum,_model) => sum + model.metrics.totalPredictions,
       0,
     );
     const averageProcessingTime = models.length > 0
-      ? models.reduce(
-        (sum, model) => sum + model.metrics.averageProcessingTime,
+      ? models.reduce(_(sum,_model) => sum + model.metrics.averageProcessingTime,
         0,
       ) / models.length
       : 0;

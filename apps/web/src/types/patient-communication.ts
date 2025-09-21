@@ -310,7 +310,7 @@ export interface CommunicationStats {
 }
 
 // Predefined message templates
-export const DEFAULT_TEMPLATES = {
+export const _DEFAULT_TEMPLATES = {
   APPOINTMENT_CONFIRMATION: {
     sms:
       'Olá {{patient_name}}! Sua consulta está confirmada para {{appointment_date}} às {{appointment_time}} com {{professional_name}}. Clínica {{clinic_name}}.',

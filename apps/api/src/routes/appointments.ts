@@ -54,7 +54,7 @@ appointments.get('/', async c => {
       },
     });
     return ok(c, { items });
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching appointments:', error);
     return serverError(
       c,
@@ -99,7 +99,7 @@ appointments.get('/patient/:patientId', async c => {
     });
 
     return ok(c, { items });
-  } catch (error) {
+  } catch (_error) {
     console.error('Error fetching patient appointments:', error);
     return serverError(
       c,
@@ -110,7 +110,6 @@ appointments.get('/patient/:patientId', async c => {
 });
 
 import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
 import { badRequest, created, notFound } from '../utils/responses';
 
 // Schemas
@@ -174,7 +173,7 @@ appointments.post(
       });
 
       return created(c, appt);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error creating appointment:', error);
       return serverError(
         c,
@@ -238,7 +237,7 @@ appointments.put(
       });
 
       return ok(c, appt);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error updating appointment:', error);
       return serverError(
         c,

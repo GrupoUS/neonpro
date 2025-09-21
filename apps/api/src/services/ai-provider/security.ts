@@ -16,7 +16,7 @@ export class AISecurityManager {
   /**
    * Validate and sanitize incoming request
    */
-  validateAndSanitizeRequest(request: RoutingRequest): RoutingRequest {
+  validateAndSanitizeRequest(_request: RoutingRequest): RoutingRequest {
     // Validate healthcare context
     if (
       request.healthcare_context.contains_pii
@@ -181,7 +181,7 @@ export class AISecurityManager {
   /**
    * Audit request initiation
    */
-  async auditRequestStart(request: RoutingRequest): Promise<void> {
+  async auditRequestStart(_request: RoutingRequest): Promise<void> {
     await this.audit_service.logEvent({
       type: AuditEventType.AI_MODEL_PREDICTION,
       user_id: request.request_metadata.user_id,
@@ -202,7 +202,7 @@ export class AISecurityManager {
    * Audit cache hit
    */
   async auditCacheHit(
-    request: RoutingRequest,
+    _request: RoutingRequest,
     cache_latency_ms: number,
   ): Promise<void> {
     await this.audit_service.logEvent({
@@ -223,7 +223,7 @@ export class AISecurityManager {
    * Audit successful request completion
    */
   async auditRequestComplete(
-    request: RoutingRequest,
+    _request: RoutingRequest,
     provider_used: AIProviderOpt,
     model_used: string,
     metrics: any,
@@ -251,7 +251,7 @@ export class AISecurityManager {
    * Audit request error
    */
   async auditRequestError(
-    request: RoutingRequest,
+    _request: RoutingRequest,
     error: Error,
     total_latency_ms: number,
   ): Promise<void> {

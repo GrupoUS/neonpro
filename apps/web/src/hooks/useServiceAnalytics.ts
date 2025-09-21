@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 // Query Keys
 export const analyticsKeys = {
   all: ['analytics'] as const,
-  service: () => [...analyticsKeys.all, 'service'] as const,
+  _service: () => [...analyticsKeys.all, 'service'] as const,
   serviceAnalytics: (clinicId: string, filters?: AnalyticsFilters) =>
     [...analyticsKeys.service(), clinicId, filters] as const,
   revenue: () => [...analyticsKeys.all, 'revenue'] as const,
@@ -206,10 +206,10 @@ export function useServiceComparison(
  */
 export function useExportAnalytics() {
   return useMutation({
-    mutationFn: (request: AnalyticsExportRequest) =>
-      serviceAnalyticsService.exportAnalytics(request),
+    mutationFn: (_request: AnalyticsExportRequest) =>
+      serviceAnalyticsService.exportAnalytics(_request),
 
-    onSuccess: (blob, _variables) => {
+    onSuccess: (_blob, _variables) => {
       // Create download link
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');

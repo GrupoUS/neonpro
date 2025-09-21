@@ -40,7 +40,7 @@ test('AccessibilityTester.tsx import should fail due to transform/compile error 
  * asserting the exported component/function exists. This documents the
  * current (non-failing) state for this module in RED phase.
  */
-test('DataAgentChat.tsx import currently resolves and exports DataAgentChat', async () => {
+test(_'DataAgentChat.tsx import currently resolves and exports DataAgentChat',_async () => {
   const mod = await import('../../components/ai/DataAgentChat');
   // Expect an exported function/component named DataAgentChat (or default)
   expect(mod.DataAgentChat || mod.default).toBeDefined();
@@ -61,7 +61,7 @@ test('security-logging.test.ts should fail to load (module not found) — observ
  * 5) ai-agent.ts (types)
  * Observed: import succeeded previously. Document current exports (type-guards).
  */
-test('ai-agent.ts import currently resolves and exports type-guard helpers', async () => {
+test(_'ai-agent.ts import currently resolves and exports type-guard helpers',_async () => {
   const mod = await import('../../types/ai-agent');
   expect(typeof (mod.isAgentResponse)).toBe('function');
   expect(typeof (mod.isUserQuery)).toBe('function');

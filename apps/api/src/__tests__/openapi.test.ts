@@ -8,9 +8,9 @@
 import { describe, expect, it } from 'vitest';
 import app from '../app';
 
-describe('OpenAPI Integration', () => {
-  describe('Documentation Endpoints', () => {
-    it('should serve OpenAPI JSON schema at /openapi.json', async () => {
+describe(_'OpenAPI Integration',_() => {
+  describe(_'Documentation Endpoints',_() => {
+    it(_'should serve OpenAPI JSON schema at /openapi.json',_async () => {
       const response = await app.request('/openapi.json');
 
       expect(response.status).toBe(200);
@@ -43,7 +43,7 @@ describe('OpenAPI Integration', () => {
       expect(tagNames).toContain('Appointments');
     });
 
-    it('should serve Swagger UI at /docs', async () => {
+    it(_'should serve Swagger UI at /docs',_async () => {
       const response = await app.request('/docs');
 
       expect(response.status).toBe(200);
@@ -55,7 +55,7 @@ describe('OpenAPI Integration', () => {
       expect(html).toContain('/openapi.json');
     });
 
-    it('should redirect /documentation to /docs', async () => {
+    it(_'should redirect /documentation to /docs',_async () => {
       const response = await app.request('/documentation', {
         redirect: 'manual',
       });
@@ -64,7 +64,7 @@ describe('OpenAPI Integration', () => {
       expect(response.headers.get('location')).toBe('/docs');
     });
 
-    it('should serve docs health check at /docs/health', async () => {
+    it(_'should serve docs health check at /docs/health',_async () => {
       const response = await app.request('/docs/health');
 
       expect(response.status).toBe(200);
@@ -77,8 +77,8 @@ describe('OpenAPI Integration', () => {
     });
   });
 
-  describe('OpenAPI Route Validation', () => {
-    it('should validate health route schema', async () => {
+  describe(_'OpenAPI Route Validation',_() => {
+    it(_'should validate health route schema',_async () => {
       const response = await app.request('/health');
 
       expect(response.status).toBe(200);
@@ -91,7 +91,7 @@ describe('OpenAPI Integration', () => {
       expect(data.version).toBe('1.0.0');
     });
 
-    it('should validate detailed health route schema', async () => {
+    it(_'should validate detailed health route schema',_async () => {
       const response = await app.request('/v1/health');
 
       expect(response.status).toBe(200);
@@ -104,7 +104,7 @@ describe('OpenAPI Integration', () => {
       expect(data.environment).toBeDefined();
     });
 
-    it('should validate API info route schema', async () => {
+    it(_'should validate API info route schema',_async () => {
       const response = await app.request('/v1/info');
 
       expect(response.status).toBe(200);
@@ -117,7 +117,7 @@ describe('OpenAPI Integration', () => {
       expect(data.timestamp).toBeDefined();
     });
 
-    it('should validate auth status route schema', async () => {
+    it(_'should validate auth status route schema',_async () => {
       const response = await app.request('/v1/auth/status');
 
       expect(response.status).toBe(200);
@@ -131,8 +131,8 @@ describe('OpenAPI Integration', () => {
     });
   });
 
-  describe('LGPD Compliance in OpenAPI', () => {
-    it('should document LGPD consent requirements for patient routes', async () => {
+  describe(_'LGPD Compliance in OpenAPI',_() => {
+    it(_'should document LGPD consent requirements for patient routes',_async () => {
       const response = await app.request('/openapi.json');
       const schema = await response.json();
 
@@ -147,7 +147,7 @@ describe('OpenAPI Integration', () => {
       );
     });
 
-    it('should document LGPD error responses', async () => {
+    it(_'should document LGPD error responses',_async () => {
       const response = await app.request('/openapi.json');
       const schema = await response.json();
 
@@ -161,8 +161,8 @@ describe('OpenAPI Integration', () => {
     });
   });
 
-  describe('Healthcare Validation in OpenAPI', () => {
-    it('should use healthcare-specific field validation', async () => {
+  describe(_'Healthcare Validation in OpenAPI',_() => {
+    it(_'should use healthcare-specific field validation',_async () => {
       const response = await app.request('/openapi.json');
       const schema = await response.json();
 
@@ -176,8 +176,8 @@ describe('OpenAPI Integration', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should return validation errors in OpenAPI format', async () => {
+  describe(_'Error Handling',_() => {
+    it(_'should return validation errors in OpenAPI format',_async () => {
       // This would test actual validation errors when invalid data is sent
       // For now, we verify the error format is documented
       const response = await app.request('/openapi.json');

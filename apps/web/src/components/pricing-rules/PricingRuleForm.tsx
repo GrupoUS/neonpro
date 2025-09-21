@@ -17,8 +17,6 @@ import { Button } from '@neonpro/ui';
 
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
-
 const pricingRuleSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
   description: z.string().optional(),
@@ -138,18 +136,18 @@ export function PricingRuleForm({
       if (rule) {
         await updateRule.mutateAsync({
           id: rule.id,
-          request: requestData,
+          _request: requestData,
         });
         toast.success('Regra de preço atualizada com sucesso');
       } else {
         await createRule.mutateAsync({
           clinicId,
-          request: requestData,
+          _request: requestData,
         });
         toast.success('Regra de preço criada com sucesso');
       }
       onSuccess();
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to submit pricing rule form:', error);
       toast.error(rule ? 'Erro ao atualizar regra' : 'Erro ao criar regra');
     }

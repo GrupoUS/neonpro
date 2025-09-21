@@ -157,7 +157,7 @@ export class EnhancedPerformanceOptimizationService {
 
     try {
       // Execute query with timeout
-      const result = await this.executeWithTimeout(async () => {
+      const result = await this.executeWithTimeout(_async () => {
         if (cursor && includeCursor) {
           // Cursor-based pagination
           return this.executeCursorPagination(queryBuilder, {
@@ -229,7 +229,7 @@ export class EnhancedPerformanceOptimizationService {
       );
 
       return paginatedResult;
-    } catch (error) {
+    } catch (_error) {
       this.updatePerformanceMetrics(
         queryKey,
         performance.now() - startTime,
@@ -245,7 +245,7 @@ export class EnhancedPerformanceOptimizationService {
   async searchPatientsEnhanced(
     _clinicId: string,
     searchParams: {
-      query?: string;
+      _query?: string;
       page?: number;
       limit?: number;
       sortBy?: string;
@@ -456,7 +456,7 @@ export class EnhancedPerformanceOptimizationService {
       }
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       throw this.handleQueryError(error, 'appointments_calendar');
     }
   }
@@ -533,7 +533,7 @@ export class EnhancedPerformanceOptimizationService {
       }
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       throw this.handleQueryError(error, 'dashboard_metrics');
     }
   }
@@ -578,8 +578,7 @@ export class EnhancedPerformanceOptimizationService {
         const batch = items.slice(i, i + batchSize);
 
         // Process batch with concurrency control
-        const batchResults = await Promise.allSettled(
-          batch.map(async (item, batchIndex) => {
+        const batchResults = await Promise.allSettled(_batch.map(async (item,_batchIndex) => {
             const actualIndex = i + batchIndex;
             try {
               const result = await processFn(item, actualIndex);
@@ -590,7 +589,7 @@ export class EnhancedPerformanceOptimizationService {
               }
 
               return { success: true, result, index: actualIndex };
-            } catch (error) {
+            } catch (_error) {
               failed++;
               const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
@@ -645,7 +644,7 @@ export class EnhancedPerformanceOptimizationService {
           averageTimePerItem,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       const totalTime = performance.now() - startTime;
 
       return {
@@ -699,7 +698,7 @@ export class EnhancedPerformanceOptimizationService {
       });
 
       console.log(`Cache warming completed for clinic ${clinicId}`);
-    } catch (error) {
+    } catch (_error) {
       console.error('Cache warming failed:', error);
     }
   }
@@ -719,7 +718,7 @@ export class EnhancedPerformanceOptimizationService {
       cacheHitRate: number;
       slowQueryCount: number;
     };
-    slowQueries?: Array<{ query: string; duration: number; timestamp: Date }>;
+    slowQueries?: Array<{ _query: string; duration: number; timestamp: Date }>;
     cacheStats?: Record<
       string,
       { hits: number; misses: number; hitRate: number }
@@ -771,8 +770,8 @@ export class EnhancedPerformanceOptimizationService {
     fn: () => Promise<T>,
     timeoutMs: number,
   ): Promise<T> {
-    return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => {
+    return new Promise(_(resolve,_reject) => {
+      const timer = setTimeout(_() => {
         reject(new Error(`Query timeout after ${timeoutMs}ms`));
       }, timeoutMs);
 
@@ -946,7 +945,7 @@ export class EnhancedPerformanceOptimizationService {
       // Use the query optimizer's cache
       const cache = (this.queryOptimizer as any).cache;
       return cache ? await cache.get(key) : null;
-    } catch (error) {
+    } catch (_error) {
       console.warn('Cache get failed:', error);
       return null;
     }
@@ -964,7 +963,7 @@ export class EnhancedPerformanceOptimizationService {
       if (cache) {
         await cache.set(key, value, ttl);
       }
-    } catch (error) {
+    } catch (_error) {
       console.warn('Cache set failed:', error);
     }
   }
@@ -1041,7 +1040,7 @@ export class EnhancedPerformanceOptimizationService {
       { hits: number; misses: number; hitRate: number }
     > = {};
 
-    this.cacheStats.forEach((value, key) => {
+    this.cacheStats.forEach(_(value,_key) => {
       const total = value.hits + value.misses;
       stats[key] = {
         hits: value.hits,
@@ -1092,8 +1091,7 @@ export class EnhancedPerformanceOptimizationService {
 
   private initializePerformanceMonitoring(): void {
     // Set up periodic performance monitoring
-    setInterval(
-      () => {
+    setInterval(_() => {
         this.cleanupPerformanceMetrics();
       },
       5 * 60 * 1000,
@@ -1111,7 +1109,7 @@ export class EnhancedPerformanceOptimizationService {
 }
 
 // Export singleton instance
-export const enhancedPerformanceOptimizationService = new EnhancedPerformanceOptimizationService(
+export const _enhancedPerformanceOptimizationService = new EnhancedPerformanceOptimizationService(
   // Prisma client would be injected from the application context
   {} as HealthcarePrismaClient,
 );

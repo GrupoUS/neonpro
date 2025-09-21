@@ -138,6 +138,6 @@ function ProfessionalServicesPage() {
   );
 }
 
-export const Route = createFileRoute('/services/professional-services')({
+export const _Route = createFileRoute('/services/professional-services')({
   component: ProfessionalServicesPage,
 });

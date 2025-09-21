@@ -171,7 +171,7 @@ export class DatabaseConnectionError extends RepositoryError {
 }
 
 export class QueryTimeoutError extends RepositoryError {
-  constructor(query: string, timeoutMs: number) {
+  constructor(_query: string, timeoutMs: number) {
     super(`Query timeout after ${timeoutMs}ms: ${query}`);
   }
 

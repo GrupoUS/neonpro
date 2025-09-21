@@ -16,13 +16,13 @@ export interface ConversationAPIRequest {
     | 'get_details'
     | 'delete'
     | 'search';
-  payload: any;
+  _payload: any;
   requestId: string;
 }
 
 export interface ConversationAPIResponse {
   type: 'conversation_response' | 'conversation_history' | 'conversation_details' | 'error';
-  payload: any;
+  _payload: any;
   requestId: string;
   success: boolean;
   error?: string;
@@ -47,7 +47,7 @@ export class ConversationAPI {
   }
 
   async handleRequest(
-    request: ConversationAPIRequest,
+    _request: ConversationAPIRequest,
     ws?: WebSocket,
   ): Promise<ConversationAPIResponse> {
     const { type, payload, requestId } = request;
@@ -86,7 +86,7 @@ export class ConversationAPI {
 
       return {
         type: 'error',
-        payload: null,
+        _payload: null,
         requestId,
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
@@ -95,7 +95,7 @@ export class ConversationAPI {
   }
 
   private async handleStartConversation(
-    payload: ConversationRequest,
+    _payload: ConversationRequest,
     requestId: string,
     ws?: WebSocket,
   ): Promise<ConversationAPIResponse> {
@@ -108,7 +108,7 @@ export class ConversationAPI {
         }
       }
 
-      const response = await this.conversationService.startConversation(payload);
+      const response = await this.conversationService.startConversation(_payload);
 
       // Send real-time updates if WebSocket is available
       if (ws && ws.readyState === WebSocket.OPEN) {
@@ -129,7 +129,7 @@ export class ConversationAPI {
 
       return {
         type: 'conversation_response',
-        payload: response,
+        _payload: response,
         requestId,
         success: true,
       };
@@ -141,11 +141,11 @@ export class ConversationAPI {
   }
 
   private async handleContinueConversation(
-    payload: {
+    _payload: {
       conversationId: string;
-      userId: string;
+      _userId: string;
       message: string;
-      context?: any;
+      _context?: any;
     },
     requestId: string,
     ws?: WebSocket,
@@ -185,7 +185,7 @@ export class ConversationAPI {
 
       return {
         type: 'conversation_response',
-        payload: response,
+        _payload: response,
         requestId,
         success: true,
       };
@@ -199,8 +199,8 @@ export class ConversationAPI {
   }
 
   private async handleGetHistory(
-    payload: {
-      userId: string;
+    _payload: {
+      _userId: string;
       clinicId: string;
       patientId?: string;
       limit?: number;
@@ -215,7 +215,7 @@ export class ConversationAPI {
         throw new Error('Missing required fields: userId, clinicId');
       }
 
-      const result = await this.conversationService.getConversationHistory(payload);
+      const result = await this.conversationService.getConversationHistory(_payload);
 
       await this.logger.logDataAccess(payload.userId, payload.clinicId, {
         action: 'api_get_history',
@@ -227,7 +227,7 @@ export class ConversationAPI {
 
       return {
         type: 'conversation_history',
-        payload: result,
+        _payload: result,
         requestId,
         success: true,
       };
@@ -241,15 +241,15 @@ export class ConversationAPI {
   }
 
   private async handleGetDetails(
-    payload: {
+    _payload: {
       conversationId: string;
-      userId: string;
+      _userId: string;
     },
     requestId: string,
   ): Promise<ConversationAPIResponse> {
     try {
       // Validate required fields
-      if (!payload.conversationId || !payload.userId) {
+      if (!payload.conversationId || !payload._userId) {
         throw new Error('Missing required fields: conversationId, userId');
       }
 
@@ -272,7 +272,7 @@ export class ConversationAPI {
 
       return {
         type: 'conversation_details',
-        payload: conversation,
+        _payload: conversation,
         requestId,
         success: true,
       };
@@ -286,19 +286,19 @@ export class ConversationAPI {
   }
 
   private async handleDeleteConversation(
-    payload: {
+    _payload: {
       conversationId: string;
-      userId: string;
+      _userId: string;
     },
     requestId: string,
   ): Promise<ConversationAPIResponse> {
     try {
       // Validate required fields
-      if (!payload.conversationId || !payload.userId) {
+      if (!payload.conversationId || !payload._userId) {
         throw new Error('Missing required fields: conversationId, userId');
       }
 
-      await this.conversationService.deleteConversation(payload.conversationId, payload.userId);
+      await this.conversationService.deleteConversation(payload.conversationId, payload._userId);
 
       await this.logger.logDataAccess(payload.userId, 'unknown', {
         action: 'api_delete_conversation',
@@ -310,7 +310,7 @@ export class ConversationAPI {
 
       return {
         type: 'conversation_details',
-        payload: { deleted: true, conversationId: payload.conversationId },
+        _payload: { deleted: true, conversationId: payload.conversationId },
         requestId,
         success: true,
       };
@@ -324,10 +324,10 @@ export class ConversationAPI {
   }
 
   private async handleSearchConversations(
-    payload: {
-      userId: string;
+    _payload: {
+      _userId: string;
       clinicId: string;
-      query: string;
+      _query: string;
       filters?: {
         patientId?: string;
         dateFrom?: string;
@@ -339,7 +339,7 @@ export class ConversationAPI {
   ): Promise<ConversationAPIResponse> {
     try {
       // Validate required fields
-      if (!payload.userId || !payload.clinicId || !payload.query) {
+      if (!payload.userId || !payload.clinicId || !payload._query) {
         throw new Error('Missing required fields: userId, clinicId, query');
       }
 
@@ -363,14 +363,14 @@ export class ConversationAPI {
         action: 'api_search_conversations',
         resource: 'conversation_api',
         requestId,
-        query: payload.query,
+        _query: payload.query,
         resultCount: conversations.length,
         success: true,
       });
 
       return {
         type: 'conversation_history',
-        payload: { conversations, total: conversations.length },
+        _payload: { conversations, total: conversations.length },
         requestId,
         success: true,
       };
@@ -388,7 +388,7 @@ export class ConversationAPI {
       if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({
           type: 'realtime_update',
-          payload: update,
+          _payload: update,
           timestamp: new Date().toISOString(),
         }));
       }
@@ -402,7 +402,7 @@ export class ConversationAPI {
   }
 
   // Helper method to validate session from request payload
-  private async validateSession(sessionId: string, userId: string): Promise<boolean> {
+  private async validateSession(sessionId: string, _userId: string): Promise<boolean> {
     try {
       const session = await this.sessionManager.getSession(sessionId);
       return session && session.userId === userId;
@@ -413,7 +413,7 @@ export class ConversationAPI {
 
   // Helper method to check user permissions for conversation operations
   private async checkConversationPermissions(
-    userId: string,
+    _userId: string,
     clinicId: string,
     action: string,
   ): Promise<boolean> {

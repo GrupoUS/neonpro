@@ -66,10 +66,9 @@ export async function importHealthcareModule<T = any>(
 
   try {
     // Create timeout promise for non-critical modules
-    const timeoutPromise = new Promise<never>((_, reject) => {
+    const timeoutPromise = new Promise<never>(_(_,_reject) => {
       if (!critical) {
-        setTimeout(
-          () => reject(new Error(`Module ${modulePath} load timeout`)),
+        setTimeout(_() => reject(new Error(`Module ${modulePath} load timeout`)),
           timeout,
         );
       }
@@ -88,7 +87,7 @@ export async function importHealthcareModule<T = any>(
     );
 
     return module.default || module;
-  } catch (error) {
+  } catch (_error) {
     console.error(`Failed to load healthcare module ${modulePath}:`, error);
 
     // Use fallback for non-critical modules
@@ -123,7 +122,7 @@ export const loadCfmValidation = () =>
     timeout: 3000,
   });
 
-export const loadAnvisaReporting = () =>
+export const _loadAnvisaReporting = () =>
   importHealthcareModule('../services/anvisa-reporting', {
     critical: false,
     timeout: 5000,
@@ -148,11 +147,11 @@ export async function preloadCriticalHealthcareModules(): Promise<void> {
 
     // Check if any critical modules failed
     const failedModules = criticalModules
-      .map((result, index) => ({
+      .map(_(result,_index) => ({
         result,
         module: HEALTHCARE_BUNDLE_CONFIG.criticalModules[index],
       }))
-      .filter(({ result }) => result.status === 'rejected');
+      .filter(_({ result }) => result.status === 'rejected');
 
     if (failedModules.length > 0) {
       console.error(
@@ -168,7 +167,7 @@ export async function preloadCriticalHealthcareModules(): Promise<void> {
     console.log(
       `Critical healthcare modules preloaded in ${Math.round(loadTime)}ms`,
     );
-  } catch (error) {
+  } catch (_error) {
     console.error('Failed to preload critical healthcare modules:', error);
     throw error;
   }
@@ -202,8 +201,7 @@ export class HealthcareBundleAnalyzer {
    * Get total bundle size
    */
   getTotalBundleSize(): number {
-    return Array.from(this.metrics.values()).reduce(
-      (total, metric) => total + metric.size,
+    return Array.from(this.metrics.values()).reduce(_(total,_metric) => total + metric.size,
       0,
     );
   }
@@ -377,12 +375,11 @@ export class HealthcareEdgePerformanceMonitor {
     const metrics = Array.from(this.bundleAnalyzer['metrics'].values());
     if (metrics.length === 0) return 0;
 
-    return (
-      metrics.reduce((sum, metric) => sum + metric.loadTime, 0) / metrics.length
+    return (_metrics.reduce((sum,_metric) => sum + metric.loadTime, 0) / metrics.length
     );
   }
 }
 
 // Export singleton instances
-export const healthcareBundleAnalyzer = new HealthcareBundleAnalyzer();
-export const healthcarePerformanceMonitor = HealthcareEdgePerformanceMonitor.getInstance();
+export const _healthcareBundleAnalyzer = new HealthcareBundleAnalyzer();
+export const _healthcarePerformanceMonitor = HealthcareEdgePerformanceMonitor.getInstance();

@@ -37,14 +37,14 @@ export class ChatService {
       const message: ChatMessage = {
         id: crypto.randomUUID(),
         sessionId: session.id,
-        role: "assistant",
+        _role: "assistant",
         content: res.content,
         createdAt: new Date().toISOString(),
         redactionFlags: ["lgpd"],
       };
 
       return message;
-    } catch (error) {
+    } catch (_error) {
       console.error("Chat service error:", error);
       throw new Error("Failed to generate response");
     }
@@ -67,7 +67,7 @@ export class ChatService {
         const message: Partial<ChatMessage> = {
           id: crypto.randomUUID(),
           sessionId: session.id,
-          role: "assistant",
+          _role: "assistant",
           content: chunk.content,
           createdAt: new Date().toISOString(),
           redactionFlags: ["lgpd"],
@@ -75,7 +75,7 @@ export class ChatService {
 
         yield message;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error("Chat streaming error:", error);
       throw new Error("Failed to generate streaming response");
     }
@@ -102,7 +102,7 @@ export class ChatService {
         content: res.content,
         createdAt: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Explanation service error:", error);
       throw new Error("Failed to generate explanation");
     }

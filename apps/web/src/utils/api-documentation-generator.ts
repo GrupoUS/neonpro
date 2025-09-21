@@ -10,8 +10,6 @@
  * - Brazilian Portuguese descriptions and examples
  */
 
-import { z } from 'zod';
-
 // API Documentation Types
 export const API_METHODS = {
   GET: 'GET',
@@ -109,7 +107,7 @@ export const APIEndpointSchema = z.object({
         titlePtBr: z.string().optional(),
         description: z.string(),
         descriptionPtBr: z.string().optional(),
-        request: z.any(),
+        _request: z.any(),
         response: z.any(),
         healthcareContext: z.string().optional(),
         accessibilityNotes: z.string().optional(),
@@ -165,7 +163,7 @@ export interface APIDocumentationReport {
 }
 
 // Brazilian Portuguese API Labels
-export const API_LABELS_PT_BR = {
+export const _API_LABELS_PT_BR = {
   // HTTP Methods
   [API_METHODS.GET]: 'BUSCAR',
   [API_METHODS.POST]: 'CRIAR',
@@ -309,7 +307,7 @@ export class APIDocumentationGenerator {
           titlePtBr: 'Requisição Básica de Informações do Paciente',
           description: 'Standard patient data retrieval with LGPD compliance',
           descriptionPtBr: 'Recuperação padrão de dados do paciente com conformidade LGPD',
-          request: {
+          _request: {
             method: 'GET',
             url: '/api/patients/pat_123456789',
             headers: {
@@ -448,7 +446,7 @@ export class APIDocumentationGenerator {
           titlePtBr: 'Criação de Consulta Acessível',
           description: 'Creating appointment with accessibility requirements',
           descriptionPtBr: 'Criando consulta com requisitos de acessibilidade',
-          request: {
+          _request: {
             method: 'POST',
             url: '/api/appointments',
             headers: {
@@ -591,7 +589,7 @@ export class APIDocumentationGenerator {
           titlePtBr: 'Avaliação de Risco de Falta',
           description: 'AI-powered prediction for appointment attendance',
           descriptionPtBr: 'Predição com IA para comparecimento em consultas',
-          request: {
+          _request: {
             method: 'POST',
             url: '/api/ai/no-show-prediction',
             headers: {

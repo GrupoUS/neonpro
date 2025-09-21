@@ -45,8 +45,7 @@ function Calendar({
 
   const mergedClassNames: typeof defaultClassNames = Object.keys(
     defaultClassNames,
-  ).reduce(
-    (acc, key) => ({
+  ).reduce(_(acc,_key) => ({
       ...acc,
       [key]: classNames?.[key as keyof typeof classNames]
         ? cn(

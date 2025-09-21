@@ -147,7 +147,7 @@ export function ExportButton({
       toast.success("Exportação iniciada com sucesso");
 
       pollJobStatus(job.id);
-    } catch (error) {
+    } catch (_error) {
       console.error("Erro ao iniciar exportação:", error);
       toast.error(
         error instanceof Error ? error.message : "Erro ao iniciar exportação",
@@ -158,7 +158,7 @@ export function ExportButton({
   };
 
   const pollJobStatus = async (jobId: string) => {
-    const pollInterval = setInterval(async () => {
+    const pollInterval = setInterval(_async () => {
       try {
         const response = await fetch(`/api/patients/export/${jobId}`, {
           headers: {
@@ -181,7 +181,7 @@ export function ExportButton({
             toast.error(`Exportação falhou: ${job.error}`);
           }
         }
-      } catch (error) {
+      } catch (_error) {
         console.error("Erro ao verificar status da exportação:", error);
         clearInterval(pollInterval);
       }
@@ -210,7 +210,7 @@ export function ExportButton({
         document.body.removeChild(a);
         toast.success("Download iniciado");
       }
-    } catch (error) {
+    } catch (_error) {
       console.error("Erro ao baixar arquivo:", error);
       toast.error("Erro ao baixar arquivo");
     }
@@ -239,8 +239,7 @@ export function ExportButton({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  return (
-    <div className={className}>
+  return (_<div className={className}>
       <Button
         onClick={() => setIsOpen(!isOpen)}
         variant="outline"
@@ -344,7 +343,7 @@ export function ExportButton({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {EXPORT_FORMATS.map((format) => (
+                      {EXPORT_FORMATS.map(_(format) => (
                         <SelectItem key={format.value} value={format.value}>
                           <div className="flex items-center gap-2">
                             <format.icon className="h-4 w-4" />
@@ -366,7 +365,7 @@ export function ExportButton({
                 <div>
                   <Label>Opções LGPD</Label>
                   <div className="space-y-2 mt-2">
-                    {LGPD_OPTIONS.map((option) => (
+                    {LGPD_OPTIONS.map(_(option) => (
                       <div
                         key={option.id}
                         className="flex items-center space-x-2"
@@ -377,7 +376,7 @@ export function ExportButton({
                             lgpdOptions[option.id as keyof typeof lgpdOptions]
                           }
                           onCheckedChange={(checked: boolean) =>
-                            setLgpdOptions((prev) => ({
+                            setLgpdOptions(_(prev) => ({
                               ...prev,
                               [option.id]: !!checked,
                             }))

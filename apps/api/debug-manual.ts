@@ -15,7 +15,7 @@ console.log('getDocument before adding:', typeof service.getDocument);
 // Try to add the method manually
 (service as any).getDocument = async function(
   documentId: string,
-  userId: string,
+  _userId: string,
 ) {
   console.log('Manual getDocument called');
   return null;
@@ -24,5 +24,5 @@ console.log('getDocument before adding:', typeof service.getDocument);
 console.log('getDocument after adding:', typeof (service as any).getDocument);
 console.log(
   'All methods:',
-  Object.getOwnPropertyNames(Object.getPrototypeOf(service)),
+  Object.getOwnPropertyNames(Object.getPrototypeOf(_service)),
 );

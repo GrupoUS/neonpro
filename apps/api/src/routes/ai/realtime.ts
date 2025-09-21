@@ -62,7 +62,7 @@ app.post('/subscribe', async c => {
     const tokenPayload = c.get('jwtPayload');
     const userId = tokenPayload.sub;
 
-    if (!userId) {
+    if (!_userId) {
       return c.json({
         success: false,
         error: 'User ID not found in token',
@@ -121,7 +121,7 @@ app.post('/subscribe', async c => {
       success: true,
       data: {
         subscriptionId: subscription.id,
-        userId: subscription.userId,
+        _userId: subscription.userId,
         sessionId: subscription.sessionId,
         eventTypes: Array.from(subscription.eventTypes),
         isActive: subscription.isActive,
@@ -130,7 +130,7 @@ app.post('/subscribe', async c => {
       requestId,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch (_error) {
     logger.error('Error creating real-time subscription', error, {
       requestId: c.req.header('X-Request-ID'),
     });
@@ -158,7 +158,7 @@ app.delete('/unsubscribe/:subscriptionId', async c => {
     const tokenPayload = c.get('jwtPayload');
     const userId = tokenPayload.sub;
 
-    if (!userId) {
+    if (!_userId) {
       return c.json({
         success: false,
         error: 'User ID not found in token',
@@ -206,7 +206,7 @@ app.delete('/unsubscribe/:subscriptionId', async c => {
       requestId,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch (_error) {
     logger.error('Error removing real-time subscription', error, {
       requestId: c.req.header('X-Request-ID'),
       subscriptionId: c.req.param('subscriptionId'),
@@ -279,7 +279,7 @@ app.get('/analytics', async c => {
       requestId,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch (_error) {
     logger.error('Error getting real-time analytics', error, {
       requestId: c.req.header('X-Request-ID'),
     });
@@ -306,7 +306,7 @@ app.get('/subscriptions', async c => {
     const tokenPayload = c.get('jwtPayload');
     const userId = tokenPayload.sub;
 
-    if (!userId) {
+    if (!_userId) {
       return c.json({
         success: false,
         error: 'User ID not found in token',
@@ -334,7 +334,7 @@ app.get('/subscriptions', async c => {
     }
 
     // Get user subscriptions
-    const subscriptions = aguiService.getUserRealtimeSubscriptions(userId);
+    const subscriptions = aguiService.getUserRealtimeSubscriptions(_userId);
 
     logger.info('Real-time subscriptions retrieved successfully', {
       requestId,
@@ -348,7 +348,7 @@ app.get('/subscriptions', async c => {
       success: true,
       data: subscriptions.map(sub => ({
         id: sub.id,
-        userId: sub.userId,
+        _userId: sub.userId,
         sessionId: sub.sessionId,
         eventTypes: Array.from(sub.eventTypes),
         isActive: sub.isActive,
@@ -358,7 +358,7 @@ app.get('/subscriptions', async c => {
       requestId,
       timestamp: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch (_error) {
     logger.error('Error getting real-time subscriptions', error, {
       requestId: c.req.header('X-Request-ID'),
     });
@@ -378,7 +378,7 @@ app.get('/subscriptions', async c => {
 app.get('/health', c => {
   return c.json({
     status: 'healthy',
-    service: 'realtime-subscriptions',
+    _service: 'realtime-subscriptions',
     timestamp: new Date().toISOString(),
     version: '1.0.0',
   });

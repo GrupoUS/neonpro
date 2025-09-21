@@ -51,7 +51,7 @@ export function AdvancedSearchDialog({
 
   const handleApply = async () => {
     // Measure search performance
-    await measureSearch(async () => {
+    await measureSearch(_async () => {
       onApplyFilters(localFilters);
       return Promise.resolve();
     });
@@ -107,7 +107,7 @@ export function AdvancedSearchDialog({
                 onChange={e =>
                   setLocalFilters(prev => ({
                     ...prev,
-                    query: e.target.value,
+                    _query: e.target.value,
                   }))}
                 className='pl-10'
               />

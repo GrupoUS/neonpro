@@ -24,7 +24,7 @@ export const patientKeys = {
   details: () => [...patientKeys.all, 'detail'] as const,
   detail: (id: string) => [...patientKeys.details(), id] as const,
   consent: (patientId: string) => [...patientKeys.all, 'consent', patientId] as const,
-  search: (query: string) => [...patientKeys.all, 'search', query] as const,
+  search: (_query: string) => [...patientKeys.all, 'search', query] as const,
 };
 
 /**
@@ -158,7 +158,7 @@ export function useCreatePatient() {
       return { previousPatients };
     },
 
-    onSuccess: (data, _variables) => {
+    onSuccess: (_data, _variables) => {
       // Update cache with real patient data
       queryClient.setQueryData(patientKeys.detail(data.id), data);
 
@@ -176,7 +176,7 @@ export function useCreatePatient() {
       toast.success(`Paciente ${data.fullName} criado com sucesso!`);
     },
 
-    onError: (error, _variables, context) => {
+    onError: (_error, _variables,_context) => {
       // Rollback optimistic update
       if (context?.previousPatients) {
         queryClient.setQueryData(patientKeys.lists(), context.previousPatients);
@@ -205,7 +205,7 @@ export function useUpdatePatient() {
   const queryClient = useQueryClient();
 
   return trpc.patients.update.useMutation({
-    onMutate: async ({ id, data }) => {
+    onMutate: async ({ id,_data }) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: patientKeys.detail(id) });
 
@@ -233,7 +233,7 @@ export function useUpdatePatient() {
       return { previousPatient };
     },
 
-    onSuccess: (data, _variables) => {
+    onSuccess: (_data, _variables) => {
       // Update cache with server response
       queryClient.setQueryData(patientKeys.detail(data.id), data);
 
@@ -243,7 +243,7 @@ export function useUpdatePatient() {
       toast.success('Dados do paciente atualizados com sucesso!');
     },
 
-    onError: (error, _variables, context) => {
+    onError: (_error, _variables,_context) => {
       // Rollback optimistic update
       if (context?.previousPatient) {
         queryClient.setQueryData(
@@ -265,7 +265,7 @@ export function useWithdrawPatientConsent() {
   const queryClient = useQueryClient();
 
   return trpc.patients.withdrawConsent.useMutation({
-    onMutate: async ({ patientId, consentTypes }) => {
+    onMutate: async ({ patientId,_consentTypes }) => {
       // LGPD Compliance: Log consent withdrawal request
       console.log('[LGPD Audit] Consent withdrawal initiated', {
         patientId,
@@ -287,7 +287,7 @@ export function useWithdrawPatientConsent() {
       return { confirmed: true };
     },
 
-    onSuccess: (data, _variables) => {
+    onSuccess: (_data, _variables) => {
       // Remove patient from cache or mark as anonymized
       queryClient.removeQueries({
         queryKey: patientKeys.detail(variables.patientId),
@@ -305,7 +305,7 @@ export function useWithdrawPatientConsent() {
       toast.success('Consentimento retirado e dados anonimizados com sucesso.');
     },
 
-    onError: (error, _variables) => {
+    onError: (_error, _variables) => {
       if (error.message === 'Operação cancelada pelo usuário') {
         toast.info('Operação cancelada.');
         return;
@@ -345,18 +345,18 @@ export function usePatientConsentStatus(patientId: string) {
  * Hook for debounced patient search with audit logging
  */
 export function usePatientSearch(
-  query: string,
+  _query: string,
   options?: {
     delay?: number;
     minLength?: number;
   },
 ) {
   const { delay = 300, minLength = 2 } = options || {};
-  const [debouncedQuery, setDebouncedQuery] = React.useState(query);
+  const [debouncedQuery, setDebouncedQuery] = React.useState(_query);
 
-  React.useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(query);
+  React.useEffect(_() => {
+    const timer = setTimeout(_() => {
+      setDebouncedQuery(_query);
     }, delay);
 
     return () => clearTimeout(timer);
@@ -432,7 +432,7 @@ export function useBulkPatientOperations() {
   const queryClient = useQueryClient();
 
   const bulkUpdateConsent = trpc.patients.bulkUpdateConsent.useMutation({
-    onMutate: async ({ patientIds, consentUpdates }) => {
+    onMutate: async ({ patientIds,_consentUpdates }) => {
       // LGPD Compliance: Log bulk consent operation
       console.log('[LGPD Audit] Bulk consent update initiated', {
         patientCount: patientIds.length,
@@ -442,7 +442,7 @@ export function useBulkPatientOperations() {
       });
     },
 
-    onSuccess: (data, _variables) => {
+    onSuccess: (_data, _variables) => {
       // Invalidate affected patients
       variables.patientIds.forEach(_id => {
         queryClient.invalidateQueries({ queryKey: patientKeys.detail(id) });
@@ -472,7 +472,7 @@ export function useBulkPatientOperations() {
 export function usePatientRealTimeUpdates(patientId?: string) {
   const queryClient = useQueryClient();
 
-  React.useEffect(() => {
+  React.useEffect(_() => {
     if (!patientId) return;
 
     // Subscribe to real-time patient updates
@@ -537,7 +537,7 @@ export function usePatientPerformanceMetrics() {
     errorRate: 0,
   });
 
-  React.useEffect(() => {
+  React.useEffect(_() => {
     // Get performance data from tRPC performance monitor
     const performanceMonitor = (window as any).__trpc_performance_monitor;
     if (performanceMonitor) {
@@ -566,7 +566,7 @@ export function usePatientPerformanceMetrics() {
 }
 
 // Export helper functions for component usage
-export const patientUtils = {
+export const _patientUtils = {
   formatCPF: (_cpf: any) => {
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   },

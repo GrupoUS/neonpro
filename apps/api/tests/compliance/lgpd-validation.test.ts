@@ -75,7 +75,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = await createTestClient({ role: 'admin' });
+    testClient = await createTestClient({ _role: 'admin' });
 
     // Clear mock systems
     mockLGPDSystem.auditTrail.length = 0;

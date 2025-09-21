@@ -6,8 +6,6 @@
  * with patient data access tracking and security event monitoring
  */
 
-import { z } from 'zod';
-
 // ============================================================================
 // Audit Event Types & Categories
 // ============================================================================
@@ -110,7 +108,7 @@ export interface AuditEvent {
 
   // Actor information
   actor: {
-    userId?: string;
+    _userId?: string;
     userType:
       | 'patient'
       | 'healthcare_professional'
@@ -118,7 +116,7 @@ export interface AuditEvent {
       | 'system'
       | 'ai_agent';
     userName?: string;
-    role?: string;
+    _role?: string;
     professionalRegistration?: string;
     sessionId?: string;
   };
@@ -314,7 +312,7 @@ export interface AuditQueryFilters {
   fromDate?: Date;
   toDate?: Date;
   eventTypes?: AuditEventType[];
-  userId?: string;
+  _userId?: string;
   patientId?: string;
   severity?: AuditSeverity;
   outcome?: AuditOutcome;
@@ -346,7 +344,7 @@ export class DatabaseAuditStorage implements AuditStorage {
       // await db.auditEvents.create(signedEvent);
 
       console.log('[Audit] Event stored:', event.id);
-    } catch (error) {
+    } catch (_error) {
       console.error('[Audit] Failed to store event:', error);
       // Don't throw - audit failures shouldn't break application flow
     }
@@ -516,7 +514,7 @@ export class AuditTrailService {
       if (this.config.realTimeLogging) {
         await this.processRealTimeEvent(auditEvent);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('[AuditTrail] Failed to log event:', error);
       // Log audit failure as a separate event
       await this.logAuditFailure(eventType, error);
@@ -527,7 +525,7 @@ export class AuditTrailService {
    * Log patient data access
    */
   async logPatientDataAccess(
-    userId: string,
+    _userId: string,
     userType: AuditEvent['actor']['userType'],
     patientId: string,
     dataType: string,
@@ -571,7 +569,7 @@ export class AuditTrailService {
    * Log emergency access
    */
   async logEmergencyAccess(
-    userId: string,
+    _userId: string,
     patientId: string,
     justification: string,
     accessType: 'break_glass' | 'emergency_override',
@@ -620,7 +618,7 @@ export class AuditTrailService {
   async logSecurityViolation(
     violationType: string,
     description: string,
-    userId?: string,
+    _userId?: string,
     technicalContext: Partial<AuditEvent['technicalContext']> = {},
     additionalData: Record<string, any> = {},
   ): Promise<void> {
@@ -667,7 +665,7 @@ export class AuditTrailService {
     await this.logEvent(
       AuditEventType.DATA_SUBJECT_REQUEST,
       {
-        userId: dataSubjectId,
+        _userId: dataSubjectId,
         userType: 'patient',
       },
       {
@@ -709,7 +707,7 @@ export class AuditTrailService {
     await this.logEvent(
       AuditEventType.AUDIT_LOG_EXPORT,
       {
-        userId: 'system', // This would be the requesting user
+        _userId: 'system', // This would be the requesting user
         userType: 'admin',
       },
       {
@@ -868,7 +866,7 @@ export class AuditTrailService {
     healthcareContext?: AuditEvent['healthcareContext'],
   ): AuditEvent['compliance'] {
     const isPatientData = resource.type === 'patient' || resource.type === 'medical_record';
-    const isSecurityEvent = eventType.includes('security') || eventType.includes('violation');
+    const _isSecurityEvent = eventType.includes('security') || eventType.includes('violation');
 
     return {
       lgpdRelevant: isPatientData || eventType.includes('data_subject'),
@@ -954,7 +952,7 @@ export class AuditTrailService {
 
       // Try to store the failure event
       console.error('[Audit] Audit failure event:', failureEvent);
-    } catch (nestedError) {
+    } catch (_nestedError) {
       // If we can't even log the failure, just console log
       console.error('[Audit] Critical: Cannot log audit failure:', nestedError);
     }
@@ -999,12 +997,12 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
           },
         );
       }
-    } catch (error) {
+    } catch (_error) {
       // Log failed request
       await auditService.logEvent(
         AuditEventType.SYSTEM_CONFIGURATION_CHANGE,
         {
-          userId: userId || 'anonymous',
+          _userId: userId || 'anonymous',
           userType: 'healthcare_professional',
           sessionId,
         },

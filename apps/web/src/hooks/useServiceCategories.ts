@@ -135,7 +135,7 @@ export function useDeleteServiceCategory() {
 
   return useMutation({
     mutationFn: (categoryId: string) => serviceCategoriesService.deleteServiceCategory(categoryId),
-    onSuccess: (_, categoryId) => {
+    onSuccess: (_,_categoryId) => {
       // Remove the category from the cache
       queryClient.removeQueries({
         queryKey: serviceCategoryKeys.detail(categoryId),
@@ -165,7 +165,7 @@ export function useInitializeDefaultCategories() {
   return useMutation({
     mutationFn: (clinicId: string) =>
       serviceCategoriesService.initializeDefaultCategories(clinicId),
-    onSuccess: (categories, clinicId) => {
+    onSuccess: (_categories,_clinicId) => {
       // Add categories to cache
       categories.forEach(_category => {
         queryClient.setQueryData(

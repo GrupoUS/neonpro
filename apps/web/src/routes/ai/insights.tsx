@@ -87,7 +87,7 @@ function AIInsightsPage() {
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
   const [timeRange, setTimeRange] = useState<string>('7d');
 
-  useEffect(() => {
+  useEffect(_() => {
     const fetchAIInsights = async () => {
       try {
         setLoading(true);
@@ -296,7 +296,7 @@ function AIInsightsPage() {
         setInsights(mockInsights);
         setModels(mockModels);
         setTrends(mockTrends);
-      } catch (error) {
+      } catch (_error) {
         setError('Erro ao carregar insights de IA');
         console.error(error);
       } finally {
@@ -375,23 +375,21 @@ function AIInsightsPage() {
   };
 
   const calculateTotalPatientsImpacted = () => {
-    return insights.reduce(
-      (total, insight) => total + (insight.patientCount || 0),
+    return insights.reduce(_(total,_insight) => total + (insight.patientCount || 0),
       0,
     );
   };
 
   const getAverageAccuracy = () => {
     if (models.length === 0) return 0;
-    return Math.round(
-      models.reduce((sum, model) => sum + model.accuracy, 0) / models.length,
+    return Math.round(_models.reduce((sum,_model) => sum + model.accuracy, 0) / models.length,
     );
   };
 
   const refreshInsights = () => {
     setLoading(true);
     // Simulate refresh
-    setTimeout(() => setLoading(false), 1000);
+    setTimeout(_() => setLoading(false), 1000);
   };
 
   if (loading) {
@@ -791,7 +789,7 @@ function AIInsightsPage() {
 
                           {/* Data Visualization */}
                           <div className='grid grid-cols-2 md:grid-cols-5 gap-2'>
-                            {insight.data.labels.map((label, _index) => (
+                            {insight.data.labels.map(_(label, _index) => (
                               <div key={index} className='text-center'>
                                 <div className='text-xs text-muted-foreground'>
                                   {label}
@@ -809,8 +807,7 @@ function AIInsightsPage() {
                               Recomendações:
                             </h4>
                             <ul className='text-sm space-y-1'>
-                              {insight.recommendations.map(
-                                (recommendation, _index) => (
+                              {insight.recommendations.map(_(recommendation, _index) => (
                                   <li
                                     key={index}
                                     className='flex items-start gap-2'
@@ -933,7 +930,7 @@ function AIInsightsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className='space-y-2'>
-                    {trends.map((trend, _index) => (
+                    {trends.map(_(trend, _index) => (
                       <div
                         key={index}
                         className='flex items-center justify-between'
@@ -970,15 +967,14 @@ function AIInsightsPage() {
                       </span>
                       <span className='text-lg font-bold'>
                         {trends
-                          .reduce((sum, trend) => sum + trend.predictions, 0)
+                          .reduce(_(sum,_trend) => sum + trend.predictions, 0)
                           .toLocaleString()}
                       </span>
                     </div>
                     <div className='flex justify-between items-center'>
                       <span className='text-sm'>Impacto Médio Diário</span>
                       <span className='text-lg font-bold'>
-                        {Math.round(
-                          trends.reduce((sum, trend) => sum + trend.impact, 0)
+                        {Math.round(_trends.reduce((sum,_trend) => sum + trend.impact, 0)
                             / trends.length,
                         )}
                         %
@@ -1009,6 +1005,6 @@ function AIInsightsPage() {
   );
 }
 
-export const Route = createFileRoute('/ai/insights')({
+export const _Route = createFileRoute('/ai/insights')({
   component: AIInsightsPage,
 });

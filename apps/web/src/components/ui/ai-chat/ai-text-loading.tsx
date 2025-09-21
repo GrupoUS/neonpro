@@ -16,8 +16,8 @@ export default function AITextLoading({
 }: AITextLoadingProps) {
   const [dots, setDots] = useState('');
 
-  useEffect(() => {
-    const interval = setInterval(() => {
+  useEffect(_() => {
+    const interval = setInterval(_() => {
       setDots(prev => {
         if (prev.length >= 3) return '';
         return prev + '.';

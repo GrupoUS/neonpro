@@ -59,7 +59,7 @@ export async function initializeErrorTracking(): Promise<void> {
       environment: errorTrackingConfig.sentry.environment,
       healthcare: errorTrackingConfig.healthcare,
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('❌ Failed to initialize error tracking:', error);
 
     // Even if initialization fails, we should continue with the application
@@ -102,7 +102,7 @@ export async function shutdownErrorTracking(): Promise<void> {
 
     isInitialized = false;
     console.log('🏁 Error tracking shutdown complete');
-  } catch (error) {
+  } catch (_error) {
     console.error('❌ Error during error tracking shutdown:', error);
   }
 }
@@ -185,7 +185,7 @@ export async function testErrorTracking(): Promise<{
 
     // Global handlers are always available once initialized
     results.globalHandlers = isInitialized;
-  } catch (error) {
+  } catch (_error) {
     console.error('Error tracking test failed:', error);
   }
 

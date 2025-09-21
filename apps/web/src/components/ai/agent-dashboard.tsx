@@ -70,7 +70,7 @@ export function AgentDashboard({
   const { searchEntries, isSearching } = useKnowledgeBaseManager();
 
   // Start new session when agent is selected
-  useEffect(() => {
+  useEffect(_() => {
     if (selectedAgent && !currentSessionId) {
       startNewSession({
         agent_type: selectedAgent,
@@ -92,7 +92,7 @@ export function AgentDashboard({
   ]);
 
   // End session when switching agents
-  useEffect(() => {
+  useEffect(_() => {
     return () => {
       if (currentSessionId) {
         endCurrentSession('User switched agents');
@@ -302,7 +302,7 @@ export function AgentDashboard({
               <CardContent>
                 <ScrollArea className='max-h-64'>
                   <div className='space-y-2'>
-                    {analytics?.data?.top_queries?.map((query, _index) => (
+                    {analytics?.data?.top_queries?.map(_(query, _index) => (
                       <div
                         key={index}
                         className='flex items-center justify-between p-2 rounded bg-muted'
@@ -596,8 +596,7 @@ export function AgentDashboard({
                     </Badge>
                   </div>
 
-                  {currentSessionId && (
-                    <Button
+                  {currentSessionId && (_<Button
                       variant='outline'
                       onClick={() => endCurrentSession('User ended session')}
                       disabled={isArchiving}

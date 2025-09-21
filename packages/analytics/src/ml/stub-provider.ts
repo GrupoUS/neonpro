@@ -155,12 +155,12 @@ export class StubModelProvider implements ModelProvider {
     for (let i = 0; i < input.inputs.length; i += maxConcurrency) {
       const batch = input.inputs.slice(i, i + maxConcurrency);
 
-      const batchPromises = batch.map(async (predInput) => {
+      const batchPromises = batch.map(_async (predInput) => {
         try {
           const result = await this.predict(predInput);
           successful++;
           return result;
-        } catch (error) {
+        } catch (_error) {
           failed++;
           // Return error as prediction result for batch processing
           return {
@@ -207,8 +207,7 @@ export class StubModelProvider implements ModelProvider {
 
     // Check required features
     const requiredFeatures = this._metadata.requiredFeatures;
-    const missingFeatures = requiredFeatures.filter(
-      (feature) => !(feature in input.features),
+    const missingFeatures = requiredFeatures.filter(_(feature) => !(feature in input.features),
     );
 
     if (missingFeatures.length > 0) {
@@ -256,7 +255,7 @@ export class StubModelProvider implements ModelProvider {
   // ============================================================================
 
   private async _delay(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(_(resolve) => setTimeout(resolve, ms));
   }
 
   private _generateMockPrediction(input: PredictionInput): {
@@ -347,11 +346,11 @@ export class StubModelProvider implements ModelProvider {
 
     return features
       .slice(0, 5)
-      .map((feature, index) => ({
+      .map(_(feature,_index) => ({
         feature,
         importance: Math.max(0.1, Math.random() * (1 - index * 0.15)),
         description: `Impact of ${feature} on ${input.type} prediction`,
       }))
-      .sort((a, b) => b.importance - a.importance);
+      .sort(_(a,_b) => b.importance - a.importance);
   }
 }

@@ -64,7 +64,7 @@ export class CalendarLGPDConsentService {
   async validateCalendarConsent(
     patientId: string,
     purpose: CalendarLGPDPurpose,
-    userId: string,
+    _userId: string,
     userRole: string,
   ): Promise<ConsentValidationResult> {
     try {
@@ -155,7 +155,7 @@ export class CalendarLGPDConsentService {
         isExplicit,
         legalBasis: matchingConsent.legal_basis || 'consent',
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in validateCalendarConsent:', error);
       return {
         isValid: false,
@@ -174,7 +174,7 @@ export class CalendarLGPDConsentService {
    */
   async getDataMinimizationLevel(
     patientId: string,
-    userId: string,
+    _userId: string,
     userRole: string,
   ): Promise<DataMinimizationLevel> {
     try {
@@ -201,7 +201,7 @@ export class CalendarLGPDConsentService {
       } else {
         return DataMinimizationLevel.RESTRICTED;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error determining data minimization level:', error);
       return DataMinimizationLevel.MINIMAL; // Fail safely
     }
@@ -212,7 +212,7 @@ export class CalendarLGPDConsentService {
    */
   async minimizeAppointmentData(
     appointment: CalendarAppointment,
-    userId: string,
+    _userId: string,
     userRole: string,
   ): Promise<MinimizedCalendarAppointment> {
     try {
@@ -269,7 +269,7 @@ export class CalendarLGPDConsentService {
         default:
           return baseMinimized;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error minimizing appointment data:', error);
       // Return minimal data on error
       return {
@@ -290,7 +290,7 @@ export class CalendarLGPDConsentService {
    */
   async processAppointmentsWithCompliance(
     appointments: CalendarAppointment[],
-    userId: string,
+    _userId: string,
     userRole: string,
   ): Promise<{
     compliantAppointments: MinimizedCalendarAppointment[];
@@ -336,7 +336,7 @@ export class CalendarLGPDConsentService {
               timestamp: new Date().toISOString(),
             });
           }
-        } catch (error) {
+        } catch (_error) {
           console.error(
             `Error processing appointment ${appointment.id}:`,
             error,
@@ -365,7 +365,7 @@ export class CalendarLGPDConsentService {
         consentIssues,
         auditLogId,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in batch processing:', error);
       return {
         compliantAppointments: [],
@@ -422,7 +422,7 @@ export class CalendarLGPDConsentService {
   private async logConsentValidation(
     patientId: string,
     purpose: CalendarLGPDPurpose,
-    userId: string,
+    _userId: string,
     userRole: string,
     consentId: string,
     isExplicit: boolean,
@@ -444,7 +444,7 @@ export class CalendarLGPDConsentService {
           validation_method: 'calendar_service',
         },
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error logging consent validation:', error);
       // Don't throw error for audit logging failures
     }
@@ -454,7 +454,7 @@ export class CalendarLGPDConsentService {
    * Log batch processing for audit
    */
   private async logBatchProcessing(
-    userId: string,
+    _userId: string,
     userRole: string,
     actions: any[],
   ): Promise<string | undefined> {
@@ -479,11 +479,11 @@ export class CalendarLGPDConsentService {
         .single();
 
       return log?.id;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error logging batch processing:', error);
       return undefined;
     }
   }
 }
 
-export const calendarLGPDConsentService = new CalendarLGPDConsentService();
+export const _calendarLGPDConsentService = new CalendarLGPDConsentService();

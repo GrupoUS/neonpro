@@ -170,11 +170,8 @@ const updatePredictionStatus = async (data: {
 /**
  * PredictionCard - Individual prediction display component
  */
-const PredictionCard = ({
-  prediction,
-  onStatusUpdate,
-  lgpdConsent,
-  mobileOptimized = true,
+const PredictionCard = (_{
+  prediction,_onStatusUpdate,_lgpdConsent,_mobileOptimized = true,
 }: {
   prediction: NoShowPrediction;
   onStatusUpdate: (id: string, status: string, action?: string) => void;
@@ -324,7 +321,7 @@ const PredictionCard = ({
               <div>
                 <h4 className='text-sm font-medium mb-2'>Fatores de Risco:</h4>
                 <div className='space-y-1'>
-                  {prediction.factors.slice(0, 3).map((factor, _index) => (
+                  {prediction.factors.slice(0, 3).map(_(factor, _index) => (
                     <div
                       key={index}
                       className='flex items-start gap-2 text-sm text-muted-foreground'
@@ -369,8 +366,7 @@ const PredictionCard = ({
 
         {/* Action Buttons */}
         <div className='flex gap-2 pt-3 border-t'>
-          {prediction.status === 'pending' && (
-            <>
+          {prediction.status === 'pending' && (_<>
               <Button
                 variant='outline'
                 size='sm'
@@ -401,8 +397,7 @@ const PredictionCard = ({
             </>
           )}
 
-          {prediction.status === 'contacted' && (
-            <Button
+          {prediction.status === 'contacted' && (_<Button
               variant='outline'
               size='sm'
               onClick={() =>
@@ -435,23 +430,17 @@ const PredictionCard = ({
  * NoShowAlerts - Main component
  */
 export const NoShowAlerts = ({
-  timeRange: initialTimeRange = '48h',
-  riskThreshold = 50,
-  highRiskOnly = false,
+  timeRange: initialTimeRange = '48h',_riskThreshold = 50,_highRiskOnly = false,
   healthcareProfessional: _healthcareProfessional, // unused by design
   lgpdConsent = {
     canViewPatientData: true,
     canSendNotifications: true,
-    consentLevel: 'full',
-  },
+    consentLevel: 'full',_},
   alertSettings = {
     enableNotifications: true,
     enableSMS: false,
     enableEmail: true,
-    autoActions: false,
-  },
-  mobileOptimized = true,
-  testId = 'noshow-alerts',
+    autoActions: false,_},_mobileOptimized = true,_testId = 'noshow-alerts',
 }: NoShowAlertsProps) => {
   const [timeRange, setTimeRange] = useState(initialTimeRange);
   const [showHighRiskOnly, setShowHighRiskOnly] = useState(highRiskOnly);
@@ -468,11 +457,7 @@ export const NoShowAlerts = ({
     error,
   } = useQuery({
     queryKey: [
-      'noshow-predictions',
-      timeRange,
-      riskThreshold,
-      showHighRiskOnly,
-    ],
+      'noshow-predictions',_timeRange,_riskThreshold,_showHighRiskOnly,_],
     queryFn: () =>
       fetchNoShowPredictions({
         timeRange,
@@ -505,7 +490,7 @@ export const NoShowAlerts = ({
   );
 
   // Memoized statistics
-  const stats = useMemo(() => {
+  const stats = useMemo(_() => {
     if (!predictions?.data?.predictions) return null;
 
     const preds = predictions.data.predictions;
@@ -535,8 +520,7 @@ export const NoShowAlerts = ({
     );
   }
 
-  return (
-    <div className='space-y-6' data-testid={testId}>
+  return (_<div className='space-y-6' data-testid={testId}>
       {/* Header */}
       <div className='flex items-center justify-between'>
         <div>
@@ -676,7 +660,7 @@ export const NoShowAlerts = ({
       {isLoading
         ? (
           <div className='space-y-4'>
-            {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className='h-48' />)}
+            {Array.from({ length: 3 }).map(_(_,_i) => <Skeleton key={i} className='h-48' />)}
           </div>
         )
         : predictions?.data?.predictions?.length > 0

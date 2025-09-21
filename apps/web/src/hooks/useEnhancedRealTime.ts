@@ -35,9 +35,9 @@ export type RealTimeEventType = 'INSERT' | 'UPDATE' | 'DELETE';
 export interface RealTimeSubscriptionOptions {
   tableName: string;
   filter?: string;
-  onInsert?: (payload: any) => void;
-  onUpdate?: (payload: any) => void;
-  onDelete?: (payload: any) => void;
+  onInsert?: (_payload: any) => void;
+  onUpdate?: (_payload: any) => void;
+  onDelete?: (_payload: any) => void;
   enableNotifications?: boolean;
   enableOptimisticUpdates?: boolean;
   rateLimitMs?: number;
@@ -94,11 +94,11 @@ export function useEnhancedRealTime() {
   }, []);
 
   // Calculate latency
-  const measureLatency = useCallback(() => {
+  const measureLatency = useCallback(_() => {
     latencyTimerRef.current = Date.now();
   }, []);
 
-  const recordLatency = useCallback(() => {
+  const recordLatency = useCallback(_() => {
     if (latencyTimerRef.current > 0) {
       const latency = Date.now() - latencyTimerRef.current;
       updateMetrics({ latency });
@@ -135,7 +135,7 @@ export function useEnhancedRealTime() {
   );
 
   // Reconnection logic with exponential backoff
-  const attemptReconnection = useCallback(() => {
+  const attemptReconnection = useCallback(_() => {
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
     }
@@ -145,10 +145,10 @@ export function useEnhancedRealTime() {
       30000,
     );
 
-    reconnectTimeoutRef.current = setTimeout(() => {
+    reconnectTimeoutRef.current = setTimeout(_() => {
       handleConnectionChange('reconnecting');
       // Trigger reconnection by re-establishing subscriptions
-      subscriptionsRef.current.forEach((subscription, key) => {
+      subscriptionsRef.current.forEach(_(subscription,_key) => {
         subscription.unsubscribe();
         subscriptionsRef.current.delete(key);
       });
@@ -192,7 +192,7 @@ export function useEnhancedRealTime() {
             recordLatency();
 
             // Update metrics
-            const now = Date.now();
+            const _now = Date.now();
             updateMetrics({
               messagesReceived: metricsRef.current.messagesReceived + 1,
               lastEventTimestamp: now,
@@ -208,13 +208,13 @@ export function useEnhancedRealTime() {
             // Handle different event types
             switch (payload.eventType) {
               case 'INSERT':
-                onInsert?.(payload);
+                onInsert?.(_payload);
                 break;
               case 'UPDATE':
-                onUpdate?.(payload);
+                onUpdate?.(_payload);
                 break;
               case 'DELETE':
-                onDelete?.(payload);
+                onDelete?.(_payload);
                 break;
             }
 
@@ -256,7 +256,7 @@ export function useEnhancedRealTime() {
   }, []);
 
   // Cleanup subscriptions
-  const cleanup = useCallback(() => {
+  const cleanup = useCallback(_() => {
     subscriptionsRef.current.forEach(_subscription => {
       subscription.unsubscribe();
     });
@@ -271,7 +271,7 @@ export function useEnhancedRealTime() {
   }, [updateMetrics, handleConnectionChange]);
 
   // Cleanup on unmount
-  useEffect(() => {
+  useEffect(_() => {
     return cleanup;
   }, [cleanup]);
 
@@ -321,7 +321,7 @@ export function useRealTimeNotifications(
       }
 
       // Rate limiting
-      const now = Date.now();
+      const _now = Date.now();
       if (now - lastNotificationRef.current < settings.rateLimitMs) {
         return;
       }
@@ -335,7 +335,7 @@ export function useRealTimeNotifications(
         try {
           const audio = new Audio('/sounds/notification.mp3');
           audio.volume = 0.3;
-          audio.play().catch(() => {
+          audio.play().catch(_() => {
             // Ignore audio play errors (user interaction required)
           });
         } catch {
@@ -361,7 +361,7 @@ export function useRealTimePatientSync(clinicId: string) {
   const { showNotification } = useRealTimeNotifications();
   const queryClient = useQueryClient();
 
-  useEffect(() => {
+  useEffect(_() => {
     if (!clinicId) return;
 
     const subscription = subscribe({

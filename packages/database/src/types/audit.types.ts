@@ -29,7 +29,7 @@ export interface ComplianceCheck {
  */
 export interface DataAccessAudit {
   id: string;
-  userId: string;
+  _userId: string;
   patientId: string;
   dataType: string;
   action: 'read' | 'write' | 'delete' | 'export';
@@ -54,7 +54,7 @@ export interface PrivateLogEntry {
  */
 export interface AuditLogRequest {
   sessionId?: string;
-  userId: string;
+  _userId: string;
   action: string;
   eventType?: string; // Legacy support
   userRole?: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
@@ -116,7 +116,7 @@ export interface ComplianceReport {
 export interface AuditSearchCriteria {
   startDate?: string | Date;
   endDate?: string | Date;
-  userId?: string;
+  _userId?: string;
   userIds?: string[]; // Multiple user IDs
   sessionIds?: string[]; // Multiple session IDs
   action?: string;
@@ -184,7 +184,7 @@ export interface RTCAuditLogEntry {
   timestamp: Date | string;
   event?: string; // Add missing property
   sessionId?: string;
-  userId: string;
+  _userId: string;
   action: string;
   userRole?: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
   resourceType?: ResourceType; // Make optional

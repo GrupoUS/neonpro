@@ -57,7 +57,7 @@ export interface LGPDAuditLog {
   action: LGPDAuditAction;
   dataCategory: string[];
   purpose: CalendarLGPDPurpose;
-  userId: string;
+  _userId: string;
   userRole: string;
   ipAddress?: string;
   userAgent?: string;
@@ -97,7 +97,7 @@ export interface AuditDetails {
 // Audit filtering and search criteria
 export interface AuditFilter {
   patientId?: string;
-  userId?: string;
+  _userId?: string;
   action?: LGPDAuditAction[];
   dateRange?: {
     start: Date;
@@ -121,7 +121,7 @@ export interface AuditReport {
     severity: string;
   }>;
   userActivity: Array<{
-    userId: string;
+    _userId: string;
     userRole: string;
     operationCount: number;
     lastActivity: Date;
@@ -147,11 +147,11 @@ export class CalendarLGPDAuditService {
    */
   async logAppointmentAccess(
     appointment: CalendarAppointment,
-    userId: string,
+    _userId: string,
     userRole: string,
     consentResult: ConsentValidationResult,
     minimizationLevel: DataMinimizationLevel,
-    context: 'view' | 'edit' | 'export' = 'view',
+    _context: 'view' | 'edit' | 'export' = 'view',
     metadata?: Partial<AuditDetails>,
   ): Promise<string> {
     try {
@@ -203,7 +203,7 @@ export class CalendarLGPDAuditService {
       }
 
       return log.id;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in logAppointmentAccess:', error);
       throw error;
     }
@@ -214,7 +214,7 @@ export class CalendarLGPDAuditService {
    */
   async logBatchOperation(
     appointments: CalendarAppointment[],
-    userId: string,
+    _userId: string,
     userRole: string,
     action: LGPDAuditAction,
     purpose: CalendarLGPDPurpose,
@@ -271,7 +271,7 @@ export class CalendarLGPDAuditService {
       }
 
       return log.id;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in logBatchOperation:', error);
       throw error;
     }
@@ -282,11 +282,11 @@ export class CalendarLGPDAuditService {
    */
   async logConsentValidation(
     patientId: string,
-    userId: string,
+    _userId: string,
     userRole: string,
     purpose: CalendarLGPDPurpose,
     consentResult: ConsentValidationResult,
-    context: 'calendar_view' | 'appointment_access' | 'data_export',
+    _context: 'calendar_view' | 'appointment_access' | 'data_export',
   ): Promise<string> {
     try {
       const auditLog: LGPDAuditLog = {
@@ -324,7 +324,7 @@ export class CalendarLGPDAuditService {
       }
 
       return log.id;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in logConsentValidation:', error);
       throw error;
     }
@@ -335,12 +335,12 @@ export class CalendarLGPDAuditService {
    */
   async logDataMinimization(
     patientId: string,
-    userId: string,
+    _userId: string,
     userRole: string,
     originalData: CalendarAppointment,
     minimizedData: any,
     minimizationLevel: DataMinimizationLevel,
-    context: string,
+    _context: string,
   ): Promise<string> {
     try {
       const auditLog: LGPDAuditLog = {
@@ -377,7 +377,7 @@ export class CalendarLGPDAuditService {
       }
 
       return log.id;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in logDataMinimization:', error);
       throw error;
     }
@@ -397,8 +397,8 @@ export class CalendarLGPDAuditService {
       if (filter?.patientId) {
         query = query.eq('patient_id', filter.patientId);
       }
-      if (filter?.userId) {
-        query = query.eq('user_id', filter.userId);
+      if (filter?._userId) {
+        query = query.eq('user_id', filter._userId);
       }
       if (filter?.action?.length) {
         query = query.in('action', filter.action);
@@ -423,7 +423,7 @@ export class CalendarLGPDAuditService {
       }
 
       return this.analyzeAuditLogs(logs || []);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in generateComplianceReport:', error);
       throw error;
     }
@@ -460,7 +460,7 @@ export class CalendarLGPDAuditService {
         ...log,
         timestamp: new Date(log.timestamp),
       })) as LGPDAuditLog[];
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in getPatientAuditLogs:', error);
       throw error;
     }
@@ -541,7 +541,7 @@ export class CalendarLGPDAuditService {
   private assessRiskLevel(
     consentResult: ConsentValidationResult,
     minimizationLevel: DataMinimizationLevel,
-    context: 'view' | 'edit' | 'export',
+    _context: 'view' | 'edit' | 'export',
   ): 'low' | 'medium' | 'high' | 'critical' {
     if (!consentResult.isValid) return 'high';
     if (
@@ -692,5 +692,5 @@ const CALENDAR_LGPD_PURPOSES = {
   MEDICAL_CARE_ACCESS: 'medical_care_access' as const,
 };
 
-export const calendarLGPDAuditService = new CalendarLGPDAuditService();
+export const _calendarLGPDAuditService = new CalendarLGPDAuditService();
 export { CALENDAR_LGPD_PURPOSES };

@@ -4,19 +4,16 @@ import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the actual calendar component since we're testing integration logic
-vi.mock('@/components/event-calendar/event-calendar', () => ({
+vi.mock(_'@/components/event-calendar/event-calendar',_() => ({
   EventCalendar: vi.fn((props: any) => {
     const { events, onEventUpdate, onEventDelete, onEventAdd, className } = props;
-    return React.createElement('div', {
-      'data-testid': 'event-calendar',
-      className,
-    }, [
+    return React.createElement(_'div', {
+      'data-testid': 'event-calendar',_className,_},_[
       React.createElement(
         'div',
         {
           key: 'calendar-events',
-          'data-testid': 'calendar-events',
-        },
+          'data-testid': 'calendar-events',_},
         events.map((event: any) =>
           React.createElement('div', {
             key: event.id,
@@ -24,15 +21,15 @@ vi.mock('@/components/event-calendar/event-calendar', () => ({
           }, event.title)
         ),
       ),
-      React.createElement('button', {
+      React.createElement(_'button', {
         key: 'update-btn',
         onClick: () => onEventUpdate?.(events[0] || {}, {}),
       }, 'Update Event'),
-      React.createElement('button', {
+      React.createElement(_'button', {
         key: 'delete-btn',
         onClick: () => onEventDelete?.('test-id'),
       }, 'Delete Event'),
-      React.createElement('button', {
+      React.createElement(_'button', {
         key: 'add-btn',
         onClick: () => onEventAdd?.({}),
       }, 'Add Event'),
@@ -41,10 +38,10 @@ vi.mock('@/components/event-calendar/event-calendar', () => ({
 }));
 
 // Rest of your test implementation...
-describe('LGPD Calendar Integration Tests', () => {
+describe(_'LGPD Calendar Integration Tests',_() => {
   let queryClient: QueryClient;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },
@@ -54,11 +51,11 @@ describe('LGPD Calendar Integration Tests', () => {
     vi.clearAllMocks();
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     queryClient.clear();
   });
 
-  it('should render calendar component with proper data handling', () => {
+  it(_'should render calendar component with proper data handling',_() => {
     // Your test implementation here
     expect(true).toBe(true); // Placeholder
   });

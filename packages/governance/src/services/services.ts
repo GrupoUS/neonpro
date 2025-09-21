@@ -12,7 +12,7 @@ import {
 
 // Shared basic types
 interface ServiceContext {
-  userId?: string;
+  _userId?: string;
 }
 
 // KPI Service -------------------------------------------------------------
@@ -94,7 +94,7 @@ export class InMemoryKPIService {
   }
   // Provisional aging check used in scenario test
   agingCheck(now: Date = new Date()) {
-    return [...this.store.values()].filter((k) =>
+    return [...this.store.values()].filter(_(k) =>
       isProvisionalAging(k.provisionalSince, now),
     );
   }

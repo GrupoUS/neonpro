@@ -149,7 +149,7 @@ class AnalyticsService {
           ? (noShowAppointments / totalAppointments) * 100
           : 0,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting appointment metrics:', error);
       return {
         totalAppointments: 0,
@@ -193,7 +193,7 @@ class AnalyticsService {
 
       const totalRevenue = (
         appointments as Array<{ total_amount: number | null }> | undefined
-      )?.reduce((sum: number, apt) => sum + (apt.total_amount || 0), 0) || 0;
+      )?.reduce((sum: number,_apt) => sum + (apt.total_amount || 0), 0) || 0;
       const averageTicket = appointments?.length
         ? totalRevenue / appointments.length
         : 0;
@@ -202,7 +202,7 @@ class AnalyticsService {
       const serviceRevenue = new Map<string, ServiceRevenueBreakdown>();
       (appointments as any[])?.forEach((_apt: any) => {
         const service = apt.service_types;
-        if (service) {
+        if (_service) {
           const existing = serviceRevenue.get(service.id) || {
             serviceId: service.id,
             serviceName: service.name,
@@ -287,7 +287,7 @@ class AnalyticsService {
         revenueByProfessional,
         monthlyRevenue,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting revenue metrics:', error);
       return {
         totalRevenue: 0,
@@ -372,7 +372,7 @@ class AnalyticsService {
       });
 
       const topPatientsByFrequency = Array.from(patientFrequency.values())
-        .sort((a, b) => b.appointmentCount - a.appointmentCount)
+        .sort(_(a,_b) => b.appointmentCount - a.appointmentCount)
         .slice(0, 10);
 
       const returningPatients = Array.from(patientFrequency.values()).filter(
@@ -423,7 +423,7 @@ class AnalyticsService {
         topPatientsByFrequency,
         patientAcquisitionTrend,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting patient analytics:', error);
       return {
         totalPatients: 0,
@@ -497,7 +497,7 @@ class AnalyticsService {
             * 100
           : 0,
       }));
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting professional performance:', error);
       return [];
     }
@@ -548,10 +548,9 @@ class AnalyticsService {
         }
       });
 
-      return Array.from(serviceStats.values()).sort(
-        (a, b) => b.appointmentCount - a.appointmentCount,
+      return Array.from(serviceStats.values()).sort(_(a,_b) => b.appointmentCount - a.appointmentCount,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting popular services:', error);
       return [];
     }
@@ -604,7 +603,7 @@ class AnalyticsService {
       }
 
       return csvContent;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error exporting analytics to CSV:', error);
       throw error;
     }
@@ -678,4 +677,4 @@ class AnalyticsService {
   }
 }
 
-export const analyticsService = new AnalyticsService();
+export const _analyticsService = new AnalyticsService();

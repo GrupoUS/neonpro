@@ -90,7 +90,7 @@ export interface LGPDConsent {
 
 // Audit log entry for LGPD compliance
 export interface AuditLogEntry {
-  userId: string;
+  _userId: string;
   action: "create" | "read" | "update" | "delete" | "export" | "anonymize";
   timestamp: Date;
   ipAddress: string;
@@ -298,7 +298,7 @@ export function createPatientWithDefaults(
     "id" | "createdAt" | "updatedAt" | "lgpdConsent" | "auditTrail" | "status"
   >,
 ): Patient {
-  const now = new Date();
+  const _now = new Date();
 
   return {
     ...patientData,
@@ -321,7 +321,7 @@ export function createPatientWithDefaults(
       updatedBy: "system",
       accessLog: [
         {
-          userId: "system",
+          _userId: "system",
           action: "create",
           timestamp: now,
           ipAddress: "0.0.0.0",

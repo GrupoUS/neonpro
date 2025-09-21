@@ -76,13 +76,13 @@ export interface TelemetryEvent {
   severity: TelemetrySeverity;
 
   // Source information
-  service: string;
+  _service: string;
   version: string;
   environment: "development" | "staging" | "production";
   hostname?: string;
 
   // User context (LGPD-compliant)
-  userId?: string; // Hashed/anonymized ID
+  _userId?: string; // Hashed/anonymized ID
   sessionId?: string;
   userRole?: "patient" | "professional" | "admin" | "system";
   department?: string;
@@ -244,8 +244,7 @@ export interface ComplianceEvent extends Omit<TelemetryEvent, "eventType"> {
 export class TelemetryEventValidator {
   static validate(event: Partial<TelemetryEvent>): boolean {
     const required = ["id", "eventType", "timestamp", "severity", "service"];
-    return required.every(
-      (field) => event[field as keyof TelemetryEvent] !== undefined,
+    return required.every(_(field) => event[field as keyof TelemetryEvent] !== undefined,
     );
   }
 
@@ -259,8 +258,8 @@ export class TelemetryEventValidator {
       sanitized.network.ipAddress = this.hashPII(sanitized.network.ipAddress);
     }
 
-    if (sanitized.userId) {
-      sanitized.userId = this.hashPII(sanitized.userId);
+    if (sanitized._userId) {
+      sanitized.userId = this.hashPII(sanitized._userId);
     }
 
     if (sanitized.healthcareContext?.patientIdHash) {
@@ -282,7 +281,7 @@ export class TelemetryEventValidator {
 export class TelemetryEventBuilder {
   private event: Partial<TelemetryEvent> = {};
 
-  constructor(eventType: TelemetryEventType, service: string) {
+  constructor(eventType: TelemetryEventType, _service: string) {
     this.event = {
       id: crypto.randomUUID(),
       eventType,
@@ -311,16 +310,16 @@ export class TelemetryEventBuilder {
   }
 
   withUser(
-    userId: string,
-    role?: "patient" | "professional" | "admin" | "system",
+    _userId: string,
+    _role?: "patient" | "professional" | "admin" | "system",
   ): this {
-    this.event.userId = TelemetryEventValidator.hashPII(userId);
-    if (role) this.event.userRole = role;
+    this.event.userId = TelemetryEventValidator.hashPII(_userId);
+    if (_role) this.event.userRole = role;
     return this;
   }
 
   withHealthcareContext(
-    context: Partial<TelemetryEvent["healthcareContext"]>,
+    _context: Partial<TelemetryEvent["healthcareContext"]>,
   ): this {
     this.event.healthcareContext = {
       ...this.event.healthcareContext,

@@ -169,17 +169,17 @@ export function TelemedicineDashboard() {
   });
 
   // Update current time every minute
-  useEffect(() => {
-    const interval = setInterval(() => {
+  useEffect(_() => {
+    const interval = setInterval(_() => {
       setCurrentTime(new Date());
     }, 60000);
     return () => clearInterval(interval);
   }, []);
 
   // Auto-refresh data
-  useEffect(() => {
+  useEffect(_() => {
     if (state.autoRefresh) {
-      const interval = setInterval(() => {
+      const interval = setInterval(_() => {
         refetchSessions();
         refetchStats();
       }, 30000); // Refresh every 30 seconds
@@ -214,7 +214,7 @@ export function TelemedicineDashboard() {
   };
 
   // Handle session end
-  const handleEndSession = async (
+  const _handleEndSession = async (
     sessionId: string,
     reason: string = 'completed',
   ) => {
@@ -230,9 +230,9 @@ export function TelemedicineDashboard() {
     if (state.searchQuery) {
       const query = state.searchQuery.toLowerCase();
       return (
-        session.patientName.toLowerCase().includes(query)
-        || session.professionalName.toLowerCase().includes(query)
-        || session.appointmentId.toLowerCase().includes(query)
+        session.patientName.toLowerCase().includes(_query)
+        || session.professionalName.toLowerCase().includes(_query)
+        || session.appointmentId.toLowerCase().includes(_query)
       );
     }
     return true;
@@ -286,8 +286,7 @@ export function TelemedicineDashboard() {
       || scheduledSessions?.find(s => s.id === selectedSession);
 
     if (session) {
-      return (
-        <VideoConsultation
+      return (_<VideoConsultation
           sessionId={selectedSession}
           onSessionEnd={() => setSelectedSession(null)}
           className='h-screen'
@@ -589,8 +588,7 @@ export function TelemedicineDashboard() {
 
                               {/* Action buttons */}
                               <div className='flex space-x-2'>
-                                {session.status === 'scheduled' && (
-                                  <Button
+                                {session.status === 'scheduled' && (_<Button
                                     size='sm'
                                     onClick={() => handleStartSession(session.appointmentId)}
                                     disabled={startSessionMutation.isLoading}
@@ -600,8 +598,7 @@ export function TelemedicineDashboard() {
                                   </Button>
                                 )}
 
-                                {session.status === 'active' && (
-                                  <Button
+                                {session.status === 'active' && (_<Button
                                     size='sm'
                                     onClick={() => handleJoinSession(session.id)}
                                     disabled={joinSessionMutation.isLoading}
@@ -611,8 +608,7 @@ export function TelemedicineDashboard() {
                                   </Button>
                                 )}
 
-                                {session.status === 'waiting' && (
-                                  <Button
+                                {session.status === 'waiting' && (_<Button
                                     size='sm'
                                     variant='outline'
                                     onClick={() => setShowConsentModal(session.id)}
@@ -730,7 +726,7 @@ export function TelemedicineDashboard() {
               <CardContent>
                 <ScrollArea className='h-48'>
                   <div className='space-y-3'>
-                    {activeSessions?.slice(0, 5).map((session, index) => (
+                    {activeSessions?.slice(0, 5).map(_(session,_index) => (
                       <div
                         key={session.id}
                         className='flex items-center space-x-3 text-sm'
@@ -760,8 +756,7 @@ export function TelemedicineDashboard() {
         </div>
 
         {/* Consent Modal */}
-        {showConsentModal && (
-          <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+        {showConsentModal && (_<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
             <div className='bg-white rounded-lg p-6 max-w-4xl max-h-[90vh] overflow-y-auto'>
               <SessionConsent
                 sessionId={showConsentModal}

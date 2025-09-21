@@ -41,7 +41,7 @@ export async function runHealthChecks(): Promise<HealthStatus> {
     checkMemoryUsage(),
   ]);
 
-  results.forEach((result, index) => {
+  results.forEach(_(result,_index) => {
     const checkNames = ["system", "database", "ai-providers", "memory"];
     if (result.status === "fulfilled") {
       checks.push(result.value);
@@ -56,8 +56,8 @@ export async function runHealthChecks(): Promise<HealthStatus> {
   });
 
   // Determine overall status
-  const failedChecks = checks.filter((check) => check.status === "fail");
-  const warningChecks = checks.filter((check) => check.status === "warn");
+  const failedChecks = checks.filter(_(check) => check.status === "fail");
+  const warningChecks = checks.filter(_(check) => check.status === "warn");
 
   let status: "healthy" | "degraded" | "unhealthy";
   if (failedChecks.length > 0) {
@@ -102,7 +102,7 @@ async function checkSystemHealth(): Promise<HealthCheck> {
         },
       },
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       name: "system",
       status: "fail",
@@ -118,7 +118,7 @@ async function checkDatabaseHealth(): Promise<HealthCheck> {
   try {
     // Simple database ping (would need actual DB connection)
     // For now, just simulate a successful check
-    await new Promise((resolve) => setTimeout(resolve, 10));
+    await new Promise(_(resolve) => setTimeout(resolve, 10));
 
     return {
       name: "database",
@@ -129,7 +129,7 @@ async function checkDatabaseHealth(): Promise<HealthCheck> {
         maxConnections: 20,
       },
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       name: "database",
       status: "fail",
@@ -145,7 +145,7 @@ async function checkAIProvidersHealth(): Promise<HealthCheck> {
   try {
     // Check AI provider availability (would need actual API calls)
     // For now, just simulate a successful check
-    await new Promise((resolve) => setTimeout(resolve, 50));
+    await new Promise(_(resolve) => setTimeout(resolve, 50));
 
     return {
       name: "ai-providers",
@@ -157,7 +157,7 @@ async function checkAIProvidersHealth(): Promise<HealthCheck> {
         google: "healthy",
       },
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       name: "ai-providers",
       status: "fail",
@@ -199,7 +199,7 @@ async function checkMemoryUsage(): Promise<HealthCheck> {
         usagePercent: Math.round(usagePercent),
       },
     };
-  } catch (error) {
+  } catch (_error) {
     return {
       name: "memory",
       status: "fail",

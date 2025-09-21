@@ -276,7 +276,7 @@ export class MobileAccessibilityOptimizer {
   /**
    * Perform comprehensive mobile accessibility optimization
    */
-  async optimizeMobileAccessibility(context?: Element | string): Promise<{
+  async optimizeMobileAccessibility(_context?: Element | string): Promise<{
     summary: {
       overallScore: number;
       touchTargetsOptimized: number;
@@ -302,7 +302,7 @@ export class MobileAccessibilityOptimizer {
     offlineCapabilities: string[];
   }> {
     const auditContext = typeof context === 'string'
-      ? document.querySelector(context)
+      ? document.querySelector(_context)
       : context || document;
 
     if (!auditContext) {
@@ -378,7 +378,7 @@ export class MobileAccessibilityOptimizer {
    */
   private async testDevice(
     device: { type: string; screen: string },
-    context: Element,
+    _context: Element,
   ): Promise<{
     deviceType: string;
     screenSize: string;
@@ -399,7 +399,7 @@ export class MobileAccessibilityOptimizer {
       totalChecks++;
 
       try {
-        const passed = rule.check(context);
+        const passed = rule.check(_context);
 
         if (!passed) {
           issues.push({
@@ -411,12 +411,12 @@ export class MobileAccessibilityOptimizer {
           });
 
           // Apply fix
-          rule.fix(context);
+          rule.fix(_context);
           optimizations.push(`Applied fix for ${rule.name} on ${device.type}`);
         } else {
           passedChecks++;
         }
-      } catch (error: unknown) {
+      } catch (_error: unknown) {
         console.error(`Mobile rule ${ruleId} failed:`, error);
         issues.push({
           ruleId: rule.id,
@@ -452,7 +452,7 @@ export class MobileAccessibilityOptimizer {
    * Test responsive design for specific viewport
    */
   private async testResponsiveDesign(
-    context: Element,
+    _context: Element,
     width: number,
     _height: number,
   ): Promise<any[]> {
@@ -507,7 +507,7 @@ export class MobileAccessibilityOptimizer {
   /**
    * Apply mobile accessibility optimizations
    */
-  private async applyOptimizations(context: Element): Promise<{
+  private async applyOptimizations(_context: Element): Promise<{
     touchTargetsOptimized: number;
     screenReaderEnhancements: number;
     responsiveImprovements: number;
@@ -583,8 +583,7 @@ export class MobileAccessibilityOptimizer {
 
     // Calculate overall score
     const totalPossible = Object.keys(stats).length - 1; // Exclude overallScore
-    const totalAchieved = Object.values(stats).reduce(
-      (sum, val) => (typeof val === 'number' && val > 0 ? sum + 1 : sum),
+    const totalAchieved = Object.values(stats).reduce(_(sum,_val) => (typeof val === 'number' && val > 0 ? sum + 1 : sum),
       0,
     );
 
@@ -627,8 +626,7 @@ export class MobileAccessibilityOptimizer {
 
     // Cumulative Layout Shift
     const clsEntries = performance.getEntriesByType('layout-shift') as any[];
-    cumulativeLayoutShift = clsEntries.reduce(
-      (sum, entry) => (entry.hadRecentInput ? sum : sum + entry.value),
+    cumulativeLayoutShift = clsEntries.reduce(_(sum,_entry) => (entry.hadRecentInput ? sum : sum + entry.value),
       0,
     );
 
@@ -656,8 +654,7 @@ export class MobileAccessibilityOptimizer {
    * Calculate overall score across all devices
    */
   private calculateOverallScore(deviceResults: any[]): number {
-    const totalScore = deviceResults.reduce(
-      (sum, result) => sum + result.score,
+    const totalScore = deviceResults.reduce(_(sum,_result) => sum + result.score,
       0,
     );
     return Math.round(totalScore / deviceResults.length);
@@ -720,7 +717,7 @@ export class MobileAccessibilityOptimizer {
   /**
    * Identify offline healthcare capabilities
    */
-  private identifyOfflineCapabilities(context: Element): string[] {
+  private identifyOfflineCapabilities(_context: Element): string[] {
     const capabilities: string[] = [];
 
     const offlineElements = context.querySelectorAll(
@@ -769,7 +766,7 @@ export class MobileAccessibilityOptimizer {
    * Test specific mobile network conditions
    */
   async testNetworkConditions(
-    context: Element,
+    _context: Element,
     networkCondition: keyof typeof MOBILE_ACCESSIBILITY_REQUIREMENTS.NETWORK_CONDITIONS,
   ): Promise<{
     condition: string;
@@ -850,7 +847,7 @@ export async function quickMobileAccessibilityCheck(
 }> {
   const context = selector ? document.querySelector(selector) : document;
 
-  if (!context) {
+  if (!_context) {
     return {
       passed: false,
       score: 0,
@@ -864,7 +861,7 @@ export async function quickMobileAccessibilityCheck(
   try {
     const optimizer = new MobileAccessibilityOptimizer();
     // Ensure we have an Element, not Document
-    const elementContext = isElement(context)
+    const elementContext = isElement(_context)
       ? context
       : document.documentElement;
     const results = await optimizer.optimizeMobileAccessibility(elementContext);
@@ -877,7 +874,7 @@ export async function quickMobileAccessibilityCheck(
       responsiveDesign: results.summary.responsiveImprovements > 0,
       issues: results.recommendations,
     };
-  } catch (error) {
+  } catch (_error) {
     console.error('Quick mobile accessibility check failed:', error);
     return {
       passed: false,

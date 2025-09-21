@@ -279,8 +279,7 @@ export const NEONPRO_STANDARDS = {
  * function PatientManagement() {
  *   const [patients, setPatients] = useState<MobilePatientData[]>([]);
  *
- *   return (
- *     <MobilePatientList
+ *   return (_*     <MobilePatientList
  *       patients={patients}
  *       onPatientSelect={(id) => console.log('Selected:', id)}
  *       userRole="aesthetician"
@@ -289,8 +288,8 @@ export const NEONPRO_STANDARDS = {
  * }
  *
  * // Validate Brazilian documents
- * const isValidCpf = validateCpf('123.456.789-00');
- * const formattedPhone = formatters.phone('11999999999');
+ * const _isValidCpf = validateCpf('123.456.789-00');
+ * const _formattedPhone = formatters.phone('11999999999');
  * ```
  */
 

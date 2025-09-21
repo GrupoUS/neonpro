@@ -18,7 +18,6 @@ import React, {
   useEffect,
   useRef,
 } from "react";
-import { z } from "zod";
 import { cn } from "../../lib/utils";
 import { useHealthcareTheme } from "../healthcare/healthcare-theme-provider";
 import {
@@ -80,9 +79,9 @@ export interface HealthcareFormProps
   // Form submission
   onSubmit?: (
     data: FormData,
-    context: HealthcareFormContext,
+    _context: HealthcareFormContext,
   ) => Promise<void> | void;
-  onError?: (errors: Record<string, string[]>) => void;
+  onError?: (errors: Record<string,_string[]>) => void;
 
   // Accessibility
   ariaLabel?: string;
@@ -152,14 +151,14 @@ export function HealthcareForm({
 
   // Error management functions
   const setFieldError = (field: string, fieldErrors: string[]) => {
-    setErrors((prev) => ({
+    setErrors(_(prev) => ({
       ...prev,
       [field]: fieldErrors,
     }));
   };
 
   const clearFieldError = (field: string) => {
-    setErrors((prev) => {
+    setErrors(_(prev) => {
       const newErrors = { ...prev };
       delete newErrors[field];
       return newErrors;
@@ -205,7 +204,7 @@ export function HealthcareForm({
       if (patientDataForm) {
         const emergencyValidation = validateEmergencyData(formDataObject);
         if (!emergencyValidation.isValid) {
-          emergencyValidation.errors.forEach((error) => {
+          emergencyValidation.errors.forEach(_(error) => {
             announceError(error);
           });
           setFieldError("emergency", emergencyValidation.errors);
@@ -217,11 +216,11 @@ export function HealthcareForm({
       if (validationSchema) {
         try {
           await validationSchema.parseAsync(formDataObject);
-        } catch (validationError) {
+        } catch (_validationError) {
           if (validationError instanceof z.ZodError) {
             const fieldErrors: Record<string, string[]> = {};
 
-            validationError.errors.forEach((error) => {
+            validationError.errors.forEach(_(error) => {
               const field = error.path.join(".");
               if (!fieldErrors[field]) {
                 fieldErrors[field] = [];
@@ -244,7 +243,7 @@ export function HealthcareForm({
       }
 
       // Form context for submission
-      const context: HealthcareFormContext = {
+      const _context: HealthcareFormContext = {
         isSubmitting: true,
         hasErrors: false,
         dataSensitivity,
@@ -260,7 +259,7 @@ export function HealthcareForm({
       };
 
       // Call onSubmit handler
-      await onSubmit?.(formData, context);
+      await onSubmit?.(formData, _context);
 
       // Success announcement
       announceToScreenReader(
@@ -269,7 +268,7 @@ export function HealthcareForm({
           : "Formulário enviado com sucesso",
         emergencyForm ? HealthcarePriority.EMERGENCY : HealthcarePriority.HIGH,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error("Healthcare form submission error:", error);
 
       const errorMessage =
@@ -285,7 +284,7 @@ export function HealthcareForm({
   };
 
   // Keyboard shortcuts for emergency forms
-  useEffect(() => {
+  useEffect(_() => {
     if (!emergencyShortcuts || !emergencyForm) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -423,7 +422,7 @@ export function HealthcareForm({
               <input
                 type="checkbox"
                 checked={consentGiven}
-                onChange={(e) => setConsentGiven(e.target.checked)}
+                onChange={(_e) => setConsentGiven(e.target.checked)}
                 className="mt-0.5"
                 aria-describedby={`${formId}-consent-description`}
               />
@@ -449,13 +448,13 @@ export function HealthcareForm({
               Erros no formulário:
             </h3>
             <ul className="list-disc list-inside space-y-1 text-sm text-destructive">
-              {errors.submit?.map((error, index) => (
+              {errors.submit?.map((error,_index) => (
                 <li key={`submit-${index}`}>{error}</li>
               ))}
-              {errors.consent?.map((error, index) => (
+              {errors.consent?.map(_(error,_index) => (
                 <li key={`consent-${index}`}>{error}</li>
               ))}
-              {errors.emergency?.map((error, index) => (
+              {errors.emergency?.map(_(error,_index) => (
                 <li key={`emergency-${index}`}>{error}</li>
               ))}
             </ul>
@@ -474,7 +473,7 @@ export function HealthcareForm({
 export function useHealthcareForm(): HealthcareFormContext {
   const context = useContext(HealthcareFormContext);
 
-  if (!context) {
+  if (!_context) {
     throw new Error("useHealthcareForm must be used within a HealthcareForm");
   }
 

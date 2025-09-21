@@ -168,7 +168,7 @@ export class HealthcareTelemetryManager {
       console.info(
         `[OpenTelemetry] Healthcare telemetry initialized for ${this.config.serviceName}`,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error(
         "[OpenTelemetry] Failed to initialize healthcare telemetry:",
         error,
@@ -214,7 +214,7 @@ export class HealthcareTelemetryManager {
     );
 
     // Add custom attributes
-    Object.entries(attributes).forEach(([key, value]) => {
+    Object.entries(attributes).forEach(_([key,_value]) => {
       span.setAttribute(key, value);
     });
 

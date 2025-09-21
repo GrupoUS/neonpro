@@ -21,22 +21,22 @@ export default function AIInputSearch({
   const [debouncedQuery, setDebouncedQuery] = useState('');
 
   // Debounced search
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(query);
+  useEffect(_() => {
+    const timer = setTimeout(_() => {
+      setDebouncedQuery(_query);
     }, debounceMs);
 
     return () => clearTimeout(timer);
   }, [query, debounceMs]);
 
   // Trigger search when debounced query changes
-  useEffect(() => {
+  useEffect(_() => {
     if (debouncedQuery && onSearch) {
       onSearch(debouncedQuery);
     }
   }, [debouncedQuery, onSearch]);
 
-  const handleClear = useCallback(() => {
+  const handleClear = useCallback(_() => {
     setQuery('');
     setIsOpen(false);
   }, []);
@@ -97,8 +97,7 @@ export default function AIInputSearch({
             'max-h-48 overflow-y-auto',
           )}
         >
-          {suggestions.map((suggestion, _index) => (
-            <button
+          {suggestions.map(_(suggestion, _index) => (_<button
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}
               className={cn(

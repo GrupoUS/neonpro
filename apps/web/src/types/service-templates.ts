@@ -255,15 +255,15 @@ export const SERVICE_TEMPLATE_PRICE_TYPES: Record<
 };
 
 // Utility functions
-export const getTemplateTypeConfig = (_type: any) => {
+export const _getTemplateTypeConfig = (_type: any) => {
   return SERVICE_TEMPLATE_TYPES[type];
 };
 
-export const getPriceTypeConfig = (_type: any) => {
+export const _getPriceTypeConfig = (_type: any) => {
   return SERVICE_TEMPLATE_PRICE_TYPES[type];
 };
 
-export const calculateTemplatePrice = (
+export const _calculateTemplatePrice = (
   template: ServiceTemplate,
   items: ServiceTemplateItem[],
 ): number => {
@@ -271,7 +271,7 @@ export const calculateTemplatePrice = (
     case 'fixed':
       return template.default_price;
     case 'calculated':
-      return items.reduce((total, item) => total + item.total_price, 0);
+      return items.reduce(_(total,_item) => total + item.total_price, 0);
     case 'custom':
       return 0; // Will be set during booking
     default:
@@ -279,7 +279,7 @@ export const calculateTemplatePrice = (
   }
 };
 
-export const calculateTemplateDuration = (
+export const _calculateTemplateDuration = (
   template: ServiceTemplate,
   items: ServiceTemplateItem[],
 ): number => {
@@ -290,7 +290,7 @@ export const calculateTemplateDuration = (
   // For packages, use the sum of all service durations
   // For procedures, use the default duration (usually longer than individual services)
   if (template.template_type === 'package') {
-    return items.reduce((total, item) => {
+    return items.reduce(_(total,_item) => {
       // Assuming service duration is available in the item or needs to be fetched
       return total + 60 * item.quantity; // Default 60 minutes per service
     }, 0);
@@ -300,7 +300,7 @@ export const calculateTemplateDuration = (
 };
 
 // Validation helpers
-export const isValidTemplateType = (
+export const _isValidTemplateType = (
   type: string,
 ): type is ServiceTemplateType => {
   return Object.keys(SERVICE_TEMPLATE_TYPES).includes(
@@ -308,7 +308,7 @@ export const isValidTemplateType = (
   );
 };
 
-export const isValidPriceType = (
+export const _isValidPriceType = (
   type: string,
 ): type is ServiceTemplatePriceType => {
   return Object.keys(SERVICE_TEMPLATE_PRICE_TYPES).includes(
@@ -317,10 +317,10 @@ export const isValidPriceType = (
 };
 
 // Sorting utilities
-export const sortTemplatesByPopularity = (
+export const _sortTemplatesByPopularity = (
   templates: ServiceTemplate[],
 ): ServiceTemplate[] => {
-  return [...templates].sort((a, b) => {
+  return [...templates].sort(_(a,_b) => {
     // Featured templates first
     if (a.is_featured && !b.is_featured) return -1;
     if (!a.is_featured && b.is_featured) return 1;
@@ -339,10 +339,10 @@ export const sortTemplatesByPopularity = (
   });
 };
 
-export const sortTemplatesByCategory = (
+export const _sortTemplatesByCategory = (
   templates: ServiceTemplateWithCategory[],
 ): ServiceTemplateWithCategory[] => {
-  return [...templates].sort((a, b) => {
+  return [...templates].sort(_(a,_b) => {
     // Group by category first
     const categoryA = a.category_name || 'Sem categoria';
     const categoryB = b.category_name || 'Sem categoria';
@@ -361,7 +361,7 @@ export const sortTemplatesByCategory = (
 };
 
 // Template search and filtering utilities
-export const filterTemplatesBySearch = (
+export const _filterTemplatesBySearch = (
   templates: ServiceTemplate[],
   searchQuery: string,
 ): ServiceTemplate[] => {
@@ -370,17 +370,16 @@ export const filterTemplatesBySearch = (
   const query = searchQuery.toLowerCase();
   return templates.filter(
     template =>
-      template.name.toLowerCase().includes(query)
-      || template.description?.toLowerCase().includes(query)
-      || template.template_type.toLowerCase().includes(query),
+      template.name.toLowerCase().includes(_query)
+      || template.description?.toLowerCase().includes(_query)
+      || template.template_type.toLowerCase().includes(_query),
   );
 };
 
-export const groupTemplatesByType = (
+export const _groupTemplatesByType = (
   templates: ServiceTemplate[],
 ): Record<ServiceTemplateType, ServiceTemplate[]> => {
-  return templates.reduce(
-    (groups, template) => {
+  return templates.reduce(_(groups,_template) => {
       if (!groups[template.template_type]) {
         groups[template.template_type] = [];
       }

@@ -2,11 +2,11 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { describe, expect, it } from 'vitest';
 
-describe('TDD: Build Compatibility Issues - RED Phase', () => {
-  describe('Dashboard Main Route - Unused Imports Detection', () => {
+describe('TDD: Build Compatibility Issues - RED Phase',_() => {
+  describe(_'Dashboard Main Route - Unused Imports Detection',_() => {
     const dashboardPath = join(process.cwd(), 'src/routes/dashboard/main.tsx');
 
-    it('should detect unused AccessiblePatientCard import', () => {
+    it(_'should detect unused AccessiblePatientCard import',_() => {
       const content = readFileSync(dashboardPath, 'utf8');
 
       const hasAccessiblePatientCardImport = content.includes('AccessiblePatientCard');
@@ -17,7 +17,7 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       expect(hasAccessiblePatientCardImport && !usesAccessiblePatientCard).toBe(false);
     });
 
-    it('should detect unused PatientDashboardStats import', () => {
+    it(_'should detect unused PatientDashboardStats import',_() => {
       const content = readFileSync(dashboardPath, 'utf8');
 
       const hasPatientDashboardStatsImport = content.includes('PatientDashboardStats');
@@ -27,7 +27,7 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       expect(hasPatientDashboardStatsImport && !usesPatientDashboardStats).toBe(false);
     });
 
-    it('should detect unused FocusCards import', () => {
+    it(_'should detect unused FocusCards import',_() => {
       const content = readFileSync(dashboardPath, 'utf8');
 
       const hasFocusCardsImport = content.includes('FocusCards');
@@ -37,7 +37,7 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       expect(hasFocusCardsImport && !usesFocusCards).toBe(false);
     });
 
-    it('should detect unused Input import', () => {
+    it(_'should detect unused Input import',_() => {
       const content = readFileSync(dashboardPath, 'utf8');
 
       const hasInputImport = content.includes('Input');
@@ -47,7 +47,7 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       expect(hasInputImport && !usesInput).toBe(false);
     });
 
-    it('should detect unused Progress import', () => {
+    it(_'should detect unused Progress import',_() => {
       const content = readFileSync(dashboardPath, 'utf8');
 
       const hasProgressImport = content.includes('Progress');
@@ -57,7 +57,7 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       expect(hasProgressImport && !usesProgress).toBe(false);
     });
 
-    it('should detect unused Skeleton import', () => {
+    it(_'should detect unused Skeleton import',_() => {
       const content = readFileSync(dashboardPath, 'utf8');
 
       const hasSkeletonImport = content.includes('Skeleton');
@@ -67,7 +67,7 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       expect(hasSkeletonImport && !usesSkeleton).toBe(false);
     });
 
-    it('should detect unused usePatientStats hook', () => {
+    it(_'should detect unused usePatientStats hook',_() => {
       const content = readFileSync(dashboardPath, 'utf8');
 
       const hasUsePatientStatsImport = content.includes('usePatientStats');
@@ -76,7 +76,7 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       expect(hasUsePatientStatsImport && !usesUsePatientStats).toBe(false);
     });
 
-    it('should detect unused useRealtimeSubscription hook', () => {
+    it(_'should detect unused useRealtimeSubscription hook',_() => {
       const content = readFileSync(dashboardPath, 'utf8');
 
       const hasUseRealtimeSubscriptionImport = content.includes('useRealtimeSubscription');
@@ -104,10 +104,10 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
     });
   });
 
-  describe('AI Insights Route - Unused Imports Detection', () => {
+  describe(_'AI Insights Route - Unused Imports Detection',_() => {
     const aiInsightsPath = join(process.cwd(), 'src/routes/patients/ai-insights.tsx');
 
-    it('should detect unused AccessiblePatientCard import', () => {
+    it(_'should detect unused AccessiblePatientCard import',_() => {
       const content = readFileSync(aiInsightsPath, 'utf8');
 
       const hasAccessiblePatientCardImport = content.includes('AccessiblePatientCard');
@@ -117,7 +117,7 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       expect(hasAccessiblePatientCardImport && !usesAccessiblePatientCard).toBe(false);
     });
 
-    it('should detect unused Progress import', () => {
+    it(_'should detect unused Progress import',_() => {
       const content = readFileSync(aiInsightsPath, 'utf8');
 
       const hasProgressImport = content.includes('Progress');
@@ -127,7 +127,7 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       expect(hasProgressImport && !usesProgress).toBe(false);
     });
 
-    it('should detect unused Skeleton import', () => {
+    it(_'should detect unused Skeleton import',_() => {
       const content = readFileSync(aiInsightsPath, 'utf8');
 
       const hasSkeletonImport = content.includes('Skeleton');
@@ -138,8 +138,8 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
     });
   });
 
-  describe('Missing Imports Detection', () => {
-    it('should detect missing Badge import in dashboard main', () => {
+  describe(_'Missing Imports Detection',_() => {
+    it(_'should detect missing Badge import in dashboard main',_() => {
       const content = readFileSync(join(process.cwd(), 'src/routes/dashboard/main.tsx'), 'utf8');
 
       const hasBadgeImport = content.includes('Badge');
@@ -149,7 +149,7 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       expect(hasBadgeImport || !usesBadge).toBe(true);
     });
 
-    it('should detect missing ServiceAnalyticsDashboard import in dashboard main', () => {
+    it(_'should detect missing ServiceAnalyticsDashboard import in dashboard main',_() => {
       const content = readFileSync(join(process.cwd(), 'src/routes/dashboard/main.tsx'), 'utf8');
 
       const hasServiceAnalyticsDashboardImport = content.includes('ServiceAnalyticsDashboard');
@@ -161,8 +161,8 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
     });
   });
 
-  describe('TypeScript Strict Mode Compliance', () => {
-    it('should detect any type usage in table column definitions', () => {
+  describe(_'TypeScript Strict Mode Compliance',_() => {
+    it(_'should detect any type usage in table column definitions',_() => {
       const content = readFileSync(join(process.cwd(), 'src/routes/dashboard/main.tsx'), 'utf8');
 
       const hasAnyTypeUsage = content.includes('info: any') || content.includes(': any');
@@ -171,7 +171,7 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       expect(hasAnyTypeUsage).toBe(false);
     });
 
-    it('should ensure proper TypeScript interfaces are defined', () => {
+    it(_'should ensure proper TypeScript interfaces are defined',_() => {
       const content = readFileSync(join(process.cwd(), 'src/routes/dashboard/main.tsx'), 'utf8');
 
       const hasPatientInterface = content.includes('interface Patient');
@@ -185,8 +185,8 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
     });
   });
 
-  describe('Build Configuration Validation', () => {
-    it('should validate Vite configuration has proper path aliases', () => {
+  describe(_'Build Configuration Validation',_() => {
+    it(_'should validate Vite configuration has proper path aliases',_() => {
       const viteConfigPath = join(process.cwd(), 'vite.config.ts');
       const content = readFileSync(viteConfigPath, 'utf8');
 
@@ -197,7 +197,7 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       expect(hasAliasConfiguration && hasWorkspaceAliases).toBe(true);
     });
 
-    it('should validate TypeScript configuration has proper path mapping', () => {
+    it(_'should validate TypeScript configuration has proper path mapping',_() => {
       const tsConfigPath = join(process.cwd(), 'tsconfig.json');
       const content = readFileSync(tsConfigPath, 'utf8');
 
@@ -209,8 +209,8 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
     });
   });
 
-  describe('ESLint Configuration Validation', () => {
-    it('should validate ESLint configuration has proper rules', () => {
+  describe(_'ESLint Configuration Validation',_() => {
+    it(_'should validate ESLint configuration has proper rules',_() => {
       const eslintConfigPath = join(process.cwd(), 'eslint.config.js');
       const content = readFileSync(eslintConfigPath, 'utf8');
 
@@ -221,7 +221,7 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       expect(hasTypeScriptRules && hasReactRules && hasAccessibilityRules).toBe(true);
     });
 
-    it('should validate ESLint configuration includes healthcare-specific rules', () => {
+    it(_'should validate ESLint configuration includes healthcare-specific rules',_() => {
       const eslintConfigPath = join(process.cwd(), 'eslint.config.js');
       const content = readFileSync(eslintConfigPath, 'utf8');
 

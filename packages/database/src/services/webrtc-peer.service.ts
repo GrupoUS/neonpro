@@ -111,7 +111,7 @@ export class WebRTCPeerManager {
       this.emit("connection-state-change", {
         state,
         sessionId: this.config.sessionId,
-        userId: this.config.localUserId,
+        _userId: this.config.localUserId,
       });
 
       if (state === "connected") {
@@ -138,7 +138,7 @@ export class WebRTCPeerManager {
       this.emit("ice-connection-state-change", {
         state,
         sessionId: this.config.sessionId,
-        userId: this.config.localUserId,
+        _userId: this.config.localUserId,
       });
     };
 
@@ -200,13 +200,13 @@ export class WebRTCPeerManager {
       console.log("Data channel opened");
       this.emit("data-channel-open", {
         sessionId: this.config.sessionId,
-        userId: this.config.localUserId,
+        _userId: this.config.localUserId,
       });
 
       // Send initial compliance metadata
       this.sendComplianceMetadata({
         type: "session-start",
-        userId: this.config.localUserId,
+        _userId: this.config.localUserId,
         timestamp: new Date().toISOString(),
         deviceInfo: this.getDeviceInfo(),
       });
@@ -227,7 +227,7 @@ export class WebRTCPeerManager {
         if (data.type === "compliance") {
           this.handleComplianceMessage(data);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error("Error parsing data channel message:", error);
       }
     };
@@ -237,7 +237,7 @@ export class WebRTCPeerManager {
       this.emit("data-channel-error", {
         error,
         sessionId: this.config.sessionId,
-        userId: this.config.localUserId,
+        _userId: this.config.localUserId,
       });
     };
 
@@ -245,7 +245,7 @@ export class WebRTCPeerManager {
       console.log("Data channel closed");
       this.emit("data-channel-close", {
         sessionId: this.config.sessionId,
-        userId: this.config.localUserId,
+        _userId: this.config.localUserId,
       });
     };
   }
@@ -263,7 +263,7 @@ export class WebRTCPeerManager {
 
       // Add tracks to peer connection
       if (this.peerConnection) {
-        this.localStream.getTracks().forEach((track) => {
+        this.localStream.getTracks().forEach(_(track) => {
           this.peerConnection!.addTrack(track, this.localStream!);
         });
       }
@@ -271,16 +271,16 @@ export class WebRTCPeerManager {
       this.emit("local-stream", {
         stream: this.localStream,
         sessionId: this.config.sessionId,
-        userId: this.config.localUserId,
+        _userId: this.config.localUserId,
       });
 
       return this.localStream;
-    } catch (error) {
+    } catch (_error) {
       console.error("Error starting media:", error);
       this.emit("media-error", {
         error,
         sessionId: this.config.sessionId,
-        userId: this.config.localUserId,
+        _userId: this.config.localUserId,
       });
       throw error;
     }
@@ -314,7 +314,7 @@ export class WebRTCPeerManager {
       });
 
       return offer;
-    } catch (error) {
+    } catch (_error) {
       console.error("Error creating offer:", error);
       throw error;
     }
@@ -344,7 +344,7 @@ export class WebRTCPeerManager {
       });
 
       return answer;
-    } catch (error) {
+    } catch (_error) {
       console.error("Error creating answer:", error);
       throw error;
     }
@@ -368,7 +368,7 @@ export class WebRTCPeerManager {
       if (description.type === "offer" && !this.config.isOfferer) {
         await this.createAnswer();
       }
-    } catch (error) {
+    } catch (_error) {
       console.error("Error setting remote description:", error);
       throw error;
     }
@@ -385,7 +385,7 @@ export class WebRTCPeerManager {
     try {
       await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
       console.log("ICE candidate added successfully");
-    } catch (error) {
+    } catch (_error) {
       console.error("Error adding ICE candidate:", error);
       throw error;
     }
@@ -399,13 +399,13 @@ export class WebRTCPeerManager {
       return;
     }
 
-    this.qualityMonitorInterval = setInterval(async () => {
+    this.qualityMonitorInterval = setInterval(_async () => {
       const quality = await this.getConnectionQuality();
       if (quality) {
         this.emit("quality-update", {
           quality,
           sessionId: this.config.sessionId,
-          userId: this.config.localUserId,
+          _userId: this.config.localUserId,
         });
       }
     }, 5000); // Check every 5 seconds
@@ -434,7 +434,7 @@ export class WebRTCPeerManager {
       let rtt = 0;
       let bandwidth = 0;
 
-      stats.forEach((report) => {
+      stats.forEach(_(report) => {
         if (report.type === "inbound-rtp") {
           packetsLost += report.packetsLost || 0;
           jitter += report.jitter || 0;
@@ -460,7 +460,7 @@ export class WebRTCPeerManager {
         bandwidth,
         timestamp: new Date(),
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting connection quality:", error);
       return null;
     }
@@ -499,7 +499,7 @@ export class WebRTCPeerManager {
         this.emit("recording-stopped", {
           chunks: this.recordingChunks,
           sessionId: this.config.sessionId,
-          userId: this.config.localUserId,
+          _userId: this.config.localUserId,
         });
       };
 
@@ -508,9 +508,9 @@ export class WebRTCPeerManager {
 
       this.emit("recording-started", {
         sessionId: this.config.sessionId,
-        userId: this.config.localUserId,
+        _userId: this.config.localUserId,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error("Error starting recording:", error);
     }
   }
@@ -574,14 +574,14 @@ export class WebRTCPeerManager {
    */
   public setAudioMuted(muted: boolean): void {
     if (this.localStream) {
-      this.localStream.getAudioTracks().forEach((track) => {
+      this.localStream.getAudioTracks().forEach(_(track) => {
         track.enabled = !muted;
       });
 
       this.emit("audio-mute-changed", {
         muted,
         sessionId: this.config.sessionId,
-        userId: this.config.localUserId,
+        _userId: this.config.localUserId,
       });
 
       // Send compliance metadata
@@ -598,14 +598,14 @@ export class WebRTCPeerManager {
    */
   public setVideoEnabled(enabled: boolean): void {
     if (this.localStream) {
-      this.localStream.getVideoTracks().forEach((track) => {
+      this.localStream.getVideoTracks().forEach(_(track) => {
         track.enabled = enabled;
       });
 
       this.emit("video-enabled-changed", {
         enabled,
         sessionId: this.config.sessionId,
-        userId: this.config.localUserId,
+        _userId: this.config.localUserId,
       });
 
       // Send compliance metadata
@@ -646,10 +646,10 @@ export class WebRTCPeerManager {
   private emit(event: string, data: any): void {
     const callbacks = this.eventCallbacks.get(event);
     if (callbacks) {
-      callbacks.forEach((callback) => {
+      callbacks.forEach(_(callback) => {
         try {
           callback(data);
-        } catch (error) {
+        } catch (_error) {
           console.error(`Error in event callback for ${event}:`, error);
         }
       });
@@ -666,12 +666,12 @@ export class WebRTCPeerManager {
       const stats = await this.peerConnection.getStats();
       const statsObj: any = {};
 
-      stats.forEach((report, id) => {
+      stats.forEach(_(report,_id) => {
         statsObj[id] = report;
       });
 
       return statsObj;
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting connection stats:", error);
       return null;
     }
@@ -696,7 +696,7 @@ export class WebRTCPeerManager {
 
     // Stop local stream
     if (this.localStream) {
-      this.localStream.getTracks().forEach((track) => {
+      this.localStream.getTracks().forEach(_(track) => {
         track.stop();
       });
     }
@@ -711,7 +711,7 @@ export class WebRTCPeerManager {
 
     this.emit("connection-closed", {
       sessionId: this.config.sessionId,
-      userId: this.config.localUserId,
+      _userId: this.config.localUserId,
     });
 
     console.log("Peer connection closed");

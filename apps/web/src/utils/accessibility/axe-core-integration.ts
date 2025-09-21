@@ -66,7 +66,7 @@ const HEALTHCARE_IMPACT_LEVELS = {
  */
 export function initializeAxeCore(): void {
   axe.configure({
-    rules: Object.entries(HEALTHCARE_RULES).map(([id, config]) => ({
+    rules: Object.entries(HEALTHCARE_RULES).map(_([id,_config]) => ({
       id,
       ...config,
     })),
@@ -108,7 +108,7 @@ export function initializeAxeCore(): void {
  * Run accessibility scan on specific element or entire page
  */
 export async function runAccessibilityScan(
-  context?: string | Element | axe.ElementContext,
+  _context?: string | Element | axe.ElementContext,
   options?: axe.RunOptions,
 ): Promise<AxeResults> {
   try {
@@ -120,7 +120,7 @@ export async function runAccessibilityScan(
 
     // Process and categorize results for healthcare context
     return processHealthcareResults(results);
-  } catch (error) {
+  } catch (_error) {
     console.error('Accessibility scan failed:', error);
     throw new Error(`Accessibility scan failed: ${error}`);
   }
@@ -311,15 +311,15 @@ export function useAccessibilityTesting() {
     > | null
   >(null);
 
-  const scan = React.useCallback(async (context?: string | Element) => {
+  const scan = React.useCallback(async (_context?: string | Element) => {
     setIsScanning(true);
     try {
-      const results = await runAccessibilityScan(context);
+      const results = await runAccessibilityScan(_context);
       setLastScan(results);
       const generatedReport = generateAccessibilityReport(results);
       setReport(generatedReport);
       return results;
-    } catch (error) {
+    } catch (_error) {
       console.error('Accessibility scan failed:', error);
       throw error;
     } finally {

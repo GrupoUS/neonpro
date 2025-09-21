@@ -48,7 +48,7 @@ interface PatientSearchResult {
 
 // Search history type
 interface SearchHistoryItem {
-  query: string;
+  _query: string;
   timestamp: number;
   results: number;
   timestamp_iso: string;
@@ -59,7 +59,7 @@ interface SearchAnalytics {
   totalSearches: number;
   averageResults: number;
   averageTime: number;
-  topQueries: Array<{ query: string; count: number }>;
+  topQueries: Array<{ _query: string; count: number }>;
   conversionRate: number;
 }
 
@@ -75,8 +75,8 @@ interface GlobalPatientSearchProps {
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
+  useEffect(_() => {
+    const handler = setTimeout(_() => {
       setDebouncedValue(value);
     }, delay);
 
@@ -90,14 +90,14 @@ function useDebounce<T>(value: T, delay: number): T {
 
 // Local storage hook for search history
 function useLocalStorage<T>(key: string, initialValue: T) {
-  const [storedValue, setStoredValue] = useState<T>(() => {
+  const [storedValue, setStoredValue] = useState<T>(_() => {
     if (typeof window === 'undefined') {
       return initialValue;
     }
     try {
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
+    } catch (_error) {
       console.warn(`Error reading localStorage key "${key}":`, error);
       return initialValue;
     }
@@ -111,7 +111,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
         if (typeof window !== 'undefined') {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
         }
-      } catch (error) {
+      } catch (_error) {
         console.warn(`Error setting localStorage key "${key}":`, error);
       }
     },
@@ -122,8 +122,8 @@ function useLocalStorage<T>(key: string, initialValue: T) {
 }
 
 // Highlight matching text
-function highlightMatch(text: string, query: string): string {
-  if (!query) return text;
+function highlightMatch(text: string, _query: string): string {
+  if (!_query) return text;
 
   const regex = new RegExp(`(${query})`, 'gi');
   return text.replace(
@@ -133,7 +133,7 @@ function highlightMatch(text: string, query: string): string {
 }
 
 // Calculate search relevance score
-function calculateRelevanceScore(patient: any, query: string): number {
+function calculateRelevanceScore(patient: any, _query: string): number {
   let score = 0;
   const normalizedQuery = query.toLowerCase();
 
@@ -143,12 +143,12 @@ function calculateRelevanceScore(patient: any, query: string): number {
   }
 
   // CPF match (high weight)
-  if (patient.cpf?.includes(query)) {
+  if (patient.cpf?.includes(_query)) {
     score += 0.3;
   }
 
   // Phone match (medium weight)
-  if (patient.phone?.includes(query)) {
+  if (patient.phone?.includes(_query)) {
     score += 0.2;
   }
 
@@ -166,17 +166,17 @@ function calculateRelevanceScore(patient: any, query: string): number {
 }
 
 // Generate match reasons
-function generateMatchReasons(patient: any, query: string): string[] {
+function generateMatchReasons(patient: any, _query: string): string[] {
   const reasons: string[] = [];
   const normalizedQuery = query.toLowerCase();
 
   if (patient.fullName?.toLowerCase().includes(normalizedQuery)) {
     reasons.push('Nome');
   }
-  if (patient.cpf?.includes(query)) {
+  if (patient.cpf?.includes(_query)) {
     reasons.push('CPF');
   }
-  if (patient.phone?.includes(query)) {
+  if (patient.phone?.includes(_query)) {
     reasons.push('Telefone');
   }
   if (patient.email?.toLowerCase().includes(normalizedQuery)) {
@@ -221,7 +221,7 @@ export function GlobalPatientSearch({
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['patient-search', clinicId, debouncedQuery],
+    queryKey: ['patient-search',_clinicId,_debouncedQuery],
     queryFn: async () => {
       if (!debouncedQuery || debouncedQuery.length < 2) return [];
 
@@ -272,7 +272,7 @@ export function GlobalPatientSearch({
 
         // Update search history
         const historyItem: SearchHistoryItem = {
-          query: debouncedQuery,
+          _query: debouncedQuery,
           timestamp: Date.now(),
           results: mockResults.length,
           timestamp_iso: new Date().toISOString(),
@@ -313,7 +313,7 @@ export function GlobalPatientSearch({
               : undefined,
           },
         }));
-      } catch (error) {
+      } catch (_error) {
         console.error('Search error:', error);
         throw error;
       }
@@ -324,12 +324,12 @@ export function GlobalPatientSearch({
   });
 
   // Filter and sort results
-  const filteredResults = useMemo(() => {
+  const filteredResults = useMemo(_() => {
     if (!searchResults) return [];
 
     return searchResults
       .filter(result => result.matchScore > 0.1) // Minimum relevance threshold
-      .sort((a, b) => b.matchScore - a.matchScore); // Sort by relevance
+      .sort(_(a,_b) => b.matchScore - a.matchScore); // Sort by relevance
   }, [searchResults]);
 
   // Handle patient selection
@@ -357,34 +357,34 @@ export function GlobalPatientSearch({
 
   // Handle search history item click
   const handleHistoryClick = useCallback((_historyItem: any) => {
-    setQuery(historyItem.query);
+    setQuery(historyItem._query);
     inputRef.current?.focus();
   }, []);
 
   // Clear search history
-  const clearSearchHistory = useCallback(() => {
+  const clearSearchHistory = useCallback(_() => {
     setSearchHistory([]);
     toast.success('Histórico de busca limpo');
   }, [setSearchHistory]);
 
   // Update top queries for analytics
   function updateTopQueries(
-    current: Array<{ query: string; count: number }>,
+    current: Array<{ _query: string; count: number }>,
     newQuery: string,
   ) {
     const existing = current.find(item => item.query === newQuery);
     if (existing) {
       existing.count += 1;
     } else {
-      current.push({ query: newQuery, count: 1 });
+      current.push({ _query: newQuery, count: 1 });
     }
-    return current.sort((a, b) => b.count - a.count).slice(0, 5);
+    return current.sort(_(a,_b) => b.count - a.count).slice(0, 5);
   }
 
   // Loading skeleton
   const LoadingSkeleton = () => (
     <div className='space-y-2 p-4'>
-      {[...Array(3)].map((_, i) => (
+      {[...Array(3)].map(_(_,_i) => (
         <div key={i} className='flex items-center space-x-3'>
           <div className='h-10 w-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse'></div>
           <div className='flex-1 space-y-2'>
@@ -397,9 +397,8 @@ export function GlobalPatientSearch({
   );
 
   // Search result item
-  const SearchResultItem = ({
-    patient,
-    index,
+  const SearchResultItem = (_{
+    patient,_index,
   }: {
     patient: PatientSearchResult;
     index: number;
@@ -455,7 +454,7 @@ export function GlobalPatientSearch({
 
         {patient.matchReasons.length > 0 && (
           <div className='flex items-center space-x-1 mt-2'>
-            {patient.matchReasons.slice(0, 3).map((reason, i) => (
+            {patient.matchReasons.slice(0, 3).map(_(reason,_i) => (
               <Badge key={i} variant='outline' className='text-xs'>
                 {reason}
               </Badge>
@@ -501,8 +500,7 @@ export function GlobalPatientSearch({
               className='pl-10 pr-10'
               aria-label='Busca global de pacientes'
             />
-            {query && (
-              <Button
+            {query && (_<Button
                 variant='ghost'
                 size='sm'
                 className='absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0'
@@ -539,8 +537,7 @@ export function GlobalPatientSearch({
               </h3>
 
               {/* Analytics toggle */}
-              {showAnalytics && analytics && (
-                <Button
+              {showAnalytics && analytics && (_<Button
                   variant='ghost'
                   size='sm'
                   onClick={() => toast.info('Analytics em desenvolvimento')}
@@ -579,8 +576,7 @@ export function GlobalPatientSearch({
                 </div>
               )
               : query && query.length >= 2
-              ? (
-                filteredResults.length > 0
+              ? (_filteredResults.length > 0
                   ? (
                     <div className='divide-y'>
                       {filteredResults.map((patient, _index) => (
@@ -622,7 +618,7 @@ export function GlobalPatientSearch({
                       </Button>
                     </div>
                     <div className='space-y-1'>
-                      {searchHistory.slice(0, 5).map((item, _index) => (
+                      {searchHistory.slice(0, 5).map(_(item, _index) => (
                         <div
                           key={index}
                           className='flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded cursor-pointer'

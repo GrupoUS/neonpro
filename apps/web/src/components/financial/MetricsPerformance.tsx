@@ -10,11 +10,9 @@ export interface MetricsPerformanceProps {
   'data-testid'?: string;
 }
 
-export const MetricsPerformance: React.FC<MetricsPerformanceProps> = ({
-  onPerformanceUpdate,
-  className,
-  'data-testid': testId,
-}) => {
+export const MetricsPerformance: React.FC<MetricsPerformanceProps> = (_{
+  onPerformanceUpdate,_className,
+  'data-testid': testId,_}) => {
   const [performance, setPerformance] = useState({
     loadTime: 0,
     queryTime: 0,
@@ -24,7 +22,7 @@ export const MetricsPerformance: React.FC<MetricsPerformanceProps> = ({
     status: 'good' as 'good' | 'warning' | 'critical',
   });
 
-  useEffect(() => {
+  useEffect(_() => {
     // Mock performance data
     const mockPerformance = {
       loadTime: 1.2,

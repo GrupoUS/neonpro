@@ -98,7 +98,7 @@ export function useSendAppointmentCancellation() {
  */
 export function useNotificationLogs(patientId: string) {
   return useQuery({
-    queryKey: ['notification-logs', patientId],
+    queryKey: ['notification-logs',_patientId],
     queryFn: async () => {
       // This would fetch from the notification_logs table
       // For now, return empty array as placeholder
@@ -114,7 +114,7 @@ export function useNotificationLogs(patientId: string) {
  */
 export function useNotificationPreferences(patientId: string) {
   return useQuery({
-    queryKey: ['notification-preferences', patientId],
+    queryKey: ['notification-preferences',_patientId],
     queryFn: async () => {
       // This would fetch from the patient_notification_preferences table
       // For now, return default preferences
@@ -143,8 +143,7 @@ export function useUpdateNotificationPreferences() {
 
   return useMutation({
     mutationFn: async ({
-      patientId,
-      preferences,
+      patientId,_preferences,
     }: {
       patientId: string;
       preferences: any;
@@ -157,7 +156,7 @@ export function useUpdateNotificationPreferences() {
       });
       return preferences;
     },
-    onSuccess: (_, { patientId }) => {
+    onSuccess: (_,_{ patientId }) => {
       toast.success('Preferências de notificação atualizadas');
       queryClient.invalidateQueries({
         queryKey: ['notification-preferences', patientId],

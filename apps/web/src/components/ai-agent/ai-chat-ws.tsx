@@ -26,8 +26,8 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
   const [chatState, setChatState] = useState<ChatState>({
     messages: [],
     isLoading: false,
-    context: {
-      userId: user?.id || '',
+    _context: {
+      _userId: user?.id || '',
       userRole: user?.role || '',
       domain: initialContext?.domain,
     },
@@ -44,7 +44,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
   });
 
   // Handle incoming messages
-  useEffect(() => {
+  useEffect(_() => {
     if (!lastMessage) return;
 
     switch (lastMessage.type) {
@@ -53,7 +53,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
         // Add assistant response to chat
         const assistantMessage: ChatMessage = {
           id: `msg_${Date.now()}_assistant`,
-          role: 'assistant',
+          _role: 'assistant',
           content: lastMessage.content || lastMessage.message || '',
           timestamp: lastMessage.timestamp || new Date().toISOString(),
           data: lastMessage.data,
@@ -75,7 +75,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
       case 'error':
         const errorMessage: ChatMessage = {
           id: `msg_${Date.now()}_error`,
-          role: 'assistant',
+          _role: 'assistant',
           content: lastMessage.message || 'Ocorreu um erro ao processar sua solicitação',
           timestamp: lastMessage.timestamp || new Date().toISOString(),
         };
@@ -101,7 +101,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
             ...prev.messages,
             {
               id: `msg_${Date.now()}_system`,
-              role: 'system',
+              _role: 'system',
               content: 'Conectado ao assistente NeonPro',
               timestamp: new Date().toISOString(),
             },
@@ -135,7 +135,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
       // Add user message to chat
       const userMessage: ChatMessage = {
         id: `msg_${Date.now()}_user`,
-        role: 'user',
+        _role: 'user',
         content: message,
         timestamp: new Date().toISOString(),
       };
@@ -149,7 +149,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
       try {
         // Send query via WebSocket
         await sendQuery(message, {
-          userId: user.id,
+          _userId: user.id,
           userRole: user.role,
           domain: initialContext?.domain,
           professionalId: initialContext?.professionalId,
@@ -159,7 +159,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
         const errorMessage: ChatMessage = {
           id: `msg_${Date.now()}_error`,
-          role: 'assistant',
+          _role: 'assistant',
           content: 'Desculpe, ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente.',
           timestamp: new Date().toISOString(),
         };
@@ -200,7 +200,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
           }
           break;
         case 'export_data':
-          handleExportData(action.payload);
+          handleExportData(action._payload);
           break;
         case 'refresh':
           // Refresh current view
@@ -215,7 +215,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
     async (_payload: any) => {
       try {
         // Send export action via WebSocket
-        await sendAction('export_data', payload);
+        await sendAction('export_data', _payload);
 
         toast({
           title: 'Exportação iniciada',
@@ -322,8 +322,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
             )}
 
             {/* Render action buttons */}
-            {message.actions && message.actions.length > 0 && (
-              <div className='flex gap-2 mt-3'>
+            {message.actions && message.actions.length > 0 && (_<div className='flex gap-2 mt-3'>
                 {message.actions.map(action => (
                   <button
                     key={action.id}
@@ -352,7 +351,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
   );
 
   // Auto-scroll to bottom
-  React.useEffect(() => {
+  React.useEffect(_() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatState.messages]);
 

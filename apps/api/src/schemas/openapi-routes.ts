@@ -38,7 +38,7 @@ export const PatientIdParamSchema = z
   .openapi('PatientIdParam');
 
 // Health and system routes
-export const healthRoute = createRoute({
+export const _healthRoute = createRoute({
   method: 'get',
   path: '/health',
   summary: 'Basic Health Check',
@@ -57,7 +57,7 @@ export const healthRoute = createRoute({
   },
 });
 
-export const detailedHealthRoute = createRoute({
+export const _detailedHealthRoute = createRoute({
   method: 'get',
   path: '/v1/health',
   summary: 'Detailed Health Check',
@@ -76,7 +76,7 @@ export const detailedHealthRoute = createRoute({
   },
 });
 
-export const apiInfoRoute = createRoute({
+export const _apiInfoRoute = createRoute({
   method: 'get',
   path: '/v1/info',
   summary: 'API Information',
@@ -96,7 +96,7 @@ export const apiInfoRoute = createRoute({
 });
 
 // Authentication routes
-export const authStatusRoute = createRoute({
+export const _authStatusRoute = createRoute({
   method: 'get',
   path: '/v1/auth/status',
   summary: 'Authentication Status',
@@ -116,7 +116,7 @@ export const authStatusRoute = createRoute({
 });
 
 // Client management routes (LGPD compliant)
-export const listClientsRoute = createRoute({
+export const _listClientsRoute = createRoute({
   method: 'get',
   path: '/v1/clients',
   summary: 'List Clients',
@@ -141,7 +141,7 @@ export const listClientsRoute = createRoute({
   },
 });
 
-export const getClientByIdRoute = createRoute({
+export const _getClientByIdRoute = createRoute({
   method: 'get',
   path: '/v1/clients/{clientId}',
   summary: 'Get Client Details',
@@ -153,7 +153,7 @@ export const getClientByIdRoute = createRoute({
       BearerAuth: [],
     },
   ],
-  request: {
+  _request: {
     params: ClientIdParamSchema,
   },
   responses: {
@@ -170,7 +170,7 @@ export const getClientByIdRoute = createRoute({
 });
 
 // Appointment management routes
-export const listAppointmentsRoute = createRoute({
+export const _listAppointmentsRoute = createRoute({
   method: 'get',
   path: '/v1/appointments',
   summary: 'List Appointments',
@@ -194,7 +194,7 @@ export const listAppointmentsRoute = createRoute({
   },
 });
 
-export const getClientAppointmentsRoute = createRoute({
+export const _getClientAppointmentsRoute = createRoute({
   method: 'get',
   path: '/v1/appointments/client/{clientId}',
   summary: 'Get Client Appointments',
@@ -206,7 +206,7 @@ export const getClientAppointmentsRoute = createRoute({
       BearerAuth: [],
     },
   ],
-  request: {
+  _request: {
     params: ClientIdParamSchema,
   },
   responses: {
@@ -223,7 +223,7 @@ export const getClientAppointmentsRoute = createRoute({
 });
 
 // Patient management routes
-export const listPatientsRoute = createRoute({
+export const _listPatientsRoute = createRoute({
   method: 'get',
   path: '/v1/patients',
   summary: 'List Patients',
@@ -273,7 +273,7 @@ export const listPatientsRoute = createRoute({
   },
 });
 
-export const getPatientByIdRoute = createRoute({
+export const _getPatientByIdRoute = createRoute({
   method: 'get',
   path: '/v1/patients/{patientId}',
   summary: 'Get Patient Details',
@@ -284,7 +284,7 @@ export const getPatientByIdRoute = createRoute({
       BearerAuth: [],
     },
   ],
-  request: {
+  _request: {
     params: PatientIdParamSchema,
   },
   responses: {
@@ -339,7 +339,7 @@ export const getPatientByIdRoute = createRoute({
   },
 });
 
-export const createPatientRoute = createRoute({
+export const _createPatientRoute = createRoute({
   method: 'post',
   path: '/v1/patients',
   summary: 'Create Patient',
@@ -350,7 +350,7 @@ export const createPatientRoute = createRoute({
       BearerAuth: [],
     },
   ],
-  request: {
+  _request: {
     body: {
       content: {
         'application/json': {
@@ -399,7 +399,7 @@ export const createPatientRoute = createRoute({
   },
 });
 
-export const updatePatientRoute = createRoute({
+export const _updatePatientRoute = createRoute({
   method: 'put',
   path: '/v1/patients/{patientId}',
   summary: 'Update Patient',
@@ -410,7 +410,7 @@ export const updatePatientRoute = createRoute({
       BearerAuth: [],
     },
   ],
-  request: {
+  _request: {
     params: PatientIdParamSchema,
     body: {
       content: {

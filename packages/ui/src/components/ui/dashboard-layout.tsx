@@ -28,7 +28,7 @@ export function DashboardCard({
 
   const position = getCardPosition(cardId);
 
-  const handleDragEnd = useCallback(() => {
+  const handleDragEnd = useCallback(_() => {
     setIsDragging(false);
 
     if (cardRef.current) {
@@ -58,8 +58,7 @@ export function DashboardCard({
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
       animate={{
         x: position.x,
-        y: position.y,
-      }}
+        y: position.y,_}}
       onDragStart={() => setIsDragging(true)}
       onDragEnd={handleDragEnd}
       whileDrag={{
@@ -114,7 +113,7 @@ export function DashboardLayout({
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Extract card IDs from children
-  const cardIds = React.Children.toArray(children).map((child, index) => {
+  const cardIds = React.Children.toArray(children).map(_(child,_index) => {
     if (React.isValidElement(child)) {
       return (
         child.key?.toString() ||
@@ -126,7 +125,7 @@ export function DashboardLayout({
   });
 
   // Update container size on mount and resize
-  useEffect(() => {
+  useEffect(_() => {
     const updateSize = () => {
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
@@ -141,10 +140,10 @@ export function DashboardLayout({
   }, [updateContainerSize]);
 
   // Auto-distribute cards when container size is available and children change
-  useEffect(() => {
+  useEffect(_() => {
     if (cardIds.length > 0) {
       // Small delay to ensure container size is updated
-      const timer = setTimeout(() => {
+      const timer = setTimeout(_() => {
         autoDistributeCards(cardIds);
       }, 100);
 
@@ -171,7 +170,7 @@ export function DashboardLayout({
 
       {/* Dashboard Content - Cards with absolute positioning */}
       <div className="relative w-full h-full pt-14">
-        {React.Children.map(children, (child, index) => {
+        {React.Children.map(children,_(child,_index) => {
           if (React.isValidElement(child)) {
             // Generate consistent ID for each card
             const cardId =

@@ -6,10 +6,10 @@
 import { vi } from 'vitest';
 
 // Mock console methods globally for all security tests
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
+const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(_() => {});
+const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(_() => {});
+const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(_() => {});
+const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(_() => {});
 
 // Store original console methods for restoration
 const originalConsole = {
@@ -20,14 +20,14 @@ const originalConsole = {
 };
 
 // Test environment setup
-export const setupSecurityLoggingTests = () => {
+export const _setupSecurityLoggingTests = () => {
   // Clear all mock calls before each test
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
   });
 
   // Restore original console methods after all tests
-  afterEach(() => {
+  afterEach(_() => {
     vi.restoreAllMocks();
   });
 
@@ -41,7 +41,7 @@ export const setupSecurityLoggingTests = () => {
 };
 
 // Security-specific test utilities
-export const securityTestUtils = {
+export const _securityTestUtils = {
   // Check for SQL injection patterns in logs
   hasSqlInjectionPatterns: (output: string[][]) => {
     const sqlPatterns = [

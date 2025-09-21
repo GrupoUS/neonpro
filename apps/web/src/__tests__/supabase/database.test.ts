@@ -18,11 +18,11 @@ import {
 } from '@/lib/testing/supabase-test-client';
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
-describe('Supabase Database Integration', () => {
+describe(_'Supabase Database Integration',_() => {
   let testClient: any;
   let testDataGenerator: HealthcareTestDataGenerator;
 
-  beforeAll(() => {
+  beforeAll(_() => {
     testClient = createTestSupabaseClient({
       lgpdCompliant: true,
       auditTrail: true,
@@ -33,13 +33,13 @@ describe('Supabase Database Integration', () => {
     console.log('🧪 Database Integration Test Environment Setup Complete');
   });
 
-  afterAll(async () => {
+  afterAll(_async () => {
     await testDataGenerator.cleanupTestData();
     console.log('🗄️ Database Integration Test Environment Cleaned Up');
   });
 
-  describe('Schema Validation and Integrity', () => {
-    test('should validate core healthcare schema structure', async () => {
+  describe(_'Schema Validation and Integrity',_() => {
+    test(_'should validate core healthcare schema structure',_async () => {
       // architect-review: Healthcare schema validation
       const expectedTables = [
         'users',
@@ -62,7 +62,7 @@ describe('Supabase Database Integration', () => {
       }
     });
 
-    test('should validate LGPD compliance table structures', async () => {
+    test(_'should validate LGPD compliance table structures',_async () => {
       // security-auditor: LGPD compliance validation
       const lgpdTables = [
         'consent_records',
@@ -83,7 +83,7 @@ describe('Supabase Database Integration', () => {
       console.log('✅ LGPD consent record structure validated');
     });
 
-    test('should validate healthcare data relationships', async () => {
+    test(_'should validate healthcare data relationships',_async () => {
       // architect-review: Data relationship integrity
       const testPatient = await testDataGenerator.createTestPatient();
       const testDoctor = await testDataGenerator.createTestDoctor();
@@ -111,7 +111,7 @@ describe('Supabase Database Integration', () => {
       console.log('✅ Healthcare data relationships validated');
     });
 
-    test('should validate data type constraints and validations', async () => {
+    test(_'should validate data type constraints and validations',_async () => {
       // security-auditor: Data integrity validation
       const validationTests = [
         {
@@ -158,7 +158,7 @@ describe('Supabase Database Integration', () => {
       }
     });
 
-    test('should validate audit trail triggers', async () => {
+    test(_'should validate audit trail triggers',_async () => {
       // security-auditor: Audit trail validation
       const testPatient = await testDataGenerator.createTestPatient();
 
@@ -193,8 +193,8 @@ describe('Supabase Database Integration', () => {
     });
   });
 
-  describe('Migration and Schema Evolution', () => {
-    test('should validate migration rollback capabilities', async () => {
+  describe(_'Migration and Schema Evolution',_() => {
+    test(_'should validate migration rollback capabilities',_async () => {
       // architect-review: Migration safety validation
       console.log('🔄 Testing migration rollback capabilities (mock)');
 
@@ -214,7 +214,7 @@ describe('Supabase Database Integration', () => {
       }
     });
 
-    test('should validate data migration integrity', async () => {
+    test(_'should validate data migration integrity',_async () => {
       // architect-review: Data migration validation
       const testPatients = await testDataGenerator.createBulkTestData(
         'patients',
@@ -235,7 +235,7 @@ describe('Supabase Database Integration', () => {
       console.log('✅ Data migration integrity validated');
     });
 
-    test('should validate zero-downtime migration strategies', async () => {
+    test(_'should validate zero-downtime migration strategies',_async () => {
       // architect-review: Zero-downtime validation
       const startTime = performance.now();
 
@@ -260,8 +260,8 @@ describe('Supabase Database Integration', () => {
     });
   });
 
-  describe('Performance and Optimization', () => {
-    test('should validate query performance benchmarks', async () => {
+  describe(_'Performance and Optimization',_() => {
+    test(_'should validate query performance benchmarks',_async () => {
       // security-auditor: Performance validation
       const performanceTests = [
         {
@@ -318,10 +318,10 @@ describe('Supabase Database Integration', () => {
       }
     });
 
-    test('should validate bulk operations performance', async () => {
+    test(_'should validate bulk operations performance',_async () => {
       // architect-review: Bulk operations validation
       const bulkSize = 100;
-      const testData = Array.from({ length: bulkSize }, (_, i) => ({
+      const testData = Array.from({ length: bulkSize },_(_,_i) => ({
         patient_id: `bulk-test-patient-${i}`,
         record_type: 'lab_result',
         content: `Lab result ${i}`,
@@ -348,12 +348,11 @@ describe('Supabase Database Integration', () => {
       );
     });
 
-    test('should validate connection pooling efficiency', async () => {
+    test(_'should validate connection pooling efficiency',_async () => {
       // architect-review: Connection management validation
       const concurrentOperations = 10;
       const operationPromises = Array.from(
-        { length: concurrentOperations },
-        async (_, i) => {
+        { length: concurrentOperations },_async (_,_i) => {
           const startTime = performance.now();
           const { data, error } = await testClient
             .from('patients')
@@ -378,7 +377,7 @@ describe('Supabase Database Integration', () => {
         ).toBe(true);
       });
 
-      const avgResponseTime = results.reduce((sum, r) => sum + r.responseTime, 0) / results.length;
+      const avgResponseTime = results.reduce(_(sum,_r) => sum + r.responseTime, 0) / results.length;
       console.log(
         `✅ Connection pooling: ${concurrentOperations} concurrent ops, avg ${
           avgResponseTime.toFixed(
@@ -388,20 +387,20 @@ describe('Supabase Database Integration', () => {
       );
     });
 
-    test('should validate caching strategies', async () => {
+    test(_'should validate caching strategies',_async () => {
       // architect-review: Caching validation
       const cacheTestQueries = [
         {
           name: 'Doctor Specializations',
-          query: () => testClient.from('doctors').select('specialization').distinct(),
+          _query: () => testClient.from('doctors').select('specialization').distinct(),
         },
         {
           name: 'Organization List',
-          query: () => testClient.from('organizations').select('id, name, type'),
+          _query: () => testClient.from('organizations').select('id, name, type'),
         },
         {
           name: 'Appointment Status Options',
-          query: () => testClient.from('appointments').select('status').distinct(),
+          _query: () => testClient.from('appointments').select('status').distinct(),
         },
       ];
 
@@ -428,8 +427,8 @@ describe('Supabase Database Integration', () => {
     });
   });
 
-  describe('Data Integrity and Constraints', () => {
-    test('should validate foreign key constraints', async () => {
+  describe(_'Data Integrity and Constraints',_() => {
+    test(_'should validate foreign key constraints',_async () => {
       // security-auditor: Data integrity validation
       const testPatient = await testDataGenerator.createTestPatient();
 
@@ -456,7 +455,7 @@ describe('Supabase Database Integration', () => {
       console.log('✅ Foreign key constraints validated (mock)');
     });
 
-    test('should validate unique constraints', async () => {
+    test(_'should validate unique constraints',_async () => {
       // security-auditor: Uniqueness validation
       const testUserData = {
         email: `unique-test-${Date.now()}@neonpro.com`,
@@ -477,7 +476,7 @@ describe('Supabase Database Integration', () => {
       console.log('✅ Unique constraints validated (mock)');
     });
 
-    test('should validate check constraints', async () => {
+    test(_'should validate check constraints',_async () => {
       // security-auditor: Data validation constraints
       const constraintTests = [
         {
@@ -510,7 +509,7 @@ describe('Supabase Database Integration', () => {
       }
     });
 
-    test('should validate data encryption requirements', async () => {
+    test(_'should validate data encryption requirements',_async () => {
       // security-auditor: Encryption validation
       const sensitiveData = {
         patient_id: 'test-patient-encryption',

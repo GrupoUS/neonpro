@@ -41,7 +41,7 @@ function AppointmentsPage() {
   const { data: appointments, isLoading, error } = useAppointments(clinicId);
 
   // Build a memoized set of event time ranges for collision checks
-  const appointmentRanges = useMemo(() => {
+  const appointmentRanges = useMemo(_() => {
     return (appointments || []).map(a => ({
       id: a.id,
       start: new Date(a.start),
@@ -58,9 +58,9 @@ function AppointmentsPage() {
   const deleteAppointmentMutation = useDeleteAppointment();
 
   // Appointments statistics for overview cards
-  const stats = useMemo(() => {
+  const stats = useMemo(_() => {
     const list = appointments || [];
-    const now = new Date();
+    const _now = new Date();
     const totalToday = list.filter(a => isSameDay(new Date(a.start), now)).length;
     const upcoming = list.filter(a => isAfter(new Date(a.start), now)).length;
     const completed = list.filter(a =>
@@ -168,7 +168,7 @@ function AppointmentsPage() {
     };
 
     createAppointmentMutation.mutate(
-      { data: appointmentData, clinicId },
+      { data: appointmentData,_clinicId },
       {
         onSuccess: () => {
           setShowNewAppointment(false);
@@ -291,8 +291,7 @@ function AppointmentsPage() {
               </div>
             </div>
           )}
-          {error && (
-            <div className='flex items-center justify-center h-96'>
+          {error && (_<div className='flex items-center justify-center h-96'>
               <div className='text-center'>
                 <p className='text-lg font-semibold text-destructive mb-2'>
                   Erro ao carregar agendamentos
@@ -362,6 +361,6 @@ function AppointmentsPage() {
   );
 }
 
-export const Route = createFileRoute('/services/appointments')({
+export const _Route = createFileRoute('/services/appointments')({
   component: AppointmentsPage,
 });

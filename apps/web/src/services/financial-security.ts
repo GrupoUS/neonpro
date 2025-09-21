@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase';
 
 export interface SecurityEvent {
   id: string;
-  userId: string;
+  _userId: string;
   eventType: 'access' | 'modification' | 'export' | 'login' | 'logout' | 'failure';
   resourceType: 'financial_data' | 'patient_data' | 'reports' | 'system';
   resourceId?: string;
@@ -15,7 +15,7 @@ export interface SecurityEvent {
 }
 
 export interface AccessControl {
-  userId: string;
+  _userId: string;
   resource: string;
   permissions: string[];
   roles: string[];
@@ -32,7 +32,7 @@ export interface AccessControl {
 
 export interface AuditLog {
   id: string;
-  userId: string;
+  _userId: string;
   action: string;
   resource: string;
   resourceId?: string;
@@ -82,10 +82,10 @@ export class FinancialSecurityService {
    * Check if user has permission to access resource
    */
   static async checkAccess(
-    userId: string,
+    _userId: string,
     resource: string,
     action: string,
-    context?: {
+    _context?: {
       ipAddress?: string;
       userAgent?: string;
       resourceId?: string;
@@ -100,7 +100,7 @@ export class FinancialSecurityService {
       const { data: accessData, error: accessError } = await supabase
         .from('user_access_controls')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .eq('resource', resource);
 
       if (accessError) throw accessError;
@@ -148,7 +148,7 @@ export class FinancialSecurityService {
 
       // Check time restrictions
       if (accessControl.restrictions?.timeRestrictions) {
-        const now = new Date();
+        const _now = new Date();
         const currentTime = now.getHours() * 100 + now.getMinutes();
         const currentDay = now.getDay();
 
@@ -203,7 +203,7 @@ export class FinancialSecurityService {
         allowed: true,
         restrictions: accessControl.restrictions,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error checking access:', error);
       return {
         allowed: false,
@@ -236,7 +236,7 @@ export class FinancialSecurityService {
 
       // Check if this event should trigger an alert
       await this.checkForSecurityAlert(event);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error logging security event:', error);
     }
   }
@@ -263,7 +263,7 @@ export class FinancialSecurityService {
         });
 
       if (error) throw error;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error logging audit trail:', error);
     }
   }
@@ -295,7 +295,7 @@ export class FinancialSecurityService {
 
       // Log encryption event
       await this.logSecurityEvent({
-        userId: 'system',
+        _userId: 'system',
         eventType: 'modification',
         resourceType: 'financial_data',
         severity: 'low',
@@ -307,7 +307,7 @@ export class FinancialSecurityService {
       });
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error encrypting data:', error);
       throw new Error('Data encryption failed');
     }
@@ -316,7 +316,7 @@ export class FinancialSecurityService {
   /**
    * Decrypt sensitive financial data
    */
-  static async decryptData(encryptedData: string, userId: string): Promise<any> {
+  static async decryptData(encryptedData: string, _userId: string): Promise<any> {
     try {
       const crypto = await import('crypto');
 
@@ -355,7 +355,7 @@ export class FinancialSecurityService {
       });
 
       return data;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error decrypting data:', error);
       throw new Error('Data decryption failed');
     }
@@ -367,7 +367,7 @@ export class FinancialSecurityService {
   static async validateCompliance(
     data: any,
     operation: string,
-    userId: string,
+    _userId: string,
   ): Promise<{
     compliant: boolean;
     violations: Array<{
@@ -418,7 +418,7 @@ export class FinancialSecurityService {
         compliant: violations.length === 0,
         violations,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error validating compliance:', error);
       return {
         compliant: false,
@@ -474,7 +474,7 @@ export class FinancialSecurityService {
         investigator: alert.investigator,
         resolution: alert.resolution,
       }));
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting security alerts:', error);
       return [];
     }
@@ -536,7 +536,7 @@ export class FinancialSecurityService {
         });
 
       if (error) throw error;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error creating security alert:', error);
     }
   }
@@ -544,21 +544,21 @@ export class FinancialSecurityService {
   /**
    * Get recent failures for a user
    */
-  private static async getRecentFailures(userId: string, minutes: number): Promise<number> {
+  private static async getRecentFailures(_userId: string, minutes: number): Promise<number> {
     try {
       const since = new Date(Date.now() - minutes * 60 * 1000);
 
       const { data, error } = await supabase
         .from('security_events')
         .select('id')
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .eq('event_type', 'failure')
         .gte('timestamp', since.toISOString());
 
       if (error) throw error;
 
       return data?.length || 0;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting recent failures:', error);
       return 0;
     }
@@ -605,6 +605,6 @@ export class FinancialSecurityService {
    * Get nested value from object
    */
   private static getNestedValue(obj: any, path: string): any {
-    return path.split('.').reduce((current, key) => current?.[key], obj);
+    return path.split('.').reduce(_(current,_key) => current?.[key], obj);
   }
 }

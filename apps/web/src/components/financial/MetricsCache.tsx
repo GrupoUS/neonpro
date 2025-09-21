@@ -9,11 +9,9 @@ export interface MetricsCacheProps {
   'data-testid'?: string;
 }
 
-export const MetricsCache: React.FC<MetricsCacheProps> = ({
-  onCacheUpdate,
-  className,
-  'data-testid': testId,
-}) => {
+export const MetricsCache: React.FC<MetricsCacheProps> = (_{
+  onCacheUpdate,_className,
+  'data-testid': testId,_}) => {
   const [cacheStats, setCacheStats] = useState({
     size: 0,
     hitRate: 0,
@@ -43,7 +41,7 @@ export const MetricsCache: React.FC<MetricsCacheProps> = ({
       if (onCacheUpdate) {
         onCacheUpdate(stats);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to refresh cache stats:', error);
     } finally {
       setIsRefreshing(false);
@@ -59,12 +57,12 @@ export const MetricsCache: React.FC<MetricsCacheProps> = ({
         keys: [],
         memory: 0,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to clear cache:', error);
     }
   };
 
-  useEffect(() => {
+  useEffect(_() => {
     refreshStats();
   }, []);
 
@@ -124,8 +122,7 @@ export const MetricsCache: React.FC<MetricsCacheProps> = ({
           </div>
         </div>
 
-        {cacheStats.keys.length > 0 && (
-          <div>
+        {cacheStats.keys.length > 0 && (_<div>
             <h4 className='font-medium mb-2'>Cache Keys</h4>
             <div className='flex flex-wrap gap-2'>
               {cacheStats.keys.map((key, _index) => (

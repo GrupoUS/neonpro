@@ -15,21 +15,21 @@ import {
   complianceTestUtils 
 } from './test-setup';
 
-describe('Database Logging - Healthcare Data Compliance', () => {
+describe(_'Database Logging - Healthcare Data Compliance',_() => {
   let consoleCapture: ReturnType<typeof loggingTestUtils.captureConsoleOutput>;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
     consoleCapture = loggingTestUtils.captureConsoleOutput();
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     consoleCapture.restore();
     vi.restoreAllMocks();
   });
 
-  describe('LGPD Compliance - Patient Data Protection', () => {
-    it('should NOT log sensitive patient PII data to console', async () => {
+  describe(_'LGPD Compliance - Patient Data Protection',_() => {
+    it(_'should NOT log sensitive patient PII data to console',_async () => {
       // Setup test environment with sanitized patient data
       process.env.SUPABASE_URL = 'https://test.supabase.co';
       process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-key';
@@ -49,7 +49,7 @@ describe('Database Logging - Healthcare Data Compliance', () => {
 
       // Mock database client to simulate operations
       const mockClient = testUtils.createMockClient();
-      const mockError = testUtils.createDatabaseError('Constraint violation', '23505');
+      const _mockError = testUtils.createDatabaseError('Constraint violation', '23505');
       
       // Simulate database operation that fails and might log patient data
       try {
@@ -61,7 +61,7 @@ describe('Database Logging - Healthcare Data Compliance', () => {
           // Current implementation might log: console.error('Database error:', result.error)
           console.error('Database error:', result.error);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Connection error:', error);
       }
 
@@ -77,7 +77,7 @@ describe('Database Logging - Healthcare Data Compliance', () => {
       expect(hasSensitiveData).toBe(false);
     });
 
-    it('should anonymize medical record data in error logs', async () => {
+    it(_'should anonymize medical record data in error logs',_async () => {
       const mockMedicalRecord = {
         ...healthcareFixtures.medicalRecordData,
         diagnosis: 'Depression Major',
@@ -103,7 +103,7 @@ describe('Database Logging - Healthcare Data Compliance', () => {
         if (result.error) {
           console.error('Failed to insert medical record:', result.error);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Medical record operation failed:', error);
       }
 
@@ -119,8 +119,8 @@ describe('Database Logging - Healthcare Data Compliance', () => {
     });
   });
 
-  describe('CFM Compliance - Medical Professional Data', () => {
-    it('should NOT log doctor credentials or patient interactions', async () => {
+  describe(_'CFM Compliance - Medical Professional Data',_() => {
+    it(_'should NOT log doctor credentials or patient interactions',_async () => {
       const mockDoctorData = {
         ...healthcareFixtures.professionalData,
         crm: '123456-SP', // This should NOT be logged
@@ -155,7 +155,7 @@ describe('Database Logging - Healthcare Data Compliance', () => {
         if (aptResult.error) {
           console.error('Appointment operation failed:', aptResult.error);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Professional data operation failed:', error);
       }
 
@@ -173,8 +173,8 @@ describe('Database Logging - Healthcare Data Compliance', () => {
     });
   });
 
-  describe('Database Connection Security', () => {
-    it('should NOT log database connection credentials or URLs', async () => {
+  describe(_'Database Connection Security',_() => {
+    it(_'should NOT log database connection credentials or URLs',_async () => {
       // Simulate connection error scenarios
       const originalUrl = process.env.SUPABASE_URL;
       process.env.SUPABASE_URL = 'https://invalid.supabase.co';
@@ -184,7 +184,7 @@ describe('Database Logging - Healthcare Data Compliance', () => {
         const client = createAdminClient();
         // Mock a connection validation method
         await (client as any).validateConnection?.();
-      } catch (error) {
+      } catch (_error) {
         console.error('Database connection failed:', error);
         console.error('Connection details:', {
           url: process.env.SUPABASE_URL,
@@ -206,7 +206,7 @@ describe('Database Logging - Healthcare Data Compliance', () => {
       expect(hasConnectionDetails).toBe(false);
     });
 
-    it('should NOT log database schema information in errors', async () => {
+    it(_'should NOT log database schema information in errors',_async () => {
       // Simulate schema-related error
       try {
         const client = createAdminClient();
@@ -218,7 +218,7 @@ describe('Database Logging - Healthcare Data Compliance', () => {
           console.error('Query failed:', result.error);
           console.error('Table does not exist: nonexistent_table');
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Schema error:', error);
       }
 
@@ -235,8 +235,8 @@ describe('Database Logging - Healthcare Data Compliance', () => {
     });
   });
 
-  describe('ANVISA Compliance - Medical Device Data', () => {
-    it('should NOT log medical device calibration or measurement data', async () => {
+  describe(_'ANVISA Compliance - Medical Device Data',_() => {
+    it(_'should NOT log medical device calibration or measurement data',_async () => {
       const mockDeviceData = {
         device_id: 'device-789',
         patient_id: 'patient-456',
@@ -260,7 +260,7 @@ describe('Database Logging - Healthcare Data Compliance', () => {
           console.error('Medical device data insertion failed:', result.error);
           console.error('Device measurements:', mockDeviceData.measurements);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Device operation error:', error);
       }
 
@@ -278,8 +278,8 @@ describe('Database Logging - Healthcare Data Compliance', () => {
     });
   });
 
-  describe('Structured Logging Requirements', () => {
-    it('should use structured logging with proper correlation IDs', async () => {
+  describe(_'Structured Logging Requirements',_() => {
+    it(_'should use structured logging with proper correlation IDs',_async () => {
       const testCorrelationId = testUtils.generateCorrelationId();
       
       // Simulate an operation that should include correlation ID
@@ -294,7 +294,7 @@ describe('Database Logging - Healthcare Data Compliance', () => {
       expect(hasStructuredLogging).toBe(true);
     });
 
-    it('should sanitize error objects before logging', async () => {
+    it(_'should sanitize error objects before logging',_async () => {
       const errorWithSensitiveData = {
         message: 'Database connection failed',
         stack: 'Error: Database connection failed\\n    at Connection.connect (/app/src/client.ts:45:10)',
@@ -305,7 +305,7 @@ describe('Database Logging - Healthcare Data Compliance', () => {
           user: 'postgres',
           password: 'supersecretpassword' // This should NOT be logged
         },
-        query: 'SELECT * FROM patients WHERE id = $1',
+        _query: 'SELECT * FROM patients WHERE id = $1',
         parameters: ['patient-sensitive-123'] // This should NOT be logged
       };
 
@@ -324,10 +324,10 @@ describe('Database Logging - Healthcare Data Compliance', () => {
     });
   });
 
-  describe('Healthcare Data Anonymization', () => {
-    it('should NOT log personal identifiers in error contexts', async () => {
+  describe(_'Healthcare Data Anonymization',_() => {
+    it(_'should NOT log personal identifiers in error contexts',_async () => {
       const patientIds = ['patient-123', 'patient-456', 'patient-789'];
-      const doctorIds = ['doctor-111', 'doctor-222'];
+      const _doctorIds = ['doctor-111', 'doctor-222'];
 
       // Simulate bulk operations that might fail
       patientIds.forEach(patientId => {
@@ -335,7 +335,7 @@ describe('Database Logging - Healthcare Data Compliance', () => {
           console.log(`Processing patient ${patientId}`);
           // Simulate operation that fails
           throw new Error(`Failed to process patient ${patientId}`);
-        } catch (error) {
+        } catch (_error) {
           console.error(`Error for patient ${patientId}:`, error);
         }
       });
@@ -352,7 +352,7 @@ describe('Database Logging - Healthcare Data Compliance', () => {
       expect(hasPatientIds).toBe(false);
     });
 
-    it('should anonymize CPF and similar identifiers in logs', async () => {
+    it(_'should anonymize CPF and similar identifiers in logs',_async () => {
       const testCases = [
         '123.456.789-00',
         '987.654.321-11',
@@ -377,8 +377,8 @@ describe('Database Logging - Healthcare Data Compliance', () => {
     });
   });
 
-  describe('LGPD Data Processing Compliance', () => {
-    it('should validate LGPD compliance for data processing operations', async () => {
+  describe(_'LGPD Data Processing Compliance',_() => {
+    it(_'should validate LGPD compliance for data processing operations',_async () => {
       const lgpdData = complianceTestUtils.generateLGPDCompliantData();
       const validationResult = complianceTestUtils.validatesLGPDCompliance(
         lgpdData, 
@@ -392,9 +392,9 @@ describe('Database Logging - Healthcare Data Compliance', () => {
       expect(validationResult.checks.hasLegalBasis).toBe(true);
     });
 
-    it('should maintain audit trail for healthcare data access', async () => {
+    it(_'should maintain audit trail for healthcare data access',_async () => {
       const auditTrail = {
-        userId: 'test-user-123',
+        _userId: 'test-user-123',
         action: 'patient_data_access',
         timestamp: new Date().toISOString(),
         correlationId: testUtils.generateCorrelationId(),

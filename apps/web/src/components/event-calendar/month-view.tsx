@@ -43,7 +43,7 @@ export function MonthView({
   onEventSelect,
   onEventCreate,
 }: MonthViewProps) {
-  const days = useMemo(() => {
+  const days = useMemo(_() => {
     const monthStart = startOfMonth(currentDate);
     const monthEnd = endOfMonth(monthStart);
     const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
@@ -52,14 +52,14 @@ export function MonthView({
     return eachDayOfInterval({ start: calendarStart, end: calendarEnd });
   }, [currentDate]);
 
-  const weekdays = useMemo(() => {
-    return Array.from({ length: 7 }).map((_, i) => {
+  const weekdays = useMemo(_() => {
+    return Array.from({ length: 7 }).map(_(_,_i) => {
       const date = addDays(startOfWeek(new Date()), i);
       return format(date, 'EEE');
     });
   }, []);
 
-  const weeks = useMemo(() => {
+  const weeks = useMemo(_() => {
     const result = [];
     let week = [];
 
@@ -85,7 +85,7 @@ export function MonthView({
     eventGap: EventGap,
   });
 
-  useEffect(() => {
+  useEffect(_() => {
     setIsMounted(true);
   }, []);
 
@@ -102,12 +102,12 @@ export function MonthView({
         ))}
       </div>
       <div className='grid flex-1 auto-rows-fr'>
-        {weeks.map((week, weekIndex) => (
+        {weeks.map(_(week,_weekIndex) => (
           <div
             key={`week-${weekIndex}`}
             className='grid grid-cols-7 [&:last-child>*]:border-b-0'
           >
-            {week.map((day, dayIndex) => {
+            {week.map((day,_dayIndex) => {
               if (!day) return null; // Skip if day is undefined
 
               const dayEvents = getEventsForDay(events, day);
@@ -150,7 +150,7 @@ export function MonthView({
                       ref={isReferenceCell ? contentRef : null}
                       className='min-h-[calc((var(--event-height)+var(--event-gap))*2)] sm:min-h-[calc((var(--event-height)+var(--event-gap))*3)] lg:min-h-[calc((var(--event-height)+var(--event-gap))*4)]'
                     >
-                      {sortEvents(allDayEvents).map((event, _index) => {
+                      {sortEvents(allDayEvents).map(_(event, _index) => {
                         const eventStart = new Date(event.start);
                         const eventEnd = new Date(event.end);
                         const isFirstDay = isSameDay(day, eventStart);

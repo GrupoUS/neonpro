@@ -21,14 +21,14 @@ export const DEFAULT_SESSION_CONFIG = {
 } as const;
 
 // Healthcare-specific session configurations
-export const HEALTHCARE_SESSION_CONFIG = {
+export const _HEALTHCARE_SESSION_CONFIG = {
   ...DEFAULT_SESSION_CONFIG,
   defaultExpirationMs: 4 * 60 * 60 * 1000, // 4 hours for healthcare
   maxConcurrentSessions: 5, // Lower limit for healthcare compliance
 } as const;
 
 // Session event types
-export const SESSION_EVENTS = {
+export const _SESSION_EVENTS = {
   CREATED: 'session_created',
   UPDATED: 'session_updated',
   EXPIRED: 'session_expired',
@@ -38,15 +38,15 @@ export const SESSION_EVENTS = {
 } as const;
 
 // Helper functions for session management
-export const generateSessionId = (): string => {
+export const _generateSessionId = (): string => {
   return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 };
 
-export const isValidSessionId = (sessionId: string): boolean => {
+export const _isValidSessionId = (sessionId: string): boolean => {
   return /^session_\d+_[a-z0-9]{9}$/.test(sessionId);
 };
 
-export const formatSessionDuration = (ms: number): string => {
+export const _formatSessionDuration = (ms: number): string => {
   const hours = Math.floor(ms / (1000 * 60 * 60));
   const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((ms % (1000 * 60)) / 1000);
@@ -60,8 +60,8 @@ export const formatSessionDuration = (ms: number): string => {
   }
 };
 
-export const getSessionHealth = (session: SessionData): 'healthy' | 'expiring_soon' | 'expired' => {
-  const now = new Date();
+export const _getSessionHealth = (session: SessionData): 'healthy' | 'expiring_soon' | 'expired' => {
+  const _now = new Date();
   const expiresAt = new Date(session.expiresAt);
   const timeUntilExpiration = expiresAt.getTime() - now.getTime();
 

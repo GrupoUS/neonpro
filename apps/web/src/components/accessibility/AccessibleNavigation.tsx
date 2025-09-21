@@ -82,7 +82,7 @@ export function AccessibleNavigation({
     [onNavigate, announce, isMobileMenuOpen],
   );
 
-  const toggleMobileMenu = useCallback(() => {
+  const toggleMobileMenu = useCallback(_() => {
     setIsMobileMenuOpen(prev => {
       const newState = !prev;
       announce(
@@ -113,7 +113,7 @@ export function AccessibleNavigation({
   );
 
   // Close mobile menu on escape key
-  useEffect(() => {
+  useEffect(_() => {
     const handleEscape = (_event: any) => {
       if (event.key === 'Escape' && isMobileMenuOpen) {
         setIsMobileMenuOpen(false);
@@ -196,7 +196,7 @@ export function AccessibleNavigation({
                     aria-labelledby={`submenu-${item.id}`}
                     aria-hidden={!isSubmenuOpen}
                   >
-                    {item.children?.map((child, childIndex) => (
+                    {item.children?.map((child,_childIndex) => (
                       <li key={child.id} role='none'>
                         <Button
                           variant='ghost'
@@ -319,7 +319,7 @@ export function AccessibleNavigation({
                 role='menubar'
                 aria-label='Menu principal'
               >
-                {items.map((item, _index) => renderNavigationItem(item, index, false))}
+                {items.map(_(item, _index) => renderNavigationItem(item, index, false))}
               </ul>
             </div>
 

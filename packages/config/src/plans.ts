@@ -531,9 +531,9 @@ export function getRecommendedUpgrade(
 
   // Find the lowest tier plan that has access to the feature
   const availableUpgrades = allowedPlans
-    .map((plan) => ({ plan, priority: getPlanPriority(plan) }))
-    .filter(({ priority }) => priority > currentPriority)
-    .sort((a, b) => a.priority - b.priority);
+    .map(_(plan) => ({ plan, priority: getPlanPriority(plan) }))
+    .filter(_({ priority }) => priority > currentPriority)
+    .sort(_(a,_b) => a.priority - b.priority);
 
   return availableUpgrades.length > 0 ? availableUpgrades[0].plan : null;
 }
@@ -550,8 +550,7 @@ export function getPreferredModel(
 
   // For healthcare-specific use cases, prefer healthcare-optimized models
   if (useCase === "analysis" || useCase === "prediction") {
-    const healthcareModel = planConfig.availableModels.find(
-      (model) => MODEL_ACCESS_CONTROL[model].healthcareOptimized,
+    const healthcareModel = planConfig.availableModels.find(_(model) => MODEL_ACCESS_CONTROL[model].healthcareOptimized,
     );
     if (healthcareModel) return healthcareModel;
   }

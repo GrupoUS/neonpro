@@ -17,7 +17,7 @@ export interface MaskingRule {
   maskingType: 'full' | 'partial' | 'hash' | 'tokenize' | 'redact';
   pattern?: RegExp;
   replacementPattern?: string;
-  context:
+  _context:
     | 'list_view'
     | 'detail_view'
     | 'export'
@@ -32,7 +32,7 @@ export interface MaskingRule {
 }
 
 export interface MaskingContext {
-  userId: string;
+  _userId: string;
   userRole: string;
   purpose: string[];
   patientId?: string;
@@ -56,7 +56,7 @@ export interface MaskingResult {
     | 'highly_confidential';
   auditLog?: {
     maskingEvent: string;
-    userId: string;
+    _userId: string;
     timestamp: Date;
     fieldsMasked: string[];
     reason: string;
@@ -76,7 +76,7 @@ const HEALTHCARE_MASKING_RULES: MaskingRule[] = [
     maskingType: 'partial',
     pattern: /\b(\d{3})\.?(\d{3})\.?(\d{3})-?(\d{2})\b/g,
     replacementPattern: '$1.***.***-$4',
-    context: 'list_view',
+    _context: 'list_view',
     priority: 100,
   },
   {
@@ -84,7 +84,7 @@ const HEALTHCARE_MASKING_RULES: MaskingRule[] = [
     fieldName: 'cpf',
     dataCategory: LGPDDataCategory.PERSONAL,
     maskingType: 'full',
-    context: 'export',
+    _context: 'export',
     priority: 95,
   },
   {
@@ -94,7 +94,7 @@ const HEALTHCARE_MASKING_RULES: MaskingRule[] = [
     maskingType: 'partial',
     pattern: /\b(?:\+55\s?)?\(?(\d{2})\)?\s?9?(\d{4})-?(\d{4})\b/g,
     replacementPattern: '($1) *****-$3',
-    context: 'list_view',
+    _context: 'list_view',
     priority: 90,
   },
   {
@@ -104,7 +104,7 @@ const HEALTHCARE_MASKING_RULES: MaskingRule[] = [
     maskingType: 'partial',
     pattern: /\b([A-Za-z0-9._%+-]+)@([A-Za-z0-9.-]+\.[A-Z|a-z]{2,})\b/g,
     replacementPattern: '***@$2',
-    context: 'list_view',
+    _context: 'list_view',
     priority: 85,
   },
 
@@ -114,7 +114,7 @@ const HEALTHCARE_MASKING_RULES: MaskingRule[] = [
     fieldName: ['medical_record', 'prontuario', 'patient_record'],
     dataCategory: LGPDDataCategory.MEDICAL,
     maskingType: 'hash',
-    context: 'list_view',
+    _context: 'list_view',
     priority: 150,
   },
   {
@@ -122,7 +122,7 @@ const HEALTHCARE_MASKING_RULES: MaskingRule[] = [
     fieldName: ['diagnosis', 'diagnostico', 'cid_code'],
     dataCategory: LGPDDataCategory.MEDICAL,
     maskingType: 'redact',
-    context: 'list_view',
+    _context: 'list_view',
     priority: 140,
     conditions: {
       userRole: ['receptionist', 'admin'],
@@ -133,7 +133,7 @@ const HEALTHCARE_MASKING_RULES: MaskingRule[] = [
     fieldName: ['medication', 'medicamento', 'prescription'],
     dataCategory: LGPDDataCategory.MEDICAL,
     maskingType: 'partial',
-    context: 'list_view',
+    _context: 'list_view',
     priority: 130,
   },
 
@@ -145,7 +145,7 @@ const HEALTHCARE_MASKING_RULES: MaskingRule[] = [
     maskingType: 'full',
     pattern: /\b(\d{4})[\s-]?(\d{4})[\s-]?(\d{4})[\s-]?(\d{4})\b/g,
     replacementPattern: '****-****-****-$4',
-    context: 'all',
+    _context: 'all',
     priority: 200,
   },
   {
@@ -153,7 +153,7 @@ const HEALTHCARE_MASKING_RULES: MaskingRule[] = [
     fieldName: ['bank_account', 'agency', 'conta_bancaria'],
     dataCategory: LGPDDataCategory.FINANCIAL,
     maskingType: 'partial',
-    context: 'list_view',
+    _context: 'list_view',
     priority: 110,
   },
 
@@ -168,7 +168,7 @@ const HEALTHCARE_MASKING_RULES: MaskingRule[] = [
     ],
     dataCategory: LGPDDataCategory.BIOMETRIC,
     maskingType: 'redact',
-    context: 'all',
+    _context: 'all',
     priority: 300,
   },
 
@@ -178,7 +178,7 @@ const HEALTHCARE_MASKING_RULES: MaskingRule[] = [
     fieldName: ['address', 'endereco', 'street_address'],
     dataCategory: LGPDDataCategory.PERSONAL,
     maskingType: 'partial',
-    context: 'list_view',
+    _context: 'list_view',
     priority: 80,
   },
   {
@@ -188,7 +188,7 @@ const HEALTHCARE_MASKING_RULES: MaskingRule[] = [
     maskingType: 'partial',
     pattern: /\b(\d{5})-?(\d{3})\b/g,
     replacementPattern: '$1-***',
-    context: 'list_view',
+    _context: 'list_view',
     priority: 75,
   },
 ];
@@ -201,7 +201,7 @@ export class DataMaskingService {
   private maskingRules: MaskingRule[] = HEALTHCARE_MASKING_RULES;
   private auditLog: Array<{
     timestamp: Date;
-    userId: string;
+    _userId: string;
     action: string;
     details: any;
   }> = [];
@@ -211,12 +211,12 @@ export class DataMaskingService {
    */
   async maskData(
     data: any,
-    context: MaskingContext,
+    _context: MaskingContext,
     customRules?: MaskingRule[],
   ): Promise<MaskingResult> {
     try {
       const startTime = Date.now();
-      const rulesToApply = customRules || this.getApplicableRules(context);
+      const rulesToApply = customRules || this.getApplicableRules(_context);
 
       // Deep clone data to avoid modifying original
       const maskedData = JSON.parse(JSON.stringify(data));
@@ -258,7 +258,7 @@ export class DataMaskingService {
       await this.logMaskingActivity(result, Date.now() - startTime);
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in maskData:', error);
       throw new Error('Failed to apply data masking');
     }
@@ -267,7 +267,7 @@ export class DataMaskingService {
   /**
    * Get applicable masking rules for the given context
    */
-  private getApplicableRules(context: MaskingContext): MaskingRule[] {
+  private getApplicableRules(_context: MaskingContext): MaskingRule[] {
     return this.maskingRules
       .filter(rule => {
         // Check context applicability
@@ -309,7 +309,7 @@ export class DataMaskingService {
 
         return true;
       })
-      .sort((a, b) => b.priority - a.priority); // Higher priority first
+      .sort(_(a,_b) => b.priority - a.priority); // Higher priority first
   }
 
   /**
@@ -318,7 +318,7 @@ export class DataMaskingService {
   private applyMaskingRules(
     data: any,
     rules: MaskingRule[],
-    context: MaskingContext,
+    _context: MaskingContext,
     tracking: {
       rulesApplied: string[];
       dataCategoriesMasked: Set<LGPDDataCategory>;
@@ -354,13 +354,13 @@ export class DataMaskingService {
         tracking.fieldsMasked.push(currentPath);
 
         // Apply masking based on type
-        data[key] = this.applyMasking(value, rule, context);
+        data[key] = this.applyMasking(value, rule, _context);
       }
 
       // Recursively process nested objects and arrays
       if (typeof value === 'object' && value !== null) {
         if (Array.isArray(value)) {
-          value.forEach((item, index) => {
+          value.forEach(_(item,_index) => {
             if (typeof item === 'object' && item !== null) {
               this.applyMaskingRules(
                 item,
@@ -384,7 +384,7 @@ export class DataMaskingService {
   private applyMasking(
     value: any,
     rule: MaskingRule,
-    context: MaskingContext,
+    _context: MaskingContext,
   ): any {
     if (typeof value !== 'string') {
       return value;
@@ -409,7 +409,7 @@ export class DataMaskingService {
         return this.hashValue(value);
 
       case 'tokenize':
-        return this.tokenizeValue(value, context);
+        return this.tokenizeValue(value, _context);
 
       case 'redact':
         return '[REDACTED]';
@@ -436,7 +436,7 @@ export class DataMaskingService {
   /**
    * Tokenize value for reversible masking
    */
-  private tokenizeValue(value: string, context: MaskingContext): string {
+  private tokenizeValue(value: string, _context: MaskingContext): string {
     // In production, this would integrate with a tokenization service
     return `token_${Buffer.from(value).toString('base64').substring(0, 8)}`;
   }
@@ -469,13 +469,13 @@ export class DataMaskingService {
    * Create audit log entry
    */
   private createAuditLogEntry(
-    context: MaskingContext,
+    _context: MaskingContext,
     fieldsMasked: string[],
     rulesApplied: string[],
   ) {
     return {
       maskingEvent: 'data_masking_applied',
-      userId: context.userId,
+      _userId: context.userId,
       timestamp: new Date(),
       fieldsMasked,
       reason: `Applied ${rulesApplied.length} masking rules for ${context.viewContext} context`,
@@ -493,7 +493,7 @@ export class DataMaskingService {
       const logEntry = {
         id: crypto.randomUUID(),
         timestamp: new Date(),
-        userId: 'system', // Would be actual user in real implementation
+        _userId: 'system', // Would be actual user in real implementation
         action: 'data_masking',
         details: {
           processingTime,
@@ -507,7 +507,7 @@ export class DataMaskingService {
       // In production, this would write to your audit log system
       this.auditLog.push(logEntry);
       console.log('[Data Masking Audit]', JSON.stringify(logEntry, null, 2));
-    } catch (error) {
+    } catch (_error) {
       console.error('Error logging masking activity:', error);
     }
   }
@@ -518,7 +518,7 @@ export class DataMaskingService {
   addCustomRule(rule: MaskingRule): void {
     this.maskingRules.push(rule);
     // Sort by priority
-    this.maskingRules.sort((a, b) => b.priority - a.priority);
+    this.maskingRules.sort(_(a,_b) => b.priority - a.priority);
   }
 
   /**
@@ -544,7 +544,7 @@ export class DataMaskingService {
    */
   async previewMasking(
     data: any,
-    context: MaskingContext,
+    _context: MaskingContext,
   ): Promise<{
     previewData: any;
     affectedFields: string[];
@@ -600,7 +600,7 @@ export class DataMaskingService {
  * Create default masking context for healthcare operations
  */
 export function createHealthcareMaskingContext(
-  userId: string,
+  _userId: string,
   userRole: string,
   purpose: string[],
   patientId?: string,
@@ -628,7 +628,7 @@ export function requiresLGPDMasking(
   fieldName: string,
   dataCategory: LGPDDataCategory,
   userRole: string,
-  context: MaskingContext['viewContext'] = 'list',
+  _context: MaskingContext['viewContext'] = 'list',
 ): boolean {
   const healthcareContext = createHealthcareMaskingContext('system', userRole, [
     'check',
@@ -642,7 +642,7 @@ export function requiresLGPDMasking(
       : [rule.fieldName];
     return (
       rule.dataCategory === dataCategory
-      && (rule.context === 'all' || rule.context === context)
+      && (rule.context === 'all' || rule.context === _context)
       && fieldNames.some(name => fieldName.toLowerCase().includes(name.toLowerCase()))
     );
   });

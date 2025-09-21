@@ -82,7 +82,7 @@ export class ExportService {
         format: options.format,
         metadata: completeMetadata,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error exporting financial metrics:', error);
       throw new Error('Falha ao exportar relatório financeiro');
     }
@@ -126,7 +126,7 @@ export class ExportService {
         format: options.format,
         metadata: completeMetadata,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error exporting dashboard:', error);
       throw new Error('Falha ao exportar dashboard');
     }
@@ -286,7 +286,7 @@ export class ExportService {
     if (dashboardData.insights.length > 0) {
       content += 'INSIGHTS E RECOMENDAÇÕES\n';
       content += '=' + '='.repeat(35) + '\n';
-      dashboardData.insights.forEach((insight, _index) => {
+      dashboardData.insights.forEach(_(insight, _index) => {
         content += `${index + 1}. ${insight.title}\n`;
         content += `   ${insight.description}\n`;
         if (insight.recommendations && insight.recommendations.length > 0) {

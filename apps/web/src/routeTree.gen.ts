@@ -1189,6 +1189,6 @@ const rootRouteChildren: RootRouteChildren = {
   ApiGoogleCalendarDisconnectRoute: ApiGoogleCalendarDisconnectRoute,
   ApiGoogleCalendarWebhookRoute: ApiGoogleCalendarWebhookRoute,
 };
-export const routeTree = rootRouteImport
+export const _routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>();

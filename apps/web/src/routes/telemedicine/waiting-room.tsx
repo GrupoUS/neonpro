@@ -25,7 +25,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
-export const Route = createFileRoute('/telemedicine/waiting-room')({
+export const _Route = createFileRoute('/telemedicine/waiting-room')({
   component: WaitingRoom,
 });
 

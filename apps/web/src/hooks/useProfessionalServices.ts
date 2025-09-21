@@ -143,8 +143,8 @@ export function useCreateProfessionalService() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: CreateProfessionalServiceRequest) =>
-      professionalServicesService.createProfessionalService(request),
+    mutationFn: (_request: CreateProfessionalServiceRequest) =>
+      professionalServicesService.createProfessionalService(_request),
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: professionalServicesKeys.all });
@@ -164,8 +164,8 @@ export function useUpdateProfessionalService() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: UpdateProfessionalServiceRequest) =>
-      professionalServicesService.updateProfessionalService(request),
+    mutationFn: (_request: UpdateProfessionalServiceRequest) =>
+      professionalServicesService.updateProfessionalService(_request),
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: professionalServicesKeys.all });
@@ -205,8 +205,8 @@ export function useBulkAssignServices() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: BulkAssignServicesRequest) =>
-      professionalServicesService.bulkAssignServices(request),
+    mutationFn: (_request: BulkAssignServicesRequest) =>
+      professionalServicesService.bulkAssignServices(_request),
     onSuccess: count => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: professionalServicesKeys.all });
@@ -226,8 +226,8 @@ export function useSetPrimaryProfessional() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: SetPrimaryProfessionalRequest) =>
-      professionalServicesService.setPrimaryProfessional(request),
+    mutationFn: (_request: SetPrimaryProfessionalRequest) =>
+      professionalServicesService.setPrimaryProfessional(_request),
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: professionalServicesKeys.all });
@@ -249,9 +249,7 @@ export function useToggleProfessionalService() {
 
   return useMutation({
     mutationFn: async ({
-      isAssigned,
-      professionalServiceId,
-      createRequest,
+      isAssigned,_professionalServiceId,_createRequest,
     }: {
       isAssigned: boolean;
       professionalServiceId?: string;

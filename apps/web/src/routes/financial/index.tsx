@@ -4,7 +4,7 @@ import { Card } from '@neonpro/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { CreditCard } from 'lucide-react';
 
-export const Route = createFileRoute('/financial/')({
+export const _Route = createFileRoute('/financial/')({
   beforeLoad: async () => {
     const session = await getCurrentSession();
     if (!session) {

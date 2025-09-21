@@ -2,9 +2,9 @@ import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { describe, expect, it } from 'vitest';
 
-describe('TDD: Import Resolution Issues - RED Phase', () => {
-  describe('Path Alias Validation', () => {
-    it('should validate @ alias resolves to src directory', () => {
+describe('TDD: Import Resolution Issues - RED Phase',_() => {
+  describe(_'Path Alias Validation',_() => {
+    it(_'should validate @ alias resolves to src directory',_() => {
       const viteConfigPath = join(process.cwd(), 'vite.config.ts');
       const content = readFileSync(viteConfigPath, 'utf8');
 
@@ -16,7 +16,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasAliasConfig && hasProperReplacement).toBe(true);
     });
 
-    it('should validate @ alias is used consistently across components', () => {
+    it(_'should validate @ alias is used consistently across components',_() => {
       const files = [
         'src/components/ui/button.tsx',
         'src/components/ui/card.tsx',
@@ -32,7 +32,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       });
     });
 
-    it('should validate workspace package aliases are properly configured', () => {
+    it(_'should validate workspace package aliases are properly configured',_() => {
       const viteConfigPath = join(process.cwd(), 'vite.config.ts');
       const content = readFileSync(viteConfigPath, 'utf8');
 
@@ -50,7 +50,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasAllWorkspaceAliases).toBe(true);
     });
 
-    it('should validate workspace package aliases point to correct paths', () => {
+    it(_'should validate workspace package aliases point to correct paths',_() => {
       const viteConfigPath = join(process.cwd(), 'vite.config.ts');
       const content = readFileSync(viteConfigPath, 'utf8');
 
@@ -62,8 +62,8 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
     });
   });
 
-  describe('Workspace Package Resolution', () => {
-    it('should validate @neonpro/ui package is properly imported', () => {
+  describe(_'Workspace Package Resolution',_() => {
+    it(_'should validate @neonpro/ui package is properly imported',_() => {
       const dashboardPath = join(process.cwd(), 'src/routes/dashboard/main.tsx');
       const content = readFileSync(dashboardPath, 'utf8');
 
@@ -75,7 +75,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasUiImport || !usesUiComponents).toBe(true);
     });
 
-    it('should validate @neonpro/utils package is properly imported', () => {
+    it(_'should validate @neonpro/utils package is properly imported',_() => {
       const dashboardPath = join(process.cwd(), 'src/routes/dashboard/main.tsx');
       const content = readFileSync(dashboardPath, 'utf8');
 
@@ -86,7 +86,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasUtilsImport || !usesUtils).toBe(true);
     });
 
-    it('should validate workspace packages exist in correct locations', () => {
+    it(_'should validate workspace packages exist in correct locations',_() => {
       const packages = [
         '../../packages/ui/src',
         '../../packages/utils/src',
@@ -100,7 +100,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       });
     });
 
-    it('should validate workspace packages have proper index files', () => {
+    it(_'should validate workspace packages have proper index files',_() => {
       const packageIndexFiles = [
         '../../packages/ui/src/index.ts',
         '../../packages/utils/src/index.ts',
@@ -115,8 +115,8 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
     });
   });
 
-  describe('TypeScript Path Mapping Validation', () => {
-    it('should validate tsconfig.json has proper path mappings', () => {
+  describe(_'TypeScript Path Mapping Validation',_() => {
+    it(_'should validate tsconfig.json has proper path mappings',_() => {
       const tsConfigPath = join(process.cwd(), 'tsconfig.json');
       const content = readFileSync(tsConfigPath, 'utf8');
 
@@ -127,7 +127,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasPathsSection && hasWorkspaceMappings).toBe(true);
     });
 
-    it('should validate tsconfig.json paths point to correct locations', () => {
+    it(_'should validate tsconfig.json paths point to correct locations',_() => {
       const tsConfigPath = join(process.cwd(), 'tsconfig.json');
       const content = readFileSync(tsConfigPath, 'utf8');
 
@@ -138,7 +138,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasCorrectUiPath && hasCorrectUtilsPath && hasCorrectSharedPath).toBe(true);
     });
 
-    it('should validate TypeScript baseUrl is properly configured', () => {
+    it(_'should validate TypeScript baseUrl is properly configured',_() => {
       const tsConfigPath = join(process.cwd(), 'tsconfig.json');
       const content = readFileSync(tsConfigPath, 'utf8');
 
@@ -149,8 +149,8 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
     });
   });
 
-  describe('Import Statement Consistency', () => {
-    it('should validate consistent import patterns across the codebase', () => {
+  describe(_'Import Statement Consistency',_() => {
+    it(_'should validate consistent import patterns across the codebase',_() => {
       const testFiles = [
         'src/routes/dashboard/main.tsx',
         'src/routes/patients/ai-insights.tsx',
@@ -171,7 +171,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       });
     });
 
-    it('should validate no mixed import types in same file', () => {
+    it(_'should validate no mixed import types in same file',_() => {
       const testFiles = [
         'src/routes/dashboard/main.tsx',
         'src/routes/patients/ai-insights.tsx',
@@ -191,7 +191,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       });
     });
 
-    it('should validate proper React import patterns', () => {
+    it(_'should validate proper React import patterns',_() => {
       const testFiles = [
         'src/routes/dashboard/main.tsx',
         'src/routes/patients/ai-insights.tsx',
@@ -214,8 +214,8 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
     });
   });
 
-  describe('Module Resolution Edge Cases', () => {
-    it('should validate file extensions are properly handled', () => {
+  describe(_'Module Resolution Edge Cases',_() => {
+    it(_'should validate file extensions are properly handled',_() => {
       const viteConfigPath = join(process.cwd(), 'vite.config.ts');
       const content = readFileSync(viteConfigPath, 'utf8');
 
@@ -226,7 +226,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasExtensionsConfig && hasProperExtensions).toBe(true);
     });
 
-    it('should validate module resolution strategy is correct', () => {
+    it(_'should validate module resolution strategy is correct',_() => {
       const tsConfigPath = join(process.cwd(), 'tsconfig.json');
       const content = readFileSync(tsConfigPath, 'utf8');
 
@@ -237,7 +237,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasModuleResolution && usesBundlerResolution).toBe(true);
     });
 
-    it('should validate allowImportingTsExtensions is properly configured', () => {
+    it(_'should validate allowImportingTsExtensions is properly configured',_() => {
       const tsConfigPath = join(process.cwd(), 'tsconfig.json');
       const content = readFileSync(tsConfigPath, 'utf8');
 

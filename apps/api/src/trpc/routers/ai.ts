@@ -173,14 +173,12 @@ async function selectOptimalProvider(
 
     case 'prediction':
       // Prefer lower cost for prediction tasks
-      return availableProviders.sort(
-        (a, b) => a.costPerToken - b.costPerToken,
+      return availableProviders.sort(_(a,_b) => a.costPerToken - b.costPerToken,
       )[0];
 
     case 'analysis':
       // Prefer higher quality for analysis
-      return availableProviders.sort(
-        (a, b) => b.healthScore - a.healthScore,
+      return availableProviders.sort(_(a,_b) => b.healthScore - a.healthScore,
       )[0];
 
     default:
@@ -282,7 +280,7 @@ function anonymizePatientDataForAI(data: any): any {
     'gender',
   ];
 
-  return Object.keys(anonymized).reduce((acc, key) => {
+  return Object.keys(anonymized).reduce(_(acc,_key) => {
     if (allowedFields.includes(key)) {
       acc[key] = anonymized[key];
     }
@@ -296,7 +294,7 @@ function anonymizePatientDataForAI(data: any): any {
 function translateMedicalTerms(text: string): string {
   let translatedText = text;
 
-  Object.entries(MEDICAL_TERMINOLOGY_PT).forEach(([english, portuguese]) => {
+  Object.entries(MEDICAL_TERMINOLOGY_PT).forEach(_([english,_portuguese]) => {
     const regex = new RegExp(`\\b${english}\\b`, 'gi');
     translatedText = translatedText.replace(regex, portuguese);
   });
@@ -317,7 +315,7 @@ export const aiRouter = router({
     .input(
       v.object({
         message: v.string([v.minLength(1, 'Message cannot be empty')]),
-        context: v.optional(
+        _context: v.optional(
           v.object({
             patientId: v.optional(v.string()),
             sessionId: v.optional(v.string()),
@@ -327,7 +325,7 @@ export const aiRouter = router({
         language: v.optional(v.string()),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(_async ({ ctx,_input }) => {
       try {
         // Select optimal AI provider
         const provider = await selectOptimalProvider('conversation', 'medium');
@@ -337,7 +335,7 @@ export const aiRouter = router({
           `${HEALTHCARE_CONTEXT_PROMPTS.medicalAssistant}\n\nPaciente: ${input.message}`;
 
         // Call AI provider
-        const result = await callAIProvider(provider, prompt, input.context);
+        const result = await callAIProvider(provider, prompt, input._context);
 
         // Translate medical terms to Portuguese if needed
         const translatedResponse = translateMedicalTerms(result.response);
@@ -345,7 +343,7 @@ export const aiRouter = router({
         // Create audit trail
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             patientId: input.context?.patientId,
             action: AuditAction.READ,
@@ -378,7 +376,7 @@ export const aiRouter = router({
             anvisaCompliant: true,
           },
         };
-      } catch (error) {
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to process AI chat request',
@@ -406,7 +404,7 @@ export const aiRouter = router({
         ),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(_async ({ ctx,_input }) => {
       try {
         // Get patient data
         const patient = await ctx.prisma.patient.findFirst({
@@ -453,7 +451,7 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
         // Create audit trail
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             patientId: input.patientId,
             action: AuditAction.READ,
@@ -504,7 +502,7 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
             auditTrail: true,
           },
         };
-      } catch (error) {
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to predict no-show risk',
@@ -539,7 +537,7 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
         ),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(_async ({ ctx,_input }) => {
       try {
         // Select optimal AI provider for analysis
         const provider = await selectOptimalProvider('analysis', 'high');
@@ -560,7 +558,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
         // Create audit trail
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             action: AuditAction.READ,
             resource: 'ai_insights',
@@ -607,7 +605,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
             auditTrail: true,
           },
         };
-      } catch (error) {
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to generate healthcare insights',
@@ -635,7 +633,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
         language: v.optional(v.string()),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(_async ({ ctx,_input }) => {
       // Transform input to match predictNoShow schema
       const transformedInput = {
         patientId: input.patient_id,
@@ -675,7 +673,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
         specialization: v.optional(v.string()),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(_async ({ ctx,_input }) => {
       try {
         // Get patient data for risk analysis
         const patient = await ctx.prisma.patient.findFirst({
@@ -718,7 +716,7 @@ Forneça análise de risco e recomendações.`;
         // Create audit trail
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             patientId: input.patient_id,
             action: AuditAction.READ,
@@ -760,7 +758,7 @@ Forneça análise de risco e recomendações.`;
             cfm_compliant: true,
           },
         };
-      } catch (error) {
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to analyze aesthetic risk',
@@ -786,7 +784,7 @@ Forneça análise de risco e recomendações.`;
         ),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(_async ({ ctx,_input }) => {
       try {
         // Select optimal provider based on input criteria
         const provider = await selectOptimalProvider(
@@ -809,7 +807,7 @@ Forneça análise de risco e recomendações.`;
         // Create audit trail
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             action: AuditAction.READ,
             resource: 'ai_provider_routing',
@@ -845,7 +843,7 @@ Forneça análise de risco e recomendações.`;
             fallback_available: true,
           },
         };
-      } catch (error) {
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to route AI provider',
@@ -881,7 +879,7 @@ Forneça análise de risco e recomendações.`;
         ),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(_async ({ ctx,_input }) => {
       try {
         const { requests, batch_settings } = input;
         const maxConcurrent = batch_settings?.max_concurrent || 5;
@@ -901,8 +899,8 @@ Forneça análise de risco e recomendações.`;
 
               const result = (await Promise.race([
                 callAIProvider(provider, JSON.stringify(request.data)),
-                new Promise((_, reject) =>
-                  setTimeout(() => reject(new Error('Timeout')), timeoutMs)
+                new Promise(_(_,_reject) =>
+                  setTimeout(_() => reject(new Error('Timeout')), timeoutMs)
                 ),
               ])) as any;
 
@@ -913,7 +911,7 @@ Forneça análise de risco e recomendações.`;
                 provider: provider.name,
                 cost: result.cost,
               };
-            } catch (error) {
+            } catch (_error) {
               return {
                 id: request.id,
                 status: 'error',
@@ -929,7 +927,7 @@ Forneça análise de risco e recomendações.`;
         // Create audit trail
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             action: AuditAction.READ,
             resource: 'ai_batch_analysis',
@@ -955,7 +953,7 @@ Forneça análise de risco e recomendações.`;
           summary: {
             successful: results.filter(r => r.status === 'success').length,
             failed: results.filter(r => r.status === 'error').length,
-            total_cost: results.reduce((sum, r) => sum + (r.cost || 0), 0),
+            total_cost: results.reduce(_(sum,_r) => sum + (r.cost || 0), 0),
           },
           compliance: {
             lgpd_compliant: true,
@@ -963,7 +961,7 @@ Forneça análise de risco e recomendações.`;
             batch_processed: true,
           },
         };
-      } catch (error) {
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to process batch analysis',

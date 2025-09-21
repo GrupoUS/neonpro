@@ -67,9 +67,9 @@ export function CSPProvider({
     utils,
   } = useHealthcareCSP();
 
-  const [manager] = useState(() => new ClientCSPManager());
+  const [manager] = useState(_() => new ClientCSPManager());
 
-  useEffect(() => {
+  useEffect(_() => {
     // Initialize client-side CSP management
     if (typeof window !== 'undefined') {
       // Set CSP nonce meta tag
@@ -153,11 +153,11 @@ export function CSPScript({
 }: CSPScriptProps): React.ReactElement {
   const { nonce, loadScript } = useCSP();
 
-  useEffect(() => {
+  useEffect(_() => {
     if (!src) return;
 
     loadScript(src, { nonce, async, defer, integrity, crossOrigin })
-      .then(() => onLoad?.())
+      .then(_() => onLoad?.())
       .catch(onError);
   }, [
     src,
@@ -216,11 +216,11 @@ export function CSPStyle({
 }: CSPStyleProps): React.ReactElement {
   const { nonce, loadStyle } = useCSP();
 
-  useEffect(() => {
+  useEffect(_() => {
     if (!href) return;
 
     loadStyle(href, { nonce, integrity, crossOrigin })
-      .then(() => onLoad?.())
+      .then(_() => onLoad?.())
       .catch(onError);
   }, [href, nonce, integrity, crossOrigin, loadStyle, onLoad, onError]);
 

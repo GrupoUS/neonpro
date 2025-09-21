@@ -75,7 +75,7 @@ describe('GET /api/ai/sessions/{sessionId} - Contract Test', () => {
           expect(message).toHaveProperty('role');
           expect(message).toHaveProperty('content');
           expect(message).toHaveProperty('timestamp');
-          expect(['user', 'assistant']).toContain(message.role);
+          expect(['user', 'assistant']).toContain(message._role);
         }
       }
     });
@@ -190,7 +190,7 @@ describe('GET /api/ai/sessions/{sessionId} - Contract Test', () => {
 
         // Active sessions should have recent lastActivity
         const lastActivity = new Date(sessionData.lastActivity);
-        const now = new Date();
+        const _now = new Date();
         const timeDiff = now.getTime() - lastActivity.getTime();
         expect(timeDiff).toBeLessThan(30 * 60 * 1000); // Less than 30 minutes
       }

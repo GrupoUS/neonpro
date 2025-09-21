@@ -20,8 +20,6 @@ const auditLogger = {
   warn: () => {},
   error: () => {},
 };
-import { z } from 'zod';
-
 // Security validation schemas
 const _SensitiveDataSchema = z.object({
   name: z.string().regex(/^[A-Za-z\s]+$/),
@@ -97,7 +95,7 @@ export function sanitizeForAI(data: any): string {
     }
 
     return JSON.stringify(sanitized);
-  } catch (error) {
+  } catch (_error) {
     auditLogger.logError('ai_sanitization_error', {
       error: error instanceof Error ? error.message : 'Unknown error',
       dataSize: JSON.stringify(data).length,
@@ -254,14 +252,14 @@ export class AIRateLimiter {
 
   constructor() {
     // Clean up old request records every minute
-    this.cleanupInterval = setInterval(() => {
+    this.cleanupInterval = setInterval(_() => {
       this.cleanupOldRequests();
     }, 60000);
   }
 
-  canMakeRequest(userId: string, clinicId: string): boolean {
+  canMakeRequest(_userId: string, clinicId: string): boolean {
     const key = `${userId}:${clinicId}`;
-    const now = Date.now();
+    const _now = Date.now();
     const userRequests = this.requests.get(key) || [];
 
     // Remove requests older than 1 hour
@@ -305,7 +303,7 @@ export class AIRateLimiter {
   }
 
   private cleanupOldRequests(): void {
-    const now = Date.now();
+    const _now = Date.now();
     for (const [key, requests] of this.requests.entries()) {
       const recentRequests = requests.filter(
         time => now - time < 60 * 60 * 1000,
@@ -354,7 +352,7 @@ export function validateApiKeyRotation(apiKeyInfo: {
  * Logs AI interaction for audit trail compliance
  */
 export function logAIInteraction(interaction: {
-  userId: string;
+  _userId: string;
   patientId?: string;
   clinicId: string;
   provider: string;
@@ -364,7 +362,7 @@ export function logAIInteraction(interaction: {
 }): void {
   auditLogger.logSecurityEvent({
     event: 'ai_interaction',
-    userId: interaction.userId,
+    _userId: interaction.userId,
     patientId: interaction.patientId,
     clinicId: interaction.clinicId,
     provider: interaction.provider,
@@ -427,12 +425,12 @@ function sanitizeMedicalText(text: string): string {
 }
 
 // Export singleton instance
-export const aiSecurityService = {
+export const _aiSecurityService = {
   sanitizeForAI,
   validatePromptSecurity,
   validateMedicalTerminology,
   validateAIOutputSafety,
-  canMakeRequest: (userId: string, clinicId: string) =>
+  canMakeRequest: (_userId: string, clinicId: string) =>
     aiRateLimiter.canMakeRequest(userId, clinicId),
   validateApiKeyRotation,
   logAIInteraction,

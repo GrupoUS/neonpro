@@ -17,7 +17,7 @@ import type { UsageCounterData, SubscriptionTier } from "@neonpro/types";
  * Extended metadata interface for healthcare usage tracking
  */
 export interface UsageMetadata {
-  userId: string;
+  _userId: string;
   planCode: SubscriptionTier;
   concurrentRequests: number;
   totalRequests: number;
@@ -73,7 +73,7 @@ export interface SupabaseClient {
 
 export interface UsageCounterCreateData {
   clinicId: string;
-  userId: string;
+  _userId: string;
   planCode: SubscriptionTier;
   monthlyQueries?: number;
   dailyQueries?: number;
@@ -104,7 +104,7 @@ export interface UsageCounterUpdateData {
 
 export interface UsageCounterFilters {
   clinicId?: string;
-  userId?: string;
+  _userId?: string;
   planCode?: SubscriptionTier;
   periodStart?: Date;
   lastActivityAfter?: Date;
@@ -113,7 +113,7 @@ export interface UsageCounterFilters {
 
 export interface DailyUsageUpsertParams {
   clinicId: string;
-  userId: string;
+  _userId: string;
   planCode: SubscriptionTier;
   increment?: {
     monthlyQueries?: number;
@@ -142,7 +142,7 @@ export class UsageCounterRepository {
    * Creates a new usage counter
    */
   async create(data: UsageCounterCreateData): Promise<ExtendedUsageCounterData> {
-    const now = new Date();
+    const _now = new Date();
 
     const insertData = {
       entity_type: "clinic",
@@ -187,7 +187,7 @@ export class UsageCounterRepository {
    * This is the core functionality for T017
    */
   async dailyUpsert(params: DailyUsageUpsertParams): Promise<ExtendedUsageCounterData> {
-    const now = new Date();
+    const _now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     // First, try to get existing counter
@@ -292,7 +292,7 @@ export class UsageCounterRepository {
       // Create new counter
       const createData: UsageCounterCreateData = {
         clinicId: params.clinicId,
-        userId: params.userId,
+        _userId: params.userId,
         planCode: params.planCode,
         monthlyQueries: params.increment?.monthlyQueries || 0,
         dailyQueries: params.increment?.dailyQueries || 0,
@@ -373,8 +373,8 @@ export class UsageCounterRepository {
     if (filters.clinicId) {
       query = query.eq("entity_type", "clinic").eq("entity_id", filters.clinicId);
     }
-    if (filters.userId) {
-      query = query.eq("metadata->>user_id", filters.userId);
+    if (filters._userId) {
+      query = query.eq("metadata->>user_id", filters._userId);
     }
     if (filters.planCode) {
       query = query.eq("plan_code", filters.planCode);
@@ -457,16 +457,16 @@ export class UsageCounterRepository {
    */
   async resetDailyCounters(
     clinicId: string,
-    userId: string,
+    _userId: string,
   ): Promise<UsageCounterData> {
-    const now = new Date();
+    const _now = new Date();
 
     const { data: result, error } = await this.supabase
       .from("usage_counters")
       .update({
         daily_queries: 0,
         metadata: {
-          ...(await this.getExistingMetadata(clinicId, userId)),
+          ...(await this.getExistingMetadata(clinicId, _userId)),
           last_reset: now.toISOString(),
         },
         updated_at: now.toISOString(),
@@ -488,9 +488,9 @@ export class UsageCounterRepository {
    */
   async resetMonthlyCounters(
     clinicId: string,
-    userId: string,
+    _userId: string,
   ): Promise<UsageCounterData> {
-    const now = new Date();
+    const _now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
     const { data: result, error } = await this.supabase
@@ -500,7 +500,7 @@ export class UsageCounterRepository {
         daily_queries: 0,
         current_cost_usd: 0,
         metadata: {
-          ...(await this.getExistingMetadata(clinicId, userId)),
+          ...(await this.getExistingMetadata(clinicId, _userId)),
           period_start: monthStart.toISOString(),
           last_reset: now.toISOString(),
         },
@@ -610,7 +610,7 @@ export class UsageCounterRepository {
 
     return {
       clinicId: row.entity_id,
-      userId: metadata.userId || '',
+      _userId: metadata.userId || '',
       planCode: metadata.planCode || 'basic',
       monthlyQueries: row.monthly_queries || 0,
       dailyQueries: row.daily_queries || 0,

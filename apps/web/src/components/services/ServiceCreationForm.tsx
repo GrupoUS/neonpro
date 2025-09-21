@@ -21,7 +21,7 @@ interface ServiceCreationFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   clinicId: string;
-  onServiceCreated?: (service: {
+  onServiceCreated?: (_service: {
     id: string;
     name: string;
     duration_minutes: number;
@@ -147,8 +147,8 @@ export function ServiceCreationForm({
       onOpenChange(false);
 
       toast.success('Serviço criado com sucesso!');
-    } catch (error) {
-      console.error('Error creating service:', error);
+    } catch (_error) {
+      console.error('Error creating _service:', error);
       toast.error('Erro ao criar serviço. Tente novamente.');
     } finally {
       setIsSubmitting(false);

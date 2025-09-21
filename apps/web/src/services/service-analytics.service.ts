@@ -246,7 +246,7 @@ export class ServiceAnalyticsService {
   /**
    * Export analytics data
    */
-  static async exportAnalytics(request: AnalyticsExportRequest): Promise<Blob> {
+  static async exportAnalytics(_request: AnalyticsExportRequest): Promise<Blob> {
     const { data, error } = await (this.sb as any).rpc('export_analytics', {
       p_clinic_id: request.clinic_id,
       p_report_type: request.report_type,
@@ -334,4 +334,4 @@ export class ServiceAnalyticsService {
   }
 }
 
-export const serviceAnalyticsService = ServiceAnalyticsService;
+export const _serviceAnalyticsService = ServiceAnalyticsService;

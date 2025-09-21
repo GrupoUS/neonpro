@@ -8,7 +8,7 @@ import { createClient } from '@supabase/supabase-js';
 
 export interface AuditLogEntry {
   id?: string;
-  userId: string;
+  _userId: string;
   action: string;
   resource: string;
   resourceId?: string;
@@ -100,7 +100,7 @@ export class AuditLogger {
     if (this.options.enableDatabaseLogging && this.supabase) {
       try {
         await this.logToDatabase(fullEntry);
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to log audit entry to database:', error);
       }
     }
@@ -115,7 +115,7 @@ export class AuditLogger {
    * Log a successful operation
    */
   async success(
-    userId: string,
+    _userId: string,
     action: string,
     resource: string,
     metadata?: Record<string, unknown>,
@@ -133,7 +133,7 @@ export class AuditLogger {
    * Log a failed operation
    */
   async error(
-    userId: string,
+    _userId: string,
     action: string,
     resource: string,
     errorMessage: string,
@@ -153,7 +153,7 @@ export class AuditLogger {
    * Log healthcare data access (LGPD compliant)
    */
   async logHealthcareAccess(
-    userId: string,
+    _userId: string,
     action: string,
     patientId: string,
     dataType: string,
@@ -180,7 +180,7 @@ export class AuditLogger {
    * Log AI/ML operations
    */
   async logAIOperation(
-    userId: string,
+    _userId: string,
     action: string,
     model: string,
     inputTokens?: number,
@@ -295,7 +295,7 @@ export class AuditLogger {
       }
 
       return safeMetadata;
-    } catch (error) {
+    } catch (_error) {
       console.warn('[Audit Logger] Failed to serialize metadata:', error);
       return null;
     }

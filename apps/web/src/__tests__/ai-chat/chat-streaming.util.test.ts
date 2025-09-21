@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 // This test exercises mock mode iterator behavior without hitting network
 
 describe('AI Chat — streaming util (mock mode)', () => {
-  it('yields text chunks then done', async () => {
+  it(_'yields text chunks then done',_async () => {
     // Force mock mode via env simulation is tricky in browser env; rely on default export behavior
     const itr = await startChatStream({ sessionId: 's1', text: 'Olá' });
     const received: string[] = [];

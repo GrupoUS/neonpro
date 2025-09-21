@@ -14,8 +14,8 @@ import type { HealthcareSecurityConfig } from '../../lib/security';
 import type { CSPViolationReport } from '../../lib/security/csp';
 import type { SRIViolationReport } from '../../lib/security/sri';
 
-describe('Security Contracts', () => {
-  beforeEach(() => {
+describe(_'Security Contracts',_() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
     global.window = {
       location: { hostname: 'test.neonpro.com.br' },
@@ -23,12 +23,12 @@ describe('Security Contracts', () => {
     } as any;
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.restoreAllMocks();
   });
 
-  describe('Content Security Policy Contract', () => {
-    test('should provide healthcare-compliant CSP configuration', () => {
+  describe(_'Content Security Policy Contract',_() => {
+    test(_'should provide healthcare-compliant CSP configuration',_() => {
       // Contract: CSP must protect patient data and comply with healthcare regulations
       const expectedCSPDirectives = [
         'default-src',
@@ -53,7 +53,7 @@ describe('Security Contracts', () => {
       });
     });
 
-    test('should block unsafe sources for patient data protection', () => {
+    test(_'should block unsafe sources for patient data protection',_() => {
       // Contract: No unsafe-eval or unsafe-inline in production for patient data security
       // NOTE: Lista de fontes inseguras ilustrativa removida para evitar warning de variável não usada.
       const productionCSP = {
@@ -68,7 +68,7 @@ describe('Security Contracts', () => {
       expect(productionCSP['style-src']).toContain('\'self\'');
     });
 
-    test('should provide CSP violation reporting for healthcare compliance', () => {
+    test(_'should provide CSP violation reporting for healthcare compliance',_() => {
       // Contract: CSP violations must be reported for security monitoring
       const cspViolationReport: CSPViolationReport = {
         'document-uri': 'https://neonpro.com.br/patients',
@@ -93,7 +93,7 @@ describe('Security Contracts', () => {
       expect(typeof cspViolationReport['line-number']).toBe('number');
     });
 
-    test('should categorize CSP violations by healthcare impact', () => {
+    test(_'should categorize CSP violations by healthcare impact',_() => {
       // Contract: CSP violations categorized by medical workflow impact
       const violationCategories = {
         patient_safety_critical: [
@@ -117,7 +117,7 @@ describe('Security Contracts', () => {
       expect(severityLevels).toContain('high');
     });
 
-    test('should provide healthcare-specific security headers', () => {
+    test(_'should provide healthcare-specific security headers',_() => {
       // Contract: Additional security headers for healthcare compliance
       const healthcareHeaders = {
         'X-LGPD-Compliant': 'true',
@@ -139,8 +139,8 @@ describe('Security Contracts', () => {
     });
   });
 
-  describe('Subresource Integrity Contract', () => {
-    test('should provide SRI hash generation for healthcare-critical resources', () => {
+  describe(_'Subresource Integrity Contract',_() => {
+    test(_'should provide SRI hash generation for healthcare-critical resources',_() => {
       // Contract: SRI hashes for all healthcare-critical JavaScript/CSS resources
       const criticalResources = [
         'chart.js', // Medical charting
@@ -163,7 +163,7 @@ describe('Security Contracts', () => {
       });
     });
 
-    test('should validate SRI hash format and structure', () => {
+    test(_'should validate SRI hash format and structure',_() => {
       // Contract: SRI hash must follow standard format
       const validSRIHash =
         'sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC';
@@ -175,7 +175,7 @@ describe('Security Contracts', () => {
       expect(validSRIHash.length).toBeGreaterThan(10);
     });
 
-    test('should provide SRI violation reporting for security monitoring', () => {
+    test(_'should provide SRI violation reporting for security monitoring',_() => {
       // Contract: SRI violations must be reported with healthcare context
       const sriViolationReport: SRIViolationReport = {
         url: 'https://cdn.jsdelivr.net/npm/chart.js',
@@ -201,7 +201,7 @@ describe('Security Contracts', () => {
       );
     });
 
-    test('should categorize resources by healthcare criticality', () => {
+    test(_'should categorize resources by healthcare criticality',_() => {
       // Contract: Resource categorization for priority-based SRI enforcement
       const resourceCategories = {
         medical_charts: ['chart.js', 'd3.js', 'plotly.js'],
@@ -219,7 +219,7 @@ describe('Security Contracts', () => {
       expect(resourceCategories.monitoring).toContain('sentry');
     });
 
-    test('should provide dynamic SRI validation for CDN resources', () => {
+    test(_'should provide dynamic SRI validation for CDN resources',_() => {
       // Contract: Runtime SRI validation for dynamic resource loading
       const sriValidationMethods = {
         generateSRIHash: expect.any(Function),
@@ -240,8 +240,8 @@ describe('Security Contracts', () => {
     });
   });
 
-  describe('Healthcare Security Configuration Contract', () => {
-    test('should provide comprehensive healthcare security configuration', () => {
+  describe(_'Healthcare Security Configuration Contract',_() => {
+    test(_'should provide comprehensive healthcare security configuration',_() => {
       // Contract: Healthcare security configuration for LGPD/ANVISA compliance
       const healthcareSecurityConfig: HealthcareSecurityConfig = {
         environment: 'production',
@@ -266,7 +266,7 @@ describe('Security Contracts', () => {
       expect(healthcareSecurityConfig.healthcareCompliance.anvisa).toBe(true);
     });
 
-    test('should provide rate limiting configuration for healthcare endpoints', () => {
+    test(_'should provide rate limiting configuration for healthcare endpoints',_() => {
       // Contract: Rate limiting for different healthcare endpoint categories
       const healthcareRateLimits = {
         patient_data: {
@@ -298,7 +298,7 @@ describe('Security Contracts', () => {
       expect(healthcareRateLimits.emergency.max).toBe(200);
     });
 
-    test('should provide security middleware for Express and Hono', () => {
+    test(_'should provide security middleware for Express and Hono',_() => {
       // Contract: Security middleware compatibility
       const middlewareTypes = {
         express: expect.any(Function),
@@ -322,7 +322,7 @@ describe('Security Contracts', () => {
       expect(middlewareFeatures.lgpdCompliance).toBe(true);
     });
 
-    test('should provide healthcare endpoint security validation', () => {
+    test(_'should provide healthcare endpoint security validation',_() => {
       // Contract: Healthcare endpoint security validation
       const securityValidationOptions = {
         requirePatientConsent: true,
@@ -347,8 +347,8 @@ describe('Security Contracts', () => {
     });
   });
 
-  describe('Compliance and Audit Trail Contract', () => {
-    test('should provide LGPD compliance logging', () => {
+  describe(_'Compliance and Audit Trail Contract',_() => {
+    test(_'should provide LGPD compliance logging',_() => {
       // Contract: LGPD compliance logging for data protection
       const lgpdCompliance = {
         logDataProcessing: expect.any(Function),
@@ -370,7 +370,7 @@ describe('Security Contracts', () => {
       );
     });
 
-    test('should provide ANVISA cybersecurity compliance', () => {
+    test(_'should provide ANVISA cybersecurity compliance',_() => {
       // Contract: ANVISA RDC 505/2021 cybersecurity compliance
       const anvisaCompliance = {
         logSecurityEvent: expect.any(Function),
@@ -388,7 +388,7 @@ describe('Security Contracts', () => {
       expect(typeof anvisaCompliance.generateSecurityReport).toBe('function');
     });
 
-    test('should provide security audit trail', () => {
+    test(_'should provide security audit trail',_() => {
       // Contract: Comprehensive security audit trail
       const auditTrailEvents = [
         'csp_violation',
@@ -413,7 +413,7 @@ describe('Security Contracts', () => {
       expect(auditEventSeverities).toContain('high');
     });
 
-    test('should provide security monitoring integration', () => {
+    test(_'should provide security monitoring integration',_() => {
       // Contract: Security monitoring system integration
       const monitoringIntegration = {
         sentry: {

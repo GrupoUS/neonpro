@@ -12,8 +12,6 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { z } from 'zod';
-
 // Mobile Keyboard Navigation Levels
 export const MOBILE_KEYBOARD_LEVELS = {
   EXCELLENT: 'excellent',
@@ -143,7 +141,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
   /**
    * Detect touch interactions
    */
-  const detectTouchUser = useCallback(() => {
+  const detectTouchUser = useCallback(_() => {
     setNavigationState(prev => ({
       ...prev,
       lastInteractionType: 'touch',
@@ -325,7 +323,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
   /**
    * Create skip links
    */
-  const createSkipLinks = useCallback(() => {
+  const createSkipLinks = useCallback(_() => {
     if (finalConfig.skipLinks.length === 0) return null;
 
     const skipLinksData = finalConfig.skipLinks
@@ -429,7 +427,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
   /**
    * Restore focus to last focused element
    */
-  const restoreFocus = useCallback(() => {
+  const restoreFocus = useCallback(_() => {
     if (finalConfig.restoreFocus && lastFocusedElementRef.current) {
       lastFocusedElementRef.current.focus();
     }
@@ -438,19 +436,19 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
   /**
    * Trap focus within container
    */
-  const trapFocus = useCallback(() => {
+  const trapFocus = useCallback(_() => {
     setNavigationState(prev => ({ ...prev, focusTrapped: true }));
   }, []);
 
   /**
    * Release focus trap
    */
-  const releaseFocusTrap = useCallback(() => {
+  const releaseFocusTrap = useCallback(_() => {
     setNavigationState(prev => ({ ...prev, focusTrapped: false }));
   }, []);
 
   // Set up event listeners
-  useEffect(() => {
+  useEffect(_() => {
     const handleKeyDown = (_event: any) => {
       detectKeyboardUser(event);
       detectExternalKeyboard(event);
@@ -492,7 +490,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
   ]);
 
   // Update focusable elements when container changes
-  useEffect(() => {
+  useEffect(_() => {
     if (containerRef.current) {
       focusableElementsRef.current = getFocusableElements();
     }

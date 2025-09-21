@@ -82,7 +82,7 @@ export function AppointmentBooking({
   const [notes, setNotes] = useState('');
 
   // Pre-populate service from initialService (e.g., from Services page)
-  useEffect(() => {
+  useEffect(_() => {
     if (initialService && !serviceTypeId) {
       setServiceTypeId(initialService.id);
       setService(initialService.name);
@@ -121,14 +121,14 @@ export function AppointmentBooking({
 
   // Notification mutations
   const sendConfirmationMutation = useSendAppointmentConfirmation();
-  // const scheduleNotificationsMutation = useScheduleAppointmentNotifications();
+  // const _scheduleNotificationsMutation = useScheduleAppointmentNotifications();
 
   // Availability checking
   const checkAvailabilityMutation = useCheckAvailability();
 
   // Calculate appointment end time based on service duration
   const appointmentEndTime = time && serviceTypeId
-    ? (() => {
+    ? (_() => {
       const selectedService = serviceTypes?.find(
         st => st.id === serviceTypeId,
       );
@@ -143,7 +143,7 @@ export function AppointmentBooking({
     : null;
 
   const appointmentStartTime = time
-    ? (() => {
+    ? (_() => {
       const [hours, minutes] = time.split(':').map(Number);
       const startDateTime = new Date(date);
       startDateTime.setHours(hours, minutes, 0, 0);
@@ -305,7 +305,7 @@ export function AppointmentBooking({
       setSelectedPatientId(null);
       setNotes('');
       onOpenChange(false);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error during booking process:', error);
       // The error will be handled by the mutation's onError callback
     }
@@ -367,9 +367,7 @@ export function AppointmentBooking({
                             : (
                               availableTimeSlots.map(
                                 ({
-                                  time: timeSlot,
-                                  available,
-                                  reason,
+                                  time: timeSlot,_available,_reason,
                                 }: Partial<TimeSlot> & {
                                   time: string;
                                   available: boolean;
@@ -410,8 +408,7 @@ export function AppointmentBooking({
                   </div>
                 )}
 
-                {validation && hasConflicts && (
-                  <div className='space-y-2'>
+                {validation && hasConflicts && (_<div className='space-y-2'>
                     {validation.conflicts.map((conflict, _index) => (
                       <div
                         key={index}
@@ -428,8 +425,7 @@ export function AppointmentBooking({
                   </div>
                 )}
 
-                {validation && hasWarnings && (
-                  <div className='space-y-2'>
+                {validation && hasWarnings && (_<div className='space-y-2'>
                     {validation.warnings.map((warning, _index) => (
                       <div
                         key={index}
@@ -455,8 +451,7 @@ export function AppointmentBooking({
                     </p>
                     <div className='flex flex-wrap gap-2'>
                       {validation.suggestedAlternatives.map(
-                        (alternative, _index) => (
-                          <Button
+                        (alternative, _index) => (_<Button
                             key={index}
                             variant='outline'
                             size='sm'
@@ -575,8 +570,7 @@ export function AppointmentBooking({
                 {searchResults
                   && searchResults.length === 0
                   && patientSearch.length >= 2
-                  && !searchLoading && (
-                  <div className='mt-2 p-3 border rounded-md bg-gray-50 text-center'>
+                  && !searchLoading && (_<div className='mt-2 p-3 border rounded-md bg-gray-50 text-center'>
                     <p className='text-sm text-gray-600 mb-2'>
                       Nenhum paciente encontrado
                     </p>

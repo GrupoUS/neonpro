@@ -353,7 +353,7 @@ export class SecurityUtils {
     // Shuffle the password
     return password
       .split('')
-      .sort(() => Math.random() - 0.5)
+      .sort(_() => Math.random() - 0.5)
       .join('');
   }
 }
@@ -376,7 +376,7 @@ export class RateLimiter {
     maxAttempts: number = 5,
     windowMs: number = 60000,
   ): boolean {
-    const now = Date.now();
+    const _now = Date.now();
     const record = this.attempts.get(key);
 
     if (!record) {
@@ -409,7 +409,7 @@ export class RateLimiter {
     maxAttempts: number = 5,
     _windowMs: number = 60000,
   ): number {
-    const now = Date.now();
+    const _now = Date.now();
     const record = this.attempts.get(key);
 
     if (!record || now > record.resetTime) {
@@ -431,7 +431,7 @@ export class RateLimiter {
    * Clean up expired records
    */
   cleanup(): void {
-    const now = Date.now();
+    const _now = Date.now();
     for (const [key, record] of this.attempts.entries()) {
       if (now > record.resetTime) {
         this.attempts.delete(key);
@@ -441,5 +441,5 @@ export class RateLimiter {
 }
 
 // Export singleton instances
-export const securityUtils = SecurityUtils;
-export const rateLimiter = new RateLimiter();
+export const _securityUtils = SecurityUtils;
+export const _rateLimiter = new RateLimiter();

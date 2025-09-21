@@ -11,8 +11,6 @@
  * - Developer guides with coding standards and testing procedures
  */
 
-import { z } from 'zod';
-
 // Documentation Types
 export const DOCUMENTATION_TYPES = {
   API: 'api',
@@ -652,8 +650,7 @@ import { PatientCard } from '@/components/healthcare/PatientCard';
    * Generate documentation statistics
    */
   private generateStatistics() {
-    const totalExamples = this.sections.reduce(
-      (sum, section) => sum + (section.examples?.length || 0),
+    const totalExamples = this.sections.reduce(_(sum,_section) => sum + (section.examples?.length || 0),
       0,
     );
 

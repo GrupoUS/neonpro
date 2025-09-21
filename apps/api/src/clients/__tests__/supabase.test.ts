@@ -24,8 +24,8 @@ const mockEnv = {
 };
 
 // Mock Supabase modules before importing our client
-vi.mock('@supabase/supabase-js', () => ({
-  createClient: vi.fn((url, key) => ({
+vi.mock(_'@supabase/supabase-js',_() => ({
+  createClient: vi.fn((url,_key) => ({
     auth: {
       getSession: vi.fn(),
       getUser: vi.fn(),
@@ -36,35 +36,35 @@ vi.mock('@supabase/supabase-js', () => ({
         listUsers: vi.fn(),
       },
     },
-    from: vi.fn(() => ({
+    from: vi.fn(_() => ({
       select: vi.fn(() => ({ data: [], error: null })),
-      insert: vi.fn(() => ({ data: [], error: null })),
-      update: vi.fn(() => ({ data: [], error: null })),
-      delete: vi.fn(() => ({ data: [], error: null })),
+      insert: vi.fn(_() => ({ data: [], error: null })),
+      update: vi.fn(_() => ({ data: [], error: null })),
+      delete: vi.fn(_() => ({ data: [], error: null })),
     })),
     supabaseUrl: url,
     supabaseKey: key,
   })),
 }));
 
-vi.mock('@supabase/ssr', () => ({
-  createServerClient: vi.fn((url, key) => ({
+vi.mock(_'@supabase/ssr',_() => ({
+  createServerClient: vi.fn((url,_key) => ({
     auth: {
       getSession: vi.fn(),
       getUser: vi.fn(),
     },
-    from: vi.fn(() => ({
+    from: vi.fn(_() => ({
       select: vi.fn(() => ({ data: [], error: null })),
     })),
     supabaseUrl: url,
     supabaseKey: key,
   })),
-  createBrowserClient: vi.fn((url, key) => ({
+  createBrowserClient: vi.fn(_(url,_key) => ({
     auth: {
       getSession: vi.fn(),
       signInWithPassword: vi.fn(),
     },
-    from: vi.fn(() => ({
+    from: vi.fn(_() => ({
       select: vi.fn(() => ({ data: [], error: null })),
     })),
     supabaseUrl: url,
@@ -72,10 +72,10 @@ vi.mock('@supabase/ssr', () => ({
   })),
 }));
 
-describe('Supabase Client Implementation - TDD RED Phase', () => {
+describe(_'Supabase Client Implementation - TDD RED Phase',_() => {
   let originalEnv: typeof process.env;
 
-  beforeAll(() => {
+  beforeAll(_() => {
     // Backup original environment
     originalEnv = { ...process.env };
 
@@ -83,7 +83,7 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
     Object.assign(process.env, mockEnv);
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     // Restore original environment after each test
     Object.keys(process.env).forEach(key => {
       if (!(key in originalEnv)) {
@@ -97,7 +97,7 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
   });
 
   describe('Admin Client (createAdminClient)', () => {
-    it('should create admin client with service role authentication', async () => {
+    it(_'should create admin client with service role authentication',_async () => {
       const { createAdminClient } = await import('../supabase');
 
       const adminClient = createAdminClient();
@@ -109,7 +109,7 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
       expect(typeof adminClient.auth.getUser).toBe('function');
     });
 
-    it('should configure admin client with service role key', async () => {
+    it(_'should configure admin client with service role key',_async () => {
       const { createAdminClient } = await import('../supabase');
 
       const adminClient = createAdminClient();
@@ -121,7 +121,7 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
       expect(adminClient.supabaseUrl).toBe(process.env.SUPABASE_URL);
     });
 
-    it('should configure admin client with disabled session persistence', async () => {
+    it(_'should configure admin client with disabled session persistence',_async () => {
       const { createClient } = await import('@supabase/supabase-js');
       const { createAdminClient, resetClientInstances } = await import(
         '../supabase'
@@ -146,12 +146,12 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
       );
     });
 
-    it('should throw error when service role key is missing', async () => {
+    it(_'should throw error when service role key is missing',_async () => {
       delete process.env.SUPABASE_SERVICE_ROLE_KEY;
 
       const { createAdminClient } = await import('../supabase');
 
-      expect(() => createAdminClient()).toThrow(
+      expect(_() => createAdminClient()).toThrow(
         'SUPABASE_SERVICE_ROLE_KEY is required for admin client',
       );
     });
@@ -159,14 +159,14 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
 
   describe('Server Client (createServerClient)', () => {
     const mockCookies = {
-      getAll: vi.fn(() => [
+      getAll: vi.fn(_() => [
         { name: 'sb-access-token', value: 'token123' },
         { name: 'sb-refresh-token', value: 'refresh123' },
       ]),
       setAll: vi.fn(),
     };
 
-    it('should create server client with SSR cookie management', async () => {
+    it(_'should create server client with SSR cookie management',_async () => {
       const { createServerClient } = await import('../supabase');
 
       const serverClient = createServerClient(mockCookies);
@@ -178,7 +178,7 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
       expect(typeof serverClient.auth.getSession).toBe('function');
     });
 
-    it('should configure server client with cookie handlers', async () => {
+    it(_'should configure server client with cookie handlers',_async () => {
       const { createServerClient } = await import('../supabase');
       const { createServerClient: mockCreateServerClient } = await import(
         '@supabase/ssr'
@@ -199,7 +199,7 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
       );
     });
 
-    it('should throw error when cookie handlers are missing', async () => {
+    it(_'should throw error when cookie handlers are missing',_async () => {
       const { createServerClient } = await import('../supabase');
 
       // Temporarily override NODE_ENV to test production behavior
@@ -210,7 +210,7 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
       delete process.env.VITEST;
 
       try {
-        expect(() => createServerClient(null as any)).toThrow(
+        expect(_() => createServerClient(null as any)).toThrow(
           'Cookie handlers are required for server client',
         );
       } finally {
@@ -224,7 +224,7 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
   });
 
   describe('User Client (createUserClient)', () => {
-    it('should create user client for browser operations', async () => {
+    it(_'should create user client for browser operations',_async () => {
       const { createUserClient } = await import('../supabase');
 
       const userClient = createUserClient();
@@ -236,7 +236,7 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
       expect(typeof userClient.auth.signInWithPassword).toBe('function');
     });
 
-    it('should configure user client with anon key', async () => {
+    it(_'should configure user client with anon key',_async () => {
       const { createUserClient } = await import('../supabase');
       const { createBrowserClient } = await import('@supabase/ssr');
 
@@ -249,20 +249,20 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
       );
     });
 
-    it('should throw error when environment variables are missing', async () => {
+    it(_'should throw error when environment variables are missing',_async () => {
       delete process.env.SUPABASE_URL;
       delete process.env.SUPABASE_ANON_KEY;
 
       const { createUserClient } = await import('../supabase');
 
-      expect(() => createUserClient()).toThrow(
+      expect(_() => createUserClient()).toThrow(
         'SUPABASE_URL and SUPABASE_ANON_KEY are required',
       );
     });
   });
 
   describe('Healthcare RLS (healthcareRLS)', () => {
-    it('should provide clinic access validation', async () => {
+    it(_'should provide clinic access validation',_async () => {
       const { healthcareRLS } = await import('../supabase');
 
       const canAccess = await healthcareRLS.canAccessClinic(
@@ -275,7 +275,7 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
       expect(canAccess).not.toBe(true); // This will FAIL initially (returns true stub)
     });
 
-    it('should provide patient access validation', async () => {
+    it(_'should provide patient access validation',_async () => {
       const { healthcareRLS } = await import('../supabase');
 
       const canAccess = await healthcareRLS.canAccessPatient(
@@ -289,8 +289,8 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
     });
   });
 
-  describe('RLS Query Builder', () => {
-    it('should create RLS query builder with user context', async () => {
+  describe(_'RLS Query Builder',_() => {
+    it(_'should create RLS query builder with user context',_async () => {
       const { RLSQueryBuilder } = await import('../supabase');
 
       const builder = new RLSQueryBuilder(
@@ -299,14 +299,14 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
       );
 
       // Should store user context properly and provide query methods
-      expect(builder.userId).toBe('user-123');
-      expect(builder.role).toBe('healthcare_professional');
+      expect(builder._userId).toBe('user-123');
+      expect(builder._role).toBe('healthcare_professional');
       expect(typeof builder.buildPatientQuery).toBe('function'); // This will FAIL initially
     });
   });
 
-  describe('Connection Management', () => {
-    it('should implement connection validation', async () => {
+  describe(_'Connection Management',_() => {
+    it(_'should implement connection validation',_async () => {
       const { createAdminClient } = await import('../supabase');
 
       const adminClient = createAdminClient();
@@ -316,8 +316,8 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
     });
   });
 
-  describe('LGPD Compliance Features', () => {
-    it('should provide data export functionality', async () => {
+  describe(_'LGPD Compliance Features',_() => {
+    it(_'should provide data export functionality',_async () => {
       const { createAdminClient } = await import('../supabase');
 
       const adminClient = createAdminClient();
@@ -326,7 +326,7 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
       expect(typeof adminClient.exportUserData).toBe('function'); // This will FAIL initially
     });
 
-    it('should provide secure data deletion', async () => {
+    it(_'should provide secure data deletion',_async () => {
       const { createAdminClient } = await import('../supabase');
 
       const adminClient = createAdminClient();
@@ -336,17 +336,17 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
     });
   });
 
-  describe('Error Handling and Resilience', () => {
-    it('should validate environment configuration', async () => {
+  describe(_'Error Handling and Resilience',_() => {
+    it(_'should validate environment configuration',_async () => {
       delete process.env.SUPABASE_URL;
 
       const { createUserClient } = await import('../supabase');
-      expect(() => createUserClient()).toThrow(
+      expect(_() => createUserClient()).toThrow(
         'SUPABASE_URL and SUPABASE_ANON_KEY are required',
       );
     });
 
-    it('should handle connection failures gracefully', async () => {
+    it(_'should handle connection failures gracefully',_async () => {
       const { createAdminClient } = await import('../supabase');
 
       const adminClient = createAdminClient();
@@ -356,8 +356,8 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
     });
   });
 
-  describe('Type Safety and Integration', () => {
-    it('should export properly typed client interfaces', async () => {
+  describe(_'Type Safety and Integration',_() => {
+    it(_'should export properly typed client interfaces',_async () => {
       const module = await import('../supabase');
 
       // Should export all required functions

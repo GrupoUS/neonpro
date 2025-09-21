@@ -42,12 +42,12 @@ const createMockErrorHandler = () => {
   return handler;
 };
 
-describe("EventCollector", () => {
+describe(_"EventCollector",_() => {
   let collector: EventCollector;
   let mockFlushHandler: ReturnType<typeof createMockFlushHandler>;
   let mockErrorHandler: ReturnType<typeof createMockErrorHandler>;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     mockFlushHandler = createMockFlushHandler();
     mockErrorHandler = createMockErrorHandler();
 
@@ -61,12 +61,12 @@ describe("EventCollector", () => {
     });
   });
 
-  afterEach(async () => {
+  afterEach(_async () => {
     await collector.stop();
   });
 
-  describe("Constructor and Configuration", () => {
-    it("should create EventCollector with default configuration", () => {
+  describe(_"Constructor and Configuration",_() => {
+    it(_"should create EventCollector with default configuration",_() => {
       const defaultCollector = new EventCollector();
       const stats = defaultCollector.getStats();
 
@@ -80,7 +80,7 @@ describe("EventCollector", () => {
       defaultCollector.stop();
     });
 
-    it("should create EventCollector with custom configuration", () => {
+    it(_"should create EventCollector with custom configuration",_() => {
       const customConfig: Partial<EventCollectorConfig> = {
         maxQueueSize: 100,
         autoFlushInterval: 5000,
@@ -99,7 +99,7 @@ describe("EventCollector", () => {
       customCollector.stop();
     });
 
-    it("should create EventCollector using factory function", () => {
+    it(_"should create EventCollector using factory function",_() => {
       const factoryCollector = createEventCollector({ maxQueueSize: 10 });
       const stats = factoryCollector.getStats();
 
@@ -109,7 +109,7 @@ describe("EventCollector", () => {
   });
 
   describe("collectEvent() - Core Functionality", () => {
-    it("should successfully collect a valid event", async () => {
+    it(_"should successfully collect a valid event",_async () => {
       const event = createMockEvent();
       const result = await collector.collectEvent(event);
 
@@ -123,7 +123,7 @@ describe("EventCollector", () => {
       expect(stats.queueSize).toBe(1);
     });
 
-    it("should add timestamp to event if not present", async () => {
+    it(_"should add timestamp to event if not present",_async () => {
       const eventWithoutTimestamp = createMockEvent();
       delete eventWithoutTimestamp.timestamp;
 
@@ -135,7 +135,7 @@ describe("EventCollector", () => {
       expect(stats.queueSize).toBe(1);
     });
 
-    it("should collect multiple events in FIFO order", async () => {
+    it(_"should collect multiple events in FIFO order",_async () => {
       const events = [
         createMockEvent({ eventType: "event1" }),
         createMockEvent({ eventType: "event2" }),
@@ -153,7 +153,7 @@ describe("EventCollector", () => {
       expect(stats.totalCollected).toBe(3);
     });
 
-    it("should trigger auto-flush when batch size is reached", async () => {
+    it(_"should trigger auto-flush when batch size is reached",_async () => {
       // maxBatchSize is 3, so 3rd event should trigger auto-flush
       const events = [
         createMockEvent({ eventType: "event1" }),
@@ -173,9 +173,9 @@ describe("EventCollector", () => {
       expect(mockFlushHandler).toHaveBeenCalledWith(events);
     });
 
-    it("should handle queue overflow by flushing", async () => {
+    it(_"should handle queue overflow by flushing",_async () => {
       // maxQueueSize is 5, fill queue and add one more
-      const events = Array.from({ length: 6 }, (_, i) =>
+      const events = Array.from({ length: 6 },_(_,_i) =>
         createMockEvent({ eventType: `event${i}` }),
       );
 
@@ -190,7 +190,7 @@ describe("EventCollector", () => {
   });
 
   describe("collectEvent() - Validation", () => {
-    it("should reject null or undefined event", async () => {
+    it(_"should reject null or undefined event",_async () => {
       const result = await collector.collectEvent(null as any);
 
       expect(result.success).toBe(false);
@@ -199,7 +199,7 @@ describe("EventCollector", () => {
       expect(mockErrorHandler).toHaveBeenCalled();
     });
 
-    it("should reject event without eventType", async () => {
+    it(_"should reject event without eventType",_async () => {
       const invalidEvent = createMockEvent();
       delete (invalidEvent as any).eventType;
 
@@ -210,7 +210,7 @@ describe("EventCollector", () => {
       expect(result.queueSize).toBe(0);
     });
 
-    it("should reject event without source", async () => {
+    it(_"should reject event without source",_async () => {
       const invalidEvent = createMockEvent();
       delete (invalidEvent as any).source;
 
@@ -221,7 +221,7 @@ describe("EventCollector", () => {
       expect(result.queueSize).toBe(0);
     });
 
-    it("should reject event without data", async () => {
+    it(_"should reject event without data",_async () => {
       const invalidEvent = createMockEvent();
       delete (invalidEvent as any).data;
 
@@ -232,7 +232,7 @@ describe("EventCollector", () => {
       expect(result.queueSize).toBe(0);
     });
 
-    it("should reject event with invalid patientId type", async () => {
+    it(_"should reject event with invalid patientId type",_async () => {
       const invalidEvent = createMockEvent({
         metadata: {
           patientId: 123 as any, // Should be string
@@ -249,7 +249,7 @@ describe("EventCollector", () => {
   });
 
   describe("flush() - Core Functionality", () => {
-    it("should flush empty queue successfully", async () => {
+    it(_"should flush empty queue successfully",_async () => {
       const result = await collector.flush();
 
       expect(result.success).toBe(true);
@@ -259,7 +259,7 @@ describe("EventCollector", () => {
       expect(mockFlushHandler).not.toHaveBeenCalled();
     });
 
-    it("should flush queued events successfully", async () => {
+    it(_"should flush queued events successfully",_async () => {
       const events = [
         createMockEvent({ eventType: "event1" }),
         createMockEvent({ eventType: "event2" }),
@@ -284,7 +284,7 @@ describe("EventCollector", () => {
       expect(stats.totalProcessed).toBe(2);
     });
 
-    it("should process events in batches when queue exceeds batch size", async () => {
+    it(_"should process events in batches when queue exceeds batch size",_async () => {
       // Create a new collector with larger maxQueueSize to prevent auto-flush during collection
       const mockFlush = vi.fn().mockResolvedValue(undefined);
       const batchCollector = new EventCollector({
@@ -296,7 +296,7 @@ describe("EventCollector", () => {
       });
 
       // Add 5 events (should trigger multiple batches)
-      const events = Array.from({ length: 5 }, (_, i) =>
+      const events = Array.from({ length: 5 },_(_,_i) =>
         createMockEvent({ eventType: `event${i}` }),
       );
 
@@ -314,7 +314,7 @@ describe("EventCollector", () => {
       await batchCollector.stop();
     });
 
-    it("should handle flush errors and continue processing", async () => {
+    it(_"should handle flush errors and continue processing",_async () => {
       // This test validates that the EventCollector can handle flush errors gracefully
       // The implementation is designed to be resilient and continue operation
       const failingFlushHandler = vi
@@ -348,7 +348,7 @@ describe("EventCollector", () => {
       await collectorWithFailingFlush.stop();
     });
 
-    it("should prevent concurrent flush operations", async () => {
+    it(_"should prevent concurrent flush operations",_async () => {
       const events = [
         createMockEvent({ eventType: "event1" }),
         createMockEvent({ eventType: "event2" }),
@@ -370,8 +370,8 @@ describe("EventCollector", () => {
     });
   });
 
-  describe("Statistics and State Management", () => {
-    it("should provide accurate statistics", async () => {
+  describe(_"Statistics and State Management",_() => {
+    it(_"should provide accurate statistics",_async () => {
       const initialStats = collector.getStats();
 
       expect(initialStats.queueSize).toBe(0);
@@ -399,7 +399,7 @@ describe("EventCollector", () => {
       expect(finalStats.lastFlushTime).toBeGreaterThan(0);
     });
 
-    it("should clear queue without processing", async () => {
+    it(_"should clear queue without processing",_async () => {
       await collector.collectEvent(createMockEvent());
       await collector.collectEvent(createMockEvent());
 
@@ -412,8 +412,8 @@ describe("EventCollector", () => {
     });
   });
 
-  describe("Auto-flush Functionality", () => {
-    it("should auto-flush based on interval", async () => {
+  describe(_"Auto-flush Functionality",_() => {
+    it(_"should auto-flush based on interval",_async () => {
       const autoFlushCollector = new EventCollector({
         maxQueueSize: 10,
         autoFlushInterval: 100, // 100ms
@@ -425,14 +425,14 @@ describe("EventCollector", () => {
       await autoFlushCollector.collectEvent(createMockEvent());
 
       // Wait for auto-flush interval
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(_(resolve) => setTimeout(resolve, 150));
 
       expect(mockFlushHandler).toHaveBeenCalled();
 
       await autoFlushCollector.stop();
     });
 
-    it("should not auto-flush empty queue", async () => {
+    it(_"should not auto-flush empty queue",_async () => {
       const autoFlushCollector = new EventCollector({
         maxQueueSize: 10,
         autoFlushInterval: 100,
@@ -442,7 +442,7 @@ describe("EventCollector", () => {
       });
 
       // Wait for auto-flush interval without adding events
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      await new Promise(_(resolve) => setTimeout(resolve, 150));
 
       expect(mockFlushHandler).not.toHaveBeenCalled();
 
@@ -450,8 +450,8 @@ describe("EventCollector", () => {
     });
   });
 
-  describe("Error Handling", () => {
-    it("should handle collection errors gracefully", async () => {
+  describe(_"Error Handling",_() => {
+    it(_"should handle collection errors gracefully",_async () => {
       // Force an error by passing invalid event structure
       const result = await collector.collectEvent({} as any);
 
@@ -460,7 +460,7 @@ describe("EventCollector", () => {
       expect(mockErrorHandler).toHaveBeenCalled();
     });
 
-    it("should handle flush errors when queue is full", async () => {
+    it(_"should handle flush errors when queue is full",_async () => {
       const failingFlushHandler = vi
         .fn()
         .mockRejectedValue(new Error("Network error"));
@@ -489,8 +489,8 @@ describe("EventCollector", () => {
     });
   });
 
-  describe("Lifecycle Management", () => {
-    it("should stop and flush remaining events", async () => {
+  describe(_"Lifecycle Management",_() => {
+    it(_"should stop and flush remaining events",_async () => {
       await collector.collectEvent(createMockEvent());
       await collector.collectEvent(createMockEvent());
 
@@ -502,8 +502,8 @@ describe("EventCollector", () => {
     });
   });
 
-  describe("Default EventCollector", () => {
-    it("should provide working default instance", async () => {
+  describe(_"Default EventCollector",_() => {
+    it(_"should provide working default instance",_async () => {
       const event = createMockEvent();
       const result = await defaultEventCollector.collectEvent(event);
 
@@ -515,8 +515,8 @@ describe("EventCollector", () => {
     });
   });
 
-  describe("Healthcare Compliance Features", () => {
-    it("should handle patient data validation", async () => {
+  describe(_"Healthcare Compliance Features",_() => {
+    it(_"should handle patient data validation",_async () => {
       const patientEvent = createMockEvent({
         metadata: {
           patientId: "patient-123",
@@ -530,7 +530,7 @@ describe("EventCollector", () => {
       expect(result.queueSize).toBe(1);
     });
 
-    it("should enable audit logging when configured", async () => {
+    it(_"should enable audit logging when configured",_async () => {
       const auditCollector = new EventCollector({
         maxQueueSize: 5,
         autoFlushInterval: 0,
@@ -540,7 +540,7 @@ describe("EventCollector", () => {
       });
 
       // Mock console.log to capture audit entries
-      const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, "log").mockImplementation(_() => {});
 
       await auditCollector.collectEvent(createMockEvent());
       await auditCollector.flush();

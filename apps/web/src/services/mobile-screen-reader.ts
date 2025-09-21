@@ -11,8 +11,6 @@
  * - Healthcare-specific screen reader patterns
  */
 
-import { z } from 'zod';
-
 // Mobile Screen Reader Levels
 export const MOBILE_SCREEN_READER_LEVELS = {
   EXCELLENT: 'excellent',
@@ -55,7 +53,7 @@ export const HEALTHCARE_LANDMARKS = {
 } as const;
 
 // Heading Hierarchy for Healthcare Content
-export const HEALTHCARE_HEADING_HIERARCHY = {
+export const _HEALTHCARE_HEADING_HIERARCHY = {
   PAGE_TITLE: 1, // h1: "Prontuário do Paciente"
   SECTION_TITLE: 2, // h2: "Dados Pessoais", "Histórico Médico"
   SUBSECTION_TITLE: 3, // h3: "Medicações Atuais", "Alergias"
@@ -93,7 +91,7 @@ export const MEDICAL_PRONUNCIATION_PT_BR = {
 export const ScreenReaderElementSchema = z.object({
   id: z.string(),
   tagName: z.string(),
-  role: z.string().optional(),
+  _role: z.string().optional(),
   ariaLabel: z.string().optional(),
   ariaDescribedBy: z.string().optional(),
   ariaLabelledBy: z.string().optional(),
@@ -179,7 +177,7 @@ export interface ScreenReaderAccessibilityReport {
 }
 
 // Brazilian Portuguese Screen Reader Labels
-export const SCREEN_READER_LABELS_PT_BR = {
+export const _SCREEN_READER_LABELS_PT_BR = {
   patientData: 'Dados do paciente',
   medicalHistory: 'Histórico médico',
   currentMedications: 'Medicações atuais',
@@ -226,7 +224,7 @@ export class MobileScreenReaderService {
 
     if (missingLabels > 0) {
       const unlabeledElements = elements.filter(
-        el => (el.isFocusable || el.role) && !el.hasProperLabeling,
+        el => (el.isFocusable || el._role) && !el.hasProperLabeling,
       );
 
       issues.push({
@@ -662,7 +660,7 @@ export class MobileScreenReaderService {
       [MOBILE_SCREEN_READER_LEVELS.CRITICAL]: 1,
     };
 
-    const averageScore = levels.reduce((sum, level) => sum + levelScores[level], 0)
+    const averageScore = levels.reduce(_(sum,_level) => sum + levelScores[level], 0)
       / levels.length;
 
     if (averageScore >= 4.5) return MOBILE_SCREEN_READER_LEVELS.EXCELLENT;
@@ -696,8 +694,7 @@ export class MobileScreenReaderService {
   private generateRecommendations(): string[] {
     const recommendations: string[] = [];
 
-    const issuesByType = this.issues.reduce(
-      (acc, issue) => {
+    const issuesByType = this.issues.reduce(_(acc,_issue) => {
         if (!acc[issue.type]) acc[issue.type] = [];
         acc[issue.type].push(issue);
         return acc;
@@ -705,7 +702,7 @@ export class MobileScreenReaderService {
       {} as Record<string, ScreenReaderAccessibilityIssue[]>,
     );
 
-    Object.entries(issuesByType).forEach(([type, issues]) => {
+    Object.entries(issuesByType).forEach(_([type,_issues]) => {
       const criticalCount = issues.filter(
         i => i.severity === 'critical',
       ).length;

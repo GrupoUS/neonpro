@@ -324,13 +324,13 @@ export async function registerHealthcareServiceWorker(
  */
 function setupHealthcareServiceWorkerListeners(registration: ServiceWorkerRegistration): void {
   // Handle service worker updates
-  registration.addEventListener('updatefound', () => {
+  registration.addEventListener(_'updatefound',_() => {
     const newWorker = registration.installing;
 
     if (newWorker) {
       registrationState.isInstalling = true;
 
-      newWorker.addEventListener('statechange', () => {
+      newWorker.addEventListener(_'statechange',_() => {
         updateRegistrationState(registration);
 
         if (
@@ -346,7 +346,7 @@ function setupHealthcareServiceWorkerListeners(registration: ServiceWorkerRegist
   });
 
   // Listen for controller changes
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
+  navigator.serviceWorker.addEventListener(_'controllerchange',_() => {
     console.log('[Healthcare SW] Controller changed - page reload may be required');
 
     // For healthcare applications, we might want to prevent automatic reload

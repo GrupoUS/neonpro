@@ -112,7 +112,7 @@ export function healthcareTelemetryMiddleware() {
         try {
           await next();
           span.end();
-        } catch (error) {
+        } catch (_error) {
           span.recordException(error as Error);
           span.setStatus({
             code: 2,
@@ -129,7 +129,7 @@ export function healthcareTelemetryMiddleware() {
       // Record metrics
       const duration = Date.now() - startTime;
       recordApiMetrics(c, duration, healthcareContext);
-    } catch (error) {
+    } catch (_error) {
       // Record error metrics
       const duration = Date.now() - startTime;
       recordApiError(c, error as Error, duration, healthcareContext);
@@ -142,7 +142,7 @@ export function healthcareTelemetryMiddleware() {
 function recordApiMetrics(
   c: Context,
   duration: number,
-  context: Record<string, string | number | boolean>,
+  _context: Record<string, string | number | boolean>,
 ) {
   // Only record metrics in production or when enabled
   if (
@@ -193,7 +193,7 @@ function recordApiMetrics(
         clinic_id: context["healthcare.clinic_id"] || "unknown",
       });
     }
-  } catch (error) {
+  } catch (_error) {
     // Silently fail metric recording to not impact application
     console.warn("Failed to record telemetry metrics:", error);
   }
@@ -204,7 +204,7 @@ function recordApiError(
   c: Context,
   error: Error,
   duration: number,
-  context: Record<string, string | number | boolean>,
+  _context: Record<string, string | number | boolean>,
 ) {
   try {
     const { metrics } = require("@opentelemetry/api");
@@ -223,7 +223,7 @@ function recordApiError(
     };
 
     errorTotal.add(1, labels);
-  } catch (metricError) {
+  } catch (_metricError) {
     console.warn("Failed to record error metrics:", metricError);
   }
 }

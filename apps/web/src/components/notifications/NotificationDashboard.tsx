@@ -10,9 +10,8 @@ import {
 import { cn } from '@neonpro/ui';
 
 // Simple Progress component since it's not in the UI package
-const Progress = ({
-  value,
-  className,
+const Progress = (_{
+  value,_className,
 }: {
   value: number;
   className?: string;
@@ -58,7 +57,7 @@ export function NotificationDashboard({
     try {
       await processPendingMutation.mutateAsync();
       refetch(); // Refresh stats after processing
-    } catch (error) {
+    } catch (_error) {
       console.error('Error processing pending notifications:', error);
     }
   };
@@ -79,7 +78,7 @@ export function NotificationDashboard({
         <CardContent>
           <div className='animate-pulse space-y-4'>
             <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
-              {Array.from({ length: 4 }).map((_, i) => (
+              {Array.from({ length: 4 }).map(_(_,_i) => (
                 <div key={i} className='h-20 bg-muted rounded'></div>
               ))}
             </div>

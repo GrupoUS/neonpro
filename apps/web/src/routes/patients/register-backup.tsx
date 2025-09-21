@@ -1,5 +1,5 @@
 import { AnimatedModal } from '@/components/ui/animated-modal';
-import { Badge } from '@/components/ui/badge';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -19,7 +19,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import React, { useState } from 'react';
 
-export const Route = createFileRoute('/patients/register-backup')({
+export const _Route = createFileRoute('/patients/register-backup')({
   component: PatientRegister,
 });
 
@@ -265,7 +265,7 @@ function PatientRegister() {
 
   const confirmSubmit = () => {
     // Mock API call
-    setTimeout(() => {
+    setTimeout(_() => {
       toast({
         title: 'Paciente cadastrado com sucesso',
         description: `${formData.name} foi cadastrado no sistema.`,
@@ -422,7 +422,7 @@ function PatientRegister() {
     const error = errors[field.name];
     const fieldId = `field-${field.name}`;
     const errorId = `error-${field.name}`;
-    const helpId = `help-${field.name}`;
+    const _helpId = `help-${field.name}`;
 
     if (field.type === 'select') {
       return (
@@ -460,7 +460,7 @@ function PatientRegister() {
               />
             </SelectTrigger>
             <SelectContent>
-              {field.options?.map((option: any) => (
+              {field.options?.map((_options?: any) => (
                 <SelectItem
                   key={option.value}
                   value={option.value}
@@ -582,7 +582,7 @@ function PatientRegister() {
         className='space-y-6 sm:space-y-8'
         noValidate
       >
-        {sections.map((section, sectionIndex) => (
+        {sections.map(_(section,_sectionIndex) => (
           <Card key={section.title} className='shadow-sm'>
             <CardHeader className='pb-4'>
               <CardTitle className='text-lg sm:text-xl font-semibold text-gray-900'>

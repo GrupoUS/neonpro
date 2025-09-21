@@ -339,7 +339,7 @@ export function validateHealthcareDocument(
         errors.push('Unsupported document type');
         break;
     }
-  } catch (error) {
+  } catch (_error) {
     errors.push(`Validation error: ${error instanceof Error ? error.message : 'Unknown error'}`);
     isValid = false;
   }

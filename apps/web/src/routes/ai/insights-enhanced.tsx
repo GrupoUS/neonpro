@@ -37,7 +37,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 
-export const Route = createFileRoute('/ai/insights-enhanced')({
+export const _Route = createFileRoute('/ai/insights-enhanced')({
   component: AIInsightsPage,
 });
 
@@ -680,7 +680,7 @@ function AIInsightsPage() {
   const [activeTab, setActiveTab] = useState('insights');
 
   // Initialize data
-  useEffect(() => {
+  useEffect(_() => {
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -706,7 +706,7 @@ function AIInsightsPage() {
   }, []);
 
   // Filter insights based on selections
-  const filteredInsights = useMemo(() => {
+  const filteredInsights = useMemo(_() => {
     return insights.filter(insight => {
       const categoryMatch = selectedCategory === 'all' || insight.category === selectedCategory;
       const priorityMatch = selectedPriority === 'all' || insight.priority === selectedPriority;
@@ -715,18 +715,17 @@ function AIInsightsPage() {
   }, [insights, selectedCategory, selectedPriority]);
 
   // Calculate statistics
-  const stats = useMemo(() => {
+  const stats = useMemo(_() => {
     return {
       totalInsights: insights.length,
       criticalInsights: insights.filter(i => i.priority === 'critical')
         .length,
       highRiskPatients: noShowAnalysis?.highRiskPatients.length || 0,
       modelAccuracy: models.length > 0
-        ? models.reduce((sum, model) => sum + model.accuracy, 0)
+        ? models.reduce(_(sum,_model) => sum + model.accuracy, 0)
           / models.length
         : 0,
-      potentialSavings: insights.reduce(
-        (sum, insight) => sum + (insight.potentialSavings || 0),
+      potentialSavings: insights.reduce(_(sum,_insight) => sum + (insight.potentialSavings || 0),
         0,
       ),
     };
@@ -749,7 +748,7 @@ function AIInsightsPage() {
   const handleRefreshData = () => {
     setLoading(true);
     // Simulate data refresh
-    setTimeout(() => {
+    setTimeout(_() => {
       setInsights(generateMockInsights());
       setModels(generateMockModels());
       setLoading(false);
@@ -775,7 +774,7 @@ function AIInsightsPage() {
 
           {/* Stats skeleton */}
           <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5'>
-            {Array.from({ length: 5 }).map((_, _index) => (
+            {Array.from({ length: 5 }).map(_(_, _index) => (
               <Skeleton key={index} className='h-32' />
             ))}
           </div>
@@ -1089,7 +1088,7 @@ function AIInsightsPage() {
                       Recomendações:
                     </div>
                     <ul className='text-xs text-gray-600 space-y-1'>
-                      {insight.recommendations.slice(0, 2).map((rec, _index) => (
+                      {insight.recommendations.slice(0, 2).map(_(rec, _index) => (
                         <li key={index} className='flex items-start gap-1'>
                           <span className='text-green-600 mt-1'>•</span>
                           <span>{rec}</span>
@@ -1103,8 +1102,7 @@ function AIInsightsPage() {
                     </ul>
                   </div>
 
-                  {insight.actionable && (
-                    <Button
+                  {insight.actionable && (_<Button
                       variant='outline'
                       size='sm'
                       onClick={() => handleInsightAction(insight)}
@@ -1118,8 +1116,7 @@ function AIInsightsPage() {
             ))}
           </div>
 
-          {filteredInsights.length === 0 && (
-            <Card>
+          {filteredInsights.length === 0 && (_<Card>
               <CardContent className='text-center py-12'>
                 <Brain className='h-16 w-16 text-muted-foreground mx-auto mb-4' />
                 <h3 className='text-lg font-medium mb-2'>
@@ -1156,8 +1153,7 @@ function AIInsightsPage() {
                 </CardHeader>
                 <CardContent className='space-y-4'>
                   <div className='space-y-3'>
-                    {Object.entries(populationMetrics.riskDistribution).map(
-                      ([level, count]) => {
+                    {Object.entries(populationMetrics.riskDistribution).map(_([level,_count]) => {
                         const percentage = (count / populationMetrics.totalPatients) * 100;
                         const _color = level === 'critical'
                           ? 'red'
@@ -1202,7 +1198,7 @@ function AIInsightsPage() {
                     <div className='space-y-2'>
                       {Object.entries(
                         populationMetrics.demographics.ageGroups,
-                      ).map(([group, count]) => {
+                      ).map(_([group,_count]) => {
                         const percentage = (count / populationMetrics.totalPatients) * 100;
                         return (
                           <div
@@ -1224,7 +1220,7 @@ function AIInsightsPage() {
                     <div className='space-y-2'>
                       {Object.entries(
                         populationMetrics.demographics.gender,
-                      ).map(([gender, count]) => {
+                      ).map(_([gender,_count]) => {
                         const percentage = (count / populationMetrics.totalPatients) * 100;
                         return (
                           <div
@@ -1307,7 +1303,7 @@ function AIInsightsPage() {
                 <CardContent className='space-y-3'>
                   {populationMetrics.demographics.locations
                     .slice(0, 5)
-                    .map((location, _index) => (
+                    .map(_(location, _index) => (
                       <div
                         key={index}
                         className='flex justify-between items-center text-sm'
@@ -1451,7 +1447,7 @@ function AIInsightsPage() {
                       Fatores de Risco:
                     </div>
                     <div className='space-y-2'>
-                      {noShowAnalysis.factors.map((factor, _index) => (
+                      {noShowAnalysis.factors.map(_(factor, _index) => (
                         <div
                           key={index}
                           className='flex items-center justify-between text-sm'
@@ -1482,7 +1478,7 @@ function AIInsightsPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className='space-y-3'>
-                  {noShowAnalysis.highRiskPatients.map((patient, _index) => (
+                  {noShowAnalysis.highRiskPatients.map(_(patient, _index) => (
                     <div
                       key={index}
                       className='flex items-center justify-between p-2 border rounded'
@@ -1533,7 +1529,7 @@ function AIInsightsPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {treatmentEffectiveness.map((treatment, _index) => (
+                        {treatmentEffectiveness.map(_(treatment, _index) => (
                           <tr key={index} className='border-b'>
                             <td className='p-2 font-medium'>
                               {treatment.treatmentType}
@@ -1591,7 +1587,7 @@ function AIInsightsPage() {
               </Badge>
               <Badge variant='outline' className='text-xs'>
                 {models
-                  .reduce((sum, m) => sum + m.predictionsCount, 0)
+                  .reduce(_(sum,_m) => sum + m.predictionsCount, 0)
                   .toLocaleString()} previsões
               </Badge>
               <Badge variant='outline' className='text-xs'>

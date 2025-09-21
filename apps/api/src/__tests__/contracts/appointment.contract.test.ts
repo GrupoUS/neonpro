@@ -35,12 +35,12 @@ type AppointmentOutput = {
   checkConflicts: inferProcedureOutput<typeof appointmentRouter.checkConflicts>;
 };
 
-describe('Appointment API Contract Tests', () => {
+describe(_'Appointment API Contract Tests',_() => {
   const createCaller = createCallerFactory(appRouter);
   let caller: ReturnType<typeof createCaller>;
   let mockContext: any;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     mockContext = createMockContext();
     caller = createCaller(mockContext);
 
@@ -54,12 +54,12 @@ describe('Appointment API Contract Tests', () => {
     vi.spyOn(mockContext.scheduling, 'detectConflicts').mockResolvedValue([]);
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.restoreAllMocks();
   });
 
-  describe('Appointment Creation Contract', () => {
-    it('should validate appointment creation input schema', async () => {
+  describe(_'Appointment Creation Contract',_() => {
+    it(_'should validate appointment creation input schema',_async () => {
       const validInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -110,12 +110,12 @@ describe('Appointment API Contract Tests', () => {
         action: 'create',
         appointmentId: 'appointment-123',
         patientId: 'patient-123',
-        userId: mockContext.user.id,
+        _userId: mockContext.user.id,
         timestamp: expect.any(Date),
       });
     });
 
-    it('should reject appointment creation with scheduling conflicts', async () => {
+    it(_'should reject appointment creation with scheduling conflicts',_async () => {
       const conflictingInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -140,7 +140,7 @@ describe('Appointment API Contract Tests', () => {
       ).rejects.toThrow('Scheduling conflict detected');
     });
 
-    it('should validate appointment timing constraints', async () => {
+    it(_'should validate appointment timing constraints',_async () => {
       const pastDateInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -155,7 +155,7 @@ describe('Appointment API Contract Tests', () => {
       ).rejects.toThrow('Cannot schedule appointments in the past');
     });
 
-    it('should validate business hours constraints', async () => {
+    it(_'should validate business hours constraints',_async () => {
       const afterHoursInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -171,8 +171,8 @@ describe('Appointment API Contract Tests', () => {
     });
   });
 
-  describe('Appointment Retrieval Contract', () => {
-    it('should validate appointment retrieval by ID', async () => {
+  describe(_'Appointment Retrieval Contract',_() => {
+    it(_'should validate appointment retrieval by ID',_async () => {
       const appointmentId = 'appointment-123';
       const mockAppointment = {
         id: appointmentId,
@@ -208,12 +208,12 @@ describe('Appointment API Contract Tests', () => {
       expect(mockContext.audit.logAppointmentAction).toHaveBeenCalledWith({
         action: 'read',
         appointmentId,
-        userId: mockContext.user.id,
+        _userId: mockContext.user.id,
         timestamp: expect.any(Date),
       });
     });
 
-    it('should handle appointment not found', async () => {
+    it(_'should handle appointment not found',_async () => {
       const appointmentId = 'nonexistent-appointment';
       mockContext.prisma.appointment.findUnique.mockResolvedValue(null);
 
@@ -225,8 +225,8 @@ describe('Appointment API Contract Tests', () => {
     });
   });
 
-  describe('Appointment Update Contract', () => {
-    it('should validate appointment update input schema', async () => {
+  describe(_'Appointment Update Contract',_() => {
+    it(_'should validate appointment update input schema',_async () => {
       const appointmentId = 'appointment-123';
       const updateInput: AppointmentInput['update'] = {
         id: appointmentId,
@@ -274,13 +274,13 @@ describe('Appointment API Contract Tests', () => {
       expect(mockContext.audit.logAppointmentAction).toHaveBeenCalledWith({
         action: 'update',
         appointmentId,
-        userId: mockContext.user.id,
+        _userId: mockContext.user.id,
         timestamp: expect.any(Date),
         changes: expect.any(Object),
       });
     });
 
-    it('should prevent updating completed appointments', async () => {
+    it(_'should prevent updating completed appointments',_async () => {
       const appointmentId = 'appointment-123';
       const updateInput: AppointmentInput['update'] = {
         id: appointmentId,
@@ -302,8 +302,8 @@ describe('Appointment API Contract Tests', () => {
       );
     });
   });
-  describe('Appointment Cancellation Contract', () => {
-    it('should validate appointment cancellation', async () => {
+  describe(_'Appointment Cancellation Contract',_() => {
+    it(_'should validate appointment cancellation',_async () => {
       const appointmentId = 'appointment-123';
       const cancelInput: AppointmentInput['cancel'] = {
         id: appointmentId,
@@ -349,13 +349,13 @@ describe('Appointment API Contract Tests', () => {
       expect(mockContext.audit.logAppointmentAction).toHaveBeenCalledWith({
         action: 'cancel',
         appointmentId,
-        userId: mockContext.user.id,
+        _userId: mockContext.user.id,
         timestamp: expect.any(Date),
         reason: 'Patient requested cancellation',
       });
     });
 
-    it('should enforce cancellation time limits', async () => {
+    it(_'should enforce cancellation time limits',_async () => {
       const appointmentId = 'appointment-123';
       const cancelInput: AppointmentInput['cancel'] = {
         id: appointmentId,
@@ -378,8 +378,8 @@ describe('Appointment API Contract Tests', () => {
     });
   });
 
-  describe('Appointment Availability Contract', () => {
-    it('should validate availability checking', async () => {
+  describe(_'Appointment Availability Contract',_() => {
+    it(_'should validate availability checking',_async () => {
       const availabilityInput: AppointmentInput['getAvailability'] = {
         professionalId: 'prof-456',
         date: '2024-02-15',
@@ -422,7 +422,7 @@ describe('Appointment API Contract Tests', () => {
       });
     });
 
-    it('should handle no availability', async () => {
+    it(_'should handle no availability',_async () => {
       const availabilityInput: AppointmentInput['getAvailability'] = {
         professionalId: 'prof-456',
         date: '2024-02-15',
@@ -449,8 +449,8 @@ describe('Appointment API Contract Tests', () => {
     });
   });
 
-  describe('Appointment Conflict Detection Contract', () => {
-    it('should validate conflict checking', async () => {
+  describe(_'Appointment Conflict Detection Contract',_() => {
+    it(_'should validate conflict checking',_async () => {
       const conflictInput: AppointmentInput['checkConflicts'] = {
         professionalId: 'prof-456',
         scheduledFor: '2024-02-15T14:00:00.000Z',
@@ -487,7 +487,7 @@ describe('Appointment API Contract Tests', () => {
       });
     });
 
-    it('should return no conflicts when schedule is clear', async () => {
+    it(_'should return no conflicts when schedule is clear',_async () => {
       const conflictInput: AppointmentInput['checkConflicts'] = {
         professionalId: 'prof-456',
         scheduledFor: '2024-02-15T16:00:00.000Z',
@@ -508,8 +508,8 @@ describe('Appointment API Contract Tests', () => {
     });
   });
 
-  describe('Appointment List Contract', () => {
-    it('should validate appointment listing with filters', async () => {
+  describe(_'Appointment List Contract',_() => {
+    it(_'should validate appointment listing with filters',_async () => {
       const listInput: AppointmentInput['list'] = {
         page: 1,
         limit: 10,
@@ -574,8 +574,8 @@ describe('Appointment API Contract Tests', () => {
     });
   });
 
-  describe('Contract Type Safety', () => {
-    it('should enforce input type constraints at compile time', () => {
+  describe(_'Contract Type Safety',_() => {
+    it(_'should enforce input type constraints at compile time',_() => {
       const validInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -588,7 +588,7 @@ describe('Appointment API Contract Tests', () => {
       expect(validInput).toBeDefined();
     });
 
-    it('should enforce output type constraints', () => {
+    it(_'should enforce output type constraints',_() => {
       const mockOutput: AppointmentOutput['getById'] = {
         success: true,
         data: {

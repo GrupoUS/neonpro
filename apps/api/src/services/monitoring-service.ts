@@ -73,7 +73,7 @@ export interface SecurityEvent {
     | 'rate_limit_violation';
   severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
-  userId?: string;
+  _userId?: string;
   ipAddress: string;
   userAgent?: string;
   metadata?: Record<string, any>;
@@ -85,7 +85,7 @@ export interface SecurityEvent {
 export interface DataAccessRecord {
   id: string;
   timestamp: Date;
-  userId: string;
+  _userId: string;
   resourceType: 'client_data' | 'appointments' | 'financial' | 'medical_records';
   resourceId: string;
   action: 'read' | 'write' | 'delete';
@@ -196,20 +196,17 @@ export class MonitoringService {
    */
   private startMonitoring(): void {
     // Health checks every 30 seconds
-    this.healthCheckInterval = setInterval(
-      () => this.performHealthChecks(),
+    this.healthCheckInterval = setInterval(_() => this.performHealthChecks(),
       30000,
     );
 
     // Metrics collection every 10 seconds
-    this.metricsInterval = setInterval(
-      () => this.collectMetrics(),
+    this.metricsInterval = setInterval(_() => this.collectMetrics(),
       10000,
     );
 
     // Cleanup old data every hour
-    this.cleanupInterval = setInterval(
-      () => this.cleanupOldData(),
+    this.cleanupInterval = setInterval(_() => this.cleanupOldData(),
       3600000,
     );
   }
@@ -233,7 +230,8 @@ export class MonitoringService {
 
       // Security health
       await this.checkSecurityHealth();
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       logger.error('Health check failed:', error);
     }
   }
@@ -277,7 +275,8 @@ export class MonitoringService {
       if (!health.cache.healthy || !health.database.healthy) {
         logger.error('Service health check failed', health);
       }
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       logger.error('Service health check error:', error);
     }
   }
@@ -298,7 +297,8 @@ export class MonitoringService {
       if (responseTime > 2000) { // > 2s is concerning
         logger.warn('Slow database response', { responseTime });
       }
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       logger.error('Database health check failed:', error);
     }
   }
@@ -316,7 +316,8 @@ export class MonitoringService {
       if (stats.hitRate < 0.3) {
         logger.warn('Low cache hit rate', { hitRate: stats.hitRate });
       }
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       logger.error('Cache health check failed:', error);
     }
   }
@@ -336,7 +337,8 @@ export class MonitoringService {
       if (recentEvents.length > 10) {
         logger.error('High volume of security events detected', { count: recentEvents.length });
       }
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       logger.error('Security health check failed:', error);
     }
   }
@@ -355,7 +357,8 @@ export class MonitoringService {
 
       // Update AI metrics
       await this.updateAIMetrics();
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       logger.error('Metrics collection failed:', error);
     }
   }
@@ -368,7 +371,8 @@ export class MonitoringService {
       try {
         const cacheStats = await this.dataService.getCacheStats();
         this.metrics.performance.cacheHitRate = cacheStats.customStats?.hitRate || 0;
-      } catch (error) {
+      } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
         logger.error('Failed to update performance metrics:', error);
       }
     }
@@ -610,7 +614,7 @@ export class MonitoringService {
     return { total: 0, used: 0, free: 0, percentage: 0 };
   }
 
-  private calculateCPUUsage(cpuUsage: NodeJS.CpuUsage): number {
+  private calculateCPUUsage(_cpuUsage: NodeJS.CpuUsage): number {
     // This would calculate actual CPU usage percentage
     return 0; // Placeholder
   }
@@ -669,6 +673,6 @@ interface Recommendation {
 /**
  * Global monitoring service instance
  */
-export const monitoringService = new MonitoringService();
+export const _monitoringService = new MonitoringService();
 
 export default MonitoringService;

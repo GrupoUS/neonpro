@@ -4,8 +4,8 @@ import { GoogleCalendarClient } from '../client';
 import { GoogleCalendarCompliance } from '../compliance';
 import { GoogleCalendarService } from '../service';
 
-describe('Google Calendar Integration E2E', () => {
-  let service: GoogleCalendarService;
+describe(_'Google Calendar Integration E2E',_() => {
+  let _service: GoogleCalendarService;
   let mockSupabase: any;
   let mockClient: any;
   let mockCompliance: any;
@@ -40,7 +40,7 @@ describe('Google Calendar Integration E2E', () => {
     },
   };
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
 
     // Setup Supabase mock
@@ -48,27 +48,27 @@ describe('Google Calendar Integration E2E', () => {
       auth: {
         getUser: vi.fn().mockResolvedValue({ data: { user: mockUser } }),
       },
-      from: vi.fn(() => ({
+      from: vi.fn(_() => ({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn(),
             data: null,
             error: null,
           })),
-          gte: vi.fn(() => ({
+          gte: vi.fn(_() => ({
             lte: vi.fn(),
           })),
         })),
-        insert: vi.fn(() => ({
+        insert: vi.fn(_() => ({
           select: vi.fn(() => ({
             data: [{ id: 'integration-123' }],
             error: null,
           })),
         })),
-        update: vi.fn(() => ({
+        update: vi.fn(_() => ({
           eq: vi.fn(),
         })),
-        delete: vi.fn(() => ({
+        delete: vi.fn(_() => ({
           eq: vi.fn(),
         })),
       })),
@@ -91,7 +91,7 @@ describe('Google Calendar Integration E2E', () => {
       ]),
       createEvent: vi
         .fn()
-        .mockImplementation(async (calendarId, eventData) => ({
+        .mockImplementation(_async (calendarId,_eventData) => ({
           id: `google-${Date.now()}`,
           ...eventData,
           htmlLink: `https://calendar.google.com/calendar/event?eid=${Date.now()}`,
@@ -99,7 +99,7 @@ describe('Google Calendar Integration E2E', () => {
         })),
       updateEvent: vi
         .fn()
-        .mockImplementation(async (calendarId, eventId, updates) => ({
+        .mockImplementation(_async (calendarId,_eventId,_updates) => ({
           id: eventId,
           ...updates,
           updated: new Date().toISOString(),
@@ -121,23 +121,23 @@ describe('Google Calendar Integration E2E', () => {
     };
 
     const { GoogleCalendarClient } = require('../client');
-    GoogleCalendarClient.mockImplementation(() => mockClient);
+    GoogleCalendarClient.mockImplementation(_() => mockClient);
 
     const { GoogleCalendarCompliance } = require('../compliance');
-    GoogleCalendarCompliance.mockImplementation(() => mockCompliance);
+    GoogleCalendarCompliance.mockImplementation(_() => mockCompliance);
 
     service = new GoogleCalendarService();
   });
 
-  describe('Complete Integration Flow', () => {
-    it('should handle full integration lifecycle', async () => {
+  describe(_'Complete Integration Flow',_() => {
+    it(_'should handle full integration lifecycle',_async () => {
       // 1. User connects Google Calendar
       const authUrl = service.getAuthUrl();
       expect(authUrl).toContain('accounts.google.com');
 
       // 2. Create integration after OAuth callback
       const integration = await service.createIntegration({
-        userId: mockUser.id,
+        _userId: mockUser.id,
         clinicId: mockClinic.id,
         calendarId: 'primary',
       });
@@ -173,7 +173,7 @@ describe('Google Calendar Integration E2E', () => {
       expect(mockCompliance.logDataAccess).toHaveBeenCalled();
     });
 
-    it('should handle appointment updates', async () => {
+    it(_'should handle appointment updates',_async () => {
       // Setup existing integration and sync record
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
@@ -230,7 +230,7 @@ describe('Google Calendar Integration E2E', () => {
       );
     });
 
-    it('should handle appointment cancellation', async () => {
+    it(_'should handle appointment cancellation',_async () => {
       // Setup existing integration and sync record
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
@@ -283,7 +283,7 @@ describe('Google Calendar Integration E2E', () => {
       );
     });
 
-    it('should handle bidirectional sync', async () => {
+    it(_'should handle bidirectional sync',_async () => {
       // Setup integration
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
@@ -328,7 +328,7 @@ describe('Google Calendar Integration E2E', () => {
       expect(mockCompliance.validateDataProcessing).toHaveBeenCalledTimes(1);
     });
 
-    it('should handle conflicts properly', async () => {
+    it(_'should handle conflicts properly',_async () => {
       // Setup integration
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
@@ -368,7 +368,7 @@ describe('Google Calendar Integration E2E', () => {
       expect(conflicts[0].id).toBe('conflict-event');
     });
 
-    it('should ensure data privacy throughout the flow', async () => {
+    it(_'should ensure data privacy throughout the flow',_async () => {
       // Setup integration with encrypted tokens
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
@@ -404,7 +404,7 @@ describe('Google Calendar Integration E2E', () => {
       );
     });
 
-    it('should handle errors gracefully and maintain system stability', async () => {
+    it(_'should handle errors gracefully and maintain system stability',_async () => {
       // Simulate API failure
       mockClient.createEvent.mockRejectedValue({
         code: 503,
@@ -420,7 +420,7 @@ describe('Google Calendar Integration E2E', () => {
       // Error would be logged by the service
     });
 
-    it('should handle token refresh automatically', async () => {
+    it(_'should handle token refresh automatically',_async () => {
       // Setup integration with expired token
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
@@ -464,8 +464,8 @@ describe('Google Calendar Integration E2E', () => {
     });
   });
 
-  describe('Healthcare Compliance Requirements', () => {
-    it('should enforce data retention policies', async () => {
+  describe(_'Healthcare Compliance Requirements',_() => {
+    it(_'should enforce data retention policies',_async () => {
       const oldAppointment = {
         ...mockAppointment,
         startTime: new Date('2015-01-15T10:00:00'), // 9 years ago
@@ -504,7 +504,7 @@ describe('Google Calendar Integration E2E', () => {
       );
     });
 
-    it('should handle patient consent revocation', async () => {
+    it(_'should handle patient consent revocation',_async () => {
       mockCompliance.validateConsent.mockResolvedValueOnce(false);
 
       await expect(
@@ -515,7 +515,7 @@ describe('Google Calendar Integration E2E', () => {
       expect(mockClient.createEvent).not.toHaveBeenCalled();
     });
 
-    it('should maintain audit trail for all operations', async () => {
+    it(_'should maintain audit trail for all operations',_async () => {
       // Setup integration
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
@@ -540,7 +540,7 @@ describe('Google Calendar Integration E2E', () => {
       // Verify all access was logged
       expect(mockCompliance.logDataAccess).toHaveBeenCalledWith(
         expect.objectContaining({
-          userId: mockUser.id,
+          _userId: mockUser.id,
           action: 'SYNC_APPOINTMENT',
           dataType: 'CALENDAR_EVENT',
           patientId: mockAppointment.patientId,
@@ -549,9 +549,9 @@ describe('Google Calendar Integration E2E', () => {
     });
   });
 
-  describe('Performance and Scalability', () => {
-    it('should handle batch operations efficiently', async () => {
-      const appointments = Array.from({ length: 100 }, (_, i) => ({
+  describe(_'Performance and Scalability',_() => {
+    it(_'should handle batch operations efficiently',_async () => {
+      const appointments = Array.from({ length: 100 },_(_,_i) => ({
         ...mockAppointment,
         id: `appt-${i}`,
         startTime: new Date(`2024-01-${15 + i}T10:00:00`),
@@ -585,7 +585,7 @@ describe('Google Calendar Integration E2E', () => {
       expect(duration).toBeLessThan(10000); // Should complete in under 10 seconds
     });
 
-    it('should handle rate limiting gracefully', async () => {
+    it(_'should handle rate limiting gracefully',_async () => {
       // Simulate rate limit responses
       mockClient.createEvent
         .mockRejectedValueOnce({ code: 429, message: 'Rate limit exceeded' })

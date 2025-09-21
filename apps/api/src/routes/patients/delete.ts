@@ -5,7 +5,6 @@
  */
 
 import { Hono } from 'hono';
-import { z } from 'zod';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
 import { LGPDService } from '../../services/lgpd-service';
@@ -56,7 +55,7 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
     }
 
     // Validate query parameters
-    const queryValidation = DeletePatientQuerySchema.safeParse(query);
+    const queryValidation = DeletePatientQuerySchema.safeParse(_query);
     if (!queryValidation.success) {
       return c.json(
         {
@@ -340,7 +339,7 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
       data: deletionResult.data,
       message: 'Paciente removido com sucesso',
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Error deleting patient:', error);
 
     return c.json(

@@ -24,8 +24,7 @@ export function PricingRuleStats({ clinicId }: PricingRuleStatsProps) {
   const inactiveRules = rules.filter(rule => !rule.is_active);
 
   // Calculate rule type distribution
-  const ruleTypeDistribution = rules.reduce(
-    (acc, rule) => {
+  const ruleTypeDistribution = rules.reduce(_(acc,_rule) => {
       acc[rule.rule_type] = (acc[rule.rule_type] || 0) + 1;
       return acc;
     },
@@ -33,8 +32,7 @@ export function PricingRuleStats({ clinicId }: PricingRuleStatsProps) {
   );
 
   // Calculate adjustment type distribution
-  const adjustmentTypeDistribution = rules.reduce(
-    (acc, rule) => {
+  const adjustmentTypeDistribution = rules.reduce(_(acc,_rule) => {
       acc[rule.adjustment.type] = (acc[rule.adjustment.type] || 0) + 1;
       return acc;
     },
@@ -147,7 +145,7 @@ export function PricingRuleStats({ clinicId }: PricingRuleStatsProps) {
         </CardHeader>
         <CardContent>
           <div className='space-y-4'>
-            {Object.entries(ruleTypeDistribution).map(([type, count]) => (
+            {Object.entries(ruleTypeDistribution).map(_([type,_count]) => (
               <div key={type} className='flex items-center justify-between'>
                 <div className='flex items-center space-x-2'>
                   <Badge className={getRuleTypeColor(type)}>
@@ -182,7 +180,7 @@ export function PricingRuleStats({ clinicId }: PricingRuleStatsProps) {
         </CardHeader>
         <CardContent>
           <div className='space-y-4'>
-            {Object.entries(adjustmentTypeDistribution).map(([type, count]) => (
+            {Object.entries(adjustmentTypeDistribution).map(_([type,_count]) => (
               <div key={type} className='flex items-center justify-between'>
                 <div className='flex items-center space-x-2'>
                   <Badge

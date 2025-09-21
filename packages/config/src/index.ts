@@ -17,5 +17,5 @@ export {
 export { QUOTA_CONFIGURATION } from "./quotas";
 
 // Placeholder exports - will be populated with actual configuration
-export const complianceConfig = {};
-export const governanceConfig = {};
+export const _complianceConfig = {};
+export const _governanceConfig = {};

@@ -9,7 +9,7 @@ import { AccessibilityAuditService_LEVELS } from '../accessibility-audit';
 // Mock DOM methods
 const mockGetComputedStyle = vi.fn();
 
-beforeEach(() => {
+beforeEach(_() => {
   // Mock window.getComputedStyle
   Object.defineProperty(window, 'getComputedStyle', {
     value: mockGetComputedStyle,
@@ -40,15 +40,15 @@ beforeEach(() => {
   });
 });
 
-afterEach(() => {
+afterEach(_() => {
   vi.clearAllMocks();
 });
 
-describe('AccessibilityAuditService', () => {
+describe(_'AccessibilityAuditService',_() => {
   let auditService: AccessibilityAuditService;
   let mockElement: HTMLElement;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     auditService = new AccessibilityAuditService();
 
     // Create mock element
@@ -63,8 +63,8 @@ describe('AccessibilityAuditService', () => {
     } as any;
   });
 
-  describe('performAudit', () => {
-    it('should perform comprehensive accessibility audit', async () => {
+  describe(_'performAudit',_() => {
+    it(_'should perform comprehensive accessibility audit',_async () => {
       // Mock empty element (no issues)
       mockElement.querySelectorAll = vi.fn().mockReturnValue([]);
 
@@ -85,7 +85,7 @@ describe('AccessibilityAuditService', () => {
       expect(result.testResults).toBeDefined();
     });
 
-    it('should use document.body when no element provided', async () => {
+    it(_'should use document.body when no element provided',_async () => {
       const bodySpy = vi
         .spyOn(document.body, 'querySelectorAll')
         .mockReturnValue([] as any);
@@ -96,8 +96,8 @@ describe('AccessibilityAuditService', () => {
     });
   });
 
-  describe('Color Contrast Audit', () => {
-    it('should detect color contrast issues', async () => {
+  describe(_'Color Contrast Audit',_() => {
+    it(_'should detect color contrast issues',_async () => {
       // Mock element with poor contrast
       const mockTextElement = {
         tagName: 'P',
@@ -137,7 +137,7 @@ describe('AccessibilityAuditService', () => {
       ).toBe(true);
     });
 
-    it('should pass with good contrast', async () => {
+    it(_'should pass with good contrast',_async () => {
       // Mock element with good contrast
       const mockTextElement = {
         tagName: 'P',
@@ -178,8 +178,8 @@ describe('AccessibilityAuditService', () => {
     });
   });
 
-  describe('Keyboard Navigation Audit', () => {
-    it('should detect keyboard navigation issues', async () => {
+  describe(_'Keyboard Navigation Audit',_() => {
+    it(_'should detect keyboard navigation issues',_async () => {
       // Mock interactive element with tabindex="-1" but no aria-hidden
       const mockButton = {
         tagName: 'BUTTON',
@@ -215,7 +215,7 @@ describe('AccessibilityAuditService', () => {
       ).toBe(true);
     });
 
-    it('should detect missing focus indicators', async () => {
+    it(_'should detect missing focus indicators',_async () => {
       // Mock button without focus styles
       const mockButton = {
         tagName: 'BUTTON',
@@ -256,8 +256,8 @@ describe('AccessibilityAuditService', () => {
     });
   });
 
-  describe('ARIA Labels Audit', () => {
-    it('should detect missing ARIA labels', async () => {
+  describe(_'ARIA Labels Audit',_() => {
+    it(_'should detect missing ARIA labels',_async () => {
       // Mock input without label
       const mockInput = {
         tagName: 'INPUT',
@@ -283,7 +283,7 @@ describe('AccessibilityAuditService', () => {
       ).toBe(true);
     });
 
-    it('should pass with proper ARIA labels', async () => {
+    it(_'should pass with proper ARIA labels',_async () => {
       // Mock input with aria-label
       const mockInput = {
         tagName: 'INPUT',
@@ -309,8 +309,8 @@ describe('AccessibilityAuditService', () => {
     });
   });
 
-  describe('Screen Reader Support Audit', () => {
-    it('should detect images without alt text', async () => {
+  describe(_'Screen Reader Support Audit',_() => {
+    it(_'should detect images without alt text',_async () => {
       // Mock image without alt attribute
       const mockImage = {
         tagName: 'IMG',
@@ -333,7 +333,7 @@ describe('AccessibilityAuditService', () => {
       ).toBe(true);
     });
 
-    it('should pass with proper alt text', async () => {
+    it(_'should pass with proper alt text',_async () => {
       // Mock image with alt attribute
       const mockImage = {
         tagName: 'IMG',
@@ -357,8 +357,8 @@ describe('AccessibilityAuditService', () => {
     });
   });
 
-  describe('Healthcare Compliance Audit', () => {
-    it('should detect missing LGPD consent indicators', async () => {
+  describe(_'Healthcare Compliance Audit',_() => {
+    it(_'should detect missing LGPD consent indicators',_async () => {
       // Mock element without LGPD indicators
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
         if (selector.includes('lgpd') || selector.includes('consentimento')) {
@@ -375,7 +375,7 @@ describe('AccessibilityAuditService', () => {
       expect(result.healthcareCompliance.lgpdCompliant).toBe(false);
     });
 
-    it('should pass with LGPD consent indicators', async () => {
+    it(_'should pass with LGPD consent indicators',_async () => {
       // Mock element with LGPD indicators
       const mockConsentElement = {
         tagName: 'DIV',
@@ -399,8 +399,8 @@ describe('AccessibilityAuditService', () => {
     });
   });
 
-  describe('Brazilian Standards Audit', () => {
-    it('should detect missing Portuguese language declaration', async () => {
+  describe(_'Brazilian Standards Audit',_() => {
+    it(_'should detect missing Portuguese language declaration',_async () => {
       // Mock no Portuguese language
       mockElement.closest = vi.fn().mockReturnValue(null);
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
@@ -423,7 +423,7 @@ describe('AccessibilityAuditService', () => {
       ).toBe(true);
     });
 
-    it('should pass with Portuguese language declaration', async () => {
+    it(_'should pass with Portuguese language declaration',_async () => {
       // Mock Portuguese language
       mockElement.closest = vi.fn().mockReturnValue({ lang: 'pt-BR' });
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
@@ -447,8 +447,8 @@ describe('AccessibilityAuditService', () => {
     });
   });
 
-  describe('Audit Result Generation', () => {
-    it('should calculate correct score and level', async () => {
+  describe(_'Audit Result Generation',_() => {
+    it(_'should calculate correct score and level',_async () => {
       // Mock element with no issues
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
         if (selector.includes('lgpd') || selector.includes('consentimento')) {
@@ -466,7 +466,7 @@ describe('AccessibilityAuditService', () => {
       expect(result.summary.total).toBe(0);
     });
 
-    it('should provide healthcare compliance assessment', async () => {
+    it(_'should provide healthcare compliance assessment',_async () => {
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
         if (selector.includes('lgpd') || selector.includes('consentimento')) {
           return [{ tagName: 'DIV' }];
@@ -487,7 +487,7 @@ describe('AccessibilityAuditService', () => {
       expect(Array.isArray(result.healthcareCompliance.issues)).toBe(true);
     });
 
-    it('should provide actionable recommendations', async () => {
+    it(_'should provide actionable recommendations',_async () => {
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
         if (selector.includes('lgpd') || selector.includes('consentimento')) {
           return [{ tagName: 'DIV' }];

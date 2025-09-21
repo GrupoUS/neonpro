@@ -164,7 +164,7 @@ export class EventCollector {
         message: "Event collected successfully",
         queueSize: this.queue.length,
       };
-    } catch (error) {
+    } catch (_error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error";
       this.handleError(
@@ -204,7 +204,7 @@ export class EventCollector {
 
       if (eventsToProcess.length === 0) {
         // Add small delay to ensure measurable duration
-        await new Promise((resolve) => setTimeout(resolve, 1));
+        await new Promise(_(resolve) => setTimeout(resolve, 1));
         return {
           success: true,
           processedCount: 0,
@@ -217,7 +217,7 @@ export class EventCollector {
       let totalProcessedInFlush = 0;
 
       // Add small delay to ensure measurable duration
-      await new Promise((resolve) => setTimeout(resolve, 1));
+      await new Promise(_(resolve) => setTimeout(resolve, 1));
 
       // Process events in batches
       const batches = this.createBatches(
@@ -233,12 +233,12 @@ export class EventCollector {
           // Count as processed immediately (before error checking)
           totalProcessedInFlush += batch.length;
           this.totalProcessed += batch.length;
-        } catch (error) {
+        } catch (_error) {
           const batchError =
             error instanceof Error
               ? error
               : new Error("Batch processing failed");
-          batch.forEach((event) => {
+          batch.forEach(_(event) => {
             errors.push({ event, error: batchError });
           });
           // Subtract failed batch from processed count
@@ -264,7 +264,7 @@ export class EventCollector {
         errors,
         duration: Date.now() - startTime,
       };
-    } catch (error) {
+    } catch (_error) {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown flush error";
       this.handleError(new Error(`Flush operation failed: ${errorMessage}`));
@@ -359,7 +359,7 @@ export class EventCollector {
    */
   private startAutoFlush(): void {
     if (this.config.autoFlushInterval > 0) {
-      this.autoFlushTimer = setInterval(async () => {
+      this.autoFlushTimer = setInterval(_async () => {
         if (!this.isProcessing && this.queue.length > 0) {
           await this.flush();
         }
@@ -422,4 +422,4 @@ export function createEventCollector(
 /**
  * Global default EventCollector instance for simple usage
  */
-export const defaultEventCollector = createEventCollector();
+export const _defaultEventCollector = createEventCollector();

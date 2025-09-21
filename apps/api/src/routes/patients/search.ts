@@ -7,8 +7,6 @@
  */
 
 import { Hono } from 'hono';
-import { z } from 'zod';
-
 // Mock middleware for testing - will be replaced with actual middleware
 const requireAuth = async (c: any, next: any) => {
   c.set('user', { id: 'user-123' });
@@ -60,7 +58,7 @@ const PatientService = {
           totalPages: 1,
         },
         searchMetadata: {
-          query: 'João',
+          _query: 'João',
           executionTime: 45,
           resultsFound: 2,
           searchType: 'fulltext',
@@ -93,7 +91,7 @@ const LGPDService = {
 
 // Validation schemas
 const searchCriteriaSchema = z.object({
-  query: z.string().optional(),
+  _query: z.string().optional(),
   searchType: z
     .enum(['fulltext', 'structured', 'fuzzy', 'advanced'])
     .optional()
@@ -282,7 +280,7 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
         searchMetadata: searchResult.data.searchMetadata,
       },
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Search endpoint error:', error);
 
     // Handle validation errors

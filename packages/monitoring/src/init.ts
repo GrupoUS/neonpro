@@ -19,7 +19,7 @@ export function initializeMonitoring(config: MonitoringConfig): void {
   // Initialize logging first
   const logger = createLogger(config.logging);
   logger.info("Monitoring system starting up", {
-    service: config.serviceName,
+    _service: config.serviceName,
     version: config.serviceVersion,
     environment: config.environment,
   });
@@ -76,12 +76,12 @@ export function initializeMonitoring(config: MonitoringConfig): void {
   }
 
   // Graceful shutdown
-  process.on("SIGTERM", () => {
+  process.on(_"SIGTERM",_() => {
     logger.info("Received SIGTERM, shutting down monitoring gracefully");
     shutdownMonitoring();
   });
 
-  process.on("SIGINT", () => {
+  process.on(_"SIGINT",_() => {
     logger.info("Received SIGINT, shutting down monitoring gracefully");
     shutdownMonitoring();
   });
@@ -93,8 +93,8 @@ export function shutdownMonitoring(): void {
   if (sdk) {
     sdk
       .shutdown()
-      .then(() => console.log("📊 Monitoring system shut down successfully"))
-      .catch((error) =>
+      .then(_() => console.log("📊 Monitoring system shut down successfully"))
+      .catch(_(error) =>
         console.error("Error shutting down monitoring:", error),
       );
   }

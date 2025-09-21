@@ -39,7 +39,7 @@ class MockProvider implements AIProviderInterface {
         finishReason: i === words.length - 1 ? "stop" : undefined,
         provider: "mock",
       };
-      await new Promise((resolve) => setTimeout(resolve, 25));
+      await new Promise(_(resolve) => setTimeout(resolve, 25));
     }
   }
 }
@@ -100,7 +100,7 @@ export class AIProviderFactory {
           ...result,
           provider: result.provider ?? providerName,
         };
-      } catch (error) {
+      } catch (_error) {
         lastError = error as Error;
         console.warn(`Provider ${providerName} failed:`, error);
       }
@@ -132,7 +132,7 @@ export class AIProviderFactory {
           };
         }
         return;
-      } catch (error) {
+      } catch (_error) {
         lastError = error as Error;
         console.warn(`Streaming provider ${providerName} failed:`, error);
       }
@@ -146,4 +146,4 @@ export class AIProviderFactory {
   }
 }
 
-export const aiProviderFactory = AIProviderFactory;
+export const _aiProviderFactory = AIProviderFactory;

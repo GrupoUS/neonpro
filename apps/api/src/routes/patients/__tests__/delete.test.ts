@@ -28,7 +28,7 @@ const mockNotificationService = {
 };
 
 describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
 
     // Mock successful service responses by default
@@ -88,18 +88,18 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.restoreAllMocks();
   });
 
-  it('should export delete patient route handler', async () => {
-    expect(async () => {
+  it(_'should export delete patient route handler',_async () => {
+    expect(_async () => {
       const module = await import('../delete');
       expect(module.default).toBeDefined();
     }).not.toThrow();
   });
 
-  describe('Successful Patient Deletion', () => {
+  describe(_'Successful Patient Deletion',_() => {
     it('should perform soft delete by default (LGPD compliance)', async () => {
       const { default: deleteRoute } = await import('../delete');
 
@@ -121,7 +121,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       expect(data.message).toContain('Paciente removido com sucesso');
     });
 
-    it('should handle LGPD data subject deletion request', async () => {
+    it(_'should handle LGPD data subject deletion request',_async () => {
       mockLGPDService.validateDeletionRequest.mockResolvedValue({
         success: true,
         data: {
@@ -155,7 +155,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
     });
 
-    it('should send deletion confirmation notification', async () => {
+    it(_'should send deletion confirmation notification',_async () => {
       const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
@@ -183,7 +183,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
     });
 
-    it('should include deletion confirmation headers', async () => {
+    it(_'should include deletion confirmation headers',_async () => {
       const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
@@ -203,8 +203,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
   });
 
-  describe('LGPD Compliance and Data Deletion', () => {
-    it('should validate LGPD deletion request', async () => {
+  describe(_'LGPD Compliance and Data Deletion',_() => {
+    it(_'should validate LGPD deletion request',_async () => {
       const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
@@ -225,7 +225,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
     });
 
-    it('should handle anonymization for expired consent', async () => {
+    it(_'should handle anonymization for expired consent',_async () => {
       mockLGPDService.validateDeletionRequest.mockResolvedValue({
         success: true,
         data: {
@@ -267,7 +267,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
     });
 
-    it('should handle medical record retention requirements', async () => {
+    it(_'should handle medical record retention requirements',_async () => {
       mockLGPDService.validateDeletionRequest.mockResolvedValue({
         success: true,
         data: {
@@ -298,7 +298,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       expect(response.headers.get('X-CFM-Retention')).toBe('required');
     });
 
-    it('should handle LGPD deletion denial', async () => {
+    it(_'should handle LGPD deletion denial',_async () => {
       mockLGPDService.validateDeletionRequest.mockResolvedValue({
         success: false,
         error: 'Exclusão não permitida - dados necessários para cumprimento legal',
@@ -330,8 +330,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
   });
 
-  describe('Audit Trail and Compliance Logging', () => {
-    it('should log patient deletion activity', async () => {
+  describe(_'Audit Trail and Compliance Logging',_() => {
+    it(_'should log patient deletion activity',_async () => {
       const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
@@ -347,7 +347,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       await deleteRoute.request(mockRequest);
 
       expect(mockAuditService.logActivity).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         action: 'patient_deletion',
         resourceType: 'patient',
         resourceId: 'patient-123',
@@ -365,7 +365,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       });
     });
 
-    it('should log anonymization activity separately', async () => {
+    it(_'should log anonymization activity separately',_async () => {
       mockLGPDService.validateDeletionRequest.mockResolvedValue({
         success: true,
         data: {
@@ -398,7 +398,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       );
     });
 
-    it('should create deletion audit trail', async () => {
+    it(_'should create deletion audit trail',_async () => {
       const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
@@ -423,8 +423,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle patient not found', async () => {
+  describe(_'Error Handling',_() => {
+    it(_'should handle patient not found',_async () => {
       mockPatientService.getPatientById.mockResolvedValue({
         success: false,
         error: 'Paciente não encontrado',
@@ -450,7 +450,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       expect(data.code).toBe('PATIENT_NOT_FOUND');
     });
 
-    it('should handle authentication errors', async () => {
+    it(_'should handle authentication errors',_async () => {
       const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
@@ -469,7 +469,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       expect(data.error).toContain('Não autorizado');
     });
 
-    it('should handle insufficient permissions', async () => {
+    it(_'should handle insufficient permissions',_async () => {
       mockPatientService.validateAccess.mockResolvedValue({
         success: false,
         error: 'Permissões insuficientes para excluir este paciente',
@@ -495,7 +495,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       expect(data.code).toBe('INSUFFICIENT_PERMISSIONS');
     });
 
-    it('should handle invalid patient ID format', async () => {
+    it(_'should handle invalid patient ID format',_async () => {
       const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
@@ -519,7 +519,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       );
     });
 
-    it('should handle service errors gracefully', async () => {
+    it(_'should handle service errors gracefully',_async () => {
       mockPatientService.deletePatient.mockRejectedValue(
         new Error('Database connection failed'),
       );
@@ -543,8 +543,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
   });
 
-  describe('Brazilian Healthcare Compliance', () => {
-    it('should include CFM compliance headers', async () => {
+  describe(_'Brazilian Healthcare Compliance',_() => {
+    it(_'should include CFM compliance headers',_async () => {
       const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
@@ -564,7 +564,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       expect(response.headers.get('X-LGPD-Compliant')).toBe('true');
     });
 
-    it('should validate healthcare professional context for deletion', async () => {
+    it(_'should validate healthcare professional context for deletion',_async () => {
       const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
@@ -588,7 +588,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       );
     });
 
-    it('should handle ANVISA compliance for medical device data', async () => {
+    it(_'should handle ANVISA compliance for medical device data',_async () => {
       const { default: deleteRoute } = await import('../delete');
 
       const mockRequest = {
@@ -608,8 +608,8 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
   });
 
-  describe('Deletion Types and Scenarios', () => {
-    it('should handle hard delete for test data', async () => {
+  describe(_'Deletion Types and Scenarios',_() => {
+    it(_'should handle hard delete for test data',_async () => {
       mockLGPDService.validateDeletionRequest.mockResolvedValue({
         success: true,
         data: {
@@ -639,7 +639,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       expect(response.headers.get('X-Hard-Delete')).toBe('confirmed');
     });
 
-    it('should schedule future anonymization', async () => {
+    it(_'should schedule future anonymization',_async () => {
       mockLGPDService.validateDeletionRequest.mockResolvedValue({
         success: true,
         data: {

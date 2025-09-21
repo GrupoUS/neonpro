@@ -9,7 +9,7 @@ describe('Patients Healthcare Compliance API', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = await createTestClient({ role: 'admin' });
+    testClient = await createTestClient({ _role: 'admin' });
 
     // Create a test patient first
     const patientData = {
@@ -600,7 +600,7 @@ describe('Patients Healthcare Compliance API', () => {
       const data = await response.json();
       expect(data).toMatchObject({
         success: true,
-        request: expect.objectContaining({
+        _request: expect.objectContaining({
           request_id: expect.any(String),
           patient_id: patientId,
           request_type: 'access',
@@ -635,7 +635,7 @@ describe('Patients Healthcare Compliance API', () => {
       expect(response.status).toBe(200);
       const data = await response.json();
 
-      expect(data.request).toMatchObject({
+      expect(data._request).toMatchObject({
         impact_assessment: expect.any(Object),
         legal_review_required: expect.any(Boolean),
         data_retention_check: expect.any(Object),

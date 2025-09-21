@@ -31,8 +31,6 @@ import {
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
-
 // Type-safe params schema
 const patientParamsSchema = z.object({
   patientId: z.string().min(1),
@@ -107,7 +105,7 @@ export const Route = createFileRoute('/patients/$patientId/edit')({
       <div className='animate-pulse space-y-6'>
         <div className='h-8 bg-muted rounded w-1/3'></div>
         <div className='space-y-4'>
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: 6 }).map(_(_,_i) => (
             <div key={i} className='space-y-2'>
               <div className='h-4 bg-muted rounded w-1/4'></div>
               <div className='h-10 bg-muted rounded'></div>
@@ -119,7 +117,7 @@ export const Route = createFileRoute('/patients/$patientId/edit')({
   ),
 
   // Error boundary
-  errorComponent: ({ error, reset }) => (
+  errorComponent: (_{ error,_reset }) => (
     <div className='container mx-auto p-4 md:p-6'>
       <Card className='max-w-lg mx-auto text-center'>
         <CardHeader>
@@ -184,12 +182,12 @@ function PatientEditPage() {
 
   // Watch for changes to show unsaved changes warning
   const watchedFields = watch();
-  useEffect(() => {
+  useEffect(_() => {
     setHasUnsavedChanges(isDirty);
   }, [isDirty]);
 
   // Initialize form when patient data is loaded
-  useEffect(() => {
+  useEffect(_() => {
     if (patient) {
       resetForm({
         fullName: patient.fullName || '',
@@ -239,7 +237,7 @@ function PatientEditPage() {
         to: '/patients/$patientId',
         params: { patientId },
       });
-    } catch (error: any) {
+    } catch (_error: any) {
       toast.error(error.message || 'Erro ao atualizar paciente');
     }
   };
@@ -271,7 +269,7 @@ function PatientEditPage() {
         <div className='animate-pulse'>
           <div className='h-8 bg-muted rounded w-1/3 mb-4'></div>
           <div className='space-y-4'>
-            {Array.from({ length: 6 }).map((_, i) => (
+            {Array.from({ length: 6 }).map(_(_,_i) => (
               <div key={i} className='h-12 bg-muted rounded'></div>
             ))}
           </div>

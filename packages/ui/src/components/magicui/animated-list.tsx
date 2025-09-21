@@ -20,7 +20,7 @@ export interface SharedAnimatedListProps<T = SharedAnimatedListItem> {
   items: readonly T[] | null | undefined;
   renderItem?: SharedAnimatedListRenderItem<T>;
   className?: string;
-  role?: "list" | "listbox";
+  _role?: "list" | "listbox";
   ariaLabel?: string;
   /**
    * Visual density and sizing presets
@@ -93,7 +93,7 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
   };
 
   // Keyboard navigation (SSR safe: only runs on client)
-  React.useEffect(() => {
+  React.useEffect(_() => {
     if (!keyboardNavigation) return;
     const el = listRef.current;
     if (!el) return;
@@ -102,10 +102,10 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
       if (!items || items.length === 0) return;
       if (e.key === "ArrowDown") {
         e.preventDefault();
-        setFocusedIndex((idx) => Math.min(idx + 1, items.length - 1));
+        setFocusedIndex(_(idx) => Math.min(idx + 1, items.length - 1));
       } else if (e.key === "ArrowUp") {
         e.preventDefault();
-        setFocusedIndex((idx) => Math.max(idx - 1, 0));
+        setFocusedIndex(_(idx) => Math.max(idx - 1, 0));
       } else if (e.key === "Home") {
         e.preventDefault();
         setFocusedIndex(0);
@@ -119,7 +119,7 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
     return () => el.removeEventListener("keydown", onKeyDown);
   }, [items, keyboardNavigation]);
 
-  React.useEffect(() => {
+  React.useEffect(_() => {
     if (focusedIndex < 0) return;
     const el = listRef.current;
     if (!el) return;
@@ -171,7 +171,7 @@ export function SharedAnimatedList<T = SharedAnimatedListItem>(
       )}
 
       <AnimatePresence initial={false}>
-        {(items ?? []).map((item, idx) => {
+        {(items ?? []).map(_(item,_idx) => {
           const key = (item as any)?.id ?? idx;
           return (
             <motion.li

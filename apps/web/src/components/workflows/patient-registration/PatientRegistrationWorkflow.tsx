@@ -18,8 +18,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertTriangle, ChevronLeft, ChevronRight, Save, Shield, User } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { z } from 'zod';
-
 import { HealthcareButton } from '@/components/ui/healthcare/healthcare-button';
 import { HealthcareInput } from '@/components/ui/healthcare/healthcare-input';
 import { HealthcareLoading } from '@/components/ui/healthcare/healthcare-loading';
@@ -102,14 +100,8 @@ interface PatientRegistrationWorkflowProps {
 
 type Step = 'personal' | 'address' | 'medical' | 'emergency' | 'consent' | 'review';
 
-export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowProps> = ({
-  onSubmit,
-  onCancel,
-  initialData,
-  isLoading = false,
-  className,
-  testId = 'patient-registration-workflow',
-}) => {
+export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowProps> = (_{
+  onSubmit,_onCancel,_initialData,_isLoading = false,_className,_testId = 'patient-registration-workflow',_}) => {
   const [currentStep, setCurrentStep] = useState<Step>('personal');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -179,7 +171,7 @@ export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowPr
   const currentStepIndex = steps.indexOf(currentStep);
 
   // Announce step changes for screen readers
-  useEffect(() => {
+  useEffect(_() => {
     const stepNames = {
       personal: 'Informações Pessoais',
       address: 'Endereço',
@@ -191,7 +183,7 @@ export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowPr
     announcePolite(`Passo ${currentStepIndex + 1} de ${steps.length}: ${stepNames[currentStep]}`);
   }, [currentStep, steps.length, announcePolite]);
 
-  const nextStep = useCallback(async () => {
+  const nextStep = useCallback(_async () => {
     const fieldsToValidate = {
       personal: ['personalInfo'],
       address: ['address'],
@@ -214,7 +206,7 @@ export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowPr
     }
   }, [form, currentStep, currentStepIndex, steps, announcePolite]);
 
-  const previousStep = useCallback(() => {
+  const previousStep = useCallback(_() => {
     const prevIndex = currentStepIndex - 1;
     if (prevIndex >= 0) {
       setCurrentStep(steps[prevIndex]);
@@ -230,7 +222,7 @@ export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowPr
       announcePolite('Enviando cadastro de paciente...');
       await onSubmit(data);
       announcePolite('Cadastro de paciente concluído com sucesso');
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro ao cadastrar paciente';
       setError(errorMessage);
       announcePolite(`Erro no cadastro: ${errorMessage}`);
@@ -597,7 +589,7 @@ export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowPr
 
               <div className='space-y-2'>
                 <label className='text-sm font-medium'>Tratamentos estéticos anteriores</label>
-                {medicalInfoFieldArray.fields.map((field, index) => (
+                {medicalInfoFieldArray.fields.map(_(field,_index) => (
                   <div
                     key={field.id}
                     className='grid grid-cols-1 md:grid-cols-3 gap-2 p-3 border rounded-lg'
@@ -938,7 +930,7 @@ export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowPr
         </div>
 
         <div className='flex items-center space-x-2'>
-          {steps.map((step, index) => (
+          {steps.map(_(step,_index) => (
             <div
               key={step}
               className={cn(

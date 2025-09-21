@@ -7,7 +7,7 @@ import { SupabaseClient } from '@supabase/supabase-js';
 import { ErrorMapper } from '@neonpro/shared/errors';
 
 export interface QueryPerformanceMetrics {
-  query: string;
+  _query: string;
   duration: number;
   timestamp: string;
   success: boolean;
@@ -75,7 +75,7 @@ export class DatabasePerformanceService {
       const cached = this.getFromCache<T>(cacheKey);
       if (cached) {
         this.logPerformance({
-          query: cacheKey,
+          _query: cacheKey,
           duration: performance.now() - startTime,
           timestamp: new Date().toISOString(),
           success: true,
@@ -105,7 +105,7 @@ export class DatabasePerformanceService {
 
       // Log performance metrics
       this.logPerformance({
-        query: cacheKey || `${table}:${operation}`,
+        _query: cacheKey || `${table}:${operation}`,
         duration,
         timestamp: new Date().toISOString(),
         success: true,
@@ -116,7 +116,7 @@ export class DatabasePerformanceService {
       // Slow query detection and alerting
       if (duration > this.config.slowQueryThreshold) {
         this.warnSlowQuery({
-          query: cacheKey || `${table}:${operation}`,
+          _query: cacheKey || `${table}:${operation}`,
           duration,
           table,
           operation,
@@ -124,12 +124,12 @@ export class DatabasePerformanceService {
       }
 
       return result.data || result;
-    } catch (error) {
+    } catch (_error) {
       const duration = performance.now() - startTime;
       
       // Log failed query
       this.logPerformance({
-        query: cacheKey || `${table}:${operation}`,
+        _query: cacheKey || `${table}:${operation}`,
         duration,
         timestamp: new Date().toISOString(),
         success: false,
@@ -183,7 +183,7 @@ export class DatabasePerformanceService {
         } else {
           results.success += batch.length;
         }
-      } catch (error) {
+      } catch (_error) {
         results.errors.push({ 
           batch: i / batchSize, 
           error: error instanceof Error ? error.message : 'Unknown error' 
@@ -207,7 +207,7 @@ export class DatabasePerformanceService {
     const startTime = performance.now();
     
     try {
-      const now = new Date().toISOString();
+      const _now = new Date().toISOString();
       
       // Single operation: find and update expired records in one query
       const { data, error } = await this.supabase
@@ -224,7 +224,7 @@ export class DatabasePerformanceService {
       }
 
       this.logPerformance({
-        query: 'optimize_expiration_check',
+        _query: 'optimize_expiration_check',
         duration,
         timestamp: new Date().toISOString(),
         success: true,
@@ -236,11 +236,11 @@ export class DatabasePerformanceService {
         updatedCount: data?.length || 0,
         expiredIds: data?.map((item: any) => item.id) || [],
       };
-    } catch (error) {
+    } catch (_error) {
       const duration = performance.now() - startTime;
       
       this.logPerformance({
-        query: 'optimize_expiration_check',
+        _query: 'optimize_expiration_check',
         duration,
         timestamp: new Date().toISOString(),
         success: false,
@@ -286,7 +286,7 @@ export class DatabasePerformanceService {
       };
     }
 
-    const totalDuration = relevantMetrics.reduce((sum, metric) => sum + metric.duration, 0);
+    const totalDuration = relevantMetrics.reduce(_(sum,_metric) => sum + metric.duration, 0);
     const slowQueries = relevantMetrics.filter(metric => metric.duration > this.config.slowQueryThreshold);
     const errors = relevantMetrics.filter(metric => !metric.success);
     
@@ -320,7 +320,7 @@ export class DatabasePerformanceService {
    * Clean up expired cache entries
    */
   cleanup(): void {
-    const now = Date.now();
+    const _now = Date.now();
     
     for (const [key, entry] of this.cache) {
       if (now - new Date(entry.timestamp).getTime() > entry.ttl) {
@@ -340,7 +340,7 @@ export class DatabasePerformanceService {
     const entry = this.cache.get(key);
     if (!entry) return null;
 
-    const now = Date.now();
+    const _now = Date.now();
     if (now - new Date(entry.timestamp).getTime() > entry.ttl) {
       this.cache.delete(key);
       return null;
@@ -400,13 +400,13 @@ export class DatabasePerformanceService {
    * Log slow query warnings
    */
   private warnSlowQuery(queryInfo: {
-    query: string;
+    _query: string;
     duration: number;
     table: string;
     operation: string;
   }): void {
     console.warn(`[SLOW QUERY] ${queryInfo.table}:${queryInfo.operation} took ${queryInfo.duration.toFixed(2)}ms`, {
-      query: queryInfo.query,
+      _query: queryInfo.query,
       duration: queryInfo.duration,
       threshold: this.config.slowQueryThreshold,
     });
@@ -423,7 +423,7 @@ export class DatabasePerformanceService {
 }
 
 // Factory function for creating performance service instances
-export const createDatabasePerformanceService = (
+export const _createDatabasePerformanceService = (
   supabase: SupabaseClient,
   config?: Partial<PerformanceConfig>
 ) => {

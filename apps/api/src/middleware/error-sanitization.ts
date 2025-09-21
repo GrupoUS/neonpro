@@ -118,7 +118,7 @@ export function errorSanitizationMiddleware() {
   return async (c: Context, next: Next) => {
     try {
       await next();
-    } catch (error) {
+    } catch (_error) {
       // Sanitize the error before logging or responding
       const sanitizedError = sanitizeObject({
         message: error instanceof Error ? error.message : String(error),

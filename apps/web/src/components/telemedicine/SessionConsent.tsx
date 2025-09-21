@@ -123,7 +123,7 @@ export function SessionConsent({
 
   // LGPD consent management
   const _lgpdConsent = useLGPDConsent({
-    userId: patientId,
+    _userId: patientId,
     patientId,
     sessionId,
     clinicId: '', // This would be passed as a prop
@@ -279,14 +279,14 @@ export function SessionConsent({
   ];
 
   // Load existing consent
-  useEffect(() => {
+  useEffect(_() => {
     if (consent) {
       setConsentData(prev => ({ ...prev, ...consent }));
     }
   }, [consent]);
 
   // Calculate progress
-  useEffect(() => {
+  useEffect(_() => {
     const requiredSections = consentSections.filter(s => s.required);
     const _completedRequired = requiredSections.filter(
       s => consentData[s.id as keyof ConsentData] === true,
@@ -322,7 +322,7 @@ export function SessionConsent({
   );
 
   // Validate all required consents
-  const validateRequiredConsents = useCallback(() => {
+  const validateRequiredConsents = useCallback(_() => {
     const requiredSections = consentSections.filter(s => s.required);
     const missingConsents = requiredSections.filter(
       s => !consentData[s.id as keyof ConsentData],
@@ -332,7 +332,7 @@ export function SessionConsent({
   }, [consentData, consentSections]);
 
   // Handle consent submission
-  const handleSubmitConsent = useCallback(async () => {
+  const handleSubmitConsent = useCallback(_async () => {
     if (!validateRequiredConsents()) {
       toast.error('Por favor, complete todos os consentimentos obrigatórios');
       return;
@@ -391,7 +391,7 @@ export function SessionConsent({
   ]);
 
   // Handle consent revocation
-  const handleRevokeConsent = useCallback(async () => {
+  const handleRevokeConsent = useCallback(_async () => {
     try {
       await revokeConsent();
       await logConsentAction({
@@ -525,7 +525,7 @@ export function SessionConsent({
 
               <TabsContent value='current' className='space-y-4'>
                 <div className='grid grid-cols-2 gap-4'>
-                  {Object.entries(consentData).map(([key, value]) => (
+                  {Object.entries(consentData).map(_([key,_value]) => (
                     <div key={key} className='flex justify-between text-sm'>
                       <span className='font-medium'>{key}:</span>
                       <span
@@ -548,7 +548,7 @@ export function SessionConsent({
 
               <TabsContent value='history' className='space-y-4'>
                 <ScrollArea className='h-96'>
-                  {auditTrail.map((entry, _index) => (
+                  {auditTrail.map(_(entry, _index) => (
                     <div
                       key={index}
                       className='flex justify-between text-sm py-2 border-b'
@@ -773,8 +773,7 @@ export function SessionConsent({
       {/* Action Buttons */}
       <div className='flex flex-col sm:flex-row gap-4'>
         {mode === 'review'
-          ? (
-            <>
+          ? (_<>
               <Button
                 variant='destructive'
                 onClick={handleRevokeConsent}

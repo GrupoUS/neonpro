@@ -1,5 +1,5 @@
 // Minimal API client stub to satisfy tests; wire real client later
-export const apiClient = {
+export const _apiClient = {
   api: {
     v1: {
       patients: {

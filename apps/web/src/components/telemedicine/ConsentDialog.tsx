@@ -95,7 +95,7 @@ export function ConsentDialog({
     communication: 'comunicação entre profissionais de saúde e paciente',
   };
 
-  useEffect(() => {
+  useEffect(_() => {
     // Auto-select required consents
     const requiredConsents = consentItems
       .filter(item => item.required)

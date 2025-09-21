@@ -96,7 +96,7 @@ interface Notification {
 interface Contact {
   id: string;
   name: string;
-  role: 'patient' | 'doctor' | 'nurse' | 'receptionist' | 'administrator';
+  _role: 'patient' | 'doctor' | 'nurse' | 'receptionist' | 'administrator';
   avatar?: string;
   status: 'online' | 'offline' | 'busy' | 'away';
   lastSeen?: Date;
@@ -106,7 +106,7 @@ interface Contact {
 
 export interface HealthcareCommunicationSystemProps {
   /** Current user ID */
-  userId: string;
+  _userId: string;
   /** User role in the healthcare system */
   userRole: 'patient' | 'doctor' | 'nurse' | 'receptionist' | 'administrator';
   /** Clinic/department context */
@@ -131,24 +131,16 @@ export interface HealthcareCommunicationSystemProps {
   className?: string;
 }
 
-export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSystemProps> = ({
-  userId,
-  userRole,
-  clinicContext = 'Clínica Estética NeonPro',
-  emergencyEnabled = true,
-  videoConsultationEnabled = true,
+export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSystemProps> = (_{
+  userId,_userRole,_clinicContext = 'Clínica Estética NeonPro',_emergencyEnabled = true,_videoConsultationEnabled = true,
   lgpdSettings = {
     dataRetentionDays: 365,
     requireConsentForMessages: true,
-    enableMessageEncryption: true,
-  },
+    enableMessageEncryption: true,_},
   accessibilitySettings = {
     highContrast: false,
     largeText: false,
-    reducedMotion: false,
-  },
-  className,
-}) => {
+    reducedMotion: false,_},_className,_}) => {
   // State management
   const [messages, setMessages] = useState<Message[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -172,14 +164,14 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const notificationSoundRef = useRef<HTMLAudioElement>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
+  const _modalRef = useRef<HTMLDivElement>(null);
 
   // Mock contacts data (in real app, this would come from API)
   const contacts: Contact[] = [
     {
       id: '1',
       name: 'Dr. Ana Silva',
-      role: 'doctor',
+      _role: 'doctor',
       status: 'online',
       specialization: 'Dermatologia',
       department: 'Tratamentos Estéticos',
@@ -187,27 +179,27 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
     {
       id: '2',
       name: 'Maria Santos',
-      role: 'patient',
+      _role: 'patient',
       status: 'offline',
       lastSeen: new Date(Date.now() - 3600000),
     },
     {
       id: '3',
       name: 'João Oliveira',
-      role: 'patient',
+      _role: 'patient',
       status: 'online',
     },
     {
       id: '4',
       name: 'Carla Mendes',
-      role: 'nurse',
+      _role: 'nurse',
       status: 'busy',
       department: 'Enfermagem',
     },
     {
       id: '5',
       name: 'Roberto Costa',
-      role: 'doctor',
+      _role: 'doctor',
       status: 'away',
       specialization: 'Cirurgia Plástica',
       department: 'Procedimentos Cirúrgicos',
@@ -245,7 +237,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
   ];
 
   // Initialize sample notifications
-  useEffect(() => {
+  useEffect(_() => {
     const sampleNotifications: Notification[] = [
       {
         id: '1',
@@ -269,7 +261,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
   }, []);
 
   // Scroll to bottom of messages
-  const scrollToBottom = useCallback(() => {
+  const scrollToBottom = useCallback(_() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
@@ -297,7 +289,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
     announcePolite(`Mensagem enviada para ${contacts.find(c => c.id === selectedContact)?.name}`);
 
     // Simulate response after delay
-    setTimeout(() => {
+    setTimeout(_() => {
       const response: Message = {
         id: (Date.now() + 1).toString(),
         sender: 'staff',
@@ -323,7 +315,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
   }, [newMessage, sendMessage]);
 
   // Filter contacts based on search
-  useEffect(() => {
+  useEffect(_() => {
     const filtered = contacts.filter(contact =>
       contact.name.toLowerCase().includes(searchQuery.toLowerCase())
       || (contact.specialization
@@ -334,12 +326,12 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
   }, [searchQuery, contacts]);
 
   // Auto-scroll when new messages arrive
-  useEffect(() => {
+  useEffect(_() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
   // Initialize filtered contacts
-  useEffect(() => {
+  useEffect(_() => {
     setFilteredContacts(contacts);
   }, [contacts]);
 
@@ -359,7 +351,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
 
   // Format timestamp for display
   const formatMessageTime = (timestamp: Date) => {
-    const now = new Date();
+    const _now = new Date();
     const diff = now.getTime() - timestamp.getTime();
     const minutes = Math.floor(diff / 60000);
 
@@ -410,21 +402,21 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
 
     // In a real app, this would open file picker or camera
     setIsLoading(true);
-    setTimeout(() => {
+    setTimeout(_() => {
       setIsLoading(false);
       announcePolite('Anexo enviado com sucesso');
     }, 1000);
   }, [announcePolite]);
 
   // Handle video call initiation
-  const handleVideoCall = useCallback(() => {
+  const handleVideoCall = useCallback(_() => {
     if (!selectedContact) return;
 
     const contact = contacts.find(c => c.id === selectedContact);
     announceAssertive(`Iniciando chamada de vídeo com ${contact?.name}`);
 
     // In a real app, this would initiate video call
-    setTimeout(() => {
+    setTimeout(_() => {
       announcePolite('Chamada de vídeo iniciada');
     }, 1000);
   }, [selectedContact, contacts, announceAssertive, announcePolite]);
@@ -804,8 +796,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
                       />
 
                       <div className='absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1'>
-                        {emergencyEnabled && (
-                          <HealthcareButton
+                        {emergencyEnabled && (_<HealthcareButton
                             variant='ghost'
                             size='sm'
                             onClick={() => sendMessage(newMessage, 'emergency')}
@@ -834,8 +825,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
                   </div>
 
                   {/* Attachment Menu */}
-                  {showAttachmentMenu && (
-                    <Card className='mt-2'>
+                  {showAttachmentMenu && (_<Card className='mt-2'>
                       <CardContent className='p-2'>
                         <div className='grid grid-cols-4 gap-2'>
                           <HealthcareButton
@@ -888,7 +878,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
 
                   {/* Message Templates */}
                   <div className='mt-2 flex flex-wrap gap-1'>
-                    {messageTemplates.slice(0, 3).map(template => (
+                    {messageTemplates.slice(0, 3).map(_template => (
                       <HealthcareButton
                         key={template.id}
                         variant='outline'
@@ -926,8 +916,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
         </div>
 
         {/* Notifications Panel */}
-        {activeTab === 'notifications' && (
-          <div className='absolute inset-0 bg-white z-10 p-4'>
+        {activeTab === 'notifications' && (_<div className='absolute inset-0 bg-white z-10 p-4'>
             <div className='max-w-2xl mx-auto'>
               <div className='flex items-center justify-between mb-6'>
                 <h2 className='text-xl font-semibold text-slate-900'>

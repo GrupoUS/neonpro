@@ -6,10 +6,10 @@
 import { vi } from 'vitest';
 
 // Mock console methods globally for all compliance tests
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
+const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(_() => {});
+const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(_() => {});
+const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(_() => {});
+const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(_() => {});
 
 // Store original console methods for restoration
 const originalConsole = {
@@ -20,14 +20,14 @@ const originalConsole = {
 };
 
 // Test environment setup
-export const setupComplianceLoggingTests = () => {
+export const _setupComplianceLoggingTests = () => {
   // Clear all mock calls before each test
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
   });
 
   // Restore original console methods after all tests
-  afterEach(() => {
+  afterEach(_() => {
     vi.restoreAllMocks();
   });
 
@@ -41,7 +41,7 @@ export const setupComplianceLoggingTests = () => {
 };
 
 // LGPD-specific test utilities
-export const lgpdTestUtils = {
+export const _lgpdTestUtils = {
   // Check for LGPD personal identifiers
   hasLgpdPersonalData: (output: string[][]) => {
     const lgpdPatterns = [
@@ -104,7 +104,7 @@ export const lgpdTestUtils = {
 };
 
 // CFM-specific test utilities
-export const cfmTestUtils = {
+export const _cfmTestUtils = {
   // Check for medical professional data
   hasCfmProfessionalData: (output: string[][]) => {
     const cfmPatterns = [
@@ -156,7 +156,7 @@ export const cfmTestUtils = {
 };
 
 // ANVISA-specific test utilities
-export const anvisaTestUtils = {
+export const _anvisaTestUtils = {
   // Check for medical device data
   hasAnvisaDeviceData: (output: string[][]) => {
     const devicePatterns = [
@@ -231,7 +231,7 @@ export const anvisaTestUtils = {
 };
 
 // General compliance test utilities
-export const complianceTestUtils = {
+export const _complianceTestUtils = {
   // Check for data retention violations
   hasRetentionViolations: (output: string[][]) => {
     const retentionPatterns = [

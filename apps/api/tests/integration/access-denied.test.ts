@@ -35,9 +35,9 @@ describe('Access Denied Handling - Integration Test', () => {
         body: JSON.stringify({
           query,
           sessionId,
-          context: {
-            userId: 'receptionist-user-id',
-            role: 'receptionist',
+          _context: {
+            _userId: 'receptionist-user-id',
+            _role: 'receptionist',
           },
         }),
       });
@@ -72,9 +72,9 @@ describe('Access Denied Handling - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-denied-${Math.random()}`,
-            context: {
-              userId: 'receptionist-user-id',
-              role: 'receptionist',
+            _context: {
+              _userId: 'receptionist-user-id',
+              _role: 'receptionist',
             },
           }),
         });
@@ -102,10 +102,10 @@ describe('Access Denied Handling - Integration Test', () => {
           Authorization: 'Bearer valid-clinic-a-token',
         },
         body: JSON.stringify({
-          query: 'Dados de todos os clientes do sistema',
+          _query: 'Dados de todos os clientes do sistema',
           sessionId: 'test-session-cross-domain',
-          context: {
-            userId: 'clinic-a-user',
+          _context: {
+            _userId: 'clinic-a-user',
             domain: 'clinic-a',
           },
         }),
@@ -132,10 +132,10 @@ describe('Access Denied Handling - Integration Test', () => {
           Authorization: 'Bearer invalid-domain-token',
         },
         body: JSON.stringify({
-          query: 'Acesso a dados de outra clínica',
+          _query: 'Acesso a dados de outra clínica',
           sessionId: 'test-session-invalid-domain',
-          context: {
-            userId: 'malicious-user',
+          _context: {
+            _userId: 'malicious-user',
             domain: 'unauthorized-domain',
           },
         }),
@@ -165,11 +165,11 @@ describe('Access Denied Handling - Integration Test', () => {
           Authorization: 'Bearer valid-receptionist-token',
         },
         body: JSON.stringify({
-          query: 'Relatório financeiro completo',
+          _query: 'Relatório financeiro completo',
           sessionId: 'test-session-clear-message',
-          context: {
-            userId: 'receptionist-user-id',
-            role: 'receptionist',
+          _context: {
+            _userId: 'receptionist-user-id',
+            _role: 'receptionist',
           },
         }),
       });
@@ -195,11 +195,11 @@ describe('Access Denied Handling - Integration Test', () => {
           Authorization: 'Bearer valid-nurse-token',
         },
         body: JSON.stringify({
-          query: 'Dados financeiros confidenciais',
+          _query: 'Dados financeiros confidenciais',
           sessionId: 'test-session-suggestions',
-          context: {
-            userId: 'nurse-user-id',
-            role: 'nurse',
+          _context: {
+            _userId: 'nurse-user-id',
+            _role: 'nurse',
           },
         }),
       });
@@ -229,11 +229,11 @@ describe('Access Denied Handling - Integration Test', () => {
           Authorization: 'Bearer valid-receptionist-token',
         },
         body: JSON.stringify({
-          query: 'Acesso total ao sistema',
+          _query: 'Acesso total ao sistema',
           sessionId: 'test-session-professional',
-          context: {
-            userId: 'receptionist-user-id',
-            role: 'receptionist',
+          _context: {
+            _userId: 'receptionist-user-id',
+            _role: 'receptionist',
           },
         }),
       });
@@ -263,11 +263,11 @@ describe('Access Denied Handling - Integration Test', () => {
           Authorization: 'Bearer valid-receptionist-token',
         },
         body: JSON.stringify({
-          query: 'Tentar acessar dados restritos',
+          _query: 'Tentar acessar dados restritos',
           sessionId: 'test-session-audit-log',
-          context: {
-            userId: 'receptionist-user-id',
-            role: 'receptionist',
+          _context: {
+            _userId: 'receptionist-user-id',
+            _role: 'receptionist',
           },
         }),
       });
@@ -300,9 +300,9 @@ describe('Access Denied Handling - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-suspicious-${Math.random()}`,
-            context: {
-              userId: 'suspicious-user-id',
-              role: 'guest',
+            _context: {
+              _userId: 'suspicious-user-id',
+              _role: 'guest',
             },
           }),
         });
@@ -326,11 +326,11 @@ describe('Access Denied Handling - Integration Test', () => {
           Authorization: 'Bearer valid-receptionist-token',
         },
         body: JSON.stringify({
-          query: 'Dados financeiros completos',
+          _query: 'Dados financeiros completos',
           sessionId: 'test-session-denied-performance',
-          context: {
-            userId: 'receptionist-user-id',
-            role: 'receptionist',
+          _context: {
+            _userId: 'receptionist-user-id',
+            _role: 'receptionist',
           },
         }),
       });
@@ -354,10 +354,10 @@ describe('Access Denied Handling - Integration Test', () => {
           Authorization: 'Bearer expired-session-token',
         },
         body: JSON.stringify({
-          query: 'Qualquer consulta',
+          _query: 'Qualquer consulta',
           sessionId: 'expired-session-id',
-          context: {
-            userId: 'user-with-expired-session',
+          _context: {
+            _userId: 'user-with-expired-session',
           },
         }),
       });
@@ -375,10 +375,10 @@ describe('Access Denied Handling - Integration Test', () => {
           Authorization: 'Bearer invalid-jwt-token',
         },
         body: JSON.stringify({
-          query: 'Teste de token inválido',
+          _query: 'Teste de token inválido',
           sessionId: 'invalid-auth-session',
-          context: {
-            userId: 'invalid-user',
+          _context: {
+            _userId: 'invalid-user',
           },
         }),
       });
@@ -396,7 +396,7 @@ describe('Access Denied Handling - Integration Test', () => {
           // No Authorization header
         },
         body: JSON.stringify({
-          query: 'Teste sem autenticação',
+          _query: 'Teste sem autenticação',
           sessionId: 'no-auth-session',
         }),
       });

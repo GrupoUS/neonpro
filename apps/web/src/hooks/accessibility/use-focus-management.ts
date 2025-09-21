@@ -11,7 +11,7 @@ export function useFocusManagement<T extends HTMLElement>() {
   /**
    * Trap focus within a container (for modals, dialogs, etc.)
    */
-  const trapFocus = useCallback(() => {
+  const trapFocus = useCallback(_() => {
     const container = ref.current;
     if (!container) return;
 
@@ -57,7 +57,7 @@ export function useFocusManagement<T extends HTMLElement>() {
   /**
    * Restore focus to last focused element
    */
-  const restoreFocus = useCallback(() => {
+  const restoreFocus = useCallback(_() => {
     if (lastFocusedElement) {
       lastFocusedElement.focus();
       setLastFocusedElement(null);
@@ -67,7 +67,7 @@ export function useFocusManagement<T extends HTMLElement>() {
   /**
    * Focus first element in container
    */
-  const focusFirst = useCallback(() => {
+  const focusFirst = useCallback(_() => {
     const container = ref.current;
     if (!container) return;
 
@@ -83,7 +83,7 @@ export function useFocusManagement<T extends HTMLElement>() {
   /**
    * Focus last element in container
    */
-  const focusLast = useCallback(() => {
+  const focusLast = useCallback(_() => {
     const container = ref.current;
     if (!container) return;
 
@@ -116,7 +116,7 @@ export function useScreenReaderAnnouncer() {
     setAnnouncements(prev => [...prev, { message, priority, timestamp: Date.now() }]);
 
     // Clear after announcement
-    setTimeout(() => {
+    setTimeout(_() => {
       setAnnouncements(prev => prev.slice(1));
     }, 1000);
   }, []);

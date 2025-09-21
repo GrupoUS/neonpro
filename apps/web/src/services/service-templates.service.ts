@@ -160,7 +160,7 @@ class ServiceTemplatesService {
    * Create a new service template
    */
   async createServiceTemplate(
-    request: CreateServiceTemplateRequest,
+    _request: CreateServiceTemplateRequest,
   ): Promise<ServiceTemplate> {
     const { data, error } = await this.sb
       .from('service_templates')
@@ -195,7 +195,7 @@ class ServiceTemplatesService {
    * Update a service template
    */
   async updateServiceTemplate(
-    request: UpdateServiceTemplateRequest,
+    _request: UpdateServiceTemplateRequest,
   ): Promise<ServiceTemplate> {
     const updateData: Partial<ServiceTemplate> = {};
 
@@ -262,7 +262,7 @@ class ServiceTemplatesService {
     templateId: string,
     items: CreateServiceTemplateItemRequest[],
   ): Promise<void> {
-    const itemsData = items.map((item, _index) => ({
+    const itemsData = items.map(_(item, _index) => ({
       template_id: templateId,
       service_id: item.service_id,
       quantity: item.quantity || 1,
@@ -285,7 +285,7 @@ class ServiceTemplatesService {
    * Update a template item
    */
   async updateTemplateItem(
-    request: UpdateServiceTemplateItemRequest,
+    _request: UpdateServiceTemplateItemRequest,
   ): Promise<void> {
     const updateData: any = {};
 
@@ -344,7 +344,7 @@ class ServiceTemplatesService {
    * Duplicate a service template
    */
   async duplicateServiceTemplate(
-    request: DuplicateServiceTemplateRequest,
+    _request: DuplicateServiceTemplateRequest,
   ): Promise<string> {
     const { data, error } = await this.sb.rpc('duplicate_service_template', {
       p_template_id: request.template_id,
@@ -377,7 +377,7 @@ class ServiceTemplatesService {
 
     // Calculate template type distribution
     const templateTypes = templates.reduce(
-      (acc: Record<string, number>, template: any) => {
+      (acc: Record<string,_number>, template: any) => {
         acc[template.template_type] = (acc[template.template_type] || 0) + 1;
         return acc;
       },
@@ -385,8 +385,7 @@ class ServiceTemplatesService {
     );
 
     // Calculate price type distribution
-    const priceTypes = templates.reduce(
-      (acc, template) => {
+    const priceTypes = templates.reduce(_(acc,_template) => {
         acc[template.price_type] = (acc[template.price_type] || 0) + 1;
         return acc;
       },
@@ -395,18 +394,18 @@ class ServiceTemplatesService {
 
     // Calculate averages
     const averagePrice = totalTemplates > 0
-      ? templates.reduce((sum, t) => sum + t.default_price, 0)
+      ? templates.reduce(_(sum,_t) => sum + t.default_price, 0)
         / totalTemplates
       : 0;
 
     const averageDuration = totalTemplates > 0
-      ? templates.reduce((sum, t) => sum + t.default_duration_minutes, 0)
+      ? templates.reduce(_(sum,_t) => sum + t.default_duration_minutes, 0)
         / totalTemplates
       : 0;
 
     // Find most used template
     const mostUsedTemplate = templates.length > 0
-      ? templates.reduce((max, template) => template.usage_count > max.usage_count ? template : max)
+      ? templates.reduce(_(max,_template) => template.usage_count > max.usage_count ? template : max)
       : null;
 
     return {
@@ -429,4 +428,4 @@ class ServiceTemplatesService {
   }
 }
 
-export const serviceTemplatesService = new ServiceTemplatesService();
+export const _serviceTemplatesService = new ServiceTemplatesService();

@@ -13,8 +13,6 @@
  * - Brazilian Portuguese localization
  */
 
-import { z } from 'zod';
-
 // Production Readiness Configuration Schema
 export const ProductionReadinessConfigSchema = z
   .object({
@@ -130,13 +128,13 @@ export const VALIDATION_TYPES = {
   MOBILE: 'mobile',
 } as const;
 
-export const HEALTHCARE_COMPLIANCE_STANDARDS = {
+export const _HEALTHCARE_COMPLIANCE_STANDARDS = {
   LGPD: 'LGPD',
   ANVISA: 'ANVISA',
   CFM: 'CFM',
 } as const;
 
-export const READINESS_LEVELS = {
+export const _READINESS_LEVELS = {
   PRODUCTION_READY: 'production-ready',
   STAGING_READY: 'staging-ready',
   NOT_READY: 'not-ready',
@@ -302,7 +300,7 @@ export default class ProductionReadinessService {
       v => v.status === 'warning',
     ).length;
 
-    const overallScore = validations.reduce((sum, v) => sum + v.score, 0) / totalValidations;
+    const overallScore = validations.reduce(_(sum,_v) => sum + v.score, 0) / totalValidations;
 
     let readinessLevel: 'production-ready' | 'staging-ready' | 'not-ready' = 'not-ready';
     if (overallScore >= 95 && failedValidations === 0) {
@@ -311,8 +309,7 @@ export default class ProductionReadinessService {
       readinessLevel = 'staging-ready';
     }
 
-    const criticalIssues = validations.reduce(
-      (sum, v) => sum + v.issues.filter(i => i.severity === 'critical').length,
+    const criticalIssues = validations.reduce(_(sum,_v) => sum + v.issues.filter(i => i.severity === 'critical').length,
       0,
     );
 

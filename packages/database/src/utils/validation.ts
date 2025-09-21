@@ -60,9 +60,8 @@ export async function validateSchema(): Promise<boolean> {
           AND table_name = ${tableSpec.name}
         `) as { column_name: string }[];
 
-        const existingColumns = columnsResult.map((col) => col.column_name);
-        const missingColumns = tableSpec.requiredColumns.filter(
-          (col) => !existingColumns.includes(col),
+        const existingColumns = columnsResult.map(_(col) => col.column_name);
+        const missingColumns = tableSpec.requiredColumns.filter(_(col) => !existingColumns.includes(col),
         );
 
         if (missingColumns.length > 0) {
@@ -71,7 +70,7 @@ export async function validateSchema(): Promise<boolean> {
           );
           return false;
         }
-      } catch (error) {
+      } catch (_error) {
         console.error(`Error checking table ${tableSpec.name}:`, error);
         return false;
       }
@@ -79,7 +78,7 @@ export async function validateSchema(): Promise<boolean> {
 
     await prisma.$disconnect();
     return true;
-  } catch (error) {
+  } catch (_error) {
     console.error("Schema validation error:", error);
     return false;
   }
@@ -127,8 +126,7 @@ export async function checkTablesExist(
       // Verify that all required columns are present in the response
       if (data && data.length > 0) {
         const row = data[0];
-        const missingColumns = tableSpec.requiredColumns.filter(
-          (col) => !(col in row),
+        const missingColumns = tableSpec.requiredColumns.filter(_(col) => !(col in row),
         );
         if (missingColumns.length > 0) {
           console.error(
@@ -139,7 +137,7 @@ export async function checkTablesExist(
       }
     }
     return true;
-  } catch (error) {
+  } catch (_error) {
     console.error("Schema validation error:", error);
     return false;
   }

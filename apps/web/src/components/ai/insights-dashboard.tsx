@@ -150,13 +150,9 @@ const fetchInsightTrends = async (
 /**
  * MetricCard - Individual metric display component
  */
-const MetricCard = ({
-  title,
-  value,
-  change,
-  icon: Icon,
-  trend = 'neutral',
-  description,
+const MetricCard = (_{
+  title,_value,_change,
+  icon: Icon,_trend = 'neutral',_description,
 }: {
   title: string;
   value: string | number;
@@ -202,13 +198,8 @@ const MetricCard = ({
  */
 
 // Lightweight inline chart: responsive SVG with two lines (insights & confidence)
-export const TrendMiniChart = ({
-  data,
-  width = 240,
-  height = 80,
-  ariaLabel = 'Tendências',
-  title = 'Tendências',
-  desc = 'Mini gráfico com as tendências no período.',
+export const TrendMiniChart = (_{
+  data,_width = 240,_height = 80,_ariaLabel = 'Tendências',_title = 'Tendências',_desc = 'Mini gráfico com as tendências no período.',
 }: {
   data?: TrendData[];
   width?: number;
@@ -255,10 +246,10 @@ export const TrendMiniChart = ({
 
   const toY = (v: number) => paddingY + innerH - ((v - minV) / span) * innerH;
 
-  const points = values.map((v, i) => [paddingX + stepX * i, toY(v)] as const);
+  const points = values.map(_(v,_i) => [paddingX + stepX * i, toY(v)] as const);
 
   const dPath = points
-    .map(([x, y], i) => (i === 0 ? `M ${x} ${y}` : `L ${x} ${y}`))
+    .map(_([x,_y],_i) => (i === 0 ? `M ${x} ${y}` : `L ${x} ${y}`))
     .join(' ');
 
   return (
@@ -302,18 +293,11 @@ export const TrendMiniChart = ({
 export const AIInsightsDashboard = ({
   timeRange: initialTimeRange = '7d',
   insightTypes: _insightTypes = [
-    'patient_insights',
-    'risk_assessment',
-    'recommendations',
-  ],
-  healthcareProfessional,
+    'patient_insights',_'risk_assessment',_'recommendations',_],_healthcareProfessional,
   lgpdConsent = {
     canViewAggregatedData: true,
     canViewPatientInsights: false,
-    consentLevel: 'basic',
-  },
-  mobileOptimized = true,
-  testId = 'ai-insights-dashboard',
+    consentLevel: 'basic',_},_mobileOptimized = true,_testId = 'ai-insights-dashboard',
 }: AIInsightsDashboardProps) => {
   const [timeRange, setTimeRange] = useState(initialTimeRange);
   const [activeTab, setActiveTab] = useState('overview');
@@ -326,7 +310,7 @@ export const AIInsightsDashboard = ({
     error: metricsError,
     refetch: refetchMetrics,
   } = useQuery<MetricsApiResponse>({
-    queryKey: ['ai-metrics', timeRange, _insightTypes],
+    queryKey: ['ai-metrics',_timeRange, _insightTypes],
     queryFn: () => fetchInsightMetrics(timeRange),
     enabled: lgpdConsent.canViewAggregatedData,
     staleTime: 2 * 60 * 1000, // 2 minutes cache
@@ -339,7 +323,7 @@ export const AIInsightsDashboard = ({
     isLoading: trendsLoading,
     error: trendsError,
   } = useQuery<TrendsApiResponse>({
-    queryKey: ['ai-trends', timeRange, _insightTypes],
+    queryKey: ['ai-trends',_timeRange, _insightTypes],
     queryFn: () => fetchInsightTrends(timeRange),
     enabled: lgpdConsent.canViewAggregatedData,
     staleTime: 2 * 60 * 1000, // 2 minutes cache
@@ -354,7 +338,7 @@ export const AIInsightsDashboard = ({
   };
 
   // Memoized metric cards data
-  const metricCards = useMemo(() => {
+  const metricCards = useMemo(_() => {
     if (!metrics?.data) return [];
 
     const data = metrics.data;
@@ -499,7 +483,7 @@ export const AIInsightsDashboard = ({
           {metricsLoading
             ? (
               <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
-                {Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className='h-32' />)}
+                {Array.from({ length: 6 }).map(_(_,_i) => <Skeleton key={i} className='h-32' />)}
               </div>
             )
             : (

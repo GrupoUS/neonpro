@@ -29,7 +29,7 @@ export interface QueryMetrics {
   statusCode: number;
   responseSize: number;
   userAgent?: string;
-  userId?: string;
+  _userId?: string;
 }
 
 export class QueryTimeoutMiddleware {
@@ -50,7 +50,7 @@ export class QueryTimeoutMiddleware {
     };
 
     // Start metrics cleanup interval
-    setInterval(() => this.cleanupMetrics(), 300000); // 5 minutes
+    setInterval(_() => this.cleanupMetrics(), 300000); // 5 minutes
   }
 
   /**
@@ -83,7 +83,7 @@ export class QueryTimeoutMiddleware {
     });
 
     // Set up timeout timer
-    const timeoutTimer = setTimeout(() => {
+    const timeoutTimer = setTimeout(_() => {
       this.handleQueryTimeout(queryId, req, res);
     }, timeout);
 
@@ -108,7 +108,7 @@ export class QueryTimeoutMiddleware {
         statusCode: res.statusCode,
         responseSize: chunk ? chunk.length : 0,
         userAgent: req.headers['user-agent'],
-        userId: this.extractUserId(req),
+        _userId: this.extractUserId(req),
       };
 
       this.recordQueryMetrics(metrics);
@@ -120,7 +120,7 @@ export class QueryTimeoutMiddleware {
           queryId,
           route: req.path,
           method: req.method,
-          userId: metrics.userId,
+          _userId: metrics.userId,
         });
       }
 
@@ -158,7 +158,7 @@ export class QueryTimeoutMiddleware {
       statusCode: 504, // Gateway Timeout
       responseSize: 0,
       userAgent: req.headers['user-agent'],
-      userId: this.extractUserId(req),
+      _userId: this.extractUserId(req),
     };
 
     this.recordQueryMetrics(metrics);
@@ -169,7 +169,7 @@ export class QueryTimeoutMiddleware {
       queryId,
       route: req.path,
       method: req.method,
-      userId: metrics.userId,
+      _userId: metrics.userId,
       userAgent: req.headers['user-agent'],
     });
 
@@ -269,9 +269,9 @@ export class QueryTimeoutMiddleware {
 
     if (stats.totalQueries > 0) {
       stats.timeoutRate = (stats.timedOutQueries / stats.totalQueries) * 100;
-      stats.averageResponseTime = this.metrics.reduce((sum, m) => sum + m.duration, 0)
+      stats.averageResponseTime = this.metrics.reduce(_(sum,_m) => sum + m.duration, 0)
         / stats.totalQueries;
-      stats.averageTimeout = this.metrics.reduce((sum, m) => sum + m.timeout, 0)
+      stats.averageTimeout = this.metrics.reduce(_(sum,_m) => sum + m.timeout, 0)
         / stats.totalQueries;
     }
 
@@ -289,7 +289,7 @@ export class QueryTimeoutMiddleware {
     });
 
     return Object.entries(routeTimeouts)
-      .sort((a, b) => b[1] - a[1])
+      .sort(_(a,_b) => b[1] - a[1])
       .slice(0, limit);
   }
 
@@ -324,7 +324,7 @@ export class QueryTimeoutMiddleware {
     let longestQuery: { queryId: string; duration: number; route: string } | null = null;
     let longestDuration = 0;
 
-    const now = performance.now();
+    const _now = performance.now();
     for (const [queryId, query] of this.activeQueries) {
       const duration = now - query.startTime;
       if (duration > longestDuration) {
@@ -346,7 +346,7 @@ export class QueryTimeoutMiddleware {
   checkApproachingTimeouts(
     thresholdPercentage = 80,
   ): Array<{ queryId: string; duration: number; timeout: number; route: string }> {
-    const now = performance.now();
+    const _now = performance.now();
     const approaching: Array<
       { queryId: string; duration: number; timeout: number; route: string }
     > = [];
@@ -365,7 +365,7 @@ export class QueryTimeoutMiddleware {
       }
     }
 
-    return approaching.sort((a, b) => b.duration - a.duration);
+    return approaching.sort(_(a,_b) => b.duration - a.duration);
   }
 
   /**
@@ -392,7 +392,7 @@ export class QueryTimeoutMiddleware {
    */
   getRealTimeMetrics() {
     return {
-      activeQueries: Array.from(this.activeQueries.entries()).map(([id, query]) => ({
+      activeQueries: Array.from(this.activeQueries.entries()).map(_([id,_query]) => ({
         queryId: id,
         duration: performance.now() - query.startTime,
         timeout: query.timeout,

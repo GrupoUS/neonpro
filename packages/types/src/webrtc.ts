@@ -25,7 +25,7 @@ export type RTCConnectionState =
   | "closed";
 
 // Runtime values for TypeScript enum-like behavior
-export const RTCConnectionStates = {
+export const _RTCConnectionStates = {
   NEW: "new",
   CONNECTING: "connecting",
   CONNECTED: "connected",
@@ -45,7 +45,7 @@ export type TelemedicineCallType =
   | "urgent-care";
 
 // Runtime values for telemedicine call types
-export const TelemedicineCallTypes = {
+export const _TelemedicineCallTypes = {
   EMERGENCY: "emergency",
   SCHEDULED: "scheduled",
   CONSULTATION: "consultation",
@@ -63,7 +63,7 @@ export type MedicalDataClassification =
   | "public";
 
 // Runtime values for medical data classification
-export const MedicalDataClassifications = {
+export const _MedicalDataClassifications = {
   SENSITIVE: "sensitive",
   CONFIDENTIAL: "confidential",
   INTERNAL: "internal",
@@ -115,7 +115,7 @@ export interface RTCSignalingMessage {
   recipientId: string;
 
   /** WebRTC payload (SDP or ICE candidate) */
-  payload?: unknown;
+  _payload?: unknown;
 
   /** Timestamp for audit logging (ISO 8601) */
   timestamp: string;
@@ -180,7 +180,7 @@ export interface CallParticipant {
   name: string;
 
   /** Participant role in healthcare context */
-  role: "doctor" | "patient" | "nurse" | "specialist" | "observer";
+  _role: "doctor" | "patient" | "nurse" | "specialist" | "observer";
 
   /** Professional registration (CRM, CRO, etc.) for healthcare providers */
   professionalId?: string;
@@ -511,7 +511,7 @@ export interface RTCAuditLogEntry {
   timestamp: string;
 
   /** User ID who triggered the event */
-  userId: string;
+  _userId: string;
 
   /** User role in healthcare context */
   userRole: "doctor" | "patient" | "nurse" | "admin" | "system";
@@ -548,7 +548,7 @@ export interface RTCAuditLogEntry {
 export interface RTCConsentManager {
   /** Request consent for specific data processing */
   requestConsent(
-    userId: string,
+    _userId: string,
     dataTypes: MedicalDataClassification[],
     purpose: string,
     sessionId: string,
@@ -556,26 +556,26 @@ export interface RTCConsentManager {
 
   /** Verify existing consent is valid */
   verifyConsent(
-    userId: string,
+    _userId: string,
     dataType: MedicalDataClassification,
     sessionId: string,
   ): Promise<boolean>;
 
   /** Revoke consent for data processing */
   revokeConsent(
-    userId: string,
+    _userId: string,
     dataType: MedicalDataClassification,
     sessionId: string,
   ): Promise<void>;
 
   /** Get consent history for audit */
-  getConsentHistory(userId: string): Promise<RTCAuditLogEntry[]>;
+  getConsentHistory(_userId: string): Promise<RTCAuditLogEntry[]>;
 
   /** Export user data for LGPD compliance */
-  exportUserData(userId: string): Promise<Record<string, unknown>>;
+  exportUserData(_userId: string): Promise<Record<string, unknown>>;
 
   /** Delete user data (right to erasure) */
-  deleteUserData(userId: string, sessionId?: string): Promise<void>;
+  deleteUserData(_userId: string, sessionId?: string): Promise<void>;
 }
 
 // Export all WebRTC types for proper module resolution

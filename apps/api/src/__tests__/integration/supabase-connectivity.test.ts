@@ -11,8 +11,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { RLSQueryBuilder, supabaseAdmin, supabaseClient } from '../../lib/supabase-client';
 
-describe('Supabase Connectivity & RLS Tests', () => {
-  beforeAll(() => {
+describe(_'Supabase Connectivity & RLS Tests',_() => {
+  beforeAll(_() => {
     // Ensure we have the required environment variables for testing
     if (!process.env.SUPABASE_URL) {
       console.warn('⚠️  SUPABASE_URL not set - some tests may be skipped');
@@ -27,14 +27,14 @@ describe('Supabase Connectivity & RLS Tests', () => {
     }
   });
 
-  describe('Client Initialization', () => {
-    it('should initialize anonymous client successfully', () => {
+  describe(_'Client Initialization',_() => {
+    it(_'should initialize anonymous client successfully',_() => {
       expect(supabaseClient).toBeDefined();
       expect(supabaseClient.supabaseUrl).toBeTruthy();
       expect(supabaseClient.supabaseKey).toBeTruthy();
     });
 
-    it('should initialize admin client successfully', () => {
+    it(_'should initialize admin client successfully',_() => {
       if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
         console.log(
           '⏭️  Skipping admin client test - SUPABASE_SERVICE_ROLE_KEY not set',
@@ -47,7 +47,7 @@ describe('Supabase Connectivity & RLS Tests', () => {
       expect(supabaseAdmin.supabaseKey).toBeTruthy();
     });
 
-    it('should have different keys for anonymous and admin clients', () => {
+    it(_'should have different keys for anonymous and admin clients',_() => {
       if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
         console.log(
           '⏭️  Skipping key comparison test - SUPABASE_SERVICE_ROLE_KEY not set',
@@ -59,8 +59,8 @@ describe('Supabase Connectivity & RLS Tests', () => {
     });
   });
 
-  describe('Database Connectivity', () => {
-    it('should connect to database and retrieve basic info', async () => {
+  describe(_'Database Connectivity',_() => {
+    it(_'should connect to database and retrieve basic info',_async () => {
       if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
         console.log(
           '⏭️  Skipping connectivity test - Supabase credentials not set',
@@ -84,7 +84,7 @@ describe('Supabase Connectivity & RLS Tests', () => {
       }
     });
 
-    it('should handle connection errors gracefully', async () => {
+    it(_'should handle connection errors gracefully',_async () => {
       // Create a client with invalid URL to test error handling
       const { createClient } = await import('@supabase/supabase-js');
       const invalidClient = createClient(
@@ -102,7 +102,7 @@ describe('Supabase Connectivity & RLS Tests', () => {
     });
   });
 
-  describe('RLS Policy Enforcement', () => {
+  describe(_'RLS Policy Enforcement',_() => {
     it('should enforce RLS on protected tables (anonymous client)', async () => {
       if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
         console.log('⏭️  Skipping RLS test - Supabase credentials not set');
@@ -133,7 +133,7 @@ describe('Supabase Connectivity & RLS Tests', () => {
       }
     });
 
-    it('should allow service role to bypass RLS when appropriate', async () => {
+    it(_'should allow service role to bypass RLS when appropriate',_async () => {
       if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
         console.log(
           '⏭️  Skipping service role test - SUPABASE_SERVICE_ROLE_KEY not set',
@@ -161,18 +161,18 @@ describe('Supabase Connectivity & RLS Tests', () => {
     });
   });
 
-  describe('RLS Query Builder', () => {
-    it('should create RLS query builder without user context', () => {
+  describe(_'RLS Query Builder',_() => {
+    it(_'should create RLS query builder without user context',_() => {
       const builder = new RLSQueryBuilder();
       expect(builder).toBeDefined();
     });
 
-    it('should create RLS query builder with user context', () => {
+    it(_'should create RLS query builder with user context',_() => {
       const builder = new RLSQueryBuilder('test-user-id', 'user');
       expect(builder).toBeDefined();
     });
 
-    it('should handle patient queries with RLS context', async () => {
+    it(_'should handle patient queries with RLS context',_async () => {
       if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
         console.log(
           '⏭️  Skipping RLS query builder test - Supabase credentials not set',
@@ -196,7 +196,7 @@ describe('Supabase Connectivity & RLS Tests', () => {
             `📊 RLS query builder returned ${data?.length || 0} patient records`,
           );
         }
-      } catch (error) {
+      } catch (_error) {
         // Query builder might throw errors for invalid user context
         expect(error).toBeDefined();
         console.log(
@@ -206,8 +206,8 @@ describe('Supabase Connectivity & RLS Tests', () => {
     });
   });
 
-  describe('Healthcare RLS Utilities', () => {
-    it('should provide healthcare-specific RLS functions', async () => {
+  describe(_'Healthcare RLS Utilities',_() => {
+    it(_'should provide healthcare-specific RLS functions',_async () => {
       const { healthcareRLS } = await import('../../lib/supabase-client');
 
       expect(healthcareRLS.canAccessPatient).toBeDefined();
@@ -215,7 +215,7 @@ describe('Supabase Connectivity & RLS Tests', () => {
       expect(healthcareRLS.getUserClinics).toBeDefined();
     });
 
-    it('should handle patient access checks', async () => {
+    it(_'should handle patient access checks',_async () => {
       if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
         console.log(
           '⏭️  Skipping healthcare RLS test - Supabase credentials not set',
@@ -232,7 +232,7 @@ describe('Supabase Connectivity & RLS Tests', () => {
         );
         expect(typeof canAccess).toBe('boolean');
         console.log(`📊 Patient access check result: ${canAccess}`);
-      } catch (error) {
+      } catch (_error) {
         // Expected if RLS is properly configured
         console.log(
           `📊 Patient access check failed as expected: ${(error as Error).message}`,
@@ -241,8 +241,8 @@ describe('Supabase Connectivity & RLS Tests', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle network errors gracefully', async () => {
+  describe(_'Error Handling',_() => {
+    it(_'should handle network errors gracefully',_async () => {
       // This test ensures our error handling works
       const { createClient } = await import('@supabase/supabase-js');
       const offlineClient = createClient(
@@ -260,7 +260,7 @@ describe('Supabase Connectivity & RLS Tests', () => {
       expect(error.message).toBeTruthy();
     });
 
-    it('should handle malformed queries gracefully', async () => {
+    it(_'should handle malformed queries gracefully',_async () => {
       if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
         console.log(
           '⏭️  Skipping malformed query test - Supabase credentials not set',

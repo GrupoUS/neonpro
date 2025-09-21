@@ -718,7 +718,7 @@ export type Database = {
           metadata: Json | null;
           model_used: string | null;
           response_time_ms: number | null;
-          role: string;
+          _role: string;
           session_id: string;
           tokens_used: number | null;
         };
@@ -731,7 +731,7 @@ export type Database = {
           metadata?: Json | null;
           model_used?: string | null;
           response_time_ms?: number | null;
-          role: string;
+          _role: string;
           session_id: string;
           tokens_used?: number | null;
         };
@@ -744,7 +744,7 @@ export type Database = {
           metadata?: Json | null;
           model_used?: string | null;
           response_time_ms?: number | null;
-          role?: string;
+          _role?: string;
           session_id?: string;
           tokens_used?: number | null;
         };
@@ -761,7 +761,7 @@ export type Database = {
       ai_chat_sessions: {
         Row: {
           clinic_id: string | null;
-          context: Json | null;
+          _context: Json | null;
           created_at: string | null;
           id: string;
           last_message_at: string | null;
@@ -774,7 +774,7 @@ export type Database = {
         };
         Insert: {
           clinic_id?: string | null;
-          context?: Json | null;
+          _context?: Json | null;
           created_at?: string | null;
           id?: string;
           last_message_at?: string | null;
@@ -787,7 +787,7 @@ export type Database = {
         };
         Update: {
           clinic_id?: string | null;
-          context?: Json | null;
+          _context?: Json | null;
           created_at?: string | null;
           id?: string;
           last_message_at?: string | null;
@@ -1993,7 +1993,7 @@ export type Database = {
       };
       assistant_conversations: {
         Row: {
-          context: Json | null;
+          _context: Json | null;
           created_at: string | null;
           id: string;
           preferences: Json | null;
@@ -2003,7 +2003,7 @@ export type Database = {
           user_id: string;
         };
         Insert: {
-          context?: Json | null;
+          _context?: Json | null;
           created_at?: string | null;
           id?: string;
           preferences?: Json | null;
@@ -2013,7 +2013,7 @@ export type Database = {
           user_id: string;
         };
         Update: {
-          context?: Json | null;
+          _context?: Json | null;
           created_at?: string | null;
           id?: string;
           preferences?: Json | null;
@@ -2085,7 +2085,7 @@ export type Database = {
           id: string;
           metadata: Json | null;
           processing_time: number | null;
-          role: string;
+          _role: string;
           tokens_used: number | null;
           user_id: string;
         };
@@ -2096,7 +2096,7 @@ export type Database = {
           id?: string;
           metadata?: Json | null;
           processing_time?: number | null;
-          role: string;
+          _role: string;
           tokens_used?: number | null;
           user_id: string;
         };
@@ -2107,7 +2107,7 @@ export type Database = {
           id?: string;
           metadata?: Json | null;
           processing_time?: number | null;
-          role?: string;
+          _role?: string;
           tokens_used?: number | null;
           user_id?: string;
         };
@@ -20088,7 +20088,7 @@ export type Database = {
           professional_title: string | null;
           profile_sync_status: string | null;
           restricted_areas: string[] | null;
-          role: string | null;
+          _role: string | null;
           specialty: string[] | null;
           stripe_customer_id: string | null;
           stripe_subscription_id: string | null;
@@ -20139,7 +20139,7 @@ export type Database = {
           professional_title?: string | null;
           profile_sync_status?: string | null;
           restricted_areas?: string[] | null;
-          role?: string | null;
+          _role?: string | null;
           specialty?: string[] | null;
           stripe_customer_id?: string | null;
           stripe_subscription_id?: string | null;
@@ -20190,7 +20190,7 @@ export type Database = {
           professional_title?: string | null;
           profile_sync_status?: string | null;
           restricted_areas?: string[] | null;
-          role?: string | null;
+          _role?: string | null;
           specialty?: string[] | null;
           stripe_customer_id?: string | null;
           stripe_subscription_id?: string | null;
@@ -21203,7 +21203,7 @@ export type Database = {
           id: string;
           is_granted: boolean | null;
           resource_type: Database["public"]["Enums"]["resource_type"];
-          role: string;
+          _role: string;
         };
         Insert: {
           action: Database["public"]["Enums"]["permission_action"];
@@ -21214,7 +21214,7 @@ export type Database = {
           id?: string;
           is_granted?: boolean | null;
           resource_type: Database["public"]["Enums"]["resource_type"];
-          role: string;
+          _role: string;
         };
         Update: {
           action?: Database["public"]["Enums"]["permission_action"];
@@ -21225,7 +21225,7 @@ export type Database = {
           id?: string;
           is_granted?: boolean | null;
           resource_type?: Database["public"]["Enums"]["resource_type"];
-          role?: string;
+          _role?: string;
         };
         Relationships: [
           {
@@ -22504,7 +22504,7 @@ export type Database = {
           is_active: boolean | null;
           name: string;
           phone: string | null;
-          role: string;
+          _role: string;
           specialization: string | null;
           updated_at: string | null;
           user_id: string | null;
@@ -22518,7 +22518,7 @@ export type Database = {
           is_active?: boolean | null;
           name: string;
           phone?: string | null;
-          role: string;
+          _role: string;
           specialization?: string | null;
           updated_at?: string | null;
           user_id?: string | null;
@@ -22532,7 +22532,7 @@ export type Database = {
           is_active?: boolean | null;
           name?: string;
           phone?: string | null;
-          role?: string;
+          _role?: string;
           specialization?: string | null;
           updated_at?: string | null;
           user_id?: string | null;
@@ -27285,7 +27285,7 @@ export type Database = {
           last_login_at: string | null;
           mfa_enabled: boolean;
           permissions: Json;
-          role: string;
+          _role: string;
           updated_at: string;
         };
         Insert: {
@@ -27297,7 +27297,7 @@ export type Database = {
           last_login_at?: string | null;
           mfa_enabled?: boolean;
           permissions?: Json;
-          role?: string;
+          _role?: string;
           updated_at?: string;
         };
         Update: {
@@ -27309,7 +27309,7 @@ export type Database = {
           last_login_at?: string | null;
           mfa_enabled?: boolean;
           permissions?: Json;
-          role?: string;
+          _role?: string;
           updated_at?: string;
         };
         Relationships: [];
@@ -27392,7 +27392,7 @@ export type Database = {
           clinic_id: string | null;
           command_text: string;
           confidence_score: number | null;
-          context: Json | null;
+          _context: Json | null;
           created_at: string | null;
           entities_extracted: Json | null;
           error_message: string | null;
@@ -27408,7 +27408,7 @@ export type Database = {
           clinic_id?: string | null;
           command_text: string;
           confidence_score?: number | null;
-          context?: Json | null;
+          _context?: Json | null;
           created_at?: string | null;
           entities_extracted?: Json | null;
           error_message?: string | null;
@@ -27424,7 +27424,7 @@ export type Database = {
           clinic_id?: string | null;
           command_text?: string;
           confidence_score?: number | null;
-          context?: Json | null;
+          _context?: Json | null;
           created_at?: string | null;
           entities_extracted?: Json | null;
           error_message?: string | null;
@@ -28870,7 +28870,7 @@ export type Database = {
           next_review_date: string | null;
           professional_title: string | null;
           registrations_expiring_soon: number | null;
-          role: string | null;
+          _role: string | null;
           total_certifications: number | null;
           total_registrations: number | null;
           updated_at: string | null;
@@ -29937,7 +29937,7 @@ export type CompositeTypes<
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never;
 
-export const Constants = {
+export const _Constants = {
   public: {
     Enums: {
       api_provider_type: [

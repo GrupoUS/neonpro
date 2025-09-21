@@ -24,7 +24,7 @@ import { useState } from 'react';
 export interface AuditLogEntry {
   id: string;
   timestamp: Date;
-  userId: string;
+  _userId: string;
   userName: string;
   action: AuditAction;
   resource: string;
@@ -104,15 +104,8 @@ export function AuditTrailTable() {
 
   const { data: auditData, isLoading } = useQuery<AuditTrail>({
     queryKey: [
-      'audit-trail',
-      clinicId,
-      {
-        searchTerm,
-        actionFilter,
-        statusFilter,
-        riskLevelFilter,
-      },
-    ],
+      'audit-trail',_clinicId,_{
+        searchTerm,_actionFilter,_statusFilter,_riskLevelFilter,_},_],
     queryFn: async () => {
       const governanceService = getGovernanceService();
       const filters = {

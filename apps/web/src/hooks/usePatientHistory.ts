@@ -66,14 +66,12 @@ export function useCreateMedicalRecord() {
 
   return useMutation({
     mutationFn: ({
-      patientId,
-      clinicId,
-      request,
+      patientId,_clinicId,_request,
     }: {
       patientId: string;
       clinicId: string;
-      request: CreateMedicalRecordRequest;
-    }) => patientHistoryService.createMedicalRecord(patientId, clinicId, request),
+      _request: CreateMedicalRecordRequest;
+    }) => patientHistoryService.createMedicalRecord(patientId, clinicId, _request),
 
     onSuccess: _data => {
       // Invalidate medical records for this patient
@@ -107,12 +105,11 @@ export function useUpdateMedicalRecord() {
 
   return useMutation({
     mutationFn: ({
-      id,
-      request,
+      id,_request,
     }: {
       id: string;
-      request: UpdateMedicalRecordRequest;
-    }) => patientHistoryService.updateMedicalRecord(id, request),
+      _request: UpdateMedicalRecordRequest;
+    }) => patientHistoryService.updateMedicalRecord(id, _request),
 
     onSuccess: () => {
       // Broadly invalidate patient history queries after update
@@ -149,14 +146,12 @@ export function useCreateTreatmentPlan() {
 
   return useMutation({
     mutationFn: ({
-      patientId,
-      clinicId,
-      request,
+      patientId,_clinicId,_request,
     }: {
       patientId: string;
       clinicId: string;
-      request: CreateTreatmentPlanRequest;
-    }) => patientHistoryService.createTreatmentPlan(patientId, clinicId, request),
+      _request: CreateTreatmentPlanRequest;
+    }) => patientHistoryService.createTreatmentPlan(patientId, clinicId, _request),
 
     onSuccess: () => {
       // Invalidate treatment plans and summary
@@ -187,12 +182,11 @@ export function useUpdateTreatmentPlan() {
 
   return useMutation({
     mutationFn: ({
-      id,
-      request,
+      id,_request,
     }: {
       id: string;
-      request: UpdateTreatmentPlanRequest;
-    }) => patientHistoryService.updateTreatmentPlan(id, request),
+      _request: UpdateTreatmentPlanRequest;
+    }) => patientHistoryService.updateTreatmentPlan(id, _request),
 
     onSuccess: () => {
       // Broadly invalidate patient history queries after update
@@ -229,12 +223,11 @@ export function useCreateProgressNote() {
 
   return useMutation({
     mutationFn: ({
-      patientId,
-      request,
+      patientId,_request,
     }: {
       patientId: string;
-      request: CreateProgressNoteRequest;
-    }) => patientHistoryService.createProgressNote(patientId, request),
+      _request: CreateProgressNoteRequest;
+    }) => patientHistoryService.createProgressNote(patientId, _request),
 
     onSuccess: () => {
       // Invalidate progress notes and timeline
@@ -276,13 +269,11 @@ export function useAddPatientAllergy() {
 
   return useMutation({
     mutationFn: ({
-      patientId,
-      allergy,
+      patientId,_allergy,
     }: {
       patientId: string;
       allergy: Omit<
-        PatientAllergy,
-        'id' | 'patient_id' | 'created_at' | 'updated_at'
+        PatientAllergy,_'id' | 'patient_id' | 'created_at' | 'updated_at'
       >;
     }) => patientHistoryService.addPatientAllergy(patientId, allergy),
 
@@ -327,13 +318,11 @@ export function useAddPatientCondition() {
 
   return useMutation({
     mutationFn: ({
-      patientId,
-      condition,
+      patientId,_condition,
     }: {
       patientId: string;
       condition: Omit<
-        PatientCondition,
-        'id' | 'patient_id' | 'created_at' | 'updated_at'
+        PatientCondition,_'id' | 'patient_id' | 'created_at' | 'updated_at'
       >;
     }) => patientHistoryService.addPatientCondition(patientId, condition),
 
@@ -391,9 +380,7 @@ export function useUploadAttachment() {
 
   return useMutation({
     mutationFn: ({
-      recordId,
-      file,
-      description,
+      recordId,_file,_description,
     }: {
       recordId: string;
       file: File;

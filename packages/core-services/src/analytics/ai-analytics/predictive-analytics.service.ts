@@ -157,7 +157,7 @@ export class PredictiveAnalyticsService {
     try {
       await this.modelProvider.initialize();
       this.initialized = true;
-    } catch (error) {
+    } catch (_error) {
       console.warn("Failed to initialize ML provider:", error);
       this.initialized = false;
     }
@@ -190,7 +190,7 @@ export class PredictiveAnalyticsService {
         dataQuality: 0.92,
         lastUpdated: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting analytics metrics:", error);
       throw new Error("Failed to generate analytics metrics");
     }
@@ -200,7 +200,7 @@ export class PredictiveAnalyticsService {
    * Predict appointment no-show risk with LGPD-compliant anonymization
    */
   async predictNoShowRisk(
-    request: PredictiveRequest,
+    _request: PredictiveRequest,
   ): Promise<PredictiveInsight | null> {
     try {
       await this.ensureInitialized();
@@ -259,7 +259,7 @@ export class PredictiveAnalyticsService {
             : "non-compliant",
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error predicting no-show risk:", error);
       return null;
     }
@@ -269,7 +269,7 @@ export class PredictiveAnalyticsService {
    * Predict revenue forecast with compliance
    */
   async predictRevenueForecast(
-    request: PredictiveRequest,
+    _request: PredictiveRequest,
   ): Promise<PredictiveInsight | null> {
     try {
       await this.ensureInitialized();
@@ -328,7 +328,7 @@ export class PredictiveAnalyticsService {
             : "non-compliant",
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error forecasting revenue:", error);
       return null;
     }
@@ -338,7 +338,7 @@ export class PredictiveAnalyticsService {
    * Predict patient outcome
    */
   async predictPatientOutcome(
-    request: PredictiveRequest,
+    _request: PredictiveRequest,
   ): Promise<PredictiveInsight | null> {
     try {
       await this.ensureInitialized();
@@ -392,7 +392,7 @@ export class PredictiveAnalyticsService {
             : "non-compliant",
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error predicting patient outcome:", error);
       return null;
     }
@@ -402,15 +402,15 @@ export class PredictiveAnalyticsService {
    * Generate comprehensive predictive insights
    */
   async generateInsights(
-    request: PredictiveRequest,
+    _request: PredictiveRequest,
   ): Promise<PredictiveInsight[]> {
     try {
       await this.ensureInitialized();
 
       const insights: (PredictiveInsight | null)[] = await Promise.all([
-        this.predictNoShowRisk(request).catch(() => null),
-        this.predictRevenueForecast(request).catch(() => null),
-        this.predictPatientOutcome(request).catch(() => null),
+        this.predictNoShowRisk(_request).catch(_() => null),
+        this.predictRevenueForecast(_request).catch(_() => null),
+        this.predictPatientOutcome(_request).catch(_() => null),
       ]);
 
       // Filter out null results and return valid insights
@@ -419,15 +419,14 @@ export class PredictiveAnalyticsService {
       );
 
       // If no valid insights were generated, throw an error
-      if (
-        validInsights.length === 0 &&
+      if (_validInsights.length === 0 &&
         insights.some((insight) => insight === null)
       ) {
         throw new Error("Failed to generate predictive insights");
       }
 
       return validInsights;
-    } catch (error) {
+    } catch (_error) {
       console.error("Error generating insights:", error);
       throw error; // Re-throw for proper error handling
     }

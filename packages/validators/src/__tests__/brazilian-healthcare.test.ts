@@ -13,9 +13,9 @@ import {
   type HealthcareValidationResult
 } from '../index.js';
 
-describe('Brazilian Healthcare Validators', () => {
+describe(_'Brazilian Healthcare Validators',_() => {
   describe('CNS (Cartão Nacional de Saúde) Validation', () => {
-    test('should validate correct CNS formats', () => {
+    test(_'should validate correct CNS formats',_() => {
       // Valid CNS examples (these are test patterns, not real CNS numbers)
       const validCNS = [
         '123456789012345', // 15 digits
@@ -29,7 +29,7 @@ describe('Brazilian Healthcare Validators', () => {
       });
     });
 
-    test('should reject invalid CNS formats', () => {
+    test(_'should reject invalid CNS formats',_() => {
       const invalidCNS = [
         '12345678901234', // 14 digits
         '1234567890123456', // 16 digits
@@ -47,8 +47,8 @@ describe('Brazilian Healthcare Validators', () => {
     });
   });
 
-  describe('TUSS Code Validation', () => {
-    test('should validate correct TUSS code formats', () => {
+  describe(_'TUSS Code Validation',_() => {
+    test(_'should validate correct TUSS code formats',_() => {
       const validTUSS = [
         '10101', // 5 digits - medical procedure
         '20101010', // 8 digits - surgical procedure  
@@ -62,7 +62,7 @@ describe('Brazilian Healthcare Validators', () => {
       });
     });
 
-    test('should reject invalid TUSS code formats', () => {
+    test(_'should reject invalid TUSS code formats',_() => {
       const invalidTUSS = [
         '0101', // 4 digits
         '101010101010', // 12 digits
@@ -80,7 +80,7 @@ describe('Brazilian Healthcare Validators', () => {
   });
 
   describe('CRM (Conselho Regional de Medicina) Validation', () => {
-    test('should validate correct CRM formats', () => {
+    test(_'should validate correct CRM formats',_() => {
       const validCRM = [
         'CRM/SP123456', // São Paulo
         'CRM/RJ98765', // Rio de Janeiro
@@ -94,7 +94,7 @@ describe('Brazilian Healthcare Validators', () => {
       });
     });
 
-    test('should reject invalid CRM formats', () => {
+    test(_'should reject invalid CRM formats',_() => {
       const invalidCRM = [
         'CRM/XX123456', // Invalid state code
         'CRM/SP123', // Too short
@@ -112,8 +112,8 @@ describe('Brazilian Healthcare Validators', () => {
     });
   });
 
-  describe('Comprehensive Healthcare Document Validation', () => {
-    test('should validate CNS documents with detailed results', () => {
+  describe(_'Comprehensive Healthcare Document Validation',_() => {
+    test(_'should validate CNS documents with detailed results',_() => {
       const result: HealthcareValidationResult = validateHealthcareDocument(
         '123456789012345', 
         'cns'
@@ -126,7 +126,7 @@ describe('Brazilian Healthcare Validators', () => {
       expect(result.errors).toHaveLength(0);
     });
 
-    test('should return errors for invalid CNS documents', () => {
+    test(_'should return errors for invalid CNS documents',_() => {
       const result: HealthcareValidationResult = validateHealthcareDocument(
         '12345678901234', // Invalid (14 digits)
         'cns'
@@ -138,7 +138,7 @@ describe('Brazilian Healthcare Validators', () => {
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
-    test('should validate TUSS documents', () => {
+    test(_'should validate TUSS documents',_() => {
       const result: HealthcareValidationResult = validateHealthcareDocument(
         '10101', 
         'tuss'
@@ -149,7 +149,7 @@ describe('Brazilian Healthcare Validators', () => {
       expect(result.normalized).toBe('10101');
     });
 
-    test('should validate CRM documents', () => {
+    test(_'should validate CRM documents',_() => {
       const result: HealthcareValidationResult = validateHealthcareDocument(
         'CRM/SP123456', 
         'crm'
@@ -161,8 +161,8 @@ describe('Brazilian Healthcare Validators', () => {
     });
   });
 
-  describe('Batch Document Validation', () => {
-    test('should validate multiple healthcare documents', () => {
+  describe(_'Batch Document Validation',_() => {
+    test(_'should validate multiple healthcare documents',_() => {
       const documents = [
         { value: '123456789012345', type: 'cns' as const },
         { value: '10101', type: 'tuss' as const },
@@ -180,35 +180,35 @@ describe('Brazilian Healthcare Validators', () => {
     });
   });
 
-  describe('Healthcare Data Sanitization', () => {
-    test('should sanitize CPF for safe logging', () => {
+  describe(_'Healthcare Data Sanitization',_() => {
+    test(_'should sanitize CPF for safe logging',_() => {
       const sanitized = sanitizeHealthcareData('123.456.789-01', 'cpf');
       expect(sanitized).toBe('123.456.*-01');
     });
 
-    test('should sanitize CNS for safe logging', () => {
+    test(_'should sanitize CNS for safe logging',_() => {
       const sanitized = sanitizeHealthcareData('123 45678901 23', 'cns');
       expect(sanitized).toBe('123 4567*-23');
     });
 
-    test('should sanitize phone numbers for safe logging', () => {
+    test(_'should sanitize phone numbers for safe logging',_() => {
       const sanitized = sanitizeHealthcareData('(11) 98765-4321', 'phone');
       expect(sanitized).toBe('(11) 987*-21');
     });
 
-    test('should sanitize emails for safe logging', () => {
+    test(_'should sanitize emails for safe logging',_() => {
       const sanitized = sanitizeHealthcareData('patient@example.com', 'email');
       expect(sanitized).toBe('pat***@example.com');
     });
 
-    test('should return redacted for unknown data types', () => {
+    test(_'should return redacted for unknown data types',_() => {
       const sanitized = sanitizeHealthcareData('sensitive data', 'unknown' as any);
       expect(sanitized).toBe('[REDACTED]');
     });
   });
 
-  describe('Error Handling', () => {
-    test('should handle null/undefined inputs gracefully', () => {
+  describe(_'Error Handling',_() => {
+    test(_'should handle null/undefined inputs gracefully',_() => {
       const nullResult = validateHealthcareDocument(null as any, 'cns');
       const undefinedResult = validateHealthcareDocument(undefined as any, 'cns');
 
@@ -218,7 +218,7 @@ describe('Brazilian Healthcare Validators', () => {
       expect(undefinedResult.errors.length).toBeGreaterThan(0);
     });
 
-    test('should handle unsupported document types', () => {
+    test(_'should handle unsupported document types',_() => {
       const result = validateHealthcareDocument('123456', 'unsupported' as any);
       
       expect(result.isValid).toBe(false);
@@ -226,8 +226,8 @@ describe('Brazilian Healthcare Validators', () => {
     });
   });
 
-  describe('Healthcare Compliance Scenarios', () => {
-    test('should validate complete patient registration data', () => {
+  describe(_'Healthcare Compliance Scenarios',_() => {
+    test(_'should validate complete patient registration data',_() => {
       const patientData = [
         { value: '123.456.789-01', type: 'cpf' as const },
         { value: '715 123456789 12', type: 'cns' as const },
@@ -249,7 +249,7 @@ describe('Brazilian Healthcare Validators', () => {
       expect(criticalErrors.length).toBe(0);
     });
 
-    test('should identify and report invalid healthcare data', () => {
+    test(_'should identify and report invalid healthcare data',_() => {
       const invalidData = [
         { value: '123.456.789-01', type: 'cpf' as const }, // Valid
         { value: '12345678901234', type: 'cns' as const }, // Invalid CNS

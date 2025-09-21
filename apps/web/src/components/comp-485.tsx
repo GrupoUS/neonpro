@@ -2,7 +2,7 @@ import { Loader2 } from 'lucide-react';
 import { lazy, Suspense } from 'react';
 
 // Lazy load TanStack Table for better bundle splitting
-const TanStackTable = lazy(() => import('@tanstack/react-table'));
+const TanStackTable = lazy(_() => import('@tanstack/react-table'));
 
 // Loading component for table
 const TableLoading = () => (
@@ -107,8 +107,7 @@ function LazyDataTable() {
   } = TanStackTable;
 
   // Custom filter function for multi-column searching
-  const multiColumnFilterFn: FilterFn<Item> = (
-    row,
+  const multiColumnFilterFn: FilterFn<Item> = (_row,
     _columnId,
     filterValue: string,
   ) => {
@@ -117,9 +116,7 @@ function LazyDataTable() {
     return searchableRowContent.includes(searchTerm);
   };
 
-  const statusFilterFn: FilterFn<Item> = (
-    row,
-    columnId,
+  const statusFilterFn: FilterFn<Item> = (_row,_columnId,
     filterValue: string[],
   ) => {
     if (!filterValue?.length) return true;
@@ -130,7 +127,7 @@ function LazyDataTable() {
   const columns: ColumnDef<Item>[] = [
     {
       id: 'select',
-      header: ({ table }) => (
+      header: (_{ table }) => (
         <Checkbox
           checked={table.getIsAllPageRowsSelected()
             || (table.getIsSomePageRowsSelected() && 'indeterminate')}
@@ -139,7 +136,7 @@ function LazyDataTable() {
           aria-label='Select all'
         />
       ),
-      cell: ({ row }) => (
+      cell: (_{ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
           onCheckedChange={(value: boolean | 'indeterminate') => row.toggleSelected(Boolean(value))}
@@ -153,7 +150,7 @@ function LazyDataTable() {
     {
       header: 'Name',
       accessorKey: 'name',
-      cell: ({ row }) => <div className='font-medium'>{row.getValue('name')}</div>,
+      cell: (_{ row }) => <div className='font-medium'>{row.getValue('name')}</div>,
       size: 180,
       filterFn: multiColumnFilterFn,
       enableHiding: false,
@@ -166,7 +163,7 @@ function LazyDataTable() {
     {
       header: 'Location',
       accessorKey: 'location',
-      cell: ({ row }) => (
+      cell: (_{ row }) => (
         <div>
           <span className='text-lg leading-none'>{row.original.flag}</span>{' '}
           {row.getValue('location')}
@@ -177,7 +174,7 @@ function LazyDataTable() {
     {
       header: 'Status',
       accessorKey: 'status',
-      cell: ({ row }) => (
+      cell: (_{ row }) => (
         <Badge
           className={cn(
             row.getValue('status') === 'Inactive'
@@ -197,7 +194,7 @@ function LazyDataTable() {
     {
       header: 'Balance',
       accessorKey: 'balance',
-      cell: ({ row }) => {
+      cell: (_{ row }) => {
         const amount = parseFloat(row.getValue('balance'));
         const formatted = new Intl.NumberFormat('en-US', {
           style: 'currency',
@@ -210,7 +207,7 @@ function LazyDataTable() {
     {
       id: 'actions',
       header: () => <span className='sr-only'>Actions</span>,
-      cell: ({ row }) => <RowActions row={row} />,
+      cell: (_{ row }) => <RowActions row={row} />,
       size: 60,
       enableHiding: false,
     },
@@ -274,7 +271,7 @@ function DataTableContent({
   ]);
 
   const [data, setData] = useState<Item[]>([]);
-  useEffect(() => {
+  useEffect(_() => {
     async function fetchPosts() {
       const res = await fetch(
         'https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/users-01_fertyx.json',
@@ -316,7 +313,7 @@ function DataTableContent({
   });
 
   // Get unique status values
-  const uniqueStatusValues = useMemo(() => {
+  const uniqueStatusValues = useMemo(_() => {
     const statusColumn = table.getColumn('status');
 
     if (!statusColumn) return [];
@@ -327,13 +324,13 @@ function DataTableContent({
   }, [table.getColumn('status')?.getFacetedUniqueValues()]);
 
   // Get counts for each status
-  const statusCounts = useMemo(() => {
+  const statusCounts = useMemo(_() => {
     const statusColumn = table.getColumn('status');
     if (!statusColumn) return new Map();
     return statusColumn.getFacetedUniqueValues();
   }, [table.getColumn('status')?.getFacetedUniqueValues()]);
 
-  const selectedStatuses = useMemo(() => {
+  const selectedStatuses = useMemo(_() => {
     const filterValue = table.getColumn('status')?.getFilterValue() as string[];
     return filterValue ?? [];
   }, [table.getColumn('status')?.getFilterValue()]);
@@ -418,7 +415,7 @@ function DataTableContent({
                   Filters
                 </div>
                 <div className='space-y-3'>
-                  {uniqueStatusValues.map((value, i) => (
+                  {uniqueStatusValues.map(_(value,_i) => (
                     <div key={value} className='flex items-center gap-2'>
                       <Checkbox
                         id={`${id}-${i}`}

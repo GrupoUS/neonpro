@@ -39,9 +39,9 @@ const createMockChain = (data: any, error: any = null) => {
     limit: vi.fn().mockReturnThis(),
     range: vi.fn().mockReturnThis(),
     abortSignal: vi.fn().mockReturnThis(),
-    single: vi.fn(() => Promise.resolve({ data, error })),
-    maybeSingle: vi.fn(() => Promise.resolve({ data, error })),
-    then: vi.fn((callback) => {
+    single: vi.fn(_() => Promise.resolve({ data, error })),
+    maybeSingle: vi.fn(_() => Promise.resolve({ data, error })),
+    then: vi.fn(_(callback) => {
       const result = { data, error };
       return Promise.resolve(callback(result));
     })
@@ -53,24 +53,24 @@ const createMockChain = (data: any, error: any = null) => {
 // Mock Supabase client
 const mockSupabaseClient = {
   from: vi.fn(),
-  rpc: vi.fn(() => Promise.resolve({ data: { success: true }, error: null }))
+  rpc: vi.fn(_() => Promise.resolve({ data: { success: true }, error: null }))
 };
 
 // Mock the Supabase client creation
-vi.mock('@supabase/supabase-js', () => ({
+vi.mock(_'@supabase/supabase-js',_() => ({
   createClient: vi.fn(() => mockSupabaseClient)
 }));
 
-describe('ConsentService', () => {
+describe(_'ConsentService',_() => {
   let consentService: ConsentService;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
     consentService = new ConsentService(mockSupabaseClient as any);
   });
 
-  describe('requestConsent', () => {
-    it('should request consent successfully', async () => {
+  describe(_'requestConsent',_() => {
+    it(_'should request consent successfully',_async () => {
       const mockData = { id: 'consent-123', status: 'pending' };
       const mockChain = createMockChain(mockData);
       mockSupabaseClient.from.mockReturnValue(mockChain);
@@ -81,7 +81,7 @@ describe('ConsentService', () => {
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('consent_records');
     });
 
-    it('should handle request consent error', async () => {
+    it(_'should handle request consent error',_async () => {
       const mockChain = createMockChain(null, new Error('Database error'));
       mockSupabaseClient.from.mockReturnValue(mockChain);
 
@@ -91,8 +91,8 @@ describe('ConsentService', () => {
     });
   });
 
-  describe('grantConsent', () => {
-    it('should grant consent successfully', async () => {
+  describe(_'grantConsent',_() => {
+    it(_'should grant consent successfully',_async () => {
       const mockChain = createMockChain({ id: 'consent-123', status: 'granted' });
       mockSupabaseClient.from.mockReturnValue(mockChain);
 
@@ -102,7 +102,7 @@ describe('ConsentService', () => {
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('consent_records');
     });
 
-    it('should handle grant consent error', async () => {
+    it(_'should handle grant consent error',_async () => {
       const mockChain = createMockChain(null, new Error('Update failed'));
       mockSupabaseClient.from.mockReturnValue(mockChain);
 
@@ -112,8 +112,8 @@ describe('ConsentService', () => {
     });
   });
 
-  describe('revokeConsent', () => {
-    it('should revoke consent successfully', async () => {
+  describe(_'revokeConsent',_() => {
+    it(_'should revoke consent successfully',_async () => {
       // Mock patient lookup first - return valid patient data
       const patientData = { id: 'patient-123', clinic_id: 'clinic-123' };
       
@@ -144,8 +144,8 @@ describe('ConsentService', () => {
     });
   });
 
-  describe('verifyConsent', () => {
-    it('should verify consent successfully', async () => {
+  describe(_'verifyConsent',_() => {
+    it(_'should verify consent successfully',_async () => {
       const mockData = { id: 'consent-123', status: 'granted' };
       const mockChain = createMockChain(mockData);
       mockSupabaseClient.from.mockReturnValue(mockChain);
@@ -155,7 +155,7 @@ describe('ConsentService', () => {
       expect(result).toBe(true);
     });
 
-    it('should return false when consent not found', async () => {
+    it(_'should return false when consent not found',_async () => {
       const mockChain = createMockChain(null);
       mockSupabaseClient.from.mockReturnValue(mockChain);
 
@@ -165,8 +165,8 @@ describe('ConsentService', () => {
     });
   });
 
-  describe('getPendingConsents', () => {
-    it('should get pending consents successfully', async () => {
+  describe(_'getPendingConsents',_() => {
+    it(_'should get pending consents successfully',_async () => {
       const mockData = [{ id: 'consent-123', status: 'pending' }];
       const mockChain = createMockChain(mockData);
       mockSupabaseClient.from.mockReturnValue(mockChain);
@@ -177,8 +177,8 @@ describe('ConsentService', () => {
     });
   });
 
-  describe('getConsentHistory', () => {
-    it('should get consent history successfully', async () => {
+  describe(_'getConsentHistory',_() => {
+    it(_'should get consent history successfully',_async () => {
       // Mock patient lookup first
       const patientData = { id: 'patient-123', clinic_id: 'clinic-123' };
       
@@ -212,7 +212,7 @@ describe('ConsentService', () => {
         id: 'audit-123',
         sessionId: 'session-123',
         eventType: 'consent-given',
-        userId: 'user-123',
+        _userId: 'user-123',
         userRole: 'patient',
         dataClassification: 'general-medical',
         timestamp: '2023-01-01T00:00:00Z',
@@ -222,8 +222,8 @@ describe('ConsentService', () => {
     });
   });
 
-  describe('deleteUserData', () => {
-    it('should delete user data successfully', async () => {
+  describe(_'deleteUserData',_() => {
+    it(_'should delete user data successfully',_async () => {
       // Mock patient lookup - success
       const patientData = { id: 'patient-123', user_id: 'user-123', name: 'John Doe', clinic_id: 'clinic-123' };
       
@@ -249,7 +249,7 @@ describe('ConsentService', () => {
       expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('create_webrtc_audit_log', expect.any(Object));
     });
 
-    it('should throw error when patient not found', async () => {
+    it(_'should throw error when patient not found',_async () => {
       const mockChain = createMockChain(null, new Error('Patient not found'));
       mockSupabaseClient.from.mockReturnValue(mockChain);
 
@@ -257,8 +257,8 @@ describe('ConsentService', () => {
     });
   });
 
-  describe('exportUserData', () => {
-    it('should export user data successfully', async () => {
+  describe(_'exportUserData',_() => {
+    it(_'should export user data successfully',_async () => {
       const patientData = { id: 'patient-123', user_id: 'user-123', name: 'John Doe' };
       const consentData = [{ id: 'consent-123', status: 'granted' }];
       const webrtcData = [{ id: 'webrtc-123', action: 'connect' }];
@@ -293,7 +293,7 @@ describe('ConsentService', () => {
       expect(result.exportDate).toBeDefined();
     });
 
-    it('should throw error when patient not found', async () => {
+    it(_'should throw error when patient not found',_async () => {
       const mockChain = createMockChain(null, new Error('Patient not found'));
       mockSupabaseClient.from.mockReturnValue(mockChain);
 

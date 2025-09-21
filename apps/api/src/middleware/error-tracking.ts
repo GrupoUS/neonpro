@@ -11,7 +11,7 @@ import { logger } from '../lib/logger';
  */
 export function setupGlobalErrorHandlers(): void {
   // Handle uncaught exceptions
-  process.on('uncaughtException', (error: Error) => {
+  process.on(_'uncaughtException', (error: Error) => {
     logger.error('Uncaught Exception', {
       error: error.message,
       stack: error.stack,
@@ -26,7 +26,7 @@ export function setupGlobalErrorHandlers(): void {
   });
 
   // Handle unhandled promise rejections
-  process.on('unhandledRejection', (reason: unknown, _promise: Promise<unknown>) => {
+  process.on(_'unhandledRejection', (reason: unknown, _promise: Promise<unknown>) => {
     logger.error('Unhandled Promise Rejection', {
       reason: reason instanceof Error ? reason.message : String(reason),
       stack: reason instanceof Error ? reason.stack : undefined,
@@ -41,13 +41,13 @@ export function setupGlobalErrorHandlers(): void {
   });
 
   // Handle SIGTERM for graceful shutdown
-  process.on('SIGTERM', () => {
+  process.on(_'SIGTERM',_() => {
     logger.info('Received SIGTERM, shutting down gracefully...');
     process.exit(0);
   });
 
   // Handle SIGINT for graceful shutdown
-  process.on('SIGINT', () => {
+  process.on(_'SIGINT',_() => {
     logger.info('Received SIGINT, shutting down gracefully...');
     process.exit(0);
   });
@@ -62,7 +62,7 @@ export function errorTrackingMiddleware() {
   return async (c: any, next: () => Promise<void>) => {
     try {
       await next();
-    } catch (error) {
+    } catch (_error) {
       // Log the error
       logger.error('Request error', {
         error: error instanceof Error ? error.message : String(error),

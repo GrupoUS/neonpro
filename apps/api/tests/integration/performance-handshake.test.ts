@@ -48,7 +48,7 @@ describe('HTTPS Handshake Performance - Integration Test', () => {
           handshakeTimes.push(totalTime);
 
           console.log(`Handshake attempt ${i + 1}: ${totalTime.toFixed(2)}ms`);
-        } catch (error) {
+        } catch (_error) {
           console.error(`Handshake test ${i + 1} failed:`, error);
         }
 

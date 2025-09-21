@@ -715,7 +715,7 @@ export type GeneratedDatabase = {
           metadata: GeneratedJson | null
           model_used: string | null
           response_time_ms: number | null
-          role: string
+          _role: string
           session_id: string
           tokens_used: number | null
         }
@@ -728,7 +728,7 @@ export type GeneratedDatabase = {
           metadata?: GeneratedJson | null
           model_used?: string | null
           response_time_ms?: number | null
-          role: string
+          _role: string
           session_id: string
           tokens_used?: number | null
         }
@@ -741,7 +741,7 @@ export type GeneratedDatabase = {
           metadata?: GeneratedJson | null
           model_used?: string | null
           response_time_ms?: number | null
-          role?: string
+          _role?: string
           session_id?: string
           tokens_used?: number | null
         }
@@ -758,7 +758,7 @@ export type GeneratedDatabase = {
       ai_chat_sessions: {
         Row: {
           clinic_id: string | null
-          context: GeneratedJson | null
+          _context: GeneratedJson | null
           created_at: string | null
           id: string
           last_message_at: string | null
@@ -771,7 +771,7 @@ export type GeneratedDatabase = {
         }
         Insert: {
           clinic_id?: string | null
-          context?: GeneratedJson | null
+          _context?: GeneratedJson | null
           created_at?: string | null
           id?: string
           last_message_at?: string | null
@@ -784,7 +784,7 @@ export type GeneratedDatabase = {
         }
         Update: {
           clinic_id?: string | null
-          context?: GeneratedJson | null
+          _context?: GeneratedJson | null
           created_at?: string | null
           id?: string
           last_message_at?: string | null
@@ -1990,7 +1990,7 @@ export type GeneratedDatabase = {
       }
       assistant_conversations: {
         Row: {
-          context: GeneratedJson | null
+          _context: GeneratedJson | null
           created_at: string | null
           id: string
           preferences: GeneratedJson | null
@@ -2000,7 +2000,7 @@ export type GeneratedDatabase = {
           user_id: string
         }
         Insert: {
-          context?: GeneratedJson | null
+          _context?: GeneratedJson | null
           created_at?: string | null
           id?: string
           preferences?: GeneratedJson | null
@@ -2010,7 +2010,7 @@ export type GeneratedDatabase = {
           user_id: string
         }
         Update: {
-          context?: GeneratedJson | null
+          _context?: GeneratedJson | null
           created_at?: string | null
           id?: string
           preferences?: GeneratedJson | null
@@ -2082,7 +2082,7 @@ export type GeneratedDatabase = {
           id: string
           metadata: GeneratedJson | null
           processing_time: number | null
-          role: string
+          _role: string
           tokens_used: number | null
           user_id: string
         }
@@ -2093,7 +2093,7 @@ export type GeneratedDatabase = {
           id?: string
           metadata?: GeneratedJson | null
           processing_time?: number | null
-          role: string
+          _role: string
           tokens_used?: number | null
           user_id: string
         }
@@ -2104,7 +2104,7 @@ export type GeneratedDatabase = {
           id?: string
           metadata?: GeneratedJson | null
           processing_time?: number | null
-          role?: string
+          _role?: string
           tokens_used?: number | null
           user_id?: string
         }
@@ -20214,7 +20214,7 @@ export type GeneratedDatabase = {
           professional_title: string | null
           profile_sync_status: string | null
           restricted_areas: string[] | null
-          role: string | null
+          _role: string | null
           specialty: string[] | null
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
@@ -20265,7 +20265,7 @@ export type GeneratedDatabase = {
           professional_title?: string | null
           profile_sync_status?: string | null
           restricted_areas?: string[] | null
-          role?: string | null
+          _role?: string | null
           specialty?: string[] | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -20316,7 +20316,7 @@ export type GeneratedDatabase = {
           professional_title?: string | null
           profile_sync_status?: string | null
           restricted_areas?: string[] | null
-          role?: string | null
+          _role?: string | null
           specialty?: string[] | null
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -21329,7 +21329,7 @@ export type GeneratedDatabase = {
           id: string
           is_granted: boolean | null
           resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"]
-          role: string
+          _role: string
         }
         Insert: {
           action: GeneratedDatabase["public"]["Enums"]["permission_action"]
@@ -21340,7 +21340,7 @@ export type GeneratedDatabase = {
           id?: string
           is_granted?: boolean | null
           resource_type: GeneratedDatabase["public"]["Enums"]["resource_type"]
-          role: string
+          _role: string
         }
         Update: {
           action?: GeneratedDatabase["public"]["Enums"]["permission_action"]
@@ -21351,7 +21351,7 @@ export type GeneratedDatabase = {
           id?: string
           is_granted?: boolean | null
           resource_type?: GeneratedDatabase["public"]["Enums"]["resource_type"]
-          role?: string
+          _role?: string
         }
         Relationships: [
           {
@@ -22630,7 +22630,7 @@ export type GeneratedDatabase = {
           is_active: boolean | null
           name: string
           phone: string | null
-          role: string
+          _role: string
           specialization: string | null
           updated_at: string | null
           user_id: string | null
@@ -22644,7 +22644,7 @@ export type GeneratedDatabase = {
           is_active?: boolean | null
           name: string
           phone?: string | null
-          role: string
+          _role: string
           specialization?: string | null
           updated_at?: string | null
           user_id?: string | null
@@ -22658,7 +22658,7 @@ export type GeneratedDatabase = {
           is_active?: boolean | null
           name?: string
           phone?: string | null
-          role?: string
+          _role?: string
           specialization?: string | null
           updated_at?: string | null
           user_id?: string | null
@@ -27411,7 +27411,7 @@ export type GeneratedDatabase = {
           last_login_at: string | null
           mfa_enabled: boolean
           permissions: GeneratedJson
-          role: string
+          _role: string
           updated_at: string
         }
         Insert: {
@@ -27423,7 +27423,7 @@ export type GeneratedDatabase = {
           last_login_at?: string | null
           mfa_enabled?: boolean
           permissions?: GeneratedJson
-          role?: string
+          _role?: string
           updated_at?: string
         }
         Update: {
@@ -27435,7 +27435,7 @@ export type GeneratedDatabase = {
           last_login_at?: string | null
           mfa_enabled?: boolean
           permissions?: GeneratedJson
-          role?: string
+          _role?: string
           updated_at?: string
         }
         Relationships: []
@@ -27518,7 +27518,7 @@ export type GeneratedDatabase = {
           clinic_id: string | null
           command_text: string
           confidence_score: number | null
-          context: GeneratedJson | null
+          _context: GeneratedJson | null
           created_at: string | null
           entities_extracted: GeneratedJson | null
           error_message: string | null
@@ -27534,7 +27534,7 @@ export type GeneratedDatabase = {
           clinic_id?: string | null
           command_text: string
           confidence_score?: number | null
-          context?: GeneratedJson | null
+          _context?: GeneratedJson | null
           created_at?: string | null
           entities_extracted?: GeneratedJson | null
           error_message?: string | null
@@ -27550,7 +27550,7 @@ export type GeneratedDatabase = {
           clinic_id?: string | null
           command_text?: string
           confidence_score?: number | null
-          context?: GeneratedJson | null
+          _context?: GeneratedJson | null
           created_at?: string | null
           entities_extracted?: GeneratedJson | null
           error_message?: string | null
@@ -28943,7 +28943,7 @@ export type GeneratedDatabase = {
           next_review_date: string | null
           professional_title: string | null
           registrations_expiring_soon: number | null
-          role: string | null
+          _role: string | null
           total_certifications: number | null
           total_registrations: number | null
           updated_at: string | null

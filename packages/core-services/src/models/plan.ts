@@ -188,7 +188,7 @@ export class Plan {
   /**
    * Validates if the plan can handle a specific request
    */
-  canHandleRequest(request: {
+  canHandleRequest(_request: {
     tokens?: number;
     concurrentRequests?: number;
     features?: AIFeatureCode[];
@@ -339,8 +339,7 @@ export class Plan {
     additionalBenefits: string[];
     costDifference?: string;
   } {
-    const missingFeatures = desiredFeatures.filter(
-      (feature) => !this.hasFeature(feature),
+    const missingFeatures = desiredFeatures.filter(_(feature) => !this.hasFeature(feature),
     );
 
     if (missingFeatures.length === 0) {
@@ -361,7 +360,7 @@ export class Plan {
       const tier = tiers[i];
       const plan = new Plan(tier);
 
-      if (desiredFeatures.every((feature) => plan.hasFeature(feature))) {
+      if (_desiredFeatures.every((feature) => plan.hasFeature(feature))) {
         recommendedPlan = tier;
         break;
       }
@@ -462,8 +461,7 @@ export class Plan {
    * Gets all available plans
    */
   static getAllPlans(): Plan[] {
-    return (["free", "trial", "pro", "enterprise"] as SubscriptionTier[]).map(
-      (tier) => new Plan(tier),
+    return (["free", "trial", "pro", "enterprise"] as SubscriptionTier[]).map(_(tier) => new Plan(tier),
     );
   }
 

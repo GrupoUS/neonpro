@@ -8,24 +8,16 @@
 import { Database } from '@/types/database';
 import { createClient } from '@supabase/supabase-js';
 import { createHash } from 'crypto';
-import { z } from 'zod';
-
 // Input validation schemas
 const PermissionContextSchema = z.object({
-  userId: z.string().min(1, 'User ID is required').max(255),
+  _userId: z.string().min(1, 'User ID is required').max(255),
   sessionId: z.string().max(255).optional(),
   patientId: z.string().max(255).optional(),
-  action: z.enum(['read', 'write', 'delete', 'admin'], {
+  action: z.enum(_['read',_'write',_'delete',_'admin'], {
     errorMap: () => ({ message: 'Invalid action type' }),
   }),
-  resource: z.enum([
-    'agent_sessions',
-    'agent_messages',
-    'agent_context',
-    'agent_audit',
-    'patient_data',
-    'financial_data',
-  ], {
+  resource: z.enum(_[
+    'agent_sessions',_'agent_messages',_'agent_context',_'agent_audit',_'patient_data',_'financial_data',_], {
     errorMap: () => ({ message: 'Invalid resource type' }),
   }),
   metadata: z.record(z.any()).optional(),
@@ -37,7 +29,7 @@ const SessionIdSchema = z.string().min(1, 'Session ID is required').max(255);
 export type ValidatedPermissionContext = z.infer<typeof PermissionContextSchema>;
 
 export interface PermissionContext {
-  userId: string;
+  _userId: string;
   sessionId?: string;
   patientId?: string;
   action: 'read' | 'write' | 'delete' | 'admin';
@@ -58,14 +50,14 @@ export interface PermissionResult {
   auditLog?: {
     action: string;
     resource: string;
-    userId: string;
+    _userId: string;
     details: Record<string, any>;
   };
 }
 
 export interface UserRole {
   id: string;
-  role: 'admin' | 'clinic_admin' | 'professional' | 'staff' | 'patient';
+  _role: 'admin' | 'clinic_admin' | 'professional' | 'staff' | 'patient';
   clinicId?: string;
   permissions: string[];
   scopes: string[];
@@ -96,22 +88,22 @@ export class AgentPermissionService {
   /**
    * Check if a user has permission to perform an action
    */
-  async checkPermission(context: PermissionContext): Promise<PermissionResult> {
+  async checkPermission(_context: PermissionContext): Promise<PermissionResult> {
     const startTime = Date.now();
 
     try {
       // Validate input
-      const validatedContext = this.validateAndSanitizeContext(context);
+      const validatedContext = this.validateAndSanitizeContext(_context);
 
       // Rate limiting check
-      if (!(await this.checkRateLimit(validatedContext.userId))) {
+      if (!(await this.checkRateLimit(validatedContext._userId))) {
         return {
           granted: false,
           reason: 'Rate limit exceeded',
           auditLog: {
             action: validatedContext.action,
             resource: validatedContext.resource,
-            userId: validatedContext.userId,
+            _userId: validatedContext.userId,
             details: {
               denied: true,
               reason: 'rate_limit_exceeded',
@@ -122,7 +114,7 @@ export class AgentPermissionService {
       }
 
       // Get user roles from cache or database
-      const userRoles = await this.getUserRoles(validatedContext.userId);
+      const userRoles = await this.getUserRoles(validatedContext._userId);
 
       // Check each role for required permission
       for (const role of userRoles) {
@@ -133,7 +125,7 @@ export class AgentPermissionService {
             ...validatedContext,
             granted: true,
             processingTime: Date.now() - startTime,
-            role: role.role,
+            _role: role.role,
           });
 
           return result;
@@ -147,7 +139,7 @@ export class AgentPermissionService {
         auditLog: {
           action: validatedContext.action,
           resource: validatedContext.resource,
-          userId: validatedContext.userId,
+          _userId: validatedContext.userId,
           details: {
             denied: true,
             reason: 'no_sufficient_role',
@@ -163,7 +155,7 @@ export class AgentPermissionService {
       });
 
       return denialResult;
-    } catch (error) {
+    } catch (_error) {
       console.error('Permission check error:', error);
 
       // Fail secure - deny permission on error
@@ -173,7 +165,7 @@ export class AgentPermissionService {
         auditLog: {
           action: validatedContext.action,
           resource: validatedContext.resource,
-          userId: validatedContext.userId,
+          _userId: validatedContext.userId,
           details: {
             error: error instanceof Error ? this.sanitizeError(error) : 'Unknown error',
             processingTime: Date.now() - startTime,
@@ -196,9 +188,9 @@ export class AgentPermissionService {
   /**
    * Get user roles with caching and validation
    */
-  private async getUserRoles(userId: string): Promise<UserRole[]> {
+  private async getUserRoles(_userId: string): Promise<UserRole[]> {
     // Validate and sanitize userId
-    const validatedUserId = UserIdSchema.parse(userId);
+    const validatedUserId = UserIdSchema.parse(_userId);
     const cacheKey = this.generateSecureCacheKey(validatedUserId);
 
     // Check cache first
@@ -227,7 +219,7 @@ export class AgentPermissionService {
 
       const roles: UserRole[] = data?.map(role => ({
         id: this.sanitizeString(role.id),
-        role: this.validateRoleType(role.role),
+        _role: this.validateRoleType(role._role),
         clinicId: role.clinic_id ? this.sanitizeString(role.clinic_id) : undefined,
         permissions: role.role_permissions?.map(rp => this.sanitizePermissionString(rp.permission))
           || [],
@@ -244,7 +236,7 @@ export class AgentPermissionService {
       }
 
       return roles;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching user roles:', error);
       // Return empty array on error - fail secure
       return [];
@@ -255,8 +247,8 @@ export class AgentPermissionService {
    * Check permission for a specific role
    */
   private async checkRolePermission(
-    role: UserRole,
-    context: PermissionContext,
+    _role: UserRole,
+    _context: PermissionContext,
   ): Promise<PermissionResult> {
     const basePermission = `${context.action}:${context.resource}`;
 
@@ -266,21 +258,21 @@ export class AgentPermissionService {
     }
 
     // Role-specific permission logic
-    switch (role.role) {
+    switch (role._role) {
       case 'admin':
-        return this.checkAdminPermission(role, context);
+        return this.checkAdminPermission(role, _context);
 
       case 'clinic_admin':
-        return this.checkClinicAdminPermission(role, context);
+        return this.checkClinicAdminPermission(role, _context);
 
       case 'professional':
-        return this.checkProfessionalPermission(role, context);
+        return this.checkProfessionalPermission(role, _context);
 
       case 'staff':
-        return this.checkStaffPermission(role, context);
+        return this.checkStaffPermission(role, _context);
 
       case 'patient':
-        return this.checkPatientPermission(role, context);
+        return this.checkPatientPermission(role, _context);
 
       default:
         return { granted: false, reason: 'Unknown role type' };
@@ -291,13 +283,13 @@ export class AgentPermissionService {
    * Admin permissions - full access
    */
   private async checkAdminPermission(
-    role: UserRole,
-    context: PermissionContext,
+    _role: UserRole,
+    _context: PermissionContext,
   ): Promise<PermissionResult> {
     return {
       granted: true,
       conditions: {
-        role: 'admin',
+        _role: 'admin',
         scope: 'global',
       },
     };
@@ -307,8 +299,8 @@ export class AgentPermissionService {
    * Clinic admin permissions - clinic-wide access
    */
   private async checkClinicAdminPermission(
-    role: UserRole,
-    context: PermissionContext,
+    _role: UserRole,
+    _context: PermissionContext,
   ): Promise<PermissionResult> {
     // For patient data access, verify patient belongs to clinic
     if (context.resource === 'patient_data' && context.patientId) {
@@ -329,7 +321,7 @@ export class AgentPermissionService {
     return {
       granted: true,
       conditions: {
-        role: 'clinic_admin',
+        _role: 'clinic_admin',
         scope: 'clinic',
         clinicId: role.clinicId,
       },
@@ -340,15 +332,15 @@ export class AgentPermissionService {
    * Professional permissions - assigned patients only
    */
   private async checkProfessionalPermission(
-    role: UserRole,
-    context: PermissionContext,
+    _role: UserRole,
+    _context: PermissionContext,
   ): Promise<PermissionResult> {
     // For patient data access, verify professional has access to patient
     if (context.resource === 'patient_data' && context.patientId) {
       const { data: assignment } = await this.supabase
         .from('professional_patient_assignments')
         .select('id')
-        .eq('professional_id', context.userId)
+        .eq('professional_id', context._userId)
         .eq('patient_id', context.patientId)
         .eq('active', true)
         .single();
@@ -374,7 +366,7 @@ export class AgentPermissionService {
     return {
       granted: true,
       conditions: {
-        role: 'professional',
+        _role: 'professional',
         scope: 'assigned_patients',
         clinicId: role.clinicId,
       },
@@ -385,8 +377,8 @@ export class AgentPermissionService {
    * Staff permissions - limited access
    */
   private async checkStaffPermission(
-    role: UserRole,
-    context: PermissionContext,
+    _role: UserRole,
+    _context: PermissionContext,
   ): Promise<PermissionResult> {
     // Staff cannot access financial data
     if (context.resource === 'financial_data') {
@@ -423,7 +415,7 @@ export class AgentPermissionService {
     return {
       granted: true,
       conditions: {
-        role: 'staff',
+        _role: 'staff',
         scope: 'clinic_readonly',
         clinicId: role.clinicId,
       },
@@ -434,11 +426,11 @@ export class AgentPermissionService {
    * Patient permissions - own data only
    */
   private async checkPatientPermission(
-    role: UserRole,
-    context: PermissionContext,
+    _role: UserRole,
+    _context: PermissionContext,
   ): Promise<PermissionResult> {
     // Patients can only access their own data
-    if (context.patientId && context.patientId !== context.userId) {
+    if (context.patientId && context.patientId !== context._userId) {
       return {
         granted: false,
         reason: 'Patients can only access their own data',
@@ -456,7 +448,7 @@ export class AgentPermissionService {
     return {
       granted: true,
       conditions: {
-        role: 'patient',
+        _role: 'patient',
         scope: 'own_data',
         patientId: context.patientId,
       },
@@ -467,12 +459,12 @@ export class AgentPermissionService {
    * Log permission check for audit purposes
    */
   private async logPermissionCheck(details: {
-    userId: string;
+    _userId: string;
     action: string;
     resource: string;
     granted: boolean;
     processingTime: number;
-    role?: string;
+    _role?: string;
     error?: string;
     sessionId?: string;
     patientId?: string;
@@ -495,7 +487,7 @@ export class AgentPermissionService {
             error: details.error,
           },
         });
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to log permission check:', error);
     }
   }
@@ -503,9 +495,9 @@ export class AgentPermissionService {
   /**
    * Clear permission cache for a user and invalidate all related caches
    */
-  clearCache(userId: string): void {
+  clearCache(_userId: string): void {
     try {
-      const validatedUserId = UserIdSchema.parse(userId);
+      const validatedUserId = UserIdSchema.parse(_userId);
       const cacheKey = this.generateSecureCacheKey(validatedUserId);
       this.cache.delete(cacheKey);
 
@@ -514,7 +506,7 @@ export class AgentPermissionService {
 
       // Clean up oversized cache
       this.enforceCacheSizeLimit();
-    } catch (error) {
+    } catch (_error) {
       console.error('Error clearing cache:', error);
     }
   }
@@ -531,11 +523,11 @@ export class AgentPermissionService {
   /**
    * Get all permissions for a user (for debugging/admin)
    */
-  async getUserPermissions(userId: string): Promise<{
+  async getUserPermissions(_userId: string): Promise<{
     roles: UserRole[];
     effectivePermissions: string[];
   }> {
-    const roles = await this.getUserRoles(userId);
+    const roles = await this.getUserRoles(_userId);
     const effectivePermissions = new Set<string>();
 
     roles.forEach(role => {
@@ -554,11 +546,11 @@ export class AgentPermissionService {
    * Check if user has LGPD consent for data processing
    */
   async hasLgpdConsent(
-    userId: string,
+    _userId: string,
     consentType: 'data_processing' | 'ai_interaction' | 'data_retention',
   ): Promise<boolean> {
     try {
-      const validatedUserId = UserIdSchema.parse(userId);
+      const validatedUserId = UserIdSchema.parse(_userId);
       const validConsentType = z.enum(['data_processing', 'ai_interaction', 'data_retention'])
         .parse(consentType);
 
@@ -572,7 +564,7 @@ export class AgentPermissionService {
         .single();
 
       return !!data;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error checking LGPD consent:', error);
       // Fail secure - no consent on error
       return false;
@@ -582,14 +574,14 @@ export class AgentPermissionService {
   /**
    * Validate session ownership and permissions with security checks
    */
-  async validateSessionAccess(sessionId: string, userId: string): Promise<{
+  async validateSessionAccess(sessionId: string, _userId: string): Promise<{
     valid: boolean;
     session?: any;
     reason?: string;
   }> {
     try {
       const validatedSessionId = SessionIdSchema.parse(sessionId);
-      const validatedUserId = UserIdSchema.parse(userId);
+      const validatedUserId = UserIdSchema.parse(_userId);
 
       const { data: session, error } = await this.supabase
         .from('agent_sessions')
@@ -624,7 +616,7 @@ export class AgentPermissionService {
       }
 
       return { valid: true, session };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error validating session access:', error);
       return { valid: false, reason: 'Validation error' };
     }
@@ -634,18 +626,18 @@ export class AgentPermissionService {
    * Log permission check for audit purposes with queueing
    */
   private async queuePermissionCheckLog(details: {
-    userId: string;
+    _userId: string;
     action: string;
     resource: string;
     granted: boolean;
     processingTime: number;
-    role?: string;
+    _role?: string;
     error?: string;
     sessionId?: string;
     patientId?: string;
   }): Promise<void> {
     // Queue the audit log for async processing
-    this.auditLogQueue.push(async () => {
+    this.auditLogQueue.push(_async () => {
       try {
         await this.supabase
           .from('agent_audit_log')
@@ -666,7 +658,7 @@ export class AgentPermissionService {
               cache_version: this.cacheVersion,
             },
           });
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to log permission check:', error);
       }
     });
@@ -694,7 +686,7 @@ export class AgentPermissionService {
           await logFunction();
         }
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error processing audit log queue:', error);
     } finally {
       this.isProcessingAuditLog = false;
@@ -705,7 +697,7 @@ export class AgentPermissionService {
    * Initialize periodic cache cleanup
    */
   private initializeCacheCleanup(): void {
-    setInterval(() => {
+    setInterval(_() => {
       this.cleanupExpiredCache();
     }, 60000); // Cleanup every minute
   }
@@ -714,7 +706,7 @@ export class AgentPermissionService {
    * Cleanup expired cache entries
    */
   private cleanupExpiredCache(): void {
-    const now = Date.now();
+    const _now = Date.now();
     for (const [key, entry] of this.cache.entries()) {
       if (entry.expires <= now) {
         this.cache.delete(key);
@@ -729,17 +721,17 @@ export class AgentPermissionService {
     if (this.cache.size > this.maxCacheSize) {
       // Remove oldest entries
       const entries = Array.from(this.cache.entries())
-        .sort((a, b) => a[1].expires - b[1].expires);
+        .sort(_(a,_b) => a[1].expires - b[1].expires);
 
       const toRemove = entries.slice(0, Math.floor(this.maxCacheSize * 0.2));
-      toRemove.forEach(([key]) => this.cache.delete(key));
+      toRemove.forEach(_([key]) => this.cache.delete(key));
     }
   }
 
   /**
    * Generate secure cache key with hashing
    */
-  private generateSecureCacheKey(userId: string): string {
+  private generateSecureCacheKey(_userId: string): string {
     return `permissions_${
       createHash('sha256')
         .update(userId + process.env.CACHE_SALT || 'default_salt')
@@ -751,8 +743,8 @@ export class AgentPermissionService {
   /**
    * Validate and sanitize permission context
    */
-  private validateAndSanitizeContext(context: PermissionContext): ValidatedPermissionContext {
-    return PermissionContextSchema.parse(context);
+  private validateAndSanitizeContext(_context: PermissionContext): ValidatedPermissionContext {
+    return PermissionContextSchema.parse(_context);
   }
 
   /**
@@ -770,9 +762,9 @@ export class AgentPermissionService {
   /**
    * Validate role type
    */
-  private validateRoleType(role: string): UserRole['role'] {
+  private validateRoleType(_role: string): UserRole['role'] {
     const validRoles = ['admin', 'clinic_admin', 'professional', 'staff', 'patient'];
-    if (validRoles.includes(role)) {
+    if (validRoles.includes(_role)) {
       return role as UserRole['role'];
     }
     throw new Error(`Invalid role type: ${role}`);
@@ -813,15 +805,15 @@ export class AgentPermissionService {
   /**
    * Check rate limiting for permission checks with enhanced security
    */
-  private async checkRateLimit(userId: string): Promise<boolean> {
+  private async checkRateLimit(_userId: string): Promise<boolean> {
     // Enhanced rate limiting with security considerations
-    const rateLimitKey = `rate_limit_${this.sanitizeString(userId)}`;
-    const now = Date.now();
-    const windowMs = 60000; // 1 minute
+    const _rateLimitKey = `rate_limit_${this.sanitizeString(_userId)}`;
+    const _now = Date.now();
+    const _windowMs = 60000; // 1 minute
     const maxRequests = 50; // Reduced for security
 
     // Check if user is in security blocklist
-    if (await this.isSecurityBlocklisted(userId)) {
+    if (await this.isSecurityBlocklisted(_userId)) {
       return false;
     }
 
@@ -853,7 +845,7 @@ export class AgentPermissionService {
             table: 'user_roles',
           },
           payload => {
-            this.handleRoleChange(payload);
+            this.handleRoleChange(_payload);
           },
         )
         .on(
@@ -864,7 +856,7 @@ export class AgentPermissionService {
             table: 'role_permissions',
           },
           payload => {
-            this.handlePermissionChange(payload);
+            this.handlePermissionChange(_payload);
           },
         )
         .subscribe(status => {
@@ -873,7 +865,7 @@ export class AgentPermissionService {
 
       // Store channel for cleanup
       (this as any).realtimeChannel = channel;
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to setup real-time cache invalidation:', error);
     }
   }
@@ -881,16 +873,16 @@ export class AgentPermissionService {
   /**
    * Handle user role changes for cache invalidation
    */
-  private handleRoleChange(payload: any): void {
+  private handleRoleChange(_payload: any): void {
     try {
       if (payload.eventType === 'UPDATE' || payload.eventType === 'DELETE') {
         const userId = payload.old?.user_id || payload.new?.user_id;
-        if (userId) {
-          this.clearCache(userId);
-          this.logCacheInvalidation('role_change', userId);
+        if (_userId) {
+          this.clearCache(_userId);
+          this.logCacheInvalidation('role_change', _userId);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error handling role change:', error);
     }
   }
@@ -898,12 +890,12 @@ export class AgentPermissionService {
   /**
    * Handle permission changes for cache invalidation
    */
-  private handlePermissionChange(payload: any): void {
+  private handlePermissionChange(_payload: any): void {
     try {
       // When permissions change, increment cache version to force refresh
       this.cacheVersion++;
       this.logCacheInvalidation('permission_change', 'global');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error handling permission change:', error);
     }
   }
@@ -911,18 +903,18 @@ export class AgentPermissionService {
   /**
    * Check if user is security blocklisted
    */
-  private async isSecurityBlocklisted(userId: string): Promise<boolean> {
+  private async isSecurityBlocklisted(_userId: string): Promise<boolean> {
     try {
       const { data } = await this.supabase
         .from('security_blocklist')
         .select('id')
-        .eq('user_id', this.sanitizeString(userId))
+        .eq('user_id', this.sanitizeString(_userId))
         .eq('active', true)
         .gt('expires_at', new Date().toISOString())
         .single();
 
       return !!data;
-    } catch (error) {
+    } catch (_error) {
       return false;
     }
   }
@@ -930,12 +922,12 @@ export class AgentPermissionService {
   /**
    * Log suspicious security activity
    */
-  private async logSuspiciousActivity(userId: string, activityType: string): Promise<void> {
+  private async logSuspiciousActivity(_userId: string, activityType: string): Promise<void> {
     try {
       await this.supabase
         .from('security_events')
         .insert({
-          user_id: this.sanitizeString(userId),
+          user_id: this.sanitizeString(_userId),
           event_type: 'suspicious_activity',
           activity_type: activityType,
           severity: 'medium',
@@ -945,7 +937,7 @@ export class AgentPermissionService {
             user_agent: 'unknown', // Would be extracted from request
           },
         });
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to log suspicious activity:', error);
     }
   }

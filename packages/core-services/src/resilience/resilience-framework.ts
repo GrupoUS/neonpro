@@ -13,8 +13,6 @@
  * - LGPD-compliant error handling
  */
 
-import { z } from "zod";
-
 // ============================================================================
 // Types and Interfaces
 // ============================================================================
@@ -97,7 +95,7 @@ export interface ResilienceMetrics {
 export interface ExecutionContext {
   operation: string;
   serviceName: string;
-  userId?: string;
+  _userId?: string;
   patientId?: string;
   isEmergency: boolean;
   requiresAudit: boolean;
@@ -124,7 +122,7 @@ export class EnhancedCircuitBreaker {
 
   async execute<T>(
     operation: () => Promise<T>,
-    context: ExecutionContext,
+    _context: ExecutionContext,
   ): Promise<T> {
     this.totalRequests++;
 
@@ -134,7 +132,7 @@ export class EnhancedCircuitBreaker {
         this.consecutiveSuccesses = 0;
       } else {
         throw new ResilienceError(
-          `Circuit breaker OPEN for service: ${this.serviceName}`,
+          `Circuit breaker OPEN for _service: ${this.serviceName}`,
           "CIRCUIT_BREAKER_OPEN",
           context,
         );
@@ -145,7 +143,7 @@ export class EnhancedCircuitBreaker {
       const result = await operation();
       this.recordSuccess();
       return result;
-    } catch (error) {
+    } catch (_error) {
       this.recordFailure();
       throw error;
     }
@@ -221,7 +219,7 @@ export class RetryPolicy {
 
   constructor(private readonly config: ResilienceConfig["retry"]) {}
 
-  async shouldRetry(error: Error, context: ExecutionContext): Promise<boolean> {
+  async shouldRetry(error: Error, _context: ExecutionContext): Promise<boolean> {
     this.attempts++;
 
     // Don't retry on certain errors
@@ -287,7 +285,7 @@ export class RetryPolicy {
       "authentication failed",
     ];
 
-    return nonRetryableMessages.some((msg) =>
+    return nonRetryableMessages.some(_(msg) =>
       error.message.toLowerCase().includes(msg),
     );
   }
@@ -310,10 +308,10 @@ export class TimeoutManager {
 
   async executeWithTimeout<T>(
     operation: () => Promise<T>,
-    context: ExecutionContext,
+    _context: ExecutionContext,
   ): Promise<T> {
-    return new Promise((resolve, reject) => {
-      const timeoutId = setTimeout(() => {
+    return new Promise(_(resolve,_reject) => {
+      const timeoutId = setTimeout(_() => {
         reject(
           new ResilienceError(
             `Operation timeout for ${context.operation}`,
@@ -324,11 +322,11 @@ export class TimeoutManager {
       }, this.config.overallMs);
 
       operation()
-        .then((result) => {
+        .then(_(result) => {
           clearTimeout(timeoutId);
           resolve(result);
         })
-        .catch((error) => {
+        .catch(_(error) => {
           clearTimeout(timeoutId);
           reject(error);
         });
@@ -366,7 +364,7 @@ export class HealthMonitor {
       consecutiveSuccesses: 0,
     };
 
-    const interval = setInterval(async () => {
+    const interval = setInterval(_async () => {
       await this.performHealthCheck(serviceName, healthCheck, health);
     }, this.config.intervalMs);
 
@@ -386,9 +384,8 @@ export class HealthMonitor {
       const startTime = Date.now();
       const isHealthy = await Promise.race([
         healthCheck(),
-        new Promise<boolean>((_, reject) =>
-          setTimeout(
-            () => reject(new Error("Health check timeout")),
+        new Promise<boolean>(_(_,_reject) =>
+          setTimeout(_() => reject(new Error("Health check timeout")),
             this.config.timeoutMs,
           ),
         ),
@@ -413,7 +410,7 @@ export class HealthMonitor {
       health.successRate =
         health.consecutiveSuccesses /
         (health.consecutiveSuccesses + health.consecutiveFailures);
-    } catch (error) {
+    } catch (_error) {
       health.isHealthy = false;
       health.errorMessage = (error as Error).message;
       health.lastCheck = new Date();
@@ -427,12 +424,12 @@ export class HealthMonitor {
   }
 
   getAllHealthStatus(): ServiceHealth[] {
-    return Array.from(this.healthChecks.values()).map((h) => h.health);
+    return Array.from(this.healthChecks.values()).map(_(h) => h.health);
   }
 
   unregisterService(serviceName: string): void {
     const service = this.healthChecks.get(serviceName);
-    if (service) {
+    if (_service) {
       clearInterval(service.interval);
       this.healthChecks.delete(serviceName);
     }
@@ -466,7 +463,7 @@ export class ResilienceFramework {
   async execute<T>(
     serviceName: string,
     operation: () => Promise<T>,
-    context: ExecutionContext,
+    _context: ExecutionContext,
   ): Promise<T> {
     const startTime = Date.now();
     this.metrics.totalRequests++;
@@ -483,7 +480,7 @@ export class ResilienceFramework {
       }
 
       // Execute with circuit breaker protection
-      const result = await circuitBreaker.execute(async () => {
+      const result = await circuitBreaker.execute(_async () => {
         const retryPolicy = new RetryPolicy(this.config.retry);
 
         while (true) {
@@ -496,7 +493,7 @@ export class ResilienceFramework {
 
             this.metrics.successfulRequests++;
             return timeoutResult;
-          } catch (error) {
+          } catch (_error) {
             const shouldRetry = await retryPolicy.shouldRetry(
               error as Error,
               context,
@@ -510,18 +507,18 @@ export class ResilienceFramework {
             const delay = await retryPolicy.getDelay();
 
             if (delay > 0) {
-              await new Promise((resolve) => setTimeout(resolve, delay));
+              await new Promise(_(resolve) => setTimeout(resolve, delay));
             }
           }
         }
-      }, context);
+      }, _context);
 
       // Update metrics
       const latency = Date.now() - startTime;
       this.updateAverageLatency(latency);
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       this.metrics.failedRequests++;
 
       if (error instanceof ResilienceError) {
@@ -600,7 +597,7 @@ export class ResilienceError extends Error {
   constructor(
     message: string,
     public readonly type: string,
-    public readonly context: ExecutionContext,
+    public readonly _context: ExecutionContext,
   ) {
     super(message);
     this.name = "ResilienceError";
@@ -667,7 +664,7 @@ export const EMERGENCY_RESILIENCE_CONFIG: ResilienceConfig = {
 // Validation Schemas
 // ============================================================================
 
-export const ResilienceConfigSchema = z.object({
+export const _ResilienceConfigSchema = z.object({
   circuitBreaker: z.object({
     failureThreshold: z.number().min(1).max(20),
     timeoutMs: z.number().min(1000).max(300000),

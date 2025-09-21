@@ -11,7 +11,7 @@ import {
 } from '@/components/event-calendar/event-calendar';
 
 // Etiquettes data for calendar filtering
-export const etiquettes = [
+export const _etiquettes = [
   {
     id: 'my-events',
     name: 'My Events',
@@ -612,12 +612,12 @@ export default function Component({
   const { isColorVisible } = useCalendarContext();
 
   // Update internal state when prop events change
-  useEffect(() => {
+  useEffect(_() => {
     setEvents(propEvents);
   }, [propEvents]);
 
   // Filter events based on visible colors
-  const visibleEvents = useMemo(() => {
+  const visibleEvents = useMemo(_() => {
     return events.filter(event => isColorVisible(event.color));
   }, [events, isColorVisible]);
 
@@ -651,4 +651,4 @@ export default function Component({
 }
 
 // Named export for easier importing
-export const BigCalendar = Component;
+export const _BigCalendar = Component;

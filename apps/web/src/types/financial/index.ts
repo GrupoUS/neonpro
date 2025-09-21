@@ -100,7 +100,7 @@ export interface ResponseMetadata {
 }
 
 export interface AuditInfo {
-  readonly userId: string;
+  readonly _userId: string;
   readonly action: string;
   readonly lgpdConsent: boolean;
   readonly dataAccess: readonly string[];
@@ -120,7 +120,7 @@ export class FinancialDataError extends Error {
   constructor(
     message: string,
     public readonly code: string,
-    public readonly context?: Record<string, unknown>,
+    public readonly _context?: Record<string, unknown>,
   ) {
     super(message);
     this.name = 'FinancialDataError';

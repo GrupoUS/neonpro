@@ -4,12 +4,12 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { WaitingRoom } from '../WaitingRoom';
 
 // Mock the cn utility function
-vi.mock('@/lib/utils', () => ({
+vi.mock(_'@/lib/utils',_() => ({
   cn: (...classes: string[]) => classes.filter(Boolean).join(' '),
 }));
 
 // Mock hooks used by WaitingRoom
-vi.mock('@/hooks/use-telemedicine', () => ({
+vi.mock(_'@/hooks/use-telemedicine',_() => ({
   useWaitingRoom: vi.fn(() => ({
     connectionStatus: 'connected',
     joinWaitingRoom: vi.fn(),
@@ -18,43 +18,43 @@ vi.mock('@/hooks/use-telemedicine', () => ({
     isJoining: false,
     isLeaving: false,
   })),
-  useQueuePosition: vi.fn(() => ({
+  useQueuePosition: vi.fn(_() => ({
     queueInfo: { position: 1, estimatedWaitTime: 15 },
     refreshPosition: vi.fn(),
   })),
-  usePreConsultationCheck: vi.fn(() => ({
+  usePreConsultationCheck: vi.fn(_() => ({
     checkResults: null,
     performCheck: vi.fn(),
     isChecking: false,
   })),
-  useSessionConsent: vi.fn(() => ({
+  useSessionConsent: vi.fn(_() => ({
     consent: null,
     loading: false,
     updateConsent: vi.fn(),
     isUpdating: false,
   })),
-  useEmergencyTriage: vi.fn(() => ({
+  useEmergencyTriage: vi.fn(_() => ({
     triageAssessment: null,
     performTriage: vi.fn(),
   })),
 }));
 
 // Mock UI components
-vi.mock('@/components/ui', () => ({
-  Button: ({ children, onClick, ...props }: any) => (
+vi.mock(_'@/components/ui',_() => ({
+  Button: ({ children,_onClick, ...props }: any) => (
     <button onClick={onClick} {...props}>
       {children}
     </button>
   ),
-  Card: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardContent: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardHeader: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardTitle: ({ children, ...props }: any) => <h3 {...props}>{children}</h3>,
-  Badge: ({ children, ...props }: any) => <span {...props}>{children}</span>,
+  Card: (_{ children, ...props }: any) => <div {...props}>{children}</div>,
+  CardContent: (_{ children, ...props }: any) => <div {...props}>{children}</div>,
+  CardHeader: (_{ children, ...props }: any) => <div {...props}>{children}</div>,
+  CardTitle: (_{ children, ...props }: any) => <h3 {...props}>{children}</h3>,
+  Badge: (_{ children, ...props }: any) => <span {...props}>{children}</span>,
   // Avatar components removed - using User icon instead
 }));
 
-describe('WaitingRoom', () => {
+describe(_'WaitingRoom',_() => {
   const mockProps = {
     currentPatient: {
       id: '1',
@@ -91,26 +91,26 @@ describe('WaitingRoom', () => {
     totalWaitTime: 15,
   };
 
-  beforeEach(() => {
+  beforeEach(_() => {
     // Clear all mocks before each test
     vi.clearAllMocks();
   });
 
-  test('renders waiting room in loading state', () => {
+  test(_'renders waiting room in loading state',_() => {
     render(<WaitingRoom {...mockProps} />);
     expect(
       screen.getByText('Conectando à sala de espera...'),
     ).toBeInTheDocument();
   });
 
-  test('displays loading activity indicator', () => {
+  test(_'displays loading activity indicator',_() => {
     render(<WaitingRoom {...mockProps} />);
     // Should show activity/loading spinner with lucide-activity class
     const activityIcon = document.querySelector('.lucide-activity');
     expect(activityIcon).toBeInTheDocument();
   });
 
-  test('renders with correct appointment and patient props', () => {
+  test(_'renders with correct appointment and patient props',_() => {
     render(<WaitingRoom {...mockProps} />);
     // Component should render without errors with provided props
     expect(
@@ -118,7 +118,7 @@ describe('WaitingRoom', () => {
     ).toBeInTheDocument();
   });
 
-  test('handles missing props gracefully', () => {
+  test(_'handles missing props gracefully',_() => {
     render(
       <WaitingRoom appointmentId='test-appointment' patientId='test-patient' />,
     );
@@ -128,7 +128,7 @@ describe('WaitingRoom', () => {
     ).toBeInTheDocument();
   });
 
-  test('displays centered loading layout', () => {
+  test(_'displays centered loading layout',_() => {
     render(<WaitingRoom {...mockProps} />);
     const loadingContainer = screen
       .getByText('Conectando à sala de espera...')
@@ -136,21 +136,21 @@ describe('WaitingRoom', () => {
     expect(loadingContainer).toHaveClass('text-center');
   });
 
-  test('shows activity spinner during connection', () => {
+  test(_'shows activity spinner during connection',_() => {
     render(<WaitingRoom {...mockProps} />);
     // Should show activity/loading spinner
     const activityIcon = document.querySelector('.lucide-activity');
     expect(activityIcon).toBeInTheDocument();
   });
 
-  test('renders with proper accessibility attributes', () => {
+  test(_'renders with proper accessibility attributes',_() => {
     render(<WaitingRoom {...mockProps} />);
     // Activity icon should have aria-hidden
     const activityIcon = document.querySelector('[aria-hidden="true"]');
     expect(activityIcon).toBeInTheDocument();
   });
 
-  test('component structure is correct for loading state', () => {
+  test(_'component structure is correct for loading state',_() => {
     render(<WaitingRoom {...mockProps} />);
     const container = screen
       .getByText('Conectando à sala de espera...')
@@ -163,7 +163,7 @@ describe('WaitingRoom', () => {
     );
   });
 
-  test('loading text is in Portuguese', () => {
+  test(_'loading text is in Portuguese',_() => {
     render(<WaitingRoom {...mockProps} />);
     expect(
       screen.getByText('Conectando à sala de espera...'),

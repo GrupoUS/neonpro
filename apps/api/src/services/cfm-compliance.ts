@@ -11,8 +11,6 @@
  * - Clinical decision support compliance
  */
 
-import { z } from 'zod';
-
 // CFM Compliance Levels
 export const CFM_COMPLIANCE_LEVELS = {
   COMPLIANT: 'compliant',
@@ -518,8 +516,7 @@ export class CFMComplianceService {
     const recommendations: string[] = [];
 
     // Group issues by requirement and generate recommendations
-    const issuesByRequirement = this.issues.reduce(
-      (acc, issue) => {
+    const issuesByRequirement = this.issues.reduce(_(acc,_issue) => {
         if (!acc[issue.requirement]) acc[issue.requirement] = [];
         acc[issue.requirement].push(issue);
         return acc;
@@ -527,7 +524,7 @@ export class CFMComplianceService {
       {} as Record<string, CFMComplianceIssue[]>,
     );
 
-    Object.entries(issuesByRequirement).forEach(([requirement, issues]) => {
+    Object.entries(issuesByRequirement).forEach(_([requirement,_issues]) => {
       const criticalCount = issues.filter(
         i => i.severity === 'critical',
       ).length;

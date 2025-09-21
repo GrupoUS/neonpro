@@ -31,7 +31,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = await createTestClient({ role: 'admin' });
+    testClient = await createTestClient({ _role: 'admin' });
 
     // Setup MSW server for external service mocking
     server = setupServer(

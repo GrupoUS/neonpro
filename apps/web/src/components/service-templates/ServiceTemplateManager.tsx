@@ -106,7 +106,7 @@ export function ServiceTemplateManager({
     ) {
       try {
         await deleteTemplate.mutateAsync(template.id);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error deleting template:', error);
       }
     }
@@ -118,7 +118,7 @@ export function ServiceTemplateManager({
         id: template.id,
         isFeatured: template.is_featured,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error toggling featured:', error);
     }
   };
@@ -129,7 +129,7 @@ export function ServiceTemplateManager({
         id: template.id,
         isActive: template.is_active,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error toggling active:', error);
     }
   };
@@ -142,7 +142,7 @@ export function ServiceTemplateManager({
         new_name: newName,
         clinic_id: clinicId,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error duplicating template:', error);
     }
   };
@@ -158,7 +158,7 @@ export function ServiceTemplateManager({
         </CardHeader>
         <CardContent>
           <div className='animate-pulse space-y-4'>
-            {Array.from({ length: 4 }).map((_, i) => (
+            {Array.from({ length: 4 }).map(_(_,_i) => (
               <div key={i} className='h-20 bg-muted rounded'></div>
             ))}
           </div>
@@ -275,8 +275,7 @@ export function ServiceTemplateManager({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='all'>Todos os tipos</SelectItem>
-                {Object.entries(SERVICE_TEMPLATE_TYPES).map(
-                  ([type, config]) => (
+                {Object.entries(SERVICE_TEMPLATE_TYPES).map(_([type,_config]) => (
                     <SelectItem key={type} value={type}>
                       <div className='flex items-center gap-2'>
                         <div

@@ -10,159 +10,159 @@
 
 import { beforeEach, describe, expect, it } from 'vitest';
 
-describe('usePerformanceMonitor', () => {
-  beforeEach(() => {
+describe(_'usePerformanceMonitor',_() => {
+  beforeEach(_() => {
     // Setup for each test
   });
 
-  it('should export the performance monitor hook', () => {
-    expect(() => {
+  it(_'should export the performance monitor hook',_() => {
+    expect(_() => {
       const module = require.resolve('../usePerformanceMonitor');
       expect(module).toBeDefined();
     }).not.toThrow();
   });
 
-  it('should track search response times', () => {
+  it(_'should track search response times',_() => {
     const { usePerformanceMonitor } = require('../usePerformanceMonitor');
     expect(usePerformanceMonitor).toBeDefined();
     expect(typeof usePerformanceMonitor).toBe('function');
   });
 
-  it('should validate search response time <300ms', () => {
+  it(_'should validate search response time <300ms',_() => {
     const { usePerformanceMonitor } = require('../usePerformanceMonitor');
     expect(usePerformanceMonitor).toBeDefined();
     expect(typeof usePerformanceMonitor).toBe('function');
   });
 
-  it('should track mobile load times', () => {
+  it(_'should track mobile load times',_() => {
     const { usePerformanceMonitor } = require('../usePerformanceMonitor');
     expect(usePerformanceMonitor).toBeDefined();
     expect(typeof usePerformanceMonitor).toBe('function');
   });
 
-  it('should validate mobile load time <500ms', () => {
+  it(_'should validate mobile load time <500ms',_() => {
     const { usePerformanceMonitor } = require('../usePerformanceMonitor');
     expect(usePerformanceMonitor).toBeDefined();
     expect(typeof usePerformanceMonitor).toBe('function');
   });
 
-  it('should track real-time latency', () => {
+  it(_'should track real-time latency',_() => {
     const { usePerformanceMonitor } = require('../usePerformanceMonitor');
     expect(usePerformanceMonitor).toBeDefined();
     expect(typeof usePerformanceMonitor).toBe('function');
   });
 
-  it('should validate real-time latency <1s', () => {
+  it(_'should validate real-time latency <1s',_() => {
     const { usePerformanceMonitor } = require('../usePerformanceMonitor');
     expect(usePerformanceMonitor).toBeDefined();
     expect(typeof usePerformanceMonitor).toBe('function');
   });
 
-  it('should provide performance metrics', () => {
+  it(_'should provide performance metrics',_() => {
     const { usePerformanceMonitor } = require('../usePerformanceMonitor');
     expect(usePerformanceMonitor).toBeDefined();
     expect(typeof usePerformanceMonitor).toBe('function');
   });
 
-  it('should detect performance bottlenecks', () => {
+  it(_'should detect performance bottlenecks',_() => {
     const { usePerformanceMonitor } = require('../usePerformanceMonitor');
     expect(usePerformanceMonitor).toBeDefined();
     expect(typeof usePerformanceMonitor).toBe('function');
   });
 
-  it('should support Brazilian healthcare context', () => {
+  it(_'should support Brazilian healthcare context',_() => {
     const { usePerformanceMonitor } = require('../usePerformanceMonitor');
     expect(usePerformanceMonitor).toBeDefined();
     expect(typeof usePerformanceMonitor).toBe('function');
   });
 
-  it('should integrate with real-time monitoring', () => {
+  it(_'should integrate with real-time monitoring',_() => {
     const { usePerformanceMonitor } = require('../usePerformanceMonitor');
     expect(usePerformanceMonitor).toBeDefined();
     expect(typeof usePerformanceMonitor).toBe('function');
   });
 });
 
-describe('useSearchPerformance', () => {
-  beforeEach(() => {
+describe(_'useSearchPerformance',_() => {
+  beforeEach(_() => {
     // Setup for each test
   });
 
-  it('should export the search performance hook', () => {
-    expect(() => {
+  it(_'should export the search performance hook',_() => {
+    expect(_() => {
       const module = require.resolve('../usePerformanceMonitor');
       expect(module).toBeDefined();
     }).not.toThrow();
   });
 
-  it('should measure search execution time', () => {
+  it(_'should measure search execution time',_() => {
     const { useSearchPerformance } = require('../usePerformanceMonitor');
     expect(useSearchPerformance).toBeDefined();
     expect(typeof useSearchPerformance).toBe('function');
   });
 
-  it('should track search performance history', () => {
+  it(_'should track search performance history',_() => {
     const { useSearchPerformance } = require('../usePerformanceMonitor');
     expect(useSearchPerformance).toBeDefined();
     expect(typeof useSearchPerformance).toBe('function');
   });
 
-  it('should provide search performance analytics', () => {
+  it(_'should provide search performance analytics',_() => {
     const { useSearchPerformance } = require('../usePerformanceMonitor');
     expect(useSearchPerformance).toBeDefined();
     expect(typeof useSearchPerformance).toBe('function');
   });
 
-  it('should alert on slow search performance', () => {
+  it(_'should alert on slow search performance',_() => {
     const { useSearchPerformance } = require('../usePerformanceMonitor');
     expect(useSearchPerformance).toBeDefined();
     expect(typeof useSearchPerformance).toBe('function');
   });
 
-  it('should support debounced search optimization', () => {
+  it(_'should support debounced search optimization',_() => {
     const { useSearchPerformance } = require('../usePerformanceMonitor');
     expect(useSearchPerformance).toBeDefined();
     expect(typeof useSearchPerformance).toBe('function');
   });
 });
 
-describe('useMobilePerformance', () => {
-  beforeEach(() => {
+describe(_'useMobilePerformance',_() => {
+  beforeEach(_() => {
     // Setup for each test
   });
 
-  it('should export the mobile performance hook', () => {
-    expect(() => {
+  it(_'should export the mobile performance hook',_() => {
+    expect(_() => {
       const module = require.resolve('../usePerformanceMonitor');
       expect(module).toBeDefined();
     }).not.toThrow();
   });
 
-  it('should detect mobile devices', () => {
+  it(_'should detect mobile devices',_() => {
     const { useMobilePerformance } = require('../usePerformanceMonitor');
     expect(useMobilePerformance).toBeDefined();
     expect(typeof useMobilePerformance).toBe('function');
   });
 
-  it('should measure mobile load times', () => {
+  it(_'should measure mobile load times',_() => {
     const { useMobilePerformance } = require('../usePerformanceMonitor');
     expect(useMobilePerformance).toBeDefined();
     expect(typeof useMobilePerformance).toBe('function');
   });
 
-  it('should track mobile-specific metrics', () => {
+  it(_'should track mobile-specific metrics',_() => {
     const { useMobilePerformance } = require('../usePerformanceMonitor');
     expect(useMobilePerformance).toBeDefined();
     expect(typeof useMobilePerformance).toBe('function');
   });
 
-  it('should optimize for mobile performance', () => {
+  it(_'should optimize for mobile performance',_() => {
     const { useMobilePerformance } = require('../usePerformanceMonitor');
     expect(useMobilePerformance).toBeDefined();
     expect(typeof useMobilePerformance).toBe('function');
   });
 
-  it('should provide mobile performance recommendations', () => {
+  it(_'should provide mobile performance recommendations',_() => {
     const { useMobilePerformance } = require('../usePerformanceMonitor');
     expect(useMobilePerformance).toBeDefined();
     expect(typeof useMobilePerformance).toBe('function');

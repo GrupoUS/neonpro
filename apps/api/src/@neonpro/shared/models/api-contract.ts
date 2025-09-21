@@ -61,7 +61,7 @@ export interface ValidationRule {
   /** Validation function */
   validate: (
     value: any,
-    context: ValidationContext,
+    _context: ValidationContext,
   ) => boolean | HealthcareValidationError;
   /** Error message if validation fails */
   errorMessage: string;
@@ -100,11 +100,11 @@ export interface FieldConstraint {
  */
 export interface ValidationContext {
   /** Request information */
-  request: {
+  _request: {
     method: string;
     path: string;
     headers: Record<string, string>;
-    userId?: string;
+    _userId?: string;
     clinicId?: string;
     requestId: string;
   };
@@ -137,7 +137,7 @@ export interface APIContractValidationResult {
     rulesFailed: number;
   };
   /** Validation context */
-  context: ValidationContext;
+  _context: ValidationContext;
 }
 
 /**
@@ -175,7 +175,7 @@ export const DEFAULT_HEALTHCARE_VALIDATION_RULES: ValidationRule[] = [
     name: 'LGPD Consent Check',
     description: 'Validates LGPD consent requirements',
     fields: ['consentRecords'],
-    validate: (value: any, context: ValidationContext) => {
+    validate: (value: any, _context: ValidationContext) => {
       // Only validate if personal data is present
       const hasPersonalData = context.request.headers['content-type']?.includes('personal')
         || false;
@@ -264,7 +264,7 @@ export function createDefaultAPIContract(): APIContract {
 export function validateAPIContract(
   data: any,
   contract: APIContract,
-  context: ValidationContext,
+  _context: ValidationContext,
 ): APIContractValidationResult {
   const startTime = Date.now();
   const errors: HealthcareValidationError[] = [];
@@ -463,7 +463,7 @@ export function validateAPIContract(
 
       rule.fields.forEach(field => {
         const value = data[field];
-        const result = rule.validate(value, context);
+        const result = rule.validate(value, _context);
 
         if (result !== true) {
           if (typeof result === 'object') {

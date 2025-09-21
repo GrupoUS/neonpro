@@ -33,7 +33,7 @@ const getPrisma = async (): Promise<PrismaClient> => {
 
 // Audit context interface
 export interface AuditContext {
-  userId?: string;
+  _userId?: string;
   action: string;
   resource: string;
   details?: Record<string, unknown>;
@@ -45,7 +45,7 @@ export interface ErrorDetails {
   code?: string;
   message: string;
   stack?: string;
-  context?: Record<string, unknown>;
+  _context?: Record<string, unknown>;
 }
 
 // Base service class
@@ -62,13 +62,13 @@ export abstract class BaseService {
     action: "VIEW" | "CREATE" | "READ" | "UPDATE" | "DELETE" | "EXPORT" | "LOGIN" | "LOGOUT" | "AI_CHAT" | "AI_PREDICTION" | "AI_ANALYSIS" | "AI_RECOMMENDATION",
     resource: string,
     additionalInfo?: Record<string, unknown>,
-    userId?: string
+    _userId?: string
   ): Promise<void> {
     try {
       const prisma = await this.getPrisma();
       await prisma.auditTrail.create({
         data: {
-          userId: userId || "system",
+          _userId: userId || "system",
           action,
           resource,
           resourceType: "SYSTEM_CONFIG",
@@ -78,7 +78,7 @@ export abstract class BaseService {
           status: "SUCCESS",
         },
       });
-    } catch (error) {
+    } catch (_error) {
       console.error("Failed to create audit log:", error);
     }
   }
@@ -87,7 +87,7 @@ export abstract class BaseService {
   protected async createWithAudit<T>(
     model: string,
     data: T,
-    userId?: string
+    _userId?: string
   ): Promise<T> {
     const prisma = await this.getPrisma();
     
@@ -104,7 +104,7 @@ export abstract class BaseService {
       );
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       await this.createAuditLog(
         "CREATE",
         model,
@@ -124,7 +124,7 @@ export abstract class BaseService {
     model: string,
     id: string,
     data: Partial<T>,
-    userId?: string
+    _userId?: string
   ): Promise<T> {
     const prisma = await this.getPrisma();
     
@@ -142,7 +142,7 @@ export abstract class BaseService {
       );
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       await this.createAuditLog(
         "UPDATE",
         model,
@@ -162,7 +162,7 @@ export abstract class BaseService {
   protected async deleteWithAudit(
     model: string,
     id: string,
-    userId?: string
+    _userId?: string
   ): Promise<void> {
     const prisma = await this.getPrisma();
     
@@ -177,7 +177,7 @@ export abstract class BaseService {
         { id },
         userId
       );
-    } catch (error) {
+    } catch (_error) {
       await this.createAuditLog(
         "DELETE",
         model,
@@ -204,7 +204,7 @@ export abstract class BaseService {
         where: { id },
       });
       return result;
-    } catch (error) {
+    } catch (_error) {
       console.error(`Error finding ${model} by id ${id}:`, error);
       throw error;
     }
@@ -220,26 +220,26 @@ export abstract class BaseService {
     try {
       const result = await (prisma as any)[model].findMany(options);
       return result;
-    } catch (error) {
+    } catch (_error) {
       console.error(`Error finding many ${model}:`, error);
       throw error;
     }
   }
 
   // Health check method
-  async healthCheck(): Promise<{ status: string; timestamp: Date; service: string }> {
+  async healthCheck(): Promise<{ status: string; timestamp: Date; _service: string }> {
     try {
       await this.getPrisma();
       return {
         status: "healthy",
         timestamp: new Date(),
-        service: this.serviceName,
+        _service: this.serviceName,
       };
     } catch (_error) {
       return {
         status: "unhealthy",
         timestamp: new Date(),
-        service: this.serviceName,
+        _service: this.serviceName,
       };
     }
   }

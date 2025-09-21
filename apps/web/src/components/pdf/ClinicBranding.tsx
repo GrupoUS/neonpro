@@ -66,11 +66,8 @@ interface DocumentInfoProps {
   generatedAt: Date;
 }
 
-export const DocumentInfo: React.FC<DocumentInfoProps> = ({
-  title,
-  patientName,
-  generatedAt,
-}) => {
+export const DocumentInfo: React.FC<DocumentInfoProps> = (_{
+  title,_patientName,_generatedAt,_}) => {
   return (
     <View>
       <Text style={styles.title}>{title}</Text>

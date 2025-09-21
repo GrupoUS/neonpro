@@ -1,6 +1,4 @@
 // Realistic zod schemas for compliance integration tests (Phase 1)
-import { z } from "zod";
-
 // --- Compliance Validation Schemas (Phase 1 minimal) ---
 
 // Basic patient schema focusing on fields used in prediction & compliance flows
@@ -65,7 +63,7 @@ const phiPatientSchema = z.object({
   id: z.string().uuid().optional(),
   firstName: z.string().min(1),
   lastName: z.string().min(1),
-  dateOfBirth: z.date().refine((d) => d.getTime() <= Date.now(), {
+  dateOfBirth: z.date().refine(_(d) => d.getTime() <= Date.now(), {
     message: "Birth date cannot be in future",
   }),
   cpf: z
@@ -132,7 +130,7 @@ const kpiSchema = z.object({
       totalPatients: z.number().int().min(1),
       ageRange: z
         .object({ min: z.number().int().min(0), max: z.number().int().min(0) })
-        .refine((r) => r.min <= r.max, {
+        .refine(_(r) => r.min <= r.max, {
           message: "ageRange.min must be <= max",
         }),
       conditions: z.array(z.string()).optional(),
@@ -200,7 +198,7 @@ const performanceBudgetSchema = z.object({
 
 const auditTrailSchema = z.object({
   id: z.string().uuid(),
-  userId: z.string().uuid(),
+  _userId: z.string().uuid(),
   action: z.enum(["read", "write", "update", "delete"]),
   resource: z.string().min(1),
   resourceType: z.enum(["patient", "appointment", "kpi", "policy", "risk"]),
@@ -253,7 +251,7 @@ export function checkComplianceRequirements(
     // @ts-ignore dynamic index
     const parsed = COMPLIANCE_SCHEMAS[schemaType].parse(data);
     return { valid: true, data: parsed, errors: [] as any[] };
-  } catch (err: any) {
+  } catch (_err: any) {
     if (err?.issues) {
       return { valid: false, data: null, errors: err.issues };
     }

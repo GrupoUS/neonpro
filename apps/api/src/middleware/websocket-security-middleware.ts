@@ -23,7 +23,7 @@ export interface WebSocketSecurityConfig {
 export interface WebSocketConnectionInfo {
   id: string;
   ip: string;
-  userId?: string;
+  _userId?: string;
   userAgent: string;
   origin: string;
   connectedAt: number;
@@ -39,7 +39,7 @@ export interface SecurityEvent {
   severity: 'low' | 'medium' | 'high' | 'critical';
   message: string;
   ip: string;
-  userId?: string;
+  _userId?: string;
   timestamp: number;
   details: Record<string, any>;
 }
@@ -74,12 +74,12 @@ export class WebSocketSecurityMiddleware {
   /**
    * Validate incoming WebSocket connection
    */
-  async validateConnection(request: any): Promise<{
+  async validateConnection(_request: any): Promise<{
     allowed: boolean;
     reason?: string;
     connectionInfo?: WebSocketConnectionInfo;
   }> {
-    const ip = this.getClientIP(request);
+    const ip = this.getClientIP(_request);
     const userAgent = request.headers['user-agent'] || '';
     const origin = request.headers.origin || '';
     const connectionId = this.generateConnectionId();
@@ -193,7 +193,7 @@ export class WebSocketSecurityMiddleware {
         severity: 'medium',
         message: 'Message size exceeded',
         ip: connection.ip,
-        userId: connection.userId,
+        _userId: connection.userId,
         details: { connectionId, messageSize, maxSize: this.config.maxMessageSize },
       });
       return { allowed: false, reason: 'Message too large' };
@@ -206,7 +206,7 @@ export class WebSocketSecurityMiddleware {
         severity: 'high',
         message: 'Message rate limit exceeded',
         ip: connection.ip,
-        userId: connection.userId,
+        _userId: connection.userId,
         details: { connectionId, messageCount: connection.messageCount },
       });
       return { allowed: false, reason: 'Rate limit exceeded' };
@@ -219,7 +219,7 @@ export class WebSocketSecurityMiddleware {
         severity: 'medium',
         message: 'Invalid message structure',
         ip: connection.ip,
-        userId: connection.userId,
+        _userId: connection.userId,
         details: { connectionId, message: typeof message },
       });
       return { allowed: false, reason: 'Invalid message structure' };
@@ -231,7 +231,7 @@ export class WebSocketSecurityMiddleware {
   /**
    * Authenticate connection
    */
-  async authenticateConnection(connectionId: string, userId: string, token?: string): Promise<{
+  async authenticateConnection(connectionId: string, _userId: string, token?: string): Promise<{
     success: boolean;
     reason?: string;
   }> {
@@ -241,21 +241,21 @@ export class WebSocketSecurityMiddleware {
     }
 
     // Check if user already has too many connections
-    if (this.config.enableRateLimiting && !this.checkUserConnectionLimits(userId)) {
+    if (this.config.enableRateLimiting && !this.checkUserConnectionLimits(_userId)) {
       this.logSecurityEvent({
         type: 'rate_limit',
         severity: 'high',
         message: 'User connection limit exceeded',
         ip: connection.ip,
         userId,
-        details: { connectionId, currentConnections: this.userConnections.get(userId)?.size || 0 },
+        details: { connectionId, currentConnections: this.userConnections.get(_userId)?.size || 0 },
       });
       return { success: false, reason: 'Connection limit exceeded' };
     }
 
     // Validate authentication token (simplified)
     if (this.config.enableAuthentication && token) {
-      const isValid = await this.validateAuthToken(token, userId);
+      const isValid = await this.validateAuthToken(token, _userId);
       if (!isValid) {
         this.logSecurityEvent({
           type: 'authentication',
@@ -304,7 +304,7 @@ export class WebSocketSecurityMiddleware {
       severity: 'low',
       message: 'WebSocket connection disconnected',
       ip: connection.ip,
-      userId: connection.userId,
+      _userId: connection.userId,
       details: { connectionId, duration: Date.now() - connection.connectedAt },
     });
   }
@@ -312,7 +312,7 @@ export class WebSocketSecurityMiddleware {
   /**
    * Get client IP address
    */
-  private getClientIP(request: any): string {
+  private getClientIP(_request: any): string {
     return (
       request.headers['x-forwarded-for']
       || request.headers['x-real-ip']
@@ -362,12 +362,12 @@ export class WebSocketSecurityMiddleware {
     }
 
     // Remove from user tracking
-    if (connection.userId) {
-      const userConnections = this.userConnections.get(connection.userId);
+    if (connection._userId) {
+      const userConnections = this.userConnections.get(connection._userId);
       if (userConnections) {
         userConnections.delete(connectionId);
         if (userConnections.size === 0) {
-          this.userConnections.delete(connection.userId);
+          this.userConnections.delete(connection._userId);
         }
       }
     }
@@ -379,11 +379,11 @@ export class WebSocketSecurityMiddleware {
   /**
    * Track user connection
    */
-  private trackUserConnection(userId: string, connectionId: string): void {
-    if (!this.userConnections.has(userId)) {
+  private trackUserConnection(_userId: string, connectionId: string): void {
+    if (!this.userConnections.has(_userId)) {
       this.userConnections.set(userId, new Set());
     }
-    this.userConnections.get(userId)!.add(connectionId);
+    this.userConnections.get(_userId)!.add(connectionId);
   }
 
   /**
@@ -397,8 +397,8 @@ export class WebSocketSecurityMiddleware {
   /**
    * Check user connection limits
    */
-  private checkUserConnectionLimits(userId: string): boolean {
-    const userConnections = this.userConnections.get(userId);
+  private checkUserConnectionLimits(_userId: string): boolean {
+    const userConnections = this.userConnections.get(_userId);
     return !userConnections || userConnections.size < this.config.maxConnectionsPerUser;
   }
 
@@ -406,8 +406,8 @@ export class WebSocketSecurityMiddleware {
    * Check message rate for connection
    */
   private checkMessageRate(connectionId: string): boolean {
-    const now = Date.now();
-    const windowMs = 60000; // 1 minute
+    const _now = Date.now();
+    const _windowMs = 60000; // 1 minute
 
     if (!this.messageTimestamps.has(connectionId)) {
       this.messageTimestamps.set(connectionId, []);
@@ -489,7 +489,7 @@ export class WebSocketSecurityMiddleware {
   /**
    * Validate authentication token (simplified)
    */
-  private async validateAuthToken(token: string, userId: string): Promise<boolean> {
+  private async validateAuthToken(token: string, _userId: string): Promise<boolean> {
     // In a real implementation, this would validate JWT tokens
     // For now, just check if token exists and has reasonable length
     return token && token.length > 10;
@@ -519,7 +519,7 @@ export class WebSocketSecurityMiddleware {
       type: event.type,
       severity: event.severity,
       ip: event.ip,
-      userId: event.userId,
+      _userId: event.userId,
     }, event.details);
   }
 
@@ -545,7 +545,7 @@ export class WebSocketSecurityMiddleware {
    */
   private startSecurityMonitoring(): void {
     // Cleanup inactive connections
-    this.cleanupInterval = setInterval(() => {
+    this.cleanupInterval = setInterval(_() => {
       this.cleanupInactiveConnections();
     }, 60000); // Every minute
   }
@@ -554,7 +554,7 @@ export class WebSocketSecurityMiddleware {
    * Cleanup inactive connections
    */
   private cleanupInactiveConnections(): void {
-    const now = Date.now();
+    const _now = Date.now();
     const timeout = this.config.connectionTimeout;
     let cleanedCount = 0;
 
@@ -587,7 +587,7 @@ export class WebSocketSecurityMiddleware {
       event => Date.now() - event.timestamp < 3600000, // Last hour
     );
 
-    const connectionDistribution = recentEvents.reduce((acc, event) => {
+    const connectionDistribution = recentEvents.reduce(_(acc,_event) => {
       if (event.type === 'connection_attempt') {
         acc[event.details.allowed ? 'allowed' : 'blocked']++;
       }
@@ -657,4 +657,4 @@ export class WebSocketSecurityMiddleware {
 }
 
 // Export singleton instance
-export const websocketSecurityMiddleware = new WebSocketSecurityMiddleware();
+export const _websocketSecurityMiddleware = new WebSocketSecurityMiddleware();

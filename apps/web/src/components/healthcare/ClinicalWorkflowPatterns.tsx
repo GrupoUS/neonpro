@@ -115,15 +115,8 @@ export const ClinicalPatientCard: React.FC<{
   showQuickActions?: boolean;
   compact?: boolean;
   className?: string;
-}> = ({
-  patient,
-  onSelectPatient,
-  onViewHistory,
-  onScheduleAppointment,
-  showQuickActions = true,
-  compact = false,
-  className,
-}) => {
+}> = (_{
+  patient,_onSelectPatient,_onViewHistory,_onScheduleAppointment,_showQuickActions = true,_compact = false,_className,_}) => {
   const criticalAlerts = patient.alerts?.filter(alert => alert.severity === 'critical') || [];
   const hasUrgentStatus = patient.status === 'urgent' || criticalAlerts.length > 0;
 
@@ -278,16 +271,8 @@ export const ClinicalWorkflowStepper: React.FC<{
   allowSkipping?: boolean;
   showProgress?: boolean;
   className?: string;
-}> = ({
-  steps,
-  currentStep,
-  onStepChange,
-  onStepComplete,
-  onWorkflowComplete,
-  allowSkipping = false,
-  showProgress = true,
-  className,
-}) => {
+}> = (_{
+  steps,_currentStep,_onStepChange,_onStepComplete,_onWorkflowComplete,_allowSkipping = false,_showProgress = true,_className,_}) => {
   const [stepData, setStepData] = useState<Record<number, any>>({});
   const [errors, setErrors] = useState<Record<number, string[]>>({});
 
@@ -396,7 +381,7 @@ export const ClinicalWorkflowStepper: React.FC<{
 
       {/* Steps */}
       <div className='space-y-4'>
-        {steps.map((step, _index) => {
+        {steps.map(_(step, _index) => {
           const isActive = index === currentStep;
           const isCompleted = step.status === 'completed';
           const hasErrors = errors[index]?.length > 0;
@@ -450,8 +435,7 @@ export const ClinicalWorkflowStepper: React.FC<{
                     </div>
 
                     {/* Step Actions */}
-                    {isActive && (
-                      <div className='flex gap-2 ml-4'>
+                    {isActive && (_<div className='flex gap-2 ml-4'>
                         {allowSkipping && !step.required && (
                           <Button
                             variant='outline'
@@ -481,7 +465,7 @@ export const ClinicalWorkflowStepper: React.FC<{
                         Correções necessárias:
                       </h5>
                       <ul className='text-sm text-red-700 space-y-1'>
-                        {errors[index].map((error, errorIndex) => (
+                        {errors[index].map((error,_errorIndex) => (
                           <li key={errorIndex} className='flex items-start gap-2'>
                             <X className='w-3 h-3 mt-0.5 flex-shrink-0' aria-hidden='true' />
                             <span>{error}</span>
@@ -512,25 +496,18 @@ export const EmergencyAlertSystem: React.FC<{
   position?: 'top' | 'bottom' | 'center';
   autoHide?: boolean;
   className?: string;
-}> = ({
-  alerts,
-  onAcknowledgeAlert,
-  onDismissAlert,
-  onEscalateAlert,
-  position = 'top',
-  autoHide = false,
-  className,
-}) => {
+}> = (_{
+  alerts,_onAcknowledgeAlert,_onDismissAlert,_onEscalateAlert,_position = 'top',_autoHide = false,_className,_}) => {
   const [visibleAlerts, setVisibleAlerts] = useState<string[]>([]);
   const alertRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  useEffect(_() => {
     setVisibleAlerts(alerts.map(alert => alert.id));
   }, [alerts]);
 
-  useEffect(() => {
+  useEffect(_() => {
     if (autoHide && alerts.length > 0) {
-      const timer = setTimeout(() => {
+      const timer = setTimeout(_() => {
         setVisibleAlerts([]);
       }, 10000); // Auto-hide after 10 seconds
 
@@ -539,7 +516,7 @@ export const EmergencyAlertSystem: React.FC<{
   }, [alerts, autoHide]);
 
   const criticalAlerts = alerts.filter(alert => alert.severity === 'critical');
-  const highAlerts = alerts.filter(alert => alert.severity === 'high');
+  const _highAlerts = alerts.filter(alert => alert.severity === 'high');
 
   if (visibleAlerts.length === 0) return null;
 
@@ -630,8 +607,7 @@ export const EmergencyAlertSystem: React.FC<{
                   Reconhecer
                 </Button>
 
-                {alert.severity === 'critical' && (
-                  <Button
+                {alert.severity === 'critical' && (_<Button
                     variant='outline'
                     size='sm'
                     onClick={() => onEscalateAlert(alert.id)}
@@ -674,15 +650,8 @@ export const QuickAppointmentScheduler: React.FC<{
   onCancel: () => void;
   emergencyMode?: boolean;
   className?: string;
-}> = ({
-  availableSlots,
-  patientId,
-  providerId,
-  onScheduleAppointment,
-  onCancel,
-  emergencyMode = false,
-  className,
-}) => {
+}> = (_{
+  availableSlots,_patientId,_providerId,_onScheduleAppointment,_onCancel,_emergencyMode = false,_className,_}) => {
   const [selectedSlot, setSelectedSlot] = useState<AppointmentSlot | null>(null);
   const [notes, setNotes] = useState('');
   const [filterType, setFilterType] = useState<string>('all');

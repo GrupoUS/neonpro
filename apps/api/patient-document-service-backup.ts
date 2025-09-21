@@ -146,7 +146,7 @@ export class PatientDocumentService {
     if (this.audit) {
       this.audit
         .logActivity({
-          userId: params.uploadedBy,
+          _userId: params.uploadedBy,
           action: 'upload',
           resourceType: 'patient_document',
           resourceId: documentId,
@@ -167,7 +167,7 @@ export class PatientDocumentService {
 
   async getDocument(
     documentId: string,
-    userId: string,
+    _userId: string,
   ): Promise<PatientDocumentDTO | null> {
     try {
       if (this.persist && this.supabase) {
@@ -200,7 +200,7 @@ export class PatientDocumentService {
         console.warn('In-memory mode: getDocument not implemented');
         return null;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting document:', error);
       throw new Error('Failed to retrieve document');
     }
@@ -228,7 +228,7 @@ export class PatientDocumentService {
         const encoder = new TextEncoder();
         return encoder.encode('Mock file content for testing').buffer;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting file content:', error);
       throw new Error('Failed to retrieve file content');
     }

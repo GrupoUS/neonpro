@@ -74,7 +74,7 @@ describe('Offline Functionality Tests (T029)', () => {
           user: {
             id: 'offline-test-user',
             email: 'offline.test@professional.com',
-            role: 'healthcare_professional',
+            _role: 'healthcare_professional',
             crm: 'CRM-98765',
           },
         }),

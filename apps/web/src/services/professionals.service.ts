@@ -65,7 +65,7 @@ class ProfessionalService {
       if (error) throw error;
 
       return data.map(this.transformProfessional);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching professionals:', error);
       throw error;
     }
@@ -90,7 +90,7 @@ class ProfessionalService {
       if (error) throw error;
 
       return data.map(this.transformProfessional);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching professionals by service type:', error);
       throw error;
     }
@@ -164,7 +164,7 @@ class ProfessionalService {
         bookedSlots,
         workingHours,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting professional availability:', error);
       throw error;
     }
@@ -192,7 +192,7 @@ class ProfessionalService {
       if (error) throw error;
 
       return conflicts.length === 0;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error checking professional availability:', error);
       return false;
     }
@@ -305,4 +305,4 @@ class ProfessionalService {
   }
 }
 
-export const professionalService = new ProfessionalService();
+export const _professionalService = new ProfessionalService();

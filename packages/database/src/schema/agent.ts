@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 // Agent Session Schema
 export const AgentSessionSchema = z.object({
   id: z.string().uuid(),
@@ -17,7 +15,7 @@ export type AgentSession = z.infer<typeof AgentSessionSchema>;
 export const AgentMessageSchema = z.object({
   id: z.string().uuid(),
   session_id: z.string().uuid(),
-  role: z.enum(["user", "assistant", "system"]),
+  _role: z.enum(["user", "assistant", "system"]),
   content: z.string().min(1),
   metadata: z.record(z.unknown()).default({}),
   created_at: z.date(),
@@ -119,7 +117,7 @@ export interface AgentContext {
   user: {
     id: string;
     email: string;
-    role: string;
+    _role: string;
   };
   session: AgentSession | null;
   permissions: string[];
@@ -128,7 +126,7 @@ export interface AgentContext {
 // Search Parameters
 export const KnowledgeSearchParamsSchema = z.object({
   agentType: z.enum(["client", "financial", "appointment"]),
-  query: z.string().min(1),
+  _query: z.string().min(1),
   limit: z.number().min(1).max(100).default(5),
   threshold: z.number().min(0).max(1).default(0.7),
 });

@@ -114,12 +114,12 @@ export function RealTimeChat({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-scroll to bottom when new messages arrive
-  useEffect(() => {
+  useEffect(_() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   // Auto-resize textarea
-  useEffect(() => {
+  useEffect(_() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
@@ -127,7 +127,7 @@ export function RealTimeChat({
   }, [newMessage]);
 
   // Mark messages as read when they come into view
-  useEffect(() => {
+  useEffect(_() => {
     const unreadMessages = messages.filter(
       m =>
         m.senderType !== participantRole
@@ -142,7 +142,7 @@ export function RealTimeChat({
   }, [messages, participantRole, markAsRead]);
 
   // Auto AI assistance for medical terms
-  useEffect(() => {
+  useEffect(_() => {
     if (enableAI && autoAIAssist && newMessage.length > 10) {
       const medicalTerms = extractMedicalTerms(newMessage);
       if (medicalTerms.length > 0) {
@@ -172,7 +172,7 @@ export function RealTimeChat({
   }, []);
 
   // Filter messages based on search and filter type
-  const filteredMessages = useCallback(() => {
+  const filteredMessages = useCallback(_() => {
     let filtered = messages;
 
     // Filter by type
@@ -214,7 +214,7 @@ export function RealTimeChat({
   }, [messages, filterType, searchQuery, showSystemMessages]);
 
   // Handle send message
-  const handleSendMessage = useCallback(async () => {
+  const handleSendMessage = useCallback(_async () => {
     if (!newMessage.trim() || isSending) return;
 
     try {
@@ -243,7 +243,7 @@ export function RealTimeChat({
           'Mensagem de urgência detectada. Considerando escalação.',
         );
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error sending message:', error);
       toast.error('Erro ao enviar mensagem');
     }
@@ -297,7 +297,7 @@ export function RealTimeChat({
         setEditingMessageId(null);
         setEditingContent('');
         toast.success('Mensagem editada');
-      } catch (error) {
+      } catch (_error) {
         console.error('Error editing message:', error);
         toast.error('Erro ao editar mensagem');
       }
@@ -349,7 +349,7 @@ export function RealTimeChat({
         });
 
         toast.success('Arquivo enviado com sucesso');
-      } catch (error) {
+      } catch (_error) {
         console.error('Error uploading file:', error);
         toast.error('Erro ao enviar arquivo');
       }
@@ -369,7 +369,7 @@ export function RealTimeChat({
           },
         });
         toast.success('Sugestão aplicada');
-      } catch (error) {
+      } catch (_error) {
         console.error('Error applying suggestion:', error);
         toast.error('Erro ao aplicar sugestão');
       }
@@ -378,11 +378,11 @@ export function RealTimeChat({
   );
 
   // Handle export chat
-  const handleExportChat = useCallback(async () => {
+  const handleExportChat = useCallback(_async () => {
     try {
       const _exportData = await exportChatHistory('pdf');
       toast.success('Histórico exportado com sucesso');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error exporting chat:', error);
       toast.error('Erro ao exportar histórico');
     }
@@ -687,8 +687,7 @@ export function RealTimeChat({
                         </div>
                       </div>
                     )
-                    : (
-                      <>
+                    : (_<>
                         <div className='text-sm'>{message.content}</div>
 
                         {/* Medical Terms Highlight */}
@@ -833,12 +832,11 @@ export function RealTimeChat({
       <div className='p-4 border-t border-gray-200 bg-gray-50'>
         <div className='flex items-end space-x-2'>
           {/* File Upload */}
-          {enableFileSharing && (
-            <div>
+          {enableFileSharing && (_<div>
               <input
                 ref={fileInputRef}
                 type='file'
-                accept='image/*,.pdf,.txt'
+                accept='image/*,_.pdf,_.txt'
                 onChange={handleFileUpload}
                 className='hidden'
               />
@@ -883,8 +881,7 @@ export function RealTimeChat({
         </div>
 
         {/* Quick Actions */}
-        {enableAI && (
-          <div className='flex items-center space-x-2 mt-2'>
+        {enableAI && (_<div className='flex items-center space-x-2 mt-2'>
             <Button
               variant='ghost'
               size='sm'
@@ -955,7 +952,7 @@ export function RealTimeChat({
             <div>
               <h4 className='font-medium mb-2'>Atividades Recentes</h4>
               <ScrollArea className='h-48'>
-                {auditLog.slice(0, 10).map((entry, _index) => (
+                {auditLog.slice(0, 10).map(_(entry, _index) => (
                   <div
                     key={index}
                     className='flex justify-between text-xs text-gray-600 py-1'

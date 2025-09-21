@@ -19,7 +19,7 @@ export interface WebRTCConfig {
 
 export interface SessionParticipant {
   id: string;
-  role: "doctor" | "patient" | "observer";
+  _role: "doctor" | "patient" | "observer";
   peerId: string;
   platform: string;
   deviceInfo: any;
@@ -54,7 +54,7 @@ export interface SessionRecording {
   retentionUntil: Date;
   encrypted: boolean;
   accessLog: Array<{
-    userId: string;
+    _userId: string;
     action: string;
     timestamp: Date;
     ipAddress: string;
@@ -162,7 +162,7 @@ export class WebRTCSessionService {
         config,
         sessionToken: session.session_token,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error initializing WebRTC session:", error);
       throw error;
     }
@@ -208,7 +208,7 @@ export class WebRTCSessionService {
         sessionId: data.id,
         roomId,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error creating WebRTC session:", error);
       throw error;
     }
@@ -246,7 +246,7 @@ export class WebRTCSessionService {
 
       // Initialize WebRTC connections
       await this.initializeSession(sessionId);
-    } catch (error) {
+    } catch (_error) {
       console.error("Error starting session:", error);
       throw error;
     }
@@ -304,7 +304,7 @@ export class WebRTCSessionService {
         timestamp: new Date().toISOString(),
         platform: participant.platform,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error("Error adding participant:", error);
       throw error;
     }
@@ -344,7 +344,7 @@ export class WebRTCSessionService {
       ) {
         await this.handleQualityIssues(roomId, metrics);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error("Error updating quality metrics:", error);
       throw error;
     }
@@ -437,7 +437,7 @@ export class WebRTCSessionService {
         recordingId,
         storageLocation,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error starting recording:", error);
       throw error;
     }
@@ -530,7 +530,7 @@ export class WebRTCSessionService {
         fileHash,
         duration,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error stopping recording:", error);
       throw error;
     }
@@ -579,7 +579,7 @@ export class WebRTCSessionService {
         timestamp: new Date().toISOString(),
         reason,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error("Error ending session:", error);
       throw error;
     }
@@ -657,7 +657,7 @@ export class WebRTCSessionService {
         recording,
         duration,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting session status:", error);
       throw error;
     }
@@ -722,7 +722,7 @@ export class WebRTCSessionService {
           console.error("Failed to log quality issues:", error);
         }
       }
-    } catch (error) {
+    } catch (_error) {
       console.error("Error handling quality issues:", error);
     }
   }
@@ -758,7 +758,7 @@ export class WebRTCSessionService {
       if (updateError) {
         console.error("Failed to log session event:", updateError);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error("Error logging session event:", error);
     }
   }
@@ -812,7 +812,7 @@ export class WebRTCSessionService {
         metrics: metrics || null,
         recording: recording || null,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting session details:", error);
       return null;
     }
@@ -855,7 +855,7 @@ export class WebRTCSessionService {
         reason,
         cancelled_at: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch (_error) {
       console.error("Error cancelling session:", error);
       throw error;
     }
@@ -882,7 +882,7 @@ export class WebRTCSessionService {
       }
 
       return data || null;
-    } catch (error) {
+    } catch (_error) {
       console.error("Error getting quality metrics:", error);
       return null;
     }

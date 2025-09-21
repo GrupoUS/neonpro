@@ -68,7 +68,7 @@ export function PolicyManagementPanel() {
   const clinicId = 'default-clinic-id'; // Placeholder
 
   const { data: policyData, isLoading } = useQuery<PolicySummary>({
-    queryKey: ['policy-management', clinicId],
+    queryKey: ['policy-management',_clinicId],
     queryFn: async () => {
       const governanceService = getGovernanceService();
       return await governanceService.getPolicyManagementData(clinicId);

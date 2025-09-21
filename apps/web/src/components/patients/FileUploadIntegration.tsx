@@ -119,7 +119,7 @@ export function FileUploadIntegration({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load existing files on mount (simplified for now)
-  useEffect(() => {
+  useEffect(_() => {
     if (patientId) {
       // TODO: Implement loadExistingFiles when patient_files table is available
       console.log('Loading files for patient:', patientId);
@@ -212,7 +212,7 @@ export function FileUploadIntegration({
 
         try {
           // Simulate progress updates
-          const progressInterval = setInterval(() => {
+          const progressInterval = setInterval(_() => {
             setUploadStates(prev => {
               const newMap = new Map(prev);
               const state = newMap.get(fileId);
@@ -247,7 +247,7 @@ export function FileUploadIntegration({
           setUploadedFiles(prev => [...prev, uploadedFile]);
 
           // Remove from upload states after delay
-          setTimeout(() => {
+          setTimeout(_() => {
             setUploadStates(prev => {
               const newMap = new Map(prev);
               newMap.delete(fileId);
@@ -257,7 +257,7 @@ export function FileUploadIntegration({
 
           toast.success(`Arquivo "${file.name}" enviado com sucesso!`);
           onFilesUploaded?.([uploadedFile]);
-        } catch (error) {
+        } catch (_error) {
           console.error('Upload error:', error);
 
           setUploadStates(prev => {
@@ -289,7 +289,7 @@ export function FileUploadIntegration({
       setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
       onFileRemoved?.(fileId);
       toast.success('Arquivo removido com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error removing file:', error);
       toast.error('Erro ao remover arquivo');
     }
@@ -395,7 +395,7 @@ export function FileUploadIntegration({
       {uploadStates.size > 0 && (
         <div className='space-y-2'>
           <h4 className='text-sm font-medium'>Enviando arquivos...</h4>
-          {Array.from(uploadStates.entries()).map(([fileId, state]) => (
+          {Array.from(uploadStates.entries()).map(_([fileId,_state]) => (
             <div
               key={fileId}
               className='flex items-center gap-3 p-3 border rounded-lg'

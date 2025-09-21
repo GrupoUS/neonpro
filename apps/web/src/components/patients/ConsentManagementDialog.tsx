@@ -21,8 +21,6 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
 import {
   Alert,
   AlertDescription,
@@ -168,9 +166,8 @@ const LGPDRightsInfo = () => (
 );
 
 // Consent status indicator
-const ConsentStatusBadge = ({
-  granted,
-  lastUpdated,
+const ConsentStatusBadge = (_{
+  granted,_lastUpdated,
 }: {
   granted: boolean;
   lastUpdated: Date;
@@ -229,10 +226,9 @@ export function ConsentManagementDialog({
   });
 
   // Load current consent status
-  useEffect(() => {
+  useEffect(_() => {
     if (patientData.consents) {
-      const currentConsents = patientData.consents.reduce(
-        (acc, consent) => {
+      const currentConsents = patientData.consents.reduce(_(acc,_consent) => {
           acc[consent.consentType.replace('_', '')] = consent.granted;
           return acc;
         },
@@ -248,7 +244,7 @@ export function ConsentManagementDialog({
     try {
       await onConsentUpdate(data);
       onOpenChange(false);
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro ao atualizar consentimentos:', error);
     } finally {
       setIsLoading(false);
@@ -259,7 +255,7 @@ export function ConsentManagementDialog({
     setIsLoading(true);
     try {
       await onDataExport(patientData.patientId);
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro ao exportar dados:', error);
     } finally {
       setIsLoading(false);
@@ -275,7 +271,7 @@ export function ConsentManagementDialog({
       setIsLoading(true);
       try {
         await onDataErasure(patientData.patientId);
-      } catch (error) {
+      } catch (_error) {
         console.error('Erro ao solicitar exclusão:', error);
       } finally {
         setIsLoading(false);
@@ -307,8 +303,7 @@ export function ConsentManagementDialog({
             { id: 'consents', label: 'Consentimentos', icon: Check },
             { id: 'rights', label: 'Direitos', icon: Eye },
             { id: 'history', label: 'Histórico', icon: Clock },
-          ].map(({ id, label, icon: Icon }) => (
-            <button
+          ].map(_({ id,_label, icon: Icon }) => (_<button
               key={id}
               onClick={() => setActiveTab(id as any)}
               className={cn(
@@ -334,7 +329,7 @@ export function ConsentManagementDialog({
                 onSubmit={form.handleSubmit(handleConsentSubmit)}
                 className='space-y-4'
               >
-                {Object.entries(CONSENT_PURPOSES).map(([key, purpose]) => {
+                {Object.entries(CONSENT_PURPOSES).map(_([key,_purpose]) => {
                   const consent = getConsentByType(key);
 
                   return (
@@ -371,7 +366,7 @@ export function ConsentManagementDialog({
                         <FormField
                           control={form.control}
                           name={key.replace('_', '') as keyof ConsentFormData}
-                          render={({ field }) => (
+                          render={(_{ field }) => (
                             <FormItem className='flex flex-row items-center justify-between space-y-0'>
                               <div className='space-y-0.5'>
                                 <FormLabel className='text-sm font-medium'>
@@ -535,8 +530,7 @@ export function ConsentManagementDialog({
         )}
 
         {/* History tab */}
-        {activeTab === 'history' && (
-          <div className='space-y-4'>
+        {activeTab === 'history' && (_<div className='space-y-4'>
             <div className='flex items-center justify-between'>
               <h3 className='text-lg font-medium'>
                 Histórico de Consentimentos
@@ -549,7 +543,7 @@ export function ConsentManagementDialog({
             <div className='space-y-3'>
               {patientData.consents
                 .sort(
-                  (a, b) =>
+                  (a,_b) =>
                     new Date(b.lastUpdated).getTime()
                     - new Date(a.lastUpdated).getTime(),
                 )

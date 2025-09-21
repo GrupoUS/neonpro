@@ -11,7 +11,7 @@ export function createPrometheusRegistry(serviceName: string): Registry {
 
   // Add default labels
   prometheusRegistry.setDefaultLabels({
-    service: serviceName,
+    _service: serviceName,
     environment: process.env.NODE_ENV || "development",
     version: process.env.SERVICE_VERSION || "1.0.0",
   });

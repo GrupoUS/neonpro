@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { GoogleCalendarService } from '@/services/google-calendar';
 
-export const Route = createFileRoute('/api/google-calendar/connect')({
+export const _Route = createFileRoute('/api/google-calendar/connect')({
   GET: async ({ request }) => {
     try {
       const url = new URL(request.url);
@@ -33,7 +33,7 @@ export const Route = createFileRoute('/api/google-calendar/connect')({
       const authUrl = service.client.getAuthUrl(state);
 
       return json({ authUrl });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error generating auth URL:', error);
       return json({ error: 'Failed to generate auth URL' }, { status: 500 });
     }

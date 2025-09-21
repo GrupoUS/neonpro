@@ -43,7 +43,7 @@ export interface SessionSecurityConfig {
 export interface EnhancedSessionMetadata {
   // Basic session info
   sessionId: string;
-  userId: string;
+  _userId: string;
   createdAt: Date;
   lastActivity: Date;
 
@@ -162,7 +162,7 @@ export class EnhancedSessionManager {
       charCounts[char] = (charCounts[char] || 0) + 1;
     });
 
-    const entropy = Object.values(charCounts).reduce((sum, count) => {
+    const entropy = Object.values(charCounts).reduce(_(sum,_count) => {
       const probability = count / chars.length;
       return sum - probability * Math.log2(probability);
     }, 0);
@@ -349,7 +349,7 @@ export class EnhancedSessionManager {
     timeRemaining?: number;
     shouldWarn: boolean;
   } {
-    const now = Date.now();
+    const _now = Date.now();
     const sessionAge = now - session.createdAt.getTime();
     const idleTime = now - session.lastActivity.getTime();
 
@@ -388,11 +388,11 @@ export class EnhancedSessionManager {
   /**
    * Manage concurrent sessions
    */
-  private manageConcurrentSessions(userId: string, currentSessionId: string): {
+  private manageConcurrentSessions(_userId: string, currentSessionId: string): {
     action: 'allow' | 'remove_oldest' | 'notify';
     removedSession?: string;
   } {
-    const userSessionIds = this.userSessions.get(userId) || new Set();
+    const userSessionIds = this.userSessions.get(_userId) || new Set();
     const userSessions = Array.from(userSessionIds)
       .map(id => this.sessions.get(id))
       .filter(Boolean) as EnhancedSessionMetadata[];
@@ -410,7 +410,7 @@ export class EnhancedSessionManager {
     }
 
     // Find oldest session
-    const oldestSession = userSessions.reduce((oldest, current) =>
+    const oldestSession = userSessions.reduce(_(oldest,_current) =>
       current.createdAt < oldest.createdAt ? current : oldest
     );
 
@@ -431,7 +431,7 @@ export class EnhancedSessionManager {
    * Create new enhanced session
    */
   createSession(
-    userId: string,
+    _userId: string,
     metadata: Partial<EnhancedSessionMetadata> = {},
   ): string {
     // Generate secure session ID
@@ -469,10 +469,10 @@ export class EnhancedSessionManager {
     this.sessions.set(sessionId, session);
 
     // Track user sessions
-    if (!this.userSessions.has(userId)) {
+    if (!this.userSessions.has(_userId)) {
       this.userSessions.set(userId, new Set());
     }
-    this.userSessions.get(userId)!.add(sessionId);
+    this.userSessions.get(_userId)!.add(sessionId);
 
     return sessionId;
   }
@@ -648,11 +648,11 @@ export class EnhancedSessionManager {
     const session = this.sessions.get(sessionId);
     if (session) {
       // Remove from user sessions
-      const userSessions = this.userSessions.get(session.userId);
+      const userSessions = this.userSessions.get(session._userId);
       if (userSessions) {
         userSessions.delete(sessionId);
         if (userSessions.size === 0) {
-          this.userSessions.delete(session.userId);
+          this.userSessions.delete(session._userId);
         }
       }
 
@@ -665,8 +665,8 @@ export class EnhancedSessionManager {
   /**
    * Get user sessions
    */
-  getUserSessions(userId: string): EnhancedSessionMetadata[] {
-    const sessionIds = this.userSessions.get(userId) || new Set();
+  getUserSessions(_userId: string): EnhancedSessionMetadata[] {
+    const sessionIds = this.userSessions.get(_userId) || new Set();
     return Array.from(sessionIds)
       .map(id => this.sessions.get(id))
       .filter(Boolean) as EnhancedSessionMetadata[];
@@ -675,8 +675,8 @@ export class EnhancedSessionManager {
   /**
    * Remove all user sessions
    */
-  removeAllUserSessions(userId: string): number {
-    const userSessionIds = this.userSessions.get(userId) || new Set();
+  removeAllUserSessions(_userId: string): number {
+    const userSessionIds = this.userSessions.get(_userId) || new Set();
     const removedCount = userSessionIds.size;
 
     userSessionIds.forEach(sessionId => {
@@ -743,7 +743,7 @@ export class EnhancedSessionManager {
       clearInterval(this.cleanupInterval);
     }
 
-    this.cleanupInterval = setInterval(() => {
+    this.cleanupInterval = setInterval(_() => {
       const cleanedCount = this.cleanExpiredSessions();
       if (cleanedCount > 0) {
         console.log(`[EnhancedSessionManager] Cleaned ${cleanedCount} expired sessions`);

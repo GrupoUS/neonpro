@@ -24,7 +24,7 @@ const mockLGPDService = {
 };
 
 describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
-  beforeEach(async () => {
+  beforeEach(_async () => {
     vi.clearAllMocks();
 
     // Inject mocked services into the endpoint
@@ -183,17 +183,17 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     mockLGPDService.maskSensitiveData.mockImplementation(data => data);
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     vi.restoreAllMocks();
   });
 
-  it('should export AI analyze route handler', async () => {
+  it(_'should export AI analyze route handler',_async () => {
     const module = await import('../analyze');
     expect(module.default).toBeDefined();
   });
 
-  describe('Successful AI Analysis Operations', () => {
-    it('should analyze structured patient data', async () => {
+  describe(_'Successful AI Analysis Operations',_() => {
+    it(_'should analyze structured patient data',_async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -245,7 +245,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(data.data.results.recommendations).toHaveLength(2);
     });
 
-    it('should analyze medical images', async () => {
+    it(_'should analyze medical images',_async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -285,7 +285,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(mockAIChatService.analyzeImage).toHaveBeenCalled();
     });
 
-    it('should analyze patient feedback text', async () => {
+    it(_'should analyze patient feedback text',_async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -294,7 +294,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
           text:
             'Estou muito satisfeita com o tratamento de limpeza de pele. Os resultados foram excelentes e superaram minhas expectativas. Houve um leve desconforto durante o procedimento, mas nada insuportável. Gostaria de saber sobre outros tratamentos disponíveis.',
           patientId: 'patient-123',
-          context: 'post_treatment_feedback',
+          _context: 'post_treatment_feedback',
         },
         options: {
           analyzeSentiment: true,
@@ -323,7 +323,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(data.data.results.actionableInsights).toHaveLength(3);
     });
 
-    it('should include AI analysis performance headers', async () => {
+    it(_'should include AI analysis performance headers',_async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -350,7 +350,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(response.headers.get('X-Analysis-Version')).toBe('3.2');
     });
 
-    it('should handle multi-modal analysis', async () => {
+    it(_'should handle multi-modal analysis',_async () => {
       mockAIChatService.analyzeMultiModal.mockResolvedValue({
         success: true,
         data: {
@@ -401,8 +401,8 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     });
   });
 
-  describe('LGPD Compliance and Data Access', () => {
-    it('should validate LGPD data access for AI analysis', async () => {
+  describe(_'LGPD Compliance and Data Access',_() => {
+    it(_'should validate LGPD data access for AI analysis',_async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -422,7 +422,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       );
 
       expect(mockLGPDService.validateDataAccess).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         dataType: 'ai_data_analysis',
         purpose: 'healthcare_analysis',
         legalBasis: 'legitimate_interest',
@@ -430,7 +430,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       });
     });
 
-    it('should log analysis activity for audit trail', async () => {
+    it(_'should log analysis activity for audit trail',_async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -452,7 +452,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       );
 
       expect(mockAuditService.logActivity).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         action: 'ai_data_analysis',
         resourceType: 'ai_analysis',
         resourceId: 'img-analysis-456',
@@ -470,7 +470,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       });
     });
 
-    it('should handle LGPD access denial for analysis', async () => {
+    it(_'should handle LGPD access denial for analysis',_async () => {
       mockLGPDService.validateDataAccess.mockResolvedValue({
         success: false,
         error: 'Acesso negado para análise de IA por política LGPD',
@@ -504,8 +504,8 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle authentication errors', async () => {
+  describe(_'Error Handling',_() => {
+    it(_'should handle authentication errors',_async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const response = await analyzeRoute.request(
@@ -525,7 +525,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(data.error).toContain('Não autorizado');
     });
 
-    it('should handle validation errors for analysis data', async () => {
+    it(_'should handle validation errors for analysis data',_async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const invalidAnalysisData = {
@@ -552,7 +552,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(data.error || data.message).toBeDefined();
     });
 
-    it('should handle AI service errors gracefully', async () => {
+    it(_'should handle AI service errors gracefully',_async () => {
       mockAIChatService.analyzeData.mockResolvedValue({
         success: false,
         error: 'Erro interno do serviço de análise de IA',
@@ -583,7 +583,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(data.error).toContain('Erro interno');
     });
 
-    it('should handle unsupported analysis types', async () => {
+    it(_'should handle unsupported analysis types',_async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -611,8 +611,8 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     });
   });
 
-  describe('Brazilian Healthcare Compliance', () => {
-    it('should include CFM compliance headers', async () => {
+  describe(_'Brazilian Healthcare Compliance',_() => {
+    it(_'should include CFM compliance headers',_async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -637,7 +637,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(response.headers.get('X-Medical-AI-Logged')).toBe('true');
     });
 
-    it('should validate healthcare professional context for medical analysis', async () => {
+    it(_'should validate healthcare professional context for medical analysis',_async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -668,8 +668,8 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     });
   });
 
-  describe('Performance and Data Handling', () => {
-    it('should include performance headers', async () => {
+  describe(_'Performance and Data Handling',_() => {
+    it(_'should include performance headers',_async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -694,11 +694,11 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(response.headers.get('X-Database-Queries')).toBeDefined();
     });
 
-    it('should handle large data analysis efficiently', async () => {
+    it(_'should handle large data analysis efficiently',_async () => {
       const largeData = {
         analysisType: 'structured_data',
         data: {
-          patientHistory: Array.from({ length: 100 }, (_, i) => ({
+          patientHistory: Array.from({ length: 100 },_(_,_i) => ({
             date: `2024-01-${String(i + 1).padStart(2, '0')}`,
             treatment: `Tratamento ${i + 1}`,
             outcome: 'satisfatório',

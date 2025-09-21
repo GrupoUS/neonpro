@@ -54,7 +54,7 @@ export default function SubscriptionUpgrade({
       toast(
         'Redirecionando para pagamento - Você será redirecionado para completar sua assinatura Pro.',
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Error opening payment link:', error);
       toast('Erro ao processar upgrade - Tente novamente em alguns instantes.');
     } finally {
@@ -108,8 +108,7 @@ export default function SubscriptionUpgrade({
           </div>
         </div>
 
-        {showFeatures && (
-          <div className='space-y-4 mb-6'>
+        {showFeatures && (_<div className='space-y-4 mb-6'>
             {PRO_FEATURES.map((feature, _index) => (
               <div key={index} className='flex items-start space-x-3'>
                 <div className='w-8 h-8 bg-[#AC9469]/10 rounded-full flex items-center justify-center flex-shrink-0'>

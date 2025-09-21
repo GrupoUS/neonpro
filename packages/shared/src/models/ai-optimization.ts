@@ -22,7 +22,6 @@
  *
  * For detailed migration steps, see the repository CHANGELOG or MIGRATION.md (if available).
  */
-import { z } from "zod";
 import {
   HealthcareDataClassification,
   LGPDDataCategory,
@@ -444,7 +443,7 @@ export class HealthcareAIOptimizationUtils {
    */
   static generateSemanticHash(
     prompt: string,
-    context: HealthcareAIUseCase,
+    _context: HealthcareAIUseCase,
   ): string {
     // Simple hash implementation - in production, use proper semantic hashing
     const combined = `${prompt}:${context}`;
@@ -479,7 +478,7 @@ export class HealthcareAIOptimizationUtils {
 }
 
 // Default configurations for common healthcare use cases
-export const DEFAULT_HEALTHCARE_AI_CONFIGS = {
+export const _DEFAULT_HEALTHCARE_AI_CONFIGS = {
   PATIENT_COMMUNICATION: {
     strategies: [
       CostOptimizationStrategy.SEMANTIC_CACHING,

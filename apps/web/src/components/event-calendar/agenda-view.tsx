@@ -23,9 +23,9 @@ export function AgendaView({
   onEventSelect,
 }: AgendaViewProps) {
   // Show events for the next days based on constant
-  const days = useMemo(() => {
+  const days = useMemo(_() => {
     console.log('Agenda view updating with date:', currentDate.toISOString());
-    return Array.from({ length: AgendaDaysToShow }, (_, i) => addDays(new Date(currentDate), i));
+    return Array.from({ length: AgendaDaysToShow },_(_,_i) => addDays(new Date(currentDate), i));
   }, [currentDate]);
 
   const handleEventClick = (event: CalendarEvent, e: React.MouseEvent) => {

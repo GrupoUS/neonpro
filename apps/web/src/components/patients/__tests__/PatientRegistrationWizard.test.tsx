@@ -18,7 +18,7 @@ const createWrapper = () => {
   );
 };
 
-describe('PatientRegistrationWizard', () => {
+describe(_'PatientRegistrationWizard',_() => {
   const defaultProps = {
     open: true,
     onOpenChange: () => {},
@@ -26,7 +26,7 @@ describe('PatientRegistrationWizard', () => {
     onPatientCreated: () => {},
   };
 
-  it('renders the wizard with first step active', () => {
+  it(_'renders the wizard with first step active',_() => {
     render(<PatientRegistrationWizard {...defaultProps} />, {
       wrapper: createWrapper(),
     });

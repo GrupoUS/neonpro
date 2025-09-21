@@ -9,11 +9,11 @@ import { useEffect, useState } from 'react';
 
 interface FloatingAIChatSimpleProps {
   className?: string;
-  context?: string;
+  _context?: string;
   patientId?: string;
   userRole?: string;
   lgpdCompliant?: boolean;
-  onAuditLog?: (action: string, details?: Record<string, any>) => void;
+  onAuditLog?: (action: string, details?: Record<string,_any>) => void;
   onEmergencyDetected?: () => void;
 }
 
@@ -45,7 +45,7 @@ export default function FloatingAIChatSimple({
   const [inputValue, setInputValue] = useState('');
 
   // Handle escape key to close chat
-  useEffect(() => {
+  useEffect(_() => {
     const handleEscape = (_event: any) => {
       if (event.key === 'Escape' && isOpen) {
         setIsOpen(false);
@@ -57,7 +57,7 @@ export default function FloatingAIChatSimple({
   }, [isOpen]);
 
   // Handle body scroll when chat is open
-  useEffect(() => {
+  useEffect(_() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -146,8 +146,7 @@ export default function FloatingAIChatSimple({
       </div>
 
       {/* Chat Modal/Popup */}
-      {isOpen && (
-        <>
+      {isOpen && (_<>
           {/* Backdrop */}
           <div
             className='fixed inset-0 bg-black/20 backdrop-blur-sm z-40'
@@ -267,12 +266,11 @@ export default function FloatingAIChatSimple({
                 : searchSuggestions?.length
                 ? (
                   <div className='flex flex-wrap gap-2'>
-                    {searchSuggestions.slice(0, 4).map((s: string) => (
-                      <button
+                    {searchSuggestions.slice(0, 4).map((s: string) => (_<button
                         key={s}
                         onClick={() => {
                           setInputValue(s);
-                          setTimeout(() => handleSendMessage(), 0);
+                          setTimeout(_() => handleSendMessage(), 0);
                         }}
                         className='text-xs px-2 py-1 rounded-full border border-[#D2D0C8] text-[#112031] hover:bg-[#F6F5F2]'
                       >

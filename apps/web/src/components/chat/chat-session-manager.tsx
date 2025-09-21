@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import ChatContainer from './chat-container';
 
 export function ChatSessionManager() {
-  const sessionId = useMemo(() => nanoid(), []);
+  const sessionId = useMemo(_() => nanoid(), []);
   const { data } = useChatSession(sessionId, { mock: true });
   return (
     <div>

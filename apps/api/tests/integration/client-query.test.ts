@@ -47,9 +47,9 @@ describe('Query Client Information - Integration Test', () => {
         body: JSON.stringify({
           query,
           sessionId,
-          context: {
-            userId: 'nurse-user-id',
-            role: 'nurse',
+          _context: {
+            _userId: 'nurse-user-id',
+            _role: 'nurse',
           },
         }),
       });
@@ -91,9 +91,9 @@ describe('Query Client Information - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-${Math.random()}`,
-            context: {
-              userId: 'nurse-user-id',
-              role: 'nurse',
+            _context: {
+              _userId: 'nurse-user-id',
+              _role: 'nurse',
             },
           }),
         });
@@ -118,11 +118,11 @@ describe('Query Client Information - Integration Test', () => {
           Authorization: 'Bearer valid-nurse-token',
         },
         body: JSON.stringify({
-          query: 'Me mostre os clientes cadastrados',
+          _query: 'Me mostre os clientes cadastrados',
           sessionId: 'test-session-structure',
-          context: {
-            userId: 'nurse-user-id',
-            role: 'nurse',
+          _context: {
+            _userId: 'nurse-user-id',
+            _role: 'nurse',
           },
         }),
       });
@@ -158,10 +158,10 @@ describe('Query Client Information - Integration Test', () => {
           Authorization: 'Bearer valid-nurse-token',
         },
         body: JSON.stringify({
-          query: 'Clientes cadastrados',
+          _query: 'Clientes cadastrados',
           sessionId: 'test-session-actions',
-          context: {
-            userId: 'nurse-user-id',
+          _context: {
+            _userId: 'nurse-user-id',
           },
         }),
       });
@@ -193,11 +193,11 @@ describe('Query Client Information - Integration Test', () => {
           Authorization: 'Bearer valid-nurse-token',
         },
         body: JSON.stringify({
-          query: 'Me mostre os clientes cadastrados',
+          _query: 'Me mostre os clientes cadastrados',
           sessionId: 'test-session-nurse',
-          context: {
-            userId: 'nurse-user-id',
-            role: 'nurse',
+          _context: {
+            _userId: 'nurse-user-id',
+            _role: 'nurse',
           },
         }),
       });
@@ -229,11 +229,11 @@ describe('Query Client Information - Integration Test', () => {
           Authorization: 'Bearer valid-receptionist-token',
         },
         body: JSON.stringify({
-          query: 'Lista de clientes',
+          _query: 'Lista de clientes',
           sessionId: 'test-session-receptionist',
-          context: {
-            userId: 'receptionist-user-id',
-            role: 'receptionist',
+          _context: {
+            _userId: 'receptionist-user-id',
+            _role: 'receptionist',
           },
         }),
       });
@@ -263,11 +263,11 @@ describe('Query Client Information - Integration Test', () => {
           Authorization: 'Bearer valid-doctor-token',
         },
         body: JSON.stringify({
-          query: 'Pacientes cadastrados',
+          _query: 'Pacientes cadastrados',
           sessionId: 'test-session-doctor',
-          context: {
-            userId: 'doctor-user-id',
-            role: 'doctor',
+          _context: {
+            _userId: 'doctor-user-id',
+            _role: 'doctor',
           },
         }),
       });
@@ -300,10 +300,10 @@ describe('Query Client Information - Integration Test', () => {
           Authorization: 'Bearer valid-clinic-a-token',
         },
         body: JSON.stringify({
-          query: 'Clientes cadastrados',
+          _query: 'Clientes cadastrados',
           sessionId: 'test-session-domain-isolation',
-          context: {
-            userId: 'clinic-a-user',
+          _context: {
+            _userId: 'clinic-a-user',
             domain: 'clinic-a',
           },
         }),
@@ -333,10 +333,10 @@ describe('Query Client Information - Integration Test', () => {
           Authorization: 'Bearer invalid-domain-token',
         },
         body: JSON.stringify({
-          query: 'Todos os clientes do sistema',
+          _query: 'Todos os clientes do sistema',
           sessionId: 'test-session-cross-domain',
-          context: {
-            userId: 'invalid-domain-user',
+          _context: {
+            _userId: 'invalid-domain-user',
             domain: 'unauthorized-domain',
           },
         }),
@@ -365,10 +365,10 @@ describe('Query Client Information - Integration Test', () => {
           Authorization: 'Bearer valid-nurse-token',
         },
         body: JSON.stringify({
-          query: 'Me mostre os clientes cadastrados',
+          _query: 'Me mostre os clientes cadastrados',
           sessionId: 'test-session-performance',
-          context: {
-            userId: 'nurse-user-id',
+          _context: {
+            _userId: 'nurse-user-id',
           },
         }),
       });
@@ -390,10 +390,10 @@ describe('Query Client Information - Integration Test', () => {
           Authorization: 'Bearer valid-nurse-token',
         },
         body: JSON.stringify({
-          query: 'Todos os clientes cadastrados',
+          _query: 'Todos os clientes cadastrados',
           sessionId: 'test-session-large-list',
-          context: {
-            userId: 'nurse-user-id',
+          _context: {
+            _userId: 'nurse-user-id',
           },
         }),
       });
@@ -419,10 +419,10 @@ describe('Query Client Information - Integration Test', () => {
           Authorization: 'Bearer valid-nurse-token',
         },
         body: JSON.stringify({
-          query: 'Clientes cadastrados',
+          _query: 'Clientes cadastrados',
           sessionId: 'test-session-privacy',
-          context: {
-            userId: 'nurse-user-id',
+          _context: {
+            _userId: 'nurse-user-id',
           },
         }),
       });
@@ -450,10 +450,10 @@ describe('Query Client Information - Integration Test', () => {
           Authorization: 'Bearer valid-nurse-token',
         },
         body: JSON.stringify({
-          query: 'Lista de pacientes',
+          _query: 'Lista de pacientes',
           sessionId: 'test-session-audit',
-          context: {
-            userId: 'nurse-user-id',
+          _context: {
+            _userId: 'nurse-user-id',
           },
         }),
       });
@@ -486,8 +486,8 @@ describe('Query Client Information - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-filter-${Math.random()}`,
-            context: {
-              userId: 'nurse-user-id',
+            _context: {
+              _userId: 'nurse-user-id',
             },
           }),
         });

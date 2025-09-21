@@ -12,7 +12,7 @@ export function useSupabaseQuery<T = any>(
   queryFn: () => Promise<{ data: T | null; error: any }>,
   options = {},
 ) {
-  return useQuery({
+  return useQuery(_{
     queryKey,
     queryFn: async () => {
       const result = await queryFn();
@@ -36,14 +36,11 @@ export function useSupabaseRealTimeQuery<T = any>(
   const setupRealTimeSubscription = () => {
     const channel = supabase
       .channel(`${table}-realtime`)
-      .on(
-        'postgres_changes',
+      .on(_'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: table,
-        },
-        () => {
+          table: table,_},_() => {
           // Invalidar query quando houver mudanças
           queryClient.invalidateQueries({ queryKey });
         },
@@ -87,9 +84,7 @@ export function usePatients(options = {}) {
 
 // Hook para queries de agendamentos
 export function useAppointments(options = {}): any {
-  return useSupabaseQuery(
-    ['appointments'],
-    async () => {
+  return useSupabaseQuery(_['appointments'],_async () => {
       const { data, error } = await supabase
         .from('appointments')
         .select(
@@ -97,7 +92,7 @@ export function useAppointments(options = {}): any {
           *,
           patient:patients(*),
           professional:professionals(*),
-          service:services(*)
+          _service:services(*)
         `,
         )
         .order('start_time', { ascending: true });
@@ -113,10 +108,7 @@ export function useAppointments(options = {}): any {
 
 // Hook para agendamentos do dia com real-time
 export function useTodayAppointments(professionalId: string | undefined): any {
-  return useSupabaseRealTimeQuery(
-    ['appointments', 'today', professionalId ?? 'all'],
-    'appointments',
-    async () => {
+  return useSupabaseRealTimeQuery(_['appointments',_'today',_professionalId ?? 'all'],_'appointments',_async () => {
       const today = new Date().toISOString().split('T')[0];
 
       let query = supabase
@@ -126,7 +118,7 @@ export function useTodayAppointments(professionalId: string | undefined): any {
           *,
           patient:patients(*),
           professional:professionals(*),
-          service:services(*)
+          _service:services(*)
         `,
         )
         .gte('start_time', `${today}T00:00:00`)
@@ -150,10 +142,7 @@ export function useTodayAppointments(professionalId: string | undefined): any {
 
 // Hook para estatísticas com real-time
 export function useStats() {
-  return useSupabaseRealTimeQuery(
-    ['stats'],
-    'patients',
-    async () => {
+  return useSupabaseRealTimeQuery(_['stats'],_'patients',_async () => {
       const [
         { count: totalPatients },
         { count: totalAppointments },
@@ -200,9 +189,7 @@ export function useSupabaseMutation(
 
   return useMutation({
     mutationFn: async ({
-      data,
-      id,
-      action,
+      data,_id,_action,
     }: {
       data?: any;
       id?: string;
@@ -238,7 +225,7 @@ export function useSupabaseMutation(
       if (result.error) throw result.error;
       return result.data;
     },
-    onSuccess: (data, _variables) => {
+    onSuccess: (_data, _variables) => {
       // Invalidar queries relacionadas
       if (options.invalidateQueries) {
         options.invalidateQueries.forEach(_queryKey => {
@@ -340,13 +327,13 @@ export function useAppointmentMutation(options = {}) {
 export function useRealTimeSubscription(
   table: string,
   callbacks: {
-    onInsert?: (payload: any) => void;
-    onUpdate?: (payload: any) => void;
-    onDelete?: (payload: any) => void;
+    onInsert?: (_payload: any) => void;
+    onUpdate?: (_payload: any) => void;
+    onDelete?: (_payload: any) => void;
   },
   filters?: Record<string, any>,
 ) {
-  useEffect(() => {
+  useEffect(_() => {
     const channel = supabase
       .channel(`${table}-subscription`)
       .on(
@@ -358,17 +345,17 @@ export function useRealTimeSubscription(
           ...filters,
         },
         payload => {
-          console.log(`Real-time update on ${table}:`, payload);
+          console.log(`Real-time update on ${table}:`, _payload);
 
           switch (payload.eventType) {
             case 'INSERT':
-              callbacks.onInsert?.(payload);
+              callbacks.onInsert?.(_payload);
               break;
             case 'UPDATE':
-              callbacks.onUpdate?.(payload);
+              callbacks.onUpdate?.(_payload);
               break;
             case 'DELETE':
-              callbacks.onDelete?.(payload);
+              callbacks.onDelete?.(_payload);
               break;
           }
         },

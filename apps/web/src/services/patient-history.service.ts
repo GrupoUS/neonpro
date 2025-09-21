@@ -80,7 +80,7 @@ export class PatientHistoryService {
   static async createMedicalRecord(
     patientId: string,
     clinicId: string,
-    request: CreateMedicalRecordRequest,
+    _request: CreateMedicalRecordRequest,
   ): Promise<MedicalRecord> {
     const { data, error } = await PatientHistoryService.sb
       .from('medical_records')
@@ -105,7 +105,7 @@ export class PatientHistoryService {
    */
   static async updateMedicalRecord(
     id: string,
-    request: UpdateMedicalRecordRequest,
+    _request: UpdateMedicalRecordRequest,
   ): Promise<MedicalRecord> {
     const { data, error } = await PatientHistoryService.sb
       .from('medical_records')
@@ -154,7 +154,7 @@ export class PatientHistoryService {
   static async createTreatmentPlan(
     patientId: string,
     clinicId: string,
-    request: CreateTreatmentPlanRequest,
+    _request: CreateTreatmentPlanRequest,
   ): Promise<TreatmentPlan> {
     const { data, error } = await PatientHistoryService.sb
       .from('treatment_plans')
@@ -181,7 +181,7 @@ export class PatientHistoryService {
    */
   static async updateTreatmentPlan(
     id: string,
-    request: UpdateTreatmentPlanRequest,
+    _request: UpdateTreatmentPlanRequest,
   ): Promise<TreatmentPlan> {
     const { data, error } = await PatientHistoryService.sb
       .from('treatment_plans')
@@ -239,7 +239,7 @@ export class PatientHistoryService {
    */
   static async createProgressNote(
     patientId: string,
-    request: CreateProgressNoteRequest,
+    _request: CreateProgressNoteRequest,
   ): Promise<ProgressNote> {
     const { data, error } = await PatientHistoryService.sb
       .from('progress_notes')
@@ -457,4 +457,4 @@ export class PatientHistoryService {
   }
 }
 
-export const patientHistoryService = PatientHistoryService;
+export const _patientHistoryService = PatientHistoryService;

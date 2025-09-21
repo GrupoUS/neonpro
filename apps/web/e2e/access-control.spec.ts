@@ -2,9 +2,9 @@
  * Role-Based Access Control E2E Tests
  *
  * Validates RBAC implementation for healthcare scenarios:
- * - Admin role: Full system access
- * - Healthcare Provider role: Clinical data access
- * - Patient role: Limited personal data access
+ * - Admin _role: Full system access
+ * - Healthcare Provider _role: Clinical data access
+ * - Patient _role: Limited personal data access
  * - Permission enforcement and data isolation
  *
  * @version 1.0.0
@@ -284,7 +284,7 @@ test.describe('Role-Based Access Control', () => {
       const aiResponse = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
         headers: { Authorization: `Bearer ${token}` },
         data: {
-          query: 'Me mostre todos os dados financeiros',
+          _query: 'Me mostre todos os dados financeiros',
           sessionId: 'test-session',
         },
       });
@@ -312,7 +312,7 @@ test.describe('Role-Based Access Control', () => {
       const aiResponse = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
         headers: { Authorization: `Bearer ${token}` },
         data: {
-          query: 'Quais os próximos agendamentos?',
+          _query: 'Quais os próximos agendamentos?',
           sessionId: 'test-session',
         },
       });

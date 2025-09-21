@@ -15,7 +15,6 @@
  * - Actionable recommendations and remediation plans
  */
 
-import { z } from 'zod';
 import ANVISAComplianceService, {
   ANVISA_COMPLIANCE_LEVELS,
   ANVISA_DEVICE_CLASSES,
@@ -512,7 +511,7 @@ export class BrazilianComplianceService {
    * Calculate next audit date
    */
   private calculateNextAuditDate(frequency: string): Date {
-    const now = new Date();
+    const _now = new Date();
     switch (frequency) {
       case 'monthly':
         return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);

@@ -9,10 +9,10 @@ import { HealthcareAIOrchestrator } from "../healthcare-ai-orchestrator";
 import { PredictiveAnalyticsService } from "../predictive-analytics.service";
 import { StubModelProvider } from "../../ml/stub-provider";
 
-describe("HealthcareAIOrchestrator", () => {
+describe(_"HealthcareAIOrchestrator",_() => {
   let orchestrator: HealthcareAIOrchestrator;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     const predictiveService = new PredictiveAnalyticsService(
       new StubModelProvider(),
       true, // Enable LGPD compliance
@@ -24,8 +24,8 @@ describe("HealthcareAIOrchestrator", () => {
     });
   });
 
-  describe("generateHealthcareInsights", () => {
-    it("should generate comprehensive healthcare insights", async () => {
+  describe(_"generateHealthcareInsights",_() => {
+    it(_"should generate comprehensive healthcare insights",_async () => {
       const insights = await orchestrator.generateHealthcareInsights("month");
 
       expect(insights).toHaveProperty("category");
@@ -42,7 +42,7 @@ describe("HealthcareAIOrchestrator", () => {
       expect(insights.generatedAt).toBeInstanceOf(Date);
     });
 
-    it("should handle different timeframes", async () => {
+    it(_"should handle different timeframes",_async () => {
       const weekInsights =
         await orchestrator.generateHealthcareInsights("week");
       const monthInsights =
@@ -56,8 +56,8 @@ describe("HealthcareAIOrchestrator", () => {
     });
   });
 
-  describe("performComplianceAudit", () => {
-    it("should perform comprehensive compliance audit", async () => {
+  describe(_"performComplianceAudit",_() => {
+    it(_"should perform comprehensive compliance audit",_async () => {
       const audit = await orchestrator.performComplianceAudit();
 
       expect(audit).toHaveProperty("lgpdCompliant");
@@ -75,7 +75,7 @@ describe("HealthcareAIOrchestrator", () => {
       expect(audit.lastAuditDate).toBeInstanceOf(Date);
     });
 
-    it("should include Brazilian healthcare compliance checks", async () => {
+    it(_"should include Brazilian healthcare compliance checks",_async () => {
       const audit = await orchestrator.performComplianceAudit();
 
       const auditText = audit.auditTrail.join(" ").toLowerCase();
@@ -85,8 +85,8 @@ describe("HealthcareAIOrchestrator", () => {
     });
   });
 
-  describe("getDashboardData", () => {
-    it("should return complete dashboard data", async () => {
+  describe(_"getDashboardData",_() => {
+    it(_"should return complete dashboard data",_async () => {
       const dashboard = await orchestrator.getDashboardData();
 
       expect(dashboard).toHaveProperty("metrics");
@@ -98,7 +98,7 @@ describe("HealthcareAIOrchestrator", () => {
       expect(Array.isArray(dashboard.insights.insights)).toBe(true);
     });
 
-    it("should determine status correctly", async () => {
+    it(_"should determine status correctly",_async () => {
       const dashboard = await orchestrator.getDashboardData();
 
       // For stub data, should typically be healthy
@@ -106,8 +106,8 @@ describe("HealthcareAIOrchestrator", () => {
     });
   });
 
-  describe("getBrazilianHealthcareKPIs", () => {
-    it("should return Brazilian healthcare KPIs", async () => {
+  describe(_"getBrazilianHealthcareKPIs",_() => {
+    it(_"should return Brazilian healthcare KPIs",_async () => {
       const kpis = await orchestrator.getBrazilianHealthcareKPIs();
 
       expect(kpis).toHaveProperty("anvisa");
@@ -130,7 +130,7 @@ describe("HealthcareAIOrchestrator", () => {
       expect(kpis.lgpd).toHaveProperty("breachCount");
     });
 
-    it("should have valid KPI ranges", async () => {
+    it(_"should have valid KPI ranges",_async () => {
       const kpis = await orchestrator.getBrazilianHealthcareKPIs();
 
       // Compliance rates should be between 0 and 1
@@ -148,8 +148,8 @@ describe("HealthcareAIOrchestrator", () => {
     });
   });
 
-  describe("Configuration", () => {
-    it("should accept custom configuration", () => {
+  describe(_"Configuration",_() => {
+    it(_"should accept custom configuration",_() => {
       const customOrchestrator = new HealthcareAIOrchestrator({
         enablePredictiveAnalytics: false,
         enableLGPDCompliance: false,
@@ -159,14 +159,14 @@ describe("HealthcareAIOrchestrator", () => {
       expect(customOrchestrator).toBeDefined();
     });
 
-    it("should use default configuration when none provided", () => {
+    it(_"should use default configuration when none provided",_() => {
       const defaultOrchestrator = new HealthcareAIOrchestrator();
       expect(defaultOrchestrator).toBeDefined();
     });
   });
 
-  describe("Error Handling", () => {
-    it("should handle errors gracefully", async () => {
+  describe(_"Error Handling",_() => {
+    it(_"should handle errors gracefully",_async () => {
       const failingModelProvider = {
         predict: async () => {
           throw new Error("Provider failed");

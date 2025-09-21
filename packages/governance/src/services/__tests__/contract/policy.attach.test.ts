@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { InMemoryPolicyService } from "../../index";
 
 describe("PolicyService.attach (contract)", () => {
-  it("resolves thresholds and returns attachment", async () => {
+  it(_"resolves thresholds and returns attachment",_async () => {
     const svc = new InMemoryPolicyService();
     const att = await svc.attach({
       policyId: "POL-AI",
@@ -13,7 +13,7 @@ describe("PolicyService.attach (contract)", () => {
     expect(att.resolvedThresholds.phase1).toBe("<5%");
   });
 
-  it("is idempotent for same policy/kpi pair", async () => {
+  it(_"is idempotent for same policy/kpi pair",_async () => {
     const svc = new InMemoryPolicyService();
     await svc.attach({
       policyId: "POL-AI",

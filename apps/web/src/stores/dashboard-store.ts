@@ -64,7 +64,7 @@ export interface DashboardActions {
   reset: () => void;
 } // Default state
 const createDefaultFilters = (): DashboardFilters => {
-  const now = new Date();
+  const _now = new Date();
   const startDate = new Date();
   startDate.setMonth(now.getMonth() - 1); // Default to last month
 
@@ -100,7 +100,7 @@ const initialState: DashboardState = {
     'ultimo-trimestre': {
       ...createDefaultFilters(),
       period: 'monthly',
-      startDate: (() => {
+      startDate: (_() => {
         const date = new Date();
         date.setMonth(date.getMonth() - 3);
         return date;
@@ -117,9 +117,8 @@ const initialState: DashboardState = {
 
 export type DashboardStore = DashboardState & DashboardActions;
 
-export const useDashboardStore = create<DashboardStore>()(
-  subscribeWithSelector(
-    immer((set, get) => ({
+export const useDashboardStore = create<DashboardStore>()(_subscribeWithSelector(
+    immer((set,_get) => (_{
       ...initialState,
 
       // Data actions
@@ -209,7 +208,7 @@ export const useDashboardStore = create<DashboardStore>()(
           state.filters.period = period;
 
           // Update date range based on period
-          const now = new Date();
+          const _now = new Date();
           const startDate = new Date();
 
           switch (period) {
@@ -260,21 +259,21 @@ export const useDashboardStore = create<DashboardStore>()(
           state.lastUpdated = null; // This will trigger a refetch
         }),
 
-      reset: () => set(() => ({ ...initialState })),
+      reset: () => set(_() => ({ ...initialState })),
     })),
   ),
 );
 
 // Selectors for common patterns
-export const useDashboardData = () => useDashboardStore(state => state.data);
-export const useDashboardFilters = () => useDashboardStore(state => state.filters);
-export const useDashboardLoading = () => useDashboardStore(state => state.loading);
-export const useDashboardError = () => useDashboardStore(state => state.error);
-export const useRealTimeData = () => useDashboardStore(state => state.realTimeData);
-export const useRealTimeEnabled = () => useDashboardStore(state => state.realTimeEnabled);
+export const _useDashboardData = () => useDashboardStore(state => state.data);
+export const _useDashboardFilters = () => useDashboardStore(state => state.filters);
+export const _useDashboardLoading = () => useDashboardStore(state => state.loading);
+export const _useDashboardError = () => useDashboardStore(state => state.error);
+export const _useRealTimeData = () => useDashboardStore(state => state.realTimeData);
+export const _useRealTimeEnabled = () => useDashboardStore(state => state.realTimeEnabled);
 
 // Action selectors
-export const useDashboardActions = () =>
+export const _useDashboardActions = () =>
   useDashboardStore(state => ({
     setData: state.setData,
     setLoading: state.setLoading,

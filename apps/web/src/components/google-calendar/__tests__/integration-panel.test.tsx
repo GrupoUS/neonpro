@@ -5,21 +5,21 @@ import { IntegrationPanel } from '../integration-panel';
 
 // Mock the service
 vi.mock('@/services/google-calendar/service');
-vi.mock('@/components/ui/tabs', () => ({
+vi.mock(_'@/components/ui/tabs',_() => ({
   Tabs: ({ children, defaultValue }: any) => (
     <div data-default-value={defaultValue}>{children}</div>
   ),
   TabsList: ({ children }: any) => <div>{children}</div>,
-  TabsTrigger: ({ children, value }: any) => <button data-value={value}>{children}</button>,
-  TabsContent: ({ children, value }: any) => <div data-value={value}>{children}</div>,
+  TabsTrigger: (_{ children, value }: any) => <button data-value={value}>{children}</button>,
+  TabsContent: (_{ children, value }: any) => <div data-value={value}>{children}</div>,
 }));
-vi.mock('@/components/ui/card', () => ({
+vi.mock(_'@/components/ui/card',_() => ({
   Card: ({ children }: any) => <div>{children}</div>,
   CardHeader: ({ children }: any) => <div>{children}</div>,
   CardTitle: ({ children }: any) => <h3>{children}</h3>,
   CardContent: ({ children }: any) => <div>{children}</div>,
 }));
-vi.mock('@/components/ui/alert-dialog', () => ({
+vi.mock(_'@/components/ui/alert-dialog',_() => ({
   AlertDialog: ({ children }: any) => <div>{children}</div>,
   AlertDialogTrigger: ({ children }: any) => children,
   AlertDialogContent: ({ children }: any) => <div>{children}</div>,
@@ -30,14 +30,14 @@ vi.mock('@/components/ui/alert-dialog', () => ({
   AlertDialogCancel: ({ children }: any) => <button>{children}</button>,
   AlertDialogAction: ({ children }: any) => <button>{children}</button>,
 }));
-vi.mock('@/components/ui/badge', () => ({
+vi.mock(_'@/components/ui/badge',_() => ({
   Badge: ({ children, variant }: any) => <span data-variant={variant}>{children}</span>,
 }));
 
-describe('IntegrationPanel', () => {
+describe(_'IntegrationPanel',_() => {
   let mockService: any;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
 
     mockService = {
@@ -48,10 +48,10 @@ describe('IntegrationPanel', () => {
       syncFromGoogle: vi.fn(),
     };
 
-    (GoogleCalendarService as any).mockImplementation(() => mockService);
+    (GoogleCalendarService as any).mockImplementation(_() => mockService);
   });
 
-  it('should display integration overview', async () => {
+  it(_'should display integration overview',_async () => {
     mockService.getUserIntegration.mockResolvedValue({
       id: 'integration-123',
       calendar_id: 'primary',
@@ -64,13 +64,13 @@ describe('IntegrationPanel', () => {
 
     render(<IntegrationPanel userId='user-123' />);
 
-    await waitFor(() => {
+    await waitFor(_() => {
       expect(screen.getByText('Dr. Smith Calendar')).toBeInTheDocument();
       expect(screen.getByText('primary')).toBeInTheDocument();
     });
   });
 
-  it('should show sync status badge', async () => {
+  it(_'should show sync status badge',_async () => {
     mockService.getUserIntegration.mockResolvedValue({
       id: 'integration-123',
       sync_enabled: true,
@@ -79,12 +79,12 @@ describe('IntegrationPanel', () => {
 
     render(<IntegrationPanel userId='user-123' />);
 
-    await waitFor(() => {
+    await waitFor(_() => {
       expect(screen.getByText('Sincronizado')).toBeInTheDocument();
     });
   });
 
-  it('should show warning when sync is disabled', async () => {
+  it(_'should show warning when sync is disabled',_async () => {
     mockService.getUserIntegration.mockResolvedValue({
       id: 'integration-123',
       sync_enabled: false,
@@ -93,12 +93,12 @@ describe('IntegrationPanel', () => {
 
     render(<IntegrationPanel userId='user-123' />);
 
-    await waitFor(() => {
+    await waitFor(_() => {
       expect(screen.getByText('Sincronização Desativada')).toBeInTheDocument();
     });
   });
 
-  it('should display sync activity logs', async () => {
+  it(_'should display sync activity logs',_async () => {
     mockService.getUserIntegration.mockResolvedValue({
       id: 'integration-123',
       sync_enabled: true,
@@ -126,14 +126,14 @@ describe('IntegrationPanel', () => {
     // Click on activity tab
     fireEvent.click(screen.getByText('Atividade'));
 
-    await waitFor(() => {
+    await waitFor(_() => {
       expect(screen.getByText('SYNC_APPOINTMENT')).toBeInTheDocument();
       expect(screen.getByText('SYNC_FROM_GOOGLE')).toBeInTheDocument();
       expect(screen.getByText('API Error')).toBeInTheDocument();
     });
   });
 
-  it('should show disconnection confirmation', async () => {
+  it(_'should show disconnection confirmation',_async () => {
     mockService.getUserIntegration.mockResolvedValue({
       id: 'integration-123',
       sync_enabled: true,
@@ -147,7 +147,7 @@ describe('IntegrationPanel', () => {
     // Click disconnect button
     fireEvent.click(screen.getByText('Desconectar'));
 
-    await waitFor(() => {
+    await waitFor(_() => {
       expect(screen.getByText('Confirmar Desconexão')).toBeInTheDocument();
       expect(
         screen.getByText('Tem certeza que deseja desconectar'),
@@ -155,7 +155,7 @@ describe('IntegrationPanel', () => {
     });
   });
 
-  it('should handle disconnection', async () => {
+  it(_'should handle disconnection',_async () => {
     mockService.getUserIntegration.mockResolvedValue({
       id: 'integration-123',
       sync_enabled: true,
@@ -172,14 +172,14 @@ describe('IntegrationPanel', () => {
     // Confirm disconnection
     fireEvent.click(screen.getByText('Desconectar'));
 
-    await waitFor(() => {
+    await waitFor(_() => {
       expect(mockService.deleteIntegration).toHaveBeenCalledWith(
         'integration-123',
       );
     });
   });
 
-  it('should show integration statistics', async () => {
+  it(_'should show integration statistics',_async () => {
     mockService.getUserIntegration.mockResolvedValue({
       id: 'integration-123',
       sync_enabled: true,
@@ -189,13 +189,13 @@ describe('IntegrationPanel', () => {
 
     render(<IntegrationPanel userId='user-123' />);
 
-    await waitFor(() => {
+    await waitFor(_() => {
       expect(screen.getByText('150')).toBeInTheDocument();
       expect(screen.getByText('eventos sincronizados')).toBeInTheDocument();
     });
   });
 
-  it('should handle manual sync', async () => {
+  it(_'should handle manual sync',_async () => {
     mockService.getUserIntegration.mockResolvedValue({
       id: 'integration-123',
       calendar_id: 'primary',
@@ -217,14 +217,13 @@ describe('IntegrationPanel', () => {
     // Click sync now button
     fireEvent.click(screen.getByText('Sincronizar Agora'));
 
-    await waitFor(() => {
+    await waitFor(_() => {
       expect(mockService.syncFromGoogle).toHaveBeenCalledWith('primary');
     });
   });
 
-  it('should show loading state', async () => {
-    mockService.getUserIntegration.mockImplementation(
-      () => new Promise(resolve => setTimeout(resolve, 1000)),
+  it(_'should show loading state',_async () => {
+    mockService.getUserIntegration.mockImplementation(_() => new Promise(resolve => setTimeout(resolve, 1000)),
     );
 
     render(<IntegrationPanel userId='user-123' />);
@@ -232,26 +231,26 @@ describe('IntegrationPanel', () => {
     expect(screen.getByText('Carregando...')).toBeInTheDocument();
   });
 
-  it('should handle errors gracefully', async () => {
+  it(_'should handle errors gracefully',_async () => {
     mockService.getUserIntegration.mockRejectedValue(
       new Error('Failed to load integration'),
     );
 
     render(<IntegrationPanel userId='user-123' />);
 
-    await waitFor(() => {
+    await waitFor(_() => {
       expect(
         screen.getByText('Erro ao carregar integração'),
       ).toBeInTheDocument();
     });
   });
 
-  it('should show empty state when no integration exists', async () => {
+  it(_'should show empty state when no integration exists',_async () => {
     mockService.getUserIntegration.mockResolvedValue(null);
 
     render(<IntegrationPanel userId='user-123' />);
 
-    await waitFor(() => {
+    await waitFor(_() => {
       expect(
         screen.getByText('Nenhuma integração encontrada'),
       ).toBeInTheDocument();

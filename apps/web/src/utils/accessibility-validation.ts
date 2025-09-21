@@ -604,7 +604,7 @@ export class AccessibilityValidator {
     options: {
       includeHealthcareAudit?: boolean;
       validateWCAG?: boolean;
-      context?:
+      _context?:
         | 'registration'
         | 'appointment'
         | 'treatment'
@@ -661,7 +661,7 @@ export class AccessibilityValidator {
     const totalCriteria = WCAG_21_AA_VALIDATION_CRITERIA.length;
     const passedCount = Math.floor(totalCriteria * 0.95); // 95% compliance target
 
-    WCAG_21_AA_VALIDATION_CRITERIA.forEach((criteria, _index) => {
+    WCAG_21_AA_VALIDATION_CRITERIA.forEach(_(criteria, _index) => {
       if (index < passedCount) {
         passedCriteria.push(criteria.id);
       } else {

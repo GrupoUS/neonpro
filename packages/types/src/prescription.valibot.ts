@@ -103,7 +103,7 @@ const validateDosage = (dosage: string): boolean => {
     /^\d+(\s*a\s*\d+)?\s*(mg|g|ml|l|mcg|µg|ui|comprimido|cápsula|gota|aplicação|spray|inalação|sachê|envelope)s?$/i,
   ];
 
-  return dosagePatterns.some((pattern) => pattern.test(dosage.trim()));
+  return dosagePatterns.some(_(pattern) => pattern.test(dosage.trim()));
 };
 
 /**
@@ -120,7 +120,7 @@ const validateFrequency = (frequency: string): boolean => {
     /^\d+\s+(gota|gotas).*\s+(olho|ouvido|nariz)/i,
   ];
 
-  return frequencyPatterns.some((pattern) => pattern.test(frequency.trim()));
+  return frequencyPatterns.some(_(pattern) => pattern.test(frequency.trim()));
 };
 
 /**
@@ -135,7 +135,7 @@ const validateDuration = (duration: string): boolean => {
     /^por\s+tempo\s+indeterminado$/i,
   ];
 
-  return durationPatterns.some((pattern) => pattern.test(duration.trim()));
+  return durationPatterns.some(_(pattern) => pattern.test(duration.trim()));
 };
 
 /**
@@ -316,7 +316,7 @@ export const ANVISARegisterNumberSchema = v.pipe(
     "Registro ANVISA deve estar no formato X.XXXX.XXXX.XXX-X",
   ),
   v.check(validateANVISARegisterNumber, "Número de registro ANVISA inválido"),
-  v.transform((value) => value as ANVISARegisterNumber),
+  v.transform(_(value) => value as ANVISARegisterNumber),
 );
 
 /**
@@ -331,7 +331,7 @@ export const PharmaceuticalBarcodeSchema = v.pipe(
     validatePharmaceuticalBarcode,
     "Código de barras farmacêutico inválido",
   ),
-  v.transform((value) => value as PharmaceuticalBarcode),
+  v.transform(_(value) => value as PharmaceuticalBarcode),
 );
 
 /**
@@ -347,7 +347,7 @@ export const DosageSchema = v.pipe(
     validateDosage,
     'Formato de dosagem inválido. Use formatos como "500mg", "5ml", "1 comprimido"',
   ),
-  v.transform((value) => value.toLowerCase() as Dosage),
+  v.transform(_(value) => value.toLowerCase() as Dosage),
 );
 
 /**
@@ -363,7 +363,7 @@ export const FrequencySchema = v.pipe(
     validateFrequency,
     'Formato de frequência inválido. Use formatos como "1x ao dia", "de 8 em 8 horas"',
   ),
-  v.transform((value) => value.toLowerCase()),
+  v.transform(_(value) => value.toLowerCase()),
 );
 
 /**
@@ -379,13 +379,13 @@ export const DurationSchema = v.pipe(
     validateDuration,
     'Formato de duração inválido. Use formatos como "7 dias", "uso contínuo"',
   ),
-  v.transform((value) => value.toLowerCase()),
+  v.transform(_(value) => value.toLowerCase()),
 );
 
 /**
  * Prescription Expiration Validation Schema
  */
-export const PrescriptionExpirationSchema = v.pipe(
+export const _PrescriptionExpirationSchema = v.pipe(
   v.object({
     issue_date: v.pipe(
       v.string(),
@@ -410,7 +410,7 @@ export const MedicationPriceSchema = v.pipe(
   v.number("Preço deve ser um número"),
   v.minValue(0, "Preço deve ser maior ou igual a zero"),
   v.maxValue(999999.99, "Preço máximo excedido"),
-  v.transform((value) => Math.round(value * 100) / 100), // Round to 2 decimal places
+  v.transform(_(value) => Math.round(value * 100) / 100), // Round to 2 decimal places
 );
 
 // =====================================
@@ -511,7 +511,7 @@ export const DigitalCertificateSchema = v.object({
 /**
  * Prescription Audit Trail Schema
  */
-export const PrescriptionAuditTrailSchema = v.object({
+export const _PrescriptionAuditTrailSchema = v.object({
   action: v.picklist(
     [
       "created", // Criada
@@ -549,7 +549,7 @@ export const PrescriptionAuditTrailSchema = v.object({
 /**
  * Prescription Creation Schema
  */
-export const PrescriptionCreationSchema = v.pipe(
+export const _PrescriptionCreationSchema = v.pipe(
   v.object({
     // Basic prescription info
     clinic_id: v.pipe(v.string(), v.uuid("ID da clínica deve ser UUID válido")),
@@ -664,7 +664,7 @@ export const PrescriptionCreationSchema = v.pipe(
 /**
  * Prescription Update Schema
  */
-export const PrescriptionUpdateSchema = v.object({
+export const _PrescriptionUpdateSchema = v.object({
   prescription_id: v.pipe(
     v.string(),
     v.uuid("ID da receita deve ser UUID válido"),
@@ -703,7 +703,7 @@ export const PrescriptionUpdateSchema = v.object({
 /**
  * Prescription Query Schema
  */
-export const PrescriptionQuerySchema = v.object({
+export const _PrescriptionQuerySchema = v.object({
   // Basic filters
   clinic_id: v.optional(v.pipe(v.string(), v.uuid())),
   patient_id: v.optional(v.pipe(v.string(), v.uuid())),
@@ -754,7 +754,7 @@ export const PrescriptionQuerySchema = v.object({
 /**
  * Validates prescription for controlled substances compliance
  */
-export const validateControlledSubstanceCompliance = (
+export const _validateControlledSubstanceCompliance = (
   medications: Array<{
     medication: { medication_type: string; controlled_substance: boolean };
     instructions: { duration: string; quantity_prescribed: number };
@@ -787,7 +787,7 @@ export const validateControlledSubstanceCompliance = (
 /**
  * Generates prescription number following Brazilian standards
  */
-export const generatePrescriptionNumber = (
+export const _generatePrescriptionNumber = (
   clinicId: string,
   professionalCRM: string,
   issueDate: string,
@@ -813,7 +813,7 @@ export const generatePrescriptionNumber = (
 /**
  * Calculates prescription expiration date based on medication type
  */
-export const calculateExpirationDate = (
+export const _calculateExpirationDate = (
   issueDate: string,
   medicationType: string,
 ): string => {

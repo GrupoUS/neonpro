@@ -9,7 +9,7 @@ import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
 import { createHealthcareCacheConfig, ResponseCacheService } from '../cache/response-cache-service';
 import { ConversationContextService } from '../conversation';
-import type { ConversationMessage } from '../conversation';
+import type { ConversationMessage } from '../conversation/conversation-context-service';
 import { AgentPermissionService } from '../permissions';
 import { RealtimeSubscriptionService } from '../realtime';
 import { AguiProtocol, AguiProtocolConfig } from './protocol';
@@ -25,7 +25,7 @@ export interface AguiServiceConfig extends AguiProtocolConfig {
 
 export interface QueryContext {
   sessionId: string;
-  userId: string;
+  _userId: string;
   patientId?: string;
   userPreferences?: Record<string, any>;
   previousTopics?: string[];
@@ -102,7 +102,7 @@ export class AguiService extends EventEmitter {
       this.protocol.getHealthStatus();
 
       this.emit('initialized');
-    } catch (error) {
+    } catch (_error) {
       this.emit('initializationError', error);
       throw error;
     }
@@ -112,8 +112,8 @@ export class AguiService extends EventEmitter {
    * Process a query through the RAG agent with caching
    */
   async processQuery(
-    query: string,
-    context: QueryContext,
+    _query: string,
+    _context: QueryContext,
     options?: {
       streaming?: boolean;
       maxResults?: number;
@@ -134,14 +134,14 @@ export class AguiService extends EventEmitter {
       if (this.cacheService && !options?.skipCache) {
         const cachedResponse = await this.cacheService.getCachedResponse({
           query,
-          context: {
+          _context: {
             patientId: context.patientId,
-            userId: context.userId,
+            _userId: context.userId,
             previousTopics: context.previousTopics,
             userPreferences: context.userPreferences,
           },
           options,
-        }, context.userId);
+        }, context._userId);
 
         if (cachedResponse) {
           const cachedResult: QueryResult = {
@@ -172,7 +172,7 @@ export class AguiService extends EventEmitter {
         session_id: context.sessionId,
         user_id: context.userId,
         patient_id: context.patientId,
-        context: {
+        _context: {
           patient_id: context.patientId,
           user_id: context.userId,
           preferences: context.userPreferences,
@@ -204,9 +204,9 @@ export class AguiService extends EventEmitter {
           await this.cacheService.cacheResponse(
             {
               query,
-              context: {
+              _context: {
                 patientId: context.patientId,
-                userId: context.userId,
+                _userId: context.userId,
                 previousTopics: context.previousTopics,
                 userPreferences: context.userPreferences,
               },
@@ -218,7 +218,7 @@ export class AguiService extends EventEmitter {
               skipCache: false,
             },
           );
-        } catch (error) {
+        } catch (_error) {
           console.error('[AguiService] Error caching response:', error);
           // Don't fail the query if caching fails
         }
@@ -229,24 +229,24 @@ export class AguiService extends EventEmitter {
         try {
           await this.conversationService.storeMessage({
             sessionId: context.sessionId,
-            userId: context.userId,
+            _userId: context.userId,
             patientId: context.patientId,
-            role: 'user',
+            _role: 'user',
             content: query,
             type: 'text',
             metadata: {
-              queryIntent: this.extractIntent(query),
-              entitiesExtracted: this.extractEntities(query),
+              queryIntent: this.extractIntent(_query),
+              entitiesExtracted: this.extractEntities(_query),
             },
-            dataClassification: this.classifyData(query),
+            dataClassification: this.classifyData(_query),
           });
 
           // Store assistant response
           await this.conversationService.storeMessage({
             sessionId: context.sessionId,
-            userId: context.userId,
+            _userId: context.userId,
             patientId: context.patientId,
-            role: 'assistant',
+            _role: 'assistant',
             content: response.content,
             type: response.type,
             metadata: {
@@ -257,8 +257,8 @@ export class AguiService extends EventEmitter {
             },
             dataClassification: this.classifyData(response.content),
           });
-        } catch (error) {
-          console.error('[AguiService] Error storing conversation context:', error);
+        } catch (_error) {
+          console.error('[AguiService] Error storing conversation _context:', error);
           // Don't fail the query if context storage fails
         }
       }
@@ -270,11 +270,11 @@ export class AguiService extends EventEmitter {
           await this.realtimeService.broadcastEvent({
             type: 'message',
             sessionId: context.sessionId,
-            userId: context.userId,
+            _userId: context.userId,
             patientId: context.patientId,
-            payload: {
+            _payload: {
               messageId: queryId,
-              role: 'user',
+              _role: 'user',
               content: query,
               messageType: 'text',
               processingTimeMs: result.processingTimeMs,
@@ -283,7 +283,7 @@ export class AguiService extends EventEmitter {
             metadata: {
               source: 'user',
               urgency: 'medium',
-              dataClassification: this.classifyData(query),
+              dataClassification: this.classifyData(_query),
             },
           });
 
@@ -291,11 +291,11 @@ export class AguiService extends EventEmitter {
           await this.realtimeService.broadcastEvent({
             type: 'message',
             sessionId: context.sessionId,
-            userId: context.userId,
+            _userId: context.userId,
             patientId: context.patientId,
-            payload: {
+            _payload: {
               messageId: `response_${queryId}`,
-              role: 'assistant',
+              _role: 'assistant',
               content: result.content,
               messageType: result.type,
               sources: result.sources,
@@ -309,7 +309,7 @@ export class AguiService extends EventEmitter {
               dataClassification: this.classifyData(result.content),
             },
           });
-        } catch (error) {
+        } catch (_error) {
           console.error('[AguiService] Error broadcasting real-time events:', error);
           // Don't fail the query if real-time broadcasting fails
         }
@@ -325,7 +325,7 @@ export class AguiService extends EventEmitter {
       this.emit('queryCompleted', { queryId, result, context });
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       // Update metrics
       this.updateMetrics({
         queryCount: 1,
@@ -349,8 +349,8 @@ export class AguiService extends EventEmitter {
    * Process streaming query
    */
   async processStreamingQuery(
-    query: string,
-    context: QueryContext,
+    _query: string,
+    _context: QueryContext,
     onChunk: (chunk: string) => void,
     options?: {
       maxResults?: number;
@@ -386,7 +386,7 @@ export class AguiService extends EventEmitter {
       this.emit('streamingQueryCompleted', { queryId, result: response, context });
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       this.emit('streamingQueryError', { queryId, error, context });
       throw error;
     } finally {
@@ -398,10 +398,10 @@ export class AguiService extends EventEmitter {
    * Create a new session
    */
   async createSession(
-    userId: string,
+    _userId: string,
     options?: {
       title?: string;
-      context?: Record<string, any>;
+      _context?: Record<string, any>;
       expiresAt?: Date;
     },
   ): Promise<AguiSession> {
@@ -410,7 +410,7 @@ export class AguiService extends EventEmitter {
       id: sessionId,
       userId,
       title: options?.title || 'Healthcare Assistant Session',
-      context: options?.context || {},
+      _context: options?.context || {},
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       expiresAt: options?.expiresAt?.toISOString()
@@ -441,7 +441,7 @@ export class AguiService extends EventEmitter {
       }
 
       return null;
-    } catch (error) {
+    } catch (_error) {
       this.emit('sessionError', { sessionId, error });
       return null;
     }
@@ -454,7 +454,7 @@ export class AguiService extends EventEmitter {
     sessionId: string,
     updates: {
       title?: string;
-      context?: Record<string, any>;
+      _context?: Record<string, any>;
       expiresAt?: Date;
     },
   ): Promise<AguiSession | null> {
@@ -473,7 +473,7 @@ export class AguiService extends EventEmitter {
       this.emit('sessionUpdated', { session, updates });
 
       return session;
-    } catch (error) {
+    } catch (_error) {
       this.emit('sessionError', { sessionId, error });
       return null;
     }
@@ -505,7 +505,7 @@ export class AguiService extends EventEmitter {
       this.updateMetrics({ feedbackCount: 1 });
 
       this.emit('feedbackSubmitted', feedbackData);
-    } catch (error) {
+    } catch (_error) {
       this.emit('feedbackError', { sessionId, messageId, error });
       throw error;
     }
@@ -521,7 +521,7 @@ export class AguiService extends EventEmitter {
     let ragAgentHealthy = true;
     try {
       await this.testRagAgentConnectivity();
-    } catch (error) {
+    } catch (_error) {
       // Log error securely without exposing sensitive information
       console.error(
         'RAG agent connectivity test failed:',
@@ -589,14 +589,14 @@ export class AguiService extends EventEmitter {
    * Send query to RAG agent
    */
   private async sendToRagAgent(
-    query: any,
+    _query: any,
     options: {
       signal?: AbortSignal;
       timeout?: number;
     },
   ): Promise<any> {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), options.timeout);
+    const timeoutId = setTimeout(_() => controller.abort(), options.timeout);
 
     try {
       // Combine signals
@@ -609,7 +609,7 @@ export class AguiService extends EventEmitter {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(query),
+        body: JSON.stringify(_query),
         signal: combinedSignal,
       });
 
@@ -675,7 +675,7 @@ export class AguiService extends EventEmitter {
           data.query,
           {
             sessionId: data.session.id,
-            userId: data.session.userId,
+            _userId: data.session.userId,
             patientId: data.query.context?.patientId,
             userPreferences: data.query.context?.userPreferences,
             previousTopics: data.query.context?.previousTopics,
@@ -684,7 +684,7 @@ export class AguiService extends EventEmitter {
         );
 
         this.protocol.sendResponse(data.connection.id, result, data.messageId);
-      } catch (error) {
+      } catch (_error) {
         // Log error for debugging while protecting sensitive information
         console.error(
           'Query processing failed:',
@@ -750,7 +750,7 @@ export class AguiService extends EventEmitter {
    * Start metrics collection
    */
   private startMetricsCollection(interval: number): void {
-    this.metricsInterval = setInterval(() => {
+    this.metricsInterval = setInterval(_() => {
       this.emit('metrics', this.getMetrics());
     }, interval);
   }
@@ -777,7 +777,7 @@ export class AguiService extends EventEmitter {
    * Create real-time subscription for a user
    */
   async createRealtimeSubscription(
-    userId: string,
+    _userId: string,
     options: {
       sessionId?: string;
       eventTypes?: ('message' | 'session_update' | 'context_change' | 'system_event')[];
@@ -817,18 +817,18 @@ export class AguiService extends EventEmitter {
   /**
    * Get user subscriptions
    */
-  getUserRealtimeSubscriptions(userId: string) {
+  getUserRealtimeSubscriptions(_userId: string) {
     if (!this.realtimeService) {
       return [];
     }
 
-    return this.realtimeService.getUserSubscriptions(userId);
+    return this.realtimeService.getUserSubscriptions(_userId);
   }
 
   /**
    * Extract intent from query text
    */
-  private extractIntent(query: string): string {
+  private extractIntent(_query: string): string {
     const lowerQuery = query.toLowerCase();
 
     if (
@@ -864,7 +864,7 @@ export class AguiService extends EventEmitter {
   /**
    * Extract entities from query text
    */
-  private extractEntities(query: string): string[] {
+  private extractEntities(_query: string): string[] {
     const entities: string[] = [];
 
     // Extract potential names (simple implementation)
@@ -947,14 +947,14 @@ export class AguiService extends EventEmitter {
   /**
    * Process CopilotKit request from frontend
    */
-  async processCopilotRequest(request: CopilotRequest): Promise<CopilotResponse> {
+  async processCopilotRequest(_request: CopilotRequest): Promise<CopilotResponse> {
     const startTime = Date.now();
 
     try {
       logger.info('Processing CopilotKit request', {
         requestId: request.id,
         sessionId: request.sessionId,
-        userId: request.userId,
+        _userId: request.userId,
         type: request.type,
       });
 
@@ -964,7 +964,7 @@ export class AguiService extends EventEmitter {
         type: 'query',
         content: request.content,
         sessionId: request.sessionId,
-        userId: request.userId,
+        _userId: request.userId,
         metadata: {
           ...request.metadata,
           source: 'copilotkit',
@@ -980,7 +980,7 @@ export class AguiService extends EventEmitter {
         type: 'response',
         content: aguiResponse.content,
         sessionId: aguiResponse.sessionId,
-        userId: aguiResponse.userId,
+        _userId: aguiResponse.userId,
         timestamp: aguiResponse.timestamp,
         metadata: {
           ...aguiResponse.metadata,
@@ -995,7 +995,7 @@ export class AguiService extends EventEmitter {
       });
 
       return copilotResponse;
-    } catch (error) {
+    } catch (_error) {
       logger.error('Failed to process CopilotKit request', error, {
         requestId: request.id,
         sessionId: request.sessionId,
@@ -1007,7 +1007,7 @@ export class AguiService extends EventEmitter {
         content:
           'Desculpe, ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.',
         sessionId: request.sessionId,
-        userId: request.userId,
+        _userId: request.userId,
         timestamp: new Date().toISOString(),
         metadata: {
           error: error instanceof Error ? error.message : 'Unknown error',

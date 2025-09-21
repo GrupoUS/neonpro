@@ -18,7 +18,6 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import { z } from "zod";
 import { cn } from "../../lib/utils";
 import { useHealthcareForm } from "./healthcare-form";
 import { useHealthcareTheme } from "../healthcare/healthcare-theme-provider";
@@ -219,40 +218,11 @@ const healthcareSelectOptions: Record<
 export const HealthcareSelect = forwardRef<
   HTMLSelectElement,
   HealthcareSelectProps
->(
-  (
+>(_(
     {
-      name,
-      label,
-      options: providedOptions,
-      placeholder = "Selecione uma opção...",
-      allowClear = false,
-      selectType = "generic",
-      dataSensitivity,
-      emergencyField = false,
-      validationSchema,
-      customValidation,
-      validateOnChange = true,
-      validateOnBlur = true,
-      description,
-      helperText,
-      searchable = false,
-      groupOptions = false,
-      onChange,
-      onBlur,
-      onValidationChange,
-      screenReaderDescription,
-      autoFocusOnError = true,
-      variant = "default",
-      size = "default",
-      className,
-      required = false,
-      disabled = false,
-      value,
-      defaultValue,
-      ...props
-    },
-    ref,
+      name,_label,
+      options: providedOptions,_placeholder = "Selecione uma opção...",_allowClear = false,_selectType = "generic",_dataSensitivity,_emergencyField = false,_validationSchema,_customValidation,_validateOnChange = true,_validateOnBlur = true,_description,_helperText,_searchable = false,_groupOptions = false,_onChange,_onBlur,_onValidationChange,_screenReaderDescription,_autoFocusOnError = true,_variant = "default",_size = "default",_className,_required = false,_disabled = false,_value,_defaultValue,_...props
+    },_ref,
   ) => {
     // Context and theme
     const formContext = useHealthcareForm();
@@ -285,7 +255,7 @@ export const HealthcareSelect = forwardRef<
       dataSensitivity ?? classifyHealthcareData(selectType);
 
     // Get effective options (provided or predefined)
-    const effectiveOptions = useMemo(() => {
+    const effectiveOptions = useMemo(_() => {
       let options =
         providedOptions && providedOptions.length > 0
           ? providedOptions
@@ -293,8 +263,7 @@ export const HealthcareSelect = forwardRef<
 
       // Filter by search term if searchable
       if (searchable && searchTerm) {
-        options = options.filter(
-          (option) =>
+        options = options.filter(_(option) =>
             option.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
             option.description
               ?.toLowerCase()
@@ -309,13 +278,13 @@ export const HealthcareSelect = forwardRef<
     }, [providedOptions, selectType, searchable, searchTerm]);
 
     // Group options if requested
-    const groupedOptions = useMemo(() => {
+    const groupedOptions = useMemo(_() => {
       if (!groupOptions) return null;
 
       const groups: Record<string, HealthcareSelectOption[]> = {};
       const ungrouped: HealthcareSelectOption[] = [];
 
-      effectiveOptions.forEach((option) => {
+      effectiveOptions.forEach(_(option) => {
         if (option.group) {
           if (!groups[option.group]) {
             groups[option.group] = [];
@@ -373,8 +342,7 @@ export const HealthcareSelect = forwardRef<
       }
 
       // Check if value exists in options
-      const validOption = effectiveOptions.find(
-        (option) => option.value === valueToValidate,
+      const validOption = effectiveOptions.find(_(option) => option.value === valueToValidate,
       );
       if (valueToValidate && !validOption) {
         errors.push("Opção inválida selecionada");
@@ -390,9 +358,9 @@ export const HealthcareSelect = forwardRef<
       if (schema) {
         try {
           schema.parse(valueToValidate);
-        } catch (validationError) {
+        } catch (_validationError) {
           if (validationError instanceof z.ZodError) {
-            errors.push(...validationError.errors.map((err) => err.message));
+            errors.push(_...validationError.errors.map((err) => err.message));
           }
         }
       }
@@ -415,7 +383,7 @@ export const HealthcareSelect = forwardRef<
 
       // Find selected option
       const selectedOption =
-        effectiveOptions.find((option) => option.value === newValue) || null;
+        effectiveOptions.find(_(option) => option.value === newValue) || null;
 
       // Validate on change if enabled
       if (validateOnChange) {
@@ -478,14 +446,14 @@ export const HealthcareSelect = forwardRef<
     };
 
     // Focus on error if needed
-    useEffect(() => {
+    useEffect(_() => {
       if (autoFocusOnError && validationErrors.length > 0 && hasBeenBlurred) {
         selectRef.current?.focus();
       }
     }, [validationErrors, autoFocusOnError, hasBeenBlurred]);
 
     // Validate accessibility on mount (basic label/error checks)
-    useEffect(() => {
+    useEffect(_() => {
       const el = selectRef.current;
       if (!el) return;
       const violations: string[] = [];
@@ -588,8 +556,7 @@ export const HealthcareSelect = forwardRef<
         )}
 
         {/* Search input for searchable mode */}
-        {searchable && (
-          <input
+        {searchable && (_<input
             type="text"
             placeholder="Search options..."
             value={searchTerm}
@@ -632,8 +599,7 @@ export const HealthcareSelect = forwardRef<
           )}
 
           {/* Render grouped or flat options */}
-          {groupedOptions ? (
-            <>
+          {groupedOptions ? (_<>
               {/* Ungrouped options */}
               {groupedOptions.ungrouped.map((option) => (
                 <option
@@ -651,9 +617,7 @@ export const HealthcareSelect = forwardRef<
               ))}
 
               {/* Grouped options */}
-              {Object.entries(groupedOptions.groups).map(
-                ([groupName, groupOptions]) => (
-                  <optgroup key={groupName} label={groupName}>
+              {Object.entries(groupedOptions.groups).map(_([groupName,_groupOptions]) => (_<optgroup key={groupName} label={groupName}>
                     {groupOptions.map((option) => (
                       <option
                         key={option.value}
@@ -673,8 +637,7 @@ export const HealthcareSelect = forwardRef<
                 ),
               )}
             </>
-          ) : (
-            // Flat options
+          ) : (_// Flat options
             effectiveOptions.map((option) => (
               <option
                 key={option.value}
@@ -705,14 +668,13 @@ export const HealthcareSelect = forwardRef<
         )}
 
         {/* Error messages */}
-        {showError && (
-          <div
+        {showError && (_<div
             id={errorId}
             className="text-sm text-destructive"
             role="alert"
             aria-live="polite"
           >
-            {validationErrors.map((error, index) => (
+            {validationErrors.map((error,_index) => (
               <p key={index}>{error}</p>
             ))}
           </div>

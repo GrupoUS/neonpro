@@ -37,7 +37,7 @@ export class PatientRepository implements IPatientRepository {
       if (!data) return null;
 
       return this.mapDatabasePatientToDomain(data);
-    } catch (error) {
+    } catch (_error) {
       console.error("PatientRepository.findById error:", error);
       return null;
     }
@@ -54,7 +54,7 @@ export class PatientRepository implements IPatientRepository {
       if (error || !data) return null;
 
       return this.mapDatabasePatientToDomain(data);
-    } catch (error) {
+    } catch (_error) {
       console.error("PatientRepository.findByMedicalRecordNumber error:", error);
       return null;
     }
@@ -110,7 +110,7 @@ export class PatientRepository implements IPatientRepository {
         limit: options?.limit || 10,
         offset: options?.offset || 0
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("PatientRepository.findByClinicId error:", error);
       return { patients: [], total: 0 };
     }
@@ -179,7 +179,7 @@ export class PatientRepository implements IPatientRepository {
         limit: options?.limit || 10,
         offset: options?.offset || 0
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("PatientRepository.findWithFilter error:", error);
       return { patients: [], total: 0 };
     }
@@ -201,7 +201,7 @@ export class PatientRepository implements IPatientRepository {
       }
 
       return this.mapDatabasePatientToDomain(data);
-    } catch (error) {
+    } catch (_error) {
       console.error("PatientRepository.create error:", error);
       throw error;
     }
@@ -224,7 +224,7 @@ export class PatientRepository implements IPatientRepository {
       }
 
       return this.mapDatabasePatientToDomain(data);
-    } catch (error) {
+    } catch (_error) {
       console.error("PatientRepository.update error:", error);
       throw error;
     }
@@ -243,13 +243,13 @@ export class PatientRepository implements IPatientRepository {
       }
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       console.error("PatientRepository.delete error:", error);
       return false;
     }
   }
 
-  async search(query: string, clinicId?: string, options?: PatientQueryOptions): Promise<PatientSearchResult> {
+  async search(_query: string, clinicId?: string, options?: PatientQueryOptions): Promise<PatientSearchResult> {
     try {
       let dbQuery = this.supabase
         .from("patients")
@@ -296,7 +296,7 @@ export class PatientRepository implements IPatientRepository {
         limit: options?.limit || 10,
         offset: options?.offset || 0
       };
-    } catch (error) {
+    } catch (_error) {
       console.error("PatientRepository.search error:", error);
       return { patients: [], total: 0 };
     }
@@ -334,7 +334,7 @@ export class PatientRepository implements IPatientRepository {
       }
 
       return count || 0;
-    } catch (error) {
+    } catch (_error) {
       console.error("PatientRepository.count error:", error);
       return 0;
     }
@@ -398,7 +398,7 @@ export class PatientRepository implements IPatientRepository {
   /**
    * Maps create request to database format
    */
-  private mapCreateRequestToDatabase(request: CreatePatientRequest): Partial<DatabasePatient> {
+  private mapCreateRequestToDatabase(_request: CreatePatientRequest): Partial<DatabasePatient> {
     return {
       clinic_id: request.clinicId,
       medical_record_number: request.medicalRecordNumber,
@@ -449,7 +449,7 @@ export class PatientRepository implements IPatientRepository {
   /**
    * Maps update request to database format
    */
-  private mapUpdateRequestToDatabase(request: UpdatePatientRequest): Partial<DatabasePatient> {
+  private mapUpdateRequestToDatabase(_request: UpdatePatientRequest): Partial<DatabasePatient> {
     const updateData: Partial<DatabasePatient> = {};
 
     if (request.familyName !== undefined) updateData.family_name = request.familyName;

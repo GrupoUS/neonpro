@@ -56,7 +56,7 @@ interface AppointmentFormData {
 const ClientDetailsModal: React.FC<{
   client: ClientData;
   onClose: () => void;
-}> = ({ client, onClose }) => {
+}> = (_{ client,_onClose }) => {
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className='sm:max-w-2xl max-h-[80vh] overflow-y-auto'>
@@ -200,7 +200,7 @@ const DataExportModal: React.FC<{
   dataType: 'clients' | 'appointments' | 'financial';
   onClose: () => void;
   onExport: (options: ExportOptions) => void;
-}> = ({ data, dataType, onClose, onExport }) => {
+}> = (_{ data,_dataType,_onClose,_onExport }) => {
   const [exportOptions, setExportOptions] = useState<ExportOptions>({
     format: 'csv',
     includeSummary: true,
@@ -303,10 +303,10 @@ const DataExportModal: React.FC<{
  * Pre-fills appointment creation form based on AI context
  */
 const AppointmentCreationModal: React.FC<{
-  context?: Record<string, any>;
+  _context?: Record<string, any>;
   onClose: () => void;
   onSuccess?: () => void;
-}> = ({ context, onClose, onSuccess }) => {
+}> = (_{ context,_onClose,_onSuccess }) => {
   const [formData, setFormData] = useState<AppointmentFormData>({
     clientId: context?.clientId || '',
     serviceId: context?.serviceId || '',
@@ -410,12 +410,8 @@ const AppointmentCreationModal: React.FC<{
 /**
  * Main ActionHandlers Component
  */
-export const ActionHandlers: React.FC<ActionHandlersProps> = ({
-  actions,
-  onActionExecuted,
-  sessionId,
-  className,
-}) => {
+export const ActionHandlers: React.FC<ActionHandlersProps> = (_{
+  actions,_onActionExecuted,_sessionId,_className,_}) => {
   const [selectedClient, setSelectedClient] = useState<ClientData | null>(null);
   const [exportData, setExportData] = useState<
     { data: any[]; dataType: 'clients' | 'appointments' | 'financial' } | null
@@ -484,7 +480,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
           try {
             const clientData = await aiAgentService.getClientDetails(action.payload.clientId);
             setSelectedClient(clientData);
-          } catch (error) {
+          } catch (_error) {
             console.error('Failed to fetch client details:', error);
           }
         } else if (action.payload?.client) {
@@ -601,16 +597,14 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
       </div>
 
       {/* Client Details Modal */}
-      {selectedClient && (
-        <ClientDetailsModal
+      {selectedClient && (_<ClientDetailsModal
           client={selectedClient}
           onClose={() => setSelectedClient(null)}
         />
       )}
 
       {/* Data Export Modal */}
-      {exportData && (
-        <DataExportModal
+      {exportData && (_<DataExportModal
           data={exportData.data}
           dataType={exportData.dataType}
           onClose={() => setExportData(null)}
@@ -619,8 +613,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
       )}
 
       {/* Appointment Creation Modal */}
-      {showAppointmentModal && (
-        <AppointmentCreationModal
+      {showAppointmentModal && (_<AppointmentCreationModal
           context={appointmentContext}
           onClose={() => {
             setShowAppointmentModal(false);

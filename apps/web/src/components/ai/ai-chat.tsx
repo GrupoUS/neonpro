@@ -92,7 +92,7 @@ export interface AIChatProps {
 
 interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant';
+  _role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
   model?: string;
@@ -174,20 +174,11 @@ const fetchAvailableModels = async (): Promise<AIModel[]> => {
 /**
  * AIChat - Main chat interface component
  */
-export const AIChat = ({
-  patientContext,
-  healthcareProfessional,
-  defaultModel = 'gpt-4',
-  showModelSelection = true,
-  showVoiceInput = false,
-  showFileAttachment = false,
+export const AIChat = (_{
+  patientContext,_healthcareProfessional,_defaultModel = 'gpt-4',_showModelSelection = true,_showVoiceInput = false,_showFileAttachment = false,
   lgpdConsent = {
     canStoreHistory: true,
-    dataRetentionDays: 30,
-  },
-  mobileOptimized = true,
-  maxHeight = '600px',
-  testId = 'ai-chat',
+    dataRetentionDays: 30,_},_mobileOptimized = true,_maxHeight = '600px',_testId = 'ai-chat',
 }: AIChatProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -198,7 +189,7 @@ export const AIChat = ({
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  // const queryClient = useQueryClient();
+  // const _queryClient = useQueryClient();
 
   // Fetch available AI models
   const { data: availableModels = [] } = useQuery({
@@ -214,7 +205,7 @@ export const AIChat = ({
       if (response.success && response.data) {
         const assistantMessage: ChatMessage = {
           id: response.data.messageId || Date.now().toString(),
-          role: 'assistant',
+          _role: 'assistant',
           content: response.data.response || response.data.message,
           timestamp: new Date(),
           model: selectedModel,
@@ -234,7 +225,7 @@ export const AIChat = ({
       console.error('Chat error:', error);
       const errorMessage: ChatMessage = {
         id: Date.now().toString(),
-        role: 'assistant',
+        _role: 'assistant',
         content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.',
         timestamp: new Date(),
         model: selectedModel,
@@ -245,21 +236,21 @@ export const AIChat = ({
   });
 
   // Auto-scroll to bottom
-  const scrollToBottom = useCallback(() => {
+  const scrollToBottom = useCallback(_() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
-  useEffect(() => {
+  useEffect(_() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
   // Handle send message
-  const handleSendMessage = useCallback(async () => {
+  const handleSendMessage = useCallback(_async () => {
     if (!inputMessage.trim() || isLoading) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
-      role: 'user',
+      _role: 'user',
       content: inputMessage.trim(),
       timestamp: new Date(),
     };
@@ -297,13 +288,13 @@ export const AIChat = ({
   );
 
   // Voice input (placeholder implementation)
-  const handleVoiceToggle = useCallback(() => {
+  const handleVoiceToggle = useCallback(_() => {
     setIsListening(!isListening);
     // Voice recognition implementation would go here
   }, [isListening]);
 
   // Clear chat
-  const handleClearChat = useCallback(() => {
+  const handleClearChat = useCallback(_() => {
     setMessages([]);
   }, []);
 

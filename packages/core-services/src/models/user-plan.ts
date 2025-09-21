@@ -116,7 +116,7 @@ export class UserPlan {
     const endDate = this.subscriptionEnd || this.trialEndDate;
     if (!endDate) return null;
 
-    const now = new Date();
+    const _now = new Date();
     const diffTime = endDate.getTime() - now.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
@@ -563,10 +563,10 @@ export class UserPlan {
    */
   static createTrial(
     clinicId: string,
-    userId: string,
+    _userId: string,
     trialDays: number = 30,
   ): UserPlan {
-    const now = new Date();
+    const _now = new Date();
     const trialEnd = new Date(now.getTime() + trialDays * 24 * 60 * 60 * 1000);
 
     const subscription: UserSubscription = {

@@ -50,7 +50,7 @@ function HealthcareTestComponent() {
         },
       });
       toast.success('Paciente atualizado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro ao atualizar paciente:', error);
       toast.error('Erro ao atualizar paciente');
     } finally {
@@ -73,7 +73,7 @@ function HealthcareTestComponent() {
         priority: 'medium',
       });
       toast.success('Agendamento criado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro ao criar agendamento:', error);
       toast.error('Erro ao criar agendamento');
     } finally {

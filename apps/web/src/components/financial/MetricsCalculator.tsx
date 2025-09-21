@@ -17,11 +17,9 @@ export interface MetricsCalculatorProps {
   'data-testid'?: string;
 }
 
-export const MetricsCalculator: React.FC<MetricsCalculatorProps> = ({
-  onCalculate,
-  className,
-  'data-testid': testId,
-}) => {
+export const MetricsCalculator: React.FC<MetricsCalculatorProps> = (_{
+  onCalculate,_className,
+  'data-testid': testId,_}) => {
   const [period, setPeriod] = useState<string>('monthly');
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
@@ -45,7 +43,7 @@ export const MetricsCalculator: React.FC<MetricsCalculatorProps> = ({
       if (onCalculate) {
         onCalculate(result);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Calculation failed:', error);
     } finally {
       setIsCalculating(false);

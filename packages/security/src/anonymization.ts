@@ -606,4 +606,4 @@ export const DEFAULT_MASKING_OPTIONS: Record<
 /**
  * Version of the anonymization utilities
  */
-export const ANONYMIZATION_VERSION = '1.0.0';
+export const _ANONYMIZATION_VERSION = '1.0.0';

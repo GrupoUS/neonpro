@@ -8,7 +8,6 @@
 import { HealthcareTRPCError } from '@neonpro/utils/healthcare-errors';
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
-import { z } from 'zod';
 import {
   AgentMessageResponseSchema,
   AgentSessionResponseSchema,
@@ -131,7 +130,7 @@ async function createAgentAuditTrail(
 ) {
   await ctx.prisma.auditTrail.create({
     data: {
-      userId: ctx.userId,
+      _userId: ctx.userId,
       clinicId: ctx.clinicId,
       action: AuditAction.CREATE,
       resource: 'agent_operation',
@@ -155,7 +154,7 @@ async function createAgentAuditTrail(
  * Mock RAG implementation (replace with real vector database)
  */
 async function performRAGSearch(
-  query: string,
+  _query: string,
   agentType: string,
   limit: number = 10,
 ): Promise<RAGResult[]> {
@@ -225,7 +224,7 @@ async function performRAGSearch(
 // TRPC ROUTER IMPLEMENTATION
 // =====================================
 
-export const agentRouter = router({
+export const _agentRouter = router({
   /**
    * Create Agent Session
    * Starts a new conversational session with an AI agent
@@ -241,7 +240,7 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(_async ({ ctx,_input }) => {
       try {
         // Validate user has permission for this agent type
         if (
@@ -259,7 +258,7 @@ export const agentRouter = router({
         // Create session in database
         const session = await ctx.prisma.agentSession.create({
           data: {
-            userId: ctx.user.id,
+            _userId: ctx.user.id,
             agentType: input.agent_type,
             status: 'active',
             metadata: {
@@ -297,7 +296,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch (_error) {
         if (error instanceof HealthcareTRPCError) {
           throw error;
         }
@@ -331,10 +330,10 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(_async ({ ctx,_input }) => {
       try {
         const where = {
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
           ...(input.agent_type && { agentType: input.agent_type }),
           ...(input.status && { status: input.status }),
         };
@@ -373,7 +372,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to list agent sessions',
@@ -404,12 +403,12 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(_async ({ ctx,_input }) => {
       try {
         const session = await ctx.prisma.agentSession.findFirst({
           where: {
             id: input.session_id,
-            userId: ctx.user.id,
+            _userId: ctx.user.id,
           },
         });
 
@@ -445,7 +444,7 @@ export const agentRouter = router({
             messages: messages.map(msg => ({
               id: msg.id,
               session_id: msg.sessionId,
-              role: msg.role as any,
+              _role: msg.role as any,
               content: msg.content,
               metadata: msg.metadata,
               attachments: msg.attachments || [],
@@ -455,7 +454,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch (_error) {
         if (error instanceof HealthcareTRPCError) {
           throw error;
         }
@@ -488,13 +487,13 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(_async ({ ctx,_input }) => {
       try {
         // Verify session exists and belongs to user
         const session = await ctx.prisma.agentSession.findFirst({
           where: {
             id: input.session_id,
-            userId: ctx.user.id,
+            _userId: ctx.user.id,
             status: 'active',
           },
         });
@@ -512,7 +511,7 @@ export const agentRouter = router({
         const userMessage = await ctx.prisma.agentMessage.create({
           data: {
             sessionId: input.session_id,
-            role: input.role,
+            _role: input.role,
             content: input.content,
             metadata: input.metadata,
             attachments: input.attachments,
@@ -551,7 +550,7 @@ export const agentRouter = router({
         const _agentMessage = await ctx.prisma.agentMessage.create({
           data: {
             sessionId: input.session_id,
-            role: 'assistant',
+            _role: 'assistant',
             content: aiResponse,
             metadata: {
               provider: provider.name,
@@ -586,7 +585,7 @@ export const agentRouter = router({
             message: {
               id: userMessage.id,
               session_id: userMessage.sessionId,
-              role: userMessage.role as any,
+              _role: userMessage.role as any,
               content: userMessage.content,
               metadata: userMessage.metadata,
               attachments: userMessage.attachments || [],
@@ -601,7 +600,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch (_error) {
         if (error instanceof HealthcareTRPCError) {
           throw error;
         }
@@ -628,7 +627,7 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(_async ({ ctx,_input }) => {
       try {
         // Create knowledge entry
         const entry = await ctx.prisma.agentKnowledgeBase.create({
@@ -674,7 +673,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to add knowledge entry',
@@ -694,14 +693,14 @@ export const agentRouter = router({
         success: z.literal(true),
         data: z.object({
           results: z.array(KnowledgeEntryResponseSchema),
-          query: z.string(),
+          _query: z.string(),
           total_matches: z.number(),
         }),
         timestamp: z.string().datetime(),
         requestId: z.string().optional(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(_async ({ ctx,_input }) => {
       try {
         // Mock semantic search (replace with vector search)
         const results = await ctx.prisma.agentKnowledgeBase.findMany({
@@ -731,13 +730,13 @@ export const agentRouter = router({
               created_at: entry.createdAt,
               updated_at: entry.updatedAt,
             })),
-            query: input.query,
+            _query: input.query,
             total_matches: results.length,
           },
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to search knowledge base',
@@ -753,7 +752,7 @@ export const agentRouter = router({
   ragQuery: protectedProcedure
     .input(RAGQuerySchema)
     .output(RAGResponseSchema)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(_async ({ ctx,_input }) => {
       try {
         const startTime = Date.now();
 
@@ -761,7 +760,7 @@ export const agentRouter = router({
         const session = await ctx.prisma.agentSession.findFirst({
           where: {
             id: input.session_id,
-            userId: ctx.user.id,
+            _userId: ctx.user.id,
           },
         });
 
@@ -788,14 +787,14 @@ export const agentRouter = router({
         const response = `Com base nas informações disponíveis: ${context.substring(0, 200)}...`;
 
         return {
-          query: input.query,
+          _query: input.query,
           results: ragResults,
           context,
           response,
           tokens_used: Math.floor(response.length / 4),
           processing_time: Date.now() - startTime,
         };
-      } catch (error) {
+      } catch (_error) {
         if (error instanceof HealthcareTRPCError) {
           throw error;
         }
@@ -826,12 +825,12 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(_async ({ ctx,_input }) => {
       try {
         const session = await ctx.prisma.agentSession.findFirst({
           where: {
             id: input.session_id,
-            userId: ctx.user.id,
+            _userId: ctx.user.id,
           },
         });
 
@@ -875,7 +874,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch (_error) {
         if (error instanceof HealthcareTRPCError) {
           throw error;
         }
@@ -909,7 +908,7 @@ export const agentRouter = router({
           user_satisfaction: z.number().optional(),
           top_queries: z.array(
             z.object({
-              query: z.string(),
+              _query: z.string(),
               count: z.number(),
             }),
           ),
@@ -918,10 +917,10 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(_async ({ ctx,_input }) => {
       try {
         const where = {
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
           ...(input.agent_type && { agentType: input.agent_type }),
           ...(input.start_date && {
             createdAt: { gte: new Date(input.start_date) },
@@ -947,9 +946,9 @@ export const agentRouter = router({
           average_response_time: 1.2, // seconds
           user_satisfaction: 4.5,
           top_queries: [
-            { query: 'agendar consulta', count: 15 },
-            { query: 'valor da consulta', count: 12 },
-            { query: 'horário de funcionamento', count: 8 },
+            { _query: 'agendar consulta', count: 15 },
+            { _query: 'valor da consulta', count: 12 },
+            { _query: 'horário de funcionamento', count: 8 },
           ],
         };
 
@@ -959,7 +958,7 @@ export const agentRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (error) {
+      } catch (_error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to get agent analytics',

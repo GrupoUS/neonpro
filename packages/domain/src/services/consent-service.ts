@@ -34,11 +34,11 @@ export class ConsentDomainService {
    * @param grantedBy User who granted the consent
    * @returns Created consent record
    */
-  async createConsent(request: ConsentRequest, grantedBy: string): Promise<ConsentRecord> {
+  async createConsent(_request: ConsentRequest, grantedBy: string): Promise<ConsentRecord> {
     // Validate request
-    const validationErrors = ConsentValidator.validateRequest(request);
+    const validationErrors = ConsentValidator.validateRequest(_request);
     if (validationErrors.length > 0) {
-      throw new Error(`Invalid consent request: ${validationErrors.join(', ')}`);
+      throw new Error(`Invalid consent _request: ${validationErrors.join(', ')}`);
     }
 
     // Create consent record
@@ -150,7 +150,7 @@ export class ConsentDomainService {
     const consents = await this.repository.findByPatientId(patientId, true);
     
     const violations: ComplianceViolation[] = [];
-    const now = new Date();
+    const _now = new Date();
     let isCompliant = true;
     let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' = 'LOW';
 

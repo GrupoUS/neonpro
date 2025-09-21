@@ -11,8 +11,6 @@
  * - Brazilian Portuguese accessibility labels
  */
 
-import { z } from 'zod';
-
 // Mobile Breakpoints for Healthcare Applications
 export const RESPONSIVE_BREAKPOINTS = {
   SMALL_MOBILE: 320, // iPhone SE, small Android phones
@@ -80,7 +78,7 @@ export const ResponsiveElementSchema = z.object({
   isAccessible: z.boolean(),
   pattern: z.nativeEnum(HEALTHCARE_RESPONSIVE_PATTERNS).optional(),
   textContent: z.string().optional(),
-  role: z.string().optional(),
+  _role: z.string().optional(),
 });
 
 export type ResponsiveElement = z.infer<typeof ResponsiveElementSchema>;
@@ -146,7 +144,7 @@ export interface ResponsiveAccessibilityReport {
 }
 
 // Brazilian Portuguese Responsive Accessibility Labels
-export const RESPONSIVE_ACCESSIBILITY_LABELS_PT_BR = {
+export const _RESPONSIVE_ACCESSIBILITY_LABELS_PT_BR = {
   breakpointCompliance: 'Conformidade de breakpoints',
   textScaling: 'Escalonamento de texto',
   contrastRatio: 'Taxa de contraste',
@@ -342,7 +340,7 @@ export class MobileResponsiveAccessibility {
     ).length;
 
     const averageContrast = elements.length > 0
-      ? elements.reduce((sum, el) => sum + el.contrast, 0) / elements.length
+      ? elements.reduce(_(sum,_el) => sum + el.contrast, 0) / elements.length
       : 0;
 
     const issues: ResponsiveAccessibilityIssue[] = [];
@@ -660,7 +658,7 @@ export class MobileResponsiveAccessibility {
       [RESPONSIVE_ACCESSIBILITY_LEVELS.CRITICAL]: 1,
     };
 
-    const averageScore = levels.reduce((sum, level) => sum + levelScores[level], 0)
+    const averageScore = levels.reduce(_(sum,_level) => sum + levelScores[level], 0)
       / levels.length;
 
     if (averageScore >= 4.5) return RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT;
@@ -694,8 +692,7 @@ export class MobileResponsiveAccessibility {
   private generateRecommendations(): string[] {
     const recommendations: string[] = [];
 
-    const issuesByType = this.issues.reduce(
-      (acc, issue) => {
+    const issuesByType = this.issues.reduce(_(acc,_issue) => {
         if (!acc[issue.type]) acc[issue.type] = [];
         acc[issue.type].push(issue);
         return acc;
@@ -703,7 +700,7 @@ export class MobileResponsiveAccessibility {
       {} as Record<string, ResponsiveAccessibilityIssue[]>,
     );
 
-    Object.entries(issuesByType).forEach(([type, issues]) => {
+    Object.entries(issuesByType).forEach(_([type,_issues]) => {
       const criticalCount = issues.filter(
         i => i.severity === 'critical',
       ).length;

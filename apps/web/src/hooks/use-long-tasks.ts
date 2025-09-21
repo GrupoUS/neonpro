@@ -11,7 +11,7 @@ export interface LongTask {
 
 export interface UseLongTasksReturn {
   tasks: LongTask[];
-  addTask: (name: string, metadata?: Record<string, any>) => string;
+  addTask: (name: string, metadata?: Record<string,_any>) => string;
   updateTask: (id: string, updates: Partial<LongTask>) => void;
   removeTask: (id: string) => void;
   clearCompletedTasks: () => void;
@@ -57,7 +57,7 @@ export function useLongTasks(): UseLongTasksReturn {
     setTasks(prev => prev.filter(task => task.id !== id));
   }, []);
 
-  const clearCompletedTasks = useCallback(() => {
+  const clearCompletedTasks = useCallback(_() => {
     setTasks(prev => prev.filter(task => task.status !== 'completed' && task.status !== 'failed'));
   }, []);
 
@@ -71,8 +71,8 @@ export function useLongTasks(): UseLongTasksReturn {
   }, [tasks]);
 
   // Auto-update task durations for running tasks
-  useEffect(() => {
-    const interval = setInterval(() => {
+  useEffect(_() => {
+    const interval = setInterval(_() => {
       setTasks(prev =>
         prev.map(task => {
           if (task.status === 'running') {

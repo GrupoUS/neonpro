@@ -6,7 +6,7 @@
 import { createServerClient } from '../clients/supabase.js';
 
 export interface RLSContext {
-  userId: string;
+  _userId: string;
   userRole: string;
   clinicId: string;
   professionalId?: string;
@@ -178,7 +178,7 @@ export class AdvancedRLSPolicies {
    * Evaluate RLS policy for specific access request
    */
   async evaluatePolicy(
-    context: RLSContext,
+    _context: RLSContext,
     tableName: string,
     operation: 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE',
     recordId?: string,
@@ -214,7 +214,7 @@ export class AdvancedRLSPolicies {
         reason: 'Access denied by RLS policies',
         auditRequired: true,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error evaluating RLS policy:', error);
       return {
         allowed: false,
@@ -228,7 +228,7 @@ export class AdvancedRLSPolicies {
    * Evaluate a single RLS policy
    */
   private async evaluateSinglePolicy(
-    context: RLSContext,
+    _context: RLSContext,
     policy: AccessPolicy,
     recordId?: string,
   ): Promise<PolicyEvaluationResult> {
@@ -299,7 +299,7 @@ export class AdvancedRLSPolicies {
    * Validate patient consent for data access
    */
   private async validatePatientConsent(
-    userId: string,
+    _userId: string,
     recordId: string,
     tableName: string,
   ): Promise<boolean> {
@@ -328,7 +328,7 @@ export class AdvancedRLSPolicies {
       }
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error validating patient consent:', error);
       return false;
     }
@@ -338,7 +338,7 @@ export class AdvancedRLSPolicies {
    * Evaluate dynamic RLS conditions
    */
   private async evaluateDynamicConditions(
-    context: RLSContext,
+    _context: RLSContext,
     conditions: string[],
     recordId?: string,
   ): Promise<boolean> {
@@ -358,7 +358,7 @@ export class AdvancedRLSPolicies {
 
         if (condition.includes('auth.uid()')) {
           // Validate user authentication
-          if (!context.userId) {
+          if (!context._userId) {
             return false;
           }
         }
@@ -396,7 +396,7 @@ export class AdvancedRLSPolicies {
       }
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error evaluating dynamic conditions:', error);
       return false;
     }
@@ -463,7 +463,7 @@ USING (${sqlConditions});
   /**
    * Enhanced RLS context setting with additional security parameters
    */
-  async setRLSContext(context: RLSContext): Promise<void> {
+  async setRLSContext(_context: RLSContext): Promise<void> {
     try {
       const settings = [
         `SET app.current_user_id = '${context.userId}';`,
@@ -485,9 +485,9 @@ USING (${sqlConditions});
       }
 
       // Log RLS context setting for audit trail
-      await this.logRLSContextSet(context);
-    } catch (error) {
-      console.error('Error setting RLS context:', error);
+      await this.logRLSContextSet(_context);
+    } catch (_error) {
+      console.error('Error setting RLS _context:', error);
       throw new Error('Failed to set RLS context');
     }
   }
@@ -495,7 +495,7 @@ USING (${sqlConditions});
   /**
    * Calculate access level based on user role
    */
-  private calculateAccessLevel(role: string): string {
+  private calculateAccessLevel(_role: string): string {
     const accessLevels: Record<string, string> = {
       admin: 'full',
       clinic_admin: 'clinic_wide',
@@ -526,7 +526,7 @@ USING (${sqlConditions});
   /**
    * Log RLS context setting for audit trail
    */
-  private async logRLSContextSet(context: RLSContext): Promise<void> {
+  private async logRLSContextSet(_context: RLSContext): Promise<void> {
     try {
       await this.supabase.rpc('log_security_event', {
         event_type: 'RLS_CONTEXT_SET',
@@ -540,7 +540,7 @@ USING (${sqlConditions});
           timestamp: new Date().toISOString(),
         },
       });
-    } catch (error) {
+    } catch (_error) {
       console.warn('Failed to log RLS context set:', error);
     }
   }
@@ -587,14 +587,14 @@ USING (${sqlConditions});
   }
 
   private async validateClinicAccess(
-    userId: string,
+    _userId: string,
     clinicId: string,
   ): Promise<boolean> {
     try {
       const { data, error } = await this.supabase
         .from('user_clinic_access')
         .select('id')
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .eq('clinic_id', clinicId)
         .eq('is_active', true)
         .single();
@@ -606,7 +606,7 @@ USING (${sqlConditions});
   }
 
   private async validateUserClinicRelationship(
-    userId: string,
+    _userId: string,
     clinicId: string,
   ): Promise<boolean> {
     return this.validateClinicAccess(userId, clinicId);
@@ -633,7 +633,7 @@ USING (${sqlConditions});
 }
 
 // Export singleton instance
-export const advancedRLSPolicies = new AdvancedRLSPolicies();
+export const _advancedRLSPolicies = new AdvancedRLSPolicies();
 
 // Export types
 export type { AccessPolicy, PolicyEvaluationResult, RLSContext };

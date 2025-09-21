@@ -27,7 +27,7 @@ import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Bell } from 'lucide-react';
 import React from 'react';
 
-export const Route = createFileRoute('/admin/settings')({
+export const _Route = createFileRoute('/admin/settings')({
   beforeLoad: async () => {
     const session = await getCurrentSession();
     if (!session) {
@@ -47,14 +47,14 @@ function SettingsPage() {
   const { shouldShowUpgradePrompt, upgradeUrl } = useSubscriptionPrompt();
 
   // Chat settings state
-  const [defaultModel, setDefaultModel] = React.useState<string>(() => {
+  const [defaultModel, setDefaultModel] = React.useState<string>(_() => {
     if (typeof window === 'undefined') return 'gpt-5-mini';
     return localStorage.getItem('neonpro-default-chat-model') || 'gpt-5-mini';
   });
   const [saving, setSaving] = React.useState(false);
 
-  React.useEffect(() => {
-    (async () => {
+  React.useEffect(_() => {
+    (_async () => {
       if (!user?.id) return;
       const serverModel = await fetchDefaultChatModel(user.id);
       if (serverModel) {
@@ -79,7 +79,7 @@ function SettingsPage() {
   };
 
   // Provider visibility toggles
-  const [hiddenProviders, setHidden] = React.useState<ProviderKey[]>(() => getHiddenProviders());
+  const [hiddenProviders, setHidden] = React.useState<ProviderKey[]>(_() => getHiddenProviders());
   const toggleProvider = (_key: any) => {
     const next = hiddenProviders.includes(key)
       ? hiddenProviders.filter(p => p !== key)

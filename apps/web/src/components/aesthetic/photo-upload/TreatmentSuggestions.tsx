@@ -148,8 +148,7 @@ export function TreatmentSuggestions({
             <h4 className='text-sm font-medium'>
               Comparar Tratamentos ({selectedForComparison.length}/3)
             </h4>
-            {selectedForComparison.length > 0 && (
-              <Button
+            {selectedForComparison.length > 0 && (_<Button
                 variant='outline'
                 size='sm'
                 onClick={() => {
@@ -162,8 +161,7 @@ export function TreatmentSuggestions({
             )}
           </div>
 
-          {selectedForComparison.length >= 2 && (
-            <Button
+          {selectedForComparison.length >= 2 && (_<Button
               className='w-full'
               onClick={() => {
                 onTreatmentCompare?.(
@@ -212,8 +210,7 @@ export function TreatmentSuggestions({
                   </h4>
                 </div>
 
-                {showComparison && (
-                  <button
+                {showComparison && (_<button
                     onClick={() => handleTreatmentToggle(suggestion.id)}
                     className={cn(
                       'p-2 rounded border transition-colors',
@@ -380,8 +377,7 @@ export function TreatmentSuggestions({
       </div>
 
       {/* Load More */}
-      {suggestions.length > maxSuggestions && (
-        <div className='text-center'>
+      {suggestions.length > maxSuggestions && (_<div className='text-center'>
           <Button
             variant='outline'
             onClick={() => {

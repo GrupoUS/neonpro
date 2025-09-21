@@ -11,9 +11,9 @@ import {
   formatCEP,
 } from "../../src/validators/brazilian";
 
-describe("Brazilian Validators - T078", () => {
-  describe("validateCPF", () => {
-    it("should validate correct CPF numbers", () => {
+describe(_"Brazilian Validators - T078",_() => {
+  describe(_"validateCPF",_() => {
+    it(_"should validate correct CPF numbers",_() => {
       const validCPFs = [
         "123.456.789-09",
         "12345678909",
@@ -21,12 +21,12 @@ describe("Brazilian Validators - T078", () => {
         "98765432100",
       ];
 
-      validCPFs.forEach((cpf) => {
+      validCPFs.forEach(_(cpf) => {
         expect(validateCPF(cpf)).toBe(true);
       });
     });
 
-    it("should reject invalid CPF formats", () => {
+    it(_"should reject invalid CPF formats",_() => {
       const invalidCPFs = [
         "123.456.789-00", // Wrong check digit
         "111.111.111-11", // All same digits
@@ -38,26 +38,26 @@ describe("Brazilian Validators - T078", () => {
         undefined, // Undefined
       ];
 
-      invalidCPFs.forEach((cpf) => {
+      invalidCPFs.forEach(_(cpf) => {
         expect(validateCPF(cpf)).toBe(false);
       });
     });
   });
 
-  describe("validateCNPJ", () => {
-    it("should validate correct CNPJ numbers", () => {
+  describe(_"validateCNPJ",_() => {
+    it(_"should validate correct CNPJ numbers",_() => {
       const validCNPJs = [
         "12.345.678/0001-95",
         "12345678000195",
         "11.444.777/0001-61",
       ];
 
-      validCNPJs.forEach((cnpj) => {
+      validCNPJs.forEach(_(cnpj) => {
         expect(validateCNPJ(cnpj)).toBe(true);
       });
     });
 
-    it("should reject invalid CNPJ formats", () => {
+    it(_"should reject invalid CNPJ formats",_() => {
       const invalidCNPJs = [
         "12.345.678/0001-00", // Wrong check digit
         "11.111.111/1111-11", // All same digits
@@ -69,14 +69,14 @@ describe("Brazilian Validators - T078", () => {
         undefined, // Undefined
       ];
 
-      invalidCNPJs.forEach((cnpj) => {
+      invalidCNPJs.forEach(_(cnpj) => {
         expect(validateCNPJ(cnpj)).toBe(false);
       });
     });
   });
 
-  describe("validatePhone", () => {
-    it("should validate correct Brazilian phone numbers", () => {
+  describe(_"validatePhone",_() => {
+    it(_"should validate correct Brazilian phone numbers",_() => {
       const validPhones = [
         "(11) 99999-8888",
         "11999998888",
@@ -85,12 +85,12 @@ describe("Brazilian Validators - T078", () => {
         "+55 11 99999-8888",
       ];
 
-      validPhones.forEach((phone) => {
+      validPhones.forEach(_(phone) => {
         expect(validatePhone(phone)).toBe(true);
       });
     });
 
-    it("should reject invalid phone formats", () => {
+    it(_"should reject invalid phone formats",_() => {
       const invalidPhones = [
         "(11) 9999-888", // Too short
         "(11) 999999-8888", // Too long
@@ -101,22 +101,22 @@ describe("Brazilian Validators - T078", () => {
         undefined, // Undefined
       ];
 
-      invalidPhones.forEach((phone) => {
+      invalidPhones.forEach(_(phone) => {
         expect(validatePhone(phone)).toBe(false);
       });
     });
   });
 
-  describe("validateCEP", () => {
-    it("should validate correct CEP numbers", () => {
+  describe(_"validateCEP",_() => {
+    it(_"should validate correct CEP numbers",_() => {
       const validCEPs = ["01310-100", "01310100", "20040-020", "20040020"];
 
-      validCEPs.forEach((cep) => {
+      validCEPs.forEach(_(cep) => {
         expect(validateCEP(cep)).toBe(true);
       });
     });
 
-    it("should reject invalid CEP formats", () => {
+    it(_"should reject invalid CEP formats",_() => {
       const invalidCEPs = [
         "0131-100", // Wrong format
         "01310-1000", // Too long
@@ -127,89 +127,89 @@ describe("Brazilian Validators - T078", () => {
         undefined, // Undefined
       ];
 
-      invalidCEPs.forEach((cep) => {
+      invalidCEPs.forEach(_(cep) => {
         expect(validateCEP(cep)).toBe(false);
       });
     });
   });
 
-  describe("cleanDocument", () => {
-    it("should remove formatting from CPF", () => {
+  describe(_"cleanDocument",_() => {
+    it(_"should remove formatting from CPF",_() => {
       expect(cleanDocument("123.456.789-09")).toBe("12345678909");
     });
 
-    it("should remove formatting from CNPJ", () => {
+    it(_"should remove formatting from CNPJ",_() => {
       expect(cleanDocument("12.345.678/0001-95")).toBe("12345678000195");
     });
 
-    it("should handle already clean documents", () => {
+    it(_"should handle already clean documents",_() => {
       expect(cleanDocument("12345678909")).toBe("12345678909");
     });
 
-    it("should handle empty/null inputs", () => {
+    it(_"should handle empty/null inputs",_() => {
       expect(cleanDocument("")).toBe("");
       expect(cleanDocument(null)).toBe("");
     });
   });
 
-  describe("formatCPF", () => {
-    it("should format CPF correctly", () => {
+  describe(_"formatCPF",_() => {
+    it(_"should format CPF correctly",_() => {
       expect(formatCPF("12345678909")).toBe("123.456.789-09");
     });
 
-    it("should handle already formatted CPF", () => {
+    it(_"should handle already formatted CPF",_() => {
       expect(formatCPF("123.456.789-09")).toBe("123.456.789-09");
     });
   });
 
-  describe("formatCNPJ", () => {
-    it("should format CNPJ correctly", () => {
+  describe(_"formatCNPJ",_() => {
+    it(_"should format CNPJ correctly",_() => {
       expect(formatCNPJ("12345678000195")).toBe("12.345.678/0001-95");
     });
 
-    it("should handle already formatted CNPJ", () => {
+    it(_"should handle already formatted CNPJ",_() => {
       expect(formatCNPJ("12.345.678/0001-95")).toBe("12.345.678/0001-95");
     });
   });
 
-  describe("formatPhone", () => {
-    it("should format mobile phone correctly", () => {
+  describe(_"formatPhone",_() => {
+    it(_"should format mobile phone correctly",_() => {
       expect(formatPhone("11999998888")).toBe("(11) 99999-8888");
     });
 
-    it("should format landline correctly", () => {
+    it(_"should format landline correctly",_() => {
       expect(formatPhone("2125551234")).toBe("(21) 2555-1234");
     });
 
-    it("should handle already formatted phone", () => {
+    it(_"should handle already formatted phone",_() => {
       expect(formatPhone("(11) 99999-8888")).toBe("(11) 99999-8888");
     });
   });
 
-  describe("formatCEP", () => {
-    it("should format CEP correctly", () => {
+  describe(_"formatCEP",_() => {
+    it(_"should format CEP correctly",_() => {
       expect(formatCEP("01310100")).toBe("01310-100");
     });
 
-    it("should handle already formatted CEP", () => {
+    it(_"should handle already formatted CEP",_() => {
       expect(formatCEP("01310-100")).toBe("01310-100");
     });
   });
 
-  describe("edge cases", () => {
-    it("should handle malformed input gracefully", () => {
+  describe(_"edge cases",_() => {
+    it(_"should handle malformed input gracefully",_() => {
       expect(validateCPF("not-a-cpf")).toBe(false);
       expect(validateCNPJ("not-a-cnpj")).toBe(false);
       expect(validatePhone("not-a-phone")).toBe(false);
       expect(validateCEP("not-a-cep")).toBe(false);
     });
 
-    it("should handle special characters", () => {
+    it(_"should handle special characters",_() => {
       expect(validateCPF("123.456.789-09!")).toBe(false);
       expect(validatePhone("(11) 9999-8888 ext. 123")).toBe(false);
     });
 
-    it("should handle whitespace", () => {
+    it(_"should handle whitespace",_() => {
       expect(validateCPF(" 123.456.789-09 ")).toBe(false);
       expect(validatePhone(" (11) 99999-8888 ")).toBe(true);
     });

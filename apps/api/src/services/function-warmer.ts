@@ -50,8 +50,7 @@ class FunctionWarmer {
       this.stopWarmup();
     }
 
-    this.warmupInterval = setInterval(
-      () => {
+    this.warmupInterval = setInterval(_() => {
         this.performWarmup();
       },
       intervalMinutes * 60 * 1000,
@@ -86,7 +85,7 @@ class FunctionWarmer {
         failures: results.filter(r => !r.success).length,
         totalTargets: this.targets.length,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Warmup error:', error);
     } finally {
       this.isWarming = false;
@@ -104,8 +103,7 @@ class FunctionWarmer {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(
-        () => controller.abort(),
+      const timeoutId = setTimeout(_() => controller.abort(),
         target.timeout || 5000,
       );
 
@@ -133,7 +131,7 @@ class FunctionWarmer {
         duration,
         statusCode: response.status,
       };
-    } catch (error) {
+    } catch (_error) {
       const duration = performance.now() - start;
       return {
         url: target.url,

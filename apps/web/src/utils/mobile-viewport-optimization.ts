@@ -316,7 +316,7 @@ function setupResizeHandler(): void {
   const handleResize = () => {
     clearTimeout(resizeTimeout);
 
-    resizeTimeout = setTimeout(() => {
+    resizeTimeout = setTimeout(_() => {
       // Update viewport size
       viewportState.viewportSize = getViewportSize();
 

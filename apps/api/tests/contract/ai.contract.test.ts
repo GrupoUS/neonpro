@@ -31,7 +31,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = await createTestClient({ role: 'admin' });
+    testClient = await createTestClient({ _role: 'admin' });
 
     // Setup MSW server for external AI service mocking
     const trpcMsw = createTRPCMsw<AppRouter>({
@@ -53,7 +53,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
             {
               index: 0,
               message: {
-                role: 'assistant',
+                _role: 'assistant',
                 content:
                   'Com base nos dados do paciente, a probabilidade de não comparecimento é de 23%. Recomendo envio de lembrete via WhatsApp 24h antes.',
               },
@@ -72,7 +72,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
         return Response.json({
           id: 'msg_123',
           type: 'message',
-          role: 'assistant',
+          _role: 'assistant',
           content: [
             {
               type: 'text',
@@ -155,9 +155,9 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
     it('should process medical queries in Portuguese with proper terminology', async () => {
       const medicalQuery = {
         patient_id: patientId,
-        query:
+        _query:
           'Qual a probabilidade de não comparecimento para consulta de dermatologia estética na próxima terça-feira?',
-        context: {
+        _context: {
           procedure_type: 'dermatologia_estetica',
           appointment_date: '2024-03-26',
           weather_forecast: 'chuva',
@@ -201,9 +201,9 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
     it('should handle specialized aesthetic medicine terminology', async () => {
       const aestheticQuery = {
         patient_id: patientId,
-        query:
+        _query:
           'Avalie o risco de não comparecimento para aplicação de toxina botulínica tipo A em paciente de primeira vez',
-        context: {
+        _context: {
           procedure_type: 'toxina_botulinica',
           is_first_time: true,
           patient_age: 32,
@@ -283,7 +283,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
           .fill(null)
           .map((_, i) => ({
             patient_id: `patient_${i}`,
-            query: 'Análise rápida de probabilidade de comparecimento',
+            _query: 'Análise rápida de probabilidade de comparecimento',
             priority: i < 25 ? 'high' : 'normal',
           })),
       };
@@ -474,7 +474,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
         .fill(null)
         .map((_, i) => ({
           patient_id: `concurrent_test_${i}`,
-          query: `Previsão ${i + 1}`,
+          _query: `Previsão ${i + 1}`,
           priority: i < 20 ? 'high' : 'normal',
         }));
 

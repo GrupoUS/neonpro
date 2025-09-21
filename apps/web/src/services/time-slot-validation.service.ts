@@ -158,7 +158,7 @@ class TimeSlotValidationService {
         warnings,
         suggestedAlternatives,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error validating time slot:', error);
       return {
         isValid: false,
@@ -282,7 +282,7 @@ class TimeSlotValidationService {
       });
 
       return conflicts;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error checking professional availability:', error);
       return [
         {
@@ -344,7 +344,7 @@ class TimeSlotValidationService {
       }
 
       return null;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error checking capacity limits:', error);
       return null;
     }
@@ -359,7 +359,7 @@ class TimeSlotValidationService {
     businessRules: BusinessRules,
   ): WarningInfo[] {
     const warnings: WarningInfo[] = [];
-    const now = new Date();
+    const _now = new Date();
 
     // Check minimum notice time
     const hoursUntilAppointment = (startTime.getTime() - now.getTime()) / (1000 * 60 * 60);
@@ -505,11 +505,11 @@ class TimeSlotValidationService {
       }
 
       return this.defaultBusinessRules;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting business rules:', error);
       return this.defaultBusinessRules;
     }
   }
 }
 
-export const timeSlotValidationService = new TimeSlotValidationService();
+export const _timeSlotValidationService = new TimeSlotValidationService();

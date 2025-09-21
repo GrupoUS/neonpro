@@ -19,7 +19,7 @@ app.use(
 );
 
 // JWT middleware for authentication
-app.use('*', async (c, next) => {
+app.use(_'*',_async (c,_next) => {
   const jwtMiddleware = jwt({
     secret: process.env.JWT_SECRET!,
   });
@@ -73,7 +73,7 @@ function validateFeedbackRequest(
 async function logFeedbackForAnalytics(
   sessionId: string,
   messageId: string,
-  userId: string,
+  _userId: string,
   userRole: UserRole,
   feedback: FeedbackRequest['feedback'],
 ): Promise<void> {
@@ -101,7 +101,7 @@ async function logFeedbackForAnalytics(
       rating: feedback.rating,
       helpful: feedback.helpful,
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Failed to log feedback for analytics:', error);
     // Don't throw - feedback logging failures shouldn't block the user experience
   }
@@ -119,7 +119,7 @@ async function triggerFeedbackImprovements(
     console.warn('Low rating detected - triggering improvement analysis:', {
       rating: feedback.rating,
       comment: feedback.comment,
-      context: queryContext,
+      _context: queryContext,
     });
 
     // In production, this could:
@@ -133,7 +133,7 @@ async function triggerFeedbackImprovements(
   if (feedback.helpful === false && feedback.comment) {
     console.log('Unhelpful response with comment - analyzing for improvements:', {
       comment: feedback.comment,
-      context: queryContext,
+      _context: queryContext,
     });
 
     // In production, this could:
@@ -199,7 +199,7 @@ app.post('/ai/sessions/:sessionId/feedback', async c => {
     };
 
     return c.json(response, 200);
-  } catch (error) {
+  } catch (_error) {
     console.error('Feedback endpoint error:', error);
 
     return c.json({
@@ -247,9 +247,9 @@ app.get('/ai/sessions/:sessionId/feedback/stats', async c => {
     }
 
     const totalFeedback = sessionFeedback.length;
-    const averageRating = sessionFeedback.reduce((sum, f) => sum + f.rating, 0) / totalFeedback;
+    const averageRating = sessionFeedback.reduce(_(sum,_f) => sum + f.rating, 0) / totalFeedback;
 
-    const ratingDistribution = sessionFeedback.reduce((acc, f) => {
+    const ratingDistribution = sessionFeedback.reduce(_(acc,_f) => {
       acc[f.rating] = (acc[f.rating] || 0) + 1;
       return acc;
     }, {} as Record<number, number>);
@@ -274,7 +274,7 @@ app.get('/ai/sessions/:sessionId/feedback/stats', async c => {
       helpfulPercentage: Math.round(helpfulPercentage * 100) / 100,
       recentComments,
     }, 200);
-  } catch (error) {
+  } catch (_error) {
     console.error('Feedback stats endpoint error:', error);
 
     return c.json({
@@ -319,9 +319,9 @@ app.get('/ai/feedback/admin/overview', async c => {
     }
 
     const totalFeedback = allFeedback.length;
-    const averageRating = allFeedback.reduce((sum, f) => sum + f.rating, 0) / totalFeedback;
+    const averageRating = allFeedback.reduce(_(sum,_f) => sum + f.rating, 0) / totalFeedback;
 
-    const ratingDistribution = allFeedback.reduce((acc, f) => {
+    const ratingDistribution = allFeedback.reduce(_(acc,_f) => {
       acc[f.rating] = (acc[f.rating] || 0) + 1;
       return acc;
     }, {} as Record<number, number>);
@@ -342,7 +342,7 @@ app.get('/ai/feedback/admin/overview', async c => {
 
     // Recent activity
     const recentActivity = allFeedback
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .sort(_(a,_b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
       .slice(-10)
       .map(f => ({
         rating: f.rating,
@@ -359,7 +359,7 @@ app.get('/ai/feedback/admin/overview', async c => {
       topIssues,
       recentActivity,
     }, 200);
-  } catch (error) {
+  } catch (_error) {
     console.error('Feedback overview endpoint error:', error);
 
     return c.json({
@@ -397,7 +397,7 @@ app.get('/ai/feedback/health', async c => {
         entries: totalFeedback,
       },
     }, 200);
-  } catch (error) {
+  } catch (_error) {
     return c.json({
       status: 'unhealthy',
       timestamp: new Date().toISOString(),

@@ -8,7 +8,7 @@ import { createMiddleware } from 'hono/factory';
  * CopilotKit endpoint for healthcare AI integration
  * Handles requests from frontend CopilotKit provider
  */
-export const copilotEndpoint = createMiddleware(async (c: Context, _next) => {
+export const _copilotEndpoint = createMiddleware(async (c: Context, _next) => {
   const requestId = c.get('requestId');
   const userId = c.get('userId');
   const clinicId = c.get('clinicId');
@@ -34,7 +34,7 @@ export const copilotEndpoint = createMiddleware(async (c: Context, _next) => {
         type: body.type || 'query',
         content: body.content || body.message || '',
         sessionId: body.sessionId || `session_${userId}_${Date.now()}`,
-        userId: userId || 'anonymous',
+        _userId: userId || 'anonymous',
         metadata: {
           ...body.metadata,
           source: 'copilotkit',
@@ -69,7 +69,7 @@ export const copilotEndpoint = createMiddleware(async (c: Context, _next) => {
     // Handle GET requests for connection validation
     return c.json({
       status: 'ready',
-      service: 'copilotkit-healthcare-agent',
+      _service: 'copilotkit-healthcare-agent',
       version: '1.0.0',
       timestamp: new Date().toISOString(),
       capabilities: {
@@ -79,7 +79,7 @@ export const copilotEndpoint = createMiddleware(async (c: Context, _next) => {
         lgpdCompliance: true,
       },
     });
-  } catch (error) {
+  } catch (_error) {
     logger.error('CopilotKit endpoint error', error, {
       requestId,
       userId,

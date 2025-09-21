@@ -113,8 +113,8 @@ vi.mock('@/components/security/SecurityAlertsPanel', () => ({
 
 // Types that should exist but don't yet (TDD RED)
 interface SecurityContext {
-  userId: string;
-  role: 'admin' | 'manager' | 'doctor' | 'receptionist' | 'viewer';
+  _userId: string;
+  _role: 'admin' | 'manager' | 'doctor' | 'receptionist' | 'viewer';
   permissions: Permission[];
   sessionId: string;
   clinicId: string;
@@ -134,7 +134,7 @@ interface Permission {
 
 interface AuditEvent {
   id: string;
-  userId: string;
+  _userId: string;
   action: string;
   resource: string;
   resourceId: string;
@@ -154,7 +154,7 @@ interface SecurityViolation {
   id: string;
   type: 'unauthorized_access' | 'data_breach' | 'suspicious_activity' | 'policy_violation';
   severity: 'low' | 'medium' | 'high' | 'critical';
-  userId?: string;
+  _userId?: string;
   description: string;
   timestamp: Date;
   ipAddress: string;
@@ -240,8 +240,8 @@ describe('Financial Security Integration Tests', () => {
     });
 
     mockSecurityContext = {
-      userId: 'user-001',
-      role: 'admin',
+      _userId: 'user-001',
+      _role: 'admin',
       permissions: [
         {
           id: 'perm-001',
@@ -276,11 +276,11 @@ describe('Financial Security Integration Tests', () => {
     it('should validate user permissions for financial data access', async () => {
       // Arrange
       const resourceRequest = {
-        userId: 'user-001',
+        _userId: 'user-001',
         resource: 'financial_data',
         action: 'read' as const,
         resourceId: 'financial-report-001',
-        context: mockSecurityContext,
+        _context: mockSecurityContext,
       };
 
       const mockAccessResult = {
@@ -306,14 +306,14 @@ describe('Financial Security Integration Tests', () => {
     it('should deny access for insufficient permissions', async () => {
       // Arrange
       const unauthorizedRequest = {
-        userId: 'user-002',
+        _userId: 'user-002',
         resource: 'financial_data',
         action: 'delete' as const,
         resourceId: 'financial-report-001',
-        context: {
+        _context: {
           ...mockSecurityContext,
-          userId: 'user-002',
-          role: 'receptionist' as const,
+          _userId: 'user-002',
+          _role: 'receptionist' as const,
           permissions: [
             {
               id: 'perm-readonly',
@@ -349,25 +349,25 @@ describe('Financial Security Integration Tests', () => {
       // Arrange
       const rolePermissionTests = [
         {
-          role: 'admin' as const,
+          _role: 'admin' as const,
           resource: 'financial_data',
           action: 'admin' as const,
           expectedAccess: true,
         },
         {
-          role: 'manager' as const,
+          _role: 'manager' as const,
           resource: 'financial_reports',
           action: 'write' as const,
           expectedAccess: true,
         },
         {
-          role: 'doctor' as const,
+          _role: 'doctor' as const,
           resource: 'financial_data',
           action: 'read' as const,
           expectedAccess: false,
         },
         {
-          role: 'receptionist' as const,
+          _role: 'receptionist' as const,
           resource: 'financial_reports',
           action: 'write' as const,
           expectedAccess: false,
@@ -396,7 +396,7 @@ describe('Financial Security Integration Tests', () => {
       // Arrange
       const sessionValidationRequest = {
         sessionId: 'session-001',
-        userId: 'user-001',
+        _userId: 'user-001',
         lastActivity: new Date(Date.now() - 1800000), // 30 minutes ago
         sessionTimeout: 3600000, // 1 hour
       };
@@ -434,7 +434,7 @@ describe('Financial Security Integration Tests', () => {
     it('should log all financial data access events', async () => {
       // Arrange
       const financialAccessEvent = {
-        userId: 'user-001',
+        _userId: 'user-001',
         action: 'view_financial_report',
         resource: 'financial_report',
         resourceId: 'report-001',
@@ -448,7 +448,7 @@ describe('Financial Security Integration Tests', () => {
 
       const mockAuditEvent: AuditEvent = {
         id: 'audit-001',
-        userId: 'user-001',
+        _userId: 'user-001',
         action: 'view_financial_report',
         resource: 'financial_report',
         resourceId: 'report-001',
@@ -481,7 +481,7 @@ describe('Financial Security Integration Tests', () => {
     it('should track security violations and suspicious activities', async () => {
       // Arrange
       const suspiciousActivity = {
-        userId: 'user-suspect',
+        _userId: 'user-suspect',
         events: [
           {
             action: 'failed_login',
@@ -505,7 +505,7 @@ describe('Financial Security Integration Tests', () => {
         id: 'violation-001',
         type: 'suspicious_activity',
         severity: 'high',
-        userId: 'user-suspect',
+        _userId: 'user-suspect',
         description: 'Multiple failed login attempts followed by rapid financial data access',
         timestamp: new Date('2024-01-15T10:10:00Z'),
         ipAddress: '192.168.1.200',
@@ -543,7 +543,7 @@ describe('Financial Security Integration Tests', () => {
       const auditQuery = {
         startDate: '2024-01-01',
         endDate: '2024-01-31',
-        userId: 'user-001',
+        _userId: 'user-001',
         actions: ['view_financial_data', 'export_financial_report', 'modify_financial_data'],
         includeComplianceFlags: true,
       };
@@ -552,7 +552,7 @@ describe('Financial Security Integration Tests', () => {
         events: [
           {
             id: 'audit-001',
-            userId: 'user-001',
+            _userId: 'user-001',
             action: 'view_financial_data',
             timestamp: new Date('2024-01-15T10:00:00Z'),
             result: 'success',
@@ -560,7 +560,7 @@ describe('Financial Security Integration Tests', () => {
           },
           {
             id: 'audit-002',
-            userId: 'user-001',
+            _userId: 'user-001',
             action: 'export_financial_report',
             timestamp: new Date('2024-01-20T14:30:00Z'),
             result: 'success',
@@ -652,7 +652,7 @@ describe('Financial Security Integration Tests', () => {
 
       const decryptionRequest = {
         encryptedData,
-        userId: 'user-001',
+        _userId: 'user-001',
         purpose: 'financial_report_generation',
         auditTrail: true,
       };
@@ -906,7 +906,7 @@ describe('Financial Security Integration Tests', () => {
           type: 'financial_data_access',
           severity: 'low',
           timestamp: new Date('2024-01-15T10:00:00Z'),
-          userId: 'user-001',
+          _userId: 'user-001',
           details: {
             resource: 'financial_report',
             action: 'view',
@@ -918,7 +918,7 @@ describe('Financial Security Integration Tests', () => {
           type: 'bulk_data_export',
           severity: 'medium',
           timestamp: new Date('2024-01-15T02:30:00Z'),
-          userId: 'user-002',
+          _userId: 'user-002',
           details: {
             resource: 'patient_financial_data',
             action: 'export',
@@ -945,7 +945,7 @@ describe('Financial Security Integration Tests', () => {
       // Arrange
       const criticalSecurityEvent = {
         type: 'unauthorized_financial_access',
-        userId: 'user-unknown',
+        _userId: 'user-unknown',
         ipAddress: '192.168.1.999',
         timestamp: new Date('2024-01-15T03:00:00Z'),
         attemptedResource: 'financial_database',
@@ -1066,7 +1066,7 @@ describe('Financial Security Integration Tests', () => {
     it('should handle security service failures gracefully', async () => {
       // Arrange
       const securityRequest = {
-        userId: 'user-001',
+        _userId: 'user-001',
         resource: 'financial_data',
         action: 'read',
       };
@@ -1086,7 +1086,7 @@ describe('Financial Security Integration Tests', () => {
     it('should implement fail-secure behavior on security failures', async () => {
       // Arrange
       const criticalSecurityFailure = {
-        service: 'access_control',
+        _service: 'access_control',
         error: 'database_connection_lost',
         timestamp: new Date('2024-01-15T10:00:00Z'),
       };
@@ -1112,7 +1112,7 @@ describe('Financial Security Integration Tests', () => {
 
       // Act
       const result = await AccessControlService.validateResourceAccess({
-        userId: 'user-001',
+        _userId: 'user-001',
         resource: 'financial_data',
         action: 'read',
         emergencyMode: true,
@@ -1127,13 +1127,13 @@ describe('Financial Security Integration Tests', () => {
     it('should validate input sanitization for security parameters', async () => {
       // Arrange
       const maliciousInput = {
-        userId: 'user-001\'; DROP TABLE financial_data; --',
+        _userId: 'user-001\'; DROP TABLE financial_data; --',
         resource: '<script>alert("xss")</script>',
         action: '../../etc/passwd',
       };
 
       const sanitizedInput = {
-        userId: 'user-001',
+        _userId: 'user-001',
         resource: 'financial_data',
         action: 'read',
       };

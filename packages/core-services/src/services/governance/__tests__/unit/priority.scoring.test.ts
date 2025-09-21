@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { InMemoryPrioritizationService } from "../../index";
 
-describe("Priority scoring", () => {
-  it("applies tie-break Risk Reduction then Strategic Fit", async () => {
+describe(_"Priority scoring",_() => {
+  it(_"applies tie-break Risk Reduction then Strategic Fit",_async () => {
     const svc = new InMemoryPrioritizationService();
     const a = await svc.scoreFeature({
       featureId: "F1",

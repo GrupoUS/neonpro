@@ -92,7 +92,7 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = await createTestClient({ role: 'admin' });
+    testClient = await createTestClient({ _role: 'admin' });
 
     // Clear audit logs
     mockANVISASystem.adverseEventReports.length = 0;

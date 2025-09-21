@@ -1,8 +1,8 @@
 export interface ResourceRequest {
   resource: string;
   action: 'read' | 'write' | 'delete' | 'execute';
-  userId: string;
-  context?: {
+  _userId: string;
+  _context?: {
     ip?: string;
     userAgent?: string;
     sessionId?: string;
@@ -19,7 +19,7 @@ export interface AccessControlResult {
   auditLog: {
     requestId: string;
     timestamp: string;
-    userId: string;
+    _userId: string;
     resource: string;
     action: string;
     decision: 'granted' | 'denied';
@@ -29,13 +29,13 @@ export interface AccessControlResult {
 
 export class AccessControlService {
   static async validateResourceAccess(
-    request: ResourceRequest,
+    _request: ResourceRequest,
   ): Promise<AccessControlResult> {
     // Mock implementation for testing
     const auditLog = {
       requestId: `req-${Date.now()}`,
       timestamp: new Date().toISOString(),
-      userId: request.userId,
+      _userId: request.userId,
       resource: request.resource,
       action: request.action,
       decision: 'granted' as const,
@@ -49,7 +49,7 @@ export class AccessControlService {
   }
 
   static async checkPermission(
-    userId: string,
+    _userId: string,
     resource: string,
     action: string,
   ): Promise<boolean> {
@@ -58,7 +58,7 @@ export class AccessControlService {
   }
 
   static async getUserPermissions(
-    userId: string,
+    _userId: string,
     resource?: string,
   ): Promise<string[]> {
     // Mock implementation for testing
@@ -66,13 +66,13 @@ export class AccessControlService {
   }
 
   static async logAccessAttempt(
-    request: ResourceRequest,
+    _request: ResourceRequest,
     granted: boolean,
     reason?: string,
   ): Promise<void> {
     // Mock implementation for testing
     console.log('Access attempt logged:', {
-      userId: request.userId,
+      _userId: request.userId,
       resource: request.resource,
       action: request.action,
       granted,

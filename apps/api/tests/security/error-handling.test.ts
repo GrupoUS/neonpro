@@ -274,7 +274,7 @@ describe('Error Handling Security Tests', () => {
         try {
           // Simulate SQL error
           throw new Error(
-            'syntax error at or near "WHERE" in query: SELECT * FROM patients WHERE name = \'John\' AND age > 25 ORDER BY created_at DESC',
+            'syntax error at or near "WHERE" in _query: SELECT * FROM patients WHERE name = \'John\' AND age > 25 ORDER BY created_at DESC',
           );
         } catch (error) {
           // This should sanitize SQL queries
@@ -429,7 +429,7 @@ describe('Error Handling Security Tests', () => {
       app.use('/security-sensitive', async (c, next) => {
         try {
           return await next();
-        } catch (error) {
+        } catch (_error) {
           // This should log security-sensitive errors
           // Currently no specialized security logging exists
           if (error.message.includes('authentication') || error.message.includes('authorization')) {
@@ -463,7 +463,7 @@ describe('Error Handling Security Tests', () => {
           };
 
           throw new Error(`Processing failed for user: ${JSON.stringify(sensitiveData)}`);
-        } catch (error) {
+        } catch (_error) {
           // This should sanitize logged data
           // Currently sensitive data may be logged
           loggedError = error;
@@ -529,7 +529,7 @@ describe('Error Handling Security Tests', () => {
 
       app.use('/error-endpoint', async (c, next) => {
         const ip = c.req.header('x-forwarded-for') || 'unknown';
-        const now = Date.now();
+        const _now = Date.now();
 
         // This should implement progressive delays
         // Currently no delay mechanism exists

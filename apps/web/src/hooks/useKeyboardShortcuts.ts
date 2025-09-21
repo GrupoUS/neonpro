@@ -20,11 +20,11 @@ export function useKeyboardShortcuts(
   const shortcutsRef = useRef(shortcuts);
 
   // Update shortcuts ref when dependencies change
-  useEffect(() => {
+  useEffect(_() => {
     shortcutsRef.current = shortcuts;
   }, deps);
 
-  useEffect(() => {
+  useEffect(_() => {
     const handleKeyDown = (_e: any) => {
       const handler = shortcutsRef.current[e.key];
       if (handler) {
@@ -82,11 +82,11 @@ export function useAdvancedKeyboardShortcuts(
   } = options;
   const shortcutsRef = useRef(shortcuts);
 
-  useEffect(() => {
+  useEffect(_() => {
     shortcutsRef.current = shortcuts;
   }, deps);
 
-  useEffect(() => {
+  useEffect(_() => {
     const handleKeyDown = (_e: any) => {
       // Check if we should ignore shortcuts in input fields
       if (ignoreInputs && isInInputField(e.target)) {

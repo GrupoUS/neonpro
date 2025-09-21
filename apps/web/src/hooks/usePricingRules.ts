@@ -21,7 +21,7 @@ export const pricingRuleKeys = {
   details: () => [...pricingRuleKeys.all, 'detail'] as const,
   detail: (id: string) => [...pricingRuleKeys.details(), id] as const,
   calculations: () => [...pricingRuleKeys.all, 'calculation'] as const,
-  calculation: (clinicId: string, serviceId: string, context: any) =>
+  calculation: (clinicId: string, serviceId: string, _context: any) =>
     [...pricingRuleKeys.calculations(), clinicId, serviceId, context] as const,
   stats: (clinicId: string) => [...pricingRuleKeys.all, 'stats', clinicId] as const,
 };
@@ -59,12 +59,11 @@ export function useCreatePricingRule() {
 
   return useMutation({
     mutationFn: ({
-      clinicId,
-      request,
+      clinicId,_request,
     }: {
       clinicId: string;
-      request: CreatePricingRuleRequest;
-    }) => pricingRulesService.createPricingRule(clinicId, request),
+      _request: CreatePricingRuleRequest;
+    }) => pricingRulesService.createPricingRule(clinicId, _request),
 
     onSuccess: data => {
       // Invalidate and refetch pricing rules list
@@ -93,12 +92,11 @@ export function useUpdatePricingRule() {
 
   return useMutation({
     mutationFn: ({
-      id,
-      request,
+      id,_request,
     }: {
       id: string;
-      request: UpdatePricingRuleRequest;
-    }) => pricingRulesService.updatePricingRule(id, request),
+      _request: UpdatePricingRuleRequest;
+    }) => pricingRulesService.updatePricingRule(id, _request),
 
     onSuccess: data => {
       // Update the specific rule in cache
@@ -128,7 +126,7 @@ export function useDeletePricingRule() {
   return useMutation({
     mutationFn: (id: string) => pricingRulesService.deletePricingRule(id),
 
-    onSuccess: (_, id) => {
+    onSuccess: (_,_id) => {
       // Remove from cache
       queryClient.removeQueries({
         queryKey: pricingRuleKeys.detail(id),
@@ -185,7 +183,7 @@ export function useTogglePricingRule() {
 export function useServicePricingCalculation(
   clinicId: string,
   serviceId: string,
-  context: {
+  _context: {
     professional_id?: string;
     appointment_date?: Date;
     client_id?: string;
@@ -193,8 +191,8 @@ export function useServicePricingCalculation(
   },
 ) {
   return useQuery({
-    queryKey: pricingRuleKeys.calculation(clinicId, serviceId, context),
-    queryFn: () => pricingRulesService.calculateServicePricing(clinicId, serviceId, context),
+    queryKey: pricingRuleKeys.calculation(clinicId, serviceId, _context),
+    queryFn: () => pricingRulesService.calculateServicePricing(clinicId, serviceId, _context),
     enabled: !!clinicId && !!serviceId,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });

@@ -24,10 +24,10 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     console.log('[SW] Service worker registered:', registration.scope);
 
     // Handle updates
-    registration.addEventListener('updatefound', () => {
+    registration.addEventListener(_'updatefound',_() => {
       const newWorker = registration.installing;
       if (newWorker) {
-        newWorker.addEventListener('statechange', () => {
+        newWorker.addEventListener(_'statechange',_() => {
           if (
             newWorker.state === 'installed'
             && navigator.serviceWorker.controller
@@ -40,7 +40,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     });
 
     return registration;
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Service worker registration failed:', error);
     return null;
   }
@@ -60,7 +60,7 @@ export async function unregisterServiceWorker(): Promise<boolean> {
       return result;
     }
     return false;
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Service worker unregistration failed:', error);
     return false;
   }
@@ -78,7 +78,7 @@ export async function updateServiceWorker(): Promise<void> {
       await registration.update();
       console.log('[SW] Service worker update triggered');
     }
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Service worker update failed:', error);
   }
 }
@@ -108,7 +108,7 @@ export async function clearCaches(): Promise<void> {
       if (registration && registration.active) {
         const messageChannel = new MessageChannel();
 
-        return new Promise(resolve => {
+        return new Promise(_resolve => {
           messageChannel.port1.onmessage = () => resolve();
           registration.active!.postMessage({ type: 'CLEAR_CACHE' }, [
             messageChannel.port2,
@@ -123,7 +123,7 @@ export async function clearCaches(): Promise<void> {
       await Promise.all(cacheNames.map(name => caches.delete(name)));
       console.log('[SW] Browser caches cleared');
     }
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Failed to clear caches:', error);
   }
 }
@@ -139,14 +139,14 @@ export async function preloadCriticalResources(urls: string[]): Promise<void> {
     if (registration && registration.active) {
       const messageChannel = new MessageChannel();
 
-      return new Promise(resolve => {
+      return new Promise(_resolve => {
         messageChannel.port1.onmessage = () => resolve();
         registration.active!.postMessage({ type: 'CACHE_URLS', urls }, [
           messageChannel.port2,
         ]);
       });
     }
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Failed to preload resources:', error);
   }
 }
@@ -185,7 +185,7 @@ export async function getServiceWorkerStatus(): Promise<{
       active: !!registration?.active,
       waiting: !!registration?.waiting,
     };
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Failed to get service worker status:', error);
     return {
       supported: true,
@@ -234,7 +234,7 @@ export function setupServiceWorkerListeners(): void {
   }
 
   // Listen for service worker updates
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
+  navigator.serviceWorker.addEventListener(_'controllerchange',_() => {
     console.log('[SW] Controller changed - reloading page');
     window.location.reload();
   });
@@ -262,7 +262,7 @@ export async function initializeServiceWorker(): Promise<void> {
     await preloadCriticalResources(criticalResources);
 
     console.log('[SW] Service worker initialized successfully');
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Service worker initialization failed:', error);
   }
 }

@@ -42,7 +42,7 @@ export const BRAZILIAN_STATES = [
 ];
 
 // Healthcare specialties
-export const HEALTHCARE_SPECIALTIES = [
+export const _HEALTHCARE_SPECIALTIES = [
   "Clínica Médica",
   "Cardiologia",
   "Dermatologia",
@@ -415,7 +415,7 @@ export function validateBrazilianAddress(address: any): ValidationResult {
   // Required fields
   const requiredFields = ["street", "neighborhood", "city", "state", "cep"];
 
-  requiredFields.forEach((field) => {
+  requiredFields.forEach(_(field) => {
     if (!address[field] || address[field].trim() === "") {
       errors.push({
         field,
@@ -457,7 +457,7 @@ export function createValidationSchema(fields: Record<string, any>): {
     validate: (data: any): ValidationResult => {
       const errors: ValidationError[] = [];
 
-      Object.entries(fields).forEach(([fieldName, config]) => {
+      Object.entries(fields).forEach(_([fieldName,_config]) => {
         const value = data[fieldName];
 
         // Required field validation

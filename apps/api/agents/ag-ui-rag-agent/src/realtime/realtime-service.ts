@@ -9,7 +9,7 @@ export interface RealtimeSubscription {
   channel: RealtimeChannel;
   type: 'conversations' | 'messages' | 'sessions' | 'system';
   filters?: any;
-  callback: (payload: any) => void;
+  callback: (_payload: any) => void;
 }
 
 export interface RealtimeEvent {
@@ -24,12 +24,12 @@ export interface RealtimeEvent {
 export interface RealtimeMessage {
   conversationId?: string;
   sessionId?: string;
-  userId?: string;
+  _userId?: string;
   clinicId?: string;
   patientId?: string;
   type: 'message' | 'conversation_update' | 'session_update' | 'system_notification';
   event: RealtimeEvent;
-  payload: any;
+  _payload: any;
   timestamp: Date;
 }
 
@@ -124,13 +124,13 @@ export class RealtimeService {
   }
 
   async subscribeToConversations(
-    userId: string,
+    _userId: string,
     clinicId: string,
     callback: (message: RealtimeMessage) => void,
   ): Promise<string> {
     const subscriptionId = `conv_${userId}_${clinicId}_${Date.now()}`;
 
-    const handler = (payload: any) => {
+    const handler = (_payload: any) => {
       const message: RealtimeMessage = {
         conversationId: payload.new_record?.id || payload.old_record?.id,
         userId,
@@ -138,7 +138,7 @@ export class RealtimeService {
         patientId: payload.new_record?.patient_id || payload.old_record?.patient_id,
         type: 'conversation_update',
         event: payload,
-        payload: payload.new_record || payload.old_record,
+        _payload: payload.new_record || payload.old_record,
         timestamp: new Date(),
       };
       callback(message);
@@ -186,12 +186,12 @@ export class RealtimeService {
   ): Promise<string> {
     const subscriptionId = `msg_${conversationId}_${Date.now()}`;
 
-    const handler = (payload: any) => {
+    const handler = (_payload: any) => {
       const message: RealtimeMessage = {
         conversationId,
         type: 'message',
         event: payload,
-        payload: payload.new_record || payload.old_record,
+        _payload: payload.new_record || payload.old_record,
         timestamp: new Date(),
       };
       callback(message);
@@ -233,18 +233,18 @@ export class RealtimeService {
   }
 
   async subscribeToSessions(
-    userId: string,
+    _userId: string,
     callback: (message: RealtimeMessage) => void,
   ): Promise<string> {
     const subscriptionId = `session_${userId}_${Date.now()}`;
 
-    const handler = (payload: any) => {
+    const handler = (_payload: any) => {
       const message: RealtimeMessage = {
         sessionId: payload.new_record?.id || payload.old_record?.id,
         userId,
         type: 'session_update',
         event: payload,
-        payload: payload.new_record || payload.old_record,
+        _payload: payload.new_record || payload.old_record,
         timestamp: new Date(),
       };
       callback(message);
@@ -290,11 +290,11 @@ export class RealtimeService {
   ): Promise<string> {
     const subscriptionId = `system_${Date.now()}`;
 
-    const handler = (payload: any) => {
+    const handler = (_payload: any) => {
       const message: RealtimeMessage = {
         type: 'system_notification',
         event: payload,
-        payload: payload.new_record || payload.old_record,
+        _payload: payload.new_record || payload.old_record,
         timestamp: new Date(),
       };
       callback(message);
@@ -369,7 +369,7 @@ export class RealtimeService {
   private subscribeToTable(
     type: 'conversations' | 'messages' | 'sessions' | 'system',
     filters: any,
-    callback: (payload: any) => void,
+    callback: (_payload: any) => void,
   ): RealtimeChannel {
     const subscriptionId = `${type}_${Date.now()}`;
 
@@ -391,7 +391,7 @@ export class RealtimeService {
         break;
       case 'sessions':
         tableName = 'ai_sessions';
-        if (filters.userId) {
+        if (filters._userId) {
           filterString = `user_id=eq.${filters.userId}`;
         }
         break;
@@ -531,7 +531,7 @@ export class RealtimeService {
           created_at: new Date().toISOString(),
         },
       },
-      payload: {
+      _payload: {
         type,
         message,
         severity,

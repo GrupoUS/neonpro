@@ -32,7 +32,7 @@ export function useSubscription() {
     error,
     refetch,
   } = useQuery({
-    queryKey: ['subscription', user?.id],
+    queryKey: ['subscription',_user?.id],
     queryFn: () => getUserSubscription(user!.id),
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -83,7 +83,7 @@ export function useSubscription() {
   );
 
   // Set up real-time subscription to profile changes
-  useEffect(() => {
+  useEffect(_() => {
     if (!user?.id) return;
 
     const channel = supabase
@@ -97,7 +97,7 @@ export function useSubscription() {
           filter: `id=eq.${user.id}`,
         },
         payload => {
-          console.log('Profile subscription updated:', payload);
+          console.log('Profile subscription updated:', _payload);
           // Refetch subscription data when profile changes
           refetch();
         },
@@ -111,7 +111,7 @@ export function useSubscription() {
           filter: `customer_id=eq.${user.id}`,
         },
         payload => {
-          console.log('Subscription record updated:', payload);
+          console.log('Subscription record updated:', _payload);
           // Refetch subscription data when subscription changes
           refetch();
         },

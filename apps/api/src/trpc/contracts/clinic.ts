@@ -11,10 +11,9 @@ import {
   PaginationSchema,
   UpdateClinicRequestSchema,
 } from '@neonpro/types';
-import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
 
-export const clinicRouter = router({
+export const _clinicRouter = router({
   /**
    * Create new clinic with regulatory compliance setup
    */
@@ -26,9 +25,9 @@ export const clinicRouter = router({
     })
     .input(CreateClinicRequestSchema)
     .output(ClinicResponseSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       // Validate user has permission to create clinics
-      if (!hasSystemAdminRole(ctx.user.role)) {
+      if (!hasSystemAdminRole(ctx.user._role)) {
         throw new HealthcareTRPCError(
           'FORBIDDEN',
           'Insufficient permissions to create clinic',
@@ -178,7 +177,7 @@ export const clinicRouter = router({
             healthLicenseNumber: input.healthLicenseNumber,
             address: input.address,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 
@@ -215,7 +214,7 @@ export const clinicRouter = router({
       }),
     )
     .output(ClinicResponseSchema)
-    .query(async ({ input, ctx }) => {
+    .query(_async ({ input,_ctx }) => {
       const clinic = await ctx.prisma.clinic.findUnique({
         where: { id: input.id },
         include: {
@@ -306,7 +305,7 @@ export const clinicRouter = router({
       }),
     )
     .output(ClinicsListResponseSchema)
-    .query(async ({ input, ctx }) => {
+    .query(_async ({ input,_ctx }) => {
       let clinicIds = null;
 
       // Filter by user access if requested
@@ -399,7 +398,7 @@ export const clinicRouter = router({
     })
     .input(UpdateClinicRequestSchema)
     .output(ClinicResponseSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       const currentClinic = await ctx.prisma.clinic.findUnique({
         where: { id: input.id },
       });
@@ -539,7 +538,7 @@ export const clinicRouter = router({
             changes: getChanges(currentClinic, input),
             revalidationRequired: cnpjChanged || healthLicenseChanged,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 
@@ -616,7 +615,7 @@ export const clinicRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .query(async ({ input, ctx }) => {
+    .query(_async ({ input,_ctx }) => {
       // Validate clinic access
       await validateClinicAccess(ctx.user.id, input.clinicId);
 
@@ -742,7 +741,7 @@ export const clinicRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       // Validate clinic admin access
       await validateClinicAdminAccess(ctx.user.id, input.clinicId);
 
@@ -784,7 +783,7 @@ export const clinicRouter = router({
           details: {
             changedSettings: input.settings,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 
@@ -868,7 +867,7 @@ async function calculateClinicMetrics(
   };
 }
 
-function hasSystemAdminRole(role: string): boolean {
+function hasSystemAdminRole(_role: string): boolean {
   return role === 'system_admin';
 }
 

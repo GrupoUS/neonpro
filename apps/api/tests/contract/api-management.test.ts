@@ -381,7 +381,7 @@ describe('Contract: API Management', () => {
         version: '2.0',
         validated_at: expect.any(String),
         schema_compliance: {
-          request: true,
+          _request: true,
           response: true,
           healthcare_extensions: true,
         },

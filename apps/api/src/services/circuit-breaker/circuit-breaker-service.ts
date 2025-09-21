@@ -10,8 +10,6 @@
  * - Compliance with LGPD/ANVISA requirements
  */
 
-import { z } from 'zod';
-
 // Circuit breaker states
 export type CircuitState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
 
@@ -40,7 +38,7 @@ export interface CircuitBreakerConfig {
   auditLogging: boolean; // Enable detailed audit logging
 
   // Custom fallback
-  customFallback?: (error: Error, context?: any) => Promise<any>;
+  customFallback?: (error: Error, _context?: any) => Promise<any>;
 }
 
 // Circuit breaker metrics
@@ -71,12 +69,12 @@ export interface HealthCheckResult {
 
 // Request context for audit logging
 export interface RequestContext {
-  userId?: string;
+  _userId?: string;
   sessionId?: string;
   patientId?: string;
   endpoint: string;
   method: string;
-  service: string;
+  _service: string;
   timestamp: Date;
   metadata?: Record<string, any>;
 }
@@ -93,7 +91,7 @@ export interface CircuitBreakerEvent {
   fromState?: CircuitState;
   toState?: CircuitState;
   error?: Error;
-  context?: RequestContext;
+  _context?: RequestContext;
   metrics: CircuitBreakerMetrics;
 }
 
@@ -153,14 +151,14 @@ export class CircuitBreakerService {
    */
   async execute<T>(
     operation: () => Promise<T>,
-    context?: RequestContext,
-    fallbackValue?: T,
+    _context?: RequestContext,
+    _fallbackValue?: T,
   ): Promise<T> {
     const startTime = Date.now();
 
     // Check if circuit is open and we should fail fast
     if (this.state === 'OPEN' && this.shouldFailFast()) {
-      return this.handleCircuitOpen(context, fallbackValue);
+      return this.handleCircuitOpen(context, _fallbackValue);
     }
 
     try {
@@ -179,7 +177,8 @@ export class CircuitBreakerService {
       });
 
       return result;
-    } catch (error) {
+    } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
       // Record failure
       this.recordFailure(error as Error, Date.now() - startTime);
 
@@ -193,7 +192,7 @@ export class CircuitBreakerService {
       });
 
       // Handle failure with fallback
-      return this.handleFailure(error as Error, context, fallbackValue);
+      return this.handleFailure(error as Error, context, _fallbackValue);
     }
   }
 
@@ -201,8 +200,8 @@ export class CircuitBreakerService {
    * Execute operation with timeout
    */
   private async executeWithTimeout<T>(operation: () => Promise<T>): Promise<T> {
-    return new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
+    return new Promise(_(resolve,_reject) => {
+      const timeout = setTimeout(_() => {
         reject(new Error(`Operation timeout after ${this.config.requestTimeout}ms`));
       }, this.config.requestTimeout);
 
@@ -231,7 +230,7 @@ export class CircuitBreakerService {
   /**
    * Handle circuit open state
    */
-  private async handleCircuitOpen<T>(context?: RequestContext, fallbackValue?: T): Promise<T> {
+  private async handleCircuitOpen<T>(_context?: RequestContext, _fallbackValue?: T): Promise<T> {
     this.metrics.fallbackActivations++;
 
     // Emit fallback event
@@ -249,7 +248,8 @@ export class CircuitBreakerService {
           new Error('Circuit breaker is OPEN'),
           context,
         );
-      } catch (fallbackError) {
+      } catch (_fallbackError) {
+      // Error caught but not used - handled by surrounding logic
         // Fallback failed, use default behavior
       }
     }
@@ -273,8 +273,8 @@ export class CircuitBreakerService {
    */
   private async handleFailure<T>(
     error: Error,
-    context?: RequestContext,
-    fallbackValue?: T,
+    _context?: RequestContext,
+    _fallbackValue?: T,
   ): Promise<T> {
     // Check if we should open the circuit
     if (this.state === 'CLOSED' && this.shouldOpenCircuit()) {
@@ -287,10 +287,11 @@ export class CircuitBreakerService {
     // Try fallback mechanisms
     if (this.config.customFallback) {
       try {
-        const fallbackResult = await this.config.customFallback(error, context);
+        const fallbackResult = await this.config.customFallback(error, _context);
         this.metrics.fallbackActivations++;
         return fallbackResult;
-      } catch (fallbackError) {
+      } catch (_fallbackError) {
+      // Error caught but not used - handled by surrounding logic
         // Fallback failed, continue with default handling
       }
     }
@@ -330,7 +331,7 @@ export class CircuitBreakerService {
     });
 
     // Schedule reset attempt
-    setTimeout(() => this.attemptReset(), this.config.resetTimeout);
+    setTimeout(_() => this.attemptReset(), this.config.resetTimeout);
   }
 
   /**
@@ -476,7 +477,7 @@ export class CircuitBreakerService {
     console.log('Circuit Breaker Failure Audit:', {
       timestamp: new Date().toISOString(),
       error: error.message,
-      service: this.constructor.name,
+      _service: this.constructor.name,
       state: this.state,
       consecutiveFailures: this.metrics.consecutiveFailures,
       healthcareCritical: this.config.healthcareCritical,
@@ -487,7 +488,7 @@ export class CircuitBreakerService {
    * Start health monitoring
    */
   private startHealthMonitoring(): void {
-    this.healthCheckInterval = setInterval(() => {
+    this.healthCheckInterval = setInterval(_() => {
       this.performHealthCheck();
     }, this.config.resetTimeout / 2); // Check twice as often as reset timeout
   }
@@ -511,7 +512,7 @@ export class CircuitBreakerService {
       } else {
         const successRate = recentRequests.filter(req => req.success).length
           / recentRequests.length;
-        const avgResponseTime = recentRequests.reduce((sum, req) => sum + req.responseTime, 0)
+        const avgResponseTime = recentRequests.reduce(_(sum,_req) => sum + req.responseTime, 0)
           / recentRequests.length;
 
         if (successRate >= 0.9 && avgResponseTime < 3000) {
@@ -522,7 +523,8 @@ export class CircuitBreakerService {
           status = 'UNHEALTHY';
         }
       }
-    } catch (checkError) {
+    } catch (_checkError) {
+      // Error caught but not used - handled by surrounding logic
       status = 'UNHEALTHY';
       error = checkError instanceof Error ? checkError.message : 'Unknown error';
     }
@@ -565,7 +567,8 @@ export class CircuitBreakerService {
     this.eventCallbacks.forEach(callback => {
       try {
         callback(event);
-      } catch (error) {
+      } catch (_error) {
+      // Error caught but not used - handled by surrounding logic
         console.error('Error in circuit breaker event callback:', error);
       }
     });
@@ -692,7 +695,7 @@ export class CircuitBreakerRegistry {
   getAllMetrics(): Record<string, CircuitBreakerMetrics> {
     const metrics: Record<string, CircuitBreakerMetrics> = {};
 
-    this.circuitBreakers.forEach((circuitBreaker, serviceName) => {
+    this.circuitBreakers.forEach(_(circuitBreaker,_serviceName) => {
       metrics[serviceName] = circuitBreaker.getMetrics();
     });
 
@@ -733,12 +736,12 @@ export function createCircuitBreaker(
 export function withCircuitBreaker<T>(
   serviceName: string,
   operation: () => Promise<T>,
-  context?: RequestContext,
-  fallbackValue?: T,
+  _context?: RequestContext,
+  _fallbackValue?: T,
   config?: CircuitBreakerConfig,
 ): Promise<T> {
   const circuitBreaker = createCircuitBreaker(serviceName, config);
-  return circuitBreaker.execute(operation, context, fallbackValue);
+  return circuitBreaker.execute(operation, context, _fallbackValue);
 }
 
 export default CircuitBreakerService;

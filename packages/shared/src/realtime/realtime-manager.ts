@@ -11,9 +11,9 @@ import {
 import { QueryClient } from "@tanstack/react-query";
 
 export interface RealtimeSubscriptionOptions<T = any> {
-  onInsert?: (payload: T) => void;
-  onUpdate?: (payload: T) => void;
-  onDelete?: (payload: { old: T }) => void;
+  onInsert?: (_payload: T) => void;
+  onUpdate?: (_payload: T) => void;
+  onDelete?: (_payload: { old: T }) => void;
   queryKeys?: string[][];
   optimisticUpdates?: boolean;
   rateLimitMs?: number;
@@ -55,16 +55,13 @@ export class RealtimeManager {
 
     const channel = this.supabase
       .channel(channelName)
-      .on(
-        "postgres_changes",
+      .on(_"postgres_changes",
         {
           event: "*",
           schema: "public",
-          table: tableName,
-          filter,
-        },
+          table: tableName,_filter,_},
         async (
-          payload: RealtimePostgresChangesPayload<Record<string, any>>,
+          _payload: RealtimePostgresChangesPayload<Record<string,_any>>,
         ) => {
           // Rate limiting for healthcare data
           if (this.shouldRateLimit(channelName, options.rateLimitMs || 100)) {
@@ -74,7 +71,7 @@ export class RealtimeManager {
           await this.handleRealtimeEvent(payload, tableName, options);
         },
       )
-      .subscribe((status) => {
+      .subscribe(_(status) => {
         console.log(`Realtime subscription ${channelName} status:`, status);
 
         if (status === "SUBSCRIBED") {
@@ -82,7 +79,7 @@ export class RealtimeManager {
         } else if (status === "CHANNEL_ERROR") {
           console.error(`❌ Error subscribing to ${tableName}`);
           // Implement retry logic
-          setTimeout(() => {
+          setTimeout(_() => {
             this.retrySubscription(tableName, filter, options);
           }, 5000);
         }
@@ -93,7 +90,7 @@ export class RealtimeManager {
   }
 
   private shouldRateLimit(channelName: string, rateLimitMs: number): boolean {
-    const now = Date.now();
+    const _now = Date.now();
     const lastUpdate = this.rateLimitMap.get(channelName) || 0;
 
     if (now - lastUpdate < rateLimitMs) {
@@ -105,7 +102,7 @@ export class RealtimeManager {
   }
 
   private async handleRealtimeEvent<T extends { id: string }>(
-    payload: RealtimePostgresChangesPayload<Record<string, any>>,
+    _payload: RealtimePostgresChangesPayload<Record<string, any>>,
     tableName: string,
     options: RealtimeSubscriptionOptions<T>,
   ) {
@@ -133,13 +130,12 @@ export class RealtimeManager {
 
       // Invalidate related queries for data consistency
       if (options.queryKeys) {
-        await Promise.all(
-          options.queryKeys.map((queryKey) =>
+        await Promise.all(_options.queryKeys.map((queryKey) =>
             this.queryClient.invalidateQueries({ queryKey }),
           ),
         );
       }
-    } catch (error) {
+    } catch (_error) {
       console.error("Error handling realtime event:", error);
     }
   }
@@ -151,7 +147,7 @@ export class RealtimeManager {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
 
     // Optimistically update cache with new record
-    this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
+    this.queryClient.setQueryData(_[tableName], (old: T[] | undefined) => {
       return old ? [...old, newRecord] : [newRecord];
     });
 
@@ -166,9 +162,8 @@ export class RealtimeManager {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
 
     // Update list cache
-    this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
-      return (
-        old?.map((item) =>
+    this.queryClient.setQueryData(_[tableName], (old: T[] | undefined) => {
+      return (_old?.map((item) =>
           item.id === updatedRecord.id ? updatedRecord : item,
         ) || []
       );
@@ -185,8 +180,8 @@ export class RealtimeManager {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
 
     // Remove from list cache
-    this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
-      return old?.filter((item) => item.id !== deletedRecord.id) || [];
+    this.queryClient.setQueryData(_[tableName], (old: T[] | undefined) => {
+      return old?.filter(_(item) => item.id !== deletedRecord.id) || [];
     });
 
     // Remove specific record cache
@@ -219,7 +214,7 @@ export class RealtimeManager {
     }
 
     // Wait before retry with exponential backoff
-    await new Promise((resolve) =>
+    await new Promise(_(resolve) =>
       setTimeout(resolve, Math.pow(2, retryCount) * 1000),
     );
 
@@ -240,17 +235,17 @@ export class RealtimeManager {
 
     const channel = this.supabase
       .channel(channelName)
-      .on("presence", { event: "sync" }, () => {
+      .on(_"presence", { event: "sync" },_() => {
         const state = channel.presenceState();
         console.log("Presence sync:", state);
       })
-      .on("presence", { event: "join" }, ({ key, newPresences }) => {
+      .on(_"presence", { event: "join" },_({ key,_newPresences }) => {
         console.log("User joined:", key, newPresences);
       })
-      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
+      .on(_"presence", { event: "leave" },_({ key,_leftPresences }) => {
         console.log("User left:", key, leftPresences);
       })
-      .subscribe(async (status) => {
+      .subscribe(_async (status) => {
         if (status === "SUBSCRIBED") {
           await channel.track(initialState);
         }
@@ -277,7 +272,7 @@ export class RealtimeManager {
    * Unsubscribe from all channels
    */
   unsubscribeAll() {
-    this.channels.forEach((channel, name) => {
+    this.channels.forEach(_(channel,_name) => {
       this.supabase.removeChannel(channel);
       console.log(`Unsubscribed from ${name}`);
     });

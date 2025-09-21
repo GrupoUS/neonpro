@@ -275,7 +275,7 @@ export class WhatsAppReminderService {
           timestamp: new Date().toISOString(),
           channel: 'whatsapp',
         };
-      } catch (whatsappError) {
+      } catch (_whatsappError) {
         console.warn(
           'WhatsApp delivery failed, attempting fallback:',
           whatsappError,
@@ -347,7 +347,7 @@ export class WhatsAppReminderService {
         deliveryStatus,
         fallbackUsed,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('WhatsApp reminder service error:', error);
 
       const errorDeliveryStatus: DeliveryStatus = {
@@ -402,7 +402,7 @@ export class WhatsAppReminderService {
 
       // Check if consent is still valid (not revoked)
       const consentDate = new Date(consent.consent_date);
-      const now = new Date();
+      const _now = new Date();
       const monthsSinceConsent = (now.getTime() - consentDate.getTime())
         / (1000 * 60 * 60 * 24 * 30);
 
@@ -415,7 +415,7 @@ export class WhatsAppReminderService {
       }
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error validating LGPD consent:', error);
       return false;
     }
@@ -479,7 +479,7 @@ export class WhatsAppReminderService {
     let subject = template.subject;
     let body = template.body;
 
-    Object.entries(replacements).forEach(([placeholder, value]) => {
+    Object.entries(replacements).forEach(_([placeholder,_value]) => {
       subject = subject.replace(new RegExp(placeholder, 'g'), value);
       body = body.replace(new RegExp(placeholder, 'g'), value);
     });
@@ -525,7 +525,7 @@ export class WhatsAppReminderService {
 
       const result = await response.json();
       return { messageId: result.messages[0].id };
-    } catch (error) {
+    } catch (_error) {
       console.error('WhatsApp message send error:', error);
       throw error;
     }
@@ -559,7 +559,7 @@ export class WhatsAppReminderService {
 
       const result = await response.json();
       return { messageId: result.id || result.messageId };
-    } catch (error) {
+    } catch (_error) {
       console.error('SMS send error:', error);
       throw error;
     }
@@ -618,7 +618,7 @@ export class WhatsAppReminderService {
 
       const result = await response.json();
       return { messageId: result.messageId || 'email-' + Date.now() };
-    } catch (error) {
+    } catch (_error) {
       console.error('Email send error:', error);
       throw error;
     }
@@ -647,7 +647,7 @@ export class WhatsAppReminderService {
         sent_at: deliveryStatus.timestamp,
         created_at: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to log delivery attempt:', error);
     }
   }
@@ -684,7 +684,7 @@ export class WhatsAppReminderService {
         user_agent: 'NeonPro-WhatsApp-Service/1.0',
         created_at: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to create audit record:', error);
     }
   }
@@ -727,7 +727,7 @@ export class WhatsAppReminderService {
       }
 
       return { success: true, processed };
-    } catch (error) {
+    } catch (_error) {
       console.error('Webhook processing error:', error);
       return { success: false, processed: 0 };
     }
@@ -816,7 +816,7 @@ export class WhatsAppReminderService {
         // Send confirmation message
         await this.sendConfirmationResponse(fromPhone, responseAction);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error processing incoming message:', error);
     }
   }
@@ -839,7 +839,7 @@ export class WhatsAppReminderService {
           updated_at: new Date().toISOString(),
         })
         .eq('message_id', messageId);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error processing delivery status:', error);
     }
   }
@@ -869,7 +869,7 @@ export class WhatsAppReminderService {
           type: 'text',
           text: { body: message },
         });
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to send confirmation response:', error);
       }
     }
@@ -918,7 +918,7 @@ export class WhatsAppReminderService {
         batch.map(reminder => this.sendAppointmentReminder(reminder)),
       );
 
-      batchResults.forEach((result, index) => {
+      batchResults.forEach(_(result,_index) => {
         if (result.status === 'fulfilled') {
           success++;
           results.push({
@@ -1000,7 +1000,7 @@ export class WhatsAppReminderService {
           },
           created_at: new Date().toISOString(),
         });
-      } catch (auditError) {
+      } catch (_auditError) {
         console.warn(
           'Failed to create audit log for bulk operation:',
           auditError,
@@ -1013,7 +1013,7 @@ export class WhatsAppReminderService {
         processingTime,
         averageProcessingTimePerReminder,
       };
-    } catch (error) {
+    } catch (_error) {
       const processingTime = Date.now() - startTime;
 
       console.error('Bulk reminder processing failed:', error);
@@ -1031,7 +1031,7 @@ export class WhatsAppReminderService {
           },
           created_at: new Date().toISOString(),
         });
-      } catch (auditError) {
+      } catch (_auditError) {
         console.warn('Failed to create error audit log:', auditError);
       }
 
@@ -1083,8 +1083,7 @@ export class WhatsAppReminderService {
       const responseCount = responses?.length || 0;
 
       // Channel breakdown
-      const channelBreakdown = logs.reduce(
-        (acc, log) => {
+      const channelBreakdown = logs.reduce(_(acc,_log) => {
           acc[log.channel] = (acc[log.channel] || 0) + 1;
           return acc;
         },
@@ -1099,7 +1098,7 @@ export class WhatsAppReminderService {
         channelBreakdown,
         fallbackRate: totalSent > 0 ? (fallbackUsed / totalSent) * 100 : 0,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting delivery statistics:', error);
       throw error;
     }
@@ -1107,7 +1106,7 @@ export class WhatsAppReminderService {
 }
 
 // Export singleton instance
-export const whatsappReminderService = new WhatsAppReminderService();
+export const _whatsappReminderService = new WhatsAppReminderService();
 
 // Export types for use in other modules
 export type { AppointmentReminder, DeliveryStatus, LgpdConsentRecord, WhatsAppMessage };

@@ -28,10 +28,8 @@ export type DocumentInsert = {
 };
 
 // Query options for patient documents
-export const patientDocumentsQueryOptions = ({
-  patientId,
-  category,
-  search,
+export const _patientDocumentsQueryOptions = (_{
+  patientId,_category,_search,
 }: {
   patientId: string;
   category?: string;
@@ -80,16 +78,12 @@ export const patientDocumentsQueryOptions = ({
   });
 
 // Document upload mutation
-export const useDocumentUpload = () => {
+export const _useDocumentUpload = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
-      patientId,
-      file,
-      category = 'other',
-      description,
-      tags,
+      patientId,_file,_category = 'other',_description,_tags,
     }: {
       patientId: string;
       file: File;
@@ -128,13 +122,12 @@ export const useDocumentUpload = () => {
 };
 
 // Document delete mutation
-export const useDocumentDelete = () => {
+export const _useDocumentDelete = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
-      patientId,
-      documentId,
+      patientId,_documentId,
     }: {
       patientId: string;
       documentId: string;
@@ -163,7 +156,7 @@ export const useDocumentDelete = () => {
 };
 
 // Document download helper (not a mutation since it's a direct download)
-export const downloadDocument = async (
+export const _downloadDocument = async (
   patientId: string,
   documentId: string,
   filename: string,
@@ -188,7 +181,7 @@ export const downloadDocument = async (
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
-  } catch (error) {
+  } catch (_error) {
     console.error('Download error:', error);
     throw error;
   }

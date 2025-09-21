@@ -19,17 +19,17 @@ import {
   BatchPredictionInput,
 } from "../index";
 
-describe("ML Pipeline - Interface Contract Tests", () => {
+describe(_"ML Pipeline - Interface Contract Tests",_() => {
   let provider: StubModelProvider;
 
-  beforeEach(async () => {
+  beforeEach(_async () => {
     provider = createStubModelProvider({
       latencyMs: 10, // Fast for tests
       failureRate: 0, // No random failures in tests
     });
   });
 
-  afterEach(async () => {
+  afterEach(_async () => {
     if (provider) {
       await provider.dispose();
     }
@@ -39,12 +39,12 @@ describe("ML Pipeline - Interface Contract Tests", () => {
   // Initialization Tests
   // ============================================================================
 
-  describe("Model Provider Initialization", () => {
-    it("should initialize successfully with default config", async () => {
+  describe(_"Model Provider Initialization",_() => {
+    it(_"should initialize successfully with default config",_async () => {
       await expect(provider.initialize()).resolves.not.toThrow();
     });
 
-    it("should initialize successfully with custom config", async () => {
+    it(_"should initialize successfully with custom config",_async () => {
       const customConfig = {
         customParam: "test-value",
         timeout: 5000,
@@ -53,7 +53,7 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       await expect(provider.initialize(customConfig)).resolves.not.toThrow();
     });
 
-    it("should have valid metadata after initialization", async () => {
+    it(_"should have valid metadata after initialization",_async () => {
       await provider.initialize();
 
       const metadata = provider.metadata;
@@ -66,7 +66,7 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       expect(metadata.requiredFeatures).toContain("age");
     });
 
-    it("should fail predictions before initialization", async () => {
+    it(_"should fail predictions before initialization",_async () => {
       const input = createMockPredictionInput("patient_outcome");
 
       await expect(provider.predict(input)).rejects.toThrow(
@@ -79,12 +79,12 @@ describe("ML Pipeline - Interface Contract Tests", () => {
   // Single Prediction Tests
   // ============================================================================
 
-  describe("Single Prediction", () => {
-    beforeEach(async () => {
+  describe(_"Single Prediction",_() => {
+    beforeEach(_async () => {
       await provider.initialize();
     });
 
-    it("should make successful prediction with valid input", async () => {
+    it(_"should make successful prediction with valid input",_async () => {
       const input = createMockPredictionInput("patient_outcome");
 
       const result = await provider.predict(input);
@@ -97,7 +97,7 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       expect(result.timestamp).toBeInstanceOf(Date);
     });
 
-    it("should include feature importance in prediction result", async () => {
+    it(_"should include feature importance in prediction result",_async () => {
       const input = createMockPredictionInput("readmission_risk");
 
       const result = await provider.predict(input);
@@ -114,7 +114,7 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       }
     });
 
-    it("should return metadata in prediction result", async () => {
+    it(_"should return metadata in prediction result",_async () => {
       const input = createMockPredictionInput("no_show_risk");
 
       const result = await provider.predict(input);
@@ -124,7 +124,7 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       expect(result.metadata?.predictionType).toBe("no_show_risk");
     });
 
-    it("should validate input and reject unsupported prediction types", async () => {
+    it(_"should validate input and reject unsupported prediction types",_async () => {
       const input = {
         type: "unsupported_type" as any,
         features: {
@@ -139,7 +139,7 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       await expect(provider.predict(input)).rejects.toThrow(InvalidInputError);
     });
 
-    it("should validate input and reject missing required features", async () => {
+    it(_"should validate input and reject missing required features",_async () => {
       const input = {
         type: "patient_outcome",
         features: {
@@ -151,7 +151,7 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       await expect(provider.predict(input)).rejects.toThrow(InvalidInputError);
     });
 
-    it("should generate different prediction types correctly", async () => {
+    it(_"should generate different prediction types correctly",_async () => {
       const testCases = [
         "patient_outcome",
         "readmission_risk",
@@ -174,12 +174,12 @@ describe("ML Pipeline - Interface Contract Tests", () => {
   // Batch Prediction Tests
   // ============================================================================
 
-  describe("Batch Prediction", () => {
-    beforeEach(async () => {
+  describe(_"Batch Prediction",_() => {
+    beforeEach(_async () => {
       await provider.initialize();
     });
 
-    it("should process batch predictions successfully", async () => {
+    it(_"should process batch predictions successfully",_async () => {
       const inputs = [
         createMockPredictionInput("patient_outcome"),
         createMockPredictionInput("readmission_risk"),
@@ -197,8 +197,8 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       expect(result.stats.processingTimeMs).toBeGreaterThan(0);
     });
 
-    it("should respect batch processing options", async () => {
-      const inputs = Array.from({ length: 10 }, () =>
+    it(_"should respect batch processing options",_async () => {
+      const inputs = Array.from({ length: 10 },_() =>
         createMockPredictionInput("patient_outcome"),
       );
 
@@ -216,7 +216,7 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       expect(result.stats.total).toBe(10);
     });
 
-    it("should handle empty batch input", async () => {
+    it(_"should handle empty batch input",_async () => {
       const batchInput: BatchPredictionInput = { inputs: [] };
 
       const result = await provider.batchPredict(batchInput);
@@ -232,18 +232,18 @@ describe("ML Pipeline - Interface Contract Tests", () => {
   // Input Validation Tests
   // ============================================================================
 
-  describe("Input Validation", () => {
-    beforeEach(async () => {
+  describe(_"Input Validation",_() => {
+    beforeEach(_async () => {
       await provider.initialize();
     });
 
-    it("should validate correct input structure", () => {
+    it(_"should validate correct input structure",_() => {
       const input = createMockPredictionInput("patient_outcome");
 
-      expect(() => provider.validateInput(input)).not.toThrow();
+      expect(_() => provider.validateInput(input)).not.toThrow();
     });
 
-    it("should validate prediction input structure utility", () => {
+    it(_"should validate prediction input structure utility",_() => {
       const validInput = createMockPredictionInput("patient_outcome");
       const invalidInputs = [
         null,
@@ -257,10 +257,10 @@ describe("ML Pipeline - Interface Contract Tests", () => {
         { features: {} },
       ];
 
-      expect(() => validatePredictionInputStructure(validInput)).not.toThrow();
+      expect(_() => validatePredictionInputStructure(validInput)).not.toThrow();
 
-      invalidInputs.forEach((input) => {
-        expect(() => validatePredictionInputStructure(input)).toThrow();
+      invalidInputs.forEach(_(input) => {
+        expect(_() => validatePredictionInputStructure(input)).toThrow();
       });
     });
   });
@@ -269,8 +269,8 @@ describe("ML Pipeline - Interface Contract Tests", () => {
   // Health Check Tests
   // ============================================================================
 
-  describe("Health Check", () => {
-    it("should return health status when initialized", async () => {
+  describe(_"Health Check",_() => {
+    it(_"should return health status when initialized",_async () => {
       await provider.initialize();
 
       const health = await provider.healthCheck();
@@ -281,7 +281,7 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       expect(health.details?.modelId).toBe("healthcare-stub-v1");
     });
 
-    it("should include relevant health details", async () => {
+    it(_"should include relevant health details",_async () => {
       await provider.initialize();
 
       const health = await provider.healthCheck();
@@ -295,12 +295,12 @@ describe("ML Pipeline - Interface Contract Tests", () => {
   // Error Handling Tests
   // ============================================================================
 
-  describe("Error Handling", () => {
-    beforeEach(async () => {
+  describe(_"Error Handling",_() => {
+    beforeEach(_async () => {
       await provider.initialize();
     });
 
-    it("should throw InvalidInputError for unsupported prediction types", async () => {
+    it(_"should throw InvalidInputError for unsupported prediction types",_async () => {
       const input = {
         type: "unsupported" as any,
         features: {
@@ -315,7 +315,7 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       await expect(provider.predict(input)).rejects.toThrow(InvalidInputError);
     });
 
-    it("should throw InvalidInputError for missing features", async () => {
+    it(_"should throw InvalidInputError for missing features",_async () => {
       const input = {
         type: "patient_outcome",
         features: { age: 30 }, // Missing required features
@@ -324,7 +324,7 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       await expect(provider.predict(input)).rejects.toThrow(InvalidInputError);
     });
 
-    it("should handle prediction errors gracefully", async () => {
+    it(_"should handle prediction errors gracefully",_async () => {
       // Create provider with high failure rate for testing
       const failingProvider = createStubModelProvider({
         failureRate: 1.0, // Always fail
@@ -346,8 +346,8 @@ describe("ML Pipeline - Interface Contract Tests", () => {
   // Resource Management Tests
   // ============================================================================
 
-  describe("Resource Management", () => {
-    it("should dispose resources properly", async () => {
+  describe(_"Resource Management",_() => {
+    it(_"should dispose resources properly",_async () => {
       await provider.initialize();
 
       await expect(provider.dispose()).resolves.not.toThrow();
@@ -364,8 +364,8 @@ describe("ML Pipeline - Interface Contract Tests", () => {
   // Configuration Tests
   // ============================================================================
 
-  describe("Configuration", () => {
-    it("should accept custom configuration during creation", () => {
+  describe(_"Configuration",_() => {
+    it(_"should accept custom configuration during creation",_() => {
       const customProvider = createStubModelProvider({
         id: "custom-model",
         name: "Custom Test Model",
@@ -380,13 +380,13 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       expect(customProvider.metadata.accuracy).toBe(0.95);
     });
 
-    it("should support all defined prediction types", () => {
+    it(_"should support all defined prediction types",_() => {
       const metadata = provider.metadata;
 
-      PREDICTION_TYPES.forEach((type) => {
+      PREDICTION_TYPES.forEach(_(type) => {
         if (metadata.supportedTypes.includes(type)) {
           // If supported, should be able to create mock input
-          expect(() => createMockPredictionInput(type)).not.toThrow();
+          expect(_() => createMockPredictionInput(type)).not.toThrow();
         }
       });
     });
@@ -396,8 +396,8 @@ describe("ML Pipeline - Interface Contract Tests", () => {
   // Utility Function Tests
   // ============================================================================
 
-  describe("Utility Functions", () => {
-    it("should create mock prediction input correctly", () => {
+  describe(_"Utility Functions",_() => {
+    it(_"should create mock prediction input correctly",_() => {
       const input = createMockPredictionInput("readmission_risk", {
         customFeature: "test-value",
       });
@@ -409,7 +409,7 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       expect(input.clinicId).toBeDefined();
     });
 
-    it("should create stub provider with factory function", () => {
+    it(_"should create stub provider with factory function",_() => {
       const provider = createStubModelProvider();
 
       expect(provider).toBeInstanceOf(StubModelProvider);

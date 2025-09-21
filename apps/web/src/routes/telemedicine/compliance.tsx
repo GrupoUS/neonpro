@@ -97,7 +97,7 @@ function ComplianceDashboard() {
     },
   ];
 
-  const getStatusColor = (_status: any) => {
+  const _getStatusColor = (_status: any) => {
     switch (status) {
       case 'compliant':
         return 'text-green-600';

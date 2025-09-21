@@ -161,7 +161,7 @@ export function createLiveRegionAria(
   return {
     'aria-live': politeness,
     'aria-atomic': atomic,
-    role: 'status',
+    _role: 'status',
   };
 }
 
@@ -245,7 +245,7 @@ export class FocusManager {
 
     document.body.appendChild(announcement);
 
-    setTimeout(() => {
+    setTimeout(_() => {
       document.body.removeChild(announcement);
     }, 1000);
   }
@@ -418,7 +418,7 @@ export function createAccessibleErrorMessage(
     message: errorMessage,
     ariaAttributes: {
       id,
-      role: 'alert',
+      _role: 'alert',
       'aria-live': 'assertive',
       'aria-atomic': 'true',
     },

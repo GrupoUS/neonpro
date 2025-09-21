@@ -46,7 +46,7 @@ describe('Audit Service Module - RED Phase', () => {
         action: 'login',
         result: 'success',
         message: 'User logged in successfully',
-        userId: 'user123',
+        _userId: 'user123',
         sessionId: 'session456',
         ipAddress: '192.168.1.100',
         userAgent: 'Mozilla/5.0...',
@@ -54,7 +54,7 @@ describe('Audit Service Module - RED Phase', () => {
         details: { loginMethod: 'password' },
       });
 
-      expect(event.userId).toBe('user123');
+      expect(event._userId).toBe('user123');
       expect(event.sessionId).toBe('session456');
       expect(event.ipAddress).toBe('192.168.1.100');
       expect(event.userAgent).toBe('Mozilla/5.0...');
@@ -95,7 +95,7 @@ describe('Audit Service Module - RED Phase', () => {
         severity: AuditSeverity.INFO,
         category: 'security',
         source: 'security-policy-service',
-        userId: 'usr_healthcare_12345',
+        _userId: 'usr_healthcare_12345',
         sessionId: 'sess_67890',
         ipAddress: '192.168.1.100',
         userAgent: 'Mozilla/5.0 (compatible; Healthcare Platform)',
@@ -124,7 +124,7 @@ describe('Audit Service Module - RED Phase', () => {
       expect(log.eventType).toBe('security_policy_evaluation');
       expect(log.severity).toBe(AuditSeverity.INFO);
       expect(log.category).toBe('security');
-      expect(log.userId).toBe('usr_healthcare_12345');
+      expect(log._userId).toBe('usr_healthcare_12345');
       expect(log.sessionId).toBe('sess_67890');
       expect(log.ipAddress).toBe('192.168.1.100');
       expect(log.resource).toBe('/api/healthcare/patients');
@@ -188,7 +188,7 @@ describe('Audit Service Module - RED Phase', () => {
         severity: AuditSeverity.INFO,
         category: 'healthcare',
         source: 'patient-service',
-        userId: 'doctor123',
+        _userId: 'doctor123',
         resource: '/api/patients/123/records',
         action: 'update',
         result: 'success',
@@ -211,7 +211,7 @@ describe('Audit Service Module - RED Phase', () => {
       expect(auditTrail.eventType).toBe('patient_record_update');
       expect(auditTrail.severity).toBe(AuditSeverity.INFO);
       expect(auditTrail.category).toBe('healthcare');
-      expect(auditTrail.userId).toBe('doctor123');
+      expect(auditTrail._userId).toBe('doctor123');
       expect(auditTrail.resource).toBe('/api/patients/123/records');
       expect(auditTrail.action).toBe('update');
       expect(auditTrail.result).toBe('success');
@@ -234,7 +234,7 @@ describe('Audit Service Module - RED Phase', () => {
         severity: AuditSeverity.CRITICAL,
         category: 'security',
         source: 'auth-service',
-        userId: 'unknown_user',
+        _userId: 'unknown_user',
         ipAddress: '192.168.1.200',
         resource: '/api/patients/sensitive',
         action: 'access',
@@ -268,7 +268,7 @@ describe('Audit Service Module - RED Phase', () => {
         severity: AuditSeverity.HIGH,
         category: 'security',
         source: 'security-monitoring',
-        userId: 'user123',
+        _userId: 'user123',
         ipAddress: '192.168.1.100',
         resource: '/api/healthcare/data',
         action: 'bulk_access',
@@ -335,7 +335,7 @@ describe('Audit Service Module - RED Phase', () => {
   describe('getAuditLogs', () => {
     it('should retrieve audit logs with filtering', () => {
       const filters = {
-        userId: 'doctor123',
+        _userId: 'doctor123',
         category: 'healthcare',
         severity: AuditSeverity.INFO,
         startDate: new Date('2024-01-01'),
@@ -350,7 +350,7 @@ describe('Audit Service Module - RED Phase', () => {
     it('should support different filter combinations', () => {
       const filterCombinations = [
         { category: 'security', severity: AuditSeverity.CRITICAL },
-        { userId: 'admin123', startDate: new Date('2024-01-01') },
+        { _userId: 'admin123', startDate: new Date('2024-01-01') },
         { eventType: 'patient_data_access', compliance: { lgpd: true } },
         { ipAddress: '192.168.1.100', result: 'failure' },
       ];
@@ -363,7 +363,7 @@ describe('Audit Service Module - RED Phase', () => {
 
     it('should handle empty filter results', () => {
       const emptyFilters = {
-        userId: 'nonexistent_user',
+        _userId: 'nonexistent_user',
         startDate: new Date('2025-01-01'),
         endDate: new Date('2025-01-02'),
       };

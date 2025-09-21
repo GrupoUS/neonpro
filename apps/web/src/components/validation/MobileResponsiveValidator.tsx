@@ -116,7 +116,7 @@ export const MobileResponsiveValidator: React.FC = () => {
   const layoutShiftRef = useRef<number>(0);
 
   // Initialize Performance Monitoring
-  useEffect(() => {
+  useEffect(_() => {
     initializePerformanceMonitoring();
     return () => {
       if (performanceObserverRef.current) {
@@ -125,7 +125,7 @@ export const MobileResponsiveValidator: React.FC = () => {
     };
   }, []);
 
-  const initializePerformanceMonitoring = useCallback(() => {
+  const initializePerformanceMonitoring = useCallback(_() => {
     if (!window.PerformanceObserver) return;
 
     // Monitor LCP (Largest Contentful Paint)
@@ -321,7 +321,7 @@ export const MobileResponsiveValidator: React.FC = () => {
   }, []);
 
   // Run Complete Validation
-  const runValidation = useCallback(async () => {
+  const runValidation = useCallback(_async () => {
     setIsValidating(true);
     setValidationProgress(0);
 
@@ -387,7 +387,7 @@ export const MobileResponsiveValidator: React.FC = () => {
   // Render viewport selector
   const renderViewportSelector = () => (
     <div className='flex flex-wrap gap-2 mb-6'>
-      {Object.entries(VIEWPORT_BREAKPOINTS).map(([key, config]) => (
+      {Object.entries(VIEWPORT_BREAKPOINTS).map(_([key,_config]) => (
         <Button
           key={key}
           variant={currentViewport === key ? 'default' : 'outline'}
@@ -420,7 +420,7 @@ export const MobileResponsiveValidator: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {Object.entries(performanceMetrics).map(([metric, value]) => {
+          {Object.entries(performanceMetrics).map(_([metric,_value]) => {
             const { status } = getPerformanceStatus(
               metric as keyof PerformanceMetrics,
               value,
@@ -470,12 +470,11 @@ export const MobileResponsiveValidator: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {result.issues.length > 0 && (
-                <Alert className='mb-4'>
+              {result.issues.length > 0 && (_<Alert className='mb-4'>
                   <AlertCircle className='w-4 h-4' />
                   <AlertDescription>
                     <ul className='list-disc list-inside'>
-                      {result.issues.map((issue, index) => <li key={index}>{issue}</li>)}
+                      {result.issues.map((issue,_index) => <li key={index}>{issue}</li>)}
                     </ul>
                   </AlertDescription>
                 </Alert>
@@ -558,7 +557,7 @@ export const MobileResponsiveValidator: React.FC = () => {
               <AlertCircle className='w-4 h-4' />
               <AlertDescription>
                 <ul className='list-disc list-inside'>
-                  {accessibilityResults.issues.map((issue, index) => <li key={index}>{issue}</li>)}
+                  {accessibilityResults.issues.map((issue,_index) => <li key={index}>{issue}</li>)}
                 </ul>
               </AlertDescription>
             </Alert>
@@ -616,7 +615,7 @@ export const MobileResponsiveValidator: React.FC = () => {
               <AlertCircle className='w-4 h-4' />
               <AlertDescription>
                 <ul className='list-disc list-inside'>
-                  {healthcareResults.issues.map((issue, index) => <li key={index}>{issue}</li>)}
+                  {healthcareResults.issues.map((issue,_index) => <li key={index}>{issue}</li>)}
                 </ul>
               </AlertDescription>
             </Alert>

@@ -10,26 +10,26 @@ import {
 
 export interface ConversationRequest {
   sessionId: string;
-  userId: string;
+  _userId: string;
   clinicId: string;
   patientId?: string;
   message: string;
-  context?: any;
+  _context?: any;
   title?: string;
 }
 
 export interface ConversationResponse {
   conversationId: string;
   message: string;
-  role: 'assistant' | 'system';
-  context: any;
+  _role: 'assistant' | 'system';
+  _context: any;
   citations?: any[];
   confidence?: number;
   followUpQuestions?: string[];
 }
 
 export interface ConversationHistoryParams {
-  userId: string;
+  _userId: string;
   clinicId: string;
   patientId?: string;
   limit?: number;
@@ -57,13 +57,13 @@ export class ConversationService {
     this.contextManager = new ConversationContextManager(supabase, logger, sessionManager);
   }
 
-  async startConversation(request: ConversationRequest): Promise<ConversationResponse> {
+  async startConversation(_request: ConversationRequest): Promise<ConversationResponse> {
     try {
       // Validate session and permissions
-      await this.validateRequestPermissions(request);
+      await this.validateRequestPermissions(_request);
 
       // Check for existing active conversation
-      const existingConversation = await this.findExistingConversation(request);
+      const existingConversation = await this.findExistingConversation(_request);
 
       let conversation: ConversationContext;
       if (existingConversation) {
@@ -72,7 +72,7 @@ export class ConversationService {
         // Create new conversation
         conversation = await this.contextManager.createConversation({
           sessionId: request.sessionId,
-          userId: request.userId,
+          _userId: request.userId,
           clinicId: request.clinicId,
           patientId: request.patientId,
           title: request.title || this.generateConversationTitle(request.message),
@@ -82,7 +82,7 @@ export class ConversationService {
 
       // Add user message
       await this.contextManager.addMessage(conversation.id, request.userId, {
-        role: 'user',
+        _role: 'user',
         content: request.message,
         metadata: {
           intent: await this.analyzeIntent(request.message),
@@ -95,7 +95,7 @@ export class ConversationService {
 
       // Add assistant response to conversation
       await this.contextManager.addMessage(conversation.id, request.userId, {
-        role: 'assistant',
+        _role: 'assistant',
         content: agentResponse.message,
         metadata: {
           confidence: agentResponse.confidence,
@@ -124,8 +124,8 @@ export class ConversationService {
       return {
         conversationId: conversation.id,
         message: agentResponse.message,
-        role: 'assistant',
-        context: agentResponse.context,
+        _role: 'assistant',
+        _context: agentResponse.context,
         citations: agentResponse.citations,
         confidence: agentResponse.confidence,
         followUpQuestions: agentResponse.followUpQuestions,
@@ -133,8 +133,8 @@ export class ConversationService {
     } catch (error) {
       await this.logger.logError('conversation_start_error', {
         error: error instanceof Error ? error.message : 'Unknown error',
-        request: {
-          userId: request.userId,
+        _request: {
+          _userId: request.userId,
           clinicId: request.clinicId,
           patientId: request.patientId,
           messageLength: request.message.length,
@@ -147,13 +147,13 @@ export class ConversationService {
 
   async continueConversation(
     conversationId: string,
-    userId: string,
+    _userId: string,
     message: string,
-    context?: any,
+    _context?: any,
   ): Promise<ConversationResponse> {
     try {
       // Get conversation
-      const conversation = await this.contextManager.getConversation(conversationId, userId);
+      const conversation = await this.contextManager.getConversation(conversationId, _userId);
       if (!conversation) {
         throw new Error('Conversation not found');
       }
@@ -163,7 +163,7 @@ export class ConversationService {
 
       // Add user message
       await this.contextManager.addMessage(conversationId, userId, {
-        role: 'user',
+        _role: 'user',
         content: message,
         metadata: {
           intent: await this.analyzeIntent(message),
@@ -184,7 +184,7 @@ export class ConversationService {
 
       // Add assistant response
       await this.contextManager.addMessage(conversationId, userId, {
-        role: 'assistant',
+        _role: 'assistant',
         content: agentResponse.message,
         metadata: {
           confidence: agentResponse.confidence,
@@ -213,8 +213,8 @@ export class ConversationService {
       return {
         conversationId,
         message: agentResponse.message,
-        role: 'assistant',
-        context: agentResponse.context,
+        _role: 'assistant',
+        _context: agentResponse.context,
         citations: agentResponse.citations,
         confidence: agentResponse.confidence,
         followUpQuestions: agentResponse.followUpQuestions,
@@ -285,10 +285,10 @@ export class ConversationService {
 
   async getConversationDetails(
     conversationId: string,
-    userId: string,
+    _userId: string,
   ): Promise<ConversationContext | null> {
     try {
-      const conversation = await this.contextManager.getConversation(conversationId, userId);
+      const conversation = await this.contextManager.getConversation(conversationId, _userId);
       if (!conversation) {
         return null;
       }
@@ -315,16 +315,16 @@ export class ConversationService {
     }
   }
 
-  async deleteConversation(conversationId: string, userId: string): Promise<void> {
+  async deleteConversation(conversationId: string, _userId: string): Promise<void> {
     try {
-      const conversation = await this.contextManager.getConversation(conversationId, userId);
+      const conversation = await this.contextManager.getConversation(conversationId, _userId);
       if (!conversation) {
         throw new Error('Conversation not found');
       }
 
       await this.validateUserAccess(userId, conversation.clinicId);
 
-      await this.contextManager.deleteConversation(conversationId, userId);
+      await this.contextManager.deleteConversation(conversationId, _userId);
 
       await this.logger.logDataAccess(userId, conversation.clinicId, {
         action: 'delete_conversation',
@@ -345,9 +345,9 @@ export class ConversationService {
   }
 
   async searchConversations(
-    userId: string,
+    _userId: string,
     clinicId: string,
-    query: string,
+    _query: string,
     filters?: {
       patientId?: string;
       dateFrom?: Date;
@@ -407,9 +407,9 @@ export class ConversationService {
     }
   }
 
-  private async validateRequestPermissions(request: ConversationRequest): Promise<void> {
+  private async validateRequestPermissions(_request: ConversationRequest): Promise<void> {
     const hasAccess = await this.supabaseConnector.validateDataAccess({
-      userId: request.userId,
+      _userId: request.userId,
       clinicId: request.clinicId,
       action: 'read',
       resource: 'ai_conversation_contexts',
@@ -421,12 +421,12 @@ export class ConversationService {
 
     // Validate session
     const session = await this.sessionManager.getSession(request.sessionId);
-    if (!session || session.userId !== request.userId) {
+    if (!session || session.userId !== request._userId) {
       throw new Error('Invalid session');
     }
   }
 
-  private async validateUserAccess(userId: string, clinicId: string): Promise<void> {
+  private async validateUserAccess(_userId: string, clinicId: string): Promise<void> {
     const hasAccess = await this.supabaseConnector.validateDataAccess({
       userId,
       clinicId,
@@ -440,7 +440,7 @@ export class ConversationService {
   }
 
   private async findExistingConversation(
-    request: ConversationRequest,
+    _request: ConversationRequest,
   ): Promise<ConversationContext | null> {
     // Look for active conversations in the same session
     const conversations = await this.contextManager.getUserConversations(
@@ -506,7 +506,7 @@ export class ConversationService {
   ): Promise<{
     message: string;
     intent: string;
-    context: any;
+    _context: any;
     confidence: number;
     citations?: any[];
     tool_calls?: any[];
@@ -526,7 +526,7 @@ export class ConversationService {
       ...additionalContext,
       patientId: conversation.patientId,
       clinicId: conversation.clinicId,
-      messageHistory: history?.map(m => ({ role: m.role, content: m.content })) || [],
+      messageHistory: history?.map(m => ({ _role: m.role, content: m.content })) || [],
     };
 
     return {

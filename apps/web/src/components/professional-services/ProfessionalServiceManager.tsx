@@ -108,7 +108,7 @@ export function ProfessionalServiceManager({
     ) {
       try {
         await deleteProfessionalService.mutateAsync(assignment.id);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error deleting assignment:', error);
       }
     }
@@ -120,7 +120,7 @@ export function ProfessionalServiceManager({
         service_id: assignment.service_id,
         professional_id: assignment.professional_id,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error setting primary professional:', error);
     }
   };
@@ -136,7 +136,7 @@ export function ProfessionalServiceManager({
         </CardHeader>
         <CardContent>
           <div className='animate-pulse space-y-4'>
-            {Array.from({ length: 5 }).map((_, i) => (
+            {Array.from({ length: 5 }).map(_(_,_i) => (
               <div key={i} className='h-16 bg-muted rounded'></div>
             ))}
           </div>
@@ -253,7 +253,7 @@ export function ProfessionalServiceManager({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='all'>Todos os níveis</SelectItem>
-                {Object.entries(PROFICIENCY_LEVELS).map(([level, config]) => (
+                {Object.entries(PROFICIENCY_LEVELS).map(_([level,_config]) => (
                   <SelectItem key={level} value={level}>
                     <div className='flex items-center gap-2'>
                       <div

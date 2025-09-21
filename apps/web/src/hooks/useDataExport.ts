@@ -72,7 +72,7 @@ export function useDataExport(): UseDataExportReturn {
       }
 
       // Add data rows
-      data.forEach((row, _index) => {
+      data.forEach(_(row, _index) => {
         const values = headers.map(header => {
           let value = row[header];
 
@@ -176,7 +176,7 @@ export function useDataExport(): UseDataExportReturn {
           <tbody>
     `;
 
-      data.forEach((row, _index) => {
+      data.forEach(_(row, _index) => {
         html += '<tr>';
         headers.forEach(_header => {
           let value = row[header];
@@ -294,11 +294,11 @@ export function useDataExport(): UseDataExportReturn {
         );
 
         // Reset status after a delay
-        setTimeout(() => {
+        setTimeout(_() => {
           setStatus('idle');
           setProgress(0);
         }, 3000);
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error
           ? error.message
           : 'Erro desconhecido na exportação';
@@ -307,7 +307,7 @@ export function useDataExport(): UseDataExportReturn {
         toast.error(`Erro na exportação: ${errorMessage}`);
 
         // Reset status after a delay
-        setTimeout(() => {
+        setTimeout(_() => {
           setStatus('idle');
           setProgress(0);
           setError(null);

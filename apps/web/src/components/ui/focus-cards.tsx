@@ -16,7 +16,7 @@ export interface FocusCardsProps {
 export function FocusCards({ cards }: FocusCardsProps) {
   return (
     <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
-      {cards.map((c, i) => (
+      {cards.map((c,_i) => (
         <Card
           key={i}
           className='hover:shadow-md transition-shadow cursor-pointer'

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { InMemoryKPIService } from "../../index";
 
 describe("KPIService.archive (contract)", () => {
-  it("requires rationale and sets status Archived", async () => {
+  it(_"requires rationale and sets status Archived",_async () => {
     const svc = new InMemoryKPIService();
     await svc.register({ id: "KPI-X", name: "X Metric" });
     const archived = await svc.archive({
@@ -12,7 +12,7 @@ describe("KPIService.archive (contract)", () => {
     expect(archived.status).toBe("Archived");
   });
 
-  it("throws if rationale missing", async () => {
+  it(_"throws if rationale missing",_async () => {
     const svc = new InMemoryKPIService();
     await svc.register({ id: "KPI-Y", name: "Y Metric" });
     // @ts-expect-error testing missing rationale

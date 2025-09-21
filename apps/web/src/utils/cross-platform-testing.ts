@@ -12,8 +12,6 @@
  * - Brazilian Portuguese localization
  */
 
-import { z } from 'zod';
-
 // Cross-Platform Testing Configuration Schema
 export const CrossPlatformTestingConfigSchema = z
   .object({
@@ -141,7 +139,7 @@ export interface CrossPlatformTestReport {
 }
 
 // Cross-Platform Testing Constants
-export const BROWSERS = {
+export const _BROWSERS = {
   CHROME: 'chrome',
   FIREFOX: 'firefox',
   SAFARI: 'safari',
@@ -150,7 +148,7 @@ export const BROWSERS = {
   MOBILE_SAFARI: 'mobile-safari',
 } as const;
 
-export const DEVICES = {
+export const _DEVICES = {
   DESKTOP: 'desktop',
   TABLET: 'tablet',
   MOBILE: 'mobile',
@@ -158,7 +156,7 @@ export const DEVICES = {
   SMALL_MOBILE: 'small-mobile',
 } as const;
 
-export const TEST_TYPES = {
+export const _TEST_TYPES = {
   COMPATIBILITY: 'compatibility',
   ACCESSIBILITY: 'accessibility',
   PERFORMANCE: 'performance',
@@ -338,7 +336,7 @@ export default class CrossPlatformTestingService {
     const failedTests = results.filter(r => r.status === 'failed').length;
     const warningTests = results.filter(r => r.status === 'warning').length;
 
-    const overallCompatibilityScore = results.reduce((sum, r) => sum + r.score, 0) / totalTests;
+    const overallCompatibilityScore = results.reduce(_(sum,_r) => sum + r.score, 0) / totalTests;
 
     const uniqueBrowsers = new Set(results.map(r => r.browser)).size;
     const uniqueDevices = new Set(results.map(r => r.device)).size;
@@ -355,8 +353,7 @@ export default class CrossPlatformTestingService {
       wcagAA: accessibilityResults.filter(
         r => r.performanceMetrics.accessibilityScore >= 90,
       ).length,
-      averageScore: accessibilityResults.reduce(
-            (sum, r) => sum + r.performanceMetrics.accessibilityScore,
+      averageScore: accessibilityResults.reduce(_(sum,_r) => sum + r.performanceMetrics.accessibilityScore,
             0,
           ) / accessibilityResults.length || 0,
     };
@@ -365,7 +362,7 @@ export default class CrossPlatformTestingService {
       r => r.testType === 'healthcare-workflows',
     );
     const healthcareWorkflowCompatibility = healthcareResults.length > 0
-      ? healthcareResults.reduce((sum, r) => sum + r.score, 0)
+      ? healthcareResults.reduce(_(sum,_r) => sum + r.score, 0)
         / healthcareResults.length
       : 0;
 

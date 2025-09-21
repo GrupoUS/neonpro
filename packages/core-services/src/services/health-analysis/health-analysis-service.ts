@@ -105,7 +105,7 @@ export class HealthAnalysisService {
   async gatherPatientAnalysisData(params: {
     patientId: string;
     clinicId: string;
-    userId: string;
+    _userId: string;
     userRole: string;
   }): Promise<PatientAnalysisData> {
     try {
@@ -177,7 +177,7 @@ export class HealthAnalysisService {
       };
 
       return analysisData;
-    } catch (error) {
+    } catch (_error) {
       throw new HealthAnalysisError(
         "DATA_GATHERING_FAILED",
         `Failed to gather patient analysis data: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -282,10 +282,10 @@ PADRÕES DE COMPORTAMENTO:
         },
         model: params.model || "gpt-4",
       };
-    } catch (error) {
+    } catch (_error) {
       throw new HealthAnalysisError(
         "AI_SERVICE_ERROR",
-        `Failed to call AI service: ${error instanceof Error ? error.message : "Unknown error"}`,
+        `Failed to call AI _service: ${error instanceof Error ? error.message : "Unknown error"}`,
         "external_service",
         "high",
       );
@@ -349,7 +349,7 @@ PADRÕES DE COMPORTAMENTO:
           processingTime: 0,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       throw new HealthAnalysisError(
         "RESPONSE_PARSING_ERROR",
         `Failed to parse AI response: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -375,7 +375,7 @@ PADRÕES DE COMPORTAMENTO:
       });
 
       return analysisId;
-    } catch (error) {
+    } catch (_error) {
       throw new HealthAnalysisError(
         "STORAGE_FAILED",
         `Failed to store health analysis: ${error instanceof Error ? error.message : "Unknown error"}`,

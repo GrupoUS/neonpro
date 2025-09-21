@@ -44,7 +44,7 @@ export function AppointmentTemplateSelector({
   const { data: defaultTemplates } = useDefaultAppointmentTemplates(clinicId);
 
   // Filter templates based on search and category
-  const filteredTemplates = React.useMemo(() => {
+  const filteredTemplates = React.useMemo(_() => {
     if (!allTemplates) return [];
 
     let filtered = allTemplates;
@@ -61,9 +61,9 @@ export function AppointmentTemplateSelector({
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
         template =>
-          template.name.toLowerCase().includes(query)
-          || template.description?.toLowerCase().includes(query)
-          || template.serviceName.toLowerCase().includes(query),
+          template.name.toLowerCase().includes(_query)
+          || template.description?.toLowerCase().includes(_query)
+          || template.serviceName.toLowerCase().includes(_query),
       );
     }
 
@@ -71,7 +71,7 @@ export function AppointmentTemplateSelector({
   }, [allTemplates, selectedCategory, searchQuery]);
 
   // Get unique categories from templates
-  const categories = React.useMemo(() => {
+  const categories = React.useMemo(_() => {
     if (!allTemplates) return [];
     const uniqueCategories = [...new Set(allTemplates.map(t => t.category))];
     return uniqueCategories.sort();
@@ -138,8 +138,7 @@ export function AppointmentTemplateSelector({
             {/* Default Templates Section */}
             {selectedCategory === 'all'
               && defaultTemplates
-              && defaultTemplates.length > 0 && (
-              <div className='space-y-2'>
+              && defaultTemplates.length > 0 && (_<div className='space-y-2'>
                 <div className='flex items-center gap-2'>
                   <Star className='h-4 w-4 text-yellow-500' />
                   <h3 className='text-sm font-medium'>
@@ -168,8 +167,7 @@ export function AppointmentTemplateSelector({
               )}
               <div className='grid gap-2'>
                 {filteredTemplates.length > 0
-                  ? (
-                    filteredTemplates.map(template => (
+                  ? (_filteredTemplates.map(template => (
                       <TemplateCard
                         key={template.id}
                         template={template}

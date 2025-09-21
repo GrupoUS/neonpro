@@ -7,8 +7,6 @@
  * @fileoverview Healthcare form validation with Brazilian standards compliance
  */
 
-import { z } from 'zod';
-
 // Brazilian healthcare data validation schemas
 export const brazilianHealthcareSchemas = {
   // CPF validation (Brazilian tax ID)
@@ -92,7 +90,7 @@ export const brazilianHealthcareSchemas = {
         date = new Date(val);
       }
 
-      const now = new Date();
+      const _now = new Date();
       const minDate = new Date(now.getFullYear() - 120, 0, 1); // Max 120 years old
 
       return !isNaN(date.getTime()) && date <= now && date >= minDate;
@@ -101,17 +99,8 @@ export const brazilianHealthcareSchemas = {
     }),
 
   // Medical specialty validation
-  medicalSpecialty: z.enum([
-    'cardiologia',
-    'pediatria',
-    'ginecologia',
-    'neurologia',
-    'ortopedia',
-    'psiquiatria',
-    'dermatologia',
-    'oftalmologia',
-    'medicina-geral',
-  ], {
+  medicalSpecialty: z.enum(_[
+    'cardiologia',_'pediatria',_'ginecologia',_'neurologia',_'ortopedia',_'psiquiatria',_'dermatologia',_'oftalmologia',_'medicina-geral',_], {
     errorMap: () => ({ message: 'Especialidade médica inválida' }),
   }),
 
@@ -128,24 +117,18 @@ export const brazilianHealthcareSchemas = {
     .email('Email inválido'),
 
   // Blood type validation
-  bloodType: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], {
+  bloodType: z.enum(_['A+',_'A-',_'B+',_'B-',_'AB+',_'AB-',_'O+',_'O-'], {
     errorMap: () => ({ message: 'Tipo sanguíneo inválido' }),
   }),
 
   // Urgency level validation
-  urgencyLevel: z.enum(['emergencia', 'urgencia', 'prioridade', 'normal', 'baixa'], {
+  urgencyLevel: z.enum(_['emergencia',_'urgencia',_'prioridade',_'normal',_'baixa'], {
     errorMap: () => ({ message: 'Nível de urgência inválido' }),
   }),
 
   // Consultation type validation
-  consultationType: z.enum([
-    'primeira-consulta',
-    'retorno',
-    'consulta-urgencia',
-    'teleconsulta',
-    'consulta-especializada',
-    'segunda-opiniao',
-  ], {
+  consultationType: z.enum(_[
+    'primeira-consulta',_'retorno',_'consulta-urgencia',_'teleconsulta',_'consulta-especializada',_'segunda-opiniao',_], {
     errorMap: () => ({ message: 'Tipo de consulta inválido' }),
   }),
 };
@@ -204,7 +187,7 @@ export interface HealthcareFieldConfig {
   required: boolean;
   dataSensitivity: DataSensitivity;
   emergencyField?: boolean;
-  customValidation?: (value: string, context: HealthcareValidationContext) => string | null;
+  customValidation?: (value: string, _context: HealthcareValidationContext) => string | null;
   mask?: string;
   placeholder?: string;
   helperText?: string;
@@ -232,7 +215,7 @@ export interface FormValidationResult {
 export function validateHealthcareField(
   value: string,
   config: HealthcareFieldConfig,
-  context: HealthcareValidationContext,
+  _context: HealthcareValidationContext,
 ): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -259,7 +242,7 @@ export function validateHealthcareField(
   const schema = brazilianHealthcareSchemas[config.type];
   try {
     schema.parse(value);
-  } catch (validationError) {
+  } catch (_validationError) {
     if (validationError instanceof z.ZodError) {
       errors.push(...validationError.errors.map(err => err.message));
     }
@@ -267,7 +250,7 @@ export function validateHealthcareField(
 
   // Custom validation
   if (config.customValidation) {
-    const customError = config.customValidation(value, context);
+    const customError = config.customValidation(value, _context);
     if (customError) {
       errors.push(customError);
     }
@@ -300,7 +283,7 @@ export function validateHealthcareField(
 export function validateHealthcareForm(
   formData: Record<string, string>,
   fieldConfigs: HealthcareFieldConfig[],
-  context: HealthcareValidationContext,
+  _context: HealthcareValidationContext,
 ): FormValidationResult {
   const fieldResults: Record<string, ValidationResult> = {};
   const globalErrors: string[] = [];
@@ -310,7 +293,7 @@ export function validateHealthcareForm(
   // Validate each field
   fieldConfigs.forEach(config => {
     const value = formData[config.name] || '';
-    const result = validateHealthcareField(value, config, context);
+    const result = validateHealthcareField(value, config, _context);
     fieldResults[config.name] = result;
   });
 

@@ -39,7 +39,7 @@ function showErrorBanner(message: string) {
 
 if ((import.meta as any).env?.DEV) {
   window.addEventListener('error', e => showErrorBanner(e.message));
-  window.addEventListener('unhandledrejection', (_e: any) => {
+  window.addEventListener('unhandledrejection', (e: any) => {
     const reason: any = (e as any).reason;
     showErrorBanner(
       typeof reason === 'string' ? reason : (reason?.message ?? String(reason)),
@@ -66,7 +66,7 @@ function _loadResourceWithSRI(
     crossorigin?: 'anonymous' | 'use-credentials';
   } = {},
 ): Promise<void> {
-  return new Promise((resolve, reject) => {
+  return new Promise(_(resolve,_reject) => {
     const element = document.createElement(type);
 
     if (type === 'script') {
@@ -200,7 +200,7 @@ async function bootstrap() {
                     enableLogging: process.env.NODE_ENV !== 'production',
                   }}
                 >
-                  <RouterProvider router={router} />
+                  {router && <RouterProvider router={router} />}
                 </CSPProvider>
               </ConsentProvider>
             </ErrorBoundary>
@@ -219,7 +219,7 @@ async function bootstrap() {
       }, 2000);
     }
   } catch (err: any) {
-    console.error(error);
+    console.error(err);
     if ((import.meta as any).env?.DEV) {
       showErrorBanner(err?.message ?? String(err));
     }

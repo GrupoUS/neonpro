@@ -70,7 +70,7 @@ export interface ConsentHistory {
 
 interface LGPDConsentManagerProps {
   patientId?: string;
-  userId: string;
+  _userId: string;
   onConsentChange: (consent: LGPDConsentData) => void;
   onConsentWithdraw?: (field: keyof LGPDConsentData, reason?: string) => void;
   initialConsent?: Partial<LGPDConsentData>;
@@ -234,7 +234,7 @@ export function LGPDConsentManager({
     onConsentChange(newConsent);
   };
 
-  const handleWithdrawConsent = (field: keyof LGPDConsentData) => {
+  const _handleWithdrawConsent = (field: keyof LGPDConsentData) => {
     if (!withdrawReason.trim()) {
       toast.error('Por favor, informe o motivo da retirada do consentimento');
       return;
@@ -337,8 +337,7 @@ export function LGPDConsentManager({
               {config.description}
             </p>
 
-            {showDetailedOptions && (
-              <div className='space-y-2'>
+            {showDetailedOptions && (_<div className='space-y-2'>
                 <button
                   onClick={() =>
                     setShowDetails(prev => ({
@@ -369,8 +368,7 @@ export function LGPDConsentManager({
             {isChecked
               && field !== 'storageDuration'
               && field !== 'rightToWithdraw'
-              && field !== 'dataPortability' && (
-              <Button
+              && field !== 'dataPortability' && (_<Button
                 variant='ghost'
                 size='sm'
                 onClick={() => setShowWithdrawDialog(true)}
@@ -428,8 +426,8 @@ export function LGPDConsentManager({
         </h4>
 
         {Object.entries(CONSENT_DESCRIPTIONS)
-          .filter(([, config]) => config.category === 'required')
-          .map(([field, config]) => renderConsentItem(field as keyof LGPDConsentData, config))}
+          .filter(_([,_config]) => config.category === 'required')
+          .map(_([field,_config]) => renderConsentItem(field as keyof LGPDConsentData, config))}
       </div>
 
       {/* Recommended Consents */}
@@ -441,8 +439,8 @@ export function LGPDConsentManager({
           </h4>
 
           {Object.entries(CONSENT_DESCRIPTIONS)
-            .filter(([, config]) => config.category === 'recommended')
-            .map(([field, config]) => renderConsentItem(field as keyof LGPDConsentData, config))}
+            .filter(_([,_config]) => config.category === 'recommended')
+            .map(_([field,_config]) => renderConsentItem(field as keyof LGPDConsentData, config))}
         </div>
       )}
 
@@ -455,8 +453,8 @@ export function LGPDConsentManager({
           </h4>
 
           {Object.entries(CONSENT_DESCRIPTIONS)
-            .filter(([, config]) => config.category === 'optional')
-            .map(([field, config]) => renderConsentItem(field as keyof LGPDConsentData, config))}
+            .filter(_([,_config]) => config.category === 'optional')
+            .map(_([field,_config]) => renderConsentItem(field as keyof LGPDConsentData, config))}
         </div>
       )}
 

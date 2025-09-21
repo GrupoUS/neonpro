@@ -11,8 +11,6 @@
  */
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { z } from 'zod';
-
 // Test helper for API calls
 async function api(path: string, init?: RequestInit) {
   const { default: app } = await import('../../src/app');
@@ -38,7 +36,7 @@ const MessageRequestSchema = z.object({
       }),
     )
     .optional(),
-  context: z
+  _context: z
     .object({
       patientId: z.string().uuid().optional(),
       urgency: z.enum(['low', 'medium', 'high', 'emergency']).default('medium'),
@@ -60,7 +58,7 @@ const MessageResponseSchema = z.object({
   id: z.string().uuid(),
   sessionId: z.string().uuid(),
   content: z.string(),
-  role: z.enum(['user', 'assistant']),
+  _role: z.enum(['user', 'assistant']),
   type: z.enum(['text', 'analysis', 'recommendation']),
   metadata: z.object({
     model: z.string(),
@@ -111,7 +109,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
       const messageRequest = {
         content: 'Quais são os principais cuidados pós-procedimento para preenchimento facial?',
         type: 'text',
-        context: {
+        _context: {
           urgency: 'medium',
           specialty: 'medicina_estetica',
           medicalContext: 'preenchimento_facial',
@@ -178,7 +176,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
             },
           },
         ],
-        context: {
+        _context: {
           specialty: 'dermatologia',
           urgency: 'high',
         },
@@ -330,7 +328,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
     it('should include medical terminology validation', async () => {
       const messageRequest = {
         content: 'Como tratar acne vulgar com tretinoin tópico 0.025%?',
-        context: {
+        _context: {
           specialty: 'dermatologia',
           medicalContext: 'acne_treatment',
         },
@@ -355,7 +353,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
     it('should enforce LGPD compliance for patient data', async () => {
       const messageRequest = {
         content: 'Analise este caso clínico do paciente.',
-        context: {
+        _context: {
           patientId: '550e8400-e29b-41d4-a716-446655440001',
           specialty: 'dermatologia',
         },
@@ -378,7 +376,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
     it('should provide Brazilian healthcare context in responses', async () => {
       const messageRequest = {
         content: 'Quais medicamentos são aprovados pela ANVISA para melasma?',
-        context: {
+        _context: {
           specialty: 'dermatologia',
         },
         settings: {
@@ -406,7 +404,7 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
     it('should handle emergency medical queries appropriately', async () => {
       const messageRequest = {
         content: 'Paciente apresenta reação alérgica grave após preenchimento. O que fazer?',
-        context: {
+        _context: {
           urgency: 'emergency',
           specialty: 'medicina_estetica',
         },

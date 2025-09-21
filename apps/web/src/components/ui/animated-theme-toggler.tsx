@@ -11,7 +11,7 @@ type props = {
   size?: 'sm' | 'md' | 'lg';
 };
 
-export const AnimatedThemeToggler = ({ className, size = 'md' }: props) => {
+export const _AnimatedThemeToggler = (_{ className, size = 'md' }: props) => {
   const { theme, resolvedTheme, setTheme } = useThemeBridge();
   const [isDarkMode, setIsDarkMode] = useState<boolean>(
     resolvedTheme === 'dark',
@@ -19,7 +19,7 @@ export const AnimatedThemeToggler = ({ className, size = 'md' }: props) => {
   const [mounted, setMounted] = useState(false);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  useEffect(() => {
+  useEffect(_() => {
     setMounted(true);
     setIsDarkMode(resolvedTheme === 'dark');
   }, [resolvedTheme]);
@@ -48,8 +48,8 @@ export const AnimatedThemeToggler = ({ className, size = 'md' }: props) => {
       return;
     }
 
-    await document.startViewTransition(() => {
-      flushSync(() => {
+    await document.startViewTransition(_() => {
+      flushSync(_() => {
         const newTheme = theme === 'dark' ? 'light' : 'dark';
         setTheme(newTheme);
         setIsDarkMode(newTheme === 'dark');

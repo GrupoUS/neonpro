@@ -78,7 +78,7 @@ describe('Contract Tests: AI Sessions Endpoint', () => {
 
         // Verify response structure
         expect(data.sessionId).toBe(sessionId);
-        expect(data.userId).toBeDefined();
+        expect(data._userId).toBeDefined();
         expect(data.messages).toBeDefined();
         expect(Array.isArray(data.messages)).toBe(true);
         expect(data.createdAt).toBeDefined();
@@ -107,7 +107,7 @@ describe('Contract Tests: AI Sessions Endpoint', () => {
           const message = data.messages[0];
           expect(message).toHaveProperty('id');
           expect(message).toHaveProperty('role');
-          expect(['user', 'assistant']).toContain(message.role);
+          expect(['user', 'assistant']).toContain(message._role);
           expect(message).toHaveProperty('content');
           expect(message).toHaveProperty('timestamp');
 

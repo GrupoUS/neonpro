@@ -171,7 +171,7 @@ export function getTimeUntilAppointment(
   const appointment = typeof appointmentTime === 'string'
     ? parseISO(appointmentTime)
     : appointmentTime;
-  const now = new Date();
+  const _now = new Date();
   const diffMinutes = differenceInMinutes(appointment, now);
 
   if (diffMinutes < 0) {
@@ -285,7 +285,7 @@ export function getBrazilianHealthcareConsiderations(date: Date): {
 /**
  * Export all utility functions as a single object
  */
-export const appointmentUtils = {
+export const _appointmentUtils = {
   formatAppointmentTime,
   formatAppointmentDate,
   getNoShowRiskColor,

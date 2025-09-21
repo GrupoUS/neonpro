@@ -11,8 +11,6 @@
  * - Brazilian Portuguese accessibility labels
  */
 
-import { z } from 'zod';
-
 // WCAG 2.1 AA+ Touch Target Requirements
 export const WCAG_TOUCH_TARGETS = {
   MINIMUM_SIZE: 44, // 44x44px minimum
@@ -22,7 +20,7 @@ export const WCAG_TOUCH_TARGETS = {
 } as const;
 
 // Mobile Breakpoints for Healthcare Applications
-export const MOBILE_BREAKPOINTS = {
+export const _MOBILE_BREAKPOINTS = {
   SMALL_MOBILE: 320, // iPhone SE, small Android phones
   MOBILE: 375, // iPhone 12/13/14 standard
   LARGE_MOBILE: 414, // iPhone 12/13/14 Plus
@@ -65,7 +63,7 @@ export const TouchTargetSchema = z.object({
   isInteractive: z.boolean(),
   touchPattern: z.nativeEnum(HEALTHCARE_TOUCH_PATTERNS).optional(),
   ariaLabel: z.string().optional(),
-  role: z.string().optional(),
+  _role: z.string().optional(),
 });
 
 export type TouchTarget = z.infer<typeof TouchTargetSchema>;
@@ -125,7 +123,7 @@ export interface TouchAccessibilityReport {
 }
 
 // Brazilian Portuguese Touch Accessibility Labels
-export const TOUCH_ACCESSIBILITY_LABELS_PT_BR = {
+export const _TOUCH_ACCESSIBILITY_LABELS_PT_BR = {
   touchTarget: 'Área de toque',
   minimumSize: 'Tamanho mínimo',
   recommendedSize: 'Tamanho recomendado',
@@ -532,7 +530,7 @@ export class MobileTouchAccessibility {
       [TOUCH_ACCESSIBILITY_LEVELS.CRITICAL]: 1,
     };
 
-    const averageScore = levels.reduce((sum, level) => sum + levelScores[level], 0)
+    const averageScore = levels.reduce(_(sum,_level) => sum + levelScores[level], 0)
       / levels.length;
 
     if (averageScore >= 4.5) return TOUCH_ACCESSIBILITY_LEVELS.EXCELLENT;
@@ -566,8 +564,7 @@ export class MobileTouchAccessibility {
   private generateRecommendations(): string[] {
     const recommendations: string[] = [];
 
-    const issuesByType = this.issues.reduce(
-      (acc, issue) => {
+    const issuesByType = this.issues.reduce(_(acc,_issue) => {
         if (!acc[issue.type]) acc[issue.type] = [];
         acc[issue.type].push(issue);
         return acc;
@@ -575,7 +572,7 @@ export class MobileTouchAccessibility {
       {} as Record<string, TouchAccessibilityIssue[]>,
     );
 
-    Object.entries(issuesByType).forEach(([type, issues]) => {
+    Object.entries(issuesByType).forEach(_([type,_issues]) => {
       const criticalCount = issues.filter(
         i => i.severity === 'critical',
       ).length;

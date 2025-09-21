@@ -20,12 +20,12 @@ import { createHealthcareAgentConfig } from '@/lib/copilot-config';
 
 // Cache Manager Component
 const CacheManager = () => {
-  React.useEffect(() => {
+  React.useEffect(_() => {
     // Cache manager disabled in production type-check
     return () => {};
   }, []);
 
-  React.useEffect(() => {
+  React.useEffect(_() => {
     // Prefetcher disabled in production type-check
     return () => {};
   }, []);

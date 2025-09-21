@@ -166,7 +166,7 @@ export const PREDICTION_TYPES: readonly PredictionType[] = [
 /**
  * Standard confidence thresholds
  */
-export const CONFIDENCE_THRESHOLDS = {
+export const _CONFIDENCE_THRESHOLDS = {
   HIGH: 0.8,
   MEDIUM: 0.6,
   LOW: 0.0,
@@ -175,9 +175,9 @@ export const CONFIDENCE_THRESHOLDS = {
 /**
  * Default timeout for prediction operations (ms)
  */
-export const DEFAULT_PREDICTION_TIMEOUT_MS = 5000;
+export const _DEFAULT_PREDICTION_TIMEOUT_MS = 5000;
 
 /**
  * Maximum batch size for batch predictions
  */
-export const MAX_BATCH_SIZE = 100;
+export const _MAX_BATCH_SIZE = 100;

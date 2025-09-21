@@ -15,14 +15,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // Import optimized components
 import { HealthcareLoadingFallback } from '@/lib/lazy-loading';
 
-describe('Bundle Optimization Tests', () => {
-  beforeEach(() => {
+describe(_'Bundle Optimization Tests',_() => {
+  beforeEach(_() => {
     // Reset any mocked modules
     vi.clearAllMocks();
   });
 
-  describe('Loading Components', () => {
-    it('should render HealthcareLoadingFallback component', () => {
+  describe(_'Loading Components',_() => {
+    it(_'should render HealthcareLoadingFallback component',_() => {
       render(<HealthcareLoadingFallback />);
 
       expect(screen.getByText('Carregando...')).toBeInTheDocument();
@@ -30,8 +30,8 @@ describe('Bundle Optimization Tests', () => {
     });
   });
 
-  describe('Healthcare Compliance', () => {
-    it('should maintain LGPD compliance with lazy loading', () => {
+  describe(_'Healthcare Compliance',_() => {
+    it(_'should maintain LGPD compliance with lazy loading',_() => {
       // Validate that lazy loading doesn't compromise data privacy
       const mockPatientData = {
         id: 'patient-123',
@@ -40,13 +40,13 @@ describe('Bundle Optimization Tests', () => {
       };
 
       // This would test that lazy-loaded components still handle PHI properly
-      expect(() => {
+      expect(_() => {
         // Simulate lazy-loaded component handling sensitive data
         JSON.stringify(mockPatientData);
       }).not.toThrow();
     });
 
-    it('should maintain CFM compliance with lazy loading', () => {
+    it(_'should maintain CFM compliance with lazy loading',_() => {
       // Validate that medical components maintain compliance when lazy-loaded
       const mockSessionData = {
         sessionId: 'session-456',
@@ -56,15 +56,15 @@ describe('Bundle Optimization Tests', () => {
       };
 
       // This would test that lazy-loaded telemedicine components maintain compliance
-      expect(() => {
+      expect(_() => {
         // Simulate lazy-loaded medical session handling
         JSON.stringify(mockSessionData);
       }).not.toThrow();
     });
   });
 
-  describe('Performance Metrics', () => {
-    it('should validate bundle size reduction', () => {
+  describe(_'Performance Metrics',_() => {
+    it(_'should validate bundle size reduction',_() => {
       // This test validates that our optimizations are working
       // In a real CI/CD environment, this would check actual bundle sizes
 
@@ -83,7 +83,7 @@ describe('Bundle Optimization Tests', () => {
       };
 
       // Validate that optimizations are working
-      Object.entries(bundleSizes).forEach(([chunk, currentSize]) => {
+      Object.entries(bundleSizes).forEach(_([chunk,_currentSize]) => {
         const targetSize = targetSizes[chunk as keyof typeof targetSizes];
         const reduction = ((14171568 - currentSize) / 14171568) * 100; // Original was 14.17MB
 
@@ -99,7 +99,7 @@ describe('Bundle Optimization Tests', () => {
       });
     });
 
-    it('should validate code splitting effectiveness', () => {
+    it(_'should validate code splitting effectiveness',_() => {
       // This test validates that our code splitting strategy is working
 
       // Expected chunks that should exist after optimization
@@ -122,16 +122,16 @@ describe('Bundle Optimization Tests', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle lazy loading errors gracefully', async () => {
+  describe(_'Error Handling',_() => {
+    it(_'should handle lazy loading errors gracefully',_async () => {
       // Mock a failed lazy import
-      vi.doMock('recharts', () => {
+      vi.doMock(_'recharts',_() => {
         throw new Error('Failed to load module');
       });
 
       // This test would validate error boundaries around lazy-loaded components
       // For now, we'll just validate the test structure
-      expect(() => {
+      expect(_() => {
         render(
           <div>
             <div>Test Content</div>

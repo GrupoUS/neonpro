@@ -67,8 +67,7 @@ export class CertificateMonitor {
       await this.checkCertificate();
 
       // Set up periodic checking
-      this.checkInterval = setInterval(
-        () => this.checkCertificate(),
+      this.checkInterval = setInterval(_() => this.checkCertificate(),
         this.config.checkIntervalHours * 60 * 60 * 1000,
       );
 
@@ -78,7 +77,7 @@ export class CertificateMonitor {
         certificatePath: this.config.certificatePath,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch (_error) {
       this.logger.logError('certificate_monitor_start_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         config: this.config,
@@ -116,7 +115,7 @@ export class CertificateMonitor {
         if (stats.size === 0) {
           throw new Error(`Certificate file is empty: ${filePath}`);
         }
-      } catch (error) {
+      } catch (_error) {
         throw new Error(`Cannot read certificate file: ${filePath}`);
       }
     }
@@ -145,7 +144,7 @@ export class CertificateMonitor {
 
       // Determine alert level based on expiry
       await this.handleCertificateExpiry(certInfo, daysUntilExpiry);
-    } catch (error) {
+    } catch (_error) {
       await this.logger.logError('certificate_check_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         certificatePath: this.config.certificatePath,
@@ -174,7 +173,7 @@ export class CertificateMonitor {
       );
 
       return await this.parseCertificateOutput(stdout);
-    } catch (error) {
+    } catch (_error) {
       throw new Error(
         `Failed to get certificate info: ${
           error instanceof Error ? error.message : 'Unknown error'
@@ -221,7 +220,7 @@ export class CertificateMonitor {
         `openssl x509 -in "${this.config.certificatePath}" -fingerprint -noout`,
       );
       certInfo.fingerprint = fingerprintOutput.replace('SHA1 Fingerprint=', '').trim();
-    } catch (error) {
+    } catch (_error) {
       // Fingerprint is optional
     }
 
@@ -230,7 +229,7 @@ export class CertificateMonitor {
         `openssl x509 -in "${this.config.certificatePath}" -serial -noout`,
       );
       certInfo.serialNumber = serialOutput.replace('serial=', '').trim();
-    } catch (error) {
+    } catch (_error) {
       // Serial number is optional
     }
 
@@ -275,7 +274,7 @@ export class CertificateMonitor {
   }
 
   private calculateDaysUntilExpiry(validTo: Date): number {
-    const now = new Date();
+    const _now = new Date();
     const timeDiff = validTo.getTime() - now.getTime();
     return Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
   }
@@ -345,7 +344,7 @@ export class CertificateMonitor {
       if (this.config.webhookUrl) {
         await this.sendWebhookAlert(alert);
       }
-    } catch (error) {
+    } catch (_error) {
       await this.logger.logError('certificate_alert_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         alert,
@@ -367,7 +366,7 @@ export class CertificateMonitor {
 
   private async sendWebhookAlert(alert: CertificateAlert): Promise<void> {
     try {
-      const payload = {
+      const _payload = {
         type: 'certificate_alert',
         alert: {
           type: alert.type,
@@ -390,7 +389,7 @@ export class CertificateMonitor {
         type: alert.type,
         timestamp: new Date().toISOString(),
       });
-    } catch (error) {
+    } catch (_error) {
       throw new Error(
         `Failed to send webhook alert: ${error instanceof Error ? error.message : 'Unknown error'}`,
       );
@@ -432,7 +431,7 @@ export class CertificateMonitor {
         message: 'Certificate automatically renewed successfully',
         timestamp: new Date(),
       });
-    } catch (error) {
+    } catch (_error) {
       await this.logger.logError('auto_renewal_failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         certificate: alert.certificate.subject,
@@ -477,7 +476,7 @@ export class CertificateMonitor {
         status,
         lastCheck: new Date(),
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         certificate: null,
         daysUntilExpiry: null,

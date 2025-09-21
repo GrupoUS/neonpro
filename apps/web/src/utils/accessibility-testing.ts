@@ -41,7 +41,7 @@ export interface AccessibilityIssue {
 
 export interface AccessibilityTestingOptions {
   includeHealthcareRules?: boolean;
-  context?: string;
+  _context?: string;
 }
 
 export interface AccessibilityTestResult {
@@ -346,7 +346,7 @@ export function validateHealthcareColorContrast(): ColorContrastResult {
     { selector: '[data-diagnosis]', name: 'diagnosis information' },
   ];
 
-  healthcareElements.forEach(({ selector, name }) => {
+  healthcareElements.forEach(_({ selector,_name }) => {
     const elements = document.querySelectorAll(selector);
 
     elements.forEach(element => {

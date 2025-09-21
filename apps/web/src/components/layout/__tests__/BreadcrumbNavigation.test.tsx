@@ -5,68 +5,68 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe('BreadcrumbNavigation', () => {
-  beforeEach(() => {
+describe(_'BreadcrumbNavigation',_() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
   });
 
-  it('should export the component', () => {
+  it(_'should export the component',_() => {
     // Test that the module exists and can be imported
-    expect(() => {
+    expect(_() => {
       const module = require.resolve('../BreadcrumbNavigation');
       expect(module).toBeDefined();
     }).not.toThrow();
   });
 
-  it('should render breadcrumb trail based on current route', () => {
+  it(_'should render breadcrumb trail based on current route',_() => {
     const { BreadcrumbNavigation } = require('../BreadcrumbNavigation');
     expect(BreadcrumbNavigation).toBeDefined();
     expect(typeof BreadcrumbNavigation).toBe('function');
   });
 
-  it('should generate clickable breadcrumb links', () => {
+  it(_'should generate clickable breadcrumb links',_() => {
     const { BreadcrumbNavigation } = require('../BreadcrumbNavigation');
     expect(BreadcrumbNavigation).toBeDefined();
     expect(typeof BreadcrumbNavigation).toBe('function');
   });
 
-  it('should handle dynamic route parameters', () => {
+  it(_'should handle dynamic route parameters',_() => {
     const { BreadcrumbNavigation } = require('../BreadcrumbNavigation');
     expect(BreadcrumbNavigation).toBeDefined();
     expect(typeof BreadcrumbNavigation).toBe('function');
   });
 
-  it('should be mobile responsive', () => {
+  it(_'should be mobile responsive',_() => {
     const { BreadcrumbNavigation } = require('../BreadcrumbNavigation');
     expect(BreadcrumbNavigation).toBeDefined();
     expect(typeof BreadcrumbNavigation).toBe('function');
   });
 
-  it('should include proper ARIA navigation labels', () => {
+  it(_'should include proper ARIA navigation labels',_() => {
     const { BreadcrumbNavigation } = require('../BreadcrumbNavigation');
     expect(BreadcrumbNavigation).toBeDefined();
     expect(typeof BreadcrumbNavigation).toBe('function');
   });
 
-  it('should support custom breadcrumb labels', () => {
+  it(_'should support custom breadcrumb labels',_() => {
     const { BreadcrumbNavigation } = require('../BreadcrumbNavigation');
     expect(BreadcrumbNavigation).toBeDefined();
     expect(typeof BreadcrumbNavigation).toBe('function');
   });
 
-  it('should handle root and nested routes', () => {
+  it(_'should handle root and nested routes',_() => {
     const { BreadcrumbNavigation } = require('../BreadcrumbNavigation');
     expect(BreadcrumbNavigation).toBeDefined();
     expect(typeof BreadcrumbNavigation).toBe('function');
   });
 
-  it('should show current page as non-clickable', () => {
+  it(_'should show current page as non-clickable',_() => {
     const { BreadcrumbNavigation } = require('../BreadcrumbNavigation');
     expect(BreadcrumbNavigation).toBeDefined();
     expect(typeof BreadcrumbNavigation).toBe('function');
   });
 
-  it('should support Portuguese healthcare terminology', () => {
+  it(_'should support Portuguese healthcare terminology',_() => {
     const { BreadcrumbNavigation } = require('../BreadcrumbNavigation');
     expect(BreadcrumbNavigation).toBeDefined();
     expect(typeof BreadcrumbNavigation).toBe('function');

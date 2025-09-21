@@ -56,7 +56,7 @@ export class ComplianceAuditService {
       type: ActorType;
       name?: string;
       email?: string;
-      role?: string;
+      _role?: string;
     };
     resource: {
       type: string;
@@ -253,61 +253,56 @@ export class ComplianceAuditService {
     filters?: AuditSearchFilters,
     limit: number = 100,
   ): Promise<GenericAuditEvent[]> {
-    let results = Array.from(this.events.values()).filter(
-      (event) => event.clinicId === clinicId,
+    let results = Array.from(this.events.values()).filter(_(event) => event.clinicId === clinicId,
     );
 
     if (filters) {
       if (filters.action) {
-        results = results.filter((e) => e.action === filters.action);
+        results = results.filter(_(e) => e.action === filters.action);
       }
       if (filters.actorType) {
-        results = results.filter((e) => e.actor.type === filters.actorType);
+        results = results.filter(_(e) => e.actor.type === filters.actorType);
       }
       if (filters.actorId) {
-        results = results.filter((e) => e.actor.id === filters.actorId);
+        results = results.filter(_(e) => e.actor.id === filters.actorId);
       }
       if (filters.resourceType) {
-        results = results.filter(
-          (e) => e.resource.type === filters.resourceType,
+        results = results.filter(_(e) => e.resource.type === filters.resourceType,
         );
       }
       if (filters.resourceId) {
-        results = results.filter((e) => e.resource.id === filters.resourceId);
+        results = results.filter(_(e) => e.resource.id === filters.resourceId);
       }
       if (filters.riskLevel) {
-        results = results.filter((e) => e.riskLevel === filters.riskLevel);
+        results = results.filter(_(e) => e.riskLevel === filters.riskLevel);
       }
       if (filters.complianceStatus) {
-        results = results.filter(
-          (e) => e.complianceStatus === filters.complianceStatus,
+        results = results.filter(_(e) => e.complianceStatus === filters.complianceStatus,
         );
       }
       if (filters.framework) {
-        results = results.filter((e) =>
+        results = results.filter(_(e) =>
           e.frameworks.includes(filters.framework!),
         );
       }
       if (filters.startDate) {
-        results = results.filter((e) => e.timestamp >= filters.startDate!);
+        results = results.filter(_(e) => e.timestamp >= filters.startDate!);
       }
       if (filters.endDate) {
-        results = results.filter((e) => e.timestamp <= filters.endDate!);
+        results = results.filter(_(e) => e.timestamp <= filters.endDate!);
       }
       if (filters.sessionId) {
-        results = results.filter((e) => e.sessionId === filters.sessionId);
+        results = results.filter(_(e) => e.sessionId === filters.sessionId);
       }
       if (filters.consentRefId) {
-        results = results.filter(
-          (e) => e.consentRef?.id === filters.consentRefId,
+        results = results.filter(_(e) => e.consentRef?.id === filters.consentRefId,
         );
       }
     }
 
     // Sort by timestamp (newest first) and limit
     return results
-      .sort(
-        (a, b) =>
+      .sort(_(a,_b) =>
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       )
       .slice(0, limit);
@@ -318,7 +313,7 @@ export class ComplianceAuditService {
    */
   getViolations(eventIds?: string[]): ComplianceViolation[] {
     if (eventIds) {
-      return eventIds.map((id) => this.violations.get(id) || []).flat();
+      return eventIds.map(_(id) => this.violations.get(id) || []).flat();
     }
 
     return Array.from(this.violations.values()).flat();
@@ -340,7 +335,7 @@ export class ComplianceAuditService {
     });
 
     const filteredEvents = frameworks
-      ? events.filter((e) => frameworks.some((f) => e.frameworks.includes(f)))
+      ? events.filter(_(e) => frameworks.some(_(f) => e.frameworks.includes(f)))
       : events;
 
     const totalEvents = filteredEvents.length;
@@ -361,13 +356,13 @@ export class ComplianceAuditService {
       CRITICAL: 0,
     };
 
-    filteredEvents.forEach((event) => {
+    filteredEvents.forEach(_(event) => {
       statusBreakdown[event.complianceStatus]++;
       riskBreakdown[event.riskLevel]++;
     });
 
     // Collect violations
-    const eventIds = filteredEvents.map((e) => e.id);
+    const eventIds = filteredEvents.map(_(e) => e.id);
     const violations = this.getViolations(eventIds);
 
     // Calculate compliance score
@@ -427,11 +422,9 @@ export class ComplianceAuditService {
    */
   getSessionEvents(sessionId: string, clinicId: string): GenericAuditEvent[] {
     return Array.from(this.events.values())
-      .filter(
-        (event) => event.sessionId === sessionId && event.clinicId === clinicId,
+      .filter(_(event) => event.sessionId === sessionId && event.clinicId === clinicId,
       )
-      .sort(
-        (a, b) =>
+      .sort(_(a,_b) =>
           new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
       );
   }
@@ -442,8 +435,7 @@ export class ComplianceAuditService {
   private cleanupOldEvents(): void {
     if (this.events.size <= this.config.maxMemoryEvents) return;
 
-    const events = Array.from(this.events.entries()).sort(
-      ([, a], [, b]) =>
+    const events = Array.from(this.events.entries()).sort(_([,_a],_[,_b]) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
 
@@ -451,7 +443,7 @@ export class ComplianceAuditService {
     const toRemove = events.slice(this.config.maxMemoryEvents);
 
     // Clear old events and violations
-    toRemove.forEach(([id]) => {
+    toRemove.forEach(_([id]) => {
       this.events.delete(id);
       this.violations.delete(id);
     });
@@ -484,7 +476,7 @@ export class ComplianceAuditService {
       UNKNOWN: 0,
     };
 
-    events.forEach((event) => {
+    events.forEach(_(event) => {
       riskDistribution[event.riskLevel]++;
       complianceDistribution[event.complianceStatus]++;
     });

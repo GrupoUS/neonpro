@@ -6,7 +6,6 @@
 
 import { validateBrazilianPhone as validatePhone, validateCEP, validateCPF } from '@neonpro/shared';
 import { Hono } from 'hono';
-import { z } from 'zod';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
 import { LGPDService } from '../../services/lgpd-service';
@@ -313,7 +312,7 @@ app.put('/:id', requireAuth, dataProtection.clientView, async c => {
       data: updatedPatient,
       message: 'Paciente atualizado com sucesso',
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Error updating patient:', error);
 
     return c.json(

@@ -197,7 +197,7 @@ export class AestheticAnalysisService {
    * Analyzes patient skin condition and recommends appropriate procedures
    */
   async performAestheticAssessment(
-    request: AestheticAssessmentRequest,
+    _request: AestheticAssessmentRequest,
     patientId: string,
     professionalId: string,
     clinicId: string,
@@ -219,7 +219,7 @@ export class AestheticAnalysisService {
       });
 
       // Perform skin analysis using AI
-      const skinAnalysis = await this.analyzeSkinConditions(request);
+      const skinAnalysis = await this.analyzeSkinConditions(_request);
 
       // Get procedure recommendations based on analysis
       const procedureRecommendations = await this.generateProcedureRecommendations(
@@ -260,7 +260,7 @@ export class AestheticAnalysisService {
         clinic_id: clinicId,
         assessment_type: request.assessment_type || 'comprehensive',
         timestamp: new Date(),
-        input_data: this.sanitizeInputForAudit(request),
+        input_data: this.sanitizeInputForAudit(_request),
         output_data: this.sanitizeOutputForAudit(result),
         ai_confidence_scores: this.extractConfidenceScores(result),
         data_processing_consent: true,
@@ -277,7 +277,7 @@ export class AestheticAnalysisService {
       });
 
       return result;
-    } catch (error) {
+    } catch (_error) {
       logger.error('Aesthetic assessment failed', {
         sessionId,
         error: error.message,
@@ -300,7 +300,7 @@ export class AestheticAnalysisService {
    * Analyze skin conditions using AI algorithms
    */
   private async analyzeSkinConditions(
-    request: AestheticAssessmentRequest,
+    _request: AestheticAssessmentRequest,
   ): Promise<SkinAnalysisData[]> {
     // Mock AI skin analysis - in production, would integrate with actual AI service
     const mockAnalysis: SkinAnalysisData[] = [
@@ -338,7 +338,7 @@ export class AestheticAnalysisService {
    * Generate procedure recommendations based on skin analysis
    */
   private async generateProcedureRecommendations(
-    request: AestheticAssessmentRequest,
+    _request: AestheticAssessmentRequest,
     skinAnalysis: SkinAnalysisData[],
   ): Promise<AestheticAssessmentResult['recommended_procedures']> {
     const recommendations: AestheticAssessmentResult['recommended_procedures'] = [];
@@ -350,7 +350,7 @@ export class AestheticAnalysisService {
       for (const procedure of procedures) {
         recommendations.push({
           procedure,
-          priority: this.calculatePriority(condition, request),
+          priority: this.calculatePriority(condition, _request),
           rationale: this.generateRationale(condition, procedure),
           estimated_cost_brl: this.estimateCostBRL(
             procedure,
@@ -367,8 +367,7 @@ export class AestheticAnalysisService {
 
     // Sort by priority and limit results
     return recommendations
-      .sort(
-        (a, b) => this.priorityToNumber(a.priority) - this.priorityToNumber(b.priority),
+      .sort(_(a,_b) => this.priorityToNumber(a.priority) - this.priorityToNumber(b.priority),
       )
       .slice(0, request.max_recommendations || 5);
   }
@@ -377,7 +376,7 @@ export class AestheticAnalysisService {
    * Assess contraindications for recommended procedures
    */
   private async assessContraindications(
-    request: AestheticAssessmentRequest,
+    _request: AestheticAssessmentRequest,
     procedures: AestheticAssessmentResult['recommended_procedures'],
   ): Promise<AestheticAssessmentResult['contraindications']> {
     const contraindications: AestheticAssessmentResult['contraindications'] = [];
@@ -531,7 +530,7 @@ export class AestheticAnalysisService {
 
   private calculatePriority(
     condition: SkinAnalysisData,
-    request: AestheticAssessmentRequest,
+    _request: AestheticAssessmentRequest,
   ): 'high' | 'medium' | 'low' {
     // Calculate severity based on condition and patient request context
     const patientAge = request.patient_data?.age || 25;
@@ -664,7 +663,7 @@ export class AestheticAnalysisService {
   }
 
   private sanitizeInputForAudit(
-    request: AestheticAssessmentRequest,
+    _request: AestheticAssessmentRequest,
   ): Partial<AestheticAssessmentRequest> {
     // Remove sensitive data, keep only relevant metadata for audit
     return {
@@ -694,8 +693,7 @@ export class AestheticAnalysisService {
   private extractConfidenceScores(
     result: AestheticAssessmentResult,
   ): Record<string, number> {
-    return result.recommended_procedures.reduce(
-      (acc, recommendation) => {
+    return result.recommended_procedures.reduce(_(acc,_recommendation) => {
         acc[recommendation.procedure.id] = recommendation.procedure.effectiveness_score;
         return acc;
       },

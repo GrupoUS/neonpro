@@ -28,19 +28,19 @@ function makeFile(name: string, type: string, sizeBytes: number) {
 const ROUTE_PATH = '../documents-upload';
 
 describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
-  beforeEach(() => {
+  beforeEach(_() => {
     vi.clearAllMocks();
   });
 
   it('should export the upload documents route module (placeholder)', () => {
     // This will fail initially until the route file is created
-    expect(() => {
+    expect(_() => {
       const module = require(ROUTE_PATH);
       expect(module.default).toBeDefined();
     }).not.toThrow();
   });
 
-  it('should reject unauthenticated request with 401', async () => {
+  it(_'should reject unauthenticated request with 401',_async () => {
     const { default: uploadRoute } = require(ROUTE_PATH);
 
     const file = makeFile('test.pdf', 'application/pdf', 1024);
@@ -56,11 +56,11 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
       },
     );
 
-    const response = await uploadRoute.request(request);
+    const response = await uploadRoute.request(_request);
     expect(response.status).toBe(401);
   });
 
-  it('should reject unsupported MIME type with 415', async () => {
+  it(_'should reject unsupported MIME type with 415',_async () => {
     const { default: uploadRoute } = require(ROUTE_PATH);
 
     mockDocumentService.uploadPatientDocument.mockResolvedValue({
@@ -89,11 +89,11 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
       },
     );
 
-    const response = await uploadRoute.request(request);
+    const response = await uploadRoute.request(_request);
     expect([400, 415]).toContain(response.status); // Allow 400 until strict 415 implemented
   });
 
-  it('should reject file exceeding 10MB with 413', async () => {
+  it(_'should reject file exceeding 10MB with 413',_async () => {
     const { default: uploadRoute } = require(ROUTE_PATH);
 
     // Create a 10.5MB file
@@ -116,7 +116,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
       },
     );
 
-    const response = await uploadRoute.request(request);
+    const response = await uploadRoute.request(_request);
     expect([400, 413]).toContain(response.status); // Accept 400 until bodyLimit middleware added
   });
 
@@ -151,7 +151,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
       },
     );
 
-    const response = await uploadRoute.request(request);
+    const response = await uploadRoute.request(_request);
     const json = await response.json().catch(_error => ({}));
 
     // Final expectations (will fail until implemented)

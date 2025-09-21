@@ -14,7 +14,7 @@
 import { endOfDay, format, isSameDay, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { AlertTriangle, Calendar, CheckCircle, Clock, User } from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -28,14 +28,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
@@ -102,7 +94,7 @@ export function AppointmentBooking({
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<string>(
+  const [selectedPatient, _setSelectedPatient] = useState<string>(
     patientId || '',
   );
 
@@ -115,7 +107,7 @@ export function AppointmentBooking({
     includeNoShowRisk: true,
   });
 
-  const { data: availability, isLoading: availabilityLoading } = useAppointmentAvailability({
+  const { data: _availability, isLoading: availabilityLoading } = useAppointmentAvailability({
     date: selectedDate,
     professionalId: professionalId || '',
     duration: 60, // Default 1 hour slots
@@ -187,7 +179,7 @@ export function AppointmentBooking({
       onBookingComplete?.(result);
       setIsBookingDialogOpen(false);
       setSelectedTime('');
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to book appointment:', error);
     }
   };
@@ -217,7 +209,7 @@ export function AppointmentBooking({
         {dayAppointments.length > 0 && (
           <div className='absolute -bottom-1 left-1/2 transform -translate-x-1/2'>
             <div className='flex gap-1'>
-              {dayAppointments.slice(0, 3).map((apt, _index) => (
+              {dayAppointments.slice(0, 3).map(_(apt, _index) => (
                 <div
                   key={apt.id}
                   className={cn(
@@ -269,7 +261,7 @@ export function AppointmentBooking({
               disabled={date => date < new Date()}
               className='rounded-md border'
               components={{
-                DayContent: ({ date }) => renderDayContent(date),
+                DayContent: (_{ date }) => renderDayContent(date),
               }}
             />
 
@@ -340,8 +332,7 @@ export function AppointmentBooking({
             </div>
 
             {/* Book Appointment Button */}
-            {selectedTime && (
-              <div className='mt-4'>
+            {selectedTime && (_<div className='mt-4'>
                 <Dialog
                   open={isBookingDialogOpen}
                   onOpenChange={setIsBookingDialogOpen}
@@ -525,7 +516,7 @@ function AppointmentBookingForm({
       <div className='space-y-2'>
         <label className='text-sm font-medium'>Lembretes</label>
         <div className='space-y-2'>
-          {Object.entries(formData.reminderPreferences).map(([key, value]) => (
+          {Object.entries(formData.reminderPreferences).map(_([key,_value]) => (
             <label key={key} className='flex items-center space-x-2'>
               <input
                 type='checkbox'

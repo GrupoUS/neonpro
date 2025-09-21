@@ -48,11 +48,11 @@ export function createLogger(service = "api", autoRedact: boolean = true) {
     return entry;
   }
   return {
-    info: (msg: string, extra?: Record<string, unknown>) =>
+    info: (msg: string, extra?: Record<string,_unknown>) =>
       base("info", msg, extra),
-    error: (msg: string, extra?: Record<string, unknown>) =>
+    error: (msg: string, extra?: Record<string,_unknown>) =>
       base("error", msg, extra),
-    warn: (msg: string, extra?: Record<string, unknown>) =>
+    warn: (msg: string, extra?: Record<string,_unknown>) =>
       base("warn", msg, extra),
   };
 }

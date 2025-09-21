@@ -121,14 +121,14 @@ export class BulkOperationsService {
    * Execute bulk operation with safety mechanisms
    */
   async executeBulkOperation(
-    request: BulkOperationRequest,
+    _request: BulkOperationRequest,
   ): Promise<BulkOperationResult> {
     const startTime = Date.now();
     const auditTrailId = this.generateAuditId();
 
     try {
       // 1. Validate request
-      await this.validateBulkRequest(request);
+      await this.validateBulkRequest(_request);
 
       // 2. Check rate limits
       this.enforceRateLimit(request.requesterUserId, request.operationType);
@@ -175,7 +175,7 @@ export class BulkOperationsService {
 
       result.processingTimeMs = Date.now() - startTime;
       return result;
-    } catch (error: any) {
+    } catch (_error: any) {
       // Log error
       await this.logOperationError(request, error, auditTrailId);
 
@@ -223,7 +223,7 @@ export class BulkOperationsService {
       );
 
       return true;
-    } catch (error: any) {
+    } catch (_error: any) {
       logger.error('Failed to undo bulk operation', { undoToken, error });
       return false;
     }
@@ -247,7 +247,7 @@ export class BulkOperationsService {
   // Private helper methods
 
   private async validateBulkRequest(
-    request: BulkOperationRequest,
+    _request: BulkOperationRequest,
   ): Promise<void> {
     // Validate required fields
     if (
@@ -256,7 +256,7 @@ export class BulkOperationsService {
       || !request.entityIds?.length
     ) {
       throw new Error(
-        'Invalid bulk operation request: missing required fields',
+        'Invalid bulk operation _request: missing required fields',
       );
     }
 
@@ -274,18 +274,18 @@ export class BulkOperationsService {
     }
 
     // Validate user permissions against allowedRoles
-    await this.validateUserPermissions(request);
+    await this.validateUserPermissions(_request);
 
     // Validate clinic access permissions
-    await this.validateClinicAccess(request);
+    await this.validateClinicAccess(_request);
 
     // Validate LGPD consent for data operations
-    await this.validateLGPDConsent(request);
+    await this.validateLGPDConsent(_request);
   }
 
-  private enforceRateLimit(userId: string, operationType: string): void {
+  private enforceRateLimit(_userId: string, operationType: string): void {
     const key = `${userId}:${operationType}`;
-    const now = Date.now();
+    const _now = Date.now();
     const oneMinute = 60 * 1000;
     const config = SAFETY_CONFIGURATIONS[operationType];
 
@@ -310,7 +310,7 @@ export class BulkOperationsService {
   }
 
   private async executeWithRetry(
-    request: BulkOperationRequest,
+    _request: BulkOperationRequest,
     auditTrailId: string,
     maxRetries: number = 3,
   ): Promise<BulkOperationResult> {
@@ -319,7 +319,7 @@ export class BulkOperationsService {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         return await this.executeBulkOperationCore(request, auditTrailId);
-      } catch (error: any) {
+      } catch (_error: any) {
         lastError = error;
 
         // Don't retry validation errors or auth errors
@@ -346,7 +346,7 @@ export class BulkOperationsService {
   }
 
   private async executeBulkOperationCore(
-    request: BulkOperationRequest,
+    _request: BulkOperationRequest,
     auditTrailId: string,
   ): Promise<BulkOperationResult> {
     const result: BulkOperationResult = {
@@ -378,7 +378,7 @@ export class BulkOperationsService {
           await this.executeEntityOperation(request, entityId);
 
           result.processed++;
-        } catch (error: any) {
+        } catch (_error: any) {
           result.failed++;
           result.errors.push({
             entityId,
@@ -414,7 +414,7 @@ export class BulkOperationsService {
   }
 
   private async executeEntityOperation(
-    request: BulkOperationRequest,
+    _request: BulkOperationRequest,
     entityId: string,
   ): Promise<void> {
     // Mock implementation - in real application, execute actual operation
@@ -487,13 +487,13 @@ export class BulkOperationsService {
     this.undoOperations.set(undoToken, undoInfo);
 
     // Clean up expired undo operations
-    setTimeout(() => {
+    setTimeout(_() => {
       this.undoOperations.delete(undoToken);
     }, undoWindowMs);
   }
 
   private async logOperationStart(
-    request: BulkOperationRequest,
+    _request: BulkOperationRequest,
     auditTrailId: string,
   ): Promise<void> {
     logger.info('Bulk operation started', {
@@ -507,7 +507,7 @@ export class BulkOperationsService {
   }
 
   private async logOperationCompletion(
-    request: BulkOperationRequest,
+    _request: BulkOperationRequest,
     result: BulkOperationResult,
     auditTrailId: string,
   ): Promise<void> {
@@ -521,7 +521,7 @@ export class BulkOperationsService {
   }
 
   private async logOperationError(
-    request: BulkOperationRequest,
+    _request: BulkOperationRequest,
     error: Error,
     auditTrailId: string,
   ): Promise<void> {
@@ -552,7 +552,7 @@ export class BulkOperationsService {
   /**
    * Validate user permissions against allowed roles for the operation
    */
-  private async validateUserPermissions(request: BulkOperationRequest): Promise<void> {
+  private async validateUserPermissions(_request: BulkOperationRequest): Promise<void> {
     try {
       const supabase = createAdminClient();
       const config = SAFETY_CONFIGURATIONS[request.operationType];
@@ -569,7 +569,7 @@ export class BulkOperationsService {
       }
 
       // Check if user role is allowed for this operation
-      if (!config.allowedRoles.includes(user.role)) {
+      if (!config.allowedRoles.includes(user._role)) {
         throw new Error(
           `User role '${user.role}' is not authorized for ${request.operationType} operations. `
             + `Allowed roles: ${config.allowedRoles.join(', ')}`,
@@ -577,14 +577,14 @@ export class BulkOperationsService {
       }
 
       logger.debug('User permissions validated', {
-        userId: request.requesterUserId,
-        role: user.role,
+        _userId: request.requesterUserId,
+        _role: user.role,
         operationType: request.operationType,
         allowedRoles: config.allowedRoles,
       });
-    } catch (error) {
+    } catch (_error) {
       logger.error('User permission validation failed', {
-        userId: request.requesterUserId,
+        _userId: request.requesterUserId,
         operationType: request.operationType,
         error: error instanceof Error ? error.message : String(error),
       });
@@ -595,7 +595,7 @@ export class BulkOperationsService {
   /**
    * Validate clinic access permissions
    */
-  private async validateClinicAccess(request: BulkOperationRequest): Promise<void> {
+  private async validateClinicAccess(_request: BulkOperationRequest): Promise<void> {
     try {
       const supabase = createAdminClient();
 
@@ -643,14 +643,14 @@ export class BulkOperationsService {
       }
 
       logger.debug('Clinic access validated', {
-        userId: request.requesterUserId,
+        _userId: request.requesterUserId,
         clinicId: request.clinicId,
         entityType: request.entityType,
         entityCount: request.entityIds.length,
       });
-    } catch (error) {
+    } catch (_error) {
       logger.error('Clinic access validation failed', {
-        userId: request.requesterUserId,
+        _userId: request.requesterUserId,
         clinicId: request.clinicId,
         error: error instanceof Error ? error.message : String(error),
       });
@@ -661,7 +661,7 @@ export class BulkOperationsService {
   /**
    * Validate LGPD consent for data operations
    */
-  private async validateLGPDConsent(request: BulkOperationRequest): Promise<void> {
+  private async validateLGPDConsent(_request: BulkOperationRequest): Promise<void> {
     try {
       // Skip LGPD validation for certain operation types that are legal obligations
       const exemptOperations = ['activate', 'deactivate'];
@@ -695,7 +695,7 @@ export class BulkOperationsService {
 
         // Log consent validation for audit purposes
         logger.info('LGPD consent validated for bulk operation', {
-          userId: request.requesterUserId,
+          _userId: request.requesterUserId,
           operationType: request.operationType,
           entityType: request.entityType,
           entityCount: request.entityIds.length,
@@ -740,9 +740,9 @@ export class BulkOperationsService {
           }
         }
       }
-    } catch (error) {
+    } catch (_error) {
       logger.error('LGPD consent validation failed', {
-        userId: request.requesterUserId,
+        _userId: request.requesterUserId,
         operationType: request.operationType,
         entityType: request.entityType,
         error: error instanceof Error ? error.message : String(error),
@@ -755,11 +755,11 @@ export class BulkOperationsService {
    * Cleanup expired rate limits and undo operations
    */
   cleanup(): void {
-    const now = Date.now();
+    const _now = Date.now();
     const oneHour = 60 * 60 * 1000;
 
     // Clean up rate limits older than 1 hour
-    this.rateLimitMap.forEach((timestamps, key) => {
+    this.rateLimitMap.forEach(_(timestamps,_key) => {
       const recentTimestamps = timestamps.filter(
         timestamp => now - timestamp < oneHour,
       );
@@ -771,7 +771,7 @@ export class BulkOperationsService {
     });
 
     // Clean up expired undo operations
-    this.undoOperations.forEach((undoInfo, token) => {
+    this.undoOperations.forEach(_(undoInfo,_token) => {
       if (now > undoInfo.expiresAt) {
         this.undoOperations.delete(token);
       }
@@ -784,8 +784,7 @@ export const bulkOperationsService = new BulkOperationsService();
 
 // Start cleanup interval (run every 15 minutes)
 if (typeof setInterval !== 'undefined') {
-  setInterval(
-    () => {
+  setInterval(_() => {
       bulkOperationsService.cleanup();
     },
     15 * 60 * 1000,

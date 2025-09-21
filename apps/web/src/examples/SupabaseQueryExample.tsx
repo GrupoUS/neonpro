@@ -54,8 +54,7 @@ export function SupabaseQueryExample() {
   // Mutation para atualizar paciente
   const updatePatientMutation = useMutation({
     mutationFn: async ({
-      id,
-      data,
+      id,_data,
     }: {
       id: string;
       data: Partial<Patient>;
@@ -77,7 +76,7 @@ export function SupabaseQueryExample() {
       // Atualizar manualmente a lista de pacientes
       queryClient.setQueryData(
         patientsQueryOptions().queryKey,
-        (oldData: any) => ({
+        (oldData: any) => (_{
           ...oldData,
           patients: oldData?.patients?.map((p: Patient) =>
             p.id === updatedPatient.id ? updatedPatient : p
@@ -95,8 +94,7 @@ export function SupabaseQueryExample() {
   // Mutation para atualizar agendamento
   const updateAppointmentMutation = useMutation({
     mutationFn: async ({
-      id,
-      data,
+      id,_data,
     }: {
       id: string;
       data: Partial<Appointment>;
@@ -157,14 +155,13 @@ export function SupabaseQueryExample() {
     return <div>Erro ao carregar pacientes: {patientsError.message}</div>;
   }
 
-  return (
-    <div className='space-y-6 p-6'>
+  return (_<div className='space-y-6 p-6'>
       <div className='mb-8'>
         <h1 className='text-3xl font-bold mb-4'>
           🚀 Exemplo de Integração TanStack Query + Supabase
         </h1>
         <p className='text-gray-600 mb-4'>
-          Demonstração completa com real-time, prefetching, cache e invalidação otimizados
+          Demonstração completa com real-time,_prefetching,_cache e invalidação otimizados
         </p>
       </div>
 

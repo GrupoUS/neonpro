@@ -70,7 +70,7 @@ interface EnhancedSidebarContextProps {
   expandedSections: Set<string>;
   toggleSection: (sectionId: string) => void;
   searchQuery: string;
-  setSearchQuery: (query: string) => void;
+  setSearchQuery: (_query: string) => void;
   keyboardHelpVisible: boolean;
   setKeyboardHelpVisible: (visible: boolean) => void;
   userPreferences: UserPreferences;
@@ -95,7 +95,7 @@ const EnhancedSidebarContext = createContext<
 
 export const useEnhancedSidebar = () => {
   const context = useContext(EnhancedSidebarContext);
-  if (!context) {
+  if (!_context) {
     throw new Error(
       'useEnhancedSidebar must be used within a EnhancedSidebarProvider',
     );
@@ -104,11 +104,10 @@ export const useEnhancedSidebar = () => {
 };
 
 // Enhanced Sidebar Provider
-export const EnhancedSidebarProvider = ({
+export const EnhancedSidebarProvider = (_{
   children,
   open: openProp,
-  setOpen: setOpenProp,
-  defaultPreferences = {},
+  setOpen: setOpenProp,_defaultPreferences = {},
 }: {
   children: React.ReactNode;
   open?: boolean;
@@ -236,8 +235,7 @@ export function EnhancedSidebar({
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   // Default sidebar sections for Brazilian healthcare context
-  const defaultSections: SidebarSection[] = useMemo(
-    () => [
+  const defaultSections: SidebarSection[] = useMemo(_() => [
       {
         id: 'main',
         label: 'Principal',
@@ -322,7 +320,7 @@ export function EnhancedSidebar({
   const sections = customSections || defaultSections;
 
   // Filter sections based on search query
-  const filteredSections = useMemo(() => {
+  const filteredSections = useMemo(_() => {
     if (!debouncedSearchQuery) return sections;
 
     return sections
@@ -346,7 +344,7 @@ export function EnhancedSidebar({
     (_event: any) => {
       if (!userPreferences.keyboardShortcuts) return;
 
-      const action = Object.entries(KEYBOARD_SHORTCUTS).find(([_, config]) => {
+      const action = Object.entries(KEYBOARD_SHORTCUTS).find(_([_,_config]) => {
         const ctrlKey = config.ctrl || false;
         const shiftKey = config.shift || false;
         const altKey = config.alt || false;
@@ -493,7 +491,7 @@ export function EnhancedSidebar({
 
           {/* Navigation Sections */}
           <nav className='flex-1 overflow-y-auto p-4 space-y-2'>
-            {filteredSections.map(section => (
+            {filteredSections.map(_section => (
               <div key={section.id} className='space-y-1'>
                 <button
                   onClick={() => toggleSection(section.id)}
@@ -579,8 +577,7 @@ export function EnhancedSidebar({
 
           {/* Footer */}
           <div className='p-4 border-t space-y-2'>
-            {showKeyboardHelp && (
-              <button
+            {showKeyboardHelp && (_<button
                 onClick={() => setKeyboardHelpVisible(true)}
                 className='w-full flex items-center gap-2 p-2 text-sm rounded-md hover:bg-accent transition-colors'
                 aria-label='Mostrar ajuda de atalhos'
@@ -611,8 +608,7 @@ export function EnhancedSidebar({
 
         {/* Keyboard Help Modal */}
         <AnimatePresence>
-          {keyboardHelpVisible && (
-            <KeyboardHelpModal onClose={() => setKeyboardHelpVisible(false)} />
+          {keyboardHelpVisible && (_<KeyboardHelpModal onClose={() => setKeyboardHelpVisible(false)} />
           )}
         </AnimatePresence>
       </div>
@@ -644,7 +640,7 @@ function KeyboardHelpModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <div className='p-6 space-y-4 max-h-[60vh] overflow-y-auto'>
-          {Object.entries(KEYBOARD_SHORTCUTS).map(([key, config]) => (
+          {Object.entries(KEYBOARD_SHORTCUTS).map(_([key,_config]) => (
             <div key={key} className='flex items-center justify-between py-2'>
               <span className='text-sm text-muted-foreground'>
                 {config.description}
@@ -680,21 +676,21 @@ export function useEnhancedSidebarManagement() {
     setKeyboardHelpVisible,
   } = useEnhancedSidebar();
 
-  const toggleDarkMode = useCallback(() => {
+  const toggleDarkMode = useCallback(_() => {
     updateUserPreferences({ darkMode: !userPreferences.darkMode });
   }, [updateUserPreferences, userPreferences.darkMode]);
 
-  const toggleAnimations = useCallback(() => {
+  const toggleAnimations = useCallback(_() => {
     updateUserPreferences({ animations: !userPreferences.animations });
   }, [updateUserPreferences, userPreferences.animations]);
 
-  const toggleKeyboardShortcuts = useCallback(() => {
+  const toggleKeyboardShortcuts = useCallback(_() => {
     updateUserPreferences({
       keyboardShortcuts: !userPreferences.keyboardShortcuts,
     });
   }, [updateUserPreferences, userPreferences.keyboardShortcuts]);
 
-  const resetPreferences = useCallback(() => {
+  const resetPreferences = useCallback(_() => {
     updateUserPreferences({
       collapsed: false,
       darkMode: false,

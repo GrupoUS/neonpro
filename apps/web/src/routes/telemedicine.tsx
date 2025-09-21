@@ -9,7 +9,7 @@ import { Activity } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 
-export const Route = createFileRoute('/telemedicine')({
+export const _Route = createFileRoute('/telemedicine')({
   component: TelemedicineLayout,
 });
 

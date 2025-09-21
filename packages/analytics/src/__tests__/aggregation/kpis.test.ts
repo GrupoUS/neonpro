@@ -15,11 +15,11 @@ import {
 import type { AnalyticsEvent } from "../../types/base-metrics";
 import type { IngestionEvent } from "../../types/ingestion";
 
-describe("computeKPIs", () => {
+describe(_"computeKPIs",_() => {
   let mockEvents: AnalyticsEvent[];
   let mockIngestionEvents: IngestionEvent[];
 
-  beforeEach(() => {
+  beforeEach(_() => {
     // Create mock analytics events
     mockEvents = createMockEvents(20);
 
@@ -78,8 +78,8 @@ describe("computeKPIs", () => {
     ];
   });
 
-  describe("Basic functionality", () => {
-    it("should compute KPIs from empty events array", () => {
+  describe(_"Basic functionality",_() => {
+    it(_"should compute KPIs from empty events array",_() => {
       const result = computeKPIs([]);
 
       expect(result).toMatchObject({
@@ -124,7 +124,7 @@ describe("computeKPIs", () => {
       expect(result.metadata.coverage.totalEvents).toBe(0);
     });
 
-    it("should compute KPIs from valid events array", () => {
+    it(_"should compute KPIs from valid events array",_() => {
       const result = computeKPIs(mockEvents);
 
       expect(result).toBeDefined();
@@ -134,7 +134,7 @@ describe("computeKPIs", () => {
       expect(result.metadata.timeRange.end).toBeInstanceOf(Date);
     });
 
-    it("should handle mixed analytics and ingestion events", () => {
+    it(_"should handle mixed analytics and ingestion events",_() => {
       const combinedEvents = [...mockEvents, ...mockIngestionEvents];
       const result = computeKPIs(combinedEvents);
 
@@ -143,31 +143,31 @@ describe("computeKPIs", () => {
     });
   });
 
-  describe("Input validation", () => {
-    it("should throw error for non-array input", () => {
-      expect(() => computeKPIs(null as any)).toThrow("Events must be an array");
-      expect(() => computeKPIs(undefined as any)).toThrow(
+  describe(_"Input validation",_() => {
+    it(_"should throw error for non-array input",_() => {
+      expect(_() => computeKPIs(null as any)).toThrow("Events must be an array");
+      expect(_() => computeKPIs(undefined as any)).toThrow(
         "Events must be an array",
       );
-      expect(() => computeKPIs("not-array" as any)).toThrow(
+      expect(_() => computeKPIs("not-array" as any)).toThrow(
         "Events must be an array",
       );
-      expect(() => computeKPIs({} as any)).toThrow("Events must be an array");
+      expect(_() => computeKPIs({} as any)).toThrow("Events must be an array");
     });
 
-    it("should throw error when minimum event count not met", () => {
+    it(_"should throw error when minimum event count not met",_() => {
       const options: KPIComputationOptions = {
         validation: {
           requireMinEvents: 50,
         },
       };
 
-      expect(() => computeKPIs(mockEvents, options)).toThrow(
+      expect(_() => computeKPIs(mockEvents, options)).toThrow(
         /Insufficient events/,
       );
     });
 
-    it("should validate minimum event count when filtering reduces events", () => {
+    it(_"should validate minimum event count when filtering reduces events",_() => {
       const options: KPIComputationOptions = {
         eventTypes: ["non_existent_type"],
         validation: {
@@ -175,15 +175,15 @@ describe("computeKPIs", () => {
         },
       };
 
-      expect(() => computeKPIs(mockEvents, options)).toThrow(
+      expect(_() => computeKPIs(mockEvents, options)).toThrow(
         /Insufficient events/,
       );
     });
   });
 
-  describe("Filtering functionality", () => {
-    it("should filter events by time range", () => {
-      const now = new Date();
+  describe(_"Filtering functionality",_() => {
+    it(_"should filter events by time range",_() => {
+      const _now = new Date();
       const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
       const options: KPIComputationOptions = {
@@ -198,7 +198,7 @@ describe("computeKPIs", () => {
       expect(result.metadata.timeRange.end).toEqual(now);
     });
 
-    it("should filter events by event types", () => {
+    it(_"should filter events by event types",_() => {
       const options: KPIComputationOptions = {
         eventTypes: ["patient_visit", "appointment_completed"],
       };
@@ -208,7 +208,7 @@ describe("computeKPIs", () => {
       expect(result.metadata.eventCount).toBeLessThanOrEqual(mockEvents.length);
     });
 
-    it("should filter events by sources", () => {
+    it(_"should filter events by sources",_() => {
       const options: KPIComputationOptions = {
         sources: ["ehr_system"],
       };
@@ -222,7 +222,7 @@ describe("computeKPIs", () => {
       );
     });
 
-    it("should handle filtering with no matching events", () => {
+    it(_"should handle filtering with no matching events",_() => {
       const options: KPIComputationOptions = {
         eventTypes: ["non_existent_type"],
       };
@@ -232,8 +232,8 @@ describe("computeKPIs", () => {
     });
   });
 
-  describe("KPI category exclusion", () => {
-    it("should exclude patient flow KPIs when disabled", () => {
+  describe(_"KPI category exclusion",_() => {
+    it(_"should exclude patient flow KPIs when disabled",_() => {
       const options: KPIComputationOptions = {
         categories: {
           includePatientFlow: false,
@@ -251,7 +251,7 @@ describe("computeKPIs", () => {
       });
     });
 
-    it("should exclude clinical quality KPIs when disabled", () => {
+    it(_"should exclude clinical quality KPIs when disabled",_() => {
       const options: KPIComputationOptions = {
         categories: {
           includeClinicalQuality: false,
@@ -269,7 +269,7 @@ describe("computeKPIs", () => {
       });
     });
 
-    it("should exclude operational KPIs when disabled", () => {
+    it(_"should exclude operational KPIs when disabled",_() => {
       const options: KPIComputationOptions = {
         categories: {
           includeOperational: false,
@@ -287,7 +287,7 @@ describe("computeKPIs", () => {
       });
     });
 
-    it("should exclude financial KPIs when disabled", () => {
+    it(_"should exclude financial KPIs when disabled",_() => {
       const options: KPIComputationOptions = {
         categories: {
           includeFinancial: false,
@@ -305,7 +305,7 @@ describe("computeKPIs", () => {
       });
     });
 
-    it("should exclude system KPIs when disabled", () => {
+    it(_"should exclude system KPIs when disabled",_() => {
       const options: KPIComputationOptions = {
         categories: {
           includeSystem: false,
@@ -324,8 +324,8 @@ describe("computeKPIs", () => {
     });
   });
 
-  describe("Patient flow KPIs", () => {
-    it("should compute patient flow metrics correctly", () => {
+  describe(_"Patient flow KPIs",_() => {
+    it(_"should compute patient flow metrics correctly",_() => {
       const patientEvents: AnalyticsEvent[] = [
         {
           id: "1",
@@ -360,8 +360,8 @@ describe("computeKPIs", () => {
     });
   });
 
-  describe("Clinical quality KPIs", () => {
-    it("should compute clinical quality metrics correctly", () => {
+  describe(_"Clinical quality KPIs",_() => {
+    it(_"should compute clinical quality metrics correctly",_() => {
       const clinicalEvents: AnalyticsEvent[] = [
         {
           id: "1",
@@ -400,8 +400,8 @@ describe("computeKPIs", () => {
     });
   });
 
-  describe("Financial KPIs", () => {
-    it("should compute financial metrics correctly", () => {
+  describe(_"Financial KPIs",_() => {
+    it(_"should compute financial metrics correctly",_() => {
       const financialEvents: AnalyticsEvent[] = [
         {
           id: "1",
@@ -437,7 +437,7 @@ describe("computeKPIs", () => {
       );
     });
 
-    it("should handle zero division in financial calculations", () => {
+    it(_"should handle zero division in financial calculations",_() => {
       const emptyFinancialEvents: AnalyticsEvent[] = [];
 
       const result = computeKPIs(emptyFinancialEvents);
@@ -448,15 +448,15 @@ describe("computeKPIs", () => {
     });
   });
 
-  describe("System KPIs", () => {
-    it("should compute system metrics from ingestion events", () => {
+  describe(_"System KPIs",_() => {
+    it(_"should compute system metrics from ingestion events",_() => {
       const result = computeKPIs(mockIngestionEvents);
 
       expect(result.system.dataQualityScore).toBeGreaterThan(0);
       expect(result.system.dataQualityScore).toBeLessThanOrEqual(100);
     });
 
-    it("should handle system metrics with performance events", () => {
+    it(_"should handle system metrics with performance events",_() => {
       const systemEvents: AnalyticsEvent[] = [
         {
           id: "1",
@@ -479,8 +479,8 @@ describe("computeKPIs", () => {
     });
   });
 
-  describe("Aggregation options", () => {
-    it("should handle aggregation preferences", () => {
+  describe(_"Aggregation options",_() => {
+    it(_"should handle aggregation preferences",_() => {
       const options: KPIComputationOptions = {
         aggregation: {
           method: "average",
@@ -493,8 +493,8 @@ describe("computeKPIs", () => {
     });
   });
 
-  describe("Edge cases", () => {
-    it("should handle events with missing properties", () => {
+  describe(_"Edge cases",_() => {
+    it(_"should handle events with missing properties",_() => {
       const incompleteEvents: AnalyticsEvent[] = [
         {
           id: "1",
@@ -515,7 +515,7 @@ describe("computeKPIs", () => {
       expect(result.metadata.eventCount).toBe(2);
     });
 
-    it("should handle events with invalid timestamps", () => {
+    it(_"should handle events with invalid timestamps",_() => {
       const invalidEvents: AnalyticsEvent[] = [
         {
           id: "1",
@@ -526,17 +526,17 @@ describe("computeKPIs", () => {
       ];
 
       // Should not throw, but handle gracefully
-      expect(() => computeKPIs(invalidEvents)).not.toThrow();
+      expect(_() => computeKPIs(invalidEvents)).not.toThrow();
     });
 
-    it("should handle very large event arrays", () => {
+    it(_"should handle very large event arrays",_() => {
       const largeEventArray = createMockEvents(1000);
 
       const result = computeKPIs(largeEventArray);
       expect(result.metadata.eventCount).toBe(1000);
     });
 
-    it("should handle events with null/undefined properties", () => {
+    it(_"should handle events with null/undefined properties",_() => {
       const nullPropertyEvents: AnalyticsEvent[] = [
         {
           id: "1",
@@ -555,9 +555,9 @@ describe("computeKPIs", () => {
     });
   });
 
-  describe("Time range computation", () => {
-    it("should compute time range from events when not provided", () => {
-      const now = new Date();
+  describe(_"Time range computation",_() => {
+    it(_"should compute time range from events when not provided",_() => {
+      const _now = new Date();
       const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
       const timedEvents: AnalyticsEvent[] = [
@@ -585,7 +585,7 @@ describe("computeKPIs", () => {
       );
     });
 
-    it("should handle same start and end time for single event", () => {
+    it(_"should handle same start and end time for single event",_() => {
       const singleTime = new Date();
       const singleEvent: AnalyticsEvent[] = [
         {
@@ -607,8 +607,8 @@ describe("computeKPIs", () => {
     });
   });
 
-  describe("Complex scenarios", () => {
-    it("should handle comprehensive healthcare workflow", () => {
+  describe(_"Complex scenarios",_() => {
+    it(_"should handle comprehensive healthcare workflow",_() => {
       const workflowEvents: AnalyticsEvent[] = [
         // Patient journey
         {
@@ -678,12 +678,12 @@ describe("computeKPIs", () => {
   });
 });
 
-describe("createMockEvents", () => {
-  it("should create specified number of mock events", () => {
+describe(_"createMockEvents",_() => {
+  it(_"should create specified number of mock events",_() => {
     const events = createMockEvents(5);
     expect(events).toHaveLength(5);
 
-    events.forEach((event) => {
+    events.forEach(_(event) => {
       expect(event.id).toBeDefined();
       expect(event.type).toBeDefined();
       expect(event.timestamp).toBeInstanceOf(Date);
@@ -691,22 +691,22 @@ describe("createMockEvents", () => {
     });
   });
 
-  it("should create default number of events when count not specified", () => {
+  it(_"should create default number of events when count not specified",_() => {
     const events = createMockEvents();
     expect(events).toHaveLength(10);
   });
 
-  it("should create events with realistic healthcare properties", () => {
+  it(_"should create events with realistic healthcare properties",_() => {
     const events = createMockEvents(20);
 
     // Check for healthcare-related event types
-    const eventTypes = events.map((e) => e.type);
+    const eventTypes = events.map(_(e) => e.type);
     expect(eventTypes).toContain("patient_visit");
     expect(eventTypes).toContain("appointment_completed");
     expect(eventTypes).toContain("diagnosis_made");
 
     // Check for appropriate properties based on event type
-    const patientVisitEvent = events.find((e) => e.type === "patient_visit");
+    const patientVisitEvent = events.find(_(e) => e.type === "patient_visit");
     if (patientVisitEvent) {
       expect(patientVisitEvent.properties.patientId).toBeDefined();
       expect(patientVisitEvent.properties.waitTime).toBeTypeOf("number");

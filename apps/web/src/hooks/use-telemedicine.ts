@@ -113,7 +113,7 @@ export function useTelemedicineSession(params: {
     },
   });
 
-  useEffect(() => {
+  useEffect(_() => {
     if (sessionQuery.data) {
       setSession(sessionQuery.data);
       setLoading(false);
@@ -189,7 +189,7 @@ export function useVideoCall(_sessionId: string) {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
 
-  const initializeCall = useCallback(async () => {
+  const initializeCall = useCallback(_async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -222,13 +222,13 @@ export function useVideoCall(_sessionId: string) {
 
       peerConnectionRef.current = peerConnection;
       setCallState(prev => ({ ...prev, isConnected: true }));
-    } catch (error) {
+    } catch (_error) {
       console.error('Error initializing video call:', error);
       toast.error('Erro ao inicializar videochamada');
     }
   }, []);
 
-  const toggleMute = useCallback(() => {
+  const toggleMute = useCallback(_() => {
     if (callState.localStream) {
       const audioTrack = callState.localStream.getAudioTracks()[0];
       if (audioTrack) {
@@ -238,7 +238,7 @@ export function useVideoCall(_sessionId: string) {
     }
   }, [callState.localStream]);
 
-  const toggleVideo = useCallback(() => {
+  const toggleVideo = useCallback(_() => {
     if (callState.localStream) {
       const videoTrack = callState.localStream.getVideoTracks()[0];
       if (videoTrack) {
@@ -251,7 +251,7 @@ export function useVideoCall(_sessionId: string) {
     }
   }, [callState.localStream]);
 
-  const startScreenShare = useCallback(async () => {
+  const startScreenShare = useCallback(_async () => {
     try {
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
@@ -263,13 +263,13 @@ export function useVideoCall(_sessionId: string) {
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = screenStream;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error starting screen share:', error);
       toast.error('Erro ao compartilhar tela');
     }
   }, []);
 
-  const endCall = useCallback(() => {
+  const endCall = useCallback(_() => {
     if (callState.localStream) {
       callState.localStream.getTracks().forEach(_track => track.stop());
     }
@@ -329,7 +329,7 @@ export function useRealTimeChat(params: {
     },
   });
 
-  useEffect(() => {
+  useEffect(_() => {
     if (messagesQuery.data) {
       setMessages(messagesQuery.data);
       setLoading(false);
@@ -443,11 +443,11 @@ export function useSessionRecording(sessionId: string) {
     },
   });
 
-  const startRecording = useCallback(async () => {
+  const startRecording = useCallback(_async () => {
     return startRecordingMutation.mutateAsync({ sessionId });
   }, [sessionId, startRecordingMutation]);
 
-  const stopRecording = useCallback(async () => {
+  const stopRecording = useCallback(_async () => {
     return stopRecordingMutation.mutateAsync({ sessionId });
   }, [sessionId, stopRecordingMutation]);
 
@@ -487,17 +487,17 @@ export function useMedicalTranscription(sessionId: string) {
     },
   });
 
-  useEffect(() => {
+  useEffect(_() => {
     if (transcriptionQuery.data) {
       setTranscript(transcriptionQuery.data.content);
     }
   }, [transcriptionQuery.data]);
 
-  const startTranscription = useCallback(async () => {
+  const startTranscription = useCallback(_async () => {
     return startTranscriptionMutation.mutateAsync({ sessionId });
   }, [sessionId, startTranscriptionMutation]);
 
-  const stopTranscription = useCallback(async () => {
+  const stopTranscription = useCallback(_async () => {
     return stopTranscriptionMutation.mutateAsync({ sessionId });
   }, [sessionId, stopTranscriptionMutation]);
 
@@ -560,9 +560,9 @@ export function useWaitingRoom(_params: {
 }) {
   return {
     connectionStatus: 'connected' as const,
-    joinWaitingRoom: useCallback(() => Promise.resolve(), []),
-    leaveWaitingRoom: useCallback(() => Promise.resolve(), []),
-    updatePreConsultationData: useCallback(() => Promise.resolve(), []),
+    joinWaitingRoom: useCallback(_() => Promise.resolve(), []),
+    leaveWaitingRoom: useCallback(_() => Promise.resolve(), []),
+    updatePreConsultationData: useCallback(_() => Promise.resolve(), []),
     isJoining: false,
     isLeaving: false,
   };
@@ -572,7 +572,7 @@ export function useWaitingRoom(_params: {
 export function useQueuePosition(_appointmentId?: string) {
   return {
     queueInfo: { position: 1, estimatedWaitTime: 15, totalInQueue: 3 },
-    refreshPosition: useCallback(() => Promise.resolve(), []),
+    refreshPosition: useCallback(_() => Promise.resolve(), []),
   };
 }
 
@@ -580,7 +580,7 @@ export function useQueuePosition(_appointmentId?: string) {
 export function usePreConsultationCheck(_appointmentId?: string) {
   return {
     checkResults: null,
-    performCheck: useCallback(() => Promise.resolve(), []),
+    performCheck: useCallback(_() => Promise.resolve(), []),
     isChecking: false,
   };
 }
@@ -589,6 +589,6 @@ export function usePreConsultationCheck(_appointmentId?: string) {
 export function useEmergencyTriage(_appointmentId?: string) {
   return {
     triageAssessment: null,
-    performTriage: useCallback(() => Promise.resolve(), []),
+    performTriage: useCallback(_() => Promise.resolve(), []),
   };
 }

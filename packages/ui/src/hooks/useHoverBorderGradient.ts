@@ -92,7 +92,7 @@ export function useHoverBorderGradient(
         cancelAnimationFrame(rafRef.current);
       }
 
-      rafRef.current = requestAnimationFrame(() => {
+      rafRef.current = requestAnimationFrame(_() => {
         if (!elementRef.current) return;
 
         const rect = elementRef.current.getBoundingClientRect();
@@ -115,7 +115,7 @@ export function useHoverBorderGradient(
         clearTimeout(debounceTimeoutRef.current);
       }
 
-      debounceTimeoutRef.current = window.setTimeout(() => {
+      debounceTimeoutRef.current = window.setTimeout(_() => {
         updateMousePosition(event);
       }, debounce);
     },
@@ -132,14 +132,14 @@ export function useHoverBorderGradient(
     [enabled, updateMousePosition],
   );
 
-  const handleMouseLeave = useCallback(() => {
+  const handleMouseLeave = useCallback(_() => {
     if (!enabled) return;
     setIsHovering(false);
     setMousePosition({ x: 50, y: 50 }); // Reset to center
   }, [enabled]);
 
   // Cleanup on unmount
-  useEffect(() => {
+  useEffect(_() => {
     return () => {
       if (debounceTimeoutRef.current) {
         clearTimeout(debounceTimeoutRef.current);

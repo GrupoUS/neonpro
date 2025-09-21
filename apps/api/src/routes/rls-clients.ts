@@ -8,7 +8,7 @@ import { patientAccessMiddleware, rlsHealthcareMiddleware } from '../middleware/
 // Define context variables type for better TypeScript support
 type Variables = {
   rlsQuery: RLSQueryBuilder;
-  userId: string;
+  _userId: string;
   userRole: string;
   clinicId?: string;
   patientId?: string;
@@ -24,7 +24,7 @@ rlsPatients.use('*', rlsHealthcareMiddleware.patientAccess);
  * Get patients using RLS-aware queries
  * This route demonstrates how to use Supabase RLS instead of Prisma
  */
-rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
+rlsPatients.get(_'/', async (c: Context<{ Variables: Variables }>) => {
   try {
     const rlsQuery = c.get('rlsQuery');
     const _userId = c.get('userId'); // Prefix with _ to indicate intentionally unused
@@ -63,11 +63,11 @@ rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
       meta: {
         count: patients?.length || 0,
         rlsApplied: true,
-        userId: _userId,
+        _userId: _userId,
         userRole: _userRole,
       },
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Error in RLS patients route:', error);
     return c.json({ error: 'Internal server error' }, 500);
   }
@@ -151,7 +151,7 @@ rlsPatients.get(
           accessedBy: userId,
         },
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in RLS patient detail route:', error);
       return c.json({ error: 'Internal server error' }, 500);
     }
@@ -213,7 +213,7 @@ rlsPatients.get(
           accessedBy: _userId,
         },
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in RLS patient appointments route:', error);
       return c.json({ error: 'Internal server error' }, 500);
     }
@@ -265,7 +265,7 @@ rlsPatients.get(
           accessedBy: _userId,
         },
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in RLS patient consent route:', error);
       return c.json({ error: 'Internal server error' }, 500);
     }

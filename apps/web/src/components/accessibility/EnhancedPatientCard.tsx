@@ -77,7 +77,7 @@ export function EnhancedPatientCard({
   const { announceHealthcareData } = useScreenReaderAnnouncement();
 
   // Healthcare-specific data categorization
-  const healthcareDataCategory = useMemo(() => {
+  const healthcareDataCategory = useMemo(_() => {
     if (patient.isEmergencyCase || patient.status === 'emergency') {
       return 'emergency';
     }
@@ -90,7 +90,7 @@ export function EnhancedPatientCard({
   }, [patient]);
 
   // Generate healthcare-specific ARIA attributes
-  const healthcareAriaProps = useMemo(() => {
+  const healthcareAriaProps = useMemo(_() => {
     const baseProps = {
       'data-patient-sensitive': showSensitiveData.toString(),
       'data-healthcare-category': healthcareDataCategory,
@@ -109,7 +109,7 @@ export function EnhancedPatientCard({
   }, [showSensitiveData, healthcareDataCategory, patient, auditContext]);
 
   // Enhanced screen reader formatting with medical terminology
-  const formatPatientForScreenReader = useCallback(() => {
+  const formatPatientForScreenReader = useCallback(_() => {
     const parts = [
       `Paciente: ${patient.name}`,
       `Status: ${getEnhancedStatusLabel(patient.status)}`,
@@ -178,7 +178,7 @@ export function EnhancedPatientCard({
     return parts.join('. ');
   }, [patient, showSensitiveData, healthcareDataCategory]);
 
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback(_() => {
     onClick?.(patient);
     announceHealthcareData('Paciente selecionado', patient.name);
   }, [onClick, patient, announceHealthcareData]);

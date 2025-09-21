@@ -5,7 +5,6 @@
  */
 
 import { TRPCError } from '@trpc/server';
-import { z } from 'zod';
 import {
   healthcareProcedure,
   patientProcedure,
@@ -100,7 +99,7 @@ const complianceReportSchema = z.object({
   ]),
 });
 
-export const telemedicineRouter = router({
+export const _telemedicineRouter = router({
   /**
    * Session Management Endpoints
    */
@@ -108,7 +107,7 @@ export const telemedicineRouter = router({
   // Create a new telemedicine session
   createSession: telemedicineProcedure
     .input(createSessionSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       try {
         // Verify physician license and authorization
         const { data: physician } = await ctx.supabase
@@ -171,7 +170,7 @@ export const telemedicineRouter = router({
             restrictions: licenseVerification.telemedicineAuth.restrictions,
           },
         };
-      } catch (error) {
+      } catch (_error) {
         console.error('Error creating telemedicine session:', error);
 
         if (error instanceof TRPCError) {
@@ -189,7 +188,7 @@ export const telemedicineRouter = router({
   // Join an existing session
   joinSession: telemedicineProcedure
     .input(joinSessionSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       try {
         // const sessionDetails = await webrtcService.joinSession(
         //   input.sessionId,
@@ -211,13 +210,13 @@ export const telemedicineRouter = router({
         await cfmService.logComplianceEvent({
           sessionId: input.sessionId,
           eventType: 'session_join',
-          userId: ctx.userId!,
+          _userId: ctx.userId!,
           participantType: input.participantType,
           metadata: { deviceInfo: input.deviceInfo },
         });
 
         return sessionDetails;
-      } catch (error) {
+      } catch (_error) {
         console.error('Error joining telemedicine session:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -241,7 +240,7 @@ export const telemedicineRouter = router({
         notes: z.string().max(1000).optional(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       try {
         // Calculate actual duration using telemedicine service
         const sessionResult = await telemedicineService.endSession({
@@ -267,7 +266,7 @@ export const telemedicineRouter = router({
         });
 
         return sessionSummary;
-      } catch (error) {
+      } catch (_error) {
         console.error('Error ending telemedicine session:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -280,7 +279,7 @@ export const telemedicineRouter = router({
   // Get session status
   getSessionStatus: publicProcedure
     .input(z.object({ sessionId: z.string().uuid() }))
-    .query(async ({ input }) => {
+    .query(_async ({ input }) => {
       try {
         // Get session status using telemedicine service
         const sessionStatus = await telemedicineService.getSessionStatus(input.sessionId);
@@ -294,7 +293,7 @@ export const telemedicineRouter = router({
           recording: sessionStatus.recording,
           createdAt: sessionStatus.session.scheduledFor,
         };
-      } catch (error) {
+      } catch (_error) {
         console.error('Error getting session status:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -311,14 +310,14 @@ export const telemedicineRouter = router({
   // Verify patient identity - TODO: Implement when service available
   // verifyPatientIdentity: patientProcedure
   //   .input(patientVerificationSchema)
-  //   .mutation(async ({ input }) => {
+  //   .mutation(_async ({ input }) => {
   //     try {
   //       return await identityService.verifyPatientIdentity(
   //         input.patientId,
   //         input.documents,
   //         input.enableBiometric,
   //       );
-  //     } catch (error) {
+  //     } catch (_error) {
   //       console.error('Error verifying patient identity:', error);
   //       throw new TRPCError({
   //         code: 'INTERNAL_SERVER_ERROR',
@@ -350,14 +349,14 @@ export const telemedicineRouter = router({
   //       }),
   //     }),
   //   )
-  //   .mutation(async ({ input }) => {
+  //   .mutation(_async ({ input }) => {
   //     try {
   //       return await identityService.verifyPatientAddress(input.patientId, {
   //         ...input.address,
   //         verified: false,
   //         verificationDate: new Date(),
   //       });
-  //     } catch (error) {
+  //     } catch (_error) {
   //       console.error('Error verifying patient address:', error);
   //       throw new TRPCError({
   //         code: 'INTERNAL_SERVER_ERROR',
@@ -374,14 +373,14 @@ export const telemedicineRouter = router({
   // Verify medical license - TODO: Implement when service available
   // verifyMedicalLicense: healthcareProcedure
   //   .input(licenseVerificationSchema)
-  //   .query(async ({ input }) => {
+  //   .query(_async ({ input }) => {
   //     try {
   //       return await licenseService.verifyMedicalLicense(
   //         input.cfmNumber,
   //         input.physicianState,
   //         input.requestedSpecialty,
   //       );
-  //     } catch (error) {
+  //     } catch (_error) {
   //       console.error('Error verifying medical license:', error);
   //       throw new TRPCError({
   //         code: 'INTERNAL_SERVER_ERROR',
@@ -401,7 +400,7 @@ export const telemedicineRouter = router({
   //       specialty: z.string().optional(),
   //     }),
   //   )
-  //   .query(async ({ input }) => {
+  //   .query(_async ({ input }) => {
   //     try {
   //       return await licenseService.isAuthorizedForTelemedicine(
   //         input.cfmNumber,
@@ -409,7 +408,7 @@ export const telemedicineRouter = router({
   //         input.consultationState,
   //         input.specialty,
   //       );
-  //     } catch (error) {
+  //     } catch (_error) {
   //       console.error('Error checking telemedicine authorization:', error);
   //       throw new TRPCError({
   //         code: 'INTERNAL_SERVER_ERROR',
@@ -426,7 +425,7 @@ export const telemedicineRouter = router({
   // Record patient consent
   recordConsent: patientProcedure
     .input(consentSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       try {
         const consent = await cfmService.recordPatientConsent({
           patientId: input.patientId,
@@ -438,7 +437,7 @@ export const telemedicineRouter = router({
         });
 
         return consent;
-      } catch (error) {
+      } catch (_error) {
         console.error('Error recording patient consent:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -463,13 +462,13 @@ export const telemedicineRouter = router({
           .optional(),
       }),
     )
-    .query(async ({ input }) => {
+    .query(_async ({ input }) => {
       try {
         return await cfmService.getPatientConsentStatus(
           input.patientId,
           input.consentType,
         );
-      } catch (error) {
+      } catch (_error) {
         console.error('Error getting consent status:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -486,7 +485,7 @@ export const telemedicineRouter = router({
   // Get compliance report
   getComplianceReport: healthcareProcedure
     .input(complianceReportSchema)
-    .query(async ({ input }) => {
+    .query(_async ({ input }) => {
       try {
         return await cfmService.generateComplianceReport({
           sessionId: input.sessionId,
@@ -495,7 +494,7 @@ export const telemedicineRouter = router({
           dateRange: input.dateRange,
           reportType: input.reportType,
         });
-      } catch (error) {
+      } catch (_error) {
         console.error('Error generating compliance report:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -508,10 +507,10 @@ export const telemedicineRouter = router({
   // Get session audit trail
   getSessionAuditTrail: healthcareProcedure
     .input(z.object({ sessionId: z.string().uuid() }))
-    .query(async ({ input }) => {
+    .query(_async ({ input }) => {
       try {
         return await cfmService.getSessionAuditTrail(input.sessionId);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error getting session audit trail:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -531,7 +530,7 @@ export const telemedicineRouter = router({
         offset: z.number().min(0).default(0),
       }),
     )
-    .query(async ({ input }) => {
+    .query(_async ({ input }) => {
       try {
         // return await webrtcService.listActiveSessions({
         //   clinicId: input.clinicId,
@@ -547,7 +546,7 @@ export const telemedicineRouter = router({
           limit: input.limit,
           offset: input.offset,
         };
-      } catch (error) {
+      } catch (_error) {
         console.error('Error listing active sessions:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -573,7 +572,7 @@ export const telemedicineRouter = router({
         targetParticipant: z.string().uuid(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       try {
         // await webrtcService.sendSignal(
         //   input.sessionId,
@@ -591,7 +590,7 @@ export const telemedicineRouter = router({
         });
 
         return { success: true };
-      } catch (error) {
+      } catch (_error) {
         console.error('Error sending WebRTC signal:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -604,7 +603,7 @@ export const telemedicineRouter = router({
   // Get session recording status
   getRecordingStatus: telemedicineProcedure
     .input(z.object({ sessionId: z.string().uuid() }))
-    .query(async ({ input }) => {
+    .query(_async ({ input }) => {
       try {
         // return await webrtcService.getRecordingStatus(input.sessionId);
 
@@ -615,7 +614,7 @@ export const telemedicineRouter = router({
           recordingType: null,
           startedAt: null,
         };
-      } catch (error) {
+      } catch (_error) {
         console.error('Error getting recording status:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -633,7 +632,7 @@ export const telemedicineRouter = router({
         recordingType: z.enum(['video', 'audio', 'screen']),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       try {
         // Verify recording consent exists
         const consentStatus = await cfmService.getPatientConsentStatus(
@@ -663,7 +662,7 @@ export const telemedicineRouter = router({
           startedAt: new Date(),
           startedBy: ctx.userId,
         };
-      } catch (error) {
+      } catch (_error) {
         console.error('Error starting recording:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -676,7 +675,7 @@ export const telemedicineRouter = router({
   // Stop session recording
   stopRecording: telemedicineProcedure
     .input(z.object({ sessionId: z.string().uuid() }))
-    .mutation(async ({ input, ctx }) => {
+    .mutation(_async ({ input,_ctx }) => {
       try {
         // Stop recording using telemedicine service
         const recordingResult = await telemedicineService.stopRecording(input.sessionId);
@@ -687,7 +686,7 @@ export const telemedicineRouter = router({
           stoppedAt: new Date(),
           duration: recordingResult.duration,
         };
-      } catch (error) {
+      } catch (_error) {
         console.error('Error stopping recording:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',

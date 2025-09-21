@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-export const Route = createFileRoute('/patients/register')({
+export const _Route = createFileRoute('/patients/register')({
   component: PatientRegister,
 });
 

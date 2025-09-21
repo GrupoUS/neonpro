@@ -77,7 +77,7 @@ export function EscalationWorkflowStatus() {
   const clinicId = 'default-clinic-id'; // Placeholder
 
   const { data: escalationData, isLoading } = useQuery<Escalations>({
-    queryKey: ['escalation-workflow', clinicId],
+    queryKey: ['escalation-workflow',_clinicId],
     queryFn: async () => {
       const governanceService = getGovernanceService();
       return await governanceService.getEscalationWorkflowData(clinicId);

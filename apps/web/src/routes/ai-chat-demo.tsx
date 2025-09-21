@@ -36,7 +36,7 @@ import {
 } from 'lucide-react';
 import React, { useState } from 'react';
 
-export const Route = createFileRoute('/ai-chat-demo')({
+export const _Route = createFileRoute('/ai-chat-demo')({
   component: AIChatDemoPage,
 });
 

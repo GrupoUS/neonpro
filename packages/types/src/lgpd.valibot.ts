@@ -84,7 +84,7 @@ const validateRetentionPeriod = (period: string): boolean => {
 /**
  * Validates email format with enhanced security
  */
-export const validateSecureEmail = (email: string): boolean => {
+export const _validateSecureEmail = (email: string): boolean => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   return emailRegex.test(email) && email.length <= 254;
 };
@@ -232,7 +232,7 @@ export const SHA256HashSchema = v.pipe(
   v.length(64, "Hash SHA-256 deve ter exatamente 64 caracteres"),
   v.regex(/^[a-f0-9]{64}$/i, "Hash deve estar em formato hexadecimal válido"),
   v.check(validateSHA256Hash, "Hash SHA-256 inválido"),
-  v.transform((value) => value.toLowerCase() as ConsentHash),
+  v.transform(_(value) => value.toLowerCase() as ConsentHash),
 );
 
 /**
@@ -245,7 +245,7 @@ export const TimestampTokenSchema = v.pipe(
   v.minLength(20, "Token de timestamp deve ter pelo menos 20 caracteres"),
   v.maxLength(500, "Token de timestamp não pode exceder 500 caracteres"),
   v.check(validateTimestampToken, "Token de timestamp inválido"),
-  v.transform((value) => value as TimestampToken),
+  v.transform(_(value) => value as TimestampToken),
 );
 
 /**
@@ -261,7 +261,7 @@ export const DigitalSignatureSchema = v.pipe(
     /^[A-Za-z0-9+/=]+$/,
     "Assinatura digital deve estar em formato base64",
   ),
-  v.transform((value) => value as DigitalSignature),
+  v.transform(_(value) => value as DigitalSignature),
 );
 
 /**
@@ -275,7 +275,7 @@ export const RetentionPeriodSchema = v.pipe(
     validateRetentionPeriod,
     "Período de retenção inválido para dados de saúde",
   ),
-  v.transform((value) => value.toLowerCase()),
+  v.transform(_(value) => value.toLowerCase()),
 );
 
 /**
@@ -444,7 +444,7 @@ export const EvidenceDocumentSchema = v.object({
 /**
  * Audit Log Entry Schema
  */
-export const AuditLogEntrySchema = v.object({
+export const _AuditLogEntrySchema = v.object({
   action: v.pipe(
     v.string(),
     v.picklist(
@@ -482,7 +482,7 @@ export const AuditLogEntrySchema = v.object({
 /**
  * LGPD Consent Creation Schema
  */
-export const LGPDConsentCreationSchema = v.object({
+export const _LGPDConsentCreationSchema = v.object({
   patient_id: v.pipe(v.string(), v.uuid("ID do paciente deve ser UUID válido")),
   clinic_id: v.pipe(v.string(), v.uuid("ID da clínica deve ser UUID válido")),
 
@@ -537,7 +537,7 @@ export const LGPDConsentCreationSchema = v.object({
 /**
  * LGPD Consent Withdrawal Schema
  */
-export const LGPDConsentWithdrawalSchema = v.object({
+export const _LGPDConsentWithdrawalSchema = v.object({
   consent_id: v.pipe(
     v.string(),
     v.uuid("ID do consentimento deve ser UUID válido"),
@@ -568,7 +568,7 @@ export const LGPDConsentWithdrawalSchema = v.object({
 /**
  * LGPD Consent Update Schema
  */
-export const LGPDConsentUpdateSchema = v.object({
+export const _LGPDConsentUpdateSchema = v.object({
   consent_id: v.pipe(
     v.string(),
     v.uuid("ID do consentimento deve ser UUID válido"),
@@ -601,7 +601,7 @@ export const LGPDConsentUpdateSchema = v.object({
 /**
  * LGPD Consent Query Schema
  */
-export const LGPDConsentQuerySchema = v.object({
+export const _LGPDConsentQuerySchema = v.object({
   patient_id: v.optional(v.pipe(v.string(), v.uuid())),
   clinic_id: v.optional(v.pipe(v.string(), v.uuid())),
   consent_status: v.optional(ConsentStatusSchema),
@@ -622,7 +622,7 @@ export const LGPDConsentQuerySchema = v.object({
 /**
  * Validates complete LGPD consent lifecycle
  */
-export const validateLGPDConsentLifecycle = (_consent: unknown): boolean => {
+export const _validateLGPDConsentLifecycle = (_consent: unknown): boolean => {
   try {
     // This would contain more complex business logic validation
     // For now, we'll use the basic schema validation
@@ -635,7 +635,7 @@ export const validateLGPDConsentLifecycle = (_consent: unknown): boolean => {
 /**
  * Validates cryptographic integrity of consent
  */
-export const validateConsentIntegrity = (
+export const _validateConsentIntegrity = (
   consentHash: string,
   _consentData: string,
 ): boolean => {
@@ -647,7 +647,7 @@ export const validateConsentIntegrity = (
 /**
  * Checks if consent is still valid (not expired or withdrawn)
  */
-export const isConsentValid = (consent: {
+export const _isConsentValid = (consent: {
   status: string;
   expires_at?: string | null;
   withdrawn_at?: string | null;
@@ -671,13 +671,13 @@ export const isConsentValid = (consent: {
 /**
  * Validates LGPD compliance for healthcare data processing
  */
-export const validateHealthcareCompliance = (consent: {
+export const _validateHealthcareCompliance = (consent: {
   legal_basis: string;
   data_categories: string[];
   processing_purpose: string;
 }): boolean => {
   // Check if health data requires proper legal basis
-  const hasHealthData = consent.data_categories.some((cat) =>
+  const hasHealthData = consent.data_categories.some(_(cat) =>
     [
       "health_data",
       "sensitive_personal",

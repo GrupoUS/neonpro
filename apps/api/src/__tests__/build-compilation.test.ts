@@ -6,9 +6,9 @@
 import { execSync } from 'child_process';
 import { describe, expect, it } from 'vitest';
 
-describe('Build Compilation - TDD RED Phase', () => {
-  describe('TypeScript Compilation', () => {
-    it('should FAIL: TypeScript compilation should have no errors', () => {
+describe(_'Build Compilation - TDD RED Phase',_() => {
+  describe(_'TypeScript Compilation',_() => {
+    it('should FAIL: TypeScript compilation should have no errors',_() => {
       // This test will fail initially due to compilation errors
       // After fixes, this should pass
 
@@ -21,7 +21,7 @@ describe('Build Compilation - TDD RED Phase', () => {
           cwd: '/home/vibecode/neonpro/apps/api',
           stdio: 'pipe',
         });
-      } catch (error: any) {
+      } catch (_error: any) {
         compilationSuccess = false;
         compilationErrors = error.stdout?.toString().split('\n').filter((line: string) =>
           line.includes('error TS') && !line.includes('npm error')
@@ -51,7 +51,7 @@ describe('Build Compilation - TDD RED Phase', () => {
       expect(foundErrorPatterns.length).toBeGreaterThan(0);
     });
 
-    it('should FAIL: All missing modules should be resolved', () => {
+    it('should FAIL: All missing modules should be resolved',_() => {
       // This test documents the specific missing modules that need to be fixed
       const missingModules = [
         '@neonpro/utils/logging/logger',
@@ -76,8 +76,8 @@ describe('Build Compilation - TDD RED Phase', () => {
     });
   });
 
-  describe('Specific TypeScript Error Categories', () => {
-    it('should FAIL: Module resolution errors should exist', () => {
+  describe(_'Specific TypeScript Error Categories',_() => {
+    it('should FAIL: Module resolution errors should exist',_() => {
       // Test for the specific module resolution errors found
       const expectedErrors = [
         {
@@ -115,7 +115,7 @@ describe('Build Compilation - TDD RED Phase', () => {
       });
     });
 
-    it('should FAIL: Unused variable and code path errors should exist', () => {
+    it('should FAIL: Unused variable and code path errors should exist',_() => {
       // Test for unused variables and missing return statements
       const expectedCleanupErrors = [
         {
@@ -140,8 +140,8 @@ describe('Build Compilation - TDD RED Phase', () => {
     });
   });
 
-  describe('Build Tool Validation', () => {
-    it('should FAIL: Test framework imports should be standardized', () => {
+  describe(_'Build Tool Validation',_() => {
+    it('should FAIL: Test framework imports should be standardized',_() => {
       // Test for mixed test framework usage
       const testFrameworkIssues = [
         'bun:test imports in vitest project',
@@ -153,7 +153,7 @@ describe('Build Compilation - TDD RED Phase', () => {
       expect(testFrameworkIssues.length).toBeGreaterThan(0);
     });
 
-    it('should FAIL: Package dependencies should be consistent', () => {
+    it('should FAIL: Package dependencies should be consistent',_() => {
       // Test for dependency issues that affect compilation
       const dependencyIssues = [
         'TypeScript resolution configuration',
@@ -166,8 +166,8 @@ describe('Build Compilation - TDD RED Phase', () => {
     });
   });
 
-  describe('Integration - Build Pipeline', () => {
-    it('should FAIL: Complete build pipeline should fail', () => {
+  describe(_'Integration - Build Pipeline',_() => {
+    it('should FAIL: Complete build pipeline should fail',_() => {
       // Test the complete build process
       let buildSteps = ['type-check', 'test', 'build'];
       let failedSteps = 0;
@@ -188,7 +188,7 @@ describe('Build Compilation - TDD RED Phase', () => {
       expect(failedSteps).toBeGreaterThan(0);
     });
 
-    it('should document all errors for fixing phase', () => {
+    it(_'should document all errors for fixing phase',_() => {
       // This test documents the comprehensive error state
       const errorCategories = {
         moduleResolution: {
@@ -221,7 +221,7 @@ describe('Build Compilation - TDD RED Phase', () => {
 
       // Total errors to fix
       const totalErrors = Object.values(errorCategories)
-        .reduce((sum, category) => sum + category.count, 0);
+        .reduce(_(sum,_category) => sum + category.count, 0);
 
       expect(totalErrors).toBeGreaterThan(0);
       console.log(`🔴 TDD RED PHASE: ${totalErrors} errors identified for fixing`);

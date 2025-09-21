@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma';
 import { type LGPDOperationResult } from '../types/lgpd.js';
 import { createHealthcareError } from './createHealthcareError.js';
@@ -40,7 +39,7 @@ export const DataCategory = z.enum([
 
 export interface AuditTrailEntry {
   id: string;
-  userId?: string;
+  _userId?: string;
   patientId?: string;
   action: z.infer<typeof AuditAction>;
   entityType: string;
@@ -135,7 +134,7 @@ export class LGPDAuditService {
       // Create audit trail entry
       const auditEntry = await this.prisma.auditTrail.create({
         data: {
-          userId: entry.userId,
+          _userId: entry.userId,
           action: entry.action,
           entityType: entry.entityType,
           entityId: entry.entityId,
@@ -164,7 +163,7 @@ export class LGPDAuditService {
       if (entry.patientId) {
         await this.prisma.auditTrail.create({
           data: {
-            userId: entry.patientId,
+            _userId: entry.patientId,
             action: 'PATIENT_DATA_OPERATION',
             entityType: 'PATIENT_AUDIT',
             entityId: `${entry.entityType}_${entry.entityId}`,
@@ -193,7 +192,7 @@ export class LGPDAuditService {
         operationId: `audit_${auditEntry.id}`,
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -218,7 +217,7 @@ export class LGPDAuditService {
 
       const requestEntry = await this.prisma.auditTrail.create({
         data: {
-          userId: patientId,
+          _userId: patientId,
           action: 'DATA_SUBJECT_REQUEST',
           entityType: 'RIGHT_REQUEST',
           entityId: requestId,
@@ -255,7 +254,7 @@ export class LGPDAuditService {
         timestamp: new Date().toISOString(),
         requestId,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -282,7 +281,7 @@ export class LGPDAuditService {
       const { startDate, endDate, actionTypes, limit = 100 } = options;
 
       const whereClause: any = {
-        userId: patientId,
+        _userId: patientId,
         OR: [
           { action: { in: ['PATIENT_DATA_OPERATION'] } },
           { action: { notIn: ['PATIENT_DATA_OPERATION'] } },
@@ -314,7 +313,7 @@ export class LGPDAuditService {
         timestamp: new Date().toISOString(),
         auditTrail: formattedEntries,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -388,7 +387,7 @@ export class LGPDAuditService {
         timestamp: new Date().toISOString(),
         breachId,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -454,7 +453,7 @@ export class LGPDAuditService {
         timestamp: new Date().toISOString(),
         report,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -548,7 +547,7 @@ export class LGPDAuditService {
     const metadata = audit.metadata || {};
     return {
       id: audit.id,
-      userId: audit.userId,
+      _userId: audit.userId,
       patientId: metadata.patientId,
       action: audit.action,
       entityType: audit.entityType,
@@ -699,7 +698,7 @@ export class LGPDAuditService {
   }
 
   private groupBySeverity(breaches: any[]): Record<string, number> {
-    return breaches.reduce((acc, breach) => {
+    return breaches.reduce(_(acc,_breach) => {
       const severity = breach.metadata?.severity || 'UNKNOWN';
       acc[severity] = (acc[severity] || 0) + 1;
       return acc;
@@ -722,4 +721,4 @@ export class LGPDAuditService {
 }
 
 // Export singleton instance
-export const lgpdAuditService = new LGPDAuditService();
+export const _lgpdAuditService = new LGPDAuditService();

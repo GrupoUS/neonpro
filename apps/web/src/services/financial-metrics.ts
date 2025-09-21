@@ -52,7 +52,7 @@ export class FinancialMetricsService {
       if (error) throw error;
 
       return this.processTransactionsToMetrics(data || [], options);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error calculating financial metrics:', error);
       throw new Error('Failed to calculate financial metrics');
     }
@@ -87,7 +87,7 @@ export class FinancialMetricsService {
         appointmentCount: 0,
         averageTransactionValue: 0,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error aggregating financial data:', error);
       throw new Error('Failed to aggregate financial data');
     }
@@ -152,7 +152,7 @@ export class FinancialMetricsService {
           timestamp: new Date(record.period_start),
         })),
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting metrics history:', error);
       throw new Error('Failed to get metrics history');
     }
@@ -170,11 +170,11 @@ export class FinancialMetricsService {
     // Calculate revenue metrics
     const revenue = transactions
       .filter(t => t.type === 'income')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce(_(sum,_t) => sum + t.amount, 0);
 
     const expenses = transactions
       .filter(t => t.type === 'expense')
-      .reduce((sum, t) => sum + t.amount, 0);
+      .reduce(_(sum,_t) => sum + t.amount, 0);
 
     const profit = revenue - expenses;
 

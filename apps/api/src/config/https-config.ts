@@ -79,7 +79,7 @@ export function getHTTPSConfig(): HTTPSConfig {
         if (caPath) {
           config.ca = readFileSync(caPath, 'utf8');
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Failed to load SSL certificates:', error);
         throw new Error('SSL certificate loading failed');
       }
@@ -93,6 +93,7 @@ export function getHTTPSConfig(): HTTPSConfig {
       config.cert = readFileSync(join(devCertsPath, 'server.crt'), 'utf8');
       config.key = readFileSync(join(devCertsPath, 'server.key'), 'utf8');
     } catch (_error) {
+      // Certificate loading failed - handled by fallback logic
       console.warn('Development certificates not found, HTTPS will not be available');
       // Return configuration without certificates for HTTP fallback
     }

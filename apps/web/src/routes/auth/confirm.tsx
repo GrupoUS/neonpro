@@ -7,7 +7,7 @@ function AuthConfirmComponent() {
     'loading',
   );
 
-  useEffect(() => {
+  useEffect(_() => {
     const handleEmailConfirmation = async () => {
       try {
         // Get the current URL to check for parameters
@@ -20,7 +20,7 @@ function AuthConfirmComponent() {
         if (error || !data.session) {
           console.error('Email confirmation error:', error);
           setStatus('error');
-          setTimeout(() => {
+          setTimeout(_() => {
             window.location.href = '/login?message=confirmation_failed';
           }, 3000);
           return;
@@ -33,13 +33,13 @@ function AuthConfirmComponent() {
         const redirectUrl = nextUrl
           ? decodeURIComponent(nextUrl)
           : '/dashboard';
-        setTimeout(() => {
+        setTimeout(_() => {
           window.location.href = redirectUrl;
         }, 2000);
-      } catch (error) {
+      } catch (_error) {
         console.error('Email confirmation exception:', error);
         setStatus('error');
-        setTimeout(() => {
+        setTimeout(_() => {
           window.location.href = '/login?error=confirmation_exception';
         }, 3000);
       }
@@ -113,6 +113,6 @@ function AuthConfirmComponent() {
   );
 }
 
-export const Route = createFileRoute('/auth/confirm')({
+export const _Route = createFileRoute('/auth/confirm')({
   component: AuthConfirmComponent,
 });

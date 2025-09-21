@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 
 export interface I18nContextType {
   locale: string;
-  t: (key: string, params?: Record<string, string>) => string;
+  t: (key: string, params?: Record<string,_string>) => string;
 }
 
 export const I18nContext = createContext<I18nContextType>({
@@ -12,7 +12,7 @@ export const I18nContext = createContext<I18nContextType>({
 
 export const useI18n = () => {
   const context = useContext(I18nContext);
-  if (!context) {
+  if (!_context) {
     throw new Error('useI18n must be used within an I18nProvider');
   }
   return context;
@@ -61,14 +61,14 @@ const translations = {
 export const t = (
   key: string,
   locale: string = 'pt-BR',
-  params?: Record<string, string>,
+  params?: Record<string,_string>,
 ) => {
   const translation = translations[locale as keyof typeof translations]?.[
     key as keyof (typeof translations)['pt-BR']
   ] || key;
 
   if (params) {
-    return Object.entries(params).reduce((acc, [param, value]) => {
+    return Object.entries(params).reduce(_(acc,_[param,_value]) => {
       return acc.replace(`{{${param}}}`, value);
     }, translation);
   }

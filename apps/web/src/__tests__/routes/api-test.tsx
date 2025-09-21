@@ -228,6 +228,6 @@ function ApiTestComponent() {
   );
 }
 
-export const Route = createFileRoute('/__tests/api-test')({
+export const _Route = createFileRoute('/__tests/api-test')({
   component: ApiTestComponent,
 });

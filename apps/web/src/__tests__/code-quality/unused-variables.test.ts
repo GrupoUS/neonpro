@@ -20,7 +20,7 @@ function checkUnusedVariables(
   const unusedVariables: string[] = [];
 
   // Look for variable declarations that might be unused
-  const variablePatterns = [
+  const _variablePatterns = [
     /const\s+\[([^\]]+)\]\s*=/, // const [var1, var2] =
     /const\s+(\w+)\s*=/, // const var =
     /let\s+(\w+)\s*=/, // let var =
@@ -100,11 +100,11 @@ function checkUnusedCatchParameters(
   };
 }
 
-describe('TDD Orchestrator - Code Quality: Variables and Error Handling', () => {
+describe('TDD Orchestrator - Code Quality: Variables and Error Handling',_() => {
   const webSrcPath = join(process.cwd(), 'src');
 
-  describe('Phase 1: RED - Failing Tests for Variable Usage', () => {
-    it('should have no unused variables in insights-enhanced.tsx', () => {
+  describe('Phase 1: RED - Failing Tests for Variable Usage',_() => {
+    it(_'should have no unused variables in insights-enhanced.tsx',_() => {
       const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
       const result = checkUnusedVariables(filePath);
 
@@ -119,7 +119,7 @@ describe('TDD Orchestrator - Code Quality: Variables and Error Handling', () => 
       }
     });
 
-    it('should have proper error handling in insights-enhanced.tsx', () => {
+    it(_'should have proper error handling in insights-enhanced.tsx',_() => {
       const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
       const result = checkUnusedCatchParameters(filePath);
 
@@ -136,8 +136,8 @@ describe('TDD Orchestrator - Code Quality: Variables and Error Handling', () => 
       }
     });
   });
-  describe('Error Handling Standards', () => {
-    it('should use proper error handling patterns', () => {
+  describe(_'Error Handling Standards',_() => {
+    it(_'should use proper error handling patterns',_() => {
       const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
       const content = readFileSync(filePath, 'utf-8');
 
@@ -151,7 +151,7 @@ describe('TDD Orchestrator - Code Quality: Variables and Error Handling', () => 
       // During REFACTOR phase, we'll improve error handling patterns
     });
 
-    it('should follow TypeScript strict mode requirements', () => {
+    it(_'should follow TypeScript strict mode requirements',_() => {
       // This test validates TypeScript compliance
       const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
       const content = readFileSync(filePath, 'utf-8');
@@ -164,8 +164,8 @@ describe('TDD Orchestrator - Code Quality: Variables and Error Handling', () => 
     });
   });
 
-  describe('TDD Quality Gates', () => {
-    it('should pass all import quality checks after GREEN phase', () => {
+  describe(_'TDD Quality Gates',_() => {
+    it(_'should pass all import quality checks after GREEN phase',_() => {
       // This test will be used to validate GREEN phase completion
       const files = [
         'hooks/useFinancialMetrics.ts',

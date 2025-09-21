@@ -64,7 +64,7 @@ describe('Mobile Responsive Design Tests (T027)', () => {
           user: {
             id: 'mobile-test-user',
             email: 'mobile.test@professional.com',
-            role: 'healthcare_professional',
+            _role: 'healthcare_professional',
           },
         }),
       );
@@ -395,7 +395,7 @@ describe('Mobile Responsive Design Tests (T027)', () => {
         const role = await navItem.getAttribute('role');
 
         // Each nav item should have proper accessibility attributes
-        expect(ariaLabel || role).toBeTruthy();
+        expect(ariaLabel || _role).toBeTruthy();
       }
 
       // Test focus management

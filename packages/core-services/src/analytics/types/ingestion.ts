@@ -349,7 +349,7 @@ export interface IngestionError {
   };
 
   /** Error context */
-  context: {
+  _context: {
     operation: string;
     timestamp: Date;
     retryCount: number;

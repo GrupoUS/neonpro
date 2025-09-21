@@ -61,7 +61,7 @@ interface VideoConsultationProps {
 interface ParticipantInfo {
   id: string;
   name: string;
-  role: 'patient' | 'physician' | 'observer';
+  _role: 'patient' | 'physician' | 'observer';
   avatar?: string;
   isConnected: boolean;
   connectionQuality: 'excellent' | 'good' | 'poor' | 'critical';
@@ -149,7 +149,7 @@ export function VideoConsultation({
   const chatMessageRef = useRef<HTMLInputElement>(null);
 
   // Initialize WebRTC and attach streams to video elements
-  useEffect(() => {
+  useEffect(_() => {
     if (sessionId && session) {
       // Start WebRTC call
       startCall();
@@ -161,22 +161,22 @@ export function VideoConsultation({
   }, [sessionId, session, startCall, endCall]);
 
   // Attach local stream to video element
-  useEffect(() => {
+  useEffect(_() => {
     if (localStream && localVideoRef.current) {
       localVideoRef.current.srcObject = localStream;
     }
   }, [localStream]);
 
   // Attach remote streams to video element (first remote stream)
-  useEffect(() => {
+  useEffect(_() => {
     if (remoteStreams.length > 0 && remoteVideoRef.current) {
       remoteVideoRef.current.srcObject = remoteStreams[0];
     }
   }, [remoteStreams]);
 
   // Session duration timer
-  useEffect(() => {
-    durationInterval.current = setInterval(() => {
+  useEffect(_() => {
+    durationInterval.current = setInterval(_() => {
       setSessionDuration(
         Math.floor((Date.now() - sessionStartTime.current.getTime()) / 1000),
       );
@@ -190,27 +190,27 @@ export function VideoConsultation({
   }, []);
 
   // Monitor connection quality from WebRTC state
-  useEffect(() => {
+  useEffect(_() => {
     if (webrtcState.connectionQuality) {
       setNetworkQuality(webrtcState.connectionQuality);
     }
   }, [webrtcState.connectionQuality]);
 
   // Update participants list with WebRTC connection state
-  useEffect(() => {
+  useEffect(_() => {
     if (session) {
       const participantsList: ParticipantInfo[] = [
         {
           id: session.patientId,
           name: session.metadata.patientName,
-          role: 'patient',
+          _role: 'patient',
           isConnected: webrtcState.isConnected,
           connectionQuality: webrtcState.connectionQuality || 'good',
         },
         {
           id: session.professionalId,
           name: session.metadata.professionalName,
-          role: 'physician',
+          _role: 'physician',
           isConnected: webrtcState.isConnected,
           connectionQuality: webrtcState.connectionQuality || 'good',
         },
@@ -243,7 +243,7 @@ export function VideoConsultation({
   }, []);
 
   // Handle session end
-  const handleEndSession = useCallback(async () => {
+  const handleEndSession = useCallback(_async () => {
     try {
       await endSession('normal_completion');
       endCall();
@@ -273,7 +273,7 @@ export function VideoConsultation({
   );
 
   // Handle screen sharing with new WebRTC hook
-  const handleScreenShare = useCallback(async () => {
+  const handleScreenShare = useCallback(_async () => {
     try {
       if (webrtcState.isScreenSharing) {
         await stopScreenShare();
@@ -288,7 +288,7 @@ export function VideoConsultation({
   }, [startScreenShare, stopScreenShare, webrtcState.isScreenSharing]);
 
   // Handle recording toggle
-  const handleRecordingToggle = useCallback(async () => {
+  const handleRecordingToggle = useCallback(_async () => {
     try {
       if (isRecording) {
         await stopRecording();

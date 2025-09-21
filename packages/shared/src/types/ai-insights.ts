@@ -160,7 +160,7 @@ export interface AIInsight {
   // LGPD compliance
   lgpdConsent?: boolean;
   accessLog?: Array<{
-    userId: string;
+    _userId: string;
     action: string;
     timestamp: Date;
     ipAddress?: string;
@@ -177,7 +177,7 @@ export function generatePatientAnalysis(
   patientData: any,
   config: Partial<AIModelConfig>,
 ): Partial<AIInsight> {
-  const now = new Date();
+  const _now = new Date();
 
   return {
     id: `insight_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -344,7 +344,7 @@ export function createAIInsight(
     "id" | "createdAt" | "updatedAt" | "generatedAt" | "status"
   >,
 ): AIInsight {
-  const now = new Date();
+  const _now = new Date();
 
   return {
     ...data,
@@ -362,8 +362,8 @@ export function getInsightsByPatientId(
   patientId: string,
 ): AIInsight[] {
   return insights
-    .filter((insight) => insight.patientId === patientId)
-    .sort((a, b) => b.generatedAt.getTime() - a.generatedAt.getTime());
+    .filter(_(insight) => insight.patientId === patientId)
+    .sort(_(a,_b) => b.generatedAt.getTime() - a.generatedAt.getTime());
 }
 
 // Get insights by type
@@ -371,13 +371,12 @@ export function getInsightsByType(
   insights: AIInsight[],
   type: AIInsightType,
 ): AIInsight[] {
-  return insights.filter((insight) => insight.type === type);
+  return insights.filter(_(insight) => insight.type === type);
 }
 
 // Get validated insights
 export function getValidatedInsights(insights: AIInsight[]): AIInsight[] {
-  return insights.filter(
-    (insight) => insight.status === InsightStatus.VALIDATED,
+  return insights.filter(_(insight) => insight.status === InsightStatus.VALIDATED,
   );
 }
 
@@ -385,8 +384,7 @@ export function getValidatedInsights(insights: AIInsight[]): AIInsight[] {
 export function getInsightsRequiringValidation(
   insights: AIInsight[],
 ): AIInsight[] {
-  return insights.filter(
-    (insight) =>
+  return insights.filter(_(insight) =>
       insight.status === InsightStatus.GENERATED ||
       insight.status === InsightStatus.PENDING_REVIEW,
   );
@@ -411,7 +409,7 @@ export function calculateInsightsStatistics(insights: AIInsight[]): {
   let totalConfidence = 0;
   let totalReliability = 0;
 
-  insights.forEach((insight) => {
+  insights.forEach(_(insight) => {
     // Count by status
     stats.byStatus[insight.status] = (stats.byStatus[insight.status] || 0) + 1;
 

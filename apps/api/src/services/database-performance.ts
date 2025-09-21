@@ -62,7 +62,7 @@ export interface DatabaseHealth {
 }
 
 // Healthcare-specific query patterns
-export const HEALTHCARE_QUERY_PATTERNS = {
+export const _HEALTHCARE_QUERY_PATTERNS = {
   patientSearch: {
     tables: ['patients'],
     commonFilters: ['clinic_id', 'full_name', 'cpf', 'phone_primary', 'email'],
@@ -337,7 +337,7 @@ export class DatabasePerformanceService {
    */
   startHealthMonitoring(intervalMs: number = 300000) {
     // 5 minutes default
-    this.healthCheckInterval = setInterval(async () => {
+    this.healthCheckInterval = setInterval(_async () => {
       const health = await this.performHealthCheck();
 
       if (health.status === 'critical') {

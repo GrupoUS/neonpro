@@ -11,13 +11,13 @@ import {
   type SessionConfig,
 } from "../src/config/session";
 
-describe("T010: Chat Session Expiration Logic", () => {
+describe("T010: Chat Session Expiration Logic",_() => {
   let sessionRepo: SessionRepo;
   let sessionManager: SessionManager;
   let sessionStore: MemorySessionStore;
   let sessionConfig: SessionConfig;
 
-  beforeEach(() => {
+  beforeEach(_() => {
     sessionRepo = new SessionRepo();
 
     sessionConfig = {
@@ -35,17 +35,17 @@ describe("T010: Chat Session Expiration Logic", () => {
     sessionManager = new SessionManager(sessionConfig, sessionStore);
   });
 
-  afterEach(() => {
+  afterEach(_() => {
     sessionStore.destroy();
   });
 
-  describe("Basic Session Repository", () => {
-    it("should create new chat session with correct timestamps", async () => {
+  describe(_"Basic Session Repository",_() => {
+    it(_"should create new chat session with correct timestamps",_async () => {
       const userId = "user-123";
       const session = await sessionRepo.create(userId, "pt-BR");
 
       expect(session.id).toBeDefined();
-      expect(session.userId).toBe(userId);
+      expect(session._userId).toBe(_userId);
       expect(session.locale).toBe("pt-BR");
       expect(session.startedAt).toBeDefined();
       expect(session.lastActivityAt).toBeDefined();
@@ -53,28 +53,28 @@ describe("T010: Chat Session Expiration Logic", () => {
       expect(new Date(session.lastActivityAt)).toBeInstanceOf(Date);
     });
 
-    it("should find existing session by ID", async () => {
+    it(_"should find existing session by ID",_async () => {
       const userId = "user-123";
-      const session = await sessionRepo.create(userId);
+      const session = await sessionRepo.create(_userId);
 
       const found = await sessionRepo.find(session.id);
       expect(found).toBeDefined();
       expect(found?.id).toBe(session.id);
-      expect(found?.userId).toBe(userId);
+      expect(found?._userId).toBe(_userId);
     });
 
-    it("should return null for non-existent session", async () => {
+    it(_"should return null for non-existent session",_async () => {
       const found = await sessionRepo.find("non-existent-id");
       expect(found).toBeNull();
     });
 
-    it("should update lastActivityAt when touching session", async () => {
+    it(_"should update lastActivityAt when touching session",_async () => {
       const userId = "user-123";
-      const session = await sessionRepo.create(userId);
+      const session = await sessionRepo.create(_userId);
       const originalActivity = session.lastActivityAt;
 
       // Wait a bit to ensure timestamp difference
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise(_(resolve) => setTimeout(resolve, 10));
 
       await sessionRepo.touch(session.id);
 
@@ -83,7 +83,7 @@ describe("T010: Chat Session Expiration Logic", () => {
       expect(new Date(updated!.lastActivityAt)).toBeInstanceOf(Date);
     });
 
-    it("should handle touching non-existent session gracefully", async () => {
+    it(_"should handle touching non-existent session gracefully",_async () => {
       // Should not throw error
       await expect(
         sessionRepo.touch("non-existent-id"),
@@ -91,12 +91,12 @@ describe("T010: Chat Session Expiration Logic", () => {
     });
   });
 
-  describe("Session Manager Expiration", () => {
-    it("should create session with correct expiration time", async () => {
+  describe(_"Session Manager Expiration",_() => {
+    it(_"should create session with correct expiration time",_async () => {
       const userData = {
-        userId: "user-123",
+        _userId: "user-123",
         email: "test@example.com",
-        role: "patient",
+        _role: "patient",
       };
 
       const { sessionId, session } =
@@ -116,9 +116,9 @@ describe("T010: Chat Session Expiration Logic", () => {
       ).toBeLessThan(1000);
     });
 
-    it("should retrieve valid session before expiration", async () => {
+    it(_"should retrieve valid session before expiration",_async () => {
       const userData = {
-        userId: "user-123",
+        _userId: "user-123",
         email: "test@example.com",
       };
 
@@ -126,18 +126,18 @@ describe("T010: Chat Session Expiration Logic", () => {
       const retrieved = await sessionStore.get(sessionId);
 
       expect(retrieved).toBeDefined();
-      expect(retrieved?.userId).toBe("user-123");
+      expect(retrieved?._userId).toBe("user-123");
       expect(retrieved?.email).toBe("test@example.com");
     });
 
-    it("should return null for expired session", async () => {
+    it(_"should return null for expired session",_async () => {
       // Mock current time
       const originalNow = Date.now;
       const fixedTime = new Date("2023-01-01T12:00:00Z").getTime();
-      Date.now = vi.fn(() => fixedTime);
+      Date.now = vi.fn(_() => fixedTime);
 
       const userData = {
-        userId: "user-123",
+        _userId: "user-123",
         email: "test@example.com",
       };
 
@@ -145,7 +145,7 @@ describe("T010: Chat Session Expiration Logic", () => {
 
       // Fast-forward time beyond expiration
       const expiredTime = fixedTime + sessionConfig.maxAge * 1000 + 1000;
-      Date.now = vi.fn(() => expiredTime);
+      Date.now = vi.fn(_() => expiredTime);
 
       const retrieved = await sessionStore.get(sessionId);
       expect(retrieved).toBeNull();
@@ -154,9 +154,9 @@ describe("T010: Chat Session Expiration Logic", () => {
       Date.now = originalNow;
     });
 
-    it("should detect session renewal need", async () => {
+    it(_"should detect session renewal need",_async () => {
       const userData = {
-        userId: "user-123",
+        _userId: "user-123",
         email: "test@example.com",
       };
 
@@ -168,7 +168,7 @@ describe("T010: Chat Session Expiration Logic", () => {
         Date.now() +
         sessionConfig.maxAge * 1000 -
         sessionConfig.renewThreshold * 500;
-      Date.now = vi.fn(() => renewalTime);
+      Date.now = vi.fn(_() => renewalTime);
 
       const session = await sessionStore.get(sessionId);
       const needsRenewal =
@@ -182,9 +182,9 @@ describe("T010: Chat Session Expiration Logic", () => {
       Date.now = originalNow;
     });
 
-    it("should renew session extending expiration time", async () => {
+    it(_"should renew session extending expiration time",_async () => {
       const userData = {
-        userId: "user-123",
+        _userId: "user-123",
         email: "test@example.com",
       };
 
@@ -192,7 +192,7 @@ describe("T010: Chat Session Expiration Logic", () => {
       const originalSession = await sessionStore.get(sessionId);
 
       // Wait a bit then renew
-      await new Promise((resolve) => setTimeout(resolve, 10));
+      await new Promise(_(resolve) => setTimeout(resolve, 10));
       const renewed = await sessionManager.renewSession(sessionId);
 
       expect(renewed.success).toBe(true);
@@ -205,15 +205,15 @@ describe("T010: Chat Session Expiration Logic", () => {
       }
     });
 
-    it("should handle renewal of non-existent session", async () => {
+    it(_"should handle renewal of non-existent session",_async () => {
       const renewed = await sessionManager.renewSession("non-existent-id");
       expect(renewed.success).toBe(false);
       expect(renewed.session).toBeNull();
     });
   });
 
-  describe("Session Store Cleanup", () => {
-    it("should automatically clean up expired sessions", async () => {
+  describe(_"Session Store Cleanup",_() => {
+    it(_"should automatically clean up expired sessions",_async () => {
       // Create session with very short expiration
       const shortConfig: SessionConfig = {
         ...sessionConfig,
@@ -224,7 +224,7 @@ describe("T010: Chat Session Expiration Logic", () => {
       const shortManager = new SessionManager(shortConfig, shortStore);
 
       const userData = {
-        userId: "user-123",
+        _userId: "user-123",
         email: "test@example.com",
       };
 
@@ -235,7 +235,7 @@ describe("T010: Chat Session Expiration Logic", () => {
       expect(session).toBeDefined();
 
       // Wait for expiration and cleanup
-      await new Promise((resolve) => setTimeout(resolve, 1200));
+      await new Promise(_(resolve) => setTimeout(resolve, 1200));
 
       // Session should be cleaned up
       session = await shortStore.get(sessionId);
@@ -244,9 +244,9 @@ describe("T010: Chat Session Expiration Logic", () => {
       shortStore.destroy();
     });
 
-    it("should not clean up valid sessions during cleanup", async () => {
+    it(_"should not clean up valid sessions during cleanup",_async () => {
       const userData = {
-        userId: "user-123",
+        _userId: "user-123",
         email: "test@example.com",
       };
 
@@ -260,7 +260,7 @@ describe("T010: Chat Session Expiration Logic", () => {
       expect(session).toBeDefined();
     });
 
-    it("should clean up multiple expired sessions efficiently", async () => {
+    it(_"should clean up multiple expired sessions efficiently",_async () => {
       const SESSION_COUNT = 5;
       const shortConfig: SessionConfig = {
         ...sessionConfig,
@@ -274,7 +274,7 @@ describe("T010: Chat Session Expiration Logic", () => {
       const sessionIds: string[] = [];
       for (let i = 0; i < SESSION_COUNT; i++) {
         const { sessionId } = await shortManager.createSession({
-          userId: `user-${i}`,
+          _userId: `user-${i}`,
           email: `user${i}@example.com`,
         });
         sessionIds.push(sessionId);
@@ -287,7 +287,7 @@ describe("T010: Chat Session Expiration Logic", () => {
       }
 
       // Wait for expiration
-      await new Promise((resolve) => setTimeout(resolve, 1100));
+      await new Promise(_(resolve) => setTimeout(resolve, 1100));
 
       // Manual cleanup
       await shortStore.cleanup();
@@ -302,10 +302,10 @@ describe("T010: Chat Session Expiration Logic", () => {
     });
   });
 
-  describe("LGPD Compliance and Security", () => {
-    it("should properly expire sessions for data protection", async () => {
+  describe(_"LGPD Compliance and Security",_() => {
+    it(_"should properly expire sessions for data protection",_async () => {
       const userData = {
-        userId: "user-123",
+        _userId: "user-123",
         email: "patient@clinic.com",
         metadata: {
           patientId: "patient-456",
@@ -318,7 +318,7 @@ describe("T010: Chat Session Expiration Logic", () => {
       // Mock expired time
       const originalNow = Date.now;
       const expiredTime = Date.now() + sessionConfig.maxAge * 1000 + 1000;
-      Date.now = vi.fn(() => expiredTime);
+      Date.now = vi.fn(_() => expiredTime);
 
       // Attempt to access expired session
       const expiredSession = await sessionStore.get(sessionId);
@@ -330,9 +330,9 @@ describe("T010: Chat Session Expiration Logic", () => {
       Date.now = originalNow;
     });
 
-    it("should handle session metadata securely during expiration", async () => {
+    it(_"should handle session metadata securely during expiration",_async () => {
       const sensitiveData = {
-        userId: "user-123",
+        _userId: "user-123",
         email: "patient@clinic.com",
         metadata: {
           cpf: "123.456.789-00",
@@ -355,9 +355,9 @@ describe("T010: Chat Session Expiration Logic", () => {
       expect(session).toBeNull();
     });
 
-    it("should generate unique session IDs to prevent prediction", async () => {
+    it(_"should generate unique session IDs to prevent prediction",_async () => {
       const userData = {
-        userId: "user-123",
+        _userId: "user-123",
         email: "test@example.com",
       };
 
@@ -373,19 +373,19 @@ describe("T010: Chat Session Expiration Logic", () => {
       expect(sessionIds.size).toBe(10);
 
       // IDs should follow expected format
-      sessionIds.forEach((id) => {
+      sessionIds.forEach(_(id) => {
         expect(id).toMatch(/^sess_\d+_[a-z0-9]+$/);
       });
     });
 
-    it("should handle concurrent session operations safely", async () => {
+    it(_"should handle concurrent session operations safely",_async () => {
       const userData = {
-        userId: "user-123",
+        _userId: "user-123",
         email: "test@example.com",
       };
 
       // Create multiple sessions concurrently
-      const sessionPromises = Array.from({ length: 5 }, () =>
+      const sessionPromises = Array.from({ length: 5 },_() =>
         sessionManager.createSession(userData),
       );
 
@@ -393,9 +393,9 @@ describe("T010: Chat Session Expiration Logic", () => {
 
       // All sessions should be created successfully
       expect(sessions).toHaveLength(5);
-      sessions.forEach(({ sessionId, session }) => {
+      sessions.forEach(_({ sessionId,_session }) => {
         expect(sessionId).toBeDefined();
-        expect(session.userId).toBe("user-123");
+        expect(session._userId).toBe("user-123");
       });
 
       // All sessions should be retrievable

@@ -188,7 +188,7 @@ const MedicalVitalsChart = ({ patientId, timeRange, realTime = false }) => {
 // Helper function to generate mock vitals data
 function generateMockVitalsData(timeRange) {
   const data = [];
-  const now = new Date();
+  const _now = new Date();
   let dataPoints, intervalMs;
 
   switch (timeRange) {
