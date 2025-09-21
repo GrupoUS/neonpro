@@ -125,7 +125,7 @@ function AppointmentsPage() {
     });
   };
 
-  const handleEventDelete = (_eventId: [a-zA-Z][a-zA-Z]*) => {
+  const handleEventDelete = (_eventId: any) => {
     deleteAppointmentMutation.mutate({
       appointmentId: eventId,
       clinicId,

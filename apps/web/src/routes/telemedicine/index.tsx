@@ -193,7 +193,7 @@ function TelemedicineDashboard() {
   }, [state.autoRefresh, refetchSessions, refetchStats]);
 
   // Handle session start
-  const handleStartSession = async (_appointmentId: [a-zA-Z][a-zA-Z]*) => {
+  const handleStartSession = async (_appointmentId: any) => {
     try {
       await startSessionMutation.mutateAsync({
         appointmentId,
@@ -210,7 +210,7 @@ function TelemedicineDashboard() {
   };
 
   // Handle session join
-  const handleJoinSession = async (_sessionId: [a-zA-Z][a-zA-Z]*) => {
+  const handleJoinSession = async (_sessionId: any) => {
     try {
       await joinSessionMutation.mutateAsync({ sessionId });
     } catch (_error) {
@@ -244,7 +244,7 @@ function TelemedicineDashboard() {
   }) || [];
 
   // Get status color
-  const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
+  const getStatusColor = (_status: any) => {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-800 border-green-300';
@@ -262,7 +262,7 @@ function TelemedicineDashboard() {
   };
 
   // Get urgency color
-  const getUrgencyColor = (_urgency: [a-zA-Z][a-zA-Z]*) => {
+  const getUrgencyColor = (_urgency: any) => {
     switch (urgency) {
       case 'critical':
         return 'text-red-600';
@@ -278,7 +278,7 @@ function TelemedicineDashboard() {
   };
 
   // Format time for display
-  const formatTime = (_date: [a-zA-Z][a-zA-Z]*) => {
+  const formatTime = (_date: any) => {
     return new Intl.DateTimeFormat('pt-BR', {
       hour: '2-digit',
       minute: '2-digit',

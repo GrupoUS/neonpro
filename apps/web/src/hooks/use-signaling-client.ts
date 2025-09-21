@@ -227,7 +227,7 @@ export function useSignalingClient(
   /**
    * Send message through signaling channel
    */
-  const sendMessage = useCallback((_message: [a-zA-Z][a-zA-Z]*) => {
+  const sendMessage = useCallback((_message: any) => {
     if (websocketRef.current?.readyState === WebSocket.OPEN) {
       try {
         // Add timestamp and compliance info if not present
@@ -260,7 +260,7 @@ export function useSignalingClient(
    * Handle incoming signaling messages
    */
   const handleIncomingMessage = useCallback(
-    (_message: [a-zA-Z][a-zA-Z]*) => {
+    (_message: any) => {
       // Validate message compliance
       if (!message.compliance?.cfmCompliant) {
         console.warn('Received non-compliant message, ignoring:', message);

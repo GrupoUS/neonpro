@@ -188,7 +188,7 @@ export function useCreateAppointment() {
       });
 
       // Optimistically update to the new value
-      queryClient.setQueryData(appointmentKeys.lists(), (_old: [a-zA-Z][a-zA-Z]*) => {
+      queryClient.setQueryData(appointmentKeys.lists(), (_old: any) => {
         if (!old) return old;
 
         const optimisticAppointment = {
@@ -332,7 +332,7 @@ export function useUpdateAppointmentStatus() {
       });
 
       // Optimistically update
-      queryClient.setQueryData(appointmentKeys.detail(id), (_old: [a-zA-Z][a-zA-Z]*) => {
+      queryClient.setQueryData(appointmentKeys.detail(id), (_old: any) => {
         if (!old) return old;
         return {
           ...old,
@@ -440,7 +440,7 @@ export function useSendAppointmentReminder() {
       // Update appointment cache with reminder info
       queryClient.setQueryData(
         appointmentKeys.detail(variables.appointmentId),
-        (_old: [a-zA-Z][a-zA-Z]*) => {
+        (_old: any) => {
           if (!old) return old;
           return {
             ...old,
@@ -505,7 +505,7 @@ export function useAppointmentRealTimeUpdates(options?: {
           if (update.appointmentId) {
             queryClient.setQueryData(
               appointmentKeys.detail(update.appointmentId),
-              (_old: [a-zA-Z][a-zA-Z]*) => {
+              (_old: any) => {
                 if (!old) return old;
                 return {
                   ...old,
@@ -724,7 +724,7 @@ export const appointmentUtils = {
     });
   },
 
-  getStatusColor: (_status: [a-zA-Z][a-zA-Z]*) => {
+  getStatusColor: (_status: any) => {
     const colors = {
       scheduled: 'blue',
       confirmed: 'green',
@@ -743,7 +743,7 @@ export const appointmentUtils = {
     return Math.round((endTime - startTime) / (1000 * 60)); // Minutes
   },
 
-  getNoShowRiskText: (_risk: [a-zA-Z][a-zA-Z]*) => {
+  getNoShowRiskText: (_risk: any) => {
     if (risk > 0.7) return 'Alto risco de falta';
     if (risk > 0.4) return 'Risco moderado de falta';
     return 'Baixo risco de falta';

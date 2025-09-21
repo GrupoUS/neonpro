@@ -67,7 +67,7 @@ export function useKeyboardNavigation<T>(
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
 
   const handleKeyDown = useCallback(
-    (_event: [a-zA-Z][a-zA-Z]*) => {
+    (_event: any) => {
       if (orientation === 'grid' && columns > 1) {
         KeyboardNavigation.handleGridNavigation(
           event,
@@ -158,7 +158,7 @@ export function useScreenReaderAnnouncement() {
   );
 
   const announceFormSuccess = useCallback(
-    (_message: [a-zA-Z][a-zA-Z]*) => {
+    (_message: any) => {
       announce(`Sucesso: ${message}`, 'polite');
     },
     [announce],
@@ -242,7 +242,7 @@ export function useAccessibleField(
   );
 
   const validateField = useCallback(
-    (_fieldValue: [a-zA-Z][a-zA-Z]*) => {
+    (_fieldValue: any) => {
       if (required && !fieldValue.trim()) {
         return 'Este campo é obrigatório';
       }
@@ -257,7 +257,7 @@ export function useAccessibleField(
   );
 
   const handleChange = useCallback(
-    (_newValue: [a-zA-Z][a-zA-Z]*) => {
+    (_newValue: any) => {
       setValue(newValue);
 
       if (touched) {

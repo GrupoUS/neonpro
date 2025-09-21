@@ -594,7 +594,7 @@ describe('Supabase Performance Tests', () => {
               table: test.table,
               filter: test.filter,
             },
-            (_payload: [a-zA-Z][a-zA-Z]*) => {
+            (_payload: any) => {
               console.log(
                 `Real-time update received for ${test.table}:`,
                 payload,

@@ -172,7 +172,7 @@ export function AccessibleHealthcareForm({
   );
 
   const renderField = useCallback(
-    (_field: [a-zA-Z][a-zA-Z]*) => {
+    (_field: any) => {
       const fieldHook = fieldHooks[field.name];
       const { fieldProps, errorProps, descriptionProps } = fieldHook;
 

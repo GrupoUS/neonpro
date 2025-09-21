@@ -427,7 +427,7 @@ function PatientAIInsights() {
     });
   }, [insights, selectedCategory, selectedPriority]);
 
-  const getPriorityColor = (_priority: [a-zA-Z][a-zA-Z]*) => {
+  const getPriorityColor = (_priority: any) => {
     switch (priority) {
       case 'critical':
         return 'destructive';
@@ -442,7 +442,7 @@ function PatientAIInsights() {
     }
   };
 
-  const getPriorityLabel = (_priority: [a-zA-Z][a-zA-Z]*) => {
+  const getPriorityLabel = (_priority: any) => {
     switch (priority) {
       case 'critical':
         return 'Crítico';
@@ -457,7 +457,7 @@ function PatientAIInsights() {
     }
   };
 
-  const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
+  const getStatusColor = (_status: any) => {
     switch (status) {
       case 'active':
         return 'default';
@@ -470,7 +470,7 @@ function PatientAIInsights() {
     }
   };
 
-  const handleInsightAction = async (_insight: [a-zA-Z][a-zA-Z]*) => {
+  const handleInsightAction = async (_insight: any) => {
     toast({
       title: 'Ação de IA executada',
       description: `Iniciando ações para: ${insight.title}`,
@@ -485,7 +485,7 @@ function PatientAIInsights() {
     }, 2000);
   };
 
-  const handleInsightDetails = (_insight: [a-zA-Z][a-zA-Z]*) => {
+  const handleInsightDetails = (_insight: any) => {
     setSelectedInsight(insight);
     setIsModalOpen(true);
   };

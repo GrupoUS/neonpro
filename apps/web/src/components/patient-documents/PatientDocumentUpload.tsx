@@ -258,7 +258,7 @@ export function PatientDocumentUpload({
     formData.append('uploaded_by', user.id);
 
     // Simulate progress updates
-    const updateProgress = (_progress: [a-zA-Z][a-zA-Z]*) => {
+    const updateProgress = (_progress: any) => {
       setUploadQueue(prev => {
         const newMap = new Map(prev);
         const state = newMap.get(uploadId);
@@ -300,7 +300,7 @@ export function PatientDocumentUpload({
 
   // Handle file selection and processing
   const handleFiles = useCallback(
-    async (_files: [a-zA-Z][a-zA-Z]*) => {
+    async (_files: any) => {
       if (disabled || !user) return;
 
       const fileArray = Array.from(files);
@@ -441,7 +441,7 @@ export function PatientDocumentUpload({
   );
 
   // Handle document removal
-  const handleRemoveDocument = async (_documentId: [a-zA-Z][a-zA-Z]*) => {
+  const handleRemoveDocument = async (_documentId: any) => {
     try {
       const response = await fetch(`/api/v1/patient-documents/${documentId}`, {
         method: 'DELETE',
@@ -461,7 +461,7 @@ export function PatientDocumentUpload({
   };
 
   // Get file type info with enhanced styling
-  const getFileTypeInfo = (_mimeType: [a-zA-Z][a-zA-Z]*) => {
+  const getFileTypeInfo = (_mimeType: any) => {
     return (
       HEALTHCARE_FILE_TYPES[mimeType as keyof typeof HEALTHCARE_FILE_TYPES]
       || HEALTHCARE_FILE_TYPES.default

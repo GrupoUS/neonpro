@@ -111,7 +111,7 @@ export function CalendarDndProvider({
   // Generate a stable ID for the DndContext
   const dndContextId = useId();
 
-  const handleDragStart = (_event: [a-zA-Z][a-zA-Z]*) => {
+  const handleDragStart = (_event: any) => {
     const { active } = event;
 
     // Add safety check for data.current
@@ -158,7 +158,7 @@ export function CalendarDndProvider({
     }
   };
 
-  const handleDragOver = (_event: [a-zA-Z][a-zA-Z]*) => {
+  const handleDragOver = (_event: any) => {
     const { over } = event;
 
     if (over && activeEvent && over.data.current) {
@@ -217,7 +217,7 @@ export function CalendarDndProvider({
     }
   };
 
-  const handleDragEnd = (_event: [a-zA-Z][a-zA-Z]*) => {
+  const handleDragEnd = (_event: any) => {
     const { active, over } = event;
 
     // Add robust error checking

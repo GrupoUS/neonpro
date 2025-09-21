@@ -151,7 +151,7 @@ export function AestheticAssessmentForm({
     'Textura irregular',
   ];
 
-  const handleConcernToggle = (_concern: [a-zA-Z][a-zA-Z]*) => {
+  const handleConcernToggle = (_concern: any) => {
     const currentConcerns = form.getValues('skinAnalysis.primaryConcerns');
     const updatedConcerns = currentConcerns.includes(concern)
       ? currentConcerns.filter(c => c !== concern)

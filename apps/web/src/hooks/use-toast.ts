@@ -33,7 +33,7 @@ export function useToast() {
   return {
     toast,
     toasts,
-    dismiss: (_toastId: [a-zA-Z][a-zA-Z]*) => {
+    dismiss: (_toastId: any) => {
       setToasts(prev => prev.filter(t => t.id !== toastId));
     },
   };

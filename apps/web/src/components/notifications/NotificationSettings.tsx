@@ -63,7 +63,7 @@ export function NotificationSettings({
     setHasChanges(true);
   };
 
-  const handleLgpdConsent = (_consent: [a-zA-Z][a-zA-Z]*) => {
+  const handleLgpdConsent = (_consent: any) => {
     setLocalPreferences(prev =>
       prev
         ? {

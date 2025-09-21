@@ -291,7 +291,7 @@ export function AccessiblePatientList({
   const { announce } = useScreenReaderAnnouncement();
 
   const handlePatientSelect = useCallback(
-    (_patient: [a-zA-Z][a-zA-Z]*) => {
+    (_patient: any) => {
       onPatientSelect(patient);
       announce(`Paciente ${patient.name} selecionado`, 'polite');
     },

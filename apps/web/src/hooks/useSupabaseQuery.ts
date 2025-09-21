@@ -257,7 +257,7 @@ export function useSupabaseMutation(
 
       options.onSuccess?.(data);
     },
-    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
+    onError: (_error: any) => {
       console.error(`Error in ${table} mutation:`, error);
 
       // Mostrar toast de erro

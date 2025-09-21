@@ -376,7 +376,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
   };
 
   // Update benchmark comparison
-  const updateBenchmarkComparison = (_score: [a-zA-Z][a-zA-Z]*) => {
+  const updateBenchmarkComparison = (_score: any) => {
     setBenchmarks(prev => prev.map(benchmark => ({
       ...benchmark,
       isBeaten: score >= benchmark.score

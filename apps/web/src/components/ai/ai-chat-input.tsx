@@ -114,7 +114,7 @@ export interface AIChatInputProps {
 }
 
 // File type icons
-const getFileIcon = (_type: [a-zA-Z][a-zA-Z]*) => {
+const getFileIcon = (_type: any) => {
   if (type.startsWith('image/')) return <Image className='h-4 w-4' />;
   if (type.startsWith('video/')) return <Video className='h-4 w-4' />;
   if (type.startsWith('audio/')) return <Music className='h-4 w-4' />;
@@ -122,7 +122,7 @@ const getFileIcon = (_type: [a-zA-Z][a-zA-Z]*) => {
 };
 
 // Format file size
-const formatFileSize = (_bytes: [a-zA-Z][a-zA-Z]*) => {
+const formatFileSize = (_bytes: any) => {
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -227,7 +227,7 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
 
   // Remove attachment
   const handleRemoveAttachment = useCallback(
-    (_fileId: [a-zA-Z][a-zA-Z]*) => {
+    (_fileId: any) => {
       if (onFileRemove) {
         onFileRemove(fileId);
       }

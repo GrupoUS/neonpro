@@ -149,7 +149,7 @@ export default function NotificationCard({
 
   const items = (data ?? []) as readonly NormalizedNotification[];
 
-  const onClickItem = (_n: [a-zA-Z][a-zA-Z]*) => {
+  const onClickItem = (_n: any) => {
     const id = String(n.id);
     const updated = new Set(readIds);
     updated.add(id);

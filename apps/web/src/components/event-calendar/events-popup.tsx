@@ -25,7 +25,7 @@ export function EventsPopup({
 
   // Handle click outside to close popup
   useEffect(() => {
-    const handleClickOutside = (_event: [a-zA-Z][a-zA-Z]*) => {
+    const handleClickOutside = (_event: any) => {
       if (
         popupRef.current
         && !popupRef.current.contains(event.target as Node)
@@ -42,7 +42,7 @@ export function EventsPopup({
 
   // Handle escape key to close popup
   useEffect(() => {
-    const handleEscKey = (_event: [a-zA-Z][a-zA-Z]*) => {
+    const handleEscKey = (_event: any) => {
       if (event.key === 'Escape') {
         onClose();
       }
@@ -54,7 +54,7 @@ export function EventsPopup({
     };
   }, [onClose]);
 
-  const handleEventClick = (_event: [a-zA-Z][a-zA-Z]*) => {
+  const handleEventClick = (_event: any) => {
     onEventSelect(event);
     onClose();
   };

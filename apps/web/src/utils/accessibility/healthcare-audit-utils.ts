@@ -62,7 +62,7 @@ export const HEALTHCARE_AUDIT_RULES = {
     name: 'Medical Information Accessibility',
     description: 'All medical information must be accessible to healthcare professionals',
     severity: 'critical',
-    check: (_element: [a-zA-Z][a-zA-Z]*) => {
+    check: (_element: any) => {
       const medicalInfo = element.querySelectorAll(
         '[data-sensitive="medical"], [data-medical="true"]',
       );
@@ -75,7 +75,7 @@ export const HEALTHCARE_AUDIT_RULES = {
         );
       });
     },
-    fix: (_element: [a-zA-Z][a-zA-Z]*) => {
+    fix: (_element: any) => {
       const medicalInfo = element.querySelectorAll(
         '[data-sensitive="medical"], [data-medical="true"]',
       );
@@ -96,7 +96,7 @@ export const HEALTHCARE_AUDIT_RULES = {
     name: 'Emergency Information Accessibility',
     description: 'Emergency information must be accessible without color dependence',
     severity: 'critical',
-    check: (_element: [a-zA-Z][a-zA-Z]*) => {
+    check: (_element: any) => {
       const emergencyElements = element.querySelectorAll(
         '[data-emergency="true"], .emergency',
       );
@@ -109,7 +109,7 @@ export const HEALTHCARE_AUDIT_RULES = {
         return color !== backgroundColor && color !== 'transparent';
       });
     },
-    fix: (_element: [a-zA-Z][a-zA-Z]*) => {
+    fix: (_element: any) => {
       const emergencyElements = element.querySelectorAll(
         '[data-emergency="true"], .emergency',
       );
@@ -126,7 +126,7 @@ export const HEALTHCARE_AUDIT_RULES = {
     name: 'Medical Form Accessibility',
     description: 'Medical forms must have proper labeling and instructions',
     severity: 'serious',
-    check: (_element: [a-zA-Z][a-zA-Z]*) => {
+    check: (_element: any) => {
       const medicalForms = element.querySelectorAll(
         'form[data-medical="true"], .medical-form',
       );
@@ -143,7 +143,7 @@ export const HEALTHCARE_AUDIT_RULES = {
         });
       });
     },
-    fix: (_element: [a-zA-Z][a-zA-Z]*) => {
+    fix: (_element: any) => {
       const medicalForms = element.querySelectorAll(
         'form[data-medical="true"], .medical-form',
       );
@@ -166,7 +166,7 @@ export const HEALTHCARE_AUDIT_RULES = {
     name: 'Prescription Information Accessibility',
     description: 'Prescription information must be clear and accessible',
     severity: 'serious',
-    check: (_element: [a-zA-Z][a-zA-Z]*) => {
+    check: (_element: any) => {
       const prescriptionElements = element.querySelectorAll(
         '[data-prescription="true"], .prescription',
       );
@@ -178,7 +178,7 @@ export const HEALTHCARE_AUDIT_RULES = {
         );
       });
     },
-    fix: (_element: [a-zA-Z][a-zA-Z]*) => {
+    fix: (_element: any) => {
       const prescriptionElements = element.querySelectorAll(
         '[data-prescription="true"], .prescription',
       );
@@ -200,7 +200,7 @@ export const HEALTHCARE_AUDIT_RULES = {
     name: 'Appointment Scheduling Accessibility',
     description: 'Appointment scheduling must be accessible to all users',
     severity: 'moderate',
-    check: (_element: [a-zA-Z][a-zA-Z]*) => {
+    check: (_element: any) => {
       const appointmentElements = element.querySelectorAll(
         '[data-appointment="true"], .appointment-scheduler',
       );
@@ -220,7 +220,7 @@ export const HEALTHCARE_AUDIT_RULES = {
         );
       });
     },
-    fix: (_element: [a-zA-Z][a-zA-Z]*) => {
+    fix: (_element: any) => {
       const appointmentElements = element.querySelectorAll(
         '[data-appointment="true"], .appointment-scheduler',
       );
@@ -351,7 +351,7 @@ export class HealthcareAccessibilityAuditor {
       results.categoryResults.push(categoryResult);
 
       // Update summary counts
-      categoryResult.issues.forEach((_issue: [a-zA-Z][a-zA-Z]*) => {
+      categoryResult.issues.forEach((_issue: any) => {
         switch (issue.severity) {
           case 'critical':
             results.summary.criticalIssues++;
@@ -592,7 +592,7 @@ export class HealthcareAccessibilityAuditor {
     }
 
     // Category-specific recommendations
-    results.categoryResults.forEach((_category: [a-zA-Z][a-zA-Z]*) => {
+    results.categoryResults.forEach((_category: any) => {
       if (!category.passed) {
         switch (category.category) {
           case 'Patient Safety':

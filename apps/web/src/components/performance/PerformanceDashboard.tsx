@@ -85,7 +85,7 @@ export function PerformanceDashboard({
   const analytics = getAnalytics();
 
   // Format time values
-  const formatTime = (_ms: [a-zA-Z][a-zA-Z]*) => {
+  const formatTime = (_ms: any) => {
     if (ms < 1000) return `${Math.round(ms)}ms`;
     return `${(ms / 1000).toFixed(1)}s`;
   };

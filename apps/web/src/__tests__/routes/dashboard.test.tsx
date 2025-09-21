@@ -23,7 +23,7 @@ vi.mock('@/hooks/useAuth', () => ({
 
 // Mock supabase queries used by the dashboard to return empty results quickly
 vi.mock('@/integrations/supabase/client', () => {
-  const makeChain = (_result: [a-zA-Z][a-zA-Z]*) => {
+  const makeChain = (_result: any) => {
     const p: any = Promise.resolve(result);
     p.select = () => p;
     p.order = () => p;

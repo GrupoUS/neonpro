@@ -444,7 +444,7 @@ export function useEmergencyDetection() {
       return data;
     },
 
-    onSuccess: (_data: [a-zA-Z][a-zA-Z]*) => {
+    onSuccess: (_data: any) => {
       toast.warning(
         `Emergência detectada: ${String((data as any)?.severity ?? 'ALTA').toUpperCase()}`,
         {
@@ -474,7 +474,7 @@ export function useEmergencyDetection() {
 export function usePrefetchHealthcareData() {
   const queryClient = useQueryClient();
 
-  const prefetchPatient = (_patientId: [a-zA-Z][a-zA-Z]*) => {
+  const prefetchPatient = (_patientId: any) => {
     queryClient.prefetchQuery({
       queryKey: healthcareKeys.patient(patientId),
       queryFn: async () => {
@@ -489,7 +489,7 @@ export function usePrefetchHealthcareData() {
     });
   };
 
-  const prefetchPatientAppointments = (_patientId: [a-zA-Z][a-zA-Z]*) => {
+  const prefetchPatientAppointments = (_patientId: any) => {
     queryClient.prefetchQuery({
       queryKey: healthcareKeys.patientAppointments(patientId),
       queryFn: async () => {

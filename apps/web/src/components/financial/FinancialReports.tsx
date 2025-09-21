@@ -65,7 +65,7 @@ export const FinancialReports: React.FC<FinancialReportsProps> = ({
     },
   ];
 
-  const handleGenerateReport = useCallback(async (_reportType: [a-zA-Z][a-zA-Z]*) => {
+  const handleGenerateReport = useCallback(async (_reportType: any) => {
     setIsGenerating(true);
     setSelectedReport(reportType);
 
@@ -81,7 +81,7 @@ export const FinancialReports: React.FC<FinancialReportsProps> = ({
     }
   }, [onReportGenerate]);
 
-  const handleExport = useCallback((_format: [a-zA-Z][a-zA-Z]*) => {
+  const handleExport = useCallback((_format: any) => {
     if (onExport) {
       onExport(format);
     }

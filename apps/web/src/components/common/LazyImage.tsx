@@ -161,7 +161,7 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   ...props
 }) => {
   // Generate srcSet for different formats and sizes
-  const generateSrcSet = (_baseSrc: [a-zA-Z][a-zA-Z]*) => {
+  const generateSrcSet = (_baseSrc: any) => {
     if (!breakpoints) return undefined;
 
     return Object.entries(breakpoints)

@@ -76,7 +76,7 @@ export function useAIChat(clientId?: string) {
   }, [user?.id]);
 
   // Persist chat state to session storage
-  const persistChatState = useCallback((_state: [a-zA-Z][a-zA-Z]*) => {
+  const persistChatState = useCallback((_state: any) => {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem(CHAT_SESSION_KEY, JSON.stringify(state));
     }
@@ -84,7 +84,7 @@ export function useAIChat(clientId?: string) {
 
   // Model selection setter
   const setModel = useCallback(
-    (_model: [a-zA-Z][a-zA-Z]*) => {
+    (_model: any) => {
       setChatState(prev => {
         const next = {
           ...(prev as ChatState & { model?: string }),
@@ -99,7 +99,7 @@ export function useAIChat(clientId?: string) {
 
   // Send message mutation
   const sendMessageMutation = useMutation({
-    mutationFn: async (_content: [a-zA-Z][a-zA-Z]*) => {
+    mutationFn: async (_content: any) => {
       const userMessage: ChatMessage = {
         id: nanoid(),
         role: 'user',
@@ -224,7 +224,7 @@ export function useAIChat(clientId?: string) {
   // Voice input processing
   const processVoiceMutation = useMutation<string, Error, Blob>({
     mutationFn: processVoiceInput,
-    onSuccess: (_transcript: [a-zA-Z][a-zA-Z]*) => {
+    onSuccess: (_transcript: any) => {
       if (transcript) {
         sendMessageMutation.mutate(transcript);
       }

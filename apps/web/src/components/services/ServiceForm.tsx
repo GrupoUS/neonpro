@@ -147,7 +147,7 @@ export function ServiceForm({
   };
 
   // Price input handler: keep numeric value in state and formatted BRL string for UX
-  const handlePriceChange = (_raw: [a-zA-Z][a-zA-Z]*) => {
+  const handlePriceChange = (_raw: any) => {
     const { formatted, value } = maskBRLInput(raw);
     setPriceInput(formatted);
     handleInputChange('price', value);

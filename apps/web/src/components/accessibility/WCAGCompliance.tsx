@@ -18,7 +18,7 @@ export function WCAGCompliance({ children }: WCAGProps) {
 
   useEffect(() => {
     // Set up keyboard navigation
-    const handleFirstTab = (_e: [a-zA-Z][a-zA-Z]*) => {
+    const handleFirstTab = (_e: any) => {
       if (e.key === 'Tab') {
         document.body.classList.add('user-is-tabbing');
         window.removeEventListener('keydown', handleFirstTab);
@@ -215,7 +215,7 @@ export function useFocusTrap(containerRef: React.RefObject<HTMLElement>) {
       focusableElements.length - 1
     ] as HTMLElement;
 
-    const handleTab = (_e: [a-zA-Z][a-zA-Z]*) => {
+    const handleTab = (_e: any) => {
       if (e.key !== 'Tab') return;
 
       if (e.shiftKey) {

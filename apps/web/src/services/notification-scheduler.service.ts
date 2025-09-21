@@ -413,7 +413,7 @@ class NotificationSchedulerService {
       };
 
       if (data) {
-        data.forEach((_item: [a-zA-Z][a-zA-Z]*) => {
+        data.forEach((_item: any) => {
           stats[item.status as keyof typeof stats]++;
         });
       }

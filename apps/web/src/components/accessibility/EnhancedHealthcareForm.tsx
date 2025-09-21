@@ -299,7 +299,7 @@ export function EnhancedHealthcareForm({
   );
 
   const renderMedicalTerminologyHelp = useCallback(
-    (_field: [a-zA-Z][a-zA-Z]*) => {
+    (_field: any) => {
       if (!field.medicalTerminology) return null;
 
       const { term, explanation, pronunciation } = field.medicalTerminology;
@@ -338,7 +338,7 @@ export function EnhancedHealthcareForm({
   );
 
   const renderField = useCallback(
-    (_field: [a-zA-Z][a-zA-Z]*) => {
+    (_field: any) => {
       const fieldHook = fieldHooks[field.name];
       const { fieldProps, errorProps, descriptionProps } = fieldHook;
 

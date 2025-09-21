@@ -39,7 +39,7 @@ function showErrorBanner(message: string) {
 
 if ((import.meta as any).env?.DEV) {
   window.addEventListener('error', e => showErrorBanner(e.message));
-  window.addEventListener('unhandledrejection', (_e: [a-zA-Z][a-zA-Z]*) => {
+  window.addEventListener('unhandledrejection', (_e: any) => {
     const reason: any = (e as any).reason;
     showErrorBanner(
       typeof reason === 'string' ? reason : (reason?.message ?? String(reason)),

@@ -161,7 +161,7 @@ export function AppointmentBooking({
   const timeSlots = generateTimeSlots();
 
   // Handle appointment booking
-  const handleBookAppointment = async (_formData: [a-zA-Z][a-zA-Z]*) => {
+  const handleBookAppointment = async (_formData: any) => {
     try {
       const appointmentData = {
         ...formData,
@@ -204,7 +204,7 @@ export function AppointmentBooking({
   };
 
   // Calendar day cell renderer with appointments
-  const renderDayContent = (_date: [a-zA-Z][a-zA-Z]*) => {
+  const renderDayContent = (_date: any) => {
     const dayAppointments = appointments?.filter(apt => isSameDay(new Date(apt.startTime), date))
       || [];
 

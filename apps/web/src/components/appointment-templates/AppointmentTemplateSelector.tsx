@@ -77,11 +77,11 @@ export function AppointmentTemplateSelector({
     return uniqueCategories.sort();
   }, [allTemplates]);
 
-  const formatPrice = (_price: [a-zA-Z][a-zA-Z]*) => {
+  const formatPrice = (_price: any) => {
     return formatBRL(price);
   };
 
-  const formatDuration = (_minutes: [a-zA-Z][a-zA-Z]*) => {
+  const formatDuration = (_minutes: any) => {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     if (hours > 0) {

@@ -144,7 +144,7 @@ export function convertAxeResults(
 ): AccessibilityIssue[] {
   const violations: AccessibilityIssue[] = [];
 
-  axeResults.violations.forEach((_violation: [a-zA-Z][a-zA-Z]*) => {
+  axeResults.violations.forEach((_violation: any) => {
     const accessibilityIssue: AccessibilityIssue = {
       id: violation.id,
       impact: violation.impact as AccessibilityIssue['impact'],

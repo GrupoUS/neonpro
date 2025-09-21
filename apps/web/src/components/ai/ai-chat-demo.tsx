@@ -169,7 +169,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
   const currentScenario = demoScenarios.find(s => s.id === selectedScenario) || demoScenarios[0];
 
   // Handle scenario change
-  const handleScenarioChange = (_scenarioId: [a-zA-Z][a-zA-Z]*) => {
+  const handleScenarioChange = (_scenarioId: any) => {
     const scenario = demoScenarios.find(s => s.id === scenarioId);
     if (scenario) {
       setSelectedScenario(scenarioId);
@@ -180,7 +180,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
   };
 
   // Handle manual patient selection
-  const handlePatientChange = (_patientId: [a-zA-Z][a-zA-Z]*) => {
+  const handlePatientChange = (_patientId: any) => {
     const patient = patientId === 'none'
       ? undefined
       : demoPatients.find(p => p.id === patientId);
@@ -188,7 +188,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
   };
 
   // Handle manual professional selection
-  const handleProfessionalChange = (_professionalId: [a-zA-Z][a-zA-Z]*) => {
+  const handleProfessionalChange = (_professionalId: any) => {
     const professional = professionalId === 'none'
       ? undefined
       : demoProfessionals.find(p => p.id === professionalId);
@@ -196,7 +196,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
   };
 
   // Handle session type change
-  const handleSessionTypeChange = (_type: [a-zA-Z][a-zA-Z]*) => {
+  const handleSessionTypeChange = (_type: any) => {
     setSessionType(type as any);
   };
 

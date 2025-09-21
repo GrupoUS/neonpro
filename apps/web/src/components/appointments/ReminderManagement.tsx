@@ -273,7 +273,7 @@ export function ReminderManagement({
   const { data: consentData } = useLGPDConsent(patientId);
 
   // Check channel availability based on consent and contact info
-  const getChannelAvailability = (_channel: [a-zA-Z][a-zA-Z]*) => {
+  const getChannelAvailability = (_channel: any) => {
     if (!channel.available) {
       return { available: false, reason: 'Não disponível' };
     }
@@ -346,7 +346,7 @@ export function ReminderManagement({
       .replace(/{CLINIC_PHONE}/g, '(11) 99999-9999');
   };
 
-  const handleSaveTemplate = (_template: [a-zA-Z][a-zA-Z]*) => {
+  const handleSaveTemplate = (_template: any) => {
     if (editingTemplate) {
       setTemplates(prev => prev.map(t => (t.id === template.id ? template : t)));
     } else {

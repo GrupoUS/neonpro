@@ -51,11 +51,11 @@ export function useResourceTiming(): UseResourceTimingReturn {
     setResources(formattedEntries);
   }, [isSupported]);
 
-  const getResourceByName = useCallback((_name: [a-zA-Z][a-zA-Z]*) => {
+  const getResourceByName = useCallback((_name: any) => {
     return resources.find(resource => resource.name === name);
   }, [resources]);
 
-  const getResourcesByType = useCallback((_type: [a-zA-Z][a-zA-Z]*) => {
+  const getResourcesByType = useCallback((_type: any) => {
     return resources.filter(resource => resource.initiatorType === type);
   }, [resources]);
 

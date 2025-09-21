@@ -90,7 +90,7 @@ export function EventCalendar({
 
   // Add keyboard shortcuts for view switching
   useEffect(() => {
-    const handleKeyDown = (_e: [a-zA-Z][a-zA-Z]*) => {
+    const handleKeyDown = (_e: any) => {
       // Skip if user is typing in an input, textarea or contentEditable element
       // or if the event dialog is open
       if (
@@ -137,12 +137,12 @@ export function EventCalendar({
     navigateToToday();
   };
 
-  const handleEventSelect = (_event: [a-zA-Z][a-zA-Z]*) => {
+  const handleEventSelect = (_event: any) => {
     setSelectedEvent(event);
     setIsEventDialogOpen(true);
   };
 
-  const handleEventCreate = (_startTime: [a-zA-Z][a-zA-Z]*) => {
+  const handleEventCreate = (_startTime: any) => {
     // Snap to 15-minute intervals
     const minutes = startTime.getMinutes();
     const remainder = minutes % 15;
@@ -169,7 +169,7 @@ export function EventCalendar({
     setIsEventDialogOpen(true);
   };
 
-  const handleEventSave = async (_event: [a-zA-Z][a-zA-Z]*) => {
+  const handleEventSave = async (_event: any) => {
     try {
       if (event.id) {
         await updateEvent({
@@ -202,7 +202,7 @@ export function EventCalendar({
     }
   };
 
-  const handleEventDelete = async (_eventId: [a-zA-Z][a-zA-Z]*) => {
+  const handleEventDelete = async (_eventId: any) => {
     try {
       await deleteEvent(eventId);
       setIsEventDialogOpen(false);
@@ -213,7 +213,7 @@ export function EventCalendar({
     }
   };
 
-  const handleEventUpdate = async (_updatedEvent: [a-zA-Z][a-zA-Z]*) => {
+  const handleEventUpdate = async (_updatedEvent: any) => {
     try {
       await updateEvent({
         id: updatedEvent.id,

@@ -157,7 +157,7 @@ const AccessibleMessageFeedback: React.FC<{
   const [comment, setComment] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-  const handleQuickFeedback = (_helpful: [a-zA-Z][a-zA-Z]*) => {
+  const handleQuickFeedback = (_helpful: any) => {
     // Submit quick feedback logic here
     setFeedbackSubmitted(true);
     onFeedbackSubmitted();
@@ -359,7 +359,7 @@ const AccessibleActionButton: React.FC<{
   onExecute: (action: AgentAction) => void;
   className?: string;
 }> = ({ action, onExecute, className }) => {
-  const getIcon = (_iconName: [a-zA-Z][a-zA-Z]*) => {
+  const getIcon = (_iconName: any) => {
     const iconProps = { className: "h-4 w-4", 'aria-hidden': "true" as const };
     switch (iconName) {
       case 'user': return <User {...iconProps} />;

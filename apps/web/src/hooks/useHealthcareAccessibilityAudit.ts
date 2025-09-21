@@ -230,7 +230,7 @@ export function useHealthcareAccessibilityAudit(
 
   // Check if specific healthcare standard is compliant
   const isStandardCompliant = useCallback(
-    (_standardId: [a-zA-Z][a-zA-Z]*) => {
+    (_standardId: any) => {
       if (!state.result) return false;
 
       const standardViolations = state.result.issues.filter(issue =>

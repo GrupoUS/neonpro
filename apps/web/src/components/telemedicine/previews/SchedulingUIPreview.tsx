@@ -28,17 +28,17 @@ export function SchedulingUIPreview() {
   const [currentScenario, setCurrentScenario] = React.useState<keyof typeof mockScenarios>('busy');
 
   // Demo event handlers
-  const handleAppointmentCreate = (_appointment: [a-zA-Z][a-zA-Z]*) => {
+  const handleAppointmentCreate = (_appointment: any) => {
     console.log('Creating appointment:', appointment);
     alert(`New appointment created for ${appointment.patientName}`);
   };
 
-  const handleAppointmentUpdate = (_appointment: [a-zA-Z][a-zA-Z]*) => {
+  const handleAppointmentUpdate = (_appointment: any) => {
     console.log('Updating appointment:', appointment);
     alert(`Appointment updated for ${appointment.patientName}`);
   };
 
-  const handleAppointmentCancel = (_appointmentId: [a-zA-Z][a-zA-Z]*) => {
+  const handleAppointmentCancel = (_appointmentId: any) => {
     console.log('Cancelling appointment:', appointmentId);
     alert(`Appointment ${appointmentId} cancelled`);
   };

@@ -345,7 +345,7 @@ export const ClinicalWorkflowStepper: React.FC<{
     }
   };
 
-  const handleStepSkip = (_stepIndex: [a-zA-Z][a-zA-Z]*) => {
+  const handleStepSkip = (_stepIndex: any) => {
     if (allowSkipping && !steps[stepIndex].required) {
       onStepChange(stepIndex + 1);
     }
@@ -544,7 +544,7 @@ export const EmergencyAlertSystem: React.FC<{
     >
       <div className="space-y-3 max-w-md">
         {alerts.filter(alert => visibleAlerts.includes(alert.id)).map((alert) => {
-          const getSeverityStyles = (_severity: [a-zA-Z][a-zA-Z]*) => {
+          const getSeverityStyles = (_severity: any) => {
             switch (severity) {
               case 'critical':
                 return 'bg-gradient-to-r from-red-500 to-red-600 text-white border-red-700 animate-pulse';
@@ -557,7 +557,7 @@ export const EmergencyAlertSystem: React.FC<{
             }
           };
 
-          const getSeverityIcon = (_severity: [a-zA-Z][a-zA-Z]*) => {
+          const getSeverityIcon = (_severity: any) => {
             switch (severity) {
               case 'critical':
                 return <Zap className="w-5 h-5" aria-hidden="true" />;

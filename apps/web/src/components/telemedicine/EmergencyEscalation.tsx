@@ -389,7 +389,7 @@ export function EmergencyEscalation({
     onEmergencyActivated(emergencyData);
   };
 
-  const contactEmergencyService = async (_contact: [a-zA-Z][a-zA-Z]*) => {
+  const contactEmergencyService = async (_contact: any) => {
     setContacts(prev =>
       prev.map(c =>
         c.type === contact.type
@@ -438,13 +438,13 @@ export function EmergencyEscalation({
     );
   };
 
-  const formatDuration = (_seconds: [a-zA-Z][a-zA-Z]*) => {
+  const formatDuration = (_seconds: any) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${String(secs).padStart(2, '0')}`;
   };
 
-  const getSeverityColor = (_level: [a-zA-Z][a-zA-Z]*) => {
+  const getSeverityColor = (_level: any) => {
     switch (level) {
       case 'red':
         return 'text-red-600 bg-red-50 border-red-200';

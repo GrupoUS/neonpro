@@ -127,7 +127,7 @@ export function AuditTrailTable() {
     gcTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const formatTimestamp = (_timestamp: [a-zA-Z][a-zA-Z]*) => {
+  const formatTimestamp = (_timestamp: any) => {
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
@@ -227,7 +227,7 @@ export function AuditTrailTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {auditData?.entries.map((_entry: [a-zA-Z][a-zA-Z]*) => {
+              {auditData?.entries.map((_entry: any) => {
                 const actionBadge = getActionBadge(entry.action);
                 const statusBadge = getStatusBadge(entry.status);
                 const riskLevelBadge = getRiskLevelBadge(entry.riskLevel);

@@ -256,7 +256,7 @@ export function EnhancedPatientCard({
     return colors[status];
   };
 
-  const getHealthcareCategoryIcon = (_category: [a-zA-Z][a-zA-Z]*) => {
+  const getHealthcareCategoryIcon = (_category: any) => {
     const icons = {
       emergency: AlertTriangle,
       critical: AlertTriangle,

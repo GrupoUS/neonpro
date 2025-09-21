@@ -49,7 +49,7 @@ function DropdownMenuContent({
   const isCloseFromMouse = React.useRef<boolean>(false);
 
   const handlePointerDown = React.useCallback(
-    (_e: [a-zA-Z][a-zA-Z]*) => {
+    (_e: any) => {
       isCloseFromMouse.current = true;
       onPointerDown?.(e);
     },
@@ -57,7 +57,7 @@ function DropdownMenuContent({
   );
 
   const handlePointerDownOutside = React.useCallback(
-    (_e: [a-zA-Z][a-zA-Z]*) => {
+    (_e: any) => {
       isCloseFromMouse.current = true;
       onPointerDownOutside?.(e);
     },
@@ -65,7 +65,7 @@ function DropdownMenuContent({
   );
 
   const handleCloseAutoFocus = React.useCallback(
-    (_e: [a-zA-Z][a-zA-Z]*) => {
+    (_e: any) => {
       if (onCloseAutoFocus) {
         return onCloseAutoFocus(e);
       }

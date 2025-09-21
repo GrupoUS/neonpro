@@ -87,7 +87,7 @@ export function ConsentProvider({
   }, []);
 
   // Save preferences to localStorage
-  const savePreferences = (_newPreferences: [a-zA-Z][a-zA-Z]*) => {
+  const savePreferences = (_newPreferences: any) => {
     const dataToSave = {
       version: CONSENT_VERSION,
       preferences: newPreferences,

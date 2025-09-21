@@ -237,7 +237,7 @@ function PatientDetailPage() {
     fetchPatientData();
   }, [id]);
 
-  const calculateAge = (_birthDate: [a-zA-Z][a-zA-Z]*) => {
+  const calculateAge = (_birthDate: any) => {
     const birth = new Date(birthDate);
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
@@ -251,7 +251,7 @@ function PatientDetailPage() {
     return age;
   };
 
-  const getStatusBadge = (_status: [a-zA-Z][a-zA-Z]*) => {
+  const getStatusBadge = (_status: any) => {
     const variants = {
       scheduled: { variant: 'default' as const, label: 'Agendada' },
       completed: { variant: 'secondary' as const, label: 'Realizada' },
@@ -261,7 +261,7 @@ function PatientDetailPage() {
     return variants[status as keyof typeof variants] || variants.scheduled;
   };
 
-  const getPriorityBadge = (_priority: [a-zA-Z][a-zA-Z]*) => {
+  const getPriorityBadge = (_priority: any) => {
     const variants = {
       low: { variant: 'outline' as const, label: 'Baixa' },
       medium: { variant: 'default' as const, label: 'Média' },
@@ -271,7 +271,7 @@ function PatientDetailPage() {
     return variants[priority as keyof typeof variants] || variants.low;
   };
 
-  const formatBirthDate = (_dateString: [a-zA-Z][a-zA-Z]*) => {
+  const formatBirthDate = (_dateString: any) => {
     return format(new Date(dateString), 'dd \'de\' MMMM \'de\' yyyy', {
       locale: ptBR,
     });

@@ -363,19 +363,19 @@ const getAge = (birthDate: string): number => {
   return age;
 };
 
-const getRiskColor = (_riskScore: [a-zA-Z][a-zA-Z]*) => {
+const getRiskColor = (_riskScore: any) => {
   if (riskScore >= 0.8) return 'text-red-600 bg-red-50 border-red-200';
   if (riskScore >= 0.6) return 'text-orange-600 bg-orange-50 border-orange-200';
   return 'text-green-600 bg-green-50 border-green-200';
 };
 
-const getRiskLabel = (_riskScore: [a-zA-Z][a-zA-Z]*) => {
+const getRiskLabel = (_riskScore: any) => {
   if (riskScore >= 0.8) return 'Alto Risco';
   if (riskScore >= 0.6) return 'Médio Risco';
   return 'Baixo Risco';
 };
 
-const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
+const getStatusColor = (_status: any) => {
   switch (status) {
     case 'active':
       return 'text-green-600 bg-green-50 border-green-200';
@@ -388,7 +388,7 @@ const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
   }
 };
 
-const getStatusLabel = (_status: [a-zA-Z][a-zA-Z]*) => {
+const getStatusLabel = (_status: any) => {
   switch (status) {
     case 'active':
       return 'Ativo';
@@ -448,7 +448,7 @@ function PatientDetailPage() {
     });
   };
 
-  const handleAIInsightAction = (_insight: [a-zA-Z][a-zA-Z]*) => {
+  const handleAIInsightAction = (_insight: any) => {
     toast({
       title: 'Ação executada',
       description: `${insight.actionLabel} foi realizada com sucesso.`,

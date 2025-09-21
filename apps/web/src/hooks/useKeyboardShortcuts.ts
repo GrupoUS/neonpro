@@ -25,7 +25,7 @@ export function useKeyboardShortcuts(
   }, deps);
 
   useEffect(() => {
-    const handleKeyDown = (_e: [a-zA-Z][a-zA-Z]*) => {
+    const handleKeyDown = (_e: any) => {
       const handler = shortcutsRef.current[e.key];
       if (handler) {
         // Prevent default behavior for handled shortcuts
@@ -43,12 +43,12 @@ export function useKeyboardShortcuts(
   }, deps); // Include dependencies to reattach when they change
 
   // Helper function to check if modifier keys are pressed
-  const isModifierPressed = (_e: [a-zA-Z][a-zA-Z]*) => {
+  const isModifierPressed = (_e: any) => {
     return e.ctrlKey || e.metaKey || e.altKey || e.shiftKey;
   };
 
   // Helper function to check if we're in an input field
-  const isInInputField = (_target: [a-zA-Z][a-zA-Z]*) => {
+  const isInInputField = (_target: any) => {
     const element = target as HTMLElement;
     return (
       element.tagName === 'INPUT'
@@ -87,7 +87,7 @@ export function useAdvancedKeyboardShortcuts(
   }, deps);
 
   useEffect(() => {
-    const handleKeyDown = (_e: [a-zA-Z][a-zA-Z]*) => {
+    const handleKeyDown = (_e: any) => {
       // Check if we should ignore shortcuts in input fields
       if (ignoreInputs && isInInputField(e.target)) {
         return;

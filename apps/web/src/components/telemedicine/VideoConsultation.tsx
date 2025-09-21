@@ -235,14 +235,14 @@ export function VideoConsultation({
   }, [session, webrtcState.isConnected, webrtcState.connectionQuality]);
 
   // Format duration
-  const formatDuration = useCallback((_seconds: [a-zA-Z][a-zA-Z]*) => {
+  const formatDuration = useCallback((_seconds: any) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }, []);
 
   // Get connection quality color
-  const getQualityColor = useCallback((_quality: [a-zA-Z][a-zA-Z]*) => {
+  const getQualityColor = useCallback((_quality: any) => {
     switch (quality) {
       case 'excellent':
         return 'text-green-500';
@@ -319,7 +319,7 @@ export function VideoConsultation({
 
   // Handle chat message send
   const handleSendMessage = useCallback(
-    async (_content: [a-zA-Z][a-zA-Z]*) => {
+    async (_content: any) => {
       if (!content.trim()) return;
 
       try {

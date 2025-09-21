@@ -173,7 +173,7 @@ export function PolicyManagementPanel() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {policyData?.policies.map((_policy: [a-zA-Z][a-zA-Z]*) => {
+            {policyData?.policies.map((_policy: any) => {
               const statusBadge = getStatusBadge(policy.status);
 
               return (

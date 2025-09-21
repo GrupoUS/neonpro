@@ -134,7 +134,7 @@ export function AdvancedAnalyticsDashboard({
     }, 1500);
   };
 
-  const getInsightIcon = (_type: [a-zA-Z][a-zA-Z]*) => {
+  const getInsightIcon = (_type: any) => {
     switch (type) {
       case 'no_show_risk':
         return AlertTriangle;
@@ -149,7 +149,7 @@ export function AdvancedAnalyticsDashboard({
     }
   };
 
-  const getImpactColor = (_impact: [a-zA-Z][a-zA-Z]*) => {
+  const getImpactColor = (_impact: any) => {
     switch (impact) {
       case 'high':
         return 'text-red-600 bg-red-50 border-red-200';

@@ -42,7 +42,7 @@ export default function AIInputSearch({
   }, []);
 
   const handleSuggestionClick = useCallback(
-    (_suggestion: [a-zA-Z][a-zA-Z]*) => {
+    (_suggestion: any) => {
       setQuery(suggestion);
       setIsOpen(false);
       onSearch?.(suggestion);

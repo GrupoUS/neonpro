@@ -238,7 +238,7 @@ function PatientRegister() {
     }
   };
 
-  const formatCPF = (_value: [a-zA-Z][a-zA-Z]*) => {
+  const formatCPF = (_value: any) => {
     return value
       .replace(/\D/g, '')
       .replace(/(\d{3})(\d)/, '$1.$2')
@@ -246,14 +246,14 @@ function PatientRegister() {
       .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
   };
 
-  const formatPhone = (_value: [a-zA-Z][a-zA-Z]*) => {
+  const formatPhone = (_value: any) => {
     return value
       .replace(/\D/g, '')
       .replace(/(\d{2})(\d)/, '($1) $2')
       .replace(/(\d{5})(\d)/, '$1-$2');
   };
 
-  const formatZipCode = (_value: [a-zA-Z][a-zA-Z]*) => {
+  const formatZipCode = (_value: any) => {
     return value.replace(/\D/g, '').replace(/(\d{5})(\d)/, '$1-$2');
   };
 
@@ -419,7 +419,7 @@ function PatientRegister() {
     },
   ];
 
-  const renderField = (_field: [a-zA-Z][a-zA-Z]*) => {
+  const renderField = (_field: any) => {
     const value = formData[field.name as keyof PatientFormData];
     const error = errors[field.name];
     const fieldId = `field-${field.name}`;

@@ -99,7 +99,7 @@ export function ServiceTemplateManager({
     return matchesSearch && matchesType && matchesStatus;
   }) || [];
 
-  const handleDeleteTemplate = async (_template: [a-zA-Z][a-zA-Z]*) => {
+  const handleDeleteTemplate = async (_template: any) => {
     if (
       window.confirm(
         `Tem certeza que deseja excluir o template "${template.name}"?`,
@@ -113,7 +113,7 @@ export function ServiceTemplateManager({
     }
   };
 
-  const handleToggleFeatured = async (_template: [a-zA-Z][a-zA-Z]*) => {
+  const handleToggleFeatured = async (_template: any) => {
     try {
       await toggleFeatured.mutateAsync({
         id: template.id,
@@ -124,7 +124,7 @@ export function ServiceTemplateManager({
     }
   };
 
-  const handleToggleActive = async (_template: [a-zA-Z][a-zA-Z]*) => {
+  const handleToggleActive = async (_template: any) => {
     try {
       await toggleActive.mutateAsync({
         id: template.id,
@@ -135,7 +135,7 @@ export function ServiceTemplateManager({
     }
   };
 
-  const handleDuplicate = async (_template: [a-zA-Z][a-zA-Z]*) => {
+  const handleDuplicate = async (_template: any) => {
     const newName = `${template.name} (Cópia)`;
     try {
       await duplicateTemplate.mutateAsync({

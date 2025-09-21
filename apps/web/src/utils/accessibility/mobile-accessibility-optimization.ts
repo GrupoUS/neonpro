@@ -77,7 +77,7 @@ export const MOBILE_HEALTHCARE_RULES = {
     name: 'emergency-interface-touch-targets',
     description: 'Emergency interfaces must have enhanced touch targets',
     severity: 'critical',
-    check: (_element: [a-zA-Z][a-zA-Z]*) => {
+    check: (_element: any) => {
       const emergencyElements = element.querySelectorAll(
         '[data-emergency="true"], .emergency',
       );
@@ -86,7 +86,7 @@ export const MOBILE_HEALTHCARE_RULES = {
         return rect.width >= 48 && rect.height >= 48; // Enhanced size for emergencies
       });
     },
-    fix: (_element: [a-zA-Z][a-zA-Z]*) => {
+    fix: (_element: any) => {
       const emergencyElements = element.querySelectorAll(
         '[data-emergency="true"], .emergency',
       );
@@ -108,7 +108,7 @@ export const MOBILE_HEALTHCARE_RULES = {
     name: 'Medical Form Touch Targets',
     description: 'Medical form inputs must have adequate touch targets',
     severity: 'serious',
-    check: (_element: [a-zA-Z][a-zA-Z]*) => {
+    check: (_element: any) => {
       const medicalForms = element.querySelectorAll(
         'form[data-medical="true"], .medical-form',
       );
@@ -120,7 +120,7 @@ export const MOBILE_HEALTHCARE_RULES = {
         });
       });
     },
-    fix: (_element: [a-zA-Z][a-zA-Z]*) => {
+    fix: (_element: any) => {
       const medicalForms = element.querySelectorAll(
         'form[data-medical="true"], .medical-form',
       );
@@ -144,7 +144,7 @@ export const MOBILE_HEALTHCARE_RULES = {
     name: 'Mobile Screen Reader Support',
     description: 'Content must be accessible to mobile screen readers',
     severity: 'critical',
-    check: (_element: [a-zA-Z][a-zA-Z]*) => {
+    check: (_element: any) => {
       const interactiveElements = element.querySelectorAll(
         'button, input, select, textarea, a',
       );
@@ -156,7 +156,7 @@ export const MOBILE_HEALTHCARE_RULES = {
         );
       });
     },
-    fix: (_element: [a-zA-Z][a-zA-Z]*) => {
+    fix: (_element: any) => {
       const interactiveElements = element.querySelectorAll(
         'button, input, select, textarea, a',
       );
@@ -179,7 +179,7 @@ export const MOBILE_HEALTHCARE_RULES = {
     name: 'Responsive Medical Content',
     description: 'Medical content must be readable across all device sizes',
     severity: 'serious',
-    check: (_element: [a-zA-Z][a-zA-Z]*) => {
+    check: (_element: any) => {
       const medicalContent = element.querySelectorAll(
         '[data-medical="true"], .medical-content',
       );
@@ -192,7 +192,7 @@ export const MOBILE_HEALTHCARE_RULES = {
         );
       });
     },
-    fix: (_element: [a-zA-Z][a-zA-Z]*) => {
+    fix: (_element: any) => {
       const medicalContent = element.querySelectorAll(
         '[data-medical="true"], .medical-content',
       );
@@ -210,7 +210,7 @@ export const MOBILE_HEALTHCARE_RULES = {
     name: 'Mobile Navigation Accessibility',
     description: 'Mobile navigation must be accessible and touch-friendly',
     severity: 'serious',
-    check: (_element: [a-zA-Z][a-zA-Z]*) => {
+    check: (_element: any) => {
       const navElements = element.querySelectorAll('nav, [role="navigation"]');
       return Array.from(navElements).every(nav => {
         const navItems = nav.querySelectorAll('a, button');
@@ -220,7 +220,7 @@ export const MOBILE_HEALTHCARE_RULES = {
         });
       });
     },
-    fix: (_element: [a-zA-Z][a-zA-Z]*) => {
+    fix: (_element: any) => {
       const navElements = element.querySelectorAll('nav, [role="navigation"]');
       navElements.forEach(_nav => {
         const navItems = nav.querySelectorAll('a, button');
@@ -242,7 +242,7 @@ export const MOBILE_HEALTHCARE_RULES = {
     name: 'Offline Healthcare Functionality',
     description: 'Critical healthcare features must work offline',
     severity: 'critical',
-    check: (_element: [a-zA-Z][a-zA-Z]*) => {
+    check: (_element: any) => {
       const offlineElements = element.querySelectorAll(
         '[data-offline="true"], .offline-capable',
       );
@@ -252,7 +252,7 @@ export const MOBILE_HEALTHCARE_RULES = {
         );
       });
     },
-    fix: (_element: [a-zA-Z][a-zA-Z]*) => {
+    fix: (_element: any) => {
       const offlineElements = element.querySelectorAll(
         '[data-offline="true"], .offline-capable',
       );

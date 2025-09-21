@@ -113,7 +113,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Handle message submission
   const handleSubmit = useCallback(
-    async (_message: [a-zA-Z][a-zA-Z]*) => {
+    async (_message: any) => {
       if (!user) {
         toast({
           title: 'Erro de autenticação',
@@ -212,7 +212,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Handle data export
   const handleExportData = useCallback(
-    async (_payload: [a-zA-Z][a-zA-Z]*) => {
+    async (_payload: any) => {
       try {
         // Send export action via WebSocket
         await sendAction('export_data', payload);
@@ -234,7 +234,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Custom message renderer
   const renderMessage = useCallback(
-    (_message: [a-zA-Z][a-zA-Z]*) => {
+    (_message: any) => {
       if (message.role === 'system') {
         return (
           <div key={message.id} className='text-center py-2'>

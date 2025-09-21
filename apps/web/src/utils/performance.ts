@@ -153,7 +153,7 @@ export const preloadResource = (
   document.head.appendChild(link);
 };
 
-export const prefetchResource = (_href: [a-zA-Z][a-zA-Z]*) => {
+export const prefetchResource = (_href: any) => {
   if (typeof document === 'undefined') return;
 
   const link = document.createElement('link');

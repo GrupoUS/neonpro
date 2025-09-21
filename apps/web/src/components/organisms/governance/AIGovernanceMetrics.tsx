@@ -137,7 +137,7 @@ export function AIGovernanceMetrics() {
       <div className='space-y-3'>
         <h3 className='text-md font-semibold'>Active Models</h3>
         <div className='grid gap-4'>
-          {aiData?.models.map((_model: [a-zA-Z][a-zA-Z]*) => {
+          {aiData?.models.map((_model: any) => {
             const statusBadge = getStatusBadge(model.status);
 
             return (

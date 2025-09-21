@@ -60,7 +60,7 @@ export function PricingRulesManager() {
       || rule.description?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const handleDeleteRule = async (_rule: [a-zA-Z][a-zA-Z]*) => {
+  const handleDeleteRule = async (_rule: any) => {
     if (!confirm(`Tem certeza que deseja excluir a regra "${rule.name}"?`)) {
       return;
     }
@@ -74,7 +74,7 @@ export function PricingRulesManager() {
     }
   };
 
-  const handleToggleRule = async (_rule: [a-zA-Z][a-zA-Z]*) => {
+  const handleToggleRule = async (_rule: any) => {
     try {
       await toggleRule.mutateAsync({ id: rule.id, isActive: !rule.is_active });
       toast.success(
@@ -86,7 +86,7 @@ export function PricingRulesManager() {
     }
   };
 
-  const getRuleTypeLabel = (_type: [a-zA-Z][a-zA-Z]*) => {
+  const getRuleTypeLabel = (_type: any) => {
     const labels: Record<string, string> = {
       time_based: 'Baseada em Tempo',
       professional_specific: 'Específica do Profissional',
@@ -100,7 +100,7 @@ export function PricingRulesManager() {
     return labels[type] || type;
   };
 
-  const getRuleTypeColor = (_type: [a-zA-Z][a-zA-Z]*) => {
+  const getRuleTypeColor = (_type: any) => {
     const colors: Record<string, string> = {
       time_based: 'bg-blue-100 text-blue-800',
       professional_specific: 'bg-green-100 text-green-800',

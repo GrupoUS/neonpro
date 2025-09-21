@@ -53,7 +53,7 @@ vi.mock('@tanstack/react-router', async importOriginal => {
   const mod = await importOriginal<any>();
   return {
     ...mod,
-    useNavigate: () => (_opts: [a-zA-Z][a-zA-Z]*) => {
+    useNavigate: () => (_opts: any) => {
       // no-op capture
       (globalThis as any).__navigatedTo = opts?.to;
     },

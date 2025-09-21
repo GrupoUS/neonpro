@@ -89,7 +89,7 @@ export function RealTimeStatusIndicator({
   const IconComponent = config.icon;
 
   // Format latency
-  const formatLatency = (_latency: [a-zA-Z][a-zA-Z]*) => {
+  const formatLatency = (_latency: any) => {
     if (latency < 1000) {
       return `${latency}ms`;
     }
@@ -97,12 +97,12 @@ export function RealTimeStatusIndicator({
   };
 
   // Format messages per second
-  const formatMessagesPerSecond = (_mps: [a-zA-Z][a-zA-Z]*) => {
+  const formatMessagesPerSecond = (_mps: any) => {
     return mps.toFixed(1);
   };
 
   // Get latency status
-  const getLatencyStatus = (_latency: [a-zA-Z][a-zA-Z]*) => {
+  const getLatencyStatus = (_latency: any) => {
     if (latency < 500) return 'excellent';
     if (latency < 1000) return 'good';
     if (latency < 2000) return 'fair';

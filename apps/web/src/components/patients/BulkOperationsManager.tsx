@@ -323,7 +323,7 @@ export function BulkOperationsManager({
   }) || [];
 
   // Get operation config
-  const getOperationConfig = (_type: [a-zA-Z][a-zA-Z]*) => {
+  const getOperationConfig = (_type: any) => {
     const configs = {
       activate_patients: {
         title: 'Ativar Pacientes',
@@ -381,7 +381,7 @@ export function BulkOperationsManager({
 
   // Create bulk operation
   const createBulkOperation = useCallback(
-    async (_type: [a-zA-Z][a-zA-Z]*) => {
+    async (_type: any) => {
       if (selectedPatientIds.length === 0) {
         toast.error('Selecione pelo menos um paciente');
         return;
@@ -448,7 +448,7 @@ export function BulkOperationsManager({
 
   // Undo operation
   const undoOperation = useCallback(
-    async (_operation: [a-zA-Z][a-zA-Z]*) => {
+    async (_operation: any) => {
       if (!operation.undoable) {
         toast.error('Esta operação não pode ser desfeita');
         return;

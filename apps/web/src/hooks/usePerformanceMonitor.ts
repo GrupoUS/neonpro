@@ -287,7 +287,7 @@ export function usePerformanceMonitor() {
         const result = fn();
 
         if (result && typeof result.then === 'function') {
-          return result.then(finish).catch((_error: [a-zA-Z][a-zA-Z]*) => {
+          return result.then(finish).catch((_error: any) => {
             finish();
             throw error;
           });

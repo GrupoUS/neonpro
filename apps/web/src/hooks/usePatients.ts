@@ -131,7 +131,7 @@ export function useDebouncedPatientSearch(
 export function usePrefetchPatients() {
   const queryClient = useQueryClient();
 
-  const prefetchPatient = (_patientId: [a-zA-Z][a-zA-Z]*) => {
+  const prefetchPatient = (_patientId: any) => {
     queryClient.prefetchQuery({
       queryKey: patientKeys.detail(patientId),
       queryFn: () => patientService.getPatient(patientId),

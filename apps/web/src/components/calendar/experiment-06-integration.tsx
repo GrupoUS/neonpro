@@ -263,7 +263,7 @@ export function Experiment06CalendarIntegration({
   };
 
   // Handle event deletions with LGPD compliance
-  const handleEventDelete = async (_eventId: [a-zA-Z][a-zA-Z]*) => {
+  const handleEventDelete = async (_eventId: any) => {
     setIsLoading(true);
 
     try {

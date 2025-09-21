@@ -109,7 +109,7 @@ export function PricingRuleForm({
   const ruleType = watch('rule_type');
   const adjustmentType = watch('adjustment_type');
 
-  const onSubmit = async (_data: [a-zA-Z][a-zA-Z]*) => {
+  const onSubmit = async (_data: any) => {
     if (!clinicId) {
       toast.error('Clínica não identificada');
       return;

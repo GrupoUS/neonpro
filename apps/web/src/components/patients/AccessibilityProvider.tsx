@@ -493,7 +493,7 @@ export function AccessibilityProvider({
     );
   };
 
-  const announceToScreenReader = (_message: [a-zA-Z][a-zA-Z]*) => {
+  const announceToScreenReader = (_message: any) => {
     const event = new CustomEvent('accessibility-announce', {
       detail: message,
     });
@@ -544,7 +544,7 @@ export function useAccessibility() {
 export function withAccessibility<P extends object>(
   Component: React.ComponentType<P>,
 ) {
-  const AccessibleComponent = (_props: [a-zA-Z][a-zA-Z]*) => {
+  const AccessibleComponent = (_props: any) => {
     const { preferences, announceToScreenReader } = useAccessibility();
 
     return (
@@ -566,7 +566,7 @@ export function useKeyboardNavigation() {
   const { preferences } = useAccessibility();
 
   useEffect(() => {
-    const handleKeyDown = (_event: [a-zA-Z][a-zA-Z]*) => {
+    const handleKeyDown = (_event: any) => {
       // Add keyboard delay if enabled
       if (preferences.slowKeys && preferences.clickDelay > 0) {
         setTimeout(() => {
@@ -608,7 +608,7 @@ export function useKeyboardNavigation() {
 export function useFocusManagement() {
   const { announceToScreenReader } = useAccessibility();
 
-  const trapFocus = (_element: [a-zA-Z][a-zA-Z]*) => {
+  const trapFocus = (_element: any) => {
     const focusableElements = element.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
@@ -617,7 +617,7 @@ export function useFocusManagement() {
       focusableElements.length - 1
     ] as HTMLElement;
 
-    const handleTabKey = (_event: [a-zA-Z][a-zA-Z]*) => {
+    const handleTabKey = (_event: any) => {
       if (event.key === 'Tab') {
         if (event.shiftKey) {
           if (document.activeElement === firstElement) {

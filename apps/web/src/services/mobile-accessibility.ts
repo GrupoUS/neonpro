@@ -624,7 +624,7 @@ export class MobileAccessibilityService {
     const issues: Array<{ severity: 'low' | 'medium' | 'high' | 'critical' }> = [];
 
     // Extract issues from different accessibility areas
-    Object.values(report).forEach((_value: [a-zA-Z][a-zA-Z]*) => {
+    Object.values(report).forEach((_value: any) => {
       if (value && typeof value === 'object' && Array.isArray(value.issues)) {
         issues.push(...value.issues);
       }

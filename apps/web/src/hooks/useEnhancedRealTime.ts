@@ -108,7 +108,7 @@ export function useEnhancedRealTime() {
 
   // Handle connection status changes
   const handleConnectionChange = useCallback(
-    (_status: [a-zA-Z][a-zA-Z]*) => {
+    (_status: any) => {
       setConnectionStatus(status);
       updateMetrics({ connectionStatus: status });
 
@@ -157,7 +157,7 @@ export function useEnhancedRealTime() {
 
   // Subscribe to table changes
   const subscribe = useCallback(
-    (_options: [a-zA-Z][a-zA-Z]*) => {
+    (_options: any) => {
       if (!user) return null;
 
       const {
@@ -248,7 +248,7 @@ export function useEnhancedRealTime() {
   );
 
   // Calculate messages per second
-  const calculateMessagesPerSecond = useCallback((_currentTime: [a-zA-Z][a-zA-Z]*) => {
+  const calculateMessagesPerSecond = useCallback((_currentTime: any) => {
     const timeWindow = 60000; // 1 minute
     const messagesInWindow = metricsRef.current.messagesReceived;
     const timeElapsed = currentTime - (metricsRef.current.lastEventTimestamp - timeWindow);

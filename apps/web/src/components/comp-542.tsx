@@ -130,17 +130,17 @@ const sampleEvents: CalendarEvent[] = [
 export default function Component() {
   const [events, setEvents] = useState<CalendarEvent[]>(sampleEvents);
 
-  const handleEventAdd = (_event: [a-zA-Z][a-zA-Z]*) => {
+  const handleEventAdd = (_event: any) => {
     setEvents([...events, event]);
   };
 
-  const handleEventUpdate = (_updatedEvent: [a-zA-Z][a-zA-Z]*) => {
+  const handleEventUpdate = (_updatedEvent: any) => {
     setEvents(
       events.map(event => event.id === updatedEvent.id ? updatedEvent : event),
     );
   };
 
-  const handleEventDelete = (_eventId: [a-zA-Z][a-zA-Z]*) => {
+  const handleEventDelete = (_eventId: any) => {
     setEvents(events.filter(event => event.id !== eventId));
   };
 

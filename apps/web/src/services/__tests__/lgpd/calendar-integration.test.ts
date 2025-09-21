@@ -617,7 +617,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
       );
 
       await waitFor(() => {
-        const calendar = screen.getByTestId('event-calendar');
+        const calendar = screen.getByTestId("event-calendar");
         const events = calendar.querySelectorAll('[data-event-id]');
 
         // Should show fallback appointment data
@@ -654,7 +654,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
 
       await waitFor(() => {
         expect(screen.getByText(/1 bloqueado\(s\) por LGPD/)).toBeInTheDocument();
-        const calendar = screen.getByTestId('event-calendar');
+        const calendar = screen.getByTestId("event-calendar");
         const events = calendar.querySelectorAll('[data-event-id]');
 
         // Should not show any appointments when all are blocked

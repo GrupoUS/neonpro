@@ -171,7 +171,7 @@ export function CalendarProvider({
   }, [loadEventsForCurrentView]);
 
   // Toggle visibility of a color
-  const toggleColorVisibility = useCallback((_color: [a-zA-Z][a-zA-Z]*) => {
+  const toggleColorVisibility = useCallback((_color: any) => {
     setVisibleColors(prev => {
       if (prev.includes(color)) {
         return prev.filter(c => c !== color);
@@ -188,7 +188,7 @@ export function CalendarProvider({
   }, [visibleColors]);
 
   // Event CRUD operations
-  const createEvent = useCallback(async (_eventData: [a-zA-Z][a-zA-Z]*) => {
+  const createEvent = useCallback(async (_eventData: any) => {
     setLoading(true);
     setError(null);
 
@@ -222,7 +222,7 @@ export function CalendarProvider({
     }
   }, [defaultClinicId, currentFilters, loadEventsForCurrentView]);
 
-  const updateEvent = useCallback(async (_eventData: [a-zA-Z][a-zA-Z]*) => {
+  const updateEvent = useCallback(async (_eventData: any) => {
     setLoading(true);
     setError(null);
 
@@ -247,7 +247,7 @@ export function CalendarProvider({
     }
   }, []);
 
-  const deleteEvent = useCallback(async (_id: [a-zA-Z][a-zA-Z]*) => {
+  const deleteEvent = useCallback(async (_id: any) => {
     setLoading(true);
     setError(null);
 
@@ -277,7 +277,7 @@ export function CalendarProvider({
   }, [loadEventsForCurrentView]);
 
   // Event filtering and search
-  const applyFilters = useCallback((_filters: [a-zA-Z][a-zA-Z]*) => {
+  const applyFilters = useCallback((_filters: any) => {
     setCurrentFilters(filters);
     // The actual filtering will happen in the loadEventsForCurrentView effect
   }, []);
@@ -286,7 +286,7 @@ export function CalendarProvider({
     setCurrentFilters(null);
   }, []);
 
-  const searchEvents = useCallback(async (_options: [a-zA-Z][a-zA-Z]*) => {
+  const searchEvents = useCallback(async (_options: any) => {
     try {
       const result = await EventService.searchEvents(options);
       return result;
@@ -299,7 +299,7 @@ export function CalendarProvider({
   }, []);
 
   // Calendar navigation
-  const navigateToDate = useCallback((_date: [a-zA-Z][a-zA-Z]*) => {
+  const navigateToDate = useCallback((_date: any) => {
     setCurrentDate(date);
   }, []);
 

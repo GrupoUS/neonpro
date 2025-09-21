@@ -145,7 +145,7 @@ export const MobileResponsiveValidator: React.FC = () => {
     // Monitor CLS (Cumulative Layout Shift)
     const clsObserver = new PerformanceObserver((entryList) => {
       const entries = entryList.getEntries();
-      entries.forEach((_entry: [a-zA-Z][a-zA-Z]*) => {
+      entries.forEach((_entry: any) => {
         if (!entry.hadRecentInput) {
           layoutShiftRef.current += entry.value;
           setPerformanceMetrics(prev => ({ ...prev, cls: layoutShiftRef.current }));

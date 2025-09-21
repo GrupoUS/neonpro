@@ -93,7 +93,7 @@ export default function AIChatContainer({
 
   // Model comes from hook state; default is gpt-5-mini
 
-  const handleSendMessage = (_content: [a-zA-Z][a-zA-Z]*) => {
+  const handleSendMessage = (_content: any) => {
     if (!content.trim()) return;
 
     // Check if user has access to current model
@@ -142,13 +142,13 @@ export default function AIChatContainer({
 
   // Model is managed by the hook; no extra sync needed here
 
-  const handleSearch = (_query: [a-zA-Z][a-zA-Z]*) => {
+  const handleSearch = (_query: any) => {
     if (query.trim()) {
       handleSendMessage(query);
     }
   };
 
-  const handleVoiceInput = (_audioBlob: [a-zA-Z][a-zA-Z]*) => {
+  const handleVoiceInput = (_audioBlob: any) => {
     setIsVoiceMode(true);
     processVoice(audioBlob);
   };

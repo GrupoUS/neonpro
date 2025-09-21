@@ -103,13 +103,13 @@ interface PatientCardProps {
 }
 
 function PatientCard({ patient, onClick }: PatientCardProps) {
-  const getRiskColor = (_riskScore: [a-zA-Z][a-zA-Z]*) => {
+  const getRiskColor = (_riskScore: any) => {
     if (riskScore >= 0.8) return 'destructive';
     if (riskScore >= 0.6) return 'warning';
     return 'default';
   };
 
-  const getRiskLabel = (_riskScore: [a-zA-Z][a-zA-Z]*) => {
+  const getRiskLabel = (_riskScore: any) => {
     if (riskScore >= 0.8) return 'Alto Risco';
     if (riskScore >= 0.6) return 'Médio Risco';
     return 'Baixo Risco';
@@ -292,11 +292,11 @@ function PatientDashboard() {
       || patient.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const handlePatientClick = (_patientId: [a-zA-Z][a-zA-Z]*) => {
+  const handlePatientClick = (_patientId: any) => {
     navigate({ to: '/patients/$patientId', params: { patientId } });
   };
 
-  const handleDeletePatient = (_patient: [a-zA-Z][a-zA-Z]*) => {
+  const handleDeletePatient = (_patient: any) => {
     setSelectedPatient(patient);
     setIsModalOpen(true);
   };
@@ -334,7 +334,7 @@ function PatientDashboard() {
     {
       accessorKey: 'riskScore',
       header: 'Risco',
-      cell: (_info: [a-zA-Z][a-zA-Z]*) => {
+      cell: (_info: any) => {
         const score = info.getValue();
         let variant: 'default' | 'destructive' | 'outline' = 'default';
         let label = 'Baixo';
@@ -353,7 +353,7 @@ function PatientDashboard() {
     {
       accessorKey: 'lastVisit',
       header: 'Última Consulta',
-      cell: (_info: [a-zA-Z][a-zA-Z]*) => {
+      cell: (_info: any) => {
         const date = info.getValue();
         return date
           ? format(new Date(date), 'dd/MM/yyyy', { locale: ptBR })
@@ -363,7 +363,7 @@ function PatientDashboard() {
     {
       id: 'actions',
       header: 'Ações',
-      cell: (_info: [a-zA-Z][a-zA-Z]*) => {
+      cell: (_info: any) => {
         const patient = info.row.original;
         return (
           <div className='flex gap-2'>

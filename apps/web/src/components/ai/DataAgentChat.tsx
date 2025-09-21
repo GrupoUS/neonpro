@@ -242,7 +242,7 @@ const ActionButton: React.FC<{
   action: AgentAction;
   onExecute: (action: AgentAction) => void;
 }> = ({ action, onExecute }) => {
-  const getIcon = (_iconName: [a-zA-Z][a-zA-Z]*) => {
+  const getIcon = (_iconName: any) => {
     switch (iconName) {
       case 'user':
         return <User className='h-3 w-3' />;
@@ -311,7 +311,7 @@ const MessageFeedback: React.FC<{
     },
   });
 
-  const handleQuickFeedback = (_helpful: [a-zA-Z][a-zA-Z]*) => {
+  const handleQuickFeedback = (_helpful: any) => {
     submitQuickFeedbackMutation.mutate(helpful);
   };
 
@@ -591,7 +591,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
     aguiClient.connect();
 
     // Handle AG-UI Protocol events
-    const handleMessage = (_message: [a-zA-Z][a-zA-Z]*) => {
+    const handleMessage = (_message: any) => {
       const assistantMessage: ChatMessage = {
         id: message.id,
         role: 'assistant',
@@ -605,7 +605,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       setIsLoading(false);
     };
 
-    const handleError = (_error: [a-zA-Z][a-zA-Z]*) => {
+    const handleError = (_error: any) => {
       const errorMessage: ChatMessage = {
         id: `error_${Date.now()}`,
         role: 'assistant',
@@ -616,7 +616,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       setIsLoading(false);
     };
 
-    const handleAuthenticated = (_session: [a-zA-Z][a-zA-Z]*) => {
+    const handleAuthenticated = (_session: any) => {
       console.log('AG-UI Protocol authenticated:', session);
     };
 
@@ -631,7 +631,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   }, [aguiClient, userContext.userId]);
 
   // Update session context when needed
-  const updateAGUISessionContext = useCallback((_context: [a-zA-Z][a-zA-Z]*) => {
+  const updateAGUISessionContext = useCallback((_context: any) => {
     if (aguiSession && aguiClient.isConnected()) {
       aguiClient.updateSessionContext(context).catch(console.error);
     }
@@ -788,7 +788,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   ]);
 
   // Handle action execution
-  const handleActionExecute = useCallback((_action: [a-zA-Z][a-zA-Z]*) => {
+  const handleActionExecute = useCallback((_action: any) => {
     switch (action.type) {
       case 'view_details':
         if (action.payload?.clientId) {

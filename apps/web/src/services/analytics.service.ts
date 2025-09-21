@@ -200,7 +200,7 @@ class AnalyticsService {
 
       // Revenue by service
       const serviceRevenue = new Map<string, ServiceRevenueBreakdown>();
-      (appointments as any[])?.forEach((_apt: [a-zA-Z][a-zA-Z]*) => {
+      (appointments as any[])?.forEach((_apt: any) => {
         const service = apt.service_types;
         if (service) {
           const existing = serviceRevenue.get(service.id) || {
@@ -232,7 +232,7 @@ class AnalyticsService {
         string,
         ProfessionalRevenueBreakdown
       >();
-      (appointments as any[])?.forEach((_apt: [a-zA-Z][a-zA-Z]*) => {
+      (appointments as any[])?.forEach((_apt: any) => {
         const professional = apt.professionals;
         if (professional) {
           const existing = professionalRevenue.get(professional.id) || {
@@ -260,7 +260,7 @@ class AnalyticsService {
         const monthStart = startOfMonth(subMonths(new Date(), i));
         const monthEnd = endOfMonth(monthStart);
 
-        const monthAppointments = (appointments as any[])?.filter((_apt: [a-zA-Z][a-zA-Z]*) => {
+        const monthAppointments = (appointments as any[])?.filter((_apt: any) => {
           const aptDate = new Date(apt.start_time);
           return aptDate >= monthStart && aptDate <= monthEnd;
         }) || [];
@@ -339,7 +339,7 @@ class AnalyticsService {
       if (appointmentsError) throw appointmentsError;
 
       const totalPatients = allPatients?.length || 0;
-      const newPatients = (allPatients as any[])?.filter((_p: [a-zA-Z][a-zA-Z]*) => {
+      const newPatients = (allPatients as any[])?.filter((_p: any) => {
         const createdDate = new Date((p as any).created_at || 0);
         return (
           createdDate >= dateRange.startDate
@@ -349,7 +349,7 @@ class AnalyticsService {
 
       // Calculate patient frequency
       const patientFrequency = new Map<string, PatientFrequencyData>();
-      (appointments as any[])?.forEach((_apt: [a-zA-Z][a-zA-Z]*) => {
+      (appointments as any[])?.forEach((_apt: any) => {
         if (apt.patient_id && apt.patients) {
           const existing = patientFrequency.get(apt.patient_id) || {
             patientId: apt.patient_id,
@@ -392,14 +392,14 @@ class AnalyticsService {
         const monthStart = startOfMonth(subMonths(new Date(), i));
         const monthEnd = endOfMonth(monthStart);
 
-        const monthNewPatients = (allPatients as any[])?.filter((_p: [a-zA-Z][a-zA-Z]*) => {
+        const monthNewPatients = (allPatients as any[])?.filter((_p: any) => {
           const createdDate = new Date((p as any).created_at || 0);
           return createdDate >= monthStart && createdDate <= monthEnd;
         }).length || 0;
 
         const monthReturningPatients = Array.from(
           patientFrequency.values(),
-        ).filter((_p: [a-zA-Z][a-zA-Z]*) => {
+        ).filter((_p: any) => {
           return (
             p.lastVisit >= monthStart
             && p.lastVisit <= monthEnd
@@ -465,7 +465,7 @@ class AnalyticsService {
 
       const professionalStats = new Map<string, ProfessionalPerformance>();
 
-      (appointments as any[])?.forEach((_apt: [a-zA-Z][a-zA-Z]*) => {
+      (appointments as any[])?.forEach((_apt: any) => {
         if (apt.professional_id && apt.professionals) {
           const existing = professionalStats.get(apt.professional_id) || {
             professionalId: apt.professional_id,
@@ -531,7 +531,7 @@ class AnalyticsService {
 
       const serviceStats = new Map<string, PopularServicesData>();
 
-      (appointments as any[])?.forEach((_apt: [a-zA-Z][a-zA-Z]*) => {
+      (appointments as any[])?.forEach((_apt: any) => {
         if (apt.service_type_id && apt.service_types) {
           const existing = serviceStats.get(apt.service_type_id) || {
             serviceId: apt.service_type_id,

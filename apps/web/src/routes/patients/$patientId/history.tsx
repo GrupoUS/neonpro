@@ -524,7 +524,7 @@ function HistoryItemCard({
   item: HistoryItem;
   isLast: boolean;
 }) {
-  const getTypeIcon = (_type: [a-zA-Z][a-zA-Z]*) => {
+  const getTypeIcon = (_type: any) => {
     switch (type) {
       case 'appointment':
         return Calendar;
@@ -539,7 +539,7 @@ function HistoryItemCard({
     }
   };
 
-  const getTypeLabel = (_type: [a-zA-Z][a-zA-Z]*) => {
+  const getTypeLabel = (_type: any) => {
     switch (type) {
       case 'appointment':
         return 'Consulta';
@@ -554,7 +554,7 @@ function HistoryItemCard({
     }
   };
 
-  const getStatusBadge = (_status: [a-zA-Z][a-zA-Z]*) => {
+  const getStatusBadge = (_status: any) => {
     const statusMap = {
       completed: { label: 'Concluído', variant: 'default' as const },
       cancelled: { label: 'Cancelado', variant: 'destructive' as const },

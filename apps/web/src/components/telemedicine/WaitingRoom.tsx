@@ -170,14 +170,14 @@ export function WaitingRoom({
   }, [checkResults, consent, preConsultationData]);
 
   // Format time
-  const formatTime = useCallback((_seconds: [a-zA-Z][a-zA-Z]*) => {
+  const formatTime = useCallback((_seconds: any) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }, []);
 
   // Format wait time estimate
-  const formatWaitTimeEstimate = useCallback((_minutes: [a-zA-Z][a-zA-Z]*) => {
+  const formatWaitTimeEstimate = useCallback((_minutes: any) => {
     if (minutes < 1) return 'Menos de 1 minuto';
     if (minutes === 1) return '1 minuto';
     if (minutes < 60) return `${minutes} minutos`;
@@ -234,7 +234,7 @@ export function WaitingRoom({
   ]);
 
   // Handle vital signs update
-  const handleVitalSignsUpdate = useCallback((_vitals: [a-zA-Z][a-zA-Z]*) => {
+  const handleVitalSignsUpdate = useCallback((_vitals: any) => {
     setPreConsultationData(prev => ({
       ...prev,
       vitalSigns: { ...prev.vitalSigns, ...vitals },

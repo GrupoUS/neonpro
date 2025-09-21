@@ -344,11 +344,11 @@ function DashboardMain() {
     },
   ];
 
-  const handlePatientClick = (_patientId: [a-zA-Z][a-zA-Z]*) => {
+  const handlePatientClick = (_patientId: any) => {
     navigate({ to: '/patients/$patientId', params: { patientId } });
   };
 
-  const getPriorityColor = (_priority: [a-zA-Z][a-zA-Z]*) => {
+  const getPriorityColor = (_priority: any) => {
     switch (priority) {
       case 'critical':
         return 'destructive';
@@ -363,7 +363,7 @@ function DashboardMain() {
     }
   };
 
-  const getPriorityLabel = (_priority: [a-zA-Z][a-zA-Z]*) => {
+  const getPriorityLabel = (_priority: any) => {
     switch (priority) {
       case 'critical':
         return 'Crítico';
@@ -378,13 +378,13 @@ function DashboardMain() {
     }
   };
 
-  const getRiskColor = (_riskScore: [a-zA-Z][a-zA-Z]*) => {
+  const getRiskColor = (_riskScore: any) => {
     if (riskScore >= 0.8) return 'destructive';
     if (riskScore >= 0.6) return 'warning';
     return 'default';
   };
 
-  const getRiskLabel = (_riskScore: [a-zA-Z][a-zA-Z]*) => {
+  const getRiskLabel = (_riskScore: any) => {
     if (riskScore >= 0.8) return 'Alto Risco';
     if (riskScore >= 0.6) return 'Médio Risco';
     return 'Baixo Risco';
@@ -409,7 +409,7 @@ function DashboardMain() {
     {
       accessorKey: 'riskScore',
       header: 'Risco',
-      cell: (_info: [a-zA-Z][a-zA-Z]*) => {
+      cell: (_info: any) => {
         const score = info.getValue();
         let variant: 'default' | 'destructive' | 'outline' | 'secondary' = 'default';
         let label = 'Baixo';
@@ -428,7 +428,7 @@ function DashboardMain() {
     {
       id: 'actions',
       header: 'Ações',
-      cell: (_info: [a-zA-Z][a-zA-Z]*) => {
+      cell: (_info: any) => {
         const patient = info.row.original;
         return (
           <div className='flex gap-2'>

@@ -97,7 +97,7 @@ function ComplianceDashboard() {
     },
   ];
 
-  const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
+  const getStatusColor = (_status: any) => {
     switch (status) {
       case 'compliant':
         return 'text-green-600';
@@ -110,7 +110,7 @@ function ComplianceDashboard() {
     }
   };
 
-  const getStatusIcon = (_status: [a-zA-Z][a-zA-Z]*) => {
+  const getStatusIcon = (_status: any) => {
     switch (status) {
       case 'compliant':
         return <CheckCircle className='h-5 w-5 text-green-600' />;
@@ -123,7 +123,7 @@ function ComplianceDashboard() {
     }
   };
 
-  const formatDateTime = (_dateString: [a-zA-Z][a-zA-Z]*) => {
+  const formatDateTime = (_dateString: any) => {
     return new Date(dateString).toLocaleString('pt-BR');
   };
 

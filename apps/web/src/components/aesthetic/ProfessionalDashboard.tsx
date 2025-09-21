@@ -109,7 +109,7 @@ export function ProfessionalDashboard({
     return `${currency} ${amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
   };
 
-  const getStatusBadge = (_status: [a-zA-Z][a-zA-Z]*) => {
+  const getStatusBadge = (_status: any) => {
     const statusConfig = {
       completed: { variant: 'default' as const, label: 'Concluído' },
       in_progress: { variant: 'secondary' as const, label: 'Em andamento' },
@@ -125,7 +125,7 @@ export function ProfessionalDashboard({
     );
   };
 
-  const getActivityIcon = (_type: [a-zA-Z][a-zA-Z]*) => {
+  const getActivityIcon = (_type: any) => {
     switch (type) {
       case 'assessment':
         return <FileText className='h-4 w-4' />;

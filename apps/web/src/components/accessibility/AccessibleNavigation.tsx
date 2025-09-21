@@ -70,7 +70,7 @@ export function AccessibleNavigation({
   });
 
   const handleNavigate = useCallback(
-    (_item: [a-zA-Z][a-zA-Z]*) => {
+    (_item: any) => {
       onNavigate?.(item);
       announce(`Navegando para ${item.label}`, 'polite');
 
@@ -94,7 +94,7 @@ export function AccessibleNavigation({
   }, [announce]);
 
   const toggleSubmenu = useCallback(
-    (_itemId: [a-zA-Z][a-zA-Z]*) => {
+    (_itemId: any) => {
       setOpenSubmenu(prev => {
         const newState = prev === itemId ? null : itemId;
         const item = items.find(i => i.id === itemId);
@@ -114,7 +114,7 @@ export function AccessibleNavigation({
 
   // Close mobile menu on escape key
   useEffect(() => {
-    const handleEscape = (_event: [a-zA-Z][a-zA-Z]*) => {
+    const handleEscape = (_event: any) => {
       if (event.key === 'Escape' && isMobileMenuOpen) {
         setIsMobileMenuOpen(false);
         announce('Menu principal fechado', 'polite');

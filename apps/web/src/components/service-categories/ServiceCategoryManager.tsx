@@ -79,7 +79,7 @@ export function ServiceCategoryManager({
       || category.description?.toLowerCase().includes(searchQuery.toLowerCase()),
   ) || [];
 
-  const handleDeleteCategory = async (_category: [a-zA-Z][a-zA-Z]*) => {
+  const handleDeleteCategory = async (_category: any) => {
     if (
       window.confirm(
         `Tem certeza que deseja excluir a categoria "${category.name}"?`,

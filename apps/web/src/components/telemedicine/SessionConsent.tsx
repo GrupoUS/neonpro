@@ -410,7 +410,7 @@ export function SessionConsent({
 
   // Get section status icon
   const getSectionStatusIcon = useCallback(
-    (_section: [a-zA-Z][a-zA-Z]*) => {
+    (_section: any) => {
       const isConsented = consentData[
         section.id as keyof ConsentData
       ] as boolean;
@@ -427,7 +427,7 @@ export function SessionConsent({
   );
 
   // Get category icon
-  const getCategoryIcon = useCallback((_category: [a-zA-Z][a-zA-Z]*) => {
+  const getCategoryIcon = useCallback((_category: any) => {
     switch (category) {
       case 'basic':
         return <FileText className='h-4 w-4' />;
@@ -446,7 +446,7 @@ export function SessionConsent({
 
   // Render consent section
   const renderConsentSection = useCallback(
-    (_section: [a-zA-Z][a-zA-Z]*) => {
+    (_section: any) => {
       const isConsented = consentData[
         section.id as keyof ConsentData
       ] as boolean;

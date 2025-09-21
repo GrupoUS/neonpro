@@ -417,7 +417,7 @@ export function RealTimeChat({
 
   // Handle AI suggestion application
   const handleApplySuggestion = useCallback(
-    async (_suggestion: [a-zA-Z][a-zA-Z]*) => {
+    async (_suggestion: any) => {
       try {
         await sendMessage(suggestion.content, {
           messageType: 'text',
@@ -445,7 +445,7 @@ export function RealTimeChat({
   }, [exportChatHistory]);
 
   // Get message status icon
-  const getMessageStatusIcon = useCallback((_message: [a-zA-Z][a-zA-Z]*) => {
+  const getMessageStatusIcon = useCallback((_message: any) => {
     if (message.metadata?.urgencyLevel === 'critical') {
       return <AlertTriangle className='h-3 w-3 text-red-500' />;
     }
@@ -456,7 +456,7 @@ export function RealTimeChat({
   }, []);
 
   // Get sender avatar
-  const getSenderAvatar = useCallback((_message: [a-zA-Z][a-zA-Z]*) => {
+  const getSenderAvatar = useCallback((_message: any) => {
     switch (message.senderType) {
       case 'ai_assistant':
         return <Bot className='h-4 w-4' />;
@@ -473,7 +473,7 @@ export function RealTimeChat({
 
   // Get message background color
   const getMessageBgColor = useCallback(
-    (_message: [a-zA-Z][a-zA-Z]*) => {
+    (_message: any) => {
       if (message.senderType === participantRole) {
         return 'bg-blue-600 text-white';
       }

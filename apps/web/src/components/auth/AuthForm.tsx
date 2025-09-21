@@ -103,7 +103,7 @@ export function AuthForm({
     }
   };
 
-  const onSubmitSignUp = async (_data: [a-zA-Z][a-zA-Z]*) => {
+  const onSubmitSignUp = async (_data: any) => {
     try {
       setIsLoading(true);
       setError(null);

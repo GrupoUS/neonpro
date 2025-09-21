@@ -97,7 +97,7 @@ function NewSession() {
       || patient.medicalRecord.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const getInitials = (_name: [a-zA-Z][a-zA-Z]*) => {
+  const getInitials = (_name: any) => {
     return name
       .split(' ')
       .map(n => n[0])

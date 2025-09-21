@@ -387,7 +387,7 @@ export function GlobalPatientSearch({
 
   // Handle patient selection
   const handlePatientSelect = useCallback(
-    (_patient: [a-zA-Z][a-zA-Z]*) => {
+    (_patient: any) => {
       onPatientSelect?.(patient);
 
       // Navigate to patient details if no handler provided
@@ -409,7 +409,7 @@ export function GlobalPatientSearch({
   );
 
   // Handle search history item click
-  const handleHistoryClick = useCallback((_historyItem: [a-zA-Z][a-zA-Z]*) => {
+  const handleHistoryClick = useCallback((_historyItem: any) => {
     setQuery(historyItem.query);
     inputRef.current?.focus();
   }, []);
@@ -426,7 +426,7 @@ export function GlobalPatientSearch({
     deps: any[] = [],
   ) {
     useEffect(() => {
-      const handleKeyDown = (_e: [a-zA-Z][a-zA-Z]*) => {
+      const handleKeyDown = (_e: any) => {
         const handler = shortcuts[e.key];
         if (handler) {
           handler(e);

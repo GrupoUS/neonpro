@@ -87,7 +87,7 @@ export function SupabaseQueryExample() {
 
       toast.success(`Paciente ${updatedPatient.name} atualizado com sucesso!`);
     },
-    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
+    onError: (_error: any) => {
       toast.error(`Erro ao atualizar paciente: ${error.message}`);
     },
   });
@@ -117,13 +117,13 @@ export function SupabaseQueryExample() {
 
       toast.success(`Agendamento atualizado com sucesso!`);
     },
-    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
+    onError: (_error: any) => {
       toast.error(`Erro ao atualizar agendamento: ${error.message}`);
     },
   });
 
   // Exemplo de prefetching manual
-  const handlePatientHover = (_patientId: [a-zA-Z][a-zA-Z]*) => {
+  const handlePatientHover = (_patientId: any) => {
     queryClient.prefetchQuery(
       patientsQueryOptions({
         page: 1,

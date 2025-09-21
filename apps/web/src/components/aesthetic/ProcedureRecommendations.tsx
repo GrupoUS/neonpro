@@ -79,7 +79,7 @@ export function ProcedureRecommendations({
     [],
   );
 
-  const toggleProcedureSelection = (_procedureId: [a-zA-Z][a-zA-Z]*) => {
+  const toggleProcedureSelection = (_procedureId: any) => {
     setSelectedProcedures(prev =>
       prev.includes(procedureId)
         ? prev.filter(id => id !== procedureId)
@@ -95,13 +95,13 @@ export function ProcedureRecommendations({
     }`;
   };
 
-  const getSuitabilityColor = (_score: [a-zA-Z][a-zA-Z]*) => {
+  const getSuitabilityColor = (_score: any) => {
     if (score >= 80) return 'bg-green-100 text-green-800';
     if (score >= 60) return 'bg-yellow-100 text-yellow-800';
     return 'bg-red-100 text-red-800';
   };
 
-  const getPriorityIcon = (_priority: [a-zA-Z][a-zA-Z]*) => {
+  const getPriorityIcon = (_priority: any) => {
     switch (priority) {
       case 'alta':
         return <Target className='h-4 w-4 text-red-500' />;

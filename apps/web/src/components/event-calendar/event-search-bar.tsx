@@ -44,7 +44,7 @@ export function EventSearchBar({
   const resultsRef = useRef<HTMLDivElement>(null);
 
   // Handle search input change
-  const handleSearchChange = (_value: [a-zA-Z][a-zA-Z]*) => {
+  const handleSearchChange = (_value: any) => {
     setSearchQuery(value);
 
     if (value.trim()) {
@@ -65,7 +65,7 @@ export function EventSearchBar({
   };
 
   // Handle result selection
-  const handleResultSelect = (_event: [a-zA-Z][a-zA-Z]*) => {
+  const handleResultSelect = (_event: any) => {
     onResultSelect?.(event);
     setShowResults(false);
     clearSearch();
@@ -108,7 +108,7 @@ export function EventSearchBar({
 
   // Close results when clicking outside
   useEffect(() => {
-    const handleClickOutside = (_event: [a-zA-Z][a-zA-Z]*) => {
+    const handleClickOutside = (_event: any) => {
       if (
         inputRef.current && !inputRef.current.contains(event.target as Node)
         && resultsRef.current && !resultsRef.current.contains(event.target as Node)
@@ -133,7 +133,7 @@ export function EventSearchBar({
   }, [searchResults, searchSuggestions]);
 
   // Format date for display
-  const formatDate = (_date: [a-zA-Z][a-zA-Z]*) => {
+  const formatDate = (_date: any) => {
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',

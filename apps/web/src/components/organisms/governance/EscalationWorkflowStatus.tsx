@@ -179,7 +179,7 @@ export function EscalationWorkflowStatus() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {escalationData?.activeEscalations.map((_escalation: [a-zA-Z][a-zA-Z]*) => {
+            {escalationData?.activeEscalations.map((_escalation: any) => {
               const priorityBadge = getPriorityBadge(
                 (escalation.priority ?? 'low') as EscalationPriority,
               );

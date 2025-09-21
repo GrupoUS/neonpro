@@ -222,7 +222,7 @@ function PatientDocumentsPage() {
     },
   ];
   // Document management handlers
-  const handleDeleteDocument = async (_documentId: [a-zA-Z][a-zA-Z]*) => {
+  const handleDeleteDocument = async (_documentId: any) => {
     try {
       await deleteMutation.mutateAsync({ patientId, documentId });
       setSelectedDocuments(prev => prev.filter(id => id !== documentId));
@@ -617,13 +617,13 @@ function DocumentCard({
     // TODO: Implement view functionality (open in modal or new tab)
     console.log('View document:', document.id);
   };
-  const getFileIcon = (_type: [a-zA-Z][a-zA-Z]*) => {
+  const getFileIcon = (_type: any) => {
     if (type.startsWith('image/')) return Image;
     if (type === 'application/pdf') return FileText;
     return File;
   };
 
-  const getCategoryBadge = (_category: [a-zA-Z][a-zA-Z]*) => {
+  const getCategoryBadge = (_category: any) => {
     const categoryMap = {
       medical: { label: 'Médico', variant: 'default' as const },
       exams: { label: 'Exame', variant: 'secondary' as const },
@@ -640,7 +640,7 @@ function DocumentCard({
     );
   };
 
-  const formatFileSize = (_bytes: [a-zA-Z][a-zA-Z]*) => {
+  const formatFileSize = (_bytes: any) => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     if (bytes === 0) return '0 Bytes';
     const i = Math.floor(Math.log(bytes) / Math.log(1024));

@@ -477,7 +477,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
     }
   });
 
-  const handleAction = useCallback(async (_action: [a-zA-Z][a-zA-Z]*) => {
+  const handleAction = useCallback(async (_action: any) => {
     switch (action.type) {
       case 'view_details':
         if (action.payload?.clientId) {
@@ -551,7 +551,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
     return csvRows.join('\n');
   };
 
-  const getActionIcon = (_iconName: [a-zA-Z][a-zA-Z]*) => {
+  const getActionIcon = (_iconName: any) => {
     switch (iconName) {
       case 'user': return <User className="h-4 w-4" />;
       case 'calendar': return <CalendarIcon className="h-4 w-4" />;

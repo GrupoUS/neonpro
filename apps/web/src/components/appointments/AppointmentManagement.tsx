@@ -285,7 +285,7 @@ function AppointmentCard({
   const isOverdue = isPast(appointmentDate) && appointment.status === 'scheduled';
   const riskLevel = appointment.noShowRisk?.level;
 
-  const getStatusBadge = (_status: [a-zA-Z][a-zA-Z]*) => {
+  const getStatusBadge = (_status: any) => {
     switch (status) {
       case 'scheduled':
         return <Badge variant='default'>Agendada</Badge>;

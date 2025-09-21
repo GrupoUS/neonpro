@@ -20,7 +20,7 @@ function ComplianceCard({
   violations: number;
   lastAudit: string;
 }) {
-  const getStatusBadge = (_status: [a-zA-Z][a-zA-Z]*) => {
+  const getStatusBadge = (_status: any) => {
     const variants = {
       compliant: { variant: 'default' as const, text: 'Compliant' },
       warning: { variant: 'secondary' as const, text: 'Warning' },

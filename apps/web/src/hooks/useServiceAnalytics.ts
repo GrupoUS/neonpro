@@ -228,7 +228,7 @@ export function useExportAnalytics() {
       toast.success('Relatório exportado com sucesso!');
     },
 
-    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
+    onError: (_error: any) => {
       console.error('Error exporting analytics:', error);
       toast.error(`Erro ao exportar relatório: ${error.message}`);
     },
@@ -278,7 +278,7 @@ export function useRefreshAnalytics() {
       toast.success('Dados de analytics atualizados!');
     },
 
-    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
+    onError: (_error: any) => {
       console.error('Error refreshing analytics:', error);
       toast.error('Erro ao atualizar dados de analytics');
     },

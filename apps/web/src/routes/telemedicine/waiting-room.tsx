@@ -73,7 +73,7 @@ function WaitingRoom() {
     },
   ];
 
-  const getInitials = (_name: [a-zA-Z][a-zA-Z]*) => {
+  const getInitials = (_name: any) => {
     return name
       .split(' ')
       .map(n => n[0])
@@ -81,7 +81,7 @@ function WaitingRoom() {
       .toUpperCase();
   };
 
-  const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
+  const getStatusColor = (_status: any) => {
     switch (status) {
       case 'ready':
         return 'bg-green-100 text-green-800';
@@ -94,7 +94,7 @@ function WaitingRoom() {
     }
   };
 
-  const getConnectionIcon = (_quality: [a-zA-Z][a-zA-Z]*) => {
+  const getConnectionIcon = (_quality: any) => {
     switch (quality) {
       case 'excellent':
         return <div className='w-2 h-2 bg-green-500 rounded-full'></div>;
@@ -107,7 +107,7 @@ function WaitingRoom() {
     }
   };
 
-  const getPriorityBadge = (_priority: [a-zA-Z][a-zA-Z]*) => {
+  const getPriorityBadge = (_priority: any) => {
     if (priority === 'urgent') {
       return (
         <Badge variant='destructive' className='text-xs'>

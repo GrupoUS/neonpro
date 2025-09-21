@@ -207,7 +207,7 @@ function PatientEditPage() {
   }, [patient, resetForm]);
 
   // Form submission handler
-  const onSubmit = async (_data: [a-zA-Z][a-zA-Z]*) => {
+  const onSubmit = async (_data: any) => {
     try {
       if (
         !(user as any)?.user_metadata?.clinic_id

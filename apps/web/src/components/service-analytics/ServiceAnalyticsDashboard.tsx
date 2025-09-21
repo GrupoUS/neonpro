@@ -83,7 +83,7 @@ export function ServiceAnalyticsDashboard() {
 
   const formatCurrency = (value: number) => formatBRL(value);
 
-  const formatPercentage = (_value: [a-zA-Z][a-zA-Z]*) => {
+  const formatPercentage = (_value: any) => {
     return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
   };
 

@@ -166,7 +166,7 @@ export function NoShowRiskDisplay({
     }
   };
 
-  const getRiskIcon = (_level: [a-zA-Z][a-zA-Z]*) => {
+  const getRiskIcon = (_level: any) => {
     switch (level) {
       case 'high':
         return <AlertTriangle className='h-4 w-4' />;

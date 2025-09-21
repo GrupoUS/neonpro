@@ -23,11 +23,12 @@ const MockButton = ({ children, onClick, disabled, variant = 'primary', ...props
     onClick={onClick}
     disabled={disabled}
     className={`btn btn-${variant}`}
-    data-testid='mock-button'
+    data-testid="mock-button"
     {...props}
   >
     {children}
   </button>
+);
 );
 
 const MockForm = ({ children, onSubmit, ...props }: any) => (
@@ -255,7 +256,7 @@ describe('UI Component Contract Tests', () => {
           </MockButton>,
         );
 
-        const button = screen.getByTestId('mock-button');
+        const button = screen.getByTestId( "mock-button");
         expect(button).toBeInTheDocument();
         expect(button).toHaveTextContent('Test Button');
         expect(button).toHaveClass('btn-primary');
@@ -273,7 +274,7 @@ describe('UI Component Contract Tests', () => {
           </MockButton>,
         );
 
-        const button = screen.getByTestId('mock-button');
+        const button = screen.getByTestId( "mock-button");
         expect(button).toBeDisabled();
 
         fireEvent.click(button);

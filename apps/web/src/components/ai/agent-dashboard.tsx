@@ -100,11 +100,11 @@ export function AgentDashboard({
     };
   }, [currentSessionId, endCurrentSession]);
 
-  const handleAgentSelect = (_agentType: [a-zA-Z][a-zA-Z]*) => {
+  const handleAgentSelect = (_agentType: any) => {
     setSelectedAgent(agentType);
   };
 
-  const getAgentStats = (_agentType: [a-zA-Z][a-zA-Z]*) => {
+  const getAgentStats = (_agentType: any) => {
     const agentAnalytics = analytics?.data?.agent_usage?.find(
       usage => usage.agent_type === agentType,
     );

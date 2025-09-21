@@ -25,7 +25,7 @@ function NewAppointmentPage() {
   // Check permissions
   const canCreateAppointments = hasPermission('canCreateAppointments');
 
-  const handleBookingComplete = (_booking: [a-zA-Z][a-zA-Z]*) => {
+  const handleBookingComplete = (_booking: any) => {
     console.log('Booking completed:', booking);
     // Navigate back to appointments page after successful booking
     navigate({ to: '/appointments' });

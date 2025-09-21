@@ -104,7 +104,7 @@ export function useExportMetrics() {
         queryKey: financialKeys.exports(),
       });
     },
-    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
+    onError: (_error: any) => {
       console.error('Error exporting metrics:', error);
       toast.error('Erro ao exportar relatório. Tente novamente.');
     },
@@ -128,7 +128,7 @@ export function useRefreshFinancialMetrics() {
     onSuccess: () => {
       toast.success('Dados financeiros atualizados!');
     },
-    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
+    onError: (_error: any) => {
       console.error('Error refreshing financial metrics:', error);
       toast.error('Erro ao atualizar dados. Tente novamente.');
     },

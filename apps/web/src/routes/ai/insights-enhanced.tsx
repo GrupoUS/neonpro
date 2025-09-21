@@ -622,7 +622,7 @@ const generateMockTreatmentEffectiveness = (): TreatmentEffectiveness[] => [
 ];
 
 // Utility functions
-const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
+const getStatusColor = (_status: any) => {
   switch (status) {
     case 'active':
       return 'text-green-600 bg-green-50 border-green-200';
@@ -639,7 +639,7 @@ const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
   }
 };
 
-const getStatusIcon = (_status: [a-zA-Z][a-zA-Z]*) => {
+const getStatusIcon = (_status: any) => {
   switch (status) {
     case 'active':
       return CheckCircle;
@@ -656,7 +656,7 @@ const getStatusIcon = (_status: [a-zA-Z][a-zA-Z]*) => {
   }
 };
 
-const getPriorityColor = (_priority: [a-zA-Z][a-zA-Z]*) => {
+const getPriorityColor = (_priority: any) => {
   switch (priority) {
     case 'critical':
       return 'text-red-600 bg-red-50 border-red-200';
@@ -671,7 +671,7 @@ const getPriorityColor = (_priority: [a-zA-Z][a-zA-Z]*) => {
   }
 };
 
-const getPriorityLabel = (_priority: [a-zA-Z][a-zA-Z]*) => {
+const getPriorityLabel = (_priority: any) => {
   switch (priority) {
     case 'critical':
       return 'Crítico';
@@ -686,14 +686,14 @@ const getPriorityLabel = (_priority: [a-zA-Z][a-zA-Z]*) => {
   }
 };
 
-const formatCurrency = (_value: [a-zA-Z][a-zA-Z]*) => {
+const formatCurrency = (_value: any) => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   }).format(value);
 };
 
-const formatPercentage = (_value: [a-zA-Z][a-zA-Z]*) => {
+const formatPercentage = (_value: any) => {
   return `${(value * 100).toFixed(1)}%`;
 };
 
@@ -770,7 +770,7 @@ function AIInsightsPage() {
     };
   }, [insights, models, noShowAnalysis]);
 
-  const handleInsightAction = (_insight: [a-zA-Z][a-zA-Z]*) => {
+  const handleInsightAction = (_insight: any) => {
     toast({
       title: 'Ação executada',
       description: `${insight.actionLabel} foi realizada com sucesso.`,

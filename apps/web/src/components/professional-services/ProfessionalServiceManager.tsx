@@ -114,7 +114,7 @@ export function ProfessionalServiceManager({
     }
   };
 
-  const handleSetPrimary = async (_assignment: [a-zA-Z][a-zA-Z]*) => {
+  const handleSetPrimary = async (_assignment: any) => {
     try {
       await setPrimaryProfessional.mutateAsync({
         service_id: assignment.service_id,

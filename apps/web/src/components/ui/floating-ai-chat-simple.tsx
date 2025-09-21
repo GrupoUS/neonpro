@@ -46,7 +46,7 @@ export default function FloatingAIChatSimple({
 
   // Handle escape key to close chat
   useEffect(() => {
-    const handleEscape = (_event: [a-zA-Z][a-zA-Z]*) => {
+    const handleEscape = (_event: any) => {
       if (event.key === 'Escape' && isOpen) {
         setIsOpen(false);
       }

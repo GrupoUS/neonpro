@@ -42,7 +42,7 @@ export const MetricsPerformance: React.FC<MetricsPerformanceProps> = ({
     }
   }, []);
 
-  const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
+  const getStatusColor = (_status: any) => {
     switch (status) {
       case 'good':
         return 'bg-green-500';

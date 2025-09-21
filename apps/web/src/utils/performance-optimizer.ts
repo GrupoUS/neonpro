@@ -406,7 +406,7 @@ export class PerformanceOptimizer {
     try {
       const observer = new PerformanceObserver(list => {
         let clsValue = 0;
-        list.getEntries().forEach((_entry: [a-zA-Z][a-zA-Z]*) => {
+        list.getEntries().forEach((_entry: any) => {
           if (!entry.hadRecentInput) {
             clsValue += entry.value;
           }

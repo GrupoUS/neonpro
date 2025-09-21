@@ -50,7 +50,7 @@ export function SyncSettings({
   });
 
   const updateSettingsMutation = useMutation({
-    mutationFn: async (_settings: [a-zA-Z][a-zA-Z]*) => {
+    mutationFn: async (_settings: any) => {
       // In real app, update via API
       return { success: true };
     },

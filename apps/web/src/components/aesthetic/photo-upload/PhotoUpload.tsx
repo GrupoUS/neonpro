@@ -301,7 +301,7 @@ export function PhotoUpload({
 
   // Handle photo selection
   const handlePhotos = useCallback(
-    async (_files: [a-zA-Z][a-zA-Z]*) => {
+    async (_files: any) => {
       if (disabled) return;
 
       const fileArray = Array.from(files);
@@ -430,7 +430,7 @@ export function PhotoUpload({
   );
 
   // Handle photo removal
-  const handleRemovePhoto = async (_photoId: [a-zA-Z][a-zA-Z]*) => {
+  const handleRemovePhoto = async (_photoId: any) => {
     try {
       // TODO: Implement actual photo removal from Supabase storage
       setUploadedPhotos(prev => prev.filter(p => p.id !== photoId));

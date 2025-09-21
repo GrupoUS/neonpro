@@ -215,7 +215,7 @@ function AestheticDemo() {
     },
   ];
 
-  const handleAssessmentSubmit = async (_data: [a-zA-Z][a-zA-Z]*) => {
+  const handleAssessmentSubmit = async (_data: any) => {
     console.log('Assessment data:', data);
     setAssessmentData(data);
     setCurrentStep('recommendations');
@@ -226,7 +226,7 @@ function AestheticDemo() {
     alert(`Agendamento solicitado para ${procedureIds.length} procedimento(s)`);
   };
 
-  const handleRequestMoreInfo = (_procedureId: [a-zA-Z][a-zA-Z]*) => {
+  const handleRequestMoreInfo = (_procedureId: any) => {
     console.log('Requesting more info for procedure:', procedureId);
     alert(`Mais informações sobre o procedimento ${procedureId}`);
   };

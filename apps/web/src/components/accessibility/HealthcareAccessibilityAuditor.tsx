@@ -130,7 +130,7 @@ export function HealthcareAccessibilityAuditor({
   }
 
   // Compliance status colors
-  const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
+  const getStatusColor = (_status: any) => {
     switch (status) {
       case 'excellent':
         return 'bg-green-500';
@@ -146,7 +146,7 @@ export function HealthcareAccessibilityAuditor({
   };
 
   // Priority badge colors
-  const getPriorityColor = (_priority: [a-zA-Z][a-zA-Z]*) => {
+  const getPriorityColor = (_priority: any) => {
     switch (priority) {
       case 'immediate':
         return 'destructive';

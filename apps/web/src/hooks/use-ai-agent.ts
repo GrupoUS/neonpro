@@ -35,7 +35,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
 
   // Send message to AI agent
   const sendMessage = useCallback(
-    async (_message: [a-zA-Z][a-zA-Z]*) => {
+    async (_message: any) => {
       if (!user) {
         setError('Usuário não autenticado');
         return;
@@ -153,7 +153,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
 
   // Export data functionality
   const exportData = useCallback(
-    async (_payload: [a-zA-Z][a-zA-Z]*) => {
+    async (_payload: any) => {
       try {
         const response = await fetch('/api/ai/export', {
           method: 'POST',
