@@ -11,7 +11,11 @@ import {
   initializeOpenTelemetry,
   initializeSentry,
 } from '../config/error-tracking';
-import { setupGlobalErrorHandlers } from '../middleware/error-tracking';
+// Global error handlers setup moved to Hono app middleware
+// function setupGlobalErrorHandlers(): void {
+//   // TODO: Implement global error handlers for Hono app
+//   console.log('Global error handlers setup placeholder');
+// }
 
 let telemetrySDK: NodeSDK | null = null;
 let isInitialized = false;
@@ -45,9 +49,9 @@ export async function initializeErrorTracking(): Promise<void> {
       console.log('✅ OpenTelemetry initialized successfully');
     }
 
-    // Setup global error handlers
-    setupGlobalErrorHandlers();
-    console.log('✅ Global error handlers configured');
+    // Setup global error handlers (commented out for Hono migration)
+    // setupGlobalErrorHandlers();
+    // console.log('✅ Global error handlers configured');
 
     // Mark as initialized
     isInitialized = true;

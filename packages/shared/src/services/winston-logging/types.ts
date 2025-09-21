@@ -115,7 +115,7 @@ export const BrazilianHealthcareContextSchema = z.object({
   }).optional(),
 });
 
-export type BrazilianHealthcareContext = z.infer<typeof BrazilianHealthcareContextSchema>;
+export type WinstonBrazilianHealthcareContext = z.infer<typeof BrazilianHealthcareContextSchema>;
 
 // Enhanced LGPD compliance metadata
 export const EnhancedLGPDComplianceSchema = z.object({

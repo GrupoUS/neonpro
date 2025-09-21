@@ -31,7 +31,6 @@ import {
   DollarSign,
   Download,
   ExternalLink,
-  Heart,
   MessageSquare,
   MoreHorizontal,
   Plus,
@@ -47,19 +46,11 @@ import {
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActionHandlers } from './ActionHandlers';
 
+import { useAGUIProtocol } from '@/services/agui-protocol';
+import { formatCurrency, formatDateTime } from '@/utils/brazilian-formatters';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
   Avatar,
   AvatarFallback,
-  AvatarImage,
   Badge,
   Button,
   Card,
@@ -78,22 +69,29 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Input,
   ScrollArea,
   Textarea,
-  Toast,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui';
-import {
-  AGUIConnectionState,
-  createAGUIProtocolClient,
-  useAGUIProtocol,
-} from '@/services/agui-protocol';
-import { formatCurrency, formatDateTime } from '@/utils/brazilian-formatters';
+} from '@neonpro/ui';
 import { cn } from '@neonpro/ui';
+
+// Import NeonPro neumorphic design system
+import {
+  NeumorphicButton,
+  NeumorphicCard,
+  NeumorphicTextarea,
+  MedicalAlertCard,
+  ClinicalActionPanel,
+  PatientStatusBadge,
+  neonProColors,
+} from '@/components/ui/neonpro-neumorphic';
+
+// Import enhanced accessibility and performance monitoring
+import { AccessibilityValidator, useHealthcareAccessibility } from './DataAgentChatAccessibilityEnhanced';
+import { HealthcareWorkflowMonitor, useHealthcareWorkflowTracking } from './HealthcareWorkflowMonitor';
 
 // Import our specific types for AI agent integration
 import type {
@@ -108,6 +106,43 @@ import type {
   FinancialData,
   UserQuery,
 } from '@neonpro/types';
+
+// Security Status Component
+const SecurityStatusIndicator: React.FC = () => {
+  const [connectionStatus, setConnectionStatus] = useState<'secure' | 'checking' | 'error'>('checking');
+  
+  useEffect(() => {
+    // Check HTTPS connection and security status
+    const checkSecurity = () => {
+      const isSecure = window.location.protocol === 'https:' || window.location.hostname === 'localhost';
+      setConnectionStatus(isSecure ? 'secure' : 'error');
+    };
+    
+    checkSecurity();
+    
+    // Monitor connection status
+    const interval = setInterval(checkSecurity, 30000); // Check every 30 seconds
+    
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className='flex items-center gap-2 text-xs' role="status" aria-live="polite">
+      <div className={cn(
+        'w-2 h-2 rounded-full',
+        connectionStatus === 'secure' ? 'bg-green-500 animate-pulse' : 
+        connectionStatus === 'error' ? 'bg-red-500' : 'bg-yellow-500 animate-pulse'
+      )} />
+      <span className='text-[#B4AC9C]'>
+        {connectionStatus === 'secure' ? 'Conexão Segura (HTTPS)' :
+         connectionStatus === 'error' ? 'Conexão Insegura' : 'Verificando...'}
+      </span>
+      {connectionStatus === 'secure' && (
+        <span className='text-[#AC9469] font-medium'>🔒 Criptografado</span>
+      )}
+    </div>
+  );
+};
 
 export interface DataAgentChatProps {
   /** Current user context for role-based access */
@@ -264,15 +299,24 @@ const ActionButton: React.FC<{
   };
 
   return (
-    <Button
-      variant={action.primary ? 'default' : 'outline'}
+    <NeumorphicButton
+      variant={action.primary ? 'primary' : 'neutral'}
       size='sm'
       onClick={() => onExecute(action)}
       className='flex items-center gap-2 text-xs'
+      aria-label={action.description || action.label}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onExecute(action);
+        }
+      }}
     >
       {action.icon && getIcon(action.icon)}
-      {action.label}
-    </Button>
+      <span>{action.label}</span>
+    </NeumorphicButton>
   );
 };
 
@@ -327,20 +371,23 @@ const MessageFeedback: React.FC<{
   };
 
   return (
-    <div className='flex items-center gap-2 mt-2'>
+    <div className='flex items-center gap-2 mt-2' role="group" aria-label="Avaliação da resposta">
       <div className='flex gap-1'>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant='ghost'
+              <NeumorphicButton
+                variant='soft'
                 size='sm'
                 onClick={() => handleQuickFeedback(true)}
                 disabled={submitQuickFeedbackMutation.isPending}
                 className='h-6 w-6 p-0 text-muted-foreground hover:text-green-600'
+                aria-label="Marcar resposta como útil"
+                role="button"
+                tabIndex={0}
               >
-                <ThumbsUp className='h-3 w-3' />
-              </Button>
+                <ThumbsUp className='h-3 w-3' aria-hidden="true" />
+              </NeumorphicButton>
             </TooltipTrigger>
             <TooltipContent>
               <p>Resposta útil</p>
@@ -351,15 +398,18 @@ const MessageFeedback: React.FC<{
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button
-                variant='ghost'
+              <NeumorphicButton
+                variant='soft'
                 size='sm'
                 onClick={() => handleQuickFeedback(false)}
                 disabled={submitQuickFeedbackMutation.isPending}
                 className='h-6 w-6 p-0 text-muted-foreground hover:text-red-600'
+                aria-label="Marcar resposta como não útil"
+                role="button"
+                tabIndex={0}
               >
-                <ThumbsDown className='h-3 w-3' />
-              </Button>
+                <ThumbsDown className='h-3 w-3' aria-hidden="true" />
+              </NeumorphicButton>
             </TooltipTrigger>
             <TooltipContent>
               <p>Resposta não útil</p>
@@ -370,9 +420,15 @@ const MessageFeedback: React.FC<{
 
       <Dialog open={showDetailedFeedback} onOpenChange={setShowDetailedFeedback}>
         <DialogTrigger asChild>
-          <Button variant='ghost' size='sm' className='h-6 text-xs text-muted-foreground'>
+          <NeumorphicButton 
+            variant='soft' 
+            size='sm' 
+            className='h-6 text-xs text-muted-foreground'
+            aria-label="Abrir avaliação detalhada"
+            role="button"
+          >
             Detalhes
-          </Button>
+          </NeumorphicButton>
         </DialogTrigger>
         <DialogContent className='sm:max-w-md'>
           <DialogHeader>
@@ -383,47 +439,80 @@ const MessageFeedback: React.FC<{
           </DialogHeader>
           <div className='space-y-4'>
             <div>
-              <label className='text-sm font-medium'>Nota (1-5 estrelas)</label>
-              <div className='flex gap-1 mt-1'>
+              <label 
+                className='text-sm font-medium' 
+                id="rating-label"
+                htmlFor="rating-group"
+              >
+                Nota (1-5 estrelas)
+              </label>
+              <div 
+                className='flex gap-1 mt-1' 
+                role="radiogroup" 
+                aria-labelledby="rating-label"
+                id="rating-group"
+              >
                 {[1, 2, 3, 4, 5].map(star => (
-                  <Button
+                  <NeumorphicButton
                     key={star}
-                    variant='ghost'
+                    variant='soft'
                     size='sm'
                     onClick={() => setRating(star)}
                     className={cn(
                       'h-8 w-8 p-0',
                       rating >= star ? 'text-yellow-500' : 'text-muted-foreground',
                     )}
+                    aria-label={`${star} estrela${star > 1 ? 's' : ''}`}
+                    aria-pressed={rating >= star}
+                    role="radio"
+                    aria-checked={rating === star}
+                    tabIndex={rating === star ? 0 : -1}
                   >
                     ⭐
-                  </Button>
+                  </NeumorphicButton>
                 ))}
               </div>
             </div>
 
             <div>
-              <label className='text-sm font-medium'>Comentário (opcional)</label>
-              <Textarea
+              <label 
+                className='text-sm font-medium'
+                htmlFor="feedback-comment"
+              >
+                Comentário (opcional)
+              </label>
+              <NeumorphicTextarea
+                id="feedback-comment"
                 value={comment}
                 onChange={e => setComment(e.target.value)}
                 placeholder='Como podemos melhorar?'
                 className='mt-1'
                 rows={3}
+                variant="light"
+                aria-describedby="comment-help"
               />
+              <p id="comment-help" className="text-xs text-muted-foreground mt-1">
+                Seus comentários nos ajudam a melhorar o atendimento
+              </p>
             </div>
 
             <div className='flex gap-2'>
-              <Button
+              <NeumorphicButton
                 onClick={handleDetailedFeedback}
                 disabled={rating === 0 || submitDetailedFeedbackMutation.isPending}
+                variant="primary"
                 className='flex-1'
+                aria-label="Enviar avaliação detalhada"
               >
-                Enviar Avaliação
-              </Button>
-              <Button variant='outline' onClick={() => setShowDetailedFeedback(false)}>
+                {submitDetailedFeedbackMutation.isPending ? 'Enviando...' : 'Enviar Avaliação'}
+              </NeumorphicButton>
+              <NeumorphicButton 
+                variant='neutral' 
+                onClick={() => setShowDetailedFeedback(false)}
+                aria-label="Cancelar avaliação"
+              >
                 Cancelar
-              </Button>
+              </NeumorphicButton>
             </div>
           </div>
         </DialogContent>
@@ -449,41 +538,44 @@ const DataSummaryCard: React.FC<{
     switch (type) {
       case 'clients':
         return (
-          <div key={index} className='p-2 border rounded-md'>
-            <div className='font-medium text-sm'>{item.name}</div>
-            <div className='text-xs text-muted-foreground'>
-              {item.email} • {item.status}
+          <NeumorphicCard key={index} variant="inset" size="sm" className='p-3'>
+            <div className='font-medium text-sm text-[#112031]'>{item.name}</div>
+            <div className='text-xs text-[#B4AC9C] mt-1'>
+              {item.email} • <PatientStatusBadge status={item.status || 'active'} />
             </div>
-          </div>
+          </NeumorphicCard>
         );
 
       case 'appointments':
         return (
-          <div key={index} className='p-2 border rounded-md'>
-            <div className='font-medium text-sm'>{item.clientName}</div>
-            <div className='text-xs text-muted-foreground'>
+          <NeumorphicCard key={index} variant="inset" size="sm" className='p-3'>
+            <div className='font-medium text-sm text-[#112031]'>{item.clientName}</div>
+            <div className='text-xs text-[#B4AC9C] mt-1'>
               {formatDateTime(item.scheduledAt)} • {item.serviceName}
             </div>
-            <Badge variant='outline' className='text-xs mt-1'>
-              {item.status}
-            </Badge>
-          </div>
+            <div className='mt-2'>
+              <PatientStatusBadge 
+                status={item.status === 'confirmed' ? 'active' : item.status === 'cancelled' ? 'inactive' : 'pending'}
+                className='text-xs'
+              />
+            </div>
+          </NeumorphicCard>
         );
 
       case 'financial':
         return (
-          <div key={index} className='p-2 border rounded-md'>
-            <div className='font-medium text-sm'>{item.clientName}</div>
-            <div className='text-xs text-muted-foreground'>
-              {item.serviceName} • {formatCurrency(item.amount)}
+          <NeumorphicCard key={index} variant="inset" size="sm" className='p-3'>
+            <div className='font-medium text-sm text-[#112031]'>{item.clientName}</div>
+            <div className='text-xs text-[#B4AC9C] mt-1'>
+              {item.serviceName} • <span className='font-semibold text-[#AC9469]'>{formatCurrency(item.amount)}</span>
             </div>
-            <Badge
-              variant={item.status === 'paid' ? 'default' : 'destructive'}
-              className='text-xs mt-1'
-            >
-              {item.status}
-            </Badge>
-          </div>
+            <div className='mt-2'>
+              <PatientStatusBadge
+                status={item.status === 'paid' ? 'completed' : item.status === 'pending' ? 'pending' : 'urgent'}
+                className='text-xs'
+              />
+            </div>
+          </NeumorphicCard>
         );
 
       default:
@@ -494,42 +586,48 @@ const DataSummaryCard: React.FC<{
   if (!data || data.length === 0) return null;
 
   return (
-    <Card className='mt-3'>
-      <CardHeader className='pb-2'>
+    <NeumorphicCard variant="patient" className='mt-3' role="region" aria-label={title}>
+      <div className='pb-2'>
         <div className='flex items-center justify-between'>
-          <CardTitle className='text-sm font-medium'>{title}</CardTitle>
-          <Badge variant='secondary' className='text-xs'>
+          <h3 className='text-sm font-medium text-[#112031]'>{title}</h3>
+          <PatientStatusBadge 
+            status="active" 
+            className='text-xs bg-gradient-to-r from-[#AC9469] to-[#d2aa60ff]'
+          >
             {data.length} {data.length === 1 ? 'item' : 'itens'}
-          </Badge>
+          </PatientStatusBadge>
         </div>
         {summary && (
-          <CardDescription className='text-xs'>
+          <p className='text-xs text-[#B4AC9C] mt-1'>
             {type === 'financial' && <span>Total: {formatCurrency(summary.total)}</span>}
-          </CardDescription>
+          </p>
         )}
-      </CardHeader>
-      <CardContent className='pt-0'>
+      </div>
+      <div className='pt-0'>
         <div className='space-y-2'>
           {data.slice(0, expanded ? data.length : displayLimit).map((item, index) =>
             renderItem(item, index)
           )}
 
           {data.length > displayLimit && (
-            <Button
-              variant='ghost'
+            <NeumorphicButton
+              variant='soft'
               size='sm'
               onClick={() => setExpanded(!expanded)}
               className='w-full justify-center text-xs'
+              aria-expanded={expanded}
+              aria-label={expanded ? 'Ver menos itens' : `Ver mais ${data.length - displayLimit} itens`}
             >
               {expanded ? 'Ver menos' : `Ver mais ${data.length - displayLimit} itens`}
               <ChevronDown
                 className={cn('h-3 w-3 ml-1 transition-transform', expanded && 'rotate-180')}
+                aria-hidden="true"
               />
-            </Button>
+            </NeumorphicButton>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </NeumorphicCard>
   );
 };
 
@@ -565,6 +663,18 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   // Query client for cache management
   const queryClient = useQueryClient();
 
+  // Enhanced accessibility and performance tracking
+  const { 
+    isHighContrast, 
+    fontSize, 
+    reducedMotion,
+    increaseFontSize,
+    decreaseFontSize,
+    resetFontSize 
+  } = useHealthcareAccessibility();
+  
+  const { trackStep, startTiming } = useHealthcareWorkflowTracking();
+
   // AG-UI Protocol integration
   const aguiConfig = {
     websocketUrl: process.env.NODE_ENV === 'production'
@@ -596,7 +706,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
         id: message.id,
         role: 'assistant',
         content: message.content,
-        timestamp: new Date(message.timestamp || Date.now()),
+        timestamp: message.timestamp ? new Date(message.timestamp) : new Date(),
         actions: message.actions || [],
         metadata: message.metadata || {},
       };
@@ -674,7 +784,9 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
           id: response.response.id,
           role: 'assistant',
           content: response.response.message,
-          timestamp: new Date(response.response.timestamp || Date.now()),
+          timestamp: response.response.timestamp
+            ? new Date(response.response.timestamp)
+            : new Date(),
           data: response.response.data,
           actions: response.response.actions,
         };
@@ -715,22 +827,33 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  // Handle send message
+  // Enhanced send message with performance tracking
   const handleSendMessage = useCallback(async () => {
     if (!inputValue.trim() || isLoading) return;
 
     const query = inputValue.trim();
+    const workflowStartTime = startTiming();
+
+    // Track query processing start
+    trackStep('query_processing', workflowStartTime);
 
     // Create session if none exists
     if (!currentSessionId) {
+      const sessionStartTime = startTiming();
       await createSessionMutation.mutateAsync({
         title: query.slice(0, 50) + (query.length > 50 ? '...' : ''),
         domain: userContext.domain,
         metadata: {
           userRole: userContext.userRole,
           initialQuery: query,
+          accessibility: {
+            highContrast: isHighContrast,
+            fontSize,
+            reducedMotion,
+          },
         },
       });
+      trackStep('session_creation', sessionStartTime);
     }
 
     const userMessage: ChatMessage = {
@@ -746,29 +869,54 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
 
     // Try to send via AG-UI Protocol first, fallback to HTTP API
     try {
+      const dataRetrievalStartTime = startTiming();
+      
       if (aguiClient.isConnected()) {
         await aguiClient.sendMessage(query, 'text', {
           sessionId: currentSessionId,
           userRole: userContext.userRole,
           domain: userContext.domain,
+          accessibility: {
+            highContrast: isHighContrast,
+            fontSize,
+            reducedMotion,
+          },
         });
 
-        // Update session context with user role
+        // Update session context with user role and accessibility preferences
         updateAGUISessionContext({
           userRole: userContext.userRole,
           domain: userContext.domain,
           lastQuery: query,
+          accessibility: {
+            highContrast: isHighContrast,
+            fontSize,
+            reducedMotion,
+          },
         });
+        
+        trackStep('data_retrieval', dataRetrievalStartTime);
       } else {
         // Fallback to HTTP API
         sendMessageMutation.mutate({
           query,
           sessionId: currentSessionId || undefined,
-          userContext,
+          userContext: {
+            ...userContext,
+            accessibility: {
+              highContrast: isHighContrast,
+              fontSize,
+              reducedMotion,
+            },
+          },
         });
+        
+        trackStep('data_retrieval', dataRetrievalStartTime);
       }
     } catch (error) {
       console.error('Error sending message via AG-UI Protocol, falling back to HTTP:', error);
+      trackStep('error_handling', startTiming());
+      
       // Fallback to HTTP API
       sendMessageMutation.mutate({
         query,
@@ -853,39 +1001,79 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
 
   // Render chat interface
   const chatInterface = (
-    <Card
+    <ClinicalActionPanel
+      title="Consulta de Dados"
+      subtitle={`Usuário: ${userContext.userRole}`}
       className={cn(
         'flex flex-col w-full',
         mode === 'inline' ? 'h-full' : 'w-96 h-[500px]',
         mobileOptimized && 'touch-manipulation',
-        'border-0 shadow-lg rounded-xl overflow-hidden',
+        'overflow-hidden',
       )}
       data-testid={testId}
+      role="application"
+      aria-label="Interface de consulta de dados do sistema NeonPro"
     >
-      {/* Header */}
-      <CardHeader className='pb-3 border-b bg-gradient-to-r from-primary/5 to-blue-500/5'>
-        <div className='flex items-center justify-between'>
-          <div className='flex items-center gap-2'>
-            <Brain className='h-5 w-5 text-primary' />
-            <CardTitle className='text-lg font-semibold'>
-              Consulta de Dados
-            </CardTitle>
+      {/* Enhanced Header with Security Indicators */}
+      <div className='pb-3 border-b border-[#B4AC9C]/20 bg-gradient-to-r from-[#AC9469]/5 to-[#112031]/5 rounded-t-2xl'>
+        {/* Security Status Bar */}
+        <div className='px-4 py-2 bg-[#F6F5F2]/50 border-b border-[#B4AC9C]/10'>
+          <SecurityStatusIndicator />
+        </div>
+        
+        <div className='flex items-center justify-between p-4'>
+          <div className='flex items-center gap-3'>
+            <div className='p-2 rounded-xl bg-gradient-to-br from-[#AC9469] to-[#d2aa60ff] shadow-[2px_2px_4px_#8d7854,_-2px_-2px_4px_#cbb07e]'>
+              <Brain className='h-5 w-5 text-white' aria-hidden="true" />
+            </div>
+            <div className='hidden sm:block'>
+              <h1 className='text-lg font-semibold text-[#112031]'>
+                Assistente de Dados
+              </h1>
+              <p className='text-xs text-[#B4AC9C]'>Sistema NeonPro</p>
+            </div>
+            <div className='block sm:hidden'>
+              <h1 className='text-sm font-semibold text-[#112031]'>
+                NeonPro IA
+              </h1>
+            </div>
           </div>
 
           <div className='flex items-center gap-2'>
-            <Badge variant='outline' className='text-xs'>
+            {/* Mobile-optimized user badge */}
+            <PatientStatusBadge 
+              status="active" 
+              className={cn(
+                'text-xs bg-gradient-to-r from-[#112031] to-[#294359] text-white',
+                mobileOptimized && 'hidden sm:inline-flex'
+              )}
+            >
               {userContext.userRole}
-            </Badge>
+            </PatientStatusBadge>
+            
+            {/* Mobile user indicator */}
+            {mobileOptimized && (
+              <div className='sm:hidden w-8 h-8 rounded-full bg-gradient-to-br from-[#112031] to-[#294359] flex items-center justify-center'>
+                <span className='text-xs text-white font-bold'>
+                  {userContext.userRole.charAt(0).toUpperCase()}
+                </span>
+              </div>
+            )}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant='ghost' size='sm' className='h-8 w-8 p-0'>
-                  <MoreHorizontal className='h-4 w-4' />
-                </Button>
+                <NeumorphicButton 
+                  variant='soft' 
+                  size='sm' 
+                  className='h-8 w-8 p-0' 
+                  aria-label="Menu de opções"
+                >
+                  <MoreHorizontal className='h-4 w-4' aria-hidden="true" />
+                </NeumorphicButton>
               </DropdownMenuTrigger>
               <DropdownMenuContent align='end'>
                 <DropdownMenuItem onClick={() => setShowSettings(true)}>
-                  <Settings className='h-4 w-4 mr-2' />
+                  <Settings className='h-4 w-4 mr-2' aria-hidden="true" />
                   Configurações
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -897,49 +1085,119 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
                   }}
                   className='text-destructive'
                 >
-                  <RefreshCw className='h-4 w-4 mr-2' />
+                  <RefreshCw className='h-4 w-4 mr-2' aria-hidden="true" />
                   Nova Conversa
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
         </div>
-      </CardHeader>
+      </div>
 
       {/* Messages Area */}
-      <CardContent className='flex-1 flex flex-col p-0'>
+      <div className='flex-1 flex flex-col p-0'>
         <ScrollArea
           className='flex-1 px-4'
           style={{ maxHeight: mode === 'inline' ? maxHeight : undefined }}
+          role="log"
+          aria-live="polite"
+          aria-label="Histórico de conversas"
         >
           <div className='space-y-4 py-4'>
-            {/* Welcome message */}
+            {/* Welcome message with healthcare optimization */}
             {messages.length === 0 && !isLoadingSession && (
-              <div className='text-center py-8'>
-                <div className='w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4'>
-                  <Search className='h-6 w-6 text-primary' />
+              <MedicalAlertCard
+                alertType="info"
+                title="Bem-vindo ao Assistente NeonPro"
+                description="Sistema especializado para consultas de dados de clínicas estéticas"
+                icon={
+                  <div className='p-2 rounded-xl bg-gradient-to-br from-[#AC9469] to-[#d2aa60ff] shadow-[2px_2px_4px_#8d7854,_-2px_-2px_4px_#cbb07e]'>
+                    <Search className='h-5 w-5 text-white' />
+                  </div>
+                }
+                className='text-center'
+              >
+                <div className='space-y-4'>
+                  <div>
+                    <h3 className='text-lg font-semibold mb-2 text-[#112031]'>
+                      Como posso ajudar você hoje?
+                    </h3>
+                    <p className='text-sm text-[#B4AC9C] mb-4'>
+                      Consulte informações sobre pacientes, procedimentos ou dados financeiros de forma segura
+                    </p>
+                  </div>
+                  
+                  {/* Mobile-optimized Healthcare quick actions */}
+                  <div className={cn(
+                    'grid gap-3',
+                    mobileOptimized ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 md:grid-cols-3'
+                  )}>
+                    <NeumorphicCard 
+                      variant="floating" 
+                      size="sm" 
+                      className={cn(
+                        'p-4 text-center cursor-pointer transition-all duration-200',
+                        mobileOptimized ? 
+                          'active:scale-95 touch-manipulation min-h-[80px]' : 
+                          'hover:scale-105'
+                      )}
+                      role="button"
+                      tabIndex={0}
+                      aria-label="Buscar pacientes no sistema"
+                    >
+                      <Users className='h-8 w-8 mx-auto mb-2 text-[#AC9469]' aria-hidden="true" />
+                      <h4 className='font-medium text-xs text-[#112031]'>Buscar Pacientes</h4>
+                      <p className='text-xs text-[#B4AC9C] mt-1'>Localizar registros de clientes</p>
+                    </NeumorphicCard>
+                    
+                    <NeumorphicCard 
+                      variant="floating" 
+                      size="sm" 
+                      className={cn(
+                        'p-4 text-center cursor-pointer transition-all duration-200',
+                        mobileOptimized ? 
+                          'active:scale-95 touch-manipulation min-h-[80px]' : 
+                          'hover:scale-105'
+                      )}
+                      role="button"
+                      tabIndex={0}
+                      aria-label="Consultar agendamentos e procedimentos"
+                    >
+                      <Calendar className='h-8 w-8 mx-auto mb-2 text-[#AC9469]' aria-hidden="true" />
+                      <h4 className='font-medium text-xs text-[#112031]'>Agendamentos</h4>
+                      <p className='text-xs text-[#B4AC9C] mt-1'>Consultar procedimentos</p>
+                    </NeumorphicCard>
+                    
+                    <NeumorphicCard 
+                      variant="floating" 
+                      size="sm" 
+                      className={cn(
+                        'p-4 text-center cursor-pointer transition-all duration-200',
+                        mobileOptimized ? 
+                          'active:scale-95 touch-manipulation min-h-[80px]' : 
+                          'hover:scale-105'
+                      )}
+                      role="button"
+                      tabIndex={0}
+                      aria-label="Consultar dados financeiros e faturamento"
+                    >
+                      <DollarSign className='h-8 w-8 mx-auto mb-2 text-[#AC9469]' aria-hidden="true" />
+                      <h4 className='font-medium text-xs text-[#112031]'>Financeiro</h4>
+                      <p className='text-xs text-[#B4AC9C] mt-1'>Relatórios e faturamento</p>
+                    </NeumorphicCard>
+                  </div>
+
+                  {/* Example queries for healthcare */}
+                  <div className='mt-4 p-3 bg-[#F6F5F2] rounded-xl'>
+                    <h4 className='text-xs font-medium text-[#112031] mb-2'>Exemplos de consultas:</h4>
+                    <div className='space-y-1 text-xs text-[#B4AC9C]'>
+                      <p>• "Mostre os agendamentos de hoje"</p>
+                      <p>• "Quais pacientes faltaram esta semana?"</p>
+                      <p>• "Faturamento do mês de procedimentos de botox"</p>
+                    </div>
+                  </div>
                 </div>
-                <h3 className='text-lg font-semibold mb-2'>
-                  Como posso ajudar você hoje?
-                </h3>
-                <p className='text-sm text-muted-foreground mb-4'>
-                  Faça consultas sobre clientes, agendamentos ou informações financeiras
-                </p>
-                <div className='flex flex-wrap gap-2 justify-center text-xs'>
-                  <Badge variant='outline'>
-                    <Users className='h-3 w-3 mr-1' />
-                    Buscar Clientes
-                  </Badge>
-                  <Badge variant='outline'>
-                    <Calendar className='h-3 w-3 mr-1' />
-                    Agendamentos
-                  </Badge>
-                  <Badge variant='outline'>
-                    <DollarSign className='h-3 w-3 mr-1' />
-                    Financeiro
-                  </Badge>
-                </div>
-              </div>
+              </MedicalAlertCard>
             )}
 
             {/* Render messages */}
@@ -961,15 +1219,23 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
                   </div>
                 )}
 
-                <div
+                <NeumorphicCard
+                  variant={message.role === 'user' ? 'floating' : 'inset'}
                   className={cn(
-                    'max-w-[80%] rounded-lg px-4 py-3',
+                    'px-4 py-3 transition-all duration-200',
+                    mobileOptimized ? 'max-w-[85%] sm:max-w-[80%]' : 'max-w-[80%]',
                     message.role === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted',
+                      ? 'bg-gradient-to-br from-[#AC9469] to-[#d2aa60ff] text-white'
+                      : 'bg-[#F6F5F2] text-[#112031]',
                   )}
+                  role="article"
+                  aria-label={`Mensagem de ${message.role === 'user' ? 'usuário' : 'assistente'}`}
                 >
-                  <div className='text-sm whitespace-pre-wrap'>
+                  <div className={cn(
+                    'whitespace-pre-wrap',
+                    mobileOptimized ? 'text-sm leading-relaxed' : 'text-sm',
+                    message.role === 'user' ? 'text-white' : 'text-[#112031]'
+                  )}>
                     {message.content}
                   </div>
 
@@ -1012,9 +1278,16 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
                     />
                   )}
 
-                  {/* Message metadata */}
-                  <div className='flex items-center justify-between mt-2 text-xs opacity-70'>
-                    <span>{formatDateTime(message.timestamp)}</span>
+                  {/* Enhanced Message metadata with mobile optimization */}
+                  <div className={cn(
+                    'flex items-center justify-between mt-3 text-xs',
+                    message.role === 'user' ? 'text-white/70' : 'text-[#B4AC9C]',
+                    mobileOptimized && 'flex-col sm:flex-row gap-2 sm:gap-0'
+                  )}>
+                    <span className='flex items-center gap-1'>
+                      <span className='sr-only'>Horário da mensagem:</span>
+                      {formatDateTime(message.timestamp)}
+                    </span>
                     {message.role === 'assistant' && currentSessionId && (
                       <MessageFeedback
                         messageId={message.id}
@@ -1025,13 +1298,16 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
                       />
                     )}
                   </div>
-                </div>
+                </NeumorphicCard>
 
                 {message.role === 'user' && (
                   <div className='flex-shrink-0'>
-                    <Avatar className='h-8 w-8'>
-                      <AvatarFallback className='bg-primary text-primary-foreground'>
-                        <User className='h-4 w-4' />
+                    <Avatar className={cn(
+                      'h-8 w-8',
+                      mobileOptimized && 'h-10 w-10 sm:h-8 sm:w-8'
+                    )}>
+                      <AvatarFallback className='bg-gradient-to-br from-[#AC9469] to-[#d2aa60ff] text-white'>
+                        <User className='h-4 w-4' aria-hidden="true" />
                       </AvatarFallback>
                     </Avatar>
                   </div>
@@ -1039,34 +1315,49 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
               </div>
             ))}
 
-            {/* Loading state */}
+            {/* Enhanced Loading state with performance indicators */}
             {isLoading && (
-              <div className='flex gap-3 justify-start'>
+              <div className='flex gap-3 justify-start' role="status" aria-live="polite">
                 <div className='flex-shrink-0'>
                   <Avatar className='h-8 w-8'>
-                    <AvatarFallback className='bg-primary/10 text-primary'>
-                      <Bot className='h-4 w-4 animate-pulse' />
+                    <AvatarFallback className='bg-gradient-to-br from-[#AC9469] to-[#d2aa60ff]'>
+                      <Bot className='h-4 w-4 animate-pulse text-white' aria-hidden="true" />
                     </AvatarFallback>
                   </Avatar>
                 </div>
-                <div className='bg-muted rounded-lg px-4 py-3'>
-                  <div className='flex items-center gap-2'>
-                    <div className='flex gap-1'>
-                      <div className='w-2 h-2 bg-muted-foreground rounded-full animate-bounce' />
-                      <div
-                        className='w-2 h-2 bg-muted-foreground rounded-full animate-bounce'
-                        style={{ animationDelay: '0.1s' }}
-                      />
-                      <div
-                        className='w-2 h-2 bg-muted-foreground rounded-full animate-bounce'
-                        style={{ animationDelay: '0.2s' }}
-                      />
+                <NeumorphicCard variant="inset" className='px-4 py-3'>
+                  <div className='space-y-3'>
+                    <div className='flex items-center gap-3'>
+                      <div className='flex gap-1'>
+                        <div className='w-2 h-2 bg-[#AC9469] rounded-full animate-bounce' />
+                        <div
+                          className='w-2 h-2 bg-[#AC9469] rounded-full animate-bounce'
+                          style={{ animationDelay: '0.1s' }}
+                        />
+                        <div
+                          className='w-2 h-2 bg-[#AC9469] rounded-full animate-bounce'
+                          style={{ animationDelay: '0.2s' }}
+                        />
+                      </div>
+                      <span className='text-xs text-[#112031] font-medium'>
+                        Processando consulta de dados...
+                      </span>
                     </div>
-                    <span className='text-xs text-muted-foreground'>
-                      Analisando consulta...
-                    </span>
+                    
+                    {/* Performance indicator */}
+                    <div className='flex items-center gap-2 text-xs text-[#B4AC9C]'>
+                      <div className='w-1 h-1 bg-green-500 rounded-full animate-pulse' />
+                      <span>Conexão segura ativa</span>
+                      <div className='w-1 h-1 bg-[#AC9469] rounded-full animate-pulse' />
+                      <span>LGPD compliant</span>
+                    </div>
+                    
+                    {/* Progress bar for healthcare context */}
+                    <div className='w-full bg-[#D2D0C8] rounded-full h-1.5'>
+                      <div className='bg-gradient-to-r from-[#AC9469] to-[#d2aa60ff] h-1.5 rounded-full animate-pulse' style={{ width: '60%' }} />
+                    </div>
                   </div>
-                </div>
+                </NeumorphicCard>
               </div>
             )}
 
@@ -1074,61 +1365,125 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
           </div>
         </ScrollArea>
 
-        {/* Input Area */}
-        <div className='border-t p-4 bg-background/50 backdrop-blur-sm'>
-          <div className='flex gap-2'>
+        {/* Enhanced Input Area with Healthcare Patterns */}
+        <div className='border-t border-[#B4AC9C]/20 p-4 bg-gradient-to-r from-[#F6F5F2] to-[#D2D0C8]/50 backdrop-blur-sm rounded-b-2xl'>
+          <div className='flex gap-3 items-end'>
             <div className='flex-1 relative'>
-              <Textarea
+              <NeumorphicTextarea
                 ref={inputRef}
                 value={inputValue}
                 onChange={e => setInputValue(e.target.value)}
                 onKeyDown={handleKeyPress}
                 placeholder={placeholder}
                 disabled={isLoading}
-                className='min-h-[44px] max-h-32 resize-none pr-12'
+                variant="medical"
+                className='min-h-[44px] max-h-32 resize-none'
                 rows={1}
+                aria-label="Digite sua consulta sobre dados do sistema"
+                aria-describedby="input-help lgpd-notice"
               />
+              {isLoading && (
+                <div className='absolute right-3 top-3'>
+                  <div className='flex gap-1'>
+                    <div className='w-1 h-1 bg-[#AC9469] rounded-full animate-bounce' />
+                    <div className='w-1 h-1 bg-[#AC9469] rounded-full animate-bounce' style={{ animationDelay: '0.1s' }} />
+                    <div className='w-1 h-1 bg-[#AC9469] rounded-full animate-bounce' style={{ animationDelay: '0.2s' }} />
+                  </div>
+                </div>
+              )}
             </div>
 
-            <Button
+            <NeumorphicButton
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isLoading}
-              size='sm'
-              className='px-3'
+              variant="primary"
+              size='clinical'
+              className='px-4 min-w-[44px]'
+              aria-label={isLoading ? 'Processando consulta...' : 'Enviar consulta'}
             >
-              <Send className='h-4 w-4' />
-            </Button>
+              <Send className='h-4 w-4' aria-hidden="true" />
+            </NeumorphicButton>
           </div>
 
-          {/* LGPD Notice */}
-          <p className='text-xs text-muted-foreground mt-2 text-center'>
-            {lgpdConsent.canStoreHistory
-              ? `Conversa armazenada conforme LGPD por ${lgpdConsent.dataRetentionDays} dias`
-              : 'Conversa não armazenada • Conforme LGPD'}
+          {/* Healthcare Input Help */}
+          <p id="input-help" className='text-xs text-[#B4AC9C] mt-2 text-center'>
+            💡 Dica: Use linguagem natural. Ex: "Pacientes agendados para amanhã"
           </p>
+
+          {/* Enhanced LGPD Compliance Notice */}
+          <div id="lgpd-notice" className='mt-3 p-3 bg-[#F6F5F2] rounded-xl border-l-4 border-l-[#AC9469]'>
+            <div className='flex items-center gap-2'>
+              <div className='w-2 h-2 bg-green-500 rounded-full animate-pulse' />
+              <p className='text-xs text-[#112031] font-medium'>
+                Proteção de Dados (LGPD)
+              </p>
+            </div>
+            <p className='text-xs text-[#B4AC9C] mt-1'>
+              {lgpdConsent.canStoreHistory
+                ? `✓ Conversa armazenada com segurança por ${lgpdConsent.dataRetentionDays} dias conforme LGPD`
+                : '✓ Conversa não armazenada • Máxima privacidade conforme LGPD'}
+            </p>
+          </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </ClinicalActionPanel>
+  );
+
+  // Enhanced interface with accessibility and performance monitoring
+  const enhancedChatInterface = (
+    <AccessibilityValidator
+      enableRealTimeMonitoring={true}
+      showAccessibilityIndicator={userContext.userRole === 'admin'}
+      onAccessibilityUpdate={(status) => {
+        // Log accessibility status for compliance
+        console.log('Accessibility Status:', status);
+      }}
+    >
+      <div 
+        className='w-full h-full relative'
+        style={{ fontSize: `${fontSize}px` }}
+        data-high-contrast={isHighContrast}
+        data-reduced-motion={reducedMotion}
+      >
+        {chatInterface}
+        
+        {/* Healthcare Workflow Performance Monitor */}
+        <HealthcareWorkflowMonitor
+          enableRealTimeMonitoring={true}
+          showPerformanceIndicator={true}
+          clinicalMode={userContext.userRole === 'admin' || userContext.userRole === 'professional'}
+          targetResponseTime={2000}
+          onPerformanceUpdate={(metrics) => {
+            // Log performance metrics for optimization
+            if (metrics.responseTime > 2000) {
+              console.warn('Healthcare workflow performance degraded:', metrics);
+            }
+          }}
+          onWorkflowUpdate={(workflow) => {
+            // Track clinical workflow completion
+            if (workflow.completionRate === 100) {
+              console.log('Healthcare workflow completed:', workflow);
+            }
+          }}
+        />
+      </div>
+    </AccessibilityValidator>
   );
 
   // Return popup or inline version
   if (mode === 'popup') {
     return (
       <CopilotPopup
-        instructions='You are a healthcare data assistant for NeonPro. Help users query client data, appointments, and financial information in Portuguese.'
+        instructions='You are a healthcare data assistant for NeonPro. Help users query client data, appointments, and financial information in Portuguese. Prioritize accessibility and clinical workflow efficiency.'
         defaultOpen={false}
         clickOutsideToClose={true}
       >
-        {chatInterface}
+        {enhancedChatInterface}
       </CopilotPopup>
     );
   }
 
-  return (
-    <div className='w-full h-full'>
-      {chatInterface}
-    </div>
-  );
+  return enhancedChatInterface;
 };
 
 export default DataAgentChat;

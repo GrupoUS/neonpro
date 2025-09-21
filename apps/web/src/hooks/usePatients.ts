@@ -328,7 +328,7 @@ export function usePatientsTable(
           id: patient.id,
           fullName: patient.full_name,
           email: patient.email || undefined,
-          phone: patient.phone_primary || undefined,
+          phonePrimary: patient.phone_primary || undefined,
           birthDate: patient.birth_date || undefined,
           cpf: patient.cpf || undefined,
           createdAt: patient.created_at || '',
@@ -381,7 +381,7 @@ export function useUpdatePatient() {
       const updateData: any = {
         ...(data.fullName && { full_name: data.fullName }),
         ...(data.email !== undefined && { email: data.email || null }),
-        ...(data.phone !== undefined && { phone_primary: data.phone || null }),
+        ...(data.phonePrimary !== undefined && { phone_primary: data.phonePrimary || null }),
         ...(data.birthDate !== undefined && {
           birth_date: data.birthDate || null,
         }),

@@ -56,7 +56,7 @@ export class HealthcareError extends Error {
   public readonly lgpdCompliant: boolean;
   public readonly timestamp: Date;
   public readonly metadata?: Record<string, unknown>;
-  public readonly cause?: Error | undefined;
+  public override readonly cause?: Error | undefined;
 
   constructor(
     message: string,
@@ -420,7 +420,7 @@ export class HealthcareTRPCError extends TRPCError {
   public getAuditInfo() {
     return {
       errorId: this.id,
-      code: this.code,
+      code: (this as any).code,
       healthcareCode: this.healthcareCode,
       healthcareContext: this.healthcareContext,
       lgpdCompliant: this.lgpdCompliant,
@@ -442,15 +442,15 @@ export class HealthcareTRPCError extends TRPCError {
   public toJSON() {
     return {
       id: this.id,
-      name: this.name,
-      message: this.message,
-      code: this.code,
+      name: (this as any).name,
+      message: (this as any).message,
+      code: (this as any).code,
       healthcareCode: this.healthcareCode,
       healthcareContext: this.healthcareContext,
       lgpdCompliant: this.lgpdCompliant,
       timestamp: this.timestamp.toISOString(),
       metadata: this.metadata,
-      stack: this.stack,
+      stack: (this as any).stack,
     };
   }
 }

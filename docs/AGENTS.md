@@ -35,6 +35,35 @@ applyTo:
 - "Include relative paths in backticks"
 - "Provide shell commands in fenced code blocks when applicable"
 
+## 🚀 MANDATORY DEPLOYMENT REQUIREMENTS
+
+**CRITICAL**: All deployments MUST follow these requirements exclusively:
+
+### Deployment Architecture
+- **ALWAYS use Vercel CLI** for all deployments: `vercel deploy` or `vercel --prod`
+- **ALWAYS use Supabase CLI** for database operations: `supabase` commands
+- **NEVER use Docker, manual deployment scripts, or other deployment methods**
+
+### Required Commands
+```bash
+# Staging deployment
+vercel deploy
+
+# Production deployment
+vercel --prod
+
+# Database operations
+supabase link --project-ref [project-ref]
+supabase db push
+supabase migration up
+```
+
+### Prohibited Methods
+- ❌ Docker Compose deployments
+- ❌ Manual deployment scripts
+- ❌ Custom staging deployment methods
+- ❌ Alternative hosting platforms
+
 # Machine-readable index to guide retrieval priority per domain
 
 llm_index:

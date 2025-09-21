@@ -304,7 +304,7 @@ function PatientDetailPage() {
     id: patient.id,
     fullName: patient.fullName,
     email: patient.email,
-    phone: patient.phone,
+    phone: patient.phonePrimary,
     birthDate: patient.birthDate,
     cpf: patient.cpf,
     createdAt: patient.createdAt,
@@ -542,7 +542,7 @@ function OverviewTab({ patient }: { patient: PatientData }) {
         <CardContent className='space-y-4'>
           <InfoItem
             label='Telefone'
-            value={patient.phone ? formatBRPhone(patient.phone) : 'Não informado'}
+            value={patient.phonePrimary ? formatBRPhone(patient.phonePrimary) : 'Não informado'}
             icon={Phone}
           />
           <InfoItem

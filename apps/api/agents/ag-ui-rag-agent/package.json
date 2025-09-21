@@ -1,0 +1,66 @@
+{
+  "name": "@neonpro/ag-ui-rag-agent",
+  "version": "1.0.0",
+  "description": "Healthcare AI agent with Supabase integration for NeonPro",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src/**/*.{js,ts}",
+    "setup": "npm install && npm run build"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "ag-ui-protocol": "^0.1.0",
+    "ottomator-agents": "^0.1.0",
+    "openai": "^4.20.1",
+    "anthropic": "^0.9.1",
+    "ws": "^8.14.2",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.1.0",
+    "rate-limiter-flexible": "^3.0.8",
+    "winston": "^3.11.0",
+    "zod": "^3.22.4",
+    "uuid": "^9.0.1",
+    "crypto": "^1.0.1",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/express": "^4.17.21",
+    "@types/ws": "^8.5.10",
+    "@types/cors": "^2.8.17",
+    "@types/uuid": "^9.0.7",
+    "@types/jsonwebtoken": "^9.0.5",
+    "typescript": "^5.3.0",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.8",
+    "eslint": "^8.55.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "healthcare",
+    "ai",
+    "agent",
+    "supabase",
+    "ag-ui",
+    "rag",
+    "neonpro",
+    "lgpd"
+  ],
+  "author": "NeonPro Development Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neonpro/healthcare-agent.git"
+  }
+}

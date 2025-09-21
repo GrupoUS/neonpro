@@ -197,12 +197,11 @@ export class AuditLogger {
     if (!this.supabase) return;
 
     const { error } = await this.supabase.from('audit_logs').insert({
-      id: entry.id,
       user_id: entry.userId,
       action: entry.action,
       resource_type: entry.resource,
       resource_id: entry.resourceId,
-      new_values: entry.metadata || null, // Store metadata in new_values
+      new_values: entry.metadata ? JSON.parse(JSON.stringify(entry.metadata)) : null, // Store metadata in new_values
       ip_address: entry.ipAddress || null,
       user_agent: entry.userAgent,
       lgpd_basis: entry.lgpdCompliant ? 'legitimate_interest' : null,

@@ -14,7 +14,7 @@ import { brazilianPIIRedactionService } from './brazilian-pii-redaction';
 // Import types from types file
 import {
   EnhancedStructuredLoggingConfig,
-  BrazilianHealthcareContext,
+  WinstonBrazilianHealthcareContext,
   WinstonLogEntry,
   EnhancedLGPDCompliance,
   HealthcareSeverity,
@@ -26,7 +26,7 @@ export {
   brazilianPIIRedactionService,
   // Types
   EnhancedStructuredLoggingConfig,
-  BrazilianHealthcareContext,
+  WinstonBrazilianHealthcareContext,
   WinstonLogEntry,
   EnhancedLGPDCompliance,
   HealthcareSeverity,
@@ -130,12 +130,12 @@ export const logger = {
   logPatientSafetyEvent: (
     message: string,
     severity: 'low' | 'medium' | 'high' | 'critical',
-    healthcareContext: BrazilianHealthcareContext,
+    healthcareContext: WinstonBrazilianHealthcareContext,
     data?: any
   ) => enhancedLogger.logPatientSafetyEvent(message, severity, healthcareContext, data),
   
   logClinicalWorkflow: (
-    workflowType: BrazilianHealthcareContext['workflowType'],
+    workflowType: WinstonBrazilianHealthcareContext['workflowType'],
     stage: string,
     message: string,
     data?: any,
@@ -145,7 +145,7 @@ export const logger = {
   logMedicationEvent: (
     action: 'prescribed' | 'administered' | 'verified' | 'adverse_reaction',
     message: string,
-    healthcareContext: BrazilianHealthcareContext,
+    healthcareContext: WinstonBrazilianHealthcareContext,
     data?: any
   ) => enhancedLogger.logMedicationEvent(action, message, healthcareContext, data),
   
@@ -153,7 +153,7 @@ export const logger = {
     action: string,
     responseTime: number,
     message: string,
-    healthcareContext: BrazilianHealthcareContext,
+    healthcareContext: WinstonBrazilianHealthcareContext,
     data?: any
   ) => enhancedLogger.logEmergencyResponse(action, responseTime, message, healthcareContext, data),
   

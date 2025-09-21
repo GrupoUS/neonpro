@@ -1,5 +1,5 @@
 // Phase 3.3 — T015: Audit writer (structured)
-import { createLogger } from "@neonpro/utils";
+import { createLogger } from "@neonpro/utils/logging/logger";
 
 export type AuditOutcome = "success" | "refusal" | "limit" | "error";
 

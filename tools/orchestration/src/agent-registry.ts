@@ -408,4 +408,64 @@ export class TDDAgentRegistry {
 
     return capabilities;
   }
+
+  /**
+   * Get parallel optimized agents for concurrent execution
+   */
+  getParallelOptimizedAgents(agentNames: string[]): AgentCapability[] {
+    return agentNames
+      .map(name => this.getAgent(name as AgentType))
+      .filter((agent): agent is AgentCapability => agent !== undefined);
+  }
+
+  /**
+   * Get agent coordination groups for parallel execution
+   */
+  getAgentCoordinationGroups(agentNames: string[], pattern: string): Array<{
+    group: string;
+    agents: string[];
+  }> {
+    // Simple grouping based on agent types
+    const groups: Array<{ group: string; agents: string[] }> = [];
+    
+    // Group primary agents together
+    const primaryAgents = agentNames.filter(name => {
+      const agent = this.getAgent(name as AgentType);
+      return agent?.priority === "primary";
+    });
+    
+    if (primaryAgents.length > 0) {
+      groups.push({ group: "primary", agents: primaryAgents });
+    }
+    
+    // Group secondary agents together
+    const secondaryAgents = agentNames.filter(name => {
+      const agent = this.getAgent(name as AgentType);
+      return agent?.priority === "secondary";
+    });
+    
+    if (secondaryAgents.length > 0) {
+      groups.push({ group: "secondary", agents: secondaryAgents });
+    }
+    
+    return groups;
+  }
+
+  /**
+   * Create parallel execution plan
+   */
+  createParallelExecutionPlan(agentNames: string[], pattern: string): {
+    stages: Array<{ name: string; agents: string[] }>;
+    dependencies: Record<string, string[]>;
+  } {
+    const groups = this.getAgentCoordinationGroups(agentNames, pattern);
+    
+    return {
+      stages: groups.map(group => ({
+        name: group.group,
+        agents: group.agents
+      })),
+      dependencies: {}
+    };
+  }
 }

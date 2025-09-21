@@ -192,38 +192,43 @@ import {
   WinstonLogEntry,
   WinstonLogLevel,
   HealthcareSeverity,
-  BrazilianHealthcareContext,
+  WinstonBrazilianHealthcareContext,
   EnhancedLGPDCompliance,
 } from './types';
 
+// Type alias for backward compatibility within this file
+type BrazilianHealthcareContext = z.infer<typeof BrazilianHealthcareContextSchema>;
+
 // Custom Winston format for healthcare logs
 class HealthcareLogFormat extends winston.Logform.Format {
+  private formatOptions: { colorize?: boolean; prettyPrint?: boolean };
+
   constructor(options: { colorize?: boolean; prettyPrint?: boolean } = {}) {
     super();
-    this.options = options;
-    
-    // Define transform as a property, not a method
-    this.transform = (info: any, opts?: any) => {
-      // Apply PII redaction to all string fields
-      if (info.message && typeof info.message === 'string') {
-        info.message = brazilianPIIRedactionService.redactText(info.message);
-      }
+    this.formatOptions = options;
+  }
 
-      if (info.error && typeof info.error === 'object') {
-        info.error = brazilianPIIRedactionService.redactObject(info.error);
-      }
+  // Implement transform as property function to match Winston's expectation
+  override transform = (info: any, opts?: any) => {
+    // Apply PII redaction to all string fields
+    if (info.message && typeof info.message === 'string') {
+      info.message = brazilianPIIRedactionService.redactText(info.message);
+    }
 
-      if (info.metadata && typeof info.metadata === 'object') {
-        info.metadata = brazilianPIIRedactionService.redactObject(info.metadata);
-      }
+    if (info.error && typeof info.error === 'object') {
+      info.error = brazilianPIIRedactionService.redactObject(info.error);
+    }
 
-      // Add healthcare-specific formatting
-      if (info.severity && info.severity !== info.level) {
-        info.severityEmoji = this.getSeverityEmoji(info.severity);
-      }
+    if (info.metadata && typeof info.metadata === 'object') {
+      info.metadata = brazilianPIIRedactionService.redactObject(info.metadata);
+    }
 
-      return info;
-    };
+    // Add healthcare-specific formatting
+    if (info.severity && info.severity !== info.level) {
+      info.severityEmoji = this.getSeverityEmoji(info.severity);
+    }
+
+    return info;
   }
 
   private getSeverityEmoji(severity: HealthcareSeverity): string {

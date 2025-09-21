@@ -25,9 +25,11 @@
 import { z } from "zod";
 import {
   HealthcareDataClassification,
-  LGPDDataCategory,
   DataRetentionClass,
 } from "./healthcare-base";
+
+// Import DataCategory from main exports
+import { DataCategory } from "../index";
 
 // AI Provider Types
 export enum AIProviderOpt {
@@ -229,7 +231,7 @@ export const SemanticCacheEntrySchema = z.object({
 
   healthcare_metadata: z.object({
     data_classification: z.nativeEnum(HealthcareDataClassification),
-    lgpd_categories: z.array(z.nativeEnum(LGPDDataCategory)),
+    lgpd_categories: z.array(z.nativeEnum(DataCategory)),
     retention_class: z.nativeEnum(DataRetentionClass),
     pii_redacted: z.boolean().describe("PII redaction applied"),
     patient_consent_verified: z.boolean().describe("Patient consent verified"),
@@ -301,8 +303,8 @@ export const AIOptimizationSchema = z.object({
       .nativeEnum(HealthcareDataClassification)
       .default(HealthcareDataClassification.PATIENT_SENSITIVE),
     lgpd_categories: z
-      .array(z.nativeEnum(LGPDDataCategory))
-      .default([LGPDDataCategory.HEALTH_DATA]),
+      .array(z.nativeEnum(DataCategory))
+      .default([DataCategory.HEALTH_DATA]),
     retention_class: z
       .nativeEnum(DataRetentionClass)
       .default(DataRetentionClass.SHORT_TERM),

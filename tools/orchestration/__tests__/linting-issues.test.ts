@@ -308,9 +308,9 @@ describe("Linting Issues - RED Phase", () => {
       
       healthcareAgents.forEach(agent => {
         expect(agent.healthcareCompliance).toBeDefined();
-        expect(typeof agent.healthcareCompliance.lgpd).toBe("boolean");
-        expect(typeof agent.healthcareCompliance.anvisa).toBe("boolean");
-        expect(typeof agent.healthcareCompliance.cfm).toBe("boolean");
+        expect(typeof agent.healthcareCompliance?.lgpd).toBe("boolean");
+        expect(typeof agent.healthcareCompliance?.anvisa).toBe("boolean");
+        expect(typeof agent.healthcareCompliance?.cfm).toBe("boolean");
       });
     });
   });

@@ -176,8 +176,8 @@ describe("ExecutionPatternSelector", () => {
 
       const result = await selector.selectOptimalPattern(context);
 
-      expect(result.agentSelection.supportAgents.length).toBeGreaterThan(0);
-      expect(result.agentSelection.parallelAgents.length).toBeGreaterThan(0);
+      expect(result.agentSelection.supportAgents?.length).toBeGreaterThan(0);
+      expect(result.agentSelection.parallelAgents?.length).toBeGreaterThan(0);
     });
   });
 
@@ -253,10 +253,10 @@ describe("ExecutionPatternSelector", () => {
 
       const result = await selector.selectOptimalPattern(context);
 
-      expect(result.risks.length).toBeGreaterThan(0);
-      expect(result.mitigations.length).toBeGreaterThan(0);
-      expect(result.mitigations.length).toBeGreaterThanOrEqual(
-        result.risks.length,
+      expect(result.risks?.length).toBeGreaterThan(0);
+      expect(result.mitigations?.length).toBeGreaterThan(0);
+      expect(result.mitigations?.length).toBeGreaterThanOrEqual(
+        result.risks?.length || 0,
       );
     });
 
@@ -281,8 +281,8 @@ describe("ExecutionPatternSelector", () => {
 
       const result = await selector.selectOptimalPattern(context);
 
-      expect(result.justification.length).toBeGreaterThan(0);
-      expect(typeof result.justification[0]).toBe("string");
+      expect(result.justification?.length).toBeGreaterThan(0);
+      expect(typeof result.justification?.[0]).toBe("string");
     });
   });
 
@@ -335,7 +335,7 @@ describe("ExecutionPatternSelector", () => {
       const result = await selector.selectOptimalPattern(largeContext);
 
       expect(result.executionStrategy.batchSize).toBeGreaterThan(0);
-      expect(result.agentSelection.parallelAgents.length).toBeGreaterThan(0);
+      expect(result.agentSelection.parallelAgents?.length).toBeGreaterThan(0);
     });
   });
 });

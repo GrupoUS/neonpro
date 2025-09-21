@@ -80,11 +80,11 @@ PRE:
 
 ### 1. ARCHITECTURE OVERVIEW
 
-- **Frontend (apps/web)**:  
+- **Frontend (apps/web)**:\
   Use CopilotKit for chat UI, context sync, agentic actions, and rendering rich database answers (lists, charts, details).
-- **Protocol Layer**:  
+- **Protocol Layer**:\
   AG-UI for robust, event-driven, real-time agent/user communication.
-- **Backend (apps/api)**:  
+- **Backend (apps/api)**:\
   Use ottomator-agents/ag-ui-rag-agent skeleton for agent logic, connecting safely to Supabase via new data service.
 
 ---
@@ -218,7 +218,7 @@ constraints:
 
 ## EXAMPLES
 
-**Input (User in NeonPro Chat):**  
+**Input (User in NeonPro Chat):**\
 "Quais os próximos agendamentos da Maria da Silva para amanhã?"
 
 **Backend agent:**
@@ -289,30 +289,30 @@ constraints:
 
 ## Phase 3.1: Setup
 
-- [ ] T001 Install CopilotKit dependencies in apps/web/package.json
-- [ ] T002 Install AG-UI Protocol and runtime dependencies in apps/api/package.json
-- [ ] T003 [P] Configure environment variables for Supabase service key and OpenAI API
-- [ ] T004 Set up Python environment for ottomator-agents in apps/api/agents/
-- [ ] T046 [P] Configure HTTPS with TLS 1.3 in apps/api server configuration
-- [ ] T047 [P] Implement HSTS headers middleware in apps/api/src/middleware/security-headers.ts
-- [ ] T048 [P] Set up automatic SSL/TLS certificate renewal configuration
-- [ ] T049 [P] Configure comprehensive security headers middleware in apps/api/src/middleware/security-headers.ts
+- [x] T001 Install CopilotKit dependencies in apps/web/package.json
+- [x] T002 Install AG-UI Protocol and runtime dependencies in apps/api/package.json
+- [x] T003 [P] Configure environment variables for Supabase service key and OpenAI API
+- [x] T004 Set up Python environment for ottomator-agents in apps/api/agents/
+- [x] T046 [P] Configure HTTPS with TLS 1.3 in apps/api server configuration
+- [x] T047 [P] Implement HSTS headers middleware in apps/api/src/middleware/security-headers.ts
+- [x] T048 [P] Set up automatic SSL/TLS certificate renewal configuration
+- [x] T049 [P] Configure comprehensive security headers middleware in apps/api/src/middleware/security-headers.ts
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
 
-- [ ] T005 [P] Contract test POST /api/ai/data-agent in tests/unit/agent-endpoint.test.ts
-- [ ] T006 [P] Contract test GET /api/ai/sessions/{sessionId} in tests/unit/sessions.test.ts
-- [ ] T007 [P] Contract test POST /api/ai/sessions/{sessionId}/feedback in tests/unit/feedback.test.ts
-- [ ] T008 [P] Integration test client data query in tests/integration/client-query.test.ts
-- [ ] T009 [P] Integration test appointment query in tests/integration/appointment-query.test.ts
-- [ ] T010 [P] Integration test financial query in tests/integration/financial-query.test.ts
-- [ ] T011 [P] Integration test access control in tests/integration/access-control.test.ts
-- [ ] T050 [P] HTTPS enforcement test in tests/integration/https-enforcement.test.ts
-- [ ] T051 [P] Security headers validation test in tests/integration/security-headers.test.ts
-- [ ] T052 [P] Mixed content prevention test in tests/integration/mixed-content.test.ts
-- [ ] T053 [P] Certificate transparency validation test in tests/integration/certificate-transparency.test.ts
+- [x] T005 [P] Contract test POST /api/ai/data-agent in tests/unit/agent-endpoint.test.ts
+- [x] T006 [P] Contract test GET /api/ai/sessions/{sessionId} in tests/unit/sessions.test.ts
+- [x] T007 [P] Contract test POST /api/ai/sessions/{sessionId}/feedback in tests/unit/feedback.test.ts
+- [x] T008 [P] Integration test client data query in tests/integration/client-query.test.ts
+- [x] T009 [P] Integration test appointment query in tests/integration/appointment-query.test.ts
+- [x] T010 [P] Integration test financial query in tests/integration/financial-query.test.ts
+- [x] T011 [P] Integration test access control in tests/integration/access-control.test.ts
+- [x] T050 [P] HTTPS enforcement test in tests/integration/https-security.test.ts
+- [x] T051 [P] Security headers validation test in tests/integration/https-security.test.ts
+- [x] T052 [P] Mixed content prevention test in tests/integration/mixed-content-prevention.test.ts
+- [x] T053 [P] Certificate transparency validation test in tests/integration/certificate-transparency.test.ts
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
 

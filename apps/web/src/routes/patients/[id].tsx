@@ -60,7 +60,7 @@ interface Patient {
   id: string;
   name: string;
   email: string;
-  phone: string;
+  phonePrimary: string;
   cpf: string;
   rg: string;
   birthDate: string;
@@ -80,7 +80,7 @@ interface Patient {
   emergencyContact: {
     name: string;
     relationship: string;
-    phone: string;
+    phonePrimary: string;
     email?: string;
   };
   address: {
@@ -194,7 +194,7 @@ const generateMockPatient = (id: string): Patient => ({
   id,
   name: 'João Silva Santos',
   email: 'joao.silva@email.com',
-  phone: '+55 11 99999-8888',
+  phonePrimary: '+55 11 99999-8888',
   cpf: '123.456.789-00',
   rg: '12.345.678-9',
   birthDate: '1980-03-15',
@@ -221,7 +221,7 @@ const generateMockPatient = (id: string): Patient => ({
   emergencyContact: {
     name: 'Maria Silva Santos',
     relationship: 'Esposa',
-    phone: '+55 11 98888-7777',
+    phonePrimary: '+55 11 98888-7777',
     email: 'maria.santos@email.com',
   },
   address: {
@@ -681,7 +681,7 @@ function PatientDetailPage() {
                 <div className='flex items-start gap-2'>
                   <Phone className='h-4 w-4 text-muted-foreground mt-0.5' />
                   <div>
-                    <div className='text-sm font-medium'>{patient.phone}</div>
+                    <div className='text-sm font-medium'>{patient.phonePrimary}</div>
                   </div>
                 </div>
                 <div className='flex items-start gap-2'>

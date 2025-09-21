@@ -21,17 +21,11 @@ export enum LegalBasis {
   LEGITIMATE_INTERESTS = "legitimate_interests",
 }
 
-// Data categories according to LGPD
-export enum DataCategory {
-  PERSONAL_DATA = "personal_data",
-  SENSITIVE_DATA = "sensitive_data",
-  HEALTH_DATA = "health_data",
-  BIOMETRIC_DATA = "biometric_data",
-  GENETIC_DATA = "genetic_data",
-  LOCATION_DATA = "location_data",
-  FINANCIAL_DATA = "financial_data",
-  BEHAVIORAL_DATA = "behavioral_data",
-}
+// Data categories according to LGPD (now defined in index.ts)
+// We'll use the enum from the main export to avoid duplication
+
+// Type alias for DataCategory - import from the main package
+type DataCategory = "personal_data" | "sensitive_data" | "health_data" | "biometric_data" | "genetic_data" | "location_data" | "financial_data" | "behavioral_data";
 
 // Processing purposes
 export enum ProcessingPurpose {

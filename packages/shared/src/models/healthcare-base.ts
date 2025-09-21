@@ -4,8 +4,8 @@
  * LGPD, ANVISA, and CFM compliance requirements
  */
 
-// Re-export LGPD types from existing consent module
-export { DataCategory as LGPDDataCategory } from "../types/lgpd-consent";
+// DataCategory is now available from main exports
+// We'll use the enum directly from the main package
 
 // Healthcare Data Classification according to Brazilian healthcare regulations
 export enum HealthcareDataClassification {

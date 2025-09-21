@@ -54,57 +54,72 @@ import { FileUploadIntegration, type UploadedFile } from './FileUploadIntegratio
 // Step 1: Basic Information Schema
 const basicInfoSchema = z.object({
   fullName: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
+  familyName: z.string().min(2, 'Sobrenome é obrigatório'),
+  givenNames: z.array(z.string()).min(1, 'Pelo menos um nome é obrigatório'),
   preferredName: z.string().optional(),
   birthDate: z.string().min(1, 'Data de nascimento é obrigatória'),
   gender: z.enum(['male', 'female', 'non-binary', 'prefer-not-to-say'], {
     required_error: 'Selecione o gênero',
   }),
+  maritalStatus: z.enum(['single', 'married', 'divorced', 'widowed', 'separated', 'prefer-not-to-say']).optional(),
+  nationality: z.string().optional(),
+  bloodType: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'unknown']).optional(),
 });
 
 // Step 2: Contact & Address Schema
 const contactAddressSchema = z.object({
-  phone: z.string().min(10, 'Telefone deve ter pelo menos 10 dígitos'),
+  phonePrimary: z.string().min(10, 'Telefone principal deve ter pelo menos 10 dígitos'),
+  phoneSecondary: z.string().optional().or(z.literal('')),
   email: z
     .string()
     .email('Email deve ter um formato válido')
     .optional()
     .or(z.literal('')),
-  cep: z.string().min(8, 'CEP deve ter 8 dígitos').optional().or(z.literal('')),
-  street: z.string().optional(),
-  number: z.string().optional(),
-  complement: z.string().optional(),
-  neighborhood: z.string().optional(),
+  preferredContactMethod: z.enum(['phone', 'email', 'sms', 'whatsapp']).optional(),
+  addressLine1: z.string().optional(),
+  addressLine2: z.string().optional(),
   city: z.string().optional(),
   state: z.string().optional(),
+  postalCode: z.string().optional(),
+  country: z.string().optional(),
 });
 
 // Step 3: Documents & Identity Schema
 const documentsSchema = z.object({
   cpf: z.string().optional().or(z.literal('')),
   rg: z.string().optional().or(z.literal('')),
+  passportNumber: z.string().optional().or(z.literal('')),
+  medicalRecordNumber: z.string().optional(),
   insuranceProvider: z.string().optional().or(z.literal('')),
+  insurancePlan: z.string().optional().or(z.literal('')),
   insuranceNumber: z.string().optional().or(z.literal('')),
 });
 
 // Step 4: Medical Information Schema
 const medicalInfoSchema = z.object({
   allergies: z.string().optional().or(z.literal('')),
-  medications: z.string().optional().or(z.literal('')),
-  medicalConditions: z.string().optional().or(z.literal('')),
+  chronicConditions: z.string().optional().or(z.literal('')),
+  currentMedications: z.string().optional().or(z.literal('')),
+  patientNotes: z.string().optional().or(z.literal('')),
   emergencyContactName: z.string().optional().or(z.literal('')),
   emergencyContactPhone: z.string().optional().or(z.literal('')),
-  emergencyContactRelation: z.string().optional().or(z.literal('')),
+  emergencyContactRelationship: z.string().optional().or(z.literal('')),
+  preferredAppointmentTime: z.array(z.string()).optional(),
+  primaryDoctorId: z.string().optional(),
 });
 
 // Step 5: LGPD Consent Schema
 const consentSchema = z.object({
-  dataProcessingConsent: z.boolean().refine(val => val === true, {
-    message: 'Consentimento para processamento de dados é obrigatório',
+  lgpdConsentGiven: z.boolean().refine(val => val === true, {
+    message: 'Consentimento LGPD é obrigatório',
   }),
+  lgpdConsentVersion: z.string().default('1.0'),
+  dataConsentDate: z.string().optional(),
+  dataConsentStatus: z.string().default('active'),
+  dataSharingConsent: z.any().optional(),
   marketingConsent: z.boolean().default(false),
-  dataSharingConsent: z.boolean().default(false),
-  photoVideoConsent: z.boolean().default(false),
   researchConsent: z.boolean().default(false),
+  communicationPreferences: z.any().optional(),
 });
 
 // Combined schema for all steps
@@ -187,33 +202,48 @@ export function PatientRegistrationWizard({
     resolver: zodResolver(patientRegistrationSchema),
     defaultValues: {
       fullName: '',
+      familyName: '',
+      givenNames: [],
       preferredName: '',
       birthDate: '',
       gender: undefined,
-      phone: '',
+      maritalStatus: undefined,
+      nationality: '',
+      bloodType: undefined,
+      phonePrimary: '',
+      phoneSecondary: '',
       email: '',
-      cep: '',
-      street: '',
-      number: '',
-      complement: '',
-      neighborhood: '',
+      preferredContactMethod: undefined,
+      addressLine1: '',
+      addressLine2: '',
       city: '',
       state: '',
+      postalCode: '',
+      country: '',
       cpf: '',
       rg: '',
+      passportNumber: '',
+      medicalRecordNumber: '',
       insuranceProvider: '',
+      insurancePlan: '',
       insuranceNumber: '',
       allergies: '',
-      medications: '',
-      medicalConditions: '',
+      chronicConditions: '',
+      currentMedications: '',
+      patientNotes: '',
       emergencyContactName: '',
       emergencyContactPhone: '',
       emergencyContactRelation: '',
-      dataProcessingConsent: false,
+      preferredAppointmentTime: [],
+      primaryDoctorId: '',
+      lgpdConsentGiven: false,
+      lgpdConsentVersion: '1.0',
+      dataConsentDate: '',
+      dataConsentStatus: 'active',
+      dataSharingConsent: undefined,
       marketingConsent: false,
-      dataSharingConsent: false,
-      photoVideoConsent: false,
       researchConsent: false,
+      communicationPreferences: undefined,
     },
     mode: 'onChange',
   });
@@ -300,50 +330,57 @@ export function PatientRegistrationWizard({
     setIsSubmitting(true);
 
     try {
-      // Transform data for API
+      // Transform data for API - matching comprehensive patient interface
       const patientData = {
         fullName: data.fullName,
+        familyName: data.familyName,
+        givenNames: data.givenNames,
         preferredName: data.preferredName || undefined,
         birthDate: data.birthDate,
         gender: data.gender,
-        phone: data.phone.replace(/\D/g, ''),
+        maritalStatus: data.maritalStatus,
+        nationality: data.nationality,
+        bloodType: data.bloodType,
+        phonePrimary: data.phonePrimary,
+        phoneSecondary: data.phoneSecondary,
         email: data.email || undefined,
-        cpf: data.cpf?.replace(/\D/g, '') || undefined,
+        preferredContactMethod: data.preferredContactMethod,
+        addressLine1: data.addressLine1,
+        addressLine2: data.addressLine2,
+        city: data.city,
+        state: data.state,
+        postalCode: data.postalCode,
+        country: data.country,
+        cpf: data.cpf || undefined,
         rg: data.rg || undefined,
-        address: data.street
-          ? {
-            street: data.street,
-            number: data.number,
-            complement: data.complement,
-            neighborhood: data.neighborhood,
-            city: data.city,
-            state: data.state,
-            cep: data.cep?.replace(/\D/g, ''),
-          }
-          : undefined,
+        passportNumber: data.passportNumber || undefined,
+        medicalRecordNumber: data.medicalRecordNumber || `PAT-${Date.now()}`,
         insuranceProvider: data.insuranceProvider || undefined,
+        insurancePlan: data.insurancePlan || undefined,
         insuranceNumber: data.insuranceNumber || undefined,
-        allergies: data.allergies
-          ? data.allergies.split(',').map(a => a.trim())
+        allergies: data.allergies ? data.allergies.split(',').map(a => a.trim()).filter(Boolean) : [],
+        chronicConditions: data.chronicConditions ? data.chronicConditions.split(',').map(c => c.trim()).filter(Boolean) : [],
+        currentMedications: data.currentMedications ? data.currentMedications.split(',').map(m => m.trim()).filter(Boolean) : [],
+        patientNotes: data.patientNotes || undefined,
+        emergencyContactName: data.emergencyContactName || undefined,
+        emergencyContactPhone: data.emergencyContactPhone || undefined,
+        emergencyContactRelationship: data.emergencyContactRelationship || undefined,
+        preferredAppointmentTime: data.preferredAppointmentTime || [],
+        primaryDoctorId: data.primaryDoctorId || undefined,
+        patientStatus: 'active',
+        isActive: true,
+        lgpdConsentGiven: data.lgpdConsentGiven,
+        lgpdConsentVersion: data.lgpdConsentVersion || '1.0',
+        dataConsentDate: data.lgpdConsentGiven ? new Date().toISOString() : undefined,
+        dataConsentStatus: data.lgpdConsentGiven ? 'active' : 'inactive',
+        dataRetentionUntil: data.lgpdConsentGiven
+          ? new Date(Date.now() + 10 * 365 * 24 * 60 * 60 * 1000).toISOString()
           : undefined,
-        medications: data.medications
-          ? data.medications.split(',').map(m => m.trim())
-          : undefined,
-        medicalConditions: data.medicalConditions
-          ? data.medicalConditions.split(',').map(c => c.trim())
-          : undefined,
-        emergencyContact: data.emergencyContactName
-          ? {
-            name: data.emergencyContactName,
-            phone: data.emergencyContactPhone,
-            relationship: data.emergencyContactRelation,
-          }
-          : undefined,
-        lgpdConsentGiven: data.dataProcessingConsent,
-        marketingConsent: data.marketingConsent,
         dataSharingConsent: data.dataSharingConsent,
-        photoVideoConsent: data.photoVideoConsent,
-        researchConsent: data.researchConsent,
+        marketingConsent: data.marketingConsent || false,
+        researchConsent: data.researchConsent || false,
+        communicationPreferences: data.communicationPreferences,
+        registrationSource: 'web',
       };
 
       const newPatient = await createPatientMutation.mutateAsync({
@@ -623,8 +660,6 @@ function BasicInformationStep({ form }: { form: any }) {
 }
 
 function ContactAddressStep({ form }: { form: any }) {
-  const [isLoadingCep, setIsLoadingCep] = useState(false);
-
   // Format phone number as user types (shared helper)
   const formatPhone = (value: string) => {
     const cleanPhone = value.replace(/\D/g, '');
@@ -635,34 +670,6 @@ function ContactAddressStep({ form }: { form: any }) {
   const formatCep = (value: string) => {
     const cleanCep = value.replace(/\D/g, '');
     return cleanCep.replace(/(\d{5})(\d{3})/, '$1-$2');
-  };
-
-  // Lookup address by CEP
-  const lookupCep = async (cep: string) => {
-    const cleanCep = cep.replace(/\D/g, '');
-    if (cleanCep.length !== 8) return;
-
-    setIsLoadingCep(true);
-    try {
-      const response = await fetch(
-        `https://viacep.com.br/ws/${cleanCep}/json/`,
-      );
-      const data = await response.json();
-
-      if (!data.erro) {
-        form.setValue('street', data.logradouro || '');
-        form.setValue('neighborhood', data.bairro || '');
-        form.setValue('city', data.localidade || '');
-        form.setValue('state', data.uf || '');
-        toast.success('Endereço encontrado!');
-      } else {
-        toast.error('CEP não encontrado');
-      }
-    } catch {
-      toast.error('Erro ao buscar CEP');
-    } finally {
-      setIsLoadingCep(false);
-    }
   };
 
   return (
@@ -682,10 +689,10 @@ function ContactAddressStep({ form }: { form: any }) {
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <FormField
               control={form.control}
-              name='phone'
+              name='phonePrimary'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Telefone *</FormLabel>
+                  <FormLabel>Telefone Principal *</FormLabel>
                   <FormControl>
                     <Input
                       placeholder='(11) 99999-9999'
@@ -698,6 +705,30 @@ function ContactAddressStep({ form }: { form: any }) {
                   </FormControl>
                   <FormDescription>
                     Telefone principal para contato
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='phoneSecondary'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone Secundário</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='(11) 99999-9999'
+                      {...field}
+                      onChange={e => {
+                        const formatted = formatPhone(e.target.value);
+                        field.onChange(formatted);
+                      }}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Telefone alternativo para contato (opcional)
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -732,33 +763,18 @@ function ContactAddressStep({ form }: { form: any }) {
           <h4 className='text-sm font-medium text-muted-foreground'>
             Endereço
           </h4>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <FormField
               control={form.control}
-              name='cep'
+              name='addressLine1'
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>CEP</FormLabel>
+                  <FormLabel>Endereço *</FormLabel>
                   <FormControl>
-                    <div className='relative'>
-                      <Input
-                        placeholder='00000-000'
-                        {...field}
-                        onChange={e => {
-                          const formatted = formatCep(e.target.value);
-                          field.onChange(formatted);
-                          if (formatted.replace(/\D/g, '').length === 8) {
-                            lookupCep(formatted);
-                          }
-                        }}
-                      />
-                      {isLoadingCep && (
-                        <Loader2 className='absolute right-3 top-3 h-4 w-4 animate-spin' />
-                      )}
-                    </div>
+                    <Input placeholder='Rua, Avenida, etc.' {...field} />
                   </FormControl>
                   <FormDescription>
-                    CEP para busca automática do endereço
+                    Logradouro, número e complemento
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -767,62 +783,23 @@ function ContactAddressStep({ form }: { form: any }) {
 
             <FormField
               control={form.control}
-              name='street'
+              name='addressLine2'
               render={({ field }) => (
-                <FormItem className='md:col-span-2'>
-                  <FormLabel>Logradouro</FormLabel>
+                <FormItem>
+                  <FormLabel>Complemento</FormLabel>
                   <FormControl>
-                    <Input placeholder='Rua, Avenida, etc.' {...field} />
+                    <Input placeholder='Apto, Sala, Bloco, etc.' {...field} />
                   </FormControl>
+                  <FormDescription>
+                    Informações adicionais do endereço (opcional)
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           </div>
 
-          <div className='grid grid-cols-1 md:grid-cols-4 gap-4'>
-            <FormField
-              control={form.control}
-              name='number'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Número</FormLabel>
-                  <FormControl>
-                    <Input placeholder='123' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='complement'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Complemento</FormLabel>
-                  <FormControl>
-                    <Input placeholder='Apto, Sala, etc.' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name='neighborhood'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Bairro</FormLabel>
-                  <FormControl>
-                    <Input placeholder='Bairro' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
             <FormField
               control={form.control}
               name='city'
@@ -836,53 +813,94 @@ function ContactAddressStep({ form }: { form: any }) {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name='state'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Estado</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='UF' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value='AC'>Acre</SelectItem>
+                      <SelectItem value='AL'>Alagoas</SelectItem>
+                      <SelectItem value='AP'>Amapá</SelectItem>
+                      <SelectItem value='AM'>Amazonas</SelectItem>
+                      <SelectItem value='BA'>Bahia</SelectItem>
+                      <SelectItem value='CE'>Ceará</SelectItem>
+                      <SelectItem value='DF'>Distrito Federal</SelectItem>
+                      <SelectItem value='ES'>Espírito Santo</SelectItem>
+                      <SelectItem value='GO'>Goiás</SelectItem>
+                      <SelectItem value='MA'>Maranhão</SelectItem>
+                      <SelectItem value='MT'>Mato Grosso</SelectItem>
+                      <SelectItem value='MS'>Mato Grosso do Sul</SelectItem>
+                      <SelectItem value='MG'>Minas Gerais</SelectItem>
+                      <SelectItem value='PA'>Pará</SelectItem>
+                      <SelectItem value='PB'>Paraíba</SelectItem>
+                      <SelectItem value='PR'>Paraná</SelectItem>
+                      <SelectItem value='PE'>Pernambuco</SelectItem>
+                      <SelectItem value='PI'>Piauí</SelectItem>
+                      <SelectItem value='RJ'>Rio de Janeiro</SelectItem>
+                      <SelectItem value='RN'>Rio Grande do Norte</SelectItem>
+                      <SelectItem value='RS'>Rio Grande do Sul</SelectItem>
+                      <SelectItem value='RO'>Rondônia</SelectItem>
+                      <SelectItem value='RR'>Roraima</SelectItem>
+                      <SelectItem value='SC'>Santa Catarina</SelectItem>
+                      <SelectItem value='SP'>São Paulo</SelectItem>
+                      <SelectItem value='SE'>Sergipe</SelectItem>
+                      <SelectItem value='TO'>Tocantins</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name='postalCode'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>CEP</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder='00000-000'
+                      {...field}
+                      onChange={e => {
+                        const formatted = formatCep(e.target.value);
+                        field.onChange(formatted);
+                      }}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Código postal (opcional)
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           <FormField
             control={form.control}
-            name='state'
+            name='country'
             render={({ field }) => (
-              <FormItem className='md:w-1/4'>
-                <FormLabel>Estado</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder='UF' />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    <SelectItem value='AC'>Acre</SelectItem>
-                    <SelectItem value='AL'>Alagoas</SelectItem>
-                    <SelectItem value='AP'>Amapá</SelectItem>
-                    <SelectItem value='AM'>Amazonas</SelectItem>
-                    <SelectItem value='BA'>Bahia</SelectItem>
-                    <SelectItem value='CE'>Ceará</SelectItem>
-                    <SelectItem value='DF'>Distrito Federal</SelectItem>
-                    <SelectItem value='ES'>Espírito Santo</SelectItem>
-                    <SelectItem value='GO'>Goiás</SelectItem>
-                    <SelectItem value='MA'>Maranhão</SelectItem>
-                    <SelectItem value='MT'>Mato Grosso</SelectItem>
-                    <SelectItem value='MS'>Mato Grosso do Sul</SelectItem>
-                    <SelectItem value='MG'>Minas Gerais</SelectItem>
-                    <SelectItem value='PA'>Pará</SelectItem>
-                    <SelectItem value='PB'>Paraíba</SelectItem>
-                    <SelectItem value='PR'>Paraná</SelectItem>
-                    <SelectItem value='PE'>Pernambuco</SelectItem>
-                    <SelectItem value='PI'>Piauí</SelectItem>
-                    <SelectItem value='RJ'>Rio de Janeiro</SelectItem>
-                    <SelectItem value='RN'>Rio Grande do Norte</SelectItem>
-                    <SelectItem value='RS'>Rio Grande do Sul</SelectItem>
-                    <SelectItem value='RO'>Rondônia</SelectItem>
-                    <SelectItem value='RR'>Roraima</SelectItem>
-                    <SelectItem value='SC'>Santa Catarina</SelectItem>
-                    <SelectItem value='SP'>São Paulo</SelectItem>
-                    <SelectItem value='SE'>Sergipe</SelectItem>
-                    <SelectItem value='TO'>Tocantins</SelectItem>
-                  </SelectContent>
-                </Select>
+              <FormItem className='md:w-1/3'>
+                <FormLabel>País</FormLabel>
+                <FormControl>
+                  <Input placeholder='Brasil' {...field} />
+                </FormControl>
+                <FormDescription>
+                  País de residência (opcional)
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -1106,7 +1124,7 @@ function MedicalInformationStep({ form }: { form: any }) {
 
             <FormField
               control={form.control}
-              name='medications'
+              name='currentMedications'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Medicamentos em Uso</FormLabel>
@@ -1127,7 +1145,7 @@ function MedicalInformationStep({ form }: { form: any }) {
 
             <FormField
               control={form.control}
-              name='medicalConditions'
+              name='chronicConditions'
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Condições Médicas</FormLabel>
@@ -1248,7 +1266,7 @@ function ConsentStep({ form }: { form: any }) {
         <div className='space-y-4'>
           <FormField
             control={form.control}
-            name='dataProcessingConsent'
+            name='lgpdConsentGiven'
             render={({ field }) => (
               <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
                 <FormControl>
@@ -1289,54 +1307,6 @@ function ConsentStep({ form }: { form: any }) {
                   <FormDescription>
                     Autorizo o envio de comunicações promocionais, newsletters e informações sobre
                     novos tratamentos e serviços por email, SMS ou WhatsApp.
-                  </FormDescription>
-                </div>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='dataSharingConsent'
-            render={({ field }) => (
-              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className='space-y-1 leading-none'>
-                  <FormLabel className='text-sm font-medium'>
-                    Compartilhamento com Parceiros
-                  </FormLabel>
-                  <FormDescription>
-                    Autorizo o compartilhamento dos meus dados com laboratórios, convênios e outros
-                    profissionais de saúde quando necessário para o tratamento.
-                  </FormDescription>
-                </div>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name='photoVideoConsent'
-            render={({ field }) => (
-              <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <div className='space-y-1 leading-none'>
-                  <FormLabel className='text-sm font-medium'>
-                    Uso de Imagem
-                  </FormLabel>
-                  <FormDescription>
-                    Autorizo o uso da minha imagem (fotos e vídeos) para fins médicos, documentação
-                    de tratamentos e casos clínicos.
                   </FormDescription>
                 </div>
               </FormItem>

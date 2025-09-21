@@ -162,6 +162,27 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 ### AI & Machine Learning Stack
 
+**CopilotKit v0.20.0** - React AI Framework
+
+- **Why**: React-native conversational AI, streaming support, real-time chat integration
+- **Features**: React hooks, streaming responses, function calling, message persistence
+- **Benefits**: Healthcare-optimized UI components, LGPD-compliant chat storage
+- **Performance**: <100ms message delivery, real-time streaming
+
+**AG-UI Protocol** - Agent Communication Framework
+
+- **Why**: WebSocket-based real-time communication, healthcare compliance, security validation
+- **Features**: Bidirectional messaging, session management, role-based access control
+- **Benefits**: Real-time agent responses, audit logging, LGPD compliance
+- **Architecture**: WebSocket server (port 8081) + HTTP bridge (port 8080)
+
+**Ottomator-agents Framework** - Python RAG Backend
+
+- **Why**: Healthcare-specific RAG capabilities, Supabase integration, compliance features
+- **Features**: Healthcare data retrieval, LGPD audit logging, CPF/CNS validation
+- **Benefits**: Brazilian healthcare compliance, real-time data access, audit trails
+- **Components**: Healthcare Agent, Security Manager, Healthcare Logger, Supabase Connector
+
 **Vercel AI SDK v5.0.23** - Unified AI Framework
 
 - **Why**: Provider-agnostic interface, streaming support, React integration, edge compatibility
@@ -187,12 +208,21 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Benefits**: Client-side inference, privacy protection, offline support
 - **Use Cases**: Anti-No-Show prediction, client-side validation, offline analytics
 
+**AI Architecture & Integration**:
+
+- **Frontend**: CopilotKit React components for chat interface
+- **Bridge**: CopilotKit-to-AG-UI bridge in Hono.dev API
+- **Communication**: WebSocket + HTTP dual-server architecture
+- **Backend**: Python ottomator-agents with healthcare specialization
+- **Database**: Supabase integration with RLS for multi-tenant data access
+
 **AI Governance**:
 
 - **Data Retention**: 7-day log retention
-- **PII Protection**: Automatic redaction
+- **PII Protection**: Automatic redaction (CPF, emails, phones)
 - **Failover**: OpenAI → Anthropic with exponential backoff
 - **Rate Limiting**: Provider-specific limits with graceful degradation
+- **Audit Logging**: Complete LGPD-compliant audit trails for all AI interactions
 
 ### Testing & Quality Assurance Stack
 

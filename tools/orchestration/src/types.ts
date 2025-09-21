@@ -1,3 +1,6 @@
+// Import types needed for interface definitions
+import type { AgentCapability, OrchestrationContext, AgentType } from './agent-registry';
+
 export type AgentCoordinationPattern = "parallel" | "sequential" | "hierarchical" | "event-driven" | "consensus";
 
 // Agent and workflow type definitions
@@ -193,12 +196,17 @@ export interface WorkflowEngine {
   executeWorkflow(context: OrchestrationContext): Promise<OrchestrationResult>;
   getAvailableWorkflows(): string[];
   validateWorkflow(workflow: string): boolean;
+  selectWorkflow?(context: FeatureContext): string;
 }
 
 export interface AgentRegistry {
-  registerAgent(agent: any): void;
-  getAgent(name: string): any;
-  getAllAgents(): any[];
+  registerAgent(agent: AgentCapability): void;
+  getAgent(type: string): AgentCapability | undefined;
+  getAllAgents(): AgentCapability[];
+  getAgentsForCapability(capability: string): AgentCapability[];
+  selectOptimalAgents(context: OrchestrationContext): AgentCapability[];
+  validateAgentCapability(agent: AgentCapability): boolean;
+  getRecommendedWorkflow(context: OrchestrationContext): AgentType[];
   initializeDefaultAgents(): void;
   agentStats: Map<string, any>;
 }

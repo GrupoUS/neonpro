@@ -1,12 +1,12 @@
-export * from "./realtime/realtime-manager.js";
-export * from "./resilience/index.js";
-export * from "./services/AIService.js";
-export * from "./services/health-analysis/index.js";
-export * from "./services/ai-service-management.js";
-export * from "./services/governance/index.js";
+export * from "./realtime/realtime-manager";
+export * from "./resilience";
+export * from "./services/AIService";
+export * from "./services/health-analysis";
+export * from "./services/ai-service-management";
+export * from "./services/governance";
 
 // Phase 4 Compliance & Audit Module
-export * from "./audit/index.js";
+export * from "./audit";
 
 // Phase 4 Analytics Module - selective exports to avoid conflicts
 export type {
@@ -34,7 +34,7 @@ export type {
   IngestionEvent,
   ValidationRule,
   TransformationRule,
-} from "./analytics/index.js";
+} from "./analytics";
 
 export {
   createMockMetric,
@@ -58,28 +58,28 @@ export {
   createAnalyticsConfig,
   ANALYTICS_VERSION,
   ANALYTICS_MODULE_INFO,
-} from "./analytics/index.js";
+} from "./analytics";
 
 // Phase 1 AI Chat models/services
-export * from "./models/chat-session.js";
-export * from "./models/chat-message.js";
-export * from "./models/audit-event.js";
-export * from "./services/rate-counter.js";
-export * from "./services/pii-redaction.js";
-export * from "./services/ai-provider.js";
-export * from "./services/openai-provider.js";
-export * from "./services/anthropic-provider.js";
-export * from "./services/google-provider.js";
-export * from "./services/ai-provider-factory.js";
-export * from "./services/consent-validation.js";
-export * from "./services/chat-service.js";
+export * from "./models/chat-session";
+export * from "./models/chat-message";
+export * from "./models/audit-event";
+export * from "./services/rate-counter";
+export * from "./services/pii-redaction";
+export * from "./services/ai-provider";
+export * from "./services/openai-provider";
+export * from "./services/anthropic-provider";
+export * from "./services/google-provider";
+export * from "./services/ai-provider-factory";
+export * from "./services/consent-validation";
+export * from "./services/chat-service";
 
 // Enhanced AI Usage Counter models/services (T017)
-export * from "./models/usage-counter.js";
-export * from "./models/plan.js";
-export * from "./models/recommendation.js";
-export * from "./models/user-plan.js";
-export * from "./usage/repository.js";
+export * from "./models/usage-counter";
+export * from "./models/plan";
+export * from "./models/recommendation";
+export * from "./models/user-plan";
+export * from "./usage/repository";
 
 // Enhanced AI Abuse Window Tracker (T018)
-export * from "./usage/abuseWindow.js";
+export * from "./usage/abuseWindow";

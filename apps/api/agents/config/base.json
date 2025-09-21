@@ -1,0 +1,217 @@
+{
+  "agent": {
+    "name": "neonpro-healthcare-agent",
+    "version": "1.0.0",
+    "description": "Healthcare AI agent for NeonPro - LGPD compliant data access and natural language processing",
+    "type": "ag-ui-rag-agent",
+    "capabilities": [
+      "natural_language_processing",
+      "healthcare_data_retrieval",
+      "appointment_management",
+      "financial_queries",
+      "client_information_access",
+      "compliance_validation"
+    ]
+  },
+  "environment": {
+    "node_env": "${NODE_ENV}",
+    "log_level": "${LOG_LEVEL:-info}",
+    "healthcare_mode": true,
+    "lgpd_compliance": true,
+    "audit_logging": true
+  },
+  "database": {
+    "provider": "supabase",
+    "url": "${SUPABASE_URL}",
+    "service_key": "${SUPABASE_SERVICE_ROLE_KEY}",
+    "connection_pool": {
+      "min": 2,
+      "max": 10,
+      "idle_timeout": 30000
+    },
+    "security": {
+      "row_level_security": true,
+      "audit_trail": true,
+      "encryption_at_rest": true
+    }
+  },
+  "ai_models": {
+    "primary": {
+      "provider": "openai",
+      "model": "gpt-4",
+      "api_key": "${OPENAI_API_KEY}",
+      "max_tokens": 2000,
+      "temperature": 0.3,
+      "healthcare_mode": true
+    },
+    "fallback": {
+      "provider": "anthropic",
+      "model": "claude-3-sonnet-20240229",
+      "api_key": "${ANTHROPIC_API_KEY}",
+      "max_tokens": 2000,
+      "temperature": 0.3
+    }
+  },
+  "communication": {
+    "protocol": "ag-ui",
+    "websocket": {
+      "port": "${AGENT_WS_PORT:-8080}",
+      "path": "/agent/ws",
+      "cors": {
+        "origins": [
+          "https://neonpro.com.br",
+          "https://www.neonpro.com.br",
+          "https://neonpro.vercel.app"
+        ]
+      },
+      "security": {
+        "require_auth": true,
+        "rate_limiting": {
+          "max_requests": 100,
+          "window_ms": 60000
+        }
+      }
+    },
+    "http": {
+      "port": "${AGENT_HTTP_PORT:-8081}",
+      "base_path": "/api/agent",
+      "cors": {
+        "origins": [
+          "https://neonpro.com.br",
+          "https://www.neonpro.com.br",
+          "https://neonpro.vercel.app"
+        ]
+      }
+    }
+  },
+  "healthcare": {
+    "compliance": {
+      "lgpd": {
+        "enabled": true,
+        "data_classification": "healthcare_sensitive",
+        "retention_policy": "30_days",
+        "anonymization": true
+      },
+      "anvisa": {
+        "enabled": true,
+        "device_classification": "class_ii",
+        "reporting": true
+      },
+      "cfm": {
+        "enabled": true,
+        "telemedicine_compliance": true,
+        "professional_validation": true
+      }
+    },
+    "data_access": {
+      "allowed_entities": [
+        "clients",
+        "appointments",
+        "financial_records",
+        "treatment_history"
+      ],
+      "restricted_fields": [
+        "ssn",
+        "tax_id",
+        "bank_account",
+        "credit_card"
+      ],
+      "audit_all_access": true
+    },
+    "response_filtering": {
+      "remove_sensitive_data": true,
+      "apply_role_based_filtering": true,
+      "mask_personal_identifiers": true
+    }
+  },
+  "security": {
+    "authentication": {
+      "required": true,
+      "providers": ["supabase_jwt"],
+      "session_timeout": 1800000,
+      "refresh_threshold": 300000
+    },
+    "authorization": {
+      "rbac_enabled": true,
+      "default_role": "viewer",
+      "role_hierarchy": ["admin", "doctor", "nurse", "receptionist", "viewer"]
+    },
+    "data_protection": {
+      "encryption_in_transit": true,
+      "encryption_at_rest": true,
+      "pii_detection": true,
+      "phi_protection": true
+    }
+  },
+  "performance": {
+    "caching": {
+      "enabled": true,
+      "ttl": 300000,
+      "max_size": "100MB",
+      "strategy": "lru"
+    },
+    "rate_limiting": {
+      "requests_per_minute": 60,
+      "burst_limit": 10,
+      "healthcare_priority": true
+    },
+    "monitoring": {
+      "response_time_threshold": 2000,
+      "error_rate_threshold": 0.05,
+      "availability_target": 0.995
+    }
+  },
+  "logging": {
+    "level": "${LOG_LEVEL:-info}",
+    "structured": true,
+    "healthcare_audit": true,
+    "destinations": [
+      {
+        "type": "console",
+        "enabled": true
+      },
+      {
+        "type": "file",
+        "enabled": true,
+        "path": "/var/log/neonpro/agent.log",
+        "rotation": "daily",
+        "retention": "30d"
+      },
+      {
+        "type": "audit_trail",
+        "enabled": true,
+        "supabase_table": "audit_logs",
+        "include_data_access": true
+      }
+    ]
+  },
+  "features": {
+    "natural_language_queries": {
+      "enabled": true,
+      "supported_languages": ["pt-BR", "en-US"],
+      "intent_recognition": true,
+      "entity_extraction": true
+    },
+    "contextual_responses": {
+      "enabled": true,
+      "conversation_memory": true,
+      "session_persistence": true,
+      "max_context_length": 4000
+    },
+    "interactive_actions": {
+      "enabled": true,
+      "allowed_actions": [
+        "view_details",
+        "schedule_appointment", 
+        "send_reminder",
+        "generate_report"
+      ],
+      "require_confirmation": true
+    },
+    "real_time_updates": {
+      "enabled": true,
+      "websocket_notifications": true,
+      "data_change_events": true
+    }
+  }
+}

@@ -53,7 +53,7 @@ const patientFormSchema = z.object({
       message: 'Email inválido',
     }),
 
-  phone: z
+  phonePrimary: z
     .string()
     .optional()
     .refine(
@@ -194,7 +194,7 @@ function PatientEditPage() {
       resetForm({
         fullName: patient.fullName || '',
         email: patient.email || '',
-        phone: patient.phone || '',
+        phonePrimary: patient.phonePrimary || '',
         cpf: patient.cpf || '',
         birthDate: patient.birthDate || '',
         notes: '', // Add notes field to patient data if available
@@ -224,7 +224,7 @@ function PatientEditPage() {
         data: {
           fullName: data.fullName,
           email: data.email || undefined,
-          phone: data.phone || undefined,
+          phonePrimary: data.phonePrimary || undefined,
           cpf: data.cpf || undefined,
           birthDate: data.birthDate || undefined,
         },
@@ -460,24 +460,24 @@ function PatientEditPage() {
               <CardContent className='space-y-4'>
                 {/* Phone */}
                 <div className='space-y-2'>
-                  <Label htmlFor='phone' className='text-sm font-medium'>
-                    Telefone
+                  <Label htmlFor='phonePrimary' className='text-sm font-medium'>
+                    Telefone Principal
                   </Label>
                   <Input
-                    id='phone'
-                    {...register('phone')}
+                    id='phonePrimary'
+                    {...register('phonePrimary')}
                     placeholder='(11) 99999-9999'
-                    className={errors.phone ? 'border-destructive' : ''}
-                    aria-describedby={errors.phone ? 'phone-error' : undefined}
+                    className={errors.phonePrimary ? 'border-destructive' : ''}
+                    aria-describedby={errors.phonePrimary ? 'phonePrimary-error' : undefined}
                     onChange={e => {
                       const digits = e.target.value.replace(/\D/g, '');
                       const formatted = formatBRPhone(digits);
-                      setValue('phone', formatted, { shouldValidate: true });
+                      setValue('phonePrimary', formatted, { shouldValidate: true });
                     }}
                   />
-                  {errors.phone && (
-                    <p id='phone-error' className='text-sm text-destructive'>
-                      {errors.phone.message}
+                  {errors.phonePrimary && (
+                    <p id='phonePrimary-error' className='text-sm text-destructive'>
+                      {errors.phonePrimary.message}
                     </p>
                   )}
                 </div>

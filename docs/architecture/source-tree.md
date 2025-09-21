@@ -24,7 +24,28 @@ neonpro/
 │   │   ├── 📄 package.json               # API dependencies & scripts
 │   │   ├── 📄 vite.config.ts             # Vite build configuration
 │   │   ├── 📄 tsconfig.json              # TypeScript configuration
+│   │   ├── 📁 agents/                    # AI Agent Infrastructure
+│   │   │   └── 📁 ag-ui-rag-agent/       # Healthcare RAG Agent (ottomator-agents)
+│   │   │       ├── 📄 package.json       # Agent dependencies (Python packages)
+│   │   │       ├── 📄 requirements.txt   # Python requirements
+│   │   │       └── 📁 src/               # Agent source code
+│   │   │           ├── 📄 index.ts       # Main entry point (WebSocket + HTTP servers)
+│   │   │           ├── 📁 agent/         # Healthcare Agent core logic
+│   │   │           │   └── 📄 healthcare-agent.ts # RAG agent implementation
+│   │   │           ├── 📁 communication/ # AG-UI Protocol WebSocket server
+│   │   │           │   └── 📄 agui-server.ts # WebSocket server (port 8081)
+│   │   │           ├── 📁 http/          # HTTP server for CopilotKit bridge
+│   │   │           │   └── 📄 healthcare-http-server.ts # HTTP server (port 8080)
+│   │   │           ├── 📁 security/      # Security & access control
+│   │   │           │   └── 📄 security-manager.ts # Role-based permissions
+│   │   │           ├── 📁 logging/       # LGPD-compliant audit logging
+│   │   │           │   └── 📄 healthcare-logger.ts # Healthcare audit logger
+│   │   │           └── 📁 database/      # Supabase integration
+│   │   │               └── 📄 supabase-connector.ts # Healthcare data access
 │   │   └── 📁 src/                       # API source code
+│   │       ├── 📁 routes/                # HTTP routes and endpoints
+│   │       │   └── 📁 ai/                # AI-related routes
+│   │       │       └── 📄 copilot-bridge.ts # CopilotKit-to-AG-UI bridge
 │   │       ├── 📁 trpc/                  # tRPC infrastructure
 │   │       │   ├── 📄 context.ts         # tRPC context with Prisma + Supabase
 │   │       │   ├── 📄 trpc.ts            # Core tRPC setup with middleware
@@ -79,10 +100,13 @@ neonpro/
 │           │   ├── 📁 services/           # Service management routes
 │           │   ├── 📁 admin/              # Administration panel
 │           │   ├── 📁 profile/            # User profile management
-│           │   ├── 📁 ai/                 # AI-powered features
+│           │   ├── 📁 ai/                 # AI-powered features with CopilotKit
 │           │   ├── 📁 appointments/       # Appointment scheduling
 │           │   └── 📁 patients/           # Patient management
 │           ├── 📁 components/            # React components
+│           │   ├── 📁 ai/                # AI-powered components
+│           │   │   ├── 📄 DataAgentChat.tsx # CopilotKit chat interface
+│           │   │   └── 📄 CopilotProvider.tsx # CopilotKit provider setup
 │           │   └── 📁 ui/                # shadcn/ui components
 │           ├── 📁 __tests__/             # Consolidated test directory
 │           │   ├── 📁 contracts/         # Contract tests

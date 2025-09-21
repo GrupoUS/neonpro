@@ -102,8 +102,8 @@ const multiColumnFilterFn: FilterFn<PatientTableData> = (
   filterValue: string,
 ) => {
   const searchableRowContent = `${row.original.fullName} ${row.original.email || ''} ${
-    row.original.phone || ''
-  }`.toLowerCase();
+    row.original.phonePrimary || ''
+  } ${row.original.phoneSecondary || ''} ${row.original.cpf || ''}`.toLowerCase();
   const searchTerm = (filterValue ?? '').toLowerCase();
   return searchableRowContent.includes(searchTerm);
 };
@@ -242,10 +242,21 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
                 <span>{row.original.email}</span>
               </div>
             )}
-            {row.original.phone && (
+            {row.original.phonePrimary && (
               <div className='flex items-center gap-2 text-sm'>
                 <Phone className='size-3 text-muted-foreground' />
-                <span>{formatPhone(row.original.phone)}</span>
+                <span>{formatPhone(row.original.phonePrimary)}</span>
+              </div>
+            )}
+            {row.original.phoneSecondary && (
+              <div className='flex items-center gap-2 text-sm text-muted-foreground'>
+                <Phone className='size-3' />
+                <span>{formatPhone(row.original.phoneSecondary)}</span>
+              </div>
+            )}
+            {row.original.preferredContactMethod && (
+              <div className='flex items-center gap-2 text-xs text-muted-foreground'>
+                <span>Preferido: {row.original.preferredContactMethod}</span>
               </div>
             )}
           </div>
@@ -419,7 +430,7 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
       selectedFields: [
         'fullName',
         'email',
-        'phone',
+        'phonePrimary',
         'cpf',
         'birthDate',
         'createdAt',
@@ -445,7 +456,7 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
       selectedFields: [
         'fullName',
         'email',
-        'phone',
+        'phonePrimary',
         'cpf',
         'birthDate',
         'createdAt',

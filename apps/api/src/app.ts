@@ -24,8 +24,8 @@ import { cspViolationHandler, healthcareCSPMiddleware } from './lib/security/csp
 import {
   errorTrackingMiddleware as healthcareErrorTrackingMiddleware,
   globalErrorHandler,
-} from './middleware/error-tracking';
-import { rateLimitMiddleware } from './middleware/rate-limiting';
+} from './middleware/error-tracking.js';
+import { rateLimitMiddleware } from './middleware/rate-limiting.js';
 import {
   healthcareSecurityHeadersMiddleware,
   httpsRedirectMiddleware,

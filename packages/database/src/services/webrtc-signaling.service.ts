@@ -11,7 +11,9 @@ import type { Socket } from "socket.io";
 // Import services  
 import { WebRTCSessionService } from "./webrtc-session.service";
 import { CFMComplianceService } from "./cfm-compliance.service";
-import { winstonLogger } from "@neonpro/shared/services/structured-logging";
+import { createLogger } from "@neonpro/utils";
+
+const winstonLogger = createLogger("webrtc-signaling");
 
 interface SignalingParticipant {
   socketId: string;
@@ -79,15 +81,7 @@ export class WebRTCSignalingServer {
 
     // Start server
     this.server.listen(port, () => {
-      winstonLogger.info(`WebRTC Signaling Server listening on port ${port}`, undefined, {
-        healthcare: {
-          workflowType: "system_maintenance",
-          clinicalContext: {
-            facilityId: "signaling-server",
-            requiresAudit: true,
-          },
-        },
-      });
+      winstonLogger.info(`WebRTC Signaling Server listening on port ${port}`);
     });
   }
 
@@ -111,7 +105,7 @@ export class WebRTCSignalingServer {
           try {
             await this.handleJoinSession(socket, data);
           } catch (error) {
-            winstonLogger.error("Error joining session", error instanceof Error ? error : undefined);
+            winstonLogger.error("Error joining session", { error: error instanceof Error ? error.message : String(error) });
             socket.emit("error", {
               type: "join-session-failed",
               message: "Failed to join session",
@@ -133,7 +127,10 @@ export class WebRTCSignalingServer {
           try {
             await this.handleWebRTCSignal(socket, signal);
           } catch (error) {
-            winstonLogger.error("Error handling WebRTC signal", error instanceof Error ? error : undefined);
+            winstonLogger.error("Error handling WebRTC signal", { 
+              error: error instanceof Error ? error.message : String(error),
+              stack: error instanceof Error ? error.stack : undefined 
+            });
             socket.emit("error", {
               type: "signal-failed",
               message: "Failed to relay signal",

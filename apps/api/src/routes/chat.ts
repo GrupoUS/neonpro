@@ -41,10 +41,7 @@ function isRateLimited(userKey: string, now = Date.now()) {
 // Consent/role gate (stub): require role and consent header
 import { auditLog } from '../middleware/audit-log';
 import { chatRateLimit } from '../middleware/rate-limit';
-import {
-  sseHeaders as sseHeadersHelper,
-  sseStreamFromChunks as sseStreamFromChunksHelper,
-} from '../middleware/streaming';
+
 const ALLOWED_ROLES = new Set([
   'ADMIN',
   'CLINICAL_STAFF',
@@ -74,7 +71,24 @@ function classifyQueryType(
 }
 
 function sseStreamFromChunks(chunks: string[]): ReadableStream<Uint8Array> {
-  return sseStreamFromChunksHelper(chunks);
+  const encoder = new TextEncoder();
+  return new ReadableStream<Uint8Array>({
+    start(controller) {
+      try {
+        chunks.forEach(chunk => {
+          controller.enqueue(
+            encoder.encode(`data: ${JSON.stringify({ type: 'text', delta: chunk })}\n\n`)
+          );
+        });
+        controller.enqueue(
+          encoder.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`)
+        );
+        controller.close();
+      } catch (e) {
+        controller.error(e);
+      }
+    }
+  });
 }
 
 function mockAnswer(question: string): {
@@ -128,13 +142,20 @@ function mockAnswer(question: string): {
 }
 
 function sseHeaders(extra?: Record<string, string>) {
-  return sseHeadersHelper(extra);
+  return {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Cache-Control',
+    ...extra,
+  };
 }
 
 app.post(
   '/query',
   chatRateLimit(),
-  auditLog('chat.query'),
+  auditLog(),
   zValidator('json', ChatQuerySchema),
   async c => {
     const t0 = Date.now();

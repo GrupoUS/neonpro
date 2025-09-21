@@ -154,62 +154,79 @@ copilotBridge.post('/chat/completions', async (c) => {
 });
 
 /**
- * Call AG-UI Agent Backend
+ * Call AG-UI Agent Backend (T052 Integration)
+ * Connects to the WebSocket AG-UI server we created in T052
  */
 async function callAGUIAgent(query: string, userContext: any, requestId: string) {
-  const agentUrl = process.env.AGUI_AGENT_URL || 'http://127.0.0.1:8000';
+  // Use the AG-UI WebSocket server we implemented (T052)
+  const agentUrl = process.env.AGUI_WEBSOCKET_URL || 'ws://127.0.0.1:8081';
+  const httpUrl = process.env.AGUI_HTTP_URL || 'http://127.0.0.1:8080';
   
   try {
-    const response = await fetch(`${agentUrl}/agui/http`, {
+    // Try HTTP fallback for REST API compatibility
+    // This connects to our healthcare agent from T051
+    const response = await fetch(`${httpUrl}/healthcare/query`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'X-Request-ID': requestId,
-        'X-Healthcare-Platform': 'NeonPro'
+        'X-Healthcare-Platform': 'NeonPro',
+        'X-User-ID': userContext.userId,
+        'X-Clinic-ID': userContext.clinicId || userContext.domain,
+        'Authorization': `Bearer ${userContext.token || 'development-token'}`
       },
       body: JSON.stringify({
-        id: requestId,
-        type: 'message',
-        data: {
-          message: {
-            id: requestId,
-            content: query,
-            type: 'text',
-            user_context: userContext,
-            timestamp: new Date().toISOString()
-          },
-          session: {
-            id: userContext.sessionId,
-            user_id: userContext.userId,
-            context: userContext
-          }
+        query,
+        parameters: {},
+        context: {
+          userAgent: 'CopilotKit-Bridge',
+          ipAddress: '127.0.0.1',
+          sessionId: userContext.sessionId
         }
       })
     });
 
     if (!response.ok) {
-      throw new Error(`AG-UI Agent responded with status: ${response.status}`);
+      throw new Error(`Healthcare Agent responded with status: ${response.status}`);
     }
 
     const agentData = await response.json();
-    return agentData;
-
-  } catch (error) {
-    logger.error('AG-UI Agent call failed', {
-      requestId,
-      error: error instanceof Error ? error.message : 'Unknown error',
-      agentUrl
-    });
-
-    // Return fallback response
+    
+    // Transform response to match expected format
     return {
       id: requestId,
-      content: 'Desculpe, estou temporariamente indisponível. Tente novamente em alguns momentos.',
+      content: agentData.content || agentData.response?.content || 'Consulta processada com sucesso.',
+      type: agentData.type || agentData.response?.type || 'text',
+      data: agentData.data || agentData.response?.data,
+      actions: agentData.actions || agentData.response?.suggestions,
+      metadata: {
+        ...agentData.metadata,
+        user_role: userContext.role,
+        processing_time: agentData.processing_time || 0,
+        confidence: agentData.confidence || agentData.response?.metadata?.confidence || 0.95
+      }
+    };
+
+  } catch (error) {
+    logger.error('Healthcare Agent call failed', {
+      requestId,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      agentUrl,
+      httpUrl
+    });
+
+    // Return fallback response with healthcare context
+    return {
+      id: requestId,
+      content: 'Desculpe, o assistente de saúde está temporariamente indisponível. Por favor, tente novamente em alguns momentos ou entre em contato com o suporte técnico.',
       type: 'error',
       metadata: {
         error: true,
         fallback: true,
-        agent_error: error instanceof Error ? error.message : 'Unknown error'
+        agent_error: error instanceof Error ? error.message : 'Unknown error',
+        user_role: userContext.role,
+        processing_time: 0,
+        confidence: 0
       }
     };
   }

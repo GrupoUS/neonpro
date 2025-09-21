@@ -20,14 +20,67 @@ Sempre usar Archon MCP para task management, knowledge management e organizaçã
 4. **Contextuais** → Conforme necessidade (context7, tavily, etc.)
 5. **`desktop-commander`** → Implementação e operações
 
-### **FERRAMENTAS MCP MANDATÓRIAS**
+### **FERRAMENTAS MANDATÓRIAS**
 
 - **`serena mcp`**: Busca e análise semântica de código _(NUNCA usar busca nativa)_
-- **`supabase mcp`**: Operações de database
-- **`archon mcp`**: Task e knowledge management
+- **`supabase cli`**: Operações de database
+- **`archon mcp`**: Task e knowledge base
 - **`desktop-commander mcp`**: Operações de arquivo e sistema
-- **`context7 mcp`**: Análise contextual profunda _(NUNCA usar contexto nativo)_
-- **`tavily mcp`**: Pesquisas web em tempo real
+- **`context7 mcp`**: Análise contextual profunda
+
+## 🏗️ ARQUITETURA & STACK TÉCNICO
+
+### **Monorepo Turborepo** (Bun + PNPM)
+
+```bash
+# Estrutura: apps/{api,web} + packages/{types,database,shared,ui,utils,security,core-services} + tools/*
+pnpm dev                    # Desenvolvimento completo
+pnpm --filter @neonpro/web dev  # Frontend only
+bunx turbo build            # Build otimizado com cache
+bunx turbo test             # Tests em paralelo
+```
+
+### **Frontend (apps/web)** - React 19 + TanStack Router + Vite
+
+```bash
+# TanStack Router (File-based routing)
+pnpm routes:generate        # Gerar route tree
+pnpm routes:watch          # Watch mode para routes
+pnpm dev                   # Vite dev server
+
+# AI Integration (CopilotKit + Multi-provider)
+# Providers: @ai-sdk/openai, @ai-sdk/anthropic, @ai-sdk/google
+# Components: @copilotkit/react-core, @assistant-ui/react
+
+# Accessibility Testing (Automático)
+pnpm test:accessibility    # Axe-core testing
+pnpm test:accessibility:full  # Comprehensive a11y testing
+```
+
+### **Backend (apps/api)** - Hono.dev + tRPC + Edge Runtime
+
+```bash
+# Edge Runtime (Brazilian regions: sao1, gru1)
+pnpm dev:api               # Development server
+pnpm build:edge            # Edge-optimized build
+pnpm deploy:edge           # Deploy to Brazilian regions
+
+# Healthcare Compliance
+pnpm healthcare:compliance # Monitor compliance metrics
+pnpm bundle:analyze        # Healthcare-specific bundle analysis
+```
+
+### **Database** - PostgreSQL + Prisma + Supabase (LGPD Compliant)
+
+```bash
+# Prisma Operations
+pnpm prisma:generate       # Generate types
+pnpm prisma:migrate:deploy # Deploy migrations
+
+# Healthcare Testing
+pnpm test:rls              # Row Level Security tests
+pnpm test:compliance       # LGPD compliance validation
+```
 
 ## 🤖 COORDENAÇÃO DE AGENTES
 
@@ -76,64 +129,83 @@ Sempre usar Archon MCP para task management, knowledge management e organizaçã
 - **Triggers**: "tdd", "teste", "testing", "quality", "coverage"
 - **Especialização**: Red-Green-Refactor + multi-agent coordination
 
-### **🎯 Matriz de Ativação Inteligente**
+## 🔬 PADRÕES TÉCNICOS ESPECÍFICOS
 
-#### Por Complexidade
+### **TanStack Router Development**
 
-**Baixa Complexidade**
+```typescript
+// File-based routing em apps/web/src/routes/
+apps/web/src/routes/
+├── __root.tsx              # Layout root
+├── index.tsx               # Homepage 
+├── auth/                   # Auth routes
+├── dashboard/              # Dashboard routes
+└── patients/               # Patient management
 
-- **Agente**: `apex-dev` (solo)
-- **Situação**: Bug fixes, feature simples, refatoração local
-- **MCP**: sequential-thinking → archon → serena → desktop-commander
-
-**Média Complexidade**
-
-- **Agentes**: `apex-dev` + 1-2 especialistas
-- **Situação**: Features com UI, APIs, integração
-- **MCP**: + context7 para research adicional
-
-**Alta Complexidade**
-
-- **Agentes**: Coordenação multi-agent
-- **Situação**: Arquitetura, sistemas distribuídos, compliance crítico
-- **MCP**: + tavily para validação abrangente
-
-#### Por Palavra-chave (Auto-ativação)
-
-```yaml
-TRIGGERS_AUTOMATICOS:
-  desenvolvimento: ["desenvolver", "implementar", "código", "feature", "bug"]
-  pesquisa: ["pesquisar", "analisar", "investigar", "validar", "research"]
-  design: ["design", "ui", "ux", "interface", "página", "componente"]
-  qualidade: ["revisar", "quality", "performance", "otimizar", "refactor"]
-  segurança: ["security", "vulnerabilidade", "audit", "compliance"]
-  arquitetura: ["architecture", "sistema", "patterns", "microservices"]
-  testes: ["teste", "tdd", "testing", "coverage", "quality"]
+// Route generation automática
+pnpm routes:generate        # Generate routeTree.gen.ts
+pnpm routes:watch          # Watch mode development
 ```
 
-#### Decisão: Sequential vs Paralelo
+### **AI Integration Architecture**
 
-**Sequential (Dependências lineares)**
+```typescript
+// Multi-provider setup
+import { anthropic } from '@ai-sdk/anthropic';
+import { openai } from '@ai-sdk/openai';
+import { google } from '@ai-sdk/google';
 
-- Research → Development → Design → Testing
-- Architecture → Implementation → Security Review
+// CopilotKit integration
+import { CopilotKit } from '@copilotkit/react-core';
+import { AssistantRuntimeProvider } from '@assistant-ui/react';
 
-**Paralelo (Tarefas independentes)**
+// AG-UI Protocol (Backend communication)
+import { AgUiClient } from '@ag-ui/client';
+```
 
-- Code Review + Security Audit + Performance Analysis
-- UI Design + Backend Development (após definição de contratos)
+### **Healthcare Compliance Testing**
 
-### **Decisão Rápida de Agente**
+```bash
+# Healthcare-specific test categories
+pnpm test:healthcare       # Full compliance suite
+pnpm test:frontend         # UI/UX + accessibility
+pnpm test:backend          # API + business logic
+pnpm test:database         # RLS + data validation
+pnpm test:quality          # Performance + security
 
-```yaml
-QUANDO_USAR_AGENTES:
-  dúvida: "Comece com @apex-dev - ele coordena outros conforme necessário"
-  desenvolvimento: "@apex-dev (coordenador principal + full-stack)"
-  pesquisa: "@apex-researcher (multi-fonte + compliance)"
-  design: "@apex-ui-ux-designer (WCAG 2.1 AA+ + shadcn/ui)"
-  qualidade: "@code-reviewer (análise + performance)"
-  segurança: "@security-auditor (DevSecOps + compliance)"
-  arquitetura: "@architect-review (clean architecture + patterns)"
+# Compliance validation
+pnpm healthcare:validate   # Lint + compliance + type-check
+pnpm test:rls              # Row Level Security testing
+pnpm test:compliance       # LGPD + ANVISA + CFM validation
+```
+
+### **Brazilian Edge Optimization**
+
+```bash
+# Vercel deployment (Brazilian regions)
+vercel deploy --regions gru1,sao1  # São Paulo targeting
+pnpm deploy:edge           # Edge-optimized deployment
+pnpm bundle:analyze        # Healthcare bundle analysis
+
+# Edge runtime configuration
+edgeRuntime: {
+  regions: ["sao1", "gru1"],
+  healthcareCompliance: true,
+  lgpdEnforcement: "strict"
+}
+```
+
+### **Accessibility-First Development**
+
+```bash
+# Automated a11y testing
+pnpm test:accessibility    # Component-level axe testing
+pnpm test:a11y            # Full accessibility suite
+jest-axe                   # Integration with vitest
+
+# Components WCAG 2.1 AA+ compliant by default
+@radix-ui/* components     # Accessible primitives
+axe-core integration       # Real-time accessibility checking
 ```
 
 ## 🔄 WORKFLOWS ESSENCIAIS
@@ -148,59 +220,14 @@ sequence: 1. apex-researcher → "Validação tecnológica e best practices"
 output: "Feature production-ready com qualidade validada"
 ```
 
-### 2. Research-Driven Implementation
+### 2. AI Feature Integration
 
 ```yaml
-sequence: 1. apex-researcher → "Multi-source research e compliance"
-  2. apex-dev → "Implementação baseada em evidências"
-  3. code-reviewer → "Quality gates e security check"
-output: "Implementação evidence-based com qualidade garantida"
-```
-
-### 3. Qualidade & Segurança Integrada
-
-```yaml
-parallel:
-  - code-reviewer → "Análise de qualidade e performance"
-  - security-auditor → "Auditoria segurança e vulnerabilidades"
-  - apex-dev → "Correções coordenadas e otimizações"
-output: "Código seguro e otimizado"
-```
-
-### 4. Arquitetura & Sistema
-
-```yaml
-sequence: 1. architect-review → "Design e padrões arquiteturais"
-  2. apex-dev → "Implementação seguindo architecture mode"
-  3. security-auditor → "Validação segurança arquitetural"
-output: "Sistema bem arquitetado e seguro"
-```
-
-## ⚡ COMANDOS RÁPIDOS
-
-### Agente Único
-
-```bash
-@apex-dev "implementar autenticação JWT com refresh token"
-@apex-researcher "validar padrões LGPD para dados de pacientes"
-@apex-ui-ux-designer "criar interface de agendamento acessível"
-@code-reviewer "analisar performance da API de pacientes"
-```
-
-### Múltiplos Agentes (Paralelo)
-
-```bash
-@apex-dev,code-reviewer "implementar e revisar sistema de notificações"
-@apex-ui-ux-designer,apex-dev "criar dashboard responsivo com backend"
-@security-auditor,code-reviewer "auditoria completa de segurança"
-```
-
-### Workflows Completos
-
-```bash
-@apex-researcher,apex-dev "pesquisar e implementar integração FHIR"
-@architect-review,apex-dev,security-auditor "design e implementação microservice seguro"
-@apex-researcher,apex-dev,apex-ui-ux-designer,code-reviewer "feature completa de telemedicina"
+sequence: 1. apex-researcher → "AI provider evaluation e best practices"
+  2. apex-dev → "CopilotKit integration + multi-provider setup"
+  3. security-auditor → "AI security + data privacy validation"
+  4. test → "AI functionality + compliance testing"
+output: "AI feature segura e compliant"
 ```
 
 ## 📋 WORKFLOW ARCHON OBRIGATÓRIO
@@ -220,61 +247,47 @@ output: "Sistema bem arquitetado e seguro"
 - Manter descrições e adicionar notas de implementação
 - NÃO FAZER SUPOSIÇÕES - checar documentação do projeto
 
-## 💡 PRINCÍPIOS CONSTITUCIONAIS
+## 🚀 COMANDOS CRÍTICOS DE DESENVOLVIMENTO
 
-### **KISS Principle**
+### **Quality Gates (Mandatory)**
 
-- Escolher solução mais simples que atende requisitos
-- Código legível sobre otimizações inteligentes
-- Reduzir carga cognitiva
-- Evitar over-engineering
+```bash
+# Constitutional checks (sempre executar)
+pnpm lint:fix              # Fix linting issues
+pnpm format                # Format code
+pnpm type-check            # TypeScript validation
+pnpm healthcare:validate   # Full compliance check
 
-### **YAGNI Principle**
+# Testing by category
+pnpm test:frontend         # UI + accessibility tests
+pnpm test:backend          # API + business logic
+pnpm test:healthcare       # LGPD + compliance tests
+pnpm test:e2e             # End-to-end validation
+```
 
-- Construir apenas o que requisitos especificam
-- Resistir features "por precaução"
-- Refatorar quando requisitos emergirem
-- Focar nas user stories atuais
+### **Development Workflows**
 
-### **Chain of Thought**
+```bash
+# Frontend development
+pnpm dev:web              # Frontend only
+pnpm routes:generate      # Generate route tree
+pnpm test:accessibility   # A11y validation
 
-- Quebrar problemas em passos sequenciais
-- Verbalizar processo de raciocínio
-- Mostrar decisões intermediárias
-- Validar contra requisitos
+# Backend development  
+pnpm dev:api              # API server only
+pnpm prisma:generate      # Database types
+pnpm healthcare:compliance # Compliance monitoring
 
-## 🚀 METODOLOGIA A.P.T.E
-
-**Analyze** → Análise abrangente de requisitos
-**Plan** → Planejamento estratégico de implementação
-**Think** → Meta-cognição e avaliação multi-perspectiva
-**Execute** → Implementação sistemática com quality gates
-
-**Padrão de Qualidade**: ≥9.5/10 em todas as entregas
-
-## ⚡ OTIMIZAÇÕES DE PERFORMANCE
-
-### **Build & Runtime**
-
-- **Turborepo**: Cache inteligente para builds 3-5x mais rápidos
-- **Bun**: Scripts e testes (3-5x performance vs npm)
-- **PNPM**: Package management eficiente
-- **Vite**: Dev server <2s startup, HMR <100ms
-
-### **Desenvolvimento**
-
-- **TypeScript Strict**: Máxima type safety
-- **TanStack Router**: Type-safe routing end-to-end
-- **tRPC v11**: API type-safe sem overhead
-- **Prisma**: ORM com auto-generated types
+# Full-stack development
+pnpm dev                  # All services
+pnpm test:all-categories  # All test categories
+```
 
 ## 🔒 SEGURANÇA & COMPLIANCE
 
 ### **Healthcare Compliance (Automático)**
 
 - **LGPD**: Proteção de dados de pacientes
-- **ANVISA**: Regulamentações de dispositivos médicos
-- **CFM**: Padrões profissionais médicos
 - **WCAG 2.1 AA+**: Acessibilidade obrigatória
 
 ### **Security Standards**
@@ -310,41 +323,6 @@ output: "Sistema bem arquitetado e seguro"
 - Código legível e bem estruturado
 - Documentação adequada
 - Test coverage ≥90% (componentes críticos)
-
-## 🔧 MCP TOOLS ESSENCIAIS
-
-### Obrigatórios (Todos os Agentes)
-
-- **`sequential-thinking`**: SEMPRE primeiro passo - análise e decomposição
-- **`archon`**: Task management e knowledge base (nunca pular)
-- **`serena`**: Análise de codebase (NUNCA usar busca nativa)
-
-### Por Contexto
-
-```yaml
-research_stack:
-  - context7: Documentação oficial e frameworks
-  - tavily: Informações atuais e trends
-  - exa: Implementações reais (complexidade ≥5)
-
-development_stack:
-  - desktop-commander: Operações de arquivo e sistema
-  - supabase-mcp: Database operations
-  - shadcn-ui: Componentes e registries (UI/UX agent)
-
-quality_stack:
-  - Integração CI/CD via desktop-commander
-  - Testes automatizados e coverage
-  - Security scanning tools
-```
-
-### Sequência MCP Padrão
-
-1. **sequential-thinking** (análise)
-2. **archon** (task setup)
-3. **serena** (codebase context)
-4. **Contextuais** (conforme necessidade)
-5. **desktop-commander** (implementação)
 
 ## 🚫 RESTRIÇÕES UNIVERSAIS
 

@@ -229,9 +229,9 @@ describe("QualityControlOrchestrator", () => {
         await orchestrator.executeQualityControlOrchestration(lgpdContext);
 
       expect(session.healthcareCompliance.lgpdValidation).toBeDefined();
-      expect(session.healthcareCompliance.lgpdValidation.compliant).toBe(true);
+      expect(session.healthcareCompliance.lgpdValidation?.compliant).toBe(true);
       expect(
-        session.healthcareCompliance.lgpdValidation.violations.length,
+        session.healthcareCompliance.lgpdValidation?.violations.length,
       ).toBe(0);
     });
 

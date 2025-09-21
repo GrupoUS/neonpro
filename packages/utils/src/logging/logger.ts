@@ -8,7 +8,7 @@ export interface LogEntry {
   [k: string]: unknown;
 }
 
-import { redact } from "./redact";
+import { redact } from "./redact.js";
 
 export function createLogger(service = "api", autoRedact: boolean = true) {
   function sanitize(value: unknown): unknown {
@@ -54,5 +54,7 @@ export function createLogger(service = "api", autoRedact: boolean = true) {
       base("error", msg, extra),
     warn: (msg: string, extra?: Record<string, unknown>) =>
       base("warn", msg, extra),
+    debug: (msg: string, extra?: Record<string, unknown>) =>
+      base("info", msg, extra), // Map debug to info for simplicity
   };
 }

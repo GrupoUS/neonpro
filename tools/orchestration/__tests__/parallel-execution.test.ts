@@ -204,7 +204,7 @@ describe("Parallel Agent Execution Workflows", () => {
       const optimized = agentRegistry.getParallelOptimizedAgents(agents);
 
       expect(optimized).toHaveLength(agents.length);
-      expect(optimized.every((agent) => agents.includes(agent.name))).toBe(
+      expect(optimized.every((agent: any) => agents.includes(agent.name))).toBe(
         true,
       );
     });
@@ -218,7 +218,7 @@ describe("Parallel Agent Execution Workflows", () => {
 
       expect(groups).toBeDefined();
       expect(groups.length).toBeGreaterThan(0);
-      expect(groups.every((group) => group.agents.length > 0)).toBe(true);
+      expect(groups.every((group: any) => group.agents.length > 0)).toBe(true);
     });
 
     it("should create execution plan for parallel agents", () => {
