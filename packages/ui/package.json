@@ -58,9 +58,9 @@
       "require": "./dist/index.js"
     },
     "./lib/utils": {
-      "types": "./src/lib/utils.ts",
-      "import": "./src/lib/utils.ts",
-      "require": "./src/lib/utils.ts"
+      "types": "./src/utils/ui-utils.ts",
+      "import": "./src/utils/ui-utils.ts",
+      "require": "./src/utils/ui-utils.ts"
     },
     "./theme": {
       "types": "./src/theme/index.ts",
