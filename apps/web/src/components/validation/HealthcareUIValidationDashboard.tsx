@@ -197,7 +197,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
 
       setValidationResult(result);
       updateBenchmarkComparison(result.percentage);
-    } catch (_error) {
+    } catch (error) {
       console.error('Validation failed:', error);
     } finally {
       setIsValidating(false);

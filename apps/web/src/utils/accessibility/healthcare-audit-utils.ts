@@ -431,7 +431,7 @@ export class HealthcareAccessibilityAuditor {
         if (passed) {
           passedChecks++;
         }
-      } catch (_error) {
+      } catch (error) {
         console.error(`Audit rule ${ruleId} failed:`, error);
 
         issues.push({
@@ -670,7 +670,7 @@ export class HealthcareAccessibilityAuditor {
           message: `Applied fix for ${rule.name}`,
         });
         fixed++;
-      } catch (_error) {
+      } catch (error) {
         fixes.push({
           rule: rule.id,
           element: 'document',
@@ -771,7 +771,7 @@ export async function quickHealthcareAccessibilityCheck(
       issues: results.categoryResults.flatMap((cat: any) => cat.issues),
       healthcareCompliance: results.summary.healthcareCompliance,
     };
-  } catch (_error) {
+  } catch (error) {
     console.error('Quick healthcare accessibility check failed:', error);
     return {
       passed: false,

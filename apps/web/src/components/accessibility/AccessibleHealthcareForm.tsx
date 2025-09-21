@@ -149,7 +149,7 @@ export function AccessibleHealthcareForm({
         setSubmitSuccess(true);
         announceFormSuccess('Formulário enviado com sucesso');
         announceLive('Formulário enviado com sucesso!', 'polite');
-      } catch (_error) {
+      } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Erro ao enviar formulário';
         setSubmitError(errorMessage);
         announceFormError('envio', errorMessage);

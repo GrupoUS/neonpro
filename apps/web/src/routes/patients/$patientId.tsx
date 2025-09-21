@@ -189,7 +189,7 @@ function PatientDetailPage() {
               accessed_at: new Date().toISOString(),
             }),
           });
-        } catch (_error) {
+        } catch (error) {
           console.warn('Failed to log patient access:', error);
         }
       };

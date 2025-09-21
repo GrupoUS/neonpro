@@ -184,7 +184,7 @@ export function AppointmentBooking({
       onBookingComplete?.(result);
       setIsBookingDialogOpen(false);
       setSelectedTime('');
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to book appointment:', error);
     }
   };

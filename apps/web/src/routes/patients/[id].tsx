@@ -1,4 +1,5 @@
-'use client';
+'use client';;
+import { createFileRoute } from '@tanstack/react-router'
 
 import {
   AlertTriangle,
@@ -22,7 +23,7 @@ import {
   User,
   Video,
 } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/patients/id')({
   component: PatientDetailPage,
@@ -1365,16 +1366,3 @@ function PatientDetailPage() {
     </div>
   );
 }
-                </Badge>
-                <Badge variant='outline' className='text-xs'>
-                  Marketing: {patient.lgpdConsent.marketing ? 'Sim' : 'Não'}
-                </Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </footer>
-    </div>
-  );
-}
-

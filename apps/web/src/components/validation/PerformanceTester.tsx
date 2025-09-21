@@ -215,7 +215,7 @@ export const PerformanceTester: React.FC = () => {
       observersRef.current.forEach(_observer => {
         try {
           observer.disconnect();
-        } catch (_error) {
+        } catch (error) {
           console.warn('Error disconnecting observer:', error);
         }
       });
@@ -340,7 +340,7 @@ export const PerformanceTester: React.FC = () => {
 
       // Store all observers for cleanup
       observersRef.current = observers;
-    } catch (_error) {
+    } catch (error) {
       console.warn('Performance observers setup failed:', error);
       // Clean up any observers that were created before the error
       observers.forEach(_observer => {
@@ -438,7 +438,7 @@ export const PerformanceTester: React.FC = () => {
         } else if (scenario.id === 'patient_data_load') {
           updateMetric('DATA_LOAD', duration);
         }
-      } catch (_error) {
+      } catch (error) {
         results.push({
           id: scenario.id,
           name: scenario.name,

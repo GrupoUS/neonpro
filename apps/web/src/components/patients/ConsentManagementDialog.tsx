@@ -258,7 +258,7 @@ export function ConsentManagementDialog({
     try {
       await onConsentUpdate(data);
       onOpenChange(false);
-    } catch (_error) {
+    } catch (error) {
       console.error('Erro ao atualizar consentimentos:', error);
     } finally {
       setIsLoading(false);
@@ -269,7 +269,7 @@ export function ConsentManagementDialog({
     setIsLoading(true);
     try {
       await onDataExport(patientData.patientId);
-    } catch (_error) {
+    } catch (error) {
       console.error('Erro ao exportar dados:', error);
     } finally {
       setIsLoading(false);
@@ -285,7 +285,7 @@ export function ConsentManagementDialog({
       setIsLoading(true);
       try {
         await onDataErasure(patientData.patientId);
-      } catch (_error) {
+      } catch (error) {
         console.error('Erro ao solicitar exclusão:', error);
       } finally {
         setIsLoading(false);

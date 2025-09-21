@@ -329,7 +329,7 @@ export function useCheckAvailability() {
           conflicts,
           warnings,
         };
-      } catch (_error) {
+      } catch (error) {
         console.error('Error in availability check:', error);
         throw error;
       }
@@ -439,7 +439,7 @@ export function useServiceTimeSlots(
         }
 
         return slots;
-      } catch (_error) {
+      } catch (error) {
         console.error('Error generating time slots:', error);
         throw error;
       }

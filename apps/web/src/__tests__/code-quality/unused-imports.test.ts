@@ -72,13 +72,13 @@ describe('TDD Orchestrator - Code Quality: Unused Imports', () => {
       const filePath = join(webSrcPath, 'hooks/useFinancialMetrics.ts');
       const result = checkUnusedImports(filePath);
 
-      // This test will FAIL initially (RED phase)
-      expect(result.hasUnusedImports).toBe(false);
-      expect(result.unusedImports).toHaveLength(0);
-
       if (result.hasUnusedImports) {
         console.log(`Unused imports in useFinancialMetrics.ts: ${result.unusedImports.join(', ')}`);
       }
+
+      // This test will FAIL initially (RED phase)
+      expect(result.hasUnusedImports).toBe(false);
+      expect(result.unusedImports).toHaveLength(0);
     });
 
     it('should have no unused imports in insights-enhanced.tsx', () => {

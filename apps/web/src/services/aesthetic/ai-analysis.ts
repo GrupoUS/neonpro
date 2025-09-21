@@ -277,7 +277,7 @@ export class AestheticAIAnalysisService {
 
       // Validate and normalize the analysis result
       return this.validateAnalysis(analysisResult);
-    } catch (_error) {
+    } catch (error) {
       console.error('AI Analysis error:', error);
       // Fallback to mock analysis in case of API failure
       return this.getMockAnalysis(analysisType);

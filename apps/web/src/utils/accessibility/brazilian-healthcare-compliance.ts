@@ -793,7 +793,7 @@ export async function quickBrazilianComplianceCheck(
         (issue: any) => `${issue.standard}: ${issue.requirement} - ${issue.description}`,
       ),
     };
-  } catch (_error) {
+  } catch (error) {
     console.error('Quick compliance check failed:', error);
     return {
       passed: false,

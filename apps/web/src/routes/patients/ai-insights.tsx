@@ -409,7 +409,7 @@ function PatientAIInsights() {
         setPredictions(mockPredictions);
         setModels(mockModels);
         setTreatments(mockTreatments);
-      } catch (_error) {
+      } catch (error) {
         console.error('Error loading AI insights:', error);
       } finally {
         setLoading(false);

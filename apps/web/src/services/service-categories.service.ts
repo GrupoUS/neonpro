@@ -87,7 +87,7 @@ class ServiceCategoriesService {
           }
           : undefined,
       }));
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in getServiceCategories:', error);
       throw error;
     }
@@ -150,7 +150,7 @@ class ServiceCategoriesService {
           }
           : undefined,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in getServiceCategory:', error);
       throw error;
     }
@@ -210,7 +210,7 @@ class ServiceCategoriesService {
         created_at: data.created_at,
         updated_at: data.updated_at,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in createServiceCategory:', error);
       throw error;
     }
@@ -278,7 +278,7 @@ class ServiceCategoriesService {
         created_at: data.created_at,
         updated_at: data.updated_at,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in updateServiceCategory:', error);
       throw error;
     }
@@ -318,7 +318,7 @@ class ServiceCategoriesService {
         console.error('Error deleting service category:', error);
         throw new Error(`Failed to delete service category: ${error.message}`);
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in deleteServiceCategory:', error);
       throw error;
     }
@@ -387,7 +387,7 @@ class ServiceCategoriesService {
           is_active: service.is_active || false,
         })),
       }));
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in getServiceCategoriesWithServices:', error);
       throw error;
     }
@@ -441,7 +441,7 @@ class ServiceCategoriesService {
         created_at: category.created_at,
         updated_at: category.updated_at,
       }));
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in initializeDefaultCategories:', error);
       throw error;
     }

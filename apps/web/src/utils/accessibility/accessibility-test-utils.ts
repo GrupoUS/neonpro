@@ -258,7 +258,7 @@ export class HealthcareAccessibilityTester {
           if (report.summary.total > 0) {
             violations.push(...report.violations);
           }
-        } catch (_error) {
+        } catch (error) {
           console.error(`Axe-core test failed for ${scenario.name}:`, error);
         }
       }
@@ -271,7 +271,7 @@ export class HealthcareAccessibilityTester {
         violations,
         score,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error(`Scenario test failed for ${scenario.name}:`, error);
       return {
         name: scenario.name,
@@ -493,7 +493,7 @@ export async function quickAccessibilityCheck(selector?: string): Promise<{
       violations: report.violations,
       score: Math.max(0, 100 - report.summary.total * 10),
     };
-  } catch (_error) {
+  } catch (error) {
     console.error('Quick accessibility check failed:', error);
     return {
       passed: false,

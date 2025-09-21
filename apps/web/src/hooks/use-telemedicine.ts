@@ -222,7 +222,7 @@ export function useVideoCall(sessionId: string) {
 
       peerConnectionRef.current = peerConnection;
       setCallState(prev => ({ ...prev, isConnected: true }));
-    } catch (_error) {
+    } catch (error) {
       console.error('Error initializing video call:', error);
       toast.error('Erro ao inicializar videochamada');
     }
@@ -263,7 +263,7 @@ export function useVideoCall(sessionId: string) {
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = screenStream;
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error starting screen share:', error);
       toast.error('Erro ao compartilhar tela');
     }

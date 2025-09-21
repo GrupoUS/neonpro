@@ -58,7 +58,7 @@ export function useFormAutoSave(formKey: string): UseFormAutoSaveReturn {
         setSavedData(parsedData.data);
         setLastSaved(new Date(parsedData.timestamp));
       }
-    } catch (_error) {
+    } catch (error) {
       console.warn('Failed to load saved form data:', error);
       // Clear corrupted data
       localStorage.removeItem(storageKey);
@@ -92,7 +92,7 @@ export function useFormAutoSave(formKey: string): UseFormAutoSaveReturn {
           localStorage.setItem(storageKey, JSON.stringify(saveData));
           setSavedData(data);
           setLastSaved(new Date());
-        } catch (_error) {
+        } catch (error) {
           console.error('Failed to save form data:', error);
         }
       }, DEBOUNCE_DELAY);
@@ -106,7 +106,7 @@ export function useFormAutoSave(formKey: string): UseFormAutoSaveReturn {
       localStorage.removeItem(storageKey);
       setSavedData(null);
       setLastSaved(null);
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to clear saved form data:', error);
     }
   }, [storageKey]);

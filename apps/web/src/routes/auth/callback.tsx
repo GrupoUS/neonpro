@@ -85,7 +85,7 @@ function AuthCallbackComponent() {
             search: { error: 'auth_callback_failed' } as any,
           });
         }, 1500);
-      } catch (_error) {
+      } catch (error) {
         console.error('Auth callback exception:', error);
         setStatus('error');
         setTimeout(() => {

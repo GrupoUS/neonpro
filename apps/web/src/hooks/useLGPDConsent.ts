@@ -164,7 +164,7 @@ export function useLGPDConsent({
       );
 
       return hasValidConsent;
-    } catch (_error) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       setConsentState(prev => ({
         ...prev,
@@ -201,7 +201,7 @@ export function useLGPDConsent({
       }
 
       return success;
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to request consent:', error);
       setConsentState(prev => ({
         ...prev,
@@ -237,7 +237,7 @@ export function useLGPDConsent({
         }
 
         return success;
-      } catch (_error) {
+      } catch (error) {
         console.error('Failed to grant consent:', error);
         setConsentState(prev => ({
           ...prev,
@@ -281,7 +281,7 @@ export function useLGPDConsent({
 
         // Refresh consent state
         await checkConsent();
-      } catch (_error) {
+      } catch (error) {
         console.error('Failed to revoke consent:', error);
         setConsentState(prev => ({
           ...prev,
@@ -308,7 +308,7 @@ export function useLGPDConsent({
           clinicId,
           { purpose, dataTypes, startTime },
         );
-      } catch (_error) {
+      } catch (error) {
         console.error('Failed to log session start:', error);
       }
     },
@@ -333,7 +333,7 @@ export function useLGPDConsent({
         );
 
         setSessionStartTime(null);
-      } catch (_error) {
+      } catch (error) {
         console.error('Failed to log session end:', error);
       }
     },
@@ -360,7 +360,7 @@ export function useLGPDConsent({
           clinicId,
           metadata,
         );
-      } catch (_error) {
+      } catch (error) {
         console.error('Failed to log data access:', error);
       }
     },

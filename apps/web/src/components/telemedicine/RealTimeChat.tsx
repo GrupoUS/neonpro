@@ -304,7 +304,7 @@ export function RealTimeChat({
           'Mensagem de urgência detectada. Considerando escalação.',
         );
       }
-    } catch (_error) {
+    } catch (error) {
       toast.error('Erro ao enviar mensagem');
     }
   }, [
@@ -357,7 +357,7 @@ export function RealTimeChat({
         setEditingMessageId(null);
         setEditingContent('');
         toast.success('Mensagem editada');
-      } catch (_error) {
+      } catch (error) {
         toast.error('Erro ao editar mensagem');
       }
     },
@@ -408,7 +408,7 @@ export function RealTimeChat({
         });
 
         toast.success('Arquivo enviado com sucesso');
-      } catch (_error) {
+      } catch (error) {
         toast.error('Erro ao enviar arquivo');
       }
     },
@@ -427,7 +427,7 @@ export function RealTimeChat({
           },
         });
         toast.success('Sugestão aplicada');
-      } catch (_error) {
+      } catch (error) {
         toast.error('Erro ao aplicar sugestão');
       }
     },
@@ -439,7 +439,7 @@ export function RealTimeChat({
     try {
       const exportData = await exportChatHistory('pdf');
       toast.success('Histórico exportado com sucesso');
-    } catch (_error) {
+    } catch (error) {
       toast.error('Erro ao exportar histórico');
     }
   }, [exportChatHistory]);

@@ -149,7 +149,7 @@ class AnalyticsService {
           ? (noShowAppointments / totalAppointments) * 100
           : 0,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting appointment metrics:', error);
       return {
         totalAppointments: 0,
@@ -287,7 +287,7 @@ class AnalyticsService {
         revenueByProfessional,
         monthlyRevenue,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting revenue metrics:', error);
       return {
         totalRevenue: 0,
@@ -423,7 +423,7 @@ class AnalyticsService {
         topPatientsByFrequency,
         patientAcquisitionTrend,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting patient analytics:', error);
       return {
         totalPatients: 0,
@@ -497,7 +497,7 @@ class AnalyticsService {
             * 100
           : 0,
       }));
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting professional performance:', error);
       return [];
     }
@@ -551,7 +551,7 @@ class AnalyticsService {
       return Array.from(serviceStats.values()).sort(
         (a, b) => b.appointmentCount - a.appointmentCount,
       );
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting popular services:', error);
       return [];
     }
@@ -604,7 +604,7 @@ class AnalyticsService {
       }
 
       return csvContent;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error exporting analytics to CSV:', error);
       throw error;
     }

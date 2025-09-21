@@ -36,7 +36,7 @@ function AuthConfirmComponent() {
         setTimeout(() => {
           window.location.href = redirectUrl;
         }, 2000);
-      } catch (_error) {
+      } catch (error) {
         console.error('Email confirmation exception:', error);
         setStatus('error');
         setTimeout(() => {

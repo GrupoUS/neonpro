@@ -229,7 +229,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
       };
 
       return peerConnection;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error initializing peer connection:', error);
       toast.error('Erro ao inicializar conexão WebRTC');
       throw error;
@@ -288,7 +288,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
 
       toast.success('Mídia local inicializada');
       return stream;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error accessing local media:', error);
       toast.error('Erro ao acessar câmera e microfone');
       throw error;
@@ -337,7 +337,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
           await endSession();
           break;
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error handling signaling message:', error);
       toast.error('Erro no processamento de sinalização');
     }
@@ -372,7 +372,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
       });
 
       toast.success('Oferta WebRTC enviada');
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating offer:', error);
       toast.error('Erro ao criar oferta WebRTC');
       throw error;
@@ -416,7 +416,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
           toast.success(`Vídeo ${videoTrack.enabled ? 'ligado' : 'desligado'}`);
         }
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error toggling video:', error);
       toast.error('Erro ao alternar vídeo');
     }
@@ -465,7 +465,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
           toast.success(`Áudio ${audioTrack.enabled ? 'ligado' : 'desligado'}`);
         }
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error toggling audio:', error);
       toast.error('Erro ao alternar áudio');
     }
@@ -526,7 +526,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
           toast.success('Compartilhamento de tela iniciado');
         }
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error starting screen share:', error);
       toast.error('Erro ao compartilhar tela');
     }
@@ -566,7 +566,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
           toast.success('Compartilhamento de tela finalizado');
         }
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error stopping screen share:', error);
       toast.error('Erro ao parar compartilhamento de tela');
     }
@@ -602,7 +602,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
             stats: connectionStats,
             timestamp: Date.now(),
           });
-        } catch (_error) {
+        } catch (error) {
           console.error('Error collecting WebRTC stats:', error);
         }
       }
@@ -665,7 +665,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
       });
 
       toast.success('Sessão WebRTC finalizada');
-    } catch (_error) {
+    } catch (error) {
       console.error('Error ending session:', error);
       toast.error('Erro ao finalizar sessão');
     }
@@ -679,7 +679,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
       await initializePeerConnection();
       await initializeLocalMedia();
       toast.success('Sessão WebRTC inicializada');
-    } catch (_error) {
+    } catch (error) {
       console.error('Error initializing WebRTC session:', error);
       toast.error('Erro ao inicializar sessão WebRTC');
       throw error;

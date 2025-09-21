@@ -158,7 +158,7 @@ class TimeSlotValidationService {
         warnings,
         suggestedAlternatives,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error validating time slot:', error);
       return {
         isValid: false,
@@ -282,7 +282,7 @@ class TimeSlotValidationService {
       });
 
       return conflicts;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error checking professional availability:', error);
       return [
         {
@@ -344,7 +344,7 @@ class TimeSlotValidationService {
       }
 
       return null;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error checking capacity limits:', error);
       return null;
     }
@@ -505,7 +505,7 @@ class TimeSlotValidationService {
       }
 
       return this.defaultBusinessRules;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting business rules:', error);
       return this.defaultBusinessRules;
     }

@@ -108,7 +108,7 @@ export function ProfessionalServiceManager({
     ) {
       try {
         await deleteProfessionalService.mutateAsync(assignment.id);
-      } catch (_error) {
+      } catch (error) {
         console.error('Error deleting assignment:', error);
       }
     }
@@ -120,7 +120,7 @@ export function ProfessionalServiceManager({
         service_id: assignment.service_id,
         professional_id: assignment.professional_id,
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Error setting primary professional:', error);
     }
   };

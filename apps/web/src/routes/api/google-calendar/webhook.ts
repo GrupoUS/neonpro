@@ -37,7 +37,7 @@ export const Route = createFileRoute('/api/google-calendar/webhook')({
       }
 
       return json({ status: 'unhandled_state' });
-    } catch (_error) {
+    } catch (error) {
       console.error('Error handling webhook:', error);
       return json({ error: 'Internal server error' }, { status: 500 });
     }
@@ -59,7 +59,7 @@ export const Route = createFileRoute('/api/google-calendar/webhook')({
       }
 
       return json({ error: 'Missing challenge' }, { status: 400 });
-    } catch (_error) {
+    } catch (error) {
       console.error('Error verifying webhook:', error);
       return json({ error: 'Verification failed' }, { status: 500 });
     }

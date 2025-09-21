@@ -82,7 +82,7 @@ export function useAuth(): AuthState {
           // Don't create fallback profile - just set null to allow app to work
           setProfile(null);
         }
-      } catch (_error) {
+      } catch (error) {
         console.error('❌ useAuth: Error getting initial session:', error);
         setSession(null);
         setUser(null);

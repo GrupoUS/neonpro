@@ -367,7 +367,7 @@ export class RedisCacheBackend implements CacheBackend {
         maxRetriesPerRequest: this.redisConfig.maxRetriesPerRequest || 1,
         lazyConnect: true,
         enableReadyCheck: this.redisConfig.enableReadyCheck ?? true,
-        keepAlive: this.redisConfig.keepAlive ?? true,
+        keepAlive: this.redisConfig.keepAlive ?? 0,
         family: this.redisConfig.family || 0,
         connectionName: this.redisConfig.connectionName || 'healthcare-cache-backend',
         
@@ -654,7 +654,7 @@ export function createRedisCacheBackend(config: CacheConfig): RedisCacheBackend 
     retryDelayOnFailover: 100,
     maxRetriesPerRequest: 1,
     enableReadyCheck: true,
-    keepAlive: true,
+    keepAlive: 0,
     family: 0,
     connectionName: 'healthcare-cache-backend'
   };
