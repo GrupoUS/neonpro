@@ -129,7 +129,7 @@ export function useHealthcareAccessibilityAudit(
         }));
 
         return result;
-      } catch (_error) {
+      } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error during audit';
         setState(prev => ({
           ...prev,

@@ -374,7 +374,7 @@ export function SessionConsent({
       } else {
         toast.error('Falha na validação do consentimento');
       }
-    } catch (_error) {
+    } catch (error) {
       toast.error('Erro ao registrar consentimento');
     } finally {
       setIsValidating(false);
@@ -403,7 +403,7 @@ export function SessionConsent({
 
       onConsentRevoke?.();
       toast.success('Consentimento revogado');
-    } catch (_error) {
+    } catch (error) {
       toast.error('Erro ao revogar consentimento');
     }
   }, [revokeConsent, logConsentAction, onConsentRevoke]);

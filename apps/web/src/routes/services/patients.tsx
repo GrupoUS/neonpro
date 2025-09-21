@@ -108,7 +108,7 @@ function PatientsPage() {
         const result = await testSupabaseConnection();
         setConnectionTest(result);
         console.log('🔧 Connection test result:', result);
-      } catch (_error) {
+      } catch (error) {
         console.error('🔧 Connection test failed:', error);
         setConnectionTest({ success: false, error: 'Test failed to run' });
       }

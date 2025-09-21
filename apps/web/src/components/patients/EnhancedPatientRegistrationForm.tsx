@@ -914,7 +914,7 @@ export function EnhancedPatientRegistrationForm({
       onOpenChange(false);
       form.reset();
       setCurrentStep(0);
-    } catch (_error) {
+    } catch (error) {
       console.error('Erro ao cadastrar paciente:', error);
     } finally {
       setIsSubmitting(false);

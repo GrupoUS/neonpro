@@ -68,8 +68,8 @@ export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
       if (onMetricsUpdate) {
         onMetricsUpdate(result);
       }
-    } catch (_err) {
-      setError(err instanceof Error ? err.message : 'Failed to load metrics');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Failed to load metrics');
     } finally {
       setIsLoading(false);
     }
@@ -96,7 +96,7 @@ export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (_err) {
+    } catch (error) {
       setError('Failed to export metrics');
     }
   };

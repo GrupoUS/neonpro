@@ -203,7 +203,7 @@ export class CalendarLGPDAuditService {
       }
 
       return log.id;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in logAppointmentAccess:', error);
       throw error;
     }
@@ -271,7 +271,7 @@ export class CalendarLGPDAuditService {
       }
 
       return log.id;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in logBatchOperation:', error);
       throw error;
     }
@@ -324,7 +324,7 @@ export class CalendarLGPDAuditService {
       }
 
       return log.id;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in logConsentValidation:', error);
       throw error;
     }
@@ -377,7 +377,7 @@ export class CalendarLGPDAuditService {
       }
 
       return log.id;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in logDataMinimization:', error);
       throw error;
     }
@@ -423,7 +423,7 @@ export class CalendarLGPDAuditService {
       }
 
       return this.analyzeAuditLogs(logs || []);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in generateComplianceReport:', error);
       throw error;
     }
@@ -460,7 +460,7 @@ export class CalendarLGPDAuditService {
         ...log,
         timestamp: new Date(log.timestamp),
       })) as LGPDAuditLog[];
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in getPatientAuditLogs:', error);
       throw error;
     }

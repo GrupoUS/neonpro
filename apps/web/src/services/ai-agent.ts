@@ -238,7 +238,7 @@ class HttpClient {
 
         const data = await response.json();
         return data as T;
-      } catch (_error) {
+      } catch (error) {
         lastError = error as Error;
 
         // Don't retry on certain errors
@@ -318,7 +318,7 @@ export class AIAgentService {
       }
 
       return response;
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -346,7 +346,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -377,7 +377,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -410,7 +410,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -434,7 +434,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -465,7 +465,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -505,7 +505,7 @@ export class AIAgentService {
       );
 
       return response;
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -541,7 +541,7 @@ export class AIAgentService {
       );
 
       return response;
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -572,7 +572,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -596,7 +596,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof AIAgentError) {
         throw error;
       }
@@ -623,7 +623,7 @@ export class AIAgentService {
       });
 
       return response;
-    } catch (_error) {
+    } catch (error) {
       // Return unhealthy status instead of throwing
       return {
         status: 'unhealthy',

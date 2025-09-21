@@ -340,7 +340,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
       };
 
       recognition.start();
-    } catch (_error) {
+    } catch (error) {
       console.error('Voice recognition error:', error);
       setVoiceState('error');
     }
@@ -394,7 +394,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
         } else {
           setSearchResults(filteredMessages);
         }
-      } catch (_error) {
+      } catch (error) {
         console.error('Search error:', error);
         setSearchResults([]);
       } finally {
@@ -441,7 +441,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
           // Send through AI SDK for general chats
           handleAIChatSubmit(e);
         }
-      } catch (_error) {
+      } catch (error) {
         console.error('Message send error:', error);
       }
     },

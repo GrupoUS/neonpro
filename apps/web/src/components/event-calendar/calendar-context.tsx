@@ -156,8 +156,8 @@ export function CalendarProvider({
       const fetchedEvents = await EventService.getEvents(filters);
       setEvents(fetchedEvents);
       setFilteredEvents(fetchedEvents);
-    } catch (_err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load events';
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to load events';
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -212,8 +212,8 @@ export function CalendarProvider({
       }
 
       toast.success(`Event "${newEvent.title}" created successfully`);
-    } catch (_err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create event';
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to create event';
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;
@@ -237,8 +237,8 @@ export function CalendarProvider({
       );
 
       toast.success(`Event "${updatedEvent.title}" updated successfully`);
-    } catch (_err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update event';
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update event';
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;
@@ -262,8 +262,8 @@ export function CalendarProvider({
       if (eventToDelete) {
         toast.success(`Event "${eventToDelete.title}" deleted successfully`);
       }
-    } catch (_err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to delete event';
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete event';
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;
@@ -290,8 +290,8 @@ export function CalendarProvider({
     try {
       const result = await EventService.searchEvents(options);
       return result;
-    } catch (_err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to search events';
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Failed to search events';
       setError(errorMessage);
       toast.error(errorMessage);
       throw err;

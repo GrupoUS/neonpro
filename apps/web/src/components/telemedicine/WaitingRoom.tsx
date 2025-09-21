@@ -201,7 +201,7 @@ export function WaitingRoom({
       } else {
         setShowTriageDialog(true);
       }
-    } catch (_error) {
+    } catch (error) {
       toast.error('Erro ao processar emergência');
     }
   }, [preConsultationData, performTriage, onEmergencyEscalation]);
@@ -222,7 +222,7 @@ export function WaitingRoom({
       onSessionStart?.(sessionId);
 
       toast.success('Iniciando consulta...');
-    } catch (_error) {
+    } catch (error) {
       toast.error('Erro ao iniciar consulta');
     }
   }, [
@@ -261,7 +261,7 @@ export function WaitingRoom({
       });
       setShowConsentDialog(false);
       toast.success('Consentimento registrado');
-    } catch (_error) {
+    } catch (error) {
       toast.error('Erro ao registrar consentimento');
     }
   }, [updateConsent]);

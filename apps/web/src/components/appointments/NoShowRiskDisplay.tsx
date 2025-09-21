@@ -49,7 +49,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
 import { Tabs } from '@/components/ui/tabs';
 
 import { useAIHealthcareInsights } from '@/hooks/use-ai-chat';

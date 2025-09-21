@@ -87,7 +87,7 @@ export function ServiceCategoryManager({
     ) {
       try {
         await deleteCategory.mutateAsync(category.id);
-      } catch (_error) {
+      } catch (error) {
         console.error('Error deleting category:', error);
       }
     }
@@ -101,7 +101,7 @@ export function ServiceCategoryManager({
     ) {
       try {
         await initializeDefaults.mutateAsync(clinicId);
-      } catch (_error) {
+      } catch (error) {
         console.error('Error initializing default categories:', error);
       }
     }

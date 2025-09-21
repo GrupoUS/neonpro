@@ -53,7 +53,7 @@ export function ServiceCategoryForm({
         });
       }
       onSuccess();
-    } catch (_error) {
+    } catch (error) {
       // Error is handled by the hooks
       console.error('Form submission error:', error);
     }

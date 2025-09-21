@@ -305,7 +305,7 @@ export function AppointmentBooking({
       setSelectedPatientId(null);
       setNotes('');
       onOpenChange(false);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error during booking process:', error);
       // The error will be handled by the mutation's onError callback
     }

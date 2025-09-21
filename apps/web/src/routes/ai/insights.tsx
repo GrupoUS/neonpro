@@ -298,9 +298,9 @@ function AIInsightsPage() {
         setInsights(mockInsights);
         setModels(mockModels);
         setTrends(mockTrends);
-      } catch (_err) {
+      } catch (error) {
         setError('Erro ao carregar insights de IA');
-        console.error('Error fetching AI insights:', err);
+        console.error(error);
       } finally {
         setLoading(false);
       }

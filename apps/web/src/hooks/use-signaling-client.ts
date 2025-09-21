@@ -134,7 +134,7 @@ export function useSignalingClient(
         try {
           const message: SignalingMessage = JSON.parse(event.data);
           handleIncomingMessage(message);
-        } catch (_error) {
+        } catch (error) {
           console.error('Error parsing signaling message:', error);
         }
       };
@@ -169,7 +169,7 @@ export function useSignalingClient(
         console.error('WebRTC signaling error:', error);
         toast.error('Erro na sinalização WebRTC');
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating WebSocket connection:', error);
       setState(prev => ({ ...prev, isConnecting: false }));
       callbacks.onConnectionStateChange('disconnected');
@@ -244,7 +244,7 @@ export function useSignalingClient(
 
         websocketRef.current.send(JSON.stringify(completeMessage));
         return true;
-      } catch (_error) {
+      } catch (error) {
         console.error('Error sending signaling message:', error);
         toast.error('Erro ao enviar mensagem de sinalização');
         return false;

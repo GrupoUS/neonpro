@@ -161,7 +161,7 @@ export function Experiment06CalendarIntegration({
             })),
           });
         }
-      } catch (_err) {
+      } catch (error) {
         console.error(
           'LGPD: Error processing appointments with compliance:',
           err,
@@ -200,7 +200,7 @@ export function Experiment06CalendarIntegration({
   const calendarEvents = useMemo(() => {
     try {
       return minimizedAppointments.map(mapMinimizedAppointmentToCalendarEvent);
-    } catch (_err) {
+    } catch (error) {
       setError('Erro ao converter agendamentos para eventos do calendário');
       console.error(
         'Error mapping minimized appointments to calendar events:',
@@ -254,9 +254,9 @@ export function Experiment06CalendarIntegration({
 
       // Proceed with update
       onEventUpdate(event, updates);
-    } catch (_err) {
-      console.error('Error in LGPD-compliant event update:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao atualizar evento');
+    } catch (error) {
+      console.error(error);
+      setError(error instanceof Error ? error.message : 'Erro ao atualizar evento');
     } finally {
       setIsLoading(false);
     }
@@ -303,9 +303,9 @@ export function Experiment06CalendarIntegration({
 
       // Proceed with deletion
       onEventDelete(eventId);
-    } catch (_err) {
-      console.error('Error in LGPD-compliant event deletion:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao excluir evento');
+    } catch (error) {
+      console.error(error);
+      setError(error instanceof Error ? error.message : 'Erro ao excluir evento');
     } finally {
       setIsLoading(false);
     }
@@ -330,8 +330,8 @@ export function Experiment06CalendarIntegration({
         );
 
         onNewConsultation();
-      } catch (_err) {
-        console.error('Error logging new consultation audit:', err);
+      } catch (error) {
+        console.error(error);
         // Don't block the action for audit logging failures
         onNewConsultation();
       } finally {

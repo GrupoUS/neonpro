@@ -163,7 +163,7 @@ export function useAccessibilityTesting(
           `Critical issues threshold exceeded: ${criticalIssues} critical issues (max: ${threshold.maxCriticalIssues})`,
         );
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Accessibility testing failed:', error);
     } finally {
       setIsTesting(false);
@@ -307,7 +307,7 @@ export function useAccessibilityMonitor() {
           healthcareViolations,
           lgpdViolations,
         });
-      } catch (_error) {
+      } catch (error) {
         console.error('Accessibility monitoring failed:', error);
       }
     };

@@ -203,7 +203,7 @@ export class FinancialSecurityService {
         allowed: true,
         restrictions: accessControl.restrictions,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error checking access:', error);
       return {
         allowed: false,
@@ -236,7 +236,7 @@ export class FinancialSecurityService {
 
       // Check if this event should trigger an alert
       await this.checkForSecurityAlert(event);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error logging security event:', error);
     }
   }
@@ -263,7 +263,7 @@ export class FinancialSecurityService {
         });
 
       if (error) throw error;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error logging audit trail:', error);
     }
   }
@@ -307,7 +307,7 @@ export class FinancialSecurityService {
       });
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error encrypting data:', error);
       throw new Error('Data encryption failed');
     }
@@ -355,7 +355,7 @@ export class FinancialSecurityService {
       });
 
       return data;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error decrypting data:', error);
       throw new Error('Data decryption failed');
     }
@@ -418,7 +418,7 @@ export class FinancialSecurityService {
         compliant: violations.length === 0,
         violations,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error validating compliance:', error);
       return {
         compliant: false,
@@ -474,7 +474,7 @@ export class FinancialSecurityService {
         investigator: alert.investigator,
         resolution: alert.resolution,
       }));
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting security alerts:', error);
       return [];
     }
@@ -536,7 +536,7 @@ export class FinancialSecurityService {
         });
 
       if (error) throw error;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating security alert:', error);
     }
   }
@@ -558,7 +558,7 @@ export class FinancialSecurityService {
       if (error) throw error;
 
       return data?.length || 0;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting recent failures:', error);
       return 0;
     }

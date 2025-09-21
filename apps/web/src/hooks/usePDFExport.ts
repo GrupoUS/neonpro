@@ -74,13 +74,13 @@ export const usePDFExport = (): UsePDFExportReturn => {
       }
 
       return blob;
-    } catch (_err) {
-      const errorMessage = err instanceof Error
-        ? err.message
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
         : 'Erro desconhecido na geração do PDF';
       setError(errorMessage);
       toast.error(`Erro ao gerar PDF: ${errorMessage}`);
-      console.error('PDF generation error:', err);
+      console.error(error);
       return null;
     } finally {
       setIsGenerating(false);

@@ -204,7 +204,7 @@ function TelemedicineDashboard() {
           complianceMode: 'strict',
         },
       });
-    } catch (_error) {
+    } catch (error) {
       // Error handled by onError callback
     }
   };
@@ -213,7 +213,7 @@ function TelemedicineDashboard() {
   const handleJoinSession = async (_sessionId: any) => {
     try {
       await joinSessionMutation.mutateAsync({ sessionId });
-    } catch (_error) {
+    } catch (error) {
       // Error handled by onError callback
     }
   };
@@ -225,7 +225,7 @@ function TelemedicineDashboard() {
   ) => {
     try {
       await endSessionMutation.mutateAsync({ sessionId, reason });
-    } catch (_error) {
+    } catch (error) {
       // Error handled by onError callback
     }
   };

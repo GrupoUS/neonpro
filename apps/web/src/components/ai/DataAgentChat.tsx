@@ -767,7 +767,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
           userContext,
         });
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error sending message via AG-UI Protocol, falling back to HTTP:', error);
       // Fallback to HTTP API
       sendMessageMutation.mutate({

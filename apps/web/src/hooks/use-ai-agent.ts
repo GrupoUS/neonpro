@@ -97,8 +97,8 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
         if (data.response?.actions && data.response.actions.length > 0) {
           handleActions(data.response.actions);
         }
-      } catch (_err) {
-        const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
         setError(errorMessage);
 
         // Add error message to chat
@@ -180,7 +180,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
             description: 'Seu relatório foi baixado com sucesso',
           });
         }
-      } catch (_error) {
+      } catch (error) {
         toast({
           title: 'Erro de exportação',
           description: 'Não foi possível exportar os dados',

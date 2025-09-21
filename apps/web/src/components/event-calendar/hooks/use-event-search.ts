@@ -35,7 +35,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
           setSearchResults(result.events);
           setTotalCount(result.totalCount);
           setHasMore(result.hasMore);
-        } catch (_error) {
+        } catch (error) {
           console.error('Search failed:', error);
           setSearchResults([]);
           setTotalCount(0);
@@ -73,7 +73,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
       setSearchResults(prev => [...prev, ...result.events]);
       setCurrentPage(newPage);
       setHasMore(result.hasMore);
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to load more results:', error);
     } finally {
       setIsSearching(false);
@@ -274,7 +274,7 @@ export function useAdvancedEventSearch() {
       const result = await searchEvents(searchOptions);
       setSearchResults(result.events);
       setTotalCount(result.totalCount);
-    } catch (_error) {
+    } catch (error) {
       console.error('Advanced search failed:', error);
       setSearchResults([]);
       setTotalCount(0);

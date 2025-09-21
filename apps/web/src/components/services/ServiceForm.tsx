@@ -127,7 +127,7 @@ export function ServiceForm({
       }
 
       onSuccess();
-    } catch (_error) {
+    } catch (error) {
       console.error('Error saving service:', error);
       toast.error(
         isEditMode ? 'Erro ao atualizar serviço' : 'Erro ao criar serviço',

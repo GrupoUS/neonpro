@@ -219,7 +219,7 @@ async function bootstrap() {
       }, 2000);
     }
   } catch (err: any) {
-    console.error('[NeonPro] Boot error:', err);
+    console.error(error);
     if ((import.meta as any).env?.DEV) {
       showErrorBanner(err?.message ?? String(err));
     }

@@ -34,7 +34,7 @@ function TestAuth() {
         setResult('Google authentication initiated successfully!');
         setStatus('success');
       }
-    } catch (_err) {
+    } catch (error) {
       setResult(`Unexpected error: ${err}`);
       setStatus('error');
     } finally {
@@ -59,7 +59,7 @@ function TestAuth() {
         );
         setStatus('success');
       }
-    } catch (_err) {
+    } catch (error) {
       setResult(`Connection error: ${err}`);
       setStatus('error');
     } finally {

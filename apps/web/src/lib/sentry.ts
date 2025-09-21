@@ -403,7 +403,7 @@ export async function trackHealthcarePerformance<T>(
           );
         });
         return result;
-      } catch (_error) {
+      } catch (error) {
         trackHealthcareError(error as Error, {
           ...context,
           feature: operationName,

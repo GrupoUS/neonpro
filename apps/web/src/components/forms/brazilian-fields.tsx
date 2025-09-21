@@ -465,7 +465,7 @@ export const CEPField = forwardRef<
                 cep: unformatted,
               });
             }
-          } catch (_error) {
+          } catch (error) {
             console.warn('Erro ao buscar endereço:', error);
           } finally {
             setIsLoading(false);

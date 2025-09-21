@@ -298,9 +298,9 @@ export function useDataExport(): UseDataExportReturn {
           setStatus('idle');
           setProgress(0);
         }, 3000);
-      } catch (_err) {
-        const errorMessage = err instanceof Error
-          ? err.message
+      } catch (error) {
+        const errorMessage = error instanceof Error
+          ? error.message
           : 'Erro desconhecido na exportação';
         setError(errorMessage);
         setStatus('error');

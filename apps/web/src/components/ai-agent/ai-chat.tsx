@@ -119,7 +119,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
         if (data.response.actions && data.response.actions.length > 0) {
           handleActions(data.response.actions);
         }
-      } catch (_error) {
+      } catch (error) {
         console.error('Chat error:', _error);
         toast({
           title: 'Erro',
@@ -206,7 +206,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
             description: 'Seu relatório foi baixado com sucesso',
           });
         }
-      } catch (_error) {
+      } catch (error) {
         toast({
           title: 'Erro de exportação',
           description: 'Não foi possível exportar os dados',

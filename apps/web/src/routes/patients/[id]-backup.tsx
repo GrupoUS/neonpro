@@ -226,9 +226,9 @@ function PatientDetailPage() {
         setAppointments(mockAppointments);
         setMedicalRecords(mockMedicalRecords);
         setAiInsights(mockInsights);
-      } catch (_err) {
+      } catch (error) {
         setError('Erro ao carregar dados do paciente');
-        console.error('Error fetching patient data:', err);
+        console.error(error);
       } finally {
         setLoading(false);
       }
