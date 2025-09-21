@@ -180,7 +180,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
             description: 'Seu relatório foi baixado com sucesso',
           });
         }
-      } catch (error) {
+      } catch (_error) {
         toast({
           title: 'Erro de exportação',
           description: 'Não foi possível exportar os dados',
