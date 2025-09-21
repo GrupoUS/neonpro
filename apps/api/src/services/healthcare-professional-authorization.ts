@@ -382,7 +382,7 @@ export class HealthcareProfessionalAuthorizationService {
 
       if (needsRevalidation) {
         // Implement real CFM API integration with fallback
-        const cfmValidation = await this.validateCFMLicense(professional);
+        const cfmValidation = await this.validateCFMLicenseWithObject(professional);
 
         if (!cfmValidation.isValid) {
           return {
@@ -533,7 +533,7 @@ export class HealthcareProfessionalAuthorizationService {
   /**
    * Validate CFM license through API or fallback validation
    */
-  private async validateCFMLicense(professional: any): Promise<{
+  private async validateCFMLicenseWithObject(professional: any): Promise<{
     isValid: boolean;
     status: 'active' | 'suspended' | 'cancelled' | 'inactive';
     ethicsCompliant: boolean;

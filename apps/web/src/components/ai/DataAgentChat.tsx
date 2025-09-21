@@ -20,7 +20,7 @@
 
 'use client';
 
-import { useCopilotContext, useCopilotReadable } from '@copilotkit/react-core';
+import { useCopilotReadable } from '@copilotkit/react-core';
 import { CopilotPopup } from '@copilotkit/react-ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -31,7 +31,6 @@ import {
   DollarSign,
   Download,
   ExternalLink,
-  Heart,
   MessageSquare,
   MoreHorizontal,
   Plus,
@@ -48,18 +47,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActionHandlers } from './ActionHandlers';
 
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
   Avatar,
   AvatarFallback,
-  AvatarImage,
   Badge,
   Button,
   Card,
@@ -78,18 +67,14 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Input,
   ScrollArea,
   Textarea,
-  Toast,
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui';
 import {
-  AGUIConnectionState,
-  createAGUIProtocolClient,
   useAGUIProtocol,
 } from '@/services/agui-protocol';
 import { formatCurrency, formatDateTime } from '@/utils/brazilian-formatters';
@@ -98,7 +83,6 @@ import { cn } from '@neonpro/ui';
 // Import our specific types for AI agent integration
 import type {
   AgentAction,
-  AgentResponse,
   AppointmentData,
   ChatMessage,
   ChatState,
@@ -106,7 +90,6 @@ import type {
   DataAgentRequest,
   DataAgentResponse,
   FinancialData,
-  UserQuery,
 } from '@neonpro/types';
 
 export interface DataAgentChatProps {
@@ -556,7 +539,6 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
 
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -582,7 +564,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
     timeout: 30000,
   };
 
-  const { client: aguiClient, state: aguiState, session: aguiSession } = useAGUIProtocol(
+  const { client: aguiClient, session: aguiSession } = useAGUIProtocol(
     aguiConfig,
   );
 
@@ -638,7 +620,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   }, [aguiSession, aguiClient]);
 
   // Load existing session if provided
-  const { data: sessionData, isLoading: isLoadingSession } = useQuery({
+  const { isLoading: isLoadingSession } = useQuery({
     queryKey: ['session', currentSessionId],
     queryFn: () => getSession(currentSessionId!),
     enabled: !!currentSessionId,
@@ -836,9 +818,6 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       handleSendMessage();
     }
   }, [handleSendMessage]);
-
-  // CopilotKit integration for enhanced chat features
-  const copilotContext = useCopilotContext();
 
   // Make current data available to CopilotKit
   useCopilotReadable({

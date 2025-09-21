@@ -555,7 +555,7 @@ export class DynamicConnectionPoolService {
         executionTime
       };
 
-    } catch (error) {
+    } catch (_error) {
       const executionTime = Date.now() - originalExecutionTime;
       
       // Return cached result or error

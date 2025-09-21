@@ -23,14 +23,10 @@ import {
   Bot,
   Brain,
   CheckCircle,
-  ChevronDown,
   Clock,
-  FileText,
-  Globe,
   Mic,
   MicOff,
   Paperclip,
-  Plus,
   Search,
   Send,
   Settings,
@@ -43,7 +39,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Avatar,
   AvatarFallback,
-  AvatarImage,
   Badge,
   Button,
   Card,
@@ -64,7 +59,6 @@ import {
   SelectValue,
   Separator,
   Tabs,
-  TabsContent,
   TabsList,
   TabsTrigger,
   Tooltip,
@@ -79,13 +73,9 @@ import { cn } from '@neonpro/ui';
 // Import tRPC hooks for agent integration
 import {
   useAgentChat,
-  useAgentSession,
   useAgentSessionManager,
   useKnowledgeBaseManager,
 } from '@/trpc/agent';
-
-// Import AI SDK components as foundation
-import { Message, useAssistant, useCompletion } from '@ai-sdk/react';
 
 // Types
 export interface EnhancedAIChatProps {
@@ -227,7 +217,6 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
 }) => {
   // State management
   const [selectedModel, setSelectedModel] = useState(defaultModel);
-  const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
   const [voiceState, setVoiceState] = useState<VoiceRecognitionState>('idle');
   const [showSettings, setShowSettings] = useState(false);
   const [showSearchPanel, setShowSearchPanel] = useState(false);
@@ -254,7 +243,6 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
     isLoading: isAILoading,
     error: aiError,
     setMessages,
-    data,
     setData,
   } = useChat({
     api: '/api/ai/chat',
@@ -277,16 +265,16 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   const {
     currentSessionId,
     startNewSession,
-    endCurrentSession,
-    isCreating: isAgentCreating,
+    _endCurrentSession,
+    isCreating: _isAgentCreating,
   } = useAgentSessionManager();
 
   const {
     messages: agentMessages,
     sendMessage: sendAgentMessage,
-    performRAGSearch,
+    _performRAGSearch,
     isSending: isAgentSending,
-    isSearchingRAG,
+    _isSearchingRAG,
   } = useAgentChat(currentSessionId);
 
   // Knowledge base search

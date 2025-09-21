@@ -93,7 +93,7 @@ export function getHTTPSConfig(): HTTPSConfig {
       const devCertsPath = join(process.cwd(), 'certs', 'dev');
       config.cert = readFileSync(join(devCertsPath, 'server.crt'), 'utf8');
       config.key = readFileSync(join(devCertsPath, 'server.key'), 'utf8');
-    } catch (error) {
+    } catch (_error) {
       console.warn('Development certificates not found, HTTPS will not be available');
       // Return configuration without certificates for HTTP fallback
     }

@@ -212,7 +212,7 @@ export const PerformanceTester: React.FC = () => {
 
     return () => {
       // Properly cleanup ALL observers
-      observersRef.current.forEach(_observer => {
+      observersRef.current.forEach(observer => {
         try {
           observer.disconnect();
         } catch (error) {
@@ -321,7 +321,7 @@ export const PerformanceTester: React.FC = () => {
         inpObserver.observe({ entryTypes: ['event'] });
         observers.push(inpObserver);
       } catch (error) {
-        console.warn('INP observation not supported:', e);
+        console.warn('INP observation not supported:', error);
       }
 
       // Navigation timing - immediate measurement
@@ -343,11 +343,11 @@ export const PerformanceTester: React.FC = () => {
     } catch (error) {
       console.warn('Performance observers setup failed:', error);
       // Clean up any observers that were created before the error
-      observers.forEach(_observer => {
+      observers.forEach(observer => {
         try {
           observer.disconnect();
         } catch (error) {
-          console.warn('Error disconnecting observer during cleanup:', e);
+          console.warn('Error disconnecting observer during cleanup:', error);
         }
       });
     }

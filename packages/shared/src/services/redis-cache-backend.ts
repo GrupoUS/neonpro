@@ -41,7 +41,7 @@ export interface RedisConfig {
   retryDelayOnFailover?: number;
   maxRetriesPerRequest?: number;
   enableReadyCheck?: boolean;
-  keepAlive?: boolean;
+  keepAlive?: number;
   family?: number;
   connectionName?: string;
 }

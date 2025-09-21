@@ -149,7 +149,7 @@ export const MobileResponsiveValidator: React.FC = () => {
     // Monitor CLS (Cumulative Layout Shift)
     const clsObserver = new PerformanceObserver(entryList => {
       const entries = entryList.getEntries();
-      entries.forEach((_entry: any) => {
+      entries.forEach((entry: any) => {
         if (!entry.hadRecentInput) {
           layoutShiftRef.current += entry.value;
           setPerformanceMetrics(prev => ({ ...prev, cls: layoutShiftRef.current }));
@@ -476,7 +476,7 @@ export const MobileResponsiveValidator: React.FC = () => {
                   <AlertCircle className='w-4 h-4' />
                   <AlertDescription>
                     <ul className='list-disc list-inside'>
-                      {result.issues.map((issue, _index) => <li key={index}>{issue}</li>)}
+                      {result.issues.map((issue, index) => <li key={index}>{issue}</li>)}
                     </ul>
                   </AlertDescription>
                 </Alert>
@@ -559,7 +559,7 @@ export const MobileResponsiveValidator: React.FC = () => {
               <AlertCircle className='w-4 h-4' />
               <AlertDescription>
                 <ul className='list-disc list-inside'>
-                  {accessibilityResults.issues.map((issue, _index) => <li key={index}>{issue}</li>)}
+                  {accessibilityResults.issues.map((issue, index) => <li key={index}>{issue}</li>)}
                 </ul>
               </AlertDescription>
             </Alert>
@@ -617,7 +617,7 @@ export const MobileResponsiveValidator: React.FC = () => {
               <AlertCircle className='w-4 h-4' />
               <AlertDescription>
                 <ul className='list-disc list-inside'>
-                  {healthcareResults.issues.map((issue, _index) => <li key={index}>{issue}</li>)}
+                  {healthcareResults.issues.map((issue, index) => <li key={index}>{issue}</li>)}
                 </ul>
               </AlertDescription>
             </Alert>

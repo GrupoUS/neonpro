@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
 import { AIAgentService } from '@/services/ai-agent';
 import { AgentAction } from '@/types/ai-agent';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { format } from 'date-fns';
+
 import { ptBR } from 'date-fns/locale';
 import { CalendarIcon } from 'lucide-react';
 import React, { useCallback, useState } from 'react';

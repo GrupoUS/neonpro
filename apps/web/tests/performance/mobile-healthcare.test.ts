@@ -128,7 +128,7 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
       );
 
       const PatientDashboard = () => (
-        <div data-testid='patient-dashboard'>
+        <div data-testid="patient-dashboard">
           <h1>Pacientes</h1>
           <div data-testid='patient-list'>Loading...</div>
         </div>

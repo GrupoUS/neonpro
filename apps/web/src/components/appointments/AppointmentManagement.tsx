@@ -11,7 +11,6 @@
  */
 
 import { format, isPast, isToday, isTomorrow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import {
   AlertTriangle,
   Bell,
@@ -45,7 +44,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Progress } from '@/components/ui/progress';
 import { Tabs } from '@/components/ui/tabs';
 
 import {

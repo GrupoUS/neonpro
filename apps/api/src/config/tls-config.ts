@@ -4,7 +4,6 @@ import https from 'https';
 import { 
   TLS_CONSTANTS, 
   ERROR_CONSTANTS, 
-  LOGGING_CONSTANTS,
   getAllCiphers,
   isWeakCipher,
   getDefaultTLSVersion,
@@ -194,7 +193,9 @@ export class TLSConfigManager {
         validTo: new Date(Date.now() + TLS_CONSTANTS.CERTIFICATE.DEFAULT_VALIDITY_DAYS * 24 * 60 * 60 * 1000),
         fingerprint: this.generateCertificateFingerprint(cert),
       };
-    } catch (_error) {
+    } catch (error) {
+      // Log certificate parsing error securely
+      console.error('Certificate parsing failed:', error instanceof Error ? error.message : 'Unknown error');
       return {};
     }
   }

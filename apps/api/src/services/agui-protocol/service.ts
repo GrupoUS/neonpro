@@ -10,17 +10,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { createHealthcareCacheConfig, ResponseCacheService } from '../cache/response-cache-service';
 import { ConversationContextService } from '../conversation';
 import type { ConversationMessage } from '../conversation';
-import { AgentPermissionService, PermissionContext } from '../permissions';
+import { AgentPermissionService } from '../permissions';
 import { RealtimeSubscriptionService } from '../realtime';
-import type { RealtimeEvent } from '../realtime';
 import { AguiProtocol, AguiProtocolConfig } from './protocol';
 import {
   AguiAction,
-  AguiCapability,
   AguiHealthStatus,
-  AguiMessage,
-  AguiQueryMessage,
-  AguiResponseMessage,
   AguiSession,
   AguiSource,
   AguiUsageStats,
@@ -370,7 +365,6 @@ export class AguiService extends EventEmitter {
     },
   ): Promise<QueryResult> {
     const queryId = uuidv4();
-    const startTime = Date.now();
 
     try {
       const abortController = new AbortController();
@@ -534,6 +528,8 @@ export class AguiService extends EventEmitter {
     try {
       await this.testRagAgentConnectivity();
     } catch (error) {
+      // Log error securely without exposing sensitive information
+      console.error('RAG agent connectivity test failed:', error instanceof Error ? error.message : 'Unknown error');
       ragAgentHealthy = false;
     }
 
@@ -574,7 +570,7 @@ export class AguiService extends EventEmitter {
     this.emit('shuttingDown');
 
     // Abort all active queries
-    for (const [queryId, abortController] of this.activeQueries) {
+    for (const [_queryId, abortController] of this.activeQueries) {
       abortController.abort();
     }
     this.activeQueries.clear();
@@ -692,6 +688,8 @@ export class AguiService extends EventEmitter {
 
         this.protocol.sendResponse(data.connection.id, result, data.messageId);
       } catch (error) {
+        // Log error for debugging while protecting sensitive information
+        console.error('Query processing failed:', error instanceof Error ? error.message : 'Unknown error');
         this.protocol.sendError(
           data.connection.ws,
           'INTERNAL_ERROR',

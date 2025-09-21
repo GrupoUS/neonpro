@@ -108,7 +108,7 @@ export function WaitingRoom({
   const { queueInfo, refreshPosition } = useQueuePosition(appointmentId);
   const { checkResults, performCheck, isChecking } = usePreConsultationCheck(appointmentId);
   const { consent, requestConsent, updateConsent } = useSessionConsent(appointmentId);
-  const { triageAssessment, performTriage } = useEmergencyTriage(appointmentId);
+  const { _triageAssessment, performTriage } = useEmergencyTriage(appointmentId);
 
   // State
   const [preConsultationData, setPreConsultationData] = useState<PreConsultationData>({

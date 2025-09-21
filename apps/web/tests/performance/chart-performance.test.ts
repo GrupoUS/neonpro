@@ -26,8 +26,8 @@ import { performance, PerformanceObserver } from 'perf_hooks';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Recharts components
-const MockLineChart = ({ data, width, height, children }) => (
-  <div className='recharts-wrapper' style={{ width, height }} data-testid='line-chart'>
+const MockLineChart = ({ data, width, height, children }: any) => (
+  <div className="recharts-wrapper" style={{ width, height }} data-testid="line-chart">
     <svg width={width} height={height} className='recharts-surface'>
       {children}
     </svg>

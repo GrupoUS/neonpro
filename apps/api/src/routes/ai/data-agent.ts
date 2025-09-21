@@ -1,4 +1,4 @@
-import { AgentQueryRequest, AgentResponse, InteractiveAction, UserRole } from '@neonpro/types';
+import { AgentQueryRequest, AgentResponse, InteractiveAction, QueryIntent, UserRole } from '@neonpro/types';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { jwt } from 'hono/jwt';
@@ -296,7 +296,7 @@ app.post('/ai/data-agent', async c => {
       }
 
       // Format response based on data type
-      const response = this.formatResponse(responseData, intent, actions);
+      const response = formatResponse(responseData, intent, actions);
       const processingTime = Date.now() - startTime;
 
       return c.json({

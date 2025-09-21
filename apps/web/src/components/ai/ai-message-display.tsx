@@ -48,9 +48,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { Tooltip } from '@/components/ui/tooltip';
 
-import { Card } from '@/components/ui/card';
 
 import { formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';

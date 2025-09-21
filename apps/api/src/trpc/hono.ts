@@ -1,5 +1,4 @@
 import { Hono } from 'hono';
-import { router } from './trpc';
 
 /**
  * TRPC Hono adapter for integration tests

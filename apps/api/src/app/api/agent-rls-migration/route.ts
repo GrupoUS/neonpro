@@ -1,13 +1,13 @@
 import { createAdminClient } from '@/lib/supabase/client';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     // Get admin client
     const supabase = createAdminClient();
 
     // Simple SQL execution using the existing admin client
-    const executeSQL = async (sql: string) => {
+    const executeSQL = async (_sql: string) => {
       try {
         const { data, error } = await supabase
           .from('pg_tables')

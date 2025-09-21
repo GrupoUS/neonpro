@@ -3,13 +3,10 @@
  * Integrates WebRTC functionality with healthcare compliance and license verification
  */
 
-import { WebRTCSessionService } from '../../../packages/database/src/services/webrtc-session.service';
+import { WebRTCSessionService } from '@neonpro/database';
 import { createAdminClient } from '../clients/supabase';
 import { logger } from '../lib/logger';
-import {
-  validateCFMLicense,
-  validateWithDatabaseRules,
-} from './healthcare-professional-authorization';
+import { HealthcareProfessionalAuthorizationService } from './healthcare-professional-authorization';
 
 export interface TelemedicineSessionInput {
   patientId: string;
@@ -54,10 +51,12 @@ export interface SessionEndInput {
 
 export class TelemedicineService {
   private webrtcService: WebRTCSessionService;
+  private authorizationService: HealthcareProfessionalAuthorizationService;
   private supabase = createAdminClient();
 
   constructor() {
     this.webrtcService = new WebRTCSessionService();
+    this.authorizationService = new HealthcareProfessionalAuthorizationService();
   }
 
   /**
@@ -78,7 +77,7 @@ export class TelemedicineService {
         input.specialty,
       );
 
-      if (!licenseVerification.complianceStatus.telemedicineCompliant) {
+      if (!licenseVerification.telemedicineAuthorized) {
         throw new Error('Physician not authorized for telemedicine practice');
       }
 
@@ -374,10 +373,9 @@ export class TelemedicineService {
       }
 
       // Validate CFM license
-      const licenseVerification = await validateCFMLicense(
-        physician.cfm_number,
-        physician.state,
-        specialty,
+      const licenseVerification = await this.authorizationService.validateAuthorization(
+        physician.id,
+        'telemedicine_session'
       );
 
       return licenseVerification;

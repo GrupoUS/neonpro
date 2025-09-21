@@ -27844,6 +27844,57 @@ export type Database = {
           },
         ];
       };
+      usage_counters: {
+        Row: {
+          id: string;
+          entity_type: string;
+          entity_id: string;
+          daily_queries: number;
+          monthly_queries: number;
+          current_cost_usd: number | null;
+          average_latency_ms: number | null;
+          cache_hit_rate: number | null;
+          error_rate: number | null;
+          date: string;
+          month: string | null;
+          metadata: Json | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          entity_type: string;
+          entity_id: string;
+          daily_queries?: number;
+          monthly_queries?: number;
+          current_cost_usd?: number | null;
+          average_latency_ms?: number | null;
+          cache_hit_rate?: number | null;
+          error_rate?: number | null;
+          date?: string;
+          month?: string | null;
+          metadata?: Json | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          entity_type?: string;
+          entity_id?: string;
+          daily_queries?: number;
+          monthly_queries?: number;
+          current_cost_usd?: number | null;
+          average_latency_ms?: number | null;
+          cache_hit_rate?: number | null;
+          error_rate?: number | null;
+          date?: string;
+          month?: string | null;
+          metadata?: Json | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       ab_test_summary: {

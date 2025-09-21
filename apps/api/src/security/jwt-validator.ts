@@ -21,6 +21,7 @@
 
 import { Context } from 'hono';
 import jwt, { Algorithm, JwtPayload, VerifyOptions } from 'jsonwebtoken';
+import { secrets } from '../utils/secret-manager';
 
 // Security configuration interfaces
 interface JWTSecurityConfig {
@@ -97,11 +98,17 @@ export class JWTSecurityValidator {
       }
     }
 
-    // Initialize key store with default key
-    this.keyStore.set('default', 'test-secret-key');
-
-    // Add test secret for testing
-    this.keyStore.set('test-secret-key', 'test-secret-key');
+    // Initialize key store with secret manager
+    const jwtSecret = secrets.getJwtSecret();
+    if (jwtSecret) {
+      this.keyStore.set('default', jwtSecret);
+      this.keyStore.set('jwt-secret', jwtSecret);
+    } else {
+      // Fallback for development only - log warning
+      console.warn('JWT_SECRET not found in environment, using fallback (development only)');
+      this.keyStore.set('default', 'development-fallback-secret');
+      this.keyStore.set('jwt-secret', 'development-fallback-secret');
+    }
   }
 
   /**

@@ -375,8 +375,8 @@ export interface ReferenceObject {
   description?: string;
 }
 
-// Export namespace for OpenAPI v3.1
-export const OpenAPIV3_1 = {
+// Export namespace for OpenAPI v3.1 (local implementation)
+export const OpenAPIV3_1_Local = {
   Document: {} as OpenAPIDocument,
   Info: {} as InfoObject,
   Contact: {} as ContactObject,
