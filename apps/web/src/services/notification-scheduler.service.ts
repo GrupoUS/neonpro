@@ -125,7 +125,7 @@ class NotificationSchedulerService {
           `Scheduled ${notifications.length} notifications for appointment ${appointmentId}`,
         );
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in scheduleAppointmentNotifications:', error);
       throw error;
     }
@@ -194,7 +194,7 @@ class NotificationSchedulerService {
       for (const notification of pendingNotifications) {
         await this.processNotification(notification);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in processPendingNotifications:', error);
     }
   }
@@ -280,7 +280,7 @@ class NotificationSchedulerService {
         await this.markNotificationAttempted(notification.id);
         console.log(`Notification ${notification.id} failed, will retry later`);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error processing notification:', notification.id, error);
       await this.markNotificationAttempted(notification.id);
     }
@@ -373,7 +373,7 @@ class NotificationSchedulerService {
         .in('status', ['pending']);
 
       console.log(`Cancelled notifications for appointment ${appointmentId}`);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error cancelling appointment notifications:', error);
       throw error;
     }
@@ -413,13 +413,13 @@ class NotificationSchedulerService {
       };
 
       if (data) {
-        data.forEach((item: any) => {
+        data.forEach((_item: any) => {
           stats[item.status as keyof typeof stats]++;
         });
       }
 
       return stats;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting notification stats:', error);
       return {
         total: 0,

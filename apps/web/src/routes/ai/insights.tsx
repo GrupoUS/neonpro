@@ -1,7 +1,7 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import {
   Select,
@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -298,9 +298,9 @@ function AIInsightsPage() {
         setInsights(mockInsights);
         setModels(mockModels);
         setTrends(mockTrends);
-      } catch (err) {
+      } catch (error) {
         setError('Erro ao carregar insights de IA');
-        console.error('Error fetching AI insights:', err);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -309,7 +309,7 @@ function AIInsightsPage() {
     fetchAIInsights();
   }, [timeRange]);
 
-  const getPriorityBadge = (priority: string) => {
+  const getPriorityBadge = (_priority: any) => {
     const variants = {
       low: { variant: 'outline' as const, label: 'Baixa', icon: CheckCircle },
       medium: { variant: 'default' as const, label: 'Média', icon: Clock },
@@ -327,7 +327,7 @@ function AIInsightsPage() {
     return variants[priority as keyof typeof variants] || variants.low;
   };
 
-  const getModelStatusBadge = (status: string) => {
+  const getModelStatusBadge = (_status: any) => {
     const variants = {
       active: {
         variant: 'default' as const,
@@ -353,7 +353,7 @@ function AIInsightsPage() {
     return variants[status as keyof typeof variants] || variants.active;
   };
 
-  const getTypeIcon = (type: string) => {
+  const getTypeIcon = (_type: any) => {
     const icons = {
       health_risk: Heart,
       treatment_optimization: Activity,
@@ -793,7 +793,7 @@ function AIInsightsPage() {
 
                           {/* Data Visualization */}
                           <div className='grid grid-cols-2 md:grid-cols-5 gap-2'>
-                            {insight.data.labels.map((label, index) => (
+                            {insight.data.labels.map((label, _index) => (
                               <div key={index} className='text-center'>
                                 <div className='text-xs text-muted-foreground'>
                                   {label}
@@ -812,7 +812,7 @@ function AIInsightsPage() {
                             </h4>
                             <ul className='text-sm space-y-1'>
                               {insight.recommendations.map(
-                                (recommendation, index) => (
+                                (recommendation, _index) => (
                                   <li
                                     key={index}
                                     className='flex items-start gap-2'
@@ -935,7 +935,7 @@ function AIInsightsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className='space-y-2'>
-                    {trends.map((trend, index) => (
+                    {trends.map((trend, _index) => (
                       <div
                         key={index}
                         className='flex items-center justify-between'

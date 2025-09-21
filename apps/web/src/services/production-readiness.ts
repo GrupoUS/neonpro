@@ -350,8 +350,8 @@ export default class ProductionReadinessService {
     const recommendations = new Set<string>();
 
     // Collect all recommendations from validations
-    validations.forEach(validation => {
-      validation.recommendations.forEach(rec => recommendations.add(rec));
+    validations.forEach(_validation => {
+      validation.recommendations.forEach(_rec => recommendations.add(rec));
     });
 
     // Add general healthcare recommendations
@@ -376,8 +376,8 @@ export default class ProductionReadinessService {
   ): ProductionReadinessIssue[] {
     const criticalIssues: ProductionReadinessIssue[] = [];
 
-    validations.forEach(validation => {
-      validation.issues.forEach(issue => {
+    validations.forEach(_validation => {
+      validation.issues.forEach(_issue => {
         if (issue.severity === 'critical' || issue.severity === 'high') {
           criticalIssues.push(issue);
         }
@@ -408,7 +408,7 @@ export default class ProductionReadinessService {
 
     // Add specific items based on validation results
     const failedValidations = validations.filter(v => v.status === 'failed');
-    failedValidations.forEach(validation => {
+    failedValidations.forEach(_validation => {
       checklist.push(`⚠️ Corrigir problemas de ${validation.validationType}`);
     });
 

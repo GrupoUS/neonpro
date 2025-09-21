@@ -345,7 +345,7 @@ describe('E2E Testing Service', () => {
       expect(report.criticalIssues).toBeInstanceOf(Array);
 
       // Validate critical issue structure
-      report.criticalIssues.forEach(issue => {
+      report.criticalIssues.forEach(_issue => {
         expect(issue.scenarioId).toBeDefined();
         expect(issue.issue).toBeDefined();
         expect(issue.severity).toMatch(/^(critical|high|medium|low)$/);
@@ -360,7 +360,7 @@ describe('E2E Testing Service', () => {
         E2E_TEST_TYPES.HEALTHCARE_WORKFLOW,
       );
 
-      scenarios.forEach(scenario => {
+      scenarios.forEach(_scenario => {
         if (scenario.namePtBr) {
           expect(scenario.namePtBr).toBeDefined();
           expect(scenario.namePtBr.length).toBeGreaterThan(0);
@@ -419,7 +419,7 @@ describe('E2E Testing Service', () => {
     it('should include healthcare compliance validation in test results', async () => {
       const report = await service.executeTests();
 
-      report.results.forEach(result => {
+      report.results.forEach(_result => {
         expect(result.complianceValidation).toBeDefined();
         expect(result.complianceValidation.lgpd).toBeDefined();
         expect(result.complianceValidation.anvisa).toBeDefined();
@@ -432,7 +432,7 @@ describe('E2E Testing Service', () => {
       const report = await service.executeTests();
 
       // Verify accessibility scores are within valid range
-      report.results.forEach(result => {
+      report.results.forEach(_result => {
         expect(result.overallAccessibilityScore).toBeGreaterThanOrEqual(0);
         expect(result.overallAccessibilityScore).toBeLessThanOrEqual(100);
       });
@@ -448,7 +448,7 @@ describe('E2E Testing Service', () => {
       const report = await service.executeTests();
 
       // Verify performance scores are within valid range
-      report.results.forEach(result => {
+      report.results.forEach(_result => {
         expect(result.overallPerformanceScore).toBeGreaterThanOrEqual(0);
         expect(result.overallPerformanceScore).toBeLessThanOrEqual(100);
       });
@@ -550,7 +550,7 @@ describe('E2E Testing Service', () => {
       expect(mobileScenarios.length).toBeGreaterThanOrEqual(0);
 
       // Verify all healthcare scenarios have the correct type
-      healthcareScenarios.forEach(scenario => {
+      healthcareScenarios.forEach(_scenario => {
         expect(scenario.type).toBe(E2E_TEST_TYPES.HEALTHCARE_WORKFLOW);
       });
     });
@@ -571,15 +571,15 @@ describe('E2E Testing Service', () => {
       expect(emergencyScenarios.length).toBeGreaterThan(0);
 
       // Verify all scenarios have the correct workflow
-      patientManagementScenarios.forEach(scenario => {
+      patientManagementScenarios.forEach(_scenario => {
         expect(scenario.workflow).toBe(HEALTHCARE_WORKFLOWS.PATIENT_MANAGEMENT);
       });
-      appointmentScenarios.forEach(scenario => {
+      appointmentScenarios.forEach(_scenario => {
         expect(scenario.workflow).toBe(
           HEALTHCARE_WORKFLOWS.APPOINTMENT_SCHEDULING,
         );
       });
-      emergencyScenarios.forEach(scenario => {
+      emergencyScenarios.forEach(_scenario => {
         expect(scenario.workflow).toBe(HEALTHCARE_WORKFLOWS.EMERGENCY_ACCESS);
       });
     });

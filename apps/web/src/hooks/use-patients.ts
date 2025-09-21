@@ -138,7 +138,7 @@ export function useCreatePatient() {
       });
 
       // Optimistically update to the new value
-      queryClient.setQueryData(patientKeys.lists(), (old: any) => {
+      queryClient.setQueryData(patientKeys.lists(), (_old: any) => {
         if (!old) return old;
 
         const optimisticPatient = {
@@ -158,7 +158,7 @@ export function useCreatePatient() {
       return { previousPatients };
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Update cache with real patient data
       queryClient.setQueryData(patientKeys.detail(data.id), data);
 
@@ -176,7 +176,7 @@ export function useCreatePatient() {
       toast.success(`Paciente ${data.fullName} criado com sucesso!`);
     },
 
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       // Rollback optimistic update
       if (context?.previousPatients) {
         queryClient.setQueryData(patientKeys.lists(), context.previousPatients);
@@ -221,7 +221,7 @@ export function useUpdatePatient() {
       });
 
       // Optimistically update
-      queryClient.setQueryData(patientKeys.detail(id), (old: any) => {
+      queryClient.setQueryData(patientKeys.detail(id), (_old: any) => {
         if (!old) return old;
         return {
           ...old,
@@ -233,7 +233,7 @@ export function useUpdatePatient() {
       return { previousPatient };
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Update cache with server response
       queryClient.setQueryData(patientKeys.detail(data.id), data);
 
@@ -243,7 +243,7 @@ export function useUpdatePatient() {
       toast.success('Dados do paciente atualizados com sucesso!');
     },
 
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       // Rollback optimistic update
       if (context?.previousPatient) {
         queryClient.setQueryData(
@@ -287,7 +287,7 @@ export function useWithdrawPatientConsent() {
       return { confirmed: true };
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Remove patient from cache or mark as anonymized
       queryClient.removeQueries({
         queryKey: patientKeys.detail(variables.patientId),
@@ -305,7 +305,7 @@ export function useWithdrawPatientConsent() {
       toast.success('Consentimento retirado e dados anonimizados com sucesso.');
     },
 
-    onError: (error, variables) => {
+    onError: (error, _variables) => {
       if (error.message === 'Operação cancelada pelo usuário') {
         toast.info('Operação cancelada.');
         return;
@@ -394,7 +394,7 @@ export function usePrefetchPatients() {
   const queryClient = useQueryClient();
 
   const prefetchPatient = React.useCallback(
-    (patientId: string) => {
+    (_patientId: any) => {
       queryClient.prefetchQuery({
         queryKey: patientKeys.detail(patientId),
         queryFn: () => trpc.patients.get.fetch({ id: patientId }),
@@ -442,9 +442,9 @@ export function useBulkPatientOperations() {
       });
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Invalidate affected patients
-      variables.patientIds.forEach(id => {
+      variables.patientIds.forEach(_id => {
         queryClient.invalidateQueries({ queryKey: patientKeys.detail(id) });
       });
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
@@ -483,7 +483,7 @@ export function usePatientRealTimeUpdates(patientId?: string) {
           // Update patient cache with real-time data
           queryClient.setQueryData(
             patientKeys.detail(patientId),
-            (old: any) => {
+            (_old: any) => {
               if (!old) return old;
               return {
                 ...old,
@@ -567,21 +567,21 @@ export function usePatientPerformanceMetrics() {
 
 // Export helper functions for component usage
 export const patientUtils = {
-  formatCPF: (cpf: string) => {
+  formatCPF: (_cpf: any) => {
     return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   },
 
-  formatPhone: (phone: string) => {
+  formatPhone: (_phone: any) => {
     return phone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
   },
 
-  validateCPF: (cpf: string) => {
+  validateCPF: (_cpf: any) => {
     // Basic CPF validation (should be enhanced for production)
     const cleanCPF = cpf.replace(/\D/g, '');
     return cleanCPF.length === 11;
   },
 
-  getConsentStatusColor: (status: string) => {
+  getConsentStatusColor: (_status: any) => {
     switch (status) {
       case 'granted':
         return 'green';

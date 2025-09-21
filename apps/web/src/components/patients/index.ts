@@ -128,17 +128,17 @@ export interface PatientSearchResult {
 
 // Utility functions for Brazilian formatting
 export const formatters = {
-  cpf: (value: string) => {
+  cpf: (_value: any) => {
     const numbers = value.replace(/\D/g, '');
     return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   },
 
-  cns: (value: string) => {
+  cns: (_value: any) => {
     const numbers = value.replace(/\D/g, '');
     return numbers.replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4');
   },
 
-  phone: (value: string) => {
+  phone: (_value: any) => {
     const numbers = value.replace(/\D/g, '');
     if (numbers.length === 11) {
       return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
@@ -148,7 +148,7 @@ export const formatters = {
     return value;
   },
 
-  cep: (value: string) => {
+  cep: (_value: any) => {
     const numbers = value.replace(/\D/g, '');
     return numbers.replace(/(\d{5})(\d{3})/, '$1-$2');
   },

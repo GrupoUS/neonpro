@@ -31,7 +31,7 @@ export function useChatSession(sessionId: string, opts?: { mock?: boolean }) {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = (await res.json()) as ChatSessionInfo;
         if (!cancelled) setData(json);
-      } catch (e) {
+      } catch (error) {
         if (!cancelled) {
           setError(e instanceof Error ? e.message : 'Unknown error');
         }

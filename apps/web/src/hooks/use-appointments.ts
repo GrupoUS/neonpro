@@ -188,7 +188,7 @@ export function useCreateAppointment() {
       });
 
       // Optimistically update to the new value
-      queryClient.setQueryData(appointmentKeys.lists(), (old: any) => {
+      queryClient.setQueryData(appointmentKeys.lists(), (_old: any) => {
         if (!old) return old;
 
         const optimisticAppointment = {
@@ -209,7 +209,7 @@ export function useCreateAppointment() {
       return { previousAppointments };
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Update cache with real appointment data
       queryClient.setQueryData(appointmentKeys.detail(data.id), data);
 
@@ -242,7 +242,7 @@ export function useCreateAppointment() {
       }
     },
 
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       // Rollback optimistic update
       if (context?.previousAppointments) {
         queryClient.setQueryData(
@@ -332,7 +332,7 @@ export function useUpdateAppointmentStatus() {
       });
 
       // Optimistically update
-      queryClient.setQueryData(appointmentKeys.detail(id), (old: any) => {
+      queryClient.setQueryData(appointmentKeys.detail(id), (_old: any) => {
         if (!old) return old;
         return {
           ...old,
@@ -345,7 +345,7 @@ export function useUpdateAppointmentStatus() {
       return { previousAppointment };
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Update cache with server response
       queryClient.setQueryData(appointmentKeys.detail(data.id), data);
 
@@ -367,7 +367,7 @@ export function useUpdateAppointmentStatus() {
       );
     },
 
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       // Rollback optimistic update
       if (context?.previousAppointment) {
         queryClient.setQueryData(
@@ -436,11 +436,11 @@ export function useSendAppointmentReminder() {
       });
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Update appointment cache with reminder info
       queryClient.setQueryData(
         appointmentKeys.detail(variables.appointmentId),
-        (old: any) => {
+        (_old: any) => {
           if (!old) return old;
           return {
             ...old,
@@ -465,7 +465,7 @@ export function useSendAppointmentReminder() {
       toast.success(`Lembrete enviado via ${channelList}!`);
     },
 
-    onError: (error, variables) => {
+    onError: (error, _variables) => {
       console.error('[Send Reminder Error]', error);
 
       if (error.message.includes('consent')) {
@@ -505,7 +505,7 @@ export function useAppointmentRealTimeUpdates(options?: {
           if (update.appointmentId) {
             queryClient.setQueryData(
               appointmentKeys.detail(update.appointmentId),
-              (old: any) => {
+              (_old: any) => {
                 if (!old) return old;
                 return {
                   ...old,
@@ -724,7 +724,7 @@ export const appointmentUtils = {
     });
   },
 
-  getStatusColor: (status: string) => {
+  getStatusColor: (_status: any) => {
     const colors = {
       scheduled: 'blue',
       confirmed: 'green',
@@ -743,7 +743,7 @@ export const appointmentUtils = {
     return Math.round((endTime - startTime) / (1000 * 60)); // Minutes
   },
 
-  getNoShowRiskText: (risk: number) => {
+  getNoShowRiskText: (_risk: any) => {
     if (risk > 0.7) return 'Alto risco de falta';
     if (risk > 0.4) return 'Risco moderado de falta';
     return 'Baixo risco de falta';

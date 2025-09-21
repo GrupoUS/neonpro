@@ -2,14 +2,14 @@
 
 import { AccessiblePatientCard } from '@/components/accessibility/AccessiblePatientCard';
 import { MobilePatientCard } from '@/components/patients/MobilePatientCard';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { UniversalButton } from '@/components/ui/universal-button';
 import { useToast } from '@/hooks/use-toast';
 import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
@@ -363,19 +363,19 @@ const getAge = (birthDate: string): number => {
   return age;
 };
 
-const getRiskColor = (riskScore: number) => {
+const getRiskColor = (_riskScore: any) => {
   if (riskScore >= 0.8) return 'text-red-600 bg-red-50 border-red-200';
   if (riskScore >= 0.6) return 'text-orange-600 bg-orange-50 border-orange-200';
   return 'text-green-600 bg-green-50 border-green-200';
 };
 
-const getRiskLabel = (riskScore: number) => {
+const getRiskLabel = (_riskScore: any) => {
   if (riskScore >= 0.8) return 'Alto Risco';
   if (riskScore >= 0.6) return 'Médio Risco';
   return 'Baixo Risco';
 };
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (_status: any) => {
   switch (status) {
     case 'active':
       return 'text-green-600 bg-green-50 border-green-200';
@@ -388,7 +388,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const getStatusLabel = (status: string) => {
+const getStatusLabel = (_status: any) => {
   switch (status) {
     case 'active':
       return 'Ativo';
@@ -448,7 +448,7 @@ function PatientDetailPage() {
     });
   };
 
-  const handleAIInsightAction = (insight: AIInsight) => {
+  const handleAIInsightAction = (_insight: any) => {
     toast({
       title: 'Ação executada',
       description: `${insight.actionLabel} foi realizada com sucesso.`,
@@ -834,7 +834,7 @@ function PatientDetailPage() {
                         Condições Crônicas
                       </h4>
                       <div className='space-y-1'>
-                        {patient.chronicConditions.map((condition, index) => (
+                        {patient.chronicConditions.map((condition, _index) => (
                           <Badge
                             key={index}
                             variant='outline'
@@ -849,7 +849,7 @@ function PatientDetailPage() {
                     <div>
                       <h4 className='font-medium text-sm mb-2'>Alergias</h4>
                       <div className='space-y-1'>
-                        {patient.allergies.map((allergy, index) => (
+                        {patient.allergies.map((allergy, _index) => (
                           <Badge
                             key={index}
                             variant='destructive'
@@ -867,7 +867,7 @@ function PatientDetailPage() {
                       Medicações Atuais
                     </h4>
                     <div className='space-y-2'>
-                      {patient.medications.map((medication, index) => (
+                      {patient.medications.map((medication, _index) => (
                         <div
                           key={index}
                           className='flex items-center justify-between p-2 bg-gray-50 rounded text-sm'
@@ -1202,7 +1202,7 @@ function PatientDetailPage() {
                                     Prescrição
                                   </div>
                                   <div className='space-y-1'>
-                                    {record.prescription.map((presc, index) => (
+                                    {record.prescription.map((presc, _index) => (
                                       <div
                                         key={index}
                                         className='text-sm text-muted-foreground'

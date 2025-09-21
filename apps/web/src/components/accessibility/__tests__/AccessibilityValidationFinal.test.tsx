@@ -18,7 +18,7 @@ describe('Accessibility Validation Final Test', () => {
 
     // Check that we have criteria for all WCAG categories
     const categories = ['perceivable', 'operable', 'understandable', 'robust'];
-    categories.forEach(category => {
+    categories.forEach(_category => {
       const criteriaInCategory = WCAG_21_AA_VALIDATION_CRITERIA.filter(
         criteria => criteria.category === category,
       );
@@ -33,7 +33,7 @@ describe('Accessibility Validation Final Test', () => {
 
     // Check that we have criteria for relevant WCAG levels (AA focus)
     const wcagLevels = ['A', 'AA'];
-    wcagLevels.forEach(level => {
+    wcagLevels.forEach(_level => {
       const criteriaInLevel = WCAG_21_AA_VALIDATION_CRITERIA.filter(
         criteria => criteria.wcagLevel === level,
       );
@@ -59,7 +59,7 @@ describe('Accessibility Validation Final Test', () => {
 
     expect(healthcareCriteria.length).toBeGreaterThan(0);
 
-    healthcareCriteria.forEach(criteria => {
+    healthcareCriteria.forEach(_criteria => {
       expect(criteria.healthcareRelevant).toBe(true);
       expect(criteria.wcagLevel).toMatch(/A|AA|AAA/);
       expect(criteria.category).toMatch(
@@ -87,7 +87,7 @@ describe('Accessibility Validation Final Test', () => {
 
     expect(emergencyCriteria.length).toBeGreaterThan(0);
 
-    emergencyCriteria.forEach(criteria => {
+    emergencyCriteria.forEach(_criteria => {
       expect(criteria.healthcareRelevant).toBe(true);
     });
   });
@@ -109,7 +109,7 @@ describe('Accessibility Validation Final Test', () => {
 
     expect(medicalCriteria.length).toBeGreaterThan(0);
 
-    medicalCriteria.forEach(criteria => {
+    medicalCriteria.forEach(_criteria => {
       expect(criteria.healthcareRelevant).toBe(true);
     });
   });

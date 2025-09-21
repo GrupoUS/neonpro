@@ -62,7 +62,7 @@ export const HEALTHCARE_AUDIT_RULES = {
     name: 'Medical Information Accessibility',
     description: 'All medical information must be accessible to healthcare professionals',
     severity: 'critical',
-    check: (element: Element) => {
+    check: (_element: any) => {
       const medicalInfo = element.querySelectorAll(
         '[data-sensitive="medical"], [data-medical="true"]',
       );
@@ -75,11 +75,11 @@ export const HEALTHCARE_AUDIT_RULES = {
         );
       });
     },
-    fix: (element: Element) => {
+    fix: (_element: any) => {
       const medicalInfo = element.querySelectorAll(
         '[data-sensitive="medical"], [data-medical="true"]',
       );
-      medicalInfo.forEach(info => {
+      medicalInfo.forEach(_info => {
         if (
           !info.hasAttribute('aria-label')
           && !info.hasAttribute('aria-labelledby')
@@ -96,7 +96,7 @@ export const HEALTHCARE_AUDIT_RULES = {
     name: 'Emergency Information Accessibility',
     description: 'Emergency information must be accessible without color dependence',
     severity: 'critical',
-    check: (element: Element) => {
+    check: (_element: any) => {
       const emergencyElements = element.querySelectorAll(
         '[data-emergency="true"], .emergency',
       );
@@ -109,11 +109,11 @@ export const HEALTHCARE_AUDIT_RULES = {
         return color !== backgroundColor && color !== 'transparent';
       });
     },
-    fix: (element: Element) => {
+    fix: (_element: any) => {
       const emergencyElements = element.querySelectorAll(
         '[data-emergency="true"], .emergency',
       );
-      emergencyElements.forEach(el => {
+      emergencyElements.forEach(_el => {
         if (!el.hasAttribute('aria-label')) {
           el.setAttribute('aria-label', 'Emergency information');
         }
@@ -126,7 +126,7 @@ export const HEALTHCARE_AUDIT_RULES = {
     name: 'Medical Form Accessibility',
     description: 'Medical forms must have proper labeling and instructions',
     severity: 'serious',
-    check: (element: Element) => {
+    check: (_element: any) => {
       const medicalForms = element.querySelectorAll(
         'form[data-medical="true"], .medical-form',
       );
@@ -143,13 +143,13 @@ export const HEALTHCARE_AUDIT_RULES = {
         });
       });
     },
-    fix: (element: Element) => {
+    fix: (_element: any) => {
       const medicalForms = element.querySelectorAll(
         'form[data-medical="true"], .medical-form',
       );
-      medicalForms.forEach(form => {
+      medicalForms.forEach(_form => {
         const inputs = form.querySelectorAll('input, select, textarea');
-        inputs.forEach((input, index) => {
+        inputs.forEach((input, _index) => {
           if (!input.hasAttribute('id')) {
             input.setAttribute('id', `medical-input-${index}`);
           }
@@ -166,7 +166,7 @@ export const HEALTHCARE_AUDIT_RULES = {
     name: 'Prescription Information Accessibility',
     description: 'Prescription information must be clear and accessible',
     severity: 'serious',
-    check: (element: Element) => {
+    check: (_element: any) => {
       const prescriptionElements = element.querySelectorAll(
         '[data-prescription="true"], .prescription',
       );
@@ -178,11 +178,11 @@ export const HEALTHCARE_AUDIT_RULES = {
         );
       });
     },
-    fix: (element: Element) => {
+    fix: (_element: any) => {
       const prescriptionElements = element.querySelectorAll(
         '[data-prescription="true"], .prescription',
       );
-      prescriptionElements.forEach(el => {
+      prescriptionElements.forEach(_el => {
         if (!el.hasAttribute('aria-label')) {
           const medicationName = el
             .querySelector('.medication-name')
@@ -200,7 +200,7 @@ export const HEALTHCARE_AUDIT_RULES = {
     name: 'Appointment Scheduling Accessibility',
     description: 'Appointment scheduling must be accessible to all users',
     severity: 'moderate',
-    check: (element: Element) => {
+    check: (_element: any) => {
       const appointmentElements = element.querySelectorAll(
         '[data-appointment="true"], .appointment-scheduler',
       );
@@ -220,15 +220,15 @@ export const HEALTHCARE_AUDIT_RULES = {
         );
       });
     },
-    fix: (element: Element) => {
+    fix: (_element: any) => {
       const appointmentElements = element.querySelectorAll(
         '[data-appointment="true"], .appointment-scheduler',
       );
-      appointmentElements.forEach(el => {
+      appointmentElements.forEach(_el => {
         const dateInputs = el.querySelectorAll(
           'input[type="date"], input[type="time"]',
         );
-        dateInputs.forEach(input => {
+        dateInputs.forEach(_input => {
           if (
             !input.hasAttribute('aria-label')
             && input instanceof HTMLInputElement
@@ -351,7 +351,7 @@ export class HealthcareAccessibilityAuditor {
       results.categoryResults.push(categoryResult);
 
       // Update summary counts
-      categoryResult.issues.forEach((issue: any) => {
+      categoryResult.issues.forEach((_issue: any) => {
         switch (issue.severity) {
           case 'critical':
             results.summary.criticalIssues++;
@@ -431,7 +431,7 @@ export class HealthcareAccessibilityAuditor {
         if (passed) {
           passedChecks++;
         }
-      } catch (error) {
+      } catch (_error) {
         console.error(`Audit rule ${ruleId} failed:`, error);
 
         issues.push({
@@ -592,7 +592,7 @@ export class HealthcareAccessibilityAuditor {
     }
 
     // Category-specific recommendations
-    results.categoryResults.forEach((category: any) => {
+    results.categoryResults.forEach((_category: any) => {
       if (!category.passed) {
         switch (category.category) {
           case 'Patient Safety':
@@ -670,7 +670,7 @@ export class HealthcareAccessibilityAuditor {
           message: `Applied fix for ${rule.name}`,
         });
         fixed++;
-      } catch (error) {
+      } catch (_error) {
         fixes.push({
           rule: rule.id,
           element: 'document',
@@ -771,7 +771,7 @@ export async function quickHealthcareAccessibilityCheck(
       issues: results.categoryResults.flatMap((cat: any) => cat.issues),
       healthcareCompliance: results.summary.healthcareCompliance,
     };
-  } catch (error) {
+  } catch (_error) {
     console.error('Quick healthcare accessibility check failed:', error);
     return {
       passed: false,

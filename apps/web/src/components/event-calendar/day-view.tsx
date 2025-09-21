@@ -22,7 +22,7 @@ import {
   useCurrentTimeIndicator,
   WeekCellsHeight,
 } from '@/components/event-calendar/index';
-import { EndHour, StartHour } from '@/components/event-calendar/index';
+import { EndHour } from '@/components/event-calendar/index';
 import { cn } from '@/lib/utils';
 
 interface DayViewProps {
@@ -112,7 +112,7 @@ export function DayView({
     // Track columns for overlapping events
     const columns: { event: CalendarEvent; end: Date }[][] = [];
 
-    sortedEvents.forEach(event => {
+    sortedEvents.forEach(_event => {
       const eventStart = new Date(event.start);
       const eventEnd = new Date(event.end);
 
@@ -225,7 +225,7 @@ export function DayView({
 
       <div className='border-border/70 grid flex-1 grid-cols-[3rem_1fr] border-t sm:grid-cols-[4rem_1fr] overflow-hidden'>
         <div>
-          {hours.map((hour, index) => (
+          {hours.map((hour, _index) => (
             <div
               key={hour.toString()}
               className='border-border/70 relative h-[var(--week-cells-height)] border-b last:border-b-0'

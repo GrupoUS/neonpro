@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router';
-import React, { lazy, Suspense } from 'react';
+import React, { lazy } from 'react';
 
 // Lazy-load ONLY in dev to avoid top-level await in prod bundles
 const LazyReport: React.ComponentType = (import.meta as any).env?.DEV

@@ -47,7 +47,7 @@ describe('Security Contracts', () => {
       ];
 
       // Test: Required CSP directives for healthcare
-      expectedCSPDirectives.forEach(directive => {
+      expectedCSPDirectives.forEach(_directive => {
         expect(typeof directive).toBe('string');
         expect(directive.length).toBeGreaterThan(0);
       });
@@ -153,12 +153,12 @@ describe('Security Contracts', () => {
       const sriAlgorithms = ['sha256', 'sha384', 'sha512'];
 
       // Test: Critical resources and algorithms
-      criticalResources.forEach(resource => {
+      criticalResources.forEach(_resource => {
         expect(typeof resource).toBe('string');
         expect(resource.endsWith('.js')).toBe(true);
       });
 
-      sriAlgorithms.forEach(algorithm => {
+      sriAlgorithms.forEach(_algorithm => {
         expect(['sha256', 'sha384', 'sha512']).toContain(algorithm);
       });
     });

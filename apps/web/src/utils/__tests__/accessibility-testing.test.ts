@@ -357,7 +357,7 @@ describe('Accessibility Testing Service', () => {
       expect(report.priorityFixes.length).toBeGreaterThan(0);
 
       // Validate priority fix structure
-      report.priorityFixes.forEach(fix => {
+      report.priorityFixes.forEach(_fix => {
         expect(fix).toBeDefined();
         expect(fix.length).toBeGreaterThan(0);
       });
@@ -470,7 +470,7 @@ describe('Accessibility Testing Service', () => {
       expect(healthcareResults.length).toBeGreaterThan(0);
 
       // Verify healthcare-specific testing
-      healthcareResults.forEach(result => {
+      healthcareResults.forEach(_result => {
         expect(result.healthcareImpact).toBeInstanceOf(Array);
         expect(result.violations).toBeInstanceOf(Array);
         expect(result.recommendations).toBeInstanceOf(Array);
@@ -629,12 +629,12 @@ describe('Accessibility Testing Service', () => {
       expect(brazilianTestCases.length).toBeGreaterThan(0);
 
       // Verify all WCAG AA cases have the correct standard
-      wcagAATestCases.forEach(testCase => {
+      wcagAATestCases.forEach(_testCase => {
         expect(testCase.standard).toBe(ACCESSIBILITY_STANDARDS.WCAG_2_1_AA);
       });
 
       // Verify all Brazilian cases have the correct standard
-      brazilianTestCases.forEach(testCase => {
+      brazilianTestCases.forEach(_testCase => {
         expect(testCase.standard).toBe(
           ACCESSIBILITY_STANDARDS.BRAZILIAN_ACCESSIBILITY,
         );
@@ -665,23 +665,23 @@ describe('Accessibility Testing Service', () => {
       expect(healthcareCases.length).toBeGreaterThan(0);
 
       // Verify all cases have the correct test type
-      automatedScanCases.forEach(testCase => {
+      automatedScanCases.forEach(_testCase => {
         expect(testCase.testType).toBe(ACCESSIBILITY_TEST_TYPES.AUTOMATED_SCAN);
       });
-      keyboardCases.forEach(testCase => {
+      keyboardCases.forEach(_testCase => {
         expect(testCase.testType).toBe(
           ACCESSIBILITY_TEST_TYPES.KEYBOARD_NAVIGATION,
         );
       });
-      screenReaderCases.forEach(testCase => {
+      screenReaderCases.forEach(_testCase => {
         expect(testCase.testType).toBe(ACCESSIBILITY_TEST_TYPES.SCREEN_READER);
       });
-      mobileCases.forEach(testCase => {
+      mobileCases.forEach(_testCase => {
         expect(testCase.testType).toBe(
           ACCESSIBILITY_TEST_TYPES.MOBILE_ACCESSIBILITY,
         );
       });
-      healthcareCases.forEach(testCase => {
+      healthcareCases.forEach(_testCase => {
         expect(testCase.testType).toBe(
           ACCESSIBILITY_TEST_TYPES.HEALTHCARE_PATTERNS,
         );

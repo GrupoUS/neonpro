@@ -17,9 +17,9 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
-import { DndContext, DragOverlay, useDndContext } from '@dnd-kit/core';
+import { DndContext, useDndContext } from '@dnd-kit/core';
 import type { UniqueIdentifier } from '@dnd-kit/core';
-import { Badge, Button, Progress } from '@neonpro/ui';
+import { Badge } from '@neonpro/ui';
 import {
   IconAlertCircle,
   IconCheck,
@@ -178,7 +178,7 @@ export function PatientDocumentUpload({
       console.log('Loading existing documents for patient:', patientId);
       // Mock data for now
       setExistingDocuments([]);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error loading existing documents:', error);
       toast.error('Erro ao carregar documentos existentes');
     }
@@ -258,7 +258,7 @@ export function PatientDocumentUpload({
     formData.append('uploaded_by', user.id);
 
     // Simulate progress updates
-    const updateProgress = (progress: number) => {
+    const updateProgress = (_progress: any) => {
       setUploadQueue(prev => {
         const newMap = new Map(prev);
         const state = newMap.get(uploadId);
@@ -292,7 +292,7 @@ export function PatientDocumentUpload({
       updateProgress(100);
 
       return result.document as PatientDocument;
-    } catch (error) {
+    } catch (_error) {
       console.error('Upload error:', error);
       throw error;
     }
@@ -300,7 +300,7 @@ export function PatientDocumentUpload({
 
   // Handle file selection and processing
   const handleFiles = useCallback(
-    async (files: FileList) => {
+    async (_files: any) => {
       if (disabled || !user) return;
 
       const fileArray = Array.from(files);
@@ -355,7 +355,7 @@ export function PatientDocumentUpload({
 
           toast.success(`Documento "${file.name}" enviado com sucesso!`);
           onDocumentsUploaded?.([uploadedDocument]);
-        } catch (error) {
+        } catch (_error) {
           console.error('Upload error:', error);
 
           setUploadQueue(prev => {
@@ -441,7 +441,7 @@ export function PatientDocumentUpload({
   );
 
   // Handle document removal
-  const handleRemoveDocument = async (documentId: string) => {
+  const handleRemoveDocument = async (_documentId: any) => {
     try {
       const response = await fetch(`/api/v1/patient-documents/${documentId}`, {
         method: 'DELETE',
@@ -454,14 +454,14 @@ export function PatientDocumentUpload({
       setExistingDocuments(prev => prev.filter(doc => doc.id !== documentId));
       onDocumentRemoved?.(documentId);
       toast.success('Documento removido com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error removing document:', error);
       toast.error('Erro ao remover documento');
     }
   };
 
   // Get file type info with enhanced styling
-  const getFileTypeInfo = (mimeType: string) => {
+  const getFileTypeInfo = (_mimeType: any) => {
     return (
       HEALTHCARE_FILE_TYPES[mimeType as keyof typeof HEALTHCARE_FILE_TYPES]
       || HEALTHCARE_FILE_TYPES.default

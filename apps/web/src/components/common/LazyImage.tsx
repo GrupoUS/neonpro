@@ -52,7 +52,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
 
     const observer = createIntersectionObserver(
       entries => {
-        entries.forEach(entry => {
+        entries.forEach(_entry => {
           if (entry.isIntersecting) {
             setIsInView(true);
             observer?.disconnect();
@@ -161,7 +161,7 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
   ...props
 }) => {
   // Generate srcSet for different formats and sizes
-  const generateSrcSet = (baseSrc: string) => {
+  const generateSrcSet = (_baseSrc: any) => {
     if (!breakpoints) return undefined;
 
     return Object.entries(breakpoints)

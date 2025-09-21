@@ -179,7 +179,7 @@ export class CalendarDataMinimizationService {
         dataCategoriesShared,
         legalBasis,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in minimizeAppointmentWithCompliance:', error);
       // Return minimal data on error
       return {
@@ -231,7 +231,7 @@ export class CalendarDataMinimizationService {
         allRisks.push(...result.risksIdentified);
         allRecommendations.push(...result.recommendations);
 
-        result.dataCategoriesShared.forEach(category => dataCategoriesShared.add(category));
+        result.dataCategoriesShared.forEach(_category => dataCategoriesShared.add(category));
       }
 
       const averageScore = allScores.reduce((sum, score) => sum + score, 0) / allScores.length;
@@ -255,7 +255,7 @@ export class CalendarDataMinimizationService {
           dataCategoriesShared,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in batch minimization:', error);
       return {
         minimizedAppointments: appointments.map(apt => this.getMinimalFallback(apt)),
@@ -410,7 +410,7 @@ export class CalendarDataMinimizationService {
     ];
 
     let sanitized = medicalInfo;
-    sensitiveTerms.forEach(term => {
+    sensitiveTerms.forEach(_term => {
       const regex = new RegExp(term, 'gi');
       sanitized = sanitized.replace(regex, '[informação médica sensível]');
     });

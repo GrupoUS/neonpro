@@ -67,11 +67,11 @@ function ServicesPage() {
   // Delete service mutation
   const deleteServiceMutation = useDeleteService();
 
-  const handleEdit = (service: Service) => {
+  const handleEdit = (_service: any) => {
     setEditingService(service);
   };
 
-  const handleDelete = async (service: Service) => {
+  const handleDelete = async (_service: any) => {
     if (
       window.confirm(
         `Tem certeza que deseja excluir o serviço "${service.name}"?`,
@@ -80,7 +80,7 @@ function ServicesPage() {
       try {
         await deleteServiceMutation.mutateAsync(service.id);
         toast.success('Serviço excluído com sucesso!');
-      } catch (error) {
+      } catch (_error) {
         console.error('Error deleting service:', error);
         toast.error('Erro ao excluir serviço. Tente novamente.');
       }

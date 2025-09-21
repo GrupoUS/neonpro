@@ -15,12 +15,12 @@ import {
   useDocumentDelete,
   useDocumentUpload,
 } from '@/queries/documents';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
@@ -222,12 +222,12 @@ function PatientDocumentsPage() {
     },
   ];
   // Document management handlers
-  const handleDeleteDocument = async (documentId: string) => {
+  const handleDeleteDocument = async (_documentId: any) => {
     try {
       await deleteMutation.mutateAsync({ patientId, documentId });
       setSelectedDocuments(prev => prev.filter(id => id !== documentId));
       toast.success('Documento excluído com sucesso');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error deleting document:', error);
       toast.error('Erro ao excluir documento');
     }
@@ -248,7 +248,7 @@ function PatientDocumentsPage() {
         tags,
       });
       toast.success('Documento enviado com sucesso');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error uploading document:', error);
       toast.error('Erro ao enviar documento');
     }
@@ -586,7 +586,7 @@ function DocumentCard({
       setIsDownloading(true);
       await downloadDocument(patientId, document.id, document.name);
       toast.success('Download concluído');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error downloading document:', error);
       toast.error('Erro ao baixar documento');
     } finally {
@@ -605,7 +605,7 @@ function DocumentCard({
     try {
       setIsDeleting(true);
       onDelete(document.id);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error deleting document:', error);
       toast.error('Erro ao excluir documento');
     } finally {
@@ -617,13 +617,13 @@ function DocumentCard({
     // TODO: Implement view functionality (open in modal or new tab)
     console.log('View document:', document.id);
   };
-  const getFileIcon = (type: string) => {
+  const getFileIcon = (_type: any) => {
     if (type.startsWith('image/')) return Image;
     if (type === 'application/pdf') return FileText;
     return File;
   };
 
-  const getCategoryBadge = (category: string) => {
+  const getCategoryBadge = (_category: any) => {
     const categoryMap = {
       medical: { label: 'Médico', variant: 'default' as const },
       exams: { label: 'Exame', variant: 'secondary' as const },
@@ -640,7 +640,7 @@ function DocumentCard({
     );
   };
 
-  const formatFileSize = (bytes: number) => {
+  const formatFileSize = (_bytes: any) => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     if (bytes === 0) return '0 Bytes';
     const i = Math.floor(Math.log(bytes) / Math.log(1024));

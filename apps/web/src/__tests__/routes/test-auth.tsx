@@ -1,8 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
-import { createFileRoute, Link } from '@tanstack/react-router';
-import { CheckCircle, Chrome, XCircle } from 'lucide-react';
+import { Card } from '@neonpro/ui';
+import { createFileRoute } from '@tanstack/react-router';
+import { CheckCircle } from 'lucide-react';
 import { useState } from 'react';
 
 export const Route = createFileRoute('/__tests/test-auth')({
@@ -34,7 +34,7 @@ function TestAuth() {
         setResult('Google authentication initiated successfully!');
         setStatus('success');
       }
-    } catch (err) {
+    } catch (error) {
       setResult(`Unexpected error: ${err}`);
       setStatus('error');
     } finally {
@@ -59,7 +59,7 @@ function TestAuth() {
         );
         setStatus('success');
       }
-    } catch (err) {
+    } catch (error) {
       setResult(`Connection error: ${err}`);
       setStatus('error');
     } finally {

@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@neonpro/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { motion, useReducedMotion } from 'framer-motion';
 import React from 'react';
 

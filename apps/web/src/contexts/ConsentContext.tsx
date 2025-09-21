@@ -76,7 +76,7 @@ export function ConsentProvider({
           // Consent version changed - show banner again
           setShowConsentBanner(true);
         }
-      } catch (error) {
+      } catch (_error) {
         console.warn('Failed to parse consent preferences:', error);
         setShowConsentBanner(true);
       }
@@ -87,7 +87,7 @@ export function ConsentProvider({
   }, []);
 
   // Save preferences to localStorage
-  const savePreferences = (newPreferences: ConsentPreferences) => {
+  const savePreferences = (_newPreferences: any) => {
     const dataToSave = {
       version: CONSENT_VERSION,
       preferences: newPreferences,
@@ -97,7 +97,7 @@ export function ConsentProvider({
     try {
       localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(dataToSave));
       setConsentVersion(CONSENT_VERSION);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to save consent preferences:', error);
     }
   };

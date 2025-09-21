@@ -39,8 +39,8 @@ import {
   X,
   ChevronRight,
 } from 'lucide-react';
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Progress, Input, Textarea } from '@/components/ui';
-import { NeumorphicCard, NeumorphicButton, PatientStatusBadge } from '@/components/ui/neonpro-neumorphic';
+import { Badge } from '@/components/ui';
+import { NeumorphicCard } from '@/components/ui/neonpro-neumorphic';
 import { cn } from '@neonpro/ui';
 import { formatDateTime, formatCPF } from '@/utils/brazilian-formatters';
 
@@ -266,7 +266,7 @@ export const ClinicalWorkflowStepper: React.FC<{
   steps: ClinicalStep[];
   currentStep: number;
   onStepChange: (stepIndex: number) => void;
-  onStepComplete: (stepIndex: number, data?: any) => void;
+  onStepComplete: (stepIndex: number, _data?: any) => void;
   onWorkflowComplete: (data: any) => void;
   allowSkipping?: boolean;
   showProgress?: boolean;
@@ -292,7 +292,7 @@ export const ClinicalWorkflowStepper: React.FC<{
     const stepErrors: string[] = [];
 
     if (step.validationRules) {
-      step.validationRules.forEach(rule => {
+      step.validationRules.forEach(_rule => {
         const value = data[rule.field];
         
         switch (rule.rule) {
@@ -345,7 +345,7 @@ export const ClinicalWorkflowStepper: React.FC<{
     }
   };
 
-  const handleStepSkip = (stepIndex: number) => {
+  const handleStepSkip = (_stepIndex: any) => {
     if (allowSkipping && !steps[stepIndex].required) {
       onStepChange(stepIndex + 1);
     }
@@ -389,7 +389,7 @@ export const ClinicalWorkflowStepper: React.FC<{
 
       {/* Steps */}
       <div className="space-y-4">
-        {steps.map((step, index) => {
+        {steps.map((step, _index) => {
           const isActive = index === currentStep;
           const isCompleted = step.status === 'completed';
           const hasErrors = errors[index]?.length > 0;
@@ -544,7 +544,7 @@ export const EmergencyAlertSystem: React.FC<{
     >
       <div className="space-y-3 max-w-md">
         {alerts.filter(alert => visibleAlerts.includes(alert.id)).map((alert) => {
-          const getSeverityStyles = (severity: string) => {
+          const getSeverityStyles = (_severity: any) => {
             switch (severity) {
               case 'critical':
                 return 'bg-gradient-to-r from-red-500 to-red-600 text-white border-red-700 animate-pulse';
@@ -557,7 +557,7 @@ export const EmergencyAlertSystem: React.FC<{
             }
           };
 
-          const getSeverityIcon = (severity: string) => {
+          const getSeverityIcon = (_severity: any) => {
             switch (severity) {
               case 'critical':
                 return <Zap className="w-5 h-5" aria-hidden="true" />;

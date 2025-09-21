@@ -51,7 +51,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
+
   DropdownMenuTrigger,
   Input,
   ScrollArea,
@@ -95,7 +95,7 @@ export interface ResponseFormatterProps {
   /** Custom click handlers */
   onItemClick?: (type: 'client' | 'appointment' | 'financial', item: any) => void;
   /** Export handler */
-  onExport?: (type: 'client' | 'appointment' | 'financial', data: any[]) => void;
+  onExport?: (type: 'client' | 'appointment' | 'financial', _data: any[]) => void;
   /** Test ID */
   testId?: string;
 }
@@ -215,7 +215,7 @@ const AppointmentCard: React.FC<{
   onClick?: () => void;
   compact?: boolean;
 }> = ({ appointment, onClick, compact }) => {
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (_status: any) => {
     switch (status) {
       case 'confirmed': return 'default';
       case 'scheduled': return 'secondary';
@@ -226,7 +226,7 @@ const AppointmentCard: React.FC<{
     }
   };
 
-  const getStatusText = (status: string) => {
+  const getStatusText = (_status: any) => {
     const statusMap = {
       'scheduled': 'Agendado',
       'confirmed': 'Confirmado',
@@ -296,7 +296,7 @@ const FinancialCard: React.FC<{
   onClick?: () => void;
   compact?: boolean;
 }> = ({ financial, onClick, compact }) => {
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (_status: any) => {
     switch (status) {
       case 'paid': return 'default';
       case 'pending': return 'secondary';
@@ -307,7 +307,7 @@ const FinancialCard: React.FC<{
     }
   };
 
-  const getStatusText = (status: string) => {
+  const getStatusText = (_status: any) => {
     const statusMap = {
       'pending': 'Pendente',
       'paid': 'Pago',
@@ -554,7 +554,7 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
     // Apply search filter
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
-      data = data.filter((item: any) => {
+      data = data.filter((_item: any) => {
         const searchableText = Object.values(item).join(' ').toLowerCase();
         return searchableText.includes(searchLower);
       });
@@ -577,7 +577,7 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
   // Handle item click
-  const handleItemClick = useCallback((item: any) => {
+  const handleItemClick = useCallback((_item: any) => {
     onItemClick?.(activeTab as any, item);
   }, [activeTab, onItemClick]);
 
@@ -694,7 +694,7 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
         'grid gap-4',
         compact ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
       )}>
-        {paginatedData.map((item, index) => {
+        {paginatedData.map((item, _index) => {
           switch (activeTab) {
             case 'clients':
               return (

@@ -8,7 +8,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { EventCalendar } from '../event-calendar';
-import { CalendarEvent, EventColor } from '../types';
+import { CalendarEvent } from '../types';
 
 // Mock accessibility utilities
 vi.mock('@/utils/accessibility/healthcare-audit-utils', () => ({
@@ -74,13 +74,13 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
 
       // All images should have alt text
       const images = screen.queryAllByRole('img');
-      images.forEach(img => {
+      images.forEach(_img => {
         expect(img).toHaveAttribute('alt');
       });
 
       // Icons should have aria-labels
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(button => {
+      buttons.forEach(_button => {
         if (button.querySelector('svg')) {
           expect(button).toHaveAttribute('aria-label');
         }
@@ -102,7 +102,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       const eventElements = screen.getAllByText(
         /Consulta Acessível|Exame Acessível/,
       );
-      eventElements.forEach(element => {
+      eventElements.forEach(_element => {
         // Should be readable without color cues
         const computedStyle = window.getComputedStyle(element);
         expect(computedStyle.fontSize).not.toBe('0px');
@@ -128,7 +128,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       const eventElements = screen.getAllByText(
         /Consulta Acessível|Exame Acessível/,
       );
-      eventElements.forEach(element => {
+      eventElements.forEach(_element => {
         expect(checkColorContrast).toHaveBeenCalledWith(
           expect.objectContaining({
             element: element,
@@ -189,7 +189,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
 
       // Check for visible focus indicators
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(button => {
+      buttons.forEach(_button => {
         expect(button).toHaveAttribute('tabindex');
       });
     });
@@ -221,7 +221,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
 
       // Should have clear and simple language
       const textElements = screen.getAllByText(/Consulta|Exame|Data|Hora/);
-      textElements.forEach(element => {
+      textElements.forEach(_element => {
         expect(element.textContent).toBeDefined();
       });
     });
@@ -234,7 +234,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should have consistent response
 
       const navigationButtons = screen.getAllByRole('button');
-      navigationButtons.forEach(button => {
+      navigationButtons.forEach(_button => {
         expect(button).toBeVisible();
       });
     });
@@ -283,7 +283,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       const eventElements = screen.getAllByText(
         /Consulta Acessível|Exame Acessível/,
       );
-      eventElements.forEach(element => {
+      eventElements.forEach(_element => {
         // Should be accessible via JavaScript APIs
         expect(element).toBeInTheDocument();
       });
@@ -332,7 +332,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
         'combobox',
         'checkbox',
       );
-      formElements.forEach(element => {
+      formElements.forEach(_element => {
         expect(element).toHaveAttribute('aria-label');
       });
     });
@@ -345,7 +345,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should provide visible focus indicators
 
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(button => {
+      buttons.forEach(_button => {
         expect(button).toHaveAttribute('tabindex');
 
         // Test focus management
@@ -384,7 +384,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       const eventElements = screen.getAllByText(
         /Consulta Acessível|Exame Acessível/,
       );
-      eventElements.forEach(element => {
+      eventElements.forEach(_element => {
         // Should be distinguishable without color
         const textContent = element.textContent;
         expect(textContent).toBeTruthy();
@@ -416,7 +416,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should provide proper table summaries
 
       const tables = screen.queryAllByRole('table');
-      tables.forEach(table => {
+      tables.forEach(_table => {
         expect(table).toBeInTheDocument();
       });
     });

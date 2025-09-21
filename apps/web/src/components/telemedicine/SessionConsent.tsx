@@ -21,10 +21,10 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
@@ -35,7 +35,7 @@ import {
 } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 
@@ -374,7 +374,7 @@ export function SessionConsent({
       } else {
         toast.error('Falha na validação do consentimento');
       }
-    } catch (_error) {
+    } catch (error) {
       toast.error('Erro ao registrar consentimento');
     } finally {
       setIsValidating(false);
@@ -403,14 +403,14 @@ export function SessionConsent({
 
       onConsentRevoke?.();
       toast.success('Consentimento revogado');
-    } catch (_error) {
+    } catch (error) {
       toast.error('Erro ao revogar consentimento');
     }
   }, [revokeConsent, logConsentAction, onConsentRevoke]);
 
   // Get section status icon
   const getSectionStatusIcon = useCallback(
-    (section: ConsentSection) => {
+    (_section: any) => {
       const isConsented = consentData[
         section.id as keyof ConsentData
       ] as boolean;
@@ -427,7 +427,7 @@ export function SessionConsent({
   );
 
   // Get category icon
-  const getCategoryIcon = useCallback((category: string) => {
+  const getCategoryIcon = useCallback((_category: any) => {
     switch (category) {
       case 'basic':
         return <FileText className='h-4 w-4' />;
@@ -446,7 +446,7 @@ export function SessionConsent({
 
   // Render consent section
   const renderConsentSection = useCallback(
-    (section: ConsentSection) => {
+    (_section: any) => {
       const isConsented = consentData[
         section.id as keyof ConsentData
       ] as boolean;
@@ -548,7 +548,7 @@ export function SessionConsent({
 
               <TabsContent value='history' className='space-y-4'>
                 <ScrollArea className='h-96'>
-                  {auditTrail.map((entry, index) => (
+                  {auditTrail.map((entry, _index) => (
                     <div
                       key={index}
                       className='flex justify-between text-sm py-2 border-b'

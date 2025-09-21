@@ -9,11 +9,11 @@ import { PatientDataTable } from '@/components/patients/PatientDataTable';
 import { useAuth } from '@/hooks/useAuth';
 import { usePatientStats } from '@/hooks/usePatientStats';
 import { testSupabaseConnection } from '@/utils/supabase-test';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
-import { Activity, AlertCircle, Calendar, UserPlus, Users } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import { Suspense, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { z } from 'zod';
@@ -108,7 +108,7 @@ function PatientsPage() {
         const result = await testSupabaseConnection();
         setConnectionTest(result);
         console.log('🔧 Connection test result:', result);
-      } catch (error) {
+      } catch (_error) {
         console.error('🔧 Connection test failed:', error);
         setConnectionTest({ success: false, error: 'Test failed to run' });
       }
@@ -332,7 +332,7 @@ function PatientsStatistics({ clinicId }: { clinicId: string }) {
 
   return (
     <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'>
-      {statisticsCards.map((stat, index) => (
+      {statisticsCards.map((stat, _index) => (
         <Card key={index} className='relative overflow-hidden'>
           <CardContent className='p-4'>
             <div className='flex items-center justify-between'>

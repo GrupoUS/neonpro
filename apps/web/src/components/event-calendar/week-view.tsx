@@ -27,7 +27,7 @@ import {
   useCurrentTimeIndicator,
   WeekCellsHeight,
 } from '@/components/event-calendar/index';
-import { EndHour, StartHour } from '@/components/event-calendar/index';
+import { EndHour } from '@/components/event-calendar/index';
 import { cn } from '@/lib/utils';
 
 interface WeekViewProps {
@@ -133,7 +133,7 @@ export function WeekView({
       // Track columns for overlapping events
       const columns: { event: CalendarEvent; end: Date }[][] = [];
 
-      sortedEvents.forEach(event => {
+      sortedEvents.forEach(_event => {
         const eventStart = new Date(event.start);
         const eventEnd = new Date(event.end);
 
@@ -302,7 +302,7 @@ export function WeekView({
 
       <div className='grid flex-1 grid-cols-8 overflow-hidden'>
         <div className='border-border/70 border-r grid auto-cols-fr'>
-          {hours.map((hour, index) => (
+          {hours.map((hour, _index) => (
             <div
               key={hour.toString()}
               className='border-border/70 relative min-h-[var(--week-cells-height)] border-b last:border-b-0'

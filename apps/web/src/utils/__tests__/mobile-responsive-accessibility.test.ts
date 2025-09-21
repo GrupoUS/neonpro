@@ -427,7 +427,7 @@ describe('Mobile Responsive Accessibility', () => {
     it('should provide healthcare-specific layout recommendations', () => {
       const result = mobileResponsiveAccessibility.validateLayoutAdaptability();
 
-      result.issues.forEach(issue => {
+      result.issues.forEach(_issue => {
         if (issue.type === 'layout') {
           expect(issue.healthcareImpact).toMatch(/médic[ao]s/); // Matches both "médicos" and "médicas"
           expect(issue.wcagReference).toContain('WCAG 2.1 AA');
@@ -612,7 +612,7 @@ describe('Mobile Responsive Accessibility', () => {
 
       expect(report.recommendations.length).toBeGreaterThan(0);
 
-      report.recommendations.forEach(recommendation => {
+      report.recommendations.forEach(_recommendation => {
         expect(typeof recommendation).toBe('string');
         expect(recommendation.length).toBeGreaterThan(0);
       });
@@ -655,7 +655,7 @@ describe('Mobile Responsive Accessibility', () => {
 
       const report = mobileResponsiveAccessibility.generateReport(problematicElements);
 
-      report.breakpointCompliance.issues.forEach(issue => {
+      report.breakpointCompliance.issues.forEach(_issue => {
         expect(issue.wcagReference).toContain('WCAG 2.1 AA');
       });
     });
@@ -719,7 +719,7 @@ describe('Mobile Responsive Accessibility', () => {
         ...report.healthcarePatterns.issues,
       ];
 
-      allIssues.forEach(issue => {
+      allIssues.forEach(_issue => {
         // Check if any of the text contains Portuguese characters
         const hasPortugueseChars = (text: string) => /[áéíóúâêîôûãõçÁÉÍÓÚÂÊÎÔÛÃÕÇ]/.test(text);
 
@@ -760,7 +760,7 @@ describe('Mobile Responsive Accessibility', () => {
         ...report.healthcarePatterns.issues,
       ];
 
-      allIssues.forEach(issue => {
+      allIssues.forEach(_issue => {
         expect(issue.healthcareImpact).toBeDefined();
         expect(issue.healthcareImpact.length).toBeGreaterThan(0);
       });

@@ -42,10 +42,10 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -63,9 +63,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 
 import {
@@ -273,7 +272,7 @@ export function ReminderManagement({
   const { data: consentData } = useLGPDConsent(patientId);
 
   // Check channel availability based on consent and contact info
-  const getChannelAvailability = (channel: ReminderChannel) => {
+  const getChannelAvailability = (_channel: any) => {
     if (!channel.available) {
       return { available: false, reason: 'Não disponível' };
     }
@@ -346,7 +345,7 @@ export function ReminderManagement({
       .replace(/{CLINIC_PHONE}/g, '(11) 99999-9999');
   };
 
-  const handleSaveTemplate = (template: ReminderTemplate) => {
+  const handleSaveTemplate = (_template: any) => {
     if (editingTemplate) {
       setTemplates(prev => prev.map(t => (t.id === template.id ? template : t)));
     } else {

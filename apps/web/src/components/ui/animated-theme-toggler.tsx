@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { useThemeBridge } from '@/shims/neonpro-ui-theme';
-import { Moon, SunDim } from 'lucide-react';
+import { Moon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 

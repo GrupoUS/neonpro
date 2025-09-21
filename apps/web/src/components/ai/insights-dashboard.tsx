@@ -227,7 +227,7 @@ export const TrendMiniChart = ({
   }
 
   // Extract numeric values robustly from various possible field names
-  const values = data.map((d: any) => {
+  const values = data.map((_d: any) => {
     if (typeof d === 'number') return d;
     if (d == null) return 0;
     if (d.value != null) return Number(d.value);
@@ -504,7 +504,7 @@ export const AIInsightsDashboard = ({
             )
             : (
               <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3'>
-                {metricCards.map((card, index) => <MetricCard key={index} {...card} />)}
+                {metricCards.map((card, _index) => <MetricCard key={index} {...card} />)}
               </div>
             )}
 

@@ -209,7 +209,7 @@ export function useExportAnalytics() {
     mutationFn: (request: AnalyticsExportRequest) =>
       serviceAnalyticsService.exportAnalytics(request),
 
-    onSuccess: (blob, variables) => {
+    onSuccess: (blob, _variables) => {
       // Create download link
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -228,7 +228,7 @@ export function useExportAnalytics() {
       toast.success('Relatório exportado com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       console.error('Error exporting analytics:', error);
       toast.error(`Erro ao exportar relatório: ${error.message}`);
     },
@@ -278,7 +278,7 @@ export function useRefreshAnalytics() {
       toast.success('Dados de analytics atualizados!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       console.error('Error refreshing analytics:', error);
       toast.error('Erro ao atualizar dados de analytics');
     },

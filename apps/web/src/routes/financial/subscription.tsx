@@ -12,7 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { Button } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
-import { Crown, ExternalLink, RefreshCw } from 'lucide-react';
+import { Crown } from 'lucide-react';
 
 export const Route = createFileRoute('/financial/subscription')({
   component: SubscriptionPage,
@@ -26,7 +26,7 @@ function SubscriptionPage() {
     try {
       await refetch();
       toast('Status atualizado - Informações da assinatura foram atualizadas.');
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to refresh subscription status:', error);
       toast(
         'Erro ao atualizar - Não foi possível atualizar o status da assinatura.',
@@ -66,7 +66,7 @@ function SubscriptionPage() {
           `Erro - ${data.error || 'Não foi possível abrir o portal do cliente.'}`,
         );
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error opening customer portal:', error);
       toast('Erro - Falha ao conectar com o portal do cliente.');
     }

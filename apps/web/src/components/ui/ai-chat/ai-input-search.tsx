@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@neonpro/ui';
-import { Search, X } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react'; // React import not needed
 import type { AIInputSearchProps } from './types';
 
@@ -42,7 +42,7 @@ export default function AIInputSearch({
   }, []);
 
   const handleSuggestionClick = useCallback(
-    (suggestion: string) => {
+    (_suggestion: any) => {
       setQuery(suggestion);
       setIsOpen(false);
       onSearch?.(suggestion);
@@ -97,7 +97,7 @@ export default function AIInputSearch({
             'max-h-48 overflow-y-auto',
           )}
         >
-          {suggestions.map((suggestion, index) => (
+          {suggestions.map((suggestion, _index) => (
             <button
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}

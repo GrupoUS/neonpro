@@ -82,7 +82,7 @@ export class ExportService {
         format: options.format,
         metadata: completeMetadata,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error exporting financial metrics:', error);
       throw new Error('Falha ao exportar relatório financeiro');
     }
@@ -126,7 +126,7 @@ export class ExportService {
         format: options.format,
         metadata: completeMetadata,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error exporting dashboard:', error);
       throw new Error('Falha ao exportar dashboard');
     }
@@ -223,7 +223,7 @@ export class ExportService {
     content += 'MÉTRICAS FINANCEIRAS:\n';
     content += '=' + '='.repeat(50) + '\n\n';
 
-    metrics.forEach(metric => {
+    metrics.forEach(_metric => {
       content += `${metric.name}: ${metric.formattedValue}\n`;
       content += `  Mudança: ${this.formatCurrency(metric.change, locale)} (${
         this.formatPercentage(metric.changePercentage, locale)
@@ -286,12 +286,12 @@ export class ExportService {
     if (dashboardData.insights.length > 0) {
       content += 'INSIGHTS E RECOMENDAÇÕES\n';
       content += '=' + '='.repeat(35) + '\n';
-      dashboardData.insights.forEach((insight, index) => {
+      dashboardData.insights.forEach((insight, _index) => {
         content += `${index + 1}. ${insight.title}\n`;
         content += `   ${insight.description}\n`;
         if (insight.recommendations && insight.recommendations.length > 0) {
           content += `   Recomendações:\n`;
-          insight.recommendations.forEach(rec => {
+          insight.recommendations.forEach(_rec => {
             content += `   • ${rec}\n`;
           });
         }

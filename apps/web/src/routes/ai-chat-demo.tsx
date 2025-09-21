@@ -17,8 +17,8 @@
 import { AIChatDemo } from '@/components/ai/ai-chat-demo';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card } from '@/components/ui/card';
+import { Tabs } from '@/components/ui/tabs';
 import { createFileRoute } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
 import {

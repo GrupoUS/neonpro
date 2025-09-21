@@ -242,7 +242,7 @@ const ActionButton: React.FC<{
   action: AgentAction;
   onExecute: (action: AgentAction) => void;
 }> = ({ action, onExecute }) => {
-  const getIcon = (iconName: string) => {
+  const getIcon = (_iconName: any) => {
     switch (iconName) {
       case 'user':
         return <User className='h-3 w-3' />;
@@ -311,7 +311,7 @@ const MessageFeedback: React.FC<{
     },
   });
 
-  const handleQuickFeedback = (helpful: boolean) => {
+  const handleQuickFeedback = (_helpful: any) => {
     submitQuickFeedbackMutation.mutate(helpful);
   };
 
@@ -510,7 +510,7 @@ const DataSummaryCard: React.FC<{
       </CardHeader>
       <CardContent className='pt-0'>
         <div className='space-y-2'>
-          {data.slice(0, expanded ? data.length : displayLimit).map((item, index) =>
+          {data.slice(0, expanded ? data.length : displayLimit).map((item, _index) =>
             renderItem(item, index)
           )}
 
@@ -591,7 +591,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
     aguiClient.connect();
 
     // Handle AG-UI Protocol events
-    const handleMessage = (message: any) => {
+    const handleMessage = (_message: any) => {
       const assistantMessage: ChatMessage = {
         id: message.id,
         role: 'assistant',
@@ -605,7 +605,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       setIsLoading(false);
     };
 
-    const handleError = (error: any) => {
+    const handleError = (_error: any) => {
       const errorMessage: ChatMessage = {
         id: `error_${Date.now()}`,
         role: 'assistant',
@@ -616,7 +616,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       setIsLoading(false);
     };
 
-    const handleAuthenticated = (session: any) => {
+    const handleAuthenticated = (_session: any) => {
       console.log('AG-UI Protocol authenticated:', session);
     };
 
@@ -631,7 +631,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   }, [aguiClient, userContext.userId]);
 
   // Update session context when needed
-  const updateAGUISessionContext = useCallback((context: any) => {
+  const updateAGUISessionContext = useCallback((_context: any) => {
     if (aguiSession && aguiClient.isConnected()) {
       aguiClient.updateSessionContext(context).catch(console.error);
     }
@@ -767,7 +767,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
           userContext,
         });
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error sending message via AG-UI Protocol, falling back to HTTP:', error);
       // Fallback to HTTP API
       sendMessageMutation.mutate({
@@ -788,7 +788,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   ]);
 
   // Handle action execution
-  const handleActionExecute = useCallback((action: AgentAction) => {
+  const handleActionExecute = useCallback((_action: any) => {
     switch (action.type) {
       case 'view_details':
         if (action.payload?.clientId) {

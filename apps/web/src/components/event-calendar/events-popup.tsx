@@ -4,7 +4,7 @@ import { format, isSameDay } from 'date-fns';
 import { XIcon } from 'lucide-react';
 import { useEffect, useMemo, useRef } from 'react';
 
-import { type CalendarEvent, EventItem } from '@/components/event-calendar/index';
+import { type CalendarEvent } from '@/components/event-calendar/index';
 
 interface EventsPopupProps {
   date: Date;
@@ -25,7 +25,7 @@ export function EventsPopup({
 
   // Handle click outside to close popup
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (_event: any) => {
       if (
         popupRef.current
         && !popupRef.current.contains(event.target as Node)
@@ -42,7 +42,7 @@ export function EventsPopup({
 
   // Handle escape key to close popup
   useEffect(() => {
-    const handleEscKey = (event: KeyboardEvent) => {
+    const handleEscKey = (_event: any) => {
       if (event.key === 'Escape') {
         onClose();
       }
@@ -54,7 +54,7 @@ export function EventsPopup({
     };
   }, [onClose]);
 
-  const handleEventClick = (event: CalendarEvent) => {
+  const handleEventClick = (_event: any) => {
     onEventSelect(event);
     onClose();
   };

@@ -8,8 +8,8 @@
  */
 
 import * as Axe from 'axe-core';
-import type { AxeResults, Result } from 'axe-core';
-import type { AccessibilityIssue, AccessibilityTestingOptions } from './accessibility-testing';
+import type { AxeResults } from 'axe-core';
+import type { AccessibilityIssue } from './accessibility-testing';
 
 // Healthcare-specific accessibility rule IDs
 export const HEALTHCARE_ACCESSIBILITY_RULES = {
@@ -232,11 +232,11 @@ export class HealthcareAccessibilityAuditor {
   ): HealthcareAccessibilityIssue[] {
     const healthcareIssues: HealthcareAccessibilityIssue[] = [];
 
-    axeResults.violations.forEach(violation => {
+    axeResults.violations.forEach(_violation => {
       const healthcareRuleId = violation.id as HealthcareAccessibilityRuleId;
 
       if (HEALTHCARE_ACCESSIBILITY_RULES[healthcareRuleId]) {
-        violation.nodes.forEach((node, index) => {
+        violation.nodes.forEach((node, _index) => {
           const healthcareIssue: HealthcareAccessibilityIssue = {
             id: `${violation.id}-${index}`,
             impact: violation.impact as any,
@@ -407,7 +407,7 @@ export class HealthcareAccessibilityAuditor {
     // Base score of 100, deduct points for violations
     let score = 100;
 
-    axeResults.violations.forEach(violation => {
+    axeResults.violations.forEach(_violation => {
       const weight = violation.impact === 'critical'
         ? 10
         : violation.impact === 'serious'

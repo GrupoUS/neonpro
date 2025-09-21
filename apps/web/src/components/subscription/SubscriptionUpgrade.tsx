@@ -7,7 +7,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useToast } from '@/hooks/useToast';
 import { cn } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
-import { Brain, Check, Crown, ExternalLink, Shield, Zap } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import { useState } from 'react';
 
 interface SubscriptionUpgradeProps {
@@ -54,7 +54,7 @@ export default function SubscriptionUpgrade({
       toast(
         'Redirecionando para pagamento - Você será redirecionado para completar sua assinatura Pro.',
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Error opening payment link:', error);
       toast('Erro ao processar upgrade - Tente novamente em alguns instantes.');
     } finally {
@@ -110,7 +110,7 @@ export default function SubscriptionUpgrade({
 
         {showFeatures && (
           <div className='space-y-4 mb-6'>
-            {PRO_FEATURES.map((feature, index) => (
+            {PRO_FEATURES.map((feature, _index) => (
               <div key={index} className='flex items-start space-x-3'>
                 <div className='w-8 h-8 bg-[#AC9469]/10 rounded-full flex items-center justify-center flex-shrink-0'>
                   <feature.icon className='w-4 h-4 text-[#AC9469]' />
@@ -178,7 +178,7 @@ export default function SubscriptionUpgrade({
           <div className='text-sm font-medium text-[#112031] mb-3'>
             Incluído no Pro:
           </div>
-          {PRO_FEATURES.map((feature, index) => (
+          {PRO_FEATURES.map((feature, _index) => (
             <div key={index} className='flex items-center space-x-2'>
               <Check className='w-4 h-4 text-[#AC9469] flex-shrink-0' />
               <span className='text-sm text-[#112031]'>{feature.title}</span>

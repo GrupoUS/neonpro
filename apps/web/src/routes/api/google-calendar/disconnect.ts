@@ -17,7 +17,7 @@ export const Route = createFileRoute('/api/google-calendar/disconnect')({
 
       // For now, just return success
       return json({ success: true });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error disconnecting Google Calendar:', error);
       return json({ error: 'Failed to disconnect' }, { status: 500 });
     }

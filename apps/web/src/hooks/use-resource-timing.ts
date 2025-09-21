@@ -51,11 +51,11 @@ export function useResourceTiming(): UseResourceTimingReturn {
     setResources(formattedEntries);
   }, [isSupported]);
 
-  const getResourceByName = useCallback((name: string) => {
+  const getResourceByName = useCallback((_name: any) => {
     return resources.find(resource => resource.name === name);
   }, [resources]);
 
-  const getResourcesByType = useCallback((type: string) => {
+  const getResourcesByType = useCallback((_type: any) => {
     return resources.filter(resource => resource.initiatorType === type);
   }, [resources]);
 
@@ -79,7 +79,7 @@ export function useResourceTiming(): UseResourceTimingReturn {
 
     try {
       observer.observe({ entryTypes: ['resource'] });
-    } catch (error) {
+    } catch (_error) {
       // Fallback for browsers that don't support PerformanceObserver
       console.warn('PerformanceObserver not supported, using fallback');
     }

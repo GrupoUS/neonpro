@@ -250,7 +250,7 @@ describe('Production Readiness Service', () => {
       expect(report.criticalIssues).toBeInstanceOf(Array);
 
       // Validate critical issue structure if any exist
-      report.criticalIssues.forEach(issue => {
+      report.criticalIssues.forEach(_issue => {
         expect(issue.severity).toMatch(/^(critical|high|medium|low)$/);
         expect(issue.category).toBeDefined();
         expect(issue.issue).toBeDefined();

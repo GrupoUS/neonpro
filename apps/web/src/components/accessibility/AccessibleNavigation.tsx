@@ -15,7 +15,7 @@
 'use client';
 
 import { Button } from '@neonpro/ui';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   useAccessibilityPreferences,
@@ -70,7 +70,7 @@ export function AccessibleNavigation({
   });
 
   const handleNavigate = useCallback(
-    (item: NavigationItem) => {
+    (_item: any) => {
       onNavigate?.(item);
       announce(`Navegando para ${item.label}`, 'polite');
 
@@ -94,7 +94,7 @@ export function AccessibleNavigation({
   }, [announce]);
 
   const toggleSubmenu = useCallback(
-    (itemId: string) => {
+    (_itemId: any) => {
       setOpenSubmenu(prev => {
         const newState = prev === itemId ? null : itemId;
         const item = items.find(i => i.id === itemId);
@@ -114,7 +114,7 @@ export function AccessibleNavigation({
 
   // Close mobile menu on escape key
   useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
+    const handleEscape = (_event: any) => {
       if (event.key === 'Escape' && isMobileMenuOpen) {
         setIsMobileMenuOpen(false);
         announce('Menu principal fechado', 'polite');
@@ -319,7 +319,7 @@ export function AccessibleNavigation({
                 role='menubar'
                 aria-label='Menu principal'
               >
-                {items.map((item, index) => renderNavigationItem(item, index, false))}
+                {items.map((item, _index) => renderNavigationItem(item, index, false))}
               </ul>
             </div>
 
@@ -367,7 +367,7 @@ export function AccessibleNavigation({
           >
             <div className='px-4 py-4 space-y-2'>
               <ul className='space-y-1' role='none'>
-                {items.map((item, index) => renderNavigationItem(item, index, true))}
+                {items.map((item, _index) => renderNavigationItem(item, index, true))}
               </ul>
 
               {/* Mobile User Menu */}

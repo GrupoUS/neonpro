@@ -158,7 +158,7 @@ class TimeSlotValidationService {
         warnings,
         suggestedAlternatives,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error validating time slot:', error);
       return {
         isValid: false,
@@ -256,7 +256,7 @@ class TimeSlotValidationService {
 
       if (error) throw error;
 
-      conflictingAppointments?.forEach(appointment => {
+      conflictingAppointments?.forEach(_appointment => {
         conflicts.push({
           type: 'professional_busy',
           message: `Profissional já possui agendamento das ${
@@ -282,7 +282,7 @@ class TimeSlotValidationService {
       });
 
       return conflicts;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error checking professional availability:', error);
       return [
         {
@@ -344,7 +344,7 @@ class TimeSlotValidationService {
       }
 
       return null;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error checking capacity limits:', error);
       return null;
     }
@@ -505,7 +505,7 @@ class TimeSlotValidationService {
       }
 
       return this.defaultBusinessRules;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting business rules:', error);
       return this.defaultBusinessRules;
     }

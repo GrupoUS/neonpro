@@ -1,4 +1,4 @@
-import { Alert, AlertDescription, Badge, Button, Card, UniversalButton } from '@neonpro/ui';
+import { Alert } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -289,7 +289,7 @@ function AnimationValidationSuite() {
         <Card className='p-6'>
           <h2 className='text-xl font-semibold mb-4'>Validation Results</h2>
           <div className='space-y-3'>
-            {results.map((result, index) => (
+            {results.map((result, _index) => (
               <div
                 key={index}
                 className='flex items-center justify-between p-3 rounded-lg border'

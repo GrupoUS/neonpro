@@ -111,7 +111,7 @@ export function useCreateAppointmentTemplate() {
         description: `Template "${newTemplate.name}" foi criado.`,
       });
     },
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       console.error('Error creating appointment template:', error);
       toast.error('Erro ao criar template', {
         description: error.message || 'Ocorreu um erro inesperado.',
@@ -158,7 +158,7 @@ export function useUpdateAppointmentTemplate() {
         description: `Template "${updatedTemplate.name}" foi atualizado.`,
       });
     },
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       console.error('Error updating appointment template:', error);
       toast.error('Erro ao atualizar template', {
         description: error.message || 'Ocorreu um erro inesperado.',
@@ -174,7 +174,7 @@ export function useDeleteAppointmentTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (templateId: string) => {
+    mutationFn: async (_templateId: any) => {
       return appointmentTemplatesService.deleteAppointmentTemplate(templateId);
     },
     onSuccess: (_, templateId) => {
@@ -190,7 +190,7 @@ export function useDeleteAppointmentTemplate() {
 
       toast.success('Template removido com sucesso!');
     },
-    onError: (error: Error) => {
+    onError: (_error: any) => {
       console.error('Error deleting appointment template:', error);
       toast.error('Erro ao remover template', {
         description: error.message || 'Ocorreu um erro inesperado.',

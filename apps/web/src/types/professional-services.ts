@@ -191,7 +191,7 @@ export const PROFICIENCY_LEVELS: Record<
 export const DEFAULT_PROFICIENCY_LEVEL: ProficiencyLevel = 'intermediate';
 
 // Utility functions for proficiency levels
-export const getProficiencyConfig = (level: ProficiencyLevel) => {
+export const getProficiencyConfig = (_level: any) => {
   return PROFICIENCY_LEVELS[level];
 };
 

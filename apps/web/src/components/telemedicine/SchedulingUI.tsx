@@ -275,7 +275,7 @@ export function SchedulingUI({
   const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 });
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
-  const handleDateSelect = (date: Date) => {
+  const handleDateSelect = (_date: any) => {
     setSelectedDate(date);
   };
   return (

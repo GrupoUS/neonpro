@@ -290,13 +290,13 @@ export function PatientRegistrationWizard({
     }
   };
 
-  const handleStepClick = async (stepId: number) => {
+  const handleStepClick = async (_stepId: any) => {
     if (stepId <= currentStep || completedSteps.includes(stepId - 1)) {
       setCurrentStep(stepId);
     }
   };
 
-  const onSubmit = async (data: PatientRegistrationData) => {
+  const onSubmit = async (_data: any) => {
     setIsSubmitting(true);
 
     try {
@@ -361,7 +361,7 @@ export function PatientRegistrationWizard({
       autoSave.clearSavedData();
 
       toast.success('Paciente cadastrado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error creating patient:', error);
       toast.error('Erro ao cadastrar paciente. Tente novamente.');
     } finally {
@@ -626,19 +626,19 @@ function ContactAddressStep({ form }: { form: any }) {
   const [isLoadingCep, setIsLoadingCep] = useState(false);
 
   // Format phone number as user types (shared helper)
-  const formatPhone = (value: string) => {
+  const formatPhone = (_value: any) => {
     const cleanPhone = value.replace(/\D/g, '');
     return formatBRPhone(cleanPhone);
   };
 
   // Format CEP as user types
-  const formatCep = (value: string) => {
+  const formatCep = (_value: any) => {
     const cleanCep = value.replace(/\D/g, '');
     return cleanCep.replace(/(\d{5})(\d{3})/, '$1-$2');
   };
 
   // Lookup address by CEP
-  const lookupCep = async (cep: string) => {
+  const lookupCep = async (_cep: any) => {
     const cleanCep = cep.replace(/\D/g, '');
     if (cleanCep.length !== 8) return;
 
@@ -895,13 +895,13 @@ function ContactAddressStep({ form }: { form: any }) {
 
 function DocumentsStep({ form }: { form: any }) {
   // Format CPF as user types
-  const formatCpf = (value: string) => {
+  const formatCpf = (_value: any) => {
     const cleanCpf = value.replace(/\D/g, '');
     return cleanCpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   };
 
   // Validate CPF algorithm
-  const validateCpf = (cpf: string) => {
+  const validateCpf = (_cpf: any) => {
     const cleanCpf = cpf.replace(/\D/g, '');
     if (cleanCpf.length !== 11) return false;
 

@@ -153,7 +153,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
       ];
 
       // This would validate that the Patient model includes all required LGPD fields
-      requiredLGPDFields.forEach(field => {
+      requiredLGPDFields.forEach(_field => {
         expect(true).toBe(false); // Force failure to indicate test needs implementation
       });
     });
@@ -162,7 +162,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
       // RED: This test fails if Brazilian ID validation is missing
       const brazilianFields = ['cpf', 'cns', 'rg'];
       
-      brazilianFields.forEach(field => {
+      brazilianFields.forEach(_field => {
         expect(true).toBe(false); // Force failure to indicate test needs implementation
       });
     });
@@ -174,7 +174,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
         'dataAnonymizationScheduled',
       ];
 
-      anonymizationFields.forEach(field => {
+      anonymizationFields.forEach(_field => {
         expect(true).toBe(false); // Force failure to indicate test needs implementation
       });
     });
@@ -224,7 +224,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
         'batch_processed',
       ];
 
-      validActions.forEach(action => {
+      validActions.forEach(_action => {
         expect(true).toBe(false); // Force failure to indicate test needs implementation
       });
     });
@@ -270,7 +270,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
       // RED: This test fails if risk level validation is missing
       const validRiskLevels = ['low', 'medium', 'high', 'critical'];
       
-      validRiskLevels.forEach(level => {
+      validRiskLevels.forEach(_level => {
         expect(true).toBe(false); // Force failure to indicate test needs implementation
       });
     });
@@ -390,7 +390,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
         'lgpd_audit_logs_action_idx',
       ];
 
-      requiredIndexes.forEach(index => {
+      requiredIndexes.forEach(_index => {
         expect(true).toBe(false); // Force failure to indicate test needs implementation
       });
     });
@@ -427,7 +427,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
         '20240104_add_retention_policies.sql',
       ];
 
-      migrationFiles.forEach(file => {
+      migrationFiles.forEach(_file => {
         expect(true).toBe(false); // Force failure to indicate test needs implementation
       });
     });

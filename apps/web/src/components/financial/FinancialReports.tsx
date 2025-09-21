@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import {
   BarChart3,
@@ -65,7 +65,7 @@ export const FinancialReports: React.FC<FinancialReportsProps> = ({
     },
   ];
 
-  const handleGenerateReport = useCallback(async (reportType: string) => {
+  const handleGenerateReport = useCallback(async (_reportType: any) => {
     setIsGenerating(true);
     setSelectedReport(reportType);
 
@@ -81,7 +81,7 @@ export const FinancialReports: React.FC<FinancialReportsProps> = ({
     }
   }, [onReportGenerate]);
 
-  const handleExport = useCallback((format: string) => {
+  const handleExport = useCallback((_format: any) => {
     if (onExport) {
       onExport(format);
     }

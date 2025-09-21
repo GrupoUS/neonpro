@@ -13,14 +13,14 @@
 
 'use client';
 
-import { Card, CardContent, CardHeader } from '@neonpro/ui';
-import { AlertTriangle, Calendar, Heart, Phone, Shield, User } from 'lucide-react';
+import { Card } from '@neonpro/ui';
+import { AlertTriangle } from 'lucide-react';
 import React, { useCallback, useMemo } from 'react';
 import {
   useAccessibilityPreferences,
   useScreenReaderAnnouncement,
 } from '../../hooks/useAccessibility';
-import { ACCESSIBILITY_LABELS_PT_BR, ScreenReaderUtils } from '../../utils/accessibility';
+import { ACCESSIBILITY_LABELS_PT_BR } from '../../utils/accessibility';
 
 interface PatientData {
   id: string;
@@ -256,7 +256,7 @@ export function EnhancedPatientCard({
     return colors[status];
   };
 
-  const getHealthcareCategoryIcon = (category: string) => {
+  const getHealthcareCategoryIcon = (_category: any) => {
     const icons = {
       emergency: AlertTriangle,
       critical: AlertTriangle,

@@ -1,5 +1,5 @@
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -83,7 +83,7 @@ export function ServiceAnalyticsDashboard() {
 
   const formatCurrency = (value: number) => formatBRL(value);
 
-  const formatPercentage = (value: number) => {
+  const formatPercentage = (_value: any) => {
     return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
   };
 
@@ -210,7 +210,7 @@ export function ServiceAnalyticsDashboard() {
           <div className='space-y-4'>
             {dashboard?.service_performance
               ?.slice(0, 5)
-              .map((service, index) => (
+              .map((service, _index) => (
                 <div
                   key={service.service_id}
                   className='flex items-center justify-between'
@@ -304,7 +304,7 @@ export function ServiceAnalyticsDashboard() {
             <div className='space-y-4'>
               {dashboard?.professional_performance
                 ?.slice(0, 5)
-                .map((professional, index) => (
+                .map((professional, _index) => (
                   <div
                     key={professional.professional_id}
                     className='flex items-center justify-between'
@@ -352,7 +352,7 @@ export function ServiceAnalyticsDashboard() {
           </CardHeader>
           <CardContent>
             <div className='space-y-3'>
-              {dashboard.insights.map((insight, index) => (
+              {dashboard.insights.map((insight, _index) => (
                 <div
                   key={index}
                   className='flex items-start space-x-3 p-3 rounded-lg bg-muted/50'

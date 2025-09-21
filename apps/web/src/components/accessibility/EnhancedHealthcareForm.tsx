@@ -28,7 +28,7 @@ import {
   SelectValue,
   Textarea,
 } from '@neonpro/ui';
-import { AlertCircle, AlertTriangle, CheckCircle, Info, Shield } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 import {
   useAccessibilityPreferences,
@@ -157,7 +157,7 @@ export function EnhancedHealthcareForm({
     const warnings: Record<string, string> = {};
 
     // Validate each field
-    fields.forEach(field => {
+    fields.forEach(_field => {
       const fieldHook = fieldHooks[field.name];
       const fieldValue = formatFieldValue(field, fieldHook.value);
 
@@ -177,7 +177,7 @@ export function EnhancedHealthcareForm({
     });
 
     // Apply healthcare-specific validation rules
-    validationRules.forEach(rule => {
+    validationRules.forEach(_rule => {
       const fieldHook = fieldHooks[rule.field];
       const fieldValue = fieldHook?.value || '';
 
@@ -271,7 +271,7 @@ export function EnhancedHealthcareForm({
         setSubmitSuccess(true);
         announceFormSuccess('Formulário de saúde enviado com sucesso');
         announceLive('Formulário de saúde enviado com sucesso!', 'polite');
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error
           ? error.message
           : 'Erro ao enviar formulário de saúde';
@@ -299,7 +299,7 @@ export function EnhancedHealthcareForm({
   );
 
   const renderMedicalTerminologyHelp = useCallback(
-    (field: MedicalFormField) => {
+    (_field: any) => {
       if (!field.medicalTerminology) return null;
 
       const { term, explanation, pronunciation } = field.medicalTerminology;
@@ -338,7 +338,7 @@ export function EnhancedHealthcareForm({
   );
 
   const renderField = useCallback(
-    (field: MedicalFormField) => {
+    (_field: any) => {
       const fieldHook = fieldHooks[field.name];
       const { fieldProps, errorProps, descriptionProps } = fieldHook;
 

@@ -35,11 +35,11 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert } from '@/components/ui/alert';
+import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -50,7 +50,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 
 import { useSignalingClient } from '@/hooks/use-signaling-client';
@@ -235,14 +235,14 @@ export function VideoConsultation({
   }, [session, webrtcState.isConnected, webrtcState.connectionQuality]);
 
   // Format duration
-  const formatDuration = useCallback((seconds: number) => {
+  const formatDuration = useCallback((_seconds: any) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }, []);
 
   // Get connection quality color
-  const getQualityColor = useCallback((quality: string) => {
+  const getQualityColor = useCallback((_quality: any) => {
     switch (quality) {
       case 'excellent':
         return 'text-green-500';
@@ -264,7 +264,7 @@ export function VideoConsultation({
       endCall();
       onSessionEnd?.();
       toast.success('Sessão finalizada com sucesso');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro ao finalizar sessão');
     }
   }, [endSession, endCall, onSessionEnd]);
@@ -280,7 +280,7 @@ export function VideoConsultation({
         });
         toast.success('Emergência escalada com sucesso');
         setShowEmergencyDialog(false);
-      } catch (error) {
+      } catch (_error) {
         toast.error('Erro ao escalar emergência');
       }
     },
@@ -297,7 +297,7 @@ export function VideoConsultation({
         await startScreenShare();
         toast.success('Compartilhamento de tela iniciado');
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro no compartilhamento de tela');
     }
   }, [startScreenShare, stopScreenShare, webrtcState.isScreenSharing]);
@@ -312,14 +312,14 @@ export function VideoConsultation({
         await startRecording();
         toast.success('Gravação iniciada');
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro na gravação');
     }
   }, [isRecording, startRecording, stopRecording]);
 
   // Handle chat message send
   const handleSendMessage = useCallback(
-    async (content: string) => {
+    async (_content: any) => {
       if (!content.trim()) return;
 
       try {
@@ -327,7 +327,7 @@ export function VideoConsultation({
         if (chatMessageRef.current) {
           chatMessageRef.current.value = '';
         }
-      } catch (error) {
+      } catch (_error) {
         toast.error('Erro ao enviar mensagem');
       }
     },

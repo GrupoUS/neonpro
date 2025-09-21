@@ -1,8 +1,8 @@
 import { Progress } from '@/components/ui/progress';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { ComplianceData } from '@/lib/governance-service';
-import { Alert, AlertDescription, AlertTitle, Badge } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Alert } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
 
 type ComplianceStatus = 'compliant' | 'warning' | 'violation';
@@ -20,7 +20,7 @@ function ComplianceCard({
   violations: number;
   lastAudit: string;
 }) {
-  const getStatusBadge = (status: ComplianceStatus) => {
+  const getStatusBadge = (_status: any) => {
     const variants = {
       compliant: { variant: 'default' as const, text: 'Compliant' },
       warning: { variant: 'secondary' as const, text: 'Warning' },

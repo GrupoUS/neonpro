@@ -37,10 +37,10 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -49,8 +49,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 
 import { useAIHealthcareInsights } from '@/hooks/use-ai-chat';
 import { useAppointmentNoShowRisk, useSendAppointmentReminder } from '@/hooks/use-appointments';
@@ -166,7 +165,7 @@ export function NoShowRiskDisplay({
     }
   };
 
-  const getRiskIcon = (level: string) => {
+  const getRiskIcon = (_level: any) => {
     switch (level) {
       case 'high':
         return <AlertTriangle className='h-4 w-4' />;
@@ -333,7 +332,7 @@ export function NoShowRiskDisplay({
                 Principais Fatores de Risco:
               </h4>
               <div className='space-y-1'>
-                {riskData.riskFactors.slice(0, 3).map((factor, index) => (
+                {riskData.riskFactors.slice(0, 3).map((factor, _index) => (
                   <div
                     key={index}
                     className='flex items-center justify-between text-xs'
@@ -472,7 +471,7 @@ export function NoShowRiskDisplay({
                           Impacto climático: {Math.round(riskData.weatherImpact * 100)}%
                         </div>
                       )}
-                      {riskData.culturalFactors?.map((factor, index) => (
+                      {riskData.culturalFactors?.map((factor, _index) => (
                         <div key={index}>
                           {factor.description}: {Math.round(factor.impact * 100)}%
                         </div>
@@ -484,7 +483,7 @@ export function NoShowRiskDisplay({
             </TabsContent>
 
             <TabsContent value='factors' className='space-y-4'>
-              {riskData.riskFactors?.map((factor, index) => (
+              {riskData.riskFactors?.map((factor, _index) => (
                 <Card key={index}>
                   <CardContent className='p-4'>
                     <div className='flex items-center justify-between'>

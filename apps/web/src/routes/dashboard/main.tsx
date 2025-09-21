@@ -1,15 +1,15 @@
 'use client';
 
 import { AIInsightsDashboard } from '@/components/ai/insights-dashboard';
-import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid';
+import { BentoGrid } from '@/components/ui/bento-grid';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { EnhancedTable } from '@/components/ui/enhanced-table';
 import { FocusCards } from '@/components/ui/focus-cards';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { UniversalButton } from '@/components/ui/universal-button';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
@@ -344,11 +344,11 @@ function DashboardMain() {
     },
   ];
 
-  const handlePatientClick = (patientId: string) => {
+  const handlePatientClick = (_patientId: any) => {
     navigate({ to: '/patients/$patientId', params: { patientId } });
   };
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColor = (_priority: any) => {
     switch (priority) {
       case 'critical':
         return 'destructive';
@@ -363,7 +363,7 @@ function DashboardMain() {
     }
   };
 
-  const getPriorityLabel = (priority: string) => {
+  const getPriorityLabel = (_priority: any) => {
     switch (priority) {
       case 'critical':
         return 'Crítico';
@@ -378,13 +378,13 @@ function DashboardMain() {
     }
   };
 
-  const getRiskColor = (riskScore: number) => {
+  const getRiskColor = (_riskScore: any) => {
     if (riskScore >= 0.8) return 'destructive';
     if (riskScore >= 0.6) return 'warning';
     return 'default';
   };
 
-  const getRiskLabel = (riskScore: number) => {
+  const getRiskLabel = (_riskScore: any) => {
     if (riskScore >= 0.8) return 'Alto Risco';
     if (riskScore >= 0.6) return 'Médio Risco';
     return 'Baixo Risco';
@@ -409,7 +409,7 @@ function DashboardMain() {
     {
       accessorKey: 'riskScore',
       header: 'Risco',
-      cell: (info: any) => {
+      cell: (_info: any) => {
         const score = info.getValue();
         let variant: 'default' | 'destructive' | 'outline' | 'secondary' = 'default';
         let label = 'Baixo';
@@ -428,7 +428,7 @@ function DashboardMain() {
     {
       id: 'actions',
       header: 'Ações',
-      cell: (info: any) => {
+      cell: (_info: any) => {
         const patient = info.row.original;
         return (
           <div className='flex gap-2'>
@@ -510,7 +510,7 @@ function DashboardMain() {
             </span>
           </div>
           <div className='space-y-1'>
-            {realTimeUpdates.slice(0, 2).map((update, index) => (
+            {realTimeUpdates.slice(0, 2).map((update, _index) => (
               <div
                 key={index}
                 className='text-xs sm:text-sm text-green-700 flex items-center gap-1'
@@ -554,7 +554,7 @@ function DashboardMain() {
               Métricas principais
             </h2>
             <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
-              {metricsCards.map((metric, index) => (
+              {metricsCards.map((metric, _index) => (
                 <Card
                   key={metric.title}
                   className='transition-all hover:shadow-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'

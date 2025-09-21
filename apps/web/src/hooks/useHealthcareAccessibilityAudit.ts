@@ -129,7 +129,7 @@ export function useHealthcareAccessibilityAudit(
         }));
 
         return result;
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error during audit';
         setState(prev => ({
           ...prev,
@@ -230,7 +230,7 @@ export function useHealthcareAccessibilityAudit(
 
   // Check if specific healthcare standard is compliant
   const isStandardCompliant = useCallback(
-    (standardId: string) => {
+    (_standardId: any) => {
       if (!state.result) return false;
 
       const standardViolations = state.result.issues.filter(issue =>

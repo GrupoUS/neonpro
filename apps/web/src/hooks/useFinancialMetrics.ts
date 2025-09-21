@@ -84,7 +84,7 @@ export function useExportMetrics() {
     }): Promise<Blob> => {
       return FinancialMetricsService.exportMetrics(options, format);
     },
-    onSuccess: (blob, variables) => {
+    onSuccess: (blob, _variables) => {
       // Create download link
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -104,7 +104,7 @@ export function useExportMetrics() {
         queryKey: financialKeys.exports(),
       });
     },
-    onError: (error: any) => {
+    onError: (_error: any) => {
       console.error('Error exporting metrics:', error);
       toast.error('Erro ao exportar relatório. Tente novamente.');
     },
@@ -128,7 +128,7 @@ export function useRefreshFinancialMetrics() {
     onSuccess: () => {
       toast.success('Dados financeiros atualizados!');
     },
-    onError: (error: any) => {
+    onError: (_error: any) => {
       console.error('Error refreshing financial metrics:', error);
       toast.error('Erro ao atualizar dados. Tente novamente.');
     },

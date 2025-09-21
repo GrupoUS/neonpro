@@ -5,9 +5,9 @@
  */
 
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Link, useRouter } from '@tanstack/react-router';
-import { ArrowLeft, Home, Phone, Search } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 export function NotFoundPage() {
   const router = useRouter();

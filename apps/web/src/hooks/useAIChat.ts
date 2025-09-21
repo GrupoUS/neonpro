@@ -1,4 +1,4 @@
-import type { ChatMessage, ChatState } from '@/components/ui/ai-chat/types';
+import type { ChatMessage } from '@/components/ui/ai-chat/types';
 import { useAuth } from '@/hooks/useAuth';
 import {
   generateSearchSuggestions,
@@ -76,7 +76,7 @@ export function useAIChat(clientId?: string) {
   }, [user?.id]);
 
   // Persist chat state to session storage
-  const persistChatState = useCallback((state: ChatState) => {
+  const persistChatState = useCallback((_state: any) => {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem(CHAT_SESSION_KEY, JSON.stringify(state));
     }
@@ -84,7 +84,7 @@ export function useAIChat(clientId?: string) {
 
   // Model selection setter
   const setModel = useCallback(
-    (model: string) => {
+    (_model: any) => {
       setChatState(prev => {
         const next = {
           ...(prev as ChatState & { model?: string }),
@@ -99,7 +99,7 @@ export function useAIChat(clientId?: string) {
 
   // Send message mutation
   const sendMessageMutation = useMutation({
-    mutationFn: async (content: string) => {
+    mutationFn: async (_content: any) => {
       const userMessage: ChatMessage = {
         id: nanoid(),
         role: 'user',
@@ -183,7 +183,7 @@ export function useAIChat(clientId?: string) {
 
         // Log interaction for compliance
         logAIInteraction(sessionId, userMessage.content, aiContent, clientId);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error processing AI stream:', error);
         setChatState(prev => ({
           ...prev,
@@ -224,7 +224,7 @@ export function useAIChat(clientId?: string) {
   // Voice input processing
   const processVoiceMutation = useMutation<string, Error, Blob>({
     mutationFn: processVoiceInput,
-    onSuccess: (transcript: string) => {
+    onSuccess: (_transcript: any) => {
       if (transcript) {
         sendMessageMutation.mutate(transcript);
       }

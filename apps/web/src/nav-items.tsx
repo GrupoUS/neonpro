@@ -1,4 +1,4 @@
-import { Brain, Crown, HomeIcon, MessageSquare } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import Index from './pages/Index';
 
 /**

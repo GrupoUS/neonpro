@@ -10,7 +10,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { EventCalendar } from '../event-calendar';
-import { CalendarEvent, CalendarView, EventColor } from '../types';
+import { CalendarEvent } from '../types';
 
 // Mock healthcare compliance utilities
 vi.mock('@/utils/accessibility/healthcare-audit-utils', () => ({
@@ -150,7 +150,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       const eventElements = screen.getAllByText(
         /Consulta Dr. Silva|Exame Laboratorial/,
       );
-      eventElements.forEach(element => {
+      eventElements.forEach(_element => {
         const parent = element.closest('[data-color]');
         expect(parent).toBeInTheDocument();
       });
@@ -365,7 +365,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
 
       // Check for interactive elements with proper accessibility
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(button => {
+      buttons.forEach(_button => {
         expect(button).toHaveAttribute('aria-label');
       });
     });
@@ -395,7 +395,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       const eventElements = screen.getAllByText(
         /Consulta Dr. Silva|Exame Laboratorial/,
       );
-      eventElements.forEach(element => {
+      eventElements.forEach(_element => {
         const computedStyle = window.getComputedStyle(element);
         expect(computedStyle.color).not.toBe('rgb(255, 255, 255)'); // Not white on white
       });
@@ -413,7 +413,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
             || button.textContent?.includes('Exame'),
         );
 
-      events.forEach(event => {
+      events.forEach(_event => {
         expect(event).toHaveAttribute('aria-label');
         const label = event.getAttribute('aria-label');
         expect(label).toMatch(/(Consulta|Exame)/);

@@ -3,9 +3,9 @@ import { Label } from '@/components/atoms/label';
 import { useAuth } from '@/hooks/useAuth';
 import { getCurrentSession } from '@/integrations/supabase/client';
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { Camera, Mail, Phone, User } from 'lucide-react';
+import { Camera } from 'lucide-react';
 
 export const Route = createFileRoute('/profile/')({
   beforeLoad: async () => {

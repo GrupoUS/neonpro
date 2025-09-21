@@ -5,7 +5,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { FinancialMetricsService } from './financial-metrics';
-import type { FinancialMetric, MetricsCalculationOptions } from './financial-metrics';
+import type { FinancialMetric } from './financial-metrics';
 
 export interface DashboardData {
   id: string;
@@ -91,7 +91,7 @@ export class DashboardDataService {
         insights,
         realTimeData,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching dashboard data:', error);
       throw new Error('Failed to fetch dashboard data');
     }
@@ -149,7 +149,7 @@ export class DashboardDataService {
         completedAppointments: 0,
         pendingTasks: 0,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching dashboard summary:', error);
       throw new Error('Failed to fetch dashboard summary');
     }
@@ -178,7 +178,7 @@ export class DashboardDataService {
         urgentTasks: data?.urgent_tasks || 0,
         lastUpdated: new Date(),
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching real-time metrics:', error);
       throw new Error('Failed to fetch real-time metrics');
     }
@@ -238,7 +238,7 @@ export class DashboardDataService {
         actionable: insight.actionable,
         recommendations: insight.recommendations || [],
       }));
-    } catch (error) {
+    } catch (_error) {
       console.error('Error fetching insights:', error);
       return [];
     }
@@ -278,7 +278,7 @@ export class DashboardDataService {
           previousAggregates.patientCount,
         ),
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error calculating trends:', error);
       return {
         revenueGrowth: 0,

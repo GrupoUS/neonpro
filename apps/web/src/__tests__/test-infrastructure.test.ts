@@ -10,7 +10,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
         'tests/setup.ts',
       ];
 
-      setupFiles.forEach(setupFile => {
+      setupFiles.forEach(_setupFile => {
         const fullPath = join(process.cwd(), setupFile);
         expect(existsSync(fullPath)).toBe(true);
       });
@@ -181,7 +181,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
         'tests/accessibility',
       ];
 
-      testDirectories.forEach(dir => {
+      testDirectories.forEach(_dir => {
         const fullPath = join(process.cwd(), dir);
         expect(existsSync(fullPath)).toBe(true);
       });
@@ -195,7 +195,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
         'src/__tests__/test-infrastructure.test.ts',
       ];
 
-      testFiles.forEach(file => {
+      testFiles.forEach(_file => {
         const fullPath = join(process.cwd(), file);
         expect(existsSync(fullPath)).toBe(true);
       });
@@ -209,7 +209,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
         'src/__tests__/test-infrastructure.test.ts',
       ];
 
-      testFiles.forEach(file => {
+      testFiles.forEach(_file => {
         const fullPath = join(process.cwd(), file);
         if (existsSync(fullPath)) {
           const content = readFileSync(fullPath, 'utf8');
@@ -231,7 +231,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
         'src/__tests__/test-infrastructure.test.ts',
       ];
 
-      testFiles.forEach(file => {
+      testFiles.forEach(_file => {
         const fullPath = join(process.cwd(), file);
         if (existsSync(fullPath)) {
           const content = readFileSync(fullPath, 'utf8');
@@ -268,7 +268,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
         'handlers.ts',
       ];
 
-      mockFiles.forEach(mockFile => {
+      mockFiles.forEach(_mockFile => {
         const fullPath = join(mocksPath, mockFile);
         expect(existsSync(fullPath)).toBe(true);
       });
@@ -282,7 +282,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
         'mock-data.ts',
       ];
 
-      utilFiles.forEach(utilFile => {
+      utilFiles.forEach(_utilFile => {
         const fullPath = join(utilsPath, utilFile);
         expect(existsSync(fullPath)).toBe(true);
       });
@@ -332,7 +332,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
 
       const hasAccessibilityDirectory = existsSync(accessibilityPath);
 
-      accessibilityFiles.forEach(file => {
+      accessibilityFiles.forEach(_file => {
         const fullPath = join(accessibilityPath, file);
         expect(existsSync(fullPath)).toBe(true);
       });
@@ -349,7 +349,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
 
       const hasPerformanceDirectory = existsSync(performancePath);
 
-      performanceFiles.forEach(file => {
+      performanceFiles.forEach(_file => {
         const fullPath = join(performancePath, file);
         expect(existsSync(fullPath)).toBe(true);
       });

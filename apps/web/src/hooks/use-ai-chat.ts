@@ -147,7 +147,7 @@ export function useAIChat(conversationId?: string) {
       if (convId) {
         queryClient.setQueryData(
           aiChatKeys.conversation(convId),
-          (old: any) => {
+          (_old: any) => {
             if (!old) return old;
             return {
               ...old,
@@ -162,13 +162,13 @@ export function useAIChat(conversationId?: string) {
       return { optimisticMessage, conversationId: convId };
     },
 
-    onSuccess: (data, variables, context) => {
+    onSuccess: (data, _variables, context) => {
       // Update conversation with real response
       const convId = context?.conversationId || data.conversationId;
       if (convId) {
         queryClient.setQueryData(
           aiChatKeys.conversation(convId),
-          (old: any) => {
+          (_old: any) => {
             if (!old) return old;
 
             // Replace optimistic message with real data
@@ -217,13 +217,13 @@ export function useAIChat(conversationId?: string) {
       }
     },
 
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       // Remove optimistic message
       const convId = context?.conversationId;
       if (convId) {
         queryClient.setQueryData(
           aiChatKeys.conversation(convId),
-          (old: any) => {
+          (_old: any) => {
             if (!old) return old;
             return {
               ...old,
@@ -276,9 +276,9 @@ export function useAINoShowPrediction() {
       });
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Cache prediction result
-      queryClient.setQueryData(aiChatKeys.predictions(), (old: any) => {
+      queryClient.setQueryData(aiChatKeys.predictions(), (_old: any) => {
         const predictions = old || [];
         return [
           ...predictions.filter(
@@ -329,12 +329,12 @@ export function useAIHealthcareInsights() {
       });
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Cache insights
       const queryClient = useQueryClient();
       queryClient.setQueryData(
         aiChatKeys.insights(variables.type),
-        (old: any) => {
+        (_old: any) => {
           const insights = old || [];
           return [data, ...insights.slice(0, 9)]; // Keep last 10 insights
         },
@@ -627,10 +627,10 @@ export function useAIConversationHistory() {
   );
 
   const deleteConversation = trpc.ai.deleteConversation.useMutation({
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Update conversations cache
       const queryClient = useQueryClient();
-      queryClient.setQueryData(aiChatKeys.conversations(), (old: any) => {
+      queryClient.setQueryData(aiChatKeys.conversations(), (_old: any) => {
         if (!old) return old;
         return old.filter(
           (conv: Conversation) => conv.id !== variables.conversationId,

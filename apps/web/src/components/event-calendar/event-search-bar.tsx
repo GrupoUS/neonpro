@@ -3,9 +3,9 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Popover } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { Calendar, Clock, Filter, Search, X } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useEventSearch } from './hooks/use-event-search';
 
@@ -44,7 +44,7 @@ export function EventSearchBar({
   const resultsRef = useRef<HTMLDivElement>(null);
 
   // Handle search input change
-  const handleSearchChange = (value: string) => {
+  const handleSearchChange = (_value: any) => {
     setSearchQuery(value);
 
     if (value.trim()) {
@@ -65,7 +65,7 @@ export function EventSearchBar({
   };
 
   // Handle result selection
-  const handleResultSelect = (event: any) => {
+  const handleResultSelect = (_event: any) => {
     onResultSelect?.(event);
     setShowResults(false);
     clearSearch();
@@ -108,7 +108,7 @@ export function EventSearchBar({
 
   // Close results when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (_event: any) => {
       if (
         inputRef.current && !inputRef.current.contains(event.target as Node)
         && resultsRef.current && !resultsRef.current.contains(event.target as Node)
@@ -133,7 +133,7 @@ export function EventSearchBar({
   }, [searchResults, searchSuggestions]);
 
   // Format date for display
-  const formatDate = (date: Date) => {
+  const formatDate = (_date: any) => {
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
@@ -248,7 +248,7 @@ export function EventSearchBar({
           {!isSearching && searchSuggestions.length > 0 && searchResults.length === 0 && (
             <div className='p-2'>
               <p className='text-xs font-medium text-muted-foreground px-2 py-1'>Suggestions</p>
-              {searchSuggestions.map((suggestion, index) => (
+              {searchSuggestions.map((suggestion, _index) => (
                 <button
                   key={index}
                   className={cn(
@@ -279,7 +279,7 @@ export function EventSearchBar({
               </div>
 
               <div className='max-h-64 overflow-y-auto'>
-                {searchResults.map((event, index) => {
+                {searchResults.map((event, _index) => {
                   const suggestionIndex = searchSuggestions.length + index;
                   return (
                     <button

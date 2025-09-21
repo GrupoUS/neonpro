@@ -17,7 +17,7 @@ import {
 import { getGovernanceService } from '@/lib/governance-service';
 import type { AuditTrail } from '@/lib/governance-service';
 import { Badge } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 
@@ -127,7 +127,7 @@ export function AuditTrailTable() {
     gcTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  const formatTimestamp = (timestamp: Date) => {
+  const formatTimestamp = (_timestamp: any) => {
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',
@@ -227,7 +227,7 @@ export function AuditTrailTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {auditData?.entries.map((entry: any) => {
+              {auditData?.entries.map((_entry: any) => {
                 const actionBadge = getActionBadge(entry.action);
                 const statusBadge = getStatusBadge(entry.status);
                 const riskLevelBadge = getRiskLevelBadge(entry.riskLevel);

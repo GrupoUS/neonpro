@@ -35,7 +35,7 @@ export function useAdvancedSearch(
   const [filters, setFilters] = useState<AdvancedFilters>(initial);
 
   // Progressive CPF formatter: caps to 11 digits and adds mask step-by-step
-  const formatCPF = (value: string) => {
+  const formatCPF = (_value: any) => {
     const digits = (value ?? '').replace(/\D/g, '').slice(0, 11);
     if (digits.length <= 3) return digits;
     if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
@@ -51,7 +51,7 @@ export function useAdvancedSearch(
   };
 
   // Progressive BR phone formatter: (DD) DDDDD-DDDD, caps to 11 digits
-  const formatPhone = (value: string) => {
+  const formatPhone = (_value: any) => {
     const digits = (value ?? '').replace(/\D/g, '').slice(0, 11);
     if (digits.length <= 2) return digits;
     const ddd = digits.slice(0, 2);

@@ -1,8 +1,8 @@
 import { Input } from '@/components/atoms/input';
 import { Label } from '@/components/atoms/label';
-import { Alert, AlertDescription } from '@neonpro/ui';
+import { Alert } from '@neonpro/ui';
 import { UniversalButton } from '@neonpro/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 // Enhanced with permanent shine border effect and smooth animations
 import { showToast } from '@/components/ui/toaster';
 import {
@@ -103,7 +103,7 @@ export function AuthForm({
     }
   };
 
-  const onSubmitSignUp = async (data: AuthFormData) => {
+  const onSubmitSignUp = async (_data: any) => {
     try {
       setIsLoading(true);
       setError(null);

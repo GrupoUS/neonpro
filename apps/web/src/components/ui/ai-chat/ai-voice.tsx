@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@neonpro/ui';
-import { Mic, MicOff, Volume2, VolumeX } from 'lucide-react';
+import { Mic2 } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import type { AIVoiceProps } from './types';
 
@@ -57,12 +57,12 @@ export default function AIVoice({
           const mimeType = mediaRecorder.mimeType || audioChunks[0]?.type || 'audio/webm';
           const audioBlob = new Blob(audioChunks, { type: mimeType });
           onVoiceInput?.(audioBlob);
-          stream.getTracks().forEach(track => track.stop());
+          stream.getTracks().forEach(_track => track.stop());
         };
 
         mediaRecorder.start();
         setIsRecording(true);
-      } catch (error) {
+      } catch (_error) {
         console.error('Erro ao acessar microfone:', error);
       }
     }

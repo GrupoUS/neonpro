@@ -4,10 +4,10 @@ import { AccessiblePatientCard } from '@/components/accessibility/AccessiblePati
 import { AnimatedModal } from '@/components/ui/animated-modal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { UniversalButton } from '@/components/ui/universal-button';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -409,7 +409,7 @@ function PatientAIInsights() {
         setPredictions(mockPredictions);
         setModels(mockModels);
         setTreatments(mockTreatments);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error loading AI insights:', error);
       } finally {
         setLoading(false);
@@ -427,7 +427,7 @@ function PatientAIInsights() {
     });
   }, [insights, selectedCategory, selectedPriority]);
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColor = (_priority: any) => {
     switch (priority) {
       case 'critical':
         return 'destructive';
@@ -442,7 +442,7 @@ function PatientAIInsights() {
     }
   };
 
-  const getPriorityLabel = (priority: string) => {
+  const getPriorityLabel = (_priority: any) => {
     switch (priority) {
       case 'critical':
         return 'Crítico';
@@ -457,7 +457,7 @@ function PatientAIInsights() {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (_status: any) => {
     switch (status) {
       case 'active':
         return 'default';
@@ -470,7 +470,7 @@ function PatientAIInsights() {
     }
   };
 
-  const handleInsightAction = async (insight: PatientAIInsight) => {
+  const handleInsightAction = async (_insight: any) => {
     toast({
       title: 'Ação de IA executada',
       description: `Iniciando ações para: ${insight.title}`,
@@ -485,7 +485,7 @@ function PatientAIInsights() {
     }, 2000);
   };
 
-  const handleInsightDetails = (insight: PatientAIInsight) => {
+  const handleInsightDetails = (_insight: any) => {
     setSelectedInsight(insight);
     setIsModalOpen(true);
   };
@@ -831,7 +831,7 @@ function PatientAIInsights() {
                         Fatores:
                       </p>
                       <ul className='text-sm text-gray-600 list-disc list-inside'>
-                        {prediction.factors.map((factor, index) => <li key={index}>{factor}</li>)}
+                        {prediction.factors.map((factor, _index) => <li key={index}>{factor}</li>)}
                       </ul>
                     </div>
                     <div className='mt-3 p-3 bg-blue-50 rounded'>
@@ -1011,7 +1011,7 @@ function PatientAIInsights() {
             <div>
               <h3 className='font-medium mb-2'>Recomendações</h3>
               <ul className='space-y-1 text-sm'>
-                {selectedInsight.recommendations.map((rec, index) => (
+                {selectedInsight.recommendations.map((rec, _index) => (
                   <li key={index} className='flex items-start gap-2'>
                     <CheckCircle className='h-4 w-4 text-green-600 mt-0.5 flex-shrink-0' />
                     <span>{rec}</span>
@@ -1024,7 +1024,7 @@ function PatientAIInsights() {
               <div>
                 <h3 className='font-medium mb-2'>Ações Necessárias</h3>
                 <div className='space-y-2'>
-                  {selectedInsight.actionItems.map((action, index) => (
+                  {selectedInsight.actionItems.map((action, _index) => (
                     <div key={index} className='border rounded p-3'>
                       <div className='flex items-center justify-between mb-1'>
                         <h4 className='font-medium text-sm'>{action.title}</h4>

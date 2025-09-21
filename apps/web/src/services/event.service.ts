@@ -558,7 +558,7 @@ export class EventService {
     const eventsByPriority: Record<number, number> = {};
     let totalDuration = 0;
 
-    events.forEach(event => {
+    events.forEach(_event => {
       // Count by status
       const status = event.status || 'unknown';
       eventsByStatus[status] = (eventsByStatus[status] || 0) + 1;

@@ -2,13 +2,13 @@ import { NotificationCard } from '@/components';
 import { BentoGridItem } from '@/components/ui/bento-grid';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { DashboardCard, DashboardLayout } from '@neonpro/ui';
+import { DashboardCard } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
 
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Activity, Bell, Calendar, DollarSign, Settings, TrendingUp, Users } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 
 import { formatBRL } from '@neonpro/utils';

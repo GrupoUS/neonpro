@@ -134,7 +134,7 @@ export function useSignalingClient(
         try {
           const message: SignalingMessage = JSON.parse(event.data);
           handleIncomingMessage(message);
-        } catch (error) {
+        } catch (_error) {
           console.error('Error parsing signaling message:', error);
         }
       };
@@ -169,7 +169,7 @@ export function useSignalingClient(
         console.error('WebRTC signaling error:', error);
         toast.error('Erro na sinalização WebRTC');
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error creating WebSocket connection:', error);
       setState(prev => ({ ...prev, isConnecting: false }));
       callbacks.onConnectionStateChange('disconnected');
@@ -227,7 +227,7 @@ export function useSignalingClient(
   /**
    * Send message through signaling channel
    */
-  const sendMessage = useCallback((message: SignalingMessage) => {
+  const sendMessage = useCallback((_message: any) => {
     if (websocketRef.current?.readyState === WebSocket.OPEN) {
       try {
         // Add timestamp and compliance info if not present
@@ -244,7 +244,7 @@ export function useSignalingClient(
 
         websocketRef.current.send(JSON.stringify(completeMessage));
         return true;
-      } catch (error) {
+      } catch (_error) {
         console.error('Error sending signaling message:', error);
         toast.error('Erro ao enviar mensagem de sinalização');
         return false;
@@ -260,7 +260,7 @@ export function useSignalingClient(
    * Handle incoming signaling messages
    */
   const handleIncomingMessage = useCallback(
-    (message: SignalingMessage) => {
+    (_message: any) => {
       // Validate message compliance
       if (!message.compliance?.cfmCompliant) {
         console.warn('Received non-compliant message, ignoring:', message);

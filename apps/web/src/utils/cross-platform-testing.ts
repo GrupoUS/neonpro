@@ -446,8 +446,8 @@ export default class CrossPlatformTestingService {
   ): CrossPlatformIssue[] {
     const criticalIssues: CrossPlatformIssue[] = [];
 
-    results.forEach(result => {
-      result.issues.forEach(issue => {
+    results.forEach(_result => {
+      result.issues.forEach(_issue => {
         if (issue.severity === 'critical' || issue.severity === 'high') {
           criticalIssues.push(issue);
         }
@@ -468,7 +468,7 @@ export default class CrossPlatformTestingService {
       Record<string, 'passed' | 'failed' | 'warning'>
     > = {};
 
-    results.forEach(result => {
+    results.forEach(_result => {
       if (!matrix[result.browser]) {
         matrix[result.browser] = {};
       }

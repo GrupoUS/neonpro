@@ -454,7 +454,7 @@ export function validateAIConfig(config: unknown) {
     };
 
     return { valid: true, config: fullConfig };
-  } catch (error) {
+  } catch (_error) {
     if (error instanceof z.ZodError) {
       return {
         valid: false,

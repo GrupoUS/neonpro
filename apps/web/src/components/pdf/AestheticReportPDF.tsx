@@ -1,5 +1,5 @@
-import { Document, Page, Text, View } from '@react-pdf/renderer';
-import { type ClinicBrandingData, ClinicHeader, DocumentInfo } from './ClinicBranding';
+import { Document } from '@react-pdf/renderer';
+import { type ClinicBrandingData } from './ClinicBranding';
 import styles from './pdf-styles';
 
 // Tipos baseados no schema do formulário
@@ -166,7 +166,7 @@ export const AestheticReportPDF: React.FC<AestheticReportPDFProps> = ({
           <Text style={[styles.label, { marginTop: 10, marginBottom: 8 }]}>
             Preocupações Primárias:
           </Text>
-          {skinAnalysis.primaryConcerns.map((concern, index) => (
+          {skinAnalysis.primaryConcerns.map((concern, _index) => (
             <Text
               key={index}
               style={[styles.value, { marginLeft: 20, marginBottom: 4 }]}

@@ -16,7 +16,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { IconChevronRight, IconHome } from '@tabler/icons-react';
+import { IconChevronRight } from '@tabler/icons-react';
 import { Link, useLocation } from '@tanstack/react-router';
 import { useMemo } from 'react';
 
@@ -80,7 +80,7 @@ const generateBreadcrumbs = (
 
   // Generate breadcrumbs for each segment
   let currentPath = '';
-  segments.forEach((segment, index) => {
+  segments.forEach((segment, _index) => {
     currentPath += `/${segment}`;
     const isLast = index === segments.length - 1;
 
@@ -149,7 +149,7 @@ export function BreadcrumbNavigation({
       role='navigation'
     >
       <ol className='flex items-center space-x-1 min-w-0' role='list'>
-        {breadcrumbs.map((item, index) => (
+        {breadcrumbs.map((item, _index) => (
           <li
             key={`${item.href}-${index}`}
             className='flex items-center space-x-1'

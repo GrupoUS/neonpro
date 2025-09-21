@@ -5,7 +5,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/lib/supabase/types/database';
-import { calendarLGPDAuditService, LGPDAuditAction } from '@/services/lgpd/audit-logging.service';
+import { calendarLGPDAuditService } from '@/services/lgpd/audit-logging.service';
 import {
   calendarLGPDConsentService,
   type ConsentValidationResult,
@@ -298,7 +298,7 @@ class AppointmentService {
           legalBasis: consentResult.legalBasis,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('LGPD: Error in getAppointments:', error);
 
       // Log compliance failure
@@ -471,7 +471,7 @@ class AppointmentService {
           legalBasis: consentResult.legalBasis,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('LGPD: Error in createAppointment:', error);
 
       // Log compliance failure
@@ -652,7 +652,7 @@ class AppointmentService {
           legalBasis: consentResult.legalBasis,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('LGPD: Error in updateAppointment:', error);
 
       // Log compliance failure
@@ -753,7 +753,7 @@ class AppointmentService {
           legalBasis: consentResult.legalBasis,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('LGPD: Error in deleteAppointment:', error);
 
       // Log compliance failure
@@ -804,7 +804,7 @@ class AppointmentService {
         notes: undefined, // Notes are typically minimized out
         priority: undefined,
       }));
-    } catch (error) {
+    } catch (_error) {
       console.error('Error applying data minimization:', error);
       // Return original data if minimization fails
       return appointments;
@@ -829,7 +829,7 @@ class AppointmentService {
         consentResult,
         `appointment_${action}`,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Error logging data access:', error);
       return 'error_logging';
     }
@@ -869,7 +869,7 @@ class AppointmentService {
           timestamp: new Date().toISOString(),
         },
       );
-    } catch (logError) {
+    } catch (_logError) {
       console.error('Error logging compliance failure:', logError);
     }
   }
@@ -907,7 +907,7 @@ class AppointmentService {
       }
 
       return (data || []).length > 0;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in checkAppointmentConflict:', error);
       return false;
     }
@@ -931,7 +931,7 @@ class AppointmentService {
         new_values: metadata || {},
         created_at: new Date().toISOString(),
       } as any);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error logging appointment action:', error);
       // Don't throw error for audit logging failures
     }

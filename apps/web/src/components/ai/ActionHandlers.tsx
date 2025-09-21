@@ -13,18 +13,18 @@
 import React, { useState, useCallback } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Card } from '@/components/ui/card';
+import { Dialog } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { CalendarIcon, Download, User, ExternalLink, RefreshCw, Plus, FileText, AlertCircle } from 'lucide-react';
-import { AgentAction, ClientData, AppointmentData } from '@/types/ai-agent';
+import { CalendarIcon } from 'lucide-react';
+import { AgentAction } from '@/types/ai-agent';
 import { AIAgentService } from '@/services/ai-agent';
 import { cn } from '@/lib/utils';
 
@@ -477,7 +477,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
     }
   });
 
-  const handleAction = useCallback(async (action: AgentAction) => {
+  const handleAction = useCallback(async (_action: any) => {
     switch (action.type) {
       case 'view_details':
         if (action.payload?.clientId) {
@@ -485,7 +485,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
           try {
             const clientData = await aiAgentService.getClientDetails(action.payload.clientId);
             setSelectedClient(clientData);
-          } catch (error) {
+          } catch (_error) {
             console.error('Failed to fetch client details:', error);
           }
         } else if (action.payload?.client) {
@@ -551,7 +551,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
     return csvRows.join('\n');
   };
 
-  const getActionIcon = (iconName: string) => {
+  const getActionIcon = (_iconName: any) => {
     switch (iconName) {
       case 'user': return <User className="h-4 w-4" />;
       case 'calendar': return <CalendarIcon className="h-4 w-4" />;

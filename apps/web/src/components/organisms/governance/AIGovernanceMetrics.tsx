@@ -1,8 +1,8 @@
 import { Progress } from '@/components/ui/progress';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { AIMetrics } from '@/lib/governance-service';
-import { Alert, AlertDescription, AlertTitle, Badge } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Alert } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
 
 type ModelStatus = 'active' | 'inactive' | 'maintenance';
@@ -137,7 +137,7 @@ export function AIGovernanceMetrics() {
       <div className='space-y-3'>
         <h3 className='text-md font-semibold'>Active Models</h3>
         <div className='grid gap-4'>
-          {aiData?.models.map((model: any) => {
+          {aiData?.models.map((_model: any) => {
             const statusBadge = getStatusBadge(model.status);
 
             return (

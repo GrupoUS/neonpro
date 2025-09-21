@@ -128,7 +128,7 @@ export function useAccessibilityTesting(
         && result.violations.length > 0
       ) {
         console.group('🔍 Accessibility Issues Found');
-        result.violations.forEach(violation => {
+        result.violations.forEach(_violation => {
           console.warn(
             `[${violation.impact.toUpperCase()}] ${violation.description}`,
           );
@@ -163,7 +163,7 @@ export function useAccessibilityTesting(
           `Critical issues threshold exceeded: ${criticalIssues} critical issues (max: ${threshold.maxCriticalIssues})`,
         );
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Accessibility testing failed:', error);
     } finally {
       setIsTesting(false);
@@ -307,7 +307,7 @@ export function useAccessibilityMonitor() {
           healthcareViolations,
           lgpdViolations,
         });
-      } catch (error) {
+      } catch (_error) {
         console.error('Accessibility monitoring failed:', error);
       }
     };
@@ -355,7 +355,7 @@ export function useKeyboardNavigationTest() {
     const issues: string[] = [];
 
     // Check each focusable element
-    focusableElements.forEach((element, index) => {
+    focusableElements.forEach((element, _index) => {
       const tabIndex = element.getAttribute('tabindex');
       const ariaLabel = element.getAttribute('aria-label');
       const role = element.getAttribute('role');
@@ -410,7 +410,7 @@ export function useKeyboardNavigationTest() {
 
       if (issues.length > 0) {
         console.warn('Issues found:');
-        issues.forEach(issue => console.warn(`  ❌ ${issue}`));
+        issues.forEach(_issue => console.warn(`  ❌ ${issue}`));
       } else {
         console.log('✅ No keyboard navigation issues found');
       }

@@ -1,7 +1,7 @@
 import { AnimatedModal } from '@/components/ui/animated-modal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -238,7 +238,7 @@ function PatientRegister() {
     }
   };
 
-  const formatCPF = (value: string) => {
+  const formatCPF = (_value: any) => {
     return value
       .replace(/\D/g, '')
       .replace(/(\d{3})(\d)/, '$1.$2')
@@ -246,14 +246,14 @@ function PatientRegister() {
       .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
   };
 
-  const formatPhone = (value: string) => {
+  const formatPhone = (_value: any) => {
     return value
       .replace(/\D/g, '')
       .replace(/(\d{2})(\d)/, '($1) $2')
       .replace(/(\d{5})(\d)/, '$1-$2');
   };
 
-  const formatZipCode = (value: string) => {
+  const formatZipCode = (_value: any) => {
     return value.replace(/\D/g, '').replace(/(\d{5})(\d)/, '$1-$2');
   };
 
@@ -419,7 +419,7 @@ function PatientRegister() {
     },
   ];
 
-  const renderField = (field: any) => {
+  const renderField = (_field: any) => {
     const value = formData[field.name as keyof PatientFormData];
     const error = errors[field.name];
     const fieldId = `field-${field.name}`;

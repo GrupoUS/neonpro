@@ -207,7 +207,7 @@ export function useVideoCall(sessionId: string) {
         iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
       });
 
-      stream.getTracks().forEach(track => {
+      stream.getTracks().forEach(_track => {
         peerConnection.addTrack(track, stream);
       });
 
@@ -222,7 +222,7 @@ export function useVideoCall(sessionId: string) {
 
       peerConnectionRef.current = peerConnection;
       setCallState(prev => ({ ...prev, isConnected: true }));
-    } catch (error) {
+    } catch (_error) {
       console.error('Error initializing video call:', error);
       toast.error('Erro ao inicializar videochamada');
     }
@@ -263,7 +263,7 @@ export function useVideoCall(sessionId: string) {
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = screenStream;
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error starting screen share:', error);
       toast.error('Erro ao compartilhar tela');
     }
@@ -271,7 +271,7 @@ export function useVideoCall(sessionId: string) {
 
   const endCall = useCallback(() => {
     if (callState.localStream) {
-      callState.localStream.getTracks().forEach(track => track.stop());
+      callState.localStream.getTracks().forEach(_track => track.stop());
     }
 
     if (peerConnectionRef.current) {

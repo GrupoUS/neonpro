@@ -14,10 +14,10 @@ import {
   Zap,
 } from 'lucide-react';
 import React from 'react';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { Alert } from '../ui/alert';
 import { Badge } from '../ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Card } from '../ui/card';
+import { Tabs } from '../ui/tabs';
 
 export interface ProcedureRecommendation {
   id: string;
@@ -79,7 +79,7 @@ export function ProcedureRecommendations({
     [],
   );
 
-  const toggleProcedureSelection = (procedureId: string) => {
+  const toggleProcedureSelection = (_procedureId: any) => {
     setSelectedProcedures(prev =>
       prev.includes(procedureId)
         ? prev.filter(id => id !== procedureId)
@@ -95,13 +95,13 @@ export function ProcedureRecommendations({
     }`;
   };
 
-  const getSuitabilityColor = (score: number) => {
+  const getSuitabilityColor = (_score: any) => {
     if (score >= 80) return 'bg-green-100 text-green-800';
     if (score >= 60) return 'bg-yellow-100 text-yellow-800';
     return 'bg-red-100 text-red-800';
   };
 
-  const getPriorityIcon = (priority: string) => {
+  const getPriorityIcon = (_priority: any) => {
     switch (priority) {
       case 'alta':
         return <Target className='h-4 w-4 text-red-500' />;
@@ -151,7 +151,7 @@ export function ProcedureRecommendations({
       {(criticalContraindications.length > 0
         || warningContraindications.length > 0) && (
         <div className='space-y-3'>
-          {criticalContraindications.map((alert, index) => (
+          {criticalContraindications.map((alert, _index) => (
             <Alert key={index} variant='destructive'>
               <XCircle className='h-4 w-4' />
               <AlertTitle>
@@ -178,7 +178,7 @@ export function ProcedureRecommendations({
             </Alert>
           ))}
 
-          {warningContraindications.map((alert, index) => (
+          {warningContraindications.map((alert, _index) => (
             <Alert key={index}>
               <AlertTriangle className='h-4 w-4' />
               <AlertTitle>Atenção: {alert.condition}</AlertTitle>

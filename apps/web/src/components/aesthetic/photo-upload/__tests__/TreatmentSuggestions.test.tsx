@@ -7,7 +7,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import React from 'react';
-import { TreatmentSuggestion, TreatmentSuggestions } from '../TreatmentSuggestions';
+import { TreatmentSuggestion } from '../TreatmentSuggestions';
 
 // Mock dos utilitários
 jest.mock('@/lib/utils/format', () => ({
@@ -284,7 +284,7 @@ describe('TreatmentSuggestions Component', () => {
       );
 
       const suggestionItems = screen.getAllByRole('listitem');
-      suggestionItems.forEach((item, index) => {
+      suggestionItems.forEach((item, _index) => {
         expect(item).toHaveAttribute('aria-setsize', '2');
         expect(item).toHaveAttribute('aria-posinset', (index + 1).toString());
       });
@@ -378,7 +378,7 @@ describe('TreatmentSuggestions Component', () => {
 
       // Verificar se elementos estão adaptados para mobile
       const treatmentCards = screen.getAllByTestId(/treatment-suggestion-/);
-      treatmentCards.forEach(card => {
+      treatmentCards.forEach(_card => {
         expect(card).toHaveClass('mobile-card');
       });
     });
@@ -431,7 +431,7 @@ describe('TreatmentSuggestions Component', () => {
       render(<TreatmentSuggestions suggestions={mockSuggestions} />);
 
       const images = screen.getAllByRole('img');
-      images.forEach(img => {
+      images.forEach(_img => {
         expect(img).toHaveAttribute('loading', 'lazy');
       });
     });

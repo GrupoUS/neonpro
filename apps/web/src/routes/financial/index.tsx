@@ -1,8 +1,8 @@
 import { getCurrentSession } from '@/integrations/supabase/client';
 import { Badge } from '@neonpro/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { CreditCard, DollarSign, Receipt, TrendingDown, TrendingUp } from 'lucide-react';
+import { CreditCard } from 'lucide-react';
 
 export const Route = createFileRoute('/financial/')({
   beforeLoad: async () => {

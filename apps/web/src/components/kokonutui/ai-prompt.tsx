@@ -20,7 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@neonpro/ui';
-import { ArrowRight, Bot, Check, ChevronDown, Paperclip } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';
 

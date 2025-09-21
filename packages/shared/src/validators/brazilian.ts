@@ -696,6 +696,9 @@ export function validateANVISACode(code: string): boolean {
   const number = parts[0];
   const checkDigit = parts[1];
 
+  // Ensure both parts exist
+  if (!number || !checkDigit) return false;
+
   // Check number length (17 digits)
   if (number.length !== 17) return false;
   if (!/^\d+$/.test(number)) return false;

@@ -403,8 +403,8 @@ describe('Component Documentation Generator', () => {
       );
       expect(componentsWithExamples.length).toBeGreaterThan(0);
 
-      componentsWithExamples.forEach(component => {
-        component.examples?.forEach(example => {
+      componentsWithExamples.forEach(_component => {
+        component.examples?.forEach(_example => {
           expect(example.id).toBeDefined();
           expect(example.title).toBeDefined();
           expect(example.titlePtBr).toBeDefined();
@@ -425,7 +425,7 @@ describe('Component Documentation Generator', () => {
       expect(patientCard?.examples).toBeDefined();
       expect(patientCard?.examples?.length).toBeGreaterThan(0);
 
-      patientCard?.examples?.forEach(example => {
+      patientCard?.examples?.forEach(_example => {
         expect(example.healthcareContext).toBeDefined();
         expect(typeof example.healthcareContext).toBe('string');
         expect(example.healthcareContext!.length).toBeGreaterThan(0);
@@ -438,7 +438,7 @@ describe('Component Documentation Generator', () => {
         c => c.id === 'patient-card',
       );
 
-      patientCard?.examples?.forEach(example => {
+      patientCard?.examples?.forEach(_example => {
         expect(example.accessibilityDemo).toBe(true);
         expect(example.mobileDemo).toBe(true);
       });
@@ -487,15 +487,15 @@ describe('Component Documentation Generator', () => {
     it('should include Portuguese translations in components', () => {
       const report = generator.generateReport();
 
-      report.components.forEach(component => {
+      report.components.forEach(_component => {
         expect(component.titlePtBr).toBeDefined();
         expect(component.descriptionPtBr).toBeDefined();
 
-        component.props?.forEach(prop => {
+        component.props?.forEach(_prop => {
           expect(prop.descriptionPtBr).toBeDefined();
         });
 
-        component.examples?.forEach(example => {
+        component.examples?.forEach(_example => {
           expect(example.titlePtBr).toBeDefined();
           expect(example.descriptionPtBr).toBeDefined();
         });
@@ -510,7 +510,7 @@ describe('Component Documentation Generator', () => {
 
       expect(healthcareComponents.length).toBeGreaterThan(0);
 
-      healthcareComponents.forEach(component => {
+      healthcareComponents.forEach(_component => {
         expect(component.healthcare.brazilianPortuguese).toBe(true);
         expect(component.healthcare.medicalTerminology).toBe(true);
       });
@@ -545,7 +545,7 @@ describe('Component Documentation Generator', () => {
     it('should include performance metrics', () => {
       const report = generator.generateReport();
 
-      report.components.forEach(component => {
+      report.components.forEach(_component => {
         expect(component.metadata.testCoverage).toBeDefined();
         expect(component.metadata.testCoverage).toBeGreaterThan(80);
         expect(component.metadata.performanceScore).toBeDefined();
@@ -561,7 +561,7 @@ describe('Component Documentation Generator', () => {
       );
       expect(healthcareComponents.length).toBeGreaterThan(0);
 
-      healthcareComponents.forEach(component => {
+      healthcareComponents.forEach(_component => {
         expect(component.category).toBe(COMPONENT_CATEGORIES.HEALTHCARE);
       });
     });
@@ -570,7 +570,7 @@ describe('Component Documentation Generator', () => {
       const healthcareComponents = generator.getHealthcareComponents();
       expect(healthcareComponents.length).toBeGreaterThan(0);
 
-      healthcareComponents.forEach(component => {
+      healthcareComponents.forEach(_component => {
         const hasHealthcareFeature = component.healthcare.lgpdCompliant
           || component.healthcare.patientDataHandling
           || component.category === COMPONENT_CATEGORIES.HEALTHCARE;
@@ -582,7 +582,7 @@ describe('Component Documentation Generator', () => {
       const accessibleComponents = generator.getAccessibilityCompliantComponents();
       expect(accessibleComponents.length).toBeGreaterThan(0);
 
-      accessibleComponents.forEach(component => {
+      accessibleComponents.forEach(_component => {
         expect(component.accessibility.wcagCompliant).toBe(true);
       });
     });
@@ -591,7 +591,7 @@ describe('Component Documentation Generator', () => {
       const mobileComponents = generator.getMobileOptimizedComponents();
       expect(mobileComponents.length).toBeGreaterThan(0);
 
-      mobileComponents.forEach(component => {
+      mobileComponents.forEach(_component => {
         expect(component.mobile.touchOptimized).toBe(true);
       });
     });

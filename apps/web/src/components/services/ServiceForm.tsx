@@ -8,14 +8,14 @@ import { Input } from '@neonpro/ui';
 import { Label } from '@neonpro/ui';
 import { Textarea } from '@neonpro/ui';
 import { Switch } from '@neonpro/ui';
-import { Card, CardContent } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { TimeSlotPicker } from '@neonpro/ui';
 import { formatBRL, maskBRLInput } from '@neonpro/utils';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { useCreateService, useUpdateService } from '@/hooks/useServices';
-import type { Service, ServiceFormData, ServiceFormErrors } from '@/types/service';
+import type { Service } from '@/types/service';
 import { toast } from 'sonner';
 
 interface ServiceFormProps {
@@ -127,7 +127,7 @@ export function ServiceForm({
       }
 
       onSuccess();
-    } catch (error) {
+    } catch (_error) {
       console.error('Error saving service:', error);
       toast.error(
         isEditMode ? 'Erro ao atualizar serviço' : 'Erro ao criar serviço',
@@ -147,7 +147,7 @@ export function ServiceForm({
   };
 
   // Price input handler: keep numeric value in state and formatted BRL string for UX
-  const handlePriceChange = (raw: string) => {
+  const handlePriceChange = (_raw: any) => {
     const { formatted, value } = maskBRLInput(raw);
     setPriceInput(formatted);
     handleInputChange('price', value);

@@ -395,7 +395,7 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
     );
   };
 
-  const handlePatientCreated = (patient: any) => {
+  const handlePatientCreated = (_patient: any) => {
     toast.success(`Paciente ${patient.fullName} criado com sucesso!`);
     // The real-time subscription will automatically update the table
   };
@@ -454,7 +454,7 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
   };
 
   // Advanced search handlers (FR-005)
-  const handleApplyAdvancedFilters = (filters: any) => {
+  const handleApplyAdvancedFilters = (_filters: any) => {
     // Apply filters to the table
     if (filters.query) {
       table.getColumn('fullName')?.setFilterValue(filters.query);

@@ -356,7 +356,7 @@ describe('AestheticAIAnalysisService', () => {
       expect(suggestions).toBeInstanceOf(Array);
       expect(suggestions.length).toBeGreaterThan(0);
 
-      suggestions.forEach(suggestion => {
+      suggestions.forEach(_suggestion => {
         expect(suggestion).toHaveProperty('id');
         expect(suggestion).toHaveProperty('name');
         expect(suggestion).toHaveProperty('category');
@@ -526,7 +526,7 @@ describe('AestheticAIAnalysisService', () => {
       const results = await Promise.all(promises);
 
       // Todas devem ter o mesmo resultado
-      results.forEach(result => {
+      results.forEach(_result => {
         expect(result).toEqual(mockAnalysis);
       });
     });
@@ -713,7 +713,7 @@ describe('AestheticAIAnalysisService', () => {
       const suggestions = await aiService.getSuggestionsForScheduling(mockImageUrl);
 
       expect(suggestions).toBeInstanceOf(Array);
-      suggestions.forEach(suggestion => {
+      suggestions.forEach(_suggestion => {
         expect(suggestion).toHaveProperty('schedulingInfo');
         expect(suggestion.schedulingInfo).toHaveProperty('estimatedDuration');
         expect(suggestion.schedulingInfo).toHaveProperty(

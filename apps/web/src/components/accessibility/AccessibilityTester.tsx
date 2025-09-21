@@ -13,7 +13,7 @@
 'use client';
 
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import {
   Accessibility,
@@ -358,7 +358,7 @@ export function AccessibilityTester({
                         </div>
                       )
                       : (
-                        issues.map((issue, index) => (
+                        issues.map((issue, _index) => (
                           <div
                             key={`${issue.id}-${index}`}
                             className='p-3 rounded-lg border-l-4 bg-white'
@@ -444,7 +444,7 @@ export function AccessibilityTester({
                         </div>
                       )
                       : (
-                        colorContrast.elements.map((element, index) => (
+                        colorContrast.elements.map((element, _index) => (
                           <div
                             key={index}
                             className='p-3 rounded-lg border bg-white'
@@ -517,7 +517,7 @@ export function AccessibilityTester({
                           <h4 className='font-semibold text-sm'>
                             Keyboard Navigation Issues:
                           </h4>
-                          {keyboardIssues.map((issue, index) => (
+                          {keyboardIssues.map((issue, _index) => (
                             <div
                               key={index}
                               className='p-2 rounded bg-red-50 border border-red-200 text-sm text-red-700'

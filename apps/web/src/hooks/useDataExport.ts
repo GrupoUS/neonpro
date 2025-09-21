@@ -72,7 +72,7 @@ export function useDataExport(): UseDataExportReturn {
       }
 
       // Add data rows
-      data.forEach((row, index) => {
+      data.forEach((row, _index) => {
         const values = headers.map(header => {
           let value = row[header];
 
@@ -176,9 +176,9 @@ export function useDataExport(): UseDataExportReturn {
           <tbody>
     `;
 
-      data.forEach((row, index) => {
+      data.forEach((row, _index) => {
         html += '<tr>';
-        headers.forEach(header => {
+        headers.forEach(_header => {
           let value = row[header];
 
           // Handle different data types
@@ -298,9 +298,9 @@ export function useDataExport(): UseDataExportReturn {
           setStatus('idle');
           setProgress(0);
         }, 3000);
-      } catch (err) {
-        const errorMessage = err instanceof Error
-          ? err.message
+      } catch (error) {
+        const errorMessage = error instanceof Error
+          ? error.message
           : 'Erro desconhecido na exportação';
         setError(errorMessage);
         setStatus('error');

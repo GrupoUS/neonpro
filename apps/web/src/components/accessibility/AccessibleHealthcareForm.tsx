@@ -23,7 +23,7 @@ import {
   Label,
   Textarea,
 } from '@neonpro/ui';
-import { AlertCircle, CheckCircle, Info } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 import {
   useAccessibilityPreferences,
@@ -91,7 +91,7 @@ export function AccessibleHealthcareForm({
     let isValid = true;
     const errors: string[] = [];
 
-    fields.forEach(field => {
+    fields.forEach(_field => {
       const fieldHook = fieldHooks[field.name];
       const fieldIsValid = fieldHook.validateField();
 
@@ -149,7 +149,7 @@ export function AccessibleHealthcareForm({
         setSubmitSuccess(true);
         announceFormSuccess('Formulário enviado com sucesso');
         announceLive('Formulário enviado com sucesso!', 'polite');
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error ? error.message : 'Erro ao enviar formulário';
         setSubmitError(errorMessage);
         announceFormError('envio', errorMessage);
@@ -172,7 +172,7 @@ export function AccessibleHealthcareForm({
   );
 
   const renderField = useCallback(
-    (field: FormField) => {
+    (_field: any) => {
       const fieldHook = fieldHooks[field.name];
       const { fieldProps, errorProps, descriptionProps } = fieldHook;
 

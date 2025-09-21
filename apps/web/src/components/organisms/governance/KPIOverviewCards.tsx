@@ -2,7 +2,7 @@ import { Progress } from '@/components/ui/progress';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { KPIOverview } from '@/lib/governance-service';
 import { Badge } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
 
 function KPIMetricCard({

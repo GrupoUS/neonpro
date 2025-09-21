@@ -1,4 +1,4 @@
-import { Document, Font, Image, Page, StyleSheet, Text, View } from '@react-pdf/renderer';
+import { Document } from '@react-pdf/renderer';
 
 // Registrar fontes (Roboto é uma boa opção para documentos médicos)
 Font.register({

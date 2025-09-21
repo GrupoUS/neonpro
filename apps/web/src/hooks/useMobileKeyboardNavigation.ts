@@ -129,7 +129,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
   /**
    * Detect if user is using keyboard navigation
    */
-  const detectKeyboardUser = useCallback((event: KeyboardEvent) => {
+  const detectKeyboardUser = useCallback((_event: any) => {
     if (event.key === 'Tab') {
       setNavigationState(prev => ({
         ...prev,
@@ -154,7 +154,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
   /**
    * Detect external keyboard (Bluetooth keyboard on mobile)
    */
-  const detectExternalKeyboard = useCallback((event: KeyboardEvent) => {
+  const detectExternalKeyboard = useCallback((_event: any) => {
     // Heuristic: external keyboards typically have more key codes available
     const hasExternalKeyboard = event.code !== ''
       && (event.metaKey || event.ctrlKey || event.altKey)
@@ -203,7 +203,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
    * Handle keyboard shortcuts
    */
   const handleKeyboardShortcuts = useCallback(
-    (event: KeyboardEvent) => {
+    (_event: any) => {
       if (!navigationState.shortcutsEnabled) return;
 
       const shortcut = `${event.ctrlKey ? 'Ctrl+' : ''}${event.altKey ? 'Alt+' : ''}${event.key}`;
@@ -296,7 +296,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
    * Handle focus trap
    */
   const handleFocusTrap = useCallback(
-    (event: KeyboardEvent) => {
+    (_event: any) => {
       if (!navigationState.focusTrapped || event.key !== 'Tab') return;
 
       const focusableElements = getFocusableElements();
@@ -451,7 +451,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
 
   // Set up event listeners
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const handleKeyDown = (_event: any) => {
       detectKeyboardUser(event);
       detectExternalKeyboard(event);
       handleKeyboardShortcuts(event);
@@ -462,7 +462,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
       detectTouchUser();
     };
 
-    const handleFocusIn = (event: FocusEvent) => {
+    const handleFocusIn = (_event: any) => {
       if (event.target instanceof HTMLElement) {
         lastFocusedElementRef.current = event.target;
         setNavigationState(prev => ({

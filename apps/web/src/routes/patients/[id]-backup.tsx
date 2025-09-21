@@ -1,11 +1,11 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 // Fallback to shared UI Avatar not available; using simple initials circle inline below
 // import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -226,9 +226,9 @@ function PatientDetailPage() {
         setAppointments(mockAppointments);
         setMedicalRecords(mockMedicalRecords);
         setAiInsights(mockInsights);
-      } catch (err) {
+      } catch (error) {
         setError('Erro ao carregar dados do paciente');
-        console.error('Error fetching patient data:', err);
+        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -237,7 +237,7 @@ function PatientDetailPage() {
     fetchPatientData();
   }, [id]);
 
-  const calculateAge = (birthDate: string) => {
+  const calculateAge = (_birthDate: any) => {
     const birth = new Date(birthDate);
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
@@ -251,7 +251,7 @@ function PatientDetailPage() {
     return age;
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (_status: any) => {
     const variants = {
       scheduled: { variant: 'default' as const, label: 'Agendada' },
       completed: { variant: 'secondary' as const, label: 'Realizada' },
@@ -261,7 +261,7 @@ function PatientDetailPage() {
     return variants[status as keyof typeof variants] || variants.scheduled;
   };
 
-  const getPriorityBadge = (priority: string) => {
+  const getPriorityBadge = (_priority: any) => {
     const variants = {
       low: { variant: 'outline' as const, label: 'Baixa' },
       medium: { variant: 'default' as const, label: 'Média' },
@@ -271,7 +271,7 @@ function PatientDetailPage() {
     return variants[priority as keyof typeof variants] || variants.low;
   };
 
-  const formatBirthDate = (dateString: string) => {
+  const formatBirthDate = (_dateString: any) => {
     return format(new Date(dateString), 'dd \'de\' MMMM \'de\' yyyy', {
       locale: ptBR,
     });
@@ -538,7 +538,7 @@ function PatientDetailPage() {
                   <div>
                     <h4 className='font-medium mb-2'>Alergias</h4>
                     <div className='flex flex-wrap gap-2'>
-                      {patient.allergies.map((allergy, index) => (
+                      {patient.allergies.map((allergy, _index) => (
                         <Badge key={index} variant='destructive'>
                           {allergy}
                         </Badge>
@@ -549,7 +549,7 @@ function PatientDetailPage() {
                   <div>
                     <h4 className='font-medium mb-2'>Medicamentos em Uso</h4>
                     <div className='flex flex-wrap gap-2'>
-                      {patient.medications.map((medication, index) => (
+                      {patient.medications.map((medication, _index) => (
                         <Badge key={index} variant='outline'>
                           {medication}
                         </Badge>
@@ -560,7 +560,7 @@ function PatientDetailPage() {
                   <div>
                     <h4 className='font-medium mb-2'>Condições Crônicas</h4>
                     <div className='flex flex-wrap gap-2'>
-                      {patient.chronicConditions.map((condition, index) => (
+                      {patient.chronicConditions.map((condition, _index) => (
                         <Badge key={index} variant='secondary'>
                           {condition}
                         </Badge>
@@ -686,7 +686,7 @@ function PatientDetailPage() {
                               <div>
                                 <p className='text-sm font-medium'>Prescrição:</p>
                                 <ul className='text-sm list-disc list-inside'>
-                                  {record.prescription.map((med, index) => (
+                                  {record.prescription.map((med, _index) => (
                                     <li key={index}>{med}</li>
                                   ))}
                                 </ul>
@@ -823,7 +823,7 @@ function PatientDetailPage() {
                             </p>
                             <ul className='text-sm list-disc list-inside space-y-1'>
                               {insight.recommendations.map(
-                                (recommendation, index) => <li key={index}>{recommendation}</li>,
+                                (recommendation, _index) => <li key={index}>{recommendation}</li>,
                               )}
                             </ul>
                           </div>

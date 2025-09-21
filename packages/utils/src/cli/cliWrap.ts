@@ -97,21 +97,21 @@ export class CLIWrapper {
       const arg = args[i];
 
       // Handle long options (--option=value or --option value)
-      if (arg.startsWith("--")) {
+      if (arg?.startsWith("--")) {
         if (currentOption) {
           result.options[currentOption] = true; // Previous option was a flag
         }
 
         const [option, value] = arg.slice(2).split("=");
-        if (value !== undefined) {
+        if (value !== undefined && option) {
           result.options[option] = value;
           currentOption = null;
-        } else {
+        } else if (option) {
           currentOption = option;
         }
       }
       // Handle short options (-o value or -o=value)
-      else if (arg.startsWith("-") && arg.length > 1) {
+      else if (arg?.startsWith("-") && arg.length > 1) {
         if (currentOption) {
           result.options[currentOption] = true; // Previous option was a flag
         }
@@ -119,7 +119,9 @@ export class CLIWrapper {
         const option = arg.slice(1);
         if (option.includes("=")) {
           const [opt, value] = option.split("=");
-          result.options[opt] = value;
+          if (opt) {
+            result.options[opt] = value ?? '';
+          }
           currentOption = null;
         } else {
           currentOption = option;
@@ -128,12 +130,12 @@ export class CLIWrapper {
       // Handle option values or positional arguments
       else {
         if (currentOption) {
-          result.options[currentOption] = arg;
+          result.options[currentOption] = arg ?? '';
           currentOption = null;
         } else {
-          if (!result.command && this.commands.has(arg)) {
+          if (!result.command && arg && this.commands.has(arg)) {
             result.command = arg;
-          } else {
+          } else if (arg) {
             result.positional.push(arg);
           }
         }

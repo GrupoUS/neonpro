@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@neonpro/ui';
-import { Clock, FileText, Loader2, Settings } from 'lucide-react'; // Removed DollarSign
+import { Clock2 } from 'lucide-react'; // Removed DollarSign
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -148,7 +148,7 @@ export function ServiceCreationForm({
       onOpenChange(false);
 
       toast.success('Serviço criado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error creating service:', error);
       toast.error('Erro ao criar serviço. Tente novamente.');
     } finally {

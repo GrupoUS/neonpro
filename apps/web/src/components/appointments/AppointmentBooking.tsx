@@ -13,14 +13,14 @@
 
 import { addDays, endOfDay, format, isSameDay, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { AlertTriangle, Calendar, CheckCircle, Clock, User } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -161,7 +161,7 @@ export function AppointmentBooking({
   const timeSlots = generateTimeSlots();
 
   // Handle appointment booking
-  const handleBookAppointment = async (formData: AppointmentFormData) => {
+  const handleBookAppointment = async (_formData: any) => {
     try {
       const appointmentData = {
         ...formData,
@@ -184,7 +184,7 @@ export function AppointmentBooking({
       onBookingComplete?.(result);
       setIsBookingDialogOpen(false);
       setSelectedTime('');
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to book appointment:', error);
     }
   };
@@ -204,7 +204,7 @@ export function AppointmentBooking({
   };
 
   // Calendar day cell renderer with appointments
-  const renderDayContent = (date: Date) => {
+  const renderDayContent = (_date: any) => {
     const dayAppointments = appointments?.filter(apt => isSameDay(new Date(apt.startTime), date))
       || [];
 
@@ -214,7 +214,7 @@ export function AppointmentBooking({
         {dayAppointments.length > 0 && (
           <div className='absolute -bottom-1 left-1/2 transform -translate-x-1/2'>
             <div className='flex gap-1'>
-              {dayAppointments.slice(0, 3).map((apt, index) => (
+              {dayAppointments.slice(0, 3).map((apt, _index) => (
                 <div
                   key={apt.id}
                   className={cn(

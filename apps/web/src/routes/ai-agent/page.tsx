@@ -9,10 +9,10 @@ import { AIChat } from '@/components/ai-agent/ai-chat';
 import { AIChatWS } from '@/components/ai-agent/ai-chat-ws';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { createFileRoute } from '@tanstack/react-router';
-import { Brain, Calendar, MessageSquare, Shield, TrendingUp, Users, Zap } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import React, { useState } from 'react';
 
 export const Route = createFileRoute('/ai-agent/page')({
@@ -111,7 +111,7 @@ function AIAgentPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className='space-y-4'>
-                {features.map((feature, index) => (
+                {features.map((feature, _index) => (
                   <div key={index} className='flex items-start gap-3'>
                     <div className='flex items-center justify-center w-8 h-8 rounded-md bg-muted'>
                       <feature.icon className='h-4 w-4' />
@@ -134,7 +134,7 @@ function AIAgentPage() {
                 <CardDescription>Tente perguntar:</CardDescription>
               </CardHeader>
               <CardContent className='space-y-2'>
-                {examples.map((example, index) => (
+                {examples.map((example, _index) => (
                   <Button
                     key={index}
                     variant='ghost'

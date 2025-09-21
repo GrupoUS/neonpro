@@ -13,14 +13,14 @@
 
 'use client';
 
-import { Card, CardContent, CardHeader } from '@neonpro/ui';
-import { Calendar, Phone, User } from 'lucide-react';
+import { Card } from '@neonpro/ui';
+import { Calendar } from 'lucide-react';
 import React, { useCallback } from 'react';
 import {
   useAccessibilityPreferences,
   useScreenReaderAnnouncement,
 } from '../../hooks/useAccessibility';
-import { ACCESSIBILITY_LABELS_PT_BR, ScreenReaderUtils } from '../../utils/accessibility';
+import { ACCESSIBILITY_LABELS_PT_BR } from '../../utils/accessibility';
 
 interface PatientData {
   id: string;
@@ -291,7 +291,7 @@ export function AccessiblePatientList({
   const { announce } = useScreenReaderAnnouncement();
 
   const handlePatientSelect = useCallback(
-    (patient: PatientData) => {
+    (_patient: any) => {
       onPatientSelect(patient);
       announce(`Paciente ${patient.name} selecionado`, 'polite');
     },
@@ -304,7 +304,7 @@ export function AccessiblePatientList({
       role='list'
       aria-label={`Lista de pacientes. ${patients.length} pacientes encontrados.`}
     >
-      {patients.map((patient, index) => (
+      {patients.map((patient, _index) => (
         <div
           key={patient.id}
           role='listitem'

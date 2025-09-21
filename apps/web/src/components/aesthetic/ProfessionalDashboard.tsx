@@ -19,8 +19,8 @@ import {
 } from 'lucide-react';
 import React from 'react';
 import { Badge } from '../ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { Card } from '../ui/card';
+import { Tabs } from '../ui/tabs';
 
 export interface DashboardMetrics {
   patientsToday: number;
@@ -109,7 +109,7 @@ export function ProfessionalDashboard({
     return `${currency} ${amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (_status: any) => {
     const statusConfig = {
       completed: { variant: 'default' as const, label: 'Concluído' },
       in_progress: { variant: 'secondary' as const, label: 'Em andamento' },
@@ -125,7 +125,7 @@ export function ProfessionalDashboard({
     );
   };
 
-  const getActivityIcon = (type: string) => {
+  const getActivityIcon = (_type: any) => {
     switch (type) {
       case 'assessment':
         return <FileText className='h-4 w-4' />;

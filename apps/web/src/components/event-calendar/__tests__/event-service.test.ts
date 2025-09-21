@@ -5,7 +5,7 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { EventService } from '@/services/event.service';
-import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Supabase client
 vi.mock('@/integrations/supabase/client', () => ({

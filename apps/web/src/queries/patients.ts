@@ -172,7 +172,7 @@ export const patientStatsQueryOptions = () =>
 
 // Mutation options para criar paciente
 export const createPatientMutationOptions = {
-  mutationFn: async (patients: any) => {
+  mutationFn: async (_patients: any) => {
     const patientsArray = Array.isArray(patients) ? patients : [patients];
     const { data, error } = await (supabase as any)
       .from('patients')
@@ -186,7 +186,7 @@ export const createPatientMutationOptions = {
     // TODO: Invalidar queries relacionadas após sucesso
     // queryClient.invalidateQueries({ queryKey: ['patients'] });
   },
-  onError: (error: any) => {
+  onError: (_error: any) => {
     console.error('Error creating patient:', error);
   },
 };
@@ -210,14 +210,14 @@ export const updatePatientMutationOptions = {
     invalidateSupabaseQueries('patients');
     invalidateSupabaseQueries('patients');
   },
-  onError: (error: any) => {
+  onError: (_error: any) => {
     console.error('Error updating patient:', error);
   },
 };
 
 // Mutation options para deletar paciente
 export const deletePatientMutationOptions = {
-  mutationFn: async (id: string) => {
+  mutationFn: async (_id: any) => {
     const { error } = await supabase.from('patients').delete().eq('id', id);
 
     if (error) throw error;
@@ -227,7 +227,7 @@ export const deletePatientMutationOptions = {
     // TODO: Invalidar queries relacionadas após sucesso
     // queryClient.invalidateQueries({ queryKey: ['patients'] });
   },
-  onError: (error: any) => {
+  onError: (_error: any) => {
     console.error('Error deleting patient:', error);
   },
 };

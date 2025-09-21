@@ -1,9 +1,9 @@
 'use client';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import {
   Select,
@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { UniversalButton } from '@/components/ui/universal-button';
 import { useToast } from '@/hooks/use-toast';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
@@ -622,7 +622,7 @@ const generateMockTreatmentEffectiveness = (): TreatmentEffectiveness[] => [
 ];
 
 // Utility functions
-const getStatusColor = (status: string) => {
+const getStatusColor = (_status: any) => {
   switch (status) {
     case 'active':
       return 'text-green-600 bg-green-50 border-green-200';
@@ -639,7 +639,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const getStatusIcon = (status: string) => {
+const getStatusIcon = (_status: any) => {
   switch (status) {
     case 'active':
       return CheckCircle;
@@ -656,7 +656,7 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-const getPriorityColor = (priority: string) => {
+const getPriorityColor = (_priority: any) => {
   switch (priority) {
     case 'critical':
       return 'text-red-600 bg-red-50 border-red-200';
@@ -671,7 +671,7 @@ const getPriorityColor = (priority: string) => {
   }
 };
 
-const getPriorityLabel = (priority: string) => {
+const getPriorityLabel = (_priority: any) => {
   switch (priority) {
     case 'critical':
       return 'Crítico';
@@ -686,14 +686,14 @@ const getPriorityLabel = (priority: string) => {
   }
 };
 
-const formatCurrency = (value: number) => {
+const formatCurrency = (_value: any) => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   }).format(value);
 };
 
-const formatPercentage = (value: number) => {
+const formatPercentage = (_value: any) => {
   return `${(value * 100).toFixed(1)}%`;
 };
 
@@ -734,7 +734,7 @@ function AIInsightsPage() {
         setTreatmentEffectiveness(generateMockTreatmentEffectiveness());
 
         setLoading(false);
-      } catch (err) {
+      } catch (error) {
         setError('Erro ao carregar dados de IA');
         setLoading(false);
       }
@@ -770,7 +770,7 @@ function AIInsightsPage() {
     };
   }, [insights, models, noShowAnalysis]);
 
-  const handleInsightAction = (insight: AIInsight) => {
+  const handleInsightAction = (_insight: any) => {
     toast({
       title: 'Ação executada',
       description: `${insight.actionLabel} foi realizada com sucesso.`,
@@ -813,7 +813,7 @@ function AIInsightsPage() {
 
           {/* Stats skeleton */}
           <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5'>
-            {Array.from({ length: 5 }).map((_, index) => <Skeleton key={index} className='h-32' />)}
+            {Array.from({ length: 5 }).map((_, _index) => <Skeleton key={index} className='h-32' />)}
           </div>
 
           {/* Content skeleton */}
@@ -1125,7 +1125,7 @@ function AIInsightsPage() {
                       Recomendações:
                     </div>
                     <ul className='text-xs text-gray-600 space-y-1'>
-                      {insight.recommendations.slice(0, 2).map((rec, index) => (
+                      {insight.recommendations.slice(0, 2).map((rec, _index) => (
                         <li key={index} className='flex items-start gap-1'>
                           <span className='text-green-600 mt-1'>•</span>
                           <span>{rec}</span>
@@ -1343,7 +1343,7 @@ function AIInsightsPage() {
                 <CardContent className='space-y-3'>
                   {populationMetrics.demographics.locations
                     .slice(0, 5)
-                    .map((location, index) => (
+                    .map((location, _index) => (
                       <div
                         key={index}
                         className='flex justify-between items-center text-sm'
@@ -1487,7 +1487,7 @@ function AIInsightsPage() {
                       Fatores de Risco:
                     </div>
                     <div className='space-y-2'>
-                      {noShowAnalysis.factors.map((factor, index) => (
+                      {noShowAnalysis.factors.map((factor, _index) => (
                         <div
                           key={index}
                           className='flex items-center justify-between text-sm'
@@ -1518,7 +1518,7 @@ function AIInsightsPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className='space-y-3'>
-                  {noShowAnalysis.highRiskPatients.map((patient, index) => (
+                  {noShowAnalysis.highRiskPatients.map((patient, _index) => (
                     <div
                       key={index}
                       className='flex items-center justify-between p-2 border rounded'
@@ -1569,7 +1569,7 @@ function AIInsightsPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {treatmentEffectiveness.map((treatment, index) => (
+                        {treatmentEffectiveness.map((treatment, _index) => (
                           <tr key={index} className='border-b'>
                             <td className='p-2 font-medium'>
                               {treatment.treatmentType}
