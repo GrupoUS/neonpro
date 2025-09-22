@@ -186,11 +186,7 @@ export class MedicalLicenseDomainService {
       };
 
       // Store verification record for audit trail
-<<<<<<< HEAD
-      // await this.storeVerificationRecord(result, _request);
-=======
       await this.storeVerificationRecord(result, _request);
->>>>>>> origin/main
 
       return result;
     } catch (error) {
@@ -205,12 +201,8 @@ export class MedicalLicenseDomainService {
    * Validates verification request
    * @param request Verification request
    */
-  private validateVerificationRequest(_request: LicenseVerificationRequest): void {
-<<<<<<< HEAD
-    if (!_request.cfmNumber || !_request.cfmNumber.trim()) {
-=======
+  private validateVerificationRequest(request: LicenseVerificationRequest): void {
     if (!request.cfmNumber || !request.cfmNumber.trim()) {
->>>>>>> origin/main
       throw new Error("CFM number is required");
     }
 
@@ -327,11 +319,7 @@ export class MedicalLicenseDomainService {
   private async performManualVerification(cfmNumber: string, state: string): Promise<CFMRegistration> {
     try {
       // Implement manual verification using repository
-<<<<<<< HEAD
-      // const manualData = await this.licenseRepository.getManualVerification(cfmNumber, state);
-=======
       const manualData = await this.licenseRepository.getManualVerification(cfmNumber, state);
->>>>>>> origin/main
 
       // For now, create a pending verification record
       const pendingRegistration: CFMRegistration = {
@@ -377,11 +365,7 @@ export class MedicalLicenseDomainService {
       }
 
       // Get physician's telemedicine authorization data from repository
-<<<<<<< HEAD
-      // let authData = await this.licenseRepository.getTelemedicineAuthorization(cfmNumber);
-=======
       let authData = await this.licenseRepository.getTelemedicineAuthorization(cfmNumber);
->>>>>>> origin/main
 
       let authorization: TelemedicineAuthorization;
 

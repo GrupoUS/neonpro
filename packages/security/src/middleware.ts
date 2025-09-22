@@ -192,11 +192,7 @@ export function authentication() {
 
       // For now, just set a placeholder user but use the token for logging
       console.log('Token received:', token.substring(0, 10) + '...');
-<<<<<<< HEAD
-      c.set('user', { id: 'placeholder', _role: 'user' });
-=======
-      c.set('user', { id: 'placeholder', _role: 'user_ });
->>>>>>> origin/main
+c.set('user', { id: 'placeholder', _role: 'user' });
 
       await next();
     } catch (_error: unknown) {
@@ -319,11 +315,7 @@ export function healthcareDataProtection() {
 
       console.log('[Healthcare Access]', {
         requestId: c.get('requestId'),
-<<<<<<< HEAD
-        _userId: user?.id || 'anonymous',
-=======
-        _userId: user?.id || 'anonymous_,
->>>>>>> origin/main
+userId: user?.id || 'anonymous',
         patientId: patientId ? '[REDACTED]' : undefined,
         endpoint: c.req.path,
         method: c.req.method,

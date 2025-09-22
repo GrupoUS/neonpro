@@ -70,16 +70,8 @@ export default defineConfig(({ mode }) => {
       alias: [
         { find: '@', replacement: path.resolve(__dirname, './src') },
         {
-          find: '@neonpro/ui',
-          replacement: path.resolve(__dirname, '../../packages/ui/src'),
-        },
-        {
           find: '@neonpro/shared',
           replacement: path.resolve(__dirname, '../../packages/shared/src'),
-        },
-        {
-          find: '@neonpro/utils',
-          replacement: path.resolve(__dirname, '../../packages/utils/src'),
         },
         {
           find: '@neonpro/types',

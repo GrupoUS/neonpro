@@ -592,3 +592,34 @@ export function useEmergencyTriage(_appointmentId?: string) {
     performTriage: useCallback(() => Promise.resolve(), []),
   };
 }
+
+// AI Assistant hook (stub implementation for CI)
+export function useAIAssistant() {
+  return {
+    isAvailable: false,
+    suggestions: [],
+    transcribeAudio: useCallback(() => Promise.resolve(''), []),
+    generateSummary: useCallback(() => Promise.resolve(''), []),
+    isProcessing: false,
+  };
+}
+
+// Chat audit hook (stub implementation for CI)
+export function useChatAudit() {
+  return {
+    auditLog: [],
+    isCompliant: true,
+    addAuditEntry: useCallback(() => Promise.resolve(), []),
+    generateReport: useCallback(() => Promise.resolve({}), []),
+  };
+}
+
+// Chat compliance hook (stub implementation for CI)
+export function useChatCompliance() {
+  return {
+    complianceStatus: 'compliant',
+    violations: [],
+    checkCompliance: useCallback(() => Promise.resolve(true), []),
+    generateComplianceReport: useCallback(() => Promise.resolve({}), []),
+  };
+}

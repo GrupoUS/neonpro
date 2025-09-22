@@ -5,9 +5,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-describe('Security Logic Validation - TDD RED Phase',() => {
-  describe('Security Test Logic Error',() => {
-    it('should FAIL: hardcoded secrets detection should incorrectly return true',() => {
+describe('Security Logic Validation - TDD RED Phase', () => {
+  describe('Security Test Logic Error', () => {
+    it('should FAIL: hardcoded secrets detection should incorrectly return true', () => {
       // This is the failing test in tests/security/telemedicine-security.test.ts
       // The test expects false but gets true for hardcoded secrets detection
 
@@ -21,7 +21,7 @@ describe('Security Logic Validation - TDD RED Phase',() => {
         };
       };
 
-      const result = analyzeSecurityVulnerabilities(
+      const result = analyzeSecurityVulnerabilities();
 
       // The test expects this to be false but it's currently true
       // This represents the actual failing test scenario
@@ -37,8 +37,9 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       };
 
       expect(currentState.expected).toBe(currentState.actual); // Now passes
+    });
 
-    it('should FAIL: security test expectations should be incorrect',() => {
+    it('should FAIL: security test expectations should be incorrect', () => {
       // Test for incorrect security test expectations
       const incorrectExpectations = [
         {
@@ -62,14 +63,16 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       ];
 
       // Should fail initially - incorrect expectations exist
-      expect(incorrectExpectations.length).toBeGreaterThan(0
+      expect(incorrectExpectations.length).toBeGreaterThan(0);
 
       // At least one expectation should be wrong
-      const wrongExpectations = incorrectExpectations.filter(exp => exp.expected !== exp.actual
-      expect(wrongExpectations.length).toBeGreaterThan(0
+      const wrongExpectations = incorrectExpectations.filter(exp => exp.expected !== exp.actual);
+      expect(wrongExpectations.length).toBeGreaterThan(0);
+    });
+  });
 
-  describe('Security Vulnerability Detection Logic',() => {
-    it('should FAIL: vulnerability detection should have false positives',() => {
+  describe('Security Vulnerability Detection Logic', () => {
+    it('should FAIL: vulnerability detection should have false positives', () => {
       // Test for false positives in security detection
       const falsePositives = [
         {
@@ -87,9 +90,10 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       ];
 
       // Should fail initially - false positives exist
-      expect(falsePositives.length).toBeGreaterThan(0
+      expect(falsePositives.length).toBeGreaterThan(0);
+    });
 
-    it('should FAIL: vulnerability detection should miss real issues',() => {
+    it('should FAIL: vulnerability detection should miss real issues', () => {
       // Test for missed security vulnerabilities
       const missedVulnerabilities = [
         {
@@ -110,10 +114,12 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       ];
 
       // Should fail initially - real issues missed
-      expect(missedVulnerabilities.length).toBeGreaterThan(0
+      expect(missedVulnerabilities.length).toBeGreaterThan(0);
+    });
+  });
 
-  describe('Security Compliance Logic',() => {
-    it('should FAIL: compliance checks should be incorrect',() => {
+  describe('Security Compliance Logic', () => {
+    it('should FAIL: compliance checks should be incorrect', () => {
       // Test for incorrect compliance logic
       const complianceIssues = [
         {
@@ -140,13 +146,14 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       ];
 
       // Should fail initially - compliance logic incorrect
-      expect(complianceIssues.length).toBeGreaterThan(0
+      expect(complianceIssues.length).toBeGreaterThan(0);
 
       // At least one compliance check is wrong
-      const wrongChecks = complianceIssues.filter(check => check.expected !== check.actual
-      expect(wrongChecks.length).toBeGreaterThan(0
+      const wrongChecks = complianceIssues.filter(check => check.expected !== check.actual);
+      expect(wrongChecks.length).toBeGreaterThan(0);
+    });
 
-    it('should FAIL: security scoring should be incorrect',() => {
+    it('should FAIL: security scoring should be incorrect', () => {
       // Test for incorrect security scoring
       const scoringIssues = [
         {
@@ -170,10 +177,12 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       ];
 
       // Should fail initially - scoring incorrect
-      expect(scoringIssues.length).toBeGreaterThan(0
+      expect(scoringIssues.length).toBeGreaterThan(0);
+    });
+  });
 
-  describe('Security Test Data Issues',() => {
-    it('should FAIL: security test fixtures should be incorrect',() => {
+  describe('Security Test Data Issues', () => {
+    it('should FAIL: security test fixtures should be incorrect', () => {
       // Test for incorrect test fixtures
       const fixtureIssues = [
         {
@@ -197,9 +206,10 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       ];
 
       // Should fail initially - fixture issues exist
-      expect(fixtureIssues.length).toBeGreaterThan(0
+      expect(fixtureIssues.length).toBeGreaterThan(0);
+    });
 
-    it('should FAIL: security test environment should be misconfigured',() => {
+    it('should FAIL: security test environment should be misconfigured', () => {
       // Test for misconfigured security test environment
       const envIssues = [
         {
@@ -223,10 +233,12 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       ];
 
       // Should fail initially - env issues exist
-      expect(envIssues.length).toBeGreaterThan(0
+      expect(envIssues.length).toBeGreaterThan(0);
+    });
+  });
 
-  describe('Security Mocking Issues',() => {
-    it('should FAIL: security mocks should be unrealistic',() => {
+  describe('Security Mocking Issues', () => {
+    it('should FAIL: security mocks should be unrealistic', () => {
       // Test for unrealistic security mocks
       const mockIssues = [
         {
@@ -247,13 +259,14 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       ];
 
       // Should fail initially - unrealistic mocks exist
-      expect(mockIssues.length).toBeGreaterThan(0
+      expect(mockIssues.length).toBeGreaterThan(0);
 
       // All mocks should be unrealistic (failing state)
-      const unrealisticMocks = mockIssues.filter(mock => !mock.realistic
-      expect(unrealisticMocks.length).toBe(mockIssues.length
+      const unrealisticMocks = mockIssues.filter(mock => !mock.realistic);
+      expect(unrealisticMocks.length).toBe(mockIssues.length);
+    });
 
-    it('should FAIL: security test scenarios should be incomplete',() => {
+    it('should FAIL: security test scenarios should be incomplete', () => {
       // Test for incomplete security test scenarios
       const missingScenarios = [
         'Denial of service attacks',
@@ -267,10 +280,12 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       ];
 
       // Should fail initially - scenarios missing
-      expect(missingScenarios.length).toBeGreaterThan(0
+      expect(missingScenarios.length).toBeGreaterThan(0);
+    });
+  });
 
-  describe('Security Integration Issues',() => {
-    it('should FAIL: security middleware integration should be broken',() => {
+  describe('Security Integration Issues', () => {
+    it('should FAIL: security middleware integration should be broken', () => {
       // Test for broken security middleware integration
       const integrationIssues = [
         {
@@ -296,9 +311,10 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       ];
 
       // Should fail initially - integration issues exist
-      expect(integrationIssues.length).toBeGreaterThan(0
+      expect(integrationIssues.length).toBeGreaterThan(0);
+    });
 
-    it('should FAIL: security logging should be insufficient',() => {
+    it('should FAIL: security logging should be insufficient', () => {
       // Test for insufficient security logging
       const loggingIssues = [
         {
@@ -319,10 +335,12 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       ];
 
       // Should fail initially - logging insufficient
-      expect(loggingIssues.length).toBeGreaterThan(0
+      expect(loggingIssues.length).toBeGreaterThan(0);
+    });
+  });
 
-  describe('Integration - Complete Security Logic',() => {
-    it('should FAIL: All security logic issues should compromise security validation',() => {
+  describe('Integration - Complete Security Logic', () => {
+    it('should FAIL: All security logic issues should compromise security validation', () => {
       // Comprehensive test for all security logic issues
       const securityLogicIssues = {
         testLogic: [
@@ -353,13 +371,14 @@ describe('Security Logic Validation - TDD RED Phase',() => {
 
       // Count total issues
       const totalIssues = Object.values(securityLogicIssues)
-        .reduce((sum, issues) => sum + issues.length, 0
+        .reduce((sum, issues) => sum + issues.length, 0);
 
       // Should fail initially - multiple security logic issues
-      expect(totalIssues).toBeGreaterThan(0
-      console.log(`🔴 Security Logic Issues: ${totalIssues} identified`
+      expect(totalIssues).toBeGreaterThan(0);
+      console.log(`🔴 Security Logic Issues: ${totalIssues} identified`);
+    });
 
-    it('should document security logic error patterns for fixing',() => {
+    it('should document security logic error patterns for fixing', () => {
       // Document the exact security logic error patterns
       const securityErrorPatterns = [
         {
@@ -393,12 +412,14 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       ];
 
       // Should document current state for GREEN phase
-      expect(securityErrorPatterns.length).toBeGreaterThan(0
+      expect(securityErrorPatterns.length).toBeGreaterThan(0);
       securityErrorPatterns.forEach(pattern => {
-        expect(pattern.pattern).toBeDefined(
-        expect(pattern.fixRequired).toBeDefined(
+        expect(pattern.pattern).toBeDefined();
+        expect(pattern.fixRequired).toBeDefined();
+      });
+    });
 
-    it('should identify the specific failing test for priority fixing',() => {
+    it('should identify the specific failing test for priority fixing', () => {
       // Highlight the critical failing test that needs immediate attention
       const criticalFailingTest = {
         file: 'tests/security/telemedicine-security.test.ts',
@@ -413,10 +434,13 @@ describe('Security Logic Validation - TDD RED Phase',() => {
       };
 
       // This is the specific test that's currently failing
-      expect(criticalFailingTest.file).toBeDefined(
-      expect(criticalFailingTest.error).toBe('expected true to be false')
-      expect(criticalFailingTest.priority).toBe('high')
+      expect(criticalFailingTest.file).toBeDefined();
+      expect(criticalFailingTest.error).toBe('expected true to be false');
+      expect(criticalFailingTest.priority).toBe('high');
 
       console.log(
         `🚨 Critical Failing Test: ${criticalFailingTest.file} - ${criticalFailingTest.test}`,
-      
+      );
+    });
+  });
+});

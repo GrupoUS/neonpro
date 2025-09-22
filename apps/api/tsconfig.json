@@ -4,16 +4,12 @@
     "composite": true,
     "noEmit": false,
     "outDir": "./dist",
-<<<<<<< HEAD
     "rootDir": "./src",
     "baseUrl": ".",
     "lib": ["ES2022", "DOM"],
     "types": ["node", "vitest/globals"],
     "jsx": "preserve",
-=======
-    "baseUrl": "./src",
     "moduleResolution": "node",
->>>>>>> origin/main
     "paths": {
       "@/*": ["./src/*"],
       "@/lib/*": ["./src/lib/*"],

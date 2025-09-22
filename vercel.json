@@ -1,38 +1,4 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "version": 2,
-  "name": "neonpro-web",
-  "regions": ["gru1"],
-  "installCommand": "bun install --no-frozen-lockfile",
-  "buildCommand": "bunx turbo build --filter=@neonpro/web",
-  "outputDirectory": "apps/web/dist",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=63072000; includeSubDomains; preload"
-        },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-DNS-Prefetch-Control", "value": "off" },
-        { "key": "Cross-Origin-Opener-Policy", "value": "same-origin" },
-        {
-          "key": "Cross-Origin-Embedder-Policy",
-          "value": "require-corp; report-to=csp-endpoint"
-        },
-        { "key": "Cross-Origin-Resource-Policy", "value": "same-site" },
-        {
-          "key": "Permissions-Policy",
-          "value": "geolocation=(), microphone=(), camera=(), payment=(), usb=(), vr=(), gyroscope=(), magnetometer=(), accelerometer=()"
-        }
-      ]
-    }
-  ]
+  "installCommand": "cd apps/web && npm install",
+  "buildCommand": "cd apps/web && npm run build"
 }

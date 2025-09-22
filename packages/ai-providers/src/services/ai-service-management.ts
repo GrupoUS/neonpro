@@ -5,15 +5,16 @@
  * for AI services in the healthcare platform.
  */
 
-import { AIProvider } from "./ai-provider";
+import { AIProvider } from "../providers/ai-provider";
+
 
 // Simple error class for AI service management
 class AIServiceError extends Error {
   constructor(
     public code: string,
     message: string,
-    public category: string = "system",
-    public severity: string = "medium",
+    public category: string = "system" as string,
+    public severity: string = "medium" as string,
   ) {
     super(message);
     this.name = "AIServiceError";
@@ -90,15 +91,15 @@ export class AIServiceManagement {
       const results = await Promise.allSettled(healthChecks);
       const healthStatuses: AIServiceHealth[] = [];
 
-      results.forEach((result,_index) => {
+      results.forEach((result, _index) => {
         if (result.status === "fulfilled") {
           healthStatuses.push(result.value);
         } else {
           // Create a failed health status for providers that couldn't be checked
-          const providerName = Array.from(this.providers.keys())[index];
+          const providerName = Array.from(this.providers.keys())[_index];
           healthStatuses.push({
             status: "unavailable",
-            provider: providerName,
+            provider: providerName || "unknown",
             model: "unknown",
             responseTime: 0,
             lastCheck: new Date(),
@@ -144,12 +145,14 @@ export class AIServiceManagement {
       const results = await Promise.allSettled(checks);
       const availabilities: ModelAvailability[] = [];
 
-      results.forEach((result,_index) => {
+      results.forEach((result, _index) => {
         if (result.status === "fulfilled") {
           availabilities.push(result.value);
         } else {
           // Create unavailable status for models that couldn't be checked
-          const { provider: p, model: m } = modelsToCheck[index];
+          const modelInfo = modelsToCheck[_index];
+          const p = modelInfo?.provider || "unknown";
+          const m = modelInfo?.model || "unknown";
           availabilities.push({
             provider: p,
             model: m,
@@ -416,22 +419,18 @@ export class AIServiceManagement {
     for (let i = 0; i < Math.min(daysDiff, 30); i++) {
       const date = new Date(period.start.getTime() + i * 24 * 60 * 60 * 1000);
       dailyBreakdown.push({
-        date: date.toISOString().split("T")[0],
+        date: date.toISOString().split("T")[0] as string,
         requests: Math.floor(Math.random() * 100) + 10,
         tokens: Math.floor(Math.random() * 50000) + 5000,
         cost: Math.random() * 2 + 0.1,
       });
     }
 
-    const totalRequests = dailyBreakdown.reduce((sum,_day) => sum + day.requests,
-      0,
-    );
+    const totalRequests = dailyBreakdown.reduce((sum, _day) => sum + _day.requests, 0);
     const successfulRequests = Math.floor(totalRequests * 0.95);
     const failedRequests = totalRequests - successfulRequests;
-    const totalTokensUsed = dailyBreakdown.reduce((sum,_day) => sum + day.tokens,
-      0,
-    );
-    const totalCost = dailyBreakdown.reduce((sum,_day) => sum + day.cost, 0);
+    const totalTokensUsed = dailyBreakdown.reduce((sum, _day) => sum + _day.tokens, 0);
+    const totalCost = dailyBreakdown.reduce((sum, _day) => sum + _day.cost, 0);
 
     return {
       provider: providerName,

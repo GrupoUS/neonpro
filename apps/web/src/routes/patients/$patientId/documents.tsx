@@ -220,17 +220,13 @@ function PatientDocumentsPage() {
     },
   ];
   // Document management handlers
-  const handleDeleteDocument = async (_documentId: any) => {
+  const handleDeleteDocument = async (documentId: string) => {
     try {
       await deleteMutation.mutateAsync({ patientId, documentId });
       setSelectedDocuments(prev => prev.filter(id => id !== documentId));
       toast.success('Documento excluído com sucesso');
-    } catch (_error) {
-<<<<<<< HEAD
-      console.error('Error deleting document:', _error);
-=======
+    } catch (error) {
       console.error('Error deleting document:', error);
->>>>>>> origin/main
       toast.error('Erro ao excluir documento');
     }
   };
@@ -250,12 +246,8 @@ function PatientDocumentsPage() {
         tags,
       });
       toast.success('Documento enviado com sucesso');
-    } catch (_error) {
-<<<<<<< HEAD
-      console.error('Error uploading document:', _error);
-=======
+    } catch (error) {
       console.error('Error uploading document:', error);
->>>>>>> origin/main
       toast.error('Erro ao enviar documento');
     }
   };
@@ -592,12 +584,8 @@ function DocumentCard({
       setIsDownloading(true);
       await downloadDocument(patientId, document.id, document.name);
       toast.success('Download concluído');
-    } catch (_error) {
-<<<<<<< HEAD
-      console.error('Error downloading document:', _error);
-=======
+    } catch (error) {
       console.error('Error downloading document:', error);
->>>>>>> origin/main
       toast.error('Erro ao baixar documento');
     } finally {
       setIsDownloading(false);
@@ -615,12 +603,8 @@ function DocumentCard({
     try {
       setIsDeleting(true);
       onDelete(document.id);
-    } catch (_error) {
-<<<<<<< HEAD
-      console.error('Error deleting document:', _error);
-=======
+    } catch (error) {
       console.error('Error deleting document:', error);
->>>>>>> origin/main
       toast.error('Erro ao excluir documento');
     } finally {
       setIsDeleting(false);
@@ -631,13 +615,13 @@ function DocumentCard({
     // TODO: Implement view functionality (open in modal or new tab)
     console.log('View document:', document.id);
   };
-  const getFileIcon = (_type: any) => {
+  const getFileIcon = (type: string) => {
     if (type.startsWith('image/')) return Image;
     if (type === 'application/pdf') return FileText;
     return File;
   };
 
-  const getCategoryBadge = (_category: any) => {
+  const getCategoryBadge = (category: string) => {
     const categoryMap = {
       medical: { label: 'Médico', variant: 'default' as const },
       exams: { label: 'Exame', variant: 'secondary' as const },
@@ -654,7 +638,7 @@ function DocumentCard({
     );
   };
 
-  const formatFileSize = (_bytes: any) => {
+  const formatFileSize = (bytes: number) => {
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     if (bytes === 0) return '0 Bytes';
     const i = Math.floor(Math.log(bytes) / Math.log(1024));

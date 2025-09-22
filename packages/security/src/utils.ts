@@ -334,11 +334,7 @@ export class SecurityUtils {
     const lowercase = 'abcdefghijklmnopqrstuvwxyz';
     const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const numbers = '0123456789';
-<<<<<<< HEAD
-    const special = '!@#$%^&*()_+-=[]{}|;:,.<>?'
-=======
-    const special = ''!@#$%^&*()_+-=[]{}|;:,.<>?'
->>>>>>> origin/main
+const special = '!@#$%^&*()_+-=[]{}|;:,.<>?'
 
     const allChars = lowercase + uppercase + numbers + special;
     let password = '';

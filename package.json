@@ -4,7 +4,7 @@
   "description": "NeonPro aesthetic clinic management platform - Turborepo monorepo",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@8.15.1+sha256.245fe901f8e7fa8782d7f17d32b6a83995e2ae03984cb5b62b8949bfdc27c7b5",
+  "packageManager": "npm@8.15.1",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=8.0.0"
@@ -24,7 +24,8 @@
     "tar-fs": ">=2.1.3",
     "got": ">=11.8.5",
     "tough-cookie": ">=4.1.3",
-    "cookie": ">=0.7.0"
+    "cookie": ">=0.7.0",
+    "bun": "^1.2.22"
   },
   "scripts": {
     "build": "bunx turbo build",
@@ -75,8 +76,8 @@
   "author": "NeonPro Development Team",
   "license": "MIT",
   "dependencies": {
-    "cross-spawn": "^6.0.6",
     "dotenv": "^17.2.2",
+    "lodash-es": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "lovable-tagger": "^1.1.9",
     "turbo": "^2.5.6"

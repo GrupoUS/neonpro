@@ -37,8 +37,8 @@ class MockProvider implements AIProviderInterface {
         delta: chunkContent,
         finished: i === words.length - 1,
         finishReason: i === words.length - 1 ? "stop" : undefined,
-        provider: "mock",
-      };
+        provider: "mock" as AIProvider,
+      } as StreamChunk;
       await new Promise((resolve) => setTimeout(resolve, 25));
     }
   }
@@ -99,7 +99,7 @@ export class AIProviderFactory {
         return {
           ...result,
           provider: result.provider ?? providerName,
-        };
+        } as GenerateAnswerResult;
       } catch (error) {
         lastError = error as Error;
         console.warn(`Provider ${providerName} failed:`, error);
@@ -129,7 +129,7 @@ export class AIProviderFactory {
           yield {
             ...chunk,
             provider: chunk.provider ?? providerName,
-          };
+          } as StreamChunk;
         }
         return;
       } catch (error) {

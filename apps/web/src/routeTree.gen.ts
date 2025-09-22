@@ -27,7 +27,6 @@ import { Route as ServicesProfessionalServicesRouteImport } from './routes/servi
 import { Route as ServicesPatientsRouteImport } from './routes/services/patients'
 import { Route as ServicesClientsRouteImport } from './routes/services/clients'
 import { Route as ServicesAppointmentsRouteImport } from './routes/services/appointments'
-import { Route as PatientsRegisterBackupRouteImport } from './routes/patients/register-backup'
 import { Route as PatientsRegisterRouteImport } from './routes/patients/register'
 import { Route as PatientsIdBackupRouteImport } from './routes/patients/[id]-backup'
 import { Route as PatientsIdRouteImport } from './routes/patients/[id]'
@@ -156,11 +155,6 @@ const ServicesClientsRoute = ServicesClientsRouteImport.update({
 const ServicesAppointmentsRoute = ServicesAppointmentsRouteImport.update({
   id: '/services/appointments',
   path: '/services/appointments',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PatientsRegisterBackupRoute = PatientsRegisterBackupRouteImport.update({
-  id: '/patients/register-backup',
-  path: '/patients/register-backup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatientsRegisterRoute = PatientsRegisterRouteImport.update({
@@ -378,7 +372,6 @@ export interface FileRoutesByFullPath {
   '/patients/id': typeof PatientsIdRoute
   '/patients/id-backup': typeof PatientsIdBackupRoute
   '/patients/register': typeof PatientsRegisterRoute
-  '/patients/register-backup': typeof PatientsRegisterBackupRoute
   '/services/appointments': typeof ServicesAppointmentsRoute
   '/services/clients': typeof ServicesClientsRoute
   '/services/patients': typeof ServicesPatientsRoute
@@ -433,7 +426,6 @@ export interface FileRoutesByTo {
   '/patients/id': typeof PatientsIdRoute
   '/patients/id-backup': typeof PatientsIdBackupRoute
   '/patients/register': typeof PatientsRegisterRoute
-  '/patients/register-backup': typeof PatientsRegisterBackupRoute
   '/services/appointments': typeof ServicesAppointmentsRoute
   '/services/clients': typeof ServicesClientsRoute
   '/services/patients': typeof ServicesPatientsRoute
@@ -490,7 +482,6 @@ export interface FileRoutesById {
   '/patients/id': typeof PatientsIdRoute
   '/patients/id-backup': typeof PatientsIdBackupRoute
   '/patients/register': typeof PatientsRegisterRoute
-  '/patients/register-backup': typeof PatientsRegisterBackupRoute
   '/services/appointments': typeof ServicesAppointmentsRoute
   '/services/clients': typeof ServicesClientsRoute
   '/services/patients': typeof ServicesPatientsRoute
@@ -548,7 +539,6 @@ export interface FileRouteTypes {
     | '/patients/id'
     | '/patients/id-backup'
     | '/patients/register'
-    | '/patients/register-backup'
     | '/services/appointments'
     | '/services/clients'
     | '/services/patients'
@@ -603,7 +593,6 @@ export interface FileRouteTypes {
     | '/patients/id'
     | '/patients/id-backup'
     | '/patients/register'
-    | '/patients/register-backup'
     | '/services/appointments'
     | '/services/clients'
     | '/services/patients'
@@ -659,7 +648,6 @@ export interface FileRouteTypes {
     | '/patients/id'
     | '/patients/id-backup'
     | '/patients/register'
-    | '/patients/register-backup'
     | '/services/appointments'
     | '/services/clients'
     | '/services/patients'
@@ -716,7 +704,6 @@ export interface RootRouteChildren {
   PatientsIdRoute: typeof PatientsIdRoute
   PatientsIdBackupRoute: typeof PatientsIdBackupRoute
   PatientsRegisterRoute: typeof PatientsRegisterRoute
-  PatientsRegisterBackupRoute: typeof PatientsRegisterBackupRoute
   ServicesAppointmentsRoute: typeof ServicesAppointmentsRoute
   ServicesClientsRoute: typeof ServicesClientsRoute
   ServicesPatientsRoute: typeof ServicesPatientsRoute
@@ -859,13 +846,6 @@ declare module '@tanstack/react-router' {
       path: '/services/appointments'
       fullPath: '/services/appointments'
       preLoaderRoute: typeof ServicesAppointmentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/patients/register-backup': {
-      id: '/patients/register-backup'
-      path: '/patients/register-backup'
-      fullPath: '/patients/register-backup'
-      preLoaderRoute: typeof PatientsRegisterBackupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patients/register': {
@@ -1183,7 +1163,6 @@ const rootRouteChildren: RootRouteChildren = {
   PatientsIdRoute: PatientsIdRoute,
   PatientsIdBackupRoute: PatientsIdBackupRoute,
   PatientsRegisterRoute: PatientsRegisterRoute,
-  PatientsRegisterBackupRoute: PatientsRegisterBackupRoute,
   ServicesAppointmentsRoute: ServicesAppointmentsRoute,
   ServicesClientsRoute: ServicesClientsRoute,
   ServicesPatientsRoute: ServicesPatientsRoute,

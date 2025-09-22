@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
-
-import { useState, useEffect, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 /**
  * Hook for mobile optimization in healthcare applications
