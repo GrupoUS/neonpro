@@ -17,7 +17,7 @@ export type ChatSessionStatus = "active" | "closed" | "error";
 export interface ChatSession {
   id: string;
   clinicId: string;
-  (userId): string;
+  userId: string;
   locale: "pt-BR" | "en-US";
   startedAt: string; // ISO
   lastActivityAt: string; // ISO
@@ -31,7 +31,7 @@ export interface ChatSession {
 export interface ChatMessage {
   id: string;
   sessionId: string;
-  (role): ChatRole;
+  role: ChatRole;
   content: string;
   redactionFlags?: string[];
   createdAt: string; // ISO
@@ -45,7 +45,7 @@ export type ConsentStatus = "valid" | "missing" | "invalid";
 export interface AuditEvent {
   id: string;
   clinicId: string;
-  (userId): string;
+  userId: string;
   sessionId?: string;
   actionType:
     | "query"

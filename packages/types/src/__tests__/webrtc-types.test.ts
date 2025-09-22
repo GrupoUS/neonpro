@@ -31,8 +31,8 @@ import type {
 import type * as WebRTC from "../webrtc";
 
 describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
-  describe(""Type Export Resolution") => {
-    it(""should import WebRTC types without TypeScript conflicts","async () => {
+  describe("Type Export Resolution", () => {
+    it("should import WebRTC types without TypeScript conflicts", async () => {
       // Test that WebRTC types can be imported without conflicts
       // Note: TypeScript types are compile-time only, not runtime accessible
 
@@ -198,7 +198,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
         sessionId: "session-123",
         eventType: "session-start" as const,
         timestamp: new Date().toISOString(),
-        (userId): "doctor-1",
+        userId: "doctor-1",
         userRole: "doctor" as const,
         dataClassification: "sensitive" as MedicalDataClassification,
         description: "Telemedicine session started",

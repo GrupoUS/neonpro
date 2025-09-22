@@ -62,7 +62,7 @@ export class RedisCacheBackend implements CacheBackend {
   constructor(config: CacheConfig, redisConfig: RedisConfig) {
     this.config = config;
     this.redisConfig = this.validateRedisConfig(redisConfig);
-    this.securityKey = process.env.CACHE_SECURITY_KEY || ''healthcare_cache_security_key'
+    this.securityKey = process.env.CACHE_SECURITY_KEY || 'healthcare_cache_security_key';
     this.stats = this.initializeStats();
 
     // Initialize Redis connection
@@ -224,7 +224,7 @@ export class RedisCacheBackend implements CacheBackend {
       }
 
       // Clear only keys with our prefix
-      const prefix = this.redisConfig.keyPrefix || ''healthcare_cache:'
+      const prefix = this.redisConfig.keyPrefix || 'healthcare_cache:';
       const keys = await this.safeRedisOperation(() => this.redis.keys(`${prefix}*`));
       
       if (keys.length > 0) {
@@ -487,7 +487,7 @@ export class RedisCacheBackend implements CacheBackend {
    * Generate secure cache key with hashing
    */
   private generateSecureKey(key: string): string {
-    const prefix = this.redisConfig.keyPrefix || ''healthcare_cache:'
+    const prefix = this.redisConfig.keyPrefix || 'healthcare_cache:';
     const timestamp = Date.now();
     const hash = createHash('sha256')
       .update(key + this.securityKey + timestamp)
@@ -691,7 +691,7 @@ export class RedisCacheBackend implements CacheBackend {
       ...config,
       connectTimeout: config.connectTimeout || 5000,
       commandTimeout: config.commandTimeout || 5000,
-      keyPrefix: config.keyPrefix || 'healthcare_cache:_,
+      keyPrefix: config.keyPrefix || 'healthcare_cache:',
       database: config.database || 0,
       family: config.family || 0,
       connectionName: config.connectionName || 'healthcare-cache-backend'
@@ -717,12 +717,12 @@ export class RedisCacheBackend implements CacheBackend {
  */
 export function createRedisCacheBackend(config: CacheConfig): RedisCacheBackend {
   const redisConfig: RedisConfig = {
-    url: process.env.REDIS_URL || 'redis://localhost:6379_,
+    url: process.env.REDIS_URL || 'redis://localhost:6379',
     password: process.env.REDIS_PASSWORD,
     username: process.env.REDIS_USERNAME,
-    tls: process.env.REDIS_TLS === 'true_,
-    database: parseInt(process.env.REDIS_DATABASE || '0_),
-    keyPrefix: process.env.REDIS_KEY_PREFIX || 'healthcare_cache:_,
+    tls: process.env.REDIS_TLS === 'true',
+    database: parseInt(process.env.REDIS_DATABASE || '0'),
+    keyPrefix: process.env.REDIS_KEY_PREFIX || 'healthcare_cache:',
     connectTimeout: 5000,
     commandTimeout: 5000,
     retryDelayOnFailover: 100,

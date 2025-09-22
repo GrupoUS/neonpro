@@ -557,7 +557,7 @@ export class Worker {
    * Create timeout promise
    */
   private createTimeoutPromise(timeout: number): Promise<never> {
-    return new Promise((, reject) => {
+    return new Promise((_, reject) => {
       setTimeout(() => {
         reject(new Error(`Job execution timeout after ${timeout}ms`));
       }, timeout);

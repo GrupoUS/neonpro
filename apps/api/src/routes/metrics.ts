@@ -95,9 +95,9 @@ metricsApi.get('/dashboard', async c => {
     {} as Record<string, number[]>,
   );
 
-  const webVitalsAverages = Object.entries(webVitalsByName).reduce((acc,_[name,_values]) => {
+  const webVitalsAverages = Object.entries(webVitalsByName).reduce((acc, [name, values]) => {
       acc[name] = {
-        average: values.reduce((sum,_val) => sum + val, 0) / values.length,
+        average: values.reduce((sum, val) => sum + val, 0) / values.length,
         p95: percentile(values, 95),
         p99: percentile(values, 99),
         count: values.length,

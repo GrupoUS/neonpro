@@ -187,13 +187,13 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     vi.restoreAllMocks();
   });
 
-  it(_'should export AI analyze route handler',async () => {
+  it('should export AI analyze route handler', async () => {
     const module = await import('../analyze');
     expect(module.default).toBeDefined();
   });
 
-  describe(_'Successful AI Analysis Operations'), () => {
-    it(_'should analyze structured patient data',async () => {
+  describe('Successful AI Analysis Operations', () => {
+    it('should analyze structured patient data', async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -245,7 +245,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(data.data.results.recommendations).toHaveLength(2);
     });
 
-    it(_'should analyze medical images',async () => {
+    it('should analyze medical images', async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -285,7 +285,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(mockAIChatService.analyzeImage).toHaveBeenCalled();
     });
 
-    it(_'should analyze patient feedback text',async () => {
+    it('should analyze patient feedback text', async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -323,7 +323,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(data.data.results.actionableInsights).toHaveLength(3);
     });
 
-    it(_'should include AI analysis performance headers',async () => {
+    it('should include AI analysis performance headers', async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -350,7 +350,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(response.headers.get('X-Analysis-Version')).toBe('3.2');
     });
 
-    it(_'should handle multi-modal analysis',async () => {
+    it('should handle multi-modal analysis', async () => {
       mockAIChatService.analyzeMultiModal.mockResolvedValue({
         success: true,
         data: {
@@ -401,8 +401,8 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     });
   });
 
-  describe(_'LGPD Compliance and Data Access'), () => {
-    it(_'should validate LGPD data access for AI analysis',async () => {
+  describe('LGPD Compliance and Data Access', () => {
+    it('should validate LGPD data access for AI analysis', async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -430,7 +430,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       });
     });
 
-    it(_'should log analysis activity for audit trail',async () => {
+    it('should log analysis activity for audit trail', async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -470,7 +470,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       });
     });
 
-    it(_'should handle LGPD access denial for analysis',async () => {
+    it('should handle LGPD access denial for analysis', async () => {
       mockLGPDService.validateDataAccess.mockResolvedValue({
         success: false,
         error: 'Acesso negado para análise de IA por política LGPD',
@@ -504,8 +504,8 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     });
   });
 
-  describe(_'Error Handling'), () => {
-    it(_'should handle authentication errors',async () => {
+  describe('Error Handling', () => {
+    it('should handle authentication errors', async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const response = await analyzeRoute.request(
@@ -525,7 +525,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(data.error).toContain('Não autorizado');
     });
 
-    it(_'should handle validation errors for analysis data',async () => {
+    it('should handle validation errors for analysis data', async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const invalidAnalysisData = {
@@ -552,7 +552,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(data.error || data.message).toBeDefined();
     });
 
-    it(_'should handle AI service errors gracefully',async () => {
+    it('should handle AI service errors gracefully', async () => {
       mockAIChatService.analyzeData.mockResolvedValue({
         success: false,
         error: 'Erro interno do serviço de análise de IA',
@@ -583,7 +583,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(data.error).toContain('Erro interno');
     });
 
-    it(_'should handle unsupported analysis types',async () => {
+    it('should handle unsupported analysis types', async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -611,8 +611,8 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     });
   });
 
-  describe(_'Brazilian Healthcare Compliance'), () => {
-    it(_'should include CFM compliance headers',async () => {
+  describe('Brazilian Healthcare Compliance', () => {
+    it('should include CFM compliance headers', async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -637,7 +637,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(response.headers.get('X-Medical-AI-Logged')).toBe('true');
     });
 
-    it(_'should validate healthcare professional context for medical analysis',async () => {
+    it('should validate healthcare professional context for medical analysis', async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -668,8 +668,8 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     });
   });
 
-  describe(_'Performance and Data Handling'), () => {
-    it(_'should include performance headers',async () => {
+  describe('Performance and Data Handling', () => {
+    it('should include performance headers', async () => {
       const { default: analyzeRoute } = await import('../analyze');
 
       const analysisData = {
@@ -694,7 +694,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(response.headers.get('X-Database-Queries')).toBeDefined();
     });
 
-    it(_'should handle large data analysis efficiently',async () => {
+    it('should handle large data analysis efficiently', async () => {
       const largeData = {
         analysisType: 'structured_data',
         data: {

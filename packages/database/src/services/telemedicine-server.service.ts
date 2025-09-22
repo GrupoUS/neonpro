@@ -138,7 +138,7 @@ export class TelemedicineServer {
     this.app.use(express.urlencoded({ extended: true }));
 
     // Request logging for compliance
-    this.app.use((req,res,_next) => {
+    this.app.use((req,res,next) => {
       const sessionId = req.headers["x-session-id"] as string;
 
       if (sessionId) {
@@ -170,7 +170,7 @@ export class TelemedicineServer {
    */
   private setupRoutes(): void {
     // Health check
-    this.app.get(_"/health",(req, res) => {
+    this.app.get("/health",(req, res) => {
       res.json({
         status: "healthy",
         timestamp: new Date().toISOString(),
@@ -871,7 +871,7 @@ export class TelemedicineServer {
         error: any,
         _req: express.Request,
         res: express.Response,
-        _next: express.NextFunction,
+        next: express.NextFunction,
       ) => {
         console.error("Global error handler:", error);
 
@@ -927,7 +927,7 @@ export class TelemedicineServer {
    * Starts the telemedicine server
    */
   public start(): void {
-    this.httpServer.listen(_this.config.port, () => {
+    this.httpServer.listen(this.config.port, () => {
       console.log(`Telemedicine Server listening on port ${this.config.port}`);
       console.log(
         `Signaling Server listening on port ${this.config.signalingPort}`,
@@ -989,12 +989,12 @@ if (require.main === module) {
   telemedicineServer.start();
 
   // Graceful shutdown
-  process.on(_"SIGTERM",_async () => {
+  process.on("SIGTERM", async () => {
     await telemedicineServer.stop();
     process.exit(0);
   });
 
-  process.on(_"SIGINT",_async () => {
+  process.on("SIGINT", async () => {
     await telemedicineServer.stop();
     process.exit(0);
   });

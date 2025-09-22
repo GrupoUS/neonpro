@@ -243,7 +243,7 @@ export interface ComplianceEvent extends Omit<TelemetryEvent, "eventType"> {
 // Event validation and utilities
 export class TelemetryEventValidator {
   static validate(event: Partial<TelemetryEvent>): boolean {
-    const required = ["id", "eventType", "timestamp", "severity", "service"];
+    const required = ["id", "eventType", "timestamp", "severity", "_service"];
     return required.every((field) => event[field as keyof TelemetryEvent] !== undefined,
     );
   }
@@ -259,7 +259,7 @@ export class TelemetryEventValidator {
     }
 
     if (sanitized._userId) {
-      sanitized.userId = this.hashPII(sanitized._userId);
+      sanitized._userId = this.hashPII(sanitized._userId);
     }
 
     if (sanitized.healthcareContext?.patientIdHash) {
@@ -287,7 +287,7 @@ export class TelemetryEventBuilder {
       eventType,
       timestamp: new Date(),
       severity: TelemetrySeverity.INFO,
-      service,
+      _service,
       version: "1.0.0",
       environment: (process.env.NODE_ENV as any) || "development",
       healthcareContext: {
@@ -310,16 +310,16 @@ export class TelemetryEventBuilder {
   }
 
   withUser(
-    _userId: string,
-    _role?: "patient" | "professional" | "admin" | "system",
+    userId: string,
+    role?: "patient" | "professional" | "admin" | "system",
   ): this {
-    this.event.userId = TelemetryEventValidator.hashPII(userId);
+    this.event._userId = TelemetryEventValidator.hashPII(userId);
     if (role) this.event.userRole = role;
     return this;
   }
 
   withHealthcareContext(
-    _context: Partial<TelemetryEvent["healthcareContext"]>,
+    context: Partial<TelemetryEvent["healthcareContext"]>,
   ): this {
     this.event.healthcareContext = {
       ...this.event.healthcareContext,
@@ -376,7 +376,7 @@ export class TelemetryEventBuilder {
       !event.eventType ||
       !event.timestamp ||
       !event.severity ||
-      !event.service
+      !event._service
     ) {
       throw new Error("TelemetryEvent missing required fields after build");
     }

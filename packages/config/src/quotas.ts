@@ -528,7 +528,7 @@ export function createQuotaAuditTrail(
   return {
     action,
     timestamp: new Date(),
-    _userId: userId,
+    userId,
     consentStatus: "valid", // Assume valid for quota operations
     dataProcessingPurpose: "audit",
     anonymizationLevel: "none",

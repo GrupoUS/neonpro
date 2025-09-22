@@ -744,8 +744,8 @@ export class DynamicConnectionPoolService {
   }
 
   private withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
-    return Promise.race(_[
-      promise,new Promise<never>((, reject) =>
+    return Promise.race([
+      promise, new Promise<never>((_, reject) =>
         setTimeout(() => reject(new Error('Query timeout')), timeoutMs)
       ),
     ]);

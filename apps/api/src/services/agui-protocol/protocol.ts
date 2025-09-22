@@ -46,7 +46,7 @@ export class AguiProtocol extends EventEmitter {
    */
   async handleConnection(ws: WebSocket, _request: any): Promise<void> {
     const connectionId = uuidv4();
-    const clientIp = this.getClientIp(request);
+    const clientIp = this.getClientIp(_request);
 
     try {
       // Check rate limits
@@ -511,8 +511,8 @@ export class AguiProtocol extends EventEmitter {
     if (!session) {
       session = {
         id: sessionId,
-        userId,
-        _context: {},
+        userId: _userId,
+        context: {},
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
@@ -622,9 +622,9 @@ export class AguiProtocol extends EventEmitter {
    * Get client IP address
    */
   private getClientIp(_request: any): string {
-    return request.headers['x-forwarded-for']
-      || request.connection.remoteAddress
-      || request.socket.remoteAddress;
+    return _request.headers['x-forwarded-for']
+      || _request.connection.remoteAddress
+      || _request.socket.remoteAddress;
   }
 
   /**

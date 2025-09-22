@@ -616,9 +616,9 @@ export class SecurityHeadersService {
     });
 
     const topViolatedDirectives = Object.entries(directiveCounts)
-      .sort(([,_a],_[,_b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
-      .map(([directive,_count]) => ({ directive, count }));
+      .map(([directive, count]) => ({ directive, count }));
 
     // Count blocked URIs
     const uriCounts: Record<string, number> = {};
@@ -627,9 +627,9 @@ export class SecurityHeadersService {
     });
 
     const topBlockedUris = Object.entries(uriCounts)
-      .sort(([,_a],_[,_b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
-      .map(([uri,_count]) => ({ uri, count }));
+      .map(([uri, count]) => ({ uri, count }));
 
     // Determine risk level
     let riskLevel: 'low' | 'medium' | 'high' = 'low';

@@ -53,20 +53,20 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
   const setupSubscription = useCallback(() => {
     if (!realtimeManager.current || !options.enabled) return undefined;
 
-    const subscription = realtimeManager.current.subscribeToTable(_options.tableName,_options.filter,
+    const subscription = realtimeManager.current.subscribeToTable(options.tableName, options.filter,
       {
         queryKeys: [queryKey],
         optimisticUpdates: true,
         rateLimitMs: 100, // Healthcare-appropriate rate limiting
-        onInsert: (_payload: T) => {
-          console.log(`New ${options.tableName} inserted:`, _payload);
+        onInsert: (payload: T) => {
+          console.log(`New ${options.tableName} inserted:`, payload);
           options.realtimeOptions?.onInsert?.(payload);
         },
-        onUpdate: (_payload: T) => {
-          console.log(`${options.tableName} updated:`, _payload);
+        onUpdate: (payload: T) => {
+          console.log(`${options.tableName} updated:`, payload);
           options.realtimeOptions?.onUpdate?.(payload);
         },
-        onDelete: (_payload: { old: T }) => {
+        onDelete: (payload: { old: T }) => {
           console.log(`${options.tableName} deleted:`, payload.old);
           options.realtimeOptions?.onDelete?.(payload);
         },
@@ -131,8 +131,8 @@ export function useRealtimeMutation<T extends { id: string }>(
       const previousData = queryClient.getQueryData<T[]>(queryKey);
 
       // Optimistically update
-      queryClient.setQueryData<T[]>(_queryKey,(old) => {
-        return (_old?.map((item) =>
+      queryClient.setQueryData<T[]>(queryKey, (old) => {
+        return (old?.map((item) =>
             item.id === updatedItem.id ? updatedItem : item,
           ) ?? []
         );
@@ -144,7 +144,7 @@ export function useRealtimeMutation<T extends { id: string }>(
   );
 
   const rollback = useCallback(
-    (_context: { previousData?: T[] }) => {
+    (context: { previousData?: T[] }) => {
       if (context.previousData) {
         queryClient.setQueryData(queryKey, context.previousData);
       }

@@ -929,7 +929,7 @@ export class EnhancedRLSSecurityService {
     return {
       hourlyPatterns: hourlyData,
       peakThreatHours: Object.entries(hourlyData)
-        .sort(([,_a],_[,_b]) => b.denied - a.denied)
+        .sort(([, a], [, b]) => b.denied - a.denied)
         .slice(0, 3)
         .map(([hour]) => parseInt(hour)),
     };

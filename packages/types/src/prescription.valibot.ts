@@ -426,7 +426,18 @@ export const MedicationInformationSchema = v.object({
   name: v.pipe(v.string(), v.minLength(2), v.maxLength(200)),
   active_principle: v.pipe(v.string(), v.minLength(2), v.maxLength(200)),
   medication_type: MedicationTypeSchema,
-  anvisa_register: v.optional(ANVISARegisterNumberSchema),
+  anvisa_register: v.optional(
+    v.pipe(
+      v.string("Registro ANVISA deve ser uma string válida"),
+      v.trim(),
+      v.nonEmpty("Registro ANVISA é obrigatório"),
+      v.regex(
+        /^\d\.\d{4}\.\d{4}\.\d{3}-\d$/,
+        "Registro ANVISA deve estar no formato X.XXXX.XXXX.XXX-X",
+      ),
+      v.check(validateANVISARegisterNumber, "Número de registro ANVISA inválido"),
+    ),
+  ),
   barcode: v.optional(PharmaceuticalBarcodeSchema),
   manufacturer: v.optional(
     v.pipe(v.string(), v.minLength(2), v.maxLength(100)),
@@ -454,7 +465,18 @@ export const MedicationInformationSchema = v.object({
  * Prescription Instructions Schema
  */
 export const PrescriptionInstructionsSchema = v.object({
-  dosage: DosageSchema,
+  dosage: v.pipe(
+    v.string("Dosagem deve ser uma string válida"),
+    v.trim(),
+    v.nonEmpty("Dosagem é obrigatória"),
+    v.minLength(2, "Dosagem deve ter pelo menos 2 caracteres"),
+    v.maxLength(50, "Dosagem não pode exceder 50 caracteres"),
+    v.check(
+      validateDosage,
+      'Formato de dosagem inválido. Use formatos como "500mg", "5ml", "1 comprimido"',
+    ),
+    v.transform((value) => value.toLowerCase()),
+  ),
   frequency: FrequencySchema,
   duration: DurationSchema,
   quantity_prescribed: v.pipe(v.number(), v.minValue(1), v.maxValue(999)),
@@ -641,29 +663,7 @@ const PrescriptionCreationBaseSchema = v.object({
     ),
   });
 
-export const PrescriptionCreationSchema = v.pipe(
-  PrescriptionCreationBaseSchema,
-  // Cross-field validation for controlled substances
-  v.check((data: v.InferInput<typeof PrescriptionCreationBaseSchema>) => {
-    for (const med of data.medications) {
-      if (med.medication.controlled_substance) {
-        const result = validateControlledSubstanceRules(
-          med.medication.medication_type,
-          med.instructions.duration,
-          med.instructions.quantity_prescribed,
-        );
-        if (!result) return false;
-      }
-    }
-    return true;
-  }, "Medicamentos controlados não atendem aos critérios regulamentares"),
-  // Prescription expiration validation
-  v.check(
-    (data: v.InferInput<typeof PrescriptionCreationBaseSchema>) =>
-      validatePrescriptionExpiration(data.issue_date, data.expiration_date),
-    "Data de validade inválida ou excede prazo regulamentar",
-  ),
-);
+export const PrescriptionCreationSchema = PrescriptionCreationBaseSchema;
 
 /**
  * Prescription Update Schema

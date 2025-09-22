@@ -142,7 +142,7 @@ describe(_'Security Headers Middleware',() => {
       let capturedContext: any;
 
       app.use('*', securityHeadersMiddleware());
-      app.use(_'*',(c,_next) => {
+      app.use('*', (c, next) => {
         capturedContext = c.get('securityHeaders');
         return next();
       });

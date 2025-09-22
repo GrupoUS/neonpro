@@ -334,7 +334,7 @@ export function FileUploadIntegration({
   );
 
   // Get file type info
-  const getFileTypeInfo = (_mimeType: any) => {
+  const getFileTypeInfo = (mimeType: any) => {
     return (
       HEALTHCARE_FILE_TYPES[mimeType as keyof typeof HEALTHCARE_FILE_TYPES]
       || HEALTHCARE_FILE_TYPES.default

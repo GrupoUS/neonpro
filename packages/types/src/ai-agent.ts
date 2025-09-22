@@ -95,9 +95,9 @@ export interface UserQuery {
   /** Session identifier for conversation context */
   sessionId: string;
   /** User who submitted the query */
-  (userId): string;
+  userId: string;
   /** Natural language text input */
-  (query): string;
+  query: string;
   /** Parsed intent classification */
   intent: QueryIntent;
   /** Extracted parameters from the query */
@@ -264,7 +264,7 @@ export interface ChatSession {
   /** Session identifier (UUID) */
   id: string;
   /** User identifier */
-  (userId): string;
+  userId: string;
   /** Session status */
   status: SessionStatus;
   /** When the session started */
@@ -272,7 +272,7 @@ export interface ChatSession {
   /** Last interaction timestamp */
   lastActivity: Date;
   /** Conversation context object */
-  (context): SessionContext;
+  context: SessionContext;
   /** Number of messages in session */
   messageCount: number;
 }
@@ -286,7 +286,7 @@ export interface SessionContext {
   /** User's current domain */
   domain: string;
   /** User role for permission checking */
-  (role): UserRole;
+  role: UserRole;
   /** Active filters or preferences */
   preferences?: UserPreferences;
   /** Recent conversation history */
@@ -303,11 +303,11 @@ export type UserRole =
 
 export interface PermissionContext {
   /** User identifier */
-  (userId): string;
+  userId: string;
   /** Organization/clinic domain */
   domain: string;
   /** User role */
-  (role): UserRole;
+  role: UserRole;
   /** Specific permissions array */
   permissions: Permission[];
   /** Data access scope */
@@ -332,7 +332,7 @@ export type DataScope =
 
 export interface AgentQueryRequest {
   /** Natural language query from user */
-  (query): string;
+  query: string;
   /** Unique session identifier for conversation context */
   sessionId: string;
   /** Optional conversation context */

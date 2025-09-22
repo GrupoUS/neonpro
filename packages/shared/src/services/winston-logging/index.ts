@@ -34,12 +34,12 @@ export {
 
 // Default configuration for healthcare applications
 const defaultConfig: EnhancedStructuredLoggingConfig = {
-  _service: 'neonpro-healthcare_,
-  environment: (process.env.NODE_ENV as any) || 'development_,
-  version: process.env.npm_package_version || '2.0.0_,
+  _service: 'neonpro-healthcare',
+  environment: (process.env.NODE_ENV as any) || 'development',
+  version: process.env.npm_package_version || '2.0.0',
   
-  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug_,
-  severityLevel: process.env.NODE_ENV === 'production' ? 'info' : 'debug_,
+  level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
+  severityLevel: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
   
   transports: {
     console: {
@@ -48,7 +48,7 @@ const defaultConfig: EnhancedStructuredLoggingConfig = {
       format: 'json',
     },
     file: {
-      enabled: process.env.NODE_ENV === 'production_,
+      enabled: process.env.NODE_ENV === 'production',
       level: 'info',
       filename: 'logs/neonpro-healthcare.log',
       maxSize: '20m',
@@ -56,7 +56,7 @@ const defaultConfig: EnhancedStructuredLoggingConfig = {
       format: 'json',
     },
     dailyRotate: {
-      enabled: process.env.NODE_ENV === 'production_,
+      enabled: process.env.NODE_ENV === 'production',
       level: 'info',
       filename: 'logs/neonpro-healthcare-%DATE%.log',
       datePattern: 'YYYY-MM-DD',
@@ -90,8 +90,8 @@ const defaultConfig: EnhancedStructuredLoggingConfig = {
   },
   
   format: {
-    colorize: process.env.NODE_ENV !== 'production_,
-    prettyPrint: process.env.NODE_ENV === 'development_,
+    colorize: process.env.NODE_ENV !== 'production',
+    prettyPrint: process.env.NODE_ENV === 'development',
     timestamp: true,
     showLevel: true,
   },
@@ -143,7 +143,7 @@ export const logger = {
   ) => enhancedLogger.logClinicalWorkflow(workflowType, stage, message, data, _context),
   
   logMedicationEvent: (
-    action: 'prescribed' | 'administered' | 'verified' | 'adverse_reaction_,
+    action: 'prescribed' | 'administered' | 'verified' | 'adverse_reaction',
     message: string,
     healthcareContext: BrazilianHealthcareContext,
     data?: any
@@ -158,12 +158,12 @@ export const logger = {
   ) => enhancedLogger.logEmergencyResponse(action, responseTime, message, healthcareContext, data),
   
   // Utility methods
-  child: (_context: any) => enhancedLogger.child(context),
+  child: (context: any) => enhancedLogger.child(context),
   getCorrelationId: () => enhancedLogger.getCorrelationId(),
   generateCorrelationId: () => enhancedLogger.generateCorrelationId(),
   setCorrelationId: (id: string) => enhancedLogger.setCorrelationId(id),
   clearCorrelationId: () => enhancedLogger.clearCorrelationId(),
-  setRequestContext: (_context: any) => enhancedLogger.setRequestContext(context),
+  setRequestContext: (context: any) => enhancedLogger.setRequestContext(context),
   getRequestContext: () => enhancedLogger.getRequestContext(),
   clearRequestContext: () => enhancedLogger.clearRequestContext(),
   getStatistics: () => enhancedLogger.getStatistics(),
@@ -210,7 +210,7 @@ export function createCorrelationMiddleware(loggerInstance: EnhancedStructuredLo
     res.setHeader('x-correlation-id', correlationId);
     
     // Clear context when response finishes
-    res.on('finish_, () => {
+    res.on('finish', () => {
       loggerInstance.clearCorrelationId();
       loggerInstance.clearRequestContext();
     });
@@ -222,12 +222,12 @@ export function createCorrelationMiddleware(loggerInstance: EnhancedStructuredLo
 // Global error handling hook
 export function setupGlobalErrorHandling(loggerInstance: EnhancedStructuredLogger = enhancedLogger) {
   if (typeof process !== 'undefined') {
-    process.on('uncaughtException_,(error) => {
+    process.on('uncaughtException', (error) => {
       loggerInstance.emergency('Uncaught Exception', { error: error.message, stack: error.stack });
       process.exit(1);
     });
 
-    process.on('unhandledRejection_,(reason,_promise) => {
+    process.on('unhandledRejection', (reason, promise) => {
       const errorData = { 
         reason: reason instanceof Error ? reason.message : reason,
         promise: promise.toString() 

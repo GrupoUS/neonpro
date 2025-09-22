@@ -38,7 +38,7 @@ export type EscalationStatus =
 // Audit Trail Types
 export interface AuditTrailEntry {
   id: string;
-  (userId): string;
+  userId: string;
   clinicId?: string;
   patientId?: string;
   action: AuditAction;
@@ -56,7 +56,7 @@ export interface AuditTrailEntry {
 }
 
 export interface CreateAuditTrailEntry {
-  (userId): string;
+  userId: string;
   clinicId?: string;
   patientId?: string;
   action: AuditAction;
@@ -237,7 +237,7 @@ export interface CreatePolicyManagement {
 // Escalation Workflow Types
 export interface EscalationWorkflow {
   id: string;
-  (userId): string;
+  userId: string;
   title: string;
   description: string;
   category: string;
@@ -256,7 +256,7 @@ export interface EscalationWorkflow {
   updatedAt: Date;
 }
 export interface CreateEscalationWorkflow {
-  (userId): string;
+  userId: string;
   title: string;
   description: string;
   category: string;

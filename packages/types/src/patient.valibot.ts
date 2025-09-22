@@ -68,12 +68,12 @@ const validateCPF = (cpf: string): boolean => {
     "99999999999",
   ];
 
-  if (invalidPatterns.includes_cleanCPF) return false;
+  if (invalidPatterns.includes(cleanCPF)) return false;
 
   // Validate check digits
   let sum = 0;
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(cleanCPF.charAt_i) * (10 - i);
+    sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
   }
 
   let remainder = (sum * 10) % 11;
@@ -82,7 +82,7 @@ const validateCPF = (cpf: string): boolean => {
 
   sum = 0;
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(cleanCPF.charAt_i) * (11 - i);
+    sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
   }
 
   remainder = (sum * 10) % 11;
@@ -104,21 +104,21 @@ const validateCNS = (cns: string): boolean => {
   const firstDigit = cleanCNS.charAt(0);
   
   // Temporary CNS validation (starts with 7, 8, or 9)
-  if (["7", "8", "9"].includes_firstDigit) {
+  if (["7", "8", "9"].includes(firstDigit)) {
     let sum = 0;
     for (let i = 0; i < 15; i++) {
-      sum += parseInt(cleanCNS.charAt_i) * (15 - i);
+      sum += parseInt(cleanCNS.charAt(i)) * (15 - i);
     }
     return sum % 11 === 0;
   }
 
   // Definitive CNS validation (starts with 1 or 2)
-  if (["1", "2"].includes_firstDigit) {
+  if (["1", "2"].includes(firstDigit)) {
     const identifier = cleanCNS.substring(0, 11);
     let sum = 0;
 
     for (let i = 0; i < 11; i++) {
-      sum += parseInt(identifier.charAt_i) * (15 - i);
+      sum += parseInt(identifier.charAt(i)) * (15 - i);
     }
 
     const remainder = sum % 11;
@@ -156,7 +156,7 @@ const validateBrazilianPhone = (phone: string): boolean => {
 
   // Area code should be valid (11-99)
   const areaCode = cleanPhone.substring(2, 4);
-  const areaCodeNum = parseInt_areaCode;
+  const areaCodeNum = parseInt(areaCode);
   if (areaCodeNum < 11 || areaCodeNum > 99) return false;
 
   // Mobile numbers should start with 9

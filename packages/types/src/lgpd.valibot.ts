@@ -47,7 +47,7 @@ export type TimestampToken = string & { readonly __brand: "TimestampToken" };
  */
 const validateSHA256Hash = (hash: string): boolean => {
   const sha256Regex = /^[a-f0-9]{64}$/i;
-  return sha256Regex.test_hash;
+  return sha256Regex.test(hash);
 };
 
 /**
@@ -57,7 +57,7 @@ const validateTimestampToken = (token: string): boolean => {
   // Basic validation for timestamp token format
   // Should be base64 encoded cryptographic timestamp
   const base64Regex = /^[A-Za-z0-9+/]*={0,2}$/;
-  return base64Regex.test_token && token.length >= 20;
+  return base64Regex.test(token) && token.length >= 20;
 };
 
 /**
@@ -78,7 +78,7 @@ const validateRetentionPeriod = (period: string): boolean => {
   const iso8601Pattern =
     /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?$/;
 
-  return healthcareRetentions.includes_period || iso8601Pattern.test_period;
+  return healthcareRetentions.includes(period) || iso8601Pattern.test(period);
 };
 
 /**
@@ -86,7 +86,7 @@ const validateRetentionPeriod = (period: string): boolean => {
  */
 export const validateSecureEmail = (email: string): boolean => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-  return emailRegex.test_email && email.length <= 254;
+  return emailRegex.test(email) && email.length <= 254;
 };
 
 // =====================================
@@ -490,7 +490,7 @@ export const LGPDConsentCreationSchema = v.object({
   legal_basis: LegalBasisSchema,
   processing_purpose: ProcessingPurposeSchema,
   data_categories: v.pipe(
-    v.array_DataCategorySchema,
+    v.array(DataCategorySchema),
     v.minLength(1, "Pelo menos uma categoria de dados é obrigatória"),
   ),
   data_subjects: v.pipe(
@@ -504,7 +504,7 @@ export const LGPDConsentCreationSchema = v.object({
   consent_type: ConsentTypeSchema,
   consent_version: ConsentVersionSchema,
   consent_text: ConsentTextSchema,
-  consent_language: v.optional_LanguageSchema,
+  consent_language: v.optional(LanguageSchema),
 
   // Collection context
   collection_method: CollectionMethodSchema,
@@ -517,7 +517,7 @@ export const LGPDConsentCreationSchema = v.object({
   user_agent: UserAgentSchema,
   session_id: v.optional(v.string()),
   device_fingerprint: v.optional(v.string()),
-  geolocation: v.optional_GeolocationSchema,
+  geolocation: v.optional(GeolocationSchema),
 
   // Compliance flags
   gdpr_compliant: v.optional(v.boolean()),
@@ -530,7 +530,7 @@ export const LGPDConsentCreationSchema = v.object({
   regulatory_frameworks: v.array(v.string()),
 
   // Evidence and proof
-  evidence_documents: v.optional(v.array_EvidenceDocumentSchema),
+  evidence_documents: v.optional(v.array(EvidenceDocumentSchema)),
   cryptographic_proof: CryptographicProofSchema,
 });
 
@@ -561,8 +561,8 @@ export const LGPDConsentWithdrawalSchema = v.object({
   data_processing_restricted: v.optional(v.boolean()),
 
   // Evidence
-  evidence_documents: v.optional(v.array_EvidenceDocumentSchema),
-  cryptographic_proof: v.optional_CryptographicProofSchema,
+  evidence_documents: v.optional(v.array(EvidenceDocumentSchema)),
+  cryptographic_proof: v.optional(CryptographicProofSchema),
 });
 
 /**
@@ -578,11 +578,11 @@ export const LGPDConsentUpdateSchema = v.object({
   ),
 
   // Updated fields
-  consent_status: v.optional_ConsentStatusSchema,
-  consent_version: v.optional_ConsentVersionSchema,
-  processing_purpose: v.optional_ProcessingPurposeSchema,
-  data_categories: v.optional(v.array_DataCategorySchema),
-  retention_period: v.optional_RetentionPeriodSchema,
+  consent_status: v.optional(ConsentStatusSchema),
+  consent_version: v.optional(ConsentVersionSchema),
+  processing_purpose: v.optional(ProcessingPurposeSchema),
+  data_categories: v.optional(v.array(DataCategorySchema)),
+  retention_period: v.optional(RetentionPeriodSchema),
 
   // Audit context
   updated_by: v.optional(v.pipe(v.string(), v.uuid())),
@@ -594,8 +594,8 @@ export const LGPDConsentUpdateSchema = v.object({
   user_agent: UserAgentSchema,
 
   // Evidence
-  evidence_documents: v.optional(v.array_EvidenceDocumentSchema),
-  cryptographic_proof: v.optional_CryptographicProofSchema,
+  evidence_documents: v.optional(v.array(EvidenceDocumentSchema)),
+  cryptographic_proof: v.optional(CryptographicProofSchema),
 });
 
 /**
@@ -604,9 +604,9 @@ export const LGPDConsentUpdateSchema = v.object({
 export const LGPDConsentQuerySchema = v.object({
   patient_id: v.optional(v.pipe(v.string(), v.uuid())),
   clinic_id: v.optional(v.pipe(v.string(), v.uuid())),
-  consent_status: v.optional_ConsentStatusSchema,
-  legal_basis: v.optional_LegalBasisSchema,
-  data_categories: v.optional(v.array_DataCategorySchema),
+  consent_status: v.optional(ConsentStatusSchema),
+  legal_basis: v.optional(LegalBasisSchema),
+  data_categories: v.optional(v.array(DataCategorySchema)),
   created_after: v.optional(v.pipe(v.string(), v.isoDateTime())),
   created_before: v.optional(v.pipe(v.string(), v.isoDateTime())),
   expires_after: v.optional(v.pipe(v.string(), v.isoDateTime())),
@@ -622,7 +622,7 @@ export const LGPDConsentQuerySchema = v.object({
 /**
  * Validates complete LGPD consent lifecycle
  */
-export const validateLGPDConsentLifecycle = (consent: unknown): boolean => {
+export const validateLGPDConsentLifecycle = (_consent: unknown): boolean => {
   try {
     // This would contain more complex business logic validation
     // For now, we'll use the basic schema validation
@@ -637,7 +637,7 @@ export const validateLGPDConsentLifecycle = (consent: unknown): boolean => {
  */
 export const validateConsentIntegrity = (
   consentHash: string,
-  consentData: string,
+  _consentData: string,
 ): boolean => {
   // This would implement actual cryptographic validation
   // For now, we validate the hash format

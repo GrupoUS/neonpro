@@ -155,7 +155,10 @@ const ConsentIndicator = ({
 
 // Mobile-optimized patient card with touch targets ≥44px
 const MobilePatientCard = ({
-  patient,onSelect, userRole,onVisibilityToggle,
+  patient,
+  onSelect,
+  userRole,
+  onVisibilityToggle,
 }: {
   patient: MobilePatientData;
   onSelect: (id: string) => void;

@@ -356,7 +356,7 @@ class SQLSanitizer {
         }
 
         const insertColumns = columns.join(', ');
-        const placeholders = columns.map((, index) => `$${index + 1}`).join(', ');
+        const placeholders = columns.map((_, index) => `$${index + 1}`).join(', ');
         return `INSERT INTO ${table} (${insertColumns}) VALUES (${placeholders})`;
 
       case 'UPDATE':

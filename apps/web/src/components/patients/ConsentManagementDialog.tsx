@@ -239,12 +239,12 @@ export function ConsentManagementDialog({
     }
   }, [patientData.consents, form]);
 
-  const handleConsentSubmit = async (_data: any) => {
+  const handleConsentSubmit = async (data: any) => {
     setIsLoading(true);
     try {
       await onConsentUpdate(data);
       onOpenChange(false);
-    } catch (_error) {
+    } catch (error) {
       console.error('Erro ao atualizar consentimentos:', error);
     } finally {
       setIsLoading(false);
@@ -255,7 +255,7 @@ export function ConsentManagementDialog({
     setIsLoading(true);
     try {
       await onDataExport(patientData.patientId);
-    } catch (_error) {
+    } catch (error) {
       console.error('Erro ao exportar dados:', error);
     } finally {
       setIsLoading(false);
@@ -271,7 +271,7 @@ export function ConsentManagementDialog({
       setIsLoading(true);
       try {
         await onDataErasure(patientData.patientId);
-      } catch (_error) {
+      } catch (error) {
         console.error('Erro ao solicitar exclusão:', error);
       } finally {
         setIsLoading(false);
@@ -303,7 +303,7 @@ export function ConsentManagementDialog({
             { id: 'consents', label: 'Consentimentos', icon: Check },
             { id: 'rights', label: 'Direitos', icon: Eye },
             { id: 'history', label: 'Histórico', icon: Clock },
-          ].map(({ id,label, icon: Icon }) => (<button
+          ].map(({ id, label, icon: Icon }) => (<button
               key={id}
               onClick={() => setActiveTab(id as any)}
               className={cn(
@@ -401,7 +401,7 @@ export function ConsentManagementDialog({
                             </p>
                             <div className='flex flex-wrap gap-1'>
                               {consent.dataCategories.map(
-                                (category, _index) => (
+                                (category, index) => (
                                   <Badge
                                     key={index}
                                     variant='outline'

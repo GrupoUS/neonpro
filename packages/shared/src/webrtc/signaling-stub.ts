@@ -282,7 +282,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
     this.auditLog.push({
       ...message,
       // Ensure no sensitive data leaks in logs
-      _payload:
+      payload:
         message.dataClassification === "sensitive" ||
         message.dataClassification === "confidential"
           ? "[REDACTED]"
@@ -382,7 +382,7 @@ export function createSignalingMessage(
   sessionId: string,
   senderId: string,
   recipientId: string,
-  _payload?: any,
+  payload?: any,
   options?: {
     dataClassification?: MedicalDataClassification;
     metadata?: RTCSignalingMessage["metadata"];

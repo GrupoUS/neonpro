@@ -64,12 +64,12 @@ export function AdvancedSearchDialog({
     onApplyFilters({});
   };
 
-  const handleCPFChange = (_value: any) => {
+  const handleCPFChange = (value: any) => {
     const formatted = formatCPF(value);
     setLocalFilters(prev => ({ ...prev, cpf: formatted }));
   };
 
-  const handlePhoneChange = (_value: any) => {
+  const handlePhoneChange = (value: any) => {
     const formatted = formatPhone(value);
     setLocalFilters(prev => ({ ...prev, phone: formatted }));
   };
@@ -107,7 +107,7 @@ export function AdvancedSearchDialog({
                 onChange={e =>
                   setLocalFilters(prev => ({
                     ...prev,
-                    _query: e.target.value,
+                    query: e.target.value,
                   }))}
                 className='pl-10'
               />

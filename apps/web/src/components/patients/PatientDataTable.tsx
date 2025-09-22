@@ -94,7 +94,7 @@ interface PatientDataTableProps {
 }
 
 // Custom filter function for multi-column searching
-const multiColumnFilterFn: FilterFn<PatientTableData> = (_row,columnId,
+const multiColumnFilterFn: FilterFn<PatientTableData> = (row, _columnId,
   filterValue: string,
 ) => {
   const searchableRowContent = `${row.original.fullName} ${row.original.email || ''} ${
@@ -104,11 +104,11 @@ const multiColumnFilterFn: FilterFn<PatientTableData> = (_row,columnId,
   return searchableRowContent.includes(searchTerm);
 };
 
-const statusFilterFn: FilterFn<PatientTableData> = (_row,columnId,
+const statusFilterFn: FilterFn<PatientTableData> = (row, _columnId,
   filterValue: string[],
 ) => {
   if (!filterValue?.length) return true;
-  const status = row.getValue(columnId) as string;
+  const status = row.getValue(_columnId) as string;
   return filterValue.includes(status);
 };
 
@@ -179,7 +179,24 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
 }
 
 function PatientDataTableContent({
-  clinicId,id, navigate,inputRef, columnFilters,setColumnFilters, columnVisibility,setColumnVisibility, pagination,setPagination, sorting,setSorting, showCreateDialog,setShowCreateDialog, showAdvancedSearch,setShowAdvancedSearch, searchFilter,statusFilter,
+  clinicId,
+  id,
+  navigate,
+  inputRef,
+  columnFilters,
+  setColumnFilters,
+  columnVisibility,
+  setColumnVisibility,
+  pagination,
+  setPagination,
+  sorting,
+  setSorting,
+  showCreateDialog,
+  setShowCreateDialog,
+  showAdvancedSearch,
+  setShowAdvancedSearch,
+  searchFilter,
+  statusFilter,
 }: {
   clinicId: string;
   id: string;
@@ -414,7 +431,7 @@ function PatientDataTableContent({
 
   // Get unique status values for filter
   const uniqueStatusValues = useMemo(() => ['Active', 'Inactive', 'Pending'],
-    [],
+    []
   );
 
   const selectedStatuses = useMemo(() => {
@@ -444,7 +461,7 @@ function PatientDataTableContent({
     );
   };
 
-  const handlePatientCreated = (_patient: any) => {
+  const handlePatientCreated = (patient: any) => {
     toast.success(`Paciente criado com sucesso!`);
     // The real-time subscription will automatically update the table
   };
@@ -503,14 +520,14 @@ function PatientDataTableContent({
   };
 
   // Advanced search handlers (FR-005)
-  const handleApplyAdvancedFilters = (_filters: any) => {
+  const handleApplyAdvancedFilters = (filters: any) => {
     // Apply filters to the table
-    if (_filters._query) {
-      table.getColumn('fullName')?.setFilterValue(_filters._query);
+    if (filters.query) {
+      table.getColumn('fullName')?.setFilterValue(filters.query);
     }
 
-    if (_filters.status && _filters.status.length > 0) {
-      table.getColumn('status')?.setFilterValue(_filters.status);
+    if (filters.status && filters.status.length > 0) {
+      table.getColumn('status')?.setFilterValue(filters.status);
     }
 
     // Note: CPF, phone, email, and date range filters would need backend support

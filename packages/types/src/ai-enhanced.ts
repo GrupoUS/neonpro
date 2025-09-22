@@ -128,7 +128,7 @@ export interface PlanData {
 export interface UsageCounter {
   readonly id: string;
   readonly clinicId: string;
-  readonly (userId): string;
+  readonly userId: string;
   readonly planCode: SubscriptionTier;
 
   // Usage metrics
@@ -162,7 +162,7 @@ export interface UsageCounter {
  */
 export interface UsageCounterData {
   clinicId: string;
-  (userId): string;
+  userId: string;
   planCode: SubscriptionTier;
   monthlyQueries: number;
   dailyQueries: number;
@@ -201,7 +201,7 @@ export interface UsageAggregation {
 export interface Recommendation {
   readonly id: string;
   readonly clinicId: string;
-  readonly (userId): string;
+  readonly userId: string;
 
   // Recommendation details
   readonly recommendationType: RecommendationType;

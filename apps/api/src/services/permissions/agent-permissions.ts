@@ -5,19 +5,20 @@
  * with LGPD compliance and healthcare security requirements.
  */
 
-import { Database } from '@/types/database';
+import { Database } from '../../../../packages/types/src/database';
 import { createClient } from '@supabase/supabase-js';
 import { createHash } from 'crypto';
+import { z } from 'zod';
 // Input validation schemas
 const PermissionContextSchema = z.object({
   _userId: z.string().min(1, 'User ID is required').max(255),
   sessionId: z.string().max(255).optional(),
   patientId: z.string().max(255).optional(),
-  action: z.enum(_['read',_'write',_'delete',_'admin'], {
+  action: z.enum(['read', 'write', 'delete', 'admin'], {
     errorMap: () => ({ message: 'Invalid action type' }),
   }),
-  resource: z.enum(_[
-    'agent_sessions',_'agent_messages',_'agent_context',_'agent_audit',_'patient_data',_'financial_data',_], {
+  resource: z.enum([
+    'agent_sessions', 'agent_messages', 'agent_context', 'agent_audit', 'patient_data', 'financial_data'], {
     errorMap: () => ({ message: 'Invalid resource type' }),
   }),
   metadata: z.record(z.any()).optional(),
@@ -93,7 +94,7 @@ export class AgentPermissionService {
 
     try {
       // Validate input
-      const validatedContext = this.validateAndSanitizeContext(context);
+      const validatedContext = this.validateAndSanitizeContext(_context);
 
       // Rate limiting check
       if (!(await this.checkRateLimit(validatedContext._userId))) {
@@ -103,7 +104,7 @@ export class AgentPermissionService {
           auditLog: {
             action: validatedContext.action,
             resource: validatedContext.resource,
-            _userId: validatedContext.userId,
+            _userId: validatedContext._userId,
             details: {
               denied: true,
               reason: 'rate_limit_exceeded',
@@ -139,7 +140,7 @@ export class AgentPermissionService {
         auditLog: {
           action: validatedContext.action,
           resource: validatedContext.resource,
-          _userId: validatedContext.userId,
+          _userId: validatedContext._userId,
           details: {
             denied: true,
             reason: 'no_sufficient_role',
@@ -165,7 +166,7 @@ export class AgentPermissionService {
         auditLog: {
           action: validatedContext.action,
           resource: validatedContext.resource,
-          _userId: validatedContext.userId,
+          _userId: validatedContext._userId,
           details: {
             error: error instanceof Error ? this.sanitizeError(error) : 'Unknown error',
             processingTime: Date.now() - startTime,

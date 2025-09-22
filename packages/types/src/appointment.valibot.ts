@@ -145,7 +145,7 @@ export const CreateAppointmentSchema = v.object({
     v.minValue(15),
     v.maxValue(480),
   ),
-  priority: v.optional_AppointmentPriority,
+  priority: v.optional(AppointmentPriority),
   estimated_cost: v.optional(v.pipe(v.number(), v.minValue(0))),
   notes: v.optional(v.string()),
   reminder_preferences: v.optional(
@@ -164,7 +164,7 @@ export type CreateAppointment = v.InferOutput<typeof CreateAppointmentSchema>;
 
 // Appointment Update Schema
 export const UpdateAppointmentSchema = v.object({
-  status: v.optional_AppointmentStatus,
+  status: v.optional(AppointmentStatus),
   scheduled_date: v.optional(v.pipe(v.string(), v.isoDateTime())),
   duration_minutes: v.optional(
     v.pipe(v.number(), v.integer(), v.minValue(15), v.maxValue(480)),
@@ -184,8 +184,8 @@ export const AppointmentFiltersSchema = v.object({
   patient_id: v.optional(v.pipe(v.string(), v.uuid())),
   professional_id: v.optional(v.pipe(v.string(), v.uuid())),
   clinic_id: v.optional(v.pipe(v.string(), v.uuid())),
-  status: v.optional_AppointmentStatus,
-  procedure_type: v.optional_AestheticProcedureType,
+  status: v.optional(AppointmentStatus),
+  procedure_type: v.optional(AestheticProcedureType),
   date_from: v.optional(v.pipe(v.string(), v.isoDate())),
   date_to: v.optional(v.pipe(v.string(), v.isoDate())),
   high_risk_no_show: v.optional(v.boolean()),

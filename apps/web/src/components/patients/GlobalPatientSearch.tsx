@@ -48,7 +48,7 @@ interface PatientSearchResult {
 
 // Search history type
 interface SearchHistoryItem {
-  _query: string;
+  query: string;
   timestamp: number;
   results: number;
   timestamp_iso: string;
@@ -59,7 +59,7 @@ interface SearchAnalytics {
   totalSearches: number;
   averageResults: number;
   averageTime: number;
-  topQueries: Array<{ _query: string; count: number }>;
+  topQueries: Array<{ query: string; count: number }>;
   conversionRate: number;
 }
 
@@ -122,8 +122,8 @@ function useLocalStorage<T>(key: string, initialValue: T) {
 }
 
 // Highlight matching text
-function highlightMatch(text: string, _query: string): string {
-  if (!_query) return text;
+function highlightMatch(text: string, query: string): string {
+  if (!query) return text;
 
   const regex = new RegExp(`(${query})`, 'gi');
   return text.replace(
@@ -133,7 +133,7 @@ function highlightMatch(text: string, _query: string): string {
 }
 
 // Calculate search relevance score
-function calculateRelevanceScore(patient: any, _query: string): number {
+function calculateRelevanceScore(patient: any, query: string): number {
   let score = 0;
   const normalizedQuery = query.toLowerCase();
 
@@ -166,7 +166,7 @@ function calculateRelevanceScore(patient: any, _query: string): number {
 }
 
 // Generate match reasons
-function generateMatchReasons(patient: any, _query: string): string[] {
+function generateMatchReasons(patient: any, query: string): string[] {
   const reasons: string[] = [];
   const normalizedQuery = query.toLowerCase();
 
@@ -272,7 +272,7 @@ export function GlobalPatientSearch({
 
         // Update search history
         const historyItem: SearchHistoryItem = {
-          _query: debouncedQuery,
+          query: debouncedQuery,
           timestamp: Date.now(),
           results: mockResults.length,
           timestamp_iso: new Date().toISOString(),
@@ -313,7 +313,7 @@ export function GlobalPatientSearch({
               : undefined,
           },
         }));
-      } catch (_error) {
+      } catch (error) {
         console.error('Search error:', error);
         throw error;
       }
@@ -334,7 +334,7 @@ export function GlobalPatientSearch({
 
   // Handle patient selection
   const handlePatientSelect = useCallback(
-    (_patient: any) => {
+    (patient: any) => {
       onPatientSelect?.(patient);
 
       // Navigate to patient details if no handler provided
@@ -356,8 +356,8 @@ export function GlobalPatientSearch({
   );
 
   // Handle search history item click
-  const handleHistoryClick = useCallback((_historyItem: any) => {
-    setQuery(historyItem._query);
+  const handleHistoryClick = useCallback((historyItem: any) => {
+    setQuery(historyItem.query);
     inputRef.current?.focus();
   }, []);
 
@@ -369,14 +369,14 @@ export function GlobalPatientSearch({
 
   // Update top queries for analytics
   function updateTopQueries(
-    current: Array<{ _query: string; count: number }>,
+    current: Array<{ query: string; count: number }>,
     newQuery: string,
   ) {
     const existing = current.find(item => item.query === newQuery);
     if (existing) {
       existing.count += 1;
     } else {
-      current.push({ _query: newQuery, count: 1 });
+      current.push({ query: newQuery, count: 1 });
     }
     return current.sort((a, b) => b.count - a.count).slice(0, 5);
   }
@@ -398,7 +398,8 @@ export function GlobalPatientSearch({
 
   // Search result item
   const SearchResultItem = ({
-    patient,index,
+    patient,
+    index,
   }: {
     patient: PatientSearchResult;
     index: number;
@@ -579,7 +580,7 @@ export function GlobalPatientSearch({
               ? (_filteredResults.length > 0
                   ? (
                     <div className='divide-y'>
-                      {filteredResults.map((patient, _index) => (
+                      {filteredResults.map((patient, index) => (
                         <SearchResultItem
                           key={patient.id}
                           patient={patient}
@@ -618,7 +619,7 @@ export function GlobalPatientSearch({
                       </Button>
                     </div>
                     <div className='space-y-1'>
-                      {searchHistory.slice(0, 5).map((item, _index) => (
+                      {searchHistory.slice(0, 5).map((item, index) => (
                         <div
                           key={index}
                           className='flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded cursor-pointer'

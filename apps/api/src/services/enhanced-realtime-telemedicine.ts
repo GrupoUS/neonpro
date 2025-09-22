@@ -293,11 +293,11 @@ export class EnhancedTelemedicineRealtime {
     const response = await channel.track(validatedPresence);
 
     // Store locally for monitoring
-    this.presenceStates.set(presence.userId!, validatedPresence);
+    this.presenceStates.set(fullPresence.userId!, validatedPresence);
 
     // Monitor connection quality
-    if (validatedPresence.connectionQuality) {
-      await this.assessConnectionQuality(sessionId, validatedPresence);
+    if (fullPresence.connectionQuality) {
+      await this.assessConnectionQuality(sessionId, fullPresence);
     }
 
     return response === 'ok';
@@ -427,7 +427,7 @@ export class EnhancedTelemedicineRealtime {
   ): Promise<void> {
     for (const userId of participants) {
       const initialPresence: PresenceState = {
-        userId,
+        _userId: userId,
         sessionId,
         userRole: 'patient', // Default, should be determined by actual role
         status: 'online',
@@ -493,7 +493,7 @@ export class EnhancedTelemedicineRealtime {
           if (quality === 'poor' && presence.connectionQuality.latency > 300) {
             await this.sendQualityAlert(
               sessionId,
-              userId,
+              presence._userId,
               presence.connectionQuality,
             );
           }
@@ -578,7 +578,7 @@ export class EnhancedTelemedicineRealtime {
       event: 'quality_alert',
       _payload: {
         type: 'poor_connection_quality',
-        userId,
+        userId: _userId,
         quality,
         suggestions: [
           'Check your internet connection',
@@ -624,7 +624,7 @@ export class EnhancedTelemedicineRealtime {
       type: 'broadcast',
       event: 'quality_suggestions',
       _payload: {
-        userId,
+        userId: _userId,
         suggestions,
         currentQuality: quality,
         timestamp: new Date().toISOString(),
