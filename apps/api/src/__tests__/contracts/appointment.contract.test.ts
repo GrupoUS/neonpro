@@ -59,7 +59,7 @@ describe(_'Appointment API Contract Tests',() => {
   });
 
   describe(_'Appointment Creation Contract',() => {
-    it(_'should validate appointment creation input schema',_async () => {
+    it(_'should validate appointment creation input schema',async () => {
       const validInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -115,7 +115,7 @@ describe(_'Appointment API Contract Tests',() => {
       });
     });
 
-    it(_'should reject appointment creation with scheduling conflicts',_async () => {
+    it(_'should reject appointment creation with scheduling conflicts',async () => {
       const conflictingInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -140,7 +140,7 @@ describe(_'Appointment API Contract Tests',() => {
       ).rejects.toThrow('Scheduling conflict detected');
     });
 
-    it(_'should validate appointment timing constraints',_async () => {
+    it(_'should validate appointment timing constraints',async () => {
       const pastDateInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -155,7 +155,7 @@ describe(_'Appointment API Contract Tests',() => {
       ).rejects.toThrow('Cannot schedule appointments in the past');
     });
 
-    it(_'should validate business hours constraints',_async () => {
+    it(_'should validate business hours constraints',async () => {
       const afterHoursInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -172,7 +172,7 @@ describe(_'Appointment API Contract Tests',() => {
   });
 
   describe(_'Appointment Retrieval Contract',() => {
-    it(_'should validate appointment retrieval by ID',_async () => {
+    it(_'should validate appointment retrieval by ID',async () => {
       const appointmentId = 'appointment-123';
       const mockAppointment = {
         id: appointmentId,
@@ -213,7 +213,7 @@ describe(_'Appointment API Contract Tests',() => {
       });
     });
 
-    it(_'should handle appointment not found',_async () => {
+    it(_'should handle appointment not found',async () => {
       const appointmentId = 'nonexistent-appointment';
       mockContext.prisma.appointment.findUnique.mockResolvedValue(null);
 
@@ -226,7 +226,7 @@ describe(_'Appointment API Contract Tests',() => {
   });
 
   describe(_'Appointment Update Contract',() => {
-    it(_'should validate appointment update input schema',_async () => {
+    it(_'should validate appointment update input schema',async () => {
       const appointmentId = 'appointment-123';
       const updateInput: AppointmentInput['update'] = {
         id: appointmentId,
@@ -280,7 +280,7 @@ describe(_'Appointment API Contract Tests',() => {
       });
     });
 
-    it(_'should prevent updating completed appointments',_async () => {
+    it(_'should prevent updating completed appointments',async () => {
       const appointmentId = 'appointment-123';
       const updateInput: AppointmentInput['update'] = {
         id: appointmentId,
@@ -303,7 +303,7 @@ describe(_'Appointment API Contract Tests',() => {
     });
   });
   describe(_'Appointment Cancellation Contract',() => {
-    it(_'should validate appointment cancellation',_async () => {
+    it(_'should validate appointment cancellation',async () => {
       const appointmentId = 'appointment-123';
       const cancelInput: AppointmentInput['cancel'] = {
         id: appointmentId,
@@ -355,7 +355,7 @@ describe(_'Appointment API Contract Tests',() => {
       });
     });
 
-    it(_'should enforce cancellation time limits',_async () => {
+    it(_'should enforce cancellation time limits',async () => {
       const appointmentId = 'appointment-123';
       const cancelInput: AppointmentInput['cancel'] = {
         id: appointmentId,
@@ -379,7 +379,7 @@ describe(_'Appointment API Contract Tests',() => {
   });
 
   describe(_'Appointment Availability Contract',() => {
-    it(_'should validate availability checking',_async () => {
+    it(_'should validate availability checking',async () => {
       const availabilityInput: AppointmentInput['getAvailability'] = {
         professionalId: 'prof-456',
         date: '2024-02-15',
@@ -422,7 +422,7 @@ describe(_'Appointment API Contract Tests',() => {
       });
     });
 
-    it(_'should handle no availability',_async () => {
+    it(_'should handle no availability',async () => {
       const availabilityInput: AppointmentInput['getAvailability'] = {
         professionalId: 'prof-456',
         date: '2024-02-15',
@@ -450,7 +450,7 @@ describe(_'Appointment API Contract Tests',() => {
   });
 
   describe(_'Appointment Conflict Detection Contract',() => {
-    it(_'should validate conflict checking',_async () => {
+    it(_'should validate conflict checking',async () => {
       const conflictInput: AppointmentInput['checkConflicts'] = {
         professionalId: 'prof-456',
         scheduledFor: '2024-02-15T14:00:00.000Z',
@@ -487,7 +487,7 @@ describe(_'Appointment API Contract Tests',() => {
       });
     });
 
-    it(_'should return no conflicts when schedule is clear',_async () => {
+    it(_'should return no conflicts when schedule is clear',async () => {
       const conflictInput: AppointmentInput['checkConflicts'] = {
         professionalId: 'prof-456',
         scheduledFor: '2024-02-15T16:00:00.000Z',
@@ -509,7 +509,7 @@ describe(_'Appointment API Contract Tests',() => {
   });
 
   describe(_'Appointment List Contract',() => {
-    it(_'should validate appointment listing with filters',_async () => {
+    it(_'should validate appointment listing with filters',async () => {
       const listInput: AppointmentInput['list'] = {
         page: 1,
         limit: 10,

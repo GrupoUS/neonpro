@@ -113,7 +113,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Handle message submission
   const handleSubmit = useCallback(
-    async (_message: any) => {
+    async (message: any) => {
       if (!user) {
         toast({
           title: 'Erro de autenticação',

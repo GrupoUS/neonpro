@@ -13,11 +13,11 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Card } from '@/components/ui/card';
-import { Dialog } from '@/components/ui/dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { AIAgentService } from '@/services/ai-agent';
@@ -25,7 +25,7 @@ import { AgentAction } from '@/types/ai-agent';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { ptBR } from 'date-fns/locale';
-import { CalendarIcon } from 'lucide-react';
+import { AlertCircle, CalendarIcon, Download, ExternalLink, FileText, Plus, RefreshCw, User } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 
 interface ActionHandlersProps {
@@ -200,7 +200,7 @@ const DataExportModal: React.FC<{
   dataType: 'clients' | 'appointments' | 'financial';
   onClose: () => void;
   onExport: (options: ExportOptions) => void;
-}> = ({ data,dataType, onClose, onExport }) => {
+}> = ({ data, dataType, onClose, onExport }) => {
   const [exportOptions, setExportOptions] = useState<ExportOptions>({
     format: 'csv',
     includeSummary: true,
@@ -303,10 +303,10 @@ const DataExportModal: React.FC<{
  * Pre-fills appointment creation form based on AI context
  */
 const AppointmentCreationModal: React.FC<{
-  _context?: Record<string, any>;
+  context?: Record<string, any>;
   onClose: () => void;
   onSuccess?: () => void;
-}> = ({ context,onClose, onSuccess }) => {
+}> = ({ context, onClose, onSuccess }) => {
   const [formData, setFormData] = useState<AppointmentFormData>({
     clientId: context?.clientId || '',
     serviceId: context?.serviceId || '',
@@ -411,7 +411,7 @@ const AppointmentCreationModal: React.FC<{
  * Main ActionHandlers Component
  */
 export const ActionHandlers: React.FC<ActionHandlersProps> = ({
-  actions,onActionExecuted, sessionId,className, }) => {
+  actions, onActionExecuted, sessionId, className, }) => {
   const [selectedClient, setSelectedClient] = useState<ClientData | null>(null);
   const [exportData, setExportData] = useState<
     { data: any[]; dataType: 'clients' | 'appointments' | 'financial' } | null
@@ -472,7 +472,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
     },
   });
 
-  const handleAction = useCallback(async (_action: any) => {
+  const handleAction = useCallback(async (action: any) => {
     switch (action.type) {
       case 'view_details':
         if (action.payload?.clientId) {
@@ -480,7 +480,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
           try {
             const clientData = await aiAgentService.getClientDetails(action.payload.clientId);
             setSelectedClient(clientData);
-          } catch (_error) {
+          } catch (error) {
             console.error('Failed to fetch client details:', error);
           }
         } else if (action.payload?.client) {
@@ -546,7 +546,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
     return csvRows.join('\n');
   };
 
-  const getActionIcon = (_iconName: any) => {
+  const getActionIcon = (iconName: any) => {
     switch (iconName) {
       case 'user':
         return <User className='h-4 w-4' />;

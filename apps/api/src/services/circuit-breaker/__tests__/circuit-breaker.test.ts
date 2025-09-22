@@ -19,7 +19,7 @@ import {
   ServiceDependency,
 } from '../health-checker';
 
-describe(_'CircuitBreakerService',_() => {
+describe(_'CircuitBreakerService'), () => {
   let circuitBreaker: CircuitBreakerService;
 
   beforeEach(() => {
@@ -30,31 +30,31 @@ describe(_'CircuitBreakerService',_() => {
     circuitBreaker.destroy();
   });
 
-  describe(_'Basic Operations',_() => {
-    test(_'should start in CLOSED state',_() => {
+  describe(_'Basic Operations'), () => {
+    test(_'should start in CLOSED state'), () => {
       expect(circuitBreaker.getState()).toBe('CLOSED');
     });
 
-    test(_'should execute successful operations',_async () => {
-      const result = await circuitBreaker.execute(_async () => 'success');
+    test(_'should execute successful operations',async () => {
+      const result = await circuitBreaker.execute(async () => 'success');
       expect(result).toBe('success');
       expect(circuitBreaker.getState()).toBe('CLOSED');
     });
 
-    test(_'should handle operation failures',_async () => {
+    test(_'should handle operation failures',async () => {
       const error = new Error('Test error');
       await expect(_circuitBreaker.execute(async () => {
         throw error;
       })).rejects.toThrow('Test error');
     });
 
-    test(_'should open circuit after failure threshold',_async () => {
+    test(_'should open circuit after failure threshold',async () => {
       const error = new Error('Test error');
 
       // Fail multiple times to open circuit
       for (let i = 0; i < HEALTHCARE_CIRCUIT_CONFIG.failureThreshold; i++) {
         try {
-          await circuitBreaker.execute(_async () => {
+          await circuitBreaker.execute(async () => {
             throw error;
           });
         } catch (e) {
@@ -65,7 +65,7 @@ describe(_'CircuitBreakerService',_() => {
       expect(circuitBreaker.getState()).toBe('OPEN');
     });
 
-    test(_'should fail fast when circuit is open',_async () => {
+    test(_'should fail fast when circuit is open',async () => {
       // Force circuit open
       circuitBreaker['forceReset']();
       circuitBreaker['state'] = 'OPEN';
@@ -77,8 +77,8 @@ describe(_'CircuitBreakerService',_() => {
     });
   });
 
-  describe(_'Healthcare Compliance',_() => {
-    test(_'should use fail-secure mode for healthcare services',_async () => {
+  describe(_'Healthcare Compliance'), () => {
+    test(_'should use fail-secure mode for healthcare services',async () => {
       const healthcareCircuitBreaker = new CircuitBreakerService({
         ...HEALTHCARE_CIRCUIT_CONFIG,
         healthcareCritical: true,
@@ -97,18 +97,18 @@ describe(_'CircuitBreakerService',_() => {
       healthcareCircuitBreaker.destroy();
     });
 
-    test(_'should provide fallback values when available',_async () => {
+    test(_'should provide fallback values when available',async () => {
       // Force circuit open
       circuitBreaker['forceReset']();
       circuitBreaker['state'] = 'OPEN';
       circuitBreaker['nextAttemptTime'] = new Date(Date.now() + 60000);
 
       const fallbackValue = 'fallback response';
-      const result = await circuitBreaker.execute(_async () => 'success', undefined, _fallbackValue);
+      const result = await circuitBreaker.execute(async () => 'success', undefined, _fallbackValue);
       expect(result).toBe(fallbackValue);
     });
 
-    test(_'should use custom fallback when provided',_async () => {
+    test(_'should use custom fallback when provided',async () => {
       const config = {
         ...HEALTHCARE_CIRCUIT_CONFIG,
         customFallback: async (error: Error) => 'custom fallback',
@@ -121,17 +121,17 @@ describe(_'CircuitBreakerService',_() => {
       customCircuitBreaker['state'] = 'OPEN';
       customCircuitBreaker['nextAttemptTime'] = new Date(Date.now() + 60000);
 
-      const result = await customCircuitBreaker.execute(_async () => 'success');
+      const result = await customCircuitBreaker.execute(async () => 'success');
       expect(result).toBe('custom fallback');
 
       customCircuitBreaker.destroy();
     });
   });
 
-  describe(_'Metrics and Monitoring',_() => {
-    test(_'should track request metrics',_async () => {
+  describe(_'Metrics and Monitoring'), () => {
+    test(_'should track request metrics',async () => {
       // Successful request
-      await circuitBreaker.execute(_async () => 'success');
+      await circuitBreaker.execute(async () => 'success');
 
       let metrics = circuitBreaker.getMetrics();
       expect(metrics.totalRequests).toBe(1);
@@ -140,7 +140,7 @@ describe(_'CircuitBreakerService',_() => {
 
       // Failed request
       try {
-        await circuitBreaker.execute(_async () => {
+        await circuitBreaker.execute(async () => {
           throw new Error('Test error');
         });
       } catch (e) {
@@ -153,12 +153,12 @@ describe(_'CircuitBreakerService',_() => {
       expect(metrics.failedRequests).toBe(1);
     });
 
-    test(_'should track consecutive failures',_async () => {
+    test(_'should track consecutive failures',async () => {
       const error = new Error('Test error');
 
       for (let i = 0; i < 3; i++) {
         try {
-          await circuitBreaker.execute(_async () => {
+          await circuitBreaker.execute(async () => {
             throw error;
           });
         } catch (e) {
@@ -170,14 +170,14 @@ describe(_'CircuitBreakerService',_() => {
       expect(metrics.consecutiveFailures).toBe(3);
     });
 
-    test(_'should calculate average response time',_async () => {
+    test(_'should calculate average response time',async () => {
       // First request
-      await circuitBreaker.execute(_async () => {
+      await circuitBreaker.execute(async () => {
         return new Promise(resolve => setTimeout(resolve, 100, 'result1'));
       });
 
       // Second request
-      await circuitBreaker.execute(_async () => {
+      await circuitBreaker.execute(async () => {
         return new Promise(resolve => setTimeout(resolve, 200, 'result2'));
       });
 
@@ -187,8 +187,8 @@ describe(_'CircuitBreakerService',_() => {
     });
   });
 
-  describe(_'Event Handling',_() => {
-    test(_'should emit events for state changes',_async () => {
+  describe(_'Event Handling'), () => {
+    test(_'should emit events for state changes',async () => {
       const events: any[] = [];
       circuitBreaker.onEvent(event => {
         events.push(event);
@@ -198,7 +198,7 @@ describe(_'CircuitBreakerService',_() => {
       const error = new Error('Test error');
       for (let i = 0; i < HEALTHCARE_CIRCUIT_CONFIG.failureThreshold; i++) {
         try {
-          await circuitBreaker.execute(_async () => {
+          await circuitBreaker.execute(async () => {
             throw error;
           });
         } catch (e) {
@@ -210,20 +210,20 @@ describe(_'CircuitBreakerService',_() => {
       expect(events.some(e => e.type === 'REQUEST_FAILURE')).toBe(true);
     });
 
-    test(_'should emit events for successful requests',_async () => {
+    test(_'should emit events for successful requests',async () => {
       const events: any[] = [];
       circuitBreaker.onEvent(event => {
         events.push(event);
       });
 
-      await circuitBreaker.execute(_async () => 'success');
+      await circuitBreaker.execute(async () => 'success');
 
       expect(events.some(e => e.type === 'REQUEST_SUCCESS')).toBe(true);
     });
   });
 
-  describe(_'Configuration and Updates',_() => {
-    test(_'should allow configuration updates',_() => {
+  describe(_'Configuration and Updates'), () => {
+    test(_'should allow configuration updates'), () => {
       const newConfig = {
         failureThreshold: 10,
         resetTimeout: 120000,
@@ -235,7 +235,7 @@ describe(_'CircuitBreakerService',_() => {
       expect(circuitBreaker).toBeDefined();
     });
 
-    test(_'should force reset circuit',_() => {
+    test(_'should force reset circuit'), () => {
       // Force circuit open
       circuitBreaker['state'] = 'OPEN';
       circuitBreaker['failureCount'] = 5;
@@ -247,8 +247,8 @@ describe(_'CircuitBreakerService',_() => {
     });
   });
 
-  describe(_'Timeout Handling',_() => {
-    test(_'should timeout long-running operations',_async () => {
+  describe(_'Timeout Handling'), () => {
+    test(_'should timeout long-running operations',async () => {
       const slowConfig = {
         ...HEALTHCARE_CIRCUIT_CONFIG,
         requestTimeout: 100, // 100ms timeout
@@ -265,7 +265,7 @@ describe(_'CircuitBreakerService',_() => {
   });
 });
 
-describe(_'ExternalServiceHealthChecker',_() => {
+describe(_'ExternalServiceHealthChecker'), () => {
   let healthChecker: ExternalServiceHealthChecker;
 
   beforeEach(() => {
@@ -276,8 +276,8 @@ describe(_'ExternalServiceHealthChecker',_() => {
     healthChecker.destroy();
   });
 
-  describe(_'Service Registration',_() => {
-    test(_'should register services for monitoring',_() => {
+  describe(_'Service Registration'), () => {
+    test(_'should register services for monitoring'), () => {
       const _service: ServiceDependency = {
         name: 'test-service',
         type: 'api',
@@ -293,7 +293,7 @@ describe(_'ExternalServiceHealthChecker',_() => {
       }).not.toThrow();
     });
 
-    test(_'should handle duplicate service registration',_() => {
+    test(_'should handle duplicate service registration'), () => {
       const _service: ServiceDependency = {
         name: 'test-service',
         type: 'api',
@@ -313,8 +313,8 @@ describe(_'ExternalServiceHealthChecker',_() => {
     });
   });
 
-  describe(_'Health Status',_() => {
-    test(_'should provide comprehensive health status',_() => {
+  describe(_'Health Status'), () => {
+    test(_'should provide comprehensive health status'), () => {
       const _service: ServiceDependency = {
         name: 'test-service',
         type: 'api',
@@ -337,7 +337,7 @@ describe(_'ExternalServiceHealthChecker',_() => {
       expect(healthStatus.criticalServicesHealthy).toBeDefined();
     });
 
-    test(_'should include registered services in health status',_() => {
+    test(_'should include registered services in health status'), () => {
       const _service: ServiceDependency = {
         name: 'test-service',
         type: 'api',
@@ -357,8 +357,8 @@ describe(_'ExternalServiceHealthChecker',_() => {
     });
   });
 
-  describe(_'Event Handling',_() => {
-    test(_'should emit health check events',_async () => {
+  describe(_'Event Handling'), () => {
+    test(_'should emit health check events',async () => {
       const events: any[] = [];
       healthChecker.onEvent(event => {
         events.push(event);
@@ -384,8 +384,8 @@ describe(_'ExternalServiceHealthChecker',_() => {
     });
   });
 
-  describe(_'Service Unregistration',_() => {
-    test(_'should unregister services',_() => {
+  describe(_'Service Unregistration'), () => {
+    test(_'should unregister services'), () => {
       const _service: ServiceDependency = {
         name: 'test-service',
         type: 'api',
@@ -403,7 +403,7 @@ describe(_'ExternalServiceHealthChecker',_() => {
       expect(healthStatus.services['test-service']).toBeUndefined();
     });
 
-    test(_'should handle unregistering non-existent services',_() => {
+    test(_'should handle unregistering non-existent services'), () => {
       expect(() => {
         healthChecker.unregisterService('non-existent-service');
       }).not.toThrow();
@@ -411,8 +411,8 @@ describe(_'ExternalServiceHealthChecker',_() => {
   });
 });
 
-describe(_'Integration Scenarios',_() => {
-  test(_'should handle circuit breaker with health checker integration',_async () => {
+describe(_'Integration Scenarios'), () => {
+  test(_'should handle circuit breaker with health checker integration',async () => {
     const circuitBreaker = new CircuitBreakerService(HEALTHCARE_CIRCUIT_CONFIG);
     const healthChecker = new ExternalServiceHealthChecker(HEALTHCARE_HEALTH_CONFIG);
 
@@ -439,7 +439,7 @@ describe(_'Integration Scenarios',_() => {
     healthChecker.destroy();
   });
 
-  test(_'should handle healthcare-specific scenarios',_async () => {
+  test(_'should handle healthcare-specific scenarios',async () => {
     const healthcareCircuitBreaker = new CircuitBreakerService({
       ...HEALTHCARE_CIRCUIT_CONFIG,
       healthcareCritical: true,
@@ -464,8 +464,8 @@ describe(_'Integration Scenarios',_() => {
   });
 });
 
-describe(_'Error Handling',_() => {
-  test(_'should handle callback errors gracefully',_() => {
+describe(_'Error Handling'), () => {
+  test(_'should handle callback errors gracefully'), () => {
     const circuitBreaker = new CircuitBreakerService(HEALTHCARE_CIRCUIT_CONFIG);
 
     // Add an error-throwing callback
@@ -487,7 +487,7 @@ describe(_'Error Handling',_() => {
     circuitBreaker.destroy();
   });
 
-  test(_'should handle invalid service configurations',_() => {
+  test(_'should handle invalid service configurations'), () => {
     const healthChecker = new ExternalServiceHealthChecker(HEALTHCARE_HEALTH_CONFIG);
 
     // Should handle invalid service names gracefully

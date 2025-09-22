@@ -107,7 +107,7 @@ export const telemedicineRouter = router({
   // Create a new telemedicine session
   createSession: telemedicineProcedure
     .input(createSessionSchema)
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       try {
         // Verify physician license and authorization
         const { data: physician } = await ctx.supabase
@@ -188,7 +188,7 @@ export const telemedicineRouter = router({
   // Join an existing session
   joinSession: telemedicineProcedure
     .input(joinSessionSchema)
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       try {
         // const sessionDetails = await webrtcService.joinSession(
         //   input.sessionId,
@@ -240,7 +240,7 @@ export const telemedicineRouter = router({
         notes: z.string().max(1000).optional(),
       }),
     )
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       try {
         // Calculate actual duration using telemedicine service
         const sessionResult = await telemedicineService.endSession({
@@ -279,7 +279,7 @@ export const telemedicineRouter = router({
   // Get session status
   getSessionStatus: publicProcedure
     .input(z.object({ sessionId: z.string().uuid() }))
-    .query(_async ({ input }) => {
+    .query(async ({ input }) => {
       try {
         // Get session status using telemedicine service
         const sessionStatus = await telemedicineService.getSessionStatus(input.sessionId);
@@ -310,7 +310,7 @@ export const telemedicineRouter = router({
   // Verify patient identity - TODO: Implement when service available
   // verifyPatientIdentity: patientProcedure
   //   .input(patientVerificationSchema)
-  //   .mutation(_async ({ input }) => {
+  //   .mutation(async ({ input }) => {
   //     try {
   //       return await identityService.verifyPatientIdentity(
   //         input.patientId,
@@ -349,7 +349,7 @@ export const telemedicineRouter = router({
   //       }),
   //     }),
   //   )
-  //   .mutation(_async ({ input }) => {
+  //   .mutation(async ({ input }) => {
   //     try {
   //       return await identityService.verifyPatientAddress(input.patientId, {
   //         ...input.address,
@@ -373,7 +373,7 @@ export const telemedicineRouter = router({
   // Verify medical license - TODO: Implement when service available
   // verifyMedicalLicense: healthcareProcedure
   //   .input(licenseVerificationSchema)
-  //   .query(_async ({ input }) => {
+  //   .query(async ({ input }) => {
   //     try {
   //       return await licenseService.verifyMedicalLicense(
   //         input.cfmNumber,
@@ -400,7 +400,7 @@ export const telemedicineRouter = router({
   //       specialty: z.string().optional(),
   //     }),
   //   )
-  //   .query(_async ({ input }) => {
+  //   .query(async ({ input }) => {
   //     try {
   //       return await licenseService.isAuthorizedForTelemedicine(
   //         input.cfmNumber,
@@ -425,7 +425,7 @@ export const telemedicineRouter = router({
   // Record patient consent
   recordConsent: patientProcedure
     .input(consentSchema)
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       try {
         const consent = await cfmService.recordPatientConsent({
           patientId: input.patientId,
@@ -462,7 +462,7 @@ export const telemedicineRouter = router({
           .optional(),
       }),
     )
-    .query(_async ({ input }) => {
+    .query(async ({ input }) => {
       try {
         return await cfmService.getPatientConsentStatus(
           input.patientId,
@@ -485,7 +485,7 @@ export const telemedicineRouter = router({
   // Get compliance report
   getComplianceReport: healthcareProcedure
     .input(complianceReportSchema)
-    .query(_async ({ input }) => {
+    .query(async ({ input }) => {
       try {
         return await cfmService.generateComplianceReport({
           sessionId: input.sessionId,
@@ -507,7 +507,7 @@ export const telemedicineRouter = router({
   // Get session audit trail
   getSessionAuditTrail: healthcareProcedure
     .input(z.object({ sessionId: z.string().uuid() }))
-    .query(_async ({ input }) => {
+    .query(async ({ input }) => {
       try {
         return await cfmService.getSessionAuditTrail(input.sessionId);
       } catch (error) {
@@ -530,7 +530,7 @@ export const telemedicineRouter = router({
         offset: z.number().min(0).default(0),
       }),
     )
-    .query(_async ({ input }) => {
+    .query(async ({ input }) => {
       try {
         // return await webrtcService.listActiveSessions({
         //   clinicId: input.clinicId,
@@ -572,7 +572,7 @@ export const telemedicineRouter = router({
         targetParticipant: z.string().uuid(),
       }),
     )
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       try {
         // await webrtcService.sendSignal(
         //   input.sessionId,
@@ -603,7 +603,7 @@ export const telemedicineRouter = router({
   // Get session recording status
   getRecordingStatus: telemedicineProcedure
     .input(z.object({ sessionId: z.string().uuid() }))
-    .query(_async ({ input }) => {
+    .query(async ({ input }) => {
       try {
         // return await webrtcService.getRecordingStatus(input.sessionId);
 
@@ -632,7 +632,7 @@ export const telemedicineRouter = router({
         recordingType: z.enum(['video', 'audio', 'screen']),
       }),
     )
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       try {
         // Verify recording consent exists
         const consentStatus = await cfmService.getPatientConsentStatus(
@@ -675,7 +675,7 @@ export const telemedicineRouter = router({
   // Stop session recording
   stopRecording: telemedicineProcedure
     .input(z.object({ sessionId: z.string().uuid() }))
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       try {
         // Stop recording using telemedicine service
         const recordingResult = await telemedicineService.stopRecording(input.sessionId);

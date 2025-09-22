@@ -861,7 +861,7 @@ export class TelemedicineService {
       this.activeSessions.delete(sessionId);
 
       // Clean up authentication contexts
-      this.authContexts.forEach((, key) => {
+      this.authContexts.forEach((_, key) => {
         if (key.startsWith(sessionId)) {
           this.authContexts.delete(key);
         }

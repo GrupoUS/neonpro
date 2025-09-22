@@ -160,13 +160,13 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     vi.restoreAllMocks();
   });
 
-  it(_'should export patient history route handler',_async () => {
+  it(_'should export patient history route handler',async () => {
     const module = await import('../history');
     expect(module.default).toBeDefined();
   });
 
-  describe(_'Successful Patient History Retrieval',_() => {
-    it(_'should retrieve patient history with default parameters',_async () => {
+  describe(_'Successful Patient History Retrieval'), () => {
+    it(_'should retrieve patient history with default parameters',async () => {
       const { default: historyRoute } = await import('../history');
 
       const mockRequest = {
@@ -190,7 +190,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       expect(data.data.summary).toBeDefined();
     });
 
-    it(_'should retrieve patient history with pagination',_async () => {
+    it(_'should retrieve patient history with pagination',async () => {
       const { default: historyRoute } = await import('../history');
 
       const mockRequest = {
@@ -215,7 +215,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       });
     });
 
-    it(_'should retrieve patient history with event type filters',_async () => {
+    it(_'should retrieve patient history with event type filters',async () => {
       const { default: historyRoute } = require('../history');
 
       const mockRequest = {
@@ -242,7 +242,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       });
     });
 
-    it(_'should retrieve patient history with date range filters',_async () => {
+    it(_'should retrieve patient history with date range filters',async () => {
       const { default: historyRoute } = require('../history');
 
       const mockRequest = {
@@ -271,7 +271,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       });
     });
 
-    it(_'should retrieve patient history with severity filters',_async () => {
+    it(_'should retrieve patient history with severity filters',async () => {
       const { default: historyRoute } = require('../history');
 
       const mockRequest = {
@@ -298,7 +298,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       });
     });
 
-    it(_'should include history metadata headers',_async () => {
+    it(_'should include history metadata headers',async () => {
       const { default: historyRoute } = require('../history');
 
       const mockRequest = {
@@ -324,8 +324,8 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     });
   });
 
-  describe(_'LGPD Compliance and History Access',_() => {
-    it(_'should validate LGPD history access permissions',_async () => {
+  describe(_'LGPD Compliance and History Access'), () => {
+    it(_'should validate LGPD history access permissions',async () => {
       const { default: historyRoute } = require('../history');
 
       const mockRequest = {
@@ -348,7 +348,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       });
     });
 
-    it(_'should log history access for audit trail',_async () => {
+    it(_'should log history access for audit trail',async () => {
       const { default: historyRoute } = require('../history');
 
       const mockRequest = {
@@ -383,7 +383,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       });
     });
 
-    it(_'should handle LGPD history access denial',_async () => {
+    it(_'should handle LGPD history access denial',async () => {
       mockLGPDService.validateHistoryAccess.mockResolvedValue({
         success: false,
         error: 'Acesso ao histórico negado por política LGPD',
@@ -410,7 +410,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       expect(data.code).toBe('LGPD_HISTORY_ACCESS_DENIED');
     });
 
-    it(_'should mask sensitive data in history based on access level',_async () => {
+    it(_'should mask sensitive data in history based on access level',async () => {
       mockLGPDService.validateHistoryAccess.mockResolvedValue({
         success: true,
         data: { canAccess: true, accessLevel: 'limited' },
@@ -464,8 +464,8 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     });
   });
 
-  describe(_'Error Handling',_() => {
-    it(_'should handle authentication errors',_async () => {
+  describe(_'Error Handling'), () => {
+    it(_'should handle authentication errors',async () => {
       const { default: historyRoute } = require('../history');
 
       const mockRequest = {
@@ -484,7 +484,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       expect(data.error).toContain('Não autorizado');
     });
 
-    it(_'should handle patient not found errors',_async () => {
+    it(_'should handle patient not found errors',async () => {
       mockPatientService.validatePatientExists.mockResolvedValue({
         success: false,
         error: 'Paciente não encontrado',
@@ -511,7 +511,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       expect(data.code).toBe('PATIENT_NOT_FOUND');
     });
 
-    it(_'should handle validation errors for query parameters',_async () => {
+    it(_'should handle validation errors for query parameters',async () => {
       const { default: historyRoute } = require('../history');
 
       const mockRequest = {
@@ -532,7 +532,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       expect(data.errors.length).toBeGreaterThan(0);
     });
 
-    it(_'should handle service errors gracefully',_async () => {
+    it(_'should handle service errors gracefully',async () => {
       mockAuditService.getPatientHistory.mockResolvedValue({
         success: false,
         error: 'Erro interno do serviço de auditoria',
@@ -557,7 +557,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       expect(data.error).toContain('Erro interno');
     });
 
-    it(_'should handle history retrieval timeout',_async () => {
+    it(_'should handle history retrieval timeout',async () => {
       mockAuditService.getPatientHistory.mockRejectedValue(
         new Error('History retrieval timeout'),
       );
@@ -582,8 +582,8 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     });
   });
 
-  describe(_'Brazilian Healthcare Compliance',_() => {
-    it(_'should include CFM compliance headers',_async () => {
+  describe(_'Brazilian Healthcare Compliance'), () => {
+    it(_'should include CFM compliance headers',async () => {
       const { default: historyRoute } = require('../history');
 
       const mockRequest = {
@@ -603,7 +603,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       expect(response.headers.get('X-Audit-Trail-Complete')).toBe('true');
     });
 
-    it(_'should validate healthcare professional context for medical history',_async () => {
+    it(_'should validate healthcare professional context for medical history',async () => {
       const { default: historyRoute } = require('../history');
 
       const mockRequest = {
@@ -629,7 +629,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       );
     });
 
-    it(_'should include data retention policy information',_async () => {
+    it(_'should include data retention policy information',async () => {
       const { default: historyRoute } = require('../history');
 
       const mockRequest = {
@@ -651,8 +651,8 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     });
   });
 
-  describe(_'Performance and Caching',_() => {
-    it(_'should include performance headers',_async () => {
+  describe(_'Performance and Caching'), () => {
+    it(_'should include performance headers',async () => {
       const { default: historyRoute } = require('../history');
 
       const mockRequest = {
@@ -674,7 +674,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
       expect(response.headers.get('X-Database-Queries')).toBeDefined();
     });
 
-    it(_'should handle large history sets with efficient pagination',_async () => {
+    it(_'should handle large history sets with efficient pagination',async () => {
       const largeHistorySet = Array.from({ length: 100 },(, i) => ({
         id: `event-${i}`,
         timestamp: `2024-01-${String(i + 1).padStart(2, '0')}T10:00:00Z`,

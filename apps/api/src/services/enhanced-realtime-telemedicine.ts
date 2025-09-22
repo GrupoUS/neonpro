@@ -377,7 +377,7 @@ export class EnhancedTelemedicineRealtime {
     channel: RealtimeChannel,
     sessionId: string,
   ): void {
-    channel.on(_'presence', { event: 'sync' },_() => {
+    channel.on('presence', { event: 'sync' }), () => {
       const state = channel.presenceState();
       console.log(
         `👥 Presence sync for session ${sessionId}:`,
@@ -386,11 +386,11 @@ export class EnhancedTelemedicineRealtime {
       );
     });
 
-    channel.on(_'presence', { event: 'join' },({ key,_newPresences }) => {
+    channel.on('presence', { event: 'join' },({ key,_newPresences }) => {
       console.log(`👋 User joined session ${sessionId}:`, key, newPresences);
     });
 
-    channel.on(_'presence', { event: 'leave' },({ key,_leftPresences }) => {
+    channel.on('presence', { event: 'leave' },({ key,_leftPresences }) => {
       console.log(`👋 User left session ${sessionId}:`, key, leftPresences);
 
       // Clean up local presence state

@@ -68,7 +68,7 @@ export class WebSocketServerMiddleware {
    * Attach to HTTP server for upgrade handling
    */
   attachToServer(server: HttpServer): void {
-    server.on(_'upgrade',(request,socket,_head) => {
+    server.on('upgrade', (request, socket, head) => {
       this.handleUpgrade(request, socket, head);
     });
 
@@ -108,7 +108,7 @@ export class WebSocketServerMiddleware {
    */
   private setupEventHandlers(): void {
     // Handle new connections
-    this.wss.on(_'connection',(ws,_request) => {
+    this.wss.on('connection', (ws, _request) => {
       this.aguiService.getProtocolInstance().handleConnection(ws, _request);
     });
 
@@ -118,7 +118,7 @@ export class WebSocketServerMiddleware {
     });
 
     // Handle server close
-    this.wss.on(_'close',_() => {
+    this.wss.on('close', () => {
       logger.info('WebSocket server closed');
     });
 
@@ -131,7 +131,7 @@ export class WebSocketServerMiddleware {
    */
   private setupServiceEventHandlers(): void {
     // Service lifecycle events
-    this.aguiService.on(_'initialized',_() => {
+    this.aguiService.on('initialized', () => {
       logger.info('AGUI service initialized');
     });
 
@@ -139,11 +139,11 @@ export class WebSocketServerMiddleware {
       logger.error('AGUI service initialization error', { error });
     });
 
-    this.aguiService.on(_'shuttingDown',_() => {
+    this.aguiService.on('shuttingDown', () => {
       logger.info('AGUI service shutting down');
     });
 
-    this.aguiService.on(_'shutdown',_() => {
+    this.aguiService.on('shutdown', () => {
       logger.info('AGUI service shutdown completed');
     });
 

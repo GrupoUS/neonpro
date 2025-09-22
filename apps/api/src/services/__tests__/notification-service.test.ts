@@ -15,13 +15,13 @@ describe('Real-time Notification Service (T042)', () => {
     vi.restoreAllMocks();
   });
 
-  it(_'should export NotificationService class',_async () => {
+  it(_'should export NotificationService class',async () => {
     const module = await import('../notification-service');
     expect(module.NotificationService).toBeDefined();
   });
 
-  describe(_'Multi-channel Notification Delivery',_() => {
-    it(_'should send email notification',_async () => {
+  describe(_'Multi-channel Notification Delivery'), () => {
+    it(_'should send email notification',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -46,7 +46,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.persisted).toBe(true);
     });
 
-    it(_'should send SMS notification',_async () => {
+    it(_'should send SMS notification',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -69,7 +69,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.persisted).toBe(true);
     });
 
-    it(_'should send WhatsApp notification',_async () => {
+    it(_'should send WhatsApp notification',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -95,7 +95,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.persisted).toBe(true);
     });
 
-    it(_'should send push notification',_async () => {
+    it(_'should send push notification',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -120,8 +120,8 @@ describe('Real-time Notification Service (T042)', () => {
     });
   });
 
-  describe(_'Real-time Notification Streaming',_() => {
-    it(_'should start notification stream',_async () => {
+  describe(_'Real-time Notification Streaming'), () => {
+    it(_'should start notification stream',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -141,7 +141,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.channelCount).toBe(3);
     });
 
-    it(_'should stop notification stream',_async () => {
+    it(_'should stop notification stream',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -153,7 +153,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.finalNotificationCount).toBeGreaterThanOrEqual(0);
     });
 
-    it(_'should get real-time notification status',_async () => {
+    it(_'should get real-time notification status',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -166,7 +166,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.lastUpdated).toBeDefined();
     });
 
-    it(_'should list active notification streams',_async () => {
+    it(_'should list active notification streams',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -178,8 +178,8 @@ describe('Real-time Notification Service (T042)', () => {
     });
   });
 
-  describe(_'Brazilian Healthcare Context',_() => {
-    it(_'should send LGPD compliant notification',_async () => {
+  describe(_'Brazilian Healthcare Context'), () => {
+    it(_'should send LGPD compliant notification',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -207,7 +207,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.auditLogged).toBe(true);
     });
 
-    it(_'should send ANVISA compliant medical notification',_async () => {
+    it(_'should send ANVISA compliant medical notification',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -235,7 +235,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.priority).toBe('critical');
     });
 
-    it(_'should send CFM compliant professional notification',_async () => {
+    it(_'should send CFM compliant professional notification',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -264,7 +264,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.specialtyValidated).toBe(true);
     });
 
-    it(_'should validate Brazilian phone number format',_async () => {
+    it(_'should validate Brazilian phone number format',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -284,8 +284,8 @@ describe('Real-time Notification Service (T042)', () => {
     });
   });
 
-  describe(_'Template Management',_() => {
-    it(_'should create notification template',_async () => {
+  describe(_'Template Management'), () => {
+    it(_'should create notification template',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -326,7 +326,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.persisted).toBe(true);
     });
 
-    it(_'should render template with dynamic content',_async () => {
+    it(_'should render template with dynamic content',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -350,7 +350,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.missingVariables).toEqual([]);
     });
 
-    it(_'should update notification template',_async () => {
+    it(_'should update notification template',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -368,7 +368,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.version).toBeGreaterThan(1);
     });
 
-    it(_'should list available templates',_async () => {
+    it(_'should list available templates',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -386,8 +386,8 @@ describe('Real-time Notification Service (T042)', () => {
     });
   });
 
-  describe(_'Delivery Tracking and Status Monitoring',_() => {
-    it(_'should track notification delivery',_async () => {
+  describe(_'Delivery Tracking and Status Monitoring'), () => {
+    it(_'should track notification delivery',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -401,7 +401,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.nextRetry).toBeDefined();
     });
 
-    it(_'should retry failed notification',_async () => {
+    it(_'should retry failed notification',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -419,7 +419,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.remainingRetries).toBeLessThanOrEqual(3);
     });
 
-    it(_'should get delivery statistics',_async () => {
+    it(_'should get delivery statistics',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -437,7 +437,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.byChannel).toBeDefined();
     });
 
-    it(_'should update notification status',_async () => {
+    it(_'should update notification status',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -466,8 +466,8 @@ describe('Real-time Notification Service (T042)', () => {
     });
   });
 
-  describe(_'Priority-based Queuing and Rate Limiting',_() => {
-    it(_'should queue high priority notification',_async () => {
+  describe(_'Priority-based Queuing and Rate Limiting'), () => {
+    it(_'should queue high priority notification',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -489,7 +489,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.rateLimitBypassed).toBe(true);
     });
 
-    it(_'should apply rate limiting',_async () => {
+    it(_'should apply rate limiting',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -506,7 +506,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.currentCount).toBeGreaterThanOrEqual(0);
     });
 
-    it(_'should process notification queue',_async () => {
+    it(_'should process notification queue',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -523,7 +523,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.nextProcessAt).toBeDefined();
     });
 
-    it(_'should get queue status',_async () => {
+    it(_'should get queue status',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -537,8 +537,8 @@ describe('Real-time Notification Service (T042)', () => {
     });
   });
 
-  describe(_'Integration with Existing Data Models',_() => {
-    it(_'should integrate with Patient model',_async () => {
+  describe(_'Integration with Existing Data Models'), () => {
+    it(_'should integrate with Patient model',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -557,7 +557,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.auditLogged).toBe(true);
     });
 
-    it(_'should validate LGPD consent before sending',_async () => {
+    it(_'should validate LGPD consent before sending',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -575,7 +575,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.canSend).toBeDefined();
     });
 
-    it(_'should log notification to audit trail',_async () => {
+    it(_'should log notification to audit trail',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -598,7 +598,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.complianceFlags).toContain('notification_delivery');
     });
 
-    it(_'should sync with notification preferences',_async () => {
+    it(_'should sync with notification preferences',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -612,8 +612,8 @@ describe('Real-time Notification Service (T042)', () => {
     });
   });
 
-  describe(_'Database Integration',_() => {
-    it(_'should handle database connection errors gracefully',_async () => {
+  describe(_'Database Integration'), () => {
+    it(_'should handle database connection errors gracefully',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -629,7 +629,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.error).toContain('Erro de conexão com banco de dados');
     });
 
-    it(_'should validate database schema',_async () => {
+    it(_'should validate database schema',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -641,7 +641,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.indexesOptimal).toBeDefined();
     });
 
-    it(_'should perform database maintenance',_async () => {
+    it(_'should perform database maintenance',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -657,8 +657,8 @@ describe('Real-time Notification Service (T042)', () => {
     });
   });
 
-  describe(_'Error Handling and Validation',_() => {
-    it(_'should handle invalid notification parameters',_async () => {
+  describe(_'Error Handling and Validation'), () => {
+    it(_'should handle invalid notification parameters',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
@@ -674,7 +674,7 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
-    it(_'should validate service configuration',_async () => {
+    it(_'should validate service configuration',async () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 

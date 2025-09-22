@@ -115,7 +115,7 @@ export const realtimeTelemedicineRouter = router({
    */
   createSession: telemedicineProcedure
     .input(CreateSessionSchema)
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -182,7 +182,7 @@ export const realtimeTelemedicineRouter = router({
    */
   sendMessage: telemedicineProcedure
     .input(SendMessageSchema)
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -235,7 +235,7 @@ export const realtimeTelemedicineRouter = router({
    */
   updatePresence: telemedicineProcedure
     .input(UpdatePresenceSchema)
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -314,7 +314,7 @@ export const realtimeTelemedicineRouter = router({
    */
   monitorQuality: telemedicineProcedure
     .input(MonitorQualitySchema)
-    .query(_async ({ input,_ctx }) => {
+    .query(async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -380,7 +380,7 @@ export const realtimeTelemedicineRouter = router({
         sessionId: z.string().uuid(),
       }),
     )
-    .query(_async ({ input,_ctx }) => {
+    .query(async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -431,7 +431,7 @@ export const realtimeTelemedicineRouter = router({
         summary: z.string().max(1000).optional(),
       }),
     )
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -477,7 +477,7 @@ export const realtimeTelemedicineRouter = router({
   /**
    * Get real-time connection health check
    */
-  healthCheck: protectedProcedure.query(_async ({ ctx }) => {
+  healthCheck: protectedProcedure.query(async ({ ctx }) => {
     try {
       // Check if service is initialized and working
       const service = await initializeRealtimeService();
@@ -532,7 +532,7 @@ export const realtimeTelemedicineRouter = router({
         requiredActions: z.array(z.string()).optional(),
       }),
     )
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       try {
         const service = await initializeRealtimeService();
 

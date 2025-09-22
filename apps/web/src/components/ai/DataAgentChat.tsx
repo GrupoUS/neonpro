@@ -180,14 +180,14 @@ const apiCall = async (endpoint: string, options: RequestInit = {}): Promise<any
   return response.json();
 };
 
-const sendDataAgentQuery = async (_request: DataAgentRequest): Promise<DataAgentResponse> => {
+const sendDataAgentQuery = async (request: DataAgentRequest): Promise<DataAgentResponse> => {
   return apiCall('/data-agent', {
     method: 'POST',
     body: JSON.stringify(request),
   });
 };
 
-const createSession = async (_request: CreateSessionRequest): Promise<SessionResponse> => {
+const createSession = async (request: CreateSessionRequest): Promise<SessionResponse> => {
   return apiCall('/sessions', {
     method: 'POST',
     body: JSON.stringify(request),
@@ -223,7 +223,7 @@ const _ActionButton: React.FC<{
   action: AgentAction;
   onExecute: (action: AgentAction) => void;
 }> = ({ action, onExecute }) => {
-  const getIcon = (_iconName: any) => {
+  const getIcon = (iconName: any) => {
     switch (iconName) {
       case 'user':
         return <User className='h-3 w-3' />;
@@ -264,8 +264,8 @@ const _ActionButton: React.FC<{
 const MessageFeedback: React.FC<{
   messageId: string;
   sessionId: string;
-  onFeedbackSubmitted: () => void;
-}> = ({ messageId,sessionId, onFeedbackSubmitted }) => {
+ onFeedbackSubmitted: () => void;
+}> = ({ messageId, sessionId, onFeedbackSubmitted }) => {
   const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState('');
@@ -290,7 +290,7 @@ const MessageFeedback: React.FC<{
     },
   });
 
-  const handleQuickFeedback = (_helpful: any) => {
+  const handleQuickFeedback = (helpful: any) => {
     submitQuickFeedbackMutation.mutate(helpful);
   };
 
@@ -419,7 +419,7 @@ const DataSummaryCard: React.FC<{
   data: any[];
   type: 'clients' | 'appointments' | 'financial';
   summary?: any;
-}> = ({ title,data, type, summary }) => {
+}> = ({ title, data, type, summary }) => {
   const [expanded, setExpanded] = useState(false);
   const displayLimit = 3;
 
@@ -488,7 +488,7 @@ const DataSummaryCard: React.FC<{
       </CardHeader>
       <CardContent className='pt-0'>
         <div className='space-y-2'>
-          {data.slice(0, expanded ? data.length : displayLimit).map((item, _index) =>
+          {data.slice(0, expanded ? data.length : displayLimit).map((item, index) =>
             renderItem(item, index)
           )}
 
@@ -514,11 +514,20 @@ const DataSummaryCard: React.FC<{
  * Main DataAgentChat Component
  */
 export const DataAgentChat: React.FC<DataAgentChatProps> = ({
-  userContext,initialSessionId, mode = 'inline', maxHeight = '600px', mobileOptimized = true,
+  userContext, 
+  initialSessionId, 
+  mode = 'inline', 
+  maxHeight = '600px', 
+  mobileOptimized = true,
   lgpdConsent = {
     canStoreHistory: true,
-    dataRetentionDays: 30, },
-  placeholder = 'Digite sua consulta... Ex: "Quais os próximos agendamentos?"', testId = 'data-agent-chat',onSessionChange, onDataDiscovered, }) => {
+    dataRetentionDays: 30,
+  },
+  placeholder = 'Digite sua consulta... Ex: "Quais os próximos agendamentos?"', 
+  testId = 'data-agent-chat',
+  onSessionChange, 
+  onDataDiscovered,
+}) => {
   // State management
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(initialSessionId || null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -558,7 +567,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
     aguiClient.connect();
 
     // Handle AG-UI Protocol events
-    const handleMessage = (_message: any) => {
+    const handleMessage = (message: any) => {
       const assistantMessage: ChatMessage = {
         id: message.id,
         _role: 'assistant',
@@ -572,7 +581,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       setIsLoading(false);
     };
 
-    const handleError = (_error: any) => {
+    const handleError = (error: any) => {
       const errorMessage: ChatMessage = {
         id: `error_${Date.now()}`,
         _role: 'assistant',
@@ -583,7 +592,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       setIsLoading(false);
     };
 
-    const handleAuthenticated = (_session: any) => {
+    const handleAuthenticated = (session: any) => {
       console.log('AG-UI Protocol authenticated:', session);
     };
 
@@ -598,7 +607,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   }, [aguiClient, userContext.userId]);
 
   // Update session context when needed
-  const updateAGUISessionContext = useCallback((_context: any) => {
+  const updateAGUISessionContext = useCallback((context: any) => {
     if (aguiSession && aguiClient.isConnected()) {
       aguiClient.updateSessionContext(context).catch(console.error);
     }
@@ -734,7 +743,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
           userContext,
         });
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error sending message via AG-UI Protocol, falling back to HTTP:', error);
       // Fallback to HTTP API
       sendMessageMutation.mutate({
@@ -755,7 +764,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   ]);
 
   // Handle action execution
-  const handleActionExecute = useCallback((_action: any) => {
+  const handleActionExecute = useCallback((action: any) => {
     switch (action.type) {
       case 'view_details':
         if (action.payload?.clientId) {

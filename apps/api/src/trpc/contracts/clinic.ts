@@ -3,6 +3,7 @@
  * Multi-tenant clinic management with compliance tracking
  */
 
+import { z } from 'zod';
 import {
   ClinicResponseSchema,
   ClinicsListResponseSchema,
@@ -25,9 +26,9 @@ export const clinicRouter = router({
     })
     .input(CreateClinicRequestSchema)
     .output(ClinicResponseSchema)
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       // Validate user has permission to create clinics
-      if (!hasSystemAdminRole(ctx.user._role)) {
+      if (!hasSystemAdminRole(ctx.user.role)) {
         throw new HealthcareTRPCError(
           'FORBIDDEN',
           'Insufficient permissions to create clinic',
@@ -214,7 +215,7 @@ export const clinicRouter = router({
       }),
     )
     .output(ClinicResponseSchema)
-    .query(_async ({ input,_ctx }) => {
+    .query(async ({ input, ctx }) => {
       const clinic = await ctx.prisma.clinic.findUnique({
         where: { id: input.id },
         include: {
@@ -305,7 +306,7 @@ export const clinicRouter = router({
       }),
     )
     .output(ClinicsListResponseSchema)
-    .query(_async ({ input,_ctx }) => {
+    .query(async ({ input, ctx }) => {
       let clinicIds = null;
 
       // Filter by user access if requested
@@ -398,7 +399,7 @@ export const clinicRouter = router({
     })
     .input(UpdateClinicRequestSchema)
     .output(ClinicResponseSchema)
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       const currentClinic = await ctx.prisma.clinic.findUnique({
         where: { id: input.id },
       });
@@ -615,7 +616,7 @@ export const clinicRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .query(_async ({ input,_ctx }) => {
+    .query(async ({ input, ctx }) => {
       // Validate clinic access
       await validateClinicAccess(ctx.user.id, input.clinicId);
 
@@ -741,7 +742,7 @@ export const clinicRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(_async ({ input,_ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       // Validate clinic admin access
       await validateClinicAdminAccess(ctx.user.id, input.clinicId);
 
@@ -867,7 +868,7 @@ async function calculateClinicMetrics(
   };
 }
 
-function hasSystemAdminRole(_role: string): boolean {
+function hasSystemAdminRole(role: string): boolean {
   return role === 'system_admin';
 }
 

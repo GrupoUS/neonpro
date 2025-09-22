@@ -481,7 +481,7 @@ export const crudRouter = router({
    */
   crud: healthcareProcedure
     .input(crudRequestSchema)
-    .mutation(_async ({ ctx,_input }) => {
+    .mutation(async ({ ctx,_input }) => {
       try {
         switch (input.step) {
           case 'intent':
@@ -543,7 +543,7 @@ export const crudRouter = router({
         operationId: v.string(),
       }),
     )
-    .query(_async ({ ctx,_input }) => {
+    .query(async ({ ctx,_input }) => {
       try {
         // Use proper operation state management instead of audit trail
         const operationStateService = createOperationStateService(ctx.prisma);

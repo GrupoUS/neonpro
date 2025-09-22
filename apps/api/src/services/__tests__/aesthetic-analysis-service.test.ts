@@ -79,7 +79,7 @@ const mockAuditService = {
   logError: vi.fn(() => Promise.resolve()),
 } as any;
 
-describe(_'AestheticAnalysisService',_() => {
+describe(_'AestheticAnalysisService'), () => {
   let _service: AestheticAnalysisService;
   let mockPatientRequest: AestheticAssessmentRequest;
 
@@ -113,8 +113,8 @@ describe(_'AestheticAnalysisService',_() => {
     vi.clearAllMocks();
   });
 
-  describe(_'performAestheticAssessment',_() => {
-    it(_'should return aesthetic assessment with procedure recommendations',_async () => {
+  describe(_'performAestheticAssessment'), () => {
+    it(_'should return aesthetic assessment with procedure recommendations',async () => {
       const result = await service.performAestheticAssessment(
         mockPatientRequest,
         'patient-123',
@@ -131,7 +131,7 @@ describe(_'AestheticAnalysisService',_() => {
       expect(Array.isArray(result.contraindications)).toBe(true);
     });
 
-    it(_'should include botox recommendations for wrinkle conditions',_async () => {
+    it(_'should include botox recommendations for wrinkle conditions',async () => {
       const result = await service.performAestheticAssessment(
         mockPatientRequest,
         'patient-123',
@@ -149,7 +149,7 @@ describe(_'AestheticAnalysisService',_() => {
       expect(botoxRecommendation?.estimated_cost_brl).toHaveProperty('max');
     });
 
-    it(_'should identify age-related contraindications for minors',_async () => {
+    it(_'should identify age-related contraindications for minors',async () => {
       const minorRequest = {
         ...mockPatientRequest,
         age: { value: 16, unit: 'year' },
@@ -171,7 +171,7 @@ describe(_'AestheticAnalysisService',_() => {
       expect(ageContraindication?.explanation).toContain('ANVISA');
     });
 
-    it(_'should flag smoking contraindications for laser procedures',_async () => {
+    it(_'should flag smoking contraindications for laser procedures',async () => {
       const smokingPatientRequest = {
         ...mockPatientRequest,
         lifestyle_factors: {
@@ -210,7 +210,7 @@ describe(_'AestheticAnalysisService',_() => {
       }
     });
 
-    it(_'should provide appropriate educational content',_async () => {
+    it(_'should provide appropriate educational content',async () => {
       const result = await service.performAestheticAssessment(
         mockPatientRequest,
         'patient-123',
@@ -229,7 +229,7 @@ describe(_'AestheticAnalysisService',_() => {
       );
     });
 
-    it(_'should generate age-appropriate follow-up schedules',_async () => {
+    it(_'should generate age-appropriate follow-up schedules',async () => {
       // Test older patient
       const olderPatientRequest = {
         ...mockPatientRequest,
@@ -265,7 +265,7 @@ describe(_'AestheticAnalysisService',_() => {
       );
     });
 
-    it(_'should handle skin type contraindications for darker skin',_async () => {
+    it(_'should handle skin type contraindications for darker skin',async () => {
       const darkSkinRequest = {
         ...mockPatientRequest,
         skin_type: 'VI' as const,
@@ -301,7 +301,7 @@ describe(_'AestheticAnalysisService',_() => {
       }
     });
 
-    it(_'should estimate realistic Brazilian Real pricing',_async () => {
+    it(_'should estimate realistic Brazilian Real pricing',async () => {
       const result = await service.performAestheticAssessment(
         mockPatientRequest,
         'patient-123',
@@ -323,7 +323,7 @@ describe(_'AestheticAnalysisService',_() => {
       }
     });
 
-    it(_'should throw error when LGPD consent is missing',_async () => {
+    it(_'should throw error when LGPD consent is missing',async () => {
       // Mock missing consent
       mockSupabase.from = vi.fn(() => ({
         select: vi.fn(() => ({
@@ -345,7 +345,7 @@ describe(_'AestheticAnalysisService',_() => {
       ).rejects.toThrow('LGPD_CONSENT_REQUIRED');
     });
 
-    it(_'should create proper audit trail for LGPD compliance',_async () => {
+    it(_'should create proper audit trail for LGPD compliance',async () => {
       // Create proper mock chain for insert call
       const insertMock = vi.fn(() => Promise.resolve({ data: null, error: null }));
       const fromMock = vi.fn(() => ({
@@ -383,8 +383,8 @@ describe(_'AestheticAnalysisService',_() => {
     });
   });
 
-  describe(_'getTreatmentProtocol',_() => {
-    it(_'should return detailed treatment protocol with steps and recovery timeline',_async () => {
+  describe(_'getTreatmentProtocol'), () => {
+    it(_'should return detailed treatment protocol with steps and recovery timeline',async () => {
       const protocol = await service.getTreatmentProtocol(
         'botox_001',
         'adult_female',
@@ -404,8 +404,8 @@ describe(_'AestheticAnalysisService',_() => {
     });
   });
 
-  describe(_'getPatientAestheticData',_() => {
-    it(_'should return patient data for LGPD access rights',_async () => {
+  describe(_'getPatientAestheticData'), () => {
+    it(_'should return patient data for LGPD access rights',async () => {
       // Create a simplified mock specifically for this test
       const mockSupabaseForThisTest = {
         from: vi.fn((tableName: string) => ({
@@ -466,8 +466,8 @@ describe(_'AestheticAnalysisService',_() => {
     });
   });
 
-  describe(_'Brazilian Aesthetic Clinic Compliance',_() => {
-    it(_'should ensure all recommended procedures are ANVISA approved',_async () => {
+  describe(_'Brazilian Aesthetic Clinic Compliance'), () => {
+    it(_'should ensure all recommended procedures are ANVISA approved',async () => {
       const result = await service.performAestheticAssessment(
         mockPatientRequest,
         'patient-123',
@@ -480,7 +480,7 @@ describe(_'AestheticAnalysisService',_() => {
       }
     });
 
-    it(_'should include proper contraindication warnings for safety',_async () => {
+    it(_'should include proper contraindication warnings for safety',async () => {
       const result = await service.performAestheticAssessment(
         mockPatientRequest,
         'patient-123',
@@ -496,7 +496,7 @@ describe(_'AestheticAnalysisService',_() => {
       );
     });
 
-    it(_'should provide bilingual content appropriate for Brazilian clinics',_async () => {
+    it(_'should provide bilingual content appropriate for Brazilian clinics',async () => {
       const result = await service.performAestheticAssessment(
         mockPatientRequest,
         'patient-123',

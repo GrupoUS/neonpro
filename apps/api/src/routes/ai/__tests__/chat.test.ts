@@ -29,7 +29,7 @@ const mockPatientService = {
 };
 
 describe('POST /api/v2/ai/chat endpoint (T051)', () => {
-  beforeEach(_async () => {
+  beforeEach(async () => {
     vi.clearAllMocks();
 
     // Inject mocked services into the endpoint
@@ -182,13 +182,13 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     vi.restoreAllMocks();
   });
 
-  it(_'should export AI chat route handler',_async () => {
+  it(_'should export AI chat route handler',async () => {
     const module = await import('../chat.js');
     expect(module.default).toBeDefined();
   });
 
-  describe(_'Successful AI Chat Operations',_() => {
-    it(_'should send message to AI with default model',_async () => {
+  describe(_'Successful AI Chat Operations'), () => {
+    it(_'should send message to AI with default model',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
       const chatData = {
@@ -221,7 +221,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(data.data.response.confidence).toBeGreaterThan(0.9);
     });
 
-    it(_'should send message with specific model preference',_async () => {
+    it(_'should send message with specific model preference',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
       const chatData = {
@@ -265,7 +265,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       });
     });
 
-    it(_'should initiate streaming chat response',_async () => {
+    it(_'should initiate streaming chat response',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
       const chatData = {
@@ -298,7 +298,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(mockAIChatService.streamMessage).toHaveBeenCalled();
     });
 
-    it(_'should include patient context when provided',_async () => {
+    it(_'should include patient context when provided',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
       const chatData = {
@@ -334,7 +334,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       });
     });
 
-    it(_'should include AI performance headers',_async () => {
+    it(_'should include AI performance headers',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
       const chatData = {
@@ -361,7 +361,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(response.headers.get('X-AI-Provider')).toBe('openai');
     });
 
-    it(_'should handle model fallback scenarios',_async () => {
+    it(_'should handle model fallback scenarios',async () => {
       mockAIChatService.generateResponse.mockResolvedValueOnce({
         success: true,
         data: {
@@ -418,8 +418,8 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     });
   });
 
-  describe(_'LGPD Compliance and Data Access',_() => {
-    it(_'should validate LGPD data access for AI chat',_async () => {
+  describe(_'LGPD Compliance and Data Access'), () => {
+    it(_'should validate LGPD data access for AI chat',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
       const chatData = {
@@ -447,7 +447,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       });
     });
 
-    it(_'should log AI chat activity for audit trail',_async () => {
+    it(_'should log AI chat activity for audit trail',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
       const chatData = {
@@ -489,7 +489,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       });
     });
 
-    it(_'should handle LGPD access denial for AI chat',_async () => {
+    it(_'should handle LGPD access denial for AI chat',async () => {
       // Reset and set up the mock for this specific test
       const { setServices } = await import('../chat.js');
       setServices({
@@ -531,7 +531,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(data.code).toBe('LGPD_AI_CHAT_DENIED');
     });
 
-    it(_'should mask sensitive data in chat responses',_async () => {
+    it(_'should mask sensitive data in chat responses',async () => {
       // Reset and set up the mock for this specific test
       const { setServices } = await import('../chat.js');
       setServices({
@@ -588,8 +588,8 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     });
   });
 
-  describe(_'Error Handling',_() => {
-    it(_'should handle authentication errors',_async () => {
+  describe(_'Error Handling'), () => {
+    it(_'should handle authentication errors',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
       const response = await chatRoute.request(
@@ -609,7 +609,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(data.error).toContain('Não autorizado');
     });
 
-    it(_'should handle validation errors for chat data',_async () => {
+    it(_'should handle validation errors for chat data',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
       const invalidChatData = {
@@ -636,7 +636,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(data.error || data.message).toBeDefined();
     });
 
-    it(_'should handle AI service errors gracefully',_async () => {
+    it(_'should handle AI service errors gracefully',async () => {
       mockAIChatService.sendMessage.mockResolvedValue({
         success: false,
         error: 'Erro interno do serviço de IA',
@@ -667,7 +667,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(data.error).toContain('Erro interno');
     });
 
-    it(_'should handle AI model unavailability',_async () => {
+    it(_'should handle AI model unavailability',async () => {
       mockAIChatService.sendMessage.mockRejectedValue(
         new Error('All AI models unavailable'),
       );
@@ -699,8 +699,8 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     });
   });
 
-  describe(_'Brazilian Healthcare Compliance',_() => {
-    it(_'should include CFM compliance headers',_async () => {
+  describe(_'Brazilian Healthcare Compliance'), () => {
+    it(_'should include CFM compliance headers',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
       const chatData = {
@@ -725,7 +725,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(response.headers.get('X-Medical-AI-Logged')).toBe('true');
     });
 
-    it(_'should validate healthcare professional context for medical AI',_async () => {
+    it(_'should validate healthcare professional context for medical AI',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
       const chatData = {
@@ -761,8 +761,8 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     });
   });
 
-  describe(_'Performance and Streaming',_() => {
-    it(_'should include performance metrics in response',_async () => {
+  describe(_'Performance and Streaming'), () => {
+    it(_'should include performance metrics in response',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
       const chatData = {
@@ -789,7 +789,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(response.headers.get('X-AI-Processing-Time')).toBe('1250ms');
     });
 
-    it(_'should handle streaming requests properly',_async () => {
+    it(_'should handle streaming requests properly',async () => {
       const { default: chatRoute } = await import('../chat.js');
 
       const chatData = {

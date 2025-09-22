@@ -57,7 +57,7 @@ describe(_'Clinic Contract Testing',() => {
   });
 
   describe(_'Clinic Creation Contract',() => {
-    it(_'should validate clinic creation input and output',_async () => {
+    it(_'should validate clinic creation input and output',async () => {
       const createInput: ClinicInput['create'] = {
         basicInfo: {
           name: 'Clínica Estética NeonPro',
@@ -165,7 +165,7 @@ describe(_'Clinic Contract Testing',() => {
       });
     });
 
-    it(_'should reject invalid ANVISA registration',_async () => {
+    it(_'should reject invalid ANVISA registration',async () => {
       const invalidInput: ClinicInput['create'] = {
         basicInfo: {
           name: 'Invalid Clinic',
@@ -195,7 +195,7 @@ describe(_'Clinic Contract Testing',() => {
       );
     });
 
-    it(_'should enforce LGPD compliance requirements',_async () => {
+    it(_'should enforce LGPD compliance requirements',async () => {
       const nonCompliantInput: ClinicInput['create'] = {
         basicInfo: {
           name: 'Non-Compliant Clinic',
@@ -231,7 +231,7 @@ describe(_'Clinic Contract Testing',() => {
   });
 
   describe(_'Clinic Retrieval Contract',() => {
-    it(_'should validate clinic retrieval by ID',_async () => {
+    it(_'should validate clinic retrieval by ID',async () => {
       const clinicId = 'clinic-789';
       const mockClinic = {
         id: clinicId,
@@ -288,7 +288,7 @@ describe(_'Clinic Contract Testing',() => {
       });
     });
 
-    it(_'should handle clinic not found',_async () => {
+    it(_'should handle clinic not found',async () => {
       const clinicId = 'nonexistent-clinic';
 
       mockContext.prisma.clinic.findUnique.mockResolvedValue(null);
@@ -300,7 +300,7 @@ describe(_'Clinic Contract Testing',() => {
   });
 
   describe(_'Clinic Update Contract',() => {
-    it(_'should validate clinic information updates',_async () => {
+    it(_'should validate clinic information updates',async () => {
       const clinicId = 'clinic-789';
       const updateInput: ClinicInput['update'] = {
         id: clinicId,
@@ -381,7 +381,7 @@ describe(_'Clinic Contract Testing',() => {
       });
     });
 
-    it(_'should prevent unauthorized updates to critical fields',_async () => {
+    it(_'should prevent unauthorized updates to critical fields',async () => {
       const clinicId = 'clinic-789';
       const unauthorizedUpdate: ClinicInput['update'] = {
         id: clinicId,
@@ -406,7 +406,7 @@ describe(_'Clinic Contract Testing',() => {
   });
 
   describe(_'Clinic Statistics Contract',() => {
-    it(_'should validate clinic statistics retrieval',_async () => {
+    it(_'should validate clinic statistics retrieval',async () => {
       const clinicId = 'clinic-789';
       const period = 'monthly';
 
@@ -492,7 +492,7 @@ describe(_'Clinic Contract Testing',() => {
   });
 
   describe(_'Clinic Configuration Contract',() => {
-    it(_'should validate clinic configuration updates',_async () => {
+    it(_'should validate clinic configuration updates',async () => {
       const configInput: ClinicInput['updateConfiguration'] = {
         clinicId: 'clinic-789',
         configuration: {
@@ -551,7 +551,7 @@ describe(_'Clinic Contract Testing',() => {
       });
     });
 
-    it(_'should validate configuration constraints',_async () => {
+    it(_'should validate configuration constraints',async () => {
       const invalidConfig: ClinicInput['updateConfiguration'] = {
         clinicId: 'clinic-789',
         configuration: {
@@ -569,7 +569,7 @@ describe(_'Clinic Contract Testing',() => {
   });
 
   describe(_'Clinic List Contract',() => {
-    it(_'should validate clinic listing with filters',_async () => {
+    it(_'should validate clinic listing with filters',async () => {
       const listInput: ClinicInput['list'] = {
         page: 1,
         limit: 10,

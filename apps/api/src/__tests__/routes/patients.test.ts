@@ -78,7 +78,7 @@ describe(_"patient Management API - NeonPro Healthcare",() => {
     vi.restoreAllMocks();
   });
   describe(_"pOST /patients - Create Patient",() => {
-    it(_"should create patient with valid Brazilian healthcare data",_async () => {
+    it(_"should create patient with valid Brazilian healthcare data",async () => {
       const newPatientData = {
         name: "João da Silva",
         cpf: "98765432100",
@@ -180,7 +180,7 @@ describe(_"patient Management API - NeonPro Healthcare",() => {
       expect(mockPrisma.auditLog.create).toHaveBeenCalled();
     });
 
-    it(_"should reject patient creation with invalid CPF",_async () => {
+    it(_"should reject patient creation with invalid CPF",async () => {
       const invalidPatientData = {
         name: "Test Patient",
         cpf: "12345678999", // Invalid CPF
@@ -242,7 +242,7 @@ describe(_"patient Management API - NeonPro Healthcare",() => {
       });
     });
 
-    it(_"should require LGPD consent for patient creation",_async () => {
+    it(_"should require LGPD consent for patient creation",async () => {
       const patientWithoutConsent = {
         name: "Patient Test",
         cpf: "12345678900",
@@ -295,7 +295,7 @@ describe(_"patient Management API - NeonPro Healthcare",() => {
     });
   });
   describe("gET /patients/:id - Get Patient",() => {
-    it(_"should retrieve patient with data masking based on user role",_async () => {
+    it(_"should retrieve patient with data masking based on user role",async () => {
       const fullPatientData = { ...mockPatient };
       const maskedPatientData = {
         ...mockPatient,
@@ -372,7 +372,7 @@ describe(_"patient Management API - NeonPro Healthcare",() => {
       expect(mockLGPDService.logDataAccess).toHaveBeenCalled();
     });
 
-    it(_"should enforce tenant isolation for patient access",_async () => {
+    it(_"should enforce tenant isolation for patient access",async () => {
       mockPrisma.patient.findUnique.mockResolvedValue(undefined); // Patient not found in user's tenant
 
       const mockContext = {
@@ -424,7 +424,7 @@ describe(_"patient Management API - NeonPro Healthcare",() => {
   });
 
   describe("pUT /patients/:id - Update Patient",() => {
-    it(_"should update patient with audit trail",_async () => {
+    it(_"should update patient with audit trail",async () => {
       const updateData = {
         phone: "11977777777",
         email: "newemail@example.com",
@@ -504,7 +504,7 @@ describe(_"patient Management API - NeonPro Healthcare",() => {
   });
 
   describe("dELETE /patients/:id - Delete Patient (LGPD Right to Erasure)", () => {
-    it(_"should soft delete patient with LGPD compliance",_async () => {
+    it(_"should soft delete patient with LGPD compliance",async () => {
       mockPrisma.patient.update.mockResolvedValue({
         ...mockPatient,
         isActive: false,

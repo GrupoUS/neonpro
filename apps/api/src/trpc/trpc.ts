@@ -41,7 +41,7 @@ const t = initTRPC.context<Context>().create({
  * Enhanced Authentication middleware
  * Ensures user is authenticated for protected procedures
  */
-const authMiddleware = t.middleware(_async ({ ctx,_next }) => {
+const authMiddleware = t.middleware(async ({ ctx,_next }) => {
   if (!ctx._userId) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
@@ -56,7 +56,7 @@ const authMiddleware = t.middleware(_async ({ ctx,_next }) => {
  * Enhanced LGPD Consent middleware
  * Verifies patient consent before data operations with improved validation
  */
-const consentMiddleware = t.middleware(_async ({ ctx,next,_input }) => {
+const consentMiddleware = t.middleware(async ({ ctx,next,_input }) => {
   // For patient data operations, verify LGPD consent
   if (input && typeof input === 'object' && 'patientId' in input) {
     const patientId = input.patientId as string;

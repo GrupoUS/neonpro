@@ -64,7 +64,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
   let prismaWithContext: any;
   let queryOptimizer: HealthcareQueryOptimizer;
 
-  beforeAll(_async () => {
+  beforeAll(async () => {
     // Initialize Prisma client
     prismaClient = getHealthcarePrismaClient();
 
@@ -73,7 +73,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
     expect(isHealthy).toBe(true);
   });
 
-  afterAll(_async () => {
+  afterAll(async () => {
     // Clean up test data
     try {
       await cleanupTestData();
@@ -85,7 +85,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
     await prismaClient.$disconnect();
   });
 
-  beforeEach(_async () => {
+  beforeEach(async () => {
     // Create context-aware Prisma client for each test
     prismaWithContext = createPrismaWithContext(mockHealthcareContext);
     queryOptimizer = new HealthcareQueryOptimizer(prismaWithContext);
@@ -94,7 +94,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
     await setupTestData();
   });
 
-  afterEach(_async () => {
+  afterEach(async () => {
     // Clean up after each test
     await cleanupTestData();
   });
@@ -115,12 +115,12 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
       expect(context.permissions).toContain('patient_read');
     });
 
-    test(_'should validate healthcare context successfully',_async () => {
+    test(_'should validate healthcare context successfully',async () => {
       const isValid = await prismaWithContext.validateContext();
       expect(isValid).toBe(true);
     });
 
-    test(_'should fail context validation for invalid clinic access',_async () => {
+    test(_'should fail context validation for invalid clinic access',async () => {
       const invalidContext = createHealthcareContextFromRequest(
         'invalid-user',
         'invalid-clinic',
@@ -134,7 +134,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
   });
 
   describe(_'LGPD Compliance Operations',() => {
-    test(_'should export patient data in LGPD-compliant format',_async () => {
+    test(_'should export patient data in LGPD-compliant format',async () => {
       const exportData = await prismaWithContext.exportPatientData(
         testPatientId,
         testUserId,
@@ -151,7 +151,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
       expect(exportData.metadata.requestedBy).toBe(testUserId);
     });
 
-    test(_'should delete patient data with cascade option',_async () => {
+    test(_'should delete patient data with cascade option',async () => {
       await expect(
         prismaWithContext.deletePatientData(testPatientId, {
           cascadeDelete: true,
@@ -167,7 +167,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
       expect(deletedPatient).toBeNull();
     });
 
-    test(_'should validate consent for data processing',_async () => {
+    test(_'should validate consent for data processing',async () => {
       // First create a consent record
       await LGPDComplianceHelper.recordConsent(
         prismaWithContext,
@@ -262,7 +262,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
   });
 
   describe(_'Healthcare Query Operations',() => {
-    test(_'should find patients in clinic with RLS validation',_async () => {
+    test(_'should find patients in clinic with RLS validation',async () => {
       const patients = await prismaWithContext.findPatientsInClinic(
         testClinicId,
         {
@@ -278,7 +278,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
       });
     });
 
-    test(_'should find appointments for professional',_async () => {
+    test(_'should find appointments for professional',async () => {
       const appointments = await prismaWithContext.findAppointmentsForProfessional(
         testProfessionalId,
         {
@@ -289,7 +289,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
       expect(Array.isArray(appointments)).toBe(true);
     });
 
-    test(_'should create audit logs for operations',_async () => {
+    test(_'should create audit logs for operations',async () => {
       await prismaWithContext.createAuditLog(
         'VIEW',
         'PATIENT_RECORD',
@@ -315,7 +315,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
   });
 
   describe(_'Performance Optimization',() => {
-    test(_'should optimize patient search with caching',_async () => {
+    test(_'should optimize patient search with caching',async () => {
       const searchResult1 = await queryOptimizer.searchPatientsOptimized(
         testClinicId,
         {
@@ -342,7 +342,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
       expect(searchResult2.fromCache).toBe(true);
     });
 
-    test(_'should get optimized dashboard metrics',_async () => {
+    test(_'should get optimized dashboard metrics',async () => {
       const result = await queryOptimizer.getDashboardMetricsOptimized(testClinicId);
 
       expect(result.metrics).toBeDefined();
@@ -363,7 +363,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
   });
 
   describe(_'Healthcare Appointment Operations',() => {
-    test(_'should calculate no-show risk score',_async () => {
+    test(_'should calculate no-show risk score',async () => {
       // This would need a test appointment
       const appointmentId = 'test-appointment-123';
 
@@ -377,7 +377,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
       expect(riskScore).toBeLessThanOrEqual(100);
     });
 
-    test(_'should check appointment conflicts',_async () => {
+    test(_'should check appointment conflicts',async () => {
       const startTime = new Date();
       const endTime = new Date(startTime.getTime() + 60 * 60 * 1000); // 1 hour later
 
@@ -393,7 +393,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
   });
 
   describe(_'Error Handling',() => {
-    test(_'should throw HealthcareComplianceError for LGPD violations',_async () => {
+    test(_'should throw HealthcareComplianceError for LGPD violations',async () => {
       // Create invalid context (no CFM validation for professional)
       const invalidContext = createHealthcareContextFromRequest(
         testUserId,
@@ -407,7 +407,7 @@ describe(_'Healthcare Prisma Client Integration Tests',() => {
       await expect(invalidPrisma.validateContext()).resolves.toBe(false);
     });
 
-    test(_'should throw UnauthorizedHealthcareAccessError for invalid access',_async () => {
+    test(_'should throw UnauthorizedHealthcareAccessError for invalid access',async () => {
       const unauthorizedContext = createHealthcareContextFromRequest(
         'unauthorized-user',
         testClinicId,

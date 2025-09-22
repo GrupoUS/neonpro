@@ -72,7 +72,7 @@ describe(_'AI Contract Testing',() => {
   });
 
   describe(_'AI Chat Session Contract',() => {
-    it(_'should validate chat session creation',_async () => {
+    it(_'should validate chat session creation',async () => {
       const sessionInput: AIInput['createChatSession'] = {
         _context: {
           type: 'patient_consultation',
@@ -140,7 +140,7 @@ describe(_'AI Contract Testing',() => {
       });
     });
 
-    it(_'should enforce PHI sanitization requirements',_async () => {
+    it(_'should enforce PHI sanitization requirements',async () => {
       const unsafeInput: AIInput['createChatSession'] = {
         _context: {
           type: 'patient_consultation',
@@ -168,7 +168,7 @@ describe(_'AI Contract Testing',() => {
   });
 
   describe(_'AI Chat Message Contract',() => {
-    it(_'should validate message sending with PHI sanitization',_async () => {
+    it(_'should validate message sending with PHI sanitization',async () => {
       const messageInput: AIInput['sendMessage'] = {
         sessionId: 'session-uuid-123',
         message: {
@@ -251,7 +251,7 @@ describe(_'AI Contract Testing',() => {
       );
     });
 
-    it(_'should reject unsafe message content',_async () => {
+    it(_'should reject unsafe message content',async () => {
       const unsafeInput: AIInput['sendMessage'] = {
         sessionId: 'session-uuid-123',
         message: {
@@ -272,7 +272,7 @@ describe(_'AI Contract Testing',() => {
   });
 
   describe(_'AI No-Show Prediction Contract',() => {
-    it(_'should validate no-show prediction generation',_async () => {
+    it(_'should validate no-show prediction generation',async () => {
       const predictionInput: AIInput['predictNoShow'] = {
         appointmentId: 'appt-789',
         factors: {
@@ -366,7 +366,7 @@ describe(_'AI Contract Testing',() => {
       );
     });
 
-    it(_'should handle insufficient data for prediction',_async () => {
+    it(_'should handle insufficient data for prediction',async () => {
       const insufficientInput: AIInput['predictNoShow'] = {
         appointmentId: 'appt-new-patient',
         factors: {
@@ -403,7 +403,7 @@ describe(_'AI Contract Testing',() => {
   });
 
   describe(_'AI Insights Generation Contract',() => {
-    it(_'should validate clinic insights generation',_async () => {
+    it(_'should validate clinic insights generation',async () => {
       const insightsInput: AIInput['generateInsights'] = {
         clinicId: 'clinic-789',
         scope: 'clinic_performance',
@@ -511,7 +511,7 @@ describe(_'AI Contract Testing',() => {
       });
     });
 
-    it(_'should validate patient-specific insights',_async () => {
+    it(_'should validate patient-specific insights',async () => {
       const patientInsightsInput: AIInput['generateInsights'] = {
         scope: 'patient_analysis',
         patientId: 'patient-456',
@@ -585,7 +585,7 @@ describe(_'AI Contract Testing',() => {
   });
 
   describe(_'AI Chat History Contract',() => {
-    it(_'should validate chat history retrieval with filters',_async () => {
+    it(_'should validate chat history retrieval with filters',async () => {
       const historyInput: AIInput['getChatHistory'] = {
         sessionId: 'session-uuid-123',
         filters: {

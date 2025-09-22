@@ -116,7 +116,7 @@ export class QueryOptimizerService {
     this.pool = new Pool(poolConfig);
 
     // Set up pool event handlers for monitoring
-    this.pool.on(_'connect',_() => {
+    this.pool.on('connect', () => {
       this.connectionMetrics.totalConnections++;
     });
 
@@ -134,7 +134,7 @@ export class QueryOptimizerService {
       this.connectionMetrics.totalConnections--;
     });
 
-    this.pool.on(_'error',(err, _client) => {
+    this.pool.on('error',(err, _client) => {
       console.error('[QueryOptimizer] Pool error:', err);
       this.connectionMetrics.failedQueries++;
     });

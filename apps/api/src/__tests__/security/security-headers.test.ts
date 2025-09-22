@@ -22,7 +22,7 @@ describe(_'Security Headers Middleware',() => {
   });
 
   describe(_'Basic Security Headers',() => {
-    it(_'should apply basic security headers',_async () => {
+    it(_'should apply basic security headers',async () => {
       app.use('*', securityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
 
@@ -37,7 +37,7 @@ describe(_'Security Headers Middleware',() => {
       expect(response.headers.get('X-Request-ID')).toBeDefined();
     });
 
-    it(_'should apply healthcare compliance headers',_async () => {
+    it(_'should apply healthcare compliance headers',async () => {
       app.use('*', healthcareSecurityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
 
@@ -53,7 +53,7 @@ describe(_'Security Headers Middleware',() => {
       expect(response.headers.get('X-Encryption-Status')).toBe('enabled');
     });
 
-    it(_'should apply HSTS in production environment',_async () => {
+    it(_'should apply HSTS in production environment',async () => {
       const originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'production';
 
@@ -70,7 +70,7 @@ describe(_'Security Headers Middleware',() => {
       process.env.NODE_ENV = originalEnv;
     });
 
-    it(_'should not apply HSTS in development environment',_async () => {
+    it(_'should not apply HSTS in development environment',async () => {
       const originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'development';
 
@@ -87,7 +87,7 @@ describe(_'Security Headers Middleware',() => {
   });
 
   describe(_'Cross-Origin Security Headers',() => {
-    it(_'should apply Cross-Origin Embedder Policy',_async () => {
+    it(_'should apply Cross-Origin Embedder Policy',async () => {
       app.use('*', securityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
 
@@ -98,7 +98,7 @@ describe(_'Security Headers Middleware',() => {
       );
     });
 
-    it(_'should apply Cross-Origin Opener Policy',_async () => {
+    it(_'should apply Cross-Origin Opener Policy',async () => {
       app.use('*', securityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
 
@@ -109,7 +109,7 @@ describe(_'Security Headers Middleware',() => {
       );
     });
 
-    it(_'should apply Cross-Origin Resource Policy',_async () => {
+    it(_'should apply Cross-Origin Resource Policy',async () => {
       app.use('*', securityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
 
@@ -122,7 +122,7 @@ describe(_'Security Headers Middleware',() => {
   });
 
   describe(_'Permissions Policy',() => {
-    it(_'should apply restrictive permissions policy',_async () => {
+    it(_'should apply restrictive permissions policy',async () => {
       app.use('*', securityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
 
@@ -138,7 +138,7 @@ describe(_'Security Headers Middleware',() => {
   });
 
   describe(_'Security Context',() => {
-    it(_'should add security context to request',_async () => {
+    it(_'should add security context to request',async () => {
       let capturedContext: any;
 
       app.use('*', securityHeadersMiddleware());

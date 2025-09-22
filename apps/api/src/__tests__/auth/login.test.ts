@@ -80,7 +80,7 @@ describe(_'authentication API Endpoints - NeonPro Healthcare',() => {
     vi.restoreAllMocks();
   });
   describe(_'pOST /auth/login - Healthcare Professional Login',() => {
-    it(_'should authenticate doctor with valid credentials',_async () => {
+    it(_'should authenticate doctor with valid credentials',async () => {
       // Mock successful database lookup
       mockPrisma.user.findUnique.mockResolvedValue(mockUser);
       mockAuthService.login.mockResolvedValue({
@@ -151,7 +151,7 @@ describe(_'authentication API Endpoints - NeonPro Healthcare',() => {
       expect(mockPrisma.auditLog.create).toHaveBeenCalled();
     });
 
-    it(_'should reject login with invalid credentials',_async () => {
+    it(_'should reject login with invalid credentials',async () => {
       // Mock user not found
       mockPrisma.user.findUnique.mockResolvedValue(undefined);
 
@@ -208,7 +208,7 @@ describe(_'authentication API Endpoints - NeonPro Healthcare',() => {
       });
     });
 
-    it(_'should validate healthcare professional license',_async () => {
+    it(_'should validate healthcare professional license',async () => {
       const userWithoutLicense = {
         ...mockUser,
         professionalLicense: undefined,
@@ -262,7 +262,7 @@ describe(_'authentication API Endpoints - NeonPro Healthcare',() => {
     });
   });
   describe(_'pOST /auth/refresh - Token Refresh',() => {
-    it(_'should refresh valid access token',_async () => {
+    it(_'should refresh valid access token',async () => {
       const mockRefreshToken = 'valid-refresh-token';
       const newTokens = {
         accessToken: 'new-access-token',
@@ -341,7 +341,7 @@ describe(_'authentication API Endpoints - NeonPro Healthcare',() => {
       );
     });
 
-    it(_'should reject expired refresh token',_async () => {
+    it(_'should reject expired refresh token',async () => {
       const expiredRefreshToken = 'expired-refresh-token';
 
       mockPrisma.session.findUnique.mockResolvedValue(undefined); // Expired session not found
@@ -400,7 +400,7 @@ describe(_'authentication API Endpoints - NeonPro Healthcare',() => {
   });
 
   describe(_'pOST /auth/logout - Session Termination',() => {
-    it(_'should successfully logout user and invalidate session',_async () => {
+    it(_'should successfully logout user and invalidate session',async () => {
       const accessToken = 'valid-access-token';
 
       mockJWT.verify.mockReturnValue({

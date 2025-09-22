@@ -37,7 +37,7 @@ describe(_'BillingService',() => {
   });
 
   describe(_'createBilling',() => {
-    it(_'should create a billing successfully',_async () => {
+    it(_'should create a billing successfully',async () => {
       const billingData = {
         patientId: randomUUID(),
         clinicId: randomUUID(),
@@ -73,7 +73,7 @@ describe(_'BillingService',() => {
       expect(result.data?.total).toBe(157.5); // 150 + 5% ISS tax
     });
 
-    it(_'should fail when required fields are missing',_async () => {
+    it(_'should fail when required fields are missing',async () => {
       const invalidData = {
         // Missing required fields
         items: [],
@@ -87,7 +87,7 @@ describe(_'BillingService',() => {
   });
 
   describe(_'getBilling',() => {
-    it(_'should return billing by ID',_async () => {
+    it(_'should return billing by ID',async () => {
       // First create a billing
       const billingData = {
         patientId: randomUUID(),
@@ -123,7 +123,7 @@ describe(_'BillingService',() => {
       expect(result.data?.id).toBe(createResult.data!.id);
     });
 
-    it(_'should return error for non-existent billing',_async () => {
+    it(_'should return error for non-existent billing',async () => {
       const result = await service.getBilling('non-existent-id');
 
       expect(result.success).toBe(false);
@@ -132,7 +132,7 @@ describe(_'BillingService',() => {
   });
 
   describe(_'searchBillings',() => {
-    it(_'should search billings with filters',_async () => {
+    it(_'should search billings with filters',async () => {
       const result = await service.searchBillings({
         patientId: randomUUID(),
         page: 1,
@@ -147,7 +147,7 @@ describe(_'BillingService',() => {
   });
 
   describe(_'processPayment',() => {
-    it(_'should process payment successfully',_async () => {
+    it(_'should process payment successfully',async () => {
       // First create a billing
       const billingData = {
         patientId: randomUUID(),
@@ -192,7 +192,7 @@ describe(_'BillingService',() => {
   });
 
   describe(_'getFinancialSummary',() => {
-    it(_'should generate financial summary',_async () => {
+    it(_'should generate financial summary',async () => {
       const result = await service.getFinancialSummary(randomUUID());
 
       expect(result.success).toBe(true);

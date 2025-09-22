@@ -9,15 +9,15 @@ import DatabasePerformanceService, {
   HEALTHCARE_RECOMMENDED_INDEXES,
 } from '../database-performance';
 
-describe(_'DatabasePerformanceService',_() => {
+describe(_'DatabasePerformanceService'), () => {
   let _service: DatabasePerformanceService;
 
   beforeEach(() => {
     service = new DatabasePerformanceService();
   });
 
-  describe(_'analyzePerformance',_() => {
-    it(_'should analyze database performance metrics',_async () => {
+  describe(_'analyzePerformance'), () => {
+    it(_'should analyze database performance metrics',async () => {
       const metrics = await service.analyzePerformance();
 
       expect(metrics).toHaveProperty('connectionPool');
@@ -55,7 +55,7 @@ describe(_'DatabasePerformanceService',_() => {
       expect(metrics.healthcareCompliance).toHaveProperty('auditTrailQueries');
     });
 
-    it(_'should provide realistic connection pool metrics',_async () => {
+    it(_'should provide realistic connection pool metrics',async () => {
       const metrics = await service.analyzePerformance();
       const pool = metrics.connectionPool;
 
@@ -68,7 +68,7 @@ describe(_'DatabasePerformanceService',_() => {
       expect(pool.utilization).toBeLessThanOrEqual(100);
     });
 
-    it(_'should provide healthcare-specific compliance metrics',_async () => {
+    it(_'should provide healthcare-specific compliance metrics',async () => {
       const metrics = await service.analyzePerformance();
       const compliance = metrics.healthcareCompliance;
 
@@ -89,8 +89,8 @@ describe(_'DatabasePerformanceService',_() => {
     });
   });
 
-  describe(_'generateIndexRecommendations',_() => {
-    it(_'should generate healthcare-specific index recommendations',_() => {
+  describe(_'generateIndexRecommendations'), () => {
+    it(_'should generate healthcare-specific index recommendations'), () => {
       const recommendations = service.generateIndexRecommendations();
 
       expect(recommendations).toBeInstanceOf(Array);
@@ -120,7 +120,7 @@ describe(_'DatabasePerformanceService',_() => {
       });
     });
 
-    it(_'should prioritize critical healthcare indexes',_() => {
+    it(_'should prioritize critical healthcare indexes'), () => {
       const recommendations = service.generateIndexRecommendations();
       const criticalRecs = recommendations.filter(
         rec => rec.priority === 'critical',
@@ -140,7 +140,7 @@ describe(_'DatabasePerformanceService',_() => {
       expect(avgCriticalImprovement).toBeGreaterThan(avgHighImprovement);
     });
 
-    it(_'should include patient and appointment table indexes',_() => {
+    it(_'should include patient and appointment table indexes'), () => {
       const recommendations = service.generateIndexRecommendations();
       const patientIndexes = recommendations.filter(
         rec => rec.table === 'patients',
@@ -168,8 +168,8 @@ describe(_'DatabasePerformanceService',_() => {
     });
   });
 
-  describe(_'performHealthCheck',_() => {
-    it(_'should perform comprehensive database health check',_async () => {
+  describe(_'performHealthCheck'), () => {
+    it(_'should perform comprehensive database health check',async () => {
       const health = await service.performHealthCheck();
 
       expect(health).toHaveProperty('status');
@@ -194,7 +194,7 @@ describe(_'DatabasePerformanceService',_() => {
       expect(Date.now() - health.lastChecked.getTime()).toBeLessThan(5000); // Within 5 seconds
     });
 
-    it(_'should identify performance issues and provide recommendations',_async () => {
+    it(_'should identify performance issues and provide recommendations',async () => {
       // Mock poor performance metrics
       const mockQueryMonitor = {
         getStats: () => ({
@@ -225,7 +225,7 @@ describe(_'DatabasePerformanceService',_() => {
       expect(hasHealthcareRecommendation).toBe(true);
     });
 
-    it(_'should score healthy systems appropriately',_async () => {
+    it(_'should score healthy systems appropriately',async () => {
       // Mock good performance metrics
       const mockQueryMonitor = {
         getStats: () => ({
@@ -245,8 +245,8 @@ describe(_'DatabasePerformanceService',_() => {
     });
   });
 
-  describe(_'startHealthMonitoring',_() => {
-    it(_'should start health monitoring with interval',_() => {
+  describe(_'startHealthMonitoring'), () => {
+    it(_'should start health monitoring with interval'), () => {
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -261,7 +261,7 @@ describe(_'DatabasePerformanceService',_() => {
       errorSpy.mockRestore();
     });
 
-    it(_'should stop health monitoring',_() => {
+    it(_'should stop health monitoring'), () => {
       service.startHealthMonitoring(100);
 
       expect(() => service.stopHealthMonitoring()).not.toThrow();
@@ -271,8 +271,8 @@ describe(_'DatabasePerformanceService',_() => {
     });
   });
 
-  describe(_'getQueryMonitor',_() => {
-    it(_'should return query monitor instance',_() => {
+  describe(_'getQueryMonitor'), () => {
+    it(_'should return query monitor instance'), () => {
       const monitor = service.getQueryMonitor();
 
       expect(monitor).toBeDefined();
@@ -283,8 +283,8 @@ describe(_'DatabasePerformanceService',_() => {
     });
   });
 
-  describe(_'Healthcare Query Patterns',_() => {
-    it(_'should define comprehensive healthcare query patterns',_() => {
+  describe(_'Healthcare Query Patterns'), () => {
+    it(_'should define comprehensive healthcare query patterns'), () => {
       expect(HEALTHCARE_QUERY_PATTERNS).toHaveProperty('patientSearch');
       expect(HEALTHCARE_QUERY_PATTERNS).toHaveProperty('appointmentScheduling');
       expect(HEALTHCARE_QUERY_PATTERNS).toHaveProperty('patientHistory');
@@ -302,7 +302,7 @@ describe(_'DatabasePerformanceService',_() => {
       });
     });
 
-    it(_'should have appropriate response time expectations',_() => {
+    it(_'should have appropriate response time expectations'), () => {
       // LGPD compliance queries should be fastest (critical for compliance)
       expect(
         HEALTHCARE_QUERY_PATTERNS.lgpdCompliance.expectedResponseTime,
@@ -324,8 +324,8 @@ describe(_'DatabasePerformanceService',_() => {
     });
   });
 
-  describe(_'Healthcare Recommended Indexes',_() => {
-    it(_'should define comprehensive healthcare indexes',_() => {
+  describe(_'Healthcare Recommended Indexes'), () => {
+    it(_'should define comprehensive healthcare indexes'), () => {
       expect(HEALTHCARE_RECOMMENDED_INDEXES).toBeInstanceOf(Array);
       expect(HEALTHCARE_RECOMMENDED_INDEXES.length).toBeGreaterThan(5);
 
@@ -343,7 +343,7 @@ describe(_'DatabasePerformanceService',_() => {
       });
     });
 
-    it(_'should prioritize critical healthcare operations',_() => {
+    it(_'should prioritize critical healthcare operations'), () => {
       const criticalIndexes = HEALTHCARE_RECOMMENDED_INDEXES.filter(
         idx => idx.priority === 'critical',
       );
@@ -374,7 +374,7 @@ describe(_'DatabasePerformanceService',_() => {
       expect(consentIndex).toBeDefined();
     });
 
-    it(_'should include full-text search indexes for patient data',_() => {
+    it(_'should include full-text search indexes for patient data'), () => {
       const ginIndexes = HEALTHCARE_RECOMMENDED_INDEXES.filter(
         idx => idx.type === 'gin',
       );

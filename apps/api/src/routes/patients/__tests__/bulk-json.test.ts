@@ -15,10 +15,10 @@
 import { describe, expect, it, test } from 'vitest';
 
 describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
-  describe(_'JSON Payload Processing',_() => {
-    it(_'should import bulk operations route correctly',_async () => {
+  describe(_'JSON Payload Processing'), () => {
+    it(_'should import bulk operations route correctly',async () => {
       // This may FAIL if route export is not properly configured
-      expect(_async () => {
+      expect(async () => {
         const bulkModule = await import('../bulk');
 
         expect(bulkModule.default).toBeDefined();
@@ -28,7 +28,7 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
       }).not.toThrow();
     });
 
-    it(_'should process valid bulk JSON payload correctly',_async () => {
+    it(_'should process valid bulk JSON payload correctly',async () => {
       // This will FAIL due to JSON processing issues
       const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
@@ -72,7 +72,7 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
       expect(typeof data).toBe('object');
     });
 
-    it(_'should handle malformed JSON payload gracefully',_async () => {
+    it(_'should handle malformed JSON payload gracefully',async () => {
       // This will FAIL due to poor error handling
       const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
@@ -110,7 +110,7 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
       }
     });
 
-    it(_'should validate required JSON fields for bulk operations',_async () => {
+    it(_'should validate required JSON fields for bulk operations',async () => {
       // This will FAIL due to insufficient validation
       const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
@@ -147,8 +147,8 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
     });
   });
 
-  describe(_'Healthcare-Specific JSON Validation',_() => {
-    it(_'should validate LGPD consent fields in JSON payload',_async () => {
+  describe(_'Healthcare-Specific JSON Validation'), () => {
+    it(_'should validate LGPD consent fields in JSON payload',async () => {
       // This will FAIL due to missing LGPD validation
       const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
@@ -193,7 +193,7 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
       expect(data.consentValidated).toBe(true);
     });
 
-    it(_'should validate Brazilian healthcare professional fields',_async () => {
+    it(_'should validate Brazilian healthcare professional fields',async () => {
       // This will FAIL due to missing CFM validation
       const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
@@ -238,7 +238,7 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
       expect(data.professionalValidation).toBe(true);
     });
 
-    it(_'should validate medical data classification in JSON',_async () => {
+    it(_'should validate medical data classification in JSON',async () => {
       // This will FAIL due to missing medical data validation
       const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
@@ -288,8 +288,8 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
     });
   });
 
-  describe(_'Large JSON Payload Handling',_() => {
-    it(_'should handle large bulk operations JSON efficiently',_async () => {
+  describe(_'Large JSON Payload Handling'), () => {
+    it(_'should handle large bulk operations JSON efficiently',async () => {
       // This will FAIL due to performance/memory issues
       const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
@@ -335,7 +335,7 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
       expect(data.totalProcessed).toBe(1000);
     });
 
-    it(_'should enforce JSON payload size limits',_async () => {
+    it(_'should enforce JSON payload size limits',async () => {
       // This will FAIL due to missing size validation
       const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
@@ -378,8 +378,8 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
     });
   });
 
-  describe(_'JSON Content-Type Validation',_() => {
-    it(_'should require application/json content-type header',_async () => {
+  describe(_'JSON Content-Type Validation'), () => {
+    it(_'should require application/json content-type header',async () => {
       // This will FAIL if content-type validation is missing
       const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
@@ -424,7 +424,7 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
       }
     });
 
-    it(_'should handle JSON with different character encodings',_async () => {
+    it(_'should handle JSON with different character encodings',async () => {
       // This will FAIL if encoding is not properly handled
       const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;

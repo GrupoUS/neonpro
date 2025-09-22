@@ -637,7 +637,7 @@ export class AgentPermissionService {
     patientId?: string;
   }): Promise<void> {
     // Queue the audit log for async processing
-    this.auditLogQueue.push(_async () => {
+    this.auditLogQueue.push(async () => {
       try {
         await this.supabase
           .from('agent_audit_log')

@@ -157,7 +157,7 @@ export class EnhancedPerformanceOptimizationService {
 
     try {
       // Execute query with timeout
-      const result = await this.executeWithTimeout(_async () => {
+      const result = await this.executeWithTimeout(async () => {
         if (cursor && includeCursor) {
           // Cursor-based pagination
           return this.executeCursorPagination(queryBuilder, {

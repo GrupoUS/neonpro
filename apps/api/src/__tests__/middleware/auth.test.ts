@@ -70,7 +70,7 @@ describe(_'Authentication Middleware - Real Database Integration',() => {
   });
 
   describe(_'requireAuth',() => {
-    it(_'should authenticate user with valid token',_async () => {
+    it(_'should authenticate user with valid token',async () => {
       // Arrange
       const mockUser = {
         id: 'user-123',
@@ -101,7 +101,7 @@ describe(_'Authentication Middleware - Real Database Integration',() => {
       expect(mockNext).toHaveBeenCalled();
     });
 
-    it(_'should reject request without token',_async () => {
+    it(_'should reject request without token',async () => {
       // Arrange
       mockContext.req.header = vi.fn().mockReturnValue(undefined);
 
@@ -115,7 +115,7 @@ describe(_'Authentication Middleware - Real Database Integration',() => {
       expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it(_'should reject request with invalid token',_async () => {
+    it(_'should reject request with invalid token',async () => {
       // Arrange
       mockContext.req.header = vi.fn().mockReturnValue('Bearer invalid-token');
 
@@ -135,7 +135,7 @@ describe(_'Authentication Middleware - Real Database Integration',() => {
   });
 
   describe(_'requireHealthcareProfessional',() => {
-    it(_'should validate healthcare professional with real database data',_async () => {
+    it(_'should validate healthcare professional with real database data',async () => {
       // Arrange
       const userId = 'user-123';
       const mockHealthcareProfessional = {
@@ -187,7 +187,7 @@ describe(_'Authentication Middleware - Real Database Integration',() => {
       expect(mockNext).toHaveBeenCalled();
     });
 
-    it(_'should reject healthcare professional with inactive license',_async () => {
+    it(_'should reject healthcare professional with inactive license',async () => {
       // Arrange
       const userId = 'user-123';
       const mockInactiveProfessional = {
@@ -228,7 +228,7 @@ describe(_'Authentication Middleware - Real Database Integration',() => {
       expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it(_'should reject when healthcare professional not found in database',_async () => {
+    it(_'should reject when healthcare professional not found in database',async () => {
       // Arrange
       const userId = 'user-123';
       mockContext.get = vi.fn().mockReturnValue(userId);
@@ -257,7 +257,7 @@ describe(_'Authentication Middleware - Real Database Integration',() => {
   });
 
   describe(_'requireLGPDConsent',() => {
-    it(_'should validate LGPD consent with real database data',_async () => {
+    it(_'should validate LGPD consent with real database data',async () => {
       // Arrange
       const userId = 'user-123';
       const mockLGPDConsent = {
@@ -309,7 +309,7 @@ describe(_'Authentication Middleware - Real Database Integration',() => {
       expect(mockNext).toHaveBeenCalled();
     });
 
-    it(_'should reject when required consent purposes are missing',_async () => {
+    it(_'should reject when required consent purposes are missing',async () => {
       // Arrange
       const userId = 'user-123';
       const mockInsufficientConsent = {
@@ -352,7 +352,7 @@ describe(_'Authentication Middleware - Real Database Integration',() => {
       expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it(_'should reject when consent is inactive',_async () => {
+    it(_'should reject when consent is inactive',async () => {
       // Arrange
       const userId = 'user-123';
       const mockInactiveConsent = {
@@ -397,7 +397,7 @@ describe(_'Authentication Middleware - Real Database Integration',() => {
   });
 
   describe(_'requireAIAccess',() => {
-    it(_'should grant AI access with valid healthcare professional and LGPD consent',_async () => {
+    it(_'should grant AI access with valid healthcare professional and LGPD consent',async () => {
       // Arrange
       const userId = 'user-123';
       const mockHealthcareProfessional = {
@@ -455,7 +455,7 @@ describe(_'Authentication Middleware - Real Database Integration',() => {
       expect(mockNext).toHaveBeenCalled();
     });
 
-    it(_'should reject AI access when healthcare professional lacks AI permission',_async () => {
+    it(_'should reject AI access when healthcare professional lacks AI permission',async () => {
       // Arrange
       const userId = 'user-123';
       const mockHealthcareProfessional = {

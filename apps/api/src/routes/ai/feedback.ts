@@ -19,7 +19,7 @@ app.use(
 );
 
 // JWT middleware for authentication
-app.use(_'*',_async (c,_next) => {
+app.use(_'*',async (c,_next) => {
   const jwtMiddleware = jwt({
     secret: process.env.JWT_SECRET!,
   });

@@ -37,7 +37,7 @@ copilotBridge.use(
 );
 
 // Security headers middleware
-copilotBridge.use(_'*', async (c: Context, next: Next) => {
+copilotBridge.use('*', async (c: Context, next: Next) => {
   // Apply healthcare security headers
   c.header('X-Healthcare-Platform', 'NeonPro');
   c.header('X-LGPD-Compliance', 'true');

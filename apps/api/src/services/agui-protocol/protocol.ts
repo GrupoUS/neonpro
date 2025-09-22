@@ -73,7 +73,7 @@ export class AguiProtocol extends EventEmitter {
 
       // Set up message handler
       ws.on('message', data => this.handleMessage(connectionId, data));
-      ws.on(_'close',_() => this.handleDisconnect(connectionId));
+      ws.on('close', () => this.handleDisconnect(connectionId));
       ws.on('error', error => this.handleError(connectionId, error));
 
       // Send hello message

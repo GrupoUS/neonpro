@@ -92,7 +92,7 @@ export interface Patient {
   id: string;
   clinicId: string;
   medicalRecordNumber: string;
-  externalIds?: Record<string, any>;
+  externalIds?: ExternalIds;
   givenNames: string[];
   familyName: string;
   fullName: string;
@@ -170,19 +170,19 @@ export interface Appointment {
   description?: string;
 }
 
-// Database types - placeholder for Supabase generated types
+// Database types - properly typed with generics for healthcare compliance
 export interface Database {
   public: {
     Tables: {
       [key: string]: {
-        Row: Record<string, any>;
-        Insert: Record<string, any>;
-        Update: Record<string, any>;
+        Row: DatabaseRow;
+        Insert: DatabaseInsert;
+        Update: DatabaseUpdate;
       };
     };
     Views: {
       [key: string]: {
-        Row: Record<string, any>;
+        Row: DatabaseRow;
       };
     };
     Functions: {
@@ -195,4 +195,48 @@ export interface Database {
       [key: string]: string;
     };
   };
+}
+
+// Base database types with healthcare constraints
+export interface DatabaseRow {
+  id: string;
+  created_at?: string;
+  updated_at?: string;
+  created_by?: string;
+  updated_by?: string;
+  deleted_at?: string;
+  is_active?: boolean;
+  [key: string]: unknown;
+}
+
+export interface DatabaseInsert {
+  id?: string;
+  created_at?: string;
+  updated_at?: string;
+  created_by?: string;
+  updated_by?: string;
+  deleted_at?: string;
+  is_active?: boolean;
+  [key: string]: unknown;
+}
+
+export interface DatabaseUpdate {
+  id?: string;
+  created_at?: string;
+  updated_at?: string;
+  created_by?: string;
+  updated_by?: string;
+  deleted_at?: string;
+  is_active?: boolean;
+  [key: string]: unknown;
+}
+
+// Healthcare-specific external ID types
+export interface ExternalIds {
+  integration_id?: string;
+  legacy_id?: string;
+  external_system_id?: string;
+  insurance_id?: string;
+  medical_record_system_id?: string;
+  [key: string]: string | number | boolean | null;
 }

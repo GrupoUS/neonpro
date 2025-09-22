@@ -240,7 +240,7 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(_async ({ ctx,_input }) => {
+    .mutation(async ({ ctx,_input }) => {
       try {
         // Validate user has permission for this agent type
         if (
@@ -330,7 +330,7 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .query(_async ({ ctx,_input }) => {
+    .query(async ({ ctx,_input }) => {
       try {
         const where = {
           _userId: ctx.user.id,
@@ -403,7 +403,7 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .query(_async ({ ctx,_input }) => {
+    .query(async ({ ctx,_input }) => {
       try {
         const session = await ctx.prisma.agentSession.findFirst({
           where: {
@@ -487,7 +487,7 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(_async ({ ctx,_input }) => {
+    .mutation(async ({ ctx,_input }) => {
       try {
         // Verify session exists and belongs to user
         const session = await ctx.prisma.agentSession.findFirst({
@@ -627,7 +627,7 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(_async ({ ctx,_input }) => {
+    .mutation(async ({ ctx,_input }) => {
       try {
         // Create knowledge entry
         const entry = await ctx.prisma.agentKnowledgeBase.create({
@@ -700,7 +700,7 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .query(_async ({ ctx,_input }) => {
+    .query(async ({ ctx,_input }) => {
       try {
         // Mock semantic search (replace with vector search)
         const results = await ctx.prisma.agentKnowledgeBase.findMany({
@@ -752,7 +752,7 @@ export const agentRouter = router({
   ragQuery: protectedProcedure
     .input(RAGQuerySchema)
     .output(RAGResponseSchema)
-    .mutation(_async ({ ctx,_input }) => {
+    .mutation(async ({ ctx,_input }) => {
       try {
         const startTime = Date.now();
 
@@ -825,7 +825,7 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(_async ({ ctx,_input }) => {
+    .mutation(async ({ ctx,_input }) => {
       try {
         const session = await ctx.prisma.agentSession.findFirst({
           where: {
@@ -917,7 +917,7 @@ export const agentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .query(_async ({ ctx,_input }) => {
+    .query(async ({ ctx,_input }) => {
       try {
         const where = {
           _userId: ctx.user.id,

@@ -14,15 +14,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
     vi.restoreAllMocks();
   });
 
-  it(_'should export AIChatService class',_() => {
+  it(_'should export AIChatService class'), () => {
     expect(() => {
       const module = require('../ai-chat-service');
       expect(module.AIChatService).toBeDefined();
     }).not.toThrow();
   });
 
-  describe(_'Multi-Model Support',_() => {
-    it(_'should support OpenAI models',_async () => {
+  describe(_'Multi-Model Support'), () => {
+    it(_'should support OpenAI models',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -39,7 +39,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.model).toBe('gpt-4');
     });
 
-    it(_'should support Anthropic models',_async () => {
+    it(_'should support Anthropic models',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -57,7 +57,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.provider).toBe('anthropic');
     });
 
-    it(_'should support Google models',_async () => {
+    it(_'should support Google models',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -75,7 +75,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.provider).toBe('google');
     });
 
-    it(_'should support local models',_async () => {
+    it(_'should support local models',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -92,8 +92,8 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
     });
   });
 
-  describe(_'Brazilian Healthcare Context',_() => {
-    it(_'should provide healthcare-specific responses in Portuguese',_async () => {
+  describe(_'Brazilian Healthcare Context'), () => {
+    it(_'should provide healthcare-specific responses in Portuguese',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -109,7 +109,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data._context).toBe('medical_consultation');
     });
 
-    it(_'should integrate with patient data for personalized responses',_async () => {
+    it(_'should integrate with patient data for personalized responses',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -125,7 +125,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.patientId).toBe('patient-123');
     });
 
-    it(_'should provide ANVISA-compliant medical information',_async () => {
+    it(_'should provide ANVISA-compliant medical information',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -142,8 +142,8 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
     });
   });
 
-  describe(_'Conversation Management',_() => {
-    it(_'should create new conversation',_async () => {
+  describe(_'Conversation Management'), () => {
+    it(_'should create new conversation',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -159,7 +159,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.title).toBe('Consulta sobre sintomas');
     });
 
-    it(_'should add message to conversation',_async () => {
+    it(_'should add message to conversation',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -176,7 +176,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.content).toBe('Estou sentindo dor de cabeça');
     });
 
-    it(_'should get conversation history',_async () => {
+    it(_'should get conversation history',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -187,7 +187,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.conversationId).toBe('conv-123');
     });
 
-    it(_'should list patient conversations',_async () => {
+    it(_'should list patient conversations',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -199,8 +199,8 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
     });
   });
 
-  describe(_'AI Insights Integration',_() => {
-    it(_'should generate insights from conversation',_async () => {
+  describe(_'AI Insights Integration'), () => {
+    it(_'should generate insights from conversation',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -215,7 +215,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.analysisType).toBe('symptom_analysis');
     });
 
-    it(_'should suggest follow-up questions',_async () => {
+    it(_'should suggest follow-up questions',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -229,7 +229,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.suggestions.length).toBeGreaterThan(0);
     });
 
-    it(_'should detect urgent symptoms',_async () => {
+    it(_'should detect urgent symptoms',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -246,8 +246,8 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
     });
   });
 
-  describe(_'LGPD Compliance',_() => {
-    it(_'should track conversation access for audit',_async () => {
+  describe(_'LGPD Compliance'), () => {
+    it(_'should track conversation access for audit',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -262,7 +262,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.accessLogged).toBe(true);
     });
 
-    it(_'should anonymize conversation data',_async () => {
+    it(_'should anonymize conversation data',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -273,7 +273,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.message).toContain('Conversa anonimizada');
     });
 
-    it(_'should export conversation data for LGPD requests',_async () => {
+    it(_'should export conversation data for LGPD requests',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -289,8 +289,8 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
     });
   });
 
-  describe(_'Performance and Monitoring',_() => {
-    it(_'should track response times',_async () => {
+  describe(_'Performance and Monitoring'), () => {
+    it(_'should track response times',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -306,7 +306,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(typeof result.data.responseTime).toBe('number');
     });
 
-    it(_'should handle rate limiting',_async () => {
+    it(_'should handle rate limiting',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -319,7 +319,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.resetTime).toBeDefined();
     });
 
-    it(_'should provide service health status',_() => {
+    it(_'should provide service health status'), () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -331,8 +331,8 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
     });
   });
 
-  describe(_'Error Handling',_() => {
-    it(_'should handle provider API errors gracefully',_async () => {
+  describe(_'Error Handling'), () => {
+    it(_'should handle provider API errors gracefully',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -348,7 +348,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.error).toContain('Provedor de IA não suportado');
     });
 
-    it(_'should handle network timeouts',_async () => {
+    it(_'should handle network timeouts',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 
@@ -363,7 +363,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.error).toContain('Timeout');
     });
 
-    it(_'should validate input parameters',_async () => {
+    it(_'should validate input parameters',async () => {
       const { AIChatService } = require('../ai-chat-service');
       const service = new AIChatService();
 

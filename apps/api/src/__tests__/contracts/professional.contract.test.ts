@@ -56,7 +56,7 @@ describe(_'Professional Contract Testing',() => {
   });
 
   describe(_'Professional Creation Contract',() => {
-    it(_'should validate professional creation input and output',_async () => {
+    it(_'should validate professional creation input and output',async () => {
       const createInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Maria Silva',
@@ -135,7 +135,7 @@ describe(_'Professional Contract Testing',() => {
       });
     });
 
-    it(_'should reject invalid CRM number',_async () => {
+    it(_'should reject invalid CRM number',async () => {
       const invalidInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Invalid',
@@ -165,7 +165,7 @@ describe(_'Professional Contract Testing',() => {
       ).rejects.toThrow('Invalid CRM number: Invalid CRM format');
     });
 
-    it(_'should enforce CFM compliance requirements',_async () => {
+    it(_'should enforce CFM compliance requirements',async () => {
       const nonCompliantInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Non Compliant',
@@ -201,7 +201,7 @@ describe(_'Professional Contract Testing',() => {
   });
 
   describe(_'Professional Retrieval Contract',() => {
-    it(_'should validate professional retrieval by ID',_async () => {
+    it(_'should validate professional retrieval by ID',async () => {
       const professionalId = 'prof-789';
       const mockProfessional = {
         id: professionalId,
@@ -259,7 +259,7 @@ describe(_'Professional Contract Testing',() => {
       });
     });
 
-    it(_'should handle professional not found',_async () => {
+    it(_'should handle professional not found',async () => {
       const professionalId = 'nonexistent-prof';
 
       mockContext.prisma.professional.findUnique.mockResolvedValue(null);
@@ -271,7 +271,7 @@ describe(_'Professional Contract Testing',() => {
   });
 
   describe(_'Professional Update Contract',() => {
-    it(_'should validate professional information updates',_async () => {
+    it(_'should validate professional information updates',async () => {
       const professionalId = 'prof-789';
       const updateInput: ProfessionalInput['update'] = {
         id: professionalId,
@@ -343,7 +343,7 @@ describe(_'Professional Contract Testing',() => {
       });
     });
 
-    it(_'should prevent unauthorized updates to critical fields',_async () => {
+    it(_'should prevent unauthorized updates to critical fields',async () => {
       const professionalId = 'prof-789';
       const unauthorizedUpdate: ProfessionalInput['update'] = {
         id: professionalId,
@@ -370,7 +370,7 @@ describe(_'Professional Contract Testing',() => {
   });
 
   describe(_'Professional Schedule Management Contract',() => {
-    it(_'should validate schedule updates',_async () => {
+    it(_'should validate schedule updates',async () => {
       const scheduleInput: ProfessionalInput['updateSchedule'] = {
         professionalId: 'prof-789',
         schedule: {
@@ -416,7 +416,7 @@ describe(_'Professional Contract Testing',() => {
       });
     });
 
-    it(_'should validate schedule conflicts',_async () => {
+    it(_'should validate schedule conflicts',async () => {
       const conflictingSchedule: ProfessionalInput['updateSchedule'] = {
         professionalId: 'prof-789',
         schedule: {
@@ -433,7 +433,7 @@ describe(_'Professional Contract Testing',() => {
   });
 
   describe(_'Professional List Contract',() => {
-    it(_'should validate professional listing with filters',_async () => {
+    it(_'should validate professional listing with filters',async () => {
       const listInput: ProfessionalInput['list'] = {
         page: 1,
         limit: 10,
@@ -499,7 +499,7 @@ describe(_'Professional Contract Testing',() => {
   });
 
   describe(_'Professional Qualification Management Contract',() => {
-    it(_'should validate qualification addition',_async () => {
+    it(_'should validate qualification addition',async () => {
       const qualificationInput: ProfessionalInput['addQualification'] = {
         professionalId: 'prof-789',
         qualification: {
@@ -535,7 +535,7 @@ describe(_'Professional Contract Testing',() => {
       });
     });
 
-    it(_'should validate qualification expiry monitoring',_async () => {
+    it(_'should validate qualification expiry monitoring',async () => {
       const professionalId = 'prof-789';
       const mockExpiringQualifications = [
         {

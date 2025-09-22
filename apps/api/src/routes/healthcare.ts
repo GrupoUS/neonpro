@@ -37,7 +37,7 @@ type HealthcareEnv = {
 const healthcare = new Hono<HealthcareEnv>();
 
 // Performance monitoring middleware
-const performanceMiddleware = createMiddleware<HealthcareEnv>(_async (c,_next) => {
+const performanceMiddleware = createMiddleware<HealthcareEnv>(async (c,_next) => {
     const startTime = Date.now();
     c.set('performanceMetrics', { startTime, dbQueries: 0 });
 
@@ -59,7 +59,7 @@ const performanceMiddleware = createMiddleware<HealthcareEnv>(_async (c,_next) =
 );
 
 // LGPD compliance audit middleware
-const auditMiddleware = createMiddleware<HealthcareEnv>(_async (c,_next) => {
+const auditMiddleware = createMiddleware<HealthcareEnv>(async (c,_next) => {
   const user = c.get('user');
   const method = c.req.method;
   const path = c.req.path;
@@ -108,7 +108,7 @@ const auditMiddleware = createMiddleware<HealthcareEnv>(_async (c,_next) => {
 });
 
 // Healthcare role-based authorization middleware
-const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(_async (c,_next) => {
+const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(async (c,_next) => {
     const token = c.req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {

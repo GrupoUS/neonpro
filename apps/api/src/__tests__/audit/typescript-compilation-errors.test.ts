@@ -21,7 +21,7 @@ describe('TypeScript Compilation Error Detection',() => {
       }).toThrow('Identifier \'Database\' has already been declared');
     });
 
-    it(_'should detect Json type redeclaration conflicts',_() => {
+    it(_'should detect Json type redeclaration conflicts'), () => {
       // RED: Json type conflicts break database serialization
       expect(() => {
         const { Json } = require('@/types/supabase');
@@ -30,22 +30,22 @@ describe('TypeScript Compilation Error Detection',() => {
     });
   });
 
-  describe(_'Module Resolution Issues',_() => {
-    it(_'should detect missing @neonpro/core-services module',_() => {
+  describe(_'Module Resolution Issues'), () => {
+    it(_'should detect missing @neonpro/core-services module'), () => {
       // RED: Critical for AI chat functionality in healthcare context
       expect(() => {
         require('@/routes/ai-chat');
       }).toThrow('Cannot find module \'@neonpro/core-services\'');
     });
 
-    it(_'should detect missing @neonpro/database module',_() => {
+    it(_'should detect missing @neonpro/database module'), () => {
       // RED: Database module required for patient data operations
       expect(() => {
         require('@/routes/patients');
       }).toThrow('Cannot find module \'@neonpro/database\'');
     });
 
-    it(_'should detect missing trpc helpers',_() => {
+    it(_'should detect missing trpc helpers'), () => {
       // RED: Required for contract testing in healthcare APIs
       expect(() => {
         require('../helpers/trpc-context');
@@ -53,8 +53,8 @@ describe('TypeScript Compilation Error Detection',() => {
     });
   });
 
-  describe(_'Contract API Type Mismatches',_() => {
-    it(_'should detect missing createChatSession method in AI contract',_() => {
+  describe(_'Contract API Type Mismatches'), () => {
+    it(_'should detect missing createChatSession method in AI contract'), () => {
       // RED: Critical for telemedicine AI chat functionality
       const aiContract = {
         chat: jest.fn(),
@@ -65,7 +65,7 @@ describe('TypeScript Compilation Error Detection',() => {
       expect(aiContract.createChatSession).toBeDefined();
     });
 
-    it(_'should detect missing sendMessage method',_() => {
+    it(_'should detect missing sendMessage method'), () => {
       // RED: Required for real-time patient communication
       const aiContract = {
         chat: jest.fn(),
@@ -76,7 +76,7 @@ describe('TypeScript Compilation Error Detection',() => {
       expect(aiContract.sendMessage).toBeDefined();
     });
 
-    it(_'should detect missing predictNoShow method',_() => {
+    it(_'should detect missing predictNoShow method'), () => {
       // RED: Critical for healthcare appointment management
       const aiContract = {
         chat: jest.fn(),
@@ -88,8 +88,8 @@ describe('TypeScript Compilation Error Detection',() => {
     });
   });
 
-  describe(_'tRPC Export Issues',_() => {
-    it(_'should detect missing createCallerFactory export',_() => {
+  describe(_'tRPC Export Issues'), () => {
+    it(_'should detect missing createCallerFactory export'), () => {
       // RED: Required for tRPC testing in healthcare contracts
       expect(() => {
         const { createCallerFactory } = require('@trpc/server');
@@ -98,8 +98,8 @@ describe('TypeScript Compilation Error Detection',() => {
     });
   });
 
-  describe(_'Error Tracking Export Issues',_() => {
-    it(_'should detect ErrorTrackingManager export',_() => {
+  describe(_'Error Tracking Export Issues'), () => {
+    it(_'should detect ErrorTrackingManager export'), () => {
       // RED: Critical for healthcare error compliance and audit trails
       expect(() => {
         const { ErrorTrackingManager } = require('@/lib/error-tracking');
@@ -108,8 +108,8 @@ describe('TypeScript Compilation Error Detection',() => {
     });
   });
 
-  describe(_'Syntax Error Detection',_() => {
-    it(_'should detect parenthesis/semicolon syntax errors',_() => {
+  describe(_'Syntax Error Detection'), () => {
+    it(_'should detect parenthesis/semicolon syntax errors'), () => {
       // RED: Syntax errors break healthcare API functionality
       const syntaxErrorPatterns = [
         'Expected ")" but found ";"',
@@ -125,8 +125,8 @@ describe('TypeScript Compilation Error Detection',() => {
     });
   });
 
-  describe(_'Contract Test Export Issues',_() => {
-    it(_'should detect missing default exports in contract tests',_() => {
+  describe(_'Contract Test Export Issues'), () => {
+    it(_'should detect missing default exports in contract tests'), () => {
       // RED: Contract tests are required for healthcare API validation
       const contractModules = [
         './ai.contract.test',
@@ -146,8 +146,8 @@ describe('TypeScript Compilation Error Detection',() => {
     });
   });
 
-  describe(_'Timeout Issues in Tests',_() => {
-    it(_'should detect timeout issues in healthcare behavior detection',_() => {
+  describe(_'Timeout Issues in Tests'), () => {
+    it(_'should detect timeout issues in healthcare behavior detection'), () => {
       // RED: Healthcare abuse detection must not timeout
       const timeoutTest = async () => {
         // Simulate timeout in abuse detection
@@ -159,8 +159,8 @@ describe('TypeScript Compilation Error Detection',() => {
     });
   });
 
-  describe(_'LGPD Compliance Type Safety',_() => {
-    it(_'should ensure LGPD types are properly exported',_() => {
+  describe(_'LGPD Compliance Type Safety'), () => {
+    it(_'should ensure LGPD types are properly exported'), () => {
       // RED: LGPD compliance requires proper type definitions
       expect(() => {
         const { LGPDComplianceError } = require('@/types/errors');
@@ -168,7 +168,7 @@ describe('TypeScript Compilation Error Detection',() => {
       }).not.toThrow();
     });
 
-    it(_'should validate error severity types',_() => {
+    it(_'should validate error severity types'), () => {
       // RED: Error severity is critical for healthcare incident response
       const { ErrorSeverity } = require('@/types/error-severity');
 
@@ -179,8 +179,8 @@ describe('TypeScript Compilation Error Detection',() => {
     });
   });
 
-  describe(_'Healthcare Security Types',_() => {
-    it(_'should validate security header types',_() => {
+  describe(_'Healthcare Security Types'), () => {
+    it(_'should validate security header types'), () => {
       // RED: Security headers are mandatory for healthcare data protection
       expect(() => {
         const {

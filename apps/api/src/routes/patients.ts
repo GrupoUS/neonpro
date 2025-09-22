@@ -13,7 +13,7 @@ import { badRequest, created, notFound, ok, serverError } from '../utils/respons
 
 // Consent duration configuration (defaults to 1 year)
 const DEFAULT_CONSENT_DURATION_MS = 365 * 24 * 60 * 60 * 1000;
-const CONSENT_DURATION_MS = (_() => {
+const CONSENT_DURATION_MS = (() => {
   const v = process.env.CONSENT_DURATION_MS;
   const n = v ? Number(v) : NaN;
   return Number.isFinite(n) && n > 0 ? n : DEFAULT_CONSENT_DURATION_MS;
@@ -75,9 +75,11 @@ class PatientService extends BaseService {
   ) {
     return this.withAuditLog(
       {
-        operation: 'GET_PATIENTS',userId,
+        operation: 'GET_PATIENTS',
+        userId,
         tableName: 'patients',
-        recordId: clinicId,_},_async () => {
+        recordId: clinicId,
+      }, async () => {
         const offset = (options.page - 1) * options.limit;
 
         const whereClause: any = {
@@ -143,9 +145,11 @@ class PatientService extends BaseService {
   async getPatientById(patientId: string, _userId: string) {
     return this.withAuditLog(
       {
-        operation: 'GET_PATIENT',userId,
+        operation: 'GET_PATIENT',
+        userId,
         tableName: 'patients',
-        recordId: patientId,_},_async () => {
+        recordId: patientId,
+      }, async () => {
         const patient = await prisma.patient.findUnique({
           where: { id: patientId },
           include: {
@@ -195,10 +199,12 @@ class PatientService extends BaseService {
 
     return this.withAuditLog(
       {
-        operation: 'CREATE_PATIENT',userId,
+        operation: 'CREATE_PATIENT',
+        userId,
         tableName: 'patients',
         recordId: 'new',
-        newValues: data,_},_async () => {
+        newValues: data,
+      }, async () => {
         // Generate medical record number
         const medicalRecordNumber = await this.generateMedicalRecordNumber(
           data.clinicId,
@@ -262,11 +268,13 @@ class PatientService extends BaseService {
 
     return this.withAuditLog(
       {
-        operation: 'UPDATE_PATIENT',userId,
+        operation: 'UPDATE_PATIENT',
+        userId,
         tableName: 'patients',
         recordId: data.id,
         oldValues: existingPatient,
-        newValues: data,_},_async () => {
+        newValues: data,
+      }, async () => {
         const { id, ...updateData } = data;
 
         return prisma.patient.update({

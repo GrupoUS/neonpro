@@ -106,7 +106,7 @@ describe(_'HealthcareSecurityTestFramework',() => {
   });
 
   describe(_'Test Execution',() => {
-    it(_'should run HSTS header test',_async () => {
+    it(_'should run HSTS header test',async () => {
       // Mock fetch for HSTS test
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
@@ -129,7 +129,7 @@ describe(_'HealthcareSecurityTestFramework',() => {
       expect(hstsResult?.score).toBeGreaterThan(90);
     });
 
-    it(_'should handle missing HSTS header',_async () => {
+    it(_'should handle missing HSTS header',async () => {
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn().mockReturnValue(null),
@@ -147,7 +147,7 @@ describe(_'HealthcareSecurityTestFramework',() => {
       expect(hstsResult?.issues[0].severity).toBe('HIGH');
     });
 
-    it(_'should run CSP header test',_async () => {
+    it(_'should run CSP header test',async () => {
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn((name: string) => {
@@ -169,7 +169,7 @@ describe(_'HealthcareSecurityTestFramework',() => {
       expect(cspResult?.score).toBeGreaterThan(80);
     });
 
-    it(_'should handle missing CSP header',_async () => {
+    it(_'should handle missing CSP header',async () => {
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn().mockReturnValue(null),
@@ -187,7 +187,7 @@ describe(_'HealthcareSecurityTestFramework',() => {
       expect(cspResult?.issues[0].severity).toBe('MEDIUM');
     });
 
-    it(_'should run XSS protection headers test',_async () => {
+    it(_'should run XSS protection headers test',async () => {
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn((name: string) => {
@@ -211,7 +211,7 @@ describe(_'HealthcareSecurityTestFramework',() => {
       expect(xssResult?.score).toBe(100);
     });
 
-    it(_'should handle missing XSS protection headers',_async () => {
+    it(_'should handle missing XSS protection headers',async () => {
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn().mockReturnValue(null),
@@ -258,7 +258,7 @@ describe(_'HealthcareSecurityTestFramework',() => {
       );
     });
 
-    it(_'should handle test timeouts',_async () => {
+    it(_'should handle test timeouts',async () => {
       global.fetch = vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 10000)), // Longer than timeout
       );
 
@@ -280,7 +280,7 @@ describe(_'HealthcareSecurityTestFramework',() => {
   });
 
   describe(_'Error Handling',() => {
-    it(_'should handle network errors gracefully',_async () => {
+    it(_'should handle network errors gracefully',async () => {
       global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
 
       const results = await framework.runAllTests(mockContext);
@@ -293,7 +293,7 @@ describe(_'HealthcareSecurityTestFramework',() => {
       expect(hstsResult?.issues[0].type).toBe('TEST_ERROR');
     });
 
-    it(_'should handle test function errors',_async () => {
+    it(_'should handle test function errors',async () => {
       const errorTest = {
         id: 'error-test',
         name: 'Error Test',
@@ -316,7 +316,7 @@ describe(_'HealthcareSecurityTestFramework',() => {
   });
 
   describe(_'Scoring and Risk Assessment',() => {
-    it(_'should calculate appropriate scores for passed tests',_async () => {
+    it(_'should calculate appropriate scores for passed tests',async () => {
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn((name: string) => {
@@ -336,7 +336,7 @@ describe(_'HealthcareSecurityTestFramework',() => {
       expect(hstsResult?.score).toBeGreaterThan(90);
     });
 
-    it(_'should calculate reduced scores for tests with issues',_async () => {
+    it(_'should calculate reduced scores for tests with issues',async () => {
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn((name: string) => {

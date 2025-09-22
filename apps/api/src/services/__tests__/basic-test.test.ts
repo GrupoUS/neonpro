@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-describe(_'Basic Test',_() => {
-  it(_'should pass',_() => {
+describe(_'Basic Test'), () => {
+  it(_'should pass'), () => {
     expect(true).toBe(true);
   });
 });

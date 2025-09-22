@@ -204,7 +204,7 @@ export class EnhancedAIDataService extends AIDataService {
    * Get clients by name with caching
    */
   async getClientsByName(parameters: QueryParameters): Promise<any[]> {
-    return this.getWithCache(_'client_data',parameters,_async () => {
+    return this.getWithCache(_'client_data',parameters,async () => {
       return super.getClientsByName(parameters);
     });
   }
@@ -213,7 +213,7 @@ export class EnhancedAIDataService extends AIDataService {
    * Get appointments by date range with caching
    */
   async getAppointmentsByDate(parameters: QueryParameters): Promise<any[]> {
-    return this.getWithCache(_'appointments',parameters,_async () => {
+    return this.getWithCache(_'appointments',parameters,async () => {
       return super.getAppointmentsByDate(parameters);
     });
   }
@@ -222,7 +222,7 @@ export class EnhancedAIDataService extends AIDataService {
    * Get financial summary with caching
    */
   async getFinancialSummary(parameters: QueryParameters): Promise<any> {
-    return this.getWithCache(_'financial',parameters,_async () => {
+    return this.getWithCache(_'financial',parameters,async () => {
       return super.getFinancialSummary(parameters);
     });
   }

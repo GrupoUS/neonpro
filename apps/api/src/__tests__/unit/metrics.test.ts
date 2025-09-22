@@ -31,7 +31,7 @@ describe(_'HealthcareMetricsService',() => {
   });
 
   describe(_'recordMetric',() => {
-    it(_'should successfully record a metric',_async () => {
+    it(_'should successfully record a metric',async () => {
       // Mock successful database insertion
       const insertSpy = vi
         .spyOn(metricsService as any, 'db')
@@ -64,7 +64,7 @@ describe(_'HealthcareMetricsService',() => {
       expect(result.metricId).toBe('test-metric-id');
     });
 
-    it(_'should handle database errors gracefully',_async () => {
+    it(_'should handle database errors gracefully',async () => {
       // Mock database error
       const insertSpy = vi
         .spyOn(metricsService as any, 'db')
@@ -95,7 +95,7 @@ describe(_'HealthcareMetricsService',() => {
       expect(result.error).toBeDefined();
     });
 
-    it(_'should log metric to console when database fails',_async () => {
+    it(_'should log metric to console when database fails',async () => {
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       // Mock database error
@@ -128,7 +128,7 @@ describe(_'HealthcareMetricsService',() => {
       consoleSpy.mockRestore();
     });
 
-    it(_'should include default compliance flags when not provided',_async () => {
+    it(_'should include default compliance flags when not provided',async () => {
       const insertSpy = vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
@@ -165,14 +165,14 @@ describe(_'HealthcareMetricsService',() => {
   });
 
   describe(_'getKPIStatus',() => {
-    it(_'should return error for non-existent KPI',_async () => {
+    it(_'should return error for non-existent KPI',async () => {
       const result = await metricsService.getKPIStatus('non-existent-kpi');
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('KPI not found');
     });
 
-    it(_'should return KPI status with compliance evaluation',_async () => {
+    it(_'should return KPI status with compliance evaluation',async () => {
       // Mock successful metric aggregation
       const mockAggregation = {
         success: true,
@@ -194,7 +194,7 @@ describe(_'HealthcareMetricsService',() => {
       expect(result.complianceStatus).toBe('compliant');
     });
 
-    it(_'should handle metric aggregation errors',_async () => {
+    it(_'should handle metric aggregation errors',async () => {
       vi.spyOn(metricsService, 'getMetricAggregation' as any).mockResolvedValue(
         {
           success: false,
@@ -210,7 +210,7 @@ describe(_'HealthcareMetricsService',() => {
   });
 
   describe(_'getMetricAggregation',() => {
-    it(_'should return empty aggregation when no data exists',_async () => {
+    it(_'should return empty aggregation when no data exists',async () => {
       const insertSpy = vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
@@ -244,7 +244,7 @@ describe(_'HealthcareMetricsService',() => {
       expect(result.data!.avg).toBe(0);
     });
 
-    it(_'should calculate aggregation correctly from data',_async () => {
+    it(_'should calculate aggregation correctly from data',async () => {
       const mockData = [
         {
           value: 90,
@@ -308,7 +308,7 @@ describe(_'HealthcareMetricsService',() => {
       expect(result.data!.complianceRate).toBe(66.67); // 2 out of 3 compliant
     });
 
-    it(_'should handle database query errors',_async () => {
+    it(_'should handle database query errors',async () => {
       const insertSpy = vi
         .spyOn(metricsService as any, 'db')
         .mockImplementation();
@@ -342,7 +342,7 @@ describe(_'HealthcareMetricsService',() => {
   });
 
   describe(_'getComplianceDashboard',() => {
-    it(_'should generate dashboard with KPI statuses',_async () => {
+    it(_'should generate dashboard with KPI statuses',async () => {
       // Mock getKPIStatus to return successful responses
       vi.spyOn(metricsService, 'getKPIStatus' as any).mockImplementation(
         (_kpiId: string) => {
@@ -369,7 +369,7 @@ describe(_'HealthcareMetricsService',() => {
       expect(result.dashboard!.overallScore).toBeGreaterThan(0);
     });
 
-    it(_'should handle errors in dashboard generation',_async () => {
+    it(_'should handle errors in dashboard generation',async () => {
       vi.spyOn(metricsService, 'getKPIStatus' as any).mockRejectedValue(
         new Error('KPI error'),
       );

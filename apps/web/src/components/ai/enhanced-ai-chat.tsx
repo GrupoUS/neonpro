@@ -194,11 +194,23 @@ type VoiceRecognitionState = 'idle' | 'listening' | 'processing' | 'error';
  * Enhanced AI Chat Component
  */
 export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
-  patientContext,healthcareProfessional, defaultModel = 'gpt-4o', showModelSelection = true, showVoiceInput = true, showFileAttachment = false, showSearch = true,
+  patientContext,
+  healthcareProfessional,
+  defaultModel = 'gpt-4o',
+  showModelSelection = true,
+  showVoiceInput = true,
+  showFileAttachment = false,
+  showSearch = true,
   lgpdConsent = {
     canStoreHistory: true,
     dataRetentionDays: 30,
-    requiresExplicitConsent: false, }, mobileOptimized = true, maxHeight = '600px', testId = 'enhanced-ai-chat', sessionType = 'general', }) => {
+    requiresExplicitConsent: false,
+  },
+  mobileOptimized = true,
+  maxHeight = '600px',
+  testId = 'enhanced-ai-chat',
+  sessionType = 'general',
+}) => {
   // State management
   const [selectedModel, setSelectedModel] = useState(defaultModel);
   const [voiceState, setVoiceState] = useState<VoiceRecognitionState>('idle');
@@ -248,14 +260,17 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   // tRPC agent integration
   const {
     currentSessionId,
-    startNewSession,endCurrentSession,
+    startNewSession,
+    endCurrentSession,
     isCreating: isAgentCreating,
   } = useAgentSessionManager();
 
   const {
     messages: agentMessages,
-    sendMessage: sendAgentMessage,performRAGSearch,
-    isSending: isAgentSending,isSearchingRAG,
+    sendMessage: sendAgentMessage,
+    performRAGSearch,
+    isSending: isAgentSending,
+    isSearchingRAG,
   } = useAgentChat(currentSessionId);
 
   // Knowledge base search
@@ -321,7 +336,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
 
   // Search functionality
   const handleSearch = useCallback(
-    async (_query: any) => {
+    async (query: any) => {
       if (!query.trim()) {
         setSearchResults([]);
         return;
@@ -342,7 +357,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
             limit: 5,
           });
 
-          const knowledgeMessages: ChatMessage[] = knowledgeResults.data?.map((entry, _index) => ({
+          const knowledgeMessages: ChatMessage[] = knowledgeResults.data?.map((entry, index) => ({
             id: `knowledge-${index}`,
             _role: 'system',
             content: entry.content,
@@ -363,7 +378,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
         } else {
           setSearchResults(filteredMessages);
         }
-      } catch (_error) {
+      } catch (error) {
         console.error('Search error:', error);
         setSearchResults([]);
       } finally {
@@ -410,7 +425,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
           // Send through AI SDK for general chats
           handleAIChatSubmit(e);
         }
-      } catch (_error) {
+      } catch (error) {
         console.error('Message send error:', error);
       }
     },
@@ -453,10 +468,10 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   );
 
   // Render message content with markdown support
-  const renderMessageContent = useCallback((_content: any) => {
+  const renderMessageContent = useCallback((content: any) => {
     return (
       <div className='prose prose-sm max-w-none dark:prose-invert'>
-        {content.split('\n').map((line, _index) => (
+        {content.split('\n').map((line, index) => (
           <p key={index} className='mb-2 last:mb-0'>
             {line}
           </p>

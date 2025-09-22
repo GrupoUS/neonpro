@@ -6,15 +6,15 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import IndexOptimizerService, { HEALTHCARE_INDEX_PATTERNS } from '../index-optimizer';
 
-describe(_'IndexOptimizerService',_() => {
+describe(_'IndexOptimizerService'), () => {
   let _service: IndexOptimizerService;
 
   beforeEach(() => {
     service = new IndexOptimizerService();
   });
 
-  describe(_'analyzeTableIndexes',_() => {
-    it(_'should analyze indexes for patients table',_async () => {
+  describe(_'analyzeTableIndexes'), () => {
+    it(_'should analyze indexes for patients table',async () => {
       const analysis = await service.analyzeTableIndexes('patients');
 
       expect(analysis).toHaveProperty('table', 'patients');
@@ -33,7 +33,7 @@ describe(_'IndexOptimizerService',_() => {
       expect(analysis.optimizationScore).toBeLessThanOrEqual(100);
     });
 
-    it(_'should analyze indexes for appointments table',_async () => {
+    it(_'should analyze indexes for appointments table',async () => {
       const analysis = await service.analyzeTableIndexes('appointments');
 
       expect(analysis.table).toBe('appointments');
@@ -55,7 +55,7 @@ describe(_'IndexOptimizerService',_() => {
       expect(scheduleIndex?.priority).toBe('critical');
     });
 
-    it(_'should identify unused indexes correctly',_async () => {
+    it(_'should identify unused indexes correctly',async () => {
       const analysis = await service.analyzeTableIndexes('patients');
 
       analysis.unusedIndexes.forEach(index => {
@@ -64,7 +64,7 @@ describe(_'IndexOptimizerService',_() => {
       });
     });
 
-    it(_'should calculate optimization score based on index quality',_async () => {
+    it(_'should calculate optimization score based on index quality',async () => {
       const patientsAnalysis = await service.analyzeTableIndexes('patients');
       const professionalsAnalysis = await service.analyzeTableIndexes('professionals');
 
@@ -84,8 +84,8 @@ describe(_'IndexOptimizerService',_() => {
     });
   });
 
-  describe(_'generateIndexCreationScripts',_() => {
-    it(_'should generate valid SQL for missing indexes',_async () => {
+  describe(_'generateIndexCreationScripts'), () => {
+    it(_'should generate valid SQL for missing indexes',async () => {
       const analysis = await service.analyzeTableIndexes('patients');
       const scripts = service.generateIndexCreationScripts(
         analysis.missingIndexes,
@@ -118,7 +118,7 @@ describe(_'IndexOptimizerService',_() => {
       });
     });
 
-    it(_'should handle GIN indexes for full-text search',_async () => {
+    it(_'should handle GIN indexes for full-text search',async () => {
       const analysis = await service.analyzeTableIndexes('patients');
       const ginIndex = analysis.recommendedIndexes.find(
         idx => idx.type === 'gin',
@@ -134,7 +134,7 @@ describe(_'IndexOptimizerService',_() => {
       }
     });
 
-    it(_'should prioritize healthcare-critical indexes',_async () => {
+    it(_'should prioritize healthcare-critical indexes',async () => {
       const analysis = await service.analyzeTableIndexes('patients');
       const scripts = service.generateIndexCreationScripts(
         analysis.missingIndexes,
@@ -159,8 +159,8 @@ describe(_'IndexOptimizerService',_() => {
     });
   });
 
-  describe(_'analyzeAllHealthcareTables',_() => {
-    it(_'should analyze all healthcare tables',_async () => {
+  describe(_'analyzeAllHealthcareTables'), () => {
+    it(_'should analyze all healthcare tables',async () => {
       const analyses = await service.analyzeAllHealthcareTables();
 
       expect(analyses).toBeInstanceOf(Map);
@@ -180,7 +180,7 @@ describe(_'IndexOptimizerService',_() => {
       });
     });
 
-    it(_'should cache analysis results',_async () => {
+    it(_'should cache analysis results',async () => {
       // Clear cache first to ensure clean state
       service.clearCache();
 
@@ -197,8 +197,8 @@ describe(_'IndexOptimizerService',_() => {
     });
   });
 
-  describe(_'getOptimizationReport',_() => {
-    it(_'should generate comprehensive optimization report',_async () => {
+  describe(_'getOptimizationReport'), () => {
+    it(_'should generate comprehensive optimization report',async () => {
       const report = await service.getOptimizationReport();
 
       expect(report).toHaveProperty('overallScore');
@@ -224,7 +224,7 @@ describe(_'IndexOptimizerService',_() => {
       );
     });
 
-    it(_'should prioritize recommendations correctly',_async () => {
+    it(_'should prioritize recommendations correctly',async () => {
       const report = await service.getOptimizationReport();
       const recommendations = report.prioritizedRecommendations;
 
@@ -241,7 +241,7 @@ describe(_'IndexOptimizerService',_() => {
       }
     });
 
-    it(_'should include healthcare-critical indexes in top recommendations',_async () => {
+    it(_'should include healthcare-critical indexes in top recommendations',async () => {
       const report = await service.getOptimizationReport();
       const topRecommendations = report.prioritizedRecommendations.slice(0, 5);
 
@@ -263,8 +263,8 @@ describe(_'IndexOptimizerService',_() => {
     });
   });
 
-  describe(_'clearCache',_() => {
-    it(_'should clear analysis cache',_async () => {
+  describe(_'clearCache'), () => {
+    it(_'should clear analysis cache',async () => {
       // Populate cache
       await service.analyzeTableIndexes('patients');
 
@@ -276,8 +276,8 @@ describe(_'IndexOptimizerService',_() => {
     });
   });
 
-  describe(_'Healthcare Index Patterns',_() => {
-    it(_'should define comprehensive healthcare query patterns',_() => {
+  describe(_'Healthcare Index Patterns'), () => {
+    it(_'should define comprehensive healthcare query patterns'), () => {
       expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('patientSearch');
       expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('patientByCPF');
       expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('patientFullTextSearch');
@@ -301,7 +301,7 @@ describe(_'IndexOptimizerService',_() => {
       });
     });
 
-    it(_'should prioritize high-frequency healthcare operations',_() => {
+    it(_'should prioritize high-frequency healthcare operations'), () => {
       const highFrequencyPatterns = Object.entries(HEALTHCARE_INDEX_PATTERNS)
         .filter(([, pattern]) => pattern.frequency === 'very_high')
         .map(([name, _]) => name);
@@ -313,7 +313,7 @@ describe(_'IndexOptimizerService',_() => {
       expect(highFrequencyPatterns.length).toBeGreaterThan(0);
     });
 
-    it(_'should include LGPD compliance patterns',_() => {
+    it(_'should include LGPD compliance patterns'), () => {
       expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('consentTracking');
       expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('auditTrail');
 
@@ -328,7 +328,7 @@ describe(_'IndexOptimizerService',_() => {
       expect(auditPattern.pattern).toContain('record_id');
     });
 
-    it(_'should include Brazilian-specific patterns',_() => {
+    it(_'should include Brazilian-specific patterns'), () => {
       const cpfPattern = HEALTHCARE_INDEX_PATTERNS.patientByCPF;
       expect(cpfPattern.pattern).toContain('cpf');
       expect(cpfPattern.frequency).toBe('high'); // CPF lookup is common in Brazil

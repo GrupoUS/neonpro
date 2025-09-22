@@ -2,11 +2,11 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { describe, expect, it } from 'vitest';
 
-describe('TDD: Unused Imports Detection - TRPC Contracts',_() => {
+describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
   const trpcContractsPath = join(process.cwd(), 'src/trpc/contracts');
 
-  describe(_'Agent Contract - Unused Imports',_() => {
-    it(_'should detect unused HealthcareTRPCError import',_() => {
+  describe(_'Agent Contract - Unused Imports'), () => {
+    it(_'should detect unused HealthcareTRPCError import'), () => {
       const filePath = join(trpcContractsPath, 'agent.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -17,7 +17,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts',_() => {
       expect(hasHealthcareTRPCErrorImport && !usesHealthcareTRPCError).toBe(false);
     });
 
-    it(_'should detect unused protectedProcedure and router imports',_() => {
+    it(_'should detect unused protectedProcedure and router imports'), () => {
       const filePath = join(trpcContractsPath, 'agent.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -34,8 +34,8 @@ describe('TDD: Unused Imports Detection - TRPC Contracts',_() => {
     });
   });
 
-  describe(_'AI Contract - Unused Imports',_() => {
-    it(_'should detect unused auditLogger import',_() => {
+  describe(_'AI Contract - Unused Imports'), () => {
+    it(_'should detect unused auditLogger import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -45,7 +45,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts',_() => {
       expect(hasAuditLoggerImport && !usesAuditLogger).toBe(false);
     });
 
-    it(_'should detect unused AIResponseSchema import',_() => {
+    it(_'should detect unused AIResponseSchema import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -55,7 +55,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts',_() => {
       expect(hasAIResponseSchemaImport && !usesAIResponseSchema).toBe(false);
     });
 
-    it(_'should detect unused LGPDComplianceMiddleware import',_() => {
+    it(_'should detect unused LGPDComplianceMiddleware import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -65,7 +65,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts',_() => {
       expect(hasLGPDComplianceMiddlewareImport && !usesLGPDComplianceMiddleware).toBe(false);
     });
 
-    it(_'should detect unused shouldRetainAIData import',_() => {
+    it(_'should detect unused shouldRetainAIData import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -75,7 +75,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts',_() => {
       expect(hasShouldRetainAIDataImport && !usesShouldRetainAIData).toBe(false);
     });
 
-    it(_'should detect unused lgpdDataSubjectService import',_() => {
+    it(_'should detect unused lgpdDataSubjectService import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -85,7 +85,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts',_() => {
       expect(hasLgpdDataSubjectServiceImport && !usesLgpdDataSubjectService).toBe(false);
     });
 
-    it(_'should detect unused healthAnalysisService variable',_() => {
+    it(_'should detect unused healthAnalysisService variable'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -97,7 +97,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts',_() => {
       expect(hasHealthAnalysisServiceVariable && !usesHealthAnalysisService).toBe(false);
     });
 
-    it(_'should detect unused helper functions',_() => {
+    it(_'should detect unused helper functions'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 

@@ -325,7 +325,7 @@ export const aiRouter = router({
         language: v.optional(v.string()),
       }),
     )
-    .mutation(_async ({ ctx,_input }) => {
+    .mutation(async ({ ctx,_input }) => {
       try {
         // Select optimal AI provider
         const provider = await selectOptimalProvider('conversation', 'medium');
@@ -404,7 +404,7 @@ export const aiRouter = router({
         ),
       }),
     )
-    .query(_async ({ ctx,_input }) => {
+    .query(async ({ ctx,_input }) => {
       try {
         // Get patient data
         const patient = await ctx.prisma.patient.findFirst({
@@ -537,7 +537,7 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
         ),
       }),
     )
-    .query(_async ({ ctx,_input }) => {
+    .query(async ({ ctx,_input }) => {
       try {
         // Select optimal AI provider for analysis
         const provider = await selectOptimalProvider('analysis', 'high');
@@ -633,7 +633,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
         language: v.optional(v.string()),
       }),
     )
-    .query(_async ({ ctx,_input }) => {
+    .query(async ({ ctx,_input }) => {
       // Transform input to match predictNoShow schema
       const transformedInput = {
         patientId: input.patient_id,
@@ -673,7 +673,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
         specialization: v.optional(v.string()),
       }),
     )
-    .query(_async ({ ctx,_input }) => {
+    .query(async ({ ctx,_input }) => {
       try {
         // Get patient data for risk analysis
         const patient = await ctx.prisma.patient.findFirst({
@@ -784,7 +784,7 @@ Forneça análise de risco e recomendações.`;
         ),
       }),
     )
-    .query(_async ({ ctx,_input }) => {
+    .query(async ({ ctx,_input }) => {
       try {
         // Select optimal provider based on input criteria
         const provider = await selectOptimalProvider(
@@ -879,7 +879,7 @@ Forneça análise de risco e recomendações.`;
         ),
       }),
     )
-    .mutation(_async ({ ctx,_input }) => {
+    .mutation(async ({ ctx,_input }) => {
       try {
         const { requests, batch_settings } = input;
         const maxConcurrent = batch_settings?.max_concurrent || 5;
@@ -899,7 +899,7 @@ Forneça análise de risco e recomendações.`;
 
               const result = (await Promise.race([
                 callAIProvider(provider, JSON.stringify(request.data)),
-                new Promise((, reject) =>
+                new Promise((resolve, reject) =>
                   setTimeout(() => reject(new Error('Timeout')), timeoutMs)
                 ),
               ])) as any;

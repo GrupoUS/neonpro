@@ -14,15 +14,15 @@ describe('LGPD Compliance Service (T040)', () => {
     vi.restoreAllMocks();
   });
 
-  it(_'should export LGPDService class',_() => {
+  it(_'should export LGPDService class'), () => {
     expect(() => {
       const module = require('../lgpd-service');
       expect(module.LGPDService).toBeDefined();
     }).not.toThrow();
   });
 
-  describe(_'Consent Management',_() => {
-    it(_'should create consent record',_async () => {
+  describe(_'Consent Management'), () => {
+    it(_'should create consent record',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -42,7 +42,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.consentDate).toBeDefined();
     });
 
-    it(_'should update consent preferences',_async () => {
+    it(_'should update consent preferences',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -59,7 +59,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.updatedAt).toBeDefined();
     });
 
-    it(_'should revoke consent',_async () => {
+    it(_'should revoke consent',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -76,7 +76,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.message).toContain('Consentimento revogado');
     });
 
-    it(_'should get consent history',_async () => {
+    it(_'should get consent history',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -89,8 +89,8 @@ describe('LGPD Compliance Service (T040)', () => {
     });
   });
 
-  describe(_'Data Subject Rights',_() => {
-    it(_'should process data access request',_async () => {
+  describe(_'Data Subject Rights'), () => {
+    it(_'should process data access request',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -107,7 +107,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.estimatedCompletion).toBeDefined();
     });
 
-    it(_'should process data portability request',_async () => {
+    it(_'should process data portability request',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -124,7 +124,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.downloadUrl).toBeDefined();
     });
 
-    it(_'should process data deletion request',_async () => {
+    it(_'should process data deletion request',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -141,7 +141,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.scheduledDeletion).toBeDefined();
     });
 
-    it(_'should process data rectification request',_async () => {
+    it(_'should process data rectification request',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -160,8 +160,8 @@ describe('LGPD Compliance Service (T040)', () => {
     });
   });
 
-  describe(_'Data Processing Activities',_() => {
-    it(_'should log data processing activity',_async () => {
+  describe(_'Data Processing Activities'), () => {
+    it(_'should log data processing activity',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -180,7 +180,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.legalBasis).toBe('consent');
     });
 
-    it(_'should get processing activities report',_async () => {
+    it(_'should get processing activities report',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -197,7 +197,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.totalActivities).toBeGreaterThanOrEqual(0);
     });
 
-    it(_'should validate processing legality',_async () => {
+    it(_'should validate processing legality',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -215,8 +215,8 @@ describe('LGPD Compliance Service (T040)', () => {
     });
   });
 
-  describe(_'Data Retention Management',_() => {
-    it(_'should set data retention policy',_async () => {
+  describe(_'Data Retention Management'), () => {
+    it(_'should set data retention policy',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -234,7 +234,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.legalBasis).toContain('CFM');
     });
 
-    it(_'should check data retention status',_async () => {
+    it(_'should check data retention status',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -247,7 +247,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.nextReview).toBeDefined();
     });
 
-    it(_'should process retention review',_async () => {
+    it(_'should process retention review',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -266,8 +266,8 @@ describe('LGPD Compliance Service (T040)', () => {
     });
   });
 
-  describe(_'Privacy Impact Assessment',_() => {
-    it(_'should create privacy impact assessment',_async () => {
+  describe(_'Privacy Impact Assessment'), () => {
+    it(_'should create privacy impact assessment',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -285,7 +285,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.status).toBe('draft');
     });
 
-    it(_'should update privacy impact assessment',_async () => {
+    it(_'should update privacy impact assessment',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -318,7 +318,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.status).toBe('approved');
     });
 
-    it(_'should get privacy impact assessments',_async () => {
+    it(_'should get privacy impact assessments',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -334,8 +334,8 @@ describe('LGPD Compliance Service (T040)', () => {
     });
   });
 
-  describe(_'Compliance Monitoring',_() => {
-    it(_'should generate compliance report',_async () => {
+  describe(_'Compliance Monitoring'), () => {
+    it(_'should generate compliance report',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -356,7 +356,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.violations).toBeDefined();
     });
 
-    it(_'should check compliance status',_async () => {
+    it(_'should check compliance status',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -369,7 +369,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.securityCompliance).toBeDefined();
     });
 
-    it(_'should log compliance violation',_async () => {
+    it(_'should log compliance violation',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -389,8 +389,8 @@ describe('LGPD Compliance Service (T040)', () => {
     });
   });
 
-  describe(_'Data Anonymization',_() => {
-    it(_'should anonymize patient data',_async () => {
+  describe(_'Data Anonymization'), () => {
+    it(_'should anonymize patient data',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -407,7 +407,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.method).toBe('k-anonymity');
     });
 
-    it(_'should validate anonymization quality',_async () => {
+    it(_'should validate anonymization quality',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -421,8 +421,8 @@ describe('LGPD Compliance Service (T040)', () => {
     });
   });
 
-  describe(_'Error Handling and Validation',_() => {
-    it(_'should handle invalid consent data',_async () => {
+  describe(_'Error Handling and Validation'), () => {
+    it(_'should handle invalid consent data',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -437,7 +437,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
-    it(_'should handle non-existent patient requests',_async () => {
+    it(_'should handle non-existent patient requests',async () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 
@@ -451,7 +451,7 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.error).toContain('Paciente não encontrado');
     });
 
-    it(_'should validate service configuration',_() => {
+    it(_'should validate service configuration'), () => {
       const { LGPDService } = require('../lgpd-service');
       const service = new LGPDService();
 

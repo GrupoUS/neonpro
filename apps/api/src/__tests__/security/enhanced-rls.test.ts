@@ -111,7 +111,7 @@ describe(_'AdvancedRLSPolicies',() => {
       };
     });
 
-    it(_'should allow access for authorized roles',_async () => {
+    it(_'should allow access for authorized roles',async () => {
       mockSupabase.rpc.mockResolvedValue({ data: null, error: null });
 
       const result = await rls.evaluatePolicy(
@@ -124,7 +124,7 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(result.auditRequired).toBe(true);
     });
 
-    it(_'should deny access for unauthorized roles',_async () => {
+    it(_'should deny access for unauthorized roles',async () => {
       mockContext.userRole = 'patient';
       mockSupabase.rpc.mockResolvedValue({ data: null, error: null });
 
@@ -138,7 +138,7 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(result.auditRequired).toBe(true);
     });
 
-    it(_'should handle emergency access',_async () => {
+    it(_'should handle emergency access',async () => {
       mockContext.emergencyAccess = true;
       mockContext.accessTime = new Date('2024-01-01T23:00:00'); // Outside normal hours
       mockSupabase.rpc.mockResolvedValue({ data: null, error: null });
@@ -153,7 +153,7 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(result.emergencyAccess).toBeDefined();
     });
 
-    it(_'should handle evaluation errors gracefully',_async () => {
+    it(_'should handle evaluation errors gracefully',async () => {
       mockSupabase.rpc.mockRejectedValue(new Error('Database error'));
 
       const result = await rls.evaluatePolicy(
@@ -184,7 +184,7 @@ describe(_'AdvancedRLSPolicies',() => {
       };
     });
 
-    it(_'should set RLS context with enhanced security parameters',_async () => {
+    it(_'should set RLS context with enhanced security parameters',async () => {
       mockSupabase.rpc.mockResolvedValue({ data: null, error: null });
 
       await rls.setRLSContext(mockContext);
@@ -219,7 +219,7 @@ describe(_'AdvancedRLSPolicies',() => {
       });
     });
 
-    it(_'should handle context setting errors',_async () => {
+    it(_'should handle context setting errors',async () => {
       mockSupabase.rpc.mockRejectedValue(
         new Error('Database connection failed'),
       );
@@ -279,7 +279,7 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(requestId2).not.toBe(requestId);
     });
 
-    it(_'should log RLS context setting',_async () => {
+    it(_'should log RLS context setting',async () => {
       const mockContext: RLSContext = {
         _userId: 'test-user-id',
         userRole: 'doctor',
@@ -312,7 +312,7 @@ describe(_'AdvancedRLSPolicies',() => {
   });
 
   describe(_'Error Handling and Edge Cases',() => {
-    it(_'should handle missing professional ID for restricted access',_async () => {
+    it(_'should handle missing professional ID for restricted access',async () => {
       const mockContext: RLSContext = {
         _userId: 'test-user-id',
         userRole: 'doctor',
@@ -335,7 +335,7 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(result.auditRequired).toBe(true);
     });
 
-    it(_'should handle empty role list in policies',_async () => {
+    it(_'should handle empty role list in policies',async () => {
       // Create a custom policy with no roles
       const customPolicy: AccessPolicy = {
         tableName: 'test_table',

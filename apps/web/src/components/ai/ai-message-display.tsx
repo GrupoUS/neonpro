@@ -148,7 +148,9 @@ const renderMarkdown = (content: string, _isStreaming = false) => {
 
 // Streaming text component
 const StreamingText: React.FC<{ content: string; isComplete?: boolean }> = ({
-  content,isComplete, }) => {
+  content,
+  isComplete,
+}) => {
   const [displayedContent, setDisplayedContent] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -183,9 +185,32 @@ const StreamingText: React.FC<{ content: string; isComplete?: boolean }> = ({
  * AI Message Display Component
  */
 export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
-  content,role, timestamp,messageId, isStreaming = false, streamingContent = '',model, confidence,processingTime, healthcareContext = false, sources = [],
-  metadata: metadata = {},userAvatar, assistantAvatar, showTimestamp = true, showModelInfo = true, showActions = true, compact = false, testId = 'ai-message-display',
-  onMessageAction: onMessageAction,onCopy, onSpeak,onEdit, onDelete,onFlag, }) => {
+  content,
+  role,
+  timestamp,
+  messageId,
+  isStreaming = false,
+  streamingContent = '',
+  model,
+  confidence,
+  processingTime,
+  healthcareContext = false,
+  sources = [],
+  metadata = {},
+  userAvatar,
+  assistantAvatar,
+  showTimestamp = true,
+  showModelInfo = true,
+  showActions = true,
+  compact = false,
+  testId = 'ai-message-display',
+  onMessageAction,
+  onCopy,
+  onSpeak,
+  onEdit,
+  onDelete,
+  onFlag,
+}) => {
   // State
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(content);
@@ -202,7 +227,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
       onCopy?.(content);
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to copy text:', error);
     }
   }, [content, onCopy]);

@@ -178,7 +178,7 @@ export class OttomatorAgentBridge extends EventEmitter {
           resolve(void 0);
         }, 5000);
 
-        this.agentProcess?.on(_'exit',_() => {
+        this.agentProcess?.on('exit', () => {
           clearTimeout(timeout);
           resolve(void 0);
         });
@@ -231,7 +231,7 @@ export class OttomatorAgentBridge extends EventEmitter {
         reject(error);
       });
 
-      this.agentProcess.on(_'exit',(code,_signal) => {
+      this.agentProcess.on('exit',(code,_signal) => {
         logger.warn('Agent process exited', { code, signal });
         this.isHealthy = false;
         this.emit('exit', { code, signal });

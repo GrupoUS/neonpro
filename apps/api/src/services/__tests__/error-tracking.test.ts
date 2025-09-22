@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ErrorSeveritySchema, errorTracker, HealthcareErrorTypeSchema } from '../error-tracking';
 
 // Mock Sentry and OpenTelemetry
-vi.mock(_'@sentry/node',_() => ({
+vi.mock(_'@sentry/node'), () => ({
   captureException: vi.fn(),
   addBreadcrumb: vi.fn(),
   setUser: vi.fn(),
@@ -17,7 +17,7 @@ vi.mock(_'@sentry/node',_() => ({
   ),
 }));
 
-vi.mock(_'@opentelemetry/api',_() => ({
+vi.mock(_'@opentelemetry/api'), () => ({
   trace: {
     getTracer: vi.fn(() => ({
       startSpan: vi.fn(() => ({
@@ -33,7 +33,7 @@ vi.mock(_'@opentelemetry/api',_() => ({
   },
 }));
 
-describe(_'HealthcareErrorTracker',_() => {
+describe(_'HealthcareErrorTracker'), () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -43,7 +43,7 @@ describe(_'HealthcareErrorTracker',_() => {
     errorTracker['resetMetrics']();
   });
 
-  it(_'should redact sensitive healthcare data from error messages',_async () => {
+  it(_'should redact sensitive healthcare data from error messages',async () => {
     const error = new Error('Patient CPF 123.456.789-00 access denied');
     const context = {
       _userId: 'test-user',
@@ -58,7 +58,7 @@ describe(_'HealthcareErrorTracker',_() => {
     expect(metrics.totalErrors).toBe(1);
   });
 
-  it(_'should classify healthcare errors correctly',_async () => {
+  it(_'should classify healthcare errors correctly',async () => {
     const unauthorizedError = new Error('Unauthorized access to patient data');
     await errorTracker.trackError(unauthorizedError, {
       _userId: 'test-user',
@@ -69,7 +69,7 @@ describe(_'HealthcareErrorTracker',_() => {
     expect(metrics.totalErrors).toBe(1);
   });
 
-  it(_'should handle different error severities',_async () => {
+  it(_'should handle different error severities',async () => {
     const criticalError = new Error('Database connection failed');
     await errorTracker.trackError(criticalError, {
       _userId: 'test-user',
@@ -80,7 +80,7 @@ describe(_'HealthcareErrorTracker',_() => {
     expect(metrics.totalErrors).toBe(1);
   });
 
-  it(_'should export correct types and schemas',_() => {
+  it(_'should export correct types and schemas'), () => {
     expect(HealthcareErrorTypeSchema).toBeDefined();
     expect(ErrorSeveritySchema).toBeDefined();
 
@@ -91,7 +91,7 @@ describe(_'HealthcareErrorTracker',_() => {
     expect(ErrorSeveritySchema.enum.critical).toBe('critical');
   });
 
-  it(_'should provide error metrics',_() => {
+  it(_'should provide error metrics'), () => {
     const metrics = errorTracker.getMetrics();
     expect(metrics).toHaveProperty('totalErrors');
     expect(metrics).toHaveProperty('errorsByType');

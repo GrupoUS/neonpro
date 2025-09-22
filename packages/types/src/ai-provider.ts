@@ -92,7 +92,7 @@ export interface ChatResponse {
 export interface StreamingChatResponse {
   id: string;
   stream:
-    | ReadableStream<any>
+    | ReadableStream<unknown>
     | AsyncIterable<{
         content: string;
         delta?: string;

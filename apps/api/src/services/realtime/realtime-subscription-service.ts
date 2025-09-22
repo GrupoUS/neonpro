@@ -118,7 +118,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
           .on('broadcast', { event: eventType }, payload => {
             this.handleRealtimeEvent(payload.payload, eventType);
           })
-          .on(_'presence', { event: 'sync' },_() => {
+          .on('presence', { event: 'sync' }, () => {
             this.handlePresenceSync(channelName);
           })
           .on('system', event => {

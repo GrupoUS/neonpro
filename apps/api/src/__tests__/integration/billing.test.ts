@@ -23,7 +23,7 @@ describe(_'Billing API',() => {
   let mockAppointment: any;
   let testInvoiceId: string;
 
-  beforeAll(_async () => {
+  beforeAll(async () => {
     await setupTestDb();
     mockUser = await createMockUser('professional');
     mockPatient = await createMockPatient();
@@ -31,18 +31,18 @@ describe(_'Billing API',() => {
     authHeaders = await setupTestAuth(mockUser.id);
   });
 
-  afterAll(_async () => {
+  afterAll(async () => {
     await clearTestData();
   });
 
-  beforeEach(_async () => {
+  beforeEach(async () => {
     // Clear any existing test invoices
     await clearTestData('invoices');
     await clearTestData('payments');
   });
 
   describe(_'POST /v1/billing/invoices',() => {
-    it(_'should create a new invoice',_async () => {
+    it(_'should create a new invoice',async () => {
       const invoiceData = {
         patientId: mockPatient.id,
         appointmentId: mockAppointment.id,
@@ -85,7 +85,7 @@ describe(_'Billing API',() => {
       testInvoiceId = data.data.id;
     });
 
-    it(_'should calculate taxes correctly',_async () => {
+    it(_'should calculate taxes correctly',async () => {
       const invoiceData = {
         patientId: mockPatient.id,
         clinicId: mockUser.clinicId,
@@ -112,7 +112,7 @@ describe(_'Billing API',() => {
       expect(data.data.netAmount).toBe(95.0);
     });
 
-    it(_'should validate required fields',_async () => {
+    it(_'should validate required fields',async () => {
       const invalidData = {
         patientId: mockPatient.id,
         // Missing required fields
@@ -129,7 +129,7 @@ describe(_'Billing API',() => {
       expect(data.errors).toBeDefined();
     });
 
-    it(_'should reject invoice without authentication',_async () => {
+    it(_'should reject invoice without authentication',async () => {
       const invoiceData = {
         patientId: mockPatient.id,
         clinicId: mockUser.clinicId,
@@ -154,7 +154,7 @@ describe(_'Billing API',() => {
   });
 
   describe('GET /v1/billing/invoices/:id',() => {
-    beforeEach(_async () => {
+    beforeEach(async () => {
       // Create a test invoice first
       const invoiceData = {
         patientId: mockPatient.id,
@@ -180,7 +180,7 @@ describe(_'Billing API',() => {
       testInvoiceId = data.data.id;
     });
 
-    it(_'should retrieve an invoice by ID',_async () => {
+    it(_'should retrieve an invoice by ID',async () => {
       const res = await testClient(app).billing.invoices[':id'].$get({
         param: { id: testInvoiceId },
         header: authHeaders,
@@ -194,7 +194,7 @@ describe(_'Billing API',() => {
       expect(data.data).toHaveProperty('items');
     });
 
-    it(_'should return 404 for non-existent invoice',_async () => {
+    it(_'should return 404 for non-existent invoice',async () => {
       const res = await testClient(app).billing.invoices[':id'].$get({
         param: { id: 'non-existent-id' },
         header: authHeaders,
@@ -203,7 +203,7 @@ describe(_'Billing API',() => {
       expect(res.status).toBe(404);
     });
 
-    it(_'should reject access without authentication',_async () => {
+    it(_'should reject access without authentication',async () => {
       const res = await testClient(app).billing.invoices[':id'].$get({
         param: { id: testInvoiceId },
       });
@@ -213,7 +213,7 @@ describe(_'Billing API',() => {
   });
 
   describe(_'GET /v1/billing/invoices',() => {
-    beforeEach(_async () => {
+    beforeEach(async () => {
       // Create multiple test invoices
       const invoices = [
         {
@@ -254,7 +254,7 @@ describe(_'Billing API',() => {
       }
     });
 
-    it(_'should search invoices with filters',_async () => {
+    it(_'should search invoices with filters',async () => {
       const res = await testClient(app).billing.invoices.$get({
         _query: {
           patientId: mockPatient.id,
@@ -272,7 +272,7 @@ describe(_'Billing API',() => {
       expect(Array.isArray(data.data.invoices)).toBe(true);
     });
 
-    it(_'should paginate results',_async () => {
+    it(_'should paginate results',async () => {
       const res = await testClient(app).billing.invoices.$get({
         _query: {
           page: '1',
@@ -290,7 +290,7 @@ describe(_'Billing API',() => {
   });
 
   describe('POST /v1/billing/invoices/:id/payments',() => {
-    beforeEach(_async () => {
+    beforeEach(async () => {
       // Create a test invoice first
       const invoiceData = {
         patientId: mockPatient.id,
@@ -316,7 +316,7 @@ describe(_'Billing API',() => {
       testInvoiceId = data.data.id;
     });
 
-    it(_'should process a payment',_async () => {
+    it(_'should process a payment',async () => {
       const paymentData = {
         amount: 150.0,
         paymentMethod: 'credit_card',
@@ -338,7 +338,7 @@ describe(_'Billing API',() => {
       expect(data.data.status).toBe('completed');
     });
 
-    it(_'should process partial payment',_async () => {
+    it(_'should process partial payment',async () => {
       const paymentData = {
         amount: 75.0, // Half of the invoice amount
         paymentMethod: 'cash',
@@ -365,7 +365,7 @@ describe(_'Billing API',() => {
       expect(invoiceData.data.status).toBe('partially_paid');
     });
 
-    it(_'should handle installment payments',_async () => {
+    it(_'should handle installment payments',async () => {
       const paymentData = {
         amount: 150.0,
         paymentMethod: 'credit_card',
@@ -387,7 +387,7 @@ describe(_'Billing API',() => {
   });
 
   describe('GET /v1/billing/invoices/:id/payments',() => {
-    beforeEach(_async () => {
+    beforeEach(async () => {
       // Create invoice and payment
       const invoiceData = {
         patientId: mockPatient.id,
@@ -425,7 +425,7 @@ describe(_'Billing API',() => {
       });
     });
 
-    it(_'should retrieve payment history',_async () => {
+    it(_'should retrieve payment history',async () => {
       const res = await testClient(app).billing.invoices[':id'].payments.$get({
         param: { id: testInvoiceId },
         header: authHeaders,
@@ -442,7 +442,7 @@ describe(_'Billing API',() => {
   });
 
   describe(_'GET /v1/billing/dashboard/stats',() => {
-    it(_'should return billing statistics',_async () => {
+    it(_'should return billing statistics',async () => {
       const res = await testClient(app).billing.dashboard.stats.$get({
         _query: { period: 'month' },
         header: authHeaders,
@@ -458,7 +458,7 @@ describe(_'Billing API',() => {
   });
 
   describe(_'GET /v1/billing/reports/financial',() => {
-    it(_'should generate financial report',_async () => {
+    it(_'should generate financial report',async () => {
       const startDate = new Date();
       startDate.setMonth(startDate.getMonth() - 1);
       const endDate = new Date();
@@ -483,7 +483,7 @@ describe(_'Billing API',() => {
   });
 
   describe(_'GET /v1/billing/sus/procedures',() => {
-    it(_'should return SUS procedure codes',_async () => {
+    it(_'should return SUS procedure codes',async () => {
       const res = await testClient(app).billing.sus.procedures.$get({
         _query: { q: 'consulta', limit: '10' },
         header: authHeaders,
@@ -497,7 +497,7 @@ describe(_'Billing API',() => {
   });
 
   describe(_'POST /v1/billing/insurance/verify',() => {
-    it(_'should verify insurance coverage',_async () => {
+    it(_'should verify insurance coverage',async () => {
       const verificationData = {
         patientId: mockPatient.id,
         procedureCode: 'cbhpm_10101012',
@@ -522,7 +522,7 @@ describe(_'Billing API',() => {
   });
 
   describe(_'GET /v1/billing/tax/calculation',() => {
-    it(_'should calculate taxes for service',_async () => {
+    it(_'should calculate taxes for service',async () => {
       const res = await testClient(app).billing.tax.calculation.$get({
         _query: {
           amount: '1000',
@@ -540,7 +540,7 @@ describe(_'Billing API',() => {
       expect(data.data).toHaveProperty('netAmount');
     });
 
-    it(_'should validate amount parameter',_async () => {
+    it(_'should validate amount parameter',async () => {
       const res = await testClient(app).billing.tax.calculation.$get({
         _query: {
           amount: '0',
@@ -556,7 +556,7 @@ describe(_'Billing API',() => {
   });
 
   describe(_'Invoice Status Updates',() => {
-    beforeEach(_async () => {
+    beforeEach(async () => {
       // Create a test invoice
       const invoiceData = {
         patientId: mockPatient.id,
@@ -581,7 +581,7 @@ describe(_'Billing API',() => {
       testInvoiceId = (await res.json()).data.id;
     });
 
-    it(_'should update invoice status to paid when full payment received',_async () => {
+    it(_'should update invoice status to paid when full payment received',async () => {
       const paymentData = {
         amount: 200.0,
         paymentMethod: 'bank_transfer',
@@ -610,7 +610,7 @@ describe(_'Billing API',() => {
   });
 
   describe(_'LGPD Compliance',() => {
-    it(_'should log audit trail for billing operations',_async () => {
+    it(_'should log audit trail for billing operations',async () => {
       // This test verifies that audit logs are created
       // for billing operations (create, read, update, payment)
 
@@ -641,7 +641,7 @@ describe(_'Billing API',() => {
       // and trusting that the audit middleware is functioning
     });
 
-    it(_'should handle sensitive data appropriately',_async () => {
+    it(_'should handle sensitive data appropriately',async () => {
       // Create an invoice
       const invoiceData = {
         patientId: mockPatient.id,

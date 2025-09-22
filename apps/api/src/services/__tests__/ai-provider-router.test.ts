@@ -14,7 +14,7 @@ import { SemanticCacheService } from '../semantic-cache';
 jest.mock('../semantic-cache');
 jest.mock('../audit-trail');
 
-describe(_'AIProviderRouterService',_() => {
+describe(_'AIProviderRouterService'), () => {
   let routerService: AIProviderRouterService;
   let mockSemanticCache: jest.Mocked<SemanticCacheService>;
   let mockAuditService: jest.Mocked<AuditTrailService>;
@@ -43,8 +43,8 @@ describe(_'AIProviderRouterService',_() => {
     routerService.destroy();
   });
 
-  describe(_'Initialization',_() => {
-    it(_'should initialize with default healthcare-compliant providers',_() => {
+  describe(_'Initialization'), () => {
+    it(_'should initialize with default healthcare-compliant providers'), () => {
       const availableProviders = routerService.getAvailableProvidersList();
 
       expect(availableProviders).toContain(AIProvider.OPENAI);
@@ -53,7 +53,7 @@ describe(_'AIProviderRouterService',_() => {
       expect(availableProviders).toContain(AIProvider.AWS_BEDROCK);
     });
 
-    it(_'should have all providers in healthy state initially',_() => {
+    it(_'should have all providers in healthy state initially'), () => {
       const healthChecks = routerService.getProviderHealth();
 
       expect(Array.isArray(healthChecks)).toBe(true);
@@ -64,8 +64,8 @@ describe(_'AIProviderRouterService',_() => {
     });
   });
 
-  describe(_'Request Routing',_() => {
-    it(_'should route a basic healthcare request successfully',_async () => {
+  describe(_'Request Routing'), () => {
+    it(_'should route a basic healthcare request successfully',async () => {
       const request = {
         prompt: 'Como posso ajudar com sua consulta médica?',
         healthcare_context: {
@@ -111,7 +111,7 @@ describe(_'AIProviderRouterService',_() => {
       expect(response.metrics.cache_hit).toBe(false);
     });
 
-    it(_'should handle emergency requests with priority routing',_async () => {
+    it(_'should handle emergency requests with priority routing',async () => {
       const emergencyRequest = {
         prompt: 'Paciente com dor no peito urgente',
         healthcare_context: {
@@ -152,7 +152,7 @@ describe(_'AIProviderRouterService',_() => {
       );
     });
 
-    it(_'should use semantic cache when available',_async () => {
+    it(_'should use semantic cache when available',async () => {
       const request = {
         prompt: 'Informações sobre diabetes',
         healthcare_context: {
@@ -198,8 +198,8 @@ describe(_'AIProviderRouterService',_() => {
     });
   });
 
-  describe(_'Provider Selection Strategies',_() => {
-    it(_'should select cost-optimized provider',_async () => {
+  describe(_'Provider Selection Strategies'), () => {
+    it(_'should select cost-optimized provider',async () => {
       const request = {
         prompt: 'Consulta básica',
         healthcare_context: {
@@ -236,7 +236,7 @@ describe(_'AIProviderRouterService',_() => {
       );
     });
 
-    it(_'should select latency-optimized provider',_async () => {
+    it(_'should select latency-optimized provider',async () => {
       const request = {
         prompt: 'Resposta rápida necessária',
         healthcare_context: {
@@ -271,8 +271,8 @@ describe(_'AIProviderRouterService',_() => {
     });
   });
 
-  describe(_'Healthcare Compliance',_() => {
-    it(_'should reject requests without patient ID when PII is present',_async () => {
+  describe(_'Healthcare Compliance'), () => {
+    it(_'should reject requests without patient ID when PII is present',async () => {
       const invalidRequest = {
         prompt: 'Dados do paciente João Silva, CPF 123.456.789-00',
         healthcare_context: {
@@ -305,7 +305,7 @@ describe(_'AIProviderRouterService',_() => {
       );
     });
 
-    it(_'should apply PII redaction when contains_pii is true',_async () => {
+    it(_'should apply PII redaction when contains_pii is true',async () => {
       const request = {
         prompt: 'Paciente João Silva, CPF 123.456.789-00, telefone (11) 99999-9999',
         healthcare_context: {
@@ -354,8 +354,8 @@ describe(_'AIProviderRouterService',_() => {
     });
   });
 
-  describe(_'Error Handling and Fallbacks',_() => {
-    it(_'should handle provider failure with fallback',_async () => {
+  describe(_'Error Handling and Fallbacks'), () => {
+    it(_'should handle provider failure with fallback',async () => {
       // Disable all providers except one to test fallback
       routerService.setProviderEnabled(AIProvider.OPENAI, false);
       routerService.setProviderEnabled(AIProvider.AZURE, false);
@@ -396,8 +396,8 @@ describe(_'AIProviderRouterService',_() => {
     });
   });
 
-  describe(_'Provider Management',_() => {
-    it(_'should enable and disable providers correctly',_() => {
+  describe(_'Provider Management'), () => {
+    it(_'should enable and disable providers correctly'), () => {
       expect(routerService.setProviderEnabled(AIProvider.OPENAI, false)).toBe(
         true,
       );
@@ -412,7 +412,7 @@ describe(_'AIProviderRouterService',_() => {
       ).toBe(false);
     });
 
-    it(_'should return provider health metrics',_() => {
+    it(_'should return provider health metrics'), () => {
       const health = routerService.getProviderHealth(AIProvider.OPENAI);
 
       expect(health).toBeDefined();
@@ -422,7 +422,7 @@ describe(_'AIProviderRouterService',_() => {
       expect(health).toHaveProperty('last_check');
     });
 
-    it(_'should return provider performance metrics',_() => {
+    it(_'should return provider performance metrics'), () => {
       const metrics = routerService.getProviderMetrics(AIProvider.OPENAI);
 
       expect(metrics).toBeDefined();
@@ -433,8 +433,8 @@ describe(_'AIProviderRouterService',_() => {
     });
   });
 
-  describe(_'Input Validation and Security',_() => {
-    it(_'should reject requests with malicious content',_async () => {
+  describe(_'Input Validation and Security'), () => {
+    it(_'should reject requests with malicious content',async () => {
       const maliciousRequest = {
         prompt: '<script>alert("xss")</script> DROP TABLE patients;',
         healthcare_context: {
@@ -468,7 +468,7 @@ describe(_'AIProviderRouterService',_() => {
       expect(response.compliance.data_sanitized).toBe(true);
     });
 
-    it(_'should validate request structure',_async () => {
+    it(_'should validate request structure',async () => {
       const invalidRequest = {
         // Missing required fields
         prompt: '',

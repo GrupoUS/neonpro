@@ -205,11 +205,11 @@ export class HTTPSMonitoringMiddleware {
     try {
       const server = (global as any).server;
       if (server && server.on) {
-        server.on(_'secureConnection', (socket: any) => {
+        server.on('secureConnection', (socket: any) => {
           this.handleSecureConnection(socket);
         });
 
-        server.on(_'tlsClientError', (err: any, socket: any) => {
+        server.on('tlsClientError', (err: any, socket: any) => {
           this.handleTLSClientError(err, socket);
         });
 
@@ -251,11 +251,11 @@ export class HTTPSMonitoringMiddleware {
       this.activeHandshakes.set(sessionId, handshakeInfo);
 
       // Monitor handshake completion
-      socket.on(_'secure',_() => {
+      socket.on('secure', () => {
         this.handleHandshakeComplete(sessionId);
       });
 
-      socket.on(_'error', (error: any) => {
+      socket.on('error', (error: any) => {
         this.handleHandshakeError(sessionId, error);
       });
     } catch (error) {
