@@ -7,7 +7,7 @@ import { cn } from '@neonpro/ui';
 const Label = React.forwardRef<
   React.ElementRef<typeof LabelPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root>
->(_({ className,_...props },_ref) => (
+>(({ className, ...props }, ref) => (
   <LabelPrimitive.Root
     ref={ref}
     className={cn(

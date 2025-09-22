@@ -21,7 +21,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-export const _Route = createFileRoute('/patients/register')({
+export const Route = createFileRoute('/patients/register')({
   component: PatientRegister,
 });
 
@@ -47,7 +47,7 @@ function PatientRegister() {
   const navigate = useNavigate();
 
   // Handle successful patient creation
-  const handlePatientCreated = (_patient: any) => {
+  const handlePatientCreated = (patient: any) => {
     setRecentlyCreated(patient.id);
     setIsWizardOpen(false);
 

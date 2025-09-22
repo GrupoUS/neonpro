@@ -119,7 +119,7 @@ export function FileUploadIntegration({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load existing files on mount (simplified for now)
-  useEffect(_() => {
+  useEffect(() => {
     if (patientId) {
       // TODO: Implement loadExistingFiles when patient_files table is available
       console.log('Loading files for patient:', patientId);
@@ -212,7 +212,7 @@ export function FileUploadIntegration({
 
         try {
           // Simulate progress updates
-          const progressInterval = setInterval(_() => {
+          const progressInterval = setInterval(() => {
             setUploadStates(prev => {
               const newMap = new Map(prev);
               const state = newMap.get(fileId);
@@ -247,7 +247,7 @@ export function FileUploadIntegration({
           setUploadedFiles(prev => [...prev, uploadedFile]);
 
           // Remove from upload states after delay
-          setTimeout(_() => {
+          setTimeout(() => {
             setUploadStates(prev => {
               const newMap = new Map(prev);
               newMap.delete(fileId);
@@ -395,7 +395,7 @@ export function FileUploadIntegration({
       {uploadStates.size > 0 && (
         <div className='space-y-2'>
           <h4 className='text-sm font-medium'>Enviando arquivos...</h4>
-          {Array.from(uploadStates.entries()).map(_([fileId,_state]) => (
+          {Array.from(uploadStates.entries()).map(([fileId, state]) => (
             <div
               key={fileId}
               className='flex items-center gap-3 p-3 border rounded-lg'

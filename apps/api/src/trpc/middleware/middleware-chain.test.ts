@@ -51,7 +51,7 @@ const createMockContext = (_overrides = {}) => ({
 });
 
 describe(_'Enhanced Healthcare Middleware Chain',_() => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
     // Reset performance timing
     vi.spyOn(performance, 'now').mockReturnValue(0);
@@ -320,7 +320,7 @@ describe(_'Enhanced Healthcare Middleware Chain',_() => {
       const ctx = createMockContext();
       let callCount = 0;
 
-      vi.spyOn(performance, 'now').mockImplementation(_() => {
+      vi.spyOn(performance, 'now').mockImplementation(() => {
         callCount++;
         return callCount * 50; // Simulate 50ms per middleware
       });
@@ -339,10 +339,10 @@ describe(_'Enhanced Healthcare Middleware Chain',_() => {
 
       // Chain all middleware
       const chainedMiddleware = async () => {
-        return prismaRLSMiddleware(_{
+        return prismaRLSMiddleware({
           ctx,
           next: () =>
-            cfmValidationMiddleware(_{
+            cfmValidationMiddleware({
               ctx,
               next: () =>
                 lgpdAuditMiddleware({

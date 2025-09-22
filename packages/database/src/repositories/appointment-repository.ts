@@ -38,7 +38,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       if (!data) return null;
 
       return this.mapDatabaseAppointmentToDomain(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("AppointmentRepository.findById error:", error);
       return null;
     }
@@ -97,7 +97,7 @@ export class AppointmentRepository implements IAppointmentRepository {
         limit: options?.limit || 10,
         offset: options?.offset || 0
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("AppointmentRepository.findByPatientId error:", error);
       return { appointments: [], total: 0 };
     }
@@ -156,7 +156,7 @@ export class AppointmentRepository implements IAppointmentRepository {
         limit: options?.limit || 10,
         offset: options?.offset || 0
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("AppointmentRepository.findByProfessionalId error:", error);
       return { appointments: [], total: 0 };
     }
@@ -215,7 +215,7 @@ export class AppointmentRepository implements IAppointmentRepository {
         limit: options?.limit || 10,
         offset: options?.offset || 0
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("AppointmentRepository.findByClinicId error:", error);
       return { appointments: [], total: 0 };
     }
@@ -287,7 +287,7 @@ export class AppointmentRepository implements IAppointmentRepository {
         limit: options?.limit || 10,
         offset: options?.offset || 0
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("AppointmentRepository.findWithFilter error:", error);
       return { appointments: [], total: 0 };
     }
@@ -309,7 +309,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       }
 
       return this.mapDatabaseAppointmentToDomain(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("AppointmentRepository.create error:", error);
       throw error;
     }
@@ -332,7 +332,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       }
 
       return this.mapDatabaseAppointmentToDomain(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("AppointmentRepository.update error:", error);
       throw error;
     }
@@ -351,7 +351,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       }
 
       return true;
-    } catch (_error) {
+    } catch (error) {
       console.error("AppointmentRepository.delete error:", error);
       return false;
     }
@@ -381,7 +381,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       if (!data) return [];
 
       return data.map(this.mapDatabaseAppointmentToDomain);
-    } catch (_error) {
+    } catch (error) {
       console.error("AppointmentRepository.findByDateRange error:", error);
       return [];
     }
@@ -427,7 +427,7 @@ export class AppointmentRepository implements IAppointmentRepository {
       }
 
       return count || 0;
-    } catch (_error) {
+    } catch (error) {
       console.error("AppointmentRepository.count error:", error);
       return 0;
     }

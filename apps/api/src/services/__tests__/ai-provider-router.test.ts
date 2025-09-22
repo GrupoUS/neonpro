@@ -19,7 +19,7 @@ describe(_'AIProviderRouterService',_() => {
   let mockSemanticCache: jest.Mocked<SemanticCacheService>;
   let mockAuditService: jest.Mocked<AuditTrailService>;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     // Create mocked services
     mockSemanticCache = {
       findSimilarEntry: jest.fn(),
@@ -39,7 +39,7 @@ describe(_'AIProviderRouterService',_() => {
     );
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     routerService.destroy();
   });
 
@@ -99,7 +99,7 @@ describe(_'AIProviderRouterService',_() => {
       // Mock cache miss
       mockSemanticCache.findSimilarEntry.mockResolvedValue(null);
 
-      const response = await routerService.routeRequest(_request);
+      const response = await routerService.routeRequest(request);
 
       expect(response).toBeDefined();
       expect(response.content).toBeTruthy();
@@ -188,7 +188,7 @@ describe(_'AIProviderRouterService',_() => {
         accessCount: 1,
       } as any);
 
-      const response = await routerService.routeRequest(_request);
+      const response = await routerService.routeRequest(request);
 
       expect(response.metrics.cache_hit).toBe(true);
       expect(response.provider_used).toBe(AIProvider.LOCAL);
@@ -226,7 +226,7 @@ describe(_'AIProviderRouterService',_() => {
         },
       };
 
-      const response = await routerService.routeRequest(_request);
+      const response = await routerService.routeRequest(request);
 
       expect(response).toBeDefined();
       expect(response.metrics.total_cost_usd).toBeGreaterThan(0);
@@ -264,7 +264,7 @@ describe(_'AIProviderRouterService',_() => {
         },
       };
 
-      const response = await routerService.routeRequest(_request);
+      const response = await routerService.routeRequest(request);
 
       expect(response).toBeDefined();
       expect(response.metrics.total_latency_ms).toBeLessThan(5000);
@@ -337,7 +337,7 @@ describe(_'AIProviderRouterService',_() => {
         },
       };
 
-      const response = await routerService.routeRequest(_request);
+      const response = await routerService.routeRequest(request);
 
       expect(response).toBeDefined();
       expect(response.compliance.pii_redacted).toBe(true);
@@ -389,7 +389,7 @@ describe(_'AIProviderRouterService',_() => {
         },
       };
 
-      const response = await routerService.routeRequest(_request);
+      const response = await routerService.routeRequest(request);
 
       expect(response).toBeDefined();
       expect(response.provider_used).toBe(AIProvider.ANTHROPIC); // Should fallback to available provider

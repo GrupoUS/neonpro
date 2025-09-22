@@ -70,7 +70,7 @@ const cfmValidationSchema = z.object({
  *
  * Validates medical operations according to CFM regulations
  */
-export const _cfmValidationMiddleware = middleware(_async ({ ctx,_next,_path }) => {
+export const cfmValidationMiddleware = middleware(_async ({ ctx,next,_path }) => {
   try {
     // Check if this operation requires CFM validation
     if (!requiresCFMValidation(path)) {
@@ -106,7 +106,7 @@ export const _cfmValidationMiddleware = middleware(_async ({ ctx,_next,_path }) 
     });
 
     return next();
-  } catch (_error) {
+  } catch (error) {
     logger.error('CFM validation failed', {
       path,
       _userId: ctx.user?.id,
@@ -375,7 +375,7 @@ export async function auditCFMCompliance(ctx: any, operation: string, result: an
 
     // Store in audit database (implement as needed)
     // await storeAuditRecord(auditData);
-  } catch (_error) {
+  } catch (error) {
     logger.error('CFM compliance audit failed', {
       operation,
       _userId: ctx.user?.id,
@@ -429,7 +429,7 @@ export async function generateCFMComplianceReport(
     });
 
     return report;
-  } catch (_error) {
+  } catch (error) {
     logger.error('Failed to generate CFM compliance report', {
       startDate,
       endDate,
@@ -491,7 +491,7 @@ function isProcedureOperation(path: string): boolean {
 export function validateCFMInput(input: any): z.infer<typeof cfmValidationSchema> {
   try {
     return cfmValidationSchema.parse(input);
-  } catch (_error) {
+  } catch (error) {
     if (error instanceof z.ZodError) {
       const errorMessages = error.errors.map(err => `${err.path.join('.')}: ${err.message}`);
       throw new TRPCError({

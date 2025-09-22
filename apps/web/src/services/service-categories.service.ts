@@ -448,4 +448,4 @@ class ServiceCategoriesService {
   }
 }
 
-export const _serviceCategoriesService = new ServiceCategoriesService();
+export const serviceCategoriesService = new ServiceCategoriesService();

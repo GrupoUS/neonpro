@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
 
-describe(_"Monitoring",_() => {
-  it(_"should track performance metrics",_() => {
+describe("Monitoring", () => {
+  it("should track performance metrics", () => {
     // Placeholder for performance monitoring tests
     expect(true).toBe(true);
   });
 
-  it(_"should handle health checks",_() => {
+  it("should handle health checks", () => {
     // Placeholder for health check tests
     expect(true).toBe(true);
   });

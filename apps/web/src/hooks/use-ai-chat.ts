@@ -111,7 +111,7 @@ export function useAIChat(conversationId?: string) {
 
   // Send message with healthcare context
   const sendMessage = trpc.ai.chat.useMutation({
-    onMutate: async ({ message, conversationId: targetConvId,_context }) => {
+    onMutate: async ({ message, conversationId: targetConvId, context }) => {
       // Cancel outgoing refetches
       const convId = targetConvId || conversation.data?.id;
       if (convId) {
@@ -162,7 +162,7 @@ export function useAIChat(conversationId?: string) {
       return { optimisticMessage, conversationId: convId };
     },
 
-    onSuccess: (_data, _variables,_context) => {
+    onSuccess: (data, variables, context) => {
       // Update conversation with real response
       const convId = context?.conversationId || data.conversationId;
       if (convId) {
@@ -217,7 +217,7 @@ export function useAIChat(conversationId?: string) {
       }
     },
 
-    onError: (_error, _variables,_context) => {
+    onError: (error, variables, context) => {
       // Remove optimistic message
       const convId = context?.conversationId;
       if (convId) {
@@ -266,7 +266,7 @@ export function useAINoShowPrediction() {
   const queryClient = useQueryClient();
 
   return trpc.ai.predictNoShow.useMutation({
-    onMutate: async ({ patientId,_appointmentData }) => {
+    onMutate: async ({ patientId, appointmentData }) => {
       // LGPD Compliance: Log prediction request
       console.log('[LGPD Audit] No-show prediction requested', {
         patientId,
@@ -276,7 +276,7 @@ export function useAINoShowPrediction() {
       });
     },
 
-    onSuccess: (_data, _variables) => {
+    onSuccess: (data, variables) => {
       // Cache prediction result
       queryClient.setQueryData(aiChatKeys.predictions(), (_old: any) => {
         const predictions = old || [];
@@ -318,7 +318,7 @@ export function useAINoShowPrediction() {
  */
 export function useAIHealthcareInsights() {
   return trpc.ai.generateInsights.useMutation({
-    onMutate: async ({ data,_type,_context }) => {
+    onMutate: async ({ data,type, context }) => {
       // LGPD Compliance: Log insight generation
       console.log('[LGPD Audit] Healthcare insights requested', {
         insightType: type,
@@ -329,7 +329,7 @@ export function useAIHealthcareInsights() {
       });
     },
 
-    onSuccess: (_data, _variables) => {
+    onSuccess: (data, variables) => {
       // Cache insights
       const queryClient = useQueryClient();
       queryClient.setQueryData(
@@ -363,7 +363,7 @@ export function useAIProviderRouting() {
   const [failoverCount, setFailoverCount] = React.useState(0);
 
   const routeProvider = trpc.ai.routeProvider.useMutation({
-    onMutate: async ({ preferredProvider,_operation,_estimatedCost }) => {
+    onMutate: async ({ preferredProvider,operation, estimatedCost }) => {
       // Log provider routing decision
       console.log('[AI Provider Routing]', {
         currentProvider,
@@ -387,7 +387,7 @@ export function useAIProviderRouting() {
       }
     },
 
-    onError: _error => {
+    onError: error => {
       // Implement failover logic
       const nextProvider = currentProvider === 'openai' ? 'anthropic' : 'openai';
       setCurrentProvider(nextProvider);
@@ -438,7 +438,7 @@ export function useAIUsageMonitoring() {
   );
 
   // Show warnings for high usage
-  React.useEffect(_() => {
+  React.useEffect(() => {
     if (usage.data?.isNearLimit) {
       toast.warning(
         `⚠️ Uso de IA próximo do limite: R$ ${usage.data.currentCost.toFixed(2)} / R$ ${
@@ -564,7 +564,7 @@ export function useAIStreamingChat(conversationId: string) {
   const [streamingMessage, setStreamingMessage] = React.useState<string>('');
   const [isStreaming, setIsStreaming] = React.useState(false);
 
-  React.useEffect(_() => {
+  React.useEffect(() => {
     if (!conversationId) return;
 
     // Subscribe to streaming responses
@@ -664,7 +664,7 @@ export function useAIConversationHistory() {
 /**
  * Utility functions for AI chat functionality
  */
-export const _aiChatUtils = {
+export const aiChatUtils = {
   // Anonymize patient data before sending to AI
   anonymizePatientData: (text: string): string => {
     return text

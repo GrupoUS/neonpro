@@ -63,7 +63,7 @@ export class ReminderScheduler {
     await this.processScheduledReminders();
 
     // Set up recurring interval
-    this.schedulerInterval = setInterval(_async () => {
+    this.schedulerInterval = setInterval(async () => {
         if (this.isRunning) {
           await this.processScheduledReminders();
         }
@@ -245,7 +245,7 @@ export class ReminderScheduler {
               failed++;
             }
           }
-        } catch (_reminderError) {
+        } catch (reminderError) {
           console.error(
             `Error processing reminder ${scheduledReminder.id}:`,
             reminderError,
@@ -274,7 +274,7 @@ export class ReminderScheduler {
       );
 
       return { processed, sent, failed, skipped };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in processScheduledReminders:', error);
       return { processed, sent, failed, skipped };
     }
@@ -375,7 +375,7 @@ export class ReminderScheduler {
         scheduled: scheduledReminders.length,
         reminders: scheduledReminders,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error scheduling reminders for appointment:', error);
       throw error;
     }
@@ -406,7 +406,7 @@ export class ReminderScheduler {
       );
 
       return cancelledCount;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error cancelling scheduled reminders:', error);
       throw error;
     }
@@ -428,7 +428,7 @@ export class ReminderScheduler {
       }
 
       return data || [];
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting reminder schedules:', error);
       throw error;
     }
@@ -468,7 +468,7 @@ export class ReminderScheduler {
       }
 
       return data;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error upserting reminder schedule:', error);
       throw error;
     }
@@ -490,7 +490,7 @@ export class ReminderScheduler {
       if (error) {
         console.error('Error updating scheduled reminder:', error);
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error updating scheduled reminder:', error);
     }
   }
@@ -530,7 +530,7 @@ export class ReminderScheduler {
         throw error;
       }
 
-      const stats = data.reduce(_(acc,_reminder) => {
+      const stats = data.reduce((acc,_reminder) => {
           acc.total++;
           acc[reminder.status] = (acc[reminder.status] || 0) + 1;
           if (reminder.processing_time_ms) {
@@ -564,7 +564,7 @@ export class ReminderScheduler {
         successRate: Math.round(successRate * 100) / 100,
         averageProcessingTime: Math.round(averageProcessingTime),
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting scheduler statistics:', error);
       throw error;
     }

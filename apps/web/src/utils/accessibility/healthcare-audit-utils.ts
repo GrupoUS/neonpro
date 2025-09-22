@@ -77,7 +77,7 @@ export const HEALTHCARE_AUDIT_RULES = {
       const medicalInfo = element.querySelectorAll(
         '[data-sensitive="medical"], [data-medical="true"]',
       );
-      medicalInfo.forEach(_info => {
+      medicalInfo.forEach(info => {
         if (
           !info.hasAttribute('aria-label')
           && !info.hasAttribute('aria-labelledby')
@@ -111,7 +111,7 @@ export const HEALTHCARE_AUDIT_RULES = {
       const emergencyElements = element.querySelectorAll(
         '[data-emergency="true"], .emergency',
       );
-      emergencyElements.forEach(_el => {
+      emergencyElements.forEach(el => {
         if (!el.hasAttribute('aria-label')) {
           el.setAttribute('aria-label', 'Emergency information');
         }
@@ -145,9 +145,9 @@ export const HEALTHCARE_AUDIT_RULES = {
       const medicalForms = element.querySelectorAll(
         'form[data-medical="true"], .medical-form',
       );
-      medicalForms.forEach(_form => {
+      medicalForms.forEach(form => {
         const inputs = form.querySelectorAll('input, select, textarea');
-        inputs.forEach(_(input, _index) => {
+        inputs.forEach((input, _index) => {
           if (!input.hasAttribute('id')) {
             input.setAttribute('id', `medical-input-${index}`);
           }
@@ -180,7 +180,7 @@ export const HEALTHCARE_AUDIT_RULES = {
       const prescriptionElements = element.querySelectorAll(
         '[data-prescription="true"], .prescription',
       );
-      prescriptionElements.forEach(_el => {
+      prescriptionElements.forEach(el => {
         if (!el.hasAttribute('aria-label')) {
           const medicationName = el
             .querySelector('.medication-name')
@@ -222,11 +222,11 @@ export const HEALTHCARE_AUDIT_RULES = {
       const appointmentElements = element.querySelectorAll(
         '[data-appointment="true"], .appointment-scheduler',
       );
-      appointmentElements.forEach(_el => {
+      appointmentElements.forEach(el => {
         const dateInputs = el.querySelectorAll(
           'input[type="date"], input[type="time"]',
         );
-        dateInputs.forEach(_input => {
+        dateInputs.forEach(input => {
           if (
             !input.hasAttribute('aria-label')
             && input instanceof HTMLInputElement
@@ -304,7 +304,7 @@ export class HealthcareAccessibilityAuditor {
     detailedReport: any;
   }> {
     const auditContext = typeof context === 'string'
-      ? document.querySelector(_context)
+      ? document.querySelector(context)
       : context || document;
 
     if (!auditContext) {
@@ -368,10 +368,10 @@ export class HealthcareAccessibilityAuditor {
     }
 
     // Calculate overall score
-    const totalChecks = results.categoryResults.reduce(_(sum,_cat) => sum + cat.issues.length,
+    const totalChecks = results.categoryResults.reduce((sum, cat) => sum + cat.issues.length,
       0,
     );
-    const passedChecks = results.categoryResults.reduce(_(sum,_cat) => sum + cat.issues.filter((issue: any) => issue.passed).length,
+    const passedChecks = results.categoryResults.reduce((sum, cat) => sum + cat.issues.filter((issue: any) => issue.passed).length,
       0,
     );
 
@@ -413,7 +413,7 @@ export class HealthcareAccessibilityAuditor {
       totalChecks++;
 
       try {
-        const passed = rule.check(_context);
+        const passed = rule.check(context);
 
         issues.push({
           ruleId: rule.id,
@@ -461,9 +461,9 @@ export class HealthcareAccessibilityAuditor {
     cfm: boolean;
   }> {
     return {
-      lgpd: this.validateLGPDCompliance(_context),
-      anvisa: this.validateANVISACompliance(_context),
-      cfm: this.validateCFMCompliance(_context),
+      lgpd: this.validateLGPDCompliance(context),
+      anvisa: this.validateANVISACompliance(context),
+      cfm: this.validateCFMCompliance(context),
     };
   }
 

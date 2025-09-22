@@ -101,7 +101,7 @@ export function Experiment06CalendarIntegration({
   >([]);
 
   // Process appointments with LGPD compliance
-  useEffect(_() => {
+  useEffect(() => {
     const processAppointmentsWithCompliance = async () => {
       if (!appointments.length) {
         setMinimizedAppointments([]);
@@ -197,7 +197,7 @@ export function Experiment06CalendarIntegration({
   }, [appointments, userId, userRole]);
 
   // Convert minimized appointments to calendar events
-  const calendarEvents = useMemo(_() => {
+  const calendarEvents = useMemo(() => {
     try {
       return minimizedAppointments.map(mapMinimizedAppointmentToCalendarEvent);
     } catch (_error) {
@@ -365,7 +365,7 @@ export function Experiment06CalendarIntegration({
   const { isColorVisible } = useCalendarContext();
 
   // Filter events based on visible colors
-  const visibleEvents = useMemo(_() => {
+  const visibleEvents = useMemo(() => {
     return calendarEvents.filter(event => isColorVisible(event.color));
   }, [calendarEvents, isColorVisible]);
 
@@ -440,7 +440,7 @@ export function Experiment06CalendarIntegration({
           <div className='space-y-1'>
             {complianceStatus.consentValidations
               .slice(0, 3)
-              .map(_(issue, _index) => (
+              .map((issue, _index) => (
                 <div key={index} className='text-yellow-700 text-xs'>
                   • {issue.error || 'Issue sem descrição'}
                 </div>

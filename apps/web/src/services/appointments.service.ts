@@ -940,7 +940,7 @@ class AppointmentService {
    * Mock appointments data for when database tables don't exist yet
    */
   private getMockAppointments(): CalendarAppointment[] {
-    const _now = new Date();
+    const now = new Date();
     const tomorrow = new Date(now);
     tomorrow.setDate(now.getDate() + 1);
     const nextWeek = new Date(now);
@@ -1023,4 +1023,4 @@ class AppointmentService {
   }
 }
 
-export const _appointmentService = new AppointmentService();
+export const appointmentService = new AppointmentService();

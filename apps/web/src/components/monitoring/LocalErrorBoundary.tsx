@@ -5,8 +5,8 @@ interface Props {
   fallback?: React.ComponentType<any>;
 }
 
-function DefaultFallback(_{
-  error,_resetError,
+function DefaultFallback({
+  error,resetError,
 }: {
   error: Error;
   resetError: () => void;

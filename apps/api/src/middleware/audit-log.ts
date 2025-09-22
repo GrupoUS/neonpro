@@ -166,12 +166,12 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
         // Note: HonoRequest may not have clone method, so we try to access body directly
         try {
           requestBody = await c.req.json();
-        } catch (_bodyError) {
+        } catch (bodyError) {
           // If we can't read the body, continue without it
           console.warn('Could not read request body for audit logging:', bodyError);
         }
         requestBody = sanitizeData(requestBody, sensitiveFields);
-      } catch (_error) {
+      } catch (error) {
         // Ignore errors when reading request body
       }
     }
@@ -195,7 +195,7 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
           success: true,
         },
       } as AuditLogEntry;
-    } catch (_err) {
+    } catch (err) {
       error = err;
       const duration = Date.now() - startTime;
 
@@ -319,4 +319,4 @@ export function authAuditMiddleware() {
  * Simple audit log function (alias for auditLogMiddleware)
  * @deprecated Use specific audit middleware instead
  */
-export const _auditLog = auditLogMiddleware;
+export const auditLog = auditLogMiddleware;

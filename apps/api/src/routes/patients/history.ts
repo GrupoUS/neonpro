@@ -345,7 +345,7 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
         summary: historyResult.data.summary,
       },
     });
-  } catch (_error) {
+  } catch (error) {
     console.error('History endpoint error:', error);
 
     // Handle validation errors

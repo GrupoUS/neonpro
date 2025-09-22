@@ -67,7 +67,7 @@ const TestComponent = () => {
   );
 };
 
-describe(_'CalendarProvider',_() => {
+describe(('CalendarProvider', () => {
   const mockEvent = {
     id: 'test-event-id',
     title: 'Test Event',
@@ -82,7 +82,7 @@ describe(_'CalendarProvider',_() => {
     notes: 'Test notes',
   };
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     // Mock EventService methods
@@ -92,11 +92,11 @@ describe(_'CalendarProvider',_() => {
     vi.mocked(EventService.deleteEvent).mockResolvedValue();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  it(_'should initialize with default values',_() => {
+  it(('should initialize with default values', () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -109,28 +109,28 @@ describe(_'CalendarProvider',_() => {
     expect(screen.getByTestId('current-view')).toHaveTextContent('month');
   });
 
-  it(_'should load events on mount',_async () => {
+  it(_'should load events on mount',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
       </CalendarProvider>,
     );
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(EventService.getEvents).toHaveBeenCalledTimes(1);
     });
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByTestId('loading')).toHaveTextContent('false');
     });
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByTestId('events-count')).toHaveTextContent('1');
     });
   });
 
-  it(_'should handle loading state',_async () => {
-    vi.mocked(EventService.getEvents).mockImplementationOnce(_async () => {
+  it(_'should handle loading state',async () => {
+    vi.mocked(EventService.getEvents).mockImplementationOnce(async () => {
       await new Promise(resolve => setTimeout(resolve, 100));
       return [mockEvent as any];
     });
@@ -143,12 +143,12 @@ describe(_'CalendarProvider',_() => {
 
     expect(screen.getByTestId('loading')).toHaveTextContent('true');
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByTestId('loading')).toHaveTextContent('false');
     });
   });
 
-  it(_'should handle error state',_async () => {
+  it(_'should handle error state',async () => {
     const errorMessage = 'Failed to load events';
     vi.mocked(EventService.getEvents).mockRejectedValueOnce(new Error(errorMessage));
 
@@ -158,18 +158,18 @@ describe(_'CalendarProvider',_() => {
       </CalendarProvider>,
     );
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByTestId('error')).toHaveTextContent(errorMessage);
     });
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByTestId('loading')).toHaveTextContent('false');
     });
 
     expect(toast.error).toHaveBeenCalledWith(errorMessage);
   });
 
-  it(_'should create event successfully',_async () => {
+  it(_'should create event successfully',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -177,16 +177,16 @@ describe(_'CalendarProvider',_() => {
     );
 
     // Wait for initial load
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByTestId('loading')).toHaveTextContent('false');
     });
 
     // Create event
-    await act(_async () => {
+    await act(async () => {
       fireEvent.click(screen.getByTestId('create-event'));
     });
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(EventService.createEvent).toHaveBeenCalledWith({
         title: 'Test Event',
         start: expect.any(Date),
@@ -198,7 +198,7 @@ describe(_'CalendarProvider',_() => {
     expect(toast.success).toHaveBeenCalledWith('Event "Test Event" created successfully');
   });
 
-  it(_'should handle event creation error',_async () => {
+  it(_'should handle event creation error',async () => {
     const errorMessage = 'Failed to create event';
     vi.mocked(EventService.createEvent).mockRejectedValueOnce(new Error(errorMessage));
 
@@ -209,21 +209,21 @@ describe(_'CalendarProvider',_() => {
     );
 
     // Wait for initial load
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByTestId('loading')).toHaveTextContent('false');
     });
 
     // Create event
-    await act(_async () => {
+    await act(async () => {
       fireEvent.click(screen.getByTestId('create-event'));
     });
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(toast.error).toHaveBeenCalledWith(errorMessage);
     });
   });
 
-  it(_'should update event successfully',_async () => {
+  it(_'should update event successfully',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -231,16 +231,16 @@ describe(_'CalendarProvider',_() => {
     );
 
     // Wait for initial load
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByTestId('loading')).toHaveTextContent('false');
     });
 
     // Update event
-    await act(_async () => {
+    await act(async () => {
       fireEvent.click(screen.getByTestId('update-event'));
     });
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(EventService.updateEvent).toHaveBeenCalledWith({
         id: 'test-id',
         title: 'Updated Event',
@@ -250,7 +250,7 @@ describe(_'CalendarProvider',_() => {
     expect(toast.success).toHaveBeenCalledWith('Event "Test Event" updated successfully');
   });
 
-  it(_'should delete event successfully',_async () => {
+  it(_'should delete event successfully',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -258,23 +258,23 @@ describe(_'CalendarProvider',_() => {
     );
 
     // Wait for initial load
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByTestId('loading')).toHaveTextContent('false');
     });
 
     // Delete event
-    await act(_async () => {
+    await act(async () => {
       fireEvent.click(screen.getByTestId('delete-event'));
     });
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(EventService.deleteEvent).toHaveBeenCalledWith('test-id');
     });
 
     expect(toast.success).toHaveBeenCalledWith('Event "Test Event" deleted successfully');
   });
 
-  it(_'should navigate to today',_async () => {
+  it(_'should navigate to today',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -282,12 +282,12 @@ describe(_'CalendarProvider',_() => {
     );
 
     // Wait for initial load
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByTestId('loading')).toHaveTextContent('false');
     });
 
     // Navigate to today
-    await act(_async () => {
+    await act(async () => {
       fireEvent.click(screen.getByTestId('navigate-today'));
     });
 
@@ -295,7 +295,7 @@ describe(_'CalendarProvider',_() => {
     // This is tested implicitly through the context behavior
   });
 
-  it(_'should change view',_async () => {
+  it(_'should change view',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -303,19 +303,19 @@ describe(_'CalendarProvider',_() => {
     );
 
     // Wait for initial load
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByTestId('loading')).toHaveTextContent('false');
     });
 
     // Change view
-    await act(_async () => {
+    await act(async () => {
       fireEvent.click(screen.getByTestId('set-view'));
     });
 
     expect(screen.getByTestId('current-view')).toHaveTextContent('week');
   });
 
-  it(_'should refresh events',_async () => {
+  it(_'should refresh events',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -323,24 +323,24 @@ describe(_'CalendarProvider',_() => {
     );
 
     // Wait for initial load
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByTestId('loading')).toHaveTextContent('false');
     });
 
     const initialCallCount = vi.mocked(EventService.getEvents).mock.calls.length;
 
     // Refresh events
-    await act(_async () => {
+    await act(async () => {
       const { refreshEvents } = useCalendarContext();
       await refreshEvents();
     });
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(vi.mocked(EventService.getEvents).mock.calls.length).toBe(initialCallCount + 1);
     });
   });
 
-  it(_'should handle empty events list',_async () => {
+  it(_'should handle empty events list',async () => {
     vi.mocked(EventService.getEvents).mockResolvedValueOnce([]);
 
     render(
@@ -349,14 +349,14 @@ describe(_'CalendarProvider',_() => {
       </CalendarProvider>,
     );
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByTestId('loading')).toHaveTextContent('false');
     });
 
     expect(screen.getByTestId('events-count')).toHaveTextContent('0');
   });
 
-  it(_'should use initial events when provided',_async () => {
+  it(_'should use initial events when provided',async () => {
     const initialEvents = [mockEvent as any];
 
     render(
@@ -369,12 +369,12 @@ describe(_'CalendarProvider',_() => {
     expect(screen.getByTestId('events-count')).toHaveTextContent('1');
 
     // Should still fetch from backend
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(EventService.getEvents).toHaveBeenCalledTimes(1);
     });
   });
 
-  it(_'should apply clinic ID filter when provided',_async () => {
+  it(_'should apply clinic ID filter when provided',async () => {
     const defaultClinicId = 'default-clinic-id';
 
     render(
@@ -383,7 +383,7 @@ describe(_'CalendarProvider',_() => {
       </CalendarProvider>,
     );
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(EventService.getEvents).toHaveBeenCalledWith(
         expect.objectContaining({
           clinicId: [defaultClinicId],

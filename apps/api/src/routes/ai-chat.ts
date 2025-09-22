@@ -171,7 +171,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
             savedCost: cacheEntry.originalCost,
           });
         }
-      } catch (_cacheError) {
+      } catch (cacheError) {
         console.warn(
           'Semantic cache error (continuing without cache):',
           cacheError,
@@ -241,7 +241,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
               controller.enqueue(encoder.encode(chunk));
             }
             controller.close();
-          } catch (_error) {
+          } catch (error) {
             controller.error(error);
           }
         },
@@ -301,13 +301,13 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
                 promptLength: userPrompt.length,
                 responseLength: fullResponse.length,
               });
-            } catch (_cacheError) {
+            } catch (cacheError) {
               console.warn('Failed to cache AI response:', cacheError);
             }
           }
 
           controller.close();
-        } catch (_error) {
+        } catch (error) {
           console.error('Streaming error:', error);
           controller.error(error);
         }
@@ -344,7 +344,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
         'X-Chat-Started-At': new Date().toISOString(),
       },
     });
-  } catch (_error) {
+  } catch (error) {
     const ms = endTimerMs(t0);
     logMetric({ route: '/v1/ai-chat/stream', ms, ok: false });
     console.error('AI chat error:', error);
@@ -429,7 +429,7 @@ app.post(
           .map(s => s.trim())
           .filter(Boolean)
           .slice(0, 5);
-      } catch (_error) {
+      } catch (error) {
         console.error('AI suggestions failed:', error);
         // Fallback suggestions
         suggestions = [
@@ -444,7 +444,7 @@ app.post(
       console.log('Search Suggestions:', {
         timestamp: new Date().toISOString(),
         sessionId,
-        _query: redactPII(_query),
+        _query: redactPII(query),
         suggestionsCount: suggestions.length,
       });
 
@@ -452,7 +452,7 @@ app.post(
       logMetric({ route: '/v1/ai-chat/suggestions', ms, ok: true });
       c.header('X-Response-Time', `${ms}ms`);
       return c.json({ suggestions });
-    } catch (_error) {
+    } catch (error) {
       const ms = endTimerMs(t0);
       logMetric({ route: '/v1/ai-chat/suggestions', ms, ok: false });
       console.error('Search suggestions error:', error);
@@ -479,7 +479,7 @@ app.get('/health', c => {
     status: 'ok',
     _service: 'neonpro-ai-chat',
     timestamp: new Date().toISOString(),
-    providers: availableProviders.reduce(_(acc,_provider) => {
+    providers: availableProviders.reduce((acc,_provider) => {
         acc[provider] = 'available';
         return acc;
       },

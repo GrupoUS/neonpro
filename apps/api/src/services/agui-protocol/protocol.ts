@@ -37,8 +37,8 @@ export class AguiProtocol extends EventEmitter {
     this.config = config;
 
     // Start periodic cleanup
-    setInterval(_() => this.cleanup(), this.config.cleanupInterval);
-    setInterval(_() => this.updateRateLimits(), 60000); // Update every minute
+    setInterval(() => this.cleanup(), this.config.cleanupInterval);
+    setInterval(() => this.updateRateLimits(), 60000); // Update every minute
   }
 
   /**
@@ -46,7 +46,7 @@ export class AguiProtocol extends EventEmitter {
    */
   async handleConnection(ws: WebSocket, _request: any): Promise<void> {
     const connectionId = uuidv4();
-    const clientIp = this.getClientIp(_request);
+    const clientIp = this.getClientIp(request);
 
     try {
       // Check rate limits
@@ -80,7 +80,7 @@ export class AguiProtocol extends EventEmitter {
       this.sendHello(connection);
 
       this.emit('connection', connection);
-    } catch (_error) {
+    } catch (error) {
       this.emit('connectionError', { connectionId, error });
       ws.close(1011, 'Internal server error');
     }
@@ -134,7 +134,7 @@ export class AguiProtocol extends EventEmitter {
       }
 
       this.emit('message', { connection, message });
-    } catch (_error) {
+    } catch (error) {
       this.emit('messageError', { connectionId, error, data });
       this.sendError(connection.ws, 'INTERNAL_ERROR', 'Failed to process message');
     }
@@ -153,7 +153,7 @@ export class AguiProtocol extends EventEmitter {
       }
 
       return message as AguiMessage;
-    } catch (_error) {
+    } catch (error) {
       return null;
     }
   }
@@ -164,7 +164,7 @@ export class AguiProtocol extends EventEmitter {
   private validateMessage(message: AguiMessage): string | null {
     // Validate timestamp (not too old or future)
     const messageTime = new Date(message.timestamp);
-    const _now = new Date();
+    const now = new Date();
     const timeDiff = Math.abs(now.getTime() - messageTime.getTime());
 
     if (timeDiff > this.config.maxMessageAge) {
@@ -237,7 +237,7 @@ export class AguiProtocol extends EventEmitter {
       });
 
       this.emit('authenticated', { connection, _userId: connection.userId });
-    } catch (_error) {
+    } catch (error) {
       this.sendError(connection.ws, 'INTERNAL_ERROR', 'Failed to process hello message');
     }
   }
@@ -448,7 +448,7 @@ export class AguiProtocol extends EventEmitter {
   private sendMessage(ws: WebSocket, message: AguiMessage): void {
     try {
       ws.send(JSON.stringify(message));
-    } catch (_error) {
+    } catch (error) {
       this.emit('sendError', { error, message });
     }
   }
@@ -497,7 +497,7 @@ export class AguiProtocol extends EventEmitter {
       }
 
       return { success: false, error: 'Unsupported authentication type' };
-    } catch (_error) {
+    } catch (error) {
       return { success: false, error: 'Invalid authentication token' };
     }
   }
@@ -533,7 +533,7 @@ export class AguiProtocol extends EventEmitter {
    */
   private checkRateLimit(clientIp: string): boolean {
     const limit = this.rateLimiter.get(clientIp) || this.getDefaultRateLimit();
-    const _now = Date.now();
+    const now = Date.now();
 
     // Reset minute counter if needed
     if (now > new Date(limit.resetTimes.minute).getTime()) {
@@ -572,7 +572,7 @@ export class AguiProtocol extends EventEmitter {
    */
   private updateRateLimits(): void {
     for (const [clientIp, limit] of this.rateLimiter.entries()) {
-      const _now = Date.now();
+      const now = Date.now();
 
       // Reset counters if needed
       if (now > new Date(limit.resetTimes.minute).getTime()) {
@@ -599,7 +599,7 @@ export class AguiProtocol extends EventEmitter {
    * Cleanup expired sessions and connections
    */
   private cleanup(): void {
-    const _now = Date.now();
+    const now = Date.now();
 
     // Clean up expired sessions
     for (const [sessionId, session] of this.sessions.entries()) {

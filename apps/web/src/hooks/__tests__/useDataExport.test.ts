@@ -22,7 +22,7 @@ const mockClick = vi.fn();
 const mockAppendChild = vi.fn();
 const mockRemoveChild = vi.fn();
 
-Object.defineProperty(_global,_'document', {
+Object.defineProperty(_global, 'document', {
   value: {
     createElement: vi.fn(() => ({
       href: '',
@@ -33,13 +33,13 @@ Object.defineProperty(_global,_'document', {
       appendChild: mockAppendChild,
       removeChild: mockRemoveChild,
     },
-    getElementsByTagName: vi.fn(_() => []),
+    getElementsByTagName: vi.fn(() => []),
   },
   writable: true,
 });
 
 // Mock patient data
-const _mockPatients = [
+const mockPatients = [
   {
     id: '1',
     fullName: 'João Silva',
@@ -60,20 +60,20 @@ const _mockPatients = [
   },
 ];
 
-describe(_'useDataExport',_() => {
-  beforeEach(_() => {
+describe(('useDataExport', () => {
+  beforeEach(() => {
     vi.clearAllMocks();
     mockCreateObjectURL.mockReturnValue('blob:mock-url');
   });
 
-  it(_'should export the hook function',_() => {
+  it(('should export the hook function', () => {
     // Simple test to verify the module can be imported
-    expect(_() => {
+    expect(() => {
       require('../useDataExport');
     }).not.toThrow();
   });
 
-  it(_'should export patients data to CSV format',_() => {
+  it(('should export patients data to CSV format', () => {
     const { useDataExport } = require('../useDataExport');
     expect(useDataExport).toBeDefined();
 
@@ -81,7 +81,7 @@ describe(_'useDataExport',_() => {
     expect(typeof useDataExport).toBe('function');
   });
 
-  it(_'should export patients data to PDF format',_() => {
+  it(('should export patients data to PDF format', () => {
     const { useDataExport } = require('../useDataExport');
     expect(useDataExport).toBeDefined();
 
@@ -89,7 +89,7 @@ describe(_'useDataExport',_() => {
     expect(typeof useDataExport).toBe('function');
   });
 
-  it(_'should handle export errors gracefully',_() => {
+  it(('should handle export errors gracefully', () => {
     const { useDataExport } = require('../useDataExport');
     expect(useDataExport).toBeDefined();
 
@@ -97,7 +97,7 @@ describe(_'useDataExport',_() => {
     expect(typeof useDataExport).toBe('function');
   });
 
-  it(_'should provide export progress tracking',_() => {
+  it(('should provide export progress tracking', () => {
     const { useDataExport } = require('../useDataExport');
     expect(useDataExport).toBeDefined();
 
@@ -105,7 +105,7 @@ describe(_'useDataExport',_() => {
     expect(typeof useDataExport).toBe('function');
   });
 
-  it(_'should support filtered data export',_() => {
+  it(('should support filtered data export', () => {
     const { useDataExport } = require('../useDataExport');
     expect(useDataExport).toBeDefined();
 

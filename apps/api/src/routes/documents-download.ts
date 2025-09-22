@@ -124,7 +124,7 @@ app.get('/:documentId/download', requireAuth(), async c => {
 
     try {
       fileContent = await documentService.getFileContent(document.file_path);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error reading file:', error);
 
       // Log failed download
@@ -205,7 +205,7 @@ app.get('/:documentId/download', requireAuth(), async c => {
       status: 200,
       headers,
     });
-  } catch (_error) {
+  } catch (error) {
     console.error('Document download error:', error);
 
     if (error instanceof HTTPException) {
@@ -270,7 +270,7 @@ app.get('/:documentId/preview', requireAuth(), async c => {
     url.searchParams.set('preview', 'true');
 
     return c.redirect(url.toString(), 302);
-  } catch (_error) {
+  } catch (error) {
     console.error('Document preview error:', error);
 
     if (error instanceof HTTPException) {

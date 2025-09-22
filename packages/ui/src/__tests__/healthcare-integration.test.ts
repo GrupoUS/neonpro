@@ -7,8 +7,8 @@
 
 import { describe, it, expect } from "vitest";
 
-describe(_"Healthcare Components Integration",_() => {
-  it(_"should export healthcare validation utilities",_async () => {
+describe("Healthcare Components Integration", () => {
+  it("should export healthcare validation utilities", async () => {
     const { healthcareValidationSchemas, DataSensitivity } = await import(
       "../utils/healthcare-validation"
     );
@@ -17,7 +17,7 @@ describe(_"Healthcare Components Integration",_() => {
     expect(DataSensitivity).toBeDefined();
   });
 
-  it(_"should export accessibility utilities",_async () => {
+  it("should export accessibility utilities", async () => {
     const { announceToScreenReader, HealthcarePriority, generateAccessibleId } =
       await import("../utils/accessibility");
 
@@ -26,7 +26,7 @@ describe(_"Healthcare Components Integration",_() => {
     expect(generateAccessibleId).toBeDefined();
   });
 
-  it(_"should export healthcare theme provider",_async () => {
+  it("should export healthcare theme provider", async () => {
     const { HealthcareThemeProvider, useHealthcareTheme } = await import(
       "../components/healthcare/healthcare-theme-provider"
     );
@@ -35,7 +35,7 @@ describe(_"Healthcare Components Integration",_() => {
     expect(useHealthcareTheme).toBeDefined();
   });
 
-  it(_"should export LGPD consent banner",_async () => {
+  it("should export LGPD consent banner", async () => {
     const { LGPDConsentBanner, useLGPDConsent, ConsentType } = await import(
       "../components/healthcare/lgpd-consent-banner"
     );
@@ -45,7 +45,7 @@ describe(_"Healthcare Components Integration",_() => {
     expect(ConsentType).toBeDefined();
   });
 
-  it(_"should export healthcare form components",_async () => {
+  it("should export healthcare form components", async () => {
     const { HealthcareForm } = await import(
       "../components/forms/healthcare-form"
     );

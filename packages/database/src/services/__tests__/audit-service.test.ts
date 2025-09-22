@@ -43,10 +43,10 @@ const mockAuditLog = {
   created_at: "2024-01-01T00:00:00Z",
 };
 
-describe(_"AuditService",_() => {
+describe("AuditService", () => {
   let auditService: AuditService;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     // Setup mock chain
@@ -153,11 +153,11 @@ describe(_"AuditService",_() => {
     auditService = new AuditService(mockSupabaseClient);
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.clearAllMocks();
   });
 
-  describe(_"createAuditLog",_() => {
+  describe("createAuditLog", () => {
     it(_"should create audit log successfully",_async () => {
       mockSingle.mockResolvedValueOnce({
         data: { id: "audit-123" },
@@ -190,7 +190,7 @@ describe(_"AuditService",_() => {
     });
   });
 
-  describe(_"logSessionStart",_() => {
+  describe("logSessionStart", () => {
     it(_"should log session start successfully",_async () => {
       mockSingle.mockResolvedValueOnce({
         data: { id: "audit-123" },
@@ -210,7 +210,7 @@ describe(_"AuditService",_() => {
     });
   });
 
-  describe(_"logSessionEnd",_() => {
+  describe("logSessionEnd", () => {
     it(_"should log session end successfully",_async () => {
       mockSingle.mockResolvedValueOnce({
         data: { id: "audit-123" },
@@ -230,7 +230,7 @@ describe(_"AuditService",_() => {
     });
   });
 
-  describe(_"logDataAccess",_() => {
+  describe("logDataAccess", () => {
     it(_"should log data access successfully",_async () => {
       mockSingle.mockResolvedValueOnce({
         data: { id: "audit-123" },
@@ -250,7 +250,7 @@ describe(_"AuditService",_() => {
     });
   });
 
-  describe(_"logConsentVerification",_() => {
+  describe("logConsentVerification", () => {
     it(_"should log consent verification successfully",_async () => {
       mockSingle.mockResolvedValueOnce({
         data: { id: "audit-123" },
@@ -270,7 +270,7 @@ describe(_"AuditService",_() => {
     });
   });
 
-  describe(_"logSecurityEvent",_() => {
+  describe("logSecurityEvent", () => {
     it(_"should log security event successfully",_async () => {
       mockSingle.mockResolvedValueOnce({
         data: { id: "audit-123" },
@@ -290,7 +290,7 @@ describe(_"AuditService",_() => {
     });
   });
 
-  describe(_"getSessionAuditLogs",_() => {
+  describe("getSessionAuditLogs", () => {
     it(_"should return session audit logs",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [mockAuditLog],
@@ -334,7 +334,7 @@ describe(_"AuditService",_() => {
     });
   });
 
-  describe(_"getUserAuditLogs",_() => {
+  describe("getUserAuditLogs", () => {
     it(_"should return user audit logs",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [mockAuditLog],
@@ -378,7 +378,7 @@ describe(_"AuditService",_() => {
     });
   });
 
-  describe(_"getAuditLogsByDateRange",_() => {
+  describe("getAuditLogsByDateRange", () => {
     it(_"should return audit logs within date range",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [mockAuditLog],
@@ -429,7 +429,7 @@ describe(_"AuditService",_() => {
     });
   });
 
-  describe(_"getComplianceReport",_() => {
+  describe("getComplianceReport", () => {
     it(_"should return compliance report",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [mockAuditLog],
@@ -480,7 +480,7 @@ describe(_"AuditService",_() => {
     });
   });
 
-  describe(_"searchAuditLogs",_() => {
+  describe("searchAuditLogs", () => {
     it(_"should search audit logs by criteria",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [mockAuditLog],
@@ -539,7 +539,7 @@ describe(_"AuditService",_() => {
     });
   });
 
-  describe(_"edge cases and error handling",_() => {
+  describe("edge cases and error handling", () => {
     it(_"should handle malformed compliance check data",_async () => {
       mockOrder.mockResolvedValueOnce({
         data: [
@@ -559,7 +559,7 @@ describe(_"AuditService",_() => {
     });
 
     it(_"should handle large datasets efficiently",_async () => {
-      const largeMockData = Array.from({ length: 1000 },_(_,_i) => ({
+      const largeMockData = Array.from({ length: 1000 },(, i) => ({
         ...mockAuditLog,
         id: `audit-${i}`,
       }));

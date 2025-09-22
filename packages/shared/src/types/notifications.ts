@@ -239,7 +239,7 @@ export function createMultiChannelNotification(
   baseNotification: Partial<Notification>,
   channels: string[],
 ): Partial<Notification>[] {
-  return channels.map(_(channel) => ({
+  return channels.map((channel) => ({
     ...baseNotification,
     id: `notification_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     channel,
@@ -264,7 +264,7 @@ export function anonymizeNotification(
 
   if (anonymized.data) {
     const anonymizedData: Record<string, any> = {};
-    Object.keys(anonymized.data).forEach(_(key) => {
+    Object.keys(anonymized.data).forEach((key) => {
       if (key.includes("name") || key.includes("Name")) {
         anonymizedData[key] = `PACIENTE_ANON_${Date.now()}`;
       } else if (key.includes("phone") || key.includes("Phone")) {
@@ -285,7 +285,7 @@ export function anonymizeNotification(
 export function retryNotification(
   notification: Partial<Notification>,
 ): Partial<Notification> {
-  const _now = new Date();
+  const now = new Date();
   const nextRetry = new Date(
     now.getTime() + Math.pow(2, notification.attempts || 0) * 60000,
   ); // Exponential backoff
@@ -326,7 +326,7 @@ export function calculateNotificationMetrics(
   let read = 0;
   let failed = 0;
 
-  notifications.forEach(_(notification) => {
+  notifications.forEach((notification) => {
     // Count by channel
     if (notification.channel) {
       metrics.byChannel[notification.channel] =
@@ -356,7 +356,7 @@ export function calculateNotificationMetrics(
 
     // Sum costs from delivery status
     if (notification.deliveryStatus) {
-      notification.deliveryStatus.forEach(_(delivery) => {
+      notification.deliveryStatus.forEach((delivery) => {
         if (delivery.cost) {
           metrics.totalCost += delivery.cost;
         }
@@ -407,7 +407,7 @@ export function validateHealthcareCompliance(
 export function createNotification(
   data: Omit<Notification, "id" | "createdAt" | "updatedAt" | "status">,
 ): Notification {
-  const _now = new Date();
+  const now = new Date();
 
   return {
     ...data,
@@ -424,8 +424,8 @@ export function getNotificationsByRecipient(
   recipientId: string,
 ): Notification[] {
   return notifications
-    .filter(_(notification) => notification.recipientId === recipientId)
-    .sort(_(a,_b) => b.createdAt.getTime() - a.createdAt.getTime());
+    .filter((notification) => notification.recipientId === recipientId)
+    .sort((a,_b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
 // Get notifications by type
@@ -433,14 +433,14 @@ export function getNotificationsByType(
   notifications: Notification[],
   type: NotificationType,
 ): Notification[] {
-  return notifications.filter(_(notification) => notification.type === type);
+  return notifications.filter((notification) => notification.type === type);
 }
 
 // Get pending notifications
 export function getPendingNotifications(
   notifications: Notification[],
 ): Notification[] {
-  return notifications.filter(_(notification) =>
+  return notifications.filter((notification) =>
       notification.status === NotificationStatus.PENDING ||
       notification.status === NotificationStatus.SCHEDULED,
   );
@@ -450,7 +450,7 @@ export function getPendingNotifications(
 export function getFailedNotifications(
   notifications: Notification[],
 ): Notification[] {
-  return notifications.filter(_(notification) =>
+  return notifications.filter((notification) =>
       notification.status === NotificationStatus.FAILED &&
       (notification.attempts || 0) < 3, // Max 3 retry attempts
   );
@@ -473,7 +473,7 @@ export function shouldSendNotification(
 
   // Check quiet hours
   if (preferences?.quietHours?.enabled) {
-    const _now = new Date();
+    const now = new Date();
     const currentTime = now.toTimeString().substring(0, 5); // HH:MM format
 
     const { start, end } = preferences.quietHours;

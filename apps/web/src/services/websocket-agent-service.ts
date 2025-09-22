@@ -145,7 +145,7 @@ export class WebSocketAgentService {
     }
 
     // Notify connection handlers
-    this.connectionHandlers.forEach(_handler => handler());
+    this.connectionHandlers.forEach(handler => handler());
   }
 
   private handleMessage(event: MessageEvent) {
@@ -155,12 +155,12 @@ export class WebSocketAgentService {
 
       // Emit to specific handlers
       const handlers = this.messageHandlers.get(messageType) || [];
-      handlers.forEach(_handler => handler(data));
+      handlers.forEach(handler => handler(data));
 
       // Emit to wildcard handlers
       const wildcardHandlers = this.messageHandlers.get('*') || [];
 
-      wildcardHandlers.forEach(_handler => handler(data));
+      wildcardHandlers.forEach(handler => handler(data));
     } catch (_error) {
       console.error('Error parsing WebSocket message:', error);
     }
@@ -171,7 +171,7 @@ export class WebSocketAgentService {
     this.isConnected = false;
 
     // Notify disconnection handlers
-    this.disconnectionHandlers.forEach(_handler => handler(event));
+    this.disconnectionHandlers.forEach(handler => handler(event));
 
     // Attempt to reconnect
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
@@ -180,7 +180,7 @@ export class WebSocketAgentService {
         `Attempting to reconnect... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`,
       );
 
-      setTimeout(_() => {
+      setTimeout(() => {
         this.connect();
       }, this.reconnectInterval);
     }
@@ -191,7 +191,7 @@ export class WebSocketAgentService {
   }
 
   private sendMessageWithResponse(message: any): Promise<any> {
-    return new Promise(_(resolve,_reject) => {
+    return new Promise((resolve, reject) => {
       if (!this.isConnected) {
         reject(new Error('WebSocket not connected'));
         return;
@@ -202,7 +202,7 @@ export class WebSocketAgentService {
       message.id = messageId;
 
       // Set up response handler
-      const timeout = setTimeout(_() => {
+      const timeout = setTimeout(() => {
         this.off('response', responseHandler);
         reject(new Error('Request timeout'));
       }, 30000); // 30 second timeout
@@ -242,7 +242,7 @@ export function useWebSocketAgent(config?: WebSocketAgentConfig) {
   const [isConnected, setIsConnected] = React.useState(false);
   const [lastMessage, setLastMessage] = React.useState<any>(null);
 
-  React.useEffect(_() => {
+  React.useEffect(() => {
     const service = getWebSocketAgentService(config);
 
     const handleConnect = () => setIsConnected(true);

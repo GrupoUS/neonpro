@@ -281,7 +281,7 @@ app.openapi(
         },
         201,
       );
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating patient:', error);
 
       return c.json(

@@ -98,7 +98,7 @@ export function VideoConsultation({
   });
 
   // Signaling Client for WebRTC communication
-  const _signalingClient = useSignalingClient(
+  const signalingClient = useSignalingClient(
     sessionId,
     session?.patientId || 'unknown',
     {
@@ -149,7 +149,7 @@ export function VideoConsultation({
   const chatMessageRef = useRef<HTMLInputElement>(null);
 
   // Initialize WebRTC and attach streams to video elements
-  useEffect(_() => {
+  useEffect(() => {
     if (sessionId && session) {
       // Start WebRTC call
       startCall();
@@ -161,22 +161,22 @@ export function VideoConsultation({
   }, [sessionId, session, startCall, endCall]);
 
   // Attach local stream to video element
-  useEffect(_() => {
+  useEffect(() => {
     if (localStream && localVideoRef.current) {
       localVideoRef.current.srcObject = localStream;
     }
   }, [localStream]);
 
   // Attach remote streams to video element (first remote stream)
-  useEffect(_() => {
+  useEffect(() => {
     if (remoteStreams.length > 0 && remoteVideoRef.current) {
       remoteVideoRef.current.srcObject = remoteStreams[0];
     }
   }, [remoteStreams]);
 
   // Session duration timer
-  useEffect(_() => {
-    durationInterval.current = setInterval(_() => {
+  useEffect(() => {
+    durationInterval.current = setInterval(() => {
       setSessionDuration(
         Math.floor((Date.now() - sessionStartTime.current.getTime()) / 1000),
       );
@@ -190,14 +190,14 @@ export function VideoConsultation({
   }, []);
 
   // Monitor connection quality from WebRTC state
-  useEffect(_() => {
+  useEffect(() => {
     if (webrtcState.connectionQuality) {
       setNetworkQuality(webrtcState.connectionQuality);
     }
   }, [webrtcState.connectionQuality]);
 
   // Update participants list with WebRTC connection state
-  useEffect(_() => {
+  useEffect(() => {
     if (session) {
       const participantsList: ParticipantInfo[] = [
         {
@@ -243,7 +243,7 @@ export function VideoConsultation({
   }, []);
 
   // Handle session end
-  const handleEndSession = useCallback(_async () => {
+  const handleEndSession = useCallback(async () => {
     try {
       await endSession('normal_completion');
       endCall();
@@ -273,7 +273,7 @@ export function VideoConsultation({
   );
 
   // Handle screen sharing with new WebRTC hook
-  const handleScreenShare = useCallback(_async () => {
+  const handleScreenShare = useCallback(async () => {
     try {
       if (webrtcState.isScreenSharing) {
         await stopScreenShare();
@@ -288,7 +288,7 @@ export function VideoConsultation({
   }, [startScreenShare, stopScreenShare, webrtcState.isScreenSharing]);
 
   // Handle recording toggle
-  const handleRecordingToggle = useCallback(_async () => {
+  const handleRecordingToggle = useCallback(async () => {
     try {
       if (isRecording) {
         await stopRecording();

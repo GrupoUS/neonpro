@@ -29,7 +29,7 @@ export class ConsentRepository implements IConsentRepository {
 
   async findById(id: string): Promise<ConsentRecord | null> {
     try {
-      return await this.performanceService.optimizedQuery(_"consent_records",_"select",_async (client) => {
+      return await this.performanceService.optimizedQuery(_"consent_records","select",_async (client) => {
           const { data, error } = await client
             .from("consent_records")
             .select(`
@@ -50,7 +50,7 @@ export class ConsentRepository implements IConsentRepository {
           columns: "id, patient_id, consent_type, status, expires_at, patient:patients(id, full_name, cpf)",
         }
       );
-    } catch (_error) {
+    } catch (error) {
       console.error("ConsentRepository.findById error:", error);
       return null;
     }
@@ -72,7 +72,7 @@ export class ConsentRepository implements IConsentRepository {
       if (!data) return [];
 
       return data.map(this.mapDatabaseConsentToDomain);
-    } catch (_error) {
+    } catch (error) {
       console.error("ConsentRepository.findByPatientId error:", error);
       return [];
     }
@@ -135,7 +135,7 @@ export class ConsentRepository implements IConsentRepository {
         limit: options?.limit || 10,
         offset: options?.offset || 0
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("ConsentRepository.findWithFilter error:", error);
       return { consents: [], total: 0 };
     }
@@ -167,7 +167,7 @@ export class ConsentRepository implements IConsentRepository {
       }
 
       return this.mapDatabaseConsentToDomain(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("ConsentRepository.create error:", error);
       throw error;
     }
@@ -190,7 +190,7 @@ export class ConsentRepository implements IConsentRepository {
       }
 
       return this.mapDatabaseConsentToDomain(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("ConsentRepository.update error:", error);
       throw error;
     }
@@ -215,7 +215,7 @@ export class ConsentRepository implements IConsentRepository {
       }
 
       return this.mapDatabaseConsentToDomain(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("ConsentRepository.revoke error:", error);
       throw error;
     }
@@ -234,7 +234,7 @@ export class ConsentRepository implements IConsentRepository {
       }
 
       return true;
-    } catch (_error) {
+    } catch (error) {
       console.error("ConsentRepository.delete error:", error);
       return false;
     }
@@ -256,7 +256,7 @@ export class ConsentRepository implements IConsentRepository {
       }
 
       // Fetch the updated records
-      return await this.performanceService.optimizedQuery(_"consent_records",_"select",_async (client) => {
+      return await this.performanceService.optimizedQuery(_"consent_records","select",_async (client) => {
           const { data, error } = await client
             .from("consent_records")
             .select(`
@@ -274,7 +274,7 @@ export class ConsentRepository implements IConsentRepository {
           columns: "id, patient_id, consent_type, status, expires_at",
         }
       );
-    } catch (_error) {
+    } catch (error) {
       console.error("ConsentRepository.checkExpiration error:", error);
       return [];
     }
@@ -282,8 +282,8 @@ export class ConsentRepository implements IConsentRepository {
 
   async getActiveConsents(patientId: string): Promise<ConsentRecord[]> {
     try {
-      return await this.performanceService.optimizedQuery(_"consent_records",_"select",_async (client) => {
-          const _now = new Date().toISOString();
+      return await this.performanceService.optimizedQuery(_"consent_records","select",_async (client) => {
+          const now = new Date().toISOString();
           const { data, error } = await client
             .from("consent_records")
             .select(`
@@ -303,7 +303,7 @@ export class ConsentRepository implements IConsentRepository {
           columns: "id, patient_id, consent_type, status, expires_at, granted_at",
         }
       );
-    } catch (_error) {
+    } catch (error) {
       console.error("ConsentRepository.getActiveConsents error:", error);
       return [];
     }
@@ -311,8 +311,8 @@ export class ConsentRepository implements IConsentRepository {
 
   async hasActiveConsent(patientId: string, consentType: ConsentType): Promise<boolean> {
     try {
-      return await this.performanceService.optimizedQuery(_"consent_records",_"select",_async (client) => {
-          const _now = new Date().toISOString();
+      return await this.performanceService.optimizedQuery(_"consent_records","select",_async (client) => {
+          const now = new Date().toISOString();
           const { data, error } = await client
             .from("consent_records")
             .select("id")
@@ -333,7 +333,7 @@ export class ConsentRepository implements IConsentRepository {
           columns: "id",
         }
       );
-    } catch (_error) {
+    } catch (error) {
       console.error("ConsentRepository.hasActiveConsent error:", error);
       return false;
     }

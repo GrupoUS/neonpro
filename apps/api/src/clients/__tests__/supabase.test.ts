@@ -36,11 +36,11 @@ vi.mock(_'@supabase/supabase-js',_() => ({
         listUsers: vi.fn(),
       },
     },
-    from: vi.fn(_() => ({
+    from: vi.fn(() => ({
       select: vi.fn(() => ({ data: [], error: null })),
-      insert: vi.fn(_() => ({ data: [], error: null })),
-      update: vi.fn(_() => ({ data: [], error: null })),
-      delete: vi.fn(_() => ({ data: [], error: null })),
+      insert: vi.fn(() => ({ data: [], error: null })),
+      update: vi.fn(() => ({ data: [], error: null })),
+      delete: vi.fn(() => ({ data: [], error: null })),
     })),
     supabaseUrl: url,
     supabaseKey: key,
@@ -53,18 +53,18 @@ vi.mock(_'@supabase/ssr',_() => ({
       getSession: vi.fn(),
       getUser: vi.fn(),
     },
-    from: vi.fn(_() => ({
+    from: vi.fn(() => ({
       select: vi.fn(() => ({ data: [], error: null })),
     })),
     supabaseUrl: url,
     supabaseKey: key,
   })),
-  createBrowserClient: vi.fn(_(url,_key) => ({
+  createBrowserClient: vi.fn((url,_key) => ({
     auth: {
       getSession: vi.fn(),
       signInWithPassword: vi.fn(),
     },
-    from: vi.fn(_() => ({
+    from: vi.fn(() => ({
       select: vi.fn(() => ({ data: [], error: null })),
     })),
     supabaseUrl: url,
@@ -75,7 +75,7 @@ vi.mock(_'@supabase/ssr',_() => ({
 describe(_'Supabase Client Implementation - TDD RED Phase',_() => {
   let originalEnv: typeof process.env;
 
-  beforeAll(_() => {
+  beforeAll(() => {
     // Backup original environment
     originalEnv = { ...process.env };
 
@@ -83,7 +83,7 @@ describe(_'Supabase Client Implementation - TDD RED Phase',_() => {
     Object.assign(process.env, mockEnv);
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     // Restore original environment after each test
     Object.keys(process.env).forEach(key => {
       if (!(key in originalEnv)) {
@@ -151,7 +151,7 @@ describe(_'Supabase Client Implementation - TDD RED Phase',_() => {
 
       const { createAdminClient } = await import('../supabase');
 
-      expect(_() => createAdminClient()).toThrow(
+      expect(() => createAdminClient()).toThrow(
         'SUPABASE_SERVICE_ROLE_KEY is required for admin client',
       );
     });
@@ -159,7 +159,7 @@ describe(_'Supabase Client Implementation - TDD RED Phase',_() => {
 
   describe('Server Client (createServerClient)', () => {
     const mockCookies = {
-      getAll: vi.fn(_() => [
+      getAll: vi.fn(() => [
         { name: 'sb-access-token', value: 'token123' },
         { name: 'sb-refresh-token', value: 'refresh123' },
       ]),
@@ -210,7 +210,7 @@ describe(_'Supabase Client Implementation - TDD RED Phase',_() => {
       delete process.env.VITEST;
 
       try {
-        expect(_() => createServerClient(null as any)).toThrow(
+        expect(() => createServerClient(null as any)).toThrow(
           'Cookie handlers are required for server client',
         );
       } finally {
@@ -255,7 +255,7 @@ describe(_'Supabase Client Implementation - TDD RED Phase',_() => {
 
       const { createUserClient } = await import('../supabase');
 
-      expect(_() => createUserClient()).toThrow(
+      expect(() => createUserClient()).toThrow(
         'SUPABASE_URL and SUPABASE_ANON_KEY are required',
       );
     });
@@ -341,7 +341,7 @@ describe(_'Supabase Client Implementation - TDD RED Phase',_() => {
       delete process.env.SUPABASE_URL;
 
       const { createUserClient } = await import('../supabase');
-      expect(_() => createUserClient()).toThrow(
+      expect(() => createUserClient()).toThrow(
         'SUPABASE_URL and SUPABASE_ANON_KEY are required',
       );
     });

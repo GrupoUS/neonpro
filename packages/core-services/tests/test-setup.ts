@@ -6,10 +6,10 @@
 import { vi } from 'vitest';
 
 // Mock console methods globally for all AI service tests
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(_() => {});
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(_() => {});
-const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(_() => {});
-const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(_() => {});
+const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
 
 // Store original console methods for restoration
 const originalConsole = {
@@ -20,14 +20,14 @@ const originalConsole = {
 };
 
 // Test environment setup
-export const _setupAIServiceLoggingTests = () => {
+export const setupAIServiceLoggingTests = () => {
   // Clear all mock calls before each test
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
   // Restore original console methods after all tests
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
@@ -41,18 +41,18 @@ export const _setupAIServiceLoggingTests = () => {
 };
 
 // AI-specific test utilities
-export const _aiTestUtils = {
+export const aiTestUtils = {
   // Check for AI model API keys in logs
   hasAiApiKeyExposure: (output: string[][]) => {
     const apiKeyPatterns = [
       'sk-ant-api', // Anthropic
       'sk-', // OpenAI/Sklearn
       'AIza', // Google AI
-      'pk_', // Stripe-like patterns
-      'live_', // Live keys
-      'test_', // Test keys
-      'api_key',
-      'secret_key',
+      'pk__, // Stripe-like patterns
+      'live__, // Live keys
+      'test__, // Test keys
+      'api_key_,
+      'secret_key_,
       'anthropic',
       'openai',
       'google'
@@ -107,16 +107,16 @@ export const _aiTestUtils = {
   hasAiConfigExposure: (output: string[][]) => {
     const configPatterns = [
       'temperature',
-      'max_tokens',
+      'max_tokens_,
       'model',
       'prompt',
-      'system_prompt',
+      'system_prompt_,
       'gpt-',
       'claude-',
       'gemini-',
-      'top_p',
-      'frequency_penalty',
-      'presence_penalty'
+      'top_p_,
+      'frequency_penalty_,
+      'presence_penalty_
     ];
 
     return output.some(log => 
@@ -154,16 +154,16 @@ export const _aiTestUtils = {
   hasAiPerformanceMetrics: (output: string[][]) => {
     const metricPatterns = [
       'latency',
-      'response_time',
-      'processing_time',
+      'response_time_,
+      'processing_time_,
       'accuracy',
       'confidence',
       'score',
       'probability',
       'prediction',
       'classification',
-      'model_version',
-      'deploy_id'
+      'model_version_,
+      'deploy_id_
     ];
 
     return output.some(log => 
@@ -196,15 +196,15 @@ export const _aiTestUtils = {
   hasAiIntegrationDetails: (output: string[][]) => {
     const integrationPatterns = [
       'endpoint',
-      'api_url',
-      'base_url',
+      'api_url_,
+      'base_url_,
       'webhook',
       'callback',
       'integration',
       'connector',
       'adapter',
-      'service_url',
-      'api_endpoint'
+      'service_url_,
+      'api_endpoint_
     ];
 
     return output.some(log => 

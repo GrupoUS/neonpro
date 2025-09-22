@@ -50,7 +50,7 @@ class LegacyErrorTracker {
     }
 
     // Convert legacy context to healthcare context
-    const healthcareContext = this.convertContext(_context);
+    const healthcareContext = this.convertContext(context);
 
     // Use healthcare tracker
     return this.healthcareTracker.captureException(
@@ -74,7 +74,7 @@ class LegacyErrorTracker {
     }
 
     // Convert legacy context to healthcare context
-    const healthcareContext = this.convertContext(_context);
+    const healthcareContext = this.convertContext(context);
 
     // Map level to severity
     const severity = level === 'error' ? 'high' : level === 'warning' ? 'medium' : 'low';
@@ -132,7 +132,7 @@ class LegacyErrorTracker {
     if (!this.config.enabled) {
       return 'disabled';
     }
-    const healthcareContext = this.convertContext(_context);
+    const healthcareContext = this.convertContext(context);
     return await this.healthcareTracker.trackError(error, healthcareContext);
   }
 
@@ -314,7 +314,7 @@ export function getLegacyErrorTracker(
 export function initializeLegacyErrorTracking(
   config?: Partial<LegacyConfig>,
 ): Promise<void> {
-  return new Promise(_(resolve,_reject) => {
+  return new Promise((resolve,_reject) => {
     try {
       const tracker = getLegacyErrorTracker(config);
 
@@ -327,7 +327,7 @@ export function initializeLegacyErrorTracking(
 
       console.log('[Legacy Error Tracker] Initialized successfully');
       resolve();
-    } catch (_error) {
+    } catch (error) {
       console.error('[Legacy Error Tracker] Failed to initialize:', error);
       reject(error);
     }
@@ -335,7 +335,7 @@ export function initializeLegacyErrorTracking(
 }
 
 // Export singleton instance for backward compatibility
-export const _errorTracker = getLegacyErrorTracker();
+export const errorTracker = getLegacyErrorTracker();
 // Import the missing healthcare error factory
 import { createHealthcareError, ErrorCategory, ErrorSeverity } from './createHealthcareError';
 

@@ -81,7 +81,7 @@ export async function streamWithFailover(opts: {
           'Como posso ajudar você hoje?',
         ];
         let i = 0;
-        const id = setInterval(_() => {
+        const id = setInterval(() => {
           controller.enqueue(new TextEncoder().encode(chunks[i]));
           i++;
           if (i >= chunks.length) {
@@ -114,7 +114,7 @@ export async function streamWithFailover(opts: {
         'X-Data-Freshness': 'as-of-now',
       },
     });
-  } catch (_primaryError) {
+  } catch (primaryError) {
     console.error('Primary AI provider failed:', primaryError);
     try {
       const { adapter } = resolveProvider(DEFAULT_SECONDARY);
@@ -127,7 +127,7 @@ export async function streamWithFailover(opts: {
       return result.toTextStreamResponse({
         headers: { 'X-Chat-Model': `google:${DEFAULT_SECONDARY}` },
       });
-    } catch (_fallbackError) {
+    } catch (fallbackError) {
       console.error('Secondary AI provider failed:', fallbackError);
       throw new Error('Serviço de IA temporariamente indisponível');
     }
@@ -179,7 +179,7 @@ export async function generateWithFailover(opts: {
         'X-Chat-Model': `${MODEL_REGISTRY[chosen].provider}:${chosen}`,
       }),
     };
-  } catch (_primaryError) {
+  } catch (primaryError) {
     console.error('Primary AI provider failed:', primaryError);
     try {
       const { adapter } = resolveProvider(DEFAULT_SECONDARY);
@@ -193,7 +193,7 @@ export async function generateWithFailover(opts: {
         text: result.text,
         headers: new Headers({ 'X-Chat-Model': `google:${DEFAULT_SECONDARY}` }),
       };
-    } catch (_fallbackError) {
+    } catch (fallbackError) {
       console.error('Secondary AI provider failed:', fallbackError);
       throw new Error('Serviço de IA temporariamente indisponível');
     }

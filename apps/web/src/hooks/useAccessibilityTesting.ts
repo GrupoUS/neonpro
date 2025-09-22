@@ -104,7 +104,7 @@ export function useAccessibilityTesting(
   /**
    * Run accessibility test
    */
-  const testAccessibility = useCallback(_async () => {
+  const testAccessibility = useCallback(async () => {
     if (!optionsRef.current.enabled) return;
 
     setIsTesting(true);
@@ -127,7 +127,7 @@ export function useAccessibilityTesting(
         && result.violations.length > 0
       ) {
         console.group('🔍 Accessibility Issues Found');
-        result.violations.forEach(_violation => {
+        result.violations.forEach(violation => {
           console.warn(
             `[${violation.impact.toUpperCase()}] ${violation.description}`,
           );
@@ -172,12 +172,12 @@ export function useAccessibilityTesting(
   /**
    * Debounced test runner
    */
-  const debouncedTest = useCallback(_() => {
+  const debouncedTest = useCallback(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
-    timeoutRef.current = setTimeout(_() => {
+    timeoutRef.current = setTimeout(() => {
       testAccessibility();
     }, optionsRef.current.debounceMs);
   }, [testAccessibility]);
@@ -185,7 +185,7 @@ export function useAccessibilityTesting(
   /**
    * Clear test results
    */
-  const clearResults = useCallback(_() => {
+  const clearResults = useCallback(() => {
     setTestResult(null);
     setLastTested(null);
     setColorContrast({
@@ -197,7 +197,7 @@ export function useAccessibilityTesting(
   }, []);
 
   // Run test on mount
-  useEffect(_() => {
+  useEffect(() => {
     if (optionsRef.current.runOnMount && optionsRef.current.enabled) {
       testAccessibility();
     }
@@ -210,10 +210,10 @@ export function useAccessibilityTesting(
   }, [testAccessibility]);
 
   // Watch for DOM changes and re-run tests
-  useEffect(_() => {
+  useEffect(() => {
     if (!optionsRef.current.runOnChanges || !optionsRef.current.enabled) return;
 
-    const observer = new MutationObserver(_() => {
+    const observer = new MutationObserver(() => {
       debouncedTest();
     });
 
@@ -254,7 +254,7 @@ export function useComponentAccessibility<T extends HTMLElement>(
 ) {
   const [element, setElement] = useState<T | null>(null);
 
-  useEffect(_() => {
+  useEffect(() => {
     if (componentRef.current) {
       setElement(componentRef.current);
     }
@@ -280,7 +280,7 @@ export function useAccessibilityMonitor() {
     lgpdViolations: 0,
   });
 
-  const startMonitoring = useCallback(_() => {
+  const startMonitoring = useCallback(() => {
     setIsActive(true);
 
     // Run initial test
@@ -319,7 +319,7 @@ export function useAccessibilityMonitor() {
     return () => clearInterval(interval);
   }, []);
 
-  const stopMonitoring = useCallback(_() => {
+  const stopMonitoring = useCallback(() => {
     setIsActive(false);
   }, []);
 
@@ -345,7 +345,7 @@ export function useKeyboardNavigationTest() {
     issues: [],
   });
 
-  const testKeyboardNavigation = useCallback(_() => {
+  const testKeyboardNavigation = useCallback(() => {
     const focusableElements = document.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
@@ -354,7 +354,7 @@ export function useKeyboardNavigationTest() {
     const issues: string[] = [];
 
     // Check each focusable element
-    focusableElements.forEach(_(element, _index) => {
+    focusableElements.forEach((element, _index) => {
       const tabIndex = element.getAttribute('tabindex');
       const ariaLabel = element.getAttribute('aria-label');
       const role = element.getAttribute('role');
@@ -409,7 +409,7 @@ export function useKeyboardNavigationTest() {
 
       if (issues.length > 0) {
         console.warn('Issues found:');
-        issues.forEach(_issue => console.warn(`  ❌ ${issue}`));
+        issues.forEach(issue => console.warn(`  ❌ ${issue}`));
       } else {
         console.log('✅ No keyboard navigation issues found');
       }

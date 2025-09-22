@@ -286,4 +286,4 @@ export class PricingRulesService {
   }
 }
 
-export const _pricingRulesService = PricingRulesService;
+export const pricingRulesService = PricingRulesService;

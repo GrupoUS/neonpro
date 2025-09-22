@@ -12,7 +12,7 @@ import {
 
 // Mock Supabase client - Fixed to support proper chaining
 const createChainableMock = (tableName: string) => {
-  const orderMock = vi.fn(_() => {
+  const orderMock = vi.fn(() => {
     if (tableName === 'aesthetic_audit_logs') {
       return Promise.resolve({
         data: [
@@ -44,7 +44,7 @@ const createChainableMock = (tableName: string) => {
 
   // This is the key fix: eq() must return an object with order method
   const eqReturnValue = {
-    eq: vi.fn(_() => ({
+    eq: vi.fn(() => ({
       single: vi.fn(() =>
         Promise.resolve({
           data: {
@@ -57,16 +57,16 @@ const createChainableMock = (tableName: string) => {
     order: orderMock, // This is the missing piece!
   };
 
-  const eqMock = vi.fn(_() => eqReturnValue);
+  const eqMock = vi.fn(() => eqReturnValue);
 
-  const selectMock = vi.fn(_() => ({
+  const selectMock = vi.fn(() => ({
     eq: eqMock,
     order: orderMock,
   }));
 
   return {
     select: selectMock,
-    insert: vi.fn(_() => Promise.resolve({ data: null, error: null })),
+    insert: vi.fn(() => Promise.resolve({ data: null, error: null })),
   };
 };
 
@@ -76,14 +76,14 @@ const mockSupabase = {
 
 // Mock Audit service
 const mockAuditService = {
-  logError: vi.fn(_() => Promise.resolve()),
+  logError: vi.fn(() => Promise.resolve()),
 } as any;
 
 describe(_'AestheticAnalysisService',_() => {
   let _service: AestheticAnalysisService;
   let mockPatientRequest: AestheticAssessmentRequest;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     service = new AestheticAnalysisService(mockSupabase, mockAuditService);
 
     mockPatientRequest = {
@@ -325,7 +325,7 @@ describe(_'AestheticAnalysisService',_() => {
 
     it(_'should throw error when LGPD consent is missing',_async () => {
       // Mock missing consent
-      mockSupabase.from = vi.fn(_() => ({
+      mockSupabase.from = vi.fn(() => ({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             eq: vi.fn(() => ({
@@ -347,8 +347,8 @@ describe(_'AestheticAnalysisService',_() => {
 
     it(_'should create proper audit trail for LGPD compliance',_async () => {
       // Create proper mock chain for insert call
-      const insertMock = vi.fn(_() => Promise.resolve({ data: null, error: null }));
-      const fromMock = vi.fn(_() => ({
+      const insertMock = vi.fn(() => Promise.resolve({ data: null, error: null }));
+      const fromMock = vi.fn(() => ({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             eq: vi.fn(() => ({

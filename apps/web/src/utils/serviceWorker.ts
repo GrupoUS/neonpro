@@ -24,10 +24,10 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     console.log('[SW] Service worker registered:', registration.scope);
 
     // Handle updates
-    registration.addEventListener(_'updatefound',_() => {
+    registration.addEventListener('updatefound', () => {
       const newWorker = registration.installing;
       if (newWorker) {
-        newWorker.addEventListener(_'statechange',_() => {
+        newWorker.addEventListener('statechange', () => {
           if (
             newWorker.state === 'installed'
             && navigator.serviceWorker.controller
@@ -108,7 +108,7 @@ export async function clearCaches(): Promise<void> {
       if (registration && registration.active) {
         const messageChannel = new MessageChannel();
 
-        return new Promise(_resolve => {
+        return new Promise(resolve => {
           messageChannel.port1.onmessage = () => resolve();
           registration.active!.postMessage({ type: 'CLEAR_CACHE' }, [
             messageChannel.port2,
@@ -139,7 +139,7 @@ export async function preloadCriticalResources(urls: string[]): Promise<void> {
     if (registration && registration.active) {
       const messageChannel = new MessageChannel();
 
-      return new Promise(_resolve => {
+      return new Promise(resolve => {
         messageChannel.port1.onmessage = () => resolve();
         registration.active!.postMessage({ type: 'CACHE_URLS', urls }, [
           messageChannel.port2,
@@ -234,7 +234,7 @@ export function setupServiceWorkerListeners(): void {
   }
 
   // Listen for service worker updates
-  navigator.serviceWorker.addEventListener(_'controllerchange',_() => {
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
     console.log('[SW] Controller changed - reloading page');
     window.location.reload();
   });

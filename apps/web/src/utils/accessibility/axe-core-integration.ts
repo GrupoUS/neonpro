@@ -66,7 +66,7 @@ const HEALTHCARE_IMPACT_LEVELS = {
  */
 export function initializeAxeCore(): void {
   axe.configure({
-    rules: Object.entries(HEALTHCARE_RULES).map(_([id,_config]) => ({
+    rules: Object.entries(HEALTHCARE_RULES).map(([id, config]) => ({
       id,
       ...config,
     })),
@@ -314,7 +314,7 @@ export function useAccessibilityTesting() {
   const scan = React.useCallback(async (_context?: string | Element) => {
     setIsScanning(true);
     try {
-      const results = await runAccessibilityScan(_context);
+      const results = await runAccessibilityScan(context);
       setLastScan(results);
       const generatedReport = generateAccessibilityReport(results);
       setReport(generatedReport);

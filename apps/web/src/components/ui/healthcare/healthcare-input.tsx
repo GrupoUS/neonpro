@@ -42,9 +42,9 @@ export interface HealthcareInputProps extends React.InputHTMLAttributes<HTMLInpu
  * HealthcareInput - WCAG 2.1 AA+ compliant input component
  * Designed for healthcare applications with Brazilian formatting and accessibility
  */
-const HealthcareInput = React.forwardRef<HTMLInputElement, HealthcareInputProps>(_({
-    className,_type = 'text',_label,_error,_helperText,_required = false,_mobileOptimized = true,_healthcareContext,_brazilianFormat,_validationPattern,_validateOnChange = false,_maxLength,_showCharCount = false,_isPassword = false,_ariaDescription,_accessibilityAction = 'type',_keyboardShortcut,_value,_onChange,_onBlur,_...props
-  },_ref) => {
+const HealthcareInput = React.forwardRef<HTMLInputElement, HealthcareInputProps>(({
+    className, type = 'text',label, error,helperText, required = false, mobileOptimized = true,healthcareContext, brazilianFormat,validationPattern, validateOnChange = false,maxLength, showCharCount = false, isPassword = false,ariaDescription, accessibilityAction = 'type',keyboardShortcut, value,onChange, onBlur, ...props
+  }, ref) => {
     const { isMobile } = useMobileOptimization();
     const [showPassword, setShowPassword] = React.useState(false);
     const [internalValue, setInternalValue] = React.useState(value || '');
@@ -181,25 +181,25 @@ const HealthcareInput = React.forwardRef<HTMLInputElement, HealthcareInputProps>
     );
 
     // Determine input type
-    const inputType = React.useMemo(_() => {
+    const inputType = React.useMemo(() => {
       if (isPassword && !showPassword) return 'password';
       if (isPassword && showPassword) return 'text';
       return type;
     }, [isPassword, showPassword, type]);
 
     // Get character count
-    const charCount = React.useMemo(_() => {
+    const charCount = React.useMemo(() => {
       return internalValue.length;
     }, [internalValue]);
 
     // Check if character count is near limit
-    const isCharCountWarning = React.useMemo(_() => {
+    const isCharCountWarning = React.useMemo(() => {
       if (!maxLength) return false;
       return charCount >= maxLength * 0.9;
     }, [charCount, maxLength]);
 
     // Generate accessibility attributes
-    const accessibilityProps = React.useMemo(_() => {
+    const accessibilityProps = React.useMemo(() => {
       const props: Record<string, string> = {};
 
       if (required) {
@@ -287,7 +287,7 @@ const HealthcareInput = React.forwardRef<HTMLInputElement, HealthcareInputProps>
           />
 
           {/* Password Toggle */}
-          {isPassword && (_<button
+          {isPassword && (<button
               type='button'
               onClick={() => setShowPassword(!showPassword)}
               className='absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-ring rounded-sm p-1'

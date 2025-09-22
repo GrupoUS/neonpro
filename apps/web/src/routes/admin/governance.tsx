@@ -2,7 +2,7 @@ import { GovernanceDashboard } from '@/components/organisms/governance/Governanc
 import { getCurrentSession } from '@/integrations/supabase/client';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 
-export const _Route = createFileRoute('/admin/governance')({
+export const Route = createFileRoute('/admin/governance')({
   beforeLoad: async () => {
     const session = await getCurrentSession();
     if (!session) {

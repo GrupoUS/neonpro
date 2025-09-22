@@ -111,7 +111,7 @@ export interface PricingRuleFilters {
 }
 
 // Predefined pricing rule templates
-export const _PRICING_RULE_TEMPLATES = {
+export const PRICING_RULE_TEMPLATES = {
   HAPPY_HOUR: {
     name: 'Happy Hour Discount',
     rule_type: 'time_based' as PricingRuleType,
@@ -182,7 +182,7 @@ export function calculatePricing(
   // Sort rules by priority (highest first)
   const sortedRules = rules
     .filter(rule => rule.is_active)
-    .sort(_(a,_b) => b.priority - a.priority);
+    .sort((a, b) => b.priority - a.priority);
 
   for (const rule of sortedRules) {
     if (shouldApplyRule(rule, _context)) {

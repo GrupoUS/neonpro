@@ -107,7 +107,7 @@ export function AppointmentBooking({
     includeNoShowRisk: true,
   });
 
-  const { data: _availability, isLoading: availabilityLoading } = useAppointmentAvailability({
+  const { data: availability, isLoading: availabilityLoading } = useAppointmentAvailability({
     date: selectedDate,
     professionalId: professionalId || '',
     duration: 60, // Default 1 hour slots
@@ -209,7 +209,7 @@ export function AppointmentBooking({
         {dayAppointments.length > 0 && (
           <div className='absolute -bottom-1 left-1/2 transform -translate-x-1/2'>
             <div className='flex gap-1'>
-              {dayAppointments.slice(0, 3).map(_(apt, _index) => (
+              {dayAppointments.slice(0, 3).map((apt, _index) => (
                 <div
                   key={apt.id}
                   className={cn(
@@ -261,7 +261,7 @@ export function AppointmentBooking({
               disabled={date => date < new Date()}
               className='rounded-md border'
               components={{
-                DayContent: (_{ date }) => renderDayContent(date),
+                DayContent: ({ date }) => renderDayContent(date),
               }}
             />
 
@@ -332,7 +332,7 @@ export function AppointmentBooking({
             </div>
 
             {/* Book Appointment Button */}
-            {selectedTime && (_<div className='mt-4'>
+            {selectedTime && (<div className='mt-4'>
                 <Dialog
                   open={isBookingDialogOpen}
                   onOpenChange={setIsBookingDialogOpen}
@@ -516,7 +516,7 @@ function AppointmentBookingForm({
       <div className='space-y-2'>
         <label className='text-sm font-medium'>Lembretes</label>
         <div className='space-y-2'>
-          {Object.entries(formData.reminderPreferences).map(_([key,_value]) => (
+          {Object.entries(formData.reminderPreferences).map(([key, value]) => (
             <label key={key} className='flex items-center space-x-2'>
               <input
                 type='checkbox'

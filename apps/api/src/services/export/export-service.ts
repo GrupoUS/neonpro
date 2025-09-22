@@ -100,7 +100,7 @@ export class ExportService {
   ): Promise<ExportJob[]> {
     const userJobs = Array.from(this.ACTIVE_JOBS.values())
       .filter(job => job.userId === _userId)
-      .sort(_(a,_b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .sort((a,_b) => b.createdAt.getTime() - a.createdAt.getTime())
       .slice(0, limit);
 
     return userJobs;
@@ -161,7 +161,7 @@ export class ExportService {
         DEFAULT_EXPORT_FIELDS,
         processedData.length,
       );
-    } catch (_error) {
+    } catch (error) {
       job.status = 'failed';
       job.error = error instanceof Error ? error.message : 'Erro desconhecido';
       job.updatedAt = new Date();
@@ -258,7 +258,7 @@ export class ExportService {
       });
     });
 
-    const _csv = Papa.unparse({
+    const csv = Papa.unparse({
       fields: headers,
       data: csvData,
     });
@@ -304,7 +304,7 @@ export class ExportService {
   }
 
   static async cleanupExpiredJobs(): Promise<void> {
-    const _now = new Date();
+    const now = new Date();
 
     for (const [jobId, job] of this.ACTIVE_JOBS.entries()) {
       if (job.result && job.result.expiresAt < now) {

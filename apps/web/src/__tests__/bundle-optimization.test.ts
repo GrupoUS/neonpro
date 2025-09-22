@@ -17,16 +17,16 @@ import { VideoConsultation } from '@/components/telemedicine';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LibraryLoading } from '@/lib/utils';
 
-describe(_'Bundle Optimization Tests',_() => {
-  beforeEach(_() => {
+describe(('Bundle Optimization Tests', () => {
+  beforeEach(() => {
     // Reset any mocked modules
     vi.clearAllMocks();
   });
 
-  describe(_'Chart Component Lazy Loading',_() => {
-    it(_'should render chart with loading state',_async () => {
+  describe(('Chart Component Lazy Loading', () => {
+    it(_'should render chart with loading state',async () => {
       // Mock chart data
-      const _chartData = [
+      const chartData = [
         { name: 'Jan', value: 100 },
         { name: 'Feb', value: 200 },
         { name: 'Mar', value: 150 },
@@ -51,12 +51,12 @@ describe(_'Bundle Optimization Tests',_() => {
       expect(screen.getByText(/Carregando gráfico/i)).toBeInTheDocument();
 
       // After lazy loading, content should be visible
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.getByText('Test Chart Content')).toBeInTheDocument();
       });
     });
 
-    it(_'should handle chart tooltip lazy loading',_async () => {
+    it(_'should handle chart tooltip lazy loading',async () => {
       const tooltipContent = React.createElement(
         ChartTooltipContent,
         null,
@@ -70,8 +70,8 @@ describe(_'Bundle Optimization Tests',_() => {
     });
   });
 
-  describe(_'Telemedicine Component Lazy Loading',_() => {
-    it(_'should render VideoConsultation with loading state',_async () => {
+  describe(('Telemedicine Component Lazy Loading', () => {
+    it(_'should render VideoConsultation with loading state',async () => {
       render(
         React.createElement(
           Suspense,
@@ -88,14 +88,14 @@ describe(_'Bundle Optimization Tests',_() => {
       expect(screen.getByText(/Carregando telemedicina/i)).toBeInTheDocument();
 
       // Component should eventually load (though in test environment it may not fully initialize)
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.queryByText(/Carregando telemedicina/i)).not.toBeInTheDocument();
       }, { timeout: 5000 });
     });
   });
 
-  describe(_'Loading Components',_() => {
-    it(_'should render LibraryLoading component',_() => {
+  describe(('Loading Components', () => {
+    it(('should render LibraryLoading component', () => {
       render(
         React.createElement(LibraryLoading, { message: 'Test Loading' }),
       );
@@ -104,7 +104,7 @@ describe(_'Bundle Optimization Tests',_() => {
       expect(screen.getByRole('status')).toBeInTheDocument();
     });
 
-    it(_'should use default message when none provided',_() => {
+    it(('should use default message when none provided', () => {
       render(
         React.createElement(LibraryLoading),
       );
@@ -113,8 +113,8 @@ describe(_'Bundle Optimization Tests',_() => {
     });
   });
 
-  describe(_'Performance Metrics',_() => {
-    it(_'should validate bundle size reduction',_() => {
+  describe(('Performance Metrics', () => {
+    it(('should validate bundle size reduction', () => {
       // This test validates that our optimizations are working
       // In a real CI/CD environment, this would check actual bundle sizes
 
@@ -133,7 +133,7 @@ describe(_'Bundle Optimization Tests',_() => {
       };
 
       // Validate that optimizations are working
-      Object.entries(bundleSizes).forEach(_([chunk,_currentSize]) => {
+      Object.entries(bundleSizes).forEach(([chunk, currentSize]) => {
         const targetSize = targetSizes[chunk as keyof typeof targetSizes];
         const reduction = ((currentSize - targetSize) / currentSize) * 100;
 
@@ -149,7 +149,7 @@ describe(_'Bundle Optimization Tests',_() => {
       });
     });
 
-    it(_'should validate code splitting effectiveness',_() => {
+    it(('should validate code splitting effectiveness', () => {
       // This test validates that our code splitting strategy is working
 
       // Expected chunks that should exist after optimization
@@ -171,8 +171,8 @@ describe(_'Bundle Optimization Tests',_() => {
     });
   });
 
-  describe(_'Healthcare Compliance',_() => {
-    it(_'should maintain LGPD compliance with lazy loading',_() => {
+  describe(('Healthcare Compliance', () => {
+    it(('should maintain LGPD compliance with lazy loading', () => {
       // Validate that lazy loading doesn't compromise data privacy
       const mockPatientData = {
         id: 'patient-123',
@@ -181,13 +181,13 @@ describe(_'Bundle Optimization Tests',_() => {
       };
 
       // This would test that lazy-loaded components still handle PHI properly
-      expect(_() => {
+      expect(() => {
         // Simulate lazy-loaded component handling sensitive data
         JSON.stringify(mockPatientData);
       }).not.toThrow();
     });
 
-    it(_'should maintain CFM compliance with lazy loading',_() => {
+    it(('should maintain CFM compliance with lazy loading', () => {
       // Validate that medical components maintain compliance when lazy-loaded
       const mockSessionData = {
         sessionId: 'session-456',
@@ -197,23 +197,23 @@ describe(_'Bundle Optimization Tests',_() => {
       };
 
       // This would test that lazy-loaded telemedicine components maintain compliance
-      expect(_() => {
+      expect(() => {
         // Simulate lazy-loaded medical session handling
         JSON.stringify(mockSessionData);
       }).not.toThrow();
     });
   });
 
-  describe(_'Error Handling',_() => {
-    it(_'should handle lazy loading errors gracefully',_async () => {
+  describe(('Error Handling', () => {
+    it(_'should handle lazy loading errors gracefully',async () => {
       // Mock a failed lazy import
-      vi.doMock(_'recharts',_() => {
+      vi.doMock(('recharts', () => {
         throw new Error('Failed to load module');
       });
 
       // This test would validate error boundaries around lazy-loaded components
       // For now, we'll just validate the test structure
-      expect(_() => {
+      expect(() => {
         render(
           React.createElement(
             ChartContainer,

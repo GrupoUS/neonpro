@@ -141,7 +141,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
   /**
    * Detect touch interactions
    */
-  const detectTouchUser = useCallback(_() => {
+  const detectTouchUser = useCallback(() => {
     setNavigationState(prev => ({
       ...prev,
       lastInteractionType: 'touch',
@@ -323,7 +323,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
   /**
    * Create skip links
    */
-  const createSkipLinks = useCallback(_() => {
+  const createSkipLinks = useCallback(() => {
     if (finalConfig.skipLinks.length === 0) return null;
 
     const skipLinksData = finalConfig.skipLinks
@@ -427,7 +427,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
   /**
    * Restore focus to last focused element
    */
-  const restoreFocus = useCallback(_() => {
+  const restoreFocus = useCallback(() => {
     if (finalConfig.restoreFocus && lastFocusedElementRef.current) {
       lastFocusedElementRef.current.focus();
     }
@@ -436,19 +436,19 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
   /**
    * Trap focus within container
    */
-  const trapFocus = useCallback(_() => {
+  const trapFocus = useCallback(() => {
     setNavigationState(prev => ({ ...prev, focusTrapped: true }));
   }, []);
 
   /**
    * Release focus trap
    */
-  const releaseFocusTrap = useCallback(_() => {
+  const releaseFocusTrap = useCallback(() => {
     setNavigationState(prev => ({ ...prev, focusTrapped: false }));
   }, []);
 
   // Set up event listeners
-  useEffect(_() => {
+  useEffect(() => {
     const handleKeyDown = (_event: any) => {
       detectKeyboardUser(event);
       detectExternalKeyboard(event);
@@ -490,7 +490,7 @@ export function useMobileKeyboardNavigation(config: Partial<FocusConfig> = {}) {
   ]);
 
   // Update focusable elements when container changes
-  useEffect(_() => {
+  useEffect(() => {
     if (containerRef.current) {
       focusableElementsRef.current = getFocusableElements();
     }

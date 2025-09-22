@@ -24,7 +24,7 @@ export function useEventFilters() {
   }, [applyFilters]);
 
   // Filter events based on current filters
-  const locallyFilteredEvents = useMemo(_() => {
+  const locallyFilteredEvents = useMemo(() => {
     if (!currentFilters) return filteredEvents;
 
     return filteredEvents.filter(event => {
@@ -93,7 +93,7 @@ export function useEventFilters() {
   }, [filteredEvents, currentFilters]);
 
   // Get available filter options from current events
-  const filterOptions = useMemo(_() => {
+  const filterOptions = useMemo(() => {
     if (loading) {
       return {
         statuses: [],
@@ -114,7 +114,7 @@ export function useEventFilters() {
 
     return {
       statuses,
-      priorities: priorities.sort(_(a,_b) => a - b),
+      priorities: priorities.sort((a, b) => a - b),
       patients: patientIds,
       professionals: professionalIds,
       clinics: clinicIds,
@@ -124,7 +124,7 @@ export function useEventFilters() {
 
   // Quick filter presets
   const applyQuickFilter = useCallback((preset: 'today' | 'week' | 'month' | 'upcoming') => {
-    const _now = new Date();
+    const now = new Date();
     let filters: EventFilterOptions = {};
 
     switch (preset) {

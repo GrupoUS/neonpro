@@ -23,19 +23,19 @@ const mockLGPDService = {
 
 // Wire route service imports to our mocks
 vi.mock(_'../../../services/patient-service',_() => ({
-  PatientService: vi.fn().mockImplementation(_() => mockPatientService),
+  PatientService: vi.fn().mockImplementation(() => mockPatientService),
 }));
 
 vi.mock(_'../../../services/audit-service',_() => ({
-  ComprehensiveAuditService: vi.fn().mockImplementation(_() => mockAuditService),
+  ComprehensiveAuditService: vi.fn().mockImplementation(() => mockAuditService),
 }));
 
 vi.mock(_'../../../services/lgpd-service',_() => ({
-  LGPDService: vi.fn().mockImplementation(_() => mockLGPDService),
+  LGPDService: vi.fn().mockImplementation(() => mockLGPDService),
 }));
 
 describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     // Mock successful service responses by default
@@ -92,7 +92,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     mockLGPDService.maskSensitiveData.mockImplementation(data => data);
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 

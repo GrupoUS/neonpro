@@ -440,7 +440,7 @@ export class LGPDService {
     try {
       const patientConsents = Array.from(this.consents.values())
         .filter(consent => consent.patientId === patientId)
-        .sort(_(a,_b) => b.consentDate.getTime() - a.consentDate.getTime());
+        .sort((a,_b) => b.consentDate.getTime() - a.consentDate.getTime());
 
       const currentConsent = patientConsents.find(consent => !consent.withdrawalDate) || null;
       const history = patientConsents.flatMap(
@@ -674,13 +674,13 @@ export class LGPDService {
 
       const summary = {
         totalActivities: activities.length,
-        byLegalBasis: activities.reduce(_(acc,_activity) => {
+        byLegalBasis: activities.reduce((acc,_activity) => {
             acc[activity.legalBasis] = (acc[activity.legalBasis] || 0) + 1;
             return acc;
           },
           {} as Record<string, number>,
         ),
-        byPurpose: activities.reduce(_(acc,_activity) => {
+        byPurpose: activities.reduce((acc,_activity) => {
             acc[activity.purpose] = (acc[activity.purpose] || 0) + 1;
             return acc;
           },

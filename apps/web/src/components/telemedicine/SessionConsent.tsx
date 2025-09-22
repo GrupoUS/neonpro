@@ -106,8 +106,7 @@ interface ConsentSection {
 
 export function SessionConsent({
   sessionId,
-  patientId,
-  _professionalId,
+  patientId,professionalId,
   onConsentComplete,
   onConsentRevoke,
   mode = 'initial',
@@ -119,10 +118,10 @@ export function SessionConsent({
   );
 
   // Session consent management
-  const _sessionConsent = useSessionConsent(sessionId);
+  const sessionConsent = useSessionConsent(sessionId);
 
   // LGPD consent management
-  const _lgpdConsent = useLGPDConsent({
+  const lgpdConsent = useLGPDConsent({
     _userId: patientId,
     patientId,
     sessionId,
@@ -279,16 +278,16 @@ export function SessionConsent({
   ];
 
   // Load existing consent
-  useEffect(_() => {
+  useEffect(() => {
     if (consent) {
       setConsentData(prev => ({ ...prev, ...consent }));
     }
   }, [consent]);
 
   // Calculate progress
-  useEffect(_() => {
+  useEffect(() => {
     const requiredSections = consentSections.filter(s => s.required);
-    const _completedRequired = requiredSections.filter(
+    const completedRequired = requiredSections.filter(
       s => consentData[s.id as keyof ConsentData] === true,
     ).length;
 
@@ -322,7 +321,7 @@ export function SessionConsent({
   );
 
   // Validate all required consents
-  const validateRequiredConsents = useCallback(_() => {
+  const validateRequiredConsents = useCallback(() => {
     const requiredSections = consentSections.filter(s => s.required);
     const missingConsents = requiredSections.filter(
       s => !consentData[s.id as keyof ConsentData],
@@ -332,7 +331,7 @@ export function SessionConsent({
   }, [consentData, consentSections]);
 
   // Handle consent submission
-  const handleSubmitConsent = useCallback(_async () => {
+  const handleSubmitConsent = useCallback(async () => {
     if (!validateRequiredConsents()) {
       toast.error('Por favor, complete todos os consentimentos obrigatórios');
       return;
@@ -391,7 +390,7 @@ export function SessionConsent({
   ]);
 
   // Handle consent revocation
-  const handleRevokeConsent = useCallback(_async () => {
+  const handleRevokeConsent = useCallback(async () => {
     try {
       await revokeConsent();
       await logConsentAction({
@@ -525,7 +524,7 @@ export function SessionConsent({
 
               <TabsContent value='current' className='space-y-4'>
                 <div className='grid grid-cols-2 gap-4'>
-                  {Object.entries(consentData).map(_([key,_value]) => (
+                  {Object.entries(consentData).map(([key, value]) => (
                     <div key={key} className='flex justify-between text-sm'>
                       <span className='font-medium'>{key}:</span>
                       <span
@@ -548,7 +547,7 @@ export function SessionConsent({
 
               <TabsContent value='history' className='space-y-4'>
                 <ScrollArea className='h-96'>
-                  {auditTrail.map(_(entry, _index) => (
+                  {auditTrail.map((entry, _index) => (
                     <div
                       key={index}
                       className='flex justify-between text-sm py-2 border-b'
@@ -773,7 +772,7 @@ export function SessionConsent({
       {/* Action Buttons */}
       <div className='flex flex-col sm:flex-row gap-4'>
         {mode === 'review'
-          ? (_<>
+          ? (<>
               <Button
                 variant='destructive'
                 onClick={handleRevokeConsent}

@@ -5,154 +5,154 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe(_'useEnhancedRealTime',_() => {
-  beforeEach(_() => {
+describe(('useEnhancedRealTime', () => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it(_'should export the hook',_() => {
+  it(('should export the hook', () => {
     // Test that the module exists and can be imported
-    expect(_() => {
+    expect(() => {
       const module = require.resolve('../useEnhancedRealTime');
       expect(module).toBeDefined();
     }).not.toThrow();
   });
 
-  it(_'should establish WebSocket connection with <1s latency',_() => {
+  it(('should establish WebSocket connection with <1s latency', () => {
     const { useEnhancedRealTime } = require('../useEnhancedRealTime');
     expect(useEnhancedRealTime).toBeDefined();
     expect(typeof useEnhancedRealTime).toBe('function');
   });
 
-  it(_'should handle real-time patient data updates',_() => {
+  it(('should handle real-time patient data updates', () => {
     const { useEnhancedRealTime } = require('../useEnhancedRealTime');
     expect(useEnhancedRealTime).toBeDefined();
     expect(typeof useEnhancedRealTime).toBe('function');
   });
 
-  it(_'should provide connection status monitoring',_() => {
+  it(('should provide connection status monitoring', () => {
     const { useEnhancedRealTime } = require('../useEnhancedRealTime');
     expect(useEnhancedRealTime).toBeDefined();
     expect(typeof useEnhancedRealTime).toBe('function');
   });
 
-  it(_'should handle network reconnection gracefully',_() => {
+  it(('should handle network reconnection gracefully', () => {
     const { useEnhancedRealTime } = require('../useEnhancedRealTime');
     expect(useEnhancedRealTime).toBeDefined();
     expect(typeof useEnhancedRealTime).toBe('function');
   });
 
-  it(_'should optimize performance for <1s latency',_() => {
+  it(('should optimize performance for <1s latency', () => {
     const { useEnhancedRealTime } = require('../useEnhancedRealTime');
     expect(useEnhancedRealTime).toBeDefined();
     expect(typeof useEnhancedRealTime).toBe('function');
   });
 
-  it(_'should support multiple table subscriptions',_() => {
+  it(('should support multiple table subscriptions', () => {
     const { useEnhancedRealTime } = require('../useEnhancedRealTime');
     expect(useEnhancedRealTime).toBeDefined();
     expect(typeof useEnhancedRealTime).toBe('function');
   });
 
-  it(_'should handle subscription cleanup on unmount',_() => {
+  it(('should handle subscription cleanup on unmount', () => {
     const { useEnhancedRealTime } = require('../useEnhancedRealTime');
     expect(useEnhancedRealTime).toBeDefined();
     expect(typeof useEnhancedRealTime).toBe('function');
   });
 
-  it(_'should provide real-time metrics and monitoring',_() => {
+  it(('should provide real-time metrics and monitoring', () => {
     const { useEnhancedRealTime } = require('../useEnhancedRealTime');
     expect(useEnhancedRealTime).toBeDefined();
     expect(typeof useEnhancedRealTime).toBe('function');
   });
 
-  it(_'should handle authentication state changes',_() => {
+  it(('should handle authentication state changes', () => {
     const { useEnhancedRealTime } = require('../useEnhancedRealTime');
     expect(useEnhancedRealTime).toBeDefined();
     expect(typeof useEnhancedRealTime).toBe('function');
   });
 });
 
-describe(_'useRealTimeNotifications',_() => {
-  beforeEach(_() => {
+describe(('useRealTimeNotifications', () => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it(_'should export the notification hook',_() => {
-    expect(_() => {
+  it(('should export the notification hook', () => {
+    expect(() => {
       const module = require.resolve('../useEnhancedRealTime');
       expect(module).toBeDefined();
     }).not.toThrow();
   });
 
-  it(_'should display toast notifications for real-time changes',_() => {
+  it(('should display toast notifications for real-time changes', () => {
     const { useRealTimeNotifications } = require('../useEnhancedRealTime');
     expect(useRealTimeNotifications).toBeDefined();
     expect(typeof useRealTimeNotifications).toBe('function');
   });
 
-  it(_'should support different notification types',_() => {
+  it(('should support different notification types', () => {
     const { useRealTimeNotifications } = require('../useEnhancedRealTime');
     expect(useRealTimeNotifications).toBeDefined();
     expect(typeof useRealTimeNotifications).toBe('function');
   });
 
-  it(_'should handle notification preferences',_() => {
+  it(('should handle notification preferences', () => {
     const { useRealTimeNotifications } = require('../useEnhancedRealTime');
     expect(useRealTimeNotifications).toBeDefined();
     expect(typeof useRealTimeNotifications).toBe('function');
   });
 
-  it(_'should support Brazilian Portuguese messages',_() => {
+  it(('should support Brazilian Portuguese messages', () => {
     const { useRealTimeNotifications } = require('../useEnhancedRealTime');
     expect(useRealTimeNotifications).toBeDefined();
     expect(typeof useRealTimeNotifications).toBe('function');
   });
 
-  it(_'should handle notification rate limiting',_() => {
+  it(('should handle notification rate limiting', () => {
     const { useRealTimeNotifications } = require('../useEnhancedRealTime');
     expect(useRealTimeNotifications).toBeDefined();
     expect(typeof useRealTimeNotifications).toBe('function');
   });
 });
 
-describe(_'useRealTimePatientSync',_() => {
-  beforeEach(_() => {
+describe(('useRealTimePatientSync', () => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it(_'should export the patient sync hook',_() => {
-    expect(_() => {
+  it(('should export the patient sync hook', () => {
+    expect(() => {
       const module = require.resolve('../useEnhancedRealTime');
       expect(module).toBeDefined();
     }).not.toThrow();
   });
 
-  it(_'should sync patient data in real-time',_() => {
+  it(('should sync patient data in real-time', () => {
     const { useRealTimePatientSync } = require('../useEnhancedRealTime');
     expect(useRealTimePatientSync).toBeDefined();
     expect(typeof useRealTimePatientSync).toBe('function');
   });
 
-  it(_'should handle optimistic updates',_() => {
+  it(('should handle optimistic updates', () => {
     const { useRealTimePatientSync } = require('../useEnhancedRealTime');
     expect(useRealTimePatientSync).toBeDefined();
     expect(typeof useRealTimePatientSync).toBe('function');
   });
 
-  it(_'should support conflict resolution',_() => {
+  it(('should support conflict resolution', () => {
     const { useRealTimePatientSync } = require('../useEnhancedRealTime');
     expect(useRealTimePatientSync).toBeDefined();
     expect(typeof useRealTimePatientSync).toBe('function');
   });
 
-  it(_'should handle batch updates efficiently',_() => {
+  it(('should handle batch updates efficiently', () => {
     const { useRealTimePatientSync } = require('../useEnhancedRealTime');
     expect(useRealTimePatientSync).toBeDefined();
     expect(typeof useRealTimePatientSync).toBe('function');
   });
 
-  it(_'should maintain data consistency',_() => {
+  it(('should maintain data consistency', () => {
     const { useRealTimePatientSync } = require('../useEnhancedRealTime');
     expect(useRealTimePatientSync).toBeDefined();
     expect(typeof useRealTimePatientSync).toBe('function');

@@ -634,7 +634,7 @@ export class NotificationService {
       console.log(
         "📢 [NotificationService] Healthcare notification service initialized securely",
       );
-    } catch (_error) {
+    } catch (error) {
       console.error("Failed to initialize notification _service:", error);
     }
   }
@@ -651,7 +651,7 @@ export class NotificationService {
       "normal",
       "low",
     ];
-    priorities.forEach(_(priority) => {
+    priorities.forEach((priority) => {
       this.notificationQueue.set(priority, []);
     });
   }
@@ -664,7 +664,7 @@ export class NotificationService {
       clearInterval(this.processingTimer);
     }
 
-    this.processingTimer = setInterval(_() => {
+    this.processingTimer = setInterval(() => {
       this.processQueue();
     }, this.config.processingInterval);
   }
@@ -746,7 +746,7 @@ export class NotificationService {
       );
 
       return validatedNotification;
-    } catch (_error) {
+    } catch (error) {
       console.error("Failed to create notification:", error);
       throw error;
     }
@@ -953,7 +953,7 @@ export class NotificationService {
         // Process batch
         await this.processBatch(batch);
       }
-    } catch (_error) {
+    } catch (error) {
       console.error("Error processing notification queue:", error);
     }
   }
@@ -987,7 +987,7 @@ export class NotificationService {
    * Process notification batch
    */
   private async processBatch(notifications: Notification[]): Promise<void> {
-    const promises = notifications.map(_(notification) =>
+    const promises = notifications.map((notification) =>
       this.processNotification(notification),
     );
     await Promise.allSettled(promises);
@@ -1033,7 +1033,7 @@ export class NotificationService {
       for (const channel of notification.channels) {
         await this.deliverToChannel(notification, channel);
       }
-    } catch (_error) {
+    } catch (error) {
       console.error(
         `Failed to process notification ${notification.id}:`,
         error,
@@ -1052,7 +1052,7 @@ export class NotificationService {
     let notification: Notification | undefined;
 
     for (const [_priority, queue] of this.notificationQueue.entries()) {
-      const index = queue.findIndex(_(n) => n.id === notificationId);
+      const index = queue.findIndex((n) => n.id === notificationId);
       if (index !== -1) {
         notification = queue.splice(index, 1)[0];
         break;
@@ -1131,7 +1131,7 @@ export class NotificationService {
 
       // Update status to delivered
       await this.updateNotificationStatus(notification.id, "delivered");
-    } catch (_error) {
+    } catch (error) {
       console.error(
         `Failed to deliver notification ${notification.id} via ${channel}:`,
         error,
@@ -1396,7 +1396,7 @@ export class NotificationService {
         allowed: result.allowed,
         retryAfter: result.retryAfter,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Rate limit check failed:", error);
       // Fail open for healthcare notifications to ensure delivery
       return { allowed: true };
@@ -1498,8 +1498,8 @@ export class NotificationService {
     overrideDelay?: number,
   ): Promise<void> {
     const lastAttempt = notification.deliveryAttempts
-      .filter(_(attempt) => attempt.channel === channel)
-      .sort(_(a,_b) =>
+      .filter((attempt) => attempt.channel === channel)
+      .sort((a,_b) =>
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       )[0];
 
@@ -1585,7 +1585,7 @@ export class NotificationService {
 /**
  * Default notification service instance with healthcare-optimized settings
  */
-export const _notificationService = new NotificationService({
+export const notificationService = new NotificationService({
   enabled: true,
   maxQueueSize: 5000, // Larger queue for healthcare
   batchSize: 25, // Smaller batches for better control

@@ -99,7 +99,7 @@ const complianceReportSchema = z.object({
   ]),
 });
 
-export const _telemedicineRouter = router({
+export const telemedicineRouter = router({
   /**
    * Session Management Endpoints
    */
@@ -170,7 +170,7 @@ export const _telemedicineRouter = router({
             restrictions: licenseVerification.telemedicineAuth.restrictions,
           },
         };
-      } catch (_error) {
+      } catch (error) {
         console.error('Error creating telemedicine session:', error);
 
         if (error instanceof TRPCError) {
@@ -216,7 +216,7 @@ export const _telemedicineRouter = router({
         });
 
         return sessionDetails;
-      } catch (_error) {
+      } catch (error) {
         console.error('Error joining telemedicine session:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -266,7 +266,7 @@ export const _telemedicineRouter = router({
         });
 
         return sessionSummary;
-      } catch (_error) {
+      } catch (error) {
         console.error('Error ending telemedicine session:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -293,7 +293,7 @@ export const _telemedicineRouter = router({
           recording: sessionStatus.recording,
           createdAt: sessionStatus.session.scheduledFor,
         };
-      } catch (_error) {
+      } catch (error) {
         console.error('Error getting session status:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -317,7 +317,7 @@ export const _telemedicineRouter = router({
   //         input.documents,
   //         input.enableBiometric,
   //       );
-  //     } catch (_error) {
+  //     } catch (error) {
   //       console.error('Error verifying patient identity:', error);
   //       throw new TRPCError({
   //         code: 'INTERNAL_SERVER_ERROR',
@@ -356,7 +356,7 @@ export const _telemedicineRouter = router({
   //         verified: false,
   //         verificationDate: new Date(),
   //       });
-  //     } catch (_error) {
+  //     } catch (error) {
   //       console.error('Error verifying patient address:', error);
   //       throw new TRPCError({
   //         code: 'INTERNAL_SERVER_ERROR',
@@ -380,7 +380,7 @@ export const _telemedicineRouter = router({
   //         input.physicianState,
   //         input.requestedSpecialty,
   //       );
-  //     } catch (_error) {
+  //     } catch (error) {
   //       console.error('Error verifying medical license:', error);
   //       throw new TRPCError({
   //         code: 'INTERNAL_SERVER_ERROR',
@@ -408,7 +408,7 @@ export const _telemedicineRouter = router({
   //         input.consultationState,
   //         input.specialty,
   //       );
-  //     } catch (_error) {
+  //     } catch (error) {
   //       console.error('Error checking telemedicine authorization:', error);
   //       throw new TRPCError({
   //         code: 'INTERNAL_SERVER_ERROR',
@@ -437,7 +437,7 @@ export const _telemedicineRouter = router({
         });
 
         return consent;
-      } catch (_error) {
+      } catch (error) {
         console.error('Error recording patient consent:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -468,7 +468,7 @@ export const _telemedicineRouter = router({
           input.patientId,
           input.consentType,
         );
-      } catch (_error) {
+      } catch (error) {
         console.error('Error getting consent status:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -494,7 +494,7 @@ export const _telemedicineRouter = router({
           dateRange: input.dateRange,
           reportType: input.reportType,
         });
-      } catch (_error) {
+      } catch (error) {
         console.error('Error generating compliance report:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -510,7 +510,7 @@ export const _telemedicineRouter = router({
     .query(_async ({ input }) => {
       try {
         return await cfmService.getSessionAuditTrail(input.sessionId);
-      } catch (_error) {
+      } catch (error) {
         console.error('Error getting session audit trail:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -546,7 +546,7 @@ export const _telemedicineRouter = router({
           limit: input.limit,
           offset: input.offset,
         };
-      } catch (_error) {
+      } catch (error) {
         console.error('Error listing active sessions:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -590,7 +590,7 @@ export const _telemedicineRouter = router({
         });
 
         return { success: true };
-      } catch (_error) {
+      } catch (error) {
         console.error('Error sending WebRTC signal:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -614,7 +614,7 @@ export const _telemedicineRouter = router({
           recordingType: null,
           startedAt: null,
         };
-      } catch (_error) {
+      } catch (error) {
         console.error('Error getting recording status:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -662,7 +662,7 @@ export const _telemedicineRouter = router({
           startedAt: new Date(),
           startedBy: ctx.userId,
         };
-      } catch (_error) {
+      } catch (error) {
         console.error('Error starting recording:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
@@ -686,7 +686,7 @@ export const _telemedicineRouter = router({
           stoppedAt: new Date(),
           duration: recordingResult.duration,
         };
-      } catch (_error) {
+      } catch (error) {
         console.error('Error stopping recording:', error);
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',

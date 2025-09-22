@@ -130,10 +130,10 @@ export function useServicesByCategory(clinicId?: string) {
   const { data: services } = useServiceTypes(clinicId);
   const { data: categories } = useServiceCategories(clinicId);
 
-  const servicesByCategory = React.useMemo(_() => {
+  const servicesByCategory = React.useMemo(() => {
     if (!services || !categories) return {};
 
-    return categories.reduce(_(acc,_category) => {
+    return categories.reduce((acc, category) => {
         acc[category] = services.filter(
           service => service.category === category,
         );

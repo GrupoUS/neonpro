@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-export const _Route = createFileRoute('/dashboard/main')({
+export const Route = createFileRoute('/dashboard/main')({
   component: DashboardMain,
 });
 
@@ -103,7 +103,7 @@ function DashboardMain() {
   const navigate = useNavigate();
 
   // Redirect to login if not authenticated
-  useEffect(_() => {
+  useEffect(() => {
     if (!loading && !isAuthenticated) {
       navigate({ to: '/auth/login' });
     }
@@ -248,7 +248,7 @@ function DashboardMain() {
   ];
 
   // Initialize data
-  useEffect(_() => {
+  useEffect(() => {
     setAiInsights(mockAIInsights);
     setRealTimeUpdates(mockRealTimeUpdates);
   }, []);
@@ -319,7 +319,7 @@ function DashboardMain() {
     },
   ];
 
-  const handlePatientClick = (_patientId: any) => {
+  const handlePatientClick = (patientId: any) => {
     navigate({ to: '/patients/$patientId', params: { patientId } });
   };
 
@@ -342,7 +342,7 @@ function DashboardMain() {
     {
       accessorKey: 'riskScore',
       header: 'Risco',
-      cell: (_info: any) => {
+      cell: (info: any) => {
         const score = info.getValue();
         let variant: 'default' | 'destructive' | 'outline' | 'secondary' = 'default';
         let label = 'Baixo';
@@ -361,9 +361,9 @@ function DashboardMain() {
     {
       id: 'actions',
       header: 'Ações',
-      cell: (_info: any) => {
+      cell: (info: any) => {
         const patient = info.row.original;
-        return (_<div className='flex gap-2'>
+        return (<div className='flex gap-2'>
             <Button
               variant='outline'
               size='sm'
@@ -442,7 +442,7 @@ function DashboardMain() {
             </span>
           </div>
           <div className='space-y-1'>
-            {realTimeUpdates.slice(0, 2).map(_(update, _index) => (
+            {realTimeUpdates.slice(0, 2).map((update, index) => (
               <div
                 key={index}
                 className='text-xs sm:text-sm text-green-700 flex items-center gap-1'
@@ -486,7 +486,7 @@ function DashboardMain() {
               Métricas principais
             </h2>
             <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
-              {metricsCards.map(_(metric, _index) => (
+              {metricsCards.map((metric, index) => (
                 <Card
                   key={metric.title}
                   className='transition-all hover:shadow-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'

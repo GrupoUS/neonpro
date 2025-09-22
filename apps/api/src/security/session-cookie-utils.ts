@@ -169,7 +169,7 @@ export class SessionCookieUtils {
         sessionId,
         warnings: warnings.length > 0 ? warnings : undefined,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         isValid: false,
         error: 'Failed to parse session cookies',

@@ -196,17 +196,17 @@ export class MonitoringService {
    */
   private startMonitoring(): void {
     // Health checks every 30 seconds
-    this.healthCheckInterval = setInterval(_() => this.performHealthChecks(),
+    this.healthCheckInterval = setInterval(() => this.performHealthChecks(),
       30000,
     );
 
     // Metrics collection every 10 seconds
-    this.metricsInterval = setInterval(_() => this.collectMetrics(),
+    this.metricsInterval = setInterval(() => this.collectMetrics(),
       10000,
     );
 
     // Cleanup old data every hour
-    this.cleanupInterval = setInterval(_() => this.cleanupOldData(),
+    this.cleanupInterval = setInterval(() => this.cleanupOldData(),
       3600000,
     );
   }
@@ -230,7 +230,7 @@ export class MonitoringService {
 
       // Security health
       await this.checkSecurityHealth();
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       logger.error('Health check failed:', error);
     }
@@ -275,7 +275,7 @@ export class MonitoringService {
       if (!health.cache.healthy || !health.database.healthy) {
         logger.error('Service health check failed', health);
       }
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       logger.error('Service health check error:', error);
     }
@@ -290,14 +290,14 @@ export class MonitoringService {
       const startTime = Date.now();
 
       // This would be implemented with actual database health checks
-      const _dbHealthy = true; // Placeholder
+      const dbHealthy = true; // Placeholder
 
       const responseTime = Date.now() - startTime;
 
       if (responseTime > 2000) { // > 2s is concerning
         logger.warn('Slow database response', { responseTime });
       }
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       logger.error('Database health check failed:', error);
     }
@@ -316,7 +316,7 @@ export class MonitoringService {
       if (stats.hitRate < 0.3) {
         logger.warn('Low cache hit rate', { hitRate: stats.hitRate });
       }
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       logger.error('Cache health check failed:', error);
     }
@@ -327,7 +327,7 @@ export class MonitoringService {
    */
   private async checkSecurityHealth(): Promise<void> {
     try {
-      const _errorTracking = getErrorTrackingHealth();
+      const errorTracking = getErrorTrackingHealth();
 
       // Check for recent security events
       const recentEvents = this.securityEvents.filter(
@@ -337,7 +337,7 @@ export class MonitoringService {
       if (recentEvents.length > 10) {
         logger.error('High volume of security events detected', { count: recentEvents.length });
       }
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       logger.error('Security health check failed:', error);
     }
@@ -357,7 +357,7 @@ export class MonitoringService {
 
       // Update AI metrics
       await this.updateAIMetrics();
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       logger.error('Metrics collection failed:', error);
     }
@@ -371,7 +371,7 @@ export class MonitoringService {
       try {
         const cacheStats = await this.dataService.getCacheStats();
         this.metrics.performance.cacheHitRate = cacheStats.customStats?.hitRate || 0;
-      } catch (_error) {
+      } catch (error) {
       // Error caught but not used - handled by surrounding logic
         logger.error('Failed to update performance metrics:', error);
       }
@@ -673,6 +673,6 @@ interface Recommendation {
 /**
  * Global monitoring service instance
  */
-export const _monitoringService = new MonitoringService();
+export const monitoringService = new MonitoringService();
 
 export default MonitoringService;

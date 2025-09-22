@@ -155,7 +155,7 @@ export class EnhancedAIDataService extends AIDataService {
       }
 
       return data;
-    } catch (_error) {
+    } catch (error) {
       console.error(`[EnhancedAIDataService] Error in getWithCache for ${intent}:`, error);
       throw error;
     }
@@ -204,7 +204,7 @@ export class EnhancedAIDataService extends AIDataService {
    * Get clients by name with caching
    */
   async getClientsByName(parameters: QueryParameters): Promise<any[]> {
-    return this.getWithCache(_'client_data',_parameters,_async () => {
+    return this.getWithCache(_'client_data',parameters,_async () => {
       return super.getClientsByName(parameters);
     });
   }
@@ -213,7 +213,7 @@ export class EnhancedAIDataService extends AIDataService {
    * Get appointments by date range with caching
    */
   async getAppointmentsByDate(parameters: QueryParameters): Promise<any[]> {
-    return this.getWithCache(_'appointments',_parameters,_async () => {
+    return this.getWithCache(_'appointments',parameters,_async () => {
       return super.getAppointmentsByDate(parameters);
     });
   }
@@ -222,7 +222,7 @@ export class EnhancedAIDataService extends AIDataService {
    * Get financial summary with caching
    */
   async getFinancialSummary(parameters: QueryParameters): Promise<any> {
-    return this.getWithCache(_'financial',_parameters,_async () => {
+    return this.getWithCache(_'financial',parameters,_async () => {
       return super.getFinancialSummary(parameters);
     });
   }
@@ -267,7 +267,7 @@ export class EnhancedAIDataService extends AIDataService {
       for (const key of keys) {
         await this.cache.delete(key);
       }
-    } catch (_error) {
+    } catch (error) {
       console.error(`[EnhancedAIDataService] Error clearing cache for ${intent}:`, error);
     }
   }
@@ -321,7 +321,7 @@ export class EnhancedAIDataService extends AIDataService {
       }
 
       return { healthy: true };
-    } catch (_error) {
+    } catch (error) {
       return {
         healthy: false,
         message: `Cache health check failed: ${
@@ -336,7 +336,7 @@ export class EnhancedAIDataService extends AIDataService {
    */
   private async databaseHealthCheck(): Promise<{ healthy: boolean; message?: string }> {
     try {
-      const { data: _data, error } = await this.supabase
+      const { data: data, error } = await this.supabase
         .from('clients')
         .select('count', { count: 'exact', head: true })
         .limit(1);
@@ -346,7 +346,7 @@ export class EnhancedAIDataService extends AIDataService {
       }
 
       return { healthy: true };
-    } catch (_error) {
+    } catch (error) {
       return {
         healthy: false,
         message: `Database health check failed: ${

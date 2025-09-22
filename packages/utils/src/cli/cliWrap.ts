@@ -163,7 +163,7 @@ export class CLIWrapper {
         },
       });
     } else {
-      const commands = Array.from(this.commands.entries()).map(_([name,_cmd]) => ({
+      const commands = Array.from(this.commands.entries()).map(([name, cmd]) => ({
           name,
           description: cmd.description,
         }),
@@ -216,7 +216,7 @@ export class CLIWrapper {
       const command = this.commands.get(parsed.command)!;
 
       // Execute command with timeout
-      const timeoutId = setTimeout(_() => {
+      const timeoutId = setTimeout(() => {
         exitError(
           `Command '${parsed.command}' timed out after ${this.config.timeout}ms`,
           124,
@@ -228,11 +228,11 @@ export class CLIWrapper {
           command.handler(parsed.positional, parsed.options),
         );
         clearTimeout(timeoutId);
-      } catch (_error) {
+      } catch (error) {
         clearTimeout(timeoutId);
         throw error;
       }
-    } catch (_error) {
+    } catch (error) {
       const errorDetails =
         error instanceof Error
           ? {

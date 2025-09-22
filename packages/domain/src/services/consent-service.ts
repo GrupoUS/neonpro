@@ -38,7 +38,7 @@ export class ConsentDomainService {
     // Validate request
     const validationErrors = ConsentValidator.validateRequest(_request);
     if (validationErrors.length > 0) {
-      throw new Error(`Invalid consent _request: ${validationErrors.join(', ')}`);
+      throw new Error(`Invalid consent _request: ${validationErrors.join(', _)}`);
     }
 
     // Create consent record
@@ -150,7 +150,7 @@ export class ConsentDomainService {
     const consents = await this.repository.findByPatientId(patientId, true);
     
     const violations: ComplianceViolation[] = [];
-    const _now = new Date();
+    const now = new Date();
     let isCompliant = true;
     let riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' = 'LOW';
 
@@ -160,7 +160,7 @@ export class ConsentDomainService {
         if (consent.status !== 'EXPIRED') {
           violations.push({
             id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            type: 'EXPIRED_CONSENT_NOT_MARKED',
+            type: 'EXPIRED_CONSENT_NOT_MARKED_,
             severity: 'MEDIUM',
             description: `Consent ${consent.id} has expired but is not marked as expired`,
             affectedConsentId: consent.id,
@@ -183,7 +183,7 @@ export class ConsentDomainService {
     if (expiringSoon.length > 0) {
       violations.push({
         id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        type: 'CONSENT_EXPIRING_SOON',
+        type: 'CONSENT_EXPIRING_SOON_,
         severity: 'LOW',
         description: `${expiringSoon.length} consent(s) expiring within 30 days`,
         recommendation: 'Renew expiring consents',
@@ -193,14 +193,14 @@ export class ConsentDomainService {
 
     // Check for missing essential consents (data processing)
     const hasDataProcessingConsent = consents.some(consent =>
-      consent.consentType === 'data_processing' &&
+      consent.consentType === 'data_processing_ &&
       consent.status === 'ACTIVE'
     );
 
     if (!hasDataProcessingConsent) {
       violations.push({
         id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        type: 'MISSING_DATA_PROCESSING_CONSENT',
+        type: 'MISSING_DATA_PROCESSING_CONSENT_,
         severity: 'HIGH',
         description: 'Patient does not have active data processing consent',
         recommendation: 'Obtain data processing consent immediately',
@@ -211,12 +211,12 @@ export class ConsentDomainService {
     }
 
     // Determine overall compliance status
-    let status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT' = 'COMPLIANT';
+    let status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT' = ''COMPLIANT'
     if (violations.some(v => v.severity === 'HIGH' || v.severity === 'CRITICAL')) {
-      status = 'NON_COMPLIANT';
+      status = ''NON_COMPLIANT'
       isCompliant = false;
     } else if (violations.length > 0) {
-      status = 'PARTIALLY_COMPLIANT';
+      status = ''PARTIALLY_COMPLIANT'
     }
 
     // Generate recommendations

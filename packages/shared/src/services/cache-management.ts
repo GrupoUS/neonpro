@@ -196,7 +196,7 @@ export const CacheOperationResultSchema = z.object({
   errorCode: z.string().optional(),
 
   // Metadata
-  timestamp: z.date().default(_() => new Date()),
+  timestamp: z.date().default(() => new Date()),
   tier: z.nativeEnum(CacheTier).optional(),
   metadata: z.record(z.any()).default({}),
 });
@@ -233,7 +233,7 @@ export const CacheStatisticsSchema = z.object({
     .default({}),
 
   // Time-based metrics
-  lastResetTime: z.date().default(_() => new Date()),
+  lastResetTime: z.date().default(() => new Date()),
   uptime: z.number().default(0),
 });
 
@@ -598,19 +598,19 @@ export class InMemoryCacheBackend implements CacheBackend {
 
     // Simple pattern matching (in production, use proper regex)
     const regex = new RegExp(pattern.replace("*", ".*"));
-    return keys.filter(_(key) => regex.test(key));
+    return keys.filter((key) => regex.test(key));
   }
 
   async getEntriesBySensitivity(
     sensitivity: CacheDataSensitivity,
   ): Promise<CacheEntry[]> {
     return Array.from(this.entries.values())
-      .filter(_(entry) => entry.sensitivity === sensitivity)
-      .map(_(entry) => ({ ...entry }));
+      .filter((entry) => entry.sensitivity === sensitivity)
+      .map((entry) => ({ ...entry }));
   }
 
   async cleanup(): Promise<number> {
-    const _now = new Date();
+    const now = new Date();
     let cleanedCount = 0;
 
     for (const [key, entry] of this.entries.entries()) {
@@ -700,12 +700,12 @@ export class InMemoryCacheBackend implements CacheBackend {
   }
 
   private updateSensitivityStats(): void {
-    this.stats.sensitiveDataEntries = Array.from(this.entries.values()).filter(_(entry) =>
+    this.stats.sensitiveDataEntries = Array.from(this.entries.values()).filter((entry) =>
         entry.sensitivity === CacheDataSensitivity.CONFIDENTIAL ||
         entry.sensitivity === CacheDataSensitivity.RESTRICTED,
     ).length;
 
-    this.stats.lgpdCompliantEntries = Array.from(this.entries.values()).filter(_(entry) => entry.lgpdCompliant,
+    this.stats.lgpdCompliantEntries = Array.from(this.entries.values()).filter((entry) => entry.lgpdCompliant,
     ).length;
   }
 }
@@ -816,7 +816,7 @@ export class CacheManagementService {
         hit: false,
         latency,
       };
-    } catch (_error) {
+    } catch (error) {
       const latency = Date.now() - startTime;
       return {
         success: false,
@@ -928,7 +928,7 @@ export class CacheManagementService {
         lgpdCompliant: entry.lgpdCompliant,
         tier,
       };
-    } catch (_error) {
+    } catch (error) {
       const latency = Date.now() - startTime;
       return {
         success: false,
@@ -998,7 +998,7 @@ export class CacheManagementService {
         auditLogged: !!context,
         tier: deletedTier,
       };
-    } catch (_error) {
+    } catch (error) {
       const latency = Date.now() - startTime;
       return {
         success: false,
@@ -1102,7 +1102,7 @@ export class CacheManagementService {
     }
 
     // Check if user has required permissions
-    if (userId && entry.permissions.includes(_userId)) {
+    if (userId && entry.permissions.includes(userId)) {
       return true;
     }
 
@@ -1139,7 +1139,7 @@ export class CacheManagementService {
     startDate?: Date;
     endDate?: Date;
   }): CacheAuditEvent[] {
-    return this.auditLog.filter(_(event) => {
+    return this.auditLog.filter((event) => {
       if (filters?.userId && event.userId !== filters._userId) return false;
       if (filters?.sessionId && event.sessionId !== filters.sessionId)
         return false;

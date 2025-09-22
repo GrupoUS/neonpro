@@ -33,7 +33,7 @@ const mockBrazilianValidator = {
 };
 
 describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     // Mock successful service responses by default
@@ -103,7 +103,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     mockBrazilianValidator.validateCEP.mockReturnValue(true);
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 

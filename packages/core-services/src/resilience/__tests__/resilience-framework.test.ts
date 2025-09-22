@@ -32,21 +32,21 @@ enum HealthcareAIUseCase {
   SYMPTOMS_ANALYSIS = "symptoms_analysis",
 }
 
-describe(_"Resilience Framework",_() => {
+describe("Resilience Framework", () => {
   let resilienceFramework: ResilienceFramework;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     resilienceFramework = new ResilienceFramework(
       DEFAULT_HEALTHCARE_RESILIENCE_CONFIG,
     );
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     resilienceFramework.resetMetrics();
   });
 
-  describe(_"Circuit Breaker",_() => {
-    test(_"should start in CLOSED state",_() => {
+  describe("Circuit Breaker", () => {
+    test(_"should start in CLOSED state", () => {
       const circuitBreaker = new EnhancedCircuitBreaker(
         "test-service",
         DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.circuitBreaker,
@@ -64,7 +64,7 @@ describe(_"Resilience Framework",_() => {
       // Simulate failures
       for (let i = 0; i < 3; i++) {
         try {
-          await circuitBreaker.execute(_() => Promise.reject(new Error("Service failure")),
+          await circuitBreaker.execute(() => Promise.reject(new Error("Service failure")),
             {
               operation: "test",
               serviceName: "test-service",
@@ -72,7 +72,7 @@ describe(_"Resilience Framework",_() => {
               requiresAudit: false,
             },
           );
-        } catch (_error) {
+        } catch (error) {
           // Expected failures
         }
       }
@@ -86,7 +86,7 @@ describe(_"Resilience Framework",_() => {
         DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.circuitBreaker,
       );
 
-      const result = await circuitBreaker.execute(_() => Promise.resolve("success"),
+      const result = await circuitBreaker.execute(() => Promise.resolve("success"),
         {
           operation: "test",
           serviceName: "test-service",
@@ -118,7 +118,7 @@ describe(_"Resilience Framework",_() => {
     });
   });
 
-  describe(_"Retry Policy",_() => {
+  describe("Retry Policy", () => {
     test(_"should retry on retryable errors",_async () => {
       const retryPolicy = new RetryPolicy({
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.retry,
@@ -234,9 +234,9 @@ describe(_"Resilience Framework",_() => {
     });
   });
 
-  describe(_"Resilience Framework Integration",_() => {
+  describe("Resilience Framework Integration", () => {
     test(_"should execute successful operations",_async () => {
-      const result = await resilienceFramework.execute(_"test-service",_() => Promise.resolve("test-result"),
+      const result = await resilienceFramework.execute(_"test-service", () => Promise.resolve("test-result"),
         {
           operation: "test",
           serviceName: "test-service",
@@ -257,13 +257,13 @@ describe(_"Resilience Framework",_() => {
       let attemptCount = 0;
       const failingOperation = vi
         .fn()
-        .mockImplementationOnce(_() =>
+        .mockImplementationOnce(() =>
           Promise.reject(new Error("First failure")),
         )
-        .mockImplementationOnce(_() =>
+        .mockImplementationOnce(() =>
           Promise.reject(new Error("Second failure")),
         )
-        .mockImplementationOnce(_() => Promise.resolve("success"));
+        .mockImplementationOnce(() => Promise.resolve("success"));
 
       const result = await resilienceFramework.execute(
         "test-service",
@@ -286,10 +286,10 @@ describe(_"Resilience Framework",_() => {
     });
   });
 
-  describe(_"Healthcare Resilience Service",_() => {
+  describe("Healthcare Resilience Service", () => {
     let healthcareResilience: HealthcareResilienceService;
 
-    beforeEach(_() => {
+    beforeEach(() => {
       healthcareResilience = new HealthcareResilienceService({
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG,
         healthcare: {
@@ -321,7 +321,7 @@ describe(_"Resilience Framework",_() => {
         requiresConsent: true,
       };
 
-      const result = await healthcareResilience.executeHealthcareOperation(_"patient-service",_() => Promise.resolve("patient-data"),
+      const result = await healthcareResilience.executeHealthcareOperation(_"patient-service", () => Promise.resolve("patient-data"),
         context,
       );
 
@@ -332,7 +332,7 @@ describe(_"Resilience Framework",_() => {
       expect(metrics.audit.successRate).toBe(1);
     });
 
-    test(_"should generate compliance reports",_() => {
+    test(_"should generate compliance reports", () => {
       const report = healthcareResilience.generateComplianceReport();
 
       expect(report).toHaveProperty("reportPeriod");
@@ -342,8 +342,8 @@ describe(_"Resilience Framework",_() => {
     });
   });
 
-  describe(_"Error Handling",_() => {
-    test(_"should create ResilienceError with proper context",_() => {
+  describe("Error Handling", () => {
+    test(_"should create ResilienceError with proper context", () => {
       const context = {
         operation: "test-operation",
         serviceName: "test-service",
@@ -355,7 +355,7 @@ describe(_"Resilience Framework",_() => {
 
       expect(error.message).toBe("Test error");
       expect(error.type).toBe("TIMEOUT");
-      expect(error._context).toBe(_context);
+      expect(error._context).toBe(context);
       expect(error.name).toBe("ResilienceError");
     });
   });

@@ -70,7 +70,7 @@ export function useCreatePatient() {
 
   return useMutation({
     mutationFn: async ({
-      data,_clinicId,
+      data,clinicId,
     }: {
       data: CreatePatientData;
       clinicId: string;
@@ -81,7 +81,7 @@ export function useCreatePatient() {
       return patientService.createPatient(data, clinicId, user.id);
     },
 
-    onSuccess: (_newPatient,_{ clinicId }) => {
+    onSuccess: (_newPatient, { clinicId }) => {
       // Invalidate patient lists and searches
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
       queryClient.invalidateQueries({
@@ -109,11 +109,11 @@ export function useDebouncedPatientSearch(
   _query: string,
   delay = 300,
 ) {
-  const [debouncedQuery, setDebouncedQuery] = React.useState(_query);
+  const [debouncedQuery, setDebouncedQuery] = React.useState(query);
 
-  React.useEffect(_() => {
-    const timer = setTimeout(_() => {
-      setDebouncedQuery(_query);
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
     }, delay);
 
     return () => clearTimeout(timer);
@@ -218,7 +218,7 @@ export function usePatientsTable(
   } = options || {};
 
   // Set up real-time subscription
-  React.useEffect(_() => {
+  React.useEffect(() => {
     if (!clinicId) return;
 
     const channel = supabase
@@ -365,7 +365,7 @@ export function useUpdatePatient() {
 
   return useMutation({
     mutationFn: async ({
-      patientId,_data,_clinicId,
+      patientId,data, clinicId,
     }: {
       patientId: string;
       data: Partial<CreatePatientData>;
@@ -420,7 +420,7 @@ export function useUpdatePatient() {
       };
     },
 
-    onSuccess: (_updatedPatient,_{ clinicId }) => {
+    onSuccess: (_updatedPatient, { clinicId }) => {
       // Update cache
       queryClient.setQueryData(
         patientKeys.detail(updatedPatient.id),
@@ -452,7 +452,7 @@ export function useDeletePatient() {
 
   return useMutation({
     mutationFn: async ({
-      patientId,_clinicId,
+      patientId,clinicId,
     }: {
       patientId: string;
       clinicId: string;
@@ -479,7 +479,7 @@ export function useDeletePatient() {
       return { patientId };
     },
 
-    onSuccess: (_,_{ patientId,_clinicId }) => {
+    onSuccess: (_, { patientId, clinicId }) => {
       // Remove from cache
       queryClient.removeQueries({ queryKey: patientKeys.detail(patientId) });
 
@@ -508,7 +508,7 @@ export function useBulkDeletePatients() {
 
   return useMutation({
     mutationFn: async ({
-      patientIds,_clinicId,
+      patientIds,clinicId,
     }: {
       patientIds: string[];
       clinicId: string;
@@ -534,9 +534,9 @@ export function useBulkDeletePatients() {
       return { patientIds };
     },
 
-    onSuccess: (_,_{ patientIds,_clinicId }) => {
+    onSuccess: (_, { patientIds, clinicId }) => {
       // Remove from cache
-      patientIds.forEach(_id => {
+      patientIds.forEach(id => {
         queryClient.removeQueries({ queryKey: patientKeys.detail(id) });
       });
 

@@ -6,14 +6,14 @@
 import { describe, expect, it } from "vitest";
 
 describe("LGPD Consent Model (T034)", () => {
-  it(_"should export LGPDConsent type",_() => {
-    expect(_() => {
+  it("should export LGPDConsent type", () => {
+    expect(() => {
       const module = require("../lgpd-consent");
       expect(module.createLGPDConsent).toBeDefined();
     }).not.toThrow();
   });
 
-  it(_"should have required LGPD consent fields",_() => {
+  it("should have required LGPD consent fields", () => {
     const { LGPDConsent } = require("../lgpd-consent");
     const consent: LGPDConsent = {
       id: "consent-123",
@@ -43,7 +43,7 @@ describe("LGPD Consent Model (T034)", () => {
     expect(consent.dataProcessing).toBe(true);
   });
 
-  it(_"should support legal basis types",_() => {
+  it("should support legal basis types", () => {
     const { LegalBasis } = require("../lgpd-consent");
     expect(LegalBasis.CONSENT).toBe("consent");
     expect(LegalBasis.CONTRACT).toBe("contract");
@@ -53,7 +53,7 @@ describe("LGPD Consent Model (T034)", () => {
     expect(LegalBasis.LEGITIMATE_INTERESTS).toBe("legitimate_interests");
   });
 
-  it(_"should support data categories",_() => {
+  it("should support data categories", () => {
     const { DataCategory } = require("../lgpd-consent");
     expect(DataCategory.PERSONAL_DATA).toBe("personal_data");
     expect(DataCategory.SENSITIVE_DATA).toBe("sensitive_data");
@@ -62,7 +62,7 @@ describe("LGPD Consent Model (T034)", () => {
     expect(DataCategory.LOCATION_DATA).toBe("location_data");
   });
 
-  it(_"should support processing purposes",_() => {
+  it("should support processing purposes", () => {
     const { ProcessingPurpose } = require("../lgpd-consent");
     expect(ProcessingPurpose.HEALTHCARE_TREATMENT).toBe("healthcare_treatment");
     expect(ProcessingPurpose.APPOINTMENT_MANAGEMENT).toBe(
@@ -73,7 +73,7 @@ describe("LGPD Consent Model (T034)", () => {
     expect(ProcessingPurpose.ANALYTICS).toBe("analytics");
   });
 
-  it(_"should handle consent withdrawal",_() => {
+  it("should handle consent withdrawal", () => {
     const { withdrawConsent } = require("../lgpd-consent");
 
     const consent = {
@@ -91,7 +91,7 @@ describe("LGPD Consent Model (T034)", () => {
     expect(withdrawn.withdrawalReason).toBe("Patient requested withdrawal");
   });
 
-  it(_"should validate consent completeness",_() => {
+  it("should validate consent completeness", () => {
     const { validateConsentCompleteness } = require("../lgpd-consent");
 
     const completeConsent = {
@@ -114,7 +114,7 @@ describe("LGPD Consent Model (T034)", () => {
     expect(validateConsentCompleteness(incompleteConsent)).toBe(false);
   });
 
-  it(_"should support data retention settings",_() => {
+  it("should support data retention settings", () => {
     const { DataRetentionSettings } = require("../lgpd-consent");
     const retention: DataRetentionSettings = {
       enabled: true,
@@ -130,7 +130,7 @@ describe("LGPD Consent Model (T034)", () => {
     expect(retention.automaticDeletion).toBe(true);
   });
 
-  it(_"should track consent history",_() => {
+  it("should track consent history", () => {
     const { ConsentHistory } = require("../lgpd-consent");
     const history: ConsentHistory = {
       id: "history-123",
@@ -147,7 +147,7 @@ describe("LGPD Consent Model (T034)", () => {
     expect(history.changes).toContain("dataProcessing: false -> true");
   });
 
-  it(_"should generate consent summary",_() => {
+  it("should generate consent summary", () => {
     const { generateConsentSummary } = require("../lgpd-consent");
 
     const consent = {
@@ -165,7 +165,7 @@ describe("LGPD Consent Model (T034)", () => {
     expect(summary).toContain("healthcare_treatment");
   });
 
-  it(_"should check if consent is expired",_() => {
+  it("should check if consent is expired", () => {
     const { isConsentExpired } = require("../lgpd-consent");
 
     const expiredConsent = {
@@ -188,7 +188,7 @@ describe("LGPD Consent Model (T034)", () => {
     expect(isConsentExpired(validConsent)).toBe(false);
   });
 
-  it(_"should support consent renewal",_() => {
+  it("should support consent renewal", () => {
     const { renewConsent } = require("../lgpd-consent");
 
     const oldConsent = {
@@ -204,7 +204,7 @@ describe("LGPD Consent Model (T034)", () => {
     expect(renewed.previousConsentId).toBe("consent-123");
   });
 
-  it(_"should handle data subject rights",_() => {
+  it("should handle data subject rights", () => {
     const { DataSubjectRight } = require("../lgpd-consent");
     expect(DataSubjectRight.ACCESS).toBe("access");
     expect(DataSubjectRight.RECTIFICATION).toBe("rectification");
@@ -213,7 +213,7 @@ describe("LGPD Consent Model (T034)", () => {
     expect(DataSubjectRight.OBJECTION).toBe("objection");
   });
 
-  it(_"should create data subject request",_() => {
+  it("should create data subject request", () => {
     const { createDataSubjectRequest } = require("../lgpd-consent");
 
     const request = createDataSubjectRequest({
@@ -228,7 +228,7 @@ describe("LGPD Consent Model (T034)", () => {
     expect(request.requestDate).toBeInstanceOf(Date);
   });
 
-  it(_"should support LGPD compliance audit",_() => {
+  it("should support LGPD compliance audit", () => {
     const { auditLGPDCompliance } = require("../lgpd-consent");
 
     const consent = {

@@ -598,4 +598,4 @@ Nos vemos em breve! ✨`,
   }
 }
 
-export const _notificationService = new NotificationService();
+export const notificationService = new NotificationService();

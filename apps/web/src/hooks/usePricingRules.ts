@@ -59,7 +59,7 @@ export function useCreatePricingRule() {
 
   return useMutation({
     mutationFn: ({
-      clinicId,_request,
+      clinicId,request,
     }: {
       clinicId: string;
       _request: CreatePricingRuleRequest;
@@ -92,7 +92,7 @@ export function useUpdatePricingRule() {
 
   return useMutation({
     mutationFn: ({
-      id,_request,
+      id,request,
     }: {
       id: string;
       _request: UpdatePricingRuleRequest;
@@ -126,7 +126,7 @@ export function useDeletePricingRule() {
   return useMutation({
     mutationFn: (id: string) => pricingRulesService.deletePricingRule(id),
 
-    onSuccess: (_,_id) => {
+    onSuccess: (_, id) => {
       // Remove from cache
       queryClient.removeQueries({
         queryKey: pricingRuleKeys.detail(id),

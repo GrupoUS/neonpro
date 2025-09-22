@@ -356,7 +356,7 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
       },
       statusCode,
     );
-  } catch (_error) {
+  } catch (error) {
     console.error('Bulk actions endpoint error:', error);
 
     // Handle validation errors

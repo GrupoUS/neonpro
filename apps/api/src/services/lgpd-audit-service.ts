@@ -192,7 +192,7 @@ export class LGPDAuditService {
         operationId: `audit_${auditEntry.id}`,
         timestamp: new Date().toISOString(),
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -254,7 +254,7 @@ export class LGPDAuditService {
         timestamp: new Date().toISOString(),
         requestId,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -313,7 +313,7 @@ export class LGPDAuditService {
         timestamp: new Date().toISOString(),
         auditTrail: formattedEntries,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -387,7 +387,7 @@ export class LGPDAuditService {
         timestamp: new Date().toISOString(),
         breachId,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -453,7 +453,7 @@ export class LGPDAuditService {
         timestamp: new Date().toISOString(),
         report,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -698,7 +698,7 @@ export class LGPDAuditService {
   }
 
   private groupBySeverity(breaches: any[]): Record<string, number> {
-    return breaches.reduce(_(acc,_breach) => {
+    return breaches.reduce((acc,_breach) => {
       const severity = breach.metadata?.severity || 'UNKNOWN';
       acc[severity] = (acc[severity] || 0) + 1;
       return acc;
@@ -721,4 +721,4 @@ export class LGPDAuditService {
 }
 
 // Export singleton instance
-export const _lgpdAuditService = new LGPDAuditService();
+export const lgpdAuditService = new LGPDAuditService();

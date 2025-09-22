@@ -717,7 +717,7 @@ export class APIContractUtils {
     }
 
     // Validate patient data endpoints
-    const patientDataEndpoints = contract.endpoints.filter(_(e) => e.healthcareContext.involvesPatientData,
+    const patientDataEndpoints = contract.endpoints.filter((e) => e.healthcareContext.involvesPatientData,
     );
     if (
       patientDataEndpoints.length > 0 &&

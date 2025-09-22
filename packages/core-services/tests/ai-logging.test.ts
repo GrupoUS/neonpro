@@ -8,22 +8,22 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock console methods to capture logging output
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(_() => {});
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(_() => {});
-const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(_() => {});
-const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(_() => {});
+const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
 
-describe(_'AI Service Logging - Data Protection',_() => {
-  beforeEach(_() => {
+describe('AI Service Logging - Data Protection_, () => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  describe(_'AI Model Input Protection',_() => {
-    it(_'should NOT log sensitive patient data in AI prompts',_() => {
+  describe('AI Model Input Protection_, () => {
+    it('should NOT log sensitive patient data in AI prompts_, () => {
       const sensitivePrompt = {
         patientId: 'patient-123',
         prompt: 'Analyze the following medical data: Patient João Silva, age 45, diagnosed with Type 2 Diabetes. Current medications: Metformin 500mg twice daily. Recent HbA1c: 7.2%. Blood pressure: 140/90 mmHg. Weight: 85kg, Height: 175cm. Family history: Father had heart attack at age 60.',
@@ -37,7 +37,7 @@ describe(_'AI Service Logging - Data Protection',_() => {
       // Simulate AI service logging
       console.log('AI Prompt:', sensitivePrompt.prompt);
       console.error('AI processing failed for patient:', sensitivePrompt.patientId);
-      console.info('AI _context:', sensitivePrompt._context);
+      console.info('AI _context:_, sensitivePrompt._context);
 
       // Test will FAIL because sensitive medical data is being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
@@ -53,7 +53,7 @@ describe(_'AI Service Logging - Data Protection',_() => {
       expect(hasSensitiveData).toBe(false);
     });
 
-    it(_'should NOT log AI model configuration or API keys',_() => {
+    it('should NOT log AI model configuration or API keys_, () => {
       const aiConfig = {
         model: 'gpt-4-turbo-preview',
         apiKey: 'sk-ant-api03-xyz123abc456def789ghi012-jkl345mno678pqr',
@@ -80,24 +80,24 @@ describe(_'AI Service Logging - Data Protection',_() => {
       expect(hasAiCredentials).toBe(false);
     });
 
-    it(_'should NOT log conversation history with patient data',_() => {
+    it('should NOT log conversation history with patient data_, () => {
       const conversationHistory = [
         {
-          _role: 'user',
+          _role: 'user_,
           content: 'Patient Maria Santos, CRM 12345-SP, reports chest pain during exercise. ECG shows ST elevation. What are the next steps?'
         },
         {
-          _role: 'assistant',
+          _role: 'assistant_,
           content: 'Based on the symptoms and ECG findings, this could indicate acute coronary syndrome. Immediate steps should include...'
         },
         {
-          _role: 'user',
+          _role: 'user_,
           content: 'Patient\'s blood pressure is 160/100, heart rate 110 bpm. Family history of heart disease. Should we administer aspirin?'
         }
       ];
 
       // Simulate conversation logging
-      conversationHistory.forEach(_(message,_index) => {
+      conversationHistory.forEach((message,_index) => {
         console.log(`Message ${index}:`, message);
         console.error(`Processing ${message.role} message:`, message.content);
       });
@@ -117,8 +117,8 @@ describe(_'AI Service Logging - Data Protection',_() => {
     });
   });
 
-  describe(_'AI Model Output Protection',_() => {
-    it(_'should NOT log AI-generated medical recommendations with patient identifiers',_() => {
+  describe('AI Model Output Protection_, () => {
+    it('should NOT log AI-generated medical recommendations with patient identifiers_, () => {
       const aiResponse = {
         patientId: 'patient-456',
         recommendations: [
@@ -149,7 +149,7 @@ describe(_'AI Service Logging - Data Protection',_() => {
       expect(hasRecommendationData).toBe(false);
     });
 
-    it(_'should NOT log AI model reasoning that exposes sensitive patterns',_() => {
+    it('should NOT log AI model reasoning that exposes sensitive patterns_, () => {
       const sensitiveReasoning = {
         analysis: 'Patient exhibits classic symptoms of myocardial infarction: crushing substernal chest pain radiating to left arm, diaphoresis, nausea. Risk factors include: age 62, male, hypertension, diabetes mellitus type 2, smoking 1ppd for 30 years, BMI 32. Family history significant for father\'s MI at age 58.',
         differentialDiagnosis: [
@@ -184,8 +184,8 @@ describe(_'AI Service Logging - Data Protection',_() => {
     });
   });
 
-  describe(_'AI Service Performance Monitoring',_() => {
-    it(_'should NOT log performance metrics that could expose system architecture',_() => {
+  describe('AI Service Performance Monitoring_, () => {
+    it('should NOT log performance metrics that could expose system architecture_, () => {
       const performanceMetrics = {
         _request: {
           patientId: 'patient-789',
@@ -226,7 +226,7 @@ describe(_'AI Service Logging - Data Protection',_() => {
       expect(hasSystemData).toBe(false);
     });
 
-    it(_'should NOT log error details that could expose AI service vulnerabilities',_() => {
+    it('should NOT log error details that could expose AI service vulnerabilities_, () => {
       const errorDetails = {
         error: 'Rate limit exceeded',
         endpoint: 'https://api.anthropic.com/v1/messages',
@@ -264,8 +264,8 @@ describe(_'AI Service Logging - Data Protection',_() => {
     });
   });
 
-  describe(_'AI Training and Model Updates',_() => {
-    it(_'should NOT log training data or model parameters',_() => {
+  describe('AI Training and Model Updates_, () => {
+    it('should NOT log training data or model parameters_, () => {
       const trainingData = {
         dataset: 'medical-qa-2024-v2',
         samples: [
@@ -280,7 +280,7 @@ describe(_'AI Service Logging - Data Protection',_() => {
           epochs: 10,
           warmupSteps: 1000
         },
-        modelWeights: '/models/claude-medical-v2/weights/epoch_10.pt'
+        modelWeights: '/models/claude-medical-v2/weights/epoch_10.pt_
       };
 
       // Simulate training logging
@@ -302,7 +302,7 @@ describe(_'AI Service Logging - Data Protection',_() => {
       expect(hasTrainingData).toBe(false);
     });
 
-    it(_'should NOT log model evaluation results with sensitive test cases',_() => {
+    it('should NOT log model evaluation results with sensitive test cases_, () => {
       const evaluationResults = {
         testCases: [
           {
@@ -340,14 +340,14 @@ describe(_'AI Service Logging - Data Protection',_() => {
     });
   });
 
-  describe(_'AI Service Integration with Healthcare Systems',_() => {
-    it(_'should NOT log EHR/EMR integration details',_() => {
+  describe('AI Service Integration with Healthcare Systems_, () => {
+    it('should NOT log EHR/EMR integration details_, () => {
       const integrationData = {
         ehrSystem: 'Epic',
         apiEndpoint: 'https://epic.neonpro.com/fhir/R4',
         patientId: 'eHR-patient-12345',
         authToken: 'Bearer epic-token-xyz789',
-        _query: 'Patient?given=John&family=Smith&birthdate=1970-01-01'
+        _query: 'Patient?given=John&family=Smith&birthdate=1970-01-01_
       };
 
       // Simulate EHR integration logging
@@ -368,7 +368,7 @@ describe(_'AI Service Logging - Data Protection',_() => {
       expect(hasEhrData).toBe(false);
     });
 
-    it(_'should NOT log medical imaging AI analysis results with PHI',_() => {
+    it('should NOT log medical imaging AI analysis results with PHI_, () => {
       const imagingAnalysis = {
         studyId: 'MRI-CHEST-2024-001234',
         patientId: 'patient-567',
@@ -406,20 +406,20 @@ describe(_'AI Service Logging - Data Protection',_() => {
     });
   });
 
-  describe(_'AI Service Billing and Usage Tracking',_() => {
-    it(_'should NOT log detailed billing information with patient identifiers',_() => {
+  describe('AI Service Billing and Usage Tracking_, () => {
+    it('should NOT log detailed billing information with patient identifiers_, () => {
       const billingData = {
         patientId: 'patient-890',
         services: [
           {
-            serviceType: 'AI_Consultation',
+            serviceType: 'AI_Consultation_,
             model: 'claude-3-opus',
             duration: 300, // seconds
             tokensUsed: 2500,
             cost: 0.050
           },
           {
-            serviceType: 'AI_Imaging_Analysis',
+            serviceType: 'AI_Imaging_Analysis_,
             model: 'medical-imaging-v2',
             imagesProcessed: 15,
             cost: 0.150
@@ -449,7 +449,7 @@ describe(_'AI Service Logging - Data Protection',_() => {
       expect(hasBillingData).toBe(false);
     });
 
-    it(_'should NOT log usage patterns that could reveal sensitive information',_() => {
+    it('should NOT log usage patterns that could reveal sensitive information_, () => {
       const usagePatterns = {
         doctorId: 'doctor-123',
         specialty: 'Oncology',

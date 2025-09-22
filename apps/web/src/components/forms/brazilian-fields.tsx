@@ -62,15 +62,14 @@ export interface BrazilianFieldProps {
  * CPF Input Field
  * Formats and validates Brazilian CPF numbers
  */
-export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(_(
-    {
-      label = 'CPF',_placeholder = '000.000.000-00',_value = '',_onChange,_onBlur,_error,_required = false,_disabled = false,_id,_name = 'cpf',_className,_testId = 'cpf-field',_autoComplete = 'off',_},_ref,
+export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
+      label = 'CPF', placeholder = '000.000.000-00', value = '',onChange, onBlur,error, required = false, disabled = false,id, name = 'cpf',className, testId = 'cpf-field', autoComplete = 'off', },ref,
   ) => {
     const [internalValue, setInternalValue] = useState(value);
     const [validationError, setValidationError] = useState<string>('');
 
     // Update internal value when prop changes
-    useEffect(_() => {
+    useEffect(() => {
       setInternalValue(value);
     }, [value]);
 
@@ -89,7 +88,7 @@ export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(_(
       [onChange],
     );
 
-    const handleBlur = useCallback(_() => {
+    const handleBlur = useCallback(() => {
       const unformatted = unformatCPF(internalValue);
 
       if (unformatted && !validateCPFMask(unformatted)) {
@@ -157,14 +156,13 @@ CPFField.displayName = 'CPFField';
  * CNPJ Input Field
  * Formats and validates Brazilian CNPJ numbers
  */
-export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(_(
-    {
-      label = 'CNPJ',_placeholder = '00.000.000/0000-00',_value = '',_onChange,_onBlur,_error,_required = false,_disabled = false,_id,_name = 'cnpj',_className,_testId = 'cnpj-field',_autoComplete = 'off',_},_ref,
+export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(({
+      label = 'CNPJ', placeholder = '00.000.000/0000-00', value = '',onChange, onBlur,error, required = false, disabled = false,id, name = 'cnpj',className, testId = 'cnpj-field', autoComplete = 'off', },ref,
   ) => {
     const [internalValue, setInternalValue] = useState(value);
     const [validationError, setValidationError] = useState<string>('');
 
-    useEffect(_() => {
+    useEffect(() => {
       setInternalValue(value);
     }, [value]);
 
@@ -183,7 +181,7 @@ export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(_(
       [onChange],
     );
 
-    const handleBlur = useCallback(_() => {
+    const handleBlur = useCallback(() => {
       const unformatted = unformatCNPJ(internalValue);
 
       if (unformatted && !validateCNPJ(unformatted)) {
@@ -273,7 +271,7 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
     const [internalValue, setInternalValue] = useState(value);
     const [validationError, setValidationError] = useState<string>('');
 
-    useEffect(_() => {
+    useEffect(() => {
       setInternalValue(value);
     }, [value]);
 
@@ -292,7 +290,7 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
       [onChange],
     );
 
-    const handleBlur = useCallback(_() => {
+    const handleBlur = useCallback(() => {
       const unformatted = unformatPhone(internalValue);
 
       if (unformatted && !validateBRPhoneMask(unformatted)) {
@@ -366,15 +364,14 @@ export const CEPField = forwardRef<
     /** Auto-fill address callback */
     onAddressFound?: (address: any) => void;
   }
->(_(
-    {
-      label = 'CEP',_placeholder = '00000-000',_value = '',_onChange,_onBlur,_error,_required = false,_disabled = false,_id,_name = 'cep',_className,_testId = 'cep-field',_autoComplete = 'postal-code',_onAddressFound,_},_ref,
+>(({
+      label = 'CEP', placeholder = '00000-000', value = '',onChange, onBlur,error, required = false, disabled = false,id, name = 'cep',className, testId = 'cep-field', autoComplete = 'postal-code',onAddressFound, },ref,
   ) => {
     const [internalValue, setInternalValue] = useState(value);
     const [validationError, setValidationError] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(_() => {
+    useEffect(() => {
       setInternalValue(value);
     }, [value]);
 
@@ -393,7 +390,7 @@ export const CEPField = forwardRef<
       [onChange],
     );
 
-    const handleBlur = useCallback(_async () => {
+    const handleBlur = useCallback(async () => {
       const unformatted = unformatCEP(internalValue);
 
       if (unformatted && !validateCEP(unformatted)) {

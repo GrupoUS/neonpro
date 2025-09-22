@@ -5,13 +5,13 @@ import type { ChatSession as ChatSessionType } from "@neonpro/types";
 
 export type ChatSession = ChatSessionType;
 
-export const _createChatSession = (
+export const createChatSession = (
   input: Omit<ChatSession, "startedAt" | "lastActivityAt"> & {
     startedAt?: string;
     lastActivityAt?: string;
   },
 ): ChatSession => {
-  const _now = new Date().toISOString();
+  const now = new Date().toISOString();
   return {
     ...input,
     startedAt: input.startedAt ?? now,
@@ -19,7 +19,7 @@ export const _createChatSession = (
   };
 };
 
-export const _isSessionIdle = (
+export const isSessionIdle = (
   session: ChatSession,
   now: Date = new Date(),
 ): boolean => {

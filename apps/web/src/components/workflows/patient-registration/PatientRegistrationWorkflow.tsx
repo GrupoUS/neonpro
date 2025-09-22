@@ -100,8 +100,8 @@ interface PatientRegistrationWorkflowProps {
 
 type Step = 'personal' | 'address' | 'medical' | 'emergency' | 'consent' | 'review';
 
-export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowProps> = (_{
-  onSubmit,_onCancel,_initialData,_isLoading = false,_className,_testId = 'patient-registration-workflow',_}) => {
+export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowProps> = ({
+  onSubmit,onCancel, initialData, isLoading = false,className, testId = 'patient-registration-workflow', }) => {
   const [currentStep, setCurrentStep] = useState<Step>('personal');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -171,7 +171,7 @@ export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowPr
   const currentStepIndex = steps.indexOf(currentStep);
 
   // Announce step changes for screen readers
-  useEffect(_() => {
+  useEffect(() => {
     const stepNames = {
       personal: 'Informações Pessoais',
       address: 'Endereço',
@@ -183,7 +183,7 @@ export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowPr
     announcePolite(`Passo ${currentStepIndex + 1} de ${steps.length}: ${stepNames[currentStep]}`);
   }, [currentStep, steps.length, announcePolite]);
 
-  const nextStep = useCallback(_async () => {
+  const nextStep = useCallback(async () => {
     const fieldsToValidate = {
       personal: ['personalInfo'],
       address: ['address'],
@@ -206,7 +206,7 @@ export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowPr
     }
   }, [form, currentStep, currentStepIndex, steps, announcePolite]);
 
-  const previousStep = useCallback(_() => {
+  const previousStep = useCallback(() => {
     const prevIndex = currentStepIndex - 1;
     if (prevIndex >= 0) {
       setCurrentStep(steps[prevIndex]);
@@ -589,7 +589,7 @@ export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowPr
 
               <div className='space-y-2'>
                 <label className='text-sm font-medium'>Tratamentos estéticos anteriores</label>
-                {medicalInfoFieldArray.fields.map(_(field,_index) => (
+                {medicalInfoFieldArray.fields.map((field, index) => (
                   <div
                     key={field.id}
                     className='grid grid-cols-1 md:grid-cols-3 gap-2 p-3 border rounded-lg'
@@ -930,7 +930,7 @@ export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowPr
         </div>
 
         <div className='flex items-center space-x-2'>
-          {steps.map(_(step,_index) => (
+          {steps.map((step, index) => (
             <div
               key={step}
               className={cn(

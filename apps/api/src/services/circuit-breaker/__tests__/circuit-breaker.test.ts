@@ -22,11 +22,11 @@ import {
 describe(_'CircuitBreakerService',_() => {
   let circuitBreaker: CircuitBreakerService;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     circuitBreaker = new CircuitBreakerService(HEALTHCARE_CIRCUIT_CONFIG);
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     circuitBreaker.destroy();
   });
 
@@ -105,7 +105,7 @@ describe(_'CircuitBreakerService',_() => {
 
       const fallbackValue = 'fallback response';
       const result = await circuitBreaker.execute(_async () => 'success', undefined, _fallbackValue);
-      expect(result).toBe(_fallbackValue);
+      expect(result).toBe(fallbackValue);
     });
 
     test(_'should use custom fallback when provided',_async () => {
@@ -268,11 +268,11 @@ describe(_'CircuitBreakerService',_() => {
 describe(_'ExternalServiceHealthChecker',_() => {
   let healthChecker: ExternalServiceHealthChecker;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     healthChecker = new ExternalServiceHealthChecker(HEALTHCARE_HEALTH_CONFIG);
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     healthChecker.destroy();
   });
 
@@ -288,8 +288,8 @@ describe(_'ExternalServiceHealthChecker',_() => {
         requiredFor: ['testing'],
       };
 
-      expect(_() => {
-        healthChecker.registerService(_service);
+      expect(() => {
+        healthChecker.registerService(service);
       }).not.toThrow();
     });
 
@@ -304,11 +304,11 @@ describe(_'ExternalServiceHealthChecker',_() => {
         requiredFor: ['testing'],
       };
 
-      healthChecker.registerService(_service);
+      healthChecker.registerService(service);
 
       // Should not throw when registering same service again
-      expect(_() => {
-        healthChecker.registerService(_service);
+      expect(() => {
+        healthChecker.registerService(service);
       }).not.toThrow();
     });
   });
@@ -325,7 +325,7 @@ describe(_'ExternalServiceHealthChecker',_() => {
         requiredFor: ['testing'],
       };
 
-      healthChecker.registerService(_service);
+      healthChecker.registerService(service);
 
       const healthStatus = healthChecker.getComprehensiveHealthStatus();
 
@@ -348,7 +348,7 @@ describe(_'ExternalServiceHealthChecker',_() => {
         requiredFor: ['testing'],
       };
 
-      healthChecker.registerService(_service);
+      healthChecker.registerService(service);
 
       const healthStatus = healthChecker.getComprehensiveHealthStatus();
 
@@ -374,7 +374,7 @@ describe(_'ExternalServiceHealthChecker',_() => {
         requiredFor: ['testing'],
       };
 
-      healthChecker.registerService(_service);
+      healthChecker.registerService(service);
 
       // Wait for at least one health check cycle
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -396,7 +396,7 @@ describe(_'ExternalServiceHealthChecker',_() => {
         requiredFor: ['testing'],
       };
 
-      healthChecker.registerService(_service);
+      healthChecker.registerService(service);
       healthChecker.unregisterService('test-service');
 
       const healthStatus = healthChecker.getComprehensiveHealthStatus();
@@ -404,7 +404,7 @@ describe(_'ExternalServiceHealthChecker',_() => {
     });
 
     test(_'should handle unregistering non-existent services',_() => {
-      expect(_() => {
+      expect(() => {
         healthChecker.unregisterService('non-existent-service');
       }).not.toThrow();
     });
@@ -426,7 +426,7 @@ describe(_'Integration Scenarios',_() => {
       requiredFor: ['integration-testing'],
     };
 
-    healthChecker.registerService(_service);
+    healthChecker.registerService(service);
 
     // Test that both services work together
     const healthStatus = healthChecker.getComprehensiveHealthStatus();
@@ -469,14 +469,14 @@ describe(_'Error Handling',_() => {
     const circuitBreaker = new CircuitBreakerService(HEALTHCARE_CIRCUIT_CONFIG);
 
     // Add an error-throwing callback
-    expect(_() => {
-      circuitBreaker.onEvent(_() => {
+    expect(() => {
+      circuitBreaker.onEvent(() => {
         throw new Error('Callback error');
       });
     }).not.toThrow();
 
     // Should not throw when emitting events
-    expect(_() => {
+    expect(() => {
       circuitBreaker['emitEvent']({
         type: 'TEST_EVENT',
         timestamp: new Date(),
@@ -491,11 +491,11 @@ describe(_'Error Handling',_() => {
     const healthChecker = new ExternalServiceHealthChecker(HEALTHCARE_HEALTH_CONFIG);
 
     // Should handle invalid service names gracefully
-    expect(_() => {
+    expect(() => {
       healthChecker.unregisterService('');
     }).not.toThrow();
 
-    expect(_() => {
+    expect(() => {
       healthChecker.getServiceHealth('');
     }).not.toThrow();
 

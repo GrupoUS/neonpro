@@ -287,8 +287,8 @@ export class PerformanceMetricsService {
         observer.observe({ entryTypes: ['longtask'] });
 
         // Simplified TTI estimation
-        window.addEventListener(_'load',_() => {
-          setTimeout(_() => {
+        window.addEventListener(('load', () => {
+          setTimeout(() => {
             const navigationEntry = performance.getEntriesByType(
               'navigation',
             )[0] as PerformanceNavigationTiming;
@@ -349,7 +349,7 @@ export class PerformanceMetricsService {
           entry.name.includes('/patients/')
           || entry.name.includes('/patient-data/'),
       )
-      .sort(_(a,_b) => b.startTime - a.startTime);
+      .sort((a, b) => b.startTime - a.startTime);
 
     return entries.length > 0 ? entries[0].duration : 0;
   }
@@ -381,7 +381,7 @@ export class PerformanceMetricsService {
 
     if (appointmentEntries.length === 0) return 0;
 
-    const latestEntry = appointmentEntries.sort(_(a,_b) => b.startTime - a.startTime,
+    const latestEntry = appointmentEntries.sort((a, b) => b.startTime - a.startTime,
     )[0];
     return latestEntry.duration;
   }
@@ -399,7 +399,7 @@ export class PerformanceMetricsService {
 
     if (aiEntries.length === 0) return undefined;
 
-    const latestEntry = aiEntries.sort(_(a,_b) => b.startTime - a.startTime)[0];
+    const latestEntry = aiEntries.sort((a, b) => b.startTime - a.startTime)[0];
     return latestEntry.duration;
   }
 
@@ -422,7 +422,7 @@ export class PerformanceMetricsService {
 
     if (emergencyEntries.length === 0) return undefined;
 
-    const latestEntry = emergencyEntries.sort(_(a,_b) => b.startTime - a.startTime,
+    const latestEntry = emergencyEntries.sort((a, b) => b.startTime - a.startTime,
     )[0];
     return latestEntry.duration;
   }
@@ -438,7 +438,7 @@ export class PerformanceMetricsService {
 
     if (prescriptionEntries.length === 0) return undefined;
 
-    const latestEntry = prescriptionEntries.sort(_(a,_b) => b.startTime - a.startTime,
+    const latestEntry = prescriptionEntries.sort((a, b) => b.startTime - a.startTime,
     )[0];
     return latestEntry.duration;
   }
@@ -452,7 +452,7 @@ export class PerformanceMetricsService {
 
     if (auditEntries.length === 0) return undefined;
 
-    const latestEntry = auditEntries.sort(_(a,_b) => b.startTime - a.startTime,
+    const latestEntry = auditEntries.sort((a, b) => b.startTime - a.startTime,
     )[0];
     return latestEntry.duration;
   }
@@ -501,7 +501,7 @@ export class PerformanceMetricsService {
         entry => entry.name.endsWith('.js') || entry.name.endsWith('.css'),
       );
 
-    const totalSize = scriptEntries.reduce(_(sum,_entry) => {
+    const totalSize = scriptEntries.reduce((sum, entry) => {
       return sum + (entry.transferSize || 0);
     }, 0);
 
@@ -521,7 +521,7 @@ export class PerformanceMetricsService {
 
     if (dbEntries.length === 0) return undefined;
 
-    const avgQueryTime = dbEntries.reduce(_(sum,_entry) => sum + entry.duration, 0)
+    const avgQueryTime = dbEntries.reduce((sum, entry) => sum + entry.duration, 0)
       / dbEntries.length;
     return avgQueryTime;
   }
@@ -826,7 +826,7 @@ export class PerformanceMetricsService {
   }
 
   private setupReportingInterval(): void {
-    setInterval(_() => {
+    setInterval(() => {
       if (this.metricsQueue.length > 0) {
         this.reportMetrics();
       }
@@ -917,7 +917,7 @@ export class PerformanceMetricsService {
   private setupPerformanceObserver(): void {
     // Additional performance observations can be set up here
     if ('PerformanceObserver' in window) {
-      this.observer = new PerformanceObserver(_() => {
+      this.observer = new PerformanceObserver(() => {
         // Handle additional performance entries as needed
       });
     }
@@ -976,7 +976,7 @@ export function getPerformanceMetricsService(): PerformanceMetricsService | null
 }
 
 // Export default instance
-export const _performanceMetrics = createPerformanceMetricsService();
+export const performanceMetrics = createPerformanceMetricsService();
 
 // Type definitions for external use
 declare global {

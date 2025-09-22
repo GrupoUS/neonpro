@@ -60,7 +60,7 @@ export class ConsentService {
       const auditEvent: AuditEvent = {
         id: `audit-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_CREATED',
+        action: 'CONSENT_CREATED_,
         entityType: 'consent',
         entityId: consent.id,
         actorId: 'system',
@@ -80,12 +80,12 @@ export class ConsentService {
       await this.persistConsent(consent);
 
       return consent;
-    } catch (_error) {
+    } catch (error) {
       // Log error without exposing patient data
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_CREATE_ERROR',
+        action: 'CONSENT_CREATE_ERROR_,
         entityType: 'consent',
         entityId: 'unknown',
         actorId: 'system',
@@ -109,7 +109,7 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_ACCESSED',
+        action: 'CONSENT_ACCESSED_,
         entityType: 'consent',
         entityId: 'multiple',
         actorId: 'system',
@@ -121,11 +121,11 @@ export class ConsentService {
       // Query consents from database
       const consents = await this.queryConsentsByPatient(patientId);
       return consents;
-    } catch (_error) {
+    } catch (error) {
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_ACCESS_ERROR',
+        action: 'CONSENT_ACCESS_ERROR_,
         entityType: 'consent',
         entityId: 'multiple',
         actorId: 'system',
@@ -165,7 +165,7 @@ export class ConsentService {
       const auditEvent: AuditEvent = {
         id: `audit-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_REVOKED',
+        action: 'CONSENT_REVOKED_,
         entityType: 'consent',
         entityId: consentId,
         actorId: 'system',
@@ -179,11 +179,11 @@ export class ConsentService {
       this.auditLogger(auditEvent);
 
       return revokedConsent;
-    } catch (_error) {
+    } catch (error) {
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_REVOKE_ERROR',
+        action: 'CONSENT_REVOKE_ERROR_,
         entityType: 'consent',
         entityId: consentId,
         actorId: 'system',
@@ -206,23 +206,23 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'COMPLIANCE_CHECK',
+        action: 'COMPLIANCE_CHECK_,
         entityType: 'patient',
         entityId: this.hashPatientId(patientId),
         actorId: 'system',
         metadata: {
-          checkType: 'LGPD_COMPLIANCE',
+          checkType: 'LGPD_COMPLIANCE_,
         },
       });
 
       // Perform comprehensive LGPD compliance checking
       const complianceResult = await this.performComplianceCheck(patientId);
       return complianceResult;
-    } catch (_error) {
+    } catch (error) {
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'COMPLIANCE_CHECK_ERROR',
+        action: 'COMPLIANCE_CHECK_ERROR_,
         entityType: 'patient',
         entityId: this.hashPatientId(patientId),
         actorId: 'system',
@@ -242,7 +242,7 @@ export class ConsentService {
   private hashPatientId(patientId: string): string {
     // Simple hash for demo - in production use proper crypto hash
     const hash = Array.from(patientId)
-      .reduce(_(acc,_char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0)
+      .reduce((acc,_char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0)
       .toString(16);
     return `patient_${hash.slice(-8)}`;
   }
@@ -268,7 +268,7 @@ export class ConsentService {
     this.auditLogger({
       id: `audit-log-${Date.now()}`,
       timestamp: new Date().toISOString(),
-      action: 'AUDIT_LOG_ENTRY',
+      action: 'AUDIT_LOG_ENTRY_,
       entityType: 'system',
       entityId: 'consent-service',
       actorId: 'system',
@@ -287,8 +287,8 @@ export class ConsentService {
    */
   private async persistConsent(consent: ConsentRecord): Promise<void> {
     try {
-      const { data: _data, error } = await supabase
-        .from('patient_consents')
+      const { data: data, error } = await supabase
+        .from('patient_consents_)
         .insert({
           id: consent.id,
           patient_id: consent.patientId,
@@ -313,7 +313,7 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_PERSISTED',
+        action: 'CONSENT_PERSISTED_,
         entityType: 'consent',
         entityId: consent.id,
         actorId: 'system',
@@ -322,10 +322,10 @@ export class ConsentService {
           consentType: consent.consentType,
         },
       });
-    } catch (_error) {
+    } catch (error) {
       // Use ErrorMapper for consistent error handling
       const mappedError = ErrorMapper.mapError(error, {
-        action: 'persist_consent',
+        action: 'persist_consent_,
         timestamp: new Date().toISOString(),
       });
 
@@ -333,7 +333,7 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_PERSIST_ERROR',
+        action: 'CONSENT_PERSIST_ERROR_,
         entityType: 'consent',
         entityId: consent.id,
         actorId: 'system',
@@ -355,11 +355,11 @@ export class ConsentService {
    */
   private async queryConsentsByPatient(patientId: string): Promise<ConsentRecord[]> {
     try {
-      const { data: _data, error } = await supabase
-        .from('patient_consents')
+      const { data: data, error } = await supabase
+        .from('patient_consents_)
         .select('*')
-        .eq('patient_id', patientId)
-        .order('granted_at', { ascending: false });
+        .eq('patient_id_, patientId)
+        .order('granted_at_, { ascending: false });
 
       if (error) {
         throw new Error(`Failed to query consents: ${error.message}`);
@@ -381,16 +381,16 @@ export class ConsentService {
       }));
 
       return consents;
-    } catch (_error) {
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
-        action: 'query_consents',
+        action: 'query_consents_,
         timestamp: new Date().toISOString(),
       });
 
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_QUERY_ERROR',
+        action: 'CONSENT_QUERY_ERROR_,
         entityType: 'consent',
         entityId: 'multiple',
         actorId: 'system',
@@ -412,8 +412,8 @@ export class ConsentService {
    */
   private async findConsentById(consentId: string): Promise<ConsentRecord | null> {
     try {
-      const { data: _data, error } = await supabase
-        .from('patient_consents')
+      const { data: data, error } = await supabase
+        .from('patient_consents_)
         .select('*')
         .eq('id', consentId)
         .single();
@@ -428,28 +428,28 @@ export class ConsentService {
 
       // Transform database record to ConsentRecord format
       return {
-        id: _data.id,
-        patientId: _data.patient_id,
-        consentType: _data.consent_type,
-        status: _data.status,
-        purpose: _data.purpose,
-        dataTypes: _data.data_types || [],
-        grantedAt: _data.granted_at,
-        expiresAt: _data.expires_at,
-        revokedAt: _data.revoked_at,
-        metadata: _data.metadata,
-        auditTrail: _data.audit_trail || [],
+        id: data.id,
+        patientId: data.patient_id,
+        consentType: data.consent_type,
+        status: data.status,
+        purpose: data.purpose,
+        dataTypes: data.data_types || [],
+        grantedAt: data.granted_at,
+        expiresAt: data.expires_at,
+        revokedAt: data.revoked_at,
+        metadata: data.metadata,
+        auditTrail: data.audit_trail || [],
       };
-    } catch (_error) {
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
-        action: 'find_consent',
+        action: 'find_consent_,
         timestamp: new Date().toISOString(),
       });
 
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_FIND_ERROR',
+        action: 'CONSENT_FIND_ERROR_,
         entityType: 'consent',
         entityId: consentId,
         actorId: 'system',
@@ -469,8 +469,8 @@ export class ConsentService {
    */
   private async updateConsent(consent: ConsentRecord): Promise<void> {
     try {
-      const { data: _data, error } = await supabase
-        .from('patient_consents')
+      const { data: data, error } = await supabase
+        .from('patient_consents_)
         .update({
           status: consent.status,
           revoked_at: consent.revokedAt,
@@ -488,7 +488,7 @@ export class ConsentService {
       this.auditLogger({
         id: `audit-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_UPDATED',
+        action: 'CONSENT_UPDATED_,
         entityType: 'consent',
         entityId: consent.id,
         actorId: 'system',
@@ -497,16 +497,16 @@ export class ConsentService {
           newStatus: consent.status,
         },
       });
-    } catch (_error) {
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
-        action: 'update_consent',
+        action: 'update_consent_,
         timestamp: new Date().toISOString(),
       });
 
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'CONSENT_UPDATE_ERROR',
+        action: 'CONSENT_UPDATE_ERROR_,
         entityType: 'consent',
         entityId: consent.id,
         actorId: 'system',
@@ -532,7 +532,7 @@ export class ConsentService {
       const consents = await this.queryConsentsByPatient(patientId);
 
       const violations: string[] = [];
-      const _now = new Date();
+      const now = new Date();
 
       // Check for expired consents
       const expiredConsents = consents.filter(consent =>
@@ -566,7 +566,7 @@ export class ConsentService {
       // Check for missing sensitive data handling
       const sensitiveConsents = consents.filter(consent =>
         consent.dataTypes.some(type =>
-          ['medical_records', 'diagnosis', 'treatment', 'genetic_data'].includes(type)
+          ['medical_records', 'diagnosis', 'treatment', 'genetic_data_].includes(type)
         )
       );
 
@@ -589,8 +589,8 @@ export class ConsentService {
         riskLevel = 'MEDIUM';
       }
 
-      const status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING' =
-        isCompliant ? 'COMPLIANT' : 'NON_COMPLIANT';
+      const status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING_ =
+        isCompliant ? 'COMPLIANT' : ''NON_COMPLIANT'
 
       return {
         status,
@@ -606,16 +606,16 @@ export class ConsentService {
           'Implement additional safeguards for sensitive data'
         ] : [],
       };
-    } catch (_error) {
+    } catch (error) {
       const mappedError = ErrorMapper.mapError(error, {
-        action: 'compliance_check',
+        action: 'compliance_check_,
         timestamp: new Date().toISOString(),
       });
 
       this.auditLogger({
         id: `audit-error-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        action: 'COMPLIANCE_CHECK_ERROR',
+        action: 'COMPLIANCE_CHECK_ERROR_,
         entityType: 'patient',
         entityId: this.hashPatientId(patientId),
         actorId: 'system',
@@ -630,7 +630,7 @@ export class ConsentService {
 }
 
 // Export utility functions for creating consent service instances
-export const _createConsentService = (auditLogger?: (event: AuditEvent) => void) => {
+export const createConsentService = (auditLogger?: (event: AuditEvent) => void) => {
   return new ConsentService(auditLogger);
 };
 

@@ -124,7 +124,7 @@ webVitalsRouter.post('/api/analytics/web-vitals', async c => {
       metricId: metricEntry.id,
       timestamp: metricEntry.timestamp,
     });
-  } catch (_error) {
+  } catch (error) {
     console.error('Web vitals recording error:', error);
     return c.json({ error: 'Failed to record metric' }, 500);
   }
@@ -192,7 +192,7 @@ webVitalsRouter.post('/api/analytics/web-vitals/beacon', async c => {
 
     // Return empty response for beacon (standard)
     return new Response(null, { status: 204 });
-  } catch (_error) {
+  } catch (error) {
     console.error('Web vitals beacon error:', error);
     return new Response(null, { status: 204 });
   }
@@ -233,7 +233,7 @@ webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async c => {
     };
 
     return c.json(dashboard);
-  } catch (_error) {
+  } catch (error) {
     console.error('Dashboard generation error:', error);
     return c.json({ error: 'Failed to generate dashboard' }, 500);
   }
@@ -245,7 +245,7 @@ function generateMetricId(): string {
 }
 
 function getTimeRangeStart(timeRange: string): Date {
-  const _now = new Date();
+  const now = new Date();
   switch (timeRange) {
     case '1h':
       return new Date(now.getTime() - 1 * 60 * 60 * 1000);
@@ -317,11 +317,11 @@ function calculateCoreWebVitals(
       return;
     }
 
-    const values = vitalMetrics.map(m => m.value).sort(_(a,_b) => a - b);
+    const values = vitalMetrics.map(m => m.value).sort((a,_b) => a - b);
     const p50 = values[Math.floor(values.length * 0.5)] || 0;
     const p90 = values[Math.floor(values.length * 0.9)] || 0;
     const p95 = values[Math.floor(values.length * 0.95)] || 0;
-    const avg = values.reduce(_(sum,_v) => sum + v, 0) / values.length;
+    const avg = values.reduce((sum,_v) => sum + v, 0) / values.length;
 
     results[vital] = {
       metric: vital,
@@ -395,7 +395,7 @@ function calculateHealthcareMetrics(metrics: MetricEntry[]): {
     return { count: 0 };
   }
 
-  const avgResponseTime = healthcareMetrics.reduce(_(sum,_m) => sum + m.value, 0)
+  const avgResponseTime = healthcareMetrics.reduce((sum,_m) => sum + m.value, 0)
     / healthcareMetrics.length;
 
   return {
@@ -433,12 +433,12 @@ function calculateDeviceBreakdown(metrics: MetricEntry[]): Array<{
   });
 
   return Object.entries(devices)
-    .map(_([device,_data]) => ({
+    .map(([device,_data]) => ({
       device,
       metrics: data.count,
       sessions: data.sessions.size,
     }))
-    .sort(_(a,_b) => b.metrics - a.metrics);
+    .sort((a,_b) => b.metrics - a.metrics);
 }
 
 function calculateUrlBreakdown(metrics: MetricEntry[]): Array<{
@@ -462,7 +462,7 @@ function calculateUrlBreakdown(metrics: MetricEntry[]): Array<{
   });
 
   return Object.entries(urls)
-    .map(_([url,_data]) => (_{
+    .map(([url,_data]) => ({
       url,
       metrics: data.metrics.length,
       sessions: data.sessions.size,
@@ -470,7 +470,7 @@ function calculateUrlBreakdown(metrics: MetricEntry[]): Array<{
         data.metrics.reduce((sum,_m) => sum + m.value, 0) / data.metrics.length,
       ),
     }))
-    .sort(_(a,_b) => b.metrics - a.metrics);
+    .sort((a,_b) => b.metrics - a.metrics);
 }
 
 function calculateTrends(metrics: MetricEntry[]): Array<{
@@ -489,13 +489,13 @@ function calculateTrends(metrics: MetricEntry[]): Array<{
   });
 
   return Object.entries(trends)
-    .map(_([hour,_hourMetrics]) => ({
+    .map(([hour,_hourMetrics]) => ({
       hour: parseInt(hour),
       count: hourMetrics.length,
       avgValue: Math.round(_hourMetrics.reduce((sum,_m) => sum + m.value, 0) / hourMetrics.length,
       ),
     }))
-    .sort(_(a,_b) => a.hour - b.hour);
+    .sort((a,_b) => a.hour - b.hour);
 }
 
 export default webVitalsRouter;

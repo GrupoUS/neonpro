@@ -324,7 +324,7 @@ export class BillingService {
       }
 
       // Calculate totals
-      const subtotal = billingData.items.reduce(_(sum,_item) => sum + item.totalValue,
+      const subtotal = billingData.items.reduce((sum,_item) => sum + item.totalValue,
         0,
       );
       const discounts = billingData.discounts || 0;
@@ -389,7 +389,7 @@ export class BillingService {
         data: billing,
         message: 'Cobrança criada com sucesso',
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Billing operation failed:', error);
       return {
         success: false,
@@ -416,7 +416,7 @@ export class BillingService {
         success: true,
         data: billing,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Billing operation failed:', error);
       return {
         success: false,
@@ -479,7 +479,7 @@ export class BillingService {
 
       // Sorting
       if (options.sortBy) {
-        allBillings.sort(_(a,_b) => {
+        allBillings.sort((a,_b) => {
           const aValue = (a as any)[options.sortBy!];
           const bValue = (b as any)[options.sortBy!];
 
@@ -510,7 +510,7 @@ export class BillingService {
           },
         },
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Billing operation failed:', error);
       return {
         success: false,
@@ -610,7 +610,7 @@ export class BillingService {
         data: { paymentId, status: paymentStatus },
         message: 'Pagamento processado com sucesso',
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Billing operation failed:', error);
       return {
         success: false,
@@ -651,31 +651,31 @@ export class BillingService {
       // Calculate summary
       const totalRevenue = billings
         .filter(b => b.paymentStatus === PaymentStatus.PAID)
-        .reduce(_(sum,_b) => sum + b.total, 0);
+        .reduce((sum,_b) => sum + b.total, 0);
 
       const totalPending = billings
         .filter(b => b.paymentStatus === PaymentStatus.PENDING)
-        .reduce(_(sum,_b) => sum + b.total, 0);
+        .reduce((sum,_b) => sum + b.total, 0);
 
       const totalPaid = totalRevenue;
 
       const totalOverdue = billings
         .filter(b => b.paymentStatus === PaymentStatus.OVERDUE)
-        .reduce(_(sum,_b) => sum + b.total, 0);
+        .reduce((sum,_b) => sum + b.total, 0);
 
       const averageTicket = billings.length > 0
-        ? billings.reduce(_(sum,_b) => sum + b.total, 0) / billings.length
+        ? billings.reduce((sum,_b) => sum + b.total, 0) / billings.length
         : 0;
 
       // Revenue by type
-      const revenueByType = Object.values(BillingType).reduce(_(acc,_type) => {
+      const revenueByType = Object.values(BillingType).reduce((acc,_type) => {
           acc[type] = billings
             .filter(
               b =>
                 b.billingType === type
                 && b.paymentStatus === PaymentStatus.PAID,
             )
-            .reduce(_(sum,_b) => sum + b.total, 0);
+            .reduce((sum,_b) => sum + b.total, 0);
           return acc;
         },
         {} as Record<BillingType, number>,
@@ -702,7 +702,7 @@ export class BillingService {
         success: true,
         data: summary,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Billing operation failed:', error);
       return {
         success: false,
@@ -742,8 +742,8 @@ export class BillingService {
       });
 
     return Object.entries(monthRevenue)
-      .map(_([month,_revenue]) => ({ month, revenue }))
-      .sort(_(a,_b) => a.month.localeCompare(b.month));
+      .map(([month,_revenue]) => ({ month, revenue }))
+      .sort((a,_b) => a.month.localeCompare(b.month));
   }
 
   /**
@@ -768,8 +768,8 @@ export class BillingService {
       });
 
     return Object.entries(procedureStats)
-      .map(_([procedure,_stats]) => ({ procedure, ...stats }))
-      .sort(_(a,_b) => b.revenue - a.revenue)
+      .map(([procedure,_stats]) => ({ procedure, ...stats }))
+      .sort((a,_b) => b.revenue - a.revenue)
       .slice(0, 10);
   }
 

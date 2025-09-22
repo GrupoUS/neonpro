@@ -5,91 +5,91 @@
 
 import { beforeEach, describe, expect, it } from 'vitest';
 
-describe(_'mobileOptimization',_() => {
-  beforeEach(_() => {
+describe(('mobileOptimization', () => {
+  beforeEach(() => {
     // Setup for each test
   });
 
-  it(_'should export mobile optimization utilities',_() => {
-    expect(_() => {
+  it(('should export mobile optimization utilities', () => {
+    expect(() => {
       const module = require.resolve('../mobileOptimization');
       expect(module).toBeDefined();
     }).not.toThrow();
   });
 
-  it(_'should detect mobile devices',_() => {
+  it(('should detect mobile devices', () => {
     const module = require('../mobileOptimization');
     expect(module.isMobileDevice).toBeDefined();
     expect(typeof module.isMobileDevice).toBe('function');
   });
 
-  it(_'should get network information',_() => {
+  it(('should get network information', () => {
     const { getNetworkInfo } = require('../mobileOptimization');
     expect(getNetworkInfo).toBeDefined();
     expect(typeof getNetworkInfo).toBe('function');
   });
 
-  it(_'should detect slow connections',_() => {
+  it(('should detect slow connections', () => {
     const { isSlowConnection } = require('../mobileOptimization');
     expect(isSlowConnection).toBeDefined();
     expect(typeof isSlowConnection).toBe('function');
   });
 
-  it(_'should create lazy components',_() => {
+  it(('should create lazy components', () => {
     const { createLazyComponent } = require('../mobileOptimization');
     expect(createLazyComponent).toBeDefined();
     expect(typeof createLazyComponent).toBe('function');
   });
 
-  it(_'should provide optimized image component',_() => {
+  it(('should provide optimized image component', () => {
     const { OptimizedImage } = require('../mobileOptimization');
     expect(OptimizedImage).toBeDefined();
     expect(typeof OptimizedImage).toBe('function');
   });
 
-  it(_'should preload critical resources',_() => {
+  it(('should preload critical resources', () => {
     const { preloadCriticalResources } = require('../mobileOptimization');
     expect(preloadCriticalResources).toBeDefined();
     expect(typeof preloadCriticalResources).toBe('function');
   });
 
-  it(_'should defer non-critical resources',_() => {
+  it(('should defer non-critical resources', () => {
     const { deferNonCriticalResources } = require('../mobileOptimization');
     expect(deferNonCriticalResources).toBeDefined();
     expect(typeof deferNonCriticalResources).toBe('function');
   });
 
-  it(_'should provide performance-aware loading hook',_() => {
+  it(('should provide performance-aware loading hook', () => {
     const { usePerformanceAwareLoading } = require('../mobileOptimization');
     expect(usePerformanceAwareLoading).toBeDefined();
     expect(typeof usePerformanceAwareLoading).toBe('function');
   });
 
-  it(_'should monitor bundle size',_() => {
+  it(('should monitor bundle size', () => {
     const { getBundleSize } = require('../mobileOptimization');
     expect(getBundleSize).toBeDefined();
     expect(typeof getBundleSize).toBe('function');
   });
 
-  it(_'should monitor memory usage',_() => {
+  it(('should monitor memory usage', () => {
     const { getMemoryUsage } = require('../mobileOptimization');
     expect(getMemoryUsage).toBeDefined();
     expect(typeof getMemoryUsage).toBe('function');
   });
 
-  it(_'should add resource hints',_() => {
+  it(('should add resource hints', () => {
     const { addResourceHints } = require('../mobileOptimization');
     expect(addResourceHints).toBeDefined();
     expect(typeof addResourceHints).toBe('function');
   });
 
-  it(_'should apply mobile optimizations',_() => {
+  it(('should apply mobile optimizations', () => {
     const { applyMobileOptimizations } = require('../mobileOptimization');
     expect(applyMobileOptimizations).toBeDefined();
     expect(typeof applyMobileOptimizations).toBe('function');
   });
 
-  it(_'should initialize mobile optimizations',_() => {
+  it(('should initialize mobile optimizations', () => {
     const { initializeMobileOptimizations } = require('../mobileOptimization');
     expect(initializeMobileOptimizations).toBeDefined();
     expect(typeof initializeMobileOptimizations).toBe('function');

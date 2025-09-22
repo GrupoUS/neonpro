@@ -23,16 +23,16 @@ export function EnhancedTable<T extends Record<string, any>>({
   columns,
   data,
 }: EnhancedTableProps<T>) {
-  return (_<div className='w-full'>
+  return (<div className='w-full'>
       <Table>
         <TableHeader>
           <TableRow>
-            {columns.map((col,_i) => <TableHead key={i}>{col.header}</TableHead>)}
+            {columns.map((col, i) => <TableHead key={i}>{col.header}</TableHead>)}
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map(_(row,_rIdx) => (_<TableRow key={rIdx}>
-              {columns.map((col,_cIdx) => {
+          {data.map((row, rIdx) => (<TableRow key={rIdx}>
+              {columns.map((col, cIdx) => {
                 const getValue = () => {
                   if (!col.accessorKey) return undefined;
                   const key = col.accessorKey as string;

@@ -173,7 +173,7 @@ const apiCall = async (endpoint: string, options: RequestInit = {}): Promise<any
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(_() => ({ error: { message: 'Unknown error' } }));
+    const error = await response.json().catch(() => ({ error: { message: 'Unknown error' } }));
     throw new Error(error.error?.message || 'Request failed');
   }
 
@@ -183,14 +183,14 @@ const apiCall = async (endpoint: string, options: RequestInit = {}): Promise<any
 const sendDataAgentQuery = async (_request: DataAgentRequest): Promise<DataAgentResponse> => {
   return apiCall('/data-agent', {
     method: 'POST',
-    body: JSON.stringify(_request),
+    body: JSON.stringify(request),
   });
 };
 
 const createSession = async (_request: CreateSessionRequest): Promise<SessionResponse> => {
   return apiCall('/sessions', {
     method: 'POST',
-    body: JSON.stringify(_request),
+    body: JSON.stringify(request),
   });
 };
 
@@ -222,7 +222,7 @@ const submitQuickFeedback = async (
 const _ActionButton: React.FC<{
   action: AgentAction;
   onExecute: (action: AgentAction) => void;
-}> = (_{ action,_onExecute }) => {
+}> = ({ action, onExecute }) => {
   const getIcon = (_iconName: any) => {
     switch (iconName) {
       case 'user':
@@ -265,7 +265,7 @@ const MessageFeedback: React.FC<{
   messageId: string;
   sessionId: string;
   onFeedbackSubmitted: () => void;
-}> = (_{ messageId,_sessionId,_onFeedbackSubmitted }) => {
+}> = ({ messageId,sessionId, onFeedbackSubmitted }) => {
   const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState('');
@@ -305,7 +305,7 @@ const MessageFeedback: React.FC<{
     });
   };
 
-  return (_<div className='flex items-center gap-2 mt-2'>
+  return (<div className='flex items-center gap-2 mt-2'>
       <div className='flex gap-1'>
         <TooltipProvider>
           <Tooltip>
@@ -363,7 +363,7 @@ const MessageFeedback: React.FC<{
             <div>
               <label className='text-sm font-medium'>Nota (1-5 estrelas)</label>
               <div className='flex gap-1 mt-1'>
-                {[1, 2, 3, 4, 5].map(_star => (
+                {[1, 2, 3, 4, 5].map(star => (
                   <Button
                     key={star}
                     variant='ghost'
@@ -419,7 +419,7 @@ const DataSummaryCard: React.FC<{
   data: any[];
   type: 'clients' | 'appointments' | 'financial';
   summary?: any;
-}> = (_{ title,_data,_type,_summary }) => {
+}> = ({ title,data, type, summary }) => {
   const [expanded, setExpanded] = useState(false);
   const displayLimit = 3;
 
@@ -488,11 +488,11 @@ const DataSummaryCard: React.FC<{
       </CardHeader>
       <CardContent className='pt-0'>
         <div className='space-y-2'>
-          {data.slice(0, expanded ? data.length : displayLimit).map(_(item, _index) =>
+          {data.slice(0, expanded ? data.length : displayLimit).map((item, _index) =>
             renderItem(item, index)
           )}
 
-          {data.length > displayLimit && (_<Button
+          {data.length > displayLimit && (<Button
               variant='ghost'
               size='sm'
               onClick={() => setExpanded(!expanded)}
@@ -513,12 +513,12 @@ const DataSummaryCard: React.FC<{
 /**
  * Main DataAgentChat Component
  */
-export const DataAgentChat: React.FC<DataAgentChatProps> = (_{
-  userContext,_initialSessionId,_mode = 'inline',_maxHeight = '600px',_mobileOptimized = true,
+export const DataAgentChat: React.FC<DataAgentChatProps> = ({
+  userContext,initialSessionId, mode = 'inline', maxHeight = '600px', mobileOptimized = true,
   lgpdConsent = {
     canStoreHistory: true,
-    dataRetentionDays: 30,_},
-  placeholder = 'Digite sua consulta... Ex: "Quais os próximos agendamentos?"',_testId = 'data-agent-chat',_onSessionChange,_onDataDiscovered,_}) => {
+    dataRetentionDays: 30, },
+  placeholder = 'Digite sua consulta... Ex: "Quais os próximos agendamentos?"', testId = 'data-agent-chat',onSessionChange, onDataDiscovered, }) => {
   // State management
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(initialSessionId || null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -554,7 +554,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = (_{
   );
 
   // Connect to AG-UI Protocol when component mounts
-  useEffect(_() => {
+  useEffect(() => {
     aguiClient.connect();
 
     // Handle AG-UI Protocol events
@@ -600,13 +600,13 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = (_{
   // Update session context when needed
   const updateAGUISessionContext = useCallback((_context: any) => {
     if (aguiSession && aguiClient.isConnected()) {
-      aguiClient.updateSessionContext(_context).catch(console.error);
+      aguiClient.updateSessionContext(context).catch(console.error);
     }
   }, [aguiSession, aguiClient]);
 
   // Load existing session if provided
   const { isLoading: isLoadingSession } = useQuery({
-    queryKey: ['session',_currentSessionId],
+    queryKey: ['session', currentSessionId],
     queryFn: () => getSession(currentSessionId!),
     enabled: !!currentSessionId,
     onSuccess: data => {
@@ -674,16 +674,16 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = (_{
   });
 
   // Auto-scroll to bottom
-  const scrollToBottom = useCallback(_() => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
-  useEffect(_() => {
+  useEffect(() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
   // Handle send message
-  const handleSendMessage = useCallback(_async () => {
+  const handleSendMessage = useCallback(async () => {
     if (!inputValue.trim() || isLoading) return;
 
     const query = inputValue.trim();
@@ -979,7 +979,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = (_{
                   {/* Message metadata */}
                   <div className='flex items-center justify-between mt-2 text-xs opacity-70'>
                     <span>{formatDateTime(message.timestamp)}</span>
-                    {message.role === 'assistant' && currentSessionId && (_<MessageFeedback
+                    {message.role === 'assistant' && currentSessionId && (<MessageFeedback
                         messageId={message.id}
                         sessionId={currentSessionId}
                         onFeedbackSubmitted={() => {

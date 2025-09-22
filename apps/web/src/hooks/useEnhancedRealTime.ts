@@ -94,11 +94,11 @@ export function useEnhancedRealTime() {
   }, []);
 
   // Calculate latency
-  const measureLatency = useCallback(_() => {
+  const measureLatency = useCallback(() => {
     latencyTimerRef.current = Date.now();
   }, []);
 
-  const recordLatency = useCallback(_() => {
+  const recordLatency = useCallback(() => {
     if (latencyTimerRef.current > 0) {
       const latency = Date.now() - latencyTimerRef.current;
       updateMetrics({ latency });
@@ -135,7 +135,7 @@ export function useEnhancedRealTime() {
   );
 
   // Reconnection logic with exponential backoff
-  const attemptReconnection = useCallback(_() => {
+  const attemptReconnection = useCallback(() => {
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
     }
@@ -145,10 +145,10 @@ export function useEnhancedRealTime() {
       30000,
     );
 
-    reconnectTimeoutRef.current = setTimeout(_() => {
+    reconnectTimeoutRef.current = setTimeout(() => {
       handleConnectionChange('reconnecting');
       // Trigger reconnection by re-establishing subscriptions
-      subscriptionsRef.current.forEach(_(subscription,_key) => {
+      subscriptionsRef.current.forEach((subscription, key) => {
         subscription.unsubscribe();
         subscriptionsRef.current.delete(key);
       });
@@ -192,7 +192,7 @@ export function useEnhancedRealTime() {
             recordLatency();
 
             // Update metrics
-            const _now = Date.now();
+            const now = Date.now();
             updateMetrics({
               messagesReceived: metricsRef.current.messagesReceived + 1,
               lastEventTimestamp: now,
@@ -208,13 +208,13 @@ export function useEnhancedRealTime() {
             // Handle different event types
             switch (payload.eventType) {
               case 'INSERT':
-                onInsert?.(_payload);
+                onInsert?.(payload);
                 break;
               case 'UPDATE':
-                onUpdate?.(_payload);
+                onUpdate?.(payload);
                 break;
               case 'DELETE':
-                onDelete?.(_payload);
+                onDelete?.(payload);
                 break;
             }
 
@@ -256,8 +256,8 @@ export function useEnhancedRealTime() {
   }, []);
 
   // Cleanup subscriptions
-  const cleanup = useCallback(_() => {
-    subscriptionsRef.current.forEach(_subscription => {
+  const cleanup = useCallback(() => {
+    subscriptionsRef.current.forEach(subscription => {
       subscription.unsubscribe();
     });
     subscriptionsRef.current.clear();
@@ -271,7 +271,7 @@ export function useEnhancedRealTime() {
   }, [updateMetrics, handleConnectionChange]);
 
   // Cleanup on unmount
-  useEffect(_() => {
+  useEffect(() => {
     return cleanup;
   }, [cleanup]);
 
@@ -321,7 +321,7 @@ export function useRealTimeNotifications(
       }
 
       // Rate limiting
-      const _now = Date.now();
+      const now = Date.now();
       if (now - lastNotificationRef.current < settings.rateLimitMs) {
         return;
       }
@@ -335,7 +335,7 @@ export function useRealTimeNotifications(
         try {
           const audio = new Audio('/sounds/notification.mp3');
           audio.volume = 0.3;
-          audio.play().catch(_() => {
+          audio.play().catch(() => {
             // Ignore audio play errors (user interaction required)
           });
         } catch {
@@ -361,7 +361,7 @@ export function useRealTimePatientSync(clinicId: string) {
   const { showNotification } = useRealTimeNotifications();
   const queryClient = useQueryClient();
 
-  useEffect(_() => {
+  useEffect(() => {
     if (!clinicId) return;
 
     const subscription = subscribe({

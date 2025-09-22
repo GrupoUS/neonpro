@@ -66,14 +66,14 @@ export function useCreateMedicalRecord() {
 
   return useMutation({
     mutationFn: ({
-      patientId,_clinicId,_request,
+      patientId,clinicId, request,
     }: {
       patientId: string;
       clinicId: string;
       _request: CreateMedicalRecordRequest;
     }) => patientHistoryService.createMedicalRecord(patientId, clinicId, _request),
 
-    onSuccess: _data => {
+    onSuccess: data => {
       // Invalidate medical records for this patient
       queryClient.invalidateQueries({
         queryKey: patientHistoryKeys.all,
@@ -105,7 +105,7 @@ export function useUpdateMedicalRecord() {
 
   return useMutation({
     mutationFn: ({
-      id,_request,
+      id,request,
     }: {
       id: string;
       _request: UpdateMedicalRecordRequest;
@@ -146,7 +146,7 @@ export function useCreateTreatmentPlan() {
 
   return useMutation({
     mutationFn: ({
-      patientId,_clinicId,_request,
+      patientId,clinicId, request,
     }: {
       patientId: string;
       clinicId: string;
@@ -182,7 +182,7 @@ export function useUpdateTreatmentPlan() {
 
   return useMutation({
     mutationFn: ({
-      id,_request,
+      id,request,
     }: {
       id: string;
       _request: UpdateTreatmentPlanRequest;
@@ -223,7 +223,7 @@ export function useCreateProgressNote() {
 
   return useMutation({
     mutationFn: ({
-      patientId,_request,
+      patientId,request,
     }: {
       patientId: string;
       _request: CreateProgressNoteRequest;
@@ -269,15 +269,15 @@ export function useAddPatientAllergy() {
 
   return useMutation({
     mutationFn: ({
-      patientId,_allergy,
+      patientId,allergy,
     }: {
       patientId: string;
       allergy: Omit<
-        PatientAllergy,_'id' | 'patient_id' | 'created_at' | 'updated_at'
+        PatientAllergy, 'id' | 'patient_id' | 'created_at' | 'updated_at'
       >;
     }) => patientHistoryService.addPatientAllergy(patientId, allergy),
 
-    onSuccess: (_data, _variables) => {
+    onSuccess: (data, variables) => {
       void _data;
       // Invalidate allergies for this patient
       queryClient.invalidateQueries({
@@ -318,15 +318,15 @@ export function useAddPatientCondition() {
 
   return useMutation({
     mutationFn: ({
-      patientId,_condition,
+      patientId,condition,
     }: {
       patientId: string;
       condition: Omit<
-        PatientCondition,_'id' | 'patient_id' | 'created_at' | 'updated_at'
+        PatientCondition, 'id' | 'patient_id' | 'created_at' | 'updated_at'
       >;
     }) => patientHistoryService.addPatientCondition(patientId, condition),
 
-    onSuccess: (_data, _variables) => {
+    onSuccess: (data, variables) => {
       void _data;
       // Invalidate conditions for this patient
       queryClient.invalidateQueries({
@@ -380,7 +380,7 @@ export function useUploadAttachment() {
 
   return useMutation({
     mutationFn: ({
-      recordId,_file,_description,
+      recordId,file, description,
     }: {
       recordId: string;
       file: File;

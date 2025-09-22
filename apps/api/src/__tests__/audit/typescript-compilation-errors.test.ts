@@ -10,12 +10,12 @@
 
 import { describe, expect, it } from 'vitest';
 
-describe(_'TypeScript Compilation Error Detection',_() => {
-  describe(_'Database Type Conflicts',_() => {
-    it(_'should detect Database type redeclaration in supabase.ts',_() => {
+describe('TypeScript Compilation Error Detection',() => {
+  describe('Database Type Conflicts',() => {
+    it('should detect Database type redeclaration in supabase.ts',() => {
       // RED: This test must fail until Database type conflicts are resolved
       // Critical for healthcare data integrity
-      expect(_() => {
+      expect(() => {
         // This import should fail due to type redeclaration
         require('@/types/supabase');
       }).toThrow('Identifier \'Database\' has already been declared');
@@ -23,7 +23,7 @@ describe(_'TypeScript Compilation Error Detection',_() => {
 
     it(_'should detect Json type redeclaration conflicts',_() => {
       // RED: Json type conflicts break database serialization
-      expect(_() => {
+      expect(() => {
         const { Json } = require('@/types/supabase');
         return typeof Json;
       }).not.toThrow();
@@ -33,21 +33,21 @@ describe(_'TypeScript Compilation Error Detection',_() => {
   describe(_'Module Resolution Issues',_() => {
     it(_'should detect missing @neonpro/core-services module',_() => {
       // RED: Critical for AI chat functionality in healthcare context
-      expect(_() => {
+      expect(() => {
         require('@/routes/ai-chat');
       }).toThrow('Cannot find module \'@neonpro/core-services\'');
     });
 
     it(_'should detect missing @neonpro/database module',_() => {
       // RED: Database module required for patient data operations
-      expect(_() => {
+      expect(() => {
         require('@/routes/patients');
       }).toThrow('Cannot find module \'@neonpro/database\'');
     });
 
     it(_'should detect missing trpc helpers',_() => {
       // RED: Required for contract testing in healthcare APIs
-      expect(_() => {
+      expect(() => {
         require('../helpers/trpc-context');
       }).toThrow('Cannot find module');
     });
@@ -91,7 +91,7 @@ describe(_'TypeScript Compilation Error Detection',_() => {
   describe(_'tRPC Export Issues',_() => {
     it(_'should detect missing createCallerFactory export',_() => {
       // RED: Required for tRPC testing in healthcare contracts
-      expect(_() => {
+      expect(() => {
         const { createCallerFactory } = require('@trpc/server');
         return typeof createCallerFactory;
       }).not.toThrow();
@@ -101,7 +101,7 @@ describe(_'TypeScript Compilation Error Detection',_() => {
   describe(_'Error Tracking Export Issues',_() => {
     it(_'should detect ErrorTrackingManager export',_() => {
       // RED: Critical for healthcare error compliance and audit trails
-      expect(_() => {
+      expect(() => {
         const { ErrorTrackingManager } = require('@/lib/error-tracking');
         return typeof ErrorTrackingManager;
       }).not.toThrow();
@@ -162,7 +162,7 @@ describe(_'TypeScript Compilation Error Detection',_() => {
   describe(_'LGPD Compliance Type Safety',_() => {
     it(_'should ensure LGPD types are properly exported',_() => {
       // RED: LGPD compliance requires proper type definitions
-      expect(_() => {
+      expect(() => {
         const { LGPDComplianceError } = require('@/types/errors');
         return typeof LGPDComplianceError;
       }).not.toThrow();
@@ -182,7 +182,7 @@ describe(_'TypeScript Compilation Error Detection',_() => {
   describe(_'Healthcare Security Types',_() => {
     it(_'should validate security header types',_() => {
       // RED: Security headers are mandatory for healthcare data protection
-      expect(_() => {
+      expect(() => {
         const {
           SecurityHeaders,
         } = require('@/services/security-headers-service');

@@ -252,7 +252,7 @@ describe('ResponseFormatter', () => {
       expect(result.content.data[0]).toEqual({
         id: 1,
         cliente: 'João Silva',
-        data_hora: '15/01/2024 07:30:00',
+        data_hora: '15/01/2024, 07:30:00',
         status: 'confirmed',
         tipo: 'consultation',
         medico: 'Dr. Silva',

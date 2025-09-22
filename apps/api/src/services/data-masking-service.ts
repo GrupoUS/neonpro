@@ -216,7 +216,7 @@ export class DataMaskingService {
   ): Promise<MaskingResult> {
     try {
       const startTime = Date.now();
-      const rulesToApply = customRules || this.getApplicableRules(_context);
+      const rulesToApply = customRules || this.getApplicableRules(context);
 
       // Deep clone data to avoid modifying original
       const maskedData = JSON.parse(JSON.stringify(data));
@@ -258,7 +258,7 @@ export class DataMaskingService {
       await this.logMaskingActivity(result, Date.now() - startTime);
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in maskData:', error);
       throw new Error('Failed to apply data masking');
     }
@@ -309,7 +309,7 @@ export class DataMaskingService {
 
         return true;
       })
-      .sort(_(a,_b) => b.priority - a.priority); // Higher priority first
+      .sort((a,_b) => b.priority - a.priority); // Higher priority first
   }
 
   /**
@@ -360,7 +360,7 @@ export class DataMaskingService {
       // Recursively process nested objects and arrays
       if (typeof value === 'object' && value !== null) {
         if (Array.isArray(value)) {
-          value.forEach(_(item,_index) => {
+          value.forEach((item,_index) => {
             if (typeof item === 'object' && item !== null) {
               this.applyMaskingRules(
                 item,
@@ -507,7 +507,7 @@ export class DataMaskingService {
       // In production, this would write to your audit log system
       this.auditLog.push(logEntry);
       console.log('[Data Masking Audit]', JSON.stringify(logEntry, null, 2));
-    } catch (_error) {
+    } catch (error) {
       console.error('Error logging masking activity:', error);
     }
   }
@@ -518,7 +518,7 @@ export class DataMaskingService {
   addCustomRule(rule: MaskingRule): void {
     this.maskingRules.push(rule);
     // Sort by priority
-    this.maskingRules.sort(_(a,_b) => b.priority - a.priority);
+    this.maskingRules.sort((a,_b) => b.priority - a.priority);
   }
 
   /**

@@ -13,8 +13,8 @@ import './healthcare-compliance-suite';
 import './accessibility-compliance-suite';
 import './performance-benchmark-suite';
 
-describe(_'Calendar Test Runner - Comprehensive Validation',_() => {
-  beforeAll(_() => {
+describe(('Calendar Test Runner - Comprehensive Validation', () => {
+  beforeAll(() => {
     console.log('🚀 Starting Calendar Test Suite Execution');
     console.log('📋 Test Suites:');
     console.log('   - Contract Tests T011-T030 (TDD Compliance)');
@@ -23,7 +23,7 @@ describe(_'Calendar Test Runner - Comprehensive Validation',_() => {
     console.log('   - Performance Benchmark Suite');
   });
 
-  afterAll(_() => {
+  afterAll(() => {
     console.log('✅ Calendar Test Suite Execution Complete');
     console.log('📊 Expected Results:');
     console.log('   - 100% TDD Compliance');
@@ -32,22 +32,22 @@ describe(_'Calendar Test Runner - Comprehensive Validation',_() => {
     console.log('   - 90%+ Performance Benchmarks Achieved');
   });
 
-  it(_'should validate comprehensive test coverage',_() => {
+  it(('should validate comprehensive test coverage', () => {
     // Meta-test to ensure all test suites are properly integrated
     expect(true).toBe(true);
   });
 
-  it(_'should validate healthcare compliance integration',_() => {
+  it(('should validate healthcare compliance integration', () => {
     // Validate that healthcare compliance is properly integrated
     expect(true).toBe(true);
   });
 
-  it(_'should validate accessibility compliance integration',_() => {
+  it(('should validate accessibility compliance integration', () => {
     // Validate that accessibility compliance is properly integrated
     expect(true).toBe(true);
   });
 
-  it(_'should validate performance optimization integration',_() => {
+  it(('should validate performance optimization integration', () => {
     // Validate that performance optimization is properly integrated
     expect(true).toBe(true);
   });

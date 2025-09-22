@@ -5,8 +5,8 @@ export interface RiskExposureInput {
   probability: number;
   impact: number;
 }
-export const _computeRiskExposure = (_{
-  probability,_impact,
+export const computeRiskExposure = ({
+  probability,impact,
 }: RiskExposureInput) => probability * impact;
 
 export interface KPIEvalInput {
@@ -18,7 +18,7 @@ export interface KPIEvalResult {
   status: "within" | "breach";
   delta: number;
 }
-export const _evaluateKPIValue = ({
+export const evaluateKPIValue = ({
   value,
   target,
   direction,
@@ -38,8 +38,8 @@ export interface PriorityScoreFactors {
   strategicFit: number;
 }
 // Simple weighted scoring: higher impact, riskReduction, strategicFit better; lower effort better.
-export const _scorePriority = (_{
-  impact,_effort,_riskReduction,_strategicFit,
+export const scorePriority = ({
+  impact,effort,_riskReduction,strategicFit,
 }: PriorityScoreFactors) => {
   const base = impact * 2 + riskReduction * 1.5 + strategicFit * 1.2 - effort;
   return base;
@@ -55,10 +55,10 @@ export interface PolicyAggregationResult {
   passed: number;
   status: "pass" | "fail" | "partial";
 }
-export const _aggregatePolicyRules = (
+export const aggregatePolicyRules = (
   rules: PolicyRule[],
 ): PolicyAggregationResult => {
-  const results = rules.map(_(r) => r.evaluate());
+  const results = rules.map((r) => r.evaluate());
   const passed = results.filter(Boolean).length;
   const total = results.length;
   let status: PolicyAggregationResult["status"] = "fail";
@@ -68,10 +68,10 @@ export const _aggregatePolicyRules = (
 };
 
 // Escalation: simple receipt id generator using timestamp for now (Phase 1 minimal)
-export const _generateEscalationId = () => `ESC-REC-${Date.now()}`;
+export const generateEscalationId = () => `ESC-REC-${Date.now()}`;
 
 // KPI provisional aging check (> 60 days)
-export const _isProvisionalAging = (
+export const isProvisionalAging = (
   provisionalSince: Date | undefined,
   now: Date,
 ) => {

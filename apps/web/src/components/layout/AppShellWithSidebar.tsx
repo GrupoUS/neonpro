@@ -33,7 +33,7 @@ import { toast } from 'sonner';
 const usePatientRealtimeSubscription = () => {
   const { user } = useAuth();
 
-  useEffect(_() => {
+  useEffect(() => {
     if (!user) return;
 
     // Canal para real-time updates de pacientes
@@ -73,7 +73,7 @@ const usePatientRealtimeSubscription = () => {
 const useAppointmentRealtimeSubscription = () => {
   const { user } = useAuth();
 
-  useEffect(_() => {
+  useEffect(() => {
     if (!user) return;
 
     // Canal para real-time updates de agendamentos
@@ -122,7 +122,7 @@ const useAppointmentRealtimeSubscription = () => {
   }, [user]);
 
   // Monitorar conexão do Supabase
-  useEffect(_() => {
+  useEffect(() => {
     const handleConnectionChange = (_status: any) => {
       if (status === 'SUBSCRIBED') {
         console.log('Real-time connection established');
@@ -147,11 +147,11 @@ const useAppointmentRealtimeSubscription = () => {
 const useRoutePrefetch = () => {
   const location = useLocation();
 
-  useEffect(_() => {
+  useEffect(() => {
     // Prefetch dados com base na rota
     if (location.pathname.startsWith('/patients')) {
       queryClient.prefetchQuery({
-        queryKey: ['patients',_'stats'],
+        queryKey: ['patients', 'stats'],
         queryFn: async () => {
           const { data } = await supabase
             .from('patients')
@@ -164,7 +164,7 @@ const useRoutePrefetch = () => {
 
     if (location.pathname.startsWith('/appointments')) {
       queryClient.prefetchQuery({
-        queryKey: ['appointments',_'today'],
+        queryKey: ['appointments', 'today'],
         queryFn: async () => {
           const today = new Date().toISOString().split('T')[0];
           const { data } = await supabase
@@ -190,7 +190,7 @@ function AppShellContent() {
   useRoutePrefetch();
 
   // Configurar tratamento de erros
-  useEffect(_() => {
+  useEffect(() => {
     setupQueryErrorHandling();
   }, []);
 

@@ -14,14 +14,14 @@ import {
   securityHeadersMiddleware,
 } from '../../middleware/security-headers';
 
-describe(_'Security Headers Middleware',_() => {
+describe(_'Security Headers Middleware',() => {
   let app: Hono;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     app = new Hono();
   });
 
-  describe(_'Basic Security Headers',_() => {
+  describe(_'Basic Security Headers',() => {
     it(_'should apply basic security headers',_async () => {
       app.use('*', securityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
@@ -86,7 +86,7 @@ describe(_'Security Headers Middleware',_() => {
     });
   });
 
-  describe(_'Cross-Origin Security Headers',_() => {
+  describe(_'Cross-Origin Security Headers',() => {
     it(_'should apply Cross-Origin Embedder Policy',_async () => {
       app.use('*', securityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
@@ -121,7 +121,7 @@ describe(_'Security Headers Middleware',_() => {
     });
   });
 
-  describe(_'Permissions Policy',_() => {
+  describe(_'Permissions Policy',() => {
     it(_'should apply restrictive permissions policy',_async () => {
       app.use('*', securityHeadersMiddleware());
       app.get('/test', c => c.json({ message: 'test' }));
@@ -137,12 +137,12 @@ describe(_'Security Headers Middleware',_() => {
     });
   });
 
-  describe(_'Security Context',_() => {
+  describe(_'Security Context',() => {
     it(_'should add security context to request',_async () => {
       let capturedContext: any;
 
       app.use('*', securityHeadersMiddleware());
-      app.use(_'*',_(c,_next) => {
+      app.use(_'*',(c,_next) => {
         capturedContext = c.get('securityHeaders');
         return next();
       });

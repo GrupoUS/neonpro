@@ -8,6 +8,8 @@
  */
 
 import crypto from 'crypto';
+import { z } from 'zod';
+
 // API Key Permissions Schema
 export const ApiKeyPermissionsSchema = z.object({
   read: z.boolean().default(false),
@@ -26,7 +28,7 @@ export const ApiKeyMetadataSchema = z.object({
   description: z.string().optional(),
   clinicId: z.string(),
   _userId: z.string(),
-  createdAt: z.date().default(_() => new Date()),
+  createdAt: z.date().default(() => new Date()),
   lastUsedAt: z.date().optional(),
   expiresAt: z.date().optional(),
   isActive: z.boolean().default(true),

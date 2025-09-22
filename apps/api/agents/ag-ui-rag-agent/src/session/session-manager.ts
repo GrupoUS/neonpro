@@ -408,7 +408,7 @@ export class SessionManager {
    * Enforce session limits per user
    */
   private async enforceSessionLimits(_userId: string): Promise<void> {
-    const userSessions = this.getUserSessions(_userId);
+    const userSessions = this.getUserSessions(userId);
 
     if (userSessions.length >= this.config.maxSessionsPerUser) {
       // Expire the oldest session

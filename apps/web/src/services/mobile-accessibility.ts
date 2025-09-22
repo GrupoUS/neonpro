@@ -408,7 +408,7 @@ export class MobileAccessibilityService {
       [MOBILE_ACCESSIBILITY_LEVELS.CRITICAL]: 1,
     };
 
-    const averageScore = levels.reduce(_(sum,_level) => sum + levelScores[level as keyof typeof levelScores],
+    const averageScore = levels.reduce((sum, level) => sum + levelScores[level as keyof typeof levelScores],
       0,
     ) / levels.length;
 
@@ -609,7 +609,7 @@ export class MobileAccessibilityService {
    * Calculate next audit date
    */
   private calculateNextAuditDate(): Date {
-    const _now = new Date();
+    const now = new Date();
     return new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000); // 90 days
   }
 

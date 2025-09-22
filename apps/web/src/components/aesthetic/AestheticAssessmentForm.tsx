@@ -186,7 +186,7 @@ export function AestheticAssessmentForm({
                 <FormField
                   control={form.control}
                   name='patientData.name'
-                  render={(_{ field }) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nome Completo *</FormLabel>
                       <FormControl>
@@ -200,7 +200,7 @@ export function AestheticAssessmentForm({
                 <FormField
                   control={form.control}
                   name='patientData.age'
-                  render={(_{ field }) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Idade *</FormLabel>
                       <FormControl>
@@ -222,7 +222,7 @@ export function AestheticAssessmentForm({
                 <FormField
                   control={form.control}
                   name='patientData.skinType'
-                  render={(_{ field }) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Fototipo de Pele *</FormLabel>
                       <Select
@@ -263,7 +263,7 @@ export function AestheticAssessmentForm({
                 <FormField
                   control={form.control}
                   name='patientData.gender'
-                  render={(_{ field }) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Gênero *</FormLabel>
                       <Select
@@ -328,7 +328,7 @@ export function AestheticAssessmentForm({
               <FormField
                 control={form.control}
                 name='skinAnalysis.primaryConcerns'
-                render={(_{ field }) => (
+                render={({ field }) => (
                   <FormItem>
                     <FormLabel>Preocupações Principais *</FormLabel>
                     <FormDescription>
@@ -357,7 +357,7 @@ export function AestheticAssessmentForm({
                 <FormField
                   control={form.control}
                   name='skinAnalysis.skinCondition'
-                  render={(_{ field }) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Tipo de Pele</FormLabel>
                       <Select
@@ -385,7 +385,7 @@ export function AestheticAssessmentForm({
                 <FormField
                   control={form.control}
                   name='skinAnalysis.sunDamage'
-                  render={(_{ field }) => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel>Danos Solares</FormLabel>
                       <Select
@@ -417,7 +417,7 @@ export function AestheticAssessmentForm({
                   <FormField
                     control={form.control}
                     name='skinAnalysis.acnePresent'
-                    render={(_{ field }) => (
+                    render={({ field }) => (
                       <FormItem className='flex flex-row items-center space-x-3 space-y-0'>
                         <FormControl>
                           <input
@@ -437,7 +437,7 @@ export function AestheticAssessmentForm({
                   <FormField
                     control={form.control}
                     name='skinAnalysis.melasmaPresent'
-                    render={(_{ field }) => (
+                    render={({ field }) => (
                       <FormItem className='flex flex-row items-center space-x-3 space-y-0'>
                         <FormControl>
                           <input
@@ -457,7 +457,7 @@ export function AestheticAssessmentForm({
                   <FormField
                     control={form.control}
                     name='skinAnalysis.wrinklesPresent'
-                    render={(_{ field }) => (
+                    render={({ field }) => (
                       <FormItem className='flex flex-row items-center space-x-3 space-y-0'>
                         <FormControl>
                           <input
@@ -488,7 +488,7 @@ export function AestheticAssessmentForm({
           </Button>
 
           {/* Seção de Exportação PDF */}
-          {(_() => {
+          {(() => {
             const formData = form.getValues();
             const hasBasicData = formData.patientData.name
               && formData.patientData.age

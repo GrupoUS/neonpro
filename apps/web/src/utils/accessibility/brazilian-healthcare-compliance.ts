@@ -340,7 +340,7 @@ export class BrazilianHealthcareComplianceValidator {
     }>;
   }> {
     const auditContext = typeof context === 'string'
-      ? document.querySelector(_context)
+      ? document.querySelector(context)
       : context || document;
 
     if (!auditContext) {
@@ -423,10 +423,10 @@ export class BrazilianHealthcareComplianceValidator {
     }
 
     // Calculate overall score
-    const totalRequirements = Object.values(results.standards).reduce(_(sum,_std) => sum + std.requirements.length,
+    const totalRequirements = Object.values(results.standards).reduce((sum, std) => sum + std.requirements.length,
       0,
     );
-    const passedRequirements = Object.values(results.standards).reduce(_(sum,_std) => sum + std.requirements.filter(req => req.passed).length,
+    const passedRequirements = Object.values(results.standards).reduce((sum, std) => sum + std.requirements.filter(req => req.passed).length,
       0,
     );
 
@@ -480,7 +480,7 @@ export class BrazilianHealthcareComplianceValidator {
     for (const [_reqId, requirement] of Object.entries(standard.requirements)) {
       try {
         const req = requirement as any; // Type assertion to handle unknown type
-        const passed = req.validation(_context);
+        const passed = req.validation(context);
         const violations = passed
           ? []
           : this.generateRequirementViolations(req);

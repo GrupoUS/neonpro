@@ -13,7 +13,7 @@ import {
 } from '@neonpro/types';
 import { protectedProcedure, router } from '../trpc';
 
-export const _appointmentRouter = router({
+export const appointmentRouter = router({
   /**
    * Create new appointment with conflict detection
    */

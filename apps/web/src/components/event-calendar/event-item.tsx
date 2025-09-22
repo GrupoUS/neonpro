@@ -117,11 +117,11 @@ export function EventItem({
   const eventColor = event.color;
 
   // Use the provided currentTime (for dragging) or the event's actual time
-  const displayStart = useMemo(_() => {
+  const displayStart = useMemo(() => {
     return currentTime || new Date(event.start);
   }, [currentTime, event.start]);
 
-  const displayEnd = useMemo(_() => {
+  const displayEnd = useMemo(() => {
     return currentTime
       ? new Date(
         new Date(currentTime).getTime()
@@ -131,7 +131,7 @@ export function EventItem({
   }, [currentTime, event.start, event.end]);
 
   // Calculate event duration in minutes
-  const durationMinutes = useMemo(_() => {
+  const durationMinutes = useMemo(() => {
     return differenceInMinutes(displayEnd, displayStart);
   }, [displayStart, displayEnd]);
 

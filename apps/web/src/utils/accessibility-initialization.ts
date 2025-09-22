@@ -178,7 +178,7 @@ async function runInitialAudit(): Promise<void> {
       console.warn('[Accessibility] Initial audit found violations:', result.violations.length);
 
       // Group violations by impact
-      const violationsByImpact = result.violations.reduce(_(acc,_violation) => {
+      const violationsByImpact = result.violations.reduce((acc, violation) => {
         if (!acc[violation.impact]) {
           acc[violation.impact] = [];
         }
@@ -186,7 +186,7 @@ async function runInitialAudit(): Promise<void> {
         return acc;
       }, {} as Record<string, any[]>);
 
-      Object.entries(violationsByImpact).forEach(_([impact,_violations]) => {
+      Object.entries(violationsByImpact).forEach(([impact, violations]) => {
         console.warn(`[Accessibility] ${impact.toUpperCase()}: ${violations.length} violations`);
         violations.forEach(violation => {
           console.warn(`  - ${violation.id}: ${violation.description}`);
@@ -231,7 +231,7 @@ function setupContinuousMonitoring(): void {
   try {
     const interval = accessibilityState.config.reportInterval || 30000;
 
-    accessibilityState.monitoringInterval = setInterval(_async () => {
+    accessibilityState.monitoringInterval = setInterval(async () => {
       try {
         const result = await runAccessibilityTest(
           document.documentElement,

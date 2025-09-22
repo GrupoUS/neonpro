@@ -1,6 +1,6 @@
 import type { QueryClient } from '@tanstack/react-query';
 
-export const _healthcareOptimisticUpdates = {
+export const healthcareOptimisticUpdates = {
   patient: {
     async updateMedicalRecord(
       queryClient: QueryClient,

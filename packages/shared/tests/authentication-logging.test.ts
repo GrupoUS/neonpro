@@ -8,30 +8,30 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock console methods to capture logging output
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(_() => {});
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(_() => {});
-const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(_() => {});
-const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(_() => {});
+const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
 
-describe(_'Authentication Logging - Token Exposure Prevention',_() => {
-  beforeEach(_() => {
+describe('Authentication Logging - Token Exposure Prevention_, () => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  describe(_'JWT Token Protection',_() => {
-    it(_'should NOT log JWT tokens in error scenarios',_() => {
-      const mockJwtToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c';
+  describe('JWT Token Protection_, () => {
+    it('should NOT log JWT tokens in error scenarios_, () => {
+      const mockJwtToken = ''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
       const refreshToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.refresh-token-secret';
 
       // Simulate authentication error that would log tokens
       try {
         console.log(`Authenticating with token: ${mockJwtToken}`);
         throw new Error('Token validation failed');
-      } catch (_error) {
+      } catch (error) {
         console.error(`Authentication failed for token: ${mockJwtToken}`, error);
         console.warn(`Refresh token expired: ${refreshToken}`);
       }
@@ -47,20 +47,20 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
       expect(hasFullTokens).toBe(false);
     });
 
-    it(_'should NOT log token headers or payload contents',_() => {
+    it('should NOT log token headers or payload contents_, () => {
       const tokenHeader = { alg: 'HS256', typ: 'JWT' };
       const tokenPayload = {
         sub: 'user-123',
         email: 'user@example.com',
-        _role: 'doctor',
-        clinic_id: 'clinic-456',
-        permissions: ['read:patients', 'write:medical_records'],
+        _role: 'doctor_,
+        clinic_id: 'clinic-456_,
+        permissions: ['read:patients', 'write:medical_records_],
         exp: 1735689600
       };
 
       // Simulate debug logging that would expose token contents
       console.log('Decoded token header:', tokenHeader);
-      console.log('Token _payload:', tokenPayload);
+      console.log('Token _payload:_, tokenPayload);
       console.error('Token validation failed:', { header: tokenHeader, _payload: tokenPayload });
 
       // Test will FAIL because token contents are being logged
@@ -78,17 +78,17 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
     });
   });
 
-  describe(_'API Key Protection',_() => {
-    it(_'should NOT log API keys or service credentials',_() => {
+  describe('API Key Protection_, () => {
+    it('should NOT log API keys or service credentials_, () => {
       const testApiKeys = [
         'sk-ant-api03-xyz123abc456def789ghi012-jkl345mno678pqr',
-        'supabase_anon_key_xyz123abc456def789ghi012',
-        'service_role_key_abcdef1234567890',
-        'stripe_secret_key_sk_test_1234567890'
+        'supabase_anon_key_xyz123abc456def789ghi012_,
+        'service_role_key_abcdef1234567890_,
+        'stripe_secret_key_sk_test_1234567890_
       ];
 
       // Simulate various authentication scenarios
-      testApiKeys.forEach(_(apiKey,_index) => {
+      testApiKeys.forEach((apiKey, index) => {
         console.log(`Using API key ${index + 1}: ${apiKey}`);
         console.error(`Invalid API key format: ${apiKey}`);
         console.warn(`API key rotation needed for: ${apiKey}`);
@@ -98,26 +98,26 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleWarn.mock.calls];
       const hasApiKeys = allLogs.some(call => 
         JSON.stringify(call).includes('sk-ant-api03') ||
-        JSON.stringify(call).includes('supabase_anon_key') ||
-        JSON.stringify(call).includes('service_role_key') ||
-        JSON.stringify(call).includes('stripe_secret_key')
+        JSON.stringify(call).includes('supabase_anon_key_) ||
+        JSON.stringify(call).includes('service_role_key_) ||
+        JSON.stringify(call).includes('stripe_secret_key_)
       );
 
       expect(hasApiKeys).toBe(false);
     });
 
-    it(_'should NOT log webhook signing secrets',_() => {
+    it('should NOT log webhook signing secrets_, () => {
       const webhookSecrets = [
-        'whsec_abcdef1234567890abcdef1234567890',
-        'webhook_signing_secret_xyz123abc456def789',
-        'stripe_webhook_secret_whsec_1234567890'
+        'whsec_abcdef1234567890abcdef1234567890_,
+        'webhook_signing_secret_xyz123abc456def789_,
+        'stripe_webhook_secret_whsec_1234567890_
       ];
 
       webhookSecrets.forEach(secret => {
         try {
           console.log(`Verifying webhook with secret: ${secret}`);
           throw new Error('Webhook signature verification failed');
-        } catch (_error) {
+        } catch (error) {
           console.error(`Webhook verification failed for secret ${secret}:`, error);
         }
       });
@@ -125,24 +125,24 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
       // Test will FAIL because webhook secrets are being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls];
       const hasWebhookSecrets = allLogs.some(call => 
-        JSON.stringify(call).includes('whsec_') ||
-        JSON.stringify(call).includes('webhook_signing_secret') ||
-        JSON.stringify(call).includes('stripe_webhook_secret')
+        JSON.stringify(call).includes('whsec__) ||
+        JSON.stringify(call).includes('webhook_signing_secret_) ||
+        JSON.stringify(call).includes('stripe_webhook_secret_)
       );
 
       expect(hasWebhookSecrets).toBe(false);
     });
   });
 
-  describe(_'Session Data Protection',_() => {
-    it(_'should NOT log session identifiers or cookies',_() => {
+  describe('Session Data Protection_, () => {
+    it('should NOT log session identifiers or cookies_, () => {
       const sessionData = {
-        sessionId: 'sess_1234567890abcdef',
-        _userId: 'user-123',
+        sessionId: 'sess_1234567890abcdef_,
+        _userId: 'user-123_,
         accessToken: 'access-token-xyz123',
         refreshToken: 'refresh-token-abc456',
         expiresAt: '2024-12-31T23:59:59Z',
-        cookie: 'session_id=sess_1234567890abcdef; Path=/; HttpOnly; Secure; SameSite=Strict'
+        cookie: 'session_id=sess_1234567890abcdef; Path=/; HttpOnly; Secure; SameSite=Strict_
       };
 
       // Simulate session management logging
@@ -153,7 +153,7 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
       // Test will FAIL because session data is being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleWarn.mock.calls];
       const hasSessionData = allLogs.some(call => 
-        JSON.stringify(call).includes('sess_1234567890abcdef') ||
+        JSON.stringify(call).includes('sess_1234567890abcdef_) ||
         JSON.stringify(call).includes('access-token-xyz123') ||
         JSON.stringify(call).includes('refresh-token-abc456') ||
         JSON.stringify(call).includes('user-123')
@@ -162,12 +162,12 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
       expect(hasSessionData).toBe(false);
     });
 
-    it(_'should NOT log OAuth state or authorization codes',_() => {
+    it('should NOT log OAuth state or authorization codes_, () => {
       const oauthData = {
-        state: 'oauth_state_1234567890abcdef',
-        code: 'auth_code_xyz123abc456def789',
+        state: 'oauth_state_1234567890abcdef_,
+        code: 'auth_code_xyz123abc456def789_,
         redirectUri: 'https://app.neonpro.com/auth/callback',
-        clientId: 'client_id_123456'
+        clientId: 'client_id_123456_
       };
 
       // Simulate OAuth flow logging
@@ -178,9 +178,9 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
       // Test will FAIL because OAuth data is being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
       const hasOAuthData = allLogs.some(call => 
-        JSON.stringify(call).includes('oauth_state_1234567890abcdef') ||
-        JSON.stringify(call).includes('auth_code_xyz123abc456def789') ||
-        JSON.stringify(call).includes('client_id_123456')
+        JSON.stringify(call).includes('oauth_state_1234567890abcdef_) ||
+        JSON.stringify(call).includes('auth_code_xyz123abc456def789_) ||
+        JSON.stringify(call).includes('client_id_123456_)
       );
 
       expect(hasOAuthData).toBe(false);
@@ -188,7 +188,7 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
   });
 
   describe('Multi-Factor Authentication (MFA) Protection', () => {
-    it(_'should NOT log MFA secrets or backup codes',_() => {
+    it('should NOT log MFA secrets or backup codes_, () => {
       const mfaData = {
         totpSecret: 'JBSWY3DPEHPK3PXP', // Base32 encoded secret
         backupCodes: [
@@ -219,10 +219,10 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
       expect(hasMfaData).toBe(false);
     });
 
-    it(_'should NOT log biometric template data',_() => {
+    it('should NOT log biometric template data_, () => {
       const biometricData = {
-        templateId: 'bio_template_123',
-        _userId: 'user-456',
+        templateId: 'bio_template_123_,
+        _userId: 'user-456_,
         type: 'fingerprint',
         templateHash: 'a1b2c3d4e5f6...', // Simplified representation
         enrolledAt: '2024-01-15T10:30:00Z'
@@ -236,7 +236,7 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
       // Test will FAIL because biometric data is being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
       const hasBiometricData = allLogs.some(call => 
-        JSON.stringify(call).includes('bio_template_123') ||
+        JSON.stringify(call).includes('bio_template_123_) ||
         JSON.stringify(call).includes('user-456') ||
         JSON.stringify(call).includes('fingerprint') ||
         JSON.stringify(call).includes('a1b2c3d4e5f6')
@@ -246,13 +246,13 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
     });
   });
 
-  describe(_'Credential Rotation and Revocation',_() => {
-    it(_'should NOT log credential rotation details',_() => {
+  describe('Credential Rotation and Revocation_, () => {
+    it('should NOT log credential rotation details_, () => {
       const rotationData = {
-        credentialId: 'cred_1234567890',
-        oldKey: 'old_key_xyz123abc456',
-        newKey: 'new_key_def789ghi012',
-        rotationReason: 'key_compromise',
+        credentialId: 'cred_1234567890_,
+        oldKey: 'old_key_xyz123abc456_,
+        newKey: 'new_key_def789ghi012_,
+        rotationReason: 'key_compromise_,
         rotatedAt: '2024-01-15T14:30:00Z'
       };
 
@@ -267,20 +267,20 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
       // Test will FAIL because credential details are being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls];
       const hasCredentialData = allLogs.some(call => 
-        JSON.stringify(call).includes('cred_1234567890') ||
-        JSON.stringify(call).includes('old_key_xyz123abc456') ||
-        JSON.stringify(call).includes('new_key_def789ghi012') ||
-        JSON.stringify(call).includes('key_compromise')
+        JSON.stringify(call).includes('cred_1234567890_) ||
+        JSON.stringify(call).includes('old_key_xyz123abc456_) ||
+        JSON.stringify(call).includes('new_key_def789ghi012_) ||
+        JSON.stringify(call).includes('key_compromise_)
       );
 
       expect(hasCredentialData).toBe(false);
     });
 
-    it(_'should NOT log token revocation reasons with user details',_() => {
+    it('should NOT log token revocation reasons with user details_, () => {
       const revocationData = {
-        tokenId: 'token_1234567890',
-        _userId: 'user-789',
-        reason: 'suspicious_activity',
+        tokenId: 'token_1234567890_,
+        _userId: 'user-789_,
+        reason: 'suspicious_activity_,
         ipAddress: '192.168.1.100',
         userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
       };
@@ -292,9 +292,9 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
       // Test will FAIL because user details are being logged with revocation
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls];
       const hasRevocationData = allLogs.some(call => 
-        JSON.stringify(call).includes('token_1234567890') ||
+        JSON.stringify(call).includes('token_1234567890_) ||
         JSON.stringify(call).includes('user-789') ||
-        JSON.stringify(call).includes('suspicious_activity') ||
+        JSON.stringify(call).includes('suspicious_activity_) ||
         JSON.stringify(call).includes('192.168.1.100')
       );
 
@@ -302,21 +302,21 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
     });
   });
 
-  describe(_'Authentication Audit Trail Protection',_() => {
-    it(_'should NOT log sensitive authentication events with PII',_() => {
+  describe('Authentication Audit Trail Protection_, () => {
+    it('should NOT log sensitive authentication events with PII_, () => {
       const authEvents = [
         {
-          eventType: 'login_success',
-          _userId: 'user-123',
+          eventType: 'login_success_,
+          _userId: 'user-123_,
           email: 'doctor@neonpro.com',
           ipAddress: '189.1.1.1',
-          deviceFingerprint: 'fp_1234567890'
+          deviceFingerprint: 'fp_1234567890_
         },
         {
-          eventType: 'login_failure',
+          eventType: 'login_failure_,
           attemptedEmail: 'admin@neonpro.com',
           ipAddress: '200.200.200.200',
-          reason: 'invalid_credentials'
+          reason: 'invalid_credentials_
         }
       ];
 
@@ -333,21 +333,21 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
         JSON.stringify(call).includes('admin@neonpro.com') ||
         JSON.stringify(call).includes('189.1.1.1') ||
         JSON.stringify(call).includes('200.200.200.200') ||
-        JSON.stringify(call).includes('fp_1234567890')
+        JSON.stringify(call).includes('fp_1234567890_)
       );
 
       expect(hasAuthPii).toBe(false);
     });
 
-    it(_'should use structured logging for auth events with proper data classification',_() => {
+    it('should use structured logging for auth events with proper data classification_, () => {
       const authEvent = {
-        eventType: 'password_change',
-        _userId: 'user-456',
+        eventType: 'password_change_,
+        _userId: 'user-456_,
         timestamp: new Date().toISOString(),
         success: true,
         metadata: {
           method: 'web',
-          sessionId: 'sess_7890abcdef'
+          sessionId: 'sess_7890abcdef_
         }
       };
 
@@ -368,8 +368,8 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
     });
   });
 
-  describe(_'Third-Party Authentication Integration',_() => {
-    it(_'should NOT log third-party provider credentials',_() => {
+  describe('Third-Party Authentication Integration_, () => {
+    it('should NOT log third-party provider credentials_, () => {
       const providerConfigs = {
         google: {
           clientId: 'google-client-id-123',
@@ -386,7 +386,7 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
       };
 
       // Simulate third-party auth configuration logging
-      Object.entries(providerConfigs).forEach(_([provider,_config]) => {
+      Object.entries(providerConfigs).forEach(([provider, config]) => {
         console.log(`${provider} provider configured:`, config);
         console.error(`${provider} authentication initialization failed:`, config);
       });
@@ -405,7 +405,7 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
       expect(hasProviderCredentials).toBe(false);
     });
 
-    it(_'should NOT log access tokens from third-party providers',_() => {
+    it('should NOT log access tokens from third-party providers_, () => {
       const thirdPartyTokens = [
         {
           provider: 'google',
@@ -416,7 +416,7 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
         {
           provider: 'microsoft',
           accessToken: 'EwBz8xyz123abc456def789',
-          refreshToken: 'M.R3_BAY.xyz123abc456def789',
+          refreshToken: 'M.R3_BAY.xyz123abc456def789_,
           expiresIn: 3600
         }
       ];
@@ -433,7 +433,7 @@ describe(_'Authentication Logging - Token Exposure Prevention',_() => {
         JSON.stringify(call).includes('ya29.a0Ae4lvC2m6w') ||
         JSON.stringify(call).includes('EwBz8xyz123abc') ||
         JSON.stringify(call).includes('1//0Gf2xyz123') ||
-        JSON.stringify(call).includes('M.R3_BAY.xyz123')
+        JSON.stringify(call).includes('M.R3_BAY.xyz123_)
       );
 
       expect(hasThirdPartyTokens).toBe(false);

@@ -70,7 +70,7 @@ export const usePDFExport = (): UsePDFExportReturn => {
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
         // Cleanup URL após um tempo
-        setTimeout(_() => URL.revokeObjectURL(url), 10000);
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
       }
 
       return blob;
@@ -118,17 +118,17 @@ const normalizeNameForFilename = (name: string): string => {
     .normalize('NFD') // Decompõe acentos
     .replace(/[\u0300-\u036f]/g, '') // Remove marcas diacríticas (acentos)
     .replace(/[^a-zA-Z0-9\s-]/g, '') // Remove caracteres especiais, mantendo espaços e hífens
-    .replace(/[-\s]+/g, '_') // Substitui espaços e hífens por underscore
-    .replace(/_+/g, '_') // Remove underscores duplicados
+    .replace(/[-\s]+/g, '') // Substitui espaços e hífens por underscore
+    .replace(/_+/g, '') // Remove underscores duplicados
     .toLowerCase();
 };
 
-export const _generatePDFFilename = (
+export const generatePDFFilename = (
   type: 'assessment' | 'treatment' | 'consent',
   patientName: string,
   date?: Date,
 ): string => {
-  const _now = date || new Date();
+  const now = date || new Date();
   const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
   const cleanName = normalizeNameForFilename(patientName);
 

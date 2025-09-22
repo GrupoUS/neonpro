@@ -151,7 +151,7 @@ export class MedicalLicenseService {
       await this.storeVerificationRecord(result);
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error verifying medical license:", error);
       throw new Error(
         `License verification failed: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -185,7 +185,7 @@ export class MedicalLicenseService {
       await this.updateRegistrationCache(registration);
 
       return registration;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error getting CFM registration:", error);
       throw new Error(
         `Failed to retrieve CFM registration: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -235,7 +235,7 @@ export class MedicalLicenseService {
       };
 
       return registration;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error fetching from CFM API:", error);
       return null; // Fall back to manual verification
     }
@@ -296,7 +296,7 @@ export class MedicalLicenseService {
       };
 
       return registration;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error in manual verification:", error);
       throw new Error("Manual verification failed");
     }
@@ -311,7 +311,7 @@ export class MedicalLicenseService {
   ): Promise<TelemedicineAuthorization> {
     try {
       // Check state-specific telemedicine regulations
-      const stateCouncil = this.stateCouncils.find(_(council) => council.state === state,
+      const stateCouncil = this.stateCouncils.find((council) => council.state === state,
       );
 
       if (!stateCouncil) {
@@ -364,7 +364,7 @@ export class MedicalLicenseService {
       }
 
       return authorization;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error getting telemedicine authorization:", error);
       throw new Error("Failed to get telemedicine authorization");
     }
@@ -534,7 +534,7 @@ export class MedicalLicenseService {
         lastVerification: new Date(data.last_verification),
         verificationSource: data.verification_source,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error getting cached registration:", error);
       return null;
     }
@@ -542,7 +542,7 @@ export class MedicalLicenseService {
 
   private isCacheValid(lastVerification: Date): boolean {
     const cacheValidityHours = 24; // Cache is valid for 24 hours
-    const _now = new Date();
+    const now = new Date();
     const diffHours =
       (now.getTime() - lastVerification.getTime()) / (1000 * 60 * 60);
     return diffHours < cacheValidityHours;
@@ -565,7 +565,7 @@ export class MedicalLicenseService {
         last_verification: registration.lastVerification.toISOString(),
         verification_source: registration.verificationSource,
       });
-    } catch (_error) {
+    } catch (error) {
       console.error("Error updating registration cache:", error);
     }
   }
@@ -582,7 +582,7 @@ export class MedicalLicenseService {
         created_at: new Date().toISOString(),
         priority: "high",
       });
-    } catch (_error) {
+    } catch (error) {
       console.error("Error flagging for manual review:", error);
     }
   }
@@ -602,7 +602,7 @@ export class MedicalLicenseService {
         expiry_date: auth.expiryDate?.toISOString(),
         is_valid: auth.isValid,
       });
-    } catch (_error) {
+    } catch (error) {
       console.error("Error storing telemedicine authorization:", error);
     }
   }
@@ -622,7 +622,7 @@ export class MedicalLicenseService {
         verification_timestamp: result.verificationTimestamp.toISOString(),
         next_verification_due: result.nextVerificationDue.toISOString(),
       });
-    } catch (_error) {
+    } catch (error) {
       console.error("Error storing verification record:", error);
     }
   }
@@ -660,7 +660,7 @@ export class MedicalLicenseService {
         requiresSupervision: verification.telemedicineAuth.requiresSuperVision,
         emergencyOnly: verification.telemedicineAuth.emergencyOnly,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error checking telemedicine authorization:", error);
       return {
         authorized: false,
@@ -684,7 +684,7 @@ export class MedicalLicenseService {
     if (cleanCRM.length < 4 || cleanCRM.length > 6) return false;
 
     // Check if state exists in our councils
-    const stateCouncil = this.stateCouncils.find(_(council) => council.state === state.toUpperCase(),
+    const stateCouncil = this.stateCouncils.find((council) => council.state === state.toUpperCase(),
     );
     if (!stateCouncil) return false;
 
@@ -712,8 +712,8 @@ export class MedicalLicenseService {
         return [];
       }
 
-      return data?.map(_(item) => item.specialty_name) || [];
-    } catch (_error) {
+      return data?.map((item) => item.specialty_name) || [];
+    } catch (error) {
       console.error("Error getting physician specialties:", error);
       return [];
     }

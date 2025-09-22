@@ -9,11 +9,11 @@ import ConnectionPoolManager, { HEALTHCARE_WORKLOAD_PATTERNS } from '../connecti
 describe(_'ConnectionPoolManager',_() => {
   let manager: ConnectionPoolManager;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     manager = new ConnectionPoolManager();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     manager.stopMonitoring();
   });
 
@@ -229,7 +229,7 @@ describe(_'ConnectionPoolManager',_() => {
       // Mock non-peak hours to avoid healthcare constraints
       const mockDate = new Date();
       mockDate.setHours(2); // 2 AM - non-peak hours
-      vi.spyOn(global, 'Date').mockImplementation(_() => mockDate as any);
+      vi.spyOn(global, 'Date').mockImplementation(() => mockDate as any);
 
       // Simulate low utilization history
       for (let i = 0; i < 10; i++) {
@@ -265,7 +265,7 @@ describe(_'ConnectionPoolManager',_() => {
       // Mock peak hours (8 AM - 6 PM)
       const mockDate = new Date();
       mockDate.setHours(10); // 10 AM
-      vi.spyOn(global, 'Date').mockImplementation(_() => mockDate as any);
+      vi.spyOn(global, 'Date').mockImplementation(() => mockDate as any);
 
       const optimization = manager.generateOptimizationRecommendations();
 
@@ -345,14 +345,14 @@ describe(_'ConnectionPoolManager',_() => {
 
   describe(_'monitoring',_() => {
     it(_'should start and stop monitoring',_() => {
-      expect(_() => manager.startMonitoring(100)).not.toThrow();
-      expect(_() => manager.stopMonitoring()).not.toThrow();
+      expect(() => manager.startMonitoring(100)).not.toThrow();
+      expect(() => manager.stopMonitoring()).not.toThrow();
     });
 
     it('should simulate realistic metrics during monitoring', done => {
       manager.startMonitoring(50); // 50ms interval
 
-      setTimeout(_() => {
+      setTimeout(() => {
         const metrics = manager.getMetrics();
 
         // Should have updated metrics

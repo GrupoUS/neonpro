@@ -163,7 +163,7 @@ export interface APIDocumentationReport {
 }
 
 // Brazilian Portuguese API Labels
-export const _API_LABELS_PT_BR = {
+export const API_LABELS_PT_BR = {
   // HTTP Methods
   [API_METHODS.GET]: 'BUSCAR',
   [API_METHODS.POST]: 'CRIAR',

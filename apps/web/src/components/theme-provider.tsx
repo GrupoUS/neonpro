@@ -39,8 +39,8 @@ function applyThemeToDocument(theme: Theme, attribute: 'class' | 'data-theme') {
 }
 
 import { ThemeProviderBridge } from '@neonpro/ui';
-export const ThemeProvider: React.FC<ThemeProviderProps> = (_{
-  attribute = 'class',_defaultTheme = 'system',_enableSystem = true,_disableTransitionOnChange = true,_children,_...divProps
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({
+  attribute = 'class', _defaultTheme = 'system', _enableSystem = true, _disableTransitionOnChange = true, children, ..._divProps
 }) => {
   const [theme, setThemeState] = React.useState<Theme>(defaultTheme);
   const [resolvedTheme, setResolvedTheme] = React.useState<'light' | 'dark'>(
@@ -49,7 +49,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = (_{
       : (defaultTheme as 'light' | 'dark'),
   );
 
-  React.useEffect(_() => {
+  React.useEffect(() => {
     const stored = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
     if (stored) {
       setThemeState(stored);
@@ -58,12 +58,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = (_{
     }
   }, [defaultTheme]);
 
-  React.useEffect(_() => {
+  React.useEffect(() => {
     const resolved = theme === 'system' && enableSystem
       ? getSystemTheme()
       : (theme as 'light' | 'dark');
     const restore = disableTransitionOnChange
-      ? (_() => {
+      ? (() => {
         const css = document.createElement('style');
         css.appendChild(
           document.createTextNode('*{transition:none !important}'),
@@ -99,7 +99,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = (_{
 
   const setTheme = React.useCallback((next: Theme) => setThemeState(next), []);
 
-  const value = React.useMemo(_() => ({ theme, resolvedTheme, setTheme }),
+  const value = React.useMemo(() => ({ theme, resolvedTheme, setTheme }),
     [theme, resolvedTheme, setTheme],
   );
 

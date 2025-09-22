@@ -133,7 +133,7 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
   }
 
   // CPU power estimation (simplified)
-  const cpuPower = (_() => {
+  const cpuPower = (() => {
     const cores = hasNavigator
       ? (navigator as NavigatorWithDeviceCapabilities).hardwareConcurrency || 4
       : 4;
@@ -228,16 +228,16 @@ const generatePerformanceSettings = (
 };
 
 export function useAnimationPerformance(): AnimationPerformanceReturn {
-  const [capabilities] = useState<DeviceCapabilities>(_() =>
+  const [capabilities] = useState<DeviceCapabilities>(() =>
     detectDeviceCapabilities(),
   );
-  const [settings] = useState<PerformanceSettings>(_() =>
+  const [settings] = useState<PerformanceSettings>(() =>
     generatePerformanceSettings(capabilities),
   );
   const [currentFPS, setCurrentFPS] = useState<number>(60);
 
   // FPS monitoring
-  useEffect(_() => {
+  useEffect(() => {
     if (!settings.enableAnimations) return;
 
     let frameCount = 0;
@@ -309,8 +309,8 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
     async (callback: () => void): Promise<number> => {
       const startTime = performance.now();
 
-      await new Promise<void>(_(resolve) => {
-        requestAnimationFrame(_() => {
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
           callback();
           resolve();
         });

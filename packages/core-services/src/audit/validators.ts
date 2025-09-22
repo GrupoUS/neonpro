@@ -286,7 +286,7 @@ export class ComplianceValidator {
     }
 
     // Add audit event ID to all violations
-    violations.forEach(_(violation) => {
+    violations.forEach((violation) => {
       violation.auditEventId = auditEvent.id;
     });
 
@@ -339,7 +339,7 @@ export class ComplianceValidator {
     action: AuditAction,
     frameworks: ComplianceFramework[],
   ): boolean {
-    return frameworks.some(_(framework) => {
+    return frameworks.some((framework) => {
       switch (framework) {
         case "LGPD":
         case "GDPR":

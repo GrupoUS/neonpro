@@ -15,15 +15,15 @@ import {
   type LimitArgument,
 } from "./crud.js";
 
-describe(_"CrudIntentParser",_() => {
+describe("CrudIntentParser", () => {
   let parser: CrudIntentParser;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     parser = createCrudIntentParser();
   });
 
-  describe(_"Intent Classification",_() => {
-    it(_"should identify CREATE intents",_() => {
+  describe("Intent Classification", () => {
+    it("should identify CREATE intents", () => {
       const inputs = [
         "create a new patient record for John Doe",
         "add new appointment for tomorrow",
@@ -31,14 +31,14 @@ describe(_"CrudIntentParser",_() => {
         "make a new clinic entry",
       ];
 
-      inputs.forEach(_(input) => {
+      inputs.forEach((input) => {
         const result = parser.parseIntent(input);
         expect(result.intent).toBe("CREATE");
         expect(result.confidence).toBeGreaterThan(0.7);
       });
     });
 
-    it(_"should identify READ intents",_() => {
+    it("should identify READ intents", () => {
       const inputs = [
         "get all patients",
         "find user by email",
@@ -48,14 +48,14 @@ describe(_"CrudIntentParser",_() => {
         "search for doctors",
       ];
 
-      inputs.forEach(_(input) => {
+      inputs.forEach((input) => {
         const result = parser.parseIntent(input);
         expect(result.intent).toBe("READ");
         expect(result.confidence).toBeGreaterThan(0.7);
       });
     });
 
-    it(_"should identify UPDATE intents",_() => {
+    it("should identify UPDATE intents", () => {
       const inputs = [
         "update patient status to active",
         "modify appointment time to 3pm",
@@ -63,14 +63,14 @@ describe(_"CrudIntentParser",_() => {
         "edit clinic address",
       ];
 
-      inputs.forEach(_(input) => {
+      inputs.forEach((input) => {
         const result = parser.parseIntent(input);
         expect(result.intent).toBe("UPDATE");
         expect(result.confidence).toBeGreaterThan(0.7);
       });
     });
 
-    it(_"should identify DELETE intents",_() => {
+    it("should identify DELETE intents", () => {
       const inputs = [
         "delete patient record",
         "remove appointment for tomorrow",
@@ -78,21 +78,21 @@ describe(_"CrudIntentParser",_() => {
         "drop clinic from database",
       ];
 
-      inputs.forEach(_(input) => {
+      inputs.forEach((input) => {
         const result = parser.parseIntent(input);
         expect(result.intent).toBe("DELETE");
         expect(result.confidence).toBeGreaterThan(0.7);
       });
     });
 
-    it(_"should handle unknown intents with low confidence",_() => {
+    it("should handle unknown intents with low confidence", () => {
       const inputs = [
         "what is the weather today?",
         "hello world",
         "random text without intent",
       ];
 
-      inputs.forEach(_(input) => {
+      inputs.forEach((input) => {
         const result = parser.parseIntent(input);
         expect(result.intent).toBe("UNKNOWN");
         expect(result.confidence).toBeLessThan(0.5);
@@ -100,8 +100,8 @@ describe(_"CrudIntentParser",_() => {
     });
   });
 
-  describe(_"Entity Extraction",_() => {
-    it(_"should extract entities from CREATE intents",_() => {
+  describe("Entity Extraction", () => {
+    it("should extract entities from CREATE intents", () => {
       const input =
         "create a new patient record for John Doe with email john@doe.com";
       const result = parser.parseIntent(input);
@@ -121,7 +121,7 @@ describe(_"CrudIntentParser",_() => {
       ).toBe(true);
     });
 
-    it(_"should extract entities from READ intents with filters",_() => {
+    it("should extract entities from READ intents with filters", () => {
       const input =
         "get all patients where status equals active and age is greater than 18";
       const result = parser.parseIntent(input);
@@ -140,7 +140,7 @@ describe(_"CrudIntentParser",_() => {
       ).toBe(true);
     });
 
-    it(_"should extract date entities",_() => {
+    it("should extract date entities", () => {
       const inputs = [
         "show appointments for today",
         "get patients created on 2024-01-15",
@@ -148,13 +148,13 @@ describe(_"CrudIntentParser",_() => {
         "appointments for tomorrow",
       ];
 
-      inputs.forEach(_(input) => {
+      inputs.forEach((input) => {
         const result = parser.parseIntent(input);
         expect(_result.entities.some((e) => e.type === "DATE")).toBe(true);
       });
     });
 
-    it(_"should extract email and phone entities",_() => {
+    it("should extract email and phone entities", () => {
       const input =
         "find patient with email admin@clinic.com or phone +5511999887766";
       const result = parser.parseIntent(input);
@@ -170,27 +170,27 @@ describe(_"CrudIntentParser",_() => {
     });
   });
 
-  describe(_"Argument Extraction",_() => {
-    it(_"should extract filter arguments from WHERE clauses",_() => {
+  describe("Argument Extraction", () => {
+    it("should extract filter arguments from WHERE clauses", () => {
       const input =
         "get patients where status equals active and age greater than 25";
       const result = parser.parseIntent(input);
 
       expect(result.arguments.filters.length).toBe(2);
 
-      const statusFilter = result.arguments.filters.find(_(f) => f.field === "status",
+      const statusFilter = result.arguments.filters.find((f) => f.field === "status",
       );
       expect(statusFilter).toBeDefined();
       expect(statusFilter?.operator).toBe("equals");
       expect(statusFilter?.value).toBe("active");
 
-      const ageFilter = result.arguments.filters.find(_(f) => f.field === "age");
+      const ageFilter = result.arguments.filters.find((f) => f.field === "age");
       expect(ageFilter).toBeDefined();
       expect(ageFilter?.operator).toBe("greater_than");
       expect(ageFilter?.value).toBe("25");
     });
 
-    it(_"should extract sort arguments from ORDER BY clauses",_() => {
+    it("should extract sort arguments from ORDER BY clauses", () => {
       const input = "get all patients ordered by created_at descending";
       const result = parser.parseIntent(input);
 
@@ -199,21 +199,21 @@ describe(_"CrudIntentParser",_() => {
       expect(result.arguments.sort?.direction).toBe("desc");
     });
 
-    it(_"should extract limit arguments",_() => {
+    it("should extract limit arguments", () => {
       const inputs = [
         { text: "get first 10 patients", limit: 10 },
         { text: "show top 5 appointments", limit: 5 },
         { text: "list 20 users maximum", limit: 20 },
       ];
 
-      inputs.forEach(_({ text,_limit }) => {
+      inputs.forEach(({ text,_limit }) => {
         const result = parser.parseIntent(text);
         expect(result.arguments.limit).toBeDefined();
         expect(result.arguments.limit?.count).toBe(limit);
       });
     });
 
-    it(_"should extract pagination arguments",_() => {
+    it("should extract pagination arguments", () => {
       const input = "get patients page 2 with 10 per page";
       const result = parser.parseIntent(input);
 
@@ -223,8 +223,8 @@ describe(_"CrudIntentParser",_() => {
     });
   });
 
-  describe(_"Complex Query Parsing",_() => {
-    it(_"should parse complex multi-filter queries",_() => {
+  describe("Complex Query Parsing", () => {
+    it("should parse complex multi-filter queries", () => {
       const input =
         "find active patients with age between 25 and 65, created after 2024-01-01, ordered by name ascending, limit 50";
       const result = parser.parseIntent(input);
@@ -250,7 +250,7 @@ describe(_"CrudIntentParser",_() => {
       expect(result.arguments.limit?.count).toBe(50);
     });
 
-    it(_"should handle Brazilian Portuguese input",_() => {
+    it("should handle Brazilian Portuguese input", () => {
       const inputs = [
         "criar novo paciente João Silva",
         "buscar todos os agendamentos de hoje",
@@ -258,7 +258,7 @@ describe(_"CrudIntentParser",_() => {
         "deletar consulta de amanhã",
       ];
 
-      inputs.forEach(_(input) => {
+      inputs.forEach((input) => {
         const result = parser.parseIntent(input);
         expect(result.intent).not.toBe("UNKNOWN");
         expect(result.confidence).toBeGreaterThan(0.6);
@@ -266,32 +266,32 @@ describe(_"CrudIntentParser",_() => {
     });
   });
 
-  describe(_"Edge Cases and Error Handling",_() => {
-    it(_"should handle empty or null input",_() => {
-      expect(_() => parser.parseIntent("")).not.toThrow();
+  describe("Edge Cases and Error Handling", () => {
+    it("should handle empty or null input", () => {
+      expect(() => parser.parseIntent("")).not.toThrow();
       expect(parser.parseIntent("").intent).toBe("UNKNOWN");
     });
 
-    it(_"should handle very long input text",_() => {
+    it("should handle very long input text", () => {
       const longInput = "get patients ".repeat(100);
       const result = parser.parseIntent(longInput);
       expect(result.intent).toBe("READ");
     });
 
-    it(_"should normalize case sensitivity",_() => {
+    it("should normalize case sensitivity", () => {
       const inputs = [
         "GET ALL PATIENTS",
         "get all patients",
         "Get All Patients",
       ];
 
-      inputs.forEach(_(input) => {
+      inputs.forEach((input) => {
         const result = parser.parseIntent(input);
         expect(result.intent).toBe("READ");
       });
     });
 
-    it(_"should handle special characters and punctuation",_() => {
+    it("should handle special characters and punctuation", () => {
       const input =
         "get patients where email = 'test@example.com' and status != 'inactive'!";
       const result = parser.parseIntent(input);
@@ -299,8 +299,8 @@ describe(_"CrudIntentParser",_() => {
     });
   });
 
-  describe(_"Configuration and Customization",_() => {
-    it(_"should allow custom confidence threshold",_() => {
+  describe("Configuration and Customization", () => {
+    it("should allow custom confidence threshold", () => {
       const customParser = createCrudIntentParser({ confidenceThreshold: 0.9 });
       const borderlineInput = "maybe show some data";
 
@@ -308,7 +308,7 @@ describe(_"CrudIntentParser",_() => {
       expect(result.intent).toBe("UNKNOWN"); // High threshold should reject borderline cases
     });
 
-    it(_"should support entity type customization",_() => {
+    it("should support entity type customization", () => {
       const customParser = createCrudIntentParser({
         customEntityTypes: ["CLINIC", "PROCEDURE", "APPOINTMENT"],
       });

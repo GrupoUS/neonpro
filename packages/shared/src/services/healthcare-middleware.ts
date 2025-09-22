@@ -455,7 +455,7 @@ export class HealthcareMiddlewareService {
       console.log(
         "🔄 [HealthcareMiddlewareService] Healthcare middleware service initialized",
       );
-    } catch (_error) {
+    } catch (error) {
       console.error(
         "Failed to initialize healthcare middleware _service:",
         error,
@@ -468,7 +468,7 @@ export class HealthcareMiddlewareService {
    */
   private setupMetricsCollection(): void {
     if (this.config.performanceMonitoring.enabled) {
-      setInterval(_() => {
+      setInterval(() => {
         this.collectAndReportMetrics();
       }, this.config.performanceMonitoring.metricsInterval);
     }
@@ -586,7 +586,7 @@ export class HealthcareMiddlewareService {
 
         // Phase 8: Post-processing
         await this.performPostProcessing(c, requestContext, startTime);
-      } catch (_error) {
+      } catch (error) {
         // Error handling
         await this.handleMiddlewareError(c, error, requestContext!, startTime);
       }
@@ -872,7 +872,7 @@ export class HealthcareMiddlewareService {
 
     // Log compliance validation
     if (this.config.logging.enableAuditLogging) {
-      await this.logComplianceValidation(_context);
+      await this.logComplianceValidation(context);
     }
   }
 
@@ -1215,7 +1215,7 @@ export class HealthcareMiddlewareService {
       ];
       const requestedFields = Object.keys(body);
 
-      const unnecessarySensitiveFields = sensitiveFields.filter(_(field) =>
+      const unnecessarySensitiveFields = sensitiveFields.filter((field) =>
           requestedFields.includes(field) &&
           !this.isFieldNecessary(field, _context),
       );
@@ -1354,7 +1354,7 @@ export class HealthcareMiddlewareService {
       if (contentType?.includes("application/json")) {
         return await c.req.json();
       }
-    } catch (_error) {
+    } catch (error) {
       // Ignore parsing errors
     }
     return null;
@@ -1417,7 +1417,7 @@ export class HealthcareMiddlewareService {
           metricsToReport.reduce((sum,_m) => sum + (m.duration || 0), 0) /
           metricsToReport.length,
         errorRate:
-          metricsToReport.filter(_(m) => m.errorOccurred).length /
+          metricsToReport.filter((m) => m.errorOccurred).length /
           metricsToReport.length,
         timestamp: new Date().toISOString(),
       });
@@ -1461,7 +1461,7 @@ export class HealthcareMiddlewareService {
 /**
  * Default healthcare middleware service instance
  */
-export const _healthcareMiddlewareService = new HealthcareMiddlewareService({
+export const healthcareMiddlewareService = new HealthcareMiddlewareService({
   enabled: true,
   environment: (process.env.NODE_ENV as any) || "development",
 

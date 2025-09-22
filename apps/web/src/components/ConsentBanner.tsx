@@ -102,7 +102,7 @@ export function ConsentBanner() {
                 </Button>
               </div>
             )
-            : (_// Detailed consent settings - expanded modal-like view
+            : (// Detailed consent settings - expanded modal-like view
               <div className='fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[60]'>
                 <Card className='w-full max-w-2xl max-h-[80vh] overflow-y-auto'>
                   <CardHeader>
@@ -248,7 +248,7 @@ export function ConsentSettings() {
   const {
     hasConsent,
     consentHistory,
-    updateConsentSettings: _updateConsentSettings,
+    updateConsentSettings: updateConsentSettings,
     updatePreferences,
   } = useConsent();
 

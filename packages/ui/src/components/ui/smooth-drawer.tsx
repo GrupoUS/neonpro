@@ -7,9 +7,9 @@ import { cn } from "../../utils";
 
 // Smooth Drawer built on Radix Dialog with slide-in animation
 
-export const _SmoothDrawer = DialogPrimitive.Root;
-export const _SmoothDrawerTrigger = DialogPrimitive.Trigger;
-export const _SmoothDrawerClose = DialogPrimitive.Close;
+export const SmoothDrawer = DialogPrimitive.Root;
+export const SmoothDrawerTrigger = DialogPrimitive.Trigger;
+export const SmoothDrawerClose = DialogPrimitive.Close;
 
 export function SmoothDrawerContent({
   className,
@@ -65,7 +65,7 @@ export function SmoothDrawerHeader({
 export const SmoothDrawerTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
->(_({ className,_...props },_ref) => (
+>(({ className, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
     className={cn(
@@ -80,7 +80,7 @@ SmoothDrawerTitle.displayName = "SmoothDrawerTitle";
 export const SmoothDrawerDescription = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(_({ className,_...props },_ref) => (
+>(({ className, ...props }, ref) => (
   <DialogPrimitive.Description
     ref={ref}
     className={cn("text-sm text-muted-foreground", className)}

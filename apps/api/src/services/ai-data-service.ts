@@ -83,7 +83,7 @@ export class AIDataService {
           domain: this.permissionContext.domain,
           timestamp: new Date().toISOString(),
         });
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to log audit entry:', error);
       // Don't throw - audit logging failures shouldn't block operations
     }
@@ -232,7 +232,7 @@ export class AIDataService {
 
     let dateFilter = '';
     if (financial?.period) {
-      const _now = new Date();
+      const now = new Date();
       switch (financial.period) {
         case 'today':
           dateFilter = `AND date::date = '${now.toISOString().split('T')[0]}'`;
@@ -409,7 +409,7 @@ export class AIDataService {
         timestamp: new Date().toISOString(),
         database: 'connected',
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
@@ -469,7 +469,7 @@ export class AIDataService {
       await this.logAccess('general', { query, sessionId }, 1);
 
       return response;
-    } catch (_error) {
+    } catch (error) {
       console.error('Ottomator agent query failed:', error);
 
       // Fallback to direct processing
@@ -492,14 +492,14 @@ export class AIDataService {
 
     try {
       // Simple intent detection based on keywords
-      const intent = this.detectQueryIntent(_query);
+      const intent = this.detectQueryIntent(query);
       let result: any = null;
 
       switch (intent) {
         case 'client_data':
           try {
             result = await this.getClientsByName({ clientNames: [query] });
-          } catch (_error) {
+          } catch (error) {
             result = {
               message: 'Erro ao buscar clientes: '
                 + (error instanceof Error ? error.message : 'Erro desconhecido'),
@@ -514,7 +514,7 @@ export class AIDataService {
             result = await this.getAppointmentsByDate({
               dateRanges: [{ start: today, end: tomorrow }],
             });
-          } catch (_error) {
+          } catch (error) {
             result = {
               message: 'Erro ao buscar agendamentos: '
                 + (error instanceof Error ? error.message : 'Erro desconhecido'),
@@ -526,7 +526,7 @@ export class AIDataService {
             result = await this.getFinancialSummary({
               financial: { period: 'today', type: 'all' },
             });
-          } catch (_error) {
+          } catch (error) {
             result = {
               message: 'Erro ao buscar dados financeiros: '
                 + (error instanceof Error ? error.message : 'Erro desconhecido'),
@@ -554,7 +554,7 @@ export class AIDataService {
           model: 'fallback',
         },
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         error: {

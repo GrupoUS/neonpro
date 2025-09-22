@@ -20,7 +20,7 @@ declare global {
     gtag?: (
       command: 'event' | string,
       action: string,
-      params?: Record<string,_any>,
+      params?: Record<string, any>,
     ) => void;
   }
 }
@@ -115,13 +115,13 @@ export class PerformanceMonitor {
   }
 
   destroy() {
-    this.observers.forEach(_observer => observer.disconnect());
+    this.observers.forEach(observer => observer.disconnect());
     this.observers = [];
   }
 }
 
 // Image lazy loading utility
-export const _createIntersectionObserver = (
+export const createIntersectionObserver = (
   callback: (entries: IntersectionObserverEntry[]) => void,
   options: IntersectionObserverInit = {},
 ): IntersectionObserver | null => {
@@ -137,7 +137,7 @@ export const _createIntersectionObserver = (
 };
 
 // Resource preloading utilities
-export const _preloadResource = (
+export const preloadResource = (
   href: string,
   as: string,
   crossorigin?: string,
@@ -153,7 +153,7 @@ export const _preloadResource = (
   document.head.appendChild(link);
 };
 
-export const _prefetchResource = (_href: any) => {
+export const prefetchResource = (_href: any) => {
   if (typeof document === 'undefined') return;
 
   const link = document.createElement('link');
@@ -164,7 +164,7 @@ export const _prefetchResource = (_href: any) => {
 };
 
 // Bundle size monitoring
-export const _logBundleSize = () => {
+export const logBundleSize = () => {
   if (typeof window === 'undefined' || process.env.NODE_ENV !== 'development') {
     return;
   }
@@ -181,7 +181,7 @@ export const _logBundleSize = () => {
 };
 
 // Memory usage monitoring
-export const _monitorMemoryUsage = ():
+export const monitorMemoryUsage = ():
   | { used: number; total: number; limit: number }
   | undefined =>
 {
@@ -211,7 +211,7 @@ export const performanceMonitor = new PerformanceMonitor();
 
 // Cleanup on page unload
 if (typeof window !== 'undefined') {
-  window.addEventListener(_'beforeunload',_() => {
+  window.addEventListener('beforeunload', () => {
     performanceMonitor.destroy();
   });
 }

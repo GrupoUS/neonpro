@@ -12,7 +12,7 @@ export function useSupabaseQuery<T = any>(
   queryFn: () => Promise<{ data: T | null; error: any }>,
   options = {},
 ) {
-  return useQuery(_{
+  return useQuery({
     queryKey,
     queryFn: async () => {
       const result = await queryFn();
@@ -40,7 +40,7 @@ export function useSupabaseRealTimeQuery<T = any>(
         {
           event: '*',
           schema: 'public',
-          table: table,_},_() => {
+          table: table, },() {
           // Invalidar query quando houver mudanças
           queryClient.invalidateQueries({ queryKey });
         },
@@ -84,7 +84,7 @@ export function usePatients(options = {}) {
 
 // Hook para queries de agendamentos
 export function useAppointments(options = {}): any {
-  return useSupabaseQuery(_['appointments'],_async () => {
+  return useSupabaseQuery(['appointments'],async () => {
       const { data, error } = await supabase
         .from('appointments')
         .select(
@@ -108,7 +108,7 @@ export function useAppointments(options = {}): any {
 
 // Hook para agendamentos do dia com real-time
 export function useTodayAppointments(professionalId: string | undefined): any {
-  return useSupabaseRealTimeQuery(_['appointments',_'today',_professionalId ?? 'all'],_'appointments',_async () => {
+  return useSupabaseRealTimeQuery(['appointments', 'today', professionalId ?? 'all'], 'appointments',async () => {
       const today = new Date().toISOString().split('T')[0];
 
       let query = supabase
@@ -142,7 +142,7 @@ export function useTodayAppointments(professionalId: string | undefined): any {
 
 // Hook para estatísticas com real-time
 export function useStats() {
-  return useSupabaseRealTimeQuery(_['stats'],_'patients',_async () => {
+  return useSupabaseRealTimeQuery(['stats'], 'patients',async () => {
       const [
         { count: totalPatients },
         { count: totalAppointments },
@@ -189,7 +189,7 @@ export function useSupabaseMutation(
 
   return useMutation({
     mutationFn: async ({
-      data,_id,_action,
+      data,id, action,
     }: {
       data?: any;
       id?: string;
@@ -225,10 +225,10 @@ export function useSupabaseMutation(
       if (result.error) throw result.error;
       return result.data;
     },
-    onSuccess: (_data, _variables) => {
+    onSuccess: (data, variables) => {
       // Invalidar queries relacionadas
       if (options.invalidateQueries) {
-        options.invalidateQueries.forEach(_queryKey => {
+        options.invalidateQueries.forEach(queryKey => {
           queryClient.invalidateQueries({ queryKey });
         });
       }
@@ -333,7 +333,7 @@ export function useRealTimeSubscription(
   },
   filters?: Record<string, any>,
 ) {
-  useEffect(_() => {
+  useEffect(() => {
     const channel = supabase
       .channel(`${table}-subscription`)
       .on(
@@ -349,13 +349,13 @@ export function useRealTimeSubscription(
 
           switch (payload.eventType) {
             case 'INSERT':
-              callbacks.onInsert?.(_payload);
+              callbacks.onInsert?.(payload);
               break;
             case 'UPDATE':
-              callbacks.onUpdate?.(_payload);
+              callbacks.onUpdate?.(payload);
               break;
             case 'DELETE':
-              callbacks.onDelete?.(_payload);
+              callbacks.onDelete?.(payload);
               break;
           }
         },

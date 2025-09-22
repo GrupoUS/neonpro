@@ -3,7 +3,7 @@ import { Button } from '@neonpro/ui'; // shadcn/ui Button for conflict testing
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
-export const _Route = createFileRoute('/__tests/comprehensive-button-test')({
+export const Route = createFileRoute('/__tests/comprehensive-button-test')({
   component: ComprehensiveButtonTest,
 });
 
@@ -13,7 +13,7 @@ function ComprehensiveButtonTest() {
   const [reducedMotion, setReducedMotion] = useState(false);
 
   // Test for prefers-reduced-motion
-  useEffect(_() => {
+  useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setReducedMotion(mediaQuery.matches);
 
@@ -541,7 +541,7 @@ function ComprehensiveButtonTest() {
           </h3>
 
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {Object.entries(testResults).map(_([testName,_passed]) => (
+            {Object.entries(testResults).map(([testName, passed]) => (
               <div
                 key={testName}
                 className={`p-3 rounded-lg border-2 ${

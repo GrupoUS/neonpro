@@ -7,12 +7,12 @@ process.env.SUPABASE_SERVICE_KEY = "test-service-key";
 process.env.DATABASE_URL = "postgresql://test:test@localhost:5432/test";
 
 // Global test setup
-beforeAll(_() => {
+beforeAll(() => {
   // Initialize test environment
   console.log("🧪 Setting up integration test environment");
 });
 
-afterAll(_() => {
+afterAll(() => {
   // Cleanup test environment
   console.log("🧹 Cleaning up integration test environment");
 });

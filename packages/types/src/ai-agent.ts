@@ -23,8 +23,7 @@ export interface UserQuery {
 }
 
 export type QueryIntent =
-  | 'client_data'
-  | 'appointments'
+  | 'client_data' | 'appointments'
   | 'financial'
   | 'general'
   | 'unknown';
@@ -234,24 +233,16 @@ export interface PermissionContext {
 }
 
 export type Permission =
-  | 'read_clients'
-  | 'write_clients'
-  | 'read_appointments'
-  | 'write_appointments'
-  | 'read_financial'
-  | 'write_financial'
-  | 'read_medical'
-  | 'write_medical'
-  | 'manage_users'
-  | 'view_analytics';
+  | 'read_clients' | 'write_clients'
+  | 'read_appointments' | 'write_appointments'
+  | 'read_financial' | 'write_financial'
+  | 'read_medical' | 'write_medical'
+  | 'manage_users' | 'view_analytics';
 
 export type DataScope =
-  | 'own_clients'
-  | 'all_clients'
-  | 'financial_read'
-  | 'financial_write'
-  | 'medical_read'
-  | 'medical_write';
+  | 'own_clients' | 'all_clients'
+  | 'financial_read' | 'financial_write'
+  | 'medical_read' | 'medical_write';
 
 export interface AgentQueryRequest {
   /** Natural language query from user */
@@ -271,7 +262,7 @@ export interface ChatMessage {
   /** Unique identifier (UUID) */
   id: string;
   /** Message role */
-  _role: 'user' | 'assistant';
+  role: 'user' | 'assistant';
   /** Message content */
   content: string;
   /** When the message was sent */
@@ -290,5 +281,5 @@ export interface AgentAction {
   icon?: string;
   primary?: boolean;
   type: 'view_details' | 'create_appointment' | 'export_data' | 'navigate' | 'refresh';
-  _payload?: Record<string, any>;
+  payload?: Record<string, any>;
 }

@@ -251,7 +251,7 @@ export function anonymizeMedicalHistory(
   }
 
   if (anonymized.prescriptions) {
-    anonymized.prescriptions = anonymized.prescriptions.map(_(prescription) => ({
+    anonymized.prescriptions = anonymized.prescriptions.map((prescription) => ({
       ...prescription,
       medication: "MEDICAÇÃO ANONIMIZADA",
       instructions: "INSTRUÇÕES ANONIMIZADAS",
@@ -266,7 +266,7 @@ export function anonymizeMedicalHistory(
 export function createMedicalHistoryEntry(
   data: Omit<MedicalHistory, "id" | "createdAt" | "updatedAt">,
 ): MedicalHistory {
-  const _now = new Date();
+  const now = new Date();
 
   return {
     ...data,
@@ -325,7 +325,7 @@ export function filterMedicalHistoryByType(
   histories: MedicalHistory[],
   type: MedicalHistoryType,
 ): MedicalHistory[] {
-  return histories.filter(_(history) => history.type === type);
+  return histories.filter((history) => history.type === type);
 }
 
 // Get recent medical history
@@ -337,6 +337,6 @@ export function getRecentMedicalHistory(
   cutoffDate.setDate(cutoffDate.getDate() - days);
 
   return histories
-    .filter(_(history) => history.date >= cutoffDate)
-    .sort(_(a,_b) => b.date.getTime() - a.date.getTime());
+    .filter((history) => history.date >= cutoffDate)
+    .sort((a,_b) => b.date.getTime() - a.date.getTime());
 }

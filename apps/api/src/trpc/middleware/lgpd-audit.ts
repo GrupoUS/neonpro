@@ -169,8 +169,8 @@ function applyDataMinimization(
  * data minimization enforcement, and LGPD compliance validation.
  */
 
-export const _lgpdAuditMiddleware = async (_{
-  ctx,_next,_path,_type,_input,
+export const lgpdAuditMiddleware = async ({
+  ctx,next,_path,type,_input,
 }: any) => {
   const start = performance.now();
   let auditEntry: any = null;
@@ -250,7 +250,7 @@ export const _lgpdAuditMiddleware = async (_{
     }
 
     return minimizedResult;
-  } catch (_error) {
+  } catch (error) {
     const duration = performance.now() - start;
 
     // Log failed operations with enhanced detail

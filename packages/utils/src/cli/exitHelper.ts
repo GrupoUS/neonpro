@@ -26,12 +26,12 @@ export interface ExitOptions {
  */
 function safeStringify(obj: unknown): string {
   try {
-    return JSON.stringify(_obj,_(_key,_value) => {
+    return JSON.stringify(obj, (_key, value) => {
       // Handle circular references
       if (typeof value === "object" && value !== null) {
         if (WeakSet && typeof WeakSet === "function") {
           const seen = new WeakSet();
-          return JSON.stringify(_obj,_(_k,_v) => {
+          return JSON.stringify(obj, (_k, v) => {
             if (typeof v === "object" && v !== null) {
               if (seen.has(v)) return "[Circular]";
               seen.add(v);
@@ -43,7 +43,7 @@ function safeStringify(obj: unknown): string {
       // Convert undefined to null for JSON compatibility
       return value === undefined ? null : value;
     });
-  } catch (_error) {
+  } catch (error) {
     // Fallback for stringify errors
     return JSON.stringify({
       error: "JSON serialization failed",
@@ -71,7 +71,7 @@ export function exitOk(message?: string, options: ExitOptions = {}): void {
 
   if (options.exit !== false) {
     // Use setImmediate to allow output to flush before exiting
-    setImmediate(_() => {
+    setImmediate(() => {
       process.exit(0);
     });
   }
@@ -99,7 +99,7 @@ export function exitError(
 
   if (options.exit !== false) {
     // Use setImmediate to allow output to flush before exiting
-    setImmediate(_() => {
+    setImmediate(() => {
       process.exit(code);
     });
   }
@@ -109,7 +109,7 @@ export function exitError(
  * Handle uncaught exceptions with proper JSON error output
  */
 export function setupGlobalErrorHandling(): void {
-  process.on(_"uncaughtException",_(error) => {
+  process.on("uncaughtException", (error) => {
     exitError("Uncaught exception occurred", 1, {
       details: {
         name: error.name,
@@ -121,7 +121,7 @@ export function setupGlobalErrorHandling(): void {
     });
   });
 
-  process.on(_"unhandledRejection",_(reason) => {
+  process.on("unhandledRejection", (reason) => {
     exitError("Unhandled promise rejection", 1, {
       details: {
         reason: String(reason),

@@ -88,7 +88,7 @@ export class IntentParserService {
     parameters: QueryParameters;
     confidence: number;
   } {
-    const normalizedQuery = this.normalizeQuery(_query);
+    const normalizedQuery = this.normalizeQuery(query);
 
     // Determine primary intent
     const intent = this.extractIntent(normalizedQuery);
@@ -146,8 +146,8 @@ export class IntentParserService {
     }
 
     const bestIntents = Object.entries(intentScores)
-      .filter(_([_,_score]) => score === maxScore)
-      .map(_([intent]) => intent as QueryIntent);
+      .filter(([, score]) => score === maxScore)
+      .map(([intent]) => intent as QueryIntent);
 
     // If tie, prioritize based on query content
     if (bestIntents.length > 1) {
@@ -190,7 +190,7 @@ export class IntentParserService {
     let matchCount = 0;
 
     for (const pattern of patterns) {
-      if (pattern.test(_query)) {
+      if (pattern.test(query)) {
         matchCount++;
       }
     }
@@ -200,7 +200,7 @@ export class IntentParserService {
 
     // Adjust based on query length and specificity
     const queryLengthBonus = Math.min(query.length / 50, 0.2);
-    const specificityBonus = this.calculateSpecificityBonus(_query);
+    const specificityBonus = this.calculateSpecificityBonus(query);
 
     return Math.min(baseConfidence + queryLengthBonus + specificityBonus, 1.0);
   }
@@ -212,14 +212,14 @@ export class IntentParserService {
     let bonus = 0;
 
     // Bonus for specific names
-    if (this.CLIENT_NAME_PATTERNS.some(pattern => pattern.test(_query))) {
+    if (this.CLIENT_NAME_PATTERNS.some(pattern => pattern.test(query))) {
       bonus += 0.2;
     }
 
     // Bonus for dates
     if (
       Object.values(this.DATE_PATTERNS).some(patterns =>
-        patterns.some(pattern => pattern.test(_query))
+        patterns.some(pattern => pattern.test(query))
       )
     ) {
       bonus += 0.2;
@@ -228,7 +228,7 @@ export class IntentParserService {
     // Bonus for financial type specification
     if (
       Object.values(this.FINANCIAL_TYPE_PATTERNS).some(patterns =>
-        patterns.some(pattern => pattern.test(_query))
+        patterns.some(pattern => pattern.test(query))
       )
     ) {
       bonus += 0.1;
@@ -251,15 +251,15 @@ export class IntentParserService {
 
     switch (intent) {
       case 'client_data':
-        parameters.clientNames = this.extractClientNames(_query);
+        parameters.clientNames = this.extractClientNames(query);
         break;
 
       case 'appointments':
-        parameters.dateRanges = this.extractDateRanges(_query);
+        parameters.dateRanges = this.extractDateRanges(query);
         break;
 
       case 'financial':
-        parameters.financial = this.extractFinancialParameters(_query);
+        parameters.financial = this.extractFinancialParameters(query);
         break;
     }
 
@@ -292,10 +292,10 @@ export class IntentParserService {
    */
   private extractDateRanges(_query: string): DateRange[] {
     const ranges: DateRange[] = [];
-    const _now = new Date();
+    const now = new Date();
 
     // Check for relative date patterns
-    if (this.DATE_PATTERNS.today.some(pattern => pattern.test(_query))) {
+    if (this.DATE_PATTERNS.today.some(pattern => pattern.test(query))) {
       const today = new Date(now);
       today.setHours(0, 0, 0, 0);
       const tomorrow = new Date(today);
@@ -304,7 +304,7 @@ export class IntentParserService {
       ranges.push({ start: today, end: tomorrow });
     }
 
-    if (this.DATE_PATTERNS.tomorrow.some(pattern => pattern.test(_query))) {
+    if (this.DATE_PATTERNS.tomorrow.some(pattern => pattern.test(query))) {
       const tomorrow = new Date(now);
       tomorrow.setDate(tomorrow.getDate() + 1);
       tomorrow.setHours(0, 0, 0, 0);
@@ -314,7 +314,7 @@ export class IntentParserService {
       ranges.push({ start: tomorrow, end: dayAfter });
     }
 
-    if (this.DATE_PATTERNS.this_week.some(pattern => pattern.test(_query))) {
+    if (this.DATE_PATTERNS.this_week.some(pattern => pattern.test(query))) {
       const weekStart = new Date(now);
       weekStart.setDate(now.getDate() - now.getDay());
       weekStart.setHours(0, 0, 0, 0);
@@ -324,7 +324,7 @@ export class IntentParserService {
       ranges.push({ start: weekStart, end: weekEnd });
     }
 
-    if (this.DATE_PATTERNS.this_month.some(pattern => pattern.test(_query))) {
+    if (this.DATE_PATTERNS.this_month.some(pattern => pattern.test(query))) {
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
       const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
       monthEnd.setHours(23, 59, 59, 999);
@@ -333,7 +333,7 @@ export class IntentParserService {
     }
 
     // Extract specific dates
-    const specificDates = this.extractSpecificDates(_query);
+    const specificDates = this.extractSpecificDates(query);
     if (specificDates.length > 0) {
       if (specificDates.length === 1) {
         // Single date - create a day range
@@ -345,7 +345,7 @@ export class IntentParserService {
         ranges.push({ start, end });
       } else {
         // Multiple dates - create range from first to last
-        const sorted = specificDates.sort(_(a,_b) => a.getTime() - b.getTime());
+        const sorted = specificDates.sort((a,_b) => a.getTime() - b.getTime());
         ranges.push({
           start: sorted[0],
           end: sorted[sorted.length - 1],
@@ -388,18 +388,18 @@ export class IntentParserService {
 
     // Extract financial type
     for (const [type, patterns] of Object.entries(this.FINANCIAL_TYPE_PATTERNS)) {
-      if (patterns.some(pattern => pattern.test(_query))) {
+      if (patterns.some(pattern => pattern.test(query))) {
         financial.type = type as 'revenue' | 'payments' | 'expenses';
         break;
       }
     }
 
     // Extract period
-    if (this.DATE_PATTERNS.today.some(pattern => pattern.test(_query))) {
+    if (this.DATE_PATTERNS.today.some(pattern => pattern.test(query))) {
       financial.period = 'today';
-    } else if (this.DATE_PATTERNS.this_week.some(pattern => pattern.test(_query))) {
+    } else if (this.DATE_PATTERNS.this_week.some(pattern => pattern.test(query))) {
       financial.period = 'week';
-    } else if (this.DATE_PATTERNS.this_month.some(pattern => pattern.test(_query))) {
+    } else if (this.DATE_PATTERNS.this_month.some(pattern => pattern.test(query))) {
       financial.period = 'month';
     } else if (query.includes('ano') || query.includes('year')) {
       financial.period = 'year';

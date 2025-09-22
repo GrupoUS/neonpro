@@ -176,7 +176,7 @@ export class LGPDComplianceHelper {
         consentRecord: consentRecords[0],
         missingCategories: isValid ? undefined : missingCategories,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Consent validity check failed:', error);
       return { isValid: false };
     }
@@ -236,7 +236,7 @@ export class LGPDComplianceHelper {
       );
 
       return consentRecord;
-    } catch (_error) {
+    } catch (error) {
       console.error('Consent recording failed:', error);
       throw error;
     }
@@ -268,7 +268,7 @@ export class LGPDComplianceHelper {
         action: 'consent_withdrawn',
         reason,
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Consent withdrawal failed:', error);
       throw error;
     }
@@ -339,7 +339,7 @@ export class HealthcareAppointmentHelper {
       }
 
       return Math.min(riskScore, 100); // Cap at 100
-    } catch (_error) {
+    } catch (error) {
       console.error('No-show risk calculation failed:', error);
       return 0;
     }
@@ -399,7 +399,7 @@ export class HealthcareAppointmentHelper {
       });
 
       return conflicts;
-    } catch (_error) {
+    } catch (error) {
       console.error('Appointment conflict check failed:', error);
       return [];
     }
@@ -434,7 +434,7 @@ export class HealthcareAppointmentHelper {
       const endOfDay = new Date(date);
       endOfDay.setHours(23, 59, 59, 999);
 
-      const _existingAppointments = await prisma.appointment.findMany({
+      const existingAppointments = await prisma.appointment.findMany({
         where: {
           professionalId,
           startTime: { gte: startOfDay },
@@ -457,7 +457,7 @@ export class HealthcareAppointmentHelper {
       // based on professional schedule, breaks, and existing appointments
 
       return availableSlots;
-    } catch (_error) {
+    } catch (error) {
       console.error('Available time slots calculation failed:', error);
       return [];
     }

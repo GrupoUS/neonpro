@@ -136,7 +136,7 @@ class NotificationSchedulerService {
    */
   async processPendingNotifications(): Promise<void> {
     try {
-      const _now = new Date();
+      const now = new Date();
 
       // Get pending notifications that are due
       const { data: pendingNotifications, error } = await supabase
@@ -432,4 +432,4 @@ class NotificationSchedulerService {
   }
 }
 
-export const _notificationSchedulerService = new NotificationSchedulerService();
+export const notificationSchedulerService = new NotificationSchedulerService();

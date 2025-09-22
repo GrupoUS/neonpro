@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
 
-describe(_"Configuration",_() => {
-  it(_"should load configuration correctly",_() => {
+describe("Configuration", () => {
+  it("should load configuration correctly", () => {
     // Placeholder for configuration loading tests
     expect(true).toBe(true);
   });
 
-  it(_"should validate configuration schema",_() => {
+  it("should validate configuration schema", () => {
     // Placeholder for configuration validation tests
     expect(true).toBe(true);
   });

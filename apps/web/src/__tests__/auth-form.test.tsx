@@ -4,8 +4,8 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { describe, expect, it } from 'vitest';
 
-describe(_'AuthForm',_() => {
-  it(_'switches between modes',_async () => {
+describe(('AuthForm', () => {
+  it(_'switches between modes',async () => {
     render(<AuthForm />);
 
     // default: sign-in visible

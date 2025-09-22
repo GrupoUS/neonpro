@@ -319,7 +319,7 @@ export type MetricUpdate = Partial<
  * Type guard to check if a metric is a healthcare metric
  */
 export function isHealthcareMetric(metric: BaseMetric): boolean {
-  return metric.complianceFrameworks.some(_(framework) =>
+  return metric.complianceFrameworks.some((framework) =>
     ["LGPD", "ANVISA", "CFM", "HIPAA"].includes(framework),
   );
 }
@@ -407,7 +407,7 @@ function extractCohort(metadata?: Record<string, unknown>): string | undefined {
  * Create a mock metric for testing purposes
  */
 export function createMockMetric(overrides?: Partial<BaseMetric>): BaseMetric {
-  const _now = new Date();
+  const now = new Date();
 
   return {
     id: "mock_metric_" + Math.random().toString(36).substr(2, 9),
@@ -517,14 +517,14 @@ export function aggregateMetrics(
 ): number {
   if (metrics.length === 0) return 0;
 
-  const values = metrics.map(_(m) => m.value);
+  const values = metrics.map((m) => m.value);
 
   switch (aggregation) {
     case "sum":
-      return values.reduce(_(sum,_val) => sum + val, 0);
+      return values.reduce((sum,_val) => sum + val, 0);
 
     case "average":
-      return values.reduce(_(sum,_val) => sum + val, 0) / values.length;
+      return values.reduce((sum,_val) => sum + val, 0) / values.length;
 
     case "count":
       return values.length;
@@ -536,7 +536,7 @@ export function aggregateMetrics(
       return Math.max(...values);
 
     case "median":
-      const sorted = values.sort(_(a,_b) => a - b);
+      const sorted = values.sort((a,_b) => a - b);
       const mid = Math.floor(sorted.length / 2);
       return sorted.length % 2 === 0
         ? (sorted[mid - 1] + sorted[mid]) / 2
@@ -544,7 +544,7 @@ export function aggregateMetrics(
 
     case "percentile":
       // Default to 95th percentile
-      const sortedValues = values.sort(_(a,_b) => a - b);
+      const sortedValues = values.sort((a,_b) => a - b);
       const index = Math.ceil(0.95 * sortedValues.length) - 1;
       return sortedValues[index];
 
@@ -552,6 +552,6 @@ export function aggregateMetrics(
       return values[values.length - 1];
 
     default:
-      return values.reduce(_(sum,_val) => sum + val, 0) / values.length;
+      return values.reduce((sum,_val) => sum + val, 0) / values.length;
   }
 }

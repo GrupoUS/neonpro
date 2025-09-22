@@ -188,7 +188,7 @@ export class ExternalServiceHealthChecker {
    * Start monitoring a service
    */
   private startMonitoring(serviceName: string): void {
-    const interval = setInterval(_() => {
+    const interval = setInterval(() => {
       this.checkServiceHealth(serviceName);
     }, this.config.checkInterval);
 
@@ -214,7 +214,7 @@ export class ExternalServiceHealthChecker {
 
     try {
       // Perform health check with circuit breaker
-      const isHealthy = await circuitBreaker.execute(_() => this.performHealthCheck(_service),
+      const isHealthy = await circuitBreaker.execute(() => this.performHealthCheck(service),
         {
           _service: serviceName,
           endpoint: service.endpoint,
@@ -228,7 +228,7 @@ export class ExternalServiceHealthChecker {
 
       // Record success
       this.recordHealthCheckSuccess(serviceName, responseTime);
-    } catch (_checkError) {
+    } catch (checkError) {
       // Error caught but not used - handled by surrounding logic
       responseTime = Date.now() - startTime;
       status = 'UNHEALTHY';
@@ -265,15 +265,15 @@ export class ExternalServiceHealthChecker {
     // Default health check logic based on service type
     switch (service.type) {
       case 'api':
-        return await this.checkApiHealth(_service);
+        return await this.checkApiHealth(service);
       case 'database':
-        return await this.checkDatabaseHealth(_service);
+        return await this.checkDatabaseHealth(service);
       case 'cache':
-        return await this.checkCacheHealth(_service);
+        return await this.checkCacheHealth(service);
       case 'external':
-        return await this.checkExternalServiceHealth(_service);
+        return await this.checkExternalServiceHealth(service);
       case 'internal':
-        return await this.checkInternalServiceHealth(_service);
+        return await this.checkInternalServiceHealth(service);
       default:
         return false;
     }
@@ -295,7 +295,7 @@ export class ExternalServiceHealthChecker {
       });
 
       return response.ok && response.status < 500;
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       return false;
     }
@@ -309,7 +309,7 @@ export class ExternalServiceHealthChecker {
       // For database services, we'd typically use a connection pool or ORM
       // This is a simplified implementation
       return true; // Assume healthy for demo purposes
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       return false;
     }
@@ -322,7 +322,7 @@ export class ExternalServiceHealthChecker {
     try {
       // For cache services, try a simple GET/SET operation
       return true; // Assume healthy for demo purposes
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       return false;
     }
@@ -339,7 +339,7 @@ export class ExternalServiceHealthChecker {
         timeout: this.config.timeout,
       });
       return response.ok;
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       return false;
     }
@@ -352,7 +352,7 @@ export class ExternalServiceHealthChecker {
     try {
       // For internal services, check if the service is running
       return true; // Assume healthy for demo purposes
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       return false;
     }
@@ -581,7 +581,7 @@ export class ExternalServiceHealthChecker {
     this.eventCallbacks.forEach(callback => {
       try {
         callback(event);
-      } catch (_error) {
+      } catch (error) {
       // Error caught but not used - handled by surrounding logic
         console.error('Error in health check event callback:', error);
       }
@@ -619,12 +619,12 @@ export class ExternalServiceHealthChecker {
     let criticalServicesHealthy = true;
     let healthcareCompliance = true;
 
-    this.serviceHealth.forEach(_(health,_serviceName) => {
+    this.serviceHealth.forEach((health,_serviceName) => {
       services[serviceName] = health;
       totalUptime += health.metrics.uptime;
 
       const service = this.services.get(serviceName);
-      if (_service) {
+      if (service) {
         if (service.healthcareCritical && health.status !== 'HEALTHY') {
           criticalServicesHealthy = false;
         }
@@ -675,7 +675,7 @@ export class ExternalServiceHealthChecker {
    */
   getAllServiceHealth(): Record<string, ServiceHealth> {
     const result: Record<string, ServiceHealth> = {};
-    this.serviceHealth.forEach(_(health,_serviceName) => {
+    this.serviceHealth.forEach((health,_serviceName) => {
       result[serviceName] = health;
     });
     return result;

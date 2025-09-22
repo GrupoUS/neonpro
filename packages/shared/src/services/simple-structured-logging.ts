@@ -81,7 +81,7 @@ export class SimpleStructuredLogger {
 }
 
 // Default logger instance
-export const _defaultLogger = new SimpleStructuredLogger({
+export const defaultLogger = new SimpleStructuredLogger({
   level: 'info',
   enableConsole: true,
   enableFile: false,

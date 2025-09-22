@@ -74,7 +74,7 @@ export function PatientRiskCard({
         Histórico: {riskScore.historicalNoShows} faltas
       </p>
 
-      {riskScore.score >= 0.4 && (_<button
+      {riskScore.score >= 0.4 && (<button
           onClick={() => handleInterventionClick("reminder")}
           className="w-full px-3 py-2 text-sm bg-white bg-opacity-50 rounded border border-current hover:bg-opacity-75 transition-colors"
         >

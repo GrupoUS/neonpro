@@ -6,7 +6,7 @@ import React from 'react';
 export const ErrorBoundary: React.FC<{
   fallback?: React.ReactNode;
   children?: React.ReactNode;
-}> = (_{ children }) => <>{children}</>;
+}> = ({ children }) => <>{children}</>;
 
 export const withErrorBoundary = <P extends object>(
   Component: React.ComponentType<P>,

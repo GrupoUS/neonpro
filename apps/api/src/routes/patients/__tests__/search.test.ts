@@ -22,7 +22,7 @@ const mockLGPDService = {
 };
 
 describe('POST /api/v2/patients/search endpoint (T048)', () => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     // Mock successful service responses by default
@@ -83,12 +83,12 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     mockLGPDService.maskSensitiveData.mockImplementation(data => data);
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
   it(_'should export search patients route handler',_() => {
-    expect(_() => {
+    expect(() => {
       const module = require('../search');
       expect(module.default).toBeDefined();
     }).not.toThrow();
@@ -622,7 +622,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     });
 
     it(_'should handle large result sets with pagination',_async () => {
-      const largeResultSet = Array.from({ length: 50 },_(_,_i) => ({
+      const largeResultSet = Array.from({ length: 50 },(, i) => ({
         id: `patient-${i}`,
         name: `Patient ${i}`,
         email: `patient${i}@example.com`,

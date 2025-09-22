@@ -11,17 +11,17 @@ export type SupabaseGeneratedJson =
   | SupabaseGeneratedJson[];
 
 // Core healthcare enums
-export type AuditAction = 'VIEW' | 'CREATE' | 'READ' | 'UPDATE' | 'DELETE' | 'EXPORT' | 'LOGIN' | 'LOGOUT' | 'AI_CHAT' | 'AI_PREDICTION' | 'AI_ANALYSIS' | 'AI_RECOMMENDATION';
-export type ResourceType = 'PATIENT_RECORD' | 'PATIENT_DATA' | 'PATIENT_CONSENT' | 'APPOINTMENT' | 'COMMUNICATION' | 'AI_PREDICTION' | 'AI_MODEL_PERFORMANCE' | 'TELEMEDICINE_SESSION' | 'PRESCRIPTION' | 'COMPLIANCE_REPORT' | 'REPORT' | 'SYSTEM_CONFIG' | 'USER_ACCOUNT';
-export type AuditStatus = 'SUCCESS' | 'FAILED' | 'FAILURE' | 'PARTIAL_SUCCESS' | 'BLOCKED';
+export type AuditAction = 'VIEW' | 'CREATE' | 'READ' | 'UPDATE' | 'DELETE' | 'EXPORT' | 'LOGIN' | 'LOGOUT' | 'AI_CHAT' | 'AI_PREDICTION' | 'AI_ANALYSIS' | ''AI_RECOMMENDATION'
+export type ResourceType = 'PATIENT_RECORD' | 'PATIENT_DATA' | 'PATIENT_CONSENT' | 'APPOINTMENT' | 'COMMUNICATION' | 'AI_PREDICTION' | 'AI_MODEL_PERFORMANCE' | 'TELEMEDICINE_SESSION' | 'PRESCRIPTION' | 'COMPLIANCE_REPORT' | 'REPORT' | 'SYSTEM_CONFIG' | ''USER_ACCOUNT'
+export type AuditStatus = 'SUCCESS' | 'FAILED' | 'FAILURE' | 'PARTIAL_SUCCESS' | ''BLOCKED'
 export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 export type ComplianceFramework = 'HIPAA' | 'LGPD' | 'GDPR' | 'SOC2';
-export type ComplianceStatusEnum = 'COMPLIANT' | 'NON_COMPLIANT' | 'UNDER_REVIEW' | 'CRITICAL';
+export type ComplianceStatusEnum = 'COMPLIANT' | 'NON_COMPLIANT' | 'UNDER_REVIEW' | ''CRITICAL'
 export type EscalationPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-export type EscalationStatus = 'OPEN' | 'IN_PROGRESS' | 'ESCALATED' | 'RESOLVED' | 'CLOSED';
+export type EscalationStatus = 'OPEN' | 'IN_PROGRESS' | 'ESCALATED' | 'RESOLVED' | ''CLOSED'
 export type GoogleCalendarSyncStatus = 'SYNCED' | 'PENDING' | 'FAILED' | 'CONFLICT' | 'IGNORED';
-export type GoogleCalendarOperation = 'CREATE' | 'UPDATE' | 'DELETE' | 'SYNC' | 'REFRESH_TOKEN';
-export type SyncDirection = 'TO_GOOGLE' | 'FROM_GOOGLE' | 'BIDIRECTIONAL';
+export type GoogleCalendarOperation = 'CREATE' | 'UPDATE' | 'DELETE' | 'SYNC' | ''REFRESH_TOKEN'
+export type SyncDirection = 'TO_GOOGLE' | 'FROM_GOOGLE' | ''BIDIRECTIONAL'
 
 // Core table types based on Prisma schema
 export interface Database {

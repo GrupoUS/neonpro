@@ -181,7 +181,7 @@ export class HealthcareAccessibilityAuditor {
     element: HTMLElement | Document = document,
     options: AccessibilityTestingOptions = {},
   ): Promise<HealthcareAccessibilityAuditResult> {
-    const _auditStart = Date.now();
+    const auditStart = Date.now();
 
     // Configure axe-core for healthcare-specific validation
     const healthcareAxeConfig = {
@@ -266,7 +266,7 @@ export class HealthcareAccessibilityAuditor {
       const healthcareRuleId = violation.id as HealthcareAccessibilityRuleId;
 
       if (HEALTHCARE_ACCESSIBILITY_RULES[healthcareRuleId]) {
-        violation.nodes.forEach(_(node,_index) => {
+        violation.nodes.forEach((node, index) => {
           const healthcareIssue: HealthcareAccessibilityIssue = {
             id: `${violation.id}-${index}`,
             impact: violation.impact as any,
@@ -429,14 +429,14 @@ export class HealthcareAccessibilityAuditor {
    * Calculate overall accessibility score
    */
   private calculateAccessibilityScore(axeResults: AxeResults): number {
-    const _totalViolations = axeResults.violations.reduce(_(sum,_violation) => sum + violation.nodes.length,
+    const totalViolations = axeResults.violations.reduce((sum, violation) => sum + violation.nodes.length,
       0,
     );
 
     // Base score of 100, deduct points for violations
     let score = 100;
 
-    axeResults.violations.forEach(_violation => {
+    axeResults.violations.forEach(violation => {
       const weight = violation.impact === 'critical'
         ? 10
         : violation.impact === 'serious'
@@ -459,7 +459,7 @@ export class HealthcareAccessibilityAuditor {
   ): number {
     if (issues.length === 0) return 100;
 
-    const totalWeight = issues.reduce(_(sum,_issue) => {
+    const totalWeight = issues.reduce((sum, issue) => {
       return (
         sum
         + (issue.emergencyRelevant
@@ -474,7 +474,7 @@ export class HealthcareAccessibilityAuditor {
 
     const resolvedWeight = issues
       .filter(issue => issue.remediationPriority === 'low')
-      .reduce(_(sum,_issue) => {
+      .reduce((sum, issue) => {
         return (
           sum
           + (issue.emergencyRelevant
@@ -499,7 +499,7 @@ export class HealthcareAccessibilityAuditor {
     const recommendations: HealthcareAccessibilityRecommendation[] = [];
 
     // Group issues by type
-    const issueGroups = issues.reduce(_(groups,_issue) => {
+    const issueGroups = issues.reduce((groups, issue) => {
         const key = issue.healthcareRuleId;
         if (!groups[key]) groups[key] = [];
         groups[key].push(issue);
@@ -509,7 +509,7 @@ export class HealthcareAccessibilityAuditor {
     );
 
     // Generate recommendation for each group
-    Object.entries(issueGroups).forEach(_([ruleId,_issueGroup]) => {
+    Object.entries(issueGroups).forEach(([ruleId, issueGroup]) => {
       const recommendation: HealthcareAccessibilityRecommendation = {
         id: `rec-${ruleId}`,
         title: `Improve ${HEALTHCARE_ACCESSIBILITY_RULES[ruleId as HealthcareAccessibilityRuleId]}`,
@@ -531,7 +531,7 @@ export class HealthcareAccessibilityAuditor {
       recommendations.push(recommendation);
     });
 
-    return recommendations.sort(_(a,_b) => {
+    return recommendations.sort((a, b) => {
       const priorityOrder = { immediate: 4, high: 3, medium: 2, low: 1 };
       return priorityOrder[b.priority] - priorityOrder[a.priority];
     });
@@ -542,7 +542,7 @@ export class HealthcareAccessibilityAuditor {
   ): 'immediate' | 'high' | 'medium' | 'low' {
     const priorityOrder = { immediate: 4, high: 3, medium: 2, low: 1 };
     const highestPriority = issues.reduce(
-      (highest: 'immediate' | 'high' | 'medium' | 'low',_issue) => {
+      (highest: 'immediate' | 'high' | 'medium' | 'low', issue) => {
         const currentPriority = priorityOrder[issue.remediationPriority];
         const highestPriorityValue = priorityOrder[highest];
         return currentPriority > highestPriorityValue
@@ -739,7 +739,7 @@ ${
 export function createHealthcareAuditor(
   _context?: Partial<HealthcareAuditContext>,
 ): HealthcareAccessibilityAuditor {
-  return new HealthcareAccessibilityAuditor(_context);
+  return new HealthcareAccessibilityAuditor(context);
 }
 
 // Export types and utilities

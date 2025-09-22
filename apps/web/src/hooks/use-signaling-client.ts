@@ -83,7 +83,7 @@ export function useSignalingClient(
   /**
    * Connect to WebSocket signaling server
    */
-  const connect = useCallback(_() => {
+  const connect = useCallback(() => {
     if (websocketRef.current?.readyState === WebSocket.OPEN) {
       return; // Already connected
     }
@@ -180,7 +180,7 @@ export function useSignalingClient(
   /**
    * Disconnect from signaling server
    */
-  const disconnect = useCallback(_() => {
+  const disconnect = useCallback(() => {
     if (websocketRef.current) {
       // Send leave message before closing
       sendMessage({
@@ -314,7 +314,7 @@ export function useSignalingClient(
   /**
    * Schedule reconnection with exponential backoff
    */
-  const scheduleReconnect = useCallback(_() => {
+  const scheduleReconnect = useCallback(() => {
     if (reconnectTimeoutRef.current) {
       clearTimeout(reconnectTimeoutRef.current);
     }
@@ -337,7 +337,7 @@ export function useSignalingClient(
       }s... (tentativa ${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})`,
     );
 
-    reconnectTimeoutRef.current = setTimeout(_() => {
+    reconnectTimeoutRef.current = setTimeout(() => {
       connect();
     }, delay);
   }, [connect, callbacks]);
@@ -345,12 +345,12 @@ export function useSignalingClient(
   /**
    * Start ping interval to keep connection alive
    */
-  const startPingInterval = useCallback(_() => {
+  const startPingInterval = useCallback(() => {
     if (pingIntervalRef.current) {
       clearInterval(pingIntervalRef.current);
     }
 
-    pingIntervalRef.current = setInterval(_() => {
+    pingIntervalRef.current = setInterval(() => {
       if (websocketRef.current?.readyState === WebSocket.OPEN) {
         sendMessage({
           type: 'connection-quality',
@@ -487,7 +487,7 @@ export function useSignalingClient(
   /**
    * End session for all participants
    */
-  const endSession = useCallback(_() => {
+  const endSession = useCallback(() => {
     return sendMessage({
       type: 'session-end',
       sessionId,
@@ -504,7 +504,7 @@ export function useSignalingClient(
   }, [sessionId, participantId, sendMessage]);
 
   // Auto-connect on mount
-  useEffect(_() => {
+  useEffect(() => {
     connect();
 
     return () => {
@@ -513,7 +513,7 @@ export function useSignalingClient(
   }, [connect, disconnect]);
 
   // Cleanup on unmount
-  useEffect(_() => {
+  useEffect(() => {
     return () => {
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);

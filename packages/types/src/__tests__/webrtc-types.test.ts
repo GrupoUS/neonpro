@@ -32,12 +32,12 @@ import type * as WebRTC from "../webrtc";
 
 describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
   describe(""Type Export Resolution") => {
-    it(""should import WebRTC types without TypeScript conflicts",_"async () => {
+    it(""should import WebRTC types without TypeScript conflicts","async () => {
       // Test that WebRTC types can be imported without conflicts
       // Note: TypeScript types are compile-time only, not runtime accessible
 
       // Test that imported types work correctly
-      expect(_() => {
+      expect(() => {
         // Type assignments to verify types work correctly
         const state: RTCConnectionState = "connected";
         const callType: TelemedicineCallType = "consultation";
@@ -48,7 +48,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
       }).not.toThrow();
     });
 
-    it(""should resolve RTCConnectionState type without conflicts",_"async () => {
+    it(""should resolve RTCConnectionState type without conflicts","async () => {
       // This will FAIL due to duplicate export declarations
       const { RTCConnectionState } = await import("../webrtc");
 
@@ -67,7 +67,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
       expect(validStates).toContain("failed");
     });
 
-    it(""should resolve TelemedicineCallType type without conflicts",_"async () => {
+    it(""should resolve TelemedicineCallType type without conflicts","async () => {
       // This will FAIL due to duplicate export declarations
       const { TelemedicineCallType } = await import("../webrtc");
 
@@ -86,7 +86,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
       expect(validCallTypes).toContain("emergency");
     });
 
-    it(""should resolve MedicalDataClassification type for LGPD compliance",_"async () => {
+    it(""should resolve MedicalDataClassification type for LGPD compliance","async () => {
       // This will FAIL due to duplicate export declarations
       const { MedicalDataClassification } = await import("../webrtc");
 
@@ -106,7 +106,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
   });
 
   describe(""Interface Type Validation") => {
-    it(""should validate RTCSignalingMessage interface structure",_"async () => {
+    it(""should validate RTCSignalingMessage interface structure","async () => {
       // This will FAIL due to current export conflicts
       const { RTCSignalingMessage } = await import("../webrtc");
 
@@ -126,7 +126,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
       expect(mockMessage.dataClassification).toBe("sensitive");
     });
 
-    it(""should validate TelemedicineCallSession interface for healthcare compliance",_"async () => {
+    it(""should validate TelemedicineCallSession interface for healthcare compliance","async () => {
       // This will FAIL due to current export conflicts
       const {
         TelemedicineCallSession,
@@ -157,7 +157,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
       expect(mockSession.compliance.encryptionEnabled).toBe(true);
     });
 
-    it(""should validate RTCCallManager interface methods",_"async () => {
+    it(""should validate RTCCallManager interface methods","async () => {
       // This will FAIL due to current export conflicts
       const { RTCCallManager } = await import("../webrtc");
 
@@ -186,7 +186,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
   });
 
   describe(""Healthcare Compliance Types") => {
-    it(""should validate RTCAuditLogEntry for LGPD audit trail",_"async () => {
+    it(""should validate RTCAuditLogEntry for LGPD audit trail","async () => {
       // This will FAIL due to current export conflicts
       const { RTCAuditLogEntry, MedicalDataClassification } = await import(
         "../webrtc"
@@ -215,7 +215,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
       expect(mockAuditEntry.complianceCheck.isCompliant).toBe(true);
     });
 
-    it(""should validate RTCConsentManager for LGPD consent management",_"async () => {
+    it(""should validate RTCConsentManager for LGPD consent management","async () => {
       // This will FAIL due to current export conflicts
       const { RTCConsentManager } = await import("../webrtc");
 
@@ -234,7 +234,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
       expect(typeof mockConsentManager.revokeConsent).toBe("function");
     });
 
-    it(""should validate RTCError with healthcare context",_"async () => {
+    it(""should validate RTCError with healthcare context","async () => {
       // This will FAIL due to current export conflicts
       const { RTCError } = await import("../webrtc");
 
@@ -259,11 +259,11 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
   });
 
   describe(""Build System Integration") => {
-    it(""should not cause TypeScript compilation errors",_"async () => {
+    it(""should not cause TypeScript compilation errors","async () => {
       // Test that WebRTC types don't cause TypeScript compilation errors
 
       // Test static type imports (compile-time validation)
-      expect(_() => {
+      expect(() => {
         // Use the types to verify they work
         type ConnectionState = WebRTC.RTCConnectionState;
         type CallType = WebRTC.TelemedicineCallType;
@@ -278,7 +278,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
       }).not.toThrow();
     });
 
-    it(""should support proper tree-shaking for production builds",_"async () => {
+    it(""should support proper tree-shaking for production builds","async () => {
       // Test that WebRTC types are properly exported for tree-shaking
       // Note: TypeScript types are compile-time only, not runtime accessible
 
@@ -300,12 +300,12 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
   });
 
   describe(""Integration with Main Types Package") => {
-    it(""should be exportable through main package index",_"async () => {
+    it(""should be exportable through main package index","async () => {
       // This will FAIL if webrtc types aren't properly exported through main index
 
       // Test importing through main package
       expect(_async () => {
-        const _mainTypes = await import("../index");
+        const mainTypes = await import("../index");
 
         // Verify WebRTC types are re-exported through main index
         // This might need to be added to packages/types/src/index.ts

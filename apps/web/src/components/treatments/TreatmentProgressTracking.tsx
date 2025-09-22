@@ -283,8 +283,8 @@ interface TreatmentProgressTrackingProps {
 
 type ViewMode = 'overview' | 'timeline' | 'sessions' | 'photos' | 'analytics' | 'reports';
 
-export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps> = (_{
-  treatment,_onUpdateSession,_onAddSessionNote,_onUploadPhoto,_onUpdateTreatment,_onGenerateReport,_onRescheduleSession,_className,_testId = 'treatment-progress-tracking',_}) => {
+export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps> = ({
+  treatment,onUpdateSession, onAddSessionNote,onUploadPhoto, onUpdateTreatment,onGenerateReport, onRescheduleSession,className, testId = 'treatment-progress-tracking', }) => {
   const [currentView, setCurrentView] = useState<ViewMode>('overview');
   const [selectedSession, setSelectedSession] = useState<TreatmentSession | null>(null);
   const [isAddingNote, setIsAddingNote] = useState(false);
@@ -328,10 +328,10 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
   const treatmentConfig = getTreatmentConfig();
 
   // Calculate progress statistics
-  const progressStats = useMemo(_() => {
+  const progressStats = useMemo(() => {
     const completedSessions = treatment.sessions.filter(s => s.status === 'completed');
     const avgSatisfaction = completedSessions.length > 0
-      ? completedSessions.reduce(_(sum,_session) => sum + (session.satisfaction || 0), 0)
+      ? completedSessions.reduce((sum, session) => sum + (session.satisfaction || 0), 0)
         / completedSessions.length
       : 0;
 
@@ -351,7 +351,7 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
       daysRemaining: Math.max(0, differenceInDays(new Date(treatment.expectedEndDate), new Date())),
       nextSession: treatment.sessions
         .filter(s => s.status === 'scheduled')
-        .sort(_(a,_b) =>
+        .sort((a, b) =>
           new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime()
         )[0],
     };
@@ -370,7 +370,7 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
         if (status === 'completed') {
           setSuccess(true);
           announcePolite('Sessão marcada como concluída com sucesso');
-          setTimeout(_() => setSuccess(false), 3000);
+          setTimeout(() => setSuccess(false), 3000);
         }
       } catch (_err) {
         const errorMessage = err instanceof Error
@@ -397,7 +397,7 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
       setIsAddingNote(false);
       setSuccess(true);
       announcePolite('Nota adicionada com sucesso');
-      setTimeout(_() => setSuccess(false), 3000);
+      setTimeout(() => setSuccess(false), 3000);
     } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Erro ao adicionar nota';
       setError(errorMessage);
@@ -442,12 +442,12 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
   }, [selectedSession, onUploadPhoto, announcePolite]);
 
   // Handle photo viewer
-  const openPhotoViewer = useCallback((photos: string[],_startIndex = 0) => {
+  const openPhotoViewer = useCallback((photos: string[], startIndex = 0) => {
     setPhotoViewer({ open: true, photos, currentIndex: startIndex });
     announcePolite('Visualizador de fotos aberto');
   }, [announcePolite]);
 
-  const closePhotoViewer = useCallback(_() => {
+  const closePhotoViewer = useCallback(() => {
     setPhotoViewer({ open: false, photos: [], currentIndex: 0 });
     announcePolite('Visualizador de fotos fechado');
   }, [announcePolite]);
@@ -633,7 +633,7 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
             <div>
               <h4 className='font-medium mb-3'>Áreas Tratadas</h4>
               <div className='flex flex-wrap gap-2'>
-                {treatmentConfig.areas.map((area,_index) => (
+                {treatmentConfig.areas.map((area, index) => (
                   <span
                     key={index}
                     className='text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded-full'
@@ -648,10 +648,10 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
       )}
 
       {/* Milestones */}
-      {treatment.milestones.length > 0 && (_<div className='bg-white border rounded-lg p-6'>
+      {treatment.milestones.length > 0 && (<div className='bg-white border rounded-lg p-6'>
           <h3 className='text-lg font-semibold mb-4'>Marcos do Tratamento</h3>
           <div className='space-y-3'>
-            {treatment.milestones.map((milestone,_index) => (
+            {treatment.milestones.map((milestone, index) => (
               <div key={index} className='flex items-center space-x-3 p-3 border rounded-lg'>
                 <div
                   className={cn(
@@ -681,7 +681,7 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
   );
 
   // Render sessions timeline
-  const renderSessionsTimeline = () => (_<div className='space-y-6'>
+  const renderSessionsTimeline = () => (<div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <h3 className='text-lg font-semibold'>Linha do Tempo das Sessões</h3>
         <HealthcareButton onClick={() => {}} size='sm'>
@@ -696,10 +696,10 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
 
         <div className='space-y-6'>
           {treatment.sessions
-            .sort(_(a,_b) =>
+            .sort((a, b) =>
               new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime()
             )
-            .map(_(session,_index) => {
+            .map((session, index) => {
               const statusConfig = sessionStatus[session.status];
               const StatusIcon = statusConfig.icon;
 
@@ -802,7 +802,7 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
                       <div className='mt-3'>
                         <p className='text-sm font-medium mb-2'>Fotos da sessão</p>
                         <div className='flex space-x-2'>
-                          {session.photos.slice(0, 3).map(_(photo,_photoIndex) => (_<button
+                          {session.photos.slice(0, 3).map((photo, photoIndex) => (<button
                               key={photoIndex}
                               onClick={() => openPhotoViewer([photo.imageUrl], photoIndex)}
                               className='relative w-16 h-16 rounded-lg overflow-hidden border'
@@ -828,7 +828,7 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
 
                     {/* Session actions */}
                     <div className='flex space-x-2 mt-4'>
-                      {session.status === 'scheduled' && (_<>
+                      {session.status === 'scheduled' && (<>
                           <HealthcareButton
                             variant='outline'
                             size='sm'
@@ -852,7 +852,7 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
                         </>
                       )}
 
-                      {session.status === 'in-progress' && (_<HealthcareButton
+                      {session.status === 'in-progress' && (<HealthcareButton
                           variant='outline'
                           size='sm'
                           onClick={() => handleUpdateSessionStatus(session.id, 'completed')}
@@ -916,7 +916,7 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
         sessionNumber: session.sessionNumber,
         sessionDate: session.scheduledDate,
       }))
-    ).sort(_(a,_b) => new Date(b.sessionDate).getTime() - new Date(a.sessionDate).getTime());
+    ).sort((a, b) => new Date(b.sessionDate).getTime() - new Date(a.sessionDate).getTime());
 
     return (
       <div className='space-y-6'>
@@ -946,7 +946,7 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
           )
           : (
             <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-              {allPhotos.map((photo,_index) => (_<div key={index} className='relative group'>
+              {allPhotos.map((photo, index) => (<div key={index} className='relative group'>
                   <button
                     onClick={() => openPhotoViewer(allPhotos.map(p => p.imageUrl), index)}
                     className='relative w-full aspect-square rounded-lg overflow-hidden border'
@@ -1062,7 +1062,7 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
   // Helper function for useMemo
   function useMemo<T>(factory: () => T, deps: any[]): T {
     const [memoized, setMemoized] = React.useState<T>(factory());
-    React.useEffect(_() => {
+    React.useEffect(() => {
       setMemoized(factory());
     }, deps);
     return memoized;
@@ -1118,7 +1118,7 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
             { id: 'sessions', label: 'Sessões', icon: Calendar },
             { id: 'photos', label: 'Fotos', icon: Camera },
             { id: 'analytics', label: 'Análise', icon: BarChart3 },
-          ].map(_tab => {
+          ].map(tab => {
             const Icon = tab.icon;
             return (
               <button
@@ -1163,7 +1163,7 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
       </div>
 
       {/* Add Note Modal */}
-      {isAddingNote && selectedSession && (_<div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
+      {isAddingNote && selectedSession && (<div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
           <div className='bg-white rounded-lg p-6 w-full max-w-md'>
             <div className='flex items-center justify-between mb-4'>
               <h3 className='text-lg font-semibold'>

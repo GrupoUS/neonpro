@@ -361,7 +361,7 @@ export class HealthcareDataClassificationUtils {
       [HealthcareDataClassification.MEDICAL_RECORDS]: 6,
     };
 
-    return classifications.reduce(_(mostRestrictive,_current) => {
+    return classifications.reduce((mostRestrictive,_current) => {
       return hierarchy[current] > hierarchy[mostRestrictive]
         ? current
         : mostRestrictive;
@@ -400,7 +400,7 @@ export class HealthcareDataClassificationUtils {
     }
 
     // Check compliance standards
-    const missingStandards = mapping.requiredStandards.filter(_(std) => !requiredStandards.includes(std),
+    const missingStandards = mapping.requiredStandards.filter((std) => !requiredStandards.includes(std),
     );
     if (missingStandards.length > 0) {
       violations.push(

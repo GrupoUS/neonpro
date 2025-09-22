@@ -29,9 +29,9 @@ export interface FinancialWidgetProps {
   'data-testid'?: string;
 }
 
-export const FinancialWidget: React.FC<FinancialWidgetProps> = (_{
-  metric,_size = 'medium',_showTrend = true,_showPercentage = true,_isLoading = false,_onRefresh,_onExpand,_className,
-  'data-testid': testId,_}) => {
+export const FinancialWidget: React.FC<FinancialWidgetProps> = ({
+  metric, size = 'medium', showTrend = true, showPercentage = true, isLoading = false,onRefresh, onExpand,className,
+  'data-testid': testId, }) => {
   const formatCurrency = (value: number, currency: string): string => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',

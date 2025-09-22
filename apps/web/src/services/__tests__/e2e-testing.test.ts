@@ -12,11 +12,11 @@ import E2ETestingService, {
   TEST_ENVIRONMENTS,
 } from '../e2e-testing';
 
-describe(_'E2E Testing Service',_() => {
+describe(('E2E Testing Service', () => {
   let _service: E2ETestingService;
   let mockConfig: Partial<E2ETestConfig>;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     mockConfig = {
       environment: TEST_ENVIRONMENTS.STAGING,
       testTypes: [
@@ -40,8 +40,8 @@ describe(_'E2E Testing Service',_() => {
     service = new E2ETestingService(mockConfig);
   });
 
-  describe(_'Configuration Validation',_() => {
-    it(_'should validate valid E2E test configuration',_() => {
+  describe(('Configuration Validation', () => {
+    it(('should validate valid E2E test configuration', () => {
       const validConfig = {
         environment: TEST_ENVIRONMENTS.STAGING,
         testTypes: [E2E_TEST_TYPES.HEALTHCARE_WORKFLOW],
@@ -67,7 +67,7 @@ describe(_'E2E Testing Service',_() => {
       expect(service.validateConfig(validConfig)).toBe(true);
     });
 
-    it(_'should use default values for optional configuration',_() => {
+    it(('should use default values for optional configuration', () => {
       const minimalConfig = {};
       const parsedConfig = E2ETestConfigSchema.parse(minimalConfig);
 
@@ -90,7 +90,7 @@ describe(_'E2E Testing Service',_() => {
       expect(parsedConfig.complianceStandards.wcag).toBe(true);
     });
 
-    it(_'should validate healthcare workflows',_() => {
+    it(('should validate healthcare workflows', () => {
       const configWithHealthcareWorkflows = {
         healthcareWorkflows: [
           HEALTHCARE_WORKFLOWS.PATIENT_MANAGEMENT,
@@ -119,8 +119,8 @@ describe(_'E2E Testing Service',_() => {
     });
   });
 
-  describe(_'E2E Test Execution',_() => {
-    it(_'should execute comprehensive E2E testing scenarios',_async () => {
+  describe(('E2E Test Execution', () => {
+    it(_'should execute comprehensive E2E testing scenarios',async () => {
       const report = await service.executeTests();
 
       expect(report).toBeDefined();
@@ -136,7 +136,7 @@ describe(_'E2E Testing Service',_() => {
       expect(report.criticalIssues).toBeInstanceOf(Array);
     });
 
-    it(_'should execute patient management workflow scenario',_async () => {
+    it(_'should execute patient management workflow scenario',async () => {
       const report = await service.executeTests();
       const patientManagementResult = report.results.find(
         r => r.scenarioId === 'patient-management-workflow',
@@ -163,7 +163,7 @@ describe(_'E2E Testing Service',_() => {
       expect(patientManagementResult?.complianceValidation.wcag).toBeDefined();
     });
 
-    it(_'should execute appointment scheduling workflow scenario',_async () => {
+    it(_'should execute appointment scheduling workflow scenario',async () => {
       const report = await service.executeTests();
       const appointmentResult = report.results.find(
         r => r.scenarioId === 'appointment-scheduling-workflow',
@@ -184,7 +184,7 @@ describe(_'E2E Testing Service',_() => {
       expect(appointmentResult?.complianceValidation.wcag).toBeDefined();
     });
 
-    it(_'should execute emergency access workflow scenario',_async () => {
+    it(_'should execute emergency access workflow scenario',async () => {
       const report = await service.executeTests();
       const emergencyResult = report.results.find(
         r => r.scenarioId === 'emergency-access-workflow',
@@ -211,8 +211,8 @@ describe(_'E2E Testing Service',_() => {
     });
   });
 
-  describe(_'E2E Test Statistics',_() => {
-    it(_'should generate accurate test statistics',_async () => {
+  describe(('E2E Test Statistics', () => {
+    it(_'should generate accurate test statistics',async () => {
       const report = await service.executeTests();
 
       expect(report.summary.totalScenarios).toBeGreaterThan(0);
@@ -234,7 +234,7 @@ describe(_'E2E Testing Service',_() => {
       expect(report.summary.averagePerformanceScore).toBeLessThanOrEqual(100);
     });
 
-    it(_'should calculate compliance validation statistics',_async () => {
+    it(_'should calculate compliance validation statistics',async () => {
       const report = await service.executeTests();
 
       expect(report.summary.complianceValidation).toBeDefined();
@@ -256,7 +256,7 @@ describe(_'E2E Testing Service',_() => {
       expect(report.summary.complianceValidation.wcag).toBeLessThanOrEqual(100);
     });
 
-    it(_'should validate healthcare workflow coverage',_async () => {
+    it(_'should validate healthcare workflow coverage',async () => {
       const report = await service.executeTests();
       const healthcareResults = report.results.filter(r =>
         service
@@ -280,8 +280,8 @@ describe(_'E2E Testing Service',_() => {
     });
   });
 
-  describe(_'E2E Test Validation',_() => {
-    it(_'should validate E2E test quality',_async () => {
+  describe(('E2E Test Validation', () => {
+    it(_'should validate E2E test quality',async () => {
       const report = await service.executeTests();
 
       // Validate that tests were executed
@@ -308,7 +308,7 @@ describe(_'E2E Testing Service',_() => {
       }
     });
 
-    it(_'should generate recommendations based on test results',_async () => {
+    it(_'should generate recommendations based on test results',async () => {
       const report = await service.executeTests();
 
       expect(report.recommendations).toBeInstanceOf(Array);
@@ -339,13 +339,13 @@ describe(_'E2E Testing Service',_() => {
       }
     });
 
-    it(_'should identify critical issues in test results',_async () => {
+    it(_'should identify critical issues in test results',async () => {
       const report = await service.executeTests();
 
       expect(report.criticalIssues).toBeInstanceOf(Array);
 
       // Validate critical issue structure
-      report.criticalIssues.forEach(_issue => {
+      report.criticalIssues.forEach(issue => {
         expect(issue.scenarioId).toBeDefined();
         expect(issue.issue).toBeDefined();
         expect(issue.severity).toMatch(/^(critical|high|medium|low)$/);
@@ -354,13 +354,13 @@ describe(_'E2E Testing Service',_() => {
     });
   });
 
-  describe(_'Brazilian Portuguese Localization',_() => {
-    it(_'should provide Brazilian Portuguese labels for E2E test types',_() => {
+  describe(('Brazilian Portuguese Localization', () => {
+    it(('should provide Brazilian Portuguese labels for E2E test types', () => {
       const scenarios = service.getScenariosByType(
         E2E_TEST_TYPES.HEALTHCARE_WORKFLOW,
       );
 
-      scenarios.forEach(_scenario => {
+      scenarios.forEach(scenario => {
         if (scenario.namePtBr) {
           expect(scenario.namePtBr).toBeDefined();
           expect(scenario.namePtBr.length).toBeGreaterThan(0);
@@ -372,7 +372,7 @@ describe(_'E2E Testing Service',_() => {
       });
     });
 
-    it(_'should include Portuguese translations in test scenarios',_async () => {
+    it(_'should include Portuguese translations in test scenarios',async () => {
       const report = await service.executeTests();
 
       // Check for Portuguese content in recommendations (more flexible matching)
@@ -398,7 +398,7 @@ describe(_'E2E Testing Service',_() => {
       }
     });
 
-    it(_'should include Portuguese translations in critical issues',_async () => {
+    it(_'should include Portuguese translations in critical issues',async () => {
       const report = await service.executeTests();
 
       // Check for Portuguese content in critical issues
@@ -415,11 +415,11 @@ describe(_'E2E Testing Service',_() => {
     });
   });
 
-  describe(_'Healthcare Compliance Integration',_() => {
-    it(_'should include healthcare compliance validation in test results',_async () => {
+  describe(('Healthcare Compliance Integration', () => {
+    it(_'should include healthcare compliance validation in test results',async () => {
       const report = await service.executeTests();
 
-      report.results.forEach(_result => {
+      report.results.forEach(result => {
         expect(result.complianceValidation).toBeDefined();
         expect(result.complianceValidation.lgpd).toBeDefined();
         expect(result.complianceValidation.anvisa).toBeDefined();
@@ -428,11 +428,11 @@ describe(_'E2E Testing Service',_() => {
       });
     });
 
-    it(_'should include accessibility compliance validation',_async () => {
+    it(_'should include accessibility compliance validation',async () => {
       const report = await service.executeTests();
 
       // Verify accessibility scores are within valid range
-      report.results.forEach(_result => {
+      report.results.forEach(result => {
         expect(result.overallAccessibilityScore).toBeGreaterThanOrEqual(0);
         expect(result.overallAccessibilityScore).toBeLessThanOrEqual(100);
       });
@@ -444,11 +444,11 @@ describe(_'E2E Testing Service',_() => {
       expect(wcagCompliantResults.length).toBeGreaterThan(0);
     });
 
-    it(_'should include mobile optimization validation',_async () => {
+    it(_'should include mobile optimization validation',async () => {
       const report = await service.executeTests();
 
       // Verify performance scores are within valid range
-      report.results.forEach(_result => {
+      report.results.forEach(result => {
         expect(result.overallPerformanceScore).toBeGreaterThanOrEqual(0);
         expect(result.overallPerformanceScore).toBeLessThanOrEqual(100);
       });
@@ -463,8 +463,8 @@ describe(_'E2E Testing Service',_() => {
     });
   });
 
-  describe(_'E2E Test Scenarios',_() => {
-    it(_'should include patient management workflow scenarios',_() => {
+  describe(('E2E Test Scenarios', () => {
+    it(('should include patient management workflow scenarios', () => {
       const patientScenarios = service.getScenariosByWorkflow(
         HEALTHCARE_WORKFLOWS.PATIENT_MANAGEMENT,
       );
@@ -487,7 +487,7 @@ describe(_'E2E Testing Service',_() => {
       expect(patientManagementScenario?.complianceRequirements).toBeDefined();
     });
 
-    it(_'should include appointment scheduling workflow scenarios',_() => {
+    it(('should include appointment scheduling workflow scenarios', () => {
       const appointmentScenarios = service.getScenariosByWorkflow(
         HEALTHCARE_WORKFLOWS.APPOINTMENT_SCHEDULING,
       );
@@ -510,7 +510,7 @@ describe(_'E2E Testing Service',_() => {
       ).toBeLessThanOrEqual(100);
     });
 
-    it(_'should include emergency access workflow scenarios',_() => {
+    it(('should include emergency access workflow scenarios', () => {
       const emergencyScenarios = service.getScenariosByWorkflow(
         HEALTHCARE_WORKFLOWS.EMERGENCY_ACCESS,
       );
@@ -535,8 +535,8 @@ describe(_'E2E Testing Service',_() => {
     });
   });
 
-  describe(_'E2E Test Filtering',_() => {
-    it(_'should filter scenarios by test type',_() => {
+  describe(('E2E Test Filtering', () => {
+    it(('should filter scenarios by test type', () => {
       const healthcareScenarios = service.getScenariosByType(
         E2E_TEST_TYPES.HEALTHCARE_WORKFLOW,
       );
@@ -550,12 +550,12 @@ describe(_'E2E Testing Service',_() => {
       expect(mobileScenarios.length).toBeGreaterThanOrEqual(0);
 
       // Verify all healthcare scenarios have the correct type
-      healthcareScenarios.forEach(_scenario => {
+      healthcareScenarios.forEach(scenario => {
         expect(scenario.type).toBe(E2E_TEST_TYPES.HEALTHCARE_WORKFLOW);
       });
     });
 
-    it(_'should filter scenarios by healthcare workflow',_() => {
+    it(('should filter scenarios by healthcare workflow', () => {
       const patientManagementScenarios = service.getScenariosByWorkflow(
         HEALTHCARE_WORKFLOWS.PATIENT_MANAGEMENT,
       );
@@ -571,15 +571,15 @@ describe(_'E2E Testing Service',_() => {
       expect(emergencyScenarios.length).toBeGreaterThan(0);
 
       // Verify all scenarios have the correct workflow
-      patientManagementScenarios.forEach(_scenario => {
+      patientManagementScenarios.forEach(scenario => {
         expect(scenario.workflow).toBe(HEALTHCARE_WORKFLOWS.PATIENT_MANAGEMENT);
       });
-      appointmentScenarios.forEach(_scenario => {
+      appointmentScenarios.forEach(scenario => {
         expect(scenario.workflow).toBe(
           HEALTHCARE_WORKFLOWS.APPOINTMENT_SCHEDULING,
         );
       });
-      emergencyScenarios.forEach(_scenario => {
+      emergencyScenarios.forEach(scenario => {
         expect(scenario.workflow).toBe(HEALTHCARE_WORKFLOWS.EMERGENCY_ACCESS);
       });
     });

@@ -861,7 +861,7 @@ export class TelemedicineService {
       this.activeSessions.delete(sessionId);
 
       // Clean up authentication contexts
-      this.authContexts.forEach(_(_,_key) => {
+      this.authContexts.forEach((, key) => {
         if (key.startsWith(sessionId)) {
           this.authContexts.delete(key);
         }
@@ -1229,7 +1229,7 @@ export class TelemedicineService {
     const retentionPeriod = this.getRetentionPeriod(session.sessionType);
 
     // Encrypt session data
-    const _encryptedData = this.encryptSessionData(session);
+    const encryptedData = this.encryptSessionData(session);
 
     // In real implementation, store in secure archive
     console.log(`Archiving session ${session.id} with ID ${archiveId}`);
@@ -1297,14 +1297,14 @@ export class TelemedicineService {
   }> {
     const activeSessions = Array.from(this.activeSessions.values());
 
-    const sessionsByType = activeSessions.reduce(_(acc,_session) => {
+    const sessionsByType = activeSessions.reduce((acc,_session) => {
         acc[session.sessionType] = (acc[session.sessionType] || 0) + 1;
         return acc;
       },
       {} as Record<TelemedicineSessionType, number>,
     );
 
-    const sessionsByStatus = activeSessions.reduce(_(acc,_session) => {
+    const sessionsByStatus = activeSessions.reduce((acc,_session) => {
         acc[session.status] = (acc[session.status] || 0) + 1;
         return acc;
       },
@@ -1312,7 +1312,7 @@ export class TelemedicineService {
     );
 
     const averageQualityScore = activeSessions.length > 0
-      ? activeSessions.reduce(_(sum,_session) => sum + session.qualityMetrics.qualityScore,
+      ? activeSessions.reduce((sum,_session) => sum + session.qualityMetrics.qualityScore,
         0,
       ) / activeSessions.length
       : 0;

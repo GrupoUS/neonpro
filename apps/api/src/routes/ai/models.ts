@@ -68,7 +68,7 @@ const modelsQuerySchema = z.object({
 let services: ServiceInterface | null = null;
 
 // Function to set services (used by tests)
-export const _setServices = (injectedServices: ServiceInterface) => {
+export const setServices = (injectedServices: ServiceInterface) => {
   services = injectedServices;
 };
 
@@ -276,7 +276,7 @@ app.get(
       }
 
       // Set all headers
-      Object.entries(responseHeaders).forEach(_([key,_value]) => {
+      Object.entries(responseHeaders).forEach(([key,_value]) => {
         c.header(key, value);
       });
 
@@ -295,7 +295,7 @@ app.get(
       }
 
       return c.json(finalResponse);
-    } catch (_error) {
+    } catch (error) {
       console.error('AI Models endpoint error:', error);
 
       // Log error for audit

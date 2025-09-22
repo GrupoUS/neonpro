@@ -69,7 +69,7 @@ export function AdvancedAnalyticsDashboard({
   const [lastUpdate, setLastUpdate] = useState(new Date());
 
   // Mock data for demonstration (in production, this would fetch from API)
-  useEffect(_() => {
+  useEffect(() => {
     loadAnalyticsData();
   }, []);
 
@@ -77,7 +77,7 @@ export function AdvancedAnalyticsDashboard({
     setIsLoading(true);
 
     // Simulate API call
-    setTimeout(_() => {
+    setTimeout(() => {
       setMetrics({
         attendanceRate: 0.84,
         revenuePerPatient: 312.75,

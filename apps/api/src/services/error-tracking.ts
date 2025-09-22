@@ -45,7 +45,7 @@ const ErrorContextSchema = z.object({
   ipAddress: z.string().optional(),
   requestId: z.string().optional(),
   sessionId: z.string().optional(),
-  timestamp: z.date().default(_() => new Date()),
+  timestamp: z.date().default(() => new Date()),
   metadata: z.record(z.unknown()).optional(),
 });
 
@@ -137,7 +137,7 @@ class HealthcareErrorTracker {
     let redactedText = text;
     const redactedFields: string[] = [];
 
-    Object.entries(HEALTHCARE_PATTERNS).forEach(_([field,_pattern]) => {
+    Object.entries(HEALTHCARE_PATTERNS).forEach(([field,_pattern]) => {
       if (pattern.test(redactedText)) {
         redactedFields.push(field);
         redactedText = redactedText.replace(
@@ -330,7 +330,7 @@ class HealthcareErrorTracker {
   ): Record<string, unknown> {
     const redacted: Record<string, unknown> = {};
 
-    Object.entries(metadata).forEach(_([key,_value]) => {
+    Object.entries(metadata).forEach(([key,_value]) => {
       if (typeof value === 'string') {
         const { redacted: redactedValue } = this.redactHealthcareData(value);
         redacted[key] = redactedValue;
@@ -352,7 +352,7 @@ class HealthcareErrorTracker {
     _context: Partial<ErrorContext> = {},
   ): RedactedError {
     // Validate and normalize context
-    const validatedContext = ErrorContextSchema.parse(_context);
+    const validatedContext = ErrorContextSchema.parse(context);
 
     // Redact healthcare data from error message
     const { redacted: redactedMessage, fields: redactedFields } = this.redactHealthcareData(
@@ -443,7 +443,7 @@ class HealthcareErrorTracker {
           this.logStructuredError(redactedError);
 
           span.setStatus({ code: SpanStatusCode.OK });
-        } catch (_trackingError) {
+        } catch (trackingError) {
           span.recordException(trackingError as Error);
           span.setStatus({
             code: SpanStatusCode.ERROR,

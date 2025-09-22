@@ -9,7 +9,7 @@ import React from 'react';
 import { LGPDConsentData } from '../LGPDConsentManager';
 
 // Mock do hook de consentimento
-jest.mock(_'../hooks/useLGPDConsent',_() => ({
+jest.mock(('../hooks/useLGPDConsent', () => ({
   useLGPDConsent: () => ({
     consentData: null,
     saveConsent: jest.fn(),
@@ -21,7 +21,7 @@ jest.mock(_'../hooks/useLGPDConsent',_() => ({
 }));
 
 // Mock do componente de criptografia
-jest.mock(_'../EncryptionStatus',_() => ({
+jest.mock(('../EncryptionStatus', () => ({
   EncryptionStatus: ({ isEncrypted }: { isEncrypted: boolean }) => (
     <div data-testid='encryption-status' data-encrypted={isEncrypted}>
       {isEncrypted ? 'Criptografado' : 'Não criptografado'}
@@ -29,7 +29,7 @@ jest.mock(_'../EncryptionStatus',_() => ({
   ),
 }));
 
-describe(_'LGPDConsentManager Component',_() => {
+describe(('LGPDConsentManager Component', () => {
   const mockSaveConsent = jest.fn();
   const mockUpdateConsent = jest.fn();
   const mockWithdrawConsent = jest.fn();
@@ -65,12 +65,12 @@ describe(_'LGPDConsentManager Component',_() => {
     },
   };
 
-  beforeEach(_() => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe(_'Renderização Inicial',_() => {
-    it(_'deve renderizar o componente vazio',_() => {
+  describe(('Renderização Inicial', () => {
+    it(('deve renderizar o componente vazio', () => {
       render(<LGPDConsentManager />);
 
       expect(
@@ -81,7 +81,7 @@ describe(_'LGPDConsentManager Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve renderizar com dados de consentimento',_() => {
+    it(('deve renderizar com dados de consentimento', () => {
       render(<LGPDConsentManager consentData={mockConsentData} />);
 
       expect(screen.getByText('Consentimento Ativo')).toBeInTheDocument();
@@ -89,7 +89,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(screen.getByText('photos, biometric_data')).toBeInTheDocument();
     });
 
-    it(_'deve mostrar estado de loading',_() => {
+    it(('deve mostrar estado de loading', () => {
       render(<LGPDConsentManager isLoading={true} />);
 
       expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
@@ -98,7 +98,7 @@ describe(_'LGPDConsentManager Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve mostrar mensagem de erro',_() => {
+    it(('deve mostrar mensagem de erro', () => {
       const errorMessage = 'Erro ao carregar consentimento';
       render(<LGPDConsentManager error={errorMessage} />);
 
@@ -108,7 +108,7 @@ describe(_'LGPDConsentManager Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve mostrar consentimento expirado',_() => {
+    it(('deve mostrar consentimento expirado', () => {
       const expiredConsent = {
         ...mockConsentData,
         status: 'expired' as const,
@@ -122,7 +122,7 @@ describe(_'LGPDConsentManager Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve mostrar consentimento revogado',_() => {
+    it(('deve mostrar consentimento revogado', () => {
       const revokedConsent = {
         ...mockConsentData,
         status: 'withdrawn' as const,
@@ -137,8 +137,8 @@ describe(_'LGPDConsentManager Component',_() => {
     });
   });
 
-  describe(_'Formulário de Consentimento',_() => {
-    it(_'deve mostrar formulário para novo consentimento',_async () => {
+  describe(('Formulário de Consentimento', () => {
+    it(_'deve mostrar formulário para novo consentimento',async () => {
       render(<LGPDConsentManager />);
 
       const newConsentButton = screen.getByRole('button', {
@@ -151,7 +151,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(screen.getByLabelText(/categorias de dados/i)).toBeInTheDocument();
     });
 
-    it(_'deve permitir selecionar finalidade',_async () => {
+    it(_'deve permitir selecionar finalidade',async () => {
       render(<LGPDConsentManager />);
 
       await userEvent.click(
@@ -164,7 +164,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(purposeSelect).toHaveValue('photo_analysis');
     });
 
-    it(_'deve permitir selecionar múltiplas categorias de dados',_async () => {
+    it(_'deve permitir selecionar múltiplas categorias de dados',async () => {
       render(<LGPDConsentManager />);
 
       await userEvent.click(
@@ -181,7 +181,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(biometricCheckbox).toBeChecked();
     });
 
-    it(_'deve permitir definir período de retenção',_async () => {
+    it(_'deve permitir definir período de retenção',async () => {
       render(<LGPDConsentManager />);
 
       await userEvent.click(
@@ -196,7 +196,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(retentionInput).toHaveValue(365);
     });
 
-    it(_'deve permitir selecionar base legal',_async () => {
+    it(_'deve permitir selecionar base legal',async () => {
       render(<LGPDConsentManager />);
 
       await userEvent.click(
@@ -210,8 +210,8 @@ describe(_'LGPDConsentManager Component',_() => {
     });
   });
 
-  describe(_'Consentimento Granular',_() => {
-    it(_'deve mostrar opções de consentimento granular',_async () => {
+  describe(('Consentimento Granular', () => {
+    it(_'deve mostrar opções de consentimento granular',async () => {
       render(<LGPDConsentManager />);
 
       await userEvent.click(
@@ -224,7 +224,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(screen.getByLabelText(/retenção/i)).toBeInTheDocument();
     });
 
-    it(_'deve permitir consentimento seletivo',_async () => {
+    it(_'deve permitir consentimento seletivo',async () => {
       render(<LGPDConsentManager />);
 
       await userEvent.click(
@@ -244,7 +244,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(sharingConsent).not.toBeChecked();
     });
 
-    it(_'deve mostrar explicações para cada tipo de consentimento',_async () => {
+    it(_'deve mostrar explicações para cada tipo de consentimento',async () => {
       render(<LGPDConsentManager />);
 
       await userEvent.click(
@@ -263,8 +263,8 @@ describe(_'LGPDConsentManager Component',_() => {
     });
   });
 
-  describe(_'Submissão do Formulário',_() => {
-    it(_'deve validar campos obrigatórios',_async () => {
+  describe(('Submissão do Formulário', () => {
+    it(_'deve validar campos obrigatórios',async () => {
       render(<LGPDConsentManager onSaveConsent={mockSaveConsent} />);
 
       await userEvent.click(
@@ -283,7 +283,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(mockSaveConsent).not.toHaveBeenCalled();
     });
 
-    it(_'deve chamar onSaveConsent com dados corretos',_async () => {
+    it(_'deve chamar onSaveConsent com dados corretos',async () => {
       render(<LGPDConsentManager onSaveConsent={mockSaveConsent} />);
 
       await userEvent.click(
@@ -322,7 +322,7 @@ describe(_'LGPDConsentManager Component',_() => {
       );
     });
 
-    it(_'deve mostrar confirmação antes de salvar',_async () => {
+    it(_'deve mostrar confirmação antes de salvar',async () => {
       render(<LGPDConsentManager onSaveConsent={mockSaveConsent} />);
 
       await userEvent.click(
@@ -351,7 +351,7 @@ describe(_'LGPDConsentManager Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve mostrar sucesso após salvar',_async () => {
+    it(_'deve mostrar sucesso após salvar',async () => {
       mockSaveConsent.mockResolvedValueOnce(mockConsentData);
 
       render(<LGPDConsentManager onSaveConsent={mockSaveConsent} />);
@@ -376,7 +376,7 @@ describe(_'LGPDConsentManager Component',_() => {
       const confirmButton = screen.getByRole('button', { name: /confirmar/i });
       await userEvent.click(confirmButton);
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(
           screen.getByText('Consentimento salvo com sucesso!'),
         ).toBeInTheDocument();
@@ -384,8 +384,8 @@ describe(_'LGPDConsentManager Component',_() => {
     });
   });
 
-  describe(_'Gerenciamento de Consentimento Existente',_() => {
-    it(_'deve permitir visualizar detalhes do consentimento',_async () => {
+  describe(('Gerenciamento de Consentimento Existente', () => {
+    it(_'deve permitir visualizar detalhes do consentimento',async () => {
       render(<LGPDConsentManager consentData={mockConsentData} />);
 
       const viewDetailsButton = screen.getByRole('button', {
@@ -400,7 +400,7 @@ describe(_'LGPDConsentManager Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve permitir editar consentimento',_async () => {
+    it(_'deve permitir editar consentimento',async () => {
       render(
         <LGPDConsentManager
           consentData={mockConsentData}
@@ -433,7 +433,7 @@ describe(_'LGPDConsentManager Component',_() => {
       );
     });
 
-    it(_'deve permitir revogar consentimento',_async () => {
+    it(_'deve permitir revogar consentimento',async () => {
       render(
         <LGPDConsentManager
           consentData={mockConsentData}
@@ -459,7 +459,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(mockWithdrawConsent).toHaveBeenCalledWith(mockConsentData.id);
     });
 
-    it(_'deve permitir solicitar acesso aos dados',_async () => {
+    it(_'deve permitir solicitar acesso aos dados',async () => {
       const onRequestDataAccess = jest.fn();
       render(
         <LGPDConsentManager
@@ -476,7 +476,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(onRequestDataAccess).toHaveBeenCalledWith(mockConsentData.id);
     });
 
-    it(_'deve permitir solicitar exclusão dos dados',_async () => {
+    it(_'deve permitir solicitar exclusão dos dados',async () => {
       const onRequestDataDeletion = jest.fn();
       render(
         <LGPDConsentManager
@@ -502,8 +502,8 @@ describe(_'LGPDConsentManager Component',_() => {
     });
   });
 
-  describe(_'Direitos do Titular',_() => {
-    it(_'deve listar todos os direitos disponíveis',_() => {
+  describe(('Direitos do Titular', () => {
+    it(('deve listar todos os direitos disponíveis', () => {
       render(<LGPDConsentManager consentData={mockConsentData} />);
 
       expect(screen.getByText(/Direitos do Titular/i)).toBeInTheDocument();
@@ -513,7 +513,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(screen.getByText('Portabilidade')).toBeInTheDocument();
     });
 
-    it(_'deve mostrar status de cada direito',_() => {
+    it(('deve mostrar status de cada direito', () => {
       render(<LGPDConsentManager consentData={mockConsentData} />);
 
       expect(screen.getByText('Acesso: Disponível')).toBeInTheDocument();
@@ -521,7 +521,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(screen.getByText('Eliminação: Disponível')).toBeInTheDocument();
     });
 
-    it(_'deve permitir exercer direitos através de botões',_async () => {
+    it(_'deve permitir exercer direitos através de botões',async () => {
       const onExerciseRight = jest.fn();
       render(
         <LGPDConsentManager
@@ -542,8 +542,8 @@ describe(_'LGPDConsentManager Component',_() => {
     });
   });
 
-  describe(_'Audit Trail',_() => {
-    it(_'deve mostrar histórico de alterações',_async () => {
+  describe(('Audit Trail', () => {
+    it(_'deve mostrar histórico de alterações',async () => {
       const auditTrail = [
         {
           timestamp: new Date(),
@@ -576,7 +576,7 @@ describe(_'LGPDConsentManager Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve mostrar detalhes de cada entrada do audit trail',_async () => {
+    it(_'deve mostrar detalhes de cada entrada do audit trail',async () => {
       const auditTrail = [
         {
           timestamp: new Date('2024-01-01T10:00:00'),
@@ -602,8 +602,8 @@ describe(_'LGPDConsentManager Component',_() => {
     });
   });
 
-  describe(_'Criptografia e Segurança',_() => {
-    it(_'deve mostrar status de criptografia',_() => {
+  describe(('Criptografia e Segurança', () => {
+    it(('deve mostrar status de criptografia', () => {
       render(
         <LGPDConsentManager consentData={mockConsentData} isEncrypted={true} />,
       );
@@ -613,7 +613,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(encryptionStatus).toHaveAttribute('data-encrypted', 'true');
     });
 
-    it(_'deve mostrar detalhes de criptografia',_async () => {
+    it(_'deve mostrar detalhes de criptografia',async () => {
       render(
         <LGPDConsentManager
           consentData={mockConsentData}
@@ -629,7 +629,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(screen.getByText('AES-256')).toBeInTheDocument();
     });
 
-    it(_'deve mostrar alerta se não criptografado',_() => {
+    it(('deve mostrar alerta se não criptografado', () => {
       render(
         <LGPDConsentManager
           consentData={mockConsentData}
@@ -646,15 +646,15 @@ describe(_'LGPDConsentManager Component',_() => {
     });
   });
 
-  describe(_'Acessibilidade',_() => {
-    it(_'deve não ter violações de acessibilidade',_async () => {
+  describe(('Acessibilidade', () => {
+    it(_'deve não ter violações de acessibilidade',async () => {
       const { container } = render(<LGPDConsentManager />);
 
       const results = await axe(container);
       expect(results).toHaveNoViolations();
     });
 
-    it(_'deve ter landmarks ARIA corretos',_() => {
+    it(('deve ter landmarks ARIA corretos', () => {
       render(<LGPDConsentManager />);
 
       expect(screen.getByRole('main')).toBeInTheDocument();
@@ -663,7 +663,7 @@ describe(_'LGPDConsentManager Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve ter labels associativas corretas',_() => {
+    it(('deve ter labels associativas corretas', () => {
       render(<LGPDConsentManager />);
 
       const purposeSelect = screen.getByLabelText(/finalidade/i);
@@ -675,7 +675,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(retentionInput).toBeInTheDocument();
     });
 
-    it(_'deve suportar navegação por teclado',_async () => {
+    it(_'deve suportar navegação por teclado',async () => {
       render(<LGPDConsentManager />);
 
       const button = screen.getByRole('button', {
@@ -692,7 +692,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(screen.getByText('Novo Consentimento')).toBeInTheDocument();
     });
 
-    it(_'deve ter anúncios ARIA live region',_async () => {
+    it(_'deve ter anúncios ARIA live region',async () => {
       render(<LGPDConsentManager />);
 
       // Simular mensagem de status
@@ -708,8 +708,8 @@ describe(_'LGPDConsentManager Component',_() => {
     });
   });
 
-  describe(_'Responsividade',_() => {
-    it(_'deve renderizar corretamente em mobile',_() => {
+  describe(('Responsividade', () => {
+    it(('deve renderizar corretamente em mobile', () => {
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         configurable: true,
@@ -723,12 +723,12 @@ describe(_'LGPDConsentManager Component',_() => {
 
       // Botões devem estar empilhados verticalmente
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(_button => {
+      buttons.forEach(button => {
         expect(button).toHaveClass('mobile-button');
       });
     });
 
-    it(_'deve renderizar corretamente em desktop',_() => {
+    it(('deve renderizar corretamente em desktop', () => {
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         configurable: true,
@@ -742,9 +742,9 @@ describe(_'LGPDConsentManager Component',_() => {
     });
   });
 
-  describe(_'Performance',_() => {
-    it(_'deve carregar rapidamente com audit trail grande',_() => {
-      const largeAuditTrail = Array.from({ length: 100 },_(_,_i) => ({
+  describe(('Performance', () => {
+    it(('deve carregar rapidamente com audit trail grande', () => {
+      const largeAuditTrail = Array.from.*}, (_, i) => ({
         timestamp: new Date(),
         action: 'modified',
         details: `Alteração ${i}`,
@@ -763,7 +763,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(endTime - startTime).toBeLessThan(1000);
     });
 
-    it(_'deve virtualizar lista de direitos quando houver muitos',_() => {
+    it(('deve virtualizar lista de direitos quando houver muitos', () => {
       render(<LGPDConsentManager consentData={mockConsentData} />);
 
       const rightsList = screen.getByTestId('rights-list');
@@ -771,8 +771,8 @@ describe(_'LGPDConsentManager Component',_() => {
     });
   });
 
-  describe(_'Testes de Integração',_() => {
-    it(_'deve integrar com sistema de autenticação',_() => {
+  describe(('Testes de Integração', () => {
+    it(('deve integrar com sistema de autenticação', () => {
       const user = {
         id: 'user-123',
         name: 'João Silva',
@@ -785,7 +785,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(screen.getByText(user.email)).toBeInTheDocument();
     });
 
-    it(_'deve enviar eventos de analytics',_() => {
+    it(('deve enviar eventos de analytics', () => {
       const mockAnalytics = {
         track: jest.fn(),
       };
@@ -803,7 +803,7 @@ describe(_'LGPDConsentManager Component',_() => {
       );
     });
 
-    it(_'deve respeitar preferências de idioma',_() => {
+    it(('deve respeitar preferências de idioma', () => {
       render(
         <LGPDConsentManager consentData={mockConsentData} language='pt-BR' />,
       );
@@ -814,8 +814,8 @@ describe(_'LGPDConsentManager Component',_() => {
     });
   });
 
-  describe(_'Edge Cases',_() => {
-    it(_'deve lidar com dados de consentimento inválidos',_() => {
+  describe(('Edge Cases', () => {
+    it(('deve lidar com dados de consentimento inválidos', () => {
       const invalidConsent = {
         ...mockConsentData,
         consentDate: 'invalid-date' as any,
@@ -826,7 +826,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(screen.getByText(/data inválida/i)).toBeInTheDocument();
     });
 
-    it(_'deve lidar com falha na revogação',_async () => {
+    it(_'deve lidar com falha na revogação',async () => {
       mockWithdrawConsent.mockRejectedValueOnce(
         new Error('Falha na revogação'),
       );
@@ -845,12 +845,12 @@ describe(_'LGPDConsentManager Component',_() => {
         screen.getByRole('button', { name: /sim, revogar/i }),
       );
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.getByText('Falha na revogação')).toBeInTheDocument();
       });
     });
 
-    it(_'deve lidar com desconexão de rede',_async () => {
+    it(_'deve lidar com desconexão de rede',async () => {
       render(<LGPDConsentManager isOnline={false} />);
 
       expect(screen.getByText(/modo offline/i)).toBeInTheDocument();
@@ -859,7 +859,7 @@ describe(_'LGPDConsentManager Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve lidar com consentimento sem data de expiração',_() => {
+    it(('deve lidar com consentimento sem data de expiração', () => {
       const consentWithoutExpiry = {
         ...mockConsentData,
         retentionPeriod: undefined,
@@ -873,8 +873,8 @@ describe(_'LGPDConsentManager Component',_() => {
     });
   });
 
-  describe(_'Conformidade LGPD',_() => {
-    it(_'deve mostrar todos os requisitos LGPD',_() => {
+  describe(('Conformidade LGPD', () => {
+    it(('deve mostrar todos os requisitos LGPD', () => {
       render(<LGPDConsentManager consentData={mockConsentData} />);
 
       expect(
@@ -884,7 +884,7 @@ describe(_'LGPDConsentManager Component',_() => {
       expect(screen.getByText(/Direitos do Titular/i)).toBeInTheDocument();
     });
 
-    it(_'deve garantir que consentimento seja informado',_async () => {
+    it(_'deve garantir que consentimento seja informado',async () => {
       render(<LGPDConsentManager />);
 
       await userEvent.click(
@@ -897,7 +897,7 @@ describe(_'LGPDConsentManager Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve garantir que consentimento seja inequívoco',_async () => {
+    it(_'deve garantir que consentimento seja inequívoco',async () => {
       render(<LGPDConsentManager />);
 
       await userEvent.click(
@@ -920,7 +920,7 @@ describe(_'LGPDConsentManager Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve permitir retirada do consentimento a qualquer momento',_() => {
+    it(('deve permitir retirada do consentimento a qualquer momento', () => {
       render(<LGPDConsentManager consentData={mockConsentData} />);
 
       const withdrawButton = screen.getByRole('button', {

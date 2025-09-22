@@ -22,10 +22,10 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   onError?: () => void;
 }
 
-export const LazyImage: React.FC<LazyImageProps> = (_{
-  src,_alt,
+export const LazyImage: React.FC<LazyImageProps> = ({
+  src,alt,
   placeholder =
-    'data:image/svg+xml;base64,_PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PC9zdmc+',_fallback = '/images/placeholder.svg',_className,_containerClassName,_loading = 'lazy',_priority = false,_sizes,_srcSet,_onLoad,_onError,_...props
+    'data:image/svg+xml;base64, PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PC9zdmc+', fallback = '/images/placeholder.svg',className, containerClassName, loading = 'lazy', priority = false,sizes, srcSet,onLoad, onError, ...props
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(priority);
@@ -33,7 +33,7 @@ export const LazyImage: React.FC<LazyImageProps> = (_{
   const imgRef = useRef<HTMLImageElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(_() => {
+  useEffect(() => {
     if (priority || loading === 'eager') {
       setIsInView(true);
       return;
@@ -41,7 +41,7 @@ export const LazyImage: React.FC<LazyImageProps> = (_{
 
     const observer = createIntersectionObserver(
       entries => {
-        entries.forEach(_entry => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             setIsInView(true);
             observer?.disconnect();
@@ -142,15 +142,15 @@ interface ResponsiveImageProps extends LazyImageProps {
   };
 }
 
-export const ResponsiveImage: React.FC<ResponsiveImageProps> = (_{
-  src,_webpSrc,_avifSrc,_breakpoints,_...props
+export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
+  src,webpSrc, avifSrc,breakpoints, ...props
 }) => {
   // Generate srcSet for different formats and sizes
   const generateSrcSet = (_baseSrc: any) => {
     if (!breakpoints) return undefined;
 
     return Object.entries(breakpoints)
-      .map(_([size,_width]) => `${baseSrc}?w=${width} ${width}w`)
+      .map(([size, width]) => `${baseSrc}?w=${width} ${width}w`)
       .join(', ');
   };
 
@@ -165,7 +165,7 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = (_{
     };
 
     return Object.entries(breakpoints)
-      .map(_([size,_width]) => `(max-width: ${sizeMap[size as keyof typeof sizeMap]}) ${width}px`,
+      .map(([size, width]) => `(max-width: ${sizeMap[size as keyof typeof sizeMap]}) ${width}px`,
       )
       .join(', ');
   };

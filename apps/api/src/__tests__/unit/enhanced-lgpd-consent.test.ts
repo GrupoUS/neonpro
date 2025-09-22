@@ -23,21 +23,21 @@ const mockPrisma = {
 };
 
 // Mock the getHealthcarePrismaClient function
-vi.mock(_'../../clients/prisma',_() => ({
+vi.mock(_'../../clients/prisma',() => ({
   getHealthcarePrismaClient: () => mockPrisma,
 }));
 
-describe(_'LGPDConsentService',_() => {
+describe(_'LGPDConsentService',() => {
   let consentService: LGPDConsentService;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
     consentService = new LGPDConsentService(
       mockPrisma as unknown as HealthcarePrismaClient,
     );
   });
 
-  describe(_'recordConsent',_() => {
+  describe(_'recordConsent',() => {
     const validConsentRequest = {
       patientId: 'patient-123',
       purpose: ConsentPurpose.enum.TREATMENT,
@@ -130,7 +130,7 @@ describe(_'LGPDConsentService',_() => {
     });
   });
 
-  describe(_'withdrawConsent',_() => {
+  describe(_'withdrawConsent',() => {
     const validWithdrawalRequest = {
       patientId: 'patient-123',
       consentId: 'consent-123',
@@ -195,7 +195,7 @@ describe(_'LGPDConsentService',_() => {
     });
   });
 
-  describe(_'getPatientConsents',_() => {
+  describe(_'getPatientConsents',() => {
     it(_'should return patient consents',_async () => {
       // Arrange
       const mockConsents = [
@@ -244,7 +244,7 @@ describe(_'LGPDConsentService',_() => {
     });
   });
 
-  describe(_'hasActiveConsent',_() => {
+  describe(_'hasActiveConsent',() => {
     it(_'should return true when active consent exists',_async () => {
       // Arrange
       mockPrisma.auditTrail.findFirst.mockResolvedValue({
@@ -278,7 +278,7 @@ describe(_'LGPDConsentService',_() => {
     });
   });
 
-  describe(_'validateConsent',_() => {
+  describe(_'validateConsent',() => {
     it(_'should pass validation when active consent exists',_async () => {
       // Arrange
       mockPrisma.auditTrail.findFirst.mockResolvedValue({
@@ -298,7 +298,7 @@ describe(_'LGPDConsentService',_() => {
           ConsentPurpose.enum.TREATMENT,
           'test-operation',
         );
-      } catch (_err) {
+      } catch (err) {
         error = err;
       }
       expect(error).toBeNull();
@@ -319,7 +319,7 @@ describe(_'LGPDConsentService',_() => {
     });
   });
 
-  describe(_'generateConsentReport',_() => {
+  describe(_'generateConsentReport',() => {
     it(_'should generate consent report successfully',_async () => {
       // Arrange
       const mockConsents = [
@@ -364,7 +364,7 @@ describe(_'LGPDConsentService',_() => {
     });
   });
 
-  describe(_'Consent Templates',_() => {
+  describe(_'Consent Templates',() => {
     it(_'should return correct template for TREATMENT purpose',_async () => {
       // Arrange
       mockPrisma.patient.findUnique.mockResolvedValue({ id: 'patient-123' });
@@ -426,7 +426,7 @@ describe(_'LGPDConsentService',_() => {
     });
   });
 
-  describe(_'Error Handling',_() => {
+  describe(_'Error Handling',() => {
     it(_'should handle database connection errors',_async () => {
       // Arrange
       mockPrisma.patient.findUnique.mockRejectedValue(
@@ -469,7 +469,7 @@ describe(_'LGPDConsentService',_() => {
     });
   });
 
-  describe(_'LGPD Compliance',_() => {
+  describe(_'LGPD Compliance',() => {
     it(_'should create audit trail for all consent operations',_async () => {
       // Arrange
       mockPrisma.patient.findUnique.mockResolvedValue({ id: 'patient-123' });

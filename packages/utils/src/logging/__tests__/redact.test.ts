@@ -3,8 +3,8 @@
 import { describe, expect, it } from "vitest";
 import * as redactModule from "../redact";
 
-describe(_"T042 redact",_() => {
-  it(_"masks email and CPF",_() => {
+describe("T042 redact", () => {
+  it("masks email and CPF", () => {
     if (typeof (redactModule as any).redact !== "function") {
       expect(typeof (redactModule as any).redact).toBe("function"); // force fail until implemented
       return;

@@ -79,7 +79,7 @@ interface EnhancedHealthcareFormProps {
   description?: string;
   fields: MedicalFormField[];
   validationRules?: HealthcareValidationRule[];
-  onSubmit: (data: Record<string,_string>) => Promise<void>;
+  onSubmit: (data: Record<string, string>) => Promise<void>;
   submitLabel?: string;
   isLoading?: boolean;
   enableHealthcareAudit?: boolean;
@@ -122,7 +122,7 @@ export function EnhancedHealthcareForm({
   >({});
 
   // Create accessible field hooks for each form field
-  const fieldHooks = fields.reduce(_(acc,_field) => {
+  const fieldHooks = fields.reduce((acc, field) => {
       acc[field.name] = useAccessibleField(field.name, {
         required: field.required,
         validate: field.validate,
@@ -150,13 +150,13 @@ export function EnhancedHealthcareForm({
     [],
   );
 
-  const validateForm = useCallback(_() => {
+  const validateForm = useCallback(() => {
     let isValid = true;
     const errors: string[] = [];
     const warnings: Record<string, string> = {};
 
     // Validate each field
-    fields.forEach(_field => {
+    fields.forEach(field => {
       const fieldHook = fieldHooks[field.name];
       const fieldValue = formatFieldValue(field, fieldHook.value);
 
@@ -176,7 +176,7 @@ export function EnhancedHealthcareForm({
     });
 
     // Apply healthcare-specific validation rules
-    validationRules.forEach(_rule => {
+    validationRules.forEach(rule => {
       const fieldHook = fieldHooks[rule.field];
       const fieldValue = fieldHook?.value || '';
 
@@ -257,7 +257,7 @@ export function EnhancedHealthcareForm({
 
       try {
         // Collect form data
-        const formData = fields.reduce(_(acc,_field) => {
+        const formData = fields.reduce((acc, field) => {
             acc[field.name] = fieldHooks[field.name].value;
             return acc;
           },

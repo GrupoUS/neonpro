@@ -362,7 +362,7 @@ export function useEventActions() {
   }, [deleteEvent]);
 
   // Refresh events
-  const refreshCalendarEvents = useCallback(_async () => {
+  const refreshCalendarEvents = useCallback(async () => {
     try {
       await refreshEvents();
       toast.success('Events refreshed');

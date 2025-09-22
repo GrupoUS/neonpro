@@ -5,20 +5,20 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe(_'FileUploadIntegration',_() => {
-  beforeEach(_() => {
+describe(('FileUploadIntegration', () => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it(_'should export the component',_() => {
+  it(('should export the component', () => {
     // Test that the module exists and can be imported
-    expect(_() => {
+    expect(() => {
       const module = require.resolve('../FileUploadIntegration');
       expect(module).toBeDefined();
     }).not.toThrow();
   });
 
-  it(_'should handle file format validation',_() => {
+  it(('should handle file format validation', () => {
     const { FileUploadIntegration } = require('../FileUploadIntegration');
     expect(FileUploadIntegration).toBeDefined();
     expect(typeof FileUploadIntegration).toBe('function');
@@ -30,55 +30,55 @@ describe(_'FileUploadIntegration',_() => {
     expect(typeof FileUploadIntegration).toBe('function');
   });
 
-  it(_'should provide upload progress indicators',_() => {
+  it(('should provide upload progress indicators', () => {
     const { FileUploadIntegration } = require('../FileUploadIntegration');
     expect(FileUploadIntegration).toBeDefined();
     expect(typeof FileUploadIntegration).toBe('function');
   });
 
-  it(_'should handle upload errors gracefully',_() => {
+  it(('should handle upload errors gracefully', () => {
     const { FileUploadIntegration } = require('../FileUploadIntegration');
     expect(FileUploadIntegration).toBeDefined();
     expect(typeof FileUploadIntegration).toBe('function');
   });
 
-  it(_'should integrate with Supabase storage',_() => {
+  it(('should integrate with Supabase storage', () => {
     const { FileUploadIntegration } = require('../FileUploadIntegration');
     expect(FileUploadIntegration).toBeDefined();
     expect(typeof FileUploadIntegration).toBe('function');
   });
 
-  it(_'should support drag and drop functionality',_() => {
+  it(('should support drag and drop functionality', () => {
     const { FileUploadIntegration } = require('../FileUploadIntegration');
     expect(FileUploadIntegration).toBeDefined();
     expect(typeof FileUploadIntegration).toBe('function');
   });
 
-  it(_'should validate file size limits',_() => {
+  it(('should validate file size limits', () => {
     const { FileUploadIntegration } = require('../FileUploadIntegration');
     expect(FileUploadIntegration).toBeDefined();
     expect(typeof FileUploadIntegration).toBe('function');
   });
 
-  it(_'should provide file preview functionality',_() => {
+  it(('should provide file preview functionality', () => {
     const { FileUploadIntegration } = require('../FileUploadIntegration');
     expect(FileUploadIntegration).toBeDefined();
     expect(typeof FileUploadIntegration).toBe('function');
   });
 
-  it(_'should be accessible with ARIA labels',_() => {
+  it(('should be accessible with ARIA labels', () => {
     const { FileUploadIntegration } = require('../FileUploadIntegration');
     expect(FileUploadIntegration).toBeDefined();
     expect(typeof FileUploadIntegration).toBe('function');
   });
 
-  it(_'should support Brazilian healthcare document types',_() => {
+  it(('should support Brazilian healthcare document types', () => {
     const { FileUploadIntegration } = require('../FileUploadIntegration');
     expect(FileUploadIntegration).toBeDefined();
     expect(typeof FileUploadIntegration).toBe('function');
   });
 
-  it(_'should handle secure file storage with proper permissions',_() => {
+  it(('should handle secure file storage with proper permissions', () => {
     const { FileUploadIntegration } = require('../FileUploadIntegration');
     expect(FileUploadIntegration).toBeDefined();
     expect(typeof FileUploadIntegration).toBe('function');

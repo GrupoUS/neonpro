@@ -207,7 +207,7 @@ export function useAdvancedAnalytics(
   }, [enableLGPDCompliance]);
 
   // Fetch all analytics data
-  const fetchAnalyticsData = useCallback(_async () => {
+  const fetchAnalyticsData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -241,12 +241,12 @@ export function useAdvancedAnalytics(
   ]);
 
   // Manual refresh
-  const refresh = useCallback(_() => {
+  const refresh = useCallback(() => {
     fetchAnalyticsData();
   }, [fetchAnalyticsData]);
 
   // Auto-refresh effect
-  useEffect(_() => {
+  useEffect(() => {
     fetchAnalyticsData();
 
     if (autoRefresh && refreshInterval > 0) {
@@ -256,9 +256,9 @@ export function useAdvancedAnalytics(
   }, [fetchAnalyticsData, autoRefresh, refreshInterval]);
 
   // Real-time updates (WebSocket simulation)
-  useEffect(_() => {
+  useEffect(() => {
     if (enableRealTime) {
-      const interval = setInterval(_() => {
+      const interval = setInterval(() => {
         // Simulate real-time metric updates
         setMetrics(prev =>
           prev
@@ -302,7 +302,7 @@ export function useAdvancedAnalytics(
     // Computed values
     hasHighRiskInsights: insights.filter(i => i.impact === 'high').length > 0,
     averageConfidence: insights.length > 0
-      ? insights.reduce(_(sum,_i) => sum + i.confidence, 0) / insights.length
+      ? insights.reduce((sum, i) => sum + i.confidence, 0) / insights.length
       : 0,
     isCompliant: complianceAudit?.lgpdCompliant
       && complianceAudit?.anvisaCompliant

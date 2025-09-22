@@ -302,7 +302,7 @@ export class MobileAccessibilityOptimizer {
     offlineCapabilities: string[];
   }> {
     const auditContext = typeof context === 'string'
-      ? document.querySelector(_context)
+      ? document.querySelector(context)
       : context || document;
 
     if (!auditContext) {
@@ -399,7 +399,7 @@ export class MobileAccessibilityOptimizer {
       totalChecks++;
 
       try {
-        const passed = rule.check(_context);
+        const passed = rule.check(context);
 
         if (!passed) {
           issues.push({
@@ -411,7 +411,7 @@ export class MobileAccessibilityOptimizer {
           });
 
           // Apply fix
-          rule.fix(_context);
+          rule.fix(context);
           optimizations.push(`Applied fix for ${rule.name} on ${device.type}`);
         } else {
           passedChecks++;
@@ -583,7 +583,7 @@ export class MobileAccessibilityOptimizer {
 
     // Calculate overall score
     const totalPossible = Object.keys(stats).length - 1; // Exclude overallScore
-    const totalAchieved = Object.values(stats).reduce(_(sum,_val) => (typeof val === 'number' && val > 0 ? sum + 1 : sum),
+    const totalAchieved = Object.values(stats).reduce((sum, val) => (typeof val === 'number' && val > 0 ? sum + 1 : sum),
       0,
     );
 
@@ -626,7 +626,7 @@ export class MobileAccessibilityOptimizer {
 
     // Cumulative Layout Shift
     const clsEntries = performance.getEntriesByType('layout-shift') as any[];
-    cumulativeLayoutShift = clsEntries.reduce(_(sum,_entry) => (entry.hadRecentInput ? sum : sum + entry.value),
+    cumulativeLayoutShift = clsEntries.reduce((sum, entry) => (entry.hadRecentInput ? sum : sum + entry.value),
       0,
     );
 
@@ -654,7 +654,7 @@ export class MobileAccessibilityOptimizer {
    * Calculate overall score across all devices
    */
   private calculateOverallScore(deviceResults: any[]): number {
-    const totalScore = deviceResults.reduce(_(sum,_result) => sum + result.score,
+    const totalScore = deviceResults.reduce((sum, result) => sum + result.score,
       0,
     );
     return Math.round(totalScore / deviceResults.length);
@@ -723,7 +723,7 @@ export class MobileAccessibilityOptimizer {
     const offlineElements = context.querySelectorAll(
       '[data-offline="true"], .offline-capable',
     );
-    offlineElements.forEach(_element => {
+    offlineElements.forEach(element => {
       const capability = element.getAttribute('data-offline-capability')
         || element.getAttribute('data-feature')
         || 'Generic healthcare feature';
@@ -861,7 +861,7 @@ export async function quickMobileAccessibilityCheck(
   try {
     const optimizer = new MobileAccessibilityOptimizer();
     // Ensure we have an Element, not Document
-    const elementContext = isElement(_context)
+    const elementContext = isElement(context)
       ? context
       : document.documentElement;
     const results = await optimizer.optimizeMobileAccessibility(elementContext);

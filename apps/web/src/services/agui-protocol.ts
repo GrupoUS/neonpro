@@ -143,7 +143,7 @@ export class AGUIProtocolClient extends EventEmitter {
       this.websocket.onerror = this.handleError.bind(this);
 
       // Set timeout for connection
-      setTimeout(_() => {
+      setTimeout(() => {
         if (this.state === AGUIConnectionState.CONNECTING) {
           this.handleError(new Error('Connection timeout'));
         }
@@ -394,7 +394,7 @@ export class AGUIProtocolClient extends EventEmitter {
       throw new Error('WebSocket not connected');
     }
 
-    return new Promise(_(resolve,_reject) => {
+    return new Promise((resolve, reject) => {
       try {
         // Store pending request
         this.pendingRequests.set(event.id, { resolve, reject });
@@ -408,7 +408,7 @@ export class AGUIProtocolClient extends EventEmitter {
         this.websocket.send(JSON.stringify(event));
 
         // Set timeout
-        setTimeout(_() => {
+        setTimeout(() => {
           if (this.pendingRequests.has(event.id)) {
             this.pendingRequests.delete(event.id);
             reject(new Error('Request timeout'));
@@ -433,7 +433,7 @@ export class AGUIProtocolClient extends EventEmitter {
   }
 
   private startHeartbeat(): void {
-    this.heartbeatTimer = setInterval(_() => {
+    this.heartbeatTimer = setInterval(() => {
       if (this.session && this.websocket?.readyState === WebSocket.OPEN) {
         const event: AGUIEvent = {
           id: this.generateId(),
@@ -467,7 +467,7 @@ export class AGUIProtocolClient extends EventEmitter {
     if (this.reconnectCount <= this.config.reconnectAttempts) {
       const delay = this.config.reconnectDelay * this.reconnectCount;
 
-      this.reconnectTimer = setTimeout(_() => {
+      this.reconnectTimer = setTimeout(() => {
         console.log(
           `Attempting reconnection (${this.reconnectCount}/${this.config.reconnectAttempts})`,
         );
@@ -526,14 +526,14 @@ export function createAGUIProtocolClient(config: AGUIProtocolConfig): AGUIProtoc
 
 // React hook for AG-UI Protocol
 export function useAGUIProtocol(config: AGUIProtocolConfig) {
-  const [client] = useState(_() => createAGUIProtocolClient(config));
+  const [client] = useState(() => createAGUIProtocolClient(config));
   const [state, setState] = useState(client.getState());
   const [session, setSession] = useState(client.getSession());
 
-  useEffect(_() => {
+  useEffect(() => {
     client.on('stateChange', setState);
     client.on('authenticated', setSession);
-    client.on(_'disconnected',_() => setSession(null));
+    client.on(('disconnected', () => setSession(null));
 
     return () => {
       client.removeAllListeners();

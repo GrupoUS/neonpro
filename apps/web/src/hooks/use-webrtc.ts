@@ -120,7 +120,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
-  const _signalingStateRef = useRef<'connecting' | 'connected' | 'disconnected'>(
+  const signalingStateRef = useRef<'connecting' | 'connected' | 'disconnected'>(
     'disconnected',
   );
   const statisticsIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -145,7 +145,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
   /**
    * Initialize WebRTC peer connection with compliance logging
    */
-  const initializePeerConnection = useCallback(_async () => {
+  const initializePeerConnection = useCallback(async () => {
     try {
       // Log compliance event
       await logComplianceEvent.mutateAsync({
@@ -239,7 +239,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
   /**
    * Initialize local media stream with medical-grade quality
    */
-  const initializeLocalMedia = useCallback(_async () => {
+  const initializeLocalMedia = useCallback(async () => {
     try {
       const constraints = {
         video: mediaSettings.video
@@ -270,7 +270,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
 
       // Add tracks to peer connection if initialized
       if (peerConnectionRef.current) {
-        stream.getTracks().forEach(_track => {
+        stream.getTracks().forEach(track => {
           peerConnectionRef.current!.addTrack(track, stream);
         });
       }
@@ -346,7 +346,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
   /**
    * Create and send offer to start session
    */
-  const createOffer = useCallback(_async () => {
+  const createOffer = useCallback(async () => {
     if (!peerConnectionRef.current) {
       throw new Error('Peer connection not initialized');
     }
@@ -382,7 +382,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
   /**
    * Toggle video on/off
    */
-  const toggleVideo = useCallback(_async () => {
+  const toggleVideo = useCallback(async () => {
     try {
       if (state.localStream) {
         const videoTrack = state.localStream.getVideoTracks()[0];
@@ -431,7 +431,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
   /**
    * Toggle audio on/off
    */
-  const toggleAudio = useCallback(_async () => {
+  const toggleAudio = useCallback(async () => {
     try {
       if (state.localStream) {
         const audioTrack = state.localStream.getAudioTracks()[0];
@@ -480,7 +480,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
   /**
    * Start screen sharing
    */
-  const startScreenShare = useCallback(_async () => {
+  const startScreenShare = useCallback(async () => {
     try {
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: {
@@ -535,7 +535,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
   /**
    * Stop screen sharing
    */
-  const stopScreenShare = useCallback(_async () => {
+  const stopScreenShare = useCallback(async () => {
     try {
       if (state.localStream && peerConnectionRef.current) {
         const videoSender = peerConnectionRef.current
@@ -575,12 +575,12 @@ export function useWebRTC(sessionId: string, participantId: string) {
   /**
    * Start statistics monitoring for connection quality
    */
-  const startStatisticsMonitoring = useCallback(_() => {
+  const startStatisticsMonitoring = useCallback(() => {
     if (statisticsIntervalRef.current) {
       clearInterval(statisticsIntervalRef.current);
     }
 
-    statisticsIntervalRef.current = setInterval(_async () => {
+    statisticsIntervalRef.current = setInterval(async () => {
       if (peerConnectionRef.current) {
         try {
           const stats = await peerConnectionRef.current.getStats();
@@ -612,7 +612,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
   /**
    * End WebRTC session and cleanup resources
    */
-  const endSession = useCallback(_async () => {
+  const endSession = useCallback(async () => {
     try {
       // Stop statistics monitoring
       if (statisticsIntervalRef.current) {
@@ -622,7 +622,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
 
       // Stop local media tracks
       if (state.localStream) {
-        state.localStream.getTracks().forEach(_track => track.stop());
+        state.localStream.getTracks().forEach(track => track.stop());
       }
 
       // Close peer connection
@@ -674,7 +674,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
   /**
    * Initialize complete WebRTC session
    */
-  const initializeSession = useCallback(_async () => {
+  const initializeSession = useCallback(async () => {
     try {
       await initializePeerConnection();
       await initializeLocalMedia();
@@ -687,7 +687,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
   }, [initializePeerConnection, initializeLocalMedia]);
 
   // Cleanup on unmount
-  useEffect(_() => {
+  useEffect(() => {
     return () => {
       endSession();
     };
@@ -744,7 +744,7 @@ function parseWebRTCStats(stats: RTCStatsReport) {
   let packetsLost = 0;
   let jitter = 0;
 
-  stats.forEach(_report => {
+  stats.forEach(report => {
     if (report.type === 'inbound-rtp' && report.mediaType === 'video') {
       bandwidth = report.bytesReceived ? (report.bytesReceived * 8) / 1024 : 0;
       packetsLost = report.packetsLost || 0;

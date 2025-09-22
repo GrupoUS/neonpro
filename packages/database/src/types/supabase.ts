@@ -29937,7 +29937,7 @@ export type CompositeTypes<
     ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
     : never;
 
-export const _Constants = {
+export const Constants = {
   public: {
     Enums: {
       api_provider_type: [

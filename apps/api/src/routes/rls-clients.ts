@@ -27,8 +27,8 @@ rlsPatients.use('*', rlsHealthcareMiddleware.patientAccess);
 rlsPatients.get(_'/', async (c: Context<{ Variables: Variables }>) => {
   try {
     const rlsQuery = c.get('rlsQuery');
-    const _userId = c.get('userId'); // Prefix with _ to indicate intentionally unused
-    const _userRole = c.get('userRole');
+    const userId = c.get('userId'); // Prefix with _ to indicate intentionally unused
+    const userRole = c.get('userRole');
 
     if (!rlsQuery) {
       return c.json({ error: 'RLS query builder not available' }, 500);
@@ -63,11 +63,11 @@ rlsPatients.get(_'/', async (c: Context<{ Variables: Variables }>) => {
       meta: {
         count: patients?.length || 0,
         rlsApplied: true,
-        _userId: _userId,
-        userRole: _userRole,
+        _userId: userId,
+        userRole: userRole,
       },
     });
-  } catch (_error) {
+  } catch (error) {
     console.error('Error in RLS patients route:', error);
     return c.json({ error: 'Internal server error' }, 500);
   }
@@ -151,7 +151,7 @@ rlsPatients.get(
           accessedBy: userId,
         },
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in RLS patient detail route:', error);
       return c.json({ error: 'Internal server error' }, 500);
     }
@@ -168,7 +168,7 @@ rlsPatients.get(
     try {
       const patientId = c.req.param('patientId');
       const rlsQuery = c.get('rlsQuery');
-      const _userId = c.get('userId');
+      const userId = c.get('userId');
 
       // Query parameters
       const limit = parseInt(c.req.query('limit') || '10');
@@ -210,10 +210,10 @@ rlsPatients.get(
           patientId,
           rlsApplied: true,
           filters: { status, startDate, endDate },
-          accessedBy: _userId,
+          accessedBy: userId,
         },
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in RLS patient appointments route:', error);
       return c.json({ error: 'Internal server error' }, 500);
     }
@@ -231,7 +231,7 @@ rlsPatients.get(
       const patientId = c.req.param('patientId');
       const purpose = c.req.query('purpose');
       const rlsQuery = c.get('rlsQuery');
-      const _userId = c.get('userId');
+      const userId = c.get('userId');
 
       // Use RLS-aware consent query
       const { data: consentRecords, error } = await rlsQuery.getConsentRecords(
@@ -262,10 +262,10 @@ rlsPatients.get(
           patientId,
           purpose,
           rlsApplied: true,
-          accessedBy: _userId,
+          accessedBy: userId,
         },
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in RLS patient consent route:', error);
       return c.json({ error: 'Internal server error' }, 500);
     }

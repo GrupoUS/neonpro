@@ -75,8 +75,8 @@ interface GlobalPatientSearchProps {
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
-  useEffect(_() => {
-    const handler = setTimeout(_() => {
+  useEffect(() => {
+    const handler = setTimeout(() => {
       setDebouncedValue(value);
     }, delay);
 
@@ -90,7 +90,7 @@ function useDebounce<T>(value: T, delay: number): T {
 
 // Local storage hook for search history
 function useLocalStorage<T>(key: string, initialValue: T) {
-  const [storedValue, setStoredValue] = useState<T>(_() => {
+  const [storedValue, setStoredValue] = useState<.*>(() => {
     if (typeof window === 'undefined') {
       return initialValue;
     }
@@ -98,7 +98,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
     } catch (_error) {
-      console.warn(`Error reading localStorage key "${key}":`, error);
+      console.warn(`Error reading localStorage key "${key}":`, _error);
       return initialValue;
     }
   });
@@ -143,12 +143,12 @@ function calculateRelevanceScore(patient: any, _query: string): number {
   }
 
   // CPF match (high weight)
-  if (patient.cpf?.includes(_query)) {
+  if (patient.cpf?.includes(query)) {
     score += 0.3;
   }
 
   // Phone match (medium weight)
-  if (patient.phone?.includes(_query)) {
+  if (patient.phone?.includes(query)) {
     score += 0.2;
   }
 
@@ -173,10 +173,10 @@ function generateMatchReasons(patient: any, _query: string): string[] {
   if (patient.fullName?.toLowerCase().includes(normalizedQuery)) {
     reasons.push('Nome');
   }
-  if (patient.cpf?.includes(_query)) {
+  if (patient.cpf?.includes(query)) {
     reasons.push('CPF');
   }
-  if (patient.phone?.includes(_query)) {
+  if (patient.phone?.includes(query)) {
     reasons.push('Telefone');
   }
   if (patient.email?.toLowerCase().includes(normalizedQuery)) {
@@ -204,7 +204,7 @@ export function GlobalPatientSearch({
   const [_isFocused, _setIsFocused] = useState(false);
 
   const debouncedQuery = useDebounce(query, 300);
-  const { measureSearch: _measureSearch, searchResponseTime, searchStatus, isSearchHealthy } =
+  const { measureSearch: measureSearch, searchResponseTime, searchStatus, isSearchHealthy } =
     useSearchPerformance();
 
   // Search history
@@ -221,7 +221,7 @@ export function GlobalPatientSearch({
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['patient-search',_clinicId,_debouncedQuery],
+    queryKey: ['patient-search',clinicId, debouncedQuery],
     queryFn: async () => {
       if (!debouncedQuery || debouncedQuery.length < 2) return [];
 
@@ -324,12 +324,12 @@ export function GlobalPatientSearch({
   });
 
   // Filter and sort results
-  const filteredResults = useMemo(_() => {
+  const filteredResults = useMemo(() => {
     if (!searchResults) return [];
 
     return searchResults
       .filter(result => result.matchScore > 0.1) // Minimum relevance threshold
-      .sort(_(a,_b) => b.matchScore - a.matchScore); // Sort by relevance
+      .sort((a, b) => b.matchScore - a.matchScore); // Sort by relevance
   }, [searchResults]);
 
   // Handle patient selection
@@ -362,7 +362,7 @@ export function GlobalPatientSearch({
   }, []);
 
   // Clear search history
-  const clearSearchHistory = useCallback(_() => {
+  const clearSearchHistory = useCallback(() => {
     setSearchHistory([]);
     toast.success('Histórico de busca limpo');
   }, [setSearchHistory]);
@@ -378,13 +378,13 @@ export function GlobalPatientSearch({
     } else {
       current.push({ _query: newQuery, count: 1 });
     }
-    return current.sort(_(a,_b) => b.count - a.count).slice(0, 5);
+    return current.sort((a, b) => b.count - a.count).slice(0, 5);
   }
 
   // Loading skeleton
   const LoadingSkeleton = () => (
     <div className='space-y-2 p-4'>
-      {[...Array(3)].map(_(_,_i) => (
+      {[...Array(3)].map((_, i) => (
         <div key={i} className='flex items-center space-x-3'>
           <div className='h-10 w-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse'></div>
           <div className='flex-1 space-y-2'>
@@ -397,8 +397,8 @@ export function GlobalPatientSearch({
   );
 
   // Search result item
-  const SearchResultItem = (_{
-    patient,_index,
+  const SearchResultItem = ({
+    patient,index,
   }: {
     patient: PatientSearchResult;
     index: number;
@@ -454,7 +454,7 @@ export function GlobalPatientSearch({
 
         {patient.matchReasons.length > 0 && (
           <div className='flex items-center space-x-1 mt-2'>
-            {patient.matchReasons.slice(0, 3).map(_(reason,_i) => (
+            {patient.matchReasons.slice(0, 3).map((reason, i) => (
               <Badge key={i} variant='outline' className='text-xs'>
                 {reason}
               </Badge>
@@ -500,7 +500,7 @@ export function GlobalPatientSearch({
               className='pl-10 pr-10'
               aria-label='Busca global de pacientes'
             />
-            {query && (_<Button
+            {query && (<Button
                 variant='ghost'
                 size='sm'
                 className='absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0'
@@ -537,7 +537,7 @@ export function GlobalPatientSearch({
               </h3>
 
               {/* Analytics toggle */}
-              {showAnalytics && analytics && (_<Button
+              {showAnalytics && analytics && (<Button
                   variant='ghost'
                   size='sm'
                   onClick={() => toast.info('Analytics em desenvolvimento')}
@@ -618,7 +618,7 @@ export function GlobalPatientSearch({
                       </Button>
                     </div>
                     <div className='space-y-1'>
-                      {searchHistory.slice(0, 5).map(_(item, _index) => (
+                      {searchHistory.slice(0, 5).map((item, _index) => (
                         <div
                           key={index}
                           className='flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded cursor-pointer'

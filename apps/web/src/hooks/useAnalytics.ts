@@ -7,9 +7,9 @@ import { useConsent } from '../contexts/ConsentContext';
  * Automatically handles consent changes and analytics initialization
  */
 export function useAnalytics() {
-  const { hasConsent, consentSettings: _consentSettings } = useConsent();
+  const { hasConsent, consentSettings: consentSettings } = useConsent();
 
-  useEffect(_() => {
+  useEffect(() => {
     // Initialize analytics if user has granted analytics consent
     if (hasConsent('analytics')) {
       analytics.initialize().catch((_error: any) => {
@@ -18,7 +18,7 @@ export function useAnalytics() {
     }
   }, [hasConsent]);
 
-  useEffect(_() => {
+  useEffect(() => {
     // Listen for consent changes to handle analytics initialization/cleanup
     const handleConsentChange = (_event: any) => {
       const { category, granted } = event.detail;
@@ -62,7 +62,7 @@ export function useAnalytics() {
         analytics.trackPageView(data);
       }
     },
-    trackEvent: (data: { name: string; properties?: Record<string,_any> }) => {
+    trackEvent: (data: { name: string; properties?: Record<string, any> }) => {
       if (hasConsent('analytics')) {
         analytics.trackEvent(data);
       }
@@ -80,7 +80,7 @@ export function useAnalytics() {
     },
     setUserId: (_userId: any) => {
       if (hasConsent('analytics')) {
-        analytics.setUserId(_userId);
+        analytics.setUserId(userId);
       }
     },
     isInitialized: hasConsent('analytics'),

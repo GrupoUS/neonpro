@@ -303,7 +303,7 @@ export class HealthcareSecurityTestFramework {
       const batchPromises = batch.map(test => this.runSingleTest(test, _context));
       const batchResults = await Promise.allSettled(batchPromises);
 
-      batchResults.forEach(_(result,_index) => {
+      batchResults.forEach((result,_index) => {
         if (result.status === 'fulfilled') {
           this.results.push(result.value);
         } else {
@@ -331,9 +331,9 @@ export class HealthcareSecurityTestFramework {
       logger.info(`Running security test: ${test.name}`);
 
       const result = await Promise.race([
-        test.testFunction(_context),
-        new Promise<SecurityTestResult>(_(_,_reject) =>
-          setTimeout(_() => reject(new Error('Test timeout')),
+        test.testFunction(context),
+        new Promise<SecurityTestResult>((, reject) =>
+          setTimeout(() => reject(new Error('Test timeout')),
             this.config.timeout,
           )
         ),
@@ -364,7 +364,7 @@ export class HealthcareSecurityTestFramework {
       }
 
       return finalResult;
-    } catch (_error) {
+    } catch (error) {
       const executionTime = Date.now() - startTime;
 
       const errorResult: SecurityTestResult = {
@@ -446,7 +446,7 @@ export class HealthcareSecurityTestFramework {
           );
         }
       }
-    } catch (_error) {
+    } catch (error) {
       issues.push({
         id: 'hsts-test-error',
         type: 'TEST_ERROR',
@@ -510,7 +510,7 @@ export class HealthcareSecurityTestFramework {
           );
         }
       }
-    } catch (_error) {
+    } catch (error) {
       issues.push({
         id: 'csp-test-error',
         type: 'TEST_ERROR',
@@ -579,7 +579,7 @@ export class HealthcareSecurityTestFramework {
           owaspId: 'A8-2017',
         });
       }
-    } catch (_error) {
+    } catch (error) {
       issues.push({
         id: 'xss-test-error',
         type: 'TEST_ERROR',
@@ -791,7 +791,7 @@ export class HealthcareSecurityTestFramework {
         totalTests: this.results.length,
         passedTests: this.results.filter(r => r.passed).length,
         failedTests: this.results.filter(r => !r.passed).length,
-        averageScore: this.results.reduce(_(sum,_r) => sum + r.score, 0)
+        averageScore: this.results.reduce((sum,_r) => sum + r.score, 0)
           / this.results.length,
         criticalIssues: this.results
           .flatMap(r => r.issues)

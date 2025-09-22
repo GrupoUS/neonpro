@@ -84,7 +84,7 @@ export class LGPDComplianceService {
       }
 
       return true;
-    } catch (_error) {
+    } catch (error) {
       console.error('LGPD validation error:', error);
       await this.logViolation(context, `Validation error: ${error}`);
       return false;
@@ -116,7 +116,7 @@ export class LGPDComplianceService {
 
     try {
       await this.supabase.from('audit_logs').insert([auditEntry]);
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to log audit entry:', error);
     }
   }
@@ -144,7 +144,7 @@ export class LGPDComplianceService {
           phiAccessed: true,
         },
       ]);
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to log LGPD violation:', error);
     }
   }
@@ -208,7 +208,7 @@ export class LGPDComplianceService {
           );
         }
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Retention check error:', error);
     }
   }
@@ -240,7 +240,7 @@ export class LGPDComplianceService {
       }
 
       return data.id;
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to create access _request:', error);
       throw error;
     }
@@ -248,4 +248,4 @@ export class LGPDComplianceService {
 }
 
 // Export singleton instance
-export const _lgpdService = new LGPDComplianceService();
+export const lgpdService = new LGPDComplianceService();

@@ -182,10 +182,10 @@ describe("Realtime Event Adapter (Basic)", () => {
       onJoin: vi.fn((event) => {
         capturedEvents.push(event);
       }),
-      onLeave: vi.fn(_(event) => {
+      onLeave: vi.fn((event) => {
         capturedEvents.push(event);
       }),
-      onStatusChange: vi.fn(_(event) => {
+      onStatusChange: vi.fn((event) => {
         capturedEvents.push(event);
       }),
       onError: vi.fn(),
@@ -198,7 +198,7 @@ describe("Realtime Event Adapter (Basic)", () => {
     await adapter.cleanup();
   });
 
-  describe(_"Adapter Lifecycle",_() => {
+  describe("Adapter Lifecycle", () => {
     it(_"should initialize successfully",_async () => {
       const freshAdapter = new TestMockRealtimeAdapter();
       await expect(freshAdapter.initialize()).resolves.toBeUndefined();
@@ -211,7 +211,7 @@ describe("Realtime Event Adapter (Basic)", () => {
     });
   });
 
-  describe(_"Channel Management",_() => {
+  describe("Channel Management", () => {
     const channelId = "test-channel-123";
 
     it(_"should join channel successfully",_async () => {
@@ -230,7 +230,7 @@ describe("Realtime Event Adapter (Basic)", () => {
       expect(channelState!.participants.get(participant.id)).toBeTruthy();
 
       // Verify join event
-      const joinEvent = capturedEvents.find(_(e) => e.type === "join");
+      const joinEvent = capturedEvents.find((e) => e.type === "join");
       expect(joinEvent).toBeTruthy();
       expect(joinEvent!.participant.id).toBe(participant.id);
       expect(joinEvent!.data?.welcomeMessage).toContain("Dr. Silva");
@@ -250,7 +250,7 @@ describe("Realtime Event Adapter (Basic)", () => {
       expect(channelState).toBeNull(); // Channel should be cleaned up when empty
 
       // Verify leave event
-      const leaveEvent = capturedEvents.find(_(e) => e.type === "leave");
+      const leaveEvent = capturedEvents.find((e) => e.type === "leave");
       expect(leaveEvent).toBeTruthy();
       expect(leaveEvent!.participant.id).toBe(participant.id);
       expect(leaveEvent!.data?.reason).toBe("Test leave");
@@ -270,7 +270,7 @@ describe("Realtime Event Adapter (Basic)", () => {
       );
 
       // Verify status change event
-      const statusEvent = capturedEvents.find(_(e) => e.type === "status_change",
+      const statusEvent = capturedEvents.find((e) => e.type === "status_change",
       );
       expect(statusEvent).toBeTruthy();
       expect(statusEvent!.data?.previousStatus).toBe("connected");
@@ -313,7 +313,7 @@ describe("Realtime Event Adapter (Basic)", () => {
     });
   });
 
-  describe(_"Error Handling",_() => {
+  describe("Error Handling", () => {
     it(_"should handle initialization errors",_async () => {
       const freshAdapter = new TestMockRealtimeAdapter();
       const participant = adapter.createMockParticipant();
@@ -339,7 +339,7 @@ describe("Realtime Event Adapter (Basic)", () => {
     });
   });
 
-  describe(_"Event Logging",_() => {
+  describe("Event Logging", () => {
     it(_"should maintain event log",_async () => {
       const participant = adapter.createMockParticipant();
       const channelId = "test-channel";
@@ -362,7 +362,7 @@ describe("Realtime Event Adapter (Basic)", () => {
     });
   });
 
-  describe(_"Healthcare Session Scenario",_() => {
+  describe("Healthcare Session Scenario", () => {
     it(_"should handle complete healthcare session flow",_async () => {
       const channelId = "healthcare-session-789";
 
@@ -441,7 +441,7 @@ describe("Realtime Event Adapter (Basic)", () => {
 
       // Verify event sequence
       const eventLog = adapter.getEventLog();
-      const eventTypes = eventLog.map(_(e) => e.type);
+      const eventTypes = eventLog.map((e) => e.type);
       expect(eventTypes).toEqual([
         "join", // doctor
         "join", // patient

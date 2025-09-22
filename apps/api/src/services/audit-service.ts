@@ -199,7 +199,7 @@ export function getAuditLogs(filters: {
 /**
  * Healthcare-specific audit event creators
  */
-export const _HealthcareAuditEvents = {
+export const HealthcareAuditEvents = {
   patientDataAccess: (data: {
     _userId: string;
     patientId: string;

@@ -130,7 +130,7 @@ app.post('/subscribe', async c => {
       requestId,
       timestamp: new Date().toISOString(),
     });
-  } catch (_error) {
+  } catch (error) {
     logger.error('Error creating real-time subscription', error, {
       requestId: c.req.header('X-Request-ID'),
     });
@@ -206,7 +206,7 @@ app.delete('/unsubscribe/:subscriptionId', async c => {
       requestId,
       timestamp: new Date().toISOString(),
     });
-  } catch (_error) {
+  } catch (error) {
     logger.error('Error removing real-time subscription', error, {
       requestId: c.req.header('X-Request-ID'),
       subscriptionId: c.req.param('subscriptionId'),
@@ -279,7 +279,7 @@ app.get('/analytics', async c => {
       requestId,
       timestamp: new Date().toISOString(),
     });
-  } catch (_error) {
+  } catch (error) {
     logger.error('Error getting real-time analytics', error, {
       requestId: c.req.header('X-Request-ID'),
     });
@@ -334,7 +334,7 @@ app.get('/subscriptions', async c => {
     }
 
     // Get user subscriptions
-    const subscriptions = aguiService.getUserRealtimeSubscriptions(_userId);
+    const subscriptions = aguiService.getUserRealtimeSubscriptions(userId);
 
     logger.info('Real-time subscriptions retrieved successfully', {
       requestId,
@@ -358,7 +358,7 @@ app.get('/subscriptions', async c => {
       requestId,
       timestamp: new Date().toISOString(),
     });
-  } catch (_error) {
+  } catch (error) {
     logger.error('Error getting real-time subscriptions', error, {
       requestId: c.req.header('X-Request-ID'),
     });

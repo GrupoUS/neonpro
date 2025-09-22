@@ -413,4 +413,4 @@ export class PatientCommunicationService {
   }
 }
 
-export const _patientCommunicationService = PatientCommunicationService;
+export const patientCommunicationService = PatientCommunicationService;

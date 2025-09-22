@@ -219,7 +219,7 @@ export class AestheticAnalysisService {
       });
 
       // Perform skin analysis using AI
-      const skinAnalysis = await this.analyzeSkinConditions(_request);
+      const skinAnalysis = await this.analyzeSkinConditions(request);
 
       // Get procedure recommendations based on analysis
       const procedureRecommendations = await this.generateProcedureRecommendations(
@@ -260,7 +260,7 @@ export class AestheticAnalysisService {
         clinic_id: clinicId,
         assessment_type: request.assessment_type || 'comprehensive',
         timestamp: new Date(),
-        input_data: this.sanitizeInputForAudit(_request),
+        input_data: this.sanitizeInputForAudit(request),
         output_data: this.sanitizeOutputForAudit(result),
         ai_confidence_scores: this.extractConfidenceScores(result),
         data_processing_consent: true,
@@ -277,7 +277,7 @@ export class AestheticAnalysisService {
       });
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       logger.error('Aesthetic assessment failed', {
         sessionId,
         error: error.message,
@@ -367,7 +367,7 @@ export class AestheticAnalysisService {
 
     // Sort by priority and limit results
     return recommendations
-      .sort(_(a,_b) => this.priorityToNumber(a.priority) - this.priorityToNumber(b.priority),
+      .sort((a,_b) => this.priorityToNumber(a.priority) - this.priorityToNumber(b.priority),
       )
       .slice(0, request.max_recommendations || 5);
   }
@@ -693,7 +693,7 @@ export class AestheticAnalysisService {
   private extractConfidenceScores(
     result: AestheticAssessmentResult,
   ): Record<string, number> {
-    return result.recommended_procedures.reduce(_(acc,_recommendation) => {
+    return result.recommended_procedures.reduce((acc,_recommendation) => {
         acc[recommendation.procedure.id] = recommendation.procedure.effectiveness_score;
         return acc;
       },

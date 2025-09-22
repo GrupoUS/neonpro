@@ -51,7 +51,7 @@ export function announceToScreenReader(
       ? "assertive"
       : "polite";
 
-  setTimeout(_() => {
+  setTimeout(() => {
     const announcement = document.createElement("div");
     announcement.setAttribute("aria-live", liveType);
     announcement.setAttribute("aria-atomic", "true");
@@ -70,7 +70,7 @@ export function announceToScreenReader(
     document.body.appendChild(announcement);
 
     // Clean up after announcement
-    setTimeout(_() => {
+    setTimeout(() => {
       if (announcement.parentNode) {
         announcement.parentNode.removeChild(announcement);
       }
@@ -84,10 +84,10 @@ export function announceToScreenReader(
 export function useHealthcareFocus(shouldFocus: boolean = false) {
   const elementRef = useRef<HTMLElement>(null);
 
-  useEffect(_() => {
+  useEffect(() => {
     if (shouldFocus && elementRef.current) {
       // Small delay to ensure element is rendered
-      const timeoutId = setTimeout(_() => {
+      const timeoutId = setTimeout(() => {
         elementRef.current?.focus();
       }, 100);
 
@@ -105,7 +105,7 @@ export function useHealthcareFocus(shouldFocus: boolean = false) {
 export function useFocusTrap(isActive: boolean) {
   const containerRef = useRef<HTMLElement>(null);
 
-  useEffect(_() => {
+  useEffect(() => {
     if (!isActive || !containerRef.current) return;
 
     const container = containerRef.current;
@@ -178,7 +178,7 @@ export function useFocusTrap(isActive: boolean) {
 export function useTableNavigation() {
   const tableRef = useRef<HTMLTableElement>(null);
 
-  useEffect(_() => {
+  useEffect(() => {
     const table = tableRef.current;
     if (!table) return;
 
@@ -296,7 +296,7 @@ export function validateColorContrast(
   }
 
   function getLuminance(r: number, g: number, b: number) {
-    const [rs, gs, bs] = [r, g, b].map(_(c) => {
+    const [rs, gs, bs] = [r, g, b].map((c) => {
       c = c / 255;
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
@@ -359,7 +359,7 @@ export function createAccessibleErrorMessage(
 /**
  * Healthcare-specific keyboard shortcuts
  */
-export const _healthcareKeyboardShortcuts = {
+export const healthcareKeyboardShortcuts = {
   // Emergency shortcuts
   emergency: {
     "Alt+E": "Ativar modo de emergência",
@@ -388,10 +388,10 @@ export const _healthcareKeyboardShortcuts = {
  * Keyboard shortcut handler for healthcare applications
  */
 export function useHealthcareKeyboardShortcuts(
-  shortcuts: Record<string,_() => void>,
+  shortcuts: Record<string, () => void>,
   isEnabled: boolean = true,
 ) {
-  useEffect(_() => {
+  useEffect(() => {
     if (!isEnabled) return;
 
     function handleKeyDown(event: KeyboardEvent) {

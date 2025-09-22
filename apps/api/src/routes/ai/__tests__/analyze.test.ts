@@ -183,7 +183,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     mockLGPDService.maskSensitiveData.mockImplementation(data => data);
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
@@ -698,7 +698,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       const largeData = {
         analysisType: 'structured_data',
         data: {
-          patientHistory: Array.from({ length: 100 },_(_,_i) => ({
+          patientHistory: Array.from({ length: 100 },(, i) => ({
             date: `2024-01-${String(i + 1).padStart(2, '0')}`,
             treatment: `Tratamento ${i + 1}`,
             outcome: 'satisfatório',

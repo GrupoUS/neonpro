@@ -114,7 +114,7 @@ export class CryptographicAuditLogger {
       this.lastHash = dataHash;
 
       return auditEntry;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating audit entry:', error);
       throw new Error('Failed to create secure audit entry');
     }
@@ -184,7 +184,7 @@ export class CryptographicAuditLogger {
       }
 
       return true;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error validating audit entry:', error);
       return false;
     }
@@ -208,7 +208,7 @@ export class CryptographicAuditLogger {
     }
 
     // Sort entries by sequence number
-    const sortedEntries = entries.sort(_(a,_b) => a.sequenceNumber - b.sequenceNumber,
+    const sortedEntries = entries.sort((a, b) => a.sequenceNumber - b.sequenceNumber,
     );
 
     for (let i = 0; i < sortedEntries.length; i++) {
@@ -269,7 +269,7 @@ export class CryptographicAuditLogger {
    * Create audit retention policy compliance report
    */
   generateRetentionReport(entries: AuditLogEntry[]): any {
-    const _now = new Date();
+    const now = new Date();
     const retentionPeriods = {
       emergency_access: 365 * 10, // 10 years for emergency access
       patient_data: 365 * 20, // 20 years for patient data access
@@ -456,7 +456,7 @@ export class CryptographicAuditLogger {
     }
 
     // Flag users with excessive access
-    const averageUserAccess = Object.values(userAccess).reduce(_(a,_b) => a + b, 0)
+    const averageUserAccess = Object.values(userAccess).reduce((a,_b) => a + b, 0)
       / Object.keys(userAccess).length;
     for (const [userId, count] of Object.entries(userAccess)) {
       if (count > averageUserAccess * 3) {
@@ -470,7 +470,7 @@ export class CryptographicAuditLogger {
     }
 
     // Flag IPs with excessive access
-    const averageIpAccess = Object.values(ipAccess).reduce(_(a,_b) => a + b, 0)
+    const averageIpAccess = Object.values(ipAccess).reduce((a,_b) => a + b, 0)
       / Object.keys(ipAccess).length;
     for (const [ip, count] of Object.entries(ipAccess)) {
       if (count > averageIpAccess * 5) {
@@ -515,4 +515,4 @@ export class CryptographicAuditLogger {
 }
 
 // Export singleton instance
-export const _cryptographicAuditLogger = CryptographicAuditLogger.getInstance();
+export const cryptographicAuditLogger = CryptographicAuditLogger.getInstance();

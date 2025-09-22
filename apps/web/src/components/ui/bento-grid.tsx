@@ -6,7 +6,7 @@ import { Card } from '@neonpro/ui';
 import { lazy, Suspense } from 'react';
 
 // Lazy load framer-motion for better bundle splitting
-const FramerMotion = lazy(_() => import('framer-motion'));
+const FramerMotion = lazy(() => import('framer-motion'));
 
 // Import types from lazy-loaded module
 type MotionProps = any;
@@ -370,7 +370,7 @@ function BentoGridItemMotion({
 /**
  * Pre-configured Bento Grid layouts for common use cases
  */
-export const _BentoGridLayouts = {
+export const BentoGridLayouts = {
   // Dashboard layout: 1 large + 3 medium cards
   dashboard: (
     <>

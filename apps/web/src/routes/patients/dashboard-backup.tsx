@@ -12,7 +12,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import React, { useState } from 'react';
 
-export const _Route = createFileRoute('/patients/dashboard-backup')({
+export const Route = createFileRoute('/patients/dashboard-backup')({
   component: PatientDashboard,
 });
 
@@ -350,7 +350,7 @@ function PatientDashboard() {
       // use 'info' param correctly
       cell: (info: any) => {
         const patient = info.row.original as Patient;
-        return (_<div className='flex gap-2'>
+        return (<div className='flex gap-2'>
             <Button
               variant='outline'
               size='sm'
@@ -455,7 +455,7 @@ function PatientDashboard() {
           Estatísticas do dashboard
         </h2>
         <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'>
-          {statsCards.map(_(stat, _index) => (
+          {statsCards.map((stat, _index) => (
             <Card
               key={stat.title}
               className='transition-shadow hover:shadow-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'

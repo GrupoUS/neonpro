@@ -197,7 +197,7 @@ const insightsQuerySchema = z.object({
 let services: ServiceInterface | null = null;
 
 // Function to set services (used by tests)
-export const _setServices = (injectedServices: ServiceInterface) => {
+export const setServices = (injectedServices: ServiceInterface) => {
   services = injectedServices;
 };
 
@@ -215,7 +215,7 @@ const getServices = () => {
 };
 
 app.get(
-  '/patient/:patientId',_mockAuthMiddleware,_mockLGPDMiddleware,_zValidator('param',_pathSchema,_(result,_c) => {
+  '/patient/:patientId',mockAuthMiddleware,_mockLGPDMiddleware,_zValidator('param',pathSchema,(result,_c) => {
     if (!result.success) {
       return c.json(
         {
@@ -298,7 +298,7 @@ app.get(
       }
 
       // Generate patient insights
-      const _insightsRequest = {
+      const insightsRequest = {
         patientId,
         _userId: user.id,
         analysisType: queryParams.analysisType,
@@ -496,7 +496,7 @@ app.get(
       responseHeaders['X-Database-Queries'] = '3';
 
       // Set all headers
-      Object.entries(responseHeaders).forEach(_([key,_value]) => {
+      Object.entries(responseHeaders).forEach(([key,_value]) => {
         c.header(key, value);
       });
 
@@ -518,7 +518,7 @@ app.get(
       setCache(cacheKey, finalResponse);
 
       return c.json(finalResponse);
-    } catch (_error) {
+    } catch (error) {
       console.error('AI Insights endpoint error:', error);
 
       // Log error for audit
@@ -673,7 +673,7 @@ app.post(
         'Cache-Control': 'private, max-age=300',
       };
 
-      Object.entries(responseHeaders).forEach(_([key,_value]) => {
+      Object.entries(responseHeaders).forEach(([key,_value]) => {
         c.header(key, value);
       });
 
@@ -691,7 +691,7 @@ app.post(
           },
         },
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('No-show prediction endpoint error:', error);
 
       return c.json(

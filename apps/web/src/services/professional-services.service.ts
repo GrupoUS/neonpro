@@ -263,7 +263,7 @@ class ProfessionalServicesService {
     ).length;
 
     // Calculate proficiency distribution
-    const proficiencyDistribution = professionalServices.reduce(_(acc,_ps) => {
+    const proficiencyDistribution = professionalServices.reduce((acc, ps) => {
         acc[ps.proficiency_level] = (acc[ps.proficiency_level] || 0) + 1;
         return acc;
       },
@@ -275,7 +275,7 @@ class ProfessionalServicesService {
       .filter(ps => ps.hourly_rate !== null)
       .map(ps => ps.hourly_rate!);
     const averageHourlyRate = ratesWithValues.length > 0
-      ? ratesWithValues.reduce(_(sum,_rate) => sum + rate, 0)
+      ? ratesWithValues.reduce((sum, rate) => sum + rate, 0)
         / ratesWithValues.length
       : 0;
 
@@ -356,7 +356,7 @@ class ProfessionalServicesService {
     }
 
     // Sort by primary status first, then by proficiency level
-    const sorted = professionals.sort(_(a,_b) => {
+    const sorted = professionals.sort((a, b) => {
       if (a.is_primary && !b.is_primary) return -1;
       if (!a.is_primary && b.is_primary) return 1;
       return b.availability_score - a.availability_score;
@@ -366,4 +366,4 @@ class ProfessionalServicesService {
   }
 }
 
-export const _professionalServicesService = new ProfessionalServicesService();
+export const professionalServicesService = new ProfessionalServicesService();

@@ -284,13 +284,13 @@ export class ErrorMapper {
 }
 
 // Predefined error creators for common scenarios
-export const _createRateLimitError = (_userId?: string) => {
+export const createRateLimitError = (_userId?: string) => {
   const error = new Error("Rate limit exceeded for user");
   error.name = "RateLimitError";
   return ErrorMapper.mapError(error, { userId, action: "rate_limit_check" });
 };
 
-export const _createConsentError = (_userId?: string, clinicId?: string) => {
+export const createConsentError = (_userId?: string, clinicId?: string) => {
   const error = new Error("LGPD consent required for data processing");
   error.name = "ConsentError";
   return ErrorMapper.mapError(error, {
@@ -300,13 +300,13 @@ export const _createConsentError = (_userId?: string, clinicId?: string) => {
   });
 };
 
-export const _createAIServiceError = (sessionId?: string) => {
+export const createAIServiceError = (sessionId?: string) => {
   const error = new Error("AI service temporarily unavailable");
   error.name = "AIServiceError";
   return ErrorMapper.mapError(error, { sessionId, action: "ai_query" });
 };
 
-export const _createDataProtectionError = (
+export const createDataProtectionError = (
   _userId?: string,
   sessionId?: string,
 ) => {

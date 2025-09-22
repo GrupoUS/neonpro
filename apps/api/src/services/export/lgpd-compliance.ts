@@ -63,7 +63,7 @@ export class ExportLGPDCompliance {
         userId,
         purpose,
       );
-    } catch (_error) {
+    } catch (error) {
       console.error('Erro ao verificar consentimento LGPD:', error);
       return false;
     }
@@ -110,7 +110,7 @@ export class ExportLGPDCompliance {
       case 'number':
         return this.anonymizeNumber(value);
       case 'array':
-        return Array.isArray(value) ? value.map(_() => '[REDACTED]') : value;
+        return Array.isArray(value) ? value.map(() => '[REDACTED]') : value;
       default:
         return '[REDACTED]';
     }
@@ -178,7 +178,7 @@ export class ExportLGPDCompliance {
     fields: PatientExportField[],
     recordCount: number,
   ): Promise<void> {
-    const _auditLog = this.generateAuditTrail(
+    const auditLog = this.generateAuditTrail(
       userId,
       exportId,
       recordCount,
@@ -197,7 +197,7 @@ export class ExportLGPDCompliance {
         legalBasis: 'CONSENT',
         timestamp: new Date(),
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Erro ao registrar acesso de dados LGPD:', error);
     }
   }

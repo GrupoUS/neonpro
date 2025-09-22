@@ -27,6 +27,7 @@ import {
   LGPDDataCategory,
   DataRetentionClass,
 } from "./healthcare-base";
+import { z } from "zod";
 
 // AI Provider Types
 export enum AIProviderOpt {
@@ -478,7 +479,7 @@ export class HealthcareAIOptimizationUtils {
 }
 
 // Default configurations for common healthcare use cases
-export const _DEFAULT_HEALTHCARE_AI_CONFIGS = {
+export const DEFAULT_HEALTHCARE_AI_CONFIGS = {
   PATIENT_COMMUNICATION: {
     strategies: [
       CostOptimizationStrategy.SEMANTIC_CACHING,

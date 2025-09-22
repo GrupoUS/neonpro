@@ -5,9 +5,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-describe(_'Type Safety - TDD RED Phase',_() => {
-  describe(_'Type Mismatch Errors',_() => {
-    it('should FAIL: string[] should not be assignable to AsyncIterable<any>',_() => {
+describe('Type Safety - TDD RED Phase',() => {
+  describe('Type Mismatch Errors',() => {
+    it('should FAIL: string[] should not be assignable to AsyncIterable<any>',() => {
       // This is the error in src/routes/chat.ts line 77
       const mockData = ['message1', 'message2', 'message3'];
 
@@ -16,7 +16,7 @@ describe(_'Type Safety - TDD RED Phase',_() => {
         return data;
       };
 
-      expect(_() => {
+      expect(() => {
         takesAsyncIterable(mockData as any); // This should cause a type error
       }).not.toThrow(); // Runtime works but TypeScript should complain
 
@@ -25,7 +25,7 @@ describe(_'Type Safety - TDD RED Phase',_() => {
       expect(hasTypeError).toBe(true);
     });
 
-    it('should FAIL: Object type should not have call signatures',_() => {
+    it('should FAIL: Object type should not have call signatures',() => {
       // This is the error in src/routes/chat.ts line 131
       const responseObject = {
         'Content-Type': 'text/event-stream',
@@ -38,7 +38,7 @@ describe(_'Type Safety - TDD RED Phase',_() => {
 
       // This should fail - object is not callable
       expect(typeof responseObject).toBe('object');
-      expect(_() => {
+      expect(() => {
         // @ts-expect-error - This should be a TypeScript error
         (responseObject as any)();
       }).toThrow();
@@ -48,7 +48,7 @@ describe(_'Type Safety - TDD RED Phase',_() => {
       expect(hasCallSignatureError).toBe(true);
     });
 
-    it('should FAIL: Type should not have properties in common with other type',_() => {
+    it('should FAIL: Type should not have properties in common with other type',() => {
       // This is the error in src/routes/chat.ts line 137
       const auditConfig = 'chat.query';
       const expectedType = {/* AuditLogConfig shape */};
@@ -63,8 +63,8 @@ describe(_'Type Safety - TDD RED Phase',_() => {
     });
   });
 
-  describe(_'Missing Property Errors',_() => {
-    it('should FAIL: HonoRequest should not have clone property',_() => {
+  describe('Missing Property Errors',() => {
+    it('should FAIL: HonoRequest should not have clone property',() => {
       // This is the error in src/middleware/audit-log.ts line 164
       interface MockHonoRequest {
         // clone property is missing
@@ -80,7 +80,7 @@ describe(_'Type Safety - TDD RED Phase',_() => {
       };
 
       // This should fail - clone property doesn't exist
-      expect(_() => {
+      expect(() => {
         // @ts-expect-error - This should be a TypeScript error
         (mockRequest as any).clone();
       }).toThrow();
@@ -90,7 +90,7 @@ describe(_'Type Safety - TDD RED Phase',_() => {
       expect(hasMissingPropertyError).toBe(true);
     });
 
-    it('should FAIL: HealthcareLogger should not have debug property',_() => {
+    it('should FAIL: HealthcareLogger should not have debug property',() => {
       // This is the error in src/middleware/audit-log.ts line 224
       interface MockHealthcareLogger {
         info: (message: string) => void;
@@ -106,7 +106,7 @@ describe(_'Type Safety - TDD RED Phase',_() => {
       };
 
       // This should fail - debug property doesn't exist
-      expect(_() => {
+      expect(() => {
         // @ts-expect-error - This should be a TypeScript error
         (mockLogger as any).debug('test message');
       }).toThrow();
@@ -117,8 +117,8 @@ describe(_'Type Safety - TDD RED Phase',_() => {
     });
   });
 
-  describe(_'Function Return Type Errors',_() => {
-    it('should FAIL: Not all code paths should return a value',_() => {
+  describe('Function Return Type Errors',() => {
+    it('should FAIL: Not all code paths should return a value',() => {
       // This is the error in middleware functions
       const testFunctionWithMissingReturn = (condition: boolean): string => {
         if (condition) {
@@ -139,7 +139,7 @@ describe(_'Type Safety - TDD RED Phase',_() => {
       expect(hasMissingReturnError).toBe(true);
     });
 
-    it('should FAIL: Function should have explicit return types',_() => {
+    it('should FAIL: Function should have explicit return types',() => {
       // Test for missing explicit return types
       const functionWithoutReturnType = () => {
         return { status: 'ok' };
@@ -155,8 +155,8 @@ describe(_'Type Safety - TDD RED Phase',_() => {
     });
   });
 
-  describe(_'Any Type Usage',_() => {
-    it('should FAIL: Code should use explicit types instead of any',_() => {
+  describe('Any Type Usage',() => {
+    it('should FAIL: Code should use explicit types instead of any',() => {
       // Test for 'any' type usage that should be explicit
       const testData: any = { value: 'test' }; // Should be explicit type
 
@@ -169,7 +169,7 @@ describe(_'Type Safety - TDD RED Phase',_() => {
       expect(hasAnyTypeUsage).toBe(true);
     });
 
-    it('should FAIL: Function parameters should have explicit types',_() => {
+    it('should FAIL: Function parameters should have explicit types',() => {
       // Test for function parameters with 'any' type
       const functionWithAnyParam = (param: any) => {
         return param.toString();
@@ -184,8 +184,8 @@ describe(_'Type Safety - TDD RED Phase',_() => {
     });
   });
 
-  describe(_'Type Assertion Issues',_() => {
-    it('should FAIL: Unsafe type assertions should exist',_() => {
+  describe('Type Assertion Issues',() => {
+    it('should FAIL: Unsafe type assertions should exist',() => {
       // Test for unsafe type assertions
       const unknownData: unknown = { value: 'test' };
 
@@ -193,7 +193,7 @@ describe(_'Type Safety - TDD RED Phase',_() => {
       const assertedData = unknownData as { value: string; extra: string };
 
       // This might fail at runtime if extra property doesn't exist
-      expect(_() => {
+      expect(() => {
         // @ts-expect-error - extra property might not exist
         console.log(assertedData.extra);
       }).not.toThrow();
@@ -203,7 +203,7 @@ describe(_'Type Safety - TDD RED Phase',_() => {
       expect(hasUnsafeTypeAssertion).toBe(true);
     });
 
-    it('should FAIL: Type guards should be missing',_() => {
+    it('should FAIL: Type guards should be missing',() => {
       // Test for missing type guards
       const processData = (data: unknown) => {
         // Missing type guard before accessing properties
@@ -220,8 +220,8 @@ describe(_'Type Safety - TDD RED Phase',_() => {
     });
   });
 
-  describe(_'Generic Type Issues',_() => {
-    it('should FAIL: Generic types should be incorrectly constrained',_() => {
+  describe('Generic Type Issues',() => {
+    it('should FAIL: Generic types should be incorrectly constrained',() => {
       // Test for generic type constraint issues
       const processGeneric = <T extends string>(data: T): T => {
         // This might fail if T doesn't have expected properties
@@ -236,7 +236,7 @@ describe(_'Type Safety - TDD RED Phase',_() => {
       expect(hasGenericConstraintIssue).toBe(true);
     });
 
-    it('should FAIL: Type inference should fail in complex scenarios',_() => {
+    it('should FAIL: Type inference should fail in complex scenarios',() => {
       // Test for type inference failures
       const complexFunction = <T, U>(a: T, b: U) => {
         return { a, b };
@@ -252,8 +252,8 @@ describe(_'Type Safety - TDD RED Phase',_() => {
     });
   });
 
-  describe(_'Integration - Complete Type Safety',_() => {
-    it('should FAIL: All type safety issues should prevent strict TypeScript compilation',_() => {
+  describe('Integration - Complete Type Safety',() => {
+    it('should FAIL: All type safety issues should prevent strict TypeScript compilation',() => {
       // Comprehensive test for all type safety issues
       const typeSafetyIssues = {
         typeMismatches: [
@@ -285,14 +285,14 @@ describe(_'Type Safety - TDD RED Phase',_() => {
 
       // Count total issues
       const totalIssues = Object.values(typeSafetyIssues)
-        .reduce(_(sum,_issues) => sum + issues.length, 0);
+        .reduce((sum,_issues) => sum + issues.length, 0);
 
       // Should fail initially - multiple type safety issues
       expect(totalIssues).toBeGreaterThan(0);
       console.log(`🔴 Type Safety Issues: ${totalIssues} identified`);
     });
 
-    it(_'should document type error patterns for fixing',_() => {
+    it('should document type error patterns for fixing',() => {
       // Document the exact type error patterns
       const typeErrorPatterns = [
         {

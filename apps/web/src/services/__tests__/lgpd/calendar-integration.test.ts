@@ -4,16 +4,16 @@ import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the actual calendar component since we're testing integration logic
-vi.mock(_'@/components/event-calendar/event-calendar',_() => ({
+vi.mock(('@/components/event-calendar/event-calendar', () => ({
   EventCalendar: vi.fn((props: any) => {
     const { events, onEventUpdate, onEventDelete, onEventAdd, className } = props;
     return React.createElement(_'div', {
-      'data-testid': 'event-calendar',_className,_},_[
+      'data-testid': 'event-calendar',className, }, [
       React.createElement(
         'div',
         {
           key: 'calendar-events',
-          'data-testid': 'calendar-events',_},
+          'data-testid': 'calendar-events', },
         events.map((event: any) =>
           React.createElement('div', {
             key: event.id,
@@ -38,10 +38,10 @@ vi.mock(_'@/components/event-calendar/event-calendar',_() => ({
 }));
 
 // Rest of your test implementation...
-describe(_'LGPD Calendar Integration Tests',_() => {
+describe(('LGPD Calendar Integration Tests', () => {
   let queryClient: QueryClient;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },
@@ -51,11 +51,11 @@ describe(_'LGPD Calendar Integration Tests',_() => {
     vi.clearAllMocks();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     queryClient.clear();
   });
 
-  it(_'should render calendar component with proper data handling',_() => {
+  it(('should render calendar component with proper data handling', () => {
     // Your test implementation here
     expect(true).toBe(true); // Placeholder
   });

@@ -418,7 +418,7 @@ export class PatientHistoryService {
   ): Promise<{ id: string; url: string }> {
     // Upload file to storage
     const fileName = `medical-records/${recordId}/${Date.now()}-${file.name}`;
-    const { data: _uploadData, error: uploadError } = await (
+    const { data: uploadData, error: uploadError } = await (
       PatientHistoryService.sb as any
     ).storage
       .from('medical-attachments')
@@ -457,4 +457,4 @@ export class PatientHistoryService {
   }
 }
 
-export const _patientHistoryService = PatientHistoryService;
+export const patientHistoryService = PatientHistoryService;

@@ -60,7 +60,7 @@ export const TLS_CONSTANTS = {
 } as const;
 
 // HTTPS Server Configuration Constants
-export const _HTTPS_CONSTANTS = {
+export const HTTPS_CONSTANTS = {
   // Server configuration defaults
   SERVER: {
     DEFAULT_PORT: 443,
@@ -166,14 +166,14 @@ export type ErrorType = typeof ERROR_CONSTANTS.TYPES[keyof typeof ERROR_CONSTANT
 export type LogEventType = typeof LOGGING_CONSTANTS.EVENTS[keyof typeof LOGGING_CONSTANTS.EVENTS];
 
 // Utility functions for constants
-export const _getAllCiphers = (): TLSCipherSuite[] => [
+export const getAllCiphers = (): TLSCipherSuite[] => [
   ...TLS_CONSTANTS.CIPHERS.TLS_1_3,
   ...TLS_CONSTANTS.CIPHERS.TLS_1_2,
 ];
 
-export const _isWeakCipher = (cipher: string): cipher is WeakCipher =>
+export const isWeakCipher = (cipher: string): cipher is WeakCipher =>
   TLS_CONSTANTS.WEAK_CIPHERS.some(weak => cipher.includes(weak));
 
-export const _getDefaultTLSVersion = () => TLS_CONSTANTS.SECURITY.MIN_TLS_VERSION;
+export const getDefaultTLSVersion = () => TLS_CONSTANTS.SECURITY.MIN_TLS_VERSION;
 
-export const _formatCipherList = (ciphers: TLSCipherSuite[]): string => ciphers.join(':');
+export const formatCipherList = (ciphers: TLSCipherSuite[]): string => ciphers.join(':');

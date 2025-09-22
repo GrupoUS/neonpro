@@ -48,10 +48,10 @@ function useSidebar() {
   return context;
 }
 
-function SidebarProvider(_{
+function SidebarProvider({
   defaultOpen = true,
   open: openProp,
-  onOpenChange: setOpenProp,_className,_style,_children,
+  onOpenChange: setOpenProp,className, style,children,
   ...props
 }: React.ComponentProps<'div'> & {
   defaultOpen?: boolean;
@@ -82,12 +82,12 @@ function SidebarProvider(_{
   );
 
   // Helper to toggle the sidebar.
-  const toggleSidebar = React.useCallback(_() => {
+  const toggleSidebar = React.useCallback(() => {
     return isMobile ? setOpenMobile(open => !open) : setOpen(open => !open);
   }, [isMobile, setOpen, setOpenMobile]);
 
   // Adds a keyboard shortcut to toggle the sidebar.
-  React.useEffect(_() => {
+  React.useEffect(() => {
     const handleKeyDown = (_event: any) => {
       if (
         event.key === SIDEBAR_KEYBOARD_SHORTCUT
@@ -106,7 +106,7 @@ function SidebarProvider(_{
   // This makes it easier to style the sidebar with Tailwind classes.
   const state = open ? 'expanded' : 'collapsed';
 
-  const contextValue = React.useMemo<SidebarContextProps>(_() => ({
+  const contextValue = React.useMemo<SidebarContextProps>(() => ({
       state,
       open,
       setOpen,
@@ -605,7 +605,7 @@ function SidebarMenuSkeleton({
   showIcon?: boolean;
 }) {
   // Random width between 50 to 90%.
-  const width = React.useMemo(_() => {
+  const width = React.useMemo(() => {
     return `${Math.floor(Math.random() * 40) + 50}%`;
   }, []);
 

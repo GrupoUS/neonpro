@@ -10,8 +10,8 @@ import {
   type LGPDPatientData,
 } from '../types/lgpd';
 
-describe(_'LGPD Functions',_() => {
-  describe(_'anonymize_patient_data',_() => {
+describe(_'LGPD Functions',() => {
+  describe(_'anonymize_patient_data',() => {
     it(_'should anonymize patient data with default options',_async () => {
       const patientData: LGPDPatientData = {
         id: 'patient-123',
@@ -102,7 +102,7 @@ describe(_'LGPD Functions',_() => {
     });
   });
 
-  describe(_'delete_patient_data',_() => {
+  describe(_'delete_patient_data',() => {
     it(_'should delete single patient data',_async () => {
       const patientId = 'patient-123';
 
@@ -175,7 +175,7 @@ describe(_'LGPD Functions',_() => {
     });
   });
 
-  describe(_'export_patient_data',_() => {
+  describe(_'export_patient_data',() => {
     it(_'should export patient data in JSON format',_async () => {
       const patientId = 'patient-123';
 
@@ -279,7 +279,7 @@ describe(_'LGPD Functions',_() => {
     });
   });
 
-  describe(_'Error Handling',_() => {
+  describe(_'Error Handling',() => {
     it(_'should handle unexpected errors in anonymization',_async () => {
       // Create a scenario that might cause an unexpected error
       const patientData: LGPDPatientData = {
@@ -313,8 +313,8 @@ describe(_'LGPD Functions',_() => {
     });
   });
 
-  describe(_'Type Safety',_() => {
-    it(_'should enforce type checking for LGPDPatientData',_() => {
+  describe(_'Type Safety',() => {
+    it(_'should enforce type checking for LGPDPatientData',() => {
       // This test ensures type safety at compile time
       const validPatientData: LGPDPatientData = {
         id: 'patient-123',
@@ -333,7 +333,7 @@ describe(_'LGPD Functions',_() => {
       expect(validPatientData.name).toBeDefined();
     });
 
-    it(_'should enforce type checking for AnonymizationOptions',_() => {
+    it(_'should enforce type checking for AnonymizationOptions',() => {
       const validOptions: AnonymizationOptions = {
         preserveId: true,
         preserveStatistics: false,
@@ -345,7 +345,7 @@ describe(_'LGPD Functions',_() => {
       expect(validOptions.preserveStatistics).toBeDefined();
     });
 
-    it(_'should enforce type checking for DeletionOptions',_() => {
+    it(_'should enforce type checking for DeletionOptions',() => {
       const validOptions: DeletionOptions = {
         softDelete: true,
         retainAuditTrail: false,
@@ -357,7 +357,7 @@ describe(_'LGPD Functions',_() => {
       expect(validOptions.retainAuditTrail).toBeDefined();
     });
 
-    it(_'should enforce type checking for ExportOptions',_() => {
+    it(_'should enforce type checking for ExportOptions',() => {
       const validOptions: ExportOptions = {
         format: 'json',
         includeMetadata: true,
@@ -372,7 +372,7 @@ describe(_'LGPD Functions',_() => {
       expect(validOptions.includeMetadata).toBeDefined();
     });
 
-    it(_'should enforce type checking for LGPDOperationResult',_() => {
+    it(_'should enforce type checking for LGPDOperationResult',() => {
       const validResult: LGPDOperationResult = {
         success: true,
         recordsProcessed: 1,

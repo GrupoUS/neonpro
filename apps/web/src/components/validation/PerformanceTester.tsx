@@ -202,7 +202,7 @@ export const PerformanceTester: React.FC = () => {
   const metricsRef = useRef<Map<string, PerformanceMetric>>(new Map());
 
   // Initialize performance monitoring
-  useEffect(_() => {
+  useEffect(() => {
     initializeMetrics();
     setupPerformanceObservers();
     getNetworkInfo();
@@ -221,10 +221,10 @@ export const PerformanceTester: React.FC = () => {
     };
   }, []);
 
-  const initializeMetrics = useCallback(_() => {
+  const initializeMetrics = useCallback(() => {
     const initialMetrics = new Map<string, PerformanceMetric>();
 
-    Object.entries(HEALTHCARE_PERFORMANCE_TARGETS).forEach(_([key,_config]) => {
+    Object.entries(HEALTHCARE_PERFORMANCE_TARGETS).forEach(([key, config]) => {
       initialMetrics.set(key, {
         name: config.name,
         value: null,
@@ -241,7 +241,7 @@ export const PerformanceTester: React.FC = () => {
     metricsRef.current = initialMetrics;
   }, []);
 
-  const setupPerformanceObservers = useCallback(_() => {
+  const setupPerformanceObservers = useCallback(() => {
     if (!window.PerformanceObserver) {
       console.warn('PerformanceObserver not supported in this browser');
       return;
@@ -377,7 +377,7 @@ export const PerformanceTester: React.FC = () => {
     return 'poor';
   };
 
-  const getNetworkInfo = useCallback(_() => {
+  const getNetworkInfo = useCallback(() => {
     if ('connection' in navigator) {
       const connection = (navigator as any).connection;
       setNetworkInfo({
@@ -388,7 +388,7 @@ export const PerformanceTester: React.FC = () => {
     }
   }, []);
 
-  const getMemoryInfo = useCallback(_() => {
+  const getMemoryInfo = useCallback(() => {
     if ('memory' in performance) {
       const memory = (performance as any).memory;
       setMemoryInfo({
@@ -399,7 +399,7 @@ export const PerformanceTester: React.FC = () => {
     }
   }, []);
 
-  const runCriticalScenarios = useCallback(_async () => {
+  const runCriticalScenarios = useCallback(async () => {
     setIsRunning(true);
     setProgress(0);
     setTestStartTime(new Date());
@@ -487,7 +487,7 @@ export const PerformanceTester: React.FC = () => {
 
   const renderMetricsGrid = () => (
     <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-      {Array.from(metrics.entries()).map(_([key,_metric]) => (
+      {Array.from(metrics.entries()).map(([key, metric]) => (
         <Card key={key} className='p-4'>
           <div className='flex items-center justify-between mb-2'>
             <span className='font-medium text-sm'>{metric.name}</span>

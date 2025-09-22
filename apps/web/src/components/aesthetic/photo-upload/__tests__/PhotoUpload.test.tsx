@@ -34,12 +34,12 @@ const createMockImageFile = (name: string, size = 1024 * 1024): File => {
   return createMockFile(name, size, 'image/jpeg');
 };
 
-describe(_'PhotoUpload Component',_() => {
+describe(('PhotoUpload Component', () => {
   const mockOnPhotosUploaded = jest.fn();
   const mockOnPhotoRemoved = jest.fn();
   const mockOnAnalysisComplete = jest.fn();
 
-  beforeEach(_() => {
+  beforeEach(() => {
     jest.clearAllMocks();
 
     // Mock the AI analysis service
@@ -72,12 +72,12 @@ describe(_'PhotoUpload Component',_() => {
     });
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  describe(_'Rendering and Basic Functionality',_() => {
-    it(_'should render the upload area correctly',_() => {
+  describe(('Rendering and Basic Functionality', () => {
+    it(('should render the upload area correctly', () => {
       render(
         <PhotoUpload
           patientId='test-patient'
@@ -94,7 +94,7 @@ describe(_'PhotoUpload Component',_() => {
       expect(screen.getByText('Formatos: JPEG, PNG, WebP')).toBeInTheDocument();
     });
 
-    it(_'should show loading state when disabled',_() => {
+    it(('should show loading state when disabled', () => {
       render(
         <PhotoUpload
           patientId='test-patient'
@@ -110,7 +110,7 @@ describe(_'PhotoUpload Component',_() => {
       expect(uploadArea).toHaveClass('cursor-not-allowed');
     });
 
-    it(_'should display max photos limit correctly',_() => {
+    it(('should display max photos limit correctly', () => {
       render(
         <PhotoUpload
           patientId='test-patient'
@@ -122,7 +122,7 @@ describe(_'PhotoUpload Component',_() => {
       expect(screen.getByText('Máximo 3 fotos')).toBeInTheDocument();
     });
 
-    it(_'should display custom max file size correctly',_() => {
+    it(('should display custom max file size correctly', () => {
       render(
         <PhotoUpload
           patientId='test-patient'
@@ -135,8 +135,8 @@ describe(_'PhotoUpload Component',_() => {
     });
   });
 
-  describe(_'File Validation',_() => {
-    it(_'should reject unsupported file types',_async () => {
+  describe(('File Validation', () => {
+    it(_'should reject unsupported file types',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -149,7 +149,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [invalidFile],
@@ -157,14 +157,14 @@ describe(_'PhotoUpload Component',_() => {
         });
       });
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(
           screen.getByText('Formato não suportado. Use: JPEG, PNG ou WebP'),
         ).toBeInTheDocument();
       });
     });
 
-    it(_'should reject files that are too large',_async () => {
+    it(_'should reject files that are too large',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -178,7 +178,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [largeFile],
@@ -186,14 +186,14 @@ describe(_'PhotoUpload Component',_() => {
         });
       });
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(
           screen.getByText('Arquivo muito grande. Máximo: 1MB'),
         ).toBeInTheDocument();
       });
     });
 
-    it(_'should enforce max photos limit',_async () => {
+    it(_'should enforce max photos limit',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -212,7 +212,7 @@ describe(_'PhotoUpload Component',_() => {
         createMockImageFile('photo2.jpg'),
       ];
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files,
@@ -220,14 +220,14 @@ describe(_'PhotoUpload Component',_() => {
         });
       });
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(
           screen.getByText('Limite de fotos atingido. Máximo: 1 fotos'),
         ).toBeInTheDocument();
       });
     });
 
-    it(_'should validate image dimensions',_async () => {
+    it(_'should validate image dimensions',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -239,14 +239,14 @@ describe(_'PhotoUpload Component',_() => {
       const mockImage = new Image();
       mockImage.onload = jest.fn();
       mockImage.onerror = jest.fn();
-      global.Image = jest.fn().mockImplementation(_() => mockImage);
+      global.Image = jest.fn().mockImplementation(() => mockImage);
 
       const smallFile = createMockImageFile('small.jpg');
       const input = container.querySelector(
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [smallFile],
@@ -255,11 +255,11 @@ describe(_'PhotoUpload Component',_() => {
       });
 
       // Simulate image loading with small dimensions
-      await act(_async () => {
+      await act(async () => {
         mockImage.onload({ target: { width: 256, height: 256 } });
       });
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(
           screen.getByText(
             'Resolução muito baixa. Mínimo: 512x512px para análise precisa',
@@ -269,8 +269,8 @@ describe(_'PhotoUpload Component',_() => {
     });
   });
 
-  describe(_'Drag and Drop Functionality',_() => {
-    it(_'should handle drag over events',_() => {
+  describe(('Drag and Drop Functionality', () => {
+    it(('should handle drag over events', () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -290,7 +290,7 @@ describe(_'PhotoUpload Component',_() => {
       expect(uploadArea).toHaveClass('bg-primary/10');
     });
 
-    it(_'should handle drag leave events',_() => {
+    it(('should handle drag leave events', () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -315,7 +315,7 @@ describe(_'PhotoUpload Component',_() => {
       expect(uploadArea).not.toHaveClass('bg-primary/10');
     });
 
-    it(_'should handle file drop events',_async () => {
+    it(_'should handle file drop events',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -328,7 +328,7 @@ describe(_'PhotoUpload Component',_() => {
       ) as HTMLElement;
       const validFile = createMockImageFile('drop-test.jpg');
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.drop(uploadArea, {
           preventDefault: jest.fn(),
           dataTransfer: {
@@ -338,12 +338,12 @@ describe(_'PhotoUpload Component',_() => {
       });
 
       // Should show upload progress
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.getByText('Enviando arquivos...')).toBeInTheDocument();
       });
     });
 
-    it(_'should not handle drop when disabled',_async () => {
+    it(_'should not handle drop when disabled',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -357,7 +357,7 @@ describe(_'PhotoUpload Component',_() => {
       ) as HTMLElement;
       const validFile = createMockImageFile('drop-test.jpg');
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.drop(uploadArea, {
           preventDefault: jest.fn(),
           dataTransfer: {
@@ -373,8 +373,8 @@ describe(_'PhotoUpload Component',_() => {
     });
   });
 
-  describe(_'Upload Progress and States',_() => {
-    it(_'should show upload progress',_async () => {
+  describe(('Upload Progress and States', () => {
+    it(_'should show upload progress',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -387,7 +387,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [validFile],
@@ -395,13 +395,13 @@ describe(_'PhotoUpload Component',_() => {
         });
       });
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.getByText('Enviando arquivos...')).toBeInTheDocument();
         expect(screen.getByText('progress-test.jpg')).toBeInTheDocument();
       });
     });
 
-    it(_'should show analysis progress',_async () => {
+    it(_'should show analysis progress',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -414,7 +414,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [validFile],
@@ -423,12 +423,12 @@ describe(_'PhotoUpload Component',_() => {
       });
 
       // Wait for upload to complete
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.getByText('Analisando com IA...')).toBeInTheDocument();
       });
     });
 
-    it(_'should handle upload errors gracefully',_async () => {
+    it(_'should handle upload errors gracefully',async () => {
       // Mock upload failure
       global.fetch = jest.fn().mockRejectedValue(new Error('Upload failed'));
 
@@ -444,7 +444,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [validFile],
@@ -452,12 +452,12 @@ describe(_'PhotoUpload Component',_() => {
         });
       });
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.getByText('Erro no upload/análise')).toBeInTheDocument();
       });
     });
 
-    it(_'should show completed photos grid',_async () => {
+    it(_'should show completed photos grid',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -470,7 +470,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [validFile],
@@ -479,14 +479,14 @@ describe(_'PhotoUpload Component',_() => {
       });
 
       // Wait for upload and analysis to complete
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.getByText('Fotos Analisadas')).toBeInTheDocument();
       }, 5000); // Increased timeout for async operations
     });
   });
 
-  describe(_'AI Analysis Integration',_() => {
-    it(_'should call AI analysis service with correct parameters',_async () => {
+  describe(('AI Analysis Integration', () => {
+    it(_'should call AI analysis service with correct parameters',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -500,7 +500,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [validFile],
@@ -508,14 +508,14 @@ describe(_'PhotoUpload Component',_() => {
         });
       });
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(
           MockAestheticAIAnalysisService.prototype.analyzePhoto,
         ).toHaveBeenCalledWith(expect.any(String), 'general');
       });
     });
 
-    it(_'should handle AI analysis failures',_async () => {
+    it(_'should handle AI analysis failures',async () => {
       MockAestheticAIAnalysisService.prototype.analyzePhoto = jest
         .fn()
         .mockRejectedValue(new Error('AI analysis failed'));
@@ -532,7 +532,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [validFile],
@@ -540,13 +540,13 @@ describe(_'PhotoUpload Component',_() => {
         });
       });
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.getByText('Fotos Analisadas')).toBeInTheDocument();
         // Should still show photos even if analysis failed
       });
     });
 
-    it(_'should display analysis results correctly',_async () => {
+    it(_'should display analysis results correctly',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -560,7 +560,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [validFile],
@@ -568,7 +568,7 @@ describe(_'PhotoUpload Component',_() => {
         });
       });
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.getByText('Confiência:')).toBeInTheDocument();
         expect(screen.getByText('Gravidade:')).toBeInTheDocument();
         expect(screen.getByText('Analisado')).toBeInTheDocument();
@@ -576,8 +576,8 @@ describe(_'PhotoUpload Component',_() => {
     });
   });
 
-  describe(_'Photo Management',_() => {
-    it(_'should handle photo removal',_async () => {
+  describe(('Photo Management', () => {
+    it(_'should handle photo removal',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -591,7 +591,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [validFile],
@@ -600,7 +600,7 @@ describe(_'PhotoUpload Component',_() => {
       });
 
       // Wait for upload to complete
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.getByText('Fotos Analisadas')).toBeInTheDocument();
       }, 5000);
 
@@ -611,7 +611,7 @@ describe(_'PhotoUpload Component',_() => {
       expect(mockOnPhotoRemoved).toHaveBeenCalled();
     });
 
-    it(_'should show photo details on click',_async () => {
+    it(_'should show photo details on click',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -624,7 +624,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [validFile],
@@ -633,7 +633,7 @@ describe(_'PhotoUpload Component',_() => {
       });
 
       // Wait for upload to complete
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.getByText('Fotos Analisadas')).toBeInTheDocument();
       }, 5000);
 
@@ -645,8 +645,8 @@ describe(_'PhotoUpload Component',_() => {
     });
   });
 
-  describe(_'Accessibility',_() => {
-    it(_'should be keyboard accessible',_() => {
+  describe(('Accessibility', () => {
+    it(('should be keyboard accessible', () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -667,7 +667,7 @@ describe(_'PhotoUpload Component',_() => {
       expect(uploadArea).toHaveFocus();
     });
 
-    it(_'should have proper ARIA labels',_() => {
+    it(('should have proper ARIA labels', () => {
       render(
         <PhotoUpload
           patientId='test-patient'
@@ -684,7 +684,7 @@ describe(_'PhotoUpload Component',_() => {
       expect(fileInput).toBeInTheDocument();
     });
 
-    it(_'should maintain focus management',_() => {
+    it(('should maintain focus management', () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -701,8 +701,8 @@ describe(_'PhotoUpload Component',_() => {
     });
   });
 
-  describe(_'Error Handling and Edge Cases',_() => {
-    it(_'should handle network errors during upload',_async () => {
+  describe(('Error Handling and Edge Cases', () => {
+    it(_'should handle network errors during upload',async () => {
       global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
 
       const { container } = render(
@@ -717,7 +717,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [validFile],
@@ -725,12 +725,12 @@ describe(_'PhotoUpload Component',_() => {
         });
       });
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.getByText(/Erro no upload\/análise/)).toBeInTheDocument();
       });
     });
 
-    it(_'should handle corrupted image files',_async () => {
+    it(_'should handle corrupted image files',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -742,14 +742,14 @@ describe(_'PhotoUpload Component',_() => {
       const mockImage = new Image();
       mockImage.onload = jest.fn();
       mockImage.onerror = jest.fn();
-      global.Image = jest.fn().mockImplementation(_() => mockImage);
+      global.Image = jest.fn().mockImplementation(() => mockImage);
 
       const corruptedFile = createMockImageFile('corrupted.jpg');
       const input = container.querySelector(
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [corruptedFile],
@@ -758,18 +758,18 @@ describe(_'PhotoUpload Component',_() => {
       });
 
       // Simulate image loading error
-      await act(_async () => {
+      await act(async () => {
         mockImage.onerror();
       });
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(
           screen.getByText('Arquivo de imagem inválido'),
         ).toBeInTheDocument();
       });
     });
 
-    it(_'should handle empty file list gracefully',_async () => {
+    it(_'should handle empty file list gracefully',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -781,7 +781,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [],
@@ -796,8 +796,8 @@ describe(_'PhotoUpload Component',_() => {
     });
   });
 
-  describe(_'Performance and Memory',_() => {
-    it(_'should clean up upload states after completion',_async () => {
+  describe(('Performance and Memory', () => {
+    it(_'should clean up upload states after completion',async () => {
       jest.useFakeTimers();
 
       const { container } = render(
@@ -812,7 +812,7 @@ describe(_'PhotoUpload Component',_() => {
         'input[type="file"]',
       ) as HTMLInputElement;
 
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [validFile],
@@ -821,12 +821,12 @@ describe(_'PhotoUpload Component',_() => {
       });
 
       // Wait for upload to complete
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(screen.getByText('Fotos Analisadas')).toBeInTheDocument();
       }, 5000);
 
       // Fast-forward timers to trigger cleanup
-      act(_() => {
+      act(() => {
         jest.advanceTimersByTime(3000);
       });
 
@@ -841,7 +841,7 @@ describe(_'PhotoUpload Component',_() => {
       jest.useRealTimers();
     });
 
-    it(_'should handle multiple rapid file selections',_async () => {
+    it(_'should handle multiple rapid file selections',async () => {
       const { container } = render(
         <PhotoUpload
           patientId='test-patient'
@@ -854,7 +854,7 @@ describe(_'PhotoUpload Component',_() => {
       ) as HTMLInputElement;
 
       // Rapid file selections
-      await act(_async () => {
+      await act(async () => {
         fireEvent.change(input, {
           target: {
             files: [createMockImageFile('rapid1.jpg')],

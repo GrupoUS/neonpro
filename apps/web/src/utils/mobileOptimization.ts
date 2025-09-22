@@ -37,14 +37,14 @@ export const isSlowConnection = (): boolean => {
 };
 
 // Lazy loading utility
-export const _createLazyComponent = <T extends any>(
+export const createLazyComponent = <T extends any>(
   importFn: () => Promise<{ default: T }>,
 ) => {
   return importFn;
 };
 
 // Image optimization utilities
-export const _getOptimizedImageSrc = (
+export const getOptimizedImageSrc = (
   src: string,
   options: {
     quality?: number;
@@ -82,10 +82,10 @@ export const _getOptimizedImageSrc = (
 };
 
 // Preload critical resources
-export const _preloadCriticalResources = (resources: string[]) => {
+export const preloadCriticalResources = (resources: string[]) => {
   if (typeof document === 'undefined') return;
 
-  resources.forEach(_resource => {
+  resources.forEach(resource => {
     const link = document.createElement('link');
     link.rel = 'preload';
     link.href = resource;
@@ -114,7 +114,7 @@ export const deferNonCriticalResources = () => {
   const nonCriticalStyles = document.querySelectorAll(
     'link[rel="stylesheet"][data-defer]',
   );
-  nonCriticalStyles.forEach(_link => {
+  nonCriticalStyles.forEach(link => {
     const newLink = document.createElement('link');
     newLink.rel = 'stylesheet';
     newLink.href = (link as HTMLLinkElement).href;
@@ -128,12 +128,12 @@ export const deferNonCriticalResources = () => {
 };
 
 // Performance-aware component loading hook
-export const _usePerformanceAwareLoading = () => {
+export const usePerformanceAwareLoading = () => {
   return true; // Simplified for utility functions
 };
 
 // Bundle size monitoring
-export const _getBundleSize = async (): Promise<number> => {
+export const getBundleSize = async (): Promise<number> => {
   if (typeof navigator === 'undefined' || !('storage' in navigator)) {
     return 0;
   }
@@ -147,7 +147,7 @@ export const _getBundleSize = async (): Promise<number> => {
 };
 
 // Memory usage monitoring
-export const _getMemoryUsage = (): number => {
+export const getMemoryUsage = (): number => {
   if (typeof performance === 'undefined' || !('memory' in performance)) {
     return 0;
   }
@@ -167,7 +167,7 @@ export const addResourceHints = () => {
     'api.supabase.co',
   ];
 
-  externalDomains.forEach(_domain => {
+  externalDomains.forEach(domain => {
     const link = document.createElement('link');
     link.rel = 'dns-prefetch';
     link.href = `//${domain}`;
@@ -180,7 +180,7 @@ export const addResourceHints = () => {
     'https://api.supabase.co',
   ];
 
-  criticalOrigins.forEach(_origin => {
+  criticalOrigins.forEach(origin => {
     const link = document.createElement('link');
     link.rel = 'preconnect';
     link.href = origin;
@@ -206,12 +206,12 @@ export const applyMobileOptimizations = () => {
 };
 
 // Initialize mobile optimizations
-export const _initializeMobileOptimizations = () => {
+export const initializeMobileOptimizations = () => {
   if (typeof window === 'undefined') return;
 
   // Apply optimizations when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener(_'DOMContentLoaded',_() => {
+    document.addEventListener(('DOMContentLoaded', () => {
       addResourceHints();
       applyMobileOptimizations();
       deferNonCriticalResources();

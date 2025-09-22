@@ -15,7 +15,7 @@ export type { SupabaseClient } from "@supabase/supabase-js";
 // Connection pool configuration optimized for healthcare workloads
 const createOptimizedSupabaseClient = (): SupabaseClient => {
   // Skip Supabase client creation in test environment
-  if (process.env.NODE_ENV === 'test') {
+  if (process.env.NODE_ENV === 'test_) {
     // Return a mock client for testing
     return {
       from: (_table: string) => ({
@@ -70,7 +70,7 @@ const createOptimizedSupabaseClient = (): SupabaseClient => {
 // Browser client for client-side operations with RLS
 const createBrowserSupabaseClient = (): SupabaseClient => {
   // Skip Supabase client creation in test environment
-  if (process.env.NODE_ENV === 'test') {
+  if (process.env.NODE_ENV === 'test_) {
     // Return a mock client for testing
     return {
       from: () => ({
@@ -124,7 +124,7 @@ const createPrismaClient = (): PrismaClient => {
 // Client creation functions for testing
 export const createNodeSupabaseClient = (): SupabaseClient => {
   // Skip Supabase client creation in test environment
-  if (process.env.NODE_ENV === 'test') {
+  if (process.env.NODE_ENV === 'test_) {
     // Return a mock client for testing
     return {
       from: () => ({
@@ -183,7 +183,7 @@ export const createServiceSupabaseClient = (): SupabaseClient => {
 
 // Export generic createClient for backwards compatibility
 export const createClient = createNodeSupabaseClient;
-export const _createServiceClient = createServiceSupabaseClient;
+export const createServiceClient = createServiceSupabaseClient;
 
 // Global instances - lazy loaded to handle test environment
 let _supabase: SupabaseClient | null = null;
@@ -199,7 +199,7 @@ export const supabase = new Proxy({} as SupabaseClient, {
   }
 });
 
-export const _supabaseBrowser = new Proxy({} as SupabaseClient, {
+export const supabaseBrowser = new Proxy({} as SupabaseClient, {
   get(_target, prop) {
     if (!_supabaseBrowser) {
       _supabaseBrowser = createBrowserSupabaseClient();
@@ -218,7 +218,7 @@ export const prisma = new Proxy({} as PrismaClient, {
 });
 
 // Connection health check
-export const _checkDatabaseHealth = async () => {
+export const checkDatabaseHealth = async () => {
   try {
     // Test Prisma connection
     await prisma.$queryRaw`SELECT 1`;
@@ -234,7 +234,7 @@ export const _checkDatabaseHealth = async () => {
       supabase: true,
       timestamp: new Date().toISOString(),
     };
-  } catch (_error) {
+  } catch (error) {
     return {
       status: "unhealthy",
       error: error instanceof Error ? error.message : "Unknown error",
@@ -248,7 +248,7 @@ export const closeDatabaseConnections = async () => {
   try {
     await prisma.$disconnect();
     console.log("Database connections closed successfully");
-  } catch (_error) {
+  } catch (error) {
     console.error("Error closing database connections", error instanceof Error ? error : new Error(String(error)));
   }
 };

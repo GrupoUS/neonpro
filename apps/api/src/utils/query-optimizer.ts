@@ -98,7 +98,7 @@ export class QueryPerformanceMonitor {
   } {
     const totalQueries = this.metrics.length;
     const averageDuration = totalQueries > 0
-      ? this.metrics.reduce(_(sum,_m) => sum + m.duration, 0) / totalQueries
+      ? this.metrics.reduce((sum,_m) => sum + m.duration, 0) / totalQueries
       : 0;
 
     const slowQueries = this.metrics.filter(
@@ -108,7 +108,7 @@ export class QueryPerformanceMonitor {
 
     // Top 10 slowest queries
     const topSlowQueries = [...this.metrics]
-      .sort(_(a,_b) => b.duration - a.duration)
+      .sort((a, b) => b.duration - a.duration)
       .slice(0, 10);
 
     // Query frequency analysis
@@ -145,8 +145,8 @@ export class QueryPerformanceMonitor {
     });
 
     // Analyze each query group
-    queryGroups.forEach(_(queries,_pattern) => {
-      const avgDuration = queries.reduce(_(sum,_q) => sum + q.duration, 0) / queries.length;
+    queryGroups.forEach((queries, pattern) => {
+      const avgDuration = queries.reduce((sum,_q) => sum + q.duration, 0) / queries.length;
       const frequency = queries.length;
 
       const issues: string[] = [];
@@ -203,7 +203,7 @@ export class QueryPerformanceMonitor {
       }
     });
 
-    return optimizations.sort(_(a,_b) => {
+    return optimizations.sort((a, b) => {
       const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
       return priorityOrder[b.priority] - priorityOrder[a.priority];
     });

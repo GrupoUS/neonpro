@@ -38,7 +38,7 @@ export function RiskAssessmentTable() {
   const clinicId = 'default-clinic-id'; // Placeholder
 
   const { data: riskData, isLoading } = useQuery<any[]>({
-    queryKey: ['risk-assessment',_clinicId],
+    queryKey: ['risk-assessment', clinicId],
     queryFn: async () => {
       const governanceService = getGovernanceService();
       return await governanceService.getRiskAssessmentData(clinicId);

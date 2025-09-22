@@ -87,7 +87,7 @@ export class AIAgentService {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${await this.getToken()}`,
         },
-        body: JSON.stringify(_payload),
+        body: JSON.stringify(payload),
       });
 
       if (!response.ok) {
@@ -150,7 +150,7 @@ export class AIAgentService {
 }
 
 // Create default instance
-export const _aiAgentService = new AIAgentService({
+export const aiAgentService = new AIAgentService({
   getToken: async () => {
     // This should be replaced with actual token retrieval logic
     const token = localStorage.getItem('auth-token');

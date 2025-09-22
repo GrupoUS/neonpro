@@ -12,11 +12,11 @@ export function useChatStreaming(opts: {
   const [error, setError] = useState<string | null>(null);
   const controllerRef = useRef<AbortController | null>(null);
 
-  useEffect(_() => {
+  useEffect(() => {
     if (!auto || !question) return;
     const controller = new AbortController();
     controllerRef.current = controller;
-    (_async () => {
+    (async () => {
       try {
         setStreaming(true);
         const url = new URL('/api/v1/chat/query', window.location.origin);
@@ -38,11 +38,11 @@ export function useChatStreaming(opts: {
           if (done) break;
           const text = decoder.decode(value);
           // Very simple SSE parsing for data: lines
-          text.split('\n').forEach(_line => {
+          text.split('\n').forEach(line => {
             if (line.startsWith('data:')) {
               const payload = line.slice(5).trim();
               try {
-                const evt = JSON.parse(_payload);
+                const evt = JSON.parse(payload);
                 if (evt?.type === 'text' && typeof evt.delta === 'string') {
                   onDelta?.(evt.delta);
                 }

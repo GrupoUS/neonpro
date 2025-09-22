@@ -1,5 +1,5 @@
 // AI-related configuration flags
-export const _aiConfig = {
+export const aiConfig = {
   AI_CHAT_MOCK_MODE: process.env.AI_CHAT_MOCK_MODE === "true",
   FREE_DAILY_READ_LIMIT: Number(process.env.FREE_DAILY_READ_LIMIT ?? 40),
   ABUSE_Q_60S: Number(process.env.ABUSE_Q_60S ?? 12),
@@ -13,7 +13,7 @@ export const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY ?? "";
 export const GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY ?? "";
 
 // AI Provider Settings
-export const _AI_MODEL_CONFIG = {
+export const AI_MODEL_CONFIG = {
   openai: {
     model: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
     maxTokens: Number(process.env.OPENAI_MAX_TOKENS ?? 1000),

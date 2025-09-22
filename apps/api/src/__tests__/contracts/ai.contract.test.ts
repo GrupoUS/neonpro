@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * Covers AI chat, insights, and automation endpoints
  */
 
-describe(_'AI Contract Testing',_() => {
+describe(_'AI Contract Testing',() => {
   const mockContext = {
     user: { id: 'user-123', _role: 'professional' },
     auth: { _userId: 'user-123', isAuthenticated: true },
@@ -64,14 +64,14 @@ describe(_'AI Contract Testing',_() => {
     },
   };
 
-  const _trpcMsw = createTRPCMsw<AppRouter>();
+  const trpcMsw = createTRPCMsw<AppRouter>();
   const caller = appRouter.createCaller(mockContext);
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe(_'AI Chat Session Contract',_() => {
+  describe(_'AI Chat Session Contract',() => {
     it(_'should validate chat session creation',_async () => {
       const sessionInput: AIInput['createChatSession'] = {
         _context: {
@@ -167,7 +167,7 @@ describe(_'AI Contract Testing',_() => {
     });
   });
 
-  describe(_'AI Chat Message Contract',_() => {
+  describe(_'AI Chat Message Contract',() => {
     it(_'should validate message sending with PHI sanitization',_async () => {
       const messageInput: AIInput['sendMessage'] = {
         sessionId: 'session-uuid-123',
@@ -271,7 +271,7 @@ describe(_'AI Contract Testing',_() => {
     });
   });
 
-  describe(_'AI No-Show Prediction Contract',_() => {
+  describe(_'AI No-Show Prediction Contract',() => {
     it(_'should validate no-show prediction generation',_async () => {
       const predictionInput: AIInput['predictNoShow'] = {
         appointmentId: 'appt-789',
@@ -402,7 +402,7 @@ describe(_'AI Contract Testing',_() => {
     });
   });
 
-  describe(_'AI Insights Generation Contract',_() => {
+  describe(_'AI Insights Generation Contract',() => {
     it(_'should validate clinic insights generation',_async () => {
       const insightsInput: AIInput['generateInsights'] = {
         clinicId: 'clinic-789',
@@ -584,7 +584,7 @@ describe(_'AI Contract Testing',_() => {
     });
   });
 
-  describe(_'AI Chat History Contract',_() => {
+  describe(_'AI Chat History Contract',() => {
     it(_'should validate chat history retrieval with filters',_async () => {
       const historyInput: AIInput['getChatHistory'] = {
         sessionId: 'session-uuid-123',
@@ -649,8 +649,8 @@ describe(_'AI Contract Testing',_() => {
     });
   });
 
-  describe(_'Contract Type Safety',_() => {
-    it(_'should enforce AI input type constraints',_() => {
+  describe(_'Contract Type Safety',() => {
+    it(_'should enforce AI input type constraints',() => {
       const validChatInput: AIInput['sendMessage'] = {
         sessionId: 'session-123',
         message: {
@@ -683,7 +683,7 @@ describe(_'AI Contract Testing',_() => {
       expect(validPredictionInput).toBeDefined();
     });
 
-    it(_'should enforce AI output type constraints',_() => {
+    it(_'should enforce AI output type constraints',() => {
       const mockChatOutput: AIOutput['sendMessage'] = {
         success: true,
         data: {

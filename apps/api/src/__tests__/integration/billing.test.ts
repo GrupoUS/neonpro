@@ -16,7 +16,7 @@ import {
 } from '../helpers/auth';
 import { clearTestData, setupTestDb } from '../helpers/database';
 
-describe(_'Billing API',_() => {
+describe(_'Billing API',() => {
   let authHeaders: Record<string, string>;
   let mockUser: any;
   let mockPatient: any;
@@ -41,7 +41,7 @@ describe(_'Billing API',_() => {
     await clearTestData('payments');
   });
 
-  describe(_'POST /v1/billing/invoices',_() => {
+  describe(_'POST /v1/billing/invoices',() => {
     it(_'should create a new invoice',_async () => {
       const invoiceData = {
         patientId: mockPatient.id,
@@ -153,7 +153,7 @@ describe(_'Billing API',_() => {
     });
   });
 
-  describe('GET /v1/billing/invoices/:id',_() => {
+  describe('GET /v1/billing/invoices/:id',() => {
     beforeEach(_async () => {
       // Create a test invoice first
       const invoiceData = {
@@ -212,7 +212,7 @@ describe(_'Billing API',_() => {
     });
   });
 
-  describe(_'GET /v1/billing/invoices',_() => {
+  describe(_'GET /v1/billing/invoices',() => {
     beforeEach(_async () => {
       // Create multiple test invoices
       const invoices = [
@@ -289,7 +289,7 @@ describe(_'Billing API',_() => {
     });
   });
 
-  describe('POST /v1/billing/invoices/:id/payments',_() => {
+  describe('POST /v1/billing/invoices/:id/payments',() => {
     beforeEach(_async () => {
       // Create a test invoice first
       const invoiceData = {
@@ -386,7 +386,7 @@ describe(_'Billing API',_() => {
     });
   });
 
-  describe('GET /v1/billing/invoices/:id/payments',_() => {
+  describe('GET /v1/billing/invoices/:id/payments',() => {
     beforeEach(_async () => {
       // Create invoice and payment
       const invoiceData = {
@@ -441,7 +441,7 @@ describe(_'Billing API',_() => {
     });
   });
 
-  describe(_'GET /v1/billing/dashboard/stats',_() => {
+  describe(_'GET /v1/billing/dashboard/stats',() => {
     it(_'should return billing statistics',_async () => {
       const res = await testClient(app).billing.dashboard.stats.$get({
         _query: { period: 'month' },
@@ -457,7 +457,7 @@ describe(_'Billing API',_() => {
     });
   });
 
-  describe(_'GET /v1/billing/reports/financial',_() => {
+  describe(_'GET /v1/billing/reports/financial',() => {
     it(_'should generate financial report',_async () => {
       const startDate = new Date();
       startDate.setMonth(startDate.getMonth() - 1);
@@ -482,7 +482,7 @@ describe(_'Billing API',_() => {
     });
   });
 
-  describe(_'GET /v1/billing/sus/procedures',_() => {
+  describe(_'GET /v1/billing/sus/procedures',() => {
     it(_'should return SUS procedure codes',_async () => {
       const res = await testClient(app).billing.sus.procedures.$get({
         _query: { q: 'consulta', limit: '10' },
@@ -496,7 +496,7 @@ describe(_'Billing API',_() => {
     });
   });
 
-  describe(_'POST /v1/billing/insurance/verify',_() => {
+  describe(_'POST /v1/billing/insurance/verify',() => {
     it(_'should verify insurance coverage',_async () => {
       const verificationData = {
         patientId: mockPatient.id,
@@ -521,7 +521,7 @@ describe(_'Billing API',_() => {
     });
   });
 
-  describe(_'GET /v1/billing/tax/calculation',_() => {
+  describe(_'GET /v1/billing/tax/calculation',() => {
     it(_'should calculate taxes for service',_async () => {
       const res = await testClient(app).billing.tax.calculation.$get({
         _query: {
@@ -555,7 +555,7 @@ describe(_'Billing API',_() => {
     });
   });
 
-  describe(_'Invoice Status Updates',_() => {
+  describe(_'Invoice Status Updates',() => {
     beforeEach(_async () => {
       // Create a test invoice
       const invoiceData = {
@@ -609,7 +609,7 @@ describe(_'Billing API',_() => {
     });
   });
 
-  describe(_'LGPD Compliance',_() => {
+  describe(_'LGPD Compliance',() => {
     it(_'should log audit trail for billing operations',_async () => {
       // This test verifies that audit logs are created
       // for billing operations (create, read, update, payment)

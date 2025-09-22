@@ -37,7 +37,7 @@ export class PatientRepository implements IPatientRepository {
       if (!data) return null;
 
       return this.mapDatabasePatientToDomain(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("PatientRepository.findById error:", error);
       return null;
     }
@@ -54,7 +54,7 @@ export class PatientRepository implements IPatientRepository {
       if (error || !data) return null;
 
       return this.mapDatabasePatientToDomain(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("PatientRepository.findByMedicalRecordNumber error:", error);
       return null;
     }
@@ -110,7 +110,7 @@ export class PatientRepository implements IPatientRepository {
         limit: options?.limit || 10,
         offset: options?.offset || 0
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("PatientRepository.findByClinicId error:", error);
       return { patients: [], total: 0 };
     }
@@ -179,7 +179,7 @@ export class PatientRepository implements IPatientRepository {
         limit: options?.limit || 10,
         offset: options?.offset || 0
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("PatientRepository.findWithFilter error:", error);
       return { patients: [], total: 0 };
     }
@@ -201,7 +201,7 @@ export class PatientRepository implements IPatientRepository {
       }
 
       return this.mapDatabasePatientToDomain(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("PatientRepository.create error:", error);
       throw error;
     }
@@ -224,7 +224,7 @@ export class PatientRepository implements IPatientRepository {
       }
 
       return this.mapDatabasePatientToDomain(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("PatientRepository.update error:", error);
       throw error;
     }
@@ -243,7 +243,7 @@ export class PatientRepository implements IPatientRepository {
       }
 
       return true;
-    } catch (_error) {
+    } catch (error) {
       console.error("PatientRepository.delete error:", error);
       return false;
     }
@@ -296,7 +296,7 @@ export class PatientRepository implements IPatientRepository {
         limit: options?.limit || 10,
         offset: options?.offset || 0
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("PatientRepository.search error:", error);
       return { patients: [], total: 0 };
     }
@@ -334,7 +334,7 @@ export class PatientRepository implements IPatientRepository {
       }
 
       return count || 0;
-    } catch (_error) {
+    } catch (error) {
       console.error("PatientRepository.count error:", error);
       return 0;
     }

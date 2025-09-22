@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { InMemoryKPIService } from "../../index";
 
-describe(_"KPI threshold breach detection",_() => {
+describe("KPI threshold breach detection", () => {
   it(_"flags severity when value crosses threshold",_async () => {
     const svc = new InMemoryKPIService();
     await svc.register({

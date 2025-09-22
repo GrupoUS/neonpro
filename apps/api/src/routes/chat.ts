@@ -53,7 +53,7 @@ const ALLOWED_ROLES = new Set([
 function checkConsentAndRole(req: Request) {
   const role = req.headers.get('x-role') || 'ANONYMOUS';
   const consent = (req.headers.get('x-consent') || '').toLowerCase();
-  const hasRole = ALLOWED_ROLES.has(_role);
+  const hasRole = ALLOWED_ROLES.has(role);
   const consentStatus = consent === 'true' || consent === 'valid' ? 'valid' : 'missing';
   return { ok: hasRole && consentStatus === 'valid', consentStatus, role };
 }
@@ -145,7 +145,7 @@ app.post(
     const clinicId = c.req.header('x-clinic-id') || 'unknown';
 
     // Rate limit first
-    if (isRateLimited(_userId)) {
+    if (isRateLimited(userId)) {
       // Audit (limit)
       const auditEvent = {
         eventId: crypto.randomUUID(),
@@ -366,7 +366,7 @@ app.post(
       }
 
       return new Response(stream, { headers });
-    } catch (_err) {
+    } catch (err) {
       console.error('Chat query error:', err);
       if (process.env.AI_AUDIT_DB === 'true') {
         try {
@@ -439,7 +439,7 @@ app.get('/session/:id', async c => {
         );
       }
       // create minimal session row if not found
-      const _now = new Date().toISOString();
+      const now = new Date().toISOString();
       const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR';
       const ins = await supabase
         .from('ai_chat_sessions')
@@ -472,7 +472,7 @@ app.get('/session/:id', async c => {
 
   // Mock fallback
   const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR';
-  const _now = new Date().toISOString();
+  const now = new Date().toISOString();
   return c.json(
     { id, userId, locale, startedAt: now, lastActivityAt: now },
     200,
@@ -496,7 +496,7 @@ app.post('/explanation', async c => {
     text: z.string().min(1).max(8000),
     locale: z.string().default('pt-BR'),
   });
-  const parsed = BodySchema.safeParse(_payload);
+  const parsed = BodySchema.safeParse(payload);
   if (!parsed.success) return c.json({ message: 'Invalid payload' }, 422);
   const { text, locale } = parsed.data;
 
@@ -564,7 +564,7 @@ app.post('/explanation', async c => {
     }
 
     return c.json({ explanation, traceId }, 200);
-  } catch (_err) {
+  } catch (err) {
     console.error('Explanation error:', err);
     return c.json(
       {

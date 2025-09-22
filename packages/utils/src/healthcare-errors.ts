@@ -169,7 +169,7 @@ export class HealthcareAuthenticationError extends HealthcareError {
 export class HealthcareAuthorizationError extends HealthcareError {
   constructor(message: string, metadata?: Record<string, unknown>) {
     super(message, ErrorCategory.AUTHORIZATION, ErrorSeverity.HIGH, {
-      code: 'INSUFFICIENT_PERMISSIONS',
+      code: 'INSUFFICIENT_PERMISSIONS_',
       metadata
     });
     this.name = 'HealthcareAuthorizationError';
@@ -207,7 +207,7 @@ export class HealthcareComplianceError extends HealthcareError {
 export class HealthcareSystemError extends HealthcareError {
   constructor(message: string, cause?: Error, metadata?: Record<string, unknown>) {
     super(message, ErrorCategory.SYSTEM, ErrorSeverity.CRITICAL, {
-      code: 'SYSTEM_ERROR',
+      code: 'SYSTEM_ERROR_',
       cause,
       metadata
     });
@@ -294,7 +294,7 @@ export function sanitizeErrorMessage(message: string): string {
   let sanitized = message;
 
   // Replace personal data patterns with placeholders
-  PERSONAL_DATA_PATTERNS.forEach(_(pattern,_index) => {
+  PERSONAL_DATA_PATTERNS.forEach((pattern, index) => {
     sanitized = sanitized.replace(pattern, `[REDACTED_${index}]`);
   });
 
@@ -340,7 +340,7 @@ export const _HealthcareErrors = {
       'Patient not found',
       ErrorCategory.BUSINESS_LOGIC,
       ErrorSeverity.MEDIUM,
-      { code: 'PATIENT_NOT_FOUND', metadata: { patientId } }
+      { code: 'PATIENT_NOT_FOUND_', metadata: { patientId } }
     ),
 
   appointmentConflict: (appointmentId?: string) =>
@@ -348,7 +348,7 @@ export const _HealthcareErrors = {
       'Appointment conflict detected',
       ErrorCategory.BUSINESS_LOGIC,
       ErrorSeverity.MEDIUM,
-      { code: 'APPOINTMENT_CONFLICT', metadata: { appointmentId } }
+      { code: 'APPOINTMENT_CONFLICT_', metadata: { appointmentId } }
     ),
 
   medicalRecordAccessDenied: (recordId?: string) =>
@@ -356,7 +356,7 @@ export const _HealthcareErrors = {
       'Medical record access denied',
       ErrorCategory.AUTHORIZATION,
       ErrorSeverity.HIGH,
-      { code: 'RECORD_ACCESS_DENIED', metadata: { recordId } }
+      { code: 'RECORD_ACCESS_DENIED_', metadata: { recordId } }
     ),
 
   crmVerificationFailed: (crmNumber?: string) =>
@@ -364,7 +364,7 @@ export const _HealthcareErrors = {
       'CRM verification failed',
       ErrorCategory.HEALTHCARE_COMPLIANCE,
       ErrorSeverity.HIGH,
-      { code: 'INVALID_CRM', metadata: { crmNumber } }
+      { code: 'INVALID_CRM_', metadata: { crmNumber } }
     ),
 
   lgpdConsentRequired: (dataType: string) =>

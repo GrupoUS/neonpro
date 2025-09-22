@@ -59,7 +59,7 @@ const mockPatientData = {
   isActive: true,
 };
 
-describe(_'Healthcare Prisma Client Integration Tests',_() => {
+describe(_'Healthcare Prisma Client Integration Tests',() => {
   let prismaClient: any;
   let prismaWithContext: any;
   let queryOptimizer: HealthcareQueryOptimizer;
@@ -77,7 +77,7 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
     // Clean up test data
     try {
       await cleanupTestData();
-    } catch (_error) {
+    } catch (error) {
       console.warn('Cleanup failed:', error);
     }
 
@@ -99,8 +99,8 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
     await cleanupTestData();
   });
 
-  describe(_'Healthcare Context Management',_() => {
-    test(_'should create healthcare context from request',_() => {
+  describe(_'Healthcare Context Management',() => {
+    test(_'should create healthcare context from request',() => {
       const context = createHealthcareContextFromRequest(
         testUserId,
         testClinicId,
@@ -133,7 +133,7 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
     });
   });
 
-  describe(_'LGPD Compliance Operations',_() => {
+  describe(_'LGPD Compliance Operations',() => {
     test(_'should export patient data in LGPD-compliant format',_async () => {
       const exportData = await prismaWithContext.exportPatientData(
         testPatientId,
@@ -196,7 +196,7 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
       expect(consentCheck.missingCategories).toBeUndefined();
     });
 
-    test(_'should sanitize patient data for AI processing',_() => {
+    test(_'should sanitize patient data for AI processing',() => {
       const sensitiveText =
         'Patient João Santos, CPF 123.456.789-01, phone (11) 99999-9999, email joao@email.com';
       const sanitized = LGPDComplianceHelper.sanitizeForAI(sensitiveText);
@@ -210,8 +210,8 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
     });
   });
 
-  describe(_'Brazilian Healthcare Validation',_() => {
-    test(_'should validate Brazilian CPF correctly',_() => {
+  describe(_'Brazilian Healthcare Validation',() => {
+    test(_'should validate Brazilian CPF correctly',() => {
       expect(BrazilianHealthcareValidator.validateCPF('123.456.789-01')).toBe(
         false,
       ); // Invalid test CPF
@@ -221,7 +221,7 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
       expect(BrazilianHealthcareValidator.validateCPF('')).toBe(false); // Empty
     });
 
-    test(_'should validate Brazilian phone numbers',_() => {
+    test(_'should validate Brazilian phone numbers',() => {
       expect(
         BrazilianHealthcareValidator.validateBrazilianPhone('(11) 99999-9999'),
       ).toBe(true);
@@ -236,21 +236,21 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
       );
     });
 
-    test(_'should validate CFM license numbers',_() => {
+    test(_'should validate CFM license numbers',() => {
       expect(BrazilianHealthcareValidator.validateCFM('12345')).toBe(true);
       expect(BrazilianHealthcareValidator.validateCFM('123456')).toBe(true);
       expect(BrazilianHealthcareValidator.validateCFM('123')).toBe(false);
       expect(BrazilianHealthcareValidator.validateCFM('1234567')).toBe(false);
     });
 
-    test(_'should validate patient data completeness',_() => {
+    test(_'should validate patient data completeness',() => {
       const validation = PatientDataHelper.validatePatientDataCompleteness(mockPatientData);
 
       expect(validation.isComplete).toBe(true);
       expect(validation.missingFields).toHaveLength(0);
     });
 
-    test(_'should generate unique medical record numbers',_() => {
+    test(_'should generate unique medical record numbers',() => {
       const mrn1 = PatientDataHelper.generateMedicalRecordNumber(testClinicId);
       const mrn2 = PatientDataHelper.generateMedicalRecordNumber(testClinicId);
 
@@ -261,7 +261,7 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
     });
   });
 
-  describe(_'Healthcare Query Operations',_() => {
+  describe(_'Healthcare Query Operations',() => {
     test(_'should find patients in clinic with RLS validation',_async () => {
       const patients = await prismaWithContext.findPatientsInClinic(
         testClinicId,
@@ -314,7 +314,7 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
     });
   });
 
-  describe(_'Performance Optimization',_() => {
+  describe(_'Performance Optimization',() => {
     test(_'should optimize patient search with caching',_async () => {
       const searchResult1 = await queryOptimizer.searchPatientsOptimized(
         testClinicId,
@@ -352,7 +352,7 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
       expect(result.fromCache).toBe(false);
     });
 
-    test(_'should track performance metrics',_() => {
+    test(_'should track performance metrics',() => {
       const metrics = queryOptimizer.getPerformanceMetrics();
 
       expect(metrics).toBeDefined();
@@ -362,7 +362,7 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
     });
   });
 
-  describe(_'Healthcare Appointment Operations',_() => {
+  describe(_'Healthcare Appointment Operations',() => {
     test(_'should calculate no-show risk score',_async () => {
       // This would need a test appointment
       const appointmentId = 'test-appointment-123';
@@ -392,7 +392,7 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
     });
   });
 
-  describe(_'Error Handling',_() => {
+  describe(_'Error Handling',() => {
     test(_'should throw HealthcareComplianceError for LGPD violations',_async () => {
       // Create invalid context (no CFM validation for professional)
       const invalidContext = createHealthcareContextFromRequest(
@@ -422,8 +422,8 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
     });
   });
 
-  describe(_'Data Anonymization',_() => {
-    test(_'should anonymize patient data for research',_() => {
+  describe(_'Data Anonymization',() => {
+    test(_'should anonymize patient data for research',() => {
       const anonymized = PatientDataHelper.anonymizePatientData(mockPatientData);
 
       expect(anonymized.givenNames).toEqual(['[ANONYMIZED]']);
@@ -489,7 +489,7 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
           ...mockPatientData,
         },
       });
-    } catch (_error) {
+    } catch (error) {
       console.warn('Test data setup failed:', error);
     }
   }
@@ -524,7 +524,7 @@ describe(_'Healthcare Prisma Client Integration Tests',_() => {
       await prismaClient.user.deleteMany({
         where: { id: testUserId },
       });
-    } catch (_error) {
+    } catch (error) {
       console.warn('Test data cleanup failed:', error);
     }
   }

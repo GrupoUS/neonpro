@@ -298,7 +298,7 @@ export function createPatientWithDefaults(
     "id" | "createdAt" | "updatedAt" | "lgpdConsent" | "auditTrail" | "status"
   >,
 ): Patient {
-  const _now = new Date();
+  const now = new Date();
 
   return {
     ...patientData,

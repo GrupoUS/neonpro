@@ -11,8 +11,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { RLSQueryBuilder, supabaseAdmin, supabaseClient } from '../../lib/supabase-client';
 
-describe(_'Supabase Connectivity & RLS Tests',_() => {
-  beforeAll(_() => {
+describe(_'Supabase Connectivity & RLS Tests',() => {
+  beforeAll(() => {
     // Ensure we have the required environment variables for testing
     if (!process.env.SUPABASE_URL) {
       console.warn('⚠️  SUPABASE_URL not set - some tests may be skipped');
@@ -27,14 +27,14 @@ describe(_'Supabase Connectivity & RLS Tests',_() => {
     }
   });
 
-  describe(_'Client Initialization',_() => {
-    it(_'should initialize anonymous client successfully',_() => {
+  describe(_'Client Initialization',() => {
+    it(_'should initialize anonymous client successfully',() => {
       expect(supabaseClient).toBeDefined();
       expect(supabaseClient.supabaseUrl).toBeTruthy();
       expect(supabaseClient.supabaseKey).toBeTruthy();
     });
 
-    it(_'should initialize admin client successfully',_() => {
+    it(_'should initialize admin client successfully',() => {
       if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
         console.log(
           '⏭️  Skipping admin client test - SUPABASE_SERVICE_ROLE_KEY not set',
@@ -47,7 +47,7 @@ describe(_'Supabase Connectivity & RLS Tests',_() => {
       expect(supabaseAdmin.supabaseKey).toBeTruthy();
     });
 
-    it(_'should have different keys for anonymous and admin clients',_() => {
+    it(_'should have different keys for anonymous and admin clients',() => {
       if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
         console.log(
           '⏭️  Skipping key comparison test - SUPABASE_SERVICE_ROLE_KEY not set',
@@ -59,7 +59,7 @@ describe(_'Supabase Connectivity & RLS Tests',_() => {
     });
   });
 
-  describe(_'Database Connectivity',_() => {
+  describe(_'Database Connectivity',() => {
     it(_'should connect to database and retrieve basic info',_async () => {
       if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
         console.log(
@@ -102,7 +102,7 @@ describe(_'Supabase Connectivity & RLS Tests',_() => {
     });
   });
 
-  describe(_'RLS Policy Enforcement',_() => {
+  describe(_'RLS Policy Enforcement',() => {
     it('should enforce RLS on protected tables (anonymous client)', async () => {
       if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
         console.log('⏭️  Skipping RLS test - Supabase credentials not set');
@@ -161,13 +161,13 @@ describe(_'Supabase Connectivity & RLS Tests',_() => {
     });
   });
 
-  describe(_'RLS Query Builder',_() => {
-    it(_'should create RLS query builder without user context',_() => {
+  describe(_'RLS Query Builder',() => {
+    it(_'should create RLS query builder without user context',() => {
       const builder = new RLSQueryBuilder();
       expect(builder).toBeDefined();
     });
 
-    it(_'should create RLS query builder with user context',_() => {
+    it(_'should create RLS query builder with user context',() => {
       const builder = new RLSQueryBuilder('test-user-id', 'user');
       expect(builder).toBeDefined();
     });
@@ -196,7 +196,7 @@ describe(_'Supabase Connectivity & RLS Tests',_() => {
             `📊 RLS query builder returned ${data?.length || 0} patient records`,
           );
         }
-      } catch (_error) {
+      } catch (error) {
         // Query builder might throw errors for invalid user context
         expect(error).toBeDefined();
         console.log(
@@ -206,7 +206,7 @@ describe(_'Supabase Connectivity & RLS Tests',_() => {
     });
   });
 
-  describe(_'Healthcare RLS Utilities',_() => {
+  describe(_'Healthcare RLS Utilities',() => {
     it(_'should provide healthcare-specific RLS functions',_async () => {
       const { healthcareRLS } = await import('../../lib/supabase-client');
 
@@ -232,7 +232,7 @@ describe(_'Supabase Connectivity & RLS Tests',_() => {
         );
         expect(typeof canAccess).toBe('boolean');
         console.log(`📊 Patient access check result: ${canAccess}`);
-      } catch (_error) {
+      } catch (error) {
         // Expected if RLS is properly configured
         console.log(
           `📊 Patient access check failed as expected: ${(error as Error).message}`,
@@ -241,7 +241,7 @@ describe(_'Supabase Connectivity & RLS Tests',_() => {
     });
   });
 
-  describe(_'Error Handling',_() => {
+  describe(_'Error Handling',() => {
     it(_'should handle network errors gracefully',_async () => {
       // This test ensures our error handling works
       const { createClient } = await import('@supabase/supabase-js');

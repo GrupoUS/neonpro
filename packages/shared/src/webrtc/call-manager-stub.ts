@@ -77,9 +77,9 @@ export class RTCCallManagerStub implements RTCCallManager {
     this.currentSession = newSession;
 
     // Simulate connection process
-    setTimeout(_() => {
+    setTimeout(() => {
       this.updateSessionState(newSession.sessionId, "connecting");
-      setTimeout(_() => {
+      setTimeout(() => {
         this.updateSessionState(newSession.sessionId, "connected");
       }, 1000);
     }, 500);
@@ -114,7 +114,7 @@ export class RTCCallManagerStub implements RTCCallManager {
     this.participants.set(sessionId, sessionParticipants);
 
     // Simulate connection
-    setTimeout(_() => {
+    setTimeout(() => {
       newParticipant.connectionState = "connected";
       this.onParticipantJoinedHandler?.(newParticipant);
     }, 800);
@@ -132,10 +132,10 @@ export class RTCCallManagerStub implements RTCCallManager {
     }
 
     // Remove participant from session
-    session.participants = session.participants.filter(_(p) => p.id !== participantId,
+    session.participants = session.participants.filter((p) => p.id !== participantId,
     );
     const sessionParticipants = this.participants.get(sessionId) || [];
-    const updatedParticipants = sessionParticipants.filter(_(p) => p.id !== participantId,
+    const updatedParticipants = sessionParticipants.filter((p) => p.id !== participantId,
     );
     this.participants.set(sessionId, updatedParticipants);
 
@@ -192,7 +192,7 @@ export class RTCCallManagerStub implements RTCCallManager {
    */
   async toggleAudio(sessionId: string, participantId: string): Promise<void> {
     const participants = this.participants.get(sessionId);
-    const participant = participants?.find(_(p) => p.id === participantId);
+    const participant = participants?.find((p) => p.id === participantId);
 
     if (participant) {
       participant.mediaState.audioEnabled =
@@ -208,7 +208,7 @@ export class RTCCallManagerStub implements RTCCallManager {
    */
   async toggleVideo(sessionId: string, participantId: string): Promise<void> {
     const participants = this.participants.get(sessionId);
-    const participant = participants?.find(_(p) => p.id === participantId);
+    const participant = participants?.find((p) => p.id === participantId);
 
     if (participant) {
       participant.mediaState.videoEnabled =
@@ -227,7 +227,7 @@ export class RTCCallManagerStub implements RTCCallManager {
     participantId: string,
   ): Promise<void> {
     const participants = this.participants.get(sessionId);
-    const participant = participants?.find(_(p) => p.id === participantId);
+    const participant = participants?.find((p) => p.id === participantId);
 
     if (participant) {
       participant.mediaState.screenShareEnabled =

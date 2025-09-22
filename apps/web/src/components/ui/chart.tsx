@@ -3,10 +3,9 @@ import * as React from 'react';
 import { lazy, Suspense } from 'react';
 
 // Lazy load recharts for better bundle splitting
-const RechartsPrimitive = lazy(_() =>
-  import('recharts').then(mod => ({
+const RechartsPrimitive = lazy(() => import('recharts').then(mod => ({
     default: mod,
-    ...Object.fromEntries(Object.entries(mod).filter(_([key]) => key !== 'default')),
+    ...Object.fromEntries(Object.entries(mod).filter(([key]) => key !== 'default')),
   }))
 );
 
@@ -61,7 +60,7 @@ const ChartContainer = React.forwardRef<
       typeof RechartsPrimitive.ResponsiveContainer
     >['children'];
   }
->(_({ id,_className,_children,_config,_...props },_ref) => {
+>(({ id,className, children,config, ...props }, ref) => {
   const uniqueId = React.useId();
   const chartId = `chart-${id || uniqueId.replace(/:/g, '')}`;
 
@@ -71,7 +70,7 @@ const ChartContainer = React.forwardRef<
         data-chart={chartId}
         ref={ref}
         className={cn(
-          'flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke="#ccc"]]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke="#fff"]]:stroke-transparent [&_.recharts-layer]:outline-none [&_.recharts-polar-grid_[stroke="#ccc"]]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke="#ccc"]]:stroke-border [&_.recharts-sector[stroke="#fff"]]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none',
+          'flex aspect-video justify-center text-xs [&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke="#ccc"]]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke="#fff"]]:stroke-transparent [&_.recharts-layer]:outline-none [&_.recharts-polar-grid[stroke="#ccc"]]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line[stroke="#ccc"]]:stroke-border [&_.recharts-sector[stroke="#fff"]]:stroke-transparent [&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none',
           className,
         )}
         {...props}
@@ -88,8 +87,8 @@ const ChartContainer = React.forwardRef<
 });
 ChartContainer.displayName = 'Chart';
 
-const ChartStyle = (_{ id, config }: { id: string; config: ChartConfig }) => {
-  const colorConfig = Object.entries(config).filter(_([,_config]) => config.theme || config.color,
+const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
+  const colorConfig = Object.entries(config).filter(([, config]) => config.theme || config.color,
   );
 
   if (!colorConfig.length) {
@@ -100,11 +99,11 @@ const ChartStyle = (_{ id, config }: { id: string; config: ChartConfig }) => {
     <style
       dangerouslySetInnerHTML={{
         __html: Object.entries(THEMES)
-          .map(_([theme,_prefix]) => `
+          .map(([theme, prefix]) => `
 ${prefix} [data-chart=${id}] {
 ${
               colorConfig
-                .map(_([key,_itemConfig]) => {
+                .map(([key, itemConfig]) => {
                   const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme]
                     || itemConfig.color;
                   return color ? `  --color-${key}: ${color};` : null;
@@ -133,13 +132,12 @@ const ChartTooltipContent = React.forwardRef<
     nameKey?: string;
     labelKey?: string;
   }
->(_(
-    {
-      active,_payload,_className,_indicator = 'dot',_hideLabel = false,_hideIndicator = false,_label,_labelFormatter,_labelClassName,_formatter,_color,_nameKey,_labelKey,_},_ref,
+>(({
+      active,payload, className, indicator = 'dot', hideLabel = false, hideIndicator = false,label, labelFormatter,labelClassName, formatter,color, nameKey,labelKey, },ref,
   ) => {
     const { config } = useChart();
 
-    const tooltipLabel = React.useMemo(_() => {
+    const tooltipLabel = React.useMemo(() => {
       if (hideLabel || !payload?.length) {
         return null;
       }
@@ -192,7 +190,7 @@ const ChartTooltipContent = React.forwardRef<
         <div className='grid gap-1.5'>
           {payload
             .filter(item => item.type !== 'none')
-            .map(_(item, _index) => {
+            .map((item, _index) => {
               const key = `${nameKey || item.name || item.dataKey || 'value'}`;
               const itemConfig = getPayloadConfigFromPayload(config, item, key);
               const indicatorColor = color || item.payload.fill || item.color;
@@ -271,8 +269,7 @@ const ChartLegendContent = React.forwardRef<
     hideIcon?: boolean;
     nameKey?: string;
   }
->(_(
-    { className,_hideIcon = false,_payload,_verticalAlign = 'bottom',_nameKey },_ref,
+>(({ className, hideIcon = false,payload, verticalAlign = 'bottom', nameKey },ref,
   ) => {
     const { config } = useChart();
 

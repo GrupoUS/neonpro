@@ -27,7 +27,7 @@ export function useFocusTrap(isActive: boolean = false) {
   const containerRef = useRef<HTMLDivElement>(null);
   const restoreFocusRef = useRef<() => void | undefined>(undefined);
 
-  useEffect(_() => {
+  useEffect(() => {
     if (!isActive || !containerRef.current) return;
 
     // Save current focus
@@ -191,14 +191,14 @@ export function useLiveRegion() {
       setPriority(newPriority);
 
       // Clear message after announcement
-      timeoutRef.current = setTimeout(_() => {
+      timeoutRef.current = setTimeout(() => {
         setMessage('');
       }, 1000);
     },
     [],
   );
 
-  useEffect(_() => {
+  useEffect(() => {
     return () => {
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
@@ -268,7 +268,7 @@ export function useAccessibleField(
     [touched, validateField],
   );
 
-  const handleBlur = useCallback(_() => {
+  const handleBlur = useCallback(() => {
     setTouched(true);
     const validationError = validateField(value);
     setError(validationError);
@@ -325,7 +325,7 @@ export function useAccessibilityPreferences() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
 
-  useEffect(_() => {
+  useEffect(() => {
     // Initial values
     setReducedMotion(prefersReducedMotion());
     setHighContrast(prefersHighContrast());
@@ -363,7 +363,7 @@ export function useSkipLinks() {
     { href: '#search', label: 'Pular para a busca' },
   ]);
 
-  const focusMainContent = useCallback(_() => {
+  const focusMainContent = useCallback(() => {
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
       mainContent.focus();
@@ -406,10 +406,10 @@ export function useAccessibleTable<T>(
     [sortColumn],
   );
 
-  const sortedData = useCallback(_() => {
+  const sortedData = useCallback(() => {
     if (!sortColumn) return data;
 
-    return [...data].sort(_(a,_b) => {
+    return [...data].sort((a, b) => {
       const aValue = a[sortColumn];
       const bValue = b[sortColumn];
 

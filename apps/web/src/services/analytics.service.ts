@@ -193,7 +193,7 @@ class AnalyticsService {
 
       const totalRevenue = (
         appointments as Array<{ total_amount: number | null }> | undefined
-      )?.reduce((sum: number,_apt) => sum + (apt.total_amount || 0), 0) || 0;
+      )?.reduce((sum: number, apt) => sum + (apt.total_amount || 0), 0) || 0;
       const averageTicket = appointments?.length
         ? totalRevenue / appointments.length
         : 0;
@@ -202,7 +202,7 @@ class AnalyticsService {
       const serviceRevenue = new Map<string, ServiceRevenueBreakdown>();
       (appointments as any[])?.forEach((_apt: any) => {
         const service = apt.service_types;
-        if (_service) {
+        if (service) {
           const existing = serviceRevenue.get(service.id) || {
             serviceId: service.id,
             serviceName: service.name,
@@ -372,7 +372,7 @@ class AnalyticsService {
       });
 
       const topPatientsByFrequency = Array.from(patientFrequency.values())
-        .sort(_(a,_b) => b.appointmentCount - a.appointmentCount)
+        .sort((a, b) => b.appointmentCount - a.appointmentCount)
         .slice(0, 10);
 
       const returningPatients = Array.from(patientFrequency.values()).filter(
@@ -548,7 +548,7 @@ class AnalyticsService {
         }
       });
 
-      return Array.from(serviceStats.values()).sort(_(a,_b) => b.appointmentCount - a.appointmentCount,
+      return Array.from(serviceStats.values()).sort((a, b) => b.appointmentCount - a.appointmentCount,
       );
     } catch (_error) {
       console.error('Error getting popular services:', error);
@@ -677,4 +677,4 @@ class AnalyticsService {
   }
 }
 
-export const _analyticsService = new AnalyticsService();
+export const analyticsService = new AnalyticsService();

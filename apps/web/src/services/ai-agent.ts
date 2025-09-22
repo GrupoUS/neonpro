@@ -218,7 +218,7 @@ class HttpClient {
 
     // Create timeout signal
     const controller = new AbortController();
-    const timeoutId = setTimeout(_() => controller.abort(), timeout);
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     // Combine signals
     const combinedSignal = signal
@@ -238,7 +238,7 @@ class HttpClient {
         clearTimeout(timeoutId);
 
         if (!response.ok) {
-          const errorData = await response.json().catch(_() => ({}));
+          const errorData = await response.json().catch(() => ({}));
           throw AIAgentError.fromResponse(errorData, response.status);
         }
 
@@ -274,7 +274,7 @@ class HttpClient {
     const controller = new AbortController();
 
     const onAbort = () => controller.abort();
-    signals.forEach(_signal => {
+    signals.forEach(signal => {
       if (signal.aborted) {
         controller.abort();
         return;
@@ -283,8 +283,8 @@ class HttpClient {
     });
 
     // Cleanup
-    controller.signal.addEventListener(_'abort',_() => {
-      signals.forEach(_signal => signal.removeEventListener('abort', onAbort));
+    controller.signal.addEventListener(('abort', () => {
+      signals.forEach(signal => signal.removeEventListener('abort', onAbort));
     });
 
     return controller.signal;
@@ -314,7 +314,7 @@ export class AIAgentService {
     try {
       const response = await HttpClient.request<DataAgentResponse>('/data-agent', {
         method: 'POST',
-        body: JSON.stringify(_request),
+        body: JSON.stringify(request),
         timeout: options.timeout,
       });
 
@@ -347,7 +347,7 @@ export class AIAgentService {
     try {
       const response = await HttpClient.request<SessionResponse>('/sessions', {
         method: 'POST',
-        body: JSON.stringify(_request),
+        body: JSON.stringify(request),
         ...options,
       });
 

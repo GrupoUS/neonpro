@@ -258,7 +258,7 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return result;
-    } catch (_error) {
+    } catch (error) {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
     }
@@ -287,11 +287,11 @@ export class HealthcareQueryOptimizer {
   }> {
     const startTime = Date.now();
     const {
-      professionalId: _professionalId,
-      patientId: _patientId,
-      startDate: _startDate,
-      endDate: _endDate,
-      status: _status,
+      professionalId: professionalId,
+      patientId: patientId,
+      startDate: startDate,
+      endDate: endDate,
+      status: status,
       includePatientDetails = true,
       includeProfessionalDetails = true,
       page = 1,
@@ -376,7 +376,7 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return result;
-    } catch (_error) {
+    } catch (error) {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
     }
@@ -420,7 +420,7 @@ export class HealthcareQueryOptimizer {
                 },
               });
               return { success: true, index: actualIndex };
-            } catch (_error) {
+            } catch (error) {
               return {
                 success: false,
                 index: actualIndex,
@@ -452,7 +452,7 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return results;
-    } catch (_error) {
+    } catch (error) {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
     }
@@ -582,7 +582,7 @@ export class HealthcareQueryOptimizer {
 
       this.updateMetrics(Date.now() - startTime, false, false);
       return { metrics, fromCache: false };
-    } catch (_error) {
+    } catch (error) {
       this.updateMetrics(Date.now() - startTime, true, false);
       throw error;
     }
@@ -682,7 +682,7 @@ export class ConnectionPoolMonitor {
    * Start monitoring connection pool
    */
   startMonitoring(intervalMs = 30000): void {
-    this.monitoringInterval = setInterval(_async () => {
+    this.monitoringInterval = setInterval(async () => {
       try {
         const metrics = await this.getConnectionMetrics();
 
@@ -696,7 +696,7 @@ export class ConnectionPoolMonitor {
             metrics.utilization + '%',
           );
         }
-      } catch (_error) {
+      } catch (error) {
         console.error('Connection pool monitoring failed:', error);
       }
     }, intervalMs);

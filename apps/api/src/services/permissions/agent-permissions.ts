@@ -93,7 +93,7 @@ export class AgentPermissionService {
 
     try {
       // Validate input
-      const validatedContext = this.validateAndSanitizeContext(_context);
+      const validatedContext = this.validateAndSanitizeContext(context);
 
       // Rate limiting check
       if (!(await this.checkRateLimit(validatedContext._userId))) {
@@ -155,7 +155,7 @@ export class AgentPermissionService {
       });
 
       return denialResult;
-    } catch (_error) {
+    } catch (error) {
       console.error('Permission check error:', error);
 
       // Fail secure - deny permission on error
@@ -190,7 +190,7 @@ export class AgentPermissionService {
    */
   private async getUserRoles(_userId: string): Promise<UserRole[]> {
     // Validate and sanitize userId
-    const validatedUserId = UserIdSchema.parse(_userId);
+    const validatedUserId = UserIdSchema.parse(userId);
     const cacheKey = this.generateSecureCacheKey(validatedUserId);
 
     // Check cache first
@@ -236,7 +236,7 @@ export class AgentPermissionService {
       }
 
       return roles;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error fetching user roles:', error);
       // Return empty array on error - fail secure
       return [];
@@ -487,7 +487,7 @@ export class AgentPermissionService {
             error: details.error,
           },
         });
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to log permission check:', error);
     }
   }
@@ -497,7 +497,7 @@ export class AgentPermissionService {
    */
   clearCache(_userId: string): void {
     try {
-      const validatedUserId = UserIdSchema.parse(_userId);
+      const validatedUserId = UserIdSchema.parse(userId);
       const cacheKey = this.generateSecureCacheKey(validatedUserId);
       this.cache.delete(cacheKey);
 
@@ -506,7 +506,7 @@ export class AgentPermissionService {
 
       // Clean up oversized cache
       this.enforceCacheSizeLimit();
-    } catch (_error) {
+    } catch (error) {
       console.error('Error clearing cache:', error);
     }
   }
@@ -527,7 +527,7 @@ export class AgentPermissionService {
     roles: UserRole[];
     effectivePermissions: string[];
   }> {
-    const roles = await this.getUserRoles(_userId);
+    const roles = await this.getUserRoles(userId);
     const effectivePermissions = new Set<string>();
 
     roles.forEach(role => {
@@ -550,7 +550,7 @@ export class AgentPermissionService {
     consentType: 'data_processing' | 'ai_interaction' | 'data_retention',
   ): Promise<boolean> {
     try {
-      const validatedUserId = UserIdSchema.parse(_userId);
+      const validatedUserId = UserIdSchema.parse(userId);
       const validConsentType = z.enum(['data_processing', 'ai_interaction', 'data_retention'])
         .parse(consentType);
 
@@ -564,7 +564,7 @@ export class AgentPermissionService {
         .single();
 
       return !!data;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error checking LGPD consent:', error);
       // Fail secure - no consent on error
       return false;
@@ -581,7 +581,7 @@ export class AgentPermissionService {
   }> {
     try {
       const validatedSessionId = SessionIdSchema.parse(sessionId);
-      const validatedUserId = UserIdSchema.parse(_userId);
+      const validatedUserId = UserIdSchema.parse(userId);
 
       const { data: session, error } = await this.supabase
         .from('agent_sessions')
@@ -616,7 +616,7 @@ export class AgentPermissionService {
       }
 
       return { valid: true, session };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error validating session access:', error);
       return { valid: false, reason: 'Validation error' };
     }
@@ -658,7 +658,7 @@ export class AgentPermissionService {
               cache_version: this.cacheVersion,
             },
           });
-      } catch (_error) {
+      } catch (error) {
         console.error('Failed to log permission check:', error);
       }
     });
@@ -686,7 +686,7 @@ export class AgentPermissionService {
           await logFunction();
         }
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error processing audit log queue:', error);
     } finally {
       this.isProcessingAuditLog = false;
@@ -697,7 +697,7 @@ export class AgentPermissionService {
    * Initialize periodic cache cleanup
    */
   private initializeCacheCleanup(): void {
-    setInterval(_() => {
+    setInterval(() => {
       this.cleanupExpiredCache();
     }, 60000); // Cleanup every minute
   }
@@ -706,7 +706,7 @@ export class AgentPermissionService {
    * Cleanup expired cache entries
    */
   private cleanupExpiredCache(): void {
-    const _now = Date.now();
+    const now = Date.now();
     for (const [key, entry] of this.cache.entries()) {
       if (entry.expires <= now) {
         this.cache.delete(key);
@@ -721,10 +721,10 @@ export class AgentPermissionService {
     if (this.cache.size > this.maxCacheSize) {
       // Remove oldest entries
       const entries = Array.from(this.cache.entries())
-        .sort(_(a,_b) => a[1].expires - b[1].expires);
+        .sort((a,_b) => a[1].expires - b[1].expires);
 
       const toRemove = entries.slice(0, Math.floor(this.maxCacheSize * 0.2));
-      toRemove.forEach(_([key]) => this.cache.delete(key));
+      toRemove.forEach(([key]) => this.cache.delete(key));
     }
   }
 
@@ -744,7 +744,7 @@ export class AgentPermissionService {
    * Validate and sanitize permission context
    */
   private validateAndSanitizeContext(_context: PermissionContext): ValidatedPermissionContext {
-    return PermissionContextSchema.parse(_context);
+    return PermissionContextSchema.parse(context);
   }
 
   /**
@@ -764,7 +764,7 @@ export class AgentPermissionService {
    */
   private validateRoleType(_role: string): UserRole['role'] {
     const validRoles = ['admin', 'clinic_admin', 'professional', 'staff', 'patient'];
-    if (validRoles.includes(_role)) {
+    if (validRoles.includes(role)) {
       return role as UserRole['role'];
     }
     throw new Error(`Invalid role type: ${role}`);
@@ -807,13 +807,13 @@ export class AgentPermissionService {
    */
   private async checkRateLimit(_userId: string): Promise<boolean> {
     // Enhanced rate limiting with security considerations
-    const _rateLimitKey = `rate_limit_${this.sanitizeString(_userId)}`;
-    const _now = Date.now();
-    const _windowMs = 60000; // 1 minute
+    const rateLimitKey = `rate_limit_${this.sanitizeString(userId)}`;
+    const now = Date.now();
+    const windowMs = 60000; // 1 minute
     const maxRequests = 50; // Reduced for security
 
     // Check if user is in security blocklist
-    if (await this.isSecurityBlocklisted(_userId)) {
+    if (await this.isSecurityBlocklisted(userId)) {
       return false;
     }
 
@@ -845,7 +845,7 @@ export class AgentPermissionService {
             table: 'user_roles',
           },
           payload => {
-            this.handleRoleChange(_payload);
+            this.handleRoleChange(payload);
           },
         )
         .on(
@@ -856,7 +856,7 @@ export class AgentPermissionService {
             table: 'role_permissions',
           },
           payload => {
-            this.handlePermissionChange(_payload);
+            this.handlePermissionChange(payload);
           },
         )
         .subscribe(status => {
@@ -865,7 +865,7 @@ export class AgentPermissionService {
 
       // Store channel for cleanup
       (this as any).realtimeChannel = channel;
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to setup real-time cache invalidation:', error);
     }
   }
@@ -877,12 +877,12 @@ export class AgentPermissionService {
     try {
       if (payload.eventType === 'UPDATE' || payload.eventType === 'DELETE') {
         const userId = payload.old?.user_id || payload.new?.user_id;
-        if (_userId) {
-          this.clearCache(_userId);
+        if (userId) {
+          this.clearCache(userId);
           this.logCacheInvalidation('role_change', _userId);
         }
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error handling role change:', error);
     }
   }
@@ -895,7 +895,7 @@ export class AgentPermissionService {
       // When permissions change, increment cache version to force refresh
       this.cacheVersion++;
       this.logCacheInvalidation('permission_change', 'global');
-    } catch (_error) {
+    } catch (error) {
       console.error('Error handling permission change:', error);
     }
   }
@@ -908,13 +908,13 @@ export class AgentPermissionService {
       const { data } = await this.supabase
         .from('security_blocklist')
         .select('id')
-        .eq('user_id', this.sanitizeString(_userId))
+        .eq('user_id', this.sanitizeString(userId))
         .eq('active', true)
         .gt('expires_at', new Date().toISOString())
         .single();
 
       return !!data;
-    } catch (_error) {
+    } catch (error) {
       return false;
     }
   }
@@ -927,7 +927,7 @@ export class AgentPermissionService {
       await this.supabase
         .from('security_events')
         .insert({
-          user_id: this.sanitizeString(_userId),
+          user_id: this.sanitizeString(userId),
           event_type: 'suspicious_activity',
           activity_type: activityType,
           severity: 'medium',
@@ -937,7 +937,7 @@ export class AgentPermissionService {
             user_agent: 'unknown', // Would be extracted from request
           },
         });
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to log suspicious activity:', error);
     }
   }

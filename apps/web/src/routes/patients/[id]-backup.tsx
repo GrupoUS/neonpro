@@ -27,7 +27,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-export const _Route = createFileRoute('/patients/id-backup')({
+export const Route = createFileRoute('/patients/id-backup')({
   component: PatientDetailPage,
 });
 
@@ -117,7 +117,7 @@ function PatientDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(_() => {
+  useEffect(() => {
     const fetchPatientData = async () => {
       try {
         setLoading(true);
@@ -538,7 +538,7 @@ function PatientDetailPage() {
                   <div>
                     <h4 className='font-medium mb-2'>Alergias</h4>
                     <div className='flex flex-wrap gap-2'>
-                      {patient.allergies.map(_(allergy, _index) => (
+                      {patient.allergies.map((allergy, _index) => (
                         <Badge key={index} variant='destructive'>
                           {allergy}
                         </Badge>
@@ -549,7 +549,7 @@ function PatientDetailPage() {
                   <div>
                     <h4 className='font-medium mb-2'>Medicamentos em Uso</h4>
                     <div className='flex flex-wrap gap-2'>
-                      {patient.medications.map(_(medication, _index) => (
+                      {patient.medications.map((medication, _index) => (
                         <Badge key={index} variant='outline'>
                           {medication}
                         </Badge>
@@ -560,7 +560,7 @@ function PatientDetailPage() {
                   <div>
                     <h4 className='font-medium mb-2'>Condições Crônicas</h4>
                     <div className='flex flex-wrap gap-2'>
-                      {patient.chronicConditions.map(_(condition, _index) => (
+                      {patient.chronicConditions.map((condition, _index) => (
                         <Badge key={index} variant='secondary'>
                           {condition}
                         </Badge>
@@ -822,7 +822,7 @@ function PatientDetailPage() {
                               Recomendações:
                             </p>
                             <ul className='text-sm list-disc list-inside space-y-1'>
-                              {insight.recommendations.map(_(recommendation, _index) => <li key={index}>{recommendation}</li>,
+                              {insight.recommendations.map((recommendation, _index) => <li key={index}>{recommendation}</li>,
                               )}
                             </ul>
                           </div>

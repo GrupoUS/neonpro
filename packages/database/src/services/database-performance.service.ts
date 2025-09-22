@@ -124,7 +124,7 @@ export class DatabasePerformanceService {
       }
 
       return result.data || result;
-    } catch (_error) {
+    } catch (error) {
       const duration = performance.now() - startTime;
       
       // Log failed query
@@ -183,7 +183,7 @@ export class DatabasePerformanceService {
         } else {
           results.success += batch.length;
         }
-      } catch (_error) {
+      } catch (error) {
         results.errors.push({ 
           batch: i / batchSize, 
           error: error instanceof Error ? error.message : 'Unknown error' 
@@ -199,7 +199,7 @@ export class DatabasePerformanceService {
    */
   async optimizeExpirationCheck(
     table: string,
-    dateColumn: string = 'expires_at',
+    dateColumn: string = 'expires_at_,
     statusColumn: string = 'status',
     activeStatus: string = 'ACTIVE',
     expiredStatus: string = 'EXPIRED'
@@ -207,7 +207,7 @@ export class DatabasePerformanceService {
     const startTime = performance.now();
     
     try {
-      const _now = new Date().toISOString();
+      const now = new Date().toISOString();
       
       // Single operation: find and update expired records in one query
       const { data, error } = await this.supabase
@@ -224,7 +224,7 @@ export class DatabasePerformanceService {
       }
 
       this.logPerformance({
-        _query: 'optimize_expiration_check',
+        _query: 'optimize_expiration_check_,
         duration,
         timestamp: new Date().toISOString(),
         success: true,
@@ -236,11 +236,11 @@ export class DatabasePerformanceService {
         updatedCount: data?.length || 0,
         expiredIds: data?.map((item: any) => item.id) || [],
       };
-    } catch (_error) {
+    } catch (error) {
       const duration = performance.now() - startTime;
       
       this.logPerformance({
-        _query: 'optimize_expiration_check',
+        _query: 'optimize_expiration_check_,
         duration,
         timestamp: new Date().toISOString(),
         success: false,
@@ -286,7 +286,7 @@ export class DatabasePerformanceService {
       };
     }
 
-    const totalDuration = relevantMetrics.reduce(_(sum,_metric) => sum + metric.duration, 0);
+    const totalDuration = relevantMetrics.reduce((sum,_metric) => sum + metric.duration, 0);
     const slowQueries = relevantMetrics.filter(metric => metric.duration > this.config.slowQueryThreshold);
     const errors = relevantMetrics.filter(metric => !metric.success);
     
@@ -320,7 +320,7 @@ export class DatabasePerformanceService {
    * Clean up expired cache entries
    */
   cleanup(): void {
-    const _now = Date.now();
+    const now = Date.now();
     
     for (const [key, entry] of this.cache) {
       if (now - new Date(entry.timestamp).getTime() > entry.ttl) {
@@ -340,7 +340,7 @@ export class DatabasePerformanceService {
     const entry = this.cache.get(key);
     if (!entry) return null;
 
-    const _now = Date.now();
+    const now = Date.now();
     if (now - new Date(entry.timestamp).getTime() > entry.ttl) {
       this.cache.delete(key);
       return null;
@@ -423,7 +423,7 @@ export class DatabasePerformanceService {
 }
 
 // Factory function for creating performance service instances
-export const _createDatabasePerformanceService = (
+export const createDatabasePerformanceService = (
   supabase: SupabaseClient,
   config?: Partial<PerformanceConfig>
 ) => {

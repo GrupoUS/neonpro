@@ -8,5 +8,5 @@ export function withinChatLimits(_userId: string, max5 = 10, max60 = 30) {
 }
 
 export function recordChatHit(_userId: string) {
-  return counter.touch(_userId);
+  return counter.touch(userId);
 }

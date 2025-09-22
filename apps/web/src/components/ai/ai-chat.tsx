@@ -174,11 +174,11 @@ const fetchAvailableModels = async (): Promise<AIModel[]> => {
 /**
  * AIChat - Main chat interface component
  */
-export const AIChat = (_{
-  patientContext,_healthcareProfessional,_defaultModel = 'gpt-4',_showModelSelection = true,_showVoiceInput = false,_showFileAttachment = false,
+export const AIChat = ({
+  patientContext,healthcareProfessional, defaultModel = 'gpt-4', showModelSelection = true, showVoiceInput = false, showFileAttachment = false,
   lgpdConsent = {
     canStoreHistory: true,
-    dataRetentionDays: 30,_},_mobileOptimized = true,_maxHeight = '600px',_testId = 'ai-chat',
+    dataRetentionDays: 30, }, mobileOptimized = true, maxHeight = '600px', testId = 'ai-chat',
 }: AIChatProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -189,7 +189,7 @@ export const AIChat = (_{
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-  // const _queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   // Fetch available AI models
   const { data: availableModels = [] } = useQuery({
@@ -236,16 +236,16 @@ export const AIChat = (_{
   });
 
   // Auto-scroll to bottom
-  const scrollToBottom = useCallback(_() => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
-  useEffect(_() => {
+  useEffect(() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
   // Handle send message
-  const handleSendMessage = useCallback(_async () => {
+  const handleSendMessage = useCallback(async () => {
     if (!inputMessage.trim() || isLoading) return;
 
     const userMessage: ChatMessage = {
@@ -288,13 +288,13 @@ export const AIChat = (_{
   );
 
   // Voice input (placeholder implementation)
-  const handleVoiceToggle = useCallback(_() => {
+  const handleVoiceToggle = useCallback(() => {
     setIsListening(!isListening);
     // Voice recognition implementation would go here
   }, [isListening]);
 
   // Clear chat
-  const handleClearChat = useCallback(_() => {
+  const handleClearChat = useCallback(() => {
     setMessages([]);
   }, []);
 

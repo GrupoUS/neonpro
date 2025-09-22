@@ -4,79 +4,79 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { SchedulingUI } from '../SchedulingUI';
 
 // Mock the cn utility function
-vi.mock(_'@/lib/utils',_() => ({
+vi.mock(('@/lib/utils', () => ({
   cn: (...classes: string[]) => classes.filter(Boolean).join(' '),
 }));
 
 // Mock date-fns functions
-vi.mock(_'date-fns',_() => ({
-  format: vi.fn((date,_formatStr) => {
+vi.mock(('date-fns', () => ({
+  format: vi.fn((date, formatStr) => {
     if (formatStr === 'MMMM yyyy') return 'January 2024';
     if (formatStr === 'yyyy-MM-dd') return '2024-01-15';
     if (formatStr === 'HH:mm') return '14:30';
     if (formatStr === 'dd/MM/yyyy') return '15/01/2024';
     return '2024-01-15 14:30';
   }),
-  addDays: vi.fn(_(date,_days) => new Date(date.getTime() + days * 24 * 60 * 60 * 1000),
+  addDays: vi.fn((date, days) => new Date(date.getTime() + days * 24 * 60 * 60 * 1000),
   ),
   startOfWeek: vi.fn(date => date),
   endOfWeek: vi.fn(date => date),
-  isSameDay: vi.fn(_() => false),
-  isPast: vi.fn(_() => false),
-  isToday: vi.fn(_() => false),
+  isSameDay: vi.fn(() => false),
+  isPast: vi.fn(() => false),
+  isToday: vi.fn(() => false),
   pt: {},
 }));
 
 // Mock UI components
-vi.mock(_'@/components/ui',_() => ({
-  Button: ({ children,_onClick,_variant, ...props }: any) => (
+vi.mock(('@/components/ui', () => ({
+  Button: ({ children,onClick, variant, ...props }: any) => (
     <button onClick={onClick} data-variant={variant} {...props}>
       {children}
     </button>
   ),
-  Card: (_{ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardContent: (_{ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardHeader: (_{ children, ...props }: any) => <div {...props}>{children}</div>,
-  CardTitle: (_{ children, ...props }: any) => <h3 {...props}>{children}</h3>,
-  Badge: (_{ children,_variant, ...props }: any) => (
+  Card: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  CardContent: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  CardHeader: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  CardTitle: ({ children, ...props }: any) => <h3 {...props}>{children}</h3>,
+  Badge: ({ children,variant, ...props }: any) => (
     <span data-variant={variant} {...props}>
       {children}
     </span>
   ),
-  Input: (_{ onChange, ...props }: any) => <input onChange={onChange} {...props} />,
-  Select: (_{ children,_onValueChange, ...props }: any) => (
+  Input: ({ onChange, ...props }: any) => <input onChange={onChange} {...props} />,
+  Select: ({ children,onValueChange, ...props }: any) => (
     <select onChange={e => onValueChange?.(e.target.value)} {...props}>
       {children}
     </select>
   ),
-  SelectContent: (_{ children, ...props }: any) => <div {...props}>{children}</div>,
-  SelectItem: (_{ children,_value, ...props }: any) => (
+  SelectContent: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  SelectItem: ({ children,value, ...props }: any) => (
     <option value={value} {...props}>
       {children}
     </option>
   ),
-  SelectTrigger: (_{ children, ...props }: any) => <div {...props}>{children}</div>,
-  SelectValue: (_{ placeholder, ...props }: any) => <span {...props}>{placeholder}</span>,
-  Dialog: (_{ children,_open, ...props }: any) => open ? <div {...props}>{children}</div> : null,
-  DialogContent: (_{ children, ...props }: any) => <div {...props}>{children}</div>,
-  DialogHeader: (_{ children, ...props }: any) => <div {...props}>{children}</div>,
-  DialogTitle: (_{ children, ...props }: any) => <h2 {...props}>{children}</h2>,
-  DialogTrigger: (_{ children, ...props }: any) => <div {...props}>{children}</div>,
+  SelectTrigger: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  SelectValue: ({ placeholder, ...props }: any) => <span {...props}>{placeholder}</span>,
+  Dialog: ({ children,open, ...props }: any) => open ? <div {...props}>{children}</div> : null,
+  DialogContent: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  DialogHeader: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+  DialogTitle: ({ children, ...props }: any) => <h2 {...props}>{children}</h2>,
+  DialogTrigger: ({ children, ...props }: any) => <div {...props}>{children}</div>,
   // Avatar components removed - using User icon instead
 }));
 
-describe(_'SchedulingUI',_() => {
+describe(('SchedulingUI', () => {
   const mockProps = {
     onAppointmentCreate: vi.fn(),
     onAppointmentUpdate: vi.fn(),
     onAppointmentCancel: vi.fn(),
   };
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  test(_'renders scheduling UI title',_() => {
+  test(('renders scheduling UI title', () => {
     render(<SchedulingUI {...mockProps} />);
     expect(screen.getByText('Agendamento de Telemedicina')).toBeInTheDocument();
     expect(
@@ -84,18 +84,18 @@ describe(_'SchedulingUI',_() => {
     ).toBeInTheDocument();
   });
 
-  test(_'displays view mode buttons',_() => {
+  test(('displays view mode buttons', () => {
     render(<SchedulingUI {...mockProps} />);
     expect(screen.getByText('Calendário')).toBeInTheDocument();
     expect(screen.getByText('Lista')).toBeInTheDocument();
   });
 
-  test(_'shows new consultation button',_() => {
+  test(('shows new consultation button', () => {
     render(<SchedulingUI {...mockProps} />);
     expect(screen.getByText('Agendar Consulta')).toBeInTheDocument();
   });
 
-  test(_'displays filters section',_() => {
+  test(('displays filters section', () => {
     render(<SchedulingUI {...mockProps} />);
     expect(screen.getByText('Filtros')).toBeInTheDocument();
     expect(
@@ -103,7 +103,7 @@ describe(_'SchedulingUI',_() => {
     ).toBeInTheDocument();
   });
 
-  test(_'search functionality works',_() => {
+  test(('search functionality works', () => {
     render(<SchedulingUI {...mockProps} />);
     const searchInput = screen.getByPlaceholderText(
       'Buscar por paciente ou profissional...',
@@ -112,7 +112,7 @@ describe(_'SchedulingUI',_() => {
     expect(searchInput).toHaveValue('Maria Silva');
   });
 
-  test(_'view mode toggle works',_() => {
+  test(('view mode toggle works', () => {
     render(<SchedulingUI {...mockProps} />);
     const listButton = screen.getByText('Lista');
     fireEvent.click(listButton);
@@ -121,37 +121,37 @@ describe(_'SchedulingUI',_() => {
     expect(screen.getByText('Todas as Consultas')).toBeInTheDocument();
   });
 
-  test(_'calendar view displays by default',_() => {
+  test(('calendar view displays by default', () => {
     render(<SchedulingUI {...mockProps} />);
     // Calendar view should show month navigation
     expect(screen.getByText('January 2024')).toBeInTheDocument();
   });
 
-  test(_'displays appointment count',_() => {
+  test(('displays appointment count', () => {
     render(<SchedulingUI {...mockProps} />);
     // Should show count of appointments
     expect(screen.getByText(/consulta\(s\)/)).toBeInTheDocument();
   });
 
-  test(_'new appointment dialog can be opened',_() => {
+  test(('new appointment dialog can be opened', () => {
     render(<SchedulingUI {...mockProps} />);
     // Should show the new consultation button somewhere in the header
     expect(screen.getByText(/Nova|Agendar/)).toBeInTheDocument();
   });
 
-  test(_'handles empty state correctly',_() => {
+  test(('handles empty state correctly', () => {
     render(<SchedulingUI {...mockProps} appointments={[]} />);
     expect(
       screen.getByText('Nenhuma consulta agendada para este dia'),
     ).toBeInTheDocument();
   });
 
-  test(_'status filter dropdown exists',_() => {
+  test(('status filter dropdown exists', () => {
     render(<SchedulingUI {...mockProps} />);
     expect(screen.getByText('Filtrar por status')).toBeInTheDocument();
   });
 
-  test(_'mock appointments are displayed',_() => {
+  test(('mock appointments are displayed', () => {
     render(<SchedulingUI {...mockProps} />);
     // Change view to list mode to see all appointments
     const listButton = screen.getByText('Lista');

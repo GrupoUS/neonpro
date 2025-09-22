@@ -11,14 +11,14 @@ const mockSupabase = {
   from: vi.fn(),
 };
 
-vi.mock(_'@supabase/supabase-js',_() => ({
+vi.mock('@supabase/supabase-js_, () => ({
   createClient: vi.fn(() => mockSupabase),
 }));
 
-describe(_'Usage Counter Repository Security Tests',_() => {
+describe('Usage Counter Repository Security Tests_, () => {
   let repository: UsageCounterRepository;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
     
     // Mock successful database operations
@@ -67,15 +67,15 @@ describe(_'Usage Counter Repository Security Tests',_() => {
     );
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.clearAllMocks();
   });
 
   function createMockDatabaseRow(): UsageCounterDatabaseRow {
     return {
       id: 'test-id',
-      entity_type: 'clinic',
-      entity_id: 'clinic123',
+      entity_type: 'clinic_,
+      entity_id: 'clinic123_,
       monthly_queries: 100,
       daily_queries: 10,
       current_cost_usd: 0.05,
@@ -85,7 +85,7 @@ describe(_'Usage Counter Repository Security Tests',_() => {
       date: '2024-01-01',
       month: '2024-01',
       metadata: {
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium',
         concurrentRequests: 5,
         totalRequests: 1000,
@@ -101,15 +101,15 @@ describe(_'Usage Counter Repository Security Tests',_() => {
         auditLogEntries: 100,
         securityEvents: 0,
       },
-      created_at: '2024-01-01T00:00:00Z',
-      updated_at: '2024-01-01T12:00:00Z',
+      created_at: '2024-01-01T00:00:00Z_,
+      updated_at: '2024-01-01T12:00:00Z_,
     };
   }
 
-  describe(_'Type Safety',_() => {
-    it(_'should enforce strict TypeScript interfaces',_() => {
+  describe('Type Safety_, () => {
+    it('should enforce strict TypeScript interfaces_, () => {
       const metadata: UsageMetadata = {
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium',
         concurrentRequests: 5,
         totalRequests: 1000,
@@ -126,15 +126,15 @@ describe(_'Usage Counter Repository Security Tests',_() => {
         securityEvents: 0,
       };
 
-      expect(metadata._userId).toBe('user123');
+      expect(metadata._userId).toBe('user123_);
       expect(metadata.planCode).toBe('premium');
       expect(metadata.healthcareComplianceScore).toBe(0.95);
     });
 
-    it(_'should validate healthcare-specific metadata fields',_async () => {
+    it('should validate healthcare-specific metadata fields_,_async () => {
       const createData = {
         clinicId: 'clinic123',
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -155,9 +155,9 @@ describe(_'Usage Counter Repository Security Tests',_() => {
       expect(result.metadata?.healthcareComplianceScore).toBeDefined();
     });
 
-    it(_'should handle optional healthcare security fields',_async () => {
+    it('should handle optional healthcare security fields_,_async () => {
       const metadata: Partial<UsageMetadata> = {
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium',
         concurrentRequests: 5,
         totalRequests: 1000,
@@ -178,14 +178,14 @@ describe(_'Usage Counter Repository Security Tests',_() => {
     });
   });
 
-  describe(_'Database Operations Security',_() => {
-    it(_'should safely handle database row mapping',_async () => {
-      const _mockRow = createMockDatabaseRow();
+  describe('Database Operations Security_, () => {
+    it('should safely handle database row mapping_,_async () => {
+      const mockRow = createMockDatabaseRow();
       
       // Mock the findByUserAndClinic method to return our test data
       vi.spyOn(repository, 'findByUserAndClinic' as any).mockResolvedValue({
         clinicId: 'clinic123',
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium',
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -205,7 +205,7 @@ describe(_'Usage Counter Repository Security Tests',_() => {
 
       const result = await repository.dailyUpsert({
         clinicId: 'clinic123',
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium',
         increment: {
           monthlyQueries: 10,
@@ -227,7 +227,7 @@ describe(_'Usage Counter Repository Security Tests',_() => {
       expect(result.clinicId).toBe('clinic123');
     });
 
-    it(_'should handle database errors gracefully',_async () => {
+    it('should handle database errors gracefully_,_async () => {
       mockSupabase.from.mockReturnValue({
         insert: vi.fn().mockReturnValue({
           select: vi.fn().mockReturnValue({
@@ -238,7 +238,7 @@ describe(_'Usage Counter Repository Security Tests',_() => {
 
       const createData = {
         clinicId: 'clinic123',
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -248,12 +248,12 @@ describe(_'Usage Counter Repository Security Tests',_() => {
       await expect(repository.create(createData)).rejects.toThrow('Database connection failed');
     });
 
-    it(_'should validate numeric field parsing',_async () => {
+    it('should validate numeric field parsing_,_async () => {
       const rowWithStrings: UsageCounterDatabaseRow = {
         ...createMockDatabaseRow(),
-        current_cost_usd: '0.05' as any, // Test string to number conversion
-        average_latency_ms: '150' as any,
-        cache_hit_rate: '0.8' as any,
+        current_cost_usd: '0.05_ as any, // Test string to number conversion
+        average_latency_ms: '150_ as any,
+        cache_hit_rate: '0.8_ as any,
       };
 
       // Mock the mapping method directly
@@ -265,11 +265,11 @@ describe(_'Usage Counter Repository Security Tests',_() => {
     });
   });
 
-  describe(_'Healthcare Data Security',_() => {
-    it(_'should track patient data access count',_async () => {
+  describe('Healthcare Data Security_, () => {
+    it('should track patient data access count_,_async () => {
       const createData = {
         clinicId: 'clinic123',
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -285,10 +285,10 @@ describe(_'Usage Counter Repository Security Tests',_() => {
       expect(result.metadata?.healthcareComplianceScore).toBe(0.95);
     });
 
-    it(_'should validate healthcare compliance score range',_async () => {
+    it('should validate healthcare compliance score range_,_async () => {
       const createData = {
         clinicId: 'clinic123',
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -301,10 +301,10 @@ describe(_'Usage Counter Repository Security Tests',_() => {
       expect(result).toBeDefined();
     });
 
-    it(_'should track security events in healthcare context',_async () => {
+    it('should track security events in healthcare context_,_async () => {
       const createData = {
         clinicId: 'clinic123',
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -320,11 +320,11 @@ describe(_'Usage Counter Repository Security Tests',_() => {
     });
   });
 
-  describe(_'Input Validation',_() => {
-    it(_'should validate numeric inputs',_async () => {
+  describe('Input Validation_, () => {
+    it('should validate numeric inputs_,_async () => {
       const invalidData = {
         clinicId: 'clinic123',
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium' as const,
         monthlyQueries: -100, // Invalid negative value
         dailyQueries: -10, // Invalid negative value
@@ -336,10 +336,10 @@ describe(_'Usage Counter Repository Security Tests',_() => {
       expect(result).toBeDefined();
     });
 
-    it(_'should handle extremely large values',_async () => {
+    it('should handle extremely large values_,_async () => {
       const largeValueData = {
         clinicId: 'clinic123',
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium' as const,
         monthlyQueries: Number.MAX_SAFE_INTEGER,
         dailyQueries: Number.MAX_SAFE_INTEGER,
@@ -352,10 +352,10 @@ describe(_'Usage Counter Repository Security Tests',_() => {
       expect(result).toBeDefined();
     });
 
-    it(_'should validate date strings',_async () => {
+    it('should validate date strings_,_async () => {
       const createData = {
         clinicId: 'clinic123',
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,
@@ -372,8 +372,8 @@ describe(_'Usage Counter Repository Security Tests',_() => {
     });
   });
 
-  describe(_'Privacy and Compliance',_() => {
-    it(_'should not expose sensitive data in error messages',_async () => {
+  describe('Privacy and Compliance_, () => {
+    it('should not expose sensitive data in error messages_,_async () => {
       mockSupabase.from.mockReturnValue({
         insert: vi.fn().mockReturnValue({
           select: vi.fn().mockReturnValue({
@@ -384,10 +384,10 @@ describe(_'Usage Counter Repository Security Tests',_() => {
 
       const sensitiveData = {
         clinicId: 'clinic123',
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium' as const,
         monthlyQueries: 100,
-        patientData: 'sensitive_health_information', // This should not appear in errors
+        patientData: 'sensitive_health_information_, // This should not appear in errors
       };
 
       await expect(repository.create(sensitiveData as any)).rejects.not.toThrow(
@@ -395,10 +395,10 @@ describe(_'Usage Counter Repository Security Tests',_() => {
       );
     });
 
-    it(_'should maintain data retention policies',_async () => {
+    it('should maintain data retention policies_,_async () => {
       const createData = {
         clinicId: 'clinic123',
-        _userId: 'user123',
+        _userId: 'user123_,
         planCode: 'premium' as const,
         monthlyQueries: 100,
         dailyQueries: 10,

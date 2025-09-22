@@ -53,7 +53,7 @@ export function GoogleCalendarIntegrationPanel({
 
   // Query for recent sync activity
   const { data: syncActivity } = useQuery({
-    queryKey: ['gcal-activity',_userId,_clinicId],
+    queryKey: ['gcal-activity',userId, clinicId],
     queryFn: async () => {
       // In real app, fetch from API
       return [
@@ -134,7 +134,7 @@ export function GoogleCalendarIntegrationPanel({
         </CardHeader>
         <CardContent>
           {!integrationStatus?.isConnected
-            ? (_<GoogleCalendarConnectButton
+            ? (<GoogleCalendarConnectButton
                 userId={userId}
                 clinicId={clinicId}
                 onConnect={() => {

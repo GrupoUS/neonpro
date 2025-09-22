@@ -200,7 +200,7 @@ export class HealthcareMetricsService {
       }
 
       return { success: true, metricId: data.id };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error recording healthcare metric:', error);
       return { success: false, error: 'Internal metric recording error' };
     }
@@ -261,7 +261,7 @@ export class HealthcareMetricsService {
         complianceStatus,
         trend,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting KPI status:', error);
       return { success: false, error: 'Internal KPI status error' };
     }
@@ -280,7 +280,7 @@ export class HealthcareMetricsService {
     error?: string;
   }> {
     try {
-      const _now = new Date();
+      const now = new Date();
       const periodMs = {
         hour: 60 * 60 * 1000,
         day: 24 * 60 * 60 * 1000,
@@ -331,17 +331,17 @@ export class HealthcareMetricsService {
       const aggregation: MetricAggregation = {
         type,
         period,
-        value: values.reduce(_(sum,_v) => sum + v, 0),
+        value: values.reduce((sum,_v) => sum + v, 0),
         count: data.length,
         min: Math.min(...values),
         max: Math.max(...values),
-        avg: values.reduce(_(sum,_v) => sum + v, 0) / values.length,
+        avg: values.reduce((sum,_v) => sum + v, 0) / values.length,
         complianceRate: (compliantCount / data.length) * 100,
         timestamp: endTime,
       };
 
       return { success: true, data: aggregation };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in getMetricAggregation:', error);
       return { success: false, error: 'Internal aggregation error' };
     }
@@ -423,7 +423,7 @@ export class HealthcareMetricsService {
           recentAlerts: recentAlerts.success ? recentAlerts.alerts! : [],
         },
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error generating compliance dashboard:', error);
       return { success: false, error: 'Internal dashboard generation error' };
     }
@@ -495,7 +495,7 @@ export class HealthcareMetricsService {
       }));
 
       return { success: true, alerts };
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to aggregate alerts:', error);
       return { success: false, error: 'Internal alerts error' };
     }
@@ -556,7 +556,7 @@ export class HealthcareMetricsService {
 }
 
 // Export singleton instance
-export const _healthcareMetrics = new HealthcareMetricsService();
+export const healthcareMetrics = new HealthcareMetricsService();
 
 // Legacy exports for backward compatibility
 export function startTimer(): Timer {

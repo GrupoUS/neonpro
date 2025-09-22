@@ -35,12 +35,12 @@ type AppointmentOutput = {
   checkConflicts: inferProcedureOutput<typeof appointmentRouter.checkConflicts>;
 };
 
-describe(_'Appointment API Contract Tests',_() => {
+describe(_'Appointment API Contract Tests',() => {
   const createCaller = createCallerFactory(appRouter);
   let caller: ReturnType<typeof createCaller>;
   let mockContext: any;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     mockContext = createMockContext();
     caller = createCaller(mockContext);
 
@@ -54,11 +54,11 @@ describe(_'Appointment API Contract Tests',_() => {
     vi.spyOn(mockContext.scheduling, 'detectConflicts').mockResolvedValue([]);
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  describe(_'Appointment Creation Contract',_() => {
+  describe(_'Appointment Creation Contract',() => {
     it(_'should validate appointment creation input schema',_async () => {
       const validInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
@@ -171,7 +171,7 @@ describe(_'Appointment API Contract Tests',_() => {
     });
   });
 
-  describe(_'Appointment Retrieval Contract',_() => {
+  describe(_'Appointment Retrieval Contract',() => {
     it(_'should validate appointment retrieval by ID',_async () => {
       const appointmentId = 'appointment-123';
       const mockAppointment = {
@@ -225,7 +225,7 @@ describe(_'Appointment API Contract Tests',_() => {
     });
   });
 
-  describe(_'Appointment Update Contract',_() => {
+  describe(_'Appointment Update Contract',() => {
     it(_'should validate appointment update input schema',_async () => {
       const appointmentId = 'appointment-123';
       const updateInput: AppointmentInput['update'] = {
@@ -302,7 +302,7 @@ describe(_'Appointment API Contract Tests',_() => {
       );
     });
   });
-  describe(_'Appointment Cancellation Contract',_() => {
+  describe(_'Appointment Cancellation Contract',() => {
     it(_'should validate appointment cancellation',_async () => {
       const appointmentId = 'appointment-123';
       const cancelInput: AppointmentInput['cancel'] = {
@@ -378,7 +378,7 @@ describe(_'Appointment API Contract Tests',_() => {
     });
   });
 
-  describe(_'Appointment Availability Contract',_() => {
+  describe(_'Appointment Availability Contract',() => {
     it(_'should validate availability checking',_async () => {
       const availabilityInput: AppointmentInput['getAvailability'] = {
         professionalId: 'prof-456',
@@ -449,7 +449,7 @@ describe(_'Appointment API Contract Tests',_() => {
     });
   });
 
-  describe(_'Appointment Conflict Detection Contract',_() => {
+  describe(_'Appointment Conflict Detection Contract',() => {
     it(_'should validate conflict checking',_async () => {
       const conflictInput: AppointmentInput['checkConflicts'] = {
         professionalId: 'prof-456',
@@ -508,7 +508,7 @@ describe(_'Appointment API Contract Tests',_() => {
     });
   });
 
-  describe(_'Appointment List Contract',_() => {
+  describe(_'Appointment List Contract',() => {
     it(_'should validate appointment listing with filters',_async () => {
       const listInput: AppointmentInput['list'] = {
         page: 1,
@@ -574,8 +574,8 @@ describe(_'Appointment API Contract Tests',_() => {
     });
   });
 
-  describe(_'Contract Type Safety',_() => {
-    it(_'should enforce input type constraints at compile time',_() => {
+  describe(_'Contract Type Safety',() => {
+    it(_'should enforce input type constraints at compile time',() => {
       const validInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -588,7 +588,7 @@ describe(_'Appointment API Contract Tests',_() => {
       expect(validInput).toBeDefined();
     });
 
-    it(_'should enforce output type constraints',_() => {
+    it(_'should enforce output type constraints',() => {
       const mockOutput: AppointmentOutput['getById'] = {
         success: true,
         data: {

@@ -238,7 +238,7 @@ export class AIChatService {
       const startTime = Date.now();
 
       // Validate input
-      const validation = this.validateAIRequest(_request);
+      const validation = this.validateAIRequest(request);
       if (!validation.isValid) {
         return {
           success: false,
@@ -501,7 +501,7 @@ export class AIChatService {
     try {
       const patientConversations = Array.from(this.conversations.values())
         .filter(conv => conv.patientId === patientId)
-        .sort(_(a,_b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+        .sort((a,_b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 
       return {
         success: true,
@@ -797,7 +797,7 @@ export class AIChatService {
         };
       }
 
-      return this.generateResponse(_request);
+      return this.generateResponse(request);
     } catch {
       return {
         success: false,

@@ -38,7 +38,7 @@ export function createRealtimeAdapter(
 }
 
 // Default configurations for common scenarios
-export const _defaultConfigs = {
+export const defaultConfigs = {
   supabase: (
     overrides: Partial<RealtimeAdapterConfig> = {},
   ): RealtimeAdapterConfig => ({

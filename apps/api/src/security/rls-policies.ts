@@ -214,7 +214,7 @@ export class AdvancedRLSPolicies {
         reason: 'Access denied by RLS policies',
         auditRequired: true,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error evaluating RLS policy:', error);
       return {
         allowed: false,
@@ -328,7 +328,7 @@ export class AdvancedRLSPolicies {
       }
 
       return true;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error validating patient consent:', error);
       return false;
     }
@@ -396,7 +396,7 @@ export class AdvancedRLSPolicies {
       }
 
       return true;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error evaluating dynamic conditions:', error);
       return false;
     }
@@ -485,8 +485,8 @@ USING (${sqlConditions});
       }
 
       // Log RLS context setting for audit trail
-      await this.logRLSContextSet(_context);
-    } catch (_error) {
+      await this.logRLSContextSet(context);
+    } catch (error) {
       console.error('Error setting RLS _context:', error);
       throw new Error('Failed to set RLS context');
     }
@@ -540,7 +540,7 @@ USING (${sqlConditions});
           timestamp: new Date().toISOString(),
         },
       });
-    } catch (_error) {
+    } catch (error) {
       console.warn('Failed to log RLS context set:', error);
     }
   }
@@ -633,7 +633,7 @@ USING (${sqlConditions});
 }
 
 // Export singleton instance
-export const _advancedRLSPolicies = new AdvancedRLSPolicies();
+export const advancedRLSPolicies = new AdvancedRLSPolicies();
 
 // Export types
 export type { AccessPolicy, PolicyEvaluationResult, RLSContext };

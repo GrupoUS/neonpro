@@ -109,7 +109,7 @@ async function initializeRealtimeService() {
   return realtimeService;
 }
 
-export const _realtimeTelemedicineRouter = router({
+export const realtimeTelemedicineRouter = router({
   /**
    * Create a new telemedicine real-time session
    */
@@ -129,7 +129,7 @@ export const _realtimeTelemedicineRouter = router({
         }
 
         // Verify participants are valid and accessible
-        if (!input.participants.includes(_userId)) {
+        if (!input.participants.includes(userId)) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message: 'User must be a participant in the telemedicine session',

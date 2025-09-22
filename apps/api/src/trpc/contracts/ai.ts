@@ -39,7 +39,7 @@ import {
 // Initialize services
 const healthAnalysisService = new HealthAnalysisService();
 
-export const _aiRouter = router({
+export const aiRouter = router({
   /**
    * AI Chat completion with healthcare context and compliance
    */
@@ -108,7 +108,7 @@ export const _aiRouter = router({
             ConsentPurpose.AI_ANALYSIS,
             'AI chat processing',
           );
-        } catch (_error) {
+        } catch (error) {
           // Create audit entry for consent violation
           await lgpdAuditService.recordAudit({
             _userId: ctx.userId,
@@ -181,7 +181,7 @@ export const _aiRouter = router({
       });
 
       // Build healthcare context (simplified)
-      const _systemContext = {
+      const systemContext = {
         _userId: ctx.userId,
         clinicId: input.clinicId,
         patientId: input.patientId,
@@ -861,7 +861,7 @@ export const _aiRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (_error) {
+      } catch (error) {
         await ctx.prisma.auditLog.create({
           data: {
             action: 'ai_health_analysis_error',
@@ -933,7 +933,7 @@ export const _aiRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (_error) {
+      } catch (error) {
         return {
           success: true,
           data: {
@@ -1097,7 +1097,7 @@ export const _aiRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-      } catch (_error) {
+      } catch (error) {
         throw new HealthcareTRPCError(
           'INTERNAL_SERVER_ERROR',
           'Failed to generate appointment suggestions',
@@ -1117,7 +1117,7 @@ async function sanitizeHealthcareMessage(
   return message; // Placeholder
 }
 
-async function _buildHealthcareContext(_context: any): Promise<string> {
+async function buildHealthcareContext(_context: any): Promise<string> {
   // Build context-aware system prompt for healthcare AI
   return 'Healthcare AI assistant context'; // Placeholder
 }
@@ -1132,7 +1132,7 @@ async function callAIServiceWithRetry(_request: any): Promise<any> {
   };
 }
 
-async function _checkAIUsageLimit(
+async function checkAIUsageLimit(
   _userId: string,
   _clinicId: string,
 ): Promise<any> {
@@ -1140,5 +1140,5 @@ async function _checkAIUsageLimit(
 }
 
 function hasHealthAnalysisPermission(_role: string): boolean {
-  return ['doctor', 'admin'].includes(_role);
+  return ['doctor', 'admin'].includes(role);
 }

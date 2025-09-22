@@ -28,8 +28,8 @@ export type DocumentInsert = {
 };
 
 // Query options for patient documents
-export const _patientDocumentsQueryOptions = (_{
-  patientId,_category,_search,
+export const patientDocumentsQueryOptions = ({
+  patientId,category, search,
 }: {
   patientId: string;
   category?: string;
@@ -78,12 +78,12 @@ export const _patientDocumentsQueryOptions = (_{
   });
 
 // Document upload mutation
-export const _useDocumentUpload = () => {
+export const useDocumentUpload = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
-      patientId,_file,_category = 'other',_description,_tags,
+      patientId,file, category = 'other',description, tags,
     }: {
       patientId: string;
       file: File;
@@ -112,7 +112,7 @@ export const _useDocumentUpload = () => {
 
       return response.json();
     },
-    onSuccess: (_, _variables) => {
+    onSuccess: (_, variables) => {
       // Invalidate document list for this patient
       queryClient.invalidateQueries({
         queryKey: ['patient-documents', variables.patientId],
@@ -122,12 +122,12 @@ export const _useDocumentUpload = () => {
 };
 
 // Document delete mutation
-export const _useDocumentDelete = () => {
+export const useDocumentDelete = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({
-      patientId,_documentId,
+      patientId,documentId,
     }: {
       patientId: string;
       documentId: string;
@@ -146,7 +146,7 @@ export const _useDocumentDelete = () => {
 
       return { success: true };
     },
-    onSuccess: (_, _variables) => {
+    onSuccess: (_, variables) => {
       // Invalidate document list for this patient
       queryClient.invalidateQueries({
         queryKey: ['patient-documents', variables.patientId],
@@ -156,7 +156,7 @@ export const _useDocumentDelete = () => {
 };
 
 // Document download helper (not a mutation since it's a direct download)
-export const _downloadDocument = async (
+export const downloadDocument = async (
   patientId: string,
   documentId: string,
   filename: string,

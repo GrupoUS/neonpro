@@ -63,14 +63,14 @@ export function getEventsForDay(
       const eventStart = new Date(event.start);
       return isSameDay(day, eventStart);
     })
-    .sort(_(a,_b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 }
 
 /**
  * Sort events with multi-day events first, then by start time
  */
 export function sortEvents(events: CalendarEvent[]): CalendarEvent[] {
-  return [...events].sort(_(a,_b) => {
+  return [...events].sort((a, b) => {
     const aIsMultiDay = isMultiDayEvent(a);
     const bIsMultiDay = isMultiDayEvent(b);
 
@@ -137,7 +137,7 @@ export function getAgendaEventsForDay(
         || (day > eventStart && day < eventEnd)
       );
     })
-    .sort(_(a,_b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
 }
 
 /**

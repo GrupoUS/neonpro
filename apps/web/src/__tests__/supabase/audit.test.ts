@@ -21,12 +21,12 @@ import {
 } from '@/lib/testing/supabase-test-client';
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
-describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
+describe(('Supabase Audit Trail - LGPD Compliance', () => {
   let testClient: any;
   let testDataGenerator: HealthcareTestDataGenerator;
   let auditEvents: AuditEvent[] = [];
 
-  beforeAll(_() => {
+  beforeAll(() => {
     testClient = createTestSupabaseClient({
       lgpdCompliant: true,
       auditTrail: true,
@@ -37,7 +37,7 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
     console.log('🧪 Audit Trail Test Environment Setup Complete');
   });
 
-  afterAll(_async () => {
+  afterAll(async () => {
     await testDataGenerator.cleanupTestData();
 
     // Generate audit summary
@@ -73,8 +73,8 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
     return auditEvent;
   };
 
-  describe(_'LGPD Compliance Auditing',_() => {
-    test(_'should log data access events with LGPD context',_async () => {
+  describe(('LGPD Compliance Auditing', () => {
+    test(_'should log data access events with LGPD context',async () => {
       // security-auditor: LGPD compliance validation
       const testPatient = await testDataGenerator.createTestPatient();
       const testDoctor = await testDataGenerator.createAuthenticatedTestUser('doctor');
@@ -126,7 +126,7 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
       console.log('✅ LGPD data access logging validated');
     });
 
-    test(_'should track consent management activities',_async () => {
+    test(_'should track consent management activities',async () => {
       // security-auditor: Consent tracking validation
       const testUser = await testDataGenerator.createTestUser({
         _role: 'patient',
@@ -191,7 +191,7 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
       }
     });
 
-    test(_'should validate data processing activities documentation',_async () => {
+    test(_'should validate data processing activities documentation',async () => {
       // security-auditor: Processing activities validation
       const processingActivities = [
         {
@@ -251,7 +251,7 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
       }
     });
 
-    test(_'should track data subject rights requests',_async () => {
+    test(_'should track data subject rights requests',async () => {
       // security-auditor: Data subject rights validation
       const testPatient = await testDataGenerator.createTestPatient();
 
@@ -320,8 +320,8 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
     });
   });
 
-  describe(_'Data Access Logging',_() => {
-    test(_'should log detailed healthcare data access patterns',_async () => {
+  describe(('Data Access Logging', () => {
+    test(_'should log detailed healthcare data access patterns',async () => {
       // security-auditor: Healthcare data access validation
       const testPatient = await testDataGenerator.createTestPatient();
       const testDoctor = await testDataGenerator.createTestUser({
@@ -406,7 +406,7 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
       }
     });
 
-    test(_'should track cross-organizational data sharing',_async () => {
+    test(_'should track cross-organizational data sharing',async () => {
       // security-auditor: Inter-organizational access validation
       const testPatient = await testDataGenerator.createTestPatient();
       const externalRequest = {
@@ -444,7 +444,7 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
       console.log('✅ Cross-organizational data sharing logged');
     });
 
-    test(_'should monitor bulk data operations',_async () => {
+    test(_'should monitor bulk data operations',async () => {
       // security-auditor: Bulk operations monitoring
       const bulkOperations = [
         {
@@ -499,8 +499,8 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
     });
   });
 
-  describe(_'Security Event Tracking',_() => {
-    test(_'should detect and log suspicious access patterns',_async () => {
+  describe(('Security Event Tracking', () => {
+    test(_'should detect and log suspicious access patterns',async () => {
       // security-auditor: Suspicious activity detection
       const suspiciousEvents = [
         {
@@ -578,7 +578,7 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
       }
     });
 
-    test(_'should track privilege escalation and administrative actions',_async () => {
+    test(_'should track privilege escalation and administrative actions',async () => {
       // security-auditor: Administrative actions validation
       const adminActions = [
         {
@@ -639,7 +639,7 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
       }
     });
 
-    test(_'should monitor system integration and API usage',_async () => {
+    test(_'should monitor system integration and API usage',async () => {
       // security-auditor: API monitoring validation
       const apiEvents = [
         {
@@ -704,8 +704,8 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
     });
   });
 
-  describe(_'Compliance Reporting',_() => {
-    test(_'should generate LGPD compliance reports',_async () => {
+  describe(('Compliance Reporting', () => {
+    test(_'should generate LGPD compliance reports',async () => {
       // security-auditor: LGPD reporting validation
       const reportingPeriod = {
         start_date: '2024-01-01T00:00:00.000Z',
@@ -769,7 +769,7 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
       console.log('✅ LGPD compliance report generated');
     });
 
-    test(_'should generate ANVISA regulatory reports',_async () => {
+    test(_'should generate ANVISA regulatory reports',async () => {
       // security-auditor: ANVISA reporting validation
       const anvisaReport = {
         report_id: `anvisa-${Date.now()}`,
@@ -823,7 +823,7 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
       console.log('✅ ANVISA regulatory report generated');
     });
 
-    test(_'should validate audit trail completeness and integrity',_async () => {
+    test(_'should validate audit trail completeness and integrity',async () => {
       // security-auditor: Audit integrity validation
       const auditIntegrityCheck = {
         check_id: `integrity-${Date.now()}`,
@@ -871,8 +871,8 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
     });
   });
 
-  describe(_'Data Retention and Deletion',_() => {
-    test(_'should validate retention policy enforcement',_async () => {
+  describe(('Data Retention and Deletion', () => {
+    test(_'should validate retention policy enforcement',async () => {
       // security-auditor: Retention policy validation
       const retentionPolicies = [
         {
@@ -934,7 +934,7 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
       }
     });
 
-    test(_'should track secure data deletion processes',_async () => {
+    test(_'should track secure data deletion processes',async () => {
       // security-auditor: Secure deletion validation
       const deletionScenarios = [
         {
@@ -988,8 +988,8 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
     });
   });
 
-  describe(_'Breach Detection and Response',_() => {
-    test(_'should detect and respond to potential data breaches',_async () => {
+  describe(('Breach Detection and Response', () => {
+    test(_'should detect and respond to potential data breaches',async () => {
       // security-auditor: Breach detection validation
       const breachScenarios = [
         {
@@ -1049,7 +1049,7 @@ describe(_'Supabase Audit Trail - LGPD Compliance',_() => {
       }
     });
 
-    test(_'should validate incident response procedures',_async () => {
+    test(_'should validate incident response procedures',async () => {
       // security-auditor: Incident response validation
       const incidentResponse = {
         incident_id: 'INC-20240916-001',

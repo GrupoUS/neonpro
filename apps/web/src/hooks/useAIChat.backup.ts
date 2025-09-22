@@ -21,11 +21,11 @@ const CHAT_SESSION_KEY = 'neonpro-ai-chat-session';
  */
 export function useAIChat(clientId?: string) {
   const queryClient = useQueryClient();
-  const [sessionId] = useState(_() => nanoid());
+  const [sessionId] = useState(() => nanoid());
   const { user } = useAuth();
 
   // Chat state management
-  const [chatState, setChatState] = useState<ChatState>(_() => {
+  const [chatState, setChatState] = useState<.*>(() => {
     // Load from session storage on mount
     if (typeof window !== 'undefined') {
       const saved = sessionStorage.getItem(CHAT_SESSION_KEY);
@@ -54,8 +54,8 @@ export function useAIChat(clientId?: string) {
   });
 
   // Hydrate model from server when user is known
-  useEffect(_() => {
-    (_async () => {
+  useEffect(() => {
+    (async () => {
       if (!user?.id) return;
       const serverModel = await fetchDefaultChatModel(user.id);
       if (serverModel) {
@@ -131,7 +131,7 @@ export function useAIChat(clientId?: string) {
 
       return { userMessage, stream };
     },
-    onSuccess: async (_{ userMessage,_stream }) => {
+    onSuccess: async ({ userMessage, stream }) => {
       // Process streaming response
       const reader = stream.getReader();
       let aiContent = '';
@@ -204,7 +204,7 @@ export function useAIChat(clientId?: string) {
 
   // Search suggestions query
   const { data: searchSuggestions = [], isLoading: suggestionsLoading } = useQuery({
-    queryKey: ['search-suggestions',_chatState.messages.length],
+    queryKey: ['search-suggestions', chatState.messages.length],
     queryFn: async () => {
       const lastUserMessage = chatState.messages
         .filter(m => m.role === 'user')
@@ -232,7 +232,7 @@ export function useAIChat(clientId?: string) {
   });
 
   // Clear chat history
-  const clearChat = useCallback(_() => {
+  const clearChat = useCallback(() => {
     const clearedState: ChatState = {
       messages: [],
       isLoading: false,
@@ -246,7 +246,7 @@ export function useAIChat(clientId?: string) {
   }, [queryClient, persistChatState]);
 
   // Retry last message
-  const retryLastMessage = useCallback(_() => {
+  const retryLastMessage = useCallback(() => {
     const lastUserMessage = chatState.messages
       .filter(m => m.role === 'user')
       .pop();

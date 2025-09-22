@@ -22,17 +22,17 @@ const mockLGPDService = {
 };
 
 // Mock middleware
-const _mockRequireAuth = vi.fn(_(c,_next) => {
+const mockRequireAuth = vi.fn((c,_next) => {
   c.set('userId', 'user-123');
   return next();
 });
 
-const _mockLGPDMiddleware = vi.fn(_(c,_next) => next());
+const mockLGPDMiddleware = vi.fn((c,_next) => next());
 
 describe('GET /api/v2/patients endpoint (T043)', () => {
   // let app: Hono;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     // Mock successful service responses by default
@@ -81,12 +81,12 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     });
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
   it(_'should export list patients route handler',_() => {
-    expect(_() => {
+    expect(() => {
       const module = require('../list');
       expect(module.default).toBeDefined();
     }).not.toThrow();
@@ -451,7 +451,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     });
 
     it(_'should handle large result sets efficiently',_async () => {
-      const largePatientList = Array.from({ length: 100 },_(_,_i) => ({
+      const largePatientList = Array.from({ length: 100 },(, i) => ({
         id: `patient-${i}`,
         name: `Patient ${i}`,
         cpf: `123.456.789-${i.toString().padStart(2, '0')}`,

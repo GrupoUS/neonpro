@@ -441,9 +441,8 @@ function createRLSEnforcedPrisma(
  * Automatically enforces Row Level Security policies for all Prisma operations,
  * ensuring proper multi-tenant data isolation and user context validation.
  */
-export const _prismaRLSMiddleware = async (_{
-  ctx,_next,_path,
-  _type,
+export const prismaRLSMiddleware = async ({
+  ctx,next,_path,type,
   _input,
 }: any) => {
   const start = performance.now();
@@ -490,7 +489,7 @@ export const _prismaRLSMiddleware = async (_{
     }
 
     return result;
-  } catch (_error) {
+  } catch (error) {
     const duration = performance.now() - start;
 
     // Log RLS failures for security auditing

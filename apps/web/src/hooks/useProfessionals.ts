@@ -11,7 +11,7 @@ import { useQuery } from '@tanstack/react-query';
  */
 export function useProfessionals(clinicId: string) {
   return useQuery({
-    queryKey: ['professionals',_clinicId],
+    queryKey: ['professionals', clinicId],
     queryFn: () => professionalService.getProfessionalsByClinic(clinicId),
     enabled: !!clinicId,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -27,7 +27,7 @@ export function useProfessionalsByServiceType(
   serviceTypeId: string,
 ) {
   return useQuery({
-    queryKey: ['professionals',_'by-service-type',_clinicId,_serviceTypeId],
+    queryKey: ['professionals', 'by-service-type',clinicId, serviceTypeId],
     queryFn: () =>
       professionalService.getProfessionalsByServiceType(
         clinicId,

@@ -44,7 +44,7 @@ export class ChatService {
       };
 
       return message;
-    } catch (_error) {
+    } catch (error) {
       console.error("Chat service error:", error);
       throw new Error("Failed to generate response");
     }
@@ -75,7 +75,7 @@ export class ChatService {
 
         yield message;
       }
-    } catch (_error) {
+    } catch (error) {
       console.error("Chat streaming error:", error);
       throw new Error("Failed to generate streaming response");
     }
@@ -102,7 +102,7 @@ export class ChatService {
         content: res.content,
         createdAt: new Date().toISOString(),
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Explanation service error:", error);
       throw new Error("Failed to generate explanation");
     }

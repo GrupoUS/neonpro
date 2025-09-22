@@ -184,7 +184,7 @@ export class MedicalLicenseDomainService {
       await this.storeVerificationRecord(result, _request);
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error verifying medical license:", error);
       throw new Error(
         `License verification failed: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -251,7 +251,7 @@ export class MedicalLicenseDomainService {
       await this.updateRegistrationCache(registration);
 
       return registration;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error getting CFM registration:", error);
       throw new Error(
         `Failed to retrieve CFM registration: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -299,7 +299,7 @@ export class MedicalLicenseDomainService {
       };
 
       return registration;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error fetching from CFM API:", error);
       return null; // Fall back to manual verification
     }
@@ -314,7 +314,7 @@ export class MedicalLicenseDomainService {
   private async performManualVerification(cfmNumber: string, state: string): Promise<CFMRegistration> {
     try {
       // Implement manual verification using repository
-      const _manualData = await this.licenseRepository.getManualVerification(cfmNumber, state);
+      const manualData = await this.licenseRepository.getManualVerification(cfmNumber, state);
 
       // For now, create a pending verification record
       const pendingRegistration: CFMRegistration = {
@@ -332,7 +332,7 @@ export class MedicalLicenseDomainService {
       await this.flagForManualReview(cfmNumber, state);
 
       return pendingRegistration;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error in manual verification:", error);
       throw new Error("Manual verification failed");
     }
@@ -352,7 +352,7 @@ export class MedicalLicenseDomainService {
   ): Promise<TelemedicineAuthorization> {
     try {
       // Check state-specific telemedicine regulations
-      const stateCouncil = this.stateCouncils.find(_(council) => council.state === state,
+      const stateCouncil = this.stateCouncils.find((council) => council.state === state,
       );
 
       if (!stateCouncil) {
@@ -384,7 +384,7 @@ export class MedicalLicenseDomainService {
       // }
 
       return authorization;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error getting telemedicine authorization:", error);
       throw new Error("Failed to get telemedicine authorization");
     }
@@ -684,7 +684,7 @@ export class MedicalLicenseDomainService {
    */
   private isCacheValid(lastVerification: Date): boolean {
     const cacheValidityHours = 24; // Cache is valid for 24 hours
-    const _now = new Date();
+    const now = new Date();
     const diffHours = (now.getTime() - lastVerification.getTime()) / (1000 * 60 * 60);
     return diffHours < cacheValidityHours;
   }
@@ -741,7 +741,7 @@ export class MedicalLicenseDomainService {
         emergencyOnly: verification.telemedicineAuth.emergencyOnly,
         complianceDetails: verification.complianceStatus
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error checking telemedicine authorization:", error);
       return {
         authorized: false,
@@ -774,7 +774,7 @@ export class MedicalLicenseDomainService {
       const specialties = registration.specialty ? [registration.specialty] : [];
       
       return [...specialties, ...additionalSpecialties];
-    } catch (_error) {
+    } catch (error) {
       console.error("Error getting physician specialties:", error);
       return [];
     }

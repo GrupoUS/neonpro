@@ -298,7 +298,7 @@ export class HealthcareAccessibilityTester {
 
     for (const selector of scenario.selectors) {
       const found = document.querySelectorAll(selector);
-      found.forEach(_el => elements.push(el));
+      found.forEach(el => elements.push(el));
     }
 
     return elements;
@@ -458,7 +458,7 @@ export class HealthcareAccessibilityTester {
 /**
  * Create global accessibility tester instance
  */
-export const _healthcareAccessibilityTester = new HealthcareAccessibilityTester();
+export const healthcareAccessibilityTester = new HealthcareAccessibilityTester();
 
 /**
  * Utility function for quick accessibility checks
@@ -485,7 +485,7 @@ export async function quickAccessibilityCheck(selector?: string): Promise<{
   }
 
   try {
-    const results = await axe.run(_context);
+    const results = await axe.run(context);
     const report = generateAccessibilityReport(results);
 
     return {

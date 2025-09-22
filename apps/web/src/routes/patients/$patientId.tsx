@@ -98,14 +98,14 @@ export const Route = createFileRoute('/patients/$patientId')({
 
         {/* Tab navigation skeleton */}
         <div className='flex space-x-8 border-b'>
-          {Array.from({ length: 4 }).map(_(_,_i) => (
+          {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className='h-10 bg-muted rounded w-20'></div>
           ))}
         </div>
 
         {/* Content skeleton */}
         <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-          {Array.from({ length: 4 }).map(_(_,_i) => (
+          {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className='h-64 bg-muted rounded-lg'></div>
           ))}
         </div>
@@ -119,7 +119,7 @@ export const Route = createFileRoute('/patients/$patientId')({
   ),
 
   // Enhanced error boundary with accessibility
-  errorComponent: (_{ error,_reset }) => (
+  errorComponent: ({ error, reset }) => (
     <div className='container mx-auto p-4 md:p-6' role='main'>
       <Card className='max-w-2xl mx-auto'>
         <CardHeader className='text-center'>
@@ -172,7 +172,7 @@ function PatientDetailPage() {
   const { data: patient, isLoading, error, refetch } = usePatient(patientId);
 
   // Log access for LGPD compliance
-  useEffect(_() => {
+  useEffect(() => {
     if (patient && user?.id) {
       const logAccess = async () => {
         try {
@@ -238,12 +238,12 @@ function PatientDetailPage() {
             </div>
           </div>
           <div className='flex space-x-8 border-b'>
-            {Array.from({ length: 4 }).map(_(_,_i) => (
+            {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className='h-10 bg-muted rounded w-20'></div>
             ))}
           </div>
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-            {Array.from({ length: 4 }).map(_(_,_i) => (
+            {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className='h-64 bg-muted rounded-lg'></div>
             ))}
           </div>
@@ -420,7 +420,7 @@ function PatientDetailPage() {
             { key: 'history', label: 'Histórico', icon: History },
             { key: 'appointments', label: 'Consultas', icon: Calendar },
             { key: 'documents', label: 'Documentos', icon: FileText },
-          ].map(_({ key,_label, icon: Icon }) => (_<button
+          ].map(({ key,label, icon: Icon }) => (<button
               key={key}
               onClick={() => handleTabChange(key as typeof tab)}
               className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors ${
@@ -448,7 +448,7 @@ function PatientDetailPage() {
         aria-labelledby={`tab-${tab}`}
       >
         <ErrorBoundary
-          fallback={(error: Error) => (_<Card>
+          fallback={(error: Error) => (<Card>
               <CardContent className='p-6 text-center'>
                 <AlertCircle className='w-8 h-8 text-destructive mx-auto mb-2' />
                 <h3 className='font-semibold text-destructive mb-2'>
@@ -634,7 +634,7 @@ function OverviewTab({ patient }: { patient: PatientData }) {
 /**
  * History Tab Component (Placeholder)
  */
-function HistoryTab({ patientId: _patientId }: { patientId: string }) {
+function HistoryTab({ patientId: patientId }: { patientId: string }) {
   return (
     <Card>
       <CardHeader>
@@ -661,7 +661,7 @@ function HistoryTab({ patientId: _patientId }: { patientId: string }) {
 /**
  * Appointments Tab Component (Placeholder)
  */
-function AppointmentsTab({ patientId: _patientId }: { patientId: string }) {
+function AppointmentsTab({ patientId: patientId }: { patientId: string }) {
   return (
     <Card>
       <CardHeader>
@@ -686,7 +686,7 @@ function AppointmentsTab({ patientId: _patientId }: { patientId: string }) {
 /**
  * Documents Tab Component (Placeholder)
  */
-function DocumentsTab({ patientId: _patientId }: { patientId: string }) {
+function DocumentsTab({ patientId: patientId }: { patientId: string }) {
   return (
     <Card>
       <CardHeader>
@@ -790,7 +790,7 @@ function MedicalInfoSection({
 function TabContentSkeleton() {
   return (
     <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-      {Array.from({ length: 4 }).map(_(_,_i) => (
+      {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className='h-64 bg-muted rounded-lg animate-pulse'></div>
       ))}
     </div>

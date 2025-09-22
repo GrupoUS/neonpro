@@ -6,8 +6,8 @@
 import { describe, expect, it } from 'vitest';
 import { AccessibilityValidator } from '../../../utils/accessibility-validation';
 
-describe(_'Accessibility Validation Simple Test',_() => {
-  it(_'should validate accessibility without React components',_async () => {
+describe(('Accessibility Validation Simple Test', () => {
+  it(_'should validate accessibility without React components',async () => {
     const validator = new AccessibilityValidator();
 
     // Skip the DOM-based tests for now and focus on the validation logic
@@ -28,7 +28,7 @@ describe(_'Accessibility Validation Simple Test',_() => {
     expect(Array.isArray(report.recommendations)).toBe(true);
   });
 
-  it(_'should validate component accessibility',_async () => {
+  it(_'should validate component accessibility',async () => {
     const validator = new AccessibilityValidator();
 
     // Skip the DOM-based tests for now and focus on the validation logic
@@ -45,7 +45,7 @@ describe(_'Accessibility Validation Simple Test',_() => {
     expect(Array.isArray(result.recommendations)).toBe(true);
   });
 
-  it(_'should have WCAG validation criteria',_() => {
+  it(('should have WCAG validation criteria', () => {
     const {
       WCAG_21_AA_VALIDATION_CRITERIA,
     } = require('../../../utils/accessibility-validation');
@@ -56,7 +56,7 @@ describe(_'Accessibility Validation Simple Test',_() => {
 
     // Check that we have criteria for all WCAG categories
     const categories = ['perceivable', 'operable', 'understandable', 'robust'];
-    categories.forEach(_category => {
+    categories.forEach(category => {
       const criteriaInCategory = WCAG_21_AA_VALIDATION_CRITERIA.filter(
         criteria => criteria.category === category,
       );
@@ -64,7 +64,7 @@ describe(_'Accessibility Validation Simple Test',_() => {
     });
   });
 
-  it(_'should generate compliance certificate',_() => {
+  it(('should generate compliance certificate', () => {
     const validator = new AccessibilityValidator();
     const mockReport = {
       timestamp: new Date().toISOString(),

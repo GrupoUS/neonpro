@@ -7,8 +7,10 @@
  * @fileoverview Healthcare-specific validation patterns and utilities
  */
 
+import { z } from "zod";
+
 // Healthcare-specific validation schemas
-export const _healthcareValidationSchemas = {
+export const healthcareValidationSchemas = {
   // Patient identifier validation (CPF format for Brazil)
   cpf: z
     .string()
@@ -128,7 +130,7 @@ export const _healthcareValidationSchemas = {
     .refine((dateStr: string) => {
       const [day, month, year] = dateStr.split("/").map(Number);
       const date = new Date(year, month - 1, day);
-      const _now = new Date();
+      const now = new Date();
 
       // Check if date is valid
       if (
@@ -172,7 +174,7 @@ export const _healthcareValidationSchemas = {
       .string()
       .min(2, "Alérgeno deve ter pelo menos 2 caracteres")
       .max(100, "Alérgeno deve ter no máximo 100 caracteres"),
-    severity: z.enum(_["leve",_"moderada",_"grave"], {
+    severity: z.enum(["leve","moderada","grave"], {
       errorMap: () => ({ message: "Selecione uma severidade válida" }),
     }),
     notes: z
@@ -252,7 +254,7 @@ export function classifyHealthcareData(fieldType: string): DataSensitivity {
 }
 
 // Validation error message localization (Portuguese for Brazil)
-export const _healthcareValidationMessages = {
+export const healthcareValidationMessages = {
   required: "Este campo é obrigatório",
   invalid: "Valor inválido",
   tooShort: "Muito curto",
@@ -270,7 +272,7 @@ export const _healthcareValidationMessages = {
 };
 
 // LGPD consent validation
-export const _lgpdConsentSchema = z.object({
+export const lgpdConsentSchema = z.object({
   dataProcessingConsent: z
     .boolean()
     .refine(
@@ -372,7 +374,7 @@ export function anonymizePatientData(
   // Remove or hash sensitive identifiers
   const sensitiveFields = ["cpf", "name", "phone", "email", "address"];
 
-  sensitiveFields.forEach(_(field) => {
+  sensitiveFields.forEach((field) => {
     if (anonymized[field]) {
       // Replace with anonymized placeholder
       anonymized[field] = `[ANONIMIZADO_${field.toUpperCase()}]`;
@@ -390,7 +392,7 @@ export function anonymizePatientData(
     "duration",
   ];
 
-  Object.keys(anonymized).forEach(_(key) => {
+  Object.keys(anonymized).forEach((key) => {
     if (!allowedFields.includes(key) && sensitiveFields.includes(key)) {
       delete anonymized[key];
     }

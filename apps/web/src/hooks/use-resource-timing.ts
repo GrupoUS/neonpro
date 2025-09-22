@@ -26,11 +26,10 @@ export interface UseResourceTimingReturn {
 
 export function useResourceTiming(): UseResourceTimingReturn {
   const [resources, setResources] = useState<ResourceTimingEntry[]>([]);
-  const [isSupported] = useState(_() =>
-    'performance' in window && 'getEntriesByType' in performance
+  const [isSupported] = useState(() => 'performance' in window && 'getEntriesByType' in performance
   );
 
-  const updateResources = useCallback(_() => {
+  const updateResources = useCallback(() => {
     if (!isSupported) return;
 
     const entries = performance.getEntriesByType('resource') as PerformanceResourceTiming[];
@@ -61,21 +60,21 @@ export function useResourceTiming(): UseResourceTimingReturn {
     return resources.filter(resource => resource.initiatorType === type);
   }, [resources]);
 
-  const clearResources = useCallback(_() => {
+  const clearResources = useCallback(() => {
     if (isSupported && 'clearResourceTimings' in performance) {
       (performance as any).clearResourceTimings();
     }
     setResources([]);
   }, [isSupported]);
 
-  useEffect(_() => {
+  useEffect(() => {
     if (!isSupported) return;
 
     // Initial load
     updateResources();
 
     // Listen for new resources
-    const observer = new PerformanceObserver(_list => {
+    const observer = new PerformanceObserver(list => {
       updateResources();
     });
 

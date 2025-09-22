@@ -2,13 +2,13 @@ import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { AnalyticsDashboard } from '../AnalyticsDashboard';
 
-describe(_'AnalyticsDashboard',_() => {
-  it(_'renders correctly - snapshot test',_() => {
+describe(('AnalyticsDashboard', () => {
+  it(('renders correctly - snapshot test', () => {
     const { container } = render(<AnalyticsDashboard />);
     expect(container.firstChild).toMatchSnapshot();
   });
 
-  it(_'renders header section with title and description',_() => {
+  it(('renders header section with title and description', () => {
     const { getByText } = render(<AnalyticsDashboard />);
 
     expect(getByText('Analytics Dashboard')).toBeInTheDocument();
@@ -17,7 +17,7 @@ describe(_'AnalyticsDashboard',_() => {
     ).toBeInTheDocument();
   });
 
-  it(_'renders KPI cards with skeleton placeholders',_() => {
+  it(('renders KPI cards with skeleton placeholders', () => {
     const { getByText } = render(<AnalyticsDashboard />);
 
     expect(getByText('Taxa de Presença')).toBeInTheDocument();
@@ -26,7 +26,7 @@ describe(_'AnalyticsDashboard',_() => {
     expect(getByText('Eficiência Operacional')).toBeInTheDocument();
   });
 
-  it(_'renders trends chart placeholder',_() => {
+  it(('renders trends chart placeholder', () => {
     const { getByText } = render(<AnalyticsDashboard />);
 
     expect(getByText('Tendências de Agendamento')).toBeInTheDocument();
@@ -35,7 +35,7 @@ describe(_'AnalyticsDashboard',_() => {
     ).toBeInTheDocument();
   });
 
-  it(_'renders AI insights section',_() => {
+  it(('renders AI insights section', () => {
     const { getByText } = render(<AnalyticsDashboard />);
 
     expect(getByText('Insights de IA')).toBeInTheDocument();
@@ -44,7 +44,7 @@ describe(_'AnalyticsDashboard',_() => {
     expect(getByText('Capacidade Ociosa Identificada')).toBeInTheDocument();
   });
 
-  it(_'renders performance metrics with progress bars',_() => {
+  it(('renders performance metrics with progress bars', () => {
     const { getByText } = render(<AnalyticsDashboard />);
 
     expect(getByText('Métricas de Performance')).toBeInTheDocument();
@@ -54,7 +54,7 @@ describe(_'AnalyticsDashboard',_() => {
     expect(getByText('Taxa de Retorno')).toBeInTheDocument();
   });
 
-  it(_'renders quick actions buttons',_() => {
+  it(('renders quick actions buttons', () => {
     const { getByText } = render(<AnalyticsDashboard />);
 
     expect(getByText('Ações Rápidas')).toBeInTheDocument();
@@ -65,7 +65,7 @@ describe(_'AnalyticsDashboard',_() => {
     expect(getByText('Análise de Eficiência')).toBeInTheDocument();
   });
 
-  it(_'renders data status section',_() => {
+  it(('renders data status section', () => {
     const { getByText } = render(<AnalyticsDashboard />);
 
     expect(getByText('Status dos Dados')).toBeInTheDocument();
@@ -74,7 +74,7 @@ describe(_'AnalyticsDashboard',_() => {
     expect(getByText('Qualidade dos dados')).toBeInTheDocument();
   });
 
-  it(_'applies custom className when provided',_() => {
+  it(('applies custom className when provided', () => {
     const { container } = render(
       <AnalyticsDashboard className='custom-class' />,
     );

@@ -144,7 +144,7 @@ export interface ResponsiveAccessibilityReport {
 }
 
 // Brazilian Portuguese Responsive Accessibility Labels
-export const _RESPONSIVE_ACCESSIBILITY_LABELS_PT_BR = {
+export const RESPONSIVE_ACCESSIBILITY_LABELS_PT_BR = {
   breakpointCompliance: 'Conformidade de breakpoints',
   textScaling: 'Escalonamento de texto',
   contrastRatio: 'Taxa de contraste',
@@ -177,7 +177,7 @@ export class MobileResponsiveAccessibility {
     const compliantBreakpoints: number[] = [];
     const issues: ResponsiveAccessibilityIssue[] = [];
 
-    testedBreakpoints.forEach(_breakpoint => {
+    testedBreakpoints.forEach(breakpoint => {
       const elementsAtBreakpoint = elements.filter(
         el => el.breakpoint === breakpoint,
       );
@@ -253,7 +253,7 @@ export class MobileResponsiveAccessibility {
     // Test zoom levels: 100%, 150%, 200%
     const zoomLevels = [100, 150, 200];
 
-    zoomLevels.forEach(_zoomLevel => {
+    zoomLevels.forEach(zoomLevel => {
       const scaledElements = elements.map(el => ({
         ...el,
         fontSize: el.fontSize * (zoomLevel / 100),
@@ -340,7 +340,7 @@ export class MobileResponsiveAccessibility {
     ).length;
 
     const averageContrast = elements.length > 0
-      ? elements.reduce(_(sum,_el) => sum + el.contrast, 0) / elements.length
+      ? elements.reduce((sum, el) => sum + el.contrast, 0) / elements.length
       : 0;
 
     const issues: ResponsiveAccessibilityIssue[] = [];
@@ -658,7 +658,7 @@ export class MobileResponsiveAccessibility {
       [RESPONSIVE_ACCESSIBILITY_LEVELS.CRITICAL]: 1,
     };
 
-    const averageScore = levels.reduce(_(sum,_level) => sum + levelScores[level], 0)
+    const averageScore = levels.reduce((sum, level) => sum + levelScores[level], 0)
       / levels.length;
 
     if (averageScore >= 4.5) return RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT;
@@ -692,7 +692,7 @@ export class MobileResponsiveAccessibility {
   private generateRecommendations(): string[] {
     const recommendations: string[] = [];
 
-    const issuesByType = this.issues.reduce(_(acc,_issue) => {
+    const issuesByType = this.issues.reduce((acc, issue) => {
         if (!acc[issue.type]) acc[issue.type] = [];
         acc[issue.type].push(issue);
         return acc;
@@ -700,7 +700,7 @@ export class MobileResponsiveAccessibility {
       {} as Record<string, ResponsiveAccessibilityIssue[]>,
     );
 
-    Object.entries(issuesByType).forEach(_([type,_issues]) => {
+    Object.entries(issuesByType).forEach(([type, issues]) => {
       const criticalCount = issues.filter(
         i => i.severity === 'critical',
       ).length;

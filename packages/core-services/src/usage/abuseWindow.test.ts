@@ -13,11 +13,11 @@ import {
   type RequestEntry,
 } from "./abuseWindow.js";
 
-describe(_"AbuseWindowTracker",_() => {
+describe("AbuseWindowTracker", () => {
   let tracker: AbuseWindowTracker;
   let config: SlidingWindowConfig;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     config = {
       window60s: 3, // Lower limits for testing
       window10m: 5,
@@ -26,12 +26,12 @@ describe(_"AbuseWindowTracker",_() => {
     vi.useFakeTimers();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     tracker.destroy();
     vi.useRealTimers();
   });
 
-  describe(_"Basic Rate Limiting",_() => {
+  describe("Basic Rate Limiting", () => {
     it(_"should allow requests within limits",_async () => {
       const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const request = {
@@ -98,7 +98,7 @@ describe(_"AbuseWindowTracker",_() => {
     });
   });
 
-  describe(_"Sliding Window Behavior",_() => {
+  describe("Sliding Window Behavior", () => {
     it(_"should allow requests after 60s window slides",_async () => {
       const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const request = {
@@ -155,7 +155,7 @@ describe(_"AbuseWindowTracker",_() => {
     });
   });
 
-  describe(_"Key Isolation",_() => {
+  describe("Key Isolation", () => {
     it(_"should track different IPs separately",_async () => {
       const key1: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const key2: TrackingKey = { type: "ip", value: "192.168.1.2" };
@@ -205,7 +205,7 @@ describe(_"AbuseWindowTracker",_() => {
     });
   });
 
-  describe(_"Statistics and Monitoring",_() => {
+  describe("Statistics and Monitoring", () => {
     it(_"should provide accurate statistics",_async () => {
       const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const request = { ip: "192.168.1.1", endpoint: "/api/test" };
@@ -241,7 +241,7 @@ describe(_"AbuseWindowTracker",_() => {
     });
   });
 
-  describe(_"Read-only Operations",_() => {
+  describe("Read-only Operations", () => {
     it(_"should check without tracking",_async () => {
       const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const request = { ip: "192.168.1.1", endpoint: "/api/test" };
@@ -261,8 +261,8 @@ describe(_"AbuseWindowTracker",_() => {
     });
   });
 
-  describe(_"Configuration Management",_() => {
-    it(_"should update configuration dynamically",_() => {
+  describe("Configuration Management", () => {
+    it("should update configuration dynamically", () => {
       const newConfig = { window60s: 10, window10m: 20 };
       tracker.updateConfig(newConfig);
 
@@ -271,14 +271,14 @@ describe(_"AbuseWindowTracker",_() => {
       expect(updatedConfig.window10m).toBe(20);
     });
 
-    it(_"should get default configuration",_() => {
+    it("should get default configuration", () => {
       const defaultConfig = getDefaultAbuseConfig();
       expect(defaultConfig.window60s).toBe(12);
       expect(defaultConfig.window10m).toBe(5);
     });
   });
 
-  describe(_"Reset Operations",_() => {
+  describe("Reset Operations", () => {
     it(_"should reset specific key",_async () => {
       const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const request = { ip: "192.168.1.1", endpoint: "/api/test" };
@@ -319,8 +319,8 @@ describe(_"AbuseWindowTracker",_() => {
     });
   });
 
-  describe(_"Factory Functions",_() => {
-    it(_"should create tracker with factory function",_() => {
+  describe("Factory Functions", () => {
+    it("should create tracker with factory function", () => {
       const customConfig = { window60s: 20, window10m: 50 };
       const factoryTracker = createAbuseWindowTracker(customConfig);
 

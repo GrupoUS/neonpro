@@ -432,7 +432,7 @@ export class StructuredLogger {
         healthcareCompliance:
           this.config.healthcareCompliance.enablePIIRedaction,
       });
-    } catch (_error) {
+    } catch (error) {
       console.error("Failed to initialize structured logging:", error);
     }
   }
@@ -445,7 +445,7 @@ export class StructuredLogger {
       clearInterval(this.flushTimer);
     }
 
-    this.flushTimer = setInterval(_() => {
+    this.flushTimer = setInterval(() => {
       this.flush();
     }, this.config.performance.flushInterval);
   }
@@ -462,7 +462,7 @@ export class StructuredLogger {
 
     process.on("SIGINT", gracefulShutdown);
     process.on("SIGTERM", gracefulShutdown);
-    process.on(_"beforeExit",_() => this.flush());
+    process.on(_"beforeExit", () => this.flush());
   }
 
   // ============================================================================
@@ -761,7 +761,7 @@ export class StructuredLogger {
       if (["critical", "alert", "emergency"].includes(level)) {
         this.flush();
       }
-    } catch (_error) {
+    } catch (error) {
       console.error("Failed to log message:", error);
     }
   }
@@ -949,7 +949,7 @@ export class StructuredLogger {
     ];
 
     let redactedText = text;
-    piiPatterns.forEach(_(pattern) => {
+    piiPatterns.forEach((pattern) => {
       redactedText = redactedText.replace(pattern, "[REDACTED]");
     });
 
@@ -973,7 +973,7 @@ export class StructuredLogger {
       "token",
     ];
 
-    Object.keys(redactedObj).forEach(_(key) => {
+    Object.keys(redactedObj).forEach((key) => {
       if (_piiFields.some((field) => key.toLowerCase().includes(field))) {
         redactedObj[key] = "[REDACTED]";
       } else if (typeof redactedObj[key] === "string") {
@@ -1086,10 +1086,10 @@ export class StructuredLogger {
       if (this.config.outputs.file) {
         await this.writeToFile(logsToFlush);
       }
-    } catch (_error) {
+    } catch (error) {
       console.error("Failed to flush logs:", error);
       // Re-add logs to buffer for retry (keep only critical ones)
-      const criticalLogs = logsToFlush.filter(_(log) =>
+      const criticalLogs = logsToFlush.filter((log) =>
         ["critical", "alert", "emergency"].includes(log.level),
       );
       this.logBuffer.unshift(...criticalLogs);

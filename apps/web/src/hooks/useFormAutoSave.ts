@@ -19,7 +19,7 @@ interface SavedFormData {
 }
 
 interface UseFormAutoSaveReturn {
-  saveFormData: (data: Record<string,_any>) => void;
+  saveFormData: (data: Record<string, any>) => void;
   savedData: Record<string, any> | null;
   hasSavedData: boolean;
   lastSaved: Date | null;
@@ -40,12 +40,12 @@ export function useFormAutoSave(formKey: string): UseFormAutoSaveReturn {
   const storageKey = `${STORAGE_PREFIX}${formKey}`;
 
   // Load saved data on mount
-  useEffect(_() => {
+  useEffect(() => {
     try {
       const saved = localStorage.getItem(storageKey);
       if (saved) {
         const parsedData: SavedFormData = JSON.parse(saved);
-        const _now = Date.now();
+        const now = Date.now();
 
         // Check if data is expired
         if (now - parsedData.timestamp > EXPIRATION_TIME) {
@@ -69,7 +69,7 @@ export function useFormAutoSave(formKey: string): UseFormAutoSaveReturn {
 
   // Debounced save function
   const saveFormData = useCallback(
-    (data: Record<string,_any>) => {
+    (data: Record<string, any>) => {
       // Don't save empty data
       if (!data || Object.keys(data).length === 0) {
         return;
@@ -81,7 +81,7 @@ export function useFormAutoSave(formKey: string): UseFormAutoSaveReturn {
       }
 
       // Set new debounce timer
-      debounceRef.current = setTimeout(_() => {
+      debounceRef.current = setTimeout(() => {
         try {
           const saveData: SavedFormData = {
             data,
@@ -101,7 +101,7 @@ export function useFormAutoSave(formKey: string): UseFormAutoSaveReturn {
   );
 
   // Clear saved data
-  const clearSavedData = useCallback(_() => {
+  const clearSavedData = useCallback(() => {
     try {
       localStorage.removeItem(storageKey);
       setSavedData(null);
@@ -112,7 +112,7 @@ export function useFormAutoSave(formKey: string): UseFormAutoSaveReturn {
   }, [storageKey]);
 
   // Cleanup debounce timer on unmount
-  useEffect(_() => {
+  useEffect(() => {
     return () => {
       if (debounceRef.current) {
         clearTimeout(debounceRef.current);

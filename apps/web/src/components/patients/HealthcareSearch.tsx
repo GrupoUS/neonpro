@@ -226,8 +226,8 @@ const formatPhone = (_value: any) => {
 };
 
 // Document validation status component
-const ValidationStatus = (_{
-  isValid,_message,
+const ValidationStatus = ({
+  isValid,message,
 }: {
   isValid: boolean;
   message: string;
@@ -244,8 +244,8 @@ const ValidationStatus = (_{
 );
 
 // Search result card component
-const SearchResultCard = (_{
-  patient,_onSelect,
+const SearchResultCard = ({
+  patient,onSelect,
 }: {
   patient: PatientSearchResult;
   onSelect: (patient: PatientSearchResult) => void;
@@ -471,7 +471,7 @@ export function HealthcareSearch({
                     <FormField
                       control={basicForm.control}
                       name='searchType'
-                      render={(_{ field }) => (
+                      render={({ field }) => (
                         <FormItem>
                           <Select
                             onValueChange={field.onChange}
@@ -496,7 +496,7 @@ export function HealthcareSearch({
                     <FormField
                       control={basicForm.control}
                       name='searchTerm'
-                      render={(_{ field }) => (
+                      render={({ field }) => (
                         <FormItem className='flex-1'>
                           <FormControl>
                             <Input
@@ -534,7 +534,7 @@ export function HealthcareSearch({
                     <FormField
                       control={advancedForm.control}
                       name='name'
-                      render={(_{ field }) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Nome Completo</FormLabel>
                           <FormControl>
@@ -551,7 +551,7 @@ export function HealthcareSearch({
                     <FormField
                       control={advancedForm.control}
                       name='cpf'
-                      render={(_{ field }) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>CPF</FormLabel>
                           <FormControl>
@@ -577,7 +577,7 @@ export function HealthcareSearch({
                     <FormField
                       control={advancedForm.control}
                       name='cns'
-                      render={(_{ field }) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>CNS (Cartão Nacional de Saúde)</FormLabel>
                           <FormControl>
@@ -603,7 +603,7 @@ export function HealthcareSearch({
                     <FormField
                       control={advancedForm.control}
                       name='rg'
-                      render={(_{ field }) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>RG</FormLabel>
                           <FormControl>
@@ -617,7 +617,7 @@ export function HealthcareSearch({
                     <FormField
                       control={advancedForm.control}
                       name='phone'
-                      render={(_{ field }) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Telefone</FormLabel>
                           <FormControl>
@@ -647,7 +647,7 @@ export function HealthcareSearch({
                     <FormField
                       control={advancedForm.control}
                       name='email'
-                      render={(_{ field }) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>E-mail</FormLabel>
                           <FormControl>
@@ -661,7 +661,7 @@ export function HealthcareSearch({
                     <FormField
                       control={advancedForm.control}
                       name='city'
-                      render={(_{ field }) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Cidade</FormLabel>
                           <FormControl>
@@ -675,7 +675,7 @@ export function HealthcareSearch({
                     <FormField
                       control={advancedForm.control}
                       name='state'
-                      render={(_{ field }) => (
+                      render={({ field }) => (
                         <FormItem>
                           <FormLabel>Estado</FormLabel>
                           <Select

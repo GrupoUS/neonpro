@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // We will mock providers used internally by ai.ts by mocking generateText
 
 describe(_'generateWithFailover',_() => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.resetModules();
     vi.clearAllMocks();
   });

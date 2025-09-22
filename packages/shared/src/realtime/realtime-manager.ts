@@ -55,11 +55,11 @@ export class RealtimeManager {
 
     const channel = this.supabase
       .channel(channelName)
-      .on(_"postgres_changes",
+      .on("postgres_changes",
         {
           event: "*",
           schema: "public",
-          table: tableName,_filter,_},
+          table: tableName,filter,_},
         async (
           _payload: RealtimePostgresChangesPayload<Record<string,_any>>,
         ) => {
@@ -71,7 +71,7 @@ export class RealtimeManager {
           await this.handleRealtimeEvent(payload, tableName, options);
         },
       )
-      .subscribe(_(status) => {
+      .subscribe((status) => {
         console.log(`Realtime subscription ${channelName} status:`, status);
 
         if (status === "SUBSCRIBED") {
@@ -79,7 +79,7 @@ export class RealtimeManager {
         } else if (status === "CHANNEL_ERROR") {
           console.error(`❌ Error subscribing to ${tableName}`);
           // Implement retry logic
-          setTimeout(_() => {
+          setTimeout(() => {
             this.retrySubscription(tableName, filter, options);
           }, 5000);
         }
@@ -90,7 +90,7 @@ export class RealtimeManager {
   }
 
   private shouldRateLimit(channelName: string, rateLimitMs: number): boolean {
-    const _now = Date.now();
+    const now = Date.now();
     const lastUpdate = this.rateLimitMap.get(channelName) || 0;
 
     if (now - lastUpdate < rateLimitMs) {
@@ -135,7 +135,7 @@ export class RealtimeManager {
           ),
         );
       }
-    } catch (_error) {
+    } catch (error) {
       console.error("Error handling realtime event:", error);
     }
   }
@@ -181,7 +181,7 @@ export class RealtimeManager {
 
     // Remove from list cache
     this.queryClient.setQueryData(_[tableName], (old: T[] | undefined) => {
-      return old?.filter(_(item) => item.id !== deletedRecord.id) || [];
+      return old?.filter((item) => item.id !== deletedRecord.id) || [];
     });
 
     // Remove specific record cache
@@ -214,7 +214,7 @@ export class RealtimeManager {
     }
 
     // Wait before retry with exponential backoff
-    await new Promise(_(resolve) =>
+    await new Promise((resolve) =>
       setTimeout(resolve, Math.pow(2, retryCount) * 1000),
     );
 
@@ -235,14 +235,14 @@ export class RealtimeManager {
 
     const channel = this.supabase
       .channel(channelName)
-      .on(_"presence", { event: "sync" },_() => {
+      .on(_"presence", { event: "sync" }, () => {
         const state = channel.presenceState();
         console.log("Presence sync:", state);
       })
-      .on(_"presence", { event: "join" },_({ key,_newPresences }) => {
+      .on(_"presence", { event: "join" },({ key,_newPresences }) => {
         console.log("User joined:", key, newPresences);
       })
-      .on(_"presence", { event: "leave" },_({ key,_leftPresences }) => {
+      .on(_"presence", { event: "leave" },({ key,_leftPresences }) => {
         console.log("User left:", key, leftPresences);
       })
       .subscribe(_async (status) => {
@@ -272,7 +272,7 @@ export class RealtimeManager {
    * Unsubscribe from all channels
    */
   unsubscribeAll() {
-    this.channels.forEach(_(channel,_name) => {
+    this.channels.forEach((channel,_name) => {
       this.supabase.removeChannel(channel);
       console.log(`Unsubscribed from ${name}`);
     });

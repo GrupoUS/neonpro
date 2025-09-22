@@ -120,21 +120,21 @@ export class QueryOptimizerService {
       this.connectionMetrics.totalConnections++;
     });
 
-    this.pool.on('acquire', _client => {
+    this.pool.on('acquire', client => {
       this.connectionMetrics.activeConnections++;
       this.connectionMetrics.idleConnections--;
     });
 
-    this.pool.on('release', _client => {
+    this.pool.on('release', client => {
       this.connectionMetrics.activeConnections--;
       this.connectionMetrics.idleConnections++;
     });
 
-    this.pool.on('remove', _client => {
+    this.pool.on('remove', client => {
       this.connectionMetrics.totalConnections--;
     });
 
-    this.pool.on(_'error',_(err, _client) => {
+    this.pool.on(_'error',(err, _client) => {
       console.error('[QueryOptimizer] Pool error:', err);
       this.connectionMetrics.failedQueries++;
     });
@@ -192,7 +192,7 @@ export class QueryOptimizerService {
 
       const metrics: QueryMetrics = {
         queryId,
-        _query: this.sanitizeQuery(_query),
+        _query: this.sanitizeQuery(query),
         executionTimeMs: executionTime,
         rowsAffected: result?.length || 0,
         cacheHit,
@@ -224,11 +224,11 @@ export class QueryOptimizerService {
       this.connectionMetrics.totalQueries++;
 
       return { data: result, metrics };
-    } catch (_error) {
+    } catch (error) {
       const executionTime = performance.now() - startTime;
       const metrics: QueryMetrics = {
         queryId,
-        _query: this.sanitizeQuery(_query),
+        _query: this.sanitizeQuery(query),
         executionTimeMs: executionTime,
         rowsAffected: 0,
         cacheHit: false,
@@ -259,10 +259,10 @@ export class QueryOptimizerService {
     }
 
     const timeout = options.timeout || this.config.queryTimeout!;
-    const _startTime = performance.now();
+    const startTime = performance.now();
 
-    return new Promise(_(resolve,_reject) => {
-      const timer = setTimeout(_() => {
+    return new Promise((resolve,_reject) => {
+      const timer = setTimeout(() => {
         reject(new Error(`Query timeout after ${timeout}ms`));
       }, timeout);
 
@@ -329,7 +329,7 @@ export class QueryOptimizerService {
         indexesUsed,
         recommendations,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('[QueryOptimizer] Failed to get query plan:', error);
       return {
         query,
@@ -410,10 +410,10 @@ export class QueryOptimizerService {
     executionTime: number,
   ): Promise<void> {
     try {
-      const plan = await this.getQueryPlan(_query);
+      const plan = await this.getQueryPlan(query);
 
       console.log('[QueryOptimizer] Optimization recommendations:', {
-        _query: this.sanitizeQuery(_query),
+        _query: this.sanitizeQuery(query),
         executionTimeMs: executionTime,
         estimatedCost: plan.estimatedCost,
         estimatedRows: plan.estimatedRows,
@@ -423,12 +423,12 @@ export class QueryOptimizerService {
       // Log recommendations to audit log
       await this.logOptimizationEvent({
         type: 'query_optimization',
-        _query: this.sanitizeQuery(_query),
+        _query: this.sanitizeQuery(query),
         executionTimeMs: executionTime,
         recommendations: plan.recommendations,
         timestamp: new Date().toISOString(),
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('[QueryOptimizer] Failed to provide optimization recommendations:', error);
     }
   }
@@ -527,7 +527,7 @@ export class QueryOptimizerService {
     const successfulQueries = this.queryMetrics.filter(m => m.success);
     if (successfulQueries.length === 0) return 0;
 
-    const totalTime = successfulQueries.reduce(_(sum,_m) => sum + m.executionTimeMs, 0);
+    const totalTime = successfulQueries.reduce((sum,_m) => sum + m.executionTimeMs, 0);
     return totalTime / successfulQueries.length;
   }
 
@@ -537,7 +537,7 @@ export class QueryOptimizerService {
   private getTopSlowQueries(limit: number) {
     return this.queryMetrics
       .filter(m => m.success)
-      .sort(_(a,_b) => b.executionTimeMs - a.executionTimeMs)
+      .sort((a,_b) => b.executionTimeMs - a.executionTimeMs)
       .slice(0, limit);
   }
 
@@ -554,7 +554,7 @@ export class QueryOptimizerService {
     });
 
     return Object.entries(indexCounts)
-      .sort(_(a,_b) => b[1] - a[1])
+      .sort((a,_b) => b[1] - a[1])
       .slice(0, limit);
   }
 
@@ -601,7 +601,7 @@ export class QueryOptimizerService {
    */
   private async getFromCache<T>(_query: string, params: any[]): Promise<T | null> {
     // Simple cache implementation - in production, use Redis
-    const _cacheKey = this.generateCacheKey(query, params);
+    const cacheKey = this.generateCacheKey(query, params);
     // Cache implementation would go here
     return null;
   }
@@ -611,7 +611,7 @@ export class QueryOptimizerService {
    */
   private async cacheResult<T>(_query: string, params: any[], _result: T): Promise<void> {
     // Simple cache implementation - in production, use Redis
-    const _cacheKey = this.generateCacheKey(query, params);
+    const cacheKey = this.generateCacheKey(query, params);
     // Cache implementation would go here
   }
 
@@ -619,7 +619,7 @@ export class QueryOptimizerService {
    * Generate cache key
    */
   private generateCacheKey(_query: string, params: any[]): string {
-    const queryHash = this.hashString(_query);
+    const queryHash = this.hashString(query);
     const paramsHash = this.hashString(JSON.stringify(params));
     return `_query:${queryHash}:${paramsHash}`;
   }
@@ -653,7 +653,7 @@ export class QueryOptimizerService {
           details: event,
           timestamp: new Date().toISOString(),
         });
-    } catch (_error) {
+    } catch (error) {
       console.error('[QueryOptimizer] Failed to log optimization event:', error);
     }
   }

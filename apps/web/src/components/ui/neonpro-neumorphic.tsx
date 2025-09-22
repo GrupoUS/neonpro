@@ -70,41 +70,41 @@ const neumorphicButtonVariants = cva(
         // Primary healthcare button
         primary: [
           'bg-gradient-to-br from-[#AC9469] to-[#d2aa60ff] text-white',
-          'shadow-[6px_6px_12px_#8d7854,_-6px_-6px_12px_#cbb07e]',
-          'hover:shadow-[4px_4px_8px_#8d7854,_-4px_-4px_8px_#cbb07e]',
-          'active:shadow-[inset_4px_4px_8px_#8d7854,_inset_-4px_-4px_8px_#cbb07e]',
+          'shadow-[6px_6px_12px_#8d7854, -6px_-6px_12px_#cbb07e]',
+          'hover:shadow-[4px_4px_8px_#8d7854, -4px_-4px_8px_#cbb07e]',
+          'active:shadow-[inset_4px_4px_8px_#8d7854, inset_-4px_-4px_8px_#cbb07e]',
           'focus:ring-[#AC9469]/50',
         ],
         // Professional healthcare button
         professional: [
           'bg-gradient-to-br from-[#112031] to-[#294359] text-white',
-          'shadow-[6px_6px_12px_#0a0d11,_-6px_-6px_12px_#182b51]',
-          'hover:shadow-[4px_4px_8px_#0a0d11,_-4px_-4px_8px_#182b51]',
-          'active:shadow-[inset_4px_4px_8px_#0a0d11,_inset_-4px_-4px_8px_#182b51]',
+          'shadow-[6px_6px_12px_#0a0d11, -6px_-6px_12px_#182b51]',
+          'hover:shadow-[4px_4px_8px_#0a0d11, -4px_-4px_8px_#182b51]',
+          'active:shadow-[inset_4px_4px_8px_#0a0d11, inset_-4px_-4px_8px_#182b51]',
           'focus:ring-[#112031]/50',
         ],
         // Neutral/secondary button
         neutral: [
           'bg-[#D2D0C8] text-[#112031]',
-          'shadow-[6px_6px_12px_#beb9b1,_-6px_-6px_12px_#e6e1df]',
-          'hover:shadow-[4px_4px_8px_#beb9b1,_-4px_-4px_8px_#e6e1df]',
-          'active:shadow-[inset_4px_4px_8px_#beb9b1,_inset_-4px_-4px_8px_#e6e1df]',
+          'shadow-[6px_6px_12px_#beb9b1, -6px_-6px_12px_#e6e1df]',
+          'hover:shadow-[4px_4px_8px_#beb9b1, -4px_-4px_8px_#e6e1df]',
+          'active:shadow-[inset_4px_4px_8px_#beb9b1, inset_-4px_-4px_8px_#e6e1df]',
           'focus:ring-[#B4AC9C]/50',
         ],
         // Soft button for subtle actions
         soft: [
           'bg-[#F6F5F2] text-[#112031]',
-          'shadow-[2px_2px_4px_#e1dfdc,_-2px_-2px_4px_#ffffff]',
-          'hover:shadow-[1px_1px_2px_#e1dfdc,_-1px_-1px_2px_#ffffff]',
-          'active:shadow-[inset_2px_2px_4px_#e1dfdc,_inset_-2px_-2px_4px_#ffffff]',
+          'shadow-[2px_2px_4px_#e1dfdc, -2px_-2px_4px_#ffffff]',
+          'hover:shadow-[1px_1px_2px_#e1dfdc, -1px_-1px_2px_#ffffff]',
+          'active:shadow-[inset_2px_2px_4px_#e1dfdc, inset_-2px_-2px_4px_#ffffff]',
           'focus:ring-[#AC9469]/30',
         ],
         // Alert/danger button for critical actions
         alert: [
           'bg-gradient-to-br from-[#dc2626] to-[#b91c1c] text-white',
-          'shadow-[6px_6px_12px_#991b1b,_-6px_-6px_12px_#ef4444]',
-          'hover:shadow-[4px_4px_8px_#991b1b,_-4px_-4px_8px_#ef4444]',
-          'active:shadow-[inset_4px_4px_8px_#991b1b,_inset_-4px_-4px_8px_#ef4444]',
+          'shadow-[6px_6px_12px_#991b1b, -6px_-6px_12px_#ef4444]',
+          'hover:shadow-[4px_4px_8px_#991b1b, -4px_-4px_8px_#ef4444]',
+          'active:shadow-[inset_4px_4px_8px_#991b1b, inset_-4px_-4px_8px_#ef4444]',
           'focus:ring-red-500/50',
         ],
       },
@@ -137,37 +137,37 @@ const neumorphicCardVariants = cva(
         // Raised card for main content
         raised: [
           'bg-[#D2D0C8]',
-          'shadow-[8px_8px_16px_#beb9b1,_-8px_-8px_16px_#e6e1df]',
-          'hover:shadow-[6px_6px_12px_#beb9b1,_-6px_-6px_12px_#e6e1df]',
+          'shadow-[8px_8px_16px_#beb9b1, -8px_-8px_16px_#e6e1df]',
+          'hover:shadow-[6px_6px_12px_#beb9b1, -6px_-6px_12px_#e6e1df]',
         ],
         // Inset card for content wells
         inset: [
           'bg-[#D2D0C8]',
-          'shadow-[inset_6px_6px_12px_#beb9b1,_inset_-6px_-6px_12px_#e6e1df]',
+          'shadow-[inset_6px_6px_12px_#beb9b1, inset_-6px_-6px_12px_#e6e1df]',
         ],
         // Floating card for modals and overlays
         floating: [
           'bg-[#F6F5F2]',
-          'shadow-[12px_12px_24px_#a8a398,_-12px_-12px_24px_#fcf7f8]',
-          'hover:shadow-[8px_8px_16px_#a8a398,_-8px_-8px_16px_#fcf7f8]',
+          'shadow-[12px_12px_24px_#a8a398, -12px_-12px_24px_#fcf7f8]',
+          'hover:shadow-[8px_8px_16px_#a8a398, -8px_-8px_16px_#fcf7f8]',
         ],
         // Patient card with healthcare-specific styling
         patient: [
           'bg-gradient-to-br from-[#F6F5F2] to-[#D2D0C8]',
-          'shadow-[6px_6px_12px_#beb9b1,_-6px_-6px_12px_#e6e1df]',
-          'hover:shadow-[4px_4px_8px_#beb9b1,_-4px_-4px_8px_#e6e1df]',
+          'shadow-[6px_6px_12px_#beb9b1, -6px_-6px_12px_#e6e1df]',
+          'hover:shadow-[4px_4px_8px_#beb9b1, -4px_-4px_8px_#e6e1df]',
           'border-l-4 border-l-[#AC9469]', // Accent border for identification
         ],
         // Alert card for important information
         alert: [
           'bg-gradient-to-br from-[#fef2f2] to-[#fee2e2]',
-          'shadow-[6px_6px_12px_#f3c7c7,_-6px_-6px_12px_#ffffff]',
+          'shadow-[6px_6px_12px_#f3c7c7, -6px_-6px_12px_#ffffff]',
           'border-l-4 border-l-red-500',
         ],
         // Success card for positive feedback
         success: [
           'bg-gradient-to-br from-[#f0fdf4] to-[#dcfce7]',
-          'shadow-[6px_6px_12px_#c7e7c7,_-6px_-6px_12px_#ffffff]',
+          'shadow-[6px_6px_12px_#c7e7c7, -6px_-6px_12px_#ffffff]',
           'border-l-4 border-l-green-500',
         ],
       },
@@ -199,20 +199,20 @@ const neumorphicInputVariants = cva(
         // Standard inset input
         inset: [
           'bg-[#D2D0C8]',
-          'shadow-[inset_4px_4px_8px_#beb9b1,_inset_-4px_-4px_8px_#e6e1df]',
-          'focus:shadow-[inset_2px_2px_4px_#beb9b1,_inset_-2px_-2px_4px_#e6e1df]',
+          'shadow-[inset_4px_4px_8px_#beb9b1, inset_-4px_-4px_8px_#e6e1df]',
+          'focus:shadow-[inset_2px_2px_4px_#beb9b1, inset_-2px_-2px_4px_#e6e1df]',
         ],
         // Light input for better contrast
         light: [
           'bg-[#F6F5F2]',
-          'shadow-[inset_2px_2px_4px_#e1dfdc,_inset_-2px_-2px_4px_#ffffff]',
-          'focus:shadow-[inset_1px_1px_2px_#e1dfdc,_inset_-1px_-1px_2px_#ffffff]',
+          'shadow-[inset_2px_2px_4px_#e1dfdc, inset_-2px_-2px_4px_#ffffff]',
+          'focus:shadow-[inset_1px_1px_2px_#e1dfdc, inset_-1px_-1px_2px_#ffffff]',
         ],
         // Medical input with enhanced accessibility
         medical: [
           'bg-[#F6F5F2]',
-          'shadow-[inset_3px_3px_6px_#e1dfdc,_inset_-3px_-3px_6px_#ffffff]',
-          'focus:shadow-[inset_1px_1px_2px_#e1dfdc,_inset_-1px_-1px_2px_#ffffff]',
+          'shadow-[inset_3px_3px_6px_#e1dfdc, inset_-3px_-3px_6px_#ffffff]',
+          'focus:shadow-[inset_1px_1px_2px_#e1dfdc, inset_-1px_-1px_2px_#ffffff]',
           'border-2 border-transparent focus:border-[#AC9469]',
         ],
       },
@@ -240,7 +240,7 @@ export interface NeumorphicButtonProps
   // asChild removed - not used in implementation
 }
 
-const NeumorphicButton = forwardRef<HTMLButtonElement, NeumorphicButtonProps>(_({ className,_variant,_size,_...props },_ref) => {
+const NeumorphicButton = forwardRef<HTMLButtonElement, NeumorphicButtonProps>(({ className,variant, size, ...props }, ref) => {
     return (
       <button
         className={cn(neumorphicButtonVariants({ variant, size, className }))}
@@ -259,7 +259,7 @@ export interface NeumorphicCardProps
   // asChild removed - not used in implementation
 }
 
-const NeumorphicCard = forwardRef<HTMLDivElement, NeumorphicCardProps>(_({ className,_variant,_size,_...props },_ref) => {
+const NeumorphicCard = forwardRef<HTMLDivElement, NeumorphicCardProps>(({ className,variant, size, ...props }, ref) => {
     return (
       <div
         className={cn(neumorphicCardVariants({ variant, size, className }))}
@@ -276,7 +276,7 @@ export interface NeumorphicInputProps
   extends React.InputHTMLAttributes<HTMLInputElement>, VariantProps<typeof neumorphicInputVariants>
 {}
 
-const NeumorphicInput = forwardRef<HTMLInputElement, NeumorphicInputProps>(_({ className,_variant,_size,_type,_...props },_ref) => {
+const NeumorphicInput = forwardRef<HTMLInputElement, NeumorphicInputProps>(({ className,variant, size,type, ...props }, ref) => {
     return (
       <input
         type={type}
@@ -296,7 +296,7 @@ export interface NeumorphicTextareaProps
     VariantProps<typeof neumorphicInputVariants>
 {}
 
-const NeumorphicTextarea = forwardRef<HTMLTextAreaElement, NeumorphicTextareaProps>(_({ className,_variant,_size,_...props },_ref) => {
+const NeumorphicTextarea = forwardRef<HTMLTextAreaElement, NeumorphicTextareaProps>(({ className,variant, size, ...props }, ref) => {
     return (
       <textarea
         className={cn(
@@ -320,18 +320,18 @@ export interface PatientStatusBadgeProps {
   className?: string;
 }
 
-const PatientStatusBadge = forwardRef<HTMLSpanElement, PatientStatusBadgeProps>(_({ status,_className,_...props },_ref) => {
+const PatientStatusBadge = forwardRef<HTMLSpanElement, PatientStatusBadgeProps>(({ status,className, ...props }, ref) => {
     const statusStyles = {
       active:
-        'bg-gradient-to-r from-green-400 to-green-500 text-white shadow-[2px_2px_4px_#22c55e80,_-2px_-2px_4px_#4ade8080]',
+        'bg-gradient-to-r from-green-400 to-green-500 text-white shadow-[2px_2px_4px_#22c55e80, -2px_-2px_4px_#4ade8080]',
       inactive:
-        'bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-[2px_2px_4px_#6b728080,_-2px_-2px_4px_#9ca3af80]',
+        'bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-[2px_2px_4px_#6b728080, -2px_-2px_4px_#9ca3af80]',
       pending:
-        'bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-[2px_2px_4px_#eab30880,_-2px_-2px_4px_#f59e0b80]',
+        'bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-[2px_2px_4px_#eab30880, -2px_-2px_4px_#f59e0b80]',
       urgent:
-        'bg-gradient-to-r from-red-400 to-red-500 text-white shadow-[2px_2px_4px_#ef444480,_-2px_-2px_4px_#f8717180]',
+        'bg-gradient-to-r from-red-400 to-red-500 text-white shadow-[2px_2px_4px_#ef444480, -2px_-2px_4px_#f8717180]',
       completed:
-        'bg-gradient-to-r from-[#AC9469] to-[#d2aa60ff] text-white shadow-[2px_2px_4px_#AC946980,_-2px_-2px_4px_#d2aa6080]',
+        'bg-gradient-to-r from-[#AC9469] to-[#d2aa60ff] text-white shadow-[2px_2px_4px_#AC946980, -2px_-2px_4px_#d2aa6080]',
     };
 
     return (
@@ -359,16 +359,16 @@ export interface MedicalAlertCardProps extends React.HTMLAttributes<HTMLDivEleme
   icon?: React.ReactNode;
 }
 
-const MedicalAlertCard = forwardRef<HTMLDivElement, MedicalAlertCardProps>(_({ alertType,_title,_description,_icon,_className,_children,_...props },_ref) => {
+const MedicalAlertCard = forwardRef<HTMLDivElement, MedicalAlertCardProps>(({ alertType,title, description,icon, className,children, ...props }, ref) => {
     const alertStyles = {
       info:
-        'from-blue-50 to-blue-100 border-l-blue-500 shadow-[6px_6px_12px_#c7d2fe,_-6px_-6px_12px_#ffffff]',
+        'from-blue-50 to-blue-100 border-l-blue-500 shadow-[6px_6px_12px_#c7d2fe, -6px_-6px_12px_#ffffff]',
       warning:
-        'from-yellow-50 to-yellow-100 border-l-yellow-500 shadow-[6px_6px_12px_#fde68a,_-6px_-6px_12px_#ffffff]',
+        'from-yellow-50 to-yellow-100 border-l-yellow-500 shadow-[6px_6px_12px_#fde68a, -6px_-6px_12px_#ffffff]',
       error:
-        'from-red-50 to-red-100 border-l-red-500 shadow-[6px_6px_12px_#fecaca,_-6px_-6px_12px_#ffffff]',
+        'from-red-50 to-red-100 border-l-red-500 shadow-[6px_6px_12px_#fecaca, -6px_-6px_12px_#ffffff]',
       success:
-        'from-green-50 to-green-100 border-l-green-500 shadow-[6px_6px_12px_#bbf7d0,_-6px_-6px_12px_#ffffff]',
+        'from-green-50 to-green-100 border-l-green-500 shadow-[6px_6px_12px_#bbf7d0, -6px_-6px_12px_#ffffff]',
     };
 
     return (
@@ -408,13 +408,13 @@ export interface ClinicalActionPanelProps extends React.HTMLAttributes<HTMLDivEl
   actions?: React.ReactNode;
 }
 
-const ClinicalActionPanel = forwardRef<HTMLDivElement, ClinicalActionPanelProps>(_({ title,_subtitle,_actions,_className,_children,_...props },_ref) => {
+const ClinicalActionPanel = forwardRef<HTMLDivElement, ClinicalActionPanelProps>(({ title,subtitle, actions,className, children, ...props }, ref) => {
     return (
       <div
         className={cn(
           'rounded-2xl bg-[#F6F5F2] p-6',
-          'shadow-[8px_8px_16px_#e1dfdc,_-8px_-8px_16px_#ffffff]',
-          'hover:shadow-[6px_6px_12px_#e1dfdc,_-6px_-6px_12px_#ffffff]',
+          'shadow-[8px_8px_16px_#e1dfdc, -8px_-8px_16px_#ffffff]',
+          'hover:shadow-[6px_6px_12px_#e1dfdc, -6px_-6px_12px_#ffffff]',
           'transition-all duration-300',
           className,
         )}

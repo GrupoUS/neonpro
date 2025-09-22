@@ -13,7 +13,7 @@ import {
 } from '@neonpro/types/api/contracts';
 import { protectedProcedure, router } from '../trpc';
 
-export const _professionalRouter = router({
+export const professionalRouter = router({
   /**
    * Register new healthcare professional with license validation
    */

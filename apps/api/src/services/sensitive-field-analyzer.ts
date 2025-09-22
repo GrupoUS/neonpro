@@ -288,11 +288,11 @@ export class HealthcareSensitiveFieldAnalyzer {
 
     if (typeof data === 'object') {
       if (Array.isArray(data)) {
-        data.forEach(_(item,_index) => {
+        data.forEach((item,_index) => {
           this.analyzeDataStructure(item, results, `${path}[${index}]`);
         });
       } else {
-        Object.entries(data).forEach(_([key,_value]) => {
+        Object.entries(data).forEach(([key,_value]) => {
           const currentPath = path ? `${path}.${key}` : key;
 
           // Check if this field is classified as sensitive

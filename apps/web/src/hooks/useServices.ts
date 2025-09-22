@@ -178,7 +178,7 @@ export function useUpdateService() {
         message: 'Serviço atualizado com sucesso!',
       };
     },
-    onSuccess: (_, _variables) => {
+    onSuccess: (_, variables) => {
       // Invalidate and refetch services
       queryClient.invalidateQueries({ queryKey: serviceKeys.lists() });
       queryClient.invalidateQueries({
@@ -276,7 +276,7 @@ export function useCheckAvailability() {
 
         // Add conflicts for existing appointments
         if (existingAppointments && existingAppointments.length > 0) {
-          existingAppointments.forEach(_appointment => {
+          existingAppointments.forEach(appointment => {
             const patient = appointment.patients as any;
             const service = appointment.service_types as any;
             conflicts.push({
@@ -315,7 +315,7 @@ export function useCheckAvailability() {
         }
 
         // Check for short break between appointments
-        const _now = new Date();
+        const now = new Date();
         const hoursUntilAppointment = (startDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
         if (hoursUntilAppointment < 2) {
           warnings.push({

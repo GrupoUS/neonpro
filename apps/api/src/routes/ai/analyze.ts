@@ -78,7 +78,7 @@ const analyzeRequestSchema = z.object({
 let services: ServiceInterface | null = null;
 
 // Function to set services (used by tests)
-export const _setServices = (injectedServices: ServiceInterface) => {
+export const setServices = (injectedServices: ServiceInterface) => {
   services = injectedServices;
 };
 
@@ -251,7 +251,7 @@ app.post(
       }
 
       // Set all headers
-      Object.entries(responseHeaders).forEach(_([key,_value]) => {
+      Object.entries(responseHeaders).forEach(([key,_value]) => {
         c.header(key, value);
       });
 
@@ -259,7 +259,7 @@ app.post(
         success: true,
         data: analysisResponse.data,
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('AI Analyze endpoint error:', error);
 
       // Log error for audit

@@ -14,12 +14,12 @@ import {
   useContext,
   useEffect,
   useState,
-  ReactNode,
+  ReactNode
 } from "react";
 import {
   HealthcareA11yContext,
   HealthcarePriority,
-  announceToScreenReader,
+  announceToScreenReader
 } from "../../utils/accessibility";
 import { DataSensitivity } from "../../utils/healthcare-validation";
 
@@ -61,7 +61,7 @@ export const defaultHealthcareTheme: HealthcareThemeConfig = {
   reduceMotion: true, // Default to reduced motion for healthcare
   dataSensitivityLevel: DataSensitivity.CONFIDENTIAL,
   auditMode: true, // Default to audit mode for healthcare
-  consentRequired: true,
+  consentRequired: true
 };
 
 // Healthcare theme context
@@ -95,10 +95,10 @@ export function HealthcareThemeProvider({
   children,
   initialTheme = {},
   onThemeChange,
-  persistTheme = true,
+  persistTheme = true
 }: HealthcareThemeProviderProps) {
   // Initialize theme from localStorage or defaults
-  const [theme, setTheme] = useState<HealthcareThemeConfig>(_() => {
+  const [theme, setTheme] = useState<HealthcareThemeConfig>(() => {
     if (typeof window === "undefined") {
       return { ...defaultHealthcareTheme, ...initialTheme };
     }
@@ -118,7 +118,7 @@ export function HealthcareThemeProvider({
     patientDataVisible: theme.patientDataMode,
     highContrastMode: theme.highContrast,
     reduceMotion: theme.reduceMotion,
-    screenReaderMode: theme.screenReaderOptimized,
+    screenReaderMode: theme.screenReaderOptimized
   };
 
   // Update theme function
@@ -130,7 +130,7 @@ export function HealthcareThemeProvider({
     if (persistTheme && typeof window !== "undefined") {
       try {
         localStorage.setItem("healthcare-theme", JSON.stringify(newTheme));
-      } catch (_error) {
+      } catch (error) {
         console.warn("Failed to persist healthcare theme:", error);
       }
     }
@@ -168,8 +168,8 @@ export function HealthcareThemeProvider({
         : {
             highContrast: true,
             reduceMotion: false, // Allow animations for emergency alerts
-            screenReaderOptimized: true,
-          }),
+            screenReaderOptimized: true
+          })
     });
   };
 
@@ -178,7 +178,7 @@ export function HealthcareThemeProvider({
     updateTheme({
       patientDataMode: !theme.patientDataMode,
       // Ensure audit mode is enabled when viewing patient data
-      auditMode: !theme.patientDataMode ? true : theme.auditMode,
+      auditMode: !theme.patientDataMode ? true : theme.auditMode
     });
   };
 
@@ -189,12 +189,12 @@ export function HealthcareThemeProvider({
       // Auto-enable audit mode for sensitive data
       auditMode:
         level === DataSensitivity.RESTRICTED ||
-        level === DataSensitivity.CONFIDENTIAL,
+        level === DataSensitivity.CONFIDENTIAL
     });
   };
 
   // Apply theme to document element
-  useEffect(_() => {
+  useEffect(() => {
     if (typeof document === "undefined") return;
 
     const root = document.documentElement;
@@ -238,7 +238,7 @@ export function HealthcareThemeProvider({
   }, [theme]);
 
   // Listen for system preference changes
-  useEffect(_() => {
+  useEffect(() => {
     if (typeof window === "undefined") return;
 
     const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -259,7 +259,7 @@ export function HealthcareThemeProvider({
     toggleEmergencyMode,
     togglePatientDataMode,
     setDataSensitivity,
-    accessibility,
+    accessibility
   };
 
   return (
@@ -275,7 +275,7 @@ export function HealthcareThemeProvider({
 export function useHealthcareTheme(): HealthcareThemeContextValue {
   const context = useContext(HealthcareThemeContext);
 
-  if (!_context) {
+  if (!context) {
     throw new Error(
       "useHealthcareTheme must be used within a HealthcareThemeProvider",
     );

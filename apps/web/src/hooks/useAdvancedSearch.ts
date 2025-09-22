@@ -64,7 +64,7 @@ export function useAdvancedSearch(
   const validateCPF = (value: string) => /^(\d{3})\.(\d{3})\.(\d{3})-(\d{2})$/.test(value ?? '');
   const validatePhone = (value: string) => /^\(\d{2}\) \d{5}-\d{4}$/.test(value ?? '');
 
-  const metrics: AdvancedSearchMetrics = useMemo(_() => {
+  const metrics: AdvancedSearchMetrics = useMemo(() => {
     const nonEmpty = [
       filters.query && filters.query.trim() !== '' ? 1 : 0,
       filters.email && filters.email.trim() !== '' ? 1 : 0,
@@ -73,7 +73,7 @@ export function useAdvancedSearch(
       (filters.status?.length ?? 0) > 0 ? 1 : 0,
       filters.dateRange?.start ? 1 : 0,
       filters.dateRange?.end ? 1 : 0,
-    ].reduce(_(a,_b) => a + b, 0);
+    ].reduce((a, b) => a + b, 0);
     return {
       totalFilters: nonEmpty,
       lastSearchAt: undefined,

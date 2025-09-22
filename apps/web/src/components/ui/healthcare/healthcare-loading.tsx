@@ -64,16 +64,16 @@ export interface HealthcareLoadingProps
  * HealthcareLoading - WCAG 2.1 AA+ compliant loading component
  * Designed for healthcare applications with accessibility focus
  */
-const HealthcareLoading = React.forwardRef<HTMLDivElement, HealthcareLoadingProps>(_({
-    className,_size,_variant,_color,_message,_progress,_ariaLabel,_healthcareContext,_announceChanges = true,_minDisplayTime = 1000,_customIndicator,_...props
-  },_ref) => {
+const HealthcareLoading = React.forwardRef<HTMLDivElement, HealthcareLoadingProps>(({
+    className,size, variant,color, message,progress, ariaLabel,healthcareContext, announceChanges = true, minDisplayTime = 1000,customIndicator, ...props
+  }, ref) => {
     const { t } = useI18n();
     const { announcePolite } = useScreenReaderAnnouncer();
     const [startTime] = React.useState(Date.now());
     const [shouldShow, setShouldShow] = React.useState(false);
 
     // Announce loading state changes
-    React.useEffect(_() => {
+    React.useEffect(() => {
       if (announceChanges) {
         const loadingMessage = message || t('common.loading');
         announcePolite(loadingMessage);
@@ -81,8 +81,8 @@ const HealthcareLoading = React.forwardRef<HTMLDivElement, HealthcareLoadingProp
     }, [message, announceChanges, announcePolite, t]);
 
     // Handle minimum display time
-    React.useEffect(_() => {
-      const timer = setTimeout(_() => {
+    React.useEffect(() => {
+      const timer = setTimeout(() => {
         setShouldShow(true);
       }, minDisplayTime);
 
@@ -106,7 +106,7 @@ const HealthcareLoading = React.forwardRef<HTMLDivElement, HealthcareLoadingProp
     const loadingMessage = message || t('common.loading');
 
     // Generate accessibility attributes
-    const accessibilityProps = React.useMemo(_() => {
+    const accessibilityProps = React.useMemo(() => {
       const props: Record<string, string> = {};
 
       if (ariaLabel) {
@@ -338,20 +338,20 @@ export interface HealthcareErrorProps extends React.HTMLAttributes<HTMLDivElemen
  * HealthcareError - WCAG 2.1 AA+ compliant error component
  * Designed for healthcare applications with accessibility focus
  */
-const HealthcareError = React.forwardRef<HTMLDivElement, HealthcareErrorProps>(_({
-    className,_error,_details,_type = 'general',_onRetry,_onDismiss,_healthcareContext,_announceChanges = true,_...props
-  },_ref) => {
+const HealthcareError = React.forwardRef<HTMLDivElement, HealthcareErrorProps>(({
+    className,error, details, type = 'general',onRetry, onDismiss,healthcareContext, announceChanges = true, ...props
+  }, ref) => {
     const { t } = useI18n();
     const { announceAssertive } = useScreenReaderAnnouncer();
 
     // Error message
-    const errorMessage = React.useMemo(_() => {
+    const errorMessage = React.useMemo(() => {
       if (typeof error === 'string') return error;
       return error.message || t('common.error');
     }, [error, t]);
 
     // Error icon based on type
-    const ErrorIcon = React.useMemo(_() => {
+    const ErrorIcon = React.useMemo(() => {
       switch (type) {
         case 'network':
           return (
@@ -453,14 +453,14 @@ const HealthcareError = React.forwardRef<HTMLDivElement, HealthcareErrorProps>(_
     }, [type]);
 
     // Announce error changes
-    React.useEffect(_() => {
+    React.useEffect(() => {
       if (announceChanges) {
         announceAssertive(`Erro: ${errorMessage}`);
       }
     }, [errorMessage, announceChanges, announceAssertive]);
 
     // Generate accessibility attributes
-    const accessibilityProps = React.useMemo(_() => {
+    const accessibilityProps = React.useMemo(() => {
       const props: Record<string, string> = {};
 
       props['aria-live'] = 'assertive';

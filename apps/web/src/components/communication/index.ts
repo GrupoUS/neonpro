@@ -15,7 +15,7 @@ export type {
 } from './HealthcareCommunicationSystem';
 
 // Component constants and configuration
-export const _COMMUNICATION_CONFIG = {
+export const COMMUNICATION_CONFIG = {
   maxMessageLength: 5000,
   maxFileSize: 10485760, // 10MB
   supportedAttachmentTypes: [

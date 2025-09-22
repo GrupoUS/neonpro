@@ -29,7 +29,7 @@ const mockLGPDService = {
 };
 
 describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     // Mock successful service responses by default
@@ -132,7 +132,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     });
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
@@ -598,7 +598,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
       const bulkData = {
         action: 'update',
-        patientIds: Array.from({ length: 1000 },_(_,_i) => `patient-${i}`), // Large batch
+        patientIds: Array.from({ length: 1000 },(, i) => `patient-${i}`), // Large batch
         updateData: { status: 'active' },
       };
 
@@ -687,7 +687,7 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
   describe(_'Performance and Batch Processing',_() => {
     it(_'should handle large batch operations efficiently',_async () => {
-      const largeBatch = Array.from({ length: 100 },_(_,_i) => `patient-${i}`);
+      const largeBatch = Array.from({ length: 100 },(, i) => `patient-${i}`);
 
       mockPatientService.bulkUpdatePatients.mockResolvedValue({
         success: true,

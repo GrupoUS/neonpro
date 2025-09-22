@@ -207,9 +207,9 @@ export function useServiceComparison(
 export function useExportAnalytics() {
   return useMutation({
     mutationFn: (_request: AnalyticsExportRequest) =>
-      serviceAnalyticsService.exportAnalytics(_request),
+      serviceAnalyticsService.exportAnalytics(request),
 
-    onSuccess: (_blob, _variables) => {
+    onSuccess: (blob, variables) => {
       // Create download link
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');

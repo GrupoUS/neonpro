@@ -93,7 +93,7 @@ const chatRequestSchema = z.object({
 let services: ServiceInterface | null = null;
 
 // Function to set services (used by tests)
-export const _setServices = (injectedServices: ServiceInterface) => {
+export const setServices = (injectedServices: ServiceInterface) => {
   services = injectedServices;
 };
 
@@ -117,7 +117,7 @@ app.post(
   zValidator('json', chatRequestSchema),
   async c => {
     const startTime = Date.now();
-    const _user = c.get('user');
+    const user = c.get('user');
     const requestData = c.req.valid('json');
     const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
     const userAgent = c.req.header('User-Agent') || 'unknown';
@@ -128,7 +128,7 @@ app.post(
       // Validate LGPD data access for AI chat
       const currentServices = getServices();
       const lgpdValidation = await currentServices.lgpdService.validateDataAccess({
-        _userId: _user.id,
+        _userId: user.id,
         dataType: 'ai_chat',
         purpose: 'healthcare_assistance',
         legalBasis: 'legitimate_interest',
@@ -151,7 +151,7 @@ app.post(
       if (requestData.patientId && requestData.context?.includePatientHistory) {
         const patientData = await currentServices.patientService.getPatientContext({
           patientId: requestData.patientId,
-          _userId: _user.id,
+          _userId: user.id,
           includeHistory: true,
         });
 
@@ -161,8 +161,8 @@ app.post(
       }
 
       // Prepare AI chat request
-      const _aiChatRequest = {
-        _userId: _user.id,
+      const aiChatRequest = {
+        _userId: user.id,
         message: requestData.message,
         conversationId: requestData.conversationId,
         modelPreference: requestData.modelPreference,
@@ -180,7 +180,7 @@ app.post(
       if (requestData.streaming) {
         // Use streamMessage for streaming requests
         aiResponse = await currentServices.aiChatService.streamMessage({
-          _userId: _user.id,
+          _userId: user.id,
           message: requestData.message,
           conversationId: requestData.conversationId,
           modelPreference: requestData.modelPreference,
@@ -242,7 +242,7 @@ app.post(
         };
 
       await currentServices.auditService.logActivity({
-        _userId: _user.id,
+        _userId: user.id,
         action: 'ai_chat_message',
         resourceType: 'ai_conversation',
         resourceId: requestData.streaming
@@ -297,7 +297,7 @@ app.post(
       }
 
       // Set all headers
-      Object.entries(responseHeaders).forEach(_([key,_value]) => {
+      Object.entries(responseHeaders).forEach(([key,_value]) => {
         c.header(key, value);
       });
 
@@ -305,13 +305,13 @@ app.post(
         success: true,
         data: responseData,
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('AI Chat endpoint error:', error);
 
       // Log error for audit
       const currentServices = getServices();
       await currentServices.auditService.logActivity({
-        _userId: _user.id,
+        _userId: user.id,
         action: 'ai_chat_error',
         resourceType: 'ai_conversation',
         resourceId: 'error',
@@ -443,7 +443,7 @@ app.post(
   mockLGPDMiddleware,
   zValidator('json', sessionRequestSchema),
   async c => {
-    const _user = c.get('user');
+    const user = c.get('user');
     const requestData = c.req.valid('json');
 
     try {
@@ -528,7 +528,7 @@ app.post(
         },
         201,
       );
-    } catch (_error) {
+    } catch (error) {
       console.error('Chat request failed:', error);
       return c.json(
         {
@@ -548,7 +548,7 @@ app.post(
   mockLGPDMiddleware,
   zValidator('json', messageRequestSchema),
   async c => {
-    const _user = c.get('user');
+    const user = c.get('user');
     const sessionId = c.req.param('sessionId');
     const requestData = c.req.valid('json');
 
@@ -708,7 +708,7 @@ app.post(
         c.header('Connection', 'keep-alive');
 
         // Set other headers
-        Object.entries(headers).forEach(_([key,_value]) => {
+        Object.entries(headers).forEach(([key,_value]) => {
           c.header(key, value);
         });
 
@@ -724,7 +724,7 @@ app.post(
         });
       } else {
         // Set headers for regular response
-        Object.entries(headers).forEach(_([key,_value]) => {
+        Object.entries(headers).forEach(([key,_value]) => {
           c.header(key, value);
         });
 
@@ -737,7 +737,7 @@ app.post(
           201,
         );
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Chat request failed:', error);
       return c.json(
         {

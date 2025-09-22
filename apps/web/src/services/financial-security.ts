@@ -148,7 +148,7 @@ export class FinancialSecurityService {
 
       // Check time restrictions
       if (accessControl.restrictions?.timeRestrictions) {
-        const _now = new Date();
+        const now = new Date();
         const currentTime = now.getHours() * 100 + now.getMinutes();
         const currentDay = now.getDay();
 
@@ -605,6 +605,6 @@ export class FinancialSecurityService {
    * Get nested value from object
    */
   private static getNestedValue(obj: any, path: string): any {
-    return path.split('.').reduce(_(current,_key) => current?.[key], obj);
+    return path.split('.').reduce((current, key) => current?.[key], obj);
   }
 }

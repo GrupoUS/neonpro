@@ -62,7 +62,7 @@ export function ComplianceStatusPanel() {
   const clinicId = 'default-clinic-id'; // Placeholder
 
   const { data: complianceData, isLoading } = useQuery<ComplianceData>({
-    queryKey: ['compliance-status',_clinicId],
+    queryKey: ['compliance-status', clinicId],
     queryFn: async () => {
       const governanceService = getGovernanceService();
       return await governanceService.getComplianceStatusData(clinicId);

@@ -80,10 +80,10 @@ export class AgentSessionService {
   ): Promise<SessionData> {
     try {
       // Check concurrent session limit
-      await this.validateConcurrentSessionLimit(_userId);
+      await this.validateConcurrentSessionLimit(userId);
 
       const sessionId = uuidv4();
-      const _now = new Date();
+      const now = new Date();
       const expirationMs = options.expirationMs || this.config.defaultExpirationMs;
       const expiresAt = new Date(now.getTime() + expirationMs);
 
@@ -117,7 +117,7 @@ export class AgentSessionService {
       this.cacheSession(session);
 
       return session;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating session:', error);
       throw new Error(
         `Failed to create session: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -152,7 +152,7 @@ export class AgentSessionService {
       this.cacheSession(session);
 
       return session;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error retrieving session:', error);
       return null;
     }
@@ -181,7 +181,7 @@ export class AgentSessionService {
       sessions.forEach(session => this.cacheSession(session));
 
       return sessions;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting user sessions:', error);
       return [];
     }
@@ -230,7 +230,7 @@ export class AgentSessionService {
       this.cacheSession(updatedSession);
 
       return updatedSession;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error updating session:', error);
       return null;
     }
@@ -255,7 +255,7 @@ export class AgentSessionService {
 
       await this.storeSession(updatedSession);
       this.cacheSession(updatedSession);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error recording session activity:', error);
     }
   }
@@ -283,7 +283,7 @@ export class AgentSessionService {
       this.sessionCache.delete(sessionId);
 
       return true;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error expiring session:', error);
       return false;
     }
@@ -316,7 +316,7 @@ export class AgentSessionService {
       this.sessionCache.delete(sessionId);
 
       return true;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error deleting session:', error);
       return false;
     }
@@ -354,7 +354,7 @@ export class AgentSessionService {
       });
 
       return expiredSessions.length;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error cleaning up expired sessions:', error);
       return 0;
     }
@@ -385,7 +385,7 @@ export class AgentSessionService {
       return await this.updateSession(sessionId, {
         expiresAt: newExpiresAt,
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Error extending session:', error);
       return null;
     }
@@ -406,7 +406,7 @@ export class AgentSessionService {
         .from('agent_sessions')
         .select('*', { count: 'exact' });
 
-      if (_userId) {
+      if (userId) {
         query = query.eq('user_id', _userId);
       }
 
@@ -430,11 +430,11 @@ export class AgentSessionService {
         .filter(length => length > 0);
 
       const averageSessionLength = sessionLengths.length > 0
-        ? sessionLengths.reduce(_(sum,_length) => sum + length, 0) / sessionLengths.length
+        ? sessionLengths.reduce((sum,_length) => sum + length, 0) / sessionLengths.length
         : 0;
 
       // Get total messages
-      const totalMessages = allSessions.reduce(_(sum,_session) => sum + (session.message_count || 0),
+      const totalMessages = allSessions.reduce((sum,_session) => sum + (session.message_count || 0),
         0,
       );
 
@@ -445,7 +445,7 @@ export class AgentSessionService {
         averageSessionLength,
         totalMessages,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting session statistics:', error);
       return {
         totalSessions: 0,
@@ -526,7 +526,7 @@ export class AgentSessionService {
     this.sessionCache.set(session.sessionId, session);
 
     // Set expiration for cache entry
-    setTimeout(_() => {
+    setTimeout(() => {
       this.sessionCache.delete(session.sessionId);
     }, this.cacheTimeout);
   }
@@ -535,7 +535,7 @@ export class AgentSessionService {
    * Validate concurrent session limit
    */
   private async validateConcurrentSessionLimit(_userId: string): Promise<void> {
-    const activeSessions = await this.getUserSessions(_userId);
+    const activeSessions = await this.getUserSessions(userId);
 
     if (activeSessions.length >= this.config.maxConcurrentSessions) {
       throw new Error(
@@ -548,10 +548,10 @@ export class AgentSessionService {
    * Start cleanup timer
    */
   private startCleanupTimer(): void {
-    this.cleanupTimer = setInterval(_async () => {
+    this.cleanupTimer = setInterval(async () => {
       try {
         await this.cleanupExpiredSessions();
-      } catch (_error) {
+      } catch (error) {
         console.error('Error in session cleanup:', error);
       }
     }, this.config.cleanupIntervalMs);
@@ -572,7 +572,7 @@ export class AgentSessionService {
     // Final cleanup
     try {
       await this.cleanupExpiredSessions();
-    } catch (_error) {
+    } catch (error) {
       console.error('Error in final cleanup:', error);
     }
   }

@@ -933,7 +933,7 @@ export const HealthcareCompliancePolicySchema = z.object({
 });
 
 // Password Policy Schema
-export const _PasswordPolicySchema = z.object({
+export const PasswordPolicySchema = z.object({
   minLength: z.number().min(8).max(128),
   maxLength: z.number().min(8).max(256),
   requireUppercase: z.boolean(),

@@ -20,10 +20,10 @@ export type * from './ai-chat-types';
 export { formatDateTime } from '@/utils/brazilian-formatters';
 
 // Version
-export const _AI_CHAT_COMPONENTS_VERSION = '1.0.0';
+export const AI_CHAT_COMPONENTS_VERSION = '1.0.0';
 
 // Component metadata
-export const _COMPONENT_INFO = {
+export const COMPONENT_INFO = {
   EnhancedAIChat: {
     name: 'Enhanced AI Chat',
     description: 'Comprehensive AI chat interface with healthcare compliance',

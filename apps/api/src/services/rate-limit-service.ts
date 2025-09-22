@@ -52,7 +52,7 @@ export interface RateLimitEvaluation {
 export function createRateLimitRule(
   data: Partial<RateLimitRule>,
 ): RateLimitRule {
-  const _now = new Date().toISOString();
+  const now = new Date().toISOString();
 
   const ruleData = {
     id: crypto.randomUUID(),
@@ -95,7 +95,7 @@ export function evaluateRateLimit(
   // In a real implementation, this would check against a store (Redis, memory, etc.)
   // For now, we'll simulate rate limiting logic
 
-  const _windowStart = new Date(currentTime.getTime() - rule.windowMs);
+  const windowStart = new Date(currentTime.getTime() - rule.windowMs);
 
   // Simulate current usage (in real implementation, this would come from store)
   const currentUsage = Math.floor(Math.random() * rule.maxRequests);
@@ -171,7 +171,7 @@ export const HealthcareRateLimitPresets = {
 /**
  * Default rate limit rules for healthcare API
  */
-export const _defaultHealthcareRules = [
+export const defaultHealthcareRules = [
   createRateLimitRule({
     name: 'Patient Data Access',
     endpoint: '/api/v2/patients/*',

@@ -131,7 +131,7 @@ export function useLGPDConsent({
   /**
    * Check if user has valid consent for all required data types
    */
-  const checkConsent = useCallback(_async () => {
+  const checkConsent = useCallback(async () => {
     setConsentState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
@@ -143,7 +143,7 @@ export function useLGPDConsent({
       const hasValidConsent = consentChecks.every(Boolean);
 
       // Get pending consents
-      const pendingConsents = await consentService.getPendingConsents(_userId);
+      const pendingConsents = await consentService.getPendingConsents(userId);
 
       setConsentState({
         isLoading: false,
@@ -368,7 +368,7 @@ export function useLGPDConsent({
   );
 
   // Auto-check consent on mount if enabled
-  useEffect(_() => {
+  useEffect(() => {
     if (autoCheck) {
       checkConsent();
     }

@@ -122,7 +122,7 @@ export class HealthcareLogger {
         // Re-add logs to buffer for retry
         this.auditBuffer.unshift(...logsToFlush);
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error flushing audit buffer:', error);
       // Re-add logs to buffer for retry
       this.auditBuffer.unshift(...logsToFlush);

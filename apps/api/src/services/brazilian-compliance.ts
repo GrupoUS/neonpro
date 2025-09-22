@@ -511,7 +511,7 @@ export class BrazilianComplianceService {
    * Calculate next audit date
    */
   private calculateNextAuditDate(frequency: string): Date {
-    const _now = new Date();
+    const now = new Date();
     switch (frequency) {
       case 'monthly':
         return new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);

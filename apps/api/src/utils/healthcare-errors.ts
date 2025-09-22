@@ -394,7 +394,7 @@ export class HealthcareLogger {
       if (error.severity === HealthcareErrorSeverity.CRITICAL) {
         await this.sendCriticalAlert(error);
       }
-    } catch (_loggingError) {
+    } catch (loggingError) {
       console.error('Failed to log healthcare error:', loggingError);
     }
   }
@@ -430,7 +430,7 @@ export class HealthcareLogger {
           details: context.details,
         });
       }
-    } catch (_loggingError) {
+    } catch (loggingError) {
       console.error('Failed to log healthcare success:', loggingError);
     }
   }
@@ -473,7 +473,7 @@ export class HealthcareLogger {
         //   extra: error.toSanitizedJSON(),
         // });
       }
-    } catch (_monitoringError) {
+    } catch (monitoringError) {
       console.error('Failed to send to monitoring:', monitoringError);
     }
   }
@@ -499,7 +499,7 @@ Time: ${error.timestamp.toISOString()}
       console.error('CRITICAL ALERT:', alertMessage);
 
       // Email/Slack notification would be implemented here
-    } catch (_alertError) {
+    } catch (alertError) {
       console.error('Failed to send critical alert:', alertError);
     }
   }
@@ -591,7 +591,7 @@ export class HealthcareErrorHandler {
 }
 
 // Export singleton instance
-export const _healthcareErrorHandler = new HealthcareErrorHandler();
+export const healthcareErrorHandler = new HealthcareErrorHandler();
 
 /**
  * tRPC-specific healthcare error class

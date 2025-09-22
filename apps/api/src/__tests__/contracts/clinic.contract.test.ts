@@ -10,7 +10,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * Ensures type safety, input validation, and output conformity
  */
 
-describe(_'Clinic Contract Testing',_() => {
+describe(_'Clinic Contract Testing',() => {
   const mockContext = {
     user: { id: 'user-123', _role: 'admin' },
     auth: { _userId: 'user-123', isAuthenticated: true },
@@ -49,14 +49,14 @@ describe(_'Clinic Contract Testing',_() => {
     },
   };
 
-  const _trpcMsw = createTRPCMsw<AppRouter>();
+  const trpcMsw = createTRPCMsw<AppRouter>();
   const caller = appRouter.createCaller(mockContext);
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe(_'Clinic Creation Contract',_() => {
+  describe(_'Clinic Creation Contract',() => {
     it(_'should validate clinic creation input and output',_async () => {
       const createInput: ClinicInput['create'] = {
         basicInfo: {
@@ -230,7 +230,7 @@ describe(_'Clinic Contract Testing',_() => {
     });
   });
 
-  describe(_'Clinic Retrieval Contract',_() => {
+  describe(_'Clinic Retrieval Contract',() => {
     it(_'should validate clinic retrieval by ID',_async () => {
       const clinicId = 'clinic-789';
       const mockClinic = {
@@ -299,7 +299,7 @@ describe(_'Clinic Contract Testing',_() => {
     });
   });
 
-  describe(_'Clinic Update Contract',_() => {
+  describe(_'Clinic Update Contract',() => {
     it(_'should validate clinic information updates',_async () => {
       const clinicId = 'clinic-789';
       const updateInput: ClinicInput['update'] = {
@@ -405,7 +405,7 @@ describe(_'Clinic Contract Testing',_() => {
     });
   });
 
-  describe(_'Clinic Statistics Contract',_() => {
+  describe(_'Clinic Statistics Contract',() => {
     it(_'should validate clinic statistics retrieval',_async () => {
       const clinicId = 'clinic-789';
       const period = 'monthly';
@@ -491,7 +491,7 @@ describe(_'Clinic Contract Testing',_() => {
     });
   });
 
-  describe(_'Clinic Configuration Contract',_() => {
+  describe(_'Clinic Configuration Contract',() => {
     it(_'should validate clinic configuration updates',_async () => {
       const configInput: ClinicInput['updateConfiguration'] = {
         clinicId: 'clinic-789',
@@ -568,7 +568,7 @@ describe(_'Clinic Contract Testing',_() => {
     });
   });
 
-  describe(_'Clinic List Contract',_() => {
+  describe(_'Clinic List Contract',() => {
     it(_'should validate clinic listing with filters',_async () => {
       const listInput: ClinicInput['list'] = {
         page: 1,
@@ -631,8 +631,8 @@ describe(_'Clinic Contract Testing',_() => {
     });
   });
 
-  describe(_'Contract Type Safety',_() => {
-    it(_'should enforce input type constraints at compile time',_() => {
+  describe(_'Contract Type Safety',() => {
+    it(_'should enforce input type constraints at compile time',() => {
       const validInput: ClinicInput['create'] = {
         basicInfo: {
           name: 'Test Clinic',
@@ -655,7 +655,7 @@ describe(_'Clinic Contract Testing',_() => {
       expect(validInput).toBeDefined();
     });
 
-    it(_'should enforce output type constraints',_() => {
+    it(_'should enforce output type constraints',() => {
       const mockOutput: ClinicOutput['getById'] = {
         success: true,
         data: {

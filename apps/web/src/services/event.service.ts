@@ -504,7 +504,7 @@ export class EventService {
    * Get upcoming events (from now onwards)
    */
   static async getUpcomingEvents(limit: number = 10): Promise<CalendarEventExtended[]> {
-    const _now = new Date();
+    const now = new Date();
     const events = await this.getEvents({
       dateRange: { start: now, end: addMonths(now, 3) },
     });
@@ -558,7 +558,7 @@ export class EventService {
     const eventsByPriority: Record<number, number> = {};
     let totalDuration = 0;
 
-    events.forEach(_event => {
+    events.forEach(event => {
       // Count by status
       const status = event.status || 'unknown';
       eventsByStatus[status] = (eventsByStatus[status] || 0) + 1;

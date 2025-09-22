@@ -41,7 +41,7 @@ class RateLimitStore {
 
   // Clean up expired entries periodically
   cleanup(): void {
-    const _now = Date.now();
+    const now = Date.now();
     for (const [key, entry] of this.store.entries()) {
       if (now > entry.resetTime) {
         this.store.delete(key);
@@ -53,7 +53,7 @@ class RateLimitStore {
 const store = new RateLimitStore();
 
 // Clean up expired entries every 5 minutes
-setInterval(_() => store.cleanup(), 5 * 60 * 1000);
+setInterval(() => store.cleanup(), 5 * 60 * 1000);
 
 /**
  * Rate limiting configuration
@@ -140,7 +140,7 @@ function createRateLimit(config: RateLimitConfig) {
       if (skipSuccessfulRequests && c.res.status < 400) {
         shouldCount = false;
       }
-    } catch (_error) {
+    } catch (error) {
       // Check if we should skip counting failed requests
       if (skipFailedRequests) {
         shouldCount = false;

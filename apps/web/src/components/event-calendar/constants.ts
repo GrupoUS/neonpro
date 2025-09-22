@@ -1,9 +1,9 @@
 import { type EventColor } from './types';
 
-export const _EventHeight = 24;
+export const EventHeight = 24;
 
 // Etiquettes for calendar filtering
-export const _etiquettes = [
+export const etiquettes = [
   {
     id: 'my-events',
     name: 'My Events',
@@ -37,18 +37,18 @@ export const _etiquettes = [
 ];
 
 // Vertical gap between events in pixels - controls spacing in month view
-export const _EventGap = 4;
+export const EventGap = 4;
 
 // Height of hour cells in week and day views - controls the scale of time display
-export const _WeekCellsHeight = 72;
+export const WeekCellsHeight = 72;
 
 // Number of days to show in the agenda view
-export const _AgendaDaysToShow = 30;
+export const AgendaDaysToShow = 30;
 
 // Start and end hours for the week and day views
-export const _StartHour = 7; // Start at 7 AM
-export const _EndHour = 20; // End at 8 PM
+export const StartHour = 7; // Start at 7 AM
+export const EndHour = 20; // End at 8 PM
 
 // Default start and end times
-export const _DefaultStartHour = 9; // 9 AM
-export const _DefaultEndHour = 10; // 10 AM
+export const DefaultStartHour = 9; // 9 AM
+export const DefaultEndHour = 10; // 10 AM

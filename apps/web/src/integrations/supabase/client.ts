@@ -58,7 +58,7 @@ export const supabase: SupabaseClient<Database> = createClient<Database>(
 // Helper functions for authentication with proper redirects
 
 // Helper para login com OAuth providers
-export const _signInWithProvider = async (
+export const signInWithProvider = async (
   provider: 'google' | 'github' | 'apple',
   redirectTo?: string,
 ) => {
@@ -76,7 +76,7 @@ export const _signInWithProvider = async (
 };
 
 // Helper para login com email/password
-export const _signInWithEmail = async (email: string, password: string) => {
+export const signInWithEmail = async (email: string, password: string) => {
   return supabase.auth.signInWithPassword({
     email,
     password,
@@ -84,7 +84,7 @@ export const _signInWithEmail = async (email: string, password: string) => {
 };
 
 // Helper para signup com redirecionamento
-export const _signUpWithEmail = async (
+export const signUpWithEmail = async (
   email: string,
   password: string,
   redirectTo?: string,
@@ -104,7 +104,7 @@ export const _signUpWithEmail = async (
 };
 
 // Helper para reset de senha
-export const _resetPassword = async (email: string, redirectTo?: string) => {
+export const resetPassword = async (email: string, redirectTo?: string) => {
   const baseUrl = getSiteUrl();
   const finalRedirectTo = redirectTo
     ? `${baseUrl}${redirectTo}`
@@ -121,7 +121,7 @@ export const signOut = async () => {
 };
 
 // Helper para verificar se usuário está autenticado
-export const _getCurrentUser = async () => {
+export const getCurrentUser = async () => {
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -129,7 +129,7 @@ export const _getCurrentUser = async () => {
 };
 
 // Helper para verificar sessão atual
-export const _getCurrentSession = async () => {
+export const getCurrentSession = async () => {
   const {
     data: { session },
   } = await supabase.auth.getSession();

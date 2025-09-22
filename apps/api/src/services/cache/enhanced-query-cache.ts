@@ -30,10 +30,10 @@ import {
 import { RedisCacheBackend } from '../../../shared/src/services/redis-cache-backend';
 
 // Input validation schemas
-const _QueryCacheKeySchema = z.string().min(1).max(1000);
+const QueryCacheKeySchema = z.string().min(1).max(1000);
 const UserIdSchema = z.string().min(1).max(255);
-const _QueryTTLSchema = z.number().min(1).max(86400); // Max 24 hours
-const _CacheSizeSchema = z.number().min(1).max(10000);
+const QueryTTLSchema = z.number().min(1).max(86400); // Max 24 hours
+const CacheSizeSchema = z.number().min(1).max(10000);
 
 /**
  * Enhanced query cache configuration
@@ -175,8 +175,8 @@ export class EnhancedQueryCacheService {
 
     try {
       // Validate inputs
-      const validatedUserId = UserIdSchema.parse(_userId);
-      const validatedQuery = this.validateQuery(_query);
+      const validatedUserId = UserIdSchema.parse(userId);
+      const validatedQuery = this.validateQuery(query);
 
       if (options.bypassCache) {
         return { cached: false, source: 'miss', executionTime: Date.now() - startTime };
@@ -243,7 +243,7 @@ export class EnhancedQueryCacheService {
       );
 
       return { cached: false, source: 'miss', executionTime };
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error getting cached response:', error);
       this.stats.errorCount++;
@@ -269,8 +269,8 @@ export class EnhancedQueryCacheService {
   ): Promise<CacheOperationResult> {
     try {
       // Validate inputs
-      const validatedUserId = UserIdSchema.parse(_userId);
-      const validatedQuery = this.validateQuery(_query);
+      const validatedUserId = UserIdSchema.parse(userId);
+      const validatedQuery = this.validateQuery(query);
       const validatedResponse = this.validateResponse(response);
 
       // Generate cache key
@@ -325,7 +325,7 @@ export class EnhancedQueryCacheService {
       }
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error caching response:', error);
       this.stats.errorCount++;
@@ -405,7 +405,7 @@ export class EnhancedQueryCacheService {
         invalidatedCount: totalInvalidated,
         details: results,
       };
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error invalidating cache:', error);
       return {
@@ -426,7 +426,7 @@ export class EnhancedQueryCacheService {
 
       // Update memory usage
       let totalMemoryUsage = 0;
-      cacheStats.forEach(_(tierStats,_tier) => {
+      cacheStats.forEach((tierStats,_tier) => {
         totalMemoryUsage += tierStats.memoryUsage;
         if (tier === CacheTier.MEMORY) {
           this.stats.memoryCacheSize = tierStats.totalEntries;
@@ -438,7 +438,7 @@ export class EnhancedQueryCacheService {
       this.stats.totalMemoryUsage = totalMemoryUsage;
 
       return { ...this.stats };
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error getting statistics:', error);
       return this.stats;
@@ -505,7 +505,7 @@ export class EnhancedQueryCacheService {
         details,
         stats: await this.getStats(),
       };
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Health check failed:', error);
       return {
@@ -578,7 +578,7 @@ export class EnhancedQueryCacheService {
    * Initialize health check timer
    */
   private initializeHealthCheck(): void {
-    this.healthCheckTimer = setInterval(_() => this.healthCheck(),
+    this.healthCheckTimer = setInterval(() => this.healthCheck(),
       this.config.healthCheckInterval,
     );
   }

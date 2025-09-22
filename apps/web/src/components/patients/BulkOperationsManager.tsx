@@ -171,7 +171,7 @@ export function BulkOperationsManager({
 
   // Mock operations query
   const { data: operations, isLoading } = useQuery({
-    queryKey: ['bulk-operations',_clinicId],
+    queryKey: ['bulk-operations', clinicId],
     queryFn: async () => {
       await new Promise(resolve => setTimeout(resolve, 100));
 
@@ -226,7 +226,7 @@ export function BulkOperationsManager({
   });
 
   // Process queue
-  useEffect(_() => {
+  useEffect(() => {
     if (
       queue.paused
       || !queue.currentOperation
@@ -429,7 +429,7 @@ export function BulkOperationsManager({
       }
 
       try {
-        await measurePerformance(_'bulk-undo',_async () => {
+        await measurePerformance(_'bulk-undo',async () => {
           // Simulate undo operation
           await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -556,7 +556,7 @@ export function BulkOperationsManager({
                 inactivate_patients: 'Inativar',
                 add_tags: 'Adicionar Tags',
                 remove_tags: 'Remover Tags',
-              }).map(_([type,_label]) => {
+              }).map(([type, label]) => {
                 const config = getOperationConfig(type as BulkOperationType);
                 const Icon = config.icon;
 
@@ -702,7 +702,7 @@ export function BulkOperationsManager({
                       <TableCell className='text-right'>
                         <div className='flex items-center justify-end gap-1'>
                           {operation.undoable
-                            && operation.status === 'completed' && (_<Button
+                            && operation.status === 'completed' && (<Button
                               variant='outline'
                               size='sm'
                               onClick={() => {

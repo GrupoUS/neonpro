@@ -10,12 +10,12 @@ import React from 'react';
 import { TreatmentSuggestion } from '../TreatmentSuggestions';
 
 // Mock dos utilitários
-jest.mock(_'@/lib/utils/format',_() => ({
+jest.mock(('@/lib/utils/format', () => ({
   formatCurrency: (value: number) => `R$ ${value.toFixed(2)}`,
 }));
 
 // Mock do componente de confiança
-jest.mock(_'../TrustBadge',_() => ({
+jest.mock(('../TrustBadge', () => ({
   TrustBadge: ({ confidence }: { confidence: number }) => (
     <div data-testid='trust-badge' data-confidence={confidence}>
       Confidence: {confidence}%
@@ -23,7 +23,7 @@ jest.mock(_'../TrustBadge',_() => ({
   ),
 }));
 
-describe(_'TreatmentSuggestions Component',_() => {
+describe(('TreatmentSuggestions Component', () => {
   const mockSuggestions: TreatmentSuggestion[] = [
     {
       id: 'tx-001',
@@ -71,37 +71,37 @@ describe(_'TreatmentSuggestions Component',_() => {
     },
   ];
 
-  beforeEach(_() => {
+  beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  describe(_'Renderização',_() => {
-    it(_'deve renderizar o componente sem sugestões',_() => {
+  describe(('Renderização', () => {
+    it(('deve renderizar o componente sem sugestões', () => {
       render(<TreatmentSuggestions suggestions={[]} />);
       expect(
         screen.getByText('Nenhuma sugestão de tratamento disponível'),
       ).toBeInTheDocument();
     });
 
-    it(_'deve renderizar o componente com sugestões',_() => {
+    it(('deve renderizar o componente com sugestões', () => {
       render(<TreatmentSuggestions suggestions={mockSuggestions} />);
       expect(screen.getByText('Sugestões de Tratamento')).toBeInTheDocument();
       expect(screen.getByText('Toxina Botulínica')).toBeInTheDocument();
       expect(screen.getByText('Ácido Hialurônico')).toBeInTheDocument();
     });
 
-    it(_'deve renderizar o componente com loading',_() => {
+    it(('deve renderizar o componente com loading', () => {
       render(<TreatmentSuggestions suggestions={[]} isLoading={true} />);
       expect(screen.getByTestId('loading-spinner')).toBeInTheDocument();
     });
 
-    it(_'deve renderizar mensagem de erro',_() => {
+    it(('deve renderizar mensagem de erro', () => {
       const errorMessage = 'Erro ao carregar sugestões';
       render(<TreatmentSuggestions suggestions={[]} error={errorMessage} />);
       expect(screen.getByText(errorMessage)).toBeInTheDocument();
     });
 
-    it(_'deve ordenar sugestões por nível de confiança',_() => {
+    it(('deve ordenar sugestões por nível de confiança', () => {
       const unorderedSuggestions = [...mockSuggestions].reverse();
       render(<TreatmentSuggestions suggestions={unorderedSuggestions} />);
 
@@ -112,8 +112,8 @@ describe(_'TreatmentSuggestions Component',_() => {
     });
   });
 
-  describe(_'Detalhes do Tratamento',_() => {
-    it(_'deve exibir informações básicas do tratamento',_() => {
+  describe(('Detalhes do Tratamento', () => {
+    it(('deve exibir informações básicas do tratamento', () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[0]]} />);
 
       expect(screen.getByText('Toxina Botulínica')).toBeInTheDocument();
@@ -123,20 +123,20 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(screen.getByText('R$ 800.00 - R$ 1,200.00')).toBeInTheDocument();
     });
 
-    it(_'deve exibir informações de duração',_() => {
+    it(('deve exibir informações de duração', () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[0]]} />);
 
       expect(screen.getByText('30 min')).toBeInTheDocument();
       expect(screen.getByText('6 meses')).toBeInTheDocument();
     });
 
-    it(_'deve exibir score de adequação',_() => {
+    it(('deve exibir score de adequação', () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[0]]} />);
 
       expect(screen.getByText('95% adequado')).toBeInTheDocument();
     });
 
-    it(_'deve exibir badge de confiança',_() => {
+    it(('deve exibir badge de confiança', () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[0]]} />);
 
       const trustBadge = screen.getByTestId('trust-badge');
@@ -144,14 +144,14 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(trustBadge).toHaveAttribute('data-confidence', '92');
     });
 
-    it(_'deve exibir benefícios',_() => {
+    it(('deve exibir benefícios', () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[0]]} />);
 
       expect(screen.getByText('Rápida recuperação')).toBeInTheDocument();
       expect(screen.getByText('Resultados naturais')).toBeInTheDocument();
     });
 
-    it(_'deve exibir considerações',_() => {
+    it(('deve exibir considerações', () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[0]]} />);
 
       expect(
@@ -160,8 +160,8 @@ describe(_'TreatmentSuggestions Component',_() => {
     });
   });
 
-  describe(_'Interação com o Usuário',_() => {
-    it(_'deve permitir selecionar um tratamento',_async () => {
+  describe(('Interação com o Usuário', () => {
+    it(_'deve permitir selecionar um tratamento',async () => {
       const onTreatmentSelect = jest.fn();
       render(
         <TreatmentSuggestions
@@ -176,7 +176,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(onTreatmentSelect).toHaveBeenCalledWith(mockSuggestions[0]);
     });
 
-    it(_'deve permitir expandir detalhes do tratamento',_async () => {
+    it(_'deve permitir expandir detalhes do tratamento',async () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[0]]} />);
 
       const expandButton = screen.getByRole('button', { name: /detalhes/i });
@@ -188,7 +188,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve permitir comparar tratamentos',_async () => {
+    it(_'deve permitir comparar tratamentos',async () => {
       render(<TreatmentSuggestions suggestions={mockSuggestions} />);
 
       // Selecionar primeiro tratamento para comparação
@@ -209,7 +209,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve permitir agendar consulta',_async () => {
+    it(_'deve permitir agendar consulta',async () => {
       const onScheduleConsultation = jest.fn();
       render(
         <TreatmentSuggestions
@@ -227,8 +227,8 @@ describe(_'TreatmentSuggestions Component',_() => {
     });
   });
 
-  describe(_'Filtros e Ordenação',_() => {
-    it(_'deve permitir filtrar por categoria',_async () => {
+  describe(('Filtros e Ordenação', () => {
+    it(_'deve permitir filtrar por categoria',async () => {
       render(<TreatmentSuggestions suggestions={mockSuggestions} />);
 
       const categoryFilter = screen.getByLabelText(/filtrar por categoria/i);
@@ -238,7 +238,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(suggestionElements).toHaveLength(2);
     });
 
-    it(_'deve permitir filtrar por faixa de preço',_async () => {
+    it(_'deve permitir filtrar por faixa de preço',async () => {
       render(<TreatmentSuggestions suggestions={mockSuggestions} />);
 
       const minPriceInput = screen.getByLabelText(/preço mínimo/i);
@@ -251,7 +251,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(screen.getByText('Toxina Botulínica')).toBeInTheDocument();
     });
 
-    it(_'deve permitir ordenar por diferentes critérios',_async () => {
+    it(_'deve permitir ordenar por diferentes critérios',async () => {
       render(<TreatmentSuggestions suggestions={mockSuggestions} />);
 
       const sortBySelect = screen.getByLabelText(/ordenar por/i);
@@ -264,8 +264,8 @@ describe(_'TreatmentSuggestions Component',_() => {
     });
   });
 
-  describe(_'Acessibilidade',_() => {
-    it(_'deve não ter violações de acessibilidade',_async () => {
+  describe(('Acessibilidade', () => {
+    it(_'deve não ter violações de acessibilidade',async () => {
       const { container } = render(
         <TreatmentSuggestions suggestions={mockSuggestions} />,
       );
@@ -274,7 +274,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(results).toHaveNoViolations();
     });
 
-    it(_'deve ter atributos ARIA corretos',_() => {
+    it(('deve ter atributos ARIA corretos', () => {
       render(<TreatmentSuggestions suggestions={mockSuggestions} />);
 
       const suggestionsList = screen.getByRole('list');
@@ -284,13 +284,13 @@ describe(_'TreatmentSuggestions Component',_() => {
       );
 
       const suggestionItems = screen.getAllByRole('listitem');
-      suggestionItems.forEach(_(item, _index) => {
+      suggestionItems.forEach((item, _index) => {
         expect(item).toHaveAttribute('aria-setsize', '2');
         expect(item).toHaveAttribute('aria-posinset', (index + 1).toString());
       });
     });
 
-    it(_'deve suportar navegação por teclado',_async () => {
+    it(_'deve suportar navegação por teclado',async () => {
       render(<TreatmentSuggestions suggestions={mockSuggestions} />);
 
       const firstTreatment = screen.getByTestId('treatment-suggestion-tx-001');
@@ -316,7 +316,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(onTreatmentSelect).toHaveBeenCalledWith(mockSuggestions[0]);
     });
 
-    it(_'deve ter descrições adequadas para leitores de tela',_() => {
+    it(('deve ter descrições adequadas para leitores de tela', () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[0]]} />);
 
       const treatmentCard = screen.getByTestId('treatment-suggestion-tx-001');
@@ -330,8 +330,8 @@ describe(_'TreatmentSuggestions Component',_() => {
     });
   });
 
-  describe(_'Considerações de Saúde',_() => {
-    it(_'deve exibir avisos de contraindicação',_() => {
+  describe(('Considerações de Saúde', () => {
+    it(('deve exibir avisos de contraindicação', () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[0]]} />);
 
       expect(screen.getByText('⚠️ Contraindicado para:')).toBeInTheDocument();
@@ -340,7 +340,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve exibir avisos de precaução',_() => {
+    it(('deve exibir avisos de precaução', () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[1]]} />);
 
       expect(screen.getByText('⚠️ Precaução para:')).toBeInTheDocument();
@@ -349,7 +349,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       ).toBeInTheDocument();
     });
 
-    it(_'deve permitir ver detalhes de saúde',_async () => {
+    it(_'deve permitir ver detalhes de saúde',async () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[0]]} />);
 
       const healthDetailsButton = screen.getByRole('button', {
@@ -362,8 +362,8 @@ describe(_'TreatmentSuggestions Component',_() => {
     });
   });
 
-  describe(_'Responsividade',_() => {
-    it(_'deve renderizar corretamente em dispositivos móveis',_() => {
+  describe(('Responsividade', () => {
+    it(('deve renderizar corretamente em dispositivos móveis', () => {
       // Simular viewport móvel
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -378,12 +378,12 @@ describe(_'TreatmentSuggestions Component',_() => {
 
       // Verificar se elementos estão adaptados para mobile
       const treatmentCards = screen.getAllByTestId(/treatment-suggestion-/);
-      treatmentCards.forEach(_card => {
+      treatmentCards.forEach(card => {
         expect(card).toHaveClass('mobile-card');
       });
     });
 
-    it(_'deve renderizar corretamente em tablets',_() => {
+    it(('deve renderizar corretamente em tablets', () => {
       // Simular viewport tablet
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -397,7 +397,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(tabletLayout).toBeInTheDocument();
     });
 
-    it(_'deve renderizar corretmente em desktop',_() => {
+    it(('deve renderizar corretmente em desktop', () => {
       // Simular viewport desktop
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -412,9 +412,9 @@ describe(_'TreatmentSuggestions Component',_() => {
     });
   });
 
-  describe(_'Performance',_() => {
-    it(_'deve renderizar rapidamente com muitas sugestões',_() => {
-      const manySuggestions = Array.from({ length: 50 },_(_,_i) => ({
+  describe(('Performance', () => {
+    it(('deve renderizar rapidamente com muitas sugestões', () => {
+      const manySuggestions = Array.from.*}, (_, i) => ({
         ...mockSuggestions[0],
         id: `tx-${i}`,
         name: `Tratamento ${i}`,
@@ -427,18 +427,18 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(endTime - startTime).toBeLessThan(1000); // Menos de 1 segundo
     });
 
-    it(_'deve lazy load imagens quando necessário',_() => {
+    it(('deve lazy load imagens quando necessário', () => {
       render(<TreatmentSuggestions suggestions={mockSuggestions} />);
 
       const images = screen.getAllByRole('img');
-      images.forEach(_img => {
+      images.forEach(img => {
         expect(img).toHaveAttribute('loading', 'lazy');
       });
     });
   });
 
-  describe(_'Testes de Integração',_() => {
-    it(_'deve integrar com sistema de agendamento',_async () => {
+  describe(('Testes de Integração', () => {
+    it(_'deve integrar com sistema de agendamento',async () => {
       const onScheduleConsultation = jest.fn();
       render(
         <TreatmentSuggestions
@@ -460,7 +460,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       );
     });
 
-    it(_'deve integrar com sistema de preferências do usuário',_async () => {
+    it(_'deve integrar com sistema de preferências do usuário',async () => {
       const userPreferences = {
         preferredCategories: ['preenchimento'],
         budgetRange: { min: 500, max: 2000 },
@@ -477,7 +477,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(screen.getByText('Toxina Botulínica')).toBeInTheDocument();
     });
 
-    it(_'deve enviar eventos de analytics',_() => {
+    it(('deve enviar eventos de analytics', () => {
       const mockAnalytics = {
         track: jest.fn(),
       };
@@ -503,8 +503,8 @@ describe(_'TreatmentSuggestions Component',_() => {
     });
   });
 
-  describe(_'Edge Cases',_() => {
-    it(_'deve lidar com dados incompletos',_() => {
+  describe(('Edge Cases', () => {
+    it(('deve lidar com dados incompletos', () => {
       const incompleteSuggestion = {
         ...mockSuggestions[0],
         priceRange: undefined,
@@ -517,7 +517,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(screen.queryByText(/R\$/)).not.toBeInTheDocument();
     });
 
-    it(_'deve lidar com sugestões duplicadas',_() => {
+    it(('deve lidar com sugestões duplicadas', () => {
       const duplicateSuggestions = [mockSuggestions[0], mockSuggestions[0]];
 
       render(<TreatmentSuggestions suggestions={duplicateSuggestions} />);
@@ -528,7 +528,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(suggestionElements).toHaveLength(1); // Deve deduplicar
     });
 
-    it(_'deve lidar com strings muito longas',_() => {
+    it(('deve lidar com strings muito longas', () => {
       const longDescription = 'A'.repeat(1000);
       const longSuggestion = {
         ...mockSuggestions[0],
@@ -541,7 +541,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(description).toHaveClass('truncated');
     });
 
-    it(_'deve lidar com valores numéricos extremos',_() => {
+    it(('deve lidar com valores numéricos extremos', () => {
       const extremePriceSuggestion = {
         ...mockSuggestions[0],
         priceRange: { min: 0, max: 999999 },
@@ -555,14 +555,14 @@ describe(_'TreatmentSuggestions Component',_() => {
     });
   });
 
-  describe(_'Localização',_() => {
-    it(_'deve usar formato de moeda brasileiro',_() => {
+  describe(('Localização', () => {
+    it(('deve usar formato de moeda brasileiro', () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[0]]} />);
 
       expect(screen.getByText('R$ 800.00 - R$ 1,200.00')).toBeInTheDocument();
     });
 
-    it(_'deve usar português brasileiro nos textos',_() => {
+    it(('deve usar português brasileiro nos textos', () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[0]]} />);
 
       expect(screen.getByText('Sugestões de Tratamento')).toBeInTheDocument();
@@ -570,7 +570,7 @@ describe(_'TreatmentSuggestions Component',_() => {
       expect(screen.getByText('detalhes')).toBeInTheDocument();
     });
 
-    it(_'deve formatar datas corretamente',_() => {
+    it(('deve formatar datas corretamente', () => {
       render(<TreatmentSuggestions suggestions={[mockSuggestions[0]]} />);
 
       expect(screen.getByText('30 min')).toBeInTheDocument();

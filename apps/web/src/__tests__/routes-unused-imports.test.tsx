@@ -2,11 +2,11 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { describe, expect, it } from 'vitest';
 
-describe('TDD: Unused Component Imports Detection - Web Route Files',_() => {
+describe('TDD: Unused Component Imports Detection - Web Route Files',() {
   const webRoutesPath = join(process.cwd(), 'src/routes');
 
-  describe(_'Dashboard Main Route - Unused Component Imports',_() => {
-    it(_'should detect unused AccessiblePatientCard import',_() => {
+  describe(('Dashboard Main Route - Unused Component Imports', () => {
+    it(('should detect unused AccessiblePatientCard import', () => {
       const filePath = join(webRoutesPath, 'dashboard/main.tsx');
       const content = readFileSync(filePath, 'utf8');
 
@@ -18,7 +18,7 @@ describe('TDD: Unused Component Imports Detection - Web Route Files',_() => {
       expect(hasAccessiblePatientCardImport && !usesAccessiblePatientCard).toBe(false);
     });
 
-    it(_'should detect unused PatientDashboardStats import',_() => {
+    it(('should detect unused PatientDashboardStats import', () => {
       const filePath = join(webRoutesPath, 'dashboard/main.tsx');
       const content = readFileSync(filePath, 'utf8');
 
@@ -29,7 +29,7 @@ describe('TDD: Unused Component Imports Detection - Web Route Files',_() => {
       expect(hasPatientDashboardStatsImport && !usesPatientDashboardStats).toBe(false);
     });
 
-    it(_'should detect unused FocusCards import',_() => {
+    it(('should detect unused FocusCards import', () => {
       const filePath = join(webRoutesPath, 'dashboard/main.tsx');
       const content = readFileSync(filePath, 'utf8');
 
@@ -40,7 +40,7 @@ describe('TDD: Unused Component Imports Detection - Web Route Files',_() => {
       expect(hasFocusCardsImport && !usesFocusCards).toBe(false);
     });
 
-    it(_'should detect unused Input import',_() => {
+    it(('should detect unused Input import', () => {
       const filePath = join(webRoutesPath, 'dashboard/main.tsx');
       const content = readFileSync(filePath, 'utf8');
 
@@ -51,7 +51,7 @@ describe('TDD: Unused Component Imports Detection - Web Route Files',_() => {
       expect(hasInputImport && !usesInput).toBe(false);
     });
 
-    it(_'should detect unused Progress import',_() => {
+    it(('should detect unused Progress import', () => {
       const filePath = join(webRoutesPath, 'dashboard/main.tsx');
       const content = readFileSync(filePath, 'utf8');
 
@@ -62,7 +62,7 @@ describe('TDD: Unused Component Imports Detection - Web Route Files',_() => {
       expect(hasProgressImport && !usesProgress).toBe(false);
     });
 
-    it(_'should detect unused Skeleton import',_() => {
+    it(('should detect unused Skeleton import', () => {
       const filePath = join(webRoutesPath, 'dashboard/main.tsx');
       const content = readFileSync(filePath, 'utf8');
 
@@ -73,7 +73,7 @@ describe('TDD: Unused Component Imports Detection - Web Route Files',_() => {
       expect(hasSkeletonImport && !usesSkeleton).toBe(false);
     });
 
-    it(_'should detect unused usePatientStats hook',_() => {
+    it(('should detect unused usePatientStats hook', () => {
       const filePath = join(webRoutesPath, 'dashboard/main.tsx');
       const content = readFileSync(filePath, 'utf8');
 
@@ -83,7 +83,7 @@ describe('TDD: Unused Component Imports Detection - Web Route Files',_() => {
       expect(hasUsePatientStatsImport && !usesUsePatientStats).toBe(false);
     });
 
-    it(_'should detect unused useRealtimeSubscription hook',_() => {
+    it(('should detect unused useRealtimeSubscription hook', () => {
       const filePath = join(webRoutesPath, 'dashboard/main.tsx');
       const content = readFileSync(filePath, 'utf8');
 
@@ -113,8 +113,8 @@ describe('TDD: Unused Component Imports Detection - Web Route Files',_() => {
     });
   });
 
-  describe(_'AI Insights Route - Unused Component Imports',_() => {
-    it(_'should detect unused AccessiblePatientCard import',_() => {
+  describe(('AI Insights Route - Unused Component Imports', () => {
+    it(('should detect unused AccessiblePatientCard import', () => {
       const filePath = join(webRoutesPath, 'patients/ai-insights.tsx');
       const content = readFileSync(filePath, 'utf8');
 
@@ -125,7 +125,7 @@ describe('TDD: Unused Component Imports Detection - Web Route Files',_() => {
       expect(hasAccessiblePatientCardImport && !usesAccessiblePatientCard).toBe(false);
     });
 
-    it(_'should detect unused Progress import',_() => {
+    it(('should detect unused Progress import', () => {
       const filePath = join(webRoutesPath, 'patients/ai-insights.tsx');
       const content = readFileSync(filePath, 'utf8');
 
@@ -136,7 +136,7 @@ describe('TDD: Unused Component Imports Detection - Web Route Files',_() => {
       expect(hasProgressImport && !usesProgress).toBe(false);
     });
 
-    it(_'should detect unused Skeleton import',_() => {
+    it(('should detect unused Skeleton import', () => {
       const filePath = join(webRoutesPath, 'patients/ai-insights.tsx');
       const content = readFileSync(filePath, 'utf8');
 

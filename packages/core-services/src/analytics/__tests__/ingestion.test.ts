@@ -25,9 +25,9 @@ import {
   HealthStatus,
 } from "../adapters/ingestion-adapter";
 
-describe(_"Ingestion Types and Adapters",_() => {
-  describe(_"Type Guards",_() => {
-    it(_"should validate IngestionEvent objects",_() => {
+describe("Ingestion Types and Adapters", () => {
+  describe("Type Guards", () => {
+    it("should validate IngestionEvent objects", () => {
       const validEvent: IngestionEvent = {
         id: "event_001",
         eventType: "data_received",
@@ -58,7 +58,7 @@ describe(_"Ingestion Types and Adapters",_() => {
       expect(isIngestionEvent(null)).toBe(false);
     });
 
-    it(_"should validate IngestionConfig objects",_() => {
+    it("should validate IngestionConfig objects", () => {
       const validConfig: IngestionConfig = {
         sourceId: "db_source_001",
         sourceType: "database",
@@ -86,7 +86,7 @@ describe(_"Ingestion Types and Adapters",_() => {
       expect(isIngestionConfig({})).toBe(false);
     });
 
-    it(_"should validate ValidationRule objects",_() => {
+    it("should validate ValidationRule objects", () => {
       const validRule: ValidationRule = {
         ruleId: "rule_001",
         description: "Required field validation",
@@ -101,7 +101,7 @@ describe(_"Ingestion Types and Adapters",_() => {
     });
   });
 
-  describe(_"BaseIngestionAdapter",_() => {
+  describe("BaseIngestionAdapter", () => {
     let adapter: TestIngestionAdapter;
     let mockConfig: IngestionConfig;
 
@@ -176,7 +176,7 @@ describe(_"Ingestion Types and Adapters",_() => {
       }
     }
 
-    beforeEach(_() => {
+    beforeEach(() => {
       mockConfig = {
         sourceId: "test_source",
         sourceType: "database",
@@ -203,7 +203,7 @@ describe(_"Ingestion Types and Adapters",_() => {
       adapter = new TestIngestionAdapter("test_adapter", mockConfig);
     });
 
-    it(_"should initialize correctly",_() => {
+    it("should initialize correctly", () => {
       expect(adapter.adapterId).toBe("test_adapter");
       expect(adapter.config).toBe(mockConfig);
       expect(adapter.isConnected()).toBe(false);
@@ -219,7 +219,7 @@ describe(_"Ingestion Types and Adapters",_() => {
       expect(adapter.isConnected()).toBe(false);
     });
 
-    it(_"should manage event listeners",_() => {
+    it("should manage event listeners", () => {
       const mockHandler = vi.fn();
       const eventType: IngestionEventType = "data_received";
 
@@ -295,7 +295,7 @@ describe(_"Ingestion Types and Adapters",_() => {
       expect(Array.isArray(healthStatus.errors)).toBe(true);
     });
 
-    it(_"should validate data using validation rules",_() => {
+    it("should validate data using validation rules", () => {
       const testData = [
         { patientId: "P001", name: "John Doe" },
         { patientId: "", name: "Jane Doe" }, // Invalid: empty patientId
@@ -319,7 +319,7 @@ describe(_"Ingestion Types and Adapters",_() => {
       expect(result.errors).toHaveLength(2);
     });
 
-    it(_"should transform data using transformation rules",_() => {
+    it("should transform data using transformation rules", () => {
       const testData = [
         { oldField: "value1", otherField: "keep1" },
         { oldField: "value2", otherField: "keep2" },
@@ -343,11 +343,11 @@ describe(_"Ingestion Types and Adapters",_() => {
     });
   });
 
-  describe(_"DatabaseIngestionAdapter",_() => {
+  describe("DatabaseIngestionAdapter", () => {
     let dbAdapter: DatabaseIngestionAdapter;
     let mockConfig: IngestionConfig;
 
-    beforeEach(_() => {
+    beforeEach(() => {
       mockConfig = {
         sourceId: "db_source",
         sourceType: "database",
@@ -407,11 +407,11 @@ describe(_"Ingestion Types and Adapters",_() => {
     });
   });
 
-  describe(_"APIIngestionAdapter",_() => {
+  describe("APIIngestionAdapter", () => {
     let apiAdapter: APIIngestionAdapter;
     let mockConfig: IngestionConfig;
 
-    beforeEach(_() => {
+    beforeEach(() => {
       mockConfig = {
         sourceId: "api_source",
         sourceType: "api",
@@ -454,8 +454,8 @@ describe(_"Ingestion Types and Adapters",_() => {
     });
   });
 
-  describe(_"Data Quality Assessment",_() => {
-    it(_"should assess data quality dimensions",_() => {
+  describe("Data Quality Assessment", () => {
+    it("should assess data quality dimensions", () => {
       const assessment: DataQualityAssessment = {
         assessmentId: "quality_001",
         timestamp: new Date(),
@@ -490,8 +490,8 @@ describe(_"Ingestion Types and Adapters",_() => {
     });
   });
 
-  describe(_"Compliance Validation",_() => {
-    it(_"should validate compliance with healthcare regulations",_() => {
+  describe("Compliance Validation", () => {
+    it("should validate compliance with healthcare regulations", () => {
       const validation: ComplianceValidationResult = {
         validationId: "compliance_001",
         framework: "LGPD",
@@ -520,8 +520,8 @@ describe(_"Ingestion Types and Adapters",_() => {
     });
   });
 
-  describe(_"Error Handling",_() => {
-    it(_"should handle and categorize ingestion errors",_() => {
+  describe("Error Handling", () => {
+    it("should handle and categorize ingestion errors", () => {
       const error: IngestionError = {
         errorId: "error_001",
         type: "validation_error",
@@ -551,7 +551,7 @@ describe(_"Ingestion Types and Adapters",_() => {
       expect(error.recovery?.suggestions).toHaveLength(3);
     });
 
-    it(_"should handle different error types",_() => {
+    it("should handle different error types", () => {
       const errorTypes: IngestionErrorType[] = [
         "connection_error",
         "authentication_error",
@@ -564,14 +564,14 @@ describe(_"Ingestion Types and Adapters",_() => {
         "unknown_error",
       ];
 
-      errorTypes.forEach(_(errorType) => {
+      errorTypes.forEach((errorType) => {
         expect(typeof errorType).toBe("string");
       });
     });
   });
 
-  describe(_"Monitoring Metrics",_() => {
-    it(_"should track comprehensive monitoring metrics",_() => {
+  describe("Monitoring Metrics", () => {
+    it("should track comprehensive monitoring metrics", () => {
       const metrics: IngestionMonitoringMetrics = {
         period: {
           start: new Date(Date.now() - 3600000), // 1 hour ago
@@ -610,8 +610,8 @@ describe(_"Ingestion Types and Adapters",_() => {
     });
   });
 
-  describe(_"Stream Configuration",_() => {
-    it(_"should configure real-time data streams",_() => {
+  describe("Stream Configuration", () => {
+    it("should configure real-time data streams", () => {
       const streamConfig: StreamConfig = {
         streamId: "patient_vitals_stream",
         source: {
@@ -644,8 +644,8 @@ describe(_"Ingestion Types and Adapters",_() => {
     });
   });
 
-  describe(_"Webhook Configuration",_() => {
-    it(_"should configure webhook endpoints for external systems",_() => {
+  describe("Webhook Configuration", () => {
+    it("should configure webhook endpoints for external systems", () => {
       const webhookConfig: WebhookConfig = {
         webhookId: "compliance_alerts",
         endpoint: {

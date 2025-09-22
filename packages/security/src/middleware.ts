@@ -75,7 +75,7 @@ export function inputValidation() {
           const sanitizedFormData = sanitizeObject(formData);
           c.set('sanitizedFormData', sanitizedFormData);
         }
-      } catch (_error) {
+      } catch (error) {
         // If body parsing fails, continue to let error handlers deal with it
         console.warn('Failed to parse request body for validation:', error);
       }
@@ -192,7 +192,7 @@ export function authentication() {
 
       // For now, just set a placeholder user but use the token for logging
       console.log('Token received:', token.substring(0, 10) + '...');
-      c.set('user', { id: 'placeholder', _role: 'user' });
+      c.set('user', { id: 'placeholder', _role: 'user_ });
 
       await next();
     } catch (_error: unknown) {
@@ -272,7 +272,7 @@ export function securityLogging() {
         userAgent: userAgent.substring(0, 100), // Truncate for privacy
         timestamp: new Date().toISOString(),
       });
-    } catch (_error) {
+    } catch (error) {
       const duration = Date.now() - startTime;
 
       // Log errors and security events
@@ -315,7 +315,7 @@ export function healthcareDataProtection() {
 
       console.log('[Healthcare Access]', {
         requestId: c.get('requestId'),
-        _userId: user?.id || 'anonymous',
+        _userId: user?.id || 'anonymous_,
         patientId: patientId ? '[REDACTED]' : undefined,
         endpoint: c.req.path,
         method: c.req.method,
@@ -403,7 +403,7 @@ async function validateLGPDConsent(
       'LGPD consent validation not fully implemented - allowing access',
     );
     return true;
-  } catch (_error) {
+  } catch (error) {
     console.error('LGPD consent validation failed:', error);
     // Fail securely - deny access if consent validation fails
     return false;

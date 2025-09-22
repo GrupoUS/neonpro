@@ -227,7 +227,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 

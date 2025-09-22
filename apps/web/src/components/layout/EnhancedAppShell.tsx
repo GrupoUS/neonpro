@@ -36,8 +36,8 @@ const LoadingFallback = () => (
 );
 
 // Error fallback component
-const ErrorFallback = (_{
-  error,_resetError,
+const ErrorFallback = ({
+  error,resetError,
 }: {
   error: Error;
   resetError: () => void;
@@ -76,7 +76,7 @@ const ConnectionStatus = () => {
   >('connecting');
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
-  useEffect(_() => {
+  useEffect(() => {
     // Monitor Supabase connection
     const channel = supabase.channel('connection-status');
 
@@ -160,7 +160,7 @@ const PerformanceMetrics = () => {
 const useHealthcareRealtimeSubscriptions = () => {
   const { user } = useAuth();
 
-  useEffect(_() => {
+  useEffect(() => {
     if (!user) return;
 
     // Patient data changes
@@ -284,12 +284,12 @@ const useHealthcareRealtimeSubscriptions = () => {
 const useHealthcareRoutePrefetch = () => {
   const location = window.location.pathname;
 
-  useEffect(_() => {
+  useEffect(() => {
     // Prefetch based on healthcare-specific routes
     if (location.startsWith('/patients')) {
       // Prefetch patient-related data
       queryClient.prefetchQuery({
-        queryKey: ['patients',_'health-stats'],
+        queryKey: ['patients', 'health-stats'],
         queryFn: async () => {
           const { data } = await supabase
             .from('patient_health_stats')
@@ -304,7 +304,7 @@ const useHealthcareRoutePrefetch = () => {
     if (location.startsWith('/appointments')) {
       // Prefetch appointment data
       queryClient.prefetchQuery({
-        queryKey: ['appointments',_'healthcare-metrics'],
+        queryKey: ['appointments', 'healthcare-metrics'],
         queryFn: async () => {
           const today = new Date().toISOString().split('T')[0];
           const { data } = await supabase
@@ -321,7 +321,7 @@ const useHealthcareRoutePrefetch = () => {
     if (location.startsWith('/services')) {
       // Prefetch healthcare services
       queryClient.prefetchQuery({
-        queryKey: ['services',_'healthcare-procedures'],
+        queryKey: ['services', 'healthcare-procedures'],
         queryFn: async () => {
           const { data } = await supabase
             .from('healthcare_services')
@@ -344,7 +344,7 @@ const useSessionMonitoring = () => {
     { retentionDays: 30, isSensitiveData: true },
   );
 
-  useEffect(_() => {
+  useEffect(() => {
     if (!user) return;
 
     // Update activity timestamp
@@ -374,13 +374,13 @@ const useSessionMonitoring = () => {
       'touchstart',
       'click',
     ];
-    activityEvents.forEach(_event => {
+    activityEvents.forEach(event => {
       window.addEventListener(event, handleActivity, { passive: true });
     });
 
     return () => {
       clearInterval(interval);
-      activityEvents.forEach(_event => {
+      activityEvents.forEach(event => {
         window.removeEventListener(event, handleActivity);
       });
     };

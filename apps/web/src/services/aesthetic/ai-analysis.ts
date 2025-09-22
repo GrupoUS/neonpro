@@ -293,7 +293,7 @@ export class AestheticAIAnalysisService {
     const suggestions: TreatmentSuggestion[] = [];
 
     // Analyze concerns and match with treatments
-    analysis.concerns.forEach(_concern => {
+    analysis.concerns.forEach(concern => {
       const concernLower = concern.toLowerCase();
 
       // Match treatments based on concerns
@@ -344,7 +344,7 @@ export class AestheticAIAnalysisService {
     });
 
     // Remove duplicates and add unique IDs
-    const uniqueSuggestions = suggestions.filter(_(suggestion,_index,_self) => index === self.findIndex(s => s.id === suggestion.id),
+    const uniqueSuggestions = suggestions.filter((suggestion,index, self) => index === self.findIndex(s => s.id === suggestion.id),
     );
 
     // Sort by priority and confidence
@@ -353,7 +353,7 @@ export class AestheticAIAnalysisService {
         ...suggestion,
         id: `${suggestion.id}-${Date.now()}-${Math.random().toString(36).substring(2)}`,
       }))
-      .sort(_(a,_b) => {
+      .sort((a, b) => {
         // Priority sorting: high > medium > low
         const priorityOrder = { high: 3, medium: 2, low: 1 };
         const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
@@ -516,7 +516,7 @@ export class AestheticAIAnalysisService {
 
     // Aggregate results
     const allConcerns = analyses.flatMap(a => a.concerns);
-    const concernCounts = allConcerns.reduce(_(acc,_concern) => {
+    const concernCounts = allConcerns.reduce((acc, concern) => {
         acc[concern] = (acc[concern] || 0) + 1;
         return acc;
       },
@@ -524,16 +524,16 @@ export class AestheticAIAnalysisService {
     );
 
     const primaryConcerns = Object.entries(concernCounts)
-      .sort(_([,_a],_[,_b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
-      .map(_([concern]) => concern);
+      .map(([concern]) => concern);
 
-    const averageSeverity = analyses.reduce(_(sum,_a) => sum + a.severity.overall, 0)
+    const averageSeverity = analyses.reduce((sum, a) => sum + a.severity.overall, 0)
       / analyses.length;
 
     // Generate combined treatment suggestions
     const allSuggestions = analyses.flatMap(a => this.generateTreatmentSuggestions(a));
-    const uniqueSuggestions = allSuggestions.filter(_(suggestion,_index,_self) => index === self.findIndex(s => s.id === suggestion.id),
+    const uniqueSuggestions = allSuggestions.filter((suggestion,index, self) => index === self.findIndex(s => s.id === suggestion.id),
     );
 
     return {
@@ -542,7 +542,7 @@ export class AestheticAIAnalysisService {
         primaryConcerns,
         averageSeverity,
         treatmentRecommendations: uniqueSuggestions
-          .sort(_(a,_b) => b.confidence - a.confidence)
+          .sort((a, b) => b.confidence - a.confidence)
           .slice(0, 8),
       },
     };
@@ -550,7 +550,7 @@ export class AestheticAIAnalysisService {
 }
 
 // Create default instance
-export const _aestheticAIAnalysisService = new AestheticAIAnalysisService({
+export const aestheticAIAnalysisService = new AestheticAIAnalysisService({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY || '',
   model: 'gpt-4-vision-preview',
   maxTokens: 1000,

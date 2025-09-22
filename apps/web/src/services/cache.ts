@@ -67,7 +67,7 @@ export class CacheService {
         }
       }
 
-      keysToDelete.forEach(_key => this.cache.delete(key));
+      keysToDelete.forEach(key => this.cache.delete(key));
     } else {
       // Exact match
       this.cache.delete(pattern);
@@ -126,7 +126,7 @@ export class CacheService {
     if (!this.cleanupScheduled) {
       this.cleanupScheduled = true;
 
-      setTimeout(_() => {
+      setTimeout(() => {
         this.cleanup();
         this.cleanupScheduled = false;
       }, 5 * 60 * 1000);
@@ -139,7 +139,7 @@ export class CacheService {
    * Clean up expired cache entries
    */
   private static cleanup(): void {
-    const _now = Date.now();
+    const now = Date.now();
     const keysToDelete: string[] = [];
 
     for (const [key, entry] of this.cache.entries()) {
@@ -148,6 +148,6 @@ export class CacheService {
       }
     }
 
-    keysToDelete.forEach(_key => this.cache.delete(key));
+    keysToDelete.forEach(key => this.cache.delete(key));
   }
 }

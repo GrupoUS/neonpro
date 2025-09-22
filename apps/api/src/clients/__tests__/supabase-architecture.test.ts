@@ -17,7 +17,7 @@ import type { Context } from 'hono';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Hono context for SSR integration testing
-const _mockHonoContext = {
+const mockHonoContext = {
   req: {
     header: vi.fn(),
     cookie: vi.fn(),
@@ -62,12 +62,12 @@ describe(_'Supabase Architecture Validation - Architect Review',_() => {
 
         // Admin client should NOT be used for user-facing operations
         const adminClient = createAdminClient();
-        expect(_() => adminClient.auth.signInWithPassword('user@email.com', 'password')).toThrow(
+        expect(() => adminClient.auth.signInWithPassword('user@email.com', 'password')).toThrow(
           'Admin client should not be used for user authentication',
         );
 
         // Server client should require cookie handlers
-        expect(_() => createServerClient(null as any)).toThrow(
+        expect(() => createServerClient(null as any)).toThrow(
           'Cookie handlers are required for server client',
         );
       });
@@ -347,7 +347,7 @@ describe(_'Supabase Architecture Validation - Architect Review',_() => {
         const { createServerClient } = await import('../supabase');
 
         const cookieManager = {
-          getAll: vi.fn(_() => [
+          getAll: vi.fn(() => [
             { name: 'sb-access-token', value: 'encrypted_token' },
             { name: 'sb-refresh-token', value: 'encrypted_refresh' },
           ]),
@@ -444,7 +444,7 @@ describe(_'Supabase Architecture Validation - Architect Review',_() => {
         });
 
         // Mock database unavailability
-        vi.spyOn(serverClient, 'from').mockImplementation(_() => {
+        vi.spyOn(serverClient, 'from').mockImplementation(() => {
           throw new Error('Database unavailable');
         });
 

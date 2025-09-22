@@ -165,7 +165,7 @@ async function anonymizePatientData(patientId: string, prisma: any) {
 // TRPC ROUTER IMPLEMENTATION
 // =====================================
 
-export const _patientsRouter = router({
+export const patientsRouter = router({
   /**
    * Create Patient with LGPD Compliance
    * Includes cryptographic consent management and audit logging
@@ -273,7 +273,7 @@ export const _patientsRouter = router({
           consentStatus: 'active',
           consentProof: consentProof.integrity,
         };
-      } catch (_error) {
+      } catch (error) {
         // Log failed attempt
         await ctx.prisma.auditTrail.create({
           data: {
@@ -372,7 +372,7 @@ export const _patientsRouter = router({
           consentExpiresAt: consent.expirationDate,
           dataMinimizationApplied: true,
         };
-      } catch (_error) {
+      } catch (error) {
         // Log access attempt failure
         await ctx.prisma.auditTrail.create({
           data: {
@@ -486,7 +486,7 @@ export const _patientsRouter = router({
             auditLogged: true,
           },
         };
-      } catch (_error) {
+      } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to retrieve patient list',
@@ -551,7 +551,7 @@ export const _patientsRouter = router({
           ...updatedPatient,
           updateProof: updateProof.integrity,
         };
-      } catch (_error) {
+      } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to update patient',
@@ -588,7 +588,7 @@ export const _patientsRouter = router({
           },
         );
 
-        const _result = await ctx.prisma.$transaction(async prisma => {
+        const result = await ctx.prisma.$transaction(async prisma => {
           // Update consent status
           await prisma.lGPDConsent.updateMany({
             where: {
@@ -644,7 +644,7 @@ export const _patientsRouter = router({
           withdrawalProof: withdrawalProof.integrity,
           message: 'Consent withdrawn and patient data anonymized per LGPD compliance',
         };
-      } catch (_error) {
+      } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to withdraw consent and anonymize data',

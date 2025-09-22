@@ -18,7 +18,7 @@ export const isValidOutcome = (outcome: AuditOutcome): boolean =>
   outcome === "error" ||
   outcome === "limit";
 
-export const _validateAuditEvent = (evt: AuditEvent): void => {
+export const validateAuditEvent = (evt: AuditEvent): void => {
   if (!isValidConsentStatus(evt.consentStatus))
     throw new Error("Invalid consentStatus");
   if (!isValidOutcome(evt.outcome)) throw new Error("Invalid outcome");

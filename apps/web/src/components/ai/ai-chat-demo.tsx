@@ -148,8 +148,8 @@ const demoScenarios = [
 /**
  * AI Chat Demo Component
  */
-export const AIChatDemo: React.FC<AIChatDemoProps> = (_{
-  showScenarios = true,_testMode = false,_}) => {
+export const AIChatDemo: React.FC<AIChatDemoProps> = ({
+  showScenarios = true, testMode = false, }) => {
   // State
   const [selectedScenario, setSelectedScenario] = useState('general');
   const [selectedPatient, setSelectedPatient] = useState<

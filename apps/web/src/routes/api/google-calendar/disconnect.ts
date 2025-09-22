@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-export const _Route = createFileRoute('/api/google-calendar/disconnect')({
+export const Route = createFileRoute('/api/google-calendar/disconnect')({
   POST: async ({ request }) => {
     try {
       const body = await request.json();

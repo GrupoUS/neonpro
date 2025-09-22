@@ -144,7 +144,7 @@ export function useCreateProfessionalService() {
 
   return useMutation({
     mutationFn: (_request: CreateProfessionalServiceRequest) =>
-      professionalServicesService.createProfessionalService(_request),
+      professionalServicesService.createProfessionalService(request),
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: professionalServicesKeys.all });
@@ -165,7 +165,7 @@ export function useUpdateProfessionalService() {
 
   return useMutation({
     mutationFn: (_request: UpdateProfessionalServiceRequest) =>
-      professionalServicesService.updateProfessionalService(_request),
+      professionalServicesService.updateProfessionalService(request),
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: professionalServicesKeys.all });
@@ -206,7 +206,7 @@ export function useBulkAssignServices() {
 
   return useMutation({
     mutationFn: (_request: BulkAssignServicesRequest) =>
-      professionalServicesService.bulkAssignServices(_request),
+      professionalServicesService.bulkAssignServices(request),
     onSuccess: count => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: professionalServicesKeys.all });
@@ -227,7 +227,7 @@ export function useSetPrimaryProfessional() {
 
   return useMutation({
     mutationFn: (_request: SetPrimaryProfessionalRequest) =>
-      professionalServicesService.setPrimaryProfessional(_request),
+      professionalServicesService.setPrimaryProfessional(request),
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: professionalServicesKeys.all });
@@ -249,7 +249,7 @@ export function useToggleProfessionalService() {
 
   return useMutation({
     mutationFn: async ({
-      isAssigned,_professionalServiceId,_createRequest,
+      isAssigned,professionalServiceId, createRequest,
     }: {
       isAssigned: boolean;
       professionalServiceId?: string;

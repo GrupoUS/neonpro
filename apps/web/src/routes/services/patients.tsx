@@ -43,7 +43,7 @@ export const Route = createFileRoute('/services/patients')({
 
         {/* Statistics cards skeleton */}
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6'>
-          {Array.from({ length: 4 }).map(_(_,_i) => (
+          {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className='h-24 bg-muted rounded-lg'></div>
           ))}
         </div>
@@ -51,7 +51,7 @@ export const Route = createFileRoute('/services/patients')({
         {/* Table skeleton */}
         <div className='bg-card rounded-lg border'>
           <div className='h-12 bg-muted rounded-t-lg mb-4'></div>
-          {Array.from({ length: 5 }).map(_(_,_i) => (
+          {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className='h-16 bg-muted/50 rounded mx-4 mb-2'></div>
           ))}
         </div>
@@ -60,7 +60,7 @@ export const Route = createFileRoute('/services/patients')({
   ),
 
   // Error boundary for patient data
-  errorComponent: (_{ error,_reset }) => (
+  errorComponent: ({ error, reset }) => (
     <div className='container mx-auto p-4 md:p-6'>
       <Card className='max-w-lg mx-auto text-center'>
         <CardHeader>
@@ -100,7 +100,7 @@ function PatientsPage() {
   // const search = Route.useSearch(); // Currently unused
 
   // Test Supabase connection on component mount
-  useEffect(_() => {
+  useEffect(() => {
     const runConnectionTest = async () => {
       try {
         const result = await testSupabaseConnection();
@@ -222,7 +222,7 @@ function PatientsPage() {
 
       {/* Main Patients Table with Error Boundary */}
       <ErrorBoundary
-        fallback={(_error: Error) => (_<Card>
+        fallback={(_error: Error) => (<Card>
             <CardContent className='p-6 text-center'>
               <AlertCircle className='w-8 h-8 text-destructive mx-auto mb-2' />
               <h3 className='font-semibold text-destructive mb-2'>
@@ -376,7 +376,7 @@ function PatientTableSkeleton() {
 
           {/* Table skeleton */}
           <div className='space-y-2'>
-            {Array.from({ length: 5 }).map(_(_,_i) => (
+            {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className='h-16 bg-muted/50 rounded'></div>
             ))}
           </div>
@@ -385,7 +385,7 @@ function PatientTableSkeleton() {
           <div className='flex justify-between items-center'>
             <div className='h-8 bg-muted rounded w-32'></div>
             <div className='flex gap-1'>
-              {Array.from({ length: 4 }).map(_(_,_i) => (
+              {Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className='h-8 w-8 bg-muted rounded'></div>
               ))}
             </div>

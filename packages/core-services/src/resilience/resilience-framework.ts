@@ -143,7 +143,7 @@ export class EnhancedCircuitBreaker {
       const result = await operation();
       this.recordSuccess();
       return result;
-    } catch (_error) {
+    } catch (error) {
       this.recordFailure();
       throw error;
     }
@@ -285,7 +285,7 @@ export class RetryPolicy {
       "authentication failed",
     ];
 
-    return nonRetryableMessages.some(_(msg) =>
+    return nonRetryableMessages.some((msg) =>
       error.message.toLowerCase().includes(msg),
     );
   }
@@ -310,8 +310,8 @@ export class TimeoutManager {
     operation: () => Promise<T>,
     _context: ExecutionContext,
   ): Promise<T> {
-    return new Promise(_(resolve,_reject) => {
-      const timeoutId = setTimeout(_() => {
+    return new Promise((resolve,_reject) => {
+      const timeoutId = setTimeout(() => {
         reject(
           new ResilienceError(
             `Operation timeout for ${context.operation}`,
@@ -322,11 +322,11 @@ export class TimeoutManager {
       }, this.config.overallMs);
 
       operation()
-        .then(_(result) => {
+        .then((result) => {
           clearTimeout(timeoutId);
           resolve(result);
         })
-        .catch(_(error) => {
+        .catch((error) => {
           clearTimeout(timeoutId);
           reject(error);
         });
@@ -364,7 +364,7 @@ export class HealthMonitor {
       consecutiveSuccesses: 0,
     };
 
-    const interval = setInterval(_async () => {
+    const interval = setInterval(async () => {
       await this.performHealthCheck(serviceName, healthCheck, health);
     }, this.config.intervalMs);
 
@@ -384,8 +384,8 @@ export class HealthMonitor {
       const startTime = Date.now();
       const isHealthy = await Promise.race([
         healthCheck(),
-        new Promise<boolean>(_(_,_reject) =>
-          setTimeout(_() => reject(new Error("Health check timeout")),
+        new Promise<boolean>((, reject) =>
+          setTimeout(() => reject(new Error("Health check timeout")),
             this.config.timeoutMs,
           ),
         ),
@@ -410,7 +410,7 @@ export class HealthMonitor {
       health.successRate =
         health.consecutiveSuccesses /
         (health.consecutiveSuccesses + health.consecutiveFailures);
-    } catch (_error) {
+    } catch (error) {
       health.isHealthy = false;
       health.errorMessage = (error as Error).message;
       health.lastCheck = new Date();
@@ -424,12 +424,12 @@ export class HealthMonitor {
   }
 
   getAllHealthStatus(): ServiceHealth[] {
-    return Array.from(this.healthChecks.values()).map(_(h) => h.health);
+    return Array.from(this.healthChecks.values()).map((h) => h.health);
   }
 
   unregisterService(serviceName: string): void {
     const service = this.healthChecks.get(serviceName);
-    if (_service) {
+    if (service) {
       clearInterval(service.interval);
       this.healthChecks.delete(serviceName);
     }
@@ -493,7 +493,7 @@ export class ResilienceFramework {
 
             this.metrics.successfulRequests++;
             return timeoutResult;
-          } catch (_error) {
+          } catch (error) {
             const shouldRetry = await retryPolicy.shouldRetry(
               error as Error,
               context,
@@ -507,7 +507,7 @@ export class ResilienceFramework {
             const delay = await retryPolicy.getDelay();
 
             if (delay > 0) {
-              await new Promise(_(resolve) => setTimeout(resolve, delay));
+              await new Promise((resolve) => setTimeout(resolve, delay));
             }
           }
         }
@@ -518,7 +518,7 @@ export class ResilienceFramework {
       this.updateAverageLatency(latency);
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       this.metrics.failedRequests++;
 
       if (error instanceof ResilienceError) {
@@ -664,7 +664,7 @@ export const EMERGENCY_RESILIENCE_CONFIG: ResilienceConfig = {
 // Validation Schemas
 // ============================================================================
 
-export const _ResilienceConfigSchema = z.object({
+export const ResilienceConfigSchema = z.object({
   circuitBreaker: z.object({
     failureThreshold: z.number().min(1).max(20),
     timeoutMs: z.number().min(1000).max(300000),

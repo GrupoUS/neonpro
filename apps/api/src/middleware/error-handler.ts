@@ -8,7 +8,7 @@ import { logger } from '../lib/logger';
 export async function errorHandler(c: Context, next: Next) {
   try {
     await next();
-  } catch (_error) {
+  } catch (error) {
     // Log the error
     logger.error('Unhandled error in API', {
       error: error instanceof Error ? error.message : String(error),

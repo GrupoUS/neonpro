@@ -70,7 +70,7 @@ function AdvancedAnimationsTest() {
   });
 
   // Performance monitoring
-  React.useEffect(_() => {
+  React.useEffect(() => {
     let frameCount = 0;
     let lastTime = performance.now();
     let animationFrameId: number;
@@ -309,7 +309,7 @@ function AdvancedAnimationsTest() {
                         </Label>
                         <Slider
                           value={[config.hoverBorderWidth]}
-                          onValueChange={(_[value]) =>
+                          onValueChange={([value]) =>
                             setConfig(prev => ({
                               ...prev,
                               hoverBorderWidth: value,
@@ -378,7 +378,7 @@ function AdvancedAnimationsTest() {
                         </Label>
                         <Slider
                           value={[config.shineBorderDuration]}
-                          onValueChange={(_[value]) =>
+                          onValueChange={([value]) =>
                             setConfig(prev => ({
                               ...prev,
                               shineBorderDuration: value,
@@ -707,6 +707,6 @@ function AdvancedAnimationsTest() {
   );
 }
 
-export const _Route = createFileRoute('/__tests/advanced-animations-test')({
+export const Route = createFileRoute('/__tests/advanced-animations-test')({
   component: AdvancedAnimationsTest,
 });

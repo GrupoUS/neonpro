@@ -111,7 +111,7 @@ export class CacheInvalidationStrategy {
     // Invalidate all related queries aggressively
     await Promise.all([
       this.queryClient.invalidateQueries({ queryKey: [tableName] }),
-      ...queryKeys.map(_(queryKey) =>
+      ...queryKeys.map((queryKey) =>
         this.queryClient.invalidateQueries({ queryKey }),
       ),
     ]);
@@ -192,7 +192,7 @@ export class CacheInvalidationStrategy {
     // Heuristics for when to use aggressive invalidation
     const criticalFields = ["status", "priority", "emergency", "cancelled"];
 
-    return criticalFields.some(_(field) =>
+    return criticalFields.some((field) =>
         payload[field] !== undefined &&
         (payload[field] === "emergency" || payload[field] === "high_priority"),
     );
@@ -307,7 +307,7 @@ export class EnhancedRealtimeManager {
         {
           event: "*",
           schema: "public",
-          table: tableName,_filter,_},
+          table: tableName,filter,_},
         async (
           _payload: RealtimePostgresChangesPayload<Record<string,_any>>,
         ) => {
@@ -351,7 +351,7 @@ export class EnhancedRealtimeManager {
       this.metrics.successfulEvents++;
       const latency = Date.now() - startTime;
       this.updateAverageLatency(latency);
-    } catch (_error) {
+    } catch (error) {
       this.metrics.failedEvents++;
       console.error("Error handling enhanced realtime event:", error);
 
@@ -472,11 +472,11 @@ export class EnhancedRealtimeManager {
 
     const intervalMs = options.fallbackPollingIntervalMs || 5000;
 
-    const interval = setInterval(_async () => {
+    const interval = setInterval(async () => {
       try {
         await this.performFallbackPolling(tableName, filter, options);
         this.metrics.fallbackPollingEvents++;
-      } catch (_error) {
+      } catch (error) {
         console.error("Fallback polling error:", error);
       }
     }, intervalMs);
@@ -585,14 +585,14 @@ export class EnhancedRealtimeManager {
     }
 
     // Wait before retry
-    await new Promise(_(resolve) => setTimeout(resolve, backoffMs));
+    await new Promise((resolve) => setTimeout(resolve, backoffMs));
 
     // Retry subscription
     this.subscribeToTable(tableName, filter, options);
   }
 
   private startHealthMonitoring(): void {
-    this.healthCheckInterval = setInterval(_async () => {
+    this.healthCheckInterval = setInterval(async () => {
       await this.performHealthCheck();
     }, 30000); // Check every 30 seconds
   }
@@ -663,7 +663,7 @@ export class EnhancedRealtimeManager {
           this.connectionHealth.retryBackoffMs * 1.5,
         );
       }
-    } catch (_error) {
+    } catch (error) {
       console.error("Realtime health check failed:", error);
       this.connectionHealth.isConnected = false;
       this.connectionHealth.quality = "disconnected";
@@ -682,7 +682,7 @@ export class EnhancedRealtimeManager {
   }
 
   private shouldRateLimit(channelName: string, rateLimitMs: number): boolean {
-    const _now = Date.now();
+    const now = Date.now();
     const lastUpdate = this.rateLimitMap.get(channelName) || 0;
 
     if (now - lastUpdate < rateLimitMs) {
@@ -725,7 +725,7 @@ export class EnhancedRealtimeManager {
   ): Promise<void> {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
     this.queryClient.setQueryData(_[tableName], (old: T[] | undefined) => {
-      return old?.filter(_(item) => item.id !== deletedRecord.id) || [];
+      return old?.filter((item) => item.id !== deletedRecord.id) || [];
     });
     this.queryClient.removeQueries({ queryKey: [tableName, deletedRecord.id] });
   }
@@ -737,7 +737,7 @@ export class EnhancedRealtimeManager {
     // Force immediate refetch for critical data
     await Promise.all([
       this.queryClient.invalidateQueries({ queryKey: [tableName] }),
-      ...(queryKeys || []).map(_(queryKey) =>
+      ...(queryKeys || []).map((queryKey) =>
         this.queryClient.invalidateQueries({ queryKey }),
       ),
     ]);
@@ -796,7 +796,7 @@ export class EnhancedRealtimeManager {
   }
 
   unsubscribeAll(): void {
-    this.channels.forEach(_(channel,_name) => {
+    this.channels.forEach((channel,_name) => {
       this.supabase.removeChannel(channel);
       this.clearFallbackPolling(name);
       console.log(`Unsubscribed from enhanced ${name}`);

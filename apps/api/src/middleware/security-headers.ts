@@ -84,7 +84,7 @@ export class SecurityHeadersMiddleware {
 
         // Add security-related custom headers
         if (this.config.customHeaders) {
-          Object.entries(this.config.customHeaders).forEach(_([key,_value]) => {
+          Object.entries(this.config.customHeaders).forEach(([key,_value]) => {
             res.setHeader(key, value);
           });
         }
@@ -109,7 +109,7 @@ export class SecurityHeadersMiddleware {
         });
 
         next();
-      } catch (_error) {
+      } catch (error) {
         this.logger.logError('security_headers_middleware_error', {
           error: error instanceof Error ? error.message : 'Unknown error',
           url: req.url,
@@ -189,7 +189,7 @@ export class SecurityHeadersMiddleware {
     };
 
     return Object.entries(cspDirectives)
-      .map(_([directive,_value]) => value ? `${directive} ${value}` : directive)
+      .map(([directive,_value]) => value ? `${directive} ${value}` : directive)
       .join('; ');
   }
 

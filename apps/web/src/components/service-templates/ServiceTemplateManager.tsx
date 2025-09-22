@@ -158,7 +158,7 @@ export function ServiceTemplateManager({
         </CardHeader>
         <CardContent>
           <div className='animate-pulse space-y-4'>
-            {Array.from({ length: 4 }).map(_(_,_i) => (
+            {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className='h-20 bg-muted rounded'></div>
             ))}
           </div>
@@ -275,7 +275,7 @@ export function ServiceTemplateManager({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='all'>Todos os tipos</SelectItem>
-                {Object.entries(SERVICE_TEMPLATE_TYPES).map(_([type,_config]) => (
+                {Object.entries(SERVICE_TEMPLATE_TYPES).map(([type, config]) => (
                     <SelectItem key={type} value={type}>
                       <div className='flex items-center gap-2'>
                         <div

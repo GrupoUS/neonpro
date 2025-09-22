@@ -40,8 +40,8 @@ function AnimationValidationSuite() {
   const startTimeRef = useRef<number>(0);
   const testTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-  const measurePerformance = useCallback(_() => {
-    const _now = performance.now();
+  const measurePerformance = useCallback(() => {
+    const now = performance.now();
     if (startTimeRef.current) {
       const frameTime = now - startTimeRef.current;
       frameTimeRef.current.push(frameTime);
@@ -51,7 +51,7 @@ function AnimationValidationSuite() {
         frameTimeRef.current = frameTimeRef.current.slice(-60);
       }
 
-      const avgFrameTime = frameTimeRef.current.reduce(_(a,_b) => a + b, 0)
+      const avgFrameTime = frameTimeRef.current.reduce((a, b) => a + b, 0)
         / frameTimeRef.current.length;
       const fps = Math.round(1000 / avgFrameTime);
 
@@ -69,7 +69,7 @@ function AnimationValidationSuite() {
     }
   }, [isRunning, animationCount]);
 
-  const startTest = useCallback(_() => {
+  const startTest = useCallback(() => {
     setIsRunning(true);
     setResults([]);
     frameTimeRef.current = [];
@@ -78,12 +78,12 @@ function AnimationValidationSuite() {
     measurePerformance();
 
     // Run test for specified duration
-    testTimeoutRef.current = setTimeout(_() => {
+    testTimeoutRef.current = setTimeout(() => {
       stopTest();
     }, testDuration[0] * 1000);
   }, [measurePerformance, testDuration]);
 
-  const stopTest = useCallback(_() => {
+  const stopTest = useCallback(() => {
     setIsRunning(false);
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
@@ -124,7 +124,7 @@ function AnimationValidationSuite() {
     setResults(validationResults);
   }, [metrics, animationCount]);
 
-  const testAccessibility = useCallback(_() => {
+  const testAccessibility = useCallback(() => {
     const prefersReducedMotion = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
     ).matches;
@@ -149,7 +149,7 @@ function AnimationValidationSuite() {
     setResults(prev => [...prev, ...accessibilityResults]);
   }, []);
 
-  useEffect(_() => {
+  useEffect(() => {
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
@@ -285,7 +285,7 @@ function AnimationValidationSuite() {
       </div>
 
       {/* Validation Results */}
-      {results.length > 0 && (_<Card className='p-6'>
+      {results.length > 0 && (<Card className='p-6'>
           <h2 className='text-xl font-semibold mb-4'>Validation Results</h2>
           <div className='space-y-3'>
             {results.map((result, _index) => (
@@ -318,7 +318,7 @@ function AnimationValidationSuite() {
       <Card className='p-6'>
         <h2 className='text-xl font-semibold mb-4'>Animation Test Grid</h2>
         <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4'>
-          {Array.from({ length: animationCount[0] },_(_,_i) => (
+          {Array.from.*}, (_, i) => (
             <UniversalButton
               key={i}
               variant='outline'
@@ -344,6 +344,6 @@ function AnimationValidationSuite() {
   );
 }
 
-export const _Route = createFileRoute('/__tests/animation-validation-suite')({
+export const Route = createFileRoute('/__tests/animation-validation-suite')({
   component: AnimationValidationSuite,
 });

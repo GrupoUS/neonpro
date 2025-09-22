@@ -150,8 +150,8 @@ interface HealthcareDashboardProps {
 type TimeRange = 'today' | 'week' | 'month' | 'quarter' | 'year';
 type ViewMode = 'overview' | 'patients' | 'appointments' | 'treatments' | 'financial' | 'staff';
 
-export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = (_{
-  className,_onRefresh,_onViewPatient,_onViewAppointment,_onViewTreatment,_testId = 'healthcare-dashboard',_}) => {
+export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
+  className,onRefresh, onViewPatient,onViewAppointment, onViewTreatment, testId = 'healthcare-dashboard', }) => {
   const [currentTimeRange, setCurrentTimeRange] = useState<TimeRange>('today');
   const [currentView, setCurrentView] = useState<ViewMode>('overview');
   const [isLoading, setIsLoading] = useState(false);
@@ -276,11 +276,11 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = (_{
   ]);
 
   const [financialData, setFinancialData] = useState<FinancialData>({
-    dailyRevenue: Array.from({ length: 7 },_(_,_i) => ({
+    dailyRevenue: Array.from.*}, (_, i) => ({
       date: format(subDays(new Date(), 6 - i), 'yyyy-MM-dd'),
       revenue: Math.floor(Math.random() * 15000) + 8000,
     })),
-    monthlyRevenue: Array.from({ length: 12 },_(_,_i) => ({
+    monthlyRevenue: Array.from.*}, (_, i) => ({
       month: format(new Date(2024, i, 1), 'MMM', { locale: ptBR }),
       revenue: Math.floor(Math.random() * 300000) + 200000,
       projection: Math.floor(Math.random() * 350000) + 250000,
@@ -302,7 +302,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = (_{
   });
 
   // Initialize alerts
-  useEffect(_() => {
+  useEffect(() => {
     setAlerts([
       {
         id: '1',
@@ -333,7 +333,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = (_{
   }, []);
 
   // Handle refresh
-  const handleRefresh = useCallback(_async () => {
+  const handleRefresh = useCallback(async () => {
     setIsLoading(true);
     try {
       announcePolite('Atualizando dados do dashboard...');
@@ -350,7 +350,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = (_{
   // Filter appointments based on current time range
   const filteredAppointments = appointments.filter(appointment => {
     const appointmentDate = parseISO(appointment.date);
-    const _now = new Date();
+    const now = new Date();
 
     switch (currentTimeRange) {
       case 'today':
@@ -500,7 +500,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = (_{
         <div className='bg-white border rounded-lg p-6'>
           <h3 className='text-lg font-semibold mb-4'>Serviços Mais Vendidos</h3>
           <div className='space-y-3'>
-            {financialData.serviceBreakdown.slice(0, 4).map(_(service,_index) => (
+            {financialData.serviceBreakdown.slice(0, 4).map((service, index) => (
               <div key={service.service} className='flex items-center justify-between'>
                 <div className='flex items-center space-x-3'>
                   <div
@@ -567,7 +567,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = (_{
   );
 
   // Render appointments view
-  const renderAppointmentsView = () => (_<div className='space-y-6'>
+  const renderAppointmentsView = () => (<div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <h3 className='text-lg font-semibold'>Agendamentos</h3>
         <div className='flex space-x-2'>
@@ -583,7 +583,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = (_{
       </div>
 
       <div className='grid grid-cols-1 md:grid-cols-6 gap-4 mb-6'>
-        {Object.entries(appointmentsByStatus).map(_([status,_appointments]) => {
+        {Object.entries(appointmentsByStatus).map(([status, appointments]) => {
           const config = {
             scheduled: { color: 'blue', label: 'Agendados' },
             confirmed: { color: 'green', label: 'Confirmados' },
@@ -682,7 +682,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = (_{
   );
 
   // Render treatments view
-  const renderTreatmentsView = () => (_<div className='space-y-6'>
+  const renderTreatmentsView = () => (<div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <h3 className='text-lg font-semibold'>Tratamentos em Andamento</h3>
         <HealthcareButton onClick={() => {}} size='sm'>
@@ -1008,7 +1008,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = (_{
               { id: 'appointments', label: 'Agendamentos', icon: Calendar },
               { id: 'treatments', label: 'Tratamentos', icon: Activity },
               { id: 'financial', label: 'Financeiro', icon: DollarSign },
-            ].map(_tab => {
+            ].map(tab => {
               const Icon = tab.icon;
               return (
                 <button

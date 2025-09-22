@@ -21,12 +21,12 @@ import {
 } from '@/lib/testing/supabase-test-client';
 import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 
-describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
+describe(('Supabase Edge Functions - Healthcare Processing', () => {
   let testClient: any;
   let testDataGenerator: HealthcareTestDataGenerator;
   let functionMetrics: EdgeFunctionMetrics[] = [];
 
-  beforeAll(_() => {
+  beforeAll(() => {
     testClient = createTestSupabaseClient({
       lgpdCompliant: true,
       edgeFunctions: true,
@@ -37,12 +37,12 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
     console.log('🧪 Edge Functions Test Environment Setup Complete');
   });
 
-  afterAll(_async () => {
+  afterAll(async () => {
     await testDataGenerator.cleanupTestData();
 
     // Generate performance report
     console.log('\n📊 Edge Functions Test Summary:');
-    const avgLatency = functionMetrics.reduce(_(sum,_m) => sum + m.latency, 0)
+    const avgLatency = functionMetrics.reduce((sum, m) => sum + m.latency, 0)
       / functionMetrics.length;
     console.log(`Average Latency: ${avgLatency.toFixed(2)}ms`);
     console.log(`Total Functions Tested: ${functionMetrics.length}`);
@@ -98,8 +98,8 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
     };
   };
 
-  describe(_'Healthcare Data Processing Functions',_() => {
-    test(_'should process patient data validation',_async () => {
+  describe(('Healthcare Data Processing Functions', () => {
+    test(_'should process patient data validation',async () => {
       // architect-review: Healthcare data validation
       const patientValidationPayload = {
         patient_data: {
@@ -148,7 +148,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ Patient data validation function tested');
     });
 
-    test(_'should process medical record classification',_async () => {
+    test(_'should process medical record classification',async () => {
       // security-auditor: Medical data classification
       const medicalRecordPayload = {
         record_content:
@@ -181,7 +181,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ Medical record classification function tested');
     });
 
-    test(_'should process prescription validation and drug interaction checks',_async () => {
+    test(_'should process prescription validation and drug interaction checks',async () => {
       // security-auditor: Prescription safety validation
       const prescriptionPayload = {
         patient_id: 'patient-123',
@@ -223,7 +223,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ Prescription validation function tested');
     });
 
-    test(_'should process lab results analysis and flagging',_async () => {
+    test(_'should process lab results analysis and flagging',async () => {
       // architect-review: Lab results processing
       const labResultsPayload = {
         patient_id: 'patient-456',
@@ -272,7 +272,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ Lab results analysis function tested');
     });
 
-    test(_'should process AI-assisted diagnosis support',_async () => {
+    test(_'should process AI-assisted diagnosis support',async () => {
       // architect-review: AI diagnosis support
       const diagnosisPayload = {
         patient_context: {
@@ -317,8 +317,8 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
     });
   });
 
-  describe(_'Real-time Communication Functions',_() => {
-    test(_'should handle real-time appointment notifications',_async () => {
+  describe(('Real-time Communication Functions', () => {
+    test(_'should handle real-time appointment notifications',async () => {
       // security-auditor: Real-time notification validation
       const notificationPayload = {
         notification_type: 'appointment_reminder',
@@ -356,7 +356,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ Real-time appointment notification function tested');
     });
 
-    test(_'should handle emergency alert broadcasting',_async () => {
+    test(_'should handle emergency alert broadcasting',async () => {
       // security-auditor: Emergency alert validation
       const emergencyPayload = {
         alert_type: 'medical_emergency',
@@ -397,7 +397,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ Emergency alert broadcasting function tested');
     });
 
-    test(_'should handle WebSocket connection management',_async () => {
+    test(_'should handle WebSocket connection management',async () => {
       // architect-review: WebSocket management validation
       const websocketPayload = {
         connection_type: 'patient_monitoring',
@@ -435,7 +435,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ WebSocket connection management function tested');
     });
 
-    test(_'should handle telemedicine session coordination',_async () => {
+    test(_'should handle telemedicine session coordination',async () => {
       // architect-review: Telemedicine coordination
       const telemedicinePayload = {
         session_type: 'video_consultation',
@@ -483,8 +483,8 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
     });
   });
 
-  describe(_'API Validation and Transformation',_() => {
-    test(_'should validate and transform HL7 FHIR data',_async () => {
+  describe(('API Validation and Transformation', () => {
+    test(_'should validate and transform HL7 FHIR data',async () => {
       // architect-review: FHIR data transformation
       const fhirPayload = {
         resource_type: 'Patient',
@@ -539,7 +539,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ HL7 FHIR data transformation function tested');
     });
 
-    test(_'should validate API request schemas',_async () => {
+    test(_'should validate API request schemas',async () => {
       // security-auditor: API schema validation
       const schemaValidationPayload = {
         endpoint: '/api/v1/appointments',
@@ -582,7 +582,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ API schema validation function tested');
     });
 
-    test(_'should transform and sanitize user input',_async () => {
+    test(_'should transform and sanitize user input',async () => {
       // security-auditor: Input sanitization validation
       const sanitizationPayload = {
         input_type: 'patient_registration_form',
@@ -627,8 +627,8 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
     });
   });
 
-  describe(_'LGPD Compliance Functions',_() => {
-    test(_'should handle consent management processing',_async () => {
+  describe(('LGPD Compliance Functions', () => {
+    test(_'should handle consent management processing',async () => {
       // security-auditor: LGPD consent processing
       const consentPayload = {
         user_id: 'patient-consent-123',
@@ -670,7 +670,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ LGPD consent management function tested');
     });
 
-    test(_'should handle data anonymization processing',_async () => {
+    test(_'should handle data anonymization processing',async () => {
       // security-auditor: Data anonymization validation
       const anonymizationPayload = {
         dataset_id: 'research-dataset-456',
@@ -720,7 +720,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ Data anonymization function tested');
     });
 
-    test(_'should handle data subject rights requests processing',_async () => {
+    test(_'should handle data subject rights requests processing',async () => {
       // security-auditor: Data subject rights validation
       const dsrPayload = {
         request_type: 'data_access_request',
@@ -764,8 +764,8 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
     });
   });
 
-  describe(_'Performance and Scalability',_() => {
-    test(_'should handle high-throughput data processing',_async () => {
+  describe(('Performance and Scalability', () => {
+    test(_'should handle high-throughput data processing',async () => {
       // architect-review: High-throughput validation
       const throughputPayload = {
         operation_type: 'batch_patient_import',
@@ -797,7 +797,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ High-throughput processing function tested');
     });
 
-    test(_'should handle concurrent function executions',_async () => {
+    test(_'should handle concurrent function executions',async () => {
       // architect-review: Concurrency validation
       const concurrentRequests = 50;
       const concurrentPayload = {
@@ -806,7 +806,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       };
 
       const promises = Array.from(
-        { length: concurrentRequests },_async (_,_i) => {
+        { length: concurrentRequests },async (, i) => {
           return await mockEdgeFunction(
             'concurrent-patient-lookup',
             { ...concurrentPayload, request_id: i },
@@ -818,7 +818,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       const results = await Promise.all(promises);
 
       const successfulRequests = results.filter(r => r.error === null).length;
-      const avgLatency = results.reduce(_(sum,_r) => sum + r.latency, 0) / results.length;
+      const avgLatency = results.reduce((sum, r) => sum + r.latency, 0) / results.length;
 
       expect(successfulRequests).toBeGreaterThan(concurrentRequests * 0.9); // 90% success rate
       expect(avgLatency).toBeLessThan(500); // Average under 500ms
@@ -832,7 +832,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       );
     });
 
-    test(_'should validate function cold start performance',_async () => {
+    test(_'should validate function cold start performance',async () => {
       // architect-review: Cold start validation
       const coldStartPayloads = [
         {
@@ -864,8 +864,8 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
     });
   });
 
-  describe(_'Error Handling and Recovery',_() => {
-    test(_'should handle function timeout scenarios',_async () => {
+  describe(('Error Handling and Recovery', () => {
+    test(_'should handle function timeout scenarios',async () => {
       // security-auditor: Timeout handling validation
       const timeoutPayload = {
         operation: 'complex_data_analysis',
@@ -884,7 +884,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ Function timeout scenario handled gracefully');
     });
 
-    test(_'should handle memory limit exceeded scenarios',_async () => {
+    test(_'should handle memory limit exceeded scenarios',async () => {
       // architect-review: Memory limit validation
       const memoryPayload = {
         operation: 'large_dataset_processing',
@@ -905,7 +905,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ Memory limit scenario handled');
     });
 
-    test(_'should handle external service failures',_async () => {
+    test(_'should handle external service failures',async () => {
       // security-auditor: External service failure handling
       const externalServicePayload = {
         primary_service: 'prescription_validation_api',
@@ -930,8 +930,8 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
     });
   });
 
-  describe(_'Security and Authorization',_() => {
-    test(_'should validate JWT token and authorize requests',_async () => {
+  describe(('Security and Authorization', () => {
+    test(_'should validate JWT token and authorize requests',async () => {
       // security-auditor: Authorization validation
       const authPayload = {
         jwt_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
@@ -958,7 +958,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ JWT authorization function tested');
     });
 
-    test(_'should implement rate limiting and abuse prevention',_async () => {
+    test(_'should implement rate limiting and abuse prevention',async () => {
       // security-auditor: Rate limiting validation
       const rateLimitPayload = {
         user_id: 'user-rate-limit-test',
@@ -988,7 +988,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ Rate limiting function tested');
     });
 
-    test(_'should validate API key and scope authorization',_async () => {
+    test(_'should validate API key and scope authorization',async () => {
       // security-auditor: API key validation
       const apiKeyPayload = {
         api_key: 'ak_test_1234567890abcdef',
@@ -1015,8 +1015,8 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
     });
   });
 
-  describe(_'Integration and External APIs',_() => {
-    test(_'should integrate with external laboratory systems',_async () => {
+  describe(('Integration and External APIs', () => {
+    test(_'should integrate with external laboratory systems',async () => {
       // architect-review: Laboratory integration
       const labIntegrationPayload = {
         lab_provider: 'Laboratorio_Central_SP',
@@ -1045,7 +1045,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ Laboratory system integration function tested');
     });
 
-    test(_'should integrate with pharmacy systems for prescription validation',_async () => {
+    test(_'should integrate with pharmacy systems for prescription validation',async () => {
       // architect-review: Pharmacy integration
       const pharmacyPayload = {
         pharmacy_chain: 'Drogaria_Nacional',
@@ -1079,7 +1079,7 @@ describe(_'Supabase Edge Functions - Healthcare Processing',_() => {
       console.log('✅ Pharmacy system integration function tested');
     });
 
-    test(_'should handle webhook processing for external events',_async () => {
+    test(_'should handle webhook processing for external events',async () => {
       // security-auditor: Webhook processing validation
       const webhookPayload = {
         webhook_source: 'insurance_provider',

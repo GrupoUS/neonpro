@@ -106,7 +106,7 @@ billing.post(
       }
 
       return created(c, result.data, result.message);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating invoice:', error);
       return serverError(c, 'Erro interno do servidor');
     }
@@ -139,7 +139,7 @@ billing.get('/invoices/:id', async c => {
     }
 
     return ok(c, result.data);
-  } catch (_error) {
+  } catch (error) {
     console.error('Error fetching invoice:', error);
     return serverError(c, 'Erro interno do servidor');
   }
@@ -173,7 +173,7 @@ billing.get(
       }
 
       return ok(c, result.data);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error searching invoices:', error);
       return serverError(c, 'Erro interno do servidor');
     }
@@ -218,7 +218,7 @@ billing.put(
       }
 
       return ok(c, result.data, result.message);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error updating invoice:', error);
       return serverError(c, 'Erro interno do servidor');
     }
@@ -251,7 +251,7 @@ billing.delete('/invoices/:id', async c => {
     }
 
     return ok(c, { cancelled: true }, result.message);
-  } catch (_error) {
+  } catch (error) {
     console.error('Error cancelling invoice:', error);
     return serverError(c, 'Erro interno do servidor');
   }
@@ -292,7 +292,7 @@ billing.post(
       }
 
       return created(c, result.data, result.message);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error processing payment:', error);
       return serverError(c, 'Erro interno do servidor');
     }
@@ -325,7 +325,7 @@ billing.get('/invoices/:id/payments', async c => {
     }
 
     return ok(c, result.data);
-  } catch (_error) {
+  } catch (error) {
     console.error('Error fetching payment history:', error);
     return serverError(c, 'Erro interno do servidor');
   }
@@ -363,7 +363,7 @@ billing.get(
       }
 
       return ok(c, result.data);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error generating financial report:', error);
       return serverError(c, 'Erro interno do servidor');
     }
@@ -391,7 +391,7 @@ billing.get('/dashboard/stats', async c => {
     }
 
     return ok(c, result.data);
-  } catch (_error) {
+  } catch (error) {
     console.error('Error fetching billing stats:', error);
     return serverError(c, 'Erro interno do servidor');
   }
@@ -413,7 +413,7 @@ billing.get('/sus/procedures', async c => {
     }
 
     return ok(c, result.data);
-  } catch (_error) {
+  } catch (error) {
     console.error('Error fetching SUS procedures:', error);
     return serverError(c, 'Erro interno do servidor');
   }
@@ -445,7 +445,7 @@ billing.post('/insurance/verify', async c => {
     }
 
     return ok(c, result.data);
-  } catch (_error) {
+  } catch (error) {
     console.error('Error verifying insurance coverage:', error);
     return serverError(c, 'Erro interno do servidor');
   }
@@ -471,7 +471,7 @@ billing.get('/tax/calculation', async c => {
     }
 
     return ok(c, result.data);
-  } catch (_error) {
+  } catch (error) {
     console.error('Error calculating taxes:', error);
     return serverError(c, 'Erro interno do servidor');
   }

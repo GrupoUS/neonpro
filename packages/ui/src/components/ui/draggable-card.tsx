@@ -6,13 +6,13 @@ import {
   useMotionValue,
   useSpring,
   useTransform,
-  useVelocity,
+  useVelocity
 } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { cn } from "../../utils";
 
-export const _DraggableCardBody = (_{
-  className,_children,
+export const DraggableCard = ({
+  className,children
 }: {
   className?: string;
   children?: React.ReactNode;
@@ -25,7 +25,7 @@ export const _DraggableCardBody = (_{
     top: 0,
     left: 0,
     right: 0,
-    bottom: 0,
+    bottom: 0
   });
 
   // physics biatch
@@ -35,7 +35,7 @@ export const _DraggableCardBody = (_{
   const springConfig = {
     stiffness: 100,
     damping: 20,
-    mass: 0.5,
+    mass: 0.5
   };
 
   const rotateX = useSpring(
@@ -57,7 +57,7 @@ export const _DraggableCardBody = (_{
     springConfig,
   );
 
-  useEffect(_() => {
+  useEffect(() => {
     // Update constraints when component mounts or window resizes
     const updateConstraints = () => {
       if (typeof window !== "undefined") {
@@ -65,7 +65,7 @@ export const _DraggableCardBody = (_{
           top: -window.innerHeight / 2,
           left: -window.innerWidth / 2,
           right: window.innerWidth / 2,
-          bottom: window.innerHeight / 2,
+          bottom: window.innerHeight / 2
         });
       }
     };
@@ -88,7 +88,7 @@ export const _DraggableCardBody = (_{
         width: 0,
         height: 0,
         left: 0,
-        top: 0,
+        top: 0
       };
     const centerX = left + width / 2;
     const centerY = top + height / 2;
@@ -103,14 +103,14 @@ export const _DraggableCardBody = (_{
     mouseY.set(0);
   };
 
-  return (_<motion.div
+  return (<motion.div
       ref={cardRef}
       drag
       dragConstraints={constraints}
       onDragStart={() => {
         document.body.style.cursor = "grabbing";
       }}
-      onDragEnd={(_event,_info) => {
+      onDragEnd={(_event, info) => {
         document.body.style.cursor = "default";
 
         controls.start({
@@ -118,8 +118,8 @@ export const _DraggableCardBody = (_{
           rotateY: 0,
           transition: {
             type: "spring",
-            ...springConfig,
-          },
+            ...springConfig
+          }
         });
         const currentVelocityX = velocityX.get();
         const currentVelocityY = velocityY.get();
@@ -137,7 +137,7 @@ export const _DraggableCardBody = (_{
           type: "spring",
           stiffness: 50,
           damping: 15,
-          mass: 0.8,
+          mass: 0.8
         });
 
         animate(info.point.y, info.point.y + currentVelocityY * 0.3, {
@@ -147,14 +147,14 @@ export const _DraggableCardBody = (_{
           type: "spring",
           stiffness: 50,
           damping: 15,
-          mass: 0.8,
+          mass: 0.8
         });
       }}
       style={{
         rotateX,
         rotateY,
         opacity,
-        willChange: "transform",
+        willChange: "transform"
       }}
       animate={controls}
       whileHover={{ scale: 1.02 }}
@@ -168,7 +168,7 @@ export const _DraggableCardBody = (_{
       {children}
       <motion.div
         style={{
-          opacity: glareOpacity,
+          opacity: glareOpacity
         }}
         className="pointer-events-none absolute inset-0 bg-white select-none"
       />
@@ -176,8 +176,8 @@ export const _DraggableCardBody = (_{
   );
 };
 
-export const _DraggableCardContainer = (_{
-  className,_children,
+export const DraggableCardContainer = ({
+  className,children
 }: {
   className?: string;
   children?: React.ReactNode;

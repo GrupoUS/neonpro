@@ -96,7 +96,7 @@ export function useCreateServiceTemplate() {
 
   return useMutation({
     mutationFn: (_request: CreateServiceTemplateRequest) =>
-      serviceTemplatesService.createServiceTemplate(_request),
+      serviceTemplatesService.createServiceTemplate(request),
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
@@ -117,7 +117,7 @@ export function useUpdateServiceTemplate() {
 
   return useMutation({
     mutationFn: (_request: UpdateServiceTemplateRequest) =>
-      serviceTemplatesService.updateServiceTemplate(_request),
+      serviceTemplatesService.updateServiceTemplate(request),
     onSuccess: data => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
@@ -161,12 +161,12 @@ export function useAddTemplateItems() {
 
   return useMutation({
     mutationFn: ({
-      templateId,_items,
+      templateId,items,
     }: {
       templateId: string;
       items: CreateServiceTemplateItemRequest[];
     }) => serviceTemplatesService.addTemplateItems(templateId, items),
-    onSuccess: (_, _variables) => {
+    onSuccess: (_, variables) => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
       queryClient.invalidateQueries({
@@ -189,7 +189,7 @@ export function useUpdateTemplateItem() {
 
   return useMutation({
     mutationFn: (_request: UpdateServiceTemplateItemRequest) =>
-      serviceTemplatesService.updateTemplateItem(_request),
+      serviceTemplatesService.updateTemplateItem(request),
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
@@ -249,7 +249,7 @@ export function useDuplicateServiceTemplate() {
 
   return useMutation({
     mutationFn: (_request: DuplicateServiceTemplateRequest) =>
-      serviceTemplatesService.duplicateServiceTemplate(_request),
+      serviceTemplatesService.duplicateServiceTemplate(request),
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
@@ -270,7 +270,7 @@ export function useToggleTemplateFeatured() {
 
   return useMutation({
     mutationFn: async ({
-      id,_isFeatured,
+      id,isFeatured,
     }: {
       id: string;
       isFeatured: boolean;
@@ -280,7 +280,7 @@ export function useToggleTemplateFeatured() {
         is_featured: !isFeatured,
       });
     },
-    onSuccess: (_,_{ isFeatured }) => {
+    onSuccess: (_, { isFeatured }) => {
       const message = isFeatured
         ? 'Template removido dos destaques'
         : 'Template adicionado aos destaques';
@@ -305,7 +305,7 @@ export function useToggleTemplateActive() {
         is_active: !isActive,
       });
     },
-    onSuccess: (_,_{ isActive }) => {
+    onSuccess: (_, { isActive }) => {
       const message = isActive ? 'Template desativado' : 'Template ativado';
       toast.success(message);
     },

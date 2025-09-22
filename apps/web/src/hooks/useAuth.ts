@@ -19,15 +19,15 @@ export function useAuth(): AuthState {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(_() => {
+  useEffect(() => {
     // Get initial session and profile
     const getInitialSession = async () => {
       console.log('🔍 useAuth: Getting initial session...');
       try {
         // Add timeout to prevent hanging
         const sessionPromise = getCurrentSession();
-        const timeoutPromise = new Promise(_(_,_reject) =>
-          setTimeout(_() => reject(new Error('Session timeout')), 3000)
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Session timeout')), 3000)
         );
 
         const currentSession = (await Promise.race([
@@ -51,8 +51,8 @@ export function useAuth(): AuthState {
             const profilePromise = userProfileService.getUserProfile(
               currentSession.user.id,
             );
-            const profileTimeoutPromise = new Promise(_(_,_reject) =>
-              setTimeout(_() => reject(new Error('Profile loading timeout')),
+            const profileTimeoutPromise = new Promise((_, reject) =>
+              setTimeout(() => reject(new Error('Profile loading timeout')),
                 3000,
               )
             );
@@ -97,7 +97,7 @@ export function useAuth(): AuthState {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(_async (event,_session) => {
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session?.user?.email);
 
       setSession(session);
@@ -109,8 +109,8 @@ export function useAuth(): AuthState {
           const profilePromise = userProfileService.getUserProfile(
             session.user.id,
           );
-          const profileTimeoutPromise = new Promise(_(_,_reject) =>
-            setTimeout(_() => reject(new Error('Profile loading timeout')),
+          const profileTimeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Profile loading timeout')),
               3000,
             )
           );

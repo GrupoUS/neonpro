@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { hasConflict } from '../utils/appointments';
 
-vi.mock(_'../lib/prisma',_() => ({
+vi.mock('../lib/prisma', () => ({
   prisma: {
     appointment: {
       count: vi.fn().mockResolvedValue(1),
@@ -9,8 +9,8 @@ vi.mock(_'../lib/prisma',_() => ({
   },
 }));
 
-describe(_'appointments conflict detection',_() => {
-  it(_'returns true when overlapping exists',_async () => {
+describe('appointments conflict detection', () => {
+  it('returns true when overlapping exists', async () => {
     const ok = await hasConflict({
       clinicId: 'c',
       professionalId: 'p',

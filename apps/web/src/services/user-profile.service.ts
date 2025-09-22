@@ -74,13 +74,13 @@ class UserProfileService {
     // Handle fallback user case immediately
     if (userId === 'fallback-user') {
       console.log('🔧 Creating fallback profile for development');
-      return this.createFallbackProfile(_userId);
+      return this.createFallbackProfile(userId);
     }
 
     try {
       // Add timeout to all database operations
-      const timeoutPromise = new Promise(_(_,_reject) =>
-        setTimeout(_() => reject(new Error('Database operation timeout')), 5000)
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Database operation timeout')), 5000)
       );
 
       // First check if user is a professional
@@ -372,7 +372,7 @@ class UserProfileService {
    */
   async getAccessibleClinics(_userId: string): Promise<string[]> {
     try {
-      const profile = await this.getUserProfile(_userId);
+      const profile = await this.getUserProfile(userId);
       if (!profile) return [];
 
       // For now, return single clinic ID
@@ -385,4 +385,4 @@ class UserProfileService {
   }
 }
 
-export const _userProfileService = new UserProfileService();
+export const userProfileService = new UserProfileService();

@@ -209,7 +209,7 @@ export function useCreateAppointment() {
       return { previousAppointments };
     },
 
-    onSuccess: (_data, _variables) => {
+    onSuccess: (data, variables) => {
       // Update cache with real appointment data
       queryClient.setQueryData(appointmentKeys.detail(data.id), data);
 
@@ -242,7 +242,7 @@ export function useCreateAppointment() {
       }
     },
 
-    onError: (_error, _variables,_context) => {
+    onError: (error, variables, context) => {
       // Rollback optimistic update
       if (context?.previousAppointments) {
         queryClient.setQueryData(
@@ -314,7 +314,7 @@ export function useUpdateAppointmentStatus() {
   const queryClient = useQueryClient();
 
   return trpc.appointments.updateStatus.useMutation({
-    onMutate: async ({ id,_status,_notes }) => {
+    onMutate: async ({ id,status, notes }) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: appointmentKeys.detail(id) });
 
@@ -345,7 +345,7 @@ export function useUpdateAppointmentStatus() {
       return { previousAppointment };
     },
 
-    onSuccess: (_data, _variables) => {
+    onSuccess: (data, variables) => {
       // Update cache with server response
       queryClient.setQueryData(appointmentKeys.detail(data.id), data);
 
@@ -367,7 +367,7 @@ export function useUpdateAppointmentStatus() {
       );
     },
 
-    onError: (_error, _variables,_context) => {
+    onError: (error, variables, context) => {
       // Rollback optimistic update
       if (context?.previousAppointment) {
         queryClient.setQueryData(
@@ -425,7 +425,7 @@ export function useSendAppointmentReminder() {
   const queryClient = useQueryClient();
 
   return trpc.appointments.sendReminder.useMutation({
-    onMutate: async ({ appointmentId,_channels,_scheduledFor }) => {
+    onMutate: async ({ appointmentId,channels, scheduledFor }) => {
       // Healthcare audit: Log reminder sending
       console.log('[Healthcare Audit] Appointment reminder initiated', {
         appointmentId,
@@ -436,7 +436,7 @@ export function useSendAppointmentReminder() {
       });
     },
 
-    onSuccess: (_data, _variables) => {
+    onSuccess: (data, variables) => {
       // Update appointment cache with reminder info
       queryClient.setQueryData(
         appointmentKeys.detail(variables.appointmentId),
@@ -465,7 +465,7 @@ export function useSendAppointmentReminder() {
       toast.success(`Lembrete enviado via ${channelList}!`);
     },
 
-    onError: (_error, _variables) => {
+    onError: (error, variables) => {
       console.error('[Send Reminder Error]', error);
 
       if (error.message.includes('consent')) {
@@ -493,7 +493,7 @@ export function useAppointmentRealTimeUpdates(options?: {
   const queryClient = useQueryClient();
   const { appointmentId, professionalId, patientId } = options || {};
 
-  React.useEffect(_() => {
+  React.useEffect(() => {
     if (!appointmentId && !professionalId && !patientId) return;
 
     // Subscribe to real-time appointment updates
@@ -679,7 +679,7 @@ export function useAppointmentPerformanceMetrics() {
     cacheHitRate: 0,
   });
 
-  React.useEffect(_() => {
+  React.useEffect(() => {
     // Get performance data from tRPC performance monitor
     const performanceMonitor = (window as any).__trpc_performance_monitor;
     if (performanceMonitor) {
@@ -708,7 +708,7 @@ export function useAppointmentPerformanceMetrics() {
 }
 
 // Helper functions for appointment utilities
-export const _appointmentUtils = {
+export const appointmentUtils = {
   formatTime: (date: string | Date) => {
     return new Date(date).toLocaleTimeString('pt-BR', {
       hour: '2-digit',
@@ -750,7 +750,7 @@ export const _appointmentUtils = {
   },
 
   getInterventionPriority: (interventions: any[]) => {
-    return interventions.sort(_(a,_b) => b.priority - a.priority).slice(0, 3);
+    return interventions.sort((a, b) => b.priority - a.priority).slice(0, 3);
   },
 };
 

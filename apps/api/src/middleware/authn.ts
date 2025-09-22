@@ -82,7 +82,7 @@ export function authenticationMiddleware() {
       });
 
       await next();
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof HTTPException) {
         throw error;
       }
@@ -214,7 +214,7 @@ async function validateUserFromToken(_payload: any): Promise<ValidatedUser | nul
       clinicId: user.clinic_id,
       name: user.name,
     };
-  } catch (_error) {
+  } catch (error) {
     logger.error('User validation from token failed', {
       error: error instanceof Error ? error.message : String(error),
     });
@@ -228,11 +228,11 @@ async function validateUserFromToken(_payload: any): Promise<ValidatedUser | nul
 export function requireAuth(allowedRoles: string[] = []) {
   return async (c: Context, next: Next) => {
     // Apply authentication first
-    await authenticationMiddleware()(_c,_async () => {});
+    await authenticationMiddleware()(c, async () => {});
 
     // Then apply authorization if roles are specified
     if (allowedRoles.length > 0) {
-      await authorizationMiddleware(allowedRoles)(_c,_async () => {});
+      await authorizationMiddleware(allowedRoles)(c, async () => {});
     }
 
     // Finally continue to the actual handler
@@ -277,7 +277,7 @@ export function optionalAuth() {
           });
         }
       }
-    } catch (_error) {
+    } catch (error) {
       // Silently fail for optional auth
       logger.debug('Optional authentication failed', {
         error: error instanceof Error ? error.message : String(error),

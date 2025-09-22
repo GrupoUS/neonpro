@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 // RED: streaming pipeline not implemented yet; we assert minimal contracts/types are wired
 
 describe('AI Chat — streaming pipeline (Phase 1)', () => {
-  it(_'wires types and env flags correctly',_() => {
+  it(('wires types and env flags correctly', () => {
     const session: ChatSession = {
       id: 's1',
       clinicId: 'c1',
@@ -29,7 +29,7 @@ describe('AI Chat — streaming pipeline (Phase 1)', () => {
     expect(typeof aiConfig.AI_CHAT_MOCK_MODE).toBe('boolean');
   });
 
-  it(_'streaming util yields chunks in mock mode',_async () => {
+  it(_'streaming util yields chunks in mock mode',async () => {
     const mod = await import('@/lib/ai-chat/streaming');
     const itr = await mod.startChatStream({ sessionId: 's1', text: 'Olá' });
     const out: string[] = [];

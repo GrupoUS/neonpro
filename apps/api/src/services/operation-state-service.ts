@@ -258,15 +258,15 @@ export class OperationStateService {
 
     return {
       total,
-      byStatus: statusStats.reduce(_(acc,_stat) => {
+      byStatus: statusStats.reduce((acc,_stat) => {
         acc[stat.status] = stat._count.status;
         return acc;
       }, {} as Record<string, number>),
-      byStep: stepStats.reduce(_(acc,_stat) => {
+      byStep: stepStats.reduce((acc,_stat) => {
         acc[stat.step] = stat._count.step;
         return acc;
       }, {} as Record<string, number>),
-      byEntity: entityStats.reduce(_(acc,_stat) => {
+      byEntity: entityStats.reduce((acc,_stat) => {
         acc[stat.entity] = stat._count.entity;
         return acc;
       }, {} as Record<string, number>),

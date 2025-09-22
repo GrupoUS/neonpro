@@ -53,7 +53,7 @@ export const HEALTHCARE_LANDMARKS = {
 } as const;
 
 // Heading Hierarchy for Healthcare Content
-export const _HEALTHCARE_HEADING_HIERARCHY = {
+export const HEALTHCARE_HEADING_HIERARCHY = {
   PAGE_TITLE: 1, // h1: "Prontuário do Paciente"
   SECTION_TITLE: 2, // h2: "Dados Pessoais", "Histórico Médico"
   SUBSECTION_TITLE: 3, // h3: "Medicações Atuais", "Alergias"
@@ -177,7 +177,7 @@ export interface ScreenReaderAccessibilityReport {
 }
 
 // Brazilian Portuguese Screen Reader Labels
-export const _SCREEN_READER_LABELS_PT_BR = {
+export const SCREEN_READER_LABELS_PT_BR = {
   patientData: 'Dados do paciente',
   medicalHistory: 'Histórico médico',
   currentMedications: 'Medicações atuais',
@@ -660,7 +660,7 @@ export class MobileScreenReaderService {
       [MOBILE_SCREEN_READER_LEVELS.CRITICAL]: 1,
     };
 
-    const averageScore = levels.reduce(_(sum,_level) => sum + levelScores[level], 0)
+    const averageScore = levels.reduce((sum, level) => sum + levelScores[level], 0)
       / levels.length;
 
     if (averageScore >= 4.5) return MOBILE_SCREEN_READER_LEVELS.EXCELLENT;
@@ -694,7 +694,7 @@ export class MobileScreenReaderService {
   private generateRecommendations(): string[] {
     const recommendations: string[] = [];
 
-    const issuesByType = this.issues.reduce(_(acc,_issue) => {
+    const issuesByType = this.issues.reduce((acc, issue) => {
         if (!acc[issue.type]) acc[issue.type] = [];
         acc[issue.type].push(issue);
         return acc;
@@ -702,7 +702,7 @@ export class MobileScreenReaderService {
       {} as Record<string, ScreenReaderAccessibilityIssue[]>,
     );
 
-    Object.entries(issuesByType).forEach(_([type,_issues]) => {
+    Object.entries(issuesByType).forEach(([type, issues]) => {
       const criticalCount = issues.filter(
         i => i.severity === 'critical',
       ).length;

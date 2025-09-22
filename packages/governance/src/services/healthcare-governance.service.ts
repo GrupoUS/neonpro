@@ -76,7 +76,7 @@ export class HealthcareGovernanceService
       }
 
       return this.mapHealthcareMetrics(data || []);
-    } catch (_error) {
+    } catch (error) {
       console.error("Error fetching healthcare metrics:", error);
       if (error instanceof Error) {
         throw new Error(`Failed to fetch healthcare metrics: ${error.message}`);
@@ -136,7 +136,7 @@ export class HealthcareGovernanceService
       });
 
       return this.mapHealthcareMetric(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("Error creating healthcare metric:", error);
       if (error instanceof Error) {
         throw new Error(`Failed to create healthcare metric: ${error.message}`);
@@ -196,7 +196,7 @@ export class HealthcareGovernanceService
       });
 
       return this.mapHealthcareMetric(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("Error updating healthcare metric:", error);
       if (error instanceof Error) {
         throw new Error(`Failed to update healthcare metric: ${error.message}`);
@@ -234,7 +234,7 @@ export class HealthcareGovernanceService
           clinicalContext: "Healthcare metric deletion",
         },
       });
-    } catch (_error) {
+    } catch (error) {
       console.error("Error deleting healthcare metric:", error);
       if (error instanceof Error) {
         throw new Error(`Failed to delete healthcare metric: ${error.message}`);
@@ -259,7 +259,7 @@ export class HealthcareGovernanceService
       }
 
       return this.mapPatientSafetyKPIs(data || []);
-    } catch (_error) {
+    } catch (error) {
       console.error("Error fetching patient safety KPIs:", error);
       throw error;
     }
@@ -289,7 +289,7 @@ export class HealthcareGovernanceService
       }
 
       return this.mapPatientSafetyKPI(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("Error updating patient safety KPI:", error);
       throw error;
     }
@@ -329,7 +329,7 @@ export class HealthcareGovernanceService
       }
 
       return this.mapHealthcarePolicies(data || []);
-    } catch (_error) {
+    } catch (error) {
       console.error("Error fetching healthcare policies:", error);
       throw error;
     }
@@ -364,7 +364,7 @@ export class HealthcareGovernanceService
       }
 
       return this.mapHealthcarePolicy(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("Error creating healthcare policy:", error);
       throw error;
     }
@@ -392,7 +392,7 @@ export class HealthcareGovernanceService
       }
 
       return this.mapHealthcarePolicy(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("Error updating healthcare policy:", error);
       throw error;
     }
@@ -438,7 +438,7 @@ export class HealthcareGovernanceService
       }
 
       return this.mapHealthcareAlerts(data || []);
-    } catch (_error) {
+    } catch (error) {
       console.error("Error fetching healthcare alerts:", error);
       throw error;
     }
@@ -476,7 +476,7 @@ export class HealthcareGovernanceService
       }
 
       return this.mapHealthcareAlert(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("Error creating healthcare alert:", error);
       throw error;
     }
@@ -504,7 +504,7 @@ export class HealthcareGovernanceService
       }
 
       return this.mapHealthcareAlert(data);
-    } catch (_error) {
+    } catch (error) {
       console.error("Error updating healthcare alert:", error);
       throw error;
     }
@@ -574,7 +574,7 @@ export class HealthcareGovernanceService
       }
 
       return report;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error generating compliance report:", error);
       throw error;
     }
@@ -613,7 +613,7 @@ export class HealthcareGovernanceService
       }
 
       return this.mapComplianceReports(data || []);
-    } catch (_error) {
+    } catch (error) {
       console.error("Error fetching compliance reports:", error);
       throw error;
     }
@@ -646,7 +646,7 @@ export class HealthcareGovernanceService
       });
 
       return auditEntry;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error creating healthcare audit entry:", error);
       if (error instanceof Error) {
         throw new Error(
@@ -669,7 +669,7 @@ export class HealthcareGovernanceService
       const alerts = await this.getHealthcareAlerts(clinicId, {
         status: "ACTIVE",
       });
-      const criticalAlerts = alerts.filter(_(alert) => alert.severity === "CRITICAL",
+      const criticalAlerts = alerts.filter((alert) => alert.severity === "CRITICAL",
       ).length;
 
       // Calculate compliance scores
@@ -677,8 +677,8 @@ export class HealthcareGovernanceService
       const patientSafetyScore = this.calculatePatientSafetyScore(metrics);
 
       // Get CFM and ANVISA specific compliance
-      const cfmMetrics = metrics.filter(_(m) => m.complianceFramework === "CFM");
-      const anvisaMetrics = metrics.filter(_(m) => m.complianceFramework === "ANVISA",
+      const cfmMetrics = metrics.filter((m) => m.complianceFramework === "CFM");
+      const anvisaMetrics = metrics.filter((m) => m.complianceFramework === "ANVISA",
       );
 
       const cfmComplianceScore = this.calculateComplianceScore(cfmMetrics);
@@ -688,7 +688,7 @@ export class HealthcareGovernanceService
       return {
         overallComplianceScore,
         criticalAlerts,
-        activeViolations: alerts.filter(_(alert) => alert.alertType === "COMPLIANCE_VIOLATION",
+        activeViolations: alerts.filter((alert) => alert.alertType === "COMPLIANCE_VIOLATION",
         ).length,
         patientSafetyScore,
         cfmComplianceStatus: {
@@ -715,7 +715,7 @@ export class HealthcareGovernanceService
           alertResolutionTrend: "IMPROVING",
         },
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error getting healthcare dashboard data:", error);
       throw error;
     }
@@ -723,7 +723,7 @@ export class HealthcareGovernanceService
 
   // Private helper methods
   private mapHealthcareMetrics(data: HealthcareMetricRecord[]): HealthcareMetric[] {
-    return data.map(_(item) => this.mapHealthcareMetric(item));
+    return data.map((item) => this.mapHealthcareMetric(item));
   }
 
   private mapHealthcareMetric(data: HealthcareMetricRecord): HealthcareMetric {
@@ -749,7 +749,7 @@ export class HealthcareGovernanceService
   }
 
   private mapPatientSafetyKPIs(data: PatientSafetyKPIRecord[]): PatientSafetyKPI[] {
-    return data.map(_(item) => this.mapPatientSafetyKPI(item));
+    return data.map((item) => this.mapPatientSafetyKPI(item));
   }
 
   private mapPatientSafetyKPI(data: PatientSafetyKPIRecord): PatientSafetyKPI {
@@ -774,7 +774,7 @@ export class HealthcareGovernanceService
   }
 
   private mapHealthcarePolicies(data: HealthcarePolicyRecord[]): HealthcarePolicy[] {
-    return data.map(_(item) => this.mapHealthcarePolicy(item));
+    return data.map((item) => this.mapHealthcarePolicy(item));
   }
 
   private mapHealthcarePolicy(data: HealthcarePolicyRecord): HealthcarePolicy {
@@ -803,7 +803,7 @@ export class HealthcareGovernanceService
   }
 
   private mapHealthcareAlerts(data: HealthcareAlertRecord[]): HealthcareAlert[] {
-    return data.map(_(item) => this.mapHealthcareAlert(item));
+    return data.map((item) => this.mapHealthcareAlert(item));
   }
 
   private mapHealthcareAlert(data: HealthcareAlertRecord): HealthcareAlert {
@@ -829,7 +829,7 @@ export class HealthcareGovernanceService
   }
 
   private mapComplianceReports(data: ComplianceReportRecord[]): HealthcareComplianceReport[] {
-    return data.map(_(item) => ({
+    return data.map((item) => ({
       id: item.id,
       clinicId: item.clinic_id,
       reportType: item.report_type as HealthcareComplianceReport["reportType"],
@@ -855,16 +855,16 @@ export class HealthcareGovernanceService
   private calculateComplianceScore(metrics: HealthcareMetric[]): number {
     if (metrics.length === 0) return 0;
 
-    const scores = metrics.map(_(metric) => {
+    const scores = metrics.map((metric) => {
       const performance = metric.currentValue / metric.targetValue;
       return Math.min(performance * 100, 100);
     });
 
-    return scores.reduce(_(sum,_score) => sum + score, 0) / scores.length;
+    return scores.reduce((sum,_score) => sum + score, 0) / scores.length;
   }
 
   private calculatePatientSafetyScore(metrics: HealthcareMetric[]): number {
-    const safetyMetrics = metrics.filter(_(m) => m.category === "PATIENT_SAFETY",
+    const safetyMetrics = metrics.filter((m) => m.category === "PATIENT_SAFETY",
     );
     return this.calculateComplianceScore(safetyMetrics);
   }
@@ -890,9 +890,9 @@ export class HealthcareGovernanceService
 
     return {
       count: alerts.length,
-      critical: alerts.filter(_(a) => a.severity === "CRITICAL").length,
-      resolved: alerts.filter(_(a) => a.status === "RESOLVED").length,
-      pending: alerts.filter(_(a) => a.status === "ACTIVE").length,
+      critical: alerts.filter((a) => a.severity === "CRITICAL").length,
+      resolved: alerts.filter((a) => a.status === "RESOLVED").length,
+      pending: alerts.filter((a) => a.status === "ACTIVE").length,
     };
   }
 
@@ -908,7 +908,7 @@ export class HealthcareGovernanceService
     const recommendations: string[] = [];
 
     // Check for low-performing metrics
-    const lowPerformingMetrics = metrics.filter(_(m) => m.currentValue < m.threshold,
+    const lowPerformingMetrics = metrics.filter((m) => m.currentValue < m.threshold,
     );
     if (lowPerformingMetrics.length > 0) {
       recommendations.push(
@@ -917,7 +917,7 @@ export class HealthcareGovernanceService
     }
 
     // Check for high-risk metrics
-    const highRiskMetrics = metrics.filter(_(m) => m.riskLevel === "HIGH" || m.riskLevel === "CRITICAL",
+    const highRiskMetrics = metrics.filter((m) => m.riskLevel === "HIGH" || m.riskLevel === "CRITICAL",
     );
     if (highRiskMetrics.length > 0) {
       recommendations.push(
@@ -942,7 +942,7 @@ export class HealthcareGovernanceService
   private calculateNextAuditDate(
     reportType: HealthcareComplianceReport["reportType"],
   ): Date {
-    const _now = new Date();
+    const now = new Date();
     switch (reportType) {
       case "CFM_TELEMEDICINE":
         return new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000); // 90 days

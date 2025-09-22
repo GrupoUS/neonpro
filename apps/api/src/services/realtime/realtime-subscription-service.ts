@@ -164,7 +164,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
 
       this.emit('subscription_created', subscription);
       return subscription;
-    } catch (_error) {
+    } catch (error) {
       this.logError('create_subscription_failed', { userId, options, error });
       throw new Error(`Failed to create subscription: ${error.message}`);
     }
@@ -190,7 +190,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
 
       this.emit('subscription_removed', { subscriptionId });
       this.logEvent('subscription_removed', { subscriptionId });
-    } catch (_error) {
+    } catch (error) {
       this.logError('remove_subscription_failed', { subscriptionId, error });
       throw new Error(`Failed to remove subscription: ${error.message}`);
     }
@@ -246,7 +246,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
         type: fullEvent.type,
         channelsCount: channels.length,
       });
-    } catch (_error) {
+    } catch (error) {
       this.logError('broadcast_failed', { event, error });
       throw new Error(`Failed to broadcast event: ${error.message}`);
     }
@@ -289,7 +289,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
    * Clean up inactive subscriptions
    */
   async cleanupInactiveSubscriptions(maxInactiveTime: number = 30 * 60 * 1000): Promise<number> {
-    const _now = Date.now();
+    const now = Date.now();
     const toRemove: string[] = [];
 
     for (const [subscriptionId, subscription] of this.subscriptions) {
@@ -332,7 +332,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
       }
 
       this.updateAnalytics(eventType);
-    } catch (_error) {
+    } catch (error) {
       this.logError('event_handling_failed', { payload, eventType, error });
     }
   }
@@ -467,7 +467,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
    * Start event processor
    */
   private startEventProcessor(): void {
-    setInterval(_() => {
+    setInterval(() => {
       if (this.isProcessing || this.eventQueue.length === 0) {
         return;
       }
@@ -479,7 +479,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
         .catch(error => {
           this.logError('event_batch_failed', { error, batchSize: batch.length });
         })
-        .finally(_() => {
+        .finally(() => {
           this.isProcessing = false;
         });
     }, 100); // Process every 100ms
@@ -502,7 +502,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
       if (this.analytics.latencies.length > 1000) {
         this.analytics.latencies = this.analytics.latencies.slice(-1000);
       }
-    } catch (_error) {
+    } catch (error) {
       this.analytics.errors++;
       this.logError('event_processing_failed', { eventId: event.id, error });
     }
@@ -512,7 +512,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
    * Start cleanup task
    */
   private startCleanupTask(): void {
-    setInterval(_() => {
+    setInterval(() => {
       this.cleanupInactiveSubscriptions()
         .then(count => {
           if (count > 0) {
@@ -532,7 +532,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
     const subscription = this.subscriptions.get(subscriptionId);
     if (!subscription) return;
 
-    const heartbeat = setInterval(_() => {
+    const heartbeat = setInterval(() => {
       if (!subscription.isActive) {
         clearInterval(heartbeat);
         return;
@@ -557,7 +557,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
    * Setup error handling
    */
   private setupErrorHandling(): void {
-    this.supabase.onClose(_() => {
+    this.supabase.onClose(() => {
       this.emit('connection_lost');
       this.logError('connection_lost', {});
     });
@@ -596,7 +596,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
   private calculateAverageLatency(): number {
     if (this.analytics.latencies.length === 0) return 0;
 
-    const sum = this.analytics.latencies.reduce(_(acc,_latency) => acc + latency, 0);
+    const sum = this.analytics.latencies.reduce((acc,_latency) => acc + latency, 0);
     return sum / this.analytics.latencies.length;
   }
 
@@ -635,7 +635,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
       this.supabase.close();
 
       this.emit('shutdown');
-    } catch (_error) {
+    } catch (error) {
       this.logError('shutdown_failed', { error });
       throw error;
     }

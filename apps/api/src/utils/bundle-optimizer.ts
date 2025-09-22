@@ -68,7 +68,7 @@ export async function importHealthcareModule<T = any>(
     // Create timeout promise for non-critical modules
     const timeoutPromise = new Promise<never>(_(_,_reject) => {
       if (!critical) {
-        setTimeout(_() => reject(new Error(`Module ${modulePath} load timeout`)),
+        setTimeout(() => reject(new Error(`Module ${modulePath} load timeout`)),
           timeout,
         );
       }
@@ -87,7 +87,7 @@ export async function importHealthcareModule<T = any>(
     );
 
     return module.default || module;
-  } catch (_error) {
+  } catch (error) {
     console.error(`Failed to load healthcare module ${modulePath}:`, error);
 
     // Use fallback for non-critical modules
@@ -122,7 +122,7 @@ export const loadCfmValidation = () =>
     timeout: 3000,
   });
 
-export const _loadAnvisaReporting = () =>
+export const loadAnvisaReporting = () =>
   importHealthcareModule('../services/anvisa-reporting', {
     critical: false,
     timeout: 5000,
@@ -147,11 +147,11 @@ export async function preloadCriticalHealthcareModules(): Promise<void> {
 
     // Check if any critical modules failed
     const failedModules = criticalModules
-      .map(_(result,_index) => ({
+      .map((result,_index) => ({
         result,
         module: HEALTHCARE_BUNDLE_CONFIG.criticalModules[index],
       }))
-      .filter(_({ result }) => result.status === 'rejected');
+      .filter(({ result }) => result.status === 'rejected');
 
     if (failedModules.length > 0) {
       console.error(
@@ -167,7 +167,7 @@ export async function preloadCriticalHealthcareModules(): Promise<void> {
     console.log(
       `Critical healthcare modules preloaded in ${Math.round(loadTime)}ms`,
     );
-  } catch (_error) {
+  } catch (error) {
     console.error('Failed to preload critical healthcare modules:', error);
     throw error;
   }
@@ -201,7 +201,7 @@ export class HealthcareBundleAnalyzer {
    * Get total bundle size
    */
   getTotalBundleSize(): number {
-    return Array.from(this.metrics.values()).reduce(_(total,_metric) => total + metric.size,
+    return Array.from(this.metrics.values()).reduce((total,_metric) => total + metric.size,
       0,
     );
   }
@@ -381,5 +381,5 @@ export class HealthcareEdgePerformanceMonitor {
 }
 
 // Export singleton instances
-export const _healthcareBundleAnalyzer = new HealthcareBundleAnalyzer();
-export const _healthcarePerformanceMonitor = HealthcareEdgePerformanceMonitor.getInstance();
+export const healthcareBundleAnalyzer = new HealthcareBundleAnalyzer();
+export const healthcarePerformanceMonitor = HealthcareEdgePerformanceMonitor.getInstance();

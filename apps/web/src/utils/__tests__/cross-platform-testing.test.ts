@@ -15,11 +15,11 @@ import CrossPlatformTestingService, {
   TEST_TYPES,
 } from '../cross-platform-testing';
 
-describe(_'Cross-Platform Testing Service',_() => {
+describe(('Cross-Platform Testing Service', () => {
   let _service: CrossPlatformTestingService;
   let config: CrossPlatformTestingConfig;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     config = {
       browsers: ['chrome', 'firefox', 'safari', 'edge'],
       devices: ['desktop', 'tablet', 'mobile'],
@@ -40,13 +40,13 @@ describe(_'Cross-Platform Testing Service',_() => {
     service = new CrossPlatformTestingService(config);
   });
 
-  describe(_'Configuration Validation',_() => {
-    it(_'should validate valid cross-platform testing configuration',_() => {
+  describe(('Configuration Validation', () => {
+    it(('should validate valid cross-platform testing configuration', () => {
       const result = CrossPlatformTestingConfigSchema.safeParse(config);
       expect(result.success).toBe(true);
     });
 
-    it(_'should use default values for optional configuration',_() => {
+    it(('should use default values for optional configuration', () => {
       const minimalConfig = {};
       const result = CrossPlatformTestingConfigSchema.parse(minimalConfig);
 
@@ -60,7 +60,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       expect(result.performanceThresholds.maxLoadTime).toBe(3000);
     });
 
-    it(_'should validate browser and device constants',_() => {
+    it(('should validate browser and device constants', () => {
       expect(BROWSERS.CHROME).toBe('chrome');
       expect(BROWSERS.FIREFOX).toBe('firefox');
       expect(BROWSERS.SAFARI).toBe('safari');
@@ -71,8 +71,8 @@ describe(_'Cross-Platform Testing Service',_() => {
     });
   });
 
-  describe(_'Cross-Platform Test Execution',_() => {
-    it(_'should execute comprehensive cross-platform testing',_async () => {
+  describe(('Cross-Platform Test Execution', () => {
+    it(_'should execute comprehensive cross-platform testing',async () => {
       const report = await service.executeCrossPlatformTests();
 
       expect(report.executionId).toMatch(/^cross-platform-\d+$/);
@@ -88,7 +88,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       expect(report.platformMatrix).toBeDefined();
     });
 
-    it(_'should execute compatibility testing across platforms',_async () => {
+    it(_'should execute compatibility testing across platforms',async () => {
       const report = await service.executeCrossPlatformTests();
 
       const compatibilityResults = report.results.filter(
@@ -96,7 +96,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       );
       expect(compatibilityResults.length).toBeGreaterThan(0);
 
-      compatibilityResults.forEach(_result => {
+      compatibilityResults.forEach(result => {
         expect(result.platform).toBeDefined();
         expect(result.browser).toMatch(/^(chrome|firefox|safari|edge)$/);
         expect(result.device).toMatch(/^(desktop|tablet|mobile)$/);
@@ -108,7 +108,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       });
     });
 
-    it(_'should execute accessibility testing across platforms',_async () => {
+    it(_'should execute accessibility testing across platforms',async () => {
       const report = await service.executeCrossPlatformTests();
 
       const accessibilityResults = report.results.filter(
@@ -116,7 +116,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       );
       expect(accessibilityResults.length).toBeGreaterThan(0);
 
-      accessibilityResults.forEach(_result => {
+      accessibilityResults.forEach(result => {
         expect(result.testType).toBe('accessibility');
         expect(
           result.performanceMetrics.accessibilityScore,
@@ -130,7 +130,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       });
     });
 
-    it(_'should execute performance testing across platforms',_async () => {
+    it(_'should execute performance testing across platforms',async () => {
       const report = await service.executeCrossPlatformTests();
 
       const performanceResults = report.results.filter(
@@ -138,7 +138,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       );
       expect(performanceResults.length).toBeGreaterThan(0);
 
-      performanceResults.forEach(_result => {
+      performanceResults.forEach(result => {
         expect(result.testType).toBe('performance');
         expect(result.performanceMetrics.loadTime).toBeGreaterThan(0);
         expect(result.performanceMetrics.interactionDelay).toBeGreaterThan(0);
@@ -147,8 +147,8 @@ describe(_'Cross-Platform Testing Service',_() => {
     });
   });
 
-  describe(_'Cross-Platform Statistics',_() => {
-    it(_'should generate accurate cross-platform statistics',_async () => {
+  describe(('Cross-Platform Statistics', () => {
+    it(_'should generate accurate cross-platform statistics',async () => {
       const report = await service.executeCrossPlatformTests();
 
       expect(report.summary.totalTests).toBe(36); // 4 browsers × 3 devices × 3 test types
@@ -164,7 +164,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       expect(report.summary.platformCoverage.total).toBe(12);
     });
 
-    it(_'should calculate accessibility compliance across platforms',_async () => {
+    it(_'should calculate accessibility compliance across platforms',async () => {
       const report = await service.executeCrossPlatformTests();
 
       expect(report.summary.accessibilityCompliance).toBeDefined();
@@ -179,7 +179,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       ).toBeLessThanOrEqual(100);
     });
 
-    it(_'should validate healthcare workflow compatibility',_async () => {
+    it(_'should validate healthcare workflow compatibility',async () => {
       const report = await service.executeCrossPlatformTests();
 
       expect(
@@ -191,8 +191,8 @@ describe(_'Cross-Platform Testing Service',_() => {
     });
   });
 
-  describe(_'Cross-Platform Validation',_() => {
-    it(_'should validate cross-platform test quality',_async () => {
+  describe(('Cross-Platform Validation', () => {
+    it(_'should validate cross-platform test quality',async () => {
       const report = await service.executeCrossPlatformTests();
 
       // Validate that tests were executed
@@ -211,7 +211,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       }
     });
 
-    it(_'should generate recommendations based on cross-platform results',_async () => {
+    it(_'should generate recommendations based on cross-platform results',async () => {
       const report = await service.executeCrossPlatformTests();
 
       expect(report.recommendations).toBeInstanceOf(Array);
@@ -244,13 +244,13 @@ describe(_'Cross-Platform Testing Service',_() => {
       }
     });
 
-    it(_'should identify critical issues for cross-platform compatibility',_async () => {
+    it(_'should identify critical issues for cross-platform compatibility',async () => {
       const report = await service.executeCrossPlatformTests();
 
       expect(report.criticalIssues).toBeInstanceOf(Array);
 
       // Validate critical issue structure if any exist
-      report.criticalIssues.forEach(_issue => {
+      report.criticalIssues.forEach(issue => {
         expect(issue.severity).toMatch(/^(critical|high|medium|low)$/);
         expect(issue.category).toBeDefined();
         expect(issue.issue).toBeDefined();
@@ -260,16 +260,16 @@ describe(_'Cross-Platform Testing Service',_() => {
       });
     });
 
-    it(_'should provide platform compatibility matrix',_async () => {
+    it(_'should provide platform compatibility matrix',async () => {
       const report = await service.executeCrossPlatformTests();
 
       expect(report.platformMatrix).toBeDefined();
       expect(typeof report.platformMatrix).toBe('object');
 
       // Validate matrix structure
-      Object.keys(report.platformMatrix).forEach(_browser => {
+      Object.keys(report.platformMatrix).forEach(browser => {
         expect(config.browsers).toContain(browser);
-        Object.keys(report.platformMatrix[browser]).forEach(_device => {
+        Object.keys(report.platformMatrix[browser]).forEach(device => {
           expect(config.devices).toContain(device);
           expect(report.platformMatrix[browser][device]).toMatch(
             /^(passed|failed|warning)$/,
@@ -279,8 +279,8 @@ describe(_'Cross-Platform Testing Service',_() => {
     });
   });
 
-  describe(_'Brazilian Portuguese Localization',_() => {
-    it(_'should provide Brazilian Portuguese cross-platform labels',_() => {
+  describe(('Brazilian Portuguese Localization', () => {
+    it(('should provide Brazilian Portuguese cross-platform labels', () => {
       const labels = CrossPlatformTestingService.getPortugueseLabels();
 
       expect(labels.browsers.chrome).toBe('Google Chrome');
@@ -291,7 +291,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       expect(labels.testTypes.performance).toBe('Performance');
     });
 
-    it(_'should include Portuguese translations in cross-platform recommendations',_async () => {
+    it(_'should include Portuguese translations in cross-platform recommendations',async () => {
       const report = await service.executeCrossPlatformTests();
 
       // Check for Portuguese content in recommendations
@@ -310,7 +310,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       expect(hasPortugueseRecommendations).toBe(true);
     });
 
-    it(_'should include Portuguese translations in healthcare considerations',_async () => {
+    it(_'should include Portuguese translations in healthcare considerations',async () => {
       const report = await service.executeCrossPlatformTests();
 
       // Check for Portuguese content in healthcare considerations
@@ -336,8 +336,8 @@ describe(_'Cross-Platform Testing Service',_() => {
     });
   });
 
-  describe(_'Healthcare Cross-Platform Integration',_() => {
-    it(_'should include healthcare compatibility validation in cross-platform results',_async () => {
+  describe(('Healthcare Cross-Platform Integration', () => {
+    it(_'should include healthcare compatibility validation in cross-platform results',async () => {
       const report = await service.executeCrossPlatformTests();
 
       // Check for healthcare compatibility validation
@@ -355,7 +355,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       expect(hasHealthcareCompatibility).toBe(true);
     });
 
-    it(_'should include mobile optimization validation for healthcare workflows',_async () => {
+    it(_'should include mobile optimization validation for healthcare workflows',async () => {
       const report = await service.executeCrossPlatformTests();
 
       // Check for mobile optimization validation
@@ -368,7 +368,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       expect(hasMobileOptimization).toBe(true);
     });
 
-    it(_'should include emergency access validation across platforms',_async () => {
+    it(_'should include emergency access validation across platforms',async () => {
       const report = await service.executeCrossPlatformTests();
 
       // Check for emergency access validation
@@ -379,23 +379,23 @@ describe(_'Cross-Platform Testing Service',_() => {
     });
   });
 
-  describe(_'Cross-Platform Test Types',_() => {
-    it(_'should include compatibility test scenarios',_() => {
+  describe(('Cross-Platform Test Types', () => {
+    it(('should include compatibility test scenarios', () => {
       expect(TEST_TYPES.COMPATIBILITY).toBe('compatibility');
       expect(config.testTypes).toContain('compatibility');
     });
 
-    it(_'should include accessibility test scenarios',_() => {
+    it(('should include accessibility test scenarios', () => {
       expect(TEST_TYPES.ACCESSIBILITY).toBe('accessibility');
       expect(config.testTypes).toContain('accessibility');
     });
 
-    it(_'should include performance test scenarios',_() => {
+    it(('should include performance test scenarios', () => {
       expect(TEST_TYPES.PERFORMANCE).toBe('performance');
       expect(config.testTypes).toContain('performance');
     });
 
-    it(_'should include healthcare workflow test scenarios',_() => {
+    it(('should include healthcare workflow test scenarios', () => {
       expect(TEST_TYPES.HEALTHCARE_WORKFLOWS).toBe('healthcare-workflows');
       expect(config.healthcareWorkflows).toContain('patient-registration');
       expect(config.healthcareWorkflows).toContain('appointment-booking');
@@ -403,8 +403,8 @@ describe(_'Cross-Platform Testing Service',_() => {
     });
   });
 
-  describe(_'Cross-Platform Test Filtering',_() => {
-    it(_'should filter tests by browser',_async () => {
+  describe(('Cross-Platform Test Filtering', () => {
+    it(_'should filter tests by browser',async () => {
       const chromeOnlyConfig = { ...config, browsers: ['chrome'] as const };
       const chromeService = new CrossPlatformTestingService(chromeOnlyConfig);
       const report = await chromeService.executeCrossPlatformTests();
@@ -413,7 +413,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       expect(report.summary.platformCoverage.browsers).toBe(1);
     });
 
-    it(_'should filter tests by device',_async () => {
+    it(_'should filter tests by device',async () => {
       const mobileOnlyConfig = { ...config, devices: ['mobile'] as const };
       const mobileService = new CrossPlatformTestingService(mobileOnlyConfig);
       const report = await mobileService.executeCrossPlatformTests();
@@ -422,7 +422,7 @@ describe(_'Cross-Platform Testing Service',_() => {
       expect(report.summary.platformCoverage.devices).toBe(1);
     });
 
-    it(_'should filter tests by test type',_async () => {
+    it(_'should filter tests by test type',async () => {
       const accessibilityOnlyConfig = {
         ...config,
         testTypes: ['accessibility'] as const,

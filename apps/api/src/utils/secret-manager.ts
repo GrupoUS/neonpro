@@ -76,7 +76,7 @@ class SecretManager {
         provider: this.config.provider,
         secretCount: this.secrets.size,
       });
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to load secrets', error as Error, {
         provider: this.config.provider,
       });
@@ -149,7 +149,7 @@ class SecretManager {
     }
 
     const [ivHex, authTagHex, encrypted] = parts;
-    const _iv = Buffer.from(ivHex, 'hex');
+    const iv = Buffer.from(ivHex, 'hex');
     const authTag = Buffer.from(authTagHex, 'hex');
 
     const decipher = crypto.createDecipher('aes-256-gcm', this.encryptionKey);
@@ -211,7 +211,7 @@ class SecretManager {
 
     try {
       return this.decrypt(encryptedValue);
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to decrypt secret', error as Error, {
         secretName: name,
         accessedBy,

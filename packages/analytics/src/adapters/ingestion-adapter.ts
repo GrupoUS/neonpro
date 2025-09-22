@@ -175,7 +175,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
   protected emitEvent(event: IngestionEvent): void {
     const handlers = this.eventHandlers.get(event.eventType);
     if (handlers) {
-      handlers.forEach(_(handler) => handler(event));
+      handlers.forEach((handler) => handler(event));
     }
   }
 
@@ -188,7 +188,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     const invalid: any[] = [];
     const errors: IngestionError[] = [];
 
-    data.forEach(_(record,_index) => {
+    data.forEach((record,_index) => {
       let isValid = true;
 
       for (const rule of this.validationRules) {
@@ -216,7 +216,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
             });
             break;
           }
-        } catch (_error) {
+        } catch (error) {
           isValid = false;
           errors.push({
             errorId: `validation_error_${Date.now()}_${index}`,
@@ -258,7 +258,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     const transformed: any[] = [];
     const errors: IngestionError[] = [];
 
-    data.forEach(_(record,_index) => {
+    data.forEach((record,_index) => {
       let transformedRecord = { ...record };
 
       for (const rule of this.transformationRules) {
@@ -267,7 +267,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
             transformedRecord,
             rule,
           );
-        } catch (_error) {
+        } catch (error) {
           errors.push({
             errorId: `transformation_error_${Date.now()}_${index}`,
             type: "transformation_error",
@@ -357,13 +357,13 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
   }
 
   private getFieldValue(record: any, fieldPath: string): any {
-    return fieldPath.split(".").reduce(_(obj,_key) => obj?.[key], record);
+    return fieldPath.split(".").reduce((obj,_key) => obj?.[key], record);
   }
 
   private setFieldValue(record: any, fieldPath: string, value: any): void {
     const keys = fieldPath.split(".");
     const lastKey = keys.pop()!;
-    const target = keys.reduce(_(obj,_key) => {
+    const target = keys.reduce((obj,_key) => {
       if (!obj[key]) obj[key] = {};
       return obj[key];
     }, record);
@@ -481,7 +481,7 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
         processedRecords: transformed.length,
         validRecords: valid.length,
         invalidRecords: invalid.length,
-        errors: [...validationErrors, ...transformationErrors].map(_(e) => e.message,
+        errors: [...validationErrors, ...transformationErrors].map((e) => e.message,
         ),
         warnings: [],
       },

@@ -124,6 +124,6 @@ function ServiceCategoriesPage() {
   );
 }
 
-export const _Route = createFileRoute('/services/service-categories')({
+export const Route = createFileRoute('/services/service-categories')({
   component: ServiceCategoriesPage,
 });

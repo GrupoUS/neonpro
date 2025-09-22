@@ -138,7 +138,7 @@ copilotBridge.post('/chat/completions', async c => {
       const response = formatCopilotResponse(agentResponse, requestId, startTime);
       return c.json(response);
     }
-  } catch (_error) {
+  } catch (error) {
     logger.error('CopilotKit bridge error', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',
@@ -196,7 +196,7 @@ async function callAGUIAgent(_query: string, userContext: any, requestId: string
 
     const agentData = await response.json();
     return agentData;
-  } catch (_error) {
+  } catch (error) {
     logger.error('AG-UI Agent call failed', {
       requestId,
       error: error instanceof Error ? error.message : 'Unknown error',

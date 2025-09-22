@@ -42,7 +42,7 @@ export async function validateSchema(): Promise<boolean> {
         const existsResult = (await prisma.$queryRaw`
           SELECT EXISTS (
             SELECT FROM information_schema.tables 
-            WHERE table_schema = 'public' 
+            WHERE table_schema = 'public_ 
             AND table_name = ${tableSpec.name}
           )
         `) as any[];
@@ -56,12 +56,12 @@ export async function validateSchema(): Promise<boolean> {
         const columnsResult = (await prisma.$queryRaw`
           SELECT column_name 
           FROM information_schema.columns 
-          WHERE table_schema = 'public' 
+          WHERE table_schema = 'public_ 
           AND table_name = ${tableSpec.name}
         `) as { column_name: string }[];
 
-        const existingColumns = columnsResult.map(_(col) => col.column_name);
-        const missingColumns = tableSpec.requiredColumns.filter(_(col) => !existingColumns.includes(col),
+        const existingColumns = columnsResult.map((col) => col.column_name);
+        const missingColumns = tableSpec.requiredColumns.filter((col) => !existingColumns.includes(col),
         );
 
         if (missingColumns.length > 0) {
@@ -70,7 +70,7 @@ export async function validateSchema(): Promise<boolean> {
           );
           return false;
         }
-      } catch (_error) {
+      } catch (error) {
         console.error(`Error checking table ${tableSpec.name}:`, error);
         return false;
       }
@@ -78,7 +78,7 @@ export async function validateSchema(): Promise<boolean> {
 
     await prisma.$disconnect();
     return true;
-  } catch (_error) {
+  } catch (error) {
     console.error("Schema validation error:", error);
     return false;
   }
@@ -126,7 +126,7 @@ export async function checkTablesExist(
       // Verify that all required columns are present in the response
       if (data && data.length > 0) {
         const row = data[0];
-        const missingColumns = tableSpec.requiredColumns.filter(_(col) => !(col in row),
+        const missingColumns = tableSpec.requiredColumns.filter((col) => !(col in row),
         );
         if (missingColumns.length > 0) {
           console.error(
@@ -137,7 +137,7 @@ export async function checkTablesExist(
       }
     }
     return true;
-  } catch (_error) {
+  } catch (error) {
     console.error("Schema validation error:", error);
     return false;
   }

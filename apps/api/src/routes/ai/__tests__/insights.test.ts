@@ -157,7 +157,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     mockLGPDService.maskSensitiveData.mockImplementation(data => data);
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
@@ -658,7 +658,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
           insights: {
             // Large dataset simulation
             riskAssessment: { overallRisk: 'medium' },
-            treatmentRecommendations: Array.from({ length: 20 },_(_,_i) => ({
+            treatmentRecommendations: Array.from({ length: 20 },(, i) => ({
               treatment: `Tratamento ${i + 1}`,
               priority: 'medium',
               confidence: 0.8,

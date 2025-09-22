@@ -69,7 +69,7 @@ export class TraceManager {
       const result = await fn(span);
       this.setStatus(operationName, "ok");
       return result;
-    } catch (_error) {
+    } catch (error) {
       this.setStatus(
         operationName,
         "error",
@@ -92,7 +92,7 @@ export class TraceManager {
       const result = fn(span);
       this.setStatus(operationName, "ok");
       return result;
-    } catch (_error) {
+    } catch (error) {
       this.setStatus(
         operationName,
         "error",
@@ -106,4 +106,4 @@ export class TraceManager {
 }
 
 // Global trace manager instance
-export const _globalTraceManager = new TraceManager("neonpro-chat");
+export const globalTraceManager = new TraceManager("neonpro-chat");

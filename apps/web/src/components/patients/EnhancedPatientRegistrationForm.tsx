@@ -163,7 +163,7 @@ const BasicInformationStep = () => {
         <FormField
           control={form.control}
           name='basicInfo.cpf'
-          render={(_{ field }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>CPF *</FormLabel>
               <FormControl>
@@ -205,7 +205,7 @@ const BasicInformationStep = () => {
         <FormField
           control={form.control}
           name='basicInfo.birthDate'
-          render={(_{ field }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Data de Nascimento *</FormLabel>
               <FormControl>
@@ -219,7 +219,7 @@ const BasicInformationStep = () => {
         <FormField
           control={form.control}
           name='basicInfo.gender'
-          render={(_{ field }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Gênero *</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -244,7 +244,7 @@ const BasicInformationStep = () => {
         <FormField
           control={form.control}
           name='cns'
-          render={(_{ field }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>CNS (Cartão Nacional de Saúde)</FormLabel>
               <FormControl>
@@ -261,7 +261,7 @@ const BasicInformationStep = () => {
         <FormField
           control={form.control}
           name='rg'
-          render={(_{ field }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>RG</FormLabel>
               <FormControl>
@@ -313,7 +313,7 @@ const AddressStep = () => {
         <FormField
           control={form.control}
           name='address.street'
-          render={(_{ field }) => (
+          render={({ field }) => (
             <FormItem className='md:col-span-2'>
               <FormLabel>Endereço *</FormLabel>
               <FormControl>
@@ -329,7 +329,7 @@ const AddressStep = () => {
         <FormField
           control={form.control}
           name='address.number'
-          render={(_{ field }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Número *</FormLabel>
               <FormControl>
@@ -343,7 +343,7 @@ const AddressStep = () => {
         <FormField
           control={form.control}
           name='address.complement'
-          render={(_{ field }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Complemento</FormLabel>
               <FormControl>
@@ -357,7 +357,7 @@ const AddressStep = () => {
         <FormField
           control={form.control}
           name='address.neighborhood'
-          render={(_{ field }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Bairro *</FormLabel>
               <FormControl>
@@ -373,7 +373,7 @@ const AddressStep = () => {
         <FormField
           control={form.control}
           name='address.city'
-          render={(_{ field }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Cidade *</FormLabel>
               <FormControl>
@@ -387,7 +387,7 @@ const AddressStep = () => {
         <FormField
           control={form.control}
           name='address.state'
-          render={(_{ field }) => (
+          render={({ field }) => (
             <FormItem>
               <FormLabel>Estado *</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
@@ -453,7 +453,7 @@ const ContactStep = () => {
     if (formatted.length <= 15) onChange(formatted);
   };
 
-  return (_<div className='space-y-4'>
+  return (<div className='space-y-4'>
       <FormField
         control={form.control}
         name='basicInfo.phone'
@@ -499,7 +499,7 @@ const ContactStep = () => {
       <FormField
         control={form.control}
         name='basicInfo.email'
-        render={(_{ field }) => (
+        render={({ field }) => (
           <FormItem>
             <FormLabel>E-mail *</FormLabel>
             <FormControl>
@@ -591,7 +591,7 @@ const ConsentStep = () => {
               <FormField
                 control={form.control}
                 name={`consent.${purpose.key}`}
-                render={(_{ field }) => (
+                render={({ field }) => (
                   <FormItem className='flex flex-row items-start space-x-3 space-y-0'>
                     <FormControl>
                       <Checkbox
@@ -630,7 +630,7 @@ const ConsentStep = () => {
         <FormField
           control={form.control}
           name='termsAccepted'
-          render={(_{ field }) => (
+          render={({ field }) => (
             <FormItem className='flex flex-row items-start space-x-3 space-y-0'>
               <FormControl>
                 <Checkbox
@@ -660,7 +660,7 @@ const ConsentStep = () => {
         <FormField
           control={form.control}
           name='privacyPolicyAccepted'
-          render={(_{ field }) => (
+          render={({ field }) => (
             <FormItem className='flex flex-row items-start space-x-3 space-y-0'>
               <FormControl>
                 <Checkbox
@@ -818,7 +818,7 @@ export function EnhancedPatientRegistrationForm({
   onOpenChange,
   onSubmit,
   initialData,
-  userRole: _userRole,
+  userRole: userRole,
   className,
 }: EnhancedPatientRegistrationFormProps) {
   const [currentStep, setCurrentStep] = useState<number>(0);
@@ -970,7 +970,7 @@ export function EnhancedPatientRegistrationForm({
 
         {/* Step Navigation */}
         <div className='flex justify-between'>
-          {REGISTRATION_STEPS.map(_(step, _index) => {
+          {REGISTRATION_STEPS.map((step, _index) => {
             const Icon = step.icon;
             const isActive = index === currentStep;
             const isCompleted = index < currentStep;

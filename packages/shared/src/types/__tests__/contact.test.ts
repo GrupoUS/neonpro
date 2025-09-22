@@ -6,14 +6,14 @@
 import { describe, expect, it } from "vitest";
 
 describe("Contact Information Model (T033)", () => {
-  it(_"should export Contact type",_() => {
-    expect(_() => {
+  it("should export Contact type", () => {
+    expect(() => {
       const module = require("../contact");
       expect(module.createContact).toBeDefined();
     }).not.toThrow();
   });
 
-  it(_"should have required contact fields",_() => {
+  it("should have required contact fields", () => {
     const { Contact } = require("../contact");
     const contact: Contact = {
       id: "contact-123",
@@ -42,7 +42,7 @@ describe("Contact Information Model (T033)", () => {
     expect(contact.phone).toBe("(11) 99999-9999");
   });
 
-  it(_"should support contact types",_() => {
+  it("should support contact types", () => {
     const { ContactType } = require("../contact");
     expect(ContactType.PRIMARY).toBe("primary");
     expect(ContactType.EMERGENCY).toBe("emergency");
@@ -51,7 +51,7 @@ describe("Contact Information Model (T033)", () => {
     expect(ContactType.OTHER).toBe("other");
   });
 
-  it(_"should support relationship types",_() => {
+  it("should support relationship types", () => {
     const { RelationshipType } = require("../contact");
     expect(RelationshipType.SELF).toBe("self");
     expect(RelationshipType.SPOUSE).toBe("spouse");
@@ -62,28 +62,28 @@ describe("Contact Information Model (T033)", () => {
     expect(RelationshipType.OTHER).toBe("other");
   });
 
-  it(_"should validate Brazilian phone numbers",_() => {
+  it("should validate Brazilian phone numbers", () => {
     const { validateBrazilianPhone } = require("../contact");
     expect(validateBrazilianPhone("(11) 99999-9999")).toBe(true);
     expect(validateBrazilianPhone("11999999999")).toBe(true);
     expect(validateBrazilianPhone("invalid")).toBe(false);
   });
 
-  it(_"should validate email addresses",_() => {
+  it("should validate email addresses", () => {
     const { validateEmail } = require("../contact");
     expect(validateEmail("joao@example.com")).toBe(true);
     expect(validateEmail("invalid-email")).toBe(false);
     expect(validateEmail("")).toBe(false);
   });
 
-  it(_"should validate Brazilian CEP",_() => {
+  it("should validate Brazilian CEP", () => {
     const { validateCEP } = require("../contact");
     expect(validateCEP("01234-567")).toBe(true);
     expect(validateCEP("01234567")).toBe(true);
     expect(validateCEP("invalid")).toBe(false);
   });
 
-  it(_"should format contact for display",_() => {
+  it("should format contact for display", () => {
     const { formatContactForDisplay } = require("../contact");
 
     const contact = {
@@ -99,7 +99,7 @@ describe("Contact Information Model (T033)", () => {
     expect(formatted).toContain("spouse");
   });
 
-  it(_"should support contact preferences",_() => {
+  it("should support contact preferences", () => {
     const { ContactPreferences } = require("../contact");
     const preferences: ContactPreferences = {
       preferredMethod: "whatsapp",
@@ -115,7 +115,7 @@ describe("Contact Information Model (T033)", () => {
     expect(preferences.allowWhatsApp).toBe(true);
   });
 
-  it(_"should handle emergency contact priority",_() => {
+  it("should handle emergency contact priority", () => {
     const { setEmergencyPriority } = require("../contact");
 
     const contact = {
@@ -129,7 +129,7 @@ describe("Contact Information Model (T033)", () => {
     expect(updated.emergencyPriority).toBe(1);
   });
 
-  it(_"should support LGPD compliance for contacts",_() => {
+  it("should support LGPD compliance for contacts", () => {
     const { anonymizeContact } = require("../contact");
 
     const contact = {
@@ -148,7 +148,7 @@ describe("Contact Information Model (T033)", () => {
     expect(anonymized.email).toMatch(/^anon_.*@anonymized\.com$/);
   });
 
-  it(_"should validate contact completeness",_() => {
+  it("should validate contact completeness", () => {
     const { validateContactCompleteness } = require("../contact");
 
     const completeContact = {
@@ -167,7 +167,7 @@ describe("Contact Information Model (T033)", () => {
     expect(validateContactCompleteness(incompleteContact)).toBe(false);
   });
 
-  it(_"should support contact notes and tags",_() => {
+  it("should support contact notes and tags", () => {
     const { Contact } = require("../contact");
     const contact: Contact = {
       id: "contact-123",

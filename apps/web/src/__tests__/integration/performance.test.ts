@@ -32,25 +32,25 @@ const mockBundleAnalyzer = {
   getUnusedModules: vi.fn(),
 };
 
-describe(_'Performance Integration Tests',_() => {
-  beforeEach(_() => {
+describe(('Performance Integration Tests', () => {
+  beforeEach(() => {
     vi.clearAllMocks();
     // Mock global performance
     global.performance = {
-      now: vi.fn(_() => Date.now()),
+      now: vi.fn(() => Date.now()),
       mark: vi.fn(),
       measure: vi.fn(),
-      getEntriesByType: vi.fn(_() => []),
-      getEntriesByName: vi.fn(_() => []),
+      getEntriesByType: vi.fn(() => []),
+      getEntriesByName: vi.fn(() => []),
     } as any;
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  describe(_'Bundle Optimization Integration',_() => {
-    test(_'should integrate code splitting with route-based chunks',_async () => {
+  describe(('Bundle Optimization Integration', () => {
+    test(_'should integrate code splitting with route-based chunks',async () => {
       // Test: Route-based code splitting integration
       const routeChunks = {
         '/patients': { size: 150000, modules: 45 },
@@ -61,7 +61,7 @@ describe(_'Performance Integration Tests',_() => {
       };
 
       // Verify chunk sizes are within healthcare performance budgets
-      Object.entries(routeChunks).forEach(_([route,_chunk]) => {
+      Object.entries(routeChunks).forEach(([route, chunk]) => {
         if (route === '/emergency') {
           expect(chunk.size).toBeLessThan(100000); // Emergency routes must be <100KB
         } else {
@@ -71,7 +71,7 @@ describe(_'Performance Integration Tests',_() => {
       });
     });
 
-    test(_'should integrate tree-shaking with healthcare-specific libraries',_async () => {
+    test(_'should integrate tree-shaking with healthcare-specific libraries',async () => {
       // Test: Tree-shaking for medical libraries
       const medicalLibrariesUsage = {
         'chart.js': {
@@ -87,13 +87,13 @@ describe(_'Performance Integration Tests',_() => {
       };
 
       // Verify tree-shaking effectiveness
-      Object.entries(medicalLibrariesUsage).forEach(_([library,_usage]) => {
+      Object.entries(medicalLibrariesUsage).forEach(([library, usage]) => {
         expect(usage.used.length).toBeGreaterThan(0);
         expect(Array.isArray(usage.unused)).toBe(true);
       });
     });
 
-    test(_'should integrate lazy loading with medical workflow components',_async () => {
+    test(_'should integrate lazy loading with medical workflow components',async () => {
       // Test: Lazy loading for medical components
       const lazyComponents = {
         PatientChart: () => import('../components/medical/PatientChart'),
@@ -103,13 +103,13 @@ describe(_'Performance Integration Tests',_() => {
       };
 
       // Verify lazy loading setup
-      Object.entries(lazyComponents).forEach(_([componentName,_importFn]) => {
+      Object.entries(lazyComponents).forEach(([componentName, importFn]) => {
         expect(typeof importFn).toBe('function');
         expect(componentName).toMatch(/^[A-Z]/); // Component names should be PascalCase
       });
     });
 
-    test(_'should integrate module federation for healthcare microservices',_async () => {
+    test(_'should integrate module federation for healthcare microservices',async () => {
       // Test: Module federation for healthcare modules
       const federatedModules = {
         patientManagement: {
@@ -131,7 +131,7 @@ describe(_'Performance Integration Tests',_() => {
       };
 
       // Verify module federation configuration
-      Object.entries(federatedModules).forEach(_([serviceName,_config]) => {
+      Object.entries(federatedModules).forEach(([serviceName, config]) => {
         expect(config.remoteEntry).toMatch(/^https:\/\/.*\.neonpro\.com\.br/);
         expect(config.exposedModules).toHaveLength.greaterThan(0);
         expect(serviceName).toMatch(/^[a-z]/); // Service names should be camelCase
@@ -139,8 +139,8 @@ describe(_'Performance Integration Tests',_() => {
     });
   });
 
-  describe(_'Caching Strategy Integration',_() => {
-    test(_'should integrate service worker with healthcare data caching',_async () => {
+  describe(('Caching Strategy Integration', () => {
+    test(_'should integrate service worker with healthcare data caching',async () => {
       // Test: Service worker caching for healthcare data
       const cacheStrategies = {
         staticAssets: 'CacheFirst',
@@ -165,7 +165,7 @@ describe(_'Performance Integration Tests',_() => {
       expect(cacheTTL.patientData).toBeLessThan(cacheTTL.staticAssets);
     });
 
-    test(_'should integrate CDN with healthcare content delivery',_async () => {
+    test(_'should integrate CDN with healthcare content delivery',async () => {
       // Test: CDN integration for healthcare assets
       const cdnConfiguration = {
         staticAssets: 'https://cdn.neonpro.com.br/static/',
@@ -182,7 +182,7 @@ describe(_'Performance Integration Tests',_() => {
       };
 
       // Verify CDN configuration
-      Object.values(cdnConfiguration).forEach(_url => {
+      Object.values(cdnConfiguration).forEach(url => {
         expect(url).toMatch(/^https:\/\/.*\.neonpro\.com\.br/);
       });
 
@@ -192,7 +192,7 @@ describe(_'Performance Integration Tests',_() => {
       );
     });
 
-    test(_'should integrate browser caching with LGPD compliance',_async () => {
+    test(_'should integrate browser caching with LGPD compliance',async () => {
       // Test: Browser caching with LGPD data protection
       const lgpdCacheRules = {
         patientPII: { cache: false, reason: 'Contains PII' },
@@ -208,7 +208,7 @@ describe(_'Performance Integration Tests',_() => {
       expect(lgpdCacheRules.publicContent.cache).toBe(true);
     });
 
-    test(_'should integrate memory management with patient data handling',_async () => {
+    test(_'should integrate memory management with patient data handling',async () => {
       // Test: Memory management for healthcare applications
       const memoryManagement = {
         patientDataLimit: 50, // Max patients in memory
@@ -232,8 +232,8 @@ describe(_'Performance Integration Tests',_() => {
     });
   });
 
-  describe(_'Resource Compression Integration',_() => {
-    test(_'should integrate gzip compression with healthcare assets',_async () => {
+  describe(('Resource Compression Integration', () => {
+    test(_'should integrate gzip compression with healthcare assets',async () => {
       // Test: Gzip compression for healthcare assets
       const compressionConfig = {
         javascript: { enabled: true, level: 6, threshold: 1024 },
@@ -252,19 +252,19 @@ describe(_'Performance Integration Tests',_() => {
       };
 
       // Verify compression configuration
-      Object.values(compressionConfig).forEach(_config => {
+      Object.values(compressionConfig).forEach(config => {
         expect(config.enabled).toBe(true);
         expect(config.level).toBeGreaterThanOrEqual(1);
         expect(config.level).toBeLessThanOrEqual(9);
       });
 
-      Object.values(compressionRatios).forEach(_ratio => {
+      Object.values(compressionRatios).forEach(ratio => {
         expect(ratio).toBeGreaterThan(0);
         expect(ratio).toBeLessThan(1);
       });
     });
 
-    test(_'should integrate image optimization with medical imagery',_async () => {
+    test(_'should integrate image optimization with medical imagery',async () => {
       // Test: Image optimization for medical content
       const imageOptimization = {
         webp: { quality: 85, enabled: true },
@@ -287,7 +287,7 @@ describe(_'Performance Integration Tests',_() => {
       expect(medicalImageSizes.fullsize.width).toBeLessThanOrEqual(1920);
     });
 
-    test(_'should integrate font optimization with medical UI',_async () => {
+    test(_'should integrate font optimization with medical UI',async () => {
       // Test: Font optimization for healthcare interface
       const fontOptimization = {
         preload: ['Inter-Regular.woff2', 'Inter-Medium.woff2'],
@@ -310,8 +310,8 @@ describe(_'Performance Integration Tests',_() => {
     });
   });
 
-  describe(_'Performance Monitoring Integration',_() => {
-    test(_'should integrate Web Vitals with healthcare performance thresholds',_async () => {
+  describe(('Performance Monitoring Integration', () => {
+    test(_'should integrate Web Vitals with healthcare performance thresholds',async () => {
       // Test: Web Vitals monitoring for healthcare
       const healthcareThresholds = {
         emergency: { lcp: 1000, fid: 50, cls: 0.05 },
@@ -347,7 +347,7 @@ describe(_'Performance Integration Tests',_() => {
       );
     });
 
-    test(_'should integrate performance budget with healthcare workflows',_async () => {
+    test(_'should integrate performance budget with healthcare workflows',async () => {
       // Test: Performance budgets for healthcare features
       const performanceBudgets = {
         emergency: {
@@ -371,7 +371,7 @@ describe(_'Performance Integration Tests',_() => {
       };
 
       // Verify performance budgets
-      Object.entries(performanceBudgets).forEach(_([workflow,_budget]) => {
+      Object.entries(performanceBudgets).forEach(([workflow, budget]) => {
         const total = budget.mainBundle + budget.vendor + budget.assets;
         expect(total).toBeLessThanOrEqual(budget.totalSize);
 
@@ -381,7 +381,7 @@ describe(_'Performance Integration Tests',_() => {
       });
     });
 
-    test(_'should integrate real-time monitoring with patient safety alerts',_async () => {
+    test(_'should integrate real-time monitoring with patient safety alerts',async () => {
       // Test: Real-time performance monitoring for patient safety
       const performanceAlerts = {
         criticalThresholds: {
@@ -417,7 +417,7 @@ describe(_'Performance Integration Tests',_() => {
       );
     });
 
-    test(_'should integrate lighthouse CI with healthcare performance standards',_async () => {
+    test(_'should integrate lighthouse CI with healthcare performance standards',async () => {
       // Test: Lighthouse CI for healthcare performance standards
       const lighthouseThresholds = {
         performance: 85, // Healthcare apps need good performance
@@ -458,8 +458,8 @@ describe(_'Performance Integration Tests',_() => {
     });
   });
 
-  describe(_'End-to-End Performance Integration',_() => {
-    test(_'should integrate full performance pipeline for healthcare workflows',_async () => {
+  describe(('End-to-End Performance Integration', () => {
+    test(_'should integrate full performance pipeline for healthcare workflows',async () => {
       // Test: Complete performance pipeline
       const performancePipeline = {
         build: {
@@ -483,14 +483,14 @@ describe(_'Performance Integration Tests',_() => {
       };
 
       // Verify complete pipeline
-      Object.values(performancePipeline).forEach(_stage => {
-        Object.values(stage).forEach(_feature => {
+      Object.values(performancePipeline).forEach(stage => {
+        Object.values(stage).forEach(feature => {
           expect(feature).toBe(true);
         });
       });
     });
 
-    test(_'should measure performance impact on healthcare workflows',_async () => {
+    test(_'should measure performance impact on healthcare workflows',async () => {
       // Test: Performance impact measurement
       const workflowImpacts = {
         patientRegistration: {
@@ -516,7 +516,7 @@ describe(_'Performance Integration Tests',_() => {
       };
 
       // Verify performance improvements
-      Object.entries(workflowImpacts).forEach(_([workflow,_impact]) => {
+      Object.entries(workflowImpacts).forEach(([workflow, impact]) => {
         expect(impact.optimizedTime).toBeLessThan(impact.baseTime);
         expect(parseFloat(impact.improvement)).toBeGreaterThan(30);
 

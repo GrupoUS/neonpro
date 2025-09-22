@@ -12,13 +12,13 @@
  * await provider.initialize();
  *
  * const prediction = await provider.predict({
- *   type: 'readmission_risk',
+ *   type: 'readmission_risk_,
  *   features: {
  *     age: 65,
  *     gender: 'male',
- *     medical_history: ['diabetes', 'hypertension'],
- *     current_symptoms: ['chest_pain'],
- *     vital_signs: { bp: '140/90', hr: 80 }
+ *     medical_history: ['diabetes', 'hypertension_],
+ *     current_symptoms: ['chest_pain_],
+ *     vital_signs: { bp: '140/90_, hr: 80 }
  *   }
  * });
  * ```
@@ -166,7 +166,7 @@ export const PREDICTION_TYPES: readonly PredictionType[] = [
 /**
  * Standard confidence thresholds
  */
-export const _CONFIDENCE_THRESHOLDS = {
+export const CONFIDENCE_THRESHOLDS = {
   HIGH: 0.8,
   MEDIUM: 0.6,
   LOW: 0.0,
@@ -175,9 +175,9 @@ export const _CONFIDENCE_THRESHOLDS = {
 /**
  * Default timeout for prediction operations (ms)
  */
-export const _DEFAULT_PREDICTION_TIMEOUT_MS = 5000;
+export const DEFAULT_PREDICTION_TIMEOUT_MS = 5000;
 
 /**
  * Maximum batch size for batch predictions
  */
-export const _MAX_BATCH_SIZE = 100;
+export const MAX_BATCH_SIZE = 100;

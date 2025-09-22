@@ -25,11 +25,11 @@ const createMockSupabaseClient = () => ({
   onConflict: jest.fn().mockReturnThis(),
 });
 
-describe(_'DatabasePerformanceService',_() => {
+describe('DatabasePerformanceService_, () => {
   let performanceService: DatabasePerformanceService;
   let mockSupabase: any;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     mockSupabase = createMockSupabaseClient();
     performanceService = new DatabasePerformanceService(mockSupabase, {
       enableQueryCaching: true,
@@ -44,8 +44,8 @@ describe(_'DatabasePerformanceService',_() => {
     performanceService['metrics'] = [];
   });
 
-  describe(_'optimizedQuery',_() => {
-    it(_'should execute query and cache results for SELECT operations',_async () => {
+  describe('optimizedQuery_, () => {
+    it('should execute query and cache results for SELECT operations_,_async () => {
       const mockData = { id: '1', name: 'Test' };
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockResolvedValue({
@@ -54,8 +54,8 @@ describe(_'DatabasePerformanceService',_() => {
         }),
       });
 
-      const result = await performanceService.optimizedQuery(_'test_table',_'select',_async (client) => {
-          const response = await client.from('test_table').select('*');
+      const result = await performanceService.optimizedQuery('test_table','select_,_async (client) => {
+          const response = await client.from('test_table').select('*_);
           return response;
         },
         { cacheKey: 'test-query' }
@@ -64,15 +64,15 @@ describe(_'DatabasePerformanceService',_() => {
       expect(result).toEqual(mockData);
       
       // Verify cache was populated
-      const cachedResult = performanceService['getFromCache']('test_table:select:test-query');
+      const cachedResult = performanceService['getFromCache']('test_table:select:test-query_);
       expect(cachedResult).toEqual(mockData);
     });
 
-    it(_'should use cached results for subsequent calls',_async () => {
+    it('should use cached results for subsequent calls_,_async () => {
       const mockData = { id: '1', name: 'Test' };
       
       // Populate cache directly
-      performanceService['setToCache']('test_table:select:test-query', mockData, 60000);
+      performanceService['setToCache']('test_table:select:test-query_, mockData, 60000);
 
       const querySpy = jest.fn().mockResolvedValue({
         data: mockData,
@@ -80,7 +80,7 @@ describe(_'DatabasePerformanceService',_() => {
       });
 
       const result = await performanceService.optimizedQuery(
-        'test_table',
+        'test_table_,
         'select',
         querySpy,
         { cacheKey: 'test-query' }
@@ -90,7 +90,7 @@ describe(_'DatabasePerformanceService',_() => {
       expect(querySpy).not.toHaveBeenCalled(); // Should not be called due to cache
     });
 
-    it(_'should not cache INSERT operations',_async () => {
+    it('should not cache INSERT operations_,_async () => {
       const mockData = { id: '1' };
       mockSupabase.from.mockReturnValue({
         insert: jest.fn().mockResolvedValue({
@@ -99,8 +99,8 @@ describe(_'DatabasePerformanceService',_() => {
         }),
       });
 
-      await performanceService.optimizedQuery(_'test_table',_'insert',_async (client) => {
-          const response = await client.from('test_table').insert({ name: 'Test' });
+      await performanceService.optimizedQuery('test_table','insert_,_async (client) => {
+          const response = await client.from('test_table').insert({ name: 'Test_ });
           return response;
         }
       );
@@ -110,7 +110,7 @@ describe(_'DatabasePerformanceService',_() => {
       expect(cacheSize).toBe(0);
     });
 
-    it(_'should log performance metrics',_async () => {
+    it('should log performance metrics_,_async () => {
       const mockData = { id: '1', name: 'Test' };
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockResolvedValue({
@@ -119,8 +119,8 @@ describe(_'DatabasePerformanceService',_() => {
         }),
       });
 
-      await performanceService.optimizedQuery(_'test_table',_'select',_async (client) => {
-          const response = await client.from('test_table').select('*');
+      await performanceService.optimizedQuery('test_table','select_,_async (client) => {
+          const response = await client.from('test_table').select('*_);
           return response;
         }
       );
@@ -128,13 +128,13 @@ describe(_'DatabasePerformanceService',_() => {
       const metrics = performanceService.getPerformanceMetrics();
       expect(metrics).toHaveLength(1);
       expect(metrics[0]).toMatchObject({
-        table: 'test_table',
+        table: 'test_table_,
         operation: 'select',
         success: true,
       });
     });
 
-    it(_'should handle errors gracefully',_async () => {
+    it('should handle errors gracefully_,_async () => {
       const mockError = { message: 'Database error' };
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockResolvedValue({
@@ -144,8 +144,8 @@ describe(_'DatabasePerformanceService',_() => {
       });
 
       await expect(_performanceService.optimizedQuery(
-          'test_table',_'select',_async (client) => {
-            const response = await client.from('test_table').select('*');
+          'test_table','select_,_async (client) => {
+            const response = await client.from('test_table').select('*_);
             return response;
           }
         )
@@ -157,9 +157,9 @@ describe(_'DatabasePerformanceService',_() => {
     });
   });
 
-  describe(_'batchInsert',_() => {
-    it(_'should split large batches into smaller chunks',_async () => {
-      const data = Array.from({ length: 250 },_(_,_i) => ({ id: i + 1, name: `Item ${i + 1}` }));
+  describe('batchInsert_, () => {
+    it('should split large batches into smaller chunks_,_async () => {
+      const data = Array.from({ length: 250 },(, i) => ({ id: i + 1, name: `Item ${i + 1}` }));
       
       mockSupabase.from.mockReturnValue({
         insert: jest.fn().mockResolvedValue({
@@ -167,7 +167,7 @@ describe(_'DatabasePerformanceService',_() => {
         }),
       });
 
-      const result = await performanceService.batchInsert('test_table', data, {
+      const result = await performanceService.batchInsert('test_table_, data, {
         batchSize: 100,
       });
 
@@ -176,7 +176,7 @@ describe(_'DatabasePerformanceService',_() => {
       expect(mockSupabase.from).toHaveBeenCalledTimes(3); // 250 / 100 = 3 batches
     });
 
-    it(_'should handle batch errors gracefully',_async () => {
+    it('should handle batch errors gracefully_,_async () => {
       const data = [
         { id: 1, name: 'Item 1' },
         { id: 2, name: 'Item 2' },
@@ -188,7 +188,7 @@ describe(_'DatabasePerformanceService',_() => {
           .mockResolvedValueOnce({ error: { message: 'Constraint violation' } }), // Second batch fails
       });
 
-      const result = await performanceService.batchInsert('test_table', data, {
+      const result = await performanceService.batchInsert('test_table_, data, {
         batchSize: 1,
       });
 
@@ -201,8 +201,8 @@ describe(_'DatabasePerformanceService',_() => {
     });
   });
 
-  describe(_'optimizeExpirationCheck',_() => {
-    it(_'should perform single-operation expiration check',_async () => {
+  describe('optimizeExpirationCheck_, () => {
+    it('should perform single-operation expiration check_,_async () => {
       const mockExpiredData = [
         { id: '1' },
         { id: '2' },
@@ -220,8 +220,8 @@ describe(_'DatabasePerformanceService',_() => {
       });
 
       const result = await performanceService.optimizeExpirationCheck(
-        'test_table',
-        'expires_at',
+        'test_table_,
+        'expires_at_,
         'status',
         'ACTIVE',
         'EXPIRED'
@@ -232,13 +232,13 @@ describe(_'DatabasePerformanceService',_() => {
     });
   });
 
-  describe(_'getPerformanceStats',_() => {
-    it(_'should calculate performance statistics correctly',_async () => {
+  describe('getPerformanceStats_, () => {
+    it('should calculate performance statistics correctly_,_async () => {
       // Add some test metrics
       performanceService['metrics'] = [
-        { _query: 'test1', duration: 50, timestamp: new Date().toISOString(), success: true, table: 'test', operation: 'select' },
-        { _query: 'test2', duration: 150, timestamp: new Date().toISOString(), success: true, table: 'test', operation: 'select' },
-        { _query: 'test3', duration: 200, timestamp: new Date().toISOString(), success: false, table: 'test', operation: 'select' },
+        { _query: 'test1', duration: 50, timestamp: new Date().toISOString(), success: true, table: 'test', operation: 'select_ },
+        { _query: 'test2', duration: 150, timestamp: new Date().toISOString(), success: true, table: 'test', operation: 'select_ },
+        { _query: 'test3', duration: 200, timestamp: new Date().toISOString(), success: false, table: 'test', operation: 'select_ },
       ];
 
       const stats = performanceService.getPerformanceStats();
@@ -249,7 +249,7 @@ describe(_'DatabasePerformanceService',_() => {
       expect(stats.errorRate).toBe(33.33333333333333); // 1 error out of 3 queries
     });
 
-    it(_'should handle empty metrics',_() => {
+    it('should handle empty metrics_, () => {
       const stats = performanceService.getPerformanceStats();
 
       expect(stats.totalQueries).toBe(0);
@@ -259,8 +259,8 @@ describe(_'DatabasePerformanceService',_() => {
     });
   });
 
-  describe(_'cache management',_() => {
-    it(_'should clear cache entries',_() => {
+  describe('cache management_, () => {
+    it('should clear cache entries_, () => {
       // Populate cache
       performanceService['setToCache']('key1', 'value1', 60000);
       performanceService['setToCache']('key2', 'value2', 60000);
@@ -270,7 +270,7 @@ describe(_'DatabasePerformanceService',_() => {
       expect(performanceService['cache'].size).toBe(0);
     });
 
-    it(_'should clear cache entries matching pattern',_() => {
+    it('should clear cache entries matching pattern_, () => {
       // Populate cache
       performanceService['setToCache']('user:1:data', 'value1', 60000);
       performanceService['setToCache']('user:2:data', 'value2', 60000);
@@ -282,18 +282,18 @@ describe(_'DatabasePerformanceService',_() => {
       expect(performanceService['cache'].has('other:key')).toBe(true);
     });
 
-    it(_'should clean up expired entries',_() => {
+    it('should clean up expired entries_, () => {
       // Add expired entry
       const expiredTimestamp = new Date(Date.now() - 120000).toISOString(); // 2 minutes ago
       performanceService['cache'].set('expired', {
-        data: 'expired_value',
+        data: 'expired_value_,
         timestamp: expiredTimestamp,
         ttl: 60000,
         key: 'expired',
       });
 
       // Add valid entry
-      performanceService['setToCache']('valid', 'valid_value', 60000);
+      performanceService['setToCache']('valid', 'valid_value_, 60000);
       expect(performanceService['cache'].size).toBe(2);
 
       performanceService.cleanup();
@@ -302,8 +302,8 @@ describe(_'DatabasePerformanceService',_() => {
     });
   });
 
-  describe(_'cache size management',_() => {
-    it(_'should respect max cache size',_() => {
+  describe('cache size management_, () => {
+    it('should respect max cache size_, () => {
       const service = new DatabasePerformanceService(mockSupabase, {
         enableQueryCaching: true,
         cacheTTL: 60000,

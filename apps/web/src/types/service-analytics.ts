@@ -314,7 +314,7 @@ export function getTimeRangeDates(range: AnalyticsTimeRange): {
   start: Date;
   end: Date;
 } {
-  const _now = new Date();
+  const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
   switch (range) {

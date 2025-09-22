@@ -94,7 +94,7 @@ export class SecurityMonitoringDashboardService {
    */
   async getSecurityDashboard(clinicId?: string): Promise<SecurityDashboard> {
     try {
-      const _now = new Date();
+      const now = new Date();
       const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
       const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
@@ -132,7 +132,7 @@ export class SecurityMonitoringDashboardService {
         accessPatterns,
         compliance,
       };
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to generate security dashboard', error);
       throw new Error('Failed to generate security dashboard');
     }
@@ -178,9 +178,9 @@ export class SecurityMonitoringDashboardService {
         timestamp: new Date(),
         totalRequests: data?.length || 0,
         deniedRequests: data?.filter(log => !log.access_granted).length || 0,
-        securityScore: data?.reduce(_(acc,_log) => acc + log.security_score, 0)
+        securityScore: data?.reduce((acc,_log) => acc + log.security_score, 0)
             / (data?.length || 1) || 0,
-        threatLevel: data?.reduce(_(acc,_log) => acc + log.threat_level, 0)
+        threatLevel: data?.reduce((acc,_log) => acc + log.threat_level, 0)
             / (data?.length || 1) || 0,
         alerts: data
           ?.filter(log => log.threat_level > 50)
@@ -208,7 +208,7 @@ export class SecurityMonitoringDashboardService {
       this.metricsCache.set(cacheKey, metrics);
 
       return metrics;
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to get real-time metrics', error);
       return {
         timestamp: new Date(),
@@ -258,7 +258,7 @@ export class SecurityMonitoringDashboardService {
         medium: alerts.filter(alert => alert.severity === 'MEDIUM'),
         low: alerts.filter(alert => alert.severity === 'LOW'),
       };
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to get alerts by severity', error);
       return { critical: [], high: [], medium: [], low: [] };
     }
@@ -308,7 +308,7 @@ export class SecurityMonitoringDashboardService {
       // Analyze by time
       const byTime: Array<{ hour: number; requests: number; threats: number }> = Array(24)
         .fill(0)
-        .map(_(_,_hour) => ({ hour, requests: 0, threats: 0 }));
+        .map((, hour) => ({ hour, requests: 0, threats: 0 }));
 
       logs.forEach(log => {
         // By role (extract from user data or metadata)
@@ -344,7 +344,7 @@ export class SecurityMonitoringDashboardService {
         const data = byEndpoint[endpoint];
         data.avgThreat = logs
           .filter(log => log.table_name === endpoint)
-          .reduce(_(acc,_log) => acc + log.threat_level, 0) / data.requests;
+          .reduce((acc,_log) => acc + log.threat_level, 0) / data.requests;
       });
 
       return {
@@ -352,7 +352,7 @@ export class SecurityMonitoringDashboardService {
         byEndpoint,
         byTime,
       };
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to get access patterns', error);
       return { byRole: {}, byEndpoint: {}, byTime: [] };
     }
@@ -389,7 +389,7 @@ export class SecurityMonitoringDashboardService {
         accessControls: accessControlStatus,
         incidentResponse: incidentStatus,
       };
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to get compliance status', error);
       return {
         lgpdCompliant: false,
@@ -413,7 +413,7 @@ export class SecurityMonitoringDashboardService {
     lastUpdated: Date;
   }> {
     try {
-      const _now = new Date();
+      const now = new Date();
       const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
       let query = this.supabase
@@ -429,8 +429,8 @@ export class SecurityMonitoringDashboardService {
       const logs = data || [];
 
       const uniqueUsers = new Set(logs.map(log => log.user_id));
-      const avgSecurityScore = logs.reduce(_(acc,_log) => acc + log.security_score, 0) / logs.length;
-      const avgThreatLevel = logs.reduce(_(acc,_log) => acc + log.threat_level, 0) / logs.length;
+      const avgSecurityScore = logs.reduce((acc,_log) => acc + log.security_score, 0) / logs.length;
+      const avgThreatLevel = logs.reduce((acc,_log) => acc + log.threat_level, 0) / logs.length;
 
       return {
         totalEndpoints: 15, // Mock data
@@ -440,7 +440,7 @@ export class SecurityMonitoringDashboardService {
         threatLevel: avgThreatLevel || 0,
         lastUpdated: now,
       };
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to get overview stats', error);
       return {
         totalEndpoints: 0,
@@ -512,7 +512,7 @@ export class SecurityMonitoringDashboardService {
       report.summary.securityIncidents = logs.filter(
         log => log.threat_level > 70,
       ).length;
-      report.summary.avgSecurityScore = logs.reduce(_(acc,_log) => acc + log.security_score, 0)
+      report.summary.avgSecurityScore = logs.reduce((acc,_log) => acc + log.security_score, 0)
         / logs.length;
       report.summary.maxThreatLevel = Math.max(
         ...logs.map(log => log.threat_level),
@@ -536,7 +536,7 @@ export class SecurityMonitoringDashboardService {
       await this.storeSecurityReport(report);
 
       return report;
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to generate security report', error);
       throw new Error('Failed to generate security report');
     }
@@ -547,7 +547,7 @@ export class SecurityMonitoringDashboardService {
    */
   private startRealTimeMonitoring(): void {
     // Set up periodic cache cleanup
-    setInterval(_() => {
+    setInterval(() => {
         this.cleanupMetricsCache();
       },
       5 * 60 * 1000,
@@ -603,7 +603,7 @@ export class SecurityMonitoringDashboardService {
 
       // Update dashboard metrics cache
       this.invalidateMetricsCache(alert.clinic_id);
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to handle real-time alert', error);
     }
   }
@@ -620,7 +620,7 @@ export class SecurityMonitoringDashboardService {
    * Invalidate metrics cache for clinic
    */
   private invalidateMetricsCache(clinicId?: string): void {
-    const prefix = `metrics_${clinicId || 'all'}_`;
+    const prefix = `metrics_${clinicId || 'all'}`;
 
     for (const key of this.metricsCache.keys()) {
       if (key.startsWith(prefix)) {
@@ -642,9 +642,9 @@ export class SecurityMonitoringDashboardService {
     });
 
     return Object.entries(threatTypes)
-      .sort(_([,_a],_[,_b]) => b - a)
+      .sort(([,_a],_[,_b]) => b - a)
       .slice(0, 5)
-      .map(_([type]) => type);
+      .map(([type]) => type);
   }
 
   private async checkAuditLogRetention(): Promise<boolean> {
@@ -727,7 +727,7 @@ export class SecurityMonitoringDashboardService {
       }
     });
 
-    return Object.entries(threatTypes).map(_([type,_data]) => ({
+    return Object.entries(threatTypes).map(([type,_data]) => ({
       type,
       severity: data.maxThreat > 75 ? 'HIGH' : data.maxThreat > 50 ? 'MEDIUM' : 'LOW',
       count: data.count,
@@ -771,7 +771,7 @@ export class SecurityMonitoringDashboardService {
     }
 
     // Check for low security scores
-    const avgSecurityScore = logs.reduce(_(acc,_log) => acc + log.security_score, 0) / logs.length;
+    const avgSecurityScore = logs.reduce((acc,_log) => acc + log.security_score, 0) / logs.length;
     if (avgSecurityScore < 70) {
       issues.push(`Low average security score: ${avgSecurityScore.toFixed(1)}`);
       score -= 10;
@@ -828,7 +828,7 @@ export class SecurityMonitoringDashboardService {
       }
     });
 
-    const suspiciousIPs = Object.entries(ipCounts).filter(_([,_count]) => count > 100,
+    const suspiciousIPs = Object.entries(ipCounts).filter(([,_count]) => count > 100,
     );
     if (suspiciousIPs.length > 0) {
       recommendations.push(
@@ -852,7 +852,7 @@ export class SecurityMonitoringDashboardService {
         compliance_score: report.compliance.score,
         recommendations: report.recommendations,
       });
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to store security report', error);
     }
   }
@@ -915,7 +915,7 @@ export class SecurityMonitoringDashboardService {
           score: dateGroups[date].totalScore / dateGroups[date].count,
         })),
       };
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to get security trends', error);
       return { requests: [], threats: [], securityScores: [] };
     }
@@ -943,7 +943,7 @@ export class SecurityMonitoringDashboardService {
 
       const { data } = await query;
       return data || [];
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to get top security events', error);
       return [];
     }
@@ -951,7 +951,7 @@ export class SecurityMonitoringDashboardService {
 }
 
 // Export singleton instance
-export const _securityMonitoringDashboardService = new SecurityMonitoringDashboardService();
+export const securityMonitoringDashboardService = new SecurityMonitoringDashboardService();
 
 // Export types
 export type { SecurityDashboard, SecurityMetrics, SecurityReport };

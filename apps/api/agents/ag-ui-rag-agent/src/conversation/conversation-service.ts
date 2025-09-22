@@ -60,10 +60,10 @@ export class ConversationService {
   async startConversation(_request: ConversationRequest): Promise<ConversationResponse> {
     try {
       // Validate session and permissions
-      await this.validateRequestPermissions(_request);
+      await this.validateRequestPermissions(request);
 
       // Check for existing active conversation
-      const existingConversation = await this.findExistingConversation(_request);
+      const existingConversation = await this.findExistingConversation(request);
 
       let conversation: ConversationContext;
       if (existingConversation) {

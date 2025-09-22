@@ -69,7 +69,7 @@ export function useCreateAppointment() {
 
   return useMutation({
     mutationFn: async ({
-      data,_clinicId,
+      data,clinicId,
     }: {
       data: CreateAppointmentData;
       clinicId: string;
@@ -80,7 +80,7 @@ export function useCreateAppointment() {
       return appointmentService.createAppointment(data, clinicId, user.id);
     },
 
-    onMutate: async (_{ data,_clinicId }) => {
+    onMutate: async ({ data, clinicId }) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({
         queryKey: appointmentKeys.calendar(clinicId),
@@ -115,10 +115,10 @@ export function useCreateAppointment() {
       return { previousAppointments, optimisticAppointment };
     },
 
-    onSuccess: (_newAppointment, { clinicId: _clinicId }) => {
+    onSuccess: (_newAppointment, { clinicId: clinicId }) => {
       // Replace optimistic data with server data
       queryClient.setQueryData(
-        appointmentKeys.calendar(_clinicId),
+        appointmentKeys.calendar(clinicId),
         (old: CalendarAppointment[] = []) =>
           old.map(apt => (apt.id.startsWith('temp-') ? newAppointment : apt)),
       );
@@ -129,7 +129,7 @@ export function useCreateAppointment() {
       toast.success('Agendamento criado com sucesso!');
     },
 
-    onError: (_error,_{ clinicId },_context) => {
+    onError: (_error, { clinicId }, context) => {
       // Rollback optimistic update
       if (context?.previousAppointments) {
         queryClient.setQueryData(
@@ -142,10 +142,10 @@ export function useCreateAppointment() {
       toast.error(error.message || 'Erro ao criar agendamento');
     },
 
-    onSettled: (_, __, { clinicId: _clinicId }) => {
+    onSettled: (_data, _error, { clinicId: clinicId }) => {
       // Always refetch after mutation
       queryClient.invalidateQueries({
-        queryKey: appointmentKeys.calendar(_clinicId),
+        queryKey: appointmentKeys.calendar(clinicId),
       });
     },
   });
@@ -160,8 +160,8 @@ export function useUpdateAppointment() {
 
   return useMutation({
     mutationFn: async ({
-      appointmentId,_updates,
-      clinicId: _clinicId,
+      appointmentId,updates,
+      clinicId: clinicId,
     }: {
       appointmentId: string;
       updates: UpdateAppointmentData;
@@ -179,7 +179,7 @@ export function useUpdateAppointment() {
       );
     },
 
-    onMutate: async (_{ appointmentId,_updates,_clinicId }) => {
+    onMutate: async ({ appointmentId,updates, clinicId }) => {
       // clinicId used for query keys
       // Cancel outgoing refetches
       await queryClient.cancelQueries({
@@ -211,10 +211,10 @@ export function useUpdateAppointment() {
       return { previousAppointments };
     },
 
-    onSuccess: (_updatedAppointment, { clinicId: _clinicId }) => {
+    onSuccess: (_updatedAppointment, { clinicId: clinicId }) => {
       // Replace optimistic data with server data
       queryClient.setQueryData(
-        appointmentKeys.calendar(_clinicId),
+        appointmentKeys.calendar(clinicId),
         (old: CalendarAppointment[] = []) =>
           old.map(apt => apt.id === updatedAppointment.id ? updatedAppointment : apt),
       );
@@ -225,7 +225,7 @@ export function useUpdateAppointment() {
       toast.success('Agendamento atualizado com sucesso!');
     },
 
-    onError: (_error,_{ clinicId },_context) => {
+    onError: (_error, { clinicId }, context) => {
       // Rollback optimistic update
       if (context?.previousAppointments) {
         queryClient.setQueryData(
@@ -238,10 +238,10 @@ export function useUpdateAppointment() {
       toast.error(error.message || 'Erro ao atualizar agendamento');
     },
 
-    onSettled: (_, __, { clinicId: _clinicId }) => {
+    onSettled: (_data, _error, { clinicId: clinicId }) => {
       // Always refetch after mutation
       queryClient.invalidateQueries({
-        queryKey: appointmentKeys.calendar(_clinicId),
+        queryKey: appointmentKeys.calendar(clinicId),
       });
     },
   });
@@ -257,7 +257,7 @@ export function useDeleteAppointment() {
   return useMutation({
     mutationFn: async ({
       appointmentId,
-      clinicId: _clinicId,_reason,
+      clinicId: clinicId,reason,
     }: {
       appointmentId: string;
       clinicId: string;
@@ -273,7 +273,7 @@ export function useDeleteAppointment() {
       );
     },
 
-    onMutate: async (_{ appointmentId,_clinicId }) => {
+    onMutate: async ({ appointmentId, clinicId }) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({
         queryKey: appointmentKeys.calendar(clinicId),
@@ -293,14 +293,14 @@ export function useDeleteAppointment() {
       return { previousAppointments };
     },
 
-    onSuccess: (_, { clinicId: _clinicId }) => {
+    onSuccess: (_, { clinicId: clinicId }) => {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
 
       toast.success('Agendamento cancelado com sucesso!');
     },
 
-    onError: (_error,_{ clinicId },_context) => {
+    onError: (_error, { clinicId }, context) => {
       // Rollback optimistic update
       if (context?.previousAppointments) {
         queryClient.setQueryData(
@@ -313,10 +313,10 @@ export function useDeleteAppointment() {
       toast.error(error.message || 'Erro ao cancelar agendamento');
     },
 
-    onSettled: (_, __, { clinicId: _clinicId }) => {
+    onSettled: (_data, _error, { clinicId: clinicId }) => {
       // Always refetch after mutation
       queryClient.invalidateQueries({
-        queryKey: appointmentKeys.calendar(_clinicId),
+        queryKey: appointmentKeys.calendar(clinicId),
       });
     },
   });
@@ -350,7 +350,7 @@ export function useAppointmentRealtime(clinicId: string) {
     [queryClient, clinicId],
   );
 
-  useEffect(_() => {
+  useEffect(() => {
     if (!clinicId) return;
     const hasChannel = typeof (supabase as any)?.channel === 'function';
     if (!hasChannel) return;

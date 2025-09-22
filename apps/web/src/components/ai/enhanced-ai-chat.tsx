@@ -193,12 +193,12 @@ type VoiceRecognitionState = 'idle' | 'listening' | 'processing' | 'error';
 /**
  * Enhanced AI Chat Component
  */
-export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = (_{
-  patientContext,_healthcareProfessional,_defaultModel = 'gpt-4o',_showModelSelection = true,_showVoiceInput = true,_showFileAttachment = false,_showSearch = true,
+export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
+  patientContext,healthcareProfessional, defaultModel = 'gpt-4o', showModelSelection = true, showVoiceInput = true, showFileAttachment = false, showSearch = true,
   lgpdConsent = {
     canStoreHistory: true,
     dataRetentionDays: 30,
-    requiresExplicitConsent: false,_},_mobileOptimized = true,_maxHeight = '600px',_testId = 'enhanced-ai-chat',_sessionType = 'general',_}) => {
+    requiresExplicitConsent: false, }, mobileOptimized = true, maxHeight = '600px', testId = 'enhanced-ai-chat', sessionType = 'general', }) => {
   // State management
   const [selectedModel, setSelectedModel] = useState(defaultModel);
   const [voiceState, setVoiceState] = useState<VoiceRecognitionState>('idle');
@@ -248,33 +248,30 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = (_{
   // tRPC agent integration
   const {
     currentSessionId,
-    startNewSession,
-    _endCurrentSession,
-    isCreating: _isAgentCreating,
+    startNewSession,endCurrentSession,
+    isCreating: isAgentCreating,
   } = useAgentSessionManager();
 
   const {
     messages: agentMessages,
-    sendMessage: sendAgentMessage,
-    _performRAGSearch,
-    isSending: isAgentSending,
-    _isSearchingRAG,
+    sendMessage: sendAgentMessage,performRAGSearch,
+    isSending: isAgentSending,isSearchingRAG,
   } = useAgentChat(currentSessionId);
 
   // Knowledge base search
-  const { searchEntries, isSearching: _isKnowledgeSearching } = useKnowledgeBaseManager();
+  const { searchEntries, isSearching: isKnowledgeSearching } = useKnowledgeBaseManager();
 
   // Auto-scroll to bottom
-  const scrollToBottom = useCallback(_() => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
-  useEffect(_() => {
+  useEffect(() => {
     scrollToBottom();
   }, [messages, agentMessages, scrollToBottom]);
 
   // Voice recognition implementation
-  const startVoiceRecognition = useCallback(_async () => {
+  const startVoiceRecognition = useCallback(async () => {
     if (
       !('webkitSpeechRecognition' in window)
       && !('SpeechRecognition' in window)
@@ -318,7 +315,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = (_{
     }
   }, [setInput]);
 
-  const stopVoiceRecognition = useCallback(_() => {
+  const stopVoiceRecognition = useCallback(() => {
     setVoiceState('idle');
   }, []);
 
@@ -345,7 +342,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = (_{
             limit: 5,
           });
 
-          const knowledgeMessages: ChatMessage[] = knowledgeResults.data?.map(_(entry, _index) => ({
+          const knowledgeMessages: ChatMessage[] = knowledgeResults.data?.map((entry, _index) => ({
             id: `knowledge-${index}`,
             _role: 'system',
             content: entry.content,
@@ -445,7 +442,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = (_{
   );
 
   // Clear chat
-  const handleClearChat = useCallback(_() => {
+  const handleClearChat = useCallback(() => {
     setMessages([]);
     setData(undefined);
   }, [setMessages, setData]);
@@ -459,7 +456,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = (_{
   const renderMessageContent = useCallback((_content: any) => {
     return (
       <div className='prose prose-sm max-w-none dark:prose-invert'>
-        {content.split('\n').map(_(line, _index) => (
+        {content.split('\n').map((line, _index) => (
           <p key={index} className='mb-2 last:mb-0'>
             {line}
           </p>
@@ -544,7 +541,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = (_{
           </div>
 
           <div className='flex items-center gap-2'>
-            {showSearch && (_<TooltipProvider>
+            {showSearch && (<TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -704,7 +701,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = (_{
               </div>
             )}
 
-            {searchResults.length > 0 && (_<div className='mt-3 space-y-2 max-h-32 overflow-y-auto'>
+            {searchResults.length > 0 && (<div className='mt-3 space-y-2 max-h-32 overflow-y-auto'>
                 {searchResults.map((result, _index) => (
                   <div
                     key={index}

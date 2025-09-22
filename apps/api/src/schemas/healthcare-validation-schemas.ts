@@ -85,12 +85,12 @@ export const AppointmentSchema = z.object({
     .refine(date => !isNaN(Date.parse(date)), 'Horário de início inválido')
     .refine(date => {
       const startTime = new Date(date);
-      const _now = new Date();
+      const now = new Date();
       return startTime > now;
     }, 'Horário da consulta não pode estar no passado')
     .refine(date => {
       const startTime = new Date(date);
-      const _now = new Date();
+      const now = new Date();
       const maxFuture = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000); // 90 days
       return startTime <= maxFuture;
     }, 'Agendamento não pode ser feito com mais de 90 dias de antecedência'),
@@ -341,7 +341,7 @@ export function validateEntityData(entity: string, data: any): {
         sanitizedData: data,
       };
     }
-  } catch (_error) {
+  } catch (error) {
     return {
       isValid: false,
       errors: ['Erro na validação do esquema'],

@@ -6,14 +6,14 @@
 import { describe, expect, it } from "vitest";
 
 describe("Appointment Model (T033)", () => {
-  it(_"should export Appointment type",_() => {
-    expect(_() => {
+  it("should export Appointment type", () => {
+    expect(() => {
       const module = require("../appointment");
       expect(module.createAppointment).toBeDefined();
     }).not.toThrow();
   });
 
-  it(_"should have required appointment fields",_() => {
+  it("should have required appointment fields", () => {
     const { Appointment } = require("../appointment");
     const appointment: Appointment = {
       id: "appointment-123",
@@ -35,7 +35,7 @@ describe("Appointment Model (T033)", () => {
     expect(appointment.status).toBe("scheduled");
   });
 
-  it(_"should support appointment status enum",_() => {
+  it("should support appointment status enum", () => {
     const { AppointmentStatus } = require("../appointment");
     expect(AppointmentStatus.SCHEDULED).toBe("scheduled");
     expect(AppointmentStatus.CONFIRMED).toBe("confirmed");
@@ -45,7 +45,7 @@ describe("Appointment Model (T033)", () => {
     expect(AppointmentStatus.NO_SHOW).toBe("no_show");
   });
 
-  it(_"should support appointment types",_() => {
+  it("should support appointment types", () => {
     const { AppointmentType } = require("../appointment");
     expect(AppointmentType.CONSULTATION).toBe("consultation");
     expect(AppointmentType.FOLLOW_UP).toBe("follow_up");
@@ -53,7 +53,7 @@ describe("Appointment Model (T033)", () => {
     expect(AppointmentType.EMERGENCY).toBe("emergency");
   });
 
-  it(_"should have reminder settings",_() => {
+  it("should have reminder settings", () => {
     const { ReminderSettings } = require("../appointment");
     const reminder: ReminderSettings = {
       enabled: true,
@@ -66,7 +66,7 @@ describe("Appointment Model (T033)", () => {
     expect(reminder.methods).toContain("whatsapp");
   });
 
-  it(_"should validate appointment times",_() => {
+  it("should validate appointment times", () => {
     const { validateAppointmentTimes } = require("../appointment");
 
     const validTimes = {
@@ -87,7 +87,7 @@ describe("Appointment Model (T033)", () => {
     ).toBe(false);
   });
 
-  it(_"should check for appointment conflicts",_() => {
+  it("should check for appointment conflicts", () => {
     const { checkAppointmentConflict } = require("../appointment");
 
     const existingAppointment = {
@@ -113,7 +113,7 @@ describe("Appointment Model (T033)", () => {
     ).toBe(false);
   });
 
-  it(_"should calculate appointment duration",_() => {
+  it("should calculate appointment duration", () => {
     const { calculateAppointmentDuration } = require("../appointment");
 
     const startTime = new Date("2024-01-15T10:00:00");
@@ -123,7 +123,7 @@ describe("Appointment Model (T033)", () => {
     expect(duration).toBe(90); // minutes
   });
 
-  it(_"should format appointment for display",_() => {
+  it("should format appointment for display", () => {
     const { formatAppointmentForDisplay } = require("../appointment");
 
     const appointment = {
@@ -140,7 +140,7 @@ describe("Appointment Model (T033)", () => {
     expect(formatted).toContain("Consultório 1");
   });
 
-  it(_"should support Brazilian business hours validation",_() => {
+  it("should support Brazilian business hours validation", () => {
     const { isWithinBusinessHours } = require("../appointment");
 
     const businessHours = new Date("2024-01-15T14:00:00"); // 2 PM
@@ -152,7 +152,7 @@ describe("Appointment Model (T033)", () => {
     expect(isWithinBusinessHours(weekend)).toBe(false);
   });
 
-  it(_"should handle appointment cancellation",_() => {
+  it("should handle appointment cancellation", () => {
     const { cancelAppointment } = require("../appointment");
 
     const appointment = {
@@ -173,7 +173,7 @@ describe("Appointment Model (T033)", () => {
     expect(cancelled.cancelledAt).toBeInstanceOf(Date);
   });
 
-  it(_"should support no-show tracking",_() => {
+  it("should support no-show tracking", () => {
     const { markAsNoShow } = require("../appointment");
 
     const appointment = {
@@ -187,7 +187,7 @@ describe("Appointment Model (T033)", () => {
     expect(noShow.noShowAt).toBeInstanceOf(Date);
   });
 
-  it(_"should calculate appointment cost",_() => {
+  it("should calculate appointment cost", () => {
     const { calculateAppointmentCost } = require("../appointment");
 
     const appointment = {
@@ -205,7 +205,7 @@ describe("Appointment Model (T033)", () => {
     expect(cost).toBe(150.0);
   });
 
-  it(_"should support LGPD compliance for appointments",_() => {
+  it("should support LGPD compliance for appointments", () => {
     const { anonymizeAppointment } = require("../appointment");
 
     const appointment = {

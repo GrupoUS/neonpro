@@ -143,7 +143,7 @@ export enum HealthcareOperationType {
 }
 
 // Sensitive data patterns for redaction
-export const _SENSITIVE_DATA_PATTERNS = [
+export const SENSITIVE_DATA_PATTERNS = [
   // Brazilian documents
   /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, // CPF
   /\b\d{2}\.\d{3}\.\d{3}-\d{1}\b/g, // RG
@@ -164,7 +164,7 @@ export const _SENSITIVE_DATA_PATTERNS = [
 ];
 
 // Field names that contain sensitive data
-export const _SENSITIVE_FIELD_NAMES = [
+export const SENSITIVE_FIELD_NAMES = [
   "cpf",
   "rg",
   "cnpj",

@@ -56,7 +56,7 @@ interface AppointmentFormData {
 const ClientDetailsModal: React.FC<{
   client: ClientData;
   onClose: () => void;
-}> = (_{ client,_onClose }) => {
+}> = ({ client, onClose }) => {
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className='sm:max-w-2xl max-h-[80vh] overflow-y-auto'>
@@ -200,7 +200,7 @@ const DataExportModal: React.FC<{
   dataType: 'clients' | 'appointments' | 'financial';
   onClose: () => void;
   onExport: (options: ExportOptions) => void;
-}> = (_{ data,_dataType,_onClose,_onExport }) => {
+}> = ({ data,dataType, onClose, onExport }) => {
   const [exportOptions, setExportOptions] = useState<ExportOptions>({
     format: 'csv',
     includeSummary: true,
@@ -306,7 +306,7 @@ const AppointmentCreationModal: React.FC<{
   _context?: Record<string, any>;
   onClose: () => void;
   onSuccess?: () => void;
-}> = (_{ context,_onClose,_onSuccess }) => {
+}> = ({ context,onClose, onSuccess }) => {
   const [formData, setFormData] = useState<AppointmentFormData>({
     clientId: context?.clientId || '',
     serviceId: context?.serviceId || '',
@@ -410,8 +410,8 @@ const AppointmentCreationModal: React.FC<{
 /**
  * Main ActionHandlers Component
  */
-export const ActionHandlers: React.FC<ActionHandlersProps> = (_{
-  actions,_onActionExecuted,_sessionId,_className,_}) => {
+export const ActionHandlers: React.FC<ActionHandlersProps> = ({
+  actions,onActionExecuted, sessionId,className, }) => {
   const [selectedClient, setSelectedClient] = useState<ClientData | null>(null);
   const [exportData, setExportData] = useState<
     { data: any[]; dataType: 'clients' | 'appointments' | 'financial' } | null
@@ -597,14 +597,14 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = (_{
       </div>
 
       {/* Client Details Modal */}
-      {selectedClient && (_<ClientDetailsModal
+      {selectedClient && (<ClientDetailsModal
           client={selectedClient}
           onClose={() => setSelectedClient(null)}
         />
       )}
 
       {/* Data Export Modal */}
-      {exportData && (_<DataExportModal
+      {exportData && (<DataExportModal
           data={exportData.data}
           dataType={exportData.dataType}
           onClose={() => setExportData(null)}
@@ -613,7 +613,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = (_{
       )}
 
       {/* Appointment Creation Modal */}
-      {showAppointmentModal && (_<AppointmentCreationModal
+      {showAppointmentModal && (<AppointmentCreationModal
           context={appointmentContext}
           onClose={() => {
             setShowAppointmentModal(false);

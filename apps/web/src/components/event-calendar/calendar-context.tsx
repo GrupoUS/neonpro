@@ -90,7 +90,7 @@ export function CalendarProvider({
   const [currentView, setCurrentView] = useState<CalendarView>('month');
 
   // Initialize visibleColors based on the isActive property in etiquettes
-  const [visibleColors, setVisibleColors] = useState<string[]>(_() => {
+  const [visibleColors, setVisibleColors] = useState<.*>(() => {
     return etiquettes
       .filter(etiquette => etiquette.isActive)
       .map(etiquette => etiquette.color);
@@ -104,7 +104,7 @@ export function CalendarProvider({
   const [filteredEvents, setFilteredEvents] = useState<CalendarEventExtended[]>(initialEvents);
 
   // Load events for current date range
-  const loadEventsForCurrentView = useCallback(_async () => {
+  const loadEventsForCurrentView = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -166,7 +166,7 @@ export function CalendarProvider({
   }, [currentDate, currentView, defaultClinicId, currentFilters]);
 
   // Auto-refresh events when date or view changes
-  useEffect(_() => {
+  useEffect(() => {
     loadEventsForCurrentView();
   }, [loadEventsForCurrentView]);
 
@@ -272,7 +272,7 @@ export function CalendarProvider({
     }
   }, [events]);
 
-  const refreshEvents = useCallback(_async () => {
+  const refreshEvents = useCallback(async () => {
     await loadEventsForCurrentView();
   }, [loadEventsForCurrentView]);
 
@@ -282,7 +282,7 @@ export function CalendarProvider({
     // The actual filtering will happen in the loadEventsForCurrentView effect
   }, []);
 
-  const clearFilters = useCallback(_() => {
+  const clearFilters = useCallback(() => {
     setCurrentFilters(null);
   }, []);
 
@@ -303,11 +303,11 @@ export function CalendarProvider({
     setCurrentDate(date);
   }, []);
 
-  const navigateToToday = useCallback(_() => {
+  const navigateToToday = useCallback(() => {
     setCurrentDate(new Date());
   }, []);
 
-  const navigatePrevious = useCallback(_() => {
+  const navigatePrevious = useCallback(() => {
     const newDate = new Date(currentDate);
     switch (currentView) {
       case 'day':
@@ -326,7 +326,7 @@ export function CalendarProvider({
     setCurrentDate(newDate);
   }, [currentDate, currentView]);
 
-  const navigateNext = useCallback(_() => {
+  const navigateNext = useCallback(() => {
     const newDate = new Date(currentDate);
     switch (currentView) {
       case 'day':

@@ -61,7 +61,7 @@ export class TokenManagementService {
 
   constructor() {
     // Start cleanup interval
-    setInterval(_() => this.cleanup(), 5 * 60 * 1000); // Every 5 minutes
+    setInterval(() => this.cleanup(), 5 * 60 * 1000); // Every 5 minutes
   }
 
   /**
@@ -117,7 +117,7 @@ export class TokenManagementService {
       });
 
       return { success: true };
-    } catch (_error) {
+    } catch (error) {
       console.error('Token blacklisting error:', error);
       return { success: false, error: 'Failed to blacklist token' };
     }
@@ -164,10 +164,10 @@ export class TokenManagementService {
       }
 
       // Clear token bindings for user
-      this.tokenBindings.delete(_userId);
+      this.tokenBindings.delete(userId);
 
       return { success: true, revokedCount };
-    } catch (_error) {
+    } catch (error) {
       console.error('User token blacklisting error:', error);
       return { success: false, revokedCount: 0 };
     }
@@ -205,7 +205,7 @@ export class TokenManagementService {
       await this.createTokenBinding(userId, _context);
 
       return { token, expiresAt };
-    } catch (_error) {
+    } catch (error) {
       console.error('Refresh token creation error:', error);
       throw new Error('Failed to create refresh token');
     }
@@ -254,7 +254,7 @@ export class TokenManagementService {
       }
 
       // Check if rotation is needed (based on usage patterns)
-      const rotationReason = this.shouldRotateToken(_payload);
+      const rotationReason = this.shouldRotateToken(payload);
 
       if (rotationReason) {
         // Create new refresh token
@@ -279,7 +279,7 @@ export class TokenManagementService {
       }
 
       return { success: true };
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof jwt.JsonWebTokenError) {
         return {
           success: false,
@@ -301,7 +301,7 @@ export class TokenManagementService {
   private async createTokenBinding(_userId: string, _context?: Context): Promise<void> {
     try {
       const deviceId = context?.req.header('x-device-id') || 'unknown';
-      const fingerprint = this.generateFingerprint(_context);
+      const fingerprint = this.generateFingerprint(context);
 
       const binding: TokenBinding = {
         userId,
@@ -313,7 +313,7 @@ export class TokenManagementService {
       };
 
       this.tokenBindings.set(userId, binding);
-    } catch (_error) {
+    } catch (error) {
       console.error('Token binding creation error:', error);
     }
   }
@@ -323,12 +323,12 @@ export class TokenManagementService {
    */
   private async validateTokenBinding(_userId: string, _context?: Context): Promise<boolean> {
     try {
-      const binding = this.tokenBindings.get(_userId);
+      const binding = this.tokenBindings.get(userId);
       if (!binding || !binding.isActive) {
         return false;
       }
 
-      const currentFingerprint = this.generateFingerprint(_context);
+      const currentFingerprint = this.generateFingerprint(context);
       const deviceId = context?.req.header('x-device-id') || 'unknown';
 
       // Check if device ID matches
@@ -356,7 +356,7 @@ export class TokenManagementService {
       binding.lastUsed = Date.now();
 
       return true;
-    } catch (_error) {
+    } catch (error) {
       console.error('Token binding validation error:', error);
       return false;
     }
@@ -409,7 +409,7 @@ export class TokenManagementService {
    * Determine if token should be rotated
    */
   private shouldRotateToken(_payload: any): string | null {
-    const _now = Math.floor(Date.now() / 1000);
+    const now = Math.floor(Date.now() / 1000);
     const tokenAge = now - (payload.iat || now);
 
     // Rotate tokens older than 3 days
@@ -470,7 +470,7 @@ export class TokenManagementService {
           ip_address: context?.req.header('x-forwarded-for'),
           user_agent: context?.req.header('user-agent'),
         });
-    } catch (_error) {
+    } catch (error) {
       console.error('Audit logging error:', error);
       // Don't fail the operation if audit logging fails
     }
@@ -480,7 +480,7 @@ export class TokenManagementService {
    * Cleanup expired entries
    */
   private cleanup(): void {
-    const _now = Math.floor(Date.now() / 1000);
+    const now = Math.floor(Date.now() / 1000);
 
     // Clean expired tokens
     for (const [key, tokenInfo] of this.tokenStore.entries()) {
@@ -529,4 +529,4 @@ export class TokenManagementService {
 }
 
 // Global token management service instance
-export const _tokenManagementService = new TokenManagementService();
+export const tokenManagementService = new TokenManagementService();

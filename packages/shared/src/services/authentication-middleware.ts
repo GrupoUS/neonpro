@@ -886,7 +886,7 @@ export class HealthcareAuthMiddleware {
       console.log(
         "🔐 [HealthcareAuthMiddleware] Healthcare authentication middleware initialized",
       );
-    } catch (_error) {
+    } catch (error) {
       console.error(
         "Failed to initialize healthcare authentication middleware:",
         error,
@@ -899,13 +899,13 @@ export class HealthcareAuthMiddleware {
    */
   private setupSessionManagement(): void {
     // Session cleanup interval
-    setInterval(_() => {
+    setInterval(() => {
       this.cleanupExpiredSessions();
     }, 60000); // Every minute
 
     // Session rotation interval
     if (this.config.session.enableSessionRotation) {
-      setInterval(_() => {
+      setInterval(() => {
         this.rotateActiveSessions();
       }, this.config.session.sessionRotationInterval * 1000);
     }
@@ -916,7 +916,7 @@ export class HealthcareAuthMiddleware {
    */
   private setupSecurityMonitoring(): void {
     if (this.config.security.enableAnomalyDetection) {
-      setInterval(_() => {
+      setInterval(() => {
         this.detectSessionAnomalies();
       }, 300000); // Every 5 minutes
     }
@@ -1058,7 +1058,7 @@ export class HealthcareAuthMiddleware {
         if (authResult.session) {
           await this.logSessionActivity(c, authResult.session);
         }
-      } catch (_error) {
+      } catch (error) {
         console.error("Authentication middleware error:", error);
         return this.handleAuthError(c, error);
       }
@@ -1274,7 +1274,7 @@ export class HealthcareAuthMiddleware {
         false,
         riskScore,
       );
-    } catch (_error) {
+    } catch (error) {
       console.error("Authentication error:", error);
       return this.createAuthResult(
         false,
@@ -1299,7 +1299,7 @@ export class HealthcareAuthMiddleware {
     const cookieToken = c.req
       .header("cookie")
       ?.split(";")
-      .find(_(cookie) => cookie.trim().startsWith("auth_token="))
+      .find((cookie) => cookie.trim().startsWith("auth_token="))
       ?.split("=")[1];
 
     if (cookieToken) {
@@ -1362,7 +1362,7 @@ export class HealthcareAuthMiddleware {
       };
 
       return jwtPayload;
-    } catch (_error) {
+    } catch (error) {
       console.error("Token validation error:", error);
       return null;
     }
@@ -1391,7 +1391,7 @@ export class HealthcareAuthMiddleware {
       }
 
       return session;
-    } catch (_error) {
+    } catch (error) {
       console.error("Session creation error:", error);
       return null;
     }
@@ -1406,7 +1406,7 @@ export class HealthcareAuthMiddleware {
   ): Promise<AuthSession | null> {
     try {
       const sessionId = decoded.sessionId || `sess_${nanoid(16)}`;
-      const _now = new Date().toISOString();
+      const now = new Date().toISOString();
 
       // TODO: Get user profile from database based on decoded.userId
       const userProfile = await this.getUserProfile(decoded._userId);
@@ -1479,7 +1479,7 @@ export class HealthcareAuthMiddleware {
       };
 
       return session;
-    } catch (_error) {
+    } catch (error) {
       console.error("New session creation error:", error);
       return null;
     }
@@ -1517,7 +1517,7 @@ export class HealthcareAuthMiddleware {
     session: AuthSession,
     c: Context,
   ): Promise<boolean> {
-    const _now = Date.now();
+    const now = Date.now();
 
     // Check absolute expiration
     if (new Date(session.sessionMetadata.expiresAt).getTime() < now) {
@@ -1537,12 +1537,12 @@ export class HealthcareAuthMiddleware {
     }
 
     // Check concurrent session limit
-    const userSessions = Array.from(this.activeSessions.values()).filter(_(s) => s.userId === session.userId,
+    const userSessions = Array.from(this.activeSessions.values()).filter((s) => s.userId === session.userId,
     );
 
     if (userSessions.length > this.config.session.maxConcurrentSessions) {
       // Remove oldest session
-      const oldestSession = userSessions.sort(_(a,_b) =>
+      const oldestSession = userSessions.sort((a,_b) =>
           new Date(a.sessionMetadata.lastActivity).getTime() -
           new Date(b.sessionMetadata.lastActivity).getTime(),
       )[0];
@@ -1667,7 +1667,7 @@ export class HealthcareAuthMiddleware {
    * Update session with current request information
    */
   private async updateSession(session: AuthSession, c: Context): Promise<void> {
-    const _now = new Date().toISOString();
+    const now = new Date().toISOString();
 
     // Update activity timestamp
     session.sessionMetadata.lastActivity = now;
@@ -1920,7 +1920,7 @@ export class HealthcareAuthMiddleware {
    * Cleanup expired sessions
    */
   private cleanupExpiredSessions(): void {
-    const _now = Date.now();
+    const now = Date.now();
     const expiredSessions: string[] = [];
 
     for (const [sessionId, session] of this.activeSessions.entries()) {
@@ -1995,7 +1995,7 @@ export class HealthcareAuthMiddleware {
           return parts.slice(0, 4).join(":") + "::";
         }
       }
-    } catch (_error) {
+    } catch (error) {
       console.warn(`IP anonymization failed for value: ${ip}`);
     }
 
@@ -2096,7 +2096,7 @@ export class HealthcareAuthMiddleware {
 /**
  * Default healthcare authentication middleware instance
  */
-export const _healthcareAuthMiddleware = new HealthcareAuthMiddleware({
+export const healthcareAuthMiddleware = new HealthcareAuthMiddleware({
   enabled: true,
   environment: (process.env.NODE_ENV as Environment) || "development",
 

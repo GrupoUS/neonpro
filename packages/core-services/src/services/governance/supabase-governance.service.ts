@@ -98,7 +98,7 @@ export class SupabaseGovernanceService implements GovernanceService {
 
     if (error) throw new Error(`Failed to get audit trail: ${error.message}`);
 
-    const entries = data?.map(_(item) => this.mapAuditTrailFromDb(item)) || [];
+    const entries = data?.map((item) => this.mapAuditTrailFromDb(item)) || [];
 
     return {
       entries,
@@ -115,7 +115,7 @@ export class SupabaseGovernanceService implements GovernanceService {
 
     if (error) throw new Error(`Failed to get KPI metrics: ${error.message}`);
 
-    return data?.map(_(item) => this.mapKPIMetricFromDb(item)) || [];
+    return data?.map((item) => this.mapKPIMetricFromDb(item)) || [];
   }
 
   async updateKPIMetric(update: UpdateKPIMetric): Promise<KPIMetric> {
@@ -150,7 +150,7 @@ export class SupabaseGovernanceService implements GovernanceService {
     if (error)
       throw new Error(`Failed to get compliance status: ${error.message}`);
 
-    return data?.map(_(item) => this.mapComplianceStatusFromDb(item)) || [];
+    return data?.map((item) => this.mapComplianceStatusFromDb(item)) || [];
   }
 
   async updateComplianceStatus(
@@ -190,7 +190,7 @@ export class SupabaseGovernanceService implements GovernanceService {
     if (error)
       throw new Error(`Failed to get risk assessments: ${error.message}`);
 
-    return data?.map(_(item) => this.mapRiskAssessmentFromDb(item)) || [];
+    return data?.map((item) => this.mapRiskAssessmentFromDb(item)) || [];
   }
 
   async createRiskAssessment(
@@ -234,7 +234,7 @@ export class SupabaseGovernanceService implements GovernanceService {
     if (error)
       throw new Error(`Failed to get AI governance metrics: ${error.message}`);
 
-    return data?.map(_(item) => this.mapAIGovernanceFromDb(item)) || [];
+    return data?.map((item) => this.mapAIGovernanceFromDb(item)) || [];
   }
 
   async updateAIGovernanceMetric(
@@ -285,7 +285,7 @@ export class SupabaseGovernanceService implements GovernanceService {
 
     if (error) throw new Error(`Failed to get policies: ${error.message}`);
 
-    return data?.map(_(item) => this.mapPolicyFromDb(item)) || [];
+    return data?.map((item) => this.mapPolicyFromDb(item)) || [];
   }
 
   async updatePolicy(
@@ -338,7 +338,7 @@ export class SupabaseGovernanceService implements GovernanceService {
 
     if (error) throw new Error(`Failed to get escalations: ${error.message}`);
 
-    return data?.map(_(item) => this.mapEscalationFromDb(item)) || [];
+    return data?.map((item) => this.mapEscalationFromDb(item)) || [];
   }
   async createEscalation(
     escalation: CreateEscalationWorkflow,
@@ -544,12 +544,12 @@ export class SupabaseGovernanceService implements GovernanceService {
   async getKPIOverviewData(): Promise<KPIOverviewData> {
     const metrics = await this.getKPIMetrics();
     const totalKPIs = metrics.length;
-    const normalizedKPIs = metrics.filter(_(m) => m.status === "ACTIVE").length;
-    const criticalKPIs = metrics.filter(_(m) => m.threshold && m.currentValue < m.threshold,
+    const normalizedKPIs = metrics.filter((m) => m.status === "ACTIVE").length;
+    const criticalKPIs = metrics.filter((m) => m.threshold && m.currentValue < m.threshold,
     ).length;
 
     // Calculate aggregated scores
-    const qualityMetric = metrics.find(_(m) => m.name === "Data Quality Score");
+    const qualityMetric = metrics.find((m) => m.name === "Data Quality Score");
     const dataQualityScore = qualityMetric?.currentValue || 0;
 
     const normalizationRate =
@@ -574,15 +574,15 @@ export class SupabaseGovernanceService implements GovernanceService {
   ): Promise<ComplianceStatusData> {
     const statuses = await this.getComplianceStatus(clinicId);
 
-    const hipaaCompliance = statuses.find(_(s) => s.framework === "HIPAA");
-    const lgpdCompliance = statuses.find(_(s) => s.framework === "LGPD");
+    const hipaaCompliance = statuses.find((s) => s.framework === "HIPAA");
+    const lgpdCompliance = statuses.find((s) => s.framework === "LGPD");
 
     const overallScore =
       statuses.length > 0
-        ? statuses.reduce(_(sum,_s) => sum + s.score, 0) / statuses.length
+        ? statuses.reduce((sum,_s) => sum + s.score, 0) / statuses.length
         : 0;
 
-    const criticalViolations = statuses.reduce(_(sum,_s) => (s.status === "CRITICAL" ? sum + s.violations : sum),
+    const criticalViolations = statuses.reduce((sum,_s) => (s.status === "CRITICAL" ? sum + s.violations : sum),
       0,
     );
 
@@ -603,7 +603,7 @@ export class SupabaseGovernanceService implements GovernanceService {
       },
       overallScore,
       criticalViolations,
-      upcomingDeadlines: statuses.filter(_(s) =>
+      upcomingDeadlines: statuses.filter((s) =>
           s.nextAudit &&
           s.nextAudit > new Date() &&
           s.nextAudit < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),

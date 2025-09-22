@@ -1,7 +1,7 @@
 import { ServiceAnalyticsDashboard } from '@/components/service-analytics/ServiceAnalyticsDashboard';
 import { createFileRoute } from '@tanstack/react-router';
 
-export const _Route = createFileRoute('/services/service-analytics')({
+export const Route = createFileRoute('/services/service-analytics')({
   component: ServiceAnalyticsPage,
 });
 

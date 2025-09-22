@@ -5,10 +5,10 @@ import { ConnectButton } from '../connect-button';
 
 // Mock the service
 vi.mock('@/services/google-calendar/service');
-vi.mock(_'@/components/ui/button',_() => ({
+vi.mock(('@/components/ui/button', () => ({
   Button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
 }));
-vi.mock(_'@/components/ui/dialog',_() => ({
+vi.mock(('@/components/ui/dialog', () => ({
   Dialog: ({ children, open }: any) => (open ? <div>{children}</div> : null),
   DialogTrigger: ({ children }: any) => children,
   DialogContent: ({ children }: any) => <div>{children}</div>,
@@ -16,15 +16,15 @@ vi.mock(_'@/components/ui/dialog',_() => ({
   DialogTitle: ({ children }: any) => <h2>{children}</h2>,
   DialogDescription: ({ children }: any) => <p>{children}</p>,
 }));
-vi.mock(_'@/components/ui/alert',_() => ({
+vi.mock(('@/components/ui/alert', () => ({
   Alert: ({ children }: any) => <div role='alert'>{children}</div>,
   AlertDescription: ({ children }: any) => <div>{children}</div>,
 }));
 
-describe(_'ConnectButton',_() => {
+describe(('ConnectButton', () => {
   let mockService: any;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     mockService = {
@@ -33,10 +33,10 @@ describe(_'ConnectButton',_() => {
       createIntegration: vi.fn(),
     };
 
-    (GoogleCalendarService as any).mockImplementation(_() => mockService);
+    (GoogleCalendarService as any).mockImplementation(() => mockService);
   });
 
-  it(_'should show connect button when not connected',_async () => {
+  it(_'should show connect button when not connected',async () => {
     mockService.getUserIntegration.mockResolvedValue(null);
     mockService.getAuthUrl.mockReturnValue(
       'https://accounts.google.com/o/oauth2/auth',
@@ -47,7 +47,7 @@ describe(_'ConnectButton',_() => {
     expect(screen.getByText('Conectar Google Calendar')).toBeInTheDocument();
   });
 
-  it(_'should show connected state when integration exists',_async () => {
+  it(_'should show connected state when integration exists',async () => {
     mockService.getUserIntegration.mockResolvedValue({
       id: 'integration-123',
       calendar_id: 'primary',
@@ -56,12 +56,12 @@ describe(_'ConnectButton',_() => {
 
     render(<ConnectButton clinicId='clinic-123' />);
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByText('Calendar Conectado')).toBeInTheDocument();
     });
   });
 
-  it(_'should open auth dialog when clicking connect',_async () => {
+  it(_'should open auth dialog when clicking connect',async () => {
     mockService.getUserIntegration.mockResolvedValue(null);
     mockService.getAuthUrl.mockReturnValue(
       'https://accounts.google.com/o/oauth2/auth',
@@ -71,14 +71,14 @@ describe(_'ConnectButton',_() => {
 
     fireEvent.click(screen.getByText('Conectar Google Calendar'));
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(
         screen.getByText('Conectar com Google Calendar'),
       ).toBeInTheDocument();
     });
   });
 
-  it(_'should show compliance warning in dialog',_async () => {
+  it(_'should show compliance warning in dialog',async () => {
     mockService.getUserIntegration.mockResolvedValue(null);
     mockService.getAuthUrl.mockReturnValue(
       'https://accounts.google.com/o/oauth2/auth',
@@ -88,7 +88,7 @@ describe(_'ConnectButton',_() => {
 
     fireEvent.click(screen.getByText('Conectar Google Calendar'));
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByText('LGPD Compliance')).toBeInTheDocument();
       expect(
         screen.getByText('Todos os dados serão processados'),
@@ -96,8 +96,8 @@ describe(_'ConnectButton',_() => {
     });
   });
 
-  it(_'should handle loading state',_async () => {
-    mockService.getUserIntegration.mockImplementation(_() => new Promise(resolve => setTimeout(resolve, 1000)),
+  it(_'should handle loading state',async () => {
+    mockService.getUserIntegration.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 1000)),
     );
 
     render(<ConnectButton clinicId='clinic-123' />);
@@ -105,12 +105,12 @@ describe(_'ConnectButton',_() => {
     expect(screen.getByText('...')).toBeInTheDocument();
   });
 
-  it(_'should handle errors gracefully',_async () => {
+  it(_'should handle errors gracefully',async () => {
     mockService.getUserIntegration.mockRejectedValue(new Error('API Error'));
 
     render(<ConnectButton clinicId='clinic-123' />);
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(screen.getByText('Erro ao verificar status')).toBeInTheDocument();
     });
   });

@@ -116,7 +116,7 @@ const StatusBadge = ({ status }: { status: MobilePatientData['status'] }) => {
 };
 
 // LGPD consent indicator component
-const ConsentIndicator = (_{
+const ConsentIndicator = ({
   consentStatus,
 }: {
   consentStatus: MobilePatientData['consentStatus'];
@@ -154,8 +154,8 @@ const ConsentIndicator = (_{
 };
 
 // Mobile-optimized patient card with touch targets ≥44px
-const MobilePatientCard = (_{
-  patient,_onSelect,_userRole,_onVisibilityToggle,
+const MobilePatientCard = ({
+  patient,onSelect, userRole,onVisibilityToggle,
 }: {
   patient: MobilePatientData;
   onSelect: (id: string) => void;
@@ -171,7 +171,7 @@ const MobilePatientCard = (_{
   const maskedPhone = formatBRPhone(patient.phone);
   const displayCpf = maskCpf(patient.maskedCpf, patient.dataVisibilityLevel);
 
-  return (_<Card className='mb-3 touch-manipulation'>
+  return (<Card className='mb-3 touch-manipulation'>
       <CardContent className='p-4'>
         <div className='flex items-start justify-between'>
           <div className='flex-1 min-w-0'>
@@ -299,7 +299,7 @@ export function MobilePatientList({
   >({});
 
   // Filter patients based on search and filters
-  const filteredPatients = useMemo(_() => {
+  const filteredPatients = useMemo(() => {
     return patients.filter(patient => {
       const matchesSearch = patient.name.toLowerCase().includes(searchTerm.toLowerCase())
         || patient.maskedCpf.includes(searchTerm)
@@ -330,7 +330,7 @@ export function MobilePatientList({
   if (isLoading) {
     return (
       <div className='space-y-3'>
-        {Array.from({ length: 3 }).map(_(_,_i) => (
+        {Array.from({ length: 3 }).map((_, i) => (
           <Card key={i} className='p-4'>
             <div className='space-y-2'>
               <Skeleton className='h-4 w-3/4' />

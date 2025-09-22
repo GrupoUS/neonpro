@@ -16,15 +16,15 @@ import {
   WCAG_TOUCH_TARGETS,
 } from '../mobile-touch-accessibility';
 
-describe(_'Mobile Touch Accessibility',_() => {
+describe(('Mobile Touch Accessibility', () => {
   let mobileTouchAccessibility: MobileTouchAccessibility;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     mobileTouchAccessibility = new MobileTouchAccessibility();
   });
 
-  describe(_'Schema Validation',_() => {
-    it(_'should validate touch target schema',_() => {
+  describe(('Schema Validation', () => {
+    it(('should validate touch target schema', () => {
       const validTouchTarget = {
         id: 'button-1',
         element: 'button.primary',
@@ -42,7 +42,7 @@ describe(_'Mobile Touch Accessibility',_() => {
       expect(result.success).toBe(true);
     });
 
-    it(_'should reject invalid touch target',_() => {
+    it(('should reject invalid touch target', () => {
       const invalidTouchTarget = {
         id: 'button-1',
         // Missing required fields
@@ -55,8 +55,8 @@ describe(_'Mobile Touch Accessibility',_() => {
     });
   });
 
-  describe(_'Touch Target Validation',_() => {
-    it(_'should validate compliant touch targets',_() => {
+  describe(('Touch Target Validation', () => {
+    it(('should validate compliant touch targets', () => {
       const compliantTargets: TouchTarget[] = [
         {
           id: 'button-1',
@@ -88,7 +88,7 @@ describe(_'Mobile Touch Accessibility',_() => {
       expect(result.issues).toHaveLength(0);
     });
 
-    it(_'should detect undersized touch targets',_() => {
+    it(('should detect undersized touch targets', () => {
       const undersizedTargets: TouchTarget[] = [
         {
           id: 'button-1',
@@ -122,7 +122,7 @@ describe(_'Mobile Touch Accessibility',_() => {
       expect(result.issues[0].title).toBe('Áreas de toque muito pequenas');
     });
 
-    it(_'should detect overlapping touch targets',_() => {
+    it(('should detect overlapping touch targets', () => {
       const overlappingTargets: TouchTarget[] = [
         {
           id: 'button-1',
@@ -155,7 +155,7 @@ describe(_'Mobile Touch Accessibility',_() => {
       ).toBe('Áreas de toque sobrepostas');
     });
 
-    it(_'should handle mixed compliance scenarios',_() => {
+    it(('should handle mixed compliance scenarios', () => {
       const mixedTargets: TouchTarget[] = [
         {
           id: 'button-1',
@@ -199,8 +199,8 @@ describe(_'Mobile Touch Accessibility',_() => {
     });
   });
 
-  describe(_'Gesture Accessibility Validation',_() => {
-    it(_'should validate gesture accessibility',_() => {
+  describe(('Gesture Accessibility Validation', () => {
+    it(('should validate gesture accessibility', () => {
       const result = mobileTouchAccessibility.validateGestureAccessibility();
 
       expect(result.level).toBeOneOf([
@@ -223,10 +223,10 @@ describe(_'Mobile Touch Accessibility',_() => {
       }
     });
 
-    it(_'should provide healthcare-specific gesture recommendations',_() => {
+    it(('should provide healthcare-specific gesture recommendations', () => {
       const result = mobileTouchAccessibility.validateGestureAccessibility();
 
-      result.issues.forEach(_issue => {
+      result.issues.forEach(issue => {
         if (issue.type === 'gesture') {
           expect(issue.healthcareImpact).toContain('funcionalidades médicas');
           expect(issue.wcagReference).toContain('WCAG 2.1 AA');
@@ -236,8 +236,8 @@ describe(_'Mobile Touch Accessibility',_() => {
     });
   });
 
-  describe(_'Touch Feedback Validation',_() => {
-    it(_'should validate touch feedback accessibility',_() => {
+  describe(('Touch Feedback Validation', () => {
+    it(('should validate touch feedback accessibility', () => {
       const result = mobileTouchAccessibility.validateTouchFeedback();
 
       expect(result.level).toBeOneOf([
@@ -251,7 +251,7 @@ describe(_'Mobile Touch Accessibility',_() => {
       expect(Array.isArray(result.issues)).toBe(true);
     });
 
-    it(_'should detect missing haptic feedback',_() => {
+    it(('should detect missing haptic feedback', () => {
       const result = mobileTouchAccessibility.validateTouchFeedback();
 
       // The mock implementation sets hapticSupport to false
@@ -264,10 +264,10 @@ describe(_'Mobile Touch Accessibility',_() => {
       ).toBe('Feedback háptico ausente');
     });
 
-    it(_'should provide healthcare-specific feedback recommendations',_() => {
+    it(('should provide healthcare-specific feedback recommendations', () => {
       const result = mobileTouchAccessibility.validateTouchFeedback();
 
-      result.issues.forEach(_issue => {
+      result.issues.forEach(issue => {
         if (issue.type === 'feedback') {
           expect(issue.healthcareImpact).toContain(
             'usuários com deficiências visuais',
@@ -282,8 +282,8 @@ describe(_'Mobile Touch Accessibility',_() => {
     });
   });
 
-  describe(_'Healthcare Touch Patterns Validation',_() => {
-    it(_'should validate healthcare-specific touch patterns',_() => {
+  describe(('Healthcare Touch Patterns Validation', () => {
+    it(('should validate healthcare-specific touch patterns', () => {
       const result = mobileTouchAccessibility.validateHealthcarePatterns();
 
       expect(result.level).toBeOneOf([
@@ -311,7 +311,7 @@ describe(_'Mobile Touch Accessibility',_() => {
       );
     });
 
-    it(_'should detect missing healthcare patterns',_() => {
+    it(('should detect missing healthcare patterns', () => {
       const result = mobileTouchAccessibility.validateHealthcarePatterns();
 
       if (result.missingPatterns.length > 0) {
@@ -324,7 +324,7 @@ describe(_'Mobile Touch Accessibility',_() => {
       }
     });
 
-    it(_'should validate all healthcare touch pattern types',_() => {
+    it(('should validate all healthcare touch pattern types', () => {
       const result = mobileTouchAccessibility.validateHealthcarePatterns();
 
       const allPatterns = [
@@ -354,8 +354,8 @@ describe(_'Mobile Touch Accessibility',_() => {
     });
   });
 
-  describe(_'Comprehensive Report Generation',_() => {
-    it(_'should generate comprehensive touch accessibility report',_() => {
+  describe(('Comprehensive Report Generation', () => {
+    it(('should generate comprehensive touch accessibility report', () => {
       const mockTargets: TouchTarget[] = [
         {
           id: 'button-1',
@@ -399,7 +399,7 @@ describe(_'Mobile Touch Accessibility',_() => {
       expect(report.healthcarePatterns).toBeDefined();
     });
 
-    it(_'should calculate overall score based on issues',_() => {
+    it(('should calculate overall score based on issues', () => {
       const mockTargets: TouchTarget[] = [
         {
           id: 'button-critical',
@@ -423,7 +423,7 @@ describe(_'Mobile Touch Accessibility',_() => {
       ]);
     });
 
-    it(_'should generate actionable recommendations',_() => {
+    it(('should generate actionable recommendations', () => {
       const mockTargets: TouchTarget[] = [
         {
           id: 'button-1',
@@ -440,7 +440,7 @@ describe(_'Mobile Touch Accessibility',_() => {
 
       expect(report.recommendations.length).toBeGreaterThan(0);
 
-      report.recommendations.forEach(_recommendation => {
+      report.recommendations.forEach(recommendation => {
         expect(typeof recommendation).toBe('string');
         expect(recommendation.length).toBeGreaterThan(0);
       });
@@ -453,15 +453,15 @@ describe(_'Mobile Touch Accessibility',_() => {
     });
   });
 
-  describe(_'WCAG Compliance',_() => {
-    it(_'should enforce WCAG 2.1 AA+ touch target requirements',_() => {
+  describe(('WCAG Compliance', () => {
+    it(('should enforce WCAG 2.1 AA+ touch target requirements', () => {
       expect(WCAG_TOUCH_TARGETS.MINIMUM_SIZE).toBe(44);
       expect(WCAG_TOUCH_TARGETS.RECOMMENDED_SIZE).toBe(48);
       expect(WCAG_TOUCH_TARGETS.MINIMUM_SPACING).toBe(8);
       expect(WCAG_TOUCH_TARGETS.RECOMMENDED_SPACING).toBe(16);
     });
 
-    it(_'should reference WCAG guidelines in issues',_() => {
+    it(('should reference WCAG guidelines in issues', () => {
       const undersizedTargets: TouchTarget[] = [
         {
           id: 'button-1',
@@ -476,14 +476,14 @@ describe(_'Mobile Touch Accessibility',_() => {
 
       const result = mobileTouchAccessibility.validateTouchTargets(undersizedTargets);
 
-      result.issues.forEach(_issue => {
+      result.issues.forEach(issue => {
         expect(issue.wcagReference).toContain('WCAG 2.1 AA');
       });
     });
   });
 
-  describe(_'Mobile Breakpoints',_() => {
-    it(_'should define healthcare-appropriate mobile breakpoints',_() => {
+  describe(('Mobile Breakpoints', () => {
+    it(('should define healthcare-appropriate mobile breakpoints', () => {
       expect(MOBILE_BREAKPOINTS.SMALL_MOBILE).toBe(320);
       expect(MOBILE_BREAKPOINTS.MOBILE).toBe(375);
       expect(MOBILE_BREAKPOINTS.LARGE_MOBILE).toBe(414);
@@ -491,8 +491,8 @@ describe(_'Mobile Touch Accessibility',_() => {
     });
   });
 
-  describe(_'Brazilian Portuguese Localization',_() => {
-    it(_'should provide Brazilian Portuguese accessibility labels',_() => {
+  describe(('Brazilian Portuguese Localization', () => {
+    it(('should provide Brazilian Portuguese accessibility labels', () => {
       expect(TOUCH_ACCESSIBILITY_LABELS_PT_BR.touchTarget).toBe(
         'Área de toque',
       );
@@ -510,7 +510,7 @@ describe(_'Mobile Touch Accessibility',_() => {
       );
     });
 
-    it(_'should use Portuguese in issue descriptions',_() => {
+    it(('should use Portuguese in issue descriptions', () => {
       const undersizedTargets: TouchTarget[] = [
         {
           id: 'button-1',
@@ -525,7 +525,7 @@ describe(_'Mobile Touch Accessibility',_() => {
 
       const result = mobileTouchAccessibility.validateTouchTargets(undersizedTargets);
 
-      result.issues.forEach(_issue => {
+      result.issues.forEach(issue => {
         expect(issue.title).toMatch(/[áéíóúâêîôûãõçÁÉÍÓÚÂÊÎÔÛÃÕÇ]/); // Contains Portuguese characters
         expect(issue.description).toMatch(/[áéíóúâêîôûãõçÁÉÍÓÚÂÊÎÔÛÃÕÇ]/);
         expect(issue.recommendation).toMatch(/[áéíóúâêîôûãõçÁÉÍÓÚÂÊÎÔÛÃÕÇ]/);
@@ -533,8 +533,8 @@ describe(_'Mobile Touch Accessibility',_() => {
     });
   });
 
-  describe(_'Healthcare-Specific Features',_() => {
-    it(_'should include healthcare impact in issues',_() => {
+  describe(('Healthcare-Specific Features', () => {
+    it(('should include healthcare impact in issues', () => {
       const mockTargets: TouchTarget[] = [
         {
           id: 'button-1',
@@ -550,13 +550,13 @@ describe(_'Mobile Touch Accessibility',_() => {
 
       const result = mobileTouchAccessibility.validateTouchTargets(mockTargets);
 
-      result.issues.forEach(_issue => {
+      result.issues.forEach(issue => {
         expect(issue.healthcareImpact).toBeDefined();
         expect(issue.healthcareImpact.length).toBeGreaterThan(0);
       });
     });
 
-    it(_'should validate healthcare touch patterns',_() => {
+    it(('should validate healthcare touch patterns', () => {
       const patterns = Object.values(HEALTHCARE_TOUCH_PATTERNS);
 
       expect(patterns).toContain('patient_data_entry');
@@ -568,8 +568,8 @@ describe(_'Mobile Touch Accessibility',_() => {
     });
   });
 
-  describe(_'Constants and Enums',_() => {
-    it(_'should have correct touch accessibility levels',_() => {
+  describe(('Constants and Enums', () => {
+    it(('should have correct touch accessibility levels', () => {
       expect(TOUCH_ACCESSIBILITY_LEVELS.EXCELLENT).toBe('excellent');
       expect(TOUCH_ACCESSIBILITY_LEVELS.GOOD).toBe('good');
       expect(TOUCH_ACCESSIBILITY_LEVELS.ACCEPTABLE).toBe('acceptable');
@@ -577,7 +577,7 @@ describe(_'Mobile Touch Accessibility',_() => {
       expect(TOUCH_ACCESSIBILITY_LEVELS.CRITICAL).toBe('critical');
     });
 
-    it(_'should have healthcare-specific touch patterns',_() => {
+    it(('should have healthcare-specific touch patterns', () => {
       expect(HEALTHCARE_TOUCH_PATTERNS.PATIENT_DATA_ENTRY).toBe(
         'patient_data_entry',
       );

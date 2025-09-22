@@ -5,13 +5,13 @@
  * health checks, and detailed reporting for healthcare compliance testing.
  */
 
-import { execSync } from 'child_process';
+import { execSync } from ''child_process'
 import * as fs from 'fs';
 import * as path from 'path';
 
 // ES module compatibility
-const __filename = new URL(import.meta.url).pathname;
-const __dirname = path.dirname(__filename);
+const _filename = new URL(import.meta.url).pathname;
+const _dirname = path.dirname(__filename);
 
 interface TestResult {
   name: string;
@@ -76,9 +76,9 @@ class DatabaseTestRunner {
 
     // Check for required environment variables
     const requiredEnvVars = [
-      'SUPABASE_URL',
-      'SUPABASE_SERVICE_ROLE_KEY',
-      'JWT_SECRET'
+      'SUPABASE_URL_,
+      'SUPABASE_SERVICE_ROLE_KEY_,
+      'JWT_SECRET_
     ];
 
     const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
@@ -241,7 +241,7 @@ class DatabaseTestRunner {
       // Run vitest with specific pattern
       const command = `npx vitest run --pattern "${pattern}" --reporter=verbose --json`;
       const output = execSync(command, {
-        cwd: path.join(__dirname, '../..'),
+        cwd: path.join(__dirname, '../.._),
         encoding: 'utf-8',
         timeout: 60000, // 60 second timeout
         stdio: 'pipe'
@@ -344,11 +344,11 @@ class DatabaseTestRunner {
     console.log('\\n🎯 Final Test Report');
     console.log('═'.repeat(60));
     
-    const totalTests = this.testResults.reduce(_(sum,_suite) => sum + suite.totalTests, 0);
-    const totalPassed = this.testResults.reduce(_(sum,_suite) => sum + suite.passed, 0);
-    const totalFailed = this.testResults.reduce(_(sum,_suite) => sum + suite.failed, 0);
-    const totalSkipped = this.testResults.reduce(_(sum,_suite) => sum + suite.skipped, 0);
-    const totalDuration = this.testResults.reduce(_(sum,_suite) => sum + suite.duration, 0);
+    const totalTests = this.testResults.reduce((sum,_suite) => sum + suite.totalTests, 0);
+    const totalPassed = this.testResults.reduce((sum,_suite) => sum + suite.passed, 0);
+    const totalFailed = this.testResults.reduce((sum,_suite) => sum + suite.failed, 0);
+    const totalSkipped = this.testResults.reduce((sum,_suite) => sum + suite.skipped, 0);
+    const totalDuration = this.testResults.reduce((sum,_suite) => sum + suite.duration, 0);
     const successRate = totalTests > 0 ? (totalPassed / totalTests * 100).toFixed(2) : '0';
 
     console.log(`📊 Overall Results:`);
@@ -415,14 +415,14 @@ class DatabaseTestRunner {
       testResults: this.testResults,
       summary: {
         totalSuites: this.testResults.length,
-        totalTests: this.testResults.reduce(_(sum,_suite) => sum + suite.totalTests, 0),
-        totalPassed: this.testResults.reduce(_(sum,_suite) => sum + suite.passed, 0),
-        totalFailed: this.testResults.reduce(_(sum,_suite) => sum + suite.failed, 0),
-        totalSkipped: this.testResults.reduce(_(sum,_suite) => sum + suite.skipped, 0),
-        totalDuration: this.testResults.reduce(_(sum,_suite) => sum + suite.duration, 0),
-        successRate: this.testResults.reduce(_(sum,_suite) => sum + suite.totalTests, 0) > 0 
+        totalTests: this.testResults.reduce((sum,_suite) => sum + suite.totalTests, 0),
+        totalPassed: this.testResults.reduce((sum,_suite) => sum + suite.passed, 0),
+        totalFailed: this.testResults.reduce((sum,_suite) => sum + suite.failed, 0),
+        totalSkipped: this.testResults.reduce((sum,_suite) => sum + suite.skipped, 0),
+        totalDuration: this.testResults.reduce((sum,_suite) => sum + suite.duration, 0),
+        successRate: this.testResults.reduce((sum,_suite) => sum + suite.totalTests, 0) > 0 
           ? (_this.testResults.reduce((sum,_suite) => sum + suite.passed, 0) / 
-             this.testResults.reduce(_(sum,_suite) => sum + suite.totalTests, 0) * 100).toFixed(2)
+             this.testResults.reduce((sum,_suite) => sum + suite.totalTests, 0) * 100).toFixed(2)
           : '0'
       }
     };
@@ -463,10 +463,10 @@ async function runDatabaseTests() {
     runner.saveResultsToFile();
 
     // Exit with appropriate code
-    const totalFailed = results.reduce(_(sum,_suite) => sum + suite.failed, 0);
+    const totalFailed = results.reduce((sum,_suite) => sum + suite.failed, 0);
     process.exit(totalFailed > 0 ? 1 : 0);
 
-  } catch (_error) {
+  } catch (error) {
     console.error('💥 Test runner failed:', error);
     process.exit(1);
   }

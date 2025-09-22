@@ -2,9 +2,9 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { createClient, createServiceClient } from "../client";
 import { checkTablesExist, validateSchema } from "../utils/validation";
 
-describe(_"Supabase Migration Integration",_() => {
-  describe(_"Client Creation",_() => {
-    beforeEach(_() => {
+describe("Supabase Migration Integration", () => {
+  describe("Client Creation", () => {
+    beforeEach(() => {
       // Mock environment variables
       process.env.NEXT_PUBLIC_SUPABASE_URL = "https://test.supabase.co";
       process.env.SUPABASE_URL = "https://test.supabase.co";
@@ -12,7 +12,7 @@ describe(_"Supabase Migration Integration",_() => {
       process.env.SUPABASE_SERVICE_ROLE_KEY = "test-service-key";
     });
 
-    afterEach(_() => {
+    afterEach(() => {
       // Clean up environment variables
       delete process.env.NEXT_PUBLIC_SUPABASE_URL;
       delete process.env.SUPABASE_URL;
@@ -20,38 +20,38 @@ describe(_"Supabase Migration Integration",_() => {
       delete process.env.SUPABASE_SERVICE_ROLE_KEY;
     });
 
-    it(_"should create a client with proper configuration",_() => {
+    it("should create a client with proper configuration", () => {
       const client = createClient();
       expect(client).toBeDefined();
       expect(typeof client.from).toBe("function");
       expect(typeof client.auth).toBe("object");
     });
 
-    it(_"should create a service client with proper configuration",_() => {
+    it("should create a service client with proper configuration", () => {
       const serviceClient = createServiceClient();
       expect(serviceClient).toBeDefined();
       expect(typeof serviceClient.from).toBe("function");
       expect(typeof serviceClient.auth).toBe("object");
     });
 
-    it(_"should throw error when missing environment variables",_() => {
+    it("should throw error when missing environment variables", () => {
       delete process.env.SUPABASE_URL;
 
-      expect(_() => createClient()).toThrow(
+      expect(() => createClient()).toThrow(
         "Missing Supabase environment variables",
       );
     });
 
-    it(_"should throw error when missing service role key",_() => {
+    it("should throw error when missing service role key", () => {
       delete process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-      expect(_() => createServiceClient()).toThrow(
+      expect(() => createServiceClient()).toThrow(
         "Missing Supabase service role environment variables",
       );
     });
   });
 
-  describe(_"Schema Validation",_() => {
+  describe("Schema Validation", () => {
     it(_"should validate schema successfully",_async () => {
       const isValid = await validateSchema();
       expect(isValid).toBe(true);
@@ -91,7 +91,7 @@ describe(_"Supabase Migration Integration",_() => {
     });
   });
 
-  describe(_"Database Types",_() => {
+  describe("Database Types", () => {
     it(_"should have proper TypeScript types structure",_async () => {
       // Import types dynamically to test structure
       const types = await import("../types/supabase");
@@ -115,8 +115,8 @@ describe(_"Supabase Migration Integration",_() => {
     });
   });
 
-  describe(_"Migration Health Check",_() => {
-    it(_"should provide migration health status",_() => {
+  describe("Migration Health Check", () => {
+    it("should provide migration health status", () => {
       // Test that migration health check functions are available
       expect(validateSchema).toBeDefined();
       expect(checkTablesExist).toBeDefined();
@@ -151,8 +151,8 @@ describe(_"Supabase Migration Integration",_() => {
     });
   });
 
-  describe(_"Migration Scripts Validation",_() => {
-    it(_"should validate migration file format",_() => {
+  describe("Migration Scripts Validation", () => {
+    it("should validate migration file format", () => {
       // Test migration file naming convention
       const validMigrationName = "20250911143000_initial_schema.sql";
       const invalidMigrationName = "invalid-migration.sql";
@@ -163,7 +163,7 @@ describe(_"Supabase Migration Integration",_() => {
       expect(migrationPattern.test(invalidMigrationName)).toBe(false);
     });
 
-    it(_"should validate SQL migration structure",_() => {
+    it("should validate SQL migration structure", () => {
       // Test that migrations follow proper structure
       const sampleMigration = `
         -- Migration comment
@@ -180,7 +180,7 @@ describe(_"Supabase Migration Integration",_() => {
     });
   });
 
-  describe(_"Error Handling",_() => {
+  describe("Error Handling", () => {
     it(_"should handle connection errors gracefully",_async () => {
       // Mock a failed connection
       const mockFailingClient = {
@@ -191,23 +191,23 @@ describe(_"Supabase Migration Integration",_() => {
 
       try {
         await checkTablesExist(mockFailingClient);
-      } catch (_error) {
+      } catch (error) {
         expect(error).toBeDefined();
       }
     });
 
-    it(_"should provide meaningful error messages",_() => {
+    it("should provide meaningful error messages", () => {
       delete process.env.NEXT_PUBLIC_SUPABASE_URL;
       delete process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-      expect(_() => createClient()).toThrow(
+      expect(() => createClient()).toThrow(
         "Missing Supabase environment variables",
       );
     });
   });
 
-  describe(_"Performance and Reliability",_() => {
-    it(_"should create clients efficiently",_() => {
+  describe("Performance and Reliability", () => {
+    it("should create clients efficiently", () => {
       const start = Date.now();
 
       for (let i = 0; i < 100; i++) {
@@ -222,22 +222,22 @@ describe(_"Supabase Migration Integration",_() => {
     });
 
     it(_"should handle concurrent client creation",_async () => {
-      const promises = Array.from({ length: 10 },_() =>
+      const promises = Array.from({ length: 10 }, () =>
         Promise.resolve(createClient()),
       );
 
       const clients = await Promise.all(promises);
 
       expect(clients).toHaveLength(10);
-      clients.forEach(_(client) => {
+      clients.forEach((client) => {
         expect(client).toBeDefined();
         expect(typeof client.from).toBe("function");
       });
     });
   });
 
-  describe(_"Configuration Validation",_() => {
-    it(_"should validate client configuration options",_() => {
+  describe("Configuration Validation", () => {
+    it("should validate client configuration options", () => {
       const client = createClient();
 
       // Test that client has expected configuration
@@ -246,7 +246,7 @@ describe(_"Supabase Migration Integration",_() => {
       expect(typeof client.channel).toBe("function");
     });
 
-    it(_"should configure service client differently from regular client",_() => {
+    it("should configure service client differently from regular client", () => {
       const regularClient = createClient();
       const serviceClient = createServiceClient();
 

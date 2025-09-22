@@ -191,7 +191,7 @@ export class AIChatMetrics {
       return this.createEmptyMetrics();
     }
 
-    return allMetrics.reduce(_(acc,_current) => ({
+    return allMetrics.reduce((acc,_current) => ({
       responseTime: (acc.responseTime + current.responseTime) / 2, // Average
       firstTokenTime:
         acc.firstTokenTime && current.firstTokenTime
@@ -230,13 +230,13 @@ export class AIChatMetrics {
     count: number;
   } {
     const events = clinicId
-      ? this.events.filter(_(e) => e.clinicId === clinicId)
+      ? this.events.filter((e) => e.clinicId === clinicId)
       : this.events;
 
     const responseTimes = events
-      .filter(_(e) => e.metrics.responseTime)
-      .map(_(e) => e.metrics.responseTime!)
-      .sort(_(a,_b) => a - b);
+      .filter((e) => e.metrics.responseTime)
+      .map((e) => e.metrics.responseTime!)
+      .sort((a,_b) => a - b);
 
     if (responseTimes.length === 0) {
       return { p50: 0, p95: 0, p99: 0, average: 0, count: 0 };
@@ -251,7 +251,7 @@ export class AIChatMetrics {
       p50: getPercentile(responseTimes, 50),
       p95: getPercentile(responseTimes, 95),
       p99: getPercentile(responseTimes, 99),
-      average: responseTimes.reduce(_(a,_b) => a + b, 0) / responseTimes.length,
+      average: responseTimes.reduce((a,_b) => a + b, 0) / responseTimes.length,
       count: responseTimes.length,
     };
   }
@@ -266,17 +266,17 @@ export class AIChatMetrics {
     totalInteractions: number;
   } {
     const events = clinicId
-      ? this.events.filter(_(e) => e.clinicId === clinicId)
+      ? this.events.filter((e) => e.clinicId === clinicId)
       : this.events;
 
     const totalInteractions = events.length;
-    const piiDetections = events.reduce(_(sum,_e) => sum + (e.metrics.piiDetections || 0),
+    const piiDetections = events.reduce((sum,_e) => sum + (e.metrics.piiDetections || 0),
       0,
     );
-    const consentValidations = events.reduce(_(sum,_e) => sum + (e.metrics.consentValidations || 0),
+    const consentValidations = events.reduce((sum,_e) => sum + (e.metrics.consentValidations || 0),
       0,
     );
-    const auditEvents = events.reduce(_(sum,_e) => sum + (e.metrics.auditEvents || 0),
+    const auditEvents = events.reduce((sum,_e) => sum + (e.metrics.auditEvents || 0),
       0,
     );
 
@@ -303,25 +303,25 @@ export class AIChatMetrics {
     lastHit?: string;
   } {
     const events = clinicId
-      ? this.events.filter(_(e) => e.clinicId === clinicId)
+      ? this.events.filter((e) => e.clinicId === clinicId)
       : this.events;
 
-    const rateLimitEvents = events.filter(_(e) => e.eventType === "rate_limit");
+    const rateLimitEvents = events.filter((e) => e.eventType === "rate_limit");
     const totalInteractions = events.length;
-    const totalHits = rateLimitEvents.reduce(_(sum,_e) => sum + (e.metrics.rateLimitHits || 0),
+    const totalHits = rateLimitEvents.reduce((sum,_e) => sum + (e.metrics.rateLimitHits || 0),
       0,
     );
 
     const remainingValues = events
-      .filter(_(e) => e.metrics.rateLimitRemaining !== undefined)
-      .map(_(e) => e.metrics.rateLimitRemaining!);
+      .filter((e) => e.metrics.rateLimitRemaining !== undefined)
+      .map((e) => e.metrics.rateLimitRemaining!);
 
     const averageRemaining =
       remainingValues.length > 0
-        ? remainingValues.reduce(_(a,_b) => a + b, 0) / remainingValues.length
+        ? remainingValues.reduce((a,_b) => a + b, 0) / remainingValues.length
         : 0;
 
-    const lastHitEvent = rateLimitEvents.sort(_(a,_b) =>
+    const lastHitEvent = rateLimitEvents.sort((a,_b) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     )[0];
 
@@ -345,7 +345,7 @@ export class AIChatMetrics {
     rateLimitingStats: any;
     clinicMetrics: Array<{ clinicId: string; metrics: AIMetrics }>;
   } {
-    const clinicMetrics = Array.from(this.metrics.entries()).map(_([clinicId,_metrics]) => ({
+    const clinicMetrics = Array.from(this.metrics.entries()).map(([clinicId,_metrics]) => ({
         clinicId,
         metrics,
       }),
@@ -427,19 +427,19 @@ export class AIChatMetrics {
 export const aiChatMetrics = new AIChatMetrics();
 
 // Convenience functions for common use cases
-export const _recordAISuccess = (
+export const recordAISuccess = (
   params: Parameters<AIChatMetrics["recordSuccess"]>[0],
 ) => {
   aiChatMetrics.recordSuccess(params);
 };
 
-export const _recordAIRefusal = (
+export const recordAIRefusal = (
   params: Parameters<AIChatMetrics["recordRefusal"]>[0],
 ) => {
   aiChatMetrics.recordRefusal(params);
 };
 
-export const _recordAIError = (
+export const recordAIError = (
   params: Parameters<AIChatMetrics["recordError"]>[0],
 ) => {
   aiChatMetrics.recordError(params);

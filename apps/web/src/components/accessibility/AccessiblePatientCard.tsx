@@ -54,7 +54,7 @@ export function AccessiblePatientCard({
   const { announceHealthcareData } = useScreenReaderAnnouncement();
 
   // Format patient data for screen readers
-  const formatPatientForScreenReader = useCallback(_() => {
+  const formatPatientForScreenReader = useCallback(() => {
     const parts = [
       `Paciente: ${patient.name}`,
       `Status: ${getStatusLabel(patient.status)}`,
@@ -81,7 +81,7 @@ export function AccessiblePatientCard({
     return parts.join('. ');
   }, [patient, showSensitiveData]);
 
-  const handleClick = useCallback(_() => {
+  const handleClick = useCallback(() => {
     onClick?.(patient);
     announceHealthcareData('Paciente selecionado', patient.name);
   }, [onClick, patient, announceHealthcareData]);
@@ -298,7 +298,7 @@ export function AccessiblePatientList({
     [onPatientSelect, announce],
   );
 
-  return (_<div
+  return (<div
       className={className}
       role='list'
       aria-label={`Lista de pacientes. ${patients.length} pacientes encontrados.`}

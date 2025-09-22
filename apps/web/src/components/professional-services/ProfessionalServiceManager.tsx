@@ -81,11 +81,9 @@ export function ProfessionalServiceManager({
 
   // Filter assignments based on search and filters
   const filteredAssignments = assignments?.filter(assignment => {
-    const matchesSearch = assignment.professional_name
-      .toLowerCase()
+    const matchesSearch = assignment.professional_name.toLowerCase()
       .includes(searchQuery.toLowerCase())
-      || assignment.service_name
-        .toLowerCase()
+      || assignment.service_name.toLowerCase()
         .includes(searchQuery.toLowerCase());
 
     const matchesProficiency = proficiencyFilter === 'all'
@@ -136,7 +134,7 @@ export function ProfessionalServiceManager({
         </CardHeader>
         <CardContent>
           <div className='animate-pulse space-y-4'>
-            {Array.from({ length: 5 }).map(_(_,_i) => (
+            {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className='h-16 bg-muted rounded'></div>
             ))}
           </div>
@@ -253,7 +251,7 @@ export function ProfessionalServiceManager({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='all'>Todos os níveis</SelectItem>
-                {Object.entries(PROFICIENCY_LEVELS).map(_([level,_config]) => (
+                {Object.entries(PROFICIENCY_LEVELS).map(([level, config]) => (
                   <SelectItem key={level} value={level}>
                     <div className='flex items-center gap-2'>
                       <div

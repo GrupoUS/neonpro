@@ -15,7 +15,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Brain } from 'lucide-react';
 import React, { useState } from 'react';
 
-export const _Route = createFileRoute('/ai-agent/page')({
+export const Route = createFileRoute('/ai-agent/page')({
   component: AIAgentPage,
 });
 
@@ -111,7 +111,7 @@ function AIAgentPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className='space-y-4'>
-                {features.map((feature, _index) => (
+                {features.map((feature, index) => (
                   <div key={index} className='flex items-start gap-3'>
                     <div className='flex items-center justify-center w-8 h-8 rounded-md bg-muted'>
                       <feature.icon className='h-4 w-4' />
@@ -134,7 +134,7 @@ function AIAgentPage() {
                 <CardDescription>Tente perguntar:</CardDescription>
               </CardHeader>
               <CardContent className='space-y-2'>
-                {examples.map(_(example, _index) => (_<Button
+                {examples.map((example, index) => (<Button
                     key={index}
                     variant='ghost'
                     className='w-full justify-start text-left h-auto p-3'

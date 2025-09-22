@@ -142,7 +142,7 @@ export class TelemedicineService {
           consentObtained: session.recording_consent || false,
         },
       };
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error creating telemedicine session', {
         error: error instanceof Error ? error.message : String(error),
         physicianId: input.physicianId,
@@ -187,7 +187,7 @@ export class TelemedicineService {
         .eq('id', sessionId);
 
       logger.info('Telemedicine session started successfully', { sessionId });
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error starting telemedicine session', {
         error: error instanceof Error ? error.message : String(error),
         sessionId,
@@ -239,7 +239,7 @@ export class TelemedicineService {
             fileHash: recordingResult.fileHash,
             duration: recordingResult.duration,
           };
-        } catch (_recordingError) {
+        } catch (recordingError) {
           logger.warn('Failed to stop recording', {
             error: recordingError instanceof Error
               ? recordingError.message
@@ -278,7 +278,7 @@ export class TelemedicineService {
         duration,
         recordingSummary,
       };
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error ending telemedicine session', {
         error: error instanceof Error ? error.message : String(error),
         sessionId: input.sessionId,
@@ -343,7 +343,7 @@ export class TelemedicineService {
         qualityMetrics: webrtcStatus.qualityMetrics || {},
         recording: webrtcStatus.recording || {},
       };
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error getting session status', {
         error: error instanceof Error ? error.message : String(error),
         sessionId,
@@ -379,7 +379,7 @@ export class TelemedicineService {
       );
 
       return licenseVerification;
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error verifying physician license', {
         error: error instanceof Error ? error.message : String(error),
         physicianId,
@@ -407,7 +407,7 @@ export class TelemedicineService {
       if (physician.clinic_id !== clinicId) {
         throw new Error('Physician does not have access to this clinic');
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error verifying clinic access', {
         error: error instanceof Error ? error.message : String(error),
         physicianId,
@@ -457,7 +457,7 @@ export class TelemedicineService {
       logger.info('Recording started for telemedicine session', { sessionId });
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error starting recording', {
         error: error instanceof Error ? error.message : String(error),
         sessionId,
@@ -500,7 +500,7 @@ export class TelemedicineService {
       logger.info('Recording stopped for telemedicine session', { sessionId });
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error stopping recording', {
         error: error instanceof Error ? error.message : String(error),
         sessionId,
@@ -511,4 +511,4 @@ export class TelemedicineService {
 }
 
 // Export singleton instance
-export const _telemedicineService = new TelemedicineService();
+export const telemedicineService = new TelemedicineService();

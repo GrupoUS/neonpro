@@ -156,7 +156,7 @@ export class LGPDDataSubjectService {
         requestId,
         estimatedCompletion,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -176,7 +176,7 @@ export class LGPDDataSubjectService {
   ): Promise<LGPDOperationResult & { accessData?: AccessRequestData }> {
     try {
       // Validate request exists and belongs to patient
-      const _request = await this.validateRequest(
+      const request = await this.validateRequest(
         requestId,
         patientId,
         'ACCESS',
@@ -231,7 +231,7 @@ export class LGPDDataSubjectService {
         timestamp: new Date().toISOString(),
         accessData: accessReport,
       };
-    } catch (_error) {
+    } catch (error) {
       await this.handleRequestError(requestId, error);
       return {
         success: false,
@@ -257,7 +257,7 @@ export class LGPDDataSubjectService {
   ): Promise<LGPDOperationResult> {
     try {
       // Validate request exists and belongs to patient
-      const _request = await this.validateRequest(
+      const request = await this.validateRequest(
         requestId,
         patientId,
         'DELETION',
@@ -320,7 +320,7 @@ export class LGPDDataSubjectService {
         operationId: `deletion_${requestId}`,
         timestamp: new Date().toISOString(),
       };
-    } catch (_error) {
+    } catch (error) {
       await this.handleRequestError(requestId, error);
       return {
         success: false,
@@ -342,7 +342,7 @@ export class LGPDDataSubjectService {
   ): Promise<LGPDOperationResult & { exportData?: any; exportUrl?: string }> {
     try {
       // Validate request exists and belongs to patient
-      const _request = await this.validateRequest(
+      const request = await this.validateRequest(
         requestId,
         patientId,
         'PORTABILITY',
@@ -391,7 +391,7 @@ export class LGPDDataSubjectService {
         exportData: exportResult.exportData,
         exportUrl: exportResult.exportUrl,
       };
-    } catch (_error) {
+    } catch (error) {
       await this.handleRequestError(requestId, error);
       return {
         success: false,
@@ -413,7 +413,7 @@ export class LGPDDataSubjectService {
   ): Promise<LGPDOperationResult & { explanation?: any }> {
     try {
       // Validate request exists and belongs to patient
-      const _request = await this.validateRequest(
+      const request = await this.validateRequest(
         requestId,
         patientId,
         'AUTOMATED_DECISION_EXPLANATION',
@@ -475,7 +475,7 @@ export class LGPDDataSubjectService {
         timestamp: new Date().toISOString(),
         explanation: explanationReport,
       };
-    } catch (_error) {
+    } catch (error) {
       await this.handleRequestError(requestId, error);
       return {
         success: false,
@@ -520,7 +520,7 @@ export class LGPDDataSubjectService {
         timestamp: new Date().toISOString(),
         request,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -566,7 +566,7 @@ export class LGPDDataSubjectService {
         take: limit,
       });
 
-      const formattedRequests = requests.map(request => this.mapToDataSubjectRequest(_request));
+      const formattedRequests = requests.map(request => this.mapToDataSubjectRequest(request));
 
       return {
         success: true,
@@ -575,7 +575,7 @@ export class LGPDDataSubjectService {
         timestamp: new Date().toISOString(),
         requests: formattedRequests,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -836,7 +836,7 @@ export class LGPDDataSubjectService {
         },
       });
       deletedCount++;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error deleting personal data:', error);
     }
 
@@ -858,7 +858,7 @@ export class LGPDDataSubjectService {
       console.log(
         `Would process ${appointments.length} health records for deletion`,
       );
-    } catch (_error) {
+    } catch (error) {
       console.error('Error deleting health data:', error);
     }
 
@@ -961,4 +961,4 @@ export class LGPDDataSubjectService {
 }
 
 // Export singleton instance
-export const _lgpdDataSubjectService = new LGPDDataSubjectService();
+export const lgpdDataSubjectService = new LGPDDataSubjectService();

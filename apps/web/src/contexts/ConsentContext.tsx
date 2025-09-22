@@ -61,7 +61,7 @@ export function ConsentProvider({
   const [_consentVersion, setConsentVersion] = useState<string | null>(null);
 
   // Load saved preferences on mount
-  useEffect(_() => {
+  useEffect(() => {
     const savedData = localStorage.getItem(CONSENT_STORAGE_KEY);
 
     if (savedData) {

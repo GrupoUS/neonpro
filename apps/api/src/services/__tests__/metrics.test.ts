@@ -8,11 +8,11 @@ Object.defineProperty(_global,_'crypto', {
 });
 
 describe(_'Healthcare Metrics Service',_() => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
@@ -21,7 +21,7 @@ describe(_'Healthcare Metrics Service',_() => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
-      expect(_service).toBeDefined();
+      expect(service).toBeDefined();
       expect(typeof service.recordMetric).toBe('function');
       expect(typeof service.getKPIStatus).toBe('function');
       expect(typeof service.getMetricAggregation).toBe('function');
@@ -106,7 +106,7 @@ describe(_'Healthcare Metrics Service',_() => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(_() => {});
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       service.logMetric({ test: 'data' });
 
@@ -118,11 +118,11 @@ describe(_'Healthcare Metrics Service',_() => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(_() => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {
         throw new Error('Console error');
       });
 
-      expect(_() => service.logMetric({ test: 'data' })).not.toThrow();
+      expect(() => service.logMetric({ test: 'data' })).not.toThrow();
 
       consoleSpy.mockRestore();
     });

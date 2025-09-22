@@ -29,10 +29,10 @@ export {
 export { TREATMENT_DATABASE } from '@/services/aesthetic/ai-analysis';
 
 // Version
-export const _PHOTO_UPLOAD_VERSION = '1.0.0';
+export const PHOTO_UPLOAD_VERSION = '1.0.0';
 
 // Feature flags
-export const _PHOTO_UPLOAD_FEATURES = {
+export const PHOTO_UPLOAD_FEATURES = {
   dragDrop: true,
   aiAnalysis: true,
   treatmentRecommendations: true,
@@ -44,7 +44,7 @@ export const _PHOTO_UPLOAD_FEATURES = {
 } as const;
 
 // Default configuration
-export const _DEFAULT_PHOTO_UPLOAD_CONFIG = {
+export const DEFAULT_PHOTO_UPLOAD_CONFIG = {
   maxPhotos: 5,
   maxFileSize: 20, // MB
   acceptedTypes: ['image/jpeg', 'image/png', 'image/webp'],

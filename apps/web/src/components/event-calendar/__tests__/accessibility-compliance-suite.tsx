@@ -11,7 +11,7 @@ import { EventCalendar } from '../event-calendar';
 import { CalendarEvent } from '../types';
 
 // Mock accessibility utilities
-vi.mock(_'@/utils/accessibility/healthcare-audit-utils',_() => ({
+vi.mock(('@/utils/accessibility/healthcare-audit-utils', () => ({
   validateWCAGCompliance: vi.fn().mockReturnValue({
     compliant: true,
     violations: [],
@@ -31,7 +31,7 @@ vi.mock(_'@/utils/accessibility/healthcare-audit-utils',_() => ({
   }),
 }));
 
-describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
+describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
   const accessibleEvents: CalendarEvent[] = [
     {
       id: 'accessible-1',
@@ -63,31 +63,31 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
     onEventDelete: vi.fn(),
   };
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
   // PERCEIVABLE PRINCIPLE (1.0)
-  describe(_'1. Perceivable - Information must be presentable to users in ways they can perceive',_() => {
-    it(_'should provide text alternatives for non-text content',_() => {
+  describe(('1. Perceivable - Information must be presentable to users in ways they can perceive', () => {
+    it(('should provide text alternatives for non-text content', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // All images should have alt text
       const images = screen.queryAllByRole('img');
-      images.forEach(_img => {
+      images.forEach(img => {
         expect(img).toHaveAttribute('alt');
       });
 
       // Icons should have aria-labels
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(_button => {
+      buttons.forEach(button => {
         if (button.querySelector('svg')) {
           expect(button).toHaveAttribute('aria-label');
         }
       });
     });
 
-    it(_'should provide alternatives for time-based media',_() => {
+    it(('should provide alternatives for time-based media', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Calendar should work without animations
@@ -95,21 +95,21 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       expect(calendar).toBeInTheDocument();
     });
 
-    it(_'should create content that can be presented in different ways',_() => {
+    it(('should create content that can be presented in different ways', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should maintain meaning when styles are changed
       const eventElements = screen.getAllByText(
         /Consulta Acessível|Exame Acessível/,
       );
-      eventElements.forEach(_element => {
+      eventElements.forEach(element => {
         // Should be readable without color cues
         const computedStyle = window.getComputedStyle(element);
         expect(computedStyle.fontSize).not.toBe('0px');
       });
     });
 
-    it(_'should help users avoid and correct mistakes',_() => {
+    it(('should help users avoid and correct mistakes', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide clear error identification
@@ -117,7 +117,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       // Should provide context-sensitive help
     });
 
-    it(_'should make it easier for users to see and hear content',_() => {
+    it(('should make it easier for users to see and hear content', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should have sufficient color contrast
@@ -128,7 +128,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       const eventElements = screen.getAllByText(
         /Consulta Acessível|Exame Acessível/,
       );
-      eventElements.forEach(_element => {
+      eventElements.forEach(element => {
         expect(checkColorContrast).toHaveBeenCalledWith(
           expect.objectContaining({
             element: element,
@@ -140,8 +140,8 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
   });
 
   // OPERABLE PRINCIPLE (2.0)
-  describe(_'2. Operable - Interface components must be operable by all users',_() => {
-    it(_'should make all functionality available from a keyboard',_async () => {
+  describe(('2. Operable - Interface components must be operable by all users', () => {
+    it(_'should make all functionality available from a keyboard',async () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       const {
@@ -158,26 +158,26 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       fireEvent.keyDown(calendar, { key: 'Space' });
       fireEvent.keyDown(calendar, { key: 'Escape' });
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(validateKeyboardNavigation).toHaveBeenCalled();
       });
     });
 
-    it(_'should provide users enough time to read and use content',_() => {
+    it(('should provide users enough time to read and use content', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should not have time limits on reading content
       // Should provide controls for time-based content
     });
 
-    it(_'should not cause seizures and physical reactions',_() => {
+    it(('should not cause seizures and physical reactions', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should not flash more than 3 times per second
       // Should not include flashing content
     });
 
-    it(_'should provide ways to help users navigate and find content',_() => {
+    it(('should provide ways to help users navigate and find content', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should have page titles
@@ -189,12 +189,12 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
 
       // Check for visible focus indicators
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(_button => {
+      buttons.forEach(button => {
         expect(button).toHaveAttribute('tabindex');
       });
     });
 
-    it(_'should make it easier to use inputs other than keyboard',_() => {
+    it(('should make it easier to use inputs other than keyboard', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should handle touch events appropriately
@@ -211,8 +211,8 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
   });
 
   // UNDERSTANDABLE PRINCIPLE (3.0)
-  describe(_'3. Understandable - Information and UI operation must be understandable',_() => {
-    it(_'should make text content readable and understandable',_() => {
+  describe(('3. Understandable - Information and UI operation must be understandable', () => {
+    it(('should make text content readable and understandable', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should specify language of page
@@ -221,12 +221,12 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
 
       // Should have clear and simple language
       const textElements = screen.getAllByText(/Consulta|Exame|Data|Hora/);
-      textElements.forEach(_element => {
+      textElements.forEach(element => {
         expect(element.textContent).toBeDefined();
       });
     });
 
-    it(_'should make Web pages appear and operate in predictable ways',_() => {
+    it(('should make Web pages appear and operate in predictable ways', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should have consistent navigation
@@ -234,12 +234,12 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       // Should have consistent response
 
       const navigationButtons = screen.getAllByRole('button');
-      navigationButtons.forEach(_button => {
+      navigationButtons.forEach(button => {
         expect(button).toBeVisible();
       });
     });
 
-    it(_'should help users avoid and correct mistakes',_() => {
+    it(('should help users avoid and correct mistakes', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide clear labels and instructions
@@ -254,8 +254,8 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
   });
 
   // ROBUST PRINCIPLE (4.0)
-  describe(_'4. Robust - Content must be robust enough for various assistive technologies',_() => {
-    it(_'should be compatible with current and future user agents',_() => {
+  describe(('4. Robust - Content must be robust enough for various assistive technologies', () => {
+    it(('should be compatible with current and future user agents', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should use valid HTML
@@ -273,7 +273,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       expect(validateScreenReader).toHaveBeenCalled();
     });
 
-    it(_'should ensure accessibility of APIs',_() => {
+    it(('should ensure accessibility of APIs', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should ensure accessibility of JavaScript APIs
@@ -283,7 +283,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       const eventElements = screen.getAllByText(
         /Consulta Acessível|Exame Acessível/,
       );
-      eventElements.forEach(_element => {
+      eventElements.forEach(element => {
         // Should be accessible via JavaScript APIs
         expect(element).toBeInTheDocument();
       });
@@ -291,15 +291,15 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
   });
 
   // SPECIFIC WCAG 2.1 AA+ REQUIREMENTS
-  describe(_'Specific WCAG 2.1 AA+ Requirements',_() => {
-    it(_'should meet WCAG 2.1 Level AA success criteria',_async () => {
+  describe(('Specific WCAG 2.1 AA+ Requirements', () => {
+    it(_'should meet WCAG 2.1 Level AA success criteria',async () => {
       const {
         validateWCAGCompliance,
       } = require('@/utils/accessibility/healthcare-audit-utils');
 
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
-      await waitFor(_() => {
+      await waitFor(() => {
         expect(validateWCAGCompliance).toHaveBeenCalledWith(
           expect.objectContaining({
             level: 'AA',
@@ -309,7 +309,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       });
     });
 
-    it(_'should support screen reader announcements',_() => {
+    it(('should support screen reader announcements', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should have proper ARIA live regions
@@ -320,7 +320,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       expect(calendar).toHaveAttribute('aria-live', 'polite');
     });
 
-    it(_'should provide accessible form controls',_() => {
+    it(('should provide accessible form controls', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should have proper form labels
@@ -332,12 +332,12 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
         'combobox',
         'checkbox',
       );
-      formElements.forEach(_element => {
+      formElements.forEach(element => {
         expect(element).toHaveAttribute('aria-label');
       });
     });
 
-    it(_'should handle focus management properly',_() => {
+    it(('should handle focus management properly', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should manage focus appropriately
@@ -345,7 +345,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       // Should provide visible focus indicators
 
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(_button => {
+      buttons.forEach(button => {
         expect(button).toHaveAttribute('tabindex');
 
         // Test focus management
@@ -354,7 +354,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       });
     });
 
-    it(_'should support resizable text',_() => {
+    it(('should support resizable text', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should handle text resizing gracefully
@@ -362,7 +362,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       // Should not overlap content
 
       const calendar = screen.getByRole('application');
-      const _originalStyle = window.getComputedStyle(calendar);
+      const originalStyle = window.getComputedStyle(calendar);
 
       // Simulate text zoom
       Object.defineProperty(document.documentElement, 'style', {
@@ -374,7 +374,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       expect(calendar).toBeInTheDocument();
     });
 
-    it(_'should provide accessible color coding',_() => {
+    it(('should provide accessible color coding', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should not rely solely on color
@@ -384,14 +384,14 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       const eventElements = screen.getAllByText(
         /Consulta Acessível|Exame Acessível/,
       );
-      eventElements.forEach(_element => {
+      eventElements.forEach(element => {
         // Should be distinguishable without color
         const textContent = element.textContent;
         expect(textContent).toBeTruthy();
       });
     });
 
-    it(_'should support accessible navigation',_() => {
+    it(('should support accessible navigation', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide landmark roles
@@ -408,7 +408,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       }
     });
 
-    it(_'should handle accessible tables',_() => {
+    it(('should handle accessible tables', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide proper table headers
@@ -416,12 +416,12 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       // Should provide proper table summaries
 
       const tables = screen.queryAllByRole('table');
-      tables.forEach(_table => {
+      tables.forEach(table => {
         expect(table).toBeInTheDocument();
       });
     });
 
-    it(_'should support accessible modal dialogs',_() => {
+    it(('should support accessible modal dialogs', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should handle modal dialogs appropriately
@@ -435,7 +435,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       // Should handle dialog accessibility
     });
 
-    it(_'should provide accessible error handling',_() => {
+    it(('should provide accessible error handling', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide clear error messages
@@ -445,7 +445,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       // Should handle error states accessibly
     });
 
-    it(_'should support accessible animations',_() => {
+    it(('should support accessible animations', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should respect reduced motion preferences
@@ -467,7 +467,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       });
     });
 
-    it(_'should provide accessible mobile experience',_() => {
+    it(('should provide accessible mobile experience', () => {
       // Mock mobile viewport
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -491,7 +491,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       expect(calendar).toBeInTheDocument();
     });
 
-    it(_'should support accessible printing',_() => {
+    it(('should support accessible printing', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide print styles
@@ -503,7 +503,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       expect(printStyles).toBeDefined();
     });
 
-    it(_'should provide accessible keyboard shortcuts',_() => {
+    it(('should provide accessible keyboard shortcuts', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide documented keyboard shortcuts
@@ -523,7 +523,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       fireEvent.keyDown(calendar, { key: 'Escape' }); // Close dialog
     });
 
-    it(_'should ensure accessible date and time inputs',_() => {
+    it(('should ensure accessible date and time inputs', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide accessible date inputs
@@ -533,7 +533,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       // Test date/time accessibility
     });
 
-    it(_'should provide accessible help and documentation',_() => {
+    it(('should provide accessible help and documentation', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide accessible help text
@@ -545,9 +545,9 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
   });
 
   // PERFORMANCE AND ACCESSIBILITY
-  describe(_'Performance and Accessibility',_() => {
-    it(_'should maintain accessibility with large datasets',_() => {
-      const largeEventSet = Array.from({ length: 50 },_(_,_i) => ({
+  describe(('Performance and Accessibility', () => {
+    it(('should maintain accessibility with large datasets', () => {
+      const largeEventSet = Array.from.*}, (_, i) => ({
         id: `large-event-${i}`,
         title: `Evento Grande ${i}`,
         start: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T10:00:00`),
@@ -566,7 +566,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       expect(buttons.length).toBeGreaterThan(0);
     });
 
-    it(_'should provide accessible loading states',_() => {
+    it(('should provide accessible loading states', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide accessible loading indicators
@@ -576,7 +576,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       // Should handle loading states accessibly
     });
 
-    it(_'should support accessible error recovery',_() => {
+    it(('should support accessible error recovery', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide accessible error messages
@@ -588,8 +588,8 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
   });
 
   // HEALTHCARE-SPECIFIC ACCESSIBILITY
-  describe(_'Healthcare-Specific Accessibility',_() => {
-    it(_'should provide accessible medical information',_() => {
+  describe(('Healthcare-Specific Accessibility', () => {
+    it(('should provide accessible medical information', () => {
       const medicalEvent: CalendarEvent = {
         id: 'medical-accessible-1',
         title: 'Consulta Acessível',
@@ -616,7 +616,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       // Should provide alternative formats
     });
 
-    it(_'should support accessible emergency information',_() => {
+    it(('should support accessible emergency information', () => {
       const emergencyEvent: CalendarEvent = {
         id: 'emergency-accessible-1',
         title: 'Emergência Acessível',
@@ -639,7 +639,7 @@ describe(_'Accessibility Compliance Suite - WCAG 2.1 AA+',_() => {
       // Should support emergency protocols
     });
 
-    it(_'should provide accessible consent forms',_() => {
+    it(('should provide accessible consent forms', () => {
       const consentEvent: CalendarEvent = {
         id: 'consent-accessible-1',
         title: 'Formulário de Consentimento Acessível',

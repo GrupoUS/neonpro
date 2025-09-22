@@ -17,10 +17,10 @@ export interface FinancialMetricsProps {
   'data-testid'?: string;
 }
 
-export const FinancialMetrics: React.FC<FinancialMetricsProps> = (_{
-  period = 'monthly',_autoRefresh = false,_refreshInterval = 5 * 60 * 1000,_// 5 minutes
-  onMetricsUpdate,_className,
-  'data-testid': testId,_}) => {
+export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
+  period = 'monthly', autoRefresh = false, refreshInterval = 5 * 60 * 1000, // 5 minutes
+  onMetricsUpdate,className,
+  'data-testid': testId, }) => {
   const [metrics, setMetrics] = useState<FinancialMetric[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -97,11 +97,11 @@ export const FinancialMetrics: React.FC<FinancialMetricsProps> = (_{
     }
   };
 
-  useEffect(_() => {
+  useEffect(() => {
     loadMetrics();
   }, [period]);
 
-  useEffect(_() => {
+  useEffect(() => {
     if (autoRefresh && refreshInterval > 0) {
       const interval = setInterval(loadMetrics, refreshInterval);
       return () => clearInterval(interval);

@@ -198,7 +198,7 @@ export function createAnalyticsConfig(options: {
  * Version information
  */
 export const ANALYTICS_VERSION = "1.0.0";
-export const _ANALYTICS_MODULE_INFO = {
+export const ANALYTICS_MODULE_INFO = {
   name: "@neonpro/analytics",
   version: ANALYTICS_VERSION,
   description:

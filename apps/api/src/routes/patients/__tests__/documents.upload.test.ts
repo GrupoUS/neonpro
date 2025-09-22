@@ -28,13 +28,13 @@ function makeFile(name: string, type: string, sizeBytes: number) {
 const ROUTE_PATH = '../documents-upload';
 
 describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('should export the upload documents route module (placeholder)', () => {
     // This will fail initially until the route file is created
-    expect(_() => {
+    expect(() => {
       const module = require(ROUTE_PATH);
       expect(module.default).toBeDefined();
     }).not.toThrow();
@@ -56,7 +56,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
       },
     );
 
-    const response = await uploadRoute.request(_request);
+    const response = await uploadRoute.request(request);
     expect(response.status).toBe(401);
   });
 
@@ -89,7 +89,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
       },
     );
 
-    const response = await uploadRoute.request(_request);
+    const response = await uploadRoute.request(request);
     expect([400, 415]).toContain(response.status); // Allow 400 until strict 415 implemented
   });
 
@@ -116,7 +116,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
       },
     );
 
-    const response = await uploadRoute.request(_request);
+    const response = await uploadRoute.request(request);
     expect([400, 413]).toContain(response.status); // Accept 400 until bodyLimit middleware added
   });
 
@@ -151,8 +151,8 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
       },
     );
 
-    const response = await uploadRoute.request(_request);
-    const json = await response.json().catch(_error => ({}));
+    const response = await uploadRoute.request(request);
+    const json = await response.json().catch(error => ({}));
 
     // Final expectations (will fail until implemented)
     expect(response.status).toBe(201);

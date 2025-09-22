@@ -117,7 +117,7 @@ function getViewportSize(): { width: number; height: number } {
  * Determine current breakpoint based on viewport width
  */
 function determineBreakpoint(width: number): string {
-  const { mobile: _mobile, mobileLarge, tablet, tabletLarge, desktop, desktopLarge } =
+  const { mobile: mobile, mobileLarge, tablet, tabletLarge, desktop, desktopLarge } =
     HEALTHCARE_BREAKPOINTS;
 
   if (width >= desktopLarge) return 'desktop-large';
@@ -316,7 +316,7 @@ function setupResizeHandler(): void {
   const handleResize = () => {
     clearTimeout(resizeTimeout);
 
-    resizeTimeout = setTimeout(_() => {
+    resizeTimeout = setTimeout(() => {
       // Update viewport size
       viewportState.viewportSize = getViewportSize();
 

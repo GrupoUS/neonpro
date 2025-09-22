@@ -50,7 +50,7 @@ const mockJWT = {
   decode: vi.fn(),
 };
 
-describe(_'authentication API Endpoints - NeonPro Healthcare',_() => {
+describe(_'authentication API Endpoints - NeonPro Healthcare',() => {
   // Test data
   const mockUser = {
     id: 'user-123',
@@ -72,14 +72,14 @@ describe(_'authentication API Endpoints - NeonPro Healthcare',_() => {
     expiresAt: Date.now() + 3_600_000,
   };
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
-  describe(_'pOST /auth/login - Healthcare Professional Login',_() => {
+  describe(_'pOST /auth/login - Healthcare Professional Login',() => {
     it(_'should authenticate doctor with valid credentials',_async () => {
       // Mock successful database lookup
       mockPrisma.user.findUnique.mockResolvedValue(mockUser);
@@ -261,7 +261,7 @@ describe(_'authentication API Endpoints - NeonPro Healthcare',_() => {
       ).toHaveBeenCalledWith(userWithoutLicense);
     });
   });
-  describe(_'pOST /auth/refresh - Token Refresh',_() => {
+  describe(_'pOST /auth/refresh - Token Refresh',() => {
     it(_'should refresh valid access token',_async () => {
       const mockRefreshToken = 'valid-refresh-token';
       const newTokens = {
@@ -399,7 +399,7 @@ describe(_'authentication API Endpoints - NeonPro Healthcare',_() => {
     });
   });
 
-  describe(_'pOST /auth/logout - Session Termination',_() => {
+  describe(_'pOST /auth/logout - Session Termination',() => {
     it(_'should successfully logout user and invalidate session',_async () => {
       const accessToken = 'valid-access-token';
 

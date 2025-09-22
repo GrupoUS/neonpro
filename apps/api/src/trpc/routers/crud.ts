@@ -62,7 +62,7 @@ const crudIntentSchema = v.object({
   step: v.literal('intent'),
   operation: v.string([v.picklist(CRUD_OPERATIONS)]),
   entity: v.string([v.picklist(SUPPORTED_ENTITIES)]),
-  data: v.custom(_(data,_ctx) => {
+  data: v.custom((data,_ctx) => {
     // Get the entity from the parent object
     const entity = ctx?.object?.entity;
     const operation = ctx?.object?.operation;
@@ -169,7 +169,7 @@ const crudRequestSchema = v.union([
 /**
  * CRUD Intent Response Schema
  */
-const _crudIntentResponseSchema = v.object({
+const crudIntentResponseSchema = v.object({
   intentId: v.string(),
   step: v.literal('intent'),
   status: v.string([
@@ -228,7 +228,7 @@ const _crudIntentResponseSchema = v.object({
 /**
  * CRUD Confirm Response Schema
  */
-const _crudConfirmResponseSchema = v.object({
+const crudConfirmResponseSchema = v.object({
   confirmationId: v.string(),
   intentId: v.string(),
   step: v.literal('confirm'),
@@ -259,7 +259,7 @@ const _crudConfirmResponseSchema = v.object({
 /**
  * CRUD Execute Response Schema
  */
-const _crudExecuteResponseSchema = v.object({
+const crudExecuteResponseSchema = v.object({
   executionId: v.string(),
   intentId: v.string(),
   confirmationId: v.string(),
@@ -339,7 +339,7 @@ async function validateWithAI(
       aiScore: validationResult.aiScore,
       transformedData: validationResult.transformedData || data,
     };
-  } catch (_error) {
+  } catch (error) {
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'VALIDATION_ERROR',
@@ -390,8 +390,8 @@ async function generatePreview(
       const current = await getCurrentData(entity, data.id, ctx);
       if (current) {
         preview.changes = Object.entries(data)
-          .filter(_([key,_value]) => key !== 'id' && current[key] !== value)
-          .map(_([key,_value]) => ({
+          .filter(([key,_value]) => key !== 'id' && current[key] !== value)
+          .map(([key,_value]) => ({
             field: key,
             oldValue: this.sanitizePreviewValue(current[key], key),
             newValue: this.sanitizePreviewValue(value, key),
@@ -400,7 +400,7 @@ async function generatePreview(
     }
 
     return preview;
-  } catch (_error) {
+  } catch (error) {
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'INTERNAL_ERROR',
@@ -446,7 +446,7 @@ async function getCurrentData(
       default:
         return null;
     }
-  } catch (_error) {
+  } catch (error) {
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'INTERNAL_ERROR',
@@ -474,7 +474,7 @@ async function getCurrentData(
 // TRPC ROUTER IMPLEMENTATION
 // =====================================
 
-export const _crudRouter = router({
+export const crudRouter = router({
   /**
    * Main CRUD endpoint with 3-step flow
    * Handles intent→confirm→execute operations
@@ -496,7 +496,7 @@ export const _crudRouter = router({
               message: 'Invalid step specified',
             });
         }
-      } catch (_error) {
+      } catch (error) {
         console.error('CRUD operation error:', error);
 
         // Create error audit trail
@@ -567,7 +567,7 @@ export const _crudRouter = router({
           error: operationState.errorMessage,
           metadata: operationState.metadata,
         };
-      } catch (_error) {
+      } catch (error) {
         if (error instanceof TRPCError) {
           throw error;
         }
@@ -584,7 +584,7 @@ export const _crudRouter = router({
    * List supported entities and operations
    * Provides information about what CRUD operations are available
    */
-  getSupportedEntities: protectedProcedure.query(_() => {
+  getSupportedEntities: protectedProcedure.query(() => {
     return {
       entities: SUPPORTED_ENTITIES.map(entity => ({
         name: entity,
@@ -870,7 +870,7 @@ async function handleExecuteStep(
   }
 
   const intentData = intentState.data;
-  const _confirmData = confirmState.data;
+  const confirmData = confirmState.data;
 
   // Get the data to execute (require finalData explicitly)
   const executionData = input.finalData;
@@ -961,7 +961,7 @@ async function handleExecuteStep(
         warnings: [],
       },
     };
-  } catch (_executionError) {
+  } catch (executionError) {
     // Sanitize error message to prevent information disclosure
     const appError = executionError instanceof Error
       ? GlobalErrorHandler.createError(

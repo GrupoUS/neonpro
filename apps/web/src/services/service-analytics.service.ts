@@ -334,4 +334,4 @@ export class ServiceAnalyticsService {
   }
 }
 
-export const _serviceAnalyticsService = ServiceAnalyticsService;
+export const serviceAnalyticsService = ServiceAnalyticsService;

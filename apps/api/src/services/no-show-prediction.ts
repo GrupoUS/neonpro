@@ -308,7 +308,7 @@ export class NoShowPredictionService {
       await this.logPredictionAudit(prediction);
 
       return prediction;
-    } catch (_error) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(`No-show prediction failed: ${errorMessage}`);
     }
@@ -421,7 +421,7 @@ export class NoShowPredictionService {
         confidence: analysis.confidence,
         factors: this.identifyTopFactors(behaviorFactors, analysis),
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('AI prediction failed, using fallback:', error);
       return this.generateFallbackPrediction(profile, behaviorFactors);
     }
@@ -517,7 +517,7 @@ export class NoShowPredictionService {
       });
     }
 
-    return interventions.sort(_(a,_b) => {
+    return interventions.sort((a,_b) => {
       const priorityOrder: Record<string, number> = {
         high: 3,
         medium: 2,
@@ -609,7 +609,7 @@ export class NoShowPredictionService {
 
       this.behaviorProfiles.set(patientId, profile);
       return profile;
-    } catch (_error) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(`Failed to get behavior profile: ${errorMessage}`);
     }
@@ -645,7 +645,7 @@ CONSULTA:
 FATORES COMPORTAMENTAIS BRASILEIROS:
 ${
       Object.entries(behaviorFactors)
-        .map(_([factor,_value]) => `- ${factor}: ${(value * 100).toFixed(1)}%`)
+        .map(([factor,_value]) => `- ${factor}: ${(value * 100).toFixed(1)}%`)
         .join('\n')
     }
 
@@ -692,7 +692,7 @@ Responda APENAS em formato JSON:
           : [],
         reasoning: parsed.reasoning || 'Análise baseada em fatores comportamentais',
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Failed to parse AI response:', error);
       return {
         aiRiskScore: 0.5,
@@ -912,10 +912,10 @@ Responda APENAS em formato JSON:
   }> {
     // Sort factors by impact and select top 5
     const sortedFactors = Object.entries(behaviorFactors)
-      .sort(_([,_a],_[,_b]) => b - a)
+      .sort(([,_a],_[,_b]) => b - a)
       .slice(0, 5);
 
-    return sortedFactors.map(_([factor,_impact]) => ({
+    return sortedFactors.map(([factor,_impact]) => ({
       factor: factor as BrazilianBehaviorFactor,
       impact: impact * 2 - 1, // Convert to -1 to 1 scale
       confidence: 0.8, // High confidence for behavior factors
@@ -1096,7 +1096,7 @@ Responda APENAS em formato JSON:
     };
     recommendations: string[];
   }> {
-    const models = Array.from(this.modelPerformanceMetrics.entries()).map(_([key,_metrics]) => {
+    const models = Array.from(this.modelPerformanceMetrics.entries()).map(([key,_metrics]) => {
         const [modelType, version] = key.split('_');
         return {
           modelType: modelType as AIModelType,
@@ -1106,11 +1106,11 @@ Responda APENAS em formato JSON:
       },
     );
 
-    const totalPredictions = models.reduce(_(sum,_model) => sum + model.metrics.totalPredictions,
+    const totalPredictions = models.reduce((sum,_model) => sum + model.metrics.totalPredictions,
       0,
     );
     const averageProcessingTime = models.length > 0
-      ? models.reduce(_(sum,_model) => sum + model.metrics.averageProcessingTime,
+      ? models.reduce((sum,_model) => sum + model.metrics.averageProcessingTime,
         0,
       ) / models.length
       : 0;

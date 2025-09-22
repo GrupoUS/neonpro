@@ -14,7 +14,7 @@ import {
 } from '@neonpro/types/api/contracts';
 import { protectedProcedure, router } from '../trpc';
 
-export const _patientRouter = router({
+export const patientRouter = router({
   /**
    * Create new patient with LGPD compliance validation
    */

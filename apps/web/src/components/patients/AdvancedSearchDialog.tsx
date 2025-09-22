@@ -51,7 +51,7 @@ export function AdvancedSearchDialog({
 
   const handleApply = async () => {
     // Measure search performance
-    await measureSearch(_async () => {
+    await measureSearch(async () => {
       onApplyFilters(localFilters);
       return Promise.resolve();
     });

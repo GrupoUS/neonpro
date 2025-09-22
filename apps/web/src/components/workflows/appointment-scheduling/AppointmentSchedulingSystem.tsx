@@ -116,7 +116,7 @@ const timeSlots = [
 // Generate mock weekly availability
 function generateWeeklyAvailability() {
   const days = ['Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
-  return days.reduce(_(acc,_day) => {
+  return days.reduce((acc, day) => {
     acc[day] = {
       morning: day !== 'Sábado',
       afternoon: day !== 'Sábado',
@@ -164,8 +164,8 @@ interface CalendarDay {
   isAvailable: boolean;
 }
 
-export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemProps> = (_{
-  patients,_onSchedule,_onCancel,_existingAppointments = [],_className,_testId = 'appointment-scheduling-system',_}) => {
+export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemProps> = ({
+  patients,onSchedule, onCancel, existingAppointments = [],className, testId = 'appointment-scheduling-system', }) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -200,7 +200,7 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
   const watchedValues = form.watch(['providerId', 'appointmentType', 'date']);
 
   // Update available slots when provider, appointment type, or date changes
-  useEffect(_() => {
+  useEffect(() => {
     const [providerId, appointmentType, date] = watchedValues;
     if (providerId && appointmentType && date) {
       calculateAvailableSlots(providerId, date, appointmentType);
@@ -278,7 +278,7 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
     const firstDay = new Date(year, month, 1);
-    const _lastDay = new Date(year, month + 1, 0);
+    const lastDay = new Date(year, month + 1, 0);
     const startDate = new Date(firstDay);
     startDate.setDate(startDate.getDate() - firstDay.getDay());
 
@@ -355,7 +355,7 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
       announcePolite('Consulta agendada com sucesso');
 
       // Reset form after successful submission
-      setTimeout(_() => {
+      setTimeout(() => {
         form.reset();
         setSelectedDate(null);
         setSelectedTime(null);
@@ -373,12 +373,12 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
     }
   }, [onSchedule, form, announcePolite, onCancel]);
 
-  const handleShowConfirmation = useCallback(_() => {
+  const handleShowConfirmation = useCallback(() => {
     setShowConfirmation(true);
     announcePolite('Confirmação de agendamento');
   }, [announcePolite]);
 
-  const handleCancelConfirmation = useCallback(_() => {
+  const handleCancelConfirmation = useCallback(() => {
     setShowConfirmation(false);
     announcePolite('Confirmação cancelada');
   }, [announcePolite]);
@@ -538,7 +538,7 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
                 Profissional de Saúde *
               </label>
               <div className='grid grid-cols-1 gap-2'>
-                {healthcareProviders.map(_provider => (
+                {healthcareProviders.map(provider => (
                   <button
                     key={provider.id}
                     type='button'
@@ -573,7 +573,7 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
                 Tipo de Consulta *
               </label>
               <div className='grid grid-cols-1 gap-2'>
-                {brazilianAppointmentTypes.map(_type => (
+                {brazilianAppointmentTypes.map(type => (
                   <button
                     key={type.id}
                     type='button'
@@ -656,7 +656,7 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
                   ))}
 
                   {/* Calendar Days */}
-                  {generateCalendarDays().map(_(day,_index) => (_<button
+                  {generateCalendarDays().map((day, index) => (<button
                       key={index}
                       type='button'
                       onClick={() => handleDateSelect(day.date)}

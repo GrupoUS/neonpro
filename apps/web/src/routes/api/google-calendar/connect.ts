@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 
 import { GoogleCalendarService } from '@/services/google-calendar';
 
-export const _Route = createFileRoute('/api/google-calendar/connect')({
+export const Route = createFileRoute('/api/google-calendar/connect')({
   GET: async ({ request }) => {
     try {
       const url = new URL(request.url);

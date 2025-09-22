@@ -147,18 +147,18 @@ const renderMarkdown = (content: string, _isStreaming = false) => {
 };
 
 // Streaming text component
-const StreamingText: React.FC<{ content: string; isComplete?: boolean }> = (_{
-  content,_isComplete,_}) => {
+const StreamingText: React.FC<{ content: string; isComplete?: boolean }> = ({
+  content,isComplete, }) => {
   const [displayedContent, setDisplayedContent] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  useEffect(_() => {
+  useEffect(() => {
     if (isComplete) {
       setDisplayedContent(content);
       return;
     }
 
-    const timer = setTimeout(_() => {
+    const timer = setTimeout(() => {
       if (currentIndex < content.length) {
         setDisplayedContent(content.substring(0, currentIndex + 1));
         setCurrentIndex(currentIndex + 1);
@@ -182,10 +182,10 @@ const StreamingText: React.FC<{ content: string; isComplete?: boolean }> = (_{
 /**
  * AI Message Display Component
  */
-export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = (_{
-  content,_role,_timestamp,_messageId,_isStreaming = false,_streamingContent = '',_model,_confidence,_processingTime,_healthcareContext = false,_sources = [],
-  metadata: _metadata = {},_userAvatar,_assistantAvatar,_showTimestamp = true,_showModelInfo = true,_showActions = true,_compact = false,_testId = 'ai-message-display',
-  onMessageAction: _onMessageAction,_onCopy,_onSpeak,_onEdit,_onDelete,_onFlag,_}) => {
+export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
+  content,role, timestamp,messageId, isStreaming = false, streamingContent = '',model, confidence,processingTime, healthcareContext = false, sources = [],
+  metadata: metadata = {},userAvatar, assistantAvatar, showTimestamp = true, showModelInfo = true, showActions = true, compact = false, testId = 'ai-message-display',
+  onMessageAction: onMessageAction,onCopy, onSpeak,onEdit, onDelete,onFlag, }) => {
   // State
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(content);
@@ -196,11 +196,11 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = (_{
   const messageRef = useRef<HTMLDivElement>(null);
 
   // Handle copy
-  const handleCopy = useCallback(_async () => {
+  const handleCopy = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(content);
       setIsCopied(true);
-      setTimeout(_() => setIsCopied(false), 2000);
+      setTimeout(() => setIsCopied(false), 2000);
       onCopy?.(content);
     } catch (_error) {
       console.error('Failed to copy text:', error);
@@ -208,7 +208,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = (_{
   }, [content, onCopy]);
 
   // Handle speak (text-to-speech)
-  const handleSpeak = useCallback(_() => {
+  const handleSpeak = useCallback(() => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(content);
       utterance.lang = 'pt-BR';
@@ -220,7 +220,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = (_{
   }, [content, onSpeak]);
 
   // Handle edit
-  const handleEdit = useCallback(_() => {
+  const handleEdit = useCallback(() => {
     if (role === 'user') {
       setIsEditing(true);
       setEditContent(content);
@@ -228,7 +228,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = (_{
   }, [role, content]);
 
   // Handle save edit
-  const handleSaveEdit = useCallback(_() => {
+  const handleSaveEdit = useCallback(() => {
     if (onEdit) {
       onEdit(messageId, editContent);
       setIsEditing(false);
@@ -236,20 +236,20 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = (_{
   }, [onEdit, messageId, editContent]);
 
   // Handle cancel edit
-  const handleCancelEdit = useCallback(_() => {
+  const handleCancelEdit = useCallback(() => {
     setIsEditing(false);
     setEditContent(content);
   }, [content]);
 
   // Handle delete
-  const handleDelete = useCallback(_() => {
+  const handleDelete = useCallback(() => {
     if (onDelete && confirm('Tem certeza que deseja excluir esta mensagem?')) {
       onDelete(messageId);
     }
   }, [onDelete, messageId]);
 
   // Handle flag
-  const handleFlag = useCallback(_() => {
+  const handleFlag = useCallback(() => {
     onFlag?.(messageId);
   }, [onFlag, messageId]);
 
@@ -371,7 +371,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = (_{
             )}
 
           {/* Sources */}
-          {sources.length > 0 && (_<div className='mt-3 pt-3 border-t border-border/50'>
+          {sources.length > 0 && (<div className='mt-3 pt-3 border-t border-border/50'>
               <Button
                 variant='ghost'
                 size='sm'
@@ -382,7 +382,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = (_{
                 Fontes ({sources.length})
               </Button>
 
-              {showSources && (_<div className='mt-2 space-y-1'>
+              {showSources && (<div className='mt-2 space-y-1'>
                   {sources.map((source, _index) => (
                     <div
                       key={source.id}

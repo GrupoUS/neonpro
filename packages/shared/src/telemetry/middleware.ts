@@ -112,7 +112,7 @@ export function healthcareTelemetryMiddleware() {
         try {
           await next();
           span.end();
-        } catch (_error) {
+        } catch (error) {
           span.recordException(error as Error);
           span.setStatus({
             code: 2,
@@ -129,7 +129,7 @@ export function healthcareTelemetryMiddleware() {
       // Record metrics
       const duration = Date.now() - startTime;
       recordApiMetrics(c, duration, healthcareContext);
-    } catch (_error) {
+    } catch (error) {
       // Record error metrics
       const duration = Date.now() - startTime;
       recordApiError(c, error as Error, duration, healthcareContext);
@@ -193,7 +193,7 @@ function recordApiMetrics(
         clinic_id: context["healthcare.clinic_id"] || "unknown",
       });
     }
-  } catch (_error) {
+  } catch (error) {
     // Silently fail metric recording to not impact application
     console.warn("Failed to record telemetry metrics:", error);
   }
@@ -223,7 +223,7 @@ function recordApiError(
     };
 
     errorTotal.add(1, labels);
-  } catch (_metricError) {
+  } catch (metricError) {
     console.warn("Failed to record error metrics:", metricError);
   }
 }

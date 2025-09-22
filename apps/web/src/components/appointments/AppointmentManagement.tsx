@@ -431,7 +431,7 @@ function AppointmentCard({
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
               {/* Status Updates */}
-              {appointment.status === 'scheduled' && (_<>
+              {appointment.status === 'scheduled' && (<>
                   <DropdownMenuItem
                     onClick={() => onStatusUpdate(appointment.id, 'confirmed')}
                   >

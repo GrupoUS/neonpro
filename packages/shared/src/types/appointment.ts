@@ -299,7 +299,7 @@ export function anonymizeAppointment(
 export function createAppointment(
   data: Omit<Appointment, "id" | "createdAt" | "updatedAt" | "status">,
 ): Appointment {
-  const _now = new Date();
+  const now = new Date();
 
   return {
     ...data,
@@ -319,7 +319,7 @@ export function getAppointmentsInRange(
   startDate: Date,
   endDate: Date,
 ): Appointment[] {
-  return appointments.filter(_(appointment) =>
+  return appointments.filter((appointment) =>
       appointment.startTime >= startDate && appointment.startTime <= endDate,
   );
 }
@@ -329,17 +329,17 @@ export function getUpcomingAppointments(
   appointments: Appointment[],
   days: number = 7,
 ): Appointment[] {
-  const _now = new Date();
+  const now = new Date();
   const futureDate = new Date();
   futureDate.setDate(futureDate.getDate() + days);
 
   return appointments
-    .filter(_(appointment) =>
+    .filter((appointment) =>
         appointment.startTime >= now &&
         appointment.startTime <= futureDate &&
         appointment.status !== AppointmentStatus.CANCELLED,
     )
-    .sort(_(a,_b) => a.startTime.getTime() - b.startTime.getTime());
+    .sort((a,_b) => a.startTime.getTime() - b.startTime.getTime());
 }
 
 // Check if appointment needs reminder
@@ -348,12 +348,12 @@ export function needsReminder(appointment: Appointment): boolean {
     return false;
   }
 
-  const _now = new Date();
+  const now = new Date();
   const appointmentTime = appointment.startTime;
   const hoursUntilAppointment =
     (appointmentTime.getTime() - now.getTime()) / (1000 * 60 * 60);
 
-  return appointment.reminderSettings.timeBefore.some(_(hours) => Math.abs(hoursUntilAppointment - hours) < 0.5, // Within 30 minutes of reminder time
+  return appointment.reminderSettings.timeBefore.some((hours) => Math.abs(hoursUntilAppointment - hours) < 0.5, // Within 30 minutes of reminder time
   );
 }
 
@@ -369,7 +369,7 @@ export function getAppointmentStatistics(appointments: Appointment[]): {
   let totalDuration = 0;
   let noShows = 0;
 
-  appointments.forEach(_(appointment) => {
+  appointments.forEach((appointment) => {
     byStatus[appointment.status] = (byStatus[appointment.status] || 0) + 1;
 
     if (appointment.duration) {

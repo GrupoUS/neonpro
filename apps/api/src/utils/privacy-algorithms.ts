@@ -118,7 +118,7 @@ export class PrivacyAlgorithms {
           privacyMetrics,
         },
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error applying k-anonymity:', error);
       throw new Error('Failed to apply k-anonymity');
     }
@@ -185,7 +185,7 @@ export class PrivacyAlgorithms {
           privacyMetrics,
         },
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error applying l-diversity:', error);
       throw new Error('Failed to apply l-diversity');
     }
@@ -210,7 +210,7 @@ export class PrivacyAlgorithms {
         const noise = this.generateGaussianNoise(0, sigma);
         return value + noise;
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error adding differential privacy:', error);
       return value;
     }
@@ -247,7 +247,7 @@ export class PrivacyAlgorithms {
       }
 
       return this.addDifferentialPrivacy(queryResult, epsilon, sensitivity);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error applying differential privacy to _query:', error);
       return queryResult;
     }
@@ -285,7 +285,7 @@ export class PrivacyAlgorithms {
         algorithm: 'HMAC-SHA256',
         reversible: true,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating reversible pseudonym:', error);
       throw new Error('Failed to create reversible pseudonym');
     }
@@ -317,7 +317,7 @@ export class PrivacyAlgorithms {
         algorithm: 'PBKDF2-SHA512',
         reversible: false,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating irreversible pseudonym:', error);
       throw new Error('Failed to create irreversible pseudonym');
     }
@@ -351,7 +351,7 @@ export class PrivacyAlgorithms {
       }
 
       return originalIdentifier;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error reversing pseudonym:', error);
       return null;
     }
@@ -392,7 +392,7 @@ export class PrivacyAlgorithms {
         longitude: anonymizedLng,
         precision: precisionLevel,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error anonymizing geographic data:', error);
       return { latitude, longitude, precision: 'original' };
     }
@@ -436,7 +436,7 @@ export class PrivacyAlgorithms {
         date: anonymizedDate,
         granularity,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error anonymizing date:', error);
       return { date, granularity: 'original' };
     }
@@ -458,7 +458,7 @@ export class PrivacyAlgorithms {
         ageRange: `${lowerBound}-${upperBound}`,
         midpoint,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error anonymizing age:', error);
       return { ageRange: 'unknown', midpoint: age };
     }
@@ -656,4 +656,4 @@ export class PrivacyAlgorithms {
 }
 
 // Export singleton instance
-export const _privacyAlgorithms = PrivacyAlgorithms.getInstance();
+export const privacyAlgorithms = PrivacyAlgorithms.getInstance();

@@ -486,4 +486,4 @@ export class CalendarLGPDConsentService {
   }
 }
 
-export const _calendarLGPDConsentService = new CalendarLGPDConsentService();
+export const calendarLGPDConsentService = new CalendarLGPDConsentService();

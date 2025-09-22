@@ -5,7 +5,7 @@ import type { ChatMessage as ChatMessageType } from "@neonpro/types";
 
 export type ChatMessage = ChatMessageType;
 
-export const _isFresh = (
+export const isFresh = (
   message: ChatMessage,
   now: Date = new Date(),
 ): boolean => {
@@ -13,7 +13,7 @@ export const _isFresh = (
   return now.getTime() - created <= 5 * 60 * 1000; // 5m
 };
 
-export const _withRedactionFlags = (
+export const withRedactionFlags = (
   message: ChatMessage,
   flags: string[],
 ): ChatMessage => ({

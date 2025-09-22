@@ -475,7 +475,7 @@ export class GoogleCalendarComplianceService {
 
     const parts = name.split(' ');
     return parts
-      .map(_(part, _index) => {
+      .map((part, _index) => {
         if (index === 0 || part.length <= 2) return part;
         return part[0] + '*'.repeat(part.length - 1);
       })

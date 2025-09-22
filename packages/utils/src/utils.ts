@@ -52,7 +52,7 @@ export function debounce<T extends (...args: any[]) => any>(
   
   return (...args: Parameters<T>) => {
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(_() => func(...args), delay);
+    timeoutId = setTimeout(() => func(...args), delay);
   };
 }
 
@@ -69,7 +69,7 @@ export function throttle<T extends (...args: any[]) => any>(
     if (!inThrottle) {
       func(...args);
       inThrottle = true;
-      setTimeout(_() => (inThrottle = false), limit);
+      setTimeout(() => (inThrottle = false), limit);
     }
   };
 }

@@ -62,7 +62,7 @@ export function useHealthcareAccessibilityAudit(
   const monitoringIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize auditor
-  useEffect(_() => {
+  useEffect(() => {
     auditorRef.current = new HealthcareAccessibilityAuditor(initialContext);
 
     return () => {
@@ -76,14 +76,14 @@ export function useHealthcareAccessibilityAudit(
   }, [initialContext]);
 
   // Auto-run audit on mount and when dependencies change
-  useEffect(_() => {
+  useEffect(() => {
     if (autoRun && targetElement) {
       runAudit();
     }
   }, [targetElement, autoRun]);
 
   // Set up monitoring if enabled
-  useEffect(_() => {
+  useEffect(() => {
     if (enableRealtimeMonitoring && targetElement) {
       startMonitoring();
     } else {
@@ -149,7 +149,7 @@ export function useHealthcareAccessibilityAudit(
         clearTimeout(debounceTimerRef.current);
       }
 
-      debounceTimerRef.current = setTimeout(_() => {
+      debounceTimerRef.current = setTimeout(() => {
         runAudit(customContext);
       }, debounceMs);
     },
@@ -160,23 +160,23 @@ export function useHealthcareAccessibilityAudit(
   const updateContext = useCallback(
     (_context: Partial<HealthcareAuditContext>) => {
       if (auditorRef.current) {
-        auditorRef.current.setContext(_context);
+        auditorRef.current.setContext(context);
         // Re-run audit with new context
-        runAuditDebounced(_context);
+        runAuditDebounced(context);
       }
     },
     [runAuditDebounced],
   );
 
   // Start real-time monitoring
-  const startMonitoring = useCallback(_() => {
+  const startMonitoring = useCallback(() => {
     if (monitoringIntervalRef.current) {
       clearInterval(monitoringIntervalRef.current);
     }
 
     setState(prev => ({ ...prev, isMonitoring: true }));
 
-    monitoringIntervalRef.current = setInterval(_() => {
+    monitoringIntervalRef.current = setInterval(() => {
       runAudit().catch(error => {
         console.error('Monitoring audit failed:', error);
       });
@@ -184,7 +184,7 @@ export function useHealthcareAccessibilityAudit(
   }, [runAudit, reportingIntervalMs]);
 
   // Stop real-time monitoring
-  const stopMonitoring = useCallback(_() => {
+  const stopMonitoring = useCallback(() => {
     if (monitoringIntervalRef.current) {
       clearInterval(monitoringIntervalRef.current);
       monitoringIntervalRef.current = null;
@@ -194,7 +194,7 @@ export function useHealthcareAccessibilityAudit(
   }, []);
 
   // Get compliance status
-  const getComplianceStatus = useCallback(_() => {
+  const getComplianceStatus = useCallback(() => {
     if (!state.result) return 'unknown';
 
     const { complianceScore, accessibilityScore, healthcareSpecificScore } = state.result;
@@ -207,12 +207,12 @@ export function useHealthcareAccessibilityAudit(
   }, [state.result]);
 
   // Get critical issues count
-  const getCriticalIssuesCount = useCallback(_() => {
+  const getCriticalIssuesCount = useCallback(() => {
     return state.result?.criticalIssuesCount || 0;
   }, [state.result]);
 
   // Get emergency issues count
-  const getEmergencyIssuesCount = useCallback(_() => {
+  const getEmergencyIssuesCount = useCallback(() => {
     return state.result?.emergencyIssuesCount || 0;
   }, [state.result]);
 
@@ -243,14 +243,14 @@ export function useHealthcareAccessibilityAudit(
   );
 
   // Generate compliance report
-  const generateComplianceReport = useCallback(_() => {
+  const generateComplianceReport = useCallback(() => {
     if (!state.result || !auditorRef.current) return null;
 
     return auditorRef.current.generateComplianceReport(state.result);
   }, [state.result]);
 
   // Export audit data
-  const exportAuditData = useCallback(_() => {
+  const exportAuditData = useCallback(() => {
     if (!state.result) return null;
 
     return {
@@ -292,14 +292,14 @@ export function useHealthcareAccessibilityAudit(
         },
       };
 
-      updateContext(_context);
+      updateContext(context);
       return runAudit(context, adjustedOptions);
     },
     [updateContext, runAudit, axeOptions],
   );
 
   // Simulate emergency scenario
-  const simulateEmergencyScenario = useCallback(_() => {
+  const simulateEmergencyScenario = useCallback(() => {
     const emergencyContext: Partial<HealthcareAuditContext> = {
       emergencyContext: true,
       patientJourney: 'emergency',
@@ -311,7 +311,7 @@ export function useHealthcareAccessibilityAudit(
   }, [updateContext, runAudit]);
 
   // Reset audit state
-  const resetAudit = useCallback(_() => {
+  const resetAudit = useCallback(() => {
     setState({
       result: null,
       isLoading: false,

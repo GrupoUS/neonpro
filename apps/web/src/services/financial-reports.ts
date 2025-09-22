@@ -125,7 +125,7 @@ export class FinancialReportsService {
       if (insertError) throw insertError;
 
       // Generate report data asynchronously
-      setTimeout(_() => this.processReportGeneration(reportId, type, startDate, endDate), 0);
+      setTimeout(() => this.processReportGeneration(reportId, type, startDate, endDate), 0);
 
       return report;
     } catch (_error) {
@@ -435,7 +435,7 @@ export class FinancialReportsService {
    * Calculate next run date for scheduled reports
    */
   private static calculateNextRun(frequency: 'daily' | 'weekly' | 'monthly'): Date {
-    const _now = new Date();
+    const now = new Date();
     switch (frequency) {
       case 'daily':
         return new Date(now.getTime() + 24 * 60 * 60 * 1000);

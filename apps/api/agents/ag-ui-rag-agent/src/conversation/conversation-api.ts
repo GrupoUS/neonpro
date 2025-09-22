@@ -108,7 +108,7 @@ export class ConversationAPI {
         }
       }
 
-      const response = await this.conversationService.startConversation(_payload);
+      const response = await this.conversationService.startConversation(payload);
 
       // Send real-time updates if WebSocket is available
       if (ws && ws.readyState === WebSocket.OPEN) {
@@ -215,7 +215,7 @@ export class ConversationAPI {
         throw new Error('Missing required fields: userId, clinicId');
       }
 
-      const result = await this.conversationService.getConversationHistory(_payload);
+      const result = await this.conversationService.getConversationHistory(payload);
 
       await this.logger.logDataAccess(payload.userId, payload.clinicId, {
         action: 'api_get_history',

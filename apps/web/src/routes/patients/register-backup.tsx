@@ -19,7 +19,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import React, { useState } from 'react';
 
-export const _Route = createFileRoute('/patients/register-backup')({
+export const Route = createFileRoute('/patients/register-backup')({
   component: PatientRegister,
 });
 
@@ -190,8 +190,7 @@ function PatientRegister() {
       newErrors.address_zip_code = 'CEP é obrigatório';
     } else if (
       !/^\d{5}-?\d{3}$/.test(
-        formData.address_zip_code
-          .replace(/\D/g, '')
+        formData.address_zip_code.replace(/\D/g, '')
           .replace(/(\d{5})(\d{3})/, '$1-$2'),
       )
     ) {
@@ -265,7 +264,7 @@ function PatientRegister() {
 
   const confirmSubmit = () => {
     // Mock API call
-    setTimeout(_() => {
+    setTimeout(() => {
       toast({
         title: 'Paciente cadastrado com sucesso',
         description: `${formData.name} foi cadastrado no sistema.`,
@@ -422,7 +421,7 @@ function PatientRegister() {
     const error = errors[field.name];
     const fieldId = `field-${field.name}`;
     const errorId = `error-${field.name}`;
-    const _helpId = `help-${field.name}`;
+    const helpId = `help-${field.name}`;
 
     if (field.type === 'select') {
       return (
@@ -582,7 +581,7 @@ function PatientRegister() {
         className='space-y-6 sm:space-y-8'
         noValidate
       >
-        {sections.map(_(section,_sectionIndex) => (
+        {sections.map((section, sectionIndex) => (
           <Card key={section.title} className='shadow-sm'>
             <CardHeader className='pb-4'>
               <CardTitle className='text-lg sm:text-xl font-semibold text-gray-900'>

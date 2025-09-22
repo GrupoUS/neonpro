@@ -6,9 +6,9 @@ import { describe, expect, it } from 'vitest';
 import { beforeEach } from 'vitest';
 import { RateLimiter, SecurityUtils } from '../utils';
 
-describe(_'SecurityUtils',_() => {
-  describe(_'Input Sanitization',_() => {
-    it(_'should sanitize input to prevent XSS',_() => {
+describe('SecurityUtils_, () => {
+  describe('Input Sanitization_, () => {
+    it('should sanitize input to prevent XSS_, () => {
       const maliciousInput = '<script>alert("xss")</script>';
       const sanitized = SecurityUtils.sanitizeInput(maliciousInput);
 
@@ -16,7 +16,7 @@ describe(_'SecurityUtils',_() => {
       expect(sanitized).not.toContain('<script>');
     });
 
-    it(_'should sanitize HTML content',_() => {
+    it('should sanitize HTML content_, () => {
       const maliciousHTML = '<div onclick="alert(\'xss\')">Click me</div><script>evil()</script>';
       const sanitized = SecurityUtils.sanitizeHTML(maliciousHTML);
 
@@ -25,7 +25,7 @@ describe(_'SecurityUtils',_() => {
       expect(sanitized).toContain('Click me');
     });
 
-    it(_'should handle non-string inputs',_() => {
+    it('should handle non-string inputs_, () => {
       expect(SecurityUtils.sanitizeInput(null as any)).toBe('');
       expect(SecurityUtils.sanitizeInput(undefined as any)).toBe('');
       expect(SecurityUtils.sanitizeInput(123 as any)).toBe('');
@@ -33,8 +33,8 @@ describe(_'SecurityUtils',_() => {
     });
   });
 
-  describe(_'Email Validation',_() => {
-    it(_'should validate and sanitize correct emails',_() => {
+  describe('Email Validation_, () => {
+    it('should validate and sanitize correct emails_, () => {
       const validEmails = [
         'test@example.com',
         'user.name@domain.co.uk',
@@ -49,7 +49,7 @@ describe(_'SecurityUtils',_() => {
       });
     });
 
-    it(_'should reject invalid emails',_() => {
+    it('should reject invalid emails_, () => {
       const invalidEmails = [
         'invalid-email',
         'test@',
@@ -66,8 +66,8 @@ describe(_'SecurityUtils',_() => {
     });
   });
 
-  describe(_'Phone Sanitization',_() => {
-    it(_'should sanitize Brazilian phone numbers',_() => {
+  describe('Phone Sanitization_, () => {
+    it('should sanitize Brazilian phone numbers_, () => {
       const testCases = [
         { input: '(11) 1234-5678', expected: '1112345678' },
         { input: '11 12345-6789', expected: '11123456789' },
@@ -75,13 +75,13 @@ describe(_'SecurityUtils',_() => {
         { input: '11123456789', expected: '11123456789' },
       ];
 
-      testCases.forEach(_({ input,_expected }) => {
+      testCases.forEach(({ input, expected }) => {
         const sanitized = SecurityUtils.sanitizePhone(input);
         expect(sanitized).toBe(expected);
       });
     });
 
-    it(_'should reject invalid phone numbers',_() => {
+    it('should reject invalid phone numbers_, () => {
       const invalidPhones = [
         '123', // Too short
         '123456789012', // Too long
@@ -96,21 +96,21 @@ describe(_'SecurityUtils',_() => {
     });
   });
 
-  describe(_'CPF Validation',_() => {
-    it(_'should sanitize CPF correctly',_() => {
+  describe('CPF Validation_, () => {
+    it('should sanitize CPF correctly_, () => {
       const testCases = [
         { input: '123.456.789-00', expected: '12345678900' },
         { input: '123 456 789 00', expected: '12345678900' },
         { input: '12345678900', expected: '12345678900' },
       ];
 
-      testCases.forEach(_({ input,_expected }) => {
+      testCases.forEach(({ input, expected }) => {
         const sanitized = SecurityUtils.sanitizeCPF(input);
         expect(sanitized).toBe(expected);
       });
     });
 
-    it(_'should validate CPF using official algorithm',_() => {
+    it('should validate CPF using official algorithm_, () => {
       // Valid CPFs for testing
       const validCPFs = [
         '52998224725', // Known valid CPF
@@ -122,7 +122,7 @@ describe(_'SecurityUtils',_() => {
       });
     });
 
-    it(_'should reject invalid CPFs',_() => {
+    it('should reject invalid CPFs_, () => {
       const invalidCPFs = [
         '11111111111', // All same digits
         '12345678900', // Invalid verification digits
@@ -137,8 +137,8 @@ describe(_'SecurityUtils',_() => {
     });
   });
 
-  describe(_'RG Sanitization',_() => {
-    it(_'should sanitize RG correctly',_() => {
+  describe('RG Sanitization_, () => {
+    it('should sanitize RG correctly_, () => {
       const testCases = [
         { input: '12.345.678-9', expected: '123456789' },
         { input: '12 345 678 9', expected: '123456789' },
@@ -146,15 +146,15 @@ describe(_'SecurityUtils',_() => {
         { input: 'MG12345678', expected: 'MG12345678' },
       ];
 
-      testCases.forEach(_({ input,_expected }) => {
+      testCases.forEach(({ input, expected }) => {
         const sanitized = SecurityUtils.sanitizeRG(input);
         expect(sanitized).toBe(expected);
       });
     });
   });
 
-  describe(_'Token Generation',_() => {
-    it(_'should generate secure random tokens',_() => {
+  describe('Token Generation_, () => {
+    it('should generate secure random tokens_, () => {
       const token1 = SecurityUtils.generateToken();
       const token2 = SecurityUtils.generateToken();
 
@@ -164,12 +164,12 @@ describe(_'SecurityUtils',_() => {
       expect(token1).not.toBe(token2);
     });
 
-    it(_'should generate tokens with custom length',_() => {
+    it('should generate tokens with custom length_, () => {
       const token = SecurityUtils.generateToken(16);
       expect(token.length).toBe(16);
     });
 
-    it(_'should generate secure nonces',_() => {
+    it('should generate secure nonces_, () => {
       const nonce1 = SecurityUtils.generateNonce();
       const nonce2 = SecurityUtils.generateNonce();
 
@@ -180,8 +180,8 @@ describe(_'SecurityUtils',_() => {
     });
   });
 
-  describe(_'Suspicious Pattern Detection',_() => {
-    it(_'should detect XSS patterns',_() => {
+  describe('Suspicious Pattern Detection_, () => {
+    it('should detect XSS patterns_, () => {
       const maliciousInputs = [
         '<script>alert("xss")</script>',
         'javascript:alert("xss")',
@@ -195,7 +195,7 @@ describe(_'SecurityUtils',_() => {
       });
     });
 
-    it(_'should detect SQL injection patterns',_() => {
+    it('should detect SQL injection patterns_, () => {
       const maliciousInputs = [
         'SELECT * FROM users',
         'UNION SELECT username, password FROM users',
@@ -209,7 +209,7 @@ describe(_'SecurityUtils',_() => {
       });
     });
 
-    it(_'should detect path traversal patterns',_() => {
+    it('should detect path traversal patterns_, () => {
       const maliciousInputs = [
         '../../../etc/passwd',
         '..\\..\\windows\\system32',
@@ -221,13 +221,13 @@ describe(_'SecurityUtils',_() => {
       });
     });
 
-    it(_'should not flag benign inputs',_() => {
+    it('should not flag benign inputs_, () => {
       const benignInputs = [
         'Hello World',
         'user@example.com',
         '123.456.789.012',
         'This is a normal sentence',
-        'user_name_123',
+        'user_name_123_,
       ];
 
       benignInputs.forEach(input => {
@@ -236,33 +236,33 @@ describe(_'SecurityUtils',_() => {
     });
   });
 
-  describe(_'Data Masking',_() => {
-    it(_'should mask sensitive data correctly',_() => {
+  describe('Data Masking_, () => {
+    it('should mask sensitive data correctly_, () => {
       const testCases = [
         { input: '12345678900', expected: '12******00' },
         { input: 'user@example.com', expected: 'us******om' },
         { input: 'ABC123XYZ', expected: 'AB****XYZ' },
       ];
 
-      testCases.forEach(_({ input,_expected }) => {
+      testCases.forEach(({ input, expected }) => {
         const masked = SecurityUtils.maskSensitiveData(input);
         expect(masked).toBe(expected);
       });
     });
 
-    it(_'should handle short strings',_() => {
+    it('should handle short strings_, () => {
       expect(SecurityUtils.maskSensitiveData('123')).toBe('***');
       expect(SecurityUtils.maskSensitiveData('12')).toBe('**');
       expect(SecurityUtils.maskSensitiveData('1')).toBe('*');
     });
 
-    it(_'should handle empty strings',_() => {
+    it('should handle empty strings_, () => {
       expect(SecurityUtils.maskSensitiveData('')).toBe('');
     });
   });
 
-  describe(_'Password Strength Validation',_() => {
-    it(_'should validate strong passwords',_() => {
+  describe('Password Strength Validation_, () => {
+    it('should validate strong passwords_, () => {
       const strongPasswords = [
         'StrongP@ssw0rd!',
         'MySecureP@ss123',
@@ -276,7 +276,7 @@ describe(_'SecurityUtils',_() => {
       });
     });
 
-    it(_'should reject weak passwords',_() => {
+    it('should reject weak passwords_, () => {
       const weakPasswords = [
         'password', // Too common
         '123456', // Only numbers
@@ -295,7 +295,7 @@ describe(_'SecurityUtils',_() => {
       });
     });
 
-    it(_'should provide helpful feedback',_() => {
+    it('should provide helpful feedback_, () => {
       const result = SecurityUtils.validatePasswordStrength('weak');
 
       expect(result.feedback).toContain(
@@ -314,8 +314,8 @@ describe(_'SecurityUtils',_() => {
     });
   });
 
-  describe(_'Password Generation',_() => {
-    it(_'should generate secure passwords',_() => {
+  describe('Password Generation_, () => {
+    it('should generate secure passwords_, () => {
       const password = SecurityUtils.generateSecurePassword();
 
       expect(password.length).toBe(12);
@@ -325,12 +325,12 @@ describe(_'SecurityUtils',_() => {
       expect(/[!@#$%^&*(),.?":{}|<>]/.test(password)).toBe(true); // Contains special chars
     });
 
-    it(_'should generate passwords with custom length',_() => {
+    it('should generate passwords with custom length_, () => {
       const password = SecurityUtils.generateSecurePassword(16);
       expect(password.length).toBe(16);
     });
 
-    it(_'should generate unique passwords',_() => {
+    it('should generate unique passwords_, () => {
       const password1 = SecurityUtils.generateSecurePassword();
       const password2 = SecurityUtils.generateSecurePassword();
 
@@ -339,28 +339,28 @@ describe(_'SecurityUtils',_() => {
   });
 });
 
-describe(_'RateLimiter',_() => {
+describe('RateLimiter_, () => {
   let rateLimiter: RateLimiter;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     rateLimiter = new RateLimiter();
   });
 
-  describe(_'Rate Limiting Logic',_() => {
-    it(_'should allow requests within limits',_() => {
+  describe('Rate Limiting Logic_, () => {
+    it('should allow requests within limits_, () => {
       const key = 'test-user';
       const maxAttempts = 5;
-      const _windowMs = 60000;
+      const windowMs = 60000;
 
       for (let i = 0; i < maxAttempts; i++) {
         expect(rateLimiter.isAllowed(key, maxAttempts, windowMs)).toBe(true);
       }
     });
 
-    it(_'should block requests exceeding limits',_() => {
+    it('should block requests exceeding limits_, () => {
       const key = 'test-user';
       const maxAttempts = 3;
-      const _windowMs = 60000;
+      const windowMs = 60000;
 
       // Allow first 3 requests
       for (let i = 0; i < maxAttempts; i++) {
@@ -371,10 +371,10 @@ describe(_'RateLimiter',_() => {
       expect(rateLimiter.isAllowed(key, maxAttempts, windowMs)).toBe(false);
     });
 
-    it(_'should reset after window expires',_() => {
+    it('should reset after window expires_, () => {
       const key = 'test-user';
       const maxAttempts = 2;
-      const _windowMs = 100; // Very short window for testing
+      const windowMs = 100; // Very short window for testing
 
       // Use up attempts
       expect(rateLimiter.isAllowed(key, maxAttempts, windowMs)).toBe(true);
@@ -391,11 +391,11 @@ describe(_'RateLimiter',_() => {
     });
   });
 
-  describe(_'Remaining Attempts',_() => {
-    it(_'should calculate remaining attempts correctly',_() => {
+  describe('Remaining Attempts_, () => {
+    it('should calculate remaining attempts correctly_, () => {
       const key = 'test-user';
       const maxAttempts = 5;
-      const _windowMs = 60000;
+      const windowMs = 60000;
 
       expect(rateLimiter.getRemainingAttempts(key, maxAttempts, windowMs)).toBe(
         5,
@@ -410,10 +410,10 @@ describe(_'RateLimiter',_() => {
       );
     });
 
-    it(_'should return max attempts for new keys',_() => {
+    it('should return max attempts for new keys_, () => {
       const key = 'new-user';
       const maxAttempts = 10;
-      const _windowMs = 60000;
+      const windowMs = 60000;
 
       expect(rateLimiter.getRemainingAttempts(key, maxAttempts, windowMs)).toBe(
         10,
@@ -421,11 +421,11 @@ describe(_'RateLimiter',_() => {
     });
   });
 
-  describe(_'Key Management',_() => {
-    it(_'should reset rate limiting for specific keys',_() => {
+  describe('Key Management_, () => {
+    it('should reset rate limiting for specific keys_, () => {
       const key = 'test-user';
       const maxAttempts = 3;
-      const _windowMs = 60000;
+      const windowMs = 60000;
 
       // Use up attempts
       rateLimiter.isAllowed(key, maxAttempts, windowMs);
@@ -443,11 +443,11 @@ describe(_'RateLimiter',_() => {
       );
     });
 
-    it(_'should handle cleanup of expired records',_() => {
+    it('should handle cleanup of expired records_, () => {
       const key1 = 'user1';
       const key2 = 'user2';
       const maxAttempts = 5;
-      const _windowMs = 100; // Short window
+      const windowMs = 100; // Short window
 
       // Use up attempts for both users
       rateLimiter.isAllowed(key1, maxAttempts, windowMs);

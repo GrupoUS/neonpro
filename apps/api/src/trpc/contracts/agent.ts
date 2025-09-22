@@ -101,7 +101,7 @@ export const KnowledgeEntryResponseSchema = z.object({
 /**
  * Agent Analytics Schemas
  */
-export const _AgentAnalyticsSchema = z.object({
+export const AgentAnalyticsSchema = z.object({
   session_id: z.string().uuid(),
   user_id: z.string().uuid(),
   agent_type: AgentTypeSchema,
@@ -162,7 +162,7 @@ export const RAGQuerySchema = z.object({
   max_results: z.number().int().min(1).max(50).default(10),
 });
 
-export const _RAGResponseSchema = z.object({
+export const RAGResponseSchema = z.object({
   _query: z.string(),
   results: z.array(
     z.object({
@@ -198,7 +198,7 @@ export const AgentEventSchema = z.object({
 /**
  * Response Wrappers
  */
-export const _AgentSessionListResponseSchema = z.object({
+export const AgentSessionListResponseSchema = z.object({
   success: z.literal(true),
   data: z.object({
     sessions: z.array(AgentSessionResponseSchema),
@@ -213,7 +213,7 @@ export const _AgentSessionListResponseSchema = z.object({
   requestId: z.string().optional(),
 });
 
-export const _AgentMessageListResponseSchema = z.object({
+export const AgentMessageListResponseSchema = z.object({
   success: z.literal(true),
   data: z.object({
     messages: z.array(AgentMessageResponseSchema),
@@ -228,7 +228,7 @@ export const _AgentMessageListResponseSchema = z.object({
   requestId: z.string().optional(),
 });
 
-export const _KnowledgeBaseListResponseSchema = z.object({
+export const KnowledgeBaseListResponseSchema = z.object({
   success: z.literal(true),
   data: z.object({
     entries: z.array(KnowledgeEntryResponseSchema),
@@ -246,7 +246,7 @@ export const _KnowledgeBaseListResponseSchema = z.object({
 /**
  * Error Response Schema
  */
-export const _AgentErrorResponseSchema = z.object({
+export const AgentErrorResponseSchema = z.object({
   success: z.literal(false),
   error: z.object({
     code: z.string(),

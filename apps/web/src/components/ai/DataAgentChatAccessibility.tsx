@@ -151,7 +151,7 @@ const AccessibleMessageFeedback: React.FC<{
   sessionId: string;
   onFeedbackSubmitted: () => void;
   className?: string;
-}> = (_{ messageId,_sessionId,_onFeedbackSubmitted,_className }) => {
+}> = ({ messageId,sessionId, onFeedbackSubmitted, className }) => {
   const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState('');
@@ -170,7 +170,7 @@ const AccessibleMessageFeedback: React.FC<{
     ariaLive.className = 'sr-only';
     ariaLive.textContent = announcement;
     document.body.appendChild(ariaLive);
-    setTimeout(_() => document.body.removeChild(ariaLive), 1000);
+    setTimeout(() => document.body.removeChild(ariaLive), 1000);
   };
 
   const handleDetailedFeedback = () => {
@@ -280,7 +280,7 @@ const AccessibleMessageFeedback: React.FC<{
                 aria-label='Avaliação de 1 a 5 estrelas'
                 aria-required='true'
               >
-                {[1, 2, 3, 4, 5].map(_star => (
+                {[1, 2, 3, 4, 5].map(star => (
                   <Button
                     key={star}
                     type='button'
@@ -360,7 +360,7 @@ const AccessibleActionButton: React.FC<{
   action: AgentAction;
   onExecute: (action: AgentAction) => void;
   className?: string;
-}> = (_{ action,_onExecute,_className }) => {
+}> = ({ action,onExecute, className }) => {
   const getIcon = (_iconName: any) => {
     const iconProps = { className: 'h-4 w-4', 'aria-hidden': 'true' as const };
     switch (iconName) {
@@ -441,7 +441,7 @@ const AccessibleDataSummaryCard: React.FC<{
   type: 'clients' | 'appointments' | 'financial';
   summary?: any;
   testId?: string;
-}> = (_{ title,_data,_type,_summary,_testId }) => {
+}> = ({ title,data, type,summary, testId }) => {
   const [expanded, setExpanded] = useState(false);
   const displayLimit = 3;
   const cardRef = useRef<HTMLDivElement>(null);
@@ -587,20 +587,20 @@ const AccessibleDataSummaryCard: React.FC<{
           role='list'
           aria-label={`Lista de ${data.length} ${data.length === 1 ? 'item' : 'itens'}`}
         >
-          {data.slice(0, expanded ? data.length : displayLimit).map(_(item, _index) => (
+          {data.slice(0, expanded ? data.length : displayLimit).map((item, _index) => (
             <div key={index} role='listitem'>
               {renderItem(item, index)}
             </div>
           ))}
 
-          {data.length > displayLimit && (_<Button
+          {data.length > displayLimit && (<Button
               variant='ghost'
               size='sm'
               onClick={() => {
                 setExpanded(!expanded);
                 // Announce change to screen readers
                 if (!expanded) {
-                  setTimeout(_() => {
+                  setTimeout(() => {
                     const newItems = cardRef.current?.querySelectorAll('[role="listitem"]');
                     if (newItems && newItems.length > displayLimit) {
                       (newItems[displayLimit] as HTMLElement)?.focus();

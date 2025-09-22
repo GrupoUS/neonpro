@@ -119,7 +119,7 @@ app.post(
       let responseData;
       try {
         responseData = await tRPCResponse.json();
-      } catch (_parseError) {
+      } catch (parseError) {
         console.error('Error parsing tRPC response:', parseError);
         return c.json({
           success: false,

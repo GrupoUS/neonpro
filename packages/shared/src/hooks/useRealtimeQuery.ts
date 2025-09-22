@@ -37,8 +37,8 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
   }
 
   // TanStack Query with healthcare-optimized defaults
-  const query = useQuery(_{
-    queryKey,_queryFn,
+  const query = useQuery({
+    queryKey,queryFn,
     staleTime: options.staleTime ?? 5 * 60 * 1000, // 5 minutes
     gcTime: options.gcTime ?? 10 * 60 * 1000, // 10 minutes
     refetchOnWindowFocus: options.refetchOnWindowFocus ?? false,
@@ -50,7 +50,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
   });
 
   // Memoized subscription setup
-  const setupSubscription = useCallback(_() => {
+  const setupSubscription = useCallback(() => {
     if (!realtimeManager.current || !options.enabled) return undefined;
 
     const subscription = realtimeManager.current.subscribeToTable(_options.tableName,_options.filter,
@@ -60,15 +60,15 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
         rateLimitMs: 100, // Healthcare-appropriate rate limiting
         onInsert: (_payload: T) => {
           console.log(`New ${options.tableName} inserted:`, _payload);
-          options.realtimeOptions?.onInsert?.(_payload);
+          options.realtimeOptions?.onInsert?.(payload);
         },
         onUpdate: (_payload: T) => {
           console.log(`${options.tableName} updated:`, _payload);
-          options.realtimeOptions?.onUpdate?.(_payload);
+          options.realtimeOptions?.onUpdate?.(payload);
         },
         onDelete: (_payload: { old: T }) => {
           console.log(`${options.tableName} deleted:`, payload.old);
-          options.realtimeOptions?.onDelete?.(_payload);
+          options.realtimeOptions?.onDelete?.(payload);
         },
         ...options.realtimeOptions,
       },
@@ -85,7 +85,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
   ]);
 
   // Set up real-time subscription
-  useEffect(_() => {
+  useEffect(() => {
     const subscription = setupSubscription();
 
     return () => {
@@ -97,7 +97,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
   }, [setupSubscription]);
 
   // Cleanup on unmount
-  useEffect(_() => {
+  useEffect(() => {
     return () => {
       if (realtimeManager.current) {
         realtimeManager.current.unsubscribeAll();
@@ -131,7 +131,7 @@ export function useRealtimeMutation<T extends { id: string }>(
       const previousData = queryClient.getQueryData<T[]>(queryKey);
 
       // Optimistically update
-      queryClient.setQueryData<T[]>(_queryKey,_(old) => {
+      queryClient.setQueryData<T[]>(_queryKey,(old) => {
         return (_old?.map((item) =>
             item.id === updatedItem.id ? updatedItem : item,
           ) ?? []
@@ -152,7 +152,7 @@ export function useRealtimeMutation<T extends { id: string }>(
     [queryClient, queryKey],
   );
 
-  const invalidate = useCallback(_() => queryClient.invalidateQueries({ queryKey }),
+  const invalidate = useCallback(() => queryClient.invalidateQueries({ queryKey }),
     [queryClient, queryKey],
   );
 

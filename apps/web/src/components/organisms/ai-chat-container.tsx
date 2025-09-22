@@ -31,7 +31,7 @@ interface AIChatContainerProps extends Partial<AIAssistantProps> {
   patientId?: string;
   userRole?: 'admin' | 'professional' | 'coordinator';
   lgpdCompliant?: boolean;
-  onAuditLog?: (action: string, details?: Record<string,_any>) => void;
+  onAuditLog?: (action: string, details?: Record<string, any>) => void;
   onEmergencyDetected?: (severity: 'low' | 'medium' | 'high') => void;
 }
 
@@ -87,7 +87,7 @@ export default function AIChatContainer({
   };
 
   // Auto-scroll to bottom when new messages arrive
-  useEffect(_() => {
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
@@ -144,7 +144,7 @@ export default function AIChatContainer({
 
   const handleSearch = (_query: any) => {
     if (query.trim()) {
-      handleSendMessage(_query);
+      handleSendMessage(query);
     }
   };
 
@@ -188,7 +188,7 @@ export default function AIChatContainer({
                 {hasPro && <Crown className='w-3 h-3 mr-1 inline' />}
                 {subscriptionInfo.displayStatus}
               </span>
-              {shouldShowUpgradePrompt && (_<Button
+              {shouldShowUpgradePrompt && (<Button
                   size='sm'
                   onClick={() => window.open(upgradeUrl, '_blank')}
                   className='text-xs bg-gradient-to-r from-[#AC9469] to-[#294359] hover:from-[#294359] hover:to-[#112031]'

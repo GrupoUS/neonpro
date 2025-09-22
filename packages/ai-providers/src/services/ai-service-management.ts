@@ -90,7 +90,7 @@ export class AIServiceManagement {
       const results = await Promise.allSettled(healthChecks);
       const healthStatuses: AIServiceHealth[] = [];
 
-      results.forEach(_(result,_index) => {
+      results.forEach((result,_index) => {
         if (result.status === "fulfilled") {
           healthStatuses.push(result.value);
         } else {
@@ -110,12 +110,12 @@ export class AIServiceManagement {
       });
 
       // Update cache
-      healthStatuses.forEach(_(health) => {
+      healthStatuses.forEach((health) => {
         this.healthCache.set(health.provider, health);
       });
 
       return healthStatuses;
-    } catch (_error) {
+    } catch (error) {
       throw new AIServiceError(
         "AI_HEALTH_CHECK_ERROR",
         `Failed to check AI service health: ${error instanceof Error ? error.message : String(error)}`,
@@ -144,7 +144,7 @@ export class AIServiceManagement {
       const results = await Promise.allSettled(checks);
       const availabilities: ModelAvailability[] = [];
 
-      results.forEach(_(result,_index) => {
+      results.forEach((result,_index) => {
         if (result.status === "fulfilled") {
           availabilities.push(result.value);
         } else {
@@ -167,13 +167,13 @@ export class AIServiceManagement {
       });
 
       // Update cache
-      availabilities.forEach(_(availability) => {
+      availabilities.forEach((availability) => {
         const key = `${availability.provider}:${availability.model}`;
         this.availabilityCache.set(key, availability);
       });
 
       return availabilities;
-    } catch (_error) {
+    } catch (error) {
       throw new AIServiceError(
         "MODEL_AVAILABILITY_CHECK_ERROR",
         `Failed to check model availability: ${error instanceof Error ? error.message : String(error)}`,
@@ -205,13 +205,13 @@ export class AIServiceManagement {
       }
 
       // Update cache
-      stats.forEach(_(stat) => {
+      stats.forEach((stat) => {
         const key = `${stat.provider}:${stat.period.start.toISOString()}`;
         this.usageCache.set(key, stat);
       });
 
       return stats;
-    } catch (_error) {
+    } catch (error) {
       throw new AIServiceError(
         "USAGE_STATS_ERROR",
         `Failed to get AI usage statistics: ${error instanceof Error ? error.message : String(error)}`,
@@ -323,7 +323,7 @@ export class AIServiceManagement {
         uptime: 100,
         message: "Service is responding normally",
       };
-    } catch (_error) {
+    } catch (error) {
       const responseTime = Date.now() - startTime;
 
       return {
@@ -351,7 +351,7 @@ export class AIServiceManagement {
     ];
 
     if (provider || model) {
-      return availableModels.filter(_(m) =>
+      return availableModels.filter((m) =>
           (!provider || m.provider === provider) &&
           (!model || m.model === model),
       );
@@ -386,7 +386,7 @@ export class AIServiceManagement {
         region: "us-east-1",
         lastUpdated: new Date(),
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         provider: providerName,
         model: modelName,
@@ -423,15 +423,15 @@ export class AIServiceManagement {
       });
     }
 
-    const totalRequests = dailyBreakdown.reduce(_(sum,_day) => sum + day.requests,
+    const totalRequests = dailyBreakdown.reduce((sum,_day) => sum + day.requests,
       0,
     );
     const successfulRequests = Math.floor(totalRequests * 0.95);
     const failedRequests = totalRequests - successfulRequests;
-    const totalTokensUsed = dailyBreakdown.reduce(_(sum,_day) => sum + day.tokens,
+    const totalTokensUsed = dailyBreakdown.reduce((sum,_day) => sum + day.tokens,
       0,
     );
-    const totalCost = dailyBreakdown.reduce(_(sum,_day) => sum + day.cost, 0);
+    const totalCost = dailyBreakdown.reduce((sum,_day) => sum + day.cost, 0);
 
     return {
       provider: providerName,

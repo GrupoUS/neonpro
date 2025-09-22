@@ -49,7 +49,7 @@ const mockLGPDService = {
   logDataAccess: vi.fn(),
 };
 
-describe(_"patient Management API - NeonPro Healthcare",_() => {
+describe(_"patient Management API - NeonPro Healthcare",() => {
   // Mock patient data
   const mockPatient = {
     id: "patient-123",
@@ -70,14 +70,14 @@ describe(_"patient Management API - NeonPro Healthcare",_() => {
     updatedAt: new Date(),
   };
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
-  describe(_"pOST /patients - Create Patient",_() => {
+  describe(_"pOST /patients - Create Patient",() => {
     it(_"should create patient with valid Brazilian healthcare data",_async () => {
       const newPatientData = {
         name: "João da Silva",
@@ -294,7 +294,7 @@ describe(_"patient Management API - NeonPro Healthcare",_() => {
       );
     });
   });
-  describe("gET /patients/:id - Get Patient",_() => {
+  describe("gET /patients/:id - Get Patient",() => {
     it(_"should retrieve patient with data masking based on user role",_async () => {
       const fullPatientData = { ...mockPatient };
       const maskedPatientData = {
@@ -423,7 +423,7 @@ describe(_"patient Management API - NeonPro Healthcare",_() => {
     });
   });
 
-  describe("pUT /patients/:id - Update Patient",_() => {
+  describe("pUT /patients/:id - Update Patient",() => {
     it(_"should update patient with audit trail",_async () => {
       const updateData = {
         phone: "11977777777",

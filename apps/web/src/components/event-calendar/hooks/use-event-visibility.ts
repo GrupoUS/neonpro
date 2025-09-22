@@ -27,7 +27,7 @@ export function useEventVisibility({
   const [contentHeight, setContentHeight] = useState<number | null>(null);
 
   // Use layout effect for synchronous measurement before paint
-  useLayoutEffect(_() => {
+  useLayoutEffect(() => {
     if (!contentRef.current) return;
 
     // Function to update the content height
@@ -42,7 +42,7 @@ export function useEventVisibility({
 
     // Create observer only once and reuse it
     if (!observerRef.current) {
-      observerRef.current = new ResizeObserver(_() => {
+      observerRef.current = new ResizeObserver(() => {
         // Just call updateHeight when resize is detected
         updateHeight();
       });
@@ -60,7 +60,7 @@ export function useEventVisibility({
   }, []);
 
   // Function to calculate visible events for a cell
-  const getVisibleEventCount = useMemo(_() => {
+  const getVisibleEventCount = useMemo(() => {
     return (totalEvents: number): number => {
       if (!contentHeight) return totalEvents;
 

@@ -182,7 +182,7 @@ class SQLSanitizer {
       this.auditSQLOperation(operation, result);
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       logger.error('SQL validation failed', error as Error, {
         operation: operation.type,
         table: operation.table,
@@ -281,7 +281,7 @@ class SQLSanitizer {
       return result;
     }
 
-    Object.entries(operation.conditions).forEach(_([key,_value]) => {
+    Object.entries(operation.conditions).forEach(([key,_value]) => {
       // Validate condition keys
       if (this.containsDangerousPatterns(key)) {
         result.errors.push(`Condition key '${key}' contains dangerous patterns`);
@@ -356,7 +356,7 @@ class SQLSanitizer {
         }
 
         const insertColumns = columns.join(', ');
-        const placeholders = columns.map(_(_,_index) => `$${index + 1}`).join(', ');
+        const placeholders = columns.map((, index) => `$${index + 1}`).join(', ');
         return `INSERT INTO ${table} (${insertColumns}) VALUES (${placeholders})`;
 
       case 'UPDATE':

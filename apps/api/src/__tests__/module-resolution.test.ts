@@ -5,32 +5,32 @@
 
 import { describe, expect, it } from 'vitest';
 
-describe(_'Module Resolution - TDD RED Phase',_() => {
-  describe(_'Critical Missing Imports',_() => {
-    it('should FAIL: @neonpro/utils/logging/logger should be missing',_() => {
+describe('Module Resolution - TDD RED Phase',() => {
+  describe('Critical Missing Imports',() => {
+    it('should FAIL: @neonpro/utils/logging/logger should be missing',() => {
       // This module is imported in src/lib/logger.ts but doesn't exist
-      expect(_() => {
+      expect(() => {
         require('@neonpro/utils/logging/logger');
       }).toThrow();
     });
 
-    it('should FAIL: @/services/audit-service should be missing',_() => {
+    it('should FAIL: @/services/audit-service should be missing',() => {
       // This path alias is used in tests but doesn't resolve
-      expect(_() => {
+      expect(() => {
         require('@/services/audit-service');
       }).toThrow();
     });
 
-    it('should FAIL: bun:test should not be available in vitest project',_() => {
+    it('should FAIL: bun:test should not be available in vitest project',() => {
       // Some test files incorrectly import bun:test instead of vitest
-      expect(_() => {
+      expect(() => {
         require('bun:test');
       }).toThrow();
     });
   });
 
-  describe(_'Path Alias Resolution',_() => {
-    it('should FAIL: @/ path aliases should not resolve correctly',_() => {
+  describe('Path Alias Resolution',() => {
+    it('should FAIL: @/ path aliases should not resolve correctly',() => {
       // Test various @/ path aliases that may be misconfigured
       const pathAliases = [
         '@/services/audit-service',
@@ -52,7 +52,7 @@ describe(_'Module Resolution - TDD RED Phase',_() => {
       expect(failedResolutions).toBe(pathAliases.length);
     });
 
-    it('should FAIL: Relative imports should have inconsistent patterns',_() => {
+    it('should FAIL: Relative imports should have inconsistent patterns',() => {
       // Test for inconsistent relative import patterns
       const problematicImports = [
         '../../../../../packages/database/src/types/supabase',
@@ -74,8 +74,8 @@ describe(_'Module Resolution - TDD RED Phase',_() => {
     });
   });
 
-  describe(_'Workspace Package Resolution',_() => {
-    it('should FAIL: @neonpro workspace packages should have resolution issues',_() => {
+  describe('Workspace Package Resolution',() => {
+    it('should FAIL: @neonpro workspace packages should have resolution issues',() => {
       // Test workspace package imports
       const workspacePackages = [
         '@neonpro/shared',
@@ -102,7 +102,7 @@ describe(_'Module Resolution - TDD RED Phase',_() => {
       expect(resolutionIssues).toBeGreaterThan(0);
     });
 
-    it('should FAIL: Package.json workspace configuration should have issues',_() => {
+    it('should FAIL: Package.json workspace configuration should have issues',() => {
       // This test validates that workspace configuration needs fixing
       const workspaceConfigIssues = [
         'Incorrect package linking in monorepo',
@@ -115,8 +115,8 @@ describe(_'Module Resolution - TDD RED Phase',_() => {
     });
   });
 
-  describe(_'TypeScript Module Resolution',_() => {
-    it('should FAIL: TypeScript should use incorrect module resolution strategy',_() => {
+  describe('TypeScript Module Resolution',() => {
+    it('should FAIL: TypeScript should use incorrect module resolution strategy',() => {
       // Test for the specific module resolution error mentioned
       const tsconfigIssues = [
         {
@@ -143,7 +143,7 @@ describe(_'Module Resolution - TDD RED Phase',_() => {
       expect(tsconfigIssues.length).toBeGreaterThan(0);
     });
 
-    it('should FAIL: Module resolution should fail for external dependencies',_() => {
+    it('should FAIL: Module resolution should fail for external dependencies',() => {
       // Test external dependency imports that may have issues
       const externalDeps = [
         'openapi-types',
@@ -165,8 +165,8 @@ describe(_'Module Resolution - TDD RED Phase',_() => {
     });
   });
 
-  describe(_'Import Statement Standardization',_() => {
-    it('should FAIL: Import statements should use inconsistent patterns',_() => {
+  describe('Import Statement Standardization',() => {
+    it('should FAIL: Import statements should use inconsistent patterns',() => {
       // Test for inconsistent import patterns across files
       const importPatterns = [
         {
@@ -190,7 +190,7 @@ describe(_'Module Resolution - TDD RED Phase',_() => {
       expect(importPatterns.length).toBeGreaterThan(0);
     });
 
-    it('should FAIL: Circular dependencies should exist',_() => {
+    it('should FAIL: Circular dependencies should exist',() => {
       // Test for potential circular dependencies
       const circularDependencyRisks = [
         {
@@ -210,8 +210,8 @@ describe(_'Module Resolution - TDD RED Phase',_() => {
     });
   });
 
-  describe(_'Integration - Complete Module Resolution',_() => {
-    it('should FAIL: All module resolution issues should prevent successful compilation',_() => {
+  describe('Integration - Complete Module Resolution',() => {
+    it('should FAIL: All module resolution issues should prevent successful compilation',() => {
       // Comprehensive test for all module resolution issues
       const allModuleIssues = {
         missingModules: [
@@ -243,7 +243,7 @@ describe(_'Module Resolution - TDD RED Phase',_() => {
       console.log(`🔴 Module Resolution Issues: ${totalIssues} identified`);
     });
 
-    it(_'should document specific error patterns for fixing',_() => {
+    it('should document specific error patterns for fixing',() => {
       // Document the exact error patterns we need to fix
       const errorPatterns = [
         {

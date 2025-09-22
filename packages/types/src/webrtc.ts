@@ -25,7 +25,7 @@ export type RTCConnectionState =
   | "closed";
 
 // Runtime values for TypeScript enum-like behavior
-export const _RTCConnectionStates = {
+export const RTCConnectionStates = {
   NEW: "new",
   CONNECTING: "connecting",
   CONNECTED: "connected",
@@ -45,7 +45,7 @@ export type TelemedicineCallType =
   | "urgent-care";
 
 // Runtime values for telemedicine call types
-export const _TelemedicineCallTypes = {
+export const TelemedicineCallTypes = {
   EMERGENCY: "emergency",
   SCHEDULED: "scheduled",
   CONSULTATION: "consultation",
@@ -63,7 +63,7 @@ export type MedicalDataClassification =
   | "public";
 
 // Runtime values for medical data classification
-export const _MedicalDataClassifications = {
+export const MedicalDataClassifications = {
   SENSITIVE: "sensitive",
   CONFIDENTIAL: "confidential",
   INTERNAL: "internal",

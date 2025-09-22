@@ -8,7 +8,7 @@ function AuthCallbackComponent() {
     'loading',
   );
 
-  useEffect(_() => {
+  useEffect(() => {
     const handleAuthCallback = async () => {
       try {
         // Handle OAuth callback - supports both code flow and implicit flow
@@ -32,7 +32,7 @@ function AuthCallbackComponent() {
           if (error) {
             console.error('Auth callback error:', error);
             setStatus('error');
-            setTimeout(_() => {
+            setTimeout(() => {
               router.navigate({
                 to: '/' as const,
                 search: { error: 'auth_callback_failed' } as any,
@@ -46,7 +46,7 @@ function AuthCallbackComponent() {
               'Auth callback successful (code flow), redirecting to dashboard',
             );
             setStatus('success');
-            setTimeout(_() => {
+            setTimeout(() => {
               router.navigate({ to: '/dashboard' });
             }, 800);
             return;
@@ -69,7 +69,7 @@ function AuthCallbackComponent() {
           window.history.replaceState({}, document.title, cleanUrl);
 
           // Redirect to dashboard
-          setTimeout(_() => {
+          setTimeout(() => {
             window.location.href = '/dashboard';
           }, 800);
 
@@ -79,7 +79,7 @@ function AuthCallbackComponent() {
         // No code or access_token found
         console.error('No authentication parameters found in callback URL');
         setStatus('error');
-        setTimeout(_() => {
+        setTimeout(() => {
           router.navigate({
             to: '/' as const,
             search: { error: 'auth_callback_failed' } as any,
@@ -88,7 +88,7 @@ function AuthCallbackComponent() {
       } catch (_error) {
         console.error('Auth callback exception:', error);
         setStatus('error');
-        setTimeout(_() => {
+        setTimeout(() => {
           router.navigate({
             to: '/' as const,
             search: { error: 'auth_exception' } as any,
@@ -165,6 +165,6 @@ function AuthCallbackComponent() {
   );
 }
 
-export const _Route = createFileRoute('/auth/callback')({
+export const Route = createFileRoute('/auth/callback')({
   component: AuthCallbackComponent,
 });

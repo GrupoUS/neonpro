@@ -488,7 +488,7 @@ export function useRealtimeTelemedicine(
   /**
    * Get current session statistics
    */
-  const getSessionStats = useCallback(_() => {
+  const getSessionStats = useCallback(() => {
     if (!session || !sessionInfoQuery.data) {
       return null;
     }
@@ -507,7 +507,7 @@ export function useRealtimeTelemedicine(
   }, [session, sessionInfoQuery.data, messages.length, lastEmergencyAlert]);
 
   // Auto-reconnect logic
-  useEffect(_() => {
+  useEffect(() => {
     if (options.autoReconnect && session && session.status === 'disconnected') {
       console.log('Auto-reconnecting to telemedicine session...');
       // Implement auto-reconnect logic here
@@ -515,7 +515,7 @@ export function useRealtimeTelemedicine(
   }, [session, options.autoReconnect]);
 
   // Monitor connection quality
-  useEffect(_() => {
+  useEffect(() => {
     if (session && isMonitoring && qualityQuery.data) {
       const quality = qualityQuery.data.connectionQuality;
 

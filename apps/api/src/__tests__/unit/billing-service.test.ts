@@ -14,20 +14,20 @@ import {
   PaymentStatus,
 } from '../../services/billing-service';
 
-describe(_'BillingService',_() => {
+describe(_'BillingService',() => {
   let _service: BillingService;
 
-  beforeAll(_() => {
+  beforeAll(() => {
     service = new BillingService();
   });
 
-  describe(_'Service Initialization',_() => {
-    it(_'should initialize without errors',_() => {
-      expect(_service).toBeDefined();
-      expect(_service).toBeInstanceOf(BillingService);
+  describe(_'Service Initialization',() => {
+    it(_'should initialize without errors',() => {
+      expect(service).toBeDefined();
+      expect(service).toBeInstanceOf(BillingService);
     });
 
-    it(_'should have required methods',_() => {
+    it(_'should have required methods',() => {
       expect(typeof service.createBilling).toBe('function');
       expect(typeof service.getBilling).toBe('function');
       expect(typeof service.searchBillings).toBe('function');
@@ -36,7 +36,7 @@ describe(_'BillingService',_() => {
     });
   });
 
-  describe(_'createBilling',_() => {
+  describe(_'createBilling',() => {
     it(_'should create a billing successfully',_async () => {
       const billingData = {
         patientId: randomUUID(),
@@ -86,7 +86,7 @@ describe(_'BillingService',_() => {
     });
   });
 
-  describe(_'getBilling',_() => {
+  describe(_'getBilling',() => {
     it(_'should return billing by ID',_async () => {
       // First create a billing
       const billingData = {
@@ -131,7 +131,7 @@ describe(_'BillingService',_() => {
     });
   });
 
-  describe(_'searchBillings',_() => {
+  describe(_'searchBillings',() => {
     it(_'should search billings with filters',_async () => {
       const result = await service.searchBillings({
         patientId: randomUUID(),
@@ -146,7 +146,7 @@ describe(_'BillingService',_() => {
     });
   });
 
-  describe(_'processPayment',_() => {
+  describe(_'processPayment',() => {
     it(_'should process payment successfully',_async () => {
       // First create a billing
       const billingData = {
@@ -191,7 +191,7 @@ describe(_'BillingService',_() => {
     });
   });
 
-  describe(_'getFinancialSummary',_() => {
+  describe(_'getFinancialSummary',() => {
     it(_'should generate financial summary',_async () => {
       const result = await service.getFinancialSummary(randomUUID());
 
@@ -203,8 +203,8 @@ describe(_'BillingService',_() => {
     });
   });
 
-  describe(_'Enums',_() => {
-    it(_'should have all required payment statuses',_() => {
+  describe(_'Enums',() => {
+    it(_'should have all required payment statuses',() => {
       const expectedStatuses = [
         'pending',
         'authorized',
@@ -220,7 +220,7 @@ describe(_'BillingService',_() => {
       });
     });
 
-    it(_'should have all required payment methods',_() => {
+    it(_'should have all required payment methods',() => {
       const expectedMethods = [
         'cash',
         'debit_card',
@@ -237,7 +237,7 @@ describe(_'BillingService',_() => {
       });
     });
 
-    it(_'should have all required billing types',_() => {
+    it(_'should have all required billing types',() => {
       const expectedTypes = ['sus', 'health_plan', 'private', 'mixed'];
 
       expectedTypes.forEach(type => {

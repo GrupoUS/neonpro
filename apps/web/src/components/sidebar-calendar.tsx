@@ -17,7 +17,7 @@ export default function SidebarCalendar({ className }: SidebarCalendarProps) {
   const [calendarMonth, setCalendarMonth] = useState<Date>(currentDate);
 
   // Update the calendar month whenever currentDate changes
-  useEffect(_() => {
+  useEffect(() => {
     setCalendarMonth(currentDate);
   }, [currentDate]);
 

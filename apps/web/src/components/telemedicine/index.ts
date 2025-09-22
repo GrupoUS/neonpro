@@ -113,7 +113,7 @@ export {
  *   sessionId="session-123"
  *   participantId="part-456"
  *   enableAI={true}
- *   onMessageSent={(_message) => console.log('Message sent:', message)}
+ *   onMessageSent={(message) => console.log('Message sent:', message)}
  * />
  *
  * // Session consent dialog
@@ -124,7 +124,7 @@ export {
  *   onOpenChange={setConsentOpen}
  *   patientId="pat-456"
  *   sessionType="consultation"
- *   onConsentGiven={(_consent) => console.log('Consent given:', consent)}
+ *   onConsentGiven={(consent) => console.log('Consent given:', consent)}
  * />
  *
  * // Emergency escalation interface
@@ -133,7 +133,7 @@ export {
  * <EmergencyEscalation
  *   sessionId="session-123"
  *   escalationType="medical"
- *   onEscalationComplete={(_details) => console.log('Escalated:', details)}
+ *   onEscalationComplete={(details) => console.log('Escalated:', details)}
  * />
  *
  * // LGPD consent dialog
@@ -143,7 +143,7 @@ export {
  *   open={consentOpen}
  *   onOpenChange={setConsentOpen}
  *   patientId="pat-456"
- *   onConsentGiven={(_consent) => console.log('Consent given:', consent)}
+ *   onConsentGiven={(consent) => console.log('Consent given:', consent)}
  * />
  *
  * // Telemedicine scheduling interface
@@ -152,7 +152,7 @@ export {
  * <SchedulingUI
  *   professionalId="prof-789"
  *   availableSlots={slots}
- *   onSchedule={(_appointment) => console.log('Scheduled:', appointment)}
+ *   onSchedule={(appointment) => console.log('Scheduled:', appointment)}
  * />
  *
  * // With tRPC hooks

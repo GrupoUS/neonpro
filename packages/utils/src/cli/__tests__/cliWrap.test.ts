@@ -5,9 +5,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { CLIWrapper, createCLI } from "../cliWrap.js";
 
-describe(_"CLIWrapper",_() => {
-  describe(_"command registration and argument parsing",_() => {
-    it(_"should register commands",_() => {
+describe("CLIWrapper", () => {
+  describe("command registration and argument parsing", () => {
+    it("should register commands", () => {
       const cli = new CLIWrapper({
         appName: "test-cli",
         version: "1.0.0",
@@ -25,7 +25,7 @@ describe(_"CLIWrapper",_() => {
       expect(result).toBe(cli);
     });
 
-    it(_"should parse command line arguments correctly",_() => {
+    it("should parse command line arguments correctly", () => {
       const cli = new CLIWrapper({
         appName: "test-cli",
         setupErrorHandling: false,
@@ -57,7 +57,7 @@ describe(_"CLIWrapper",_() => {
       expect(result.options.flag).toBe(true);
     });
 
-    it(_"should handle options with equals sign",_() => {
+    it("should handle options with equals sign", () => {
       const cli = new CLIWrapper({
         appName: "test-cli",
         setupErrorHandling: false,
@@ -77,7 +77,7 @@ describe(_"CLIWrapper",_() => {
       expect(result.options.flag).toBe(true);
     });
 
-    it(_"should handle short options",_() => {
+    it("should handle short options", () => {
       const cli = new CLIWrapper({
         appName: "test-cli",
         setupErrorHandling: false,
@@ -98,8 +98,8 @@ describe(_"CLIWrapper",_() => {
     });
   });
 
-  describe(_"configuration",_() => {
-    it(_"should set default configuration values",_() => {
+  describe("configuration", () => {
+    it("should set default configuration values", () => {
       const cli = new CLIWrapper({
         appName: "test-cli",
       });
@@ -113,7 +113,7 @@ describe(_"CLIWrapper",_() => {
       expect(config.setupErrorHandling).toBe(true);
     });
 
-    it(_"should override default configuration",_() => {
+    it("should override default configuration", () => {
       const cli = new CLIWrapper({
         appName: "custom-cli",
         version: "2.0.0",
@@ -130,8 +130,8 @@ describe(_"CLIWrapper",_() => {
     });
   });
 
-  describe(_"createCLI factory",_() => {
-    it(_"should create a CLI instance",_() => {
+  describe("createCLI factory", () => {
+    it("should create a CLI instance", () => {
       const cli = createCLI({
         appName: "factory-test",
         version: "2.0.0",
@@ -141,8 +141,8 @@ describe(_"CLIWrapper",_() => {
     });
   });
 
-  describe(_"command management",_() => {
-    it(_"should store registered commands",_() => {
+  describe("command management", () => {
+    it("should store registered commands", () => {
       const cli = new CLIWrapper({
         appName: "test-cli",
         setupErrorHandling: false,

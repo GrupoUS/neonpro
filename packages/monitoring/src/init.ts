@@ -76,12 +76,12 @@ export function initializeMonitoring(config: MonitoringConfig): void {
   }
 
   // Graceful shutdown
-  process.on(_"SIGTERM",_() => {
+  process.on("SIGTERM", () => {
     logger.info("Received SIGTERM, shutting down monitoring gracefully");
     shutdownMonitoring();
   });
 
-  process.on(_"SIGINT",_() => {
+  process.on("SIGINT", () => {
     logger.info("Received SIGINT, shutting down monitoring gracefully");
     shutdownMonitoring();
   });
@@ -93,8 +93,8 @@ export function shutdownMonitoring(): void {
   if (sdk) {
     sdk
       .shutdown()
-      .then(_() => console.log("📊 Monitoring system shut down successfully"))
-      .catch(_(error) =>
+      .then(() => console.log("📊 Monitoring system shut down successfully"))
+      .catch((error) =>
         console.error("Error shutting down monitoring:", error),
       );
   }

@@ -38,7 +38,7 @@ export const PatientIdParamSchema = z
   .openapi('PatientIdParam');
 
 // Health and system routes
-export const _healthRoute = createRoute({
+export const healthRoute = createRoute({
   method: 'get',
   path: '/health',
   summary: 'Basic Health Check',
@@ -57,7 +57,7 @@ export const _healthRoute = createRoute({
   },
 });
 
-export const _detailedHealthRoute = createRoute({
+export const detailedHealthRoute = createRoute({
   method: 'get',
   path: '/v1/health',
   summary: 'Detailed Health Check',
@@ -76,7 +76,7 @@ export const _detailedHealthRoute = createRoute({
   },
 });
 
-export const _apiInfoRoute = createRoute({
+export const apiInfoRoute = createRoute({
   method: 'get',
   path: '/v1/info',
   summary: 'API Information',
@@ -96,7 +96,7 @@ export const _apiInfoRoute = createRoute({
 });
 
 // Authentication routes
-export const _authStatusRoute = createRoute({
+export const authStatusRoute = createRoute({
   method: 'get',
   path: '/v1/auth/status',
   summary: 'Authentication Status',
@@ -116,7 +116,7 @@ export const _authStatusRoute = createRoute({
 });
 
 // Client management routes (LGPD compliant)
-export const _listClientsRoute = createRoute({
+export const listClientsRoute = createRoute({
   method: 'get',
   path: '/v1/clients',
   summary: 'List Clients',
@@ -141,7 +141,7 @@ export const _listClientsRoute = createRoute({
   },
 });
 
-export const _getClientByIdRoute = createRoute({
+export const getClientByIdRoute = createRoute({
   method: 'get',
   path: '/v1/clients/{clientId}',
   summary: 'Get Client Details',
@@ -170,7 +170,7 @@ export const _getClientByIdRoute = createRoute({
 });
 
 // Appointment management routes
-export const _listAppointmentsRoute = createRoute({
+export const listAppointmentsRoute = createRoute({
   method: 'get',
   path: '/v1/appointments',
   summary: 'List Appointments',
@@ -194,7 +194,7 @@ export const _listAppointmentsRoute = createRoute({
   },
 });
 
-export const _getClientAppointmentsRoute = createRoute({
+export const getClientAppointmentsRoute = createRoute({
   method: 'get',
   path: '/v1/appointments/client/{clientId}',
   summary: 'Get Client Appointments',
@@ -223,7 +223,7 @@ export const _getClientAppointmentsRoute = createRoute({
 });
 
 // Patient management routes
-export const _listPatientsRoute = createRoute({
+export const listPatientsRoute = createRoute({
   method: 'get',
   path: '/v1/patients',
   summary: 'List Patients',
@@ -273,7 +273,7 @@ export const _listPatientsRoute = createRoute({
   },
 });
 
-export const _getPatientByIdRoute = createRoute({
+export const getPatientByIdRoute = createRoute({
   method: 'get',
   path: '/v1/patients/{patientId}',
   summary: 'Get Patient Details',
@@ -339,7 +339,7 @@ export const _getPatientByIdRoute = createRoute({
   },
 });
 
-export const _createPatientRoute = createRoute({
+export const createPatientRoute = createRoute({
   method: 'post',
   path: '/v1/patients',
   summary: 'Create Patient',
@@ -399,7 +399,7 @@ export const _createPatientRoute = createRoute({
   },
 });
 
-export const _updatePatientRoute = createRoute({
+export const updatePatientRoute = createRoute({
   method: 'put',
   path: '/v1/patients/{patientId}',
   summary: 'Update Patient',

@@ -370,7 +370,7 @@ export function generateCSRFToken(): string {
       array[i] = Math.floor(Math.random() * 256);
     }
   }
-  return Array.from(_array,_(byte) => byte.toString(16).padStart(2, "0")).join(
+  return Array.from(_array,(byte) => byte.toString(16).padStart(2, "0")).join(
     "",
   );
 }
@@ -627,7 +627,7 @@ export class SessionManagementService {
    * Create a new session
    */
   async createSession(_request: CreateSessionRequest): Promise<SessionData> {
-    const validatedRequest = CreateSessionRequestSchema.parse(_request);
+    const validatedRequest = CreateSessionRequestSchema.parse(request);
 
     // Get configuration
     const defaultConfig = DEFAULT_SESSION_CONFIGS[validatedRequest.userType];
@@ -652,12 +652,12 @@ export class SessionManagementService {
       const existingSessions = await this.store.getUserSessions(
         validatedRequest.userId,
       );
-      const activeSessions = existingSessions.filter(_(s) => s.status === SessionStatus.ACTIVE,
+      const activeSessions = existingSessions.filter((s) => s.status === SessionStatus.ACTIVE,
       );
 
       if (activeSessions.length >= config.maxConcurrentSessions) {
         // Terminate oldest session
-        const oldestSession = activeSessions.sort(_(a,_b) => a.createdAt.getTime() - b.createdAt.getTime(),
+        const oldestSession = activeSessions.sort((a,_b) => a.createdAt.getTime() - b.createdAt.getTime(),
         )[0];
 
         await this.terminateSession(
@@ -668,7 +668,7 @@ export class SessionManagementService {
     }
 
     // Generate session data
-    const _now = new Date();
+    const now = new Date();
     const expiresAt = new Date(
       now.getTime() + config.maxSessionDuration * 1000,
     );
@@ -872,7 +872,7 @@ export class SessionManagementService {
     }
 
     const config = DEFAULT_SESSION_CONFIGS[session.userType];
-    const _now = new Date();
+    const now = new Date();
     const newExpiresAt = new Date(
       now.getTime() + config.maxSessionDuration * 1000,
     );
@@ -922,7 +922,7 @@ export class SessionManagementService {
       return; // Session already doesn't exist
     }
 
-    const _now = new Date();
+    const now = new Date();
 
     await this.store.update(sessionId, {
       status: SessionStatus.TERMINATED,
@@ -957,7 +957,7 @@ export class SessionManagementService {
       return;
     }
 
-    const _now = new Date();
+    const now = new Date();
 
     await this.store.update(sessionId, {
       status: SessionStatus.REVOKED,
@@ -992,7 +992,7 @@ export class SessionManagementService {
       return;
     }
 
-    const _now = new Date();
+    const now = new Date();
 
     await this.store.update(sessionId, {
       status: SessionStatus.EXPIRED,
@@ -1021,7 +1021,7 @@ export class SessionManagementService {
    * Get user sessions
    */
   async getUserSessions(_userId: string): Promise<SessionData[]> {
-    return this.store.getUserSessions(_userId);
+    return this.store.getUserSessions(userId);
   }
 
   /**
@@ -1031,8 +1031,8 @@ export class SessionManagementService {
     _userId: string,
     reason?: string,
   ): Promise<void> {
-    const sessions = await this.store.getUserSessions(_userId);
-    const activeSessions = sessions.filter(_(s) => s.status === SessionStatus.ACTIVE,
+    const sessions = await this.store.getUserSessions(userId);
+    const activeSessions = sessions.filter((s) => s.status === SessionStatus.ACTIVE,
     );
 
     for (const session of activeSessions) {
@@ -1077,7 +1077,7 @@ export class SessionManagementService {
    * Get session activity log
    */
   getActivityLog(sessionId?: string, _userId?: string): SessionActivityEvent[] {
-    return this.activityLog.filter(_(event) => {
+    return this.activityLog.filter((event) => {
       if (sessionId && event.sessionId !== sessionId) return false;
       if (userId && event.userId !== _userId) return false;
       return true;
@@ -1168,14 +1168,14 @@ export class InMemorySessionStore implements SessionStore {
 
   async getUserSessions(_userId: string): Promise<SessionData[]> {
     return Array.from(this.sessions.values())
-      .filter(_(session) => session.userId === _userId)
-      .map(_(session) => ({ ...session }));
+      .filter((session) => session.userId === _userId)
+      .map((session) => ({ ...session }));
   }
 
   async getExpiredSessions(before: Date = new Date()): Promise<SessionData[]> {
     return Array.from(this.sessions.values())
-      .filter(_(session) => session.expiresAt < before)
-      .map(_(session) => ({ ...session }));
+      .filter((session) => session.expiresAt < before)
+      .map((session) => ({ ...session }));
   }
 
   async cleanup(retentionDays: number = 30): Promise<number> {

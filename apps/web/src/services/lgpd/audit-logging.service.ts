@@ -692,5 +692,5 @@ const CALENDAR_LGPD_PURPOSES = {
   MEDICAL_CARE_ACCESS: 'medical_care_access' as const,
 };
 
-export const _calendarLGPDAuditService = new CalendarLGPDAuditService();
+export const calendarLGPDAuditService = new CalendarLGPDAuditService();
 export { CALENDAR_LGPD_PURPOSES };

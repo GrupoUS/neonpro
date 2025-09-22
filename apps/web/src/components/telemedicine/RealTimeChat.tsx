@@ -66,7 +66,7 @@ export function RealTimeChat({
   participantRole,
   enableAI = true,
   enableFileSharing = true,
-  enableVoiceNotes: _enableVoiceNotes = false,
+  enableVoiceNotes: enableVoiceNotes = false,
   className = '',
 }: RealTimeChatProps) {
   // Hooks
@@ -83,12 +83,12 @@ export function RealTimeChat({
   const {
     suggestions,
     generateSuggestion,
-    expandMedicalTerm: _expandMedicalTerm,
-    checkSymptoms: _checkSymptoms,
-    isProcessing: _isProcessing,
+    expandMedicalTerm: expandMedicalTerm,
+    checkSymptoms: checkSymptoms,
+    isProcessing: isProcessing,
   } = useAIAssistant(sessionId);
 
-  const { complianceStatus, flagMessage: _flagMessage, checkCompliance: _checkCompliance } =
+  const { complianceStatus, flagMessage: flagMessage, checkCompliance: checkCompliance } =
     useChatCompliance(sessionId);
 
   const { auditLog, exportChatHistory, generateAuditReport } = useChatAudit(sessionId);
@@ -114,12 +114,12 @@ export function RealTimeChat({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-scroll to bottom when new messages arrive
-  useEffect(_() => {
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   // Auto-resize textarea
-  useEffect(_() => {
+  useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
@@ -127,7 +127,7 @@ export function RealTimeChat({
   }, [newMessage]);
 
   // Mark messages as read when they come into view
-  useEffect(_() => {
+  useEffect(() => {
     const unreadMessages = messages.filter(
       m =>
         m.senderType !== participantRole
@@ -137,12 +137,12 @@ export function RealTimeChat({
     );
 
     if (unreadMessages.length > 0) {
-      unreadMessages.forEach(_message => markAsRead(message.id));
+      unreadMessages.forEach(message => markAsRead(message.id));
     }
   }, [messages, participantRole, markAsRead]);
 
   // Auto AI assistance for medical terms
-  useEffect(_() => {
+  useEffect(() => {
     if (enableAI && autoAIAssist && newMessage.length > 10) {
       const medicalTerms = extractMedicalTerms(newMessage);
       if (medicalTerms.length > 0) {
@@ -161,7 +161,7 @@ export function RealTimeChat({
     ];
 
     const terms: string[] = [];
-    medicalPatterns.forEach(_pattern => {
+    medicalPatterns.forEach(pattern => {
       const matches = text.match(pattern);
       if (matches) {
         terms.push(...matches);
@@ -172,7 +172,7 @@ export function RealTimeChat({
   }, []);
 
   // Filter messages based on search and filter type
-  const filteredMessages = useCallback(_() => {
+  const filteredMessages = useCallback(() => {
     let filtered = messages;
 
     // Filter by type
@@ -214,7 +214,7 @@ export function RealTimeChat({
   }, [messages, filterType, searchQuery, showSystemMessages]);
 
   // Handle send message
-  const handleSendMessage = useCallback(_async () => {
+  const handleSendMessage = useCallback(async () => {
     if (!newMessage.trim() || isSending) return;
 
     try {
@@ -378,9 +378,9 @@ export function RealTimeChat({
   );
 
   // Handle export chat
-  const handleExportChat = useCallback(_async () => {
+  const handleExportChat = useCallback(async () => {
     try {
-      const _exportData = await exportChatHistory('pdf');
+      const exportData = await exportChatHistory('pdf');
       toast.success('Histórico exportado com sucesso');
     } catch (_error) {
       console.error('Error exporting chat:', error);
@@ -687,7 +687,7 @@ export function RealTimeChat({
                         </div>
                       </div>
                     )
-                    : (_<>
+                    : (<>
                         <div className='text-sm'>{message.content}</div>
 
                         {/* Medical Terms Highlight */}
@@ -832,11 +832,11 @@ export function RealTimeChat({
       <div className='p-4 border-t border-gray-200 bg-gray-50'>
         <div className='flex items-end space-x-2'>
           {/* File Upload */}
-          {enableFileSharing && (_<div>
+          {enableFileSharing && (<div>
               <input
                 ref={fileInputRef}
                 type='file'
-                accept='image/*,_.pdf,_.txt'
+                accept='image/*, .pdf, .txt'
                 onChange={handleFileUpload}
                 className='hidden'
               />
@@ -881,7 +881,7 @@ export function RealTimeChat({
         </div>
 
         {/* Quick Actions */}
-        {enableAI && (_<div className='flex items-center space-x-2 mt-2'>
+        {enableAI && (<div className='flex items-center space-x-2 mt-2'>
             <Button
               variant='ghost'
               size='sm'
@@ -952,7 +952,7 @@ export function RealTimeChat({
             <div>
               <h4 className='font-medium mb-2'>Atividades Recentes</h4>
               <ScrollArea className='h-48'>
-                {auditLog.slice(0, 10).map(_(entry, _index) => (
+                {auditLog.slice(0, 10).map((entry, _index) => (
                   <div
                     key={index}
                     className='flex justify-between text-xs text-gray-600 py-1'

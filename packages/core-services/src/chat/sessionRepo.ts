@@ -9,7 +9,7 @@ export class SessionRepo {
     locale: ChatSession["locale"] = "pt-BR",
   ): Promise<ChatSession> {
     const id = crypto.randomUUID();
-    const _now = new Date().toISOString();
+    const now = new Date().toISOString();
     const sess: ChatSession = {
       id,
       userId,

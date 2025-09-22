@@ -24,7 +24,7 @@ export class PatientService {
   async createPatient(_request: CreatePatientRequest): Promise<Patient> {
     try {
       // Validate required fields
-      this.validateCreateRequest(_request);
+      this.validateCreateRequest(request);
 
       // Check for duplicate medical record number
       const existingPatient = await this.patientRepository.findByMedicalRecordNumber(request.medicalRecordNumber);
@@ -38,10 +38,10 @@ export class PatientService {
       }
 
       // Create patient
-      const patient = await this.patientRepository.create(_request);
+      const patient = await this.patientRepository.create(request);
 
       return patient;
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof PatientValidationError) {
         throw error;
       }
@@ -69,7 +69,7 @@ export class PatientService {
       const updatedPatient = await this.patientRepository.update(id, _request);
 
       return updatedPatient;
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof PatientValidationError) {
         throw error;
       }
@@ -83,7 +83,7 @@ export class PatientService {
   async getPatient(id: string): Promise<Patient | null> {
     try {
       return await this.patientRepository.findById(id);
-    } catch (_error) {
+    } catch (error) {
       throw new PatientError(`Failed to get patient: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -98,7 +98,7 @@ export class PatientService {
     try {
       const filter: PatientFilter = { clinicId };
       return await this.patientRepository.findWithFilter(filter, options);
-    } catch (_error) {
+    } catch (error) {
       throw new PatientError(`Failed to get patients: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -113,7 +113,7 @@ export class PatientService {
   ): Promise<PatientSearchResult> {
     try {
       return await this.patientRepository.search(query, clinicId, options);
-    } catch (_error) {
+    } catch (error) {
       throw new PatientError(`Failed to search patients: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -130,7 +130,7 @@ export class PatientService {
       }
 
       return await this.patientRepository.delete(id);
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof PatientValidationError) {
         throw error;
       }
@@ -144,7 +144,7 @@ export class PatientService {
   async countPatients(filter: PatientFilter): Promise<number> {
     try {
       return await this.patientRepository.count(filter);
-    } catch (_error) {
+    } catch (error) {
       throw new PatientError(`Failed to count patients: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
@@ -176,7 +176,7 @@ export class PatientService {
     // Validate birth date if provided
     if (request.birthDate) {
       const birthDate = new Date(request.birthDate);
-      const _now = new Date();
+      const now = new Date();
       
       if (isNaN(birthDate.getTime())) {
         throw new PatientValidationError("Invalid birth date format");

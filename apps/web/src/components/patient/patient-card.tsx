@@ -81,17 +81,17 @@ export interface PatientCardProps {
  * PatientCard - Mobile-optimized patient card component
  * Displays patient information with Brazilian healthcare compliance
  */
-export const PatientCard = memo<PatientCardProps>(_({
-    patient,_variant = 'default',_showActions = true,
+export const PatientCard = memo<PatientCardProps>(({
+    patient, variant = 'default', showActions = true,
     lgpdConsent = {
       canShowFullData: true,
       canShowSensitiveData: false,
-      consentLevel: 'basic',_},_mobileOptimized = true,_onClick,_onView,_onEdit,_onDelete,_isLoading = false,_error = null,_ariaLabel,_testId = 'patient-card',_}) => {
+      consentLevel: 'basic', }, mobileOptimized = true,onClick, onView,onEdit, onDelete, isLoading = false, error = null,ariaLabel, testId = 'patient-card', }) => {
     const navigate = useNavigate();
     const { announcePolite } = useScreenReaderAnnouncer();
 
     // Handle card click navigation
-    const handleCardClick = useCallback(_() => {
+    const handleCardClick = useCallback(() => {
       announcePolite(`Navegando para o perfil do paciente ${displayData.name}`);
       if (onClick) {
         onClick(patient);
@@ -148,7 +148,7 @@ export const PatientCard = memo<PatientCardProps>(_({
     );
 
     // Format patient data based on LGPD consent
-    const displayData = useMemo(_() => {
+    const displayData = useMemo(() => {
       const { canShowFullData, canShowSensitiveData } = lgpdConsent;
 
       return {
@@ -178,7 +178,7 @@ export const PatientCard = memo<PatientCardProps>(_({
     }, [patient, lgpdConsent]);
 
     // Get patient status badge
-    const statusBadge = useMemo(_() => {
+    const statusBadge = useMemo(() => {
       const status = patient.status || 'active';
       const statusConfig = {
         active: {
@@ -211,7 +211,7 @@ export const PatientCard = memo<PatientCardProps>(_({
     }, [patient.status]);
 
     // Get LGPD consent badge
-    const lgpdBadge = useMemo(_() => {
+    const lgpdBadge = useMemo(() => {
       const { consentLevel } = lgpdConsent;
       const consentConfig = {
         full: {

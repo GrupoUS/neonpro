@@ -9,11 +9,11 @@ import React from 'react';
 import { vi } from 'vitest';
 
 // Mock useQuery to return empty data
-vi.mock(_'@tanstack/react-query',_async () => {
+vi.mock(_'@tanstack/react-query',async () => {
   const actual = await vi.importActual('@tanstack/react-query');
   return {
     ...actual,
-    useQuery: vi.fn(_() => ({
+    useQuery: vi.fn(() => ({
       data: [],
       isLoading: false,
       error: null,
@@ -22,13 +22,13 @@ vi.mock(_'@tanstack/react-query',_async () => {
 });
 
 // Mock auth + supabase to avoid runtime errors and return empty datasets
-vi.mock(_'@/hooks/useAuth',_() => ({
+vi.mock(('@/hooks/useAuth', () => ({
   useAuth: () => ({
     user: { id: 'test-user', email: 'test@example.com' },
     session: { user: { id: 'test-user', email: 'test@example.com' } },
     profile: {
       _role: 'admin',
-      permissions: { canViewAllAppointments: true },_} as any,
+      permissions: { canViewAllAppointments: true }, } as any,
     loading: false,
     isAuthenticated: true,
     hasPermission: () => true,
@@ -36,7 +36,7 @@ vi.mock(_'@/hooks/useAuth',_() => ({
   }),
 }));
 
-vi.mock(_'@/integrations/supabase/client',_() => {
+vi.mock(('@/integrations/supabase/client', () => {
   const makeChain = (_result: any) => {
     const p: any = Promise.resolve(result);
     p.select = () => p;
@@ -84,11 +84,11 @@ function Wrapper() {
   );
 }
 
-describe(_'Appointments route',_() => {
-  it(_'shows empty state when no appointments',_async () => {
+describe(('Appointments route', () => {
+  it(_'shows empty state when no appointments',async () => {
     render(<Wrapper />);
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(
         screen.getByText(/Nenhum agendamento encontrado/i),
       ).toBeInTheDocument();

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { generatePDFFilename } from '../hooks/usePDFExport';
 
-describe(_'PDF Export Utils',_() => {
-  describe(_'generatePDFFilename',_() => {
-    it(_'should generate correct filename for assessment',_() => {
+describe(('PDF Export Utils', () => {
+  describe(('generatePDFFilename', () => {
+    it(('should generate correct filename for assessment', () => {
       const filename = generatePDFFilename(
         'assessment',
         'João Silva',
@@ -12,7 +12,7 @@ describe(_'PDF Export Utils',_() => {
       expect(filename).toBe('avaliacao_estetica_joao_silva_2024-01-01.pdf');
     });
 
-    it(_'should generate correct filename for treatment plan',_() => {
+    it(('should generate correct filename for treatment plan', () => {
       const filename = generatePDFFilename(
         'treatment',
         'Maria Santos',
@@ -21,7 +21,7 @@ describe(_'PDF Export Utils',_() => {
       expect(filename).toBe('plano_tratamento_maria_santos_2024-02-15.pdf');
     });
 
-    it(_'should clean special characters from name',_() => {
+    it(('should clean special characters from name', () => {
       const filename = generatePDFFilename(
         'consent',
         'José Carlos-Silva (Jr.)',
@@ -32,7 +32,7 @@ describe(_'PDF Export Utils',_() => {
       );
     });
 
-    it(_'should use current date when not provided',_() => {
+    it(('should use current date when not provided', () => {
       const filename = generatePDFFilename('assessment', 'Test User');
       expect(filename).toMatch(
         /^avaliacao_estetica_test_user_\d{4}-\d{2}-\d{2}\.pdf$/,

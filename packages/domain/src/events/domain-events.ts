@@ -53,7 +53,7 @@ export interface PatientAnonymizedEvent extends DomainEvent {
   data: {
     patientId: string;
     anonymizedBy: string;
-    reason: 'gdpr_request' | 'data_retention' | 'other';
+    reason: 'gdpr_request' | 'data_retention' | ''other'
   };
 }
 
@@ -210,7 +210,7 @@ export interface ComplianceCheckedEvent extends DomainEvent {
   aggregateType: 'Patient';
   data: {
     patientId: string;
-    status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT';
+    status: 'COMPLIANT' | 'NON_COMPLIANT' | ''PARTIALLY_COMPLIANT'
     riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
     violationCount: number;
     checkedBy: string;

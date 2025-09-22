@@ -62,7 +62,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
         "5.1234.5678.456-7",
       ];
 
-      validRegisters.forEach(_(register) => {
+      validRegisters.forEach((register) => {
         const result = v.safeParse(ANVISARegisterNumberSchema, register);
         expect(result.success).toBe(true);
         if (result.success) {
@@ -81,7 +81,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
         "1.2345.6789.123-45", // Wrong check digit length
       ];
 
-      invalidRegisters.forEach(_(register) => {
+      invalidRegisters.forEach((register) => {
         const result = v.safeParse(ANVISARegisterNumberSchema, register);
         expect(result.success).toBe(false);
       });
@@ -97,7 +97,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
         "1234567890128", // Valid EAN-13
       ];
 
-      validBarcodes.forEach(_(barcode) => {
+      validBarcodes.forEach((barcode) => {
         const result = v.safeParse(PharmaceuticalBarcodeSchema, barcode);
         expect(result.success).toBe(true);
       });
@@ -111,7 +111,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
         "7891234567891", // Invalid check digit
       ];
 
-      invalidBarcodes.forEach(_(barcode) => {
+      invalidBarcodes.forEach((barcode) => {
         const result = v.safeParse(PharmaceuticalBarcodeSchema, barcode);
         expect(result.success).toBe(false);
       });
@@ -133,7 +133,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
         "1 aplicação",
       ];
 
-      validDosages.forEach(_(dosage) => {
+      validDosages.forEach((dosage) => {
         const result = v.safeParse(DosageSchema, dosage);
         expect(result.success).toBe(true);
         if (result.success) {
@@ -151,7 +151,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
         "", // Empty
       ];
 
-      invalidDosages.forEach(_(dosage) => {
+      invalidDosages.forEach((dosage) => {
         const result = v.safeParse(DosageSchema, dosage);
         expect(result.success).toBe(false);
       });
@@ -173,7 +173,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
         "3 gotas no olho direito",
       ];
 
-      validFrequencies.forEach(_(frequency) => {
+      validFrequencies.forEach((frequency) => {
         const result = v.safeParse(FrequencySchema, frequency);
         expect(result.success).toBe(true);
         if (result.success) {
@@ -190,7 +190,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
         "muito",
       ];
 
-      invalidFrequencies.forEach(_(frequency) => {
+      invalidFrequencies.forEach((frequency) => {
         const result = v.safeParse(FrequencySchema, frequency);
         expect(result.success).toBe(false);
       });
@@ -208,7 +208,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
         "por tempo indeterminado",
       ];
 
-      validDurations.forEach(_(duration) => {
+      validDurations.forEach((duration) => {
         const result = v.safeParse(DurationSchema, duration);
         expect(result.success).toBe(true);
         if (result.success) {
@@ -225,7 +225,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
         "dias", // Missing quantity
       ];
 
-      invalidDurations.forEach(_(duration) => {
+      invalidDurations.forEach((duration) => {
         const result = v.safeParse(DurationSchema, duration);
         expect(result.success).toBe(false);
       });
@@ -234,7 +234,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
 
   describe(""Prescription Expiration Validation") => {
     it(""should validate correct expiration dates") => {
-      const _now = new Date();
+      const now = new Date();
       const issueDate = now.toISOString().split("T")[0]; // Date only format YYYY-MM-DD
       const validExpiration = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
         .toISOString()
@@ -250,7 +250,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
     });
 
     it(""should reject expired prescriptions at issue") => {
-      const _now = new Date();
+      const now = new Date();
       const issueDate = now.toISOString().split("T")[0];
       const expiredDate = new Date(now.getTime() - 24 * 60 * 60 * 1000)
         .toISOString()
@@ -266,7 +266,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
     });
 
     it(""should reject prescriptions with excessive validity period") => {
-      const _now = new Date();
+      const now = new Date();
       const issueDate = now.toISOString().split("T")[0];
       const tooLongExpiration = new Date(
         now.getTime() + 200 * 24 * 60 * 60 * 1000,
@@ -288,7 +288,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
     it(""should validate correct medication prices") => {
       const validPrices = [0, 10.5, 999.99, 500];
 
-      validPrices.forEach(_(price) => {
+      validPrices.forEach((price) => {
         const result = v.safeParse(MedicationPriceSchema, price);
         expect(result.success).toBe(true);
         if (result.success) {
@@ -300,7 +300,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
     it(""should reject invalid medication prices") => {
       const invalidPrices = [-1, 1000000, NaN, Infinity];
 
-      invalidPrices.forEach(_(price) => {
+      invalidPrices.forEach((price) => {
         const result = v.safeParse(MedicationPriceSchema, price);
         expect(result.success).toBe(false);
       });
@@ -434,7 +434,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
 
   describe(""Prescription Creation Schema") => {
     it(""should validate complete prescription creation") => {
-      const _now = new Date();
+      const now = new Date();
       const expiration = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
       const validPrescription = {
@@ -486,7 +486,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
     });
 
     it(""should reject prescription without required compliance verification") => {
-      const _now = new Date();
+      const now = new Date();
       const expiration = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
       const invalidPrescription = {
@@ -541,7 +541,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
     });
 
     it(""should reject prescription with controlled substance violations") => {
-      const _now = new Date();
+      const now = new Date();
       const expiration = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
       const invalidPrescription = {
@@ -712,7 +712,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
         "cancelled",
       ];
 
-      validStatuses.forEach(_(status) => {
+      validStatuses.forEach((status) => {
         const result = v.safeParse(PrescriptionStatusSchema, status);
         expect(result.success).toBe(true);
       });
@@ -727,7 +727,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
         "insulin",
       ];
 
-      validTypes.forEach(_(type) => {
+      validTypes.forEach((type) => {
         const result = v.safeParse(MedicationTypeSchema, type);
         expect(result.success).toBe(true);
       });
@@ -742,7 +742,7 @@ describe(""Digital Prescription Validation - TDD RED Phase") => {
         "inhalation",
       ];
 
-      validRoutes.forEach(_(route) => {
+      validRoutes.forEach((route) => {
         const result = v.safeParse(AdministrationRouteSchema, route);
         expect(result.success).toBe(true);
       });

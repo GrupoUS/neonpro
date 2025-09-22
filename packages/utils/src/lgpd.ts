@@ -24,7 +24,7 @@ export function redactPhone(text: string): string {
 }
 
 export function lgpdCompliance(input: string): string {
-  return [redactCPF, redactCNPJ, redactEmail, redactPhone].reduce(_(acc,_fn) => fn(acc),
+  return [redactCPF, redactCNPJ, redactEmail, redactPhone].reduce((acc, fn) => fn(acc),
     input,
   );
 }

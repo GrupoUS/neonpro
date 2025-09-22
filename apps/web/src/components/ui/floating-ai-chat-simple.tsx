@@ -13,7 +13,7 @@ interface FloatingAIChatSimpleProps {
   patientId?: string;
   userRole?: string;
   lgpdCompliant?: boolean;
-  onAuditLog?: (action: string, details?: Record<string,_any>) => void;
+  onAuditLog?: (action: string, details?: Record<string, any>) => void;
   onEmergencyDetected?: () => void;
 }
 
@@ -45,7 +45,7 @@ export default function FloatingAIChatSimple({
   const [inputValue, setInputValue] = useState('');
 
   // Handle escape key to close chat
-  useEffect(_() => {
+  useEffect(() => {
     const handleEscape = (_event: any) => {
       if (event.key === 'Escape' && isOpen) {
         setIsOpen(false);
@@ -57,7 +57,7 @@ export default function FloatingAIChatSimple({
   }, [isOpen]);
 
   // Handle body scroll when chat is open
-  useEffect(_() => {
+  useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } else {
@@ -146,7 +146,7 @@ export default function FloatingAIChatSimple({
       </div>
 
       {/* Chat Modal/Popup */}
-      {isOpen && (_<>
+      {isOpen && (<>
           {/* Backdrop */}
           <div
             className='fixed inset-0 bg-black/20 backdrop-blur-sm z-40'
@@ -266,11 +266,11 @@ export default function FloatingAIChatSimple({
                 : searchSuggestions?.length
                 ? (
                   <div className='flex flex-wrap gap-2'>
-                    {searchSuggestions.slice(0, 4).map((s: string) => (_<button
+                    {searchSuggestions.slice(0, 4).map((s: string) => (<button
                         key={s}
                         onClick={() => {
                           setInputValue(s);
-                          setTimeout(_() => handleSendMessage(), 0);
+                          setTimeout(() => handleSendMessage(), 0);
                         }}
                         className='text-xs px-2 py-1 rounded-full border border-[#D2D0C8] text-[#112031] hover:bg-[#F6F5F2]'
                       >

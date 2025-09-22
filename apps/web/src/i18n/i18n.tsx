@@ -26,8 +26,8 @@ export function I18nProvider({
 }) {
   const [locale, setLocale] = useState<LocaleKey>(defaultLocale);
   const dict = DICTS[locale] || ptBR;
-  const value = useMemo(_() => (_{
-      locale,_setLocale,
+  const value = useMemo(() => ({
+      locale,setLocale,
       t: (k: string) => dict[k] ?? k,
     }),
     [locale],

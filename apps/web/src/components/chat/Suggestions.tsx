@@ -29,7 +29,7 @@ export function Suggestions({
 
   if (!visible.length) return null;
 
-  return (_<div aria-label='suggestions-list' role='list'>
+  return (<div aria-label='suggestions-list' role='list'>
       {visible.map(item => (
         <button
           key={item.id}

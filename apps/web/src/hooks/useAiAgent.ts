@@ -70,7 +70,7 @@ export interface UseAiAgentReturn {
   // Actions
   sendMessage: (_query: string, options?: {
     _context?: Record<string, any>;
-    metadata?: Record<string,_any>;
+    metadata?: Record<string, any>;
   }) => Promise<void>;
   createNewSession: (title?: string) => Promise<string>;
   clearMessages: () => void;
@@ -144,7 +144,7 @@ const apiCall = async (endpoint: string, options: RequestInit = {}): Promise<any
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(_() => ({ error: { message: 'Unknown error' } }));
+    const error = await response.json().catch(() => ({ error: { message: 'Unknown error' } }));
     throw new Error(error.error?.message || 'Request failed');
   }
 
@@ -154,14 +154,14 @@ const apiCall = async (endpoint: string, options: RequestInit = {}): Promise<any
 const sendDataAgentQuery = async (_request: DataAgentRequest): Promise<DataAgentResponse> => {
   return apiCall('/data-agent', {
     method: 'POST',
-    body: JSON.stringify(_request),
+    body: JSON.stringify(request),
   });
 };
 
 const createSession = async (_request: CreateSessionRequest): Promise<SessionResponse> => {
   return apiCall('/sessions', {
     method: 'POST',
-    body: JSON.stringify(_request),
+    body: JSON.stringify(request),
   });
 };
 
@@ -236,8 +236,8 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
   const queryClient = useQueryClient();
 
   // Load existing session
-  const { data: _sessionData, isLoading: isLoadingSession, error: sessionError } = useQuery({
-    queryKey: ['ai-session',_currentSessionId],
+  const { data: sessionData, isLoading: isLoadingSession, error: sessionError } = useQuery({
+    queryKey: ['ai-session', currentSessionId],
     queryFn: () => getSession(currentSessionId!),
     enabled: !!currentSessionId,
     onSuccess: data => {
@@ -296,7 +296,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
       }
       setError(null);
     },
-    onSuccess: (_response, _variables) => {
+    onSuccess: (response, variables) => {
       if (response.success && response.response) {
         const assistantMessage: ChatMessage = {
           id: response.response.id,
@@ -368,7 +368,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
   });
 
   // Delete session mutation
-  const _deleteSessionMutation = useMutation({
+  const deleteSessionMutation = useMutation({
     mutationFn: deleteSession,
     onSuccess: () => {
       setCurrentSessionId(null);
@@ -394,14 +394,14 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
     _query: string,
     messageOptions?: {
       _context?: Record<string, any>;
-      metadata?: Record<string,_any>;
+      metadata?: Record<string, any>;
     },
   ) => {
     if (!query.trim()) return;
 
     // Create session if needed
     if (!currentSessionId && autoCreateSession) {
-      setPendingMessage(_query);
+      setPendingMessage(query);
       createSessionMutation.mutate({
         title: query.slice(0, 50) + (query.length > 50 ? '...' : ''),
         domain: userContext.domain,
@@ -453,12 +453,12 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
     throw new Error('Failed to create session');
   }, [createSessionMutation, userContext, lgpdConsent]);
 
-  const clearMessages = useCallback(_() => {
+  const clearMessages = useCallback(() => {
     setMessages([]);
     setError(null);
   }, []);
 
-  const retryLastMessage = useCallback(_async () => {
+  const retryLastMessage = useCallback(async () => {
     const lastUserMessage = [...messages].reverse().find(msg => msg.role === 'user');
     if (lastUserMessage) {
       await sendMessage(lastUserMessage.content);
@@ -500,7 +500,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
     });
   }, [currentSessionId, quickFeedbackMutation]);
 
-  const endCurrentSession = useCallback(_async () => {
+  const endCurrentSession = useCallback(async () => {
     if (currentSessionId) {
       await updateSessionMutation.mutateAsync({
         sessionId: currentSessionId,
@@ -556,14 +556,14 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
   const isLoading = sendMessageMutation.isPending || createSessionMutation.isPending;
 
   // Effect to handle session changes
-  useEffect(_() => {
+  useEffect(() => {
     if (currentSessionId !== initialSessionId) {
       onSessionChange?.(currentSessionId);
     }
   }, [currentSessionId, initialSessionId, onSessionChange]);
 
   // Effect to handle session errors
-  useEffect(_() => {
+  useEffect(() => {
     if (sessionError) {
       setError(sessionError as Error);
       onError?.(sessionError as Error);
@@ -571,7 +571,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
   }, [sessionError, onError]);
 
   // Cleanup effect
-  useEffect(_() => {
+  useEffect(() => {
     return () => {
       // Cleanup any pending operations
       setPendingMessage(null);

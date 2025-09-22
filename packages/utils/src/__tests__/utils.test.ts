@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
 
-describe(_"Utilities",_() => {
-  it(_"should export utility functions",_() => {
+describe("Utilities", () => {
+  it("should export utility functions", () => {
     // Placeholder for utility function tests
     expect(true).toBe(true);
   });
 
-  it(_"should handle utility operations correctly",_() => {
+  it("should handle utility operations correctly", () => {
     // Placeholder for utility operation tests
     expect(true).toBe(true);
   });

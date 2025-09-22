@@ -57,46 +57,46 @@ const createMockSupabaseClient = () => {
   } as unknown as SupabaseClient;
 };
 
-describe(_"Repository Pattern Integration Tests",_() => {
+describe("Repository Pattern Integration Tests", () => {
   let container: RepositoryContainer;
   let mockSupabase: SupabaseClient;
   let patientService: PatientService;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     mockSupabase = createMockSupabaseClient();
     container = RepositoryContainer.initialize(mockSupabase);
     patientService = new PatientService(container.getPatientRepository());
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     container.reset();
   });
 
-  describe(_"RepositoryContainer",_() => {
-    it(_"should initialize with Supabase client",_() => {
+  describe("RepositoryContainer", () => {
+    it("should initialize with Supabase client", () => {
       expect(container).toBeInstanceOf(RepositoryContainer);
     });
 
-    it(_"should provide singleton instance",_() => {
+    it("should provide singleton instance", () => {
       const instance1 = RepositoryContainer.getInstance();
       const instance2 = RepositoryContainer.getInstance();
       expect(instance1).toBe(instance2);
     });
 
-    it(_"should provide all repositories",_() => {
+    it("should provide all repositories", () => {
       const repositories = container.getRepositories();
       expect(repositories).toHaveProperty("patient");
       expect(repositories).toHaveProperty("consent");
       expect(repositories).toHaveProperty("appointment");
     });
 
-    it(_"should provide all services",_() => {
+    it("should provide all services", () => {
       const services = container.getServices();
       expect(services).toHaveProperty("audit");
       expect(services).toHaveProperty("consent");
     });
 
-    it(_"should reset all instances",_() => {
+    it("should reset all instances", () => {
       const repo1 = container.getPatientRepository();
       container.reset();
       const repo2 = container.getPatientRepository();
@@ -104,7 +104,7 @@ describe(_"Repository Pattern Integration Tests",_() => {
     });
   });
 
-  describe(_"PatientService with Repository Pattern",_() => {
+  describe("PatientService with Repository Pattern", () => {
     it(_"should create patient with validation",_async () => {
       const _request: CreatePatientRequest = {
         clinicId: "test-clinic-id",
@@ -116,7 +116,7 @@ describe(_"Repository Pattern Integration Tests",_() => {
         lgpdConsentGiven: true
       };
 
-      const patient = await patientService.createPatient(_request);
+      const patient = await patientService.createPatient(request);
       expect(patient).toBeDefined();
       expect(patient.id).toBe("test-patient-id");
     });
@@ -148,7 +148,7 @@ describe(_"Repository Pattern Integration Tests",_() => {
         lgpdConsentGiven: true
       };
 
-      await expect(patientService.createPatient(_request))
+      await expect(patientService.createPatient(request))
         .rejects.toThrow("Invalid CPF format");
     });
 
@@ -164,7 +164,7 @@ describe(_"Repository Pattern Integration Tests",_() => {
         lgpdConsentGiven: true
       };
 
-      await expect(patientService.createPatient(_request))
+      await expect(patientService.createPatient(request))
         .rejects.toThrow("Invalid primary phone number format");
     });
 
@@ -180,7 +180,7 @@ describe(_"Repository Pattern Integration Tests",_() => {
         lgpdConsentGiven: true
       };
 
-      await expect(patientService.createPatient(_request))
+      await expect(patientService.createPatient(request))
         .rejects.toThrow("Invalid email format");
     });
 
@@ -217,7 +217,7 @@ describe(_"Repository Pattern Integration Tests",_() => {
     });
   });
 
-  describe(_"Error Handling",_() => {
+  describe("Error Handling", () => {
     it(_"should handle database errors gracefully",_async () => {
       // Mock a database error
       const errorSupabase = {
@@ -255,7 +255,7 @@ describe(_"Repository Pattern Integration Tests",_() => {
         lgpdConsentGiven: true
       };
 
-      await expect(patientService.createPatient(_request))
+      await expect(patientService.createPatient(request))
         .rejects.toThrow("Birth date cannot be in the future");
     });
 
@@ -274,8 +274,8 @@ describe(_"Repository Pattern Integration Tests",_() => {
     });
   });
 
-  describe(_"Repository Pattern Benefits",_() => {
-    it(_"should provide clean separation of concerns",_() => {
+  describe("Repository Pattern Benefits", () => {
+    it("should provide clean separation of concerns", () => {
       const repository = container.getPatientRepository();
       expect(repository).toHaveProperty("findById");
       expect(repository).toHaveProperty("create");
@@ -283,14 +283,14 @@ describe(_"Repository Pattern Integration Tests",_() => {
       expect(repository).toHaveProperty("delete");
     });
 
-    it(_"should enable easy testing with dependency injection",_() => {
+    it("should enable easy testing with dependency injection", () => {
       // The fact that we can inject a mock Supabase client
       // demonstrates the benefit of dependency injection
       expect(container).toBeDefined();
       expect(patientService).toBeDefined();
     });
 
-    it(_"should provide consistent interface across repositories",_() => {
+    it("should provide consistent interface across repositories", () => {
       const patientRepo = container.getPatientRepository();
       const consentRepo = container.getConsentRepository();
       const appointmentRepo = container.getAppointmentRepository();

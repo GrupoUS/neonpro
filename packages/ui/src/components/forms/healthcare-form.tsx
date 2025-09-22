@@ -16,19 +16,20 @@ import React, {
   useContext,
   useState,
   useEffect,
-  useRef,
+  useRef
 } from "react";
+import { z } from "zod";
 import { cn } from "../../lib/utils";
 import { useHealthcareTheme } from "../healthcare/healthcare-theme-provider";
 import {
   DataSensitivity,
-  validateEmergencyData,
+  validateEmergencyData
 } from "../../utils/healthcare-validation";
 import {
   announceToScreenReader,
   HealthcarePriority,
   useFocusTrap,
-  generateAccessibleId,
+  generateAccessibleId
 } from "../../utils/accessibility";
 
 // Healthcare form validation context
@@ -79,9 +80,9 @@ export interface HealthcareFormProps
   // Form submission
   onSubmit?: (
     data: FormData,
-    _context: HealthcareFormContext,
+    context: HealthcareFormContext,
   ) => Promise<void> | void;
-  onError?: (errors: Record<string,_string[]>) => void;
+  onError?: (errors: Record<string,string[]>) => void;
 
   // Accessibility
   ariaLabel?: string;
@@ -151,14 +152,14 @@ export function HealthcareForm({
 
   // Error management functions
   const setFieldError = (field: string, fieldErrors: string[]) => {
-    setErrors(_(prev) => ({
+    setErrors((prev) => ({
       ...prev,
-      [field]: fieldErrors,
+      [field]: fieldErrors
     }));
   };
 
   const clearFieldError = (field: string) => {
-    setErrors(_(prev) => {
+    setErrors((prev) => {
       const newErrors = { ...prev };
       delete newErrors[field];
       return newErrors;
@@ -204,7 +205,7 @@ export function HealthcareForm({
       if (patientDataForm) {
         const emergencyValidation = validateEmergencyData(formDataObject);
         if (!emergencyValidation.isValid) {
-          emergencyValidation.errors.forEach(_(error) => {
+          emergencyValidation.errors.forEach((error) => {
             announceError(error);
           });
           setFieldError("emergency", emergencyValidation.errors);
@@ -216,11 +217,11 @@ export function HealthcareForm({
       if (validationSchema) {
         try {
           await validationSchema.parseAsync(formDataObject);
-        } catch (_validationError) {
+        } catch (validationError) {
           if (validationError instanceof z.ZodError) {
             const fieldErrors: Record<string, string[]> = {};
 
-            validationError.errors.forEach(_(error) => {
+            validationError.errors.forEach((error: z.ZodIssue) => {
               const field = error.path.join(".");
               if (!fieldErrors[field]) {
                 fieldErrors[field] = [];
@@ -243,7 +244,7 @@ export function HealthcareForm({
       }
 
       // Form context for submission
-      const _context: HealthcareFormContext = {
+      const context: HealthcareFormContext = {
         isSubmitting: true,
         hasErrors: false,
         dataSensitivity,
@@ -255,11 +256,11 @@ export function HealthcareForm({
         setFieldError,
         clearFieldError,
         formId,
-        announceError,
+        announceError
       };
 
       // Call onSubmit handler
-      await onSubmit?.(formData, _context);
+      await onSubmit?.(formData, context);
 
       // Success announcement
       announceToScreenReader(
@@ -268,7 +269,7 @@ export function HealthcareForm({
           : "Formulário enviado com sucesso",
         emergencyForm ? HealthcarePriority.EMERGENCY : HealthcarePriority.HIGH,
       );
-    } catch (_error) {
+    } catch (error) {
       console.error("Healthcare form submission error:", error);
 
       const errorMessage =
@@ -284,7 +285,7 @@ export function HealthcareForm({
   };
 
   // Keyboard shortcuts for emergency forms
-  useEffect(_() => {
+  useEffect(() => {
     if (!emergencyShortcuts || !emergencyForm) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -326,7 +327,7 @@ export function HealthcareForm({
     setFieldError,
     clearFieldError,
     formId,
-    announceError,
+    announceError
   };
 
   // Form CSS classes
@@ -337,7 +338,7 @@ export function HealthcareForm({
       "healthcare-form--emergency": emergencyForm,
       "healthcare-form--patient-data": patientDataForm,
       "healthcare-form--submitting": isSubmitting,
-      "healthcare-form--has-errors": contextValue.hasErrors,
+      "healthcare-form--has-errors": contextValue.hasErrors
     },
     className,
   );
@@ -422,7 +423,7 @@ export function HealthcareForm({
               <input
                 type="checkbox"
                 checked={consentGiven}
-                onChange={(_e) => setConsentGiven(e.target.checked)}
+                onChange={(e) => setConsentGiven(e.target.checked)}
                 className="mt-0.5"
                 aria-describedby={`${formId}-consent-description`}
               />
@@ -448,13 +449,13 @@ export function HealthcareForm({
               Erros no formulário:
             </h3>
             <ul className="list-disc list-inside space-y-1 text-sm text-destructive">
-              {errors.submit?.map((error,_index) => (
+              {errors.submit?.map((error,index) => (
                 <li key={`submit-${index}`}>{error}</li>
               ))}
-              {errors.consent?.map(_(error,_index) => (
+              {errors.consent?.map((error,index) => (
                 <li key={`consent-${index}`}>{error}</li>
               ))}
-              {errors.emergency?.map(_(error,_index) => (
+              {errors.emergency?.map((error,index) => (
                 <li key={`emergency-${index}`}>{error}</li>
               ))}
             </ul>
@@ -473,7 +474,7 @@ export function HealthcareForm({
 export function useHealthcareForm(): HealthcareFormContext {
   const context = useContext(HealthcareFormContext);
 
-  if (!_context) {
+  if (!context) {
     throw new Error("useHealthcareForm must be used within a HealthcareForm");
   }
 

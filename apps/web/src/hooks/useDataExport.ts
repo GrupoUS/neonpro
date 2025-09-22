@@ -72,7 +72,7 @@ export function useDataExport(): UseDataExportReturn {
       }
 
       // Add data rows
-      data.forEach(_(row, _index) => {
+      data.forEach((row, _index) => {
         const values = headers.map(header => {
           let value = row[header];
 
@@ -176,9 +176,9 @@ export function useDataExport(): UseDataExportReturn {
           <tbody>
     `;
 
-      data.forEach(_(row, _index) => {
+      data.forEach((row, _index) => {
         html += '<tr>';
-        headers.forEach(_header => {
+        headers.forEach(header => {
           let value = row[header];
 
           // Handle different data types
@@ -294,7 +294,7 @@ export function useDataExport(): UseDataExportReturn {
         );
 
         // Reset status after a delay
-        setTimeout(_() => {
+        setTimeout(() => {
           setStatus('idle');
           setProgress(0);
         }, 3000);
@@ -307,7 +307,7 @@ export function useDataExport(): UseDataExportReturn {
         toast.error(`Erro na exportação: ${errorMessage}`);
 
         // Reset status after a delay
-        setTimeout(_() => {
+        setTimeout(() => {
           setStatus('idle');
           setProgress(0);
           setError(null);

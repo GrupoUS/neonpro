@@ -66,7 +66,7 @@ export class SemanticCacheService {
       clearInterval(this.cleanupInterval);
     }
 
-    this.cleanupInterval = setInterval(_() => {
+    this.cleanupInterval = setInterval(() => {
       this.cleanup();
     }, this.config.cleanupIntervalMs);
   }
@@ -95,7 +95,7 @@ export class SemanticCacheService {
       }
 
       return embedding;
-    } catch (_error) {
+    } catch (error) {
       console.error('Erro ao gerar embedding:', error);
       // Fallback para embedding aleatório em caso de erro
       return this.generateMockEmbedding(text);
@@ -191,7 +191,7 @@ export class SemanticCacheService {
       return null;
     }
 
-    const _startTime = Date.now();
+    const startTime = Date.now();
     this.stats.totalRequests++;
 
     try {
@@ -285,7 +285,7 @@ export class SemanticCacheService {
       this.updateStats();
 
       return bestMatch;
-    } catch (_error) {
+    } catch (error) {
       console.error('Erro na busca semântica:', error);
       this.stats.cacheMisses++;
       this.updateStats();
@@ -385,7 +385,7 @@ export class SemanticCacheService {
         `Entrada adicionada ao cache. ID: ${id}, Patient: ${metadata.patientId}, Tamanho: ${this.cache.size}`,
       );
       return id;
-    } catch (_error) {
+    } catch (error) {
       console.error('Erro ao adicionar entrada ao cache:', error);
       throw error;
     }
@@ -422,7 +422,7 @@ export class SemanticCacheService {
    * Limpa entradas expiradas do cache
    */
   cleanup(): void {
-    const _now = new Date();
+    const now = new Date();
     let cleanedCount = 0;
 
     for (const [id, entry] of this.cache.entries()) {
@@ -564,7 +564,7 @@ export class SemanticCacheService {
       }
 
       return true;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error validating cache entry integrity:', error);
       return false;
     }
@@ -700,10 +700,10 @@ export class SemanticCacheService {
   }): string {
     const { prompt, patientId, strategy, context } = params;
 
-    let key = `${strategy}_`;
+    let key = `${strategy}`;
 
     if (patientId) {
-      key += `patient_${patientId}_`;
+      key += `patient_${patientId}`;
     }
 
     if (context.isEmergency) {
@@ -711,7 +711,7 @@ export class SemanticCacheService {
     }
 
     if (context.category) {
-      key += `${context.category}_`;
+      key += `${context.category}`;
     }
 
     key += this.generateHash(prompt);
@@ -805,7 +805,7 @@ export class SemanticCacheService {
           this.cache.set(entry.id, entry);
           imported++;
         }
-      } catch (_error) {
+      } catch (error) {
         console.warn(`Falha ao importar entrada ${entry.id}:`, error);
       }
     }

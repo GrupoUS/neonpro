@@ -177,7 +177,7 @@ export class HealthAnalysisService {
       };
 
       return analysisData;
-    } catch (_error) {
+    } catch (error) {
       throw new HealthAnalysisError(
         "DATA_GATHERING_FAILED",
         `Failed to gather patient analysis data: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -282,7 +282,7 @@ PADRÕES DE COMPORTAMENTO:
         },
         model: params.model || "gpt-4",
       };
-    } catch (_error) {
+    } catch (error) {
       throw new HealthAnalysisError(
         "AI_SERVICE_ERROR",
         `Failed to call AI _service: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -349,7 +349,7 @@ PADRÕES DE COMPORTAMENTO:
           processingTime: 0,
         },
       };
-    } catch (_error) {
+    } catch (error) {
       throw new HealthAnalysisError(
         "RESPONSE_PARSING_ERROR",
         `Failed to parse AI response: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -375,7 +375,7 @@ PADRÕES DE COMPORTAMENTO:
       });
 
       return analysisId;
-    } catch (_error) {
+    } catch (error) {
       throw new HealthAnalysisError(
         "STORAGE_FAILED",
         `Failed to store health analysis: ${error instanceof Error ? error.message : "Unknown error"}`,

@@ -146,7 +146,7 @@ export function initializeOpenTelemetry(): NodeSDK {
               delete request.headers['x-api-key'];
             }
           },
-          responseHook: (_span,_response) => {
+          responseHook: (span, response) => {
             // Ensure no sensitive data in response headers
             if (response.headers) {
               delete response.headers['set-cookie'];
@@ -260,7 +260,7 @@ function sanitizeUrl(url: string): string {
 /**
  * Error tracking configuration object
  */
-export const _errorTrackingConfig = {
+export const errorTrackingConfig = {
   sentry: {
     enabled: !!sentryDsn,
     dsn: sentryDsn,

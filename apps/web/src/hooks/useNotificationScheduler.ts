@@ -18,7 +18,7 @@ export function useScheduleAppointmentNotifications() {
 
   return useMutation({
     mutationFn: async ({
-      appointmentId,_appointmentDate,_patientId,_settings,
+      appointmentId,appointmentDate, patientId,settings,
     }: {
       appointmentId: string;
       appointmentDate: Date;
@@ -92,7 +92,7 @@ export function useCancelAppointmentNotifications() {
  */
 export function useNotificationStats(clinicId?: string) {
   return useQuery({
-    queryKey: ['notification-stats',_clinicId],
+    queryKey: ['notification-stats', clinicId],
     queryFn: () => notificationSchedulerService.getNotificationStats(clinicId),
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
@@ -104,7 +104,7 @@ export function useNotificationStats(clinicId?: string) {
  */
 export function useScheduledNotifications(appointmentId?: string) {
   return useQuery({
-    queryKey: ['scheduled-notifications',_appointmentId],
+    queryKey: ['scheduled-notifications', appointmentId],
     queryFn: async () => {
       // This would fetch from the scheduled_notifications table
       // For now, return empty array as placeholder
@@ -125,7 +125,7 @@ export function useAllScheduledNotifications(filters?: {
   limit?: number;
 }) {
   return useQuery({
-    queryKey: ['all-scheduled-notifications',_filters],
+    queryKey: ['all-scheduled-notifications', filters],
     queryFn: async () => {
       // This would fetch from the scheduled_notifications table with filters
       // For now, return empty array as placeholder

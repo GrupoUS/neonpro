@@ -148,7 +148,7 @@ export function ProcedureRecommendations({
 
       {/* Alertas de Contraindicação */}
       {(criticalContraindications.length > 0
-        || warningContraindications.length > 0) && (_<div className='space-y-3'>
+        || warningContraindications.length > 0) && (<div className='space-y-3'>
           {criticalContraindications.map((alert, _index) => (
             <Alert key={index} variant='destructive'>
               <XCircle className='h-4 w-4' />
@@ -158,7 +158,7 @@ export function ProcedureRecommendations({
               <AlertDescription>
                 <p className='mb-2'>{alert.description}</p>
                 <ul className='list-disc list-inside space-y-1'>
-                  {alert.restrictions.map((restriction,_i) => (
+                  {alert.restrictions.map((restriction, i) => (
                     <li key={i} className='text-sm'>
                       {restriction}
                     </li>
@@ -176,14 +176,14 @@ export function ProcedureRecommendations({
             </Alert>
           ))}
 
-          {warningContraindications.map(_(alert, _index) => (
+          {warningContraindications.map((alert, _index) => (
             <Alert key={index}>
               <AlertTriangle className='h-4 w-4' />
               <AlertTitle>Atenção: {alert.condition}</AlertTitle>
               <AlertDescription>
                 <p className='mb-2'>{alert.description}</p>
                 <ul className='list-disc list-inside space-y-1'>
-                  {alert.restrictions.map((restriction,_i) => (
+                  {alert.restrictions.map((restriction, i) => (
                     <li key={i} className='text-sm'>
                       {restriction}
                     </li>
@@ -369,7 +369,7 @@ function RecommendationGrid({
               <div className='space-y-1'>
                 <p className='text-xs font-medium text-gray-700'>Benefícios:</p>
                 <div className='flex flex-wrap gap-1'>
-                  {procedure.benefits.slice(0, 2).map(_(benefit,_i) => (
+                  {procedure.benefits.slice(0, 2).map((benefit, i) => (
                     <Badge key={i} variant='secondary' className='text-xs'>
                       {benefit}
                     </Badge>

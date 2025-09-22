@@ -128,13 +128,13 @@ export const VALIDATION_TYPES = {
   MOBILE: 'mobile',
 } as const;
 
-export const _HEALTHCARE_COMPLIANCE_STANDARDS = {
+export const HEALTHCARE_COMPLIANCE_STANDARDS = {
   LGPD: 'LGPD',
   ANVISA: 'ANVISA',
   CFM: 'CFM',
 } as const;
 
-export const _READINESS_LEVELS = {
+export const READINESS_LEVELS = {
   PRODUCTION_READY: 'production-ready',
   STAGING_READY: 'staging-ready',
   NOT_READY: 'not-ready',
@@ -300,7 +300,7 @@ export default class ProductionReadinessService {
       v => v.status === 'warning',
     ).length;
 
-    const overallScore = validations.reduce(_(sum,_v) => sum + v.score, 0) / totalValidations;
+    const overallScore = validations.reduce((sum, v) => sum + v.score, 0) / totalValidations;
 
     let readinessLevel: 'production-ready' | 'staging-ready' | 'not-ready' = 'not-ready';
     if (overallScore >= 95 && failedValidations === 0) {
@@ -309,7 +309,7 @@ export default class ProductionReadinessService {
       readinessLevel = 'staging-ready';
     }
 
-    const criticalIssues = validations.reduce(_(sum,_v) => sum + v.issues.filter(i => i.severity === 'critical').length,
+    const criticalIssues = validations.reduce((sum, v) => sum + v.issues.filter(i => i.severity === 'critical').length,
       0,
     );
 
@@ -347,8 +347,8 @@ export default class ProductionReadinessService {
     const recommendations = new Set<string>();
 
     // Collect all recommendations from validations
-    validations.forEach(_validation => {
-      validation.recommendations.forEach(_rec => recommendations.add(rec));
+    validations.forEach(validation => {
+      validation.recommendations.forEach(rec => recommendations.add(rec));
     });
 
     // Add general healthcare recommendations
@@ -373,8 +373,8 @@ export default class ProductionReadinessService {
   ): ProductionReadinessIssue[] {
     const criticalIssues: ProductionReadinessIssue[] = [];
 
-    validations.forEach(_validation => {
-      validation.issues.forEach(_issue => {
+    validations.forEach(validation => {
+      validation.issues.forEach(issue => {
         if (issue.severity === 'critical' || issue.severity === 'high') {
           criticalIssues.push(issue);
         }
@@ -405,7 +405,7 @@ export default class ProductionReadinessService {
 
     // Add specific items based on validation results
     const failedValidations = validations.filter(v => v.status === 'failed');
-    failedValidations.forEach(_validation => {
+    failedValidations.forEach(validation => {
       checklist.push(`⚠️ Corrigir problemas de ${validation.validationType}`);
     });
 

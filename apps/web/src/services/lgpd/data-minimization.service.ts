@@ -231,10 +231,10 @@ export class CalendarDataMinimizationService {
         allRisks.push(...result.risksIdentified);
         allRecommendations.push(...result.recommendations);
 
-        result.dataCategoriesShared.forEach(_category => dataCategoriesShared.add(category));
+        result.dataCategoriesShared.forEach(category => dataCategoriesShared.add(category));
       }
 
-      const averageScore = allScores.reduce(_(sum,_score) => sum + score, 0) / allScores.length;
+      const averageScore = allScores.reduce((sum, score) => sum + score, 0) / allScores.length;
       const totalScore = Math.min(100, Math.round(averageScore));
 
       // Identify critical risks
@@ -410,7 +410,7 @@ export class CalendarDataMinimizationService {
     ];
 
     let sanitized = medicalInfo;
-    sensitiveTerms.forEach(_term => {
+    sensitiveTerms.forEach(term => {
       const regex = new RegExp(term, 'gi');
       sanitized = sanitized.replace(regex, '[informação médica sensível]');
     });
@@ -649,4 +649,4 @@ export class CalendarDataMinimizationService {
   }
 }
 
-export const _calendarDataMinimizationService = new CalendarDataMinimizationService();
+export const calendarDataMinimizationService = new CalendarDataMinimizationService();

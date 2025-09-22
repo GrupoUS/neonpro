@@ -231,7 +231,7 @@ function AestheticDemo() {
     alert(`Mais informações sobre o procedimento ${procedureId}`);
   };
 
-  return (_<div className='min-h-screen bg-gray-50 py-8'>
+  return (<div className='min-h-screen bg-gray-50 py-8'>
       <div className='container mx-auto px-4'>
         {/* Navegação */}
         <div className='mb-8'>
@@ -303,7 +303,7 @@ function AestheticDemo() {
               name: 'Ana Paula Ferreira',
               specialization: 'Esteticista Especializada',
               registrationNumber: 'CREF 12345-SP',
-              clinic: 'Clínica Estética Bella Vita',_}}
+              clinic: 'Clínica Estética Bella Vita', }}
             onNavigateToPatients={() => console.log('Navigate to patients')}
             onNavigateToSchedule={() => console.log('Navigate to schedule')}
             onNavigateToCompliance={() => console.log('Navigate to compliance')}
@@ -315,6 +315,6 @@ function AestheticDemo() {
   );
 }
 
-export const _Route = createFileRoute('/demos/aesthetic-demo')({
+export const Route = createFileRoute('/demos/aesthetic-demo')({
   component: AestheticDemo,
 });

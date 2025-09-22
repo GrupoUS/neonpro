@@ -289,7 +289,7 @@ export class NotificationService {
       const timestamp = new Date();
 
       // Mock database insert (in real implementation, this would use Supabase)
-      const _notificationRecord = {
+      const notificationRecord = {
         id: notificationId,
         recipient_id: params.recipientId,
         channel: params.channel,
@@ -517,7 +517,7 @@ export class NotificationService {
       this.templates.set(template.templateId, template);
 
       // Mock database insert
-      const _templateRecord = {
+      const templateRecord = {
         id: template.templateId,
         name: template.name,
         description: template.description,
@@ -855,7 +855,7 @@ export class NotificationService {
 
       // Add to queue
       this.notificationQueue.push({ notification: params, priority });
-      this.notificationQueue.sort(_(a,_b) => b.priority - a.priority);
+      this.notificationQueue.sort((a,_b) => b.priority - a.priority);
 
       const queuePosition = params.priority === 'critical' ? 1 : this.notificationQueue.length;
       const estimatedDelivery = new Date(Date.now() + queuePosition * 1000);

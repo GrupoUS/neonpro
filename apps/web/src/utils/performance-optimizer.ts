@@ -108,22 +108,22 @@ export class PerformanceOptimizer {
     const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
     return (_query: string): Promise<T> => {
-      return new Promise(_(resolve,_reject) => {
+      return new Promise((resolve, reject) => {
         // Clear previous timeout
         clearTimeout(timeoutId);
 
         // Check cache first
-        const cached = cache.get(_query);
+        const cached = cache.get(query);
         if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
           resolve(cached.data);
           return;
         }
 
         // Debounced search
-        timeoutId = setTimeout(_async () => {
+        timeoutId = setTimeout(async () => {
           try {
             const startTime = performance.now();
-            const result = await searchFn(_query);
+            const result = await searchFn(query);
             const responseTime = performance.now() - startTime;
 
             // Cache result
@@ -172,7 +172,7 @@ export class PerformanceOptimizer {
 
     return new IntersectionObserver(
       entries => {
-        entries.forEach(_entry => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             const element = entry.target as HTMLElement;
 
@@ -225,7 +225,7 @@ export class PerformanceOptimizer {
       height,
       quality = 80,
       format = 'webp',
-      lazy: _lazy = true,
+      lazy: lazy = true,
     } = options;
 
     // Use responsive image service or CDN optimization
@@ -391,7 +391,7 @@ export class PerformanceOptimizer {
   private observePaintMetrics(): void {
     try {
       const observer = new PerformanceObserver(list => {
-        list.getEntries().forEach(_entry => {
+        list.getEntries().forEach(entry => {
           this.metrics.set(entry.name, entry.startTime);
         });
       });
@@ -423,7 +423,7 @@ export class PerformanceOptimizer {
   private observeFirstInputDelay(): void {
     try {
       const observer = new PerformanceObserver(list => {
-        list.getEntries().forEach(_entry => {
+        list.getEntries().forEach(entry => {
           const processingStart = (entry as any).processingStart || entry.startTime;
           this.metrics.set(
             'first-input-delay',
@@ -456,7 +456,7 @@ export class PerformanceOptimizer {
    * Cleanup observers
    */
   destroy(): void {
-    this.observers.forEach(_observer => observer.disconnect());
+    this.observers.forEach(observer => observer.disconnect());
     this.observers = [];
     this.metrics.clear();
   }
@@ -490,7 +490,7 @@ export function debounce<T extends (...args: any[]) => any>(
 
   return (...args: Parameters<T>) => {
     clearTimeout(timeoutId);
-    timeoutId = setTimeout(_() => func(...args), delay);
+    timeoutId = setTimeout(() => func(...args), delay);
   };
 }
 
@@ -504,7 +504,7 @@ export function throttle<T extends (...args: any[]) => any>(
   let lastCall = 0;
 
   return (...args: Parameters<T>) => {
-    const _now = Date.now();
+    const now = Date.now();
     if (now - lastCall >= delay) {
       lastCall = now;
       func(...args);
@@ -513,6 +513,6 @@ export function throttle<T extends (...args: any[]) => any>(
 }
 
 // Export singleton instance
-export const _performanceOptimizer = PerformanceOptimizer.getInstance();
+export const performanceOptimizer = PerformanceOptimizer.getInstance();
 
 // PERFORMANCE_TARGETS already exported above

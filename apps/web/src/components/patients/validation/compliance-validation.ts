@@ -311,7 +311,7 @@ export const accessibilityComplianceValidation: AccessibilityCheck[] = [
 ];
 
 // Mobile Healthcare Specific Validations
-export const _mobileHealthcareValidation = [
+export const mobileHealthcareValidation = [
   {
     requirement: 'Touch Target Accessibility',
     status: 'compliant',
@@ -351,7 +351,7 @@ export const _mobileHealthcareValidation = [
 ];
 
 // Performance Validation Results
-export const _performanceValidation = [
+export const performanceValidation = [
   {
     metric: 'Largest Contentful Paint (LCP)',
     target: '≤2.5s',
@@ -399,7 +399,7 @@ export const _performanceValidation = [
 ];
 
 // Compliance Summary
-export const _complianceSummary = {
+export const complianceSummary = {
   lgpd: {
     compliant: lgpdComplianceValidation.filter(
       check => check.status === 'compliant',

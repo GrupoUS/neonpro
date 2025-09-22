@@ -90,12 +90,12 @@ export const Route = createFileRoute('/patients/$patientId/documents')({
       <div className='animate-pulse space-y-6'>
         <div className='h-8 bg-muted rounded w-1/3'></div>
         <div className='flex gap-2'>
-          {Array.from({ length: 3 }).map(_(_,_i) => (
+          {Array.from({ length: 3 }).map((_, i) => (
             <div key={i} className='h-10 bg-muted rounded w-32'></div>
           ))}
         </div>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-          {Array.from({ length: 6 }).map(_(_,_i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className='h-48 bg-muted rounded-lg'></div>
           ))}
         </div>
@@ -104,7 +104,7 @@ export const Route = createFileRoute('/patients/$patientId/documents')({
   ),
 
   // Error boundary
-  errorComponent: (_{ error,_reset }) => (
+  errorComponent: ({ error, reset }) => (
     <div className='container mx-auto p-4 md:p-6'>
       <Card className='max-w-lg mx-auto text-center'>
         <CardHeader>
@@ -168,7 +168,7 @@ function PatientDocumentsPage() {
   const deleteMutation = useDocumentDelete();
 
   // Mock documents for development (replace with real data from API)
-  const _mockDocuments = [
+  const mockDocuments = [
     {
       id: '1',
       name: 'Exame de Sangue - Janeiro 2024.pdf',
@@ -231,7 +231,7 @@ function PatientDocumentsPage() {
     }
   };
 
-  const _handleUpload = async (
+  const handleUpload = async (
     file: File,
     category: string,
     description?: string,
@@ -263,7 +263,7 @@ function PatientDocumentsPage() {
   });
 
   // Sort documents
-  const sortedDocuments = [...filteredDocuments].sort(_(a,_b) => {
+  const sortedDocuments = [...filteredDocuments].sort((a, b) => {
     let comparison = 0;
 
     switch (sortBy) {
@@ -290,7 +290,7 @@ function PatientDocumentsPage() {
         <div className='animate-pulse space-y-6'>
           <div className='h-8 bg-muted rounded w-1/3'></div>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-            {Array.from({ length: 6 }).map(_(_,_i) => (
+            {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className='h-48 bg-muted rounded-lg'></div>
             ))}
           </div>
@@ -564,8 +564,8 @@ function PatientDocumentsPage() {
 /**
  * Document Card Component
  */
-function DocumentCard(_{
-  document,_isSelected,_onSelect,_onDelete,
+function DocumentCard({
+  document,isSelected, onSelect,onDelete,
 }: {
   document: PatientDocument;
   isSelected: boolean;

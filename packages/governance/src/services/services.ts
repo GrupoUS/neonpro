@@ -94,7 +94,7 @@ export class InMemoryKPIService {
   }
   // Provisional aging check used in scenario test
   agingCheck(now: Date = new Date()) {
-    return [...this.store.values()].filter(_(k) =>
+    return [...this.store.values()].filter((k) =>
       isProvisionalAging(k.provisionalSince, now),
     );
   }

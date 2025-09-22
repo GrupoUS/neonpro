@@ -170,11 +170,11 @@ export class FinancialMetricsService {
     // Calculate revenue metrics
     const revenue = transactions
       .filter(t => t.type === 'income')
-      .reduce(_(sum,_t) => sum + t.amount, 0);
+      .reduce((sum, t) => sum + t.amount, 0);
 
     const expenses = transactions
       .filter(t => t.type === 'expense')
-      .reduce(_(sum,_t) => sum + t.amount, 0);
+      .reduce((sum, t) => sum + t.amount, 0);
 
     const profit = revenue - expenses;
 

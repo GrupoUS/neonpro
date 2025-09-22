@@ -70,7 +70,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${await user.getIdToken()}`,
           },
-          body: JSON.stringify(_request),
+          body: JSON.stringify(request),
         });
 
         const data: DataAgentResponse = await response.json();
@@ -126,7 +126,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
 
   // Handle agent actions
   const handleActions = useCallback((actions: AgentAction[]) => {
-    actions.forEach(_action => {
+    actions.forEach(action => {
       switch (action.type) {
         case 'view_details':
           if (action.payload?.clientId) {
@@ -161,7 +161,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${await user?.getIdToken()}`,
           },
-          body: JSON.stringify(_payload),
+          body: JSON.stringify(payload),
         });
 
         if (response.ok) {
@@ -192,7 +192,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
   );
 
   // Clear chat history
-  const clearChat = useCallback(_() => {
+  const clearChat = useCallback(() => {
     setMessages([]);
     setError(null);
   }, []);
@@ -218,7 +218,7 @@ export function useAIAgentConfig() {
     setContext(prev => ({ ...prev, ...newContext }));
   }, []);
 
-  const clearContext = useCallback(_() => {
+  const clearContext = useCallback(() => {
     setContext({});
   }, []);
 

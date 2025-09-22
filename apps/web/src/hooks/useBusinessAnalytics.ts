@@ -33,7 +33,7 @@ export function useAppointmentMetrics(
 ) {
   return useQuery({
     queryKey: [
-      'appointment-metrics',_clinicId,_dateRange.startDate,_dateRange.endDate,_],
+      'appointment-metrics',clinicId, dateRange.startDate, dateRange.endDate, ],
     queryFn: () => analyticsService.getAppointmentMetrics(clinicId, dateRange),
     enabled: !!clinicId,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -50,7 +50,7 @@ export function useRevenueMetrics(
 ) {
   return useQuery({
     queryKey: [
-      'revenue-metrics',_clinicId,_dateRange.startDate,_dateRange.endDate,_],
+      'revenue-metrics',clinicId, dateRange.startDate, dateRange.endDate, ],
     queryFn: () => analyticsService.getRevenueMetrics(clinicId, dateRange),
     enabled: !!clinicId,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -67,7 +67,7 @@ export function usePatientAnalytics(
 ) {
   return useQuery({
     queryKey: [
-      'patient-analytics',_clinicId,_dateRange.startDate,_dateRange.endDate,_],
+      'patient-analytics',clinicId, dateRange.startDate, dateRange.endDate, ],
     queryFn: () => analyticsService.getPatientAnalytics(clinicId, dateRange),
     enabled: !!clinicId,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -84,7 +84,7 @@ export function useProfessionalPerformance(
 ) {
   return useQuery({
     queryKey: [
-      'professional-performance',_clinicId,_dateRange.startDate,_dateRange.endDate,_],
+      'professional-performance',clinicId, dateRange.startDate, dateRange.endDate, ],
     queryFn: () => analyticsService.getProfessionalPerformance(clinicId, dateRange),
     enabled: !!clinicId,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -101,7 +101,7 @@ export function usePopularServices(
 ) {
   return useQuery({
     queryKey: [
-      'popular-services',_clinicId,_dateRange.startDate,_dateRange.endDate,_],
+      'popular-services',clinicId, dateRange.startDate, dateRange.endDate, ],
     queryFn: () => analyticsService.getPopularServices(clinicId, dateRange),
     enabled: !!clinicId,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -115,7 +115,7 @@ export function usePopularServices(
 export function useExportAnalytics() {
   return useMutation({
     mutationFn: async ({
-      clinicId,_dateRange,_reportType,
+      clinicId,dateRange, reportType,
     }: {
       clinicId: string;
       dateRange: AnalyticsDateRange;
@@ -145,7 +145,7 @@ export function useExportAnalytics() {
 
       return csvContent;
     },
-    onSuccess: (_,_{ reportType }) => {
+    onSuccess: (_, { reportType }) => {
       toast.success(`Relatório de ${reportType} exportado com sucesso!`);
     },
     onError: error => {

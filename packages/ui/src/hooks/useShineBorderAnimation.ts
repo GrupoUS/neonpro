@@ -173,7 +173,7 @@ export function useShineBorderAnimation(
   );
 
   // Aceternity Hover Border Gradient: Gradient definitions
-  const getHoverGradientMaps = useCallback(_() => {
+  const getHoverGradientMaps = useCallback(() => {
     const movingMap: Record<HoverDirection, string> = {
       TOP: "radial-gradient(20.7% 50% at 50% 0%, hsl(0, 0%, 100%) 0%, rgba(255, 255, 255, 0) 100%)",
       LEFT: "radial-gradient(16.6% 43.1% at 0% 50%, hsl(0, 0%, 100%) 0%, rgba(255, 255, 255, 0) 100%)",
@@ -208,7 +208,7 @@ export function useShineBorderAnimation(
   }, [hoverDirection, hoverGradientTheme, hoverGradientColors]);
 
   // Duration mapping based on speed
-  const getDuration = useCallback(_() => {
+  const getDuration = useCallback(() => {
     if (duration) return duration;
     switch (speed) {
       case "slow":
@@ -221,39 +221,39 @@ export function useShineBorderAnimation(
   }, [speed, duration]);
 
   // Animation control methods
-  const start = useCallback(_() => {
+  const start = useCallback(() => {
     if (!enabled) return;
     setIsPlaying(true);
     animationStateRef.current = "playing";
   }, [enabled]);
 
-  const stop = useCallback(_() => {
+  const stop = useCallback(() => {
     setIsPlaying(false);
     animationStateRef.current = "stopped";
   }, []);
 
-  const pause = useCallback(_() => {
+  const pause = useCallback(() => {
     setIsPlaying(false);
     animationStateRef.current = "paused";
   }, []);
 
-  const resume = useCallback(_() => {
+  const resume = useCallback(() => {
     if (animationStateRef.current === "paused") {
       setIsPlaying(true);
       animationStateRef.current = "playing";
     }
   }, []);
 
-  const restart = useCallback(_() => {
+  const restart = useCallback(() => {
     stop();
     // Use RAF to ensure the stop state is applied before starting
-    requestAnimationFrame(_() => {
+    requestAnimationFrame(() => {
       start();
     });
   }, [start, stop]);
 
   // Event handlers
-  const handleMouseEnter = useCallback(_() => {
+  const handleMouseEnter = useCallback(() => {
     if (!enabled) return;
     setIsHovering(true);
 
@@ -272,7 +272,7 @@ export function useShineBorderAnimation(
     }
   }, [enabled, hoverOnly, start, enableHoverGradient]);
 
-  const handleMouseLeave = useCallback(_() => {
+  const handleMouseLeave = useCallback(() => {
     if (!enabled) return;
     setIsHovering(false);
 
@@ -286,8 +286,8 @@ export function useShineBorderAnimation(
       setIsHoverGradientActive(false);
       // Resume direction rotation
       if (!isHoverGradientActive) {
-        hoverIntervalRef.current = setInterval(_() => {
-          setHoverDirection(_(prevState) => rotateDirection(prevState));
+        hoverIntervalRef.current = setInterval(() => {
+          setHoverDirection((prevState) => rotateDirection(prevState));
         }, hoverDuration * 1000);
       }
     }
@@ -302,17 +302,17 @@ export function useShineBorderAnimation(
   ]);
 
   // Auto-start effect
-  useEffect(_() => {
+  useEffect(() => {
     if (enabled && autoStart && !hoverOnly) {
       start();
     }
   }, [enabled, autoStart, hoverOnly, start]);
 
   // Aceternity Hover Border Gradient: Direction rotation effect
-  useEffect(_() => {
+  useEffect(() => {
     if (enableHoverGradient && !isHoverGradientActive) {
-      hoverIntervalRef.current = setInterval(_() => {
-        setHoverDirection(_(prevState) => rotateDirection(prevState));
+      hoverIntervalRef.current = setInterval(() => {
+        setHoverDirection((prevState) => rotateDirection(prevState));
       }, hoverDuration * 1000);
 
       return () => {

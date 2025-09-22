@@ -27,7 +27,7 @@ export function TaskProgress({
       <span className='text-xs capitalize'>{stageLabel}</span>
       <Progress value={percent} className='w-40' />
       <span className='text-xs'>{Math.round(percent)}%</span>
-      {stage !== 'completed' && (_<Button
+      {stage !== 'completed' && (<Button
           type='button'
           variant='outline'
           size='sm'

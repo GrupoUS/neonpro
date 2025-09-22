@@ -29,13 +29,13 @@ export function showToast(
     default:
       toast(message);
   }
-  listeners.forEach(_l => l(message, variant));
+  listeners.forEach(l => l(message, variant));
 }
 
 export function useToastListener(
   cb: (message: string, variant?: 'success' | 'error' | 'info') => void,
 ) {
-  useEffect(_() => {
+  useEffect(() => {
     listeners.push(cb);
     return () => {
       listeners = listeners.filter(x => x !== cb);

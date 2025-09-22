@@ -224,14 +224,14 @@ export function PatientRegistrationWizard({
   const formValues = form.watch();
 
   // Auto-save form data when values change
-  useEffect(_() => {
+  useEffect(() => {
     if (open) {
       autoSave.saveFormData(formValues);
     }
   }, [formValues, open, autoSave]);
 
   // Load saved data when dialog opens
-  useEffect(_() => {
+  useEffect(() => {
     if (open && autoSave.hasSavedData && autoSave.savedData) {
       // Show recovery option
       if (
@@ -240,7 +240,7 @@ export function PatientRegistrationWizard({
         && autoSave.recoveryAge < 24 * 60 * 60 * 1000
       ) {
         const ageInMinutes = Math.floor(autoSave.recoveryAge / (1000 * 60));
-        toast.info(_`Dados salvos automaticamente há ${ageInMinutes} minutos. Deseja recuperar?`,
+        toast.info(`Dados salvos automaticamente há ${ageInMinutes} minutos. Deseja recuperar?`,
           {
             action: {
               label: 'Recuperar',
@@ -262,7 +262,7 @@ export function PatientRegistrationWizard({
   const progress = (currentStep / STEPS.length) * 100;
 
   // Validate current step
-  const validateCurrentStep = useCallback(_async () => {
+  const validateCurrentStep = useCallback(async () => {
     const currentSchema = currentStepData?.schema;
     if (!currentSchema) return false;
 
@@ -400,13 +400,13 @@ export function PatientRegistrationWizard({
 
         {/* Step Navigation */}
         <div className='flex justify-between items-center py-4 border-b'>
-          {STEPS.map(_(step, _index) => {
+          {STEPS.map((step, _index) => {
             const Icon = step.icon;
             const isActive = step.id === currentStep;
             const isCompleted = completedSteps.includes(step.id);
             const isAccessible = step.id <= currentStep || completedSteps.includes(step.id - 1);
 
-            return (_<button
+            return (<button
                 key={step.id}
                 onClick={() => handleStepClick(step.id)}
                 disabled={!isAccessible}
@@ -526,7 +526,7 @@ function BasicInformationStep({ form }: { form: any }) {
             render={({
               field,
             }: {
-              field: ControllerRenderProps<PatientRegistrationData,_'fullName'>;
+              field: ControllerRenderProps<PatientRegistrationData, 'fullName'>;
             }) => (
               <FormItem>
                 <FormLabel>Nome Completo *</FormLabel>
@@ -548,7 +548,7 @@ function BasicInformationStep({ form }: { form: any }) {
           <FormField
             control={form.control}
             name='preferredName'
-            render={(_{ field }) => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel>Nome Preferido</FormLabel>
                 <FormControl>
@@ -570,7 +570,7 @@ function BasicInformationStep({ form }: { form: any }) {
           <FormField
             control={form.control}
             name='birthDate'
-            render={(_{ field }) => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel>Data de Nascimento *</FormLabel>
                 <FormControl>
@@ -588,7 +588,7 @@ function BasicInformationStep({ form }: { form: any }) {
           <FormField
             control={form.control}
             name='gender'
-            render={(_{ field }) => (
+            render={({ field }) => (
               <FormItem>
                 <FormLabel>Gênero *</FormLabel>
                 <Select
@@ -704,7 +704,7 @@ function ContactAddressStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='email'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Email</FormLabel>
                   <FormControl>
@@ -733,7 +733,7 @@ function ContactAddressStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='cep'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>CEP</FormLabel>
                   <FormControl>
@@ -765,7 +765,7 @@ function ContactAddressStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='street'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem className='md:col-span-2'>
                   <FormLabel>Logradouro</FormLabel>
                   <FormControl>
@@ -781,7 +781,7 @@ function ContactAddressStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='number'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Número</FormLabel>
                   <FormControl>
@@ -795,7 +795,7 @@ function ContactAddressStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='complement'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Complemento</FormLabel>
                   <FormControl>
@@ -809,7 +809,7 @@ function ContactAddressStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='neighborhood'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Bairro</FormLabel>
                   <FormControl>
@@ -823,7 +823,7 @@ function ContactAddressStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='city'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Cidade</FormLabel>
                   <FormControl>
@@ -838,7 +838,7 @@ function ContactAddressStep({ form }: { form: any }) {
           <FormField
             control={form.control}
             name='state'
-            render={(_{ field }) => (
+            render={({ field }) => (
               <FormItem className='md:w-1/4'>
                 <FormLabel>Estado</FormLabel>
                 <Select
@@ -980,7 +980,7 @@ function DocumentsStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='rg'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>RG</FormLabel>
                   <FormControl>
@@ -1003,7 +1003,7 @@ function DocumentsStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='insuranceProvider'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Convênio</FormLabel>
                   <Select
@@ -1041,7 +1041,7 @@ function DocumentsStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='insuranceNumber'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Número da Carteirinha</FormLabel>
                   <FormControl>
@@ -1065,7 +1065,7 @@ function DocumentsStep({ form }: { form: any }) {
 }
 
 function MedicalInformationStep({ form }: { form: any }) {
-  return (_<Card>
+  return (<Card>
       <CardHeader>
         <CardTitle className='flex items-center gap-2'>
           <FileText className='w-5 h-5' />
@@ -1103,7 +1103,7 @@ function MedicalInformationStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='medications'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Medicamentos em Uso</FormLabel>
                   <FormControl>
@@ -1124,7 +1124,7 @@ function MedicalInformationStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='medicalConditions'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Condições Médicas</FormLabel>
                   <FormControl>
@@ -1153,7 +1153,7 @@ function MedicalInformationStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='emergencyContactName'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
@@ -1170,7 +1170,7 @@ function MedicalInformationStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='emergencyContactPhone'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Telefone</FormLabel>
                   <FormControl>
@@ -1187,7 +1187,7 @@ function MedicalInformationStep({ form }: { form: any }) {
             <FormField
               control={form.control}
               name='emergencyContactRelation'
-              render={(_{ field }) => (
+              render={({ field }) => (
                 <FormItem>
                   <FormLabel>Parentesco</FormLabel>
                   <Select
@@ -1245,7 +1245,7 @@ function ConsentStep({ form }: { form: any }) {
           <FormField
             control={form.control}
             name='dataProcessingConsent'
-            render={(_{ field }) => (
+            render={({ field }) => (
               <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
                 <FormControl>
                   <Checkbox
@@ -1270,7 +1270,7 @@ function ConsentStep({ form }: { form: any }) {
           <FormField
             control={form.control}
             name='marketingConsent'
-            render={(_{ field }) => (
+            render={({ field }) => (
               <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
                 <FormControl>
                   <Checkbox
@@ -1294,7 +1294,7 @@ function ConsentStep({ form }: { form: any }) {
           <FormField
             control={form.control}
             name='dataSharingConsent'
-            render={(_{ field }) => (
+            render={({ field }) => (
               <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
                 <FormControl>
                   <Checkbox
@@ -1318,7 +1318,7 @@ function ConsentStep({ form }: { form: any }) {
           <FormField
             control={form.control}
             name='photoVideoConsent'
-            render={(_{ field }) => (
+            render={({ field }) => (
               <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
                 <FormControl>
                   <Checkbox
@@ -1342,7 +1342,7 @@ function ConsentStep({ form }: { form: any }) {
           <FormField
             control={form.control}
             name='researchConsent'
-            render={(_{ field }) => (
+            render={({ field }) => (
               <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4'>
                 <FormControl>
                   <Checkbox
@@ -1377,8 +1377,8 @@ function ConsentStep({ form }: { form: any }) {
   );
 }
 
-function FileUploadStep(_{
-  uploadedFiles,_onFilesUploaded,_onFileRemoved,
+function FileUploadStep({
+  uploadedFiles,onFilesUploaded, onFileRemoved,
 }: {
   uploadedFiles: UploadedFile[];
   onFilesUploaded: (files: UploadedFile[]) => void;

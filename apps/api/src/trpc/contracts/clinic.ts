@@ -13,7 +13,7 @@ import {
 } from '@neonpro/types';
 import { protectedProcedure, router } from '../trpc';
 
-export const _clinicRouter = router({
+export const clinicRouter = router({
   /**
    * Create new clinic with regulatory compliance setup
    */

@@ -244,7 +244,7 @@ export interface ComplianceEvent extends Omit<TelemetryEvent, "eventType"> {
 export class TelemetryEventValidator {
   static validate(event: Partial<TelemetryEvent>): boolean {
     const required = ["id", "eventType", "timestamp", "severity", "service"];
-    return required.every(_(field) => event[field as keyof TelemetryEvent] !== undefined,
+    return required.every((field) => event[field as keyof TelemetryEvent] !== undefined,
     );
   }
 
@@ -313,8 +313,8 @@ export class TelemetryEventBuilder {
     _userId: string,
     _role?: "patient" | "professional" | "admin" | "system",
   ): this {
-    this.event.userId = TelemetryEventValidator.hashPII(_userId);
-    if (_role) this.event.userRole = role;
+    this.event.userId = TelemetryEventValidator.hashPII(userId);
+    if (role) this.event.userRole = role;
     return this;
   }
 

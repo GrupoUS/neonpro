@@ -15,11 +15,11 @@ import DocumentationGeneratorService, {
   HEALTHCARE_DOC_CATEGORIES,
 } from '../documentation-generator';
 
-describe(_'Documentation Generator Service',_() => {
+describe(('Documentation Generator Service', () => {
   let _service: DocumentationGeneratorService;
   let config: DocumentationConfig;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     config = {
       projectName: 'NeonPro Healthcare Platform',
       version: '1.0.0',
@@ -53,8 +53,8 @@ describe(_'Documentation Generator Service',_() => {
     service = new DocumentationGeneratorService(config);
   });
 
-  describe(_'Configuration Validation',_() => {
-    it(_'should validate valid documentation configuration',_() => {
+  describe(('Configuration Validation', () => {
+    it(('should validate valid documentation configuration', () => {
       const validConfig = {
         projectName: 'Test Project',
         version: '1.0.0',
@@ -82,7 +82,7 @@ describe(_'Documentation Generator Service',_() => {
       }
     });
 
-    it(_'should use default values for optional configuration',_() => {
+    it(('should use default values for optional configuration', () => {
       const minimalConfig = {};
       const result = DocumentationConfigSchema.parse(minimalConfig);
 
@@ -101,7 +101,7 @@ describe(_'Documentation Generator Service',_() => {
       expect(result.validateCompliance).toBe(true);
     });
 
-    it(_'should validate healthcare categories',_() => {
+    it(('should validate healthcare categories', () => {
       const configWithHealthcare = {
         healthcareCategories: [
           HEALTHCARE_DOC_CATEGORIES.PATIENT_MANAGEMENT,
@@ -123,8 +123,8 @@ describe(_'Documentation Generator Service',_() => {
     });
   });
 
-  describe(_'Documentation Generation',_() => {
-    it(_'should generate comprehensive documentation report',_async () => {
+  describe(('Documentation Generation', () => {
+    it(_'should generate comprehensive documentation report',async () => {
       const report = await service.generateDocumentation();
 
       expect(report).toBeDefined();
@@ -137,7 +137,7 @@ describe(_'Documentation Generator Service',_() => {
       expect(report.errors).toBeInstanceOf(Array);
     });
 
-    it(_'should generate API documentation section',_async () => {
+    it(_'should generate API documentation section',async () => {
       const apiConfig = {
         ...config,
         includeTypes: [DOCUMENTATION_TYPES.API],
@@ -160,7 +160,7 @@ describe(_'Documentation Generator Service',_() => {
       expect(apiSection?.examples?.length).toBeGreaterThan(0);
     });
 
-    it(_'should generate component documentation section',_async () => {
+    it(_'should generate component documentation section',async () => {
       const componentConfig = {
         ...config,
         includeTypes: [DOCUMENTATION_TYPES.COMPONENT],
@@ -184,7 +184,7 @@ describe(_'Documentation Generator Service',_() => {
       expect(componentSection?.metadata.mobileOptimized).toBe(true);
     });
 
-    it(_'should generate architecture documentation section',_async () => {
+    it(_'should generate architecture documentation section',async () => {
       const archConfig = {
         ...config,
         includeTypes: [DOCUMENTATION_TYPES.ARCHITECTURE],
@@ -203,7 +203,7 @@ describe(_'Documentation Generator Service',_() => {
       );
     });
 
-    it(_'should generate deployment documentation section',_async () => {
+    it(_'should generate deployment documentation section',async () => {
       const deployConfig = {
         ...config,
         includeTypes: [DOCUMENTATION_TYPES.DEPLOYMENT],
@@ -224,7 +224,7 @@ describe(_'Documentation Generator Service',_() => {
       );
     });
 
-    it(_'should generate user guide documentation section',_async () => {
+    it(_'should generate user guide documentation section',async () => {
       const userConfig = {
         ...config,
         includeTypes: [DOCUMENTATION_TYPES.USER_GUIDE],
@@ -243,7 +243,7 @@ describe(_'Documentation Generator Service',_() => {
       );
     });
 
-    it(_'should generate developer guide documentation section',_async () => {
+    it(_'should generate developer guide documentation section',async () => {
       const devConfig = {
         ...config,
         includeTypes: [DOCUMENTATION_TYPES.DEVELOPER_GUIDE],
@@ -262,7 +262,7 @@ describe(_'Documentation Generator Service',_() => {
       );
     });
 
-    it(_'should generate healthcare compliance documentation section',_async () => {
+    it(_'should generate healthcare compliance documentation section',async () => {
       const complianceConfig = {
         ...config,
         includeTypes: [DOCUMENTATION_TYPES.HEALTHCARE_COMPLIANCE],
@@ -283,7 +283,7 @@ describe(_'Documentation Generator Service',_() => {
       );
     });
 
-    it(_'should generate accessibility documentation section',_async () => {
+    it(_'should generate accessibility documentation section',async () => {
       const accessibilityConfig = {
         ...config,
         includeTypes: [DOCUMENTATION_TYPES.ACCESSIBILITY],
@@ -306,7 +306,7 @@ describe(_'Documentation Generator Service',_() => {
       );
     });
 
-    it(_'should generate mobile documentation section',_async () => {
+    it(_'should generate mobile documentation section',async () => {
       const mobileConfig = {
         ...config,
         includeTypes: [DOCUMENTATION_TYPES.MOBILE],
@@ -326,8 +326,8 @@ describe(_'Documentation Generator Service',_() => {
     });
   });
 
-  describe(_'Documentation Statistics',_() => {
-    it(_'should generate accurate statistics',_async () => {
+  describe(('Documentation Statistics', () => {
+    it(_'should generate accurate statistics',async () => {
       const report = await service.generateDocumentation();
 
       expect(report.statistics.totalSections).toBeGreaterThan(0);
@@ -343,17 +343,17 @@ describe(_'Documentation Generator Service',_() => {
       expect(report.statistics.mobileOptimized).toBe(true);
     });
 
-    it(_'should count examples correctly',_async () => {
+    it(_'should count examples correctly',async () => {
       const report = await service.generateDocumentation();
 
-      const totalExamplesFromSections = report.sections.reduce(_(sum,_section) => sum + (section.examples?.length || 0),
+      const totalExamplesFromSections = report.sections.reduce((sum, section) => sum + (section.examples?.length || 0),
         0,
       );
 
       expect(report.statistics.totalExamples).toBe(totalExamplesFromSections);
     });
 
-    it(_'should validate healthcare categories coverage',_async () => {
+    it(_'should validate healthcare categories coverage',async () => {
       const report = await service.generateDocumentation();
 
       const categoriesInSections = [
@@ -361,14 +361,14 @@ describe(_'Documentation Generator Service',_() => {
       ];
 
       expect(categoriesInSections.length).toBeGreaterThan(0);
-      categoriesInSections.forEach(_category => {
+      categoriesInSections.forEach(category => {
         expect(Object.values(HEALTHCARE_DOC_CATEGORIES)).toContain(category);
       });
     });
   });
 
-  describe(_'Documentation Validation',_() => {
-    it(_'should validate documentation quality',_async () => {
+  describe(('Documentation Validation', () => {
+    it(_'should validate documentation quality',async () => {
       const report = await service.generateDocumentation();
 
       expect(report.validationResults.contentQuality).toBeGreaterThan(80);
@@ -383,7 +383,7 @@ describe(_'Documentation Generator Service',_() => {
       expect(report.validationResults.mobileOptimization).toBeGreaterThan(80);
     });
 
-    it(_'should generate recommendations based on validation results',_async () => {
+    it(_'should generate recommendations based on validation results',async () => {
       const report = await service.generateDocumentation();
 
       expect(report.recommendations).toBeInstanceOf(Array);
@@ -396,10 +396,10 @@ describe(_'Documentation Generator Service',_() => {
       expect(positiveRecommendations.length).toBeGreaterThan(0);
     });
 
-    it(_'should validate section metadata',_async () => {
+    it(_'should validate section metadata',async () => {
       const report = await service.generateDocumentation();
 
-      report.sections.forEach(_section => {
+      report.sections.forEach(section => {
         expect(section.metadata).toBeDefined();
         expect(section.metadata.lastUpdated).toBeInstanceOf(Date);
         expect(section.metadata.author).toBeDefined();
@@ -412,8 +412,8 @@ describe(_'Documentation Generator Service',_() => {
     });
   });
 
-  describe(_'Brazilian Portuguese Localization',_() => {
-    it(_'should provide Brazilian Portuguese labels',_() => {
+  describe(('Brazilian Portuguese Localization', () => {
+    it(('should provide Brazilian Portuguese labels', () => {
       expect(DOCUMENTATION_LABELS_PT_BR.overview).toBe('Visão Geral');
       expect(DOCUMENTATION_LABELS_PT_BR.apiReference).toBe('Referência da API');
       expect(DOCUMENTATION_LABELS_PT_BR.components).toBe('Componentes');
@@ -434,10 +434,10 @@ describe(_'Documentation Generator Service',_() => {
       );
     });
 
-    it(_'should include Portuguese translations in sections',_async () => {
+    it(_'should include Portuguese translations in sections',async () => {
       const report = await service.generateDocumentation();
 
-      report.sections.forEach(_section => {
+      report.sections.forEach(section => {
         if (config.languages.includes(DOCUMENTATION_LANGUAGES.PORTUGUESE_BR)) {
           expect(section.titlePtBr).toBeDefined();
           expect(section.contentPtBr).toBeDefined();
@@ -445,11 +445,11 @@ describe(_'Documentation Generator Service',_() => {
       });
     });
 
-    it(_'should include Portuguese translations in examples',_async () => {
+    it(_'should include Portuguese translations in examples',async () => {
       const report = await service.generateDocumentation();
 
-      report.sections.forEach(_section => {
-        section.examples?.forEach(_example => {
+      report.sections.forEach(section => {
+        section.examples?.forEach(example => {
           if (
             config.languages.includes(DOCUMENTATION_LANGUAGES.PORTUGUESE_BR)
           ) {
@@ -461,8 +461,8 @@ describe(_'Documentation Generator Service',_() => {
     });
   });
 
-  describe(_'Healthcare Compliance Integration',_() => {
-    it(_'should include healthcare compliance metadata',_async () => {
+  describe(('Healthcare Compliance Integration', () => {
+    it(_'should include healthcare compliance metadata',async () => {
       const report = await service.generateDocumentation();
 
       const healthcareSections = report.sections.filter(
@@ -473,7 +473,7 @@ describe(_'Documentation Generator Service',_() => {
 
       expect(healthcareSections.length).toBeGreaterThan(0);
 
-      healthcareSections.forEach(_section => {
+      healthcareSections.forEach(section => {
         expect(section.metadata.healthcareCompliance).toBe(true);
         // Some sections may have healthcare in different tag positions
         const hasHealthcareTag = section.metadata.tags.some(
@@ -490,7 +490,7 @@ describe(_'Documentation Generator Service',_() => {
       });
     });
 
-    it(_'should include accessibility compliance metadata',_async () => {
+    it(_'should include accessibility compliance metadata',async () => {
       const report = await service.generateDocumentation();
 
       const accessibilitySections = report.sections.filter(
@@ -499,13 +499,13 @@ describe(_'Documentation Generator Service',_() => {
 
       expect(accessibilitySections.length).toBeGreaterThan(0);
 
-      accessibilitySections.forEach(_section => {
+      accessibilitySections.forEach(section => {
         expect(section.metadata.wcagCompliance).toBe(true);
         expect(section.metadata.tags).toContain('accessibility');
       });
     });
 
-    it(_'should include mobile optimization metadata',_async () => {
+    it(_'should include mobile optimization metadata',async () => {
       const report = await service.generateDocumentation();
 
       // Check if mobile documentation is included in the types
@@ -520,7 +520,7 @@ describe(_'Documentation Generator Service',_() => {
 
         expect(mobileSections.length).toBeGreaterThan(0);
 
-        mobileSections.forEach(_section => {
+        mobileSections.forEach(section => {
           expect(section.metadata.mobileOptimized).toBe(true);
           expect(section.metadata.tags).toContain('mobile');
         });
@@ -534,8 +534,8 @@ describe(_'Documentation Generator Service',_() => {
     });
   });
 
-  describe(_'Documentation Examples',_() => {
-    it(_'should include interactive examples when enabled',_async () => {
+  describe(('Documentation Examples', () => {
+    it(_'should include interactive examples when enabled',async () => {
       const interactiveConfig = {
         ...config,
         includeInteractiveExamples: true,
@@ -550,8 +550,8 @@ describe(_'Documentation Generator Service',_() => {
       );
       expect(sectionsWithExamples.length).toBeGreaterThan(0);
 
-      sectionsWithExamples.forEach(_section => {
-        section.examples?.forEach(_example => {
+      sectionsWithExamples.forEach(section => {
+        section.examples?.forEach(example => {
           expect(example.interactive).toBe(true);
           expect(example.code).toBeDefined();
           expect(example.healthcareContext).toBeDefined();
@@ -561,7 +561,7 @@ describe(_'Documentation Generator Service',_() => {
       });
     });
 
-    it(_'should include healthcare context in examples',_async () => {
+    it(_'should include healthcare context in examples',async () => {
       const report = await service.generateDocumentation();
 
       const healthcareExamples = report.sections
@@ -570,14 +570,14 @@ describe(_'Documentation Generator Service',_() => {
 
       expect(healthcareExamples.length).toBeGreaterThan(0);
 
-      healthcareExamples.forEach(_example => {
+      healthcareExamples.forEach(example => {
         expect(example.healthcareContext).toBeDefined();
         expect(typeof example.healthcareContext).toBe('string');
         expect(example.healthcareContext!.length).toBeGreaterThan(0);
       });
     });
 
-    it(_'should include accessibility notes in examples',_async () => {
+    it(_'should include accessibility notes in examples',async () => {
       const report = await service.generateDocumentation();
 
       const accessibilityExamples = report.sections
@@ -586,14 +586,14 @@ describe(_'Documentation Generator Service',_() => {
 
       expect(accessibilityExamples.length).toBeGreaterThan(0);
 
-      accessibilityExamples.forEach(_example => {
+      accessibilityExamples.forEach(example => {
         expect(example.accessibilityNotes).toBeDefined();
         expect(typeof example.accessibilityNotes).toBe('string');
         expect(example.accessibilityNotes!.length).toBeGreaterThan(0);
       });
     });
 
-    it(_'should include mobile notes in examples',_async () => {
+    it(_'should include mobile notes in examples',async () => {
       const report = await service.generateDocumentation();
 
       const mobileExamples = report.sections
@@ -602,7 +602,7 @@ describe(_'Documentation Generator Service',_() => {
 
       expect(mobileExamples.length).toBeGreaterThan(0);
 
-      mobileExamples.forEach(_example => {
+      mobileExamples.forEach(example => {
         expect(example.mobileNotes).toBeDefined();
         expect(typeof example.mobileNotes).toBe('string');
         expect(example.mobileNotes!.length).toBeGreaterThan(0);

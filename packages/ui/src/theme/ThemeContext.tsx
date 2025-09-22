@@ -13,7 +13,7 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 export const ThemeProviderBridge: React.FC<{
   value: ThemeContextValue;
   children: React.ReactNode;
-}> = (_{ value,_children }) => {
+}> = ({ value, children }) => {
   return (
     <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
   );

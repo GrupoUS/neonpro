@@ -58,7 +58,7 @@ export class WebSocketServerMiddleware {
         port: this.config.port,
         path: this.config.path,
       });
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to initialize WebSocket server middleware', { error });
       throw error;
     }
@@ -68,7 +68,7 @@ export class WebSocketServerMiddleware {
    * Attach to HTTP server for upgrade handling
    */
   attachToServer(server: HttpServer): void {
-    server.on(_'upgrade',_(request,_socket,_head) => {
+    server.on(_'upgrade',(request,socket,_head) => {
       this.handleUpgrade(request, socket, head);
     });
 
@@ -108,7 +108,7 @@ export class WebSocketServerMiddleware {
    */
   private setupEventHandlers(): void {
     // Handle new connections
-    this.wss.on(_'connection',_(ws,_request) => {
+    this.wss.on(_'connection',(ws,_request) => {
       this.aguiService.getProtocolInstance().handleConnection(ws, _request);
     });
 
@@ -207,7 +207,7 @@ export class WebSocketServerMiddleware {
         aguiService: aguiHealth,
         overall: aguiHealth.status === 'healthy' && this.isInitialized ? 'healthy' : 'degraded',
       };
-    } catch (_error) {
+    } catch (error) {
       logger.error('Failed to get health status', { error });
       return {
         websocketServer: {
@@ -282,7 +282,7 @@ export class WebSocketServerMiddleware {
       this.isInitialized = false;
 
       logger.info('WebSocket server middleware shutdown completed');
-    } catch (_error) {
+    } catch (error) {
       logger.error('Error during WebSocket server shutdown', { error });
       throw error;
     }

@@ -122,7 +122,7 @@ export function ProfessionalDashboard({
   };
 
   const getActivityIcon = (_type: any) => {
-    switch (_type) {
+    switch (type) {
       case 'assessment':
         return <FileText className='h-4 w-4' />;
       case 'procedure':

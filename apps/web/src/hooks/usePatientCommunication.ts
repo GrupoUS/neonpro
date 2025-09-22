@@ -56,7 +56,7 @@ export function useCreateCommunicationTemplate() {
 
   return useMutation({
     mutationFn: ({
-      clinicId,_request,
+      clinicId,request,
     }: {
       clinicId: string;
       _request: CreateCommunicationTemplateRequest;
@@ -90,7 +90,7 @@ export function useUpdateCommunicationTemplate() {
 
   return useMutation({
     mutationFn: ({
-      id,_request,
+      id,request,
     }: {
       id: string;
       _request: UpdateCommunicationTemplateRequest;
@@ -145,7 +145,7 @@ export function useSendMessage() {
 
   return useMutation({
     mutationFn: ({
-      clinicId,_request,
+      clinicId,request,
     }: {
       clinicId: string;
       _request: SendMessageRequest;
@@ -201,7 +201,7 @@ export function useUpdateCommunicationSettings() {
 
   return useMutation({
     mutationFn: ({
-      clinicId,_settings,
+      clinicId,settings,
     }: {
       clinicId: string;
       settings: Partial<CommunicationSettings>;
@@ -247,7 +247,7 @@ export function useUpdatePatientCommunicationPreferences() {
 
   return useMutation({
     mutationFn: ({
-      patientId,_preferences,
+      patientId,preferences,
     }: {
       patientId: string;
       preferences: Partial<PatientCommunicationPreferences>;
@@ -303,7 +303,7 @@ export function useScheduleAppointmentReminders() {
 
   return useMutation({
     mutationFn: ({
-      clinicId,_appointmentId,
+      clinicId,appointmentId,
     }: {
       clinicId: string;
       appointmentId: string;
@@ -337,7 +337,7 @@ export function useCancelScheduledMessages() {
 
   return useMutation({
     mutationFn: ({
-      appointmentId,_messageTypes,
+      appointmentId,messageTypes,
     }: {
       appointmentId: string;
       messageTypes?: string[];

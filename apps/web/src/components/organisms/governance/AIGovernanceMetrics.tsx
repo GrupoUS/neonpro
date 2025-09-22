@@ -59,7 +59,7 @@ export function AIGovernanceMetrics() {
   const clinicId = 'default-clinic-id'; // Placeholder
 
   const { data: aiData, isLoading } = useQuery<AIMetrics>({
-    queryKey: ['ai-governance',_clinicId],
+    queryKey: ['ai-governance', clinicId],
     queryFn: async () => {
       const governanceService = getGovernanceService();
       return await governanceService.getAIGovernanceMetrics(clinicId);

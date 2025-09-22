@@ -56,7 +56,7 @@ if ((import.meta as any).env?.DEV) {
 clientCSPManager;
 
 // Healthcare SRI-enabled resource loading utility
-function _loadResourceWithSRI(
+function loadResourceWithSRI(
   url: string,
   type: 'script' | 'style',
   integrity?: string,
@@ -66,7 +66,7 @@ function _loadResourceWithSRI(
     crossorigin?: 'anonymous' | 'use-credentials';
   } = {},
 ): Promise<void> {
-  return new Promise(_(resolve,_reject) => {
+  return new Promise((resolve, reject) => {
     const element = document.createElement(type);
 
     if (type === 'script') {
@@ -218,7 +218,7 @@ async function bootstrap() {
         console.log('[Performance] Core Web Vitals:', metrics);
       }, 2000);
     }
-  } catch (err: any) {
+  } catch (_err: any) {
     console.error(err);
     if ((import.meta as any).env?.DEV) {
       showErrorBanner(err?.message ?? String(err));

@@ -6,7 +6,7 @@
 import { Context, Next } from 'hono';
 
 // Mock middleware for testing
-export const _mockAuthMiddleware = (c: Context, next: Next) => {
+export const mockAuthMiddleware = (c: Context, next: Next) => {
   const authHeader = c.req.header('authorization');
   if (!authHeader) {
     return c.json(
@@ -23,14 +23,14 @@ export const _mockAuthMiddleware = (c: Context, next: Next) => {
 };
 
 // Mock LGPD middleware for testing
-export const _mockLGPDMiddleware = (c: Context, next: Next) => {
+export const mockLGPDMiddleware = (c: Context, next: Next) => {
   c.set('lgpdConsent', { isActive: true });
   c.set('hasLGPDConsent', true);
   return next();
 };
 
 // Mock healthcare professional middleware for testing
-export const _mockHealthcareMiddleware = (c: Context, next: Next) => {
+export const mockHealthcareMiddleware = (c: Context, next: Next) => {
   c.set('healthcareProfessional', {
     id: 'hp-123',
     crmNumber: '12345-SP',
@@ -42,13 +42,13 @@ export const _mockHealthcareMiddleware = (c: Context, next: Next) => {
 };
 
 // Mock AI access middleware for testing
-export const _mockAIAccessMiddleware = (c: Context, next: Next) => {
+export const mockAIAccessMiddleware = (c: Context, next: Next) => {
   c.set('hasAIAccess', true);
   return next();
 };
 
 // Test user object
-export const _testUser = {
+export const testUser = {
   id: 'test-user-123',
   email: 'test@example.com',
   _role: 'healthcare_professional',
@@ -56,7 +56,7 @@ export const _testUser = {
 };
 
 // Test healthcare professional object
-export const _testHealthcareProfessional = {
+export const testHealthcareProfessional = {
   id: 'test-hp-123',
   crmNumber: '12345-SP',
   specialty: 'Cardiology',
@@ -70,7 +70,7 @@ export const _testHealthcareProfessional = {
 };
 
 // Test LGPD consent object
-export const _testLGPDConsent = {
+export const testLGPDConsent = {
   _userId: 'test-user-123',
   consentDate: new Date(),
   consentVersion: '1.0',

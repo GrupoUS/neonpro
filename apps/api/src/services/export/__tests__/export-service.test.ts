@@ -4,12 +4,12 @@ import { ExportLGPDCompliance } from '../lgpd-compliance';
 import { ExportFilter, ExportPagination, LGPDComplianceOptions } from '../types';
 
 describe(_'ExportService',_() => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.useRealTimers();
   });
 
@@ -244,7 +244,7 @@ describe(_'ExportService',_() => {
       const history = await ExportService.getExportHistory(userId, 10);
 
       expect(history).toHaveLength(2);
-      expect(history[0]._userId).toBe(_userId);
+      expect(history[0]._userId).toBe(userId);
       expect(history[0].format).toBe('xlsx');
       expect(history[1].format).toBe('csv');
     });

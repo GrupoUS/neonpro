@@ -9,9 +9,9 @@ export interface MetricsCacheProps {
   'data-testid'?: string;
 }
 
-export const MetricsCache: React.FC<MetricsCacheProps> = (_{
-  onCacheUpdate,_className,
-  'data-testid': testId,_}) => {
+export const MetricsCache: React.FC<MetricsCacheProps> = ({
+  onCacheUpdate,className,
+  'data-testid': testId, }) => {
   const [cacheStats, setCacheStats] = useState({
     size: 0,
     hitRate: 0,
@@ -62,7 +62,7 @@ export const MetricsCache: React.FC<MetricsCacheProps> = (_{
     }
   };
 
-  useEffect(_() => {
+  useEffect(() => {
     refreshStats();
   }, []);
 
@@ -122,7 +122,7 @@ export const MetricsCache: React.FC<MetricsCacheProps> = (_{
           </div>
         </div>
 
-        {cacheStats.keys.length > 0 && (_<div>
+        {cacheStats.keys.length > 0 && (<div>
             <h4 className='font-medium mb-2'>Cache Keys</h4>
             <div className='flex flex-wrap gap-2'>
               {cacheStats.keys.map((key, _index) => (

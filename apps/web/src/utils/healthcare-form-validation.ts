@@ -90,7 +90,7 @@ export const brazilianHealthcareSchemas = {
         date = new Date(val);
       }
 
-      const _now = new Date();
+      const now = new Date();
       const minDate = new Date(now.getFullYear() - 120, 0, 1); // Max 120 years old
 
       return !isNaN(date.getTime()) && date <= now && date >= minDate;
@@ -99,8 +99,8 @@ export const brazilianHealthcareSchemas = {
     }),
 
   // Medical specialty validation
-  medicalSpecialty: z.enum(_[
-    'cardiologia',_'pediatria',_'ginecologia',_'neurologia',_'ortopedia',_'psiquiatria',_'dermatologia',_'oftalmologia',_'medicina-geral',_], {
+  medicalSpecialty: z.enum([
+    'cardiologia', 'pediatria', 'ginecologia', 'neurologia', 'ortopedia', 'psiquiatria', 'dermatologia', 'oftalmologia', 'medicina-geral'], {
     errorMap: () => ({ message: 'Especialidade médica inválida' }),
   }),
 
@@ -117,18 +117,18 @@ export const brazilianHealthcareSchemas = {
     .email('Email inválido'),
 
   // Blood type validation
-  bloodType: z.enum(_['A+',_'A-',_'B+',_'B-',_'AB+',_'AB-',_'O+',_'O-'], {
+  bloodType: z.enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'], {
     errorMap: () => ({ message: 'Tipo sanguíneo inválido' }),
   }),
 
   // Urgency level validation
-  urgencyLevel: z.enum(_['emergencia',_'urgencia',_'prioridade',_'normal',_'baixa'], {
+  urgencyLevel: z.enum(['emergencia', 'urgencia', 'prioridade', 'normal', 'baixa'], {
     errorMap: () => ({ message: 'Nível de urgência inválido' }),
   }),
 
   // Consultation type validation
-  consultationType: z.enum(_[
-    'primeira-consulta',_'retorno',_'consulta-urgencia',_'teleconsulta',_'consulta-especializada',_'segunda-opiniao',_], {
+  consultationType: z.enum([
+    'primeira-consulta', 'retorno', 'consulta-urgencia', 'teleconsulta', 'consulta-especializada', 'segunda-opiniao', ], {
     errorMap: () => ({ message: 'Tipo de consulta inválido' }),
   }),
 };

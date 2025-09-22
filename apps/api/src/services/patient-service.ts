@@ -133,7 +133,7 @@ export class PatientService {
    * Set healthcare context for the service
    */
   withContext(_context: HealthcareContext): PatientService {
-    return new PatientService(_context);
+    return new PatientService(context);
   }
 
   /**
@@ -234,7 +234,7 @@ export class PatientService {
         data: patient,
         message: 'Paciente criado com sucesso',
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating patient:', error);
 
       if (
@@ -299,7 +299,7 @@ export class PatientService {
         success: true,
         data: patient,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting patient by ID:', error);
 
       if (
@@ -451,7 +451,7 @@ export class PatientService {
           },
         },
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error listing patients:', error);
 
       if (
@@ -554,7 +554,7 @@ export class PatientService {
         success: true,
         data: result.data?.patients || [],
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error searching patients:', error);
       return {
         success: false,
@@ -599,7 +599,7 @@ export class PatientService {
         success: true,
         data: patient,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error finding patient by CPF:', error);
 
       if (
@@ -703,7 +703,7 @@ export class PatientService {
         data: patient,
         message: 'Paciente atualizado com sucesso',
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error updating patient:', error);
 
       if (
@@ -765,7 +765,7 @@ export class PatientService {
         success: true,
         message: 'Paciente removido com sucesso',
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error deleting patient:', error);
 
       if (

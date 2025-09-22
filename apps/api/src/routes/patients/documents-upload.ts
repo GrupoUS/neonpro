@@ -86,7 +86,7 @@ app.post('/:id/documents', requireAuth, async c => {
     );
   }
 
-  const _now = new Date().toISOString();
+  const now = new Date().toISOString();
   const docId = crypto.randomUUID();
   const patientId = params.data.id;
 

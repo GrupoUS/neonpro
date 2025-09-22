@@ -6,10 +6,10 @@
 import { vi } from 'vitest';
 
 // Mock console methods globally for all security tests
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(_() => {});
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(_() => {});
-const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(_() => {});
-const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(_() => {});
+const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
 
 // Store original console methods for restoration
 const originalConsole = {
@@ -20,14 +20,14 @@ const originalConsole = {
 };
 
 // Test environment setup
-export const _setupSecurityLoggingTests = () => {
+export const setupSecurityLoggingTests = () => {
   // Clear all mock calls before each test
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
   // Restore original console methods after all tests
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
@@ -41,7 +41,7 @@ export const _setupSecurityLoggingTests = () => {
 };
 
 // Security-specific test utilities
-export const _securityTestUtils = {
+export const securityTestUtils = {
   // Check for SQL injection patterns in logs
   hasSqlInjectionPatterns: (output: string[][]) => {
     const sqlPatterns = [
@@ -51,7 +51,7 @@ export const _securityTestUtils = {
       '--',
       '/*',
       '*/',
-      'xp_cmdshell',
+      'xp_cmdshell_,
       'INSERT INTO',
       'UPDATE SET',
       'DELETE FROM',
@@ -96,15 +96,15 @@ export const _securityTestUtils = {
   // Check for CSRF token exposure
   hasCsrfTokenExposure: (output: string[][]) => {
     const csrfPatterns = [
-      'csrf_token',
+      'csrf_token_,
       'csrf-token',
       'csrfToken',
       'cross-site',
       'forgery',
       'token',
       'secret',
-      'session_token',
-      'authenticity_token',
+      'session_token_,
+      'authenticity_token_,
     ];
 
     return output.some(log =>
@@ -189,10 +189,10 @@ export const _securityTestUtils = {
   // Check for encryption key exposure
   hasEncryptionKeyExposure: (output: string[][]) => {
     const encryptionPatterns = [
-      'private_key',
-      'public_key',
-      'secret_key',
-      'encryption_key',
+      'private_key_,
+      'public_key_,
+      'secret_key_,
+      'encryption_key_,
       'aes',
       'rsa',
       'sha256',
@@ -218,10 +218,10 @@ export const _securityTestUtils = {
   // Check for rate limiting configuration exposure
   hasRateLimitConfigExposure: (output: string[][]) => {
     const rateLimitPatterns = [
-      'rate_limit',
-      'max_requests',
+      'rate_limit_,
+      'max_requests_,
       'window',
-      'ban_duration',
+      'ban_duration_,
       'redis',
       'cache',
       'throttle',
@@ -254,8 +254,8 @@ export const _securityTestUtils = {
       'trojan',
       'ransomware',
       'phishing',
-      'data_leak',
-      'security_incident',
+      'data_leak_,
+      'security_incident_,
     ];
 
     return output.some(log =>
@@ -289,13 +289,13 @@ export const _securityTestUtils = {
   hasNetworkConfigExposure: (output: string[][]) => {
     const networkPatterns = [
       'firewall',
-      'security_group',
+      'security_group_,
       'vpc',
       'subnet',
       'gateway',
       'router',
       'switch',
-      'load_balancer',
+      'load_balancer_,
       'cdn',
       'dns',
       'proxy',

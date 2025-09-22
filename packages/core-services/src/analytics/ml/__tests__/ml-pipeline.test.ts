@@ -19,7 +19,7 @@ import {
   BatchPredictionInput,
 } from "../index";
 
-describe(_"ML Pipeline - Interface Contract Tests",_() => {
+describe("ML Pipeline - Interface Contract Tests", () => {
   let provider: StubModelProvider;
 
   beforeEach(_async () => {
@@ -39,7 +39,7 @@ describe(_"ML Pipeline - Interface Contract Tests",_() => {
   // Initialization Tests
   // ============================================================================
 
-  describe(_"Model Provider Initialization",_() => {
+  describe("Model Provider Initialization", () => {
     it(_"should initialize successfully with default config",_async () => {
       await expect(provider.initialize()).resolves.not.toThrow();
     });
@@ -79,7 +79,7 @@ describe(_"ML Pipeline - Interface Contract Tests",_() => {
   // Single Prediction Tests
   // ============================================================================
 
-  describe(_"Single Prediction",_() => {
+  describe("Single Prediction", () => {
     beforeEach(_async () => {
       await provider.initialize();
     });
@@ -174,7 +174,7 @@ describe(_"ML Pipeline - Interface Contract Tests",_() => {
   // Batch Prediction Tests
   // ============================================================================
 
-  describe(_"Batch Prediction",_() => {
+  describe("Batch Prediction", () => {
     beforeEach(_async () => {
       await provider.initialize();
     });
@@ -198,7 +198,7 @@ describe(_"ML Pipeline - Interface Contract Tests",_() => {
     });
 
     it(_"should respect batch processing options",_async () => {
-      const inputs = Array.from({ length: 10 },_() =>
+      const inputs = Array.from({ length: 10 }, () =>
         createMockPredictionInput("patient_outcome"),
       );
 
@@ -232,18 +232,18 @@ describe(_"ML Pipeline - Interface Contract Tests",_() => {
   // Input Validation Tests
   // ============================================================================
 
-  describe(_"Input Validation",_() => {
+  describe("Input Validation", () => {
     beforeEach(_async () => {
       await provider.initialize();
     });
 
-    it(_"should validate correct input structure",_() => {
+    it("should validate correct input structure", () => {
       const input = createMockPredictionInput("patient_outcome");
 
-      expect(_() => provider.validateInput(input)).not.toThrow();
+      expect(() => provider.validateInput(input)).not.toThrow();
     });
 
-    it(_"should validate prediction input structure utility",_() => {
+    it("should validate prediction input structure utility", () => {
       const validInput = createMockPredictionInput("patient_outcome");
       const invalidInputs = [
         null,
@@ -257,10 +257,10 @@ describe(_"ML Pipeline - Interface Contract Tests",_() => {
         { features: {} },
       ];
 
-      expect(_() => validatePredictionInputStructure(validInput)).not.toThrow();
+      expect(() => validatePredictionInputStructure(validInput)).not.toThrow();
 
-      invalidInputs.forEach(_(input) => {
-        expect(_() => validatePredictionInputStructure(input)).toThrow();
+      invalidInputs.forEach((input) => {
+        expect(() => validatePredictionInputStructure(input)).toThrow();
       });
     });
   });
@@ -269,7 +269,7 @@ describe(_"ML Pipeline - Interface Contract Tests",_() => {
   // Health Check Tests
   // ============================================================================
 
-  describe(_"Health Check",_() => {
+  describe("Health Check", () => {
     it(_"should return health status when initialized",_async () => {
       await provider.initialize();
 
@@ -295,7 +295,7 @@ describe(_"ML Pipeline - Interface Contract Tests",_() => {
   // Error Handling Tests
   // ============================================================================
 
-  describe(_"Error Handling",_() => {
+  describe("Error Handling", () => {
     beforeEach(_async () => {
       await provider.initialize();
     });
@@ -346,7 +346,7 @@ describe(_"ML Pipeline - Interface Contract Tests",_() => {
   // Resource Management Tests
   // ============================================================================
 
-  describe(_"Resource Management",_() => {
+  describe("Resource Management", () => {
     it(_"should dispose resources properly",_async () => {
       await provider.initialize();
 
@@ -364,8 +364,8 @@ describe(_"ML Pipeline - Interface Contract Tests",_() => {
   // Configuration Tests
   // ============================================================================
 
-  describe(_"Configuration",_() => {
-    it(_"should accept custom configuration during creation",_() => {
+  describe("Configuration", () => {
+    it("should accept custom configuration during creation", () => {
       const customProvider = createStubModelProvider({
         id: "custom-model",
         name: "Custom Test Model",
@@ -380,13 +380,13 @@ describe(_"ML Pipeline - Interface Contract Tests",_() => {
       expect(customProvider.metadata.accuracy).toBe(0.95);
     });
 
-    it(_"should support all defined prediction types",_() => {
+    it("should support all defined prediction types", () => {
       const metadata = provider.metadata;
 
-      PREDICTION_TYPES.forEach(_(type) => {
+      PREDICTION_TYPES.forEach((type) => {
         if (metadata.supportedTypes.includes(type)) {
           // If supported, should be able to create mock input
-          expect(_() => createMockPredictionInput(type)).not.toThrow();
+          expect(() => createMockPredictionInput(type)).not.toThrow();
         }
       });
     });
@@ -396,8 +396,8 @@ describe(_"ML Pipeline - Interface Contract Tests",_() => {
   // Utility Function Tests
   // ============================================================================
 
-  describe(_"Utility Functions",_() => {
-    it(_"should create mock prediction input correctly",_() => {
+  describe("Utility Functions", () => {
+    it("should create mock prediction input correctly", () => {
       const input = createMockPredictionInput("readmission_risk", {
         customFeature: "test-value",
       });
@@ -409,7 +409,7 @@ describe(_"ML Pipeline - Interface Contract Tests",_() => {
       expect(input.clinicId).toBeDefined();
     });
 
-    it(_"should create stub provider with factory function",_() => {
+    it("should create stub provider with factory function", () => {
       const provider = createStubModelProvider();
 
       expect(provider).toBeInstanceOf(StubModelProvider);

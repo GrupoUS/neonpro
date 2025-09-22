@@ -38,7 +38,7 @@ export const validateCPF = (cpf: string): boolean => {
 };
 
 // Phone number validation (Brazilian format)
-export const _validatePhone = (phone: string): boolean => {
+export const validatePhone = (phone: string): boolean => {
   if (!phone) return false;
 
   // Remove non-digits
@@ -240,7 +240,7 @@ export type ValidatedFinancialTransaction = z.infer<
 >;
 
 // Validation functions with Brazilian error messages
-export const _validateBrazilianHealthcareData = {
+export const validateBrazilianHealthcareData = {
   patient: (data: unknown) => {
     const result = BrazilianHealthcareSchemas.Patient.safeParse(data);
     if (!result.success) {
@@ -300,7 +300,7 @@ export const _validateBrazilianHealthcareData = {
 };
 
 // Appointment conflict detection
-export const _checkAppointmentConflict = (
+export const checkAppointmentConflict = (
   appointments: Array<{
     professional_id: string;
     scheduled_at: string;

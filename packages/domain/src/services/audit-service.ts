@@ -16,25 +16,25 @@ import {
  * Audit event types
  */
 export enum AuditEventType {
-  PATIENT_CREATED = 'PATIENT_CREATED',
-  PATIENT_UPDATED = 'PATIENT_UPDATED',
-  PATIENT_DELETED = 'PATIENT_DELETED',
-  PATIENT_ACCESSED = 'PATIENT_ACCESSED',
-  APPOINTMENT_CREATED = 'APPOINTMENT_CREATED',
-  APPOINTMENT_UPDATED = 'APPOINTMENT_UPDATED',
-  APPOINTMENT_CANCELLED = 'APPOINTMENT_CANCELLED',
-  APPOINTMENT_COMPLETED = 'APPOINTMENT_COMPLETED',
-  APPOINTMENT_NO_SHOW = 'APPOINTMENT_NO_SHOW',
-  CONSENT_CREATED = 'CONSENT_CREATED',
-  CONSENT_GRANTED = 'CONSENT_GRANTED',
-  CONSENT_REVOKED = 'CONSENT_REVOKED',
-  CONSENT_ACCESSED = 'CONSENT_ACCESSED',
-  CONSENT_EXPIRED = 'CONSENT_EXPIRED',
-  SECURITY_EVENT = 'SECURITY_EVENT',
-  COMPLIANCE_CHECK = 'COMPLIANCE_CHECK',
-  DATA_EXPORT = 'DATA_EXPORT',
-  DATA_ANONYMIZATION = 'DATA_ANONYMIZATION',
-  SYSTEM_CONFIG = 'SYSTEM_CONFIG'
+  PATIENT_CREATED = 'PATIENT_CREATED_,
+  PATIENT_UPDATED = 'PATIENT_UPDATED_,
+  PATIENT_DELETED = 'PATIENT_DELETED_,
+  PATIENT_ACCESSED = 'PATIENT_ACCESSED_,
+  APPOINTMENT_CREATED = 'APPOINTMENT_CREATED_,
+  APPOINTMENT_UPDATED = 'APPOINTMENT_UPDATED_,
+  APPOINTMENT_CANCELLED = 'APPOINTMENT_CANCELLED_,
+  APPOINTMENT_COMPLETED = 'APPOINTMENT_COMPLETED_,
+  APPOINTMENT_NO_SHOW = 'APPOINTMENT_NO_SHOW_,
+  CONSENT_CREATED = 'CONSENT_CREATED_,
+  CONSENT_GRANTED = 'CONSENT_GRANTED_,
+  CONSENT_REVOKED = 'CONSENT_REVOKED_,
+  CONSENT_ACCESSED = 'CONSENT_ACCESSED_,
+  CONSENT_EXPIRED = 'CONSENT_EXPIRED_,
+  SECURITY_EVENT = 'SECURITY_EVENT_,
+  COMPLIANCE_CHECK = 'COMPLIANCE_CHECK_,
+  DATA_EXPORT = 'DATA_EXPORT_,
+  DATA_ANONYMIZATION = 'DATA_ANONYMIZATION_,
+  SYSTEM_CONFIG = 'SYSTEM_CONFIG_
 }
 
 /**
@@ -76,7 +76,7 @@ export interface AuditLogEntry {
   dataClassification?: MedicalDataClassification | undefined;
   severity?: AuditSeverity | undefined;
   metadata?: Record<string, unknown> | undefined;
-  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT' | undefined;
+  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT_ | undefined;
 }
 
 /**
@@ -178,7 +178,7 @@ export class AuditDomainService {
 
     // Check compliance
     const complianceStatus = await this.checkAccessCompliance(userId, patientId, metadata?.legalBasis);
-    auditEvent.complianceStatus = complianceStatus ? 'COMPLIANT' : 'NON_COMPLIANT';
+    auditEvent.complianceStatus = complianceStatus ? 'COMPLIANT' : ''NON_COMPLIANT'
 
     // Publish domain event
     await this.eventBus.publish({
@@ -228,7 +228,7 @@ export class AuditDomainService {
       id: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date().toISOString(),
       eventType: AuditEventType.SECURITY_EVENT,
-      _userId: userId || 'system',
+      _userId: userId || 'system_,
       userRole: 'system',
       resourceType: 'SYSTEM',
       action: eventType,
@@ -300,7 +300,7 @@ export class AuditDomainService {
       eventType: AuditEventType.DATA_EXPORT,
       userId,
       userRole,
-      resourceType: 'DATA_EXPORT',
+      resourceType: 'DATA_EXPORT_,
       action: 'EXPORT',
       description: `${userRole} exported ${recordCount} ${dataType} records in ${format} format`,
       ipAddress: metadata?.ipAddress,
@@ -319,7 +319,7 @@ export class AuditDomainService {
 
     // Check export compliance
     const complianceStatus = await this.checkExportCompliance(userId, dataType, recordCount, metadata?.legalBasis);
-    auditEvent.complianceStatus = complianceStatus ? 'COMPLIANT' : 'NON_COMPLIANT';
+    auditEvent.complianceStatus = complianceStatus ? 'COMPLIANT' : ''NON_COMPLIANT'
 
     // Publish domain event
     await this.eventBus.publish({
@@ -355,7 +355,7 @@ export class AuditDomainService {
   async logDataAnonymization(
     _userId: string,
     patientId: string,
-    reason: 'gdpr_request' | 'data_retention' | 'other',
+    reason: 'gdpr_request' | 'data_retention' | 'other_,
     metadata?: {
       ipAddress?: string;
       userAgent?: string;
@@ -429,7 +429,7 @@ export class AuditDomainService {
     _clinicId?: string
   ): Promise<ComplianceReport> {
     // Generate report using audit repository
-    const _auditLogs = await this.auditRepository.findByDateRange(startDate, endDate, clinicId);
+    const auditLogs = await this.auditRepository.findByDateRange(startDate, endDate, clinicId);
     
     // Create a comprehensive report structure based on audit logs
     const report: ComplianceReport = {

@@ -3,20 +3,20 @@ import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, test } from 'vitest';
 
-describe(_'SharedAnimatedList',_() => {
-  test(_'renders loading state',_() => {
+describe(('SharedAnimatedList', () => {
+  test(('renders loading state', () => {
     render(<SharedAnimatedList items={[]} loading ariaLabel='Lista' />);
     expect(screen.getByRole('status')).toHaveTextContent(/carregando/i);
   });
 
-  test(_'renders empty state',_() => {
+  test(('renders empty state', () => {
     render(<SharedAnimatedList items={[]} ariaLabel='Lista' />);
     expect(screen.getByRole('list', { name: 'Lista' })).toHaveTextContent(
       /Nada para exibir/i,
     );
   });
 
-  test(_'renders items',_() => {
+  test(('renders items', () => {
     render(
       <SharedAnimatedList
         ariaLabel='Lista'

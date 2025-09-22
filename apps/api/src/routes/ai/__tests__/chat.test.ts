@@ -178,7 +178,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     });
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 

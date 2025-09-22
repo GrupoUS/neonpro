@@ -108,7 +108,7 @@ export default function SubscriptionUpgrade({
           </div>
         </div>
 
-        {showFeatures && (_<div className='space-y-4 mb-6'>
+        {showFeatures && (<div className='space-y-4 mb-6'>
             {PRO_FEATURES.map((feature, _index) => (
               <div key={index} className='flex items-start space-x-3'>
                 <div className='w-8 h-8 bg-[#AC9469]/10 rounded-full flex items-center justify-center flex-shrink-0'>

@@ -149,7 +149,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Handle agent actions
   const handleActions = useCallback((actions: AgentAction[]) => {
-    actions.forEach(_action => {
+    actions.forEach(action => {
       switch (action.type) {
         case 'view_details':
           if (action.payload?.clientId) {
@@ -187,7 +187,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${await user?.getIdToken()}`,
           },
-          body: JSON.stringify(_payload),
+          body: JSON.stringify(payload),
         });
 
         if (response.ok) {
@@ -289,7 +289,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
             )}
 
             {/* Render action buttons */}
-            {message.actions && message.actions.length > 0 && (_<div className='flex gap-2 mt-3'>
+            {message.actions && message.actions.length > 0 && (<div className='flex gap-2 mt-3'>
                 {message.actions.map(action => (
                   <button
                     key={action.id}
@@ -318,7 +318,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
   );
 
   // Auto-scroll to bottom
-  React.useEffect(_() => {
+  React.useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatState.messages]);
 

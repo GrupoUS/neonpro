@@ -83,7 +83,7 @@ export class WeatherService {
       });
 
       return weatherData;
-    } catch (_error) {
+    } catch (error) {
       console.error('Weather service error:', error);
 
       // Fallback to mock data on API failure
@@ -113,7 +113,7 @@ export class WeatherService {
         ...currentWeather,
         timestamp: appointmentTime,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Weather forecast error:', error);
       return null;
     }
@@ -129,7 +129,7 @@ export class WeatherService {
     try {
       // Mock implementation - in real scenario, this would call weather alert API
       return [];
-    } catch (_error) {
+    } catch (error) {
       console.error('Weather alerts error:', error);
       return [];
     }
@@ -241,7 +241,7 @@ export class WeatherService {
     state?: string,
   ): WeatherData {
     // Generate realistic weather based on location and season
-    const _now = new Date();
+    const now = new Date();
     const month = now.getMonth();
 
     // Seasonal temperature ranges for Brazil
@@ -302,4 +302,4 @@ export class WeatherService {
 }
 
 // Export singleton instance
-export const _weatherService = new WeatherService();
+export const weatherService = new WeatherService();

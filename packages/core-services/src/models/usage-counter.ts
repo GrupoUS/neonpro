@@ -191,7 +191,7 @@ export class UsageCounter {
       effectiveCost: number;
     };
   } {
-    const _now = new Date();
+    const now = new Date();
     const totalTokens = usage.inputTokens + usage.outputTokens;
 
     // Calculate cost
@@ -438,16 +438,16 @@ export class UsageCounter {
    * Gets billing metrics for a specific period
    */
   getBillingMetrics(startDate: Date, endDate: Date): BillingMetrics {
-    const relevantRequests = this._recentRequests.filter(_(req) => req.createdAt >= startDate && req.createdAt <= endDate,
+    const relevantRequests = this._recentRequests.filter((req) => req.createdAt >= startDate && req.createdAt <= endDate,
     );
 
-    const totalCostUsd = relevantRequests.reduce(_(sum,_req) => sum + req.costUsd,
+    const totalCostUsd = relevantRequests.reduce((sum,_req) => sum + req.costUsd,
       0,
     );
-    const totalTokens = relevantRequests.reduce(_(sum,_req) => sum + req.totalTokens,
+    const totalTokens = relevantRequests.reduce((sum,_req) => sum + req.totalTokens,
       0,
     );
-    const cacheSavingsUsd = relevantRequests.reduce(_(sum,_req) => sum + req.cacheSavingsUsd,
+    const cacheSavingsUsd = relevantRequests.reduce((sum,_req) => sum + req.cacheSavingsUsd,
       0,
     );
 
@@ -481,8 +481,8 @@ export class UsageCounter {
     period: "hour" | "day" | "week" | "month",
   ): UsageAggregation[] {
     return Array.from(this._aggregations.values())
-      .filter(_(agg) => agg.period === period)
-      .sort(_(a,_b) => b.timestamp.getTime() - a.timestamp.getTime());
+      .filter((agg) => agg.period === period)
+      .sort((a,_b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
   // ================================================
@@ -534,7 +534,7 @@ export class UsageCounter {
   }
 
   private updateCacheHitRate(cacheHit: boolean): number {
-    const recentCacheHits = this._recentRequests.filter(_(req) => req.cacheHit,
+    const recentCacheHits = this._recentRequests.filter((req) => req.cacheHit,
     ).length;
     const totalRecent = this._recentRequests.length;
 
@@ -543,7 +543,7 @@ export class UsageCounter {
   }
 
   private updateErrorRate(hasError: boolean): number {
-    const recentErrors = this._recentRequests.filter(_(req) =>
+    const recentErrors = this._recentRequests.filter((req) =>
         req.safetyFlags.length > 0 || req.regulatoryFlags.includes("ERROR"),
     ).length;
     const totalRecent = this._recentRequests.length;
@@ -555,36 +555,36 @@ export class UsageCounter {
   private calculatePeakHours(): number[] {
     const hourCounts = new Array(24).fill(0);
 
-    this._recentRequests.forEach(_(req) => {
+    this._recentRequests.forEach((req) => {
       const hour = req.createdAt.getHours();
       hourCounts[hour]++;
     });
 
     const maxCount = Math.max(...hourCounts);
     return hourCounts
-      .map(_(count,_hour) => ({ hour, count }))
-      .filter(_({ count }) => count > maxCount * 0.7)
-      .map(_({ hour }) => hour);
+      .map((count,_hour) => ({ hour, count }))
+      .filter(({ count }) => count > maxCount * 0.7)
+      .map(({ hour }) => hour);
   }
 
   private getPreferredModels(): EnhancedAIModel[] {
     const modelCounts = new Map<EnhancedAIModel, number>();
 
-    this._recentRequests.forEach(_(req) => {
+    this._recentRequests.forEach((req) => {
       const current = modelCounts.get(req.modelCode) || 0;
       modelCounts.set(req.modelCode, current + 1);
     });
 
     return Array.from(modelCounts.entries())
-      .sort(_(a,_b) => b[1] - a[1])
+      .sort((a,_b) => b[1] - a[1])
       .slice(0, 3)
-      .map(_([model]) => model);
+      .map(([model]) => model);
   }
 
   private getCommonSpecialties(): MedicalSpecialty[] {
     const specialtyCounts = new Map<MedicalSpecialty, number>();
 
-    this._recentRequests.forEach(_(req) => {
+    this._recentRequests.forEach((req) => {
       if (req.medicalSpecialty) {
         const current = specialtyCounts.get(req.medicalSpecialty) || 0;
         specialtyCounts.set(req.medicalSpecialty, current + 1);
@@ -592,9 +592,9 @@ export class UsageCounter {
     });
 
     return Array.from(specialtyCounts.entries())
-      .sort(_(a,_b) => b[1] - a[1])
+      .sort((a,_b) => b[1] - a[1])
       .slice(0, 3)
-      .map(_([specialty]) => specialty);
+      .map(([specialty]) => specialty);
   }
 
   private updateAggregations(usageRecord: AIUsageRecord): void {
@@ -605,7 +605,7 @@ export class UsageCounter {
       "month",
     ];
 
-    periods.forEach(_(period) => {
+    periods.forEach((period) => {
       const key = this.getAggregationKey(usageRecord.createdAt, period);
       const existing = this._aggregations.get(key);
 
@@ -735,7 +735,7 @@ export class UsageCounter {
     _userId: string,
     planCode: SubscriptionTier,
   ): UsageCounter {
-    const _now = new Date();
+    const now = new Date();
 
     const data: UsageCounterData = {
       clinicId,

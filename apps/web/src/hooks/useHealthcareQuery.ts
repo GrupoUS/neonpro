@@ -96,7 +96,7 @@ export function usePatient(
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
-    retry: (_failureCount, _error) => {
+    retry: (failureCount, error) => {
       // Don't retry on permission errors
       if (
         error.message.includes('permission')
@@ -161,7 +161,7 @@ export function useUpdatePatient() {
 
   return useMutation({
     mutationFn: async ({
-      patientId,_updates,
+      patientId,updates,
     }: {
       patientId: string;
       updates: any;
@@ -190,7 +190,7 @@ export function useUpdatePatient() {
     },
 
     // Optimistic update
-    onMutate: async (_{ patientId,_updates }) => {
+    onMutate: async ({ patientId, updates }) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({
         queryKey: healthcareKeys.patient(patientId),
@@ -215,13 +215,13 @@ export function useUpdatePatient() {
     },
 
     // On success, replace optimistic data with server data
-    onSuccess: (_data,_{ patientId }) => {
+    onSuccess: (_data, { patientId }) => {
       queryClient.setQueryData(healthcareKeys.patient(patientId), data);
       toast.success('Dados do paciente atualizados com sucesso');
     },
 
     // On error, rollback to previous data
-    onError: (_error,_{ patientId },_context) => {
+    onError: (_error, { patientId }, context) => {
       if (context?.previousPatient) {
         queryClient.setQueryData(
           healthcareKeys.patient(patientId),
@@ -234,7 +234,7 @@ export function useUpdatePatient() {
     },
 
     // Always refetch after mutation
-    onSettled: (_data, _error,_{ patientId }) => {
+    onSettled: (_data,error, { patientId }) => {
       queryClient.invalidateQueries({
         queryKey: healthcareKeys.patient(patientId),
       });
@@ -257,7 +257,7 @@ export function useCreateAppointment() {
     }) => {
       // Healthcare-specific validation
       const scheduledDate = new Date(appointmentData.scheduled_at);
-      const _now = new Date();
+      const now = new Date();
 
       if (scheduledDate <= now) {
         throw new Error('Agendamento deve ser para uma data futura');
@@ -343,7 +343,7 @@ export function useCreateAppointment() {
       return { previousAppointments, optimisticAppointment };
     },
 
-    onSuccess: (_data, _variables,_context) => {
+    onSuccess: (data, variables, context) => {
       const patientId = variables.patient_id;
 
       // Replace optimistic appointment with real data
@@ -360,7 +360,7 @@ export function useCreateAppointment() {
       toast.success('Agendamento criado com sucesso');
     },
 
-    onError: (_error, _variables,_context) => {
+    onError: (error, variables, context) => {
       const patientId = variables.patient_id;
 
       // Rollback optimistic update
@@ -374,7 +374,7 @@ export function useCreateAppointment() {
       toast.error(`Erro ao criar agendamento: ${error.message}`);
     },
 
-    onSettled: (_data, _error,_variables) => {
+    onSettled: (data, error, variables) => {
       const patientId = variables.patient_id;
 
       // Invalidate related queries
@@ -394,7 +394,7 @@ export function useEmergencyDetection() {
 
   return useMutation({
     mutationFn: async ({
-      patientId,_severity,_description,_symptoms,
+      patientId,severity, description,symptoms,
     }: {
       patientId: string;
       severity: 'low' | 'medium' | 'high' | 'critical';

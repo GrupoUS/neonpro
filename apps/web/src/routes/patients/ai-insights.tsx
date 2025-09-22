@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 
-export const _Route = createFileRoute('/patients/ai-insights')({
+export const Route = createFileRoute('/patients/ai-insights')({
   component: PatientAIInsights,
 });
 
@@ -377,7 +377,7 @@ function PatientAIInsights() {
     },
   ];
 
-  useEffect(_() => {
+  useEffect(() => {
     // Simulate API loading
     const loadData = async () => {
       try {
@@ -396,7 +396,7 @@ function PatientAIInsights() {
     loadData();
   }, []);
 
-  const filteredInsights = useMemo(_() => {
+  const filteredInsights = useMemo(() => {
     return insights.filter(insight => {
       const categoryMatch = selectedCategory === 'all' || insight.category === selectedCategory;
       const priorityMatch = selectedPriority === 'all' || insight.priority === selectedPriority;
@@ -454,7 +454,7 @@ function PatientAIInsights() {
     });
 
     // Simulate action execution
-    setTimeout(_() => {
+    setTimeout(() => {
       toast({
         title: 'Ação concluída',
         description: 'As ações recomendadas foram iniciadas com sucesso.',
@@ -685,7 +685,7 @@ function PatientAIInsights() {
                     ? '#f97316'
                     : insight.priority === 'medium'
                     ? '#eab308'
-                    : '#6b7280',_}}
+                    : '#6b7280', }}
                 onClick={() => handleInsightDetails(insight)}
               >
                 <CardHeader className='pb-3'>
@@ -807,7 +807,7 @@ function PatientAIInsights() {
                         Fatores:
                       </p>
                       <ul className='text-sm text-gray-600 list-disc list-inside'>
-                        {prediction.factors.map(_(factor,_index) => <li key={index}>{factor}</li>)}
+                        {prediction.factors.map((factor, index) => <li key={index}>{factor}</li>)}
                       </ul>
                     </div>
                     <div className='mt-3 p-3 bg-blue-50 rounded'>
@@ -921,7 +921,7 @@ function PatientAIInsights() {
       </Tabs>
 
       {/* Insight Details Modal */}
-      {selectedInsight && (_<AnimatedModal
+      {selectedInsight && (<AnimatedModal
           isOpen={isModalOpen}
           onClose={() => {
             setIsModalOpen(false);
@@ -986,7 +986,7 @@ function PatientAIInsights() {
             <div>
               <h3 className='font-medium mb-2'>Recomendações</h3>
               <ul className='space-y-1 text-sm'>
-                {selectedInsight.recommendations.map(_(rec,_index) => (
+                {selectedInsight.recommendations.map((rec, index) => (
                   <li key={index} className='flex items-start gap-2'>
                     <CheckCircle className='h-4 w-4 text-green-600 mt-0.5 flex-shrink-0' />
                     <span>{rec}</span>
@@ -995,10 +995,10 @@ function PatientAIInsights() {
               </ul>
             </div>
 
-            {selectedInsight.actionItems.length > 0 && (_<div>
+            {selectedInsight.actionItems.length > 0 && (<div>
                 <h3 className='font-medium mb-2'>Ações Necessárias</h3>
                 <div className='space-y-2'>
-                  {selectedInsight.actionItems.map((action,_index) => (
+                  {selectedInsight.actionItems.map((action, index) => (
                     <div key={index} className='border rounded p-3'>
                       <div className='flex items-center justify-between mb-1'>
                         <h4 className='font-medium text-sm'>{action.title}</h4>

@@ -344,7 +344,7 @@ export class DatabaseAuditStorage implements AuditStorage {
       // await db.auditEvents.create(signedEvent);
 
       console.log('[Audit] Event stored:', event.id);
-    } catch (_error) {
+    } catch (error) {
       console.error('[Audit] Failed to store event:', error);
       // Don't throw - audit failures shouldn't break application flow
     }
@@ -514,7 +514,7 @@ export class AuditTrailService {
       if (this.config.realTimeLogging) {
         await this.processRealTimeEvent(auditEvent);
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('[AuditTrail] Failed to log event:', error);
       // Log audit failure as a separate event
       await this.logAuditFailure(eventType, error);
@@ -866,7 +866,7 @@ export class AuditTrailService {
     healthcareContext?: AuditEvent['healthcareContext'],
   ): AuditEvent['compliance'] {
     const isPatientData = resource.type === 'patient' || resource.type === 'medical_record';
-    const _isSecurityEvent = eventType.includes('security') || eventType.includes('violation');
+    const isSecurityEvent = eventType.includes('security') || eventType.includes('violation');
 
     return {
       lgpdRelevant: isPatientData || eventType.includes('data_subject'),
@@ -952,7 +952,7 @@ export class AuditTrailService {
 
       // Try to store the failure event
       console.error('[Audit] Audit failure event:', failureEvent);
-    } catch (_nestedError) {
+    } catch (nestedError) {
       // If we can't even log the failure, just console log
       console.error('[Audit] Critical: Cannot log audit failure:', nestedError);
     }
@@ -997,7 +997,7 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
           },
         );
       }
-    } catch (_error) {
+    } catch (error) {
       // Log failed request
       await auditService.logEvent(
         AuditEventType.SYSTEM_CONFIGURATION_CHANGE,

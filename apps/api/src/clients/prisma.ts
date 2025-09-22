@@ -219,7 +219,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       }
 
       return hasAccess;
-    } catch (_error) {
+    } catch (error) {
       console.error('Context validation failed:', error);
       return false;
     }
@@ -349,7 +349,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       });
 
       return exportData;
-    } catch (_error) {
+    } catch (error) {
       console.error('Patient data export failed:', error);
       throw error;
     }
@@ -423,7 +423,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
           where: { id: patientId },
         });
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Patient data deletion failed:', error);
       throw error;
     }
@@ -481,7 +481,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       });
 
       return patients;
-    } catch (_error) {
+    } catch (error) {
       console.error('Find patients in clinic failed:', error);
       throw error;
     }
@@ -546,7 +546,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       });
 
       return appointments;
-    } catch (_error) {
+    } catch (error) {
       console.error('Find appointments for professional failed:', error);
       throw error;
     }
@@ -581,7 +581,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       await this.auditTrail.create({
         data: auditData,
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Audit log creation failed:', error);
       // Don't throw here to avoid breaking the main operation
     }
@@ -592,13 +592,13 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       await this.$queryRaw`SELECT 1`;
 
       // Test healthcare-specific tables
-      const _testQuery = await this.clinic.count();
+      const testQuery = await this.clinic.count();
 
       this.connectionPool.healthStatus = 'healthy';
       this.connectionPool.lastHealthCheck = new Date();
 
       return true;
-    } catch (_error) {
+    } catch (error) {
       console.error('Database connection validation failed:', error);
       this.connectionPool.healthStatus = 'unhealthy';
       this.connectionPool.lastHealthCheck = new Date();
@@ -648,7 +648,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
           timestamp: new Date().toISOString(),
         },
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Health metrics collection failed:', error);
       throw new Error(`Failed to collect health metrics: ${error}`);
     }
@@ -671,7 +671,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
         this.connectionPool.healthStatus = 'healthy';
         console.log('Database connection restored');
       }
-    } catch (_reconnectError) {
+    } catch (reconnectError) {
       console.error('Database reconnection failed:', reconnectError);
       throw new Error(`Database connection failed: ${error.message}`);
     }
@@ -702,14 +702,14 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
                 dataModified: true,
               },
             );
-          } catch (_auditError) {
+          } catch (auditError) {
             console.error('Audit logging failed:', auditError);
           }
         }
       }
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       // Log errors for monitoring
       console.error('Prisma operation failed:', {
         action: params.action,
@@ -727,12 +727,12 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
 
   // Handle process termination for graceful shutdown
   if (typeof process !== 'undefined') {
-    process.on(_'SIGINT',_async () => {
+    process.on('SIGINT', async () => {
       console.log('Gracefully shutting down Prisma client...');
       await healthcarePrisma.$disconnect();
     });
 
-    process.on(_'SIGTERM',_async () => {
+    process.on('SIGTERM', async () => {
       console.log('Gracefully shutting down Prisma client...');
       await healthcarePrisma.$disconnect();
     });
@@ -755,7 +755,7 @@ export function createPrismaWithContext(
   _context: HealthcareContext,
 ): HealthcarePrismaClient {
   const client = createHealthcarePrismaClient();
-  return client.withContext(_context);
+  return client.withContext(context);
 }
 
 /**

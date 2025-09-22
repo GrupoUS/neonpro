@@ -3,14 +3,14 @@
 import React, { useState } from "react";
 import { cn } from "../../utils";
 
-export const Card = React.memo(_({
-    card,_index,_hovered,_setHovered,
+export const Card = React.memo(({
+    card,index,hovered,setHovered
   }: {
     card: any;
     index: number;
     hovered: number | null;
     setHovered: React.Dispatch<React.SetStateAction<number | null>>;
-  }) => (_<div
+  }) => (<div
       onMouseEnter={() => setHovered(index)}
       onMouseLeave={() => setHovered(null)}
       className={cn(
@@ -49,7 +49,7 @@ export function FocusCards({ cards }: { cards: Card[] }) {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-5xl mx-auto md:px-8 w-full">
-      {cards.map((card,_index) => (
+      {cards.map((card,index) => (
         <Card
           key={card.title}
           card={card}

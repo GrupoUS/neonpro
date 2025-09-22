@@ -245,7 +245,7 @@ export class FocusManager {
 
     document.body.appendChild(announcement);
 
-    setTimeout(_() => {
+    setTimeout(() => {
       document.body.removeChild(announcement);
     }, 1000);
   }

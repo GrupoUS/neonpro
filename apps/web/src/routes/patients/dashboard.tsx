@@ -40,7 +40,7 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-export const _Route = createFileRoute('/patients/dashboard')({
+export const Route = createFileRoute('/patients/dashboard')({
   component: PatientDashboard,
 });
 
@@ -107,8 +107,8 @@ interface RealTimeUpdate {
   patientId?: string;
 }
 
-function PatientCard(_{
-  patient,_onClick,
+function PatientCard({
+  patient,onClick,
 }: {
   patient: Patient;
   onClick: (patientId: string) => void;
@@ -336,7 +336,7 @@ function PatientDashboard() {
   ];
 
   // Initialize data
-  useEffect(_() => {
+  useEffect(() => {
     setAiInsights(mockAIInsights);
     setRealTimeUpdates(mockRealTimeUpdates);
   }, []);
@@ -411,7 +411,7 @@ function PatientDashboard() {
     navigate({ to: '/patients/$patientId', params: { patientId } });
   };
 
-  const _handleDeletePatient = (_patient: any) => {
+  const handleDeletePatient = (_patient: any) => {
     setSelectedPatient(patient);
     setIsModalOpen(true);
   };
@@ -487,7 +487,7 @@ function PatientDashboard() {
     {
       accessorKey: 'riskScore',
       header: 'Risco',
-      cell: (_info: any) => {
+      cell: (info: any) => {
         const score = info.getValue();
         let variant: 'default' | 'destructive' | 'outline' | 'secondary' = 'default';
         let label = 'Baixo';
@@ -506,7 +506,7 @@ function PatientDashboard() {
     {
       accessorKey: 'lastVisit',
       header: 'Última Consulta',
-      cell: (_info: any) => {
+      cell: (info: any) => {
         const date = info.getValue();
         return date
           ? format(new Date(date), 'dd/MM/yyyy', { locale: ptBR })
@@ -516,9 +516,9 @@ function PatientDashboard() {
     {
       id: 'actions',
       header: 'Ações',
-      cell: (_info: any) => {
+      cell: (info: any) => {
         const patient = info.row.original;
-        return (_<div className='flex gap-2'>
+        return (<div className='flex gap-2'>
             <Button
               variant='outline'
               size='sm'
@@ -611,7 +611,7 @@ function PatientDashboard() {
             </span>
           </div>
           <div className='space-y-1'>
-            {realTimeUpdates.slice(0, 2).map(_(update, _index) => (
+            {realTimeUpdates.slice(0, 2).map((update, _index) => (
               <div
                 key={index}
                 className='text-xs sm:text-sm text-green-700 flex items-center gap-1'
@@ -633,7 +633,7 @@ function PatientDashboard() {
           Estatísticas do dashboard
         </h2>
         <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
-          {statsCards.map(_(stat, _index) => (
+          {statsCards.map((stat, _index) => (
             <Card
               key={stat.title}
               className='transition-all hover:shadow-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'
@@ -723,7 +723,7 @@ function PatientDashboard() {
                     <p className='text-sm text-gray-700'>
                       {insight.description}
                     </p>
-                    {insight.actionable && (_<Button
+                    {insight.actionable && (<Button
                         variant='outline'
                         size='sm'
                         onClick={() => handleAIInsightAction(insight)}
@@ -836,7 +836,7 @@ function PatientDashboard() {
                 </div>
               )}
 
-            {patients.length === 0 && (_<div className='text-center py-8'>
+            {patients.length === 0 && (<div className='text-center py-8'>
                 <Users className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
                 <h3 className='text-lg font-medium text-gray-900 mb-2'>
                   Nenhum paciente encontrado

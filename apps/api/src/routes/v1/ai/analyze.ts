@@ -215,7 +215,7 @@ const v1AnalyzeRequestSchema = z
 let services: ServiceInterface | null = null;
 
 // Function to set services (used by tests)
-export const _setServices = (injectedServices: ServiceInterface) => {
+export const setServices = (injectedServices: ServiceInterface) => {
   services = injectedServices;
 };
 
@@ -487,7 +487,7 @@ app.post(
       }
 
       return c.json(v1Response);
-    } catch (_error) {
+    } catch (error) {
       console.error('V1 AI Analyze endpoint error:', error);
 
       // Log error for audit

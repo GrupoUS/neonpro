@@ -5,8 +5,8 @@ import { ServiceForm } from '../ServiceForm';
 
 const noop = () => {};
 
-describe(_'ServiceForm ARIA and validation',_() => {
-  it(_'shows error for empty name on submit and clears after typing',_async () => {
+describe(('ServiceForm ARIA and validation', () => {
+  it(_'shows error for empty name on submit and clears after typing',async () => {
     render(<ServiceForm onSuccess={noop} clinicId='test-clinic' /> as any);
 
     // Submit without filling required name
@@ -27,7 +27,7 @@ describe(_'ServiceForm ARIA and validation',_() => {
     expect(screen.queryByText(/Nome do serviço é obrigatório/i)).toBeNull();
   });
 
-  it(_'price input uses numeric inputMode for mobile keyboards',_() => {
+  it(('price input uses numeric inputMode for mobile keyboards', () => {
     render(<ServiceForm onSuccess={noop} clinicId='test-clinic' /> as any);
     const price = screen.getByLabelText(/Preço/i) as HTMLInputElement;
     expect(price).toHaveAttribute('inputmode', 'numeric');

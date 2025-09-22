@@ -98,8 +98,8 @@ const fetchAIInsights = async (patientId: string) => {
 /**
  * AI Insights Section Component
  */
-const AIInsightsSection = (_{
-  patientId,_lgpdConsent,
+const AIInsightsSection = ({
+  patientId,lgpdConsent,
 }: {
   patientId: string;
   lgpdConsent: PatientProfileProps['lgpdConsent'];
@@ -109,7 +109,7 @@ const AIInsightsSection = (_{
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['ai-insights',_patientId],
+    queryKey: ['ai-insights', patientId],
     queryFn: () => fetchAIInsights(patientId),
     enabled: !!patientId && lgpdConsent?.canShowMedicalData,
     staleTime: 5 * 60 * 1000, // 5 minutes cache
@@ -284,7 +284,7 @@ const AIInsightsSection = (_{
               {trends
                 && Object.entries(trends)
                   .slice(0, 4)
-                  .map(_([key, trend]: [string,_any]) => (
+                  .map(([key, trend]: [string, any]) => (
                     <div key={key} className='space-y-2'>
                       <div className='flex items-center justify-between'>
                         <span className='text-sm font-medium capitalize'>
@@ -349,12 +349,12 @@ const AIInsightsSection = (_{
  * PatientProfile - Main component
  */
 export const PatientProfile = ({
-  patientId: propPatientId,_showAIInsights = true,
+  patientId: propPatientId, showAIInsights = true,
   lgpdConsent = {
     canShowFullData: true,
     canShowSensitiveData: false,
     canShowMedicalData: true,
-    consentLevel: 'full',_},_mobileOptimized = true,_testId = 'patient-profile',
+    consentLevel: 'full', }, mobileOptimized = true, testId = 'patient-profile',
 }: PatientProfileProps) => {
   const params = useParams({ strict: false });
   const patientId = propPatientId || (params as any)?.patientId;
@@ -366,7 +366,7 @@ export const PatientProfile = ({
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['patient',_patientId],
+    queryKey: ['patient', patientId],
     queryFn: () => fetchPatient(patientId),
     enabled: !!patientId,
     staleTime: 2 * 60 * 1000, // 2 minutes cache
@@ -403,7 +403,7 @@ export const PatientProfile = ({
   };
 
   // Memoized patient display data
-  const displayData = useMemo(_() => {
+  const displayData = useMemo(() => {
     if (!patient) return null;
 
     const { canShowFullData, canShowSensitiveData } = lgpdConsent;

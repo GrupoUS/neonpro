@@ -109,4 +109,4 @@ export class ConsoleEventLogger implements EventLogger {
 }
 
 // Default instance for convenience
-export const _eventLogger = new ConsoleEventLogger();
+export const eventLogger = new ConsoleEventLogger();

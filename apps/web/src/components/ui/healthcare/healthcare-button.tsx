@@ -126,13 +126,13 @@ export interface HealthcareButtonProps
  * HealthcareButton - WCAG 2.1 AA+ compliant button component
  * Designed for healthcare applications with accessibility focus
  */
-const HealthcareButton = React.forwardRef<HTMLButtonElement, HealthcareButtonProps>(_({
-    className,_variant,_size,_isLoading = false,_mobileOptimized = true,_isEmergency = false,_isMedical = false,_requiresConfirmation = false,_confirmationMessage,_ariaLabel,_ariaDescription,_accessibilityAction = 'press',_keyboardShortcut,_touchTargetSize,_healthcareContext,_children,_disabled,_onClick,_...props
-  },_ref) => {
+const HealthcareButton = React.forwardRef<HTMLButtonElement, HealthcareButtonProps>(({
+    className,variant, size, isLoading = false, mobileOptimized = true, isEmergency = false, isMedical = false, requiresConfirmation = false,confirmationMessage, ariaLabel,ariaDescription, accessibilityAction = 'press',keyboardShortcut, touchTargetSize,healthcareContext, children,disabled, onClick, ...props
+  }, ref) => {
     const { isMobile, touchSupported } = useMobileOptimization();
 
     // Handle keyboard navigation
-    const handleKeyDown = useKeyboardNavigation(_() => handleClick(new Event('click') as any),
+    const handleKeyDown = useKeyboardNavigation(() => handleClick(new Event('click') as any),
       () => handleClick(new Event('click') as any), // Space key
       undefined, // Escape handled by parent
     );
@@ -162,14 +162,14 @@ const HealthcareButton = React.forwardRef<HTMLButtonElement, HealthcareButtonPro
     );
 
     // Determine variant based on props
-    const buttonVariant = React.useMemo(_() => {
+    const buttonVariant = React.useMemo(() => {
       if (isEmergency) return 'emergency';
       if (isMedical) return 'medical';
       return variant;
     }, [isEmergency, isMedical, variant]);
 
     // Adjust size for mobile and accessibility
-    const buttonSize = React.useMemo(_() => {
+    const buttonSize = React.useMemo(() => {
       if (touchTargetSize === 'large') return 'xl';
       if (touchTargetSize === 'small') return 'sm';
 
@@ -182,7 +182,7 @@ const HealthcareButton = React.forwardRef<HTMLButtonElement, HealthcareButtonPro
     }, [touchTargetSize, isMobile, isEmergency, size]);
 
     // Generate accessibility attributes
-    const accessibilityProps = React.useMemo(_() => {
+    const accessibilityProps = React.useMemo(() => {
       const props: Record<string, string> = {};
 
       if (ariaLabel) {
@@ -211,7 +211,7 @@ const HealthcareButton = React.forwardRef<HTMLButtonElement, HealthcareButtonPro
     }, [ariaLabel, ariaDescription, healthcareContext, keyboardShortcut, accessibilityAction]);
 
     // Loading state content
-    const loadingContent = React.useMemo(_() => {
+    const loadingContent = React.useMemo(() => {
       if (!isLoading) return null;
 
       return (

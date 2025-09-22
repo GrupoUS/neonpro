@@ -128,7 +128,7 @@ export class BulkOperationsService {
 
     try {
       // 1. Validate request
-      await this.validateBulkRequest(_request);
+      await this.validateBulkRequest(request);
 
       // 2. Check rate limits
       this.enforceRateLimit(request.requesterUserId, request.operationType);
@@ -274,18 +274,18 @@ export class BulkOperationsService {
     }
 
     // Validate user permissions against allowedRoles
-    await this.validateUserPermissions(_request);
+    await this.validateUserPermissions(request);
 
     // Validate clinic access permissions
-    await this.validateClinicAccess(_request);
+    await this.validateClinicAccess(request);
 
     // Validate LGPD consent for data operations
-    await this.validateLGPDConsent(_request);
+    await this.validateLGPDConsent(request);
   }
 
   private enforceRateLimit(_userId: string, operationType: string): void {
     const key = `${userId}:${operationType}`;
-    const _now = Date.now();
+    const now = Date.now();
     const oneMinute = 60 * 1000;
     const config = SAFETY_CONFIGURATIONS[operationType];
 
@@ -487,7 +487,7 @@ export class BulkOperationsService {
     this.undoOperations.set(undoToken, undoInfo);
 
     // Clean up expired undo operations
-    setTimeout(_() => {
+    setTimeout(() => {
       this.undoOperations.delete(undoToken);
     }, undoWindowMs);
   }
@@ -582,7 +582,7 @@ export class BulkOperationsService {
         operationType: request.operationType,
         allowedRoles: config.allowedRoles,
       });
-    } catch (_error) {
+    } catch (error) {
       logger.error('User permission validation failed', {
         _userId: request.requesterUserId,
         operationType: request.operationType,
@@ -648,7 +648,7 @@ export class BulkOperationsService {
         entityType: request.entityType,
         entityCount: request.entityIds.length,
       });
-    } catch (_error) {
+    } catch (error) {
       logger.error('Clinic access validation failed', {
         _userId: request.requesterUserId,
         clinicId: request.clinicId,
@@ -740,7 +740,7 @@ export class BulkOperationsService {
           }
         }
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('LGPD consent validation failed', {
         _userId: request.requesterUserId,
         operationType: request.operationType,
@@ -755,11 +755,11 @@ export class BulkOperationsService {
    * Cleanup expired rate limits and undo operations
    */
   cleanup(): void {
-    const _now = Date.now();
+    const now = Date.now();
     const oneHour = 60 * 60 * 1000;
 
     // Clean up rate limits older than 1 hour
-    this.rateLimitMap.forEach(_(timestamps,_key) => {
+    this.rateLimitMap.forEach((timestamps,_key) => {
       const recentTimestamps = timestamps.filter(
         timestamp => now - timestamp < oneHour,
       );
@@ -771,7 +771,7 @@ export class BulkOperationsService {
     });
 
     // Clean up expired undo operations
-    this.undoOperations.forEach(_(undoInfo,_token) => {
+    this.undoOperations.forEach((undoInfo,_token) => {
       if (now > undoInfo.expiresAt) {
         this.undoOperations.delete(token);
       }
@@ -784,7 +784,7 @@ export const bulkOperationsService = new BulkOperationsService();
 
 // Start cleanup interval (run every 15 minutes)
 if (typeof setInterval !== 'undefined') {
-  setInterval(_() => {
+  setInterval(() => {
       bulkOperationsService.cleanup();
     },
     15 * 60 * 1000,

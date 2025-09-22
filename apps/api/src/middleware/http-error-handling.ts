@@ -9,7 +9,7 @@ export function httpErrorHandlingMiddleware() {
   return async (c: Context, next: Next) => {
     try {
       await next();
-    } catch (_error) {
+    } catch (error) {
       // Log the error with context
       const errorContext = {
         path: c.req.path,

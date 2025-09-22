@@ -166,7 +166,7 @@ export function PatientDocumentUpload({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load existing documents on mount
-  useEffect(_() => {
+  useEffect(() => {
     if (patientId && showExisting) {
       loadExistingDocuments();
     }
@@ -345,7 +345,7 @@ export function PatientDocumentUpload({
           setExistingDocuments(prev => [...prev, uploadedDocument]);
 
           // Remove from upload queue after delay
-          setTimeout(_() => {
+          setTimeout(() => {
             setUploadQueue(prev => {
               const newMap = new Map(prev);
               newMap.delete(uploadId);
@@ -480,7 +480,7 @@ export function PatientDocumentUpload({
   const totalDocuments = existingDocuments.length + uploadQueue.size;
   const canUpload = !disabled && totalDocuments < maxFiles;
 
-  return (_<DndContext
+  return (<DndContext
       onDragStart={({ active }) => setActiveId(active.id)}
       onDragEnd={() => setActiveId(null)}
     >
@@ -630,7 +630,7 @@ export function PatientDocumentUpload({
                     )}
                   </div>
 
-                  {state.status === 'error' && (_<Button
+                  {state.status === 'error' && (<Button
                       variant='ghost'
                       size='sm'
                       onClick={() => {

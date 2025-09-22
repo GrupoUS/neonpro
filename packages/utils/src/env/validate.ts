@@ -10,7 +10,7 @@ export const _validateEnv = (): boolean => {
     "NEXT_PUBLIC_SUPABASE_ANON_KEY",
   ];
 
-  const missing = required.filter(_(key) => !process.env[key]);
+  const missing = required.filter((key) => !process.env[key]);
 
   if (missing.length > 0) {
     throw new Error(

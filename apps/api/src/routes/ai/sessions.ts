@@ -55,7 +55,7 @@ function validateUserSession(_payload: any, sessionId: string): { valid: boolean
   }
 
   // Check session expiration (30 minutes of inactivity)
-  const _now = new Date();
+  const now = new Date();
   const lastActivity = new Date(session.lastActivity);
   const inactiveTime = now.getTime() - lastActivity.getTime();
 
@@ -106,7 +106,7 @@ app.get('/ai/sessions/:sessionId', async c => {
     };
 
     return c.json(response, 200);
-  } catch (_error) {
+  } catch (error) {
     console.error('Session endpoint error:', error);
 
     return c.json({
@@ -123,7 +123,7 @@ app.get('/ai/sessions/:sessionId', async c => {
  */
 export function createSession(_userId: string, userRole: UserRole, domain: string): ChatSession {
   const sessionId = crypto.randomUUID();
-  const _now = new Date();
+  const now = new Date();
 
   const session: ChatSession = {
     id: sessionId,
@@ -222,7 +222,7 @@ export function terminateSession(sessionId: string): boolean {
  * Cleanup expired sessions (call this periodically)
  */
 export function cleanupExpiredSessions(): void {
-  const _now = new Date();
+  const now = new Date();
   const expirationThreshold = 30 * 60 * 1000; // 30 minutes
 
   for (const [sessionId, session] of sessionStore.entries()) {
@@ -259,7 +259,7 @@ app.get('/ai/sessions/health', async c => {
         entries: totalSessions,
       },
     }, 200);
-  } catch (_error) {
+  } catch (error) {
     return c.json({
       status: 'unhealthy',
       timestamp: new Date().toISOString(),

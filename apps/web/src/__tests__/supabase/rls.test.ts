@@ -20,7 +20,7 @@ import {
 } from '@/lib/testing/supabase-test-client';
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
-describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
+describe(('Supabase RLS - Security Auditor Coordinated', () => {
   let testClient: any;
   let serviceClient: any;
   let testDataGenerator: HealthcareTestDataGenerator;
@@ -28,7 +28,7 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
   let testPatient: TestPatient;
   let testDoctor: TestUser;
 
-  beforeAll(_async () => {
+  beforeAll(async () => {
     // security-auditor: Initialize secure test environment
     testClient = createTestSupabaseClient({
       lgpdCompliant: true,
@@ -51,14 +51,14 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
     console.log('🧪 RLS Test Environment Setup Complete');
   });
 
-  afterAll(_async () => {
+  afterAll(async () => {
     // security-auditor: Mandatory cleanup
     await testDataGenerator.cleanupTestData();
     console.log('🔒 RLS Test Environment Cleaned Up');
   });
 
-  describe(_'Patient Data RLS Enforcement',_() => {
-    test(_'should enforce organization-level data isolation',_async () => {
+  describe(('Patient Data RLS Enforcement', () => {
+    test(_'should enforce organization-level data isolation',async () => {
       // security-auditor: Test data isolation
       const startTime = performance.now();
 
@@ -90,7 +90,7 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
 
       // Validate LGPD compliance
       if (data && data.length > 0) {
-        data.forEach(_patient => {
+        data.forEach(patient => {
           expect(patient.organization_id).toBe(testOrg.id);
           expect(patient._test_data).toBe(true);
           expect(HealthcareTestValidators.validateLGPDCompliance(patient)).toBe(
@@ -102,7 +102,7 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
       console.log('✅ Organization-level data isolation validated');
     });
 
-    test(_'should deny cross-organization access',_async () => {
+    test(_'should deny cross-organization access',async () => {
       // security-auditor: Test unauthorized access prevention
       const unauthorizedOrgId = 'unauthorized-org-id-12345';
 
@@ -121,7 +121,7 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
       console.log('✅ Cross-organization access properly denied');
     });
 
-    test(_'should deny access without authentication',_async () => {
+    test(_'should deny access without authentication',async () => {
       // security-auditor: Unauthenticated access test
       const unauthenticatedClient = createTestSupabaseClient({
         lgpdCompliant: true,
@@ -138,7 +138,7 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
       console.log('✅ Unauthenticated access properly denied');
     });
 
-    test(_'should enforce patient count limits per organization',_async () => {
+    test(_'should enforce patient count limits per organization',async () => {
       // security-auditor: Resource limit validation
       const { data, error } = await testClient
         .from('patients')
@@ -155,8 +155,8 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
     });
   });
 
-  describe(_'Healthcare-Specific RLS Policies',_() => {
-    test(_'should enforce doctor-patient relationship access',_async () => {
+  describe(('Healthcare-Specific RLS Policies', () => {
+    test(_'should enforce doctor-patient relationship access',async () => {
       // security-auditor: Role-based access validation
       const startTime = performance.now();
 
@@ -187,7 +187,7 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
       console.log('✅ Doctor-patient relationship access validated');
     });
 
-    test(_'should restrict patient access to own records only',_async () => {
+    test(_'should restrict patient access to own records only',async () => {
       // security-auditor: Patient self-access validation
       const patientUser = await testDataGenerator.createTestUser({
         _role: 'patient',
@@ -219,7 +219,7 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
       console.log('✅ Patient self-access validation completed');
     });
 
-    test(_'should prevent nurses from accessing other departments',_async () => {
+    test(_'should prevent nurses from accessing other departments',async () => {
       // security-auditor: Department-level isolation
       const nurseUser = await testDataGenerator.createTestUser({
         _role: 'nurse',
@@ -245,7 +245,7 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
       console.log('✅ Department-level access restriction validated');
     });
 
-    test(_'should enforce emergency access policies',_async () => {
+    test(_'should enforce emergency access policies',async () => {
       // security-auditor: Emergency access validation
       const emergencyUser = await testDataGenerator.createTestUser({
         _role: 'doctor',
@@ -280,8 +280,8 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
     });
   });
 
-  describe(_'Data Anonymization and Privacy',_() => {
-    test(_'should anonymize sensitive data in non-privileged queries',_async () => {
+  describe(('Data Anonymization and Privacy', () => {
+    test(_'should anonymize sensitive data in non-privileged queries',async () => {
       // security-auditor: Data anonymization validation
       const limitedUser = await testDataGenerator.createTestUser({
         _role: 'admin',
@@ -302,7 +302,7 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
       expect(error).toBeNull();
 
       if (data && data.length > 0) {
-        data.forEach(_patient => {
+        data.forEach(patient => {
           // Validate CPF is masked
           if (patient.masked_cpf) {
             expect(patient.masked_cpf).toMatch(/\*\*\*\.\*\*\*\.\*\*\*-\d{2}/);
@@ -316,7 +316,7 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
       console.log('✅ Data anonymization validated');
     });
 
-    test(_'should audit all patient data access',_async () => {
+    test(_'should audit all patient data access',async () => {
       // security-auditor: Audit trail validation
       const auditUser = await testDataGenerator.createTestUser({
         _role: 'doctor',
@@ -350,8 +350,8 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
     });
   });
 
-  describe(_'RLS Policy Configuration Validation',_() => {
-    test(_'should validate RLS policies are enabled on all healthcare tables',_async () => {
+  describe(('RLS Policy Configuration Validation', () => {
+    test(_'should validate RLS policies are enabled on all healthcare tables',async () => {
       // architect-review: RLS policy validation
       const healthcareTables = [
         'patients',
@@ -372,7 +372,7 @@ describe(_'Supabase RLS - Security Auditor Coordinated',_() => {
       }
     });
 
-    test(_'should validate organization isolation policies',_async () => {
+    test(_'should validate organization isolation policies',async () => {
       // security-auditor: Organization isolation validation
       const { data: orgPolicies, error } = await serviceClient.rpc(
         'validate_organization_policies',

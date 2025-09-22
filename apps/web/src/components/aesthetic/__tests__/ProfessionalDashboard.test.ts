@@ -82,8 +82,8 @@ const mockProfessionalInfo = {
   clinic: 'NeonPro Aesthetic Clinic',
 };
 
-describe(_'ProfessionalDashboard Component',_() => {
-  it(_'should render without crashing',_() => {
+describe(('ProfessionalDashboard Component', () => {
+  it(('should render without crashing', () => {
     const props: ProfessionalDashboardProps = {
       metrics: mockMetrics,
       recentActivities: mockActivities,
@@ -96,12 +96,12 @@ describe(_'ProfessionalDashboard Component',_() => {
       onViewActivity: vi.fn(),
     };
 
-    expect(_() => {
+    expect(() => {
       render(<ProfessionalDashboard {...props} />);
     }).not.toThrow();
   });
 
-  it(_'should display dashboard metrics correctly',_() => {
+  it(('should display dashboard metrics correctly', () => {
     const props: ProfessionalDashboardProps = {
       metrics: mockMetrics,
       recentActivities: mockActivities,
@@ -121,7 +121,7 @@ describe(_'ProfessionalDashboard Component',_() => {
     expect(screen.getByText('Receita do Mês')).toBeInTheDocument();
   });
 
-  it(_'should handle activity click events',_() => {
+  it(('should handle activity click events', () => {
     const onViewActivity = vi.fn();
     const props: ProfessionalDashboardProps = {
       metrics: mockMetrics,
@@ -141,7 +141,7 @@ describe(_'ProfessionalDashboard Component',_() => {
     // The component uses _onViewActivity but interface expects onViewActivity
   });
 
-  it(_'should display compliance status correctly',_() => {
+  it(('should display compliance status correctly', () => {
     const props: ProfessionalDashboardProps = {
       metrics: mockMetrics,
       recentActivities: mockActivities,

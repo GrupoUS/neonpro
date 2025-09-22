@@ -357,7 +357,7 @@ export class SupabaseConnector {
       sessionId,
     };
 
-    if (!await this.validateDataAccess(_request)) {
+    if (!await this.validateDataAccess(request)) {
       throw new Error('Access denied: Insufficient permissions to view patient data');
     }
 
@@ -414,7 +414,7 @@ export class SupabaseConnector {
       sessionId,
     };
 
-    if (!await this.validateDataAccess(_request)) {
+    if (!await this.validateDataAccess(request)) {
       throw new Error('Access denied: Insufficient permissions to view appointment data');
     }
 
@@ -489,7 +489,7 @@ export class SupabaseConnector {
       sessionId,
     };
 
-    if (!await this.validateDataAccess(_request)) {
+    if (!await this.validateDataAccess(request)) {
       throw new Error('Access denied: Insufficient permissions to view clinic data');
     }
 

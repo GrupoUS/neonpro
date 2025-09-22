@@ -208,7 +208,7 @@ export class DynamicConnectionPoolService {
       };
 
       return { ...this.metrics };
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       console.error('[Dynamic Pool] Error getting metrics:', error);
       return this.metrics;
@@ -252,7 +252,7 @@ export class DynamicConnectionPoolService {
         success: true,
         executionTime,
       };
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       const executionTime = Date.now() - startTime;
 
@@ -376,7 +376,7 @@ export class DynamicConnectionPoolService {
         actionRequired: false,
         autoResolve: true,
       });
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       console.error('[Dynamic Pool] Scale up failed:', error);
 
@@ -437,7 +437,7 @@ export class DynamicConnectionPoolService {
       );
 
       console.log(`[Dynamic Pool] Scaled down: ${oldSize} -> ${newSize} (${reason})`);
-    } catch (_error) {
+    } catch (error) {
       // Error caught but not used - handled by surrounding logic
       console.error('[Dynamic Pool] Scale down failed:', error);
     }
@@ -449,7 +449,7 @@ export class DynamicConnectionPoolService {
   private async performPredictiveScaling(): Promise<void> {
     if (!this.config.enablePredictiveScaling) return;
 
-    const _now = new Date();
+    const now = new Date();
     const currentPattern = this.getCurrentHealthcarePattern();
 
     if (currentPattern.scalingPriority === 'high') {
@@ -471,7 +471,7 @@ export class DynamicConnectionPoolService {
    * Get current healthcare workload pattern
    */
   private getCurrentHealthcarePattern(): any {
-    const _now = new Date();
+    const now = new Date();
     const hour = now.getHours();
     const day = now.getDay();
     const isWeekend = day === 0 || day === 6;
@@ -541,7 +541,7 @@ export class DynamicConnectionPoolService {
     console.log('[Dynamic Pool] Emergency mode deactivated');
 
     // Gradually scale back to normal
-    setTimeout(_async () => {
+    setTimeout(async () => {
       await this.shouldScaleDown();
     }, 300000); // Wait 5 minutes before scaling down
   }
@@ -570,7 +570,7 @@ export class DynamicConnectionPoolService {
         success: true,
         executionTime,
       };
-    } catch (_error) {
+    } catch (error) {
       const executionTime = Date.now() - originalExecutionTime;
 
       // Return cached result or error
@@ -600,12 +600,12 @@ export class DynamicConnectionPoolService {
    * Start monitoring services
    */
   private startMonitoring(): void {
-    this.monitoringTimer = setInterval(_async () => {
+    this.monitoringTimer = setInterval(async () => {
       try {
         await this.checkScalingConditions();
         await this.cleanupOldEvents();
         await this.resetHourlyCounters();
-      } catch (_error) {
+      } catch (error) {
       // Error caught but not used - handled by surrounding logic
         console.error('[Dynamic Pool] Monitoring error:', error);
       }
@@ -617,10 +617,10 @@ export class DynamicConnectionPoolService {
    */
   private startPredictiveScaling(): void {
     // Perform initial predictive scaling
-    setTimeout(_() => this.performPredictiveScaling(), 5000);
+    setTimeout(() => this.performPredictiveScaling(), 5000);
 
     // Schedule regular predictive checks
-    this.predictiveScalingTimer = setInterval(_() => {
+    this.predictiveScalingTimer = setInterval(() => {
       this.performPredictiveScaling();
     }, 900000); // Every 15 minutes
   }
@@ -629,10 +629,10 @@ export class DynamicConnectionPoolService {
    * Start health checks
    */
   private startHealthChecks(): void {
-    this.healthCheckTimer = setInterval(_async () => {
+    this.healthCheckTimer = setInterval(async () => {
       try {
         await this.performHealthCheck();
-      } catch (_error) {
+      } catch (error) {
       // Error caught but not used - handled by surrounding logic
         console.error('[Dynamic Pool] Health check error:', error);
       }
@@ -745,8 +745,8 @@ export class DynamicConnectionPoolService {
 
   private withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
     return Promise.race(_[
-      promise,_new Promise<never>((_,_reject) =>
-        setTimeout(_() => reject(new Error('Query timeout')), timeoutMs)
+      promise,new Promise<never>((, reject) =>
+        setTimeout(() => reject(new Error('Query timeout')), timeoutMs)
       ),
     ]);
   }
@@ -792,7 +792,7 @@ export class DynamicConnectionPoolService {
   }
 
   private async resetHourlyCounters(): Promise<void> {
-    const _now = new Date();
+    const now = new Date();
     if (now.getHours() !== this.lastHourReset.getHours()) {
       this.hourlyScalingEvents = 0;
       this.lastHourReset = now;
@@ -809,7 +809,7 @@ export class DynamicConnectionPoolService {
     const pattern = this.getCurrentHealthcarePattern();
     const interval = pattern.scalingPriority === 'high' ? 300000 : 900000; // 5 or 15 minutes
 
-    this.predictiveScalingTimer = setInterval(_() => {
+    this.predictiveScalingTimer = setInterval(() => {
       this.performPredictiveScaling();
     }, interval);
   }

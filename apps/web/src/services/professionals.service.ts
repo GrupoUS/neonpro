@@ -305,4 +305,4 @@ class ProfessionalService {
   }
 }
 
-export const _professionalService = new ProfessionalService();
+export const professionalService = new ProfessionalService();

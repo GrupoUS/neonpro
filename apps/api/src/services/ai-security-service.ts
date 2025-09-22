@@ -21,7 +21,7 @@ const auditLogger = {
   error: () => {},
 };
 // Security validation schemas
-const _SensitiveDataSchema = z.object({
+const SensitiveDataSchema = z.object({
   name: z.string().regex(/^[A-Za-z\s]+$/),
   cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/),
   medicalRecord: z.string().regex(/^MR-\d+$/),
@@ -29,7 +29,7 @@ const _SensitiveDataSchema = z.object({
   email: z.string().email(),
 });
 
-const _MedicalTermSchema = z.object({
+const MedicalTermSchema = z.object({
   term: z.string(),
   category: z.enum(['symptom', 'diagnosis', 'treatment', 'medication']),
   isValid: z.boolean(),
@@ -95,7 +95,7 @@ export function sanitizeForAI(data: any): string {
     }
 
     return JSON.stringify(sanitized);
-  } catch (_error) {
+  } catch (error) {
     auditLogger.logError('ai_sanitization_error', {
       error: error instanceof Error ? error.message : 'Unknown error',
       dataSize: JSON.stringify(data).length,
@@ -252,14 +252,14 @@ export class AIRateLimiter {
 
   constructor() {
     // Clean up old request records every minute
-    this.cleanupInterval = setInterval(_() => {
+    this.cleanupInterval = setInterval(() => {
       this.cleanupOldRequests();
     }, 60000);
   }
 
   canMakeRequest(_userId: string, clinicId: string): boolean {
     const key = `${userId}:${clinicId}`;
-    const _now = Date.now();
+    const now = Date.now();
     const userRequests = this.requests.get(key) || [];
 
     // Remove requests older than 1 hour
@@ -303,7 +303,7 @@ export class AIRateLimiter {
   }
 
   private cleanupOldRequests(): void {
-    const _now = Date.now();
+    const now = Date.now();
     for (const [key, requests] of this.requests.entries()) {
       const recentRequests = requests.filter(
         time => now - time < 60 * 60 * 1000,
@@ -425,7 +425,7 @@ function sanitizeMedicalText(text: string): string {
 }
 
 // Export singleton instance
-export const _aiSecurityService = {
+export const aiSecurityService = {
   sanitizeForAI,
   validatePromptSecurity,
   validateMedicalTerminology,

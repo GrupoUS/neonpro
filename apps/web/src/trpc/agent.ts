@@ -246,7 +246,7 @@ export function useAgentSessionManager() {
     async (params: {
       agent_type: 'client' | 'financial' | 'appointment';
       initial_context?: string;
-      metadata?: Record<string,_unknown>;
+      metadata?: Record<string, unknown>;
     }) => {
       const result = await createSession.mutateAsync(params);
       setCurrentSessionId(result.data.id);
@@ -344,7 +344,7 @@ export function useKnowledgeBaseManager() {
       content: string;
       source: string;
       tags?: string[];
-      metadata?: Record<string,_unknown>;
+      metadata?: Record<string, unknown>;
     }) => {
       return addKnowledge.mutateAsync(params);
     },

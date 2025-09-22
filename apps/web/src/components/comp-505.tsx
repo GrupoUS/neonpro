@@ -62,7 +62,7 @@ export default function Component() {
                     </p>
                   </div>
                   <div className='grid gap-1.5 px-5 max-sm:grid-cols-2'>
-                    {timeSlots.map(({ time: timeSlot,_available }) => (
+                    {timeSlots.map(({ time: timeSlot, available }) => (
                       <Button
                         key={timeSlot}
                         variant={time === timeSlot ? 'default' : 'outline'}

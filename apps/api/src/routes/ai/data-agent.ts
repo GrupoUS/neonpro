@@ -21,7 +21,7 @@ app.use(
 );
 
 // JWT middleware for authentication
-app.use(_'*',_async (c,_next) => {
+app.use('*', async (c, next) => {
   const jwtMiddleware = jwt({
     secret: process.env.JWT_SECRET!,
   });
@@ -232,7 +232,7 @@ app.post('/ai/data-agent', async c => {
           },
         });
       }
-    } catch (_ottomatorError) {
+    } catch (ottomatorError) {
       console.warn('Ottomator-agents failed, falling back to direct processing:', ottomatorError);
     }
 
@@ -312,8 +312,8 @@ app.post('/ai/data-agent', async c => {
           processingTime,
         },
       }, 200);
-    } catch (_error) {
-      console.error('Error processing _query:', error);
+    } catch (error) {
+      console.error('Error processing query:', error);
 
       return c.json({
         success: false,
@@ -339,7 +339,7 @@ app.post('/ai/data-agent', async c => {
         },
       }, 500);
     }
-  } catch (_error) {
+  } catch (error) {
     console.error('Data-agent endpoint error:', error);
 
     return c.json({

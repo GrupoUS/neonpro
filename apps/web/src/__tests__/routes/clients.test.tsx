@@ -9,7 +9,7 @@ import React from 'react';
 import { vi } from 'vitest';
 
 // Mock auth to always be authenticated in tests
-vi.mock(_'@/hooks/useAuth',_() => ({
+vi.mock(('@/hooks/useAuth', () => ({
   useAuth: () => ({
     user: { id: 'test-user', email: 'test@example.com' },
     session: { user: { id: 'test-user', email: 'test@example.com' } },
@@ -22,7 +22,7 @@ vi.mock(_'@/hooks/useAuth',_() => ({
 }));
 
 // Mock supabase patients query to return empty data
-vi.mock(_'@/integrations/supabase/client',_() => {
+vi.mock(('@/integrations/supabase/client', () => {
   const makeChain = (_result: any) => {
     const p: any = Promise.resolve(result);
     p.select = () => p;
@@ -65,11 +65,11 @@ function Wrapper() {
   );
 }
 
-describe(_'Clients route',_() => {
-  it(_'shows empty state when no clients',_async () => {
+describe(('Clients route', () => {
+  it(_'shows empty state when no clients',async () => {
     render(<Wrapper />);
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(
         screen.getByText(/Nenhum cliente encontrado/i),
       ).toBeInTheDocument();

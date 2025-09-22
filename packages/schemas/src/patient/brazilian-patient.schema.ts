@@ -19,13 +19,13 @@ import {
  */
 export const CPFSchema = z
   .string()
-  .transform(_(val) => val.replace(/[^\d]/g, ""))
-  .refine(_(val) => val.length === 11, "CPF deve ter 11 dígitos")
-  .refine(_(val) => !/^(\d)\1{10}$/.test(val),
+  .transform((val) => val.replace(/[^\d]/g, ""))
+  .refine((val) => val.length === 11, "CPF deve ter 11 dígitos")
+  .refine((val) => !/^(\d)\1{10}$/.test(val),
     "CPF inválido - todos os dígitos iguais",
   )
-  .refine(_(val) => validateCPF(val), "CPF inválido")
-  .transform(_(val) => {
+  .refine((val) => validateCPF(val), "CPF inválido")
+  .transform((val) => {
     // Format CPF: 123.456.789-09
     return val.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
   });
@@ -35,13 +35,13 @@ export const CPFSchema = z
  */
 export const CNPJSchema = z
   .string()
-  .transform(_(val) => val.replace(/[^\d]/g, ""))
-  .refine(_(val) => val.length === 14, "CNPJ deve ter 14 dígitos")
-  .refine(_(val) => !/^(\d)\1{13}$/.test(val),
+  .transform((val) => val.replace(/[^\d]/g, ""))
+  .refine((val) => val.length === 14, "CNPJ deve ter 14 dígitos")
+  .refine((val) => !/^(\d)\1{13}$/.test(val),
     "CNPJ inválido - todos os dígitos iguais",
   )
-  .refine(_(val) => validateCNPJ(val), "CNPJ inválido")
-  .transform(_(val) => {
+  .refine((val) => validateCNPJ(val), "CNPJ inválido")
+  .transform((val) => {
     // Format CNPJ: 12.345.678/0001-95
     return val.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
   });
@@ -51,12 +51,12 @@ export const CNPJSchema = z
  */
 export const BrazilianPhoneSchema = z
   .string()
-  .transform(_(val) => val.replace(/[^\d]/g, ""))
-  .refine(_(val) => [10, 11].includes(val.length),
+  .transform((val) => val.replace(/[^\d]/g, ""))
+  .refine((val) => [10, 11].includes(val.length),
     "Telefone deve ter 10 ou 11 dígitos",
   )
-  .refine(_(val) => validatePhone(val), "Telefone inválido")
-  .transform(_(val) => {
+  .refine((val) => validatePhone(val), "Telefone inválido")
+  .transform((val) => {
     // Format phone: (11) 99999-8888 or (11) 2555-1234
     if (val.length === 11) {
       return val.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
@@ -69,10 +69,10 @@ export const BrazilianPhoneSchema = z
  */
 export const BrazilianCEPSchema = z
   .string()
-  .transform(_(val) => val.replace(/[^\d]/g, ""))
-  .refine(_(val) => val.length === 8, "CEP deve ter 8 dígitos")
-  .refine(_(val) => validateCEP(val), "CEP inválido")
-  .transform(_(val) => {
+  .transform((val) => val.replace(/[^\d]/g, ""))
+  .refine((val) => val.length === 8, "CEP deve ter 8 dígitos")
+  .refine((val) => validateCEP(val), "CEP inválido")
+  .transform((val) => {
     // Format CEP: 01310-100
     return val.replace(/(\d{5})(\d{3})/, "$1-$2");
   });
@@ -117,19 +117,19 @@ export const BrazilianPatientRegistrationSchema = BasePatientSchema.extend({
   lgpdConsent: z.object({
     dataProcessing: z
       .boolean()
-      .refine(_(val) => val === true, "Consentimento obrigatório"),
+      .refine((val) => val === true, "Consentimento obrigatório"),
     dataSharing: z
       .boolean()
-      .refine(_(val) => val === true, "Consentimento obrigatório"),
+      .refine((val) => val === true, "Consentimento obrigatório"),
     marketing: z.boolean().default(false),
     retentionPeriod: z.enum(["5_years", "10_years", "25_years"]),
   }),
   birthDate: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Data deve estar no formato AAAA-MM-DD")
-    .refine(_(val) => {
+    .refine((val) => {
       const date = new Date(val);
-      const _now = new Date();
+      const now = new Date();
       const age = now.getFullYear() - date.getFullYear();
       return age >= 0 && age <= 120;
     }, "Data de nascimento inválida"),
@@ -163,14 +163,14 @@ export const PatientSearchSchema = z.object({
   name: z.string().optional(),
   cpf: z
     .string()
-    .transform(_(val) => (val ? val.replace(/[^\d]/g, "") : ""))
-    .refine(_(val) => !val || val.length === 11, "CPF deve ter 11 dígitos")
+    .transform((val) => (val ? val.replace(/[^\d]/g, "") : ""))
+    .refine((val) => !val || val.length === 11, "CPF deve ter 11 dígitos")
     .optional(),
   email: z.string().email("Email inválido").optional(),
   phone: z
     .string()
-    .transform(_(val) => (val ? val.replace(/[^\d]/g, "") : ""))
-    .refine(_(val) => !val || [10, 11].includes(val.length), "Telefone inválido")
+    .transform((val) => (val ? val.replace(/[^\d]/g, "") : ""))
+    .refine((val) => !val || [10, 11].includes(val.length), "Telefone inválido")
     .optional(),
   city: z.string().optional(),
   state: z.string().length(2).optional(),

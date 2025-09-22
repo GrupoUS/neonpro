@@ -8,16 +8,16 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { PredictiveAnalyticsService } from "../predictive-analytics.service";
 import { StubModelProvider } from "../../ml/stub-provider";
 
-describe(_"PredictiveAnalyticsService",_() => {
+describe("PredictiveAnalyticsService", () => {
   let _service: PredictiveAnalyticsService;
   let mockMLProvider: StubModelProvider;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     mockMLProvider = new StubModelProvider();
     service = new PredictiveAnalyticsService(mockMLProvider, true);
   });
 
-  describe(_"generateInsights",_() => {
+  describe("generateInsights", () => {
     it(_"should generate predictive insights with LGPD compliance",_async () => {
       const request = {
         patientData: {
@@ -34,14 +34,14 @@ describe(_"PredictiveAnalyticsService",_() => {
         timeframe: "month" as const,
       };
 
-      const insights = await service.generateInsights(_request);
+      const insights = await service.generateInsights(request);
 
       expect(insights).toBeDefined();
       expect(Array.isArray(insights)).toBe(true);
       expect(insights.length).toBeGreaterThan(0);
 
       // Check that insights have required properties
-      insights.forEach(_(insight) => {
+      insights.forEach((insight) => {
         expect(insight).toHaveProperty("id");
         expect(insight).toHaveProperty("type");
         expect(insight).toHaveProperty("title");
@@ -60,9 +60,9 @@ describe(_"PredictiveAnalyticsService",_() => {
         historicalData: { revenue: 50000 },
       };
 
-      const insights = await service.generateInsights(_request);
+      const insights = await service.generateInsights(request);
 
-      const insightTypes = insights.map(_(insight) => insight.type);
+      const insightTypes = insights.map((insight) => insight.type);
       const expectedTypes = [
         "no_show_risk",
         "revenue_forecast",
@@ -71,7 +71,7 @@ describe(_"PredictiveAnalyticsService",_() => {
       ];
 
       // Should contain at least some of the expected types
-      const hasExpectedTypes = expectedTypes.some(_(type) =>
+      const hasExpectedTypes = expectedTypes.some((type) =>
         insightTypes.includes(type),
       );
       expect(hasExpectedTypes).toBe(true);
@@ -88,7 +88,7 @@ describe(_"PredictiveAnalyticsService",_() => {
         timeframe: "month" as const,
       };
 
-      const insights = await serviceWithoutLGPD.generateInsights(_request);
+      const insights = await serviceWithoutLGPD.generateInsights(request);
       expect(insights).toBeDefined();
     });
 
@@ -111,7 +111,7 @@ describe(_"PredictiveAnalyticsService",_() => {
     });
   });
 
-  describe(_"getAnalyticsMetrics",_() => {
+  describe("getAnalyticsMetrics", () => {
     it(_"should return valid analytics metrics",_async () => {
       const metrics = await service.getAnalyticsMetrics();
 
@@ -133,7 +133,7 @@ describe(_"PredictiveAnalyticsService",_() => {
     });
   });
 
-  describe(_"generateComplianceReport",_() => {
+  describe("generateComplianceReport", () => {
     it(_"should generate LGPD compliance report",_async () => {
       const report = await service.generateComplianceReport();
 
@@ -159,7 +159,7 @@ describe(_"PredictiveAnalyticsService",_() => {
     });
   });
 
-  describe(_"LGPD Compliance",_() => {
+  describe("LGPD Compliance", () => {
     it(_"should anonymize sensitive data before processing",_async () => {
       const sensitiveRequest = {
         patientData: {
@@ -182,7 +182,7 @@ describe(_"PredictiveAnalyticsService",_() => {
     });
   });
 
-  describe(_"Predictive Insights Quality",_() => {
+  describe("Predictive Insights Quality", () => {
     it(_"should generate high-confidence insights",_async () => {
       const request = {
         appointmentData: {
@@ -193,19 +193,19 @@ describe(_"PredictiveAnalyticsService",_() => {
         timeframe: "month" as const,
       };
 
-      const insights = await service.generateInsights(_request);
+      const insights = await service.generateInsights(request);
 
       // At least some insights should have high confidence
-      const highConfidenceInsights = insights.filter(_(insight) => insight.confidence > 0.7,
+      const highConfidenceInsights = insights.filter((insight) => insight.confidence > 0.7,
       );
       expect(highConfidenceInsights.length).toBeGreaterThan(0);
     });
 
     it(_"should provide actionable recommendations",_async () => {
       const request = { timeframe: "quarter" as const };
-      const insights = await service.generateInsights(_request);
+      const insights = await service.generateInsights(request);
 
-      insights.forEach(_(insight) => {
+      insights.forEach((insight) => {
         expect(insight.recommendation).toBeDefined();
         expect(insight.recommendation.length).toBeGreaterThan(10);
         expect(typeof insight.recommendation).toBe("string");
@@ -214,9 +214,9 @@ describe(_"PredictiveAnalyticsService",_() => {
 
     it(_"should categorize impact levels correctly",_async () => {
       const request = { timeframe: "week" as const };
-      const insights = await service.generateInsights(_request);
+      const insights = await service.generateInsights(request);
 
-      insights.forEach(_(insight) => {
+      insights.forEach((insight) => {
         expect(["low", "medium", "high"]).toContain(insight.impact);
       });
     });

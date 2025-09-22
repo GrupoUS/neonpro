@@ -1,8 +1,8 @@
 import { describe, test } from 'vitest';
 import { PatientDocumentService } from '../services/patient-document-service';
 
-describe(_'Debug Service Import',_() => {
-  test(_'should import service correctly',_() => {
+describe('Debug Service Import',() => {
+  test('should import service correctly',() => {
     console.log('PatientDocumentService:', PatientDocumentService);
     console.log(
       'typeof PatientDocumentService:',
@@ -13,12 +13,12 @@ describe(_'Debug Service Import',_() => {
     console.log('_service:', _service);
     console.log('service.constructor.name:', service.constructor.name);
     console.log(
-      'Object.getOwnPropertyNames(_service):',
-      Object.getOwnPropertyNames(_service),
+      'Object.getOwnPropertyNames(service):',
+      Object.getOwnPropertyNames(service),
     );
     console.log(
-      'Object.getOwnPropertyNames(Object.getPrototypeOf(_service)):',
-      Object.getOwnPropertyNames(Object.getPrototypeOf(_service)),
+      'Object.getOwnPropertyNames(Object.getPrototypeOf(service)):',
+      Object.getOwnPropertyNames(Object.getPrototypeOf(service)),
     );
 
     // Check what methods exist

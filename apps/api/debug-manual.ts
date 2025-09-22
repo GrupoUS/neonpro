@@ -24,5 +24,5 @@ console.log('getDocument before adding:', typeof service.getDocument);
 console.log('getDocument after adding:', typeof (service as any).getDocument);
 console.log(
   'All methods:',
-  Object.getOwnPropertyNames(Object.getPrototypeOf(_service)),
+  Object.getOwnPropertyNames(Object.getPrototypeOf(service)),
 );

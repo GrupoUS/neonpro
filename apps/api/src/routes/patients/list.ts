@@ -184,7 +184,7 @@ app.openapi(
             sensitivityLevel: 'high',
           },
         );
-      } catch (_auditError) {
+      } catch (auditError) {
         console.error('Enhanced audit logging failed:', auditError);
 
         // Fallback to legacy audit service
@@ -211,7 +211,7 @@ app.openapi(
               },
             },
           );
-        } catch (_legacyAuditError) {
+        } catch (legacyAuditError) {
           console.error('Legacy audit logging also failed:', legacyAuditError);
         }
       }
@@ -264,7 +264,7 @@ app.openapi(
           cfmValidated: healthcareContext.cfmValidated,
         },
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Error listing patients:', error);
 
       // Enhanced error handling for healthcare compliance errors

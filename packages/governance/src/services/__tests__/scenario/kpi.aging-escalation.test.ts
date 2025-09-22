@@ -3,7 +3,7 @@ import { InMemoryEscalationService, InMemoryKPIService } from "../../index";
 
 // Scenario: KPI remains provisional for >60 days triggers escalation
 
-describe("Scenario: KPI provisional aging escalation",_() => {
+describe("Scenario: KPI provisional aging escalation", () => {
   it(_"escalates after 61 days provisional",_async () => {
     const kpiSvc = new InMemoryKPIService();
     const escSvc = new InMemoryEscalationService();

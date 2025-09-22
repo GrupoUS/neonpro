@@ -20,7 +20,7 @@ export const testProfessional = {
 };
 
 // Mock clinic for testing
-export const _testClinic = {
+export const testClinic = {
   id: '123e4567-e89b-12d3-a456-426614174002',
   name: 'Test Clinic',
   code: 'TEST001',

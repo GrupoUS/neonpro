@@ -68,7 +68,7 @@ function ServicesPage() {
   const deleteServiceMutation = useDeleteService();
 
   const handleEdit = (_service: any) => {
-    setEditingService(_service);
+    setEditingService(service);
   };
 
   const handleDelete = async (_service: any) => {
@@ -107,7 +107,7 @@ function ServicesPage() {
     );
   }
 
-  return (_<div className='container mx-auto py-8 space-y-8'>
+  return (<div className='container mx-auto py-8 space-y-8'>
       {/* Header */}
       <div className='flex items-center justify-between'>
         <div>
@@ -182,6 +182,6 @@ function ServicesPage() {
   );
 }
 
-export const _Route = createFileRoute('/services/')({
+export const Route = createFileRoute('/services/')({
   component: ServicesPage,
 });

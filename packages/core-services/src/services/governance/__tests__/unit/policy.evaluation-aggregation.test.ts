@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { InMemoryPolicyService } from "../../index";
 
-describe(_"Policy evaluation aggregation",_() => {
+describe("Policy evaluation aggregation", () => {
   it(_"aggregates rule results into final status",_async () => {
     const svc = new InMemoryPolicyService();
     await svc.register({

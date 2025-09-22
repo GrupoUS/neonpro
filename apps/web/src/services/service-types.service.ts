@@ -201,4 +201,4 @@ class ServiceTypeService {
   }
 }
 
-export const _serviceTypeService = new ServiceTypeService();
+export const serviceTypeService = new ServiceTypeService();

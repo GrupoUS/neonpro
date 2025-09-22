@@ -26,8 +26,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   const [searchOptions, setSearchOptions] = useState<EventSearchOptions | null>(null);
 
   // Debounced search function
-  const debouncedSearch = useMemo(_() =>
-      debounce(async (_options: any) => {
+  const debouncedSearch = useMemo(() => debounce(async (_options: any) => {
         try {
           setIsSearching(true);
           const result = await searchEvents(options);
@@ -54,7 +53,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   }, [debouncedSearch]);
 
   // Load more results (pagination)
-  const loadMore = useCallback(_async () => {
+  const loadMore = useCallback(async () => {
     if (!hasMore || isSearching || !searchOptions) return;
 
     const newPage = currentPage + 1;
@@ -123,7 +122,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   }, [performSearch, defaultLimit]);
 
   // Clear search results
-  const clearSearch = useCallback(_() => {
+  const clearSearch = useCallback(() => {
     setSearchQuery('');
     setSearchResults([]);
     setTotalCount(0);
@@ -134,7 +133,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   }, [debouncedSearch]);
 
   // Search suggestions based on query
-  const searchSuggestions = useMemo(_() => {
+  const searchSuggestions = useMemo(() => {
     if (!searchQuery.trim()) return [];
 
     // Simple suggestions based on common search patterns
@@ -184,7 +183,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   }, [searchQuery]);
 
   // Search statistics
-  const searchStats = useMemo(_() => ({
+  const searchStats = useMemo(() => ({
     totalResults: totalCount,
     displayedResults: searchResults.length,
     hasMoreResults: hasMore,
@@ -247,7 +246,7 @@ export function useAdvancedEventSearch() {
   const [isSearching, setIsSearching] = useState<boolean>(false);
   const [totalCount, setTotalCount] = useState<number>(0);
 
-  const performAdvancedSearch = useCallback(_async () => {
+  const performAdvancedSearch = useCallback(async () => {
     setIsSearching(true);
 
     try {
@@ -289,7 +288,7 @@ export function useAdvancedEventSearch() {
     }));
   }, []);
 
-  const resetFilters = useCallback(_() => {
+  const resetFilters = useCallback(() => {
     setAdvancedFilters({
       title: '',
       description: '',

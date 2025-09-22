@@ -84,11 +84,11 @@ const AccessibilityContext = createContext<
 const ScreenReaderAnnouncer = () => {
   const [announcement, setAnnouncement] = useState<string>('');
 
-  useEffect(_() => {
+  useEffect(() => {
     const handleAnnouncement = (event: CustomEvent<string>) => {
       setAnnouncement(event.detail);
       // Clear after a short delay to allow screen reader to process
-      setTimeout(_() => setAnnouncement(''), 100);
+      setTimeout(() => setAnnouncement(''), 100);
     };
 
     window.addEventListener(
@@ -129,7 +129,7 @@ const AccessibilityPanel = () => {
   } = context;
 
   if (!isAccessibilityPanelOpen) {
-    return (_<Button
+    return (<Button
         onClick={() => setAccessibilityPanelOpen(true)}
         className='fixed bottom-4 right-4 z-50 w-12 h-12 rounded-full shadow-lg'
         size='sm'
@@ -141,7 +141,7 @@ const AccessibilityPanel = () => {
     );
   }
 
-  return (_<Card className='fixed bottom-4 right-4 z-50 w-80 max-h-96 overflow-y-auto shadow-xl'>
+  return (<Card className='fixed bottom-4 right-4 z-50 w-80 max-h-96 overflow-y-auto shadow-xl'>
       <CardHeader className='pb-3'>
         <div className='flex items-center justify-between'>
           <CardTitle className='text-lg'>Acessibilidade</CardTitle>
@@ -375,7 +375,7 @@ export function AccessibilityProvider({
   const [isAccessibilityPanelOpen, setAccessibilityPanelOpen] = useState(false);
 
   // Load preferences from localStorage on mount
-  useEffect(_() => {
+  useEffect(() => {
     const savedPreferences = localStorage.getItem(
       'neonpro-accessibility-preferences',
     );
@@ -390,7 +390,7 @@ export function AccessibilityProvider({
   }, []);
 
   // Save preferences to localStorage when they change
-  useEffect(_() => {
+  useEffect(() => {
     localStorage.setItem(
       'neonpro-accessibility-preferences',
       JSON.stringify(preferences),
@@ -398,7 +398,7 @@ export function AccessibilityProvider({
   }, [preferences]);
 
   // Apply accessibility preferences to DOM
-  useEffect(_() => {
+  useEffect(() => {
     const root = document.documentElement;
 
     // Font size
@@ -442,7 +442,7 @@ export function AccessibilityProvider({
   }, [preferences]);
 
   // Detect system preferences
-  useEffect(_() => {
+  useEffect(() => {
     // Detect prefers-reduced-motion
     const reduceMotionQuery = window.matchMedia(
       '(prefers-reduced-motion: reduce)',
@@ -550,11 +550,11 @@ export function withAccessibility<P extends object>(
 export function useKeyboardNavigation() {
   const { preferences } = useAccessibility();
 
-  useEffect(_() => {
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       // Add keyboard delay if enabled
       if (preferences.slowKeys && preferences.clickDelay > 0) {
-        setTimeout(_() => {
+        setTimeout(() => {
           // Process key after delay
         }, preferences.clickDelay);
       }

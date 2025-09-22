@@ -32,7 +32,7 @@ export function useSubscription() {
     error,
     refetch,
   } = useQuery({
-    queryKey: ['subscription',_user?.id],
+    queryKey: ['subscription', user?.id],
     queryFn: () => getUserSubscription(user!.id),
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -83,7 +83,7 @@ export function useSubscription() {
   );
 
   // Set up real-time subscription to profile changes
-  useEffect(_() => {
+  useEffect(() => {
     if (!user?.id) return;
 
     const channel = supabase

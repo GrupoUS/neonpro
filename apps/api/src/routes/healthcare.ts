@@ -102,7 +102,7 @@ const auditMiddleware = createMiddleware<HealthcareEnv>(_async (c,_next) => {
         ip: c.req.header('CF-Connecting-IP') || c.req.header('X-Forwarded-For'),
       },
     });
-  } catch (_error) {
+  } catch (error) {
     console.error('Failed to log audit trail:', error);
   }
 });
@@ -144,7 +144,7 @@ const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(_async (c,_next
       });
 
       await next();
-    } catch (_error) {
+    } catch (error) {
       console.error('Authentication error:', error);
       return c.json({ error: 'Erro de autenticação' }, 401);
     }
@@ -253,7 +253,7 @@ healthcare.get(
           cached: false,
         },
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Error fetching patients:', error);
       return c.json(
         {
@@ -308,7 +308,7 @@ healthcare.get('/patients/:id', async c => {
       success: true,
       data: patient,
     });
-  } catch (_error) {
+  } catch (error) {
     console.error('Error fetching patient:', error);
     return c.json(
       {
@@ -353,7 +353,7 @@ healthcare.post('/patients', zValidator('json', patientSchema), async c => {
       },
       201,
     );
-  } catch (_error) {
+  } catch (error) {
     console.error('Error creating patient:', error);
     return c.json(
       {
@@ -404,7 +404,7 @@ healthcare.put(
         data: patient,
         message: 'Paciente atualizado com sucesso',
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Error updating patient:', error);
       return c.json(
         {
@@ -454,7 +454,7 @@ healthcare.get('/patients/:id/appointments', async c => {
       success: true,
       data: appointments || [],
     });
-  } catch (_error) {
+  } catch (error) {
     console.error('Error fetching appointments:', error);
     return c.json(
       {
@@ -480,7 +480,7 @@ healthcare.post(
 
     // Healthcare-specific validation
     const scheduledDate = new Date(appointmentData.scheduled_at);
-    const _now = new Date();
+    const now = new Date();
 
     if (scheduledDate <= now) {
       return c.json(
@@ -534,7 +534,7 @@ healthcare.post(
         },
         201,
       );
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating appointment:', error);
       return c.json(
         {
@@ -593,7 +593,7 @@ healthcare.get(
         success: true,
         data: analytics,
       });
-    } catch (_error) {
+    } catch (error) {
       console.error('Error fetching analytics:', error);
       return c.json(
         {

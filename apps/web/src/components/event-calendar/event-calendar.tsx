@@ -83,12 +83,12 @@ export function EventCalendar({
   const { open } = useSidebar();
 
   // Sync view state with context
-  React.useEffect(_() => {
+  React.useEffect(() => {
     setView(currentView);
   }, [currentView]);
 
   // Add keyboard shortcuts for view switching
-  useEffect(_() => {
+  useEffect(() => {
     const handleKeyDown = (_e: any) => {
       // Skip if user is typing in an input, textarea or contentEditable element
       // or if the event dialog is open
@@ -225,7 +225,7 @@ export function EventCalendar({
     }
   };
 
-  const viewTitle = useMemo(_() => {
+  const viewTitle = useMemo(() => {
     if (view === 'month') {
       return format(currentDate, 'MMMM yyyy');
     } else if (view === 'week') {

@@ -74,9 +74,9 @@ const app = createHealthcareOpenAPIApp();
 // Apply security middleware stack
 // app.use('*', ...getSecurityMiddlewareStack());
 
-app.use(_'*',
+app.use('*',
   cors({
-    origin: (origin,_callback) => {
+    origin: (origin, callback) => {
       // Allow same-origin requests (no origin header)
       if (!origin) return callback(null, true);
 
@@ -198,7 +198,7 @@ app.use('*', async (c, next) => {
       duration,
       requestId,
     });
-  } catch (_error) {
+  } catch (error) {
     const duration = Date.now() - startTime;
 
     // Capture error with context
@@ -515,7 +515,7 @@ if (process.env.NODE_ENV !== 'production') {
     // Test error tracking
     try {
       throw new Error('This is a test error for error tracking');
-    } catch (_error) {
+    } catch (error) {
       errorTracker.captureException(error as Error, {
         requestId,
         endpoint: 'test',

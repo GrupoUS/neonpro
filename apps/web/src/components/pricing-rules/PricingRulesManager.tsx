@@ -286,7 +286,7 @@ export function PricingRulesManager() {
               Modifique as configurações da regra de preço
             </DialogDescription>
           </DialogHeader>
-          {editingRule && (_<PricingRuleForm
+          {editingRule && (<PricingRuleForm
               rule={editingRule}
               onSuccess={() => setEditingRule(null)}
               onCancel={() => setEditingRule(null)}

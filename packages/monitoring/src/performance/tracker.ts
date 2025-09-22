@@ -51,7 +51,7 @@ export class PerformanceTracker {
     labels?: Record<string, string>,
   ): Promise<T> {
     this.startTimer(operation);
-    return fn().finally(_() => {
+    return fn().finally(() => {
       this.endTimer(operation, labels);
     });
   }
@@ -71,4 +71,4 @@ export class PerformanceTracker {
 }
 
 // Global performance tracker instance
-export const _globalPerformanceTracker = new PerformanceTracker();
+export const globalPerformanceTracker = new PerformanceTracker();

@@ -118,7 +118,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
     await this.simulateNetworkDelay();
 
     // Route message to recipient (in real implementation, this would go over network)
-    setTimeout(_() => {
+    setTimeout(() => {
       this.routeMessage(message);
     }, this.options.networkLatency || 0);
 
@@ -161,7 +161,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
     latency: number;
     lastHeartbeat: string;
   }> {
-    const _now = new Date();
+    const now = new Date();
     const latency = this.lastHeartbeat
       ? now.getTime() - this.lastHeartbeat.getTime()
       : -1;
@@ -234,7 +234,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
 
     // Timestamp validation (must be recent)
     const messageTime = new Date(message.timestamp);
-    const _now = new Date();
+    const now = new Date();
     const maxAge = 5 * 60 * 1000; // 5 minutes
     if (now.getTime() - messageTime.getTime() > maxAge) {
       throw new Error("Message timestamp is too old");
@@ -308,7 +308,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
         this.log(
           `Delivered ${message.type} message to session ${message.sessionId}`,
         );
-      } catch (_error) {
+      } catch (error) {
         this.log(
           `Error delivering message to session ${message.sessionId}: ${error}`,
         );
@@ -325,7 +325,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
    */
   private async simulateNetworkDelay(): Promise<void> {
     if (this.options.networkLatency && this.options.networkLatency > 0) {
-      await new Promise(_(resolve) =>
+      await new Promise((resolve) =>
         setTimeout(resolve, this.options.networkLatency),
       );
     }
@@ -335,7 +335,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
    * Start heartbeat simulation for connection health monitoring
    */
   private startHeartbeat(): void {
-    this.heartbeatInterval = setInterval(_() => {
+    this.heartbeatInterval = setInterval(() => {
       this.lastHeartbeat = new Date();
       this.log("Heartbeat sent");
     }, 30000); // 30 seconds

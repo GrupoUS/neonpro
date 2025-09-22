@@ -6,7 +6,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { cn } from "../../utils";
 
@@ -17,12 +17,12 @@ const ExpandableCardContext = createContext<{
 }>({
   id: null,
   expandedCard: null,
-  setExpandedCard: () => {},
+  setExpandedCard: () => {}
 });
 
 export const useExpandableCard = () => {
   const context = useContext(ExpandableCardContext);
-  if (!_context) {
+  if (!context) {
     throw new Error(
       "useExpandableCard must be used within ExpandableCardProvider",
     );
@@ -37,7 +37,7 @@ interface ExpandableCardProviderProps {
 
 export function ExpandableCardProvider({
   children,
-  className,
+  className
 }: ExpandableCardProviderProps) {
   const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
@@ -68,13 +68,13 @@ export function ExpandableCard({
   id,
   children,
   className,
-  expandedContent,
+  expandedContent
 }: ExpandableCardProps) {
   const { expandedCard, setExpandedCard } = useExpandableCard();
   const cardRef = useRef<HTMLDivElement>(null);
   const isExpanded = expandedCard === id;
 
-  useEffect(_() => {
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (cardRef.current && !cardRef.current.contains(event.target as Node)) {
         setExpandedCard(null);
@@ -130,7 +130,7 @@ export function ExpandableCard({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              onClick={(_e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">

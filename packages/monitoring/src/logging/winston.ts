@@ -19,8 +19,8 @@ export function createLogger(config: LoggingConfig): winston.Logger {
             ? winston.format.combine(
                 winston.format.colorize(),
                 winston.format.timestamp(),
-                winston.format.printf(_({ timestamp,_level,_message,_...meta }) => {
-                    return `${timestamp} [${level}]: ${message} ${Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ""}`;
+                winston.format.printf(({ timestamp,level,_message, ...meta }) => {
+                    return `${timestamp} [${level}]: ${_message} ${Object.keys(meta).length ? JSON.stringify(meta, null, 2) : ""}`;
                   },
                 ),
               )

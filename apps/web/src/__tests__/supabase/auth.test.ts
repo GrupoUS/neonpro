@@ -17,11 +17,11 @@ import {
 } from '@/lib/testing/supabase-test-client';
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest';
 
-describe(_'Supabase Authentication - LGPD Compliant',_() => {
+describe(('Supabase Authentication - LGPD Compliant', () => {
   let testClient: any;
   let testDataGenerator: HealthcareTestDataGenerator;
 
-  beforeAll(_() => {
+  beforeAll(() => {
     testClient = createTestSupabaseClient({
       lgpdCompliant: true,
       auditTrail: true,
@@ -31,13 +31,13 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
     console.log('🧪 Authentication Test Environment Setup Complete');
   });
 
-  afterAll(_async () => {
+  afterAll(async () => {
     await testDataGenerator.cleanupTestData();
     console.log('🔒 Authentication Test Environment Cleaned Up');
   });
 
-  describe(_'User Registration with LGPD Consent',_() => {
-    test(_'should register user with complete LGPD consent tracking',_async () => {
+  describe(('User Registration with LGPD Consent', () => {
+    test(_'should register user with complete LGPD consent tracking',async () => {
       const testUserData = {
         email: `test-${Date.now()}@neonpro-test.com`,
         password: 'SecureTestPassword123!',
@@ -65,7 +65,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
       // security-auditor: Registration with consent validation
       const startTime = performance.now();
 
-      const { data: _data, error: _error } = await testClient.auth.signUp({
+      const { data: data, error: error } = await testClient.auth.signUp({
         email: testUserData.email,
         password: testUserData.password,
         options: {
@@ -97,7 +97,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
       console.log('✅ User registration with LGPD consent validated');
     });
 
-    test(_'should handle consent withdrawal process',_async () => {
+    test(_'should handle consent withdrawal process',async () => {
       // security-auditor: Consent withdrawal process
       const testUser = await testDataGenerator.createAuthenticatedTestUser('patient');
 
@@ -137,7 +137,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
       console.log('✅ Consent withdrawal process validated');
     });
 
-    test(_'should reject registration without required LGPD consent',_async () => {
+    test(_'should reject registration without required LGPD consent',async () => {
       const invalidUserData = {
         email: `test-invalid-${Date.now()}@neonpro-test.com`,
         password: 'SecureTestPassword123!',
@@ -151,7 +151,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
         },
       };
 
-      const { data: _data, error: _error } = await testClient.auth.signUp({
+      const { data: data, error: error } = await testClient.auth.signUp({
         email: invalidUserData.email,
         password: invalidUserData.password,
         options: {
@@ -166,7 +166,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
       );
     });
 
-    test(_'should validate healthcare professional registration',_async () => {
+    test(_'should validate healthcare professional registration',async () => {
       const doctorUserData = {
         email: `doctor-${Date.now()}@hospital-test.com`,
         password: 'SecureDoctorPassword123!',
@@ -188,7 +188,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
         },
       };
 
-      const { data: _data, error: _error } = await testClient.auth.signUp({
+      const { data: data, error: error } = await testClient.auth.signUp({
         email: doctorUserData.email,
         password: doctorUserData.password,
         options: {
@@ -211,8 +211,8 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
     });
   });
 
-  describe(_'Session Management and Security',_() => {
-    test(_'should handle secure session lifecycle',_async () => {
+  describe(('Session Management and Security', () => {
+    test(_'should handle secure session lifecycle',async () => {
       const testUser = await testDataGenerator.createAuthenticatedTestUser('patient');
 
       // Sign in
@@ -236,7 +236,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
 
         // Validate session expiration is reasonable (not too long)
         const expiresAt = new Date(session.session.expires_at * 1000);
-        const _now = new Date();
+        const now = new Date();
         const sessionDuration = expiresAt.getTime() - now.getTime();
         const maxSessionDuration = 24 * 60 * 60 * 1000; // 24 hours
 
@@ -253,7 +253,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
       console.log('✅ Session lifecycle management validated');
     });
 
-    test(_'should enforce session security policies',_async () => {
+    test(_'should enforce session security policies',async () => {
       // security-auditor: Session security validation
       const testUser = await testDataGenerator.createAuthenticatedTestUser('doctor');
 
@@ -284,7 +284,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
       console.log('✅ Session security policies validated');
     });
 
-    test(_'should handle concurrent session limits',_async () => {
+    test(_'should handle concurrent session limits',async () => {
       // security-auditor: Concurrent session validation
       const testUser = await testDataGenerator.createAuthenticatedTestUser('nurse');
 
@@ -310,7 +310,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
       console.log('✅ Concurrent session handling validated');
     });
 
-    test(_'should track authentication events for audit',_async () => {
+    test(_'should track authentication events for audit',async () => {
       // security-auditor: Authentication audit validation
       const testUser = await testDataGenerator.createAuthenticatedTestUser('admin');
 
@@ -343,8 +343,8 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
     });
   });
 
-  describe(_'Role-Based Authentication',_() => {
-    test(_'should validate patient role authentication',_async () => {
+  describe(('Role-Based Authentication', () => {
+    test(_'should validate patient role authentication',async () => {
       const patientUser = await testDataGenerator.createTestUser({
         _role: 'patient',
         permissions: ['read_own_data', 'update_profile', 'book_appointments'],
@@ -366,7 +366,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
       console.log('✅ Patient role authentication validated');
     });
 
-    test(_'should validate healthcare professional roles',_async () => {
+    test(_'should validate healthcare professional roles',async () => {
       const roles = ['doctor', 'nurse', 'admin'] as const;
 
       for (const role of roles) {
@@ -384,7 +384,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
         expect(data.user).toBeDefined();
 
         if (data.user?.user_metadata) {
-          expect(data.user.user_metadata._role).toBe(_role);
+          expect(data.user.user_metadata._role).toBe(role);
           expect(data.user.user_metadata.permissions).toContain(
             `read_patients_${role}`,
           );
@@ -394,7 +394,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
       }
     });
 
-    test(_'should enforce organization-scoped authentication',_async () => {
+    test(_'should enforce organization-scoped authentication',async () => {
       const orgId = 'test-hospital-12345';
       const doctorUser = await testDataGenerator.createTestUser({
         _role: 'doctor',
@@ -420,12 +420,12 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
     });
   });
 
-  describe(_'Password Security and Recovery',_() => {
-    test(_'should enforce strong password requirements',_async () => {
+  describe(('Password Security and Recovery', () => {
+    test(_'should enforce strong password requirements',async () => {
       const weakPasswords = ['123456', 'password', 'abc123', 'test1234'];
 
       for (const weakPassword of weakPasswords) {
-        const { data: _data, error: _error } = await testClient.auth.signUp({
+        const { data: data, error: error } = await testClient.auth.signUp({
           email: `test-weak-${Date.now()}@neonpro-test.com`,
           password: weakPassword,
         });
@@ -437,7 +437,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
       }
     });
 
-    test(_'should handle secure password recovery',_async () => {
+    test(_'should handle secure password recovery',async () => {
       const testUser = await testDataGenerator.createTestUser({
         _role: 'patient',
       });
@@ -454,7 +454,7 @@ describe(_'Supabase Authentication - LGPD Compliant',_() => {
       console.log('✅ Password recovery process validated (mock)');
     });
 
-    test(_'should implement account lockout after failed attempts',_async () => {
+    test(_'should implement account lockout after failed attempts',async () => {
       const testUser = await testDataGenerator.createTestUser({
         _role: 'patient',
       });

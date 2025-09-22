@@ -35,18 +35,18 @@ const mockSupabase = {
   rpc: vi.fn().mockResolvedValue({ data: null, error: null }),
 } as unknown as SupabaseClient;
 
-describe(_"ConsentService",_() => {
+describe("ConsentService", () => {
   let consentService: ConsentService;
   let queryBuilder: ReturnType<typeof createSupabaseQueryBuilder>;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
     queryBuilder = createSupabaseQueryBuilder();
     (mockSupabase.from as any).mockReturnValue(queryBuilder);
     consentService = new ConsentService(mockSupabase);
   });
 
-  describe(_"requestConsent",_() => {
+  describe("requestConsent", () => {
     it(_"should request consent successfully",_async () => {
       queryBuilder.insert.mockResolvedValueOnce({ data: { id: "consent-1" }, error: null });
 
@@ -83,7 +83,7 @@ describe(_"ConsentService",_() => {
     });
   });
 
-  describe(_"verifyConsent",_() => {
+  describe("verifyConsent", () => {
     it(_"should verify consent successfully",_async () => {
       queryBuilder.eq.mockReturnThis();
       queryBuilder.single.mockResolvedValueOnce({
@@ -111,7 +111,7 @@ describe(_"ConsentService",_() => {
     });
   });
 
-  describe(_"revokeConsent",_() => {
+  describe("revokeConsent", () => {
     it(_"should revoke consent successfully",_async () => {
       queryBuilder.update.mockResolvedValueOnce({ data: {}, error: null });
 
@@ -134,7 +134,7 @@ describe(_"ConsentService",_() => {
     });
   });
 
-  describe(_"getConsentHistory",_() => {
+  describe("getConsentHistory", () => {
     it(_"should get consent history successfully",_async () => {
       const mockHistory = [
         { id: "1", status: "granted", created_at: "2023-01-01" },
@@ -160,7 +160,7 @@ describe(_"ConsentService",_() => {
     });
   });
 
-  describe(_"grantConsent",_() => {
+  describe("grantConsent", () => {
     it(_"should grant consent successfully",_async () => {
       // Mock the chained calls: update().eq().eq()
       const secondEqMock = vi.fn().mockResolvedValue({ data: {}, error: null });
@@ -190,7 +190,7 @@ describe(_"ConsentService",_() => {
     });
   });
 
-  describe(_"getPendingConsents",_() => {
+  describe("getPendingConsents", () => {
     it(_"should get pending consents successfully",_async () => {
       const mockConsents = [
         { id: "1", status: "pending", created_at: "2023-01-01" },
@@ -217,7 +217,7 @@ describe(_"ConsentService",_() => {
     });
   });
 
-  describe(_"exportUserData",_() => {
+  describe("exportUserData", () => {
     it(_"should export user data successfully",_async () => {
       const mockPatient = { id: "patient-1", user_id: "user-1", name: "John Doe" };
       const mockConsentRecords = [{ id: "consent-1", status: "granted" }];
@@ -278,7 +278,7 @@ describe(_"ConsentService",_() => {
     });
   });
 
-  describe(_"deleteUserData",_() => {
+  describe("deleteUserData", () => {
     it(_"should delete user data successfully",_async () => {
       const mockPatient = { id: "patient-1", clinic_id: "clinic-1" };
 

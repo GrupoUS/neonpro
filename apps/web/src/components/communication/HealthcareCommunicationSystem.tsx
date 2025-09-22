@@ -131,16 +131,16 @@ export interface HealthcareCommunicationSystemProps {
   className?: string;
 }
 
-export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSystemProps> = (_{
-  userId,_userRole,_clinicContext = 'Clínica Estética NeonPro',_emergencyEnabled = true,_videoConsultationEnabled = true,
+export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSystemProps> = ({
+  userId,userRole, clinicContext = 'Clínica Estética NeonPro', emergencyEnabled = true, videoConsultationEnabled = true,
   lgpdSettings = {
     dataRetentionDays: 365,
     requireConsentForMessages: true,
-    enableMessageEncryption: true,_},
+    enableMessageEncryption: true, },
   accessibilitySettings = {
     highContrast: false,
     largeText: false,
-    reducedMotion: false,_},_className,_}) => {
+    reducedMotion: false, },className, }) => {
   // State management
   const [messages, setMessages] = useState<Message[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -164,7 +164,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const notificationSoundRef = useRef<HTMLAudioElement>(null);
-  const _modalRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   // Mock contacts data (in real app, this would come from API)
   const contacts: Contact[] = [
@@ -237,7 +237,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
   ];
 
   // Initialize sample notifications
-  useEffect(_() => {
+  useEffect(() => {
     const sampleNotifications: Notification[] = [
       {
         id: '1',
@@ -261,7 +261,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
   }, []);
 
   // Scroll to bottom of messages
-  const scrollToBottom = useCallback(_() => {
+  const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
@@ -289,7 +289,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
     announcePolite(`Mensagem enviada para ${contacts.find(c => c.id === selectedContact)?.name}`);
 
     // Simulate response after delay
-    setTimeout(_() => {
+    setTimeout(() => {
       const response: Message = {
         id: (Date.now() + 1).toString(),
         sender: 'staff',
@@ -315,7 +315,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
   }, [newMessage, sendMessage]);
 
   // Filter contacts based on search
-  useEffect(_() => {
+  useEffect(() => {
     const filtered = contacts.filter(contact =>
       contact.name.toLowerCase().includes(searchQuery.toLowerCase())
       || (contact.specialization
@@ -326,12 +326,12 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
   }, [searchQuery, contacts]);
 
   // Auto-scroll when new messages arrive
-  useEffect(_() => {
+  useEffect(() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
   // Initialize filtered contacts
-  useEffect(_() => {
+  useEffect(() => {
     setFilteredContacts(contacts);
   }, [contacts]);
 
@@ -351,7 +351,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
 
   // Format timestamp for display
   const formatMessageTime = (timestamp: Date) => {
-    const _now = new Date();
+    const now = new Date();
     const diff = now.getTime() - timestamp.getTime();
     const minutes = Math.floor(diff / 60000);
 
@@ -402,21 +402,21 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
 
     // In a real app, this would open file picker or camera
     setIsLoading(true);
-    setTimeout(_() => {
+    setTimeout(() => {
       setIsLoading(false);
       announcePolite('Anexo enviado com sucesso');
     }, 1000);
   }, [announcePolite]);
 
   // Handle video call initiation
-  const handleVideoCall = useCallback(_() => {
+  const handleVideoCall = useCallback(() => {
     if (!selectedContact) return;
 
     const contact = contacts.find(c => c.id === selectedContact);
     announceAssertive(`Iniciando chamada de vídeo com ${contact?.name}`);
 
     // In a real app, this would initiate video call
-    setTimeout(_() => {
+    setTimeout(() => {
       announcePolite('Chamada de vídeo iniciada');
     }, 1000);
   }, [selectedContact, contacts, announceAssertive, announcePolite]);
@@ -796,7 +796,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
                       />
 
                       <div className='absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1'>
-                        {emergencyEnabled && (_<HealthcareButton
+                        {emergencyEnabled && (<HealthcareButton
                             variant='ghost'
                             size='sm'
                             onClick={() => sendMessage(newMessage, 'emergency')}
@@ -825,7 +825,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
                   </div>
 
                   {/* Attachment Menu */}
-                  {showAttachmentMenu && (_<Card className='mt-2'>
+                  {showAttachmentMenu && (<Card className='mt-2'>
                       <CardContent className='p-2'>
                         <div className='grid grid-cols-4 gap-2'>
                           <HealthcareButton
@@ -878,7 +878,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
 
                   {/* Message Templates */}
                   <div className='mt-2 flex flex-wrap gap-1'>
-                    {messageTemplates.slice(0, 3).map(_template => (
+                    {messageTemplates.slice(0, 3).map(template => (
                       <HealthcareButton
                         key={template.id}
                         variant='outline'
@@ -916,7 +916,7 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
         </div>
 
         {/* Notifications Panel */}
-        {activeTab === 'notifications' && (_<div className='absolute inset-0 bg-white z-10 p-4'>
+        {activeTab === 'notifications' && (<div className='absolute inset-0 bg-white z-10 p-4'>
             <div className='max-w-2xl mx-auto'>
               <div className='flex items-center justify-between mb-6'>
                 <h2 className='text-xl font-semibold text-slate-900'>

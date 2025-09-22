@@ -288,8 +288,8 @@ export const NEONPRO_STANDARDS = {
  * }
  *
  * // Validate Brazilian documents
- * const _isValidCpf = validateCpf('123.456.789-00');
- * const _formattedPhone = formatters.phone('11999999999');
+ * const isValidCpf = validateCpf('123.456.789-00');
+ * const formattedPhone = formatters.phone('11999999999');
  * ```
  */
 

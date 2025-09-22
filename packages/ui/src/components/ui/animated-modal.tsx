@@ -6,7 +6,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { cn } from "../../utils";
 
@@ -29,7 +29,7 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
 
 export const useModal = () => {
   const context = useContext(ModalContext);
-  if (!_context) {
+  if (!context) {
     throw new Error("useModal must be used within a ModalProvider");
   }
   return context;
@@ -39,8 +39,8 @@ export function Modal({ children }: { children: ReactNode }) {
   return <ModalProvider>{children}</ModalProvider>;
 }
 
-export const _ModalTrigger = (_{
-  children,_className,
+export const ModalTrigger = ({
+  children,className
 }: {
   children: ReactNode;
   className?: string;
@@ -59,15 +59,15 @@ export const _ModalTrigger = (_{
   );
 };
 
-export const _ModalBody = (_{
-  children,_className,
+export const ModalBody = ({
+  children,className
 }: {
   children: ReactNode;
   className?: string;
 }) => {
   const { open } = useModal();
 
-  useEffect(_() => {
+  useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
     } else {
@@ -77,22 +77,22 @@ export const _ModalBody = (_{
 
   const modalRef = useRef<HTMLDivElement>(null);
   const { setOpen } = useModal();
-  useOutsideClick(_modalRef,_() => setOpen(false));
+  useOutsideClick(modalRef,() => setOpen(false));
 
   return (
     <AnimatePresence>
       {open && (
         <motion.div
           initial={{
-            opacity: 0,
+            opacity: 0
           }}
           animate={{
             opacity: 1,
-            backdropFilter: "blur(10px)",
+            backdropFilter: "blur(10px)"
           }}
           exit={{
             opacity: 0,
-            backdropFilter: "blur(0px)",
+            backdropFilter: "blur(0px)"
           }}
           className="fixed [perspective:800px] [transform-style:preserve-3d] inset-0 h-full w-full  flex items-center justify-center z-50"
         >
@@ -108,23 +108,23 @@ export const _ModalBody = (_{
               opacity: 0,
               scale: 0.5,
               rotateX: 40,
-              y: 40,
+              y: 40
             }}
             animate={{
               opacity: 1,
               scale: 1,
               rotateX: 0,
-              y: 0,
+              y: 0
             }}
             exit={{
               opacity: 0,
               scale: 0.8,
-              rotateX: 10,
+              rotateX: 10
             }}
             transition={{
               type: "spring",
               stiffness: 260,
-              damping: 15,
+              damping: 15
             }}
           >
             <CloseIcon />
@@ -136,8 +136,8 @@ export const _ModalBody = (_{
   );
 };
 
-export const _ModalContent = (_{
-  children,_className,
+export const ModalContent = ({
+  children,className
 }: {
   children: ReactNode;
   className?: string;
@@ -149,8 +149,8 @@ export const _ModalContent = (_{
   );
 };
 
-export const _ModalFooter = (_{
-  children,_className,
+export const ModalFooter = ({
+  children,className
 }: {
   children: ReactNode;
   className?: string;
@@ -171,15 +171,15 @@ const Overlay = ({ className }: { className?: string }) => {
   return (
     <motion.div
       initial={{
-        opacity: 0,
+        opacity: 0
       }}
       animate={{
         opacity: 1,
-        backdropFilter: "blur(10px)",
+        backdropFilter: "blur(10px)"
       }}
       exit={{
         opacity: 0,
-        backdropFilter: "blur(0px)",
+        backdropFilter: "blur(0px)"
       }}
       className={`fixed inset-0 h-full w-full bg-black bg-opacity-50 z-50 ${className}`}
     ></motion.div>
@@ -188,7 +188,7 @@ const Overlay = ({ className }: { className?: string }) => {
 
 const CloseIcon = () => {
   const { setOpen } = useModal();
-  return (_<button
+  return (<button
       onClick={() => setOpen(false)}
       className="absolute top-4 right-4 group"
     >
@@ -218,7 +218,7 @@ export const useOutsideClick = (
   ref: React.RefObject<HTMLDivElement | null>,
   callback: Function,
 ) => {
-  useEffect(_() => {
+  useEffect(() => {
     const listener = (event: any) => {
       // DO NOTHING if the element being clicked is the target element or their children
       if (!ref.current || ref.current.contains(event.target)) {

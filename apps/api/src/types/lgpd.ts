@@ -130,7 +130,7 @@ export async function anonymize_patient_data(
       timestamp: new Date().toISOString(),
       errors: errors.length > 0 ? errors : undefined,
     };
-  } catch (_error) {
+  } catch (error) {
     return {
       success: false,
       recordsProcessed: 0,
@@ -206,7 +206,7 @@ export async function delete_patient_data(
       timestamp: new Date().toISOString(),
       errors: errors.length > 0 ? errors : undefined,
     };
-  } catch (_error) {
+  } catch (error) {
     return {
       success: false,
       recordsProcessed,
@@ -322,7 +322,7 @@ export async function export_patient_data(
       exportUrl: `https://api.example.com/exports/exp_${Date.now()}.${format}`,
       errors: errors.length > 0 ? errors : undefined,
     };
-  } catch (_error) {
+  } catch (error) {
     return {
       success: false,
       recordsProcessed: 0,

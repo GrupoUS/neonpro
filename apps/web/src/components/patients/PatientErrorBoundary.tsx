@@ -334,7 +334,7 @@ export function usePatientErrorHandler() {
     });
   }, []);
 
-  const clearError = React.useCallback(_() => {
+  const clearError = React.useCallback(() => {
     setError(null);
     setErrorId('');
   }, []);

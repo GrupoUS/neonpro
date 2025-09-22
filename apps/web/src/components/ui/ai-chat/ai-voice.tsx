@@ -17,18 +17,18 @@ export default function AIVoice({
   className,
 }: AIVoiceProps) {
   const [isRecording, setIsRecording] = useState(false);
-  const [hasAudioSupport] = useState(_() => {
+  const [hasAudioSupport] = useState(() => {
     if (typeof window === 'undefined') return false;
     const hasMediaDevices = !!navigator?.mediaDevices?.getUserMedia;
     const hasRecorder = typeof MediaRecorder !== 'undefined';
     // Se quiser manter a checagem opcional de STT:
-    // const _hasSTT = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+    // const hasSTT = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
     return hasMediaDevices && hasRecorder;
   });
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
-  const handleMicToggle = useCallback(_async () => {
+  const handleMicToggle = useCallback(async () => {
     if (!hasAudioSupport || disabled) return;
 
     if (isRecording) {
@@ -56,7 +56,7 @@ export default function AIVoice({
           const mimeType = mediaRecorder.mimeType || audioChunks[0]?.type || 'audio/webm';
           const audioBlob = new Blob(audioChunks, { type: mimeType });
           onVoiceInput?.(audioBlob);
-          stream.getTracks().forEach(_track => _track.stop());
+          stream.getTracks().forEach(track => _track.stop());
         };
 
         mediaRecorder.start();
@@ -66,7 +66,7 @@ export default function AIVoice({
       }
     }
   }, [hasAudioSupport, disabled, isRecording, onVoiceInput]);
-  const handleSpeakerToggle = useCallback(_() => {
+  const handleSpeakerToggle = useCallback(() => {
     if (disabled) return;
     onVoiceOutput?.();
   }, [disabled, onVoiceOutput]);

@@ -54,7 +54,7 @@ appointments.get('/', async c => {
       },
     });
     return ok(c, { items });
-  } catch (_error) {
+  } catch (error) {
     console.error('Error fetching appointments:', error);
     return serverError(
       c,
@@ -99,7 +99,7 @@ appointments.get('/patient/:patientId', async c => {
     });
 
     return ok(c, { items });
-  } catch (_error) {
+  } catch (error) {
     console.error('Error fetching patient appointments:', error);
     return serverError(
       c,
@@ -173,7 +173,7 @@ appointments.post(
       });
 
       return created(c, appt);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating appointment:', error);
       return serverError(
         c,
@@ -237,7 +237,7 @@ appointments.put(
       });
 
       return ok(c, appt);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error updating appointment:', error);
       return serverError(
         c,

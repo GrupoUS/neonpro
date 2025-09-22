@@ -302,7 +302,7 @@ export class AgentAuditService {
         total: count || 0,
         hasMore: (options.limit || 0) + (options.offset || 0) < (count || 0),
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error querying audit logs:', error);
       return {
         events: [],
@@ -384,13 +384,13 @@ export class AgentAuditService {
 
       // Get top actions and resources
       const topActions = Array.from(actionCounts.entries())
-        .map(_([action,_count]) => ({ action, count }))
-        .sort(_(a,_b) => b.count - a.count)
+        .map(([action,_count]) => ({ action, count }))
+        .sort((a,_b) => b.count - a.count)
         .slice(0, 10);
 
       const topResources = Array.from(resourceCounts.entries())
-        .map(_([resource,_count]) => ({ resource, count }))
-        .sort(_(a,_b) => b.count - a.count)
+        .map(([resource,_count]) => ({ resource, count }))
+        .sort((a,_b) => b.count - a.count)
         .slice(0, 10);
 
       return {
@@ -403,7 +403,7 @@ export class AgentAuditService {
           ? totalProcessingTime / processingTimeCount
           : 0,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting audit statistics:', error);
       return {
         totalEvents: 0,
@@ -488,7 +488,7 @@ export class AgentAuditService {
       }
 
       return 0; // Actual count would need to be queried separately
-    } catch (_error) {
+    } catch (error) {
       console.error('Error cleaning up old audit logs:', error);
       return 0;
     }
@@ -531,7 +531,7 @@ export class AgentAuditService {
         // Re-add failed events to pending queue
         this.pendingEvents.unshift(...eventsToFlush);
       }
-    } catch (_error) {
+    } catch (error) {
       console.error('Error flushing audit events:', error);
       // Re-add failed events to pending queue
       this.pendingEvents.unshift(...eventsToFlush);
@@ -542,7 +542,7 @@ export class AgentAuditService {
    * Start periodic flush timer
    */
   private startFlushTimer(): void {
-    this.flushTimer = setInterval(_() => {
+    this.flushTimer = setInterval(() => {
       this.flushPendingEvents().catch(console.error);
     }, this.flushInterval);
   }
@@ -604,7 +604,7 @@ export class AgentAuditService {
         .single();
 
       return !!data;
-    } catch (_error) {
+    } catch (error) {
       console.error('Error verifying LGPD consent:', error);
       return false;
     }

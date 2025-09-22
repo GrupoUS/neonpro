@@ -502,7 +502,7 @@ export function calculateFinancialHealthScore(kpis: FinancialKPI[]): {
     impact: number;
   }> = [];
 
-  kpis.forEach(_(kpi) => {
+  kpis.forEach((kpi) => {
     const weight = categoryWeights[kpi.category] || 0;
     const targetValue = kpi.targetValue || kpi.value;
     const performance = kpi.value / targetValue;
@@ -606,23 +606,23 @@ export function calculatePayerMixDiversity(
   concentration: number;
   riskLevel: RiskLevel;
 } {
-  const total = Object.values(payerMix).reduce(_(sum,_value) => sum + value, 0);
-  const proportions = Object.entries(payerMix).map(_([payer,_amount]) => ({
+  const total = Object.values(payerMix).reduce((sum,_value) => sum + value, 0);
+  const proportions = Object.entries(payerMix).map(([payer,_amount]) => ({
     payer: payer as PaymentSource,
     proportion: amount / total,
   }));
 
   // Calculate Herfindahl-Hirschman Index for concentration
-  const hhi = proportions.reduce(_(sum,_{ proportion }) => sum + proportion * proportion,
+  const hhi = proportions.reduce((sum,_{ proportion }) => sum + proportion * proportion,
     0,
   );
   const diversityScore = (1 - hhi) * 100;
 
-  const dominantPayer = proportions.reduce(_(max,_current) =>
+  const dominantPayer = proportions.reduce((max,_current) =>
     current.proportion > max.proportion ? current : max,
   ).payer;
 
-  const concentration = Math.max(_...proportions.map((p) => p.proportion)) * 100;
+  const concentration = Math.max(...proportions.map((p) => p.proportion)) * 100;
 
   const riskLevel: RiskLevel =
     concentration > 70 ? "HIGH" : concentration > 50 ? "MEDIUM" : "LOW";

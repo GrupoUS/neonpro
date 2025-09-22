@@ -28,7 +28,7 @@ const getPrisma = async (): Promise<PrismaClient> => {
     const { prisma } = await import("../client.js");
     _prismaInstance = prisma;
   }
-  return _prismaInstance;
+  return prismaInstance;
 };
 
 // Audit context interface
@@ -78,7 +78,7 @@ export abstract class BaseService {
           status: "SUCCESS",
         },
       });
-    } catch (_error) {
+    } catch (error) {
       console.error("Failed to create audit log:", error);
     }
   }
@@ -104,7 +104,7 @@ export abstract class BaseService {
       );
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       await this.createAuditLog(
         "CREATE",
         model,
@@ -142,7 +142,7 @@ export abstract class BaseService {
       );
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       await this.createAuditLog(
         "UPDATE",
         model,
@@ -177,7 +177,7 @@ export abstract class BaseService {
         { id },
         userId
       );
-    } catch (_error) {
+    } catch (error) {
       await this.createAuditLog(
         "DELETE",
         model,
@@ -204,7 +204,7 @@ export abstract class BaseService {
         where: { id },
       });
       return result;
-    } catch (_error) {
+    } catch (error) {
       console.error(`Error finding ${model} by id ${id}:`, error);
       throw error;
     }
@@ -220,7 +220,7 @@ export abstract class BaseService {
     try {
       const result = await (prisma as any)[model].findMany(options);
       return result;
-    } catch (_error) {
+    } catch (error) {
       console.error(`Error finding many ${model}:`, error);
       throw error;
     }
@@ -235,7 +235,7 @@ export abstract class BaseService {
         timestamp: new Date(),
         _service: this.serviceName,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         status: "unhealthy",
         timestamp: new Date(),

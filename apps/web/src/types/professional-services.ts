@@ -191,7 +191,7 @@ export const PROFICIENCY_LEVELS: Record<
 export const DEFAULT_PROFICIENCY_LEVEL: ProficiencyLevel = 'intermediate';
 
 // Utility functions for proficiency levels
-export const _getProficiencyConfig = (_level: any) => {
+export const getProficiencyConfig = (_level: any) => {
   return PROFICIENCY_LEVELS[level];
 };
 
@@ -199,7 +199,7 @@ export const getProficiencyScore = (level: ProficiencyLevel): number => {
   return PROFICIENCY_LEVELS[level].score;
 };
 
-export const _getProficiencyColor = (level: ProficiencyLevel): string => {
+export const getProficiencyColor = (level: ProficiencyLevel): string => {
   return PROFICIENCY_LEVELS[level].color;
 };
 
@@ -208,7 +208,7 @@ export const getProficiencyLabel = (level: ProficiencyLevel): string => {
 };
 
 // Validation helpers
-export const _isValidProficiencyLevel = (
+export const isValidProficiencyLevel = (
   level: string,
 ): level is ProficiencyLevel => {
   return Object.keys(PROFICIENCY_LEVELS).includes(level as ProficiencyLevel);
@@ -222,10 +222,10 @@ export const compareProficiencyLevels = (
   return getProficiencyScore(b) - getProficiencyScore(a); // Descending order (expert first)
 };
 
-export const _sortProfessionalsByProficiency = (
+export const sortProfessionalsByProficiency = (
   professionals: ProfessionalWithService[],
 ): ProfessionalWithService[] => {
-  return [...professionals].sort(_(a,_b) => {
+  return [...professionals].sort((a, b) => {
     // Primary professionals first
     if (a.is_primary && !b.is_primary) return -1;
     if (!a.is_primary && b.is_primary) return 1;
@@ -242,10 +242,10 @@ export const _sortProfessionalsByProficiency = (
   });
 };
 
-export const _sortServicesByProficiency = (
+export const sortServicesByProficiency = (
   services: ServiceWithProfessional[],
 ): ServiceWithProfessional[] => {
-  return [...services].sort(_(a,_b) => {
+  return [...services].sort((a, b) => {
     // Primary services first
     if (a.is_primary && !b.is_primary) return -1;
     if (!a.is_primary && b.is_primary) return 1;
@@ -263,7 +263,7 @@ export const _sortServicesByProficiency = (
 };
 
 // Rate calculation utilities
-export const _calculateEffectiveRate = (
+export const calculateEffectiveRate = (
   hourlyRate: number | null,
   servicePrice: number,
   serviceDuration: number,
@@ -277,6 +277,6 @@ export const _calculateEffectiveRate = (
   return hours > 0 ? servicePrice / hours : servicePrice;
 };
 
-export const _formatProficiencyLevel = (level: ProficiencyLevel): string => {
+export const formatProficiencyLevel = (level: ProficiencyLevel): string => {
   return getProficiencyLabel(level);
 };

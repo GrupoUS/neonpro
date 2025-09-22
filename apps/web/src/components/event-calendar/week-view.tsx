@@ -52,17 +52,17 @@ export function WeekView({
   onEventSelect,
   onEventCreate,
 }: WeekViewProps) {
-  const days = useMemo(_() => {
+  const days = useMemo(() => {
     const weekStart = startOfWeek(currentDate, { weekStartsOn: 0 });
     const weekEnd = endOfWeek(currentDate, { weekStartsOn: 0 });
     return eachDayOfInterval({ start: weekStart, end: weekEnd });
   }, [currentDate]);
 
-  const weekStart = useMemo(_() => startOfWeek(currentDate, { weekStartsOn: 0 }),
+  const weekStart = useMemo(() => startOfWeek(currentDate, { weekStartsOn: 0 }),
     [currentDate],
   );
 
-  const hours = useMemo(_() => {
+  const hours = useMemo(() => {
     const dayStart = startOfDay(currentDate);
     return eachHourOfInterval({
       start: addHours(dayStart, StartHour),
@@ -71,7 +71,7 @@ export function WeekView({
   }, [currentDate]);
 
   // Get all-day events and multi-day events for the week
-  const allDayEvents = useMemo(_() => {
+  const allDayEvents = useMemo(() => {
     return events
       .filter(event => {
         // Include explicitly marked all-day events or multi-day events
@@ -90,7 +90,7 @@ export function WeekView({
   }, [events, days]);
 
   // Process events for each day to calculate positions
-  const processedDayEvents = useMemo(_() => {
+  const processedDayEvents = useMemo(() => {
     const result = days.map(day => {
       // Get events for this day that are not all-day events or multi-day events
       const dayEvents = events.filter(event => {
@@ -109,7 +109,7 @@ export function WeekView({
       });
 
       // Sort events by start time and duration
-      const sortedEvents = [...dayEvents].sort(_(a,_b) => {
+      const sortedEvents = [...dayEvents].sort((a, b) => {
         const aStart = new Date(a.start);
         const bStart = new Date(b.start);
         const aEnd = new Date(a.end);
@@ -132,7 +132,7 @@ export function WeekView({
       // Track columns for overlapping events
       const columns: { event: CalendarEvent; end: Date }[][] = [];
 
-      sortedEvents.forEach(_event => {
+      sortedEvents.forEach(event => {
         const eventStart = new Date(event.start);
         const eventEnd = new Date(event.end);
 
@@ -243,7 +243,7 @@ export function WeekView({
                 All day
               </span>
             </div>
-            {days.map((day,_dayIndex) => {
+            {days.map((day, dayIndex) => {
               const dayAllDayEvents = allDayEvents.filter(event => {
                 const eventStart = new Date(event.start);
                 const eventEnd = new Date(event.end);
@@ -301,7 +301,7 @@ export function WeekView({
 
       <div className='grid flex-1 grid-cols-8 overflow-hidden'>
         <div className='border-border/70 border-r grid auto-cols-fr'>
-          {hours.map(_(hour, _index) => (
+          {hours.map((hour, _index) => (
             <div
               key={hour.toString()}
               className='border-border/70 relative min-h-[var(--week-cells-height)] border-b last:border-b-0'
@@ -315,7 +315,7 @@ export function WeekView({
           ))}
         </div>
 
-        {days.map(_(day,_dayIndex) => (
+        {days.map((day, dayIndex) => (
           <div
             key={day.toString()}
             className='border-border/70 relative border-r last:border-r-0 grid auto-cols-fr'

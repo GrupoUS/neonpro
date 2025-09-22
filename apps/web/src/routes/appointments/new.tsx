@@ -25,7 +25,7 @@ function NewAppointmentPage() {
   // Check permissions
   const canCreateAppointments = hasPermission('canCreateAppointments');
 
-  const handleBookingComplete = (_booking: any) => {
+  const handleBookingComplete = (booking: any) => {
     console.log('Booking completed:', booking);
     // Navigate back to appointments page after successful booking
     navigate({ to: '/appointments' });
@@ -48,7 +48,7 @@ function NewAppointmentPage() {
   }
 
   if (!canCreateAppointments) {
-    return (_<div className='container mx-auto px-4 py-8'>
+    return (<div className='container mx-auto px-4 py-8'>
         <div className='flex items-center justify-between mb-6'>
           <div className='flex items-center gap-4'>
             <Button
@@ -93,7 +93,7 @@ function NewAppointmentPage() {
     );
   }
 
-  return (_<div className='container mx-auto px-4 py-8'>
+  return (<div className='container mx-auto px-4 py-8'>
       <div className='flex items-center justify-between mb-6'>
         <div className='flex items-center gap-4'>
           <Button
@@ -235,6 +235,6 @@ function NewAppointmentPage() {
   );
 }
 
-export const _Route = createFileRoute('/appointments/new')({
+export const Route = createFileRoute('/appointments/new')({
   component: NewAppointmentPage,
 });

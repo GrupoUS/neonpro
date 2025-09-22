@@ -21,7 +21,7 @@ function ClientsPage() {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['clients',_search],
+    queryKey: ['clients', search],
     queryFn: async () => {
       let q = supabase
         .from('patients')
@@ -48,7 +48,7 @@ function ClientsPage() {
     },
   });
 
-  const rows = useMemo(_() => clients ?? [], [clients]);
+  const rows = useMemo(() => clients ?? [], [clients]);
 
   return (
     <div className='container mx-auto px-4 py-8'>
@@ -126,6 +126,6 @@ function ClientsPage() {
   );
 }
 
-export const _Route = createFileRoute('/services/clients')({
+export const Route = createFileRoute('/services/clients')({
   component: ClientsPage,
 });

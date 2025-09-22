@@ -95,7 +95,7 @@ export function ProtectedRoute({
     // Por enquanto, apenas verifica se é admin para qualquer permissão especial
     const hasPermissions =
       user.role === "admin" ||
-      requiredPermissions.every(_(_permission) => {
+      requiredPermissions.every((permission) => {
         // Lógica de permissões específica pode ser implementada aqui
         return true; // Placeholder
       });
@@ -151,11 +151,11 @@ export function usePermissions() {
   };
 
   const hasAnyPermission = (permissions: string[]): boolean => {
-    return permissions.some(_(permission) => hasPermission(permission));
+    return permissions.some((permission) => hasPermission(permission));
   };
 
   const hasAllPermissions = (permissions: string[]): boolean => {
-    return permissions.every(_(permission) => hasPermission(permission));
+    return permissions.every((permission) => hasPermission(permission));
   };
 
   return {

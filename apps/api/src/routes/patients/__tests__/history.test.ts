@@ -22,7 +22,7 @@ const mockPatientService = {
 };
 
 describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     // Mock successful service responses by default
@@ -156,7 +156,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     });
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
@@ -675,7 +675,7 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     });
 
     it(_'should handle large history sets with efficient pagination',_async () => {
-      const largeHistorySet = Array.from({ length: 100 },_(_,_i) => ({
+      const largeHistorySet = Array.from({ length: 100 },(, i) => ({
         id: `event-${i}`,
         timestamp: `2024-01-${String(i + 1).padStart(2, '0')}T10:00:00Z`,
         eventType: 'patient_updated',

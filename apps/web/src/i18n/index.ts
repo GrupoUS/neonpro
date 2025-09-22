@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react';
 
 export interface I18nContextType {
   locale: string;
-  t: (key: string, params?: Record<string,_string>) => string;
+  t: (key: string, params?: Record<string, string>) => string;
 }
 
 export const I18nContext = createContext<I18nContextType>({
@@ -61,14 +61,14 @@ const translations = {
 export const t = (
   key: string,
   locale: string = 'pt-BR',
-  params?: Record<string,_string>,
+  params?: Record<string, string>,
 ) => {
   const translation = translations[locale as keyof typeof translations]?.[
     key as keyof (typeof translations)['pt-BR']
   ] || key;
 
   if (params) {
-    return Object.entries(params).reduce(_(acc,_[param,_value]) => {
+    return Object.entries(params).reduce((acc, [param, value]) => {
       return acc.replace(`{{${param}}}`, value);
     }, translation);
   }

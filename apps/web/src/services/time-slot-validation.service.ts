@@ -256,7 +256,7 @@ class TimeSlotValidationService {
 
       if (error) throw error;
 
-      conflictingAppointments?.forEach(_appointment => {
+      conflictingAppointments?.forEach(appointment => {
         conflicts.push({
           type: 'professional_busy',
           message: `Profissional já possui agendamento das ${
@@ -359,7 +359,7 @@ class TimeSlotValidationService {
     businessRules: BusinessRules,
   ): WarningInfo[] {
     const warnings: WarningInfo[] = [];
-    const _now = new Date();
+    const now = new Date();
 
     // Check minimum notice time
     const hoursUntilAppointment = (startTime.getTime() - now.getTime()) / (1000 * 60 * 60);
@@ -512,4 +512,4 @@ class TimeSlotValidationService {
   }
 }
 
-export const _timeSlotValidationService = new TimeSlotValidationService();
+export const timeSlotValidationService = new TimeSlotValidationService();

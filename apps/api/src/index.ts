@@ -19,9 +19,9 @@ async function startServer() {
       const server = createServer(app);
 
       // Initialize WebSocket server for AG-UI Protocol
-      const _wsServer = createWebSocketServer(server);
+      const wsServer = createWebSocketServer(server);
 
-      server.listen(_port,_() => {
+      server.listen(port, () => {
         secureLogger.info(`API server listening`, {
           port,
           url: `http://localhost:${port}`,
@@ -33,11 +33,11 @@ async function startServer() {
       });
 
       // Graceful shutdown for WebSocket server
-      server.on(_'close',_() => {
+      server.on('close', () => {
         secureLogger.info('WebSocket server closed', { component: 'server-shutdown' });
       });
     }
-  } catch (_error) {
+  } catch (error) {
     secureLogger.error('Failed to start server', error, { component: 'server-startup' });
     process.exit(1);
   }
@@ -51,15 +51,15 @@ const gracefulShutdown = async (signal: string) => {
     await shutdownErrorTracking();
     secureLogger.info('Error tracking shutdown complete', { component: 'server-shutdown' });
     process.exit(0);
-  } catch (_error) {
+  } catch (error) {
     secureLogger.error('Error during shutdown', error, { component: 'server-shutdown' });
     process.exit(1);
   }
 };
 
 // Handle shutdown signals
-process.on(_'SIGTERM',_() => gracefulShutdown('SIGTERM'));
-process.on(_'SIGINT',_() => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 // Handle uncaught exceptions
 process.on('uncaughtException', error => {
@@ -68,7 +68,7 @@ process.on('uncaughtException', error => {
 });
 
 // Handle unhandled promise rejections
-process.on(_'unhandledRejection',_(reason,_promise) => {
+process.on('unhandledRejection', (reason, promise) => {
   secureLogger.error('Unhandled Rejection', reason, {
     promise: promise.toString(),
     component: 'server-error',

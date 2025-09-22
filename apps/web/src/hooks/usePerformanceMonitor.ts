@@ -76,7 +76,7 @@ export function usePerformanceMonitor() {
   const performanceObserver = useRef<PerformanceObserver | null>(null);
 
   // Initialize performance monitoring
-  useEffect(_() => {
+  useEffect(() => {
     if (typeof window === 'undefined') return;
 
     // Setup Performance Observer
@@ -84,7 +84,7 @@ export function usePerformanceMonitor() {
       performanceObserver.current = new PerformanceObserver(list => {
         const entries = list.getEntries();
 
-        entries.forEach(_entry => {
+        entries.forEach(entry => {
           if (entry.entryType === 'navigation') {
             const navEntry = entry as PerformanceNavigationTiming;
             updateMetrics({
@@ -203,7 +203,7 @@ export function usePerformanceMonitor() {
         setAlerts(prev => [...prev, ...newAlerts].slice(-20)); // Keep last 20 alerts
 
         // Show toast notifications for critical issues
-        newAlerts.forEach(_alert => {
+        newAlerts.forEach(alert => {
           if (alert.severity === 'error' || alert.severity === 'critical') {
             toast.error(alert.message);
           } else if (alert.severity === 'warning') {
@@ -228,7 +228,7 @@ export function usePerformanceMonitor() {
   );
 
   // Get performance analytics
-  const getAnalytics = useCallback(_() => {
+  const getAnalytics = useCallback(() => {
     if (metricsHistory.current.length === 0) return null;
 
     const history = metricsHistory.current;
@@ -237,11 +237,11 @@ export function usePerformanceMonitor() {
     return {
       current: latest,
       average: {
-        searchResponseTime: history.reduce(_(sum,_m) => sum + m.searchResponseTime, 0)
+        searchResponseTime: history.reduce((sum, m) => sum + m.searchResponseTime, 0)
           / history.length,
-        mobileLoadTime: history.reduce(_(sum,_m) => sum + m.mobileLoadTime, 0)
+        mobileLoadTime: history.reduce((sum, m) => sum + m.mobileLoadTime, 0)
           / history.length,
-        realTimeLatency: history.reduce(_(sum,_m) => sum + m.realTimeLatency, 0)
+        realTimeLatency: history.reduce((sum, m) => sum + m.realTimeLatency, 0)
           / history.length,
       },
       trend: {
@@ -330,7 +330,7 @@ export function useSearchPerformance() {
     [measurePerformance],
   );
 
-  const getSearchStatus = useCallback(_() => {
+  const getSearchStatus = useCallback(() => {
     return getPerformanceStatus(
       metrics.searchResponseTime,
       PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME,
@@ -354,7 +354,7 @@ export function useMobilePerformance() {
   const [isMobile, setIsMobile] = useState(false);
 
   // Detect mobile device
-  useEffect(_() => {
+  useEffect(() => {
     const checkMobile = () => {
       const userAgent = navigator.userAgent;
       const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
@@ -374,14 +374,14 @@ export function useMobilePerformance() {
     [measurePerformance],
   );
 
-  const getMobileStatus = useCallback(_() => {
+  const getMobileStatus = useCallback(() => {
     return getPerformanceStatus(
       metrics.mobileLoadTime,
       PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME,
     );
   }, [metrics.mobileLoadTime, getPerformanceStatus]);
 
-  const getRecommendations = useCallback(_() => {
+  const getRecommendations = useCallback(() => {
     const recommendations: string[] = [];
 
     if (metrics.mobileLoadTime > PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME) {

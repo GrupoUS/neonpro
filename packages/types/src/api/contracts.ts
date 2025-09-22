@@ -3,6 +3,7 @@
  * tRPC v11 API contracts with comprehensive type safety
  */
 
+import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
 // =======================
 // Base API Response Types
@@ -16,7 +17,7 @@ export const BaseResponseSchema = z.object({
 });
 
 // Request schemas for professionals
-export const _CreateProfessionalRequestSchema = z.object({
+export const CreateProfessionalRequestSchema = z.object({
   _userId: z.string().uuid(),
   clinicId: z.string().uuid(),
 
@@ -41,7 +42,7 @@ export const _CreateProfessionalRequestSchema = z.object({
   ).optional(),
 });
 
-export const _UpdateProfessionalRequestSchema = z.object({
+export const UpdateProfessionalRequestSchema = z.object({
   fullName: z.string().min(2).max(100).optional(),
   specialization: z.string().min(2).max(100).optional(),
   licenseNumber: z.string().min(5).max(20).optional(),
@@ -169,12 +170,12 @@ export const ProfessionalContractSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 // Response schemas for professionals
-export const _ProfessionalResponseSchema = BaseResponseSchema.extend({
+export const ProfessionalResponseSchema = BaseResponseSchema.extend({
   data: ProfessionalContractSchema,
   success: z.literal(true),
 });
 
-export const _ProfessionalsListResponseSchema = BaseResponseSchema.extend({
+export const ProfessionalsListResponseSchema = BaseResponseSchema.extend({
   data: z.object({
     professionals: z.array(ProfessionalContractSchema),
     pagination: PaginationSchema,
@@ -192,12 +193,12 @@ export const AIChatContractSchema = z.object({
 
   // Message Content
   content: z.string().min(1).max(4000),
-  _role: z.enum(['user', 'assistant', 'system']),
+  role: z.enum(['user', 'assistant', 'system']),
 
   // Healthcare Context
   patientId: z.string().uuid().optional(),
   clinicId: z.string().uuid(),
-  _userId: z.string().uuid(),
+  userId: z.string().uuid(),
 
   // AI Metadata
   model: z.string(),
@@ -217,7 +218,7 @@ export const AIChatContractSchema = z.object({
 // AI Request/Response Schemas
 // =======================
 
-export const _AIRequestSchema = z.object({
+export const AIRequestSchema = z.object({
   message: z.string().min(1).max(4000),
   sessionId: z.string().uuid().optional(),
   _context: z.object({
@@ -226,7 +227,7 @@ export const _AIRequestSchema = z.object({
     conversationHistory: z
       .array(
         z.object({
-          _role: z.enum(['user', 'assistant', 'system']),
+          role: z.enum(['user', 'assistant', 'system']),
           content: z.string(),
           timestamp: z.string().datetime(),
         }),
@@ -242,7 +243,7 @@ export const _AIRequestSchema = z.object({
     .optional(),
 });
 
-export const _AIResponseSchema = BaseResponseSchema.extend({
+export const AIResponseSchema = BaseResponseSchema.extend({
   data: z.object({
     message: z.string(),
     sessionId: z.string().uuid(),
@@ -256,7 +257,7 @@ export const _AIResponseSchema = BaseResponseSchema.extend({
   }),
 });
 
-export const _AIChatResponseSchema = BaseResponseSchema.extend({
+export const AIChatResponseSchema = BaseResponseSchema.extend({
   data: z.object({
     messages: z.array(AIChatContractSchema),
     sessionId: z.string().uuid(),
@@ -265,7 +266,7 @@ export const _AIChatResponseSchema = BaseResponseSchema.extend({
   }),
 });
 
-export const _AIHealthcheckResponseSchema = BaseResponseSchema.extend({
+export const AIHealthcheckResponseSchema = BaseResponseSchema.extend({
   data: z.object({
     status: z.enum(['healthy', 'degraded', 'unhealthy']),
     version: z.string(),
@@ -401,11 +402,9 @@ export const HealthcareErrorCodes = z.enum([
 export class HealthcareTRPCError extends TRPCError {
   constructor(
     code:
-      | 'BAD_REQUEST'
-      | 'UNAUTHORIZED'
+      | 'BAD_REQUEST_' | 'UNAUTHORIZED'
       | 'FORBIDDEN'
-      | 'NOT_FOUND'
-      | 'INTERNAL_SERVER_ERROR'
+      | 'NOT_FOUND' | 'INTERNAL_SERVER_ERROR'
       | 'TOO_MANY_REQUESTS',
     message: string,
     healthcareCode: z.infer<typeof HealthcareErrorCodes>,
@@ -487,12 +486,12 @@ export type HealthcareErrorCode = z.infer<typeof HealthcareErrorCodes>;
 // Expand these in the types package as the real domain models evolve.
 // =======================
 
-export const _MinimalPaginationSchema = z.object({
+export const MinimalPaginationSchema = z.object({
   page: z.number().min(1).default(1),
   limit: z.number().min(1).default(20),
 });
 
-export const _CreateClinicRequestSchema = z.object({
+export const CreateClinicRequestSchema = z.object({
   name: z.string(),
   cnpj: z.string(),
   healthLicenseNumber: z.string(),
@@ -506,7 +505,7 @@ export const _CreateClinicRequestSchema = z.object({
   settings: z.record(z.any()).optional(),
 });
 
-export const _UpdateClinicRequestSchema = z
+export const UpdateClinicRequestSchema = z
   .object({
     id: z.string().uuid(),
     name: z.string().optional(),
@@ -525,7 +524,7 @@ export const _UpdateClinicRequestSchema = z
   })
   .strict();
 
-export const _ClinicResponseSchema = z.object({
+export const ClinicResponseSchema = z.object({
   success: z.literal(true),
   data: z.any(),
   message: z.string().optional(),
@@ -533,7 +532,7 @@ export const _ClinicResponseSchema = z.object({
   requestId: z.string().optional(),
 });
 
-export const _ClinicsListResponseSchema = z.object({
+export const ClinicsListResponseSchema = z.object({
   success: z.literal(true),
   data: z.object({
     clinics: z.array(z.any()),

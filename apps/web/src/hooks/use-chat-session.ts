@@ -14,10 +14,10 @@ export function useChatSession(sessionId: string, opts?: { mock?: boolean }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(_() => {
+  useEffect(() => {
     if (!sessionId) return;
     let cancelled = false;
-    (_async () => {
+    (async () => {
       try {
         setLoading(true);
         const url = new URL(

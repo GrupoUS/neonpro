@@ -63,13 +63,13 @@ export class AguiServiceWithCircuitBreaker {
       _service: 'rag-agent',
       timestamp: new Date(),
       metadata: {
-        queryIntent: this.extractIntent(_query),
-        dataClassification: this.classifyData(_query),
+        queryIntent: this.extractIntent(query),
+        dataClassification: this.classifyData(query),
       },
     };
 
     // Execute with circuit breaker protection
-    return this.ragAgentCircuitBreaker.execute(_() => this.sendToRagAgent(query, _context),
+    return this.ragAgentCircuitBreaker.execute(() => this.sendToRagAgent(query, _context),
       requestContext,
       this.createFallbackResponse(query, _context),
     );
@@ -93,7 +93,7 @@ export class AguiServiceWithCircuitBreaker {
       },
     };
 
-    return this.databaseCircuitBreaker.execute(_() => this.storeMessageInDatabase(message),
+    return this.databaseCircuitBreaker.execute(() => this.storeMessageInDatabase(message),
       requestContext,
     );
   }
@@ -307,7 +307,7 @@ export class GoogleCalendarServiceWithCircuitBreaker {
       },
     };
 
-    return this.circuitBreaker.execute(_() => this.exchangeCodeForToken(code, _userId),
+    return this.circuitBreaker.execute(() => this.exchangeCodeForToken(code, _userId),
       requestContext,
     );
   }
@@ -328,7 +328,7 @@ export class GoogleCalendarServiceWithCircuitBreaker {
       },
     };
 
-    return this.circuitBreaker.execute(_() => this.syncEventsToGoogle(userId, events),
+    return this.circuitBreaker.execute(() => this.syncEventsToGoogle(userId, events),
       requestContext,
       { success: false, synced: 0, failed: events.length }, // Fallback value
     );
@@ -424,13 +424,13 @@ export class AIAgentServiceWithCircuitBreaker {
       timestamp: new Date(),
       metadata: {
         requestType: request.type,
-        dataClassification: this.classifyRequestData(_request),
+        dataClassification: this.classifyRequestData(request),
       },
     };
 
-    return this.circuitBreaker.execute(_() => this.processAIRequest(request, _context),
+    return this.circuitBreaker.execute(() => this.processAIRequest(request, _context),
       requestContext,
-      this.createAIFallbackResponse(_request),
+      this.createAIFallbackResponse(request),
     );
   }
 
@@ -531,7 +531,7 @@ export function setupHealthMonitoring(services: ServiceDependency[]) {
   const healthChecker = new ExternalServiceHealthChecker(HEALTHCARE_HEALTH_CONFIG);
 
   services.forEach(service => {
-    healthChecker.registerService(_service);
+    healthChecker.registerService(service);
   });
 
   // Set up event listeners for alerts

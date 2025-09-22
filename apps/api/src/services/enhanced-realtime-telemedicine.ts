@@ -322,7 +322,7 @@ export class EnhancedTelemedicineRealtime {
               encryptedData,
               encryptionKey,
             );
-          } catch (_error) {
+          } catch (error) {
             console.error('❌ Failed to decrypt message:', error);
             return;
           }
@@ -386,11 +386,11 @@ export class EnhancedTelemedicineRealtime {
       );
     });
 
-    channel.on(_'presence', { event: 'join' },_({ key,_newPresences }) => {
+    channel.on(_'presence', { event: 'join' },({ key,_newPresences }) => {
       console.log(`👋 User joined session ${sessionId}:`, key, newPresences);
     });
 
-    channel.on(_'presence', { event: 'leave' },_({ key,_leftPresences }) => {
+    channel.on(_'presence', { event: 'leave' },({ key,_leftPresences }) => {
       console.log(`👋 User left session ${sessionId}:`, key, leftPresences);
 
       // Clean up local presence state
@@ -460,7 +460,7 @@ export class EnhancedTelemedicineRealtime {
       clearInterval(this.connectionQualityMonitor);
     }
 
-    this.connectionQualityMonitor = setInterval(_async () => {
+    this.connectionQualityMonitor = setInterval(async () => {
       await this.monitorConnectionQuality(sessionId);
     }, 5000); // Monitor every 5 seconds
   }
@@ -733,7 +733,7 @@ export class EnhancedTelemedicineRealtime {
       // Clear presence states for this session
       for (const [userId, presence] of this.presenceStates.entries()) {
         if (presence.sessionId === sessionId) {
-          this.presenceStates.delete(_userId);
+          this.presenceStates.delete(userId);
         }
       }
 

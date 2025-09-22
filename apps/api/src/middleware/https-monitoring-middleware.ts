@@ -39,7 +39,7 @@ export class HTTPSMonitoringMiddleware {
     const requestId = req.get('requestId') || this.generateId();
 
     // Store request start time for handshake calculation
-    res.on(_'finish',_() => {
+    res.on('finish', () => {
       try {
         const endTime = Date.now();
         const duration = endTime - startTime;
@@ -73,7 +73,7 @@ export class HTTPSMonitoringMiddleware {
             });
           });
         }
-      } catch (_error) {
+      } catch (error) {
         logger.error('https_monitoring_middleware', 'Error in handshake monitoring', {
           error: (error as Error).message,
           requestId,
@@ -138,7 +138,7 @@ export class HTTPSMonitoringMiddleware {
         certificateTransparency: socket.certificateTransparency || false,
         timing,
       };
-    } catch (_error) {
+    } catch (error) {
       logger.debug('https_monitoring_middleware', 'Failed to extract TLS info', {
         error: (error as Error).message,
       });
@@ -164,7 +164,7 @@ export class HTTPSMonitoringMiddleware {
       };
 
       return versionMap[protocol] || protocol || 'UNKNOWN';
-    } catch (_error) {
+    } catch (error) {
       return 'UNKNOWN';
     }
   }
@@ -215,7 +215,7 @@ export class HTTPSMonitoringMiddleware {
 
         logger.info('https_monitoring_middleware', 'HTTPS handshake monitoring started');
       }
-    } catch (_error) {
+    } catch (error) {
       logger.warning('https_monitoring_middleware', 'Failed to setup server TLS monitoring', {
         error: (error as Error).message,
       });
@@ -258,7 +258,7 @@ export class HTTPSMonitoringMiddleware {
       socket.on(_'error', (error: any) => {
         this.handleHandshakeError(sessionId, error);
       });
-    } catch (_error) {
+    } catch (error) {
       logger.error('https_monitoring_middleware', 'Error handling secure connection', {
         error: (error as Error).message,
       });
@@ -308,7 +308,7 @@ export class HTTPSMonitoringMiddleware {
         // Clean up
         this.activeHandshakes.delete(sessionId);
       }
-    } catch (_error) {
+    } catch (error) {
       logger.error('https_monitoring_middleware', 'Error handling handshake completion', {
         error: (error as Error).message,
         sessionId,
@@ -331,7 +331,7 @@ export class HTTPSMonitoringMiddleware {
 
       // Clean up any pending handshake
       this.activeHandshakes.delete(sessionId);
-    } catch (_error) {
+    } catch (error) {
       logger.error('https_monitoring_middleware', 'Error handling TLS client error', {
         error: (error as Error).message,
       });
@@ -351,7 +351,7 @@ export class HTTPSMonitoringMiddleware {
 
       // Clean up pending handshake
       this.activeHandshakes.delete(sessionId);
-    } catch (_err) {
+    } catch (err) {
       logger.error('https_monitoring_middleware', 'Error handling handshake error', {
         error: (err as Error).message,
         sessionId,
@@ -389,4 +389,4 @@ export class HTTPSMonitoringMiddleware {
 }
 
 // Export singleton instance
-export const _httpsMonitoringMiddleware = new HTTPSMonitoringMiddleware();
+export const httpsMonitoringMiddleware = new HTTPSMonitoringMiddleware();

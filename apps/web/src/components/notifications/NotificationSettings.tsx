@@ -45,7 +45,7 @@ export function NotificationSettings({
   const [hasChanges, setHasChanges] = useState(false);
 
   // Update local state when preferences load
-  React.useEffect(_() => {
+  React.useEffect(() => {
     if (preferences) {
       setLocalPreferences(preferences);
     }

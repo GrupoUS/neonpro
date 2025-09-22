@@ -47,7 +47,7 @@ const CalendarDndContext = createContext<CalendarDndContextType>({
 });
 
 // Hook to use the context
-export const _useCalendarDnd = () => useContext(CalendarDndContext);
+export const useCalendarDnd = () => useContext(CalendarDndContext);
 
 // Props for the provider
 interface CalendarDndProviderProps {

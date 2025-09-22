@@ -129,7 +129,7 @@ export function PhotoUpload({
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Load existing photos on mount
-  useEffect(_() => {
+  useEffect(() => {
     if (patientId) {
       // TODO: Implement loadExistingPhotos when aesthetic_photos table is available
       console.log('Loading aesthetic photos for patient:', patientId);
@@ -324,7 +324,7 @@ export function PhotoUpload({
 
         try {
           // Simulate progress updates
-          const progressInterval = setInterval(_() => {
+          const progressInterval = setInterval(() => {
             setUploadStates(prev => {
               const newMap = new Map(prev);
               const state = newMap.get(photoId);
@@ -382,7 +382,7 @@ export function PhotoUpload({
           setUploadedPhotos(prev => [...prev, photoWithAnalysis]);
 
           // Remove from upload states after delay
-          setTimeout(_() => {
+          setTimeout(() => {
             setUploadStates(prev => {
               const newMap = new Map(prev);
               newMap.delete(photoId);
@@ -538,7 +538,7 @@ export function PhotoUpload({
       {uploadStates.size > 0 && (
         <div className='space-y-3'>
           <h4 className='text-sm font-medium'>Processando fotos...</h4>
-          {Array.from(uploadStates.entries()).map(_([photoId,_state]) => (
+          {Array.from(uploadStates.entries()).map(([photoId, state]) => (
             <div
               key={photoId}
               className='flex items-center gap-3 p-3 border rounded-lg'

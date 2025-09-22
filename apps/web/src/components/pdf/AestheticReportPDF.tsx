@@ -46,8 +46,8 @@ interface AestheticReportPDFProps {
   generatedAt?: Date;
 }
 
-const CheckboxComponent: React.FC<{ checked: boolean; label: string }> = (_{
-  checked,_label,_}) => (
+const CheckboxComponent: React.FC<{ checked: boolean; label: string }> = ({
+  checked,label, }) => (
   <View style={styles.checkboxRow}>
     <View
       style={[styles.checkbox, ...(checked ? [styles.checkboxChecked] : [])]}
@@ -164,7 +164,7 @@ export const AestheticReportPDF: React.FC<AestheticReportPDFProps> = ({
           <Text style={[styles.label, { marginTop: 10, marginBottom: 8 }]}>
             Preocupações Primárias:
           </Text>
-          {skinAnalysis.primaryConcerns.map(_(concern, _index) => (
+          {skinAnalysis.primaryConcerns.map((concern, _index) => (
             <Text
               key={index}
               style={[styles.value, { marginLeft: 20, marginBottom: 4 }]}
@@ -315,7 +315,7 @@ export const AestheticReportPDF: React.FC<AestheticReportPDFProps> = ({
         </Text>
         <Text
           style={styles.pageNumber}
-          render={(_{ pageNumber,_totalPages }) => `Página ${pageNumber} de ${totalPages}`}
+          render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`}
           fixed
         />
       </Page>

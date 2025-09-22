@@ -113,7 +113,7 @@ class SecureLogger {
     let maskedText = text;
 
     // Apply pattern-based masking
-    Object.entries(SENSITIVE_PATTERNS).forEach(_([,_pattern]) => {
+    Object.entries(SENSITIVE_PATTERNS).forEach(([, pattern]) => {
       maskedText = maskedText.replace(pattern, match => {
         const visibleChars = Math.min(3, Math.floor(match.length * 0.3));
         return match.substring(0, visibleChars) + '*'.repeat(match.length - visibleChars);
@@ -134,7 +134,7 @@ class SecureLogger {
 
     const masked: any = {};
 
-    Object.entries(obj).forEach(_([key,_value]) => {
+    Object.entries(obj).forEach(([key, value]) => {
       const lowerKey = key.toLowerCase();
 
       if (SENSITIVE_KEYS.some(sensitiveKey => lowerKey.includes(sensitiveKey))) {
@@ -288,7 +288,7 @@ export const logger = createLogger({
 });
 
 // Export with alternative name for compatibility
-export const _secureLogger = logger;
+export const secureLogger = logger;
 
 // Export types for TypeScript support
 export type { LogContext, LoggerConfig };

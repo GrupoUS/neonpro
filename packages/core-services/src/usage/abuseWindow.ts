@@ -55,7 +55,7 @@ class SlidingWindow {
    * Add new request to the window
    */
   addRequest(_request: RequestEntry): void {
-    this.requests.push(_request);
+    this.requests.push(request);
 
     // Keep memory usage bounded
     if (this.requests.length > this.maxSize) {
@@ -71,7 +71,7 @@ class SlidingWindow {
     now: number = Date.now(),
   ): RequestEntry[] {
     const cutoff = now - windowMs;
-    return this.requests.filter(_(req) => req.timestamp >= cutoff);
+    return this.requests.filter((req) => req.timestamp >= cutoff);
   }
 
   /**
@@ -79,7 +79,7 @@ class SlidingWindow {
    */
   cleanup(maxWindowMs: number, now: number = Date.now()): void {
     const cutoff = now - maxWindowMs;
-    this.requests = this.requests.filter(_(req) => req.timestamp >= cutoff);
+    this.requests = this.requests.filter((req) => req.timestamp >= cutoff);
   }
 
   /**
@@ -115,7 +115,7 @@ export class AbuseWindowTracker {
     key: TrackingKey,
     _request: Omit<RequestEntry, "timestamp">,
   ): Promise<AbuseDetectionResult> {
-    const _now = Date.now();
+    const now = Date.now();
     const keyStr = `${key.type}:${key.value}`;
 
     // Get or create sliding window for this key
@@ -131,7 +131,7 @@ export class AbuseWindowTracker {
 
     // Check 60-second window first (more restrictive)
     if (requests60s.length >= this.config.window60s) {
-      const oldestRequest60s = Math.min(_...requests60s.map((r) => r.timestamp));
+      const oldestRequest60s = Math.min(...requests60s.map((r) => r.timestamp));
       const resetTime60s = oldestRequest60s + this.WINDOW_60S;
 
       return {
@@ -146,7 +146,7 @@ export class AbuseWindowTracker {
 
     // Check 10-minute window
     if (requests10m.length >= this.config.window10m) {
-      const oldestRequest10m = Math.min(_...requests10m.map((r) => r.timestamp));
+      const oldestRequest10m = Math.min(...requests10m.map((r) => r.timestamp));
       const resetTime10m = oldestRequest10m + this.WINDOW_10M;
 
       return {
@@ -175,12 +175,12 @@ export class AbuseWindowTracker {
     // Calculate next reset time (earliest of the two windows)
     const nextReset60s =
       requests60s.length > 0
-        ? Math.min(_...requests60s.map((r) => r.timestamp)) + this.WINDOW_60S
+        ? Math.min(...requests60s.map((r) => r.timestamp)) + this.WINDOW_60S
         : now + this.WINDOW_60S;
 
     const nextReset10m =
       requests10m.length > 0
-        ? Math.min(_...requests10m.map((r) => r.timestamp)) + this.WINDOW_10M
+        ? Math.min(...requests10m.map((r) => r.timestamp)) + this.WINDOW_10M
         : now + this.WINDOW_10M;
 
     return {
@@ -197,7 +197,7 @@ export class AbuseWindowTracker {
    * Check request without tracking (read-only)
    */
   async checkRequest(key: TrackingKey): Promise<AbuseDetectionResult> {
-    const _now = Date.now();
+    const now = Date.now();
     const keyStr = `${key.type}:${key.value}`;
 
     const window = this.windows.get(keyStr);
@@ -220,7 +220,7 @@ export class AbuseWindowTracker {
 
     // Check limits
     if (requests60s.length >= this.config.window60s) {
-      const oldestRequest60s = Math.min(_...requests60s.map((r) => r.timestamp));
+      const oldestRequest60s = Math.min(...requests60s.map((r) => r.timestamp));
       return {
         allowed: false,
         remainingRequests: 0,
@@ -232,7 +232,7 @@ export class AbuseWindowTracker {
     }
 
     if (requests10m.length >= this.config.window10m) {
-      const oldestRequest10m = Math.min(_...requests10m.map((r) => r.timestamp));
+      const oldestRequest10m = Math.min(...requests10m.map((r) => r.timestamp));
       return {
         allowed: false,
         remainingRequests: 0,
@@ -278,7 +278,7 @@ export class AbuseWindowTracker {
       };
     }
 
-    const _now = Date.now();
+    const now = Date.now();
     const requests60s = window.getRequestsInWindow(this.WINDOW_60S, now);
     const requests10m = window.getRequestsInWindow(this.WINDOW_10M, now);
     const allRequests = window.getRequestsInWindow(this.MAX_WINDOW, now);
@@ -289,11 +289,11 @@ export class AbuseWindowTracker {
       totalRequests: allRequests.length,
       oldestRequest:
         allRequests.length > 0
-          ? Math.min(_...allRequests.map((r) => r.timestamp))
+          ? Math.min(...allRequests.map((r) => r.timestamp))
           : undefined,
       newestRequest:
         allRequests.length > 0
-          ? Math.max(_...allRequests.map((r) => r.timestamp))
+          ? Math.max(...allRequests.map((r) => r.timestamp))
           : undefined,
     };
   }
@@ -364,7 +364,7 @@ export class AbuseWindowTracker {
    */
   private startCleanupTimer(): void {
     // Cleanup every 5 minutes
-    this.cleanupInterval = setInterval(_() => {
+    this.cleanupInterval = setInterval(() => {
         this.performCleanup();
       },
       5 * 60 * 1000,
@@ -375,7 +375,7 @@ export class AbuseWindowTracker {
    * Perform cleanup of expired entries
    */
   private performCleanup(): void {
-    const _now = Date.now();
+    const now = Date.now();
     const keysToDelete: string[] = [];
 
     for (const [key, window] of this.windows.entries()) {

@@ -9,7 +9,7 @@ import IndexOptimizerService, { HEALTHCARE_INDEX_PATTERNS } from '../index-optim
 describe(_'IndexOptimizerService',_() => {
   let _service: IndexOptimizerService;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     service = new IndexOptimizerService();
   });
 
@@ -149,9 +149,9 @@ describe(_'IndexOptimizerService',_() => {
 
       if (criticalScripts.length > 0 && lowImpactScripts.length > 0) {
         // Critical healthcare indexes should be estimated to take more time (larger tables)
-        const avgCriticalTime = criticalScripts.reduce(_(sum,_s) => sum + s.estimatedTime, 0)
+        const avgCriticalTime = criticalScripts.reduce((sum,_s) => sum + s.estimatedTime, 0)
           / criticalScripts.length;
-        const avgLowTime = lowImpactScripts.reduce(_(sum,_s) => sum + s.estimatedTime, 0)
+        const avgLowTime = lowImpactScripts.reduce((sum,_s) => sum + s.estimatedTime, 0)
           / lowImpactScripts.length;
 
         expect(avgCriticalTime).toBeGreaterThanOrEqual(avgLowTime);
@@ -173,7 +173,7 @@ describe(_'IndexOptimizerService',_() => {
       expect(analyses.has('consent_records')).toBe(true);
 
       // Each analysis should be complete
-      analyses.forEach(_(analysis,_tableName) => {
+      analyses.forEach((analysis,_tableName) => {
         expect(analysis.table).toBe(tableName);
         expect(analysis.optimizationScore).toBeGreaterThanOrEqual(0);
         expect(analysis.optimizationScore).toBeLessThanOrEqual(100);
@@ -272,7 +272,7 @@ describe(_'IndexOptimizerService',_() => {
       service.clearCache();
 
       // Should not throw
-      expect(_() => service.clearCache()).not.toThrow();
+      expect(() => service.clearCache()).not.toThrow();
     });
   });
 
@@ -303,8 +303,8 @@ describe(_'IndexOptimizerService',_() => {
 
     it(_'should prioritize high-frequency healthcare operations',_() => {
       const highFrequencyPatterns = Object.entries(HEALTHCARE_INDEX_PATTERNS)
-        .filter(_([_,_pattern]) => pattern.frequency === 'very_high')
-        .map(_([name, _]) => name);
+        .filter(([, pattern]) => pattern.frequency === 'very_high')
+        .map(([name, _]) => name);
 
       expect(highFrequencyPatterns).toContain('professionalSchedule');
       expect(highFrequencyPatterns).toContain('dailySchedule');

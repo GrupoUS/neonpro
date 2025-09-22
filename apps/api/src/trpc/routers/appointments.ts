@@ -635,7 +635,7 @@ function generateReminderSubject(type: string, appointmentTime: Date): string {
 // TRPC ROUTER IMPLEMENTATION
 // =====================================
 
-export const _appointmentsRouter = router({
+export const appointmentsRouter = router({
   /**
    * Create Appointment with Advanced No-Show Prevention
    * Includes CFM validation, real-time availability, and AI risk prediction
@@ -689,7 +689,7 @@ export const _appointmentsRouter = router({
               input.startTime,
             );
           }
-        } catch (_error) {
+        } catch (error) {
           console.warn('Weather service integration failed:', error);
           // Continue without weather data - non-critical feature
         }
@@ -796,7 +796,7 @@ export const _appointmentsRouter = router({
             anvisaCompliant: serviceType?.requiresSpecialty ? true : false,
           },
         };
-      } catch (_error) {
+      } catch (error) {
         // Log failed appointment creation
         await ctx.prisma.auditTrail.create({
           data: {
@@ -903,7 +903,7 @@ export const _appointmentsRouter = router({
                 input.appointmentTime,
               );
             }
-          } catch (_error) {
+          } catch (error) {
             console.warn('Weather service integration failed:', error);
             // Continue without weather data - non-critical feature
           }
@@ -946,7 +946,7 @@ export const _appointmentsRouter = router({
         });
 
         return prediction;
-      } catch (_error) {
+      } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to predict no-show risk',
@@ -1236,7 +1236,7 @@ export const _appointmentsRouter = router({
           hasMore: offset + limit < total,
         },
         analytics: {
-          riskDistribution: riskStats.reduce(_(acc,_stat) => {
+          riskDistribution: riskStats.reduce((acc,_stat) => {
             acc[stat.noShowRiskLevel || 'unknown'] = stat._count.noShowRiskLevel;
             return acc;
           }, {}),
@@ -1484,7 +1484,7 @@ export const _appointmentsRouter = router({
             anvisaCompliant: serviceType?.requiresSpecialty ? true : false,
           },
         };
-      } catch (_error) {
+      } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to schedule appointment',

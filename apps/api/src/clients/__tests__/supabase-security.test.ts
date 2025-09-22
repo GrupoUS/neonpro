@@ -405,7 +405,7 @@ vi.mock(_'../supabase',_() => ({
       // Mock session security validation
       if (functionName === 'validate_session_security') {
         const lastActivity = new Date(params?.last_activity || new Date());
-        const _now = new Date();
+        const now = new Date();
         const minutesInactive = (now.getTime() - lastActivity.getTime()) / (1000 * 60);
 
         return Promise.resolve({
@@ -501,7 +501,7 @@ vi.mock(_'../supabase',_() => ({
         error: null,
       });
     }),
-    from: vi.fn(_() => ({
+    from: vi.fn(() => ({
       select: vi.fn(() => ({
         eq: vi.fn(() => Promise.resolve({ data: [], error: null })),
       })),

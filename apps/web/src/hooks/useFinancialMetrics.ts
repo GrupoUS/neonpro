@@ -80,7 +80,7 @@ export function useExportMetrics() {
     }): Promise<Blob> => {
       return FinancialMetricsService.exportMetrics(options, format);
     },
-    onSuccess: (_blob, _variables) => {
+    onSuccess: (blob, variables) => {
       // Create download link
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');

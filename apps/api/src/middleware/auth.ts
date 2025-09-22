@@ -99,7 +99,7 @@ export function auth() {
       });
 
       await next();
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof HTTPException) {
         throw error;
       }
@@ -136,7 +136,7 @@ export function optionalAuth() {
       }
 
       await next();
-    } catch (_error) {
+    } catch (error) {
       // Silent fail for optional auth
       logger.debug('Optional auth failed', {
         error: error instanceof Error ? error.message : String(error),
@@ -254,7 +254,7 @@ export function requireClinicAccess() {
  */
 export function authWithRole(allowedRoles: string | string[]) {
   return async (c: Context, next: Next) => {
-    await auth()(_c,_async () => {});
+    await auth()(c, async () => {});
     await requireRole(allowedRoles)(c, next);
   };
 }
@@ -264,7 +264,7 @@ export function authWithRole(allowedRoles: string | string[]) {
  */
 export function authWithPermission(requiredPermissions: string | string[]) {
   return async (c: Context, next: Next) => {
-    await auth()(_c,_async () => {});
+    await auth()(c, async () => {});
     await requirePermission(requiredPermissions)(c, next);
   };
 }
@@ -272,7 +272,7 @@ export function authWithPermission(requiredPermissions: string | string[]) {
 /**
  * Alias for auth middleware (for backward compatibility)
  */
-export const _requireAuth = auth;
+export const requireAuth = auth;
 
 /**
  * AI-specific access control middleware

@@ -193,7 +193,7 @@ export class OperationLog {
   logOperation(
     entry: Omit<OperationLogEntry, "id" | "timestamp" | "auditTrail">,
   ): OperationLogEntry {
-    const _now = new Date();
+    const now = new Date();
     const id = this.generateLogId();
 
     const fullEntry: OperationLogEntry = {
@@ -449,36 +449,36 @@ export class OperationLog {
 
     // Apply date filters
     if (filters.startDate) {
-      entries = entries.filter(_(e) => e.timestamp >= filters.startDate!);
+      entries = entries.filter((e) => e.timestamp >= filters.startDate!);
     }
     if (filters.endDate) {
-      entries = entries.filter(_(e) => e.timestamp <= filters.endDate!);
+      entries = entries.filter((e) => e.timestamp <= filters.endDate!);
     }
 
     // Apply category filters
     if (filters.categories && filters.categories.length > 0) {
-      entries = entries.filter(_(e) => filters.categories!.includes(e.category));
+      entries = entries.filter((e) => filters.categories!.includes(e.category));
     }
 
     // Apply severity filters
     if (filters.severities && filters.severities.length > 0) {
-      entries = entries.filter(_(e) => filters.severities!.includes(e.severity));
+      entries = entries.filter((e) => filters.severities!.includes(e.severity));
     }
 
     // Apply clinic filters
     if (filters.clinicIds && filters.clinicIds.length > 0) {
-      entries = entries.filter(_(e) => filters.clinicIds!.includes(e.clinicId));
+      entries = entries.filter((e) => filters.clinicIds!.includes(e.clinicId));
     }
 
     // Apply user filters
     if (filters.userIds && filters.userIds.length > 0) {
-      entries = entries.filter(_(e) => e.userId && filters.userIds!.includes(e._userId),
+      entries = entries.filter((e) => e.userId && filters.userIds!.includes(e._userId),
       );
     }
 
     // Apply operation filters
     if (filters.operations && filters.operations.length > 0) {
-      entries = entries.filter(_(e) =>
+      entries = entries.filter((e) =>
         filters.operations!.includes(e.operation),
       );
     }
@@ -488,8 +488,8 @@ export class OperationLog {
       filters.complianceFrameworks &&
       filters.complianceFrameworks.length > 0
     ) {
-      entries = entries.filter(_(e) =>
-        e.complianceFrameworks.some(_(f) =>
+      entries = entries.filter((e) =>
+        e.complianceFrameworks.some((f) =>
           filters.complianceFrameworks!.includes(f),
         ),
       );
@@ -497,35 +497,35 @@ export class OperationLog {
 
     // Apply personal data filter
     if (filters.personalDataOnly) {
-      entries = entries.filter(_(e) => e.personalDataInvolved);
+      entries = entries.filter((e) => e.personalDataInvolved);
     }
 
     // Apply error filter
     if (filters.errorOnly) {
-      entries = entries.filter(_(e) =>
+      entries = entries.filter((e) =>
           e.severity === "error" || e.severity === "critical" || e.errorDetails,
       );
     }
 
     // Apply tag filters
     if (filters.tags && filters.tags.length > 0) {
-      entries = entries.filter(_(e) =>
-        filters.tags!.some(_(tag) => e.tags.includes(tag)),
+      entries = entries.filter((e) =>
+        filters.tags!.some((tag) => e.tags.includes(tag)),
       );
     }
 
     // Apply text search
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
-      entries = entries.filter(_(e) =>
-          e.operation.toLowerCase().includes(_query) ||
-          e.description.toLowerCase().includes(_query) ||
-          e.tags.some(_(tag) => tag.toLowerCase().includes(_query)),
+      entries = entries.filter((e) =>
+          e.operation.toLowerCase().includes(query) ||
+          e.description.toLowerCase().includes(query) ||
+          e.tags.some((tag) => tag.toLowerCase().includes(query)),
       );
     }
 
     // Sort by timestamp (newest first)
-    entries.sort(_(a,_b) => b.timestamp.getTime() - a.timestamp.getTime());
+    entries.sort((a,_b) => b.timestamp.getTime() - a.timestamp.getTime());
 
     // Apply pagination
     if (filters.offset) {
@@ -600,10 +600,10 @@ export class OperationLog {
     endDate?: Date,
   ): LogAggregation[] {
     return Array.from(this._aggregations.values())
-      .filter(_(agg) => agg.period === period)
-      .filter(_(agg) => !startDate || agg.timestamp >= startDate)
-      .filter(_(agg) => !endDate || agg.timestamp <= endDate)
-      .sort(_(a,_b) => b.timestamp.getTime() - a.timestamp.getTime());
+      .filter((agg) => agg.period === period)
+      .filter((agg) => !startDate || agg.timestamp >= startDate)
+      .filter((agg) => !endDate || agg.timestamp <= endDate)
+      .sort((a,_b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
   /**
@@ -623,7 +623,7 @@ export class OperationLog {
     const complianceLogs = this.queryLogs({
       startDate,
       endDate,
-    }).filter(_(log) => log.complianceFrameworks.length > 0);
+    }).filter((log) => log.complianceFrameworks.length > 0);
 
     const byFramework: Record<ComplianceFramework, number> = {
       LGPD: 0,
@@ -774,7 +774,7 @@ export class OperationLog {
       "month",
     ];
 
-    periods.forEach(_(period) => {
+    periods.forEach((period) => {
       const key = this.getAggregationKey(entry.timestamp, period);
       const existing = this._aggregations.get(key);
 

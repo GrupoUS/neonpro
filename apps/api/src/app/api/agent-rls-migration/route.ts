@@ -19,7 +19,7 @@ export async function POST(_request: NextRequest) {
         }
 
         return { success: true, data };
-      } catch (_error) {
+      } catch (error) {
         return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
       }
     };
@@ -38,7 +38,7 @@ export async function POST(_request: NextRequest) {
       message: 'Database connection successful - Ready to execute agent RLS migration',
       connectionTest: connectionTest.success,
     });
-  } catch (_error) {
+  } catch (error) {
     console.error('Migration error:', error);
     return NextResponse.json(
       {

@@ -346,7 +346,7 @@ export function validateHealthcareColorContrast(): ColorContrastResult {
     { selector: '[data-diagnosis]', name: 'diagnosis information' },
   ];
 
-  healthcareElements.forEach(_({ selector,_name }) => {
+  healthcareElements.forEach(({ selector, name }) => {
     const elements = document.querySelectorAll(selector);
 
     elements.forEach(element => {

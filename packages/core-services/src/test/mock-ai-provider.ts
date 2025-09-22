@@ -163,7 +163,7 @@ export class MockAIProvider {
   private async simulateLatency(): Promise<void> {
     const latency = this.config.latency!;
     const delay = Math.random() * (latency.max - latency.min) + latency.min;
-    await new Promise(_(resolve) => setTimeout(resolve, delay));
+    await new Promise((resolve) => setTimeout(resolve, delay));
   }
 
   private estimateTokens(text: string): number {
@@ -218,7 +218,7 @@ export class MockAIProvider {
       async start(controller) {
         try {
           for (const chunk of chunks) {
-            await new Promise(_(resolve) => setTimeout(resolve, delay));
+            await new Promise((resolve) => setTimeout(resolve, delay));
 
             const streamChunk = {
               id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
@@ -259,7 +259,7 @@ export class MockAIProvider {
 
           controller.enqueue(JSON.stringify(completionChunk) + "\n");
           controller.close();
-        } catch (_error) {
+        } catch (error) {
           controller.error(error);
         }
       },
@@ -334,7 +334,7 @@ export function createMockAIProvider(
 }
 
 // Predefined mock providers for different testing scenarios
-export const _testProviders = {
+export const testProviders = {
   // Fast, reliable provider for unit tests
   fast: () =>
     createMockAIProvider({

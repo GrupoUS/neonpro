@@ -9,12 +9,12 @@ import { HEALTHCARE_POOL_CONFIG, QueryPerformanceMonitor } from '../query-optimi
 describe(_'Query Optimizer',_() => {
   let monitor: QueryPerformanceMonitor;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     monitor = new QueryPerformanceMonitor();
     vi.clearAllMocks();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     monitor.clearMetrics();
   });
 
@@ -105,7 +105,7 @@ describe(_'Query Optimizer',_() => {
 
       // Add queries with different durations
       const durations = [100, 2000, 500, 1500, 300];
-      durations.forEach(_(duration,_i) => {
+      durations.forEach((duration, i) => {
         monitor.recordQuery({
           _query: `SELECT * FROM table_${i}`,
           duration,

@@ -95,7 +95,7 @@ const EnhancedLGPDComplianceSchema = z.object({
   purposeLimitation: z.string().optional(),
 });
 
-const _WinstonLogEntrySchema = z.object({
+const WinstonLogEntrySchema = z.object({
   level: WinstonLogLevelSchema,
   message: z.string(),
   timestamp: z.string().optional(),
@@ -125,7 +125,7 @@ const _WinstonLogEntrySchema = z.object({
   source: z.string().optional(),
 });
 
-const _EnhancedStructuredLoggingConfigSchema = z.object({
+const EnhancedStructuredLoggingConfigSchema = z.object({
   _service: z.string(),
   environment: z.enum(["development", "staging", "production"]).default("development"),
   version: z.string().optional(),
@@ -465,7 +465,7 @@ export class EnhancedStructuredLogger {
       dataClassification,
       containsPII,
       containsPHI,
-      legalBasis: healthcareContext?.brazilianCompliance?.lgpdLegalBasis || 'legitimate_interests',
+      legalBasis: healthcareContext?.brazilianCompliance?.lgpdLegalBasis || 'legitimate_interests_,
       retentionPeriod: this.config.lgpdCompliance.dataRetentionDays,
       requiresConsent: this.config.lgpdCompliance.requireExplicitConsent && (containsPII || containsPHI),
       anonymized: this.config.lgpdCompliance.anonymizeByDefault,
@@ -474,7 +474,7 @@ export class EnhancedStructuredLogger {
                     healthcareContext?.clinicalContext?.requiresAudit,
       brazilianIdentifiers,
       dataMinimizationApplied: this.config.lgpdCompliance.enableDataMinimization,
-      purposeLimitation: healthcareContext?.brazilianCompliance?.lgpdLegalBasis || 'healthcare_provision',
+      purposeLimitation: healthcareContext?.brazilianCompliance?.lgpdLegalBasis || 'healthcare_provision_,
     };
   }
 
@@ -589,7 +589,7 @@ export class EnhancedStructuredLogger {
     );
 
     // Log alert (will be redacted again but that's fine)
-    this.winston.error('CRITICAL_ALERT', {
+    this.winston.error('CRITICAL_ALERT_, {
       originalMessage: alertMessage,
       severity: logEntry.severity,
       correlationId: logEntry.correlationId,
@@ -690,12 +690,12 @@ export class EnhancedStructuredLogger {
    * Log medication event
    */
   logMedicationEvent(
-    action: 'prescribed' | 'administered' | 'verified' | 'adverse_reaction',
+    action: 'prescribed' | 'administered' | 'verified' | 'adverse_reaction_,
     message: string,
     healthcareContext: BrazilianHealthcareContext,
     data?: any
   ): void {
-    const severity = action === 'adverse_reaction' ? 'alert' : 'info';
+    const severity = action === 'adverse_reaction' ? 'alert' : ''info'
 
     this.log(
       this.mapSeverityToLevel(severity),
@@ -774,7 +774,7 @@ export class EnhancedStructuredLogger {
    */
   async shutdown(): Promise<void> {
     this.winston.info('Shutting down enhanced structured logger...');
-    await new Promise<void>(_(resolve) => {
+    await new Promise<void>((resolve) => {
       this.winston.on('finish', resolve);
       this.winston.end();
     });

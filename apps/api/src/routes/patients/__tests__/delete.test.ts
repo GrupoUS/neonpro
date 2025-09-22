@@ -28,7 +28,7 @@ const mockNotificationService = {
 };
 
 describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     // Mock successful service responses by default
@@ -88,7 +88,7 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 

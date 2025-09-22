@@ -10,7 +10,7 @@ export function usePerformance(componentName: string) {
   const mountTime = useRef<number | null>(null);
   const renderCount = useRef<number>(0);
 
-  useEffect(_() => {
+  useEffect(() => {
     mountTime.current = performance.now();
     return () => {
       if (typeof mountTime.current === 'number') {
@@ -23,7 +23,7 @@ export function usePerformance(componentName: string) {
     };
   }, [componentName]);
 
-  useEffect(_() => {
+  useEffect(() => {
     renderCount.current += 1;
     if (renderCount.current > 1) {
       performance.mark(`${componentName}-render-${renderCount.current}`);

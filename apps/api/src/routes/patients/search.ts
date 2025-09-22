@@ -280,7 +280,7 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
         searchMetadata: searchResult.data.searchMetadata,
       },
     });
-  } catch (_error) {
+  } catch (error) {
     console.error('Search endpoint error:', error);
 
     // Handle validation errors

@@ -6,16 +6,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('LGPD Compliance Service (T040)', () => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
   it(_'should export LGPDService class',_() => {
-    expect(_() => {
+    expect(() => {
       const module = require('../lgpd-service');
       expect(module.LGPDService).toBeDefined();
     }).not.toThrow();

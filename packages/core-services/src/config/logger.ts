@@ -150,7 +150,7 @@ export class Logger {
       timestamp: new Date().toISOString(),
       level,
       message,
-      _context: context ? this.redactPII(_context) : undefined,
+      _context: context ? this.redactPII(context) : undefined,
       error,
     };
   }

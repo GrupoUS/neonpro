@@ -55,8 +55,8 @@ export function ServiceForm({
   const isEditMode = !!service;
 
   // Update form data and formatted price when service prop changes
-  useEffect(_() => {
-    if (_service) {
+  useEffect(() => {
+    if (service) {
       setFormData({
         name: service.name,
         description: service.description || '',

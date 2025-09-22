@@ -13,7 +13,7 @@ import { ServiceForm } from '../services/ServiceForm';
 
 function DrawerHarness() {
   const [open, setOpen] = React.useState(false);
-  return (_<div>
+  return (<div>
       <Button onClick={() => setOpen(true)}>Abrir</Button>
       <SmoothDrawer open={open} onOpenChange={setOpen}>
         <SmoothDrawerContent>
@@ -27,10 +27,10 @@ function DrawerHarness() {
   );
 }
 
-describe(_'Mobile interactions',_() => {
+describe(('Mobile interactions', () => {
   it('price input uses numeric keyboard (inputMode) and TimeSlotPicker works', async () => {
     const user = userEvent.setup();
-    render(_<ServiceForm onSuccess={() => {}} clinicId='test' /> as any);
+    render(<ServiceForm onSuccess={() => {}} clinicId='test' /> as any);
 
     // inputMode for price
     const price = screen.getByLabelText(/Preço/i) as HTMLInputElement;

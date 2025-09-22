@@ -17,9 +17,9 @@ import {
   calculatePayerMixDiversity,
 } from "../types/financial-kpis";
 
-describe(_"Financial KPIs",_() => {
-  describe(_"FinancialKPI type guards",_() => {
-    it(_"should identify valid financial KPIs",_() => {
+describe("Financial KPIs", () => {
+  describe("FinancialKPI type guards", () => {
+    it("should identify valid financial KPIs", () => {
       const kpi = createRevenueCycleKPI({
         name: "net_patient_revenue",
         value: 150000.5,
@@ -31,17 +31,17 @@ describe(_"Financial KPIs",_() => {
       expect(isFinancialKPI(kpi)).toBe(true);
     });
 
-    it(_"should reject invalid financial KPIs",_() => {
+    it("should reject invalid financial KPIs", () => {
       expect(isFinancialKPI({})).toBe(false);
       expect(isFinancialKPI(null)).toBe(false);
       expect(isFinancialKPI({ id: "test", name: "test" })).toBe(false);
     });
   });
 
-  describe(_"Revenue Cycle KPI",_() => {
+  describe("Revenue Cycle KPI", () => {
     let revenueCycleKPI: RevenueCycleKPI;
 
-    beforeEach(_() => {
+    beforeEach(() => {
       revenueCycleKPI = createRevenueCycleKPI({
         name: "revenue_cycle_efficiency",
         value: 125000.75,
@@ -51,14 +51,14 @@ describe(_"Financial KPIs",_() => {
       });
     });
 
-    it(_"should create a valid revenue cycle KPI",_() => {
+    it("should create a valid revenue cycle KPI", () => {
       expect(revenueCycleKPI.category).toBe("revenue_cycle");
       expect(revenueCycleKPI.currency).toBe("BRL");
       expect(revenueCycleKPI.value).toBe(125000.75);
       expect(revenueCycleKPI.stageMetrics.stage).toBe("collection");
     });
 
-    it(_"should track revenue cycle stages",_() => {
+    it("should track revenue cycle stages", () => {
       const stages: RevenueCycleStage[] = [
         "registration",
         "insurance_verification",
@@ -71,7 +71,7 @@ describe(_"Financial KPIs",_() => {
         "denial_management",
       ];
 
-      stages.forEach(_(stage) => {
+      stages.forEach((stage) => {
         const kpi = createRevenueCycleKPI({
           name: `stage_${stage}`,
           value: 10000,
@@ -84,7 +84,7 @@ describe(_"Financial KPIs",_() => {
       });
     });
 
-    it(_"should include stage metrics",_() => {
+    it("should include stage metrics", () => {
       expect(revenueCycleKPI.stageMetrics).toBeDefined();
       expect(revenueCycleKPI.stageMetrics.averageDays).toBeGreaterThanOrEqual(
         0,
@@ -97,10 +97,10 @@ describe(_"Financial KPIs",_() => {
     });
   });
 
-  describe(_"Insurance Claims KPI",_() => {
+  describe("Insurance Claims KPI", () => {
     let insuranceClaimsKPI: InsuranceClaimsKPI;
 
-    beforeEach(_() => {
+    beforeEach(() => {
       insuranceClaimsKPI = createInsuranceClaimsKPI({
         name: "claims_processing_efficiency",
         value: 92.5,
@@ -110,7 +110,7 @@ describe(_"Financial KPIs",_() => {
       });
     });
 
-    it(_"should create a valid insurance claims KPI",_() => {
+    it("should create a valid insurance claims KPI", () => {
       expect(insuranceClaimsKPI.category).toBe("insurance_claims");
       expect(insuranceClaimsKPI.claimsContext.payerType).toBe(
         "private_insurance",
@@ -118,7 +118,7 @@ describe(_"Financial KPIs",_() => {
       expect(insuranceClaimsKPI.claimsContext.denialRate).toBe(5.2);
     });
 
-    it(_"should handle different payer types",_() => {
+    it("should handle different payer types", () => {
       const payerTypes: PaymentSource[] = [
         "sus",
         "private_insurance",
@@ -128,7 +128,7 @@ describe(_"Financial KPIs",_() => {
         "international_insurance",
       ];
 
-      payerTypes.forEach(_(payerType) => {
+      payerTypes.forEach((payerType) => {
         const kpi = createInsuranceClaimsKPI({
           name: `claims_${payerType}`,
           value: 95.0,
@@ -141,7 +141,7 @@ describe(_"Financial KPIs",_() => {
       });
     });
 
-    it(_"should set appropriate risk level based on denial rate",_() => {
+    it("should set appropriate risk level based on denial rate", () => {
       const highDenialKPI = createInsuranceClaimsKPI({
         name: "high_denial_claims",
         value: 80.0,
@@ -163,8 +163,8 @@ describe(_"Financial KPIs",_() => {
     });
   });
 
-  describe(_"Financial Categories",_() => {
-    it(_"should support all financial categories",_() => {
+  describe("Financial Categories", () => {
+    it("should support all financial categories", () => {
       const categories: FinancialCategory[] = [
         "revenue_cycle",
         "profitability",
@@ -180,15 +180,15 @@ describe(_"Financial KPIs",_() => {
         "patient_financial_experience",
       ];
 
-      categories.forEach(_(category) => {
+      categories.forEach((category) => {
         expect(typeof category).toBe("string");
         expect(category.length).toBeGreaterThan(0);
       });
     });
   });
 
-  describe(_"Financial Health Score Calculation",_() => {
-    it(_"should calculate comprehensive financial health score",_() => {
+  describe("Financial Health Score Calculation", () => {
+    it("should calculate comprehensive financial health score", () => {
       const financialKPIs: FinancialKPI[] = [
         createRevenueCycleKPI({
           name: "monthly_revenue",
@@ -243,7 +243,7 @@ describe(_"Financial KPIs",_() => {
       expect(Array.isArray(healthScore.indicators)).toBe(true);
     });
 
-    it(_"should handle empty KPI array gracefully",_() => {
+    it("should handle empty KPI array gracefully", () => {
       const healthScore = calculateFinancialHealthScore([]);
 
       expect(healthScore.score).toBe(0);
@@ -251,7 +251,7 @@ describe(_"Financial KPIs",_() => {
       expect(healthScore.indicators).toHaveLength(0);
     });
 
-    it(_"should weight categories appropriately",_() => {
+    it("should weight categories appropriately", () => {
       const revenueCycleKPI = createRevenueCycleKPI({
         name: "revenue_test",
         value: 100000,
@@ -263,7 +263,7 @@ describe(_"Financial KPIs",_() => {
 
       const healthScore = calculateFinancialHealthScore([revenueCycleKPI]);
 
-      const revenueIndicator = healthScore.indicators.find(_(i) => i.category === "revenue_cycle",
+      const revenueIndicator = healthScore.indicators.find((i) => i.category === "revenue_cycle",
       );
       expect(revenueIndicator).toBeDefined();
       expect(revenueIndicator?.performance).toBe("above");
@@ -271,8 +271,8 @@ describe(_"Financial KPIs",_() => {
     });
   });
 
-  describe(_"Brazilian Financial Compliance Validation",_() => {
-    it(_"should validate LGPD compliance for financial data",_() => {
+  describe("Brazilian Financial Compliance Validation", () => {
+    it("should validate LGPD compliance for financial data", () => {
       const financialKPI = createRevenueCycleKPI({
         name: "patient_revenue",
         value: 50000,
@@ -292,7 +292,7 @@ describe(_"Financial KPIs",_() => {
       );
     });
 
-    it(_"should validate ANS compliance for supplementary health insurance",_() => {
+    it("should validate ANS compliance for supplementary health insurance", () => {
       const insuranceKPI = createInsuranceClaimsKPI({
         name: "ans_claims",
         value: 88.5,
@@ -317,7 +317,7 @@ describe(_"Financial KPIs",_() => {
       );
     });
 
-    it(_"should validate SUS compliance for public health services",_() => {
+    it("should validate SUS compliance for public health services", () => {
       const susKPI = createRevenueCycleKPI({
         name: "sus_reimbursement",
         value: 75000,
@@ -339,7 +339,7 @@ describe(_"Financial KPIs",_() => {
       );
     });
 
-    it(_"should provide currency-specific recommendations",_() => {
+    it("should provide currency-specific recommendations", () => {
       const brlKPI = createRevenueCycleKPI({
         name: "brl_revenue",
         value: 100000,
@@ -359,8 +359,8 @@ describe(_"Financial KPIs",_() => {
     });
   });
 
-  describe(_"Payer Mix Diversity Calculation",_() => {
-    it(_"should calculate payer mix diversity score",_() => {
+  describe("Payer Mix Diversity Calculation", () => {
+    it("should calculate payer mix diversity score", () => {
       const payerMix: Record<PaymentSource, number> = {
         sus: 40000,
         private_insurance: 30000,
@@ -379,7 +379,7 @@ describe(_"Financial KPIs",_() => {
       expect(["LOW", "MEDIUM", "HIGH"]).toContain(diversity.riskLevel);
     });
 
-    it(_"should identify high concentration risk",_() => {
+    it("should identify high concentration risk", () => {
       const highConcentrationMix: Record<PaymentSource, number> = {
         sus: 85000,
         private_insurance: 10000,
@@ -396,7 +396,7 @@ describe(_"Financial KPIs",_() => {
       expect(diversity.dominantPayer).toBe("sus");
     });
 
-    it(_"should identify low concentration risk with balanced mix",_() => {
+    it("should identify low concentration risk with balanced mix", () => {
       const balancedMix: Record<PaymentSource, number> = {
         sus: 25000,
         private_insurance: 25000,
@@ -414,8 +414,8 @@ describe(_"Financial KPIs",_() => {
     });
   });
 
-  describe(_"Currency Handling",_() => {
-    it(_"should handle Brazilian Real currency correctly",_() => {
+  describe("Currency Handling", () => {
+    it("should handle Brazilian Real currency correctly", () => {
       const brlKPI = createRevenueCycleKPI({
         name: "brl_test",
         value: 1500.75,
@@ -429,7 +429,7 @@ describe(_"Financial KPIs",_() => {
       expect(typeof brlKPI.value).toBe("number");
     });
 
-    it(_"should format currency values appropriately",_() => {
+    it("should format currency values appropriately", () => {
       const kpi = createRevenueCycleKPI({
         name: "currency_formatting_test",
         value: 123456.78,
@@ -443,8 +443,8 @@ describe(_"Financial KPIs",_() => {
     });
   });
 
-  describe(_"Financial Period Tracking",_() => {
-    it(_"should track fiscal year and periods",_() => {
+  describe("Financial Period Tracking", () => {
+    it("should track fiscal year and periods", () => {
       const kpi = createRevenueCycleKPI({
         name: "period_test",
         value: 50000,
@@ -458,8 +458,8 @@ describe(_"Financial KPIs",_() => {
     });
   });
 
-  describe(_"Performance Metrics",_() => {
-    it(_"should track target values and performance",_() => {
+  describe("Performance Metrics", () => {
+    it("should track target values and performance", () => {
       const kpi = createRevenueCycleKPI({
         name: "performance_test",
         value: 95000,

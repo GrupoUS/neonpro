@@ -10,7 +10,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * Ensures type safety, input validation, and output conformity
  */
 
-describe(_'Professional Contract Testing',_() => {
+describe(_'Professional Contract Testing',() => {
   const mockContext = {
     user: { id: 'user-123', _role: 'admin' },
     auth: { _userId: 'user-123', isAuthenticated: true },
@@ -48,14 +48,14 @@ describe(_'Professional Contract Testing',_() => {
     },
   };
 
-  const _trpcMsw = createTRPCMsw<AppRouter>();
+  const trpcMsw = createTRPCMsw<AppRouter>();
   const caller = appRouter.createCaller(mockContext);
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe(_'Professional Creation Contract',_() => {
+  describe(_'Professional Creation Contract',() => {
     it(_'should validate professional creation input and output',_async () => {
       const createInput: ProfessionalInput['create'] = {
         personalInfo: {
@@ -200,7 +200,7 @@ describe(_'Professional Contract Testing',_() => {
     });
   });
 
-  describe(_'Professional Retrieval Contract',_() => {
+  describe(_'Professional Retrieval Contract',() => {
     it(_'should validate professional retrieval by ID',_async () => {
       const professionalId = 'prof-789';
       const mockProfessional = {
@@ -270,7 +270,7 @@ describe(_'Professional Contract Testing',_() => {
     });
   });
 
-  describe(_'Professional Update Contract',_() => {
+  describe(_'Professional Update Contract',() => {
     it(_'should validate professional information updates',_async () => {
       const professionalId = 'prof-789';
       const updateInput: ProfessionalInput['update'] = {
@@ -369,7 +369,7 @@ describe(_'Professional Contract Testing',_() => {
     });
   });
 
-  describe(_'Professional Schedule Management Contract',_() => {
+  describe(_'Professional Schedule Management Contract',() => {
     it(_'should validate schedule updates',_async () => {
       const scheduleInput: ProfessionalInput['updateSchedule'] = {
         professionalId: 'prof-789',
@@ -432,7 +432,7 @@ describe(_'Professional Contract Testing',_() => {
     });
   });
 
-  describe(_'Professional List Contract',_() => {
+  describe(_'Professional List Contract',() => {
     it(_'should validate professional listing with filters',_async () => {
       const listInput: ProfessionalInput['list'] = {
         page: 1,
@@ -498,7 +498,7 @@ describe(_'Professional Contract Testing',_() => {
     });
   });
 
-  describe(_'Professional Qualification Management Contract',_() => {
+  describe(_'Professional Qualification Management Contract',() => {
     it(_'should validate qualification addition',_async () => {
       const qualificationInput: ProfessionalInput['addQualification'] = {
         professionalId: 'prof-789',
@@ -566,8 +566,8 @@ describe(_'Professional Contract Testing',_() => {
     });
   });
 
-  describe(_'Contract Type Safety',_() => {
-    it(_'should enforce input type constraints at compile time',_() => {
+  describe(_'Contract Type Safety',() => {
+    it(_'should enforce input type constraints at compile time',() => {
       const validInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Test',
@@ -590,7 +590,7 @@ describe(_'Professional Contract Testing',_() => {
       expect(validInput).toBeDefined();
     });
 
-    it(_'should enforce output type constraints',_() => {
+    it(_'should enforce output type constraints',() => {
       const mockOutput: ProfessionalOutput['getById'] = {
         success: true,
         data: {

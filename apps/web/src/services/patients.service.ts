@@ -405,5 +405,5 @@ class PatientService {
 }
 
 // Export singleton instance
-export const _patientService = new PatientService();
+export const patientService = new PatientService();
 export { PatientService };

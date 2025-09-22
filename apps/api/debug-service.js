@@ -8,7 +8,7 @@ const service = new PatientDocumentService();
 
 console.log(
   'Service methods:',
-  Object.getOwnPropertyNames(Object.getPrototypeOf(_service)),
+  Object.getOwnPropertyNames(Object.getPrototypeOf(service)),
 );
 console.log('Has getDocument?', typeof service.getDocument === 'function');
 console.log(

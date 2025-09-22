@@ -57,13 +57,13 @@ class ConsentStore {
   private consents = new Map<string, LGPDConsent[]>();
 
   async getConsents(_userId: string, purpose: ProcessingPurpose): Promise<LGPDConsent[]> {
-    const userConsents = this.consents.get(_userId) || [];
+    const userConsents = this.consents.get(userId) || [];
     return userConsents.filter(consent => consent.purpose === purpose);
   }
 
   async hasValidConsent(_userId: string, purpose: ProcessingPurpose): Promise<boolean> {
     const consents = await this.getConsents(userId, purpose);
-    const _now = new Date();
+    const now = new Date();
 
     return consents.some(consent =>
       consent.status === 'granted'
@@ -78,7 +78,7 @@ class ConsentStore {
   }
 
   async withdrawConsent(_userId: string, purpose: ProcessingPurpose): Promise<void> {
-    const userConsents = this.consents.get(_userId) || [];
+    const userConsents = this.consents.get(userId) || [];
     userConsents.forEach(consent => {
       if (consent.purpose === purpose && consent.status === 'granted') {
         consent.status = 'withdrawn';
@@ -197,7 +197,7 @@ export function lgpdMiddleware(config: LGPDConfig = {}) {
       c.set('lgpdCompliant', true);
 
       await next();
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof HTTPException) {
         throw error;
       }
@@ -302,7 +302,7 @@ export function consentMiddleware() {
         throw new HTTPException(400, {
           message: 'Invalid action. Use "grant" or "withdraw"',
         });
-      } catch (_error) {
+      } catch (error) {
         if (error instanceof HTTPException) {
           throw error;
         }
@@ -345,7 +345,7 @@ export function dataPortabilityMiddleware() {
         });
 
         return c.json(userData);
-      } catch (_error) {
+      } catch (error) {
         logger.error('Data portability error', {
           error: error instanceof Error ? error.message : String(error),
         });
@@ -388,7 +388,7 @@ export function dataErasureMiddleware() {
           userId,
           processedAt: new Date().toISOString(),
         });
-      } catch (_error) {
+      } catch (error) {
         logger.error('Data erasure error', {
           error: error instanceof Error ? error.message : String(error),
         });
@@ -537,7 +537,7 @@ async function exportUserData(supabase: any, _userId: string): Promise<any> {
       userId,
       dataCategories: Object.keys(exportedData.data),
       recordCounts: Object.fromEntries(
-        Object.entries(exportedData.data).map(_([key,_value]) => [
+        Object.entries(exportedData.data).map(([key,_value]) => [
           key,
           Array.isArray(value) ? value.length : 1,
         ]),
@@ -545,7 +545,7 @@ async function exportUserData(supabase: any, _userId: string): Promise<any> {
     });
 
     return exportedData;
-  } catch (_error) {
+  } catch (error) {
     logger.error('LGPD: Data export failed', {
       userId,
       error: error instanceof Error ? error.message : String(error),
@@ -654,7 +654,7 @@ async function deleteUserData(supabase: any, _userId: string): Promise<void> {
       totalRecordsAffected,
       deletionTimestamp,
     });
-  } catch (_error) {
+  } catch (error) {
     logger.error('LGPD: Data deletion failed', {
       userId,
       error: error instanceof Error ? error.message : String(error),
@@ -669,4 +669,4 @@ async function deleteUserData(supabase: any, _userId: string): Promise<void> {
  * Data protection middleware (alias for healthcare LGPD middleware)
  * @deprecated Use healthcareLGPDMiddleware instead
  */
-export const _dataProtection = healthcareLGPDMiddleware;
+export const dataProtection = healthcareLGPDMiddleware;

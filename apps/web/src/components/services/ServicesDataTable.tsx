@@ -30,7 +30,7 @@ import type { Service } from '@/types/service';
 import { formatBRL } from '@neonpro/utils';
 
 // Lazy load TanStack Table for better bundle splitting
-const TanStackTable = lazy(_() => import('@tanstack/react-table'));
+const TanStackTable = lazy(() => import('@tanstack/react-table'));
 
 // Import types from lazy-loaded module
 type ColumnDef<T> = any;
@@ -59,7 +59,7 @@ export function ServicesDataTable({
   const columns: ColumnDef<Service>[] = [
     {
       accessorKey: 'name',
-      header: (_{ column }) => (_<Button
+      header: ({ column }) => (<Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className='h-auto p-0 font-semibold'
@@ -68,12 +68,12 @@ export function ServicesDataTable({
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       ),
-      cell: (_{ row }) => <div className='font-medium'>{row.getValue('name')}</div>,
+      cell: ({ row }) => <div className='font-medium'>{row.getValue('name')}</div>,
     },
     {
       accessorKey: 'description',
       header: 'Descrição',
-      cell: (_{ row }) => {
+      cell: ({ row }) => {
         const description = row.getValue('description') as string | null;
         return (
           <div className='max-w-[260px] truncate text-sm text-muted-foreground'>
@@ -84,7 +84,7 @@ export function ServicesDataTable({
     },
     {
       accessorKey: 'duration_minutes',
-      header: (_{ column }) => (_<Button
+      header: ({ column }) => (<Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className='h-auto p-0 font-semibold'
@@ -93,14 +93,14 @@ export function ServicesDataTable({
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       ),
-      cell: (_{ row }) => {
+      cell: ({ row }) => {
         const minutes = row.getValue('duration_minutes') as number;
         return <div className='text-center'>{minutes} min</div>;
       },
     },
     {
       accessorKey: 'price',
-      header: (_{ column }) => (_<Button
+      header: ({ column }) => (<Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className='h-auto p-0 font-semibold'
@@ -109,7 +109,7 @@ export function ServicesDataTable({
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       ),
-      cell: (_{ row }) => {
+      cell: ({ row }) => {
         const price = row.getValue('price') as number;
         const formatted = formatBRL(price);
         return <div className='text-right font-medium'>{formatted}</div>;
@@ -118,7 +118,7 @@ export function ServicesDataTable({
     {
       accessorKey: 'is_active',
       header: 'Status',
-      cell: (_{ row }) => {
+      cell: ({ row }) => {
         const isActive = row.getValue('is_active') as boolean;
         return (
           <Badge variant={isActive ? 'default' : 'secondary'}>
@@ -130,9 +130,9 @@ export function ServicesDataTable({
     {
       id: 'actions',
       header: 'Ações',
-      cell: (_{ row }) => {
+      cell: ({ row }) => {
         const service = row.original;
-        return (_<DropdownMenu>
+        return (<DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='ghost' className='h-8 w-8 p-0'>
                 <span className='sr-only'>Abrir menu</span>
@@ -141,12 +141,12 @@ export function ServicesDataTable({
             </DropdownMenuTrigger>
             <DropdownMenuContent align='end'>
               <DropdownMenuLabel>Ações</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => onEdit(_service)}>
+              <DropdownMenuItem onClick={() => onEdit(service)}>
                 Editar serviço
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => onDelete(_service)}
+                onClick={() => onDelete(service)}
                 className='text-destructive'
               >
                 Excluir serviço
@@ -178,8 +178,8 @@ export function ServicesDataTable({
 }
 
 // Content component that uses TanStack Table
-function ServicesDataTableContent(_{
-  data,_loading,_onEdit,_onDelete,_columns,_sorting,_setSorting,_columnFilters,_setColumnFilters,_columnVisibility,_setColumnVisibility,
+function ServicesDataTableContent({
+  data,loading, onEdit,onDelete, columns,sorting, setSorting,columnFilters, setColumnFilters,columnVisibility, setColumnVisibility,
 }: {
   data: Service[];
   loading?: boolean;

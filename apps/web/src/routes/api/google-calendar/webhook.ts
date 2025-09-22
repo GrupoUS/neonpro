@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-export const _Route = createFileRoute('/api/google-calendar/webhook')({
+export const Route = createFileRoute('/api/google-calendar/webhook')({
   POST: async ({ request }) => {
     try {
       const headers = request.headers;
@@ -44,7 +44,7 @@ export const _Route = createFileRoute('/api/google-calendar/webhook')({
   },
 
   // Google requires a GET request for webhook verification
-  GET: async (_{ request }) => {
+  GET: async ({ request }) => {
     try {
       const url = new URL(request.url);
       const challenge = url.searchParams.get('challenge');

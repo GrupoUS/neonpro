@@ -132,7 +132,7 @@ export class AIProviderRouterService {
 
     try {
       // 🔒 SECURITY: Validate and sanitize request
-      const validated_request = this.security_manager.validateAndSanitizeRequest(_request);
+      const validated_request = this.security_manager.validateAndSanitizeRequest(request);
 
       // 🚨 HEALTHCARE: Check emergency bypass conditions
       if (validated_request.healthcare_context.is_emergency) {
@@ -182,7 +182,7 @@ export class AIProviderRouterService {
       );
 
       return response;
-    } catch (_error) {
+    } catch (error) {
       await this.security_manager.auditRequestError(
         request,
         error as Error,
@@ -207,7 +207,7 @@ export class AIProviderRouterService {
     }
 
     // Sort by latency for fastest response
-    emergency_providers.sort(_(a,_b) => {
+    emergency_providers.sort((a,_b) => {
       const health_a = this.health_monitor.getProviderHealth(
         a.provider,
       ) as ProviderHealthCheck;
@@ -240,7 +240,7 @@ export class AIProviderRouterService {
   private async selectProvider(
     _request: RoutingRequest,
   ): Promise<ProviderConfig> {
-    const available_providers = this.getAvailableProviders(_request);
+    const available_providers = this.getAvailableProviders(request);
 
     if (available_providers.length === 0) {
       throw new Error('No available providers for this request');
@@ -481,7 +481,7 @@ export class AIProviderRouterService {
     _request: RoutingRequest,
   ): ProviderConfig {
     // Simple round-robin based on current health metrics
-    const sorted_providers = providers.sort(_(a,_b) => {
+    const sorted_providers = providers.sort((a,_b) => {
       const health_a = this.health_monitor.getProviderHealth(
         a.provider,
       ) as ProviderHealthCheck;
@@ -587,7 +587,7 @@ export class AIProviderRouterService {
 
     // Add fallback providers if enabled
     if (request.ai_config.fallback_enabled) {
-      const fallback_providers = this.getAvailableProviders(_request)
+      const fallback_providers = this.getAvailableProviders(request)
         .filter(p => p.provider !== provider.provider)
         .slice(0, 2); // Maximum 2 fallback providers
 
@@ -646,7 +646,7 @@ export class AIProviderRouterService {
             fallback_used,
           },
         };
-      } catch (_error) {
+      } catch (error) {
         last_error = error as Error;
 
         // Update circuit breaker on failure
@@ -716,7 +716,7 @@ export class AIProviderRouterService {
     if (eligible_models.length === 0) return null;
 
     // Select best model based on cost-performance ratio
-    return eligible_models.sort(_(a,_b) => {
+    return eligible_models.sort((a,_b) => {
       const cost_a = this.estimateModelCost(a, _request);
       const cost_b = this.estimateModelCost(b, _request);
       const latency_a = a.performance_config.max_latency_ms;
@@ -896,7 +896,7 @@ export class AIProviderRouterService {
           },
         };
       }
-    } catch (_error) {
+    } catch (error) {
       console.warn('Cache lookup failed:', error);
     }
 
@@ -927,7 +927,7 @@ export class AIProviderRouterService {
         ttlMs: this.getCacheTTLForUseCase(request.healthcare_context.use_case),
         compliance: [],
       } as any);
-    } catch (_error) {
+    } catch (error) {
       console.warn('Failed to cache response:', error);
     }
   }
@@ -988,7 +988,7 @@ export class AIProviderRouterService {
     this.performHealthCheck();
 
     // Schedule periodic health checks
-    this.health_check_interval = setInterval(_() => {
+    this.health_check_interval = setInterval(() => {
       this.performHealthCheck();
     }, 30000); // Check every 30 seconds
   }
@@ -1078,8 +1078,7 @@ export class AIProviderRouterService {
    */
   getAvailableProvidersList(): AIProvider[] {
     const enabled_configs = this.config_manager.getEnabledProviders();
-    return enabled_configs
-      .map(config => config.provider)
+    return enabled_configs.map(config => config.provider)
       .filter(provider => {
         return this.health_monitor.isProviderAvailable(provider);
       });

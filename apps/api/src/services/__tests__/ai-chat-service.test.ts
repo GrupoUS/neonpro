@@ -6,16 +6,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('AI Chat Service with Multi-Model Support (T039)', () => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
   it(_'should export AIChatService class',_() => {
-    expect(_() => {
+    expect(() => {
       const module = require('../ai-chat-service');
       expect(module.AIChatService).toBeDefined();
     }).not.toThrow();

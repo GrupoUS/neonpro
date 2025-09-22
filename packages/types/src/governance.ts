@@ -64,7 +64,7 @@ export interface PriorityScore {
 
 export interface PHIEntity {
   id: string;
-  entityType: string; // e.g. 'patient_record'
+  entityType: string; // e.g. 'patient_record_
   encryptionAtRest: "AES-256";
   encryptionInTransit: "TLS>=1.2";
   rlsPolicy: string; // reference to RLS predicate name

@@ -143,7 +143,7 @@ export class AccessibilityAuditService {
   private async auditColorContrast(element: HTMLElement): Promise<void> {
     const textElements = element.querySelectorAll('*');
 
-    textElements.forEach(_el => {
+    textElements.forEach(el => {
       const htmlEl = el as HTMLElement;
       const styles = window.getComputedStyle(htmlEl);
       const color = styles.color;
@@ -197,7 +197,7 @@ export class AccessibilityAuditService {
       'button, a, input, select, textarea, [tabindex], [role="button"], [role="link"]',
     );
 
-    interactiveElements.forEach(_el => {
+    interactiveElements.forEach(el => {
       const htmlEl = el as HTMLElement;
       const tabIndex = htmlEl.getAttribute('tabindex');
 
@@ -252,7 +252,7 @@ export class AccessibilityAuditService {
       'input:not([type="hidden"]), select, textarea, button:not([aria-label]):not([aria-labelledby])',
     );
 
-    elementsNeedingLabels.forEach(_el => {
+    elementsNeedingLabels.forEach(el => {
       const htmlEl = el as HTMLElement;
       const hasLabel = htmlEl.hasAttribute('aria-label')
         || htmlEl.hasAttribute('aria-labelledby')
@@ -287,7 +287,7 @@ export class AccessibilityAuditService {
     const headings = element.querySelectorAll('h1, h2, h3, h4, h5, h6');
     let previousLevel = 0;
 
-    headings.forEach(_heading => {
+    headings.forEach(heading => {
       const level = parseInt(heading.tagName.charAt(1));
 
       if (level > previousLevel + 1) {
@@ -320,7 +320,7 @@ export class AccessibilityAuditService {
     // Check for images without alt text
     const images = element.querySelectorAll('img');
 
-    images.forEach(_img => {
+    images.forEach(img => {
       if (!img.hasAttribute('alt') && !img.hasAttribute('aria-hidden')) {
         this.testResults.screenReaderSupport = false;
         this.addIssue({
@@ -462,7 +462,7 @@ export class AccessibilityAuditService {
       issues: this.issues
         .filter(i => i.healthcareImpact)
         .map(i => i.healthcareImpact!)
-        .filter(_(impact,_index,_arr) => arr.indexOf(impact) === index),
+        .filter((impact,index, arr) => arr.indexOf(impact) === index),
     };
 
     // Generate recommendations

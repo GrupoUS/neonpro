@@ -172,7 +172,7 @@ export class LGPDConsentService {
         timestamp: new Date().toISOString(),
         consentId: consentRecord.id,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -253,7 +253,7 @@ export class LGPDConsentService {
         operationId: `withdrawal_${consent.id}`,
         timestamp: new Date().toISOString(),
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -360,7 +360,7 @@ export class LGPDConsentService {
         timestamp: new Date().toISOString(),
         report,
       };
-    } catch (_error) {
+    } catch (error) {
       return {
         success: false,
         recordsProcessed: 0,
@@ -526,4 +526,4 @@ export class LGPDConsentService {
 }
 
 // Export singleton instance
-export const _lgpdConsentService = new LGPDConsentService();
+export const lgpdConsentService = new LGPDConsentService();

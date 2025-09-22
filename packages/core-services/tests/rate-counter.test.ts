@@ -9,7 +9,7 @@ import {
 // Mock timer for testing
 vi.useFakeTimers();
 
-describe(_"RateCounter Service",_() => {
+describe("RateCounter Service", () => {
   let rateCounter: RateCounter;
 
   const defaultConfig: RateCounterConfig = {
@@ -18,29 +18,29 @@ describe(_"RateCounter Service",_() => {
     cleanupIntervalMs: 30000, // 30 seconds
   };
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllTimers();
     rateCounter = new RateCounter(defaultConfig);
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     if (rateCounter) {
       rateCounter.cleanup();
     }
   });
 
-  describe(_"Basic rate limiting",_() => {
+  describe("Basic rate limiting", () => {
     it(_"should allow requests within limit",_async () => {
       const userId = "user1";
 
       // First request should be allowed
-      const result1 = await rateCounter.checkLimit(_userId);
+      const result1 = await rateCounter.checkLimit(userId);
       expect(result1.allowed).toBe(true);
       expect(result1.remainingRequests).toBe(9);
       expect(result1.totalRequests).toBe(1);
 
       // Second request should be allowed
-      const result2 = await rateCounter.checkLimit(_userId);
+      const result2 = await rateCounter.checkLimit(userId);
       expect(result2.allowed).toBe(true);
       expect(result2.remainingRequests).toBe(8);
       expect(result2.totalRequests).toBe(2);
@@ -51,13 +51,13 @@ describe(_"RateCounter Service",_() => {
 
       // Make 10 requests (the limit)
       for (let i = 0; i < 10; i++) {
-        const result = await rateCounter.checkLimit(_userId);
+        const result = await rateCounter.checkLimit(userId);
         expect(result.allowed).toBe(true);
         expect(result.remainingRequests).toBe(9 - i);
       }
 
       // 11th request should be blocked
-      const result = await rateCounter.checkLimit(_userId);
+      const result = await rateCounter.checkLimit(userId);
       expect(result.allowed).toBe(false);
       expect(result.remainingRequests).toBe(0);
       expect(result.totalRequests).toBe(10);
@@ -80,24 +80,24 @@ describe(_"RateCounter Service",_() => {
     });
   });
 
-  describe(_"Sliding window behavior",_() => {
+  describe("Sliding window behavior", () => {
     it(_"should reset limits after window expires",_async () => {
       const userId = "user1";
 
       // Make 10 requests (exhaust limit)
       for (let i = 0; i < 10; i++) {
-        await rateCounter.checkLimit(_userId);
+        await rateCounter.checkLimit(userId);
       }
 
       // Should be blocked
-      let result = await rateCounter.checkLimit(_userId);
+      let result = await rateCounter.checkLimit(userId);
       expect(result.allowed).toBe(false);
 
       // Advance time by window size + 1ms
       vi.advanceTimersByTime(defaultConfig.windowSizeMs + 1);
 
       // Should be allowed again
-      result = await rateCounter.checkLimit(_userId);
+      result = await rateCounter.checkLimit(userId);
       expect(result.allowed).toBe(true);
       expect(result.remainingRequests).toBe(9);
       expect(result.totalRequests).toBe(1);
@@ -109,7 +109,7 @@ describe(_"RateCounter Service",_() => {
 
       // Make 5 requests
       for (let i = 0; i < 5; i++) {
-        await rateCounter.checkLimit(_userId);
+        await rateCounter.checkLimit(userId);
       }
 
       // Advance time by half window
@@ -117,11 +117,11 @@ describe(_"RateCounter Service",_() => {
 
       // Make 5 more requests (should reach limit)
       for (let i = 0; i < 5; i++) {
-        await rateCounter.checkLimit(_userId);
+        await rateCounter.checkLimit(userId);
       }
 
       // Should be at limit
-      let result = await rateCounter.checkLimit(_userId);
+      let result = await rateCounter.checkLimit(userId);
       expect(result.allowed).toBe(false);
 
       // Advance time by half window again (total = full window from first _request)
@@ -129,13 +129,13 @@ describe(_"RateCounter Service",_() => {
 
       // First 5 requests should have expired, so 5 more should be allowed
       for (let i = 0; i < 5; i++) {
-        result = await rateCounter.checkLimit(_userId);
+        result = await rateCounter.checkLimit(userId);
         expect(result.allowed).toBe(true);
       }
     });
   });
 
-  describe(_"Multiple rate limits",_() => {
+  describe("Multiple rate limits", () => {
     it(_"should handle multiple rate limits per user",_async () => {
       const userId = "user1";
       const shortLimit: RateLimit = { windowSizeMs: 5000, maxRequests: 3 }; // 3 per 5 seconds
@@ -199,16 +199,16 @@ describe(_"RateCounter Service",_() => {
     });
   });
 
-  describe(_"Rate limit information",_() => {
+  describe("Rate limit information", () => {
     it(_"should provide accurate rate limit information",_async () => {
       const userId = "user1";
 
       // Make some requests
-      await rateCounter.checkLimit(_userId);
-      await rateCounter.checkLimit(_userId);
-      await rateCounter.checkLimit(_userId);
+      await rateCounter.checkLimit(userId);
+      await rateCounter.checkLimit(userId);
+      await rateCounter.checkLimit(userId);
 
-      const info = await rateCounter.getRateLimitInfo(_userId);
+      const info = await rateCounter.getRateLimitInfo(userId);
       expect(info.totalRequests).toBe(3);
       expect(info.remainingRequests).toBe(7);
       expect(info.resetTime).toBeGreaterThan(Date.now());
@@ -227,16 +227,16 @@ describe(_"RateCounter Service",_() => {
       const userId = "user1";
       const startTime = Date.now();
 
-      await rateCounter.checkLimit(_userId);
+      await rateCounter.checkLimit(userId);
 
-      const info = await rateCounter.getRateLimitInfo(_userId);
+      const info = await rateCounter.getRateLimitInfo(userId);
       const expectedResetTime = startTime + defaultConfig.windowSizeMs;
 
       expect(info.resetTime).toBeCloseTo(expectedResetTime, -2); // Within 100ms tolerance
     });
   });
 
-  describe(_"Burst handling",_() => {
+  describe("Burst handling", () => {
     it(_"should handle burst requests correctly",_async () => {
       const userId = "user1";
       const burstConfig: RateCounterConfig = {
@@ -249,12 +249,12 @@ describe(_"RateCounter Service",_() => {
 
       // Make 15 requests in burst
       for (let i = 0; i < 15; i++) {
-        const result = await burstCounter.checkLimit(_userId);
+        const result = await burstCounter.checkLimit(userId);
         expect(result.allowed).toBe(true);
       }
 
       // 16th request should be blocked
-      const result = await burstCounter.checkLimit(_userId);
+      const result = await burstCounter.checkLimit(userId);
       expect(result.allowed).toBe(false);
 
       burstCounter.cleanup();
@@ -273,26 +273,26 @@ describe(_"RateCounter Service",_() => {
 
       // Make 5 requests quickly (burst limit)
       for (let i = 0; i < 5; i++) {
-        const result = await burstCounter.checkLimit(_userId);
+        const result = await burstCounter.checkLimit(userId);
         expect(result.allowed).toBe(true);
       }
 
       // 6th request should be blocked by burst limit
-      let result = await burstCounter.checkLimit(_userId);
+      let result = await burstCounter.checkLimit(userId);
       expect(result.allowed).toBe(false);
 
       // Wait for burst window to reset
       vi.advanceTimersByTime(5001);
 
       // Should be allowed again (within regular limit)
-      result = await burstCounter.checkLimit(_userId);
+      result = await burstCounter.checkLimit(userId);
       expect(result.allowed).toBe(true);
 
       burstCounter.cleanup();
     });
   });
 
-  describe(_"Memory management and cleanup",_() => {
+  describe("Memory management and cleanup", () => {
     it(_"should clean up expired entries",_async () => {
       const cleanupConfig: RateCounterConfig = {
         ...defaultConfig,
@@ -323,18 +323,18 @@ describe(_"RateCounter Service",_() => {
       cleanupCounter.cleanup();
     });
 
-    it(_"should handle cleanup gracefully",_() => {
+    it("should handle cleanup gracefully", () => {
       const counter = new RateCounter(defaultConfig);
 
       // Should not throw when cleaning up
-      expect(_() => counter.cleanup()).not.toThrow();
+      expect(() => counter.cleanup()).not.toThrow();
 
       // Should handle multiple cleanup calls
-      expect(_() => counter.cleanup()).not.toThrow();
+      expect(() => counter.cleanup()).not.toThrow();
     });
   });
 
-  describe(_"Edge cases and error handling",_() => {
+  describe("Edge cases and error handling", () => {
     it(_"should handle invalid user IDs",_async () => {
       expect(_async () => await rateCounter.checkLimit("")).not.toThrow();
       expect(_async () => await rateCounter.checkLimit(null as any),
@@ -343,14 +343,14 @@ describe(_"RateCounter Service",_() => {
       ).not.toThrow();
     });
 
-    it(_"should handle invalid configurations gracefully",_() => {
+    it("should handle invalid configurations gracefully", () => {
       const invalidConfig: RateCounterConfig = {
         windowSizeMs: -1000,
         maxRequests: -5,
         cleanupIntervalMs: 0,
       };
 
-      expect(_() => new RateCounter(invalidConfig)).not.toThrow();
+      expect(() => new RateCounter(invalidConfig)).not.toThrow();
 
       // Should use safe defaults
       const counter = new RateCounter(invalidConfig);
@@ -362,51 +362,51 @@ describe(_"RateCounter Service",_() => {
       const userId = "user1";
 
       // Make multiple concurrent requests
-      const promises = Array.from({ length: 5 },_() =>
-        rateCounter.checkLimit(_userId),
+      const promises = Array.from({ length: 5 }, () =>
+        rateCounter.checkLimit(userId),
       );
       const results = await Promise.all(promises);
 
       // All should be processed correctly
       expect(results).toHaveLength(5);
-      results.forEach(_(result) => {
+      results.forEach((result) => {
         expect(result).toHaveProperty("allowed");
         expect(result).toHaveProperty("remainingRequests");
         expect(result).toHaveProperty("totalRequests");
       });
 
       // Total requests should be 5
-      const info = await rateCounter.getRateLimitInfo(_userId);
+      const info = await rateCounter.getRateLimitInfo(userId);
       expect(info.totalRequests).toBe(5);
     });
 
     it(_"should handle time manipulation gracefully",_async () => {
       const userId = "user1";
 
-      await rateCounter.checkLimit(_userId);
+      await rateCounter.checkLimit(userId);
 
       // Jump backwards in time
       vi.setSystemTime(Date.now() - 100000);
 
       // Should still work correctly
-      const result = await rateCounter.checkLimit(_userId);
+      const result = await rateCounter.checkLimit(userId);
       expect(result).toHaveProperty("allowed");
 
       // Jump forward in time
       vi.setSystemTime(Date.now() + 100000);
 
-      const result2 = await rateCounter.checkLimit(_userId);
+      const result2 = await rateCounter.checkLimit(userId);
       expect(result2).toHaveProperty("allowed");
     });
   });
 
-  describe(_"Performance",_() => {
+  describe("Performance", () => {
     it(_"should handle large numbers of users efficiently",_async () => {
       const startTime = Date.now();
       const userCount = 1000;
 
       // Create requests for many users
-      const promises = Array.from({ length: userCount },_(_,_i) =>
+      const promises = Array.from({ length: userCount },(, i) =>
         rateCounter.checkLimit(`user${i}`),
       );
 
@@ -433,7 +433,7 @@ describe(_"RateCounter Service",_() => {
     });
   });
 
-  describe(_"Real-world scenarios",_() => {
+  describe("Real-world scenarios", () => {
     it("should implement LGPD-compliant rate limiting (10/5min, 30/hour)", async () => {
       const userId = "patient1";
       const fiveMinLimit: RateLimit = {
@@ -489,7 +489,7 @@ describe(_"RateCounter Service",_() => {
 
       // Should allow more requests for emergency scenarios
       for (let i = 0; i < 50; i++) {
-        const result = await emergencyCounter.checkLimit(_userId);
+        const result = await emergencyCounter.checkLimit(userId);
         expect(result.allowed).toBe(true);
       }
 

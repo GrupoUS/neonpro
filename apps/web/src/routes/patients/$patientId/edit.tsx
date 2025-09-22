@@ -105,7 +105,7 @@ export const Route = createFileRoute('/patients/$patientId/edit')({
       <div className='animate-pulse space-y-6'>
         <div className='h-8 bg-muted rounded w-1/3'></div>
         <div className='space-y-4'>
-          {Array.from({ length: 6 }).map(_(_,_i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className='space-y-2'>
               <div className='h-4 bg-muted rounded w-1/4'></div>
               <div className='h-10 bg-muted rounded'></div>
@@ -117,7 +117,7 @@ export const Route = createFileRoute('/patients/$patientId/edit')({
   ),
 
   // Error boundary
-  errorComponent: (_{ error,_reset }) => (
+  errorComponent: ({ error, reset }) => (
     <div className='container mx-auto p-4 md:p-6'>
       <Card className='max-w-lg mx-auto text-center'>
         <CardHeader>
@@ -182,12 +182,12 @@ function PatientEditPage() {
 
   // Watch for changes to show unsaved changes warning
   const watchedFields = watch();
-  useEffect(_() => {
+  useEffect(() => {
     setHasUnsavedChanges(isDirty);
   }, [isDirty]);
 
   // Initialize form when patient data is loaded
-  useEffect(_() => {
+  useEffect(() => {
     if (patient) {
       resetForm({
         fullName: patient.fullName || '',
@@ -269,7 +269,7 @@ function PatientEditPage() {
         <div className='animate-pulse'>
           <div className='h-8 bg-muted rounded w-1/3 mb-4'></div>
           <div className='space-y-4'>
-            {Array.from({ length: 6 }).map(_(_,_i) => (
+            {Array.from({ length: 6 }).map((_, i) => (
               <div key={i} className='h-12 bg-muted rounded'></div>
             ))}
           </div>

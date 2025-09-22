@@ -65,7 +65,7 @@ export function AccessibilityTester({
     isTesting,
     healthcareCompliance,
     testAccessibility,
-    clearResults: _clearResults,
+    clearResults: clearResults,
   } = useAccessibilityTesting(undefined, {
     enabled,
     runOnMount: autoTest,
@@ -121,7 +121,7 @@ export function AccessibilityTester({
 
   if (!enabled) return null;
 
-  return (_<>
+  return (<>
       {/* Toggle Button */}
       <div
         className={`fixed z-50 ${positionClasses[position]}`}
@@ -244,7 +244,7 @@ export function AccessibilityTester({
                   },
                   { id: 'contrast', label: 'Colors', icon: Palette },
                   { id: 'keyboard', label: 'Keyboard', icon: Keyboard },
-                ].map(_({ id,_label, icon: Icon }) => (
+                ].map(({ id,label, icon: Icon }) => (
                   <Button
                     key={id}
                     variant={activeTab === id ? 'default' : 'ghost'}
@@ -553,7 +553,7 @@ export function AccessibilityTester({
       )}
 
       {/* Backdrop */}
-      {isVisible && (_<div
+      {isVisible && (<div
           className='fixed inset-0 bg-black bg-opacity-25 z-30'
           onClick={() => setIsVisible(false)}
           aria-hidden='true'

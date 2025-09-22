@@ -173,12 +173,12 @@ async function selectOptimalProvider(
 
     case 'prediction':
       // Prefer lower cost for prediction tasks
-      return availableProviders.sort(_(a,_b) => a.costPerToken - b.costPerToken,
+      return availableProviders.sort((a,_b) => a.costPerToken - b.costPerToken,
       )[0];
 
     case 'analysis':
       // Prefer higher quality for analysis
-      return availableProviders.sort(_(a,_b) => b.healthScore - a.healthScore,
+      return availableProviders.sort((a,_b) => b.healthScore - a.healthScore,
       )[0];
 
     default:
@@ -280,7 +280,7 @@ function anonymizePatientDataForAI(data: any): any {
     'gender',
   ];
 
-  return Object.keys(anonymized).reduce(_(acc,_key) => {
+  return Object.keys(anonymized).reduce((acc,_key) => {
     if (allowedFields.includes(key)) {
       acc[key] = anonymized[key];
     }
@@ -294,7 +294,7 @@ function anonymizePatientDataForAI(data: any): any {
 function translateMedicalTerms(text: string): string {
   let translatedText = text;
 
-  Object.entries(MEDICAL_TERMINOLOGY_PT).forEach(_([english,_portuguese]) => {
+  Object.entries(MEDICAL_TERMINOLOGY_PT).forEach(([english,_portuguese]) => {
     const regex = new RegExp(`\\b${english}\\b`, 'gi');
     translatedText = translatedText.replace(regex, portuguese);
   });
@@ -376,7 +376,7 @@ export const aiRouter = router({
             anvisaCompliant: true,
           },
         };
-      } catch (_error) {
+      } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to process AI chat request',
@@ -502,7 +502,7 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
             auditTrail: true,
           },
         };
-      } catch (_error) {
+      } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to predict no-show risk',
@@ -605,7 +605,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
             auditTrail: true,
           },
         };
-      } catch (_error) {
+      } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to generate healthcare insights',
@@ -758,7 +758,7 @@ Forneça análise de risco e recomendações.`;
             cfm_compliant: true,
           },
         };
-      } catch (_error) {
+      } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to analyze aesthetic risk',
@@ -843,7 +843,7 @@ Forneça análise de risco e recomendações.`;
             fallback_available: true,
           },
         };
-      } catch (_error) {
+      } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to route AI provider',
@@ -899,8 +899,8 @@ Forneça análise de risco e recomendações.`;
 
               const result = (await Promise.race([
                 callAIProvider(provider, JSON.stringify(request.data)),
-                new Promise(_(_,_reject) =>
-                  setTimeout(_() => reject(new Error('Timeout')), timeoutMs)
+                new Promise((, reject) =>
+                  setTimeout(() => reject(new Error('Timeout')), timeoutMs)
                 ),
               ])) as any;
 
@@ -911,7 +911,7 @@ Forneça análise de risco e recomendações.`;
                 provider: provider.name,
                 cost: result.cost,
               };
-            } catch (_error) {
+            } catch (error) {
               return {
                 id: request.id,
                 status: 'error',
@@ -953,7 +953,7 @@ Forneça análise de risco e recomendações.`;
           summary: {
             successful: results.filter(r => r.status === 'success').length,
             failed: results.filter(r => r.status === 'error').length,
-            total_cost: results.reduce(_(sum,_r) => sum + (r.cost || 0), 0),
+            total_cost: results.reduce((sum,_r) => sum + (r.cost || 0), 0),
           },
           compliance: {
             lgpd_compliant: true,
@@ -961,7 +961,7 @@ Forneça análise de risco e recomendações.`;
             batch_processed: true,
           },
         };
-      } catch (_error) {
+      } catch (error) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to process batch analysis',

@@ -129,7 +129,7 @@ class HealthcareCacheKeyGenerator implements CacheKeyGenerator {
       content: piiSanitizer.sanitize(msg.content),
     }));
 
-    const contextHash = this.hashContext(_context);
+    const contextHash = this.hashContext(context);
     const messagesHash = this.hashMessages(normalizedMessages);
 
     return `healthcare-ai-chat:${contextHash}:${messagesHash}`;
@@ -287,7 +287,7 @@ app.post(
                   controller.enqueue(encoder.encode(chunk));
                 }
                 controller.close();
-              } catch (_error) {
+              } catch (error) {
                 controller.error(error);
               }
             },
@@ -332,7 +332,7 @@ app.post(
             try {
               controller.enqueue(encoder.encode(mockResponse.content));
               controller.close();
-            } catch (_error) {
+            } catch (error) {
               controller.error(error);
             }
           },
@@ -373,7 +373,7 @@ app.post(
               controller.enqueue(encoder.encode(chunk));
             }
             controller.close();
-          } catch (_error) {
+          } catch (error) {
             console.error('Streaming error:', error);
             controller.error(error);
           }
@@ -429,7 +429,7 @@ app.post(
           'X-Chat-Started-At': new Date().toISOString(),
         },
       });
-    } catch (_error) {
+    } catch (error) {
       const ms = endTimerMs(t0);
       logMetric({ route: '/v1/ai-chat/stream', ms, ok: false });
 
@@ -479,7 +479,7 @@ app.get('/health', c => {
     status: 'ok',
     _service: 'neonpro-ai-chat-enhanced',
     timestamp: new Date().toISOString(),
-    providers: availableProviders.reduce(_(acc,_provider) => {
+    providers: availableProviders.reduce((acc,_provider) => {
         acc[provider] = 'available';
         return acc;
       },

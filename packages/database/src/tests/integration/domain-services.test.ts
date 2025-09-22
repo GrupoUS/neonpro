@@ -62,17 +62,17 @@ const createMockSupabaseClient = () => {
   } as any;
 };
 
-describe(_"Domain Services Integration Tests",_() => {
+describe("Domain Services Integration Tests", () => {
   let container: RepositoryContainer;
   let consentService: ConsentDomainService;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     const mockSupabase = createMockSupabaseClient();
     container = RepositoryContainer.initialize(mockSupabase);
     consentService = container.getConsentService();
   });
 
-  describe(_"ConsentDomainService",_() => {
+  describe("ConsentDomainService", () => {
     it(_"should create consent with proper validation",_async () => {
       const _request: ConsentRequest = {
         patientId: "test-patient-id",
@@ -135,35 +135,35 @@ describe(_"Domain Services Integration Tests",_() => {
     });
   });
 
-  describe(_"Domain Service Benefits",_() => {
-    it(_"should encapsulate business logic",_() => {
+  describe("Domain Service Benefits", () => {
+    it("should encapsulate business logic", () => {
       expect(consentService).toBeDefined();
       expect(typeof consentService.createConsent).toBe("function");
       expect(typeof consentService.checkCompliance).toBe("function");
       expect(typeof consentService.revokeConsent).toBe("function");
     });
 
-    it(_"should provide domain-driven operations",_() => {
+    it("should provide domain-driven operations", () => {
       // Domain services should operate on domain concepts
       expect(consentService.createConsent).toBeDefined();
       expect(consentService.checkCompliance).toBeDefined();
     });
 
-    it(_"should be testable with dependency injection",_() => {
+    it("should be testable with dependency injection", () => {
       // The fact that we can inject a mock repository
       // demonstrates the benefit of the architecture
       expect(consentService).toBeDefined();
     });
   });
 
-  describe(_"Cross-Service Integration",_() => {
+  describe("Cross-Service Integration", () => {
     it(_"should work with audit service integration",_async () => {
       const auditService = container.getAuditService();
       expect(auditService).toBeDefined();
       expect(typeof auditService.createAuditLog).toBe("function");
     });
 
-    it(_"should provide consistent service interfaces",_() => {
+    it("should provide consistent service interfaces", () => {
       const services = container.getServices();
       expect(services).toHaveProperty("audit");
       expect(services).toHaveProperty("consent");

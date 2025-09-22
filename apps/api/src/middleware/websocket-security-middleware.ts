@@ -79,7 +79,7 @@ export class WebSocketSecurityMiddleware {
     reason?: string;
     connectionInfo?: WebSocketConnectionInfo;
   }> {
-    const ip = this.getClientIP(_request);
+    const ip = this.getClientIP(request);
     const userAgent = request.headers['user-agent'] || '';
     const origin = request.headers.origin || '';
     const connectionId = this.generateConnectionId();
@@ -241,14 +241,14 @@ export class WebSocketSecurityMiddleware {
     }
 
     // Check if user already has too many connections
-    if (this.config.enableRateLimiting && !this.checkUserConnectionLimits(_userId)) {
+    if (this.config.enableRateLimiting && !this.checkUserConnectionLimits(userId)) {
       this.logSecurityEvent({
         type: 'rate_limit',
         severity: 'high',
         message: 'User connection limit exceeded',
         ip: connection.ip,
         userId,
-        details: { connectionId, currentConnections: this.userConnections.get(_userId)?.size || 0 },
+        details: { connectionId, currentConnections: this.userConnections.get(userId)?.size || 0 },
       });
       return { success: false, reason: 'Connection limit exceeded' };
     }
@@ -380,10 +380,10 @@ export class WebSocketSecurityMiddleware {
    * Track user connection
    */
   private trackUserConnection(_userId: string, connectionId: string): void {
-    if (!this.userConnections.has(_userId)) {
+    if (!this.userConnections.has(userId)) {
       this.userConnections.set(userId, new Set());
     }
-    this.userConnections.get(_userId)!.add(connectionId);
+    this.userConnections.get(userId)!.add(connectionId);
   }
 
   /**
@@ -398,7 +398,7 @@ export class WebSocketSecurityMiddleware {
    * Check user connection limits
    */
   private checkUserConnectionLimits(_userId: string): boolean {
-    const userConnections = this.userConnections.get(_userId);
+    const userConnections = this.userConnections.get(userId);
     return !userConnections || userConnections.size < this.config.maxConnectionsPerUser;
   }
 
@@ -406,8 +406,8 @@ export class WebSocketSecurityMiddleware {
    * Check message rate for connection
    */
   private checkMessageRate(connectionId: string): boolean {
-    const _now = Date.now();
-    const _windowMs = 60000; // 1 minute
+    const now = Date.now();
+    const windowMs = 60000; // 1 minute
 
     if (!this.messageTimestamps.has(connectionId)) {
       this.messageTimestamps.set(connectionId, []);
@@ -545,7 +545,7 @@ export class WebSocketSecurityMiddleware {
    */
   private startSecurityMonitoring(): void {
     // Cleanup inactive connections
-    this.cleanupInterval = setInterval(_() => {
+    this.cleanupInterval = setInterval(() => {
       this.cleanupInactiveConnections();
     }, 60000); // Every minute
   }
@@ -554,7 +554,7 @@ export class WebSocketSecurityMiddleware {
    * Cleanup inactive connections
    */
   private cleanupInactiveConnections(): void {
-    const _now = Date.now();
+    const now = Date.now();
     const timeout = this.config.connectionTimeout;
     let cleanedCount = 0;
 
@@ -587,7 +587,7 @@ export class WebSocketSecurityMiddleware {
       event => Date.now() - event.timestamp < 3600000, // Last hour
     );
 
-    const connectionDistribution = recentEvents.reduce(_(acc,_event) => {
+    const connectionDistribution = recentEvents.reduce((acc,_event) => {
       if (event.type === 'connection_attempt') {
         acc[event.details.allowed ? 'allowed' : 'blocked']++;
       }
@@ -657,4 +657,4 @@ export class WebSocketSecurityMiddleware {
 }
 
 // Export singleton instance
-export const _websocketSecurityMiddleware = new WebSocketSecurityMiddleware();
+export const websocketSecurityMiddleware = new WebSocketSecurityMiddleware();

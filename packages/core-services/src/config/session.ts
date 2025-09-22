@@ -37,7 +37,7 @@ export class MemorySessionStore implements SessionStore {
   private cleanupInterval: NodeJS.Timeout;
 
   constructor(cleanupIntervalMs = 60000) {
-    this.cleanupInterval = setInterval(_() => {
+    this.cleanupInterval = setInterval(() => {
       void this.cleanup();
     }, cleanupIntervalMs);
   }
@@ -63,7 +63,7 @@ export class MemorySessionStore implements SessionStore {
   }
 
   async cleanup(): Promise<void> {
-    const _now = new Date();
+    const now = new Date();
     for (const [sessionId, session] of this.sessions.entries()) {
       if (new Date(session.expiresAt) < now) {
         this.sessions.delete(sessionId);
@@ -98,7 +98,7 @@ export class SessionManager {
     metadata?: Record<string, any>;
   }): Promise<{ sessionId: string; session: UserSession }> {
     const sessionId = this.generateSessionId();
-    const _now = new Date();
+    const now = new Date();
     const expiresAt = new Date(now.getTime() + this.config.maxAge * 1000);
 
     const session: UserSession = {
@@ -142,7 +142,7 @@ export class SessionManager {
     const session = await this.store.get(sessionId);
     if (!session) return null;
 
-    const _now = new Date();
+    const now = new Date();
     const expiresAt = new Date(now.getTime() + this.config.maxAge * 1000);
 
     const renewedSession: UserSession = {
@@ -160,7 +160,7 @@ export class SessionManager {
   }
 
   shouldRenewSession(session: UserSession): boolean {
-    const _now = new Date();
+    const now = new Date();
     const expiresAt = new Date(session.expiresAt);
     const timeRemaining = (expiresAt.getTime() - now.getTime()) / 1000;
     return timeRemaining < this.config.renewThreshold;
@@ -271,7 +271,7 @@ export function sessionMiddleware(options?: {
 
     if (session && options?.permissions && options.permissions.length > 0) {
       const userPermissions = session.permissions || [];
-      const hasAllPermissions = options.permissions.every(_(permission) =>
+      const hasAllPermissions = options.permissions.every((permission) =>
         userPermissions.includes(permission),
       );
 
@@ -298,7 +298,7 @@ export function sessionMiddleware(options?: {
 }
 
 function getCookieValue(cookieHeader: string, name: string): string | null {
-  const cookies = cookieHeader.split(";").map(_(cookie) => cookie.trim());
+  const cookies = cookieHeader.split(";").map((cookie) => cookie.trim());
   for (const cookie of cookies) {
     const [cookieName, cookieValue] = cookie.split("=");
     if (cookieName === name) {

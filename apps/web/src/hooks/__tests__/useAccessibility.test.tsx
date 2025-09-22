@@ -22,7 +22,7 @@ const mockScrollIntoView = vi.fn();
 const mockAddEventListener = vi.fn();
 const mockRemoveEventListener = vi.fn();
 
-beforeEach(_() => {
+beforeEach(() => {
   // Mock DOM elements
   Object.defineProperty(document, 'activeElement', {
     value: { focus: mockFocus },
@@ -81,60 +81,57 @@ beforeEach(_() => {
   vi.useFakeTimers();
 });
 
-afterEach(_() => {
+afterEach(() => {
   vi.clearAllMocks();
   vi.useRealTimers();
 });
 
-describe(_'useFocusTrap',_() => {
-  it(_'should create focus trap when active',_() => {
-    const { result } = renderHook(_() => useFocusTrap(true));
+describe(('useFocusTrap', () => {
+  it(('should create focus trap when active', () => {
+    const { result } = renderHook(() => useFocusTrap(true));
 
     expect(result.current).toBeDefined();
     expect(result.current.current).toBeNull(); // Initially null until ref is attached
   });
 
-  it(_'should not create focus trap when inactive',_() => {
-    const { result } = renderHook(_() => useFocusTrap(false));
+  it(('should not create focus trap when inactive', () => {
+    const { result } = renderHook(() => useFocusTrap(false));
 
     expect(result.current).toBeDefined();
     expect(result.current.current).toBeNull();
   });
 });
 
-describe(_'useKeyboardNavigation',_() => {
+describe(('useKeyboardNavigation', () => {
   const mockItems = ['item1', 'item2', 'item3'];
   const mockOnSelect = vi.fn();
 
-  beforeEach(_() => {
+  beforeEach(() => {
     mockOnSelect.mockClear();
   });
 
-  it(_'should initialize with correct default values',_() => {
-    const { result } = renderHook(_() =>
-      useKeyboardNavigation(mockItems, { onSelect: mockOnSelect })
+  it(('should initialize with correct default values', () => {
+    const { result } = renderHook(() => useKeyboardNavigation(mockItems, { onSelect: mockOnSelect })
     );
 
     expect(result.current.activeIndex).toBe(0);
   });
 
-  it(_'should handle keyboard navigation',_() => {
-    const { result } = renderHook(_() =>
-      useKeyboardNavigation(mockItems, { onSelect: mockOnSelect })
+  it(('should handle keyboard navigation', () => {
+    const { result } = renderHook(() => useKeyboardNavigation(mockItems, { onSelect: mockOnSelect })
     );
 
     const mockEvent = new KeyboardEvent('keydown', { key: 'ArrowDown' });
 
-    act(_() => {
+    act(() => {
       result.current.handleKeyDown(mockEvent);
     });
 
     expect(result.current.activeIndex).toBe(1);
   });
 
-  it(_'should handle selection with Enter key',_() => {
-    const { result } = renderHook(_() =>
-      useKeyboardNavigation(mockItems, { onSelect: mockOnSelect })
+  it(('should handle selection with Enter key', () => {
+    const { result } = renderHook(() => useKeyboardNavigation(mockItems, { onSelect: mockOnSelect })
     );
 
     const mockEvent = new KeyboardEvent('keydown', { key: 'Enter' });
@@ -143,16 +140,15 @@ describe(_'useKeyboardNavigation',_() => {
       writable: true,
     });
 
-    act(_() => {
+    act(() => {
       result.current.handleKeyDown(mockEvent);
     });
 
     expect(mockOnSelect).toHaveBeenCalledWith('item1', 0);
   });
 
-  it(_'should provide correct item props',_() => {
-    const { result } = renderHook(_() =>
-      useKeyboardNavigation(mockItems, { onSelect: mockOnSelect })
+  it(('should provide correct item props', () => {
+    const { result } = renderHook(() => useKeyboardNavigation(mockItems, { onSelect: mockOnSelect })
     );
 
     const itemProps = result.current.getItemProps(1);
@@ -164,9 +160,9 @@ describe(_'useKeyboardNavigation',_() => {
   });
 });
 
-describe(_'useScreenReaderAnnouncement',_() => {
-  it(_'should provide announcement functions',_() => {
-    const { result } = renderHook(_() => useScreenReaderAnnouncement());
+describe(('useScreenReaderAnnouncement', () => {
+  it(('should provide announcement functions', () => {
+    const { result } = renderHook(() => useScreenReaderAnnouncement());
 
     expect(typeof result.current.announce).toBe('function');
     expect(typeof result.current.announceHealthcareData).toBe('function');
@@ -174,10 +170,10 @@ describe(_'useScreenReaderAnnouncement',_() => {
     expect(typeof result.current.announceFormSuccess).toBe('function');
   });
 
-  it(_'should announce healthcare data correctly',_() => {
-    const { result } = renderHook(_() => useScreenReaderAnnouncement());
+  it(('should announce healthcare data correctly', () => {
+    const { result } = renderHook(() => useScreenReaderAnnouncement());
 
-    act(_() => {
+    act(() => {
       result.current.announceHealthcareData(
         'Pressão arterial',
         '120/80',
@@ -188,10 +184,10 @@ describe(_'useScreenReaderAnnouncement',_() => {
     expect(document.body.appendChild).toHaveBeenCalled();
   });
 
-  it(_'should announce form errors with assertive priority',_() => {
-    const { result } = renderHook(_() => useScreenReaderAnnouncement());
+  it(('should announce form errors with assertive priority', () => {
+    const { result } = renderHook(() => useScreenReaderAnnouncement());
 
-    act(_() => {
+    act(() => {
       result.current.announceFormError('email', 'Email inválido');
     });
 
@@ -199,18 +195,18 @@ describe(_'useScreenReaderAnnouncement',_() => {
   });
 });
 
-describe(_'useLiveRegion',_() => {
-  it(_'should initialize with empty message',_() => {
-    const { result } = renderHook(_() => useLiveRegion());
+describe(('useLiveRegion', () => {
+  it(('should initialize with empty message', () => {
+    const { result } = renderHook(() => useLiveRegion());
 
     expect(result.current.message).toBe('');
     expect(result.current.liveRegionProps['aria-live']).toBe('polite');
   });
 
-  it(_'should update message when announced',_() => {
-    const { result } = renderHook(_() => useLiveRegion());
+  it(('should update message when announced', () => {
+    const { result } = renderHook(() => useLiveRegion());
 
-    act(_() => {
+    act(() => {
       result.current.announce('Test message', 'assertive');
     });
 
@@ -218,52 +214,51 @@ describe(_'useLiveRegion',_() => {
     expect(result.current.liveRegionProps['aria-live']).toBe('assertive');
   });
 
-  it(_'should clear message after timeout',_async () => {
-    const { result } = renderHook(_() => useLiveRegion());
+  it(_'should clear message after timeout',async () => {
+    const { result } = renderHook(() => useLiveRegion());
 
-    act(_() => {
+    act(() => {
       result.current.announce('Test message');
     });
 
     expect(result.current.message).toBe('Test message');
 
-    act(_() => {
+    act(() => {
       vi.advanceTimersByTime(1000);
     });
 
-    await waitFor(_() => {
+    await waitFor(() => {
       expect(result.current.message).toBe('');
     });
   });
 });
 
-describe(_'useAccessibleField',_() => {
-  it(_'should initialize with default values',_() => {
-    const { result } = renderHook(_() => useAccessibleField('testField'));
+describe(('useAccessibleField', () => {
+  it(('should initialize with default values', () => {
+    const { result } = renderHook(() => useAccessibleField('testField'));
 
     expect(result.current.value).toBe('');
     expect(result.current.error).toBeNull();
     expect(result.current.touched).toBe(false);
   });
 
-  it(_'should validate required fields',_() => {
-    const { result } = renderHook(_() => useAccessibleField('testField', { required: true }));
+  it(('should validate required fields', () => {
+    const { result } = renderHook(() => useAccessibleField('testField', { required: true }));
 
-    act(_() => {
+    act(() => {
       const isValid = result.current.validateField();
       expect(isValid).toBe(false);
       expect(result.current.error).toBe('Este campo é obrigatório');
     });
   });
 
-  it(_'should use custom validation',_() => {
+  it(('should use custom validation', () => {
     const customValidate = (value: string) => value.length < 3 ? 'Mínimo 3 caracteres' : null;
 
-    const { result } = renderHook(_() =>
-      useAccessibleField('testField', { validate: customValidate })
+    const { result } = renderHook(() => useAccessibleField('testField', { validate: customValidate })
     );
 
-    act(_() => {
+    act(() => {
       result.current.setValue('ab');
       const isValid = result.current.validateField();
       expect(isValid).toBe(false);
@@ -271,8 +266,8 @@ describe(_'useAccessibleField',_() => {
     });
   });
 
-  it(_'should provide correct field props',_() => {
-    const { result } = renderHook(_() => useAccessibleField('testField', { required: true }));
+  it(('should provide correct field props', () => {
+    const { result } = renderHook(() => useAccessibleField('testField', { required: true }));
 
     const { fieldProps } = result.current;
 
@@ -282,8 +277,8 @@ describe(_'useAccessibleField',_() => {
   });
 });
 
-describe(_'useAccessibilityPreferences',_() => {
-  it(_'should detect user preferences',_() => {
+describe(('useAccessibilityPreferences', () => {
+  it(('should detect user preferences', () => {
     // Mock reduced motion preference
     window.matchMedia = vi.fn().mockImplementation(query => ({
       matches: query === '(prefers-reduced-motion: reduce)',
@@ -296,17 +291,17 @@ describe(_'useAccessibilityPreferences',_() => {
       dispatchEvent: vi.fn(),
     }));
 
-    const { result } = renderHook(_() => useAccessibilityPreferences());
+    const { result } = renderHook(() => useAccessibilityPreferences());
 
     expect(result.current.prefersReducedMotion).toBe(true);
     expect(result.current.prefersHighContrast).toBe(false);
   });
 
-  it(_'should listen for preference changes',_() => {
+  it(('should listen for preference changes', () => {
     const mockAddEventListener = vi.fn();
     const mockRemoveEventListener = vi.fn();
 
-    window.matchMedia = vi.fn().mockImplementation(_() => ({
+    window.matchMedia = vi.fn().mockImplementation(() => ({
       matches: false,
       media: '',
       onchange: null,
@@ -317,7 +312,7 @@ describe(_'useAccessibilityPreferences',_() => {
       dispatchEvent: vi.fn(),
     }));
 
-    const { unmount } = renderHook(_() => useAccessibilityPreferences());
+    const { unmount } = renderHook(() => useAccessibilityPreferences());
 
     expect(mockAddEventListener).toHaveBeenCalledTimes(2); // For both queries
 
@@ -327,9 +322,9 @@ describe(_'useAccessibilityPreferences',_() => {
   });
 });
 
-describe(_'useSkipLinks',_() => {
-  it(_'should provide skip links and focus function',_() => {
-    const { result } = renderHook(_() => useSkipLinks());
+describe(('useSkipLinks', () => {
+  it(('should provide skip links and focus function', () => {
+    const { result } = renderHook(() => useSkipLinks());
 
     expect(result.current.skipLinks).toHaveLength(3);
     expect(result.current.skipLinks[0].href).toBe('#main-content');
@@ -339,10 +334,10 @@ describe(_'useSkipLinks',_() => {
     expect(typeof result.current.focusMainContent).toBe('function');
   });
 
-  it(_'should focus main content when called',_() => {
-    const { result } = renderHook(_() => useSkipLinks());
+  it(('should focus main content when called', () => {
+    const { result } = renderHook(() => useSkipLinks());
 
-    act(_() => {
+    act(() => {
       result.current.focusMainContent();
     });
 
@@ -351,7 +346,7 @@ describe(_'useSkipLinks',_() => {
   });
 });
 
-describe(_'useAccessibleTable',_() => {
+describe(('useAccessibleTable', () => {
   const mockData = [
     { id: 1, name: 'João', age: 30 },
     { id: 2, name: 'Maria', age: 25 },
@@ -363,18 +358,18 @@ describe(_'useAccessibleTable',_() => {
     { key: 'age' as const, label: 'Idade', sortable: true },
   ];
 
-  it(_'should initialize with correct default values',_() => {
-    const { result } = renderHook(_() => useAccessibleTable(mockData, mockColumns));
+  it(('should initialize with correct default values', () => {
+    const { result } = renderHook(() => useAccessibleTable(mockData, mockColumns));
 
     expect(result.current.sortColumn).toBeNull();
     expect(result.current.sortDirection).toBe('asc');
     expect(result.current.sortedData).toEqual(mockData);
   });
 
-  it(_'should sort data when column is clicked',_() => {
-    const { result } = renderHook(_() => useAccessibleTable(mockData, mockColumns));
+  it(('should sort data when column is clicked', () => {
+    const { result } = renderHook(() => useAccessibleTable(mockData, mockColumns));
 
-    act(_() => {
+    act(() => {
       result.current.handleSort('age');
     });
 
@@ -383,14 +378,14 @@ describe(_'useAccessibleTable',_() => {
     expect(result.current.sortedData[0].age).toBe(25); // Maria should be first
   });
 
-  it(_'should reverse sort direction when same column is clicked',_() => {
-    const { result } = renderHook(_() => useAccessibleTable(mockData, mockColumns));
+  it(('should reverse sort direction when same column is clicked', () => {
+    const { result } = renderHook(() => useAccessibleTable(mockData, mockColumns));
 
-    act(_() => {
+    act(() => {
       result.current.handleSort('age');
     });
 
-    act(_() => {
+    act(() => {
       result.current.handleSort('age');
     });
 
@@ -398,8 +393,8 @@ describe(_'useAccessibleTable',_() => {
     expect(result.current.sortedData[0].age).toBe(35); // Pedro should be first
   });
 
-  it(_'should provide correct column header props',_() => {
-    const { result } = renderHook(_() => useAccessibleTable(mockData, mockColumns));
+  it(('should provide correct column header props', () => {
+    const { result } = renderHook(() => useAccessibleTable(mockData, mockColumns));
 
     const headerProps = result.current.getColumnHeaderProps(mockColumns[0]);
 
@@ -410,8 +405,8 @@ describe(_'useAccessibleTable',_() => {
     expect(typeof headerProps.onClick).toBe('function');
   });
 
-  it(_'should create accessible table caption',_() => {
-    const { result } = renderHook(_() => useAccessibleTable(mockData, mockColumns));
+  it(('should create accessible table caption', () => {
+    const { result } = renderHook(() => useAccessibleTable(mockData, mockColumns));
 
     expect(result.current.caption).toBe(
       'Tabela de dados. Tabela com 3 linhas e 2 colunas.',

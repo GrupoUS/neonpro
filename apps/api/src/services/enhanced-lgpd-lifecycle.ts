@@ -511,7 +511,7 @@ export class EnhancedLGPDLifecycleService {
 
           this.processingRecords.set(record.id, record);
           anonymizedRecords++;
-        } catch (_error) {
+        } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
           errors.push(
             `Failed to anonymize record ${record.id}: ${errorMessage}`,
@@ -533,7 +533,7 @@ export class EnhancedLGPDLifecycleService {
         anonymizedRecords,
         errors,
       };
-    } catch (_error) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       errors.push(`Anonymization process failed: ${errorMessage}`);
       return {
@@ -560,7 +560,7 @@ export class EnhancedLGPDLifecycleService {
       errors: [] as string[],
     };
 
-    const _now = new Date();
+    const now = new Date();
 
     try {
       // Process all data processing records
@@ -606,14 +606,14 @@ export class EnhancedLGPDLifecycleService {
               results.notificationsSent++;
             }
           }
-        } catch (_error) {
+        } catch (error) {
           const errorMessage = error instanceof Error ? error.message : String(error);
           results.errors.push(
             `Failed to process record ${recordId}: ${errorMessage}`,
           );
         }
       }
-    } catch (_error) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       results.errors.push(`Retention enforcement failed: ${errorMessage}`);
     }
@@ -642,21 +642,21 @@ export class EnhancedLGPDLifecycleService {
       record => !patientId || record.patientId === patientId,
     );
 
-    const recordsByStage = records.reduce(_(acc,_record) => {
+    const recordsByStage = records.reduce((acc,_record) => {
         acc[record.lifecycleStage] = (acc[record.lifecycleStage] || 0) + 1;
         return acc;
       },
       {} as Record<DataLifecycleStage, number>,
     );
 
-    const recordsByCategory = records.reduce(_(acc,_record) => {
+    const recordsByCategory = records.reduce((acc,_record) => {
         acc[record.dataCategory] = (acc[record.dataCategory] || 0) + 1;
         return acc;
       },
       {} as Record<DataCategory, number>,
     );
 
-    const _now = new Date();
+    const now = new Date();
     const thirtyDaysFromNow = new Date(
       now.getTime() + 30 * 24 * 60 * 60 * 1000,
     );

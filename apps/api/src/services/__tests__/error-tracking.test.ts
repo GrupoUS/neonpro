@@ -34,11 +34,11 @@ vi.mock(_'@opentelemetry/api',_() => ({
 }));
 
 describe(_'HealthcareErrorTracker',_() => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     // Reset metrics
     errorTracker['resetMetrics']();
   });

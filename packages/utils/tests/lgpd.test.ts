@@ -15,21 +15,21 @@ import {
   type PIIDetectionResult,
 } from "../src/lgpd";
 
-describe(_"LGPD Compliance Utilities",_() => {
-  describe(_"CPF redaction and validation",_() => {
-    it(_"should redact valid CPF formats",_() => {
+describe("LGPD Compliance Utilities", () => {
+  describe("CPF redaction and validation", () => {
+    it("should redact valid CPF formats", () => {
       expect(redactCPF("123.456.789-01")).toBe("***.***.***-**");
       expect(redactCPF("12345678901")).toBe("***********");
       expect(redactCPF("CPF: 123.456.789-01")).toBe("CPF: ***.***.***-**");
     });
 
-    it(_"should not redact invalid CPF patterns",_() => {
+    it("should not redact invalid CPF patterns", () => {
       expect(redactCPF("123.456.789")).toBe("123.456.789");
       expect(redactCPF("12345")).toBe("12345");
       expect(redactCPF("abc.def.ghi-jk")).toBe("abc.def.ghi-jk");
     });
 
-    it(_"should validate CPF correctly",_() => {
+    it("should validate CPF correctly", () => {
       // Valid CPFs
       expect(validateCPF("11144477735")).toBe(true);
       expect(validateCPF("111.444.777-35")).toBe(true);
@@ -41,7 +41,7 @@ describe(_"LGPD Compliance Utilities",_() => {
       expect(validateCPF("invalid")).toBe(false);
     });
 
-    it(_"should handle edge cases for CPF",_() => {
+    it("should handle edge cases for CPF", () => {
       expect(redactCPF("")).toBe("");
       expect(redactCPF("123")).toBe("123");
       expect(validateCPF("")).toBe(false);
@@ -50,8 +50,8 @@ describe(_"LGPD Compliance Utilities",_() => {
     });
   });
 
-  describe(_"CNPJ redaction and validation",_() => {
-    it(_"should redact valid CNPJ formats",_() => {
+  describe("CNPJ redaction and validation", () => {
+    it("should redact valid CNPJ formats", () => {
       expect(redactCNPJ("12.345.678/0001-95")).toBe("**.***.***/****-**");
       expect(redactCNPJ("12345678000195")).toBe("**************");
       expect(redactCNPJ("CNPJ: 12.345.678/0001-95")).toBe(
@@ -59,12 +59,12 @@ describe(_"LGPD Compliance Utilities",_() => {
       );
     });
 
-    it(_"should not redact invalid CNPJ patterns",_() => {
+    it("should not redact invalid CNPJ patterns", () => {
       expect(redactCNPJ("12.345.678/0001")).toBe("12.345.678/0001");
       expect(redactCNPJ("123456789")).toBe("123456789");
     });
 
-    it(_"should validate CNPJ correctly",_() => {
+    it("should validate CNPJ correctly", () => {
       // Valid CNPJ
       expect(validateCNPJ("11222333000181")).toBe(true);
       expect(validateCNPJ("11.222.333/0001-81")).toBe(true);
@@ -76,8 +76,8 @@ describe(_"LGPD Compliance Utilities",_() => {
     });
   });
 
-  describe(_"Email redaction",_() => {
-    it(_"should redact email addresses",_() => {
+  describe("Email redaction", () => {
+    it("should redact email addresses", () => {
       expect(redactEmail("user@example.com")).toBe("u***@e******.com");
       expect(redactEmail("john.doe@company.com.br")).toBe(
         "j***.***@c******.com.br",
@@ -87,41 +87,41 @@ describe(_"LGPD Compliance Utilities",_() => {
       );
     });
 
-    it(_"should handle complex email patterns",_() => {
+    it("should handle complex email patterns", () => {
       expect(redactEmail("user+tag@example.com")).toBe("u***@e******.com");
       expect(redactEmail("user.name+tag@subdomain.example.com")).toBe(
         "u***.***@s*******.e******.com",
       );
     });
 
-    it(_"should not redact invalid emails",_() => {
+    it("should not redact invalid emails", () => {
       expect(redactEmail("notanemail")).toBe("notanemail");
       expect(redactEmail("user@")).toBe("user@");
       expect(redactEmail("@example.com")).toBe("@example.com");
     });
   });
 
-  describe(_"Phone redaction",_() => {
-    it(_"should redact Brazilian phone numbers",_() => {
+  describe("Phone redaction", () => {
+    it("should redact Brazilian phone numbers", () => {
       expect(redactPhone("(11) 99999-9999")).toBe("(11) 9****-****");
       expect(redactPhone("11999999999")).toBe("11*********");
       expect(redactPhone("+55 11 99999-9999")).toBe("+55 11 9****-****");
       expect(redactPhone("011 9999-9999")).toBe("011 9***-****");
     });
 
-    it(_"should redact international phone formats",_() => {
+    it("should redact international phone formats", () => {
       expect(redactPhone("+1 (555) 123-4567")).toBe("+1 (555) 1**-****");
       expect(redactPhone("+44 20 7946 0958")).toBe("+44 20 7*** ****");
     });
 
-    it(_"should not redact invalid phone patterns",_() => {
+    it("should not redact invalid phone patterns", () => {
       expect(redactPhone("123")).toBe("123");
       expect(redactPhone("notaphone")).toBe("notaphone");
     });
   });
 
-  describe(_"Bank account redaction",_() => {
-    it(_"should redact bank account numbers",_() => {
+  describe("Bank account redaction", () => {
+    it("should redact bank account numbers", () => {
       expect(
         redactBankAccount("Banco: 001 Agência: 1234 Conta: 567890-1"),
       ).toBe("Banco: 001 Agência: **** Conta: ******-*");
@@ -130,7 +130,7 @@ describe(_"LGPD Compliance Utilities",_() => {
       );
     });
 
-    it(_"should handle various bank account formats",_() => {
+    it("should handle various bank account formats", () => {
       expect(redactBankAccount("Conta corrente: 12345-6")).toBe(
         "Conta corrente: *****-*",
       );
@@ -140,21 +140,21 @@ describe(_"LGPD Compliance Utilities",_() => {
     });
   });
 
-  describe(_"Full name redaction",_() => {
-    it(_"should redact full names while preserving first name",_() => {
+  describe("Full name redaction", () => {
+    it("should redact full names while preserving first name", () => {
       expect(redactFullName("João Silva Santos")).toBe("João ****** ******");
       expect(redactFullName("Maria da Silva")).toBe("Maria ** *****");
       expect(redactFullName("José")).toBe("José"); // Single name unchanged
     });
 
-    it(_"should handle names with particles",_() => {
+    it("should handle names with particles", () => {
       expect(redactFullName("Ana Paula da Costa e Silva")).toBe(
         "Ana ***** ** ***** * *****",
       );
       expect(redactFullName("Pedro de Alcântara")).toBe("Pedro ** *********");
     });
 
-    it(_"should preserve name formatting",_() => {
+    it("should preserve name formatting", () => {
       expect(redactFullName("CARLOS EDUARDO SANTOS")).toBe(
         "CARLOS ******* ******",
       );
@@ -164,8 +164,8 @@ describe(_"LGPD Compliance Utilities",_() => {
     });
   });
 
-  describe(_"Comprehensive PII detection",_() => {
-    it(_"should detect multiple PII types in text",_() => {
+  describe("Comprehensive PII detection", () => {
+    it("should detect multiple PII types in text", () => {
       const text =
         "CPF: 111.444.777-35, Email: john@example.com, Telefone: (11) 99999-9999";
       const result = detectPIIPatterns(text);
@@ -180,7 +180,7 @@ describe(_"LGPD Compliance Utilities",_() => {
       );
     });
 
-    it(_"should provide confidence scores",_() => {
+    it("should provide confidence scores", () => {
       const text = "CPF válido: 111.444.777-35";
       const result = detectPIIPatterns(text);
 
@@ -188,20 +188,20 @@ describe(_"LGPD Compliance Utilities",_() => {
       expect(result.overall.riskLevel).toBe("high");
     });
 
-    it(_"should handle mixed valid and invalid patterns",_() => {
+    it("should handle mixed valid and invalid patterns", () => {
       const text =
         "CPF: 12345678901, Email: invalid-email, Phone: (11) 99999-9999";
       const result = detectPIIPatterns(text);
 
       // Should detect phone as valid, CPF as invalid format, email as invalid
-      const validPatterns = result.patterns.filter(_(p) => p.confidence > 0.7);
+      const validPatterns = result.patterns.filter((p) => p.confidence > 0.7);
       expect(validPatterns).toHaveLength(1); // Only phone
       expect(validPatterns[0].type).toBe("phone");
     });
   });
 
-  describe(_"Complete PII redaction",_() => {
-    it(_"should redact all PII types in complex text",_() => {
+  describe("Complete PII redaction", () => {
+    it("should redact all PII types in complex text", () => {
       const text = `
         Paciente: João Silva Santos
         CPF: 111.444.777-35
@@ -219,18 +219,18 @@ describe(_"LGPD Compliance Utilities",_() => {
       expect(redacted).toContain("Ag: ****, CC: ******-*"); // Bank account
     });
 
-    it(_"should preserve non-PII content",_() => {
+    it("should preserve non-PII content", () => {
       const text = "Este é um texto normal sem informações pessoais.";
       expect(redactPII(text)).toBe(text);
     });
 
-    it(_"should handle edge cases",_() => {
+    it("should handle edge cases", () => {
       expect(redactPII("")).toBe("");
       expect(redactPII(null as any)).toBe("");
       expect(redactPII(undefined as any)).toBe("");
     });
 
-    it(_"should work with custom options",_() => {
+    it("should work with custom options", () => {
       const text = "João Silva, CPF: 111.444.777-35";
       const redacted = redactPII(text, {
         preserveNames: false,
@@ -243,8 +243,8 @@ describe(_"LGPD Compliance Utilities",_() => {
     });
   });
 
-  describe(_"Data anonymization",_() => {
-    it(_"should anonymize structured data objects",_() => {
+  describe("Data anonymization", () => {
+    it("should anonymize structured data objects", () => {
       const data = {
         id: 1,
         name: "João Silva Santos",
@@ -269,7 +269,7 @@ describe(_"LGPD Compliance Utilities",_() => {
       expect(anonymized.metadata.internalCode).toBe("PAC001"); // Internal data preserved
     });
 
-    it(_"should handle arrays of objects",_() => {
+    it("should handle arrays of objects", () => {
       const data = [
         { name: "João Silva", cpf: "111.444.777-35" },
         { name: "Maria Santos", cpf: "222.555.888-46" },
@@ -283,7 +283,7 @@ describe(_"LGPD Compliance Utilities",_() => {
       expect(anonymized[1].name).toBe("Maria ******");
     });
 
-    it(_"should handle nested objects",_() => {
+    it("should handle nested objects", () => {
       const data = {
         patient: {
           personal: {
@@ -307,8 +307,8 @@ describe(_"LGPD Compliance Utilities",_() => {
     });
   });
 
-  describe(_"Performance and edge cases",_() => {
-    it(_"should handle large texts efficiently",_() => {
+  describe("Performance and edge cases", () => {
+    it("should handle large texts efficiently", () => {
       const largeText = "Normal text ".repeat(1000) + "CPF: 111.444.777-35";
       const start = Date.now();
       const result = redactPII(largeText);
@@ -318,7 +318,7 @@ describe(_"LGPD Compliance Utilities",_() => {
       expect(result).toContain("***.***.***-**");
     });
 
-    it(_"should handle special characters and unicode",_() => {
+    it("should handle special characters and unicode", () => {
       const text =
         "Usuário: João André, CPF: 111.444.777-35, Observação: café ☕";
       const result = redactPII(text);
@@ -328,14 +328,14 @@ describe(_"LGPD Compliance Utilities",_() => {
       expect(result).toContain("café ☕"); // Non-PII unicode preserved
     });
 
-    it(_"should be safe against regex injection",_() => {
+    it("should be safe against regex injection", () => {
       const maliciousText = "CPF: 111.444.777-35 (.*?)+ dangerous regex";
-      expect(_() => redactPII(maliciousText)).not.toThrow();
+      expect(() => redactPII(maliciousText)).not.toThrow();
     });
   });
 
-  describe(_"Configuration and customization",_() => {
-    it(_"should respect redaction configuration",_() => {
+  describe("Configuration and customization", () => {
+    it("should respect redaction configuration", () => {
       const text = "João Silva, CPF: 111.444.777-35";
 
       const conservative = redactPII(text, {
@@ -354,7 +354,7 @@ describe(_"LGPD Compliance Utilities",_() => {
       expect(aggressive).toContain("XXXX XXXXX");
     });
 
-    it(_"should allow custom PII patterns",_() => {
+    it("should allow custom PII patterns", () => {
       const customConfig = {
         customPatterns: [
           {

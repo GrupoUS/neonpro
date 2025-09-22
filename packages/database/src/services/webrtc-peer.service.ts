@@ -227,7 +227,7 @@ export class WebRTCPeerManager {
         if (data.type === "compliance") {
           this.handleComplianceMessage(data);
         }
-      } catch (_error) {
+      } catch (error) {
         console.error("Error parsing data channel message:", error);
       }
     };
@@ -263,7 +263,7 @@ export class WebRTCPeerManager {
 
       // Add tracks to peer connection
       if (this.peerConnection) {
-        this.localStream.getTracks().forEach(_(track) => {
+        this.localStream.getTracks().forEach((track) => {
           this.peerConnection!.addTrack(track, this.localStream!);
         });
       }
@@ -275,7 +275,7 @@ export class WebRTCPeerManager {
       });
 
       return this.localStream;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error starting media:", error);
       this.emit("media-error", {
         error,
@@ -314,7 +314,7 @@ export class WebRTCPeerManager {
       });
 
       return offer;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error creating offer:", error);
       throw error;
     }
@@ -344,7 +344,7 @@ export class WebRTCPeerManager {
       });
 
       return answer;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error creating answer:", error);
       throw error;
     }
@@ -368,7 +368,7 @@ export class WebRTCPeerManager {
       if (description.type === "offer" && !this.config.isOfferer) {
         await this.createAnswer();
       }
-    } catch (_error) {
+    } catch (error) {
       console.error("Error setting remote description:", error);
       throw error;
     }
@@ -385,7 +385,7 @@ export class WebRTCPeerManager {
     try {
       await this.peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
       console.log("ICE candidate added successfully");
-    } catch (_error) {
+    } catch (error) {
       console.error("Error adding ICE candidate:", error);
       throw error;
     }
@@ -399,7 +399,7 @@ export class WebRTCPeerManager {
       return;
     }
 
-    this.qualityMonitorInterval = setInterval(_async () => {
+    this.qualityMonitorInterval = setInterval(async () => {
       const quality = await this.getConnectionQuality();
       if (quality) {
         this.emit("quality-update", {
@@ -434,7 +434,7 @@ export class WebRTCPeerManager {
       let rtt = 0;
       let bandwidth = 0;
 
-      stats.forEach(_(report) => {
+      stats.forEach((report) => {
         if (report.type === "inbound-rtp") {
           packetsLost += report.packetsLost || 0;
           jitter += report.jitter || 0;
@@ -460,7 +460,7 @@ export class WebRTCPeerManager {
         bandwidth,
         timestamp: new Date(),
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error getting connection quality:", error);
       return null;
     }
@@ -510,7 +510,7 @@ export class WebRTCPeerManager {
         sessionId: this.config.sessionId,
         _userId: this.config.localUserId,
       });
-    } catch (_error) {
+    } catch (error) {
       console.error("Error starting recording:", error);
     }
   }
@@ -574,7 +574,7 @@ export class WebRTCPeerManager {
    */
   public setAudioMuted(muted: boolean): void {
     if (this.localStream) {
-      this.localStream.getAudioTracks().forEach(_(track) => {
+      this.localStream.getAudioTracks().forEach((track) => {
         track.enabled = !muted;
       });
 
@@ -598,7 +598,7 @@ export class WebRTCPeerManager {
    */
   public setVideoEnabled(enabled: boolean): void {
     if (this.localStream) {
-      this.localStream.getVideoTracks().forEach(_(track) => {
+      this.localStream.getVideoTracks().forEach((track) => {
         track.enabled = enabled;
       });
 
@@ -646,10 +646,10 @@ export class WebRTCPeerManager {
   private emit(event: string, data: any): void {
     const callbacks = this.eventCallbacks.get(event);
     if (callbacks) {
-      callbacks.forEach(_(callback) => {
+      callbacks.forEach((callback) => {
         try {
           callback(data);
-        } catch (_error) {
+        } catch (error) {
           console.error(`Error in event callback for ${event}:`, error);
         }
       });
@@ -666,12 +666,12 @@ export class WebRTCPeerManager {
       const stats = await this.peerConnection.getStats();
       const statsObj: any = {};
 
-      stats.forEach(_(report,_id) => {
+      stats.forEach((report,_id) => {
         statsObj[id] = report;
       });
 
       return statsObj;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error getting connection stats:", error);
       return null;
     }
@@ -696,7 +696,7 @@ export class WebRTCPeerManager {
 
     // Stop local stream
     if (this.localStream) {
-      this.localStream.getTracks().forEach(_(track) => {
+      this.localStream.getTracks().forEach((track) => {
         track.stop();
       });
     }

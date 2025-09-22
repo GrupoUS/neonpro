@@ -118,7 +118,7 @@ export function ServiceCategoryManager({
         </CardHeader>
         <CardContent>
           <div className='animate-pulse space-y-4'>
-            {Array.from({ length: 3 }).map(_(_,_i) => (
+            {Array.from({ length: 3 }).map((_, i) => (
               <div key={i} className='h-16 bg-muted rounded'></div>
             ))}
           </div>
@@ -349,7 +349,7 @@ export function ServiceCategoryManager({
               Atualize as informações da categoria
             </DialogDescription>
           </DialogHeader>
-          {editingCategory && (_<ServiceCategoryForm
+          {editingCategory && (<ServiceCategoryForm
               category={editingCategory}
               clinicId={clinicId}
               onSuccess={() => setEditingCategory(null)}

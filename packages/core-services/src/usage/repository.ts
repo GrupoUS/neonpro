@@ -142,7 +142,7 @@ export class UsageCounterRepository {
    * Creates a new usage counter
    */
   async create(data: UsageCounterCreateData): Promise<ExtendedUsageCounterData> {
-    const _now = new Date();
+    const now = new Date();
 
     const insertData = {
       entity_type: "clinic",
@@ -187,7 +187,7 @@ export class UsageCounterRepository {
    * This is the core functionality for T017
    */
   async dailyUpsert(params: DailyUsageUpsertParams): Promise<ExtendedUsageCounterData> {
-    const _now = new Date();
+    const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     // First, try to get existing counter
@@ -459,7 +459,7 @@ export class UsageCounterRepository {
     clinicId: string,
     _userId: string,
   ): Promise<UsageCounterData> {
-    const _now = new Date();
+    const now = new Date();
 
     const { data: result, error } = await this.supabase
       .from("usage_counters")
@@ -490,7 +490,7 @@ export class UsageCounterRepository {
     clinicId: string,
     _userId: string,
   ): Promise<UsageCounterData> {
-    const _now = new Date();
+    const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
     const { data: result, error } = await this.supabase
@@ -610,7 +610,7 @@ export class UsageCounterRepository {
 
     return {
       clinicId: row.entity_id,
-      _userId: metadata.userId || '',
+      _userId: metadata.userId || ',
       planCode: metadata.planCode || 'basic',
       monthlyQueries: row.monthly_queries || 0,
       dailyQueries: row.daily_queries || 0,

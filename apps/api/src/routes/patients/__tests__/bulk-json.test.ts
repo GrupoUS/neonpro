@@ -132,7 +132,7 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
               authorization: 'Bearer test-token',
               'content-type': 'application/json',
             }),
-            body: JSON.stringify(_payload),
+            body: JSON.stringify(payload),
           },
         );
 
@@ -298,7 +298,7 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
       const largeBulkPayload = {
         operationId: 'bulk-large-123',
         action: 'update',
-        patientIds: Array.from({ length: 1000 },_(_,_i) => `patient-${i + 1}`),
+        patientIds: Array.from({ length: 1000 },(, i) => `patient-${i + 1}`),
         data: {
           status: 'active',
           batchProcessing: true,
@@ -341,11 +341,11 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
       const bulkRoute = bulkModule.default;
 
       // Generate excessively large payload (10MB+)
-      const massiveData = Array.from({ length: 10000 },_(_,_i) => ({
+      const massiveData = Array.from({ length: 10000 },(, i) => ({
         patientId: `patient-${i}`,
         massiveField: 'x'.repeat(1000), // 1KB per patient
         medicalHistory: Array.from(
-          { length: 100 },_(_,_j) => `history-item-${j}`,
+          { length: 100 },(, j) => `history-item-${j}`,
         ),
       }));
 

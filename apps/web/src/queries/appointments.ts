@@ -8,8 +8,8 @@ type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
 type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
 
 // Query options para listar agendamentos com filtros
-export const appointmentsQueryOptions: any = (_{
-  page = 1,_pageSize = 10,_startDate,_endDate,_status,_professionalId,_patientId,
+export const appointmentsQueryOptions: any = ({
+  page = 1, pageSize = 10,startDate, endDate,status, professionalId,patientId,
 }: {
   page?: number;
   pageSize?: number;
@@ -21,8 +21,8 @@ export const appointmentsQueryOptions: any = (_{
 } = {}) =>
   queryOptions({
     queryKey: [
-      'appointments',_'list',_{
-        page,_pageSize,_startDate,_endDate,_status,_professionalId,_patientId,_},_],
+      'appointments', 'list', {
+        page,pageSize, startDate,endDate, status,professionalId, patientId, }, ],
     queryFn: async () => {
       let query = supabase.from('appointments').select(
         `
@@ -83,7 +83,7 @@ export const appointmentsQueryOptions: any = (_{
 // Query options para buscar um agendamento específico
 export const appointmentQueryOptions: any = (id: string) =>
   queryOptions({
-    queryKey: ['appointments',_'detail',_id],
+    queryKey: ['appointments', 'detail', id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('appointments')
@@ -111,7 +111,7 @@ export const appointmentQueryOptions: any = (id: string) =>
 // Query options para agendamentos do dia
 export const todayAppointmentsQueryOptions: any = (professionalId?: string) =>
   queryOptions({
-    queryKey: ['appointments',_'today',_professionalId],
+    queryKey: ['appointments', 'today', professionalId],
     queryFn: async () => {
       const today = new Date().toISOString().split('T')[0];
 
@@ -146,7 +146,7 @@ export const todayAppointmentsQueryOptions: any = (professionalId?: string) =>
 // Query options para agenda semanal
 export const weeklyAppointmentsQueryOptions: any = (professionalId?: string) =>
   queryOptions({
-    queryKey: ['appointments',_'weekly',_professionalId],
+    queryKey: ['appointments', 'weekly', professionalId],
     queryFn: async () => {
       const today = new Date();
       const startOfWeek = new Date(
@@ -184,9 +184,9 @@ export const weeklyAppointmentsQueryOptions: any = (professionalId?: string) =>
   });
 
 // Query options para estatísticas de agendamentos
-export const _appointmentStatsQueryOptions = () =>
+export const appointmentStatsQueryOptions = () =>
   queryOptions({
-    queryKey: ['appointments',_'stats'],
+    queryKey: ['appointments', 'stats'],
     queryFn: async () => {
       const today = new Date().toISOString().split('T')[0];
       const startOfMonth = new Date(
@@ -247,7 +247,7 @@ export const _appointmentStatsQueryOptions = () =>
   });
 
 // Mutation options para criar agendamento
-export const _createAppointmentMutationOptions = {
+export const createAppointmentMutationOptions = {
   mutationFn: async (_appointment: any) => {
     const { data, error } = await supabase
       .from('appointments')
@@ -269,8 +269,8 @@ export const _createAppointmentMutationOptions = {
 };
 
 // Mutation options para atualizar agendamento
-export const _updateAppointmentMutationOptions = {
-  mutationFn: async (_{
+export const updateAppointmentMutationOptions = {
+  mutationFn: async ({
     id,
     ...appointment
   }: AppointmentUpdate & { id: string }) => {
@@ -295,7 +295,7 @@ export const _updateAppointmentMutationOptions = {
 };
 
 // Mutation options para deletar agendamento
-export const _deleteAppointmentMutationOptions = {
+export const deleteAppointmentMutationOptions = {
   mutationFn: async (_id: any) => {
     const { error } = await supabase.from('appointments').delete().eq('id', id);
 
@@ -313,7 +313,7 @@ export const _deleteAppointmentMutationOptions = {
 };
 
 // Mutation options para confirmar agendamento
-export const _confirmAppointmentMutationOptions = {
+export const confirmAppointmentMutationOptions = {
   mutationFn: async (_id: any) => {
     const { data, error } = await supabase
       .from('appointments')

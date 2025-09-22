@@ -14,7 +14,7 @@ class ChatRateLimiter {
   }>();
 
   isLimited(key: string, maxRequests: number, windowMs: number): boolean {
-    const _now = Date.now();
+    const now = Date.now();
     const existing = this.limits.get(key);
 
     if (!existing) {
@@ -42,7 +42,7 @@ class ChatRateLimiter {
   }
 
   getRemainingRequests(key: string, maxRequests: number, windowMs: number): number {
-    const _now = Date.now();
+    const now = Date.now();
     const existing = this.limits.get(key);
 
     if (!existing) {
@@ -82,7 +82,7 @@ export function chatRateLimit() {
       const ip = c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'unknown';
 
       // Use userId if available, otherwise fall back to IP
-      const _rateLimitKey = userId !== 'anonymous' ? `user:${userId}` : `ip:${ip}`;
+      const rateLimitKey = userId !== 'anonymous' ? `user:${userId}` : `ip:${ip}`;
 
       // Chat-specific limits: 20 requests per 5 minutes, 100 per hour
       const shortWindowMs = 5 * 60 * 1000; // 5 minutes
@@ -178,7 +178,7 @@ export function chatRateLimit() {
       c.header('X-RateLimit-Remaining-Long', remainingLong.toString());
 
       await next();
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof HTTPException) {
         throw error;
       }

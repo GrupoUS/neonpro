@@ -2,10 +2,10 @@ import { render } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { ChartContainer } from '../components/ui/chart';
 
-describe(_'Chart Component CSS Syntax',_() => {
-  it(_'should render without CSS syntax errors',_() => {
+describe(('Chart Component CSS Syntax', () => {
+  it(('should render without CSS syntax errors', () => {
     // This test will fail due to CSS syntax errors with escaped quotes
-    expect(_() => {
+    expect(() => {
       render(
         <ChartContainer config={{}}>
           <div>Test Chart</div>
@@ -14,7 +14,7 @@ describe(_'Chart Component CSS Syntax',_() => {
     }).not.toThrow();
   });
 
-  it(_'should have valid CSS class names',_() => {
+  it(('should have valid CSS class names', () => {
     // Test that the className string is valid CSS
     const invalidClassName =
       '[&_.recharts-cartesian-grid_line[stroke=\\\'#ccc\\\']]:stroke-border/50';

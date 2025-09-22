@@ -3,16 +3,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { GoogleCalendarClient } from '../client';
 
 // Mock googleapis
-vi.mock(_'googleapis',_() => ({
+vi.mock(('googleapis', () => ({
   google: {
     auth: {
-      OAuth2: vi.fn().mockImplementation(_() => ({
+      OAuth2: vi.fn().mockImplementation(() => ({
         setCredentials: vi.fn(),
         getAccessToken: vi.fn(),
         refreshToken: vi.fn(),
       })),
     },
-    calendar: vi.fn().mockImplementation(_() => ({
+    calendar: vi.fn().mockImplementation(() => ({
       calendars: {
         get: vi.fn(),
         list: vi.fn(),
@@ -29,28 +29,28 @@ vi.mock(_'googleapis',_() => ({
 }));
 
 // Mock Supabase
-vi.mock(_'@supabase/supabase-js',_() => ({
+vi.mock(('@supabase/supabase-js', () => ({
   createClient: vi.fn(() => ({
     auth: {
       getUser: vi.fn(),
     },
-    from: vi.fn(_() => ({
+    from: vi.fn(() => ({
       select: vi.fn(() => ({
         eq: vi.fn(() => ({
           single: vi.fn(),
         })),
       })),
-      insert: vi.fn(_() => ({
+      insert: vi.fn(() => ({
         select: vi.fn(),
       })),
-      update: vi.fn(_() => ({
+      update: vi.fn(() => ({
         eq: vi.fn(),
       })),
     })),
   })),
 }));
 
-describe(_'GoogleCalendarClient',_() => {
+describe(('GoogleCalendarClient', () => {
   let client: GoogleCalendarClient;
   let mockSupabase: any;
   let mockGoogleAuth: any;
@@ -62,12 +62,12 @@ describe(_'GoogleCalendarClient',_() => {
     redirectUri: 'http://localhost:3000/auth/callback',
   };
 
-  const _mockUser = {
+  const mockUser = {
     id: 'user-123',
     email: 'doctor@neonpro.com.br',
   };
 
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     // Setup mocks
@@ -140,8 +140,8 @@ describe(_'GoogleCalendarClient',_() => {
 
     // Setup googleapis mock
     const { google } = require('googleapis');
-    google.auth.OAuth2.mockImplementation(_() => mockGoogleAuth);
-    google.calendar.mockImplementation(_() => mockCalendar);
+    google.auth.OAuth2.mockImplementation(() => mockGoogleAuth);
+    google.calendar.mockImplementation(() => mockCalendar);
 
     // Setup Supabase mock
     mockSupabase = createClient('test-url', 'test-key');
@@ -149,8 +149,8 @@ describe(_'GoogleCalendarClient',_() => {
     client = new GoogleCalendarClient(mockConfig);
   });
 
-  describe(_'Authentication',_() => {
-    it(_'should generate auth URL with correct scopes',_() => {
+  describe(('Authentication', () => {
+    it(('should generate auth URL with correct scopes', () => {
       const authUrl = client.getAuthUrl();
 
       expect(authUrl).toContain('client_id=test-client-id');
@@ -162,7 +162,7 @@ describe(_'GoogleCalendarClient',_() => {
       );
     });
 
-    it(_'should handle token exchange',_async () => {
+    it(_'should handle token exchange',async () => {
       const code = 'auth-code-123';
       const tokens = {
         access_token: 'test-access-token',
@@ -178,15 +178,15 @@ describe(_'GoogleCalendarClient',_() => {
       expect(mockGoogleAuth.setCredentials).toHaveBeenCalledWith(tokens);
     });
 
-    it(_'should refresh expired tokens',_async () => {
+    it(_'should refresh expired tokens',async () => {
       await client.refreshTokens();
 
       expect(mockGoogleAuth.refreshToken).toHaveBeenCalled();
     });
   });
 
-  describe(_'Calendar Operations',_() => {
-    beforeEach(_async () => {
+  describe(('Calendar Operations', () => {
+    beforeEach(async () => {
       // Setup authenticated client
       await client.setTokens({
         access_token: 'test-token',
@@ -194,7 +194,7 @@ describe(_'GoogleCalendarClient',_() => {
       });
     });
 
-    it(_'should fetch calendar list',_async () => {
+    it(_'should fetch calendar list',async () => {
       const calendars = await client.listCalendars();
 
       expect(mockCalendar.calendars.list).toHaveBeenCalled();
@@ -202,7 +202,7 @@ describe(_'GoogleCalendarClient',_() => {
       expect(calendars[0].id).toBe('primary');
     });
 
-    it(_'should create events with healthcare metadata',_async () => {
+    it(_'should create events with healthcare metadata',async () => {
       const eventData = {
         summary: 'Consulta com Dr. Silva',
         description: 'Consulta de rotina',
@@ -240,7 +240,7 @@ describe(_'GoogleCalendarClient',_() => {
       expect(event.id).toBe('event-123');
     });
 
-    it(_'should update events with conflict resolution',_async () => {
+    it(_'should update events with conflict resolution',async () => {
       const updates = {
         summary: 'Consulta Remarcada',
         start: new Date('2024-01-15T14:00:00'),
@@ -258,7 +258,7 @@ describe(_'GoogleCalendarClient',_() => {
       expect(event.summary).toBe('Updated Appointment');
     });
 
-    it(_'should delete events with audit logging',_async () => {
+    it(_'should delete events with audit logging',async () => {
       await client.deleteEvent('primary', 'event-123');
 
       expect(mockCalendar.events.delete).toHaveBeenCalledWith({
@@ -267,7 +267,7 @@ describe(_'GoogleCalendarClient',_() => {
       });
     });
 
-    it(_'should list events with time range filter',_async () => {
+    it(_'should list events with time range filter',async () => {
       const start = new Date('2024-01-01T00:00:00');
       const end = new Date('2024-01-31T23:59:59');
 
@@ -285,7 +285,7 @@ describe(_'GoogleCalendarClient',_() => {
       expect(events[0].summary).toBe('Patient Appointment');
     });
 
-    it(_'should cancel events gracefully',_async () => {
+    it(_'should cancel events gracefully',async () => {
       await client.cancelEvent('primary', 'event-123');
 
       expect(mockCalendar.events.patch).toHaveBeenCalledWith({
@@ -298,8 +298,8 @@ describe(_'GoogleCalendarClient',_() => {
     });
   });
 
-  describe(_'Error Handling',_() => {
-    it(_'should handle API rate limits',_async () => {
+  describe(('Error Handling', () => {
+    it(_'should handle API rate limits',async () => {
       mockCalendar.events.insert.mockRejectedValue({
         code: 429,
         message: 'Rate limit exceeded',
@@ -314,7 +314,7 @@ describe(_'GoogleCalendarClient',_() => {
       ).rejects.toThrow('Rate limit exceeded');
     });
 
-    it(_'should handle invalid auth tokens',_async () => {
+    it(_'should handle invalid auth tokens',async () => {
       mockCalendar.calendars.list.mockRejectedValue({
         code: 401,
         message: 'Invalid credentials',
@@ -325,7 +325,7 @@ describe(_'GoogleCalendarClient',_() => {
       );
     });
 
-    it(_'should handle network errors',_async () => {
+    it(_'should handle network errors',async () => {
       mockCalendar.events.insert.mockRejectedValue(new Error('Network error'));
 
       await expect(
@@ -338,8 +338,8 @@ describe(_'GoogleCalendarClient',_() => {
     });
   });
 
-  describe(_'Healthcare Compliance',_() => {
-    it(_'should include LGPD compliance headers',_async () => {
+  describe(('Healthcare Compliance', () => {
+    it(_'should include LGPD compliance headers',async () => {
       await client.createEvent('primary', {
         summary: 'Consulta Médica',
         description: 'Dados do paciente',
@@ -362,7 +362,7 @@ describe(_'GoogleCalendarClient',_() => {
       );
     });
 
-    it(_'should mask sensitive data in error logs',_() => {
+    it(('should mask sensitive data in error logs', () => {
       const error = new Error(
         'Failed to process patient data: João Silva - 123.456.789-00',
       );

@@ -75,7 +75,7 @@ class PatientService extends BaseService {
   ) {
     return this.withAuditLog(
       {
-        operation: 'GET_PATIENTS',_userId,
+        operation: 'GET_PATIENTS',userId,
         tableName: 'patients',
         recordId: clinicId,_},_async () => {
         const offset = (options.page - 1) * options.limit;
@@ -143,7 +143,7 @@ class PatientService extends BaseService {
   async getPatientById(patientId: string, _userId: string) {
     return this.withAuditLog(
       {
-        operation: 'GET_PATIENT',_userId,
+        operation: 'GET_PATIENT',userId,
         tableName: 'patients',
         recordId: patientId,_},_async () => {
         const patient = await prisma.patient.findUnique({
@@ -195,7 +195,7 @@ class PatientService extends BaseService {
 
     return this.withAuditLog(
       {
-        operation: 'CREATE_PATIENT',_userId,
+        operation: 'CREATE_PATIENT',userId,
         tableName: 'patients',
         recordId: 'new',
         newValues: data,_},_async () => {
@@ -262,7 +262,7 @@ class PatientService extends BaseService {
 
     return this.withAuditLog(
       {
-        operation: 'UPDATE_PATIENT',_userId,
+        operation: 'UPDATE_PATIENT',userId,
         tableName: 'patients',
         recordId: data.id,
         oldValues: existingPatient,
@@ -342,7 +342,7 @@ app.get(
       c.header('X-Page', result.pagination.page.toString());
 
       return ok(c, result);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error fetching patients:', error);
 
       return serverError(
@@ -376,7 +376,7 @@ app.get(
       c.header('X-Retention-Policy', '7-years');
 
       return ok(c, patient);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error fetching patient:', error);
 
       if (error instanceof Error && error.message === 'Patient not found') {
@@ -409,7 +409,7 @@ app.post(
       c.header('Location', `/patients/${patient.id}`);
 
       return created(c, patient, `/patients/${patient.id}`);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating patient:', error);
 
       return badRequest(

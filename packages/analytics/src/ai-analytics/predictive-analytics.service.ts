@@ -157,7 +157,7 @@ export class PredictiveAnalyticsService {
     try {
       await this.modelProvider.initialize();
       this.initialized = true;
-    } catch (_error) {
+    } catch (error) {
       console.warn("Failed to initialize ML provider:", error);
       this.initialized = false;
     }
@@ -190,7 +190,7 @@ export class PredictiveAnalyticsService {
         dataQuality: 0.92,
         lastUpdated: new Date().toISOString(),
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error getting analytics metrics:", error);
       throw new Error("Failed to generate analytics metrics");
     }
@@ -259,7 +259,7 @@ export class PredictiveAnalyticsService {
             : "non-compliant",
         },
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error predicting no-show risk:", error);
       return null;
     }
@@ -328,7 +328,7 @@ export class PredictiveAnalyticsService {
             : "non-compliant",
         },
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error forecasting revenue:", error);
       return null;
     }
@@ -392,7 +392,7 @@ export class PredictiveAnalyticsService {
             : "non-compliant",
         },
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error predicting patient outcome:", error);
       return null;
     }
@@ -408,9 +408,9 @@ export class PredictiveAnalyticsService {
       await this.ensureInitialized();
 
       const insights: (PredictiveInsight | null)[] = await Promise.all([
-        this.predictNoShowRisk(_request).catch(_() => null),
-        this.predictRevenueForecast(_request).catch(_() => null),
-        this.predictPatientOutcome(_request).catch(_() => null),
+        this.predictNoShowRisk(request).catch(() => null),
+        this.predictRevenueForecast(request).catch(() => null),
+        this.predictPatientOutcome(request).catch(() => null),
       ]);
 
       // Filter out null results and return valid insights
@@ -426,7 +426,7 @@ export class PredictiveAnalyticsService {
       }
 
       return validInsights;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error generating insights:", error);
       throw error; // Re-throw for proper error handling
     }

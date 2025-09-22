@@ -266,7 +266,7 @@ export const SEMANTIC_CACHE_CONFIG = {
 /**
  * Healthcare-specific quota and billing compliance for Brazil
  */
-export const _HEALTHCARE_COMPLIANCE_CONFIG = {
+export const HEALTHCARE_COMPLIANCE_CONFIG = {
   // CFM Resolution 2314/2022 compliance
   cfmCompliance: {
     maxConsecutiveAiInteractions: 5, // Require human professional review after 5 AI interactions
@@ -395,7 +395,7 @@ export function calculateRequestCost(
  * Determines if semantic caching should be applied
  */
 export function shouldApplySemanticCache(
-  _query: string,
+  query: string,
   previousQueries: string[],
   contextType:
     | "general"
@@ -408,7 +408,7 @@ export function shouldApplySemanticCache(
   }
 
   // Simple similarity check (in production, use more sophisticated NLP)
-  const maxSimilarity = Math.max(_...previousQueries.map((prev) =>
+  const maxSimilarity = Math.max(...previousQueries.map((prev) =>
       calculateStringSimilarity(query.toLowerCase(), prev.toLowerCase()),
     ),
   );
@@ -492,7 +492,7 @@ export function generateUsageAlerts(
  * Gets the next quota reset date
  */
 function getNextQuotaResetDate(resetDay: number): Date {
-  const _now = new Date();
+  const now = new Date();
   const nextReset = new Date(now.getFullYear(), now.getMonth() + 1, resetDay);
 
   // If we're past the reset day this month, move to next month
@@ -511,7 +511,7 @@ function calculateStringSimilarity(str1: string, str2: string): number {
   const set1 = new Set(str1.split(" "));
   const set2 = new Set(str2.split(" "));
 
-  const intersection = new Set(_[...set1].filter((x) => set2.has(x)));
+  const intersection = new Set([...set1].filter((x) => set2.has(x)));
   const union = new Set([...set1, ...set2]);
 
   return intersection.size / union.size;
@@ -522,13 +522,13 @@ function calculateStringSimilarity(str1: string, str2: string): number {
  */
 export function createQuotaAuditTrail(
   action: string,
-  _userId: string,
+  userId: string,
   details: Record<string, unknown>,
 ): AuditTrail {
   return {
     action,
     timestamp: new Date(),
-    userId,
+    _userId: userId,
     consentStatus: "valid", // Assume valid for quota operations
     dataProcessingPurpose: "audit",
     anonymizationLevel: "none",

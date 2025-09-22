@@ -22,7 +22,7 @@ app.post('/stripe/webhook', async c => {
     let event;
     try {
       event = JSON.parse(body);
-    } catch (_err) {
+    } catch (err) {
       console.error('Invalid JSON in webhook body:', err);
       return c.json({ error: 'Invalid JSON' }, 400);
     }
@@ -38,7 +38,7 @@ app.post('/stripe/webhook', async c => {
       console.error('Webhook processing failed:', result.message);
       return c.json({ error: result.message }, 500);
     }
-  } catch (_error) {
+  } catch (error) {
     console.error('Webhook error:', error);
     return c.json({ error: 'Internal server error' }, 500);
   }
@@ -74,7 +74,7 @@ async function handleStripeWebhook(
         console.log(`Unhandled webhook event type: ${event.type}`);
         return { success: true, message: `Ignored event type: ${event.type}` };
     }
-  } catch (_error) {
+  } catch (error) {
     console.error('Error processing webhook:', error);
     return { success: false, message: `Error processing webhook: ${error}` };
   }
@@ -400,7 +400,7 @@ async function findUserByStripeCustomer(
     // This would require additional logic to match Stripe customer email with user email
 
     return null;
-  } catch (_error) {
+  } catch (error) {
     console.error('Error finding user by Stripe customer:', error);
     return null;
   }

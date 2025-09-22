@@ -229,7 +229,7 @@ export class EnhancedPerformanceOptimizationService {
       );
 
       return paginatedResult;
-    } catch (_error) {
+    } catch (error) {
       this.updatePerformanceMetrics(
         queryKey,
         performance.now() - startTime,
@@ -456,7 +456,7 @@ export class EnhancedPerformanceOptimizationService {
       }
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       throw this.handleQueryError(error, 'appointments_calendar');
     }
   }
@@ -533,7 +533,7 @@ export class EnhancedPerformanceOptimizationService {
       }
 
       return result;
-    } catch (_error) {
+    } catch (error) {
       throw this.handleQueryError(error, 'dashboard_metrics');
     }
   }
@@ -589,7 +589,7 @@ export class EnhancedPerformanceOptimizationService {
               }
 
               return { success: true, result, index: actualIndex };
-            } catch (_error) {
+            } catch (error) {
               failed++;
               const errorMessage = error instanceof Error ? error.message : 'Unknown error';
 
@@ -644,7 +644,7 @@ export class EnhancedPerformanceOptimizationService {
           averageTimePerItem,
         },
       };
-    } catch (_error) {
+    } catch (error) {
       const totalTime = performance.now() - startTime;
 
       return {
@@ -698,7 +698,7 @@ export class EnhancedPerformanceOptimizationService {
       });
 
       console.log(`Cache warming completed for clinic ${clinicId}`);
-    } catch (_error) {
+    } catch (error) {
       console.error('Cache warming failed:', error);
     }
   }
@@ -770,8 +770,8 @@ export class EnhancedPerformanceOptimizationService {
     fn: () => Promise<T>,
     timeoutMs: number,
   ): Promise<T> {
-    return new Promise(_(resolve,_reject) => {
-      const timer = setTimeout(_() => {
+    return new Promise((resolve,_reject) => {
+      const timer = setTimeout(() => {
         reject(new Error(`Query timeout after ${timeoutMs}ms`));
       }, timeoutMs);
 
@@ -780,7 +780,7 @@ export class EnhancedPerformanceOptimizationService {
           clearTimeout(timer);
           resolve(result);
         })
-        .catch(_error => {
+        .catch(error => {
           clearTimeout(timer);
           reject(error);
         });
@@ -945,7 +945,7 @@ export class EnhancedPerformanceOptimizationService {
       // Use the query optimizer's cache
       const cache = (this.queryOptimizer as any).cache;
       return cache ? await cache.get(key) : null;
-    } catch (_error) {
+    } catch (error) {
       console.warn('Cache get failed:', error);
       return null;
     }
@@ -963,7 +963,7 @@ export class EnhancedPerformanceOptimizationService {
       if (cache) {
         await cache.set(key, value, ttl);
       }
-    } catch (_error) {
+    } catch (error) {
       console.warn('Cache set failed:', error);
     }
   }
@@ -1040,7 +1040,7 @@ export class EnhancedPerformanceOptimizationService {
       { hits: number; misses: number; hitRate: number }
     > = {};
 
-    this.cacheStats.forEach(_(value,_key) => {
+    this.cacheStats.forEach((value,_key) => {
       const total = value.hits + value.misses;
       stats[key] = {
         hits: value.hits,
@@ -1091,7 +1091,7 @@ export class EnhancedPerformanceOptimizationService {
 
   private initializePerformanceMonitoring(): void {
     // Set up periodic performance monitoring
-    setInterval(_() => {
+    setInterval(() => {
         this.cleanupPerformanceMetrics();
       },
       5 * 60 * 1000,
@@ -1100,7 +1100,7 @@ export class EnhancedPerformanceOptimizationService {
 
   private cleanupPerformanceMetrics(): void {
     // Remove old metrics data
-    const _cutoff = Date.now() - 60 * 60 * 1000; // Keep last hour
+    const cutoff = Date.now() - 60 * 60 * 1000; // Keep last hour
 
     for (const [_key, _metrics] of this.performanceMetrics.entries()) {
       // Implement cleanup logic based on your requirements
@@ -1109,7 +1109,7 @@ export class EnhancedPerformanceOptimizationService {
 }
 
 // Export singleton instance
-export const _enhancedPerformanceOptimizationService = new EnhancedPerformanceOptimizationService(
+export const enhancedPerformanceOptimizationService = new EnhancedPerformanceOptimizationService(
   // Prisma client would be injected from the application context
   {} as HealthcarePrismaClient,
 );

@@ -81,7 +81,7 @@ export class AuditService {
       }
 
       return data.id;
-    } catch (_error) {
+    } catch (error) {
       console.error("AuditService.createAuditLog error:", error);
       throw error;
     }
@@ -328,7 +328,7 @@ export class AuditService {
       }
 
       return logs.map((log: DatabaseLogEntry) => this.mapDatabaseLogToEntry(log));
-    } catch (_error) {
+    } catch (error) {
       console.error("AuditService.getSessionAuditLogs error:", error);
       return [];
     }
@@ -367,7 +367,7 @@ export class AuditService {
       }
 
       return logs.map((log: DatabaseLogEntry) => this.mapDatabaseLogToEntry(log));
-    } catch (_error) {
+    } catch (error) {
       console.error("AuditService.getUserAuditLogs error:", error);
       return [];
     }
@@ -414,7 +414,7 @@ export class AuditService {
       }
 
       return logs.map((log: any) => this.mapDatabaseLogToEntry(log));
-    } catch (_error) {
+    } catch (error) {
       console.error("AuditService.getAuditLogsByDateRange error:", error);
       return [];
     }
@@ -453,7 +453,7 @@ export class AuditService {
       const auditLogs = logs ? logs.map((log: any) => this.mapDatabaseLogToEntry(log)) : [];
 
       return this.generateComplianceReport(auditLogs, startDate, endDate);
-    } catch (_error) {
+    } catch (error) {
       console.error("AuditService.getComplianceReport error:", error);
       throw error;
     }
@@ -521,7 +521,7 @@ export class AuditService {
       }
 
       return logs.map((log: any) => this.mapDatabaseLogToEntry(log));
-    } catch (_error) {
+    } catch (error) {
       console.error("AuditService.searchAuditLogs error:", error);
       return [];
     }
@@ -538,7 +538,7 @@ export class AuditService {
       _userId: log.user_id,
       action: log.action || this.mapActionToEventType(log.event_type || log.action),
       userRole: log.user_role || "system",
-      dataClassification: typeof log.data_classification === 'string' ? log.data_classification : "general",
+      dataClassification: typeof log.data_classification === 'string_ ? log.data_classification : "general",
       description: log.description || "",
       timestamp: log.timestamp || log.created_at,
       ipAddress: log.ip_address,
@@ -579,7 +579,7 @@ export class AuditService {
     endDate: Date,
   ): ComplianceReport {
     const totalEvents = logs.length;
-    const compliantEvents = logs.filter(_(log) => log.complianceCheck?.isCompliant === true).length;
+    const compliantEvents = logs.filter((log) => log.complianceCheck?.isCompliant === true).length;
     const nonCompliantEvents = totalEvents - compliantEvents;
 
     const riskLevels = {
@@ -591,7 +591,7 @@ export class AuditService {
 
     const violations: Record<string, number> = {};
 
-    logs.forEach(_(log) => {
+    logs.forEach((log) => {
       const riskLevel = log.complianceCheck?.riskLevel || 'LOW';
       if (riskLevel in riskLevels) {
         riskLevels[riskLevel.toLowerCase() as keyof typeof riskLevels]++;

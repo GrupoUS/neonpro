@@ -114,7 +114,7 @@ export class CFMComplianceService {
         validationTimestamp: new Date(),
         errorMessage: "License requires external CFM validation",
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error validating CFM license:", error);
       return {
         crmNumber,
@@ -248,7 +248,7 @@ export class CFMComplianceService {
         sessionId: session.id,
         complianceStatus: complianceCheck,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error creating telemedicine session:", error);
       throw new Error(
         `Session creation failed: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -361,7 +361,7 @@ export class CFMComplianceService {
         violations,
         recommendations,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error performing compliance check:", error);
       throw error;
     }
@@ -393,7 +393,7 @@ export class CFMComplianceService {
       if (error) {
         throw new Error(`Failed to create WebRTC session: ${error.message}`);
       }
-    } catch (_error) {
+    } catch (error) {
       console.error("Error creating WebRTC session:", error);
       throw error;
     }
@@ -445,20 +445,20 @@ export class CFMComplianceService {
       // Calculate detailed metrics
       const totalSessions = sessions?.length || 0;
       const validatedSessions =
-        sessions?.filter(_(s) => s.cfm_validation_status === "validated")
+        sessions?.filter((s) => s.cfm_validation_status === "validated")
           .length || 0;
       const complianceRate =
         totalSessions > 0 ? (validatedSessions / totalSessions) * 100 : 100;
 
       const sessionsWithConsent =
-        sessions?.filter(_(s) => s.lgpd_compliant).length || 0;
+        sessions?.filter((s) => s.lgpd_compliant).length || 0;
       const sessionsWithRecording =
-        sessions?.filter(_(s) => s.recording_enabled && s.recording_consent)
+        sessions?.filter((s) => s.recording_enabled && s.recording_consent)
           .length || 0;
 
       const averageComplianceScore =
         sessions?.length > 0
-          ? sessions.reduce(_(sum,_s) => sum + (s.ngs2_compliance_score || 0),
+          ? sessions.reduce((sum,_s) => sum + (s.ngs2_compliance_score || 0),
               0,
             ) / sessions.length
           : 100;
@@ -497,7 +497,7 @@ export class CFMComplianceService {
       }
 
       return report;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error generating compliance report:", error);
       throw error;
     }
@@ -514,7 +514,7 @@ export class CFMComplianceService {
     // In production, this would use proper key management (HSM)
     const array = new Uint8Array(32);
     crypto.getRandomValues(array);
-    return Array.from(_array,_(byte) => byte.toString(16).padStart(2, "0")).join(
+    return Array.from(_array,(byte) => byte.toString(16).padStart(2, "0")).join(
       "",
     );
   }
@@ -582,7 +582,7 @@ export class CFMComplianceService {
         documentsVerified,
         errors,
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error validating patient identity:", error);
       return {
         isValid: false,
@@ -655,7 +655,7 @@ export class CFMComplianceService {
         console.error("Failed to log compliance event:", error);
         // Don't throw error to avoid breaking the main flow
       }
-    } catch (_error) {
+    } catch (error) {
       console.error("Error logging compliance event:", error);
       // Don't throw error to avoid breaking the main flow
     }
@@ -692,7 +692,7 @@ export class CFMComplianceService {
         sessionData: data,
         generatedAt: new Date().toISOString(),
       };
-    } catch (_error) {
+    } catch (error) {
       console.error("Error getting session audit trail:", error);
       throw error;
     }

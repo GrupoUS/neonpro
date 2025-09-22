@@ -56,7 +56,7 @@ const authMiddleware = t.middleware(_async ({ ctx,_next }) => {
  * Enhanced LGPD Consent middleware
  * Verifies patient consent before data operations with improved validation
  */
-const consentMiddleware = t.middleware(_async ({ ctx,_next,_input }) => {
+const consentMiddleware = t.middleware(_async ({ ctx,next,_input }) => {
   // For patient data operations, verify LGPD consent
   if (input && typeof input === 'object' && 'patientId' in input) {
     const patientId = input.patientId as string;
@@ -101,39 +101,39 @@ export const router = t.router;
 export const middleware = t.middleware;
 
 // Public procedures (minimal middleware for performance)
-export const _publicProcedure = t.procedure.use(
+export const publicProcedure = t.procedure.use(
   t.middleware(lgpdAuditMiddleware),
 );
 
 // Protected procedures (authenticated users)
-export const _protectedProcedure = t.procedure
+export const protectedProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
   .use(t.middleware(lgpdAuditMiddleware));
 
 // Healthcare procedures (medical professionals with CFM validation)
-export const _healthcareProcedure = t.procedure
+export const healthcareProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
   .use(t.middleware(cfmValidationMiddleware))
   .use(t.middleware(lgpdAuditMiddleware));
 
 // Patient procedures (patient data operations with consent validation)
-export const _patientProcedure = t.procedure
+export const patientProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
   .use(t.middleware(lgpdAuditMiddleware))
   .use(consentMiddleware);
 
 // Emergency procedures (emergency medical access with enhanced logging)
-export const _emergencyProcedure = t.procedure
+export const emergencyProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
   .use(t.middleware(cfmValidationMiddleware))
   .use(t.middleware(lgpdAuditMiddleware));
 
 // Telemedicine procedures (full compliance stack for remote healthcare)
-export const _telemedicineProcedure = t.procedure
+export const telemedicineProcedure = t.procedure
   .use(t.middleware(prismaRLSMiddleware))
   .use(authMiddleware)
   .use(t.middleware(cfmValidationMiddleware))

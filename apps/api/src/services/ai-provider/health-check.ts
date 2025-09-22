@@ -115,7 +115,7 @@ export class ProviderHealthMonitor {
         );
         current_health.last_check = new Date();
       }
-    } catch (_error) {
+    } catch (error) {
       // Update health status on failure
       const current_health = this.provider_health.get(provider);
       if (current_health) {

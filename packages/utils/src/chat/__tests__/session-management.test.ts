@@ -21,23 +21,23 @@ import {
   getSessionMetrics,
 } from "../session-management";
 
-describe("T010: Session Management for AI Chat",_() => {
+describe("T010: Session Management for AI Chat", () => {
   let mockSessionStore: Map<string, ChatSession>;
   let mockTimestamp: number;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     mockSessionStore = new Map();
     mockTimestamp = Date.now();
     vi.useFakeTimers();
     vi.setSystemTime(mockTimestamp);
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.useRealTimers();
     vi.clearAllMocks();
   });
 
-  describe(_"Session Creation",_() => {
+  describe("Session Creation", () => {
     it(_"should create new session with valid parameters",_async () => {
       const sessionConfig: SessionConfig = {
         _userId: "user-123",
@@ -115,7 +115,7 @@ describe("T010: Session Management for AI Chat",_() => {
     });
   });
 
-  describe(_"Session Retrieval",_() => {
+  describe("Session Retrieval", () => {
     let testSession: ChatSession;
 
     beforeEach(_async () => {
@@ -169,7 +169,7 @@ describe("T010: Session Management for AI Chat",_() => {
     });
   });
 
-  describe(_"Session Activity Management",_() => {
+  describe("Session Activity Management", () => {
     let testSession: ChatSession;
 
     beforeEach(_async () => {
@@ -210,7 +210,7 @@ describe("T010: Session Management for AI Chat",_() => {
     it(_"should handle concurrent updates safely",_async () => {
       const updates = Array(10)
         .fill(null)
-        .map(_(_,_i) =>
+        .map((_,_i) =>
           updateSessionActivity(testSession.id, { messageCount: i + 1 }),
         );
 
@@ -225,7 +225,7 @@ describe("T010: Session Management for AI Chat",_() => {
     });
   });
 
-  describe(_"Session Timeout and Expiration",_() => {
+  describe("Session Timeout and Expiration", () => {
     let testSession: ChatSession;
 
     beforeEach(_async () => {
@@ -277,7 +277,7 @@ describe("T010: Session Management for AI Chat",_() => {
     });
   });
 
-  describe(_"Session Cleanup",_() => {
+  describe("Session Cleanup", () => {
     let activeSessions: ChatSession[];
     let expiredSessions: ChatSession[];
 
@@ -347,7 +347,7 @@ describe("T010: Session Management for AI Chat",_() => {
     });
   });
 
-  describe(_"Session Security and Access Control",_() => {
+  describe("Session Security and Access Control", () => {
     let testSession: ChatSession;
 
     beforeEach(_async () => {
@@ -394,7 +394,7 @@ describe("T010: Session Management for AI Chat",_() => {
     });
 
     it(_"should log access attempts for audit",_async () => {
-      const logSpy = vi.spyOn(console, "log").mockImplementation(_() => {});
+      const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 
       await validateSessionAccess(testSession.id, {
         _userId: "user-123",
@@ -415,7 +415,7 @@ describe("T010: Session Management for AI Chat",_() => {
     });
   });
 
-  describe(_"Session End and Finalization",_() => {
+  describe("Session End and Finalization", () => {
     let testSession: ChatSession;
 
     beforeEach(_async () => {
@@ -476,7 +476,7 @@ describe("T010: Session Management for AI Chat",_() => {
     });
   });
 
-  describe(_"Session Metrics and Analytics",_() => {
+  describe("Session Metrics and Analytics", () => {
     beforeEach(_async () => {
       // Create multiple sessions for metrics testing
       await Promise.all([
@@ -521,7 +521,7 @@ describe("T010: Session Management for AI Chat",_() => {
     });
   });
 
-  describe(_"LGPD Compliance Features",_() => {
+  describe("LGPD Compliance Features", () => {
     let testSession: ChatSession;
 
     beforeEach(_async () => {

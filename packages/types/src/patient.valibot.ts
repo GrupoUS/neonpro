@@ -173,7 +173,7 @@ const validateBrazilianPhone = (phone: string): boolean => {
  * CPF Validation Schema with Brazilian format checking
  * Provides detailed Portuguese error messages for healthcare compliance
  */
-export const _CPFSchema = v.pipe(
+export const CPFSchema = v.pipe(
   v.string("CPF deve ser uma string válida"),
   v.trim(),
   v.nonEmpty("CPF é obrigatório para pacientes brasileiros"),
@@ -182,40 +182,40 @@ export const _CPFSchema = v.pipe(
     "CPF deve estar no formato XXX.XXX.XXX-XX",
   ),
   v.check(validateCPF, "CPF inválido. Verifique os dígitos verificadores"),
-  v.transform(_(value) => value.replace(/[^\d]/g, "") as CPF),
+  v.transform((value) => value.replace(/[^\d]/g, "") as CPF),
 );
 
 /**
  * CNS (Cartão Nacional de Saúde) Validation Schema
  * Brazilian health card validation with official algorithm
  */
-export const _CNSSchema = v.pipe(
+export const CNSSchema = v.pipe(
   v.string("CNS deve ser uma string válida"),
   v.trim(),
   v.nonEmpty("CNS é obrigatório para acesso ao SUS"),
   v.regex(/^\d{15}$/, "CNS deve conter exatamente 15 dígitos"),
   v.check(validateCNS, "CNS inválido. Verifique o número do cartão"),
-  v.transform(_(value) => value as CNS),
+  v.transform((value) => value as CNS),
 );
 
 /**
  * Brazilian Email Validation Schema
  * Enhanced validation for healthcare institutional emails
  */
-export const _BrazilianEmailSchema = v.pipe(
+export const BrazilianEmailSchema = v.pipe(
   v.string("Email deve ser uma string válida"),
   v.trim(),
   v.nonEmpty("Email é obrigatório para comunicação"),
   v.email("Formato de email inválido"),
   v.maxLength(254, "Email não pode exceder 254 caracteres"),
-  v.transform(_(value) => value.toLowerCase()),
+  v.transform((value) => value.toLowerCase()),
 );
 
 /**
  * Brazilian Phone Validation Schema
  * Validates mobile numbers with Brazilian format (+55 XX 9XXXX-XXXX)
  */
-export const _BrazilianPhoneSchema = v.pipe(
+export const BrazilianPhoneSchema = v.pipe(
   v.string("Telefone deve ser uma string válida"),
   v.trim(),
   v.nonEmpty("Telefone é obrigatório para contato"),
@@ -224,14 +224,14 @@ export const _BrazilianPhoneSchema = v.pipe(
     "Telefone deve estar no formato brasileiro (+55 XX 9XXXX-XXXX)",
   ),
   v.check(validateBrazilianPhone, "Número de telefone brasileiro inválido"),
-  v.transform(_(value) => value.replace(/[^\d]/g, "")),
+  v.transform((value) => value.replace(/[^\d]/g, "")),
 );
 
 /**
  * RG (Registro Geral) Validation Schema
  * Brazilian state identification document
  */
-export const _RGSchema = v.pipe(
+export const RGSchema = v.pipe(
   v.string("RG deve ser uma string válida"),
   v.trim(),
   v.nonEmpty("RG é obrigatório"),
@@ -244,7 +244,7 @@ export const _RGSchema = v.pipe(
  * Medical Record Number Validation Schema
  * Clinic-specific patient identifier
  */
-export const _MedicalRecordNumberSchema = v.pipe(
+export const MedicalRecordNumberSchema = v.pipe(
   v.string("Número do prontuário deve ser uma string válida"),
   v.trim(),
   v.nonEmpty("Número do prontuário é obrigatório"),
@@ -254,7 +254,7 @@ export const _MedicalRecordNumberSchema = v.pipe(
     /^[A-Za-z0-9-]+$/,
     "Número do prontuário deve conter apenas letras, números e hífens",
   ),
-  v.transform(_(value) => value.toUpperCase() as MedicalRecordNumber),
+  v.transform((value) => value.toUpperCase() as MedicalRecordNumber),
 );
 
 // =====================================
@@ -265,7 +265,7 @@ export const _MedicalRecordNumberSchema = v.pipe(
  * Brazilian States Schema
  * All 27 Brazilian states and federal district
  */
-export const _BrazilianStateSchema = v.picklist(
+export const BrazilianStateSchema = v.picklist(
   [
     "AC",
     "AL",
@@ -302,7 +302,7 @@ export const _BrazilianStateSchema = v.picklist(
  * Gender Options Schema with Brazilian standards
  * Includes options for healthcare compliance
  */
-export const _GenderSchema = v.picklist(
+export const GenderSchema = v.picklist(
   ["masculino", "feminino", "nao_binario", "nao_informado", "outro"],
   "Opção de gênero inválida",
 );
@@ -310,7 +310,7 @@ export const _GenderSchema = v.picklist(
 /**
  * Marital Status Schema with Brazilian legal standards
  */
-export const _MaritalStatusSchema = v.picklist(
+export const MaritalStatusSchema = v.picklist(
   [
     "solteiro",
     "casado",
@@ -326,7 +326,7 @@ export const _MaritalStatusSchema = v.picklist(
 /**
  * Blood Type Schema with medical standards
  */
-export const _BloodTypeSchema = v.picklist(
+export const BloodTypeSchema = v.picklist(
   ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
   "Tipo sanguíneo inválido",
 );
@@ -334,7 +334,7 @@ export const _BloodTypeSchema = v.picklist(
 /**
  * Preferred Contact Method Schema for Brazilian healthcare
  */
-export const _ContactMethodSchema = v.picklist(
+export const ContactMethodSchema = v.picklist(
   ["telefone", "whatsapp", "email", "sms", "presencial"],
   "Método de contato preferido inválido",
 );
@@ -342,7 +342,7 @@ export const _ContactMethodSchema = v.picklist(
 /**
  * Language Preference Schema with Brazilian variants
  */
-export const _LanguagePreferenceSchema = v.picklist(
+export const LanguagePreferenceSchema = v.picklist(
   [
     "pt-BR",
     "en-US",

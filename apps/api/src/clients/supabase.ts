@@ -194,7 +194,7 @@ export function createAdminClient(): HealthcareAdminClient {
             .select('*')
             .eq('user_id', _userId);
           exportData[table] = data || [];
-        } catch (_error) {
+        } catch (error) {
           console.error(
             `Failed to export ${table} data for user ${userId}:`,
             error,
@@ -211,7 +211,7 @@ export function createAdminClient(): HealthcareAdminClient {
         exportDate: new Date().toISOString(),
         data: exportData,
       };
-    } catch (_error) {
+    } catch (error) {
       throw new Error(`Failed to export user data`);
     }
   };
@@ -247,8 +247,8 @@ export function createAdminClient(): HealthcareAdminClient {
         .from('profiles' as any)
         .delete()
         .eq('id', _userId);
-      await adminClient.auth.admin.deleteUser(_userId);
-    } catch (_error) {
+      await adminClient.auth.admin.deleteUser(userId);
+    } catch (error) {
       throw new Error(`Failed to delete user data: ${error}`);
     }
   };
@@ -262,7 +262,7 @@ export function createAdminClient(): HealthcareAdminClient {
         return await originalAuth.admin.createUser(userMetadata);
       },
       deleteUser: async (_userId: string) => {
-        return await originalAuth.admin.deleteUser(_userId);
+        return await originalAuth.admin.deleteUser(userId);
       },
       listUsers: async () => {
         return await originalAuth.admin.listUsers();
@@ -355,7 +355,7 @@ export function createUserClient(): HealthcareUserClient {
  * Healthcare Row Level Security (RLS) helper functions
  * Implements multi-tenant clinic isolation and patient access controls
  */
-export const _healthcareRLS = {
+export const healthcareRLS = {
   /**
    * Validates if user can access specific clinic data
    * Based on clinic membership and role permissions
@@ -377,7 +377,7 @@ export const _healthcareRLS = {
         .single();
 
       return !!membership;
-    } catch (_error) {
+    } catch (error) {
       console.error(
         `Failed to check user clinic membership for user ${userId}, clinic ${clinicId}`,
       );
@@ -415,7 +415,7 @@ export const _healthcareRLS = {
         .single();
 
       return !!patientClinic;
-    } catch (_error) {
+    } catch (error) {
       console.error(
         `Failed to check patient access for patient ${patientId}:`,
         error,

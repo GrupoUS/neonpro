@@ -5,61 +5,61 @@
 
 import { beforeEach, describe, expect, it } from 'vitest';
 
-describe(_'PerformanceDashboard',_() => {
-  beforeEach(_() => {
+describe(('PerformanceDashboard', () => {
+  beforeEach(() => {
     // Setup for each test
   });
 
-  it(_'should export the component',_() => {
-    expect(_() => {
+  it(('should export the component', () => {
+    expect(() => {
       const module = require.resolve('../PerformanceDashboard');
       expect(module).toBeDefined();
     }).not.toThrow();
   });
 
-  it(_'should render performance metrics',_() => {
+  it(('should render performance metrics', () => {
     const { PerformanceDashboard } = require('../PerformanceDashboard');
     expect(PerformanceDashboard).toBeDefined();
     expect(typeof PerformanceDashboard).toBe('function');
   });
 
-  it(_'should display search response time metrics',_() => {
+  it(('should display search response time metrics', () => {
     const { PerformanceDashboard } = require('../PerformanceDashboard');
     expect(PerformanceDashboard).toBeDefined();
     expect(typeof PerformanceDashboard).toBe('function');
   });
 
-  it(_'should display mobile load time metrics',_() => {
+  it(('should display mobile load time metrics', () => {
     const { PerformanceDashboard } = require('../PerformanceDashboard');
     expect(PerformanceDashboard).toBeDefined();
     expect(typeof PerformanceDashboard).toBe('function');
   });
 
-  it(_'should display real-time latency metrics',_() => {
+  it(('should display real-time latency metrics', () => {
     const { PerformanceDashboard } = require('../PerformanceDashboard');
     expect(PerformanceDashboard).toBeDefined();
     expect(typeof PerformanceDashboard).toBe('function');
   });
 
-  it(_'should show performance status indicators',_() => {
+  it(('should show performance status indicators', () => {
     const { PerformanceDashboard } = require('../PerformanceDashboard');
     expect(PerformanceDashboard).toBeDefined();
     expect(typeof PerformanceDashboard).toBe('function');
   });
 
-  it(_'should display performance alerts',_() => {
+  it(('should display performance alerts', () => {
     const { PerformanceDashboard } = require('../PerformanceDashboard');
     expect(PerformanceDashboard).toBeDefined();
     expect(typeof PerformanceDashboard).toBe('function');
   });
 
-  it(_'should render in compact mode',_() => {
+  it(('should render in compact mode', () => {
     const { PerformanceDashboard } = require('../PerformanceDashboard');
     expect(PerformanceDashboard).toBeDefined();
     expect(typeof PerformanceDashboard).toBe('function');
   });
 
-  it(_'should support Brazilian Portuguese labels',_() => {
+  it(('should support Brazilian Portuguese labels', () => {
     const { PerformanceDashboard } = require('../PerformanceDashboard');
     expect(PerformanceDashboard).toBeDefined();
     expect(typeof PerformanceDashboard).toBe('function');
@@ -71,19 +71,19 @@ describe(_'PerformanceDashboard',_() => {
     expect(typeof PerformanceDashboard).toBe('function');
   });
 
-  it(_'should be mobile responsive',_() => {
+  it(('should be mobile responsive', () => {
     const { PerformanceDashboard } = require('../PerformanceDashboard');
     expect(PerformanceDashboard).toBeDefined();
     expect(typeof PerformanceDashboard).toBe('function');
   });
 
-  it(_'should show performance analytics',_() => {
+  it(('should show performance analytics', () => {
     const { PerformanceDashboard } = require('../PerformanceDashboard');
     expect(PerformanceDashboard).toBeDefined();
     expect(typeof PerformanceDashboard).toBe('function');
   });
 
-  it(_'should display performance recommendations',_() => {
+  it(('should display performance recommendations', () => {
     const { PerformanceDashboard } = require('../PerformanceDashboard');
     expect(PerformanceDashboard).toBeDefined();
     expect(typeof PerformanceDashboard).toBe('function');

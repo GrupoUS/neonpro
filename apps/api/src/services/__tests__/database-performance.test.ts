@@ -12,7 +12,7 @@ import DatabasePerformanceService, {
 describe(_'DatabasePerformanceService',_() => {
   let _service: DatabasePerformanceService;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     service = new DatabasePerformanceService();
   });
 
@@ -132,9 +132,9 @@ describe(_'DatabasePerformanceService',_() => {
 
       // Critical indexes should have higher estimated improvements
       const avgCriticalImprovement =
-        criticalRecs.reduce(_(sum,_rec) => sum + rec.estimatedImprovement, 0)
+        criticalRecs.reduce((sum,_rec) => sum + rec.estimatedImprovement, 0)
         / criticalRecs.length;
-      const avgHighImprovement = highRecs.reduce(_(sum,_rec) => sum + rec.estimatedImprovement, 0)
+      const avgHighImprovement = highRecs.reduce((sum,_rec) => sum + rec.estimatedImprovement, 0)
         / highRecs.length;
 
       expect(avgCriticalImprovement).toBeGreaterThan(avgHighImprovement);
@@ -247,13 +247,13 @@ describe(_'DatabasePerformanceService',_() => {
 
   describe(_'startHealthMonitoring',_() => {
     it(_'should start health monitoring with interval',_() => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(_() => {});
-      const errorSpy = vi.spyOn(console, 'error').mockImplementation(_() => {});
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       service.startHealthMonitoring(100); // 100ms interval for testing
 
       // Should not throw
-      expect(_() => service.startHealthMonitoring(100)).not.toThrow();
+      expect(() => service.startHealthMonitoring(100)).not.toThrow();
 
       service.stopHealthMonitoring();
 
@@ -264,10 +264,10 @@ describe(_'DatabasePerformanceService',_() => {
     it(_'should stop health monitoring',_() => {
       service.startHealthMonitoring(100);
 
-      expect(_() => service.stopHealthMonitoring()).not.toThrow();
+      expect(() => service.stopHealthMonitoring()).not.toThrow();
 
       // Should be able to stop multiple times
-      expect(_() => service.stopHealthMonitoring()).not.toThrow();
+      expect(() => service.stopHealthMonitoring()).not.toThrow();
     });
   });
 

@@ -14,15 +14,15 @@ import ComponentDocumentationGenerator, {
   ComponentDocumentationSchema,
 } from '../component-documentation-generator';
 
-describe(_'Component Documentation Generator',_() => {
+describe(('Component Documentation Generator', () => {
   let generator: ComponentDocumentationGenerator;
 
-  beforeEach(_() => {
+  beforeEach(() => {
     generator = new ComponentDocumentationGenerator();
   });
 
-  describe(_'Component Documentation Schema Validation',_() => {
-    it(_'should validate valid component documentation',_() => {
+  describe(('Component Documentation Schema Validation', () => {
+    it(('should validate valid component documentation', () => {
       const validComponent = {
         id: 'test-component',
         name: 'TestComponent',
@@ -82,7 +82,7 @@ describe(_'Component Documentation Generator',_() => {
       }
     });
 
-    it(_'should reject invalid component documentation',_() => {
+    it(('should reject invalid component documentation', () => {
       const invalidComponent = {
         id: 'test-component',
         // Missing required fields
@@ -94,7 +94,7 @@ describe(_'Component Documentation Generator',_() => {
       expect(result.success).toBe(false);
     });
 
-    it(_'should validate component props',_() => {
+    it(('should validate component props', () => {
       const componentWithProps = {
         id: 'test-component',
         name: 'TestComponent',
@@ -169,8 +169,8 @@ describe(_'Component Documentation Generator',_() => {
     });
   });
 
-  describe(_'Healthcare Component Documentation',_() => {
-    it(_'should generate report with healthcare components',_() => {
+  describe(('Healthcare Component Documentation', () => {
+    it(('should generate report with healthcare components', () => {
       const report = generator.generateReport();
 
       expect(report.components.length).toBeGreaterThan(0);
@@ -179,7 +179,7 @@ describe(_'Component Documentation Generator',_() => {
       expect(report.categories).toContain(COMPONENT_CATEGORIES.ACCESSIBILITY);
     });
 
-    it(_'should include Patient Card component',_() => {
+    it(('should include Patient Card component', () => {
       const report = generator.generateReport();
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
@@ -195,7 +195,7 @@ describe(_'Component Documentation Generator',_() => {
       expect(patientCard?.healthcare.patientDataHandling).toBe(true);
     });
 
-    it(_'should include Appointment Scheduler component',_() => {
+    it(('should include Appointment Scheduler component', () => {
       const report = generator.generateReport();
       const scheduler = report.components.find(
         c => c.id === 'appointment-scheduler',
@@ -213,7 +213,7 @@ describe(_'Component Documentation Generator',_() => {
       expect(scheduler?.mobile.offlineSupport).toBe(true);
     });
 
-    it(_'should include Mobile Accessibility Hook',_() => {
+    it(('should include Mobile Accessibility Hook', () => {
       const report = generator.generateReport();
       const hook = report.components.find(
         c => c.id === 'use-mobile-accessibility',
@@ -229,8 +229,8 @@ describe(_'Component Documentation Generator',_() => {
     });
   });
 
-  describe(_'Accessibility Compliance',_() => {
-    it(_'should track WCAG compliance levels',_() => {
+  describe(('Accessibility Compliance', () => {
+    it(('should track WCAG compliance levels', () => {
       const report = generator.generateReport();
 
       expect(report.accessibilityCompliance.wcagAA).toBeGreaterThan(0);
@@ -252,7 +252,7 @@ describe(_'Component Documentation Generator',_() => {
       );
     });
 
-    it(_'should include accessibility features in components',_() => {
+    it(('should include accessibility features in components', () => {
       const report = generator.generateReport();
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
@@ -272,7 +272,7 @@ describe(_'Component Documentation Generator',_() => {
       expect(patientCard?.accessibility.mobileAccessible).toBe(true);
     });
 
-    it(_'should include accessibility notes in props',_() => {
+    it(('should include accessibility notes in props', () => {
       const report = generator.generateReport();
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
@@ -292,8 +292,8 @@ describe(_'Component Documentation Generator',_() => {
     });
   });
 
-  describe(_'Healthcare Compliance',_() => {
-    it(_'should track healthcare compliance features',_() => {
+  describe(('Healthcare Compliance', () => {
+    it(('should track healthcare compliance features', () => {
       const report = generator.generateReport();
 
       expect(report.healthcareCompliance.lgpdCompliant).toBeGreaterThan(0);
@@ -311,7 +311,7 @@ describe(_'Component Documentation Generator',_() => {
       );
     });
 
-    it(_'should include healthcare features in components',_() => {
+    it(('should include healthcare features in components', () => {
       const report = generator.generateReport();
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
@@ -326,7 +326,7 @@ describe(_'Component Documentation Generator',_() => {
       expect(patientCard?.healthcare.brazilianPortuguese).toBe(true);
     });
 
-    it(_'should include healthcare context in props',_() => {
+    it(('should include healthcare context in props', () => {
       const report = generator.generateReport();
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
@@ -344,8 +344,8 @@ describe(_'Component Documentation Generator',_() => {
     });
   });
 
-  describe(_'Mobile Optimization',_() => {
-    it(_'should track mobile optimization features',_() => {
+  describe(('Mobile Optimization', () => {
+    it(('should track mobile optimization features', () => {
       const report = generator.generateReport();
 
       expect(report.mobileOptimization.responsive).toBeGreaterThan(0);
@@ -360,7 +360,7 @@ describe(_'Component Documentation Generator',_() => {
       );
     });
 
-    it(_'should include mobile features in components',_() => {
+    it(('should include mobile features in components', () => {
       const report = generator.generateReport();
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
@@ -374,7 +374,7 @@ describe(_'Component Documentation Generator',_() => {
       expect(patientCard?.mobile.supportedBreakpoints).toContain('768px');
     });
 
-    it(_'should include mobile notes in props',_() => {
+    it(('should include mobile notes in props', () => {
       const report = generator.generateReport();
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
@@ -394,8 +394,8 @@ describe(_'Component Documentation Generator',_() => {
     });
   });
 
-  describe(_'Component Examples',_() => {
-    it(_'should include comprehensive examples',_() => {
+  describe(('Component Examples', () => {
+    it(('should include comprehensive examples', () => {
       const report = generator.generateReport();
 
       const componentsWithExamples = report.components.filter(
@@ -403,8 +403,8 @@ describe(_'Component Documentation Generator',_() => {
       );
       expect(componentsWithExamples.length).toBeGreaterThan(0);
 
-      componentsWithExamples.forEach(_component => {
-        component.examples?.forEach(_example => {
+      componentsWithExamples.forEach(component => {
+        component.examples?.forEach(example => {
           expect(example.id).toBeDefined();
           expect(example.title).toBeDefined();
           expect(example.titlePtBr).toBeDefined();
@@ -416,7 +416,7 @@ describe(_'Component Documentation Generator',_() => {
       });
     });
 
-    it(_'should include healthcare context in examples',_() => {
+    it(('should include healthcare context in examples', () => {
       const report = generator.generateReport();
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
@@ -425,26 +425,26 @@ describe(_'Component Documentation Generator',_() => {
       expect(patientCard?.examples).toBeDefined();
       expect(patientCard?.examples?.length).toBeGreaterThan(0);
 
-      patientCard?.examples?.forEach(_example => {
+      patientCard?.examples?.forEach(example => {
         expect(example.healthcareContext).toBeDefined();
         expect(typeof example.healthcareContext).toBe('string');
         expect(example.healthcareContext!.length).toBeGreaterThan(0);
       });
     });
 
-    it(_'should include accessibility demos in examples',_() => {
+    it(('should include accessibility demos in examples', () => {
       const report = generator.generateReport();
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
       );
 
-      patientCard?.examples?.forEach(_example => {
+      patientCard?.examples?.forEach(example => {
         expect(example.accessibilityDemo).toBe(true);
         expect(example.mobileDemo).toBe(true);
       });
     });
 
-    it(_'should include emergency example',_() => {
+    it(('should include emergency example', () => {
       const report = generator.generateReport();
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
@@ -463,8 +463,8 @@ describe(_'Component Documentation Generator',_() => {
     });
   });
 
-  describe(_'Brazilian Portuguese Localization',_() => {
-    it(_'should provide Portuguese component labels',_() => {
+  describe(('Brazilian Portuguese Localization', () => {
+    it(('should provide Portuguese component labels', () => {
       expect(COMPONENT_LABELS_PT_BR[COMPONENT_TYPES.FUNCTIONAL]).toBe(
         'Componente Funcional',
       );
@@ -484,25 +484,25 @@ describe(_'Component Documentation Generator',_() => {
       );
     });
 
-    it(_'should include Portuguese translations in components',_() => {
+    it(('should include Portuguese translations in components', () => {
       const report = generator.generateReport();
 
-      report.components.forEach(_component => {
+      report.components.forEach(component => {
         expect(component.titlePtBr).toBeDefined();
         expect(component.descriptionPtBr).toBeDefined();
 
-        component.props?.forEach(_prop => {
+        component.props?.forEach(prop => {
           expect(prop.descriptionPtBr).toBeDefined();
         });
 
-        component.examples?.forEach(_example => {
+        component.examples?.forEach(example => {
           expect(example.titlePtBr).toBeDefined();
           expect(example.descriptionPtBr).toBeDefined();
         });
       });
     });
 
-    it(_'should include Portuguese medical terminology',_() => {
+    it(('should include Portuguese medical terminology', () => {
       const report = generator.generateReport();
       const healthcareComponents = report.components.filter(
         c => c.healthcare.brazilianPortuguese,
@@ -510,15 +510,15 @@ describe(_'Component Documentation Generator',_() => {
 
       expect(healthcareComponents.length).toBeGreaterThan(0);
 
-      healthcareComponents.forEach(_component => {
+      healthcareComponents.forEach(component => {
         expect(component.healthcare.brazilianPortuguese).toBe(true);
         expect(component.healthcare.medicalTerminology).toBe(true);
       });
     });
   });
 
-  describe(_'Component Dependencies and Relationships',_() => {
-    it(_'should include component dependencies',_() => {
+  describe(('Component Dependencies and Relationships', () => {
+    it(('should include component dependencies', () => {
       const report = generator.generateReport();
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
@@ -530,7 +530,7 @@ describe(_'Component Documentation Generator',_() => {
       expect(patientCard?.dependencies).toContain('@/hooks/useAccessibility');
     });
 
-    it(_'should include related components',_() => {
+    it(('should include related components', () => {
       const report = generator.generateReport();
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
@@ -542,10 +542,10 @@ describe(_'Component Documentation Generator',_() => {
       expect(patientCard?.relatedComponents).toContain('EmergencyContactCard');
     });
 
-    it(_'should include performance metrics',_() => {
+    it(('should include performance metrics', () => {
       const report = generator.generateReport();
 
-      report.components.forEach(_component => {
+      report.components.forEach(component => {
         expect(component.metadata.testCoverage).toBeDefined();
         expect(component.metadata.testCoverage).toBeGreaterThan(80);
         expect(component.metadata.performanceScore).toBeDefined();
@@ -554,23 +554,23 @@ describe(_'Component Documentation Generator',_() => {
     });
   });
 
-  describe(_'Utility Methods',_() => {
-    it(_'should get components by category',_() => {
+  describe(('Utility Methods', () => {
+    it(('should get components by category', () => {
       const healthcareComponents = generator.getComponentsByCategory(
         COMPONENT_CATEGORIES.HEALTHCARE,
       );
       expect(healthcareComponents.length).toBeGreaterThan(0);
 
-      healthcareComponents.forEach(_component => {
+      healthcareComponents.forEach(component => {
         expect(component.category).toBe(COMPONENT_CATEGORIES.HEALTHCARE);
       });
     });
 
-    it(_'should get healthcare components',_() => {
+    it(('should get healthcare components', () => {
       const healthcareComponents = generator.getHealthcareComponents();
       expect(healthcareComponents.length).toBeGreaterThan(0);
 
-      healthcareComponents.forEach(_component => {
+      healthcareComponents.forEach(component => {
         const hasHealthcareFeature = component.healthcare.lgpdCompliant
           || component.healthcare.patientDataHandling
           || component.category === COMPONENT_CATEGORIES.HEALTHCARE;
@@ -578,25 +578,25 @@ describe(_'Component Documentation Generator',_() => {
       });
     });
 
-    it(_'should get accessibility-compliant components',_() => {
+    it(('should get accessibility-compliant components', () => {
       const accessibleComponents = generator.getAccessibilityCompliantComponents();
       expect(accessibleComponents.length).toBeGreaterThan(0);
 
-      accessibleComponents.forEach(_component => {
+      accessibleComponents.forEach(component => {
         expect(component.accessibility.wcagCompliant).toBe(true);
       });
     });
 
-    it(_'should get mobile-optimized components',_() => {
+    it(('should get mobile-optimized components', () => {
       const mobileComponents = generator.getMobileOptimizedComponents();
       expect(mobileComponents.length).toBeGreaterThan(0);
 
-      mobileComponents.forEach(_component => {
+      mobileComponents.forEach(component => {
         expect(component.mobile.touchOptimized).toBe(true);
       });
     });
 
-    it(_'should validate component documentation',_() => {
+    it(('should validate component documentation', () => {
       const validComponent = {
         id: 'test',
         name: 'Test',

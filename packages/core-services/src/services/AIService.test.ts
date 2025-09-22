@@ -5,10 +5,10 @@ import { describe, expect, it, vi } from "vitest";
 import type { ServiceContext } from "../types";
 
 // Mock types and dependencies if needed
-describe(_"Enhanced No-Show Prediction",_() => {
+describe("Enhanced No-Show Prediction", () => {
   const mockContext: ServiceContext = { _userId: "test" };
 
-  describe(_"preprocessNoShowData",_() => {
+  describe("preprocessNoShowData", () => {
     it(_"should bin patientAge in preprocessNoShowData",_async () => {
       // Note: To test private method, we can use (aiService as any)['preprocessNoShowData'] or expose it for testing
       // For now, test via public API once implemented
@@ -26,7 +26,7 @@ describe(_"Enhanced No-Show Prediction",_() => {
     });
   });
 
-  describe(_"makePrediction",_() => {
+  describe("makePrediction", () => {
     it(_"should use enhanced logic with flag true and achieve confidence >0.8",_async () => {
       const request = {
         type: "appointment_noshow",

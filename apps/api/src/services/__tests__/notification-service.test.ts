@@ -7,11 +7,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('Real-time Notification Service (T042)', () => {
-  beforeEach(_() => {
+  beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  afterEach(_() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 

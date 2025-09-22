@@ -27,8 +27,8 @@ const defaultClinicData: ClinicBrandingData = {
   website: 'www.clinicaestetica.com.br',
 };
 
-export const PDFExportButtons: React.FC<PDFExportButtonsProps> = (_{
-  assessmentData,_clinicData = defaultClinicData,_variant = 'default',_size = 'default',_showPreview = true,_className = '',_}) => {
+export const PDFExportButtons: React.FC<PDFExportButtonsProps> = ({
+  assessmentData, clinicData = defaultClinicData, variant = 'default', size = 'default', showPreview = true, className = '', }) => {
   const { isGenerating, downloadPDF, previewPDF, error } = usePDFExport();
 
   const handleDownload = async () => {

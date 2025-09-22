@@ -78,7 +78,7 @@ export class WebRTCSignalingServer {
     this.setupCleanupInterval();
 
     // Start server
-    this.server.listen(_port,_() => {
+    this.server.listen(port, () => {
       winstonLogger.info(`WebRTC Signaling Server listening on port ${port}`, undefined, {
         healthcare: {
           workflowType: "system_maintenance",
@@ -109,7 +109,7 @@ export class WebRTCSignalingServer {
         }) => {
           try {
             await this.handleJoinSession(socket, data);
-          } catch (_error) {
+          } catch (error) {
             winstonLogger.error("Error joining session", error instanceof Error ? error : undefined);
             socket.emit("error", {
               type: "join-session-failed",
@@ -130,7 +130,7 @@ export class WebRTCSignalingServer {
         }) => {
           try {
             await this.handleWebRTCSignal(socket, signal);
-          } catch (_error) {
+          } catch (error) {
             winstonLogger.error("Error handling WebRTC signal", error instanceof Error ? error : undefined);
             socket.emit("error", {
               type: "signal-failed",
@@ -156,7 +156,7 @@ export class WebRTCSignalingServer {
         }) => {
           try {
             await this.handleConnectionState(socket, state);
-          } catch (_error) {
+          } catch (error) {
             console.error("Error handling connection state:", error);
           }
         },
@@ -166,7 +166,7 @@ export class WebRTCSignalingServer {
       socket.on(_"leave-session", async (data: { sessionId: string }) => {
         try {
           await this.handleLeaveSession(socket, data.sessionId);
-        } catch (_error) {
+        } catch (error) {
           console.error("Error leaving session:", error);
         }
       });
@@ -194,7 +194,7 @@ export class WebRTCSignalingServer {
         }) => {
           try {
             await this.handleComplianceEvent(socket, event);
-          } catch (_error) {
+          } catch (error) {
             console.error("Error handling compliance event:", error);
           }
         },
@@ -299,8 +299,8 @@ export class WebRTCSignalingServer {
 
     // Send join confirmation with existing participants list
     const existingParticipants = Array.from(room.participants.values())
-      .filter(_(p) => p.socketId !== socket.id)
-      .map(_(p) => ({
+      .filter((p) => p.socketId !== socket.id)
+      .map((p) => ({
         _userId: p.userId,
         participantType: p.participantType,
         socketId: p.socketId,
@@ -364,7 +364,7 @@ export class WebRTCSignalingServer {
     }
 
     // Find target participant's socket
-    const targetParticipant = Array.from(room.participants.values()).find(_(p) => p.userId === to,
+    const targetParticipant = Array.from(room.participants.values()).find((p) => p.userId === to,
     );
 
     if (!targetParticipant) {
@@ -507,7 +507,7 @@ export class WebRTCSignalingServer {
     if (room.participants.size === 0) {
       room.isActive = false;
       // Keep room for a short time for audit purposes, then remove
-      setTimeout(_() => {
+      setTimeout(() => {
         this.sessionRooms.delete(sessionId);
       }, 300000); // 5 minutes
     }
@@ -524,7 +524,7 @@ export class WebRTCSignalingServer {
       const participant = room.participants.get(socket.id);
       if (participant) {
         // Handle graceful leave
-        this.handleLeaveSession(socket, sessionId).catch(_(error) => {
+        this.handleLeaveSession(socket, sessionId).catch((error) => {
           console.error("Error handling disconnect leave:", error);
         });
       }
@@ -602,7 +602,7 @@ export class WebRTCSignalingServer {
       }
 
       return false;
-    } catch (_error) {
+    } catch (error) {
       console.error("Error validating user authorization:", error);
       return false;
     }
@@ -625,7 +625,7 @@ export class WebRTCSignalingServer {
    * Sets up cleanup interval for inactive sessions and participants
    */
   private setupCleanupInterval(): void {
-    setInterval(_() => {
+    setInterval(() => {
       this.cleanupInactiveSessions();
     }, 60000); // Run every minute
   }
@@ -634,7 +634,7 @@ export class WebRTCSignalingServer {
    * Cleans up inactive sessions and participants
    */
   private cleanupInactiveSessions(): void {
-    const _now = new Date();
+    const now = new Date();
     const inactivityTimeout = 5 * 60 * 1000; // 5 minutes
 
     for (const [sessionId, room] of this.sessionRooms.entries()) {
@@ -658,7 +658,7 @@ export class WebRTCSignalingServer {
                 signaling: true,
               },
             })
-            .catch(_(error) => {
+            .catch((error) => {
               console.error("Error logging participant timeout:", error);
             });
         } else {
@@ -686,7 +686,7 @@ export class WebRTCSignalingServer {
    * Gets active sessions count for monitoring
    */
   public getActiveSessionsCount(): number {
-    return Array.from(this.sessionRooms.values()).filter(_(room) => room.isActive && room.participants.size > 0,
+    return Array.from(this.sessionRooms.values()).filter((room) => room.isActive && room.participants.size > 0,
     ).length;
   }
 
@@ -694,7 +694,7 @@ export class WebRTCSignalingServer {
    * Gets total participants count for monitoring
    */
   public getTotalParticipantsCount(): number {
-    return Array.from(this.sessionRooms.values()).reduce(_(total,_room) => total + room.participants.size,
+    return Array.from(this.sessionRooms.values()).reduce((total,_room) => total + room.participants.size,
       0,
     );
   }
@@ -712,14 +712,14 @@ export class WebRTCSignalingServer {
     });
 
     // Wait a moment for clients to receive the message
-    await new Promise(_(resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Close all socket connections
     (this.io as any).close();
 
     // Close HTTP server
-    await new Promise<void>(_(resolve) => {
-      this.server.close(_() => {
+    await new Promise<void>((resolve) => {
+      this.server.close(() => {
         resolve();
       });
     });
