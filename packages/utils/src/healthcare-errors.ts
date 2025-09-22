@@ -11,7 +11,7 @@
  */
 
 // Error severity levels
-import { TRPCError } from '@trpc/server';
+import { TRPCError, TRPCErrorOptions } from '@trpc/server';
 
 export enum ErrorSeverity {
   LOW = 'low',
@@ -400,7 +400,7 @@ export class HealthcareTRPCError extends TRPCError {
   public readonly metadata?: Record<string, unknown>;
 
   constructor(
-    code: any,
+    code: TRPCErrorOptions['code'],
     message: string,
     healthcareCode?: string,
     metadata?: Record<string, unknown>
@@ -420,7 +420,7 @@ export class HealthcareTRPCError extends TRPCError {
   public getAuditInfo() {
     return {
       errorId: this.id,
-      code: (this as any).code,
+      code: this.code,
       healthcareCode: this.healthcareCode,
       healthcareContext: this.healthcareContext,
       lgpdCompliant: this.lgpdCompliant,
@@ -442,15 +442,15 @@ export class HealthcareTRPCError extends TRPCError {
   public toJSON() {
     return {
       id: this.id,
-      name: (this as any).name,
-      message: (this as any).message,
-      code: (this as any).code,
+      name: this.name,
+      message: this.message,
+      code: this.code,
       healthcareCode: this.healthcareCode,
       healthcareContext: this.healthcareContext,
       lgpdCompliant: this.lgpdCompliant,
       timestamp: this.timestamp.toISOString(),
       metadata: this.metadata,
-      stack: (this as any).stack,
+      stack: this.stack,
     };
   }
 }

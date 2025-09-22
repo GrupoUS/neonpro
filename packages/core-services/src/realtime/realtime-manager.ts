@@ -235,14 +235,14 @@ export class RealtimeManager {
 
     const channel = this.supabase
       .channel(channelName)
-      .on(_"presence", { event: "sync" }, () => {
+      .on('presence', { event: "sync" }, () => {
         const state = channel.presenceState();
         console.log("Presence sync:", state);
       })
-      .on(_"presence", { event: "join" },({ key,_newPresences }) => {
+      .on('presence', { event: "join" }, ({ key, newPresences }) => {
         console.log("User joined:", key, newPresences);
       })
-      .on(_"presence", { event: "leave" },({ key,_leftPresences }) => {
+      .on('presence', { event: "leave" }, ({ key, leftPresences }) => {
         console.log("User left:", key, leftPresences);
       })
       .subscribe(_async (status) => {

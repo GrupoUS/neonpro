@@ -14,6 +14,8 @@
  * @compliance LGPD, ANVISA, ISO 27001, NIST Cybersecurity Framework
  */
 
+import { z } from "zod";
+
 // ============================================================================
 // TYPES & SCHEMAS
 // ============================================================================
@@ -85,7 +87,7 @@ export type HealthcareCacheContext = z.infer<
  */
 export const CacheEntrySchema = z.object({
   key: z.string(),
-  value: z.any(),
+  value: z.unknown(),
 
   // Metadata
   createdAt: z.date(),
@@ -118,7 +120,7 @@ export const CacheEntrySchema = z.object({
   upstream: z.string().optional(),
 
   // Metadata
-  metadata: z.record(z.any()).default({}),
+  metadata: z.record(z.unknown()).default({}),
 });
 
 export type CacheEntry = z.infer<typeof CacheEntrySchema>;
@@ -198,7 +200,7 @@ export const CacheOperationResultSchema = z.object({
   // Metadata
   timestamp: z.date().default(() => new Date()),
   tier: z.nativeEnum(CacheTier).optional(),
-  metadata: z.record(z.any()).default({}),
+  metadata: z.record(z.unknown()).default({}),
 });
 
 export type CacheOperationResult = z.infer<typeof CacheOperationResultSchema>;
@@ -270,7 +272,7 @@ export const CacheAuditEventSchema = z.object({
   auditReason: z.string().optional(),
 
   // Metadata
-  metadata: z.record(z.any()).default({}),
+  metadata: z.record(z.unknown()).default({}),
 });
 
 export type CacheAuditEvent = z.infer<typeof CacheAuditEventSchema>;
@@ -832,7 +834,7 @@ export class CacheManagementService {
    */
   async set(
     key: string,
-    value: any,
+    value: unknown,
     options: {
       ttl?: number;
       sensitivity?: CacheDataSensitivity;
@@ -1175,7 +1177,7 @@ export class HealthcareCachePatterns {
   async cachePatientData(
     patientId: string,
     dataType: string,
-    data: any,
+    data: unknown,
     options: {
       providerId?: string;
       facilityId?: string;
@@ -1211,7 +1213,7 @@ export class HealthcareCachePatterns {
    */
   async cacheClinicalSession(
     sessionId: string,
-    sessionData: any,
+    sessionData: unknown,
     options: {
       patientId?: string;
       providerId?: string;
@@ -1243,7 +1245,7 @@ export class HealthcareCachePatterns {
    */
   async cacheEmergencyData(
     emergencyId: string,
-    data: any,
+    data: unknown,
     options: {
       patientId?: string;
       facilityId?: string;

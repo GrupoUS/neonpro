@@ -98,12 +98,12 @@ export class ConsentDomainService {
   async revokeConsent(consentId: string, revokedBy: string, reason?: string): Promise<ConsentRecord> {
     // Get existing consent
     const existingConsent = await this.repository.findById(consentId);
-    if (!existingConsent) {
+    if (!existingConsent) {`
       throw new Error(`Consent with ID ${consentId} not found`);
     }
 
     // Check if consent is already revoked
-    if (existingConsent.status === 'REVOKED') {
+    if (existingConsent.status === 'REVOKED') {`
       throw new Error(`Consent ${consentId} is already revoked`);
     }
 
@@ -158,10 +158,10 @@ export class ConsentDomainService {
     for (const consent of consents) {
       if (consent.expiresAt && new Date(consent.expiresAt) < now) {
         if (consent.status !== 'EXPIRED') {
-          violations.push({
+          violations.push({`
             id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             type: 'EXPIRED_CONSENT_NOT_MARKED_,
-            severity: 'MEDIUM',
+            severity: 'MEDIUM',`
             description: `Consent ${consent.id} has expired but is not marked as expired`,
             affectedConsentId: consent.id,
             recommendation: 'Mark consent as expired or renew consent',
@@ -181,10 +181,10 @@ export class ConsentDomainService {
     );
 
     if (expiringSoon.length > 0) {
-      violations.push({
+      violations.push({`
         id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         type: 'CONSENT_EXPIRING_SOON_,
-        severity: 'LOW',
+        severity: 'LOW',`
         description: `${expiringSoon.length} consent(s) expiring within 30 days`,
         recommendation: 'Renew expiring consents',
         resolved: false
@@ -198,7 +198,7 @@ export class ConsentDomainService {
     );
 
     if (!hasDataProcessingConsent) {
-      violations.push({
+      violations.push({`
         id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         type: 'MISSING_DATA_PROCESSING_CONSENT_,
         severity: 'HIGH',
@@ -221,7 +221,7 @@ export class ConsentDomainService {
 
     // Generate recommendations
     const recommendations: string[] = [];
-    if (expiringSoon.length > 0) {
+    if (expiringSoon.length > 0) {`
       recommendations.push(`Renew ${expiringSoon.length} expiring consent(s)`);
     }
     if (!hasDataProcessingConsent) {
@@ -271,7 +271,7 @@ export class ConsentDomainService {
    */
   async renewConsent(consentId: string, newExpiration: string, renewedBy: string): Promise<ConsentRecord> {
     const existingConsent = await this.repository.findById(consentId);
-    if (!existingConsent) {
+    if (!existingConsent) {`
       throw new Error(`Consent with ID ${consentId} not found`);
     }
 
@@ -304,4 +304,4 @@ export class ConsentDomainService {
 
     return updatedConsent;
   }
-}
+}`

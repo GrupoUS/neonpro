@@ -46,8 +46,8 @@ test.describe('Performance Requirements Validation', () => {
       const startTime = performance.now();
 
       const response = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
-        data: {
-          _query: 'Próximos agendamentos',
+        json: {
+          query: 'Próximos agendamentos',
           sessionId: 'test-session',
         },
       });
@@ -184,7 +184,7 @@ test.describe('Performance Requirements Validation', () => {
         const startTime = performance.now();
 
         const response = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
-          data: {
+          json: {
             query,
             sessionId: 'test-session',
           },
@@ -203,8 +203,8 @@ test.describe('Performance Requirements Validation', () => {
     test('should handle session management efficiently', async ({ request }) => {
       // Test session creation and access
       const sessionResponse = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
-        data: {
-          _query: 'Test session',
+        json: {
+          query: 'Test session',
           sessionId: 'performance-test-session',
         },
       });
@@ -241,7 +241,7 @@ test.describe('Performance Requirements Validation', () => {
         const startTime = performance.now();
 
         const response = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
-          data: {
+          json: {
             query,
             sessionId,
           },
@@ -296,8 +296,8 @@ test.describe('Performance Requirements Validation', () => {
       const concurrentQueries = 5;
       const queries = Array(concurrentQueries).fill(0).map((_, index) =>
         request.post(`${baseUrl}/api/v2/ai/data-agent`, {
-          data: {
-            _query: `Test query ${index}`,
+          json: {
+            query: `Test query ${index}`,
             sessionId: `concurrent-session-${index}`,
           },
         })

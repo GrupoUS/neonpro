@@ -3,6 +3,16 @@
 // Task T003: Add types (Plan, UsageCounter, Recommendation, DomainDescriptor)
 // ============================================
 
+// Healthcare-compliant metadata types for AI Enhanced
+export interface AIEnhancedMetadata {
+  processingTime?: number;
+  cacheHit?: boolean;
+  modelVersion?: string;
+  requestSource?: string;
+  complianceLevel?: 'standard' | 'enhanced' | 'restricted';
+  [key: string]: unknown;
+}
+
 // This file defines types that directly match the database schema and models
 // It extends the existing enhanced-ai.ts types for specific database entities
 
@@ -118,7 +128,7 @@ export interface PlanData {
 export interface UsageCounter {
   readonly id: string;
   readonly clinicId: string;
-  readonly _userId: string;
+  readonly (userId): string;
   readonly planCode: SubscriptionTier;
 
   // Usage metrics
@@ -152,7 +162,7 @@ export interface UsageCounter {
  */
 export interface UsageCounterData {
   clinicId: string;
-  _userId: string;
+  (userId): string;
   planCode: SubscriptionTier;
   monthlyQueries: number;
   dailyQueries: number;
@@ -191,7 +201,7 @@ export interface UsageAggregation {
 export interface Recommendation {
   readonly id: string;
   readonly clinicId: string;
-  readonly _userId: string;
+  readonly (userId): string;
 
   // Recommendation details
   readonly recommendationType: RecommendationType;
@@ -346,11 +356,11 @@ export type AIFeatureCode =
  * Request types for AI enhanced endpoints
  */
 export interface AIAnalyzeRequest {
-  readonly _query: string;
+  readonly query: string;
   readonly specialty?: MedicalSpecialty;
   readonly preferredModel?: EnhancedAIModel;
-  readonly _context?: Record<string, unknown>;
-  readonly _userId: string;
+  readonly context?: Record<string, unknown>;
+  readonly userId: string;
   readonly clinicId: string;
 }
 
@@ -359,12 +369,12 @@ export interface AICrudRequest {
   readonly intent: string;
   readonly entity?: string;
   readonly data?: Record<string, unknown>;
-  readonly _userId: string;
+  readonly userId: string;
   readonly clinicId: string;
 }
 
 export interface AIUsageRequest {
-  readonly _userId?: string;
+  readonly userId?: string;
   readonly clinicId?: string;
   readonly startDate?: Date;
   readonly endDate?: Date;
@@ -372,7 +382,7 @@ export interface AIUsageRequest {
 }
 
 export interface AIRecommendationsRequest {
-  readonly _userId: string;
+  readonly userId: string;
   readonly clinicId: string;
   readonly category?: RecommendationCategory;
   readonly status?: RecommendationStatus;
@@ -389,7 +399,7 @@ export interface AIAnalyzeResponse {
   readonly model: EnhancedAIModel;
   readonly tokensUsed: number;
   readonly latencyMs: number;
-  readonly metadata?: Record<string, any>;
+  readonly metadata?: AIEnhancedMetadata;
 }
 
 export interface AICrudResponse {
@@ -398,7 +408,7 @@ export interface AICrudResponse {
   readonly result?: unknown;
   readonly confirmation?: string;
   readonly tokensUsed: number;
-  readonly metadata?: Record<string, any>;
+  readonly metadata?: AIEnhancedMetadata;
 }
 
 export interface AIUsageResponse {
@@ -425,14 +435,14 @@ export interface AIRecommendationsResponse {
   readonly success: boolean;
   readonly recommendations: Recommendation[];
   readonly total: number;
-  readonly metadata?: Record<string, any>;
+  readonly metadata?: AIEnhancedMetadata;
 }
 
 export interface AIModelsResponse {
   readonly success: boolean;
   readonly models: EnhancedAIModel[];
   readonly availability: Record<EnhancedAIModel, boolean>;
-  readonly metadata?: Record<string, any>;
+  readonly metadata?: AIEnhancedMetadata;
 }
 
 // ================================================

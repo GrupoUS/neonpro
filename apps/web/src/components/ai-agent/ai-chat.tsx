@@ -62,7 +62,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Handle message submission
   const handleSubmit = useCallback(
-    async (_message: any) => {
+    async (message: any) => {
       if (!user) {
         toast({
           title: 'Erro de autenticação',
@@ -82,8 +82,8 @@ export function AIChat({ className, initialContext }: AIChatProps) {
             Authorization: `Bearer ${await user.getIdToken()}`,
           },
           body: JSON.stringify({
-            _query: message,
-            _context: {
+            query: message,
+            context: {
               _userId: user.id,
               userRole: user.role,
               domain: initialContext?.domain,
@@ -119,8 +119,8 @@ export function AIChat({ className, initialContext }: AIChatProps) {
         if (data.response.actions && data.response.actions.length > 0) {
           handleActions(data.response.actions);
         }
-      } catch (_error) {
-        console.error('Chat error:', _error);
+      } catch (error) {
+        console.error('Chat error:', error);
         toast({
           title: 'Erro',
           description: error instanceof Error
@@ -167,7 +167,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
           }
           break;
         case 'export_data':
-          handleExportData(action._payload);
+          handleExportData(action.payload);
           break;
         case 'refresh':
           // Refresh current view
@@ -179,7 +179,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Handle data export
   const handleExportData = useCallback(
-    async (_payload: any) => {
+    async (payload: any) => {
       try {
         const response = await fetch('/api/ai/export', {
           method: 'POST',
@@ -219,7 +219,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Custom message renderer
   const renderMessage = useCallback(
-    (_message: any) => {
+    (message: any) => {
       if (message.role === 'system') return null;
 
       return (

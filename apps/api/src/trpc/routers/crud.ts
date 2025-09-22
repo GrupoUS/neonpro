@@ -15,7 +15,7 @@ import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/clien
 import { TRPCError } from '@trpc/server';
 import * as v from 'valibot';
 import { logger } from '../../lib/logger';
-import { GlobalErrorHandler } from '../../lib/error-handler';
+import { GlobalErrorHandler } from '../../middleware/error-handler';
 import {
   AppointmentSchema,
   getEntitySchema,

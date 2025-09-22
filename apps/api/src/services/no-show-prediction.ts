@@ -912,7 +912,7 @@ Responda APENAS em formato JSON:
   }> {
     // Sort factors by impact and select top 5
     const sortedFactors = Object.entries(behaviorFactors)
-      .sort(([,_a],_[,_b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5);
 
     return sortedFactors.map(([factor,_impact]) => ({

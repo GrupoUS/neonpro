@@ -73,6 +73,29 @@ export interface ValidationResult {
   errors: ValidationError[];
 }
 
+// Patient data interface
+export interface PatientData {
+  name?: string;
+  cpf?: string;
+  phone?: string;
+  email?: string;
+  birthDate?: string;
+  gender?: string;
+  [key: string]: unknown;
+}
+
+// Brazilian address interface
+export interface BrazilianAddress {
+  street?: string;
+  number?: string;
+  complement?: string;
+  neighborhood?: string;
+  city?: string;
+  state?: string;
+  cep?: string;
+  [key: string]: unknown;
+}
+
 // Clean document numbers (remove formatting)
 export function cleanDocument(document: string): string {
   return document.replace(/[^\d]/g, "");
@@ -336,7 +359,7 @@ export function getValidationMessage(field: string, errorType: string): string {
 }
 
 // Validate patient data
-export function validatePatientData(data: any): ValidationResult {
+export function validatePatientData(data: PatientData): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Name validation
@@ -409,7 +432,7 @@ export function validatePatientData(data: any): ValidationResult {
 }
 
 // Validate Brazilian address
-export function validateBrazilianAddress(address: any): ValidationResult {
+export function validateBrazilianAddress(address: BrazilianAddress): ValidationResult {
   const errors: ValidationError[] = [];
 
   // Required fields
@@ -451,10 +474,10 @@ export function validateBrazilianAddress(address: any): ValidationResult {
 
 // Create validation schema
 export function createValidationSchema(fields: Record<string, any>): {
-  validate: (data: any) => ValidationResult;
+  validate: (data: PatientData | BrazilianAddress) => ValidationResult;
 } {
   return {
-    validate: (data: any): ValidationResult => {
+    validate: (data: PatientData | BrazilianAddress): ValidationResult => {
       const errors: ValidationError[] = [];
 
       Object.entries(fields).forEach(([fieldName,_config]) => {

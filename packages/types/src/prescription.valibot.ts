@@ -385,19 +385,21 @@ export const DurationSchema = v.pipe(
 /**
  * Prescription Expiration Validation Schema
  */
+const PrescriptionExpirationBaseSchema = v.object({
+  issue_date: v.pipe(
+    v.string(),
+    v.isoDate("Data de emissão deve estar em formato ISO"),
+  ),
+  expiration_date: v.pipe(
+    v.string(),
+    v.isoDate("Data de validade deve estar em formato ISO"),
+  ),
+});
+
 export const PrescriptionExpirationSchema = v.pipe(
-  v.object({
-    issue_date: v.pipe(
-      v.string(),
-      v.isoDate("Data de emissão deve estar em formato ISO"),
-    ),
-    expiration_date: v.pipe(
-      v.string(),
-      v.isoDate("Data de validade deve estar em formato ISO"),
-    ),
-  }),
+  PrescriptionExpirationBaseSchema,
   v.check(
-    (data: any) =>
+    (data: v.InferInput<typeof PrescriptionExpirationBaseSchema>) =>
       validatePrescriptionExpiration(data.issue_date, data.expiration_date),
     "Data de validade inválida ou excede o prazo máximo de 180 dias",
   ),
@@ -549,10 +551,9 @@ export const PrescriptionAuditTrailSchema = v.object({
 /**
  * Prescription Creation Schema
  */
-export const PrescriptionCreationSchema = v.pipe(
-  v.object({
-    // Basic prescription info
-    clinic_id: v.pipe(v.string(), v.uuid("ID da clínica deve ser UUID válido")),
+const PrescriptionCreationBaseSchema = v.object({
+  // Basic prescription info
+  clinic_id: v.pipe(v.string(), v.uuid("ID da clínica deve ser UUID válido")),
     patient_id: v.pipe(
       v.string(),
       v.uuid("ID do paciente deve ser UUID válido"),
@@ -638,9 +639,12 @@ export const PrescriptionCreationSchema = v.pipe(
         relationship: v.pipe(v.string(), v.maxLength(50)),
       }),
     ),
-  }),
+  });
+
+export const PrescriptionCreationSchema = v.pipe(
+  PrescriptionCreationBaseSchema,
   // Cross-field validation for controlled substances
-  v.check((data: any) => {
+  v.check((data: v.InferInput<typeof PrescriptionCreationBaseSchema>) => {
     for (const med of data.medications) {
       if (med.medication.controlled_substance) {
         const result = validateControlledSubstanceRules(
@@ -655,7 +659,7 @@ export const PrescriptionCreationSchema = v.pipe(
   }, "Medicamentos controlados não atendem aos critérios regulamentares"),
   // Prescription expiration validation
   v.check(
-    (data: any) =>
+    (data: v.InferInput<typeof PrescriptionCreationBaseSchema>) =>
       validatePrescriptionExpiration(data.issue_date, data.expiration_date),
     "Data de validade inválida ou excede prazo regulamentar",
   ),

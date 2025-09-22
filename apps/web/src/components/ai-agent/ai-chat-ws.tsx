@@ -154,8 +154,8 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
           domain: initialContext?.domain,
           professionalId: initialContext?.professionalId,
         });
-      } catch {
-        console.error('WebSocket error:', _error);
+      } catch (error) {
+        console.error('WebSocket error:', error);
 
         const errorMessage: ChatMessage = {
           id: `msg_${Date.now()}_error`,
@@ -212,10 +212,10 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Handle data export
   const handleExportData = useCallback(
-    async (_payload: any) => {
+    async (payload: any) => {
       try {
         // Send export action via WebSocket
-        await sendAction('export_data', _payload);
+        await sendAction('export_data', payload);
 
         toast({
           title: 'Exportação iniciada',
@@ -234,7 +234,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Custom message renderer
   const renderMessage = useCallback(
-    (_message: any) => {
+    (message: any) => {
       if (message.role === 'system') {
         return (
           <div key={message.id} className='text-center py-2'>

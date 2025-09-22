@@ -95,9 +95,9 @@ export interface UserQuery {
   /** Session identifier for conversation context */
   sessionId: string;
   /** User who submitted the query */
-  _userId: string;
+  (userId): string;
   /** Natural language text input */
-  _query: string;
+  (query): string;
   /** Parsed intent classification */
   intent: QueryIntent;
   /** Extracted parameters from the query */
@@ -236,7 +236,7 @@ export interface ChartDataPoint {
 export interface ChartAxis {
   title?: string;
   type?: 'category' | 'number' | 'time';
-  format?: (value: any) => string;
+  format?: (value: unknown) => string;
 }
 
 export interface InteractiveAction {
@@ -264,7 +264,7 @@ export interface ChatSession {
   /** Session identifier (UUID) */
   id: string;
   /** User identifier */
-  _userId: string;
+  (userId): string;
   /** Session status */
   status: SessionStatus;
   /** When the session started */
@@ -272,7 +272,7 @@ export interface ChatSession {
   /** Last interaction timestamp */
   lastActivity: Date;
   /** Conversation context object */
-  _context: SessionContext;
+  (context): SessionContext;
   /** Number of messages in session */
   messageCount: number;
 }
@@ -286,7 +286,7 @@ export interface SessionContext {
   /** User's current domain */
   domain: string;
   /** User role for permission checking */
-  _role: UserRole;
+  (role): UserRole;
   /** Active filters or preferences */
   preferences?: UserPreferences;
   /** Recent conversation history */
@@ -303,11 +303,11 @@ export type UserRole =
 
 export interface PermissionContext {
   /** User identifier */
-  _userId: string;
+  (userId): string;
   /** Organization/clinic domain */
   domain: string;
   /** User role */
-  _role: UserRole;
+  (role): UserRole;
   /** Specific permissions array */
   permissions: Permission[];
   /** Data access scope */
@@ -332,13 +332,13 @@ export type DataScope =
 
 export interface AgentQueryRequest {
   /** Natural language query from user */
-  _query: string;
+  (query): string;
   /** Unique session identifier for conversation context */
   sessionId: string;
   /** Optional conversation context */
-  _context?: {
+  context?: {
     /** User identifier */
-    _userId?: string;
+    userId?: string;
     /** Recent conversation history */
     previousMessages?: ChatMessage[];
   };

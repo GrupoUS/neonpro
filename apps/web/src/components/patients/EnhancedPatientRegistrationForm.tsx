@@ -8,14 +8,17 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  Database,
   FileText,
   Heart,
   Loader2,
   Mail,
   MapPin,
   Phone,
+  Share,
   Shield,
   User,
+  X,
 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
@@ -111,17 +114,17 @@ interface EnhancedPatientRegistrationFormProps {
 }
 
 // Document formatting functions
-const formatCpf = (_value: any) => {
+const formatCpf = (value: any) => {
   const numbers = value.replace(/\D/g, '');
   return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 };
 
-const formatCep = (_value: any) => {
+const formatCep = (value: any) => {
   const numbers = value.replace(/\D/g, '');
   return numbers.replace(/(\d{5})(\d{3})/, '$1-$2');
 };
 
-const formatPhone = (_value: any) => {
+const formatPhone = (value: any) => {
   const numbers = value.replace(/\D/g, '');
   if (numbers.length === 11) {
     return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
@@ -818,7 +821,7 @@ export function EnhancedPatientRegistrationForm({
   onOpenChange,
   onSubmit,
   initialData,
-  userRole: userRole,
+  userRole: _userRole,
   className,
 }: EnhancedPatientRegistrationFormProps) {
   const [currentStep, setCurrentStep] = useState<number>(0);
@@ -881,7 +884,7 @@ export function EnhancedPatientRegistrationForm({
     }
   };
 
-  const handleSubmit = async (_data: any) => {
+  const handleSubmit = async (data: any) => {
     setIsSubmitting(true);
     try {
       // Add consent metadata
@@ -899,7 +902,7 @@ export function EnhancedPatientRegistrationForm({
       onOpenChange(false);
       form.reset();
       setCurrentStep(0);
-    } catch (_error) {
+    } catch (error) {
       console.error('Erro ao cadastrar paciente:', error);
     } finally {
       setIsSubmitting(false);
@@ -970,7 +973,7 @@ export function EnhancedPatientRegistrationForm({
 
         {/* Step Navigation */}
         <div className='flex justify-between'>
-          {REGISTRATION_STEPS.map((step, _index) => {
+          {REGISTRATION_STEPS.map((step, index) => {
             const Icon = step.icon;
             const isActive = index === currentStep;
             const isCompleted = index < currentStep;

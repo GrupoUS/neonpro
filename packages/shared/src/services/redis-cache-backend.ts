@@ -15,11 +15,12 @@
 
 import { Redis } from 'ioredis';
 import { createHash } from 'crypto';
-import { 
-  CacheBackend, 
-  CacheEntry, 
-  CacheStatistics, 
-  CacheConfig, 
+import { z } from 'zod';
+import {
+  CacheBackend,
+  CacheEntry,
+  CacheStatistics,
+  CacheConfig,
   CacheDataSensitivity,
   CacheTier,
 } from './cache-management';
@@ -555,7 +556,7 @@ export class RedisCacheBackend implements CacheBackend {
   /**
    * Validate parsed data against Zod schema
    */
-  private validateWithSchema(data: any): { success: boolean; data?: CacheEntry; error?: string } {
+  private validateWithSchema(data: unknown): { success: boolean; data?: CacheEntry; error?: string } {
     try {
       // Import schema dynamically to avoid circular dependencies
       const { CacheEntrySchema } = require('./cache-management');
@@ -577,7 +578,7 @@ export class RedisCacheBackend implements CacheBackend {
   /**
    * Normalize date strings to Date objects
    */
-  private normalizeDates(data: any): CacheEntry {
+  private normalizeDates(data: unknown): CacheEntry {
     const normalized = { ...data };
     
     if (typeof normalized.createdAt === 'string') {
@@ -596,7 +597,7 @@ export class RedisCacheBackend implements CacheBackend {
   /**
    * Validate cache entry structure (legacy fallback)
    */
-  private validateCacheEntry(entry: any): boolean {
+  private validateCacheEntry(entry: unknown): boolean {
     return !!(
       entry &&
       typeof entry === 'object' &&

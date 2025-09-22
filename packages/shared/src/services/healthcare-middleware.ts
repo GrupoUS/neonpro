@@ -16,6 +16,7 @@
  */
 
 import { nanoid } from "nanoid";
+import { z } from "zod";
 import type { Context, Next, MiddlewareHandler } from "hono";
 
 // ============================================================================
@@ -699,7 +700,7 @@ export class HealthcareMiddlewareService {
    */
   private determineComplianceContext(
     c: Context,
-    userContext: any,
+    userContext: HealthcareRequestContext["userContext"],
   ): HealthcareRequestContext["complianceContext"] {
     // Determine legal basis based on request type and user context
     let legalBasis:
@@ -754,7 +755,7 @@ export class HealthcareMiddlewareService {
    */
   private async detectWorkflowContext(
     c: Context,
-    userContext: any,
+    userContext: HealthcareRequestContext["userContext"],
   ): Promise<HealthcareRequestContext["workflowContext"]> {
     const path = c.req.path.toLowerCase();
     const method = c.req.method;
@@ -779,7 +780,7 @@ export class HealthcareMiddlewareService {
       userContext?.userRole === "system_admin";
 
     // Workflow type detection
-    let workflowType: any = "administrative_task";
+    let workflowType: HealthcareRequestContext["workflowContext"]["workflowType"] = "administrative_task";
 
     if (path.includes("/patient") && method === "POST")
       workflowType = "patient_registration";
@@ -1017,7 +1018,7 @@ export class HealthcareMiddlewareService {
    */
   private async handleMiddlewareError(
     c: Context,
-    error: any,
+    error: Error & { code?: string; name?: string },
     _context: HealthcareRequestContext,
     startTime: number,
   ): Promise<void> {
@@ -1363,7 +1364,7 @@ export class HealthcareMiddlewareService {
   /**
    * Determine error status code
    */
-  private determineErrorStatusCode(error: any): number {
+  private determineErrorStatusCode(error: Error & { message?: string }): number {
     if (error.message?.includes("LGPD_CONSENT_REQUIRED")) return 403;
     if (error.message?.includes("CSRF_TOKEN_MISSING")) return 403;
     if (error.message?.includes("RATE_LIMIT_EXCEEDED")) return 429;
@@ -1373,7 +1374,7 @@ export class HealthcareMiddlewareService {
   /**
    * Create error response
    */
-  private createErrorResponse(error: any, _context?: HealthcareRequestContext) {
+  private createErrorResponse(error: Error & { message?: string }, _context?: HealthcareRequestContext) {
     const baseResponse = {
       error: true,
       message: this.config.errorHandling.enableDetailedErrors

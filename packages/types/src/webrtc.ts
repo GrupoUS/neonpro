@@ -115,7 +115,7 @@ export interface RTCSignalingMessage {
   recipientId: string;
 
   /** WebRTC payload (SDP or ICE candidate) */
-  _payload?: unknown;
+  payload?: unknown;
 
   /** Timestamp for audit logging (ISO 8601) */
   timestamp: string;
@@ -180,7 +180,7 @@ export interface CallParticipant {
   name: string;
 
   /** Participant role in healthcare context */
-  _role: "doctor" | "patient" | "nurse" | "specialist" | "observer";
+  role: "doctor" | "patient" | "nurse" | "specialist" | "observer";
 
   /** Professional registration (CRM, CRO, etc.) for healthcare providers */
   professionalId?: string;
@@ -511,7 +511,7 @@ export interface RTCAuditLogEntry {
   timestamp: string;
 
   /** User ID who triggered the event */
-  _userId: string;
+  userId: string;
 
   /** User role in healthcare context */
   userRole: "doctor" | "patient" | "nurse" | "admin" | "system";
@@ -548,7 +548,7 @@ export interface RTCAuditLogEntry {
 export interface RTCConsentManager {
   /** Request consent for specific data processing */
   requestConsent(
-    _userId: string,
+    userId: string,
     dataTypes: MedicalDataClassification[],
     purpose: string,
     sessionId: string,
@@ -556,26 +556,26 @@ export interface RTCConsentManager {
 
   /** Verify existing consent is valid */
   verifyConsent(
-    _userId: string,
+    userId: string,
     dataType: MedicalDataClassification,
     sessionId: string,
   ): Promise<boolean>;
 
   /** Revoke consent for data processing */
   revokeConsent(
-    _userId: string,
+    userId: string,
     dataType: MedicalDataClassification,
     sessionId: string,
   ): Promise<void>;
 
   /** Get consent history for audit */
-  getConsentHistory(_userId: string): Promise<RTCAuditLogEntry[]>;
+  getConsentHistory(userId: string): Promise<RTCAuditLogEntry[]>;
 
   /** Export user data for LGPD compliance */
-  exportUserData(_userId: string): Promise<Record<string, unknown>>;
+  exportUserData(userId: string): Promise<Record<string, unknown>>;
 
   /** Delete user data (right to erasure) */
-  deleteUserData(_userId: string, sessionId?: string): Promise<void>;
+  deleteUserData(userId: string, sessionId?: string): Promise<void>;
 }
 
 // Export all WebRTC types for proper module resolution

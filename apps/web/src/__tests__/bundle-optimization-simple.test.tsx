@@ -15,14 +15,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 // Import optimized components
 import { HealthcareLoadingFallback } from '@/lib/lazy-loading';
 
-describe(('Bundle Optimization Tests', () => {
+describe('Bundle Optimization Tests', () => {
   beforeEach(() => {
     // Reset any mocked modules
     vi.clearAllMocks();
   });
 
-  describe(('Loading Components', () => {
-    it(('should render HealthcareLoadingFallback component', () => {
+  describe('Loading Components', () => {
+    it('should render HealthcareLoadingFallback component', () => {
       render(<HealthcareLoadingFallback />);
 
       expect(screen.getByText('Carregando...')).toBeInTheDocument();
@@ -30,8 +30,8 @@ describe(('Bundle Optimization Tests', () => {
     });
   });
 
-  describe(('Healthcare Compliance', () => {
-    it(('should maintain LGPD compliance with lazy loading', () => {
+  describe('Healthcare Compliance', () => {
+    it('should maintain LGPD compliance with lazy loading', () => {
       // Validate that lazy loading doesn't compromise data privacy
       const mockPatientData = {
         id: 'patient-123',
@@ -46,7 +46,7 @@ describe(('Bundle Optimization Tests', () => {
       }).not.toThrow();
     });
 
-    it(('should maintain CFM compliance with lazy loading', () => {
+    it('should maintain CFM compliance with lazy loading', () => {
       // Validate that medical components maintain compliance when lazy-loaded
       const mockSessionData = {
         sessionId: 'session-456',
@@ -63,8 +63,8 @@ describe(('Bundle Optimization Tests', () => {
     });
   });
 
-  describe(('Performance Metrics', () => {
-    it(('should validate bundle size reduction', () => {
+  describe('Performance Metrics', () => {
+    it('should validate bundle size reduction', () => {
       // This test validates that our optimizations are working
       // In a real CI/CD environment, this would check actual bundle sizes
 
@@ -99,7 +99,7 @@ describe(('Bundle Optimization Tests', () => {
       });
     });
 
-    it(('should validate code splitting effectiveness', () => {
+    it('should validate code splitting effectiveness', () => {
       // This test validates that our code splitting strategy is working
 
       // Expected chunks that should exist after optimization
@@ -122,10 +122,10 @@ describe(('Bundle Optimization Tests', () => {
     });
   });
 
-  describe(('Error Handling', () => {
-    it(_'should handle lazy loading errors gracefully',async () => {
+  describe('Error Handling', () => {
+    it('should handle lazy loading errors gracefully', async () => {
       // Mock a failed lazy import
-      vi.doMock(('recharts', () => {
+      vi.doMock('recharts', () => {
         throw new Error('Failed to load module');
       });
 

@@ -288,13 +288,13 @@ export function PatientRegistrationWizard({
     }
   };
 
-  const handleStepClick = async (_stepId: any) => {
+  const handleStepClick = async (stepId: any) => {
     if (stepId <= currentStep || completedSteps.includes(stepId - 1)) {
       setCurrentStep(stepId);
     }
   };
 
-  const onSubmit = async (_data: any) => {
+  const onSubmit = async (data: any) => {
     setIsSubmitting(true);
 
     try {
@@ -359,7 +359,7 @@ export function PatientRegistrationWizard({
       autoSave.clearSavedData();
 
       toast.success('Paciente cadastrado com sucesso!');
-    } catch (_error) {
+    } catch (error) {
       console.error('Error creating patient:', error);
       toast.error('Erro ao cadastrar paciente. Tente novamente.');
     } finally {
@@ -400,7 +400,7 @@ export function PatientRegistrationWizard({
 
         {/* Step Navigation */}
         <div className='flex justify-between items-center py-4 border-b'>
-          {STEPS.map((step, _index) => {
+          {STEPS.map((step) => {
             const Icon = step.icon;
             const isActive = step.id === currentStep;
             const isCompleted = completedSteps.includes(step.id);
@@ -623,19 +623,19 @@ function ContactAddressStep({ form }: { form: any }) {
   const [isLoadingCep, setIsLoadingCep] = useState(false);
 
   // Format phone number as user types (shared helper)
-  const formatPhone = (_value: any) => {
+  const formatPhone = (value: any) => {
     const cleanPhone = value.replace(/\D/g, '');
     return formatBRPhone(cleanPhone);
   };
 
   // Format CEP as user types
-  const formatCep = (_value: any) => {
+  const formatCep = (value: any) => {
     const cleanCep = value.replace(/\D/g, '');
     return cleanCep.replace(/(\d{5})(\d{3})/, '$1-$2');
   };
 
   // Lookup address by CEP
-  const lookupCep = async (_cep: any) => {
+  const lookupCep = async (cep: any) => {
     const cleanCep = cep.replace(/\D/g, '');
     if (cleanCep.length !== 8) return;
 
@@ -892,13 +892,13 @@ function ContactAddressStep({ form }: { form: any }) {
 
 function DocumentsStep({ form }: { form: any }) {
   // Format CPF as user types
-  const formatCpf = (_value: any) => {
+  const formatCpf = (value: any) => {
     const cleanCpf = value.replace(/\D/g, '');
     return cleanCpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   };
 
   // Validate CPF algorithm
-  const validateCpf = (_cpf: any) => {
+  const validateCpf = (cpf: any) => {
     const cleanCpf = cpf.replace(/\D/g, '');
     if (cleanCpf.length !== 11) return false;
 
@@ -1378,7 +1378,9 @@ function ConsentStep({ form }: { form: any }) {
 }
 
 function FileUploadStep({
-  uploadedFiles,onFilesUploaded, onFileRemoved,
+  uploadedFiles,
+  onFilesUploaded,
+  onFileRemoved,
 }: {
   uploadedFiles: UploadedFile[];
   onFilesUploaded: (files: UploadedFile[]) => void;

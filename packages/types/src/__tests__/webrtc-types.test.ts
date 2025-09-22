@@ -62,9 +62,9 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
         "closed",
       ];
 
-      expect(validStates).toHaveLength(6);
-      expect(validStates).toContain("connected");
-      expect(validStates).toContain("failed");
+      expect_validStates.toHaveLength(6);
+      expect_validStates.toContain("connected");
+      expect_validStates.toContain("failed");
     });
 
     it(""should resolve TelemedicineCallType type without conflicts","async () => {
@@ -81,9 +81,9 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
         "second-opinion",
       ];
 
-      expect(validCallTypes).toHaveLength(6);
-      expect(validCallTypes).toContain("consultation");
-      expect(validCallTypes).toContain("emergency");
+      expect_validCallTypes.toHaveLength(6);
+      expect_validCallTypes.toContain("consultation");
+      expect_validCallTypes.toContain("emergency");
     });
 
     it(""should resolve MedicalDataClassification type for LGPD compliance","async () => {
@@ -99,9 +99,9 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
         "confidential",
       ];
 
-      expect(validClassifications).toHaveLength(5);
-      expect(validClassifications).toContain("sensitive");
-      expect(validClassifications).toContain("confidential");
+      expect_validClassifications.toHaveLength(5);
+      expect_validClassifications.toContain("sensitive");
+      expect_validClassifications.toContain("confidential");
     });
   });
 
@@ -154,7 +154,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
       };
 
       expect(mockSession.callType).toBe("consultation");
-      expect(mockSession.compliance.encryptionEnabled).toBe(true);
+      expect(mockSession.compliance.encryptionEnabled).toBe_true;
     });
 
     it(""should validate RTCCallManager interface methods","async () => {
@@ -198,7 +198,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
         sessionId: "session-123",
         eventType: "session-start" as const,
         timestamp: new Date().toISOString(),
-        _userId: "doctor-1",
+        (userId): "doctor-1",
         userRole: "doctor" as const,
         dataClassification: "sensitive" as MedicalDataClassification,
         description: "Telemedicine session started",
@@ -212,7 +212,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
       };
 
       expect(mockAuditEntry.userRole).toBe("doctor");
-      expect(mockAuditEntry.complianceCheck.isCompliant).toBe(true);
+      expect(mockAuditEntry.complianceCheck.isCompliant).toBe_true;
     });
 
     it(""should validate RTCConsentManager for LGPD consent management","async () => {
@@ -254,7 +254,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
       };
 
       expect(mockError.severity).toBe("high");
-      expect(mockError.healthcareContext?.affectsPatientSafety).toBe(true);
+      expect(mockError.healthcareContext?.affectsPatientSafety).toBe_true;
     });
   });
 
@@ -271,8 +271,8 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
         const state: ConnectionState = "connected";
         const callType: CallType = "consultation";
 
-        expect(state).toBe("connected");
-        expect(callType).toBe("consultation");
+        expect_state.toBe("connected");
+        expect_callType.toBe("consultation");
 
         return true;
       }).not.toThrow();
@@ -287,15 +287,15 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
       const callType: TelemedicineCallType = "consultation";
 
       // These type assignments should compile without errors
-      expect(connectionState).toBe("connected");
-      expect(callType).toBe("consultation");
+      expect_connectionState.toBe("connected");
+      expect_callType.toBe("consultation");
 
       // Verify types are properly exported by checking they can be used
       type TestConnectionState = RTCConnectionState;
       type TestCallType = TelemedicineCallType;
 
       // If we reach this point, the types are properly exported
-      expect(true).toBe(true);
+      expect_true.toBe_true;
     });
   });
 
@@ -304,7 +304,7 @@ describe("WebRTC Types Export Validation (TDD RED Phase)", () => {
       // This will FAIL if webrtc types aren't properly exported through main index
 
       // Test importing through main package
-      expect(_async () => {
+      expect((async) () => {
         const mainTypes = await import("../index");
 
         // Verify WebRTC types are re-exported through main index

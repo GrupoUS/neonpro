@@ -67,6 +67,8 @@ vi.mock('@/services/rate-limit-service');
 vi.mock('@/services/security-headers-service');
 vi.mock('@/services/audit-service');
 
+import { z } from 'zod';
+
 // Test schemas for contract validation
 const SecurityPolicySchema = z.object({
   id: z.string(),

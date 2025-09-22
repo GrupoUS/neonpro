@@ -31,9 +31,9 @@ import {
   User,
   Volume2,
 } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 import { Badge } from '@/components/ui/badge';
 
@@ -196,7 +196,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
   processingTime,
   healthcareContext = false,
   sources = [],
-  metadata = {},
+  metadata: _metadata = {},
   userAvatar,
   assistantAvatar,
   showTimestamp = true,
@@ -204,7 +204,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
   showActions = true,
   compact = false,
   testId = 'ai-message-display',
-  onMessageAction,
+  onMessageAction: _onMessageAction, // alias to avoid unused-parameter lint error
   onCopy,
   onSpeak,
   onEdit,
@@ -396,7 +396,8 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
             )}
 
           {/* Sources */}
-          {sources.length > 0 && (<div className='mt-3 pt-3 border-t border-border/50'>
+          {sources.length > 0 && (
+            <div className='mt-3 pt-3 border-t border-border/50'>
               <Button
                 variant='ghost'
                 size='sm'
@@ -407,7 +408,8 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
                 Fontes ({sources.length})
               </Button>
 
-              {showSources && (<div className='mt-2 space-y-1'>
+              {showSources && (
+                <div className='mt-2 space-y-1'>
                   {sources.map((source, _index) => (
                     <div
                       key={source.id}

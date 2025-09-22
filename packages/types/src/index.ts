@@ -238,5 +238,5 @@ export interface ExternalIds {
   external_system_id?: string;
   insurance_id?: string;
   medical_record_system_id?: string;
-  [key: string]: string | number | boolean | null;
+  [key: string]: string | number | boolean | null | undefined;
 }

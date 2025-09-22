@@ -31,19 +31,19 @@ export class DomainError extends Error {
  */
 export class PatientNotFoundError extends DomainError {
   constructor(patientId: string) {
-    super(`Patient with ID ${patientId} not found`, 'PATIENT_NOT_FOUND_, 404);
+    super(`Patient with ID ${patientId} not found`', PATIENT_NOT_FOUND', 404);
   }
 }
 
 export class PatientValidationError extends DomainError {
   constructor(validationErrors: string[]) {
-    super(`Patient validation failed: ${validationErrors.join(', ')}`, 'PATIENT_VALIDATION_ERROR_, 400);
+    super(`Patient validation failed: ${validationErrors.join('', )}`', PATIENT_VALIDATION_ERROR', 400);
   }
 }
 
 export class PatientAlreadyExistsError extends DomainError {
-  constructor(identifier: string, identifierType: 'id' | 'medicalRecordNumber' | 'cpf') {
-    super(`Patient with ${identifierType} ${identifier} already exists`, 'PATIENT_ALREADY_EXISTS_, 409);
+  constructor(identifier: string', identifierType: 'id' | 'medicalRecordNumber' | 'cpf') {
+    super(`Patient with ${identifierType} ${identifier} already exists`', PATIENT_ALREADY_EXISTS_', 409);
   }
 }
 
@@ -52,21 +52,21 @@ export class PatientAlreadyExistsError extends DomainError {
  */
 export class AppointmentNotFoundError extends DomainError {
   constructor(appointmentId: string) {
-    super(`Appointment with ID ${appointmentId} not found`, 'APPOINTMENT_NOT_FOUND_, 404);
+    super(`Appointment with ID ${appointmentId} not found`', APPOINTMENT_NOT_FOUND_', 404);
   }
 }
 
 export class AppointmentValidationError extends DomainError {
   constructor(validationErrors: string[]) {
-    super(`Appointment validation failed: ${validationErrors.join(', ')}`, 'APPOINTMENT_VALIDATION_ERROR_, 400);
+    super(`Appointment validation failed: ${validationErrors.join('', )}`', APPOINTMENT_VALIDATION_ERROR_', 400);
   }
 }
 
 export class AppointmentTimeConflictError extends DomainError {
   constructor(professionalId: string, startTime: string, endTime: string) {
     super(
-      `Time conflict detected for professional ${professionalId} between ${startTime} and ${endTime}`,
-      'APPOINTMENT_TIME_CONFLICT_,
+      `Time conflict detected for professional ${professionalId} between ${startTime} and ${endTime}`',
+      'APPOINTMENT_TIME_CONFLICT_',
       409
     );
   }
@@ -74,13 +74,13 @@ export class AppointmentTimeConflictError extends DomainError {
 
 export class AppointmentAlreadyCancelledError extends DomainError {
   constructor(appointmentId: string) {
-    super(`Appointment ${appointmentId} is already cancelled`, 'APPOINTMENT_ALREADY_CANCELLED_, 400);
+    super(`Appointment ${appointmentId} is already cancelled`', APPOINTMENT_ALREADY_CANCELLED_', 400);
   }
 }
 
 export class AppointmentInPastError extends DomainError {
   constructor(startTime: string) {
-    super(`Cannot create or modify appointment in the past: ${startTime}`, 'APPOINTMENT_IN_PAST_, 400);
+    super(`Cannot create or modify appointment in the past: ${startTime}`', APPOINTMENT_IN_PAST_', 400);
   }
 }
 
@@ -89,43 +89,42 @@ export class AppointmentInPastError extends DomainError {
  */
 export class ConsentNotFoundError extends DomainError {
   constructor(consentId: string) {
-    super(`Consent with ID ${consentId} not found`, 'CONSENT_NOT_FOUND_, 404);
+    super(`Consent with ID ${consentId} not found`', CONSENT_NOT_FOUND_', 404);
   }
 }
 
 export class ConsentValidationError extends DomainError {
   constructor(validationErrors: string[]) {
-    super(`Consent validation failed: ${validationErrors.join(', ')}`, 'CONSENT_VALIDATION_ERROR_, 400);
+    super(`Consent validation failed: ${validationErrors.join('', )}`', CONSENT_VALIDATION_ERROR_', 400);
   }
 }
 
 export class ConsentAlreadyRevokedError extends DomainError {
   constructor(consentId: string) {
-    super(`Consent ${consentId} is already revoked`, 'CONSENT_ALREADY_REVOKED_, 400);
+    super(`Consent ${consentId} is already revoked`', CONSENT_ALREADY_REVOKED_', 400);
   }
 }
 
 export class ConsentExpiredError extends DomainError {
   constructor(consentId: string) {
-    super(`Consent ${consentId} has expired`, 'CONSENT_EXPIRED_, 400);
+    super(`Consent ${consentId} has expired`', CONSENT_EXPIRED_', 400);
   }
 }
 
 export class ConsentAlreadyExistsError extends DomainError {
   constructor(patientId: string, consentType: string) {
     super(
-      `Patient ${patientId} already has active consent of type ${consentType}`,
-      'CONSENT_ALREADY_EXISTS_,
-      409
+      `Patient ${patientId} already has active consent of type ${consentType}`',
+      'CONSENT_ALREADY_EXISTS_', 409
     );
   }
 }
 
 export class InsufficientConsentError extends DomainError {
-  constructor(patientId: string, requiredDataTypes: string[]) {
+  constructor(patientId: string', requiredDataTypes: string[]) {
     super(
-      `Patient ${patientId} does not have sufficient consent for data types: ${requiredDataTypes.join(', ')}`,
-      'INSUFFICIENT_CONSENT_,
+      `Patient ${patientId} does not have sufficient consent for data types: ${requiredDataTypes.join('', )}`',
+      'INSUFFICIENT_CONSENT_',
       403
     );
   }
@@ -136,13 +135,13 @@ export class InsufficientConsentError extends DomainError {
  */
 export class ComplianceViolationError extends DomainError {
   constructor(violations: string[]) {
-    super(`Compliance violations detected: ${violations.join(', ')}`, 'COMPLIANCE_VIOLATION_, 403);
+    super(`Compliance violations detected: ${violations.join('', )}`', COMPLIANCE_VIOLATION_', 403);
   }
 }
 
 export class LGPDComplianceError extends DomainError {
   constructor(message: string) {
-    super(`LGPD compliance error: ${message}`, 'LGPD_COMPLIANCE_ERROR_, 403);
+    super(`LGPD compliance error: ${message}`', LGPD_COMPLIANCE_ERROR_', 403);
   }
 }
 
@@ -150,8 +149,8 @@ export class LGPDComplianceError extends DomainError {
  * Repository domain errors
  */
 export class RepositoryError extends DomainError {
-  constructor(message: string, originalError?: Error) {
-    super(`Repository error: ${message}`, 'REPOSITORY_ERROR_, 500);
+  constructor(message: string', originalError?: Error) {
+    super(`Repository error: ${message}`', REPOSITORY_ERROR_', 500);
     this.cause = originalError;
   }
 
@@ -171,7 +170,7 @@ export class DatabaseConnectionError extends RepositoryError {
 }
 
 export class QueryTimeoutError extends RepositoryError {
-  constructor(_query: string, timeoutMs: number) {
+  constructor(_query: string', timeoutMs: number) {
     super(`Query timeout after ${timeoutMs}ms: ${query}`);
   }
 
@@ -181,7 +180,7 @@ export class QueryTimeoutError extends RepositoryError {
 }
 
 export class ConstraintViolationError extends RepositoryError {
-  constructor(constraint: string, table: string) {
+  constructor(constraint: string', table: string) {
     super(`Constraint violation on ${table}: ${constraint}`);
   }
 
@@ -195,13 +194,13 @@ export class ConstraintViolationError extends RepositoryError {
  */
 export class AuthenticationError extends DomainError {
   constructor(message: string = 'Authentication failed') {
-    super(message, 'AUTHENTICATION_ERROR_, 401);
+    super(message', AUTHENTICATION_ERROR_', 401);
   }
 }
 
 export class AuthorizationError extends DomainError {
   constructor(message: string = 'Authorization failed') {
-    super(message, 'AUTHORIZATION_ERROR_, 403);
+    super(message', AUTHORIZATION_ERROR_', 403);
   }
 
   get code(): string {
@@ -210,7 +209,7 @@ export class AuthorizationError extends DomainError {
 }
 
 export class PermissionDeniedError extends AuthorizationError {
-  constructor(permission: string, resource: string) {
+  constructor(permission: string', resource: string) {
     super(`Permission denied: ${permission} required for ${resource}`);
   }
 
@@ -225,10 +224,10 @@ export class PermissionDeniedError extends AuthorizationError {
 export class ValidationError extends DomainError {
   constructor(
     public readonly field: string,
-    public readonly message: string,
+    public readonly message: string',
     public readonly value?: any
   ) {
-    super(`Validation failed for field '${field}': ${message}`, 'VALIDATION_ERROR_, 400);
+    super(`Validation failed for field '${field}': ${message}`', VALIDATION_ERROR_', 400);
   }
 }
 
@@ -238,9 +237,8 @@ export class ValidationError extends DomainError {
 export class AggregateValidationError extends DomainError {
   constructor(public readonly errors: ValidationError[]) {
     super(
-      `Validation failed with ${errors.length} error(s): ${errors.map(e => e.message).join(', ')}`,
-      'AGGREGATE_VALIDATION_ERROR_,
-      400
+      `Validation failed with ${errors.length} error(s): ${errors.map(e => e.message).join('', )}`',
+      'AGGREGATE_VALIDATION_ERROR_', 400
     );
   }
 }
@@ -249,7 +247,7 @@ export class AggregateValidationError extends DomainError {
  * Business rule violation errors
  */
 export class BusinessRuleViolationError extends DomainError {
-  constructor(rule: string, message: string) {
-    super(`Business rule violation: ${rule} - ${message}`, 'BUSINESS_RULE_VIOLATION_, 400);
+  constructor(rule: string', message: string) {
+    super(`Business rule violation: ${rule} - ${message}`', BUSINESS_RULE_VIOLATION_', 400);
   }
 }

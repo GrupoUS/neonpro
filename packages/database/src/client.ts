@@ -15,7 +15,7 @@ export type { SupabaseClient } from "@supabase/supabase-js";
 // Connection pool configuration optimized for healthcare workloads
 const createOptimizedSupabaseClient = (): SupabaseClient => {
   // Skip Supabase client creation in test environment
-  if (process.env.NODE_ENV === 'test_) {
+  if (process.env.NODE_ENV === 'test') {
     // Return a mock client for testing
     return {
       from: (_table: string) => ({
@@ -70,7 +70,7 @@ const createOptimizedSupabaseClient = (): SupabaseClient => {
 // Browser client for client-side operations with RLS
 const createBrowserSupabaseClient = (): SupabaseClient => {
   // Skip Supabase client creation in test environment
-  if (process.env.NODE_ENV === 'test_) {
+  if (process.env.NODE_ENV === 'test') {
     // Return a mock client for testing
     return {
       from: () => ({
@@ -124,7 +124,7 @@ const createPrismaClient = (): PrismaClient => {
 // Client creation functions for testing
 export const createNodeSupabaseClient = (): SupabaseClient => {
   // Skip Supabase client creation in test environment
-  if (process.env.NODE_ENV === 'test_) {
+  if (process.env.NODE_ENV === 'test') {
     // Return a mock client for testing
     return {
       from: () => ({

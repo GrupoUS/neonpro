@@ -6,9 +6,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-describe(('Bundle Optimization Validation', () => {
-  describe(('Performance Metrics', () => {
-    it(('should validate bundle size reduction targets', () => {
+describe('Bundle Optimization Validation', () => {
+  describe('Performance Metrics', () => {
+    it('should validate bundle size reduction targets', () => {
       // Original bundle sizes before optimization
       const originalSizes = {
         'vendor-misc': 14171568, // 14.17MB
@@ -40,7 +40,7 @@ describe(('Bundle Optimization Validation', () => {
       });
     });
 
-    it(('should validate lazy loading implementation exists', () => {
+    it('should validate lazy loading implementation exists', () => {
       // Check that lazy loading utilities exist
       const lazyLoadingFiles = [
         '/src/lib/lazy-loading.tsx',
@@ -55,7 +55,7 @@ describe(('Bundle Optimization Validation', () => {
       });
     });
 
-    it(('should validate healthcare compliance maintained', () => {
+    it('should validate healthcare compliance maintained', () => {
       // Validate that healthcare compliance is maintained
       const complianceRequirements = [
         'LGPD - Data Privacy',
@@ -71,8 +71,8 @@ describe(('Bundle Optimization Validation', () => {
     });
   });
 
-  describe(('Code Splitting Strategy', () => {
-    it(('should validate expected chunks are created', () => {
+  describe('Code Splitting Strategy', () => {
+    it('should validate expected chunks are created', () => {
       const expectedChunks = [
         'vendor-charts', // Recharts and D3
         'vendor-tables', // TanStack Table
@@ -89,7 +89,7 @@ describe(('Bundle Optimization Validation', () => {
       });
     });
 
-    it(('should validate loading states are implemented', () => {
+    it('should validate loading states are implemented', () => {
       const loadingStates = [
         'HealthcareLoadingFallback',
         'TableLoading',

@@ -14,6 +14,7 @@
 import { createClient, RealtimeChannel, RealtimeClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
+import * as z from 'zod';
 // Enhanced telemedicine subscription schemas
 const TelemedicineMessageSchema = z.object({
   id: z.string().uuid(),
@@ -377,7 +378,7 @@ export class EnhancedTelemedicineRealtime {
     channel: RealtimeChannel,
     sessionId: string,
   ): void {
-    channel.on('presence', { event: 'sync' }), () => {
+    channel.on('presence', { event: 'sync' }, () => {
       const state = channel.presenceState();
       console.log(
         `👥 Presence sync for session ${sessionId}:`,
@@ -386,11 +387,11 @@ export class EnhancedTelemedicineRealtime {
       );
     });
 
-    channel.on('presence', { event: 'join' },({ key,_newPresences }) => {
+    channel.on('presence', { event: 'join' }, ({ key, newPresences }) => {
       console.log(`👋 User joined session ${sessionId}:`, key, newPresences);
     });
 
-    channel.on('presence', { event: 'leave' },({ key,_leftPresences }) => {
+    channel.on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
       console.log(`👋 User left session ${sessionId}:`, key, leftPresences);
 
       // Clean up local presence state

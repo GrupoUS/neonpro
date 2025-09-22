@@ -15,6 +15,7 @@
  */
 
 import { nanoid } from "nanoid";
+import { z } from "zod";
 
 // Import enhanced Winston-based logging
 import {
@@ -724,7 +725,7 @@ export class StructuredLogger {
       healthcare?: HealthcareContext;
       technical?: Partial<TechnicalContext>;
     },
-    error?: any,
+    error?: Error,
   ): void {
     // Check if level meets threshold
     if (!this.shouldLog(level)) {
@@ -797,7 +798,7 @@ export class StructuredLogger {
       healthcare?: HealthcareContext;
       technical?: Partial<TechnicalContext>;
     },
-    error?: any,
+    error?: Error,
   ): LogEntry {
     const id = `log_${nanoid(12)}`;
     const timestamp = Date.now();
@@ -1353,7 +1354,7 @@ export const piiRedactionService = brazilianPIIRedactionService;
 /**
  * Utility function to redact PII from any text or object
  */
-export function redactPII(data: any): any {
+export function redactPII(data: unknown): unknown {
   if (typeof data === 'string') {
     return piiRedactionService.redactText(data);
   } else if (typeof data === 'object' && data !== null) {
@@ -1365,7 +1366,7 @@ export function redactPII(data: any): any {
 /**
  * Utility function to check if data contains PII
  */
-export function containsPII(data: any): boolean {
+export function containsPII(data: unknown): boolean {
   if (typeof data === 'string') {
     return piiRedactionService.containsPII(data);
   } else if (typeof data === 'object' && data !== null) {
@@ -1385,7 +1386,7 @@ export function generateCorrelationId(): string {
  * Create logging middleware for request correlation
  */
 export function createLoggingMiddleware() {
-  return (req: any, res: any, next: any) => {
+  return (req: { headers?: Record<string, string> }, res: { setHeader: (key: string, value: string) => void }, next: () => void) => {
     const correlationId = req.headers['x-correlation-id'] || generateCorrelationId();
     
     // Set correlation ID in both loggers

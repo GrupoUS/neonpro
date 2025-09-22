@@ -15,6 +15,7 @@
  */
 
 import { nanoid } from "nanoid";
+import { z } from "zod";
 import type { Context } from "hono";
 import type {
   HealthcareRole,
@@ -593,8 +594,8 @@ export class HealthcareAuthorizationRules {
   ): Partial<AuthorizationDecision> {
     const { subject, resource, action, environment } = context;
     const reasons: string[] = [];
-    const obligations: any[] = [];
-    const advice: any[] = [];
+    const obligations: AuthorizationDecision["obligations"] = [];
+    const advice: AuthorizationDecision["advice"] = [];
     let decision: "permit" | "deny" = "deny";
 
     // Emergency access override
@@ -673,7 +674,7 @@ export class HealthcareAuthorizationRules {
   ): Partial<AuthorizationDecision> {
     const { subject, action } = context;
     const reasons: string[] = [];
-    const obligations: any[] = [];
+    const obligations: AuthorizationDecision["obligations"] = [];
     let decision: "permit" | "deny" = "deny";
 
     // Prescribing privileges
@@ -756,7 +757,7 @@ export class HealthcareAuthorizationRules {
   ): Partial<AuthorizationDecision> {
     const { subject, action } = context;
     const reasons: string[] = [];
-    const obligations: any[] = [];
+    const obligations: AuthorizationDecision["obligations"] = [];
     let decision: "permit" | "deny" = "deny";
 
     // System administration
@@ -800,8 +801,8 @@ export class HealthcareAuthorizationRules {
   ): Partial<AuthorizationDecision> {
     const { subject, environment } = context;
     const reasons: string[] = [];
-    const obligations: any[] = [];
-    const advice: any[] = [];
+    const obligations: AuthorizationDecision["obligations"] = [];
+    const advice: AuthorizationDecision["advice"] = [];
     let decision: "permit" | "deny" = "deny";
 
     // Emergency responder access
@@ -842,8 +843,8 @@ export class HealthcareAuthorizationRules {
   ): Partial<AuthorizationDecision> {
     const { subject, resource, action, compliance } = context;
     const reasons: string[] = [];
-    const obligations: any[] = [];
-    const advice: any[] = [];
+    const obligations: AuthorizationDecision["obligations"] = [];
+    const advice: AuthorizationDecision["advice"] = [];
     let decision: "permit" | "deny" = "permit"; // Start with permit, apply restrictions
 
     // Consent validation
@@ -1148,9 +1149,9 @@ export class HealthcareAuthorizationEngine {
     let finalDecision: "permit" | "deny" | "not_applicable" | "indeterminate" =
       this.config.decisionEngine.defaultDecision;
     const allReasons: string[] = [];
-    const allObligations: any[] = [];
-    const allAdvice: any[] = [];
-    const conditions: any[] = [];
+    const allObligations: AuthorizationDecision["obligations"] = [];
+    const allAdvice: AuthorizationDecision["advice"] = [];
+    const conditions: AuthorizationDecision["conditions"] = [];
 
     // Risk assessment
     const riskScore = await this.assessRisk(context);

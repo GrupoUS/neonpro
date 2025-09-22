@@ -56,6 +56,45 @@ export interface ClinicData {
   updatedAt?: string;
   isActive?: boolean;
 }
+
+// Zod schemas for validation
+export const ClinicSettingsSchema = z.object({
+  timezone: z.string().optional(),
+  language: z.string().optional(),
+  dateFormat: z.string().optional(),
+  notifications: z.object({
+    email: z.boolean(),
+    sms: z.boolean(),
+    push: z.boolean(),
+  }).optional(),
+  appointment: z.object({
+    defaultDuration: z.number(),
+    allowOverlap: z.boolean(),
+    bufferTime: z.number(),
+  }).optional(),
+  billing: z.object({
+    currency: z.string(),
+    autoInvoice: z.boolean(),
+  }).optional(),
+}).passthrough();
+
+export const ClinicDataSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  cnpj: z.string().optional(),
+  healthLicenseNumber: z.string().optional(),
+  address: z.object({
+    street: z.string(),
+    number: z.string(),
+    city: z.string(),
+    state: z.string(),
+    zip: z.string(),
+  }).optional(),
+  settings: ClinicSettingsSchema.optional(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
+  isActive: z.boolean().optional(),
+});
 // =======================
 // Base API Response Types
 // =======================
@@ -69,7 +108,7 @@ export const BaseResponseSchema = z.object({
 
 // Request schemas for professionals
 export const CreateProfessionalRequestSchema = z.object({
-  _userId: z.string().uuid(),
+  userId: z.string().uuid(),
   clinicId: z.string().uuid(),
 
   // Professional Details
@@ -193,7 +232,7 @@ export const AppointmentContractSchema = z.object({
 
 export const ProfessionalContractSchema = z.object({
   id: z.string().uuid(),
-  _userId: z.string().uuid(),
+  userId: z.string().uuid(),
   clinicId: z.string().uuid(),
 
   // Professional Details
@@ -272,7 +311,7 @@ export const AIChatContractSchema = z.object({
 export const AIRequestSchema = z.object({
   message: z.string().min(1).max(4000),
   sessionId: z.string().uuid().optional(),
-  _context: z.object({
+  context: z.object({
     patientId: z.string().uuid().optional(),
     clinicId: z.string().uuid(),
     conversationHistory: z
@@ -453,7 +492,7 @@ export const HealthcareErrorCodes = z.enum([
 export class HealthcareTRPCError extends TRPCError {
   constructor(
     code:
-      | 'BAD_REQUEST_' | 'UNAUTHORIZED'
+      | 'BAD_REQUEST' | 'UNAUTHORIZED'
       | 'FORBIDDEN'
       | 'NOT_FOUND' | 'INTERNAL_SERVER_ERROR'
       | 'TOO_MANY_REQUESTS',
@@ -553,7 +592,7 @@ export const CreateClinicRequestSchema = z.object({
     state: z.string().length(2),
     zip: z.string().optional(),
   }),
-  settings: ClinicSettings.optional(),
+  settings: z.record(z.unknown()).optional(),
 });
 
 export const UpdateClinicRequestSchema = z
@@ -571,13 +610,13 @@ export const UpdateClinicRequestSchema = z
         zip: z.string().optional(),
       })
       .optional(),
-    settings: ClinicSettings.optional(),
+    settings: z.record(z.unknown()).optional(),
   })
   .strict();
 
 export const ClinicResponseSchema = z.object({
   success: z.literal(true),
-  data: ClinicData,
+  data: z.record(z.unknown()),
   message: z.string().optional(),
   timestamp: z.string().optional(),
   requestId: z.string().optional(),
@@ -586,7 +625,7 @@ export const ClinicResponseSchema = z.object({
 export const ClinicsListResponseSchema = z.object({
   success: z.literal(true),
   data: z.object({
-    clinics: z.array(ClinicData),
+    clinics: z.array(z.record(z.unknown())),
     pagination: z.object({
       page: z.number(),
       limit: z.number(),

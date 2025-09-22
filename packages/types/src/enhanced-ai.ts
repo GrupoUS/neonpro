@@ -3,6 +3,16 @@
 // Extends existing AI provider types for subscription plans and usage tracking
 // Date: 2025-09-15
 
+// Healthcare-compliant metadata types for Enhanced AI
+export interface EnhancedAIMetadata {
+  complianceLevel?: 'standard' | 'enhanced' | 'restricted';
+  dataSensitivity?: 'public' | 'internal' | 'confidential' | 'restricted';
+  auditTrail?: boolean;
+  encryptionLevel?: 'none' | 'basic' | 'advanced' | 'military';
+  retentionPeriod?: number;
+  [key: string]: unknown;
+}
+
 import type {
   AIProvider,
   AIProviderConfig,
@@ -167,7 +177,7 @@ export interface AIUsageRecord {
 
   // User and Context
   readonly clinicId: string;
-  readonly _userId: string;
+  readonly (userId): string;
   readonly sessionId?: string;
 
   // Model and Request Details
@@ -251,7 +261,7 @@ export interface BillingMetrics {
 export interface AuditTrail {
   readonly action: string;
   readonly timestamp: Date;
-  readonly _userId: string;
+  readonly (userId): string;
   readonly userRole?: string;
   readonly ipAddress?: string;
   readonly userAgent?: string;
@@ -262,7 +272,7 @@ export interface AuditTrail {
     | "training"
     | "audit";
   readonly anonymizationLevel: "none" | "pseudonymized" | "anonymized";
-  readonly metadata?: Record<string, any>;
+  readonly metadata?: EnhancedAIMetadata;
 }
 
 // ================================================
@@ -333,7 +343,7 @@ export type SubscriptionStatus = "active" | "suspended" | "cancelled" | "trial";
 export interface UserSubscription {
   readonly id: string;
   readonly clinicId: string;
-  readonly _userId: string;
+  readonly (userId): string;
   readonly planCode: SubscriptionTier;
 
   // Subscription Details
@@ -373,7 +383,7 @@ export interface UserSubscription {
 export interface EnhancedAIRequest extends GenerateAnswerInput {
   readonly modelCode: EnhancedAIModel;
   readonly clinicId: string;
-  readonly _userId: string;
+  readonly (userId): string;
   readonly sessionId?: string;
 
   // Healthcare Context

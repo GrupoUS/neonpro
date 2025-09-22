@@ -187,7 +187,7 @@ export function FileUploadIntegration({
 
   // Handle file selection
   const handleFiles = useCallback(
-    async (_files: any) => {
+    async (files: any) => {
       if (disabled) return;
 
       const fileArray = Array.from(files);
@@ -257,7 +257,7 @@ export function FileUploadIntegration({
 
           toast.success(`Arquivo "${file.name}" enviado com sucesso!`);
           onFilesUploaded?.([uploadedFile]);
-        } catch (_error) {
+        } catch (error) {
           console.error('Upload error:', error);
 
           setUploadStates(prev => {
@@ -283,13 +283,13 @@ export function FileUploadIntegration({
   );
 
   // Handle file removal (simplified for now)
-  const handleRemoveFile = async (_fileId: any) => {
+  const handleRemoveFile = async (fileId: any) => {
     try {
       // TODO: Implement actual file removal from Supabase storage
       setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
       onFileRemoved?.(fileId);
       toast.success('Arquivo removido com sucesso!');
-    } catch (_error) {
+    } catch (error) {
       console.error('Error removing file:', error);
       toast.error('Erro ao remover arquivo');
     }
