@@ -3,6 +3,6 @@
   "version": 2,
   "installCommand": "bun install",
   "buildCommand": "bun run build",
-  "outputDirectory": "apps/web/dist",
+  "outputDirectory": "dist",
   "framework": null
 }
