@@ -308,128 +308,87 @@ describe('API Documentation Generator', () => {
     });
 
     it('should include mobile notes in examples', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
       const endpointsWithExamples = report.endpoints.filter(
         e => e.examples && e.examples.length > 0,
-      
-      expect(endpointsWithExamples.length).toBeGreaterThan(0
+      );
+      expect(endpointsWithExamples.length).toBeGreaterThan(0);
 
       endpointsWithExamples.forEach(endpoint => {
-        (endpoint as any).examples?.forEach(example => {
-          // Variable 'example' is already declared as parameter
-<<<<<<< HEAD
-          expect(example.mobileNotes).toBeDefined(
-          expect(typeof example.mobileNotes).toBe('string')
-          expect(example.mobileNotes!.length).toBeGreaterThan(0
-        }
-      }
-    }
-=======
+        (endpoint as any).examples?.forEach((example: any) => {
           expect(example.mobileNotes).toBeDefined();
           expect(typeof example.mobileNotes).toBe('string');
           expect(example.mobileNotes!.length).toBeGreaterThan(0);
         });
       });
     });
->>>>>>> origin/main
 
     it('should include mobile optimization in response examples', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
       const patientEndpoint = report.endpoints.find(
         e => e.id === 'get-patient',
-      
+      );
 
-      expect(patientEndpoint?.responses[0].example.accessibility).toBeDefined(
+      expect(patientEndpoint?.responses[0].example.accessibility).toBeDefined();
       expect(
         (patientEndpoint?.responses[0].example.accessibility as any)
           .mobileOptimized,
       ).toBe(true);
-    }
-  }
+    });
+  });
 
   describe('Authentication and Security', () => {
     it('should track authentication methods', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
-      expect(report.authenticationMethods).toContain('bearer')
+      expect(report.authenticationMethods).toContain('bearer');
 
       const authEndpoints = report.endpoints.filter(
         e => (e as any).authentication.required,
-<<<<<<< HEAD
-      
-=======
       );
->>>>>>> origin/main
       expect(authEndpoints.length).toBe(report.endpoints.length); // All endpoints require auth
-    }
+    });
 
     it('should include LGPD consent requirements', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
       const lgpdEndpoints = report.endpoints.filter(
         e => (e as any).authentication.lgpdConsent,
-<<<<<<< HEAD
-      
-      expect(lgpdEndpoints.length).toBeGreaterThan(0
-=======
       );
       expect(lgpdEndpoints.length).toBeGreaterThan(0);
->>>>>>> origin/main
 
       lgpdEndpoints.forEach((endpoint: any) => {
         expect(endpoint.authentication.lgpdConsent).toBe(true);
-      }
-    }
+      });
+    });
 
     it('should include rate limiting information', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
       const rateLimitedEndpoints = report.endpoints.filter(
         e => e.metadata.rateLimit,
-      
-      expect(rateLimitedEndpoints.length).toBeGreaterThan(0
+      );
+      expect(rateLimitedEndpoints.length).toBeGreaterThan(0);
 
       rateLimitedEndpoints.forEach(endpoint => {
-<<<<<<< HEAD
-        expect((endpoint as any).metadata.rateLimit?.requests).toBeGreaterThan(0
-        expect((endpoint as any).metadata.rateLimit?.window).toBeDefined(
-      }
-    }
-  }
-=======
         expect((endpoint as any).metadata.rateLimit?.requests).toBeGreaterThan(0);
         expect((endpoint as any).metadata.rateLimit?.window).toBeDefined();
       });
     });
   });
->>>>>>> origin/main
 
   describe('Error Handling', () => {
     it('should include comprehensive error documentation', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
       const endpointsWithErrors = report.endpoints.filter(
         e => e.errors && e.errors.length > 0,
-      
-      expect(endpointsWithErrors.length).toBeGreaterThan(0
+      );
+      expect(endpointsWithErrors.length).toBeGreaterThan(0);
 
       endpointsWithErrors.forEach(endpoint => {
-        (endpoint as any).errors?.forEach(error => {
-          // Variable 'error' is already declared as parameter
-<<<<<<< HEAD
-          expect(error.code).toBeDefined(
-          expect(error.statusCode).toBeGreaterThan(0
-          expect(error.message).toBeDefined(
-          expect(error.messagePtBr).toBeDefined(
-          expect(error.description).toBeDefined(
-          expect(error.descriptionPtBr).toBeDefined(
-          expect(error.resolution).toBeDefined(
-          expect(error.resolutionPtBr).toBeDefined(
-        }
-      }
-    }
-=======
+        (endpoint as any).errors?.forEach((error: any) => {
           expect(error.code).toBeDefined();
           expect(error.statusCode).toBeGreaterThan(0);
           expect(error.message).toBeDefined();
@@ -441,7 +400,6 @@ describe('API Documentation Generator', () => {
         });
       });
     });
->>>>>>> origin/main
 
     it('should include healthcare-specific errors', () => {
       const report = generator.generateReport(
