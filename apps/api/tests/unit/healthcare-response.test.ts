@@ -27,12 +27,12 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData, options);
+      const response = createHealthcareResponse(responseData, options
 
-      expect(response).toBeInstanceOf(Response);
-      expect(response.status).toBe(200);
-      expect(response.headers.get('Content-Type')).toBe('application/json');
-    });
+      expect(response).toBeInstanceOf(Response
+      expect(response.status).toBe(200
+      expect(response.headers.get('Content-Type')).toBe('application/json')
+    }
 
     it('should create an error healthcare response with proper error structure', () => {
       const responseData = {
@@ -53,12 +53,12 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData, options);
+      const response = createHealthcareResponse(responseData, options
 
-      expect(response).toBeInstanceOf(Response);
-      expect(response.status).toBe(400);
-      expect(response.headers.get('X-Error-Type')).toBe('validation_error');
-    });
+      expect(response).toBeInstanceOf(Response
+      expect(response.status).toBe(400
+      expect(response.headers.get('X-Error-Type')).toBe('validation_error')
+    }
 
     it('should include healthcare-specific metadata in response', () => {
       const responseData = {
@@ -76,10 +76,10 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData);
+      const response = createHealthcareResponse(responseData
 
-      expect(response).toBeInstanceOf(Response);
-    });
+      expect(response).toBeInstanceOf(Response
+    }
 
     it('should handle custom headers for healthcare compliance', () => {
       const responseData = {
@@ -103,13 +103,13 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData, options);
+      const response = createHealthcareResponse(responseData, options
 
-      expect(response.headers.get('X-LGPD-Compliant')).toBe('true');
-      expect(response.headers.get('X-CFM-Validated')).toBe('true');
-      expect(response.headers.get('X-ANVISA-Status')).toBe('approved');
-      expect(response.headers.get('Cache-Control')).toBe('no-cache');
-    });
+      expect(response.headers.get('X-LGPD-Compliant')).toBe('true')
+      expect(response.headers.get('X-CFM-Validated')).toBe('true')
+      expect(response.headers.get('X-ANVISA-Status')).toBe('approved')
+      expect(response.headers.get('Cache-Control')).toBe('no-cache')
+    }
 
     it('should sanitize personal data in error responses', () => {
       const responseData = {
@@ -123,11 +123,11 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData, { status: 400 });
+      const response = createHealthcareResponse(responseData, { status: 400 }
 
-      expect(response).toBeInstanceOf(Response);
-      expect(response.status).toBe(400);
-    });
+      expect(response).toBeInstanceOf(Response
+      expect(response.status).toBe(400
+    }
 
     it('should handle missing compliance information gracefully', () => {
       const responseData = {
@@ -136,11 +136,11 @@ describe('Healthcare Response Module - RED Phase', () => {
         processingTime: 10,
       };
 
-      const response = createHealthcareResponse(responseData);
+      const response = createHealthcareResponse(responseData
 
-      expect(response).toBeInstanceOf(Response);
-      expect(response.status).toBe(200);
-    });
+      expect(response).toBeInstanceOf(Response
+      expect(response.status).toBe(200
+    }
 
     it('should support different content types for healthcare data', () => {
       const responseData = {
@@ -161,10 +161,10 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData, options);
+      const response = createHealthcareResponse(responseData, options
 
-      expect(response.headers.get('Content-Type')).toBe('application/vnd.healthcare+json');
-    });
+      expect(response.headers.get('Content-Type')).toBe('application/vnd.healthcare+json')
+    }
 
     it('should include audit trail information in responses', () => {
       const responseData = {
@@ -183,10 +183,10 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData);
+      const response = createHealthcareResponse(responseData
 
-      expect(response).toBeInstanceOf(Response);
-    });
+      expect(response).toBeInstanceOf(Response
+    }
 
     it('should handle healthcare-specific status codes', () => {
       const responseData = {
@@ -207,11 +207,11 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData, options);
+      const response = createHealthcareResponse(responseData, options
 
-      expect(response.status).toBe(403);
-      expect(response.headers.get('X-Healthcare-Error')).toBe('authorization_failed');
-    });
+      expect(response.status).toBe(403
+      expect(response.headers.get('X-Healthcare-Error')).toBe('authorization_failed')
+    }
 
     it('should support Brazilian healthcare compliance headers', () => {
       const responseData = {
@@ -234,10 +234,10 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
       };
 
-      const response = createHealthcareResponse(responseData, options);
+      const response = createHealthcareResponse(responseData, options
 
-      expect(response.headers.get('X-Brazil-Healthcare-Compliance')).toBe('CFM-ANVISA-LGPD');
-      expect(response.headers.get('X-Medical-Professional-CRM')).toBe('12345-SP');
-    });
-  });
-});
+      expect(response.headers.get('X-Brazil-Healthcare-Compliance')).toBe('CFM-ANVISA-LGPD')
+      expect(response.headers.get('X-Medical-Professional-CRM')).toBe('12345-SP')
+    }
+  }
+}

@@ -48,7 +48,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
     // Setup mock server for API calls
     server.use(
       http.post('/api/v1/ai/crud/execute', async ({ request }) => {
-        const body = await request.json();
+        const body = await request.json(
 
         // Validate request format
         if (!validateExecuteRequest(body)) {
@@ -58,7 +58,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'INVALID_REQUEST',
             }),
             { status: 400 },
-          );
+          
         }
 
         // Validate confirm ID and token
@@ -69,7 +69,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'INVALID_CONFIRM',
             }),
             { status: 404 },
-          );
+          
         }
 
         // Validate execution token
@@ -80,7 +80,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'INVALID_TOKEN',
             }),
             { status: 401 },
-          );
+          
         }
 
         // Validate operation-specific validation (missing required fields for CREATE)
@@ -91,7 +91,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'VALIDATION_FAILED',
             }),
             { status: 400 },
-          );
+          
         }
 
         // Reject operation-specific validation for test case
@@ -102,7 +102,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'VALIDATION_FAILED',
             }),
             { status: 400 },
-          );
+          
         }
 
         // SQL Injection Protection
@@ -113,7 +113,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'SECURITY_VIOLATION',
             }),
             { status: 400 },
-          );
+          
         }
 
         // Reject SQL injection for test case
@@ -124,7 +124,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'SECURITY_VIOLATION',
             }),
             { status: 400 },
-          );
+          
         }
 
         // Data type validation
@@ -135,7 +135,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'TYPE_VALIDATION_FAILED',
             }),
             { status: 400 },
-          );
+          
         }
 
         // Reject type validation for test case
@@ -146,7 +146,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'TYPE_VALIDATION_FAILED',
             }),
             { status: 400 },
-          );
+          
         }
 
         // LGPD consent validation for sensitive data
@@ -157,7 +157,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'CONSENT_REQUIRED',
             }),
             { status: 422 },
-          );
+          
         }
 
         // Reject consent validation for test case
@@ -168,14 +168,14 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'CONSENT_REQUIRED',
             }),
             { status: 422 },
-          );
+          
         }
 
         // Database connection simulation
         if (
-          body.simulateError === 'database_connection'
+          body.simulateError === 'database_connection')
           || body.operation?.data?.triggerDatabaseError === true
-          || body.operation?.data?.name === 'TRIGGER_DB_ERROR'
+          || body.operation?.data?.name === 'TRIGGER_DB_ERROR')
         ) {
           return new HttpResponse(
             JSON.stringify({
@@ -183,7 +183,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'DATABASE_ERROR',
             }),
             { status: 500 },
-          );
+          
         }
 
         // Reject database error for test case
@@ -194,7 +194,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'DATABASE_ERROR',
             }),
             { status: 500 },
-          );
+          
         }
 
         // Constraint violation simulation
@@ -205,7 +205,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'CONSTRAINT_VIOLATION',
             }),
             { status: 409 },
-          );
+          
         }
 
         // Reject constraint violation for test case
@@ -216,7 +216,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'CONSTRAINT_VIOLATION',
             }),
             { status: 409 },
-          );
+          
         }
 
         // Transaction rollback simulation
@@ -227,7 +227,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'TRANSACTION_FAILED',
             }),
             { status: 500 },
-          );
+          
         }
 
         // Reject transaction rollback for test case
@@ -238,7 +238,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               code: 'TRANSACTION_FAILED',
             }),
             { status: 500 },
-          );
+          
         }
 
         // Simulate successful execution
@@ -250,7 +250,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               .replace(/</g, '&lt;')
               .replace(/>/g, '&gt;')
               .replace(/"/g, '&quot;')
-              .replace(/'/g, '&#x27;');
+              .replace(/'/g, '&#x27;')
           };
 
           return HttpResponse.json({
@@ -298,7 +298,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               validationTime: 45,
               totalTime: 201,
             },
-          });
+          }
         }
 
         // Handle other operations
@@ -357,9 +357,9 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
                 .replace(/>/g, '&gt;')
                 .replace(/"/g, '&quot;')
                 .replace(/'/g, '&#x27;')
-                .replace(/&/g, '&amp;');
+                .replace(/&/g, '&amp;')
             }
-          });
+          }
         }
 
         return HttpResponse.json({
@@ -387,41 +387,41 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               correlationId: body.context?.correlationId || 'correlation-789',
             },
           },
-        });
+        }
       }),
-    );
-  });
+    
+  }
 
   afterEach(() => {
     // Reset server handlers
-    server.resetHandlers();
-  });
+    server.resetHandlers(
+  }
 
   describe('Execute Request Validation', () => {
     it('should accept valid execute requests', async () => {
       // RED: Test expects valid request to be accepted
-      const response = await executeCrudOperation(mockExecuteRequest);
+      const response = await executeCrudOperation(mockExecuteRequest
 
       expect(response.success).toBe(true);
-      expect(response.executionId).toBeDefined();
-      expect(response.result).toBeDefined();
-      expect(response.auditTrail).toBeDefined();
-      expect(response.performance).toBeDefined();
-    });
+      expect(response.executionId).toBeDefined(
+      expect(response.result).toBeDefined(
+      expect(response.auditTrail).toBeDefined(
+      expect(response.performance).toBeDefined(
+    }
 
     it('should reject requests with invalid confirm ID', async () => {
       // RED: Test expects invalid confirm ID to be rejected
       const invalidRequest = { ...mockExecuteRequest, confirmId: 'invalid-confirm' };
 
-      await expect(executeCrudOperation(invalidRequest)).rejects.toThrow('Invalid confirmation ID');
-    });
+      await expect(executeCrudOperation(invalidRequest)).rejects.toThrow('Invalid confirmation ID')
+    }
 
     it('should reject requests with invalid execution token', async () => {
       // RED: Test expects invalid execution token to be rejected
       const invalidRequest = { ...mockExecuteRequest, executionToken: 'invalid-token' };
 
-      await expect(executeCrudOperation(invalidRequest)).rejects.toThrow('Invalid execution token');
-    });
+      await expect(executeCrudOperation(invalidRequest)).rejects.toThrow('Invalid execution token')
+    }
 
     it('should reject requests missing required fields', async () => {
       // GREEN: Fixed to match actual API error message
@@ -429,8 +429,8 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
 
       await expect(executeCrudOperation(incompleteRequest)).rejects.toThrow(
         'Invalid execute request format',
-      );
-    });
+      
+    }
 
     it('should validate operation structure', async () => {
       // GREEN: Fixed to match actual API error message
@@ -441,9 +441,9 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
 
       await expect(executeCrudOperation(invalidOperation)).rejects.toThrow(
         'Invalid execute request format',
-      );
-    });
-  });
+      
+    }
+  }
 
   describe('CRUD Operation Execution', () => {
     it('should successfully execute CREATE operations', async () => {
@@ -456,15 +456,15 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         },
       };
 
-      const response = await executeCrudOperation(createRequest);
+      const response = await executeCrudOperation(createRequest
 
       expect(response.success).toBe(true);
-      expect(response.result.recordId).toBeDefined();
+      expect(response.result.recordId).toBeDefined(
       expect(response.result.created).toBe(true);
-      expect(response.result.data).toBeDefined();
-      expect(response.result.data.id).toBeDefined();
-      expect(response.result.data.createdAt).toBeDefined();
-    });
+      expect(response.result.data).toBeDefined(
+      expect(response.result.data.id).toBeDefined(
+      expect(response.result.data.createdAt).toBeDefined(
+    }
 
     it('should successfully execute READ operations', async () => {
       // RED: Test expects successful READ execution
@@ -477,11 +477,11 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         },
       };
 
-      const response = await executeCrudOperation(readRequest);
+      const response = await executeCrudOperation(readRequest
 
       expect(response.success).toBe(true);
-      expect(response.result.data).toBeDefined();
-    });
+      expect(response.result.data).toBeDefined(
+    }
 
     it('should successfully execute UPDATE operations', async () => {
       // RED: Test expects successful UPDATE execution
@@ -494,11 +494,11 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         },
       };
 
-      const response = await executeCrudOperation(updateRequest);
+      const response = await executeCrudOperation(updateRequest
 
       expect(response.success).toBe(true);
-      expect(response.result.affected).toBe(1);
-    });
+      expect(response.result.affected).toBe(1
+    }
 
     it('should successfully execute DELETE operations', async () => {
       // RED: Test expects successful DELETE execution
@@ -511,12 +511,12 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         },
       };
 
-      const response = await executeCrudOperation(deleteRequest);
+      const response = await executeCrudOperation(deleteRequest
 
       expect(response.success).toBe(true);
-      expect(response.result.affected).toBe(1);
+      expect(response.result.affected).toBe(1
       expect(response.result.deleted).toBe(true);
-    });
+    }
 
     it('should handle operation-specific validation', async () => {
       // RED: Test expects operation-specific validation
@@ -529,9 +529,9 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         },
       };
 
-      await expect(executeCrudOperation(invalidCreateRequest)).rejects.toThrow('Validation failed');
-    });
-  });
+      await expect(executeCrudOperation(invalidCreateRequest)).rejects.toThrow('Validation failed')
+    }
+  }
 
   describe('Data Integrity and Security', () => {
     it('should maintain data integrity during operations', async () => {
@@ -549,12 +549,12 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         },
       };
 
-      const response = await executeCrudOperation(integrityTestRequest);
+      const response = await executeCrudOperation(integrityTestRequest
 
-      expect(response.result.data.name).toBe('Integrity Test Patient');
-      expect(response.result.data.email).toBe('integrity@test.com');
-      expect(response.result.data.phone).toBe('+5511987654321');
-    });
+      expect(response.result.data.name).toBe('Integrity Test Patient')
+      expect(response.result.data.email).toBe('integrity@test.com')
+      expect(response.result.data.phone).toBe('+5511987654321')
+    }
 
     it('should protect against SQL injection', async () => {
       // RED: Test expects SQL injection protection
@@ -571,8 +571,8 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
 
       await expect(executeCrudOperation(sqlInjectionRequest)).rejects.toThrow(
         'Invalid input format',
-      );
-    });
+      
+    }
 
     it('should sanitize input data', async () => {
       // RED: Test expects input sanitization
@@ -588,11 +588,11 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         },
       };
 
-      const response = await executeCrudOperation(xssRequest);
+      const response = await executeCrudOperation(xssRequest
 
-      expect(response.result.data.name).not.toContain('<script>');
-      expect(response.result.data.name).toContain('&lt;script&gt;');
-    });
+      expect(response.result.data.name).not.toContain('<script>')
+      expect(response.result.data.name).toContain('&lt;script&gt;')
+    }
 
     it('should validate data types', async () => {
       // RED: Test expects data type validation
@@ -611,52 +611,52 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
 
       await expect(executeCrudOperation(typeMismatchRequest)).rejects.toThrow(
         'Type validation failed',
-      );
-    });
-  });
+      
+    }
+  }
 
   describe('Audit Trail and Compliance', () => {
     it('should maintain comprehensive audit trail', async () => {
       // RED: Test expects comprehensive audit trail
-      const response = await executeCrudOperation(mockExecuteRequest);
+      const response = await executeCrudOperation(mockExecuteRequest
 
-      expect(response.auditTrail).toBeDefined();
-      expect(response.auditTrail).toHaveProperty('executionId');
-      expect(response.auditTrail).toHaveProperty('confirmId');
-      expect(response.auditTrail).toHaveProperty('timestamp');
-      expect(response.auditTrail).toHaveProperty('operation');
-      expect(response.auditTrail).toHaveProperty('entity');
-      expect(response.auditTrail).toHaveProperty('userId');
-      expect(response.auditTrail).toHaveProperty('success');
-    });
+      expect(response.auditTrail).toBeDefined(
+      expect(response.auditTrail).toHaveProperty('executionId')
+      expect(response.auditTrail).toHaveProperty('confirmId')
+      expect(response.auditTrail).toHaveProperty('timestamp')
+      expect(response.auditTrail).toHaveProperty('operation')
+      expect(response.auditTrail).toHaveProperty('entity')
+      expect(response.auditTrail).toHaveProperty('userId')
+      expect(response.auditTrail).toHaveProperty('success')
+    }
 
     it('should include compliance validation results', async () => {
       // RED: Test expects compliance validation results
-      const response = await executeCrudOperation(mockExecuteRequest);
+      const response = await executeCrudOperation(mockExecuteRequest
 
-      expect(response.auditTrail.compliance).toBeDefined();
-      expect(response.auditTrail.compliance.lgpd).toBeDefined();
-      expect(response.auditTrail.compliance.cfm).toBeDefined();
-      expect(response.auditTrail.compliance.anvisa).toBeDefined();
+      expect(response.auditTrail.compliance).toBeDefined(
+      expect(response.auditTrail.compliance.lgpd).toBeDefined(
+      expect(response.auditTrail.compliance.cfm).toBeDefined(
+      expect(response.auditTrail.compliance.anvisa).toBeDefined(
 
       expect(response.auditTrail.compliance.lgpd.passed).toBe(true);
       expect(response.auditTrail.compliance.cfm.passed).toBe(true);
       expect(response.auditTrail.compliance.anvisa.passed).toBe(true);
-    });
+    }
 
     it('should track execution performance metrics', async () => {
       // RED: Test expects performance metrics tracking
-      const response = await executeCrudOperation(mockExecuteRequest);
+      const response = await executeCrudOperation(mockExecuteRequest
 
-      expect(response.performance).toBeDefined();
-      expect(response.performance).toHaveProperty('executionTime');
-      expect(response.performance).toHaveProperty('validationTime');
-      expect(response.performance).toHaveProperty('totalTime');
+      expect(response.performance).toBeDefined(
+      expect(response.performance).toHaveProperty('executionTime')
+      expect(response.performance).toHaveProperty('validationTime')
+      expect(response.performance).toHaveProperty('totalTime')
 
-      expect(typeof response.performance.executionTime).toBe('number');
-      expect(typeof response.performance.validationTime).toBe('number');
-      expect(typeof response.performance.totalTime).toBe('number');
-    });
+      expect(typeof response.performance.executionTime).toBe('number')
+      expect(typeof response.performance.validationTime).toBe('number')
+      expect(typeof response.performance.totalTime).toBe('number')
+    }
 
     it('should maintain correlation ID across the flow', async () => {
       // RED: Test expects correlation ID maintenance
@@ -668,11 +668,11 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         },
       };
 
-      const response = await executeCrudOperation(requestWithCorrelation);
+      const response = await executeCrudOperation(requestWithCorrelation
 
-      expect(response.auditTrail.correlationId).toBe('test-correlation-123');
-    });
-  });
+      expect(response.auditTrail.correlationId).toBe('test-correlation-123')
+    }
+  }
 
   describe('LGPD Compliance', () => {
     it('should handle patient data with LGPD compliance', async () => {
@@ -692,11 +692,11 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         },
       };
 
-      const response = await executeCrudOperation(patientDataRequest);
+      const response = await executeCrudOperation(patientDataRequest
 
       expect(response.auditTrail.compliance.lgpd.passed).toBe(true);
-      expect(response.auditTrail.compliance.lgpd.score).toBeGreaterThanOrEqual(90);
-    });
+      expect(response.auditTrail.compliance.lgpd.score).toBeGreaterThanOrEqual(90
+    }
 
     it('should require consent for sensitive health data', async () => {
       // RED: Test expects consent requirement for sensitive data
@@ -714,18 +714,18 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         },
       };
 
-      await expect(executeCrudOperation(sensitiveDataRequest)).rejects.toThrow('Consent required');
-    });
+      await expect(executeCrudOperation(sensitiveDataRequest)).rejects.toThrow('Consent required')
+    }
 
     it('should include data retention information', async () => {
       // RED: Test expects data retention information
-      const response = await executeCrudOperation(mockExecuteRequest);
+      const response = await executeCrudOperation(mockExecuteRequest
 
-      expect(response.result.dataRetention).toBeDefined();
-      expect(response.result.dataRetention.policy).toBeDefined();
-      expect(response.result.dataRetention.expiresAt).toBeDefined();
-    });
-  });
+      expect(response.result.dataRetention).toBeDefined(
+      expect(response.result.dataRetention.policy).toBeDefined(
+      expect(response.result.dataRetention.expiresAt).toBeDefined(
+    }
+  }
 
   describe('Error Handling and Recovery', () => {
     it('should handle database connection errors gracefully', async () => {
@@ -743,8 +743,8 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
 
       await expect(executeCrudOperation(dbErrorRequest)).rejects.toThrow(
         'Database connection failed',
-      );
-    });
+      
+    }
 
     it('should handle constraint violations', async () => {
       // RED: Test expects constraint violation handling
@@ -759,21 +759,21 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         },
       };
 
-      await expect(executeCrudOperation(duplicateRequest)).rejects.toThrow('Constraint violation');
-    });
+      await expect(executeCrudOperation(duplicateRequest)).rejects.toThrow('Constraint violation')
+    }
 
     it('should provide detailed error information', async () => {
       // RED: Test expects detailed error information
       try {
-        await executeCrudOperation(invalidExecuteRequest);
+        await executeCrudOperation(invalidExecuteRequest
       } catch (error) {
-        expect(error).toHaveProperty('message');
-        expect(error).toHaveProperty('code');
-        expect(error).toHaveProperty('details');
-        expect(error).toHaveProperty('timestamp');
-        expect(error).toHaveProperty('executionId');
+        expect(error).toHaveProperty('message')
+        expect(error).toHaveProperty('code')
+        expect(error).toHaveProperty('details')
+        expect(error).toHaveProperty('timestamp')
+        expect(error).toHaveProperty('executionId')
       }
-    });
+    }
 
     it('should support transaction rollback on failure', async () => {
       // RED: Test expects transaction rollback support
@@ -794,22 +794,22 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
 
       await expect(executeCrudOperation(partialFailureRequest)).rejects.toThrow(
         'Transaction failed',
-      );
+      
 
       // Verify rollback occurred
       // This would typically require checking the database state
-    });
-  });
+    }
+  }
 
   describe('Performance and Scalability', () => {
     it('should execute operations within acceptable time limits', async () => {
       // RED: Test expects acceptable execution time
-      const startTime = performance.now();
-      await executeCrudOperation(mockExecuteRequest);
-      const endTime = performance.now();
+      const startTime = performance.now(
+      await executeCrudOperation(mockExecuteRequest
+      const endTime = performance.now(
 
       expect(endTime - startTime).toBeLessThan(1000); // 1 second
-    });
+    }
 
     it('should handle concurrent operations efficiently', async () => {
       // RED: Test expects concurrent operation handling
@@ -819,15 +819,15 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
           ...mockExecuteRequest.operation,
           data: { ...mockExecuteRequest.operation.data, name: `Concurrent ${i}` },
         },
-      }));
+      })
 
       const results = await Promise.allSettled(
         concurrentRequests.map(req => executeCrudOperation(req)),
-      );
+      
 
-      const successful = results.filter(r => r.status === 'fulfilled');
-      expect(successful.length).toBe(5);
-    });
+      const successful = results.filter(r => r.status === 'fulfilled')
+      expect(successful.length).toBe(5
+    }
 
     it('should scale with large datasets', async () => {
       // RED: Test expects large dataset handling
@@ -846,14 +846,14 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         },
       };
 
-      const startTime = performance.now();
-      const response = await executeCrudOperation(largeDatasetRequest);
-      const endTime = performance.now();
+      const startTime = performance.now(
+      const response = await executeCrudOperation(largeDatasetRequest
+      const endTime = performance.now(
 
       expect(response.success).toBe(true);
       expect(endTime - startTime).toBeLessThan(5000); // 5 seconds for large dataset
-    });
-  });
+    }
+  }
 
   describe('Integration with Previous Phases', () => {
     it('should validate complete 3-step flow', async () => {
@@ -861,12 +861,12 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
       // This would typically involve calling all three phases
       // For now, we validate the execute phase expectations
 
-      const response = await executeCrudOperation(mockExecuteRequest);
+      const response = await executeCrudOperation(mockExecuteRequest
 
       expect(response.success).toBe(true);
-      expect(response.auditTrail.confirmId).toBe(mockExecuteRequest.confirmId);
+      expect(response.auditTrail.confirmId).toBe(mockExecuteRequest.confirmId
       expect(response.auditTrail.success).toBe(true);
-    });
+    }
 
     it('should maintain flow context across phases', async () => {
       // RED: Test expects flow context maintenance
@@ -882,10 +882,10 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         },
       };
 
-      const response = await executeCrudOperation(contextAwareRequest);
+      const response = await executeCrudOperation(contextAwareRequest
 
-      expect(response.auditTrail.flowContext).toBeDefined();
-      expect(response.auditTrail.flowContext.userJourney).toBe('patient_registration');
-    });
-  });
-});
+      expect(response.auditTrail.flowContext).toBeDefined(
+      expect(response.auditTrail.flowContext.userJourney).toBe('patient_registration')
+    }
+  }
+}

@@ -1,12 +1,50 @@
 {
-  "extends": "./tsconfig.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": ".",
+    "noEmit": false,
     "outDir": "./dist-tests",
+    "rootDir": ".",
     "declaration": false,
     "sourceMap": true,
-    "types": ["vitest", "vitest/globals", "@testing-library/jest-dom"]
+    "types": ["vitest", "vitest/globals", "@testing-library/jest-dom", "node"],
+    "exactOptionalPropertyTypes": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./packages/*"],
+      "@neonpro/*": ["./packages/*/src"],
+      "@apps/*": ["./apps/*/src"],
+      "@tests/*": ["./tools/tests/*"]
+    }
   },
-  "include": ["tools/tests/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.js"]
+  "include": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "tests/**/*",
+    "tools/tests/**/*",
+    "apps/api/tests/**/*",
+    "apps/web/**/__tests__/**/*",
+    "packages/**/__tests__/**/*",
+    "packages/**/tests/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/dist/**/*",
+    "**/*.js",
+    "**/*.d.ts"
+  ],
+  "references": [
+    { "path": "./packages/types" },
+    { "path": "./packages/utils" },
+    { "path": "./packages/shared" },
+    { "path": "./packages/database" },
+    { "path": "./packages/security" },
+    { "path": "./packages/ui" },
+    { "path": "./apps/api" },
+    { "path": "./apps/web" }
+  ]
 }

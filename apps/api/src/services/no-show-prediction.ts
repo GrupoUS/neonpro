@@ -1097,7 +1097,11 @@ Responda APENAS em formato JSON:
     recommendations: string[];
   }> {
     const models = Array.from(this.modelPerformanceMetrics.entries()).map(([key,_metrics]) => {
+<<<<<<< HEAD
+        const [modelType, version] = key.split('');
+=======
         const [modelType, version] = key.split('_');
+>>>>>>> origin/main
         return {
           modelType: modelType as AIModelType,
           version,

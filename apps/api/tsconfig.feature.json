@@ -1,12 +1,10 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "noEmit": true,
     "baseUrl": ".",
     "rootDir": ".",
-    "noEmit": true,
-    "moduleResolution": "node",
     "types": ["node"],
-    "skipLibCheck": true,
     "paths": {
       "@neonpro/database": ["src/types/shims-neonpro.d.ts"],
       "@neonpro/utils": ["src/types/shims-neonpro.d.ts"]

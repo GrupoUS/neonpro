@@ -6,9 +6,9 @@ import { describe, expect, it } from 'vitest';
 
 async function api(path: string, init?: RequestInit) {
   // Use main app which includes AI optimization routes
-  const { default: app } = await import('../../src/app');
-  const url = new URL(`http://local.test${path}`);
-  return app.request(url, init);
+  const { default: app } = await import('../../src/app')
+  const url = new URL(`http://local.test${path}`
+  return app.request(url, init
 }
 
 describe('Contract: AI Optimization API', () => {
@@ -32,12 +32,12 @@ describe('Contract: AI Optimization API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(cacheQuery),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         found: expect.any(Boolean),
         entry: expect.any(Object),
@@ -53,7 +53,7 @@ describe('Contract: AI Optimization API', () => {
           privacyProtected: expect.any(Boolean),
           complianceVerified: expect.any(Boolean),
         }),
-      });
+      }
 
       if (data.found && data.entry) {
         expect(data.entry).toMatchObject({
@@ -67,9 +67,9 @@ describe('Contract: AI Optimization API', () => {
               expect.stringContaining('COMPLIANT'),
             ]),
           }),
-        });
+        }
       }
-    });
+    }
 
     it('should add entry to semantic cache', async () => {
       const cacheEntry = {
@@ -93,12 +93,12 @@ describe('Contract: AI Optimization API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(cacheEntry),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(201);
+      expect(res.status).toBe(201
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         entry_id: expect.any(String),
         status: 'cached',
@@ -113,8 +113,8 @@ describe('Contract: AI Optimization API', () => {
           similarityThreshold: expect.any(Number),
           ttlSet: expect.any(Boolean),
         }),
-      });
-    });
+      }
+    }
 
     it('should optimize healthcare queries', async () => {
       const healthcareQuery = {
@@ -137,12 +137,12 @@ describe('Contract: AI Optimization API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(healthcareQuery),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         cache_key: expect.any(String),
         optimized: expect.any(Boolean),
@@ -159,8 +159,8 @@ describe('Contract: AI Optimization API', () => {
           cacheStrategy: expect.any(String),
           bypassReason: expect.any(String),
         }),
-      });
-    });
+      }
+    }
 
     it('should retrieve cache statistics', async () => {
       const res = await api('/api/v1/ai/cache/stats', {
@@ -168,12 +168,12 @@ describe('Contract: AI Optimization API', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         performance: expect.objectContaining({
           totalRequests: expect.any(Number),
@@ -194,8 +194,8 @@ describe('Contract: AI Optimization API', () => {
           lastCleanup: expect.any(String),
           enabled: expect.any(Boolean),
         }),
-      });
-    });
+      }
+    }
 
     it('should clear cache with healthcare safety checks', async () => {
       const res = await api('/api/v1/ai/cache/clear', {
@@ -209,12 +209,12 @@ describe('Contract: AI Optimization API', () => {
           healthcare_backup: true,
           reason: 'cache_maintenance',
         }),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         cleared: expect.any(Boolean),
         entries_removed: expect.any(Number),
@@ -224,9 +224,9 @@ describe('Contract: AI Optimization API', () => {
           auditTrailCreated: expect.any(Boolean),
           complianceMaintained: expect.any(Boolean),
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('AI Provider Management', () => {
     it('should configure AI provider settings', async () => {
@@ -252,12 +252,12 @@ describe('Contract: AI Optimization API', () => {
           authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(providerConfig),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         provider_id: expect.any(String),
         status: 'configured',
@@ -271,8 +271,8 @@ describe('Contract: AI Optimization API', () => {
           lgpdCompliant: expect.any(Boolean),
           dataEncryption: expect.any(Boolean),
         }),
-      });
-    });
+      }
+    }
 
     it('should list available AI providers', async () => {
       const res = await api('/api/v1/ai/providers', {
@@ -280,12 +280,12 @@ describe('Contract: AI Optimization API', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         providers: expect.any(Array),
         healthcare_capabilities: expect.objectContaining({
@@ -299,7 +299,7 @@ describe('Contract: AI Optimization API', () => {
           cost_monitoring: expect.any(Boolean),
           budget_enforcement: expect.any(Boolean),
         }),
-      });
+      }
 
       if (data.providers.length > 0) {
         const provider = data.providers[0];
@@ -308,9 +308,9 @@ describe('Contract: AI Optimization API', () => {
           available: expect.any(Boolean),
           healthcare_ready: expect.any(Boolean),
           cost_per_token: expect.any(Number),
-        });
+        }
       }
-    });
+    }
 
     it('should route requests to optimal AI provider', async () => {
       const routingRequest = {
@@ -335,12 +335,12 @@ describe('Contract: AI Optimization API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(routingRequest),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         selected_provider: expect.any(String),
         routing_reason: expect.any(String),
@@ -355,9 +355,9 @@ describe('Contract: AI Optimization API', () => {
           budget_impact: expect.any(String),
           cost_efficiency: expect.any(Number),
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Cost Tracking and Analytics', () => {
     it('should track AI usage costs', async () => {
@@ -383,12 +383,12 @@ describe('Contract: AI Optimization API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(costEntry),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(201);
+      expect(res.status).toBe(201
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         entry_id: expect.any(String),
         status: 'recorded',
@@ -402,8 +402,8 @@ describe('Contract: AI Optimization API', () => {
           budget_impact: expect.any(String),
           efficiency_rating: expect.any(String),
         }),
-      });
-    });
+      }
+    }
 
     it('should generate cost analytics report', async () => {
       const res = await api('/api/v1/ai/costs/analytics', {
@@ -415,12 +415,12 @@ describe('Contract: AI Optimization API', () => {
           period: '30d',
           group_by: 'feature',
         }).toString(),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         period: expect.objectContaining({
           start: expect.any(String),
@@ -443,8 +443,8 @@ describe('Contract: AI Optimization API', () => {
           efficiency_opportunities: expect.any(Array),
           budget_recommendations: expect.any(Array),
         }),
-      });
-    });
+      }
+    }
 
     it('should manage cost budgets', async () => {
       const budgetConfig = {
@@ -473,12 +473,12 @@ describe('Contract: AI Optimization API', () => {
           authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(budgetConfig),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         budget_id: expect.any(String),
         status: 'active',
@@ -492,9 +492,9 @@ describe('Contract: AI Optimization API', () => {
           alert_system: expect.any(Boolean),
           reporting_frequency: expect.any(String),
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('AI Optimization Endpoints', () => {
     it('should optimize AI model parameters', async () => {
@@ -524,12 +524,12 @@ describe('Contract: AI Optimization API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(optimizationRequest),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         optimization_id: expect.any(String),
         recommendations: expect.any(Array),
@@ -543,8 +543,8 @@ describe('Contract: AI Optimization API', () => {
           complianceMaintained: expect.any(Boolean),
           emergencyReadiness: expect.any(Boolean),
         }),
-      });
-    });
+      }
+    }
 
     it('should perform A/B testing for AI models', async () => {
       const abTestConfig = {
@@ -568,12 +568,12 @@ describe('Contract: AI Optimization API', () => {
           authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(abTestConfig),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(201);
+      expect(res.status).toBe(201
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         test_id: expect.any(String),
         status: 'running',
@@ -587,8 +587,8 @@ describe('Contract: AI Optimization API', () => {
           safety_triggers: expect.any(Boolean),
           early_termination: expect.any(Boolean),
         }),
-      });
-    });
+      }
+    }
 
     it('should analyze AI performance and quality', async () => {
       const res = await api('/api/v1/ai/optimize/performance', {
@@ -600,12 +600,12 @@ describe('Contract: AI Optimization API', () => {
           period: '7d',
           features: 'patient_triage,diagnostic_support',
         }).toString(),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         performance_summary: expect.objectContaining({
           overall_accuracy: expect.any(Number),
@@ -625,9 +625,9 @@ describe('Contract: AI Optimization API', () => {
           medical_standards_met: expect.any(Boolean),
           audit_requirements_met: expect.any(Boolean),
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Healthcare AI Compliance', () => {
     it('should validate AI output for healthcare compliance', async () => {
@@ -653,12 +653,12 @@ describe('Contract: AI Optimization API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(validationRequest),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         valid: expect.any(Boolean),
         compliance_score: expect.any(Number),
@@ -670,8 +670,8 @@ describe('Contract: AI Optimization API', () => {
           professionalStandardsMet: expect.any(Boolean),
         }),
         recommendations: expect.any(Array),
-      });
-    });
+      }
+    }
 
     it('should generate AI compliance audit report', async () => {
       const res = await api('/api/v1/ai/compliance/audit-report', {
@@ -683,12 +683,12 @@ describe('Contract: AI Optimization API', () => {
           period: '30d',
           include_patient_data: 'true',
         }).toString(),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         audit_period: expect.objectContaining({
           start: expect.any(String),
@@ -712,8 +712,8 @@ describe('Contract: AI Optimization API', () => {
           diagnostic_assistance_cases: expect.any(Number),
           professional_satisfaction_score: expect.any(Number),
         }),
-      });
-    });
+      }
+    }
 
     it('should manage AI consent and preferences', async () => {
       const consentConfig = {
@@ -744,12 +744,12 @@ describe('Contract: AI Optimization API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(consentConfig),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(201);
+      expect(res.status).toBe(201
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         consent_id: expect.any(String),
         status: 'active',
@@ -763,9 +763,9 @@ describe('Contract: AI Optimization API', () => {
           MedicalEthicsFollowed: expect.any(Boolean),
           PatientRightsProtected: expect.any(Boolean),
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Error Handling', () => {
     it('should handle invalid cache entries', async () => {
@@ -785,17 +785,17 @@ describe('Contract: AI Optimization API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(invalidEntry),
-      });
+      }
 
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(400
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         error: expect.any(String),
         validation_errors: expect.any(Array),
         healthcare_guidelines: expect.any(Array),
-      });
-    });
+      }
+    }
 
     it('should handle AI provider failures', async () => {
       const res = await api('/api/v1/ai/providers/test-connection', {
@@ -808,11 +808,11 @@ describe('Contract: AI Optimization API', () => {
           provider: 'INVALID_PROVIDER',
           api_key: 'invalid-key',
         }),
-      });
+      }
 
-      expect(res.status).toBe(503);
+      expect(res.status).toBe(503
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         error: expect.any(String),
         provider_status: 'unavailable',
@@ -822,8 +822,8 @@ describe('Contract: AI Optimization API', () => {
           emergencyProtocolsActive: expect.any(Boolean),
           manual_override_available: expect.any(Boolean),
         }),
-      });
-    });
+      }
+    }
 
     it('should handle budget exceeded scenarios', async () => {
       const res = await api('/api/v1/ai/costs/track', {
@@ -843,11 +843,11 @@ describe('Contract: AI Optimization API', () => {
             budget_impact: 'critical',
           },
         }),
-      });
+      }
 
-      expect(res.status).toBe(403);
+      expect(res.status).toBe(403
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         error: expect.stringContaining('budget'),
         budget_exceeded: expect.any(Boolean),
@@ -857,9 +857,9 @@ describe('Contract: AI Optimization API', () => {
           manual_approval_required: expect.any(Boolean),
         }),
         recommendations: expect.any(Array),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Performance and Monitoring', () => {
     it('should return AI optimization health metrics', async () => {
@@ -868,12 +868,12 @@ describe('Contract: AI Optimization API', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         status: expect.stringMatching(/^(healthy|degraded|unhealthy)$/),
         components: expect.objectContaining({
@@ -902,8 +902,8 @@ describe('Contract: AI Optimization API', () => {
           cost_efficiency: expect.any(Number),
           uptime_percentage: expect.any(Number),
         }),
-      });
-    });
+      }
+    }
 
     it('should provide real-time AI usage monitoring', async () => {
       const res = await api('/api/v1/ai/monitoring/real-time', {
@@ -911,12 +911,12 @@ describe('Contract: AI Optimization API', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         current_activity: expect.objectContaining({
           active_requests: expect.any(Number),
@@ -935,7 +935,7 @@ describe('Contract: AI Optimization API', () => {
           cache_utilization: expect.any(Number),
           provider_load: expect.any(Object),
         }),
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

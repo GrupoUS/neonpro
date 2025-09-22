@@ -41,7 +41,7 @@ describe(('Google Calendar Integration E2E', () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(
 
     // Setup Supabase mock
     mockSupabase = {
@@ -73,7 +73,7 @@ describe(('Google Calendar Integration E2E', () => {
         })),
       })),
     };
-    (createClient as any).mockReturnValue(mockSupabase);
+    (createClient as any).mockReturnValue(mockSupabase
 
     // Setup client mock
     mockClient = {
@@ -120,34 +120,34 @@ describe(('Google Calendar Integration E2E', () => {
       anonymizeData: vi.fn(data => data.replace(/[0-9]/g, 'X')),
     };
 
-    const { GoogleCalendarClient } = require('../client');
-    GoogleCalendarClient.mockImplementation(() => mockClient);
+    const { GoogleCalendarClient } = require('../client')
+    GoogleCalendarClient.mockImplementation(() => mockClient
 
-    const { GoogleCalendarCompliance } = require('../compliance');
-    GoogleCalendarCompliance.mockImplementation(() => mockCompliance);
+    const { GoogleCalendarCompliance } = require('../compliance')
+    GoogleCalendarCompliance.mockImplementation(() => mockCompliance
 
-    service = new GoogleCalendarService();
-  });
+    service = new GoogleCalendarService(
+  }
 
   describe(('Complete Integration Flow', () => {
     it(_'should handle full integration lifecycle',async () => {
       // 1. User connects Google Calendar
-      const authUrl = service.getAuthUrl();
-      expect(authUrl).toContain('accounts.google.com');
+      const authUrl = service.getAuthUrl(
+      expect(authUrl).toContain('accounts.google.com')
 
       // 2. Create integration after OAuth callback
       const integration = await service.createIntegration({
         _userId: mockUser.id,
         clinicId: mockClinic.id,
         calendarId: 'primary',
-      });
+      }
 
-      expect(integration).toEqual([{ id: 'integration-123' }]);
+      expect(integration).toEqual([{ id: 'integration-123' }]
 
       // 3. Sync appointment to Google Calendar
-      const syncResult = await service.syncAppointmentToCalendar(mockAppointment);
+      const syncResult = await service.syncAppointmentToCalendar(mockAppointment
 
-      expect(syncResult).toBeTruthy();
+      expect(syncResult).toBeTruthy(
       expect(mockClient.createEvent).toHaveBeenCalledWith(
         'primary',
         expect.objectContaining({
@@ -165,13 +165,13 @@ describe(('Google Calendar Integration E2E', () => {
             }),
           },
         }),
-      );
+      
 
       // 4. Verify compliance checks
-      expect(mockCompliance.validateDataProcessing).toHaveBeenCalled();
-      expect(mockCompliance.validateConsent).toHaveBeenCalled();
-      expect(mockCompliance.logDataAccess).toHaveBeenCalled();
-    });
+      expect(mockCompliance.validateDataProcessing).toHaveBeenCalled(
+      expect(mockCompliance.validateConsent).toHaveBeenCalled(
+      expect(mockCompliance.logDataAccess).toHaveBeenCalled(
+    }
 
     it(_'should handle appointment updates',async () => {
       // Setup existing integration and sync record
@@ -191,7 +191,7 @@ describe(('Google Calendar Integration E2E', () => {
             }),
           })),
         })),
-      });
+      }
 
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
@@ -205,7 +205,7 @@ describe(('Google Calendar Integration E2E', () => {
             }),
           })),
         })),
-      });
+      }
 
       // Update appointment
       const updatedAppointment = {
@@ -216,7 +216,7 @@ describe(('Google Calendar Integration E2E', () => {
         location: 'Sala 202 - 2º Andar',
       };
 
-      await service.syncAppointmentToCalendar(updatedAppointment);
+      await service.syncAppointmentToCalendar(updatedAppointment
 
       expect(mockClient.updateEvent).toHaveBeenCalledWith(
         'primary',
@@ -227,8 +227,8 @@ describe(('Google Calendar Integration E2E', () => {
           end: updatedAppointment.endTime,
           location: updatedAppointment.location,
         }),
-      );
-    });
+      
+    }
 
     it(_'should handle appointment cancellation',async () => {
       // Setup existing integration and sync record
@@ -248,7 +248,7 @@ describe(('Google Calendar Integration E2E', () => {
             }),
           })),
         })),
-      });
+      }
 
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
@@ -262,26 +262,26 @@ describe(('Google Calendar Integration E2E', () => {
             }),
           })),
         })),
-      });
+      }
 
       const cancelledAppointment = {
         ...mockAppointment,
         status: 'CANCELLED',
       };
 
-      await service.syncAppointmentToCalendar(cancelledAppointment);
+      await service.syncAppointmentToCalendar(cancelledAppointment
 
       expect(mockClient.deleteEvent).toHaveBeenCalledWith(
         'primary',
         'google-event-123',
-      );
+      
       expect(mockCompliance.logDataDeletion).toHaveBeenCalledWith(
         expect.objectContaining({
           action: 'DELETE_APPOINTMENT',
           dataType: 'CALENDAR_EVENT',
         }),
-      );
-    });
+      
+    }
 
     it(_'should handle bidirectional sync',async () => {
       // Setup integration
@@ -301,7 +301,7 @@ describe(('Google Calendar Integration E2E', () => {
             }),
           })),
         })),
-      });
+      }
 
       // Mock events from Google Calendar
       const googleEvents = [
@@ -320,13 +320,13 @@ describe(('Google Calendar Integration E2E', () => {
         },
       ];
 
-      mockClient.listEvents.mockResolvedValueOnce(googleEvents);
+      mockClient.listEvents.mockResolvedValueOnce(googleEvents
 
-      const syncedEvents = await service.syncFromGoogle('primary');
+      const syncedEvents = await service.syncFromGoogle('primary')
 
-      expect(syncedEvents).toHaveLength(1);
-      expect(mockCompliance.validateDataProcessing).toHaveBeenCalledTimes(1);
-    });
+      expect(syncedEvents).toHaveLength(1
+      expect(mockCompliance.validateDataProcessing).toHaveBeenCalledTimes(1
+    }
 
     it(_'should handle conflicts properly',async () => {
       // Setup integration
@@ -346,7 +346,7 @@ describe(('Google Calendar Integration E2E', () => {
             }),
           })),
         })),
-      });
+      }
 
       // Mock conflicting event
       const conflictingEvent = {
@@ -356,17 +356,17 @@ describe(('Google Calendar Integration E2E', () => {
         end: { dateTime: '2024-01-15T11:30:00-03:00' },
       };
 
-      mockClient.listEvents.mockResolvedValueOnce([conflictingEvent]);
+      mockClient.listEvents.mockResolvedValueOnce([conflictingEvent]
 
       const conflicts = await service.checkForConflicts(
         mockAppointment.startTime,
         mockAppointment.endTime,
         'primary',
-      );
+      
 
-      expect(conflicts).toHaveLength(1);
-      expect(conflicts[0].id).toBe('conflict-event');
-    });
+      expect(conflicts).toHaveLength(1
+      expect(conflicts[0].id).toBe('conflict-event')
+    }
 
     it(_'should ensure data privacy throughout the flow',async () => {
       // Setup integration with encrypted tokens
@@ -386,39 +386,39 @@ describe(('Google Calendar Integration E2E', () => {
             }),
           })),
         })),
-      });
+      }
 
-      await service.syncAppointmentToCalendar(mockAppointment);
+      await service.syncAppointmentToCalendar(mockAppointment
 
       // Verify tokens were decrypted
       expect(mockCompliance.decryptSensitiveData).toHaveBeenCalledWith(
         'encrypted:very-secret-token',
-      );
+      
       expect(mockCompliance.decryptSensitiveData).toHaveBeenCalledWith(
         'encrypted:very-secret-refresh',
-      );
+      
 
       // Verify sensitive data is not logged
       expect(mockCompliance.anonymizeData).toHaveBeenCalledWith(
         expect.stringContaining(mockAppointment.patientId),
-      );
-    });
+      
+    }
 
     it(_'should handle errors gracefully and maintain system stability',async () => {
       // Simulate API failure
       mockClient.createEvent.mockRejectedValue({
         code: 503,
         message: 'Service Unavailable',
-      });
+      }
 
-      const result = await service.syncAppointmentToCalendar(mockAppointment);
+      const result = await service.syncAppointmentToCalendar(mockAppointment
 
       // Should return null instead of throwing
-      expect(result).toBeNull();
+      expect(result).toBeNull(
 
       // Should have logged the error
       // Error would be logged by the service
-    });
+    }
 
     it(_'should handle token refresh automatically',async () => {
       // Setup integration with expired token
@@ -438,31 +438,31 @@ describe(('Google Calendar Integration E2E', () => {
             }),
           })),
         })),
-      });
+      }
 
       // First call fails with auth error
       mockClient.createEvent.mockRejectedValueOnce({
         code: 401,
         message: 'Invalid token',
-      });
+      }
 
       // After refresh, it succeeds
       mockClient.createEvent.mockResolvedValueOnce({
         id: 'event-after-refresh',
-      });
+      }
 
       // Mock token refresh
       mockClient.refreshTokens = vi.fn().mockResolvedValue({
         access_token: 'new-access-token',
         refresh_token: 'new-refresh-token',
-      });
+      }
 
-      const result = await service.syncAppointmentToCalendar(mockAppointment);
+      const result = await service.syncAppointmentToCalendar(mockAppointment
 
-      expect(result).toBeTruthy();
-      expect(mockClient.refreshTokens).toHaveBeenCalled();
-    });
-  });
+      expect(result).toBeTruthy(
+      expect(mockClient.refreshTokens).toHaveBeenCalled(
+    }
+  }
 
   describe(('Healthcare Compliance Requirements', () => {
     it(_'should enforce data retention policies',async () => {
@@ -492,28 +492,32 @@ describe(('Google Calendar Integration E2E', () => {
             }),
           })),
         })),
-      });
+      }
 
-      await service.syncAppointmentToCalendar(oldAppointment);
+      await service.syncAppointmentToCalendar(oldAppointment
 
       expect(mockCompliance.validateDataProcessing).toHaveBeenCalledWith(
         expect.objectContaining({
           retentionPeriod: '10-years',
           dataType: 'HEALTHCARE_APPOINTMENT',
         }),
-      );
-    });
+      
+    }
 
     it(_'should handle patient consent revocation',async () => {
+<<<<<<< HEAD
+      mockCompliance.validateConsent.mockResolvedValueOnce(false
+=======
       mockCompliance.validateConsent.mockResolvedValueOnce(false);
+>>>>>>> origin/main
 
       await expect(
         service.syncAppointmentToCalendar(mockAppointment),
-      ).rejects.toThrow('Patient consent required');
+      ).rejects.toThrow('Patient consent required')
 
       // Should not proceed with sync
-      expect(mockClient.createEvent).not.toHaveBeenCalled();
-    });
+      expect(mockClient.createEvent).not.toHaveBeenCalled(
+    }
 
     it(_'should maintain audit trail for all operations',async () => {
       // Setup integration
@@ -533,9 +537,9 @@ describe(('Google Calendar Integration E2E', () => {
             }),
           })),
         })),
-      });
+      }
 
-      await service.syncAppointmentToCalendar(mockAppointment);
+      await service.syncAppointmentToCalendar(mockAppointment
 
       // Verify all access was logged
       expect(mockCompliance.logDataAccess).toHaveBeenCalledWith(
@@ -545,9 +549,9 @@ describe(('Google Calendar Integration E2E', () => {
           dataType: 'CALENDAR_EVENT',
           patientId: mockAppointment.patientId,
         }),
-      );
-    });
-  });
+      
+    }
+  }
 
   describe(('Performance and Scalability', () => {
     it(_'should handle batch operations efficiently',async () => {
@@ -556,7 +560,7 @@ describe(('Google Calendar Integration E2E', () => {
         id: `appt-${i}`,
         startTime: new Date(`2024-01-${15 + i}T10:00:00`),
         endTime: new Date(`2024-01-${15 + i}T11:00:00`),
-      }));
+      })
 
       // Setup integration
       mockSupabase.from.mockReturnValueOnce({
@@ -575,21 +579,21 @@ describe(('Google Calendar Integration E2E', () => {
             }),
           })),
         })),
-      });
+      }
 
-      const startTime = Date.now();
-      const results = await service.batchSyncAppointments(appointments);
+      const startTime = Date.now(
+      const results = await service.batchSyncAppointments(appointments
       const duration = Date.now() - startTime;
 
-      expect(results).toHaveLength(100);
+      expect(results).toHaveLength(100
       expect(duration).toBeLessThan(10000); // Should complete in under 10 seconds
-    });
+    }
 
     it(_'should handle rate limiting gracefully',async () => {
       // Simulate rate limit responses
       mockClient.createEvent
         .mockRejectedValueOnce({ code: 429, message: 'Rate limit exceeded' })
-        .mockResolvedValueOnce({ id: 'event-after-retry' });
+        .mockResolvedValueOnce({ id: 'event-after-retry' }
 
       // Setup integration
       mockSupabase.from.mockReturnValueOnce({
@@ -608,11 +612,11 @@ describe(('Google Calendar Integration E2E', () => {
             }),
           })),
         })),
-      });
+      }
 
-      const result = await service.syncAppointmentToCalendar(mockAppointment);
+      const result = await service.syncAppointmentToCalendar(mockAppointment
 
-      expect(result).toBeTruthy();
-    });
-  });
-});
+      expect(result).toBeTruthy(
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import { getCurrentSession, supabase } from '@/integrations/supabase/client';
 import { type UserProfile, userProfileService } from '@/services/user-profile.service';
-import type { Session } from '@supabase/supabase-js';
+import type { Session, User } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 
 export interface AuthState {

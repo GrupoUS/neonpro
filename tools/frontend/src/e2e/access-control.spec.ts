@@ -26,7 +26,7 @@ test.describe('Role-Based Access Control', () => {
     test.beforeEach(async ({ request }) => {
       // Login as admin user
       await request.post(`${baseUrl}/api/v1/auth/login`, {
-        json: {
+        data: {
           email: 'admin@neonpro.com.br',
           password: 'admin123'
         }
@@ -94,7 +94,7 @@ test.describe('Role-Based Access Control', () => {
     test.beforeEach(async ({ request }) => {
       // Login as healthcare provider
       await request.post(`${baseUrl}/api/v1/auth/login`, {
-        json: {
+        data: {
           email: 'medico@neonpro.com.br',
           password: 'medico123'
         }
@@ -163,7 +163,7 @@ test.describe('Role-Based Access Control', () => {
       };
 
       const response = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
-        json: aiRequest
+        data: aiRequest
       });
 
       expect(response.status()).toBe(200);
@@ -194,7 +194,7 @@ test.describe('Role-Based Access Control', () => {
     test.beforeEach(async ({ request }) => {
       // Login as patient
       await request.post(`${baseUrl}/api/v1/auth/login`, {
-        json: {
+        data: {
           email: 'paciente@neonpro.com.br',
           password: 'paciente123'
         }
@@ -244,7 +244,7 @@ test.describe('Role-Based Access Control', () => {
       };
 
       const response = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
-        json: aiRequest
+        data: aiRequest
       });
 
       expect(response.status()).toBe(200);
@@ -302,7 +302,7 @@ test.describe('Role-Based Access Control', () => {
     test('should deny access with invalid authentication', async ({ request }) => {
       // Try to login with invalid credentials
       const loginResponse = await request.post(`${baseUrl}/api/v1/auth/login`, {
-        json: {
+        data: {
           email: 'invalid@example.com',
           password: 'invalid'
         }
@@ -315,7 +315,7 @@ test.describe('Role-Based Access Control', () => {
       expect(protectedResponse.status()).toBe(401);
     });
 
-    test('should handle expired sessions', async ({ request }) => {
+    test('should handle expired sessions', async () => {
       // This test would require session expiration simulation
       test.info().annotations.push({
         type: 'note',
@@ -326,7 +326,7 @@ test.describe('Role-Based Access Control', () => {
     test('should prevent permission escalation', async ({ request }) => {
       // Login as regular user
       await request.post(`${baseUrl}/api/v1/auth/login`, {
-        json: {
+        data: {
           email: 'paciente@neonpro.com.br',
           password: 'paciente123'
         }
@@ -360,7 +360,7 @@ test.describe('Role-Based Access Control', () => {
     test('should log access to sensitive patient data', async ({ request }) => {
       // Login as healthcare provider
       await request.post(`${baseUrl}/api/v1/auth/login`, {
-        json: {
+        data: {
           email: 'medico@neonpro.com.br',
           password: 'medico123'
         }
@@ -404,7 +404,7 @@ test.describe('Role-Based Access Control', () => {
     test('should apply different data masking based on role', async ({ request }) => {
       // Test as patient
       await request.post(`${baseUrl}/api/v1/auth/login`, {
-        json: {
+        data: {
           email: 'paciente@neonpro.com.br',
           password: 'paciente123'
         }
@@ -422,7 +422,7 @@ test.describe('Role-Based Access Control', () => {
 
       // Test as healthcare provider
       await request.post(`${baseUrl}/api/v1/auth/login`, {
-        json: {
+        data: {
           email: 'medico@neonpro.com.br',
           password: 'medico123'
         }
@@ -444,7 +444,7 @@ test.describe('Role-Based Access Control', () => {
     test('should control data sharing between roles', async ({ request }) => {
       // Test appointment sharing between patient and provider
       await request.post(`${baseUrl}/api/v1/auth/login`, {
-        json: {
+        data: {
           email: 'medico@neonpro.com.br',
           password: 'medico123'
         }
@@ -473,7 +473,7 @@ test.describe('Role-Based Access Control', () => {
       // This would be a special case for healthcare emergencies
       
       const emergencyResponse = await request.post(`${baseUrl}/api/v1/auth/emergency-access`, {
-        json: {
+        data: {
           reason: 'medical_emergency',
           patientId: 'test-patient-id',
           providerId: 'emergency-provider-id'
@@ -499,7 +499,7 @@ test.describe('Role-Based Access Control', () => {
       // Test multiple sessions for same user
       const loginPromises = Array(3).fill(null).map(() => 
         request.post(`${baseUrl}/api/v1/auth/login`, {
-          json: {
+          data: {
             email: 'medico@neonpro.com.br',
             password: 'medico123'
           }
@@ -518,7 +518,7 @@ test.describe('Role-Based Access Control', () => {
       expect(testResponse.status()).toBe(200);
     });
 
-    test('should terminate sessions on role change', async ({ request }) => {
+    test('should terminate sessions on role change', async () => {
       // This would test role change scenarios
       test.info().annotations.push({
         type: 'note',
@@ -528,4 +528,4 @@ test.describe('Role-Based Access Control', () => {
   });
 });
 
-export default accessControlSpec;
+// Export test suite for module consistency

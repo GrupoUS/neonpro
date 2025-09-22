@@ -7,17 +7,11 @@
 export {
   createClient,
   createServiceClient,
-  // Legacy function exports for backward compatibility
-  supabase,
-  supabaseBrowser,
-  prisma,
 } from "./client";
 
 // Database types
-export type { Database } from "./types/supabase";
+export type { Database } from "./types/supabase-generated";
 export type { SupabaseClient } from "./client";
-export type * from "./types/audit.types";
-export type * from "./types/index";
 
 // Service implementations - only existing ones
 export { AuditService } from "./services/audit-service";

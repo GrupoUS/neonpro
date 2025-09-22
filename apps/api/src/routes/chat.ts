@@ -1,4 +1,5 @@
 import { zValidator } from '@hono/zod-validator';
+import { z } from 'zod';
 import { supabase } from '@neonpro/database';
 import { Hono } from 'hono';
 import { DEFAULT_PRIMARY, streamWithFailover } from '../config/ai';
@@ -490,13 +491,13 @@ app.post('/explanation', async c => {
   // Parse and validate payload
   let _payload: any = {};
   try {
-    payload = await c.req.json();
+    _payload = await c.req.json();
   } catch {}
   const BodySchema = z.object({
     text: z.string().min(1).max(8000),
     locale: z.string().default('pt-BR'),
   });
-  const parsed = BodySchema.safeParse(payload);
+  const parsed = BodySchema.safeParse(_payload);
   if (!parsed.success) return c.json({ message: 'Invalid payload' }, 422);
   const { text, locale } = parsed.data;
 

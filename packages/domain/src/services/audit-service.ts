@@ -164,9 +164,9 @@ export class AuditDomainService {
       resourceId: patientId,
       action: 'READ',
       description: `${userRole} accessed patient data: ${reason}`,
-      ipAddress: metadata?.ipAddress,
-      userAgent: metadata?.userAgent,
-      clinicId: metadata?.clinicId,
+      ipAddress: metadata?.ipAddress || '',
+      userAgent: metadata?.userAgent || '',
+      clinicId: metadata?.clinicId || '',
       dataClassification: metadata?.dataClassification || MedicalDataClassification.SENSITIVE,
       severity: AuditSeverity.LOW,
       metadata: {
@@ -234,9 +234,9 @@ export class AuditDomainService {
       resourceType: 'SYSTEM',
       action: eventType,
       description,
-      ipAddress: metadata?.ipAddress,
-      userAgent: metadata?.userAgent,
-      clinicId: metadata?.clinicId,
+      ipAddress: metadata?.ipAddress || '',
+      userAgent: metadata?.userAgent || '',
+      clinicId: metadata?.clinicId || '',
       dataClassification: MedicalDataClassification.RESTRICTED,
       severity,
       metadata: {
@@ -304,9 +304,9 @@ export class AuditDomainService {
       resourceType: 'DATA_EXPORT',
       action: 'EXPORT',
       description: `${userRole} exported ${recordCount} ${dataType} records in ${format} format`,
-      ipAddress: metadata?.ipAddress,
-      userAgent: metadata?.userAgent,
-      clinicId: metadata?.clinicId,
+      ipAddress: metadata?.ipAddress || '',
+      userAgent: metadata?.userAgent || '',
+      clinicId: metadata?.clinicId || '',
       dataClassification: MedicalDataClassification.SENSITIVE,
       severity: AuditSeverity.MEDIUM,
       metadata: {
@@ -374,9 +374,9 @@ export class AuditDomainService {
       resourceId: patientId,
       action: 'ANONYMIZE',
       description: `Patient data anonymized: ${reason}`,
-      ipAddress: metadata?.ipAddress,
-      userAgent: metadata?.userAgent,
-      clinicId: metadata?.clinicId,
+      ipAddress: metadata?.ipAddress || '',
+      userAgent: metadata?.userAgent || '',
+      clinicId: metadata?.clinicId || '',
       dataClassification: MedicalDataClassification.RESTRICTED,
       severity: AuditSeverity.HIGH,
       metadata: {
@@ -429,9 +429,12 @@ export class AuditDomainService {
     endDate: Date,
     _clinicId?: string
   ): Promise<ComplianceReport> {
+<<<<<<< HEAD
+=======
     // Generate report using audit repository
     const auditLogs = await this.auditRepository.findByDateRange(startDate, endDate, _clinicId);
     
+>>>>>>> origin/main
     // Create a comprehensive report structure based on audit logs
     const report: ComplianceReport = {
       id: `compliance-report-${Date.now()}`,
@@ -475,7 +478,11 @@ export class AuditDomainService {
    */
   private async checkAccessCompliance(
     _userId: string,
+<<<<<<< HEAD
+    _patientId: string,
+=======
     patientId: string,
+>>>>>>> origin/main
     legalBasis?: string
   ): Promise<boolean> {
     // Implement compliance checking logic
@@ -495,7 +502,11 @@ export class AuditDomainService {
    */
   private async checkExportCompliance(
     _userId: string,
+<<<<<<< HEAD
+    _dataType: string,
+=======
     dataType: string,
+>>>>>>> origin/main
     recordCount: number,
     legalBasis?: string
   ): Promise<boolean> {

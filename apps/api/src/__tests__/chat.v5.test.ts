@@ -12,8 +12,5 @@ describe('chat v5 stream',() => {
         sessionId: 's1',
         locale: 'pt-BR',
       }),
-    });
     // In test env without keys we allow mock mode path to still send 200 or 500 depending on env.
-    expect([200, 500]).toContain(res.status);
-  });
-});
+    expect([200, 500]).toContain(res.status

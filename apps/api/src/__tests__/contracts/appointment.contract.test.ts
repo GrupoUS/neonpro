@@ -35,31 +35,39 @@ type AppointmentOutput = {
   checkConflicts: inferProcedureOutput<typeof appointmentRouter.checkConflicts>;
 };
 
+<<<<<<< HEAD
+describe('Appointment API Contract Tests',() => {
+  const createCaller = createCallerFactory(appRouter
+=======
 describe(_'Appointment API Contract Tests',() => {
   const createCaller = createCallerFactory(appRouter);
+>>>>>>> origin/main
   let caller: ReturnType<typeof createCaller>;
   let mockContext: any;
 
   beforeEach(() => {
-    mockContext = createMockContext();
-    caller = createCaller(mockContext);
+    mockContext = createMockContext(
+    caller = createCaller(mockContext
 
     // Mock audit logging
     vi.spyOn(mockContext.audit, 'logAppointmentAction').mockResolvedValue(
       undefined,
-    );
+    
     vi.spyOn(mockContext.scheduling, 'checkAvailability').mockResolvedValue(
       true,
-    );
-    vi.spyOn(mockContext.scheduling, 'detectConflicts').mockResolvedValue([]);
-  });
+    
+    vi.spyOn(mockContext.scheduling, 'detectConflicts').mockResolvedValue([]
 
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks(
 
+<<<<<<< HEAD
+  describe('Appointment Creation Contract',() => {
+    it('should validate appointment creation input schema',async () => {
+=======
   describe(_'Appointment Creation Contract',() => {
     it(_'should validate appointment creation input schema',async () => {
+>>>>>>> origin/main
       const validInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -83,9 +91,8 @@ describe(_'Appointment API Contract Tests',() => {
         status: 'scheduled',
         createdAt: new Date(),
         updatedAt: new Date(),
-      });
 
-      const result = await caller.api.appointment.create(validInput);
+      const result = await caller.api.appointment.create(validInput
 
       expect(result).toMatchObject({
         success: true,
@@ -96,14 +103,12 @@ describe(_'Appointment API Contract Tests',() => {
           status: 'scheduled',
           scheduledFor: expect.any(String),
         }),
-      });
 
       // Verify conflict detection was called
       expect(mockContext.scheduling.detectConflicts).toHaveBeenCalledWith({
         professionalId: 'prof-456',
         scheduledFor: '2024-02-15T14:00:00.000Z',
         duration: 60,
-      });
 
       // Verify audit logging
       expect(mockContext.audit.logAppointmentAction).toHaveBeenCalledWith({
@@ -112,10 +117,12 @@ describe(_'Appointment API Contract Tests',() => {
         patientId: 'patient-123',
         _userId: mockContext.user.id,
         timestamp: expect.any(Date),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should reject appointment creation with scheduling conflicts',async () => {
+=======
     it(_'should reject appointment creation with scheduling conflicts',async () => {
+>>>>>>> origin/main
       const conflictingInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -133,14 +140,17 @@ describe(_'Appointment API Contract Tests',() => {
           duration: 60,
           conflict: 'overlap',
         },
-      ]);
+      ]
 
       await expect(
         caller.api.appointment.create(conflictingInput),
-      ).rejects.toThrow('Scheduling conflict detected');
-    });
+      ).rejects.toThrow('Scheduling conflict detected')
 
+<<<<<<< HEAD
+    it('should validate appointment timing constraints',async () => {
+=======
     it(_'should validate appointment timing constraints',async () => {
+>>>>>>> origin/main
       const pastDateInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -152,10 +162,13 @@ describe(_'Appointment API Contract Tests',() => {
 
       await expect(
         caller.api.appointment.create(pastDateInput),
-      ).rejects.toThrow('Cannot schedule appointments in the past');
-    });
+      ).rejects.toThrow('Cannot schedule appointments in the past')
 
+<<<<<<< HEAD
+    it('should validate business hours constraints',async () => {
+=======
     it(_'should validate business hours constraints',async () => {
+>>>>>>> origin/main
       const afterHoursInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -167,12 +180,15 @@ describe(_'Appointment API Contract Tests',() => {
 
       await expect(
         caller.api.appointment.create(afterHoursInput),
-      ).rejects.toThrow('Appointment outside business hours');
-    });
-  });
+      ).rejects.toThrow('Appointment outside business hours')
 
+<<<<<<< HEAD
+  describe('Appointment Retrieval Contract',() => {
+    it('should validate appointment retrieval by ID',async () => {
+=======
   describe(_'Appointment Retrieval Contract',() => {
     it(_'should validate appointment retrieval by ID',async () => {
+>>>>>>> origin/main
       const appointmentId = 'appointment-123';
       const mockAppointment = {
         id: appointmentId,
@@ -190,10 +206,10 @@ describe(_'Appointment API Contract Tests',() => {
 
       mockContext.prisma.appointment.findUnique.mockResolvedValue(
         mockAppointment,
-      );
+      
 
       const input: AppointmentInput['getById'] = { id: appointmentId };
-      const result = await caller.api.appointment.getById(input);
+      const result = await caller.api.appointment.getById(input
 
       expect(result).toMatchObject({
         success: true,
@@ -202,7 +218,6 @@ describe(_'Appointment API Contract Tests',() => {
           patientId: 'patient-123',
           status: 'scheduled',
         }),
-      });
 
       // Verify audit logging
       expect(mockContext.audit.logAppointmentAction).toHaveBeenCalledWith({
@@ -210,23 +225,28 @@ describe(_'Appointment API Contract Tests',() => {
         appointmentId,
         _userId: mockContext.user.id,
         timestamp: expect.any(Date),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should handle appointment not found',async () => {
+=======
     it(_'should handle appointment not found',async () => {
+>>>>>>> origin/main
       const appointmentId = 'nonexistent-appointment';
-      mockContext.prisma.appointment.findUnique.mockResolvedValue(null);
+      mockContext.prisma.appointment.findUnique.mockResolvedValue(null
 
       const input: AppointmentInput['getById'] = { id: appointmentId };
 
       await expect(caller.api.appointment.getById(input)).rejects.toThrow(
         'Appointment not found',
-      );
-    });
-  });
+      
 
+<<<<<<< HEAD
+  describe('Appointment Update Contract',() => {
+    it('should validate appointment update input schema',async () => {
+=======
   describe(_'Appointment Update Contract',() => {
     it(_'should validate appointment update input schema',async () => {
+>>>>>>> origin/main
       const appointmentId = 'appointment-123';
       const updateInput: AppointmentInput['update'] = {
         id: appointmentId,
@@ -254,12 +274,12 @@ describe(_'Appointment API Contract Tests',() => {
 
       mockContext.prisma.appointment.findUnique.mockResolvedValue(
         existingAppointment,
-      );
+      
       mockContext.prisma.appointment.update.mockResolvedValue(
         updatedAppointment,
-      );
+      
 
-      const result = await caller.api.appointment.update(updateInput);
+      const result = await caller.api.appointment.update(updateInput
 
       expect(result).toMatchObject({
         success: true,
@@ -268,7 +288,6 @@ describe(_'Appointment API Contract Tests',() => {
           scheduledFor: '2024-02-16T15:00:00.000Z',
           status: 'confirmed',
         }),
-      });
 
       // Verify audit logging
       expect(mockContext.audit.logAppointmentAction).toHaveBeenCalledWith({
@@ -277,10 +296,12 @@ describe(_'Appointment API Contract Tests',() => {
         _userId: mockContext.user.id,
         timestamp: expect.any(Date),
         changes: expect.any(Object),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should prevent updating completed appointments',async () => {
+=======
     it(_'should prevent updating completed appointments',async () => {
+>>>>>>> origin/main
       const appointmentId = 'appointment-123';
       const updateInput: AppointmentInput['update'] = {
         id: appointmentId,
@@ -295,15 +316,21 @@ describe(_'Appointment API Contract Tests',() => {
 
       mockContext.prisma.appointment.findUnique.mockResolvedValue(
         completedAppointment,
-      );
+      
 
       await expect(caller.api.appointment.update(updateInput)).rejects.toThrow(
         'Cannot update completed appointment',
+<<<<<<< HEAD
+      
+  describe('Appointment Cancellation Contract',() => {
+    it('should validate appointment cancellation',async () => {
+=======
       );
     });
   });
   describe(_'Appointment Cancellation Contract',() => {
     it(_'should validate appointment cancellation',async () => {
+>>>>>>> origin/main
       const appointmentId = 'appointment-123';
       const cancelInput: AppointmentInput['cancel'] = {
         id: appointmentId,
@@ -329,12 +356,12 @@ describe(_'Appointment API Contract Tests',() => {
 
       mockContext.prisma.appointment.findUnique.mockResolvedValue(
         existingAppointment,
-      );
+      
       mockContext.prisma.appointment.update.mockResolvedValue(
         cancelledAppointment,
-      );
+      
 
-      const result = await caller.api.appointment.cancel(cancelInput);
+      const result = await caller.api.appointment.cancel(cancelInput
 
       expect(result).toMatchObject({
         success: true,
@@ -343,7 +370,6 @@ describe(_'Appointment API Contract Tests',() => {
           status: 'cancelled',
           cancellationReason: 'Patient requested cancellation',
         }),
-      });
 
       // Verify audit logging
       expect(mockContext.audit.logAppointmentAction).toHaveBeenCalledWith({
@@ -352,10 +378,12 @@ describe(_'Appointment API Contract Tests',() => {
         _userId: mockContext.user.id,
         timestamp: expect.any(Date),
         reason: 'Patient requested cancellation',
-      });
-    });
 
+<<<<<<< HEAD
+    it('should enforce cancellation time limits',async () => {
+=======
     it(_'should enforce cancellation time limits',async () => {
+>>>>>>> origin/main
       const appointmentId = 'appointment-123';
       const cancelInput: AppointmentInput['cancel'] = {
         id: appointmentId,
@@ -370,16 +398,19 @@ describe(_'Appointment API Contract Tests',() => {
 
       mockContext.prisma.appointment.findUnique.mockResolvedValue(
         soonAppointment,
-      );
+      
 
       await expect(caller.api.appointment.cancel(cancelInput)).rejects.toThrow(
         'Cannot cancel appointment less than 24 hours in advance',
-      );
-    });
-  });
+      
 
+<<<<<<< HEAD
+  describe('Appointment Availability Contract',() => {
+    it('should validate availability checking',async () => {
+=======
   describe(_'Appointment Availability Contract',() => {
     it(_'should validate availability checking',async () => {
+>>>>>>> origin/main
       const availabilityInput: AppointmentInput['getAvailability'] = {
         professionalId: 'prof-456',
         date: '2024-02-15',
@@ -403,9 +434,9 @@ describe(_'Appointment API Contract Tests',() => {
 
       mockContext.scheduling.getAvailability.mockResolvedValue(
         mockAvailability,
-      );
+      
 
-      const result = await caller.api.appointment.getAvailability(availabilityInput);
+      const result = await caller.api.appointment.getAvailability(availabilityInput
 
       expect(result).toMatchObject({
         success: true,
@@ -419,10 +450,12 @@ describe(_'Appointment API Contract Tests',() => {
             }),
           ]),
         }),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should handle no availability',async () => {
+=======
     it(_'should handle no availability',async () => {
+>>>>>>> origin/main
       const availabilityInput: AppointmentInput['getAvailability'] = {
         professionalId: 'prof-456',
         date: '2024-02-15',
@@ -436,21 +469,23 @@ describe(_'Appointment API Contract Tests',() => {
         businessHours: null,
       };
 
-      mockContext.scheduling.getAvailability.mockResolvedValue(noAvailability);
+      mockContext.scheduling.getAvailability.mockResolvedValue(noAvailability
 
-      const result = await caller.api.appointment.getAvailability(availabilityInput);
+      const result = await caller.api.appointment.getAvailability(availabilityInput
 
       expect(result).toMatchObject({
         success: true,
         data: expect.objectContaining({
           availableSlots: [],
         }),
-      });
-    });
-  });
 
+<<<<<<< HEAD
+  describe('Appointment Conflict Detection Contract',() => {
+    it('should validate conflict checking',async () => {
+=======
   describe(_'Appointment Conflict Detection Contract',() => {
     it(_'should validate conflict checking',async () => {
+>>>>>>> origin/main
       const conflictInput: AppointmentInput['checkConflicts'] = {
         professionalId: 'prof-456',
         scheduledFor: '2024-02-15T14:00:00.000Z',
@@ -468,9 +503,9 @@ describe(_'Appointment API Contract Tests',() => {
         },
       ];
 
-      mockContext.scheduling.detectConflicts.mockResolvedValue(mockConflicts);
+      mockContext.scheduling.detectConflicts.mockResolvedValue(mockConflicts
 
-      const result = await caller.api.appointment.checkConflicts(conflictInput);
+      const result = await caller.api.appointment.checkConflicts(conflictInput
 
       expect(result).toMatchObject({
         success: true,
@@ -484,19 +519,21 @@ describe(_'Appointment API Contract Tests',() => {
             }),
           ]),
         }),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should return no conflicts when schedule is clear',async () => {
+=======
     it(_'should return no conflicts when schedule is clear',async () => {
+>>>>>>> origin/main
       const conflictInput: AppointmentInput['checkConflicts'] = {
         professionalId: 'prof-456',
         scheduledFor: '2024-02-15T16:00:00.000Z',
         duration: 60,
       };
 
-      mockContext.scheduling.detectConflicts.mockResolvedValue([]);
+      mockContext.scheduling.detectConflicts.mockResolvedValue([]
 
-      const result = await caller.api.appointment.checkConflicts(conflictInput);
+      const result = await caller.api.appointment.checkConflicts(conflictInput
 
       expect(result).toMatchObject({
         success: true,
@@ -504,12 +541,14 @@ describe(_'Appointment API Contract Tests',() => {
           hasConflicts: false,
           conflicts: [],
         }),
-      });
-    });
-  });
 
+<<<<<<< HEAD
+  describe('Appointment List Contract',() => {
+    it('should validate appointment listing with filters',async () => {
+=======
   describe(_'Appointment List Contract',() => {
     it(_'should validate appointment listing with filters',async () => {
+>>>>>>> origin/main
       const listInput: AppointmentInput['list'] = {
         page: 1,
         limit: 10,
@@ -544,10 +583,10 @@ describe(_'Appointment API Contract Tests',() => {
 
       mockContext.prisma.appointment.findMany.mockResolvedValue(
         mockAppointments,
-      );
-      mockContext.prisma.appointment.count.mockResolvedValue(15);
+      
+      mockContext.prisma.appointment.count.mockResolvedValue(15
 
-      const result = await caller.api.appointment.list(listInput);
+      const result = await caller.api.appointment.list(listInput
 
       expect(result).toMatchObject({
         success: true,
@@ -570,12 +609,14 @@ describe(_'Appointment API Contract Tests',() => {
             status: ['scheduled', 'confirmed'],
           }),
         },
-      });
-    });
-  });
 
+<<<<<<< HEAD
+  describe('Contract Type Safety',() => {
+    it('should enforce input type constraints at compile time',() => {
+=======
   describe(_'Contract Type Safety',() => {
     it(_'should enforce input type constraints at compile time',() => {
+>>>>>>> origin/main
       const validInput: AppointmentInput['create'] = {
         patientId: 'patient-123',
         professionalId: 'prof-456',
@@ -585,10 +626,13 @@ describe(_'Appointment API Contract Tests',() => {
         type: 'consultation',
       };
 
-      expect(validInput).toBeDefined();
-    });
+      expect(validInput).toBeDefined(
 
+<<<<<<< HEAD
+    it('should enforce output type constraints',() => {
+=======
     it(_'should enforce output type constraints',() => {
+>>>>>>> origin/main
       const mockOutput: AppointmentOutput['getById'] = {
         success: true,
         data: {
@@ -605,9 +649,6 @@ describe(_'Appointment API Contract Tests',() => {
         },
       };
 
-      expect(mockOutput).toBeDefined();
+      expect(mockOutput).toBeDefined(
       expect(mockOutput.success).toBe(true);
-      expect(mockOutput.data.id).toBe('appointment-123');
-    });
-  });
-});
+      expect(mockOutput.data.id).toBe('appointment-123')

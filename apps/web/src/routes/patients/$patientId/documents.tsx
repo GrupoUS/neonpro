@@ -226,7 +226,11 @@ function PatientDocumentsPage() {
       setSelectedDocuments(prev => prev.filter(id => id !== documentId));
       toast.success('Documento excluído com sucesso');
     } catch (_error) {
+<<<<<<< HEAD
+      console.error('Error deleting document:', _error);
+=======
       console.error('Error deleting document:', error);
+>>>>>>> origin/main
       toast.error('Erro ao excluir documento');
     }
   };
@@ -247,7 +251,11 @@ function PatientDocumentsPage() {
       });
       toast.success('Documento enviado com sucesso');
     } catch (_error) {
+<<<<<<< HEAD
+      console.error('Error uploading document:', _error);
+=======
       console.error('Error uploading document:', error);
+>>>>>>> origin/main
       toast.error('Erro ao enviar documento');
     }
   };
@@ -585,7 +593,11 @@ function DocumentCard({
       await downloadDocument(patientId, document.id, document.name);
       toast.success('Download concluído');
     } catch (_error) {
+<<<<<<< HEAD
+      console.error('Error downloading document:', _error);
+=======
       console.error('Error downloading document:', error);
+>>>>>>> origin/main
       toast.error('Erro ao baixar documento');
     } finally {
       setIsDownloading(false);
@@ -604,7 +616,11 @@ function DocumentCard({
       setIsDeleting(true);
       onDelete(document.id);
     } catch (_error) {
+<<<<<<< HEAD
+      console.error('Error deleting document:', _error);
+=======
       console.error('Error deleting document:', error);
+>>>>>>> origin/main
       toast.error('Erro ao excluir documento');
     } finally {
       setIsDeleting(false);

@@ -37,8 +37,8 @@ describe(('E2E Testing Service', () => {
       generateReports: true,
     };
 
-    service = new E2ETestingService(mockConfig);
-  });
+    service = new E2ETestingService(mockConfig
+  }
 
   describe(('Configuration Validation', () => {
     it(('should validate valid E2E test configuration', () => {
@@ -65,30 +65,30 @@ describe(('E2E Testing Service', () => {
       };
 
       expect(service.validateConfig(validConfig)).toBe(true);
-    });
+    }
 
     it(('should use default values for optional configuration', () => {
       const minimalConfig = {};
-      const parsedConfig = E2ETestConfigSchema.parse(minimalConfig);
+      const parsedConfig = E2ETestConfigSchema.parse(minimalConfig
 
-      expect(parsedConfig.environment).toBe(TEST_ENVIRONMENTS.STAGING);
+      expect(parsedConfig.environment).toBe(TEST_ENVIRONMENTS.STAGING
       expect(parsedConfig.testTypes).toContain(
         E2E_TEST_TYPES.HEALTHCARE_WORKFLOW,
-      );
+      
       expect(parsedConfig.healthcareWorkflows).toContain(
         HEALTHCARE_WORKFLOWS.PATIENT_MANAGEMENT,
-      );
-      expect(parsedConfig.browsers).toContain('chrome');
-      expect(parsedConfig.mobileDevices).toContain('iPhone');
-      expect(parsedConfig.screenReaders).toContain('VoiceOver');
-      expect(parsedConfig.languages).toContain('pt-BR');
-      expect(parsedConfig.performanceThresholds.maxLoadTime).toBe(3000);
-      expect(parsedConfig.performanceThresholds.maxInteractionDelay).toBe(100);
+      
+      expect(parsedConfig.browsers).toContain('chrome')
+      expect(parsedConfig.mobileDevices).toContain('iPhone')
+      expect(parsedConfig.screenReaders).toContain('VoiceOver')
+      expect(parsedConfig.languages).toContain('pt-BR')
+      expect(parsedConfig.performanceThresholds.maxLoadTime).toBe(3000
+      expect(parsedConfig.performanceThresholds.maxInteractionDelay).toBe(100
       expect(parsedConfig.complianceStandards.lgpd).toBe(true);
       expect(parsedConfig.complianceStandards.anvisa).toBe(true);
       expect(parsedConfig.complianceStandards.cfm).toBe(true);
       expect(parsedConfig.complianceStandards.wcag).toBe(true);
-    });
+    }
 
     it(('should validate healthcare workflows', () => {
       const configWithHealthcareWorkflows = {
@@ -102,190 +102,222 @@ describe(('E2E Testing Service', () => {
 
       const parsedConfig = E2ETestConfigSchema.parse(
         configWithHealthcareWorkflows,
-      );
-      expect(parsedConfig.healthcareWorkflows).toHaveLength(4);
+      
+      expect(parsedConfig.healthcareWorkflows).toHaveLength(4
       expect(parsedConfig.healthcareWorkflows).toContain(
         HEALTHCARE_WORKFLOWS.PATIENT_MANAGEMENT,
-      );
+      
       expect(parsedConfig.healthcareWorkflows).toContain(
         HEALTHCARE_WORKFLOWS.APPOINTMENT_SCHEDULING,
-      );
+      
       expect(parsedConfig.healthcareWorkflows).toContain(
         HEALTHCARE_WORKFLOWS.EMERGENCY_ACCESS,
-      );
+      
       expect(parsedConfig.healthcareWorkflows).toContain(
         HEALTHCARE_WORKFLOWS.MEDICAL_DATA_PROCESSING,
-      );
-    });
-  });
+      
+    }
+  }
 
   describe(('E2E Test Execution', () => {
     it(_'should execute comprehensive E2E testing scenarios',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+=======
       const report = await service.executeTests();
+>>>>>>> origin/main
 
-      expect(report).toBeDefined();
-      expect(report.executionId).toMatch(/^e2e-\d+$/);
-      expect(report.config).toEqual(expect.objectContaining(mockConfig));
-      expect(report.startTime).toBeInstanceOf(Date);
-      expect(report.endTime).toBeInstanceOf(Date);
-      expect(report.totalDuration).toBeGreaterThan(0);
-      expect(report.environment).toBe(TEST_ENVIRONMENTS.STAGING);
-      expect(report.results).toBeInstanceOf(Array);
-      expect(report.summary).toBeDefined();
-      expect(report.recommendations).toBeInstanceOf(Array);
-      expect(report.criticalIssues).toBeInstanceOf(Array);
-    });
+      expect(report).toBeDefined(
+      expect(report.executionId).toMatch(/^e2e-\d+$/
+      expect(report.config).toEqual(expect.objectContaining(mockConfig)
+      expect(report.startTime).toBeInstanceOf(Date
+      expect(report.endTime).toBeInstanceOf(Date
+      expect(report.totalDuration).toBeGreaterThan(0
+      expect(report.environment).toBe(TEST_ENVIRONMENTS.STAGING
+      expect(report.results).toBeInstanceOf(Array
+      expect(report.summary).toBeDefined(
+      expect(report.recommendations).toBeInstanceOf(Array
+      expect(report.criticalIssues).toBeInstanceOf(Array
+    }
 
     it(_'should execute patient management workflow scenario',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+=======
       const report = await service.executeTests();
+>>>>>>> origin/main
       const patientManagementResult = report.results.find(
         r => r.scenarioId === 'patient-management-workflow',
-      );
+      
 
-      expect(patientManagementResult).toBeDefined();
+      expect(patientManagementResult).toBeDefined(
       expect(patientManagementResult?.status).toMatch(
         /^(passed|failed|skipped|error)$/,
-      );
-      expect(patientManagementResult?.duration).toBeGreaterThan(0);
-      expect(patientManagementResult?.steps).toBeInstanceOf(Array);
+      
+      expect(patientManagementResult?.duration).toBeGreaterThan(0
+      expect(patientManagementResult?.steps).toBeInstanceOf(Array
       expect(
         patientManagementResult?.overallAccessibilityScore,
-      ).toBeGreaterThanOrEqual(0);
+      ).toBeGreaterThanOrEqual(0
       expect(
         patientManagementResult?.overallPerformanceScore,
-      ).toBeGreaterThanOrEqual(0);
-      expect(patientManagementResult?.complianceValidation).toBeDefined();
-      expect(patientManagementResult?.complianceValidation.lgpd).toBeDefined();
+      ).toBeGreaterThanOrEqual(0
+      expect(patientManagementResult?.complianceValidation).toBeDefined(
+      expect(patientManagementResult?.complianceValidation.lgpd).toBeDefined(
       expect(
         patientManagementResult?.complianceValidation.anvisa,
-      ).toBeDefined();
-      expect(patientManagementResult?.complianceValidation.cfm).toBeDefined();
-      expect(patientManagementResult?.complianceValidation.wcag).toBeDefined();
-    });
+      ).toBeDefined(
+      expect(patientManagementResult?.complianceValidation.cfm).toBeDefined(
+      expect(patientManagementResult?.complianceValidation.wcag).toBeDefined(
+    }
 
     it(_'should execute appointment scheduling workflow scenario',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+=======
       const report = await service.executeTests();
+>>>>>>> origin/main
       const appointmentResult = report.results.find(
         r => r.scenarioId === 'appointment-scheduling-workflow',
-      );
+      
 
-      expect(appointmentResult).toBeDefined();
+      expect(appointmentResult).toBeDefined(
       expect(appointmentResult?.status).toMatch(
         /^(passed|failed|skipped|error)$/,
-      );
-      expect(appointmentResult?.steps).toBeInstanceOf(Array);
-      expect(appointmentResult?.steps.length).toBeGreaterThan(0);
+      
+      expect(appointmentResult?.steps).toBeInstanceOf(Array
+      expect(appointmentResult?.steps.length).toBeGreaterThan(0
       expect(
         appointmentResult?.overallAccessibilityScore,
-      ).toBeGreaterThanOrEqual(0);
+      ).toBeGreaterThanOrEqual(0
       expect(appointmentResult?.overallPerformanceScore).toBeGreaterThanOrEqual(
         0,
-      );
-      expect(appointmentResult?.complianceValidation.wcag).toBeDefined();
-    });
+      
+      expect(appointmentResult?.complianceValidation.wcag).toBeDefined(
+    }
 
     it(_'should execute emergency access workflow scenario',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+=======
       const report = await service.executeTests();
+>>>>>>> origin/main
       const emergencyResult = report.results.find(
         r => r.scenarioId === 'emergency-access-workflow',
-      );
+      
 
       // Emergency access scenario should be included in results
-      expect(emergencyResult).toBeDefined();
+      expect(emergencyResult).toBeDefined(
       if (emergencyResult) {
         expect(emergencyResult.status).toMatch(
           /^(passed|failed|skipped|error)$/,
-        );
-        expect(emergencyResult.steps).toBeInstanceOf(Array);
+        
+        expect(emergencyResult.steps).toBeInstanceOf(Array
         expect(
           emergencyResult.overallAccessibilityScore,
-        ).toBeGreaterThanOrEqual(0);
-        expect(emergencyResult.complianceValidation).toBeDefined();
+        ).toBeGreaterThanOrEqual(0
+        expect(emergencyResult.complianceValidation).toBeDefined(
       } else {
         // If emergency scenario is not found, verify it exists in scenarios
         const emergencyScenarios = service.getScenariosByWorkflow(
           HEALTHCARE_WORKFLOWS.EMERGENCY_ACCESS,
-        );
-        expect(emergencyScenarios.length).toBeGreaterThanOrEqual(0);
+        
+        expect(emergencyScenarios.length).toBeGreaterThanOrEqual(0
       }
-    });
-  });
+    }
+  }
 
   describe(('E2E Test Statistics', () => {
     it(_'should generate accurate test statistics',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+=======
       const report = await service.executeTests();
+>>>>>>> origin/main
 
-      expect(report.summary.totalScenarios).toBeGreaterThan(0);
-      expect(report.summary.passedScenarios).toBeGreaterThanOrEqual(0);
-      expect(report.summary.failedScenarios).toBeGreaterThanOrEqual(0);
-      expect(report.summary.skippedScenarios).toBeGreaterThanOrEqual(0);
+      expect(report.summary.totalScenarios).toBeGreaterThan(0
+      expect(report.summary.passedScenarios).toBeGreaterThanOrEqual(0
+      expect(report.summary.failedScenarios).toBeGreaterThanOrEqual(0
+      expect(report.summary.skippedScenarios).toBeGreaterThanOrEqual(0
       expect(report.summary.totalScenarios).toBe(
         report.summary.passedScenarios
           + report.summary.failedScenarios
           + report.summary.skippedScenarios,
-      );
-      expect(report.summary.overallSuccessRate).toBeGreaterThanOrEqual(0);
-      expect(report.summary.overallSuccessRate).toBeLessThanOrEqual(100);
+      
+      expect(report.summary.overallSuccessRate).toBeGreaterThanOrEqual(0
+      expect(report.summary.overallSuccessRate).toBeLessThanOrEqual(100
       expect(report.summary.averageAccessibilityScore).toBeGreaterThanOrEqual(
         0,
-      );
-      expect(report.summary.averageAccessibilityScore).toBeLessThanOrEqual(100);
-      expect(report.summary.averagePerformanceScore).toBeGreaterThanOrEqual(0);
-      expect(report.summary.averagePerformanceScore).toBeLessThanOrEqual(100);
-    });
+      
+      expect(report.summary.averageAccessibilityScore).toBeLessThanOrEqual(100
+      expect(report.summary.averagePerformanceScore).toBeGreaterThanOrEqual(0
+      expect(report.summary.averagePerformanceScore).toBeLessThanOrEqual(100
+    }
 
     it(_'should calculate compliance validation statistics',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+=======
       const report = await service.executeTests();
+>>>>>>> origin/main
 
-      expect(report.summary.complianceValidation).toBeDefined();
+      expect(report.summary.complianceValidation).toBeDefined(
       expect(report.summary.complianceValidation.lgpd).toBeGreaterThanOrEqual(
         0,
-      );
-      expect(report.summary.complianceValidation.lgpd).toBeLessThanOrEqual(100);
+      
+      expect(report.summary.complianceValidation.lgpd).toBeLessThanOrEqual(100
       expect(report.summary.complianceValidation.anvisa).toBeGreaterThanOrEqual(
         0,
-      );
+      
       expect(report.summary.complianceValidation.anvisa).toBeLessThanOrEqual(
         100,
-      );
-      expect(report.summary.complianceValidation.cfm).toBeGreaterThanOrEqual(0);
-      expect(report.summary.complianceValidation.cfm).toBeLessThanOrEqual(100);
+      
+      expect(report.summary.complianceValidation.cfm).toBeGreaterThanOrEqual(0
+      expect(report.summary.complianceValidation.cfm).toBeLessThanOrEqual(100
       expect(report.summary.complianceValidation.wcag).toBeGreaterThanOrEqual(
         0,
-      );
-      expect(report.summary.complianceValidation.wcag).toBeLessThanOrEqual(100);
-    });
+      
+      expect(report.summary.complianceValidation.wcag).toBeLessThanOrEqual(100
+    }
 
     it(_'should validate healthcare workflow coverage',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+=======
       const report = await service.executeTests();
+>>>>>>> origin/main
       const healthcareResults = report.results.filter(r =>
         service
           .getScenariosByType(E2E_TEST_TYPES.HEALTHCARE_WORKFLOW)
           .some(s => s.id === r.scenarioId)
-      );
+      
 
-      expect(healthcareResults.length).toBeGreaterThan(0);
+      expect(healthcareResults.length).toBeGreaterThan(0
 
       // Verify patient management workflow is covered
       const patientManagementCovered = healthcareResults.some(
         r => r.scenarioId === 'patient-management-workflow',
-      );
+      
       expect(patientManagementCovered).toBe(true);
 
       // Verify appointment scheduling workflow is covered
       const appointmentSchedulingCovered = healthcareResults.some(
         r => r.scenarioId === 'appointment-scheduling-workflow',
-      );
+      
       expect(appointmentSchedulingCovered).toBe(true);
-    });
-  });
+    }
+  }
 
   describe(('E2E Test Validation', () => {
     it(_'should validate E2E test quality',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+=======
       const report = await service.executeTests();
+>>>>>>> origin/main
 
       // Validate that tests were executed
-      expect(report.summary.totalScenarios).toBeGreaterThan(0);
+      expect(report.summary.totalScenarios).toBeGreaterThan(0
 
       // If tests were executed, validate quality metrics
       if (report.summary.totalScenarios > 0) {
@@ -306,13 +338,17 @@ describe(('E2E Testing Service', () => {
           60,
         ); // Minimum 60% WCAG compliance for mock (flexible)
       }
-    });
+    }
 
     it(_'should generate recommendations based on test results',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+=======
       const report = await service.executeTests();
+>>>>>>> origin/main
 
-      expect(report.recommendations).toBeInstanceOf(Array);
-      expect(report.recommendations.length).toBeGreaterThan(0);
+      expect(report.recommendations).toBeInstanceOf(Array
+      expect(report.recommendations.length).toBeGreaterThan(0
 
       // Check for healthcare-specific recommendations (more flexible matching)
       const hasHealthcareRecommendations = report.recommendations.some(
@@ -330,22 +366,35 @@ describe(('E2E Testing Service', () => {
           || rec.includes('compliance')
           || rec.includes('mobile')
           || rec.includes('WCAG'),
-      );
+      
       // If no specific healthcare recommendations, at least check that recommendations exist
       if (!hasHealthcareRecommendations && report.recommendations.length > 0) {
-        expect(report.recommendations.length).toBeGreaterThan(0);
+        expect(report.recommendations.length).toBeGreaterThan(0
       } else {
         expect(hasHealthcareRecommendations).toBe(true);
       }
-    });
+    }
 
     it(_'should identify critical issues in test results',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+=======
       const report = await service.executeTests();
+>>>>>>> origin/main
 
-      expect(report.criticalIssues).toBeInstanceOf(Array);
+      expect(report.criticalIssues).toBeInstanceOf(Array
 
       // Validate critical issue structure
       report.criticalIssues.forEach(issue => {
+<<<<<<< HEAD
+        expect(issue.scenarioId).toBeDefined(
+        expect(issue.issue).toBeDefined(
+        expect(issue.severity).toMatch(/^(critical|high|medium|low)$/
+        expect(issue.recommendation).toBeDefined(
+      }
+    }
+  }
+=======
         expect(issue.scenarioId).toBeDefined();
         expect(issue.issue).toBeDefined();
         expect(issue.severity).toMatch(/^(critical|high|medium|low)$/);
@@ -353,27 +402,32 @@ describe(('E2E Testing Service', () => {
       });
     });
   });
+>>>>>>> origin/main
 
   describe(('Brazilian Portuguese Localization', () => {
     it(('should provide Brazilian Portuguese labels for E2E test types', () => {
       const scenarios = service.getScenariosByType(
         E2E_TEST_TYPES.HEALTHCARE_WORKFLOW,
-      );
+      
 
       scenarios.forEach(scenario => {
         if (scenario.namePtBr) {
-          expect(scenario.namePtBr).toBeDefined();
-          expect(scenario.namePtBr.length).toBeGreaterThan(0);
+          expect(scenario.namePtBr).toBeDefined(
+          expect(scenario.namePtBr.length).toBeGreaterThan(0
         }
         if (scenario.descriptionPtBr) {
-          expect(scenario.descriptionPtBr).toBeDefined();
-          expect(scenario.descriptionPtBr.length).toBeGreaterThan(0);
+          expect(scenario.descriptionPtBr).toBeDefined(
+          expect(scenario.descriptionPtBr.length).toBeGreaterThan(0
         }
-      });
-    });
+      }
+    }
 
     it(_'should include Portuguese translations in test scenarios',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+=======
       const report = await service.executeTests();
+>>>>>>> origin/main
 
       // Check for Portuguese content in recommendations (more flexible matching)
       const hasPortugueseRecommendations = report.recommendations.some(
@@ -389,17 +443,21 @@ describe(('E2E Testing Service', () => {
           || rec.includes('test')
           || rec.includes('quality')
           || rec.includes('mobile'),
-      );
+      
       // If no Portuguese recommendations, at least check that recommendations exist
       if (!hasPortugueseRecommendations && report.recommendations.length > 0) {
-        expect(report.recommendations.length).toBeGreaterThan(0);
+        expect(report.recommendations.length).toBeGreaterThan(0
       } else {
         expect(hasPortugueseRecommendations).toBe(true);
       }
-    });
+    }
 
     it(_'should include Portuguese translations in critical issues',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+=======
       const report = await service.executeTests();
+>>>>>>> origin/main
 
       // Check for Portuguese content in critical issues
       if (report.criticalIssues.length > 0) {
@@ -409,14 +467,35 @@ describe(('E2E Testing Service', () => {
             || issue.issue.includes('falhou')
             || issue.recommendation.includes('Investigar')
             || issue.recommendation.includes('corrigir'),
-        );
+        
         expect(hasPortugueseIssues).toBe(true);
       }
-    });
-  });
+    }
+  }
 
   describe(('Healthcare Compliance Integration', () => {
     it(_'should include healthcare compliance validation in test results',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+
+      report.results.forEach(result => {
+        expect(result.complianceValidation).toBeDefined(
+        expect(result.complianceValidation.lgpd).toBeDefined(
+        expect(result.complianceValidation.anvisa).toBeDefined(
+        expect(result.complianceValidation.cfm).toBeDefined(
+        expect(result.complianceValidation.wcag).toBeDefined(
+      }
+    }
+
+    it(_'should include accessibility compliance validation',async () => {
+      const report = await service.executeTests(
+
+      // Verify accessibility scores are within valid range
+      report.results.forEach(result => {
+        expect(result.overallAccessibilityScore).toBeGreaterThanOrEqual(0
+        expect(result.overallAccessibilityScore).toBeLessThanOrEqual(100
+      }
+=======
       const report = await service.executeTests();
 
       report.results.forEach(result => {
@@ -436,15 +515,25 @@ describe(('E2E Testing Service', () => {
         expect(result.overallAccessibilityScore).toBeGreaterThanOrEqual(0);
         expect(result.overallAccessibilityScore).toBeLessThanOrEqual(100);
       });
+>>>>>>> origin/main
 
       // Verify WCAG compliance is validated
       const wcagCompliantResults = report.results.filter(
         r => r.complianceValidation.wcag,
-      );
-      expect(wcagCompliantResults.length).toBeGreaterThan(0);
-    });
+      
+      expect(wcagCompliantResults.length).toBeGreaterThan(0
+    }
 
     it(_'should include mobile optimization validation',async () => {
+<<<<<<< HEAD
+      const report = await service.executeTests(
+
+      // Verify performance scores are within valid range
+      report.results.forEach(result => {
+        expect(result.overallPerformanceScore).toBeGreaterThanOrEqual(0
+        expect(result.overallPerformanceScore).toBeLessThanOrEqual(100
+      }
+=======
       const report = await service.executeTests();
 
       // Verify performance scores are within valid range
@@ -452,76 +541,77 @@ describe(('E2E Testing Service', () => {
         expect(result.overallPerformanceScore).toBeGreaterThanOrEqual(0);
         expect(result.overallPerformanceScore).toBeLessThanOrEqual(100);
       });
+>>>>>>> origin/main
 
       // Check for mobile-specific test steps
       const mobileSteps = report.results
         .flatMap(r => r.steps)
         .filter(
           step => step.performanceMetrics?.interactionDelay !== undefined,
-        );
-      expect(mobileSteps.length).toBeGreaterThan(0);
-    });
-  });
+        
+      expect(mobileSteps.length).toBeGreaterThan(0
+    }
+  }
 
   describe(('E2E Test Scenarios', () => {
     it(('should include patient management workflow scenarios', () => {
       const patientScenarios = service.getScenariosByWorkflow(
         HEALTHCARE_WORKFLOWS.PATIENT_MANAGEMENT,
-      );
+      
 
-      expect(patientScenarios.length).toBeGreaterThan(0);
+      expect(patientScenarios.length).toBeGreaterThan(0
 
       const patientManagementScenario = patientScenarios.find(
         s => s.id === 'patient-management-workflow',
-      );
-      expect(patientManagementScenario).toBeDefined();
-      expect(patientManagementScenario?.priority).toBe('critical');
-      expect(patientManagementScenario?.steps.length).toBeGreaterThan(0);
+      
+      expect(patientManagementScenario).toBeDefined(
+      expect(patientManagementScenario?.priority).toBe('critical')
+      expect(patientManagementScenario?.steps.length).toBeGreaterThan(0
       expect(patientManagementScenario?.expectedResults.length).toBeGreaterThan(
         0,
-      );
+      
       expect(
         patientManagementScenario?.accessibilityRequirements,
-      ).toBeDefined();
-      expect(patientManagementScenario?.mobileRequirements).toBeDefined();
-      expect(patientManagementScenario?.complianceRequirements).toBeDefined();
-    });
+      ).toBeDefined(
+      expect(patientManagementScenario?.mobileRequirements).toBeDefined(
+      expect(patientManagementScenario?.complianceRequirements).toBeDefined(
+    }
 
     it(('should include appointment scheduling workflow scenarios', () => {
       const appointmentScenarios = service.getScenariosByWorkflow(
         HEALTHCARE_WORKFLOWS.APPOINTMENT_SCHEDULING,
-      );
+      
 
-      expect(appointmentScenarios.length).toBeGreaterThan(0);
+      expect(appointmentScenarios.length).toBeGreaterThan(0
 
       const appointmentScenario = appointmentScenarios.find(
         s => s.id === 'appointment-scheduling-workflow',
-      );
-      expect(appointmentScenario).toBeDefined();
-      expect(appointmentScenario?.priority).toBe('critical');
-      expect(appointmentScenario?.steps.length).toBeGreaterThan(0);
-      expect(appointmentScenario?.expectedResults.length).toBeGreaterThan(0);
-      expect(appointmentScenario?.performanceRequirements).toBeDefined();
+      
+      expect(appointmentScenario).toBeDefined(
+      expect(appointmentScenario?.priority).toBe('critical')
+      expect(appointmentScenario?.steps.length).toBeGreaterThan(0
+      expect(appointmentScenario?.expectedResults.length).toBeGreaterThan(0
+      expect(appointmentScenario?.performanceRequirements).toBeDefined(
       expect(
         appointmentScenario?.performanceRequirements?.maxLoadTime,
-      ).toBeLessThanOrEqual(2000);
+      ).toBeLessThanOrEqual(2000
       expect(
         appointmentScenario?.performanceRequirements?.maxInteractionDelay,
-      ).toBeLessThanOrEqual(100);
-    });
+      ).toBeLessThanOrEqual(100
+    }
 
     it(('should include emergency access workflow scenarios', () => {
       const emergencyScenarios = service.getScenariosByWorkflow(
         HEALTHCARE_WORKFLOWS.EMERGENCY_ACCESS,
-      );
+      
 
-      expect(emergencyScenarios.length).toBeGreaterThan(0);
+      expect(emergencyScenarios.length).toBeGreaterThan(0
 
       const emergencyScenario = emergencyScenarios.find(
         s => s.id === 'emergency-access-workflow',
-      );
-      expect(emergencyScenario).toBeDefined();
-      expect(emergencyScenario?.priority).toBe('critical');
+      
+      expect(emergencyScenario).toBeDefined(
+      expect(emergencyScenario?.priority).toBe('critical')
       expect(emergencyScenario?.estimatedDuration).toBeLessThanOrEqual(30000); // 30 seconds max for emergency
       expect(
         emergencyScenario?.performanceRequirements?.maxLoadTime,
@@ -532,46 +622,67 @@ describe(('E2E Testing Service', () => {
       expect(
         emergencyScenario?.performanceRequirements?.minAccessibilityScore,
       ).toBeGreaterThanOrEqual(98); // 98% min
-    });
-  });
+    }
+  }
 
   describe(('E2E Test Filtering', () => {
     it(('should filter scenarios by test type', () => {
       const healthcareScenarios = service.getScenariosByType(
         E2E_TEST_TYPES.HEALTHCARE_WORKFLOW,
-      );
+      
       const accessibilityScenarios = service.getScenariosByType(
         E2E_TEST_TYPES.ACCESSIBILITY,
-      );
-      const mobileScenarios = service.getScenariosByType(E2E_TEST_TYPES.MOBILE);
+      
+      const mobileScenarios = service.getScenariosByType(E2E_TEST_TYPES.MOBILE
 
-      expect(healthcareScenarios.length).toBeGreaterThan(0);
-      expect(accessibilityScenarios.length).toBeGreaterThanOrEqual(0);
-      expect(mobileScenarios.length).toBeGreaterThanOrEqual(0);
+      expect(healthcareScenarios.length).toBeGreaterThan(0
+      expect(accessibilityScenarios.length).toBeGreaterThanOrEqual(0
+      expect(mobileScenarios.length).toBeGreaterThanOrEqual(0
 
       // Verify all healthcare scenarios have the correct type
       healthcareScenarios.forEach(scenario => {
+<<<<<<< HEAD
+        expect(scenario.type).toBe(E2E_TEST_TYPES.HEALTHCARE_WORKFLOW
+      }
+    }
+=======
         expect(scenario.type).toBe(E2E_TEST_TYPES.HEALTHCARE_WORKFLOW);
       });
     });
+>>>>>>> origin/main
 
     it(('should filter scenarios by healthcare workflow', () => {
       const patientManagementScenarios = service.getScenariosByWorkflow(
         HEALTHCARE_WORKFLOWS.PATIENT_MANAGEMENT,
-      );
+      
       const appointmentScenarios = service.getScenariosByWorkflow(
         HEALTHCARE_WORKFLOWS.APPOINTMENT_SCHEDULING,
-      );
+      
       const emergencyScenarios = service.getScenariosByWorkflow(
         HEALTHCARE_WORKFLOWS.EMERGENCY_ACCESS,
-      );
+      
 
-      expect(patientManagementScenarios.length).toBeGreaterThan(0);
-      expect(appointmentScenarios.length).toBeGreaterThan(0);
-      expect(emergencyScenarios.length).toBeGreaterThan(0);
+      expect(patientManagementScenarios.length).toBeGreaterThan(0
+      expect(appointmentScenarios.length).toBeGreaterThan(0
+      expect(emergencyScenarios.length).toBeGreaterThan(0
 
       // Verify all scenarios have the correct workflow
       patientManagementScenarios.forEach(scenario => {
+<<<<<<< HEAD
+        expect(scenario.workflow).toBe(HEALTHCARE_WORKFLOWS.PATIENT_MANAGEMENT
+      }
+      appointmentScenarios.forEach(scenario => {
+        expect(scenario.workflow).toBe(
+          HEALTHCARE_WORKFLOWS.APPOINTMENT_SCHEDULING,
+        
+      }
+      emergencyScenarios.forEach(scenario => {
+        expect(scenario.workflow).toBe(HEALTHCARE_WORKFLOWS.EMERGENCY_ACCESS
+      }
+    }
+  }
+}
+=======
         expect(scenario.workflow).toBe(HEALTHCARE_WORKFLOWS.PATIENT_MANAGEMENT);
       });
       appointmentScenarios.forEach(scenario => {
@@ -585,3 +696,4 @@ describe(('E2E Testing Service', () => {
     });
   });
 });
+>>>>>>> origin/main

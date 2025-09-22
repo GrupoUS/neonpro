@@ -24,16 +24,21 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
   let enterpriseClinicId: string;
 
   beforeEach(async () => {
+<<<<<<< HEAD
+    await setupTestDatabase(
+    testClient = createTestClient({ _role: 'admin' }
+=======
     await setupTestDatabase();
     testClient = createTestClient({ _role: 'admin' });
+>>>>>>> origin/main
     freeClinicId = 'clinic-free-br-001';
     premiumClinicId = 'clinic-premium-br-002';
     enterpriseClinicId = 'clinic-enterprise-br-003';
-  });
+  }
 
   afterEach(async () => {
-    await cleanupTestDatabase();
-  });
+    await cleanupTestDatabase(
+  }
 
   describe('Free Plan Limitations', () => {
     it('should enforce monthly AI request limits for free plan', async () => {
@@ -56,22 +61,22 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
               planCheck: true,
             }),
           }),
-        );
+        
       }
 
       // TDD RED: Plan gating not implemented - MUST FAIL
-      const responses = await Promise.all(requests);
+      const responses = await Promise.all(requests
 
       // First 20 requests should succeed
       for (let i = 0; i < 20; i++) {
-        expect(responses[i].status).toBe(200);
+        expect(responses[i].status).toBe(200
       }
 
       // Requests 21-25 should be blocked
       for (let i = 20; i < 25; i++) {
         expect(responses[i].status).toBe(429); // Too Many Requests
 
-        const error = await responses[i].json();
+        const error = await responses[i].json(
         expect(error).toMatchObject({
           error: 'LIMITE_PLANO_EXCEDIDO',
           message: expect.stringContaining('plano gratuito'),
@@ -87,9 +92,9 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
             paymentMethods: expect.arrayContaining(['PIX', 'cartao_credito']),
           },
           locale: 'pt-BR',
-        });
+        }
       }
-    });
+    }
 
     it('should restrict advanced AI models to premium plans only', async () => {
       const advancedAnalysisRequest = {
@@ -112,11 +117,11 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(advancedAnalysisRequest),
-      });
+      }
 
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(403
 
-      const error = await response.json();
+      const error = await response.json(
       expect(error).toMatchObject({
         error: 'MODELO_PREMIUM_NECESSARIO',
         message: expect.stringContaining('GPT-4'),
@@ -125,8 +130,8 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
         availableModels: ['gpt-3.5-turbo', 'claude-instant'],
         upgradeRequired: true,
         locale: 'pt-BR',
-      });
-    });
+      }
+    }
 
     it('should limit data export features for free plan users', async () => {
       const exportRequest = {
@@ -146,11 +151,11 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(exportRequest),
-      });
+      }
 
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(403
 
-      const error = await response.json();
+      const error = await response.json(
       expect(error).toMatchObject({
         error: 'EXPORTACAO_PREMIUM_NECESSARIA',
         message: expect.stringContaining('exportação detalhada'),
@@ -158,9 +163,9 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
         availableExports: ['basic_summary'],
         upgradeRequired: true,
         locale: 'pt-BR',
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Premium Plan Features', () => {
     it('should allow unlimited AI requests for premium plan', async () => {
@@ -182,17 +187,17 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
               aiModel: 'gpt-4',
             }),
           }),
-        );
+        
       }
 
       // TDD RED: Premium unlimited access not implemented - MUST FAIL
-      const responses = await Promise.all(requests);
+      const responses = await Promise.all(requests
 
       // All requests should succeed
       responses.forEach(response => {
-        expect(response.status).toBe(200);
-      });
-    });
+        expect(response.status).toBe(200
+      }
+    }
 
     it('should enable advanced AI models for premium subscribers', async () => {
       const premiumFeaturesRequest = {
@@ -217,11 +222,11 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(premiumFeaturesRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         analysisId: expect.any(String),
         planFeatures: {
@@ -232,8 +237,8 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
         },
         modelsUsed: expect.arrayContaining(['gpt-4']),
         premiumFeatures: expect.any(Array),
-      });
-    });
+      }
+    }
 
     it('should provide detailed analytics and export capabilities', async () => {
       const detailedExportRequest = {
@@ -255,11 +260,11 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(detailedExportRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         exportData: {
           format: 'pdf',
@@ -274,9 +279,9 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           customReports: true,
           unlimitedHistory: true,
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Brazilian Payment Integration', () => {
     it('should process PIX payments for plan upgrades', async () => {
@@ -309,11 +314,11 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(pixUpgradeRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         paymentIntentId: expect.any(String),
         pixCode: expect.any(String),
@@ -326,8 +331,8 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           iss: expect.any(Number),
           totalTaxes: expect.any(Number),
         },
-      });
-    });
+      }
+    }
 
     it('should handle regional pricing for different Brazilian markets', async () => {
       const regionalPricingRequests = [
@@ -350,12 +355,12 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
             'x-location-city': location.city,
             ...testClient.headers,
           },
-        });
+        }
 
         responses.push({
           location,
           response: await response.json(),
-        });
+        }
       }
 
       responses.forEach(({ location, response }) => {
@@ -379,10 +384,10 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           },
           regionalAdjustment: expect.any(Number),
           paymentMethods: expect.arrayContaining(['PIX']),
-        });
-      });
-    });
-  });
+        }
+      }
+    }
+  }
 
   describe('Plan Migration and Downgrade Protection', () => {
     it('should handle plan downgrades with data retention policies', async () => {
@@ -406,11 +411,11 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(downgradeRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         downgradeScheduled: true,
         effectiveDate: expect.any(String),
@@ -425,8 +430,8 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           retainedFeatures: expect.any(Array),
           migrationNotes: expect.any(Array),
         },
-      });
-    });
+      }
+    }
 
     it('should validate enterprise plan requirements and compliance', async () => {
       const enterpriseValidationRequest = {
@@ -449,11 +454,11 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(enterpriseValidationRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         enterpriseEligible: true,
         validationResults: {
@@ -470,9 +475,9 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           customAnalytics: true,
           bulkDiscounts: true,
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('LGPD Compliance for Subscription Data', () => {
     it('should protect subscription and billing data according to LGPD', async () => {
@@ -499,11 +504,11 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(lgpdDataRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         dataSubjectResponse: {
           subscriptionData: {
@@ -524,7 +529,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
             accessLogged: true,
           },
         },
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

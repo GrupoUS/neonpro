@@ -1,6 +1,6 @@
 ---
 title: "NeonPro Technology Stack"
-last_updated: 2025-09-18
+**last_updated**: 2025-09-22
 form: reference
 tags: [technology, stack, decisions, rationale]
 related:
@@ -89,7 +89,8 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 **Supporting Frontend Libraries**:
 
 - **React Hook Form v7.62.0**: Performance-focused forms, minimal re-renders
-- **Zod v3.23.8**: Runtime schema validation, TypeScript integration
+- **Valibot v0.30.0**: Primary runtime schema validation (75% smaller than Zod)
+- **Zod v4.22.0**: Fallback validation library when Valibot doesn't have specific features
 - **Zustand v4.4.0**: Lightweight state management, TypeScript-first
 - **TanStack Query v5.62.0**: Server state management, caching, background updates
 
@@ -127,12 +128,20 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Benefits**: LGPD compliance, audit logging, Brazilian identity validation (CPF, CNS)
 - **Performance**: <50ms database queries, optimized for healthcare workflows
 
-**Valibot v0.30.0** - Runtime Schema Validation
+**Valibot v0.30.0** - Primary Runtime Schema Validation
 
 - **Why**: 75% smaller bundle size vs Zod, edge runtime optimized, TypeScript-first
 - **Features**: Brazilian healthcare validation (CPF, TUSS codes), streaming validation, composable schemas
 - **Benefits**: Edge function compatibility, healthcare compliance, performance optimization
-- **Usage**: tRPC input validation, healthcare data schemas, Brazilian regulatory compliance
+- **Usage**: Primary validation library for all new development, tRPC input validation, healthcare data schemas
+- **Fallback Strategy**: Use Zod v4.22.0 when specific Valibot features are not available
+
+**Zod v4.22.0** - Secondary Runtime Schema Validation
+
+- **Why**: Mature ecosystem, extensive feature set, backward compatibility
+- **Features**: Comprehensive schema definitions, transformer functions, error handling
+- **Benefits**: Extensive documentation, community support, integrations
+- **Usage**: Fallback when Valibot lacks specific features, legacy code maintenance
 
 ### Authentication & Security Stack
 

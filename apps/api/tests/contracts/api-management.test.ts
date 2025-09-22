@@ -40,10 +40,10 @@ import {
 } from '../../src/services/security-policy-service';
 
 // Mock external dependencies
-vi.mock('@/services/api-key-service');
-vi.mock('@/middleware/rate-limiting');
-vi.mock('@/services/quota-service');
-vi.mock('@/services/security-policy-service');
+vi.mock('@/services/api-key-service')
+vi.mock('@/middleware/rate-limiting')
+vi.mock('@/services/quota-service')
+vi.mock('@/services/security-policy-service')
 
 // Test schemas for contract validation
 const ApiKeySchema = z.object({
@@ -79,7 +79,7 @@ const ApiKeySchema = z.object({
       purposes: z.array(z.string()),
     })
     .optional(),
-});
+}
 
 const ApiKeyCreateRequestSchema = z.object({
   name: z.string().min(1).max(100),
@@ -103,7 +103,7 @@ const ApiKeyCreateRequestSchema = z.object({
     ]),
     purposes: z.array(z.string()),
   }),
-});
+}
 
 const ApiKeyUpdateRequestSchema = z.object({
   name: z.string().min(1).max(100).optional(),
@@ -119,7 +119,7 @@ const ApiKeyUpdateRequestSchema = z.object({
       requestsPerDay: z.number().min(1).max(1000000),
     })
     .optional(),
-});
+}
 
 const RateLimitSchema = z.object({
   current: z.number().min(0),
@@ -128,7 +128,7 @@ const RateLimitSchema = z.object({
   resetTime: z.string(),
   windowSize: z.enum(['minute', 'hour', 'day']),
   exceeded: z.boolean(),
-});
+}
 
 const QuotaSchema = z.object({
   current: z.number().min(0),
@@ -146,7 +146,7 @@ const QuotaSchema = z.object({
       }),
     )
     .optional(),
-});
+}
 
 const SecurityPolicySchema = z.object({
   id: z.string(),
@@ -173,7 +173,7 @@ const SecurityPolicySchema = z.object({
       hipaa: z.boolean(),
     })
     .optional(),
-});
+}
 
 const ErrorResponseSchema = z.object({
   error: z.object({
@@ -185,7 +185,7 @@ const ErrorResponseSchema = z.object({
     path: z.string(),
     method: z.string(),
   }),
-});
+}
 
 // Test data generators
 const generateValidApiKeyCreateRequest = () => ({
@@ -206,7 +206,7 @@ const generateValidApiKeyCreateRequest = () => ({
     legalBasis: 'consent' as const,
     purposes: ['api_management', 'system_monitoring'],
   },
-});
+}
 
 const generateValidApiKey = () => ({
   id: 'ak_12345678901234567890123456789012',
@@ -235,7 +235,7 @@ const generateValidApiKey = () => ({
     consentTimestamp: new Date().toISOString(),
     purposes: ['api_management', 'system_monitoring'],
   },
-});
+}
 
 const generateValidRateLimitResult = () => ({
   current: 50,
@@ -244,7 +244,7 @@ const generateValidRateLimitResult = () => ({
   resetTime: new Date(Date.now() + 60 * 1000).toISOString(),
   windowSize: 'minute' as const,
   exceeded: false,
-});
+}
 
 const generateValidQuotaResult = () => ({
   current: 5000,
@@ -258,7 +258,7 @@ const generateValidQuotaResult = () => ({
     storage_mb: { used: 100, limit: 1000, remaining: 900 },
     concurrent_requests: { used: 5, limit: 50, remaining: 45 },
   },
-});
+}
 
 const generateValidSecurityPolicy = () => ({
   id: 'sp_12345678901234567890123456789012',
@@ -329,7 +329,7 @@ const generateValidSecurityPolicy = () => ({
     gdpr: true,
     hipaa: false,
   },
-});
+}
 
 describe('API Management Contract Tests', () => {
   let app: Hono;
@@ -337,90 +337,90 @@ describe('API Management Contract Tests', () => {
 
   beforeEach(() => {
     // Create Hono app for testing
-    app = createHono();
+    app = createHono(
 
     // Setup API management routes
     app.post('/api/management/api-keys', async c => {
-      const body = await c.req.json();
-      const validated = ApiKeyCreateRequestSchema.parse(body);
-      const result = await createApiKey(validated);
-      return c.json(result, 201);
-    });
+      const body = await c.req.json(
+      const validated = ApiKeyCreateRequestSchema.parse(body
+      const result = await createApiKey(validated
+      return c.json(result, 201
+    }
 
     app.get('/api/management/api-keys', async c => {
-      const result = await validateApiKey(c.req.header('Authorization') || '');
-      return c.json(result);
-    });
+      const result = await validateApiKey(c.req.header('Authorization') || '')
+      return c.json(result
+    }
 
     app.put('/api/management/api-keys/:id', async c => {
-      const id = c.req.param('id');
-      const body = await c.req.json();
-      const validated = ApiKeyUpdateRequestSchema.parse(body);
-      const result = await rotateApiKey(id, validated);
-      return c.json(result);
-    });
+      const id = c.req.param('id')
+      const body = await c.req.json(
+      const validated = ApiKeyUpdateRequestSchema.parse(body
+      const result = await rotateApiKey(id, validated
+      return c.json(result
+    }
 
     app.delete('/api/management/api-keys/:id', async c => {
-      const id = c.req.param('id');
-      const result = await revokeApiKey(id);
-      return c.json(result);
-    });
+      const id = c.req.param('id')
+      const result = await revokeApiKey(id
+      return c.json(result
+    }
 
     app.get('/api/management/rate-limit', async c => {
       const apiKey = c.req.header('x-api-key') || '';
-      const result = await checkRateLimit(apiKey);
-      return c.json(result);
-    });
+      const result = await checkRateLimit(apiKey
+      return c.json(result
+    }
 
     app.get('/api/management/quota', async c => {
       const apiKey = c.req.header('x-api-key') || '';
-      const result = await checkQuota(apiKey);
-      return c.json(result);
-    });
+      const result = await checkQuota(apiKey
+      return c.json(result
+    }
 
     app.get('/api/management/security-policies', async c => {
-      const result = await validateSecurityPolicy();
-      return c.json(result);
-    });
+      const result = await validateSecurityPolicy(
+      return c.json(result
+    }
 
     app.post('/api/management/security-policies/:id/apply', async c => {
-      const id = c.req.param('id');
-      const result = await applySecurityPolicy(id);
-      return c.json(result);
-    });
+      const id = c.req.param('id')
+      const result = await applySecurityPolicy(id
+      return c.json(result
+    }
 
     // Create test client
-    client = hc<typeof app>('http://localhost:3000');
+    client = hc<typeof app>('http://localhost:3000')
 
     // Reset all mocks
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks(
+  }
 
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks(
+  }
 
   describe('POST /api/management/api-keys - Create API Key', () => {
     it('should create a new API key with valid request', async () => {
-      const requestData = generateValidApiKeyCreateRequest();
-      const expectedResponse = generateValidApiKey();
+      const requestData = generateValidApiKeyCreateRequest(
+      const expectedResponse = generateValidApiKey(
 
-      (createApiKey as Mock).mockResolvedValue(expectedResponse);
+      (createApiKey as Mock).mockResolvedValue(expectedResponse
 
       const response = await client.api.management['api-keys'].$post({
         json: requestData,
-      });
+      }
 
-      expect(response.status).toBe(201);
-      const data = await response.json();
+      expect(response.status).toBe(201
+      const data = await response.json(
 
       // Validate response schema
-      const validatedData = ApiKeySchema.parse(data);
-      expect(validatedData).toEqual(expectedResponse);
+      const validatedData = ApiKeySchema.parse(data
+      expect(validatedData).toEqual(expectedResponse
 
       // Verify mock was called with correct data
-      expect(createApiKey).toHaveBeenCalledWith(requestData);
-    });
+      expect(createApiKey).toHaveBeenCalledWith(requestData
+    }
 
     it('should reject request with invalid schema', async () => {
       const invalidRequest = {
@@ -434,15 +434,15 @@ describe('API Management Contract Tests', () => {
 
       const response = await client.api.management['api-keys'].$post({
         json: invalidRequest,
-      });
+      }
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
+      expect(response.status).toBe(400
+      const data = await response.json(
 
       // Validate error response schema
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('VALIDATION_ERROR');
-    });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('VALIDATION_ERROR')
+    }
 
     it('should enforce LGPD compliance requirements', async () => {
       const requestWithoutConsent = {
@@ -453,14 +453,14 @@ describe('API Management Contract Tests', () => {
 
       const response = await client.api.management['api-keys'].$post({
         json: requestWithoutConsent,
-      });
+      }
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
+      expect(response.status).toBe(400
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('LGPD_COMPLIANCE_REQUIRED');
-    });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('LGPD_COMPLIANCE_REQUIRED')
+    }
 
     it('should validate permission levels', async () => {
       const invalidPermissions = {
@@ -474,14 +474,14 @@ describe('API Management Contract Tests', () => {
 
       const response = await client.api.management['api-keys'].$post({
         json: invalidPermissions,
-      });
+      }
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
+      expect(response.status).toBe(400
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('INVALID_PERMISSIONS');
-    });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('INVALID_PERMISSIONS')
+    }
 
     it('should validate rate limit constraints', async () => {
       const invalidRateLimit = {
@@ -499,37 +499,37 @@ describe('API Management Contract Tests', () => {
 
       const response = await client.api.management['api-keys'].$post({
         json: invalidRateLimit,
-      });
+      }
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
+      expect(response.status).toBe(400
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('INVALID_RATE_LIMIT');
-    });
-  });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('INVALID_RATE_LIMIT')
+    }
+  }
 
   describe('GET /api/management/api-keys - Validate API Key', () => {
     it('should validate existing API key', async () => {
       const apiKey = 'sk_test_12345678901234567890123456789012';
-      const expectedResponse = generateValidApiKey();
+      const expectedResponse = generateValidApiKey(
 
-      (validateApiKey as Mock).mockResolvedValue(expectedResponse);
+      (validateApiKey as Mock).mockResolvedValue(expectedResponse
 
       const response = await client.api.management['api-keys'].$get({
         header: {
           Authorization: `Bearer ${apiKey}`,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      const validatedData = ApiKeySchema.parse(data);
-      expect(validatedData).toEqual(expectedResponse);
+      const validatedData = ApiKeySchema.parse(data
+      expect(validatedData).toEqual(expectedResponse
 
-      expect(validateApiKey).toHaveBeenCalledWith(`Bearer ${apiKey}`);
-    });
+      expect(validateApiKey).toHaveBeenCalledWith(`Bearer ${apiKey}`
+    }
 
     it('should reject invalid API key format', async () => {
       const invalidApiKey = 'invalid_key_format';
@@ -538,51 +538,51 @@ describe('API Management Contract Tests', () => {
         header: {
           Authorization: `Bearer ${invalidApiKey}`,
         },
-      });
+      }
 
-      expect(response.status).toBe(401);
-      const data = await response.json();
+      expect(response.status).toBe(401
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('INVALID_API_KEY_FORMAT');
-    });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('INVALID_API_KEY_FORMAT')
+    }
 
     it('should handle expired API key', async () => {
       const expiredApiKey = 'sk_expired_12345678901234567890123456789012';
 
-      (validateApiKey as Mock).mockRejectedValue(new Error('API key expired'));
+      (validateApiKey as Mock).mockRejectedValue(new Error('API key expired')
 
       const response = await client.api.management['api-keys'].$get({
         header: {
           Authorization: `Bearer ${expiredApiKey}`,
         },
-      });
+      }
 
-      expect(response.status).toBe(401);
-      const data = await response.json();
+      expect(response.status).toBe(401
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('API_KEY_EXPIRED');
-    });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('API_KEY_EXPIRED')
+    }
 
     it('should handle revoked API key', async () => {
       const revokedApiKey = 'sk_revoked_12345678901234567890123456789012';
 
-      (validateApiKey as Mock).mockRejectedValue(new Error('API key revoked'));
+      (validateApiKey as Mock).mockRejectedValue(new Error('API key revoked')
 
       const response = await client.api.management['api-keys'].$get({
         header: {
           Authorization: `Bearer ${revokedApiKey}`,
         },
-      });
+      }
 
-      expect(response.status).toBe(401);
-      const data = await response.json();
+      expect(response.status).toBe(401
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('API_KEY_REVOKED');
-    });
-  });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('API_KEY_REVOKED')
+    }
+  }
 
   describe('PUT /api/management/api-keys/:id - Rotate API Key', () => {
     it('should rotate API key with valid request', async () => {
@@ -599,22 +599,22 @@ describe('API Management Contract Tests', () => {
         permissions: ['read'],
       };
 
-      (rotateApiKey as Mock).mockResolvedValue(expectedResponse);
+      (rotateApiKey as Mock).mockResolvedValue(expectedResponse
 
       const response = await client.api.management['api-keys'][':id'].$put({
         param: { id: apiKeyId },
         json: updateData,
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      const validatedData = ApiKeySchema.parse(data);
-      expect(validatedData).toEqual(expectedResponse);
+      const validatedData = ApiKeySchema.parse(data
+      expect(validatedData).toEqual(expectedResponse
       expect(validatedData.key).not.toBe(generateValidApiKey().key); // New key should be different
 
-      expect(rotateApiKey).toHaveBeenCalledWith(apiKeyId, updateData);
-    });
+      expect(rotateApiKey).toHaveBeenCalledWith(apiKeyId, updateData
+    }
 
     it('should handle invalid API key ID format', async () => {
       const invalidId = 'invalid_id_format';
@@ -622,15 +622,15 @@ describe('API Management Contract Tests', () => {
       const response = await client.api.management['api-keys'][':id'].$put({
         param: { id: invalidId },
         json: { name: 'Updated' },
-      });
+      }
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
+      expect(response.status).toBe(400
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('INVALID_API_KEY_ID_FORMAT');
-    });
-  });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('INVALID_API_KEY_ID_FORMAT')
+    }
+  }
 
   describe('DELETE /api/management/api-keys/:id - Revoke API Key', () => {
     it('should revoke API key successfully', async () => {
@@ -641,57 +641,57 @@ describe('API Management Contract Tests', () => {
         revokedAt: new Date().toISOString(),
       };
 
-      (revokeApiKey as Mock).mockResolvedValue(expectedResponse);
+      (revokeApiKey as Mock).mockResolvedValue(expectedResponse
 
       const response = await client.api.management['api-keys'][':id'].$delete({
         param: { id: apiKeyId },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      expect(data).toEqual(expectedResponse);
-      expect(revokeApiKey).toHaveBeenCalledWith(apiKeyId);
-    });
+      expect(data).toEqual(expectedResponse
+      expect(revokeApiKey).toHaveBeenCalledWith(apiKeyId
+    }
 
     it('should handle non-existent API key', async () => {
       const nonExistentId = 'ak_nonexistent_12345678901234567890123456789012';
 
-      (revokeApiKey as Mock).mockRejectedValue(new Error('API key not found'));
+      (revokeApiKey as Mock).mockRejectedValue(new Error('API key not found')
 
       const response = await client.api.management['api-keys'][':id'].$delete({
         param: { id: nonExistentId },
-      });
+      }
 
-      expect(response.status).toBe(404);
-      const data = await response.json();
+      expect(response.status).toBe(404
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('API_KEY_NOT_FOUND');
-    });
-  });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('API_KEY_NOT_FOUND')
+    }
+  }
 
   describe('GET /api/management/rate-limit - Rate Limit Status', () => {
     it('should return current rate limit status', async () => {
       const apiKey = 'sk_test_12345678901234567890123456789012';
-      const expectedResponse = generateValidRateLimitResult();
+      const expectedResponse = generateValidRateLimitResult(
 
-      (checkRateLimit as Mock).mockResolvedValue(expectedResponse);
+      (checkRateLimit as Mock).mockResolvedValue(expectedResponse
 
       const response = await client.api.management['rate-limit'].$get({
         header: {
           'x-api-key': apiKey,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      const validatedData = RateLimitSchema.parse(data);
-      expect(validatedData).toEqual(expectedResponse);
+      const validatedData = RateLimitSchema.parse(data
+      expect(validatedData).toEqual(expectedResponse
 
-      expect(checkRateLimit).toHaveBeenCalledWith(apiKey);
-    });
+      expect(checkRateLimit).toHaveBeenCalledWith(apiKey
+    }
 
     it('should handle rate limit exceeded', async () => {
       const apiKey = 'sk_limited_12345678901234567890123456789012';
@@ -701,54 +701,54 @@ describe('API Management Contract Tests', () => {
         remaining: 0,
       };
 
-      (checkRateLimit as Mock).mockResolvedValue(rateLimitExceeded);
+      (checkRateLimit as Mock).mockResolvedValue(rateLimitExceeded
 
       const response = await client.api.management['rate-limit'].$get({
         header: {
           'x-api-key': apiKey,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      const validatedData = RateLimitSchema.parse(data);
+      const validatedData = RateLimitSchema.parse(data
       expect(validatedData.exceeded).toBe(true);
-      expect(validatedData.remaining).toBe(0);
-    });
+      expect(validatedData.remaining).toBe(0
+    }
 
     it('should handle missing API key', async () => {
-      const response = await client.api.management['rate-limit'].$get({});
+      const response = await client.api.management['rate-limit'].$get({}
 
-      expect(response.status).toBe(401);
-      const data = await response.json();
+      expect(response.status).toBe(401
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('API_KEY_REQUIRED');
-    });
-  });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('API_KEY_REQUIRED')
+    }
+  }
 
   describe('GET /api/management/quota - Quota Status', () => {
     it('should return current quota status', async () => {
       const apiKey = 'sk_test_12345678901234567890123456789012';
-      const expectedResponse = generateValidQuotaResult();
+      const expectedResponse = generateValidQuotaResult(
 
-      (checkQuota as Mock).mockResolvedValue(expectedResponse);
+      (checkQuota as Mock).mockResolvedValue(expectedResponse
 
       const response = await client.api.management.quota.$get({
         header: {
           'x-api-key': apiKey,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      const validatedData = QuotaSchema.parse(data);
-      expect(validatedData).toEqual(expectedResponse);
+      const validatedData = QuotaSchema.parse(data
+      expect(validatedData).toEqual(expectedResponse
 
-      expect(checkQuota).toHaveBeenCalledWith(apiKey);
-    });
+      expect(checkQuota).toHaveBeenCalledWith(apiKey
+    }
 
     it('should handle quota exceeded', async () => {
       const apiKey = 'sk_quota_exceeded_12345678901234567890123456789012';
@@ -758,21 +758,21 @@ describe('API Management Contract Tests', () => {
         remaining: 0,
       };
 
-      (checkQuota as Mock).mockResolvedValue(quotaExceeded);
+      (checkQuota as Mock).mockResolvedValue(quotaExceeded
 
       const response = await client.api.management.quota.$get({
         header: {
           'x-api-key': apiKey,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      const validatedData = QuotaSchema.parse(data);
+      const validatedData = QuotaSchema.parse(data
       expect(validatedData.exceeded).toBe(true);
-      expect(validatedData.remaining).toBe(0);
-    });
+      expect(validatedData.remaining).toBe(0
+    }
 
     it('should validate quota period structure', async () => {
       const apiKey = 'sk_test_12345678901234567890123456789012';
@@ -785,77 +785,77 @@ describe('API Management Contract Tests', () => {
         exceeded: false,
       };
 
-      (checkQuota as Mock).mockResolvedValue(quotaResponse);
+      (checkQuota as Mock).mockResolvedValue(quotaResponse
 
       const response = await client.api.management.quota.$get({
         header: {
           'x-api-key': apiKey,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      const validatedData = QuotaSchema.parse(data);
-      expect(validatedData.period).toBe('daily');
-      expect(validatedData.remaining).toBeGreaterThan(validatedData.current);
-    });
-  });
+      const validatedData = QuotaSchema.parse(data
+      expect(validatedData.period).toBe('daily')
+      expect(validatedData.remaining).toBeGreaterThan(validatedData.current
+    }
+  }
 
   describe('GET /api/management/security-policies - Security Policies', () => {
     it('should return list of security policies', async () => {
       const expectedPolicies = [generateValidSecurityPolicy()];
 
-      (validateSecurityPolicy as Mock).mockResolvedValue(expectedPolicies);
+      (validateSecurityPolicy as Mock).mockResolvedValue(expectedPolicies
 
       const response = await client.api.management['security-policies'].$get(
         {},
-      );
+      
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       expect(Array.isArray(data)).toBe(true);
       if (data.length > 0) {
-        const validatedData = SecurityPolicySchema.parse(data[0]);
-        expect(validatedData).toEqual(expectedPolicies[0]);
+        const validatedData = SecurityPolicySchema.parse(data[0]
+        expect(validatedData).toEqual(expectedPolicies[0]
       }
 
-      expect(validateSecurityPolicy).toHaveBeenCalled();
-    });
+      expect(validateSecurityPolicy).toHaveBeenCalled(
+    }
 
     it('should include healthcare compliance information', async () => {
-      const policyWithCompliance = generateValidSecurityPolicy();
+      const policyWithCompliance = generateValidSecurityPolicy(
 
       (validateSecurityPolicy as Mock).mockResolvedValue([
         policyWithCompliance,
-      ]);
+      ]
 
       const response = await client.api.management['security-policies'].$get(
         {},
-      );
+      
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       const policy = data[0];
-      expect(policy.compliance).toBeDefined();
+      expect(policy.compliance).toBeDefined(
       expect(policy.compliance.lgpd).toBe(true);
       expect(policy.compliance.anvisa).toBe(true);
       expect(policy.compliance.cfm).toBe(true);
-    });
+    }
 
     it('should validate security policy rules structure', async () => {
-      const policy = generateValidSecurityPolicy();
+      const policy = generateValidSecurityPolicy(
 
-      (validateSecurityPolicy as Mock).mockResolvedValue([policy]);
+      (validateSecurityPolicy as Mock).mockResolvedValue([policy]
 
       const response = await client.api.management['security-policies'].$get(
         {},
-      );
+      
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       const policyData = data[0];
       expect(Array.isArray(policyData.rules)).toBe(true);
@@ -864,13 +864,13 @@ describe('API Management Contract Tests', () => {
         const rule = policyData.rules[0];
         expect(['csp', 'cors', 'rate_limit', 'auth', 'encryption']).toContain(
           rule.type,
-        );
-        expect(typeof rule.priority).toBe('number');
-        expect(rule.priority).toBeGreaterThanOrEqual(1);
-        expect(rule.priority).toBeLessThanOrEqual(10);
+        
+        expect(typeof rule.priority).toBe('number')
+        expect(rule.priority).toBeGreaterThanOrEqual(1
+        expect(rule.priority).toBeLessThanOrEqual(10
       }
-    });
-  });
+    }
+  }
 
   describe('POST /api/management/security-policies/:id/apply - Apply Security Policy', () => {
     it('should apply security policy successfully', async () => {
@@ -884,61 +884,61 @@ describe('API Management Contract Tests', () => {
         complianceValidated: true,
       };
 
-      (applySecurityPolicy as Mock).mockResolvedValue(expectedResponse);
+      (applySecurityPolicy as Mock).mockResolvedValue(expectedResponse
 
       const response = await client.api.management['security-policies'][
-        ':id'
+        ':id')
       ].apply.$post({
         param: { id: policyId },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      expect(data).toEqual(expectedResponse);
-      expect(applySecurityPolicy).toHaveBeenCalledWith(policyId);
-    });
+      expect(data).toEqual(expectedResponse
+      expect(applySecurityPolicy).toHaveBeenCalledWith(policyId
+    }
 
     it('should handle non-existent security policy', async () => {
       const nonExistentId = 'sp_nonexistent_12345678901234567890123456789012';
 
       (applySecurityPolicy as Mock).mockRejectedValue(
         new Error('Security policy not found'),
-      );
+      
 
       const response = await client.api.management['security-policies'][
-        ':id'
+        ':id')
       ].apply.$post({
         param: { id: nonExistentId },
-      });
+      }
 
-      expect(response.status).toBe(404);
-      const data = await response.json();
+      expect(response.status).toBe(404
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('SECURITY_POLICY_NOT_FOUND');
-    });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('SECURITY_POLICY_NOT_FOUND')
+    }
 
     it('should handle policy application failure', async () => {
       const policyId = 'sp_failed_12345678901234567890123456789012';
 
       (applySecurityPolicy as Mock).mockRejectedValue(
         new Error('Policy application failed'),
-      );
+      
 
       const response = await client.api.management['security-policies'][
-        ':id'
+        ':id')
       ].apply.$post({
         param: { id: policyId },
-      });
+      }
 
-      expect(response.status).toBe(500);
-      const data = await response.json();
+      expect(response.status).toBe(500
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('POLICY_APPLICATION_FAILED');
-    });
-  });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('POLICY_APPLICATION_FAILED')
+    }
+  }
 
   describe('Healthcare Compliance Validation', () => {
     it('should enforce LGPD data minimization', async () => {
@@ -959,14 +959,14 @@ describe('API Management Contract Tests', () => {
 
       const response = await client.api.management['api-keys'].$post({
         json: requestWithExcessiveData,
-      });
+      }
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
+      expect(response.status).toBe(400
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('LGPD_DATA_MINIMIZATION_VIOLATION');
-    });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('LGPD_DATA_MINIMIZATION_VIOLATION')
+    }
 
     it('should validate healthcare-specific permissions', async () => {
       const requestWithHealthcarePermissions = {
@@ -984,29 +984,29 @@ describe('API Management Contract Tests', () => {
           data.permissions.includes('admin')
           && !data.lgpdConsent.purposes.includes('administrative_access')
         ) {
-          throw new Error('Administrative access requires explicit consent');
+          throw new Error('Administrative access requires explicit consent')
         }
-        return generateValidApiKey();
-      });
+        return generateValidApiKey(
+      }
 
       const response = await client.api.management['api-keys'].$post({
         json: requestWithHealthcarePermissions,
-      });
+      }
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
+      expect(response.status).toBe(400
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('HEALTHCARE_ADMIN_CONSENT_REQUIRED');
-    });
-  });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('HEALTHCARE_ADMIN_CONSENT_REQUIRED')
+    }
+  }
 
   describe('Performance Requirements', () => {
     it('should handle concurrent API key validation requests', async () => {
       const apiKey = 'sk_test_12345678901234567890123456789012';
-      const expectedResponse = generateValidApiKey();
+      const expectedResponse = generateValidApiKey(
 
-      (validateApiKey as Mock).mockResolvedValue(expectedResponse);
+      (validateApiKey as Mock).mockResolvedValue(expectedResponse
 
       // Simulate concurrent requests
       const concurrentRequests = Array(10)
@@ -1017,155 +1017,155 @@ describe('API Management Contract Tests', () => {
               Authorization: `Bearer ${apiKey}`,
             },
           })
-        );
+        
 
-      const responses = await Promise.all(concurrentRequests);
+      const responses = await Promise.all(concurrentRequests
 
       // All requests should succeed
       responses.forEach(response => {
-        expect(response.status).toBe(200);
-      });
+        expect(response.status).toBe(200
+      }
 
-      expect(validateApiKey).toHaveBeenCalledTimes(10);
-    });
+      expect(validateApiKey).toHaveBeenCalledTimes(10
+    }
 
     it('should respond within performance SLA', async () => {
       const apiKey = 'sk_test_12345678901234567890123456789012';
-      const expectedResponse = generateValidApiKey();
+      const expectedResponse = generateValidApiKey(
 
       (validateApiKey as Mock).mockImplementation(async () => {
         // Simulate processing time within SLA
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise(resolve => setTimeout(resolve, 10)
         return expectedResponse;
-      });
+      }
 
-      const startTime = Date.now();
+      const startTime = Date.now(
       const response = await client.api.management['api-keys'].$get({
         header: {
           Authorization: `Bearer ${apiKey}`,
         },
-      });
-      const endTime = Date.now();
+      }
+      const endTime = Date.now(
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
       expect(endTime - startTime).toBeLessThan(100); // Should respond within 100ms
-    });
-  });
+    }
+  }
 
   describe('Error Handling and Logging', () => {
     it('should log API management operations', async () => {
-      const requestData = generateValidApiKeyCreateRequest();
-      const expectedResponse = generateValidApiKey();
+      const requestData = generateValidApiKeyCreateRequest(
+      const expectedResponse = generateValidApiKey(
 
-      (createApiKey as Mock).mockResolvedValue(expectedResponse);
+      (createApiKey as Mock).mockResolvedValue(expectedResponse
 
       await client.api.management['api-keys'].$post({
         json: requestData,
-      });
+      }
 
       // Verify that the service was called (logging would happen internally)
-      expect(createApiKey).toHaveBeenCalledWith(requestData);
-    });
+      expect(createApiKey).toHaveBeenCalledWith(requestData
+    }
 
     it('should handle service failures gracefully', async () => {
       const apiKey = 'sk_error_test_12345678901234567890123456789012';
 
       (validateApiKey as Mock).mockRejectedValue(
         new Error('Database connection failed'),
-      );
+      
 
       const response = await client.api.management['api-keys'].$get({
         header: {
           Authorization: `Bearer ${apiKey}`,
         },
-      });
+      }
 
-      expect(response.status).toBe(500);
-      const data = await response.json();
+      expect(response.status).toBe(500
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('INTERNAL_SERVER_ERROR');
-      expect(errorData.error.message).toBe('Database connection failed');
-    });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('INTERNAL_SERVER_ERROR')
+      expect(errorData.error.message).toBe('Database connection failed')
+    }
 
     it('should include request ID in error responses', async () => {
       const apiKey = 'sk_test_12345678901234567890123456789012';
 
-      (validateApiKey as Mock).mockRejectedValue(new Error('Test error'));
+      (validateApiKey as Mock).mockRejectedValue(new Error('Test error')
 
       const response = await client.api.management['api-keys'].$get({
         header: {
           Authorization: `Bearer ${apiKey}`,
         },
-      });
+      }
 
-      expect(response.status).toBe(500);
-      const data = await response.json();
+      expect(response.status).toBe(500
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.requestId).toBeDefined();
-      expect(errorData.error.timestamp).toBeDefined();
-      expect(errorData.error.path).toBe('/api/management/api-keys');
-      expect(errorData.error.method).toBe('GET');
-    });
-  });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.requestId).toBeDefined(
+      expect(errorData.error.timestamp).toBeDefined(
+      expect(errorData.error.path).toBe('/api/management/api-keys')
+      expect(errorData.error.method).toBe('GET')
+    }
+  }
 
   describe('Contract Compliance', () => {
     it('should validate all required response fields', async () => {
-      const requestData = generateValidApiKeyCreateRequest();
-      const expectedResponse = generateValidApiKey();
+      const requestData = generateValidApiKeyCreateRequest(
+      const expectedResponse = generateValidApiKey(
 
-      (createApiKey as Mock).mockResolvedValue(expectedResponse);
+      (createApiKey as Mock).mockResolvedValue(expectedResponse
 
       const response = await client.api.management['api-keys'].$post({
         json: requestData,
-      });
+      }
 
-      expect(response.status).toBe(201);
-      const data = await response.json();
+      expect(response.status).toBe(201
+      const data = await response.json(
 
       // Validate all required fields are present
-      expect(data).toHaveProperty('id');
-      expect(data).toHaveProperty('key');
-      expect(data).toHaveProperty('name');
-      expect(data).toHaveProperty('permissions');
-      expect(data).toHaveProperty('createdAt');
-      expect(data).toHaveProperty('updatedAt');
-      expect(data).toHaveProperty('isActive');
-      expect(data).toHaveProperty('usageCount');
-      expect(data).toHaveProperty('lgpdConsent');
-    });
+      expect(data).toHaveProperty('id')
+      expect(data).toHaveProperty('key')
+      expect(data).toHaveProperty('name')
+      expect(data).toHaveProperty('permissions')
+      expect(data).toHaveProperty('createdAt')
+      expect(data).toHaveProperty('updatedAt')
+      expect(data).toHaveProperty('isActive')
+      expect(data).toHaveProperty('usageCount')
+      expect(data).toHaveProperty('lgpdConsent')
+    }
 
     it('should follow OpenAPI specification patterns', async () => {
       const apiKey = 'sk_test_12345678901234567890123456789012';
-      const expectedResponse = generateValidRateLimitResult();
+      const expectedResponse = generateValidRateLimitResult(
 
-      (checkRateLimit as Mock).mockResolvedValue(expectedResponse);
+      (checkRateLimit as Mock).mockResolvedValue(expectedResponse
 
       const response = await client.api.management['rate-limit'].$get({
         header: {
           'x-api-key': apiKey,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       // Validate OpenAPI compliance
-      expect(data).toHaveProperty('current');
-      expect(data).toHaveProperty('limit');
-      expect(data).toHaveProperty('remaining');
-      expect(data).toHaveProperty('resetTime');
-      expect(data).toHaveProperty('windowSize');
-      expect(data).toHaveProperty('exceeded');
+      expect(data).toHaveProperty('current')
+      expect(data).toHaveProperty('limit')
+      expect(data).toHaveProperty('remaining')
+      expect(data).toHaveProperty('resetTime')
+      expect(data).toHaveProperty('windowSize')
+      expect(data).toHaveProperty('exceeded')
 
       // Validate data types
-      expect(typeof data.current).toBe('number');
-      expect(typeof data.limit).toBe('number');
-      expect(typeof data.remaining).toBe('number');
-      expect(typeof data.resetTime).toBe('string');
-      expect(['minute', 'hour', 'day']).toContain(data.windowSize);
-      expect(typeof data.exceeded).toBe('boolean');
-    });
-  });
-});
+      expect(typeof data.current).toBe('number')
+      expect(typeof data.limit).toBe('number')
+      expect(typeof data.remaining).toBe('number')
+      expect(typeof data.resetTime).toBe('string')
+      expect(['minute', 'hour', 'day']).toContain(data.windowSize
+      expect(typeof data.exceeded).toBe('boolean')
+    }
+  }
+}

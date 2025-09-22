@@ -8,19 +8,19 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // Mock console methods to capture logging output
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
+const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {}
+const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {}
+const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {}
+const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {}
 
 describe('AI Service Logging - Data Protection_, () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks(
+  }
 
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks(
+  }
 
   describe('AI Model Input Protection_, () => {
     it('should NOT log sensitive patient data in AI prompts_, () => {
@@ -35,9 +35,15 @@ describe('AI Service Logging - Data Protection_, () => {
       };
 
       // Simulate AI service logging
+<<<<<<< HEAD
+      console.log('AI Prompt:', sensitivePrompt.prompt
+      console.error('AI processing failed for patient:', sensitivePrompt.patientId
+      console.info('AI _context:_, sensitivePrompt._context
+=======
       console.log('AI Prompt:', sensitivePrompt.prompt);
       console.error('AI processing failed for patient:', sensitivePrompt.patientId);
       console.info('AI _context:_, sensitivePrompt._context);
+>>>>>>> origin/main
 
       // Test will FAIL because sensitive medical data is being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
@@ -48,10 +54,10 @@ describe('AI Service Logging - Data Protection_, () => {
         JSON.stringify(call).includes('140/90 mmHg') ||
         JSON.stringify(call).includes('patient-123') ||
         JSON.stringify(call).includes('Penicillin')
-      );
+      
 
       expect(hasSensitiveData).toBe(false);
-    });
+    }
 
     it('should NOT log AI model configuration or API keys_, () => {
       const aiConfig = {
@@ -60,13 +66,13 @@ describe('AI Service Logging - Data Protection_, () => {
         temperature: 0.7,
         maxTokens: 2000,
         systemPrompt: 'You are a medical AI assistant...',
-        baseUrl: 'https://api.anthropic.com/v1/messages'
+        baseUrl: 'https://api.anthropic.com/v1/messages')
       };
 
       // Simulate AI configuration logging
-      console.log('AI Configuration:', aiConfig);
-      console.error('AI initialization failed:', aiConfig);
-      console.warn('Using model:', aiConfig.model, 'with API:', aiConfig.apiKey);
+      console.log('AI Configuration:', aiConfig
+      console.error('AI initialization failed:', aiConfig
+      console.warn('Using model:', aiConfig.model, 'with API:', aiConfig.apiKey
 
       // Test will FAIL because AI credentials are being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleWarn.mock.calls];
@@ -75,15 +81,26 @@ describe('AI Service Logging - Data Protection_, () => {
         JSON.stringify(call).includes('gpt-4-turbo-preview') ||
         JSON.stringify(call).includes('https://api.anthropic.com') ||
         JSON.stringify(call).includes('xyz123abc456def789')
-      );
+      
 
       expect(hasAiCredentials).toBe(false);
-    });
+    }
 
     it('should NOT log conversation history with patient data_, () => {
       const conversationHistory = [
         {
           _role: 'user_,
+<<<<<<< HEAD
+          content: 'Patient Maria Santos, CRM 12345-SP, reports chest pain during exercise. ECG shows ST elevation. What are the next steps?')
+        },
+        {
+          _role: 'assistant_,
+          content: 'Based on the symptoms and ECG findings, this could indicate acute coronary syndrome. Immediate steps should include...')
+        },
+        {
+          _role: 'user_,
+          content: 'Patient\'s blood pressure is 160/100, heart rate 110 bpm. Family history of heart disease. Should we administer aspirin?')
+=======
           content: 'Patient Maria Santos, CRM 12345-SP, reports chest pain during exercise. ECG shows ST elevation. What are the next steps?'
         },
         {
@@ -93,14 +110,21 @@ describe('AI Service Logging - Data Protection_, () => {
         {
           _role: 'user_,
           content: 'Patient\'s blood pressure is 160/100, heart rate 110 bpm. Family history of heart disease. Should we administer aspirin?'
+>>>>>>> origin/main
         }
       ];
 
       // Simulate conversation logging
       conversationHistory.forEach((message,_index) => {
+<<<<<<< HEAD
+        console.log(`Message ${index}:`, message
+        console.error(`Processing ${message.role} message:`, message.content
+      }
+=======
         console.log(`Message ${index}:`, message);
         console.error(`Processing ${message.role} message:`, message.content);
       });
+>>>>>>> origin/main
 
       // Test will FAIL because conversation contains sensitive medical data
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls];
@@ -111,11 +135,11 @@ describe('AI Service Logging - Data Protection_, () => {
         JSON.stringify(call).includes('ST elevation') ||
         JSON.stringify(call).includes('160/100') ||
         JSON.stringify(call).includes('aspirin')
-      );
+      
 
       expect(hasConversationData).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('AI Model Output Protection_, () => {
     it('should NOT log AI-generated medical recommendations with patient identifiers_, () => {
@@ -125,16 +149,16 @@ describe('AI Service Logging - Data Protection_, () => {
           'Prescribe Lisinopril 10mg daily for hypertension management',
           'Schedule follow-up appointment in 2 weeks',
           'Order lipid panel and cardiac stress test',
-          'Counsel on DASH diet and exercise regimen'
+          'Counsel on DASH diet and exercise regimen')
         ],
         confidence: 0.87,
-        reasoning: 'Based on current blood pressure of 150/95 and risk factors including age 58, smoking history, and family history of stroke'
+        reasoning: 'Based on current blood pressure of 150/95 and risk factors including age 58, smoking history, and family history of stroke')
       };
 
       // Simulate AI response logging
-      console.log('AI Recommendations:', aiResponse.recommendations);
-      console.error('AI processing completed for patient:', aiResponse.patientId);
-      console.info('AI confidence score:', aiResponse.confidence);
+      console.log('AI Recommendations:', aiResponse.recommendations
+      console.error('AI processing completed for patient:', aiResponse.patientId
+      console.info('AI confidence score:', aiResponse.confidence
 
       // Test will FAIL because patient-specific recommendations are being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
@@ -144,10 +168,10 @@ describe('AI Service Logging - Data Protection_, () => {
         JSON.stringify(call).includes('patient-456') ||
         JSON.stringify(call).includes('DASH diet') ||
         JSON.stringify(call).includes('cardiac stress test')
-      );
+      
 
       expect(hasRecommendationData).toBe(false);
-    });
+    }
 
     it('should NOT log AI model reasoning that exposes sensitive patterns_, () => {
       const sensitiveReasoning = {
@@ -155,19 +179,19 @@ describe('AI Service Logging - Data Protection_, () => {
         differentialDiagnosis: [
           'Acute Coronary Syndrome (85% probability)',
           'Aortic Dissection (10% probability)',
-          'Pulmonary Embolism (5% probability)'
+          'Pulmonary Embolism (5% probability)')
         ],
         redFlags: [
           'Elevated troponin levels (5.2 ng/mL)',
           'ST elevation in leads II, III, aVF',
-          'Hypotension (BP 90/60)'
+          'Hypotension (BP 90/60)')
         ]
       };
 
       // Simulate AI reasoning logging
-      console.log('AI Analysis:', sensitiveReasoning.analysis);
-      console.error('Differential diagnosis:', sensitiveReasoning.differentialDiagnosis);
-      console.warn('Red flags identified:', sensitiveReasoning.redFlags);
+      console.log('AI Analysis:', sensitiveReasoning.analysis
+      console.error('Differential diagnosis:', sensitiveReasoning.differentialDiagnosis
+      console.warn('Red flags identified:', sensitiveReasoning.redFlags
 
       // Test will FAIL because detailed medical reasoning is being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleWarn.mock.calls];
@@ -178,11 +202,11 @@ describe('AI Service Logging - Data Protection_, () => {
         JSON.stringify(call).includes('5.2 ng/mL') ||
         JSON.stringify(call).includes('ST elevation') ||
         JSON.stringify(call).includes('90/60')
-      );
+      
 
       expect(hasReasoningData).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('AI Service Performance Monitoring_, () => {
     it('should NOT log performance metrics that could expose system architecture_, () => {
@@ -191,7 +215,7 @@ describe('AI Service Logging - Data Protection_, () => {
           patientId: 'patient-789',
           promptLength: 1250,
           model: 'claude-3-sonnet-20240229',
-          timestamp: '2024-01-15T14:30:00Z'
+          timestamp: '2024-01-15T14:30:00Z')
         },
         response: {
           responseLength: 890,
@@ -203,14 +227,14 @@ describe('AI Service Logging - Data Protection_, () => {
           memoryUsage: '512MB',
           cpuUsage: '85%',
           databaseQueries: 3,
-          cacheHitRate: '0.87'
+          cacheHitRate: '0.87')
         }
       };
 
       // Simulate performance monitoring logging
-      console.log('AI Performance Metrics:', performanceMetrics);
-      console.error('Slow AI response detected:', performanceMetrics);
-      console.info('AI cost analysis:', performanceMetrics.response.cost);
+      console.log('AI Performance Metrics:', performanceMetrics
+      console.error('Slow AI response detected:', performanceMetrics
+      console.info('AI cost analysis:', performanceMetrics.response.cost
 
       // Test will FAIL because detailed system metrics are being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
@@ -221,10 +245,10 @@ describe('AI Service Logging - Data Protection_, () => {
         JSON.stringify(call).includes('512MB') ||
         JSON.stringify(call).includes('85% cpu') ||
         JSON.stringify(call).includes('0.025')
-      );
+      
 
       expect(hasSystemData).toBe(false);
-    });
+    }
 
     it('should NOT log error details that could expose AI service vulnerabilities_, () => {
       const errorDetails = {
@@ -235,7 +259,7 @@ describe('AI Service Logging - Data Protection_, () => {
           headers: {
             'Authorization': 'Bearer sk-ant-api03-xyz123',
             'Content-Type': 'application/json',
-            'x-api-version': '2023-06-01'
+            'x-api-version': '2023-06-01')
           },
           body: {
             model: 'claude-3-sonnet-20240229',
@@ -246,9 +270,9 @@ describe('AI Service Logging - Data Protection_, () => {
       };
 
       // Simulate error logging
-      console.error('AI API Error:', errorDetails);
-      console.warn('Rate limit hit for endpoint:', errorDetails.endpoint);
-      console.log('Retry configuration:', errorDetails.retryAfter);
+      console.error('AI API Error:', errorDetails
+      console.warn('Rate limit hit for endpoint:', errorDetails.endpoint
+      console.log('Retry configuration:', errorDetails.retryAfter
 
       // Test will FAIL because API details and credentials are being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleWarn.mock.calls];
@@ -258,11 +282,11 @@ describe('AI Service Logging - Data Protection_, () => {
         JSON.stringify(call).includes('claude-3-sonnet-20240229') ||
         JSON.stringify(call).includes('4096') ||
         JSON.stringify(call).includes('2023-06-01')
-      );
+      
 
       expect(hasApiDetails).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('AI Training and Model Updates_, () => {
     it('should NOT log training data or model parameters_, () => {
@@ -271,7 +295,7 @@ describe('AI Service Logging - Data Protection_, () => {
         samples: [
           {
             prompt: 'Patient with chronic kidney disease, eGFR 25 mL/min/1.73m². What medications should be avoided?',
-            response: 'Avoid NSAIDs, aminoglycosides, IV contrast. Adjust doses for renally cleared medications...'
+            response: 'Avoid NSAIDs, aminoglycosides, IV contrast. Adjust doses for renally cleared medications...')
           }
         ],
         hyperparameters: {
@@ -284,9 +308,9 @@ describe('AI Service Logging - Data Protection_, () => {
       };
 
       // Simulate training logging
-      console.log('Training started with dataset:', trainingData.dataset);
-      console.error('Model hyperparameters:', trainingData.hyperparameters);
-      console.info('Training samples:', trainingData.samples);
+      console.log('Training started with dataset:', trainingData.dataset
+      console.error('Model hyperparameters:', trainingData.hyperparameters
+      console.info('Training samples:', trainingData.samples
 
       // Test will FAIL because training data and model details are being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
@@ -297,10 +321,10 @@ describe('AI Service Logging - Data Protection_, () => {
         JSON.stringify(call).includes('NSAIDs') ||
         JSON.stringify(call).includes('0.0001') ||
         JSON.stringify(call).includes('/models/claude-medical-v2')
-      );
+      
 
       expect(hasTrainingData).toBe(false);
-    });
+    }
 
     it('should NOT log model evaluation results with sensitive test cases_, () => {
       const evaluationResults = {
@@ -321,9 +345,9 @@ describe('AI Service Logging - Data Protection_, () => {
       };
 
       // Simulate evaluation logging
-      console.log('Model evaluation results:', evaluationResults.metrics);
-      console.error('Failed test cases:', evaluationResults.testCases);
-      console.info('Test case details:', evaluationResults.testCases[0]);
+      console.log('Model evaluation results:', evaluationResults.metrics
+      console.error('Failed test cases:', evaluationResults.testCases
+      console.info('Test case details:', evaluationResults.testCases[0]
 
       // Test will FAIL because test cases contain sensitive medical scenarios
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
@@ -334,11 +358,11 @@ describe('AI Service Logging - Data Protection_, () => {
         JSON.stringify(call).includes('warfarin therapy') ||
         JSON.stringify(call).includes('INR 2.8') ||
         JSON.stringify(call).includes('Ischemic stroke')
-      );
+      
 
       expect(hasTestCases).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('AI Service Integration with Healthcare Systems_, () => {
     it('should NOT log EHR/EMR integration details_, () => {
@@ -351,9 +375,9 @@ describe('AI Service Logging - Data Protection_, () => {
       };
 
       // Simulate EHR integration logging
-      console.log('EHR Integration:', integrationData.ehrSystem);
-      console.error('EHR API call failed:', integrationData);
-      console.info('Querying patient:', integrationData.patientId);
+      console.log('EHR Integration:', integrationData.ehrSystem
+      console.error('EHR API call failed:', integrationData
+      console.info('Querying patient:', integrationData.patientId
 
       // Test will FAIL because EHR integration details are being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
@@ -363,10 +387,10 @@ describe('AI Service Logging - Data Protection_, () => {
         JSON.stringify(call).includes('eHR-patient-12345') ||
         JSON.stringify(call).includes('epic-token-xyz789') ||
         JSON.stringify(call).includes('John&family=Smith')
-      );
+      
 
       expect(hasEhrData).toBe(false);
-    });
+    }
 
     it('should NOT log medical imaging AI analysis results with PHI_, () => {
       const imagingAnalysis = {
@@ -375,21 +399,21 @@ describe('AI Service Logging - Data Protection_, () => {
         findings: [
           '4cm spiculated mass in right upper lobe',
           'Enlarged mediastinal lymph nodes',
-          'No pleural effusion'
+          'No pleural effusion')
         ],
         impression: 'Findings suspicious for primary lung malignancy. Recommend CT-guided biopsy.',
         confidence: 0.91,
         dicomMetadata: {
           patientName: 'ANONYMIZED^PATIENT',
           studyDate: '20240115',
-          modality: 'MR'
+          modality: 'MR')
         }
       };
 
       // Simulate imaging AI logging
-      console.log('AI Imaging Analysis:', imagingAnalysis.findings);
-      console.error('Analysis completed for study:', imagingAnalysis.studyId);
-      console.warn('Impression:', imagingAnalysis.impression);
+      console.log('AI Imaging Analysis:', imagingAnalysis.findings
+      console.error('Analysis completed for study:', imagingAnalysis.studyId
+      console.warn('Impression:', imagingAnalysis.impression
 
       // Test will FAIL because imaging analysis contains sensitive findings
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleWarn.mock.calls];
@@ -400,11 +424,11 @@ describe('AI Service Logging - Data Protection_, () => {
         JSON.stringify(call).includes('lung malignancy') ||
         JSON.stringify(call).includes('CT-guided biopsy') ||
         JSON.stringify(call).includes('MRI-CHEST-2024-001234')
-      );
+      
 
       expect(hasImagingData).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('AI Service Billing and Usage Tracking_, () => {
     it('should NOT log detailed billing information with patient identifiers_, () => {
@@ -427,13 +451,13 @@ describe('AI Service Logging - Data Protection_, () => {
         ],
         totalCost: 0.200,
         insuranceProvider: 'Unimed',
-        claimId: 'CLAIM-2024-001234'
+        claimId: 'CLAIM-2024-001234')
       };
 
       // Simulate billing logging
-      console.log('AI Service Billing:', billingData);
-      console.error('High-cost AI service detected:', billingData.services[0]);
-      console.info('Insurance claim:', billingData.claimId);
+      console.log('AI Service Billing:', billingData
+      console.error('High-cost AI service detected:', billingData.services[0]
+      console.info('Insurance claim:', billingData.claimId
 
       // Test will FAIL because billing data contains patient and service details
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
@@ -444,10 +468,10 @@ describe('AI Service Logging - Data Protection_, () => {
         JSON.stringify(call).includes('0.050') ||
         JSON.stringify(call).includes('Unimed') ||
         JSON.stringify(call).includes('CLAIM-2024-001234')
-      );
+      
 
       expect(hasBillingData).toBe(false);
-    });
+    }
 
     it('should NOT log usage patterns that could reveal sensitive information_, () => {
       const usagePatterns = {
@@ -467,9 +491,9 @@ describe('AI Service Logging - Data Protection_, () => {
       };
 
       // Simulate usage analytics logging
-      console.log('Doctor Usage Patterns:', usagePatterns);
-      console.error('High usage detected for:', usagePatterns.doctorId);
-      console.info('Common conditions analyzed:', usagePatterns.dailyUsage[0].commonConditions);
+      console.log('Doctor Usage Patterns:', usagePatterns
+      console.error('High usage detected for:', usagePatterns.doctorId
+      console.info('Common conditions analyzed:', usagePatterns.dailyUsage[0].commonConditions
 
       // Test will FAIL because usage patterns reveal sensitive medical practice information
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
@@ -480,9 +504,9 @@ describe('AI Service Logging - Data Protection_, () => {
         JSON.stringify(call).includes('Lung Cancer') ||
         JSON.stringify(call).includes('45 queries') ||
         JSON.stringify(call).includes('12 patients')
-      );
+      
 
       expect(hasUsageData).toBe(false);
-    });
-  });
-});
+    }
+  }
+}

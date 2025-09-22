@@ -707,7 +707,7 @@ export class SemanticCacheService {
     }
 
     if (context.isEmergency) {
-      key += 'emergency_';
+      key += 'emergency';
     }
 
     if (context.category) {

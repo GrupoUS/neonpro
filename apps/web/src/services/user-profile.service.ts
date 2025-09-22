@@ -72,9 +72,9 @@ class UserProfileService {
     console.log('🔍 getUserProfile called for _userId:', _userId);
 
     // Handle fallback user case immediately
-    if (userId === 'fallback-user') {
+    if (_userId === 'fallback-user') {
       console.log('🔧 Creating fallback profile for development');
-      return this.createFallbackProfile(userId);
+      return this.createFallbackProfile(_userId);
     }
 
     try {
@@ -199,7 +199,11 @@ class UserProfileService {
       permissions,
       staffInfo: {
         id: anyStaff.id,
+<<<<<<< HEAD
+        _role: anyStaff._role,
+=======
         _role: anyStaff.role,
+>>>>>>> origin/main
         specialization: anyStaff.specialization || '',
         crmNumber: anyStaff.crm_number || '',
         avatarUrl: anyStaff.avatar_url || '',
@@ -287,7 +291,7 @@ class UserProfileService {
       canManageSettings: false,
     };
 
-    switch (role.toLowerCase()) {
+    switch (_role.toLowerCase()) {
       case 'admin':
       case 'clinic_admin':
         return {

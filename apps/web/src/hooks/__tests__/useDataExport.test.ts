@@ -6,8 +6,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock URL.createObjectURL and URL.revokeObjectURL
-const mockCreateObjectURL = vi.fn();
-const mockRevokeObjectURL = vi.fn();
+const mockCreateObjectURL = vi.fn(
+const mockRevokeObjectURL = vi.fn(
 
 Object.defineProperty(global, 'URL', {
   value: {
@@ -15,12 +15,12 @@ Object.defineProperty(global, 'URL', {
     revokeObjectURL: mockRevokeObjectURL,
   },
   writable: true,
-});
+}
 
 // Mock document.createElement and click
-const mockClick = vi.fn();
-const mockAppendChild = vi.fn();
-const mockRemoveChild = vi.fn();
+const mockClick = vi.fn(
+const mockAppendChild = vi.fn(
+const mockRemoveChild = vi.fn(
 
 Object.defineProperty(_global, 'document', {
   value: {
@@ -36,7 +36,7 @@ Object.defineProperty(_global, 'document', {
     getElementsByTagName: vi.fn(() => []),
   },
   writable: true,
-});
+}
 
 // Mock patient data
 const mockPatients = [
@@ -62,54 +62,79 @@ const mockPatients = [
 
 describe(('useDataExport', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    mockCreateObjectURL.mockReturnValue('blob:mock-url');
-  });
+    vi.clearAllMocks(
+    mockCreateObjectURL.mockReturnValue('blob:mock-url')
+  }
 
   it(('should export the hook function', () => {
     // Simple test to verify the module can be imported
     expect(() => {
-      require('../useDataExport');
-    }).not.toThrow();
-  });
+      require('../useDataExport')
+    }).not.toThrow(
+  }
 
   it(('should export patients data to CSV format', () => {
+<<<<<<< HEAD
+    const { useDataExport } = require('../useDataExport')
+    expect(useDataExport).toBeDefined(
+=======
     const { useDataExport } = require('../useDataExport');
     expect(useDataExport).toBeDefined();
+>>>>>>> origin/main
 
     // Test that the hook can be imported and is a function
-    expect(typeof useDataExport).toBe('function');
-  });
+    expect(typeof useDataExport).toBe('function')
+  }
 
   it(('should export patients data to PDF format', () => {
+<<<<<<< HEAD
+    const { useDataExport } = require('../useDataExport')
+    expect(useDataExport).toBeDefined(
+=======
     const { useDataExport } = require('../useDataExport');
     expect(useDataExport).toBeDefined();
+>>>>>>> origin/main
 
     // Test that the hook can be imported and is a function
-    expect(typeof useDataExport).toBe('function');
-  });
+    expect(typeof useDataExport).toBe('function')
+  }
 
   it(('should handle export errors gracefully', () => {
+<<<<<<< HEAD
+    const { useDataExport } = require('../useDataExport')
+    expect(useDataExport).toBeDefined(
+=======
     const { useDataExport } = require('../useDataExport');
     expect(useDataExport).toBeDefined();
+>>>>>>> origin/main
 
     // Test that the hook can be imported and is a function
-    expect(typeof useDataExport).toBe('function');
-  });
+    expect(typeof useDataExport).toBe('function')
+  }
 
   it(('should provide export progress tracking', () => {
+<<<<<<< HEAD
+    const { useDataExport } = require('../useDataExport')
+    expect(useDataExport).toBeDefined(
+=======
     const { useDataExport } = require('../useDataExport');
     expect(useDataExport).toBeDefined();
+>>>>>>> origin/main
 
     // Test that the hook can be imported and is a function
-    expect(typeof useDataExport).toBe('function');
-  });
+    expect(typeof useDataExport).toBe('function')
+  }
 
   it(('should support filtered data export', () => {
+<<<<<<< HEAD
+    const { useDataExport } = require('../useDataExport')
+    expect(useDataExport).toBeDefined(
+=======
     const { useDataExport } = require('../useDataExport');
     expect(useDataExport).toBeDefined();
+>>>>>>> origin/main
 
     // Test that the hook can be imported and is a function
-    expect(typeof useDataExport).toBe('function');
-  });
-});
+    expect(typeof useDataExport).toBe('function')
+  }
+}

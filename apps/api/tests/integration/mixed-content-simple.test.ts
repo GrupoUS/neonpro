@@ -24,8 +24,8 @@ describe('Mixed Content Prevention Test (T052)', () => {
         res.writeHead(301, {
           Location: `https://localhost${req.url}`,
           'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
-        });
-        res.end();
+        }
+        res.end(
         return;
       }
 
@@ -33,64 +33,64 @@ describe('Mixed Content Prevention Test (T052)', () => {
       res.setHeader(
         'Content-Security-Policy',
         'default-src \'self\'; script-src \'self\' \'unsafe-inline\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data: https:; font-src \'self\' data:; connect-src \'self\' https:; media-src \'self\'; object-src \'none\'; child-src \'none\'; frame-ancestors \'none\'; form-action \'self\'; upgrade-insecure-requests',
-      );
-      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-      res.setHeader('X-Content-Type-Options', 'nosniff');
-      res.setHeader('X-Frame-Options', 'DENY');
+      
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload')
+      res.setHeader('X-Content-Type-Options', 'nosniff')
+      res.setHeader('X-Frame-Options', 'DENY')
 
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ status: 'ok', message: 'Mixed content prevention test' }));
-    });
+      res.writeHead(200, { 'Content-Type': 'application/json' }
+      res.end(JSON.stringify({ status: 'ok', message: 'Mixed content prevention test' })
+    }
 
     await new Promise<void>(resolve => {
       server.listen(0, () => {
         const address = server.address() as AddressInfo;
         baseUrl = `http://localhost:${address.port}`;
-        resolve();
-      });
-    });
-  });
+        resolve(
+      }
+    }
+  }
 
   afterAll(() => {
     if (server) {
-      server.close();
+      server.close(
     }
-  });
+  }
 
   describe('CSP Mixed Content Prevention', () => {
     it('should include upgrade-insecure-requests directive', async () => {
-      const response = await fetch(`${baseUrl}/test`);
+      const response = await fetch(`${baseUrl}/test`
 
-      const csp = response.headers.get('Content-Security-Policy');
-      expect(csp).toBeDefined();
-      expect(csp).toContain('upgrade-insecure-requests');
-    });
+      const csp = response.headers.get('Content-Security-Policy')
+      expect(csp).toBeDefined(
+      expect(csp).toContain('upgrade-insecure-requests')
+    }
 
     it('should enforce HTTPS for all resources', async () => {
-      const response = await fetch(`${baseUrl}/test`);
+      const response = await fetch(`${baseUrl}/test`
 
-      const csp = response.headers.get('Content-Security-Policy');
-      expect(csp).toBeDefined();
-      expect(csp).toContain('default-src \'self\'');
-      expect(csp).toContain('connect-src \'self\' https:');
-    });
+      const csp = response.headers.get('Content-Security-Policy')
+      expect(csp).toBeDefined(
+      expect(csp).toContain('default-src \'self\'')
+      expect(csp).toContain('connect-src \'self\' https:')
+    }
 
     it('should prevent mixed content in script sources', async () => {
-      const response = await fetch(`${baseUrl}/test`);
+      const response = await fetch(`${baseUrl}/test`
 
-      const csp = response.headers.get('Content-Security-Policy');
-      expect(csp).toBeDefined();
-      expect(csp).toContain('script-src \'self\'');
-    });
+      const csp = response.headers.get('Content-Security-Policy')
+      expect(csp).toBeDefined(
+      expect(csp).toContain('script-src \'self\'')
+    }
 
     it('should prevent mixed content in style sources', async () => {
-      const response = await fetch(`${baseUrl}/test`);
+      const response = await fetch(`${baseUrl}/test`
 
-      const csp = response.headers.get('Content-Security-Policy');
-      expect(csp).toBeDefined();
-      expect(csp).toContain('style-src \'self\'');
-    });
-  });
+      const csp = response.headers.get('Content-Security-Policy')
+      expect(csp).toBeDefined(
+      expect(csp).toContain('style-src \'self\'')
+    }
+  }
 
   describe('HTTPS Enforcement', () => {
     it('should redirect HTTP requests to HTTPS', async () => {
@@ -99,11 +99,11 @@ describe('Mixed Content Prevention Test (T052)', () => {
           'X-Forwarded-Proto': 'http',
         },
         redirect: 'manual',
-      });
+      }
 
-      expect(response.status).toBe(301);
-      expect(response.headers.get('Location')).toContain('https://');
-    });
+      expect(response.status).toBe(301
+      expect(response.headers.get('Location')).toContain('https://')
+    }
 
     it('should include HSTS header on redirects', async () => {
       const response = await fetch(`${baseUrl}/test`, {
@@ -111,64 +111,64 @@ describe('Mixed Content Prevention Test (T052)', () => {
           'X-Forwarded-Proto': 'http',
         },
         redirect: 'manual',
-      });
+      }
 
-      const hstsHeader = response.headers.get('Strict-Transport-Security');
-      expect(hstsHeader).toBeDefined();
-      expect(hstsHeader).toContain('max-age=31536000');
-    });
-  });
+      const hstsHeader = response.headers.get('Strict-Transport-Security')
+      expect(hstsHeader).toBeDefined(
+      expect(hstsHeader).toContain('max-age=31536000')
+    }
+  }
 
   describe('Resource Loading Security', () => {
     it('should allow only secure image sources', async () => {
-      const response = await fetch(`${baseUrl}/test`);
+      const response = await fetch(`${baseUrl}/test`
 
-      const csp = response.headers.get('Content-Security-Policy');
-      expect(csp).toBeDefined();
-      expect(csp).toContain('img-src \'self\' data: https:');
-    });
+      const csp = response.headers.get('Content-Security-Policy')
+      expect(csp).toBeDefined(
+      expect(csp).toContain('img-src \'self\' data: https:')
+    }
 
     it('should allow only secure font sources', async () => {
-      const response = await fetch(`${baseUrl}/test`);
+      const response = await fetch(`${baseUrl}/test`
 
-      const csp = response.headers.get('Content-Security-Policy');
-      expect(csp).toBeDefined();
-      expect(csp).toContain('font-src \'self\' data:');
-    });
+      const csp = response.headers.get('Content-Security-Policy')
+      expect(csp).toBeDefined(
+      expect(csp).toContain('font-src \'self\' data:')
+    }
 
     it('should block insecure object sources', async () => {
-      const response = await fetch(`${baseUrl}/test`);
+      const response = await fetch(`${baseUrl}/test`
 
-      const csp = response.headers.get('Content-Security-Policy');
-      expect(csp).toBeDefined();
-      expect(csp).toContain('object-src \'none\'');
-    });
-  });
+      const csp = response.headers.get('Content-Security-Policy')
+      expect(csp).toBeDefined(
+      expect(csp).toContain('object-src \'none\'')
+    }
+  }
 
   describe('Form Security', () => {
     it('should restrict form actions to same origin', async () => {
-      const response = await fetch(`${baseUrl}/test`);
+      const response = await fetch(`${baseUrl}/test`
 
-      const csp = response.headers.get('Content-Security-Policy');
-      expect(csp).toBeDefined();
-      expect(csp).toContain('form-action \'self\'');
-    });
-  });
+      const csp = response.headers.get('Content-Security-Policy')
+      expect(csp).toBeDefined(
+      expect(csp).toContain('form-action \'self\'')
+    }
+  }
 
   describe('Frame Security', () => {
     it('should prevent framing from any source', async () => {
-      const response = await fetch(`${baseUrl}/test`);
+      const response = await fetch(`${baseUrl}/test`
 
-      const csp = response.headers.get('Content-Security-Policy');
-      expect(csp).toBeDefined();
-      expect(csp).toContain('frame-ancestors \'none\'');
-    });
+      const csp = response.headers.get('Content-Security-Policy')
+      expect(csp).toBeDefined(
+      expect(csp).toContain('frame-ancestors \'none\'')
+    }
 
     it('should include X-Frame-Options header', async () => {
-      const response = await fetch(`${baseUrl}/test`);
+      const response = await fetch(`${baseUrl}/test`
 
-      const frameOptions = response.headers.get('X-Frame-Options');
-      expect(frameOptions).toBe('DENY');
-    });
-  });
-});
+      const frameOptions = response.headers.get('X-Frame-Options')
+      expect(frameOptions).toBe('DENY')
+    }
+  }
+}

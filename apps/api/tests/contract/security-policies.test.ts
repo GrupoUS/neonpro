@@ -6,9 +6,9 @@ import { describe, expect, it } from 'vitest';
 
 async function api(path: string, init?: RequestInit) {
   // Use main app which includes security policy routes
-  const { default: app } = await import('../../src/app');
-  const url = new URL(`http://local.test${path}`);
-  return app.request(url, init);
+  const { default: app } = await import('../../src/app')
+  const url = new URL(`http://local.test${path}`
+  return app.request(url, init
 }
 
 describe('Contract: Security Policies API', () => {
@@ -35,12 +35,12 @@ describe('Contract: Security Policies API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(cspConfig),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         valid: expect.any(Boolean),
         issues: expect.any(Array),
@@ -50,8 +50,8 @@ describe('Contract: Security Policies API', () => {
           lgpd_compliant: expect.any(Boolean),
           data_protection_level: expect.any(String),
         }),
-      });
-    });
+      }
+    }
 
     it('should generate healthcare-optimized CSP headers', async () => {
       const res = await api('/api/v1/security/csp/healthcare-headers', {
@@ -59,12 +59,12 @@ describe('Contract: Security Policies API', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         headers: expect.objectContaining({
           'Content-Security-Policy': expect.stringContaining('default-src'),
@@ -76,9 +76,9 @@ describe('Contract: Security Policies API', () => {
           anvisa: expect.any(Boolean),
           hipaa: expect.any(Boolean),
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Rate Limiting API', () => {
     it('should configure rate limiting rules', async () => {
@@ -98,12 +98,12 @@ describe('Contract: Security Policies API', () => {
           authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(rateLimitConfig),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         rule_id: expect.any(String),
         status: 'active',
@@ -117,8 +117,8 @@ describe('Contract: Security Policies API', () => {
           emergency_bypass: expect.any(Boolean),
           patient_safety_exemption: expect.any(Boolean),
         }),
-      });
-    });
+      }
+    }
 
     it('should return current rate limiting status', async () => {
       const res = await api('/api/v1/security/rate-limit/status', {
@@ -126,12 +126,12 @@ describe('Contract: Security Policies API', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         global_limits: expect.objectContaining({
           requests_per_minute: expect.any(Number),
@@ -148,9 +148,9 @@ describe('Contract: Security Policies API', () => {
           requests_in_window: expect.any(Number),
           blocked_ips: expect.any(Array),
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Security Policy Management', () => {
     it('should create security policy', async () => {
@@ -178,12 +178,12 @@ describe('Contract: Security Policies API', () => {
           authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(securityPolicy),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(201);
+      expect(res.status).toBe(201
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         id: expect.any(String),
         name: securityPolicy.name,
@@ -197,8 +197,8 @@ describe('Contract: Security Policies API', () => {
         }),
         created_at: expect.any(String),
         updated_at: expect.any(String),
-      });
-    });
+      }
+    }
 
     it('should list security policies', async () => {
       const res = await api('/api/v1/security/policies', {
@@ -206,12 +206,12 @@ describe('Contract: Security Policies API', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         policies: expect.any(Array),
         pagination: expect.objectContaining({
@@ -224,7 +224,7 @@ describe('Contract: Security Policies API', () => {
           anvisa_compliant: expect.any(Number),
           cfm_compliant: expect.any(Number),
         }),
-      });
+      }
 
       // Check policy structure
       if (data.policies.length > 0) {
@@ -235,9 +235,9 @@ describe('Contract: Security Policies API', () => {
           level: expect.any(String),
           data_classification: expect.any(String),
           status: expect.any(String),
-        });
+        }
       }
-    });
+    }
 
     it('should validate security policy compliance', async () => {
       const res = await api('/api/v1/security/policies/validate', {
@@ -254,12 +254,12 @@ describe('Contract: Security Policies API', () => {
             user_role: 'healthcare_provider',
           },
         }),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         compliant: expect.any(Boolean),
         violations: expect.any(Array),
@@ -270,9 +270,9 @@ describe('Contract: Security Policies API', () => {
           access_control: expect.any(Boolean),
           audit_trail: expect.any(Boolean),
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Authentication/Authorization APIs', () => {
     it('should validate authentication token', async () => {
@@ -289,12 +289,12 @@ describe('Contract: Security Policies API', () => {
             method: 'GET',
           },
         }),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         valid: expect.any(Boolean),
         user_id: expect.any(String),
@@ -305,8 +305,8 @@ describe('Contract: Security Policies API', () => {
           access_level: expect.any(String),
         }),
         expires_at: expect.any(String),
-      });
-    });
+      }
+    }
 
     it('should check authorization permissions', async () => {
       const res = await api('/api/v1/security/auth/permissions', {
@@ -324,12 +324,12 @@ describe('Contract: Security Policies API', () => {
             emergency_access: false,
           },
         }),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         allowed: expect.any(Boolean),
         reason: expect.any(String),
@@ -340,9 +340,9 @@ describe('Contract: Security Policies API', () => {
           'emergency_override',
         ]),
         audit_required: expect.any(Boolean),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('LGPD Compliance Endpoints', () => {
     it('should validate LGPD compliance for data processing', async () => {
@@ -363,12 +363,12 @@ describe('Contract: Security Policies API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(lgpdValidation),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         compliant: expect.any(Boolean),
         violations: expect.any(Array),
@@ -386,8 +386,8 @@ describe('Contract: Security Policies API', () => {
           professional_ethics: expect.any(Boolean),
           cfm_guidelines: expect.any(Boolean),
         }),
-      });
-    });
+      }
+    }
 
     it('should generate LGPD compliance report', async () => {
       const res = await api('/api/v1/security/lgpd/report', {
@@ -395,12 +395,12 @@ describe('Contract: Security Policies API', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         report_id: expect.any(String),
         generated_at: expect.any(String),
@@ -420,8 +420,8 @@ describe('Contract: Security Policies API', () => {
           professional_confidentiality: expect.any(Boolean),
           medical_records_protection: expect.any(Boolean),
         }),
-      });
-    });
+      }
+    }
 
     it('should handle data subject request (DSR)', async () => {
       const dsrRequest = {
@@ -444,12 +444,12 @@ describe('Contract: Security Policies API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(dsrRequest),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(202);
+      expect(res.status).toBe(202
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         request_id: expect.any(String),
         status: 'processing',
@@ -464,9 +464,9 @@ describe('Contract: Security Policies API', () => {
           professional_confidentiality: expect.any(Boolean),
           secure_delivery: expect.any(Boolean),
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Security Audit Trail', () => {
     it('should log security events with healthcare context', async () => {
@@ -495,12 +495,12 @@ describe('Contract: Security Policies API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(securityEvent),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(201);
+      expect(res.status).toBe(201
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         event_id: expect.any(String),
         timestamp: expect.any(String),
@@ -513,8 +513,8 @@ describe('Contract: Security Policies API', () => {
           retention_days: expect.any(Number),
           secure_storage: expect.any(Boolean),
         }),
-      });
-    });
+      }
+    }
 
     it('should retrieve security audit trail', async () => {
       const res = await api('/api/v1/security/audit/trail', {
@@ -522,12 +522,12 @@ describe('Contract: Security Policies API', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         events: expect.any(Array),
         pagination: expect.objectContaining({
@@ -545,9 +545,9 @@ describe('Contract: Security Policies API', () => {
           emergency_access: expect.any(Number),
           professional_actions: expect.any(Number),
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Error Handling', () => {
     it('should handle invalid CSP configuration', async () => {
@@ -563,17 +563,17 @@ describe('Contract: Security Policies API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(invalidCsp),
-      });
+      }
 
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(400
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         error: expect.any(String),
         validation_errors: expect.any(Array),
         security_recommendations: expect.any(Array),
-      });
-    });
+      }
+    }
 
     it('should handle unauthorized access attempts', async () => {
       const res = await api('/api/v1/security/policies', {
@@ -581,17 +581,17 @@ describe('Contract: Security Policies API', () => {
         headers: {
           authorization: 'Bearer invalid-token',
         },
-      });
+      }
 
-      expect(res.status).toBe(401);
+      expect(res.status).toBe(401
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         error: 'Unauthorized',
         security_event_logged: expect.any(Boolean),
         retry_after: expect.any(Number),
-      });
-    });
+      }
+    }
 
     it('should handle rate limit exceeded', async () => {
       // Simulate rate limit by making multiple rapid requests
@@ -604,21 +604,21 @@ describe('Contract: Security Policies API', () => {
               authorization: 'Bearer test-token',
             },
           })
-        );
+        
 
-      const responses = await Promise.all(requests);
-      const rateLimitedResponse = responses.find(res => res.status === 429);
+      const responses = await Promise.all(requests
+      const rateLimitedResponse = responses.find(res => res.status === 429
 
       if (rateLimitedResponse) {
-        const data = await rateLimitedResponse.json();
+        const data = await rateLimitedResponse.json(
         expect(data).toMatchObject({
           error: 'Rate limit exceeded',
           retry_after: expect.any(Number),
           healthcare_priority_access: expect.any(Boolean),
-        });
+        }
       }
-    });
-  });
+    }
+  }
 
   describe('Healthcare Security Requirements', () => {
     it('should validate healthcare-specific security policies', async () => {
@@ -655,12 +655,12 @@ describe('Contract: Security Policies API', () => {
           authorization: 'Bearer test-token',
         },
         body: JSON.stringify(healthcarePolicy),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         compliant: expect.any(Boolean),
         healthcare_score: expect.any(Number),
@@ -675,8 +675,8 @@ describe('Contract: Security Policies API', () => {
           availability: expect.any(Boolean),
           accountability: expect.any(Boolean),
         }),
-      });
-    });
+      }
+    }
 
     it('should generate healthcare security audit report', async () => {
       const res = await api('/api/v1/security/healthcare/audit-report', {
@@ -684,12 +684,12 @@ describe('Contract: Security Policies API', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         report_id: expect.any(String),
         period: expect.objectContaining({
@@ -708,7 +708,7 @@ describe('Contract: Security Policies API', () => {
           cfm: expect.any(Boolean),
           overall_score: expect.any(Number),
         }),
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

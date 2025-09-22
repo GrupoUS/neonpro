@@ -48,18 +48,22 @@ const createMockContext = (_overrides = {}) => ({
     timestamp: new Date(),
   },
   ...overrides,
-});
 
 describe(_'Enhanced Healthcare Middleware Chain'), () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(
     // Reset performance timing
-    vi.spyOn(performance, 'now').mockReturnValue(0);
-  });
+    vi.spyOn(performance, 'now').mockReturnValue(0
 
+<<<<<<< HEAD
+  describe('T021: LGPD Audit Middleware', () => {
+    it('should enforce data minimization for patient list operations',async () => {
+      const ctx = createMockContext(
+=======
   describe('T021: LGPD Audit Middleware'), () => {
     it(_'should enforce data minimization for patient list operations',async () => {
       const ctx = createMockContext();
+>>>>>>> origin/main
       const next = vi.fn().mockResolvedValue([
         {
           id: 'patient-1',
@@ -71,9 +75,9 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
           email: 'joao@example.com',
           medicalHistory: 'sensitive medical data',
         },
-      ]);
+      ]
 
-      mockPrisma.auditTrail.create.mockResolvedValue({});
+      mockPrisma.auditTrail.create.mockResolvedValue({  }
 
       const middleware = lgpdAuditMiddleware;
       const result = await middleware({
@@ -82,16 +86,15 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
         path: 'patients.list',
         type: 'query',
         input: {},
-      });
 
       // Should apply data minimization - remove sensitive fields
-      expect(result[0]).toHaveProperty('id');
-      expect(result[0]).toHaveProperty('fullName');
-      expect(result[0]).toHaveProperty('phone');
-      expect(result[0]).toHaveProperty('email');
-      expect(result[0]).not.toHaveProperty('cpf');
-      expect(result[0]).not.toHaveProperty('bloodType');
-      expect(result[0]).not.toHaveProperty('medicalHistory');
+      expect(result[0]).toHaveProperty('id')
+      expect(result[0]).toHaveProperty('fullName')
+      expect(result[0]).toHaveProperty('phone')
+      expect(result[0]).toHaveProperty('email')
+      expect(result[0]).not.toHaveProperty('cpf')
+      expect(result[0]).not.toHaveProperty('bloodType')
+      expect(result[0]).not.toHaveProperty('medicalHistory')
 
       // Should create audit log entry
       expect(mockPrisma.auditTrail.create).toHaveBeenCalledWith({
@@ -102,14 +105,18 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
           resource: 'patients.list',
           status: 'SUCCESS',
         }),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should generate cryptographic proof for sensitive operations',async () => {
+      const ctx = createMockContext(
+      const next = vi.fn().mockResolvedValue({ success: true   }
+=======
     it(_'should generate cryptographic proof for sensitive operations',async () => {
       const ctx = createMockContext();
       const next = vi.fn().mockResolvedValue({ success: true });
+>>>>>>> origin/main
 
-      mockPrisma.auditTrail.create.mockResolvedValue({});
+      mockPrisma.auditTrail.create.mockResolvedValue({  }
 
       const middleware = lgpdAuditMiddleware;
       await middleware({
@@ -118,23 +125,27 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
         path: 'patients.create',
         type: 'mutation',
         input: { bloodType: 'A+', allergies: ['latex'] },
-      });
 
       const auditCall = mockPrisma.auditTrail.create.mock.calls[0][0];
-      const additionalInfo = JSON.parse(auditCall.data.additionalInfo);
+      const additionalInfo = JSON.parse(auditCall.data.additionalInfo
 
-      expect(additionalInfo.cryptographicProof).toBeDefined();
-      expect(additionalInfo.cryptographicProof.hash).toBeDefined();
-      expect(additionalInfo.cryptographicProof.signature).toBeDefined();
-      expect(additionalInfo.cryptographicProof.timestampToken).toBeDefined();
+      expect(additionalInfo.cryptographicProof).toBeDefined(
+      expect(additionalInfo.cryptographicProof.hash).toBeDefined(
+      expect(additionalInfo.cryptographicProof.signature).toBeDefined(
+      expect(additionalInfo.cryptographicProof.timestampToken).toBeDefined(
       expect(additionalInfo.lgpdCompliance.auditTrailComplete).toBe(true);
-    });
-  });
 
+<<<<<<< HEAD
+  describe('T022: CFM Validation Middleware', () => {
+    it('should validate CFM license for medical operations',async () => {
+      const ctx = createMockContext(
+      const next = vi.fn().mockResolvedValue({ success: true   }
+=======
   describe('T022: CFM Validation Middleware'), () => {
     it(_'should validate CFM license for medical operations',async () => {
       const ctx = createMockContext();
       const next = vi.fn().mockResolvedValue({ success: true });
+>>>>>>> origin/main
 
       mockPrisma.professional.findUnique.mockResolvedValue({
         crmNumber: '12345',
@@ -144,9 +155,8 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
         cfmValidationStatus: 'pending',
         cfmLastValidated: new Date(Date.now() - 25 * 60 * 60 * 1000), // 25 hours ago
         telemedicineAuthorized: true,
-      });
 
-      mockPrisma.professional.update.mockResolvedValue({});
+      mockPrisma.professional.update.mockResolvedValue({  }
 
       const middleware = cfmValidationMiddleware;
       await middleware({
@@ -155,7 +165,6 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
         path: 'appointments.create',
         type: 'mutation',
         input: { patientId: 'patient-123' },
-      });
 
       expect(mockPrisma.professional.findUnique).toHaveBeenCalledWith({
         where: { id: 'prof-789' },
@@ -168,7 +177,6 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
           cfmLastValidated: true,
           telemedicineAuthorized: true,
         }),
-      });
 
       expect(mockPrisma.professional.update).toHaveBeenCalledWith({
         where: { id: 'prof-789' },
@@ -177,21 +185,24 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
           cfmLastValidated: expect.any(Date),
           telemedicineAuthorized: true,
         }),
-      });
 
-      expect(next).toHaveBeenCalled();
-    });
+      expect(next).toHaveBeenCalled(
 
+<<<<<<< HEAD
+    it('should reject operations with invalid CFM license',async () => {
+      const ctx = createMockContext(
+      const next = vi.fn(
+=======
     it(_'should reject operations with invalid CFM license',async () => {
       const ctx = createMockContext();
       const next = vi.fn();
+>>>>>>> origin/main
 
       mockPrisma.professional.findUnique.mockResolvedValue({
         crmNumber: '999',
         crmState: 'SP',
         cfmValidationStatus: 'pending',
         cfmLastValidated: new Date(Date.now() - 25 * 60 * 60 * 1000),
-      });
 
       const middleware = cfmValidationMiddleware;
 
@@ -203,14 +214,19 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
           type: 'mutation',
           input: {},
         }),
-      ).rejects.toThrow(TRPCError);
+      ).rejects.toThrow(TRPCError
 
-      expect(next).not.toHaveBeenCalled();
-    });
+      expect(next).not.toHaveBeenCalled(
 
+<<<<<<< HEAD
+    it('should require ICP-Brasil certificate for telemedicine operations',async () => {
+      const ctx = createMockContext(
+      const next = vi.fn(
+=======
     it(_'should require ICP-Brasil certificate for telemedicine operations',async () => {
       const ctx = createMockContext();
       const next = vi.fn();
+>>>>>>> origin/main
 
       mockPrisma.professional.findUnique.mockResolvedValue({
         crmNumber: '12345',
@@ -220,7 +236,6 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
         cfmValidationStatus: 'validated',
         cfmLastValidated: new Date(),
         telemedicineAuthorized: true,
-      });
 
       const middleware = cfmValidationMiddleware;
 
@@ -234,19 +249,24 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
         }),
       ).rejects.toThrow(
         'ICP-Brasil digital certificate required for telemedicine operations',
-      );
+      
 
-      expect(next).not.toHaveBeenCalled();
-    });
-  });
+      expect(next).not.toHaveBeenCalled(
 
+<<<<<<< HEAD
+  describe('T023: Prisma RLS Enforcement Middleware', () => {
+    it('should enforce clinic-based data isolation',async () => {
+      const ctx = createMockContext(
+      const next = vi.fn().mockResolvedValue([]
+=======
   describe('T023: Prisma RLS Enforcement Middleware'), () => {
     it(_'should enforce clinic-based data isolation',async () => {
       const ctx = createMockContext();
       const next = vi.fn().mockResolvedValue([]);
+>>>>>>> origin/main
 
       // Mock Prisma proxy behavior
-      const enhancedPrismaCall = vi.fn().mockResolvedValue([]);
+      const enhancedPrismaCall = vi.fn().mockResolvedValue([]
       ctx.prisma = new Proxy(mockPrisma, {
         get(target, prop) {
           if (prop === 'patient') {
@@ -256,7 +276,6 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
           }
           return target[prop];
         },
-      });
 
       const middleware = prismaRLSMiddleware;
       await middleware({
@@ -265,8 +284,17 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
         path: 'patients.list',
         type: 'query',
         input: {},
-      });
 
+<<<<<<< HEAD
+      expect(next).toHaveBeenCalled(
+      expect(ctx.rlsContext).toBeDefined(
+      expect(ctx.rlsContext.clinicId).toBe('clinic-456')
+      expect(ctx.rlsContext._userId).toBe('user-123')
+
+    it('should deny access without clinic context',async () => {
+      const ctx = createMockContext({ clinicId: null   }
+      const next = vi.fn(
+=======
       expect(next).toHaveBeenCalled();
       expect(ctx.rlsContext).toBeDefined();
       expect(ctx.rlsContext.clinicId).toBe('clinic-456');
@@ -276,6 +304,7 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
     it(_'should deny access without clinic context',async () => {
       const ctx = createMockContext({ clinicId: null });
       const next = vi.fn();
+>>>>>>> origin/main
 
       const middleware = prismaRLSMiddleware;
 
@@ -287,19 +316,21 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
           type: 'query',
           input: {},
         }),
-      ).rejects.toThrow('Clinic context required for data access');
+      ).rejects.toThrow('Clinic context required for data access')
 
-      expect(next).not.toHaveBeenCalled();
-    });
+      expect(next).not.toHaveBeenCalled(
 
+<<<<<<< HEAD
+    it('should allow emergency access with proper audit',async () => {
+=======
     it(_'should allow emergency access with proper audit',async () => {
+>>>>>>> origin/main
       const ctx = createMockContext({
         clinicId: null,
         isEmergency: true,
-      });
-      const next = vi.fn().mockResolvedValue([]);
+      const next = vi.fn().mockResolvedValue([]
 
-      mockPrisma.auditTrail.create.mockResolvedValue({});
+      mockPrisma.auditTrail.create.mockResolvedValue({  }
 
       const middleware = prismaRLSMiddleware;
       const result = await middleware({
@@ -308,22 +339,24 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
         path: 'patients.emergency',
         type: 'query',
         input: {},
-      });
 
-      expect(next).toHaveBeenCalled();
+      expect(next).toHaveBeenCalled(
       expect(ctx.rlsContext.isEmergency).toBe(true);
-    });
-  });
 
+<<<<<<< HEAD
+  describe('Performance Requirements', () => {
+    it('should complete middleware chain within 200ms target',async () => {
+      const ctx = createMockContext(
+=======
   describe(_'Performance Requirements'), () => {
     it(_'should complete middleware chain within 200ms target',async () => {
       const ctx = createMockContext();
+>>>>>>> origin/main
       let callCount = 0;
 
       vi.spyOn(performance, 'now').mockImplementation(() => {
         callCount++;
         return callCount * 50; // Simulate 50ms per middleware
-      });
 
       mockPrisma.professional.findUnique.mockResolvedValue({
         crmNumber: '12345',
@@ -331,11 +364,10 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
         cfmValidationStatus: 'validated',
         cfmLastValidated: new Date(),
         telemedicineAuthorized: true,
-      });
 
-      mockPrisma.auditTrail.create.mockResolvedValue({});
+      mockPrisma.auditTrail.create.mockResolvedValue({  }
 
-      const next = vi.fn().mockResolvedValue({ success: true });
+      const next = vi.fn().mockResolvedValue({ success: true   }
 
       // Chain all middleware
       const chainedMiddleware = async () => {
@@ -359,13 +391,9 @@ describe(_'Enhanced Healthcare Middleware Chain'), () => {
           path: 'appointments.create',
           type: 'mutation',
           input: {},
-        });
       };
 
-      const result = await chainedMiddleware();
+      const result = await chainedMiddleware(
 
-      expect(result).toEqual({ success: true });
+      expect(result).toEqual({ success: true   }
       // Performance validation is handled within each middleware
-    });
-  });
-});

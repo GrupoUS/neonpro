@@ -254,7 +254,11 @@ export class ConsentFactory {
   private static hashPatientId(patientId: string): string {
     // Simple hash for demo - in production use proper crypto hash
     const hash = Array.from(patientId)
+<<<<<<< HEAD
+      .reduce((acc,char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0)
+=======
       .reduce((acc,_char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0)
+>>>>>>> origin/main
       .toString(16);
     return `patient_${hash.slice(-8)}`;
   }

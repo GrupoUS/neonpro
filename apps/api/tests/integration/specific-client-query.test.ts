@@ -15,13 +15,13 @@ describe('Specific Client Query - Integration Test', () => {
     try {
       app = (await import('../../src/app')).default;
     } catch (error) {
-      console.log('Expected failure: App not available during TDD phase');
+      console.log('Expected failure: App not available during TDD phase')
     }
-  });
+  }
 
   describe('Named Client Query Processing', () => {
     test('should handle "Me mostre informações da Maria Silva" query', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const query = 'Me mostre informações da Maria Silva';
       const sessionId = 'test-session-specific-client';
@@ -39,18 +39,18 @@ describe('Specific Client Query - Integration Test', () => {
             _userId: 'doctor-user-id',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const responseData = await response.json();
+      const responseData = await response.json(
       expect(responseData.success).toBe(true);
-      expect(responseData.response.type).toBe('table');
-      expect(responseData.response.content.title).toContain('Maria Silva');
-    });
+      expect(responseData.response.type).toBe('table')
+      expect(responseData.response.content.title).toContain('Maria Silva')
+    }
 
     test('should extract client names from various query formats', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const nameQueries = [
         'Dados do João Santos',
@@ -73,18 +73,18 @@ describe('Specific Client Query - Integration Test', () => {
               _userId: 'doctor-user-id',
             },
           }),
-        });
+        }
 
-        expect(response.status).toBe(200);
-        const responseData = await response.json();
+        expect(response.status).toBe(200
+        const responseData = await response.json(
         expect(responseData.success).toBe(true);
       }
-    });
-  });
+    }
+  }
 
   describe('Client Data Structure', () => {
     test('should return comprehensive client information', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
@@ -99,21 +99,21 @@ describe('Specific Client Query - Integration Test', () => {
             _userId: 'doctor-user-id',
           },
         }),
-      });
+      }
 
-      const responseData = await response.json();
+      const responseData = await response.json(
 
-      expect(responseData.response.content).toHaveProperty('data');
+      expect(responseData.response.content).toHaveProperty('data')
       if (responseData.response.content.data.length > 0) {
         const clientData = responseData.response.content.data[0];
-        expect(clientData).toHaveProperty('name');
-        expect(clientData).toHaveProperty('email');
-        expect(clientData).toHaveProperty('phone');
+        expect(clientData).toHaveProperty('name')
+        expect(clientData).toHaveProperty('email')
+        expect(clientData).toHaveProperty('phone')
       }
-    });
+    }
 
     test('should include related appointments and history', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
@@ -128,19 +128,19 @@ describe('Specific Client Query - Integration Test', () => {
             _userId: 'doctor-user-id',
           },
         }),
-      });
+      }
 
-      const responseData = await response.json();
+      const responseData = await response.json(
       expect(responseData.success).toBe(true);
 
       // Should include related data linking
-      expect(responseData.actions).toBeDefined();
-    });
-  });
+      expect(responseData.actions).toBeDefined(
+    }
+  }
 
   describe('Privacy and Role-Based Access', () => {
     test('should respect role-based data visibility', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const roles = [
         { token: 'valid-doctor-token', _role: 'doctor', fullAccess: true },
@@ -163,18 +163,18 @@ describe('Specific Client Query - Integration Test', () => {
               _role: role,
             },
           }),
-        });
+        }
 
-        expect(response.status).toBe(200);
-        const responseData = await response.json();
+        expect(response.status).toBe(200
+        const responseData = await response.json(
         expect(responseData.success).toBe(true);
       }
-    });
-  });
+    }
+  }
 
   describe('Error Handling', () => {
     test('should handle non-existent client gracefully', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
@@ -189,20 +189,20 @@ describe('Specific Client Query - Integration Test', () => {
             _userId: 'doctor-user-id',
           },
         }),
-      });
+      }
 
-      const responseData = await response.json();
+      const responseData = await response.json(
       expect(responseData.success).toBe(true);
-      expect(responseData.response.type).toBe('text');
-      expect(responseData.response.content.text).toContain('não encontrado');
-    });
-  });
+      expect(responseData.response.type).toBe('text')
+      expect(responseData.response.content.text).toContain('não encontrado')
+    }
+  }
 
   describe('Performance Requirements', () => {
     test('should respond within 2 seconds', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
-      const startTime = Date.now();
+      const startTime = Date.now(
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
@@ -217,11 +217,11 @@ describe('Specific Client Query - Integration Test', () => {
             _userId: 'doctor-user-id',
           },
         }),
-      });
+      }
 
-      const endTime = Date.now();
-      expect(endTime - startTime).toBeLessThan(2000);
-      expect(response.status).toBe(200);
-    });
-  });
-});
+      const endTime = Date.now(
+      expect(endTime - startTime).toBeLessThan(2000
+      expect(response.status).toBe(200
+    }
+  }
+}

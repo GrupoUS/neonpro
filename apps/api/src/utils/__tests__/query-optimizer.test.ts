@@ -10,13 +10,11 @@ describe(_'Query Optimizer'), () => {
   let monitor: QueryPerformanceMonitor;
 
   beforeEach(() => {
-    monitor = new QueryPerformanceMonitor();
-    vi.clearAllMocks();
-  });
+    monitor = new QueryPerformanceMonitor(
+    vi.clearAllMocks(
 
   afterEach(() => {
-    monitor.clearMetrics();
-  });
+    monitor.clearMetrics(
 
   describe(_'QueryPerformanceMonitor'), () => {
     it(_'should record query metrics'), () => {
@@ -30,13 +28,12 @@ describe(_'Query Optimizer'), () => {
         clinicId: 'clinic456',
       };
 
-      monitor.recordQuery(metrics);
-      const stats = monitor.getStats();
+      monitor.recordQuery(metrics
+      const stats = monitor.getStats(
 
-      expect(stats.totalQueries).toBe(1);
-      expect(stats.averageDuration).toBe(45);
-      expect(stats.slowQueries).toBe(0);
-    });
+      expect(stats.totalQueries).toBe(1
+      expect(stats.averageDuration).toBe(45
+      expect(stats.slowQueries).toBe(0
 
     it(_'should identify slow queries'), () => {
       const slowQuery = {
@@ -49,13 +46,12 @@ describe(_'Query Optimizer'), () => {
         clinicId: 'clinic456',
       };
 
-      monitor.recordQuery(slowQuery);
-      const stats = monitor.getStats();
+      monitor.recordQuery(slowQuery
+      const stats = monitor.getStats(
 
-      expect(stats.totalQueries).toBe(1);
-      expect(stats.slowQueries).toBe(1);
-      expect(stats.slowQueryRate).toBe(100);
-    });
+      expect(stats.totalQueries).toBe(1
+      expect(stats.slowQueries).toBe(1
+      expect(stats.slowQueryRate).toBe(100
 
     it(_'should track query frequency'), () => {
       // Add multiple queries
@@ -65,7 +61,6 @@ describe(_'Query Optimizer'), () => {
         rowsAffected: 5,
         timestamp: new Date(),
         endpoint: '/api/services',
-      });
 
       monitor.recordQuery({
         _query: 'SELECT * FROM patients WHERE id = $1',
@@ -73,16 +68,19 @@ describe(_'Query Optimizer'), () => {
         rowsAffected: 1,
         timestamp: new Date(),
         endpoint: '/api/patients/123',
-      });
 
-      const stats = monitor.getStats();
-      expect(stats.totalQueries).toBe(2);
-      expect(stats.queryFrequency).toBeDefined();
-      expect(Object.keys(stats.queryFrequency).length).toBeGreaterThan(0);
-    });
+      const stats = monitor.getStats(
+      expect(stats.totalQueries).toBe(2
+      expect(stats.queryFrequency).toBeDefined(
+      expect(Object.keys(stats.queryFrequency).length).toBeGreaterThan(0
 
+<<<<<<< HEAD
+    it('should calculate average duration correctly', () => {
+      const baseTime = new Date(
+=======
     it(_'should calculate average duration correctly'), () => {
       const baseTime = new Date();
+>>>>>>> origin/main
 
       // Add multiple metrics with different durations
       for (let i = 0; i < 5; i++) {
@@ -92,16 +90,19 @@ describe(_'Query Optimizer'), () => {
           rowsAffected: 1,
           timestamp: new Date(baseTime.getTime() + i * 1000),
           endpoint: `/api/test/${i}`,
-        });
       }
 
-      const stats = monitor.getStats();
-      expect(stats.totalQueries).toBe(5);
+      const stats = monitor.getStats(
+      expect(stats.totalQueries).toBe(5
       expect(stats.averageDuration).toBe(140); // Average of 100, 120, 140, 160, 180
-    });
 
+<<<<<<< HEAD
+    it('should identify top slow queries', () => {
+      const baseTime = new Date(
+=======
     it(_'should identify top slow queries'), () => {
       const baseTime = new Date();
+>>>>>>> origin/main
 
       // Add queries with different durations
       const durations = [100, 2000, 500, 1500, 300];
@@ -112,21 +113,18 @@ describe(_'Query Optimizer'), () => {
           rowsAffected: 1,
           timestamp: new Date(baseTime.getTime() + i * 1000),
           endpoint: `/api/test/${i}`,
-        });
-      });
 
-      const stats = monitor.getStats();
-      expect(stats.totalQueries).toBe(5);
-      expect(stats.topSlowQueries).toBeDefined();
-      expect(stats.topSlowQueries.length).toBeGreaterThan(0);
+      const stats = monitor.getStats(
+      expect(stats.totalQueries).toBe(5
+      expect(stats.topSlowQueries).toBeDefined(
+      expect(stats.topSlowQueries.length).toBeGreaterThan(0
 
       // Should be sorted by duration (slowest first)
       if (stats.topSlowQueries.length > 1) {
         expect(stats.topSlowQueries[0].duration).toBeGreaterThanOrEqual(
           stats.topSlowQueries[1].duration,
-        );
+        
       }
-    });
 
     it(_'should clear metrics history'), () => {
       monitor.recordQuery({
@@ -135,16 +133,14 @@ describe(_'Query Optimizer'), () => {
         rowsAffected: 1,
         timestamp: new Date(),
         endpoint: '/api/test',
-      });
 
-      let stats = monitor.getStats();
-      expect(stats.totalQueries).toBe(1);
+      let stats = monitor.getStats(
+      expect(stats.totalQueries).toBe(1
 
-      monitor.clearMetrics();
+      monitor.clearMetrics(
 
-      stats = monitor.getStats();
-      expect(stats.totalQueries).toBe(0);
-    });
+      stats = monitor.getStats(
+      expect(stats.totalQueries).toBe(0
 
     it(_'should limit metrics history to prevent memory issues'), () => {
       // Add more than the max history limit (1000)
@@ -155,15 +151,20 @@ describe(_'Query Optimizer'), () => {
           rowsAffected: 1,
           timestamp: new Date(),
           endpoint: `/api/test/${i}`,
-        });
       }
 
-      const stats = monitor.getStats();
+      const stats = monitor.getStats(
       // Should be limited to maxMetricsHistory (1000)
-      expect(stats.totalQueries).toBeLessThanOrEqual(1000);
-    });
-  });
+      expect(stats.totalQueries).toBeLessThanOrEqual(1000
 
+<<<<<<< HEAD
+  describe('HEALTHCARE_POOL_CONFIG', () => {
+    it('should have appropriate pool configuration for healthcare workloads', () => {
+      expect(HEALTHCARE_POOL_CONFIG.min).toBe(2
+      expect(HEALTHCARE_POOL_CONFIG.max).toBe(20
+      expect(HEALTHCARE_POOL_CONFIG.acquireTimeoutMillis).toBe(30000
+      expect(HEALTHCARE_POOL_CONFIG.idleTimeoutMillis).toBe(300000
+=======
   describe(_'HEALTHCARE_POOL_CONFIG'), () => {
     it(_'should have appropriate pool configuration for healthcare workloads'), () => {
       expect(HEALTHCARE_POOL_CONFIG.min).toBe(2);
@@ -171,13 +172,11 @@ describe(_'Query Optimizer'), () => {
       expect(HEALTHCARE_POOL_CONFIG.acquireTimeoutMillis).toBe(30000);
       expect(HEALTHCARE_POOL_CONFIG.idleTimeoutMillis).toBe(300000);
     });
+>>>>>>> origin/main
 
     it(_'should have healthcare-appropriate timeout settings'), () => {
       // Healthcare systems need reliable connections
-      expect(HEALTHCARE_POOL_CONFIG.createTimeoutMillis).toBe(30000);
-      expect(HEALTHCARE_POOL_CONFIG.destroyTimeoutMillis).toBe(5000);
-      expect(HEALTHCARE_POOL_CONFIG.reapIntervalMillis).toBe(1000);
-      expect(HEALTHCARE_POOL_CONFIG.createRetryIntervalMillis).toBe(200);
-    });
-  });
-});
+      expect(HEALTHCARE_POOL_CONFIG.createTimeoutMillis).toBe(30000
+      expect(HEALTHCARE_POOL_CONFIG.destroyTimeoutMillis).toBe(5000
+      expect(HEALTHCARE_POOL_CONFIG.reapIntervalMillis).toBe(1000
+      expect(HEALTHCARE_POOL_CONFIG.createRetryIntervalMillis).toBe(200

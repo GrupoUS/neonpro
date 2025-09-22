@@ -26,12 +26,12 @@ describe("ToolOrchestrator", () => {
   };
 
   beforeEach(() => {
-    orchestrator = new ToolOrchestrator();
-  });
+    orchestrator = new ToolOrchestrator(
+  }
 
   afterEach(() => {
     // Cleanup if needed
-  });
+  }
 
   describe("Tool Execution", () => {
     it("should execute simple tool request successfully", async () => {
@@ -46,14 +46,14 @@ describe("ToolOrchestrator", () => {
         retries: 2,
       };
 
-      const result = await orchestrator.executeTool(request);
+      const result = await orchestrator.executeTool(request
 
-      expect(result.id).toBe(request.id);
-      expect(result.toolName).toBe(request.toolName);
-      expect(result.action).toBe(request.action);
+      expect(result.id).toBe(request.id
+      expect(result.toolName).toBe(request.toolName
+      expect(result.action).toBe(request.action
       expect(result.success).toBe(true);
-      expect(result.duration).toBeGreaterThan(0);
-    });
+      expect(result.duration).toBeGreaterThan(0
+    }
 
     it("should handle tool execution with dependencies", async () => {
       const dependencyRequest: ToolExecutionRequest = {
@@ -81,13 +81,13 @@ describe("ToolOrchestrator", () => {
 
       // Execute dependency first
       const dependencyResult =
-        await orchestrator.executeTool(dependencyRequest);
+        await orchestrator.executeTool(dependencyRequest
       expect(dependencyResult.success).toBe(true);
 
       // Execute dependent tool
-      const dependentResult = await orchestrator.executeTool(dependentRequest);
+      const dependentResult = await orchestrator.executeTool(dependentRequest
       expect(dependentResult.success).toBe(true);
-    });
+    }
 
     it("should handle tool execution failures gracefully", async () => {
       const failingRequest: ToolExecutionRequest = {
@@ -101,12 +101,12 @@ describe("ToolOrchestrator", () => {
         retries: 1,
       };
 
-      const result = await orchestrator.executeTool(failingRequest);
+      const result = await orchestrator.executeTool(failingRequest
 
       expect(result.success).toBe(false);
-      expect(result.error).toBeDefined();
-      expect(result.duration).toBeGreaterThan(0);
-    });
+      expect(result.error).toBeDefined(
+      expect(result.duration).toBeGreaterThan(0
+    }
 
     it("should retry failed tool executions", async () => {
       const flakyRequest: ToolExecutionRequest = {
@@ -120,12 +120,12 @@ describe("ToolOrchestrator", () => {
         retries: 3,
       };
 
-      const result = await orchestrator.executeTool(flakyRequest);
+      const result = await orchestrator.executeTool(flakyRequest
 
       // Should eventually succeed after retries
       expect(result.success).toBe(true);
-    });
-  });
+    }
+  }
 
   describe("Resource Management", () => {
     it("should allocate resources for tool execution", async () => {
@@ -145,11 +145,11 @@ describe("ToolOrchestrator", () => {
         },
       };
 
-      const result = await orchestrator.executeTool(resourceRequest);
+      const result = await orchestrator.executeTool(resourceRequest
 
       expect(result.success).toBe(true);
-      expect(result.duration).toBeGreaterThan(0);
-    });
+      expect(result.duration).toBeGreaterThan(0
+    }
 
     it("should handle resource constraints", async () => {
       const constrainedRequest: ToolExecutionRequest = {
@@ -168,10 +168,10 @@ describe("ToolOrchestrator", () => {
         },
       };
 
-      const result = await orchestrator.executeTool(constrainedRequest);
+      const result = await orchestrator.executeTool(constrainedRequest
 
       expect(result.success).toBe(true);
-    });
+    }
 
     it("should prioritize high-priority requests", async () => {
       const lowPriority: ToolExecutionRequest = {
@@ -200,14 +200,14 @@ describe("ToolOrchestrator", () => {
       const [lowResult, highResult] = await Promise.all([
         orchestrator.executeTool(lowPriority),
         orchestrator.executeTool(highPriority),
-      ]);
+      ]
 
       // Both should succeed, but high priority should be faster
       expect(lowResult.success).toBe(true);
       expect(highResult.success).toBe(true);
-      expect(highResult.duration).toBeLessThanOrEqual(lowResult.duration);
-    });
-  });
+      expect(highResult.duration).toBeLessThanOrEqual(lowResult.duration
+    }
+  }
 
   describe("Batch Execution", () => {
     it("should execute multiple tools in parallel", async () => {
@@ -244,12 +244,12 @@ describe("ToolOrchestrator", () => {
         },
       ];
 
-      const results = await orchestrator.executeBatch(requests);
+      const results = await orchestrator.executeBatch(requests
 
-      expect(results.length).toBe(3);
+      expect(results.length).toBe(3
       expect(results.every((r) => r.success)).toBe(true);
       expect(results.every((r) => r.duration > 0)).toBe(true);
-    });
+    }
 
     it("should handle batch execution with failures", async () => {
       const requests: ToolExecutionRequest[] = [
@@ -285,14 +285,14 @@ describe("ToolOrchestrator", () => {
         },
       ];
 
-      const results = await orchestrator.executeBatch(requests);
+      const results = await orchestrator.executeBatch(requests
 
-      expect(results.length).toBe(3);
+      expect(results.length).toBe(3
       expect(results[0].success).toBe(true);
       expect(results[1].success).toBe(false);
       expect(results[2].success).toBe(true);
-    });
-  });
+    }
+  }
 
   describe("Conflict Resolution", () => {
     it("should resolve resource conflicts", async () => {
@@ -330,12 +330,12 @@ describe("ToolOrchestrator", () => {
       const [result1, result2] = await Promise.all([
         orchestrator.executeTool(conflictingRequest1),
         orchestrator.executeTool(conflictingRequest2),
-      ]);
+      ]
 
       // Both should handle the conflict appropriately
-      expect(result1.duration).toBeGreaterThan(0);
-      expect(result2.duration).toBeGreaterThan(0);
-    });
+      expect(result1.duration).toBeGreaterThan(0
+      expect(result2.duration).toBeGreaterThan(0
+    }
 
     it("should handle timeout conflicts", async () => {
       const timeoutRequest: ToolExecutionRequest = {
@@ -349,13 +349,13 @@ describe("ToolOrchestrator", () => {
         retries: 1,
       };
 
-      const result = await orchestrator.executeTool(timeoutRequest);
+      const result = await orchestrator.executeTool(timeoutRequest
 
       // Should handle timeout gracefully
       expect(result.success).toBe(false);
-      expect(result.error).toContain("timeout");
-    });
-  });
+      expect(result.error).toContain("timeout"
+    }
+  }
 
   describe("Healthcare Compliance", () => {
     it("should validate healthcare compliance for medical tools", async () => {
@@ -377,11 +377,11 @@ describe("ToolOrchestrator", () => {
         },
       };
 
-      const result = await orchestrator.executeTool(healthcareRequest);
+      const result = await orchestrator.executeTool(healthcareRequest
 
       expect(result.success).toBe(true);
       expect(result.warnings.length).toBe(0); // No compliance warnings
-    });
+    }
 
     it("should warn about non-compliant healthcare operations", async () => {
       const nonCompliantRequest: ToolExecutionRequest = {
@@ -402,12 +402,12 @@ describe("ToolOrchestrator", () => {
         },
       };
 
-      const result = await orchestrator.executeTool(nonCompliantRequest);
+      const result = await orchestrator.executeTool(nonCompliantRequest
 
-      expect(result.warnings.length).toBeGreaterThan(0);
+      expect(result.warnings.length).toBeGreaterThan(0
       expect(result.warnings.some((w) => w.includes("compliance"))).toBe(true);
-    });
-  });
+    }
+  }
 
   describe("Performance Monitoring", () => {
     it("should track execution metrics", async () => {
@@ -422,15 +422,15 @@ describe("ToolOrchestrator", () => {
         retries: 1,
       };
 
-      const result = await orchestrator.executeTool(request);
+      const result = await orchestrator.executeTool(request
 
-      expect(result.duration).toBeGreaterThan(0);
+      expect(result.duration).toBeGreaterThan(0
 
       // Check performance stats
-      const stats = orchestrator.getPerformanceStats();
-      expect(stats.totalExecutions).toBeGreaterThan(0);
-      expect(stats.averageDuration).toBeGreaterThan(0);
-    });
+      const stats = orchestrator.getPerformanceStats(
+      expect(stats.totalExecutions).toBeGreaterThan(0
+      expect(stats.averageDuration).toBeGreaterThan(0
+    }
 
     it("should provide resource utilization metrics", async () => {
       const resourceRequest: ToolExecutionRequest = {
@@ -449,14 +449,14 @@ describe("ToolOrchestrator", () => {
         },
       };
 
-      const result = await orchestrator.executeTool(resourceRequest);
+      const result = await orchestrator.executeTool(resourceRequest
 
       expect(result.success).toBe(true);
 
       // Check resource utilization
-      const resourceStats = orchestrator.getResourceUtilization();
-      expect(resourceStats.memoryUtilization).toBeGreaterThan(0);
-      expect(resourceStats.cpuUtilization).toBeGreaterThan(0);
-    });
-  });
-});
+      const resourceStats = orchestrator.getResourceUtilization(
+      expect(resourceStats.memoryUtilization).toBeGreaterThan(0
+      expect(resourceStats.cpuUtilization).toBeGreaterThan(0
+    }
+  }
+}

@@ -30,20 +30,26 @@ const mockHonoContext = {
   var: {},
 } as unknown as Context;
 
+<<<<<<< HEAD
+describe('Supabase Architecture Validation - Architect Review', () => {
+  describe('Client Instantiation Architecture Patterns', () => {
+    describe('Three-Tier Client Architecture', () => {
+      it('should implement proper separation of concerns between client types',async () => {
+=======
 describe(_'Supabase Architecture Validation - Architect Review'), () => {
   describe(_'Client Instantiation Architecture Patterns'), () => {
     describe(_'Three-Tier Client Architecture'), () => {
       it(_'should implement proper separation of concerns between client types',async () => {
+>>>>>>> origin/main
         const { createAdminClient, createServerClient, createUserClient } = await import(
-          '../supabase'
-        );
+          '../supabase')
+        
 
-        const adminClient = createAdminClient();
+        const adminClient = createAdminClient(
         const serverClient = createServerClient({
           getAll: () => [],
           setAll: () => {},
-        });
-        const userClient = createUserClient();
+        const userClient = createUserClient(
 
         // Architecture validation: Each client should have distinct purposes
         expect(adminClient.auth.admin).toBeDefined(); // Admin-specific functionality
@@ -51,42 +57,53 @@ describe(_'Supabase Architecture Validation - Architect Review'), () => {
         expect(userClient.auth.signInWithPassword).toBeDefined(); // User-specific functionality
 
         // Clients should not share the same configuration
-        expect(adminClient.supabaseKey).not.toBe(serverClient.supabaseKey);
+        expect(adminClient.supabaseKey).not.toBe(serverClient.supabaseKey
         expect(serverClient.supabaseKey).toBe(userClient.supabaseKey); // Both use anon key
-      });
 
+<<<<<<< HEAD
+      it('should enforce proper client usage boundaries',async () => {
+=======
       it(_'should enforce proper client usage boundaries',async () => {
+>>>>>>> origin/main
         const { createAdminClient, createServerClient } = await import(
-          '../supabase'
-        );
+          '../supabase')
+        
 
         // Admin client should NOT be used for user-facing operations
-        const adminClient = createAdminClient();
+        const adminClient = createAdminClient(
         expect(() => adminClient.auth.signInWithPassword('user@email.com', 'password')).toThrow(
           'Admin client should not be used for user authentication',
-        );
+        
 
         // Server client should require cookie handlers
         expect(() => createServerClient(null as any)).toThrow(
           'Cookie handlers are required for server client',
-        );
-      });
-    });
+        
 
+<<<<<<< HEAD
+    describe('Client Factory Pattern Implementation', () => {
+      it('should implement singleton pattern for admin client',async () => {
+        const { createAdminClient } = await import('../supabase')
+=======
     describe(_'Client Factory Pattern Implementation'), () => {
       it(_'should implement singleton pattern for admin client',async () => {
         const { createAdminClient } = await import('../supabase');
+>>>>>>> origin/main
 
-        const adminClient1 = createAdminClient();
-        const adminClient2 = createAdminClient();
+        const adminClient1 = createAdminClient(
+        const adminClient2 = createAdminClient(
 
         // Should return the same instance for resource efficiency
-        expect(adminClient1).toBe(adminClient2);
-        expect(adminClient1.connectionPool).toBe(adminClient2.connectionPool);
-      });
+        expect(adminClient1).toBe(adminClient2
+        expect(adminClient1.connectionPool).toBe(adminClient2.connectionPool
 
+<<<<<<< HEAD
+      it('should implement factory pattern for server clients with context isolation',async () => {
+        const { createServerClient } = await import('../supabase')
+=======
       it(_'should implement factory pattern for server clients with context isolation',async () => {
         const { createServerClient } = await import('../supabase');
+>>>>>>> origin/main
 
         const cookies1 = {
           getAll: () => [{ name: 'session1', value: 'token1' }],
@@ -97,117 +114,148 @@ describe(_'Supabase Architecture Validation - Architect Review'), () => {
           setAll: () => {},
         };
 
-        const serverClient1 = createServerClient(cookies1);
-        const serverClient2 = createServerClient(cookies2);
+        const serverClient1 = createServerClient(cookies1
+        const serverClient2 = createServerClient(cookies2
 
         // Should create isolated instances for different contexts
-        expect(serverClient1).not.toBe(serverClient2);
-        expect(serverClient1.session).not.toBe(serverClient2.session);
-      });
-    });
-  });
+        expect(serverClient1).not.toBe(serverClient2
+        expect(serverClient1.session).not.toBe(serverClient2.session
 
+<<<<<<< HEAD
+  describe('Connection Pooling and Resource Management', () => {
+    describe('Connection Pool Architecture', () => {
+      it('should implement intelligent connection pooling for serverless environments',async () => {
+        const { createAdminClient } = await import('../supabase')
+=======
   describe(_'Connection Pooling and Resource Management'), () => {
     describe(_'Connection Pool Architecture'), () => {
       it(_'should implement intelligent connection pooling for serverless environments',async () => {
         const { createAdminClient } = await import('../supabase');
+>>>>>>> origin/main
 
-        const adminClient = createAdminClient();
+        const adminClient = createAdminClient(
 
         // Should have connection pool manager
-        expect(adminClient.connectionPool).toBeDefined();
-        expect(adminClient.connectionPool.maxConnections).toBeGreaterThan(0);
-        expect(adminClient.connectionPool.idleTimeout).toBeDefined();
-        expect(typeof adminClient.connectionPool.acquire).toBe('function');
-        expect(typeof adminClient.connectionPool.release).toBe('function');
-      });
+        expect(adminClient.connectionPool).toBeDefined(
+        expect(adminClient.connectionPool.maxConnections).toBeGreaterThan(0
+        expect(adminClient.connectionPool.idleTimeout).toBeDefined(
+        expect(typeof adminClient.connectionPool.acquire).toBe('function')
+        expect(typeof adminClient.connectionPool.release).toBe('function')
 
+<<<<<<< HEAD
+      it('should implement connection reuse strategies',async () => {
+        const { createAdminClient } = await import('../supabase')
+=======
       it(_'should implement connection reuse strategies',async () => {
         const { createAdminClient } = await import('../supabase');
+>>>>>>> origin/main
 
-        const adminClient = createAdminClient();
-        const connectionSpy = vi.spyOn(adminClient.connectionPool, 'acquire');
+        const adminClient = createAdminClient(
+        const connectionSpy = vi.spyOn(adminClient.connectionPool, 'acquire')
 
         // Multiple queries should reuse connections
-        await adminClient.from('patients').select('count');
-        await adminClient.from('clinics').select('count');
+        await adminClient.from('patients').select('count')
+        await adminClient.from('clinics').select('count')
 
         expect(connectionSpy).toHaveBeenCalledTimes(1); // Connection reused
-      });
 
+<<<<<<< HEAD
+      it('should handle connection cleanup on process termination',async () => {
+        const { createAdminClient } = await import('../supabase')
+=======
       it(_'should handle connection cleanup on process termination',async () => {
         const { createAdminClient } = await import('../supabase');
+>>>>>>> origin/main
 
-        const adminClient = createAdminClient();
-        const cleanupSpy = vi.spyOn(adminClient.connectionPool, 'drain');
+        const adminClient = createAdminClient(
+        const cleanupSpy = vi.spyOn(adminClient.connectionPool, 'drain')
 
         // Simulate process termination
-        process.emit('SIGTERM', 'SIGTERM');
+        process.emit('SIGTERM', 'SIGTERM')
 
-        expect(cleanupSpy).toHaveBeenCalled();
-      });
-    });
+        expect(cleanupSpy).toHaveBeenCalled(
 
+<<<<<<< HEAD
+    describe('Resource Management Patterns', () => {
+      it('should implement proper resource lifecycle management',async () => {
+        const { createServerClient } = await import('../supabase')
+=======
     describe(_'Resource Management Patterns'), () => {
       it(_'should implement proper resource lifecycle management',async () => {
         const { createServerClient } = await import('../supabase');
+>>>>>>> origin/main
 
         const serverClient = createServerClient({
           getAll: () => [],
           setAll: () => {},
-        });
 
         // Should have resource tracking
-        expect(serverClient.resourceTracker).toBeDefined();
-        expect(typeof serverClient.resourceTracker.trackQuery).toBe('function');
+        expect(serverClient.resourceTracker).toBeDefined(
+        expect(typeof serverClient.resourceTracker.trackQuery).toBe('function')
         expect(typeof serverClient.resourceTracker.releaseResources).toBe(
           'function',
-        );
-      });
+        
 
+<<<<<<< HEAD
+      it('should implement memory-efficient cursor-based pagination',async () => {
+        const { createAdminClient } = await import('../supabase')
+=======
       it(_'should implement memory-efficient cursor-based pagination',async () => {
         const { createAdminClient } = await import('../supabase');
+>>>>>>> origin/main
 
-        const adminClient = createAdminClient();
+        const adminClient = createAdminClient(
 
         const paginationQuery = adminClient
           .from('patients')
           .select('*')
-          .cursorPagination({ pageSize: 100, cursor: 'patient_123' });
+          .cursorPagination({ pageSize: 100, cursor: 'patient_123'   }
 
-        expect(paginationQuery.pagination.type).toBe('cursor');
-        expect(paginationQuery.pagination.pageSize).toBe(100);
+        expect(paginationQuery.pagination.type).toBe('cursor')
+        expect(paginationQuery.pagination.pageSize).toBe(100
         expect(paginationQuery.memoryFootprint).toBeLessThan(1024 * 1024); // < 1MB
-      });
-    });
-  });
 
+<<<<<<< HEAD
+  describe('RLS Implementation for Multi-Tenant Healthcare', () => {
+    describe('Tenant Isolation Architecture', () => {
+      it('should implement clinic-based tenant isolation through RLS',async () => {
+        const { RLSQueryBuilder } = await import('../supabase')
+=======
   describe(_'RLS Implementation for Multi-Tenant Healthcare'), () => {
     describe(_'Tenant Isolation Architecture'), () => {
       it(_'should implement clinic-based tenant isolation through RLS',async () => {
         const { RLSQueryBuilder } = await import('../supabase');
+>>>>>>> origin/main
 
         const builder = new RLSQueryBuilder(
           'professional-123',
           'healthcare_professional',
+<<<<<<< HEAD
+        
+        builder.setTenantContext({ clinicId: 'clinic-456', _role: 'doctor'   }
+=======
         );
         builder.setTenantContext({ clinicId: 'clinic-456', _role: 'doctor' });
+>>>>>>> origin/main
 
-        const patientQuery = builder.buildQuery('patients', 'select');
+        const patientQuery = builder.buildQuery('patients', 'select')
 
         // Should automatically inject tenant filters
-        expect(patientQuery.filters).toHaveProperty('clinic_id', 'clinic-456');
-        expect(patientQuery.rls.policy).toBe('clinic_tenant_isolation');
-        expect(patientQuery.securityLevel).toBe('tenant_isolated');
-      });
+        expect(patientQuery.filters).toHaveProperty('clinic_id', 'clinic-456')
+        expect(patientQuery.rls.policy).toBe('clinic_tenant_isolation')
+        expect(patientQuery.securityLevel).toBe('tenant_isolated')
 
+<<<<<<< HEAD
+      it('should validate RLS policy enforcement at query level',async () => {
+        const { createServerClient } = await import('../supabase')
+=======
       it(_'should validate RLS policy enforcement at query level',async () => {
         const { createServerClient } = await import('../supabase');
+>>>>>>> origin/main
 
         const serverClient = createServerClient({
           getAll: () => [{ name: 'clinic-context', value: 'clinic-123' }],
           setAll: () => {},
-        });
 
         const rlsValidation = await serverClient.rpc(
           'validate_rls_enforcement',
@@ -216,72 +264,83 @@ describe(_'Supabase Architecture Validation - Architect Review'), () => {
             tenant_id: 'clinic-123',
             user_role: 'healthcare_professional',
           },
-        );
+        
 
         expect(rlsValidation.data.rls_enabled).toBe(true);
-        expect(rlsValidation.data.policies_active).toHaveLength(3);
+        expect(rlsValidation.data.policies_active).toHaveLength(3
         expect(rlsValidation.data.tenant_isolation_verified).toBe(true);
-      });
-    });
 
+<<<<<<< HEAD
+    describe('Healthcare Data Access Patterns', () => {
+      it('should implement hierarchical access control for healthcare roles',async () => {
+        const { RLSQueryBuilder } = await import('../supabase')
+=======
     describe(_'Healthcare Data Access Patterns'), () => {
       it(_'should implement hierarchical access control for healthcare roles',async () => {
         const { RLSQueryBuilder } = await import('../supabase');
+>>>>>>> origin/main
 
-        const doctorBuilder = new RLSQueryBuilder('doctor-123', 'doctor');
-        const nurseBuilder = new RLSQueryBuilder('nurse-456', 'nurse');
-        const adminBuilder = new RLSQueryBuilder('admin-789', 'clinic_admin');
+        const doctorBuilder = new RLSQueryBuilder('doctor-123', 'doctor')
+        const nurseBuilder = new RLSQueryBuilder('nurse-456', 'nurse')
+        const adminBuilder = new RLSQueryBuilder('admin-789', 'clinic_admin')
 
         const doctorQuery = doctorBuilder.buildQuery(
           'medical_records',
           'select',
-        );
-        const nurseQuery = nurseBuilder.buildQuery('medical_records', 'select');
-        const adminQuery = adminBuilder.buildQuery('medical_records', 'select');
+        
+        const nurseQuery = nurseBuilder.buildQuery('medical_records', 'select')
+        const adminQuery = adminBuilder.buildQuery('medical_records', 'select')
 
         // Different access levels based on role hierarchy
-        expect(doctorQuery.accessLevel).toBe('full_medical_access');
-        expect(nurseQuery.accessLevel).toBe('care_plan_access');
-        expect(adminQuery.accessLevel).toBe('administrative_access');
+        expect(doctorQuery.accessLevel).toBe('full_medical_access')
+        expect(nurseQuery.accessLevel).toBe('care_plan_access')
+        expect(adminQuery.accessLevel).toBe('administrative_access')
 
-        expect(doctorQuery.restrictedFields).toHaveLength(0);
-        expect(nurseQuery.restrictedFields).toContain('psychiatric_notes');
-        expect(adminQuery.restrictedFields).toContain('medical_diagnosis');
-      });
+        expect(doctorQuery.restrictedFields).toHaveLength(0
+        expect(nurseQuery.restrictedFields).toContain('psychiatric_notes')
+        expect(adminQuery.restrictedFields).toContain('medical_diagnosis')
 
+<<<<<<< HEAD
+      it('should implement time-based access restrictions',async () => {
+        const { RLSQueryBuilder } = await import('../supabase')
+=======
       it(_'should implement time-based access restrictions',async () => {
         const { RLSQueryBuilder } = await import('../supabase');
+>>>>>>> origin/main
 
         const builder = new RLSQueryBuilder(
           'professional-123',
           'healthcare_professional',
-        );
+        
         builder.setTemporalContext({
           accessTime: new Date('2024-12-25T02:00:00Z'), // Christmas night
           businessHours: { start: '08:00', end: '18:00' },
           allowEmergencyAccess: false,
-        });
 
         const afterHoursQuery = builder.buildQuery(
           'sensitive_patient_data',
           'select',
-        );
+        
 
         expect(afterHoursQuery.temporalRestrictions.outsideBusinessHours).toBe(
           true,
-        );
+        
         expect(afterHoursQuery.temporalRestrictions.requiresJustification).toBe(
           true,
-        );
-        expect(afterHoursQuery.accessLevel).toBe('emergency_only');
-      });
-    });
-  });
+        
+        expect(afterHoursQuery.accessLevel).toBe('emergency_only')
 
+<<<<<<< HEAD
+  describe('Authentication Flow Architecture for Brazilian Compliance', () => {
+    describe('Multi-Factor Authentication Integration', () => {
+      it('should implement MFA-aware client configuration',async () => {
+        const { createServerClient } = await import('../supabase')
+=======
   describe(_'Authentication Flow Architecture for Brazilian Compliance'), () => {
     describe(_'Multi-Factor Authentication Integration'), () => {
       it(_'should implement MFA-aware client configuration',async () => {
         const { createServerClient } = await import('../supabase');
+>>>>>>> origin/main
 
         const serverClient = createServerClient({
           getAll: () => [
@@ -290,39 +349,44 @@ describe(_'Supabase Architecture Validation - Architect Review'), () => {
             { name: 'aal-level', value: 'aal2' },
           ],
           setAll: () => {},
-        });
 
-        const authContext = await serverClient.auth.getAuthContext();
+        const authContext = await serverClient.auth.getAuthContext(
 
         expect(authContext.mfaVerified).toBe(true);
-        expect(authContext.aalLevel).toBe('aal2');
+        expect(authContext.aalLevel).toBe('aal2')
         expect(authContext.allowedOperations).toContain(
           'access_sensitive_data',
-        );
-      });
+        
 
+<<<<<<< HEAD
+      it('should enforce step-up authentication for sensitive operations',async () => {
+        const { createServerClient } = await import('../supabase')
+=======
       it(_'should enforce step-up authentication for sensitive operations',async () => {
         const { createServerClient } = await import('../supabase');
+>>>>>>> origin/main
 
         const serverClient = createServerClient({
           getAll: () => [{ name: 'aal-level', value: 'aal1' }],
           setAll: () => {},
-        });
 
         const sensitiveOperation = serverClient.rpc('access_sensitive_phi', {
           patient_id: 'patient-123',
           operation: 'view_psychiatric_records',
-        });
 
         await expect(sensitiveOperation).rejects.toThrow(
           'STEP_UP_AUTHENTICATION_REQUIRED',
-        );
-      });
-    });
+        
 
+<<<<<<< HEAD
+    describe('Brazilian Digital Certificate Integration', () => {
+      it('should support ICP-Brasil certificate authentication',async () => {
+        const { createServerClient } = await import('../supabase')
+=======
     describe(_'Brazilian Digital Certificate Integration'), () => {
       it(_'should support ICP-Brasil certificate authentication',async () => {
         const { createServerClient } = await import('../supabase');
+>>>>>>> origin/main
 
         const serverClient = createServerClient({
           getAll: () => [
@@ -330,21 +394,24 @@ describe(_'Supabase Architecture Validation - Architect Review'), () => {
             { name: 'cert-chain-validated', value: 'true' },
           ],
           setAll: () => {},
-        });
 
-        const certValidation = await serverClient.auth.validateBrazilianCertificate();
+        const certValidation = await serverClient.auth.validateBrazilianCertificate(
 
         expect(certValidation.icpBrasilValid).toBe(true);
-        expect(certValidation.certificateType).toBe('a3_healthcare');
+        expect(certValidation.certificateType).toBe('a3_healthcare')
         expect(certValidation.professionalValidated).toBe(true);
-      });
-    });
-  });
 
+<<<<<<< HEAD
+  describe('SSR Cookie Management for Hono.js Integration', () => {
+    describe('Cookie Handling Architecture', () => {
+      it('should implement secure cookie management for SSR contexts',async () => {
+        const { createServerClient } = await import('../supabase')
+=======
   describe(_'SSR Cookie Management for Hono.js Integration'), () => {
     describe(_'Cookie Handling Architecture'), () => {
       it(_'should implement secure cookie management for SSR contexts',async () => {
         const { createServerClient } = await import('../supabase');
+>>>>>>> origin/main
 
         const cookieManager = {
           getAll: vi.fn(() => [
@@ -354,17 +421,21 @@ describe(_'Supabase Architecture Validation - Architect Review'), () => {
           setAll: vi.fn(),
         };
 
-        const serverClient = createServerClient(cookieManager);
+        const serverClient = createServerClient(cookieManager
 
         // Should handle cookie encryption/decryption
         expect(serverClient.cookieManager.encryptionEnabled).toBe(true);
         expect(serverClient.cookieManager.httpOnly).toBe(true);
-        expect(serverClient.cookieManager.sameSite).toBe('strict');
+        expect(serverClient.cookieManager.sameSite).toBe('strict')
         expect(serverClient.cookieManager.secure).toBe(true);
-      });
 
+<<<<<<< HEAD
+      it('should implement cookie chunking for large session data',async () => {
+        const { createServerClient } = await import('../supabase')
+=======
       it(_'should implement cookie chunking for large session data',async () => {
         const { createServerClient } = await import('../supabase');
+>>>>>>> origin/main
 
         const largeCookieData = 'x'.repeat(8192); // Large session data
         const cookieManager = {
@@ -375,17 +446,21 @@ describe(_'Supabase Architecture Validation - Architect Review'), () => {
           setAll: vi.fn(),
         };
 
-        const serverClient = createServerClient(cookieManager);
+        const serverClient = createServerClient(cookieManager
 
         expect(serverClient.cookieManager.chunkingEnabled).toBe(true);
-        expect(serverClient.cookieManager.maxChunkSize).toBe(4000);
-        expect(serverClient.cookieManager.assembleChunks).toBeDefined();
-      });
-    });
+        expect(serverClient.cookieManager.maxChunkSize).toBe(4000
+        expect(serverClient.cookieManager.assembleChunks).toBeDefined(
 
+<<<<<<< HEAD
+    describe('Hono.js Context Integration', () => {
+      it('should integrate seamlessly with Hono middleware patterns',async () => {
+        const { createServerClient } = await import('../supabase')
+=======
     describe(_'Hono.js Context Integration'), () => {
       it(_'should integrate seamlessly with Hono middleware patterns',async () => {
         const { createServerClient } = await import('../supabase');
+>>>>>>> origin/main
 
         // Mock Hono middleware context
         const honoContext = {
@@ -398,135 +473,164 @@ describe(_'Supabase Architecture Validation - Architect Review'), () => {
           set: vi.fn(),
         };
 
-        const honoIntegration = createServerClient.forHono(honoContext);
+        const honoIntegration = createServerClient.forHono(honoContext
 
+<<<<<<< HEAD
+        expect(honoIntegration._context).toBe(honoContext
+=======
         expect(honoIntegration._context).toBe(honoContext);
+>>>>>>> origin/main
         expect(honoIntegration.cookieExtraction.automatic).toBe(true);
-        expect(typeof honoIntegration.middleware).toBe('function');
-      });
-    });
-  });
+        expect(typeof honoIntegration.middleware).toBe('function')
 
+<<<<<<< HEAD
+  describe('Error Handling and Resilience Patterns', () => {
+    describe('Circuit Breaker Architecture', () => {
+      it('should implement circuit breaker for database connections',async () => {
+        const { createAdminClient } = await import('../supabase')
+=======
   describe(_'Error Handling and Resilience Patterns'), () => {
     describe(_'Circuit Breaker Architecture'), () => {
       it(_'should implement circuit breaker for database connections',async () => {
         const { createAdminClient } = await import('../supabase');
+>>>>>>> origin/main
 
-        const adminClient = createAdminClient();
+        const adminClient = createAdminClient(
 
         // Should have circuit breaker for resilience
-        expect(adminClient.circuitBreaker).toBeDefined();
-        expect(adminClient.circuitBreaker.failureThreshold).toBe(5);
+        expect(adminClient.circuitBreaker).toBeDefined(
+        expect(adminClient.circuitBreaker.failureThreshold).toBe(5
         expect(adminClient.circuitBreaker.resetTimeout).toBe(60000); // 1 minute
-        expect(adminClient.circuitBreaker.state).toBe('closed');
-      });
+        expect(adminClient.circuitBreaker.state).toBe('closed')
 
+<<<<<<< HEAD
+      it('should implement exponential backoff retry strategy',async () => {
+        const { createAdminClient } = await import('../supabase')
+=======
       it(_'should implement exponential backoff retry strategy',async () => {
         const { createAdminClient } = await import('../supabase');
+>>>>>>> origin/main
 
-        const adminClient = createAdminClient();
+        const adminClient = createAdminClient(
         const retryStrategy = adminClient.retryPolicy;
 
-        expect(retryStrategy.maxRetries).toBe(3);
+        expect(retryStrategy.maxRetries).toBe(3
         expect(retryStrategy.baseDelay).toBe(1000); // 1 second
         expect(retryStrategy.maxDelay).toBe(30000); // 30 seconds
-        expect(retryStrategy.backoffMultiplier).toBe(2);
-      });
-    });
+        expect(retryStrategy.backoffMultiplier).toBe(2
 
+<<<<<<< HEAD
+    describe('Graceful Degradation Patterns', () => {
+      it('should implement graceful degradation for non-critical features',async () => {
+        const { createServerClient } = await import('../supabase')
+=======
     describe(_'Graceful Degradation Patterns'), () => {
       it(_'should implement graceful degradation for non-critical features',async () => {
         const { createServerClient } = await import('../supabase');
+>>>>>>> origin/main
 
         const serverClient = createServerClient({
           getAll: () => [],
           setAll: () => {},
-        });
 
         // Mock database unavailability
         vi.spyOn(serverClient, 'from').mockImplementation(() => {
-          throw new Error('Database unavailable');
-        });
+          throw new Error('Database unavailable')
 
-        const degradedMode = await serverClient.enableGracefulDegradation();
+        const degradedMode = await serverClient.enableGracefulDegradation(
 
         expect(degradedMode.cacheEnabled).toBe(true);
         expect(degradedMode.readOnlyMode).toBe(true);
         expect(degradedMode.criticalFeaturesOnly).toBe(true);
-      });
-    });
-  });
 
+<<<<<<< HEAD
+  describe('Performance and Scalability Architecture', () => {
+    describe('Query Optimization Patterns', () => {
+      it('should implement intelligent query caching',async () => {
+        const { createServerClient } = await import('../supabase')
+=======
   describe(_'Performance and Scalability Architecture'), () => {
     describe(_'Query Optimization Patterns'), () => {
       it(_'should implement intelligent query caching',async () => {
         const { createServerClient } = await import('../supabase');
+>>>>>>> origin/main
 
         const serverClient = createServerClient({
           getAll: () => [],
           setAll: () => {},
-        });
 
         const queryCache = serverClient.queryCache;
 
         expect(queryCache.enabled).toBe(true);
-        expect(queryCache.maxSize).toBe(1000);
+        expect(queryCache.maxSize).toBe(1000
         expect(queryCache.ttl).toBe(300000); // 5 minutes
-        expect(typeof queryCache.invalidate).toBe('function');
-      });
+        expect(typeof queryCache.invalidate).toBe('function')
 
+<<<<<<< HEAD
+      it('should implement query batching for efficiency',async () => {
+        const { createAdminClient } = await import('../supabase')
+=======
       it(_'should implement query batching for efficiency',async () => {
         const { createAdminClient } = await import('../supabase');
+>>>>>>> origin/main
 
-        const adminClient = createAdminClient();
+        const adminClient = createAdminClient(
         const batchManager = adminClient.batchManager;
 
         expect(batchManager.enabled).toBe(true);
-        expect(batchManager.maxBatchSize).toBe(50);
+        expect(batchManager.maxBatchSize).toBe(50
         expect(batchManager.batchTimeout).toBe(100); // 100ms
-        expect(typeof batchManager.addToBatch).toBe('function');
-      });
-    });
+        expect(typeof batchManager.addToBatch).toBe('function')
 
+<<<<<<< HEAD
+    describe('Horizontal Scaling Support', () => {
+      it('should support read replica routing',async () => {
+        const { createAdminClient } = await import('../supabase')
+=======
     describe(_'Horizontal Scaling Support'), () => {
       it(_'should support read replica routing',async () => {
         const { createAdminClient } = await import('../supabase');
+>>>>>>> origin/main
 
-        const adminClient = createAdminClient();
+        const adminClient = createAdminClient(
         const readReplica = adminClient.readReplica;
 
         expect(readReplica.enabled).toBe(true);
-        expect(readReplica.replicaCount).toBeGreaterThan(0);
-        expect(typeof readReplica.routeQuery).toBe('function');
-      });
-    });
-  });
+        expect(readReplica.replicaCount).toBeGreaterThan(0
+        expect(typeof readReplica.routeQuery).toBe('function')
 
+<<<<<<< HEAD
+  describe('Monitoring and Observability Architecture', () => {
+    describe('Telemetry Integration', () => {
+      it('should implement comprehensive telemetry collection',async () => {
+        const { createAdminClient } = await import('../supabase')
+=======
   describe(_'Monitoring and Observability Architecture'), () => {
     describe(_'Telemetry Integration'), () => {
       it(_'should implement comprehensive telemetry collection',async () => {
         const { createAdminClient } = await import('../supabase');
+>>>>>>> origin/main
 
-        const adminClient = createAdminClient();
+        const adminClient = createAdminClient(
         const telemetry = adminClient.telemetry;
 
         expect(telemetry.metricsEnabled).toBe(true);
         expect(telemetry.tracingEnabled).toBe(true);
         expect(telemetry.loggingEnabled).toBe(true);
-        expect(typeof telemetry.recordMetric).toBe('function');
-      });
+        expect(typeof telemetry.recordMetric).toBe('function')
 
+<<<<<<< HEAD
+      it('should implement health check endpoints',async () => {
+        const { createAdminClient } = await import('../supabase')
+=======
       it(_'should implement health check endpoints',async () => {
         const { createAdminClient } = await import('../supabase');
+>>>>>>> origin/main
 
-        const adminClient = createAdminClient();
-        const healthCheck = await adminClient.getHealthStatus();
+        const adminClient = createAdminClient(
+        const healthCheck = await adminClient.getHealthStatus(
 
-        expect(healthCheck.database.status).toBe('healthy');
-        expect(healthCheck.authentication.status).toBe('healthy');
-        expect(healthCheck.rls.status).toBe('healthy');
-        expect(healthCheck.overall.score).toBeGreaterThan(0.8);
-      });
-    });
-  });
-});
+        expect(healthCheck.database.status).toBe('healthy')
+        expect(healthCheck.authentication.status).toBe('healthy')
+        expect(healthCheck.rls.status).toBe('healthy')
+        expect(healthCheck.overall.score).toBeGreaterThan(0.8

@@ -1,20 +1,30 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
+    "noEmit": false,
     "outDir": "./dist",
     "rootDir": "./src",
+<<<<<<< HEAD
+=======
     "declaration": true,
     "declarationMap": true,
     "composite": true,
     "jsx": "react-jsx",
     "skipLibCheck": true,
     "strict": true,
+>>>>>>> origin/main
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "paths": {
-      "@neonpro/core-services": ["../core-services/dist/index.d.ts"]
+      "@neonpro/core-services": ["../core-services/dist"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "references": [
+    { "path": "../types" },
+    { "path": "../utils" },
+    { "path": "../core-services" }
+  ]
 }

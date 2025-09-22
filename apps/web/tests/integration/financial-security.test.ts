@@ -16,14 +16,14 @@ vi.mock('@/lib/supabase', () => ({
     },
     rpc: vi.fn(),
   },
-}));
+})
 
 vi.mock('@/hooks/use-toast', () => ({
   useToast: () => ({
     toast: vi.fn(),
     dismiss: vi.fn(),
   }),
-}));
+})
 
 // Mock security services
 vi.mock('@/services/financial-security', () => ({
@@ -37,7 +37,7 @@ vi.mock('@/services/financial-security', () => ({
     detectAnomalies: vi.fn(),
     rotateApiKeys: vi.fn(),
   },
-}));
+})
 
 vi.mock('@/services/access-control', () => ({
   AccessControlService: {
@@ -48,7 +48,7 @@ vi.mock('@/services/access-control', () => ({
     logAccessAttempt: vi.fn(),
     getPermissionHistory: vi.fn(),
   },
-}));
+})
 
 vi.mock('@/services/audit-logger', () => ({
   AuditLogger: {
@@ -59,7 +59,7 @@ vi.mock('@/services/audit-logger', () => ({
     exportAuditLog: vi.fn(),
     searchAuditEvents: vi.fn(),
   },
-}));
+})
 
 vi.mock('@/services/compliance-validator', () => ({
   ComplianceValidator: {
@@ -70,7 +70,7 @@ vi.mock('@/services/compliance-validator', () => ({
     generateComplianceReport: vi.fn(),
     scheduleComplianceCheck: vi.fn(),
   },
-}));
+})
 
 // Mock components that should exist but don't yet (TDD RED)
 vi.mock('@/components/security/FinancialSecurityDashboard', () => ({
@@ -80,22 +80,22 @@ vi.mock('@/components/security/FinancialSecurityDashboard', () => ({
       { 'data-testid': 'financial-security-dashboard' },
       'Financial Security Dashboard',
     ),
-}));
+})
 
 vi.mock('@/components/security/AccessControlPanel', () => ({
   AccessControlPanel: () =>
     React.createElement('div', { 'data-testid': 'access-control-panel' }, 'Access Control Panel'),
-}));
+})
 
 vi.mock('@/components/security/AuditLogViewer', () => ({
   AuditLogViewer: () =>
     React.createElement('div', { 'data-testid': 'audit-log-viewer' }, 'Audit Log Viewer'),
-}));
+})
 
 vi.mock('@/components/security/ComplianceMonitor', () => ({
   ComplianceMonitor: () =>
     React.createElement('div', { 'data-testid': 'compliance-monitor' }, 'Compliance Monitor'),
-}));
+})
 
 vi.mock('@/components/security/DataEncryptionManager', () => ({
   DataEncryptionManager: () =>
@@ -104,12 +104,12 @@ vi.mock('@/components/security/DataEncryptionManager', () => ({
       { 'data-testid': 'data-encryption-manager' },
       'Data Encryption Manager',
     ),
-}));
+})
 
 vi.mock('@/components/security/SecurityAlertsPanel', () => ({
   SecurityAlertsPanel: () =>
     React.createElement('div', { 'data-testid': 'security-alerts-panel' }, 'Security Alerts Panel'),
-}));
+})
 
 // Types that should exist but don't yet (TDD RED)
 interface SecurityContext {
@@ -212,7 +212,7 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         gcTime: 0,
       },
     },
-  });
+  }
 
   return React.createElement(
     BrowserRouter,
@@ -222,7 +222,7 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       { client: queryClient },
       children,
     ),
-  );
+  
 };
 
 describe('Financial Security Integration Tests', () => {
@@ -237,7 +237,7 @@ describe('Financial Security Integration Tests', () => {
           gcTime: 0,
         },
       },
-    });
+    }
 
     mockSecurityContext = {
       _userId: 'user-001',
@@ -264,13 +264,13 @@ describe('Financial Security Integration Tests', () => {
       lastActivity: new Date('2024-01-15T10:30:00Z'),
     };
 
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks(
+  }
 
   afterEach(() => {
-    queryClient.clear();
-    vi.resetAllMocks();
-  });
+    queryClient.clear(
+    vi.resetAllMocks(
+  }
 
   describe('Access Control Integration', () => {
     it('should validate user permissions for financial data access', async () => {
@@ -291,17 +291,17 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { AccessControlService } = await import('@/services/access-control');
-      vi.mocked(AccessControlService.validateResourceAccess).mockResolvedValue(mockAccessResult);
+      const { AccessControlService } = await import('@/services/access-control')
+      vi.mocked(AccessControlService.validateResourceAccess).mockResolvedValue(mockAccessResult
 
       // Act
-      const result = await AccessControlService.validateResourceAccess(resourceRequest);
+      const result = await AccessControlService.validateResourceAccess(resourceRequest
 
       // Assert
       expect(result.allowed).toBe(true);
-      expect(result.reason).toContain('read permission');
-      expect(AccessControlService.validateResourceAccess).toHaveBeenCalledWith(resourceRequest);
-    });
+      expect(result.reason).toContain('read permission')
+      expect(AccessControlService.validateResourceAccess).toHaveBeenCalledWith(resourceRequest
+    }
 
     it('should deny access for insufficient permissions', async () => {
       // Arrange
@@ -333,17 +333,17 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { AccessControlService } = await import('@/services/access-control');
-      vi.mocked(AccessControlService.validateResourceAccess).mockResolvedValue(mockDeniedResult);
+      const { AccessControlService } = await import('@/services/access-control')
+      vi.mocked(AccessControlService.validateResourceAccess).mockResolvedValue(mockDeniedResult
 
       // Act
-      const result = await AccessControlService.validateResourceAccess(unauthorizedRequest);
+      const result = await AccessControlService.validateResourceAccess(unauthorizedRequest
 
       // Assert
       expect(result.allowed).toBe(false);
-      expect(result.reason).toContain('does not have delete permission');
-      expect(result.requiredPermissions).toContain('financial_data:delete:clinic');
-    });
+      expect(result.reason).toContain('does not have delete permission')
+      expect(result.requiredPermissions).toContain('financial_data:delete:clinic')
+    }
 
     it('should enforce role-based access control for financial operations', async () => {
       // Arrange
@@ -375,22 +375,22 @@ describe('Financial Security Integration Tests', () => {
       ];
 
       // Mock service responses
-      const { AccessControlService } = await import('@/services/access-control');
+      const { AccessControlService } = await import('@/services/access-control')
 
       for (const test of rolePermissionTests) {
-        vi.mocked(AccessControlService.hasPermission).mockResolvedValue(test.expectedAccess);
+        vi.mocked(AccessControlService.hasPermission).mockResolvedValue(test.expectedAccess
 
         // Act
         const hasPermission = await AccessControlService.hasPermission(
           test.role,
           test.resource,
           test.action,
-        );
+        
 
         // Assert
-        expect(hasPermission).toBe(test.expectedAccess);
+        expect(hasPermission).toBe(test.expectedAccess
       }
-    });
+    }
 
     it('should implement session-based access control with timeout', async () => {
       // Arrange
@@ -409,26 +409,26 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { AccessControlService } = await import('@/services/access-control');
+      const { AccessControlService } = await import('@/services/access-control')
       vi.mocked(AccessControlService.validateResourceAccess).mockResolvedValue({
         allowed: true,
         sessionValid: true,
         sessionTimeRemaining: mockSessionResult.timeRemaining,
-      });
+      }
 
       // Act
       const result = await AccessControlService.validateResourceAccess({
         ...sessionValidationRequest,
         resource: 'financial_data',
         action: 'read',
-      });
+      }
 
       // Assert
       expect(result.allowed).toBe(true);
       expect(result.sessionValid).toBe(true);
-      expect(result.sessionTimeRemaining).toBe(1800000);
-    });
-  });
+      expect(result.sessionTimeRemaining).toBe(1800000
+    }
+  }
 
   describe('Audit Logging Integration', () => {
     it('should log all financial data access events', async () => {
@@ -465,18 +465,18 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { AuditLogger } = await import('@/services/audit-logger');
-      vi.mocked(AuditLogger.logFinancialAction).mockResolvedValue(mockAuditEvent);
+      const { AuditLogger } = await import('@/services/audit-logger')
+      vi.mocked(AuditLogger.logFinancialAction).mockResolvedValue(mockAuditEvent
 
       // Act
-      const result = await AuditLogger.logFinancialAction(financialAccessEvent);
+      const result = await AuditLogger.logFinancialAction(financialAccessEvent
 
       // Assert
       expect(result.sensitiveData).toBe(true);
-      expect(result.complianceFlags).toContain('LGPD_SENSITIVE_DATA');
-      expect(result.result).toBe('success');
-      expect(AuditLogger.logFinancialAction).toHaveBeenCalledWith(financialAccessEvent);
-    });
+      expect(result.complianceFlags).toContain('LGPD_SENSITIVE_DATA')
+      expect(result.result).toBe('success')
+      expect(AuditLogger.logFinancialAction).toHaveBeenCalledWith(financialAccessEvent
+    }
 
     it('should track security violations and suspicious activities', async () => {
       // Arrange
@@ -520,23 +520,23 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { AuditLogger } = await import('@/services/audit-logger');
-      const { FinancialSecurityService } = await import('@/services/financial-security');
+      const { AuditLogger } = await import('@/services/audit-logger')
+      const { FinancialSecurityService } = await import('@/services/financial-security')
 
-      vi.mocked(AuditLogger.logSecurityEvent).mockResolvedValue(mockAuditEvent);
+      vi.mocked(AuditLogger.logSecurityEvent).mockResolvedValue(mockAuditEvent
       vi.mocked(FinancialSecurityService.detectAnomalies).mockResolvedValue([
         mockSecurityViolation,
-      ]);
+      ]
 
       // Act
-      const violations = await FinancialSecurityService.detectAnomalies(suspiciousActivity);
+      const violations = await FinancialSecurityService.detectAnomalies(suspiciousActivity
 
       // Assert
-      expect(violations).toHaveLength(1);
-      expect(violations[0].type).toBe('suspicious_activity');
-      expect(violations[0].severity).toBe('high');
-      expect(violations[0].evidence.failedLoginAttempts).toBe(3);
-    });
+      expect(violations).toHaveLength(1
+      expect(violations[0].type).toBe('suspicious_activity')
+      expect(violations[0].severity).toBe('high')
+      expect(violations[0].evidence.failedLoginAttempts).toBe(3
+    }
 
     it('should maintain comprehensive audit trail for compliance', async () => {
       // Arrange
@@ -577,19 +577,19 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { AuditLogger } = await import('@/services/audit-logger');
-      vi.mocked(AuditLogger.getAuditTrail).mockResolvedValue(mockAuditTrail);
+      const { AuditLogger } = await import('@/services/audit-logger')
+      vi.mocked(AuditLogger.getAuditTrail).mockResolvedValue(mockAuditTrail
 
       // Act
-      const result = await AuditLogger.getAuditTrail(auditQuery);
+      const result = await AuditLogger.getAuditTrail(auditQuery
 
       // Assert
-      expect(result.events).toHaveLength(2);
-      expect(result.summary.complianceEvents).toBe(2);
-      expect(result.summary.riskScore).toBe('low');
-      expect(result.events[1].complianceFlags).toContain('ANVISA_FINANCIAL_RECORD');
-    });
-  });
+      expect(result.events).toHaveLength(2
+      expect(result.summary.complianceEvents).toBe(2
+      expect(result.summary.riskScore).toBe('low')
+      expect(result.events[1].complianceFlags).toContain('ANVISA_FINANCIAL_RECORD')
+    }
+  }
 
   describe('Data Encryption Integration', () => {
     it('should encrypt sensitive financial data before storage', async () => {
@@ -626,20 +626,20 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { FinancialSecurityService } = await import('@/services/financial-security');
-      vi.mocked(FinancialSecurityService.encryptSensitiveData).mockResolvedValue(mockEncryptedData);
+      const { FinancialSecurityService } = await import('@/services/financial-security')
+      vi.mocked(FinancialSecurityService.encryptSensitiveData).mockResolvedValue(mockEncryptedData
 
       // Act
       const result = await FinancialSecurityService.encryptSensitiveData(
         sensitiveFinancialData,
         encryptionConfig,
-      );
+      
 
       // Assert
-      expect(result.encryptedPayload).toContain('AES256:');
-      expect(result.keyId).toBe('key-001');
-      expect(result.metadata.compressionRatio).toBe(0.85);
-    });
+      expect(result.encryptedPayload).toContain('AES256:')
+      expect(result.keyId).toBe('key-001')
+      expect(result.metadata.compressionRatio).toBe(0.85
+    }
 
     it('should decrypt data only for authorized users', async () => {
       // Arrange
@@ -667,27 +667,27 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { FinancialSecurityService } = await import('@/services/financial-security');
-      const { AccessControlService } = await import('@/services/access-control');
+      const { FinancialSecurityService } = await import('@/services/financial-security')
+      const { AccessControlService } = await import('@/services/access-control')
 
-      vi.mocked(AccessControlService.hasPermission).mockResolvedValue(true);
-      vi.mocked(FinancialSecurityService.decryptSensitiveData).mockResolvedValue(mockDecryptedData);
+      vi.mocked(AccessControlService.hasPermission).mockResolvedValue(true
+      vi.mocked(FinancialSecurityService.decryptSensitiveData).mockResolvedValue(mockDecryptedData
 
       // Act
       const hasPermission = await AccessControlService.hasPermission(
         'admin',
         'encrypted_financial_data',
         'read',
-      );
+      
 
       if (hasPermission) {
-        const result = await FinancialSecurityService.decryptSensitiveData(decryptionRequest);
+        const result = await FinancialSecurityService.decryptSensitiveData(decryptionRequest
 
         // Assert
         expect(result.cardNumber).toBe('****-****-****-1111'); // Should be masked
-        expect(result.amount).toBe(1500.00);
+        expect(result.amount).toBe(1500.00
       }
-    });
+    }
 
     it('should implement automatic key rotation for enhanced security', async () => {
       // Arrange
@@ -707,18 +707,18 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { FinancialSecurityService } = await import('@/services/financial-security');
-      vi.mocked(FinancialSecurityService.rotateApiKeys).mockResolvedValue(mockRotationResult);
+      const { FinancialSecurityService } = await import('@/services/financial-security')
+      vi.mocked(FinancialSecurityService.rotateApiKeys).mockResolvedValue(mockRotationResult
 
       // Act
-      const result = await FinancialSecurityService.rotateApiKeys(keyRotationConfig);
+      const result = await FinancialSecurityService.rotateApiKeys(keyRotationConfig
 
       // Assert
-      expect(result.newKeyId).toBe('key-002');
-      expect(result.affectedRecords).toBe(1500);
-      expect(result.status).toBe('completed');
-    });
-  });
+      expect(result.newKeyId).toBe('key-002')
+      expect(result.affectedRecords).toBe(1500
+      expect(result.status).toBe('completed')
+    }
+  }
 
   describe('Compliance Validation Integration', () => {
     it('should validate LGPD compliance for financial data processing', async () => {
@@ -744,17 +744,17 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { ComplianceValidator } = await import('@/services/compliance-validator');
-      vi.mocked(ComplianceValidator.validateLGPD).mockResolvedValue(mockLGPDValidation);
+      const { ComplianceValidator } = await import('@/services/compliance-validator')
+      vi.mocked(ComplianceValidator.validateLGPD).mockResolvedValue(mockLGPDValidation
 
       // Act
-      const result = await ComplianceValidator.validateLGPD(lgpdValidationRequest);
+      const result = await ComplianceValidator.validateLGPD(lgpdValidationRequest
 
       // Assert
       expect(result.compliant).toBe(true);
-      expect(result.score).toBe(95);
-      expect(result.recommendations).toHaveLength(2);
-    });
+      expect(result.score).toBe(95
+      expect(result.recommendations).toHaveLength(2
+    }
 
     it('should validate ANVISA compliance for medical device financial data', async () => {
       // Arrange
@@ -776,17 +776,17 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { ComplianceValidator } = await import('@/services/compliance-validator');
-      vi.mocked(ComplianceValidator.validateANVISA).mockResolvedValue(mockANVISAValidation);
+      const { ComplianceValidator } = await import('@/services/compliance-validator')
+      vi.mocked(ComplianceValidator.validateANVISA).mockResolvedValue(mockANVISAValidation
 
       // Act
-      const result = await ComplianceValidator.validateANVISA(anvisaValidationRequest);
+      const result = await ComplianceValidator.validateANVISA(anvisaValidationRequest
 
       // Assert
       expect(result.compliant).toBe(true);
-      expect(result.certificateNumber).toContain('ANVISA-');
-      expect(result.riskLevel).toBe('acceptable');
-    });
+      expect(result.certificateNumber).toContain('ANVISA-')
+      expect(result.riskLevel).toBe('acceptable')
+    }
 
     it('should validate CFM ethical standards for financial transparency', async () => {
       // Arrange
@@ -813,17 +813,17 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { ComplianceValidator } = await import('@/services/compliance-validator');
-      vi.mocked(ComplianceValidator.validateCFM).mockResolvedValue(mockCFMValidation);
+      const { ComplianceValidator } = await import('@/services/compliance-validator')
+      vi.mocked(ComplianceValidator.validateCFM).mockResolvedValue(mockCFMValidation
 
       // Act
-      const result = await ComplianceValidator.validateCFM(cfmValidationRequest);
+      const result = await ComplianceValidator.validateCFM(cfmValidationRequest
 
       // Assert
       expect(result.compliant).toBe(true);
-      expect(result.ethicalScore).toBe(98);
-      expect(result.requirements).toHaveLength(3);
-    });
+      expect(result.ethicalScore).toBe(98
+      expect(result.requirements).toHaveLength(3
+    }
 
     it('should generate comprehensive compliance reports', async () => {
       // Arrange
@@ -865,21 +865,21 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { ComplianceValidator } = await import('@/services/compliance-validator');
+      const { ComplianceValidator } = await import('@/services/compliance-validator')
       vi.mocked(ComplianceValidator.generateComplianceReport).mockResolvedValue(
         mockComplianceReport,
-      );
+      
 
       // Act
-      const result = await ComplianceValidator.generateComplianceReport(complianceReportRequest);
+      const result = await ComplianceValidator.generateComplianceReport(complianceReportRequest
 
       // Assert
-      expect(result.overallScore).toBe(94);
-      expect(result.regulationScores.LGPD).toBe(95);
-      expect(result.violations).toHaveLength(1);
-      expect(result.recommendations).toHaveLength(3);
-    });
-  });
+      expect(result.overallScore).toBe(94
+      expect(result.regulationScores.LGPD).toBe(95
+      expect(result.violations).toHaveLength(1
+      expect(result.recommendations).toHaveLength(3
+    }
+  }
 
   describe('Security Monitoring and Alerting Integration', () => {
     it('should monitor real-time security events', async () => {
@@ -929,17 +929,17 @@ describe('Financial Security Integration Tests', () => {
       ];
 
       // Mock service responses
-      const { FinancialSecurityService } = await import('@/services/financial-security');
-      vi.mocked(FinancialSecurityService.detectAnomalies).mockResolvedValue(mockSecurityEvents);
+      const { FinancialSecurityService } = await import('@/services/financial-security')
+      vi.mocked(FinancialSecurityService.detectAnomalies).mockResolvedValue(mockSecurityEvents
 
       // Act
-      const result = await FinancialSecurityService.detectAnomalies(securityMonitoringConfig);
+      const result = await FinancialSecurityService.detectAnomalies(securityMonitoringConfig
 
       // Assert
-      expect(result).toHaveLength(2);
-      expect(result[1].severity).toBe('medium');
+      expect(result).toHaveLength(2
+      expect(result[1].severity).toBe('medium')
       expect(result[1].details.offHours).toBe(true);
-    });
+    }
 
     it('should generate automated security alerts for critical events', async () => {
       // Arrange
@@ -975,19 +975,19 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { FinancialSecurityService } = await import('@/services/financial-security');
+      const { FinancialSecurityService } = await import('@/services/financial-security')
       vi.mocked(FinancialSecurityService.generateSecurityReport).mockResolvedValue(
         mockSecurityAlert,
-      );
+      
 
       // Act
-      const result = await FinancialSecurityService.generateSecurityReport(criticalSecurityEvent);
+      const result = await FinancialSecurityService.generateSecurityReport(criticalSecurityEvent
 
       // Assert
-      expect(result.severity).toBe('critical');
-      expect(result.autoActions).toContain('IP_temporarily_blocked');
-      expect(result.recommendedActions).toHaveLength(4);
-    });
+      expect(result.severity).toBe('critical')
+      expect(result.autoActions).toContain('IP_temporarily_blocked')
+      expect(result.recommendedActions).toHaveLength(4
+    }
 
     it('should provide security dashboard with real-time metrics', async () => {
       // Arrange
@@ -1046,21 +1046,21 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { FinancialSecurityService } = await import('@/services/financial-security');
+      const { FinancialSecurityService } = await import('@/services/financial-security')
       vi.mocked(FinancialSecurityService.generateSecurityReport).mockResolvedValue(
         mockSecurityDashboard,
-      );
+      
 
       // Act
-      const result = await FinancialSecurityService.generateSecurityReport(dashboardQuery);
+      const result = await FinancialSecurityService.generateSecurityReport(dashboardQuery
 
       // Assert
-      expect(result.overallSecurityScore).toBe(88);
-      expect(result.metrics.dataEncryptionStatus.encryptedRecords).toBe(98.5);
-      expect(result.alerts).toHaveLength(1);
-      expect(result.recommendations).toHaveLength(3);
-    });
-  });
+      expect(result.overallSecurityScore).toBe(88
+      expect(result.metrics.dataEncryptionStatus.encryptedRecords).toBe(98.5
+      expect(result.alerts).toHaveLength(1
+      expect(result.recommendations).toHaveLength(3
+    }
+  }
 
   describe('Error Handling and Security Edge Cases', () => {
     it('should handle security service failures gracefully', async () => {
@@ -1072,16 +1072,16 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service error
-      const { FinancialSecurityService } = await import('@/services/financial-security');
+      const { FinancialSecurityService } = await import('@/services/financial-security')
       vi.mocked(FinancialSecurityService.validateAccess).mockRejectedValue(
         new Error('Security service temporarily unavailable'),
-      );
+      
 
       // Act & Assert
       await expect(
         FinancialSecurityService.validateAccess(securityRequest),
-      ).rejects.toThrow('Security service temporarily unavailable');
-    });
+      ).rejects.toThrow('Security service temporarily unavailable')
+    }
 
     it('should implement fail-secure behavior on security failures', async () => {
       // Arrange
@@ -1105,10 +1105,10 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses
-      const { AccessControlService } = await import('@/services/access-control');
+      const { AccessControlService } = await import('@/services/access-control')
       vi.mocked(AccessControlService.validateResourceAccess).mockResolvedValue(
         mockFailSecureResponse,
-      );
+      
 
       // Act
       const result = await AccessControlService.validateResourceAccess({
@@ -1116,13 +1116,13 @@ describe('Financial Security Integration Tests', () => {
         resource: 'financial_data',
         action: 'read',
         emergencyMode: true,
-      });
+      }
 
       // Assert
       expect(result.accessGranted).toBe(false);
-      expect(result.reason).toContain('fail secure mode');
+      expect(result.reason).toContain('fail secure mode')
       expect(result.manualOverrideRequired).toBe(true);
-    });
+    }
 
     it('should validate input sanitization for security parameters', async () => {
       // Arrange
@@ -1139,26 +1139,26 @@ describe('Financial Security Integration Tests', () => {
       };
 
       // Mock service responses with input validation
-      const { FinancialSecurityService } = await import('@/services/financial-security');
+      const { FinancialSecurityService } = await import('@/services/financial-security')
       vi.mocked(FinancialSecurityService.validateAccess).mockImplementation(async input => {
         // Simulate input sanitization
         if (
           input.userId.includes('\'') || input.resource.includes('<')
           || input.action.includes('../')
         ) {
-          throw new Error('Invalid input detected - potential security threat');
+          throw new Error('Invalid input detected - potential security threat')
         }
         return { accessGranted: true, sanitized: true };
-      });
+      }
 
       // Act & Assert - Malicious input should be rejected
       await expect(
         FinancialSecurityService.validateAccess(maliciousInput),
-      ).rejects.toThrow('Invalid input detected');
+      ).rejects.toThrow('Invalid input detected')
 
       // Act & Assert - Clean input should be accepted
-      const result = await FinancialSecurityService.validateAccess(sanitizedInput);
+      const result = await FinancialSecurityService.validateAccess(sanitizedInput
       expect(result.sanitized).toBe(true);
-    });
-  });
-});
+    }
+  }
+}

@@ -7,7 +7,7 @@ vi.mock('../lib/prisma', () => ({
       count: vi.fn().mockResolvedValue(1),
     },
   },
-}));
+})
 
 describe('appointments conflict detection', () => {
   it('returns true when overlapping exists', async () => {
@@ -16,7 +16,4 @@ describe('appointments conflict detection', () => {
       professionalId: 'p',
       startTime: new Date('2025-01-01T10:00:00Z'),
       endTime: new Date('2025-01-01T11:00:00Z'),
-    });
     expect(ok).toBe(true);
-  });
-});

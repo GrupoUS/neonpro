@@ -8,13 +8,13 @@ import { describe, expect, it } from "vitest";
 describe("Real-time Notification Model (T036)", () => {
   it("should export Notification type", () => {
     expect(() => {
-      const module = require("../notifications");
-      expect(module.createNotification).toBeDefined();
-    }).not.toThrow();
-  });
+      const module = require("../notifications"
+      expect(module.createNotification).toBeDefined(
+    }).not.toThrow(
+  }
 
   it("should have required notification fields", () => {
-    const { Notification } = require("../notifications");
+    const { Notification } = require("../notifications"
     const notification: Notification = {
       id: "notification-123",
       recipientId: "patient-123",
@@ -34,51 +34,51 @@ describe("Real-time Notification Model (T036)", () => {
       updatedAt: new Date(),
     };
 
-    expect(notification.id).toBe("notification-123");
-    expect(notification.channel).toBe("whatsapp");
-    expect(notification.priority).toBe("high");
-  });
+    expect(notification.id).toBe("notification-123"
+    expect(notification.channel).toBe("whatsapp"
+    expect(notification.priority).toBe("high"
+  }
 
   it("should support notification types", () => {
-    const { NotificationType } = require("../notifications");
-    expect(NotificationType.APPOINTMENT_REMINDER).toBe("appointment_reminder");
+    const { NotificationType } = require("../notifications"
+    expect(NotificationType.APPOINTMENT_REMINDER).toBe("appointment_reminder"
     expect(NotificationType.APPOINTMENT_CONFIRMATION).toBe(
       "appointment_confirmation",
-    );
-    expect(NotificationType.MEDICATION_REMINDER).toBe("medication_reminder");
-    expect(NotificationType.TEST_RESULT).toBe("test_result");
-    expect(NotificationType.EMERGENCY_ALERT).toBe("emergency_alert");
-  });
+    
+    expect(NotificationType.MEDICATION_REMINDER).toBe("medication_reminder"
+    expect(NotificationType.TEST_RESULT).toBe("test_result"
+    expect(NotificationType.EMERGENCY_ALERT).toBe("emergency_alert"
+  }
 
   it("should support notification channels", () => {
-    const { NotificationChannel } = require("../notifications");
-    expect(NotificationChannel.EMAIL).toBe("email");
-    expect(NotificationChannel.SMS).toBe("sms");
-    expect(NotificationChannel.WHATSAPP).toBe("whatsapp");
-    expect(NotificationChannel.PUSH).toBe("push");
-    expect(NotificationChannel.IN_APP).toBe("in_app");
-  });
+    const { NotificationChannel } = require("../notifications"
+    expect(NotificationChannel.EMAIL).toBe("email"
+    expect(NotificationChannel.SMS).toBe("sms"
+    expect(NotificationChannel.WHATSAPP).toBe("whatsapp"
+    expect(NotificationChannel.PUSH).toBe("push"
+    expect(NotificationChannel.IN_APP).toBe("in_app"
+  }
 
   it("should support priority levels", () => {
-    const { NotificationPriority } = require("../notifications");
-    expect(NotificationPriority.LOW).toBe("low");
-    expect(NotificationPriority.NORMAL).toBe("normal");
-    expect(NotificationPriority.HIGH).toBe("high");
-    expect(NotificationPriority.URGENT).toBe("urgent");
-    expect(NotificationPriority.CRITICAL).toBe("critical");
-  });
+    const { NotificationPriority } = require("../notifications"
+    expect(NotificationPriority.LOW).toBe("low"
+    expect(NotificationPriority.NORMAL).toBe("normal"
+    expect(NotificationPriority.HIGH).toBe("high"
+    expect(NotificationPriority.URGENT).toBe("urgent"
+    expect(NotificationPriority.CRITICAL).toBe("critical"
+  }
 
   it("should support notification status", () => {
-    const { NotificationStatus } = require("../notifications");
-    expect(NotificationStatus.PENDING).toBe("pending");
-    expect(NotificationStatus.SENT).toBe("sent");
-    expect(NotificationStatus.DELIVERED).toBe("delivered");
-    expect(NotificationStatus.READ).toBe("read");
-    expect(NotificationStatus.FAILED).toBe("failed");
-  });
+    const { NotificationStatus } = require("../notifications"
+    expect(NotificationStatus.PENDING).toBe("pending"
+    expect(NotificationStatus.SENT).toBe("sent"
+    expect(NotificationStatus.DELIVERED).toBe("delivered"
+    expect(NotificationStatus.READ).toBe("read"
+    expect(NotificationStatus.FAILED).toBe("failed"
+  }
 
   it("should support Brazilian notification templates", () => {
-    const { NotificationTemplate } = require("../notifications");
+    const { NotificationTemplate } = require("../notifications"
     const template: NotificationTemplate = {
       id: "appointment-reminder-pt",
       name: "Lembrete de Consulta",
@@ -98,13 +98,13 @@ describe("Real-time Notification Model (T036)", () => {
       healthcareCompliant: true,
     };
 
-    expect(template.language).toBe("pt-BR");
+    expect(template.language).toBe("pt-BR"
     expect(template.healthcareCompliant).toBe(true);
-    expect(template.channels).toContain("whatsapp");
-  });
+    expect(template.channels).toContain("whatsapp"
+  }
 
   it("should validate notification data", () => {
-    const { validateNotification } = require("../notifications");
+    const { validateNotification } = require("../notifications"
 
     const validNotification = {
       recipientId: "patient-123",
@@ -122,10 +122,10 @@ describe("Real-time Notification Model (T036)", () => {
 
     expect(validateNotification(validNotification)).toBe(true);
     expect(validateNotification(invalidNotification)).toBe(false);
-  });
+  }
 
   it("should support delivery tracking", () => {
-    const { DeliveryStatus } = require("../notifications");
+    const { DeliveryStatus } = require("../notifications"
     const delivery: DeliveryStatus = {
       notificationId: "notification-123",
       channel: "whatsapp",
@@ -139,13 +139,13 @@ describe("Real-time Notification Model (T036)", () => {
       cost: 0.05,
     };
 
-    expect(delivery.status).toBe("delivered");
-    expect(delivery.attempts).toBe(1);
-    expect(delivery.cost).toBe(0.05);
-  });
+    expect(delivery.status).toBe("delivered"
+    expect(delivery.attempts).toBe(1
+    expect(delivery.cost).toBe(0.05
+  }
 
   it("should handle notification scheduling", () => {
-    const { scheduleNotification } = require("../notifications");
+    const { scheduleNotification } = require("../notifications"
 
     const notification = {
       recipientId: "patient-123",
@@ -155,15 +155,15 @@ describe("Real-time Notification Model (T036)", () => {
       message: "Consulta amanhã",
     };
 
-    const scheduledTime = new Date("2024-01-15T13:00:00");
-    const scheduled = scheduleNotification(notification, scheduledTime);
+    const scheduledTime = new Date("2024-01-15T13:00:00"
+    const scheduled = scheduleNotification(notification, scheduledTime
 
-    expect(scheduled.status).toBe("scheduled");
-    expect(scheduled.scheduledFor).toEqual(scheduledTime);
-  });
+    expect(scheduled.status).toBe("scheduled"
+    expect(scheduled.scheduledFor).toEqual(scheduledTime
+  }
 
   it("should support multi-channel delivery", () => {
-    const { createMultiChannelNotification } = require("../notifications");
+    const { createMultiChannelNotification } = require("../notifications"
 
     const baseNotification = {
       recipientId: "patient-123",
@@ -177,15 +177,15 @@ describe("Real-time Notification Model (T036)", () => {
     const notifications = createMultiChannelNotification(
       baseNotification,
       channels,
-    );
+    
 
-    expect(notifications).toHaveLength(4);
-    expect(notifications[0].channel).toBe("whatsapp");
-    expect(notifications[1].channel).toBe("sms");
-  });
+    expect(notifications).toHaveLength(4
+    expect(notifications[0].channel).toBe("whatsapp"
+    expect(notifications[1].channel).toBe("sms"
+  }
 
   it("should support LGPD compliance for notifications", () => {
-    const { anonymizeNotification } = require("../notifications");
+    const { anonymizeNotification } = require("../notifications"
 
     const notification = {
       id: "notification-123",
@@ -198,14 +198,14 @@ describe("Real-time Notification Model (T036)", () => {
       },
     };
 
-    const anonymized = anonymizeNotification(notification);
-    expect(anonymized.title).toMatch(/^NOTIFICAÇÃO ANONIMIZADA/);
-    expect(anonymized.message).toMatch(/^MENSAGEM ANONIMIZADA/);
-    expect(anonymized.data.patientName).toMatch(/^PACIENTE_ANON/);
-  });
+    const anonymized = anonymizeNotification(notification
+    expect(anonymized.title).toMatch(/^NOTIFICAÇÃO ANONIMIZADA/
+    expect(anonymized.message).toMatch(/^MENSAGEM ANONIMIZADA/
+    expect(anonymized.data.patientName).toMatch(/^PACIENTE_ANON/
+  }
 
   it("should handle notification preferences", () => {
-    const { NotificationPreferences } = require("../notifications");
+    const { NotificationPreferences } = require("../notifications"
     const preferences: NotificationPreferences = {
       _userId: "patient-123",
       channels: {
@@ -230,13 +230,13 @@ describe("Real-time Notification Model (T036)", () => {
       language: "pt-BR",
     };
 
-    expect(preferences.language).toBe("pt-BR");
+    expect(preferences.language).toBe("pt-BR"
     expect(preferences.channels.whatsapp.enabled).toBe(true);
-    expect(preferences.quietHours.timezone).toBe("America/Sao_Paulo");
-  });
+    expect(preferences.quietHours.timezone).toBe("America/Sao_Paulo"
+  }
 
   it("should support notification retry logic", () => {
-    const { retryNotification } = require("../notifications");
+    const { retryNotification } = require("../notifications"
 
     const failedNotification = {
       id: "notification-123",
@@ -246,14 +246,14 @@ describe("Real-time Notification Model (T036)", () => {
       errorMessage: "Network timeout",
     };
 
-    const retried = retryNotification(failedNotification);
-    expect(retried.status).toBe("pending");
-    expect(retried.attempts).toBe(2);
-    expect(retried.nextRetryAt).toBeInstanceOf(Date);
-  });
+    const retried = retryNotification(failedNotification
+    expect(retried.status).toBe("pending"
+    expect(retried.attempts).toBe(2
+    expect(retried.nextRetryAt).toBeInstanceOf(Date
+  }
 
   it("should calculate notification metrics", () => {
-    const { calculateNotificationMetrics } = require("../notifications");
+    const { calculateNotificationMetrics } = require("../notifications"
 
     const notifications = [
       {
@@ -278,15 +278,15 @@ describe("Real-time Notification Model (T036)", () => {
       },
     ];
 
-    const metrics = calculateNotificationMetrics(notifications);
-    expect(metrics.totalSent).toBe(4);
+    const metrics = calculateNotificationMetrics(notifications
+    expect(metrics.totalSent).toBe(4
     expect(metrics.deliveryRate).toBe(0.75); // 3/4 delivered or read
-    expect(metrics.totalCost).toBeCloseTo(0.21, 2);
-    expect(metrics.byChannel.whatsapp).toBe(2);
-  });
+    expect(metrics.totalCost).toBeCloseTo(0.21, 2
+    expect(metrics.byChannel.whatsapp).toBe(2
+  }
 
   it("should support Brazilian healthcare notification compliance", () => {
-    const { validateHealthcareCompliance } = require("../notifications");
+    const { validateHealthcareCompliance } = require("../notifications"
 
     const compliantNotification = {
       type: "test_result",
@@ -306,5 +306,5 @@ describe("Real-time Notification Model (T036)", () => {
 
     expect(validateHealthcareCompliance(compliantNotification)).toBe(true);
     expect(validateHealthcareCompliance(nonCompliantNotification)).toBe(false);
-  });
-});
+  }
+}

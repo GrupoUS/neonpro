@@ -3,7 +3,6 @@
  * Following TDD methodology - MUST FAIL FIRST
  * Integration with AIChatService for AI model management
  */
-
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
@@ -225,32 +224,38 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       success: true,
       data: { auditId: 'audit-models-123' },
     });
-  });
 
   afterEach(() => {
     vi.restoreAllMocks();
-  });
 
+<<<<<<< HEAD
+  it('should export AI models route handler',async () => {
+=======
   it(_'should export AI models route handler',async () => {
+>>>>>>> origin/main
     const module = await import('../models');
     expect(module.default).toBeDefined();
-  });
 
+<<<<<<< HEAD
+  describe('Successful AI Models Listing', () => {
+    it('should list all available AI models',async () => {
+=======
   describe(_'Successful AI Models Listing'), () => {
     it(_'should list all available AI models',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -262,22 +267,25 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
         'anthropic',
         'google',
       ]);
-    });
 
+<<<<<<< HEAD
+    it('should filter models by provider',async () => {
+=======
     it(_'should filter models by provider',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?provider=openai', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -285,22 +293,25 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
         _userId: 'user-123',
         filters: { provider: 'openai' },
       });
-    });
 
+<<<<<<< HEAD
+    it('should filter models by capability',async () => {
+=======
     it(_'should filter models by capability',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?capability=image_analysis', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -308,22 +319,25 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
         _userId: 'user-123',
         filters: { capability: 'image_analysis' },
       });
-    });
 
+<<<<<<< HEAD
+    it('should filter models by status',async () => {
+=======
     it(_'should filter models by status',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?status=available', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -331,22 +345,25 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
         _userId: 'user-123',
         filters: { status: 'available' },
       });
-    });
 
+<<<<<<< HEAD
+    it('should include detailed model information',async () => {
+=======
     it(_'should include detailed model information',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?includeDetails=true', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -354,136 +371,150 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(data.data.models[0].limits).toBeDefined();
       expect(data.data.models[0].performance).toBeDefined();
       expect(data.data.models[0].features).toBeDefined();
-    });
 
+<<<<<<< HEAD
+    it('should include model health information',async () => {
+=======
     it(_'should include model health information',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?includeHealth=true', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.data.healthSummary).toBeDefined();
       expect(data.data.healthSummary.overallHealth).toBe('healthy');
       expect(mockAIChatService.getModelHealth).toHaveBeenCalled();
-    });
 
+<<<<<<< HEAD
+    it('should include usage metrics',async () => {
+=======
     it(_'should include usage metrics',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?includeMetrics=true', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(data.data.metrics).toBeDefined();
       expect(data.data.metrics.usage.totalRequests).toBe(15420);
       expect(mockAIChatService.getModelMetrics).toHaveBeenCalled();
-    });
 
+<<<<<<< HEAD
+    it('should include model performance headers',async () => {
+=======
     it(_'should include model performance headers',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
       expect(response.status).toBe(200);
       expect(response.headers.get('X-Total-Models')).toBe('4');
       expect(response.headers.get('X-Available-Models')).toBe('3');
       expect(response.headers.get('X-Healthy-Models')).toBe('3');
       expect(response.headers.get('X-Model-Providers')).toBe(
-        'openai,anthropic,google',
-      );
+        'openai,anthropic,google');
+      
       expect(response.headers.get('X-Last-Updated')).toBe(
-        '2024-01-16T10:30:00Z',
-      );
-    });
-  });
+        '2024-01-16T10:30:00Z');
+      
 
+<<<<<<< HEAD
+  describe('Model Recommendations', () => {
+    it('should provide model recommendations based on use case',async () => {
+=======
   describe(_'Model Recommendations'), () => {
     it(_'should provide model recommendations based on use case',async () => {
+>>>>>>> origin/main
       mockAIChatService.getAvailableModels.mockResolvedValueOnce({
-        success: true,
+        success: true),
         data: {
           models: [], // Simplified for this test
           recommendations: [
             {
-              useCase: 'medical_image_analysis',
-              recommendedModel: 'gpt-4-vision',
-              reasoning: 'Melhor performance para análise de imagens médicas',
-              confidence: 0.95,
+              useCase: 'medical_image_analysis'),
+              recommendedModel: 'gpt-4-vision'),
+              reasoning: 'Melhor performance para análise de imagens médicas'),
+              confidence: 0.95),
             },
             {
-              useCase: 'complex_reasoning',
-              recommendedModel: 'claude-3-sonnet',
-              reasoning: 'Excelente capacidade de raciocínio complexo',
-              confidence: 0.92,
+              useCase: 'complex_reasoning'),
+              recommendedModel: 'claude-3-sonnet'),
+              reasoning: 'Excelente capacidade de raciocínio complexo'),
+              confidence: 0.92),
             },
           ],
         },
-      });
 
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?useCase=medical_image_analysis', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(200);
       expect(data.data.recommendations).toBeDefined();
       expect(data.data.recommendations[0].recommendedModel).toBe(
-        'gpt-4-vision',
-      );
-    });
+        'gpt-4-vision');
+      
 
+<<<<<<< HEAD
+    it('should provide fallback model suggestions',async () => {
+=======
     it(_'should provide fallback model suggestions',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?includeFallbacks=true', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
@@ -491,30 +522,36 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
         _userId: 'user-123',
         includeFallbacks: true,
       });
-    });
-  });
 
+<<<<<<< HEAD
+  describe('Error Handling', () => {
+    it('should handle authentication errors',async () => {
+=======
   describe(_'Error Handling'), () => {
     it(_'should handle authentication errors',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            'content-type': 'application/json',
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(401);
       expect(data.success).toBe(false);
       expect(data.error).toContain('Não autorizado');
-    });
 
+<<<<<<< HEAD
+    it('should handle service errors gracefully',async () => {
+=======
     it(_'should handle service errors gracefully',async () => {
+>>>>>>> origin/main
       mockAIChatService.getAvailableModels.mockResolvedValue({
         success: false,
         error: 'Erro interno do serviço de modelos de IA',
@@ -524,83 +561,93 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
       expect(data.error).toContain('Erro interno');
-    });
 
+<<<<<<< HEAD
+    it('should handle invalid filter parameters',async () => {
+=======
     it(_'should handle invalid filter parameters',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?provider=invalid_provider', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
       expect(data.error).toContain('Parâmetros de filtro inválidos');
-    });
 
+<<<<<<< HEAD
+    it('should handle model service unavailability',async () => {
+=======
     it(_'should handle model service unavailability',async () => {
+>>>>>>> origin/main
       mockAIChatService.getAvailableModels.mockRejectedValue(
-        new Error('Model service unavailable'),
+        new Error('Model service unavailable')
       );
+      
 
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(503);
       expect(data.success).toBe(false);
       expect(data.error).toContain(
-        'Serviço de modelos de IA temporariamente indisponível',
-      );
-    });
-  });
+        'Serviço de modelos de IA temporariamente indisponível');
+      
 
+<<<<<<< HEAD
+  describe('Audit and Logging', () => {
+    it('should log model access for audit trail',async () => {
+=======
   describe(_'Audit and Logging'), () => {
     it(_'should log model access for audit trail',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       await modelsRoute.request(
         new Request('http://localhost/?includeMetrics=true', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
-            'X-Real-IP': '192.168.1.100',
-            'User-Agent': 'Mozilla/5.0',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
+            'X-Real-IP': '192.168.1.100'),
+            'User-Agent': 'Mozilla/5.0'),
           },
         }),
-      );
+      
 
       expect(mockAuditService.logActivity).toHaveBeenCalledWith({
         _userId: 'user-123',
@@ -618,41 +665,47 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
         complianceContext: 'LGPD',
         sensitivityLevel: 'medium',
       });
-    });
-  });
 
+<<<<<<< HEAD
+  describe('Brazilian Healthcare Compliance', () => {
+    it('should include CFM compliance headers',async () => {
+=======
   describe(_'Brazilian Healthcare Compliance'), () => {
     it(_'should include CFM compliance headers',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
       expect(response.headers.get('X-CFM-Compliant')).toBe('true');
       expect(response.headers.get('X-AI-Models-Listed')).toBe('true');
       expect(response.headers.get('X-LGPD-Compliant')).toBe('true');
-    });
 
+<<<<<<< HEAD
+    it('should filter models for healthcare context',async () => {
+=======
     it(_'should filter models for healthcare context',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?healthcareContext=true', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
-            'X-Healthcare-Professional': 'CRM-SP-123456',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
+            'X-Healthcare-Professional': 'CRM-SP-123456'),
           },
         }),
-      );
+      
 
       expect(response.status).toBe(200);
       expect(mockAIChatService.getAvailableModels).toHaveBeenCalledWith({
@@ -660,47 +713,50 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
         healthcareContext: true,
         healthcareProfessional: 'CRM-SP-123456',
       });
-    });
-  });
 
+<<<<<<< HEAD
+  describe('Performance and Caching', () => {
+    it('should include performance headers',async () => {
+=======
   describe(_'Performance and Caching'), () => {
     it(_'should include performance headers',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
       expect(response.status).toBe(200);
       expect(response.headers.get('X-Response-Time')).toBeDefined();
       expect(response.headers.get('Cache-Control')).toBe('public, max-age=300');
       expect(response.headers.get('X-Database-Queries')).toBeDefined();
-    });
 
+<<<<<<< HEAD
+    it('should handle model status monitoring',async () => {
+=======
     it(_'should handle model status monitoring',async () => {
+>>>>>>> origin/main
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
         new Request('http://localhost/?monitorHealth=true', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
         }),
-      );
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
       expect(response.status).toBe(200);
       expect(data.data.metadata.monitoringEnabled).toBe(true);
       expect(data.data.metadata.refreshInterval).toBe('5 minutes');
-    });
-  });
-});

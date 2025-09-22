@@ -6,9 +6,9 @@ import { describe, expect, it } from 'vitest';
 
 async function api(path: string, init?: RequestInit) {
   // Use main app which includes observability routes
-  const { default: app } = await import('../../src/app');
-  const url = new URL(`http://local.test${path}`);
-  return app.request(url, init);
+  const { default: app } = await import('../../src/app')
+  const url = new URL(`http://local.test${path}`
+  return app.request(url, init
 }
 
 describe('Contract: Observability API', () => {
@@ -17,12 +17,12 @@ describe('Contract: Observability API', () => {
       const res = await api('/health', {
         method: 'GET',
         headers: { accept: 'application/json' },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         status: expect.stringMatching(/^(ok|degraded|down)$/),
         timestamp: expect.any(String),
@@ -32,7 +32,7 @@ describe('Contract: Observability API', () => {
           cache: expect.stringMatching(/^(healthy|degraded|unhealthy)$/),
         }),
         version: expect.any(String),
-      });
+      }
 
       // Healthcare compliance requirements
       expect(data.security).toMatchObject({
@@ -42,16 +42,16 @@ describe('Contract: Observability API', () => {
           'rate_limiting',
           'healthcare_data_protection',
         ]),
-      });
-    });
+      }
+    }
 
     it('should include LGPD compliance status', async () => {
       const res = await api('/health', {
         method: 'GET',
         headers: { 'x-request-id': 'test-health-001' },
-      });
+      }
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data.compliance).toMatchObject({
         lgpd: expect.objectContaining({
           enabled: true,
@@ -61,9 +61,9 @@ describe('Contract: Observability API', () => {
         anvisa: expect.objectContaining({
           medical_device_compliance: 'enabled',
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Telemetry Collection Endpoint', () => {
     it('should accept healthcare telemetry data', async () => {
@@ -92,18 +92,18 @@ describe('Contract: Observability API', () => {
           'x-user-id': 'user_456',
         },
         body: JSON.stringify(telemetryEvent),
-      });
+      }
 
       expect(res.ok).toBe(true);
       expect(res.status).toBe(202); // Accepted for async processing
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         event_id: expect.any(String),
         status: 'accepted',
         processed_at: expect.any(String),
-      });
-    });
+      }
+    }
 
     it('should validate telemetry data schema', async () => {
       const invalidEvent = {
@@ -115,17 +115,17 @@ describe('Contract: Observability API', () => {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(invalidEvent),
-      });
+      }
 
       expect(res.status).toBe(422); // Unprocessable Entity
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         error: 'validation_failed',
         message: expect.any(String),
         details: expect.any(Array),
-      });
-    });
+      }
+    }
 
     it('should enforce rate limiting for telemetry ingestion', async () => {
       const event = {
@@ -145,24 +145,24 @@ describe('Contract: Observability API', () => {
             'x-user-id': 'user_test',
           },
           body: JSON.stringify({ ...event, sequence: i }),
-        }));
+        })
 
-      const responses = await Promise.all(requests);
-      const rateLimitedResponse = responses.find(r => r.status === 429);
+      const responses = await Promise.all(requests
+      const rateLimitedResponse = responses.find(r => r.status === 429
 
-      expect(rateLimitedResponse).toBeDefined();
+      expect(rateLimitedResponse).toBeDefined(
 
       if (rateLimitedResponse) {
         expect(
           rateLimitedResponse.headers.get('X-RateLimit-Limit'),
-        ).toBeTruthy();
+        ).toBeTruthy(
         expect(rateLimitedResponse.headers.get('X-RateLimit-Remaining')).toBe(
           '0',
-        );
-        expect(rateLimitedResponse.headers.get('Retry-After')).toBeTruthy();
+        
+        expect(rateLimitedResponse.headers.get('Retry-After')).toBeTruthy(
       }
-    });
-  });
+    }
+  }
 
   describe('Error Tracking Endpoint', () => {
     it('should accept error reports with PII redaction', async () => {
@@ -189,19 +189,19 @@ describe('Contract: Observability API', () => {
           'x-user-id': 'user_123',
         },
         body: JSON.stringify(errorReport),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(202);
+      expect(res.status).toBe(202
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         error_id: expect.any(String),
         status: 'processed',
         redaction_applied: true,
         stored_at: expect.any(String),
-      });
-    });
+      }
+    }
 
     it('should categorize healthcare-specific errors', async () => {
       const medicalError = {
@@ -224,19 +224,19 @@ describe('Contract: Observability API', () => {
           'x-user-id': 'user_unauthorized',
         },
         body: JSON.stringify(medicalError),
-      });
+      }
 
-      expect(res.status).toBe(202);
+      expect(res.status).toBe(202
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data.classification).toMatchObject({
         category: 'security_violation',
         compliance_flag: 'lgpd_violation',
         requires_audit: true,
         notification_level: 'immediate',
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Performance Metrics Endpoint', () => {
     it('should collect Web Vitals and healthcare-specific metrics', async () => {
@@ -268,12 +268,12 @@ describe('Contract: Observability API', () => {
           'x-user-id': 'user_perf_test',
         },
         body: JSON.stringify(performanceMetrics),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(202);
+      expect(res.status).toBe(202
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         metric_id: expect.any(String),
         status: 'recorded',
@@ -283,8 +283,8 @@ describe('Contract: Observability API', () => {
           ),
           healthcare_compliance_score: expect.any(Number),
         }),
-      });
-    });
+      }
+    }
 
     it('should flag performance issues in critical healthcare workflows', async () => {
       const criticalSlowMetrics = {
@@ -308,11 +308,11 @@ describe('Contract: Observability API', () => {
           'x-user-id': 'doctor_emergency',
         },
         body: JSON.stringify(criticalSlowMetrics),
-      });
+      }
 
-      expect(res.status).toBe(202);
+      expect(res.status).toBe(202
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data.alerts).toContainEqual(
         expect.objectContaining({
           level: 'critical',
@@ -320,9 +320,9 @@ describe('Contract: Observability API', () => {
           workflow: 'emergency_patient_access',
           recommendation: expect.any(String),
         }),
-      );
-    });
-  });
+      
+    }
+  }
 
   describe('Audit Trail Endpoint', () => {
     it('should record healthcare data access for compliance', async () => {
@@ -355,12 +355,12 @@ describe('Contract: Observability API', () => {
           'x-audit-trace': 'trace_001',
         },
         body: JSON.stringify(auditEvent),
-      });
+      }
 
       expect(res.ok).toBe(true);
       expect(res.status).toBe(201); // Created
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         audit_id: expect.any(String),
         status: 'recorded',
@@ -369,8 +369,8 @@ describe('Contract: Observability API', () => {
           retention_period_days: expect.any(Number),
           deletion_scheduled_at: expect.any(String),
         }),
-      });
-    });
+      }
+    }
 
     it('should validate consent requirements for audit trails', async () => {
       const unauthorizedAuditEvent = {
@@ -400,11 +400,11 @@ describe('Contract: Observability API', () => {
           'x-user-id': 'staff_unauthorized',
         },
         body: JSON.stringify(unauthorizedAuditEvent),
-      });
+      }
 
       expect(res.status).toBe(403); // Forbidden
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         error: 'consent_violation',
         message: expect.stringContaining('consent'),
@@ -413,7 +413,7 @@ describe('Contract: Observability API', () => {
           article: expect.any(String),
           severity: 'high',
         },
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

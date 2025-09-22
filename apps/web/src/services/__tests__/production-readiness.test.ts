@@ -45,26 +45,41 @@ describe(('Production Readiness Service', () => {
         'Patient data access logging',
       ],
     };
-    service = new ProductionReadinessService(config);
-  });
+    service = new ProductionReadinessService(config
+  }
 
   describe(('Configuration Validation', () => {
     it(('should validate valid production readiness configuration', () => {
+<<<<<<< HEAD
+      const result = ProductionReadinessConfigSchema.safeParse(config
+=======
       const result = ProductionReadinessConfigSchema.safeParse(config);
+>>>>>>> origin/main
       expect(result.success).toBe(true);
-    });
+    }
 
     it(('should use default values for optional configuration', () => {
       const minimalConfig = {};
-      const result = ProductionReadinessConfigSchema.parse(minimalConfig);
+      const result = ProductionReadinessConfigSchema.parse(minimalConfig
 
-      expect(result.environment).toBe('staging');
-      expect(result.healthcareCompliance).toEqual(['LGPD', 'ANVISA', 'CFM']);
-      expect(result.validationTypes).toContain('deployment');
-      expect(result.performanceThresholds.maxLoadTime).toBe(3000);
-    });
+      expect(result.environment).toBe('staging')
+      expect(result.healthcareCompliance).toEqual(['LGPD', 'ANVISA', 'CFM']
+      expect(result.validationTypes).toContain('deployment')
+      expect(result.performanceThresholds.maxLoadTime).toBe(3000
+    }
 
     it(('should validate healthcare compliance standards', () => {
+<<<<<<< HEAD
+      expect(HEALTHCARE_COMPLIANCE_STANDARDS.LGPD).toBe('LGPD')
+      expect(HEALTHCARE_COMPLIANCE_STANDARDS.ANVISA).toBe('ANVISA')
+      expect(HEALTHCARE_COMPLIANCE_STANDARDS.CFM).toBe('CFM')
+    }
+  }
+
+  describe(('Production Readiness Validation', () => {
+    it(_'should execute comprehensive production readiness validation',async () => {
+      const report = await service.executeValidation(
+=======
       expect(HEALTHCARE_COMPLIANCE_STANDARDS.LGPD).toBe('LGPD');
       expect(HEALTHCARE_COMPLIANCE_STANDARDS.ANVISA).toBe('ANVISA');
       expect(HEALTHCARE_COMPLIANCE_STANDARDS.CFM).toBe('CFM');
@@ -74,134 +89,167 @@ describe(('Production Readiness Service', () => {
   describe(('Production Readiness Validation', () => {
     it(_'should execute comprehensive production readiness validation',async () => {
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
-      expect(report.executionId).toMatch(/^prod-ready-\d+$/);
-      expect(report.config).toEqual(config);
-      expect(report.startTime).toBeInstanceOf(Date);
-      expect(report.endTime).toBeInstanceOf(Date);
-      expect(report.totalDuration).toBeGreaterThan(0);
-      expect(report.environment).toBe('production');
-      expect(report.validations).toBeInstanceOf(Array);
+      expect(report.executionId).toMatch(/^prod-ready-\d+$/
+      expect(report.config).toEqual(config
+      expect(report.startTime).toBeInstanceOf(Date
+      expect(report.endTime).toBeInstanceOf(Date
+      expect(report.totalDuration).toBeGreaterThan(0
+      expect(report.environment).toBe('production')
+      expect(report.validations).toBeInstanceOf(Array
       expect(report.validations.length).toBe(5); // deployment, monitoring, security, performance, compliance
-      expect(report.summary).toBeDefined();
-      expect(report.recommendations).toBeInstanceOf(Array);
-      expect(report.criticalIssues).toBeInstanceOf(Array);
-      expect(report.deploymentChecklist).toBeInstanceOf(Array);
-    });
+      expect(report.summary).toBeDefined(
+      expect(report.recommendations).toBeInstanceOf(Array
+      expect(report.criticalIssues).toBeInstanceOf(Array
+      expect(report.deploymentChecklist).toBeInstanceOf(Array
+    }
 
     it(_'should execute deployment validation',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
       const deploymentValidation = report.validations.find(
         v => v.validationType === 'deployment',
-      );
-      expect(deploymentValidation).toBeDefined();
+      
+      expect(deploymentValidation).toBeDefined(
       if (deploymentValidation) {
         expect(deploymentValidation.status).toMatch(
           /^(passed|failed|warning)$/,
-        );
-        expect(deploymentValidation.score).toBeGreaterThanOrEqual(0);
-        expect(deploymentValidation.score).toBeLessThanOrEqual(100);
-        expect(deploymentValidation.issues).toBeInstanceOf(Array);
-        expect(deploymentValidation.recommendations).toBeInstanceOf(Array);
+        
+        expect(deploymentValidation.score).toBeGreaterThanOrEqual(0
+        expect(deploymentValidation.score).toBeLessThanOrEqual(100
+        expect(deploymentValidation.issues).toBeInstanceOf(Array
+        expect(deploymentValidation.recommendations).toBeInstanceOf(Array
         expect(deploymentValidation.healthcareConsiderations).toBeInstanceOf(
           Array,
-        );
+        
       }
-    });
+    }
 
     it(_'should execute security validation',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
       const securityValidation = report.validations.find(
         v => v.validationType === 'security',
-      );
-      expect(securityValidation).toBeDefined();
+      
+      expect(securityValidation).toBeDefined(
       if (securityValidation) {
-        expect(securityValidation.status).toMatch(/^(passed|failed|warning)$/);
-        expect(securityValidation.recommendations.length).toBeGreaterThan(0);
+        expect(securityValidation.status).toMatch(/^(passed|failed|warning)$/
+        expect(securityValidation.recommendations.length).toBeGreaterThan(0
         expect(
           securityValidation.healthcareConsiderations.length,
-        ).toBeGreaterThan(0);
+        ).toBeGreaterThan(0
       }
-    });
+    }
 
     it(_'should execute performance validation',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
       const performanceValidation = report.validations.find(
         v => v.validationType === 'performance',
-      );
-      expect(performanceValidation).toBeDefined();
+      
+      expect(performanceValidation).toBeDefined(
       if (performanceValidation) {
         expect(performanceValidation.status).toMatch(
           /^(passed|failed|warning)$/,
-        );
-        expect(performanceValidation.score).toBeGreaterThanOrEqual(0);
+        
+        expect(performanceValidation.score).toBeGreaterThanOrEqual(0
       }
-    });
+    }
 
     it(_'should execute compliance validation',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
       const complianceValidation = report.validations.find(
         v => v.validationType === 'compliance',
-      );
-      expect(complianceValidation).toBeDefined();
+      
+      expect(complianceValidation).toBeDefined(
       if (complianceValidation) {
         expect(complianceValidation.status).toMatch(
           /^(passed|failed|warning)$/,
-        );
+        
         expect(
           complianceValidation.healthcareConsiderations.length,
-        ).toBeGreaterThan(0);
+        ).toBeGreaterThan(0
       }
-    });
-  });
+    }
+  }
 
   describe(('Production Readiness Statistics', () => {
     it(_'should generate accurate validation statistics',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
-      expect(report.summary.totalValidations).toBe(5);
-      expect(report.summary.passedValidations).toBeGreaterThanOrEqual(0);
-      expect(report.summary.failedValidations).toBeGreaterThanOrEqual(0);
-      expect(report.summary.warningValidations).toBeGreaterThanOrEqual(0);
-      expect(report.summary.overallScore).toBeGreaterThanOrEqual(0);
-      expect(report.summary.overallScore).toBeLessThanOrEqual(100);
+      expect(report.summary.totalValidations).toBe(5
+      expect(report.summary.passedValidations).toBeGreaterThanOrEqual(0
+      expect(report.summary.failedValidations).toBeGreaterThanOrEqual(0
+      expect(report.summary.warningValidations).toBeGreaterThanOrEqual(0
+      expect(report.summary.overallScore).toBeGreaterThanOrEqual(0
+      expect(report.summary.overallScore).toBeLessThanOrEqual(100
       expect(report.summary.readinessLevel).toMatch(
         /^(production-ready|staging-ready|not-ready)$/,
-      );
-      expect(report.summary.criticalIssues).toBeGreaterThanOrEqual(0);
-    });
+      
+      expect(report.summary.criticalIssues).toBeGreaterThanOrEqual(0
+    }
 
     it(_'should calculate healthcare compliance status',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
-      expect(report.summary.healthcareCompliance).toBeDefined();
-      expect(typeof report.summary.healthcareCompliance.lgpd).toBe('boolean');
-      expect(typeof report.summary.healthcareCompliance.anvisa).toBe('boolean');
-      expect(typeof report.summary.healthcareCompliance.cfm).toBe('boolean');
-    });
+      expect(report.summary.healthcareCompliance).toBeDefined(
+      expect(typeof report.summary.healthcareCompliance.lgpd).toBe('boolean')
+      expect(typeof report.summary.healthcareCompliance.anvisa).toBe('boolean')
+      expect(typeof report.summary.healthcareCompliance.cfm).toBe('boolean')
+    }
 
     it(_'should validate production readiness levels',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
       const readinessLevel = report.summary.readinessLevel;
       expect([
         READINESS_LEVELS.PRODUCTION_READY,
         READINESS_LEVELS.STAGING_READY,
         READINESS_LEVELS.NOT_READY,
-      ]).toContain(readinessLevel);
-    });
-  });
+      ]).toContain(readinessLevel
+    }
+  }
 
   describe(('Production Readiness Validation', () => {
     it(_'should validate production readiness quality',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
       // Validate that validations were executed
-      expect(report.summary.totalValidations).toBeGreaterThan(0);
+      expect(report.summary.totalValidations).toBeGreaterThan(0
 
       // If validations were executed, validate quality metrics
       if (report.summary.totalValidations > 0) {
@@ -214,13 +262,17 @@ describe(('Production Readiness Service', () => {
         ).filter(Boolean).length;
         expect(complianceCount).toBeGreaterThanOrEqual(1); // At least one compliance standard met
       }
-    });
+    }
 
     it(_'should generate recommendations based on validation results',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
-      expect(report.recommendations).toBeInstanceOf(Array);
-      expect(report.recommendations.length).toBeGreaterThan(0);
+      expect(report.recommendations).toBeInstanceOf(Array
+      expect(report.recommendations.length).toBeGreaterThan(0
 
       // Check for healthcare-specific recommendations (more flexible matching)
       const hasHealthcareRecommendations = report.recommendations.some(
@@ -235,22 +287,38 @@ describe(('Production Readiness Service', () => {
           || rec.includes('backup')
           || rec.includes('alertas')
           || rec.includes('compliance'),
-      );
+      
       // If no specific healthcare recommendations, at least check that recommendations exist
       if (!hasHealthcareRecommendations && report.recommendations.length > 0) {
-        expect(report.recommendations.length).toBeGreaterThan(0);
+        expect(report.recommendations.length).toBeGreaterThan(0
       } else {
         expect(hasHealthcareRecommendations).toBe(true);
       }
-    });
+    }
 
     it(_'should identify critical issues for production readiness',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
-      expect(report.criticalIssues).toBeInstanceOf(Array);
+      expect(report.criticalIssues).toBeInstanceOf(Array
 
       // Validate critical issue structure if any exist
       report.criticalIssues.forEach(issue => {
+<<<<<<< HEAD
+        expect(issue.severity).toMatch(/^(critical|high|medium|low)$/
+        expect(issue.category).toBeDefined(
+        expect(issue.issue).toBeDefined(
+        expect(issue.recommendation).toBeDefined(
+        expect(issue.healthcareImpact).toBeInstanceOf(Array
+      }
+    }
+
+    it(_'should provide deployment checklist',async () => {
+      const report = await service.executeValidation(
+=======
         expect(issue.severity).toMatch(/^(critical|high|medium|low)$/);
         expect(issue.category).toBeDefined();
         expect(issue.issue).toBeDefined();
@@ -261,9 +329,10 @@ describe(('Production Readiness Service', () => {
 
     it(_'should provide deployment checklist',async () => {
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
-      expect(report.deploymentChecklist).toBeInstanceOf(Array);
-      expect(report.deploymentChecklist.length).toBeGreaterThan(0);
+      expect(report.deploymentChecklist).toBeInstanceOf(Array
+      expect(report.deploymentChecklist.length).toBeGreaterThan(0
 
       // Check for Portuguese content in checklist
       const hasPortugueseChecklist = report.deploymentChecklist.some(
@@ -274,14 +343,18 @@ describe(('Production Readiness Service', () => {
           || item.includes('Testar')
           || item.includes('Revisar')
           || item.includes('Corrigir'),
-      );
+      
       expect(hasPortugueseChecklist).toBe(true);
-    });
-  });
+    }
+  }
 
   describe(('Brazilian Portuguese Localization', () => {
     it(_'should provide Brazilian Portuguese production readiness recommendations',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
       // Check for Portuguese content in recommendations
       const hasPortugueseRecommendations = report.recommendations.some(
@@ -292,12 +365,16 @@ describe(('Production Readiness Service', () => {
           || rec.includes('monitoramento')
           || rec.includes('conformidade')
           || rec.includes('dados'),
-      );
+      
       expect(hasPortugueseRecommendations).toBe(true);
-    });
+    }
 
     it(_'should include Portuguese translations in deployment checklist',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
       // Check for Portuguese content in deployment checklist
       const hasPortugueseChecklist = report.deploymentChecklist.some(
@@ -308,12 +385,16 @@ describe(('Production Readiness Service', () => {
           || item.includes('backup')
           || item.includes('emergência')
           || item.includes('sistema'),
-      );
+      
       expect(hasPortugueseChecklist).toBe(true);
-    });
+    }
 
     it(_'should include Portuguese translations in healthcare considerations',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
       // Check for Portuguese content in healthcare considerations
       const hasPortugueseHealthcare = report.validations.some(validation =>
@@ -326,60 +407,98 @@ describe(('Production Readiness Service', () => {
             || consideration.includes('conformidade')
             || consideration.includes('dados'),
         )
-      );
+      
       expect(hasPortugueseHealthcare).toBe(true);
-    });
-  });
+    }
+  }
 
   describe(('Healthcare Production Readiness Integration', () => {
     it(_'should include healthcare compliance validation in readiness results',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
       // Check for healthcare compliance validation
       const hasHealthcareCompliance = report.validations.some(
         validation =>
-          validation.validationType === 'compliance'
+          validation.validationType === 'compliance')
           && validation.healthcareConsiderations.length > 0,
-      );
+      
       expect(hasHealthcareCompliance).toBe(true);
-    });
+    }
 
     it(_'should include security validation for healthcare data',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
       // Check for security validation with healthcare considerations
       const hasHealthcareSecurity = report.validations.some(
         validation =>
-          validation.validationType === 'security'
+          validation.validationType === 'security')
           && validation.recommendations.some(
             rec =>
               rec.includes('pacientes')
               || rec.includes('dados')
               || rec.includes('LGPD'),
           ),
-      );
+      
       expect(hasHealthcareSecurity).toBe(true);
-    });
+    }
 
     it(_'should include performance validation for healthcare workflows',async () => {
+<<<<<<< HEAD
+      const report = await service.executeValidation(
+=======
       const report = await service.executeValidation();
+>>>>>>> origin/main
 
       // Check for performance validation with healthcare considerations
       const hasHealthcarePerformance = report.validations.some(
         validation =>
-          validation.validationType === 'performance'
+          validation.validationType === 'performance')
           && validation.healthcareConsiderations.some(
             consideration =>
               consideration.includes('emergência')
               || consideration.includes('crítica'),
           ),
-      );
+      
       expect(hasHealthcarePerformance).toBe(true);
-    });
-  });
+    }
+  }
 
   describe(('Production Readiness Validation Types', () => {
     it(('should include deployment validation scenarios', () => {
+<<<<<<< HEAD
+      expect(VALIDATION_TYPES.DEPLOYMENT).toBe('deployment')
+      expect(config.validationTypes).toContain('deployment')
+    }
+
+    it(('should include monitoring validation scenarios', () => {
+      expect(VALIDATION_TYPES.MONITORING).toBe('monitoring')
+      expect(config.validationTypes).toContain('monitoring')
+    }
+
+    it(('should include security validation scenarios', () => {
+      expect(VALIDATION_TYPES.SECURITY).toBe('security')
+      expect(config.validationTypes).toContain('security')
+    }
+
+    it(('should include performance validation scenarios', () => {
+      expect(VALIDATION_TYPES.PERFORMANCE).toBe('performance')
+      expect(config.validationTypes).toContain('performance')
+    }
+
+    it(('should include compliance validation scenarios', () => {
+      expect(VALIDATION_TYPES.COMPLIANCE).toBe('compliance')
+      expect(config.validationTypes).toContain('compliance')
+    }
+  }
+=======
       expect(VALIDATION_TYPES.DEPLOYMENT).toBe('deployment');
       expect(config.validationTypes).toContain('deployment');
     });
@@ -404,6 +523,7 @@ describe(('Production Readiness Service', () => {
       expect(config.validationTypes).toContain('compliance');
     });
   });
+>>>>>>> origin/main
 
   describe(('Production Readiness Filtering', () => {
     it(_'should filter validations by type',async () => {
@@ -413,22 +533,22 @@ describe(('Production Readiness Service', () => {
       };
       const securityService = new ProductionReadinessService(
         securityOnlyConfig,
-      );
-      const report = await securityService.executeValidation();
+      
+      const report = await securityService.executeValidation(
 
-      expect(report.validations.length).toBe(1);
-      expect(report.validations[0].validationType).toBe('security');
-    });
+      expect(report.validations.length).toBe(1
+      expect(report.validations[0].validationType).toBe('security')
+    }
 
     it(_'should filter validations by healthcare compliance',async () => {
       const lgpdOnlyConfig = {
         ...config,
         healthcareCompliance: ['LGPD'] as const,
       };
-      const lgpdService = new ProductionReadinessService(lgpdOnlyConfig);
-      const report = await lgpdService.executeValidation();
+      const lgpdService = new ProductionReadinessService(lgpdOnlyConfig
+      const report = await lgpdService.executeValidation(
 
-      expect(report.config.healthcareCompliance).toEqual(['LGPD']);
-    });
-  });
-});
+      expect(report.config.healthcareCompliance).toEqual(['LGPD']
+    }
+  }
+}

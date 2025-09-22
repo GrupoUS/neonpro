@@ -15,7 +15,6 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
 
       // This test will fail initially because the import exists but type is not used
       expect(hasHealthcareTRPCErrorImport && !usesHealthcareTRPCError).toBe(false);
-    });
 
     it(_'should detect unused protectedProcedure and router imports'), () => {
       const filePath = join(trpcContractsPath, 'agent.ts');
@@ -31,7 +30,6 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
         (hasProtectedProcedureImport && !usesProtectedProcedure)
           || (hasRouterImport && !usesRouter),
       ).toBe(false);
-    });
   });
 
   describe(_'AI Contract - Unused Imports'), () => {
@@ -43,7 +41,6 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
       const usesAuditLogger = content.includes('auditLogger');
 
       expect(hasAuditLoggerImport && !usesAuditLogger).toBe(false);
-    });
 
     it(_'should detect unused AIResponseSchema import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
@@ -53,7 +50,6 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
       const usesAIResponseSchema = content.includes('AIResponseSchema');
 
       expect(hasAIResponseSchemaImport && !usesAIResponseSchema).toBe(false);
-    });
 
     it(_'should detect unused LGPDComplianceMiddleware import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
@@ -63,7 +59,6 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
       const usesLGPDComplianceMiddleware = content.includes('LGPDComplianceMiddleware');
 
       expect(hasLGPDComplianceMiddlewareImport && !usesLGPDComplianceMiddleware).toBe(false);
-    });
 
     it(_'should detect unused shouldRetainAIData import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
@@ -73,7 +68,6 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
       const usesShouldRetainAIData = content.includes('shouldRetainAIData');
 
       expect(hasShouldRetainAIDataImport && !usesShouldRetainAIData).toBe(false);
-    });
 
     it(_'should detect unused lgpdDataSubjectService import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
@@ -83,19 +77,17 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
       const usesLgpdDataSubjectService = content.includes('lgpdDataSubjectService');
 
       expect(hasLgpdDataSubjectServiceImport && !usesLgpdDataSubjectService).toBe(false);
-    });
 
     it(_'should detect unused healthAnalysisService variable'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 
       const hasHealthAnalysisServiceVariable = content.includes(
-        'const healthAnalysisService = new HealthAnalysisService()',
-      );
+        'const healthAnalysisService = new HealthAnalysisService()');
+      
       const usesHealthAnalysisService = content.includes('healthAnalysisService');
 
       expect(hasHealthAnalysisServiceVariable && !usesHealthAnalysisService).toBe(false);
-    });
 
     it(_'should detect unused helper functions'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
@@ -117,6 +109,6 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
           || (hasCallAIServiceWithRetry && !usesCallAIServiceWithRetry)
           || (hasCheckAIUsageLimit && !usesCheckAIUsageLimit),
       ).toBe(false);
-    });
+  });
   });
 });

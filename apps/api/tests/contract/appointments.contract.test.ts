@@ -30,8 +30,13 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
   let server: ReturnType<typeof setupServer>;
 
   beforeEach(async () => {
+<<<<<<< HEAD
+    await setupTestDatabase(
+    testClient = await createTestClient({ _role: 'admin' }
+=======
     await setupTestDatabase();
     testClient = await createTestClient({ _role: 'admin' });
+>>>>>>> origin/main
 
     // Setup MSW server for external service mocking
     server = setupServer(
@@ -39,7 +44,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       http.post(
         'http://localhost:3000/api/trpc/patients.create',
         async ({ request }) => {
-          const body = await request.json();
+          const body = await request.json(
           const patientData = body[0] || body;
           return Response.json({
             result: {
@@ -50,13 +55,13 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
                 updated_at: new Date().toISOString(),
               },
             },
-          });
+          }
         },
       ),
       http.post(
         'http://localhost:3000/api/trpc/doctors.create',
         async ({ request }) => {
-          const body = await request.json();
+          const body = await request.json(
           const doctorData = body[0] || body;
           return Response.json({
             result: {
@@ -67,13 +72,13 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
                 updated_at: new Date().toISOString(),
               },
             },
-          });
+          }
         },
       ),
       http.post(
         'http://localhost:3000/api/trpc/appointments.create',
         async ({ request }) => {
-          const body = await request.json();
+          const body = await request.json(
           const appointmentData = body[0] || body;
 
           const responseData: any = {
@@ -127,13 +132,13 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
                 data: responseData,
               },
             },
-          });
+          }
         },
       ),
       http.post(
         'http://localhost:3000/api/trpc/appointments.updateRealTime',
         async ({ request }) => {
-          const body = await request.json();
+          const body = await request.json(
           const updateData = body[0] || body;
           return Response.json({
             result: {
@@ -160,13 +165,13 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
                 },
               },
             },
-          });
+          }
         },
       ),
       http.post(
         'http://localhost:3000/api/trpc/appointments.sendWhatsAppReminder',
         async ({ request }) => {
-          const body = await request.json();
+          const body = await request.json(
           const reminderData = body[0] || body;
           return Response.json({
             result: {
@@ -197,7 +202,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
                 },
               },
             },
-          });
+          }
         },
       ),
       // Mock CFM license validation API
@@ -217,7 +222,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           ],
           telemedicine_authorized: true,
           anvisa_compliance: true,
-        });
+        }
       }),
       // Mock WhatsApp Business API
       http.post(
@@ -229,7 +234,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
             messages: [{ id: 'wamid.appointment_reminder_123' }],
             success: true,
             delivery_status: 'sent',
-          });
+          }
         },
       ),
       // Mock AI/ML No-Show Prediction Service
@@ -255,7 +260,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
               },
             },
           ],
-        });
+        }
       }),
       // Mock Brazilian Weather API for no-show prediction
       http.get('https://api.openweathermap.org/data/2.5/weather', () => {
@@ -264,10 +269,10 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           main: { temp: 18 },
           visibility: 5000,
           impact_on_appointments: 'high_no_show_risk',
-        });
+        }
       }),
-    );
-    server.listen();
+    
+    server.listen(
 
     // Create tRPC client
     trpcClient = createTRPCClient<AppRouter>({
@@ -282,7 +287,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
         }),
       ],
       transformer: superjson,
-    });
+    }
 
     // Create test patient and doctor
     const patientResult = await trpcClient.patients.create.mutate({
@@ -300,8 +305,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
         consent_date: new Date().toISOString(),
         ip_address: '127.0.0.1',
       },
-    });
-    console.log('👤 Patient result:', patientResult);
+    }
+    console.log('👤 Patient result:', patientResult
     patientId = patientResult.data?.id || patientResult.id;
 
     const doctorResult = await trpcClient.doctors.create.mutate({
@@ -311,15 +316,15 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       specialties: ['cardiologia', 'clinica_medica'],
       telemedicine_license: true,
       cfm_verified: true,
-    });
-    console.log('👨‍⚕️ Doctor result:', doctorResult);
+    }
+    console.log('👨‍⚕️ Doctor result:', doctorResult
     doctorId = doctorResult.data?.id || doctorResult.id;
-  });
+  }
 
   afterEach(async () => {
-    server.close();
-    await cleanupTestDatabase();
-  });
+    server.close(
+    await cleanupTestDatabase(
+  }
 
   describe('appointments.create - AI Risk Prediction Integration', () => {
     it('should FAIL: create appointment with AI-powered no-show risk assessment', async () => {
@@ -342,7 +347,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // This should FAIL because appointments router doesn't exist yet
-      const result = await trpcClient.appointments.create.mutate(appointmentData);
+      const result = await trpcClient.appointments.create.mutate(appointmentData
 
       expect(result).toMatchObject({
         success: true,
@@ -369,8 +374,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
             anvisa_compliance_checked: true,
           }),
         }),
-      });
-    });
+      }
+    }
 
     it('should FAIL: validate CFM doctor license in real-time during appointment creation', async () => {
       const appointmentData = {
@@ -383,7 +388,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because CFM validation integration doesn't exist
-      const result = await trpcClient.appointments.create.mutate(appointmentData);
+      const result = await trpcClient.appointments.create.mutate(appointmentData
 
       expect(result.data.cfm_validation).toMatchObject({
         license_status: 'active',
@@ -394,8 +399,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
         state_council: 'CRM-SP',
         anvisa_medical_device_compliance: true,
         last_validation_timestamp: expect.any(String),
-      });
-    });
+      }
+    }
 
     it('should FAIL: automatically schedule WhatsApp reminders based on no-show risk', async () => {
       const appointmentData = {
@@ -413,7 +418,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because smart reminder system doesn't exist
-      const result = await trpcClient.appointments.create.mutate(appointmentData);
+      const result = await trpcClient.appointments.create.mutate(appointmentData
 
       expect(result.data.reminder_schedule).toMatchObject({
         whatsapp_reminders: expect.arrayContaining([
@@ -432,9 +437,9 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           weather_sensitive: true,
           patient_preference_optimized: true,
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('appointments.updateRealTime - Supabase Subscriptions Integration', () => {
     beforeEach(async () => {
@@ -445,9 +450,9 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
         scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         type: 'telemedicine' as const,
         duration_minutes: 45,
-      });
+      }
       appointmentId = appointmentResult.data.id;
-    });
+    }
 
     it('should FAIL: broadcast real-time updates via Supabase subscriptions', async () => {
       const updateData = {
@@ -459,7 +464,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because real-time system doesn't exist
-      const result = await trpcClient.appointments.updateRealTime.mutate(updateData);
+      const result = await trpcClient.appointments.updateRealTime.mutate(updateData
 
       expect(result).toMatchObject({
         success: true,
@@ -484,8 +489,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           real_time_broadcast_logged: true,
           lgpd_compliance_verified: true,
         }),
-      });
-    });
+      }
+    }
 
     it('should FAIL: handle appointment rescheduling with AI risk recalculation', async () => {
       const rescheduleData = {
@@ -499,7 +504,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because rescheduling system doesn't exist
-      const result = await trpcClient.appointments.reschedule.mutate(rescheduleData);
+      const result = await trpcClient.appointments.reschedule.mutate(rescheduleData
 
       expect(result).toMatchObject({
         success: true,
@@ -523,9 +528,9 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           email_doctor: true,
           real_time_broadcast: true,
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('appointments.sendWhatsAppReminder - WhatsApp Business API Integration', () => {
     beforeEach(async () => {
@@ -534,9 +539,9 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
         doctor_id: doctorId,
         scheduled_at: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
         type: 'telemedicine' as const,
-      });
+      }
       appointmentId = appointmentResult.data.id;
-    });
+    }
 
     it('should FAIL: send personalized WhatsApp reminder with LGPD compliance', async () => {
       const reminderData = {
@@ -557,7 +562,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because WhatsApp integration doesn't exist
-      const result = await trpcClient.appointments.sendWhatsAppReminder.mutate(reminderData);
+      const result = await trpcClient.appointments.sendWhatsAppReminder.mutate(reminderData
 
       expect(result).toMatchObject({
         success: true,
@@ -584,8 +589,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           message_content_hash: expect.any(String),
           delivery_attempted_at: expect.any(String),
         }),
-      });
-    });
+      }
+    }
 
     it('should FAIL: handle WhatsApp delivery failures with fallback mechanisms', async () => {
       const reminderData = {
@@ -609,13 +614,13 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
                   code: 100,
                 },
               }),
-            );
+            
           },
         ),
-      );
+      
 
       // Should FAIL because fallback system doesn't exist
-      const result = await trpcClient.appointments.sendWhatsAppReminder.mutate(reminderData);
+      const result = await trpcClient.appointments.sendWhatsAppReminder.mutate(reminderData
 
       expect(result).toMatchObject({
         success: true,
@@ -635,9 +640,9 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           delivery_attempts: expect.any(Array),
           fallback_methods_used: expect.any(Array),
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('appointments.noShowPredictionAnalysis - Advanced AI Analytics', () => {
     it('should FAIL: provide comprehensive no-show analytics for clinic optimization', async () => {
@@ -653,7 +658,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       };
 
       // Should FAIL because analytics system doesn't exist
-      const result = await trpcClient.appointments.noShowAnalytics.query(analysisRequest);
+      const result = await trpcClient.appointments.noShowAnalytics.query(analysisRequest
 
       expect(result).toMatchObject({
         analytics: expect.objectContaining({
@@ -680,8 +685,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
             }),
           ]),
         }),
-      });
-    });
+      }
+    }
 
     it('should FAIL: generate patient-specific no-show intervention strategies', async () => {
       const interventionRequest = {
@@ -695,7 +700,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       // Should FAIL because intervention system doesn't exist
       const result = await trpcClient.appointments.generateInterventionStrategy.mutate(
         interventionRequest,
-      );
+      
 
       expect(result).toMatchObject({
         intervention_strategy: expect.objectContaining({
@@ -727,9 +732,9 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
             kpi_tracking: expect.any(Array),
           }),
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Edge Cases - Brazilian Healthcare Specifics', () => {
     it('should FAIL: handle SUS (public healthcare) appointment integration', async () => {
@@ -755,7 +760,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       // Should FAIL because SUS integration doesn't exist
       const result = await trpcClient.appointments.createSUSIntegrated.mutate(
         susAppointmentData,
-      );
+      
 
       expect(result).toMatchObject({
         success: true,
@@ -772,8 +777,8 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
             public_interest_basis_documented: true,
           }),
         }),
-      });
-    });
+      }
+    }
 
     it('should FAIL: implement ANVISA telemedicine compliance validation', async () => {
       const telemedicineValidation = {
@@ -786,7 +791,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
       // Should FAIL because ANVISA validation doesn't exist
       const result = await trpcClient.appointments.validateANVISACompliance.query(
         telemedicineValidation,
-      );
+      
 
       expect(result).toMatchObject({
         compliance_status: expect.objectContaining({
@@ -809,7 +814,7 @@ describe('tRPC Appointments Router - No-Show Prevention Tests', () => {
           audit_trail_complete: true,
           backup_systems_operational: true,
         }),
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

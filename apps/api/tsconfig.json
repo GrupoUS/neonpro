@@ -1,17 +1,27 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
+    "noEmit": false,
     "outDir": "./dist",
+<<<<<<< HEAD
+    "rootDir": "./src",
+    "baseUrl": ".",
+    "lib": ["ES2022", "DOM"],
+    "types": ["node", "vitest/globals"],
+    "jsx": "preserve",
+=======
     "baseUrl": "./src",
     "moduleResolution": "node",
+>>>>>>> origin/main
     "paths": {
-      "@/*": ["./*"],
-      "@/lib/*": ["./lib/*"],
-      "@/middleware/*": ["./middleware/*"],
-      "@/routes/*": ["./routes/*"],
-      "@/services/*": ["./services/*"],
-      "@/types/*": ["./types/*"],
-      "@/utils/*": ["./utils/*"],
+      "@/*": ["./src/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/middleware/*": ["./src/middleware/*"],
+      "@/routes/*": ["./src/routes/*"],
+      "@/services/*": ["./src/services/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/utils/*": ["./src/utils/*"],
       "@neonpro/security": ["../../packages/security/dist"],
       "@neonpro/security/*": ["../../packages/security/dist/*"],
       "@neonpro/shared": ["../../packages/shared/src"],
@@ -23,16 +33,6 @@
       "@neonpro/utils": ["../../packages/utils/dist"],
       "@neonpro/utils/*": ["../../packages/utils/dist/*"]
     },
-    "types": ["node", "vitest/globals"],
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": false,
-    "allowJs": true,
-    "incremental": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
     "plugins": [
       {
         "name": "next"
@@ -46,5 +46,12 @@
     "tests/**/*",
     "**/*.test.ts",
     "**/*.spec.ts"
+  ],
+  "references": [
+    { "path": "../../packages/types" },
+    { "path": "../../packages/utils" },
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/database" },
+    { "path": "../../packages/security" }
   ]
 }

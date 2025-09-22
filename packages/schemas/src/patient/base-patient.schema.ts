@@ -2,6 +2,8 @@
  * Base patient schema (T084 - Code duplication removal)
  * Core patient fields used across all layers
  */
+import { z } from "zod";
+
 export const BasePatientSchema = z.object({
   id: z.string().uuid().optional(),
   name: z

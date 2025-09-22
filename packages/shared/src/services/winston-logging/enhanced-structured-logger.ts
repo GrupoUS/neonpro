@@ -13,8 +13,13 @@
  * @compliance LGPD, ANVISA, Brazilian Healthcare Standards
  */
 
+<<<<<<< HEAD
+import * as winston from 'winston';
+=======
 import winston from 'winston';
+>>>>>>> origin/main
 import { nanoid } from 'nanoid';
+import { z } from 'zod';
 
 // Import types and services
 import { brazilianPIIRedactionService } from './brazilian-pii-redaction';
@@ -196,48 +201,40 @@ import {
 } from './types';
 
 // Custom Winston format for healthcare logs
-class HealthcareLogFormat extends winston.Logform.Format {
-  constructor(options: { colorize?: boolean; prettyPrint?: boolean } = {}) {
-    super();
-    this.options = options;
-    
-    // Define transform as a property, not a method
-    this.transform = (info: any, opts?: any) => {
-      // Apply PII redaction to all string fields
-      if (info.message && typeof info.message === 'string') {
-        info.message = brazilianPIIRedactionService.redactText(info.message);
-      }
-
-      if (info.error && typeof info.error === 'object') {
-        info.error = brazilianPIIRedactionService.redactObject(info.error);
-      }
-
-      if (info.metadata && typeof info.metadata === 'object') {
-        info.metadata = brazilianPIIRedactionService.redactObject(info.metadata);
-      }
-
-      // Add healthcare-specific formatting
-      if (info.severity && info.severity !== info.level) {
-        info.severityEmoji = this.getSeverityEmoji(info.severity);
-      }
-
-      return info;
-    };
+const healthcareLogFormat = winston.format((info: any) => {
+  // Apply PII redaction to all string fields
+  if (info.message && typeof info.message === 'string') {
+    info.message = brazilianPIIRedactionService.redactText(info.message);
   }
 
-  private getSeverityEmoji(severity: HealthcareSeverity): string {
-    const emojis = {
-      debug: '🐛',
-      info: 'ℹ️',
-      notice: '📋',
-      warn: '⚠️',
-      error: '❌',
-      critical: '🔥',
-      alert: '🚨',
-      emergency: '🆘',
-    };
-    return emojis[severity] || '';
+  if (info.error && typeof info.error === 'object') {
+    info.error = brazilianPIIRedactionService.redactObject(info.error);
   }
+
+  if (info.metadata && typeof info.metadata === 'object') {
+    info.metadata = brazilianPIIRedactionService.redactObject(info.metadata);
+  }
+
+  // Add healthcare-specific formatting
+  if (info.severity && info.severity !== info.level) {
+    info.severityEmoji = getSeverityEmoji(info.severity);
+  }
+
+  return info;
+});
+
+function getSeverityEmoji(severity: HealthcareSeverity): string {
+  const emojis = {
+    debug: '🐛',
+    info: 'ℹ️',
+    notice: '📋',
+    warn: '⚠️',
+    error: '❌',
+    critical: '🔥',
+    alert: '🚨',
+    emergency: '🆘',
+  };
+  return emojis[severity] || '';
 }
 
 /**
@@ -321,10 +318,7 @@ export class EnhancedStructuredLogger {
     const formats = [
       winston.format.timestamp(),
       winston.format.errors({ stack: true }),
-      new HealthcareLogFormat({
-        colorize: this.config.format.colorize,
-        prettyPrint: this.config.format.prettyPrint,
-      }),
+      healthcareLogFormat(),
     ];
 
     if (this.config.transports.console?.format === 'json') {
@@ -332,7 +326,11 @@ export class EnhancedStructuredLogger {
     } else if (this.config.transports.console?.format === 'simple') {
       formats.push(winston.format.simple());
     } else {
+<<<<<<< HEAD
+      formats.push(winston.format.printf((info) => {
+=======
       formats.push(_winston.format.printf((info) => {
+>>>>>>> origin/main
           const timestamp = info.timestamp ? new Date(info.timestamp as string).toLocaleTimeString() : '';
           const severityEmoji = info.severityEmoji || '';
           const correlationId = info.correlationId ? `[${info.correlationId}]` : '';
@@ -354,7 +352,7 @@ export class EnhancedStructuredLogger {
     return winston.format.combine(
       winston.format.timestamp(),
       winston.format.errors({ stack: true }),
-      new HealthcareLogFormat(),
+      healthcareLogFormat(),
       winston.format.json()
     );
   }
@@ -537,14 +535,18 @@ export class EnhancedStructuredLogger {
       severity,
       message,
       timestamp: new Date().toISOString(),
+<<<<<<< HEAD
+      _service: this.config._service,
+=======
       _service: this.config.service,
+>>>>>>> origin/main
       environment: this.config.environment,
       correlationId,
       requestId: requestContext.requestId,
       sessionId: requestContext.sessionId,
       traceId: requestContext.traceId,
       spanId: requestContext.spanId,
-      healthcareContext: context?.healthcare,
+      healthcareContext: _context?.healthcare,
       duration: requestContext.duration,
       memoryUsage: process.memoryUsage ? process.memoryUsage().heapUsed : undefined,
       cpuUsage: process.cpuUsage ? process.cpuUsage().user : undefined,
@@ -552,7 +554,7 @@ export class EnhancedStructuredLogger {
       deviceType: requestContext.deviceType,
       metadata: data,
       error: data?.error,
-      lgpdCompliance: this.createLGPDCompliance(severity, data, context?.healthcare),
+      lgpdCompliance: this.createLGPDCompliance(severity, data, _context?.healthcare),
       tags: [severity, this.config.service, this.config.environment],
       source: this.config.service,
     };
@@ -676,13 +678,13 @@ export class EnhancedStructuredLogger {
     const healthcareContext: BrazilianHealthcareContext = {
       workflowType,
       workflowStage: stage,
-      ...context?.healthcare,
+      ..._context?.healthcare,
     };
 
     this.info(
       `[WORKFLOW:${workflowType?.toUpperCase()}] ${message}`,
       data,
-      { healthcare: healthcareContext, technical: context?.technical }
+      { healthcare: healthcareContext, technical: _context?.technical }
     );
   }
 
@@ -695,7 +697,11 @@ export class EnhancedStructuredLogger {
     healthcareContext: BrazilianHealthcareContext,
     data?: any
   ): void {
+<<<<<<< HEAD
+    const severity = action === 'adverse_reaction' ? 'alert' : 'info'
+=======
     const severity = action === 'adverse_reaction' ? 'alert' : ''info'
+>>>>>>> origin/main
 
     this.log(
       this.mapSeverityToLevel(severity),
@@ -748,7 +754,7 @@ export class EnhancedStructuredLogger {
     // Set child context
     childLogger.setRequestContext({
       ...this.getRequestContext(),
-      ...context,
+      ..._context,
     });
     
     return childLogger;
@@ -759,7 +765,11 @@ export class EnhancedStructuredLogger {
    */
   getStatistics() {
     return {
+<<<<<<< HEAD
+      _service: this.config._service,
+=======
       _service: this.config.service,
+>>>>>>> origin/main
       environment: this.config.environment,
       level: this.config.level,
       correlationId: this.getCorrelationId(),

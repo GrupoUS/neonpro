@@ -157,7 +157,7 @@ app.post('/ai/data-agent', async c => {
             text: 'Não consegui entender sua consulta. Aqui estão algumas sugestões:',
           },
           actions: suggestions.map(suggestion => ({
-            id: `suggest_${suggestion.replace(/\s+/g, '_')}`,
+            id: `suggest_${suggestion.replace(/\s+/g, '')}`,
             label: suggestion,
             type: 'button' as const,
             action: 'suggest_query',

@@ -81,16 +81,16 @@ describe('LGPD Compliance Integration Tests', () => {
   describe('PII Redaction Integration', () => {
     it('SHOULD FAIL: Should integrate PII redaction across all packages consistently', async () => {
       // Test redaction using utils package
-      const utilsRedacted = redactPII(mockPatientData.name);
+      const utilsRedacted = redactPII(mockPatientData.name
 
       // Test redaction using security package
       const securityRedacted = maskPatientData(mockPatientData, 'basic').data.name;
 
       // Results should be consistent across packages
-      expect(utilsRedacted.text).toBe(securityRedacted);
-      expect(utilsRedacted.flags).toContain('lgpd');
-      expect(securityRedacted).not.toBe(mockPatientData.name);
-    });
+      expect(utilsRedacted.text).toBe(securityRedacted
+      expect(utilsRedacted.flags).toContain('lgpd')
+      expect(securityRedacted).not.toBe(mockPatientData.name
+    }
 
     it('SHOULD FAIL: Should handle complex nested data structures with PII', async () => {
       const complexData = {
@@ -111,13 +111,13 @@ describe('LGPD Compliance Integration Tests', () => {
       };
 
       // Should redact PII at all nesting levels
-      const redacted = redactPII(JSON.stringify(complexData));
+      const redacted = redactPII(JSON.stringify(complexData)
 
-      expect(redacted.text).not.toContain('joao.silva@email.com');
-      expect(redacted.text).not.toContain('(11) 99999-9999');
-      expect(redacted.text).not.toContain('111.444.777-35');
+      expect(redacted.text).not.toContain('joao.silva@email.com')
+      expect(redacted.text).not.toContain('(11) 99999-9999')
+      expect(redacted.text).not.toContain('111.444.777-35')
       expect(redacted.text).toContain('João'); // First name should be preserved
-    });
+    }
 
     it('SHOULD FAIL: Should validate redaction performance with large datasets', async () => {
       // Generate large dataset with PII
@@ -127,31 +127,31 @@ describe('LGPD Compliance Integration Tests', () => {
         email: `paciente${i}@email.com`,
         cpf: `${String(i).padStart(3, '0')}.444.777-35`,
         phone: `(11) 9${String(i).padStart(4, '0')}-${String(i).padStart(4, '0')}`,
-      }));
+      })
 
-      const startTime = performance.now();
-      const redactedResults = largeDataset.map(patient => redactPII(JSON.stringify(patient)));
-      const endTime = performance.now();
+      const startTime = performance.now(
+      const redactedResults = largeDataset.map(patient => redactPII(JSON.stringify(patient))
+      const endTime = performance.now(
 
       // Should process 1000 records in under 1000ms
-      expect(endTime - startTime).toBeLessThan(1000);
+      expect(endTime - startTime).toBeLessThan(1000
 
       // All results should be properly redacted
       redactedResults.forEach(result => {
-        expect(result.text).not.toContain('@email.com');
-        expect(result.text).toContain('***@');
-      });
-    });
-  });
+        expect(result.text).not.toContain('@email.com')
+        expect(result.text).toContain('***@')
+      }
+    }
+  }
 
   describe('Consent Management Integration', () => {
     it('SHOULD FAIL: Should validate consent completeness across packages', () => {
       // Test shared package consent validation
-      const isComplete = validateConsentCompleteness(mockConsent);
+      const isComplete = validateConsentCompleteness(mockConsent
 
       // Should fail because required fields are missing
       expect(isComplete).toBe(false);
-    });
+    }
 
     it('SHOULD FAIL: Should integrate consent with PII redaction decisions', () => {
       const patientWithoutConsent = {
@@ -167,26 +167,26 @@ describe('LGPD Compliance Integration Tests', () => {
       const redacted = maskPatientData(
         patientWithoutConsent,
         'full_anonymization' as LGPDComplianceLevel,
-      );
+      
 
-      expect(redacted.data.name).toBe('ANONIMIZADO');
-      expect(redacted.data.email).toContain('ANONIMIZADO');
-      expect(redacted.data.cpf).toContain('***');
-      expect(redacted.metadata.fieldsAnonymized).toContain('name');
-      expect(redacted.metadata.fieldsAnonymized).toContain('email');
-    });
+      expect(redacted.data.name).toBe('ANONIMIZADO')
+      expect(redacted.data.email).toContain('ANONIMIZADO')
+      expect(redacted.data.cpf).toContain('***')
+      expect(redacted.metadata.fieldsAnonymized).toContain('name')
+      expect(redacted.metadata.fieldsAnonymized).toContain('email')
+    }
 
     it('SHOULD FAIL: Should audit consent compliance and generate reports', () => {
-      const auditResult = auditLGPDCompliance(mockConsent);
+      const auditResult = auditLGPDCompliance(mockConsent
 
       // Should fail compliance due to missing fields
       expect(auditResult.compliant).toBe(false);
-      expect(auditResult.score).toBeLessThan(80);
-      expect(auditResult.issues.length).toBeGreaterThan(0);
+      expect(auditResult.score).toBeLessThan(80
+      expect(auditResult.issues.length).toBeGreaterThan(0
       expect(auditResult.issues).toContain(
         'Consentimento incompleto - campos obrigatórios ausentes',
-      );
-    });
+      
+    }
 
     it('SHOULD FAIL: Should handle consent withdrawal and data deletion', () => {
       const withdrawnConsent = {
@@ -198,63 +198,63 @@ describe('LGPD Compliance Integration Tests', () => {
 
       // System should handle consent withdrawal properly
       expect(withdrawnConsent.dataProcessing).toBe(false);
-      expect(withdrawnConsent.withdrawalDate).toBeDefined();
-      expect(withdrawnConsent.withdrawalReason).toBeDefined();
-    });
-  });
+      expect(withdrawnConsent.withdrawalDate).toBeDefined(
+      expect(withdrawnConsent.withdrawalReason).toBeDefined(
+    }
+  }
 
   describe('Data Anonymization Integration', () => {
     it('SHOULD FAIL: Should apply different compliance levels consistently', () => {
-      const basic = maskPatientData(mockPatientData, 'basic');
-      const enhanced = maskPatientData(mockPatientData, 'enhanced');
-      const full = maskPatientData(mockPatientData, 'full_anonymization');
+      const basic = maskPatientData(mockPatientData, 'basic')
+      const enhanced = maskPatientData(mockPatientData, 'enhanced')
+      const full = maskPatientData(mockPatientData, 'full_anonymization')
 
       // Each level should provide different levels of anonymization
       expect(basic.data.name).toContain('João'); // First name visible
       expect(enhanced.data.name).not.toContain('João'); // Name fully masked
       expect(full.data.name).toBe('ANONIMIZADO'); // Complete anonymization
 
-      expect(basic.metadata.complianceLevel).toBe('basic');
-      expect(enhanced.metadata.complianceLevel).toBe('enhanced');
-      expect(full.metadata.complianceLevel).toBe('full_anonymization');
-    });
+      expect(basic.metadata.complianceLevel).toBe('basic')
+      expect(enhanced.metadata.complianceLevel).toBe('enhanced')
+      expect(full.metadata.complianceLevel).toBe('full_anonymization')
+    }
 
     it('SHOULD FAIL: Should generate privacy compliance reports', () => {
-      const anonymized = maskPatientData(mockPatientData, 'basic');
-      const report = generatePrivacyReport(mockPatientData, anonymized);
+      const anonymized = maskPatientData(mockPatientData, 'basic')
+      const report = generatePrivacyReport(mockPatientData, anonymized
 
       // Should identify compliance risks
-      expect(report.complianceScore).toBeLessThan(100);
+      expect(report.complianceScore).toBeLessThan(100
       expect(report.lgpdCompliant).toBe(false);
-      expect(report.risks.length).toBeGreaterThan(0);
-      expect(report.recommendations.length).toBeGreaterThan(0);
-    });
+      expect(report.risks.length).toBeGreaterThan(0
+      expect(report.recommendations.length).toBeGreaterThan(0
+    }
 
     it('SHOULD FAIL: Should validate anonymization for statistical purposes', () => {
-      const anonymized = maskPatientData(mockPatientData, 'enhanced');
+      const anonymized = maskPatientData(mockPatientData, 'enhanced')
 
       // Should preserve city/state for statistical purposes
-      expect(anonymized.data.address?.city).toBe('São Paulo');
-      expect(anonymized.data.address?.state).toBe('SP');
+      expect(anonymized.data.address?.city).toBe('São Paulo')
+      expect(anonymized.data.address?.state).toBe('SP')
 
       // But mask specific address details
-      expect(anonymized.data.address?.street).not.toBe('Rua das Flores');
-      expect(anonymized.data.address?.number).not.toBe('123');
-    });
+      expect(anonymized.data.address?.street).not.toBe('Rua das Flores')
+      expect(anonymized.data.address?.number).not.toBe('123')
+    }
 
     it('SHOULD FAIL: Should handle medical data anonymization appropriately', () => {
-      const anonymized = maskPatientData(mockPatientData, 'enhanced');
+      const anonymized = maskPatientData(mockPatientData, 'enhanced')
 
       // Medical data should be handled according to LGPD
-      expect(anonymized.data.medicalData).toBeDefined();
+      expect(anonymized.data.medicalData).toBeDefined(
 
       // But should not contain identifiable information
       if (anonymized.data.medicalData?.diagnosis) {
         // Diagnosis should be preserved for treatment purposes
         expect(Array.isArray(anonymized.data.medicalData.diagnosis)).toBe(true);
       }
-    });
-  });
+    }
+  }
 
   describe('Cross-Package Compliance Validation', () => {
     it('SHOULD FAIL: Should validate data flow between packages maintains compliance', () => {
@@ -266,23 +266,23 @@ describe('LGPD Compliance Integration Tests', () => {
       const receivedData = inputText;
 
       // Step 2: Utils redacts PII
-      const utilsRedacted = redactPII(receivedData);
+      const utilsRedacted = redactPII(receivedData
 
       // Step 3: Security applies additional anonymization
       const securityData = {
         text: utilsRedacted.text,
         patient: mockPatientData,
       };
-      const securityRedacted = maskPatientData(securityData.patient, 'basic');
+      const securityRedacted = maskPatientData(securityData.patient, 'basic')
 
       // Step 4: Shared validates compliance
-      const complianceCheck = auditLGPDCompliance(mockConsent);
+      const complianceCheck = auditLGPDCompliance(mockConsent
 
       // Data should remain compliant throughout the flow
-      expect(utilsRedacted.flags.length).toBeGreaterThan(0);
-      expect(securityRedacted.metadata.fieldsAnonymized.length).toBeGreaterThan(0);
-      expect(complianceCheck.score).toBeGreaterThan(0);
-    });
+      expect(utilsRedacted.flags.length).toBeGreaterThan(0
+      expect(securityRedacted.metadata.fieldsAnonymized.length).toBeGreaterThan(0
+      expect(complianceCheck.score).toBeGreaterThan(0
+    }
 
     it('SHOULD FAIL: Should generate comprehensive compliance reports across packages', () => {
       const consents = [
@@ -291,30 +291,30 @@ describe('LGPD Compliance Integration Tests', () => {
         { ...mockConsent, patientId: 'patient-789', withdrawalDate: new Date() },
       ];
 
-      const report = generateComplianceReport(consents as LGPDConsent[]);
+      const report = generateComplianceReport(consents as LGPDConsent[]
 
       // Should provide comprehensive compliance metrics
-      expect(report.totalConsents).toBe(3);
-      expect(report.activeConsents).toBe(2);
-      expect(report.withdrawnConsents).toBe(1);
-      expect(report.complianceScore).toBeLessThan(100);
-      expect(report.issues.length).toBeGreaterThan(0);
-    });
+      expect(report.totalConsents).toBe(3
+      expect(report.activeConsents).toBe(2
+      expect(report.withdrawnConsents).toBe(1
+      expect(report.complianceScore).toBeLessThan(100
+      expect(report.issues.length).toBeGreaterThan(0
+    }
 
     it('SHOULD FAIL: Should validate audit trail completeness across packages', () => {
       // Test that all packages contribute to audit trail
       const redactionMetadata = maskPatientData(mockPatientData, 'basic').metadata;
-      const consentAudit = auditLGPDCompliance(mockConsent);
+      const consentAudit = auditLGPDCompliance(mockConsent
 
       // Audit trail should include information from all packages
-      expect(redactionMetadata.anonymizedAt).toBeDefined();
-      expect(redactionMetadata.fieldsAnonymized.length).toBeGreaterThan(0);
-      expect(redactionMetadata.version).toBeDefined();
+      expect(redactionMetadata.anonymizedAt).toBeDefined(
+      expect(redactionMetadata.fieldsAnonymized.length).toBeGreaterThan(0
+      expect(redactionMetadata.version).toBeDefined(
 
-      expect(consentAudit.issues.length).toBeGreaterThan(0);
-      expect(consentAudit.recommendations.length).toBeGreaterThan(0);
-    });
-  });
+      expect(consentAudit.issues.length).toBeGreaterThan(0
+      expect(consentAudit.recommendations.length).toBeGreaterThan(0
+    }
+  }
 
   describe('Data Subject Rights Implementation', () => {
     it('SHOULD FAIL: Should implement right to access (Art. 18 LGPD)', () => {
@@ -322,11 +322,11 @@ describe('LGPD Compliance Integration Tests', () => {
       const patientDataCopy = { ...mockPatientData };
 
       // When user requests access, they should receive all their data
-      expect(patientDataCopy.name).toBeDefined();
-      expect(patientDataCopy.cpf).toBeDefined();
-      expect(patientDataCopy.email).toBeDefined();
-      expect(patientDataCopy.medicalData).toBeDefined();
-    });
+      expect(patientDataCopy.name).toBeDefined(
+      expect(patientDataCopy.cpf).toBeDefined(
+      expect(patientDataCopy.email).toBeDefined(
+      expect(patientDataCopy.medicalData).toBeDefined(
+    }
 
     it('SHOULD FAIL: Should implement right to rectification (Art. 18 LGPD)', () => {
       // System should allow data correction
@@ -343,9 +343,9 @@ describe('LGPD Compliance Integration Tests', () => {
       };
 
       // System should handle data correction
-      expect(correctedData.name).toBe('João Silva Santos');
-      expect(correctedData.email).toBe('joao.silva@email.com');
-    });
+      expect(correctedData.name).toBe('João Silva Santos')
+      expect(correctedData.email).toBe('joao.silva@email.com')
+    }
 
     it('SHOULD FAIL: Should implement right to erasure (Art. 18 LGPD)', () => {
       // System should handle data deletion requests
@@ -357,11 +357,11 @@ describe('LGPD Compliance Integration Tests', () => {
       };
 
       // System should process deletion request
-      expect(deletionRequest.patientId).toBeDefined();
-      expect(deletionRequest.requestType).toBe('erasure');
-      expect(deletionRequest.reason).toBeDefined();
-      expect(deletionRequest.requestedAt).toBeDefined();
-    });
+      expect(deletionRequest.patientId).toBeDefined(
+      expect(deletionRequest.requestType).toBe('erasure')
+      expect(deletionRequest.reason).toBeDefined(
+      expect(deletionRequest.requestedAt).toBeDefined(
+    }
 
     it('SHOULD FAIL: Should implement right to data portability (Art. 18 LGPD)', () => {
       // System should provide data in machine-readable format
@@ -373,12 +373,12 @@ describe('LGPD Compliance Integration Tests', () => {
       };
 
       // Data should be portable and complete
-      expect(portableData.patient).toBeDefined();
-      expect(portableData.consent).toBeDefined();
-      expect(portableData.exportDate).toBeDefined();
-      expect(portableData.format).toBe('application/json');
-    });
-  });
+      expect(portableData.patient).toBeDefined(
+      expect(portableData.consent).toBeDefined(
+      expect(portableData.exportDate).toBeDefined(
+      expect(portableData.format).toBe('application/json')
+    }
+  }
 
   describe('Healthcare-Specific Compliance', () => {
     it('SHOULD FAIL: Should handle sensitive health data according to LGPD Art. 11', () => {
@@ -406,10 +406,10 @@ describe('LGPD Compliance Integration Tests', () => {
         legalBasis: LegalBasis.CONSENT, // Explicit consent required
       };
 
-      expect(sensitiveConsent.dataCategories).toContain(DataCategory.SENSITIVE_DATA);
-      expect(sensitiveConsent.dataCategories).toContain(DataCategory.GENETIC_DATA);
-      expect(sensitiveConsent.legalBasis).toBe(LegalBasis.CONSENT);
-    });
+      expect(sensitiveConsent.dataCategories).toContain(DataCategory.SENSITIVE_DATA
+      expect(sensitiveConsent.dataCategories).toContain(DataCategory.GENETIC_DATA
+      expect(sensitiveConsent.legalBasis).toBe(LegalBasis.CONSENT
+    }
 
     it('SHOULD FAIL: Should validate ANVISA compliance for medical data', () => {
       // Medical data should follow ANVISA regulations
@@ -430,7 +430,7 @@ describe('LGPD Compliance Integration Tests', () => {
 
       // Should validate ANVISA compliance
       expect(medicalRecord.records[0].anvisaNotified).toBe(true);
-    });
+    }
 
     it('SHOULD FAIL: Should implement CFM (Conselho Federal de Medicina) compliance', () => {
       // Should follow CFM ethical guidelines
@@ -448,56 +448,56 @@ describe('LGPD Compliance Integration Tests', () => {
       expect(telemedicineSession.cfmCompliant).toBe(true);
       expect(telemedicineSession.patientConsent).toBe(true);
       expect(telemedicineSession.confidentiality).toBe(true);
-    });
-  });
+    }
+  }
 
   describe('Performance and Scalability', () => {
     it('SHOULD FAIL: Should handle high-volume PII redaction efficiently', () => {
-      const largeText = Array(1000).fill(mockPatientData.name).join(' ');
+      const largeText = Array(1000).fill(mockPatientData.name).join(' ')
 
-      const startTime = performance.now();
-      const result = redactPII(largeText);
-      const endTime = performance.now();
+      const startTime = performance.now(
+      const result = redactPII(largeText
+      const endTime = performance.now(
 
       // Should process large text efficiently
-      expect(endTime - startTime).toBeLessThan(100);
-      expect(result.text).not.toContain('João Silva Santos');
-      expect(result.flags).toContain('lgpd');
-    });
+      expect(endTime - startTime).toBeLessThan(100
+      expect(result.text).not.toContain('João Silva Santos')
+      expect(result.flags).toContain('lgpd')
+    }
 
     it('SHOULD FAIL: Should maintain performance with consent validation at scale', () => {
       const consents = Array(1000).fill(null).map((_, i) => ({
         ...mockConsent,
         patientId: `patient-${i}`,
         consentDate: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
-      }));
+      })
 
-      const startTime = performance.now();
-      const report = generateComplianceReport(consents as LGPDConsent[]);
-      const endTime = performance.now();
+      const startTime = performance.now(
+      const report = generateComplianceReport(consents as LGPDConsent[]
+      const endTime = performance.now(
 
       // Should handle large-scale consent validation
-      expect(endTime - startTime).toBeLessThan(1000);
-      expect(report.totalConsents).toBe(1000);
-      expect(report.complianceScore).toBeDefined();
-    });
+      expect(endTime - startTime).toBeLessThan(1000
+      expect(report.totalConsents).toBe(1000
+      expect(report.complianceScore).toBeDefined(
+    }
 
     it('SHOULD FAIL: Should validate memory usage with large datasets', () => {
       const largeDataset = Array(10000).fill(null).map((_, i) => ({
         id: `record-${i}`,
         patient: mockPatientData,
         consent: mockConsent,
-      }));
+      })
 
       // Should not cause memory issues
       expect(() => {
         largeDataset.forEach(record => {
-          redactPII(JSON.stringify(record.patient));
-          auditLGPDCompliance(record.consent);
-        });
-      }).not.toThrow();
-    });
-  });
+          redactPII(JSON.stringify(record.patient)
+          auditLGPDCompliance(record.consent
+        }
+      }).not.toThrow(
+    }
+  }
 
   describe('Error Handling and Edge Cases', () => {
     it('SHOULD FAIL: Should handle malformed data gracefully', () => {
@@ -511,10 +511,10 @@ describe('LGPD Compliance Integration Tests', () => {
 
       // Should handle invalid data without crashing
       expect(() => {
-        redactPII(JSON.stringify(malformedData));
-        maskPatientData(malformedData as any, 'basic');
-      }).not.toThrow();
-    });
+        redactPII(JSON.stringify(malformedData)
+        maskPatientData(malformedData as any, 'basic')
+      }).not.toThrow(
+    }
 
     it('SHOULD FAIL: Should handle international data formats', () => {
       const internationalData = {
@@ -525,12 +525,12 @@ describe('LGPD Compliance Integration Tests', () => {
         cpf: '111.444.777-35',
       };
 
-      const result = redactPII(JSON.stringify(internationalData));
+      const result = redactPII(JSON.stringify(internationalData)
 
       // Should handle international formats while maintaining LGPD compliance
-      expect(result.text).toContain('j***.***@i************.com');
-      expect(result.text).toContain('***.***.***-**');
-    });
+      expect(result.text).toContain('j***.***@i************.com')
+      expect(result.text).toContain('***.***.***-**')
+    }
 
     it('SHOULD FAIL: Should validate data retention policies', () => {
       const expiredConsent = {
@@ -547,16 +547,16 @@ describe('LGPD Compliance Integration Tests', () => {
       // Should identify expired consent
       const isExpired = expiredConsent.dataRetention && expiredConsent.consentDate;
       const retentionMs = expiredConsent.dataRetention.retentionPeriod
-        * (expiredConsent.dataRetention.retentionUnit === 'years'
+        * (expiredConsent.dataRetention.retentionUnit === 'years')
           ? 365 * 24 * 60 * 60 * 1000
-          : expiredConsent.dataRetention.retentionUnit === 'months'
+          : expiredConsent.dataRetention.retentionUnit === 'months')
           ? 30 * 24 * 60 * 60 * 1000
-          : 24 * 60 * 60 * 1000);
+          : 24 * 60 * 60 * 1000
 
-      const expirationDate = new Date(expiredConsent.consentDate.getTime() + retentionMs);
-      const actuallyExpired = expirationDate < new Date();
+      const expirationDate = new Date(expiredConsent.consentDate.getTime() + retentionMs
+      const actuallyExpired = expirationDate < new Date(
 
       expect(actuallyExpired).toBe(true);
-    });
-  });
-});
+    }
+  }
+}

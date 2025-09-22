@@ -24,16 +24,21 @@ describe('Integration Test T015: Multi-Model Failover', () => {
   let criticalPatientId: string;
 
   beforeEach(async () => {
+<<<<<<< HEAD
+    await setupTestDatabase(
+    testClient = createTestClient({ _role: 'admin' }
+=======
     await setupTestDatabase();
     testClient = createTestClient({ _role: 'admin' });
+>>>>>>> origin/main
     clinicId = 'clinic-failover-test-001';
     professionalCRM = 'CRM/SP 123456';
     criticalPatientId = 'critical-patient-001';
-  });
+  }
 
   afterEach(async () => {
-    await cleanupTestDatabase();
-  });
+    await cleanupTestDatabase(
+  }
 
   describe('Primary Model Failure Detection', () => {
     it('should detect when primary AI model becomes unavailable', async () => {
@@ -65,11 +70,11 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(primaryModelRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         analysisId: expect.any(String),
         modelUsed: 'claude-3', // Fallback model
@@ -91,10 +96,10 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           criticalAnalysisCompleted: true,
           cfmComplianceMaintained: true,
         },
-      });
+      }
 
-      expect(result.failureDetection.fallbackTime).toBeLessThan(5000);
-    });
+      expect(result.failureDetection.fallbackTime).toBeLessThan(5000
+    }
 
     it('should handle multiple model failures with cascading fallbacks', async () => {
       const cascadingFailureRequest = {
@@ -123,11 +128,11 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(cascadingFailureRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         analysisId: expect.any(String),
         modelUsed: 'gemini-pro',
@@ -156,11 +161,11 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           patientSafetyMaintained: true,
           continuityCareEnsured: true,
         },
-      });
+      }
 
       expect(result.totalFallbackTime).toBeLessThan(10000); // Under 10 seconds
-    });
-  });
+    }
+  }
 
   describe('Cost-Optimized Model Selection', () => {
     it('should route to cost-effective models while maintaining quality', async () => {
@@ -182,11 +187,11 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(costOptimizedRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         analysisId: expect.any(String),
         modelSelection: {
@@ -209,11 +214,11 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           percentageSaved: expect.any(Number),
           projectedMonthlySavingsBRL: expect.any(Number),
         },
-      });
+      }
 
-      expect(result.modelSelection.costBRL).toBeLessThanOrEqual(0.5);
-      expect(result.modelSelection.qualityScore).toBeGreaterThanOrEqual(85);
-    });
+      expect(result.modelSelection.costBRL).toBeLessThanOrEqual(0.5
+      expect(result.modelSelection.qualityScore).toBeGreaterThanOrEqual(85
+    }
 
     it('should adjust model selection based on Brazilian regional latency', async () => {
       const regionalRequests = [
@@ -240,12 +245,12 @@ describe('Integration Test T015: Multi-Model Failover', () => {
             optimizeForRegion: true,
             maxLatencyMs: 3000,
           }),
-        });
+        }
 
         responses.push({
           region: regionConfig,
           response: await response.json(),
-        });
+        }
       }
 
       responses.forEach(({ region, response }) => {
@@ -263,12 +268,12 @@ describe('Integration Test T015: Multi-Model Failover', () => {
             meetsSLA: true,
             regionalRanking: expect.any(Number),
           },
-        });
+        }
 
-        expect(response.performance.actualLatency).toBeLessThan(3000);
-      });
-    });
-  });
+        expect(response.performance.actualLatency).toBeLessThan(3000
+      }
+    }
+  }
 
   describe('Healthcare-Critical Failover', () => {
     it('should prioritize reliability for emergency medical situations', async () => {
@@ -301,11 +306,11 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(emergencyRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         analysisId: expect.any(String),
         emergencyHandling: {
@@ -327,11 +332,11 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           medicalSupervisionLogged: true,
           patientSafetyPrioritized: true,
         },
-      });
+      }
 
-      expect(result.performanceGuarantees.responseTime).toBeLessThan(2000);
-      expect(result.performanceGuarantees.reliabilityScore).toBeGreaterThan(99);
-    });
+      expect(result.performanceGuarantees.responseTime).toBeLessThan(2000
+      expect(result.performanceGuarantees.reliabilityScore).toBeGreaterThan(99
+    }
 
     it('should maintain audit trail during model failovers for compliance', async () => {
       const auditedFailoverRequest = {
@@ -356,11 +361,11 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(auditedFailoverRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         analysisId: expect.any(String),
         auditTrail: {
@@ -395,9 +400,9 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           auditableDecisions: true,
           dataProtectionVerified: true,
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Quality Assurance During Failover', () => {
     it('should validate output quality consistency across models', async () => {
@@ -422,11 +427,11 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(qualityConsistencyRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         analysisId: expect.any(String),
         qualityValidation: {
@@ -453,10 +458,10 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           minimumQualityMaintained: true,
           failoverRiskAssessment: expect.any(String),
         },
-      });
+      }
 
-      expect(result.qualityValidation.overallQualityScore).toBeGreaterThan(80);
-    });
+      expect(result.qualityValidation.overallQualityScore).toBeGreaterThan(80
+    }
 
     it('should handle semantic consistency across model transitions', async () => {
       const semanticConsistencyRequest = {
@@ -482,11 +487,11 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(semanticConsistencyRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         analysisId: expect.any(String),
         semanticConsistency: {
@@ -506,11 +511,11 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           patientExperienceQuality: expect.any(Number),
           professionalUsability: expect.any(Number),
         },
-      });
+      }
 
-      expect(result.semanticConsistency.semanticAlignment).toBeGreaterThan(85);
-    });
-  });
+      expect(result.semanticConsistency.semanticAlignment).toBeGreaterThan(85
+    }
+  }
 
   describe('Monitoring and Alerting', () => {
     it('should provide real-time failover monitoring and alerts', async () => {
@@ -537,11 +542,11 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(monitoringRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         monitoringEnabled: true,
         monitoringId: expect.any(String),
@@ -564,7 +569,7 @@ describe('Integration Test T015: Multi-Model Failover', () => {
           failoverPathsTested: true,
           emergencyProtocolsVerified: true,
         },
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

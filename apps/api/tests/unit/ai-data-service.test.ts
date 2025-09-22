@@ -41,7 +41,7 @@ const mockSupabaseClient = {
 // Mock createClient
 vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(() => mockSupabaseClient),
-}));
+})
 
 // Mock ottomator bridge
 vi.mock('../../src/services/ottomator-agent-bridge', () => ({
@@ -49,7 +49,7 @@ vi.mock('../../src/services/ottomator-agent-bridge', () => ({
     isAgentHealthy: vi.fn(() => false),
     processQuery: vi.fn(),
   })),
-}));
+})
 
 describe('AIDataService', () => {
   let dataService: AIDataService;
@@ -57,7 +57,7 @@ describe('AIDataService', () => {
 
   beforeEach(() => {
     // Reset all mocks
-    vi.clearAllMocks();
+    vi.clearAllMocks(
 
     // Setup mock permission context
     mockPermissionContext = {
@@ -71,30 +71,30 @@ describe('AIDataService', () => {
     };
 
     // Setup mock query chain
-    mockSupabaseClient.from.mockReturnValue(mockQuery);
-    mockSupabaseClient.rpc.mockReturnValue(mockQuery);
+    mockSupabaseClient.from.mockReturnValue(mockQuery
+    mockSupabaseClient.rpc.mockReturnValue(mockQuery
 
-    dataService = new AIDataService(mockPermissionContext);
-  });
+    dataService = new AIDataService(mockPermissionContext
+  }
 
   describe('Constructor and Initialization', () => {
     it('should initialize with permission context', () => {
-      expect(dataService).toBeDefined();
-      expect(dataService.getPermissionContext()).toEqual(mockPermissionContext);
-    });
+      expect(dataService).toBeDefined(
+      expect(dataService.getPermissionContext()).toEqual(mockPermissionContext
+    }
 
     it('should initialize Supabase client', () => {
-      expect(mockSupabaseClient).toBeDefined();
-    });
-  });
+      expect(mockSupabaseClient).toBeDefined(
+    }
+  }
 
   describe('Permission Validation', () => {
     it('should allow access with correct permissions', async () => {
-      mockQuery.single.mockResolvedValue({ data: [], error: null });
+      mockQuery.single.mockResolvedValue({ data: [], error: null }
 
       await expect(dataService.getClientsByName({ clientNames: ['test'] }))
-        .resolves.not.toThrow();
-    });
+        .resolves.not.toThrow(
+    }
 
     it('should deny access without client permissions', async () => {
       const restrictedContext = {
@@ -102,11 +102,11 @@ describe('AIDataService', () => {
         permissions: ['read_appointments'], // Missing read_clients
       };
 
-      const restrictedService = new AIDataService(restrictedContext);
+      const restrictedService = new AIDataService(restrictedContext
 
       await expect(restrictedService.getClientsByName({ clientNames: ['test'] }))
-        .rejects.toThrow('Access denied: Insufficient permissions for client data access');
-    });
+        .rejects.toThrow('Access denied: Insufficient permissions for client data access')
+    }
 
     it('should deny access without appointment permissions', async () => {
       const restrictedContext = {
@@ -114,11 +114,11 @@ describe('AIDataService', () => {
         permissions: ['read_clients'], // Missing read_appointments
       };
 
-      const restrictedService = new AIDataService(restrictedContext);
+      const restrictedService = new AIDataService(restrictedContext
 
       await expect(restrictedService.getAppointmentsByDate({ dateRanges: [] }))
-        .rejects.toThrow('Access denied: Insufficient permissions for appointment data access');
-    });
+        .rejects.toThrow('Access denied: Insufficient permissions for appointment data access')
+    }
 
     it('should deny access without financial permissions', async () => {
       const restrictedContext = {
@@ -126,11 +126,11 @@ describe('AIDataService', () => {
         permissions: ['read_clients'], // Missing read_financial
       };
 
-      const restrictedService = new AIDataService(restrictedContext);
+      const restrictedService = new AIDataService(restrictedContext
 
       await expect(restrictedService.getFinancialSummary({}))
-        .rejects.toThrow('Access denied: Insufficient permissions for financial data access');
-    });
+        .rejects.toThrow('Access denied: Insufficient permissions for financial data access')
+    }
 
     it('should require domain specification', async () => {
       const noDomainContext = {
@@ -138,17 +138,17 @@ describe('AIDataService', () => {
         domain: '', // Empty domain
       };
 
-      const noDomainService = new AIDataService(noDomainContext);
+      const noDomainService = new AIDataService(noDomainContext
 
       await expect(noDomainService.getClientsByName({ clientNames: ['test'] }))
-        .rejects.toThrow('Access denied: User domain not specified');
-    });
-  });
+        .rejects.toThrow('Access denied: User domain not specified')
+    }
+  }
 
   describe('Client Data Access', () => {
     beforeEach(() => {
       // Reset mocks and set up test data
-      vi.clearAllMocks();
+      vi.clearAllMocks(
 
       // Set mock data for this test suite
       mockQueryResult = {
@@ -158,30 +158,30 @@ describe('AIDataService', () => {
         ],
         error: null,
       };
-    });
+    }
 
     it('should retrieve clients by name', async () => {
       const result = await dataService.getClientsByName({
         clientNames: ['João', 'Maria'],
-      });
+      }
 
-      expect(result).toHaveLength(2);
-      expect(result[0].name).toBe('João Silva');
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('clients');
-    });
+      expect(result).toHaveLength(2
+      expect(result[0].name).toBe('João Silva')
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('clients')
+    }
 
     it('should apply domain filter', async () => {
-      await dataService.getClientsByName({ clientNames: ['test'] });
+      await dataService.getClientsByName({ clientNames: ['test'] }
 
-      expect(mockQuery.eq).toHaveBeenCalledWith('domain', 'test-clinic');
-    });
+      expect(mockQuery.eq).toHaveBeenCalledWith('domain', 'test-clinic')
+    }
 
     it('should handle empty client names', async () => {
-      const result = await dataService.getClientsByName({ clientNames: [] });
+      const result = await dataService.getClientsByName({ clientNames: [] }
 
-      expect(result).toBeDefined();
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('clients');
-    });
+      expect(result).toBeDefined(
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('clients')
+    }
 
     it('should handle database errors', async () => {
       // Set error result for this test
@@ -191,14 +191,14 @@ describe('AIDataService', () => {
       };
 
       await expect(dataService.getClientsByName({ clientNames: ['test'] }))
-        .rejects.toThrow('Failed to retrieve clients: Database connection failed');
-    });
-  });
+        .rejects.toThrow('Failed to retrieve clients: Database connection failed')
+    }
+  }
 
   describe('Appointment Data Access', () => {
     beforeEach(() => {
       // Reset mocks and set up appointment test data
-      vi.clearAllMocks();
+      vi.clearAllMocks(
 
       mockQueryResult = {
         data: [
@@ -211,7 +211,7 @@ describe('AIDataService', () => {
         ],
         error: null,
       };
-    });
+    }
 
     it('should retrieve appointments by date range', async () => {
       const dateRange = {
@@ -221,45 +221,45 @@ describe('AIDataService', () => {
 
       const result = await dataService.getAppointmentsByDate({
         dateRanges: [dateRange],
-      });
+      }
 
-      expect(result).toHaveLength(1);
-      expect(result[0].clients.name).toBe('João Silva');
-      expect(mockQuery.gte).toHaveBeenCalledWith('datetime', dateRange.start.toISOString());
-      expect(mockQuery.lte).toHaveBeenCalledWith('datetime', dateRange.end.toISOString());
-    });
+      expect(result).toHaveLength(1
+      expect(result[0].clients.name).toBe('João Silva')
+      expect(mockQuery.gte).toHaveBeenCalledWith('datetime', dateRange.start.toISOString()
+      expect(mockQuery.lte).toHaveBeenCalledWith('datetime', dateRange.end.toISOString()
+    }
 
     it('should order appointments by datetime', async () => {
-      await dataService.getAppointmentsByDate({ dateRanges: [] });
+      await dataService.getAppointmentsByDate({ dateRanges: [] }
 
-      expect(mockQuery.order).toHaveBeenCalledWith('datetime', { ascending: true });
-    });
-  });
+      expect(mockQuery.order).toHaveBeenCalledWith('datetime', { ascending: true }
+    }
+  }
 
   describe('Financial Data Access', () => {
     beforeEach(() => {
       // Reset mocks and set up financial test data
-      vi.clearAllMocks();
+      vi.clearAllMocks(
 
       // Set up RPC mock for financial queries
       mockSupabaseClient.rpc.mockResolvedValue({
         data: { total_revenue: 5000, total_expenses: 2000 },
         error: null,
-      });
-    });
+      }
+    }
 
     it('should retrieve financial summary', async () => {
       const result = await dataService.getFinancialSummary({
         financial: { period: 'today', type: 'all' },
-      });
+      }
 
-      expect(result.total_revenue).toBe(5000);
+      expect(result.total_revenue).toBe(5000
       expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('get_financial_summary', {
         domain_filter: 'test-clinic',
         date_filter: expect.stringContaining('date::date'),
         type_filter: 'all',
-      });
-    });
+      }
+    }
 
     it('should restrict financial access to admin role', async () => {
       const nonAdminContext = {
@@ -267,17 +267,17 @@ describe('AIDataService', () => {
         _role: 'receptionist' as const,
       };
 
-      const nonAdminService = new AIDataService(nonAdminContext);
+      const nonAdminService = new AIDataService(nonAdminContext
 
       await expect(nonAdminService.getFinancialSummary({}))
-        .rejects.toThrow('Access denied: Insufficient permissions for financial data access');
-    });
-  });
+        .rejects.toThrow('Access denied: Insufficient permissions for financial data access')
+    }
+  }
 
   describe('Natural Language Query Processing', () => {
     beforeEach(() => {
       // Reset mocks and set up NLP test data
-      vi.clearAllMocks();
+      vi.clearAllMocks(
 
       // Set up mock data with clients for NLP tests
       mockQueryResult = {
@@ -287,74 +287,74 @@ describe('AIDataService', () => {
         ],
         error: null,
       };
-    });
+    }
 
     it('should process natural language queries with fallback', async () => {
       const response = await dataService.processNaturalLanguageQuery(
         'Mostre os clientes ativos',
         'test-session',
-      );
+      
 
-      expect(response).toBeDefined();
+      expect(response).toBeDefined(
       expect(response.success).toBe(true);
-      expect(response.response?.content).toContain('cliente');
-      expect(response.metadata?.model).toBe('fallback');
-    });
+      expect(response.response?.content).toContain('cliente')
+      expect(response.metadata?.model).toBe('fallback')
+    }
 
     it('should detect client intent', async () => {
       const response = await dataService.processNaturalLanguageQuery(
         'Informações do paciente João',
         'test-session',
-      );
+      
 
-      expect(response.response?.content).toContain('cliente');
-    });
+      expect(response.response?.content).toContain('cliente')
+    }
 
     it('should detect appointment intent', async () => {
       const response = await dataService.processNaturalLanguageQuery(
         'Agendamentos de hoje',
         'test-session',
-      );
+      
 
-      expect(response.response?.content).toContain('agendamento');
-    });
+      expect(response.response?.content).toContain('agendamento')
+    }
 
     it('should detect financial intent', async () => {
       // Set up RPC mock for financial queries
-      mockSupabaseClient.rpc.mockResolvedValue({ data: {}, error: null });
+      mockSupabaseClient.rpc.mockResolvedValue({ data: {}, error: null }
 
       const response = await dataService.processNaturalLanguageQuery(
         'Resumo financeiro',
         'test-session',
-      );
+      
 
-      expect(response.response?.content).toContain('financeiro');
-    });
+      expect(response.response?.content).toContain('financeiro')
+    }
 
     it('should handle unknown queries gracefully', async () => {
       const response = await dataService.processNaturalLanguageQuery(
         'Qual é a cor do céu?',
         'test-session',
-      );
+      
 
       expect(response.success).toBe(true);
-      expect(response.response?.content).toContain('não consegui entender');
-    });
-  });
+      expect(response.response?.content).toContain('não consegui entender')
+    }
+  }
 
   describe('Audit Logging', () => {
     beforeEach(() => {
       // Reset mocks and set up audit logging test data
-      vi.clearAllMocks();
+      vi.clearAllMocks(
 
       mockQueryResult = { data: [], error: null };
-      mockQuery.insert.mockResolvedValue({ data: null, error: null });
-    });
+      mockQuery.insert.mockResolvedValue({ data: null, error: null }
+    }
 
     it('should log successful data access', async () => {
-      await dataService.getClientsByName({ clientNames: ['test'] });
+      await dataService.getClientsByName({ clientNames: ['test'] }
 
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('audit_logs');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('audit_logs')
       expect(mockQuery.insert).toHaveBeenCalledWith({
         user_id: 'test-user-123',
         action: 'ai_agent_client_data',
@@ -364,8 +364,8 @@ describe('AIDataService', () => {
         success: true,
         domain: 'test-clinic',
         timestamp: expect.any(String),
-      });
-    });
+      }
+    }
 
     it('should log failed data access', async () => {
       // Set error result for this test
@@ -375,32 +375,32 @@ describe('AIDataService', () => {
       };
 
       await expect(dataService.getClientsByName({ clientNames: ['test'] }))
-        .rejects.toThrow();
+        .rejects.toThrow(
 
       expect(mockQuery.insert).toHaveBeenCalledWith(
         expect.objectContaining({
           success: false,
           record_count: 0,
         }),
-      );
-    });
-  });
+      
+    }
+  }
 
   describe('Health Check', () => {
     beforeEach(() => {
       // Reset mocks for health check tests
-      vi.clearAllMocks();
-    });
+      vi.clearAllMocks(
+    }
 
     it('should return healthy status when database is accessible', async () => {
       mockQueryResult = { data: [], error: null };
 
-      const health = await dataService.healthCheck();
+      const health = await dataService.healthCheck(
 
-      expect(health.status).toBe('healthy');
-      expect(health.database).toBe('connected');
-      expect(health.timestamp).toBeDefined();
-    });
+      expect(health.status).toBe('healthy')
+      expect(health.database).toBe('connected')
+      expect(health.timestamp).toBeDefined(
+    }
 
     it('should return unhealthy status when database is inaccessible', async () => {
       mockQueryResult = {
@@ -408,12 +408,12 @@ describe('AIDataService', () => {
         error: { message: 'Connection failed' },
       };
 
-      const health = await dataService.healthCheck();
+      const health = await dataService.healthCheck(
 
-      expect(health.status).toBe('unhealthy');
-      expect(health.database).toBe('disconnected');
-    });
-  });
+      expect(health.status).toBe('unhealthy')
+      expect(health.database).toBe('disconnected')
+    }
+  }
 
   describe('Permission Context Management', () => {
     it('should update permission context', () => {
@@ -422,16 +422,28 @@ describe('AIDataService', () => {
         _role: 'receptionist' as const,
       };
 
-      dataService.updatePermissionContext(newContext);
+      dataService.updatePermissionContext(newContext
 
+<<<<<<< HEAD
+      expect(dataService.getPermissionContext()._role).toBe('receptionist')
+    }
+=======
       expect(dataService.getPermissionContext()._role).toBe('receptionist');
     });
+>>>>>>> origin/main
 
     it('should return copy of permission context', () => {
-      const context = dataService.getPermissionContext();
+      const context = dataService.getPermissionContext(
       context.role = 'modified' as any;
 
+<<<<<<< HEAD
+      expect(dataService.getPermissionContext()._role).toBe('admin')
+    }
+  }
+}
+=======
       expect(dataService.getPermissionContext()._role).toBe('admin');
     });
   });
 });
+>>>>>>> origin/main

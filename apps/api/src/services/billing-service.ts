@@ -3,12 +3,14 @@
  *
  * Comprehensive billing and payment management with Brazilian tax compliance,
  * SUS integration, health plan processing, and LGPD data protection.
- *
- * @fileoverview Healthcare billing with Brazilian regulations compliance
  */
 
 import { randomUUID } from 'crypto';
+<<<<<<< HEAD
+import { z } from 'zod';
+=======
 // Brazilian tax and billing enums
+>>>>>>> origin/main
 export enum BillingType {
   SUS = 'sus',
   HEALTH_PLAN = 'health_plan',
@@ -37,7 +39,6 @@ export enum PaymentMethod {
   INSTALLMENT = 'installment',
 }
 
-// Brazilian healthcare procedure codes (CBHPM)
 const procedureCodeSchema = z.object({
   cbhpmCode: z.string().regex(/^\d{8}$/), // 8-digit CBHPM code
   description: z.string().min(5).max(500),
@@ -46,7 +47,6 @@ const procedureCodeSchema = z.object({
   specialtyRequired: z.string().optional(),
 });
 
-// Tax information schema (Brazilian)
 const taxInfoSchema = z.object({
   issRetention: z.number().min(0).max(1), // ISS retention percentage
   pisRetention: z.number().min(0).max(1), // PIS retention percentage
@@ -58,7 +58,6 @@ const taxInfoSchema = z.object({
   municipalInscription: z.string().optional(),
 });
 
-// Billing item schema
 const billingItemSchema = z.object({
   id: z.string().uuid(),
   procedureCode: procedureCodeSchema,
@@ -71,7 +70,6 @@ const billingItemSchema = z.object({
   date: z.string().datetime(),
 });
 
-// Health plan schema
 const healthPlanSchema = z.object({
   planId: z.string(),
   planName: z.string(),
@@ -84,7 +82,6 @@ const healthPlanSchema = z.object({
   preAuthNumber: z.string().optional(),
 });
 
-// Main billing schema
 const billingSchema = z.object({
   id: z.string().uuid(),
   invoiceNumber: z.string(),
@@ -147,7 +144,6 @@ export type ProcedureCode = z.infer<typeof procedureCodeSchema>;
 export type HealthPlan = z.infer<typeof healthPlanSchema>;
 export type TaxInfo = z.infer<typeof taxInfoSchema>;
 
-// Service response interface
 export interface ServiceResponse<T = any> {
   success: boolean;
   data?: T;
@@ -156,7 +152,6 @@ export interface ServiceResponse<T = any> {
   message?: string;
 }
 
-// Billing search options
 export interface BillingSearchOptions {
   patientId?: string;
   clinicId?: string;
@@ -171,7 +166,6 @@ export interface BillingSearchOptions {
   sortOrder?: 'asc' | 'desc';
 }
 
-// Financial report interfaces
 export interface FinancialSummary {
   totalRevenue: number;
   totalPending: number;
@@ -183,7 +177,6 @@ export interface FinancialSummary {
   topProcedures: Array<{ procedure: string; count: number; revenue: number }>;
 }
 
-// Payment processing interface
 export interface PaymentProcessingRequest {
   billingId: string;
   paymentMethod: PaymentMethod;
@@ -324,7 +317,11 @@ export class BillingService {
       }
 
       // Calculate totals
+<<<<<<< HEAD
+      const subtotal = billingData.items.reduce((sum,_item) => sum + _item.totalValue,
+=======
       const subtotal = billingData.items.reduce((sum,_item) => sum + item.totalValue,
+>>>>>>> origin/main
         0,
       );
       const discounts = billingData.discounts || 0;
@@ -479,7 +476,11 @@ export class BillingService {
 
       // Sorting
       if (options.sortBy) {
+<<<<<<< HEAD
+        allBillings.sort((a,b) => {
+=======
         allBillings.sort((a,_b) => {
+>>>>>>> origin/main
           const aValue = (a as any)[options.sortBy!];
           const bValue = (b as any)[options.sortBy!];
 
@@ -526,7 +527,7 @@ export class BillingService {
     _request: PaymentProcessingRequest,
   ): Promise<ServiceResponse<{ paymentId: string; status: PaymentStatus }>> {
     try {
-      const billing = this.billings.get(request.billingId);
+      const billing = this.billings.get(_request.billingId);
 
       if (!billing) {
         return {
@@ -546,7 +547,7 @@ export class BillingService {
       let paymentStatus = PaymentStatus.AUTHORIZED;
       const paymentId = randomUUID();
 
-      switch (request.paymentMethod) {
+      switch (_request.paymentMethod) {
         case PaymentMethod.CASH:
           paymentStatus = PaymentStatus.PAID;
           break;
@@ -567,17 +568,17 @@ export class BillingService {
 
       // Update billing
       billing.paymentStatus = paymentStatus;
-      billing.paymentMethod = request.paymentMethod;
+      billing.paymentMethod = _request.paymentMethod;
       if (paymentStatus === PaymentStatus.PAID) {
         billing.paymentDate = new Date().toISOString();
       }
 
       // Handle installments
-      if (request.installments && request.installments > 1) {
-        const installmentAmount = billing.total / request.installments;
+      if (_request.installments && _request.installments > 1) {
+        const installmentAmount = billing.total / _request.installments;
         billing.installments = [];
 
-        for (let i = 1; i <= request.installments; i++) {
+        for (let i = 1; i <= _request.installments; i++) {
           billing.installments.push({
             installmentNumber: i,
             amount: installmentAmount,
@@ -590,7 +591,7 @@ export class BillingService {
             paymentDate: i === 1 && paymentStatus === PaymentStatus.PAID
               ? new Date().toISOString()
               : undefined,
-            paymentMethod: request.paymentMethod,
+            paymentMethod: _request.paymentMethod,
           });
         }
       }
@@ -600,10 +601,10 @@ export class BillingService {
         action: 'payment_processed',
         performedBy: 'system',
         timestamp: new Date().toISOString(),
-        details: `Payment processed via ${request.paymentMethod}`,
+        details: `Payment processed via ${_request.paymentMethod}`,
       });
 
-      this.billings.set(request.billingId, billing);
+      this.billings.set(_request.billingId, billing);
 
       return {
         success: true,
@@ -668,7 +669,11 @@ export class BillingService {
         : 0;
 
       // Revenue by type
+<<<<<<< HEAD
+      const revenueByType = Object.values(BillingType).reduce((acc,type) => {
+=======
       const revenueByType = Object.values(BillingType).reduce((acc,_type) => {
+>>>>>>> origin/main
           acc[type] = billings
             .filter(
               b =>

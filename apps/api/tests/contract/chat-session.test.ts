@@ -9,11 +9,11 @@ async function api(path: string, init?: RequestInit) {
   process.env.SUPABASE_SERVICE_ROLE_KEY ??= 'service_role_test_key';
   process.env.NEXT_PUBLIC_SUPABASE_URL ??= 'http://localhost:54321';
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??= 'anon_test_key';
-  const { default: chat } = await import('../../src/routes/chat');
-  const app = new Hono();
-  app.route('/v1/chat', chat);
-  const url = new URL(`http://local.test/v1${path}`);
-  return app.request(url, init);
+  const { default: chat } = await import('../../src/routes/chat')
+  const app = new Hono(
+  app.route('/v1/chat', chat
+  const url = new URL(`http://local.test/v1${path}`
+  return app.request(url, init
 }
 
 describe('Contract: GET /api/v1/chat/session/:id', () => {
@@ -27,6 +27,16 @@ describe('Contract: GET /api/v1/chat/session/:id', () => {
         'x-role': 'CLINICAL_STAFF',
         'x-consent': 'true',
       },
+<<<<<<< HEAD
+    }
+    expect(res.status).toBe(200
+    const json = await res.json(
+    expect(json.id).toBe(sessionId
+    expect(json.locale).toMatch(/pt-BR|en-US/
+    expect(json._userId).toBe('u-session')
+  }
+}
+=======
     });
     expect(res.status).toBe(200);
     const json = await res.json();
@@ -35,3 +45,4 @@ describe('Contract: GET /api/v1/chat/session/:id', () => {
     expect(json._userId).toBe('u-session');
   });
 });
+>>>>>>> origin/main

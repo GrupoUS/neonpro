@@ -1,6 +1,12 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+<<<<<<< HEAD
+    "composite": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "vitest/globals", "node", "recharts"],
+    "baseUrl": ".",
+=======
     "target": "ES2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "allowImportingTsExtensions": true,
@@ -17,16 +23,10 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUncheckedIndexedAccess": true,
+>>>>>>> origin/main
     "exactOptionalPropertyTypes": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "types": ["vite/client", "vitest/globals", "node", "recharts"],
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "@/hooks/*": ["./src/hooks/*"],
@@ -62,5 +62,11 @@
     "src/**/*.test.ts",
     "src/**/*.test.tsx",
     "src/services/appointment-templates.service.ts"
+  ],
+  "references": [
+    { "path": "../../packages/types" },
+    { "path": "../../packages/utils" },
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/ui" }
   ]
 }

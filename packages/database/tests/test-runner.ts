@@ -265,7 +265,7 @@ class DatabaseTestRunner {
 
     } catch (_error: any) {
       const duration = Date.now() - startTime;
-      
+
       return {
         suite: suiteName,
         tests: [{

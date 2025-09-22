@@ -17,18 +17,18 @@ import { server } from '../mocks/server';
 
 // Setup MSW server
 beforeAll(() => {
-  console.log('📡 Starting MSW server for financial trends tests...');
-  server.listen({ onUnhandledRequest: 'warn' });
-  console.log('✅ MSW server started');
-});
+  console.log('📡 Starting MSW server for financial trends tests...')
+  server.listen({ onUnhandledRequest: 'warn' }
+  console.log('✅ MSW server started')
+}
 
 afterEach(() => {
-  server.resetHandlers();
-});
+  server.resetHandlers(
+}
 
 afterAll(() => {
-  server.close();
-});
+  server.close(
+}
 
 describe('Contract: Financial Trends API', () => {
   describe('GET /api/financial/trends', () => {
@@ -44,29 +44,29 @@ describe('Contract: Financial Trends API', () => {
             Authorization: 'Bearer test-token',
           },
         },
-      );
+      
 
       // ASSERT: Should return MRR trend data
       expect(response.ok).toBe(true);
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const data = await response.json();
+      const data = await response.json(
       expect(data.success).toBe(true);
-      expect(data.data.trend).toBeDefined();
-      expect(data.data.trend.metric).toBe('mrr');
-      expect(data.data.trend.period).toBe('12_months');
+      expect(data.data.trend).toBeDefined(
+      expect(data.data.trend.metric).toBe('mrr')
+      expect(data.data.trend.period).toBe('12_months')
 
       // Validate trend data points
-      expect(data.data.trend.dataPoints).toBeDefined();
+      expect(data.data.trend.dataPoints).toBeDefined(
       expect(Array.isArray(data.data.trend.dataPoints)).toBe(true);
-      expect(data.data.trend.dataPoints.length).toBeGreaterThan(0);
+      expect(data.data.trend.dataPoints.length).toBeGreaterThan(0
 
       // Validate data point structure
       const firstPoint = data.data.trend.dataPoints[0];
-      expect(firstPoint.date).toBeDefined();
-      expect(firstPoint.value).toBeTypeOf('number');
-      expect(firstPoint.formattedValue).toMatch(/^R\$ [\d.,]+$/);
-    });
+      expect(firstPoint.date).toBeDefined(
+      expect(firstPoint.value).toBeTypeOf('number')
+      expect(firstPoint.formattedValue).toMatch(/^R\$ [\d.,]+$/
+    }
 
     it('should return ARR growth trend with forecasting', async () => {
       // TDD RED PHASE: Test ARR growth trend with forecasting
@@ -80,26 +80,26 @@ describe('Contract: Financial Trends API', () => {
             Authorization: 'Bearer test-token',
           },
         },
-      );
+      
 
       // ASSERT: Should return ARR trend with forecast
       expect(response.ok).toBe(true);
 
-      const data = await response.json();
-      expect(data.data.trend.metric).toBe('arr');
-      expect(data.data.trend.forecast).toBeDefined();
+      const data = await response.json(
+      expect(data.data.trend.metric).toBe('arr')
+      expect(data.data.trend.forecast).toBeDefined(
 
       // Validate forecast data
       expect(data.data.trend.forecast.enabled).toBe(true);
       expect(data.data.trend.forecast.period).toBeDefined(); // e.g., "6_months"
-      expect(data.data.trend.forecast.confidence).toBeTypeOf('number');
-      expect(data.data.trend.forecast.confidence).toBeGreaterThanOrEqual(0);
-      expect(data.data.trend.forecast.confidence).toBeLessThanOrEqual(100);
+      expect(data.data.trend.forecast.confidence).toBeTypeOf('number')
+      expect(data.data.trend.forecast.confidence).toBeGreaterThanOrEqual(0
+      expect(data.data.trend.forecast.confidence).toBeLessThanOrEqual(100
 
       // Validate forecast data points
-      expect(data.data.trend.forecast.dataPoints).toBeDefined();
+      expect(data.data.trend.forecast.dataPoints).toBeDefined(
       expect(Array.isArray(data.data.trend.forecast.dataPoints)).toBe(true);
-    });
+    }
 
     it('should return churn rate trend analysis', async () => {
       // TDD RED PHASE: Test churn rate trend analysis
@@ -113,24 +113,24 @@ describe('Contract: Financial Trends API', () => {
             Authorization: 'Bearer test-token',
           },
         },
-      );
+      
 
       // ASSERT: Should return churn trend analysis
       expect(response.ok).toBe(true);
 
-      const data = await response.json();
-      expect(data.data.trend.metric).toBe('churn');
-      expect(data.data.trend.analysis).toBeDefined();
+      const data = await response.json(
+      expect(data.data.trend.metric).toBe('churn')
+      expect(data.data.trend.analysis).toBeDefined(
 
       // Validate churn analysis
-      expect(data.data.trend.analysis.type).toBe('detailed');
-      expect(data.data.trend.analysis.patterns).toBeDefined();
-      expect(data.data.trend.analysis.seasonality).toBeDefined();
-      expect(data.data.trend.analysis.averageChurn).toBeTypeOf('number');
+      expect(data.data.trend.analysis.type).toBe('detailed')
+      expect(data.data.trend.analysis.patterns).toBeDefined(
+      expect(data.data.trend.analysis.seasonality).toBeDefined(
+      expect(data.data.trend.analysis.averageChurn).toBeTypeOf('number')
       expect(data.data.trend.analysis.trendDirection).toMatch(
         /^(increasing|decreasing|stable)$/,
-      );
-    });
+      
+    }
 
     it('should return trend visualization data for charts', async () => {
       // TDD RED PHASE: Test visualization data format
@@ -144,26 +144,26 @@ describe('Contract: Financial Trends API', () => {
             Authorization: 'Bearer test-token',
           },
         },
-      );
+      
 
       // ASSERT: Should return chart-ready data
       expect(response.ok).toBe(true);
 
-      const data = await response.json();
-      expect(data.data.trend.chartData).toBeDefined();
+      const data = await response.json(
+      expect(data.data.trend.chartData).toBeDefined(
 
       // Validate chart data structure
-      expect(data.data.trend.chartData.type).toBe('line');
-      expect(data.data.trend.chartData.datasets).toBeDefined();
+      expect(data.data.trend.chartData.type).toBe('line')
+      expect(data.data.trend.chartData.datasets).toBeDefined(
       expect(Array.isArray(data.data.trend.chartData.datasets)).toBe(true);
 
       // Validate dataset structure for Chart.js compatibility
       const firstDataset = data.data.trend.chartData.datasets[0];
-      expect(firstDataset.label).toBeDefined();
-      expect(firstDataset.data).toBeDefined();
+      expect(firstDataset.label).toBeDefined(
+      expect(firstDataset.data).toBeDefined(
       expect(Array.isArray(firstDataset.data)).toBe(true);
-      expect(firstDataset.data.length).toBeGreaterThan(0);
-    });
+      expect(firstDataset.data.length).toBeGreaterThan(0
+    }
     it('should handle multiple metrics comparison', async () => {
       // TDD RED PHASE: Test multiple metrics comparison
 
@@ -176,29 +176,29 @@ describe('Contract: Financial Trends API', () => {
             Authorization: 'Bearer test-token',
           },
         },
-      );
+      
 
       // ASSERT: Should return comparison data
       expect(response.ok).toBe(true);
 
-      const data = await response.json();
-      expect(data.data.trend.comparison).toBeDefined();
-      expect(data.data.trend.comparison.metrics).toHaveLength(3);
+      const data = await response.json(
+      expect(data.data.trend.comparison).toBeDefined(
+      expect(data.data.trend.comparison.metrics).toHaveLength(3
 
       // Validate each metric in comparison
       const metrics = ['mrr', 'arr', 'churn'];
       metrics.forEach(metric => {
         const metricData = data.data.trend.comparison.metrics.find(
           (m: any) => m.metric === metric,
-        );
-        expect(metricData).toBeDefined();
-        expect(metricData.correlation).toBeTypeOf('number');
-        expect(metricData.trend).toMatch(/^(increasing|decreasing|stable)$/);
-      });
+        
+        expect(metricData).toBeDefined(
+        expect(metricData.correlation).toBeTypeOf('number')
+        expect(metricData.trend).toMatch(/^(increasing|decreasing|stable)$/
+      }
 
       // Note: Correlations will be provided by real trend analysis API
       // For mock data, we just validate basic comparison structure
-    });
+    }
 
     it('should detect anomalies in trend data', async () => {
       // TDD RED PHASE: Test anomaly detection
@@ -212,30 +212,30 @@ describe('Contract: Financial Trends API', () => {
             Authorization: 'Bearer test-token',
           },
         },
-      );
+      
 
       // ASSERT: Should return anomaly detection results
       expect(response.ok).toBe(true);
 
-      const data = await response.json();
-      expect(data.data.anomalies).toBeDefined();
-      expect(data.data.anomalies.detected).toBeTypeOf('boolean');
+      const data = await response.json(
+      expect(data.data.anomalies).toBeDefined(
+      expect(data.data.anomalies.detected).toBeTypeOf('boolean')
 
       if (data.data.anomalies.detected) {
-        expect(data.data.anomalies.points).toBeDefined();
+        expect(data.data.anomalies.points).toBeDefined(
         expect(Array.isArray(data.data.anomalies.points)).toBe(true);
 
         // Validate anomaly point structure
         if (data.data.anomalies.points.length > 0) {
           const firstAnomaly = data.data.anomalies.points[0];
-          expect(firstAnomaly.date).toBeDefined();
-          expect(firstAnomaly.value).toBeTypeOf('number');
-          expect(firstAnomaly.expectedValue).toBeTypeOf('number');
-          expect(firstAnomaly.deviationPercent).toBeTypeOf('number');
-          expect(firstAnomaly.severity).toMatch(/^(low|medium|high|critical)$/);
+          expect(firstAnomaly.date).toBeDefined(
+          expect(firstAnomaly.value).toBeTypeOf('number')
+          expect(firstAnomaly.expectedValue).toBeTypeOf('number')
+          expect(firstAnomaly.deviationPercent).toBeTypeOf('number')
+          expect(firstAnomaly.severity).toMatch(/^(low|medium|high|critical)$/
         }
       }
-    });
+    }
 
     it('should handle seasonal trend analysis', async () => {
       // TDD RED PHASE: Test seasonal analysis
@@ -249,27 +249,27 @@ describe('Contract: Financial Trends API', () => {
             Authorization: 'Bearer test-token',
           },
         },
-      );
+      
 
       // ASSERT: Should return seasonal analysis
       expect(response.ok).toBe(true);
 
-      const data = await response.json();
-      expect(data.data.seasonality).toBeDefined();
+      const data = await response.json(
+      expect(data.data.seasonality).toBeDefined(
 
       // Validate seasonality analysis
-      expect(data.data.seasonality.detected).toBeTypeOf('boolean');
-      expect(data.data.seasonality.patterns).toBeDefined();
+      expect(data.data.seasonality.detected).toBeTypeOf('boolean')
+      expect(data.data.seasonality.patterns).toBeDefined(
 
       if (data.data.seasonality.detected) {
         expect(data.data.seasonality.cycle).toBeDefined(); // e.g., "quarterly", "annual"
-        expect(data.data.seasonality.strength).toBeTypeOf('number');
-        expect(data.data.seasonality.peakMonths).toBeDefined();
+        expect(data.data.seasonality.strength).toBeTypeOf('number')
+        expect(data.data.seasonality.peakMonths).toBeDefined(
         expect(Array.isArray(data.data.seasonality.peakMonths)).toBe(true);
-        expect(data.data.seasonality.troughMonths).toBeDefined();
+        expect(data.data.seasonality.troughMonths).toBeDefined(
         expect(Array.isArray(data.data.seasonality.troughMonths)).toBe(true);
       }
-    });
+    }
 
     it('should validate trend calculation methods', async () => {
       // TDD RED PHASE: Test calculation methods
@@ -283,23 +283,23 @@ describe('Contract: Financial Trends API', () => {
             Authorization: 'Bearer test-token',
           },
         },
-      );
+      
 
       // ASSERT: Should return trend with calculation metadata
       expect(response.ok).toBe(true);
 
-      const data = await response.json();
-      expect(data.data.calculation).toBeDefined();
+      const data = await response.json(
+      expect(data.data.calculation).toBeDefined(
 
       // Validate calculation metadata
-      expect(data.data.calculation.method).toBe('linear_regression');
-      expect(data.data.calculation.rSquared).toBeTypeOf('number');
-      expect(data.data.calculation.rSquared).toBeGreaterThanOrEqual(0);
-      expect(data.data.calculation.rSquared).toBeLessThanOrEqual(1);
-      expect(data.data.calculation.slope).toBeTypeOf('number');
-      expect(data.data.calculation.intercept).toBeTypeOf('number');
-      expect(data.data.calculation.standardError).toBeTypeOf('number');
-    });
+      expect(data.data.calculation.method).toBe('linear_regression')
+      expect(data.data.calculation.rSquared).toBeTypeOf('number')
+      expect(data.data.calculation.rSquared).toBeGreaterThanOrEqual(0
+      expect(data.data.calculation.rSquared).toBeLessThanOrEqual(1
+      expect(data.data.calculation.slope).toBeTypeOf('number')
+      expect(data.data.calculation.intercept).toBeTypeOf('number')
+      expect(data.data.calculation.standardError).toBeTypeOf('number')
+    }
 
     it('should handle invalid metric validation', async () => {
       // TDD RED PHASE: Test invalid metric handling
@@ -313,22 +313,22 @@ describe('Contract: Financial Trends API', () => {
             Authorization: 'Bearer test-token',
           },
         },
-      );
+      
 
       // ASSERT: Should return validation error
       expect(response.ok).toBe(false);
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(400
 
-      const data = await response.json();
+      const data = await response.json(
       expect(data.success).toBe(false);
-      expect(data.error.code).toBe('INVALID_METRIC');
-      expect(data.error.message).toContain('metric');
-      expect(data.error.validMetrics).toBeDefined();
+      expect(data.error.code).toBe('INVALID_METRIC')
+      expect(data.error.message).toContain('metric')
+      expect(data.error.validMetrics).toBeDefined(
       expect(Array.isArray(data.error.validMetrics)).toBe(true);
-      expect(data.error.validMetrics).toContain('mrr');
-      expect(data.error.validMetrics).toContain('arr');
-      expect(data.error.validMetrics).toContain('churn');
-    });
+      expect(data.error.validMetrics).toContain('mrr')
+      expect(data.error.validMetrics).toContain('arr')
+      expect(data.error.validMetrics).toContain('churn')
+    }
 
     it('should handle insufficient data scenarios', async () => {
       // TDD RED PHASE: Test insufficient data handling
@@ -342,24 +342,24 @@ describe('Contract: Financial Trends API', () => {
             Authorization: 'Bearer test-token',
           },
         },
-      );
+      
 
       // ASSERT: Should handle insufficient data gracefully
       if (response.status === 400) {
         // Insufficient data response
-        const data = await response.json();
+        const data = await response.json(
         expect(data.success).toBe(false);
-        expect(data.error.code).toBe('INSUFFICIENT_DATA');
-        expect(data.error.message).toContain('data points');
-        expect(data.error.details.available).toBeTypeOf('number');
-        expect(data.error.details.requested).toBeTypeOf('number');
+        expect(data.error.code).toBe('INSUFFICIENT_DATA')
+        expect(data.error.message).toContain('data points')
+        expect(data.error.details.available).toBeTypeOf('number')
+        expect(data.error.details.requested).toBeTypeOf('number')
       } else {
         // Successful response with available data
         expect(response.ok).toBe(true);
-        const data = await response.json();
-        expect(data.data.trend.dataPoints.length).toBeGreaterThan(0);
-        expect(data.data.metadata.dataQuality).toBeDefined();
+        const data = await response.json(
+        expect(data.data.trend.dataPoints.length).toBeGreaterThan(0
+        expect(data.data.metadata.dataQuality).toBeDefined(
       }
-    });
-  });
-});
+    }
+  }
+}

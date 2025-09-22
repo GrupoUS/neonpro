@@ -10,7 +10,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * Ensures type safety, input validation, and output conformity
  */
 
+<<<<<<< HEAD
+describe('Professional Contract Testing',() => {
+=======
 describe(_'Professional Contract Testing',() => {
+>>>>>>> origin/main
   const mockContext = {
     user: { id: 'user-123', _role: 'admin' },
     auth: { _userId: 'user-123', isAuthenticated: true },
@@ -48,15 +52,24 @@ describe(_'Professional Contract Testing',() => {
     },
   };
 
+<<<<<<< HEAD
+  const trpcMsw = createTRPCMsw<AppRouter>(
+  const caller = appRouter.createCaller(mockContext
+=======
   const trpcMsw = createTRPCMsw<AppRouter>();
   const caller = appRouter.createCaller(mockContext);
+>>>>>>> origin/main
 
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks(
 
+<<<<<<< HEAD
+  describe('Professional Creation Contract',() => {
+    it('should validate professional creation input and output',async () => {
+=======
   describe(_'Professional Creation Contract',() => {
     it(_'should validate professional creation input and output',async () => {
+>>>>>>> origin/main
       const createInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Maria Silva',
@@ -99,16 +112,14 @@ describe(_'Professional Contract Testing',() => {
       mockContext.crm.validateLicense.mockResolvedValue({
         valid: true,
         status: 'active',
-      });
       mockContext.prisma.clinic.findUnique.mockResolvedValue({
         id: 'clinic-456',
         name: 'Test Clinic',
-      });
       mockContext.prisma.professional.create.mockResolvedValue(
         mockProfessional,
-      );
+      
 
-      const result = await caller.api.professional.create(createInput);
+      const result = await caller.api.professional.create(createInput
 
       expect(result).toMatchObject({
         success: true,
@@ -118,13 +129,11 @@ describe(_'Professional Contract Testing',() => {
           crmNumber: 'CRM/SP 123456',
           specializations: ['dermatology', 'aesthetic_medicine'],
         }),
-      });
 
       // Verify CRM validation was called
       expect(mockContext.crm.validateLicense).toHaveBeenCalledWith({
         crmNumber: 'CRM/SP 123456',
         crmState: 'SP',
-      });
 
       // Verify audit logging
       expect(mockContext.audit.logProfessionalAction).toHaveBeenCalledWith({
@@ -132,10 +141,12 @@ describe(_'Professional Contract Testing',() => {
         professionalId: 'prof-789',
         _userId: mockContext.user.id,
         timestamp: expect.any(Date),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should reject invalid CRM number',async () => {
+=======
     it(_'should reject invalid CRM number',async () => {
+>>>>>>> origin/main
       const invalidInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Invalid',
@@ -158,14 +169,16 @@ describe(_'Professional Contract Testing',() => {
       mockContext.crm.validateLicense.mockResolvedValue({
         valid: false,
         error: 'Invalid CRM format',
-      });
 
       await expect(
         caller.api.professional.create(invalidInput),
-      ).rejects.toThrow('Invalid CRM number: Invalid CRM format');
-    });
+      ).rejects.toThrow('Invalid CRM number: Invalid CRM format')
 
+<<<<<<< HEAD
+    it('should enforce CFM compliance requirements',async () => {
+=======
     it(_'should enforce CFM compliance requirements',async () => {
+>>>>>>> origin/main
       const nonCompliantInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Non Compliant',
@@ -188,20 +201,21 @@ describe(_'Professional Contract Testing',() => {
       mockContext.crm.validateLicense.mockResolvedValue({
         valid: true,
         status: 'active',
-      });
       mockContext.compliance.validateCFMCompliance.mockResolvedValue({
         compliant: false,
         missingRequirements: ['surgical_qualification'],
-      });
 
       await expect(
         caller.api.professional.create(nonCompliantInput),
-      ).rejects.toThrow('CFM compliance requirements not met');
-    });
-  });
+      ).rejects.toThrow('CFM compliance requirements not met')
 
+<<<<<<< HEAD
+  describe('Professional Retrieval Contract',() => {
+    it('should validate professional retrieval by ID',async () => {
+=======
   describe(_'Professional Retrieval Contract',() => {
     it(_'should validate professional retrieval by ID',async () => {
+>>>>>>> origin/main
       const professionalId = 'prof-789';
       const mockProfessional = {
         id: professionalId,
@@ -234,11 +248,10 @@ describe(_'Professional Contract Testing',() => {
 
       mockContext.prisma.professional.findUnique.mockResolvedValue(
         mockProfessional,
-      );
+      
 
       const result = await caller.api.professional.getById({
         id: professionalId,
-      });
 
       expect(result).toMatchObject({
         success: true,
@@ -256,22 +269,27 @@ describe(_'Professional Contract Testing',() => {
             }),
           ]),
         }),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should handle professional not found',async () => {
+=======
     it(_'should handle professional not found',async () => {
+>>>>>>> origin/main
       const professionalId = 'nonexistent-prof';
 
-      mockContext.prisma.professional.findUnique.mockResolvedValue(null);
+      mockContext.prisma.professional.findUnique.mockResolvedValue(null
 
       await expect(
         caller.api.professional.getById({ id: professionalId }),
-      ).rejects.toThrow('Professional not found');
-    });
-  });
+      ).rejects.toThrow('Professional not found')
 
+<<<<<<< HEAD
+  describe('Professional Update Contract',() => {
+    it('should validate professional information updates',async () => {
+=======
   describe(_'Professional Update Contract',() => {
     it(_'should validate professional information updates',async () => {
+>>>>>>> origin/main
       const professionalId = 'prof-789';
       const updateInput: ProfessionalInput['update'] = {
         id: professionalId,
@@ -313,12 +331,12 @@ describe(_'Professional Contract Testing',() => {
 
       mockContext.prisma.professional.findUnique.mockResolvedValue(
         existingProfessional,
-      );
+      
       mockContext.prisma.professional.update.mockResolvedValue(
         updatedProfessional,
-      );
+      
 
-      const result = await caller.api.professional.update(updateInput);
+      const result = await caller.api.professional.update(updateInput
 
       expect(result).toMatchObject({
         success: true,
@@ -328,7 +346,6 @@ describe(_'Professional Contract Testing',() => {
           email: 'maria.new@clinic.com',
           specializations: expect.arrayContaining(['laser_therapy']),
         }),
-      });
 
       // Verify audit logging for update
       expect(mockContext.audit.logProfessionalAction).toHaveBeenCalledWith({
@@ -340,10 +357,12 @@ describe(_'Professional Contract Testing',() => {
           email: 'maria.new@clinic.com',
         }),
         timestamp: expect.any(Date),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should prevent unauthorized updates to critical fields',async () => {
+=======
     it(_'should prevent unauthorized updates to critical fields',async () => {
+>>>>>>> origin/main
       const professionalId = 'prof-789';
       const unauthorizedUpdate: ProfessionalInput['update'] = {
         id: professionalId,
@@ -361,16 +380,19 @@ describe(_'Professional Contract Testing',() => {
 
       mockContext.prisma.professional.findUnique.mockResolvedValue(
         existingProfessional,
-      );
+      
 
       await expect(
         caller.api.professional.update(unauthorizedUpdate),
-      ).rejects.toThrow('Unauthorized to modify CRM information');
-    });
-  });
+      ).rejects.toThrow('Unauthorized to modify CRM information')
 
+<<<<<<< HEAD
+  describe('Professional Schedule Management Contract',() => {
+    it('should validate schedule updates',async () => {
+=======
   describe(_'Professional Schedule Management Contract',() => {
     it(_'should validate schedule updates',async () => {
+>>>>>>> origin/main
       const scheduleInput: ProfessionalInput['updateSchedule'] = {
         professionalId: 'prof-789',
         schedule: {
@@ -399,9 +421,9 @@ describe(_'Professional Contract Testing',() => {
 
       mockContext.prisma.professional.update.mockResolvedValue(
         updatedProfessional,
-      );
+      
 
-      const result = await caller.api.professional.updateSchedule(scheduleInput);
+      const result = await caller.api.professional.updateSchedule(scheduleInput
 
       expect(result).toMatchObject({
         success: true,
@@ -413,10 +435,12 @@ describe(_'Professional Contract Testing',() => {
             lunchBreak: { start: '12:00', end: '13:00' },
           }),
         }),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should validate schedule conflicts',async () => {
+=======
     it(_'should validate schedule conflicts',async () => {
+>>>>>>> origin/main
       const conflictingSchedule: ProfessionalInput['updateSchedule'] = {
         professionalId: 'prof-789',
         schedule: {
@@ -428,12 +452,15 @@ describe(_'Professional Contract Testing',() => {
 
       await expect(
         caller.api.professional.updateSchedule(conflictingSchedule),
-      ).rejects.toThrow('Invalid schedule: end time must be after start time');
-    });
-  });
+      ).rejects.toThrow('Invalid schedule: end time must be after start time')
 
+<<<<<<< HEAD
+  describe('Professional List Contract',() => {
+    it('should validate professional listing with filters',async () => {
+=======
   describe(_'Professional List Contract',() => {
     it(_'should validate professional listing with filters',async () => {
+>>>>>>> origin/main
       const listInput: ProfessionalInput['list'] = {
         page: 1,
         limit: 10,
@@ -468,10 +495,10 @@ describe(_'Professional Contract Testing',() => {
 
       mockContext.prisma.professional.findMany.mockResolvedValue(
         mockProfessionals,
-      );
-      mockContext.prisma.professional.count.mockResolvedValue(25);
+      
+      mockContext.prisma.professional.count.mockResolvedValue(25
 
-      const result = await caller.api.professional.list(listInput);
+      const result = await caller.api.professional.list(listInput
 
       expect(result).toMatchObject({
         success: true,
@@ -494,12 +521,14 @@ describe(_'Professional Contract Testing',() => {
             specializations: ['dermatology'],
           }),
         },
-      });
-    });
-  });
 
+<<<<<<< HEAD
+  describe('Professional Qualification Management Contract',() => {
+    it('should validate qualification addition',async () => {
+=======
   describe(_'Professional Qualification Management Contract',() => {
     it(_'should validate qualification addition',async () => {
+>>>>>>> origin/main
       const qualificationInput: ProfessionalInput['addQualification'] = {
         professionalId: 'prof-789',
         qualification: {
@@ -521,9 +550,9 @@ describe(_'Professional Contract Testing',() => {
 
       mockContext.prisma.professionalQualification.create.mockResolvedValue(
         newQualification,
-      );
+      
 
-      const result = await caller.api.professional.addQualification(qualificationInput);
+      const result = await caller.api.professional.addQualification(qualificationInput
 
       expect(result).toMatchObject({
         success: true,
@@ -532,10 +561,12 @@ describe(_'Professional Contract Testing',() => {
           name: 'Advanced Laser Therapy Certification',
           certificateNumber: 'CERT-2024-ALT-001',
         }),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should validate qualification expiry monitoring',async () => {
+=======
     it(_'should validate qualification expiry monitoring',async () => {
+>>>>>>> origin/main
       const professionalId = 'prof-789';
       const mockExpiringQualifications = [
         {
@@ -548,11 +579,10 @@ describe(_'Professional Contract Testing',() => {
 
       mockContext.prisma.professionalQualification.findMany.mockResolvedValue(
         mockExpiringQualifications,
-      );
+      
 
       const result = await caller.api.professional.getExpiringQualifications({
         professionalId,
-      });
 
       expect(result).toMatchObject({
         success: true,
@@ -562,12 +592,14 @@ describe(_'Professional Contract Testing',() => {
             daysUntilExpiry: 30,
           }),
         ]),
-      });
-    });
-  });
 
+<<<<<<< HEAD
+  describe('Contract Type Safety',() => {
+    it('should enforce input type constraints at compile time',() => {
+=======
   describe(_'Contract Type Safety',() => {
     it(_'should enforce input type constraints at compile time',() => {
+>>>>>>> origin/main
       const validInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Test',
@@ -587,10 +619,13 @@ describe(_'Professional Contract Testing',() => {
         _role: 'doctor',
       };
 
-      expect(validInput).toBeDefined();
-    });
+      expect(validInput).toBeDefined(
 
+<<<<<<< HEAD
+    it('should enforce output type constraints',() => {
+=======
     it(_'should enforce output type constraints',() => {
+>>>>>>> origin/main
       const mockOutput: ProfessionalOutput['getById'] = {
         success: true,
         data: {
@@ -608,9 +643,6 @@ describe(_'Professional Contract Testing',() => {
         },
       };
 
-      expect(mockOutput).toBeDefined();
+      expect(mockOutput).toBeDefined(
       expect(mockOutput.success).toBe(true);
-      expect(mockOutput.data.crmNumber).toBe('CRM/SP 123456');
-    });
-  });
-});
+      expect(mockOutput.data.crmNumber).toBe('CRM/SP 123456')

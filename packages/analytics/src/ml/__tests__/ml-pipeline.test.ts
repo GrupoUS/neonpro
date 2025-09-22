@@ -26,14 +26,23 @@ describe("ML Pipeline - Interface Contract Tests", () => {
     provider = createStubModelProvider({
       latencyMs: 10, // Fast for tests
       failureRate: 0, // No random failures in tests
+<<<<<<< HEAD
+=======
     });
   });
 
   afterEach(_async () => {
     if (provider) {
       await provider.dispose();
+>>>>>>> origin/main
     }
-  });
+  }
+
+  afterEach(_async () => {
+    if (provider) {
+      await provider.dispose(
+    }
+  }
 
   // ============================================================================
   // Initialization Tests
@@ -41,8 +50,13 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Model Provider Initialization", () => {
     it(_"should initialize successfully with default config",_async () => {
+<<<<<<< HEAD
+      await expect(provider.initialize()).resolves.not.toThrow(
+    }
+=======
       await expect(provider.initialize()).resolves.not.toThrow();
     });
+>>>>>>> origin/main
 
     it(_"should initialize successfully with custom config",_async () => {
       const customConfig = {
@@ -50,30 +64,38 @@ describe("ML Pipeline - Interface Contract Tests", () => {
         timeout: 5000,
       };
 
-      await expect(provider.initialize(customConfig)).resolves.not.toThrow();
-    });
+      await expect(provider.initialize(customConfig)).resolves.not.toThrow(
+    }
 
     it(_"should have valid metadata after initialization",_async () => {
+<<<<<<< HEAD
+      await provider.initialize(
+=======
       await provider.initialize();
+>>>>>>> origin/main
 
       const metadata = provider.metadata;
-      expect(metadata).toBeDefined();
-      expect(metadata.id).toBe("healthcare-stub-v1");
-      expect(metadata.name).toBe("Healthcare Analytics Stub Model");
-      expect(metadata.version).toBe("1.0.0");
-      expect(metadata.type).toBe("stub");
-      expect(metadata.supportedTypes).toContain("patient_outcome");
-      expect(metadata.requiredFeatures).toContain("age");
-    });
+      expect(metadata).toBeDefined(
+      expect(metadata.id).toBe("healthcare-stub-v1"
+      expect(metadata.name).toBe("Healthcare Analytics Stub Model"
+      expect(metadata.version).toBe("1.0.0"
+      expect(metadata.type).toBe("stub"
+      expect(metadata.supportedTypes).toContain("patient_outcome"
+      expect(metadata.requiredFeatures).toContain("age"
+    }
 
     it(_"should fail predictions before initialization",_async () => {
+<<<<<<< HEAD
+      const input = createMockPredictionInput("patient_outcome"
+=======
       const input = createMockPredictionInput("patient_outcome");
+>>>>>>> origin/main
 
       await expect(provider.predict(input)).rejects.toThrow(
         ModelInitializationError,
-      );
-    });
-  });
+      
+    }
+  }
 
   // ============================================================================
   // Single Prediction Tests
@@ -81,48 +103,64 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Single Prediction", () => {
     beforeEach(_async () => {
+<<<<<<< HEAD
+      await provider.initialize(
+    }
+
+    it(_"should make successful prediction with valid input",_async () => {
+      const input = createMockPredictionInput("patient_outcome"
+=======
       await provider.initialize();
     });
 
     it(_"should make successful prediction with valid input",_async () => {
       const input = createMockPredictionInput("patient_outcome");
+>>>>>>> origin/main
 
-      const result = await provider.predict(input);
+      const result = await provider.predict(input
 
-      expect(result).toBeDefined();
-      expect(result.prediction).toBeDefined();
-      expect(result.confidence).toBeGreaterThanOrEqual(0);
-      expect(result.confidence).toBeLessThanOrEqual(1);
-      expect(["low", "medium", "high"]).toContain(result.confidenceLevel);
-      expect(result.timestamp).toBeInstanceOf(Date);
-    });
+      expect(result).toBeDefined(
+      expect(result.prediction).toBeDefined(
+      expect(result.confidence).toBeGreaterThanOrEqual(0
+      expect(result.confidence).toBeLessThanOrEqual(1
+      expect(["low", "medium", "high"]).toContain(result.confidenceLevel
+      expect(result.timestamp).toBeInstanceOf(Date
+    }
 
     it(_"should include feature importance in prediction result",_async () => {
+<<<<<<< HEAD
+      const input = createMockPredictionInput("readmission_risk"
+=======
       const input = createMockPredictionInput("readmission_risk");
+>>>>>>> origin/main
 
-      const result = await provider.predict(input);
+      const result = await provider.predict(input
 
-      expect(result.featureImportance).toBeDefined();
+      expect(result.featureImportance).toBeDefined(
       expect(Array.isArray(result.featureImportance)).toBe(true);
 
       if (result.featureImportance && result.featureImportance.length > 0) {
         const firstFeature = result.featureImportance[0];
-        expect(firstFeature.feature).toBeDefined();
-        expect(firstFeature.importance).toBeGreaterThanOrEqual(0);
-        expect(firstFeature.importance).toBeLessThanOrEqual(1);
-        expect(firstFeature.description).toBeDefined();
+        expect(firstFeature.feature).toBeDefined(
+        expect(firstFeature.importance).toBeGreaterThanOrEqual(0
+        expect(firstFeature.importance).toBeLessThanOrEqual(1
+        expect(firstFeature.description).toBeDefined(
       }
-    });
+    }
 
     it(_"should return metadata in prediction result",_async () => {
+<<<<<<< HEAD
+      const input = createMockPredictionInput("no_show_risk"
+=======
       const input = createMockPredictionInput("no_show_risk");
+>>>>>>> origin/main
 
-      const result = await provider.predict(input);
+      const result = await provider.predict(input
 
-      expect(result.metadata).toBeDefined();
-      expect(result.metadata?.modelId).toBe("healthcare-stub-v1");
-      expect(result.metadata?.predictionType).toBe("no_show_risk");
-    });
+      expect(result.metadata).toBeDefined(
+      expect(result.metadata?.modelId).toBe("healthcare-stub-v1"
+      expect(result.metadata?.predictionType).toBe("no_show_risk"
+    }
 
     it(_"should validate input and reject unsupported prediction types",_async () => {
       const input = {
@@ -136,8 +174,8 @@ describe("ML Pipeline - Interface Contract Tests", () => {
         },
       };
 
-      await expect(provider.predict(input)).rejects.toThrow(InvalidInputError);
-    });
+      await expect(provider.predict(input)).rejects.toThrow(InvalidInputError
+    }
 
     it(_"should validate input and reject missing required features",_async () => {
       const input = {
@@ -148,8 +186,8 @@ describe("ML Pipeline - Interface Contract Tests", () => {
         },
       } as PredictionInput;
 
-      await expect(provider.predict(input)).rejects.toThrow(InvalidInputError);
-    });
+      await expect(provider.predict(input)).rejects.toThrow(InvalidInputError
+    }
 
     it(_"should generate different prediction types correctly",_async () => {
       const testCases = [
@@ -161,14 +199,14 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       ] as const;
 
       for (const predictionType of testCases) {
-        const input = createMockPredictionInput(predictionType);
-        const result = await provider.predict(input);
+        const input = createMockPredictionInput(predictionType
+        const result = await provider.predict(input
 
-        expect(result.prediction).toBeDefined();
-        expect(result.confidence).toBeGreaterThan(0);
+        expect(result.prediction).toBeDefined(
+        expect(result.confidence).toBeGreaterThan(0
       }
-    });
-  });
+    }
+  }
 
   // ============================================================================
   // Batch Prediction Tests
@@ -176,8 +214,13 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Batch Prediction", () => {
     beforeEach(_async () => {
+<<<<<<< HEAD
+      await provider.initialize(
+    }
+=======
       await provider.initialize();
     });
+>>>>>>> origin/main
 
     it(_"should process batch predictions successfully",_async () => {
       const inputs = [
@@ -188,19 +231,19 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
       const batchInput: BatchPredictionInput = { inputs };
 
-      const result = await provider.batchPredict(batchInput);
+      const result = await provider.batchPredict(batchInput
 
-      expect(result.results).toHaveLength(3);
-      expect(result.stats.total).toBe(3);
-      expect(result.stats.successful).toBe(3);
-      expect(result.stats.failed).toBe(0);
-      expect(result.stats.processingTimeMs).toBeGreaterThan(0);
-    });
+      expect(result.results).toHaveLength(3
+      expect(result.stats.total).toBe(3
+      expect(result.stats.successful).toBe(3
+      expect(result.stats.failed).toBe(0
+      expect(result.stats.processingTimeMs).toBeGreaterThan(0
+    }
 
     it(_"should respect batch processing options",_async () => {
       const inputs = Array.from({ length: 10 }, () =>
         createMockPredictionInput("patient_outcome"),
-      );
+      
 
       const batchInput: BatchPredictionInput = {
         inputs,
@@ -210,23 +253,23 @@ describe("ML Pipeline - Interface Contract Tests", () => {
         },
       };
 
-      const result = await provider.batchPredict(batchInput);
+      const result = await provider.batchPredict(batchInput
 
-      expect(result.results).toHaveLength(10);
-      expect(result.stats.total).toBe(10);
-    });
+      expect(result.results).toHaveLength(10
+      expect(result.stats.total).toBe(10
+    }
 
     it(_"should handle empty batch input",_async () => {
       const batchInput: BatchPredictionInput = { inputs: [] };
 
-      const result = await provider.batchPredict(batchInput);
+      const result = await provider.batchPredict(batchInput
 
-      expect(result.results).toHaveLength(0);
-      expect(result.stats.total).toBe(0);
-      expect(result.stats.successful).toBe(0);
-      expect(result.stats.failed).toBe(0);
-    });
-  });
+      expect(result.results).toHaveLength(0
+      expect(result.stats.total).toBe(0
+      expect(result.stats.successful).toBe(0
+      expect(result.stats.failed).toBe(0
+    }
+  }
 
   // ============================================================================
   // Input Validation Tests
@@ -234,17 +277,22 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Input Validation", () => {
     beforeEach(_async () => {
+<<<<<<< HEAD
+      await provider.initialize(
+    }
+=======
       await provider.initialize();
     });
+>>>>>>> origin/main
 
     it("should validate correct input structure", () => {
-      const input = createMockPredictionInput("patient_outcome");
+      const input = createMockPredictionInput("patient_outcome"
 
-      expect(() => provider.validateInput(input)).not.toThrow();
-    });
+      expect(() => provider.validateInput(input)).not.toThrow(
+    }
 
     it("should validate prediction input structure utility", () => {
-      const validInput = createMockPredictionInput("patient_outcome");
+      const validInput = createMockPredictionInput("patient_outcome"
       const invalidInputs = [
         null,
         undefined,
@@ -257,13 +305,13 @@ describe("ML Pipeline - Interface Contract Tests", () => {
         { features: {} },
       ];
 
-      expect(() => validatePredictionInputStructure(validInput)).not.toThrow();
+      expect(() => validatePredictionInputStructure(validInput)).not.toThrow(
 
       invalidInputs.forEach((input) => {
-        expect(() => validatePredictionInputStructure(input)).toThrow();
-      });
-    });
-  });
+        expect(() => validatePredictionInputStructure(input)).toThrow(
+      }
+    }
+  }
 
   // ============================================================================
   // Health Check Tests
@@ -271,25 +319,33 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Health Check", () => {
     it(_"should return health status when initialized",_async () => {
+<<<<<<< HEAD
+      await provider.initialize(
+=======
       await provider.initialize();
+>>>>>>> origin/main
 
-      const health = await provider.healthCheck();
+      const health = await provider.healthCheck(
 
-      expect(health.status).toBe("healthy");
-      expect(health.details).toBeDefined();
+      expect(health.status).toBe("healthy"
+      expect(health.details).toBeDefined(
       expect(health.details?.initialized).toBe(true);
-      expect(health.details?.modelId).toBe("healthcare-stub-v1");
-    });
+      expect(health.details?.modelId).toBe("healthcare-stub-v1"
+    }
 
     it(_"should include relevant health details",_async () => {
+<<<<<<< HEAD
+      await provider.initialize(
+=======
       await provider.initialize();
+>>>>>>> origin/main
 
-      const health = await provider.healthCheck();
+      const health = await provider.healthCheck(
 
-      expect(health.details?.accuracy).toBeDefined();
-      expect(health.details?.lastChecked).toBeDefined();
-    });
-  });
+      expect(health.details?.accuracy).toBeDefined(
+      expect(health.details?.lastChecked).toBeDefined(
+    }
+  }
 
   // ============================================================================
   // Error Handling Tests
@@ -297,8 +353,13 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Error Handling", () => {
     beforeEach(_async () => {
+<<<<<<< HEAD
+      await provider.initialize(
+    }
+=======
       await provider.initialize();
     });
+>>>>>>> origin/main
 
     it(_"should throw InvalidInputError for unsupported prediction types",_async () => {
       const input = {
@@ -312,8 +373,8 @@ describe("ML Pipeline - Interface Contract Tests", () => {
         },
       };
 
-      await expect(provider.predict(input)).rejects.toThrow(InvalidInputError);
-    });
+      await expect(provider.predict(input)).rejects.toThrow(InvalidInputError
+    }
 
     it(_"should throw InvalidInputError for missing features",_async () => {
       const input = {
@@ -321,26 +382,26 @@ describe("ML Pipeline - Interface Contract Tests", () => {
         features: { age: 30 }, // Missing required features
       } as PredictionInput;
 
-      await expect(provider.predict(input)).rejects.toThrow(InvalidInputError);
-    });
+      await expect(provider.predict(input)).rejects.toThrow(InvalidInputError
+    }
 
     it(_"should handle prediction errors gracefully",_async () => {
       // Create provider with high failure rate for testing
       const failingProvider = createStubModelProvider({
         failureRate: 1.0, // Always fail
         latencyMs: 10,
-      });
+      }
 
-      await failingProvider.initialize();
+      await failingProvider.initialize(
 
-      const input = createMockPredictionInput("patient_outcome");
+      const input = createMockPredictionInput("patient_outcome"
 
       await expect(failingProvider.predict(input)).rejects.toThrow(
         PredictionError,
-      );
-      await failingProvider.dispose();
-    });
-  });
+      
+      await failingProvider.dispose(
+    }
+  }
 
   // ============================================================================
   // Resource Management Tests
@@ -348,17 +409,21 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Resource Management", () => {
     it(_"should dispose resources properly",_async () => {
+<<<<<<< HEAD
+      await provider.initialize(
+=======
       await provider.initialize();
+>>>>>>> origin/main
 
-      await expect(provider.dispose()).resolves.not.toThrow();
+      await expect(provider.dispose()).resolves.not.toThrow(
 
       // Should not be able to make predictions after disposal
-      const input = createMockPredictionInput("patient_outcome");
+      const input = createMockPredictionInput("patient_outcome"
       await expect(provider.predict(input)).rejects.toThrow(
         ModelInitializationError,
-      );
-    });
-  });
+      
+    }
+  }
 
   // ============================================================================
   // Configuration Tests
@@ -372,13 +437,13 @@ describe("ML Pipeline - Interface Contract Tests", () => {
         version: "2.0.0",
         accuracy: 0.95,
         latencyMs: 50,
-      });
+      }
 
-      expect(customProvider.metadata.id).toBe("custom-model");
-      expect(customProvider.metadata.name).toBe("Custom Test Model");
-      expect(customProvider.metadata.version).toBe("2.0.0");
-      expect(customProvider.metadata.accuracy).toBe(0.95);
-    });
+      expect(customProvider.metadata.id).toBe("custom-model"
+      expect(customProvider.metadata.name).toBe("Custom Test Model"
+      expect(customProvider.metadata.version).toBe("2.0.0"
+      expect(customProvider.metadata.accuracy).toBe(0.95
+    }
 
     it("should support all defined prediction types", () => {
       const metadata = provider.metadata;
@@ -386,11 +451,11 @@ describe("ML Pipeline - Interface Contract Tests", () => {
       PREDICTION_TYPES.forEach((type) => {
         if (metadata.supportedTypes.includes(type)) {
           // If supported, should be able to create mock input
-          expect(() => createMockPredictionInput(type)).not.toThrow();
+          expect(() => createMockPredictionInput(type)).not.toThrow(
         }
-      });
-    });
-  });
+      }
+    }
+  }
 
   // ============================================================================
   // Utility Function Tests
@@ -400,20 +465,20 @@ describe("ML Pipeline - Interface Contract Tests", () => {
     it("should create mock prediction input correctly", () => {
       const input = createMockPredictionInput("readmission_risk", {
         customFeature: "test-value",
-      });
+      }
 
-      expect(input.type).toBe("readmission_risk");
-      expect(input.features.age).toBeDefined();
-      expect(input.features.customFeature).toBe("test-value");
-      expect(input.patientId).toBeDefined();
-      expect(input.clinicId).toBeDefined();
-    });
+      expect(input.type).toBe("readmission_risk"
+      expect(input.features.age).toBeDefined(
+      expect(input.features.customFeature).toBe("test-value"
+      expect(input.patientId).toBeDefined(
+      expect(input.clinicId).toBeDefined(
+    }
 
     it("should create stub provider with factory function", () => {
-      const provider = createStubModelProvider();
+      const provider = createStubModelProvider(
 
-      expect(provider).toBeInstanceOf(StubModelProvider);
-      expect(provider.metadata.id).toBe("healthcare-stub-v1");
-    });
-  });
-});
+      expect(provider).toBeInstanceOf(StubModelProvider
+      expect(provider.metadata.id).toBe("healthcare-stub-v1"
+    }
+  }
+}

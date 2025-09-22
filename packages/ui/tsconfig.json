@@ -1,9 +1,15 @@
 {
-  "extends": "../../tsconfig.json",
-  "composite": true,
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
+    "noEmit": false,
     "outDir": "dist",
+    "rootDir": "./src",
     "declaration": true,
+<<<<<<< HEAD
+    "declarationMap": true,
+    "sourceMap": true,
+=======
     "emitDeclarationOnly": false,
     "jsx": "react-jsx",
     "moduleResolution": "bundler",
@@ -11,11 +17,18 @@
     "target": "ES2022",
     "skipLibCheck": true,
     "strict": true,
+>>>>>>> origin/main
     "baseUrl": ".",
     "paths": {
-      "src/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@neonpro/*": ["../../packages/*/src"],
+      "@apps/*": ["../../apps/*/src"]
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
+  "references": [
+    { "path": "../types" },
+    { "path": "../utils" }
+  ]
 }

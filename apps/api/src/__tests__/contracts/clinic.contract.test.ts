@@ -10,7 +10,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * Ensures type safety, input validation, and output conformity
  */
 
+<<<<<<< HEAD
+describe('Clinic Contract Testing',() => {
+=======
 describe(_'Clinic Contract Testing',() => {
+>>>>>>> origin/main
   const mockContext = {
     user: { id: 'user-123', _role: 'admin' },
     auth: { _userId: 'user-123', isAuthenticated: true },
@@ -49,15 +53,24 @@ describe(_'Clinic Contract Testing',() => {
     },
   };
 
+<<<<<<< HEAD
+  const trpcMsw = createTRPCMsw<AppRouter>(
+  const caller = appRouter.createCaller(mockContext
+=======
   const trpcMsw = createTRPCMsw<AppRouter>();
   const caller = appRouter.createCaller(mockContext);
+>>>>>>> origin/main
 
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks(
 
+<<<<<<< HEAD
+  describe('Clinic Creation Contract',() => {
+    it('should validate clinic creation input and output',async () => {
+=======
   describe(_'Clinic Creation Contract',() => {
     it(_'should validate clinic creation input and output',async () => {
+>>>>>>> origin/main
       const createInput: ClinicInput['create'] = {
         basicInfo: {
           name: 'Clínica Estética NeonPro',
@@ -125,7 +138,6 @@ describe(_'Clinic Contract Testing',() => {
         valid: true,
         status: 'active',
         registrationDate: '2024-01-15',
-      });
       mockContext.compliance.validateLGPDCompliance.mockResolvedValue({
         compliant: true,
         requirements: [
@@ -133,10 +145,9 @@ describe(_'Clinic Contract Testing',() => {
           'privacy_policy',
           'consent_management',
         ],
-      });
-      mockContext.prisma.clinic.create.mockResolvedValue(mockClinic);
+      mockContext.prisma.clinic.create.mockResolvedValue(mockClinic
 
-      const result = await caller.api.clinic.create(createInput);
+      const result = await caller.api.clinic.create(createInput
 
       expect(result).toMatchObject({
         success: true,
@@ -146,7 +157,6 @@ describe(_'Clinic Contract Testing',() => {
           cnpj: '12.345.678/0001-90',
           specializations: expect.arrayContaining(['aesthetic_medicine']),
         }),
-      });
 
       // Verify ANVISA validation was called
       expect(
@@ -154,7 +164,6 @@ describe(_'Clinic Contract Testing',() => {
       ).toHaveBeenCalledWith({
         anvisaRegistration: 'ANVISA-REG-2024-001',
         cnpj: '12.345.678/0001-90',
-      });
 
       // Verify audit logging
       expect(mockContext.audit.logClinicAction).toHaveBeenCalledWith({
@@ -162,10 +171,12 @@ describe(_'Clinic Contract Testing',() => {
         clinicId: 'clinic-789',
         _userId: mockContext.user.id,
         timestamp: expect.any(Date),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should reject invalid ANVISA registration',async () => {
+=======
     it(_'should reject invalid ANVISA registration',async () => {
+>>>>>>> origin/main
       const invalidInput: ClinicInput['create'] = {
         basicInfo: {
           name: 'Invalid Clinic',
@@ -188,14 +199,16 @@ describe(_'Clinic Contract Testing',() => {
       mockContext.anvisa.validateClinicRegistration.mockResolvedValue({
         valid: false,
         error: 'Invalid ANVISA registration format',
-      });
 
       await expect(caller.api.clinic.create(invalidInput)).rejects.toThrow(
         'Invalid ANVISA registration: Invalid ANVISA registration format',
-      );
-    });
+      
 
+<<<<<<< HEAD
+    it('should enforce LGPD compliance requirements',async () => {
+=======
     it(_'should enforce LGPD compliance requirements',async () => {
+>>>>>>> origin/main
       const nonCompliantInput: ClinicInput['create'] = {
         basicInfo: {
           name: 'Non-Compliant Clinic',
@@ -218,20 +231,21 @@ describe(_'Clinic Contract Testing',() => {
       mockContext.anvisa.validateClinicRegistration.mockResolvedValue({
         valid: true,
         status: 'active',
-      });
       mockContext.compliance.validateLGPDCompliance.mockResolvedValue({
         compliant: false,
         missingRequirements: ['data_protection_officer', 'privacy_policy'],
-      });
 
       await expect(caller.api.clinic.create(nonCompliantInput)).rejects.toThrow(
         'LGPD compliance requirements not met',
-      );
-    });
-  });
+      
 
+<<<<<<< HEAD
+  describe('Clinic Retrieval Contract',() => {
+    it('should validate clinic retrieval by ID',async () => {
+=======
   describe(_'Clinic Retrieval Contract',() => {
     it(_'should validate clinic retrieval by ID',async () => {
+>>>>>>> origin/main
       const clinicId = 'clinic-789';
       const mockClinic = {
         id: clinicId,
@@ -266,12 +280,12 @@ describe(_'Clinic Contract Testing',() => {
         updatedAt: new Date(),
       };
 
-      mockContext.prisma.clinic.findUnique.mockResolvedValue(mockClinic);
-      mockContext.prisma.professional.count.mockResolvedValue(15);
-      mockContext.prisma.patient.count.mockResolvedValue(1250);
-      mockContext.prisma.appointment.count.mockResolvedValue(5680);
+      mockContext.prisma.clinic.findUnique.mockResolvedValue(mockClinic
+      mockContext.prisma.professional.count.mockResolvedValue(15
+      mockContext.prisma.patient.count.mockResolvedValue(1250
+      mockContext.prisma.appointment.count.mockResolvedValue(5680
 
-      const result = await caller.api.clinic.getById({ id: clinicId });
+      const result = await caller.api.clinic.getById({ id: clinicId   }
 
       expect(result).toMatchObject({
         success: true,
@@ -285,22 +299,27 @@ describe(_'Clinic Contract Testing',() => {
             totalPatients: 1250,
           }),
         }),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should handle clinic not found',async () => {
+=======
     it(_'should handle clinic not found',async () => {
+>>>>>>> origin/main
       const clinicId = 'nonexistent-clinic';
 
-      mockContext.prisma.clinic.findUnique.mockResolvedValue(null);
+      mockContext.prisma.clinic.findUnique.mockResolvedValue(null
 
       await expect(caller.api.clinic.getById({ id: clinicId })).rejects.toThrow(
         'Clinic not found',
-      );
-    });
-  });
+      
 
+<<<<<<< HEAD
+  describe('Clinic Update Contract',() => {
+    it('should validate clinic information updates',async () => {
+=======
   describe(_'Clinic Update Contract',() => {
     it(_'should validate clinic information updates',async () => {
+>>>>>>> origin/main
       const clinicId = 'clinic-789';
       const updateInput: ClinicInput['update'] = {
         id: clinicId,
@@ -353,10 +372,10 @@ describe(_'Clinic Contract Testing',() => {
         updatedAt: new Date(),
       };
 
-      mockContext.prisma.clinic.findUnique.mockResolvedValue(existingClinic);
-      mockContext.prisma.clinic.update.mockResolvedValue(updatedClinic);
+      mockContext.prisma.clinic.findUnique.mockResolvedValue(existingClinic
+      mockContext.prisma.clinic.update.mockResolvedValue(updatedClinic
 
-      const result = await caller.api.clinic.update(updateInput);
+      const result = await caller.api.clinic.update(updateInput
 
       expect(result).toMatchObject({
         success: true,
@@ -366,7 +385,6 @@ describe(_'Clinic Contract Testing',() => {
           email: 'novo-contato@neonpro.com',
           specializations: expect.arrayContaining(['laser_therapy']),
         }),
-      });
 
       // Verify audit logging for update
       expect(mockContext.audit.logClinicAction).toHaveBeenCalledWith({
@@ -378,10 +396,12 @@ describe(_'Clinic Contract Testing',() => {
           email: 'novo-contato@neonpro.com',
         }),
         timestamp: expect.any(Date),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should prevent unauthorized updates to critical fields',async () => {
+=======
     it(_'should prevent unauthorized updates to critical fields',async () => {
+>>>>>>> origin/main
       const clinicId = 'clinic-789';
       const unauthorizedUpdate: ClinicInput['update'] = {
         id: clinicId,
@@ -397,16 +417,19 @@ describe(_'Clinic Contract Testing',() => {
         name: 'Original Clinic Name',
       };
 
-      mockContext.prisma.clinic.findUnique.mockResolvedValue(existingClinic);
+      mockContext.prisma.clinic.findUnique.mockResolvedValue(existingClinic
 
       await expect(
         caller.api.clinic.update(unauthorizedUpdate),
-      ).rejects.toThrow('Unauthorized to modify CNPJ information');
-    });
-  });
+      ).rejects.toThrow('Unauthorized to modify CNPJ information')
 
+<<<<<<< HEAD
+  describe('Clinic Statistics Contract',() => {
+    it('should validate clinic statistics retrieval',async () => {
+=======
   describe(_'Clinic Statistics Contract',() => {
     it(_'should validate clinic statistics retrieval',async () => {
+>>>>>>> origin/main
       const clinicId = 'clinic-789';
       const period = 'monthly';
 
@@ -454,18 +477,17 @@ describe(_'Clinic Contract Testing',() => {
         },
       };
 
-      mockContext.prisma.appointment.count.mockResolvedValue(5680);
-      mockContext.prisma.appointment.findMany.mockResolvedValue([]);
+      mockContext.prisma.appointment.count.mockResolvedValue(5680
+      mockContext.prisma.appointment.findMany.mockResolvedValue([]
       mockContext.prisma.professional.findMany.mockResolvedValue(
         mockStatistics.professionals,
-      );
+      
 
       const result = await caller.api.clinic.getStatistics({
         clinicId,
         period,
         startDate: '2024-01-01',
         endDate: '2024-01-31',
-      });
 
       expect(result).toMatchObject({
         success: true,
@@ -487,12 +509,14 @@ describe(_'Clinic Contract Testing',() => {
             type: 'monthly',
           }),
         }),
-      });
-    });
-  });
 
+<<<<<<< HEAD
+  describe('Clinic Configuration Contract',() => {
+    it('should validate clinic configuration updates',async () => {
+=======
   describe(_'Clinic Configuration Contract',() => {
     it(_'should validate clinic configuration updates',async () => {
+>>>>>>> origin/main
       const configInput: ClinicInput['updateConfiguration'] = {
         clinicId: 'clinic-789',
         configuration: {
@@ -532,9 +556,8 @@ describe(_'Clinic Contract Testing',() => {
       mockContext.prisma.clinic.update.mockResolvedValue({
         id: 'clinic-789',
         configuration: updatedConfig,
-      });
 
-      const result = await caller.api.clinic.updateConfiguration(configInput);
+      const result = await caller.api.clinic.updateConfiguration(configInput
 
       expect(result).toMatchObject({
         success: true,
@@ -548,10 +571,12 @@ describe(_'Clinic Contract Testing',() => {
             }),
           }),
         }),
-      });
-    });
 
+<<<<<<< HEAD
+    it('should validate configuration constraints',async () => {
+=======
     it(_'should validate configuration constraints',async () => {
+>>>>>>> origin/main
       const invalidConfig: ClinicInput['updateConfiguration'] = {
         clinicId: 'clinic-789',
         configuration: {
@@ -564,12 +589,15 @@ describe(_'Clinic Contract Testing',() => {
         caller.api.clinic.updateConfiguration(invalidConfig),
       ).rejects.toThrow(
         'Invalid configuration: appointment duration must be at least 30 minutes',
-      );
-    });
-  });
+      
 
+<<<<<<< HEAD
+  describe('Clinic List Contract',() => {
+    it('should validate clinic listing with filters',async () => {
+=======
   describe(_'Clinic List Contract',() => {
     it(_'should validate clinic listing with filters',async () => {
+>>>>>>> origin/main
       const listInput: ClinicInput['list'] = {
         page: 1,
         limit: 10,
@@ -601,10 +629,10 @@ describe(_'Clinic Contract Testing',() => {
         },
       ];
 
-      mockContext.prisma.clinic.findMany.mockResolvedValue(mockClinics);
-      mockContext.prisma.clinic.count.mockResolvedValue(25);
+      mockContext.prisma.clinic.findMany.mockResolvedValue(mockClinics
+      mockContext.prisma.clinic.count.mockResolvedValue(25
 
-      const result = await caller.api.clinic.list(listInput);
+      const result = await caller.api.clinic.list(listInput
 
       expect(result).toMatchObject({
         success: true,
@@ -627,12 +655,14 @@ describe(_'Clinic Contract Testing',() => {
             specializations: ['aesthetic_medicine'],
           }),
         },
-      });
-    });
-  });
 
+<<<<<<< HEAD
+  describe('Contract Type Safety',() => {
+    it('should enforce input type constraints at compile time',() => {
+=======
   describe(_'Contract Type Safety',() => {
     it(_'should enforce input type constraints at compile time',() => {
+>>>>>>> origin/main
       const validInput: ClinicInput['create'] = {
         basicInfo: {
           name: 'Test Clinic',
@@ -652,10 +682,13 @@ describe(_'Clinic Contract Testing',() => {
         },
       };
 
-      expect(validInput).toBeDefined();
-    });
+      expect(validInput).toBeDefined(
 
+<<<<<<< HEAD
+    it('should enforce output type constraints',() => {
+=======
     it(_'should enforce output type constraints',() => {
+>>>>>>> origin/main
       const mockOutput: ClinicOutput['getById'] = {
         success: true,
         data: {
@@ -670,9 +703,6 @@ describe(_'Clinic Contract Testing',() => {
         },
       };
 
-      expect(mockOutput).toBeDefined();
+      expect(mockOutput).toBeDefined(
       expect(mockOutput.success).toBe(true);
-      expect(mockOutput.data.name).toBe('Clínica Estética NeonPro');
-    });
-  });
-});
+      expect(mockOutput.data.name).toBe('Clínica Estética NeonPro')

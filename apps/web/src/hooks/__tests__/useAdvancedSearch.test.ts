@@ -7,16 +7,57 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe(('useAdvancedSearch', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks(
+  }
 
   it(_'should export the hook function',async () => {
     // Test that the module exists and can be imported
-    const mod = await import('../useAdvancedSearch');
-    expect(mod.useAdvancedSearch).toBeTypeOf('function');
-  });
+    const mod = await import('../useAdvancedSearch')
+    expect(mod.useAdvancedSearch).toBeTypeOf('function')
+  }
 
   it(_'should handle search by name',async () => {
+<<<<<<< HEAD
+    const { useAdvancedSearch } = await import('../useAdvancedSearch')
+    expect(typeof useAdvancedSearch).toBe('function')
+  }
+
+  it(_'should handle search by CPF',async () => {
+    const { useAdvancedSearch } = await import('../useAdvancedSearch')
+    expect(typeof useAdvancedSearch).toBe('function')
+  }
+
+  it(_'should handle search by phone',async () => {
+    const { useAdvancedSearch } = await import('../useAdvancedSearch')
+    expect(typeof useAdvancedSearch).toBe('function')
+  }
+
+  it(_'should handle search by registration date range',async () => {
+    const { useAdvancedSearch } = await import('../useAdvancedSearch')
+    expect(typeof useAdvancedSearch).toBe('function')
+  }
+
+  it(_'should handle search by status filter',async () => {
+    const { useAdvancedSearch } = await import('../useAdvancedSearch')
+    expect(typeof useAdvancedSearch).toBe('function')
+  }
+
+  it(_'should provide search performance metrics',async () => {
+    const { useAdvancedSearch } = await import('../useAdvancedSearch')
+    expect(typeof useAdvancedSearch).toBe('function')
+  }
+
+  it(_'should debounce search queries for performance',async () => {
+    const { useAdvancedSearch } = await import('../useAdvancedSearch')
+    expect(typeof useAdvancedSearch).toBe('function')
+  }
+
+  it(_'should clear search filters',async () => {
+    const { useAdvancedSearch } = await import('../useAdvancedSearch')
+    expect(typeof useAdvancedSearch).toBe('function')
+  }
+}
+=======
     const { useAdvancedSearch } = await import('../useAdvancedSearch');
     expect(typeof useAdvancedSearch).toBe('function');
   });
@@ -56,6 +97,7 @@ describe(('useAdvancedSearch', () => {
     expect(typeof useAdvancedSearch).toBe('function');
   });
 });
+>>>>>>> origin/main
 
 import { act, renderHook } from '@testing-library/react';
 
@@ -64,27 +106,35 @@ import { useAdvancedSearch } from '../useAdvancedSearch';
 
 describe(('useAdvancedSearch — formatting & validation', () => {
   it(('formatCPF formats progressively and caps length', () => {
+<<<<<<< HEAD
+    const { result } = renderHook(() => useAdvancedSearch()
+=======
     const { result } = renderHook(() => useAdvancedSearch());
+>>>>>>> origin/main
 
-    expect(result.current.formatCPF('1')).toBe('1');
-    expect(result.current.formatCPF('1234')).toBe('123.4');
-    expect(result.current.formatCPF('12345678901')).toBe('123.456.789-01');
+    expect(result.current.formatCPF('1')).toBe('1')
+    expect(result.current.formatCPF('1234')).toBe('123.4')
+    expect(result.current.formatCPF('12345678901')).toBe('123.456.789-01')
     // extra digits should be ignored (length capped to 14 including punctuation)
-    expect(result.current.formatCPF('12345678901234')).toBe('123.456.789-01');
-  });
+    expect(result.current.formatCPF('12345678901234')).toBe('123.456.789-01')
+  }
 
   it('formatPhone formats to (DD) DDDDD-DDDD', () => {
-    const { result } = renderHook(() => useAdvancedSearch());
+    const { result } = renderHook(() => useAdvancedSearch()
 
-    expect(result.current.formatPhone('11')).toBe('11');
-    expect(result.current.formatPhone('119')).toBe('(11) 9');
-    expect(result.current.formatPhone('11987654321')).toBe('(11) 98765-4321');
+    expect(result.current.formatPhone('11')).toBe('11')
+    expect(result.current.formatPhone('119')).toBe('(11) 9')
+    expect(result.current.formatPhone('11987654321')).toBe('(11) 98765-4321')
     // extra digits ignored
-    expect(result.current.formatPhone('1198765432100')).toBe('(11) 98765-4321');
-  });
+    expect(result.current.formatPhone('1198765432100')).toBe('(11) 98765-4321')
+  }
 
   it(('validateCPF and validatePhone enforce strict masks', () => {
+<<<<<<< HEAD
+    const { result } = renderHook(() => useAdvancedSearch()
+=======
     const { result } = renderHook(() => useAdvancedSearch());
+>>>>>>> origin/main
 
     expect(result.current.validateCPF('123.456.789-01')).toBe(true);
     expect(result.current.validateCPF('12345678901')).toBe(false);
@@ -93,12 +143,16 @@ describe(('useAdvancedSearch — formatting & validation', () => {
     expect(result.current.validatePhone('(11) 98765-4321')).toBe(true);
     expect(result.current.validatePhone('11987654321')).toBe(false);
     expect(result.current.validatePhone('')).toBe(false);
-  });
-});
+  }
+}
 
 describe(('useAdvancedSearch — clearFilters and metrics', () => {
   it(('clearFilters resets all fields to defaults', () => {
+<<<<<<< HEAD
+    const { result } = renderHook(() => useAdvancedSearch()
+=======
     const { result } = renderHook(() => useAdvancedSearch());
+>>>>>>> origin/main
 
     act(() => {
       result.current.setFilters(prev => ({
@@ -109,14 +163,27 @@ describe(('useAdvancedSearch — clearFilters and metrics', () => {
         phone: '(11) 98765-4321',
         status: ['active'],
         dateRange: { start: new Date(), end: new Date() },
-      }));
-    });
+      })
+    }
 
     act(() => {
-      result.current.clearFilters();
-    });
+      result.current.clearFilters(
+    }
 
     const { filters } = result.current;
+<<<<<<< HEAD
+    expect(filters._query).toBe('')
+    expect(filters.email).toBe('')
+    expect(filters.cpf).toBe('')
+    expect(filters.phone).toBe('')
+    expect(filters.status).toEqual([]
+    expect(filters.dateRange.start).toBeNull(
+    expect(filters.dateRange.end).toBeNull(
+  }
+
+  it(('metrics.totalFilters counts only non-empty values', () => {
+    const { result } = renderHook(() => useAdvancedSearch()
+=======
     expect(filters._query).toBe('');
     expect(filters.email).toBe('');
     expect(filters.cpf).toBe('');
@@ -128,45 +195,52 @@ describe(('useAdvancedSearch — clearFilters and metrics', () => {
 
   it(('metrics.totalFilters counts only non-empty values', () => {
     const { result } = renderHook(() => useAdvancedSearch());
+>>>>>>> origin/main
 
     // initial state: nothing selected → 0
-    expect(result.current.metrics.totalFilters).toBe(0);
+    expect(result.current.metrics.totalFilters).toBe(0
 
     act(() => {
+<<<<<<< HEAD
+      result.current.setFilters(prev => ({ ...prev, _query: 'john' })
+    }
+    expect(result.current.metrics.totalFilters).toBe(1
+=======
       result.current.setFilters(prev => ({ ...prev, _query: 'john' }));
     });
     expect(result.current.metrics.totalFilters).toBe(1);
+>>>>>>> origin/main
 
     act(() => {
       result.current.setFilters(prev => ({
         ...prev,
         status: ['active', 'inactive'],
-      }));
-    });
-    expect(result.current.metrics.totalFilters).toBe(2);
+      })
+    }
+    expect(result.current.metrics.totalFilters).toBe(2
 
-    const start = new Date('2023-01-01');
+    const start = new Date('2023-01-01')
     act(() => {
       result.current.setFilters(prev => ({
         ...prev,
         dateRange: { start, end: null },
-      }));
-    });
-    expect(result.current.metrics.totalFilters).toBe(3);
+      })
+    }
+    expect(result.current.metrics.totalFilters).toBe(3
 
     // empty strings should not count
     act(() => {
-      result.current.setFilters(prev => ({ ...prev, email: '' }));
-    });
-    expect(result.current.metrics.totalFilters).toBe(3);
+      result.current.setFilters(prev => ({ ...prev, email: '' })
+    }
+    expect(result.current.metrics.totalFilters).toBe(3
 
     // adding a valid phone increases count
     act(() => {
       result.current.setFilters(prev => ({
         ...prev,
         phone: '(11) 98765-4321',
-      }));
-    });
-    expect(result.current.metrics.totalFilters).toBe(4);
-  });
-});
+      })
+    }
+    expect(result.current.metrics.totalFilters).toBe(4
+  }
+}

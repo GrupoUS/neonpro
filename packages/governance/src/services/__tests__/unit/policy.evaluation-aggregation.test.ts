@@ -3,7 +3,11 @@ import { InMemoryPolicyService } from "../../index";
 
 describe("Policy evaluation aggregation", () => {
   it(_"aggregates rule results into final status",_async () => {
+<<<<<<< HEAD
+    const svc = new InMemoryPolicyService(
+=======
     const svc = new InMemoryPolicyService();
+>>>>>>> origin/main
     await svc.register({
       id: "POL-1",
       name: "Encryption Policy",
@@ -11,10 +15,10 @@ describe("Policy evaluation aggregation", () => {
         { id: "RULE-1", type: "boolean", evaluate: () => true },
         { id: "RULE-2", type: "boolean", evaluate: () => false },
       ],
-    });
-    const result = await svc.evaluate("POL-1");
-    expect(result.total).toBe(2);
-    expect(result.passed).toBe(1);
-    expect(result.status).toBe("partial");
-  });
-});
+    }
+    const result = await svc.evaluate("POL-1"
+    expect(result.total).toBe(2
+    expect(result.passed).toBe(1
+    expect(result.status).toBe("partial"
+  }
+}

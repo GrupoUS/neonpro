@@ -14,14 +14,14 @@ vi.mock('@/lib/supabase', () => ({
       getSession: vi.fn(),
     },
   },
-}));
+})
 
 vi.mock('@/hooks/use-toast', () => ({
   useToast: () => ({
     toast: vi.fn(),
     dismiss: vi.fn(),
   }),
-}));
+})
 
 // Mock financial services
 vi.mock('@/services/financial-metrics', () => ({
@@ -33,7 +33,7 @@ vi.mock('@/services/financial-metrics', () => ({
     exportMetrics: vi.fn(),
     getMetricsHistory: vi.fn(),
   },
-}));
+})
 
 vi.mock('@/services/cache', () => ({
   CacheService: {
@@ -42,7 +42,7 @@ vi.mock('@/services/cache', () => ({
     invalidate: vi.fn(),
     clear: vi.fn(),
   },
-}));
+})
 
 // Mock components that should exist but don't yet (TDD RED)
 vi.mock('@/components/financial/FinancialMetrics', () => ({
@@ -52,7 +52,7 @@ vi.mock('@/components/financial/FinancialMetrics', () => ({
       { 'data-testid': 'financial-metrics' },
       'Financial Metrics Component',
     ),
-}));
+})
 
 vi.mock('@/components/financial/MetricsCalculator', () => ({
   MetricsCalculator: () =>
@@ -61,7 +61,7 @@ vi.mock('@/components/financial/MetricsCalculator', () => ({
       { 'data-testid': 'metrics-calculator' },
       'Metrics Calculator Component',
     ),
-}));
+})
 
 vi.mock('@/components/financial/MetricsAggregator', () => ({
   MetricsAggregator: () =>
@@ -70,7 +70,7 @@ vi.mock('@/components/financial/MetricsAggregator', () => ({
       { 'data-testid': 'metrics-aggregator' },
       'Metrics Aggregator Component',
     ),
-}));
+})
 
 vi.mock('@/components/financial/MetricsCache', () => ({
   MetricsCache: () =>
@@ -79,7 +79,7 @@ vi.mock('@/components/financial/MetricsCache', () => ({
       { 'data-testid': 'metrics-cache' },
       'Metrics Cache Component',
     ),
-}));
+})
 
 vi.mock('@/components/financial/MetricsPerformance', () => ({
   MetricsPerformance: () =>
@@ -88,7 +88,7 @@ vi.mock('@/components/financial/MetricsPerformance', () => ({
       { 'data-testid': 'metrics-performance' },
       'Metrics Performance Component',
     ),
-}));
+})
 
 // Types that should exist but don't yet (TDD RED)
 interface FinancialMetrics {
@@ -142,13 +142,13 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         gcTime: 0,
       },
     },
-  });
+  }
 
   return React.createElement(
     BrowserRouter,
     {},
     React.createElement(QueryClientProvider, { client: queryClient }, children),
-  );
+  
 };
 
 describe('Financial Metrics Integration Tests', () => {
@@ -162,14 +162,14 @@ describe('Financial Metrics Integration Tests', () => {
           gcTime: 0,
         },
       },
-    });
-    vi.clearAllMocks();
-  });
+    }
+    vi.clearAllMocks(
+  }
 
   afterEach(() => {
-    queryClient.clear();
-    vi.resetAllMocks();
-  });
+    queryClient.clear(
+    vi.resetAllMocks(
+  }
 
   describe('Metrics Calculation Integration', () => {
     it('should calculate basic financial metrics for a clinic', async () => {
@@ -197,23 +197,23 @@ describe('Financial Metrics Integration Tests', () => {
 
       // Mock service responses
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
       vi.mocked(FinancialMetricsService.calculateMetrics).mockResolvedValue(
         mockMetricsData,
-      );
+      
 
       // Act
-      const result = await FinancialMetricsService.calculateMetrics(mockRequest);
+      const result = await FinancialMetricsService.calculateMetrics(mockRequest
 
       // Assert
-      expect(result).toEqual(mockMetricsData);
+      expect(result).toEqual(mockMetricsData
       expect(FinancialMetricsService.calculateMetrics).toHaveBeenCalledWith(
         mockRequest,
-      );
-      expect(result.profit).toBe(10000);
-      expect(result.profitMargin).toBe(0.4);
-    });
+      
+      expect(result.profit).toBe(10000
+      expect(result.profitMargin).toBe(0.4
+    }
 
     it('should handle complex multi-period metrics calculations', async () => {
       // Arrange
@@ -252,20 +252,20 @@ describe('Financial Metrics Integration Tests', () => {
 
       // Mock service responses
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
       vi.mocked(FinancialMetricsService.calculateMetrics).mockResolvedValue(
         mockMultiPeriodMetrics,
-      );
+      
 
       // Act
-      const result = await FinancialMetricsService.calculateMetrics(mockRequest);
+      const result = await FinancialMetricsService.calculateMetrics(mockRequest
 
       // Assert
       expect(Array.isArray(result)).toBe(true);
-      expect(result).toHaveLength(2);
-      expect(result[1].growth).toBeGreaterThan(result[0].growth);
-    });
+      expect(result).toHaveLength(2
+      expect(result[1].growth).toBeGreaterThan(result[0].growth
+    }
 
     it('should calculate metrics with performance optimization', async () => {
       // Arrange
@@ -297,21 +297,21 @@ describe('Financial Metrics Integration Tests', () => {
 
       // Mock service responses
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
       vi.mocked(FinancialMetricsService.calculateMetrics).mockResolvedValue(
         mockMetricsWithPerformance,
-      );
+      
 
       // Act
-      const result = await FinancialMetricsService.calculateMetrics(mockRequest);
+      const result = await FinancialMetricsService.calculateMetrics(mockRequest
 
       // Assert
-      expect(result.performanceMetrics).toBeDefined();
-      expect(result.performanceMetrics!.calculationTime).toBeLessThan(200);
-      expect(result.performanceMetrics!.complexity).toBe('high');
-    });
-  });
+      expect(result.performanceMetrics).toBeDefined(
+      expect(result.performanceMetrics!.calculationTime).toBeLessThan(200
+      expect(result.performanceMetrics!.complexity).toBe('high')
+    }
+  }
 
   describe('Data Aggregation Integration', () => {
     it('should aggregate financial data by multiple dimensions', async () => {
@@ -363,24 +363,24 @@ describe('Financial Metrics Integration Tests', () => {
 
       // Mock service responses
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
       vi.mocked(FinancialMetricsService.aggregateData).mockResolvedValue(
         mockAggregatedData,
-      );
+      
 
       // Act
       const result = await FinancialMetricsService.aggregateData(
         mockAggregationConfig,
-      );
+      
 
       // Assert
-      expect(result.groups).toHaveLength(2);
-      expect(result.totals.revenue).toBe(25000);
+      expect(result.groups).toHaveLength(2
+      expect(result.totals.revenue).toBe(25000
       expect(result.groups[0].profitMargin).toBeGreaterThan(
         result.groups[1].profitMargin,
-      );
-    });
+      
+    }
 
     it('should handle complex aggregation with time series data', async () => {
       // Arrange
@@ -421,23 +421,23 @@ describe('Financial Metrics Integration Tests', () => {
 
       // Mock service responses
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
       vi.mocked(FinancialMetricsService.aggregateData).mockResolvedValue(
         mockTimeSeriesData,
-      );
+      
 
       // Act
-      const result = await FinancialMetricsService.aggregateData(mockTimeSeriesConfig);
+      const result = await FinancialMetricsService.aggregateData(mockTimeSeriesConfig
 
       // Assert
-      expect(result.timeSeries).toHaveLength(12);
-      expect(result.trends.revenueGrowth).toBe(0.05);
+      expect(result.timeSeries).toHaveLength(12
+      expect(result.trends.revenueGrowth).toBe(0.05
       expect(result.timeSeries[11].revenue).toBeGreaterThan(
         result.timeSeries[0].revenue,
-      );
-    });
-  });
+      
+    }
+  }
 
   describe('Caching Strategy Integration', () => {
     it('should implement aggressive caching for frequently accessed metrics', async () => {
@@ -463,42 +463,42 @@ describe('Financial Metrics Integration Tests', () => {
       };
 
       // Mock cache service
-      const { CacheService } = await import('@/services/cache');
+      const { CacheService } = await import('@/services/cache')
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
 
       vi.mocked(CacheService.get).mockResolvedValue(null); // Cache miss first
-      vi.mocked(CacheService.set).mockResolvedValue(true);
+      vi.mocked(CacheService.set).mockResolvedValue(true
       vi.mocked(FinancialMetricsService.calculateMetrics).mockResolvedValue(
         mockCachedMetrics,
-      );
+      
       vi.mocked(FinancialMetricsService.getCachedMetrics).mockResolvedValue(
         mockCachedMetrics,
-      );
+      
 
       // Act - First call (cache miss)
       const firstResult = await FinancialMetricsService.getCachedMetrics(
         mockCacheStrategy.key,
-      );
+      
 
       // Set up cache hit for second call
-      vi.mocked(CacheService.get).mockResolvedValue(mockCachedMetrics);
+      vi.mocked(CacheService.get).mockResolvedValue(mockCachedMetrics
 
       // Act - Second call (cache hit)
       const secondResult = await FinancialMetricsService.getCachedMetrics(
         mockCacheStrategy.key,
-      );
+      
 
       // Assert
-      expect(firstResult).toEqual(mockCachedMetrics);
-      expect(secondResult).toEqual(mockCachedMetrics);
+      expect(firstResult).toEqual(mockCachedMetrics
+      expect(secondResult).toEqual(mockCachedMetrics
       expect(CacheService.set).toHaveBeenCalledWith(
         mockCacheStrategy.key,
         mockCachedMetrics,
         expect.any(Number),
-      );
-    });
+      
+    }
 
     it('should handle cache invalidation on data updates', async () => {
       // Arrange
@@ -509,29 +509,29 @@ describe('Financial Metrics Integration Tests', () => {
       ];
 
       // Mock cache service
-      const { CacheService } = await import('@/services/cache');
+      const { CacheService } = await import('@/services/cache')
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
 
-      vi.mocked(CacheService.invalidate).mockResolvedValue(true);
+      vi.mocked(CacheService.invalidate).mockResolvedValue(true
       vi.mocked(FinancialMetricsService.invalidateCache).mockResolvedValue(
         true,
-      );
+      
 
       // Act
       const result = await FinancialMetricsService.invalidateCache(
         cacheKey,
         invalidationTriggers,
-      );
+      
 
       // Assert
       expect(result).toBe(true);
       expect(FinancialMetricsService.invalidateCache).toHaveBeenCalledWith(
         cacheKey,
         invalidationTriggers,
-      );
-    });
+      
+    }
 
     it('should implement conservative caching for critical metrics', async () => {
       // Arrange
@@ -556,27 +556,27 @@ describe('Financial Metrics Integration Tests', () => {
       };
 
       // Mock cache service with conservative settings
-      const { CacheService } = await import('@/services/cache');
+      const { CacheService } = await import('@/services/cache')
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
 
-      vi.mocked(CacheService.get).mockResolvedValue(null);
-      vi.mocked(CacheService.set).mockResolvedValue(true);
+      vi.mocked(CacheService.get).mockResolvedValue(null
+      vi.mocked(CacheService.set).mockResolvedValue(true
       vi.mocked(FinancialMetricsService.getCachedMetrics).mockResolvedValue(
         mockCriticalMetrics,
-      );
+      
 
       // Act
       const result = await FinancialMetricsService.getCachedMetrics(
         mockConservativeCacheStrategy.key,
-      );
+      
 
       // Assert
-      expect(result).toEqual(mockCriticalMetrics);
+      expect(result).toEqual(mockCriticalMetrics
       expect(result.cacheExpiry!.getTime()).toBeLessThan(Date.now() + 600000); // Less than 10 minutes
-    });
-  });
+    }
+  }
 
   describe('Performance Optimization Integration', () => {
     it('should optimize metrics calculation for large datasets', async () => {
@@ -609,14 +609,14 @@ describe('Financial Metrics Integration Tests', () => {
 
       // Mock service with performance tracking
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
       vi.mocked(FinancialMetricsService.calculateMetrics).mockImplementation(
         async request => {
           // Simulate performance optimization
-          const startTime = Date.now();
-          await new Promise(resolve => setTimeout(resolve, 50)); // Simulate calculation
-          const endTime = Date.now();
+          const startTime = Date.now(
+          await new Promise(resolve => setTimeout(resolve, 50); // Simulate calculation
+          const endTime = Date.now(
 
           return {
             ...mockOptimizedMetrics,
@@ -626,18 +626,18 @@ describe('Financial Metrics Integration Tests', () => {
             },
           };
         },
-      );
+      
 
       // Act
       const result = await FinancialMetricsService.calculateMetrics(
         mockLargeDatasetRequest,
-      );
+      
 
       // Assert
-      expect(result.performanceMetrics).toBeDefined();
-      expect(result.performanceMetrics!.calculationTime).toBeLessThan(500);
-      expect(result.performanceMetrics!.dataPoints).toBe(50000);
-    });
+      expect(result.performanceMetrics).toBeDefined(
+      expect(result.performanceMetrics!.calculationTime).toBeLessThan(500
+      expect(result.performanceMetrics!.dataPoints).toBe(50000
+    }
 
     it('should implement parallel processing for multi-clinic metrics', async () => {
       // Arrange
@@ -697,23 +697,27 @@ describe('Financial Metrics Integration Tests', () => {
 
       // Mock parallel processing
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
       vi.mocked(FinancialMetricsService.calculateMetrics)
         .mockResolvedValueOnce(mockParallelResults[0])
-        .mockResolvedValueOnce(mockParallelResults[1]);
+        .mockResolvedValueOnce(mockParallelResults[1]
 
       // Act
       const results = await Promise.all(
         mockMultiClinicRequests.map(request => FinancialMetricsService.calculateMetrics(_request)),
+<<<<<<< HEAD
+      
+=======
       );
+>>>>>>> origin/main
 
       // Assert
-      expect(results).toHaveLength(2);
-      expect(results[0].performanceMetrics!.calculationTime).toBeLessThan(200);
-      expect(results[1].performanceMetrics!.calculationTime).toBeLessThan(200);
-      expect(results[0].revenue).not.toBe(results[1].revenue);
-    });
+      expect(results).toHaveLength(2
+      expect(results[0].performanceMetrics!.calculationTime).toBeLessThan(200
+      expect(results[1].performanceMetrics!.calculationTime).toBeLessThan(200
+      expect(results[0].revenue).not.toBe(results[1].revenue
+    }
 
     it('should handle memory optimization for long-running calculations', async () => {
       // Arrange
@@ -745,13 +749,13 @@ describe('Financial Metrics Integration Tests', () => {
 
       // Mock memory-optimized calculation
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
       vi.mocked(FinancialMetricsService.calculateMetrics).mockImplementation(
         async request => {
           // Simulate memory optimization
           const memoryUsageBefore = process.memoryUsage?.()?.heapUsed || 0;
-          await new Promise(resolve => setTimeout(resolve, 100)); // Simulate calculation
+          await new Promise(resolve => setTimeout(resolve, 100); // Simulate calculation
           const memoryUsageAfter = process.memoryUsage?.()?.heapUsed || 0;
 
           return {
@@ -762,19 +766,19 @@ describe('Financial Metrics Integration Tests', () => {
             },
           };
         },
-      );
+      
 
       // Act
       const result = await FinancialMetricsService.calculateMetrics(
         mockMemoryOptimizedRequest,
-      );
+      
 
       // Assert
-      expect(result.performanceMetrics).toBeDefined();
-      expect(result.performanceMetrics!.dataPoints).toBe(1800);
-      expect(result.period).toBe('2020-2024');
-    });
-  });
+      expect(result.performanceMetrics).toBeDefined(
+      expect(result.performanceMetrics!.dataPoints).toBe(1800
+      expect(result.period).toBe('2020-2024')
+    }
+  }
 
   describe('Error Handling and Edge Cases', () => {
     it('should handle calculation errors gracefully', async () => {
@@ -791,35 +795,35 @@ describe('Financial Metrics Integration Tests', () => {
 
       // Mock service error
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
       vi.mocked(FinancialMetricsService.calculateMetrics).mockRejectedValue(
         new Error('Clinic not found: invalid-clinic'),
-      );
+      
 
       // Act & Assert
       await expect(
         FinancialMetricsService.calculateMetrics(mockErrorRequest),
-      ).rejects.toThrow('Clinic not found: invalid-clinic');
-    });
+      ).rejects.toThrow('Clinic not found: invalid-clinic')
+    }
 
     it('should handle cache failures gracefully', async () => {
       // Arrange
       const cacheKey = 'financial-metrics:clinic-001:monthly';
 
       // Mock cache failure
-      const { CacheService } = await import('@/services/cache');
+      const { CacheService } = await import('@/services/cache')
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
 
       vi.mocked(CacheService.get).mockRejectedValue(
         new Error('Cache service unavailable'),
-      );
+      
       vi.mocked(FinancialMetricsService.getCachedMetrics).mockImplementation(
         async key => {
           try {
-            await CacheService.get(key);
+            await CacheService.get(key
           } catch (error) {
             // Fall back to direct calculation
             return await FinancialMetricsService.calculateMetrics({
@@ -830,18 +834,18 @@ describe('Financial Metrics Integration Tests', () => {
               includeProjections: false,
               cacheStrategy: 'none',
               performanceMode: 'balanced',
-            });
+            }
           }
         },
-      );
+      
 
       // Act
-      const result = await FinancialMetricsService.getCachedMetrics(cacheKey);
+      const result = await FinancialMetricsService.getCachedMetrics(cacheKey
 
       // Assert
-      expect(result).toBeDefined();
-      expect(CacheService.get).toHaveBeenCalledWith(cacheKey);
-    });
+      expect(result).toBeDefined(
+      expect(CacheService.get).toHaveBeenCalledWith(cacheKey
+    }
 
     it('should validate data integrity in calculations', async () => {
       // Arrange
@@ -868,45 +872,45 @@ describe('Financial Metrics Integration Tests', () => {
 
       // Mock validation
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
       vi.mocked(FinancialMetricsService.calculateMetrics).mockImplementation(
         async request => {
           // Validate data integrity
           const result = mockValidatedMetrics;
 
           if (result.revenue < 0 || result.expenses < 0) {
-            throw new Error('Invalid financial data: negative values detected');
+            throw new Error('Invalid financial data: negative values detected')
           }
 
           if (result.profit !== result.revenue - result.expenses) {
             throw new Error(
               'Data integrity error: profit calculation mismatch',
-            );
+            
           }
 
           if (result.profitMargin !== result.profit / result.revenue) {
             throw new Error(
               'Data integrity error: profit margin calculation mismatch',
-            );
+            
           }
 
           return result;
         },
-      );
+      
 
       // Act
       const result = await FinancialMetricsService.calculateMetrics(
         mockDataIntegrityRequest,
-      );
+      
 
       // Assert
-      expect(result.profit).toBe(result.revenue - result.expenses);
-      expect(result.profitMargin).toBe(result.profit / result.revenue);
-      expect(result.revenue).toBeGreaterThan(0);
-      expect(result.expenses).toBeGreaterThan(0);
-    });
-  });
+      expect(result.profit).toBe(result.revenue - result.expenses
+      expect(result.profitMargin).toBe(result.profit / result.revenue
+      expect(result.revenue).toBeGreaterThan(0
+      expect(result.expenses).toBeGreaterThan(0
+    }
+  }
 
   describe('Export and Historical Data Integration', () => {
     it('should export metrics in multiple formats', async () => {
@@ -929,20 +933,20 @@ describe('Financial Metrics Integration Tests', () => {
 
       // Mock export service
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
       vi.mocked(FinancialMetricsService.exportMetrics).mockResolvedValue(
         mockExportData,
-      );
+      
 
       // Act
-      const result = await FinancialMetricsService.exportMetrics(mockExportRequest);
+      const result = await FinancialMetricsService.exportMetrics(mockExportRequest
 
       // Assert
-      expect(result.filename).toContain('financial-metrics-clinic-001-2024');
-      expect(result.url).toContain('https://storage.example.com');
-      expect(result.expiresAt).toBeInstanceOf(Date);
-    });
+      expect(result.filename).toContain('financial-metrics-clinic-001-2024')
+      expect(result.url).toContain('https://storage.example.com')
+      expect(result.expiresAt).toBeInstanceOf(Date
+    }
 
     it('should retrieve historical metrics with trend analysis', async () => {
       // Arrange
@@ -983,24 +987,24 @@ describe('Financial Metrics Integration Tests', () => {
 
       // Mock historical service
       const { FinancialMetricsService } = await import(
-        '@/services/financial-metrics'
-      );
+        '@/services/financial-metrics')
+      
       vi.mocked(FinancialMetricsService.getMetricsHistory).mockResolvedValue(
         mockHistoricalData,
-      );
+      
 
       // Act
       const result = await FinancialMetricsService.getMetricsHistory(
         mockHistoricalRequest,
-      );
+      
 
       // Assert
-      expect(result.metrics).toHaveLength(5);
-      expect(result.trends.revenueGrowth).toBe(0.1);
-      expect(result.projections.nextYear.confidence).toBe(0.85);
+      expect(result.metrics).toHaveLength(5
+      expect(result.trends.revenueGrowth).toBe(0.1
+      expect(result.projections.nextYear.confidence).toBe(0.85
       expect(result.metrics[4].revenue).toBeGreaterThan(
         result.metrics[0].revenue,
-      );
-    });
-  });
-});
+      
+    }
+  }
+}

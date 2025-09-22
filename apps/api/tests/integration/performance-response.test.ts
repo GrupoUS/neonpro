@@ -15,13 +15,13 @@ describe('Response Time Performance - Integration Test', () => {
     try {
       app = (await import('../../src/app')).default;
     } catch (error) {
-      console.log('Expected failure: App not available during TDD phase');
+      console.log('Expected failure: App not available during TDD phase')
     }
-  });
+  }
 
   describe('Simple Query Response Times', () => {
     test('should respond to appointment queries within 2 seconds', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const queries = [
         'Próximos agendamentos',
@@ -30,7 +30,7 @@ describe('Response Time Performance - Integration Test', () => {
       ];
 
       for (const query of queries) {
-        const startTime = Date.now();
+        const startTime = Date.now(
 
         const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
@@ -45,20 +45,20 @@ describe('Response Time Performance - Integration Test', () => {
               _userId: 'doctor-user-id',
             },
           }),
-        });
+        }
 
-        const endTime = Date.now();
+        const endTime = Date.now(
         const responseTime = endTime - startTime;
 
         expect(responseTime).toBeLessThan(2000); // <2s requirement
-        expect(response.status).toBe(200);
+        expect(response.status).toBe(200
 
-        console.log(`Query "${query}" took ${responseTime}ms`);
+        console.log(`Query "${query}" took ${responseTime}ms`
       }
-    });
+    }
 
     test('should respond to client queries within 2 seconds', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const queries = [
         'Clientes cadastrados',
@@ -67,7 +67,7 @@ describe('Response Time Performance - Integration Test', () => {
       ];
 
       for (const query of queries) {
-        const startTime = Date.now();
+        const startTime = Date.now(
 
         const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
@@ -82,18 +82,18 @@ describe('Response Time Performance - Integration Test', () => {
               _userId: 'nurse-user-id',
             },
           }),
-        });
+        }
 
-        const endTime = Date.now();
+        const endTime = Date.now(
         const responseTime = endTime - startTime;
 
-        expect(responseTime).toBeLessThan(2000);
-        expect(response.status).toBe(200);
+        expect(responseTime).toBeLessThan(2000
+        expect(response.status).toBe(200
       }
-    });
+    }
 
     test('should respond to financial queries within 2 seconds', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const queries = [
         'Como está o faturamento?',
@@ -102,7 +102,7 @@ describe('Response Time Performance - Integration Test', () => {
       ];
 
       for (const query of queries) {
-        const startTime = Date.now();
+        const startTime = Date.now(
 
         const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
@@ -117,20 +117,20 @@ describe('Response Time Performance - Integration Test', () => {
               _userId: 'admin-user-id',
             },
           }),
-        });
+        }
 
-        const endTime = Date.now();
+        const endTime = Date.now(
         const responseTime = endTime - startTime;
 
-        expect(responseTime).toBeLessThan(2000);
-        expect(response.status).toBe(200);
+        expect(responseTime).toBeLessThan(2000
+        expect(response.status).toBe(200
       }
-    });
-  });
+    }
+  }
 
   describe('Complex Query Response Times', () => {
     test('should handle complex appointment queries within 2 seconds', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const complexQueries = [
         'Agendamentos da semana com status confirmado',
@@ -139,7 +139,7 @@ describe('Response Time Performance - Integration Test', () => {
       ];
 
       for (const query of complexQueries) {
-        const startTime = Date.now();
+        const startTime = Date.now(
 
         const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
@@ -154,18 +154,18 @@ describe('Response Time Performance - Integration Test', () => {
               _userId: 'doctor-user-id',
             },
           }),
-        });
+        }
 
-        const endTime = Date.now();
+        const endTime = Date.now(
         const responseTime = endTime - startTime;
 
-        expect(responseTime).toBeLessThan(2000);
-        expect(response.status).toBe(200);
+        expect(responseTime).toBeLessThan(2000
+        expect(response.status).toBe(200
       }
-    });
+    }
 
     test('should handle data aggregation queries within 2 seconds', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const aggregationQueries = [
         'Total de pacientes atendidos este mês',
@@ -174,7 +174,7 @@ describe('Response Time Performance - Integration Test', () => {
       ];
 
       for (const query of aggregationQueries) {
-        const startTime = Date.now();
+        const startTime = Date.now(
 
         const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
@@ -189,20 +189,20 @@ describe('Response Time Performance - Integration Test', () => {
               _userId: 'admin-user-id',
             },
           }),
-        });
+        }
 
-        const endTime = Date.now();
+        const endTime = Date.now(
         const responseTime = endTime - startTime;
 
-        expect(responseTime).toBeLessThan(2000);
-        expect(response.status).toBe(200);
+        expect(responseTime).toBeLessThan(2000
+        expect(response.status).toBe(200
       }
-    });
-  });
+    }
+  }
 
   describe('Concurrent Request Performance', () => {
     test('should handle multiple concurrent requests within time limits', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const concurrentQueries = [
         'Próximos agendamentos',
@@ -214,7 +214,7 @@ describe('Response Time Performance - Integration Test', () => {
 
       // Execute all queries concurrently
       const promises = concurrentQueries.map((query, index) => {
-        const startTime = Date.now();
+        const startTime = Date.now(
 
         return app.request('/api/ai/data-agent', {
           method: 'POST',
@@ -230,33 +230,33 @@ describe('Response Time Performance - Integration Test', () => {
             },
           }),
         }).then(response => {
-          const endTime = Date.now();
+          const endTime = Date.now(
           return {
             query,
             responseTime: endTime - startTime,
             status: response.status,
           };
-        });
-      });
+        }
+      }
 
-      const results = await Promise.all(promises);
+      const results = await Promise.all(promises
 
       // All requests should complete within 2 seconds
       results.forEach(result => {
-        expect(result.responseTime).toBeLessThan(2000);
-        expect(result.status).toBe(200);
-        console.log(`Concurrent query "${result.query}" took ${result.responseTime}ms`);
-      });
-    });
+        expect(result.responseTime).toBeLessThan(2000
+        expect(result.status).toBe(200
+        console.log(`Concurrent query "${result.query}" took ${result.responseTime}ms`
+      }
+    }
 
     test('should maintain performance under load', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const loadTestPromises = [];
       const numberOfRequests = 10;
 
       for (let i = 0; i < numberOfRequests; i++) {
-        const startTime = Date.now();
+        const startTime = Date.now(
 
         const promise = app.request('/api/ai/data-agent', {
           method: 'POST',
@@ -272,40 +272,40 @@ describe('Response Time Performance - Integration Test', () => {
             },
           }),
         }).then(response => {
-          const endTime = Date.now();
+          const endTime = Date.now(
           return {
             requestId: i,
             responseTime: endTime - startTime,
             status: response.status,
           };
-        });
+        }
 
-        loadTestPromises.push(promise);
+        loadTestPromises.push(promise
       }
 
-      const loadResults = await Promise.all(loadTestPromises);
+      const loadResults = await Promise.all(loadTestPromises
 
       // All requests should complete within time limits
       loadResults.forEach(result => {
-        expect(result.responseTime).toBeLessThan(2000);
-        expect(result.status).toBe(200);
-      });
+        expect(result.responseTime).toBeLessThan(2000
+        expect(result.status).toBe(200
+      }
 
       // Calculate average response time
       const avgResponseTime = loadResults.reduce((sum, result) => sum + result.responseTime, 0)
         / loadResults.length;
-      console.log(`Average response time under load: ${avgResponseTime}ms`);
+      console.log(`Average response time under load: ${avgResponseTime}ms`
 
       // Average should still be well under 2 seconds
       expect(avgResponseTime).toBeLessThan(1500); // 1.5s average
-    });
-  });
+    }
+  }
 
   describe('Edge Case Performance', () => {
     test('should handle empty results quickly', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
-      const startTime = Date.now();
+      const startTime = Date.now(
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
@@ -320,17 +320,17 @@ describe('Response Time Performance - Integration Test', () => {
             _userId: 'doctor-user-id',
           },
         }),
-      });
+      }
 
-      const endTime = Date.now();
+      const endTime = Date.now(
       const responseTime = endTime - startTime;
 
-      expect(responseTime).toBeLessThan(2000);
-      expect(response.status).toBe(200);
-    });
+      expect(responseTime).toBeLessThan(2000
+      expect(response.status).toBe(200
+    }
 
     test('should handle malformed queries efficiently', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
       const malformedQueries = [
         '???',
@@ -340,7 +340,7 @@ describe('Response Time Performance - Integration Test', () => {
       ];
 
       for (const query of malformedQueries) {
-        const startTime = Date.now();
+        const startTime = Date.now(
 
         const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
@@ -355,20 +355,20 @@ describe('Response Time Performance - Integration Test', () => {
               _userId: 'doctor-user-id',
             },
           }),
-        });
+        }
 
-        const endTime = Date.now();
+        const endTime = Date.now(
         const responseTime = endTime - startTime;
 
-        expect(responseTime).toBeLessThan(2000);
+        expect(responseTime).toBeLessThan(2000
         // Status may vary for malformed queries, but should respond quickly
       }
-    });
+    }
 
     test('should handle access denied scenarios quickly', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
-      const startTime = Date.now();
+      const startTime = Date.now(
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
@@ -384,21 +384,21 @@ describe('Response Time Performance - Integration Test', () => {
             _role: 'receptionist',
           },
         }),
-      });
+      }
 
-      const endTime = Date.now();
+      const endTime = Date.now(
       const responseTime = endTime - startTime;
 
-      expect(responseTime).toBeLessThan(2000);
+      expect(responseTime).toBeLessThan(2000
       expect(response.status).toBe(200); // Should return access denied message, not HTTP error
-    });
-  });
+    }
+  }
 
   describe('Response Time Metadata Validation', () => {
     test('should include accurate processing time in response metadata', async () => {
-      expect(app).toBeDefined();
+      expect(app).toBeDefined(
 
-      const startTime = Date.now();
+      const startTime = Date.now(
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
@@ -413,21 +413,21 @@ describe('Response Time Performance - Integration Test', () => {
             _userId: 'doctor-user-id',
           },
         }),
-      });
+      }
 
-      const endTime = Date.now();
+      const endTime = Date.now(
       const totalTime = endTime - startTime;
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const responseData = await response.json();
-      expect(responseData.metadata).toBeDefined();
-      expect(responseData.metadata.processingTime).toBeDefined();
-      expect(typeof responseData.metadata.processingTime).toBe('number');
+      const responseData = await response.json(
+      expect(responseData.metadata).toBeDefined(
+      expect(responseData.metadata.processingTime).toBeDefined(
+      expect(typeof responseData.metadata.processingTime).toBe('number')
 
       // Processing time should be less than total time and under 2s
-      expect(responseData.metadata.processingTime).toBeLessThan(totalTime);
-      expect(responseData.metadata.processingTime).toBeLessThan(2000);
-    });
-  });
-});
+      expect(responseData.metadata.processingTime).toBeLessThan(totalTime
+      expect(responseData.metadata.processingTime).toBeLessThan(2000
+    }
+  }
+}

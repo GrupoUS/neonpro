@@ -27,16 +27,16 @@ describe(('Supabase Database Integration', () => {
       lgpdCompliant: true,
       auditTrail: true,
       performanceTracking: true,
-    });
-    testDataGenerator = new HealthcareTestDataGenerator();
+    }
+    testDataGenerator = new HealthcareTestDataGenerator(
 
-    console.log('🧪 Database Integration Test Environment Setup Complete');
-  });
+    console.log('🧪 Database Integration Test Environment Setup Complete')
+  }
 
   afterAll(async () => {
-    await testDataGenerator.cleanupTestData();
-    console.log('🗄️ Database Integration Test Environment Cleaned Up');
-  });
+    await testDataGenerator.cleanupTestData(
+    console.log('🗄️ Database Integration Test Environment Cleaned Up')
+  }
 
   describe(('Schema Validation and Integrity', () => {
     test(_'should validate core healthcare schema structure',async () => {
@@ -57,10 +57,10 @@ describe(('Supabase Database Integration', () => {
       for (const tableName of expectedTables) {
         const { error } = await testClient.from(tableName).select('*').limit(0); // Just check if table exists
 
-        expect(error).toBeNull();
-        console.log(`✅ Table ${tableName} exists and is accessible`);
+        expect(error).toBeNull(
+        console.log(`✅ Table ${tableName} exists and is accessible`
       }
-    });
+    }
 
     test(_'should validate LGPD compliance table structures',async () => {
       // security-auditor: LGPD compliance validation
@@ -72,21 +72,21 @@ describe(('Supabase Database Integration', () => {
       ];
 
       for (const tableName of lgpdTables) {
-        const { error } = await testClient.from(tableName).select('*').limit(0);
+        const { error } = await testClient.from(tableName).select('*').limit(0
 
-        expect(error).toBeNull();
-        console.log(`✅ LGPD table ${tableName} validated`);
+        expect(error).toBeNull(
+        console.log(`✅ LGPD table ${tableName} validated`
       }
 
       // Validate consent_records has required LGPD fields (mock check)
       // (Estrutura validada de forma conceitual – objeto exemplo removido pois não é utilizado em asserts)
-      console.log('✅ LGPD consent record structure validated');
-    });
+      console.log('✅ LGPD consent record structure validated')
+    }
 
     test(_'should validate healthcare data relationships',async () => {
       // architect-review: Data relationship integrity
-      const testPatient = await testDataGenerator.createTestPatient();
-      const testDoctor = await testDataGenerator.createTestDoctor();
+      const testPatient = await testDataGenerator.createTestPatient(
+      const testDoctor = await testDataGenerator.createTestDoctor(
 
       // Test patient-doctor relationship
       const appointmentData = {
@@ -101,15 +101,15 @@ describe(('Supabase Database Integration', () => {
         .from('appointments')
         .insert(appointmentData)
         .select()
-        .single();
+        .single(
 
-      expect(error).toBeNull();
-      expect(appointment).toBeDefined();
-      expect(appointment.patient_id).toBe(testPatient.id);
-      expect(appointment.doctor_id).toBe(testDoctor.id);
+      expect(error).toBeNull(
+      expect(appointment).toBeDefined(
+      expect(appointment.patient_id).toBe(testPatient.id
+      expect(appointment.doctor_id).toBe(testDoctor.id
 
-      console.log('✅ Healthcare data relationships validated');
-    });
+      console.log('✅ Healthcare data relationships validated')
+    }
 
     test(_'should validate data type constraints and validations',async () => {
       // security-auditor: Data integrity validation
@@ -148,19 +148,19 @@ describe(('Supabase Database Integration', () => {
           .from(test.table)
           .insert(test.validData)
           .select()
-          .single();
+          .single(
 
-        expect(validError).toBeNull();
-        expect(validResult).toBeDefined();
+        expect(validError).toBeNull(
+        expect(validResult).toBeDefined(
 
         // Test invalid data rejection (mock - would fail in real DB)
-        console.log(`✅ Data validation for ${test.table} validated`);
+        console.log(`✅ Data validation for ${test.table} validated`
       }
-    });
+    }
 
     test(_'should validate audit trail triggers',async () => {
       // security-auditor: Audit trail validation
-      const testPatient = await testDataGenerator.createTestPatient();
+      const testPatient = await testDataGenerator.createTestPatient(
 
       // Create initial record
       const { data: initialRecord, error: insertError } = await testClient
@@ -172,9 +172,9 @@ describe(('Supabase Database Integration', () => {
           created_by: 'test-doctor-123',
         })
         .select()
-        .single();
+        .single(
 
-      expect(insertError).toBeNull();
+      expect(insertError).toBeNull(
 
       // Update the record
       const { error: updateError } = await testClient
@@ -184,19 +184,19 @@ describe(('Supabase Database Integration', () => {
         })
         .eq('id', initialRecord.id)
         .select()
-        .single();
+        .single(
 
-      expect(updateError).toBeNull();
+      expect(updateError).toBeNull(
 
       // Check if audit log was created (mock implementation)
-      console.log('✅ Audit trail triggers validated (mock)');
-    });
-  });
+      console.log('✅ Audit trail triggers validated (mock)')
+    }
+  }
 
   describe(('Migration and Schema Evolution', () => {
     test(_'should validate migration rollback capabilities',async () => {
       // architect-review: Migration safety validation
-      console.log('🔄 Testing migration rollback capabilities (mock)');
+      console.log('🔄 Testing migration rollback capabilities (mock)')
 
       // Mock migration operations
       const mockMigrations = [
@@ -207,44 +207,44 @@ describe(('Supabase Database Integration', () => {
 
       for (const migration of mockMigrations) {
         // Test forward migration
-        console.log(`✅ Forward migration: ${migration} (mock)`);
+        console.log(`✅ Forward migration: ${migration} (mock)`
 
         // Test rollback capability
-        console.log(`✅ Rollback capability: ${migration} (mock)`);
+        console.log(`✅ Rollback capability: ${migration} (mock)`
       }
-    });
+    }
 
     test(_'should validate data migration integrity',async () => {
       // architect-review: Data migration validation
       const testPatients = await testDataGenerator.createBulkTestData(
         'patients',
         10,
-      );
+      
 
       // Simulate data transformation during migration
       const migrationResults = testPatients.map(patient => ({
         ...patient,
         full_name: `${patient.first_name} ${patient.last_name}`,
         migrated_at: new Date().toISOString(),
-      }));
+      })
 
-      expect(migrationResults).toHaveLength(10);
-      expect(migrationResults[0]).toHaveProperty('full_name');
-      expect(migrationResults[0]).toHaveProperty('migrated_at');
+      expect(migrationResults).toHaveLength(10
+      expect(migrationResults[0]).toHaveProperty('full_name')
+      expect(migrationResults[0]).toHaveProperty('migrated_at')
 
-      console.log('✅ Data migration integrity validated');
-    });
+      console.log('✅ Data migration integrity validated')
+    }
 
     test(_'should validate zero-downtime migration strategies',async () => {
       // architect-review: Zero-downtime validation
-      const startTime = performance.now();
+      const startTime = performance.now(
 
       // Simulate concurrent operations during migration
       const operations = Promise.all([
         testClient.from('patients').select('count').single(),
         testClient.from('doctors').select('count').single(),
         testClient.from('appointments').select('count').single(),
-      ]);
+      ]
 
       await operations;
       const responseTime = performance.now() - startTime;
@@ -256,9 +256,9 @@ describe(('Supabase Database Integration', () => {
         ),
       ).toBe(true);
 
-      console.log('✅ Zero-downtime migration capability validated');
-    });
-  });
+      console.log('✅ Zero-downtime migration capability validated')
+    }
+  }
 
   describe(('Performance and Optimization', () => {
     test(_'should validate query performance benchmarks',async () => {
@@ -271,7 +271,7 @@ describe(('Supabase Database Integration', () => {
               .from('patients')
               .select('*')
               .eq('cpf', '123.456.789-01')
-              .single();
+              .single(
           },
           expectedType: 'critical_query' as const,
         },
@@ -283,7 +283,7 @@ describe(('Supabase Database Integration', () => {
               .select('*')
               .eq('doctor_id', 'test-doctor-123')
               .gte('appointment_date', new Date().toISOString())
-              .limit(50);
+              .limit(50
           },
           expectedType: 'general_query' as const,
         },
@@ -295,18 +295,18 @@ describe(('Supabase Database Integration', () => {
               .select('*')
               .eq('patient_id', 'test-patient-123')
               .order('created_at', { ascending: false })
-              .limit(20);
+              .limit(20
           },
           expectedType: 'critical_query' as const,
         },
       ];
 
       for (const test of performanceTests) {
-        const startTime = performance.now();
-        const { data, error } = await test.operation();
+        const startTime = performance.now(
+        const { data, error } = await test.operation(
         const responseTime = performance.now() - startTime;
 
-        expect(error).toBeNull();
+        expect(error).toBeNull(
         expect(
           HealthcareTestValidators.validatePerformance(
             responseTime,
@@ -314,9 +314,9 @@ describe(('Supabase Database Integration', () => {
           ),
         ).toBe(true);
 
-        console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`);
+        console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`
       }
-    });
+    }
 
     test(_'should validate bulk operations performance',async () => {
       // architect-review: Bulk operations validation
@@ -326,56 +326,64 @@ describe(('Supabase Database Integration', () => {
         record_type: 'lab_result',
         content: `Lab result ${i}`,
         created_by: 'test-doctor-bulk',
-      }));
+      })
 
-      const startTime = performance.now();
+      const startTime = performance.now(
       const { data, error } = await testClient
         .from('medical_records')
         .insert(testData)
-        .select();
+        .select(
 
       const responseTime = performance.now() - startTime;
 
-      expect(error).toBeNull();
-      expect(data).toHaveLength(bulkSize);
+      expect(error).toBeNull(
+      expect(data).toHaveLength(bulkSize
 
       // Bulk operations should complete within reasonable time
       const maxBulkTime = 5000; // 5 seconds for 100 records
-      expect(responseTime).toBeLessThan(maxBulkTime);
+      expect(responseTime).toBeLessThan(maxBulkTime
 
       console.log(
         `✅ Bulk operation (${bulkSize} records): ${responseTime.toFixed(2)}ms`,
-      );
-    });
+      
+    }
 
     test(_'should validate connection pooling efficiency',async () => {
       // architect-review: Connection management validation
       const concurrentOperations = 10;
       const operationPromises = Array.from(
         { length: concurrentOperations },async (, i) => {
+<<<<<<< HEAD
+          const startTime = performance.now(
+=======
           const startTime = performance.now();
+>>>>>>> origin/main
           const { data, error } = await testClient
             .from('patients')
             .select('id, full_name')
-            .limit(1);
+            .limit(1
 
           const responseTime = performance.now() - startTime;
           return { operation: i, responseTime, error };
         },
-      );
+      
 
-      const results = await Promise.all(operationPromises);
+      const results = await Promise.all(operationPromises
 
       // All operations should succeed
       results.forEach(result => {
+<<<<<<< HEAD
+        expect(result.error).toBeNull(
+=======
         expect(result.error).toBeNull();
+>>>>>>> origin/main
         expect(
           HealthcareTestValidators.validatePerformance(
             result.responseTime,
             'general_query',
           ),
         ).toBe(true);
-      });
+      }
 
       const avgResponseTime = results.reduce((sum, r) => sum + r.responseTime, 0) / results.length;
       console.log(
@@ -384,8 +392,8 @@ describe(('Supabase Database Integration', () => {
             2,
           )
         }ms`,
-      );
-    });
+      
+    }
 
     test(_'should validate caching strategies',async () => {
       // architect-review: Caching validation
@@ -406,31 +414,31 @@ describe(('Supabase Database Integration', () => {
 
       for (const test of cacheTestQueries) {
         // First request (cache miss)
-        const startTime1 = performance.now();
-        const { error: error1 } = await test.query();
+        const startTime1 = performance.now(
+        const { error: error1 } = await test.query(
         const responseTime1 = performance.now() - startTime1;
 
-        expect(error1).toBeNull();
+        expect(error1).toBeNull(
 
         // Second request (cache hit - in real implementation)
-        const startTime2 = performance.now();
-        const { error: error2 } = await test.query();
+        const startTime2 = performance.now(
+        const { error: error2 } = await test.query(
         const responseTime2 = performance.now() - startTime2;
 
-        expect(error2).toBeNull();
+        expect(error2).toBeNull(
 
         // In a real caching implementation, second request should be faster
         console.log(
           `✅ ${test.name}: 1st=${responseTime1.toFixed(2)}ms, 2nd=${responseTime2.toFixed(2)}ms`,
-        );
+        
       }
-    });
-  });
+    }
+  }
 
   describe(('Data Integrity and Constraints', () => {
     test(_'should validate foreign key constraints',async () => {
       // security-auditor: Data integrity validation
-      const testPatient = await testDataGenerator.createTestPatient();
+      const testPatient = await testDataGenerator.createTestPatient(
 
       // Test valid foreign key reference
       const validAppointment = {
@@ -444,16 +452,16 @@ describe(('Supabase Database Integration', () => {
         .from('appointments')
         .insert(validAppointment)
         .select()
-        .single();
+        .single(
 
-      expect(validError).toBeNull();
-      expect(validData.patient_id).toBe(testPatient.id);
+      expect(validError).toBeNull(
+      expect(validData.patient_id).toBe(testPatient.id
 
       // Test invalid foreign key reference (should fail in real DB)
       // invalidAppointment scenario (mock) omitido pois não utilizado diretamente
 
-      console.log('✅ Foreign key constraints validated (mock)');
-    });
+      console.log('✅ Foreign key constraints validated (mock)')
+    }
 
     test(_'should validate unique constraints',async () => {
       // security-auditor: Uniqueness validation
@@ -468,13 +476,13 @@ describe(('Supabase Database Integration', () => {
         .from('patients')
         .insert(testUserData)
         .select()
-        .single();
+        .single(
 
-      expect(firstError).toBeNull();
+      expect(firstError).toBeNull(
 
       // Second insertion with same email should fail (in real DB)
-      console.log('✅ Unique constraints validated (mock)');
-    });
+      console.log('✅ Unique constraints validated (mock)')
+    }
 
     test(_'should validate check constraints',async () => {
       // security-auditor: Data validation constraints
@@ -505,9 +513,9 @@ describe(('Supabase Database Integration', () => {
 
       for (const test of constraintTests) {
         // Valid data should be accepted
-        console.log(`✅ Check constraints for ${test.table} validated (mock)`);
+        console.log(`✅ Check constraints for ${test.table} validated (mock)`
       }
-    });
+    }
 
     test(_'should validate data encryption requirements',async () => {
       // security-auditor: Encryption validation
@@ -522,17 +530,17 @@ describe(('Supabase Database Integration', () => {
         .from('medical_records')
         .insert(sensitiveData)
         .select()
-        .single();
+        .single(
 
-      expect(error).toBeNull();
+      expect(error).toBeNull(
 
       // In real implementation, sensitive fields would be encrypted
       // This test validates the structure supports encryption
-      expect(data).toHaveProperty('content');
-      expect(data).toHaveProperty('diagnosis');
-      expect(data).toHaveProperty('treatment_plan');
+      expect(data).toHaveProperty('content')
+      expect(data).toHaveProperty('diagnosis')
+      expect(data).toHaveProperty('treatment_plan')
 
-      console.log('✅ Data encryption requirements validated (mock)');
-    });
-  });
-});
+      console.log('✅ Data encryption requirements validated (mock)')
+    }
+  }
+}

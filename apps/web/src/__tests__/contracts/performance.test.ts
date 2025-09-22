@@ -15,7 +15,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 describe(('Performance Contracts', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(
     global.window = {
       performance: {
         mark: vi.fn(),
@@ -26,11 +26,11 @@ describe(('Performance Contracts', () => {
       },
       PerformanceObserver: vi.fn(),
     } as any;
-  });
+  }
 
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks(
+  }
 
   describe(('Core Web Vitals Contract', () => {
     test(('should define Core Web Vitals thresholds for healthcare applications', () => {
@@ -59,11 +59,11 @@ describe(('Performance Contracts', () => {
       };
 
       // Test: Core Web Vitals thresholds
-      expect(coreWebVitalsThresholds.LCP.good).toBe(2.5);
-      expect(coreWebVitalsThresholds.FID.good).toBe(100);
-      expect(coreWebVitalsThresholds.CLS.good).toBe(0.1);
-      expect(coreWebVitalsThresholds.INP.good).toBe(200);
-    });
+      expect(coreWebVitalsThresholds.LCP.good).toBe(2.5
+      expect(coreWebVitalsThresholds.FID.good).toBe(100
+      expect(coreWebVitalsThresholds.CLS.good).toBe(0.1
+      expect(coreWebVitalsThresholds.INP.good).toBe(200
+    }
 
     test(('should provide Core Web Vitals measurement interface', () => {
       // Contract: Interface for measuring Core Web Vitals
@@ -94,15 +94,15 @@ describe(('Performance Contracts', () => {
       };
 
       // Test: Core Web Vitals measurement structure
-      expect(sampleMeasurement.metric).toBe('LCP');
-      expect(sampleMeasurement.rating).toBe('good');
+      expect(sampleMeasurement.metric).toBe('LCP')
+      expect(sampleMeasurement.rating).toBe('good')
       expect(sampleMeasurement.healthcare_context.workflow_type).toBe(
         'emergency',
-      );
+      
       expect(sampleMeasurement.healthcare_context.medical_criticality).toBe(
         'critical',
-      );
-    });
+      
+    }
 
     test(('should categorize performance by healthcare workflow criticality', () => {
       // Contract: Performance categorization by medical workflow importance
@@ -128,10 +128,10 @@ describe(('Performance Contracts', () => {
       };
 
       // Test: Performance criteria by workflow type
-      expect(performanceCriteria.emergency_workflows.max_lcp).toBe(1.5);
-      expect(performanceCriteria.routine_patient_care.max_lcp).toBe(2.5);
-      expect(performanceCriteria.administrative_tasks.max_lcp).toBe(3.0);
-    });
+      expect(performanceCriteria.emergency_workflows.max_lcp).toBe(1.5
+      expect(performanceCriteria.routine_patient_care.max_lcp).toBe(2.5
+      expect(performanceCriteria.administrative_tasks.max_lcp).toBe(3.0
+    }
 
     test(('should provide performance monitoring for medical charts', () => {
       // Contract: Medical chart rendering performance monitoring
@@ -152,17 +152,17 @@ describe(('Performance Contracts', () => {
       // Test: Medical chart performance metrics
       expect(
         chartPerformanceMetrics.chart_types.patient_vitals.max_render_time,
-      ).toBe(500);
+      ).toBe(500
       expect(
         chartPerformanceMetrics.data_volume_thresholds.small_dataset
           .max_render_time,
-      ).toBe(300);
+      ).toBe(300
       expect(
         chartPerformanceMetrics.data_volume_thresholds.large_dataset
           .max_records,
-      ).toBe(10000);
-    });
-  });
+      ).toBe(10000
+    }
+  }
 
   describe(('Bundle Size Optimization Contract', () => {
     test(('should define bundle size limits for healthcare application', () => {
@@ -191,11 +191,11 @@ describe(('Performance Contracts', () => {
       };
 
       // Test: Bundle size limits
-      expect(bundleSizeLimits.total_bundle.target).toBe(500);
-      expect(bundleSizeLimits.total_bundle.max).toBe(650);
-      expect(bundleSizeLimits.vendor_bundle.max).toBe(300);
-      expect(bundleSizeLimits.app_bundle.max).toBe(250);
-    });
+      expect(bundleSizeLimits.total_bundle.target).toBe(500
+      expect(bundleSizeLimits.total_bundle.max).toBe(650
+      expect(bundleSizeLimits.vendor_bundle.max).toBe(300
+      expect(bundleSizeLimits.app_bundle.max).toBe(250
+    }
 
     test(('should provide bundle analysis interface', () => {
       // Contract: Interface for bundle size analysis
@@ -236,10 +236,10 @@ describe(('Performance Contracts', () => {
       };
 
       // Test: Bundle analysis structure
-      expect(sampleBundleAnalysis.size).toBe(524288);
-      expect(sampleBundleAnalysis.gzippedSize).toBe(163840);
-      expect(sampleBundleAnalysis.healthcareModules.medicalCharts).toBe(75000);
-    });
+      expect(sampleBundleAnalysis.size).toBe(524288
+      expect(sampleBundleAnalysis.gzippedSize).toBe(163840
+      expect(sampleBundleAnalysis.healthcareModules.medicalCharts).toBe(75000
+    }
 
     test(('should track critical healthcare dependencies', () => {
       // Contract: Critical healthcare dependencies that should be optimized
@@ -263,11 +263,11 @@ describe(('Performance Contracts', () => {
       };
 
       // Test: Critical dependencies tracking
-      expect(criticalDependencies.medical_charts).toContain('chart.js');
-      expect(criticalDependencies.ai_integration).toContain('@ai-sdk/react');
-      expect(dependencySizeLimits['chart.js']).toBe(50000);
-      expect(dependencySizeLimits['antd']).toBe(150000);
-    });
+      expect(criticalDependencies.medical_charts).toContain('chart.js')
+      expect(criticalDependencies.ai_integration).toContain('@ai-sdk/react')
+      expect(dependencySizeLimits['chart.js']).toBe(50000
+      expect(dependencySizeLimits['antd']).toBe(150000
+    }
 
     test(('should provide code splitting strategy for healthcare modules', () => {
       // Contract: Code splitting strategy optimized for healthcare workflows
@@ -295,13 +295,13 @@ describe(('Performance Contracts', () => {
       // Test: Code splitting strategy
       expect(codeSplittingStrategy.immediate_load).toContain(
         'emergency-alerts',
-      );
+      
       expect(codeSplittingStrategy.lazy_load.patient_management.trigger).toBe(
         'route:/patients',
-      );
+      
       expect(codeSplittingStrategy.lazy_load.medical_charts.preload).toBe(true);
-    });
-  });
+    }
+  }
 
   describe(('Resource Loading Performance Contract', () => {
     test(('should define resource loading priorities for healthcare', () => {
@@ -333,12 +333,12 @@ describe(('Performance Contracts', () => {
       };
 
       // Test: Resource loading priorities
-      expect(resourceLoadingPriorities.critical.max_load_time).toBe(500);
+      expect(resourceLoadingPriorities.critical.max_load_time).toBe(500
       expect(resourceLoadingPriorities.critical.resources).toContain(
         'emergency-alerts.js',
-      );
-      expect(resourceLoadingPriorities.important.priority).toBe('medium');
-    });
+      
+      expect(resourceLoadingPriorities.important.priority).toBe('medium')
+    }
 
     test(('should provide resource timing measurement interface', () => {
       // Contract: Interface for measuring resource loading performance
@@ -363,10 +363,10 @@ describe(('Performance Contracts', () => {
       };
 
       // Test: Resource timing measurement structure
-      expect(sampleResourceTiming.type).toBe('script');
-      expect(sampleResourceTiming.healthcare_category).toBe('important');
-      expect(sampleResourceTiming.cache_status).toBe('miss');
-    });
+      expect(sampleResourceTiming.type).toBe('script')
+      expect(sampleResourceTiming.healthcare_category).toBe('important')
+      expect(sampleResourceTiming.cache_status).toBe('miss')
+    }
 
     test(('should monitor CDN and external resource performance', () => {
       // Contract: CDN and external resource performance monitoring
@@ -395,16 +395,16 @@ describe(('Performance Contracts', () => {
       // Test: External resource monitoring configuration
       expect(externalResourceMonitoring.cdn_endpoints.max_response_time).toBe(
         300,
-      );
+      
       expect(
         externalResourceMonitoring.external_apis.ai_services.max_response_time,
-      ).toBe(2000);
+      ).toBe(2000
       expect(
         externalResourceMonitoring.external_apis.medical_databases
           .retry_attempts,
-      ).toBe(2);
-    });
-  });
+      ).toBe(2
+    }
+  }
 
   describe(('Healthcare Workflow Performance Contract', () => {
     test(('should define performance SLAs for medical workflows', () => {
@@ -431,14 +431,14 @@ describe(('Performance Contracts', () => {
       // Test: Healthcare workflow SLAs
       expect(
         healthcareWorkflowSLAs.emergency_patient_registration.max_total_time,
-      ).toBe(3000);
+      ).toBe(3000
       expect(
         healthcareWorkflowSLAs.patient_chart_loading.max_initial_load,
-      ).toBe(2000);
+      ).toBe(2000
       expect(healthcareWorkflowSLAs.ai_consultation.max_response_time).toBe(
         3000,
-      );
-    });
+      
+    }
 
     test(('should provide workflow performance measurement', () => {
       // Contract: Interface for measuring healthcare workflow performance
@@ -480,12 +480,12 @@ describe(('Performance Contracts', () => {
       };
 
       // Test: Workflow performance measurement structure
-      expect(sampleWorkflowMeasurement.total_duration).toBe(2500);
-      expect(sampleWorkflowMeasurement.patient_impact).toBe('critical');
+      expect(sampleWorkflowMeasurement.total_duration).toBe(2500
+      expect(sampleWorkflowMeasurement.patient_impact).toBe('critical')
       expect(sampleWorkflowMeasurement.medical_context.urgency_level).toBe(
         'emergency',
-      );
-    });
+      
+    }
 
     test(('should monitor database query performance for patient data', () => {
       // Contract: Database query performance monitoring for patient operations
@@ -511,15 +511,15 @@ describe(('Performance Contracts', () => {
       // Test: Database performance thresholds
       expect(databasePerformanceThresholds.patient_queries.simple_lookup).toBe(
         50,
-      );
+      
       expect(
         databasePerformanceThresholds.compliance_queries.lgpd_audit_log,
-      ).toBe(100);
+      ).toBe(100
       expect(
         databasePerformanceThresholds.ai_data_queries.context_gathering,
-      ).toBe(300);
-    });
-  });
+      ).toBe(300
+    }
+  }
 
   describe(('Performance Regression Prevention Contract', () => {
     test(('should provide performance regression detection', () => {
@@ -543,14 +543,19 @@ describe(('Performance Contracts', () => {
       // Test: Performance regression thresholds
       expect(
         performanceRegressionThresholds.core_web_vitals.lcp_regression,
-      ).toBe(10);
+      ).toBe(10
       expect(
         performanceRegressionThresholds.bundle_size.total_size_regression,
-      ).toBe(5);
+      ).toBe(5
       expect(
         performanceRegressionThresholds.api_performance.response_time_regression,
+<<<<<<< HEAD
+      ).toBe(15
+    }
+=======
       ).toBe(15);
     });
+>>>>>>> origin/main
 
     test(('should provide performance baseline management', () => {
       // Contract: Performance baseline management for comparison
@@ -608,12 +613,12 @@ describe(('Performance Contracts', () => {
       };
 
       // Test: Performance baseline structure
-      expect(sampleBaseline.metrics.core_web_vitals.lcp).toBe(2.1);
-      expect(sampleBaseline.metrics.bundle_sizes.total).toBe(580000);
+      expect(sampleBaseline.metrics.core_web_vitals.lcp).toBe(2.1
+      expect(sampleBaseline.metrics.bundle_sizes.total).toBe(580000
       expect(sampleBaseline.healthcare_context.geographic_region).toBe(
         'brazil',
-      );
-    });
+      
+    }
 
     test(('should provide automated performance testing integration', () => {
       // Contract: Automated performance testing integration
@@ -654,15 +659,15 @@ describe(('Performance Contracts', () => {
       // Test: Performance testing configuration
       expect(
         performanceTestingConfig.lighthouse_config.thresholds.performance,
-      ).toBe(90);
+      ).toBe(90
       expect(
         performanceTestingConfig.load_testing.scenarios.emergency_peak.users,
-      ).toBe(100);
+      ).toBe(100
       expect(performanceTestingConfig.continuous_monitoring.frequency).toBe(
         '5m',
-      );
-    });
-  });
-});
+      
+    }
+  }
+}
 
 export default {};

@@ -8,7 +8,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { EventCalendar } from '../event-calendar';
-import { CalendarEvent } from '../types';
+import { CalendarEvent, EventColor } from '../types';
 
 // Mock performance utilities
 vi.mock(('@/utils/performance-optimizer', () => ({
@@ -65,14 +65,14 @@ describe(('Performance Benchmark Suite - Calendar Optimization', () => {
       title: 'Consulta Performance',
       start: new Date('2024-01-15T10:00:00'),
       end: new Date('2024-01-15T11:00:00'),
-      color: 'blue' as EventColor,
+      color: 'blue',
     },
     {
       id: 'performance-2',
       title: 'Exame Performance',
       start: new Date('2024-01-15T14:00:00'),
       end: new Date('2024-01-15T15:30:00'),
-      color: 'emerald' as EventColor,
+      color: 'emerald',
     },
   ];
 
@@ -117,7 +117,7 @@ describe(('Performance Benchmark Suite - Calendar Optimization', () => {
         title: `Evento ${i}`,
         start: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T10:00:00`),
         end: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T11:00:00`),
-        color: ['blue', 'emerald', 'violet', 'rose'][i % 4] as EventColor,
+        color: ['blue', 'emerald', 'violet', 'rose'][i % 4],
       }));
 
       const startTime = performance.now();
@@ -139,7 +139,7 @@ describe(('Performance Benchmark Suite - Calendar Optimization', () => {
         title: `Evento ${i}`,
         start: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T10:00:00`),
         end: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T11:00:00`),
-        color: ['blue', 'emerald', 'violet', 'rose'][i % 4] as EventColor,
+        color: ['blue', 'emerald', 'violet', 'rose'][i % 4],
       }));
 
       const startTime = performance.now();
@@ -279,13 +279,18 @@ describe(('Performance Benchmark Suite - Calendar Optimization', () => {
       }).toThrow();
     });
 
+<<<<<<< HEAD
+    it('should prevent memory leaks with large datasets', () => {
+      const largeEventSet = Array.from({ length: 100 }, (_, i) => ({
+=======
     it(('should prevent memory leaks with large datasets', () => {
       const largeEventSet = Array.from.*}, (_, i) => ({
+>>>>>>> origin/main
         id: `memory-test-${i}`,
         title: `Evento ${i}`,
         start: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T10:00:00`),
         end: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T11:00:00`),
-        color: ['blue', 'emerald', 'violet', 'rose'][i % 4] as EventColor,
+        color: ['blue', 'emerald', 'violet', 'rose'][i % 4],
       }));
 
       const { unmount } = render(
@@ -451,13 +456,18 @@ describe(('Performance Benchmark Suite - Calendar Optimization', () => {
       // Should handle slow loading gracefully
     });
 
+<<<<<<< HEAD
+    it('should implement efficient data loading', () => {
+      const optimizedEvents = Array.from({ length: 100 }, (_, i) => ({
+=======
     it(('should implement efficient data loading', () => {
       const optimizedEvents = Array.from.*}, (_, i) => ({
+>>>>>>> origin/main
         id: `optimized-${i}`,
         title: `Evento Otimizado ${i}`,
         start: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T10:00:00`),
         end: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T11:00:00`),
-        color: ['blue', 'emerald', 'violet', 'rose'][i % 4] as EventColor,
+        color: ['blue', 'emerald', 'violet', 'rose'][i % 4],
       }));
 
       const startTime = performance.now();
@@ -626,9 +636,15 @@ describe(('Performance Benchmark Suite - Calendar Optimization', () => {
   });
 
   // SCALABILITY PERFORMANCE
+<<<<<<< HEAD
+  describe('Scalability Performance', () => {
+    it('should scale with user count', () => {
+      const userEvents = Array.from({ length: 100 }, (_, i) => ({
+=======
   describe(('Scalability Performance', () => {
     it(('should scale with user count', () => {
       const userEvents = Array.from.*}, (_, i) => ({
+>>>>>>> origin/main
         id: `user-${i}`,
         title: `Evento Usuário ${i}`,
         start: new Date(
@@ -641,7 +657,11 @@ describe(('Performance Benchmark Suite - Calendar Optimization', () => {
             String(Math.floor(i / 4) + 9).padStart(2, '0')
           }:00`,
         ),
+<<<<<<< HEAD
+        color: ['blue', 'emerald', 'violet', 'rose'][i % 4],
+=======
         color: ['blue', 'emerald', 'violet', 'rose'][i % 4] as EventColor,
+>>>>>>> origin/main
         _userId: `user-${i}`,
       }));
 

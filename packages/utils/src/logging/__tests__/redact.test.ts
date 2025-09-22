@@ -10,8 +10,8 @@ describe("T042 redact", () => {
       return;
     }
     const input = "Contato: user@example.com CPF: 123.456.789-00";
-    const out = (redactModule as any).redact(input);
-    expect(out).not.toContain("user@example.com");
-    expect(out).not.toMatch(/123\.456\.789-00/);
-  });
-});
+    const out = (redactModule as any).redact(input
+    expect(out).not.toContain("user@example.com"
+    expect(out).not.toMatch(/123\.456\.789-00/
+  }
+}

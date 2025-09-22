@@ -335,7 +335,7 @@ export class IndexOptimizerService {
     missingIndexes: IndexRecommendation[],
   ): IndexCreationScript[] {
     return missingIndexes.map(index => {
-      const indexName = `idx_${index.table}_${index.columns.join('_')}`;
+      const indexName = `idx_${index.table}_${index.columns.join('')}`;
       const columnsStr = index.columns.join(', ');
 
       let sql: string;

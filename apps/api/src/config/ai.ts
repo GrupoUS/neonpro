@@ -204,7 +204,7 @@ export async function getSuggestionsFromAI(_query: string, webHints: string[]) {
   const result = await generateText({
     model: openai(DEFAULT_PRIMARY),
     prompt:
-      `Com base na consulta "${query}" sobre tratamentos estéticos, sugira 5 tratamentos relacionados da NeonPro. Considere estas pistas da web (se houver): ${
+      `Com base na consulta "${_query}" sobre tratamentos estéticos, sugira 5 tratamentos relacionados da NeonPro. Considere estas pistas da web (se houver): ${
         webHints.join(
           '; ',
         )

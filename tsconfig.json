@@ -1,40 +1,29 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
+<<<<<<< HEAD
+=======
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
+>>>>>>> origin/main
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "jsx": "react-jsx",
+    "noEmit": false,
     "outDir": "./dist",
     "rootDir": ".",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "removeComments": false,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "exactOptionalPropertyTypes": false,
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": false,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "downlevelIteration": true,
-    "baseUrl": ".",
     "types": ["node", "vitest", "vitest/globals"],
+    "exactOptionalPropertyTypes": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "baseUrl": ".",
     "paths": {
+<<<<<<< HEAD
+      "@shared/*": ["packages/shared/src/*"],
+=======
       "@/*": ["./src/*"],
       "@shared/*": ["packages/shared/src/*"],
       "@neonpro/*": ["packages/*/src"],
       "@apps/*": ["apps/*/src"],
+>>>>>>> origin/main
       "@tests/*": ["./tools/tests/*"]
     }
   },
@@ -54,6 +43,16 @@
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/__tests__/**"
+  ],
+  "references": [
+    { "path": "./packages/types" },
+    { "path": "./packages/utils" },
+    { "path": "./packages/shared" },
+    { "path": "./packages/database" },
+    { "path": "./packages/security" },
+    { "path": "./packages/ui" },
+    { "path": "./apps/api" },
+    { "path": "./apps/web" }
   ],
   "ts-node": {
     "esm": true,

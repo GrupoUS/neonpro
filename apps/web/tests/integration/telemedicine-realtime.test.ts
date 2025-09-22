@@ -24,13 +24,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock components that will need to be implemented
 const MockTelemedicineRoom = () =>
-  React.createElement('div', { 'data-testid': 'telemedicine-room' }, 'Telemedicine Room');
+  React.createElement('div', { 'data-testid': 'telemedicine-room' }, 'Telemedicine Room')
 const MockVideoConsultation = () =>
-  React.createElement('div', { 'data-testid': 'video-consultation' }, 'Video Consultation');
+  React.createElement('div', { 'data-testid': 'video-consultation' }, 'Video Consultation')
 const MockRealTimeChat = () =>
-  React.createElement('div', { 'data-testid': 'realtime-chat' }, 'Real-time Chat');
+  React.createElement('div', { 'data-testid': 'realtime-chat' }, 'Real-time Chat')
 const MockNotificationCenter = () =>
-  React.createElement('div', { 'data-testid': 'notification-center' }, 'Notification Center');
+  React.createElement('div', { 'data-testid': 'notification-center' }, 'Notification Center')
 
 describe('Real-Time Telemedicine Interface Integration Tests', () => {
   let queryClient: QueryClient;
@@ -59,7 +59,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
     Object.defineProperty(window, 'RTCPeerConnection', {
       value: vi.fn(() => mockPeerConnection),
       writable: true,
-    });
+    }
 
     Object.defineProperty(window, 'navigator', {
       value: {
@@ -81,7 +81,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
         },
       },
       writable: true,
-    });
+    }
 
     // Mock WebSocket for real-time communication
     class MockWebSocket {
@@ -90,8 +90,8 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
         this.readyState = 1; // WebSocket.CONNECTING
         setTimeout(() => {
           this.readyState = 1; // WebSocket.OPEN
-          if (this.onopen) this.onopen({} as Event);
-        }, 100);
+          if (this.onopen) this.onopen({} as Event
+        }, 100
       }
 
       url: string;
@@ -101,33 +101,33 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       onclose: ((event: CloseEvent) => void) | null = null;
       onerror: ((event: Event) => void) | null = null;
 
-      send = vi.fn();
-      close = vi.fn();
+      send = vi.fn(
+      close = vi.fn(
     }
 
     Object.defineProperty(window, 'WebSocket', {
       value: MockWebSocket,
       writable: true,
-    });
+    }
 
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },
         mutations: { retry: false },
       },
-    });
+    }
 
-    supabase = createClient('https://mock.supabase.co', 'mock_key');
+    supabase = createClient('https://mock.supabase.co', 'mock_key')
     user = userEvent;
 
     // Mock WebSocket connection
-    mockWebSocket = new MockWebSocket('wss://realtime.neonpro.com.br/telemedicine');
-  });
+    mockWebSocket = new MockWebSocket('wss://realtime.neonpro.com.br/telemedicine')
+  }
 
   afterEach(async () => {
-    queryClient.clear();
-    vi.clearAllMocks();
-  });
+    queryClient.clear(
+    vi.clearAllMocks(
+  }
 
   const renderWithProviders = (component: React.ReactElement) => {
     return render(
@@ -136,7 +136,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
         { client: queryClient },
         React.createElement(BrowserRouter, null, component),
       ),
-    );
+    
   };
 
   describe('WebRTC Video Consultation Implementation', () => {
@@ -172,15 +172,15 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(React.createElement(MockVideoConsultation));
+        renderWithProviders(React.createElement(MockVideoConsultation)
 
         // This should fail until WebRTC implementation is complete
-        const videoElement = screen.getByTestId('video-local-stream');
-        const remoteVideoElement = screen.getByTestId('video-remote-stream');
+        const videoElement = screen.getByTestId('video-local-stream')
+        const remoteVideoElement = screen.getByTestId('video-remote-stream')
 
-        expect(videoElement).toHaveAttribute('autoplay');
-        expect(remoteVideoElement).toHaveAttribute('playsInline');
-      }).toThrow();
+        expect(videoElement).toHaveAttribute('autoplay')
+        expect(remoteVideoElement).toHaveAttribute('playsInline')
+      }).toThrow(
 
       // Expected WebRTC implementation should:
       // 1. Request camera and microphone permissions
@@ -190,7 +190,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       // 5. Monitor connection quality and provide feedback
       // 6. Handle network interruptions gracefully
       // 7. Provide recording capabilities with consent management
-    });
+    }
 
     it('should monitor and adapt video quality based on network conditions', async () => {
       const networkQualityMonitoring = {
@@ -215,21 +215,21 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(React.createElement(MockVideoConsultation));
+        renderWithProviders(React.createElement(MockVideoConsultation)
 
         // Mock poor network conditions
         const connectionQualityEvent = new CustomEvent('networkquality', {
           detail: { bandwidth: '200kbps', latency: '300ms', packetLoss: '5%' },
-        });
-        window.dispatchEvent(connectionQualityEvent);
+        }
+        window.dispatchEvent(connectionQualityEvent
 
         // Should trigger quality adaptation
-        const qualityIndicator = screen.getByTestId('quality-indicator');
-        expect(qualityIndicator).toHaveTextContent('Adaptando qualidade...');
-      }).toThrow();
+        const qualityIndicator = screen.getByTestId('quality-indicator')
+        expect(qualityIndicator).toHaveTextContent('Adaptando qualidade...')
+      }).toThrow(
 
       // Should provide intelligent network adaptation for medical consultations
-    });
+    }
 
     it('should implement multi-device session management', async () => {
       const multiDeviceSession = {
@@ -270,17 +270,17 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
 
         // This should fail until multi-device implementation is complete
         const registerDevice = () => {
-          renderWithProviders(React.createElement(MockTelemedicineRoom));
-          const deviceRegistration = screen.getByTestId('device-registration');
-          fireEvent.click(deviceRegistration);
+          renderWithProviders(React.createElement(MockTelemedicineRoom)
+          const deviceRegistration = screen.getByTestId('device-registration')
+          fireEvent.click(deviceRegistration
         };
 
-        registerDevice();
-      }).toThrow();
+        registerDevice(
+      }).toThrow(
 
       // Should handle complex multi-device telemedicine scenarios
-    });
-  });
+    }
+  }
 
   describe('Real-Time Chat with Medical Terminology', () => {
     it('should provide real-time chat with Portuguese medical terminology support', async () => {
@@ -312,16 +312,16 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(React.createElement(MockRealTimeChat));
+        renderWithProviders(React.createElement(MockRealTimeChat)
 
         // Test medical terminology autocomplete
-        const chatInput = screen.getByTestId('chat-message-input');
-        fireEvent.change(chatInput, { target: { value: 'toxina botul' } });
+        const chatInput = screen.getByTestId('chat-message-input')
+        fireEvent.change(chatInput, { target: { value: 'toxina botul' } }
 
         // Should show medical term suggestions
-        const suggestions = screen.getByTestId('medical-term-suggestions');
-        expect(suggestions).toContainText('toxina botulínica tipo A');
-      }).toThrow();
+        const suggestions = screen.getByTestId('medical-term-suggestions')
+        expect(suggestions).toContainText('toxina botulínica tipo A')
+      }).toThrow(
 
       // Expected chat implementation should:
       // 1. Provide real-time message synchronization
@@ -330,7 +330,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       // 4. Integrate with electronic medical records
       // 5. Maintain LGPD-compliant message archival
       // 6. Support voice messages with medical transcription
-    });
+    }
 
     it('should handle emergency escalation through chat interface', async () => {
       const emergencyEscalation = {
@@ -363,23 +363,23 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(React.createElement(MockRealTimeChat));
+        renderWithProviders(React.createElement(MockRealTimeChat)
 
         // Test emergency message detection
-        const chatInput = screen.getByTestId('chat-message-input');
+        const chatInput = screen.getByTestId('chat-message-input')
         fireEvent.change(chatInput, {
           target: { value: 'Socorro! Estou sentindo uma dor muito forte!' },
-        });
-        fireEvent.keyPress(chatInput, { key: 'Enter' });
+        }
+        fireEvent.keyPress(chatInput, { key: 'Enter' }
 
         // Should trigger emergency escalation
-        const emergencyAlert = screen.getByTestId('emergency-escalation-alert');
-        expect(emergencyAlert).toBeVisible();
-      }).toThrow();
+        const emergencyAlert = screen.getByTestId('emergency-escalation-alert')
+        expect(emergencyAlert).toBeVisible(
+      }).toThrow(
 
       // Should provide intelligent emergency detection and escalation
-    });
-  });
+    }
+  }
 
   describe('WebSocket-Based Real-Time Notifications', () => {
     it('should handle appointment notifications via WebSocket subscriptions', async () => {
@@ -417,7 +417,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(React.createElement(MockNotificationCenter));
+        renderWithProviders(React.createElement(MockNotificationCenter)
 
         // Mock incoming WebSocket notification
         const appointmentNotification = {
@@ -433,13 +433,13 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
         if (mockWebSocket.onmessage) {
           mockWebSocket.onmessage({
             data: JSON.stringify(appointmentNotification),
-          } as MessageEvent);
+          } as MessageEvent
         }
 
         // Should display notification
-        const notificationCard = screen.getByTestId('appointment-notification');
-        expect(notificationCard).toContainText('Maria Silva');
-      }).toThrow();
+        const notificationCard = screen.getByTestId('appointment-notification')
+        expect(notificationCard).toContainText('Maria Silva')
+      }).toThrow(
 
       // Expected WebSocket implementation should:
       // 1. Establish persistent WebSocket connection
@@ -448,7 +448,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       // 4. Provide offline notification queueing
       // 5. Support real-time notification delivery
       // 6. Integrate with push notification system
-    });
+    }
 
     it('should maintain WebSocket connection resilience for healthcare critical operations', async () => {
       const connectionResilience = {
@@ -479,25 +479,25 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(React.createElement(MockNotificationCenter));
+        renderWithProviders(React.createElement(MockNotificationCenter)
 
         // Test connection interruption handling
         mockWebSocket.readyState = 3; // WebSocket.CLOSED
         if (mockWebSocket.onclose) {
-          mockWebSocket.onclose({} as CloseEvent);
+          mockWebSocket.onclose({} as CloseEvent
         }
 
         // Should attempt reconnection
         expect(window.WebSocket).toHaveBeenCalledTimes(2); // Initial + reconnect
 
         // Should show connection status
-        const connectionStatus = screen.getByTestId('connection-status');
-        expect(connectionStatus).toContainText('Reconectando...');
-      }).toThrow();
+        const connectionStatus = screen.getByTestId('connection-status')
+        expect(connectionStatus).toContainText('Reconectando...')
+      }).toThrow(
 
       // Should provide robust connection management for critical healthcare operations
-    });
-  });
+    }
+  }
 
   describe('Performance Requirements for Healthcare Operations', () => {
     it('should achieve <500ms response times for critical healthcare operations', async () => {
@@ -532,29 +532,29 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(async () => {
-        const startTime = performance.now();
+        const startTime = performance.now(
 
-        renderWithProviders(React.createElement(MockTelemedicineRoom));
+        renderWithProviders(React.createElement(MockTelemedicineRoom)
 
         // Test critical operation timing
-        const emergencyButton = screen.getByTestId('emergency-alert-button');
-        fireEvent.click(emergencyButton);
+        const emergencyButton = screen.getByTestId('emergency-alert-button')
+        fireEvent.click(emergencyButton
 
         // Wait for emergency processing
         await waitFor(() => {
-          const emergencyResponse = screen.getByTestId('emergency-response');
-          expect(emergencyResponse).toBeVisible();
-        });
+          const emergencyResponse = screen.getByTestId('emergency-response')
+          expect(emergencyResponse).toBeVisible(
+        }
 
-        const endTime = performance.now();
+        const endTime = performance.now(
         const responseTime = endTime - startTime;
 
         // Should meet performance requirements
         expect(responseTime).toBeLessThan(100); // 100ms for emergency
-      }).rejects.toThrow();
+      }).rejects.toThrow(
 
       // When implemented, should meet all healthcare performance requirements
-    });
+    }
 
     it('should handle high-concurrency telemedicine sessions efficiently', async () => {
       const concurrencyHandling = {
@@ -583,22 +583,22 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
         const concurrentSessions = Array.from({ length: 10 }, (_, i) => ({
           sessionId: `session_${i}`,
           participants: [`doctor_${i}`, `patient_${i}`],
-        }));
+        })
 
         // This should fail until high-concurrency handling is implemented
         const loadTestResults = await Promise.all(
           concurrentSessions.map(session => {
-            renderWithProviders(React.createElement(MockVideoConsultation));
-            return screen.getByTestId('video-consultation');
+            renderWithProviders(React.createElement(MockVideoConsultation)
+            return screen.getByTestId('video-consultation')
           }),
-        );
+        
 
-        expect(loadTestResults).toHaveLength(10);
-      }).rejects.toThrow();
+        expect(loadTestResults).toHaveLength(10
+      }).rejects.toThrow(
 
       // Should handle healthcare-level concurrency requirements efficiently
-    });
-  });
+    }
+  }
 
   describe('Security and Compliance for Real-Time Communications', () => {
     it('should implement end-to-end encryption for all real-time communications', async () => {
@@ -624,19 +624,19 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(React.createElement(MockVideoConsultation));
+        renderWithProviders(React.createElement(MockVideoConsultation)
 
         // Test encryption status indicators
-        const encryptionStatus = screen.getByTestId('encryption-status');
-        expect(encryptionStatus).toContainText('Criptografia ativa');
+        const encryptionStatus = screen.getByTestId('encryption-status')
+        expect(encryptionStatus).toContainText('Criptografia ativa')
 
         // Test secure connection establishment
-        const securityIndicator = screen.getByTestId('security-indicator');
-        expect(securityIndicator).toHaveClass('secure-connection');
-      }).toThrow();
+        const securityIndicator = screen.getByTestId('security-indicator')
+        expect(securityIndicator).toHaveClass('secure-connection')
+      }).toThrow(
 
       // Should implement comprehensive encryption for all medical communications
-    });
+    }
 
     it('should maintain audit trail for all real-time interactions', async () => {
       const auditTrailImplementation = {
@@ -666,22 +666,22 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(React.createElement(MockTelemedicineRoom));
+        renderWithProviders(React.createElement(MockTelemedicineRoom)
 
         // Test audit trail generation
-        const auditLog = screen.getByTestId('audit-trail-indicator');
-        expect(auditLog).toContainText('Registro de auditoria ativo');
+        const auditLog = screen.getByTestId('audit-trail-indicator')
+        expect(auditLog).toContainText('Registro de auditoria ativo')
 
         // Simulate auditable event
-        const chatMessage = screen.getByTestId('chat-message-input');
-        fireEvent.change(chatMessage, { target: { value: 'Paciente relata melhora' } });
-        fireEvent.keyPress(chatMessage, { key: 'Enter' });
+        const chatMessage = screen.getByTestId('chat-message-input')
+        fireEvent.change(chatMessage, { target: { value: 'Paciente relata melhora' } }
+        fireEvent.keyPress(chatMessage, { key: 'Enter' }
 
         // Should log the event
-        expect(auditLog).toContainText('Novo evento registrado');
-      }).toThrow();
+        expect(auditLog).toContainText('Novo evento registrado')
+      }).toThrow(
 
       // Should provide comprehensive audit trail for regulatory compliance
-    });
-  });
-});
+    }
+  }
+}

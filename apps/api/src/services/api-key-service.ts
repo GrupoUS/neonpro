@@ -148,7 +148,7 @@ export async function rotateApiKey(oldKey: string): Promise<ApiKey | null> {
  * Generate a secure API key
  */
 function generateSecureApiKey(): string {
-  const prefix = 'neonpro_';
+  const prefix = 'neonpro';
   const randomBytes = crypto.randomBytes(32);
   const key = randomBytes.toString('base64url');
 

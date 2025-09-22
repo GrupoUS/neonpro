@@ -104,7 +104,7 @@ EXECUTION_PHASES:
 
   phase_2_test_design:
     trigger: "Requirements analysis complete"
-    primary_agent: "tdd-orchestrator"
+    primary_agent: "test-auditor"
     supporting_agents: "archon + serena"
     process:
       - "Create comprehensive test scenarios using archon task management"
@@ -115,7 +115,7 @@ EXECUTION_PHASES:
 
   phase_3_red_phase:
     trigger: "Test design complete"
-    primary_agent: "apex-dev"
+    primary_agent: "test-auditor"
     supporting_agents: "tdd-orchestrator + serena"
     process:
       - "Write failing tests that define expected behavior"
@@ -127,7 +127,7 @@ EXECUTION_PHASES:
   phase_4_green_phase:
     trigger: "All tests written and failing"
     primary_agent: "apex-dev"
-    supporting_agents: "tdd-orchestrator + desktop-commander"
+    supporting_agents: "tdd-orchestrator + architect-review"
     process:
       - "Implement minimal code to pass tests"
       - "Follow established code patterns and conventions"

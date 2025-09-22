@@ -9,13 +9,17 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { SecureLogger } from '../src/utils';
 
 // Mock console methods to capture logging output
-const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
-const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
+const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {}
+const mockConsoleError = vi.spyOn(console, 'error').mockImplementation(() => {}
+const mockConsoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {}
+const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {}
 
 describe('Security Logging - Vulnerability Prevention_, () => {
   beforeEach(() => {
+<<<<<<< HEAD
+    vi.clearAllMocks(
+  }
+=======
     vi.clearAllMocks();
     // Initialize secure logging for these tests
     SecureLogger.initialize();
@@ -25,39 +29,53 @@ describe('Security Logging - Vulnerability Prevention_, () => {
     // Restore original console methods
     SecureLogger.restore();
   });
+>>>>>>> origin/main
 
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks(
+  }
 
   describe('SQL Injection Prevention Logging_, () => {
     it('should NOT log raw SQL queries with parameters_, () => {
       const maliciousQueries = [
         'SELECT * FROM patients WHERE name = \'Robert\'); DROP TABLE patients; --',
+<<<<<<< HEAD
+        'SELECT * FROM users WHERE email = \'admin@test.com\' OR \'1\'=\'1\',
+=======
         'SELECT * FROM users WHERE email = \'admin@test.com\' OR \'1\'=\'1\'',
+>>>>>>> origin/main
         'INSERT INTO audit_logs (action, user_id) VALUES (\'login\', \'admin\'); SELECT * FROM credit_cards_,
       ];
 
       maliciousQueries.forEach(query => {
         try {
+<<<<<<< HEAD
+          console.log(`Executing _query: ${query}`
+          console.error(`Query validation failed for: ${query}`
+=======
           console.log(`Executing _query: ${query}`);
           console.error(`Query validation failed for: ${query}`);
+>>>>>>> origin/main
         } catch (error) {
-          console.error('SQL execution error:', { query, error });
+          console.error('SQL execution error:', { query, error }
         }
-      });
+      }
 
       // Test will FAIL because raw SQL queries are being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls];
       const hasRawSql = allLogs.some(call =>
         JSON.stringify(call).includes('DROP TABLE')
+<<<<<<< HEAD
+        || JSON.stringify(call).includes('OR \'1\'=\'1\')
+=======
         || JSON.stringify(call).includes('OR \'1\'=\'1\'')
+>>>>>>> origin/main
         || JSON.stringify(call).includes('SELECT * FROM credit_cards_)
         || JSON.stringify(call).includes('Robert\'); DROP TABLE')
-      );
+      
 
       expect(hasRawSql).toBe(false);
-    });
+    }
 
     it('should NOT log database connection strings or credentials_, () => {
       const connectionStrings = [
@@ -68,12 +86,12 @@ describe('Security Logging - Vulnerability Prevention_, () => {
 
       connectionStrings.forEach(connStr => {
         try {
-          console.log(`Connecting to database: ${connStr}`);
-          console.error(`Connection failed: ${connStr}`);
+          console.log(`Connecting to database: ${connStr}`
+          console.error(`Connection failed: ${connStr}`
         } catch (error) {
-          console.error('Database connection error:', { connectionString: connStr, error });
+          console.error('Database connection error:', { connectionString: connStr, error }
         }
-      });
+      }
 
       // Test will FAIL because connection strings with credentials are being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls];
@@ -83,11 +101,11 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('complexPassword123')
         || JSON.stringify(call).includes('root:supersecret')
         || JSON.stringify(call).includes('user:password')
-      );
+      
 
       expect(hasConnectionStrings).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('XSS Prevention Logging_, () => {
     it('should NOT log raw user input that could contain XSS payloads_, () => {
@@ -101,13 +119,13 @@ describe('Security Logging - Vulnerability Prevention_, () => {
 
       xssPayloads.forEach(payload => {
         try {
-          console.log(`Processing user input: ${payload}`);
-          console.error(`Input validation failed for: ${payload}`);
-          console.warn(`Sanitizing input: ${payload}`);
+          console.log(`Processing user input: ${payload}`
+          console.error(`Input validation failed for: ${payload}`
+          console.warn(`Sanitizing input: ${payload}`
         } catch (error) {
-          console.error('XSS processing error:', { input: payload, error });
+          console.error('XSS processing error:', { input: payload, error }
         }
-      });
+      }
 
       // Test will FAIL because XSS payloads are being logged
       const allLogs = [
@@ -121,10 +139,10 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('onerror=alert')
         || JSON.stringify(call).includes('onload=alert')
         || JSON.stringify(call).includes('document.cookie')
-      );
+      
 
       expect(hasXssPayloads).toBe(false);
-    });
+    }
 
     it('should NOT log HTML content that could expose DOM structure_, () => {
       const htmlContent = `
@@ -137,9 +155,9 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       `;
 
       // Simulate HTML processing logging
-      console.log('Processing HTML form:', htmlContent);
-      console.error('HTML validation failed:', htmlContent);
-      console.info('Form structure:', htmlContent);
+      console.log('Processing HTML form:', htmlContent
+      console.error('HTML validation failed:', htmlContent
+      console.info('Form structure:', htmlContent
 
       // Test will FAIL because HTML with sensitive attributes is being logged
       const allLogs = [
@@ -152,11 +170,11 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('abc123def456')
         || JSON.stringify(call).includes('patient-form')
         || JSON.stringify(call).includes('/api/patients')
-      );
+      
 
       expect(hasHtmlContent).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('CSRF Protection Logging_, () => {
     it('should NOT log CSRF tokens or session identifiers_, () => {
@@ -168,9 +186,9 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       };
 
       // Simulate CSRF validation logging
-      console.log(`CSRF token validation for form ${csrfData.formId}: ${csrfData.token}`);
-      console.error(`CSRF validation failed for session ${csrfData.sessionId}`);
-      console.warn(`Invalid CSRF token: ${csrfData.token}`);
+      console.log(`CSRF token validation for form ${csrfData.formId}: ${csrfData.token}`
+      console.error(`CSRF validation failed for session ${csrfData.sessionId}`
+      console.warn(`Invalid CSRF token: ${csrfData.token}`
 
       // Test will FAIL because CSRF tokens are being logged
       const allLogs = [
@@ -183,10 +201,10 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('sess-9876543210fedcba')
         || JSON.stringify(call).includes('patient-update-form')
         || JSON.stringify(call).includes('user-123')
-      );
+      
 
       expect(hasCsrfData).toBe(false);
-    });
+    }
 
     it('should NOT log request details that could expose application structure_, () => {
       const requestData = {
@@ -205,9 +223,15 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       };
 
       // Simulate request logging
+<<<<<<< HEAD
+      console.log('Incoming _request:_, requestData
+      console.error('Request validation failed:', requestData
+      console.info('Request URL:', requestData.url
+=======
       console.log('Incoming _request:_, requestData);
       console.error('Request validation failed:', requestData);
       console.info('Request URL:', requestData.url);
+>>>>>>> origin/main
 
       // Test will FAIL because request details with tokens are being logged
       const allLogs = [
@@ -220,11 +244,11 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('user-token-456')
         || JSON.stringify(call).includes('/api/v1/patients/123456/update')
         || JSON.stringify(call).includes('patient@test.com')
-      );
+      
 
       expect(hasRequestData).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('File Upload Security Logging_, () => {
     it('should NOT log file contents or sensitive file metadata_, () => {
@@ -247,13 +271,13 @@ describe('Security Logging - Vulnerability Prevention_, () => {
 
       fileUploads.forEach(file => {
         try {
-          console.log(`Processing file upload: ${file.filename}`);
-          console.error(`File validation failed for: ${file.filename}`, file);
-          console.warn(`Large file detected: ${file.size} bytes`);
+          console.log(`Processing file upload: ${file.filename}`
+          console.error(`File validation failed for: ${file.filename}`, file
+          console.warn(`Large file detected: ${file.size} bytes`
         } catch (error) {
-          console.error('File upload error:', { file, error });
+          console.error('File upload error:', { file, error }
         }
-      });
+      }
 
       // Test will FAIL because file contents and metadata are being logged
       const allLogs = [
@@ -268,10 +292,10 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('DICOM image data')
         || JSON.stringify(call).includes('user-789')
         || JSON.stringify(call).includes('patient-456')
-      );
+      
 
       expect(hasFileData).toBe(false);
-    });
+    }
 
     it('should NOT log file system paths that could expose directory structure_, () => {
       const filePaths = [
@@ -283,10 +307,10 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       ];
 
       filePaths.forEach(path => {
-        console.log(`File path: ${path}`);
-        console.error(`Path validation failed: ${path}`);
-        console.warn(`Directory created: ${path}`);
-      });
+        console.log(`File path: ${path}`
+        console.error(`Path validation failed: ${path}`
+        console.warn(`Directory created: ${path}`
+      }
 
       // Test will FAIL because file system paths are being logged
       const allLogs = [
@@ -300,11 +324,15 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('C:\\Program Files\\NeonPro')
         || JSON.stringify(call).includes('../../uploads/temp')
         || JSON.stringify(call).includes('/tmp/neonpro_uploads_)
+<<<<<<< HEAD
+      
+=======
       );
+>>>>>>> origin/main
 
       expect(hasFilePaths).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('Rate Limiting and DDoS Protection Logging_, () => {
     it('should NOT log IP addresses or detailed request patterns_, () => {
@@ -330,10 +358,10 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       ];
 
       securityEvents.forEach(event => {
-        console.log('Security event:', event);
-        console.error(`${event.eventType} from IP ${event.ip}`);
-        console.warn(`Blocking IP: ${event.ip}`);
-      });
+        console.log('Security event:', event
+        console.error(`${event.eventType} from IP ${event.ip}`
+        console.warn(`Blocking IP: ${event.ip}`
+      }
 
       // Test will FAIL because IP addresses and detailed patterns are being logged
       const allLogs = [
@@ -347,10 +375,10 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('Bot/1.0 (Scanner)')
         || JSON.stringify(call).includes('SQL injection attempt')
         || JSON.stringify(call).includes('XSS payload detected')
-      );
+      
 
       expect(hasSecurityData).toBe(false);
-    });
+    }
 
     it('should NOT log rate limiting configuration details_, () => {
       const rateLimitConfig = {
@@ -373,9 +401,9 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       };
 
       // Simulate configuration logging
-      console.log('Rate limit configuration:', rateLimitConfig);
-      console.error('Redis connection failed:', rateLimitConfig.storage);
-      console.info('Endpoint limits:', rateLimitConfig.endpoints);
+      console.log('Rate limit configuration:', rateLimitConfig
+      console.error('Redis connection failed:', rateLimitConfig.storage
+      console.info('Endpoint limits:', rateLimitConfig.endpoints
 
       // Test will FAIL because configuration details are being logged
       const allLogs = [
@@ -389,11 +417,11 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('6379')
         || JSON.stringify(call).includes('/api/v1/auth/login')
         || JSON.stringify(call).includes('10000 requests')
-      );
+      
 
       expect(hasConfigData).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('Security Audit Trail Protection_, () => {
     it('should NOT log sensitive audit trail details with PII_, () => {
@@ -418,10 +446,10 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       ];
 
       auditEvents.forEach(event => {
-        console.log('Audit event:', event);
-        console.error(`Security audit: ${event.eventType}`);
-        console.info('Event details:', event);
-      });
+        console.log('Audit event:', event
+        console.error(`Security audit: ${event.eventType}`
+        console.info('Event details:', event
+      }
 
       // Test will FAIL because audit events contain PII
       const allLogs = [
@@ -435,10 +463,10 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('189.1.1.50')
         || JSON.stringify(call).includes('Lisinopril 10mg')
         || JSON.stringify(call).includes('Hypertension management')
-      );
+      
 
       expect(hasAuditData).toBe(false);
-    });
+    }
 
     it('should NOT log security breach notifications with exploit details_, () => {
       const breachDetails = {
@@ -452,9 +480,9 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       };
 
       // Simulate breach logging
-      console.error('SECURITY BREACH DETECTED:', breachDetails);
-      console.warn('Vulnerability details:', breachDetails);
-      console.info('Breach mitigation:', breachDetails.mitigationApplied);
+      console.error('SECURITY BREACH DETECTED:', breachDetails
+      console.warn('Vulnerability details:', breachDetails
+      console.info('Breach mitigation:', breachDetails.mitigationApplied
 
       // Test will FAIL because breach details contain exploit information
       const allLogs = [
@@ -468,11 +496,11 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('test\' OR 1=1--')
         || JSON.stringify(call).includes('192.168.1.100')
         || JSON.stringify(call).includes('150 records')
-      );
+      
 
       expect(hasBreachData).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('Encryption and Key Management Logging_, () => {
     it('should NOT log encryption keys or algorithm details_, () => {
@@ -485,9 +513,9 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       };
 
       // Simulate encryption logging
-      console.log('Encryption process started:', { algorithm: encryptionData.algorithm });
-      console.error('Encryption failed:', encryptionData);
-      console.warn('Key generation completed:', encryptionData.key);
+      console.log('Encryption process started:', { algorithm: encryptionData.algorithm }
+      console.error('Encryption failed:', encryptionData
+      console.warn('Key generation completed:', encryptionData.key
 
       // Test will FAIL because encryption details are being logged
       const allLogs = [
@@ -500,10 +528,10 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('encryption-key-256bit')
         || JSON.stringify(call).includes('initialization-vector')
         || JSON.stringify(call).includes('authentication-tag')
-      );
+      
 
       expect(hasEncryptionData).toBe(false);
-    });
+    }
 
     it('should NOT log certificate or private key information_, () => {
       const certificateData = {
@@ -516,9 +544,9 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       };
 
       // Simulate certificate logging
-      console.log('SSL Certificate loaded:', certificateData);
-      console.error('Certificate validation failed:', certificateData);
-      console.info('Certificate subject:', certificateData.subject);
+      console.log('SSL Certificate loaded:', certificateData
+      console.error('Certificate validation failed:', certificateData
+      console.info('Certificate subject:', certificateData.subject
 
       // Test will FAIL because certificate details are being logged
       const allLogs = [
@@ -531,11 +559,11 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('/etc/ssl/private/neonpro.key')
         || JSON.stringify(call).includes('super-secret-cert-passphrase')
         || JSON.stringify(call).includes('Let\'s Encrypt')
-      );
+      
 
       expect(hasCertData).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('Network Security Logging_, () => {
     it('should NOT log network traffic details or packet contents_, () => {
@@ -550,12 +578,12 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       };
 
       // Simulate network logging
-      console.log('Network connection:', networkData);
-      console.error('Network security event:', networkData);
+      console.log('Network connection:', networkData
+      console.error('Network security event:', networkData
       console.info('TLS handshake completed:', {
         version: networkData.tlsVersion,
         cipher: networkData.cipherSuite,
-      });
+      }
 
       // Test will FAIL because network details are being logged
       const allLogs = [
@@ -569,10 +597,10 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('TLS 1.3')
         || JSON.stringify(call).includes('TLS_AES_256_GCM_SHA384_)
         || JSON.stringify(call).includes('packet contents')
-      );
+      
 
       expect(hasNetworkData).toBe(false);
-    });
+    }
 
     it('should NOT log firewall rules or security group configurations_, () => {
       const firewallConfig = {
@@ -599,9 +627,9 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       };
 
       // Simulate firewall logging
-      console.log('Firewall configuration:', firewallConfig);
-      console.error('Firewall rule validation failed:', firewallConfig.rules[0]);
-      console.info('Security group:', firewallConfig.securityGroup);
+      console.log('Firewall configuration:', firewallConfig
+      console.error('Firewall rule validation failed:', firewallConfig.rules[0]
+      console.info('Security group:', firewallConfig.securityGroup
 
       // Test will FAIL because network configuration is being logged
       const allLogs = [
@@ -615,9 +643,9 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('web-server-sg')
         || JSON.stringify(call).includes('vpc-1234567890abcdef')
         || JSON.stringify(call).includes('Block SSH from external')
-      );
+      
 
       expect(hasFirewallData).toBe(false);
-    });
-  });
-});
+    }
+  }
+}

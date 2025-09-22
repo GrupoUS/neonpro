@@ -83,12 +83,12 @@ const validatePharmaceuticalBarcode = (barcode: string): boolean => {
   // EAN-13 check digit validation
   let sum = 0;
   for (let i = 0; i < 12; i++) {
-    const digit = parseInt(cleanBarcode[i]);
+    const digit = parseInt(cleanBarcode[i] || '0');
     sum += i % 2 === 0 ? digit : digit * 3;
   }
 
   const checkDigit = (10 - (sum % 10)) % 10;
-  return checkDigit === parseInt(cleanBarcode[12]);
+  return checkDigit === parseInt(cleanBarcode[12] || '0');
 };
 
 /**
@@ -177,7 +177,7 @@ const validateControlledSubstanceRules = (
     const maxDays = 30;
     const daysMatch = prescriptionDuration.match(/^(\d+)\s+dias?$/i);
 
-    if (daysMatch) {
+    if (daysMatch && daysMatch[1]) {
       const days = parseInt(daysMatch[1]);
       if (days > maxDays) return false;
     }
