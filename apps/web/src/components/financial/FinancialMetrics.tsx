@@ -18,9 +18,13 @@ export interface FinancialMetricsProps {
 }
 
 export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
-  period = 'monthly', autoRefresh = false, refreshInterval = 5 * 60 * 1000, // 5 minutes
-  onMetricsUpdate,className,
-  'data-testid': testId, }) => {
+  period = 'monthly',
+  autoRefresh = false,
+  refreshInterval = 5 * 60 * 1000, // 5 minutes
+  onMetricsUpdate,
+  className,
+  'data-testid': testId,
+}) => {
   const [metrics, setMetrics] = useState<FinancialMetric[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

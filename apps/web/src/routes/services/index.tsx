@@ -107,7 +107,8 @@ function ServicesPage() {
     );
   }
 
-  return (<div className='container mx-auto py-8 space-y-8'>
+  return (
+    <div className='container mx-auto py-8 space-y-8'>
       {/* Header */}
       <div className='flex items-center justify-between'>
         <div>

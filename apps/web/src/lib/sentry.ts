@@ -129,7 +129,8 @@ function resolveEnvironment(): NodeEnvironment {
 
 function sanitizeString(value: unknown): unknown {
   if (typeof value !== 'string') return value;
-  return STRING_PATTERNS.reduce((current, [pattern, replacement]) => current.replace(pattern, replacement),
+  return STRING_PATTERNS.reduce(
+    (current, [pattern, replacement]) => current.replace(pattern, replacement),
     value,
   );
 }
@@ -381,7 +382,10 @@ export async function trackHealthcarePerformance<T>(
       op: 'healthcare_operation',
       attributes: {
         healthcare_context: 'true',
-        medical_context: context.medicalContext ?? 'unknown', }, },async () => {
+        medical_context: context.medicalContext ?? 'unknown',
+      },
+    },
+    async () => {
       try {
         const result = await operation();
         Sentry.withScope(scope => {

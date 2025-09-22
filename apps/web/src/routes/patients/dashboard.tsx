@@ -108,7 +108,8 @@ interface RealTimeUpdate {
 }
 
 function PatientCard({
-  patient,onClick,
+  patient,
+  onClick,
 }: {
   patient: Patient;
   onClick: (patientId: string) => void;
@@ -518,7 +519,8 @@ function PatientDashboard() {
       header: 'Ações',
       cell: (info: any) => {
         const patient = info.row.original;
-        return (<div className='flex gap-2'>
+        return (
+          <div className='flex gap-2'>
             <Button
               variant='outline'
               size='sm'
@@ -723,7 +725,8 @@ function PatientDashboard() {
                     <p className='text-sm text-gray-700'>
                       {insight.description}
                     </p>
-                    {insight.actionable && (<Button
+                    {insight.actionable && (
+                      <Button
                         variant='outline'
                         size='sm'
                         onClick={() => handleAIInsightAction(insight)}
@@ -836,7 +839,8 @@ function PatientDashboard() {
                 </div>
               )}
 
-            {patients.length === 0 && (<div className='text-center py-8'>
+            {patients.length === 0 && (
+              <div className='text-center py-8'>
                 <Users className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
                 <h3 className='text-lg font-medium text-gray-900 mb-2'>
                   Nenhum paciente encontrado

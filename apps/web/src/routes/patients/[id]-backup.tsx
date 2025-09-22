@@ -822,8 +822,9 @@ function PatientDetailPage() {
                               Recomendações:
                             </p>
                             <ul className='text-sm list-disc list-inside space-y-1'>
-                              {insight.recommendations.map((recommendation, _index) => <li key={index}>{recommendation}</li>,
-                              )}
+                              {insight.recommendations.map((recommendation, _index) => (
+                                <li key={index}>{recommendation}</li>
+                              ))}
                             </ul>
                           </div>
                         </div>

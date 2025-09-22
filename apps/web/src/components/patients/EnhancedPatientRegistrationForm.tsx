@@ -456,7 +456,8 @@ const ContactStep = () => {
     if (formatted.length <= 15) onChange(formatted);
   };
 
-  return (<div className='space-y-4'>
+  return (
+    <div className='space-y-4'>
       <FormField
         control={form.control}
         name='basicInfo.phone'

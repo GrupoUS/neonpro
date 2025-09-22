@@ -123,14 +123,12 @@ export function EnhancedHealthcareForm({
 
   // Create accessible field hooks for each form field
   const fieldHooks = fields.reduce((acc, field) => {
-      acc[field.name] = useAccessibleField(field.name, {
-        required: field.required,
-        validate: field.validate,
-      });
-      return acc;
-    },
-    {} as Record<string, ReturnType<typeof useAccessibleField>>,
-  );
+    acc[field.name] = useAccessibleField(field.name, {
+      required: field.required,
+      validate: field.validate,
+    });
+    return acc;
+  }, {} as Record<string, ReturnType<typeof useAccessibleField>>);
 
   const formatFieldValue = useCallback(
     (field: MedicalFormField, value: string): string => {
@@ -258,11 +256,9 @@ export function EnhancedHealthcareForm({
       try {
         // Collect form data
         const formData = fields.reduce((acc, field) => {
-            acc[field.name] = fieldHooks[field.name].value;
-            return acc;
-          },
-          {} as Record<string, string>,
-        );
+          acc[field.name] = fieldHooks[field.name].value;
+          return acc;
+        }, {} as Record<string, string>);
 
         await onSubmit(formData);
 

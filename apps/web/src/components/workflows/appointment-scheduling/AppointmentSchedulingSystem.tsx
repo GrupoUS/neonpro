@@ -14,6 +14,12 @@
 
 'use client';
 
+import { HealthcareButton } from '@/components/ui/healthcare/healthcare-button';
+import { HealthcareInput } from '@/components/ui/healthcare/healthcare-input';
+import { HealthcareLoading } from '@/components/ui/healthcare/healthcare-loading';
+import { useScreenReaderAnnouncer } from '@/hooks/accessibility/use-focus-management';
+import { useMobileOptimization } from '@/hooks/accessibility/use-mobile-optimization';
+import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   addDays,
@@ -29,12 +35,6 @@ import { ptBR } from 'date-fns/locale';
 import { AlertTriangle, Calendar, CheckCircle, Clock, MapPin, Phone, User } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { HealthcareButton } from '@/components/ui/healthcare/healthcare-button';
-import { HealthcareInput } from '@/components/ui/healthcare/healthcare-input';
-import { HealthcareLoading } from '@/components/ui/healthcare/healthcare-loading';
-import { useScreenReaderAnnouncer } from '@/hooks/accessibility/use-focus-management';
-import { useMobileOptimization } from '@/hooks/accessibility/use-mobile-optimization';
-import { cn } from '@/lib/utils';
 
 // Brazilian appointment types with durations and pricing
 const brazilianAppointmentTypes = [
@@ -165,7 +165,13 @@ interface CalendarDay {
 }
 
 export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemProps> = ({
-  patients,onSchedule, onCancel, existingAppointments = [],className, testId = 'appointment-scheduling-system', }) => {
+  patients,
+  onSchedule,
+  onCancel,
+  existingAppointments = [],
+  className,
+  testId = 'appointment-scheduling-system',
+}) => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -656,7 +662,8 @@ export const AppointmentSchedulingSystem: React.FC<AppointmentSchedulingSystemPr
                   ))}
 
                   {/* Calendar Days */}
-                  {generateCalendarDays().map((day, index) => (<button
+                  {generateCalendarDays().map((day, index) => (
+                    <button
                       key={index}
                       type='button'
                       onClick={() => handleDateSelect(day.date)}

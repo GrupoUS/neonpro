@@ -583,7 +583,8 @@ export class MobileAccessibilityOptimizer {
 
     // Calculate overall score
     const totalPossible = Object.keys(stats).length - 1; // Exclude overallScore
-    const totalAchieved = Object.values(stats).reduce((sum, val) => (typeof val === 'number' && val > 0 ? sum + 1 : sum),
+    const totalAchieved = Object.values(stats).reduce(
+      (sum, val) => (typeof val === 'number' && val > 0 ? sum + 1 : sum),
       0,
     );
 
@@ -626,7 +627,8 @@ export class MobileAccessibilityOptimizer {
 
     // Cumulative Layout Shift
     const clsEntries = performance.getEntriesByType('layout-shift') as any[];
-    cumulativeLayoutShift = clsEntries.reduce((sum, entry) => (entry.hadRecentInput ? sum : sum + entry.value),
+    cumulativeLayoutShift = clsEntries.reduce(
+      (sum, entry) => (entry.hadRecentInput ? sum : sum + entry.value),
       0,
     );
 
@@ -654,9 +656,7 @@ export class MobileAccessibilityOptimizer {
    * Calculate overall score across all devices
    */
   private calculateOverallScore(deviceResults: any[]): number {
-    const totalScore = deviceResults.reduce((sum, result) => sum + result.score,
-      0,
-    );
+    const totalScore = deviceResults.reduce((sum, result) => sum + result.score, 0);
     return Math.round(totalScore / deviceResults.length);
   }
 

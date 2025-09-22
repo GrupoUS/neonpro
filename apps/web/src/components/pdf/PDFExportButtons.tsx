@@ -28,7 +28,13 @@ const defaultClinicData: ClinicBrandingData = {
 };
 
 export const PDFExportButtons: React.FC<PDFExportButtonsProps> = ({
-  assessmentData, clinicData = defaultClinicData, variant = 'default', size = 'default', showPreview = true, className = '', }) => {
+  assessmentData,
+  clinicData = defaultClinicData,
+  variant = 'default',
+  size = 'default',
+  showPreview = true,
+  className = '',
+}) => {
   const { isGenerating, downloadPDF, previewPDF, error } = usePDFExport();
 
   const handleDownload = async () => {

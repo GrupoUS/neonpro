@@ -565,7 +565,10 @@ function PatientDocumentsPage() {
  * Document Card Component
  */
 function DocumentCard({
-  document,isSelected, onSelect,onDelete,
+  document,
+  isSelected,
+  onSelect,
+  onDelete,
 }: {
   document: PatientDocument;
   isSelected: boolean;

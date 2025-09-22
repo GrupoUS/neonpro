@@ -188,7 +188,8 @@ export default function AIChatContainer({
                 {hasPro && <Crown className='w-3 h-3 mr-1 inline' />}
                 {subscriptionInfo.displayStatus}
               </span>
-              {shouldShowUpgradePrompt && (<Button
+              {shouldShowUpgradePrompt && (
+                <Button
                   size='sm'
                   onClick={() => window.open(upgradeUrl, '_blank')}
                   className='text-xs bg-gradient-to-r from-[#AC9469] to-[#294359] hover:from-[#294359] hover:to-[#112031]'

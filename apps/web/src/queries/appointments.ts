@@ -9,7 +9,13 @@ type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
 
 // Query options para listar agendamentos com filtros
 export const appointmentsQueryOptions: any = ({
-  page = 1, pageSize = 10,startDate, endDate,status, professionalId,patientId,
+  page = 1,
+  pageSize = 10,
+  startDate,
+  endDate,
+  status,
+  professionalId,
+  patientId,
 }: {
   page?: number;
   pageSize?: number;
@@ -21,8 +27,18 @@ export const appointmentsQueryOptions: any = ({
 } = {}) =>
   queryOptions({
     queryKey: [
-      'appointments', 'list', {
-        page,pageSize, startDate,endDate, status,professionalId, patientId, }, ],
+      'appointments',
+      'list',
+      {
+        page,
+        pageSize,
+        startDate,
+        endDate,
+        status,
+        professionalId,
+        patientId,
+      },
+    ],
     queryFn: async () => {
       let query = supabase.from('appointments').select(
         `

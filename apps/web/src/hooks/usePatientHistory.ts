@@ -66,7 +66,9 @@ export function useCreateMedicalRecord() {
 
   return useMutation({
     mutationFn: ({
-      patientId,clinicId, request,
+      patientId,
+      clinicId,
+      request,
     }: {
       patientId: string;
       clinicId: string;
@@ -105,7 +107,8 @@ export function useUpdateMedicalRecord() {
 
   return useMutation({
     mutationFn: ({
-      id,request,
+      id,
+      request,
     }: {
       id: string;
       _request: UpdateMedicalRecordRequest;
@@ -146,7 +149,9 @@ export function useCreateTreatmentPlan() {
 
   return useMutation({
     mutationFn: ({
-      patientId,clinicId, request,
+      patientId,
+      clinicId,
+      request,
     }: {
       patientId: string;
       clinicId: string;
@@ -182,7 +187,8 @@ export function useUpdateTreatmentPlan() {
 
   return useMutation({
     mutationFn: ({
-      id,request,
+      id,
+      request,
     }: {
       id: string;
       _request: UpdateTreatmentPlanRequest;
@@ -223,7 +229,8 @@ export function useCreateProgressNote() {
 
   return useMutation({
     mutationFn: ({
-      patientId,request,
+      patientId,
+      request,
     }: {
       patientId: string;
       _request: CreateProgressNoteRequest;
@@ -269,11 +276,13 @@ export function useAddPatientAllergy() {
 
   return useMutation({
     mutationFn: ({
-      patientId,allergy,
+      patientId,
+      allergy,
     }: {
       patientId: string;
       allergy: Omit<
-        PatientAllergy, 'id' | 'patient_id' | 'created_at' | 'updated_at'
+        PatientAllergy,
+        'id' | 'patient_id' | 'created_at' | 'updated_at'
       >;
     }) => patientHistoryService.addPatientAllergy(patientId, allergy),
 
@@ -318,11 +327,13 @@ export function useAddPatientCondition() {
 
   return useMutation({
     mutationFn: ({
-      patientId,condition,
+      patientId,
+      condition,
     }: {
       patientId: string;
       condition: Omit<
-        PatientCondition, 'id' | 'patient_id' | 'created_at' | 'updated_at'
+        PatientCondition,
+        'id' | 'patient_id' | 'created_at' | 'updated_at'
       >;
     }) => patientHistoryService.addPatientCondition(patientId, condition),
 
@@ -380,7 +391,9 @@ export function useUploadAttachment() {
 
   return useMutation({
     mutationFn: ({
-      recordId,file, description,
+      recordId,
+      file,
+      description,
     }: {
       recordId: string;
       file: File;

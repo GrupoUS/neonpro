@@ -308,7 +308,7 @@ export class SecurityMonitoringDashboardService {
       // Analyze by time
       const byTime: Array<{ hour: number; requests: number; threats: number }> = Array(24)
         .fill(0)
-        .map((, hour) => ({ hour, requests: 0, threats: 0 }));
+        .map((_, hour) => ({ hour, requests: 0, threats: 0 }));
 
       logs.forEach(log => {
         // By role (extract from user data or metadata)
@@ -642,7 +642,7 @@ export class SecurityMonitoringDashboardService {
     });
 
     return Object.entries(threatTypes)
-      .sort(([,_a],_[,_b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([type]) => type);
   }

@@ -25,7 +25,7 @@ export function useAIChat(clientId?: string) {
   const { user } = useAuth();
 
   // Chat state management
-  const [chatState, setChatState] = useState<.*>(() => {
+  const [chatState, setChatState] = useState<any>(() => {
     // Load from session storage on mount
     if (typeof window !== 'undefined') {
       const saved = sessionStorage.getItem(CHAT_SESSION_KEY);
@@ -76,7 +76,7 @@ export function useAIChat(clientId?: string) {
   }, [user?.id]);
 
   // Persist chat state to session storage
-  const persistChatState = useCallback((_state: any) => {
+  const persistChatState = useCallback((state: any) => {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem(CHAT_SESSION_KEY, JSON.stringify(state));
     }
@@ -84,7 +84,7 @@ export function useAIChat(clientId?: string) {
 
   // Model selection setter
   const setModel = useCallback(
-    (_model: any) => {
+    (model: any) => {
       setChatState(prev => {
         const next = {
           ...(prev as ChatState & { model?: string }),
@@ -99,10 +99,10 @@ export function useAIChat(clientId?: string) {
 
   // Send message mutation
   const sendMessageMutation = useMutation({
-    mutationFn: async (_content: any) => {
+    mutationFn: async (content: any) => {
       const userMessage: ChatMessage = {
         id: nanoid(),
-        _role: 'user',
+        role: 'user',
         content,
         timestamp: new Date(),
         clientId,
@@ -148,7 +148,7 @@ export function useAIChat(clientId?: string) {
           // Update UI with partial response
           const aiMessage: ChatMessage = {
             id: nanoid(),
-            _role: 'assistant',
+            role: 'assistant',
             content: aiContent,
             timestamp: new Date(),
             clientId,
@@ -165,7 +165,7 @@ export function useAIChat(clientId?: string) {
         // Final state when streaming is complete
         const finalAiMessage: ChatMessage = {
           id: nanoid(),
-          _role: 'assistant',
+          role: 'assistant',
           content: aiContent,
           timestamp: new Date(),
           clientId,
@@ -183,7 +183,7 @@ export function useAIChat(clientId?: string) {
 
         // Log interaction for compliance
         logAIInteraction(sessionId, userMessage.content, aiContent, clientId);
-      } catch (_error) {
+      } catch (error) {
         console.error('Error processing AI stream:', error);
         setChatState(prev => ({
           ...prev,
@@ -224,7 +224,7 @@ export function useAIChat(clientId?: string) {
   // Voice input processing
   const processVoiceMutation = useMutation<string, Error, Blob>({
     mutationFn: processVoiceInput,
-    onSuccess: (_transcript: any) => {
+    onSuccess: (transcript: any) => {
       if (transcript) {
         sendMessageMutation.mutate(transcript);
       }

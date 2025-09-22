@@ -104,8 +104,15 @@ export function AuditTrailTable() {
 
   const { data: auditData, isLoading } = useQuery<AuditTrail>({
     queryKey: [
-      'audit-trail',clinicId, {
-        searchTerm,actionFilter, statusFilter,riskLevelFilter, }, ],
+      'audit-trail',
+      clinicId,
+      {
+        searchTerm,
+        actionFilter,
+        statusFilter,
+        riskLevelFilter,
+      },
+    ],
     queryFn: async () => {
       const governanceService = getGovernanceService();
       const filters = {

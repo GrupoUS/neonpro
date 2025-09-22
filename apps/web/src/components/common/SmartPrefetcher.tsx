@@ -244,7 +244,9 @@ export function AppointmentLink({
  * Componente para prefetching baseado em scroll
  */
 export function ScrollPrefetcher({
-  children,prefetchData, threshold = 0.8,
+  children,
+  prefetchData,
+  threshold = 0.8,
 }: {
   children: React.ReactNode;
   prefetchData: () => void;

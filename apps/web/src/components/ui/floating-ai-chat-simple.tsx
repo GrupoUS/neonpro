@@ -146,7 +146,8 @@ export default function FloatingAIChatSimple({
       </div>
 
       {/* Chat Modal/Popup */}
-      {isOpen && (<>
+      {isOpen && (
+        <>
           {/* Backdrop */}
           <div
             className='fixed inset-0 bg-black/20 backdrop-blur-sm z-40'
@@ -266,7 +267,8 @@ export default function FloatingAIChatSimple({
                 : searchSuggestions?.length
                 ? (
                   <div className='flex flex-wrap gap-2'>
-                    {searchSuggestions.slice(0, 4).map((s: string) => (<button
+                    {searchSuggestions.slice(0, 4).map((s: string) => (
+                      <button
                         key={s}
                         onClick={() => {
                           setInputValue(s);

@@ -107,7 +107,8 @@ export const useEnhancedSidebar = () => {
 export const EnhancedSidebarProvider = ({
   children,
   open: openProp,
-  setOpen: setOpenProp, defaultPreferences = {},
+  setOpen: setOpenProp,
+  defaultPreferences = {},
 }: {
   children: React.ReactNode;
   open?: boolean;
@@ -236,86 +237,84 @@ export function EnhancedSidebar({
 
   // Default sidebar sections for Brazilian healthcare context
   const defaultSections: SidebarSection[] = useMemo(() => [
-      {
-        id: 'main',
-        label: 'Principal',
-        icon: <IconHome className='h-5 w-5' />,
-        expanded: true,
-        items: [
-          {
-            label: 'Dashboard',
-            href: '/dashboard',
-            icon: <IconHome className='h-4 w-4' />,
-            hotkey: 'Ctrl+D',
-            description: 'Visão geral da clínica',
-          },
-          {
-            label: 'Busca Global',
-            href: '/search',
-            icon: <IconSearch className='h-4 w-4' />,
-            hotkey: 'Ctrl+K',
-            description: 'Buscar pacientes e agendamentos',
-          },
-        ],
-      },
-      {
-        id: 'clinical',
-        label: 'Clínica',
-        icon: <IconUser className='h-5 w-5' />,
-        expanded: true,
-        items: [
-          {
-            label: 'Pacientes',
-            href: '/patients',
-            icon: <IconUser className='h-4 w-4' />,
-            hotkey: 'Ctrl+P',
-            description: 'Gerenciar pacientes',
-          },
-          {
-            label: 'Agenda',
-            href: '/appointments',
-            icon: <IconBell className='h-4 w-4' />,
-            hotkey: 'Ctrl+A',
-            description: 'Agendamentos e calendário',
-          },
-          {
-            label: 'Serviços',
-            href: '/services',
-            icon: <IconSettings className='h-4 w-4' />,
-            hotkey: 'Ctrl+S',
-            description: 'Serviços e procedimentos',
-          },
-        ],
-      },
-      {
-        id: 'admin',
-        label: 'Administrativo',
-        icon: <IconSettings className='h-5 w-5' />,
-        expanded: false,
-        items: [
-          {
-            label: 'Financeiro',
-            href: '/financial',
-            icon: <IconMoon className='h-4 w-4' />,
-            description: 'Financeiro e faturamento',
-          },
-          {
-            label: 'Documentos',
-            href: '/documents',
-            icon: <IconSun className='h-4 w-4' />,
-            description: 'Documentos e arquivos',
-          },
-          {
-            label: 'Relatórios',
-            href: '/reports',
-            icon: <IconBell className='h-4 w-4' />,
-            description: 'Relatórios e análises',
-          },
-        ],
-      },
-    ],
-    [],
-  );
+    {
+      id: 'main',
+      label: 'Principal',
+      icon: <IconHome className='h-5 w-5' />,
+      expanded: true,
+      items: [
+        {
+          label: 'Dashboard',
+          href: '/dashboard',
+          icon: <IconHome className='h-4 w-4' />,
+          hotkey: 'Ctrl+D',
+          description: 'Visão geral da clínica',
+        },
+        {
+          label: 'Busca Global',
+          href: '/search',
+          icon: <IconSearch className='h-4 w-4' />,
+          hotkey: 'Ctrl+K',
+          description: 'Buscar pacientes e agendamentos',
+        },
+      ],
+    },
+    {
+      id: 'clinical',
+      label: 'Clínica',
+      icon: <IconUser className='h-5 w-5' />,
+      expanded: true,
+      items: [
+        {
+          label: 'Pacientes',
+          href: '/patients',
+          icon: <IconUser className='h-4 w-4' />,
+          hotkey: 'Ctrl+P',
+          description: 'Gerenciar pacientes',
+        },
+        {
+          label: 'Agenda',
+          href: '/appointments',
+          icon: <IconBell className='h-4 w-4' />,
+          hotkey: 'Ctrl+A',
+          description: 'Agendamentos e calendário',
+        },
+        {
+          label: 'Serviços',
+          href: '/services',
+          icon: <IconSettings className='h-4 w-4' />,
+          hotkey: 'Ctrl+S',
+          description: 'Serviços e procedimentos',
+        },
+      ],
+    },
+    {
+      id: 'admin',
+      label: 'Administrativo',
+      icon: <IconSettings className='h-5 w-5' />,
+      expanded: false,
+      items: [
+        {
+          label: 'Financeiro',
+          href: '/financial',
+          icon: <IconMoon className='h-4 w-4' />,
+          description: 'Financeiro e faturamento',
+        },
+        {
+          label: 'Documentos',
+          href: '/documents',
+          icon: <IconSun className='h-4 w-4' />,
+          description: 'Documentos e arquivos',
+        },
+        {
+          label: 'Relatórios',
+          href: '/reports',
+          icon: <IconBell className='h-4 w-4' />,
+          description: 'Relatórios e análises',
+        },
+      ],
+    },
+  ], []);
 
   const sections = customSections || defaultSections;
 
@@ -577,7 +576,8 @@ export function EnhancedSidebar({
 
           {/* Footer */}
           <div className='p-4 border-t space-y-2'>
-            {showKeyboardHelp && (<button
+            {showKeyboardHelp && (
+              <button
                 onClick={() => setKeyboardHelpVisible(true)}
                 className='w-full flex items-center gap-2 p-2 text-sm rounded-md hover:bg-accent transition-colors'
                 aria-label='Mostrar ajuda de atalhos'
@@ -608,7 +608,8 @@ export function EnhancedSidebar({
 
         {/* Keyboard Help Modal */}
         <AnimatePresence>
-          {keyboardHelpVisible && (<KeyboardHelpModal onClose={() => setKeyboardHelpVisible(false)} />
+          {keyboardHelpVisible && (
+            <KeyboardHelpModal onClose={() => setKeyboardHelpVisible(false)} />
           )}
         </AnimatePresence>
       </div>

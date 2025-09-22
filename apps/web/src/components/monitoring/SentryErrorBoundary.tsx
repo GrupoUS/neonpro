@@ -15,9 +15,10 @@ export function SentryErrorBoundary({
   fallback,
 }: SentryErrorBoundaryProps) {
   // Use Sentry's built-in Error Boundary with custom fallback
-  return (<Sentry.ErrorBoundary
+  return (
+    <Sentry.ErrorBoundary
       fallback={fallback || SentryErrorFallback}
-      beforeCapture={(scope,error, errorInfo) => {
+      beforeCapture={(scope, error, errorInfo) => {
         // Add React-specific context before sending to Sentry
         scope.setTag('errorBoundary', 'react');
         scope.setContext('react', {
@@ -34,7 +35,8 @@ export function SentryErrorBoundary({
  */
 
 function SentryErrorFallback({
-  error,resetError,
+  error,
+  resetError,
 }: {
   error: Error;
   resetError: () => void;

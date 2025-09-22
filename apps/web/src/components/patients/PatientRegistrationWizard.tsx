@@ -240,20 +240,18 @@ export function PatientRegistrationWizard({
         && autoSave.recoveryAge < 24 * 60 * 60 * 1000
       ) {
         const ageInMinutes = Math.floor(autoSave.recoveryAge / (1000 * 60));
-        toast.info(`Dados salvos automaticamente há ${ageInMinutes} minutos. Deseja recuperar?`,
-          {
-            action: {
-              label: 'Recuperar',
-              onClick: () => {
-                if (autoSave.savedData) {
-                  form.reset(autoSave.savedData as PatientRegistrationData);
-                  toast.success('Dados recuperados com sucesso!');
-                }
-              },
+        toast.info(`Dados salvos automaticamente há ${ageInMinutes} minutos. Deseja recuperar?`, {
+          action: {
+            label: 'Recuperar',
+            onClick: () => {
+              if (autoSave.savedData) {
+                form.reset(autoSave.savedData as PatientRegistrationData);
+                toast.success('Dados recuperados com sucesso!');
+              }
             },
-            duration: 10000,
           },
-        );
+          duration: 10000,
+        });
       }
     }
   }, [open, autoSave, form]);
@@ -400,13 +398,14 @@ export function PatientRegistrationWizard({
 
         {/* Step Navigation */}
         <div className='flex justify-between items-center py-4 border-b'>
-          {STEPS.map((step) => {
+          {STEPS.map(step => {
             const Icon = step.icon;
             const isActive = step.id === currentStep;
             const isCompleted = completedSteps.includes(step.id);
             const isAccessible = step.id <= currentStep || completedSteps.includes(step.id - 1);
 
-            return (<button
+            return (
+              <button
                 key={step.id}
                 onClick={() => handleStepClick(step.id)}
                 disabled={!isAccessible}
@@ -1065,7 +1064,8 @@ function DocumentsStep({ form }: { form: any }) {
 }
 
 function MedicalInformationStep({ form }: { form: any }) {
-  return (<Card>
+  return (
+    <Card>
       <CardHeader>
         <CardTitle className='flex items-center gap-2'>
           <FileText className='w-5 h-5' />

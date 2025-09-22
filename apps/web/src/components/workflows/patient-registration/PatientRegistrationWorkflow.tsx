@@ -14,10 +14,6 @@
 
 'use client';
 
-import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertTriangle, ChevronLeft, ChevronRight, Save, Shield, User } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
-import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { HealthcareButton } from '@/components/ui/healthcare/healthcare-button';
 import { HealthcareInput } from '@/components/ui/healthcare/healthcare-input';
 import { HealthcareLoading } from '@/components/ui/healthcare/healthcare-loading';
@@ -25,6 +21,10 @@ import { useScreenReaderAnnouncer } from '@/hooks/accessibility/use-focus-manage
 import { useMobileOptimization } from '@/hooks/accessibility/use-mobile-optimization';
 import { cn } from '@/lib/utils';
 import { formatBRPhone, formatCEP, formatCPF } from '@/utils/brazilian-formatters';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AlertTriangle, ChevronLeft, ChevronRight, Save, Shield, User } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 
 // Brazilian healthcare validation schemas
 const personalInfoSchema = z.object({
@@ -101,7 +101,13 @@ interface PatientRegistrationWorkflowProps {
 type Step = 'personal' | 'address' | 'medical' | 'emergency' | 'consent' | 'review';
 
 export const PatientRegistrationWorkflow: React.FC<PatientRegistrationWorkflowProps> = ({
-  onSubmit,onCancel, initialData, isLoading = false,className, testId = 'patient-registration-workflow', }) => {
+  onSubmit,
+  onCancel,
+  initialData,
+  isLoading = false,
+  className,
+  testId = 'patient-registration-workflow',
+}) => {
   const [currentStep, setCurrentStep] = useState<Step>('personal');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -107,17 +107,13 @@ function LazyDataTable() {
   } = TanStackTable;
 
   // Custom filter function for multi-column searching
-  const multiColumnFilterFn: FilterFn<Item> = (_row,columnId,
-    filterValue: string,
-  ) => {
+  const multiColumnFilterFn: FilterFn<Item> = (_row, columnId, filterValue: string) => {
     const searchableRowContent = `${row.original.name} ${row.original.email}`.toLowerCase();
     const searchTerm = (filterValue ?? '').toLowerCase();
     return searchableRowContent.includes(searchTerm);
   };
 
-  const statusFilterFn: FilterFn<Item> = (_row,columnId,
-    filterValue: string[],
-  ) => {
+  const statusFilterFn: FilterFn<Item> = (_row, columnId, filterValue: string[]) => {
     if (!filterValue?.length) return true;
     const status = row.getValue(columnId) as string;
     return filterValue.includes(status);

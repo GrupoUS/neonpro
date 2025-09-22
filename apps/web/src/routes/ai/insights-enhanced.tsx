@@ -725,9 +725,7 @@ function AIInsightsPage() {
         ? models.reduce((sum, model) => sum + model.accuracy, 0)
           / models.length
         : 0,
-      potentialSavings: insights.reduce((sum, insight) => sum + (insight.potentialSavings || 0),
-        0,
-      ),
+      potentialSavings: insights.reduce((sum, insight) => sum + (insight.potentialSavings || 0), 0),
     };
   }, [insights, models, noShowAnalysis]);
 
@@ -774,9 +772,7 @@ function AIInsightsPage() {
 
           {/* Stats skeleton */}
           <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5'>
-            {Array.from({ length: 5 }).map((_, index) => (
-              <Skeleton key={index} className='h-32' />
-            ))}
+            {Array.from({ length: 5 }).map((_, index) => <Skeleton key={index} className='h-32' />)}
           </div>
 
           {/* Content skeleton */}
@@ -1102,7 +1098,8 @@ function AIInsightsPage() {
                     </ul>
                   </div>
 
-                  {insight.actionable && (<Button
+                  {insight.actionable && (
+                    <Button
                       variant='outline'
                       size='sm'
                       onClick={() => handleInsightAction(insight)}
@@ -1116,7 +1113,8 @@ function AIInsightsPage() {
             ))}
           </div>
 
-          {filteredInsights.length === 0 && (<Card>
+          {filteredInsights.length === 0 && (
+            <Card>
               <CardContent className='text-center py-12'>
                 <Brain className='h-16 w-16 text-muted-foreground mx-auto mb-4' />
                 <h3 className='text-lg font-medium mb-2'>
@@ -1154,30 +1152,29 @@ function AIInsightsPage() {
                 <CardContent className='space-y-4'>
                   <div className='space-y-3'>
                     {Object.entries(populationMetrics.riskDistribution).map(([level, count]) => {
-                        const percentage = (count / populationMetrics.totalPatients) * 100;
-                        const color = level === 'critical'
-                          ? 'red'
-                          : level === 'high'
-                          ? 'orange'
-                          : level === 'medium'
-                          ? 'yellow'
-                          : 'green';
+                      const percentage = (count / populationMetrics.totalPatients) * 100;
+                      const color = level === 'critical'
+                        ? 'red'
+                        : level === 'high'
+                        ? 'orange'
+                        : level === 'medium'
+                        ? 'yellow'
+                        : 'green';
 
-                        return (
-                          <div key={level} className='space-y-2'>
-                            <div className='flex justify-between text-sm'>
-                              <span className='font-medium capitalize'>
-                                {level}
-                              </span>
-                              <span>
-                                {count} pacientes ({percentage.toFixed(1)}%)
-                              </span>
-                            </div>
-                            <Progress value={percentage} className='h-2' />
+                      return (
+                        <div key={level} className='space-y-2'>
+                          <div className='flex justify-between text-sm'>
+                            <span className='font-medium capitalize'>
+                              {level}
+                            </span>
+                            <span>
+                              {count} pacientes ({percentage.toFixed(1)}%)
+                            </span>
                           </div>
-                        );
-                      },
-                    )}
+                          <Progress value={percentage} className='h-2' />
+                        </div>
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>

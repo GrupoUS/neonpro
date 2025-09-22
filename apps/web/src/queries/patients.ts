@@ -17,7 +17,12 @@ type PatientUpdate = Partial<PatientInsert> & { id: string };
 
 // Query options para listar pacientes com filtros
 export const patientsQueryOptions = ({
-  page = 1, pageSize = 10, search = '',status, sortBy = 'created_at', sortOrder = 'desc',
+  page = 1,
+  pageSize = 10,
+  search = '',
+  status,
+  sortBy = 'created_at',
+  sortOrder = 'desc',
 }: {
   page?: number;
   pageSize?: number;
@@ -28,7 +33,10 @@ export const patientsQueryOptions = ({
 } = {}) =>
   queryOptions({
     queryKey: [
-      'patients', 'list', { page,pageSize, search,status, sortBy, sortOrder }, ],
+      'patients',
+      'list',
+      { page, pageSize, search, status, sortBy, sortOrder },
+    ],
     queryFn: async () => {
       let query = supabase.from('patients').select('*', { count: 'exact' });
 

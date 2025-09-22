@@ -26,24 +26,23 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   const [searchOptions, setSearchOptions] = useState<EventSearchOptions | null>(null);
 
   // Debounced search function
-  const debouncedSearch = useMemo(() => debounce(async (_options: any) => {
-        try {
-          setIsSearching(true);
-          const result = await searchEvents(options);
-          setSearchResults(result.events);
-          setTotalCount(result.totalCount);
-          setHasMore(result.hasMore);
-        } catch (_error) {
-          console.error('Search failed:', error);
-          setSearchResults([]);
-          setTotalCount(0);
-          setHasMore(false);
-        } finally {
-          setIsSearching(false);
-        }
-      }, debounceMs),
-    [searchEvents, debounceMs],
-  );
+  const debouncedSearch = useMemo(() =>
+    debounce(async (_options: any) => {
+      try {
+        setIsSearching(true);
+        const result = await searchEvents(options);
+        setSearchResults(result.events);
+        setTotalCount(result.totalCount);
+        setHasMore(result.hasMore);
+      } catch (_error) {
+        console.error('Search failed:', error);
+        setSearchResults([]);
+        setTotalCount(0);
+        setHasMore(false);
+      } finally {
+        setIsSearching(false);
+      }
+    }, debounceMs), [searchEvents, debounceMs]);
 
   // Perform search
   const performSearch = useCallback(async (_options: any) => {

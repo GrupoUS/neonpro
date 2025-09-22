@@ -25,7 +25,7 @@ export function useAIChat(clientId?: string) {
   const { user } = useAuth();
 
   // Chat state management
-  const [chatState, setChatState] = useState<.*>(() => {
+  const [chatState, setChatState] = useState<any>(() => {
     // Load from session storage on mount
     if (typeof window !== 'undefined') {
       const saved = sessionStorage.getItem(CHAT_SESSION_KEY);

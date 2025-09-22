@@ -695,12 +695,10 @@ export class MobileScreenReaderService {
     const recommendations: string[] = [];
 
     const issuesByType = this.issues.reduce((acc, issue) => {
-        if (!acc[issue.type]) acc[issue.type] = [];
-        acc[issue.type].push(issue);
-        return acc;
-      },
-      {} as Record<string, ScreenReaderAccessibilityIssue[]>,
-    );
+      if (!acc[issue.type]) acc[issue.type] = [];
+      acc[issue.type].push(issue);
+      return acc;
+    }, {} as Record<string, ScreenReaderAccessibilityIssue[]>);
 
     Object.entries(issuesByType).forEach(([type, issues]) => {
       const criticalCount = issues.filter(

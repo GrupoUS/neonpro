@@ -100,7 +100,16 @@ export const brazilianHealthcareSchemas = {
 
   // Medical specialty validation
   medicalSpecialty: z.enum([
-    'cardiologia', 'pediatria', 'ginecologia', 'neurologia', 'ortopedia', 'psiquiatria', 'dermatologia', 'oftalmologia', 'medicina-geral'], {
+    'cardiologia',
+    'pediatria',
+    'ginecologia',
+    'neurologia',
+    'ortopedia',
+    'psiquiatria',
+    'dermatologia',
+    'oftalmologia',
+    'medicina-geral',
+  ], {
     errorMap: () => ({ message: 'Especialidade médica inválida' }),
   }),
 
@@ -128,7 +137,13 @@ export const brazilianHealthcareSchemas = {
 
   // Consultation type validation
   consultationType: z.enum([
-    'primeira-consulta', 'retorno', 'consulta-urgencia', 'teleconsulta', 'consulta-especializada', 'segunda-opiniao', ], {
+    'primeira-consulta',
+    'retorno',
+    'consulta-urgencia',
+    'teleconsulta',
+    'consulta-especializada',
+    'segunda-opiniao',
+  ], {
     errorMap: () => ({ message: 'Tipo de consulta inválido' }),
   }),
 };

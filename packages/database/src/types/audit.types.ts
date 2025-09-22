@@ -15,9 +15,9 @@ export interface AuditEvent {
  * Compliance check result for LGPD/healthcare regulations
  */
 export interface ComplianceCheck {
-  status: 'COMPLIANT' | 'NON_COMPLIANT' | ''PENDING'
+  status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING'
   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | ''CRITICAL' // Legacy support
+  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' // Legacy support
   violations: string[];
   isCompliant: boolean;
   lastChecked?: string;
@@ -128,7 +128,7 @@ export interface AuditSearchCriteria {
   dataClassifications?: MedicalDataClassification[]; // Multiple classifications
   ipAddress?: string;
   clinicId?: string;
-  complianceStatus?: 'compliant' | 'non_compliant' | ''pending'
+  complianceStatus?: 'compliant' | 'non_compliant' | 'pending'
   limit?: number;
   offset?: number;
   sortBy?: 'timestamp' | 'action' | 'userId';
@@ -154,7 +154,7 @@ export type MedicalDataClassification =
 export type ResourceType =
   | 'patient'
   | 'appointment'
-  | 'medical_record_
+  | 'medical_record'
   | 'prescription'
   | 'payment'
   | 'user'
@@ -204,7 +204,7 @@ export interface RTCAuditLogEntry {
   };
   // Add missing properties from service usage
   severity?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT' | ''PENDING_REVIEW'
+  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING_REVIEW'
   violations?: Array<{ rule: string; description: string; severity: string }> | Record<string, unknown>;
   patientContext?: {
     patientId?: string;

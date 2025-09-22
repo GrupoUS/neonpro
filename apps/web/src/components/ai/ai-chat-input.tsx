@@ -134,7 +134,30 @@ const formatFileSize = (_bytes: any) => {
  * AI Chat Input Component
  */
 export const AIChatInput: React.FC<AIChatInputProps> = ({
-  value,onChange, onSubmit, placeholder = 'Digite sua mensagem...', disabled = false, showVoiceInput = true, showFileAttachment = true, showSearch = true, showModelSelection = true, selectedModel = 'gpt-4o',onModelChange, availableModels = [], voiceState = 'idle',onVoiceToggle, attachments = [],onFileAttach, onFileRemove,onSearch, healthcareCompliance, isLoading = false, minHeight = 44, maxHeight = 200, testId = 'ai-chat-input', }) => {
+  value,
+  onChange,
+  onSubmit,
+  placeholder = 'Digite sua mensagem...',
+  disabled = false,
+  showVoiceInput = true,
+  showFileAttachment = true,
+  showSearch = true,
+  showModelSelection = true,
+  selectedModel = 'gpt-4o',
+  onModelChange,
+  availableModels = [],
+  voiceState = 'idle',
+  onVoiceToggle,
+  attachments = [],
+  onFileAttach,
+  onFileRemove,
+  onSearch,
+  healthcareCompliance,
+  isLoading = false,
+  minHeight = 44,
+  maxHeight = 200,
+  testId = 'ai-chat-input',
+}) => {
   // State
   const [isFocused, setIsFocused] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -377,7 +400,8 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
             )}
 
             {/* Search Button */}
-            {showSearch && (<TooltipProvider>
+            {showSearch && (
+              <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button

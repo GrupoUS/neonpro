@@ -449,7 +449,8 @@ export function WaitingRoom({
                         </div>
                       </div>
                     </div>
-                    {!consent?.given && (<Button
+                    {!consent?.given && (
+                      <Button
                         size='sm'
                         onClick={() => setShowConsentDialog(true)}
                         className='ml-2'

@@ -27,7 +27,7 @@ export function useProfessionalsByServiceType(
   serviceTypeId: string,
 ) {
   return useQuery({
-    queryKey: ['professionals', 'by-service-type',clinicId, serviceTypeId],
+    queryKey: ['professionals', 'by-service-type', clinicId, serviceTypeId],
     queryFn: () =>
       professionalService.getProfessionalsByServiceType(
         clinicId,

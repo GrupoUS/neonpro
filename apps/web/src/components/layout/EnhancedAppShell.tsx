@@ -37,7 +37,8 @@ const LoadingFallback = () => (
 
 // Error fallback component
 const ErrorFallback = ({
-  error,resetError,
+  error,
+  resetError,
 }: {
   error: Error;
   resetError: () => void;

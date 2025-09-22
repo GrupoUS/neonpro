@@ -344,7 +344,8 @@ export class AestheticAIAnalysisService {
     });
 
     // Remove duplicates and add unique IDs
-    const uniqueSuggestions = suggestions.filter((suggestion,index, self) => index === self.findIndex(s => s.id === suggestion.id),
+    const uniqueSuggestions = suggestions.filter((suggestion, index, self) =>
+      index === self.findIndex(s => s.id === suggestion.id)
     );
 
     // Sort by priority and confidence
@@ -517,11 +518,9 @@ export class AestheticAIAnalysisService {
     // Aggregate results
     const allConcerns = analyses.flatMap(a => a.concerns);
     const concernCounts = allConcerns.reduce((acc, concern) => {
-        acc[concern] = (acc[concern] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
+      acc[concern] = (acc[concern] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
     const primaryConcerns = Object.entries(concernCounts)
       .sort(([, a], [, b]) => b - a)
@@ -533,7 +532,8 @@ export class AestheticAIAnalysisService {
 
     // Generate combined treatment suggestions
     const allSuggestions = analyses.flatMap(a => this.generateTreatmentSuggestions(a));
-    const uniqueSuggestions = allSuggestions.filter((suggestion,index, self) => index === self.findIndex(s => s.id === suggestion.id),
+    const uniqueSuggestions = allSuggestions.filter((suggestion, index, self) =>
+      index === self.findIndex(s => s.id === suggestion.id)
     );
 
     return {

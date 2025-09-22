@@ -26,7 +26,8 @@ export function TelemedicineSession() {
   }
 
   // Show enhanced VideoConsultation component with WebRTC integration
-  return (<VideoConsultation
+  return (
+    <VideoConsultation
       sessionId={sessionId}
       onSessionEnd={() => navigate({ to: '/telemedicine' })}
       className='h-screen'

@@ -291,7 +291,8 @@ function AppointmentsPage() {
               </div>
             </div>
           )}
-          {error && (<div className='flex items-center justify-center h-96'>
+          {error && (
+            <div className='flex items-center justify-center h-96'>
               <div className='text-center'>
                 <p className='text-lg font-semibold text-destructive mb-2'>
                   Erro ao carregar agendamentos

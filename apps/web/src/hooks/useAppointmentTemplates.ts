@@ -89,7 +89,9 @@ export function useCreateAppointmentTemplate() {
 
   return useMutation({
     mutationFn: async ({
-      templateData,clinicId, userId,
+      templateData,
+      clinicId,
+      userId,
     }: {
       templateData: CreateAppointmentTemplateData;
       clinicId: string;
@@ -126,7 +128,9 @@ export function useUpdateAppointmentTemplate() {
 
   return useMutation({
     mutationFn: async ({
-      templateId,updateData, userId,
+      templateId,
+      updateData,
+      userId,
     }: {
       templateId: string;
       updateData: UpdateAppointmentTemplateData;
@@ -238,12 +242,10 @@ export function useAppointmentTemplateCategories(clinicId?: string) {
   return {
     data: templates
       ? templates.reduce((acc, template) => {
-          const category = template.category;
-          acc[category] = (acc[category] || 0) + 1;
-          return acc;
-        },
-        {} as Record<string, number>,
-      )
+        const category = template.category;
+        acc[category] = (acc[category] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>)
       : undefined,
     isLoading: !templates,
   };

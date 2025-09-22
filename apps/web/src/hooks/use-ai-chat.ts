@@ -318,7 +318,7 @@ export function useAINoShowPrediction() {
  */
 export function useAIHealthcareInsights() {
   return trpc.ai.generateInsights.useMutation({
-    onMutate: async ({ data,type, context }) => {
+    onMutate: async ({ data, type, context }) => {
       // LGPD Compliance: Log insight generation
       console.log('[LGPD Audit] Healthcare insights requested', {
         insightType: type,
@@ -363,7 +363,7 @@ export function useAIProviderRouting() {
   const [failoverCount, setFailoverCount] = React.useState(0);
 
   const routeProvider = trpc.ai.routeProvider.useMutation({
-    onMutate: async ({ preferredProvider,operation, estimatedCost }) => {
+    onMutate: async ({ preferredProvider, operation, estimatedCost }) => {
       // Log provider routing decision
       console.log('[AI Provider Routing]', {
         currentProvider,

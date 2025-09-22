@@ -69,7 +69,7 @@ export class AuditEvent {
     this.severity = data.severity;
     this.category = data.category;
     this.source = data.source;
-    this.userId = data.userId;
+    this._userId = data._userId;
     this.sessionId = data.sessionId;
     this.ipAddress = data.ipAddress;
     this.userAgent = data.userAgent;
@@ -132,7 +132,7 @@ export class AuditLog {
     this.severity = data.severity;
     this.category = data.category;
     this.source = data.source;
-    this.userId = data.userId;
+    this._userId = data._userId;
     this.sessionId = data.sessionId;
     this.ipAddress = data.ipAddress;
     this.userAgent = data.userAgent;

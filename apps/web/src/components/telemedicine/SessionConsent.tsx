@@ -106,7 +106,8 @@ interface ConsentSection {
 
 export function SessionConsent({
   sessionId,
-  patientId,professionalId,
+  patientId,
+  professionalId,
   onConsentComplete,
   onConsentRevoke,
   mode = 'initial',
@@ -772,7 +773,8 @@ export function SessionConsent({
       {/* Action Buttons */}
       <div className='flex flex-col sm:flex-row gap-4'>
         {mode === 'review'
-          ? (<>
+          ? (
+            <>
               <Button
                 variant='destructive'
                 onClick={handleRevokeConsent}

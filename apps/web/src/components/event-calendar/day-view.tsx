@@ -66,8 +66,7 @@ export function DayView({
           || (currentDate > eventStart && currentDate < eventEnd)
         );
       })
-      .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
-      );
+      .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
   }, [currentDate, events]);
 
   // Filter all-day events

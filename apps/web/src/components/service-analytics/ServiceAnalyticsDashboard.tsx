@@ -342,7 +342,8 @@ export function ServiceAnalyticsDashboard() {
       </div>
 
       {/* Insights */}
-      {dashboard?.insights && dashboard.insights.length > 0 && (<Card>
+      {dashboard?.insights && dashboard.insights.length > 0 && (
+        <Card>
           <CardHeader>
             <CardTitle>Insights e Recomendações</CardTitle>
             <CardDescription>

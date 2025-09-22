@@ -178,7 +178,8 @@ export function EventSearchBar({
         />
 
         {/* Clear button */}
-        {searchQuery && (<Button
+        {searchQuery && (
+          <Button
             variant='ghost'
             size='sm'
             className='absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0'
@@ -244,7 +245,8 @@ export function EventSearchBar({
           )}
 
           {/* Suggestions */}
-          {!isSearching && searchSuggestions.length > 0 && searchResults.length === 0 && (<div className='p-2'>
+          {!isSearching && searchSuggestions.length > 0 && searchResults.length === 0 && (
+            <div className='p-2'>
               <p className='text-xs font-medium text-muted-foreground px-2 py-1'>Suggestions</p>
               {searchSuggestions.map((suggestion, _index) => (
                 <button
@@ -265,7 +267,8 @@ export function EventSearchBar({
           )}
 
           {/* Search Results */}
-          {!isSearching && searchResults.length > 0 && (<div className='p-2'>
+          {!isSearching && searchResults.length > 0 && (
+            <div className='p-2'>
               <div className='flex items-center justify-between px-3 py-1'>
                 <p className='text-xs font-medium text-muted-foreground'>
                   Search Results

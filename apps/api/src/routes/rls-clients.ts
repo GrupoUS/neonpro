@@ -24,7 +24,7 @@ rlsPatients.use('*', rlsHealthcareMiddleware.patientAccess);
  * Get patients using RLS-aware queries
  * This route demonstrates how to use Supabase RLS instead of Prisma
  */
-rlsPatients.get(_'/', async (c: Context<{ Variables: Variables }>) => {
+rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
   try {
     const rlsQuery = c.get('rlsQuery');
     const userId = c.get('userId'); // Prefix with _ to indicate intentionally unused

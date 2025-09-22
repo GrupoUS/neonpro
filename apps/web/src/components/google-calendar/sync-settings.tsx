@@ -32,7 +32,7 @@ export function SyncSettings({
 
   // Mock query for integration settings
   const { data: integration, isLoading } = useQuery({
-    queryKey: ['google-calendar-integration',userId, clinicId],
+    queryKey: ['google-calendar-integration', userId, clinicId],
     queryFn: async () => {
       // In real app, fetch from API
       return {

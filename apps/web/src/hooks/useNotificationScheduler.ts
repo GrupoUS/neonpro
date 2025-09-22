@@ -18,7 +18,10 @@ export function useScheduleAppointmentNotifications() {
 
   return useMutation({
     mutationFn: async ({
-      appointmentId,appointmentDate, patientId,settings,
+      appointmentId,
+      appointmentDate,
+      patientId,
+      settings,
     }: {
       appointmentId: string;
       appointmentDate: Date;

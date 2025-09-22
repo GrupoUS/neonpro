@@ -160,7 +160,8 @@ export function EventFilterPanel({ className }: EventFilterPanelProps) {
       <div className='space-y-2'>
         <label className='text-sm font-medium'>Quick Filters</label>
         <div className='flex flex-wrap gap-2'>
-          {quickFilters.map(({ key,label, icon: Icon }) => (<Button
+          {quickFilters.map(({ key, label, icon: Icon }) => (
+            <Button
               key={key}
               variant='outline'
               size='sm'
@@ -231,10 +232,11 @@ export function EventFilterPanel({ className }: EventFilterPanelProps) {
       </div>
 
       {/* Status Filter */}
-      {filterOptions.statuses.length > 0 && (<div className='space-y-2'>
+      {filterOptions.statuses.length > 0 && (
+        <div className='space-y-2'>
           <label className='text-sm font-medium'>Status</label>
           <div className='flex flex-wrap gap-2'>
-            {statusOptions.map(({ value,label, color }) => (
+            {statusOptions.map(({ value, label, color }) => (
               <Badge
                 key={value}
                 variant={selectedStatuses.includes(value) ? 'default' : 'outline'}
@@ -259,10 +261,11 @@ export function EventFilterPanel({ className }: EventFilterPanelProps) {
       )}
 
       {/* Priority Filter */}
-      {filterOptions.priorities.length > 0 && (<div className='space-y-2'>
+      {filterOptions.priorities.length > 0 && (
+        <div className='space-y-2'>
           <label className='text-sm font-medium'>Priority</label>
           <div className='flex flex-wrap gap-2'>
-            {priorityOptions.map(({ value,label, color }) => (
+            {priorityOptions.map(({ value, label, color }) => (
               <Badge
                 key={value}
                 variant={selectedPriorities.includes(value) ? 'default' : 'outline'}
@@ -287,10 +290,11 @@ export function EventFilterPanel({ className }: EventFilterPanelProps) {
       )}
 
       {/* Color Filter */}
-      {filterOptions.colors.length > 0 && (<div className='space-y-2'>
+      {filterOptions.colors.length > 0 && (
+        <div className='space-y-2'>
           <label className='text-sm font-medium'>Color</label>
           <div className='flex flex-wrap gap-2'>
-            {colorOptions.map(({ value,label, class: colorClass }) => (
+            {colorOptions.map(({ value, label, class: colorClass }) => (
               <Badge
                 key={value}
                 variant={selectedColors.includes(value) ? 'default' : 'outline'}

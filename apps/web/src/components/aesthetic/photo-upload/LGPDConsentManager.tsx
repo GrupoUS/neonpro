@@ -337,7 +337,8 @@ export function LGPDConsentManager({
               {config.description}
             </p>
 
-            {showDetailedOptions && (<div className='space-y-2'>
+            {showDetailedOptions && (
+              <div className='space-y-2'>
                 <button
                   onClick={() =>
                     setShowDetails(prev => ({
@@ -368,7 +369,8 @@ export function LGPDConsentManager({
             {isChecked
               && field !== 'storageDuration'
               && field !== 'rightToWithdraw'
-              && field !== 'dataPortability' && (<Button
+              && field !== 'dataPortability' && (
+              <Button
                 variant='ghost'
                 size='sm'
                 onClick={() => setShowWithdrawDialog(true)}

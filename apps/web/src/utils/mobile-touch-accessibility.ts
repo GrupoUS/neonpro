@@ -565,12 +565,10 @@ export class MobileTouchAccessibility {
     const recommendations: string[] = [];
 
     const issuesByType = this.issues.reduce((acc, issue) => {
-        if (!acc[issue.type]) acc[issue.type] = [];
-        acc[issue.type].push(issue);
-        return acc;
-      },
-      {} as Record<string, TouchAccessibilityIssue[]>,
-    );
+      if (!acc[issue.type]) acc[issue.type] = [];
+      acc[issue.type].push(issue);
+      return acc;
+    }, {} as Record<string, TouchAccessibilityIssue[]>);
 
     Object.entries(issuesByType).forEach(([type, issues]) => {
       const criticalCount = issues.filter(

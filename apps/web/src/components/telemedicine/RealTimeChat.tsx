@@ -687,7 +687,8 @@ export function RealTimeChat({
                         </div>
                       </div>
                     )
-                    : (<>
+                    : (
+                      <>
                         <div className='text-sm'>{message.content}</div>
 
                         {/* Medical Terms Highlight */}
@@ -832,7 +833,8 @@ export function RealTimeChat({
       <div className='p-4 border-t border-gray-200 bg-gray-50'>
         <div className='flex items-end space-x-2'>
           {/* File Upload */}
-          {enableFileSharing && (<div>
+          {enableFileSharing && (
+            <div>
               <input
                 ref={fileInputRef}
                 type='file'
@@ -881,7 +883,8 @@ export function RealTimeChat({
         </div>
 
         {/* Quick Actions */}
-        {enableAI && (<div className='flex items-center space-x-2 mt-2'>
+        {enableAI && (
+          <div className='flex items-center space-x-2 mt-2'>
             <Button
               variant='ghost'
               size='sm'

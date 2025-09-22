@@ -429,7 +429,8 @@ export class HealthcareAccessibilityAuditor {
    * Calculate overall accessibility score
    */
   private calculateAccessibilityScore(axeResults: AxeResults): number {
-    const totalViolations = axeResults.violations.reduce((sum, violation) => sum + violation.nodes.length,
+    const totalViolations = axeResults.violations.reduce(
+      (sum, violation) => sum + violation.nodes.length,
       0,
     );
 
@@ -500,13 +501,11 @@ export class HealthcareAccessibilityAuditor {
 
     // Group issues by type
     const issueGroups = issues.reduce((groups, issue) => {
-        const key = issue.healthcareRuleId;
-        if (!groups[key]) groups[key] = [];
-        groups[key].push(issue);
-        return groups;
-      },
-      {} as Record<string, HealthcareAccessibilityIssue[]>,
-    );
+      const key = issue.healthcareRuleId;
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(issue);
+      return groups;
+    }, {} as Record<string, HealthcareAccessibilityIssue[]>);
 
     // Generate recommendation for each group
     Object.entries(issueGroups).forEach(([ruleId, issueGroup]) => {

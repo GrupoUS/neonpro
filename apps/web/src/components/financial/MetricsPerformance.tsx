@@ -11,8 +11,10 @@ export interface MetricsPerformanceProps {
 }
 
 export const MetricsPerformance: React.FC<MetricsPerformanceProps> = ({
-  onPerformanceUpdate,className,
-  'data-testid': testId, }) => {
+  onPerformanceUpdate,
+  className,
+  'data-testid': testId,
+}) => {
   const [performance, setPerformance] = useState({
     loadTime: 0,
     queryTime: 0,

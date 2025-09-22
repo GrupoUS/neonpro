@@ -286,7 +286,8 @@ export function TelemedicineDashboard() {
       || scheduledSessions?.find(s => s.id === selectedSession);
 
     if (session) {
-      return (<VideoConsultation
+      return (
+        <VideoConsultation
           sessionId={selectedSession}
           onSessionEnd={() => setSelectedSession(null)}
           className='h-screen'
@@ -588,7 +589,8 @@ export function TelemedicineDashboard() {
 
                               {/* Action buttons */}
                               <div className='flex space-x-2'>
-                                {session.status === 'scheduled' && (<Button
+                                {session.status === 'scheduled' && (
+                                  <Button
                                     size='sm'
                                     onClick={() => handleStartSession(session.appointmentId)}
                                     disabled={startSessionMutation.isLoading}
@@ -598,7 +600,8 @@ export function TelemedicineDashboard() {
                                   </Button>
                                 )}
 
-                                {session.status === 'active' && (<Button
+                                {session.status === 'active' && (
+                                  <Button
                                     size='sm'
                                     onClick={() => handleJoinSession(session.id)}
                                     disabled={joinSessionMutation.isLoading}
@@ -608,7 +611,8 @@ export function TelemedicineDashboard() {
                                   </Button>
                                 )}
 
-                                {session.status === 'waiting' && (<Button
+                                {session.status === 'waiting' && (
+                                  <Button
                                     size='sm'
                                     variant='outline'
                                     onClick={() => setShowConsentModal(session.id)}
@@ -756,7 +760,8 @@ export function TelemedicineDashboard() {
         </div>
 
         {/* Consent Modal */}
-        {showConsentModal && (<div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+        {showConsentModal && (
+          <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
             <div className='bg-white rounded-lg p-6 max-w-4xl max-h-[90vh] overflow-y-auto'>
               <SessionConsent
                 sessionId={showConsentModal}

@@ -375,15 +375,12 @@ function AIInsightsPage() {
   };
 
   const calculateTotalPatientsImpacted = () => {
-    return insights.reduce((total, insight) => total + (insight.patientCount || 0),
-      0,
-    );
+    return insights.reduce((total, insight) => total + (insight.patientCount || 0), 0);
   };
 
   const getAverageAccuracy = () => {
     if (models.length === 0) return 0;
-    return Math.round(models.reduce((sum, model) => sum + model.accuracy, 0) / models.length,
-    );
+    return Math.round(models.reduce((sum, model) => sum + model.accuracy, 0) / models.length);
   };
 
   const refreshInsights = () => {
@@ -808,15 +805,14 @@ function AIInsightsPage() {
                             </h4>
                             <ul className='text-sm space-y-1'>
                               {insight.recommendations.map((recommendation, index) => (
-                                  <li
-                                    key={index}
-                                    className='flex items-start gap-2'
-                                  >
-                                    <CheckCircle className='h-3 w-3 text-green-500 mt-0.5 flex-shrink-0' />
-                                    <span>{recommendation}</span>
-                                  </li>
-                                ),
-                              )}
+                                <li
+                                  key={index}
+                                  className='flex items-start gap-2'
+                                >
+                                  <CheckCircle className='h-3 w-3 text-green-500 mt-0.5 flex-shrink-0' />
+                                  <span>{recommendation}</span>
+                                </li>
+                              ))}
                             </ul>
                           </div>
 
@@ -974,7 +970,8 @@ function AIInsightsPage() {
                     <div className='flex justify-between items-center'>
                       <span className='text-sm'>Impacto Médio Diário</span>
                       <span className='text-lg font-bold'>
-                        {Math.round(trends.reduce((sum, trend) => sum + trend.impact, 0)
+                        {Math.round(
+                          trends.reduce((sum, trend) => sum + trend.impact, 0)
                             / trends.length,
                         )}
                         %

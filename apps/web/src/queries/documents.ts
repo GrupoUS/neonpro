@@ -29,7 +29,9 @@ export type DocumentInsert = {
 
 // Query options for patient documents
 export const patientDocumentsQueryOptions = ({
-  patientId,category, search,
+  patientId,
+  category,
+  search,
 }: {
   patientId: string;
   category?: string;
@@ -83,7 +85,11 @@ export const useDocumentUpload = () => {
 
   return useMutation({
     mutationFn: async ({
-      patientId,file, category = 'other',description, tags,
+      patientId,
+      file,
+      category = 'other',
+      description,
+      tags,
     }: {
       patientId: string;
       file: File;
@@ -127,7 +133,8 @@ export const useDocumentDelete = () => {
 
   return useMutation({
     mutationFn: async ({
-      patientId,documentId,
+      patientId,
+      documentId,
     }: {
       patientId: string;
       documentId: string;

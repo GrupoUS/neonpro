@@ -386,11 +386,9 @@ class ServiceTemplatesService {
 
     // Calculate price type distribution
     const priceTypes = templates.reduce((acc, template) => {
-        acc[template.price_type] = (acc[template.price_type] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
+      acc[template.price_type] = (acc[template.price_type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
     // Calculate averages
     const averagePrice = totalTemplates > 0

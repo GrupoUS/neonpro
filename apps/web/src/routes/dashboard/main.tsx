@@ -363,7 +363,8 @@ function DashboardMain() {
       header: 'Ações',
       cell: (info: any) => {
         const patient = info.row.original;
-        return (<div className='flex gap-2'>
+        return (
+          <div className='flex gap-2'>
             <Button
               variant='outline'
               size='sm'

@@ -353,9 +353,9 @@ export default class CrossPlatformTestingService {
       wcagAA: accessibilityResults.filter(
         r => r.performanceMetrics.accessibilityScore >= 90,
       ).length,
-      averageScore: accessibilityResults.reduce((sum, r) => sum + r.performanceMetrics.accessibilityScore,
-            0,
-          ) / accessibilityResults.length || 0,
+      averageScore:
+        accessibilityResults.reduce((sum, r) => sum + r.performanceMetrics.accessibilityScore, 0)
+          / accessibilityResults.length || 0,
     };
 
     const healthcareResults = results.filter(

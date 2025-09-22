@@ -249,7 +249,9 @@ export function useToggleProfessionalService() {
 
   return useMutation({
     mutationFn: async ({
-      isAssigned,professionalServiceId, createRequest,
+      isAssigned,
+      professionalServiceId,
+      createRequest,
     }: {
       isAssigned: boolean;
       professionalServiceId?: string;

@@ -151,7 +151,7 @@ const AccessibleMessageFeedback: React.FC<{
   sessionId: string;
   onFeedbackSubmitted: () => void;
   className?: string;
-}> = ({ messageId,sessionId, onFeedbackSubmitted, className }) => {
+}> = ({ messageId, sessionId, onFeedbackSubmitted, className }) => {
   const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState('');
@@ -360,7 +360,7 @@ const AccessibleActionButton: React.FC<{
   action: AgentAction;
   onExecute: (action: AgentAction) => void;
   className?: string;
-}> = ({ action,onExecute, className }) => {
+}> = ({ action, onExecute, className }) => {
   const getIcon = (_iconName: any) => {
     const iconProps = { className: 'h-4 w-4', 'aria-hidden': 'true' as const };
     switch (iconName) {
@@ -441,7 +441,7 @@ const AccessibleDataSummaryCard: React.FC<{
   type: 'clients' | 'appointments' | 'financial';
   summary?: any;
   testId?: string;
-}> = ({ title,data, type,summary, testId }) => {
+}> = ({ title, data, type, summary, testId }) => {
   const [expanded, setExpanded] = useState(false);
   const displayLimit = 3;
   const cardRef = useRef<HTMLDivElement>(null);
@@ -593,7 +593,8 @@ const AccessibleDataSummaryCard: React.FC<{
             </div>
           ))}
 
-          {data.length > displayLimit && (<Button
+          {data.length > displayLimit && (
+            <Button
               variant='ghost'
               size='sm'
               onClick={() => {

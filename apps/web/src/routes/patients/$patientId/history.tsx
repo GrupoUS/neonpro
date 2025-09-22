@@ -434,7 +434,8 @@ function PatientHistoryPage() {
       {/* History Timeline */}
       <div className='space-y-6'>
         {filteredHistory.length > 0
-          ? (<div className='space-y-4'>
+          ? (
+            <div className='space-y-4'>
               {filteredHistory.map((item, _index) => (
                 <HistoryItemCard
                   key={item.id}

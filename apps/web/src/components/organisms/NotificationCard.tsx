@@ -60,7 +60,7 @@ export default function NotificationCard({
   maxItems = 8,
 }: NotificationCardProps) {
   const navigate = useNavigate();
-  const [readIds, setReadIds] = React.useState<.*>(() => => getReadStore());
+  const [readIds, setReadIds] = React.useState<string[]>(() => getReadStore());
 
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['dashboardNotifications'],
@@ -163,7 +163,8 @@ export default function NotificationCard({
     }
   };
 
-  return (<ExpandableCardProvider className='grid-cols-1'>
+  return (
+    <ExpandableCardProvider className='grid-cols-1'>
       <ExpandableCard
         id='notifications-main'
         className='w-full h-full'

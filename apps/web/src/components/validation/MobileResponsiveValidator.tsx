@@ -470,7 +470,8 @@ export const MobileResponsiveValidator: React.FC = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              {result.issues.length > 0 && (<Alert className='mb-4'>
+              {result.issues.length > 0 && (
+                <Alert className='mb-4'>
                   <AlertCircle className='w-4 h-4' />
                   <AlertDescription>
                     <ul className='list-disc list-inside'>

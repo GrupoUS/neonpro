@@ -150,7 +150,7 @@ export class AuditService {
       eventType: "session-end",
       userId,
       userRole,
-      dataClassification: typeof metadata?.dataClassification === 'string' ? undefined : metadata?.dataClassification,
+      dataClassification: metadata?.dataClassification,
       description: `${userRole} ended WebRTC session (duration: ${duration}s)${
         metadata?.reason ? ` - ${metadata.reason}` : ""
       }`,
@@ -193,7 +193,7 @@ export class AuditService {
       eventType: "data-access",
       userId,
       userRole,
-      dataClassification: typeof metadata?.dataClassification === 'string' ? undefined : metadata?.dataClassification,
+      dataClassification: metadata?.dataClassification,
       description: `${userRole} accessed ${dataType}${
         patientId ? ` for patient ${patientId}` : ""
       }`,
@@ -538,7 +538,7 @@ export class AuditService {
       _userId: log.user_id,
       action: log.action || this.mapActionToEventType(log.event_type || log.action),
       userRole: log.user_role || "system",
-      dataClassification: typeof log.data_classification === 'string_ ? log.data_classification : "general",
+      dataClassification: typeof log.data_classification === 'string' ? log.data_classification : "general",
       description: log.description || "",
       timestamp: log.timestamp || log.created_at,
       ipAddress: log.ip_address,

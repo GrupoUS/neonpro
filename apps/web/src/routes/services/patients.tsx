@@ -222,7 +222,8 @@ function PatientsPage() {
 
       {/* Main Patients Table with Error Boundary */}
       <ErrorBoundary
-        fallback={(_error: Error) => (<Card>
+        fallback={(_error: Error) => (
+          <Card>
             <CardContent className='p-6 text-center'>
               <AlertCircle className='w-8 h-8 text-destructive mx-auto mb-2' />
               <h3 className='font-semibold text-destructive mb-2'>

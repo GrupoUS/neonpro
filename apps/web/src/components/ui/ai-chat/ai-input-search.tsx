@@ -97,7 +97,8 @@ export default function AIInputSearch({
             'max-h-48 overflow-y-auto',
           )}
         >
-          {suggestions.map((suggestion, _index) => (<button
+          {suggestions.map((suggestion, _index) => (
+            <button
               key={index}
               onClick={() => handleSuggestionClick(suggestion)}
               className={cn(

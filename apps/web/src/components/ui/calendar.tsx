@@ -46,16 +46,14 @@ function Calendar({
   const mergedClassNames: typeof defaultClassNames = Object.keys(
     defaultClassNames,
   ).reduce((acc, key) => ({
-      ...acc,
-      [key]: classNames?.[key as keyof typeof classNames]
-        ? cn(
-          defaultClassNames[key as keyof typeof defaultClassNames],
-          classNames[key as keyof typeof classNames],
-        )
-        : defaultClassNames[key as keyof typeof defaultClassNames],
-    }),
-    {} as typeof defaultClassNames,
-  );
+    ...acc,
+    [key]: classNames?.[key as keyof typeof classNames]
+      ? cn(
+        defaultClassNames[key as keyof typeof defaultClassNames],
+        classNames[key as keyof typeof classNames],
+      )
+      : defaultClassNames[key as keyof typeof defaultClassNames],
+  }), {} as typeof defaultClassNames);
 
   const defaultComponents = {
     Chevron: (props: {

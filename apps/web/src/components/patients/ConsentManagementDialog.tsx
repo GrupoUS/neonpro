@@ -1,26 +1,6 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import {
-  AlertTriangle,
-  Check,
-  Clock,
-  Database,
-  Download,
-  Eye,
-  FileText,
-  Info,
-  Mail,
-  Settings,
-  Share,
-  Shield,
-  Trash2,
-  X,
-} from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import {
   Alert,
   AlertDescription,
@@ -45,6 +25,26 @@ import {
   Switch,
 } from '@neonpro/ui';
 import { cn } from '@neonpro/utils';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import {
+  AlertTriangle,
+  Check,
+  Clock,
+  Database,
+  Download,
+  Eye,
+  FileText,
+  Info,
+  Mail,
+  Settings,
+  Share,
+  Shield,
+  Trash2,
+  X,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 // LGPD consent types following Brazilian data protection law
 interface ConsentRecord {
@@ -167,7 +167,8 @@ const LGPDRightsInfo = () => (
 
 // Consent status indicator
 const ConsentStatusBadge = ({
-  granted,lastUpdated,
+  granted,
+  lastUpdated,
 }: {
   granted: boolean;
   lastUpdated: Date;
@@ -206,7 +207,7 @@ export function ConsentManagementDialog({
   onConsentUpdate,
   onDataExport,
   onDataErasure,
-  userRole: userRole,
+  userRole: _userRole,
   className,
 }: ConsentManagementDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -229,11 +230,9 @@ export function ConsentManagementDialog({
   useEffect(() => {
     if (patientData.consents) {
       const currentConsents = patientData.consents.reduce((acc, consent) => {
-          acc[consent.consentType.replace('_', '')] = consent.granted;
-          return acc;
-        },
-        {} as Record<string, boolean>,
-      );
+        acc[consent.consentType.replace('_', '')] = consent.granted;
+        return acc;
+      }, {} as Record<string, boolean>);
 
       form.reset(currentConsents as ConsentFormData);
     }
@@ -303,7 +302,8 @@ export function ConsentManagementDialog({
             { id: 'consents', label: 'Consentimentos', icon: Check },
             { id: 'rights', label: 'Direitos', icon: Eye },
             { id: 'history', label: 'Histórico', icon: Clock },
-          ].map(({ id, label, icon: Icon }) => (<button
+          ].map(({ id, label, icon: Icon }) => (
+            <button
               key={id}
               onClick={() => setActiveTab(id as any)}
               className={cn(
@@ -530,7 +530,8 @@ export function ConsentManagementDialog({
         )}
 
         {/* History tab */}
-        {activeTab === 'history' && (<div className='space-y-4'>
+        {activeTab === 'history' && (
+          <div className='space-y-4'>
             <div className='flex items-center justify-between'>
               <h3 className='text-lg font-medium'>
                 Histórico de Consentimentos

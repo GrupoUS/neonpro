@@ -70,7 +70,8 @@ export function useCreatePatient() {
 
   return useMutation({
     mutationFn: async ({
-      data,clinicId,
+      data,
+      clinicId,
     }: {
       data: CreatePatientData;
       clinicId: string;
@@ -365,7 +366,9 @@ export function useUpdatePatient() {
 
   return useMutation({
     mutationFn: async ({
-      patientId,data, clinicId,
+      patientId,
+      data,
+      clinicId,
     }: {
       patientId: string;
       data: Partial<CreatePatientData>;
@@ -452,7 +455,8 @@ export function useDeletePatient() {
 
   return useMutation({
     mutationFn: async ({
-      patientId,clinicId,
+      patientId,
+      clinicId,
     }: {
       patientId: string;
       clinicId: string;
@@ -508,7 +512,8 @@ export function useBulkDeletePatients() {
 
   return useMutation({
     mutationFn: async ({
-      patientIds,clinicId,
+      patientIds,
+      clinicId,
     }: {
       patientIds: string[];
       clinicId: string;

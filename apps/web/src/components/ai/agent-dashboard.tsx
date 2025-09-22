@@ -596,7 +596,8 @@ export function AgentDashboard({
                     </Badge>
                   </div>
 
-                  {currentSessionId && (<Button
+                  {currentSessionId && (
+                    <Button
                       variant='outline'
                       onClick={() => endCurrentSession('User ended session')}
                       disabled={isArchiving}

@@ -693,12 +693,10 @@ export class MobileResponsiveAccessibility {
     const recommendations: string[] = [];
 
     const issuesByType = this.issues.reduce((acc, issue) => {
-        if (!acc[issue.type]) acc[issue.type] = [];
-        acc[issue.type].push(issue);
-        return acc;
-      },
-      {} as Record<string, ResponsiveAccessibilityIssue[]>,
-    );
+      if (!acc[issue.type]) acc[issue.type] = [];
+      acc[issue.type].push(issue);
+      return acc;
+    }, {} as Record<string, ResponsiveAccessibilityIssue[]>);
 
     Object.entries(issuesByType).forEach(([type, issues]) => {
       const criticalCount = issues.filter(

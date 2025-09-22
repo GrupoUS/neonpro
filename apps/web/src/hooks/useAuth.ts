@@ -52,9 +52,7 @@ export function useAuth(): AuthState {
               currentSession.user.id,
             );
             const profileTimeoutPromise = new Promise((_, reject) =>
-              setTimeout(() => reject(new Error('Profile loading timeout')),
-                3000,
-              )
+              setTimeout(() => reject(new Error('Profile loading timeout')), 3000)
             );
 
             const userProfile = (await Promise.race([
@@ -110,9 +108,7 @@ export function useAuth(): AuthState {
             session.user.id,
           );
           const profileTimeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('Profile loading timeout')),
-              3000,
-            )
+            setTimeout(() => reject(new Error('Profile loading timeout')), 3000)
           );
 
           const userProfile = (await Promise.race([

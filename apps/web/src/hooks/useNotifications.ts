@@ -143,7 +143,8 @@ export function useUpdateNotificationPreferences() {
 
   return useMutation({
     mutationFn: async ({
-      patientId,preferences,
+      patientId,
+      preferences,
     }: {
       patientId: string;
       preferences: any;

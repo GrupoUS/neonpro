@@ -17,14 +17,14 @@ import { VideoConsultation } from '@/components/telemedicine';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LibraryLoading } from '@/lib/utils';
 
-describe(('Bundle Optimization Tests', () => {
+describe('Bundle Optimization Tests', () => {
   beforeEach(() => {
     // Reset any mocked modules
     vi.clearAllMocks();
   });
 
-  describe(('Chart Component Lazy Loading', () => {
-    it(_'should render chart with loading state',async () => {
+  describe('Chart Component Lazy Loading', () => {
+    it('should render chart with loading state', async () => {
       // Mock chart data
       const chartData = [
         { name: 'Jan', value: 100 },
@@ -56,7 +56,7 @@ describe(('Bundle Optimization Tests', () => {
       });
     });
 
-    it(_'should handle chart tooltip lazy loading',async () => {
+    it('should handle chart tooltip lazy loading', async () => {
       const tooltipContent = React.createElement(
         ChartTooltipContent,
         null,
@@ -70,8 +70,8 @@ describe(('Bundle Optimization Tests', () => {
     });
   });
 
-  describe(('Telemedicine Component Lazy Loading', () => {
-    it(_'should render VideoConsultation with loading state',async () => {
+  describe('Telemedicine Component Lazy Loading', () => {
+    it('should render VideoConsultation with loading state', async () => {
       render(
         React.createElement(
           Suspense,
@@ -94,8 +94,8 @@ describe(('Bundle Optimization Tests', () => {
     });
   });
 
-  describe(('Loading Components', () => {
-    it(('should render LibraryLoading component', () => {
+  describe('Loading Components', () => {
+    it('should render LibraryLoading component', () => {
       render(
         React.createElement(LibraryLoading, { message: 'Test Loading' }),
       );
@@ -104,7 +104,7 @@ describe(('Bundle Optimization Tests', () => {
       expect(screen.getByRole('status')).toBeInTheDocument();
     });
 
-    it(('should use default message when none provided', () => {
+    it('should use default message when none provided', () => {
       render(
         React.createElement(LibraryLoading),
       );
@@ -113,8 +113,8 @@ describe(('Bundle Optimization Tests', () => {
     });
   });
 
-  describe(('Performance Metrics', () => {
-    it(('should validate bundle size reduction', () => {
+  describe('Performance Metrics', () => {
+    it('should validate bundle size reduction', () => {
       // This test validates that our optimizations are working
       // In a real CI/CD environment, this would check actual bundle sizes
 
@@ -149,7 +149,7 @@ describe(('Bundle Optimization Tests', () => {
       });
     });
 
-    it(('should validate code splitting effectiveness', () => {
+    it('should validate code splitting effectiveness', () => {
       // This test validates that our code splitting strategy is working
 
       // Expected chunks that should exist after optimization
@@ -171,8 +171,8 @@ describe(('Bundle Optimization Tests', () => {
     });
   });
 
-  describe(('Healthcare Compliance', () => {
-    it(('should maintain LGPD compliance with lazy loading', () => {
+  describe('Healthcare Compliance', () => {
+    it('should maintain LGPD compliance with lazy loading', () => {
       // Validate that lazy loading doesn't compromise data privacy
       const mockPatientData = {
         id: 'patient-123',
@@ -187,7 +187,7 @@ describe(('Bundle Optimization Tests', () => {
       }).not.toThrow();
     });
 
-    it(('should maintain CFM compliance with lazy loading', () => {
+    it('should maintain CFM compliance with lazy loading', () => {
       // Validate that medical components maintain compliance when lazy-loaded
       const mockSessionData = {
         sessionId: 'session-456',
@@ -204,10 +204,10 @@ describe(('Bundle Optimization Tests', () => {
     });
   });
 
-  describe(('Error Handling', () => {
-    it(_'should handle lazy loading errors gracefully',async () => {
+  describe('Error Handling', () => {
+    it('should handle lazy loading errors gracefully', async () => {
       // Mock a failed lazy import
-      vi.doMock(('recharts', () => {
+      vi.doMock('recharts', () => {
         throw new Error('Failed to load module');
       });
 

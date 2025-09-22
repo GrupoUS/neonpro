@@ -92,7 +92,8 @@ function GoogleCalendarAuth() {
   }
 
   if (callbackMutation.isError) {
-    return (<div className='flex items-center justify-center min-h-screen'>
+    return (
+      <div className='flex items-center justify-center min-h-screen'>
         <div className='text-center max-w-md'>
           <div className='text-red-500 mb-4'>
             <svg

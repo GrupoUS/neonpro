@@ -420,7 +420,8 @@ function PatientDetailPage() {
             { key: 'history', label: 'Histórico', icon: History },
             { key: 'appointments', label: 'Consultas', icon: Calendar },
             { key: 'documents', label: 'Documentos', icon: FileText },
-          ].map(({ key,label, icon: Icon }) => (<button
+          ].map(({ key, label, icon: Icon }) => (
+            <button
               key={key}
               onClick={() => handleTabChange(key as typeof tab)}
               className={`py-3 px-1 border-b-2 font-medium text-sm whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors ${
@@ -448,7 +449,8 @@ function PatientDetailPage() {
         aria-labelledby={`tab-${tab}`}
       >
         <ErrorBoundary
-          fallback={(error: Error) => (<Card>
+          fallback={(error: Error) => (
+            <Card>
               <CardContent className='p-6 text-center'>
                 <AlertCircle className='w-8 h-8 text-destructive mx-auto mb-2' />
                 <h3 className='font-semibold text-destructive mb-2'>

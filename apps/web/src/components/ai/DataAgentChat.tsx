@@ -264,7 +264,7 @@ const _ActionButton: React.FC<{
 const MessageFeedback: React.FC<{
   messageId: string;
   sessionId: string;
- onFeedbackSubmitted: () => void;
+  onFeedbackSubmitted: () => void;
 }> = ({ messageId, sessionId, onFeedbackSubmitted }) => {
   const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
   const [rating, setRating] = useState<number>(0);
@@ -305,7 +305,8 @@ const MessageFeedback: React.FC<{
     });
   };
 
-  return (<div className='flex items-center gap-2 mt-2'>
+  return (
+    <div className='flex items-center gap-2 mt-2'>
       <div className='flex gap-1'>
         <TooltipProvider>
           <Tooltip>
@@ -492,7 +493,8 @@ const DataSummaryCard: React.FC<{
             renderItem(item, index)
           )}
 
-          {data.length > displayLimit && (<Button
+          {data.length > displayLimit && (
+            <Button
               variant='ghost'
               size='sm'
               onClick={() => setExpanded(!expanded)}
@@ -514,18 +516,18 @@ const DataSummaryCard: React.FC<{
  * Main DataAgentChat Component
  */
 export const DataAgentChat: React.FC<DataAgentChatProps> = ({
-  userContext, 
-  initialSessionId, 
-  mode = 'inline', 
-  maxHeight = '600px', 
+  userContext,
+  initialSessionId,
+  mode = 'inline',
+  maxHeight = '600px',
   mobileOptimized = true,
   lgpdConsent = {
     canStoreHistory: true,
     dataRetentionDays: 30,
   },
-  placeholder = 'Digite sua consulta... Ex: "Quais os próximos agendamentos?"', 
+  placeholder = 'Digite sua consulta... Ex: "Quais os próximos agendamentos?"',
   testId = 'data-agent-chat',
-  onSessionChange, 
+  onSessionChange,
   onDataDiscovered,
 }) => {
   // State management
@@ -988,7 +990,8 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
                   {/* Message metadata */}
                   <div className='flex items-center justify-between mt-2 text-xs opacity-70'>
                     <span>{formatDateTime(message.timestamp)}</span>
-                    {message.role === 'assistant' && currentSessionId && (<MessageFeedback
+                    {message.role === 'assistant' && currentSessionId && (
+                      <MessageFeedback
                         messageId={message.id}
                         sessionId={currentSessionId}
                         onFeedbackSubmitted={() => {

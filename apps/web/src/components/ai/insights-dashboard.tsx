@@ -151,8 +151,12 @@ const fetchInsightTrends = async (
  * MetricCard - Individual metric display component
  */
 const MetricCard = ({
-  title,value, change,
-  icon: Icon, trend = 'neutral',description,
+  title,
+  value,
+  change,
+  icon: Icon,
+  trend = 'neutral',
+  description,
 }: {
   title: string;
   value: string | number;
@@ -199,7 +203,12 @@ const MetricCard = ({
 
 // Lightweight inline chart: responsive SVG with two lines (insights & confidence)
 export const TrendMiniChart = ({
-  data, width = 240, height = 80, ariaLabel = 'Tendências', title = 'Tendências', desc = 'Mini gráfico com as tendências no período.',
+  data,
+  width = 240,
+  height = 80,
+  ariaLabel = 'Tendências',
+  title = 'Tendências',
+  desc = 'Mini gráfico com as tendências no período.',
 }: {
   data?: TrendData[];
   width?: number;
@@ -293,12 +302,16 @@ export const TrendMiniChart = ({
 export const AIInsightsDashboard = ({
   timeRange: initialTimeRange = '7d',
   insightTypes: insightTypes = [
-    'patient_insights', 'risk_assessment', 'recommendations'],
+    'patient_insights',
+    'risk_assessment',
+    'recommendations',
+  ],
   healthcareProfessional,
   lgpdConsent = {
     canViewAggregatedData: true,
     canViewPatientInsights: false,
-    consentLevel: 'basic'},
+    consentLevel: 'basic',
+  },
   mobileOptimized = true,
   testId = 'ai-insights-dashboard',
 }: AIInsightsDashboardProps) => {
@@ -313,7 +326,7 @@ export const AIInsightsDashboard = ({
     error: metricsError,
     refetch: refetchMetrics,
   } = useQuery<MetricsApiResponse>({
-    queryKey: ['ai-metrics',timeRange, _insightTypes],
+    queryKey: ['ai-metrics', timeRange, _insightTypes],
     queryFn: () => fetchInsightMetrics(timeRange),
     enabled: lgpdConsent.canViewAggregatedData,
     staleTime: 2 * 60 * 1000, // 2 minutes cache
@@ -326,7 +339,7 @@ export const AIInsightsDashboard = ({
     isLoading: trendsLoading,
     error: trendsError,
   } = useQuery<TrendsApiResponse>({
-    queryKey: ['ai-trends',timeRange, _insightTypes],
+    queryKey: ['ai-trends', timeRange, _insightTypes],
     queryFn: () => fetchInsightTrends(timeRange),
     enabled: lgpdConsent.canViewAggregatedData,
     staleTime: 2 * 60 * 1000, // 2 minutes cache

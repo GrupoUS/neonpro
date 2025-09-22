@@ -368,10 +368,9 @@ export class HealthcareAccessibilityAuditor {
     }
 
     // Calculate overall score
-    const totalChecks = results.categoryResults.reduce((sum, cat) => sum + cat.issues.length,
-      0,
-    );
-    const passedChecks = results.categoryResults.reduce((sum, cat) => sum + cat.issues.filter((issue: any) => issue.passed).length,
+    const totalChecks = results.categoryResults.reduce((sum, cat) => sum + cat.issues.length, 0);
+    const passedChecks = results.categoryResults.reduce(
+      (sum, cat) => sum + cat.issues.filter((issue: any) => issue.passed).length,
       0,
     );
 

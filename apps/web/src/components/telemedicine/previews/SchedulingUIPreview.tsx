@@ -57,7 +57,8 @@ export function SchedulingUIPreview() {
           </p>
 
           <div className='flex gap-4'>
-            {Object.entries(mockScenarios).map(([key, scenario]) => (<button
+            {Object.entries(mockScenarios).map(([key, scenario]) => (
+              <button
                 key={key}
                 onClick={() => setCurrentScenario(key as keyof typeof mockScenarios)}
                 className={`px-4 py-2 rounded-md border transition-colors ${

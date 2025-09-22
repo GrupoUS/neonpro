@@ -95,9 +95,8 @@ export function usePatientStats(clinicId?: string) {
       const activePatients = patientsResult.data?.filter(p => p.is_active)?.length || 0;
       const newThisMonth = newPatientsResult.data?.length || 0;
       const upcomingAppointments = appointmentsResult.data?.length || 0;
-      const revenueToday = revenueResult.data?.reduce((sum, t) => sum + (Number(t.amount) || 0),
-        0,
-      ) || 0;
+      const revenueToday = revenueResult.data?.reduce((sum, t) => sum + (Number(t.amount) || 0), 0)
+        || 0;
 
       return {
         totalPatients,

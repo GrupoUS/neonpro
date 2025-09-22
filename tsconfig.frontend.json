@@ -1,10 +1,8 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "moduleResolution": "bundler",
-    "module": "ESNext",
-    "target": "ES2020",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -21,8 +19,10 @@
       "@neonpro/ui": ["./packages/ui/src"],
       "@neonpro/ui/*": ["./packages/ui/src/*"],
       "@neonpro/shared": ["./packages/shared/src"],
+      "@neonpro/shared/*": ["./packages/shared/src/*"],
       "@neonpro/utils": ["./packages/utils/src"],
       "@neonpro/types": ["./packages/types/src"],
+      "@neonpro/types/*": ["./packages/types/src/*"],
       "@components/*": ["./apps/web/src/components/*"],
       "@hooks/*": ["./apps/web/src/hooks/*"]
     }

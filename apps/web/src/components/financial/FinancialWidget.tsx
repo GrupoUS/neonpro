@@ -30,8 +30,16 @@ export interface FinancialWidgetProps {
 }
 
 export const FinancialWidget: React.FC<FinancialWidgetProps> = ({
-  metric, size = 'medium', showTrend = true, showPercentage = true, isLoading = false,onRefresh, onExpand,className,
-  'data-testid': testId, }) => {
+  metric,
+  size = 'medium',
+  showTrend = true,
+  showPercentage = true,
+  isLoading = false,
+  onRefresh,
+  onExpand,
+  className,
+  'data-testid': testId,
+}) => {
   const formatCurrency = (value: number, currency: string): string => {
     return new Intl.NumberFormat('pt-BR', {
       style: 'currency',

@@ -32,7 +32,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./packages/*"],
-      "@neonpro/*": ["./packages/*/src"]
+      "@neonpro/*": ["./packages/*/src"],
+      "@apps/*": ["./apps/*/src"]
     }
   },
   "exclude": ["node_modules", "dist", "build"]

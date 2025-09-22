@@ -11,15 +11,15 @@ import APIDocumentationGenerator, {
   APIEndpointSchema,
 } from '../api-documentation-generator';
 
-describe(('API Documentation Generator', () => {
+describe('API Documentation Generator', () => {
   let generator: APIDocumentationGenerator;
 
   beforeEach(() => {
     generator = new APIDocumentationGenerator();
   });
 
-  describe(('API Endpoint Schema Validation', () => {
-    it(('should validate valid API endpoint', () => {
+  describe('API Endpoint Schema Validation', () => {
+    it('should validate valid API endpoint', () => {
       const validEndpoint = {
         id: 'test-endpoint',
         path: '/api/test',
@@ -66,7 +66,7 @@ describe(('API Documentation Generator', () => {
       }
     });
 
-    it(('should reject invalid API endpoint', () => {
+    it('should reject invalid API endpoint', () => {
       const invalidEndpoint = {
         id: 'test-endpoint',
         // Missing required fields
@@ -78,7 +78,7 @@ describe(('API Documentation Generator', () => {
       expect(result.success).toBe(false);
     });
 
-    it(('should validate endpoint parameters', () => {
+    it('should validate endpoint parameters', () => {
       const endpointWithParams = {
         id: 'test-endpoint',
         path: '/api/patients/{id}',
@@ -123,7 +123,7 @@ describe(('API Documentation Generator', () => {
       }
     });
 
-    it(('should validate request body schema', () => {
+    it('should validate request body schema', () => {
       const endpointWithBody = {
         id: 'create-appointment',
         path: '/api/appointments',
@@ -176,8 +176,8 @@ describe(('API Documentation Generator', () => {
     });
   });
 
-  describe(('Healthcare API Endpoints', () => {
-    it(('should generate report with healthcare endpoints', () => {
+  describe('Healthcare API Endpoints', () => {
+    it('should generate report with healthcare endpoints', () => {
       const report = generator.generateReport();
 
       expect(report.endpoints.length).toBeGreaterThan(0);
@@ -189,7 +189,7 @@ describe(('API Documentation Generator', () => {
       expect(report.categories).toContain(API_CATEGORIES.AI_FEATURES);
     });
 
-    it(('should include patient management endpoint', () => {
+    it('should include patient management endpoint', () => {
       const report = generator.generateReport();
       const patientEndpoint = report.endpoints.find(
         e => e.id === 'get-patient',
@@ -204,7 +204,7 @@ describe(('API Documentation Generator', () => {
       expect(patientEndpoint?.authentication.lgpdConsent).toBe(true);
     });
 
-    it(('should include appointment scheduling endpoint', () => {
+    it('should include appointment scheduling endpoint', () => {
       const report = generator.generateReport();
       const appointmentEndpoint = report.endpoints.find(
         e => e.id === 'create-appointment',
@@ -223,7 +223,7 @@ describe(('API Documentation Generator', () => {
       );
     });
 
-    it(('should include AI features endpoint', () => {
+    it('should include AI features endpoint', () => {
       const report = generator.generateReport();
       const aiEndpoint = report.endpoints.find(
         e => e.id === 'ai-no-show-prediction',
@@ -239,8 +239,8 @@ describe(('API Documentation Generator', () => {
     });
   });
 
-  describe(('Healthcare Compliance Features', () => {
-    it(('should track LGPD compliance', () => {
+  describe('Healthcare Compliance Features', () => {
+    it('should track LGPD compliance', () => {
       const report = generator.generateReport();
 
       expect(report.complianceFeatures.lgpdCompliant).toBeGreaterThan(0);
@@ -257,7 +257,7 @@ describe(('API Documentation Generator', () => {
       });
     });
 
-    it(('should track ANVISA compliance', () => {
+    it('should track ANVISA compliance', () => {
       const report = generator.generateReport();
 
       expect(report.complianceFeatures.anvisaCompliant).toBeGreaterThan(0);
@@ -270,7 +270,7 @@ describe(('API Documentation Generator', () => {
       );
     });
 
-    it(('should track CFM compliance', () => {
+    it('should track CFM compliance', () => {
       const report = generator.generateReport();
 
       expect(report.complianceFeatures.cfmCompliant).toBeGreaterThan(0);
@@ -281,7 +281,7 @@ describe(('API Documentation Generator', () => {
       expect(cfmEndpoints.length).toBe(report.complianceFeatures.cfmCompliant);
     });
 
-    it(('should track WCAG compliance', () => {
+    it('should track WCAG compliance', () => {
       const report = generator.generateReport();
 
       expect(report.complianceFeatures.wcagCompliant).toBeGreaterThan(0);
@@ -295,8 +295,8 @@ describe(('API Documentation Generator', () => {
     });
   });
 
-  describe(('Mobile Optimization', () => {
-    it(('should track mobile-optimized endpoints', () => {
+  describe('Mobile Optimization', () => {
+    it('should track mobile-optimized endpoints', () => {
       const report = generator.generateReport();
 
       expect(report.mobileOptimized).toBeGreaterThan(0);
@@ -307,7 +307,7 @@ describe(('API Documentation Generator', () => {
       expect(mobileEndpoints.length).toBe(report.mobileOptimized);
     });
 
-    it(('should include mobile notes in examples', () => {
+    it('should include mobile notes in examples', () => {
       const report = generator.generateReport();
 
       const endpointsWithExamples = report.endpoints.filter(
@@ -317,7 +317,7 @@ describe(('API Documentation Generator', () => {
 
       endpointsWithExamples.forEach(endpoint => {
         (endpoint as any).examples?.forEach(example => {
-          const example: any = _example;
+          // Variable 'example' is already declared as parameter
           expect(example.mobileNotes).toBeDefined();
           expect(typeof example.mobileNotes).toBe('string');
           expect(example.mobileNotes!.length).toBeGreaterThan(0);
@@ -325,7 +325,7 @@ describe(('API Documentation Generator', () => {
       });
     });
 
-    it(('should include mobile optimization in response examples', () => {
+    it('should include mobile optimization in response examples', () => {
       const report = generator.generateReport();
       const patientEndpoint = report.endpoints.find(
         e => e.id === 'get-patient',
@@ -339,8 +339,8 @@ describe(('API Documentation Generator', () => {
     });
   });
 
-  describe(('Authentication and Security', () => {
-    it(('should track authentication methods', () => {
+  describe('Authentication and Security', () => {
+    it('should track authentication methods', () => {
       const report = generator.generateReport();
 
       expect(report.authenticationMethods).toContain('bearer');
@@ -351,7 +351,7 @@ describe(('API Documentation Generator', () => {
       expect(authEndpoints.length).toBe(report.endpoints.length); // All endpoints require auth
     });
 
-    it(('should include LGPD consent requirements', () => {
+    it('should include LGPD consent requirements', () => {
       const report = generator.generateReport();
 
       const lgpdEndpoints = report.endpoints.filter(
@@ -364,7 +364,7 @@ describe(('API Documentation Generator', () => {
       });
     });
 
-    it(('should include rate limiting information', () => {
+    it('should include rate limiting information', () => {
       const report = generator.generateReport();
 
       const rateLimitedEndpoints = report.endpoints.filter(
@@ -379,8 +379,8 @@ describe(('API Documentation Generator', () => {
     });
   });
 
-  describe(('Error Handling', () => {
-    it(('should include comprehensive error documentation', () => {
+  describe('Error Handling', () => {
+    it('should include comprehensive error documentation', () => {
       const report = generator.generateReport();
 
       const endpointsWithErrors = report.endpoints.filter(
@@ -390,7 +390,7 @@ describe(('API Documentation Generator', () => {
 
       endpointsWithErrors.forEach(endpoint => {
         (endpoint as any).errors?.forEach(error => {
-          const error: any = _error;
+          // Variable 'error' is already declared as parameter
           expect(error.code).toBeDefined();
           expect(error.statusCode).toBeGreaterThan(0);
           expect(error.message).toBeDefined();
@@ -403,7 +403,7 @@ describe(('API Documentation Generator', () => {
       });
     });
 
-    it(('should include healthcare-specific errors', () => {
+    it('should include healthcare-specific errors', () => {
       const report = generator.generateReport();
       const patientEndpoint = report.endpoints.find(
         e => e.id === 'get-patient',
@@ -420,7 +420,7 @@ describe(('API Documentation Generator', () => {
       expect(lgpdError?.messagePtBr).toBe('Consentimento LGPD obrigatório');
     });
 
-    it(('should include appointment-specific errors', () => {
+    it('should include appointment-specific errors', () => {
       const report = generator.generateReport();
       const appointmentEndpoint = report.endpoints.find(
         e => e.id === 'create-appointment',
@@ -439,8 +439,8 @@ describe(('API Documentation Generator', () => {
     });
   });
 
-  describe(('Brazilian Portuguese Localization', () => {
-    it(('should provide Portuguese API labels', () => {
+  describe('Brazilian Portuguese Localization', () => {
+    it('should provide Portuguese API labels', () => {
       expect(API_LABELS_PT_BR[API_METHODS.GET]).toBe('BUSCAR');
       expect(API_LABELS_PT_BR[API_METHODS.POST]).toBe('CRIAR');
       expect(API_LABELS_PT_BR[API_METHODS.PUT]).toBe('ATUALIZAR');
@@ -461,27 +461,27 @@ describe(('API Documentation Generator', () => {
       expect(API_LABELS_PT_BR.mobileOptimized).toBe('Otimizado para Móvel');
     });
 
-    it(('should include Portuguese translations in endpoints', () => {
+    it('should include Portuguese translations in endpoints', () => {
       const report = generator.generateReport();
 
       report.endpoints.forEach(endpoint => {
-        const endpoint: any = _endpoint;
+        // Variable 'endpoint' is already declared as parameter
         expect(endpoint.titlePtBr).toBeDefined();
         expect(endpoint.descriptionPtBr).toBeDefined();
 
         endpoint.parameters?.forEach(param => {
-          const param: any = _param;
+          // Variable 'param' is already declared as parameter
           expect(param.descriptionPtBr).toBeDefined();
         });
 
         endpoint.responses.forEach(response => {
-          const response: any = _response;
+          // Variable 'response' is already declared as parameter
           expect(response.descriptionPtBr).toBeDefined();
         });
       });
     });
 
-    it(('should include Portuguese translations in examples', () => {
+    it('should include Portuguese translations in examples', () => {
       const report = generator.generateReport();
 
       const endpointsWithExamples = report.endpoints.filter(
@@ -489,9 +489,9 @@ describe(('API Documentation Generator', () => {
       );
 
       endpointsWithExamples.forEach(endpoint => {
-        const endpoint: any = _endpoint;
+        // Variable 'endpoint' is already declared as parameter
         endpoint.examples?.forEach(example => {
-          const example: any = _example;
+          // Variable 'example' is already declared as parameter
           expect(example.titlePtBr).toBeDefined();
           expect(example.descriptionPtBr).toBeDefined();
         });
@@ -499,8 +499,8 @@ describe(('API Documentation Generator', () => {
     });
   });
 
-  describe(('Healthcare Context and Accessibility', () => {
-    it(('should include healthcare context in parameters', () => {
+  describe('Healthcare Context and Accessibility', () => {
+    it('should include healthcare context in parameters', () => {
       const report = generator.generateReport();
       const patientEndpoint = report.endpoints.find(
         e => e.id === 'get-patient',
@@ -513,7 +513,7 @@ describe(('API Documentation Generator', () => {
       );
     });
 
-    it(('should include accessibility notes in examples', () => {
+    it('should include accessibility notes in examples', () => {
       const report = generator.generateReport();
 
       const endpointsWithExamples = report.endpoints.filter(
@@ -521,9 +521,9 @@ describe(('API Documentation Generator', () => {
       );
 
       endpointsWithExamples.forEach(endpoint => {
-        const endpoint: any = _endpoint;
+        // Variable 'endpoint' is already declared as parameter
         endpoint.examples?.forEach(example => {
-          const example: any = _example;
+          // Variable 'example' is already declared as parameter
           expect(example.accessibilityNotes).toBeDefined();
           expect(typeof example.accessibilityNotes).toBe('string');
           expect(example.accessibilityNotes!.length).toBeGreaterThan(0);
@@ -531,7 +531,7 @@ describe(('API Documentation Generator', () => {
       });
     });
 
-    it(('should include healthcare context in examples', () => {
+    it('should include healthcare context in examples', () => {
       const report = generator.generateReport();
 
       const endpointsWithExamples = report.endpoints.filter(
@@ -539,9 +539,9 @@ describe(('API Documentation Generator', () => {
       );
 
       endpointsWithExamples.forEach(endpoint => {
-        const endpoint: any = _endpoint;
+        // Variable 'endpoint' is already declared as parameter
         endpoint.examples?.forEach(example => {
-          const example: any = _example;
+          // Variable 'example' is already declared as parameter
           expect(example.healthcareContext).toBeDefined();
           expect(typeof example.healthcareContext).toBe('string');
           expect(example.healthcareContext!.length).toBeGreaterThan(0);
@@ -550,25 +550,25 @@ describe(('API Documentation Generator', () => {
     });
   });
 
-  describe(('Utility Methods', () => {
-    it(('should get endpoints by category', () => {
+  describe('Utility Methods', () => {
+    it('should get endpoints by category', () => {
       const patientEndpoints = generator.getEndpointsByCategory(
         API_CATEGORIES.PATIENT_MANAGEMENT,
       );
       expect(patientEndpoints.length).toBeGreaterThan(0);
 
       patientEndpoints.forEach(endpoint => {
-        const endpoint: any = _endpoint;
+        // Variable 'endpoint' is already declared as parameter
         expect(endpoint.category).toBe(API_CATEGORIES.PATIENT_MANAGEMENT);
       });
     });
 
-    it(('should get healthcare-compliant endpoints', () => {
+    it('should get healthcare-compliant endpoints', () => {
       const healthcareEndpoints = generator.getHealthcareCompliantEndpoints();
       expect(healthcareEndpoints.length).toBeGreaterThan(0);
 
       healthcareEndpoints.forEach(endpoint => {
-        const endpoint: any = _endpoint;
+        // Variable 'endpoint' is already declared as parameter
         const hasCompliance = endpoint.metadata.compliance?.lgpd
           || endpoint.metadata.compliance?.anvisa
           || endpoint.metadata.compliance?.cfm;
@@ -576,17 +576,17 @@ describe(('API Documentation Generator', () => {
       });
     });
 
-    it(('should get mobile-optimized endpoints', () => {
+    it('should get mobile-optimized endpoints', () => {
       const mobileEndpoints = generator.getMobileOptimizedEndpoints();
       expect(mobileEndpoints.length).toBeGreaterThan(0);
 
       mobileEndpoints.forEach(endpoint => {
-        const endpoint: any = _endpoint;
+        // Variable 'endpoint' is already declared as parameter
         expect(endpoint.metadata.mobileOptimized).toBe(true);
       });
     });
 
-    it(('should validate endpoint schema', () => {
+    it('should validate endpoint schema', () => {
       const validEndpoint = {
         id: 'test',
         path: '/test',

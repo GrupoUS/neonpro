@@ -40,7 +40,12 @@ function applyThemeToDocument(theme: Theme, attribute: 'class' | 'data-theme') {
 
 import { ThemeProviderBridge } from '@neonpro/ui';
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
-  attribute = 'class', _defaultTheme = 'system', _enableSystem = true, _disableTransitionOnChange = true, children, ..._divProps
+  attribute = 'class',
+  _defaultTheme = 'system',
+  _enableSystem = true,
+  _disableTransitionOnChange = true,
+  children,
+  ..._divProps
 }) => {
   const [theme, setThemeState] = React.useState<Theme>(defaultTheme);
   const [resolvedTheme, setResolvedTheme] = React.useState<'light' | 'dark'>(
@@ -99,9 +104,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
   const setTheme = React.useCallback((next: Theme) => setThemeState(next), []);
 
-  const value = React.useMemo(() => ({ theme, resolvedTheme, setTheme }),
-    [theme, resolvedTheme, setTheme],
-  );
+  const value = React.useMemo(() => ({ theme, resolvedTheme, setTheme }), [
+    theme,
+    resolvedTheme,
+    setTheme,
+  ]);
 
   return (
     <div {...divProps}>

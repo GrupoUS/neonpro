@@ -116,7 +116,14 @@ export const ClinicalPatientCard: React.FC<{
   compact?: boolean;
   className?: string;
 }> = ({
-  patient,onSelectPatient, onViewHistory,onScheduleAppointment, showQuickActions = true, compact = false,className, }) => {
+  patient,
+  onSelectPatient,
+  onViewHistory,
+  onScheduleAppointment,
+  showQuickActions = true,
+  compact = false,
+  className,
+}) => {
   const criticalAlerts = patient.alerts?.filter(alert => alert.severity === 'critical') || [];
   const hasUrgentStatus = patient.status === 'urgent' || criticalAlerts.length > 0;
 
@@ -272,7 +279,15 @@ export const ClinicalWorkflowStepper: React.FC<{
   showProgress?: boolean;
   className?: string;
 }> = ({
-  steps,currentStep, onStepChange,onStepComplete, onWorkflowComplete, allowSkipping = false, showProgress = true,className, }) => {
+  steps,
+  currentStep,
+  onStepChange,
+  onStepComplete,
+  onWorkflowComplete,
+  allowSkipping = false,
+  showProgress = true,
+  className,
+}) => {
   const [stepData, setStepData] = useState<Record<number, any>>({});
   const [errors, setErrors] = useState<Record<number, string[]>>({});
 
@@ -435,7 +450,8 @@ export const ClinicalWorkflowStepper: React.FC<{
                     </div>
 
                     {/* Step Actions */}
-                    {isActive && (<div className='flex gap-2 ml-4'>
+                    {isActive && (
+                      <div className='flex gap-2 ml-4'>
                         {allowSkipping && !step.required && (
                           <Button
                             variant='outline'
@@ -497,7 +513,14 @@ export const EmergencyAlertSystem: React.FC<{
   autoHide?: boolean;
   className?: string;
 }> = ({
-  alerts,onAcknowledgeAlert, onDismissAlert,onEscalateAlert, position = 'top', autoHide = false,className, }) => {
+  alerts,
+  onAcknowledgeAlert,
+  onDismissAlert,
+  onEscalateAlert,
+  position = 'top',
+  autoHide = false,
+  className,
+}) => {
   const [visibleAlerts, setVisibleAlerts] = useState<string[]>([]);
   const alertRef = useRef<HTMLDivElement>(null);
 
@@ -607,7 +630,8 @@ export const EmergencyAlertSystem: React.FC<{
                   Reconhecer
                 </Button>
 
-                {alert.severity === 'critical' && (<Button
+                {alert.severity === 'critical' && (
+                  <Button
                     variant='outline'
                     size='sm'
                     onClick={() => onEscalateAlert(alert.id)}
@@ -651,7 +675,14 @@ export const QuickAppointmentScheduler: React.FC<{
   emergencyMode?: boolean;
   className?: string;
 }> = ({
-  availableSlots,patientId, providerId,onScheduleAppointment, onCancel, emergencyMode = false,className, }) => {
+  availableSlots,
+  patientId,
+  providerId,
+  onScheduleAppointment,
+  onCancel,
+  emergencyMode = false,
+  className,
+}) => {
   const [selectedSlot, setSelectedSlot] = useState<AppointmentSlot | null>(null);
   const [notes, setNotes] = useState('');
   const [filterType, setFilterType] = useState<string>('all');

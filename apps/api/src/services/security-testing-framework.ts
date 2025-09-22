@@ -332,7 +332,7 @@ export class HealthcareSecurityTestFramework {
 
       const result = await Promise.race([
         test.testFunction(context),
-        new Promise<SecurityTestResult>((, reject) =>
+        new Promise<SecurityTestResult>((_, reject) =>
           setTimeout(() => reject(new Error('Test timeout')),
             this.config.timeout,
           )

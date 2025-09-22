@@ -264,11 +264,9 @@ class ProfessionalServicesService {
 
     // Calculate proficiency distribution
     const proficiencyDistribution = professionalServices.reduce((acc, ps) => {
-        acc[ps.proficiency_level] = (acc[ps.proficiency_level] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
+      acc[ps.proficiency_level] = (acc[ps.proficiency_level] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
     // Calculate average hourly rate
     const ratesWithValues = professionalServices

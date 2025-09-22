@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
  */
 export function useDefaultChatModel() {
   const { user } = useAuth();
-  const [defaultModel, setDefaultModel] = useState<.*>(() => {
+  const [defaultModel, setDefaultModel] = useState<string>(() => {
     if (typeof window === 'undefined') return 'gpt-5-mini';
     return localStorage.getItem('neonpro-default-chat-model') || 'gpt-5-mini';
   });

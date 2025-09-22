@@ -151,7 +151,13 @@ type TimeRange = 'today' | 'week' | 'month' | 'quarter' | 'year';
 type ViewMode = 'overview' | 'patients' | 'appointments' | 'treatments' | 'financial' | 'staff';
 
 export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
-  className,onRefresh, onViewPatient,onViewAppointment, onViewTreatment, testId = 'healthcare-dashboard', }) => {
+  className,
+  onRefresh,
+  onViewPatient,
+  onViewAppointment,
+  onViewTreatment,
+  testId = 'healthcare-dashboard',
+}) => {
   const [currentTimeRange, setCurrentTimeRange] = useState<TimeRange>('today');
   const [currentView, setCurrentView] = useState<ViewMode>('overview');
   const [isLoading, setIsLoading] = useState(false);
@@ -276,17 +282,17 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
   ]);
 
   const [financialData, setFinancialData] = useState<FinancialData>({
-    dailyRevenue: Array.from.*}, (_, i) => ({
+    dailyRevenue: Array.from({ length: 7 }, (_, i) => ({
       date: format(subDays(new Date(), 6 - i), 'yyyy-MM-dd'),
       revenue: Math.floor(Math.random() * 15000) + 8000,
     })),
-    monthlyRevenue: Array.from.*}, (_, i) => ({
+    monthlyRevenue: Array.from({ length: 12 }, (_, i) => ({
       month: format(new Date(2024, i, 1), 'MMM', { locale: ptBR }),
       revenue: Math.floor(Math.random() * 300000) + 200000,
       projection: Math.floor(Math.random() * 350000) + 250000,
     })),
     serviceBreakdown: [
-      { _service: 'Botox', revenue: 85000, count: 85 },
+      { service: 'Botox', revenue: 85000, count: 85 },
       { _service: 'Preenchimento', revenue: 95000, count: 65 },
       { _service: 'Laser', revenue: 65000, count: 95 },
       { _service: 'Peeling', revenue: 25000, count: 45 },
@@ -567,7 +573,8 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
   );
 
   // Render appointments view
-  const renderAppointmentsView = () => (<div className='space-y-6'>
+  const renderAppointmentsView = () => (
+    <div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <h3 className='text-lg font-semibold'>Agendamentos</h3>
         <div className='flex space-x-2'>
@@ -682,7 +689,8 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
   );
 
   // Render treatments view
-  const renderTreatmentsView = () => (<div className='space-y-6'>
+  const renderTreatmentsView = () => (
+    <div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <h3 className='text-lg font-semibold'>Tratamentos em Andamento</h3>
         <HealthcareButton onClick={() => {}} size='sm'>

@@ -58,7 +58,8 @@ export function HoverBorderGradient({
     // Return undefined explicitly when hovered is true
     return undefined;
   }, [hovered, duration, clockwise, rotateDirection]); // Add clockwise and rotateDirection to dependencies
-  return (<Tag
+  return (
+    <Tag
       onMouseEnter={() => {
         setHovered(true);
       }}

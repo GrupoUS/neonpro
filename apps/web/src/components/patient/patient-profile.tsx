@@ -99,7 +99,8 @@ const fetchAIInsights = async (patientId: string) => {
  * AI Insights Section Component
  */
 const AIInsightsSection = ({
-  patientId,lgpdConsent,
+  patientId,
+  lgpdConsent,
 }: {
   patientId: string;
   lgpdConsent: PatientProfileProps['lgpdConsent'];
@@ -349,12 +350,16 @@ const AIInsightsSection = ({
  * PatientProfile - Main component
  */
 export const PatientProfile = ({
-  patientId: propPatientId, showAIInsights = true,
+  patientId: propPatientId,
+  showAIInsights = true,
   lgpdConsent = {
     canShowFullData: true,
     canShowSensitiveData: false,
     canShowMedicalData: true,
-    consentLevel: 'full', }, mobileOptimized = true, testId = 'patient-profile',
+    consentLevel: 'full',
+  },
+  mobileOptimized = true,
+  testId = 'patient-profile',
 }: PatientProfileProps) => {
   const params = useParams({ strict: false });
   const patientId = propPatientId || (params as any)?.patientId;

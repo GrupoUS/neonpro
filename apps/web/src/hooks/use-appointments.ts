@@ -314,7 +314,7 @@ export function useUpdateAppointmentStatus() {
   const queryClient = useQueryClient();
 
   return trpc.appointments.updateStatus.useMutation({
-    onMutate: async ({ id,status, notes }) => {
+    onMutate: async ({ id, status, notes }) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: appointmentKeys.detail(id) });
 
@@ -425,7 +425,7 @@ export function useSendAppointmentReminder() {
   const queryClient = useQueryClient();
 
   return trpc.appointments.sendReminder.useMutation({
-    onMutate: async ({ appointmentId,channels, scheduledFor }) => {
+    onMutate: async ({ appointmentId, channels, scheduledFor }) => {
       // Healthcare audit: Log reminder sending
       console.log('[Healthcare Audit] Appointment reminder initiated', {
         appointmentId,

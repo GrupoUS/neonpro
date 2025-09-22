@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react';
 export function useLocalStorage<T>(key: string, initialValue: T) {
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
-  const [storedValue, setStoredValue] = useState<.*>(() => {
+  const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === 'undefined') {
       return initialValue;
     }
@@ -75,7 +75,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 
 // Enhanced version with encryption for sensitive data
 export function useSecureLocalStorage<T>(key: string, initialValue: T) {
-  const [storedValue, setStoredValue] = useState<.*>(() => {
+  const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === 'undefined') {
       return initialValue;
     }
@@ -123,7 +123,7 @@ export function useSecureLocalStorage<T>(key: string, initialValue: T) {
 
 // Session storage version for temporary data
 export function useSessionStorage<T>(key: string, initialValue: T) {
-  const [storedValue, setStoredValue] = useState<.*>(() => {
+  const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === 'undefined') {
       return initialValue;
     }
@@ -173,7 +173,7 @@ export function useCompliantLocalStorage<T>(
     autoCleanup = true,
   } = options;
 
-  const [storedValue, setStoredValue] = useState<.*>(() => {
+  const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === 'undefined') {
       return initialValue;
     }

@@ -298,7 +298,8 @@ export function AccessiblePatientList({
     [onPatientSelect, announce],
   );
 
-  return (<div
+  return (
+    <div
       className={className}
       role='list'
       aria-label={`Lista de pacientes. ${patients.length} pacientes encontrados.`}

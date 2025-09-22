@@ -47,7 +47,7 @@ function SettingsPage() {
   const { shouldShowUpgradePrompt, upgradeUrl } = useSubscriptionPrompt();
 
   // Chat settings state
-  const [defaultModel, setDefaultModel] = React.useState<.*>(() => {
+  const [defaultModel, setDefaultModel] = React.useState<string>(() => {
     if (typeof window === 'undefined') return 'gpt-5-mini';
     return localStorage.getItem('neonpro-default-chat-model') || 'gpt-5-mini';
   });

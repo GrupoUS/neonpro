@@ -480,7 +480,8 @@ export function PatientDocumentUpload({
   const totalDocuments = existingDocuments.length + uploadQueue.size;
   const canUpload = !disabled && totalDocuments < maxFiles;
 
-  return (<DndContext
+  return (
+    <DndContext
       onDragStart={({ active }) => setActiveId(active.id)}
       onDragEnd={() => setActiveId(null)}
     >
@@ -630,7 +631,8 @@ export function PatientDocumentUpload({
                     )}
                   </div>
 
-                  {state.status === 'error' && (<Button
+                  {state.status === 'error' && (
+                    <Button
                       variant='ghost'
                       size='sm'
                       onClick={() => {

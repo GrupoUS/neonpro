@@ -66,7 +66,7 @@ export async function importHealthcareModule<T = any>(
 
   try {
     // Create timeout promise for non-critical modules
-    const timeoutPromise = new Promise<never>(_(_,_reject) => {
+    const timeoutPromise = new Promise<never>((_, reject) => {
       if (!critical) {
         setTimeout(() => reject(new Error(`Module ${modulePath} load timeout`)),
           timeout,

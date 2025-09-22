@@ -23,7 +23,8 @@ export function EnhancedTable<T extends Record<string, any>>({
   columns,
   data,
 }: EnhancedTableProps<T>) {
-  return (<div className='w-full'>
+  return (
+    <div className='w-full'>
       <Table>
         <TableHeader>
           <TableRow>
@@ -31,7 +32,8 @@ export function EnhancedTable<T extends Record<string, any>>({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((row, rIdx) => (<TableRow key={rIdx}>
+          {data.map((row, rIdx) => (
+            <TableRow key={rIdx}>
               {columns.map((col, cIdx) => {
                 const getValue = () => {
                   if (!col.accessorKey) return undefined;

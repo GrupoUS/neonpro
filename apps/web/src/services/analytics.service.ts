@@ -548,7 +548,8 @@ class AnalyticsService {
         }
       });
 
-      return Array.from(serviceStats.values()).sort((a, b) => b.appointmentCount - a.appointmentCount,
+      return Array.from(serviceStats.values()).sort((a, b) =>
+        b.appointmentCount - a.appointmentCount
       );
     } catch (_error) {
       console.error('Error getting popular services:', error);

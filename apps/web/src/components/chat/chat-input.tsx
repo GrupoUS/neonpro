@@ -3,7 +3,8 @@ import { AIPrompt } from '@/components/ui/ai-chat';
 import { useI18n } from '@/i18n/i18n';
 
 export function ChatInput({
-  disabled,onSubmit,
+  disabled,
+  onSubmit,
 }: {
   disabled?: boolean;
   onSubmit?: (text: string) => void;

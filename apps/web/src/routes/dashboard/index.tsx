@@ -88,9 +88,7 @@ function DashboardComponent() {
         .lte('transaction_date', end.toISOString())
         .eq('transaction_type', 'income');
       if (error) throw error;
-      const total = (data ?? []).reduce((sum, t: any) => sum + (t?.amount ?? 0),
-        0,
-      );
+      const total = (data ?? []).reduce((sum, t: any) => sum + (t?.amount ?? 0), 0);
       return total;
     },
   });

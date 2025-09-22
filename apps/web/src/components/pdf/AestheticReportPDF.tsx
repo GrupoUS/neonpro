@@ -47,7 +47,9 @@ interface AestheticReportPDFProps {
 }
 
 const CheckboxComponent: React.FC<{ checked: boolean; label: string }> = ({
-  checked,label, }) => (
+  checked,
+  label,
+}) => (
   <View style={styles.checkboxRow}>
     <View
       style={[styles.checkbox, ...(checked ? [styles.checkboxChecked] : [])]}

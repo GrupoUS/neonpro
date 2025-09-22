@@ -61,8 +61,7 @@ export const MagicCard = React.forwardRef<HTMLDivElement, MagicCardProps>(
     const Comp = asChild ? Slot : 'div';
     const containerRef = React.useRef<HTMLDivElement | null>(null);
 
-    React.useImperativeHandle(_ref,() containerRef.current as HTMLDivElement,
-    );
+    React.useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);
 
     const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
       const el = containerRef.current;

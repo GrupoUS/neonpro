@@ -9,7 +9,6 @@ import {
   Calendar,
   Clock,
   Eye,
-  EyeOff,
   FileText,
   Heart,
   Mail,
@@ -238,7 +237,8 @@ export function MobilePatientCard({
               <div className='flex items-center gap-2'>
                 <User className='h-3 w-3' />
                 <span className='font-mono text-xs'>{displayCpf}</span>
-                {dataVisibilityLevel !== 'full' && onVisibilityChange && (<Button
+                {dataVisibilityLevel !== 'full' && onVisibilityChange && (
+                  <Button
                     variant='ghost'
                     size='sm'
                     className='h-5 w-5 p-0'
@@ -289,7 +289,8 @@ export function MobilePatientCard({
                 <Calendar className='mr-2 h-4 w-4' />
                 Agendar consulta
               </DropdownMenuItem>
-              {consentInfo.dataProcessing && (<DropdownMenuItem onClick={() => handleAction('message')}>
+              {consentInfo.dataProcessing && (
+                <DropdownMenuItem onClick={() => handleAction('message')}>
                   <MessageCircle className='mr-2 h-4 w-4' />
                   Enviar mensagem
                 </DropdownMenuItem>

@@ -148,7 +148,8 @@ export function ProcedureRecommendations({
 
       {/* Alertas de Contraindicação */}
       {(criticalContraindications.length > 0
-        || warningContraindications.length > 0) && (<div className='space-y-3'>
+        || warningContraindications.length > 0) && (
+        <div className='space-y-3'>
           {criticalContraindications.map((alert, _index) => (
             <Alert key={index} variant='destructive'>
               <XCircle className='h-4 w-4' />

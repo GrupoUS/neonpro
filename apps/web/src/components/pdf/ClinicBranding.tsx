@@ -20,7 +20,8 @@ interface ClinicHeaderProps {
 }
 
 export const ClinicHeader: React.FC<ClinicHeaderProps> = ({
-  clinicData,documentTitle,
+  clinicData,
+  documentTitle,
   _patientName,
   _generatedAt = new Date(),
 }) => {
@@ -66,7 +67,10 @@ interface DocumentInfoProps {
 }
 
 export const DocumentInfo: React.FC<DocumentInfoProps> = ({
-  title,patientName, generatedAt, }) => {
+  title,
+  patientName,
+  generatedAt,
+}) => {
   return (
     <View>
       <Text style={styles.title}>{title}</Text>

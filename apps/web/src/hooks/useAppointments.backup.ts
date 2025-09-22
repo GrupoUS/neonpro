@@ -69,7 +69,8 @@ export function useCreateAppointment() {
 
   return useMutation({
     mutationFn: async ({
-      data,clinicId,
+      data,
+      clinicId,
     }: {
       data: CreateAppointmentData;
       clinicId: string;
@@ -160,7 +161,8 @@ export function useUpdateAppointment() {
 
   return useMutation({
     mutationFn: async ({
-      appointmentId,updates,
+      appointmentId,
+      updates,
       clinicId: clinicId,
     }: {
       appointmentId: string;
@@ -179,7 +181,7 @@ export function useUpdateAppointment() {
       );
     },
 
-    onMutate: async ({ appointmentId,updates, clinicId }) => {
+    onMutate: async ({ appointmentId, updates, clinicId }) => {
       // clinicId used for query keys
       // Cancel outgoing refetches
       await queryClient.cancelQueries({
@@ -257,7 +259,8 @@ export function useDeleteAppointment() {
   return useMutation({
     mutationFn: async ({
       appointmentId,
-      clinicId: clinicId,reason,
+      clinicId: clinicId,
+      reason,
     }: {
       appointmentId: string;
       clinicId: string;

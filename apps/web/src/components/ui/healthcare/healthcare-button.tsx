@@ -127,148 +127,166 @@ export interface HealthcareButtonProps
  * Designed for healthcare applications with accessibility focus
  */
 const HealthcareButton = React.forwardRef<HTMLButtonElement, HealthcareButtonProps>(({
-    className,variant, size, isLoading = false, mobileOptimized = true, isEmergency = false, isMedical = false, requiresConfirmation = false,confirmationMessage, ariaLabel,ariaDescription, accessibilityAction = 'press',keyboardShortcut, touchTargetSize,healthcareContext, children,disabled, onClick, ...props
-  }, ref) => {
-    const { isMobile, touchSupported } = useMobileOptimization();
+  className,
+  variant,
+  size,
+  isLoading = false,
+  mobileOptimized = true,
+  isEmergency = false,
+  isMedical = false,
+  requiresConfirmation = false,
+  confirmationMessage,
+  ariaLabel,
+  ariaDescription,
+  accessibilityAction = 'press',
+  keyboardShortcut,
+  touchTargetSize,
+  healthcareContext,
+  children,
+  disabled,
+  onClick,
+  ...props
+}, ref) => {
+  const { isMobile, touchSupported } = useMobileOptimization();
 
-    // Handle keyboard navigation
-    const handleKeyDown = useKeyboardNavigation(() => handleClick(new Event('click') as any),
-      () => handleClick(new Event('click') as any), // Space key
-      undefined, // Escape handled by parent
-    );
+  // Handle keyboard navigation
+  const handleKeyDown = useKeyboardNavigation(
+    () => handleClick(new Event('click') as any),
+    () => handleClick(new Event('click') as any), // Space key
+    undefined, // Escape handled by parent
+  );
 
-    // Handle click with confirmation
-    const handleClick = React.useCallback(
-      (e: React.MouseEvent<HTMLButtonElement>) => {
-        if (disabled || isLoading) {
-          e.preventDefault();
-          return;
-        }
+  // Handle click with confirmation
+  const handleClick = React.useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      if (disabled || isLoading) {
+        e.preventDefault();
+        return;
+      }
 
-        if (requiresConfirmation) {
-          const message = confirmationMessage
-            || (isEmergency
-              ? 'Esta é uma ação de emergência. Deseja continuar?'
-              : 'Confirmar esta ação?');
+      if (requiresConfirmation) {
+        const message = confirmationMessage
+          || (isEmergency
+            ? 'Esta é uma ação de emergência. Deseja continuar?'
+            : 'Confirmar esta ação?');
 
-          if (confirm(message)) {
-            onClick?.(e);
-          }
-        } else {
+        if (confirm(message)) {
           onClick?.(e);
         }
-      },
-      [disabled, isLoading, requiresConfirmation, confirmationMessage, isEmergency, onClick],
-    );
-
-    // Determine variant based on props
-    const buttonVariant = React.useMemo(() => {
-      if (isEmergency) return 'emergency';
-      if (isMedical) return 'medical';
-      return variant;
-    }, [isEmergency, isMedical, variant]);
-
-    // Adjust size for mobile and accessibility
-    const buttonSize = React.useMemo(() => {
-      if (touchTargetSize === 'large') return 'xl';
-      if (touchTargetSize === 'small') return 'sm';
-
-      // Auto-adjust based on device and context
-      if (isMobile || isEmergency) {
-        return size === 'icon' || size === 'iconLg' ? 'lg' : 'lg';
+      } else {
+        onClick?.(e);
       }
+    },
+    [disabled, isLoading, requiresConfirmation, confirmationMessage, isEmergency, onClick],
+  );
 
-      return size;
-    }, [touchTargetSize, isMobile, isEmergency, size]);
+  // Determine variant based on props
+  const buttonVariant = React.useMemo(() => {
+    if (isEmergency) return 'emergency';
+    if (isMedical) return 'medical';
+    return variant;
+  }, [isEmergency, isMedical, variant]);
 
-    // Generate accessibility attributes
-    const accessibilityProps = React.useMemo(() => {
-      const props: Record<string, string> = {};
+  // Adjust size for mobile and accessibility
+  const buttonSize = React.useMemo(() => {
+    if (touchTargetSize === 'large') return 'xl';
+    if (touchTargetSize === 'small') return 'sm';
 
-      if (ariaLabel) {
-        props['aria-label'] = ariaLabel;
-      }
+    // Auto-adjust based on device and context
+    if (isMobile || isEmergency) {
+      return size === 'icon' || size === 'iconLg' ? 'lg' : 'lg';
+    }
 
-      if (ariaDescription) {
-        props['aria-describedby'] = ariaDescription;
-      }
+    return size;
+  }, [touchTargetSize, isMobile, isEmergency, size]);
 
-      if (healthcareContext) {
-        props['data-healthcare-context'] = healthcareContext;
-      }
+  // Generate accessibility attributes
+  const accessibilityProps = React.useMemo(() => {
+    const props: Record<string, string> = {};
 
-      if (keyboardShortcut) {
-        props['data-keyboard-shortcut'] = keyboardShortcut;
-        props['title'] = `${ariaLabel || 'Botão'} (${keyboardShortcut})`;
-      }
+    if (ariaLabel) {
+      props['aria-label'] = ariaLabel;
+    }
 
-      if (accessibilityAction) {
-        props['role'] = 'button';
-        props['data-action'] = accessibilityAction;
-      }
+    if (ariaDescription) {
+      props['aria-describedby'] = ariaDescription;
+    }
 
-      return props;
-    }, [ariaLabel, ariaDescription, healthcareContext, keyboardShortcut, accessibilityAction]);
+    if (healthcareContext) {
+      props['data-healthcare-context'] = healthcareContext;
+    }
 
-    // Loading state content
-    const loadingContent = React.useMemo(() => {
-      if (!isLoading) return null;
+    if (keyboardShortcut) {
+      props['data-keyboard-shortcut'] = keyboardShortcut;
+      props['title'] = `${ariaLabel || 'Botão'} (${keyboardShortcut})`;
+    }
 
-      return (
-        <>
-          <svg
-            className='animate-spin h-4 w-4'
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            aria-hidden='true'
-          >
-            <circle
-              className='opacity-25'
-              cx='12'
-              cy='12'
-              r='10'
-              stroke='currentColor'
-              strokeWidth='4'
-            />
-            <path
-              className='opacity-75'
-              fill='currentColor'
-              d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-            />
-          </svg>
-          <span className='sr-only'>Carregando...</span>
-        </>
-      );
-    }, [isLoading]);
+    if (accessibilityAction) {
+      props['role'] = 'button';
+      props['data-action'] = accessibilityAction;
+    }
+
+    return props;
+  }, [ariaLabel, ariaDescription, healthcareContext, keyboardShortcut, accessibilityAction]);
+
+  // Loading state content
+  const loadingContent = React.useMemo(() => {
+    if (!isLoading) return null;
 
     return (
-      <button
-        ref={ref}
-        className={cn(
-          healthcareButtonVariants({
-            variant: buttonVariant,
-            size: buttonSize,
-            mobileOptimized: mobileOptimized && touchSupported,
-            loading: isLoading,
-          }),
-          // Emergency animations
-          isEmergency && 'animate-pulse',
-          // Disabled states
-          (disabled || isLoading) && 'cursor-not-allowed',
-          className,
-        )}
-        disabled={disabled || isLoading}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        {...accessibilityProps}
-        {...props}
-      >
-        {isLoading ? loadingContent : children}
-      </button>
+      <>
+        <svg
+          className='animate-spin h-4 w-4'
+          xmlns='http://www.w3.org/2000/svg'
+          fill='none'
+          viewBox='0 0 24 24'
+          aria-hidden='true'
+        >
+          <circle
+            className='opacity-25'
+            cx='12'
+            cy='12'
+            r='10'
+            stroke='currentColor'
+            strokeWidth='4'
+          />
+          <path
+            className='opacity-75'
+            fill='currentColor'
+            d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+          />
+        </svg>
+        <span className='sr-only'>Carregando...</span>
+      </>
     );
-  },
-);
+  }, [isLoading]);
+
+  return (
+    <button
+      ref={ref}
+      className={cn(
+        healthcareButtonVariants({
+          variant: buttonVariant,
+          size: buttonSize,
+          mobileOptimized: mobileOptimized && touchSupported,
+          loading: isLoading,
+        }),
+        // Emergency animations
+        isEmergency && 'animate-pulse',
+        // Disabled states
+        (disabled || isLoading) && 'cursor-not-allowed',
+        className,
+      )}
+      disabled={disabled || isLoading}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+      {...accessibilityProps}
+      {...props}
+    >
+      {isLoading ? loadingContent : children}
+    </button>
+  );
+});
 
 HealthcareButton.displayName = 'HealthcareButton';
 

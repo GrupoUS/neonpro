@@ -423,10 +423,12 @@ export class BrazilianHealthcareComplianceValidator {
     }
 
     // Calculate overall score
-    const totalRequirements = Object.values(results.standards).reduce((sum, std) => sum + std.requirements.length,
+    const totalRequirements = Object.values(results.standards).reduce(
+      (sum, std) => sum + std.requirements.length,
       0,
     );
-    const passedRequirements = Object.values(results.standards).reduce((sum, std) => sum + std.requirements.filter(req => req.passed).length,
+    const passedRequirements = Object.values(results.standards).reduce(
+      (sum, std) => sum + std.requirements.filter(req => req.passed).length,
       0,
     );
 

@@ -379,10 +379,8 @@ export function EmergencyEscalation({
     // Start contacting emergency services
     for (const contact of contacts) {
       setTimeout(() => {
-          contactEmergencyService(contact);
-        },
-        contact.type === 'samu' ? 0 : 5000,
-      ); // SAMU first, others after 5s
+        contactEmergencyService(contact);
+      }, contact.type === 'samu' ? 0 : 5000); // SAMU first, others after 5s
     }
 
     onEmergencyActivated(emergencyData);
@@ -917,7 +915,8 @@ export function EmergencyEscalation({
           </div>
 
           <div className='flex space-x-2'>
-            {!isEmergencyActive && (<>
+            {!isEmergencyActive && (
+              <>
                 <Button variant='outline' onClick={onClose}>
                   Cancelar
                 </Button>

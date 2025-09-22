@@ -585,7 +585,7 @@ describe(('Supabase Performance Tests', () => {
         // Mock subscription setup
         const subscription = testClient
           .channel(`test-${test.table}`)
-          .on(_'postgres_changes',
+          .on('postgres_changes',
             {
               event: '*',
               schema: 'public',

@@ -134,13 +134,11 @@ export function useServicesByCategory(clinicId?: string) {
     if (!services || !categories) return {};
 
     return categories.reduce((acc, category) => {
-        acc[category] = services.filter(
-          service => service.category === category,
-        );
-        return acc;
-      },
-      {} as Record<string, ServiceType[]>,
-    );
+      acc[category] = services.filter(
+        service => service.category === category,
+      );
+      return acc;
+    }, {} as Record<string, ServiceType[]>);
   }, [services, categories]);
 
   return servicesByCategory;

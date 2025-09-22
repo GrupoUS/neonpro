@@ -429,7 +429,7 @@ export function BulkOperationsManager({
       }
 
       try {
-        await measurePerformance(_'bulk-undo',async () => {
+        await measurePerformance('bulk-undo', async () => {
           // Simulate undo operation
           await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -702,7 +702,8 @@ export function BulkOperationsManager({
                       <TableCell className='text-right'>
                         <div className='flex items-center justify-end gap-1'>
                           {operation.undoable
-                            && operation.status === 'completed' && (<Button
+                            && operation.status === 'completed' && (
+                            <Button
                               variant='outline'
                               size='sm'
                               onClick={() => {

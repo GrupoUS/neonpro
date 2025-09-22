@@ -132,15 +132,23 @@ export interface HealthcareCommunicationSystemProps {
 }
 
 export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSystemProps> = ({
-  userId,userRole, clinicContext = 'Clínica Estética NeonPro', emergencyEnabled = true, videoConsultationEnabled = true,
+  userId,
+  userRole,
+  clinicContext = 'Clínica Estética NeonPro',
+  emergencyEnabled = true,
+  videoConsultationEnabled = true,
   lgpdSettings = {
     dataRetentionDays: 365,
     requireConsentForMessages: true,
-    enableMessageEncryption: true, },
+    enableMessageEncryption: true,
+  },
   accessibilitySettings = {
     highContrast: false,
     largeText: false,
-    reducedMotion: false, },className, }) => {
+    reducedMotion: false,
+  },
+  className,
+}) => {
   // State management
   const [messages, setMessages] = useState<Message[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -796,7 +804,8 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
                       />
 
                       <div className='absolute right-2 top-1/2 transform -translate-y-1/2 flex items-center gap-1'>
-                        {emergencyEnabled && (<HealthcareButton
+                        {emergencyEnabled && (
+                          <HealthcareButton
                             variant='ghost'
                             size='sm'
                             onClick={() => sendMessage(newMessage, 'emergency')}
@@ -825,7 +834,8 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
                   </div>
 
                   {/* Attachment Menu */}
-                  {showAttachmentMenu && (<Card className='mt-2'>
+                  {showAttachmentMenu && (
+                    <Card className='mt-2'>
                       <CardContent className='p-2'>
                         <div className='grid grid-cols-4 gap-2'>
                           <HealthcareButton
@@ -916,7 +926,8 @@ export const HealthcareCommunicationSystem: React.FC<HealthcareCommunicationSyst
         </div>
 
         {/* Notifications Panel */}
-        {activeTab === 'notifications' && (<div className='absolute inset-0 bg-white z-10 p-4'>
+        {activeTab === 'notifications' && (
+          <div className='absolute inset-0 bg-white z-10 p-4'>
             <div className='max-w-2xl mx-auto'>
               <div className='flex items-center justify-between mb-6'>
                 <h2 className='text-xl font-semibold text-slate-900'>

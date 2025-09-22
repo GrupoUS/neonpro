@@ -289,7 +289,8 @@ export function AIChat({ className, initialContext }: AIChatProps) {
             )}
 
             {/* Render action buttons */}
-            {message.actions && message.actions.length > 0 && (<div className='flex gap-2 mt-3'>
+            {message.actions && message.actions.length > 0 && (
+              <div className='flex gap-2 mt-3'>
                 {message.actions.map(action => (
                   <button
                     key={action.id}

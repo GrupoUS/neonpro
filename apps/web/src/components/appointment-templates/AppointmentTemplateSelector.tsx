@@ -138,7 +138,8 @@ export function AppointmentTemplateSelector({
             {/* Default Templates Section */}
             {selectedCategory === 'all'
               && defaultTemplates
-              && defaultTemplates.length > 0 && (<div className='space-y-2'>
+              && defaultTemplates.length > 0 && (
+              <div className='space-y-2'>
                 <div className='flex items-center gap-2'>
                   <Star className='h-4 w-4 text-yellow-500' />
                   <h3 className='text-sm font-medium'>
@@ -168,16 +169,15 @@ export function AppointmentTemplateSelector({
               <div className='grid gap-2'>
                 {filteredTemplates.length > 0
                   ? (_filteredTemplates.map(template => (
-                      <TemplateCard
-                        key={template.id}
-                        template={template}
-                        isSelected={selectedTemplateId === template.id}
-                        onSelect={() => onSelectTemplate(template)}
-                        formatPrice={formatPrice}
-                        formatDuration={formatDuration}
-                      />
-                    ))
-                  )
+                    <TemplateCard
+                      key={template.id}
+                      template={template}
+                      isSelected={selectedTemplateId === template.id}
+                      onSelect={() => onSelectTemplate(template)}
+                      formatPrice={formatPrice}
+                      formatDuration={formatDuration}
+                    />
+                  )))
                   : (
                     <div className='text-center py-8 text-muted-foreground'>
                       <p>Nenhum template encontrado</p>

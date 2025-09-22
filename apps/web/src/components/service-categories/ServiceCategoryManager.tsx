@@ -349,7 +349,8 @@ export function ServiceCategoryManager({
               Atualize as informações da categoria
             </DialogDescription>
           </DialogHeader>
-          {editingCategory && (<ServiceCategoryForm
+          {editingCategory && (
+            <ServiceCategoryForm
               category={editingCategory}
               clinicId={clinicId}
               onSuccess={() => setEditingCategory(null)}

@@ -332,7 +332,8 @@ export function AppointmentBooking({
             </div>
 
             {/* Book Appointment Button */}
-            {selectedTime && (<div className='mt-4'>
+            {selectedTime && (
+              <div className='mt-4'>
                 <Dialog
                   open={isBookingDialogOpen}
                   onOpenChange={setIsBookingDialogOpen}

@@ -171,7 +171,10 @@ const updatePredictionStatus = async (data: {
  * PredictionCard - Individual prediction display component
  */
 const PredictionCard = ({
-  prediction,onStatusUpdate, lgpdConsent, mobileOptimized = true,
+  prediction,
+  onStatusUpdate,
+  lgpdConsent,
+  mobileOptimized = true,
 }: {
   prediction: NoShowPrediction;
   onStatusUpdate: (id: string, status: string, action?: string) => void;
@@ -366,7 +369,8 @@ const PredictionCard = ({
 
         {/* Action Buttons */}
         <div className='flex gap-2 pt-3 border-t'>
-          {prediction.status === 'pending' && (<>
+          {prediction.status === 'pending' && (
+            <>
               <Button
                 variant='outline'
                 size='sm'
@@ -397,7 +401,8 @@ const PredictionCard = ({
             </>
           )}
 
-          {prediction.status === 'contacted' && (<Button
+          {prediction.status === 'contacted' && (
+            <Button
               variant='outline'
               size='sm'
               onClick={() =>
@@ -430,17 +435,23 @@ const PredictionCard = ({
  * NoShowAlerts - Main component
  */
 export const NoShowAlerts = ({
-  timeRange: initialTimeRange = '48h', riskThreshold = 50, highRiskOnly = false,
+  timeRange: initialTimeRange = '48h',
+  riskThreshold = 50,
+  highRiskOnly = false,
   healthcareProfessional: healthcareProfessional, // unused by design
   lgpdConsent = {
     canViewPatientData: true,
     canSendNotifications: true,
-    consentLevel: 'full', },
+    consentLevel: 'full',
+  },
   alertSettings = {
     enableNotifications: true,
     enableSMS: false,
     enableEmail: true,
-    autoActions: false, }, mobileOptimized = true, testId = 'noshow-alerts',
+    autoActions: false,
+  },
+  mobileOptimized = true,
+  testId = 'noshow-alerts',
 }: NoShowAlertsProps) => {
   const [timeRange, setTimeRange] = useState(initialTimeRange);
   const [showHighRiskOnly, setShowHighRiskOnly] = useState(highRiskOnly);
@@ -457,7 +468,11 @@ export const NoShowAlerts = ({
     error,
   } = useQuery({
     queryKey: [
-      'noshow-predictions',timeRange, riskThreshold,showHighRiskOnly, ],
+      'noshow-predictions',
+      timeRange,
+      riskThreshold,
+      showHighRiskOnly,
+    ],
     queryFn: () =>
       fetchNoShowPredictions({
         timeRange,
@@ -520,7 +535,8 @@ export const NoShowAlerts = ({
     );
   }
 
-  return (<div className='space-y-6' data-testid={testId}>
+  return (
+    <div className='space-y-6' data-testid={testId}>
       {/* Header */}
       <div className='flex items-center justify-between'>
         <div>

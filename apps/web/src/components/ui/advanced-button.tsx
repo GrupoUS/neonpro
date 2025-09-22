@@ -252,7 +252,8 @@ function UniversalButton({
     );
   }
 
-  return (<Comp
+  return (
+    <Comp
       data-slot='universal-button'
       className={combinedClassName}
       style={combinedStyle}

@@ -240,7 +240,8 @@ export interface NeumorphicButtonProps
   // asChild removed - not used in implementation
 }
 
-const NeumorphicButton = forwardRef<HTMLButtonElement, NeumorphicButtonProps>(({ className,variant, size, ...props }, ref) => {
+const NeumorphicButton = forwardRef<HTMLButtonElement, NeumorphicButtonProps>(
+  ({ className, variant, size, ...props }, ref) => {
     return (
       <button
         className={cn(neumorphicButtonVariants({ variant, size, className }))}
@@ -259,7 +260,8 @@ export interface NeumorphicCardProps
   // asChild removed - not used in implementation
 }
 
-const NeumorphicCard = forwardRef<HTMLDivElement, NeumorphicCardProps>(({ className,variant, size, ...props }, ref) => {
+const NeumorphicCard = forwardRef<HTMLDivElement, NeumorphicCardProps>(
+  ({ className, variant, size, ...props }, ref) => {
     return (
       <div
         className={cn(neumorphicCardVariants({ variant, size, className }))}
@@ -276,7 +278,8 @@ export interface NeumorphicInputProps
   extends React.InputHTMLAttributes<HTMLInputElement>, VariantProps<typeof neumorphicInputVariants>
 {}
 
-const NeumorphicInput = forwardRef<HTMLInputElement, NeumorphicInputProps>(({ className,variant, size,type, ...props }, ref) => {
+const NeumorphicInput = forwardRef<HTMLInputElement, NeumorphicInputProps>(
+  ({ className, variant, size, type, ...props }, ref) => {
     return (
       <input
         type={type}
@@ -296,7 +299,8 @@ export interface NeumorphicTextareaProps
     VariantProps<typeof neumorphicInputVariants>
 {}
 
-const NeumorphicTextarea = forwardRef<HTMLTextAreaElement, NeumorphicTextareaProps>(({ className,variant, size, ...props }, ref) => {
+const NeumorphicTextarea = forwardRef<HTMLTextAreaElement, NeumorphicTextareaProps>(
+  ({ className, variant, size, ...props }, ref) => {
     return (
       <textarea
         className={cn(
@@ -320,7 +324,8 @@ export interface PatientStatusBadgeProps {
   className?: string;
 }
 
-const PatientStatusBadge = forwardRef<HTMLSpanElement, PatientStatusBadgeProps>(({ status,className, ...props }, ref) => {
+const PatientStatusBadge = forwardRef<HTMLSpanElement, PatientStatusBadgeProps>(
+  ({ status, className, ...props }, ref) => {
     const statusStyles = {
       active:
         'bg-gradient-to-r from-green-400 to-green-500 text-white shadow-[2px_2px_4px_#22c55e80, -2px_-2px_4px_#4ade8080]',
@@ -359,7 +364,8 @@ export interface MedicalAlertCardProps extends React.HTMLAttributes<HTMLDivEleme
   icon?: React.ReactNode;
 }
 
-const MedicalAlertCard = forwardRef<HTMLDivElement, MedicalAlertCardProps>(({ alertType,title, description,icon, className,children, ...props }, ref) => {
+const MedicalAlertCard = forwardRef<HTMLDivElement, MedicalAlertCardProps>(
+  ({ alertType, title, description, icon, className, children, ...props }, ref) => {
     const alertStyles = {
       info:
         'from-blue-50 to-blue-100 border-l-blue-500 shadow-[6px_6px_12px_#c7d2fe, -6px_-6px_12px_#ffffff]',
@@ -408,7 +414,8 @@ export interface ClinicalActionPanelProps extends React.HTMLAttributes<HTMLDivEl
   actions?: React.ReactNode;
 }
 
-const ClinicalActionPanel = forwardRef<HTMLDivElement, ClinicalActionPanelProps>(({ title,subtitle, actions,className, children, ...props }, ref) => {
+const ClinicalActionPanel = forwardRef<HTMLDivElement, ClinicalActionPanelProps>(
+  ({ title, subtitle, actions, className, children, ...props }, ref) => {
     return (
       <div
         className={cn(

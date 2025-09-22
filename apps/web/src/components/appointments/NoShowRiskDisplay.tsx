@@ -143,10 +143,8 @@ export function NoShowRiskDisplay({
   // Auto-refresh risk data every 30 minutes
   useEffect(() => {
     const interval = setInterval(() => {
-        refetchRisk();
-      },
-      30 * 60 * 1000,
-    );
+      refetchRisk();
+    }, 30 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, [refetchRisk]);

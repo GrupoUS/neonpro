@@ -51,7 +51,10 @@ function useSidebar() {
 function SidebarProvider({
   defaultOpen = true,
   open: openProp,
-  onOpenChange: setOpenProp,className, style,children,
+  onOpenChange: setOpenProp,
+  className,
+  style,
+  children,
   ...props
 }: React.ComponentProps<'div'> & {
   defaultOpen?: boolean;
@@ -107,16 +110,14 @@ function SidebarProvider({
   const state = open ? 'expanded' : 'collapsed';
 
   const contextValue = React.useMemo<SidebarContextProps>(() => ({
-      state,
-      open,
-      setOpen,
-      isMobile,
-      openMobile,
-      setOpenMobile,
-      toggleSidebar,
-    }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
-  );
+    state,
+    open,
+    setOpen,
+    isMobile,
+    openMobile,
+    setOpenMobile,
+    toggleSidebar,
+  }), [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]);
 
   return (
     <SidebarContext.Provider value={contextValue}>

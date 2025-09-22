@@ -161,7 +161,8 @@ export function useUpdatePatient() {
 
   return useMutation({
     mutationFn: async ({
-      patientId,updates,
+      patientId,
+      updates,
     }: {
       patientId: string;
       updates: any;
@@ -234,7 +235,7 @@ export function useUpdatePatient() {
     },
 
     // Always refetch after mutation
-    onSettled: (_data,error, { patientId }) => {
+    onSettled: (_data, error, { patientId }) => {
       queryClient.invalidateQueries({
         queryKey: healthcareKeys.patient(patientId),
       });
@@ -394,7 +395,10 @@ export function useEmergencyDetection() {
 
   return useMutation({
     mutationFn: async ({
-      patientId,severity, description,symptoms,
+      patientId,
+      severity,
+      description,
+      symptoms,
     }: {
       patientId: string;
       severity: 'low' | 'medium' | 'high' | 'critical';

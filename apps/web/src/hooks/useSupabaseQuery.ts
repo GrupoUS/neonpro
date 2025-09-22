@@ -36,11 +36,14 @@ export function useSupabaseRealTimeQuery<T = any>(
   const setupRealTimeSubscription = () => {
     const channel = supabase
       .channel(`${table}-realtime`)
-      .on(_'postgres_changes',
+      .on(
+        'postgres_changes',
         {
           event: '*',
           schema: 'public',
-          table: table, },() {
+          table: table,
+        },
+        () => {
           // Invalidar query quando houver mudanças
           queryClient.invalidateQueries({ queryKey });
         },
@@ -84,31 +87,32 @@ export function usePatients(options = {}) {
 
 // Hook para queries de agendamentos
 export function useAppointments(options = {}): any {
-  return useSupabaseQuery(['appointments'],async () => {
-      const { data, error } = await supabase
-        .from('appointments')
-        .select(
-          `
+  return useSupabaseQuery(['appointments'], async () => {
+    const { data, error } = await supabase
+      .from('appointments')
+      .select(
+        `
           *,
           patient:patients(*),
           professional:professionals(*),
           _service:services(*)
         `,
-        )
-        .order('start_time', { ascending: true });
+      )
+      .order('start_time', { ascending: true });
 
-      return { data, error };
-    },
-    {
-      staleTime: 2 * 60 * 1000,
-      ...options,
-    },
-  );
+    return { data, error };
+  }, {
+    staleTime: 2 * 60 * 1000,
+    ...options,
+  });
 }
 
 // Hook para agendamentos do dia com real-time
 export function useTodayAppointments(professionalId: string | undefined): any {
-  return useSupabaseRealTimeQuery(['appointments', 'today', professionalId ?? 'all'], 'appointments',async () => {
+  return useSupabaseRealTimeQuery(
+    ['appointments', 'today', professionalId ?? 'all'],
+    'appointments',
+    async () => {
       const today = new Date().toISOString().split('T')[0];
 
       let query = supabase
@@ -142,38 +146,36 @@ export function useTodayAppointments(professionalId: string | undefined): any {
 
 // Hook para estatísticas com real-time
 export function useStats() {
-  return useSupabaseRealTimeQuery(['stats'], 'patients',async () => {
-      const [
-        { count: totalPatients },
-        { count: totalAppointments },
-        { count: todayAppointments },
-      ] = await Promise.all([
-        supabase.from('patients').select('*', { count: 'exact', head: true }),
-        supabase
-          .from('appointments')
-          .select('*', { count: 'exact', head: true }),
-        supabase
-          .from('appointments')
-          .select('*', { count: 'exact', head: true })
-          .gte(
-            'start_time',
-            new Date().toISOString().split('T')[0] + 'T00:00:00',
-          ),
-      ]);
+  return useSupabaseRealTimeQuery(['stats'], 'patients', async () => {
+    const [
+      { count: totalPatients },
+      { count: totalAppointments },
+      { count: todayAppointments },
+    ] = await Promise.all([
+      supabase.from('patients').select('*', { count: 'exact', head: true }),
+      supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true }),
+      supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .gte(
+          'start_time',
+          new Date().toISOString().split('T')[0] + 'T00:00:00',
+        ),
+    ]);
 
-      return {
-        data: {
-          totalPatients: totalPatients || 0,
-          totalAppointments: totalAppointments || 0,
-          todayAppointments: todayAppointments || 0,
-        },
-        error: null,
-      };
-    },
-    {
-      staleTime: 5 * 60 * 1000,
-    },
-  );
+    return {
+      data: {
+        totalPatients: totalPatients || 0,
+        totalAppointments: totalAppointments || 0,
+        todayAppointments: todayAppointments || 0,
+      },
+      error: null,
+    };
+  }, {
+    staleTime: 5 * 60 * 1000,
+  });
 }
 
 // Hook genérico para mutations do Supabase
@@ -189,7 +191,9 @@ export function useSupabaseMutation(
 
   return useMutation({
     mutationFn: async ({
-      data,id, action,
+      data,
+      id,
+      action,
     }: {
       data?: any;
       id?: string;
@@ -244,7 +248,7 @@ export function useSupabaseMutation(
 
       options.onSuccess?.(data);
     },
-    onError: (_error: any) => {
+    onError: (error: any) => {
       console.error(`Error in ${table} mutation:`, error);
 
       // Mostrar toast de erro
@@ -345,7 +349,7 @@ export function useRealTimeSubscription(
           ...filters,
         },
         payload => {
-          console.log(`Real-time update on ${table}:`, _payload);
+          console.log(`Real-time update on ${table}:`, payload);
 
           switch (payload.eventType) {
             case 'INSERT':

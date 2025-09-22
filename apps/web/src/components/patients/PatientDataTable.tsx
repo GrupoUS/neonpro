@@ -81,11 +81,11 @@ import { PatientCreationForm } from './PatientCreationForm';
 const TanStackTable = lazy(() => import('@tanstack/react-table'));
 
 // Import types from lazy-loaded module
-type ColumnDef<T> = any;
+type ColumnDef<_T> = any;
 type ColumnFiltersState = any;
 type FilterFn = any;
 type PaginationState = any;
-type Row<T> = any;
+type Row<_T> = any;
 type SortingState = any;
 type VisibilityState = any;
 
@@ -94,9 +94,7 @@ interface PatientDataTableProps {
 }
 
 // Custom filter function for multi-column searching
-const multiColumnFilterFn: FilterFn<PatientTableData> = (row, _columnId,
-  filterValue: string,
-) => {
+const multiColumnFilterFn: FilterFn<PatientTableData> = (row, _columnId, filterValue: string) => {
   const searchableRowContent = `${row.original.fullName} ${row.original.email || ''} ${
     row.original.phone || ''
   }`.toLowerCase();
@@ -104,9 +102,7 @@ const multiColumnFilterFn: FilterFn<PatientTableData> = (row, _columnId,
   return searchableRowContent.includes(searchTerm);
 };
 
-const statusFilterFn: FilterFn<PatientTableData> = (row, _columnId,
-  filterValue: string[],
-) => {
+const statusFilterFn: FilterFn<PatientTableData> = (row, _columnId, filterValue: string[]) => {
   if (!filterValue?.length) return true;
   const status = row.getValue(_columnId) as string;
   return filterValue.includes(status);
@@ -225,7 +221,7 @@ function PatientDataTableContent({
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
-    flexRender,
+    _flexRender,
   } = TanStackTable as any;
 
   // Fetch patients data with real-time updates
@@ -254,156 +250,153 @@ function PatientDataTableContent({
 
   // Define table columns
   const columns: ColumnDef<PatientTableData>[] = useMemo(() => [
-      {
-        id: 'select',
-        header: ({ table }) => (
-          <Checkbox
-            checked={table.getIsAllPageRowsSelected()
-              || (table.getIsSomePageRowsSelected() && 'indeterminate')}
-            onCheckedChange={(value: boolean | 'indeterminate') =>
-              table.toggleAllPageRowsSelected(Boolean(value))}
-            aria-label='Selecionar todos'
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value: boolean | 'indeterminate') =>
-              row.toggleSelected(Boolean(value))}
-            aria-label='Selecionar linha'
-          />
-        ),
-        size: 28,
-        enableSorting: false,
-        enableHiding: false,
-      },
-      {
-        header: 'Nome',
-        accessorKey: 'fullName',
-        cell: ({ row }) => (
-          <div className='flex items-center gap-3'>
-            <div className='flex size-8 shrink-0 items-center justify-center rounded-full bg-muted'>
-              <User className='size-4' />
-            </div>
-            <div>
-              <div className='font-medium'>{row.getValue('fullName')}</div>
-              {row.original.age && (
-                <div className='text-muted-foreground text-sm'>
-                  {row.original.age} anos
-                </div>
-              )}
-            </div>
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={table.getIsAllPageRowsSelected()
+            || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+          onCheckedChange={(value: boolean | 'indeterminate') =>
+            table.toggleAllPageRowsSelected(Boolean(value))}
+          aria-label='Selecionar todos'
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value: boolean | 'indeterminate') => row.toggleSelected(Boolean(value))}
+          aria-label='Selecionar linha'
+        />
+      ),
+      size: 28,
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      header: 'Nome',
+      accessorKey: 'fullName',
+      cell: ({ row }) => (
+        <div className='flex items-center gap-3'>
+          <div className='flex size-8 shrink-0 items-center justify-center rounded-full bg-muted'>
+            <User className='size-4' />
           </div>
-        ),
-        size: 200,
-        filterFn: multiColumnFilterFn,
-        enableHiding: false,
-      },
-      {
-        header: 'Contato',
-        id: 'contact',
-        cell: ({ row }) => (
-          <div className='space-y-1'>
-            {row.original.email && (
-              <div className='flex items-center gap-2 text-sm'>
-                <Mail className='size-3 text-muted-foreground' />
-                <span>{row.original.email}</span>
-              </div>
-            )}
-            {row.original.phone && (
-              <div className='flex items-center gap-2 text-sm'>
-                <Phone className='size-3 text-muted-foreground' />
-                <span>{formatPhone(row.original.phone)}</span>
+          <div>
+            <div className='font-medium'>{row.getValue('fullName')}</div>
+            {row.original.age && (
+              <div className='text-muted-foreground text-sm'>
+                {row.original.age} anos
               </div>
             )}
           </div>
-        ),
-        size: 220,
-      },
-      {
-        header: 'CPF',
-        accessorKey: 'cpf',
-        cell: ({ row }) => {
-          const cpf = row.getValue('cpf') as string;
-          if (!cpf) return <span className='text-muted-foreground'>—</span>;
+        </div>
+      ),
+      size: 200,
+      filterFn: multiColumnFilterFn,
+      enableHiding: false,
+    },
+    {
+      header: 'Contato',
+      id: 'contact',
+      cell: ({ row }) => (
+        <div className='space-y-1'>
+          {row.original.email && (
+            <div className='flex items-center gap-2 text-sm'>
+              <Mail className='size-3 text-muted-foreground' />
+              <span>{row.original.email}</span>
+            </div>
+          )}
+          {row.original.phone && (
+            <div className='flex items-center gap-2 text-sm'>
+              <Phone className='size-3 text-muted-foreground' />
+              <span>{formatPhone(row.original.phone)}</span>
+            </div>
+          )}
+        </div>
+      ),
+      size: 220,
+    },
+    {
+      header: 'CPF',
+      accessorKey: 'cpf',
+      cell: ({ row }) => {
+        const cpf = row.getValue('cpf') as string;
+        if (!cpf) return <span className='text-muted-foreground'>—</span>;
 
-          // Format CPF: 000.000.000-00
-          const cleanCPF = cpf.replace(/\D/g, '');
-          const formattedCPF = cleanCPF.replace(
-            /(\d{3})(\d{3})(\d{3})(\d{2})/,
-            '$1.$2.$3-$4',
-          );
-          return <span className='font-mono text-sm'>{formattedCPF}</span>;
-        },
-        size: 140,
+        // Format CPF: 000.000.000-00
+        const cleanCPF = cpf.replace(/\D/g, '');
+        const formattedCPF = cleanCPF.replace(
+          /(\d{3})(\d{3})(\d{3})(\d{2})/,
+          '$1.$2.$3-$4',
+        );
+        return <span className='font-mono text-sm'>{formattedCPF}</span>;
       },
-      {
-        header: 'Status',
-        accessorKey: 'status',
-        cell: ({ row }) => {
-          const status = row.getValue('status') as string;
-          return (
-            <Badge
-              className={cn(
-                status === 'Inactive'
-                  && 'bg-muted-foreground/60 text-primary-foreground',
-                status === 'Pending'
-                  && 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
-                status === 'Active'
-                  && 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
-              )}
-            >
-              {status === 'Active'
-                ? 'Ativo'
-                : status === 'Inactive'
-                ? 'Inativo'
-                : 'Pendente'}
-            </Badge>
-          );
-        },
-        size: 100,
-        filterFn: statusFilterFn,
+      size: 140,
+    },
+    {
+      header: 'Status',
+      accessorKey: 'status',
+      cell: ({ row }) => {
+        const status = row.getValue('status') as string;
+        return (
+          <Badge
+            className={cn(
+              status === 'Inactive'
+                && 'bg-muted-foreground/60 text-primary-foreground',
+              status === 'Pending'
+                && 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300',
+              status === 'Active'
+                && 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+            )}
+          >
+            {status === 'Active'
+              ? 'Ativo'
+              : status === 'Inactive'
+              ? 'Inativo'
+              : 'Pendente'}
+          </Badge>
+        );
       },
-      {
-        header: 'Última Visita',
-        accessorKey: 'lastVisit',
-        cell: ({ row }) => {
-          const lastVisit = row.getValue('lastVisit') as string;
-          return lastVisit
-            ? (
-              <div className='flex items-center gap-2'>
-                <Calendar className='size-3 text-muted-foreground' />
-                <span className='text-sm'>{formatDate(lastVisit)}</span>
-              </div>
-            )
-            : <span className='text-muted-foreground'>—</span>;
-        },
-        size: 120,
-      },
-      {
-        header: 'Consultas',
-        accessorKey: 'totalAppointments',
-        cell: ({ row }) => {
-          const total = row.getValue('totalAppointments') as number;
-          return (
+      size: 100,
+      filterFn: statusFilterFn,
+    },
+    {
+      header: 'Última Visita',
+      accessorKey: 'lastVisit',
+      cell: ({ row }) => {
+        const lastVisit = row.getValue('lastVisit') as string;
+        return lastVisit
+          ? (
             <div className='flex items-center gap-2'>
-              <Stethoscope className='size-3 text-muted-foreground' />
-              <span className='text-sm font-medium'>{total}</span>
+              <Calendar className='size-3 text-muted-foreground' />
+              <span className='text-sm'>{formatDate(lastVisit)}</span>
             </div>
-          );
-        },
-        size: 100,
+          )
+          : <span className='text-muted-foreground'>—</span>;
       },
-      {
-        id: 'actions',
-        header: () => <span className='sr-only'>Ações</span>,
-        cell: ({ row }) => <PatientRowActions row={row} onNavigate={navigate} />,
-        size: 60,
-        enableHiding: false,
+      size: 120,
+    },
+    {
+      header: 'Consultas',
+      accessorKey: 'totalAppointments',
+      cell: ({ row }) => {
+        const total = row.getValue('totalAppointments') as number;
+        return (
+          <div className='flex items-center gap-2'>
+            <Stethoscope className='size-3 text-muted-foreground' />
+            <span className='text-sm font-medium'>{total}</span>
+          </div>
+        );
       },
-    ],
-    [navigate],
-  );
+      size: 100,
+    },
+    {
+      id: 'actions',
+      header: () => <span className='sr-only'>Ações</span>,
+      cell: ({ row }) => <PatientRowActions row={row} onNavigate={navigate} />,
+      size: 60,
+      enableHiding: false,
+    },
+  ], [navigate]);
 
   const table = useReactTable({
     data: patients,
@@ -430,9 +423,7 @@ function PatientDataTableContent({
   });
 
   // Get unique status values for filter
-  const uniqueStatusValues = useMemo(() => ['Active', 'Inactive', 'Pending'],
-    []
-  );
+  const uniqueStatusValues = useMemo(() => ['Active', 'Inactive', 'Pending'], []);
 
   const selectedStatuses = useMemo(() => {
     return statusFilter;
@@ -452,16 +443,14 @@ function PatientDataTableContent({
     const selectedRows = table.getSelectedRowModel().rows;
     const patientIds = selectedRows.map(row => row.original.id);
 
-    bulkDeleteMutation.mutate({ patientIds, clinicId },
-      {
-        onSuccess: () => {
-          table.resetRowSelection();
-        },
+    bulkDeleteMutation.mutate({ patientIds, clinicId }, {
+      onSuccess: () => {
+        table.resetRowSelection();
       },
-    );
+    });
   };
 
-  const handlePatientCreated = (patient: any) => {
+  const handlePatientCreated = (_patient: any) => {
     toast.success(`Paciente criado com sucesso!`);
     // The real-time subscription will automatically update the table
   };
@@ -546,7 +535,8 @@ function PatientDataTableContent({
   };
 
   if (error) {
-    return (<div className='flex items-center justify-center p-8'>
+    return (
+      <div className='flex items-center justify-center p-8'>
         <div className='text-center'>
           <CircleAlertIcon className='mx-auto mb-4 size-12 text-muted-foreground' />
           <h3 className='mb-2 text-lg font-semibold'>
@@ -945,7 +935,8 @@ function PatientRowActions({
   row: Row<PatientTableData>;
   onNavigate: any;
 }) {
-  return (<DropdownMenu>
+  return (
+    <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className='flex justify-end'>
           <Button

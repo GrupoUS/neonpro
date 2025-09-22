@@ -14,10 +14,23 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { AIAgentService } from '@/services/ai-agent';
@@ -25,7 +38,16 @@ import { AgentAction } from '@/types/ai-agent';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { ptBR } from 'date-fns/locale';
-import { AlertCircle, CalendarIcon, Download, ExternalLink, FileText, Plus, RefreshCw, User } from 'lucide-react';
+import {
+  AlertCircle,
+  CalendarIcon,
+  Download,
+  ExternalLink,
+  FileText,
+  Plus,
+  RefreshCw,
+  User,
+} from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 
 interface ActionHandlersProps {
@@ -411,7 +433,11 @@ const AppointmentCreationModal: React.FC<{
  * Main ActionHandlers Component
  */
 export const ActionHandlers: React.FC<ActionHandlersProps> = ({
-  actions, onActionExecuted, sessionId, className, }) => {
+  actions,
+  onActionExecuted,
+  sessionId,
+  className,
+}) => {
   const [selectedClient, setSelectedClient] = useState<ClientData | null>(null);
   const [exportData, setExportData] = useState<
     { data: any[]; dataType: 'clients' | 'appointments' | 'financial' } | null
@@ -597,14 +623,16 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
       </div>
 
       {/* Client Details Modal */}
-      {selectedClient && (<ClientDetailsModal
+      {selectedClient && (
+        <ClientDetailsModal
           client={selectedClient}
           onClose={() => setSelectedClient(null)}
         />
       )}
 
       {/* Data Export Modal */}
-      {exportData && (<DataExportModal
+      {exportData && (
+        <DataExportModal
           data={exportData.data}
           dataType={exportData.dataType}
           onClose={() => setExportData(null)}
@@ -613,7 +641,8 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
       )}
 
       {/* Appointment Creation Modal */}
-      {showAppointmentModal && (<AppointmentCreationModal
+      {showAppointmentModal && (
+        <AppointmentCreationModal
           context={appointmentContext}
           onClose={() => {
             setShowAppointmentModal(false);

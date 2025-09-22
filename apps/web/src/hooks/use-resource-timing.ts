@@ -26,7 +26,8 @@ export interface UseResourceTimingReturn {
 
 export function useResourceTiming(): UseResourceTimingReturn {
   const [resources, setResources] = useState<ResourceTimingEntry[]>([]);
-  const [isSupported] = useState(() => 'performance' in window && 'getEntriesByType' in performance
+  const [isSupported] = useState(() =>
+    'performance' in window && 'getEntriesByType' in performance
   );
 
   const updateResources = useCallback(() => {

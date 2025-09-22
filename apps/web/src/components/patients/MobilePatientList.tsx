@@ -25,14 +25,6 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
@@ -174,7 +166,8 @@ const MobilePatientCard = ({
   const maskedPhone = formatBRPhone(patient.phone);
   const displayCpf = maskCpf(patient.maskedCpf, patient.dataVisibilityLevel);
 
-  return (<Card className='mb-3 touch-manipulation'>
+  return (
+    <Card className='mb-3 touch-manipulation'>
       <CardContent className='p-4'>
         <div className='flex items-start justify-between'>
           <div className='flex-1 min-w-0'>

@@ -954,7 +954,8 @@ function PatientDetailPage() {
                         )}
                       </div>
                     ))}
-                    {aiInsights.length > 2 && (<Button
+                    {aiInsights.length > 2 && (
+                      <Button
                         variant='outline'
                         size='sm'
                         onClick={() => setActiveTab('insights')}
@@ -1157,7 +1158,8 @@ function PatientDetailPage() {
                                 </div>
                               </div>
 
-                              {record.prescription.length > 0 && (<div>
+                              {record.prescription.length > 0 && (
+                                <div>
                                   <div className='text-sm font-medium mb-1'>
                                     Prescrição
                                   </div>
@@ -1308,7 +1310,8 @@ function PatientDetailPage() {
                                 </div>
                               </div>
 
-                              {insight.actionable && (<Button
+                              {insight.actionable && (
+                                <Button
                                   variant='outline'
                                   size='sm'
                                   onClick={() => handleAIInsightAction(insight)}

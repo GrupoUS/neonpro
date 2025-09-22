@@ -13,7 +13,7 @@ function resolveTheme(theme: Theme): 'light' | 'dark' {
 }
 
 export function useThemeBridge() {
-  const [theme, setThemeState] = useState<.*>(() => {
+  const [theme, setThemeState] = useState<Theme>(() => {
     try {
       return (localStorage.getItem('neonpro-theme') as Theme) || 'dark';
     } catch {

@@ -685,7 +685,8 @@ function PatientAIInsights() {
                     ? '#f97316'
                     : insight.priority === 'medium'
                     ? '#eab308'
-                    : '#6b7280', }}
+                    : '#6b7280',
+                }}
                 onClick={() => handleInsightDetails(insight)}
               >
                 <CardHeader className='pb-3'>
@@ -921,7 +922,8 @@ function PatientAIInsights() {
       </Tabs>
 
       {/* Insight Details Modal */}
-      {selectedInsight && (<AnimatedModal
+      {selectedInsight && (
+        <AnimatedModal
           isOpen={isModalOpen}
           onClose={() => {
             setIsModalOpen(false);
@@ -995,7 +997,8 @@ function PatientAIInsights() {
               </ul>
             </div>
 
-            {selectedInsight.actionItems.length > 0 && (<div>
+            {selectedInsight.actionItems.length > 0 && (
+              <div>
                 <h3 className='font-medium mb-2'>Ações Necessárias</h3>
                 <div className='space-y-2'>
                   {selectedInsight.actionItems.map((action, index) => (

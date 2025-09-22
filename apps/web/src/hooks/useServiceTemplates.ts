@@ -161,7 +161,8 @@ export function useAddTemplateItems() {
 
   return useMutation({
     mutationFn: ({
-      templateId,items,
+      templateId,
+      items,
     }: {
       templateId: string;
       items: CreateServiceTemplateItemRequest[];
@@ -270,7 +271,8 @@ export function useToggleTemplateFeatured() {
 
   return useMutation({
     mutationFn: async ({
-      id,isFeatured,
+      id,
+      isFeatured,
     }: {
       id: string;
       isFeatured: boolean;

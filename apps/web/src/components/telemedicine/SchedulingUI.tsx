@@ -273,7 +273,7 @@ export function SchedulingUI({
 
   // Generate week view data
   const weekStart = startOfWeek(selectedDate, { weekStartsOn: 0 });
-  const weekDays = Array.from.*}, (_, i) => addDays(weekStart, i));
+  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
   const handleDateSelect = (_date: any) => {
     setSelectedDate(date);
@@ -461,7 +461,8 @@ export function SchedulingUI({
                 </CardHeader>
                 <CardContent>
                   {dailyAppointments.length === 0
-                    ? (<div className='text-center py-12'>
+                    ? (
+                      <div className='text-center py-12'>
                         <Calendar className='h-12 w-12 mx-auto text-muted-foreground mb-4' />
                         <p className='text-muted-foreground'>
                           Nenhuma consulta agendada para este dia
@@ -476,7 +477,8 @@ export function SchedulingUI({
                         </Button>
                       </div>
                     )
-                    : (<div className='space-y-4'>
+                    : (
+                      <div className='space-y-4'>
                         {dailyAppointments
                           .sort((a, b) => a.date.getTime() - b.date.getTime())
                           .map(appointment => (
@@ -518,23 +520,23 @@ export function SchedulingUI({
                     </div>
                   )
                   : (_filteredAppointments.sort((a, b) => a.date.getTime() - b.date.getTime())
-                      .map(appointment => (
-                        <AppointmentCard
-                          key={appointment.id}
-                          appointment={appointment}
-                          onUpdate={onAppointmentUpdate}
-                          onCancel={onAppointmentCancel}
-                          showDate
-                        />
-                      ))
-                  )}
+                    .map(appointment => (
+                      <AppointmentCard
+                        key={appointment.id}
+                        appointment={appointment}
+                        onUpdate={onAppointmentUpdate}
+                        onCancel={onAppointmentCancel}
+                        showDate
+                      />
+                    )))}
               </div>
             </CardContent>
           </Card>
         )}
     </div>
   );
-} // AppointmentCard Component
+}
+
 interface AppointmentCardProps {
   appointment: TelemedicineAppointment;
   onUpdate?: (appointment: TelemedicineAppointment) => void;
@@ -614,7 +616,8 @@ function AppointmentCard({
             Editar
           </Button>
 
-          {appointment.status === 'scheduled' && (<Button
+          {appointment.status === 'scheduled' && (
+            <Button
               variant='destructive'
               size='sm'
               onClick={() => onCancel?.(appointment.id)}

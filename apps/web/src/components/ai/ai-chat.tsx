@@ -175,10 +175,19 @@ const fetchAvailableModels = async (): Promise<AIModel[]> => {
  * AIChat - Main chat interface component
  */
 export const AIChat = ({
-  patientContext,healthcareProfessional, defaultModel = 'gpt-4', showModelSelection = true, showVoiceInput = false, showFileAttachment = false,
+  patientContext,
+  healthcareProfessional,
+  defaultModel = 'gpt-4',
+  showModelSelection = true,
+  showVoiceInput = false,
+  showFileAttachment = false,
   lgpdConsent = {
     canStoreHistory: true,
-    dataRetentionDays: 30, }, mobileOptimized = true, maxHeight = '600px', testId = 'ai-chat',
+    dataRetentionDays: 30,
+  },
+  mobileOptimized = true,
+  maxHeight = '600px',
+  testId = 'ai-chat',
 }: AIChatProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');

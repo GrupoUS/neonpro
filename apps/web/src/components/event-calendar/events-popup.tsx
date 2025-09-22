@@ -113,7 +113,8 @@ export function EventsPopup({
               const isFirstDay = isSameDay(date, eventStart);
               const isLastDay = isSameDay(date, eventEnd);
 
-              return (<div
+              return (
+                <div
                   key={event.id}
                   className='cursor-pointer'
                   onClick={() => handleEventClick(event)}

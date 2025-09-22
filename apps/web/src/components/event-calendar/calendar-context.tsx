@@ -90,7 +90,7 @@ export function CalendarProvider({
   const [currentView, setCurrentView] = useState<CalendarView>('month');
 
   // Initialize visibleColors based on the isActive property in etiquettes
-  const [visibleColors, setVisibleColors] = useState<.*>(() => {
+  const [visibleColors, setVisibleColors] = useState<string[]>(() => {
     return etiquettes
       .filter(etiquette => etiquette.isActive)
       .map(etiquette => etiquette.color);

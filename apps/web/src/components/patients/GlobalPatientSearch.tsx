@@ -90,7 +90,7 @@ function useDebounce<T>(value: T, delay: number): T {
 
 // Local storage hook for search history
 function useLocalStorage<T>(key: string, initialValue: T) {
-  const [storedValue, setStoredValue] = useState<.*>(() => {
+  const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === 'undefined') {
       return initialValue;
     }
@@ -221,7 +221,7 @@ export function GlobalPatientSearch({
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['patient-search',clinicId, debouncedQuery],
+    queryKey: ['patient-search', clinicId, debouncedQuery],
     queryFn: async () => {
       if (!debouncedQuery || debouncedQuery.length < 2) return [];
 
@@ -501,7 +501,8 @@ export function GlobalPatientSearch({
               className='pl-10 pr-10'
               aria-label='Busca global de pacientes'
             />
-            {query && (<Button
+            {query && (
+              <Button
                 variant='ghost'
                 size='sm'
                 className='absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0'
@@ -538,7 +539,8 @@ export function GlobalPatientSearch({
               </h3>
 
               {/* Analytics toggle */}
-              {showAnalytics && analytics && (<Button
+              {showAnalytics && analytics && (
+                <Button
                   variant='ghost'
                   size='sm'
                   onClick={() => toast.info('Analytics em desenvolvimento')}
@@ -577,30 +579,29 @@ export function GlobalPatientSearch({
                 </div>
               )
               : query && query.length >= 2
-              ? (_filteredResults.length > 0
-                  ? (
-                    <div className='divide-y'>
-                      {filteredResults.map((patient, index) => (
-                        <SearchResultItem
-                          key={patient.id}
-                          patient={patient}
-                          index={index}
-                        />
-                      ))}
-                    </div>
-                  )
-                  : (
-                    <div className='p-8 text-center'>
-                      <Search className='h-12 w-12 mx-auto mb-4 text-gray-400' />
-                      <h3 className='text-sm font-medium mb-2'>
-                        Nenhum paciente encontrado
-                      </h3>
-                      <p className='text-sm text-gray-500'>
-                        Tente buscar por nome, CPF, telefone ou email
-                      </p>
-                    </div>
-                  )
-              )
+              ? (filteredResults.length > 0
+                ? (
+                  <div className='divide-y'>
+                    {filteredResults.map((patient, index) => (
+                      <SearchResultItem
+                        key={patient.id}
+                        patient={patient}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                )
+                : (
+                  <div className='p-8 text-center'>
+                    <Search className='h-12 w-12 mx-auto mb-4 text-gray-400' />
+                    <h3 className='text-sm font-medium mb-2'>
+                      Nenhum paciente encontrado
+                    </h3>
+                    <p className='text-sm text-gray-500'>
+                      Tente buscar por nome, CPF, telefone ou email
+                    </p>
+                  </div>
+                ))
               : searchHistory.length > 0
               ? (
                 <div className='divide-y'>

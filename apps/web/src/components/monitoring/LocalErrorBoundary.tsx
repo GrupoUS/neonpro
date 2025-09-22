@@ -6,7 +6,8 @@ interface Props {
 }
 
 function DefaultFallback({
-  error,resetError,
+  error,
+  resetError,
 }: {
   error: Error;
   resetError: () => void;

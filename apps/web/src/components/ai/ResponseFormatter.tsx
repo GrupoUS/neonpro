@@ -113,7 +113,7 @@ const ClientCard: React.FC<{
   client: ClientData;
   onClick?: () => void;
   compact?: boolean;
-}> = ({ client,onClick, compact }) => {
+}> = ({ client, onClick, compact }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -215,7 +215,7 @@ const AppointmentCard: React.FC<{
   appointment: AppointmentData;
   onClick?: () => void;
   compact?: boolean;
-}> = ({ appointment,onClick, compact }) => {
+}> = ({ appointment, onClick, compact }) => {
   const getStatusColor = (_status: any) => {
     switch (status) {
       case 'confirmed':
@@ -302,7 +302,7 @@ const FinancialCard: React.FC<{
   financial: FinancialData;
   onClick?: () => void;
   compact?: boolean;
-}> = ({ financial,onClick, compact }) => {
+}> = ({ financial, onClick, compact }) => {
   const getStatusColor = (_status: any) => {
     switch (status) {
       case 'paid':
@@ -406,7 +406,7 @@ const DataTable: React.FC<{
   type: 'clients' | 'appointments' | 'financial';
   onItemClick?: (item: any) => void;
   compact?: boolean;
-}> = ({ data,type, onItemClick, compact }) => {
+}> = ({ data, type, onItemClick, compact }) => {
   const renderTableHeaders = () => {
     switch (type) {
       case 'clients':
@@ -537,7 +537,15 @@ const DataTable: React.FC<{
  * Main ResponseFormatter Component
  */
 export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
-  response, showExport = true, itemsPerPage = 10, compact = false, enableFilters = true,onItemClick, onExport, testId = 'response-formatter', }) => {
+  response,
+  showExport = true,
+  itemsPerPage = 10,
+  compact = false,
+  enableFilters = true,
+  onItemClick,
+  onExport,
+  testId = 'response-formatter',
+}) => {
   const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<FilterState>({
@@ -728,7 +736,8 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
         {paginatedData.map((item, _index) => {
           switch (activeTab) {
             case 'clients':
-              return (<ClientCard
+              return (
+                <ClientCard
                   key={index}
                   client={item}
                   onClick={() => handleItemClick(item)}
@@ -736,7 +745,8 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
                 />
               );
             case 'appointments':
-              return (<AppointmentCard
+              return (
+                <AppointmentCard
                   key={index}
                   appointment={item}
                   onClick={() => handleItemClick(item)}
@@ -744,7 +754,8 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
                 />
               );
             case 'financial':
-              return (<FinancialCard
+              return (
+                <FinancialCard
                   key={index}
                   financial={item}
                   onClick={() => handleItemClick(item)}

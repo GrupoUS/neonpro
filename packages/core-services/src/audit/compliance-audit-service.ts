@@ -253,8 +253,7 @@ export class ComplianceAuditService {
     filters?: AuditSearchFilters,
     limit: number = 100,
   ): Promise<GenericAuditEvent[]> {
-    let results = Array.from(this.events.values()).filter((event) => event.clinicId === clinicId,
-    );
+    let results = Array.from(this.events.values()).filter((event) => event.clinicId === clinicId);
 
     if (filters) {
       if (filters.action) {

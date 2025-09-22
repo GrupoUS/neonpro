@@ -22,8 +22,11 @@ export interface FinancialReportsProps {
 }
 
 export const FinancialReports: React.FC<FinancialReportsProps> = ({
-  onReportGenerate,onExport, className,
-  'data-testid': testId, }) => {
+  onReportGenerate,
+  onExport,
+  className,
+  'data-testid': testId,
+}) => {
   const [selectedReport, setSelectedReport] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -152,7 +155,8 @@ export const FinancialReports: React.FC<FinancialReportsProps> = ({
                         )}
                     </Button>
 
-                    {isSelected && !isGenerating && (<div className='flex gap-1'>
+                    {isSelected && !isGenerating && (
+                      <div className='flex gap-1'>
                         {report.format.map(format => (
                           <Button
                             key={format}

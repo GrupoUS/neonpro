@@ -59,7 +59,8 @@ export function ServicesDataTable({
   const columns: ColumnDef<Service>[] = [
     {
       accessorKey: 'name',
-      header: ({ column }) => (<Button
+      header: ({ column }) => (
+        <Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className='h-auto p-0 font-semibold'
@@ -84,7 +85,8 @@ export function ServicesDataTable({
     },
     {
       accessorKey: 'duration_minutes',
-      header: ({ column }) => (<Button
+      header: ({ column }) => (
+        <Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className='h-auto p-0 font-semibold'
@@ -100,7 +102,8 @@ export function ServicesDataTable({
     },
     {
       accessorKey: 'price',
-      header: ({ column }) => (<Button
+      header: ({ column }) => (
+        <Button
           variant='ghost'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           className='h-auto p-0 font-semibold'
@@ -132,7 +135,8 @@ export function ServicesDataTable({
       header: 'Ações',
       cell: ({ row }) => {
         const service = row.original;
-        return (<DropdownMenu>
+        return (
+          <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='ghost' className='h-8 w-8 p-0'>
                 <span className='sr-only'>Abrir menu</span>
@@ -179,7 +183,17 @@ export function ServicesDataTable({
 
 // Content component that uses TanStack Table
 function ServicesDataTableContent({
-  data,loading, onEdit,onDelete, columns,sorting, setSorting,columnFilters, setColumnFilters,columnVisibility, setColumnVisibility,
+  data,
+  loading,
+  onEdit,
+  onDelete,
+  columns,
+  sorting,
+  setSorting,
+  columnFilters,
+  setColumnFilters,
+  columnVisibility,
+  setColumnVisibility,
 }: {
   data: Service[];
   loading?: boolean;

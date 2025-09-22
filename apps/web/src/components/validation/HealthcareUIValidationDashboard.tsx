@@ -524,7 +524,8 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
   };
 
   // Render benchmarks comparison
-  const renderBenchmarks = () => (<Card className='mb-6'>
+  const renderBenchmarks = () => (
+    <Card className='mb-6'>
       <CardHeader>
         <CardTitle className='flex items-center gap-2'>
           <BarChart3 className='w-5 h-5' />
@@ -640,7 +641,8 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
               </Card>
             )}
 
-            {validationResult.topRecommendations.length > 0 && (<Card>
+            {validationResult.topRecommendations.length > 0 && (
+              <Card>
                 <CardHeader>
                   <CardTitle className='flex items-center gap-2 text-blue-600'>
                     <TrendingUp className='w-5 h-5' />

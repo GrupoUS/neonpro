@@ -556,7 +556,8 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
           </div>
 
           <div className='flex items-center gap-2'>
-            {showSearch && (<TooltipProvider>
+            {showSearch && (
+              <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
@@ -716,7 +717,8 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
               </div>
             )}
 
-            {searchResults.length > 0 && (<div className='mt-3 space-y-2 max-h-32 overflow-y-auto'>
+            {searchResults.length > 0 && (
+              <div className='mt-3 space-y-2 max-h-32 overflow-y-auto'>
                 {searchResults.map((result, _index) => (
                   <div
                     key={index}

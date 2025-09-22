@@ -16,6 +16,12 @@
 
 'use client';
 
+import { HealthcareButton } from '@/components/ui/healthcare/healthcare-button';
+import { HealthcareInput } from '@/components/ui/healthcare/healthcare-input';
+import { HealthcareLoading } from '@/components/ui/healthcare/healthcare-loading';
+import { useScreenReaderAnnouncer } from '@/hooks/accessibility/use-focus-management';
+import { useMobileOptimization } from '@/hooks/accessibility/use-mobile-optimization';
+import { cn } from '@/lib/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { addDays, differenceInDays, format, isAfter, isBefore, subDays } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -70,12 +76,6 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { HealthcareButton } from '@/components/ui/healthcare/healthcare-button';
-import { HealthcareInput } from '@/components/ui/healthcare/healthcare-input';
-import { HealthcareLoading } from '@/components/ui/healthcare/healthcare-loading';
-import { useScreenReaderAnnouncer } from '@/hooks/accessibility/use-focus-management';
-import { useMobileOptimization } from '@/hooks/accessibility/use-mobile-optimization';
-import { cn } from '@/lib/utils';
 
 // Brazilian aesthetic treatment types with detailed information
 const brazilianAestheticTreatments = {
@@ -284,7 +284,16 @@ interface TreatmentProgressTrackingProps {
 type ViewMode = 'overview' | 'timeline' | 'sessions' | 'photos' | 'analytics' | 'reports';
 
 export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps> = ({
-  treatment,onUpdateSession, onAddSessionNote,onUploadPhoto, onUpdateTreatment,onGenerateReport, onRescheduleSession,className, testId = 'treatment-progress-tracking', }) => {
+  treatment,
+  onUpdateSession,
+  onAddSessionNote,
+  onUploadPhoto,
+  onUpdateTreatment,
+  onGenerateReport,
+  onRescheduleSession,
+  className,
+  testId = 'treatment-progress-tracking',
+}) => {
   const [currentView, setCurrentView] = useState<ViewMode>('overview');
   const [selectedSession, setSelectedSession] = useState<TreatmentSession | null>(null);
   const [isAddingNote, setIsAddingNote] = useState(false);
@@ -648,7 +657,8 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
       )}
 
       {/* Milestones */}
-      {treatment.milestones.length > 0 && (<div className='bg-white border rounded-lg p-6'>
+      {treatment.milestones.length > 0 && (
+        <div className='bg-white border rounded-lg p-6'>
           <h3 className='text-lg font-semibold mb-4'>Marcos do Tratamento</h3>
           <div className='space-y-3'>
             {treatment.milestones.map((milestone, index) => (
@@ -681,7 +691,8 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
   );
 
   // Render sessions timeline
-  const renderSessionsTimeline = () => (<div className='space-y-6'>
+  const renderSessionsTimeline = () => (
+    <div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <h3 className='text-lg font-semibold'>Linha do Tempo das Sessões</h3>
         <HealthcareButton onClick={() => {}} size='sm'>
@@ -802,7 +813,8 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
                       <div className='mt-3'>
                         <p className='text-sm font-medium mb-2'>Fotos da sessão</p>
                         <div className='flex space-x-2'>
-                          {session.photos.slice(0, 3).map((photo, photoIndex) => (<button
+                          {session.photos.slice(0, 3).map((photo, photoIndex) => (
+                            <button
                               key={photoIndex}
                               onClick={() => openPhotoViewer([photo.imageUrl], photoIndex)}
                               className='relative w-16 h-16 rounded-lg overflow-hidden border'
@@ -828,7 +840,8 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
 
                     {/* Session actions */}
                     <div className='flex space-x-2 mt-4'>
-                      {session.status === 'scheduled' && (<>
+                      {session.status === 'scheduled' && (
+                        <>
                           <HealthcareButton
                             variant='outline'
                             size='sm'
@@ -852,7 +865,8 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
                         </>
                       )}
 
-                      {session.status === 'in-progress' && (<HealthcareButton
+                      {session.status === 'in-progress' && (
+                        <HealthcareButton
                           variant='outline'
                           size='sm'
                           onClick={() => handleUpdateSessionStatus(session.id, 'completed')}
@@ -946,7 +960,8 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
           )
           : (
             <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-              {allPhotos.map((photo, index) => (<div key={index} className='relative group'>
+              {allPhotos.map((photo, index) => (
+                <div key={index} className='relative group'>
                   <button
                     onClick={() => openPhotoViewer(allPhotos.map(p => p.imageUrl), index)}
                     className='relative w-full aspect-square rounded-lg overflow-hidden border'
@@ -1163,7 +1178,8 @@ export const TreatmentProgressTracking: React.FC<TreatmentProgressTrackingProps>
       </div>
 
       {/* Add Note Modal */}
-      {isAddingNote && selectedSession && (<div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
+      {isAddingNote && selectedSession && (
+        <div className='fixed inset-0 bg-black/50 flex items-center justify-center z-50'>
           <div className='bg-white rounded-lg p-6 w-full max-w-md'>
             <div className='flex items-center justify-between mb-4'>
               <h3 className='text-lg font-semibold'>

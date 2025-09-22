@@ -134,7 +134,8 @@ function AIAgentPage() {
                 <CardDescription>Tente perguntar:</CardDescription>
               </CardHeader>
               <CardContent className='space-y-2'>
-                {examples.map((example, index) => (<Button
+                {examples.map((example, index) => (
+                  <Button
                     key={index}
                     variant='ghost'
                     className='w-full justify-start text-left h-auto p-3'

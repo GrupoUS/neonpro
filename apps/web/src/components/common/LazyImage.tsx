@@ -23,9 +23,20 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 }
 
 export const LazyImage: React.FC<LazyImageProps> = ({
-  src,alt,
+  src,
+  alt,
   placeholder =
-    'data:image/svg+xml;base64, PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PC9zdmc+', fallback = '/images/placeholder.svg',className, containerClassName, loading = 'lazy', priority = false,sizes, srcSet,onLoad, onError, ...props
+    'data:image/svg+xml;base64, PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PC9zdmc+',
+  fallback = '/images/placeholder.svg',
+  className,
+  containerClassName,
+  loading = 'lazy',
+  priority = false,
+  sizes,
+  srcSet,
+  onLoad,
+  onError,
+  ...props
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [isInView, setIsInView] = useState(priority);
@@ -143,7 +154,11 @@ interface ResponsiveImageProps extends LazyImageProps {
 }
 
 export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
-  src,webpSrc, avifSrc,breakpoints, ...props
+  src,
+  webpSrc,
+  avifSrc,
+  breakpoints,
+  ...props
 }) => {
   // Generate srcSet for different formats and sizes
   const generateSrcSet = (_baseSrc: any) => {
@@ -165,8 +180,7 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     };
 
     return Object.entries(breakpoints)
-      .map(([size, width]) => `(max-width: ${sizeMap[size as keyof typeof sizeMap]}) ${width}px`,
-      )
+      .map(([size, width]) => `(max-width: ${sizeMap[size as keyof typeof sizeMap]}) ${width}px`)
       .join(', ');
   };
 

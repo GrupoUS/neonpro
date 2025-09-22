@@ -58,9 +58,7 @@ export function WeekView({
     return eachDayOfInterval({ start: weekStart, end: weekEnd });
   }, [currentDate]);
 
-  const weekStart = useMemo(() => startOfWeek(currentDate, { weekStartsOn: 0 }),
-    [currentDate],
-  );
+  const weekStart = useMemo(() => startOfWeek(currentDate, { weekStartsOn: 0 }), [currentDate]);
 
   const hours = useMemo(() => {
     const dayStart = startOfDay(currentDate);

@@ -309,7 +309,8 @@ export default class ProductionReadinessService {
       readinessLevel = 'staging-ready';
     }
 
-    const criticalIssues = validations.reduce((sum, v) => sum + v.issues.filter(i => i.severity === 'critical').length,
+    const criticalIssues = validations.reduce(
+      (sum, v) => sum + v.issues.filter(i => i.severity === 'critical').length,
       0,
     );
 

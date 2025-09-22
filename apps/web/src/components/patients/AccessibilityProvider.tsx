@@ -129,7 +129,8 @@ const AccessibilityPanel = () => {
   } = context;
 
   if (!isAccessibilityPanelOpen) {
-    return (<Button
+    return (
+      <Button
         onClick={() => setAccessibilityPanelOpen(true)}
         className='fixed bottom-4 right-4 z-50 w-12 h-12 rounded-full shadow-lg'
         size='sm'
@@ -141,7 +142,8 @@ const AccessibilityPanel = () => {
     );
   }
 
-  return (<Card className='fixed bottom-4 right-4 z-50 w-80 max-h-96 overflow-y-auto shadow-xl'>
+  return (
+    <Card className='fixed bottom-4 right-4 z-50 w-80 max-h-96 overflow-y-auto shadow-xl'>
       <CardHeader className='pb-3'>
         <div className='flex items-center justify-between'>
           <CardTitle className='text-lg'>Acessibilidade</CardTitle>

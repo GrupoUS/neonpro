@@ -59,7 +59,8 @@ export function useCreatePricingRule() {
 
   return useMutation({
     mutationFn: ({
-      clinicId,request,
+      clinicId,
+      request,
     }: {
       clinicId: string;
       _request: CreatePricingRuleRequest;
@@ -92,7 +93,8 @@ export function useUpdatePricingRule() {
 
   return useMutation({
     mutationFn: ({
-      id,request,
+      id,
+      request,
     }: {
       id: string;
       _request: UpdatePricingRuleRequest;

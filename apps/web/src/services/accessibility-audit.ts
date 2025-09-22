@@ -462,7 +462,7 @@ export class AccessibilityAuditService {
       issues: this.issues
         .filter(i => i.healthcareImpact)
         .map(i => i.healthcareImpact!)
-        .filter((impact,index, arr) => arr.indexOf(impact) === index),
+        .filter((impact, index, arr) => arr.indexOf(impact) === index),
     };
 
     // Generate recommendations

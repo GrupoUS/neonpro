@@ -288,7 +288,8 @@ export function PerformanceDashboard({
       )}
 
       {/* Performance Analytics */}
-      {analytics && (<Card>
+      {analytics && (
+        <Card>
           <CardHeader>
             <CardTitle className='flex items-center justify-between'>
               <span className='flex items-center gap-2'>

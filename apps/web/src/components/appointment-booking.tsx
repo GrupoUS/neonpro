@@ -367,7 +367,9 @@ export function AppointmentBooking({
                             : (
                               availableTimeSlots.map(
                                 ({
-                                  time: timeSlot,available, reason,
+                                  time: timeSlot,
+                                  available,
+                                  reason,
                                 }: Partial<TimeSlot> & {
                                   time: string;
                                   available: boolean;
@@ -408,7 +410,8 @@ export function AppointmentBooking({
                   </div>
                 )}
 
-                {validation && hasConflicts && (<div className='space-y-2'>
+                {validation && hasConflicts && (
+                  <div className='space-y-2'>
                     {validation.conflicts.map((conflict, _index) => (
                       <div
                         key={index}
@@ -425,7 +428,8 @@ export function AppointmentBooking({
                   </div>
                 )}
 
-                {validation && hasWarnings && (<div className='space-y-2'>
+                {validation && hasWarnings && (
+                  <div className='space-y-2'>
                     {validation.warnings.map((warning, _index) => (
                       <div
                         key={index}
@@ -451,7 +455,8 @@ export function AppointmentBooking({
                     </p>
                     <div className='flex flex-wrap gap-2'>
                       {validation.suggestedAlternatives.map(
-                        (alternative, _index) => (<Button
+                        (alternative, _index) => (
+                          <Button
                             key={index}
                             variant='outline'
                             size='sm'
@@ -570,7 +575,8 @@ export function AppointmentBooking({
                 {searchResults
                   && searchResults.length === 0
                   && patientSearch.length >= 2
-                  && !searchLoading && (<div className='mt-2 p-3 border rounded-md bg-gray-50 text-center'>
+                  && !searchLoading && (
+                  <div className='mt-2 p-3 border rounded-md bg-gray-50 text-center'>
                     <p className='text-sm text-gray-600 mb-2'>
                       Nenhum paciente encontrado
                     </p>

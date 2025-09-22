@@ -276,17 +276,16 @@ export function ServiceTemplateManager({
               <SelectContent>
                 <SelectItem value='all'>Todos os tipos</SelectItem>
                 {Object.entries(SERVICE_TEMPLATE_TYPES).map(([type, config]) => (
-                    <SelectItem key={type} value={type}>
-                      <div className='flex items-center gap-2'>
-                        <div
-                          className='w-3 h-3 rounded-full'
-                          style={{ backgroundColor: config.color }}
-                        />
-                        {config.label}
-                      </div>
-                    </SelectItem>
-                  ),
-                )}
+                  <SelectItem key={type} value={type}>
+                    <div className='flex items-center gap-2'>
+                      <div
+                        className='w-3 h-3 rounded-full'
+                        style={{ backgroundColor: config.color }}
+                      />
+                      {config.label}
+                    </div>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
