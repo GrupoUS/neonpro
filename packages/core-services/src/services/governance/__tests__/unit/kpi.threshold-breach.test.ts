@@ -3,11 +3,6 @@ import { InMemoryKPIService } from "../../index";
 
 describe("KPI threshold breach detection", () => {
   it(_"flags severity when value crosses threshold",_async () => {
-<<<<<<< HEAD
-    const svc = new InMemoryKPIService(
-=======
-    const svc = new InMemoryKPIService();
->>>>>>> origin/main
     await svc.register({
       id: "KPI-LAT",
       name: "Latency",

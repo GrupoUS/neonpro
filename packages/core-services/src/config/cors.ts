@@ -163,7 +163,7 @@ export function securityHeadersMiddleware(
       const cspDirectives = Object.entries(
         securityConfig.contentSecurityPolicy.directives,
       )
-        .map(([directive,_values]) => {
+        .map(([directive,values]) => {
           const valueString = Array.isArray(values) ? values.join(" ") : values;
           return `${directive} ${valueString}`;
         })
@@ -197,7 +197,7 @@ export function securityHeadersMiddleware(
     const permissionsPolicyDirectives = Object.entries(
       securityConfig.permissionsPolicy,
     )
-      .map(([directive,_allowlist]) => {
+      .map(([directive,allowlist]) => {
         if (allowlist.length === 0) {
           return `${directive}=()`;
         }
@@ -318,7 +318,7 @@ export function securityMiddleware(options?: {
       const cspDirectives = Object.entries(
         securityConfig.contentSecurityPolicy.directives,
       )
-        .map(([directive,_values]) => {
+        .map(([directive,values]) => {
           const valueString = Array.isArray(values) ? values.join(" ") : values;
           return `${directive} ${valueString}`;
         })
@@ -352,7 +352,7 @@ export function securityMiddleware(options?: {
     const permissionsPolicyDirectives = Object.entries(
       securityConfig.permissionsPolicy,
     )
-      .map(([directive,_allowlist]) => {
+      .map(([directive,allowlist]) => {
         if (allowlist.length === 0) {
           return `${directive}=()`;
         }

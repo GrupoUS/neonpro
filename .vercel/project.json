@@ -1,1 +1,16 @@
-{"projectId":"prj_2d3tEP931RoNtiIGSlJ1EXL0EaFY","orgId":"team_bjVDLqo42Gb3p28RelxJia6x","projectName":"neonpro"}
+{
+  "projectId": "prj_2d3tEP931RoNtiIGSlJ1EXL0EaFY",
+  "orgId": "team_bjVDLqo42Gb3p28RelxJia6x",
+  "projectName": "neonpro",
+  "settings": {
+    "createdAt": 1757602560224,
+    "framework": null,
+    "devCommand": null,
+    "installCommand": "bun install",
+    "buildCommand": "bun install && bunx turbo build --filter=@neonpro/web",
+    "outputDirectory": "apps/web/dist",
+    "rootDirectory": null,
+    "directoryListing": false,
+    "nodeVersion": "22.x"
+  }
+}

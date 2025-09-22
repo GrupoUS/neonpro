@@ -126,17 +126,6 @@ describe('Usage Counter Repository Security Tests_, () => {
         securityEvents: 0,
       };
 
-<<<<<<< HEAD
-      expect(metadata._userId).toBe('user123_
-      expect(metadata.planCode).toBe('premium')
-      expect(metadata.healthcareComplianceScore).toBe(0.95
-    }
-=======
-      expect(metadata._userId).toBe('user123_);
-      expect(metadata.planCode).toBe('premium');
-      expect(metadata.healthcareComplianceScore).toBe(0.95);
-    });
->>>>>>> origin/main
 
     it('should validate healthcare-specific metadata fields_,_async () => {
       const createData = {
@@ -187,11 +176,6 @@ describe('Usage Counter Repository Security Tests_, () => {
 
   describe('Database Operations Security_, () => {
     it('should safely handle database row mapping_,_async () => {
-<<<<<<< HEAD
-      const mockRow = createMockDatabaseRow(
-=======
-      const mockRow = createMockDatabaseRow();
->>>>>>> origin/main
       
       // Mock the findByUserAndClinic method to return our test data
       vi.spyOn(repository, 'findByUserAndClinic' as any).mockResolvedValue({

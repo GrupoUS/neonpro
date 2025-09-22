@@ -113,11 +113,6 @@ describe("PredictiveAnalyticsService", () => {
 
   describe("getAnalyticsMetrics", () => {
     it(_"should return valid analytics metrics",_async () => {
-<<<<<<< HEAD
-      const metrics = await service.getAnalyticsMetrics(
-=======
-      const metrics = await service.getAnalyticsMetrics();
->>>>>>> origin/main
 
       expect(metrics).toHaveProperty("attendanceRate"
       expect(metrics).toHaveProperty("revenuePerPatient"
@@ -139,11 +134,6 @@ describe("PredictiveAnalyticsService", () => {
 
   describe("generateComplianceReport", () => {
     it(_"should generate LGPD compliance report",_async () => {
-<<<<<<< HEAD
-      const report = await service.generateComplianceReport(
-=======
-      const report = await service.generateComplianceReport();
->>>>>>> origin/main
 
       expect(report).toHaveProperty("anonymizationEnabled"
       expect(report).toHaveProperty("dataProcessingCompliant"
@@ -158,11 +148,6 @@ describe("PredictiveAnalyticsService", () => {
     }
 
     it(_"should include privacy protection measures in audit trail",_async () => {
-<<<<<<< HEAD
-      const report = await service.generateComplianceReport(
-=======
-      const report = await service.generateComplianceReport();
->>>>>>> origin/main
 
       const auditMessages = report.auditTrail.join(" ").toLowerCase(
       expect(auditMessages).toContain("anonymization"
@@ -209,15 +194,6 @@ describe("PredictiveAnalyticsService", () => {
 
       // At least some insights should have high confidence
       const highConfidenceInsights = insights.filter((insight) => insight.confidence > 0.7,
-<<<<<<< HEAD
-      
-      expect(highConfidenceInsights.length).toBeGreaterThan(0
-    }
-=======
-      );
-      expect(highConfidenceInsights.length).toBeGreaterThan(0);
-    });
->>>>>>> origin/main
 
     it(_"should provide actionable recommendations",_async () => {
       const request = { timeframe: "quarter" as const };

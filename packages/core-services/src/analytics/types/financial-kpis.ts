@@ -606,8 +606,8 @@ export function calculatePayerMixDiversity(
   concentration: number;
   riskLevel: RiskLevel;
 } {
-  const total = Object.values(payerMix).reduce((sum,_value) => sum + value, 0);
-  const proportions = Object.entries(payerMix).map(([payer,_amount]) => ({
+  const total = Object.values(payerMix).reduce((sum,value) => sum + value, 0);
+  const proportions = Object.entries(payerMix).map(([payer,amount]) => ({
     payer: payer as PaymentSource,
     proportion: amount / total,
   }));
@@ -619,7 +619,7 @@ export function calculatePayerMixDiversity(
   );
   const diversityScore = (1 - hhi) * 100;
 
-  const dominantPayer = proportions.reduce((max,_current) =>
+  const dominantPayer = proportions.reduce((max,current) =>
     current.proportion > max.proportion ? current : max,
   ).payer;
 

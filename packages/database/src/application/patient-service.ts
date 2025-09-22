@@ -10,11 +10,6 @@ CreatePatientRequest,
   PatientEntityValidationError
 } from "@neonpro/domain";
 
-import {
-  PatientQueryOptions,
-  PatientSearchResult
-} from "../types/index.js";
-
 /**
  * Application service for patient management
  * Uses repository pattern with proper dependency injection

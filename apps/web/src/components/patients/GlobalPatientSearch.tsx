@@ -204,7 +204,7 @@ export function GlobalPatientSearch({
   const [_isFocused, _setIsFocused] = useState(false);
 
   const debouncedQuery = useDebounce(query, 300);
-  const { measureSearch: measureSearch, searchResponseTime, searchStatus, isSearchHealthy } =
+  const { measureSearch: _measureSearch, searchResponseTime, searchStatus, isSearchHealthy } =
     useSearchPerformance();
 
   // Search history

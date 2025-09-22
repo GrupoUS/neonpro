@@ -74,65 +74,30 @@ describe(('useDataExport', () => {
   }
 
   it(('should export patients data to CSV format', () => {
-<<<<<<< HEAD
-    const { useDataExport } = require('../useDataExport')
-    expect(useDataExport).toBeDefined(
-=======
-    const { useDataExport } = require('../useDataExport');
-    expect(useDataExport).toBeDefined();
->>>>>>> origin/main
 
     // Test that the hook can be imported and is a function
     expect(typeof useDataExport).toBe('function')
   }
 
   it(('should export patients data to PDF format', () => {
-<<<<<<< HEAD
-    const { useDataExport } = require('../useDataExport')
-    expect(useDataExport).toBeDefined(
-=======
-    const { useDataExport } = require('../useDataExport');
-    expect(useDataExport).toBeDefined();
->>>>>>> origin/main
 
     // Test that the hook can be imported and is a function
     expect(typeof useDataExport).toBe('function')
   }
 
   it(('should handle export errors gracefully', () => {
-<<<<<<< HEAD
-    const { useDataExport } = require('../useDataExport')
-    expect(useDataExport).toBeDefined(
-=======
-    const { useDataExport } = require('../useDataExport');
-    expect(useDataExport).toBeDefined();
->>>>>>> origin/main
 
     // Test that the hook can be imported and is a function
     expect(typeof useDataExport).toBe('function')
   }
 
   it(('should provide export progress tracking', () => {
-<<<<<<< HEAD
-    const { useDataExport } = require('../useDataExport')
-    expect(useDataExport).toBeDefined(
-=======
-    const { useDataExport } = require('../useDataExport');
-    expect(useDataExport).toBeDefined();
->>>>>>> origin/main
 
     // Test that the hook can be imported and is a function
     expect(typeof useDataExport).toBe('function')
   }
 
   it(('should support filtered data export', () => {
-<<<<<<< HEAD
-    const { useDataExport } = require('../useDataExport')
-    expect(useDataExport).toBeDefined(
-=======
-    const { useDataExport } = require('../useDataExport');
-    expect(useDataExport).toBeDefined();
->>>>>>> origin/main
 
     // Test that the hook can be imported and is a function
     expect(typeof useDataExport).toBe('function')

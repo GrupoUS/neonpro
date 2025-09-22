@@ -63,11 +63,6 @@ afterEach(() => {
 
 describe(('PerformanceMonitor', () => {
   it(('should initialize web vitals monitoring', () => {
-<<<<<<< HEAD
-    const monitor = new PerformanceMonitor(
-=======
-    const monitor = new PerformanceMonitor();
->>>>>>> origin/main
 
     expect(monitor).toBeDefined(
     expect(monitor.getMetrics()).toEqual({
@@ -80,11 +75,6 @@ describe(('PerformanceMonitor', () => {
   }
 
   it(('should initialize performance observer', () => {
-<<<<<<< HEAD
-    new PerformanceMonitor(
-=======
-    new PerformanceMonitor();
->>>>>>> origin/main
 
     expect(global.PerformanceObserver).toHaveBeenCalled(
   }
@@ -105,13 +95,6 @@ describe(('PerformanceMonitor', () => {
   }
 
   it(('should destroy observers on cleanup', () => {
-<<<<<<< HEAD
-    const monitor = new PerformanceMonitor(
-    const disconnectSpy = vi.fn(
-=======
-    const monitor = new PerformanceMonitor();
-    const disconnectSpy = vi.fn();
->>>>>>> origin/main
 
     // Mock observer with disconnect method
     monitor['observers'] = [{ disconnect: disconnectSpy } as any];
@@ -125,11 +108,6 @@ describe(('PerformanceMonitor', () => {
 
 describe(('createIntersectionObserver', () => {
   it(('should create intersection observer when supported', () => {
-<<<<<<< HEAD
-    const callback = vi.fn(
-=======
-    const callback = vi.fn();
->>>>>>> origin/main
     const options = { threshold: 0.5 };
 
     const observer = createIntersectionObserver(callback, options
@@ -155,11 +133,6 @@ describe(('createIntersectionObserver', () => {
   }
 
   it(('should use default options', () => {
-<<<<<<< HEAD
-    const callback = vi.fn(
-=======
-    const callback = vi.fn();
->>>>>>> origin/main
 
     createIntersectionObserver(callback
 
@@ -175,11 +148,6 @@ describe(('createIntersectionObserver', () => {
 
 describe(('Resource preloading', () => {
   it(('should preload resources', () => {
-<<<<<<< HEAD
-    preloadResource('/test.js', 'script')
-=======
-    preloadResource('/test.js', 'script');
->>>>>>> origin/main
 
     const link = document.querySelector(
       'link[rel="preload"]',
@@ -190,11 +158,6 @@ describe(('Resource preloading', () => {
   }
 
   it(('should preload resources with crossorigin', () => {
-<<<<<<< HEAD
-    preloadResource('/test.css', 'style', 'anonymous')
-=======
-    preloadResource('/test.css', 'style', 'anonymous');
->>>>>>> origin/main
 
     const link = document.querySelector(
       'link[rel="preload"]',
@@ -204,11 +167,6 @@ describe(('Resource preloading', () => {
   }
 
   it(('should prefetch resources', () => {
-<<<<<<< HEAD
-    prefetchResource('/next-page.js')
-=======
-    prefetchResource('/next-page.js');
->>>>>>> origin/main
 
     const link = document.querySelector(
       'link[rel="prefetch"]',

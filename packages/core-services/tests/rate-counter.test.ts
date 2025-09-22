@@ -125,11 +125,6 @@ describe("RateCounter Service", () => {
       expect(result.allowed).toBe(false);
 
       // Advance time by half window again (total = full window from first _request)
-<<<<<<< HEAD
-      vi.advanceTimersByTime(halfWindow
-=======
-      vi.advanceTimersByTime(halfWindow);
->>>>>>> origin/main
 
       // First 5 requests should have expired, so 5 more should be allowed
       for (let i = 0; i < 5; i++) {
@@ -222,17 +217,6 @@ describe("RateCounter Service", () => {
     }
 
     it(_"should handle non-existent users",_async () => {
-<<<<<<< HEAD
-      const info = await rateCounter.getRateLimitInfo("nonexistent"
-      expect(info.totalRequests).toBe(0
-      expect(info.remainingRequests).toBe(defaultConfig.maxRequests
-    }
-=======
-      const info = await rateCounter.getRateLimitInfo("nonexistent");
-      expect(info.totalRequests).toBe(0);
-      expect(info.remainingRequests).toBe(defaultConfig.maxRequests);
-    });
->>>>>>> origin/main
 
     it(_"should calculate reset time correctly",_async () => {
       const userId = "user1";
@@ -347,21 +331,6 @@ describe("RateCounter Service", () => {
 
   describe("Edge cases and error handling", () => {
     it(_"should handle invalid user IDs",_async () => {
-<<<<<<< HEAD
-      expect(_async () => await rateCounter.checkLimit("")).not.toThrow(
-      expect(_async () => await rateCounter.checkLimit(null as any),
-      ).not.toThrow(
-      expect(_async () => await rateCounter.checkLimit(undefined as any),
-      ).not.toThrow(
-    }
-=======
-      expect(_async () => await rateCounter.checkLimit("")).not.toThrow();
-      expect(_async () => await rateCounter.checkLimit(null as any),
-      ).not.toThrow();
-      expect(_async () => await rateCounter.checkLimit(undefined as any),
-      ).not.toThrow();
-    });
->>>>>>> origin/main
 
     it("should handle invalid configurations gracefully", () => {
       const invalidConfig: RateCounterConfig = {
@@ -422,11 +391,6 @@ describe("RateCounter Service", () => {
 
   describe("Performance", () => {
     it(_"should handle large numbers of users efficiently",_async () => {
-<<<<<<< HEAD
-      const startTime = Date.now(
-=======
-      const startTime = Date.now();
->>>>>>> origin/main
       const userCount = 1000;
 
       // Create requests for many users

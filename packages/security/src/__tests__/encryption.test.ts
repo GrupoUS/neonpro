@@ -16,24 +16,10 @@ describe('EncryptionManager_, () => {
 
   describe('Key Generation_, () => {
     it('should generate a valid encryption key_, () => {
-<<<<<<< HEAD
-      const key = encryptionManager.generateKey(
-      expect(key).toBeDefined(
-      expect(typeof key).toBe('string')
-=======
-      const key = encryptionManager.generateKey();
-      expect(key).toBeDefined();
-      expect(typeof key).toBe('string');
->>>>>>> origin/main
       expect(encryptionManager.validateKey(key)).toBe(true);
     }
 
     it('should validate keys correctly_, () => {
-<<<<<<< HEAD
-      const validKey = encryptionManager.generateKey(
-=======
-      const validKey = encryptionManager.generateKey();
->>>>>>> origin/main
       expect(encryptionManager.validateKey(validKey)).toBe(true);
 
       expect(encryptionManager.validateKey('invalid')).toBe(false);
@@ -207,27 +193,11 @@ describe('KeyManager_, () => {
 
   describe('Key Storage_, () => {
     it('should store and retrieve keys_, () => {
-<<<<<<< HEAD
-      keyManager.storeKey(testKeyId, testKey
-      const retrievedKey = keyManager.getKey(testKeyId
-=======
-      keyManager.storeKey(testKeyId, testKey);
-      const retrievedKey = keyManager.getKey(testKeyId);
->>>>>>> origin/main
 
       expect(retrievedKey).toBe(testKey
     }
 
     it('should return null for non-existent keys_, () => {
-<<<<<<< HEAD
-      const retrievedKey = keyManager.getKey('non-existent')
-      expect(retrievedKey).toBeNull(
-    }
-=======
-      const retrievedKey = keyManager.getKey('non-existent');
-      expect(retrievedKey).toBeNull();
-    });
->>>>>>> origin/main
 
     it('should handle key expiration_, () => {
       const expiredKey = 'expired-key';
@@ -240,28 +210,12 @@ describe('KeyManager_, () => {
     }
 
     it('should remove keys_, () => {
-<<<<<<< HEAD
-      keyManager.storeKey(testKeyId, testKey
-      expect(keyManager.getKey(testKeyId)).toBe(testKey
-=======
-      keyManager.storeKey(testKeyId, testKey);
-      expect(keyManager.getKey(testKeyId)).toBe(testKey);
->>>>>>> origin/main
 
       keyManager.removeKey(testKeyId
       expect(keyManager.getKey(testKeyId)).toBeNull(
     }
 
     it('should list all stored keys_, () => {
-<<<<<<< HEAD
-      keyManager.storeKey('key1', 'value1')
-      keyManager.storeKey('key2', 'value2')
-      keyManager.storeKey('key3', 'value3')
-=======
-      keyManager.storeKey('key1', 'value1');
-      keyManager.storeKey('key2', 'value2');
-      keyManager.storeKey('key3', 'value3');
->>>>>>> origin/main
 
       const keys = keyManager.listKeys(
       expect(keys).toContain('key1')
@@ -289,11 +243,6 @@ describe('KeyManager_, () => {
     }
 
     it('should work even when no old key exists_, () => {
-<<<<<<< HEAD
-      const newKey = keyManager.rotateKey(testKeyId, 3600
-=======
-      const newKey = keyManager.rotateKey(testKeyId, 3600);
->>>>>>> origin/main
 
       expect(newKey).toBeDefined(
       expect(keyManager.getKey(testKeyId)).toBe(newKey

@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 // Phase 3.4 — T016/T017: Zod schemas for chat
 export const ChatQuerySchema = z.object({
   question: z.string().min(1).max(4000),

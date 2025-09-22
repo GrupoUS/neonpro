@@ -453,22 +453,12 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
         operation: 'create',
         data: { name: 'Test Patient' },
         _context: mockConfirmRequest.context,
-<<<<<<< HEAD
-      }
-=======
-      });
->>>>>>> origin/main
 
       const confirmResponse = await confirmCrudIntent({
         intentId: intentResponse.intentId,
         token: intentResponse.token,
         confirmation: mockConfirmRequest.confirmation,
         _context: mockConfirmRequest.context,
-<<<<<<< HEAD
-      }
-=======
-      });
->>>>>>> origin/main
 
       expect(confirmResponse.success).toBe(true);
       expect(confirmResponse.auditTrail.intentId).toBe(intentResponse.intentId

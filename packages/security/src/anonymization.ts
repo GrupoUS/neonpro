@@ -44,11 +44,6 @@ export interface MaskingOptions {
 /**
  * LGPD compliance levels for anonymization
  */
-<<<<<<< HEAD
-export type LGPDComplianceLevel = 'basic' | 'enhanced' | 'full_anonymization'
-=======
-export type LGPDComplianceLevel = 'basic' | 'enhanced' | ''full_anonymization'
->>>>>>> origin/main
 
 /**
  * Patient data structure for healthcare anonymization
@@ -610,8 +605,3 @@ export const DEFAULT_MASKING_OPTIONS: Record<
 /**
  * Version of the anonymization utilities
  */
-<<<<<<< HEAD
-export const ANONYMIZATION_VERSION = '1.0.0'
-=======
-export const ANONYMIZATION_VERSION = ''1.0.0'
->>>>>>> origin/main

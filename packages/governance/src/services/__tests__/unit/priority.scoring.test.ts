@@ -3,11 +3,6 @@ import { InMemoryPrioritizationService } from "../../index";
 
 describe("Priority scoring", () => {
   it(_"applies tie-break Risk Reduction then Strategic Fit",_async () => {
-<<<<<<< HEAD
-    const svc = new InMemoryPrioritizationService(
-=======
-    const svc = new InMemoryPrioritizationService();
->>>>>>> origin/main
     const a = await svc.scoreFeature({
       featureId: "F1",
       impact: 8,

@@ -191,19 +191,6 @@ describe("Brazilian Validation Schemas (T037)", () => {
 
       const result = validatePatientData(invalidPatient
       expect(result.isValid).toBe(false);
-<<<<<<< HEAD
-      expect(result.errors.length).toBeGreaterThan(0
-      expect(_result.errors.some((e) => e.field === "cpf")).toBe(true);
-      expect(_result.errors.some((e) => e.field === "phone")).toBe(true);
-    }
-  }
-=======
-      expect(result.errors.length).toBeGreaterThan(0);
-      expect(_result.errors.some((e) => e.field === "cpf")).toBe(true);
-      expect(_result.errors.some((e) => e.field === "phone")).toBe(true);
-    });
-  });
->>>>>>> origin/main
 
   describe("Address Validation", () => {
     it("should validate Brazilian addresses", () => {

@@ -13,7 +13,7 @@
     }
   },
   "scripts": {
-    "build": "tsc --project tsconfig.build.json",
+    "build": "bun x tsc --project tsconfig.build.json",
     "dev": "tsc -w -p tsconfig.build.json",
     "lint": "oxlint src/",
     "lint:fix": "oxlint src/ --fix",

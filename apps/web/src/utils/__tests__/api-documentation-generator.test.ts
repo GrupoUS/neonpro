@@ -330,11 +330,10 @@ describe('API Documentation Generator', () => {
         e => e.id === 'get-patient',
       );
 
-      expect(patientEndpoint?.responses[0].example.accessibility).toBeDefined();
-      expect(
-        (patientEndpoint?.responses[0].example.accessibility as any)
-          .mobileOptimized,
-      ).toBe(true);
+      // safe access: guard each level (use optional chaining for arrays: ?.[])
+      const accessibility = patientEndpoint?.responses?.[0]?.example?.accessibility as any;
+      expect(accessibility).toBeDefined();
+      expect(accessibility?.mobileOptimized).toBe(true);
     });
   });
 
@@ -402,198 +401,135 @@ describe('API Documentation Generator', () => {
     });
 
     it('should include healthcare-specific errors', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
       const patientEndpoint = report.endpoints.find(
         e => e.id === 'get-patient',
-      
+      );
 
-<<<<<<< HEAD
-      expect(patientEndpoint?.errors).toBeDefined(
-      expect((patientEndpoint as any).errors?.length).toBeGreaterThan(0
-=======
       expect(patientEndpoint?.errors).toBeDefined();
       expect((patientEndpoint as any).errors?.length).toBeGreaterThan(0);
->>>>>>> origin/main
 
       const lgpdError = (patientEndpoint as any)?.errors?.find(
-        e => e.code === 'LGPD_CONSENT_REQUIRED',
-      
-      expect(lgpdError).toBeDefined(
-      expect(lgpdError?.message).toBe('LGPD consent required')
-      expect(lgpdError?.messagePtBr).toBe('Consentimento LGPD obrigatório')
-    }
+        (e: any) => e.code === 'LGPD_CONSENT_REQUIRED',
+      );
+      expect(lgpdError).toBeDefined();
+      expect(lgpdError?.message).toBe('LGPD consent required');
+      expect(lgpdError?.messagePtBr).toBe('Consentimento LGPD obrigatório');
+    });
 
     it('should include appointment-specific errors', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
       const appointmentEndpoint = report.endpoints.find(
         e => e.id === 'create-appointment',
-      
+      );
 
-      expect(appointmentEndpoint?.errors).toBeDefined(
+      expect(appointmentEndpoint?.errors).toBeDefined();
 
       const conflictError = (appointmentEndpoint as any)?.errors?.find(
-        e => e.code === 'APPOINTMENT_CONFLICT',
-      
-      expect(conflictError).toBeDefined(
-      expect(conflictError?.statusCode).toBe(409
+        (e: any) => e.code === 'APPOINTMENT_CONFLICT',
+      );
+      expect(conflictError).toBeDefined();
+      expect(conflictError?.statusCode).toBe(409);
       expect(conflictError?.messagePtBr).toBe(
         'Conflito de horário da consulta',
-      
-    }
-  }
+      );
+    });
+  });
 
   describe('Brazilian Portuguese Localization', () => {
     it('should provide Portuguese API labels', () => {
-      expect(API_LABELS_PT_BR[API_METHODS.GET]).toBe('BUSCAR')
-      expect(API_LABELS_PT_BR[API_METHODS.POST]).toBe('CRIAR')
-      expect(API_LABELS_PT_BR[API_METHODS.PUT]).toBe('ATUALIZAR')
-      expect(API_LABELS_PT_BR[API_METHODS.DELETE]).toBe('EXCLUIR')
+      expect(API_LABELS_PT_BR[API_METHODS.GET]).toBe('BUSCAR');
+      expect(API_LABELS_PT_BR[API_METHODS.POST]).toBe('CRIAR');
+      expect(API_LABELS_PT_BR[API_METHODS.PUT]).toBe('ATUALIZAR');
+      expect(API_LABELS_PT_BR[API_METHODS.DELETE]).toBe('EXCLUIR');
 
       expect(API_LABELS_PT_BR[API_CATEGORIES.PATIENT_MANAGEMENT]).toBe(
         'Gestão de Pacientes',
-      
+      );
       expect(API_LABELS_PT_BR[API_CATEGORIES.APPOINTMENT_SCHEDULING]).toBe(
         'Agendamento de Consultas',
-      
+      );
       expect(API_LABELS_PT_BR[API_CATEGORIES.AI_FEATURES]).toBe(
         'Recursos de IA',
-      
+      );
 
-      expect(API_LABELS_PT_BR.authentication).toBe('Autenticação')
-      expect(API_LABELS_PT_BR.lgpdConsent).toBe('Consentimento LGPD')
-      expect(API_LABELS_PT_BR.mobileOptimized).toBe('Otimizado para Móvel')
-    }
+      expect(API_LABELS_PT_BR.authentication).toBe('Autenticação');
+      expect(API_LABELS_PT_BR.lgpdConsent).toBe('Consentimento LGPD');
+      expect(API_LABELS_PT_BR.mobileOptimized).toBe('Otimizado para Móvel');
+    });
 
     it('should include Portuguese translations in endpoints', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
       report.endpoints.forEach(endpoint => {
-        // Variable 'endpoint' is already declared as parameter
-<<<<<<< HEAD
-        expect(endpoint.titlePtBr).toBeDefined(
-        expect(endpoint.descriptionPtBr).toBeDefined(
-
-        endpoint.parameters?.forEach(param => {
-          // Variable 'param' is already declared as parameter
-          expect(param.descriptionPtBr).toBeDefined(
-        }
-
-        endpoint.responses.forEach(response => {
-          // Variable 'response' is already declared as parameter
-          expect(response.descriptionPtBr).toBeDefined(
-        }
-      }
-    }
-=======
         expect(endpoint.titlePtBr).toBeDefined();
         expect(endpoint.descriptionPtBr).toBeDefined();
 
-        endpoint.parameters?.forEach(param => {
-          // Variable 'param' is already declared as parameter
+        endpoint.parameters?.forEach((param: any) => {
           expect(param.descriptionPtBr).toBeDefined();
         });
 
-        endpoint.responses.forEach(response => {
-          // Variable 'response' is already declared as parameter
+        endpoint.responses.forEach((response: any) => {
           expect(response.descriptionPtBr).toBeDefined();
         });
       });
     });
->>>>>>> origin/main
 
     it('should include Portuguese translations in examples', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
       const endpointsWithExamples = report.endpoints.filter(
         e => e.examples && e.examples.length > 0,
-      
+      );
 
       endpointsWithExamples.forEach(endpoint => {
-        // Variable 'endpoint' is already declared as parameter
-        endpoint.examples?.forEach(example => {
-          // Variable 'example' is already declared as parameter
-<<<<<<< HEAD
-          expect(example.titlePtBr).toBeDefined(
-          expect(example.descriptionPtBr).toBeDefined(
-        }
-      }
-    }
-  }
-=======
+        (endpoint as any).examples?.forEach((example: any) => {
           expect(example.titlePtBr).toBeDefined();
           expect(example.descriptionPtBr).toBeDefined();
         });
       });
     });
   });
->>>>>>> origin/main
 
   describe('Healthcare Context and Accessibility', () => {
     it('should include healthcare context in parameters', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
       const patientEndpoint = report.endpoints.find(
         e => e.id === 'get-patient',
-      
+      );
 
-<<<<<<< HEAD
-      expect((patientEndpoint as any).parameters).toBeDefined(
-      expect((patientEndpoint as any).parameters![0].healthcareContext).toBeDefined(
-=======
       expect((patientEndpoint as any).parameters).toBeDefined();
       expect((patientEndpoint as any).parameters![0].healthcareContext).toBeDefined();
->>>>>>> origin/main
       expect((patientEndpoint as any).parameters![0].healthcareContext).toContain(
         'Patient identification',
-      
-    }
+      );
+    });
 
     it('should include accessibility notes in examples', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
       const endpointsWithExamples = report.endpoints.filter(
         e => e.examples && e.examples.length > 0,
-      
+      );
 
       endpointsWithExamples.forEach(endpoint => {
-        // Variable 'endpoint' is already declared as parameter
-        endpoint.examples?.forEach(example => {
-          // Variable 'example' is already declared as parameter
-<<<<<<< HEAD
-          expect(example.accessibilityNotes).toBeDefined(
-          expect(typeof example.accessibilityNotes).toBe('string')
-          expect(example.accessibilityNotes!.length).toBeGreaterThan(0
-        }
-      }
-    }
-=======
+        (endpoint as any).examples?.forEach((example: any) => {
           expect(example.accessibilityNotes).toBeDefined();
           expect(typeof example.accessibilityNotes).toBe('string');
           expect(example.accessibilityNotes!.length).toBeGreaterThan(0);
         });
       });
     });
->>>>>>> origin/main
 
     it('should include healthcare context in examples', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
       const endpointsWithExamples = report.endpoints.filter(
         e => e.examples && e.examples.length > 0,
-      
+      );
 
       endpointsWithExamples.forEach(endpoint => {
-        // Variable 'endpoint' is already declared as parameter
-        endpoint.examples?.forEach(example => {
-          // Variable 'example' is already declared as parameter
-<<<<<<< HEAD
-          expect(example.healthcareContext).toBeDefined(
-          expect(typeof example.healthcareContext).toBe('string')
-          expect(example.healthcareContext!.length).toBeGreaterThan(0
-        }
-      }
-    }
-  }
-=======
+        (endpoint as any).examples?.forEach((example: any) => {
           expect(example.healthcareContext).toBeDefined();
           expect(typeof example.healthcareContext).toBe('string');
           expect(example.healthcareContext!.length).toBeGreaterThan(0);
@@ -601,49 +537,39 @@ describe('API Documentation Generator', () => {
       });
     });
   });
->>>>>>> origin/main
 
   describe('Utility Methods', () => {
     it('should get endpoints by category', () => {
       const patientEndpoints = generator.getEndpointsByCategory(
         API_CATEGORIES.PATIENT_MANAGEMENT,
-      
-      expect(patientEndpoints.length).toBeGreaterThan(0
+      );
+      expect(patientEndpoints.length).toBeGreaterThan(0);
 
       patientEndpoints.forEach(endpoint => {
-        // Variable 'endpoint' is already declared as parameter
-<<<<<<< HEAD
-        expect(endpoint.category).toBe(API_CATEGORIES.PATIENT_MANAGEMENT
-      }
-    }
-=======
         expect(endpoint.category).toBe(API_CATEGORIES.PATIENT_MANAGEMENT);
       });
     });
->>>>>>> origin/main
 
     it('should get healthcare-compliant endpoints', () => {
-      const healthcareEndpoints = generator.getHealthcareCompliantEndpoints(
-      expect(healthcareEndpoints.length).toBeGreaterThan(0
+      const healthcareEndpoints = generator.getHealthcareCompliantEndpoints();
+      expect(healthcareEndpoints.length).toBeGreaterThan(0);
 
       healthcareEndpoints.forEach(endpoint => {
-        // Variable 'endpoint' is already declared as parameter
-        const hasCompliance = endpoint.metadata.compliance?.lgpd
-          || endpoint.metadata.compliance?.anvisa
-          || endpoint.metadata.compliance?.cfm;
+        const hasCompliance = (endpoint as any).metadata.compliance?.lgpd
+          || (endpoint as any).metadata.compliance?.anvisa
+          || (endpoint as any).metadata.compliance?.cfm;
         expect(hasCompliance).toBe(true);
-      }
-    }
+      });
+    });
 
     it('should get mobile-optimized endpoints', () => {
-      const mobileEndpoints = generator.getMobileOptimizedEndpoints(
-      expect(mobileEndpoints.length).toBeGreaterThan(0
+      const mobileEndpoints = generator.getMobileOptimizedEndpoints();
+      expect(mobileEndpoints.length).toBeGreaterThan(0);
 
       mobileEndpoints.forEach(endpoint => {
-        // Variable 'endpoint' is already declared as parameter
-        expect(endpoint.metadata.mobileOptimized).toBe(true);
-      }
-    }
+        expect((endpoint as any).metadata.mobileOptimized).toBe(true);
+      });
+    });
 
     it('should validate endpoint schema', () => {
       const validEndpoint = {
@@ -660,6 +586,7 @@ describe('API Documentation Generator', () => {
 
       expect(generator.validateEndpoint(validEndpoint)).toBe(true);
       expect(generator.validateEndpoint({})).toBe(false);
-    }
-  }
-}
+    });
+  });
+});
+

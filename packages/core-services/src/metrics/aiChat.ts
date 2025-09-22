@@ -80,7 +80,7 @@ export class AIChatMetrics {
     piiDetected?: boolean;
   }): void {
     this.recordInteraction({
-      _userId: params.userId,
+      _userId: params._userId,
       clinicId: params.clinicId,
       sessionId: params.sessionId,
       eventType: "success",
@@ -107,7 +107,7 @@ export class AIChatMetrics {
     responseTime: number;
   }): void {
     this.recordInteraction({
-      _userId: params.userId,
+      _userId: params._userId,
       clinicId: params.clinicId,
       sessionId: params.sessionId,
       eventType: "refusal",
@@ -132,7 +132,7 @@ export class AIChatMetrics {
     remaining: number;
   }): void {
     this.recordInteraction({
-      _userId: params.userId,
+      _userId: params._userId,
       clinicId: params.clinicId,
       eventType: "rate_limit",
       metrics: {
@@ -158,7 +158,7 @@ export class AIChatMetrics {
     responseTime?: number;
   }): void {
     this.recordInteraction({
-      _userId: params.userId,
+      _userId: params._userId,
       clinicId: params.clinicId,
       sessionId: params.sessionId,
       eventType: "error",
@@ -191,7 +191,7 @@ export class AIChatMetrics {
       return this.createEmptyMetrics();
     }
 
-    return allMetrics.reduce((acc,_current) => ({
+    return allMetrics.reduce((acc, current) => ({
       responseTime: (acc.responseTime + current.responseTime) / 2, // Average
       firstTokenTime:
         acc.firstTokenTime && current.firstTokenTime
@@ -236,7 +236,7 @@ export class AIChatMetrics {
     const responseTimes = events
       .filter((e) => e.metrics.responseTime)
       .map((e) => e.metrics.responseTime!)
-      .sort((a,_b) => a - b);
+      .sort((a, b) => a - b);
 
     if (responseTimes.length === 0) {
       return { p50: 0, p95: 0, p99: 0, average: 0, count: 0 };
@@ -251,7 +251,7 @@ export class AIChatMetrics {
       p50: getPercentile(responseTimes, 50),
       p95: getPercentile(responseTimes, 95),
       p99: getPercentile(responseTimes, 99),
-      average: responseTimes.reduce((a,_b) => a + b, 0) / responseTimes.length,
+      average: responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length,
       count: responseTimes.length,
     };
   }
@@ -270,13 +270,13 @@ export class AIChatMetrics {
       : this.events;
 
     const totalInteractions = events.length;
-    const piiDetections = events.reduce((sum,_e) => sum + (e.metrics.piiDetections || 0),
+    const piiDetections = events.reduce((sum, e) => sum + (e.metrics.piiDetections || 0),
       0,
     );
-    const consentValidations = events.reduce((sum,_e) => sum + (e.metrics.consentValidations || 0),
+    const consentValidations = events.reduce((sum, e) => sum + (e.metrics.consentValidations || 0),
       0,
     );
-    const auditEvents = events.reduce((sum,_e) => sum + (e.metrics.auditEvents || 0),
+    const auditEvents = events.reduce((sum, e) => sum + (e.metrics.auditEvents || 0),
       0,
     );
 
@@ -308,7 +308,7 @@ export class AIChatMetrics {
 
     const rateLimitEvents = events.filter((e) => e.eventType === "rate_limit");
     const totalInteractions = events.length;
-    const totalHits = rateLimitEvents.reduce((sum,_e) => sum + (e.metrics.rateLimitHits || 0),
+    const totalHits = rateLimitEvents.reduce((sum, e) => sum + (e.metrics.rateLimitHits || 0),
       0,
     );
 
@@ -318,10 +318,10 @@ export class AIChatMetrics {
 
     const averageRemaining =
       remainingValues.length > 0
-        ? remainingValues.reduce((a,_b) => a + b, 0) / remainingValues.length
+        ? remainingValues.reduce((a, b) => a + b, 0) / remainingValues.length
         : 0;
 
-    const lastHitEvent = rateLimitEvents.sort((a,_b) =>
+    const lastHitEvent = rateLimitEvents.sort((a, b) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     )[0];
 
@@ -345,7 +345,7 @@ export class AIChatMetrics {
     rateLimitingStats: any;
     clinicMetrics: Array<{ clinicId: string; metrics: AIMetrics }>;
   } {
-    const clinicMetrics = Array.from(this.metrics.entries()).map(([clinicId,_metrics]) => ({
+    const clinicMetrics = Array.from(this.metrics.entries()).map(([clinicId, metrics]) => ({
         clinicId,
         metrics,
       }),

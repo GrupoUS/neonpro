@@ -706,11 +706,6 @@ describe('Financial Metrics Integration Tests', () => {
       // Act
       const results = await Promise.all(
         mockMultiClinicRequests.map(request => FinancialMetricsService.calculateMetrics(_request)),
-<<<<<<< HEAD
-      
-=======
-      );
->>>>>>> origin/main
 
       // Assert
       expect(results).toHaveLength(2

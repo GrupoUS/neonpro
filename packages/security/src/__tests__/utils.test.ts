@@ -12,15 +12,6 @@ describe('SecurityUtils_, () => {
       const maliciousInput = '<script>alert("xss")</script>';
       const sanitized = SecurityUtils.sanitizeInput(maliciousInput
 
-<<<<<<< HEAD
-      expect(sanitized).toBe('<script>alert("xss")</script>')
-      expect(sanitized).not.toContain('<script>')
-    }
-=======
-      expect(sanitized).toBe('<script>alert("xss")<&#x2F;script>');
-      expect(sanitized).toContain('<script>'); // The sanitized version still contains script tags but escaped
-    });
->>>>>>> origin/main
 
     it('should sanitize HTML content_, () => {
       const maliciousHTML = '<div onclick="alert(\'xss\')">Click me</div><script>evil()</script>';
@@ -32,21 +23,6 @@ describe('SecurityUtils_, () => {
     }
 
     it('should handle non-string inputs_, () => {
-<<<<<<< HEAD
-      expect(SecurityUtils.sanitizeInput(null as any)).toBe(')
-      expect(SecurityUtils.sanitizeInput(undefined as any)).toBe(')
-      expect(SecurityUtils.sanitizeInput(123 as any)).toBe(')
-      expect(SecurityUtils.sanitizeInput({} as any)).toBe(')
-    }
-  }
-=======
-      expect(SecurityUtils.sanitizeInput(null as any)).toBe('');
-      expect(SecurityUtils.sanitizeInput(undefined as any)).toBe('');
-      expect(SecurityUtils.sanitizeInput(123 as any)).toBe('');
-      expect(SecurityUtils.sanitizeInput({} as any)).toBe('');
-    });
-  });
->>>>>>> origin/main
 
   describe('Email Validation_, () => {
     it('should validate and sanitize correct emails_, () => {
@@ -170,13 +146,6 @@ describe('SecurityUtils_, () => {
 
   describe('Token Generation_, () => {
     it('should generate secure random tokens_, () => {
-<<<<<<< HEAD
-      const token1 = SecurityUtils.generateToken(
-      const token2 = SecurityUtils.generateToken(
-=======
-      const token1 = SecurityUtils.generateToken();
-      const token2 = SecurityUtils.generateToken();
->>>>>>> origin/main
 
       expect(token1).toBeDefined(
       expect(typeof token1).toBe('string')
@@ -185,23 +154,6 @@ describe('SecurityUtils_, () => {
     }
 
     it('should generate tokens with custom length_, () => {
-<<<<<<< HEAD
-      const token = SecurityUtils.generateToken(16
-      expect(token.length).toBe(16
-    }
-
-    it('should generate secure nonces_, () => {
-      const nonce1 = SecurityUtils.generateNonce(
-      const nonce2 = SecurityUtils.generateNonce(
-=======
-      const token = SecurityUtils.generateToken(16);
-      expect(token.length).toBe(16);
-    });
-
-    it('should generate secure nonces_, () => {
-      const nonce1 = SecurityUtils.generateNonce();
-      const nonce2 = SecurityUtils.generateNonce();
->>>>>>> origin/main
 
       expect(nonce1).toBeDefined(
       expect(typeof nonce1).toBe('string')
@@ -230,11 +182,6 @@ describe('SecurityUtils_, () => {
         'UNION SELECT username, password FROM users',
         'DROP TABLE users',
         'INSERT INTO users VALUES',
-<<<<<<< HEAD
-        'UPDATE users SET admin=\'1\',
-=======
-        'UPDATE users SET admin=1',
->>>>>>> origin/main
       ];
 
       maliciousInputs.forEach(input => {
@@ -283,27 +230,6 @@ describe('SecurityUtils_, () => {
     }
 
     it('should handle short strings_, () => {
-<<<<<<< HEAD
-      expect(SecurityUtils.maskSensitiveData('123')).toBe('***')
-      expect(SecurityUtils.maskSensitiveData('12')).toBe('**')
-      expect(SecurityUtils.maskSensitiveData('1')).toBe('*')
-    }
-
-    it('should handle empty strings_, () => {
-      expect(SecurityUtils.maskSensitiveData(')).toBe(')
-    }
-  }
-=======
-      expect(SecurityUtils.maskSensitiveData('123')).toBe('***');
-      expect(SecurityUtils.maskSensitiveData('12')).toBe('**');
-      expect(SecurityUtils.maskSensitiveData('1')).toBe('*');
-    });
-
-    it('should handle empty strings_, () => {
-      expect(SecurityUtils.maskSensitiveData('')).toBe('');
-    });
-  });
->>>>>>> origin/main
 
   describe('Password Strength Validation_, () => {
     it('should validate strong passwords_, () => {
@@ -340,45 +266,16 @@ describe('SecurityUtils_, () => {
     }
 
     it('should provide helpful feedback_, () => {
-<<<<<<< HEAD
-      const result = SecurityUtils.validatePasswordStrength('weak')
-=======
-      const result = SecurityUtils.validatePasswordStrength('weak');
->>>>>>> origin/main
 
       expect(result.feedback).toContain(
         'Password must be at least 8 characters long',
       
       expect(result.feedback).toContain(
-<<<<<<< HEAD
-        'Password must contain lowercase letters',
-      
-      expect(result.feedback).toContain(
-=======
->>>>>>> origin/main
         'Password must contain uppercase letters',
       
       expect(result.feedback).toContain('Password must contain numbers')
       expect(result.feedback).toContain(
         'Password must contain special characters',
-<<<<<<< HEAD
-      
-    }
-  }
-
-  describe('Password Generation_, () => {
-    it('should generate secure passwords_, () => {
-      const password = SecurityUtils.generateSecurePassword(
-=======
-      );
-      // Note: 'weak' contains lowercase letters, so that message is not included
-    });
-  });
-
-  describe('Password Generation_, () => {
-    it('should generate secure passwords_, () => {
-      const password = SecurityUtils.generateSecurePassword();
->>>>>>> origin/main
 
       expect(password.length).toBe(12
       expect(/[a-z]/.test(password)).toBe(true); // Contains lowercase
@@ -388,23 +285,6 @@ describe('SecurityUtils_, () => {
     }
 
     it('should generate passwords with custom length_, () => {
-<<<<<<< HEAD
-      const password = SecurityUtils.generateSecurePassword(16
-      expect(password.length).toBe(16
-    }
-
-    it('should generate unique passwords_, () => {
-      const password1 = SecurityUtils.generateSecurePassword(
-      const password2 = SecurityUtils.generateSecurePassword(
-=======
-      const password = SecurityUtils.generateSecurePassword(16);
-      expect(password.length).toBe(16);
-    });
-
-    it('should generate unique passwords_, () => {
-      const password1 = SecurityUtils.generateSecurePassword();
-      const password2 = SecurityUtils.generateSecurePassword();
->>>>>>> origin/main
 
       expect(password1).not.toBe(password2
     }
@@ -510,15 +390,6 @@ describe('RateLimiter_, () => {
       // Should allow requests again
       expect(rateLimiter.isAllowed(key, maxAttempts, windowMs)).toBe(true);
       expect(rateLimiter.getRemainingAttempts(key, maxAttempts, windowMs)).toBe(
-<<<<<<< HEAD
-        3,
-      
-    }
-=======
-        2,
-      );
-    });
->>>>>>> origin/main
 
     it('should handle cleanup of expired records_, () => {
       const key1 = 'user1';
@@ -546,20 +417,3 @@ describe('RateLimiter_, () => {
       // After cleanup, new requests should get full allowance
       expect(
         rateLimiter.getRemainingAttempts(key1, maxAttempts, windowMs),
-<<<<<<< HEAD
-      ).toBe(5
-      expect(
-        rateLimiter.getRemainingAttempts(key2, maxAttempts, windowMs),
-      ).toBe(5
-    }
-  }
-}
-=======
-      ).toBe(4);
-      expect(
-        rateLimiter.getRemainingAttempts(key2, maxAttempts, windowMs),
-      ).toBe(4);
-    });
-  });
-});
->>>>>>> origin/main

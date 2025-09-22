@@ -16,20 +16,6 @@ const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {}
 
 describe('Security Logging - Vulnerability Prevention_, () => {
   beforeEach(() => {
-<<<<<<< HEAD
-    vi.clearAllMocks(
-  }
-=======
-    vi.clearAllMocks();
-    // Initialize secure logging for these tests
-    SecureLogger.initialize();
-  });
-
-  afterEach(() => {
-    // Restore original console methods
-    SecureLogger.restore();
-  });
->>>>>>> origin/main
 
   afterEach(() => {
     vi.restoreAllMocks(
@@ -39,23 +25,11 @@ describe('Security Logging - Vulnerability Prevention_, () => {
     it('should NOT log raw SQL queries with parameters_, () => {
       const maliciousQueries = [
         'SELECT * FROM patients WHERE name = \'Robert\'); DROP TABLE patients; --',
-<<<<<<< HEAD
-        'SELECT * FROM users WHERE email = \'admin@test.com\' OR \'1\'=\'1\',
-=======
-        'SELECT * FROM users WHERE email = \'admin@test.com\' OR \'1\'=\'1\'',
->>>>>>> origin/main
         'INSERT INTO audit_logs (action, user_id) VALUES (\'login\', \'admin\'); SELECT * FROM credit_cards_,
       ];
 
       maliciousQueries.forEach(query => {
         try {
-<<<<<<< HEAD
-          console.log(`Executing _query: ${query}`
-          console.error(`Query validation failed for: ${query}`
-=======
-          console.log(`Executing _query: ${query}`);
-          console.error(`Query validation failed for: ${query}`);
->>>>>>> origin/main
         } catch (error) {
           console.error('SQL execution error:', { query, error }
         }
@@ -65,11 +39,6 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls];
       const hasRawSql = allLogs.some(call =>
         JSON.stringify(call).includes('DROP TABLE')
-<<<<<<< HEAD
-        || JSON.stringify(call).includes('OR \'1\'=\'1\')
-=======
-        || JSON.stringify(call).includes('OR \'1\'=\'1\'')
->>>>>>> origin/main
         || JSON.stringify(call).includes('SELECT * FROM credit_cards_)
         || JSON.stringify(call).includes('Robert\'); DROP TABLE')
       
@@ -223,15 +192,6 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       };
 
       // Simulate request logging
-<<<<<<< HEAD
-      console.log('Incoming _request:_, requestData
-      console.error('Request validation failed:', requestData
-      console.info('Request URL:', requestData.url
-=======
-      console.log('Incoming _request:_, requestData);
-      console.error('Request validation failed:', requestData);
-      console.info('Request URL:', requestData.url);
->>>>>>> origin/main
 
       // Test will FAIL because request details with tokens are being logged
       const allLogs = [
@@ -324,11 +284,6 @@ describe('Security Logging - Vulnerability Prevention_, () => {
         || JSON.stringify(call).includes('C:\\Program Files\\NeonPro')
         || JSON.stringify(call).includes('../../uploads/temp')
         || JSON.stringify(call).includes('/tmp/neonpro_uploads_)
-<<<<<<< HEAD
-      
-=======
-      );
->>>>>>> origin/main
 
       expect(hasFilePaths).toBe(false);
     }

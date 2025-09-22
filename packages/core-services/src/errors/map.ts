@@ -32,11 +32,11 @@ export class ErrorMapper {
 
     // Handle known error types
     if (error instanceof Error) {
-      return this.mapKnownError(error, context, timestamp);
+      return this.mapKnownError(error, _context, timestamp);
     }
 
     // Handle unknown errors
-    return this.mapUnknownError(error, context, timestamp);
+    return this.mapUnknownError(error, _context, timestamp);
   }
 
   private static mapKnownError(
@@ -58,7 +58,7 @@ export class ErrorMapper {
         logLevel: "warn",
         shouldLog: true,
         metadata: {
-          _userId: context?.userId,
+          _userId: _context?._userId,
           timestamp,
           originalError: "Rate limit exceeded",
         },
@@ -76,7 +76,7 @@ export class ErrorMapper {
         logLevel: "info",
         shouldLog: false,
         metadata: {
-          _userId: context?.userId,
+          _userId: _context?._userId,
           timestamp,
         },
       };
@@ -97,9 +97,9 @@ export class ErrorMapper {
         logLevel: "warn",
         shouldLog: true,
         metadata: {
-          _userId: context?.userId,
-          clinicId: context?.clinicId,
-          action: context?.action,
+          _userId: _context?._userId,
+          clinicId: _context?.clinicId,
+          action: _context?.action,
           timestamp,
         },
       };
@@ -116,8 +116,8 @@ export class ErrorMapper {
         logLevel: "info",
         shouldLog: true,
         metadata: {
-          _userId: context?.userId,
-          clinicId: context?.clinicId,
+          _userId: _context?._userId,
+          clinicId: _context?.clinicId,
           timestamp,
           complianceIssue: true,
         },
@@ -140,8 +140,8 @@ export class ErrorMapper {
         logLevel: "error",
         shouldLog: true,
         metadata: {
-          _userId: context?.userId,
-          sessionId: context?.sessionId,
+          _userId: _context?._userId,
+          sessionId: _context?.sessionId,
           timestamp,
           serviceType: "ai",
         },
@@ -164,8 +164,8 @@ export class ErrorMapper {
         logLevel: "error",
         shouldLog: true,
         metadata: {
-          _userId: context?.userId,
-          clinicId: context?.clinicId,
+          _userId: _context?._userId,
+          clinicId: _context?.clinicId,
           timestamp,
           serviceType: "database",
         },
@@ -187,8 +187,8 @@ export class ErrorMapper {
         logLevel: "warn",
         shouldLog: true,
         metadata: {
-          _userId: context?.userId,
-          sessionId: context?.sessionId,
+          _userId: _context?._userId,
+          sessionId: _context?.sessionId,
           timestamp,
           complianceIssue: true,
           dataProtection: true,
@@ -197,7 +197,7 @@ export class ErrorMapper {
     }
 
     // Default for unrecognized errors
-    return this.mapUnknownError(error, context, timestamp);
+    return this.mapUnknownError(error, _context, timestamp);
   }
 
   private static mapUnknownError(
@@ -213,9 +213,9 @@ export class ErrorMapper {
       logLevel: "error",
       shouldLog: true,
       metadata: {
-        _userId: context?.userId,
-        clinicId: context?.clinicId,
-        sessionId: context?.sessionId,
+        _userId: _context?._userId,
+        clinicId: _context?.clinicId,
+        sessionId: _context?.sessionId,
         timestamp,
         errorType: typeof error,
         hasStack: error instanceof Error && !!error.stack,
@@ -253,7 +253,7 @@ export class ErrorMapper {
         timestamp: new Date().toISOString(),
       },
       // Include request ID if available for support debugging
-      ...(context?.sessionId && { requestId: context.sessionId }),
+      ...(_context?.sessionId && { requestId: _context.sessionId }),
     };
   }
 
@@ -273,10 +273,10 @@ export class ErrorMapper {
       code: mapped.code,
       statusCode: mapped.statusCode,
       _context: {
-        _userId: context?.userId,
-        clinicId: context?.clinicId,
-        sessionId: context?.sessionId,
-        action: context?.action,
+        _userId: _context?._userId,
+        clinicId: _context?.clinicId,
+        sessionId: _context?.sessionId,
+        action: _context?.action,
         timestamp: mapped.metadata?.timestamp,
       },
       metadata: mapped.metadata,
@@ -288,17 +288,17 @@ export class ErrorMapper {
 }
 
 // Predefined error creators for common scenarios
-export const createRateLimitError = (_userId?: string) => {
+export const createRateLimitError = (userId?: string) => {
   const error = new Error("Rate limit exceeded for user");
   error.name = "RateLimitError";
-  return ErrorMapper.mapError(error, { userId, action: "rate_limit_check" });
+  return ErrorMapper.mapError(error, { _userId: userId, action: "rate_limit_check" });
 };
 
-export const createConsentError = (_userId?: string, clinicId?: string) => {
+export const createConsentError = (userId?: string, clinicId?: string) => {
   const error = new Error("LGPD consent required for data processing");
   error.name = "ConsentError";
   return ErrorMapper.mapError(error, {
-    userId,
+    _userId: userId,
     clinicId,
     action: "consent_validation",
   });
@@ -311,13 +311,13 @@ export const createAIServiceError = (sessionId?: string) => {
 };
 
 export const createDataProtectionError = (
-  _userId?: string,
+  userId?: string,
   sessionId?: string,
 ) => {
   const error = new Error("PII detected in user input");
   error.name = "DataProtectionError";
   return ErrorMapper.mapError(error, {
-    userId,
+    _userId: userId,
     sessionId,
     action: "pii_detection",
   });

@@ -176,29 +176,6 @@ describe(('CalendarLGPDAuditService - RED Phase Tests', () => {
       expect(auditLog.patientId).toBe(mockAppointment.id
       expect(auditLog.action).toBeDefined(
       expect(Array.isArray(auditLog.dataCategory)).toBe(true);
-<<<<<<< HEAD
-      expect(auditLog.purpose).toBeDefined(
-      expect(auditLog._userId).toBe(mockUserId
-      expect(auditLog.userRole).toBe(mockUserRole
-      expect(auditLog.timestamp).toBeInstanceOf(Date
-      expect(auditLog.details).toBeDefined(
-      expect(auditLog.complianceStatus).toBeDefined(
-      expect(auditLog.legalBasis).toBeDefined(
-      expect(auditLog.retentionDays).toBeGreaterThan(0
-      expect(auditLog.riskLevel).toBeDefined(
-    }
-=======
-      expect(auditLog.purpose).toBeDefined();
-      expect(auditLog._userId).toBe(mockUserId);
-      expect(auditLog.userRole).toBe(mockUserRole);
-      expect(auditLog.timestamp).toBeInstanceOf(Date);
-      expect(auditLog.details).toBeDefined();
-      expect(auditLog.complianceStatus).toBeDefined();
-      expect(auditLog.legalBasis).toBeDefined();
-      expect(auditLog.retentionDays).toBeGreaterThan(0);
-      expect(auditLog.riskLevel).toBeDefined();
-    });
->>>>>>> origin/main
 
     it(_'should FAIL - should determine correct action based on context',async () => {
       // RED: This test fails if action determination is incorrect

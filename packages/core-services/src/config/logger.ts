@@ -77,7 +77,7 @@ export class Logger {
     // Text format
     const parts = [entry.timestamp, `[${entry.level}]`, entry.message];
 
-    if (entry.context && Object.keys(entry._context).length > 0) {
+    if (entry._context && Object.keys(entry._context).length > 0) {
       parts.push(`Context: ${JSON.stringify(entry._context)}`);
     }
 
@@ -108,7 +108,7 @@ export class Logger {
     if (!this.config.redactPII) return obj;
 
     // Simple PII redaction - can be enhanced
-    const piiFields = [
+    const _piiFields = [
       "email",
       "phone",
       "ssn",
@@ -128,7 +128,7 @@ export class Logger {
     if (typeof obj === "object" && obj !== null) {
       const redacted = { ...obj };
       for (const key of Object.keys(redacted)) {
-        if (_piiFields.some((field) => key.toLowerCase().includes(field))) {
+        if (_piiFields.some((field: string) => key.toLowerCase().includes(field))) {
           redacted[key] = "[REDACTED]";
         } else if (typeof redacted[key] === "object") {
           redacted[key] = this.redactPII(redacted[key]);
@@ -150,7 +150,7 @@ export class Logger {
       timestamp: new Date().toISOString(),
       level,
       message,
-      _context: context ? this.redactPII(context) : undefined,
+      _context: _context ? this.redactPII(_context) : undefined,
       error,
     };
   }
@@ -161,32 +161,32 @@ export class Logger {
     this.writeLog(entry);
   }
 
-  info(message: string, _context?: Record<string, any>): void {
+  info(message: string, context?: Record<string, any>): void {
     if (!this.shouldLog("INFO")) return;
-    const entry = this.createLogEntry("INFO", message, _context);
+    const entry = this.createLogEntry("INFO", message, context);
     this.writeLog(entry);
   }
 
-  warn(message: string, _context?: Record<string, any>, error?: Error): void {
+  warn(message: string, context?: Record<string, any>, error?: Error): void {
     if (!this.shouldLog("WARN")) return;
     const entry = this.createLogEntry("WARN", message, context, error);
     this.writeLog(entry);
   }
 
-  error(message: string, _context?: Record<string, any>, error?: Error): void {
+  error(message: string, context?: Record<string, any>, error?: Error): void {
     if (!this.shouldLog("ERROR")) return;
     const entry = this.createLogEntry("ERROR", message, context, error);
     this.writeLog(entry);
   }
 
-  fatal(message: string, _context?: Record<string, any>, error?: Error): void {
+  fatal(message: string, context?: Record<string, any>, error?: Error): void {
     if (!this.shouldLog("FATAL")) return;
     const entry = this.createLogEntry("FATAL", message, context, error);
     this.writeLog(entry);
   }
 
   // Specialized logging methods for AI operations
-  logAIRequest(_context: {
+  logAIRequest(context: {
     sessionId: string;
     _userId: string;
     provider: string;
@@ -196,7 +196,7 @@ export class Logger {
   }): void {
     this.info("AI request initiated", {
       sessionId: context.sessionId,
-      _userId: context.userId,
+      _userId: context._userId,
       provider: context.provider,
       model: context.model,
       requestId: context.requestId,
@@ -204,7 +204,7 @@ export class Logger {
     });
   }
 
-  logAIResponse(_context: {
+  logAIResponse(context: {
     sessionId: string;
     _userId: string;
     provider: string;
@@ -226,7 +226,7 @@ export class Logger {
       message,
       _context: {
         sessionId: context.sessionId,
-        _userId: context.userId,
+        _userId: context._userId,
         provider: context.provider,
         model: context.model,
         requestId: context.requestId,
@@ -249,7 +249,7 @@ export class Logger {
     this.warn("Rate limit approached", _context);
   }
 
-  logSecurityEvent(_context: {
+  logSecurityEvent(context: {
     event: string;
     sessionId?: string;
     _userId?: string;
@@ -270,7 +270,7 @@ export class Logger {
       _context: {
         event: context.event,
         sessionId: context.sessionId,
-        _userId: context.userId,
+        _userId: context._userId,
         severity: context.severity,
         details: this.redactPII(context.details),
       },

@@ -154,7 +154,7 @@ export class RepositoryError extends DomainError {
     this.cause = originalError;
   }
 
-  get code(): string {
+  override get code(): string {
     return 'REPOSITORY_ERROR';
   }
 }
@@ -203,7 +203,7 @@ export class AuthorizationError extends DomainError {
     super(message, 'AUTHORIZATION_ERROR', 403);
   }
 
-  get code(): string {
+  override get code(): string {
     return 'AUTHORIZATION_ERROR';
   }
 }
@@ -224,7 +224,7 @@ export class PermissionDeniedError extends AuthorizationError {
 export class ValidationError extends DomainError {
   constructor(
     public readonly field: string,
-    public readonly message: string,
+    override readonly message: string,
     public readonly value?: any
   ) {
     super(`Validation failed for field '${field}': ${message}`, 'VALIDATION_ERROR', 400);

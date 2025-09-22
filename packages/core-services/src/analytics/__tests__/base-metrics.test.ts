@@ -69,31 +69,6 @@ describe("Base Metrics", () => {
         eventType: "metric_created",
         clinicId: "clinic_123",
         _userId: "user_456",
-<<<<<<< HEAD
-      }
-    }
-
-    it("should create a valid AnalyticsEvent", () => {
-      expect(isAnalyticsEvent(validEvent)).toBe(true);
-      expect(validEvent.id).toBeDefined(
-      expect(validEvent.eventType).toBe("metric_created"
-      expect(validEvent.clinicId).toBe("clinic_123"
-      expect(validEvent._userId).toBe("user_456"
-      expect(validEvent.timestamp).toBeInstanceOf(Date
-    }
-=======
-      });
-    });
-
-    it("should create a valid AnalyticsEvent", () => {
-      expect(isAnalyticsEvent(validEvent)).toBe(true);
-      expect(validEvent.id).toBeDefined();
-      expect(validEvent.eventType).toBe("metric_created");
-      expect(validEvent.clinicId).toBe("clinic_123");
-      expect(validEvent._userId).toBe("user_456");
-      expect(validEvent.timestamp).toBeInstanceOf(Date);
-    });
->>>>>>> origin/main
 
     it("should validate required fields in isAnalyticsEvent", () => {
       expect(isAnalyticsEvent({})).toBe(false);

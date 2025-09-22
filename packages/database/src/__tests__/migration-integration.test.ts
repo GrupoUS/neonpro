@@ -53,11 +53,6 @@ describe("Supabase Migration Integration", () => {
 
   describe("Schema Validation", () => {
     it(_"should validate schema successfully",_async () => {
-<<<<<<< HEAD
-      const isValid = await validateSchema(
-=======
-      const isValid = await validateSchema();
->>>>>>> origin/main
       expect(isValid).toBe(true);
     }
 
@@ -129,11 +124,6 @@ describe("Supabase Migration Integration", () => {
     }
 
     it(_"should validate required enum types exist in schema",_async () => {
-<<<<<<< HEAD
-      const types = await import("../types/supabase"
-=======
-      const types = await import("../types/supabase");
->>>>>>> origin/main
       const enums = types.Database.public.Enums;
       expect(enums.appointment_status).toBeDefined(
       expect(enums.consent_status).toBeDefined(

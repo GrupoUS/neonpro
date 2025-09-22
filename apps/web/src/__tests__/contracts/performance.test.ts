@@ -549,13 +549,6 @@ describe(('Performance Contracts', () => {
       ).toBe(5
       expect(
         performanceRegressionThresholds.api_performance.response_time_regression,
-<<<<<<< HEAD
-      ).toBe(15
-    }
-=======
-      ).toBe(15);
-    });
->>>>>>> origin/main
 
     test(('should provide performance baseline management', () => {
       // Contract: Performance baseline management for comparison
