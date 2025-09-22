@@ -1,3 +1,6 @@
+import { LegalBasis } from './gender.js';
+import type { Patient } from '../entities/patient.js';
+
 /**
  * LGPD consent tracking
  */

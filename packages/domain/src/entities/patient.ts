@@ -1,14 +1,5 @@
-import { 
-  Gender, 
-  PatientStatus, 
-  LegalBasis, 
-  BloodType,
-  ContactMethod 
-} from '../value-objects/gender.js';
-import { Address } from '../value-objects/address.js';
-import { EmergencyContact } from '../value-objects/contact.js';
-import { HealthcareInfo, validateCPF, formatCPF } from '../value-objects/healthcare.js';
-import { LGPDConsent, AuditTrail } from '../value-objects/lgpd.js';
+import { Gender, BloodType, ContactMethod } from '../value-objects/gender.js';
+import { validateCPF, formatCPF } from '../value-objects/healthcare.js';
 
 /**
  * Consolidated Patient Entity - Single source of truth for patient data
@@ -140,6 +131,116 @@ export class PatientValidator {
 }
 
 /**
+ * Request types for patient operations
+ */
+export interface CreatePatientRequest {
+  clinicId: string;
+  medicalRecordNumber: string;
+  givenNames: string[];
+  familyName: string;
+  phonePrimary?: string;
+  phoneSecondary?: string;
+  email?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  birthDate?: string;
+  gender?: Gender | string;
+  maritalStatus?: string;
+  bloodType?: BloodType;
+  allergies?: string[];
+  chronicConditions?: string[];
+  currentMedications?: string[];
+  insuranceProvider?: string;
+  insuranceNumber?: string;
+  insurancePlan?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  emergencyContactRelationship?: string;
+  lgpdConsentGiven?: boolean;
+}
+
+export interface UpdatePatientRequest {
+  id: string;
+  givenNames?: string[];
+  familyName?: string;
+  phonePrimary?: string;
+  phoneSecondary?: string;
+  email?: string;
+  addressLine1?: string;
+  addressLine2?: string;
+  city?: string;
+  state?: string;
+  postalCode?: string;
+  country?: string;
+  birthDate?: string;
+  gender?: Gender | string;
+  maritalStatus?: string;
+  bloodType?: BloodType;
+  allergies?: string[];
+  chronicConditions?: string[];
+  currentMedications?: string[];
+  insuranceProvider?: string;
+  insuranceNumber?: string;
+  insurancePlan?: string;
+  emergencyContactName?: string;
+  emergencyContactPhone?: string;
+  emergencyContactRelationship?: string;
+  lgpdConsentGiven?: boolean;
+}
+
+export interface PatientFilter {
+  clinicId?: string;
+  isActive?: boolean;
+  gender?: Gender | string;
+  bloodType?: BloodType;
+  hasAllergies?: boolean;
+  hasChronicConditions?: boolean;
+  insuranceProvider?: string;
+  searchQuery?: string;
+  dateOfBirthFrom?: string;
+  dateOfBirthTo?: string;
+}
+
+export interface PatientSearchResult {
+  patients: Patient[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  hasMore: boolean;
+}
+
+export interface PatientQueryOptions {
+  page?: number;
+  pageSize?: number;
+  sortBy?: 'fullName' | 'createdAt' | 'updatedAt' | 'medicalRecordNumber';
+  sortOrder?: 'asc' | 'desc';
+  includeInactive?: boolean;
+}
+
+export class PatientError extends Error {
+  constructor(
+    message: string,
+    public code: string,
+    public details?: Record<string, any>
+  ) {
+    super(message);
+    this.name = 'PatientError';
+  }
+}
+
+export class PatientValidationError extends PatientError {
+  constructor(message: string, public field: string, public value?: any) {
+    super(message, 'VALIDATION_ERROR', { field, value });
+    this.name = 'PatientValidationError';
+  }
+}
+
+/**
  * Patient factory methods
  */
 export class PatientFactory {
@@ -177,6 +278,7 @@ export class PatientFactory {
       allergies: [],
       chronicConditions: [],
       currentMedications: [],
+      lgpdConsentGiven: false,
     });
   }
 }

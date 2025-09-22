@@ -137,30 +137,27 @@ export class LGPDComplianceError extends DomainError {
  * Repository domain errors
  */
 export class RepositoryError extends DomainError {
-  constructor(message: string, originalError?: Error) {
-    super(`Repository error: ${message}`, 'REPOSITORY_ERROR', 500);
+  constructor(message: string, originalError?: Error, code?: string, statusCode?: number) {
+    super(`Repository error: ${message}`, code || 'REPOSITORY_ERROR', statusCode || 500);
     this.cause = originalError;
   }
 }
 
 export class DatabaseConnectionError extends RepositoryError {
   constructor(originalError?: Error) {
-    super('Database connection failed', originalError);
-    this.code = 'DATABASE_CONNECTION_ERROR';
+    super('Database connection failed', originalError, 'DATABASE_CONNECTION_ERROR', 500);
   }
 }
 
 export class QueryTimeoutError extends RepositoryError {
   constructor(query: string, timeoutMs: number) {
-    super(`Query timeout after ${timeoutMs}ms: ${query}`);
-    this.code = 'QUERY_TIMEOUT_ERROR';
+    super(`Query timeout after ${timeoutMs}ms: ${query}`, undefined, 'QUERY_TIMEOUT_ERROR', 500);
   }
 }
 
 export class ConstraintViolationError extends RepositoryError {
   constructor(constraint: string, table: string) {
-    super(`Constraint violation on ${table}: ${constraint}`);
-    this.code = 'CONSTRAINT_VIOLATION_ERROR';
+    super(`Constraint violation on ${table}: ${constraint}`, undefined, 'CONSTRAINT_VIOLATION_ERROR', 500);
   }
 }
 
@@ -174,15 +171,14 @@ export class AuthenticationError extends DomainError {
 }
 
 export class AuthorizationError extends DomainError {
-  constructor(message: string = 'Authorization failed') {
-    super(message, 'AUTHORIZATION_ERROR', 403);
+  constructor(message: string = 'Authorization failed', code?: string, statusCode?: number) {
+    super(message, code || 'AUTHORIZATION_ERROR', statusCode || 403);
   }
 }
 
 export class PermissionDeniedError extends AuthorizationError {
   constructor(permission: string, resource: string) {
-    super(`Permission denied: ${permission} required for ${resource}`);
-    this.code = 'PERMISSION_DENIED';
+    super(`Permission denied: ${permission} required for ${resource}`, 'PERMISSION_DENIED', 403);
   }
 }
 

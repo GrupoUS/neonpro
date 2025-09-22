@@ -1,3 +1,5 @@
+import { BloodType } from './gender.js';
+
 /**
  * Healthcare-specific information
  */
@@ -12,16 +14,7 @@ export interface HealthcareInfo {
   medicalNotes?: string;
 }
 
-/**
- * Preferred contact method enum
- */
-export enum ContactMethod {
-  PHONE = "phone",
-  EMAIL = "email",
-  SMS = "sms",
-  WHATSAPP = "whatsapp",
-  MAIL = "mail"
-}
+
 
 /**
  * Brazilian CPF validation

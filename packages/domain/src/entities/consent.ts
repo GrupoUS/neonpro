@@ -50,13 +50,13 @@ export interface ConsentRecord {
   purpose: string;
   dataTypes: string[];
   grantedAt: string;
-  expiresAt?: string;
-  revokedAt?: string;
-  revokedBy?: string;
-  revocationReason?: string;
+  expiresAt: string | undefined;
+  revokedAt: string | undefined;
+  revokedBy: string | undefined;
+  revocationReason: string | undefined;
   legalBasis: LegalBasis;
   consentVersion: string;
-  metadata?: Record<string, unknown>;
+  metadata: Record<string, unknown> | undefined;
   auditTrail: ConsentAuditEvent[];
 }
 
@@ -244,7 +244,7 @@ export class ConsentFactory {
       action,
       actorId,
       patientIdHash: this.hashPatientId(patientId),
-      details
+      details: details
     };
   }
 

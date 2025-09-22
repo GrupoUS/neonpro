@@ -44,3 +44,14 @@ export enum BloodType {
   O_NEGATIVE = "O-",
   UNKNOWN = "UNKNOWN"
 }
+
+/**
+ * Contact method preferences
+ */
+export enum ContactMethod {
+  PHONE = "phone",
+  EMAIL = "email",
+  SMS = "sms",
+  WHATSAPP = "whatsapp",
+  MAIL = "mail",
+}

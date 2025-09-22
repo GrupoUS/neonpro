@@ -1,14 +1,16 @@
-import { 
+import type { 
   ConsentRecord, 
-  ConsentRequest, 
-  ConsentAction,
-  ConsentStatus,
+  ConsentRequest,
   ComplianceCheck,
   ComplianceViolation,
-  ConsentValidator,
+} from '../entities/consent.js';
+import { 
+  ConsentAction,
+  ConsentStatus,
+  ConsentValidator, 
   ConsentFactory 
 } from '../entities/consent.js';
-import { ConsentRepository, ConsentQueryRepository } from '../repositories/consent-repository.js';
+import type { ConsentRepository, ConsentQueryRepository } from '../repositories/consent-repository.js';
 
 /**
  * Domain Service for Consent Management

@@ -1,3 +1,5 @@
+import type { Address } from './address.js';
+
 /**
  * Emergency contact information
  */
