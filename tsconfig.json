@@ -1,12 +1,9 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-<<<<<<< HEAD
-=======
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
->>>>>>> origin/main
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "noEmit": false,
     "outDir": "./dist",
@@ -16,14 +13,10 @@
     "noPropertyAccessFromIndexSignature": false,
     "baseUrl": ".",
     "paths": {
-<<<<<<< HEAD
-      "@shared/*": ["packages/shared/src/*"],
-=======
       "@/*": ["./src/*"],
       "@shared/*": ["packages/shared/src/*"],
       "@neonpro/*": ["packages/*/src"],
       "@apps/*": ["apps/*/src"],
->>>>>>> origin/main
       "@tests/*": ["./tools/tests/*"]
     }
   },
