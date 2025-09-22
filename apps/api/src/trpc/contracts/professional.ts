@@ -25,7 +25,7 @@ export const professionalRouter = router({
     })
     .input(CreateProfessionalRequestSchema)
     .output(ProfessionalResponseSchema)
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       // Validate clinic exists and user has permission
       const clinic = await ctx.prisma.clinic.findUnique({
         where: { id: input.clinicId },
@@ -178,7 +178,7 @@ export const professionalRouter = router({
       }),
     )
     .output(ProfessionalResponseSchema)
-    .query(async ({ input,_ctx }) => {
+    .query(async ({ input, _ctx }) => {
       const professional = await ctx.prisma.professional.findUnique({
         where: { id: input.id },
         include: {
@@ -274,7 +274,7 @@ export const professionalRouter = router({
       }),
     )
     .output(ProfessionalsListResponseSchema)
-    .query(async ({ input,_ctx }) => {
+    .query(async ({ input, _ctx }) => {
       // Validate clinic access
       await validateClinicAccess(ctx.user.id, input.clinicId);
 
@@ -413,7 +413,7 @@ export const professionalRouter = router({
     })
     .input(UpdateProfessionalRequestSchema)
     .output(ProfessionalResponseSchema)
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       const currentProfessional = await ctx.prisma.professional.findUnique({
         where: { id: input.id },
       });
@@ -603,7 +603,7 @@ export const professionalRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .query(async ({ input,_ctx }) => {
+    .query(async ({ input, _ctx }) => {
       const professional = await ctx.prisma.professional.findUnique({
         where: { id: input.professionalId },
         include: {
@@ -696,7 +696,7 @@ export const professionalRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       const professional = await ctx.prisma.professional.findUnique({
         where: { id: input.id },
       });

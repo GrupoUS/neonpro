@@ -1297,24 +1297,19 @@ export class TelemedicineService {
   }> {
     const activeSessions = Array.from(this.activeSessions.values());
 
-    const sessionsByType = activeSessions.reduce((acc,_session) => {
-        acc[session.sessionType] = (acc[session.sessionType] || 0) + 1;
-        return acc;
-      },
-      {} as Record<TelemedicineSessionType, number>,
-    );
+    const sessionsByType = activeSessions.reduce((acc, _session) => {
+      acc[session.sessionType] = (acc[session.sessionType] || 0) + 1;
+      return acc;
+    }, {} as Record<TelemedicineSessionType, number>);
 
-    const sessionsByStatus = activeSessions.reduce((acc,_session) => {
-        acc[session.status] = (acc[session.status] || 0) + 1;
-        return acc;
-      },
-      {} as Record<SessionStatus, number>,
-    );
+    const sessionsByStatus = activeSessions.reduce((acc, _session) => {
+      acc[session.status] = (acc[session.status] || 0) + 1;
+      return acc;
+    }, {} as Record<SessionStatus, number>);
 
     const averageQualityScore = activeSessions.length > 0
-      ? activeSessions.reduce((sum,_session) => sum + session.qualityMetrics.qualityScore,
-        0,
-      ) / activeSessions.length
+      ? activeSessions.reduce((sum, _session) => sum + session.qualityMetrics.qualityScore, 0)
+        / activeSessions.length
       : 0;
 
     const complianceIssues = activeSessions.filter(

@@ -3,7 +3,6 @@
  * Multi-tenant clinic management with compliance tracking
  */
 
-import { z } from 'zod';
 import {
   ClinicResponseSchema,
   ClinicsListResponseSchema,
@@ -12,6 +11,7 @@ import {
   PaginationSchema,
   UpdateClinicRequestSchema,
 } from '@neonpro/types';
+import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
 
 export const clinicRouter = router({

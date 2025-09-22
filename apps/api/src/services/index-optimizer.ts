@@ -278,7 +278,7 @@ export class IndexOptimizerService {
    */
   private indexesAreSimilar(columns1: string[], columns2: string[]): boolean {
     if (columns1.length !== columns2.length) return false;
-    return columns1.every((col,_index) => col === columns2[index]);
+    return columns1.every((col, _index) => col === columns2[index]);
   }
 
   /**
@@ -434,7 +434,7 @@ export class IndexOptimizerService {
     const scores = Array.from(tableAnalyses.values()).map(
       analysis => analysis.optimizationScore,
     );
-    const overallScore = scores.reduce((sum,_score) => sum + score, 0) / scores.length;
+    const overallScore = scores.reduce((sum, _score) => sum + score, 0) / scores.length;
 
     // Get all missing indexes and prioritize them
     const allMissingIndexes: IndexRecommendation[] = [];
@@ -443,7 +443,7 @@ export class IndexOptimizerService {
     });
 
     // Sort by priority and healthcare relevance
-    const prioritizedRecommendations = allMissingIndexes.sort((a,_b) => {
+    const prioritizedRecommendations = allMissingIndexes.sort((a, _b) => {
       const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
       const aPriority = priorityOrder[a.priority];
       const bPriority = priorityOrder[b.priority];

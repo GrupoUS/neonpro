@@ -98,7 +98,7 @@ export class QueryPerformanceMonitor {
   } {
     const totalQueries = this.metrics.length;
     const averageDuration = totalQueries > 0
-      ? this.metrics.reduce((sum,_m) => sum + m.duration, 0) / totalQueries
+      ? this.metrics.reduce((sum, _m) => sum + m.duration, 0) / totalQueries
       : 0;
 
     const slowQueries = this.metrics.filter(
@@ -146,7 +146,7 @@ export class QueryPerformanceMonitor {
 
     // Analyze each query group
     queryGroups.forEach((queries, pattern) => {
-      const avgDuration = queries.reduce((sum,_q) => sum + q.duration, 0) / queries.length;
+      const avgDuration = queries.reduce((sum, _q) => sum + q.duration, 0) / queries.length;
       const frequency = queries.length;
 
       const issues: string[] = [];

@@ -64,12 +64,10 @@ export class ReminderScheduler {
 
     // Set up recurring interval
     this.schedulerInterval = setInterval(async () => {
-        if (this.isRunning) {
-          await this.processScheduledReminders();
-        }
-      },
-      intervalMinutes * 60 * 1000,
-    );
+      if (this.isRunning) {
+        await this.processScheduledReminders();
+      }
+    }, intervalMinutes * 60 * 1000);
   }
 
   /**
@@ -530,25 +528,23 @@ export class ReminderScheduler {
         throw error;
       }
 
-      const stats = data.reduce((acc,_reminder) => {
-          acc.total++;
-          acc[reminder.status] = (acc[reminder.status] || 0) + 1;
-          if (reminder.processing_time_ms) {
-            acc.totalProcessingTime += reminder.processing_time_ms;
-            acc.processedCount++;
-          }
-          return acc;
-        },
-        {
-          total: 0,
-          sent: 0,
-          failed: 0,
-          pending: 0,
-          cancelled: 0,
-          totalProcessingTime: 0,
-          processedCount: 0,
-        },
-      );
+      const stats = data.reduce((acc, _reminder) => {
+        acc.total++;
+        acc[reminder.status] = (acc[reminder.status] || 0) + 1;
+        if (reminder.processing_time_ms) {
+          acc.totalProcessingTime += reminder.processing_time_ms;
+          acc.processedCount++;
+        }
+        return acc;
+      }, {
+        total: 0,
+        sent: 0,
+        failed: 0,
+        pending: 0,
+        cancelled: 0,
+        totalProcessingTime: 0,
+        processedCount: 0,
+      });
 
       const successRate = stats.total > 0 ? (stats.sent / stats.total) * 100 : 0;
       const averageProcessingTime = stats.processedCount > 0

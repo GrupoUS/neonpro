@@ -333,9 +333,7 @@ export class HealthcareSecurityTestFramework {
       const result = await Promise.race([
         test.testFunction(context),
         new Promise<SecurityTestResult>((_, reject) =>
-          setTimeout(() => reject(new Error('Test timeout')),
-            this.config.timeout,
-          )
+          setTimeout(() => reject(new Error('Test timeout')), this.config.timeout)
         ),
       ]);
 
@@ -791,7 +789,7 @@ export class HealthcareSecurityTestFramework {
         totalTests: this.results.length,
         passedTests: this.results.filter(r => r.passed).length,
         failedTests: this.results.filter(r => !r.passed).length,
-        averageScore: this.results.reduce((sum,_r) => sum + r.score, 0)
+        averageScore: this.results.reduce((sum, _r) => sum + r.score, 0)
           / this.results.length,
         criticalIssues: this.results
           .flatMap(r => r.issues)
@@ -816,8 +814,7 @@ export class HealthcareSecurityTestFramework {
   // Get security score
   getSecurityScore(): number {
     if (this.results.length === 0) return 0;
-    return (this.results.reduce((sum, r) => sum + r.score, 0) / this.results.length
-    );
+    return (this.results.reduce((sum, r) => sum + r.score, 0) / this.results.length);
   }
 }
 

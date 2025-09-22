@@ -207,7 +207,7 @@ export class AIProviderRouterService {
     }
 
     // Sort by latency for fastest response
-    emergency_providers.sort((a,_b) => {
+    emergency_providers.sort((a, _b) => {
       const health_a = this.health_monitor.getProviderHealth(
         a.provider,
       ) as ProviderHealthCheck;
@@ -481,7 +481,7 @@ export class AIProviderRouterService {
     _request: RoutingRequest,
   ): ProviderConfig {
     // Simple round-robin based on current health metrics
-    const sorted_providers = providers.sort((a,_b) => {
+    const sorted_providers = providers.sort((a, _b) => {
       const health_a = this.health_monitor.getProviderHealth(
         a.provider,
       ) as ProviderHealthCheck;
@@ -716,7 +716,7 @@ export class AIProviderRouterService {
     if (eligible_models.length === 0) return null;
 
     // Select best model based on cost-performance ratio
-    return eligible_models.sort((a,_b) => {
+    return eligible_models.sort((a, _b) => {
       const cost_a = this.estimateModelCost(a, _request);
       const cost_b = this.estimateModelCost(b, _request);
       const latency_a = a.performance_config.max_latency_ms;

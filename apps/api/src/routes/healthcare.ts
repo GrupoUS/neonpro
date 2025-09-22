@@ -37,29 +37,28 @@ type HealthcareEnv = {
 const healthcare = new Hono<HealthcareEnv>();
 
 // Performance monitoring middleware
-const performanceMiddleware = createMiddleware<HealthcareEnv>(async (c,_next) => {
-    const startTime = Date.now();
-    c.set('performanceMetrics', { startTime, dbQueries: 0 });
+const performanceMiddleware = createMiddleware<HealthcareEnv>(async (c, _next) => {
+  const startTime = Date.now();
+  c.set('performanceMetrics', { startTime, dbQueries: 0 });
 
-    await next();
+  await next();
 
-    const endTime = Date.now();
-    const duration = endTime - startTime;
-    const metrics = c.get('performanceMetrics');
+  const endTime = Date.now();
+  const duration = endTime - startTime;
+  const metrics = c.get('performanceMetrics');
 
-    // Log performance metrics for healthcare compliance
-    console.log(
-      `Healthcare API Performance: ${c.req.method} ${c.req.path} - ${duration}ms, ${metrics.dbQueries} DB queries`,
-    );
+  // Log performance metrics for healthcare compliance
+  console.log(
+    `Healthcare API Performance: ${c.req.method} ${c.req.path} - ${duration}ms, ${metrics.dbQueries} DB queries`,
+  );
 
-    // Add performance headers
-    c.header('X-Response-Time', `${duration}ms`);
-    c.header('X-DB-Queries', metrics.dbQueries.toString());
-  },
-);
+  // Add performance headers
+  c.header('X-Response-Time', `${duration}ms`);
+  c.header('X-DB-Queries', metrics.dbQueries.toString());
+});
 
 // LGPD compliance audit middleware
-const auditMiddleware = createMiddleware<HealthcareEnv>(async (c,_next) => {
+const auditMiddleware = createMiddleware<HealthcareEnv>(async (c, _next) => {
   const user = c.get('user');
   const method = c.req.method;
   const path = c.req.path;
@@ -108,48 +107,47 @@ const auditMiddleware = createMiddleware<HealthcareEnv>(async (c,_next) => {
 });
 
 // Healthcare role-based authorization middleware
-const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(async (c,_next) => {
-    const token = c.req.header('Authorization')?.replace('Bearer ', '');
+const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(async (c, _next) => {
+  const token = c.req.header('Authorization')?.replace('Bearer ', '');
 
-    if (!token) {
-      return c.json({ error: 'Token de autorização necessário' }, 401);
+  if (!token) {
+    return c.json({ error: 'Token de autorização necessário' }, 401);
+  }
+
+  try {
+    // Verify JWT token with Supabase
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(token);
+
+    if (error || !user) {
+      return c.json({ error: 'Token inválido' }, 401);
     }
 
-    try {
-      // Verify JWT token with Supabase
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser(token);
+    // Get user role and permissions
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('role, permissions')
+      .eq('user_id', user.id)
+      .single();
 
-      if (error || !user) {
-        return c.json({ error: 'Token inválido' }, 401);
-      }
-
-      // Get user role and permissions
-      const { data: profile } = await supabase
-        .from('user_profiles')
-        .select('role, permissions')
-        .eq('user_id', user.id)
-        .single();
-
-      if (!profile) {
-        return c.json({ error: 'Perfil de usuário não encontrado' }, 403);
-      }
-
-      c.set('user', {
-        id: user.id,
-        _role: profile.role,
-        permissions: profile.permissions || [],
-      });
-
-      await next();
-    } catch (error) {
-      console.error('Authentication error:', error);
-      return c.json({ error: 'Erro de autenticação' }, 401);
+    if (!profile) {
+      return c.json({ error: 'Perfil de usuário não encontrado' }, 403);
     }
-  },
-);
+
+    c.set('user', {
+      id: user.id,
+      _role: profile.role,
+      permissions: profile.permissions || [],
+    });
+
+    await next();
+  } catch (error) {
+    console.error('Authentication error:', error);
+    return c.json({ error: 'Erro de autenticação' }, 401);
+  }
+});
 
 // Apply global middleware
 healthcare.use('*', logger());
@@ -582,7 +580,7 @@ healthcare.get(
         totalPatients: patientsResult.count || 0,
         totalAppointments: appointmentsResult.count || 0,
         totalProcedures: proceduresResult.count || 0,
-        appointmentsByStatus: appointmentsResult.data?.reduce((acc: any,_apt) => {
+        appointmentsByStatus: appointmentsResult.data?.reduce((acc: any, _apt) => {
           acc[apt.status] = (acc[apt.status] || 0) + 1;
           return acc;
         }, {}) || {},

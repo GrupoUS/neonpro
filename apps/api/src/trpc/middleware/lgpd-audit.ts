@@ -170,7 +170,11 @@ function applyDataMinimization(
  */
 
 export const lgpdAuditMiddleware = async ({
-  ctx,next,_path,type,_input,
+  ctx,
+  next,
+  _path,
+  type,
+  _input,
 }: any) => {
   const start = performance.now();
   let auditEntry: any = null;

@@ -501,7 +501,7 @@ export class AIChatService {
     try {
       const patientConversations = Array.from(this.conversations.values())
         .filter(conv => conv.patientId === patientId)
-        .sort((a,_b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+        .sort((a, _b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 
       return {
         success: true,

@@ -214,14 +214,12 @@ export class ExternalServiceHealthChecker {
 
     try {
       // Perform health check with circuit breaker
-      const isHealthy = await circuitBreaker.execute(() => this.performHealthCheck(service),
-        {
-          _service: serviceName,
-          endpoint: service.endpoint,
-          method: 'HEALTH_CHECK',
-          timestamp: new Date(),
-        } as any,
-      );
+      const isHealthy = await circuitBreaker.execute(() => this.performHealthCheck(service), {
+        _service: serviceName,
+        endpoint: service.endpoint,
+        method: 'HEALTH_CHECK',
+        timestamp: new Date(),
+      } as any);
 
       responseTime = Date.now() - startTime;
       status = isHealthy ? this.determineHealthStatus(responseTime, _service) : 'UNHEALTHY';
@@ -582,7 +580,7 @@ export class ExternalServiceHealthChecker {
       try {
         callback(event);
       } catch (error) {
-      // Error caught but not used - handled by surrounding logic
+        // Error caught but not used - handled by surrounding logic
         console.error('Error in health check event callback:', error);
       }
     });
@@ -619,7 +617,7 @@ export class ExternalServiceHealthChecker {
     let criticalServicesHealthy = true;
     let healthcareCompliance = true;
 
-    this.serviceHealth.forEach((health,_serviceName) => {
+    this.serviceHealth.forEach((health, _serviceName) => {
       services[serviceName] = health;
       totalUptime += health.metrics.uptime;
 
@@ -675,7 +673,7 @@ export class ExternalServiceHealthChecker {
    */
   getAllServiceHealth(): Record<string, ServiceHealth> {
     const result: Record<string, ServiceHealth> = {};
-    this.serviceHealth.forEach((health,_serviceName) => {
+    this.serviceHealth.forEach((health, _serviceName) => {
       result[serviceName] = health;
     });
     return result;

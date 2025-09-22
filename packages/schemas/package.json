@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "zod": "^3.22.0",
-    "@neonpro/validators": "workspace:*"
+    "@neonpro/validators": "file:../validators"
   },
   "devDependencies": {
     "tsup": "^8.0.0",

@@ -345,7 +345,7 @@ export class IntentParserService {
         ranges.push({ start, end });
       } else {
         // Multiple dates - create range from first to last
-        const sorted = specificDates.sort((a,_b) => a.getTime() - b.getTime());
+        const sorted = specificDates.sort((a, _b) => a.getTime() - b.getTime());
         ranges.push({
           start: sorted[0],
           end: sorted[sorted.length - 1],

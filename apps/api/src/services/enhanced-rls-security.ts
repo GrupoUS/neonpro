@@ -820,7 +820,7 @@ export class EnhancedRLSSecurityService {
         .gte('timestamp', thirtyDaysAgo.toISOString())
         .order('timestamp', { ascending: false });
 
-      const securityScore = auditData?.reduce((acc,_log) => acc + log.security_score, 0)
+      const securityScore = auditData?.reduce((acc, _log) => acc + log.security_score, 0)
         / (auditData?.length || 1);
 
       return {
@@ -890,9 +890,9 @@ export class EnhancedRLSSecurityService {
           deniedRequests,
           accessDeniedRate: totalRequests > 0 ? (deniedRequests / totalRequests) * 100 : 0,
           highThreatEvents,
-          averageSecurityScore: auditData?.reduce((acc,_log) => acc + log.security_score, 0)
+          averageSecurityScore: auditData?.reduce((acc, _log) => acc + log.security_score, 0)
               / totalRequests || 0,
-          averageThreatLevel: auditData?.reduce((acc,_log) => acc + log.threat_level, 0)
+          averageThreatLevel: auditData?.reduce((acc, _log) => acc + log.threat_level, 0)
               / totalRequests || 0,
         },
         threats: auditData?.filter(log => log.threat_level >= threatThreshold) || [],

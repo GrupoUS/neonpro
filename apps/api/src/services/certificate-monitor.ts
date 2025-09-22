@@ -67,7 +67,8 @@ export class CertificateMonitor {
       await this.checkCertificate();
 
       // Set up periodic checking
-      this.checkInterval = setInterval(() => this.checkCertificate(),
+      this.checkInterval = setInterval(
+        () => this.checkCertificate(),
         this.config.checkIntervalHours * 60 * 60 * 1000,
       );
 

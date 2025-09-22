@@ -297,7 +297,7 @@ app.post(
       }
 
       // Set all headers
-      Object.entries(responseHeaders).forEach(([key,_value]) => {
+      Object.entries(responseHeaders).forEach(([key, _value]) => {
         c.header(key, value);
       });
 
@@ -708,7 +708,7 @@ app.post(
         c.header('Connection', 'keep-alive');
 
         // Set other headers
-        Object.entries(headers).forEach(([key,_value]) => {
+        Object.entries(headers).forEach(([key, _value]) => {
           c.header(key, value);
         });
 
@@ -724,7 +724,7 @@ app.post(
         });
       } else {
         // Set headers for regular response
-        Object.entries(headers).forEach(([key,_value]) => {
+        Object.entries(headers).forEach(([key, _value]) => {
           c.header(key, value);
         });
 

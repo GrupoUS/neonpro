@@ -62,7 +62,7 @@ const crudIntentSchema = v.object({
   step: v.literal('intent'),
   operation: v.string([v.picklist(CRUD_OPERATIONS)]),
   entity: v.string([v.picklist(SUPPORTED_ENTITIES)]),
-  data: v.custom((data,_ctx) => {
+  data: v.custom((data, _ctx) => {
     // Get the entity from the parent object
     const entity = ctx?.object?.entity;
     const operation = ctx?.object?.operation;
@@ -390,8 +390,8 @@ async function generatePreview(
       const current = await getCurrentData(entity, data.id, ctx);
       if (current) {
         preview.changes = Object.entries(data)
-          .filter(([key,_value]) => key !== 'id' && current[key] !== value)
-          .map(([key,_value]) => ({
+          .filter(([key, _value]) => key !== 'id' && current[key] !== value)
+          .map(([key, _value]) => ({
             field: key,
             oldValue: this.sanitizePreviewValue(current[key], key),
             newValue: this.sanitizePreviewValue(value, key),
@@ -481,7 +481,7 @@ export const crudRouter = router({
    */
   crud: healthcareProcedure
     .input(crudRequestSchema)
-    .mutation(async ({ ctx,_input }) => {
+    .mutation(async ({ ctx, _input }) => {
       try {
         switch (input.step) {
           case 'intent':
@@ -543,7 +543,7 @@ export const crudRouter = router({
         operationId: v.string(),
       }),
     )
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       try {
         // Use proper operation state management instead of audit trail
         const operationStateService = createOperationStateService(ctx.prisma);

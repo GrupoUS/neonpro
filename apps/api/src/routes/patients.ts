@@ -79,7 +79,8 @@ class PatientService extends BaseService {
         userId,
         tableName: 'patients',
         recordId: clinicId,
-      }, async () => {
+      },
+      async () => {
         const offset = (options.page - 1) * options.limit;
 
         const whereClause: any = {
@@ -149,7 +150,8 @@ class PatientService extends BaseService {
         userId,
         tableName: 'patients',
         recordId: patientId,
-      }, async () => {
+      },
+      async () => {
         const patient = await prisma.patient.findUnique({
           where: { id: patientId },
           include: {
@@ -204,7 +206,8 @@ class PatientService extends BaseService {
         tableName: 'patients',
         recordId: 'new',
         newValues: data,
-      }, async () => {
+      },
+      async () => {
         // Generate medical record number
         const medicalRecordNumber = await this.generateMedicalRecordNumber(
           data.clinicId,
@@ -274,7 +277,8 @@ class PatientService extends BaseService {
         recordId: data.id,
         oldValues: existingPatient,
         newValues: data,
-      }, async () => {
+      },
+      async () => {
         const { id, ...updateData } = data;
 
         return prisma.patient.update({

@@ -606,7 +606,7 @@ export class DynamicConnectionPoolService {
         await this.cleanupOldEvents();
         await this.resetHourlyCounters();
       } catch (error) {
-      // Error caught but not used - handled by surrounding logic
+        // Error caught but not used - handled by surrounding logic
         console.error('[Dynamic Pool] Monitoring error:', error);
       }
     }, this.config.healthCheckInterval);
@@ -633,7 +633,7 @@ export class DynamicConnectionPoolService {
       try {
         await this.performHealthCheck();
       } catch (error) {
-      // Error caught but not used - handled by surrounding logic
+        // Error caught but not used - handled by surrounding logic
         console.error('[Dynamic Pool] Health check error:', error);
       }
     }, 60000); // Every minute
@@ -745,7 +745,8 @@ export class DynamicConnectionPoolService {
 
   private withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
     return Promise.race([
-      promise, new Promise<never>((_, reject) =>
+      promise,
+      new Promise<never>((_, reject) =>
         setTimeout(() => reject(new Error('Query timeout')), timeoutMs)
       ),
     ]);

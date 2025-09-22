@@ -9,7 +9,7 @@
     "installCommand": "bun install",
     "buildCommand": "bun run build:vercel",
     "outputDirectory": "dist",
-    "rootDirectory": "",
+    "rootDirectory": "apps/web",
     "directoryListing": false,
     "nodeVersion": "22.x"
   }

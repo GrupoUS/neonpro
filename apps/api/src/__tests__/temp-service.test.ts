@@ -8,7 +8,7 @@ describe('Temp Service Test', () => {
       'Temp service methods:',
       Object.getOwnPropertyNames(Object.getPrototypeOf(service)),
     );
-    
+
     console.log('Has getDocument?', typeof service.getDocument === 'function');
     console.log(
       'Has getFileContent?',

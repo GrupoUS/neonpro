@@ -254,23 +254,23 @@ export class HTTPSMonitoringService {
       m.handshakeTimeMs <= this.config.maxHandshakeTimeMs
     );
 
-    const protocolDistribution = allMetrics.reduce((acc,_m) => {
+    const protocolDistribution = allMetrics.reduce((acc, _m) => {
       acc[m.tlsVersion] = (acc[m.tlsVersion] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-    const cipherSuiteDistribution = allMetrics.reduce((acc,_m) => {
+    const cipherSuiteDistribution = allMetrics.reduce((acc, _m) => {
       acc[m.cipherSuite] = (acc[m.cipherSuite] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
     const recentAlerts = this.alerts
       .filter(a => !a.resolved && Date.now() - new Date(a.timestamp).getTime() < 3600000)
-      .sort((a,_b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      .sort((a, _b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
     return {
       totalHandshakes: allMetrics.length,
-      averageHandshakeTime: handshakeTimes.reduce((a,_b) => a + b, 0) / handshakeTimes.length,
+      averageHandshakeTime: handshakeTimes.reduce((a, _b) => a + b, 0) / handshakeTimes.length,
       minHandshakeTime: Math.min(...handshakeTimes),
       maxHandshakeTime: Math.max(...handshakeTimes),
       complianceRate: (compliantHandshakes.length / allMetrics.length) * 100,

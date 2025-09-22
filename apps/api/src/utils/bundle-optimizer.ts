@@ -68,9 +68,7 @@ export async function importHealthcareModule<T = any>(
     // Create timeout promise for non-critical modules
     const timeoutPromise = new Promise<never>((_, reject) => {
       if (!critical) {
-        setTimeout(() => reject(new Error(`Module ${modulePath} load timeout`)),
-          timeout,
-        );
+        setTimeout(() => reject(new Error(`Module ${modulePath} load timeout`)), timeout);
       }
     });
 
@@ -147,7 +145,7 @@ export async function preloadCriticalHealthcareModules(): Promise<void> {
 
     // Check if any critical modules failed
     const failedModules = criticalModules
-      .map((result,_index) => ({
+      .map((result, _index) => ({
         result,
         module: HEALTHCARE_BUNDLE_CONFIG.criticalModules[index],
       }))
@@ -201,9 +199,7 @@ export class HealthcareBundleAnalyzer {
    * Get total bundle size
    */
   getTotalBundleSize(): number {
-    return Array.from(this.metrics.values()).reduce((total,_metric) => total + metric.size,
-      0,
-    );
+    return Array.from(this.metrics.values()).reduce((total, _metric) => total + metric.size, 0);
   }
 
   /**
@@ -375,8 +371,7 @@ export class HealthcareEdgePerformanceMonitor {
     const metrics = Array.from(this.bundleAnalyzer['metrics'].values());
     if (metrics.length === 0) return 0;
 
-    return (_metrics.reduce((sum,_metric) => sum + metric.loadTime, 0) / metrics.length
-    );
+    return (_metrics.reduce((sum, _metric) => sum + metric.loadTime, 0) / metrics.length);
   }
 }
 

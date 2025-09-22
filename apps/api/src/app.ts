@@ -74,7 +74,8 @@ const app = createHealthcareOpenAPIApp();
 // Apply security middleware stack
 // app.use('*', ...getSecurityMiddlewareStack());
 
-app.use('*',
+app.use(
+  '*',
   cors({
     origin: (origin, callback) => {
       // Allow same-origin requests (no origin header)

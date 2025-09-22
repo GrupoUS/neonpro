@@ -137,7 +137,7 @@ class HealthcareErrorTracker {
     let redactedText = text;
     const redactedFields: string[] = [];
 
-    Object.entries(HEALTHCARE_PATTERNS).forEach(([field,_pattern]) => {
+    Object.entries(HEALTHCARE_PATTERNS).forEach(([field, _pattern]) => {
       if (pattern.test(redactedText)) {
         redactedFields.push(field);
         redactedText = redactedText.replace(
@@ -330,7 +330,7 @@ class HealthcareErrorTracker {
   ): Record<string, unknown> {
     const redacted: Record<string, unknown> = {};
 
-    Object.entries(metadata).forEach(([key,_value]) => {
+    Object.entries(metadata).forEach(([key, _value]) => {
       if (typeof value === 'string') {
         const { redacted: redactedValue } = this.redactHealthcareData(value);
         redacted[key] = redactedValue;

@@ -252,17 +252,29 @@ The build system follows a **dependency-first approach** where packages build in
 
 ### Package Manager Strategy
 
-- **Primary**: **PNPM** (performance + disk efficiency)
-  - Symlinked node_modules for space efficiency
-  - Strict dependency resolution
+**Primary-First Approach with Intelligent Fallback**
+
+- **Primary**: **Bun** (3-5x faster for all operations)
+  - Full workspace management with `bun-workspace.json`
+  - Native TypeScript support, built-in bundler
+  - Optimized for monorepo development
+- **Secondary**: **PNPM** (workspace compatibility)
   - Workspace protocol support (`workspace:*`)
-- **Development**: **Bun** (3-5x faster for scripts)
-  - Used for test execution and development scripts
-  - Faster package installation in development
-- **Workspace Benefits**:
-  - Shared dependencies hoisted to root
+  - Fallback for dependencies requiring PNPM-specific features
+  - Mature ecosystem for edge cases
+- **Tertiary**: **NPM** (universal compatibility)
+  - Final fallback for maximum compatibility
+  - Legacy dependencies and special cases
+- **Intelligent Fallback**: Automated script detects best available package manager
+  - `./scripts/package-manager-fallback.sh` for automatic selection
+  - Seamless transitions between package managers
+  - Colored output for clear status reporting
+
+**Workspace Benefits**:
+  - Shared dependencies hoisted to root (PNPM-style)
   - Consistent versions across packages
-  - Efficient CI/CD caching
+  - Efficient CI/CD caching with Turborepo
+  - Automatic package manager detection and fallback
 
 ## Package Dependencies & Relationships
 
@@ -348,43 +360,67 @@ import type { AppRouter } from "@/types/router";
 **Development**:
 
 ```bash
-# Start all applications in development mode
-pnpm dev
+# Start all applications in development mode (Bun primary)
+bun run dev
+
+# Start with intelligent fallback (auto-detects best package manager)
+./scripts/package-manager-fallback.sh dev
 
 # Start specific applications
+bun run dev:web
+bun run dev:api
+
+# Fallback options when needed
 pnpm --filter @neonpro/web dev
-pnpm --filter @neonpro/api dev
+npm run dev --workspace=@neonpro/web
 
 # Start with specific package rebuilding
-pnpm dev --filter @neonpro/web...
+bun run dev --filter @neonpro/web...
 ```
 
 **Building**:
 
 ```bash
 # Build all packages and applications (respects dependency order)
-pnpm build
+bun run build
+
+# With intelligent fallback
+./scripts/package-manager-fallback.sh build
 
 # Build specific package and its dependencies
-pnpm --filter @neonpro/core-services... build
+bun run build --filter @neonpro/core-services...
 
 # Build only applications (assumes packages are built)
-pnpm --filter "./apps/*" build
+bun run build --filter "./apps/*"
+
+# Fallback options
+pnpm build
+npm run build
 ```
 
 **Quality Assurance**:
 
 ```bash
-# Canonical workspace scripts (run from repo root)
+# Canonical workspace scripts (Bun primary)
+bun run lint
+bun run type-check
+bun run test:backend
+bun run test:frontend
+bun run test:healthcare -- --regression
+bun run constitutional:full
+
+# With intelligent fallback
+./scripts/package-manager-fallback.sh lint
+./scripts/package-manager-fallback.sh test:healthcare
+
+# Fallback options when needed
 pnpm lint
 pnpm type-check
 pnpm test:backend
 pnpm test:frontend
-pnpm test:healthcare -- --regression
-pnpm constitutional:full
 ```
 
-Always archive CLI output in Archon task notes and fall back to `pnpm test:healthcare -- --audit-only` when compliance gates fail so the rerun is traceable.
+Always archive CLI output in Archon task notes and fall back to `./scripts/package-manager-fallback.sh test:healthcare -- --audit-only` when compliance gates fail so the rerun is traceable.
 
 ### Package-Specific Scripts
 

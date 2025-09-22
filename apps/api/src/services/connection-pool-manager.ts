@@ -377,9 +377,7 @@ export class ConnectionPoolManager {
       return this.metrics.utilization;
     }
 
-    const sum = this.metricsHistory.reduce((acc,_metrics) => acc + metrics.utilization,
-      0,
-    );
+    const sum = this.metricsHistory.reduce((acc, _metrics) => acc + metrics.utilization, 0);
     return sum / this.metricsHistory.length;
   }
 

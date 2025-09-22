@@ -73,7 +73,7 @@ export const aiRouter = router({
       }),
     )
     .output(AIChatResponseSchema)
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       // Validate clinic access
       if (ctx.clinicId !== input.clinicId) {
         throw new HealthcareTRPCError(
@@ -495,7 +495,7 @@ export const aiRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .query(async ({ input,_ctx }) => {
+    .query(async ({ input, _ctx }) => {
       // Validate clinic access through context
       if (ctx.clinicId !== input.clinicId) {
         throw new HealthcareTRPCError(
@@ -732,7 +732,7 @@ export const aiRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       // Validate clinic and patient access
       const clinic = await ctx.prisma.clinic.findFirst({
         where: {
@@ -900,7 +900,7 @@ export const aiRouter = router({
       }),
     )
     .output(AIHealthcheckResponseSchema)
-    .query(async ({ input,_ctx }) => {
+    .query(async ({ input, _ctx }) => {
       try {
         // Check AI service availability
         const serviceStatus = await checkAIServiceHealth();
@@ -1016,7 +1016,7 @@ export const aiRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       // Validate access
       const clinic = await ctx.prisma.clinic.findFirst({
         where: {

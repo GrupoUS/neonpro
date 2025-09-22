@@ -374,7 +374,7 @@ export class CompressionMiddleware {
 
     // Update average compression ratio
     if (this.compressionStats.compressedResponses > 0) {
-      const totalRatio = this.metrics.reduce((sum,_m) => sum + m.compressionRatio, 0);
+      const totalRatio = this.metrics.reduce((sum, _m) => sum + m.compressionRatio, 0);
       this.compressionStats.averageCompressionRatio = totalRatio / this.metrics.length;
     }
   }
@@ -389,10 +389,10 @@ export class CompressionMiddleware {
         ? (this.compressionStats.compressedResponses / this.compressionStats.totalRequests) * 100
         : 0,
       averageResponseSize: this.metrics.length > 0
-        ? this.metrics.reduce((sum,_m) => sum + m.originalSize, 0) / this.metrics.length
+        ? this.metrics.reduce((sum, _m) => sum + m.originalSize, 0) / this.metrics.length
         : 0,
       averageCompressedSize: this.metrics.length > 0
-        ? this.metrics.reduce((sum,_m) => sum + m.compressedSize, 0) / this.metrics.length
+        ? this.metrics.reduce((sum, _m) => sum + m.compressedSize, 0) / this.metrics.length
         : 0,
       topCompressedRoutes: this.getTopCompressedRoutes(5),
       compressionMethodDistribution: Object.fromEntries(this.compressionStats.compressionMethods),
@@ -416,9 +416,9 @@ export class CompressionMiddleware {
     });
 
     return Object.entries(routeStats)
-      .sort((a,_b) => b[1].bytesSaved - a[1].bytesSaved)
+      .sort((a, _b) => b[1].bytesSaved - a[1].bytesSaved)
       .slice(0, limit)
-      .map(([route,_stats]) => ({
+      .map(([route, _stats]) => ({
         route,
         requestsCompressed: stats.count,
         bytesSaved: stats.bytesSaved,

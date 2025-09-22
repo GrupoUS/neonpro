@@ -442,7 +442,10 @@ function createRLSEnforcedPrisma(
  * ensuring proper multi-tenant data isolation and user context validation.
  */
 export const prismaRLSMiddleware = async ({
-  ctx,next,_path,type,
+  ctx,
+  next,
+  _path,
+  type,
   _input,
 }: any) => {
   const start = performance.now();

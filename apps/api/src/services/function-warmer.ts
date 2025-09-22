@@ -51,10 +51,8 @@ class FunctionWarmer {
     }
 
     this.warmupInterval = setInterval(() => {
-        this.performWarmup();
-      },
-      intervalMinutes * 60 * 1000,
-    );
+      this.performWarmup();
+    }, intervalMinutes * 60 * 1000);
 
     // Initial warmup
     this.performWarmup();
@@ -103,9 +101,7 @@ class FunctionWarmer {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(),
-        target.timeout || 5000,
-      );
+      const timeoutId = setTimeout(() => controller.abort(), target.timeout || 5000);
 
       // Do not send body for GET requests to satisfy lint rule and HTTP semantics
       const init: RequestInit = {

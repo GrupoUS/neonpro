@@ -215,7 +215,10 @@ const getServices = () => {
 };
 
 app.get(
-  '/patient/:patientId',mockAuthMiddleware,_mockLGPDMiddleware,_zValidator('param',pathSchema,(result,_c) => {
+  '/patient/:patientId',
+  mockAuthMiddleware,
+  _mockLGPDMiddleware,
+  _zValidator('param', pathSchema, (result, _c) => {
     if (!result.success) {
       return c.json(
         {
@@ -496,7 +499,7 @@ app.get(
       responseHeaders['X-Database-Queries'] = '3';
 
       // Set all headers
-      Object.entries(responseHeaders).forEach(([key,_value]) => {
+      Object.entries(responseHeaders).forEach(([key, _value]) => {
         c.header(key, value);
       });
 
@@ -673,7 +676,7 @@ app.post(
         'Cache-Control': 'private, max-age=300',
       };
 
-      Object.entries(responseHeaders).forEach(([key,_value]) => {
+      Object.entries(responseHeaders).forEach(([key, _value]) => {
         c.header(key, value);
       });
 

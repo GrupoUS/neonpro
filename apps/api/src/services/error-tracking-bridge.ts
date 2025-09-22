@@ -314,7 +314,7 @@ export function getLegacyErrorTracker(
 export function initializeLegacyErrorTracking(
   config?: Partial<LegacyConfig>,
 ): Promise<void> {
-  return new Promise((resolve,_reject) => {
+  return new Promise((resolve, _reject) => {
     try {
       const tracker = getLegacyErrorTracker(config);
 

@@ -309,7 +309,7 @@ export class DataMaskingService {
 
         return true;
       })
-      .sort((a,_b) => b.priority - a.priority); // Higher priority first
+      .sort((a, _b) => b.priority - a.priority); // Higher priority first
   }
 
   /**
@@ -360,7 +360,7 @@ export class DataMaskingService {
       // Recursively process nested objects and arrays
       if (typeof value === 'object' && value !== null) {
         if (Array.isArray(value)) {
-          value.forEach((item,_index) => {
+          value.forEach((item, _index) => {
             if (typeof item === 'object' && item !== null) {
               this.applyMaskingRules(
                 item,
@@ -518,7 +518,7 @@ export class DataMaskingService {
   addCustomRule(rule: MaskingRule): void {
     this.maskingRules.push(rule);
     // Sort by priority
-    this.maskingRules.sort((a,_b) => b.priority - a.priority);
+    this.maskingRules.sort((a, _b) => b.priority - a.priority);
   }
 
   /**

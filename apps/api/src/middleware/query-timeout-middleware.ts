@@ -269,9 +269,9 @@ export class QueryTimeoutMiddleware {
 
     if (stats.totalQueries > 0) {
       stats.timeoutRate = (stats.timedOutQueries / stats.totalQueries) * 100;
-      stats.averageResponseTime = this.metrics.reduce((sum,_m) => sum + m.duration, 0)
+      stats.averageResponseTime = this.metrics.reduce((sum, _m) => sum + m.duration, 0)
         / stats.totalQueries;
-      stats.averageTimeout = this.metrics.reduce((sum,_m) => sum + m.timeout, 0)
+      stats.averageTimeout = this.metrics.reduce((sum, _m) => sum + m.timeout, 0)
         / stats.totalQueries;
     }
 
@@ -289,7 +289,7 @@ export class QueryTimeoutMiddleware {
     });
 
     return Object.entries(routeTimeouts)
-      .sort((a,_b) => b[1] - a[1])
+      .sort((a, _b) => b[1] - a[1])
       .slice(0, limit);
   }
 
@@ -365,7 +365,7 @@ export class QueryTimeoutMiddleware {
       }
     }
 
-    return approaching.sort((a,_b) => b.duration - a.duration);
+    return approaching.sort((a, _b) => b.duration - a.duration);
   }
 
   /**
@@ -392,7 +392,7 @@ export class QueryTimeoutMiddleware {
    */
   getRealTimeMetrics() {
     return {
-      activeQueries: Array.from(this.activeQueries.entries()).map(([id,_query]) => ({
+      activeQueries: Array.from(this.activeQueries.entries()).map(([id, _query]) => ({
         queryId: id,
         duration: performance.now() - query.startTime,
         timeout: query.timeout,

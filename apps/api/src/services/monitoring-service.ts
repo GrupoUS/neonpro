@@ -196,19 +196,13 @@ export class MonitoringService {
    */
   private startMonitoring(): void {
     // Health checks every 30 seconds
-    this.healthCheckInterval = setInterval(() => this.performHealthChecks(),
-      30000,
-    );
+    this.healthCheckInterval = setInterval(() => this.performHealthChecks(), 30000);
 
     // Metrics collection every 10 seconds
-    this.metricsInterval = setInterval(() => this.collectMetrics(),
-      10000,
-    );
+    this.metricsInterval = setInterval(() => this.collectMetrics(), 10000);
 
     // Cleanup old data every hour
-    this.cleanupInterval = setInterval(() => this.cleanupOldData(),
-      3600000,
-    );
+    this.cleanupInterval = setInterval(() => this.cleanupOldData(), 3600000);
   }
 
   /**
@@ -372,7 +366,7 @@ export class MonitoringService {
         const cacheStats = await this.dataService.getCacheStats();
         this.metrics.performance.cacheHitRate = cacheStats.customStats?.hitRate || 0;
       } catch (error) {
-      // Error caught but not used - handled by surrounding logic
+        // Error caught but not used - handled by surrounding logic
         logger.error('Failed to update performance metrics:', error);
       }
     }

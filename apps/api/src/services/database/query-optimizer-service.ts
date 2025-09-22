@@ -134,7 +134,7 @@ export class QueryOptimizerService {
       this.connectionMetrics.totalConnections--;
     });
 
-    this.pool.on('error',(err, _client) => {
+    this.pool.on('error', (err, _client) => {
       console.error('[QueryOptimizer] Pool error:', err);
       this.connectionMetrics.failedQueries++;
     });
@@ -261,7 +261,7 @@ export class QueryOptimizerService {
     const timeout = options.timeout || this.config.queryTimeout!;
     const startTime = performance.now();
 
-    return new Promise((resolve,_reject) => {
+    return new Promise((resolve, _reject) => {
       const timer = setTimeout(() => {
         reject(new Error(`Query timeout after ${timeout}ms`));
       }, timeout);
@@ -527,7 +527,7 @@ export class QueryOptimizerService {
     const successfulQueries = this.queryMetrics.filter(m => m.success);
     if (successfulQueries.length === 0) return 0;
 
-    const totalTime = successfulQueries.reduce((sum,_m) => sum + m.executionTimeMs, 0);
+    const totalTime = successfulQueries.reduce((sum, _m) => sum + m.executionTimeMs, 0);
     return totalTime / successfulQueries.length;
   }
 
@@ -537,7 +537,7 @@ export class QueryOptimizerService {
   private getTopSlowQueries(limit: number) {
     return this.queryMetrics
       .filter(m => m.success)
-      .sort((a,_b) => b.executionTimeMs - a.executionTimeMs)
+      .sort((a, _b) => b.executionTimeMs - a.executionTimeMs)
       .slice(0, limit);
   }
 
@@ -554,7 +554,7 @@ export class QueryOptimizerService {
     });
 
     return Object.entries(indexCounts)
-      .sort((a,_b) => b[1] - a[1])
+      .sort((a, _b) => b[1] - a[1])
       .slice(0, limit);
   }
 

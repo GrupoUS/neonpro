@@ -331,11 +331,11 @@ export class HealthcareMetricsService {
       const aggregation: MetricAggregation = {
         type,
         period,
-        value: values.reduce((sum,_v) => sum + v, 0),
+        value: values.reduce((sum, _v) => sum + v, 0),
         count: data.length,
         min: Math.min(...values),
         max: Math.max(...values),
-        avg: values.reduce((sum,_v) => sum + v, 0) / values.length,
+        avg: values.reduce((sum, _v) => sum + v, 0) / values.length,
         complianceRate: (compliantCount / data.length) * 100,
         timestamp: endTime,
       };

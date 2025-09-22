@@ -100,7 +100,7 @@ export class ExportService {
   ): Promise<ExportJob[]> {
     const userJobs = Array.from(this.ACTIVE_JOBS.values())
       .filter(job => job.userId === _userId)
-      .sort((a,_b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .sort((a, _b) => b.createdAt.getTime() - a.createdAt.getTime())
       .slice(0, limit);
 
     return userJobs;

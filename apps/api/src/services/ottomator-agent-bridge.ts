@@ -131,7 +131,7 @@ export class OttomatorAgentBridge extends EventEmitter {
       throw new Error('Maximum concurrent queries exceeded');
     }
 
-    return new Promise((resolve,_reject) => {
+    return new Promise((resolve, _reject) => {
       const queryId = `query_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const timeout = setTimeout(() => {
         this.activeQueries.delete(queryId);
@@ -205,7 +205,7 @@ export class OttomatorAgentBridge extends EventEmitter {
   }
 
   private async startAgentProcess(): Promise<void> {
-    return new Promise((resolve,_reject) => {
+    return new Promise((resolve, _reject) => {
       const args = [path.join(this.config.agentPath, 'main.py')];
 
       logger.info('Starting Python agent process', {
@@ -231,7 +231,7 @@ export class OttomatorAgentBridge extends EventEmitter {
         reject(error);
       });
 
-      this.agentProcess.on('exit',(code,_signal) => {
+      this.agentProcess.on('exit', (code, _signal) => {
         logger.warn('Agent process exited', { code, signal });
         this.isHealthy = false;
         this.emit('exit', { code, signal });

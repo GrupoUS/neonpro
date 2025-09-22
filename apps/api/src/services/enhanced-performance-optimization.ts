@@ -578,34 +578,33 @@ export class EnhancedPerformanceOptimizationService {
         const batch = items.slice(i, i + batchSize);
 
         // Process batch with concurrency control
-        const batchResults = await Promise.allSettled(_batch.map(async (item,_batchIndex) => {
-            const actualIndex = i + batchIndex;
-            try {
-              const result = await processFn(item, actualIndex);
-              processed++;
+        const batchResults = await Promise.allSettled(_batch.map(async (item, _batchIndex) => {
+          const actualIndex = i + batchIndex;
+          try {
+            const result = await processFn(item, actualIndex);
+            processed++;
 
-              if (options?.progressCallback) {
-                options.progressCallback(processed, items.length, failed);
-              }
-
-              return { success: true, result, index: actualIndex };
-            } catch (error) {
-              failed++;
-              const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-
-              if (!continueOnError) {
-                throw error;
-              }
-
-              return {
-                success: false,
-                error: errorMessage,
-                item,
-                index: actualIndex,
-              };
+            if (options?.progressCallback) {
+              options.progressCallback(processed, items.length, failed);
             }
-          }),
-        );
+
+            return { success: true, result, index: actualIndex };
+          } catch (error) {
+            failed++;
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+            if (!continueOnError) {
+              throw error;
+            }
+
+            return {
+              success: false,
+              error: errorMessage,
+              item,
+              index: actualIndex,
+            };
+          }
+        }));
 
         // Process batch results
         batchResults.forEach(batchResult => {
@@ -770,7 +769,7 @@ export class EnhancedPerformanceOptimizationService {
     fn: () => Promise<T>,
     timeoutMs: number,
   ): Promise<T> {
-    return new Promise((resolve,_reject) => {
+    return new Promise((resolve, _reject) => {
       const timer = setTimeout(() => {
         reject(new Error(`Query timeout after ${timeoutMs}ms`));
       }, timeoutMs);
@@ -1040,7 +1039,7 @@ export class EnhancedPerformanceOptimizationService {
       { hits: number; misses: number; hitRate: number }
     > = {};
 
-    this.cacheStats.forEach((value,_key) => {
+    this.cacheStats.forEach((value, _key) => {
       const total = value.hits + value.misses;
       stats[key] = {
         hits: value.hits,
@@ -1092,10 +1091,8 @@ export class EnhancedPerformanceOptimizationService {
   private initializePerformanceMonitoring(): void {
     // Set up periodic performance monitoring
     setInterval(() => {
-        this.cleanupPerformanceMetrics();
-      },
-      5 * 60 * 1000,
-    ); // Clean up every 5 minutes
+      this.cleanupPerformanceMetrics();
+    }, 5 * 60 * 1000); // Clean up every 5 minutes
   }
 
   private cleanupPerformanceMetrics(): void {

@@ -479,12 +479,10 @@ app.get('/health', c => {
     status: 'ok',
     _service: 'neonpro-ai-chat-enhanced',
     timestamp: new Date().toISOString(),
-    providers: availableProviders.reduce((acc,_provider) => {
-        acc[provider] = 'available';
-        return acc;
-      },
-      {} as Record<string, string>,
-    ),
+    providers: availableProviders.reduce((acc, _provider) => {
+      acc[provider] = 'available';
+      return acc;
+    }, {} as Record<string, string>),
     cache: cacheHealth,
   });
 });

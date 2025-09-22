@@ -26,7 +26,7 @@
     "clean": "rm -rf dist coverage"
   },
   "dependencies": {
-    "@neonpro/database": "workspace:*"
+    "@neonpro/database": "file:../database"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.10",
@@ -39,8 +39,8 @@
     "vitest": "^3.2.4"
   },
   "peerDependencies": {
-    "@neonpro/config": "workspace:*",
-    "@neonpro/types": "workspace:*"
+    "@neonpro/config": "file:../config",
+    "@neonpro/types": "file:../types"
   },
   "files": [
     "dist"

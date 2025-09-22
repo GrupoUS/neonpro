@@ -162,7 +162,7 @@ export class EnhancedSessionManager {
       charCounts[char] = (charCounts[char] || 0) + 1;
     });
 
-    const entropy = Object.values(charCounts).reduce((sum,_count) => {
+    const entropy = Object.values(charCounts).reduce((sum, _count) => {
       const probability = count / chars.length;
       return sum - probability * Math.log2(probability);
     }, 0);
@@ -410,7 +410,7 @@ export class EnhancedSessionManager {
     }
 
     // Find oldest session
-    const oldestSession = userSessions.reduce((oldest,_current) =>
+    const oldestSession = userSessions.reduce((oldest, _current) =>
       current.createdAt < oldest.createdAt ? current : oldest
     );
 

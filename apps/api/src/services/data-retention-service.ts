@@ -876,7 +876,7 @@ export class DataRetentionService {
         .select('recordsProcessed')
         .gte('startTime', yesterday.toISOString());
 
-      const totalRecordsProcessed24h = executions?.reduce((sum,_exec) =>
+      const totalRecordsProcessed24h = executions?.reduce((sum, _exec) =>
         sum + exec.recordsProcessed, 0) || 0;
 
       // Calculate policies by category

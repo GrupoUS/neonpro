@@ -930,7 +930,7 @@ export class PatientPrivacyControlsService {
       priority: 1,
     });
 
-    return actions.sort((a,_b) => b.priority - a.priority);
+    return actions.sort((a, _b) => b.priority - a.priority);
   }
 
   /**
@@ -954,9 +954,9 @@ export class PatientPrivacyControlsService {
     const completed = requests?.filter(r => r.status === 'completed').length || 0;
     const lastAccessDate = requests
       ?.filter(r => r.status === 'completed')
-      .sort((a,_b) =>
-          new Date(b.processedAt!).getTime()
-          - new Date(a.processedAt!).getTime(),
+      .sort((a, _b) =>
+        new Date(b.processedAt!).getTime()
+        - new Date(a.processedAt!).getTime()
       )[0]?.processedAt;
 
     return {
@@ -985,7 +985,8 @@ export class PatientPrivacyControlsService {
 
     const pending = requests?.filter(r => r.status === 'pending').length || 0;
     const completed = requests?.filter(r => r.status === 'completed').length || 0;
-    const lastRequestDate = requests?.sort((a,_b) => new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime(),
+    const lastRequestDate = requests?.sort((a, _b) =>
+      new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime()
     )[0]?.requestedAt;
 
     return {

@@ -52,7 +52,7 @@ function redactSensitiveData(text: string): {
   let redactedText = text;
   const redactedFields: string[] = [];
 
-  Object.entries(HEALTHCARE_PATTERNS).forEach(([field,_pattern]) => {
+  Object.entries(HEALTHCARE_PATTERNS).forEach(([field, _pattern]) => {
     if (pattern.test(redactedText)) {
       redactedFields.push(field);
       redactedText = redactedText.replace(
@@ -71,7 +71,7 @@ function redactSensitiveData(text: string): {
 function redactMetadata(metadata: Record<string, any>): Record<string, any> {
   const redacted: Record<string, any> = {};
 
-  Object.entries(metadata).forEach(([key,_value]) => {
+  Object.entries(metadata).forEach(([key, _value]) => {
     if (typeof value === 'string') {
       const { redacted: redactedValue } = redactSensitiveData(value);
       redacted[key] = redactedValue;

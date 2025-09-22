@@ -480,7 +480,11 @@ export class SupabaseConnector {
   /**
    * Get clinic summary data for AI context
    */
-  public async getClinicSummary(clinicId: string, _userId: string, sessionId: string): Promise<any> {
+  public async getClinicSummary(
+    clinicId: string,
+    _userId: string,
+    sessionId: string,
+  ): Promise<any> {
     const _request: DataAccessRequest = {
       action: 'read',
       resourceType: 'appointment',

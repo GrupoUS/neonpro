@@ -5,7 +5,6 @@
  * ensuring LGPD compliance, data protection, and medical safety.
  */
 
-<<<<<<< HEAD
 import { z } from 'zod';
 
 // Temporary mock for startup - TODO: Replace with actual @neonpro/security auditLogger
@@ -17,24 +16,8 @@ const auditLogger = {
   logError: (..._args: any[]) => {},
   logSecurityEvent: (..._args: any[]) => {},
 };
-=======
-// TODO: Fix import path issue with @neonpro/security auditLogger
-// import { AuditLogger } from '@neonpro/security';
-// const auditLogger = new AuditLogger({
-//   enableConsoleLogging: true,
-//   enableDatabaseLogging: false,
-//   logLevel: 'info',
-// });
 
-// Temporary mock for startup
-const auditLogger = {
-  log: () => {},
-  info: () => {},
-  warn: () => {},
-  error: () => {},
-};
 // Security validation schemas
->>>>>>> origin/main
 const SensitiveDataSchema = z.object({
   name: z.string().regex(/^[A-Za-z\s]+$/),
   cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/),
@@ -272,17 +255,13 @@ export class AIRateLimiter {
   }
 
   canMakeRequest(_userId: string, clinicId: string): boolean {
-<<<<<<< HEAD
     const key = `${_userId}:${clinicId}`;
-=======
-    const key = `${userId}:${clinicId}`;
->>>>>>> origin/main
     const now = Date.now();
     const userRequests = this.requests.get(key) || [];
 
     // Remove requests older than 1 hour
     const recentRequests = userRequests.filter(
-      time => now - time < 60 * 60 * 1000,
+      time => now - time < 60 * 1000,
     );
 
     // Check minute limit
@@ -381,11 +360,7 @@ export function logAIInteraction(interaction: {
 }): void {
   auditLogger.logSecurityEvent({
     event: 'ai_interaction',
-<<<<<<< HEAD
     _userId: interaction._userId,
-=======
-    _userId: interaction.userId,
->>>>>>> origin/main
     patientId: interaction.patientId,
     clinicId: interaction.clinicId,
     provider: interaction.provider,
@@ -454,11 +429,7 @@ export const aiSecurityService = {
   validateMedicalTerminology,
   validateAIOutputSafety,
   canMakeRequest: (_userId: string, clinicId: string) =>
-<<<<<<< HEAD
     aiRateLimiter.canMakeRequest(_userId, clinicId),
-=======
-    aiRateLimiter.canMakeRequest(userId, clinicId),
->>>>>>> origin/main
   validateApiKeyRotation,
   logAIInteraction,
   shouldRetainAIData,

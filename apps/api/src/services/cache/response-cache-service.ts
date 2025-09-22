@@ -345,7 +345,7 @@ export class ResponseCacheService {
     if (this.localCache.size > this.config.maxSize) {
       // Simple LRU eviction
       const entries = Array.from(this.localCache.entries());
-      entries.sort((a,_b) => a[1].hitCount - b[1].hitCount);
+      entries.sort((a, _b) => a[1].hitCount - b[1].hitCount);
 
       const toRemove = entries.slice(0, Math.floor(this.config.maxSize * 0.2));
       toRemove.forEach(([key]) => {
@@ -450,9 +450,7 @@ export class ResponseCacheService {
    * Initialize health check timer
    */
   private initializeHealthCheck(): void {
-    this.healthCheckTimer = setInterval(() => this.healthCheck(),
-      this.config.healthCheckInterval,
-    );
+    this.healthCheckTimer = setInterval(() => this.healthCheck(), this.config.healthCheckInterval);
   }
 
   /**

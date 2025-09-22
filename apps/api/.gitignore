@@ -1,0 +1,61 @@
+# Dependencies
+node_modules/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Development tools
+dev-tools/
+*.debug.ts
+*.debug.js
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
+# AI/ML models
+models/
+*.model
+*.weights
+
+# Healthcare compliance - no patient data
+*.patient-data
+*.medical-records
+
+# Debug and profiling
+*.profile
+*.cpuprofile
+heapdump-*.heapsnapshot
+
+# Bundle analysis
+*.stats.json
+*.stats.html

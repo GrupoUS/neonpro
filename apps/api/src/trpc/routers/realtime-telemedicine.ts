@@ -115,7 +115,7 @@ export const realtimeTelemedicineRouter = router({
    */
   createSession: telemedicineProcedure
     .input(CreateSessionSchema)
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -182,7 +182,7 @@ export const realtimeTelemedicineRouter = router({
    */
   sendMessage: telemedicineProcedure
     .input(SendMessageSchema)
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -235,7 +235,7 @@ export const realtimeTelemedicineRouter = router({
    */
   updatePresence: telemedicineProcedure
     .input(UpdatePresenceSchema)
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -314,7 +314,7 @@ export const realtimeTelemedicineRouter = router({
    */
   monitorQuality: telemedicineProcedure
     .input(MonitorQualitySchema)
-    .query(async ({ input,_ctx }) => {
+    .query(async ({ input, _ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -380,7 +380,7 @@ export const realtimeTelemedicineRouter = router({
         sessionId: z.string().uuid(),
       }),
     )
-    .query(async ({ input,_ctx }) => {
+    .query(async ({ input, _ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -431,7 +431,7 @@ export const realtimeTelemedicineRouter = router({
         summary: z.string().max(1000).optional(),
       }),
     )
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       try {
         const service = await initializeRealtimeService();
 
@@ -532,7 +532,7 @@ export const realtimeTelemedicineRouter = router({
         requiredActions: z.array(z.string()).optional(),
       }),
     )
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       try {
         const service = await initializeRealtimeService();
 

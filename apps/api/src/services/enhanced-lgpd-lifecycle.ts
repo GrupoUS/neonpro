@@ -642,19 +642,15 @@ export class EnhancedLGPDLifecycleService {
       record => !patientId || record.patientId === patientId,
     );
 
-    const recordsByStage = records.reduce((acc,_record) => {
-        acc[record.lifecycleStage] = (acc[record.lifecycleStage] || 0) + 1;
-        return acc;
-      },
-      {} as Record<DataLifecycleStage, number>,
-    );
+    const recordsByStage = records.reduce((acc, _record) => {
+      acc[record.lifecycleStage] = (acc[record.lifecycleStage] || 0) + 1;
+      return acc;
+    }, {} as Record<DataLifecycleStage, number>);
 
-    const recordsByCategory = records.reduce((acc,_record) => {
-        acc[record.dataCategory] = (acc[record.dataCategory] || 0) + 1;
-        return acc;
-      },
-      {} as Record<DataCategory, number>,
-    );
+    const recordsByCategory = records.reduce((acc, _record) => {
+      acc[record.dataCategory] = (acc[record.dataCategory] || 0) + 1;
+      return acc;
+    }, {} as Record<DataCategory, number>);
 
     const now = new Date();
     const thirtyDaysFromNow = new Date(

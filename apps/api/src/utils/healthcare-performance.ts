@@ -404,7 +404,8 @@ export class HealthcareQueryOptimizer {
       for (let i = 0; i < patientsData.length; i += batchSize) {
         const batch = patientsData.slice(i, i + batchSize);
 
-        const batchResults = await Promise.allSettled(_batch.map(async (patientData,_batchIndex) => {
+        const batchResults = await Promise.allSettled(
+          _batch.map(async (patientData, _batchIndex) => {
             const actualIndex = i + batchIndex;
             try {
               // Ensure patientData is a valid object before spreading

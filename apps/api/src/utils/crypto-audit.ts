@@ -208,8 +208,7 @@ export class CryptographicAuditLogger {
     }
 
     // Sort entries by sequence number
-    const sortedEntries = entries.sort((a, b) => a.sequenceNumber - b.sequenceNumber,
-    );
+    const sortedEntries = entries.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
 
     for (let i = 0; i < sortedEntries.length; i++) {
       const currentEntry = sortedEntries[i];
@@ -456,7 +455,7 @@ export class CryptographicAuditLogger {
     }
 
     // Flag users with excessive access
-    const averageUserAccess = Object.values(userAccess).reduce((a,_b) => a + b, 0)
+    const averageUserAccess = Object.values(userAccess).reduce((a, _b) => a + b, 0)
       / Object.keys(userAccess).length;
     for (const [userId, count] of Object.entries(userAccess)) {
       if (count > averageUserAccess * 3) {
@@ -470,7 +469,7 @@ export class CryptographicAuditLogger {
     }
 
     // Flag IPs with excessive access
-    const averageIpAccess = Object.values(ipAccess).reduce((a,_b) => a + b, 0)
+    const averageIpAccess = Object.values(ipAccess).reduce((a, _b) => a + b, 0)
       / Object.keys(ipAccess).length;
     for (const [ip, count] of Object.entries(ipAccess)) {
       if (count > averageIpAccess * 5) {

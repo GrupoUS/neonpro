@@ -479,7 +479,7 @@ export class WhatsAppReminderService {
     let subject = template.subject;
     let body = template.body;
 
-    Object.entries(replacements).forEach(([placeholder,_value]) => {
+    Object.entries(replacements).forEach(([placeholder, _value]) => {
       subject = subject.replace(new RegExp(placeholder, 'g'), value);
       body = body.replace(new RegExp(placeholder, 'g'), value);
     });
@@ -918,7 +918,7 @@ export class WhatsAppReminderService {
         batch.map(reminder => this.sendAppointmentReminder(reminder)),
       );
 
-      batchResults.forEach((result,_index) => {
+      batchResults.forEach((result, _index) => {
         if (result.status === 'fulfilled') {
           success++;
           results.push({
@@ -1083,12 +1083,10 @@ export class WhatsAppReminderService {
       const responseCount = responses?.length || 0;
 
       // Channel breakdown
-      const channelBreakdown = logs.reduce((acc,_log) => {
-          acc[log.channel] = (acc[log.channel] || 0) + 1;
-          return acc;
-        },
-        {} as Record<string, number>,
-      );
+      const channelBreakdown = logs.reduce((acc, _log) => {
+        acc[log.channel] = (acc[log.channel] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>);
 
       return {
         totalSent,

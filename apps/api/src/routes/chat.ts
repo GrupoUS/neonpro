@@ -1,7 +1,7 @@
 import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
 import { supabase } from '@neonpro/database';
 import { Hono } from 'hono';
+import { z } from 'zod';
 import { DEFAULT_PRIMARY, streamWithFailover } from '../config/ai';
 
 // OpenAPI contract reference (specs/002-phase-1-ai/contracts/chat-query.openapi.json)

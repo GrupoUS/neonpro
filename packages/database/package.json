@@ -41,8 +41,8 @@
     "sync": "npm run validate-schema && npm run build"
   },
   "dependencies": {
-    "@neonpro/domain": "workspace:1.0.0",
-    "@neonpro/shared": "workspace:*",
+    "@neonpro/domain": "file:../domain",
+    "@neonpro/shared": "file:../shared",
     "@prisma/adapter-pg": "^6.16.1",
     "@prisma/client": "^5.22.0",
     "@supabase/supabase-js": "^2.57.4",

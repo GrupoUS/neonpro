@@ -251,7 +251,7 @@ app.post(
       }
 
       // Set all headers
-      Object.entries(responseHeaders).forEach(([key,_value]) => {
+      Object.entries(responseHeaders).forEach(([key, _value]) => {
         c.header(key, value);
       });
 

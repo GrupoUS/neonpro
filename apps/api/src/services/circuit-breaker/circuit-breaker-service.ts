@@ -200,7 +200,7 @@ export class CircuitBreakerService {
    * Execute operation with timeout
    */
   private async executeWithTimeout<T>(operation: () => Promise<T>): Promise<T> {
-    return new Promise((resolve,_reject) => {
+    return new Promise((resolve, _reject) => {
       const timeout = setTimeout(() => {
         reject(new Error(`Operation timeout after ${this.config.requestTimeout}ms`));
       }, this.config.requestTimeout);
@@ -249,7 +249,7 @@ export class CircuitBreakerService {
           context,
         );
       } catch (fallbackError) {
-      // Error caught but not used - handled by surrounding logic
+        // Error caught but not used - handled by surrounding logic
         // Fallback failed, use default behavior
       }
     }
@@ -291,7 +291,7 @@ export class CircuitBreakerService {
         this.metrics.fallbackActivations++;
         return fallbackResult;
       } catch (fallbackError) {
-      // Error caught but not used - handled by surrounding logic
+        // Error caught but not used - handled by surrounding logic
         // Fallback failed, continue with default handling
       }
     }
@@ -512,7 +512,7 @@ export class CircuitBreakerService {
       } else {
         const successRate = recentRequests.filter(req => req.success).length
           / recentRequests.length;
-        const avgResponseTime = recentRequests.reduce((sum,_req) => sum + req.responseTime, 0)
+        const avgResponseTime = recentRequests.reduce((sum, _req) => sum + req.responseTime, 0)
           / recentRequests.length;
 
         if (successRate >= 0.9 && avgResponseTime < 3000) {
@@ -568,7 +568,7 @@ export class CircuitBreakerService {
       try {
         callback(event);
       } catch (error) {
-      // Error caught but not used - handled by surrounding logic
+        // Error caught but not used - handled by surrounding logic
         console.error('Error in circuit breaker event callback:', error);
       }
     });
@@ -695,7 +695,7 @@ export class CircuitBreakerRegistry {
   getAllMetrics(): Record<string, CircuitBreakerMetrics> {
     const metrics: Record<string, CircuitBreakerMetrics> = {};
 
-    this.circuitBreakers.forEach((circuitBreaker,_serviceName) => {
+    this.circuitBreakers.forEach((circuitBreaker, _serviceName) => {
       metrics[serviceName] = circuitBreaker.getMetrics();
     });
 

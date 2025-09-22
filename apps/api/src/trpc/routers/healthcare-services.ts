@@ -70,7 +70,7 @@ export const healthcareServicesRouter = router({
         }),
       ),
     )
-   .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
         if (!lgpdService) {
           throw new TRPCError({
@@ -140,7 +140,7 @@ export const healthcareServicesRouter = router({
         }),
       ),
     )
-   .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
         if (!lgpdService) {
           throw new TRPCError({
@@ -203,7 +203,7 @@ export const healthcareServicesRouter = router({
         }),
       ),
     )
-   .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
         if (!lgpdService) {
           throw new TRPCError({
@@ -266,7 +266,7 @@ export const healthcareServicesRouter = router({
         }),
       ),
     )
-   .query(async ({ input, ctx }) => {
+    .query(async ({ input, ctx }) => {
       try {
         if (!lgpdService) {
           throw new TRPCError({
@@ -334,7 +334,7 @@ export const healthcareServicesRouter = router({
         }),
       ),
     )
-   .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input, ctx }) => {
       try {
         if (!noShowService) {
           throw new TRPCError({
@@ -1075,8 +1075,7 @@ export const healthcareServicesRouter = router({
       }
 
       dashboardData.overallComplianceScore = scores.length > 0
-        ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length,
-        )
+        ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length)
         : 0;
 
       // Collect critical issues and recommendations

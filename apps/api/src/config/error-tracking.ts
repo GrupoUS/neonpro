@@ -126,19 +126,22 @@ export function initializeOpenTelemetry(): NodeSDK {
       getNodeAutoInstrumentations({
         // Disable instrumentations that might capture sensitive data
         '@opentelemetry/instrumentation-fs': {
-          enabled: false,_// File system operations may contain sensitive paths
+          enabled: false,
+          _, // File system operations may contain sensitive paths
         },
         '@opentelemetry/instrumentation-dns': {
-          enabled: false,_// DNS lookups not relevant for healthcare
+          enabled: false,
+          _, // DNS lookups not relevant for healthcare
         },
         '@opentelemetry/instrumentation-net': {
-          enabled: false,_// Low-level network calls not needed
+          enabled: false,
+          _, // Low-level network calls not needed
         },
 
         // Configure HTTP instrumentation to redact sensitive headers
         '@opentelemetry/instrumentation-http': {
           enabled: true,
-          requestHook: (span,_request) => {
+          requestHook: (span, _request) => {
             // Remove sensitive headers from tracing
             if (request.headers) {
               delete request.headers.authorization;

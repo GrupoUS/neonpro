@@ -123,8 +123,7 @@ export class SemanticCacheService {
     }
 
     // Normalizar embedding
-    const magnitude = Math.sqrt(_embedding.reduce((sum,_val) => sum + val * val, 0),
-    );
+    const magnitude = Math.sqrt(_embedding.reduce((sum, _val) => sum + val * val, 0));
     return embedding.map(val => val / magnitude);
   }
 

@@ -675,7 +675,7 @@ export class ConversationContextService {
       return undefined;
     }
 
-    return responseTimes.reduce((sum,_time) => sum + time, 0) / responseTimes.length;
+    return responseTimes.reduce((sum, _time) => sum + time, 0) / responseTimes.length;
   }
 
   /**
@@ -688,7 +688,7 @@ export class ConversationContextService {
     // Calculate response time analytics
     const responseTimes = this.extractResponseTimes(messages);
     const avgResponseTime = responseTimes.length > 0
-      ? responseTimes.reduce((sum,_time) => sum + time, 0) / responseTimes.length
+      ? responseTimes.reduce((sum, _time) => sum + time, 0) / responseTimes.length
       : 0;
 
     // Calculate topics frequency
@@ -701,9 +701,9 @@ export class ConversationContextService {
     });
 
     const topTopics = Array.from(topicCounts.entries())
-      .sort((a,_b) => b[1] - a[1])
+      .sort((a, _b) => b[1] - a[1])
       .slice(0, 10)
-      .map(([topic,_count]) => ({ topic, count }));
+      .map(([topic, _count]) => ({ topic, count }));
 
     return {
       totalSessions: sessionCount,
@@ -751,7 +751,7 @@ export class ConversationContextService {
   private calculatePercentile(numbers: number[], percentile: number): number {
     if (numbers.length === 0) return 0;
 
-    const sorted = numbers.slice().sort((a,_b) => a - b);
+    const sorted = numbers.slice().sort((a, _b) => a - b);
     const index = Math.ceil((percentile / 100) * sorted.length) - 1;
     return sorted[Math.max(0, Math.min(index, sorted.length - 1))];
   }

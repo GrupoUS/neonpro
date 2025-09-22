@@ -430,11 +430,12 @@ export class AgentSessionService {
         .filter(length => length > 0);
 
       const averageSessionLength = sessionLengths.length > 0
-        ? sessionLengths.reduce((sum,_length) => sum + length, 0) / sessionLengths.length
+        ? sessionLengths.reduce((sum, _length) => sum + length, 0) / sessionLengths.length
         : 0;
 
       // Get total messages
-      const totalMessages = allSessions.reduce((sum,_session) => sum + (session.message_count || 0),
+      const totalMessages = allSessions.reduce(
+        (sum, _session) => sum + (session.message_count || 0),
         0,
       );
 

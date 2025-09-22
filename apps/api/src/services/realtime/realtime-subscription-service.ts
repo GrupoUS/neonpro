@@ -596,7 +596,7 @@ export class RealtimeSubscriptionService extends EventEmitter {
   private calculateAverageLatency(): number {
     if (this.analytics.latencies.length === 0) return 0;
 
-    const sum = this.analytics.latencies.reduce((acc,_latency) => acc + latency, 0);
+    const sum = this.analytics.latencies.reduce((acc, _latency) => acc + latency, 0);
     return sum / this.analytics.latencies.length;
   }
 

@@ -44,8 +44,8 @@
     "prepare": "echo 'prepare script disabled for workspace install'"
   },
   "dependencies": {
-    "@neonpro/types": "workspace:*",
-    "@neonpro/utils": "workspace:*",
+    "@neonpro/types": "file:../types",
+    "@neonpro/utils": "file:../utils",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/sdk-node": "^0.57.2",
     "@opentelemetry/resources": "^1.29.0",

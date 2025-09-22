@@ -2,376 +2,41 @@
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": [
     "**/.env.*local",
-    "**/package.json",
-    "**/tsconfig.json",
-    "pnpm-workspace.yaml",
-    "pnpm-lock.yaml",
-    ".config/dprint/dprint.json",
-    "packages/database/prisma/schema.prisma",
-    "packages/database/src/**/*.ts"
+    "tsconfig.json",
+    "tsconfig.*.json"
   ],
-
-  "daemon": true,
-  "ui": "tui",
-  "globalEnv": [
-    "NODE_ENV",
-    "VERCEL_ENV",
-    "CI",
-    "TURBO_TOKEN",
-    "TURBO_TEAM",
-    "SUPABASE_URL",
-    "SUPABASE_ANON_KEY",
-    "SUPABASE_SERVICE_ROLE_KEY",
-    "SUPABASE_PROJECT_ID",
-    "DATABASE_URL",
-    "DIRECT_URL",
-    "LGPD_COMPLIANCE_KEY",
-    "VITE_SUPABASE_URL",
-    "VITE_SUPABASE_ANON_KEY",
-    "VITE_APP_ENV",
-    "VITE_API_URL",
-    "VITE_SITE_URL",
-    "OPENAI_API_KEY",
-    "ANTHROPIC_API_KEY",
-    "ENCRYPTION_KEY",
-    "JWT_SECRET",
-    "NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    "HEALTHCARE_COMPLIANCE_MODE",
-    "LGPD_AUDIT_ENABLED",
-    "GOOGLE_GENERATIVE_AI_API_KEY"
-  ],
-  "remoteCache": {
-    "signature": false,
-    "enabled": false,
-    "timeout": 60
-  },
-  "globalPassThroughEnv": ["CI", "NODE_ENV", "VERCEL_ENV"],
   "tasks": {
-    "db:generate": {
-      "cache": false,
-      "dependsOn": ["^build"],
-      "inputs": [
-        "packages/database/prisma/schema.prisma",
-        "packages/database/src/**/*.ts"
-      ],
-      "outputs": [
-        "packages/database/src/generated/**",
-        "node_modules/.prisma/**"
-      ]
-    },
-    "db:migrate": {
-      "cache": false,
-      "dependsOn": ["db:generate"]
-    },
-    "db:seed": {
-      "cache": false,
-      "dependsOn": ["db:migrate"]
-    },
     "build": {
-      "dependsOn": ["^build", "db:generate"],
-      "inputs": [
-        "src/**/*.{ts,tsx,js,jsx}",
-        "styles/**/*.{css,scss}",
-        "public/**/*",
-        "package.json",
-        "tsconfig.json",
-        "vite.config.*",
-        "tailwind.config.*",
-        "bunfig.toml",
-        "!*/**/__tests__/**",
-        "!*/**/*.test.*",
-        "!*/**/*.spec.*",
-        "!tools/monorepo-audit/**"
-      ],
-      "outputs": ["dist/**", "build/**"],
-      "persistent": false,
-      "cache": true,
-      "env": [
-        "NODE_ENV",
-        "VITE_SUPABASE_URL",
-        "VITE_SUPABASE_ANON_KEY",
-        "SUPABASE_SERVICE_ROLE_KEY",
-        "SUPABASE_URL",
-        "SUPABASE_ANON_KEY"
-      ],
-      "outputLogs": "hash-only"
-    },
-    "@neonpro/types#build": {
-      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**"]
-    },
-    "@neonpro/database#build": {
-      "dependsOn": ["@neonpro/types#build"],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "prisma/**/*.prisma",
-        "supabase/**/*.sql",
-        "types/**/*.ts",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": ["dist/**"]
-    },
-    "@neonpro/shared#build": {
-      "dependsOn": [
-        "@neonpro/types#build",
-        "@neonpro/database#build",
-        "@neonpro/core-services#build"
-      ],
-      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**"]
-    },
-    "@neonpro/ui#build": {
-      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**"]
-    },
-    "@neonpro/utils#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
-      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**"]
-    },
-    "@neonpro/security#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
-      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**"]
-    },
-
-    "@neonpro/core-services#build": {
-      "dependsOn": ["@neonpro/types#build", "@neonpro/database#build"],
-      "inputs": ["src/**/*.{ts,js}", "package.json", "tsconfig.json"],
-      "outputs": ["dist/**"]
-    },
-
-    "@neonpro/web#build": {
       "dependsOn": ["^build"],
-      "inputs": [
-        "src/**/*.{ts,tsx,js,jsx}",
-        "public/**/*",
-        "index.html",
-        "vite.config.ts",
-        "tailwind.config.*",
-        "package.json",
-        "tsconfig.json",
-        ".env.local",
-        ".env.production.local",
-        ".env",
-        ".env.production",
-        "!src/**/__tests__/**",
-        "!src/**/*.test.*",
-        "!src/**/*.spec.*"
-      ],
-      "outputs": ["dist/**"],
-      "env": ["NODE_ENV", "VITE_SUPABASE_URL", "VITE_SUPABASE_ANON_KEY"],
-      "outputLogs": "hash-only"
-    },
-
-    "@neonpro/api#build": {
-      "dependsOn": ["^build"],
-      "inputs": [
-        "src/**/*.{ts,js}",
-        "package.json",
-        "tsconfig.json",
-        "vite.config.ts",
-        "!src/**/__tests__/**",
-        "!src/**/*.test.*",
-        "!src/**/*.spec.*"
-      ],
-      "outputs": ["dist/**"],
-      "env": [
-        "NODE_ENV",
-        "SUPABASE_URL",
-        "SUPABASE_SERVICE_ROLE_KEY",
-        "DATABASE_URL"
-      ]
-    },
-
-    "lint": {
-      "inputs": [
-        "**/*.{ts,tsx,js,jsx}",
-        ".config/dprint/dprint.json",
-        ".config/eslint/.eslintrc.*",
-        ".config/oxlint/.oxlintrc.*"
-      ],
-      "outputs": [".eslintcache", "**/*.tsbuildinfo"],
-      "outputLogs": "new-only",
-      "cache": true,
-      "env": ["NODE_OPTIONS"]
-    },
-    "lint:fix": {
-      "inputs": [
-        "**/*.{ts,tsx,js,jsx}",
-        ".config/dprint/dprint.json",
-        ".config/eslint/.eslintrc.*",
-        ".config/oxlint/.oxlintrc.*"
-      ],
-      "outputs": [".eslintcache", "**/*.tsbuildinfo"],
-      "outputLogs": "new-only",
-      "cache": true,
-      "env": ["NODE_OPTIONS"]
-    },
-    "type-check": {
-      "dependsOn": ["^build"],
-      "inputs": [
-        "**/*.{ts,tsx}",
-        "**/tsconfig.json",
-        "**/tsconfig.*.json",
-        "package.json"
-      ],
-      "outputs": ["**/*.tsbuildinfo", ".turbo/type-check.log"],
-      "outputLogs": "errors-only",
-      "cache": true,
-      "env": ["NODE_OPTIONS"]
-    },
-    "format": {
-      "inputs": [
-        "**/*.{ts,tsx,js,jsx,json,md,toml,yaml,yml,css,scss,sass,less}",
-        ".config/dprint/dprint.json",
-        ".config/prettier/.prettierrc*"
-      ],
-      "outputs": [".dprint.cache"],
-      "outputLogs": "new-only",
-      "cache": true
-    },
-    "format:check": {
-      "inputs": [
-        "**/*.{ts,tsx,js,jsx,json,md,toml,yaml,yml,css,scss,sass,less}",
-        ".config/dprint/dprint.json",
-        ".config/prettier/.prettierrc*"
-      ],
-      "outputs": [".dprint.cache"],
-      "outputLogs": "new-only",
-      "cache": true
-    },
-    "test": {
-      "dependsOn": ["build"],
-      "inputs": [
-        "**/*.test.*",
-        "**/*.spec.*",
-        ".config/testing/vitest.config.*",
-        ".config/testing/vitest.setup.*",
-        "vitest.d.ts",
-        "src/**/*.{ts,tsx,js,jsx}",
-        "tools/frontend/src/**/*.{test,spec}.{ts,tsx,js,jsx}",
-        "tools/backend/src/**/*.{test,spec}.{ts,js}",
-        "tools/database/src/**/*.{test,spec}.{ts,js}",
-        "tools/quality/src/**/*.{test,spec}.{ts,js}",
-        "tools/shared/src/**/*.{test,spec}.{ts,js}",
-        "tools/*/vitest.config.*",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [
-        "coverage/**",
-        "tools/*/reports/**",
-        "tools/frontend/reports/**",
-        "tools/backend/reports/**",
-        "tools/database/reports/**",
-        "tools/quality/reports/**",
-        "junit.xml",
-        ".vitest/**",
-        "node_modules/.vitest/**"
-      ],
-      "env": ["CI", "NODE_ENV"],
-      "cache": true,
-      "outputLogs": "full"
-    },
-    "test:watch": {
-      "cache": false,
-      "persistent": true,
-      "inputs": [
-        "**/*.test.*",
-        "**/*.spec.*",
-        ".config/testing/vitest.config.*",
-        ".config/testing/vitest.setup.*",
-        "vitest.d.ts",
-        "src/**/*.{ts,tsx,js,jsx}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": [],
-      "env": ["NODE_ENV"]
-    },
-    "test:coverage": {
-      "dependsOn": ["build"],
-      "inputs": [
-        "**/*.test.*",
-        "**/*.spec.*",
-        ".config/testing/vitest.config.*",
-        ".config/testing/vitest.setup.*",
-        "vitest.d.ts",
-        "src/**/*.{ts,tsx,js,jsx}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": ["coverage/**", ".vitest/**", "node_modules/.vitest/**"],
-      "env": ["CI", "NODE_ENV"],
-      "cache": true
-    },
-    "test:unit": {
-      "dependsOn": ["build"],
-      "inputs": [
-        "**/*.test.*",
-        "**/*.spec.*",
-        ".config/testing/vitest.config.*"
-      ],
-      "outputs": ["coverage/**"]
-    },
-    "test:e2e": {
-      "dependsOn": ["build"],
-      "inputs": [
-        "**/*.e2e.*",
-        "tools/frontend/src/e2e/**",
-        ".config/testing/playwright.config.*"
-      ],
-      "outputs": [
-        "playwright-report/**",
-        "test-results/**",
-        "tools/frontend/reports/e2e/**"
-      ]
-    },
-    "test:e2e:install": {
-      "cache": false,
-      "outputs": []
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
     },
     "dev": {
       "cache": false,
-      "persistent": true,
-      "inputs": [
-        "$TURBO_DEFAULT$",
-        ".env.development.local",
-        ".env.local",
-        ".env.development",
-        ".env"
-      ],
-      "env": [
-        "NODE_ENV",
-        "VITE_SUPABASE_URL",
-        "VITE_SUPABASE_ANON_KEY",
-        "SUPABASE_URL",
-        "SUPABASE_SERVICE_ROLE_KEY"
-      ]
+      "persistent": true
     },
-    "clean": {
-      "cache": false,
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": ["coverage/**"]
+    },
+    "lint": {
       "outputs": []
     },
-    "coverage": {
-      "dependsOn": ["test"],
-      "inputs": [
-        "**/*.test.*",
-        "**/*.spec.*",
-        ".config/testing/vitest.config.*",
-        ".config/testing/vitest.setup.*",
-        "vitest.d.ts",
-        "src/**/*.{ts,tsx,js,jsx}",
-        "package.json",
-        "tsconfig.json"
-      ],
-      "outputs": ["coverage/**", ".vitest/**", "node_modules/.vitest/**"],
-      "env": ["CI", "NODE_ENV"],
-      "cache": true,
-      "outputLogs": "full"
+    "type-check": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "clean": {
+      "cache": false
+    },
+    "build:analyze": {
+      "dependsOn": ["^build"],
+      "outputs": ["*.stats.json", "*.stats.html", "bundle-analysis*.html"]
     }
-  }
+  },
+  "globalEnv": [
+    "NODE_ENV",
+    "VERCEL",
+    "VERCEL_ENV",
+    "EDGE_RUNTIME"
+  ]
 }

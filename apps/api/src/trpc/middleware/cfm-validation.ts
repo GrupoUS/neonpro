@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server';
-import { logger } from '../../lib/logger';
 import { initTRPC } from '@trpc/server';
+import { logger } from '../../lib/logger';
 
 const t = initTRPC.create();
 const { middleware } = t;
@@ -70,7 +70,7 @@ const cfmValidationSchema = z.object({
  *
  * Validates medical operations according to CFM regulations
  */
-export const cfmValidationMiddleware = middleware(async ({ ctx,next,_path }) => {
+export const cfmValidationMiddleware = middleware(async ({ ctx, next, _path }) => {
   try {
     // Check if this operation requires CFM validation
     if (!requiresCFMValidation(path)) {

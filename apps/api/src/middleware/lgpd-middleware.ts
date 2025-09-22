@@ -537,7 +537,7 @@ async function exportUserData(supabase: any, _userId: string): Promise<any> {
       userId,
       dataCategories: Object.keys(exportedData.data),
       recordCounts: Object.fromEntries(
-        Object.entries(exportedData.data).map(([key,_value]) => [
+        Object.entries(exportedData.data).map(([key, _value]) => [
           key,
           Array.isArray(value) ? value.length : 1,
         ]),

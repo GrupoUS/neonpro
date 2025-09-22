@@ -178,9 +178,9 @@ export class SecurityMonitoringDashboardService {
         timestamp: new Date(),
         totalRequests: data?.length || 0,
         deniedRequests: data?.filter(log => !log.access_granted).length || 0,
-        securityScore: data?.reduce((acc,_log) => acc + log.security_score, 0)
+        securityScore: data?.reduce((acc, _log) => acc + log.security_score, 0)
             / (data?.length || 1) || 0,
-        threatLevel: data?.reduce((acc,_log) => acc + log.threat_level, 0)
+        threatLevel: data?.reduce((acc, _log) => acc + log.threat_level, 0)
             / (data?.length || 1) || 0,
         alerts: data
           ?.filter(log => log.threat_level > 50)
@@ -344,7 +344,7 @@ export class SecurityMonitoringDashboardService {
         const data = byEndpoint[endpoint];
         data.avgThreat = logs
           .filter(log => log.table_name === endpoint)
-          .reduce((acc,_log) => acc + log.threat_level, 0) / data.requests;
+          .reduce((acc, _log) => acc + log.threat_level, 0) / data.requests;
       });
 
       return {
@@ -429,8 +429,9 @@ export class SecurityMonitoringDashboardService {
       const logs = data || [];
 
       const uniqueUsers = new Set(logs.map(log => log.user_id));
-      const avgSecurityScore = logs.reduce((acc,_log) => acc + log.security_score, 0) / logs.length;
-      const avgThreatLevel = logs.reduce((acc,_log) => acc + log.threat_level, 0) / logs.length;
+      const avgSecurityScore = logs.reduce((acc, _log) => acc + log.security_score, 0)
+        / logs.length;
+      const avgThreatLevel = logs.reduce((acc, _log) => acc + log.threat_level, 0) / logs.length;
 
       return {
         totalEndpoints: 15, // Mock data
@@ -512,7 +513,7 @@ export class SecurityMonitoringDashboardService {
       report.summary.securityIncidents = logs.filter(
         log => log.threat_level > 70,
       ).length;
-      report.summary.avgSecurityScore = logs.reduce((acc,_log) => acc + log.security_score, 0)
+      report.summary.avgSecurityScore = logs.reduce((acc, _log) => acc + log.security_score, 0)
         / logs.length;
       report.summary.maxThreatLevel = Math.max(
         ...logs.map(log => log.threat_level),
@@ -548,10 +549,8 @@ export class SecurityMonitoringDashboardService {
   private startRealTimeMonitoring(): void {
     // Set up periodic cache cleanup
     setInterval(() => {
-        this.cleanupMetricsCache();
-      },
-      5 * 60 * 1000,
-    ); // Clean up every 5 minutes
+      this.cleanupMetricsCache();
+    }, 5 * 60 * 1000); // Clean up every 5 minutes
 
     // Set up real-time subscriptions for security alerts
     this.setupRealTimeSubscriptions();
@@ -727,7 +726,7 @@ export class SecurityMonitoringDashboardService {
       }
     });
 
-    return Object.entries(threatTypes).map(([type,_data]) => ({
+    return Object.entries(threatTypes).map(([type, _data]) => ({
       type,
       severity: data.maxThreat > 75 ? 'HIGH' : data.maxThreat > 50 ? 'MEDIUM' : 'LOW',
       count: data.count,
@@ -771,7 +770,7 @@ export class SecurityMonitoringDashboardService {
     }
 
     // Check for low security scores
-    const avgSecurityScore = logs.reduce((acc,_log) => acc + log.security_score, 0) / logs.length;
+    const avgSecurityScore = logs.reduce((acc, _log) => acc + log.security_score, 0) / logs.length;
     if (avgSecurityScore < 70) {
       issues.push(`Low average security score: ${avgSecurityScore.toFixed(1)}`);
       score -= 10;
@@ -828,8 +827,7 @@ export class SecurityMonitoringDashboardService {
       }
     });
 
-    const suspiciousIPs = Object.entries(ipCounts).filter(([,_count]) => count > 100,
-    );
+    const suspiciousIPs = Object.entries(ipCounts).filter(([, _count]) => count > 100);
     if (suspiciousIPs.length > 0) {
       recommendations.push(
         'Investigate high-frequency access patterns from specific IP addresses',

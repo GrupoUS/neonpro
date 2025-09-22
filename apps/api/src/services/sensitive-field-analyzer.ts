@@ -288,11 +288,11 @@ export class HealthcareSensitiveFieldAnalyzer {
 
     if (typeof data === 'object') {
       if (Array.isArray(data)) {
-        data.forEach((item,_index) => {
+        data.forEach((item, _index) => {
           this.analyzeDataStructure(item, results, `${path}[${index}]`);
         });
       } else {
-        Object.entries(data).forEach(([key,_value]) => {
+        Object.entries(data).forEach(([key, _value]) => {
           const currentPath = path ? `${path}.${key}` : key;
 
           // Check if this field is classified as sensitive
@@ -551,12 +551,12 @@ export function sensitiveDataExposureMiddleware(): (
   c: Context,
   next: () => Promise<void>,
 ) => Promise<void> {
-  return async (c: Context,_next) => {
+  return async (c: Context, _next) => {
     // Store original response
     const originalJson = c.json;
 
     // Override json method to analyze response
-    c.json = (data: any, status?: number, headers?: Record<string,_string>) => {
+    c.json = (data: any, status?: number, headers?: Record<string, _string>) => {
       // Analyze response for sensitive data exposure
       const analysis = sensitiveFieldAnalyzer.analyzeAPIResponse(
         data,

@@ -1,6 +1,6 @@
 /**
  * PR 55 Error Fix Validation Tests
- * 
+ *
  * This test suite validates all the critical errors identified in PR 55:
  * 1. Missing zod import in enhanced-query-cache.ts
  * 2. Parameter reference mismatches across multiple files
@@ -8,14 +8,16 @@
  * 4. Error message formatting issues
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 // Test 1: Missing zod import validation
 describe('Missing zod import in enhanced-query-cache.ts', () => {
   it('should fail to import due to missing zod', async () => {
     // This test will fail because zod is used but not imported
     await expect(async () => {
-      const { EnhancedQueryCacheService } = await import('../services/cache/enhanced-query-cache.ts');
+      const { EnhancedQueryCacheService } = await import(
+        '../services/cache/enhanced-query-cache.ts'
+      );
       return new EnhancedQueryCacheService({
         enableMemoryCache: true,
         enableRedisCache: false,
@@ -50,7 +52,7 @@ describe('Parameter reference mismatches', () => {
     await expect(async () => {
       const { BulkOperationsService } = await import('../services/bulk-operations-service.ts');
       const service = new BulkOperationsService();
-      
+
       // This will fail because method uses `request` instead of `_request`
       await service.executeBulkOperation({
         operationType: 'activate',
@@ -66,7 +68,7 @@ describe('Parameter reference mismatches', () => {
     await expect(async () => {
       const { BillingService } = await import('../services/billing-service.ts');
       const service = new BillingService();
-      
+
       // This will fail because reduce function uses `item` instead of `_item`
       await service.createBilling({
         patientId: 'test-patient',
@@ -93,7 +95,7 @@ describe('Parameter reference mismatches', () => {
   it('should fail in ai-security-service.ts canMakeRequest method', async () => {
     await expect(async () => {
       const { aiSecurityService } = await import('../services/ai-security-service.ts');
-      
+
       // This will fail because method uses `userId` instead of `_userId`
       return aiSecurityService.canMakeRequest('test-user', 'test-clinic');
     }).rejects.toThrow('userId is not defined');
@@ -105,11 +107,11 @@ describe('Parameter reference mismatches', () => {
       const request = new Request('https://example.com/health', {
         method: 'GET',
       });
-      
+
       // This will fail because handler uses `request` instead of `_request`
       const url = new URL(request.url);
       const pathname = url.pathname;
-      
+
       // These references will fail at runtime
       expect(pathname).toBe('/health');
     }).resolves.toBeDefined(); // Will fail when actual handler is executed
@@ -120,8 +122,10 @@ describe('Parameter reference mismatches', () => {
 describe('Interface property mismatches', () => {
   it('should fail in QueryCacheEntry interface validation', async () => {
     await expect(async () => {
-      const { EnhancedQueryCacheService } = await import('../services/cache/enhanced-query-cache.ts');
-      
+      const { EnhancedQueryCacheService } = await import(
+        '../services/cache/enhanced-query-cache.ts'
+      );
+
       // Create instance to test validateCacheEntry method
       const service = new EnhancedQueryCacheService({
         enableMemoryCache: true,
@@ -138,7 +142,7 @@ describe('Interface property mismatches', () => {
         dataRetentionHours: 168,
         anonymizationEnabled: true,
       });
-      
+
       // Test validateCacheEntry method which expects `entry.userId` but interface has `_userId`
       const mockEntry = {
         queryHash: 'test',
@@ -154,7 +158,7 @@ describe('Interface property mismatches', () => {
         lgpdCompliant: true,
         auditRequired: false,
       };
-      
+
       // This should fail because validateCacheEntry checks for `entry.userId` but entry has `_userId`
       // @ts-ignore - accessing private method for testing
       const result = service.validateCacheEntry(mockEntry);
@@ -169,7 +173,7 @@ describe('Error message formatting issues', () => {
     await expect(async () => {
       const { BulkOperationsService } = await import('../services/bulk-operations-service.ts');
       const service = new BulkOperationsService();
-      
+
       try {
         // This will trigger an error message with prefixed parameter names
         await service.executeBulkOperation({

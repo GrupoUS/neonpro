@@ -247,9 +247,9 @@ app.get('/ai/sessions/:sessionId/feedback/stats', async c => {
     }
 
     const totalFeedback = sessionFeedback.length;
-    const averageRating = sessionFeedback.reduce((sum,_f) => sum + f.rating, 0) / totalFeedback;
+    const averageRating = sessionFeedback.reduce((sum, _f) => sum + f.rating, 0) / totalFeedback;
 
-    const ratingDistribution = sessionFeedback.reduce((acc,_f) => {
+    const ratingDistribution = sessionFeedback.reduce((acc, _f) => {
       acc[f.rating] = (acc[f.rating] || 0) + 1;
       return acc;
     }, {} as Record<number, number>);
@@ -319,9 +319,9 @@ app.get('/ai/feedback/admin/overview', async c => {
     }
 
     const totalFeedback = allFeedback.length;
-    const averageRating = allFeedback.reduce((sum,_f) => sum + f.rating, 0) / totalFeedback;
+    const averageRating = allFeedback.reduce((sum, _f) => sum + f.rating, 0) / totalFeedback;
 
-    const ratingDistribution = allFeedback.reduce((acc,_f) => {
+    const ratingDistribution = allFeedback.reduce((acc, _f) => {
       acc[f.rating] = (acc[f.rating] || 0) + 1;
       return acc;
     }, {} as Record<number, number>);
@@ -342,7 +342,7 @@ app.get('/ai/feedback/admin/overview', async c => {
 
     // Recent activity
     const recentActivity = allFeedback
-      .sort((a,_b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .sort((a, _b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
       .slice(-10)
       .map(f => ({
         rating: f.rating,

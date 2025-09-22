@@ -587,7 +587,7 @@ export class WebSocketSecurityMiddleware {
       event => Date.now() - event.timestamp < 3600000, // Last hour
     );
 
-    const connectionDistribution = recentEvents.reduce((acc,_event) => {
+    const connectionDistribution = recentEvents.reduce((acc, _event) => {
       if (event.type === 'connection_attempt') {
         acc[event.details.allowed ? 'allowed' : 'blocked']++;
       }

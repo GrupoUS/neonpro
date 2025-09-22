@@ -281,7 +281,7 @@ class SQLSanitizer {
       return result;
     }
 
-    Object.entries(operation.conditions).forEach(([key,_value]) => {
+    Object.entries(operation.conditions).forEach(([key, _value]) => {
       // Validate condition keys
       if (this.containsDangerousPatterns(key)) {
         result.errors.push(`Condition key '${key}' contains dangerous patterns`);

@@ -173,13 +173,11 @@ async function selectOptimalProvider(
 
     case 'prediction':
       // Prefer lower cost for prediction tasks
-      return availableProviders.sort((a,_b) => a.costPerToken - b.costPerToken,
-      )[0];
+      return availableProviders.sort((a, _b) => a.costPerToken - b.costPerToken)[0];
 
     case 'analysis':
       // Prefer higher quality for analysis
-      return availableProviders.sort((a,_b) => b.healthScore - a.healthScore,
-      )[0];
+      return availableProviders.sort((a, _b) => b.healthScore - a.healthScore)[0];
 
     default:
       return availableProviders[0];
@@ -280,7 +278,7 @@ function anonymizePatientDataForAI(data: any): any {
     'gender',
   ];
 
-  return Object.keys(anonymized).reduce((acc,_key) => {
+  return Object.keys(anonymized).reduce((acc, _key) => {
     if (allowedFields.includes(key)) {
       acc[key] = anonymized[key];
     }
@@ -294,7 +292,7 @@ function anonymizePatientDataForAI(data: any): any {
 function translateMedicalTerms(text: string): string {
   let translatedText = text;
 
-  Object.entries(MEDICAL_TERMINOLOGY_PT).forEach(([english,_portuguese]) => {
+  Object.entries(MEDICAL_TERMINOLOGY_PT).forEach(([english, _portuguese]) => {
     const regex = new RegExp(`\\b${english}\\b`, 'gi');
     translatedText = translatedText.replace(regex, portuguese);
   });
@@ -325,7 +323,7 @@ export const aiRouter = router({
         language: v.optional(v.string()),
       }),
     )
-    .mutation(async ({ ctx,_input }) => {
+    .mutation(async ({ ctx, _input }) => {
       try {
         // Select optimal AI provider
         const provider = await selectOptimalProvider('conversation', 'medium');
@@ -404,7 +402,7 @@ export const aiRouter = router({
         ),
       }),
     )
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       try {
         // Get patient data
         const patient = await ctx.prisma.patient.findFirst({
@@ -537,7 +535,7 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
         ),
       }),
     )
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       try {
         // Select optimal AI provider for analysis
         const provider = await selectOptimalProvider('analysis', 'high');
@@ -633,7 +631,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
         language: v.optional(v.string()),
       }),
     )
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       // Transform input to match predictNoShow schema
       const transformedInput = {
         patientId: input.patient_id,
@@ -673,7 +671,7 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
         specialization: v.optional(v.string()),
       }),
     )
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       try {
         // Get patient data for risk analysis
         const patient = await ctx.prisma.patient.findFirst({
@@ -784,7 +782,7 @@ Forneça análise de risco e recomendações.`;
         ),
       }),
     )
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       try {
         // Select optimal provider based on input criteria
         const provider = await selectOptimalProvider(
@@ -879,7 +877,7 @@ Forneça análise de risco e recomendações.`;
         ),
       }),
     )
-    .mutation(async ({ ctx,_input }) => {
+    .mutation(async ({ ctx, _input }) => {
       try {
         const { requests, batch_settings } = input;
         const maxConcurrent = batch_settings?.max_concurrent || 5;
@@ -953,7 +951,7 @@ Forneça análise de risco e recomendações.`;
           summary: {
             successful: results.filter(r => r.status === 'success').length,
             failed: results.filter(r => r.status === 'error').length,
-            total_cost: results.reduce((sum,_r) => sum + (r.cost || 0), 0),
+            total_cost: results.reduce((sum, _r) => sum + (r.cost || 0), 0),
           },
           compliance: {
             lgpd_compliant: true,

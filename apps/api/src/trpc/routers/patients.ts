@@ -13,9 +13,7 @@
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import * as v from 'valibot';
-import {
-  Patient
-} from '../../../../../../packages/types/src/patient.valibot';
+import { Patient } from '../../../../../../packages/types/src/patient.valibot';
 import {
   CreatePatientSchema,
   GetPatientSchema,
@@ -172,7 +170,7 @@ export const patientsRouter = router({
    */
   create: healthcareProcedure
     .input(CreatePatientSchema)
-    .mutation(async ({ ctx,_input }) => {
+    .mutation(async ({ ctx, _input }) => {
       try {
         // Validate LGPD consent is properly provided
         if (!input.lgpdConsentGiven || !input.lgpdConsentVersion) {
@@ -306,7 +304,7 @@ export const patientsRouter = router({
    */
   get: patientProcedure
     .input(GetPatientSchema)
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       try {
         // Validate consent for data access
         const consent = await validateConsent(input.id, 'view', ctx.prisma);
@@ -403,7 +401,7 @@ export const patientsRouter = router({
    */
   list: protectedProcedure
     .input(ListPatientsSchema)
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       const { limit = 20, offset = 0, search, isActive = true } = input;
 
       try {
@@ -499,7 +497,7 @@ export const patientsRouter = router({
    */
   update: patientProcedure
     .input(UpdatePatientSchema)
-    .mutation(async ({ ctx,_input }) => {
+    .mutation(async ({ ctx, _input }) => {
       const { id, ...updateData } = input;
 
       try {
@@ -574,7 +572,7 @@ export const patientsRouter = router({
         digitalSignature: v.optional(v.string()),
       }),
     )
-    .mutation(async ({ ctx,_input }) => {
+    .mutation(async ({ ctx, _input }) => {
       try {
         const { patientId, reason, digitalSignature } = input;
 
@@ -659,7 +657,7 @@ export const patientsRouter = router({
    */
   getConsentStatus: patientProcedure
     .input(GetPatientSchema)
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       const consents = await ctx.prisma.lGPDConsent.findMany({
         where: {
           patientId: input.id,

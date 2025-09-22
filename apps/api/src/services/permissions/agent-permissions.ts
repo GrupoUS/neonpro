@@ -5,10 +5,10 @@
  * with LGPD compliance and healthcare security requirements.
  */
 
-import { Database } from '../../../../packages/types/src/database';
 import { createClient } from '@supabase/supabase-js';
 import { createHash } from 'crypto';
 import { z } from 'zod';
+import { Database } from '../../../../packages/types/src/database';
 // Input validation schemas
 const PermissionContextSchema = z.object({
   _userId: z.string().min(1, 'User ID is required').max(255),
@@ -18,7 +18,13 @@ const PermissionContextSchema = z.object({
     errorMap: () => ({ message: 'Invalid action type' }),
   }),
   resource: z.enum([
-    'agent_sessions', 'agent_messages', 'agent_context', 'agent_audit', 'patient_data', 'financial_data'], {
+    'agent_sessions',
+    'agent_messages',
+    'agent_context',
+    'agent_audit',
+    'patient_data',
+    'financial_data',
+  ], {
     errorMap: () => ({ message: 'Invalid resource type' }),
   }),
   metadata: z.record(z.any()).optional(),
@@ -722,7 +728,7 @@ export class AgentPermissionService {
     if (this.cache.size > this.maxCacheSize) {
       // Remove oldest entries
       const entries = Array.from(this.cache.entries())
-        .sort((a,_b) => a[1].expires - b[1].expires);
+        .sort((a, _b) => a[1].expires - b[1].expires);
 
       const toRemove = entries.slice(0, Math.floor(this.maxCacheSize * 0.2));
       toRemove.forEach(([key]) => this.cache.delete(key));

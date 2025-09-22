@@ -384,13 +384,13 @@ export class AgentAuditService {
 
       // Get top actions and resources
       const topActions = Array.from(actionCounts.entries())
-        .map(([action,_count]) => ({ action, count }))
-        .sort((a,_b) => b.count - a.count)
+        .map(([action, _count]) => ({ action, count }))
+        .sort((a, _b) => b.count - a.count)
         .slice(0, 10);
 
       const topResources = Array.from(resourceCounts.entries())
-        .map(([resource,_count]) => ({ resource, count }))
-        .sort((a,_b) => b.count - a.count)
+        .map(([resource, _count]) => ({ resource, count }))
+        .sort((a, _b) => b.count - a.count)
         .slice(0, 10);
 
       return {

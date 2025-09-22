@@ -545,15 +545,13 @@ export class ANVISAComplianceService {
     const recommendations: string[] = [];
 
     // Group issues by requirement and generate recommendations
-    const issuesByRequirement = this.issues.reduce((acc,_issue) => {
-        if (!acc[issue.requirement]) acc[issue.requirement] = [];
-        acc[issue.requirement].push(issue);
-        return acc;
-      },
-      {} as Record<string, ANVISAComplianceIssue[]>,
-    );
+    const issuesByRequirement = this.issues.reduce((acc, _issue) => {
+      if (!acc[issue.requirement]) acc[issue.requirement] = [];
+      acc[issue.requirement].push(issue);
+      return acc;
+    }, {} as Record<string, ANVISAComplianceIssue[]>);
 
-    Object.entries(issuesByRequirement).forEach(([requirement,_issues]) => {
+    Object.entries(issuesByRequirement).forEach(([requirement, _issues]) => {
       const criticalCount = issues.filter(
         i => i.severity === 'critical',
       ).length;

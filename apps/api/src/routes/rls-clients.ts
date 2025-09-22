@@ -53,9 +53,7 @@ rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
 
     // Log successful access
     console.log(
-      `RLS Patient Access: User ${userId} (${userRole}) accessed ${
-        patients?.length || 0
-      } patients`,
+      `RLS Patient Access: User ${userId} (${userRole}) accessed ${patients?.length || 0} patients`,
     );
 
     return c.json({

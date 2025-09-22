@@ -698,7 +698,7 @@ export class LGPDAuditService {
   }
 
   private groupBySeverity(breaches: any[]): Record<string, number> {
-    return breaches.reduce((acc,_breach) => {
+    return breaches.reduce((acc, _breach) => {
       const severity = breach.metadata?.severity || 'UNKNOWN';
       acc[severity] = (acc[severity] || 0) + 1;
       return acc;

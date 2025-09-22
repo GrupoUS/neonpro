@@ -203,7 +203,7 @@ export class HTTPSServerManager {
         this.metrics.activeConnections--;
       });
 
-      this.httpsServer.on('request', (req,_res) => {
+      this.httpsServer.on('request', (req, _res) => {
         this.metrics.httpsRequests++;
         const startTime = Date.now();
 
@@ -311,7 +311,7 @@ export class HTTPSServerManager {
     });
 
     // Handle client errors
-    server.on('clientError', (error,_socket) => {
+    server.on('clientError', (error, _socket) => {
       this.logger.logError(LOGGING_CONSTANTS.EVENTS.CLIENT_ERROR, {
         error: error instanceof Error ? error.message : 'Unknown error',
         remoteAddress: socket.remoteAddress,
@@ -367,7 +367,8 @@ export class HTTPSServerManager {
       const stopPromises: Promise<void>[] = [];
 
       if (this.httpsServer) {
-        stopPromises.push( new Promise<void>(closeResolve => {
+        stopPromises.push(
+          new Promise<void>(closeResolve => {
             this.httpsServer!.close(() => {
               this.logger.logSystemEvent(LOGGING_CONSTANTS.EVENTS.HTTPS_SERVER_STOPPED, {
                 port: this.config.port,
@@ -380,7 +381,8 @@ export class HTTPSServerManager {
       }
 
       if (this.httpServer) {
-        stopPromises.push( new Promise<void>(closeResolve => {
+        stopPromises.push(
+          new Promise<void>(closeResolve => {
             this.httpServer!.close(() => {
               this.logger.logSystemEvent('http_redirect_server_stopped', {
                 port: this.config.httpPort,

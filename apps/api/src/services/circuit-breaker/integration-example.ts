@@ -69,7 +69,8 @@ export class AguiServiceWithCircuitBreaker {
     };
 
     // Execute with circuit breaker protection
-    return this.ragAgentCircuitBreaker.execute(() => this.sendToRagAgent(query, _context),
+    return this.ragAgentCircuitBreaker.execute(
+      () => this.sendToRagAgent(query, _context),
       requestContext,
       this.createFallbackResponse(query, _context),
     );
@@ -93,7 +94,8 @@ export class AguiServiceWithCircuitBreaker {
       },
     };
 
-    return this.databaseCircuitBreaker.execute(() => this.storeMessageInDatabase(message),
+    return this.databaseCircuitBreaker.execute(
+      () => this.storeMessageInDatabase(message),
       requestContext,
     );
   }
@@ -307,7 +309,8 @@ export class GoogleCalendarServiceWithCircuitBreaker {
       },
     };
 
-    return this.circuitBreaker.execute(() => this.exchangeCodeForToken(code, _userId),
+    return this.circuitBreaker.execute(
+      () => this.exchangeCodeForToken(code, _userId),
       requestContext,
     );
   }
@@ -328,7 +331,8 @@ export class GoogleCalendarServiceWithCircuitBreaker {
       },
     };
 
-    return this.circuitBreaker.execute(() => this.syncEventsToGoogle(userId, events),
+    return this.circuitBreaker.execute(
+      () => this.syncEventsToGoogle(userId, events),
       requestContext,
       { success: false, synced: 0, failed: events.length }, // Fallback value
     );
@@ -428,7 +432,8 @@ export class AIAgentServiceWithCircuitBreaker {
       },
     };
 
-    return this.circuitBreaker.execute(() => this.processAIRequest(request, _context),
+    return this.circuitBreaker.execute(
+      () => this.processAIRequest(request, _context),
       requestContext,
       this.createAIFallbackResponse(request),
     );

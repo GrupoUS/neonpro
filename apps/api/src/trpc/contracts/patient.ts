@@ -26,7 +26,7 @@ export const patientRouter = router({
     })
     .input(CreatePatientRequestSchema)
     .output(PatientResponseSchema)
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       // Validate LGPD consent
       if (!input.lgpdConsent) {
         throw new HealthcareTRPCError(
@@ -107,7 +107,7 @@ export const patientRouter = router({
     })
     .input(GetPatientRequestSchema)
     .output(PatientResponseSchema)
-    .query(async ({ input,_ctx }) => {
+    .query(async ({ input, _ctx }) => {
       // Check clinic access
       await validateClinicAccess(ctx.user.id, input.id);
 
@@ -164,7 +164,7 @@ export const patientRouter = router({
     })
     .input(ListPatientsRequestSchema)
     .output(PatientsListResponseSchema)
-    .query(async ({ input,_ctx }) => {
+    .query(async ({ input, _ctx }) => {
       // Validate clinic access
       await validateClinicAccess(ctx.user.id, input.clinicId);
 
@@ -222,7 +222,7 @@ export const patientRouter = router({
     })
     .input(UpdatePatientRequestSchema)
     .output(PatientResponseSchema)
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       // Get current patient data for change tracking
       const currentPatient = await ctx.prisma.patient.findUnique({
         where: { id: input.id },
@@ -308,7 +308,7 @@ export const patientRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(async ({ input,_ctx }) => {
+    .mutation(async ({ input, _ctx }) => {
       const patient = await ctx.prisma.patient.findUnique({
         where: { id: input.id },
       });

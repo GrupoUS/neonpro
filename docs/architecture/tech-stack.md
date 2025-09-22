@@ -35,17 +35,27 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Benefits**: Zero-config caching, dependency-aware builds, Vercel integration
 - **Performance**: ~35s cold build, ~3s incremental with cache
 
-**PNPM v8.15.0** - Package Manager
-
-- **Why**: 3x faster installs, efficient disk usage, workspace protocol support
-- **Benefits**: Strict dependency resolution, workspace hoisting, security advantages
-- **Config**: Workspace protocol (`workspace:*`), symlinked node_modules
-
-**Bun (Latest)** - Development Scripts & Testing
+**Bun (Latest)** - Primary Package Manager & Development Scripts
 
 - **Why**: 3-5x faster than npm, excellent TypeScript support, built-in bundler
-- **Usage**: Test runner, development scripts, package auditing
+- **Usage**: Primary package manager, test runner, development scripts, package auditing
 - **Performance**: ~12s test suite execution vs ~30s with Jest
+- **Workspace Support**: Full monorepo workspace management with `bun-workspace.json`
+- **Fallback Strategy**: Automatic fallback to PNPM/NPM for compatibility
+
+**PNPM v8.15.0** - Secondary Package Manager
+
+- **Why**: Workspace protocol support, efficient disk usage, strict dependency resolution
+- **Usage**: Fallback when Bun compatibility issues arise, workspace management
+- **Benefits**: Mature ecosystem, symlinked node_modules, security advantages
+- **Integration**: Seamless fallback via automated scripts
+
+**NPM v11.6.0+** - Tertiary Package Manager
+
+- **Why**: Universal compatibility, largest package registry
+- **Usage**: Final fallback option, legacy dependencies
+- **Benefits**: Industry standard, maximum compatibility
+- **Integration**: Available as final fallback in automated scripts
 
 **TypeScript v5.9.2** - Type Safety & Developer Experience
 

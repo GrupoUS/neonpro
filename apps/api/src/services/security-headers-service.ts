@@ -739,7 +739,7 @@ export class SecurityHeadersService {
         const securityResult = this.generateSecurityHeaders(context);
 
         // Apply headers to response
-        Object.entries(securityResult.headers).forEach(([key,_value]) => {
+        Object.entries(securityResult.headers).forEach(([key, _value]) => {
           c.header(key, value);
         });
 

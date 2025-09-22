@@ -642,7 +642,7 @@ export const appointmentsRouter = router({
    */
   create: healthcareProcedure
     .input(CreateAppointmentSchema)
-    .mutation(async ({ ctx,_input }) => {
+    .mutation(async ({ ctx, _input }) => {
       try {
         // Step 1: Validate CFM license and specialty requirements
         const serviceType = await ctx.prisma.serviceType.findUnique({
@@ -838,7 +838,7 @@ export const appointmentsRouter = router({
         serviceTypeId: v.string([v.uuid('Invalid service type ID')]),
       }),
     )
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       const availability = await checkRealTimeAvailability(
         input.professionalId,
         input.startTime,
@@ -884,7 +884,7 @@ export const appointmentsRouter = router({
         includeWeather: v.optional(v.boolean()),
       }),
     )
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       try {
         // Get weather data if requested
         let weatherData = null;
@@ -970,7 +970,7 @@ export const appointmentsRouter = router({
         urgent: v.optional(v.boolean()),
       }),
     )
-    .mutation(async ({ ctx,_input }) => {
+    .mutation(async ({ ctx, _input }) => {
       const appointment = await ctx.prisma.appointment.findFirst({
         where: {
           id: input.appointmentId,
@@ -1052,7 +1052,7 @@ export const appointmentsRouter = router({
    */
   get: protectedProcedure
     .input(GetAppointmentSchema)
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       const appointment = await ctx.prisma.appointment.findFirst({
         where: {
           id: input.id,
@@ -1141,7 +1141,7 @@ export const appointmentsRouter = router({
    */
   list: protectedProcedure
     .input(ListAppointmentsSchema)
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       const {
         limit = 20,
         offset = 0,
@@ -1236,7 +1236,7 @@ export const appointmentsRouter = router({
           hasMore: offset + limit < total,
         },
         analytics: {
-          riskDistribution: riskStats.reduce((acc,_stat) => {
+          riskDistribution: riskStats.reduce((acc, _stat) => {
             acc[stat.noShowRiskLevel || 'unknown'] = stat._count.noShowRiskLevel;
             return acc;
           }, {}),
@@ -1255,7 +1255,7 @@ export const appointmentsRouter = router({
    */
   updateStatus: protectedProcedure
     .input(UpdateAppointmentSchema)
-    .mutation(async ({ ctx,_input }) => {
+    .mutation(async ({ ctx, _input }) => {
       const { id, ...updateData } = input;
 
       const appointment = await ctx.prisma.appointment.findFirst({
@@ -1337,7 +1337,7 @@ export const appointmentsRouter = router({
         isNoShow: v.optional(v.boolean()),
       }),
     )
-    .mutation(async ({ ctx,_input }) => {
+    .mutation(async ({ ctx, _input }) => {
       const appointment = await ctx.prisma.appointment.findFirst({
         where: {
           id: input.appointmentId,
@@ -1420,7 +1420,7 @@ export const appointmentsRouter = router({
    */
   schedule: healthcareProcedure
     .input(CreateAppointmentSchema)
-    .mutation(async ({ ctx,_input }) => {
+    .mutation(async ({ ctx, _input }) => {
       // Call the create procedure directly to avoid circular dependency
       try {
         // Step 1: Validate CFM license and specialty requirements
@@ -1506,7 +1506,7 @@ export const appointmentsRouter = router({
         serviceTypeId: v.string([v.uuid('Invalid service type ID')]),
       }),
     )
-    .query(async ({ ctx,_input }) => {
+    .query(async ({ ctx, _input }) => {
       // Call checkRealTimeAvailability directly
       const availability = await checkRealTimeAvailability(
         input.professionalId,
