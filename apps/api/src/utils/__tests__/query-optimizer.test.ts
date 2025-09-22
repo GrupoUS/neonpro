@@ -6,7 +6,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { HEALTHCARE_POOL_CONFIG, QueryPerformanceMonitor } from '../query-optimizer';
 
-describe('Query Optimizer', () => {
+describe(_'Query Optimizer'), () => {
   let monitor: QueryPerformanceMonitor;
 
   beforeEach(() => {
@@ -16,8 +16,8 @@ describe('Query Optimizer', () => {
   afterEach(() => {
     monitor.clearMetrics(
 
-  describe('QueryPerformanceMonitor', () => {
-    it('should record query metrics', () => {
+  describe(_'QueryPerformanceMonitor'), () => {
+    it(_'should record query metrics'), () => {
       const metrics = {
         _query: 'SELECT * FROM patients WHERE id = $1',
         duration: 45,
@@ -35,7 +35,7 @@ describe('Query Optimizer', () => {
       expect(stats.averageDuration).toBe(45
       expect(stats.slowQueries).toBe(0
 
-    it('should identify slow queries', () => {
+    it(_'should identify slow queries'), () => {
       const slowQuery = {
         _query: 'SELECT * FROM appointments WHERE date > $1',
         duration: 1500, // Above slow query threshold (1000ms)
@@ -53,7 +53,7 @@ describe('Query Optimizer', () => {
       expect(stats.slowQueries).toBe(1
       expect(stats.slowQueryRate).toBe(100
 
-    it('should track query frequency', () => {
+    it(_'should track query frequency'), () => {
       // Add multiple queries
       monitor.recordQuery({
         _query: 'SELECT * FROM services',
@@ -74,8 +74,13 @@ describe('Query Optimizer', () => {
       expect(stats.queryFrequency).toBeDefined(
       expect(Object.keys(stats.queryFrequency).length).toBeGreaterThan(0
 
+<<<<<<< HEAD
     it('should calculate average duration correctly', () => {
       const baseTime = new Date(
+=======
+    it(_'should calculate average duration correctly'), () => {
+      const baseTime = new Date();
+>>>>>>> origin/main
 
       // Add multiple metrics with different durations
       for (let i = 0; i < 5; i++) {
@@ -91,8 +96,13 @@ describe('Query Optimizer', () => {
       expect(stats.totalQueries).toBe(5
       expect(stats.averageDuration).toBe(140); // Average of 100, 120, 140, 160, 180
 
+<<<<<<< HEAD
     it('should identify top slow queries', () => {
       const baseTime = new Date(
+=======
+    it(_'should identify top slow queries'), () => {
+      const baseTime = new Date();
+>>>>>>> origin/main
 
       // Add queries with different durations
       const durations = [100, 2000, 500, 1500, 300];
@@ -116,7 +126,7 @@ describe('Query Optimizer', () => {
         
       }
 
-    it('should clear metrics history', () => {
+    it(_'should clear metrics history'), () => {
       monitor.recordQuery({
         _query: 'SELECT 1',
         duration: 10,
@@ -132,7 +142,7 @@ describe('Query Optimizer', () => {
       stats = monitor.getStats(
       expect(stats.totalQueries).toBe(0
 
-    it('should limit metrics history to prevent memory issues', () => {
+    it(_'should limit metrics history to prevent memory issues'), () => {
       // Add more than the max history limit (1000)
       for (let i = 0; i < 1100; i++) {
         monitor.recordQuery({
@@ -147,14 +157,24 @@ describe('Query Optimizer', () => {
       // Should be limited to maxMetricsHistory (1000)
       expect(stats.totalQueries).toBeLessThanOrEqual(1000
 
+<<<<<<< HEAD
   describe('HEALTHCARE_POOL_CONFIG', () => {
     it('should have appropriate pool configuration for healthcare workloads', () => {
       expect(HEALTHCARE_POOL_CONFIG.min).toBe(2
       expect(HEALTHCARE_POOL_CONFIG.max).toBe(20
       expect(HEALTHCARE_POOL_CONFIG.acquireTimeoutMillis).toBe(30000
       expect(HEALTHCARE_POOL_CONFIG.idleTimeoutMillis).toBe(300000
+=======
+  describe(_'HEALTHCARE_POOL_CONFIG'), () => {
+    it(_'should have appropriate pool configuration for healthcare workloads'), () => {
+      expect(HEALTHCARE_POOL_CONFIG.min).toBe(2);
+      expect(HEALTHCARE_POOL_CONFIG.max).toBe(20);
+      expect(HEALTHCARE_POOL_CONFIG.acquireTimeoutMillis).toBe(30000);
+      expect(HEALTHCARE_POOL_CONFIG.idleTimeoutMillis).toBe(300000);
+    });
+>>>>>>> origin/main
 
-    it('should have healthcare-appropriate timeout settings', () => {
+    it(_'should have healthcare-appropriate timeout settings'), () => {
       // Healthcare systems need reliable connections
       expect(HEALTHCARE_POOL_CONFIG.createTimeoutMillis).toBe(30000
       expect(HEALTHCARE_POOL_CONFIG.destroyTimeoutMillis).toBe(5000

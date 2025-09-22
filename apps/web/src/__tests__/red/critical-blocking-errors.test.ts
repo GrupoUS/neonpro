@@ -41,7 +41,11 @@ test('AccessibilityTester.tsx import should fail due to transform/compile error 
  * current (non-failing) state for this module in RED phase.
  */
 test(_'DataAgentChat.tsx import currently resolves and exports DataAgentChat',async () => {
+<<<<<<< HEAD
   const mod = await import('../../components/ai/DataAgentChat')
+=======
+  const mod = await import('../../components/ai/DataAgentChat');
+>>>>>>> origin/main
   // Expect an exported function/component named DataAgentChat (or default)
   expect(mod.DataAgentChat || mod.default).toBeDefined(
 }
@@ -62,11 +66,19 @@ test('security-logging.test.ts should fail to load (module not found) — observ
  * Observed: import succeeded previously. Document current exports (type-guards).
  */
 test(_'ai-agent.ts import currently resolves and exports type-guard helpers',async () => {
+<<<<<<< HEAD
   const mod = await import('../../types/ai-agent')
   expect(typeof (mod.isAgentResponse)).toBe('function')
   expect(typeof (mod.isUserQuery)).toBe('function')
   expect(typeof (mod.isInteractiveAction)).toBe('function')
 }
+=======
+  const mod = await import('../../types/ai-agent');
+  expect(typeof (mod.isAgentResponse)).toBe('function');
+  expect(typeof (mod.isUserQuery)).toBe('function');
+  expect(typeof (mod.isInteractiveAction)).toBe('function');
+});
+>>>>>>> origin/main
 
 /**
  * 6) crud-test-utils.ts

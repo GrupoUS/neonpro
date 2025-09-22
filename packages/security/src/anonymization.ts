@@ -44,7 +44,11 @@ export interface MaskingOptions {
 /**
  * LGPD compliance levels for anonymization
  */
+<<<<<<< HEAD
 export type LGPDComplianceLevel = 'basic' | 'enhanced' | 'full_anonymization'
+=======
+export type LGPDComplianceLevel = 'basic' | 'enhanced' | ''full_anonymization'
+>>>>>>> origin/main
 
 /**
  * Patient data structure for healthcare anonymization
@@ -338,7 +342,7 @@ export function maskPatientData(
       }
       break;
 
-    case 'full_anonymization':
+    case 'full_anonymization_:
       // Remove all identifiable information
       if (result.name) {
         result.name = 'ANONIMIZADO';
@@ -558,7 +562,7 @@ export function generatePrivacyReport(
     && risks.length > 0
   ) {
     recommendations.push(
-      'Considere usar nível de conformidade "enhanced" ou "full_anonymization"',
+      'Considere usar nível de conformidade "enhanced" ou "full_anonymization",
     );
   }
 
@@ -606,4 +610,8 @@ export const DEFAULT_MASKING_OPTIONS: Record<
 /**
  * Version of the anonymization utilities
  */
+<<<<<<< HEAD
 export const ANONYMIZATION_VERSION = '1.0.0'
+=======
+export const ANONYMIZATION_VERSION = ''1.0.0'
+>>>>>>> origin/main

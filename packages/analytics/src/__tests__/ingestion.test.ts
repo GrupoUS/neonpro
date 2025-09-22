@@ -287,7 +287,11 @@ describe("Ingestion Types and Adapters", () => {
     }
 
     it(_"should provide health status",_async () => {
+<<<<<<< HEAD
       const healthStatus = await adapter.getHealthStatus(
+=======
+      const healthStatus = await adapter.getHealthStatus();
+>>>>>>> origin/main
 
       expect(healthStatus.status).toMatch(/^(healthy|degraded|unhealthy)$/
       expect(healthStatus.lastCheck).toBeInstanceOf(Date
@@ -382,7 +386,11 @@ describe("Ingestion Types and Adapters", () => {
     }
 
     it(_"should ingest batch data",_async () => {
+<<<<<<< HEAD
       await dbAdapter.connect(
+=======
+      await dbAdapter.connect();
+>>>>>>> origin/main
 
       const testData = [
         { id: 1, name: "Record 1" },
@@ -398,7 +406,11 @@ describe("Ingestion Types and Adapters", () => {
     }
 
     it(_"should provide database-specific metrics",_async () => {
+<<<<<<< HEAD
       const metrics = await dbAdapter.getMetrics(
+=======
+      const metrics = await dbAdapter.getMetrics();
+>>>>>>> origin/main
 
       expect(metrics.period).toBeDefined(
       expect(metrics.throughput.recordsPerSecond).toBeGreaterThan(0
@@ -446,7 +458,11 @@ describe("Ingestion Types and Adapters", () => {
     }
 
     it(_"should provide API-specific metrics",_async () => {
+<<<<<<< HEAD
       const metrics = await apiAdapter.getMetrics(
+=======
+      const metrics = await apiAdapter.getMetrics();
+>>>>>>> origin/main
 
       expect(metrics.throughput.recordsPerSecond).toBeGreaterThan(0
       expect(metrics.performance.errorRate).toBeGreaterThanOrEqual(0

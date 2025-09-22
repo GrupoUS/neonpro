@@ -54,7 +54,11 @@ describe('Mixed Content Prevention Test (T052)', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({ _query: 'test query' }),
+<<<<<<< HEAD
       }
+=======
+      });
+>>>>>>> origin/main
 
       const cspHeader = response.headers.get('content-security-policy')
       expect(cspHeader).toBeTruthy(
@@ -80,7 +84,11 @@ describe('Mixed Content Prevention Test (T052)', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({ _query: 'healthcare data query' }),
+<<<<<<< HEAD
       }
+=======
+      });
+>>>>>>> origin/main
 
       const cspHeader = response.headers.get('content-security-policy')
       expect(cspHeader).toBeTruthy(

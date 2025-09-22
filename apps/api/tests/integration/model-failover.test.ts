@@ -24,8 +24,13 @@ describe('Integration Test T015: Multi-Model Failover', () => {
   let criticalPatientId: string;
 
   beforeEach(async () => {
+<<<<<<< HEAD
     await setupTestDatabase(
     testClient = createTestClient({ _role: 'admin' }
+=======
+    await setupTestDatabase();
+    testClient = createTestClient({ _role: 'admin' });
+>>>>>>> origin/main
     clinicId = 'clinic-failover-test-001';
     professionalCRM = 'CRM/SP 123456';
     criticalPatientId = 'critical-patient-001';

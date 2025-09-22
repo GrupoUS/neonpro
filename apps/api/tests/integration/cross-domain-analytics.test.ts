@@ -24,8 +24,13 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
   let professionalNetwork: string[];
 
   beforeEach(async () => {
+<<<<<<< HEAD
     await setupTestDatabase(
     testClient = createTestClient({ _role: 'admin' }
+=======
+    await setupTestDatabase();
+    testClient = createTestClient({ _role: 'admin' });
+>>>>>>> origin/main
     clinicNetwork = [
       'clinic-sp-001',
       'clinic-rj-002',

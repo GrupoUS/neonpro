@@ -25,9 +25,15 @@ describe(('useFormAutoSave', () => {
   }
 
   it(('should export the hook function', () => {
+<<<<<<< HEAD
     const { useFormAutoSave } = require('../useFormAutoSave')
     expect(typeof useFormAutoSave).toBe('function')
   }
+=======
+    const { useFormAutoSave } = require('../useFormAutoSave');
+    expect(typeof useFormAutoSave).toBe('function');
+  });
+>>>>>>> origin/main
 
   it(('should handle localStorage operations correctly', () => {
     // Test localStorage mock setup
@@ -37,8 +43,13 @@ describe(('useFormAutoSave', () => {
   }
 
   it(('should create storage key correctly', () => {
+<<<<<<< HEAD
     const { useFormAutoSave } = require('../useFormAutoSave')
     expect(useFormAutoSave).toBeDefined(
+=======
+    const { useFormAutoSave } = require('../useFormAutoSave');
+    expect(useFormAutoSave).toBeDefined();
+>>>>>>> origin/main
 
     // Test that the hook can be imported and is a function
     expect(typeof useFormAutoSave).toBe('function')

@@ -125,7 +125,11 @@ describe(('Documentation Generator Service', () => {
 
   describe(('Documentation Generation', () => {
     it(_'should generate comprehensive documentation report',async () => {
+<<<<<<< HEAD
       const report = await service.generateDocumentation(
+=======
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       expect(report).toBeDefined(
       expect(report.generatedAt).toBeInstanceOf(Date
@@ -328,7 +332,11 @@ describe(('Documentation Generator Service', () => {
 
   describe(('Documentation Statistics', () => {
     it(_'should generate accurate statistics',async () => {
+<<<<<<< HEAD
       const report = await service.generateDocumentation(
+=======
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       expect(report.statistics.totalSections).toBeGreaterThan(0
       expect(report.statistics.totalExamples).toBeGreaterThan(0
@@ -344,7 +352,11 @@ describe(('Documentation Generator Service', () => {
     }
 
     it(_'should count examples correctly',async () => {
+<<<<<<< HEAD
       const report = await service.generateDocumentation(
+=======
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       const totalExamplesFromSections = report.sections.reduce((sum, section) => sum + (section.examples?.length || 0),
         0,
@@ -354,12 +366,17 @@ describe(('Documentation Generator Service', () => {
     }
 
     it(_'should validate healthcare categories coverage',async () => {
+<<<<<<< HEAD
       const report = await service.generateDocumentation(
+=======
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       const categoriesInSections = [
         ...new Set(report.sections.map(s => s.category).filter(Boolean)),
       ];
 
+<<<<<<< HEAD
       expect(categoriesInSections.length).toBeGreaterThan(0
       categoriesInSections.forEach(category => {
         expect(Object.values(HEALTHCARE_DOC_CATEGORIES)).toContain(category
@@ -370,6 +387,18 @@ describe(('Documentation Generator Service', () => {
   describe(('Documentation Validation', () => {
     it(_'should validate documentation quality',async () => {
       const report = await service.generateDocumentation(
+=======
+      expect(categoriesInSections.length).toBeGreaterThan(0);
+      categoriesInSections.forEach(category => {
+        expect(Object.values(HEALTHCARE_DOC_CATEGORIES)).toContain(category);
+      });
+    });
+  });
+
+  describe(('Documentation Validation', () => {
+    it(_'should validate documentation quality',async () => {
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       expect(report.validationResults.contentQuality).toBeGreaterThan(80
       expect(report.validationResults.translationCompleteness).toBeGreaterThan(
@@ -384,7 +413,11 @@ describe(('Documentation Generator Service', () => {
     }
 
     it(_'should generate recommendations based on validation results',async () => {
+<<<<<<< HEAD
       const report = await service.generateDocumentation(
+=======
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       expect(report.recommendations).toBeInstanceOf(Array
       expect(report.recommendations.length).toBeGreaterThan(0
@@ -397,6 +430,7 @@ describe(('Documentation Generator Service', () => {
     }
 
     it(_'should validate section metadata',async () => {
+<<<<<<< HEAD
       const report = await service.generateDocumentation(
 
       report.sections.forEach(section => {
@@ -417,6 +451,28 @@ describe(('Documentation Generator Service', () => {
       expect(DOCUMENTATION_LABELS_PT_BR.overview).toBe('Visão Geral')
       expect(DOCUMENTATION_LABELS_PT_BR.apiReference).toBe('Referência da API')
       expect(DOCUMENTATION_LABELS_PT_BR.components).toBe('Componentes')
+=======
+      const report = await service.generateDocumentation();
+
+      report.sections.forEach(section => {
+        expect(section.metadata).toBeDefined();
+        expect(section.metadata.lastUpdated).toBeInstanceOf(Date);
+        expect(section.metadata.author).toBeDefined();
+        expect(section.metadata.version).toBeDefined();
+        expect(section.metadata.tags).toBeInstanceOf(Array);
+        expect(section.metadata.wcagCompliance).toBeDefined();
+        expect(section.metadata.healthcareCompliance).toBeDefined();
+        expect(section.metadata.mobileOptimized).toBeDefined();
+      });
+    });
+  });
+
+  describe(('Brazilian Portuguese Localization', () => {
+    it(('should provide Brazilian Portuguese labels', () => {
+      expect(DOCUMENTATION_LABELS_PT_BR.overview).toBe('Visão Geral');
+      expect(DOCUMENTATION_LABELS_PT_BR.apiReference).toBe('Referência da API');
+      expect(DOCUMENTATION_LABELS_PT_BR.components).toBe('Componentes');
+>>>>>>> origin/main
       expect(DOCUMENTATION_LABELS_PT_BR.patientManagement).toBe(
         'Gestão de Pacientes',
       
@@ -435,7 +491,11 @@ describe(('Documentation Generator Service', () => {
     }
 
     it(_'should include Portuguese translations in sections',async () => {
+<<<<<<< HEAD
       const report = await service.generateDocumentation(
+=======
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       report.sections.forEach(section => {
         if (config.languages.includes(DOCUMENTATION_LANGUAGES.PORTUGUESE_BR)) {
@@ -446,7 +506,11 @@ describe(('Documentation Generator Service', () => {
     }
 
     it(_'should include Portuguese translations in examples',async () => {
+<<<<<<< HEAD
       const report = await service.generateDocumentation(
+=======
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       report.sections.forEach(section => {
         section.examples?.forEach(example => {
@@ -463,7 +527,11 @@ describe(('Documentation Generator Service', () => {
 
   describe(('Healthcare Compliance Integration', () => {
     it(_'should include healthcare compliance metadata',async () => {
+<<<<<<< HEAD
       const report = await service.generateDocumentation(
+=======
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       const healthcareSections = report.sections.filter(
         s =>
@@ -491,7 +559,11 @@ describe(('Documentation Generator Service', () => {
     }
 
     it(_'should include accessibility compliance metadata',async () => {
+<<<<<<< HEAD
       const report = await service.generateDocumentation(
+=======
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       const accessibilitySections = report.sections.filter(
         s => s.category === HEALTHCARE_DOC_CATEGORIES.ACCESSIBILITY_FEATURES,
@@ -506,7 +578,11 @@ describe(('Documentation Generator Service', () => {
     }
 
     it(_'should include mobile optimization metadata',async () => {
+<<<<<<< HEAD
       const report = await service.generateDocumentation(
+=======
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       // Check if mobile documentation is included in the types
       const hasMobileType = config.includeTypes.includes(
@@ -562,7 +638,11 @@ describe(('Documentation Generator Service', () => {
     }
 
     it(_'should include healthcare context in examples',async () => {
+<<<<<<< HEAD
       const report = await service.generateDocumentation(
+=======
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       const healthcareExamples = report.sections
         .flatMap(s => s.examples || [])
@@ -571,6 +651,7 @@ describe(('Documentation Generator Service', () => {
       expect(healthcareExamples.length).toBeGreaterThan(0
 
       healthcareExamples.forEach(example => {
+<<<<<<< HEAD
         expect(example.healthcareContext).toBeDefined(
         expect(typeof example.healthcareContext).toBe('string')
         expect(example.healthcareContext!.length).toBeGreaterThan(0
@@ -579,6 +660,16 @@ describe(('Documentation Generator Service', () => {
 
     it(_'should include accessibility notes in examples',async () => {
       const report = await service.generateDocumentation(
+=======
+        expect(example.healthcareContext).toBeDefined();
+        expect(typeof example.healthcareContext).toBe('string');
+        expect(example.healthcareContext!.length).toBeGreaterThan(0);
+      });
+    });
+
+    it(_'should include accessibility notes in examples',async () => {
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       const accessibilityExamples = report.sections
         .flatMap(s => s.examples || [])
@@ -587,6 +678,7 @@ describe(('Documentation Generator Service', () => {
       expect(accessibilityExamples.length).toBeGreaterThan(0
 
       accessibilityExamples.forEach(example => {
+<<<<<<< HEAD
         expect(example.accessibilityNotes).toBeDefined(
         expect(typeof example.accessibilityNotes).toBe('string')
         expect(example.accessibilityNotes!.length).toBeGreaterThan(0
@@ -595,6 +687,16 @@ describe(('Documentation Generator Service', () => {
 
     it(_'should include mobile notes in examples',async () => {
       const report = await service.generateDocumentation(
+=======
+        expect(example.accessibilityNotes).toBeDefined();
+        expect(typeof example.accessibilityNotes).toBe('string');
+        expect(example.accessibilityNotes!.length).toBeGreaterThan(0);
+      });
+    });
+
+    it(_'should include mobile notes in examples',async () => {
+      const report = await service.generateDocumentation();
+>>>>>>> origin/main
 
       const mobileExamples = report.sections
         .flatMap(s => s.examples || [])
@@ -603,6 +705,7 @@ describe(('Documentation Generator Service', () => {
       expect(mobileExamples.length).toBeGreaterThan(0
 
       mobileExamples.forEach(example => {
+<<<<<<< HEAD
         expect(example.mobileNotes).toBeDefined(
         expect(typeof example.mobileNotes).toBe('string')
         expect(example.mobileNotes!.length).toBeGreaterThan(0
@@ -610,3 +713,12 @@ describe(('Documentation Generator Service', () => {
     }
   }
 }
+=======
+        expect(example.mobileNotes).toBeDefined();
+        expect(typeof example.mobileNotes).toBe('string');
+        expect(example.mobileNotes!.length).toBeGreaterThan(0);
+      });
+    });
+  });
+});
+>>>>>>> origin/main

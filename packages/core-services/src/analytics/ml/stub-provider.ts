@@ -54,7 +54,7 @@ const DEFAULT_STUB_CONFIG: StubModelConfig = {
   ],
   accuracy: 0.85,
   latencyMs: 100,
-  failureRate: 0.05,
+  failureRate: 0,
 };
 
 // ============================================================================

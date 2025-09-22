@@ -172,7 +172,11 @@ describe("Resilience Framework", () => {
 
       // Second attempt should not retry
       expect(await retryPolicy.shouldRetry(error, _context)).toBe(false);
+<<<<<<< HEAD
     }
+=======
+    });
+>>>>>>> origin/main
 
     test(_"should allow more retries for emergencies",_async () => {
       const retryPolicy = new RetryPolicy({
@@ -333,7 +337,11 @@ describe("Resilience Framework", () => {
     }
 
     test(_"should generate compliance reports", () => {
+<<<<<<< HEAD
       const report = healthcareResilience.generateComplianceReport(
+=======
+      const report = healthcareResilience.generateComplianceReport();
+>>>>>>> origin/main
 
       expect(report).toHaveProperty("reportPeriod"
       expect(report).toHaveProperty("lgpdCompliance"
@@ -351,6 +359,7 @@ describe("Resilience Framework", () => {
         requiresAudit: false,
       };
 
+<<<<<<< HEAD
       const error = new ResilienceError("Test error", "TIMEOUT", _context
 
       expect(error.message).toBe("Test error"
@@ -360,3 +369,14 @@ describe("Resilience Framework", () => {
     }
   }
 }
+=======
+      const error = new ResilienceError("Test error", "TIMEOUT", _context);
+
+      expect(error.message).toBe("Test error");
+      expect(error.type).toBe("TIMEOUT");
+      expect(error._context).toBe(context);
+      expect(error.name).toBe("ResilienceError");
+    });
+  });
+});
+>>>>>>> origin/main

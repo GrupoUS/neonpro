@@ -145,7 +145,7 @@ class UserProfileService {
         authUser.user.email,
       );
       return this.buildPatientProfile(authUser.user);
-    } catch (error) {
+    } catch (_error) {
       console.error('❌ Error fetching user profile:', error);
       // Throw error instead of creating fallback to let caller handle it
       throw error;
@@ -199,7 +199,11 @@ class UserProfileService {
       permissions,
       staffInfo: {
         id: anyStaff.id,
+<<<<<<< HEAD
         _role: anyStaff._role,
+=======
+        _role: anyStaff.role,
+>>>>>>> origin/main
         specialization: anyStaff.specialization || '',
         crmNumber: anyStaff.crm_number || '',
         avatarUrl: anyStaff.avatar_url || '',
@@ -226,7 +230,7 @@ class UserProfileService {
   /**
    * Create fallback profile for development/testing
    */
-  private createFallbackProfile(userId: string): UserProfile {
+  private createFallbackProfile(_userId: string): UserProfile {
     const permissions = this.getProfessionalPermissions(); // Give full permissions for development
 
     return {
@@ -370,7 +374,7 @@ class UserProfileService {
   /**
    * Get user's accessible clinic IDs
    */
-  async getAccessibleClinics(userId: string): Promise<string[]> {
+  async getAccessibleClinics(_userId: string): Promise<string[]> {
     try {
       const profile = await this.getUserProfile(userId);
       if (!profile) return [];
@@ -378,7 +382,7 @@ class UserProfileService {
       // For now, return single clinic ID
       // In future, could support multi-clinic access
       return profile.clinicId ? [profile.clinicId] : [];
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting accessible clinics:', error);
       return [];
     }

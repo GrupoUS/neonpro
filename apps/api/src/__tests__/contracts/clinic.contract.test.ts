@@ -10,7 +10,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * Ensures type safety, input validation, and output conformity
  */
 
+<<<<<<< HEAD
 describe('Clinic Contract Testing',() => {
+=======
+describe(_'Clinic Contract Testing',() => {
+>>>>>>> origin/main
   const mockContext = {
     user: { id: 'user-123', _role: 'admin' },
     auth: { _userId: 'user-123', isAuthenticated: true },
@@ -49,14 +53,24 @@ describe('Clinic Contract Testing',() => {
     },
   };
 
+<<<<<<< HEAD
   const trpcMsw = createTRPCMsw<AppRouter>(
   const caller = appRouter.createCaller(mockContext
+=======
+  const trpcMsw = createTRPCMsw<AppRouter>();
+  const caller = appRouter.createCaller(mockContext);
+>>>>>>> origin/main
 
   beforeEach(() => {
     vi.clearAllMocks(
 
+<<<<<<< HEAD
   describe('Clinic Creation Contract',() => {
     it('should validate clinic creation input and output',async () => {
+=======
+  describe(_'Clinic Creation Contract',() => {
+    it(_'should validate clinic creation input and output',async () => {
+>>>>>>> origin/main
       const createInput: ClinicInput['create'] = {
         basicInfo: {
           name: 'Clínica Estética NeonPro',
@@ -158,7 +172,11 @@ describe('Clinic Contract Testing',() => {
         _userId: mockContext.user.id,
         timestamp: expect.any(Date),
 
+<<<<<<< HEAD
     it('should reject invalid ANVISA registration',async () => {
+=======
+    it(_'should reject invalid ANVISA registration',async () => {
+>>>>>>> origin/main
       const invalidInput: ClinicInput['create'] = {
         basicInfo: {
           name: 'Invalid Clinic',
@@ -186,7 +204,11 @@ describe('Clinic Contract Testing',() => {
         'Invalid ANVISA registration: Invalid ANVISA registration format',
       
 
+<<<<<<< HEAD
     it('should enforce LGPD compliance requirements',async () => {
+=======
+    it(_'should enforce LGPD compliance requirements',async () => {
+>>>>>>> origin/main
       const nonCompliantInput: ClinicInput['create'] = {
         basicInfo: {
           name: 'Non-Compliant Clinic',
@@ -217,8 +239,13 @@ describe('Clinic Contract Testing',() => {
         'LGPD compliance requirements not met',
       
 
+<<<<<<< HEAD
   describe('Clinic Retrieval Contract',() => {
     it('should validate clinic retrieval by ID',async () => {
+=======
+  describe(_'Clinic Retrieval Contract',() => {
+    it(_'should validate clinic retrieval by ID',async () => {
+>>>>>>> origin/main
       const clinicId = 'clinic-789';
       const mockClinic = {
         id: clinicId,
@@ -273,7 +300,11 @@ describe('Clinic Contract Testing',() => {
           }),
         }),
 
+<<<<<<< HEAD
     it('should handle clinic not found',async () => {
+=======
+    it(_'should handle clinic not found',async () => {
+>>>>>>> origin/main
       const clinicId = 'nonexistent-clinic';
 
       mockContext.prisma.clinic.findUnique.mockResolvedValue(null
@@ -282,8 +313,13 @@ describe('Clinic Contract Testing',() => {
         'Clinic not found',
       
 
+<<<<<<< HEAD
   describe('Clinic Update Contract',() => {
     it('should validate clinic information updates',async () => {
+=======
+  describe(_'Clinic Update Contract',() => {
+    it(_'should validate clinic information updates',async () => {
+>>>>>>> origin/main
       const clinicId = 'clinic-789';
       const updateInput: ClinicInput['update'] = {
         id: clinicId,
@@ -361,7 +397,11 @@ describe('Clinic Contract Testing',() => {
         }),
         timestamp: expect.any(Date),
 
+<<<<<<< HEAD
     it('should prevent unauthorized updates to critical fields',async () => {
+=======
+    it(_'should prevent unauthorized updates to critical fields',async () => {
+>>>>>>> origin/main
       const clinicId = 'clinic-789';
       const unauthorizedUpdate: ClinicInput['update'] = {
         id: clinicId,
@@ -383,8 +423,13 @@ describe('Clinic Contract Testing',() => {
         caller.api.clinic.update(unauthorizedUpdate),
       ).rejects.toThrow('Unauthorized to modify CNPJ information')
 
+<<<<<<< HEAD
   describe('Clinic Statistics Contract',() => {
     it('should validate clinic statistics retrieval',async () => {
+=======
+  describe(_'Clinic Statistics Contract',() => {
+    it(_'should validate clinic statistics retrieval',async () => {
+>>>>>>> origin/main
       const clinicId = 'clinic-789';
       const period = 'monthly';
 
@@ -465,8 +510,13 @@ describe('Clinic Contract Testing',() => {
           }),
         }),
 
+<<<<<<< HEAD
   describe('Clinic Configuration Contract',() => {
     it('should validate clinic configuration updates',async () => {
+=======
+  describe(_'Clinic Configuration Contract',() => {
+    it(_'should validate clinic configuration updates',async () => {
+>>>>>>> origin/main
       const configInput: ClinicInput['updateConfiguration'] = {
         clinicId: 'clinic-789',
         configuration: {
@@ -522,7 +572,11 @@ describe('Clinic Contract Testing',() => {
           }),
         }),
 
+<<<<<<< HEAD
     it('should validate configuration constraints',async () => {
+=======
+    it(_'should validate configuration constraints',async () => {
+>>>>>>> origin/main
       const invalidConfig: ClinicInput['updateConfiguration'] = {
         clinicId: 'clinic-789',
         configuration: {
@@ -537,8 +591,13 @@ describe('Clinic Contract Testing',() => {
         'Invalid configuration: appointment duration must be at least 30 minutes',
       
 
+<<<<<<< HEAD
   describe('Clinic List Contract',() => {
     it('should validate clinic listing with filters',async () => {
+=======
+  describe(_'Clinic List Contract',() => {
+    it(_'should validate clinic listing with filters',async () => {
+>>>>>>> origin/main
       const listInput: ClinicInput['list'] = {
         page: 1,
         limit: 10,
@@ -597,8 +656,13 @@ describe('Clinic Contract Testing',() => {
           }),
         },
 
+<<<<<<< HEAD
   describe('Contract Type Safety',() => {
     it('should enforce input type constraints at compile time',() => {
+=======
+  describe(_'Contract Type Safety',() => {
+    it(_'should enforce input type constraints at compile time',() => {
+>>>>>>> origin/main
       const validInput: ClinicInput['create'] = {
         basicInfo: {
           name: 'Test Clinic',
@@ -620,7 +684,11 @@ describe('Clinic Contract Testing',() => {
 
       expect(validInput).toBeDefined(
 
+<<<<<<< HEAD
     it('should enforce output type constraints',() => {
+=======
+    it(_'should enforce output type constraints',() => {
+>>>>>>> origin/main
       const mockOutput: ClinicOutput['getById'] = {
         success: true,
         data: {

@@ -10,7 +10,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * Ensures type safety, input validation, and output conformity
  */
 
+<<<<<<< HEAD
 describe('Professional Contract Testing',() => {
+=======
+describe(_'Professional Contract Testing',() => {
+>>>>>>> origin/main
   const mockContext = {
     user: { id: 'user-123', _role: 'admin' },
     auth: { _userId: 'user-123', isAuthenticated: true },
@@ -48,14 +52,24 @@ describe('Professional Contract Testing',() => {
     },
   };
 
+<<<<<<< HEAD
   const trpcMsw = createTRPCMsw<AppRouter>(
   const caller = appRouter.createCaller(mockContext
+=======
+  const trpcMsw = createTRPCMsw<AppRouter>();
+  const caller = appRouter.createCaller(mockContext);
+>>>>>>> origin/main
 
   beforeEach(() => {
     vi.clearAllMocks(
 
+<<<<<<< HEAD
   describe('Professional Creation Contract',() => {
     it('should validate professional creation input and output',async () => {
+=======
+  describe(_'Professional Creation Contract',() => {
+    it(_'should validate professional creation input and output',async () => {
+>>>>>>> origin/main
       const createInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Maria Silva',
@@ -128,7 +142,11 @@ describe('Professional Contract Testing',() => {
         _userId: mockContext.user.id,
         timestamp: expect.any(Date),
 
+<<<<<<< HEAD
     it('should reject invalid CRM number',async () => {
+=======
+    it(_'should reject invalid CRM number',async () => {
+>>>>>>> origin/main
       const invalidInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Invalid',
@@ -156,7 +174,11 @@ describe('Professional Contract Testing',() => {
         caller.api.professional.create(invalidInput),
       ).rejects.toThrow('Invalid CRM number: Invalid CRM format')
 
+<<<<<<< HEAD
     it('should enforce CFM compliance requirements',async () => {
+=======
+    it(_'should enforce CFM compliance requirements',async () => {
+>>>>>>> origin/main
       const nonCompliantInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Non Compliant',
@@ -187,8 +209,13 @@ describe('Professional Contract Testing',() => {
         caller.api.professional.create(nonCompliantInput),
       ).rejects.toThrow('CFM compliance requirements not met')
 
+<<<<<<< HEAD
   describe('Professional Retrieval Contract',() => {
     it('should validate professional retrieval by ID',async () => {
+=======
+  describe(_'Professional Retrieval Contract',() => {
+    it(_'should validate professional retrieval by ID',async () => {
+>>>>>>> origin/main
       const professionalId = 'prof-789';
       const mockProfessional = {
         id: professionalId,
@@ -243,7 +270,11 @@ describe('Professional Contract Testing',() => {
           ]),
         }),
 
+<<<<<<< HEAD
     it('should handle professional not found',async () => {
+=======
+    it(_'should handle professional not found',async () => {
+>>>>>>> origin/main
       const professionalId = 'nonexistent-prof';
 
       mockContext.prisma.professional.findUnique.mockResolvedValue(null
@@ -252,8 +283,13 @@ describe('Professional Contract Testing',() => {
         caller.api.professional.getById({ id: professionalId }),
       ).rejects.toThrow('Professional not found')
 
+<<<<<<< HEAD
   describe('Professional Update Contract',() => {
     it('should validate professional information updates',async () => {
+=======
+  describe(_'Professional Update Contract',() => {
+    it(_'should validate professional information updates',async () => {
+>>>>>>> origin/main
       const professionalId = 'prof-789';
       const updateInput: ProfessionalInput['update'] = {
         id: professionalId,
@@ -322,7 +358,11 @@ describe('Professional Contract Testing',() => {
         }),
         timestamp: expect.any(Date),
 
+<<<<<<< HEAD
     it('should prevent unauthorized updates to critical fields',async () => {
+=======
+    it(_'should prevent unauthorized updates to critical fields',async () => {
+>>>>>>> origin/main
       const professionalId = 'prof-789';
       const unauthorizedUpdate: ProfessionalInput['update'] = {
         id: professionalId,
@@ -346,8 +386,13 @@ describe('Professional Contract Testing',() => {
         caller.api.professional.update(unauthorizedUpdate),
       ).rejects.toThrow('Unauthorized to modify CRM information')
 
+<<<<<<< HEAD
   describe('Professional Schedule Management Contract',() => {
     it('should validate schedule updates',async () => {
+=======
+  describe(_'Professional Schedule Management Contract',() => {
+    it(_'should validate schedule updates',async () => {
+>>>>>>> origin/main
       const scheduleInput: ProfessionalInput['updateSchedule'] = {
         professionalId: 'prof-789',
         schedule: {
@@ -391,7 +436,11 @@ describe('Professional Contract Testing',() => {
           }),
         }),
 
+<<<<<<< HEAD
     it('should validate schedule conflicts',async () => {
+=======
+    it(_'should validate schedule conflicts',async () => {
+>>>>>>> origin/main
       const conflictingSchedule: ProfessionalInput['updateSchedule'] = {
         professionalId: 'prof-789',
         schedule: {
@@ -405,8 +454,13 @@ describe('Professional Contract Testing',() => {
         caller.api.professional.updateSchedule(conflictingSchedule),
       ).rejects.toThrow('Invalid schedule: end time must be after start time')
 
+<<<<<<< HEAD
   describe('Professional List Contract',() => {
     it('should validate professional listing with filters',async () => {
+=======
+  describe(_'Professional List Contract',() => {
+    it(_'should validate professional listing with filters',async () => {
+>>>>>>> origin/main
       const listInput: ProfessionalInput['list'] = {
         page: 1,
         limit: 10,
@@ -468,8 +522,13 @@ describe('Professional Contract Testing',() => {
           }),
         },
 
+<<<<<<< HEAD
   describe('Professional Qualification Management Contract',() => {
     it('should validate qualification addition',async () => {
+=======
+  describe(_'Professional Qualification Management Contract',() => {
+    it(_'should validate qualification addition',async () => {
+>>>>>>> origin/main
       const qualificationInput: ProfessionalInput['addQualification'] = {
         professionalId: 'prof-789',
         qualification: {
@@ -503,7 +562,11 @@ describe('Professional Contract Testing',() => {
           certificateNumber: 'CERT-2024-ALT-001',
         }),
 
+<<<<<<< HEAD
     it('should validate qualification expiry monitoring',async () => {
+=======
+    it(_'should validate qualification expiry monitoring',async () => {
+>>>>>>> origin/main
       const professionalId = 'prof-789';
       const mockExpiringQualifications = [
         {
@@ -530,8 +593,13 @@ describe('Professional Contract Testing',() => {
           }),
         ]),
 
+<<<<<<< HEAD
   describe('Contract Type Safety',() => {
     it('should enforce input type constraints at compile time',() => {
+=======
+  describe(_'Contract Type Safety',() => {
+    it(_'should enforce input type constraints at compile time',() => {
+>>>>>>> origin/main
       const validInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Test',
@@ -553,7 +621,11 @@ describe('Professional Contract Testing',() => {
 
       expect(validInput).toBeDefined(
 
+<<<<<<< HEAD
     it('should enforce output type constraints',() => {
+=======
+    it(_'should enforce output type constraints',() => {
+>>>>>>> origin/main
       const mockOutput: ProfessionalOutput['getById'] = {
         success: true,
         data: {

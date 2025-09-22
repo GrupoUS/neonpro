@@ -318,12 +318,21 @@ describe('API Documentation Generator', () => {
       endpointsWithExamples.forEach(endpoint => {
         (endpoint as any).examples?.forEach(example => {
           // Variable 'example' is already declared as parameter
+<<<<<<< HEAD
           expect(example.mobileNotes).toBeDefined(
           expect(typeof example.mobileNotes).toBe('string')
           expect(example.mobileNotes!.length).toBeGreaterThan(0
         }
       }
     }
+=======
+          expect(example.mobileNotes).toBeDefined();
+          expect(typeof example.mobileNotes).toBe('string');
+          expect(example.mobileNotes!.length).toBeGreaterThan(0);
+        });
+      });
+    });
+>>>>>>> origin/main
 
     it('should include mobile optimization in response examples', () => {
       const report = generator.generateReport(
@@ -347,7 +356,11 @@ describe('API Documentation Generator', () => {
 
       const authEndpoints = report.endpoints.filter(
         e => (e as any).authentication.required,
+<<<<<<< HEAD
       
+=======
+      );
+>>>>>>> origin/main
       expect(authEndpoints.length).toBe(report.endpoints.length); // All endpoints require auth
     }
 
@@ -356,8 +369,13 @@ describe('API Documentation Generator', () => {
 
       const lgpdEndpoints = report.endpoints.filter(
         e => (e as any).authentication.lgpdConsent,
+<<<<<<< HEAD
       
       expect(lgpdEndpoints.length).toBeGreaterThan(0
+=======
+      );
+      expect(lgpdEndpoints.length).toBeGreaterThan(0);
+>>>>>>> origin/main
 
       lgpdEndpoints.forEach((endpoint: any) => {
         expect(endpoint.authentication.lgpdConsent).toBe(true);
@@ -373,11 +391,19 @@ describe('API Documentation Generator', () => {
       expect(rateLimitedEndpoints.length).toBeGreaterThan(0
 
       rateLimitedEndpoints.forEach(endpoint => {
+<<<<<<< HEAD
         expect((endpoint as any).metadata.rateLimit?.requests).toBeGreaterThan(0
         expect((endpoint as any).metadata.rateLimit?.window).toBeDefined(
       }
     }
   }
+=======
+        expect((endpoint as any).metadata.rateLimit?.requests).toBeGreaterThan(0);
+        expect((endpoint as any).metadata.rateLimit?.window).toBeDefined();
+      });
+    });
+  });
+>>>>>>> origin/main
 
   describe('Error Handling', () => {
     it('should include comprehensive error documentation', () => {
@@ -391,6 +417,7 @@ describe('API Documentation Generator', () => {
       endpointsWithErrors.forEach(endpoint => {
         (endpoint as any).errors?.forEach(error => {
           // Variable 'error' is already declared as parameter
+<<<<<<< HEAD
           expect(error.code).toBeDefined(
           expect(error.statusCode).toBeGreaterThan(0
           expect(error.message).toBeDefined(
@@ -402,6 +429,19 @@ describe('API Documentation Generator', () => {
         }
       }
     }
+=======
+          expect(error.code).toBeDefined();
+          expect(error.statusCode).toBeGreaterThan(0);
+          expect(error.message).toBeDefined();
+          expect(error.messagePtBr).toBeDefined();
+          expect(error.description).toBeDefined();
+          expect(error.descriptionPtBr).toBeDefined();
+          expect(error.resolution).toBeDefined();
+          expect(error.resolutionPtBr).toBeDefined();
+        });
+      });
+    });
+>>>>>>> origin/main
 
     it('should include healthcare-specific errors', () => {
       const report = generator.generateReport(
@@ -409,8 +449,13 @@ describe('API Documentation Generator', () => {
         e => e.id === 'get-patient',
       
 
+<<<<<<< HEAD
       expect(patientEndpoint?.errors).toBeDefined(
       expect((patientEndpoint as any).errors?.length).toBeGreaterThan(0
+=======
+      expect(patientEndpoint?.errors).toBeDefined();
+      expect((patientEndpoint as any).errors?.length).toBeGreaterThan(0);
+>>>>>>> origin/main
 
       const lgpdError = (patientEndpoint as any)?.errors?.find(
         e => e.code === 'LGPD_CONSENT_REQUIRED',
@@ -466,6 +511,7 @@ describe('API Documentation Generator', () => {
 
       report.endpoints.forEach(endpoint => {
         // Variable 'endpoint' is already declared as parameter
+<<<<<<< HEAD
         expect(endpoint.titlePtBr).toBeDefined(
         expect(endpoint.descriptionPtBr).toBeDefined(
 
@@ -480,6 +526,22 @@ describe('API Documentation Generator', () => {
         }
       }
     }
+=======
+        expect(endpoint.titlePtBr).toBeDefined();
+        expect(endpoint.descriptionPtBr).toBeDefined();
+
+        endpoint.parameters?.forEach(param => {
+          // Variable 'param' is already declared as parameter
+          expect(param.descriptionPtBr).toBeDefined();
+        });
+
+        endpoint.responses.forEach(response => {
+          // Variable 'response' is already declared as parameter
+          expect(response.descriptionPtBr).toBeDefined();
+        });
+      });
+    });
+>>>>>>> origin/main
 
     it('should include Portuguese translations in examples', () => {
       const report = generator.generateReport(
@@ -492,12 +554,21 @@ describe('API Documentation Generator', () => {
         // Variable 'endpoint' is already declared as parameter
         endpoint.examples?.forEach(example => {
           // Variable 'example' is already declared as parameter
+<<<<<<< HEAD
           expect(example.titlePtBr).toBeDefined(
           expect(example.descriptionPtBr).toBeDefined(
         }
       }
     }
   }
+=======
+          expect(example.titlePtBr).toBeDefined();
+          expect(example.descriptionPtBr).toBeDefined();
+        });
+      });
+    });
+  });
+>>>>>>> origin/main
 
   describe('Healthcare Context and Accessibility', () => {
     it('should include healthcare context in parameters', () => {
@@ -506,8 +577,13 @@ describe('API Documentation Generator', () => {
         e => e.id === 'get-patient',
       
 
+<<<<<<< HEAD
       expect((patientEndpoint as any).parameters).toBeDefined(
       expect((patientEndpoint as any).parameters![0].healthcareContext).toBeDefined(
+=======
+      expect((patientEndpoint as any).parameters).toBeDefined();
+      expect((patientEndpoint as any).parameters![0].healthcareContext).toBeDefined();
+>>>>>>> origin/main
       expect((patientEndpoint as any).parameters![0].healthcareContext).toContain(
         'Patient identification',
       
@@ -524,12 +600,21 @@ describe('API Documentation Generator', () => {
         // Variable 'endpoint' is already declared as parameter
         endpoint.examples?.forEach(example => {
           // Variable 'example' is already declared as parameter
+<<<<<<< HEAD
           expect(example.accessibilityNotes).toBeDefined(
           expect(typeof example.accessibilityNotes).toBe('string')
           expect(example.accessibilityNotes!.length).toBeGreaterThan(0
         }
       }
     }
+=======
+          expect(example.accessibilityNotes).toBeDefined();
+          expect(typeof example.accessibilityNotes).toBe('string');
+          expect(example.accessibilityNotes!.length).toBeGreaterThan(0);
+        });
+      });
+    });
+>>>>>>> origin/main
 
     it('should include healthcare context in examples', () => {
       const report = generator.generateReport(
@@ -542,6 +627,7 @@ describe('API Documentation Generator', () => {
         // Variable 'endpoint' is already declared as parameter
         endpoint.examples?.forEach(example => {
           // Variable 'example' is already declared as parameter
+<<<<<<< HEAD
           expect(example.healthcareContext).toBeDefined(
           expect(typeof example.healthcareContext).toBe('string')
           expect(example.healthcareContext!.length).toBeGreaterThan(0
@@ -549,6 +635,15 @@ describe('API Documentation Generator', () => {
       }
     }
   }
+=======
+          expect(example.healthcareContext).toBeDefined();
+          expect(typeof example.healthcareContext).toBe('string');
+          expect(example.healthcareContext!.length).toBeGreaterThan(0);
+        });
+      });
+    });
+  });
+>>>>>>> origin/main
 
   describe('Utility Methods', () => {
     it('should get endpoints by category', () => {
@@ -559,9 +654,15 @@ describe('API Documentation Generator', () => {
 
       patientEndpoints.forEach(endpoint => {
         // Variable 'endpoint' is already declared as parameter
+<<<<<<< HEAD
         expect(endpoint.category).toBe(API_CATEGORIES.PATIENT_MANAGEMENT
       }
     }
+=======
+        expect(endpoint.category).toBe(API_CATEGORIES.PATIENT_MANAGEMENT);
+      });
+    });
+>>>>>>> origin/main
 
     it('should get healthcare-compliant endpoints', () => {
       const healthcareEndpoints = generator.getHealthcareCompliantEndpoints(

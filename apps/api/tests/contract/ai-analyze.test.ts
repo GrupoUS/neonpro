@@ -25,8 +25,13 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
   let patientId: string;
 
   beforeEach(async () => {
+<<<<<<< HEAD
     await setupTestDatabase(
     testClient = createTestClient({ _role: 'admin' }
+=======
+    await setupTestDatabase();
+    testClient = createTestClient({ _role: 'admin' });
+>>>>>>> origin/main
     patientId = 'test-patient-123';
   }
 

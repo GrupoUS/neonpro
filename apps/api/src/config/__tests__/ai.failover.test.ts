@@ -2,14 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // We will mock providers used internally by ai.ts by mocking generateText
 
-describe('generateWithFailover', () => {
+describe(_'generateWithFailover'), () => {
   beforeEach(() => {
     vi.resetModules(
     vi.clearAllMocks(
 
-  it('falls back to secondary model when primary throws', async () => {
+  it(_'falls back to secondary model when primary throws',async () => {
     // Mock ai SDK generateText used by ai.ts
-    vi.mock('ai', () => ({
+    vi.mock(_'ai'), () => ({
       generateText: vi
         .fn()
         // First call (primary) throws

@@ -62,8 +62,13 @@ describe("EventCollector", () => {
   }
 
   afterEach(_async () => {
+<<<<<<< HEAD
     await collector.stop(
   }
+=======
+    await collector.stop();
+  });
+>>>>>>> origin/main
 
   describe("Constructor and Configuration", () => {
     it("should create EventCollector with default configuration", () => {
@@ -110,8 +115,13 @@ describe("EventCollector", () => {
 
   describe("collectEvent() - Core Functionality", () => {
     it(_"should successfully collect a valid event",_async () => {
+<<<<<<< HEAD
       const event = createMockEvent(
       const result = await collector.collectEvent(event
+=======
+      const event = createMockEvent();
+      const result = await collector.collectEvent(event);
+>>>>>>> origin/main
 
       expect(result.success).toBe(true);
       expect(result.queueSize).toBe(1
@@ -124,7 +134,11 @@ describe("EventCollector", () => {
     }
 
     it(_"should add timestamp to event if not present",_async () => {
+<<<<<<< HEAD
       const eventWithoutTimestamp = createMockEvent(
+=======
+      const eventWithoutTimestamp = createMockEvent();
+>>>>>>> origin/main
       delete eventWithoutTimestamp.timestamp;
 
       const result = await collector.collectEvent(eventWithoutTimestamp
@@ -191,7 +205,11 @@ describe("EventCollector", () => {
 
   describe("collectEvent() - Validation", () => {
     it(_"should reject null or undefined event",_async () => {
+<<<<<<< HEAD
       const result = await collector.collectEvent(null as any
+=======
+      const result = await collector.collectEvent(null as any);
+>>>>>>> origin/main
 
       expect(result.success).toBe(false);
       expect(result.message).toContain("Invalid event"
@@ -200,7 +218,11 @@ describe("EventCollector", () => {
     }
 
     it(_"should reject event without eventType",_async () => {
+<<<<<<< HEAD
       const invalidEvent = createMockEvent(
+=======
+      const invalidEvent = createMockEvent();
+>>>>>>> origin/main
       delete (invalidEvent as any).eventType;
 
       const result = await collector.collectEvent(invalidEvent
@@ -211,7 +233,11 @@ describe("EventCollector", () => {
     }
 
     it(_"should reject event without source",_async () => {
+<<<<<<< HEAD
       const invalidEvent = createMockEvent(
+=======
+      const invalidEvent = createMockEvent();
+>>>>>>> origin/main
       delete (invalidEvent as any).source;
 
       const result = await collector.collectEvent(invalidEvent
@@ -222,7 +248,11 @@ describe("EventCollector", () => {
     }
 
     it(_"should reject event without data",_async () => {
+<<<<<<< HEAD
       const invalidEvent = createMockEvent(
+=======
+      const invalidEvent = createMockEvent();
+>>>>>>> origin/main
       delete (invalidEvent as any).data;
 
       const result = await collector.collectEvent(invalidEvent
@@ -250,7 +280,11 @@ describe("EventCollector", () => {
 
   describe("flush() - Core Functionality", () => {
     it(_"should flush empty queue successfully",_async () => {
+<<<<<<< HEAD
       const result = await collector.flush(
+=======
+      const result = await collector.flush();
+>>>>>>> origin/main
 
       expect(result.success).toBe(true);
       expect(result.processedCount).toBe(0
@@ -293,6 +327,18 @@ describe("EventCollector", () => {
         maxBatchSize: 2, // Smaller batch size to ensure batching happens
         enableAuditLog: false,
         onFlush: mockFlush,
+<<<<<<< HEAD
+=======
+      });
+
+      // Add 5 events (should trigger multiple batches)
+      const events = Array.from({ length: 5 },(, i) =>
+        createMockEvent({ eventType: `event${i}` }),
+      );
+
+      for (const event of events) {
+        await batchCollector.collectEvent(event);
+>>>>>>> origin/main
       }
 
       // Add 5 events (should trigger multiple batches)
@@ -372,7 +418,11 @@ describe("EventCollector", () => {
 
   describe("Statistics and State Management", () => {
     it(_"should provide accurate statistics",_async () => {
+<<<<<<< HEAD
       const initialStats = collector.getStats(
+=======
+      const initialStats = collector.getStats();
+>>>>>>> origin/main
 
       expect(initialStats.queueSize).toBe(0
       expect(initialStats.totalCollected).toBe(0
@@ -400,8 +450,13 @@ describe("EventCollector", () => {
     }
 
     it(_"should clear queue without processing",_async () => {
+<<<<<<< HEAD
       await collector.collectEvent(createMockEvent()
       await collector.collectEvent(createMockEvent()
+=======
+      await collector.collectEvent(createMockEvent());
+      await collector.collectEvent(createMockEvent());
+>>>>>>> origin/main
 
       expect(collector.getStats().queueSize).toBe(2
 
@@ -491,8 +546,13 @@ describe("EventCollector", () => {
 
   describe("Lifecycle Management", () => {
     it(_"should stop and flush remaining events",_async () => {
+<<<<<<< HEAD
       await collector.collectEvent(createMockEvent()
       await collector.collectEvent(createMockEvent()
+=======
+      await collector.collectEvent(createMockEvent());
+      await collector.collectEvent(createMockEvent());
+>>>>>>> origin/main
 
       const result = await collector.stop(
 
@@ -504,8 +564,13 @@ describe("EventCollector", () => {
 
   describe("Default EventCollector", () => {
     it(_"should provide working default instance",_async () => {
+<<<<<<< HEAD
       const event = createMockEvent(
       const result = await defaultEventCollector.collectEvent(event
+=======
+      const event = createMockEvent();
+      const result = await defaultEventCollector.collectEvent(event);
+>>>>>>> origin/main
 
       expect(result.success).toBe(true);
       expect(result.queueSize).toBe(1

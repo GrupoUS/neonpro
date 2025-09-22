@@ -273,7 +273,11 @@ describe(('Supabase Performance Tests', () => {
       for (const connectionCount of concurrentConnections) {
         const operationPromises = Array.from(
           { length: connectionCount },async (, i) => {
+<<<<<<< HEAD
             const startTime = performance.now(
+=======
+            const startTime = performance.now();
+>>>>>>> origin/main
             const { error } = await testClient
               .from('patients')
               .select('count')
@@ -666,7 +670,11 @@ describe(('Supabase Performance Tests', () => {
       const concurrentOperations = 20;
       const operationPromises = Array.from(
         { length: concurrentOperations },async (, i) => {
+<<<<<<< HEAD
           const startTime = performance.now(
+=======
+          const startTime = performance.now();
+>>>>>>> origin/main
 
           // Simulate concurrent real-time operations
           const operations = [
@@ -710,7 +718,11 @@ describe(('Supabase Performance Tests', () => {
 
       const userOperations = Array.from(
         { length: peakLoadSimulation.concurrentUsers },async (, userId) => {
+<<<<<<< HEAD
           const userStartTime = performance.now(
+=======
+          const userStartTime = performance.now();
+>>>>>>> origin/main
           const operations = [];
 
           for (let i = 0; i < peakLoadSimulation.operationsPerUser; i++) {

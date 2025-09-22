@@ -69,6 +69,8 @@ vi.mock('@/services/audit-service')
 
 import { z } from 'zod';
 
+import { z } from 'zod';
+
 // Test schemas for contract validation
 const SecurityPolicySchema = z.object({
   id: z.string(),
@@ -812,7 +814,11 @@ describe('Security Policies Contract Tests', () => {
 
       const response = await client.api.security.policies.$get({
         _query: { compliance: 'lgpd' },
+<<<<<<< HEAD
       }
+=======
+      });
+>>>>>>> origin/main
 
       expect(response.status).toBe(200
       const data = await response.json(
@@ -1200,7 +1206,11 @@ describe('Security Policies Contract Tests', () => {
 
       const response = await client.api.security.audit.logs.$get({
         _query: { compliance: 'healthcare' },
+<<<<<<< HEAD
       }
+=======
+      });
+>>>>>>> origin/main
 
       expect(response.status).toBe(200
       const data = await response.json(

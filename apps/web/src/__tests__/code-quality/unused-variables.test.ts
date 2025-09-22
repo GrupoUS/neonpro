@@ -101,12 +101,21 @@ function checkUnusedCatchParameters(
 }
 
 describe('TDD Orchestrator - Code Quality: Variables and Error Handling',() {
+<<<<<<< HEAD
   const webSrcPath = join(process.cwd(), 'src')
 
   describe('Phase 1: RED - Failing Tests for Variable Usage',() {
     it(('should have no unused variables in insights-enhanced.tsx', () => {
       const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx')
       const result = checkUnusedVariables(filePath
+=======
+  const webSrcPath = join(process.cwd(), 'src');
+
+  describe('Phase 1: RED - Failing Tests for Variable Usage',() {
+    it(('should have no unused variables in insights-enhanced.tsx', () => {
+      const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
+      const result = checkUnusedVariables(filePath);
+>>>>>>> origin/main
 
       // This test will FAIL initially (RED phase)
       expect(result.hasUnusedVariables).toBe(false);
@@ -120,8 +129,13 @@ describe('TDD Orchestrator - Code Quality: Variables and Error Handling',() {
     }
 
     it(('should have proper error handling in insights-enhanced.tsx', () => {
+<<<<<<< HEAD
       const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx')
       const result = checkUnusedCatchParameters(filePath
+=======
+      const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
+      const result = checkUnusedCatchParameters(filePath);
+>>>>>>> origin/main
 
       // This test will FAIL initially (RED phase)
       expect(result.hasUnusedCatchParams).toBe(false);
@@ -134,12 +148,21 @@ describe('TDD Orchestrator - Code Quality: Variables and Error Handling',() {
           }`,
         
       }
+<<<<<<< HEAD
     }
   }
   describe(('Error Handling Standards', () => {
     it(('should use proper error handling patterns', () => {
       const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx')
       const content = readFileSync(filePath, 'utf-8')
+=======
+    });
+  });
+  describe(('Error Handling Standards', () => {
+    it(('should use proper error handling patterns', () => {
+      const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
+      const content = readFileSync(filePath, 'utf-8');
+>>>>>>> origin/main
 
       // Check for try-catch blocks
       const tryCatchBlocks = content.match(/try\s*{[^}]*}\s*catch/g) || [];

@@ -22,7 +22,11 @@ describe('Basic Fetch Test', () => {
 
       expect(response.ok).toBe(true);
     } catch (_error) {
+<<<<<<< HEAD
       console.error('❌ Real HTTP request failed:', error
+=======
+      console.error('❌ Real HTTP request failed:', error);
+>>>>>>> origin/main
       throw error;
     }
   }

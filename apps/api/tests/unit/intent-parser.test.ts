@@ -252,12 +252,21 @@ describe('IntentParserService', () => {
       const roles: UserRole[] = ['admin', 'doctor', 'receptionist'];
 
       roles.forEach(role => {
+<<<<<<< HEAD
         const result = intentParser.parseQuery(query, _role
         expect(result.intent).toBe('client_data')
         expect(result.confidence).toBeGreaterThan(0.7
       }
     }
   }
+=======
+        const result = intentParser.parseQuery(query, _role);
+        expect(result.intent).toBe('client_data');
+        expect(result.confidence).toBeGreaterThan(0.7);
+      });
+    });
+  });
+>>>>>>> origin/main
 
   describe('Parameter Validation', () => {
     it('should validate client data parameters', () => {

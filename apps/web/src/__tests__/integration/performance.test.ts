@@ -183,8 +183,13 @@ describe(('Performance Integration Tests', () => {
 
       // Verify CDN configuration
       Object.values(cdnConfiguration).forEach(url => {
+<<<<<<< HEAD
         expect(url).toMatch(/^https:\/\/.*\.neonpro\.com\.br/
       }
+=======
+        expect(url).toMatch(/^https:\/\/.*\.neonpro\.com\.br/);
+      });
+>>>>>>> origin/main
 
       expect(cdnCacheHeaders.api['Cache-Control']).toBe('no-cache')
       expect(cdnCacheHeaders.medicalImages['Cache-Control']).toContain(
@@ -259,10 +264,17 @@ describe(('Performance Integration Tests', () => {
       }
 
       Object.values(compressionRatios).forEach(ratio => {
+<<<<<<< HEAD
         expect(ratio).toBeGreaterThan(0
         expect(ratio).toBeLessThan(1
       }
     }
+=======
+        expect(ratio).toBeGreaterThan(0);
+        expect(ratio).toBeLessThan(1);
+      });
+    });
+>>>>>>> origin/main
 
     test(_'should integrate image optimization with medical imagery',async () => {
       // Test: Image optimization for medical content

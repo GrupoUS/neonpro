@@ -853,12 +853,21 @@ importers:
 
   packages/database:
     dependencies:
+<<<<<<< HEAD
       '@neonpro/domain':
         specifier: workspace:1.0.0
         version: link:../domain
       '@neonpro/shared':
         specifier: workspace:*
         version: link:../shared
+=======
+      '@neonpro/core-services':
+        specifier: workspace:0.1.0
+        version: link:../core-services
+      '@neonpro/domain':
+        specifier: workspace:1.0.0
+        version: link:../domain
+>>>>>>> origin/main
       '@prisma/adapter-pg':
         specifier: ^6.16.1
         version: 6.16.1

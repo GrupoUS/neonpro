@@ -459,7 +459,11 @@ function PatientRegister() {
               />
             </SelectTrigger>
             <SelectContent>
+<<<<<<< HEAD
               {_field.options?.map((_options?: any) => (
+=======
+              {field.options?.map((_options?: any) => (
+>>>>>>> origin/main
                 <SelectItem
                   key={_options.value}
                   value={_options.value}

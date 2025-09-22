@@ -99,14 +99,22 @@ export function ExportButton({
 }: ExportButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState<"csv" | "xlsx">("csv");
+<<<<<<< HEAD
   // const [selectedFields, setSelectedFields] = useState<string[]>([]);
+=======
+  const [selectedFields, setSelectedFields] = useState<string[]>([]);
+>>>>>>> origin/main
   const [lgpdOptions, setLgpdOptions] = useState({
     anonymize: true,
     consent: true,
     excludeRestricted: false
   });
   const [currentJob, setCurrentJob] = useState<ExportJob | null>(null);
+<<<<<<< HEAD
   // const [exportHistory, setExportHistory] = useState<ExportJob[]>([]);
+=======
+  const [exportHistory, setExportHistory] = useState<ExportJob[]>([]);
+>>>>>>> origin/main
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleExport = async () => {

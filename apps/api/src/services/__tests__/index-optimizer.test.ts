@@ -6,15 +6,25 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import IndexOptimizerService, { HEALTHCARE_INDEX_PATTERNS } from '../index-optimizer';
 
+<<<<<<< HEAD
 describe('IndexOptimizerService', () => {
+=======
+describe(_'IndexOptimizerService'), () => {
+>>>>>>> origin/main
   let _service: IndexOptimizerService;
 
   beforeEach(() => {
     service = new IndexOptimizerService(
 
+<<<<<<< HEAD
   describe('analyzeTableIndexes', () => {
     it('should analyze indexes for patients table',async () => {
       const analysis = await service.analyzeTableIndexes('patients')
+=======
+  describe(_'analyzeTableIndexes'), () => {
+    it(_'should analyze indexes for patients table',async () => {
+      const analysis = await service.analyzeTableIndexes('patients');
+>>>>>>> origin/main
 
       expect(analysis).toHaveProperty('table', 'patients')
       expect(analysis).toHaveProperty('existingIndexes')
@@ -31,8 +41,13 @@ describe('IndexOptimizerService', () => {
       expect(analysis.optimizationScore).toBeGreaterThanOrEqual(0
       expect(analysis.optimizationScore).toBeLessThanOrEqual(100
 
+<<<<<<< HEAD
     it('should analyze indexes for appointments table',async () => {
       const analysis = await service.analyzeTableIndexes('appointments')
+=======
+    it(_'should analyze indexes for appointments table',async () => {
+      const analysis = await service.analyzeTableIndexes('appointments');
+>>>>>>> origin/main
 
       expect(analysis.table).toBe('appointments')
       expect(analysis.existingIndexes.length).toBeGreaterThan(0
@@ -52,16 +67,27 @@ describe('IndexOptimizerService', () => {
       expect(scheduleIndex).toBeDefined(
       expect(scheduleIndex?.priority).toBe('critical')
 
+<<<<<<< HEAD
     it('should identify unused indexes correctly',async () => {
       const analysis = await service.analyzeTableIndexes('patients')
+=======
+    it(_'should identify unused indexes correctly',async () => {
+      const analysis = await service.analyzeTableIndexes('patients');
+>>>>>>> origin/main
 
       analysis.unusedIndexes.forEach(index => {
         expect(index.isPrimary).toBe(false); // Primary keys should never be unused
         expect(index.usage.scans).toBeLessThan(10); // Low usage
 
+<<<<<<< HEAD
     it('should calculate optimization score based on index quality',async () => {
       const patientsAnalysis = await service.analyzeTableIndexes('patients')
       const professionalsAnalysis = await service.analyzeTableIndexes('professionals')
+=======
+    it(_'should calculate optimization score based on index quality',async () => {
+      const patientsAnalysis = await service.analyzeTableIndexes('patients');
+      const professionalsAnalysis = await service.analyzeTableIndexes('professionals');
+>>>>>>> origin/main
 
       // Both should have reasonable scores
       expect(patientsAnalysis.optimizationScore).toBeGreaterThan(0
@@ -77,9 +103,15 @@ describe('IndexOptimizerService', () => {
         
       }
 
+<<<<<<< HEAD
   describe('generateIndexCreationScripts', () => {
     it('should generate valid SQL for missing indexes',async () => {
       const analysis = await service.analyzeTableIndexes('patients')
+=======
+  describe(_'generateIndexCreationScripts'), () => {
+    it(_'should generate valid SQL for missing indexes',async () => {
+      const analysis = await service.analyzeTableIndexes('patients');
+>>>>>>> origin/main
       const scripts = service.generateIndexCreationScripts(
         analysis.missingIndexes,
       
@@ -109,8 +141,13 @@ describe('IndexOptimizerService', () => {
         // Healthcare impact should be valid
         expect(['low', 'medium', 'high']).toContain(script.healthcareImpact
 
+<<<<<<< HEAD
     it('should handle GIN indexes for full-text search',async () => {
       const analysis = await service.analyzeTableIndexes('patients')
+=======
+    it(_'should handle GIN indexes for full-text search',async () => {
+      const analysis = await service.analyzeTableIndexes('patients');
+>>>>>>> origin/main
       const ginIndex = analysis.recommendedIndexes.find(
         idx => idx.type === 'gin',
       
@@ -124,8 +161,13 @@ describe('IndexOptimizerService', () => {
         expect(ginScript.estimatedTime).toBeGreaterThan(20); // GIN indexes take longer
       }
 
+<<<<<<< HEAD
     it('should prioritize healthcare-critical indexes',async () => {
       const analysis = await service.analyzeTableIndexes('patients')
+=======
+    it(_'should prioritize healthcare-critical indexes',async () => {
+      const analysis = await service.analyzeTableIndexes('patients');
+>>>>>>> origin/main
       const scripts = service.generateIndexCreationScripts(
         analysis.missingIndexes,
       
@@ -147,9 +189,15 @@ describe('IndexOptimizerService', () => {
         expect(avgCriticalTime).toBeGreaterThanOrEqual(avgLowTime
       }
 
+<<<<<<< HEAD
   describe('analyzeAllHealthcareTables', () => {
     it('should analyze all healthcare tables',async () => {
       const analyses = await service.analyzeAllHealthcareTables(
+=======
+  describe(_'analyzeAllHealthcareTables'), () => {
+    it(_'should analyze all healthcare tables',async () => {
+      const analyses = await service.analyzeAllHealthcareTables();
+>>>>>>> origin/main
 
       expect(analyses).toBeInstanceOf(Map
       expect(analyses.size).toBeGreaterThan(5
@@ -162,11 +210,21 @@ describe('IndexOptimizerService', () => {
 
       // Each analysis should be complete
       analyses.forEach((analysis,_tableName) => {
+<<<<<<< HEAD
         expect(analysis.table).toBe(tableName
         expect(analysis.optimizationScore).toBeGreaterThanOrEqual(0
         expect(analysis.optimizationScore).toBeLessThanOrEqual(100
 
     it('should cache analysis results',async () => {
+=======
+        expect(analysis.table).toBe(tableName);
+        expect(analysis.optimizationScore).toBeGreaterThanOrEqual(0);
+        expect(analysis.optimizationScore).toBeLessThanOrEqual(100);
+      });
+    });
+
+    it(_'should cache analysis results',async () => {
+>>>>>>> origin/main
       // Clear cache first to ensure clean state
       service.clearCache(
 
@@ -181,9 +239,15 @@ describe('IndexOptimizerService', () => {
       // Second call should be faster (cached) or at least not slower
       expect(time2).toBeLessThanOrEqual(time1 + 1); // Allow 1ms tolerance
 
+<<<<<<< HEAD
   describe('getOptimizationReport', () => {
     it('should generate comprehensive optimization report',async () => {
       const report = await service.getOptimizationReport(
+=======
+  describe(_'getOptimizationReport'), () => {
+    it(_'should generate comprehensive optimization report',async () => {
+      const report = await service.getOptimizationReport();
+>>>>>>> origin/main
 
       expect(report).toHaveProperty('overallScore')
       expect(report).toHaveProperty('tableAnalyses')
@@ -207,8 +271,13 @@ describe('IndexOptimizerService', () => {
         report.prioritizedRecommendations.length,
       
 
+<<<<<<< HEAD
     it('should prioritize recommendations correctly',async () => {
       const report = await service.getOptimizationReport(
+=======
+    it(_'should prioritize recommendations correctly',async () => {
+      const report = await service.getOptimizationReport();
+>>>>>>> origin/main
       const recommendations = report.prioritizedRecommendations;
 
       if (recommendations.length > 1) {
@@ -223,9 +292,15 @@ describe('IndexOptimizerService', () => {
         }
       }
 
+<<<<<<< HEAD
     it('should include healthcare-critical indexes in top recommendations',async () => {
       const report = await service.getOptimizationReport(
       const topRecommendations = report.prioritizedRecommendations.slice(0, 5
+=======
+    it(_'should include healthcare-critical indexes in top recommendations',async () => {
+      const report = await service.getOptimizationReport();
+      const topRecommendations = report.prioritizedRecommendations.slice(0, 5);
+>>>>>>> origin/main
 
       // Should include patient CPF index (critical for Brazilian healthcare)
       const hasCpfIndex = topRecommendations.some(
@@ -243,8 +318,13 @@ describe('IndexOptimizerService', () => {
       // At least one of these critical indexes should be in top recommendations
       expect(hasCpfIndex || hasScheduleIndex).toBe(true);
 
+<<<<<<< HEAD
   describe('clearCache', () => {
     it('should clear analysis cache',async () => {
+=======
+  describe(_'clearCache'), () => {
+    it(_'should clear analysis cache',async () => {
+>>>>>>> origin/main
       // Populate cache
       await service.analyzeTableIndexes('patients')
 
@@ -254,6 +334,7 @@ describe('IndexOptimizerService', () => {
       // Should not throw
       expect(() => service.clearCache()).not.toThrow(
 
+<<<<<<< HEAD
   describe('Healthcare Index Patterns', () => {
     it('should define comprehensive healthcare query patterns', () => {
       expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('patientSearch')
@@ -264,6 +345,18 @@ describe('IndexOptimizerService', () => {
       expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('dailySchedule')
       expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('consentTracking')
       expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('auditTrail')
+=======
+  describe(_'Healthcare Index Patterns'), () => {
+    it(_'should define comprehensive healthcare query patterns'), () => {
+      expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('patientSearch');
+      expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('patientByCPF');
+      expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('patientFullTextSearch');
+      expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('professionalSchedule');
+      expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('patientAppointments');
+      expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('dailySchedule');
+      expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('consentTracking');
+      expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('auditTrail');
+>>>>>>> origin/main
 
       Object.values(HEALTHCARE_INDEX_PATTERNS).forEach(pattern => {
         expect(pattern).toHaveProperty('pattern')
@@ -277,10 +370,14 @@ describe('IndexOptimizerService', () => {
         expect(pattern.indexes).toBeInstanceOf(Array
         expect(pattern.indexes.length).toBeGreaterThan(0
 
-    it('should prioritize high-frequency healthcare operations', () => {
+    it(_'should prioritize high-frequency healthcare operations'), () => {
       const highFrequencyPatterns = Object.entries(HEALTHCARE_INDEX_PATTERNS)
         .filter(([, pattern]) => pattern.frequency === 'very_high')
+<<<<<<< HEAD
         .map(([name, _]) => name
+=======
+        .map(([name, _]) => name);
+>>>>>>> origin/main
 
       expect(highFrequencyPatterns).toContain('professionalSchedule')
       expect(highFrequencyPatterns).toContain('dailySchedule')
@@ -288,9 +385,15 @@ describe('IndexOptimizerService', () => {
       // These are the most common operations in healthcare systems
       expect(highFrequencyPatterns.length).toBeGreaterThan(0
 
+<<<<<<< HEAD
     it('should include LGPD compliance patterns', () => {
       expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('consentTracking')
       expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('auditTrail')
+=======
+    it(_'should include LGPD compliance patterns'), () => {
+      expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('consentTracking');
+      expect(HEALTHCARE_INDEX_PATTERNS).toHaveProperty('auditTrail');
+>>>>>>> origin/main
 
       const consentPattern = HEALTHCARE_INDEX_PATTERNS.consentTracking;
       expect(consentPattern.pattern).toContain('consent_records')
@@ -302,7 +405,7 @@ describe('IndexOptimizerService', () => {
       expect(auditPattern.pattern).toContain('table_name')
       expect(auditPattern.pattern).toContain('record_id')
 
-    it('should include Brazilian-specific patterns', () => {
+    it(_'should include Brazilian-specific patterns'), () => {
       const cpfPattern = HEALTHCARE_INDEX_PATTERNS.patientByCPF;
       expect(cpfPattern.pattern).toContain('cpf')
       expect(cpfPattern.frequency).toBe('high'); // CPF lookup is common in Brazil

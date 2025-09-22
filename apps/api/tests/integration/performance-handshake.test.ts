@@ -47,9 +47,15 @@ describe('HTTPS Handshake Performance - Integration Test', () => {
           expect(response.status).toBe(200
           handshakeTimes.push(totalTime
 
+<<<<<<< HEAD
           console.log(`Handshake attempt ${i + 1}: ${totalTime.toFixed(2)}ms`
         } catch (_error) {
           console.error(`Handshake test ${i + 1} failed:`, error
+=======
+          console.log(`Handshake attempt ${i + 1}: ${totalTime.toFixed(2)}ms`);
+        } catch (_error) {
+          console.error(`Handshake test ${i + 1} failed:`, error);
+>>>>>>> origin/main
         }
 
         // Small delay between tests to avoid connection reuse

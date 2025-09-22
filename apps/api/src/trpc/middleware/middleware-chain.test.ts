@@ -49,15 +49,21 @@ const createMockContext = (_overrides = {}) => ({
   },
   ...overrides,
 
-describe('Enhanced Healthcare Middleware Chain', () => {
+describe(_'Enhanced Healthcare Middleware Chain'), () => {
   beforeEach(() => {
     vi.clearAllMocks(
     // Reset performance timing
     vi.spyOn(performance, 'now').mockReturnValue(0
 
+<<<<<<< HEAD
   describe('T021: LGPD Audit Middleware', () => {
     it('should enforce data minimization for patient list operations',async () => {
       const ctx = createMockContext(
+=======
+  describe('T021: LGPD Audit Middleware'), () => {
+    it(_'should enforce data minimization for patient list operations',async () => {
+      const ctx = createMockContext();
+>>>>>>> origin/main
       const next = vi.fn().mockResolvedValue([
         {
           id: 'patient-1',
@@ -100,9 +106,15 @@ describe('Enhanced Healthcare Middleware Chain', () => {
           status: 'SUCCESS',
         }),
 
+<<<<<<< HEAD
     it('should generate cryptographic proof for sensitive operations',async () => {
       const ctx = createMockContext(
       const next = vi.fn().mockResolvedValue({ success: true   }
+=======
+    it(_'should generate cryptographic proof for sensitive operations',async () => {
+      const ctx = createMockContext();
+      const next = vi.fn().mockResolvedValue({ success: true });
+>>>>>>> origin/main
 
       mockPrisma.auditTrail.create.mockResolvedValue({  }
 
@@ -123,10 +135,17 @@ describe('Enhanced Healthcare Middleware Chain', () => {
       expect(additionalInfo.cryptographicProof.timestampToken).toBeDefined(
       expect(additionalInfo.lgpdCompliance.auditTrailComplete).toBe(true);
 
+<<<<<<< HEAD
   describe('T022: CFM Validation Middleware', () => {
     it('should validate CFM license for medical operations',async () => {
       const ctx = createMockContext(
       const next = vi.fn().mockResolvedValue({ success: true   }
+=======
+  describe('T022: CFM Validation Middleware'), () => {
+    it(_'should validate CFM license for medical operations',async () => {
+      const ctx = createMockContext();
+      const next = vi.fn().mockResolvedValue({ success: true });
+>>>>>>> origin/main
 
       mockPrisma.professional.findUnique.mockResolvedValue({
         crmNumber: '12345',
@@ -169,9 +188,15 @@ describe('Enhanced Healthcare Middleware Chain', () => {
 
       expect(next).toHaveBeenCalled(
 
+<<<<<<< HEAD
     it('should reject operations with invalid CFM license',async () => {
       const ctx = createMockContext(
       const next = vi.fn(
+=======
+    it(_'should reject operations with invalid CFM license',async () => {
+      const ctx = createMockContext();
+      const next = vi.fn();
+>>>>>>> origin/main
 
       mockPrisma.professional.findUnique.mockResolvedValue({
         crmNumber: '999',
@@ -193,9 +218,15 @@ describe('Enhanced Healthcare Middleware Chain', () => {
 
       expect(next).not.toHaveBeenCalled(
 
+<<<<<<< HEAD
     it('should require ICP-Brasil certificate for telemedicine operations',async () => {
       const ctx = createMockContext(
       const next = vi.fn(
+=======
+    it(_'should require ICP-Brasil certificate for telemedicine operations',async () => {
+      const ctx = createMockContext();
+      const next = vi.fn();
+>>>>>>> origin/main
 
       mockPrisma.professional.findUnique.mockResolvedValue({
         crmNumber: '12345',
@@ -222,10 +253,17 @@ describe('Enhanced Healthcare Middleware Chain', () => {
 
       expect(next).not.toHaveBeenCalled(
 
+<<<<<<< HEAD
   describe('T023: Prisma RLS Enforcement Middleware', () => {
     it('should enforce clinic-based data isolation',async () => {
       const ctx = createMockContext(
       const next = vi.fn().mockResolvedValue([]
+=======
+  describe('T023: Prisma RLS Enforcement Middleware'), () => {
+    it(_'should enforce clinic-based data isolation',async () => {
+      const ctx = createMockContext();
+      const next = vi.fn().mockResolvedValue([]);
+>>>>>>> origin/main
 
       // Mock Prisma proxy behavior
       const enhancedPrismaCall = vi.fn().mockResolvedValue([]
@@ -247,6 +285,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
         type: 'query',
         input: {},
 
+<<<<<<< HEAD
       expect(next).toHaveBeenCalled(
       expect(ctx.rlsContext).toBeDefined(
       expect(ctx.rlsContext.clinicId).toBe('clinic-456')
@@ -255,6 +294,17 @@ describe('Enhanced Healthcare Middleware Chain', () => {
     it('should deny access without clinic context',async () => {
       const ctx = createMockContext({ clinicId: null   }
       const next = vi.fn(
+=======
+      expect(next).toHaveBeenCalled();
+      expect(ctx.rlsContext).toBeDefined();
+      expect(ctx.rlsContext.clinicId).toBe('clinic-456');
+      expect(ctx.rlsContext._userId).toBe('user-123');
+    });
+
+    it(_'should deny access without clinic context',async () => {
+      const ctx = createMockContext({ clinicId: null });
+      const next = vi.fn();
+>>>>>>> origin/main
 
       const middleware = prismaRLSMiddleware;
 
@@ -270,7 +320,11 @@ describe('Enhanced Healthcare Middleware Chain', () => {
 
       expect(next).not.toHaveBeenCalled(
 
+<<<<<<< HEAD
     it('should allow emergency access with proper audit',async () => {
+=======
+    it(_'should allow emergency access with proper audit',async () => {
+>>>>>>> origin/main
       const ctx = createMockContext({
         clinicId: null,
         isEmergency: true,
@@ -289,9 +343,15 @@ describe('Enhanced Healthcare Middleware Chain', () => {
       expect(next).toHaveBeenCalled(
       expect(ctx.rlsContext.isEmergency).toBe(true);
 
+<<<<<<< HEAD
   describe('Performance Requirements', () => {
     it('should complete middleware chain within 200ms target',async () => {
       const ctx = createMockContext(
+=======
+  describe(_'Performance Requirements'), () => {
+    it(_'should complete middleware chain within 200ms target',async () => {
+      const ctx = createMockContext();
+>>>>>>> origin/main
       let callCount = 0;
 
       vi.spyOn(performance, 'now').mockImplementation(() => {

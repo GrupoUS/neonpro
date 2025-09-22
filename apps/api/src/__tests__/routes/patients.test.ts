@@ -74,7 +74,12 @@ describe(_"patient Management API - NeonPro Healthcare",() => {
     vi.clearAllMocks(
 
   afterEach(() => {
+<<<<<<< HEAD
     vi.restoreAllMocks(
+=======
+    vi.restoreAllMocks();
+  });
+>>>>>>> origin/main
   describe(_"pOST /patients - Create Patient",() => {
     it(_"should create patient with valid Brazilian healthcare data",async () => {
       const newPatientData = {
@@ -279,7 +284,13 @@ describe(_"patient Management API - NeonPro Healthcare",() => {
 
       expect(mockLGPDService.validateConsent).toHaveBeenCalledWith(
         patientWithoutConsent.lgpdConsent,
+<<<<<<< HEAD
       
+=======
+      );
+    });
+  });
+>>>>>>> origin/main
   describe("gET /patients/:id - Get Patient",() => {
     it(_"should retrieve patient with data masking based on user role",async () => {
       const fullPatientData = { ...mockPatient };

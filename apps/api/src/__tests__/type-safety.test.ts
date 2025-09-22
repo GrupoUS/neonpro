@@ -266,7 +266,11 @@ describe('Type Safety - TDD RED Phase',() => {
 
       // Count total issues
       const totalIssues = Object.values(typeSafetyIssues)
+<<<<<<< HEAD
         .reduce((sum,_issues) => sum + issues.length, 0
+=======
+        .reduce((sum,_issues) => sum + issues.length, 0);
+>>>>>>> origin/main
 
       // Should fail initially - multiple type safety issues
       expect(totalIssues).toBeGreaterThan(0

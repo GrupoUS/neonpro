@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
+<<<<<<< HEAD
 describe(''Simple Create Route Test', () => {
   it(''should create simple working route',async () => {
+=======
+describe(_'Simple Create Route Test'), () => {
+  it(_'should create simple working route',async () => {
+>>>>>>> origin/main
     // Use real Hono directly without OpenAPIHono
     const { Hono } = await import('hono')
 

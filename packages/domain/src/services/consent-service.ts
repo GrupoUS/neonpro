@@ -82,6 +82,12 @@ export class ConsentDomainService {
       }
     );
 
+<<<<<<< HEAD
+=======
+    // Add audit event to repository when we implement audit logging
+    await this.repository.addAuditEvent(patientId, accessEvent);
+
+>>>>>>> origin/main
     return consents;
   }
 
@@ -213,12 +219,12 @@ export class ConsentDomainService {
       status = 'NON_COMPLIANT';
       isCompliant = false;
     } else if (violations.length > 0) {
-      status = 'PARTIALLY_COMPLIANT';
+      status = ''PARTIALLY_COMPLIANT'
     }
 
     // Generate recommendations
     const recommendations: string[] = [];
-    if (expiringSoon.length > 0) {
+    if (expiringSoon.length > 0) {`
       recommendations.push(`Renew ${expiringSoon.length} expiring consent(s)`);
     }
     if (!hasDataProcessingConsent) {
@@ -301,4 +307,4 @@ export class ConsentDomainService {
 
     return updatedConsent;
   }
-}
+}`

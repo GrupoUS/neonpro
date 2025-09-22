@@ -106,7 +106,11 @@ describe("CrudIntentParser", () => {
         "create a new patient record for John Doe with email john@doe.com";
       const result = parser.parseIntent(input
 
+<<<<<<< HEAD
       expect(result.entities.length).toBeGreaterThan(0
+=======
+      expect(result.entities.length).toBeGreaterThan(0);
+>>>>>>> origin/main
       expect(_result.entities.some(
           (e) => e.type === "PERSON" && e.value === "John Doe",
         ),
@@ -149,10 +153,17 @@ describe("CrudIntentParser", () => {
       ];
 
       inputs.forEach((input) => {
+<<<<<<< HEAD
         const result = parser.parseIntent(input
         expect(_result.entities.some((e) => e.type === "DATE")).toBe(true);
       }
     }
+=======
+        const result = parser.parseIntent(input);
+        expect(_result.entities.some((e) => e.type === "DATE")).toBe(true);
+      });
+    });
+>>>>>>> origin/main
 
     it("should extract email and phone entities", () => {
       const input =
@@ -179,10 +190,17 @@ describe("CrudIntentParser", () => {
       expect(result.arguments.filters.length).toBe(2
 
       const statusFilter = result.arguments.filters.find((f) => f.field === "status",
+<<<<<<< HEAD
       
       expect(statusFilter).toBeDefined(
       expect(statusFilter?.operator).toBe("equals"
       expect(statusFilter?.value).toBe("active"
+=======
+      );
+      expect(statusFilter).toBeDefined();
+      expect(statusFilter?.operator).toBe("equals");
+      expect(statusFilter?.value).toBe("active");
+>>>>>>> origin/main
 
       const ageFilter = result.arguments.filters.find((f) => f.field === "age"
       expect(ageFilter).toBeDefined(
@@ -207,11 +225,19 @@ describe("CrudIntentParser", () => {
       ];
 
       inputs.forEach(({ text,_limit }) => {
+<<<<<<< HEAD
         const result = parser.parseIntent(text
         expect(result.arguments.limit).toBeDefined(
         expect(result.arguments.limit?.count).toBe(limit
       }
     }
+=======
+        const result = parser.parseIntent(text);
+        expect(result.arguments.limit).toBeDefined();
+        expect(result.arguments.limit?.count).toBe(limit);
+      });
+    });
+>>>>>>> origin/main
 
     it("should extract pagination arguments", () => {
       const input = "get patients page 2 with 10 per page";
@@ -229,14 +255,22 @@ describe("CrudIntentParser", () => {
         "find active patients with age between 25 and 65, created after 2024-01-01, ordered by name ascending, limit 50";
       const result = parser.parseIntent(input
 
+<<<<<<< HEAD
       expect(result.intent).toBe("READ"
+=======
+      expect(result.intent).toBe("READ");
+>>>>>>> origin/main
       expect(_result.entities.some(
           (e) => e.type === "ENTITY_TYPE" && e.value === "patients",
         ),
       ).toBe(true);
 
       // Check filters
+<<<<<<< HEAD
       expect(result.arguments.filters.length).toBeGreaterThan(0
+=======
+      expect(result.arguments.filters.length).toBeGreaterThan(0);
+>>>>>>> origin/main
       expect(_result.arguments.filters.some(
           (f) => f.field === "status" && f.value === "active",
         ),
@@ -318,6 +352,12 @@ describe("CrudIntentParser", () => {
 
       expect(_result.entities.some((e) => e.type === "PROCEDURE")).toBe(true);
       expect(_result.entities.some((e) => e.type === "CLINIC")).toBe(true);
+<<<<<<< HEAD
     }
   }
 }
+=======
+    });
+  });
+});
+>>>>>>> origin/main

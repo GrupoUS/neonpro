@@ -4,8 +4,16 @@ import { describe, expect, it } from 'vitest';
 
 describe(('AI Chat — error handling', () => {
   it(_'placeholder error helper returns generic message',async () => {
+<<<<<<< HEAD
     const mod = await import('@/lib/ai-chat/errors')
     expect(typeof mod.toUserMessage).toBe('function')
     expect(mod.toUserMessage(new Error('x'))).toContain('unavailable')
   }
 }
+=======
+    const mod = await import('@/lib/ai-chat/errors');
+    expect(typeof mod.toUserMessage).toBe('function');
+    expect(mod.toUserMessage(new Error('x'))).toContain('unavailable');
+  });
+});
+>>>>>>> origin/main

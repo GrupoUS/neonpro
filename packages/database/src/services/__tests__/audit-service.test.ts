@@ -520,7 +520,11 @@ describe("AuditService", () => {
 
       const result = await auditService.searchAuditLogs({
         _userId: "nonexistent-user",
+<<<<<<< HEAD
       }
+=======
+      });
+>>>>>>> origin/main
 
       expect(result).toEqual([]
     }
@@ -533,7 +537,11 @@ describe("AuditService", () => {
 
       const result = await auditService.searchAuditLogs({
         _userId: "user-123",
+<<<<<<< HEAD
       }
+=======
+      });
+>>>>>>> origin/main
 
       expect(result).toEqual([]
     }

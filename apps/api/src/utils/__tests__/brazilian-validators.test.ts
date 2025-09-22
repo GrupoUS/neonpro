@@ -15,8 +15,13 @@
 import { describe, expect, it, test } from 'vitest';
 
 describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
+<<<<<<< HEAD
   describe('Core Validator Imports', () => {
     it('should import BrazilianHealthcareValidator class',async () => {
+=======
+  describe(_'Core Validator Imports'), () => {
+    it(_'should import BrazilianHealthcareValidator class',async () => {
+>>>>>>> origin/main
       // This may FAIL if export is not properly configured
       expect(async () => {
         const { BrazilianHealthcareValidator } = await import(
@@ -29,7 +34,11 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
         return true;
       }).not.toThrow(
 
+<<<<<<< HEAD
     it('should import LGPD compliance validators',async () => {
+=======
+    it(_'should import LGPD compliance validators',async () => {
+>>>>>>> origin/main
       // This may FAIL if imports are not properly resolved
       expect(async () => {
         const lgpdModule = await import('../lgpd-compliance-validator')
@@ -42,7 +51,11 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
         return true;
       }).not.toThrow(
 
+<<<<<<< HEAD
     it('should have all required Brazilian validators accessible',async () => {
+=======
+    it(_'should have all required Brazilian validators accessible',async () => {
+>>>>>>> origin/main
       // This will FAIL due to missing CNPJ validator and other gaps
       const { BrazilianHealthcareValidator } = await import(
         '../healthcare-helpers')
@@ -65,8 +78,13 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
         'function',
       
 
+<<<<<<< HEAD
   describe('CPF Validation Functionality', () => {
     it('should validate valid CPF numbers correctly',async () => {
+=======
+  describe(_'CPF Validation Functionality'), () => {
+    it(_'should validate valid CPF numbers correctly',async () => {
+>>>>>>> origin/main
       const { BrazilianHealthcareValidator } = await import(
         '../healthcare-helpers')
       
@@ -82,7 +100,11 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
       validCPFs.forEach(cpf => {
         expect(BrazilianHealthcareValidator.validateCPF(cpf)).toBe(true);
 
+<<<<<<< HEAD
     it('should reject invalid CPF numbers',async () => {
+=======
+    it(_'should reject invalid CPF numbers',async () => {
+>>>>>>> origin/main
       const { BrazilianHealthcareValidator } = await import(
         '../healthcare-helpers')
       
@@ -103,8 +125,13 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
           false,
         
 
+<<<<<<< HEAD
   describe('CNPJ Validation Functionality', () => {
     it('should validate valid CNPJ numbers correctly',async () => {
+=======
+  describe(_'CNPJ Validation Functionality'), () => {
+    it(_'should validate valid CNPJ numbers correctly',async () => {
+>>>>>>> origin/main
       // This will FAIL - CNPJ validator is missing
       const { BrazilianHealthcareValidator } = await import(
         '../healthcare-helpers')
@@ -120,7 +147,11 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
       validCNPJs.forEach(cnpj => {
         expect(BrazilianHealthcareValidator.validateCNPJ(cnpj)).toBe(true);
 
+<<<<<<< HEAD
     it('should reject invalid CNPJ numbers',async () => {
+=======
+    it(_'should reject invalid CNPJ numbers',async () => {
+>>>>>>> origin/main
       // This will FAIL - CNPJ validator is missing
       const { BrazilianHealthcareValidator } = await import(
         '../healthcare-helpers')
@@ -141,8 +172,13 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
           false,
         
 
+<<<<<<< HEAD
   describe('CFM Professional Registration Validation', () => {
     it('should validate CFM registration numbers',async () => {
+=======
+  describe(_'CFM Professional Registration Validation'), () => {
+    it(_'should validate CFM registration numbers',async () => {
+>>>>>>> origin/main
       const { BrazilianHealthcareValidator } = await import(
         '../healthcare-helpers')
       
@@ -157,7 +193,11 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
       validCFMs.forEach(cfm => {
         expect(BrazilianHealthcareValidator.validateCFM(cfm)).toBe(true);
 
+<<<<<<< HEAD
     it('should reject invalid CFM registration numbers',async () => {
+=======
+    it(_'should reject invalid CFM registration numbers',async () => {
+>>>>>>> origin/main
       const { BrazilianHealthcareValidator } = await import(
         '../healthcare-helpers')
       
@@ -176,7 +216,7 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
           false,
         
 
-  describe('Healthcare Professional Registration Expansion', () => {
+  describe(_'Healthcare Professional Registration Expansion'), () => {
     it('should validate CRO (Dentist) registration numbers', async () => {
       // This will FAIL - CRO validator is missing
       const { BrazilianHealthcareValidator } = await import(
@@ -227,7 +267,7 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
       validCRFs.forEach(crf => {
         expect(BrazilianHealthcareValidator.validateCRF(crf)).toBe(true);
 
-  describe('Brazilian Address and Geographic Validation', () => {
+  describe(_'Brazilian Address and Geographic Validation'), () => {
     it('should validate Brazilian CEP (postal code)', async () => {
       // This will FAIL - CEP validator is missing
       const { BrazilianHealthcareValidator } = await import(
@@ -246,7 +286,11 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
       validCEPs.forEach(cep => {
         expect(BrazilianHealthcareValidator.validateCEP(cep)).toBe(true);
 
+<<<<<<< HEAD
     it('should validate Brazilian state codes',async () => {
+=======
+    it(_'should validate Brazilian state codes',async () => {
+>>>>>>> origin/main
       // This will FAIL - State validator is missing
       const { BrazilianHealthcareValidator } = await import(
         '../healthcare-helpers')
@@ -274,8 +318,13 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
           true,
         
 
+<<<<<<< HEAD
   describe('LGPD Compliance Integration', () => {
     it('should integrate with LGPD compliance validator',async () => {
+=======
+  describe(_'LGPD Compliance Integration'), () => {
+    it(_'should integrate with LGPD compliance validator',async () => {
+>>>>>>> origin/main
       // This may FAIL due to integration issues
       const healthcareModule = await import('../healthcare-helpers')
       const lgpdModule = await import('../lgpd-compliance-validator')
@@ -289,7 +338,11 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
         typeof lgpdModule.LGPDComplianceValidator.validateDataProcessing,
       ).toBe('function')
 
+<<<<<<< HEAD
     it('should validate patient consent with Brazilian legal requirements',async () => {
+=======
+    it(_'should validate patient consent with Brazilian legal requirements',async () => {
+>>>>>>> origin/main
       // This will likely FAIL due to missing consent validation
       const { LGPDComplianceValidator, LGPDLegalBasis } = await import(
         '../lgpd-compliance-validator')
@@ -310,8 +363,13 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
       const isValid = await LGPDComplianceValidator.validateConsent(mockConsentData
       expect(typeof isValid).toBe('boolean')
 
+<<<<<<< HEAD
   describe('Module Export Structure', () => {
     it('should export all validators through a unified interface',async () => {
+=======
+  describe(_'Module Export Structure'), () => {
+    it(_'should export all validators through a unified interface',async () => {
+>>>>>>> origin/main
       // This will FAIL if there's no unified export
       expect(async () => {
         // Test if there's a main validator export
@@ -325,7 +383,11 @@ describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
         return true;
       }).not.toThrow(
 
+<<<<<<< HEAD
     it('should be importable from the main utils index',async () => {
+=======
+    it(_'should be importable from the main utils index',async () => {
+>>>>>>> origin/main
       // This will FAIL if not exported through main index
       expect(async () => {
         const utilsIndex = await import('../index')

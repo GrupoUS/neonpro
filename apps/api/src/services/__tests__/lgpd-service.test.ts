@@ -12,16 +12,23 @@ describe('LGPD Compliance Service (T040)', () => {
   afterEach(() => {
     vi.restoreAllMocks(
 
-  it('should export LGPDService class', () => {
+  it(_'should export LGPDService class'), () => {
     expect(() => {
       const module = require('../lgpd-service')
       expect(module.LGPDService).toBeDefined(
     }).not.toThrow(
 
+<<<<<<< HEAD
   describe('Consent Management', () => {
     it('should create consent record',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+  describe(_'Consent Management'), () => {
+    it(_'should create consent record',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.createConsent({
         patientId: 'patient-123',
@@ -37,9 +44,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.dataProcessing).toBe(true);
       expect(result.data.consentDate).toBeDefined(
 
+<<<<<<< HEAD
     it('should update consent preferences',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should update consent preferences',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.updateConsent('consent-123', {
         marketing: true,
@@ -52,9 +65,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.analytics).toBe(false);
       expect(result.data.updatedAt).toBeDefined(
 
+<<<<<<< HEAD
     it('should revoke consent',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should revoke consent',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.revokeConsent('consent-123', {
         revokedBy: 'patient-123',
@@ -67,9 +86,15 @@ describe('LGPD Compliance Service (T040)', () => {
       
       expect(result.message).toContain('Consentimento revogado')
 
+<<<<<<< HEAD
     it('should get consent history',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should get consent history',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.getConsentHistory('patient-123')
 
@@ -78,10 +103,17 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.patientId).toBe('patient-123')
       expect(result.data.currentConsent).toBeDefined(
 
+<<<<<<< HEAD
   describe('Data Subject Rights', () => {
     it('should process data access request',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+  describe(_'Data Subject Rights'), () => {
+    it(_'should process data access request',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.processDataAccessRequest({
         patientId: 'patient-123',
@@ -94,9 +126,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.status).toBe('processing')
       expect(result.data.estimatedCompletion).toBeDefined(
 
+<<<<<<< HEAD
     it('should process data portability request',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should process data portability request',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.processDataPortabilityRequest({
         patientId: 'patient-123',
@@ -109,9 +147,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.format).toBe('json')
       expect(result.data.downloadUrl).toBeDefined(
 
+<<<<<<< HEAD
     it('should process data deletion request',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should process data deletion request',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.processDataDeletionRequest({
         patientId: 'patient-123',
@@ -124,9 +168,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.status).toBe('approved')
       expect(result.data.scheduledDeletion).toBeDefined(
 
+<<<<<<< HEAD
     it('should process data rectification request',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should process data rectification request',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.processDataRectificationRequest({
         patientId: 'patient-123',
@@ -140,10 +190,17 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.field).toBe('email')
       expect(result.data.status).toBe('approved')
 
+<<<<<<< HEAD
   describe('Data Processing Activities', () => {
     it('should log data processing activity',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+  describe(_'Data Processing Activities'), () => {
+    it(_'should log data processing activity',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.logProcessingActivity({
         patientId: 'patient-123',
@@ -158,9 +215,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.timestamp).toBeDefined(
       expect(result.data.legalBasis).toBe('consent')
 
+<<<<<<< HEAD
     it('should get processing activities report',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should get processing activities report',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.getProcessingActivitiesReport({
         patientId: 'patient-123',
@@ -173,9 +236,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.summary).toBeDefined(
       expect(result.data.totalActivities).toBeGreaterThanOrEqual(0
 
+<<<<<<< HEAD
     it('should validate processing legality',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should validate processing legality',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.validateProcessingLegality({
         patientId: 'patient-123',
@@ -188,10 +257,17 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.legalBasis).toBeDefined(
       expect(result.data.requirements).toBeDefined(
 
+<<<<<<< HEAD
   describe('Data Retention Management', () => {
     it('should set data retention policy',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+  describe(_'Data Retention Management'), () => {
+    it(_'should set data retention policy',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.setRetentionPolicy({
         dataCategory: 'medical_records',
@@ -205,9 +281,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.retentionPeriod).toBe(20
       expect(result.data.legalBasis).toContain('CFM')
 
+<<<<<<< HEAD
     it('should check data retention status',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should check data retention status',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.checkRetentionStatus('patient-123')
 
@@ -217,9 +299,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.dataCategories).toBeDefined(
       expect(result.data.nextReview).toBeDefined(
 
+<<<<<<< HEAD
     it('should process retention review',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should process retention review',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.processRetentionReview({
         patientId: 'patient-123',
@@ -233,10 +321,17 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.decision).toBe('extend')
       expect(result.data.newRetentionDate).toBeDefined(
 
+<<<<<<< HEAD
   describe('Privacy Impact Assessment', () => {
     it('should create privacy impact assessment',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+  describe(_'Privacy Impact Assessment'), () => {
+    it(_'should create privacy impact assessment',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.createPrivacyImpactAssessment({
         projectName: 'Implementação de IA para diagnóstico',
@@ -250,9 +345,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.riskLevel).toBe('high')
       expect(result.data.status).toBe('draft')
 
+<<<<<<< HEAD
     it('should update privacy impact assessment',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should update privacy impact assessment',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       // First create an assessment
       const createResult = await service.createPrivacyImpactAssessment({
@@ -281,9 +382,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(Array.isArray(result.data.mitigationMeasures)).toBe(true);
       expect(result.data.status).toBe('approved')
 
+<<<<<<< HEAD
     it('should get privacy impact assessments',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should get privacy impact assessments',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.getPrivacyImpactAssessments({
         status: 'approved',
@@ -294,10 +401,17 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(Array.isArray(result.data.assessments)).toBe(true);
       expect(result.data.total).toBeGreaterThanOrEqual(0
 
+<<<<<<< HEAD
   describe('Compliance Monitoring', () => {
     it('should generate compliance report',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+  describe(_'Compliance Monitoring'), () => {
+    it(_'should generate compliance report',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.generateComplianceReport({
         reportType: 'monthly',
@@ -314,9 +428,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.metrics).toBeDefined(
       expect(result.data.violations).toBeDefined(
 
+<<<<<<< HEAD
     it('should check compliance status',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should check compliance status',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.checkComplianceStatus(
 
@@ -326,9 +446,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.retentionCompliance).toBeDefined(
       expect(result.data.securityCompliance).toBeDefined(
 
+<<<<<<< HEAD
     it('should log compliance violation',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should log compliance violation',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.logComplianceViolation({
         violationType: 'unauthorized_access',
@@ -343,10 +469,17 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.severity).toBe('high')
       expect(result.data.status).toBe('reported')
 
+<<<<<<< HEAD
   describe('Data Anonymization', () => {
     it('should anonymize patient data',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+  describe(_'Data Anonymization'), () => {
+    it(_'should anonymize patient data',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.anonymizePatientData({
         patientId: 'patient-123',
@@ -359,9 +492,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.anonymizedRecords).toBeGreaterThan(0
       expect(result.data.method).toBe('k-anonymity')
 
+<<<<<<< HEAD
     it('should validate anonymization quality',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should validate anonymization quality',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.validateAnonymizationQuality('anon-123')
 
@@ -371,10 +510,17 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.data.riskAssessment).toBeDefined(
       expect(result.data.recommendations).toBeDefined(
 
+<<<<<<< HEAD
   describe('Error Handling and Validation', () => {
     it('should handle invalid consent data',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+  describe(_'Error Handling and Validation'), () => {
+    it(_'should handle invalid consent data',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.createConsent({
         patientId: '',
@@ -385,9 +531,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.errors).toBeDefined(
       expect(result.errors.length).toBeGreaterThan(0
 
+<<<<<<< HEAD
     it('should handle non-existent patient requests',async () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should handle non-existent patient requests',async () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const result = await service.processDataAccessRequest({
         patientId: 'non-existent',
@@ -397,9 +549,15 @@ describe('LGPD Compliance Service (T040)', () => {
       expect(result.success).toBe(false);
       expect(result.error).toContain('Paciente não encontrado')
 
+<<<<<<< HEAD
     it('should validate service configuration', () => {
       const { LGPDService } = require('../lgpd-service')
       const service = new LGPDService(
+=======
+    it(_'should validate service configuration'), () => {
+      const { LGPDService } = require('../lgpd-service');
+      const service = new LGPDService();
+>>>>>>> origin/main
 
       const config = service.getServiceConfiguration(
 

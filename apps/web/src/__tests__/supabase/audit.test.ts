@@ -130,7 +130,11 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
       // security-auditor: Consent tracking validation
       const testUser = await testDataGenerator.createTestUser({
         _role: 'patient',
+<<<<<<< HEAD
       }
+=======
+      });
+>>>>>>> origin/main
 
       const consentActivities = [
         {
@@ -326,10 +330,17 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
       const testPatient = await testDataGenerator.createTestPatient(
       const testDoctor = await testDataGenerator.createTestUser({
         _role: 'doctor',
+<<<<<<< HEAD
       }
       const testNurse = await testDataGenerator.createTestUser({
         _role: 'nurse',
       }
+=======
+      });
+      const testNurse = await testDataGenerator.createTestUser({
+        _role: 'nurse',
+      });
+>>>>>>> origin/main
 
       const accessScenarios = [
         {

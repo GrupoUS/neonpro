@@ -17,7 +17,7 @@ Sempre usar Archon MCP para task management, knowledge management e organizaçã
 1. **`sequential-thinking`** → Análise e decomposição (SEMPRE primeiro)
 2. **`archon`** → Task setup e knowledge base
 3. **`serena`** → Análise de codebase (NUNCA busca nativa)
-4. **Contextuais** → Conforme necessidade (context7, tavily, etc.)
+4. **Contextuais** → Conforme necessidade (context7, web-search, etc.)
 5. **`desktop-commander`** → Implementação e operações
 
 ### **FERRAMENTAS MCP MANDATÓRIAS**
@@ -27,7 +27,8 @@ Sempre usar Archon MCP para task management, knowledge management e organizaçã
 - **`archon mcp`**: Task e knowledge management
 - **`desktop-commander mcp`**: Operações de arquivo e sistema
 - **`context7 mcp`**: Análise contextual profunda _(NUNCA usar contexto nativo)_
-- **`tavily mcp`**: Pesquisas web em tempo real
+- **`web-search mcp`**: Pesquisas web em tempo real
+- **`vision-mcp`**: Análise de imagens e multimídia
 
 ## 🤖 COORDENAÇÃO DE AGENTES
 
@@ -45,7 +46,7 @@ Sempre usar Archon MCP para task management, knowledge management e organizaçã
 **`apex-researcher`** - Inteligência de Pesquisa
 
 - **Triggers**: "pesquisar", "analisar", "investigar", "validar", "research", "compliance"
-- **Especialização**: Multi-fonte (Context7 → Tavily → Archon) + validação cruzada ≥95%
+- **Especialização**: Multi-fonte (Context7 → Web Search → Archon) + validação cruzada ≥95%
 - **Capacidades**: Evidence-based implementation, compliance validation
 
 **`apex-ui-ux-designer`** - Excelência em Design
@@ -96,7 +97,7 @@ Sempre usar Archon MCP para task management, knowledge management e organizaçã
 
 - **Agentes**: Coordenação multi-agent
 - **Situação**: Arquitetura, sistemas distribuídos, compliance crítico
-- **MCP**: + tavily para validação abrangente
+- **MCP**: + web-search para validação abrangente
 
 #### Por Palavra-chave (Auto-ativação)
 
@@ -324,8 +325,8 @@ output: "Sistema bem arquitetado e seguro"
 ```yaml
 research_stack:
   - context7: Documentação oficial e frameworks
-  - tavily: Informações atuais e trends
-  - exa: Implementações reais (complexidade ≥5)
+  - web-search: Informações atuais e trends
+  - vision-mcp: Análise de imagens e multimídia
 
 development_stack:
   - desktop-commander: Operações de arquivo e sistema
@@ -336,6 +337,10 @@ quality_stack:
   - Integração CI/CD via desktop-commander
   - Testes automatizados e coverage
   - Security scanning tools
+
+vision_stack:
+  - zai-mcp-server: Análise de imagens e vídeos
+  - web-search: Busca de imagens e referências visuais
 ```
 
 ### Sequência MCP Padrão

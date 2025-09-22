@@ -615,7 +615,11 @@ describe('Observability API Contract Tests', () => {
 
       // Validate user ID format (if provided)
       if (telemetryData._userId) {
+<<<<<<< HEAD
         expect(telemetryData._userId).toMatch(/^usr_(anon_)?[a-zA-Z0-9]{8,}$/
+=======
+        expect(telemetryData._userId).toMatch(/^usr_(anon_)?[a-zA-Z0-9]{8,}$/);
+>>>>>>> origin/main
       }
     }
   }

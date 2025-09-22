@@ -19,7 +19,11 @@ describe('Audit Logger Security Tests_, () => {
   let auditLogger: AuditLogger;
 
   beforeEach(() => {
+<<<<<<< HEAD
     vi.clearAllMocks(
+=======
+    vi.clearAllMocks();
+>>>>>>> origin/main
 
     mockSupabase.from.mockReturnValue({
       insert: vi.fn().mockReturnValue({
@@ -62,10 +66,17 @@ describe('Audit Logger Security Tests_, () => {
         100,
         50,
         aiMetadata,
+<<<<<<< HEAD
       
 
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
     }
+=======
+      );
+
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
+    });
+>>>>>>> origin/main
 
     it('should reject invalid AI metadata types_,_async () => {
       const invalidMetadata = {
@@ -85,8 +96,13 @@ describe('Audit Logger Security Tests_, () => {
           invalidMetadata.outputTokens as any,
           invalidMetadata,
         ),
+<<<<<<< HEAD
       ).resolves.not.toThrow(
     }
+=======
+      ).resolves.not.toThrow();
+    });
+>>>>>>> origin/main
 
     it('should validate healthcare access metadata_,_async () => {
       const healthcareMetadata: HealthcareAccessMetadata = {
@@ -108,11 +124,19 @@ describe('Audit Logger Security Tests_, () => {
         'patient_record_,
         true,
         healthcareMetadata,
+<<<<<<< HEAD
       
 
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
     }
   }
+=======
+      );
+
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
+    });
+  });
+>>>>>>> origin/main
 
   describe('Metadata Serialization Security_, () => {
     it('should safely serialize primitive metadata_,_async () => {
@@ -131,8 +155,13 @@ describe('Audit Logger Security Tests_, () => {
 
       await auditLogger.log(entry
 
+<<<<<<< HEAD
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
     }
+=======
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
+    });
+>>>>>>> origin/main
 
     it('should safely serialize complex objects_,_async () => {
       const entry: AuditLogEntry = {
@@ -153,8 +182,13 @@ describe('Audit Logger Security Tests_, () => {
 
       await auditLogger.log(entry
 
+<<<<<<< HEAD
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
     }
+=======
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
+    });
+>>>>>>> origin/main
 
     it('should handle circular references in metadata_,_async () => {
       const circularObject: any = { name: 'test' };
@@ -189,9 +223,15 @@ describe('Audit Logger Security Tests_, () => {
 
       await auditLogger.log(entry
 
+<<<<<<< HEAD
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
     }
   }
+=======
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
+    });
+  });
+>>>>>>> origin/main
 
   describe('Input Validation_, () => {
     it('should validate required audit log fields_,_async () => {
@@ -239,9 +279,15 @@ describe('Audit Logger Security Tests_, () => {
 
       await auditLogger.log(entry
 
+<<<<<<< HEAD
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
     }
   }
+=======
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
+    });
+  });
+>>>>>>> origin/main
 
   describe('Database Security_, () => {
     it('should not leak sensitive information in errors_,_async () => {
@@ -295,10 +341,17 @@ describe('Audit Logger Security Tests_, () => {
           accessReason: 'treatment',
           retentionPeriod: '10_years_,
         },
+<<<<<<< HEAD
       
 
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
     }
+=======
+      );
+
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
+    });
+>>>>>>> origin/main
 
     it('should log healthcare data access without LGPD consent_,_async () => {
       await auditLogger.logHealthcareAccess(
@@ -311,10 +364,17 @@ describe('Audit Logger Security Tests_, () => {
           accessReason: 'emergency',
           retentionPeriod: '24_hours_,
         },
+<<<<<<< HEAD
       
 
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
     }
+=======
+      );
+
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
+    });
+>>>>>>> origin/main
 
     it('should validate healthcare metadata fields_,_async () => {
       const validHealthcareMetadata: HealthcareAccessMetadata = {
@@ -331,9 +391,18 @@ describe('Audit Logger Security Tests_, () => {
         'patient_record_,
         true,
         validHealthcareMetadata,
+<<<<<<< HEAD
       
 
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
     }
   }
 }
+=======
+      );
+
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
+    });
+  });
+});
+>>>>>>> origin/main

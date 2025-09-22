@@ -1,9 +1,19 @@
 import {
   PatientRepository as IPatientRepository,
   Patient,
+<<<<<<< HEAD
   PatientFilters,
   PatientValidationError,
   DomainError
+=======
+  CreatePatientRequest,
+  UpdatePatientRequest,
+  PatientFilter,
+  PatientSearchResult,
+  PatientQueryOptions,
+  PatientError,
+  PatientEntityValidationError
+>>>>>>> origin/main
 } from "@neonpro/domain";
 import {
   CreatePatientRequest as ApiCreatePatientRequest,
@@ -25,7 +35,11 @@ export class PatientService {
   /**
    * Create a new patient with validation
    */
+<<<<<<< HEAD
   async createPatient(_request: ApiCreatePatientRequest): Promise<Patient> {
+=======
+  async createPatient(_request: CreatePatientRequest): Promise<Patient> {
+>>>>>>> origin/main
     try {
       // Validate required fields
       this.validateCreateRequest(_request);
@@ -57,7 +71,11 @@ export class PatientService {
   /**
    * Update an existing patient
    */
+<<<<<<< HEAD
   async updatePatient(id: string, _request: ApiUpdatePatientRequest): Promise<Patient> {
+=======
+  async updatePatient(id: string, _request: UpdatePatientRequest): Promise<Patient> {
+>>>>>>> origin/main
     try {
       // Check if patient exists
       const existingPatient = await this.patientRepository.findById(id);
@@ -135,8 +153,13 @@ export class PatientService {
    * Search patients by query string
    */
   async searchPatients(
+<<<<<<< HEAD
     _query: string,
     clinicId?: string,
+=======
+    _query: string, 
+    clinicId?: string, 
+>>>>>>> origin/main
     options?: PatientQueryOptions
   ): Promise<PatientSearchResult> {
     try {
@@ -238,9 +261,15 @@ export class PatientService {
   /**
    * Validate patient creation request
    */
+<<<<<<< HEAD
   private validateCreateRequest(_request: ApiCreatePatientRequest): void {
     if (!_request.clinicId) {
       throw new PatientValidationError(["Clinic ID is required"]);
+=======
+  private validateCreateRequest(_request: CreatePatientRequest): void {
+    if (!request.clinicId) {
+      throw new PatientValidationError("Clinic ID is required");
+>>>>>>> origin/main
     }
 
     if (!_request.fullName) {

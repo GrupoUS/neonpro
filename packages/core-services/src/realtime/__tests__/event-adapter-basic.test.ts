@@ -195,6 +195,7 @@ describe("Realtime Event Adapter (Basic)", () => {
   }
 
   afterEach(_async () => {
+<<<<<<< HEAD
     await adapter.cleanup(
   }
 
@@ -210,6 +211,23 @@ describe("Realtime Event Adapter (Basic)", () => {
       expect(adapter.getActiveChannels()).toEqual([]
     }
   }
+=======
+    await adapter.cleanup();
+  });
+
+  describe("Adapter Lifecycle", () => {
+    it(_"should initialize successfully",_async () => {
+      const freshAdapter = new TestMockRealtimeAdapter();
+      await expect(freshAdapter.initialize()).resolves.toBeUndefined();
+      await freshAdapter.cleanup();
+    });
+
+    it(_"should cleanup successfully",_async () => {
+      await expect(adapter.cleanup()).resolves.toBeUndefined();
+      expect(adapter.getActiveChannels()).toEqual([]);
+    });
+  });
+>>>>>>> origin/main
 
   describe("Channel Management", () => {
     const channelId = "test-channel-123";
@@ -219,7 +237,11 @@ describe("Realtime Event Adapter (Basic)", () => {
         id: "participant-1",
         name: "Dr. Silva",
         _role: "doctor",
+<<<<<<< HEAD
       }
+=======
+      });
+>>>>>>> origin/main
 
       await adapter.joinChannel(channelId, participant
 
@@ -237,7 +259,11 @@ describe("Realtime Event Adapter (Basic)", () => {
     }
 
     it(_"should leave channel successfully",_async () => {
+<<<<<<< HEAD
       const participant = adapter.createMockParticipant(
+=======
+      const participant = adapter.createMockParticipant();
+>>>>>>> origin/main
 
       // First join
       await adapter.joinChannel(channelId, participant
@@ -257,7 +283,11 @@ describe("Realtime Event Adapter (Basic)", () => {
     }
 
     it(_"should update participant status",_async () => {
+<<<<<<< HEAD
       const participant = adapter.createMockParticipant(
+=======
+      const participant = adapter.createMockParticipant();
+>>>>>>> origin/main
 
       // First join
       await adapter.joinChannel(channelId, participant
@@ -271,10 +301,17 @@ describe("Realtime Event Adapter (Basic)", () => {
 
       // Verify status change event
       const statusEvent = capturedEvents.find((e) => e.type === "status_change",
+<<<<<<< HEAD
       
       expect(statusEvent).toBeTruthy(
       expect(statusEvent!.data?.previousStatus).toBe("connected"
       expect(statusEvent!.data?.newStatus).toBe("reconnecting"
+=======
+      );
+      expect(statusEvent).toBeTruthy();
+      expect(statusEvent!.data?.previousStatus).toBe("connected");
+      expect(statusEvent!.data?.newStatus).toBe("reconnecting");
+>>>>>>> origin/main
 
       // Verify participant state
       const channelState = adapter.getChannelState(channelId
@@ -287,13 +324,21 @@ describe("Realtime Event Adapter (Basic)", () => {
         id: "participant-1",
         name: "Dr. Silva",
         _role: "doctor",
+<<<<<<< HEAD
       }
+=======
+      });
+>>>>>>> origin/main
 
       const participant2 = adapter.createMockParticipant({
         id: "participant-2",
         name: "Patient João",
         _role: "patient",
+<<<<<<< HEAD
       }
+=======
+      });
+>>>>>>> origin/main
 
       // Join both participants
       await adapter.joinChannel(channelId, participant1
@@ -315,8 +360,13 @@ describe("Realtime Event Adapter (Basic)", () => {
 
   describe("Error Handling", () => {
     it(_"should handle initialization errors",_async () => {
+<<<<<<< HEAD
       const freshAdapter = new TestMockRealtimeAdapter(
       const participant = adapter.createMockParticipant(
+=======
+      const freshAdapter = new TestMockRealtimeAdapter();
+      const participant = adapter.createMockParticipant();
+>>>>>>> origin/main
 
       // Try to join without initialization
       await expect(
@@ -341,7 +391,11 @@ describe("Realtime Event Adapter (Basic)", () => {
 
   describe("Event Logging", () => {
     it(_"should maintain event log",_async () => {
+<<<<<<< HEAD
       const participant = adapter.createMockParticipant(
+=======
+      const participant = adapter.createMockParticipant();
+>>>>>>> origin/main
       const channelId = "test-channel";
 
       adapter.clearEventLog(

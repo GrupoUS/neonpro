@@ -13,7 +13,11 @@ import {
   SecurityTestConfig,
 } from '../../services/security-testing-framework';
 
+<<<<<<< HEAD
 describe('HealthcareSecurityTestFramework',() => {
+=======
+describe(_'HealthcareSecurityTestFramework',() => {
+>>>>>>> origin/main
   let framework: HealthcareSecurityTestFramework;
   let mockContext: any;
 
@@ -48,12 +52,22 @@ describe('HealthcareSecurityTestFramework',() => {
       config,
     };
 
+<<<<<<< HEAD
   describe('Framework Initialization',() => {
     it('should initialize with default tests',() => {
       const results = framework.getResults(
       expect(results).toHaveLength(0
 
     it('should calculate security score correctly',() => {
+=======
+  describe(_'Framework Initialization',() => {
+    it(_'should initialize with default tests',() => {
+      const results = framework.getResults();
+      expect(results).toHaveLength(0);
+    });
+
+    it(_'should calculate security score correctly',() => {
+>>>>>>> origin/main
       // Add some mock results
       framework['results'] = [
         { passed: true, score: 100 } as any,
@@ -64,12 +78,23 @@ describe('HealthcareSecurityTestFramework',() => {
       const score = framework.getSecurityScore(
       expect(score).toBe(80); // (100 + 80 + 60) / 3
 
+<<<<<<< HEAD
     it('should handle empty results',() => {
       const score = framework.getSecurityScore(
       expect(score).toBe(0
 
   describe('Test Management',() => {
     it('should add custom security tests',() => {
+=======
+    it(_'should handle empty results',() => {
+      const score = framework.getSecurityScore();
+      expect(score).toBe(0);
+    });
+  });
+
+  describe(_'Test Management',() => {
+    it(_'should add custom security tests',() => {
+>>>>>>> origin/main
       const customTest = {
         id: 'custom-test',
         name: 'Custom Security Test',
@@ -90,15 +115,25 @@ describe('HealthcareSecurityTestFramework',() => {
       // Test would be included when runAllTests is called
       expect(customTest.id).toBe('custom-test')
 
+<<<<<<< HEAD
     it('should remove security tests',() => {
       framework.removeTest('security-headers-hsts')
+=======
+    it(_'should remove security tests',() => {
+      framework.removeTest('security-headers-hsts');
+>>>>>>> origin/main
 
       // The test should no longer be available
       // This is tested implicitly by checking if tests run successfully
       expect(framework['tests'].has('security-headers-hsts')).toBe(false);
 
+<<<<<<< HEAD
   describe('Test Execution',() => {
     it('should run HSTS header test',async () => {
+=======
+  describe(_'Test Execution',() => {
+    it(_'should run HSTS header test',async () => {
+>>>>>>> origin/main
       // Mock fetch for HSTS test
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
@@ -120,7 +155,11 @@ describe('HealthcareSecurityTestFramework',() => {
       expect(hstsResult?.passed).toBe(true);
       expect(hstsResult?.score).toBeGreaterThan(90
 
+<<<<<<< HEAD
     it('should handle missing HSTS header',async () => {
+=======
+    it(_'should handle missing HSTS header',async () => {
+>>>>>>> origin/main
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn().mockReturnValue(null),
@@ -137,7 +176,11 @@ describe('HealthcareSecurityTestFramework',() => {
       expect(hstsResult?.issues).toHaveLength(1
       expect(hstsResult?.issues[0].severity).toBe('HIGH')
 
+<<<<<<< HEAD
     it('should run CSP header test',async () => {
+=======
+    it(_'should run CSP header test',async () => {
+>>>>>>> origin/main
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn((name: string) => {
@@ -158,7 +201,11 @@ describe('HealthcareSecurityTestFramework',() => {
       expect(cspResult?.passed).toBe(true);
       expect(cspResult?.score).toBeGreaterThan(80
 
+<<<<<<< HEAD
     it('should handle missing CSP header',async () => {
+=======
+    it(_'should handle missing CSP header',async () => {
+>>>>>>> origin/main
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn().mockReturnValue(null),
@@ -175,7 +222,11 @@ describe('HealthcareSecurityTestFramework',() => {
       expect(cspResult?.issues).toHaveLength(1
       expect(cspResult?.issues[0].severity).toBe('MEDIUM')
 
+<<<<<<< HEAD
     it('should run XSS protection headers test',async () => {
+=======
+    it(_'should run XSS protection headers test',async () => {
+>>>>>>> origin/main
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn((name: string) => {
@@ -198,7 +249,11 @@ describe('HealthcareSecurityTestFramework',() => {
       expect(xssResult?.passed).toBe(true);
       expect(xssResult?.score).toBe(100
 
+<<<<<<< HEAD
     it('should handle missing XSS protection headers',async () => {
+=======
+    it(_'should handle missing XSS protection headers',async () => {
+>>>>>>> origin/main
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn().mockReturnValue(null),
@@ -214,8 +269,13 @@ describe('HealthcareSecurityTestFramework',() => {
       expect(xssResult?.passed).toBe(false);
       expect(xssResult?.issues.length).toBeGreaterThan(0
 
+<<<<<<< HEAD
   describe('Test Configuration',() => {
     it('should respect disabled tests',() => {
+=======
+  describe(_'Test Configuration',() => {
+    it(_'should respect disabled tests',() => {
+>>>>>>> origin/main
       const config: SecurityTestConfig = {
         ...mockContext.config,
         disabledTests: ['security-headers-hsts'],
@@ -227,7 +287,11 @@ describe('HealthcareSecurityTestFramework',() => {
       // Should not include disabled tests in execution
       expect(results).toHaveLength(0
 
+<<<<<<< HEAD
     it('should respect enabled tests whitelist',() => {
+=======
+    it(_'should respect enabled tests whitelist',() => {
+>>>>>>> origin/main
       const config: SecurityTestConfig = {
         ...mockContext.config,
         enabledTests: ['security-headers-hsts'],
@@ -241,9 +305,15 @@ describe('HealthcareSecurityTestFramework',() => {
         true,
       
 
+<<<<<<< HEAD
     it('should handle test timeouts',async () => {
       global.fetch = vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 10000)), // Longer than timeout
       
+=======
+    it(_'should handle test timeouts',async () => {
+      global.fetch = vi.fn().mockImplementation(() => new Promise(resolve => setTimeout(resolve, 10000)), // Longer than timeout
+      );
+>>>>>>> origin/main
 
       const config: SecurityTestConfig = {
         ...mockContext.config,
@@ -260,9 +330,15 @@ describe('HealthcareSecurityTestFramework',() => {
       expect(hstsResult?.passed).toBe(false);
       expect(hstsResult?.issues[0].type).toBe('TEST_ERROR')
 
+<<<<<<< HEAD
   describe('Error Handling',() => {
     it('should handle network errors gracefully',async () => {
       global.fetch = vi.fn().mockRejectedValue(new Error('Network error')
+=======
+  describe(_'Error Handling',() => {
+    it(_'should handle network errors gracefully',async () => {
+      global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
+>>>>>>> origin/main
 
       const results = await framework.runAllTests(mockContext
 
@@ -273,7 +349,11 @@ describe('HealthcareSecurityTestFramework',() => {
       expect(hstsResult?.passed).toBe(false);
       expect(hstsResult?.issues[0].type).toBe('TEST_ERROR')
 
+<<<<<<< HEAD
     it('should handle test function errors',async () => {
+=======
+    it(_'should handle test function errors',async () => {
+>>>>>>> origin/main
       const errorTest = {
         id: 'error-test',
         name: 'Error Test',
@@ -293,8 +373,13 @@ describe('HealthcareSecurityTestFramework',() => {
       expect(errorResult?.score).toBe(0
       expect(errorResult?.issues[0].type).toBe('TEST_ERROR')
 
+<<<<<<< HEAD
   describe('Scoring and Risk Assessment',() => {
     it('should calculate appropriate scores for passed tests',async () => {
+=======
+  describe(_'Scoring and Risk Assessment',() => {
+    it(_'should calculate appropriate scores for passed tests',async () => {
+>>>>>>> origin/main
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn((name: string) => {
@@ -313,7 +398,11 @@ describe('HealthcareSecurityTestFramework',() => {
       
       expect(hstsResult?.score).toBeGreaterThan(90
 
+<<<<<<< HEAD
     it('should calculate reduced scores for tests with issues',async () => {
+=======
+    it(_'should calculate reduced scores for tests with issues',async () => {
+>>>>>>> origin/main
       global.fetch = vi.fn().mockResolvedValue({
         headers: {
           get: vi.fn((name: string) => {
@@ -336,8 +425,13 @@ describe('HealthcareSecurityTestFramework',() => {
         'Consider adding includeSubDomains to HSTS header',
       
 
+<<<<<<< HEAD
   describe('Compliance Validation',() => {
     it('should include LGPD compliance tests when enabled',() => {
+=======
+  describe(_'Compliance Validation',() => {
+    it(_'should include LGPD compliance tests when enabled',() => {
+>>>>>>> origin/main
       const config: SecurityTestConfig = {
         ...mockContext.config,
         validateLGPD: true,
@@ -347,7 +441,11 @@ describe('HealthcareSecurityTestFramework',() => {
 
       expect(lgpdFramework['tests'].has('compliance-lgpd')).toBe(true);
 
+<<<<<<< HEAD
     it('should disable LGPD compliance tests when disabled',() => {
+=======
+    it(_'should disable LGPD compliance tests when disabled',() => {
+>>>>>>> origin/main
       const config: SecurityTestConfig = {
         ...mockContext.config,
         validateLGPD: false,

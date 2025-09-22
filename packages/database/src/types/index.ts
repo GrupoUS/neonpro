@@ -84,5 +84,113 @@ export interface PatientSearchResult {
   offset: number;
 }
 
+<<<<<<< HEAD
 // Re-export for convenience
 export * from './supabase.js';
+=======
+export interface MedicalRecordData {
+  id: string;
+  patientId: string;
+  type: string;
+  content: any;
+  date: string;
+  doctorId?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NotificationData {
+  id: string;
+  recipientId: string;
+  type: string;
+  title: string;
+  message: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AnalyticsData {
+  id: string;
+  type: string;
+  data: any;
+  date: string;
+  metadata?: any;
+  createdAt: string;
+}
+
+export interface ComplianceData {
+  id: string;
+  type: string;
+  status: string;
+  details: any;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IntegrationData {
+  id: string;
+  provider: string;
+  type: string;
+  status: string;
+  config: any;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BackupData {
+  id: string;
+  type: string;
+  status: string;
+  size?: number;
+  createdAt: string;
+  expiresAt?: string;
+}
+
+export interface SecurityData {
+  id: string;
+  type: string;
+  status: string;
+  details: any;
+  createdAt: string;
+}
+
+export interface AuditLogData {
+  id: string;
+  _userId: string;
+  action: string;
+  resource: string;
+  details: any;
+  createdAt: string;
+}
+
+export interface CacheData {
+  key: string;
+  value: any;
+  expiresAt?: string;
+  createdAt: string;
+}
+
+export interface RateLimitData {
+  key: string;
+  count: number;
+  resetAt: string;
+  createdAt: string;
+}
+
+export interface ReportData {
+  id: string;
+  type: string;
+  status: string;
+  data: any;
+  createdAt: string;
+}
+
+export interface MonitoringData {
+  id: string;
+  metric: string;
+  value: number;
+  timestamp: string;
+  metadata?: any;
+}
+>>>>>>> origin/main

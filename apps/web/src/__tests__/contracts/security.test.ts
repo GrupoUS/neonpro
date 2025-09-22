@@ -48,10 +48,17 @@ describe(('Security Contracts', () => {
 
       // Test: Required CSP directives for healthcare
       expectedCSPDirectives.forEach(directive => {
+<<<<<<< HEAD
         expect(typeof directive).toBe('string')
         expect(directive.length).toBeGreaterThan(0
       }
     }
+=======
+        expect(typeof directive).toBe('string');
+        expect(directive.length).toBeGreaterThan(0);
+      });
+    });
+>>>>>>> origin/main
 
     test(('should block unsafe sources for patient data protection', () => {
       // Contract: No unsafe-eval or unsafe-inline in production for patient data security
@@ -154,14 +161,24 @@ describe(('Security Contracts', () => {
 
       // Test: Critical resources and algorithms
       criticalResources.forEach(resource => {
+<<<<<<< HEAD
         expect(typeof resource).toBe('string')
+=======
+        expect(typeof resource).toBe('string');
+>>>>>>> origin/main
         expect(resource.endsWith('.js')).toBe(true);
       }
 
       sriAlgorithms.forEach(algorithm => {
+<<<<<<< HEAD
         expect(['sha256', 'sha384', 'sha512']).toContain(algorithm
       }
     }
+=======
+        expect(['sha256', 'sha384', 'sha512']).toContain(algorithm);
+      });
+    });
+>>>>>>> origin/main
 
     test(('should validate SRI hash format and structure', () => {
       // Contract: SRI hash must follow standard format

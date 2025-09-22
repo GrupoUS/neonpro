@@ -104,15 +104,24 @@ describe("Domain Services Integration Tests", () => {
     }
 
     it(_"should check compliance for patient",_async () => {
+<<<<<<< HEAD
       const complianceCheck = await consentService.checkCompliance("test-patient-id"
       expect(complianceCheck).toBeDefined(
       expect(complianceCheck).toHaveProperty("isCompliant"
       expect(complianceCheck).toHaveProperty("riskLevel"
       expect(complianceCheck).toHaveProperty("violations"
+=======
+      const complianceCheck = await consentService.checkCompliance("test-patient-id");
+      expect(complianceCheck).toBeDefined();
+      expect(complianceCheck).toHaveProperty("isCompliant");
+      expect(complianceCheck).toHaveProperty("riskLevel");
+      expect(complianceCheck).toHaveProperty("violations");
+>>>>>>> origin/main
       expect(Array.isArray(complianceCheck.violations)).toBe(true);
     }
 
     it(_"should revoke consent properly",_async () => {
+<<<<<<< HEAD
       const revokedConsent = await consentService.revokeConsent("test-consent-id"
       expect(revokedConsent).toBeDefined(
       expect(revokedConsent.status).toBe(ConsentStatus.REVOKED
@@ -121,19 +130,40 @@ describe("Domain Services Integration Tests", () => {
 
     it(_"should find consents by patient",_async () => {
       const consents = await consentService.findConsentsByPatient("test-patient-id"
+=======
+      const revokedConsent = await consentService.revokeConsent("test-consent-id");
+      expect(revokedConsent).toBeDefined();
+      expect(revokedConsent.status).toBe(ConsentStatus.REVOKED);
+      expect(revokedConsent.revokedAt).toBeDefined();
+    });
+
+    it(_"should find consents by patient",_async () => {
+      const consents = await consentService.findConsentsByPatient("test-patient-id");
+>>>>>>> origin/main
       expect(Array.isArray(consents)).toBe(true);
     }
 
     it(_"should get active consents for patient",_async () => {
+<<<<<<< HEAD
       const activeConsents = await consentService.getActiveConsents("test-patient-id"
+=======
+      const activeConsents = await consentService.getActiveConsents("test-patient-id");
+>>>>>>> origin/main
       expect(Array.isArray(activeConsents)).toBe(true);
     }
 
     it(_"should check for specific consent type",_async () => {
+<<<<<<< HEAD
       const hasConsent = await consentService.hasActiveConsent("test-patient-id", ConsentType.DATA_PROCESSING
       expect(typeof hasConsent).toBe("boolean"
     }
   }
+=======
+      const hasConsent = await consentService.hasActiveConsent("test-patient-id", ConsentType.DATA_PROCESSING);
+      expect(typeof hasConsent).toBe("boolean");
+    });
+  });
+>>>>>>> origin/main
 
   describe("Domain Service Benefits", () => {
     it("should encapsulate business logic", () => {
@@ -158,10 +188,17 @@ describe("Domain Services Integration Tests", () => {
 
   describe("Cross-Service Integration", () => {
     it(_"should work with audit service integration",_async () => {
+<<<<<<< HEAD
       const auditService = container.getAuditService(
       expect(auditService).toBeDefined(
       expect(typeof auditService.createAuditLog).toBe("function"
     }
+=======
+      const auditService = container.getAuditService();
+      expect(auditService).toBeDefined();
+      expect(typeof auditService.createAuditLog).toBe("function");
+    });
+>>>>>>> origin/main
 
     it("should provide consistent service interfaces", () => {
       const services = container.getServices(

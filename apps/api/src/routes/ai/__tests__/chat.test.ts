@@ -59,9 +59,15 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
           processingTime: 1250),
         },
         _context: {
+<<<<<<< HEAD
           healthcareContext: true),
           medicalTerminology: 'portuguese'),
           complianceLevel: 'LGPD'),
+=======
+          healthcareContext: true,
+          medicalTerminology: 'portuguese',
+          complianceLevel: 'LGPD',
+>>>>>>> origin/main
         },
         metadata: {
           timestamp: '2024-01-16T10:30:00Z'),
@@ -88,6 +94,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         conversationId: 'conv-123'),
         messages: [
           {
+<<<<<<< HEAD
             id: 'msg-001'),
             _role: 'user'),
             content: 'Olá, preciso de ajuda com tratamentos estéticos.'),
@@ -96,6 +103,16 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
           {
             id: 'msg-002'),
             _role: 'assistant'),
+=======
+            id: 'msg-001',
+            _role: 'user',
+            content: 'Olá, preciso de ajuda com tratamentos estéticos.',
+            timestamp: '2024-01-16T10:25:00Z',
+          },
+          {
+            id: 'msg-002',
+            _role: 'assistant',
+>>>>>>> origin/main
             content:
               'Olá! Posso ajudá-lo com informações sobre tratamentos estéticos. Qual é sua dúvida específica?'),
             timestamp: '2024-01-16T10:25:30Z'),
@@ -141,9 +158,15 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
           processingTime: 1250),
         },
         _context: {
+<<<<<<< HEAD
           healthcareContext: true),
           medicalTerminology: 'portuguese'),
           complianceLevel: 'LGPD'),
+=======
+          healthcareContext: true,
+          medicalTerminology: 'portuguese',
+          complianceLevel: 'LGPD',
+>>>>>>> origin/main
         },
         metadata: {
           timestamp: '2024-01-16T10:30:00Z'),
@@ -182,6 +205,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     vi.restoreAllMocks(
   }
 
+<<<<<<< HEAD
   it(''should export AI chat route handler',async () => {
     const module = await import('../chat.js')
     expect(module.default).toBeDefined(
@@ -197,6 +221,23 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         _context: {
           healthcareContext: true),
           language: 'pt-BR'),
+=======
+  it(_'should export AI chat route handler',async () => {
+    const module = await import('../chat.js');
+    expect(module.default).toBeDefined();
+  });
+
+  describe(_'Successful AI Chat Operations'), () => {
+    it(_'should send message to AI with default model',async () => {
+      const { default: chatRoute } = await import('../chat.js');
+
+      const chatData = {
+        message: 'Olá, preciso de informações sobre tratamentos de rejuvenescimento facial.',
+        conversationId: 'conv-123',
+        _context: {
+          healthcareContext: true,
+          language: 'pt-BR',
+>>>>>>> origin/main
         },
       };
 
@@ -221,6 +262,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(data.data.response.confidence).toBeGreaterThan(0.9
     }
 
+<<<<<<< HEAD
     it(''should send message with specific model preference',async () => {
       const { default: chatRoute } = await import('../chat.js')
 
@@ -232,6 +274,19 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
           healthcareContext: true),
           medicalContext: true),
           language: 'pt-BR'),
+=======
+    it(_'should send message with specific model preference',async () => {
+      const { default: chatRoute } = await import('../chat.js');
+
+      const chatData = {
+        message: 'Quais são os riscos do preenchimento labial?',
+        conversationId: 'conv-456',
+        modelPreference: 'claude-3',
+        _context: {
+          healthcareContext: true,
+          medicalContext: true,
+          language: 'pt-BR',
+>>>>>>> origin/main
         },
       };
 
@@ -255,8 +310,13 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         model: 'gpt-4o'),
         messages: [
           {
+<<<<<<< HEAD
             _role: 'user'),
             content: 'Quais são os riscos do preenchimento labial?'),
+=======
+            _role: 'user',
+            content: 'Quais são os riscos do preenchimento labial?',
+>>>>>>> origin/main
           },
         ],
         patientId: undefined),
@@ -265,6 +325,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       }
     }
 
+<<<<<<< HEAD
     it(''should initiate streaming chat response',async () => {
       const { default: chatRoute } = await import('../chat.js')
 
@@ -275,6 +336,18 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         _context: {
           healthcareContext: true),
           detailedResponse: true),
+=======
+    it(_'should initiate streaming chat response',async () => {
+      const { default: chatRoute } = await import('../chat.js');
+
+      const chatData = {
+        message: 'Explique o processo de aplicação de botox passo a passo.',
+        conversationId: 'conv-789',
+        streaming: true,
+        _context: {
+          healthcareContext: true,
+          detailedResponse: true,
+>>>>>>> origin/main
         },
       };
 
@@ -298,6 +371,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(mockAIChatService.streamMessage).toHaveBeenCalled(
     }
 
+<<<<<<< HEAD
     it(''should include patient context when provided',async () => {
       const { default: chatRoute } = await import('../chat.js')
 
@@ -308,6 +382,18 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         _context: {
           healthcareContext: true),
           includePatientHistory: true),
+=======
+    it(_'should include patient context when provided',async () => {
+      const { default: chatRoute } = await import('../chat.js');
+
+      const chatData = {
+        message: 'Com base no histórico da paciente, qual tratamento você recomendaria?',
+        conversationId: 'conv-patient-123',
+        patientId: 'patient-123',
+        _context: {
+          healthcareContext: true,
+          includePatientHistory: true,
+>>>>>>> origin/main
         },
       };
 
@@ -328,6 +414,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(response.status).toBe(200
       expect(data.success).toBe(true);
       expect(mockPatientService.getPatientContext).toHaveBeenCalledWith({
+<<<<<<< HEAD
         patientId: 'patient-123'),
         _userId: 'user-123'),
         includeHistory: true),
@@ -336,6 +423,16 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
 
     it(''should include AI performance headers',async () => {
       const { default: chatRoute } = await import('../chat.js')
+=======
+        patientId: 'patient-123',
+        _userId: 'user-123',
+        includeHistory: true,
+      });
+    });
+
+    it(_'should include AI performance headers',async () => {
+      const { default: chatRoute } = await import('../chat.js');
+>>>>>>> origin/main
 
       const chatData = {
         message: 'Teste de performance'),
@@ -361,7 +458,11 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(response.headers.get('X-AI-Provider')).toBe('openai')
     }
 
+<<<<<<< HEAD
     it(''should handle model fallback scenarios',async () => {
+=======
+    it(_'should handle model fallback scenarios',async () => {
+>>>>>>> origin/main
       mockAIChatService.generateResponse.mockResolvedValueOnce({
         success: true),
         data: {
@@ -418,9 +519,15 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     }
   }
 
+<<<<<<< HEAD
   describe(''LGPD Compliance and Data Access', () => {
     it(''should validate LGPD data access for AI chat',async () => {
       const { default: chatRoute } = await import('../chat.js')
+=======
+  describe(_'LGPD Compliance and Data Access'), () => {
+    it(_'should validate LGPD data access for AI chat',async () => {
+      const { default: chatRoute } = await import('../chat.js');
+>>>>>>> origin/main
 
       const chatData = {
         message: 'Preciso de informações sobre tratamentos.'),
@@ -439,6 +546,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       
 
       expect(mockLGPDService.validateDataAccess).toHaveBeenCalledWith({
+<<<<<<< HEAD
         _userId: 'user-123'),
         dataType: 'ai_chat'),
         purpose: 'healthcare_assistance'),
@@ -449,6 +557,18 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
 
     it(''should log AI chat activity for audit trail',async () => {
       const { default: chatRoute } = await import('../chat.js')
+=======
+        _userId: 'user-123',
+        dataType: 'ai_chat',
+        purpose: 'healthcare_assistance',
+        legalBasis: 'legitimate_interest',
+        patientId: 'patient-123',
+      });
+    });
+
+    it(_'should log AI chat activity for audit trail',async () => {
+      const { default: chatRoute } = await import('../chat.js');
+>>>>>>> origin/main
 
       const chatData = {
         message: 'Quais são os cuidados pós-botox?'),
@@ -469,10 +589,17 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       
 
       expect(mockAuditService.logActivity).toHaveBeenCalledWith({
+<<<<<<< HEAD
         _userId: 'user-123'),
         action: 'ai_chat_message'),
         resourceType: 'ai_conversation'),
         resourceId: 'conv-audit'),
+=======
+        _userId: 'user-123',
+        action: 'ai_chat_message',
+        resourceType: 'ai_conversation',
+        resourceId: 'conv-audit',
+>>>>>>> origin/main
         details: {
           messageLength: chatData.message.length),
           model: 'gpt-4'),
@@ -489,7 +616,11 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       }
     }
 
+<<<<<<< HEAD
     it(''should handle LGPD access denial for AI chat',async () => {
+=======
+    it(_'should handle LGPD access denial for AI chat',async () => {
+>>>>>>> origin/main
       // Reset and set up the mock for this specific test
       const { setServices } = await import('../chat.js')
       setServices({
@@ -531,7 +662,11 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(data.code).toBe('LGPD_AI_CHAT_DENIED')
     }
 
+<<<<<<< HEAD
     it(''should mask sensitive data in chat responses',async () => {
+=======
+    it(_'should mask sensitive data in chat responses',async () => {
+>>>>>>> origin/main
       // Reset and set up the mock for this specific test
       const { setServices } = await import('../chat.js')
       setServices({
@@ -588,9 +723,15 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     }
   }
 
+<<<<<<< HEAD
   describe(''Error Handling', () => {
     it(''should handle authentication errors',async () => {
       const { default: chatRoute } = await import('../chat.js')
+=======
+  describe(_'Error Handling'), () => {
+    it(_'should handle authentication errors',async () => {
+      const { default: chatRoute } = await import('../chat.js');
+>>>>>>> origin/main
 
       const response = await chatRoute.request(
         new Request('http://localhost/', {
@@ -609,8 +750,13 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(data.error).toContain('Não autorizado')
     }
 
+<<<<<<< HEAD
     it(''should handle validation errors for chat data',async () => {
       const { default: chatRoute } = await import('../chat.js')
+=======
+    it(_'should handle validation errors for chat data',async () => {
+      const { default: chatRoute } = await import('../chat.js');
+>>>>>>> origin/main
 
       const invalidChatData = {
         // Missing required message
@@ -636,7 +782,11 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(data.error || data.message).toBeDefined(
     }
 
+<<<<<<< HEAD
     it(''should handle AI service errors gracefully',async () => {
+=======
+    it(_'should handle AI service errors gracefully',async () => {
+>>>>>>> origin/main
       mockAIChatService.sendMessage.mockResolvedValue({
         success: false),
         error: 'Erro interno do serviço de IA'),
@@ -667,7 +817,11 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(data.error).toContain('Erro interno')
     }
 
+<<<<<<< HEAD
     it(''should handle AI model unavailability',async () => {
+=======
+    it(_'should handle AI model unavailability',async () => {
+>>>>>>> origin/main
       mockAIChatService.sendMessage.mockRejectedValue(
         new Error('All AI models unavailable'),
       
@@ -699,12 +853,21 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     }
   }
 
+<<<<<<< HEAD
   describe(''Brazilian Healthcare Compliance', () => {
     it(''should include CFM compliance headers',async () => {
       const { default: chatRoute } = await import('../chat.js')
 
       const chatData = {
         message: 'Informações médicas sobre tratamento'),
+=======
+  describe(_'Brazilian Healthcare Compliance'), () => {
+    it(_'should include CFM compliance headers',async () => {
+      const { default: chatRoute } = await import('../chat.js');
+
+      const chatData = {
+        message: 'Informações médicas sobre tratamento',
+>>>>>>> origin/main
         _context: { medicalContext: true },
       };
 
@@ -725,6 +888,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(response.headers.get('X-Medical-AI-Logged')).toBe('true')
     }
 
+<<<<<<< HEAD
     it(''should validate healthcare professional context for medical AI',async () => {
       const { default: chatRoute } = await import('../chat.js')
 
@@ -733,6 +897,16 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         _context: {
           medicalContext: true),
           diagnosticAssistance: true),
+=======
+    it(_'should validate healthcare professional context for medical AI',async () => {
+      const { default: chatRoute } = await import('../chat.js');
+
+      const chatData = {
+        message: 'Diagnóstico diferencial para sintomas apresentados',
+        _context: {
+          medicalContext: true,
+          diagnosticAssistance: true,
+>>>>>>> origin/main
         },
       };
 
@@ -753,6 +927,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(mockAIChatService.sendMessage).toHaveBeenCalledWith(
         expect.objectContaining({
           _context: expect.objectContaining({
+<<<<<<< HEAD
             healthcareProfessional: 'CRM-SP-123456'),
             healthcareContext: 'diagnostic_assistance'),
           },
@@ -764,6 +939,19 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
   describe(''Performance and Streaming', () => {
     it(''should include performance metrics in response',async () => {
       const { default: chatRoute } = await import('../chat.js')
+=======
+            healthcareProfessional: 'CRM-SP-123456',
+            healthcareContext: 'diagnostic_assistance',
+          }),
+        }),
+      );
+    });
+  });
+
+  describe(_'Performance and Streaming'), () => {
+    it(_'should include performance metrics in response',async () => {
+      const { default: chatRoute } = await import('../chat.js');
+>>>>>>> origin/main
 
       const chatData = {
         message: 'Teste de métricas de performance'),
@@ -789,6 +977,7 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(response.headers.get('X-AI-Processing-Time')).toBe('1250ms')
     }
 
+<<<<<<< HEAD
     it(''should handle streaming requests properly',async () => {
       const { default: chatRoute } = await import('../chat.js')
 
@@ -797,6 +986,16 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
         streaming: true),
         _context: {
           expectedLength: 'long'),
+=======
+    it(_'should handle streaming requests properly',async () => {
+      const { default: chatRoute } = await import('../chat.js');
+
+      const chatData = {
+        message: 'Resposta longa que precisa de streaming',
+        streaming: true,
+        _context: {
+          expectedLength: 'long',
+>>>>>>> origin/main
         },
       };
 

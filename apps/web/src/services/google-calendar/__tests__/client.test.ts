@@ -151,7 +151,11 @@ describe(('GoogleCalendarClient', () => {
 
   describe(('Authentication', () => {
     it(('should generate auth URL with correct scopes', () => {
+<<<<<<< HEAD
       const authUrl = client.getAuthUrl(
+=======
+      const authUrl = client.getAuthUrl();
+>>>>>>> origin/main
 
       expect(authUrl).toContain('client_id=test-client-id')
       expect(authUrl).toContain(
@@ -179,7 +183,11 @@ describe(('GoogleCalendarClient', () => {
     }
 
     it(_'should refresh expired tokens',async () => {
+<<<<<<< HEAD
       await client.refreshTokens(
+=======
+      await client.refreshTokens();
+>>>>>>> origin/main
 
       expect(mockGoogleAuth.refreshToken).toHaveBeenCalled(
     }
@@ -195,7 +203,11 @@ describe(('GoogleCalendarClient', () => {
     }
 
     it(_'should fetch calendar list',async () => {
+<<<<<<< HEAD
       const calendars = await client.listCalendars(
+=======
+      const calendars = await client.listCalendars();
+>>>>>>> origin/main
 
       expect(mockCalendar.calendars.list).toHaveBeenCalled(
       expect(calendars).toHaveLength(2
@@ -259,7 +271,11 @@ describe(('GoogleCalendarClient', () => {
     }
 
     it(_'should delete events with audit logging',async () => {
+<<<<<<< HEAD
       await client.deleteEvent('primary', 'event-123')
+=======
+      await client.deleteEvent('primary', 'event-123');
+>>>>>>> origin/main
 
       expect(mockCalendar.events.delete).toHaveBeenCalledWith({
         calendarId: 'primary',
@@ -268,8 +284,13 @@ describe(('GoogleCalendarClient', () => {
     }
 
     it(_'should list events with time range filter',async () => {
+<<<<<<< HEAD
       const start = new Date('2024-01-01T00:00:00')
       const end = new Date('2024-01-31T23:59:59')
+=======
+      const start = new Date('2024-01-01T00:00:00');
+      const end = new Date('2024-01-31T23:59:59');
+>>>>>>> origin/main
 
       const events = await client.listEvents('primary', start, end
 
@@ -286,7 +307,11 @@ describe(('GoogleCalendarClient', () => {
     }
 
     it(_'should cancel events gracefully',async () => {
+<<<<<<< HEAD
       await client.cancelEvent('primary', 'event-123')
+=======
+      await client.cancelEvent('primary', 'event-123');
+>>>>>>> origin/main
 
       expect(mockCalendar.events.patch).toHaveBeenCalledWith({
         calendarId: 'primary',
@@ -326,7 +351,11 @@ describe(('GoogleCalendarClient', () => {
     }
 
     it(_'should handle network errors',async () => {
+<<<<<<< HEAD
       mockCalendar.events.insert.mockRejectedValue(new Error('Network error')
+=======
+      mockCalendar.events.insert.mockRejectedValue(new Error('Network error'));
+>>>>>>> origin/main
 
       await expect(
         client.createEvent('primary', {

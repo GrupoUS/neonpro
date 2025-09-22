@@ -15,8 +15,13 @@ describe('Chat error handling', () => {
     
     await expect(
       streamAestheticResponse([{ _role: 'user', content: 'oi' }]),
+<<<<<<< HEAD
     ).rejects.toThrow(/HTTP 500/
   }
+=======
+    ).rejects.toThrow(/HTTP 500/);
+  });
+>>>>>>> origin/main
 
   it('maps rate limit (429)', async () => {
     vi.stubGlobal(
@@ -25,8 +30,13 @@ describe('Chat error handling', () => {
     
     await expect(
       streamAestheticResponse([{ _role: 'user', content: 'oi' }]),
+<<<<<<< HEAD
     ).rejects.toThrow(/HTTP 429/
   }
+=======
+    ).rejects.toThrow(/HTTP 429/);
+  });
+>>>>>>> origin/main
 
   it('maps timeout when body is missing', async () => {
     vi.stubGlobal(
@@ -35,6 +45,12 @@ describe('Chat error handling', () => {
     
     await expect(
       streamAestheticResponse([{ _role: 'user', content: 'oi' }]),
+<<<<<<< HEAD
     ).rejects.toThrow(/missing body/
   }
 }
+=======
+    ).rejects.toThrow(/missing body/);
+  });
+});
+>>>>>>> origin/main

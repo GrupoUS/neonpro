@@ -163,7 +163,7 @@ export class AuditLogger {
     await this.log({
       userId,
       action: `healthcare_data_${action}`,
-      resource: 'patient_data',
+      resource: 'patient_data_,
       resourceId: patientId,
       metadata: {
         ...metadata,
@@ -219,7 +219,7 @@ export class AuditLogger {
     await this.log({
       userId,
       action: `ai_${action}`,
-      resource: 'ai_model',
+      resource: 'ai_model_,
       resourceId: model,
       metadata: aiMetadata as Record<string, unknown>,
       success: true,
@@ -247,7 +247,7 @@ export class AuditLogger {
     // Serialize metadata safely
     const serializedMetadata = this.serializeMetadata(entry.metadata);
 
-    const { error } = await this.supabase.from('audit_logs').insert({
+    const { error } = await this.supabase.from('audit_logs_).insert({
       user_id: entry.userId,
       action: entry.action,
       resource_type: entry.resource,
@@ -255,7 +255,7 @@ export class AuditLogger {
       new_values: serializedMetadata as any,
       ip_address: entry.ipAddress || null,
       user_agent: entry.userAgent,
-      lgpd_basis: entry.lgpdCompliant ? 'legitimate_interest' : null,
+      lgpd_basis: entry.lgpdCompliant ? 'legitimate_interest_ : null,
       created_at: entry.timestamp?.toISOString(),
     });
 

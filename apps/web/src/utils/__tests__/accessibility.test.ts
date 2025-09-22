@@ -120,8 +120,13 @@ describe(('WCAG Contrast Calculations', () => {
 
 describe(('Accessible ID Generation', () => {
   it(('should generate unique IDs', () => {
+<<<<<<< HEAD
     const id1 = generateAccessibleId(
     const id2 = generateAccessibleId(
+=======
+    const id1 = generateAccessibleId();
+    const id2 = generateAccessibleId();
+>>>>>>> origin/main
 
     expect(id1).not.toBe(id2
     expect(id1).toMatch(/^a11y-[a-z0-9]+$/
@@ -129,6 +134,7 @@ describe(('Accessible ID Generation', () => {
   }
 
   it(('should use custom prefix', () => {
+<<<<<<< HEAD
     const id = generateAccessibleId('custom')
     expect(id).toMatch(/^custom-[a-z0-9]+$/
   }
@@ -137,6 +143,16 @@ describe(('Accessible ID Generation', () => {
 describe(('Healthcare Form ARIA', () => {
   it(('should create proper ARIA attributes for required fields', () => {
     const aria = createHealthcareFormAria('patientName', true, false
+=======
+    const id = generateAccessibleId('custom');
+    expect(id).toMatch(/^custom-[a-z0-9]+$/);
+  });
+});
+
+describe(('Healthcare Form ARIA', () => {
+  it(('should create proper ARIA attributes for required fields', () => {
+    const aria = createHealthcareFormAria('patientName', true, false);
+>>>>>>> origin/main
 
     expect(aria['aria-required']).toBe(true);
     expect(aria['aria-invalid']).toBe(false);
@@ -157,6 +173,7 @@ describe(('Healthcare Form ARIA', () => {
   }
 
   it(('should include Brazilian Portuguese labels', () => {
+<<<<<<< HEAD
     const aria = createHealthcareFormAria('patientData', false, false
     expect(aria['aria-label']).toBe(ACCESSIBILITY_LABELS_PT_BR.patientData
   }
@@ -165,17 +182,36 @@ describe(('Healthcare Form ARIA', () => {
 describe(('Live Region ARIA', () => {
   it(('should create polite live region by default', () => {
     const aria = createLiveRegionAria(
+=======
+    const aria = createHealthcareFormAria('patientData', false, false);
+    expect(aria['aria-label']).toBe(ACCESSIBILITY_LABELS_PT_BR.patientData);
+  });
+});
+
+describe(('Live Region ARIA', () => {
+  it(('should create polite live region by default', () => {
+    const aria = createLiveRegionAria();
+>>>>>>> origin/main
 
     expect(aria['aria-live']).toBe('polite')
     expect(aria['aria-atomic']).toBe(false);
+<<<<<<< HEAD
     expect(aria._role).toBe('status')
   }
 
   it(('should create assertive live region when specified', () => {
     const aria = createLiveRegionAria('assertive', true
+=======
+    expect(aria._role).toBe('status');
+  });
+
+  it(('should create assertive live region when specified', () => {
+    const aria = createLiveRegionAria('assertive', true);
+>>>>>>> origin/main
 
     expect(aria['aria-live']).toBe('assertive')
     expect(aria['aria-atomic']).toBe(true);
+<<<<<<< HEAD
     expect(aria._role).toBe('status')
   }
 }
@@ -183,6 +219,15 @@ describe(('Live Region ARIA', () => {
 describe(('Focus Manager', () => {
   it(('should save and restore focus', () => {
     const restoreFocus = FocusManager.saveFocus(
+=======
+    expect(aria._role).toBe('status');
+  });
+});
+
+describe(('Focus Manager', () => {
+  it(('should save and restore focus', () => {
+    const restoreFocus = FocusManager.saveFocus();
+>>>>>>> origin/main
 
     // Simulate focus change
     const newElement = { focus: vi.fn() };
@@ -206,9 +251,15 @@ describe(('Focus Manager', () => {
   }
 
   it(('should announce to screen readers', () => {
+<<<<<<< HEAD
     vi.useFakeTimers(
     const spy = vi.spyOn(document.body, 'appendChild')
     const removeSpy = vi.spyOn(document.body, 'removeChild')
+=======
+    vi.useFakeTimers();
+    const spy = vi.spyOn(document.body, 'appendChild');
+    const removeSpy = vi.spyOn(document.body, 'removeChild');
+>>>>>>> origin/main
 
     FocusManager.announceToScreenReader('Test message')
 
@@ -224,8 +275,13 @@ describe(('Focus Manager', () => {
 
 describe(('Keyboard Navigation', () => {
   it(('should handle grid navigation correctly', () => {
+<<<<<<< HEAD
     const onNavigate = vi.fn(
     const event = new KeyboardEvent('keydown', { key: 'ArrowRight' }
+=======
+    const onNavigate = vi.fn();
+    const event = new KeyboardEvent('keydown', { key: 'ArrowRight' });
+>>>>>>> origin/main
 
     KeyboardNavigation.handleGridNavigation(event, 0, 9, 3, onNavigate
 
@@ -233,8 +289,13 @@ describe(('Keyboard Navigation', () => {
   }
 
   it(('should handle list navigation correctly', () => {
+<<<<<<< HEAD
     const onNavigate = vi.fn(
     const event = new KeyboardEvent('keydown', { key: 'ArrowDown' }
+=======
+    const onNavigate = vi.fn();
+    const event = new KeyboardEvent('keydown', { key: 'ArrowDown' });
+>>>>>>> origin/main
 
     KeyboardNavigation.handleListNavigation(event, 0, 5, onNavigate
 
@@ -242,7 +303,11 @@ describe(('Keyboard Navigation', () => {
   }
 
   it(('should handle Home and End keys', () => {
+<<<<<<< HEAD
     const onNavigate = vi.fn(
+=======
+    const onNavigate = vi.fn();
+>>>>>>> origin/main
 
     // Test Home key
     const homeEvent = new KeyboardEvent('keydown', { key: 'Home' }
@@ -256,7 +321,11 @@ describe(('Keyboard Navigation', () => {
   }
 
   it(('should handle wrapping in list navigation', () => {
+<<<<<<< HEAD
     const onNavigate = vi.fn(
+=======
+    const onNavigate = vi.fn();
+>>>>>>> origin/main
 
     // Test wrap from last to first
     const event = new KeyboardEvent('keydown', { key: 'ArrowDown' }
@@ -276,25 +345,42 @@ describe(('Screen Reader Utils', () => {
   }
 
   it(('should format dates for Brazilian Portuguese', () => {
+<<<<<<< HEAD
     const date = new Date('2024-01-15')
     const formatted = ScreenReaderUtils.formatDateForScreenReader(date
+=======
+    const date = new Date('2024-01-15');
+    const formatted = ScreenReaderUtils.formatDateForScreenReader(date);
+>>>>>>> origin/main
 
     expect(formatted).toContain('janeiro')
     expect(formatted).toContain('2024')
   }
 
   it(('should format time for Brazilian Portuguese', () => {
+<<<<<<< HEAD
     const date = new Date('2024-01-15T14:30:00')
     const formatted = ScreenReaderUtils.formatTimeForScreenReader(date
+=======
+    const date = new Date('2024-01-15T14:30:00');
+    const formatted = ScreenReaderUtils.formatTimeForScreenReader(date);
+>>>>>>> origin/main
 
     expect(formatted).toMatch(/14:30/
   }
 
   it(('should create accessible table captions', () => {
+<<<<<<< HEAD
     const caption = ScreenReaderUtils.createTableCaption('Pacientes', 10, 5
     expect(caption).toBe('Pacientes. Tabela com 10 linhas e 5 colunas.')
   }
 }
+=======
+    const caption = ScreenReaderUtils.createTableCaption('Pacientes', 10, 5);
+    expect(caption).toBe('Pacientes. Tabela com 10 linhas e 5 colunas.');
+  });
+});
+>>>>>>> origin/main
 
 describe(('User Preferences', () => {
   it(('should detect reduced motion preference', () => {
@@ -332,6 +418,7 @@ describe(('User Preferences', () => {
 
 describe(('Error Messages', () => {
   it(('should create accessible error messages', () => {
+<<<<<<< HEAD
     const error = createAccessibleErrorMessage('email', 'Email inválido')
 
     expect(error.id).toMatch(/^email-error-[a-z0-9]+$/
@@ -355,6 +442,31 @@ describe(('Constants and Labels', () => {
     expect(HEALTHCARE_ARIA_ROLES.emergencyAlert).toBe('alert')
     expect(HEALTHCARE_ARIA_ROLES.appointmentSchedule).toBe('grid')
   }
+=======
+    const error = createAccessibleErrorMessage('email', 'Email inválido');
+
+    expect(error.id).toMatch(/^email-error-[a-z0-9]+$/);
+    expect(error.message).toBe('Email inválido');
+    expect(error.ariaAttributes._role).toBe('alert');
+    expect(error.ariaAttributes['aria-live']).toBe('assertive');
+    expect(error.ariaAttributes['aria-atomic']).toBe('true');
+  });
+});
+
+describe(('Constants and Labels', () => {
+  it(('should have correct WCAG contrast ratios', () => {
+    expect(WCAG_CONTRAST_RATIOS.AA_NORMAL).toBe(4.5);
+    expect(WCAG_CONTRAST_RATIOS.AA_LARGE).toBe(3.0);
+    expect(WCAG_CONTRAST_RATIOS.AAA_NORMAL).toBe(7.0);
+    expect(WCAG_CONTRAST_RATIOS.AAA_LARGE).toBe(4.5);
+  });
+
+  it(('should have healthcare-specific ARIA roles', () => {
+    expect(HEALTHCARE_ARIA_ROLES.patientInfo).toBe('region');
+    expect(HEALTHCARE_ARIA_ROLES.emergencyAlert).toBe('alert');
+    expect(HEALTHCARE_ARIA_ROLES.appointmentSchedule).toBe('grid');
+  });
+>>>>>>> origin/main
 
   it(('should have Brazilian Portuguese accessibility labels', () => {
     expect(ACCESSIBILITY_LABELS_PT_BR.mainNavigation).toBe(

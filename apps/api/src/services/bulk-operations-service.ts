@@ -577,15 +577,26 @@ export class BulkOperationsService {
       }
 
       logger.debug('User permissions validated', {
+<<<<<<< HEAD
         _userId: _request.requesterUserId,
         _role: user.role,
         operationType: _request.operationType,
+=======
+        _userId: request.requesterUserId,
+        _role: user.role,
+        operationType: request.operationType,
+>>>>>>> origin/main
         allowedRoles: config.allowedRoles,
       });
     } catch (error) {
       logger.error('User permission validation failed', {
+<<<<<<< HEAD
         _userId: _request.requesterUserId,
         operationType: _request.operationType,
+=======
+        _userId: request.requesterUserId,
+        operationType: request.operationType,
+>>>>>>> origin/main
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;
@@ -643,6 +654,7 @@ export class BulkOperationsService {
       }
 
       logger.debug('Clinic access validated', {
+<<<<<<< HEAD
         _userId: _request.requesterUserId,
         clinicId: _request.clinicId,
         entityType: _request.entityType,
@@ -652,6 +664,17 @@ export class BulkOperationsService {
       logger.error('Clinic access validation failed', {
         _userId: _request.requesterUserId,
         clinicId: _request.clinicId,
+=======
+        _userId: request.requesterUserId,
+        clinicId: request.clinicId,
+        entityType: request.entityType,
+        entityCount: request.entityIds.length,
+      });
+    } catch (error) {
+      logger.error('Clinic access validation failed', {
+        _userId: request.requesterUserId,
+        clinicId: request.clinicId,
+>>>>>>> origin/main
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;
@@ -695,10 +718,17 @@ export class BulkOperationsService {
 
         // Log consent validation for audit purposes
         logger.info('LGPD consent validated for bulk operation', {
+<<<<<<< HEAD
           _userId: _request.requesterUserId,
           operationType: _request.operationType,
           entityType: _request.entityType,
           entityCount: _request.entityIds.length,
+=======
+          _userId: request.requesterUserId,
+          operationType: request.operationType,
+          entityType: request.entityType,
+          entityCount: request.entityIds.length,
+>>>>>>> origin/main
           patientsWithConsent: patientsWithConsent.size,
         });
       }
@@ -742,9 +772,15 @@ export class BulkOperationsService {
       }
     } catch (error) {
       logger.error('LGPD consent validation failed', {
+<<<<<<< HEAD
         _userId: _request.requesterUserId,
         operationType: _request.operationType,
         entityType: _request.entityType,
+=======
+        _userId: request.requesterUserId,
+        operationType: request.operationType,
+        entityType: request.entityType,
+>>>>>>> origin/main
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;

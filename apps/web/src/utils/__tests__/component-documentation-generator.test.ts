@@ -171,7 +171,11 @@ describe(('Component Documentation Generator', () => {
 
   describe(('Healthcare Component Documentation', () => {
     it(('should generate report with healthcare components', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
 
       expect(report.components.length).toBeGreaterThan(0
       expect(report.totalComponents).toBe(report.components.length
@@ -180,7 +184,11 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should include Patient Card component', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
       
@@ -196,7 +204,11 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should include Appointment Scheduler component', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const scheduler = report.components.find(
         c => c.id === 'appointment-scheduler',
       
@@ -214,7 +226,11 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should include Mobile Accessibility Hook', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const hook = report.components.find(
         c => c.id === 'use-mobile-accessibility',
       
@@ -231,7 +247,11 @@ describe(('Component Documentation Generator', () => {
 
   describe(('Accessibility Compliance', () => {
     it(('should track WCAG compliance levels', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
 
       expect(report.accessibilityCompliance.wcagAA).toBeGreaterThan(0
       expect(
@@ -253,7 +273,11 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should include accessibility features in components', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
       
@@ -273,7 +297,11 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should include accessibility notes in props', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
       
@@ -294,7 +322,11 @@ describe(('Component Documentation Generator', () => {
 
   describe(('Healthcare Compliance', () => {
     it(('should track healthcare compliance features', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
 
       expect(report.healthcareCompliance.lgpdCompliant).toBeGreaterThan(0
       expect(report.healthcareCompliance.anvisaCompliant).toBeGreaterThan(0
@@ -312,7 +344,11 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should include healthcare features in components', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
       
@@ -327,7 +363,11 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should include healthcare context in props', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
       
@@ -346,7 +386,11 @@ describe(('Component Documentation Generator', () => {
 
   describe(('Mobile Optimization', () => {
     it(('should track mobile optimization features', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
 
       expect(report.mobileOptimization.responsive).toBeGreaterThan(0
       expect(report.mobileOptimization.touchOptimized).toBeGreaterThan(0
@@ -361,7 +405,11 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should include mobile features in components', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
       
@@ -375,7 +423,11 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should include mobile notes in props', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
       
@@ -396,7 +448,11 @@ describe(('Component Documentation Generator', () => {
 
   describe(('Component Examples', () => {
     it(('should include comprehensive examples', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
 
       const componentsWithExamples = report.components.filter(
         c => c.examples && c.examples.length > 0,
@@ -405,19 +461,32 @@ describe(('Component Documentation Generator', () => {
 
       componentsWithExamples.forEach(component => {
         component.examples?.forEach(example => {
+<<<<<<< HEAD
           expect(example.id).toBeDefined(
           expect(example.title).toBeDefined(
           expect(example.titlePtBr).toBeDefined(
           expect(example.description).toBeDefined(
           expect(example.descriptionPtBr).toBeDefined(
           expect(example.code).toBeDefined(
+=======
+          expect(example.id).toBeDefined();
+          expect(example.title).toBeDefined();
+          expect(example.titlePtBr).toBeDefined();
+          expect(example.description).toBeDefined();
+          expect(example.descriptionPtBr).toBeDefined();
+          expect(example.code).toBeDefined();
+>>>>>>> origin/main
           expect(example.interactive).toBe(true);
         }
       }
     }
 
     it(('should include healthcare context in examples', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
       
@@ -426,6 +495,7 @@ describe(('Component Documentation Generator', () => {
       expect(patientCard?.examples?.length).toBeGreaterThan(0
 
       patientCard?.examples?.forEach(example => {
+<<<<<<< HEAD
         expect(example.healthcareContext).toBeDefined(
         expect(typeof example.healthcareContext).toBe('string')
         expect(example.healthcareContext!.length).toBeGreaterThan(0
@@ -434,6 +504,16 @@ describe(('Component Documentation Generator', () => {
 
     it(('should include accessibility demos in examples', () => {
       const report = generator.generateReport(
+=======
+        expect(example.healthcareContext).toBeDefined();
+        expect(typeof example.healthcareContext).toBe('string');
+        expect(example.healthcareContext!.length).toBeGreaterThan(0);
+      });
+    });
+
+    it(('should include accessibility demos in examples', () => {
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
       
@@ -445,7 +525,11 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should include emergency example', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
       
@@ -485,6 +569,7 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should include Portuguese translations in components', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
 
       report.components.forEach(component => {
@@ -504,6 +589,27 @@ describe(('Component Documentation Generator', () => {
 
     it(('should include Portuguese medical terminology', () => {
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+
+      report.components.forEach(component => {
+        expect(component.titlePtBr).toBeDefined();
+        expect(component.descriptionPtBr).toBeDefined();
+
+        component.props?.forEach(prop => {
+          expect(prop.descriptionPtBr).toBeDefined();
+        });
+
+        component.examples?.forEach(example => {
+          expect(example.titlePtBr).toBeDefined();
+          expect(example.descriptionPtBr).toBeDefined();
+        });
+      });
+    });
+
+    it(('should include Portuguese medical terminology', () => {
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const healthcareComponents = report.components.filter(
         c => c.healthcare.brazilianPortuguese,
       
@@ -519,7 +625,11 @@ describe(('Component Documentation Generator', () => {
 
   describe(('Component Dependencies and Relationships', () => {
     it(('should include component dependencies', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
       
@@ -531,7 +641,11 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should include related components', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
+=======
+      const report = generator.generateReport();
+>>>>>>> origin/main
       const patientCard = report.components.find(
         c => c.id === 'patient-card',
       
@@ -543,6 +657,7 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should include performance metrics', () => {
+<<<<<<< HEAD
       const report = generator.generateReport(
 
       report.components.forEach(component => {
@@ -553,6 +668,18 @@ describe(('Component Documentation Generator', () => {
       }
     }
   }
+=======
+      const report = generator.generateReport();
+
+      report.components.forEach(component => {
+        expect(component.metadata.testCoverage).toBeDefined();
+        expect(component.metadata.testCoverage).toBeGreaterThan(80);
+        expect(component.metadata.performanceScore).toBeDefined();
+        expect(component.metadata.performanceScore).toBeGreaterThan(80);
+      });
+    });
+  });
+>>>>>>> origin/main
 
   describe(('Utility Methods', () => {
     it(('should get components by category', () => {
@@ -562,6 +689,7 @@ describe(('Component Documentation Generator', () => {
       expect(healthcareComponents.length).toBeGreaterThan(0
 
       healthcareComponents.forEach(component => {
+<<<<<<< HEAD
         expect(component.category).toBe(COMPONENT_CATEGORIES.HEALTHCARE
       }
     }
@@ -569,6 +697,15 @@ describe(('Component Documentation Generator', () => {
     it(('should get healthcare components', () => {
       const healthcareComponents = generator.getHealthcareComponents(
       expect(healthcareComponents.length).toBeGreaterThan(0
+=======
+        expect(component.category).toBe(COMPONENT_CATEGORIES.HEALTHCARE);
+      });
+    });
+
+    it(('should get healthcare components', () => {
+      const healthcareComponents = generator.getHealthcareComponents();
+      expect(healthcareComponents.length).toBeGreaterThan(0);
+>>>>>>> origin/main
 
       healthcareComponents.forEach(component => {
         const hasHealthcareFeature = component.healthcare.lgpdCompliant
@@ -579,8 +716,13 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should get accessibility-compliant components', () => {
+<<<<<<< HEAD
       const accessibleComponents = generator.getAccessibilityCompliantComponents(
       expect(accessibleComponents.length).toBeGreaterThan(0
+=======
+      const accessibleComponents = generator.getAccessibilityCompliantComponents();
+      expect(accessibleComponents.length).toBeGreaterThan(0);
+>>>>>>> origin/main
 
       accessibleComponents.forEach(component => {
         expect(component.accessibility.wcagCompliant).toBe(true);
@@ -588,8 +730,13 @@ describe(('Component Documentation Generator', () => {
     }
 
     it(('should get mobile-optimized components', () => {
+<<<<<<< HEAD
       const mobileComponents = generator.getMobileOptimizedComponents(
       expect(mobileComponents.length).toBeGreaterThan(0
+=======
+      const mobileComponents = generator.getMobileOptimizedComponents();
+      expect(mobileComponents.length).toBeGreaterThan(0);
+>>>>>>> origin/main
 
       mobileComponents.forEach(component => {
         expect(component.mobile.touchOptimized).toBe(true);

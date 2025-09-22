@@ -5,7 +5,11 @@ export const runtime = 'edge';
 export const preferredRegion = 'auto';
 
 export default async function handler(_request: Request) {
+<<<<<<< HEAD
   const url = new URL(_request.url);
+=======
+  const url = new URL(request.url);
+>>>>>>> origin/main
   const pathname = url.pathname;
 
   // Basic health check optimized for Edge runtime

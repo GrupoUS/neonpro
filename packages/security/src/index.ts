@@ -4,7 +4,7 @@
  */
 
 // Version export
-export const SECURITY_VERSION = '1.0.0';
+export const SECURITY_VERSION = ''1.0.0'
 
 // Core encryption and key management
 export { EncryptionManager, encryptionManager, KeyManager, keyManager } from './encryption';
@@ -18,7 +18,7 @@ export {
 } from './audit/logger';
 
 // Security utilities and validation
-export { RateLimiter, rateLimiter, SecurityUtils, securityUtils } from './utils';
+export { RateLimiter, rateLimiter, SecurityUtils, securityUtils, SecureLogger, secureLogger } from './utils';
 
 // LGPD anonymization and data masking utilities
 export {

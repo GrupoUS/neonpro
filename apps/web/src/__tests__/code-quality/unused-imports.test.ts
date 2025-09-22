@@ -65,12 +65,21 @@ function checkUnusedImports(
 }
 
 describe('TDD Orchestrator - Code Quality: Unused Imports',() {
+<<<<<<< HEAD
   const webSrcPath = join(process.cwd(), 'src')
 
   describe('Phase 1: RED - Failing Tests for Clean Imports',() {
     it(('should have no unused imports in useFinancialMetrics.ts', () => {
       const filePath = join(webSrcPath, 'hooks/useFinancialMetrics.ts')
       const result = checkUnusedImports(filePath
+=======
+  const webSrcPath = join(process.cwd(), 'src');
+
+  describe('Phase 1: RED - Failing Tests for Clean Imports',() {
+    it(('should have no unused imports in useFinancialMetrics.ts', () => {
+      const filePath = join(webSrcPath, 'hooks/useFinancialMetrics.ts');
+      const result = checkUnusedImports(filePath);
+>>>>>>> origin/main
 
       if (result.hasUnusedImports) {
         console.log(`Unused imports in useFinancialMetrics.ts: ${result.unusedImports.join(', ')}`
@@ -82,8 +91,13 @@ describe('TDD Orchestrator - Code Quality: Unused Imports',() {
     }
 
     it(('should have no unused imports in insights-enhanced.tsx', () => {
+<<<<<<< HEAD
       const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx')
       const result = checkUnusedImports(filePath
+=======
+      const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
+      const result = checkUnusedImports(filePath);
+>>>>>>> origin/main
 
       // This test will FAIL initially (RED phase)
       expect(result.hasUnusedImports).toBe(false);
@@ -95,8 +109,13 @@ describe('TDD Orchestrator - Code Quality: Unused Imports',() {
     }
 
     it(('should have no unused imports in insights.tsx', () => {
+<<<<<<< HEAD
       const filePath = join(webSrcPath, 'routes/ai/insights.tsx')
       const result = checkUnusedImports(filePath
+=======
+      const filePath = join(webSrcPath, 'routes/ai/insights.tsx');
+      const result = checkUnusedImports(filePath);
+>>>>>>> origin/main
 
       // This test will FAIL initially (RED phase)
       expect(result.hasUnusedImports).toBe(false);
@@ -108,8 +127,13 @@ describe('TDD Orchestrator - Code Quality: Unused Imports',() {
     }
 
     it(('should have no unused imports in dashboard/main.tsx', () => {
+<<<<<<< HEAD
       const filePath = join(webSrcPath, 'routes/dashboard/main.tsx')
       const result = checkUnusedImports(filePath
+=======
+      const filePath = join(webSrcPath, 'routes/dashboard/main.tsx');
+      const result = checkUnusedImports(filePath);
+>>>>>>> origin/main
 
       // This test will FAIL initially (RED phase)
       expect(result.hasUnusedImports).toBe(false);

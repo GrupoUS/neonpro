@@ -30,8 +30,13 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
   let sessionId: string;
 
   beforeEach(async () => {
+<<<<<<< HEAD
     await setupTestDatabase(
     testClient = await createTestClient({ _role: 'admin' }
+=======
+    await setupTestDatabase();
+    testClient = await createTestClient({ _role: 'admin' });
+>>>>>>> origin/main
 
     // Setup MSW server for external AI service mocking
     const trpcMsw = createTRPCMsw<AppRouter>({

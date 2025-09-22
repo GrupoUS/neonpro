@@ -249,9 +249,15 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
 
     it('should provide expiration timestamp for intent token', async () => {
       // RED: Test expects expiration timestamp
+<<<<<<< HEAD
       const response = await createCrudIntent(mockIntentRequest
       const expiresAt = new Date(response.expiresAt
       const _now = new Date(
+=======
+      const response = await createCrudIntent(mockIntentRequest);
+      const expiresAt = new Date(response.expiresAt);
+      const _now = new Date();
+>>>>>>> origin/main
 
       expect(expiresAt.getTime()).toBeGreaterThan(now.getTime()
       expect(expiresAt.getTime() - now.getTime()).toBeLessThanOrEqual(300000); // 5 minutes

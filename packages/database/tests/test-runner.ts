@@ -263,7 +263,7 @@ class DatabaseTestRunner {
         timestamp: new Date().toISOString()
       };
 
-    } catch (error: any) {
+    } catch (_error: any) {
       const duration = Date.now() - startTime;
 
       return {

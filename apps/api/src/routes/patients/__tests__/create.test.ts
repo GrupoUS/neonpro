@@ -169,7 +169,11 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       expect(response.status).toBe(201
       expect(data.success).toBe(true);
       expect(mockPatientService.createPatient).toHaveBeenCalledWith({
+<<<<<<< HEAD
         _userId: 'user-123'),
+=======
+        _userId: 'user-123',
+>>>>>>> origin/main
         patientData: expect.objectContaining({
           name: 'Maria Santos'),
           email: 'maria@example.com'),
@@ -483,10 +487,17 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       await createRoute.request(mockRequest
 
       expect(mockAuditService.logActivity).toHaveBeenCalledWith({
+<<<<<<< HEAD
         _userId: 'user-123'),
         action: 'patient_create'),
         resourceType: 'patient'),
         resourceId: 'patient-123'),
+=======
+        _userId: 'user-123',
+        action: 'patient_create',
+        resourceType: 'patient',
+        resourceId: 'patient-123',
+>>>>>>> origin/main
         details: {
           patientName: 'João Silva'),
           dataCategories: expect.any(Array),

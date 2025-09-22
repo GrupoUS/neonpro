@@ -41,13 +41,21 @@ describe("AbuseWindowTracker", () => {
       };
 
       // First request should be allowed
+<<<<<<< HEAD
       const result1 = await tracker.checkAndTrackRequest(key, _request
+=======
+      const result1 = await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
       expect(result1.allowed).toBe(true);
       expect(result1.remainingRequests).toBe(2); // 3 - 1
       expect(result1.currentRequests).toBe(1
 
       // Second request should be allowed
+<<<<<<< HEAD
       const result2 = await tracker.checkAndTrackRequest(key, _request
+=======
+      const result2 = await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
       expect(result2.allowed).toBe(true);
       expect(result2.remainingRequests).toBe(1); // 3 - 2
       expect(result2.currentRequests).toBe(2
@@ -62,12 +70,20 @@ describe("AbuseWindowTracker", () => {
 
       // Make 3 requests (at the limit)
       for (let i = 0; i < 3; i++) {
+<<<<<<< HEAD
         const result = await tracker.checkAndTrackRequest(key, _request
+=======
+        const result = await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
         expect(result.allowed).toBe(true);
       }
 
       // 4th request should be blocked
+<<<<<<< HEAD
       const result = await tracker.checkAndTrackRequest(key, _request
+=======
+      const result = await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
       expect(result.allowed).toBe(false);
       expect(result.windowType).toBe("60s"
       expect(result.limit).toBe(3
@@ -85,13 +101,22 @@ describe("AbuseWindowTracker", () => {
       // Make 5 requests over time (within 60s limit but at 10m limit)
       for (let i = 0; i < 5; i++) {
         vi.advanceTimersByTime(70 * 1000); // 70 seconds between requests
+<<<<<<< HEAD
         const result = await tracker.checkAndTrackRequest(key, _request
+=======
+        const result = await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
         expect(result.allowed).toBe(true);
       }
 
       // 6th request should be blocked by 10m window
+<<<<<<< HEAD
       vi.advanceTimersByTime(70 * 1000
       const result = await tracker.checkAndTrackRequest(key, _request
+=======
+      vi.advanceTimersByTime(70 * 1000);
+      const result = await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
       expect(result.allowed).toBe(false);
       expect(result.windowType).toBe("10m"
       expect(result.limit).toBe(5
@@ -108,19 +133,31 @@ describe("AbuseWindowTracker", () => {
 
       // Fill up the 60s window
       for (let i = 0; i < 3; i++) {
+<<<<<<< HEAD
         const result = await tracker.checkAndTrackRequest(key, _request
+=======
+        const result = await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
         expect(result.allowed).toBe(true);
       }
 
       // Should be blocked
+<<<<<<< HEAD
       const blockedResult = await tracker.checkAndTrackRequest(key, _request
+=======
+      const blockedResult = await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
       expect(blockedResult.allowed).toBe(false);
 
       // Advance time by 61 seconds
       vi.advanceTimersByTime(61 * 1000
 
       // Should be allowed again
+<<<<<<< HEAD
       const allowedResult = await tracker.checkAndTrackRequest(key, _request
+=======
+      const allowedResult = await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
       expect(allowedResult.allowed).toBe(true);
     }
 
@@ -132,25 +169,42 @@ describe("AbuseWindowTracker", () => {
       };
 
       // Make 2 requests
+<<<<<<< HEAD
       await tracker.checkAndTrackRequest(key, _request
       await tracker.checkAndTrackRequest(key, _request
+=======
+      await tracker.checkAndTrackRequest(key, _request);
+      await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
 
       // Wait 30 seconds
       vi.advanceTimersByTime(30 * 1000
 
       // Make 1 more request (total: 3, should be allowed)
+<<<<<<< HEAD
       const result1 = await tracker.checkAndTrackRequest(key, _request
       expect(result1.allowed).toBe(true);
 
       // 4th request should be blocked
       const result2 = await tracker.checkAndTrackRequest(key, _request
+=======
+      const result1 = await tracker.checkAndTrackRequest(key, _request);
+      expect(result1.allowed).toBe(true);
+
+      // 4th request should be blocked
+      const result2 = await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
       expect(result2.allowed).toBe(false);
 
       // Wait another 31 seconds (61 total)
       vi.advanceTimersByTime(31 * 1000
 
       // First 2 requests should be out of window, should be allowed
+<<<<<<< HEAD
       const result3 = await tracker.checkAndTrackRequest(key, _request
+=======
+      const result3 = await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
       expect(result3.allowed).toBe(true);
     }
   }
@@ -211,11 +265,19 @@ describe("AbuseWindowTracker", () => {
       const request = { ip: "192.168.1.1", endpoint: "/api/test" };
 
       // Make some requests
+<<<<<<< HEAD
       await tracker.checkAndTrackRequest(key, _request
       vi.advanceTimersByTime(30 * 1000
       await tracker.checkAndTrackRequest(key, _request
       vi.advanceTimersByTime(70 * 1000); // Now at 100s
       await tracker.checkAndTrackRequest(key, _request
+=======
+      await tracker.checkAndTrackRequest(key, _request);
+      vi.advanceTimersByTime(30 * 1000);
+      await tracker.checkAndTrackRequest(key, _request);
+      vi.advanceTimersByTime(70 * 1000); // Now at 100s
+      await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
 
       const stats = tracker.getStats(key
       expect(stats.requests60s).toBe(1); // Only the last request in 60s window
@@ -230,8 +292,13 @@ describe("AbuseWindowTracker", () => {
       const key2: TrackingKey = { type: "ip", value: "192.168.1.2" };
       const request = { ip: "192.168.1.1", endpoint: "/api/test" };
 
+<<<<<<< HEAD
       await tracker.checkAndTrackRequest(key1, _request
       await tracker.checkAndTrackRequest(key2, _request
+=======
+      await tracker.checkAndTrackRequest(key1, _request);
+      await tracker.checkAndTrackRequest(key2, _request);
+>>>>>>> origin/main
 
       const memStats = tracker.getMemoryStats(
       expect(memStats.totalKeys).toBe(2
@@ -252,7 +319,11 @@ describe("AbuseWindowTracker", () => {
       expect(result1.currentRequests).toBe(0
 
       // Track one request
+<<<<<<< HEAD
       await tracker.checkAndTrackRequest(key, _request
+=======
+      await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
 
       // Check without tracking - should show current state
       const result2 = await tracker.checkRequest(key
@@ -285,18 +356,30 @@ describe("AbuseWindowTracker", () => {
 
       // Make requests to hit limit
       for (let i = 0; i < 3; i++) {
+<<<<<<< HEAD
         await tracker.checkAndTrackRequest(key, _request
       }
 
       // Should be blocked
       const blocked = await tracker.checkAndTrackRequest(key, _request
+=======
+        await tracker.checkAndTrackRequest(key, _request);
+      }
+
+      // Should be blocked
+      const blocked = await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
       expect(blocked.allowed).toBe(false);
 
       // Reset the key
       tracker.resetKey(key
 
       // Should be allowed again
+<<<<<<< HEAD
       const allowed = await tracker.checkAndTrackRequest(key, _request
+=======
+      const allowed = await tracker.checkAndTrackRequest(key, _request);
+>>>>>>> origin/main
       expect(allowed.allowed).toBe(true);
     }
 
@@ -305,8 +388,13 @@ describe("AbuseWindowTracker", () => {
       const key2: TrackingKey = { type: "ip", value: "192.168.1.2" };
       const request = { ip: "192.168.1.1", endpoint: "/api/test" };
 
+<<<<<<< HEAD
       await tracker.checkAndTrackRequest(key1, _request
       await tracker.checkAndTrackRequest(key2, _request
+=======
+      await tracker.checkAndTrackRequest(key1, _request);
+      await tracker.checkAndTrackRequest(key2, _request);
+>>>>>>> origin/main
 
       const statsBefore = tracker.getMemoryStats(
       expect(statsBefore.totalKeys).toBe(2

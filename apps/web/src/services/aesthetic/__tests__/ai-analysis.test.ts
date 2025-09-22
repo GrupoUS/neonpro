@@ -50,10 +50,17 @@ describe(('AestheticAIAnalysisService', () => {
 
   describe(('Inicialização', () => {
     it(('deve inicializar com configurações padrão', () => {
+<<<<<<< HEAD
       expect(aiService).toBeInstanceOf(AestheticAIAnalysisService
       expect(aiService['apiKey']).toBeDefined(
       expect(aiService['model']).toBe('gpt-4-vision-preview')
     }
+=======
+      expect(aiService).toBeInstanceOf(AestheticAIAnalysisService);
+      expect(aiService['apiKey']).toBeDefined();
+      expect(aiService['model']).toBe('gpt-4-vision-preview');
+    });
+>>>>>>> origin/main
 
     it(('deve permitir configuração customizada', () => {
       const customConfig = {
@@ -193,7 +200,11 @@ describe(('AestheticAIAnalysisService', () => {
     }
 
     it(_'deve validar buffer de imagem',async () => {
+<<<<<<< HEAD
       const emptyBuffer = Buffer.from('')
+=======
+      const emptyBuffer = Buffer.from('');
+>>>>>>> origin/main
 
       await expect(
         aiService.analyzePhotoFromBuffer(emptyBuffer),
@@ -288,8 +299,13 @@ describe(('AestheticAIAnalysisService', () => {
 
   describe(('Gerenciamento de Erros', () => {
     it(_'deve lidar com erro de API da OpenAI',async () => {
+<<<<<<< HEAD
       const apiError = new Error('API Error')
       mockOpenAI.chat.completions.create.mockRejectedValueOnce(apiError
+=======
+      const apiError = new Error('API Error');
+      mockOpenAI.chat.completions.create.mockRejectedValueOnce(apiError);
+>>>>>>> origin/main
 
       await expect(aiService.analyzePhoto(mockImageUrl)).rejects.toThrow(
         'Failed to analyze image',
@@ -298,7 +314,11 @@ describe(('AestheticAIAnalysisService', () => {
 
     it(_'deve lidar com timeout',async () => {
       mockOpenAI.chat.completions.create.mockImplementationOnce(() => new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 100)),
+<<<<<<< HEAD
       
+=======
+      );
+>>>>>>> origin/main
 
       await expect(aiService.analyzePhoto(mockImageUrl)).rejects.toThrow(
         'Analysis timeout',
@@ -306,7 +326,11 @@ describe(('AestheticAIAnalysisService', () => {
     }
 
     it(_'deve implementar retry com exponential backoff',async () => {
+<<<<<<< HEAD
       const apiError = new Error('Rate limit exceeded')
+=======
+      const apiError = new Error('Rate limit exceeded');
+>>>>>>> origin/main
 
       mockOpenAI.chat.completions.create
         .mockRejectedValueOnce(apiError)
@@ -331,7 +355,11 @@ describe(('AestheticAIAnalysisService', () => {
     }
 
     it(_'deve desistir após máximo de tentativas',async () => {
+<<<<<<< HEAD
       const apiError = new Error('Server error')
+=======
+      const apiError = new Error('Server error');
+>>>>>>> origin/main
 
       mockOpenAI.chat.completions.create.mockRejectedValue(apiError
 
@@ -350,12 +378,17 @@ describe(('AestheticAIAnalysisService', () => {
     };
 
     it(('deve gerar sugestões baseadas na análise', () => {
+<<<<<<< HEAD
       const suggestions = aiService.generateTreatmentSuggestions(mockAnalysis
+=======
+      const suggestions = aiService.generateTreatmentSuggestions(mockAnalysis);
+>>>>>>> origin/main
 
       expect(suggestions).toBeInstanceOf(Array
       expect(suggestions.length).toBeGreaterThan(0
 
       suggestions.forEach(suggestion => {
+<<<<<<< HEAD
         expect(suggestion).toHaveProperty('id')
         expect(suggestion).toHaveProperty('name')
         expect(suggestion).toHaveProperty('category')
@@ -366,6 +399,18 @@ describe(('AestheticAIAnalysisService', () => {
 
     it(('deve priorizar tratamentos por relevância', () => {
       const suggestions = aiService.generateTreatmentSuggestions(mockAnalysis
+=======
+        expect(suggestion).toHaveProperty('id');
+        expect(suggestion).toHaveProperty('name');
+        expect(suggestion).toHaveProperty('category');
+        expect(suggestion).toHaveProperty('confidence');
+        expect(suggestion).toHaveProperty('suitabilityScore');
+      });
+    });
+
+    it(('deve priorizar tratamentos por relevância', () => {
+      const suggestions = aiService.generateTreatmentSuggestions(mockAnalysis);
+>>>>>>> origin/main
 
       // Deve estar ordenado por suitabilityScore
       for (let i = 1; i < suggestions.length; i++) {
@@ -376,7 +421,11 @@ describe(('AestheticAIAnalysisService', () => {
     }
 
     it(('deve incluir informações detalhadas do tratamento', () => {
+<<<<<<< HEAD
       const suggestions = aiService.generateTreatmentSuggestions(mockAnalysis
+=======
+      const suggestions = aiService.generateTreatmentSuggestions(mockAnalysis);
+>>>>>>> origin/main
       const firstSuggestion = suggestions[0];
 
       expect(firstSuggestion).toHaveProperty('description')
@@ -406,7 +455,11 @@ describe(('AestheticAIAnalysisService', () => {
     }
 
     it(('deve incluir alternativas para cada tratamento', () => {
+<<<<<<< HEAD
       const suggestions = aiService.generateTreatmentSuggestions(mockAnalysis
+=======
+      const suggestions = aiService.generateTreatmentSuggestions(mockAnalysis);
+>>>>>>> origin/main
       const firstSuggestion = suggestions[0];
 
       expect(firstSuggestion.alternatives).toBeInstanceOf(Array
@@ -414,7 +467,11 @@ describe(('AestheticAIAnalysisService', () => {
     }
 
     it(('deve incluir considerações de saúde', () => {
+<<<<<<< HEAD
       const suggestions = aiService.generateTreatmentSuggestions(mockAnalysis
+=======
+      const suggestions = aiService.generateTreatmentSuggestions(mockAnalysis);
+>>>>>>> origin/main
       const firstSuggestion = suggestions[0];
 
       expect(firstSuggestion.healthcareConsiderations).toBeInstanceOf(Array
@@ -518,18 +575,31 @@ describe(('AestheticAIAnalysisService', () => {
       
 
       // Fazer múltiplas requisições simultâneas
+<<<<<<< HEAD
       const promises = Array.from({ length: 5 },() aiService.analyzePhoto(mockImageUrl)
+=======
+      const promises = Array.from({ length: 5 },() aiService.analyzePhoto(mockImageUrl));
+>>>>>>> origin/main
 
       const results = await Promise.all(promises
 
       // Todas devem ter o mesmo resultado
       results.forEach(result => {
+<<<<<<< HEAD
         expect(result).toEqual(mockAnalysis
       }
     }
 
     it(('deve monitorar métricas de performance', () => {
       const metrics = aiService.getMetrics(
+=======
+        expect(result).toEqual(mockAnalysis);
+      });
+    });
+
+    it(('deve monitorar métricas de performance', () => {
+      const metrics = aiService.getMetrics();
+>>>>>>> origin/main
 
       expect(metrics).toHaveProperty('totalRequests')
       expect(metrics).toHaveProperty('successfulRequests')
@@ -566,7 +636,11 @@ describe(('AestheticAIAnalysisService', () => {
     }
 
     it(_'deve não armazenar imagens após análise',async () => {
+<<<<<<< HEAD
       const imageBuffer = Buffer.from('sensitive-image-data')
+=======
+      const imageBuffer = Buffer.from('sensitive-image-data');
+>>>>>>> origin/main
 
       mockOpenAI.chat.completions.create.mockResolvedValueOnce({
         choices: [
@@ -598,7 +672,11 @@ describe(('AestheticAIAnalysisService', () => {
       } as any
 
       // Fazer muitas requisições rapidamente
+<<<<<<< HEAD
       const promises = Array.from({ length: 100 },() aiService.analyzePhoto(mockImageUrl)
+=======
+      const promises = Array.from({ length: 100 },() aiService.analyzePhoto(mockImageUrl));
+>>>>>>> origin/main
 
       // Algumas devem falhar devido a rate limiting
       const results = await Promise.allSettled(promises
@@ -709,10 +787,17 @@ describe(('AestheticAIAnalysisService', () => {
 
       const suggestions = await aiService.getSuggestionsForScheduling(mockImageUrl
 
+<<<<<<< HEAD
       expect(suggestions).toBeInstanceOf(Array
       suggestions.forEach(suggestion => {
         expect(suggestion).toHaveProperty('schedulingInfo')
         expect(suggestion.schedulingInfo).toHaveProperty('estimatedDuration')
+=======
+      expect(suggestions).toBeInstanceOf(Array);
+      suggestions.forEach(suggestion => {
+        expect(suggestion).toHaveProperty('schedulingInfo');
+        expect(suggestion.schedulingInfo).toHaveProperty('estimatedDuration');
+>>>>>>> origin/main
         expect(suggestion.schedulingInfo).toHaveProperty(
           'preparationRequirements',
         

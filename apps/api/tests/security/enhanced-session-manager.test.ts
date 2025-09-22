@@ -50,11 +50,19 @@ describe('Enhanced Session Manager Security Tests', () => {
       expect(sessionId).toMatch(/^[a-f0-9]{32}$/i
 
       // Should have sufficient entropy
+<<<<<<< HEAD
       const session = sessionManager.getSession(sessionId
       expect(session).toBeDefined(
       expect(session?.sessionId).toBe(sessionId
       expect(session?._userId).toBe(testUserId
     }
+=======
+      const session = sessionManager.getSession(sessionId);
+      expect(session).toBeDefined();
+      expect(session?.sessionId).toBe(sessionId);
+      expect(session?._userId).toBe(testUserId);
+    });
+>>>>>>> origin/main
 
     it('should validate session ID format', () => {
       const validSessionId = sessionManager.createSession(testUserId
@@ -169,12 +177,21 @@ describe('Enhanced Session Manager Security Tests', () => {
       expect(sessionManager.getSession(originalSessionId)).toBeUndefined(
 
       // New session should exist with same metadata
+<<<<<<< HEAD
       const newSession = sessionManager.getSession(newSessionId
       expect(newSession).toBeDefined(
       expect(newSession?._userId).toBe(testUserId
       expect(newSession?.ipAddress).toBe(testIP
       expect(newSession?.sessionId).toBe(newSessionId
     }
+=======
+      const newSession = sessionManager.getSession(newSessionId);
+      expect(newSession).toBeDefined();
+      expect(newSession?._userId).toBe(testUserId);
+      expect(newSession?.ipAddress).toBe(testIP);
+      expect(newSession?.sessionId).toBe(newSessionId);
+    });
+>>>>>>> origin/main
 
     it('should return null when regenerating non-existent session', () => {
       const result = sessionManager.regenerateSession('non-existent-session')
@@ -420,10 +437,17 @@ describe('Enhanced Session Manager Security Tests', () => {
       expect(result2.isValid).toBe(true);
 
       // Session state should be preserved
+<<<<<<< HEAD
       const session = sessionManager.getSession(sessionId
       expect(session?._userId).toBe(testUserId
       expect(session?.ipAddress).toBe(testIP
       expect(session?.permissions).toEqual(['read', 'write']
+=======
+      const session = sessionManager.getSession(sessionId);
+      expect(session?._userId).toBe(testUserId);
+      expect(session?.ipAddress).toBe(testIP);
+      expect(session?.permissions).toEqual(['read', 'write']);
+>>>>>>> origin/main
       expect(session?.refreshCount).toBe(2); // Should track refresh count
     }
 

@@ -6,8 +6,18 @@
     "outDir": "dist",
     "rootDir": "./src",
     "declaration": true,
+<<<<<<< HEAD
     "declarationMap": true,
     "sourceMap": true,
+=======
+    "emitDeclarationOnly": false,
+    "jsx": "react-jsx",
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "target": "ES2022",
+    "skipLibCheck": true,
+    "strict": true,
+>>>>>>> origin/main
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],

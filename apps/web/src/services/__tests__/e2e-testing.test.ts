@@ -121,7 +121,11 @@ describe(('E2E Testing Service', () => {
 
   describe(('E2E Test Execution', () => {
     it(_'should execute comprehensive E2E testing scenarios',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
+=======
+      const report = await service.executeTests();
+>>>>>>> origin/main
 
       expect(report).toBeDefined(
       expect(report.executionId).toMatch(/^e2e-\d+$/
@@ -137,7 +141,11 @@ describe(('E2E Testing Service', () => {
     }
 
     it(_'should execute patient management workflow scenario',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
+=======
+      const report = await service.executeTests();
+>>>>>>> origin/main
       const patientManagementResult = report.results.find(
         r => r.scenarioId === 'patient-management-workflow',
       
@@ -164,7 +172,11 @@ describe(('E2E Testing Service', () => {
     }
 
     it(_'should execute appointment scheduling workflow scenario',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
+=======
+      const report = await service.executeTests();
+>>>>>>> origin/main
       const appointmentResult = report.results.find(
         r => r.scenarioId === 'appointment-scheduling-workflow',
       
@@ -185,7 +197,11 @@ describe(('E2E Testing Service', () => {
     }
 
     it(_'should execute emergency access workflow scenario',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
+=======
+      const report = await service.executeTests();
+>>>>>>> origin/main
       const emergencyResult = report.results.find(
         r => r.scenarioId === 'emergency-access-workflow',
       
@@ -213,7 +229,11 @@ describe(('E2E Testing Service', () => {
 
   describe(('E2E Test Statistics', () => {
     it(_'should generate accurate test statistics',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
+=======
+      const report = await service.executeTests();
+>>>>>>> origin/main
 
       expect(report.summary.totalScenarios).toBeGreaterThan(0
       expect(report.summary.passedScenarios).toBeGreaterThanOrEqual(0
@@ -235,7 +255,11 @@ describe(('E2E Testing Service', () => {
     }
 
     it(_'should calculate compliance validation statistics',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
+=======
+      const report = await service.executeTests();
+>>>>>>> origin/main
 
       expect(report.summary.complianceValidation).toBeDefined(
       expect(report.summary.complianceValidation.lgpd).toBeGreaterThanOrEqual(
@@ -257,7 +281,11 @@ describe(('E2E Testing Service', () => {
     }
 
     it(_'should validate healthcare workflow coverage',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
+=======
+      const report = await service.executeTests();
+>>>>>>> origin/main
       const healthcareResults = report.results.filter(r =>
         service
           .getScenariosByType(E2E_TEST_TYPES.HEALTHCARE_WORKFLOW)
@@ -282,7 +310,11 @@ describe(('E2E Testing Service', () => {
 
   describe(('E2E Test Validation', () => {
     it(_'should validate E2E test quality',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
+=======
+      const report = await service.executeTests();
+>>>>>>> origin/main
 
       // Validate that tests were executed
       expect(report.summary.totalScenarios).toBeGreaterThan(0
@@ -309,7 +341,11 @@ describe(('E2E Testing Service', () => {
     }
 
     it(_'should generate recommendations based on test results',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
+=======
+      const report = await service.executeTests();
+>>>>>>> origin/main
 
       expect(report.recommendations).toBeInstanceOf(Array
       expect(report.recommendations.length).toBeGreaterThan(0
@@ -340,12 +376,17 @@ describe(('E2E Testing Service', () => {
     }
 
     it(_'should identify critical issues in test results',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
+=======
+      const report = await service.executeTests();
+>>>>>>> origin/main
 
       expect(report.criticalIssues).toBeInstanceOf(Array
 
       // Validate critical issue structure
       report.criticalIssues.forEach(issue => {
+<<<<<<< HEAD
         expect(issue.scenarioId).toBeDefined(
         expect(issue.issue).toBeDefined(
         expect(issue.severity).toMatch(/^(critical|high|medium|low)$/
@@ -353,6 +394,15 @@ describe(('E2E Testing Service', () => {
       }
     }
   }
+=======
+        expect(issue.scenarioId).toBeDefined();
+        expect(issue.issue).toBeDefined();
+        expect(issue.severity).toMatch(/^(critical|high|medium|low)$/);
+        expect(issue.recommendation).toBeDefined();
+      });
+    });
+  });
+>>>>>>> origin/main
 
   describe(('Brazilian Portuguese Localization', () => {
     it(('should provide Brazilian Portuguese labels for E2E test types', () => {
@@ -373,7 +423,11 @@ describe(('E2E Testing Service', () => {
     }
 
     it(_'should include Portuguese translations in test scenarios',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
+=======
+      const report = await service.executeTests();
+>>>>>>> origin/main
 
       // Check for Portuguese content in recommendations (more flexible matching)
       const hasPortugueseRecommendations = report.recommendations.some(
@@ -399,7 +453,11 @@ describe(('E2E Testing Service', () => {
     }
 
     it(_'should include Portuguese translations in critical issues',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
+=======
+      const report = await service.executeTests();
+>>>>>>> origin/main
 
       // Check for Portuguese content in critical issues
       if (report.criticalIssues.length > 0) {
@@ -417,6 +475,7 @@ describe(('E2E Testing Service', () => {
 
   describe(('Healthcare Compliance Integration', () => {
     it(_'should include healthcare compliance validation in test results',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
 
       report.results.forEach(result => {
@@ -436,6 +495,27 @@ describe(('E2E Testing Service', () => {
         expect(result.overallAccessibilityScore).toBeGreaterThanOrEqual(0
         expect(result.overallAccessibilityScore).toBeLessThanOrEqual(100
       }
+=======
+      const report = await service.executeTests();
+
+      report.results.forEach(result => {
+        expect(result.complianceValidation).toBeDefined();
+        expect(result.complianceValidation.lgpd).toBeDefined();
+        expect(result.complianceValidation.anvisa).toBeDefined();
+        expect(result.complianceValidation.cfm).toBeDefined();
+        expect(result.complianceValidation.wcag).toBeDefined();
+      });
+    });
+
+    it(_'should include accessibility compliance validation',async () => {
+      const report = await service.executeTests();
+
+      // Verify accessibility scores are within valid range
+      report.results.forEach(result => {
+        expect(result.overallAccessibilityScore).toBeGreaterThanOrEqual(0);
+        expect(result.overallAccessibilityScore).toBeLessThanOrEqual(100);
+      });
+>>>>>>> origin/main
 
       // Verify WCAG compliance is validated
       const wcagCompliantResults = report.results.filter(
@@ -445,6 +525,7 @@ describe(('E2E Testing Service', () => {
     }
 
     it(_'should include mobile optimization validation',async () => {
+<<<<<<< HEAD
       const report = await service.executeTests(
 
       // Verify performance scores are within valid range
@@ -452,6 +533,15 @@ describe(('E2E Testing Service', () => {
         expect(result.overallPerformanceScore).toBeGreaterThanOrEqual(0
         expect(result.overallPerformanceScore).toBeLessThanOrEqual(100
       }
+=======
+      const report = await service.executeTests();
+
+      // Verify performance scores are within valid range
+      report.results.forEach(result => {
+        expect(result.overallPerformanceScore).toBeGreaterThanOrEqual(0);
+        expect(result.overallPerformanceScore).toBeLessThanOrEqual(100);
+      });
+>>>>>>> origin/main
 
       // Check for mobile-specific test steps
       const mobileSteps = report.results
@@ -551,9 +641,15 @@ describe(('E2E Testing Service', () => {
 
       // Verify all healthcare scenarios have the correct type
       healthcareScenarios.forEach(scenario => {
+<<<<<<< HEAD
         expect(scenario.type).toBe(E2E_TEST_TYPES.HEALTHCARE_WORKFLOW
       }
     }
+=======
+        expect(scenario.type).toBe(E2E_TEST_TYPES.HEALTHCARE_WORKFLOW);
+      });
+    });
+>>>>>>> origin/main
 
     it(('should filter scenarios by healthcare workflow', () => {
       const patientManagementScenarios = service.getScenariosByWorkflow(
@@ -572,6 +668,7 @@ describe(('E2E Testing Service', () => {
 
       // Verify all scenarios have the correct workflow
       patientManagementScenarios.forEach(scenario => {
+<<<<<<< HEAD
         expect(scenario.workflow).toBe(HEALTHCARE_WORKFLOWS.PATIENT_MANAGEMENT
       }
       appointmentScenarios.forEach(scenario => {
@@ -585,3 +682,18 @@ describe(('E2E Testing Service', () => {
     }
   }
 }
+=======
+        expect(scenario.workflow).toBe(HEALTHCARE_WORKFLOWS.PATIENT_MANAGEMENT);
+      });
+      appointmentScenarios.forEach(scenario => {
+        expect(scenario.workflow).toBe(
+          HEALTHCARE_WORKFLOWS.APPOINTMENT_SCHEDULING,
+        );
+      });
+      emergencyScenarios.forEach(scenario => {
+        expect(scenario.workflow).toBe(HEALTHCARE_WORKFLOWS.EMERGENCY_ACCESS);
+      });
+    });
+  });
+});
+>>>>>>> origin/main

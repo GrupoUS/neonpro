@@ -13,7 +13,11 @@
  * @compliance LGPD, ANVISA, Brazilian Healthcare Standards
  */
 
+<<<<<<< HEAD
 import * as winston from 'winston';
+=======
+import winston from 'winston';
+>>>>>>> origin/main
 import { nanoid } from 'nanoid';
 import { z } from 'zod';
 
@@ -322,7 +326,11 @@ export class EnhancedStructuredLogger {
     } else if (this.config.transports.console?.format === 'simple') {
       formats.push(winston.format.simple());
     } else {
+<<<<<<< HEAD
       formats.push(winston.format.printf((info) => {
+=======
+      formats.push(_winston.format.printf((info) => {
+>>>>>>> origin/main
           const timestamp = info.timestamp ? new Date(info.timestamp as string).toLocaleTimeString() : '';
           const severityEmoji = info.severityEmoji || '';
           const correlationId = info.correlationId ? `[${info.correlationId}]` : '';
@@ -455,7 +463,7 @@ export class EnhancedStructuredLogger {
       dataClassification,
       containsPII,
       containsPHI,
-      legalBasis: healthcareContext?.brazilianCompliance?.lgpdLegalBasis || 'legitimate_interests',
+      legalBasis: healthcareContext?.brazilianCompliance?.lgpdLegalBasis || 'legitimate_interests_,
       retentionPeriod: this.config.lgpdCompliance.dataRetentionDays,
       requiresConsent: this.config.lgpdCompliance.requireExplicitConsent && (containsPII || containsPHI),
       anonymized: this.config.lgpdCompliance.anonymizeByDefault,
@@ -464,7 +472,7 @@ export class EnhancedStructuredLogger {
                     healthcareContext?.clinicalContext?.requiresAudit,
       brazilianIdentifiers,
       dataMinimizationApplied: this.config.lgpdCompliance.enableDataMinimization,
-      purposeLimitation: healthcareContext?.brazilianCompliance?.lgpdLegalBasis || 'healthcare_provision',
+      purposeLimitation: healthcareContext?.brazilianCompliance?.lgpdLegalBasis || 'healthcare_provision_,
     };
   }
 
@@ -527,7 +535,11 @@ export class EnhancedStructuredLogger {
       severity,
       message,
       timestamp: new Date().toISOString(),
+<<<<<<< HEAD
       _service: this.config._service,
+=======
+      _service: this.config.service,
+>>>>>>> origin/main
       environment: this.config.environment,
       correlationId,
       requestId: requestContext.requestId,
@@ -579,7 +591,7 @@ export class EnhancedStructuredLogger {
     );
 
     // Log alert (will be redacted again but that's fine)
-    this.winston.error('CRITICAL_ALERT', {
+    this.winston.error('CRITICAL_ALERT_, {
       originalMessage: alertMessage,
       severity: logEntry.severity,
       correlationId: logEntry.correlationId,
@@ -680,12 +692,16 @@ export class EnhancedStructuredLogger {
    * Log medication event
    */
   logMedicationEvent(
-    action: 'prescribed' | 'administered' | 'verified' | 'adverse_reaction',
+    action: 'prescribed' | 'administered' | 'verified' | 'adverse_reaction_,
     message: string,
     healthcareContext: BrazilianHealthcareContext,
     data?: any
   ): void {
+<<<<<<< HEAD
     const severity = action === 'adverse_reaction' ? 'alert' : 'info'
+=======
+    const severity = action === 'adverse_reaction' ? 'alert' : ''info'
+>>>>>>> origin/main
 
     this.log(
       this.mapSeverityToLevel(severity),
@@ -749,7 +765,11 @@ export class EnhancedStructuredLogger {
    */
   getStatistics() {
     return {
+<<<<<<< HEAD
       _service: this.config._service,
+=======
+      _service: this.config.service,
+>>>>>>> origin/main
       environment: this.config.environment,
       level: this.config.level,
       correlationId: this.getCorrelationId(),

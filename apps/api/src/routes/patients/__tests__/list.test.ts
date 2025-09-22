@@ -23,11 +23,19 @@ const mockLGPDService = {
 
 // Mock middleware
 const mockRequireAuth = vi.fn((c,_next) => {
+<<<<<<< HEAD
   c.set('userId', 'user-123')
   return _next(
 }
 
 const mockLGPDMiddleware = vi.fn((c, _next) => _next()
+=======
+  c.set('userId', 'user-123');
+  return next();
+});
+
+const mockLGPDMiddleware = vi.fn((c,_next) => next());
+>>>>>>> origin/main
 
 describe('GET /api/v2/patients endpoint (T043)', () => {
   // let app: Hono;
@@ -85,16 +93,22 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     vi.restoreAllMocks(
   }
 
-  it('should export list patients route handler', () => {
+  it(_'should export list patients route handler'), () => {
     expect(() => {
       const module = require('../list')
       expect(module.default).toBeDefined(
     }).not.toThrow(
   }
 
+<<<<<<< HEAD
   describe('Successful Patient Listing', () => {
     it('should list patients with default pagination',async () => {
       const { default: listRoute } = require('../list')
+=======
+  describe(_'Successful Patient Listing'), () => {
+    it(_'should list patients with default pagination',async () => {
+      const { default: listRoute } = require('../list');
+>>>>>>> origin/main
 
       // Mock request
       const mockRequest = {
@@ -119,8 +133,13 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       expect(data.data.pagination.total).toBe(2
     }
 
+<<<<<<< HEAD
     it('should list patients with custom pagination',async () => {
       const { default: listRoute } = require('../list')
+=======
+    it(_'should list patients with custom pagination',async () => {
+      const { default: listRoute } = require('../list');
+>>>>>>> origin/main
 
       const mockRequest = {
         method: 'GET',
@@ -143,8 +162,13 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       }
     }
 
+<<<<<<< HEAD
     it('should list patients with search query',async () => {
       const { default: listRoute } = require('../list')
+=======
+    it(_'should list patients with search query',async () => {
+      const { default: listRoute } = require('../list');
+>>>>>>> origin/main
 
       const mockRequest = {
         method: 'GET',
@@ -167,8 +191,13 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       }
     }
 
+<<<<<<< HEAD
     it('should list patients with status filter',async () => {
       const { default: listRoute } = require('../list')
+=======
+    it(_'should list patients with status filter',async () => {
+      const { default: listRoute } = require('../list');
+>>>>>>> origin/main
 
       const mockRequest = {
         method: 'GET',
@@ -194,8 +223,13 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       }
     }
 
+<<<<<<< HEAD
     it('should include LGPD compliance headers',async () => {
       const { default: listRoute } = require('../list')
+=======
+    it(_'should include LGPD compliance headers',async () => {
+      const { default: listRoute } = require('../list');
+>>>>>>> origin/main
 
       const mockRequest = {
         method: 'GET',
@@ -212,8 +246,13 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       expect(response.headers.get('X-Audit-Logged')).toBe('true')
     }
 
+<<<<<<< HEAD
     it('should include pagination headers',async () => {
       const { default: listRoute } = require('../list')
+=======
+    it(_'should include pagination headers',async () => {
+      const { default: listRoute } = require('../list');
+>>>>>>> origin/main
 
       const mockRequest = {
         method: 'GET',
@@ -231,9 +270,15 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     }
   }
 
+<<<<<<< HEAD
   describe('LGPD Compliance and Audit Logging', () => {
     it('should log data access for audit trail',async () => {
       const { default: listRoute } = require('../list')
+=======
+  describe(_'LGPD Compliance and Audit Logging'), () => {
+    it(_'should log data access for audit trail',async () => {
+      const { default: listRoute } = require('../list');
+>>>>>>> origin/main
 
       const mockRequest = {
         method: 'GET',
@@ -261,8 +306,13 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       }
     }
 
+<<<<<<< HEAD
     it('should validate LGPD data access permissions',async () => {
       const { default: listRoute } = require('../list')
+=======
+    it(_'should validate LGPD data access permissions',async () => {
+      const { default: listRoute } = require('../list');
+>>>>>>> origin/main
 
       const mockRequest = {
         method: 'GET',
@@ -282,7 +332,11 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       }
     }
 
+<<<<<<< HEAD
     it('should handle LGPD access denial',async () => {
+=======
+    it(_'should handle LGPD access denial',async () => {
+>>>>>>> origin/main
       mockLGPDService.validateDataAccess.mockResolvedValue({
         success: false,
         error: 'Acesso negado por política LGPD',
@@ -306,7 +360,11 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       expect(data.error).toContain('LGPD')
     }
 
+<<<<<<< HEAD
     it('should mask sensitive data based on user permissions',async () => {
+=======
+    it(_'should mask sensitive data based on user permissions',async () => {
+>>>>>>> origin/main
       mockPatientService.listPatients.mockResolvedValue({
         success: true,
         data: {
@@ -343,9 +401,15 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     }
   }
 
+<<<<<<< HEAD
   describe('Error Handling', () => {
     it('should handle authentication errors',async () => {
       const { default: listRoute } = require('../list')
+=======
+  describe(_'Error Handling'), () => {
+    it(_'should handle authentication errors',async () => {
+      const { default: listRoute } = require('../list');
+>>>>>>> origin/main
 
       const mockRequest = {
         method: 'GET',
@@ -363,8 +427,13 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       expect(data.error).toContain('Não autorizado')
     }
 
+<<<<<<< HEAD
     it('should handle invalid pagination parameters',async () => {
       const { default: listRoute } = require('../list')
+=======
+    it(_'should handle invalid pagination parameters',async () => {
+      const { default: listRoute } = require('../list');
+>>>>>>> origin/main
 
       const mockRequest = {
         method: 'GET',
@@ -382,7 +451,11 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       expect(data.errors).toBeDefined(
     }
 
+<<<<<<< HEAD
     it('should handle service errors gracefully',async () => {
+=======
+    it(_'should handle service errors gracefully',async () => {
+>>>>>>> origin/main
       mockPatientService.listPatients.mockResolvedValue({
         success: false,
         error: 'Erro interno do serviço',
@@ -406,7 +479,11 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       expect(data.error).toContain('Erro interno')
     }
 
+<<<<<<< HEAD
     it('should handle database connection errors',async () => {
+=======
+    it(_'should handle database connection errors',async () => {
+>>>>>>> origin/main
       mockPatientService.listPatients.mockRejectedValue(
         new Error('Database connection failed'),
       
@@ -430,9 +507,15 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     }
   }
 
+<<<<<<< HEAD
   describe('Performance and Caching', () => {
     it('should include performance headers',async () => {
       const { default: listRoute } = require('../list')
+=======
+  describe(_'Performance and Caching'), () => {
+    it(_'should include performance headers',async () => {
+      const { default: listRoute } = require('../list');
+>>>>>>> origin/main
 
       const mockRequest = {
         method: 'GET',
@@ -450,8 +533,13 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       
     }
 
+<<<<<<< HEAD
     it('should handle large result sets efficiently',async () => {
       const largePatientList = Array.from({ length: 100 }, (_, i) => ({
+=======
+    it(_'should handle large result sets efficiently',async () => {
+      const largePatientList = Array.from({ length: 100 },(, i) => ({
+>>>>>>> origin/main
         id: `patient-${i}`,
         name: `Patient ${i}`,
         cpf: `123.456.789-${i.toString().padStart(2, '0')}`,
@@ -486,9 +574,15 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     }
   }
 
+<<<<<<< HEAD
   describe('Brazilian Healthcare Compliance', () => {
     it('should validate Brazilian healthcare data access',async () => {
       const { default: listRoute } = require('../list')
+=======
+  describe(_'Brazilian Healthcare Compliance'), () => {
+    it(_'should validate Brazilian healthcare data access',async () => {
+      const { default: listRoute } = require('../list');
+>>>>>>> origin/main
 
       const mockRequest = {
         method: 'GET',
@@ -509,8 +603,13 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       
     }
 
+<<<<<<< HEAD
     it('should include CFM compliance headers',async () => {
       const { default: listRoute } = require('../list')
+=======
+    it(_'should include CFM compliance headers',async () => {
+      const { default: listRoute } = require('../list');
+>>>>>>> origin/main
 
       const mockRequest = {
         method: 'GET',

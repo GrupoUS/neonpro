@@ -45,7 +45,11 @@ describe('Bundle Optimization Tests', () => {
           { config: chartConfig },
           React.createElement('div', null, 'Test Chart Content'),
         ),
+<<<<<<< HEAD
       
+=======
+      );
+>>>>>>> origin/main
 
       // Should render loading state initially
       expect(screen.getByText(/Carregando gráfico/i)).toBeInTheDocument(
@@ -61,7 +65,11 @@ describe('Bundle Optimization Tests', () => {
         ChartTooltipContent,
         null,
         React.createElement('div', null, 'Tooltip Content'),
+<<<<<<< HEAD
       
+=======
+      );
+>>>>>>> origin/main
 
       render(tooltipContent
 
@@ -82,7 +90,11 @@ describe('Bundle Optimization Tests', () => {
           },
           React.createElement(VideoConsultation, { sessionId: 'test-session' }),
         ),
+<<<<<<< HEAD
       
+=======
+      );
+>>>>>>> origin/main
 
       // Should render loading state
       expect(screen.getByText(/Carregando telemedicina/i)).toBeInTheDocument(
@@ -98,20 +110,36 @@ describe('Bundle Optimization Tests', () => {
     it('should render LibraryLoading component', () => {
       render(
         React.createElement(LibraryLoading, { message: 'Test Loading' }),
+<<<<<<< HEAD
       
 
       expect(screen.getByText('Test Loading')).toBeInTheDocument(
       expect(screen.getByRole('status')).toBeInTheDocument(
     }
+=======
+      );
+
+      expect(screen.getByText('Test Loading')).toBeInTheDocument();
+      expect(screen.getByRole('status')).toBeInTheDocument();
+    });
+>>>>>>> origin/main
 
     it('should use default message when none provided', () => {
       render(
         React.createElement(LibraryLoading),
+<<<<<<< HEAD
       
 
       expect(screen.getByText('Carregando...')).toBeInTheDocument(
     }
   }
+=======
+      );
+
+      expect(screen.getByText('Carregando...')).toBeInTheDocument();
+    });
+  });
+>>>>>>> origin/main
 
   describe('Performance Metrics', () => {
     it('should validate bundle size reduction', () => {
@@ -141,7 +169,11 @@ describe('Bundle Optimization Tests', () => {
           `${chunk}: ${Math.round((currentSize / 1024 / 1024) * 100) / 100}MB → ${
             Math.round((targetSize / 1024 / 1024) * 100) / 100
           }MB (${Math.round(reduction)}% reduction)`,
+<<<<<<< HEAD
         
+=======
+        );
+>>>>>>> origin/main
 
         // For now, this is informational - in production, we'd enforce targets
         expect(currentSize).toBeGreaterThan(0
@@ -164,7 +196,11 @@ describe('Bundle Optimization Tests', () => {
 
       // In a real scenario, we'd validate these chunks exist in the build output
       expectedChunks.forEach(chunk => {
+<<<<<<< HEAD
         console.log(`Validating chunk exists: ${chunk}`
+=======
+        console.log(`Validating chunk exists: ${chunk}`);
+>>>>>>> origin/main
         // This would check file system in real CI/CD
         expect(chunk).toBeTruthy(
       }
@@ -220,8 +256,16 @@ describe('Bundle Optimization Tests', () => {
             { config: {} },
             React.createElement('div', null, 'Test Content'),
           ),
+<<<<<<< HEAD
         
       }).not.toThrow(
     }
   }
 }
+=======
+        );
+      }).not.toThrow();
+    });
+  });
+});
+>>>>>>> origin/main

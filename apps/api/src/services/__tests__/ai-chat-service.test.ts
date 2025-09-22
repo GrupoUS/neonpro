@@ -12,16 +12,23 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
   afterEach(() => {
     vi.restoreAllMocks(
 
-  it('should export AIChatService class', () => {
+  it(_'should export AIChatService class'), () => {
     expect(() => {
       const module = require('../ai-chat-service')
       expect(module.AIChatService).toBeDefined(
     }).not.toThrow(
 
+<<<<<<< HEAD
   describe('Multi-Model Support', () => {
     it('should support OpenAI models',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+  describe(_'Multi-Model Support'), () => {
+    it(_'should support OpenAI models',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.generateResponse({
         provider: 'openai',
@@ -34,9 +41,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.provider).toBe('openai')
       expect(result.data.model).toBe('gpt-4')
 
+<<<<<<< HEAD
     it('should support Anthropic models',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should support Anthropic models',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.generateResponse({
         provider: 'anthropic',
@@ -50,9 +63,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.response).toBeDefined(
       expect(result.data.provider).toBe('anthropic')
 
+<<<<<<< HEAD
     it('should support Google models',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should support Google models',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.generateResponse({
         provider: 'google',
@@ -66,9 +85,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.response).toBeDefined(
       expect(result.data.provider).toBe('google')
 
+<<<<<<< HEAD
     it('should support local models',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should support local models',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.generateResponse({
         provider: 'local',
@@ -80,15 +105,23 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.response).toBeDefined(
       expect(result.data.provider).toBe('local')
 
+<<<<<<< HEAD
   describe('Brazilian Healthcare Context', () => {
     it('should provide healthcare-specific responses in Portuguese',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+  describe(_'Brazilian Healthcare Context'), () => {
+    it(_'should provide healthcare-specific responses in Portuguese',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.generateHealthcareResponse({
         _query: 'Quais são os sintomas de diabetes?',
         patientId: 'patient-123',
         _context: 'medical_consultation',
+<<<<<<< HEAD
 
       expect(result.success).toBe(true);
       expect(result.data.response).toContain('diabetes')
@@ -98,6 +131,19 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
     it('should integrate with patient data for personalized responses',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.data.response).toContain('diabetes');
+      expect(result.data.language).toBe('pt-BR');
+      expect(result.data._context).toBe('medical_consultation');
+    });
+
+    it(_'should integrate with patient data for personalized responses',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.generatePersonalizedResponse({
         _query: 'Como está minha saúde?',
@@ -109,9 +155,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.personalized).toBe(true);
       expect(result.data.patientId).toBe('patient-123')
 
+<<<<<<< HEAD
     it('should provide ANVISA-compliant medical information',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should provide ANVISA-compliant medical information',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.generateMedicalInfo({
         topic: 'medicamentos',
@@ -123,24 +175,41 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.compliance).toBe('anvisa')
       expect(result.data.disclaimer).toBeDefined(
 
+<<<<<<< HEAD
   describe('Conversation Management', () => {
     it('should create new conversation',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+  describe(_'Conversation Management'), () => {
+    it(_'should create new conversation',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.createConversation({
         patientId: 'patient-123',
         title: 'Consulta sobre sintomas',
         _context: 'medical_consultation',
+<<<<<<< HEAD
+=======
+      });
+>>>>>>> origin/main
 
       expect(result.success).toBe(true);
       expect(result.data.id).toBeDefined(
       expect(result.data.patientId).toBe('patient-123')
       expect(result.data.title).toBe('Consulta sobre sintomas')
 
+<<<<<<< HEAD
     it('should add message to conversation',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should add message to conversation',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.addMessage({
         conversationId: 'conv-123',
@@ -149,6 +218,7 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
         timestamp: new Date(),
 
       expect(result.success).toBe(true);
+<<<<<<< HEAD
       expect(result.data.id).toBeDefined(
       expect(result.data._role).toBe('user')
       expect(result.data.content).toBe('Estou sentindo dor de cabeça')
@@ -156,6 +226,16 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
     it('should get conversation history',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+      expect(result.data.id).toBeDefined();
+      expect(result.data._role).toBe('user');
+      expect(result.data.content).toBe('Estou sentindo dor de cabeça');
+    });
+
+    it(_'should get conversation history',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.getConversationHistory('conv-123')
 
@@ -163,9 +243,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(Array.isArray(result.data.messages)).toBe(true);
       expect(result.data.conversationId).toBe('conv-123')
 
+<<<<<<< HEAD
     it('should list patient conversations',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should list patient conversations',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.listConversations('patient-123')
 
@@ -173,10 +259,17 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(Array.isArray(result.data.conversations)).toBe(true);
       expect(result.data.patientId).toBe('patient-123')
 
+<<<<<<< HEAD
   describe('AI Insights Integration', () => {
     it('should generate insights from conversation',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+  describe(_'AI Insights Integration'), () => {
+    it(_'should generate insights from conversation',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.generateInsights({
         conversationId: 'conv-123',
@@ -187,9 +280,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(Array.isArray(result.data.insights)).toBe(true);
       expect(result.data.analysisType).toBe('symptom_analysis')
 
+<<<<<<< HEAD
     it('should suggest follow-up questions',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should suggest follow-up questions',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.suggestFollowUp({
         conversationId: 'conv-123',
@@ -199,9 +298,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(Array.isArray(result.data.suggestions)).toBe(true);
       expect(result.data.suggestions.length).toBeGreaterThan(0
 
+<<<<<<< HEAD
     it('should detect urgent symptoms',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should detect urgent symptoms',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.detectUrgentSymptoms({
         messages: [
@@ -213,10 +318,17 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.urgencyLevel).toBe('high')
       expect(result.data.recommendation).toBeDefined(
 
+<<<<<<< HEAD
   describe('LGPD Compliance', () => {
     it('should track conversation access for audit',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+  describe(_'LGPD Compliance'), () => {
+    it(_'should track conversation access for audit',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.trackConversationAccess({
         conversationId: 'conv-123',
@@ -227,9 +339,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.success).toBe(true);
       expect(result.data.accessLogged).toBe(true);
 
+<<<<<<< HEAD
     it('should anonymize conversation data',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should anonymize conversation data',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.anonymizeConversation('conv-123')
 
@@ -237,9 +355,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.anonymized).toBe(true);
       expect(result.message).toContain('Conversa anonimizada')
 
+<<<<<<< HEAD
     it('should export conversation data for LGPD requests',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should export conversation data for LGPD requests',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.exportConversationData({
         patientId: 'patient-123',
@@ -250,10 +374,17 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.exportUrl).toBeDefined(
       expect(result.data.format).toBe('json')
 
+<<<<<<< HEAD
   describe('Performance and Monitoring', () => {
     it('should track response times',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+  describe(_'Performance and Monitoring'), () => {
+    it(_'should track response times',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.generateResponse({
         provider: 'openai',
@@ -265,9 +396,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.responseTime).toBeDefined(
       expect(typeof result.data.responseTime).toBe('number')
 
+<<<<<<< HEAD
     it('should handle rate limiting',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should handle rate limiting',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       // Mock rate limit exceeded
       const result = await service.checkRateLimit('patient-123')
@@ -277,9 +414,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.data.remaining).toBeDefined(
       expect(result.data.resetTime).toBeDefined(
 
+<<<<<<< HEAD
     it('should provide service health status', () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should provide service health status'), () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const health = service.getHealthStatus(
 
@@ -287,10 +430,17 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(health.providers).toBeDefined(
       expect(health.uptime).toBeDefined(
 
+<<<<<<< HEAD
   describe('Error Handling', () => {
     it('should handle provider API errors gracefully',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+  describe(_'Error Handling'), () => {
+    it(_'should handle provider API errors gracefully',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       // Mock API error
       const result = await service.generateResponse({
@@ -302,9 +452,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.success).toBe(false);
       expect(result.error).toContain('Provedor de IA não suportado')
 
+<<<<<<< HEAD
     it('should handle network timeouts',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should handle network timeouts',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.generateResponseWithTimeout({
         provider: 'openai',
@@ -315,9 +471,15 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       expect(result.success).toBe(false);
       expect(result.error).toContain('Timeout')
 
+<<<<<<< HEAD
     it('should validate input parameters',async () => {
       const { AIChatService } = require('../ai-chat-service')
       const service = new AIChatService(
+=======
+    it(_'should validate input parameters',async () => {
+      const { AIChatService } = require('../ai-chat-service');
+      const service = new AIChatService();
+>>>>>>> origin/main
 
       const result = await service.generateResponse({
         provider: '',

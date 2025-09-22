@@ -23,11 +23,19 @@ const mockPrisma = {
 };
 
 // Mock the getHealthcarePrismaClient function
+<<<<<<< HEAD
 vi.mock('../../clients/prisma',() => ({
+=======
+vi.mock(_'../../clients/prisma',() => ({
+>>>>>>> origin/main
   getHealthcarePrismaClient: () => mockPrisma,
 })
 
+<<<<<<< HEAD
 describe('LGPDConsentService',() => {
+=======
+describe(_'LGPDConsentService',() => {
+>>>>>>> origin/main
   let consentService: LGPDConsentService;
 
   beforeEach(() => {
@@ -36,7 +44,11 @@ describe('LGPDConsentService',() => {
       mockPrisma as unknown as HealthcarePrismaClient,
     
 
+<<<<<<< HEAD
   describe('recordConsent',() => {
+=======
+  describe(_'recordConsent',() => {
+>>>>>>> origin/main
     const validConsentRequest = {
       patientId: 'patient-123',
       purpose: ConsentPurpose.enum.TREATMENT,
@@ -47,7 +59,11 @@ describe('LGPDConsentService',() => {
       userAgent: 'Mozilla/5.0',
     };
 
+<<<<<<< HEAD
     it('should successfully record consent when patient exists',async () => {
+=======
+    it(_'should successfully record consent when patient exists',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.patient.findUnique.mockResolvedValue({ id: 'patient-123'   }
       mockPrisma.auditTrail.findFirst.mockResolvedValue(null); // No existing consent
@@ -66,7 +82,11 @@ describe('LGPDConsentService',() => {
         where: { id: 'patient-123' },
       expect(mockPrisma.auditTrail.create).toHaveBeenCalledTimes(2
 
+<<<<<<< HEAD
     it('should return error when patient does not exist',async () => {
+=======
+    it(_'should return error when patient does not exist',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.patient.findUnique.mockResolvedValue(null
 
@@ -79,7 +99,11 @@ describe('LGPDConsentService',() => {
       expect(result.errors).toBeDefined(
       expect(result.errors?.[0]).toContain('PATIENT_NOT_FOUND')
 
+<<<<<<< HEAD
     it('should revoke existing consent before creating new one',async () => {
+=======
+    it(_'should revoke existing consent before creating new one',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.patient.findUnique.mockResolvedValue({ id: 'patient-123'   }
       mockPrisma.auditTrail.findFirst.mockResolvedValue({
@@ -105,7 +129,11 @@ describe('LGPDConsentService',() => {
           },
         },
 
+<<<<<<< HEAD
     it('should handle errors gracefully',async () => {
+=======
+    it(_'should handle errors gracefully',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.patient.findUnique.mockRejectedValue(
         new Error('Database error'),
@@ -120,7 +148,11 @@ describe('LGPDConsentService',() => {
       expect(result.errors).toBeDefined(
       expect(result.errors?.[0]).toBe('Database error')
 
+<<<<<<< HEAD
   describe('withdrawConsent',() => {
+=======
+  describe(_'withdrawConsent',() => {
+>>>>>>> origin/main
     const validWithdrawalRequest = {
       patientId: 'patient-123',
       consentId: 'consent-123',
@@ -130,7 +162,11 @@ describe('LGPDConsentService',() => {
       userAgent: 'Mozilla/5.0',
     };
 
+<<<<<<< HEAD
     it('should successfully withdraw consent',async () => {
+=======
+    it(_'should successfully withdraw consent',async () => {
+>>>>>>> origin/main
       // Arrange
       const existingConsent = {
         id: 'consent-123',
@@ -167,7 +203,11 @@ describe('LGPDConsentService',() => {
           },
         },
 
+<<<<<<< HEAD
     it('should return error when consent does not exist',async () => {
+=======
+    it(_'should return error when consent does not exist',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.auditTrail.findFirst.mockResolvedValue(null
 
@@ -181,8 +221,13 @@ describe('LGPDConsentService',() => {
       expect(result.errors).toBeDefined(
       expect(result.errors?.[0]).toContain('CONSENT_NOT_FOUND')
 
+<<<<<<< HEAD
   describe('getPatientConsents',() => {
     it('should return patient consents',async () => {
+=======
+  describe(_'getPatientConsents',() => {
+    it(_'should return patient consents',async () => {
+>>>>>>> origin/main
       // Arrange
       const mockConsents = [
         {
@@ -227,8 +272,13 @@ describe('LGPDConsentService',() => {
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date),
 
+<<<<<<< HEAD
   describe('hasActiveConsent',() => {
     it('should return true when active consent exists',async () => {
+=======
+  describe(_'hasActiveConsent',() => {
+    it(_'should return true when active consent exists',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.auditTrail.findFirst.mockResolvedValue({
         id: 'consent-123',
@@ -244,7 +294,11 @@ describe('LGPDConsentService',() => {
       // Assert
       expect(result).toBe(true);
 
+<<<<<<< HEAD
     it('should return false when no active consent exists',async () => {
+=======
+    it(_'should return false when no active consent exists',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.auditTrail.findFirst.mockResolvedValue(null
 
@@ -257,8 +311,13 @@ describe('LGPDConsentService',() => {
       // Assert
       expect(result).toBe(false);
 
+<<<<<<< HEAD
   describe('validateConsent',() => {
     it('should pass validation when active consent exists',async () => {
+=======
+  describe(_'validateConsent',() => {
+    it(_'should pass validation when active consent exists',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.auditTrail.findFirst.mockResolvedValue({
         id: 'consent-123',
@@ -281,7 +340,11 @@ describe('LGPDConsentService',() => {
       }
       expect(error).toBeNull(
 
+<<<<<<< HEAD
     it('should throw error when no active consent exists',async () => {
+=======
+    it(_'should throw error when no active consent exists',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.auditTrail.findFirst.mockResolvedValue(null
 
@@ -294,8 +357,13 @@ describe('LGPDConsentService',() => {
         ),
       ).rejects.toThrow('CONSENT_REQUIRED')
 
+<<<<<<< HEAD
   describe('generateConsentReport',() => {
     it('should generate consent report successfully',async () => {
+=======
+  describe(_'generateConsentReport',() => {
+    it(_'should generate consent report successfully',async () => {
+>>>>>>> origin/main
       // Arrange
       const mockConsents = [
         {
@@ -337,8 +405,13 @@ describe('LGPDConsentService',() => {
       expect(result.report?.consentHistory).toHaveLength(1
       expect(result.report?.summary.totalConsents).toBe(1
 
+<<<<<<< HEAD
   describe('Consent Templates',() => {
     it('should return correct template for TREATMENT purpose',async () => {
+=======
+  describe(_'Consent Templates',() => {
+    it(_'should return correct template for TREATMENT purpose',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.patient.findUnique.mockResolvedValue({ id: 'patient-123'   }
       mockPrisma.auditTrail.findFirst.mockResolvedValue(null
@@ -356,7 +429,11 @@ describe('LGPDConsentService',() => {
       const consentText = createCall[0].data.metadata.consentText;
       expect(consentText).toContain('tratamento médico')
 
+<<<<<<< HEAD
     it('should return correct template for RESEARCH purpose',async () => {
+=======
+    it(_'should return correct template for RESEARCH purpose',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.patient.findUnique.mockResolvedValue({ id: 'patient-123'   }
       mockPrisma.auditTrail.findFirst.mockResolvedValue(null
@@ -374,7 +451,11 @@ describe('LGPDConsentService',() => {
       const consentText = createCall[0].data.metadata.consentText;
       expect(consentText).toContain('pesquisa médica')
 
+<<<<<<< HEAD
     it('should return default template for unknown purpose',async () => {
+=======
+    it(_'should return default template for unknown purpose',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.patient.findUnique.mockResolvedValue({ id: 'patient-123'   }
       mockPrisma.auditTrail.findFirst.mockResolvedValue(null
@@ -392,8 +473,13 @@ describe('LGPDConsentService',() => {
       const consentText = createCall[0].data.metadata.consentText;
       expect(consentText).toContain('MARKETING')
 
+<<<<<<< HEAD
   describe('Error Handling',() => {
     it('should handle database connection errors',async () => {
+=======
+  describe(_'Error Handling',() => {
+    it(_'should handle database connection errors',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.patient.findUnique.mockRejectedValue(
         new Error('Connection failed'),
@@ -411,7 +497,11 @@ describe('LGPDConsentService',() => {
       expect(result.errors).toBeDefined(
       expect(result.errors?.[0]).toBe('Connection failed')
 
+<<<<<<< HEAD
     it('should handle invalid consent data',async () => {
+=======
+    it(_'should handle invalid consent data',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.patient.findUnique.mockResolvedValue({ id: 'patient-123'   }
       mockPrisma.auditTrail.create.mockRejectedValue(
@@ -430,8 +520,13 @@ describe('LGPDConsentService',() => {
       expect(result.errors).toBeDefined(
       expect(result.errors?.[0]).toBe('Invalid data format')
 
+<<<<<<< HEAD
   describe('LGPD Compliance',() => {
     it('should create audit trail for all consent operations',async () => {
+=======
+  describe(_'LGPD Compliance',() => {
+    it(_'should create audit trail for all consent operations',async () => {
+>>>>>>> origin/main
       // Arrange
       mockPrisma.patient.findUnique.mockResolvedValue({ id: 'patient-123'   }
       mockPrisma.auditTrail.findFirst.mockResolvedValue(null
@@ -457,7 +552,11 @@ describe('LGPDConsentService',() => {
       expect(secondCall[0].data.action).toBe('LGPD_CONSENT_RECORD')
       expect(secondCall[0].data.entityType).toBe('CONSENT_MANAGEMENT')
 
+<<<<<<< HEAD
     it('should track consent withdrawal with detailed audit',async () => {
+=======
+    it(_'should track consent withdrawal with detailed audit',async () => {
+>>>>>>> origin/main
       // Arrange
       const existingConsent = {
         id: 'consent-123',
@@ -494,7 +593,11 @@ describe('LGPDConsentService',() => {
           },
         },
 
+<<<<<<< HEAD
     it('should handle consent withdrawal data processing',async () => {
+=======
+    it(_'should handle consent withdrawal data processing',async () => {
+>>>>>>> origin/main
       // Arrange
       const existingConsent = {
         id: 'consent-123',

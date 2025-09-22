@@ -5,6 +5,15 @@
     "noEmit": false,
     "outDir": "./dist",
     "rootDir": "./src",
+<<<<<<< HEAD
+=======
+    "declaration": true,
+    "declarationMap": true,
+    "composite": true,
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "strict": true,
+>>>>>>> origin/main
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "paths": {

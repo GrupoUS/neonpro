@@ -353,7 +353,11 @@ describe(('Supabase Database Integration', () => {
       const concurrentOperations = 10;
       const operationPromises = Array.from(
         { length: concurrentOperations },async (, i) => {
+<<<<<<< HEAD
           const startTime = performance.now(
+=======
+          const startTime = performance.now();
+>>>>>>> origin/main
           const { data, error } = await testClient
             .from('patients')
             .select('id, full_name')
@@ -368,7 +372,11 @@ describe(('Supabase Database Integration', () => {
 
       // All operations should succeed
       results.forEach(result => {
+<<<<<<< HEAD
         expect(result.error).toBeNull(
+=======
+        expect(result.error).toBeNull();
+>>>>>>> origin/main
         expect(
           HealthcareTestValidators.validatePerformance(
             result.responseTime,

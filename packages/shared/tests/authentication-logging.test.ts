@@ -24,7 +24,11 @@ describe('Authentication Logging - Token Exposure Prevention_, () => {
 
   describe('JWT Token Protection_, () => {
     it('should NOT log JWT tokens in error scenarios_, () => {
+<<<<<<< HEAD
       const mockJwtToken = ''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c')
+=======
+      const mockJwtToken = ''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
+>>>>>>> origin/main
       const refreshToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.refresh-token-secret';
 
       // Simulate authentication error that would log tokens
@@ -59,9 +63,15 @@ describe('Authentication Logging - Token Exposure Prevention_, () => {
       };
 
       // Simulate debug logging that would expose token contents
+<<<<<<< HEAD
       console.log('Decoded token header:', tokenHeader
       console.log('Token _payload:_, tokenPayload
       console.error('Token validation failed:', { header: tokenHeader, _payload: tokenPayload }
+=======
+      console.log('Decoded token header:', tokenHeader);
+      console.log('Token _payload:_, tokenPayload);
+      console.error('Token validation failed:', { header: tokenHeader, _payload: tokenPayload });
+>>>>>>> origin/main
 
       // Test will FAIL because token contents are being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls];
@@ -101,7 +111,11 @@ describe('Authentication Logging - Token Exposure Prevention_, () => {
         JSON.stringify(call).includes('supabase_anon_key_) ||
         JSON.stringify(call).includes('service_role_key_) ||
         JSON.stringify(call).includes('stripe_secret_key_)
+<<<<<<< HEAD
       
+=======
+      );
+>>>>>>> origin/main
 
       expect(hasApiKeys).toBe(false);
     }
@@ -128,7 +142,11 @@ describe('Authentication Logging - Token Exposure Prevention_, () => {
         JSON.stringify(call).includes('whsec__) ||
         JSON.stringify(call).includes('webhook_signing_secret_) ||
         JSON.stringify(call).includes('stripe_webhook_secret_)
+<<<<<<< HEAD
       
+=======
+      );
+>>>>>>> origin/main
 
       expect(hasWebhookSecrets).toBe(false);
     }
@@ -181,7 +199,11 @@ describe('Authentication Logging - Token Exposure Prevention_, () => {
         JSON.stringify(call).includes('oauth_state_1234567890abcdef_) ||
         JSON.stringify(call).includes('auth_code_xyz123abc456def789_) ||
         JSON.stringify(call).includes('client_id_123456_)
+<<<<<<< HEAD
       
+=======
+      );
+>>>>>>> origin/main
 
       expect(hasOAuthData).toBe(false);
     }
@@ -253,7 +275,11 @@ describe('Authentication Logging - Token Exposure Prevention_, () => {
         oldKey: 'old_key_xyz123abc456_,
         newKey: 'new_key_def789ghi012_,
         rotationReason: 'key_compromise_,
+<<<<<<< HEAD
         rotatedAt: '2024-01-15T14:30:00Z')
+=======
+        rotatedAt: '2024-01-15T14:30:00Z'
+>>>>>>> origin/main
       };
 
       // Simulate credential rotation logging
@@ -271,7 +297,11 @@ describe('Authentication Logging - Token Exposure Prevention_, () => {
         JSON.stringify(call).includes('old_key_xyz123abc456_) ||
         JSON.stringify(call).includes('new_key_def789ghi012_) ||
         JSON.stringify(call).includes('key_compromise_)
+<<<<<<< HEAD
       
+=======
+      );
+>>>>>>> origin/main
 
       expect(hasCredentialData).toBe(false);
     }
@@ -334,7 +364,11 @@ describe('Authentication Logging - Token Exposure Prevention_, () => {
         JSON.stringify(call).includes('189.1.1.1') ||
         JSON.stringify(call).includes('200.200.200.200') ||
         JSON.stringify(call).includes('fp_1234567890_)
+<<<<<<< HEAD
       
+=======
+      );
+>>>>>>> origin/main
 
       expect(hasAuthPii).toBe(false);
     }
@@ -434,7 +468,11 @@ describe('Authentication Logging - Token Exposure Prevention_, () => {
         JSON.stringify(call).includes('EwBz8xyz123abc') ||
         JSON.stringify(call).includes('1//0Gf2xyz123') ||
         JSON.stringify(call).includes('M.R3_BAY.xyz123_)
+<<<<<<< HEAD
       
+=======
+      );
+>>>>>>> origin/main
 
       expect(hasThirdPartyTokens).toBe(false);
     }

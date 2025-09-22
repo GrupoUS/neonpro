@@ -14,7 +14,7 @@ import { SemanticCacheService } from '../semantic-cache';
 jest.mock('../semantic-cache')
 jest.mock('../audit-trail')
 
-describe('AIProviderRouterService', () => {
+describe(_'AIProviderRouterService'), () => {
   let routerService: AIProviderRouterService;
   let mockSemanticCache: jest.Mocked<SemanticCacheService>;
   let mockAuditService: jest.Mocked<AuditTrailService>;
@@ -41,25 +41,41 @@ describe('AIProviderRouterService', () => {
   afterEach(() => {
     routerService.destroy(
 
+<<<<<<< HEAD
   describe('Initialization', () => {
     it('should initialize with default healthcare-compliant providers', () => {
       const availableProviders = routerService.getAvailableProvidersList(
+=======
+  describe(_'Initialization'), () => {
+    it(_'should initialize with default healthcare-compliant providers'), () => {
+      const availableProviders = routerService.getAvailableProvidersList();
+>>>>>>> origin/main
 
       expect(availableProviders).toContain(AIProvider.OPENAI
       expect(availableProviders).toContain(AIProvider.ANTHROPIC
       expect(availableProviders).toContain(AIProvider.AZURE
       expect(availableProviders).toContain(AIProvider.AWS_BEDROCK
 
+<<<<<<< HEAD
     it('should have all providers in healthy state initially', () => {
       const healthChecks = routerService.getProviderHealth(
+=======
+    it(_'should have all providers in healthy state initially'), () => {
+      const healthChecks = routerService.getProviderHealth();
+>>>>>>> origin/main
 
       expect(Array.isArray(healthChecks)).toBe(true);
       healthChecks.forEach((health: any) => {
         expect(health.status).toBe(ProviderStatus.AVAILABLE
         expect(health.success_rate).toBe(100
 
+<<<<<<< HEAD
   describe('Request Routing', () => {
     it('should route a basic healthcare request successfully',async () => {
+=======
+  describe(_'Request Routing'), () => {
+    it(_'should route a basic healthcare request successfully',async () => {
+>>>>>>> origin/main
       const request = {
         prompt: 'Como posso ajudar com sua consulta médica?',
         healthcare_context: {
@@ -104,7 +120,11 @@ describe('AIProviderRouterService', () => {
       expect(response.metrics.total_latency_ms).toBeGreaterThan(0
       expect(response.metrics.cache_hit).toBe(false);
 
+<<<<<<< HEAD
     it('should handle emergency requests with priority routing',async () => {
+=======
+    it(_'should handle emergency requests with priority routing',async () => {
+>>>>>>> origin/main
       const emergencyRequest = {
         prompt: 'Paciente com dor no peito urgente',
         healthcare_context: {
@@ -144,7 +164,11 @@ describe('AIProviderRouterService', () => {
         }),
       
 
+<<<<<<< HEAD
     it('should use semantic cache when available',async () => {
+=======
+    it(_'should use semantic cache when available',async () => {
+>>>>>>> origin/main
       const request = {
         prompt: 'Informações sobre diabetes',
         healthcare_context: {
@@ -188,8 +212,13 @@ describe('AIProviderRouterService', () => {
       expect(response.content).toBe('Informações sobre diabetes do cache')
       expect(response.metrics.total_cost_usd).toBe(0
 
+<<<<<<< HEAD
   describe('Provider Selection Strategies', () => {
     it('should select cost-optimized provider',async () => {
+=======
+  describe(_'Provider Selection Strategies'), () => {
+    it(_'should select cost-optimized provider',async () => {
+>>>>>>> origin/main
       const request = {
         prompt: 'Consulta básica',
         healthcare_context: {
@@ -225,7 +254,11 @@ describe('AIProviderRouterService', () => {
         response.provider_used,
       
 
+<<<<<<< HEAD
     it('should select latency-optimized provider',async () => {
+=======
+    it(_'should select latency-optimized provider',async () => {
+>>>>>>> origin/main
       const request = {
         prompt: 'Resposta rápida necessária',
         healthcare_context: {
@@ -258,8 +291,13 @@ describe('AIProviderRouterService', () => {
       expect(response).toBeDefined(
       expect(response.metrics.total_latency_ms).toBeLessThan(5000
 
+<<<<<<< HEAD
   describe('Healthcare Compliance', () => {
     it('should reject requests without patient ID when PII is present',async () => {
+=======
+  describe(_'Healthcare Compliance'), () => {
+    it(_'should reject requests without patient ID when PII is present',async () => {
+>>>>>>> origin/main
       const invalidRequest = {
         prompt: 'Dados do paciente João Silva, CPF 123.456.789-00',
         healthcare_context: {
@@ -291,7 +329,11 @@ describe('AIProviderRouterService', () => {
         'LGPD Violation: Patient ID required when PII is present',
       
 
+<<<<<<< HEAD
     it('should apply PII redaction when contains_pii is true',async () => {
+=======
+    it(_'should apply PII redaction when contains_pii is true',async () => {
+>>>>>>> origin/main
       const request = {
         prompt: 'Paciente João Silva, CPF 123.456.789-00, telefone (11) 99999-9999',
         healthcare_context: {
@@ -338,8 +380,13 @@ describe('AIProviderRouterService', () => {
         }),
       
 
+<<<<<<< HEAD
   describe('Error Handling and Fallbacks', () => {
     it('should handle provider failure with fallback',async () => {
+=======
+  describe(_'Error Handling and Fallbacks'), () => {
+    it(_'should handle provider failure with fallback',async () => {
+>>>>>>> origin/main
       // Disable all providers except one to test fallback
       routerService.setProviderEnabled(AIProvider.OPENAI, false
       routerService.setProviderEnabled(AIProvider.AZURE, false
@@ -378,8 +425,8 @@ describe('AIProviderRouterService', () => {
       expect(response).toBeDefined(
       expect(response.provider_used).toBe(AIProvider.ANTHROPIC); // Should fallback to available provider
 
-  describe('Provider Management', () => {
-    it('should enable and disable providers correctly', () => {
+  describe(_'Provider Management'), () => {
+    it(_'should enable and disable providers correctly'), () => {
       expect(routerService.setProviderEnabled(AIProvider.OPENAI, false)).toBe(
         true,
       
@@ -393,8 +440,13 @@ describe('AIProviderRouterService', () => {
         ),
       ).toBe(false);
 
+<<<<<<< HEAD
     it('should return provider health metrics', () => {
       const health = routerService.getProviderHealth(AIProvider.OPENAI
+=======
+    it(_'should return provider health metrics'), () => {
+      const health = routerService.getProviderHealth(AIProvider.OPENAI);
+>>>>>>> origin/main
 
       expect(health).toBeDefined(
       expect(health).toHaveProperty('status')
@@ -402,8 +454,13 @@ describe('AIProviderRouterService', () => {
       expect(health).toHaveProperty('success_rate')
       expect(health).toHaveProperty('last_check')
 
+<<<<<<< HEAD
     it('should return provider performance metrics', () => {
       const metrics = routerService.getProviderMetrics(AIProvider.OPENAI
+=======
+    it(_'should return provider performance metrics'), () => {
+      const metrics = routerService.getProviderMetrics(AIProvider.OPENAI);
+>>>>>>> origin/main
 
       expect(metrics).toBeDefined(
       expect(metrics).toHaveProperty('latency')
@@ -411,8 +468,13 @@ describe('AIProviderRouterService', () => {
       expect(metrics).toHaveProperty('quality')
       expect(metrics).toHaveProperty('healthcare_compliance')
 
+<<<<<<< HEAD
   describe('Input Validation and Security', () => {
     it('should reject requests with malicious content',async () => {
+=======
+  describe(_'Input Validation and Security'), () => {
+    it(_'should reject requests with malicious content',async () => {
+>>>>>>> origin/main
       const maliciousRequest = {
         prompt: '<script>alert("xss")</script> DROP TABLE patients;',
         healthcare_context: {
@@ -445,7 +507,11 @@ describe('AIProviderRouterService', () => {
       expect(response).toBeDefined(
       expect(response.compliance.data_sanitized).toBe(true);
 
+<<<<<<< HEAD
     it('should validate request structure',async () => {
+=======
+    it(_'should validate request structure',async () => {
+>>>>>>> origin/main
       const invalidRequest = {
         // Missing required fields
         prompt: '',

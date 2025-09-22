@@ -23,11 +23,21 @@ describe('ErrorTrackingManager',() => {
         provider: 'sentry',
         sampleRate: 0.5,
         tags: { _service: 'api' },
+<<<<<<< HEAD
+=======
+      });
+>>>>>>> origin/main
 
       const config = customTracker.getConfig();
       expect(config.provider).toBe('sentry')
       expect(config.sampleRate).toBe(0.5);
+<<<<<<< HEAD
       expect(config.tags?._service).toBe('api')
+=======
+      expect(config.tags?._service).toBe('api');
+    });
+  });
+>>>>>>> origin/main
 
   describe('Initialization',() => {
     it('should initialize custom provider successfully', async () => {
@@ -48,7 +58,11 @@ describe('ErrorTrackingManager',() => {
       await errorTracker.initialize();
 
     it('should capture exceptions with context',() => {
+<<<<<<< HEAD
       const error = new Error('Test error')
+=======
+      const error = new Error('Test error');
+>>>>>>> origin/main
       const context = {
         requestId: 'req-123',
         _userId: 'user-456',
@@ -57,8 +71,14 @@ describe('ErrorTrackingManager',() => {
       };
 
       expect(() => {
+<<<<<<< HEAD
         errorTracker.captureException(error, _context
       }).not.toThrow(
+=======
+        errorTracker.captureException(error, _context);
+      }).not.toThrow();
+    });
+>>>>>>> origin/main
 
     it('should capture messages with different levels',() => {
       expect(() => {
@@ -68,8 +88,13 @@ describe('ErrorTrackingManager',() => {
       }).not.toThrow(
 
     it('should handle missing provider gracefully',() => {
+<<<<<<< HEAD
       const uninitializedTracker = new ErrorTrackingManager(
       const error = new Error('Test error')
+=======
+      const uninitializedTracker = new ErrorTrackingManager();
+      const error = new Error('Test error');
+>>>>>>> origin/main
 
       expect(() => {
         uninitializedTracker.captureException(error
@@ -108,6 +133,7 @@ describe('ErrorTrackingManager',() => {
         mockHonoContext as any,
       
 
+<<<<<<< HEAD
       expect(context.requestId).toBe('req-123')
       expect(context._userId).toBe('user-456')
       expect(context.clinicId).toBe('clinic-789')
@@ -116,6 +142,17 @@ describe('ErrorTrackingManager',() => {
       expect(context.userAgent).toBe('Test Agent')
       expect(context.ip).toBe('192.168.1.1')
       expect(context.patientId).toBe('patient-123')
+=======
+      expect(context.requestId).toBe('req-123');
+      expect(context._userId).toBe('user-456');
+      expect(context.clinicId).toBe('clinic-789');
+      expect(context.endpoint).toBe('/api/v1/patients');
+      expect(context.method).toBe('GET');
+      expect(context.userAgent).toBe('Test Agent');
+      expect(context.ip).toBe('192.168.1.1');
+      expect(context.patientId).toBe('patient-123');
+    });
+>>>>>>> origin/main
 
     it('should handle missing context gracefully',() => {
       const mockHonoContext = {

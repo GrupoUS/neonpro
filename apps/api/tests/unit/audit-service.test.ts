@@ -54,6 +54,7 @@ describe('Audit Service Module - RED Phase', () => {
         details: { loginMethod: 'password' },
       }
 
+<<<<<<< HEAD
       expect(event._userId).toBe('user123')
       expect(event.sessionId).toBe('session456')
       expect(event.ipAddress).toBe('192.168.1.100')
@@ -61,6 +62,15 @@ describe('Audit Service Module - RED Phase', () => {
       expect(event.resource).toBe('/api/login')
       expect(event.details).toEqual({ loginMethod: 'password' }
     }
+=======
+      expect(event._userId).toBe('user123');
+      expect(event.sessionId).toBe('session456');
+      expect(event.ipAddress).toBe('192.168.1.100');
+      expect(event.userAgent).toBe('Mozilla/5.0...');
+      expect(event.resource).toBe('/api/login');
+      expect(event.details).toEqual({ loginMethod: 'password' });
+    });
+>>>>>>> origin/main
 
     it('should support healthcare compliance information', () => {
       const event = new AuditEvent({
@@ -119,6 +129,7 @@ describe('Audit Service Module - RED Phase', () => {
         isRedacted: false,
       }
 
+<<<<<<< HEAD
       expect(log).toBeDefined(
       expect(log.id).toBe('audit_12345678901234567890123456789012')
       expect(log.eventType).toBe('security_policy_evaluation')
@@ -131,6 +142,20 @@ describe('Audit Service Module - RED Phase', () => {
       expect(log.action).toBe('policy_evaluation')
       expect(log.result).toBe('success')
       expect(log.message).toBe('Security policy evaluation completed successfully')
+=======
+      expect(log).toBeDefined();
+      expect(log.id).toBe('audit_12345678901234567890123456789012');
+      expect(log.eventType).toBe('security_policy_evaluation');
+      expect(log.severity).toBe(AuditSeverity.INFO);
+      expect(log.category).toBe('security');
+      expect(log._userId).toBe('usr_healthcare_12345');
+      expect(log.sessionId).toBe('sess_67890');
+      expect(log.ipAddress).toBe('192.168.1.100');
+      expect(log.resource).toBe('/api/healthcare/patients');
+      expect(log.action).toBe('policy_evaluation');
+      expect(log.result).toBe('success');
+      expect(log.message).toBe('Security policy evaluation completed successfully');
+>>>>>>> origin/main
       expect(log.details).toEqual({
         policyId: 'sp_12345678901234567890123456789012',
         decision: 'allow',
@@ -207,6 +232,7 @@ describe('Audit Service Module - RED Phase', () => {
 
       const auditTrail = createAuditTrail(auditData
 
+<<<<<<< HEAD
       expect(auditTrail).toBeDefined(
       expect(auditTrail.eventType).toBe('patient_record_update')
       expect(auditTrail.severity).toBe(AuditSeverity.INFO
@@ -216,6 +242,17 @@ describe('Audit Service Module - RED Phase', () => {
       expect(auditTrail.action).toBe('update')
       expect(auditTrail.result).toBe('success')
       expect(auditTrail.message).toBe('Patient medical record updated')
+=======
+      expect(auditTrail).toBeDefined();
+      expect(auditTrail.eventType).toBe('patient_record_update');
+      expect(auditTrail.severity).toBe(AuditSeverity.INFO);
+      expect(auditTrail.category).toBe('healthcare');
+      expect(auditTrail._userId).toBe('doctor123');
+      expect(auditTrail.resource).toBe('/api/patients/123/records');
+      expect(auditTrail.action).toBe('update');
+      expect(auditTrail.result).toBe('success');
+      expect(auditTrail.message).toBe('Patient medical record updated');
+>>>>>>> origin/main
       expect(auditTrail.details).toEqual({
         patientId: 'patient123',
         recordType: 'medical_history',

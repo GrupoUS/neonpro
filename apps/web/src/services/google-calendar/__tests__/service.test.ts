@@ -4,9 +4,15 @@ import { GoogleCalendarCompliance } from '../compliance';
 import { GoogleCalendarService } from '../service';
 
 // Mock dependencies
+<<<<<<< HEAD
 vi.mock('../client')
 vi.mock('../compliance')
 vi.mock('@supabase/supabase-js')
+=======
+vi.mock('../client');
+vi.mock('../compliance');
+vi.mock('@supabase/supabase-js');
+>>>>>>> origin/main
 vi.mock(('@/utils/logger', () => ({
   logger: {
     info: vi.fn(),
@@ -165,7 +171,11 @@ describe(('GoogleCalendarService', () => {
     }
 
     it(_'should delete integration',async () => {
+<<<<<<< HEAD
       await service.deleteIntegration('integration-123')
+=======
+      await service.deleteIntegration('integration-123');
+>>>>>>> origin/main
 
       expect(mockCompliance.logDataDeletion).toHaveBeenCalled(
     }
@@ -378,7 +388,11 @@ describe(('GoogleCalendarService', () => {
     }
 
     it(_'should handle network errors gracefully',async () => {
+<<<<<<< HEAD
       mockClient.createEvent.mockRejectedValue(new Error('Network error')
+=======
+      mockClient.createEvent.mockRejectedValue(new Error('Network error'));
+>>>>>>> origin/main
 
       const result = await service.syncAppointmentToCalendar(mockAppointment
 
@@ -389,7 +403,11 @@ describe(('GoogleCalendarService', () => {
 
   describe(('Healthcare Compliance', () => {
     it(_'should validate consent before syncing',async () => {
+<<<<<<< HEAD
       mockCompliance.validateConsent.mockResolvedValueOnce(false
+=======
+      mockCompliance.validateConsent.mockResolvedValueOnce(false);
+>>>>>>> origin/main
 
       await expect(
         service.syncAppointmentToCalendar(mockAppointment),
@@ -397,7 +415,11 @@ describe(('GoogleCalendarService', () => {
     }
 
     it(_'should encrypt sensitive data',async () => {
+<<<<<<< HEAD
       await service.syncAppointmentToCalendar(mockAppointment
+=======
+      await service.syncAppointmentToCalendar(mockAppointment);
+>>>>>>> origin/main
 
       expect(mockCompliance.encryptSensitiveData).toHaveBeenCalledWith('token')
       expect(mockCompliance.encryptSensitiveData).toHaveBeenCalledWith(
@@ -406,7 +428,11 @@ describe(('GoogleCalendarService', () => {
     }
 
     it(_'should log all data access',async () => {
+<<<<<<< HEAD
       await service.syncAppointmentToCalendar(mockAppointment
+=======
+      await service.syncAppointmentToCalendar(mockAppointment);
+>>>>>>> origin/main
 
       expect(mockCompliance.logDataAccess).toHaveBeenCalledWith(
         expect.objectContaining({

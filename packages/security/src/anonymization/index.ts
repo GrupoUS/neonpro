@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 export type LGPDComplianceLevel = 'basic' | 'enhanced' | 'full_anonymization'
+=======
+export type LGPDComplianceLevel = 'basic' | 'enhanced' | ''full_anonymization'
+>>>>>>> origin/main
 
 export function maskCPF(cpf: string): string {
   return "***.***.***-**";

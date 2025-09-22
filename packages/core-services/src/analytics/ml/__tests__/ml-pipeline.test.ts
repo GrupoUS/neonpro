@@ -26,6 +26,15 @@ describe("ML Pipeline - Interface Contract Tests", () => {
     provider = createStubModelProvider({
       latencyMs: 10, // Fast for tests
       failureRate: 0, // No random failures in tests
+<<<<<<< HEAD
+=======
+    });
+  });
+
+  afterEach(_async () => {
+    if (provider) {
+      await provider.dispose();
+>>>>>>> origin/main
     }
   }
 
@@ -41,8 +50,13 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Model Provider Initialization", () => {
     it(_"should initialize successfully with default config",_async () => {
+<<<<<<< HEAD
       await expect(provider.initialize()).resolves.not.toThrow(
     }
+=======
+      await expect(provider.initialize()).resolves.not.toThrow();
+    });
+>>>>>>> origin/main
 
     it(_"should initialize successfully with custom config",_async () => {
       const customConfig = {
@@ -54,7 +68,11 @@ describe("ML Pipeline - Interface Contract Tests", () => {
     }
 
     it(_"should have valid metadata after initialization",_async () => {
+<<<<<<< HEAD
       await provider.initialize(
+=======
+      await provider.initialize();
+>>>>>>> origin/main
 
       const metadata = provider.metadata;
       expect(metadata).toBeDefined(
@@ -67,7 +85,11 @@ describe("ML Pipeline - Interface Contract Tests", () => {
     }
 
     it(_"should fail predictions before initialization",_async () => {
+<<<<<<< HEAD
       const input = createMockPredictionInput("patient_outcome"
+=======
+      const input = createMockPredictionInput("patient_outcome");
+>>>>>>> origin/main
 
       await expect(provider.predict(input)).rejects.toThrow(
         ModelInitializationError,
@@ -81,11 +103,19 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Single Prediction", () => {
     beforeEach(_async () => {
+<<<<<<< HEAD
       await provider.initialize(
     }
 
     it(_"should make successful prediction with valid input",_async () => {
       const input = createMockPredictionInput("patient_outcome"
+=======
+      await provider.initialize();
+    });
+
+    it(_"should make successful prediction with valid input",_async () => {
+      const input = createMockPredictionInput("patient_outcome");
+>>>>>>> origin/main
 
       const result = await provider.predict(input
 
@@ -98,7 +128,11 @@ describe("ML Pipeline - Interface Contract Tests", () => {
     }
 
     it(_"should include feature importance in prediction result",_async () => {
+<<<<<<< HEAD
       const input = createMockPredictionInput("readmission_risk"
+=======
+      const input = createMockPredictionInput("readmission_risk");
+>>>>>>> origin/main
 
       const result = await provider.predict(input
 
@@ -115,7 +149,11 @@ describe("ML Pipeline - Interface Contract Tests", () => {
     }
 
     it(_"should return metadata in prediction result",_async () => {
+<<<<<<< HEAD
       const input = createMockPredictionInput("no_show_risk"
+=======
+      const input = createMockPredictionInput("no_show_risk");
+>>>>>>> origin/main
 
       const result = await provider.predict(input
 
@@ -176,8 +214,13 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Batch Prediction", () => {
     beforeEach(_async () => {
+<<<<<<< HEAD
       await provider.initialize(
     }
+=======
+      await provider.initialize();
+    });
+>>>>>>> origin/main
 
     it(_"should process batch predictions successfully",_async () => {
       const inputs = [
@@ -234,8 +277,13 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Input Validation", () => {
     beforeEach(_async () => {
+<<<<<<< HEAD
       await provider.initialize(
     }
+=======
+      await provider.initialize();
+    });
+>>>>>>> origin/main
 
     it("should validate correct input structure", () => {
       const input = createMockPredictionInput("patient_outcome"
@@ -271,7 +319,11 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Health Check", () => {
     it(_"should return health status when initialized",_async () => {
+<<<<<<< HEAD
       await provider.initialize(
+=======
+      await provider.initialize();
+>>>>>>> origin/main
 
       const health = await provider.healthCheck(
 
@@ -282,7 +334,11 @@ describe("ML Pipeline - Interface Contract Tests", () => {
     }
 
     it(_"should include relevant health details",_async () => {
+<<<<<<< HEAD
       await provider.initialize(
+=======
+      await provider.initialize();
+>>>>>>> origin/main
 
       const health = await provider.healthCheck(
 
@@ -297,8 +353,13 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Error Handling", () => {
     beforeEach(_async () => {
+<<<<<<< HEAD
       await provider.initialize(
     }
+=======
+      await provider.initialize();
+    });
+>>>>>>> origin/main
 
     it(_"should throw InvalidInputError for unsupported prediction types",_async () => {
       const input = {
@@ -348,7 +409,11 @@ describe("ML Pipeline - Interface Contract Tests", () => {
 
   describe("Resource Management", () => {
     it(_"should dispose resources properly",_async () => {
+<<<<<<< HEAD
       await provider.initialize(
+=======
+      await provider.initialize();
+>>>>>>> origin/main
 
       await expect(provider.dispose()).resolves.not.toThrow(
 

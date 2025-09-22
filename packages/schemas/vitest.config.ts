@@ -9,7 +9,11 @@ export default defineConfig({
     coverage: {
       reporter: ['text', 'json', 'html'],
       exclude: [
+<<<<<<< HEAD
         'node_modules/**',
+=======
+        'node_modules/_,
+>>>>>>> origin/main
         'dist/',
         '**/*.d.ts',
         '**/*.config.ts',

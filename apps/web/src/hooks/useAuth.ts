@@ -64,7 +64,7 @@ export function useAuth(): AuthState {
               userProfile ? 'Success' : 'Failed',
             );
             setProfile(userProfile);
-          } catch (profileError) {
+          } catch (_profileError) {
             console.error(
               '❌ useAuth: Error loading user profile:',
               profileError,
@@ -79,7 +79,7 @@ export function useAuth(): AuthState {
           // Don't create fallback profile - just set null to allow app to work
           setProfile(null);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('❌ useAuth: Error getting initial session:', error);
         setSession(null);
         setUser(null);
@@ -116,7 +116,7 @@ export function useAuth(): AuthState {
             profileTimeoutPromise,
           ])) as any;
           setProfile(userProfile);
-        } catch (profileError) {
+        } catch (_profileError) {
           console.error('Error loading user profile:', profileError);
           setProfile(null);
         }
@@ -156,7 +156,7 @@ export function useAuth(): AuthState {
     return profile?.permissions[permission] || false;
   };
 
-  const isRole = (role: UserProfile['role']): boolean => {
+  const isRole = (_role: UserProfile['role']): boolean => {
     return profile?.role === role;
   };
 

@@ -505,7 +505,11 @@ describe(('Google Calendar Integration E2E', () => {
     }
 
     it(_'should handle patient consent revocation',async () => {
+<<<<<<< HEAD
       mockCompliance.validateConsent.mockResolvedValueOnce(false
+=======
+      mockCompliance.validateConsent.mockResolvedValueOnce(false);
+>>>>>>> origin/main
 
       await expect(
         service.syncAppointmentToCalendar(mockAppointment),

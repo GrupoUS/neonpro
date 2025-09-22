@@ -98,7 +98,11 @@ describe("Structured Logging Service", () => {
     it("should create a logger instance with valid configuration", () => {
       const stats = testLogger.getStatistics(
       expect(stats.isInitialized).toBe(true);
+<<<<<<< HEAD
       expect(stats.config._service).toBe("test-service"
+=======
+      expect(stats.config._service).toBe("test-service");
+>>>>>>> origin/main
       expect(stats.config.enabled).toBe(true);
     }
 
@@ -501,9 +505,15 @@ describe("Structured Logging Service", () => {
 
       expect(stats.bufferSize).toBe(2
       expect(stats.isInitialized).toBe(true);
+<<<<<<< HEAD
       expect(stats.config._service).toBe("test-service"
     }
   }
+=======
+      expect(stats.config._service).toBe("test-service");
+    });
+  });
+>>>>>>> origin/main
 
   // ============================================================================
   // ERROR HANDLING TESTS
@@ -535,7 +545,11 @@ describe("Structured Logging Service", () => {
 
       testLogger.error("Custom error occurred", customError as any, {
         _context: "custom",
+<<<<<<< HEAD
       }
+=======
+      });
+>>>>>>> origin/main
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
@@ -621,11 +635,19 @@ describe("Structured Logging Service", () => {
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
+<<<<<<< HEAD
       expect(logEntry.technicalContext._service).toBe("test-service"
       expect(logEntry.technicalContext.environment).toBeDefined(
       expect(logEntry.processingMetadata?.source).toBe("test-service"
     }
   }
+=======
+      expect(logEntry.technicalContext._service).toBe("test-service");
+      expect(logEntry.technicalContext.environment).toBeDefined();
+      expect(logEntry.processingMetadata?.source).toBe("test-service");
+    });
+  });
+>>>>>>> origin/main
 
   // ============================================================================
   // TAG GENERATION TESTS
@@ -680,7 +702,11 @@ describe("Structured Logging Service", () => {
       const stats = defaultLogger.getStatistics(
 
       expect(stats.isInitialized).toBe(true);
+<<<<<<< HEAD
       expect(stats.config._service).toBe("neonpro-platform"
+=======
+      expect(stats.config._service).toBe("neonpro-platform");
+>>>>>>> origin/main
       expect(stats.config.healthcareCompliance.enablePIIRedaction).toBe(true);
     }
 

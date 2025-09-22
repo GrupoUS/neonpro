@@ -19,6 +19,7 @@ describe(('useEnhancedRealTime', () => {
   }
 
   it(('should establish WebSocket connection with <1s latency', () => {
+<<<<<<< HEAD
     const { useEnhancedRealTime } = require('../useEnhancedRealTime')
     expect(useEnhancedRealTime).toBeDefined(
     expect(typeof useEnhancedRealTime).toBe('function')
@@ -72,6 +73,61 @@ describe(('useEnhancedRealTime', () => {
     expect(typeof useEnhancedRealTime).toBe('function')
   }
 }
+=======
+    const { useEnhancedRealTime } = require('../useEnhancedRealTime');
+    expect(useEnhancedRealTime).toBeDefined();
+    expect(typeof useEnhancedRealTime).toBe('function');
+  });
+
+  it(('should handle real-time patient data updates', () => {
+    const { useEnhancedRealTime } = require('../useEnhancedRealTime');
+    expect(useEnhancedRealTime).toBeDefined();
+    expect(typeof useEnhancedRealTime).toBe('function');
+  });
+
+  it(('should provide connection status monitoring', () => {
+    const { useEnhancedRealTime } = require('../useEnhancedRealTime');
+    expect(useEnhancedRealTime).toBeDefined();
+    expect(typeof useEnhancedRealTime).toBe('function');
+  });
+
+  it(('should handle network reconnection gracefully', () => {
+    const { useEnhancedRealTime } = require('../useEnhancedRealTime');
+    expect(useEnhancedRealTime).toBeDefined();
+    expect(typeof useEnhancedRealTime).toBe('function');
+  });
+
+  it(('should optimize performance for <1s latency', () => {
+    const { useEnhancedRealTime } = require('../useEnhancedRealTime');
+    expect(useEnhancedRealTime).toBeDefined();
+    expect(typeof useEnhancedRealTime).toBe('function');
+  });
+
+  it(('should support multiple table subscriptions', () => {
+    const { useEnhancedRealTime } = require('../useEnhancedRealTime');
+    expect(useEnhancedRealTime).toBeDefined();
+    expect(typeof useEnhancedRealTime).toBe('function');
+  });
+
+  it(('should handle subscription cleanup on unmount', () => {
+    const { useEnhancedRealTime } = require('../useEnhancedRealTime');
+    expect(useEnhancedRealTime).toBeDefined();
+    expect(typeof useEnhancedRealTime).toBe('function');
+  });
+
+  it(('should provide real-time metrics and monitoring', () => {
+    const { useEnhancedRealTime } = require('../useEnhancedRealTime');
+    expect(useEnhancedRealTime).toBeDefined();
+    expect(typeof useEnhancedRealTime).toBe('function');
+  });
+
+  it(('should handle authentication state changes', () => {
+    const { useEnhancedRealTime } = require('../useEnhancedRealTime');
+    expect(useEnhancedRealTime).toBeDefined();
+    expect(typeof useEnhancedRealTime).toBe('function');
+  });
+});
+>>>>>>> origin/main
 
 describe(('useRealTimeNotifications', () => {
   beforeEach(() => {
@@ -86,6 +142,7 @@ describe(('useRealTimeNotifications', () => {
   }
 
   it(('should display toast notifications for real-time changes', () => {
+<<<<<<< HEAD
     const { useRealTimeNotifications } = require('../useEnhancedRealTime')
     expect(useRealTimeNotifications).toBeDefined(
     expect(typeof useRealTimeNotifications).toBe('function')
@@ -115,6 +172,37 @@ describe(('useRealTimeNotifications', () => {
     expect(typeof useRealTimeNotifications).toBe('function')
   }
 }
+=======
+    const { useRealTimeNotifications } = require('../useEnhancedRealTime');
+    expect(useRealTimeNotifications).toBeDefined();
+    expect(typeof useRealTimeNotifications).toBe('function');
+  });
+
+  it(('should support different notification types', () => {
+    const { useRealTimeNotifications } = require('../useEnhancedRealTime');
+    expect(useRealTimeNotifications).toBeDefined();
+    expect(typeof useRealTimeNotifications).toBe('function');
+  });
+
+  it(('should handle notification preferences', () => {
+    const { useRealTimeNotifications } = require('../useEnhancedRealTime');
+    expect(useRealTimeNotifications).toBeDefined();
+    expect(typeof useRealTimeNotifications).toBe('function');
+  });
+
+  it(('should support Brazilian Portuguese messages', () => {
+    const { useRealTimeNotifications } = require('../useEnhancedRealTime');
+    expect(useRealTimeNotifications).toBeDefined();
+    expect(typeof useRealTimeNotifications).toBe('function');
+  });
+
+  it(('should handle notification rate limiting', () => {
+    const { useRealTimeNotifications } = require('../useEnhancedRealTime');
+    expect(useRealTimeNotifications).toBeDefined();
+    expect(typeof useRealTimeNotifications).toBe('function');
+  });
+});
+>>>>>>> origin/main
 
 describe(('useRealTimePatientSync', () => {
   beforeEach(() => {
@@ -129,6 +217,7 @@ describe(('useRealTimePatientSync', () => {
   }
 
   it(('should sync patient data in real-time', () => {
+<<<<<<< HEAD
     const { useRealTimePatientSync } = require('../useEnhancedRealTime')
     expect(useRealTimePatientSync).toBeDefined(
     expect(typeof useRealTimePatientSync).toBe('function')
@@ -158,3 +247,34 @@ describe(('useRealTimePatientSync', () => {
     expect(typeof useRealTimePatientSync).toBe('function')
   }
 }
+=======
+    const { useRealTimePatientSync } = require('../useEnhancedRealTime');
+    expect(useRealTimePatientSync).toBeDefined();
+    expect(typeof useRealTimePatientSync).toBe('function');
+  });
+
+  it(('should handle optimistic updates', () => {
+    const { useRealTimePatientSync } = require('../useEnhancedRealTime');
+    expect(useRealTimePatientSync).toBeDefined();
+    expect(typeof useRealTimePatientSync).toBe('function');
+  });
+
+  it(('should support conflict resolution', () => {
+    const { useRealTimePatientSync } = require('../useEnhancedRealTime');
+    expect(useRealTimePatientSync).toBeDefined();
+    expect(typeof useRealTimePatientSync).toBe('function');
+  });
+
+  it(('should handle batch updates efficiently', () => {
+    const { useRealTimePatientSync } = require('../useEnhancedRealTime');
+    expect(useRealTimePatientSync).toBeDefined();
+    expect(typeof useRealTimePatientSync).toBe('function');
+  });
+
+  it(('should maintain data consistency', () => {
+    const { useRealTimePatientSync } = require('../useEnhancedRealTime');
+    expect(useRealTimePatientSync).toBeDefined();
+    expect(typeof useRealTimePatientSync).toBe('function');
+  });
+});
+>>>>>>> origin/main

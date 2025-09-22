@@ -101,7 +101,11 @@ describe('Healthcare Errors Module - RED Phase', () => {
       const error = new HealthcareAuthenticationError(
         'Invalid credentials',
         { _userId: 'user123' },
+<<<<<<< HEAD
       
+=======
+      );
+>>>>>>> origin/main
 
       expect(error.category).toBe(ErrorCategory.AUTHENTICATION
       expect(error.severity).toBe(ErrorSeverity.HIGH
@@ -112,7 +116,11 @@ describe('Healthcare Errors Module - RED Phase', () => {
       const error = new HealthcareAuthenticationError(
         'Login failed for user 123.456.789-00',
         { _userId: '123.456.789-00' },
+<<<<<<< HEAD
       
+=======
+      );
+>>>>>>> origin/main
 
       expect(error.lgpdCompliant).toBe(false);
     }

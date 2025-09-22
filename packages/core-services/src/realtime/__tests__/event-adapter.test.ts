@@ -54,8 +54,13 @@ describe("Realtime Event Adapter", () => {
   }
 
   afterEach(_async () => {
+<<<<<<< HEAD
     await adapter.cleanup(
   }
+=======
+    await adapter.cleanup();
+  });
+>>>>>>> origin/main
 
   describe("Factory Function", () => {
     it("should create mock adapter", () => {
@@ -82,12 +87,21 @@ describe("Realtime Event Adapter", () => {
     }
 
     it(_"should cleanup successfully",_async () => {
+<<<<<<< HEAD
       await expect(adapter.cleanup()).resolves.toBeUndefined(
       expect(adapter.getActiveChannels()).toEqual([]
     }
 
     it(_"should get health status",_async () => {
       const health = await adapter.getHealth(
+=======
+      await expect(adapter.cleanup()).resolves.toBeUndefined();
+      expect(adapter.getActiveChannels()).toEqual([]);
+    });
+
+    it(_"should get health status",_async () => {
+      const health = await adapter.getHealth();
+>>>>>>> origin/main
       expect(health).toEqual({
         status: "healthy",
         latency: expect.any(Number),
@@ -165,12 +179,21 @@ describe("Realtime Event Adapter", () => {
       
 
       // Verify status change event
+<<<<<<< HEAD
       expect(eventHandlers.onStatusChange).toHaveBeenCalledTimes(1
       const statusEvent = capturedEvents.find((e) => e.type === "status_change",
       
       expect(statusEvent).toBeTruthy(
       expect(statusEvent!.data?.previousStatus).toBe("connected"
       expect(statusEvent!.data?.newStatus).toBe("reconnecting"
+=======
+      expect(eventHandlers.onStatusChange).toHaveBeenCalledTimes(1);
+      const statusEvent = capturedEvents.find((e) => e.type === "status_change",
+      );
+      expect(statusEvent).toBeTruthy();
+      expect(statusEvent!.data?.previousStatus).toBe("connected");
+      expect(statusEvent!.data?.newStatus).toBe("reconnecting");
+>>>>>>> origin/main
 
       // Verify participant state
       const channelState = adapter.getChannelState(channelId
@@ -257,8 +280,13 @@ describe("Realtime Event Adapter", () => {
     const channelId = "mock-test-channel";
 
     it(_"should simulate network latency",_async () => {
+<<<<<<< HEAD
       const participant = adapter.createMockParticipant(
       adapter.setSimulatedLatency(100
+=======
+      const participant = adapter.createMockParticipant();
+      adapter.setSimulatedLatency(100);
+>>>>>>> origin/main
 
       const start = Date.now(
       await adapter.joinChannel(channelId, participant
@@ -268,8 +296,13 @@ describe("Realtime Event Adapter", () => {
     }
 
     it(_"should maintain event log",_async () => {
+<<<<<<< HEAD
       const participant = adapter.createMockParticipant(
       adapter.clearEventLog(
+=======
+      const participant = adapter.createMockParticipant();
+      adapter.clearEventLog();
+>>>>>>> origin/main
 
       await adapter.joinChannel(channelId, participant
       await adapter.updateParticipantStatus(
@@ -287,8 +320,13 @@ describe("Realtime Event Adapter", () => {
     }
 
     it(_"should simulate disconnection",_async () => {
+<<<<<<< HEAD
       const participant = adapter.createMockParticipant(
       await adapter.joinChannel(channelId, participant
+=======
+      const participant = adapter.createMockParticipant();
+      await adapter.joinChannel(channelId, participant);
+>>>>>>> origin/main
 
       // Start disconnection simulation (doesn't wait for auto-leave)
       adapter.simulateDisconnection(channelId, participant.id
@@ -302,8 +340,13 @@ describe("Realtime Event Adapter", () => {
     }
 
     it(_"should simulate reconnection",_async () => {
+<<<<<<< HEAD
       const participant = adapter.createMockParticipant(
       await adapter.joinChannel(channelId, participant
+=======
+      const participant = adapter.createMockParticipant();
+      await adapter.joinChannel(channelId, participant);
+>>>>>>> origin/main
 
       // Start reconnection simulation
       adapter.simulateReconnection(channelId, participant.id

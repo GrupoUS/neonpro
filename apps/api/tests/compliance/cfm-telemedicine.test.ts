@@ -115,8 +115,13 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
   let patientCPF: string;
 
   beforeEach(async () => {
+<<<<<<< HEAD
     await setupTestDatabase(
     testClient = await createTestClient({ _role: 'doctor' }
+=======
+    await setupTestDatabase();
+    testClient = await createTestClient({ _role: 'doctor' });
+>>>>>>> origin/main
 
     // Clear audit logs
     mockCFMSystem.telemedicineAudit.length = 0;

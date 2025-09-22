@@ -48,7 +48,11 @@ describe("ConsentService", () => {
 
   describe("requestConsent", () => {
     it(_"should request consent successfully",_async () => {
+<<<<<<< HEAD
       queryBuilder.insert.mockResolvedValueOnce({ data: { id: "consent-1" }, error: null }
+=======
+      queryBuilder.insert.mockResolvedValueOnce({ data: { id: "consent-1" }, error: null });
+>>>>>>> origin/main
 
       const result = await consentService.requestConsent(
         "patient-1",
@@ -70,7 +74,11 @@ describe("ConsentService", () => {
     }
 
     it(_"should handle request consent error",_async () => {
+<<<<<<< HEAD
       queryBuilder.insert.mockResolvedValueOnce({ data: null, error: new Error("DB error") }
+=======
+      queryBuilder.insert.mockResolvedValueOnce({ data: null, error: new Error("DB error") });
+>>>>>>> origin/main
 
       const result = await consentService.requestConsent(
         "patient-1",
@@ -85,7 +93,11 @@ describe("ConsentService", () => {
 
   describe("verifyConsent", () => {
     it(_"should verify consent successfully",_async () => {
+<<<<<<< HEAD
       queryBuilder.eq.mockReturnThis(
+=======
+      queryBuilder.eq.mockReturnThis();
+>>>>>>> origin/main
       queryBuilder.single.mockResolvedValueOnce({
         data: { status: "granted" },
         error: null,
@@ -113,7 +125,11 @@ describe("ConsentService", () => {
 
   describe("revokeConsent", () => {
     it(_"should revoke consent successfully",_async () => {
+<<<<<<< HEAD
       queryBuilder.update.mockResolvedValueOnce({ data: {}, error: null }
+=======
+      queryBuilder.update.mockResolvedValueOnce({ data: {}, error: null });
+>>>>>>> origin/main
 
       const result = await consentService.revokeConsent("patient-1", "session-1"
 
@@ -126,7 +142,11 @@ describe("ConsentService", () => {
     }
 
     it(_"should handle revoke consent error",_async () => {
+<<<<<<< HEAD
       queryBuilder.update.mockResolvedValueOnce({ data: null, error: new Error("DB error") }
+=======
+      queryBuilder.update.mockResolvedValueOnce({ data: null, error: new Error("DB error") });
+>>>>>>> origin/main
 
       const result = await consentService.revokeConsent("patient-1", "session-1"
 
@@ -152,7 +172,11 @@ describe("ConsentService", () => {
     }
 
     it(_"should handle get consent history error",_async () => {
+<<<<<<< HEAD
       queryBuilder.order.mockResolvedValueOnce({ data: null, error: new Error("DB error") }
+=======
+      queryBuilder.order.mockResolvedValueOnce({ data: null, error: new Error("DB error") });
+>>>>>>> origin/main
 
       const result = await consentService.getConsentHistory("patient-1"
 
@@ -180,9 +204,15 @@ describe("ConsentService", () => {
     }
 
     it(_"should handle grant consent error",_async () => {
+<<<<<<< HEAD
       const secondEqMock = vi.fn().mockResolvedValue({ data: null, error: new Error("DB error") }
       const firstEqMock = vi.fn().mockReturnValue({ eq: secondEqMock }
       queryBuilder.update.mockReturnValue({ eq: firstEqMock }
+=======
+      const secondEqMock = vi.fn().mockResolvedValue({ data: null, error: new Error("DB error") });
+      const firstEqMock = vi.fn().mockReturnValue({ eq: secondEqMock });
+      queryBuilder.update.mockReturnValue({ eq: firstEqMock });
+>>>>>>> origin/main
 
       const result = await consentService.grantConsent("consent-1", "patient-1"
 
@@ -209,7 +239,11 @@ describe("ConsentService", () => {
     }
 
     it(_"should handle get pending consents error",_async () => {
+<<<<<<< HEAD
       queryBuilder.order.mockResolvedValueOnce({ data: null, error: new Error("DB error") }
+=======
+      queryBuilder.order.mockResolvedValueOnce({ data: null, error: new Error("DB error") });
+>>>>>>> origin/main
 
       const result = await consentService.getPendingConsents("patient-1"
 
@@ -269,8 +303,13 @@ describe("ConsentService", () => {
     }
 
     it(_"should handle export user data error when patient not found",_async () => {
+<<<<<<< HEAD
       const patientsQueryBuilder = createSupabaseQueryBuilder(
       patientsQueryBuilder.single.mockResolvedValueOnce({ data: null, error: new Error("Not found") }
+=======
+      const patientsQueryBuilder = createSupabaseQueryBuilder();
+      patientsQueryBuilder.single.mockResolvedValueOnce({ data: null, error: new Error("Not found") });
+>>>>>>> origin/main
       
       (mockSupabase.from as any).mockReturnValue(patientsQueryBuilder
 
@@ -340,8 +379,13 @@ describe("ConsentService", () => {
     }
 
     it(_"should handle delete user data error when patient not found",_async () => {
+<<<<<<< HEAD
       const patientsQueryBuilder = createSupabaseQueryBuilder(
       patientsQueryBuilder.single.mockResolvedValueOnce({ data: null, error: new Error("Not found") }
+=======
+      const patientsQueryBuilder = createSupabaseQueryBuilder();
+      patientsQueryBuilder.single.mockResolvedValueOnce({ data: null, error: new Error("Not found") });
+>>>>>>> origin/main
       
       (mockSupabase.from as any).mockReturnValue(patientsQueryBuilder
 

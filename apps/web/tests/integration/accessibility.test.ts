@@ -91,7 +91,11 @@ const AccessibilityViolationSchema = z.object({
   page: z.string(),
   component: z.string().optional(),
   _context: z.record(z.any()).optional(),
+<<<<<<< HEAD
 }
+=======
+});
+>>>>>>> origin/main
 
 const ContrastResultSchema = z.object({
   element: z.string(),
@@ -722,9 +726,15 @@ describe('Accessibility Testing Integration Tests', () => {
       const result = await accessibilityChecker.validateAria('div[role="alert"]')
 
       expect(result.valid).toBe(true);
+<<<<<<< HEAD
       expect(result.attributes._role).toBe('alert')
       expect(result.attributes['aria-live']).toBe('polite')
     }
+=======
+      expect(result.attributes._role).toBe('alert');
+      expect(result.attributes['aria-live']).toBe('polite');
+    });
+>>>>>>> origin/main
 
     it('should detect missing ARIA labels', async () => {
       const missingLabels = {

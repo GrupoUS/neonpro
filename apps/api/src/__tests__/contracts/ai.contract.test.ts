@@ -11,7 +11,11 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * Covers AI chat, insights, and automation endpoints
  */
 
+<<<<<<< HEAD
 describe('AI Contract Testing',() => {
+=======
+describe(_'AI Contract Testing',() => {
+>>>>>>> origin/main
   const mockContext = {
     user: { id: 'user-123', _role: 'professional' },
     auth: { _userId: 'user-123', isAuthenticated: true },
@@ -64,14 +68,24 @@ describe('AI Contract Testing',() => {
     },
   };
 
+<<<<<<< HEAD
   const trpcMsw = createTRPCMsw<AppRouter>(
   const caller = appRouter.createCaller(mockContext
+=======
+  const trpcMsw = createTRPCMsw<AppRouter>();
+  const caller = appRouter.createCaller(mockContext);
+>>>>>>> origin/main
 
   beforeEach(() => {
     vi.clearAllMocks(
 
+<<<<<<< HEAD
   describe('AI Chat Session Contract',() => {
     it('should validate chat session creation',async () => {
+=======
+  describe(_'AI Chat Session Contract',() => {
+    it(_'should validate chat session creation',async () => {
+>>>>>>> origin/main
       const sessionInput: AIInput['createChatSession'] = {
         _context: {
           type: 'patient_consultation',
@@ -134,7 +148,11 @@ describe('AI Contract Testing',() => {
         patientId: 'patient-456',
         timestamp: expect.any(Date),
 
+<<<<<<< HEAD
     it('should enforce PHI sanitization requirements',async () => {
+=======
+    it(_'should enforce PHI sanitization requirements',async () => {
+>>>>>>> origin/main
       const unsafeInput: AIInput['createChatSession'] = {
         _context: {
           type: 'patient_consultation',
@@ -158,8 +176,13 @@ describe('AI Contract Testing',() => {
         'PHI handling validation failed: Raw PHI handling not permitted',
       
 
+<<<<<<< HEAD
   describe('AI Chat Message Contract',() => {
     it('should validate message sending with PHI sanitization',async () => {
+=======
+  describe(_'AI Chat Message Contract',() => {
+    it(_'should validate message sending with PHI sanitization',async () => {
+>>>>>>> origin/main
       const messageInput: AIInput['sendMessage'] = {
         sessionId: 'session-uuid-123',
         message: {
@@ -238,7 +261,11 @@ describe('AI Contract Testing',() => {
         sanitizedContent,
       
 
+<<<<<<< HEAD
     it('should reject unsafe message content',async () => {
+=======
+    it(_'should reject unsafe message content',async () => {
+>>>>>>> origin/main
       const unsafeInput: AIInput['sendMessage'] = {
         sessionId: 'session-uuid-123',
         message: {
@@ -255,8 +282,13 @@ describe('AI Contract Testing',() => {
         'Message content rejected: Malicious intent detected',
       
 
+<<<<<<< HEAD
   describe('AI No-Show Prediction Contract',() => {
     it('should validate no-show prediction generation',async () => {
+=======
+  describe(_'AI No-Show Prediction Contract',() => {
+    it(_'should validate no-show prediction generation',async () => {
+>>>>>>> origin/main
       const predictionInput: AIInput['predictNoShow'] = {
         appointmentId: 'appt-789',
         factors: {
@@ -347,7 +379,11 @@ describe('AI Contract Testing',() => {
         }),
       
 
+<<<<<<< HEAD
     it('should handle insufficient data for prediction',async () => {
+=======
+    it(_'should handle insufficient data for prediction',async () => {
+>>>>>>> origin/main
       const insufficientInput: AIInput['predictNoShow'] = {
         appointmentId: 'appt-new-patient',
         factors: {
@@ -379,8 +415,13 @@ describe('AI Contract Testing',() => {
           message: 'Insufficient data for reliable prediction',
         }),
 
+<<<<<<< HEAD
   describe('AI Insights Generation Contract',() => {
     it('should validate clinic insights generation',async () => {
+=======
+  describe(_'AI Insights Generation Contract',() => {
+    it(_'should validate clinic insights generation',async () => {
+>>>>>>> origin/main
       const insightsInput: AIInput['generateInsights'] = {
         clinicId: 'clinic-789',
         scope: 'clinic_performance',
@@ -485,7 +526,11 @@ describe('AI Contract Testing',() => {
           confidence: 0.91,
         }),
 
+<<<<<<< HEAD
     it('should validate patient-specific insights',async () => {
+=======
+    it(_'should validate patient-specific insights',async () => {
+>>>>>>> origin/main
       const patientInsightsInput: AIInput['generateInsights'] = {
         scope: 'patient_analysis',
         patientId: 'patient-456',
@@ -553,8 +598,13 @@ describe('AI Contract Testing',() => {
           }),
         }),
 
+<<<<<<< HEAD
   describe('AI Chat History Contract',() => {
     it('should validate chat history retrieval with filters',async () => {
+=======
+  describe(_'AI Chat History Contract',() => {
+    it(_'should validate chat history retrieval with filters',async () => {
+>>>>>>> origin/main
       const historyInput: AIInput['getChatHistory'] = {
         sessionId: 'session-uuid-123',
         filters: {
@@ -615,8 +665,13 @@ describe('AI Contract Testing',() => {
           }),
         }),
 
+<<<<<<< HEAD
   describe('Contract Type Safety',() => {
     it('should enforce AI input type constraints',() => {
+=======
+  describe(_'Contract Type Safety',() => {
+    it(_'should enforce AI input type constraints',() => {
+>>>>>>> origin/main
       const validChatInput: AIInput['sendMessage'] = {
         sessionId: 'session-123',
         message: {
@@ -648,7 +703,11 @@ describe('AI Contract Testing',() => {
       expect(validChatInput).toBeDefined(
       expect(validPredictionInput).toBeDefined(
 
+<<<<<<< HEAD
     it('should enforce AI output type constraints',() => {
+=======
+    it(_'should enforce AI output type constraints',() => {
+>>>>>>> origin/main
       const mockChatOutput: AIOutput['sendMessage'] = {
         success: true,
         data: {

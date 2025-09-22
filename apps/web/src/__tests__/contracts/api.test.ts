@@ -776,7 +776,11 @@ describe(('Backend API Contracts', () => {
       ).toBe('never_deleted_or_modified')
       expect(
         medicalRecordVersioningContract.audit_requirements.integrity_verification,
+<<<<<<< HEAD
       ).toBe('cryptographic_hash_chain')
+=======
+      ).toBe('cryptographic_hash_chain');
+>>>>>>> origin/main
       expect(
         medicalRecordVersioningContract.retention_policy.active_records,
       ).toBe('permanent_retention')
@@ -1134,7 +1138,11 @@ describe(('Backend API Contracts', () => {
       ).toBe(true);
       expect(
         healthcareProfessionalAuthContract.professional_validation.license_verification.crm_validation,
+<<<<<<< HEAD
       ).toBe('cfm_realtime_api')
+=======
+      ).toBe('cfm_realtime_api');
+>>>>>>> origin/main
       expect(
         healthcareProfessionalAuthContract.session_management.security_features
           .concurrent_session_limit,

@@ -388,7 +388,11 @@ describe(('Mobile Responsive Accessibility', () => {
 
   describe(('Layout Adaptability Validation', () => {
     it(('should validate layout adaptability', () => {
+<<<<<<< HEAD
       const result = mobileResponsiveAccessibility.validateLayoutAdaptability(
+=======
+      const result = mobileResponsiveAccessibility.validateLayoutAdaptability();
+>>>>>>> origin/main
 
       expect(result.level).toBeOneOf([
         RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT,
@@ -402,7 +406,11 @@ describe(('Mobile Responsive Accessibility', () => {
     }
 
     it(('should detect rigid layout elements', () => {
+<<<<<<< HEAD
       const result = mobileResponsiveAccessibility.validateLayoutAdaptability(
+=======
+      const result = mobileResponsiveAccessibility.validateLayoutAdaptability();
+>>>>>>> origin/main
 
       // Mock implementation sets rigidElements to 2
       expect(result.rigidElements).toBe(2
@@ -413,7 +421,11 @@ describe(('Mobile Responsive Accessibility', () => {
     }
 
     it(('should detect content overflow issues', () => {
+<<<<<<< HEAD
       const result = mobileResponsiveAccessibility.validateLayoutAdaptability(
+=======
+      const result = mobileResponsiveAccessibility.validateLayoutAdaptability();
+>>>>>>> origin/main
 
       // Mock implementation sets overflowIssues to 1
       expect(result.overflowIssues).toBe(1
@@ -425,7 +437,11 @@ describe(('Mobile Responsive Accessibility', () => {
     }
 
     it(('should provide healthcare-specific layout recommendations', () => {
+<<<<<<< HEAD
       const result = mobileResponsiveAccessibility.validateLayoutAdaptability(
+=======
+      const result = mobileResponsiveAccessibility.validateLayoutAdaptability();
+>>>>>>> origin/main
 
       result.issues.forEach(issue => {
         if (issue.type === 'layout') {
@@ -439,7 +455,11 @@ describe(('Mobile Responsive Accessibility', () => {
 
   describe(('Healthcare Patterns Validation', () => {
     it(('should validate healthcare-specific responsive patterns', () => {
+<<<<<<< HEAD
       const result = mobileResponsiveAccessibility.validateHealthcarePatterns(
+=======
+      const result = mobileResponsiveAccessibility.validateHealthcarePatterns();
+>>>>>>> origin/main
 
       expect(result.level).toBeOneOf([
         RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT,
@@ -468,7 +488,11 @@ describe(('Mobile Responsive Accessibility', () => {
     }
 
     it(('should detect missing healthcare patterns', () => {
+<<<<<<< HEAD
       const result = mobileResponsiveAccessibility.validateHealthcarePatterns(
+=======
+      const result = mobileResponsiveAccessibility.validateHealthcarePatterns();
+>>>>>>> origin/main
 
       if (result.missingPatterns.length > 0) {
         expect(result.issues.some(issue => issue.type === 'content')).toBe(
@@ -481,7 +505,11 @@ describe(('Mobile Responsive Accessibility', () => {
     }
 
     it(('should validate all healthcare responsive pattern types', () => {
+<<<<<<< HEAD
       const result = mobileResponsiveAccessibility.validateHealthcarePatterns(
+=======
+      const result = mobileResponsiveAccessibility.validateHealthcarePatterns();
+>>>>>>> origin/main
 
       const allPatterns = [
         ...result.implementedPatterns,
@@ -613,9 +641,15 @@ describe(('Mobile Responsive Accessibility', () => {
       expect(report.recommendations.length).toBeGreaterThan(0
 
       report.recommendations.forEach(recommendation => {
+<<<<<<< HEAD
         expect(typeof recommendation).toBe('string')
         expect(recommendation.length).toBeGreaterThan(0
       }
+=======
+        expect(typeof recommendation).toBe('string');
+        expect(recommendation.length).toBeGreaterThan(0);
+      });
+>>>>>>> origin/main
 
       // Should prioritize critical and high severity issues
       const hasHighPriorityRecommendation = report.recommendations.some(
@@ -627,9 +661,15 @@ describe(('Mobile Responsive Accessibility', () => {
 
   describe(('WCAG Compliance', () => {
     it(('should enforce WCAG 2.1 AA+ requirements', () => {
+<<<<<<< HEAD
       expect(TEXT_SCALING_REQUIREMENTS.MAXIMUM_ZOOM).toBe(200
       expect(TEXT_SCALING_REQUIREMENTS.FONT_SIZE_MINIMUM).toBe(16
       expect(TEXT_SCALING_REQUIREMENTS.LINE_HEIGHT_MINIMUM).toBe(1.5
+=======
+      expect(TEXT_SCALING_REQUIREMENTS.MAXIMUM_ZOOM).toBe(200);
+      expect(TEXT_SCALING_REQUIREMENTS.FONT_SIZE_MINIMUM).toBe(16);
+      expect(TEXT_SCALING_REQUIREMENTS.LINE_HEIGHT_MINIMUM).toBe(1.5);
+>>>>>>> origin/main
 
       expect(CONTRAST_REQUIREMENTS.NORMAL_TEXT_AA).toBe(4.5
       expect(CONTRAST_REQUIREMENTS.LARGE_TEXT_AA).toBe(3
@@ -656,6 +696,7 @@ describe(('Mobile Responsive Accessibility', () => {
       const report = mobileResponsiveAccessibility.generateReport(problematicElements
 
       report.breakpointCompliance.issues.forEach(issue => {
+<<<<<<< HEAD
         expect(issue.wcagReference).toContain('WCAG 2.1 AA')
       }
     }
@@ -670,6 +711,22 @@ describe(('Mobile Responsive Accessibility', () => {
       expect(RESPONSIVE_BREAKPOINTS.DESKTOP).toBe(1024
     }
   }
+=======
+        expect(issue.wcagReference).toContain('WCAG 2.1 AA');
+      });
+    });
+  });
+
+  describe(('Mobile Breakpoints', () => {
+    it(('should define appropriate responsive breakpoints', () => {
+      expect(RESPONSIVE_BREAKPOINTS.SMALL_MOBILE).toBe(320);
+      expect(RESPONSIVE_BREAKPOINTS.MOBILE).toBe(375);
+      expect(RESPONSIVE_BREAKPOINTS.LARGE_MOBILE).toBe(414);
+      expect(RESPONSIVE_BREAKPOINTS.TABLET).toBe(768);
+      expect(RESPONSIVE_BREAKPOINTS.DESKTOP).toBe(1024);
+    });
+  });
+>>>>>>> origin/main
 
   describe(('Brazilian Portuguese Localization', () => {
     it(('should provide Brazilian Portuguese accessibility labels', () => {
@@ -761,6 +818,7 @@ describe(('Mobile Responsive Accessibility', () => {
       ];
 
       allIssues.forEach(issue => {
+<<<<<<< HEAD
         expect(issue.healthcareImpact).toBeDefined(
         expect(issue.healthcareImpact.length).toBeGreaterThan(0
       }
@@ -768,6 +826,15 @@ describe(('Mobile Responsive Accessibility', () => {
 
     it(('should validate healthcare responsive patterns', () => {
       const patterns = Object.values(HEALTHCARE_RESPONSIVE_PATTERNS
+=======
+        expect(issue.healthcareImpact).toBeDefined();
+        expect(issue.healthcareImpact.length).toBeGreaterThan(0);
+      });
+    });
+
+    it(('should validate healthcare responsive patterns', () => {
+      const patterns = Object.values(HEALTHCARE_RESPONSIVE_PATTERNS);
+>>>>>>> origin/main
 
       expect(patterns).toContain('patient_card')
       expect(patterns).toContain('appointment_list')
@@ -782,6 +849,7 @@ describe(('Mobile Responsive Accessibility', () => {
 
   describe(('Constants and Enums', () => {
     it(('should have correct responsive accessibility levels', () => {
+<<<<<<< HEAD
       expect(RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT).toBe('excellent')
       expect(RESPONSIVE_ACCESSIBILITY_LEVELS.GOOD).toBe('good')
       expect(RESPONSIVE_ACCESSIBILITY_LEVELS.ACCEPTABLE).toBe('acceptable')
@@ -791,6 +859,17 @@ describe(('Mobile Responsive Accessibility', () => {
 
     it(('should have healthcare-specific responsive patterns', () => {
       expect(HEALTHCARE_RESPONSIVE_PATTERNS.PATIENT_CARD).toBe('patient_card')
+=======
+      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT).toBe('excellent');
+      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.GOOD).toBe('good');
+      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.ACCEPTABLE).toBe('acceptable');
+      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.POOR).toBe('poor');
+      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.CRITICAL).toBe('critical');
+    });
+
+    it(('should have healthcare-specific responsive patterns', () => {
+      expect(HEALTHCARE_RESPONSIVE_PATTERNS.PATIENT_CARD).toBe('patient_card');
+>>>>>>> origin/main
       expect(HEALTHCARE_RESPONSIVE_PATTERNS.APPOINTMENT_LIST).toBe(
         'appointment_list',
       

@@ -463,7 +463,7 @@ export class StructuredLogger {
 
     process.on("SIGINT", gracefulShutdown);
     process.on("SIGTERM", gracefulShutdown);
-    process.on("beforeExit", () => this.flush());
+    process.on(_"beforeExit", () => this.flush());
   }
 
   // ============================================================================

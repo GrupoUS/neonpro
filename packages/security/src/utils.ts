@@ -334,7 +334,11 @@ export class SecurityUtils {
     const lowercase = 'abcdefghijklmnopqrstuvwxyz';
     const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const numbers = '0123456789';
+<<<<<<< HEAD
     const special = '!@#$%^&*()_+-=[]{}|;:,.<>?'
+=======
+    const special = ''!@#$%^&*()_+-=[]{}|;:,.<>?'
+>>>>>>> origin/main
 
     const allChars = lowercase + uppercase + numbers + special;
     let password = '';
@@ -440,6 +444,206 @@ export class RateLimiter {
   }
 }
 
+/**
+ * Secure logging utilities that sanitize sensitive data before logging
+ * Prevents logging of credentials, SQL queries, XSS payloads, and other sensitive data
+ */
+export class SecureLogger {
+  private static originalConsole = {
+    log: console.log,
+    error: console.error,
+    warn: console.warn,
+    info: console.info,
+    debug: console.debug,
+  };
+
+  /**
+   * Initialize secure logging by replacing console methods with sanitized versions
+   */
+  static initialize(): void {
+    console.log = this.secureLog;
+    console.error = this.secureError;
+    console.warn = this.secureWarn;
+    console.info = this.secureInfo;
+    console.debug = this.secureDebug;
+  }
+
+  /**
+   * Restore original console methods
+   */
+  static restore(): void {
+    console.log = this.originalConsole.log;
+    console.error = this.originalConsole.error;
+    console.warn = this.originalConsole.warn;
+    console.info = this.originalConsole.info;
+    console.debug = this.originalConsole.debug;
+  }
+
+  /**
+   * Secure log method that sanitizes sensitive data
+   */
+  private static secureLog = (...args: any[]): void => {
+    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg));
+    this.originalConsole.log(...sanitizedArgs);
+  };
+
+  /**
+   * Secure error method that sanitizes sensitive data
+   */
+  private static secureError = (...args: any[]): void => {
+    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg));
+    this.originalConsole.error(...sanitizedArgs);
+  };
+
+  /**
+   * Secure warn method that sanitizes sensitive data
+   */
+  private static secureWarn = (...args: any[]): void => {
+    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg));
+    this.originalConsole.warn(...sanitizedArgs);
+  };
+
+  /**
+   * Secure info method that sanitizes sensitive data
+   */
+  private static secureInfo = (...args: any[]): void => {
+    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg));
+    this.originalConsole.info(...sanitizedArgs);
+  };
+
+  /**
+   * Secure debug method that sanitizes sensitive data
+   */
+  private static secureDebug = (...args: any[]): void => {
+    const sanitizedArgs = args.map(arg => this.sanitizeLogArgument(arg));
+    this.originalConsole.debug(...sanitizedArgs);
+  };
+
+  /**
+   * Sanitize a single log argument
+   */
+  private static sanitizeLogArgument(arg: any): any {
+    if (typeof arg === 'string') {
+      return this.sanitizeString(arg);
+    } else if (typeof arg === 'object' && arg !== null) {
+      return this.sanitizeObject(arg);
+    }
+    return arg;
+  }
+
+  /**
+   * Sanitize string content
+   */
+  private static sanitizeString(str: string): string {
+    let sanitized = str;
+
+    // Mask database connection strings
+    sanitized = sanitized.replace(/(postgresql|mysql|mongodb):\/\/([^:]+):([^@]+)@/gi, '$1://***:***@');
+
+    // Mask passwords in connection strings
+    sanitized = sanitized.replace(/password=([^&\s]+)/gi, 'password=***');
+    sanitized = sanitized.replace(/:([^@:@]+)@/g, ':***@');
+
+    // Sanitize SQL injection patterns
+    const sqlPatterns = [
+      /DROP\s+TABLE/gi,
+      /DELETE\s+FROM/gi,
+      /INSERT\s+INTO/gi,
+      /UPDATE\s+\w+\s+SET/gi,
+      /UNION\s+SELECT/gi,
+      /EXEC\s*\(/gi,
+      /EVAL\s*\(/gi,
+      /SYSTEM\s*\(/gi,
+      /'\s*OR\s*'1'\s*=\s*'1'/gi,
+      /'\s*OR\s*1\s*=\s*1/gi,
+      /"\s*OR\s*"1"\s*=\s*"1"/gi,
+      /;\s*DROP/gi,
+      /;\s*SELECT/gi,
+    ];
+
+    sqlPatterns.forEach(pattern => {
+      sanitized = sanitized.replace(pattern, '[SQL_QUERY_REDACTED]');
+    });
+
+    // Sanitize XSS patterns
+    const xssPatterns = [
+      /<script[^>]*>.*?<\/script>/gis,
+      /javascript:/gi,
+      /vbscript:/gi,
+      /on\w+\s*=/gi,
+      /<img[^>]*onerror[^>]*>/gi,
+      /<svg[^>]*onload[^>]*>/gi,
+      /<[^>]*on\w+\s*=[^>]*>/gi,
+    ];
+
+    xssPatterns.forEach(pattern => {
+      sanitized = sanitized.replace(pattern, '[XSS_PAYLOAD_REDACTED]');
+    });
+
+    // Mask sensitive data patterns
+    const sensitivePatterns = [
+      /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, // CPF
+      /\b\d{11}\b/g, // 11-digit numbers (potential CPF)
+      /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, // Email
+      /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g, // Credit card
+      /password[\s"':]*=[^\s"']*/gi,
+      /secret[\s"':]*=[^\s"']*/gi,
+      /token[\s"':]*=[^\s"']*/gi,
+      /key[\s"':]*=[^\s"']*/gi,
+      /api[_-]?key[\s"':]*=[^\s"']*/gi,
+    ];
+
+    sensitivePatterns.forEach(pattern => {
+      sanitized = sanitized.replace(pattern, '[SENSITIVE_DATA_REDACTED]');
+    });
+
+    return sanitized;
+  }
+
+  /**
+   * Sanitize object recursively
+   */
+  private static sanitizeObject(obj: any): any {
+    if (obj === null || typeof obj !== 'object') {
+      return obj;
+    }
+
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.sanitizeLogArgument(item));
+    }
+
+    const sanitized: any = {};
+    for (const [key, value] of Object.entries(obj)) {
+      // Skip certain sensitive keys entirely
+      if (this.isSensitiveKey(key)) {
+        continue;
+      }
+
+      sanitized[key] = this.sanitizeLogArgument(value);
+    }
+
+    return sanitized;
+  }
+
+  /**
+   * Check if a key is sensitive and should be redacted
+   */
+  private static isSensitiveKey(key: string): boolean {
+    const sensitiveKeys = [
+      'password', 'secret', 'token', 'key', 'authorization',
+      'credential', 'credit', 'card', 'cvv', 'expiry',
+      'ssn', 'social', 'security', 'private', 'confidential',
+      'cpf', 'rg', 'cnh', 'passport', 'birthdate', 'birthDate',
+      'phone', 'email', 'address', 'zip', 'postal',
+    ];
+
+    return sensitiveKeys.some(sensitive =>
+      key.toLowerCase().includes(sensitive.toLowerCase())
+    );
+  }
+}
+
 // Export singleton instances
 export const securityUtils = SecurityUtils;
 export const rateLimiter = new RateLimiter();
+export const secureLogger = SecureLogger;

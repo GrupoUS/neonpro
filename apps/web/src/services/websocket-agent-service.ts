@@ -207,7 +207,7 @@ export class WebSocketAgentService {
         reject(new Error('Request timeout'));
       }, 30000); // 30 second timeout
 
-      const responseHandler = (_response: any) => {
+      const responseHandler = (response: any) => {
         if (response.id === messageId || response.in_reply_to === messageId) {
           clearTimeout(timeout);
           this.off('response', responseHandler);

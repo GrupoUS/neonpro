@@ -35,9 +35,15 @@ describe('AI Service Logging - Data Protection_, () => {
       };
 
       // Simulate AI service logging
+<<<<<<< HEAD
       console.log('AI Prompt:', sensitivePrompt.prompt
       console.error('AI processing failed for patient:', sensitivePrompt.patientId
       console.info('AI _context:_, sensitivePrompt._context
+=======
+      console.log('AI Prompt:', sensitivePrompt.prompt);
+      console.error('AI processing failed for patient:', sensitivePrompt.patientId);
+      console.info('AI _context:_, sensitivePrompt._context);
+>>>>>>> origin/main
 
       // Test will FAIL because sensitive medical data is being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
@@ -84,6 +90,7 @@ describe('AI Service Logging - Data Protection_, () => {
       const conversationHistory = [
         {
           _role: 'user_,
+<<<<<<< HEAD
           content: 'Patient Maria Santos, CRM 12345-SP, reports chest pain during exercise. ECG shows ST elevation. What are the next steps?')
         },
         {
@@ -93,14 +100,31 @@ describe('AI Service Logging - Data Protection_, () => {
         {
           _role: 'user_,
           content: 'Patient\'s blood pressure is 160/100, heart rate 110 bpm. Family history of heart disease. Should we administer aspirin?')
+=======
+          content: 'Patient Maria Santos, CRM 12345-SP, reports chest pain during exercise. ECG shows ST elevation. What are the next steps?'
+        },
+        {
+          _role: 'assistant_,
+          content: 'Based on the symptoms and ECG findings, this could indicate acute coronary syndrome. Immediate steps should include...'
+        },
+        {
+          _role: 'user_,
+          content: 'Patient\'s blood pressure is 160/100, heart rate 110 bpm. Family history of heart disease. Should we administer aspirin?'
+>>>>>>> origin/main
         }
       ];
 
       // Simulate conversation logging
       conversationHistory.forEach((message,_index) => {
+<<<<<<< HEAD
         console.log(`Message ${index}:`, message
         console.error(`Processing ${message.role} message:`, message.content
       }
+=======
+        console.log(`Message ${index}:`, message);
+        console.error(`Processing ${message.role} message:`, message.content);
+      });
+>>>>>>> origin/main
 
       // Test will FAIL because conversation contains sensitive medical data
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls];
