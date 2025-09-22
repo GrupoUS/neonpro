@@ -18,11 +18,11 @@ export * from './ai';
 // export * from './healthcare'; // removed: folder no longer exists
 
 // Common aliases (optional convenience re-exports)
-export { Alert, AlertDescription, AlertTitle } from '@neonpro/ui';
-export { Badge } from '@neonpro/ui';
-export { Button } from '@neonpro/ui'; // Use Button from UI package
+export { Alert, AlertDescription, AlertTitle } from '@/components/ui';
+export { Badge } from '@/components/ui';
+export { Button } from '@/components/ui'; // Use Button from UI package
 export { Input } from './atoms/input';
 export { Label } from './atoms/label';
 
-export { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+export { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui';
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './molecules/table';

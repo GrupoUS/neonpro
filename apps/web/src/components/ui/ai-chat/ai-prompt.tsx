@@ -1,8 +1,8 @@
 'use client';
 
 import { useSubscription } from '@/hooks/useSubscription';
-import { cn } from '@neonpro/ui';
-import { Button } from '@neonpro/ui';
+import { cn } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { Send } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 import type { AIPromptProps } from './types';

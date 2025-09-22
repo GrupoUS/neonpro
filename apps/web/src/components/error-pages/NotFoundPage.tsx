@@ -4,8 +4,8 @@
  * User-friendly 404 page with navigation options and healthcare-appropriate messaging
  */
 
-import { Button } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
+import { Button } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { Link, useRouter } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 

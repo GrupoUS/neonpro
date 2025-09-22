@@ -196,12 +196,12 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
           if (!this.applyValidationRule(record, rule)) {
             isValid = false;
             errors.push({
-              errorId: `validation_${Date.now()}_${index}`,
+              errorId: `validation_${Date.now()}_${_index}`,
               type: "validation_error",
               message: `Validation failed for rule: ${rule.description}`,
               source: {
                 sourceId: this.adapterId,
-                recordId: index.toString(),
+                recordId: _index.toString(),
                 field: rule.field,
               },
               _context: {
@@ -219,12 +219,12 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
         } catch (error) {
           isValid = false;
           errors.push({
-            errorId: `validation_error_${Date.now()}_${index}`,
+            errorId: `validation_error_${Date.now()}_${_index}`,
             type: "validation_error",
             message: `Validation rule execution failed: ${error}`,
             source: {
               sourceId: this.adapterId,
-              recordId: index.toString(),
+              recordId: _index.toString(),
               field: rule.field,
             },
             _context: {
@@ -269,12 +269,12 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
           );
         } catch (error) {
           errors.push({
-            errorId: `transformation_error_${Date.now()}_${index}`,
+            errorId: `transformation_error_${Date.now()}_${_index}`,
             type: "transformation_error",
             message: `Transformation failed for rule: ${rule.description}`,
             source: {
               sourceId: this.adapterId,
-              recordId: index.toString(),
+              recordId: _index.toString(),
               field: rule.sourceField,
             },
             _context: {
@@ -357,13 +357,13 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
   }
 
   private getFieldValue(record: any, fieldPath: string): any {
-    return fieldPath.split(".").reduce((obj,_key) => obj?.[key], record);
+    return fieldPath.split(".").reduce((obj, key) => obj?.[key], record);
   }
 
   private setFieldValue(record: any, fieldPath: string, value: any): void {
     const keys = fieldPath.split(".");
     const lastKey = keys.pop()!;
-    const target = keys.reduce((obj,_key) => {
+    const target = keys.reduce((obj, key) => {
       if (!obj[key]) obj[key] = {};
       return obj[key];
     }, record);
@@ -556,7 +556,68 @@ export class APIIngestionAdapter extends BaseIngestionAdapter {
 
   async ingestBatch(data: any[]): Promise<IngestionResult> {
     // Similar implementation to DatabaseIngestionAdapter
-    return this.ingestBatch(data);
+    const startTime = new Date();
+    const operationId = `api_batch_${Date.now()}`;
+
+    const {
+      valid,
+      invalid,
+      errors: validationErrors,
+    } = this.validateData(data);
+    const { transformed, errors: transformationErrors } =
+      this.transformData(valid);
+
+    const events: IngestionEvent[] = [
+      {
+        id: `${operationId}_processing`,
+        type: "ingestion_processing",
+        eventType: "processing_completed",
+        timestamp: new Date(),
+        _userId: undefined,
+        sessionId: operationId,
+        properties: {
+          operation: "batch_processing",
+        },
+        _context: {
+          adapterId: this.adapterId,
+        },
+        source: {
+          sourceId: this.adapterId,
+          sourceType: "api",
+          recordCount: data.length,
+          dataSize: JSON.stringify(data).length,
+        },
+        processing: { startTime, endTime: new Date(), status: "completed" },
+        quality: {
+          validRecords: valid.length,
+          invalidRecords: invalid.length,
+          duplicateRecords: 0,
+          transformedRecords: transformed.length,
+        },
+      },
+    ];
+
+    return {
+      operationId,
+      status: invalid.length === 0 ? "success" : "partial_success",
+      summary: {
+        totalRecords: data.length,
+        processedRecords: transformed.length,
+        validRecords: valid.length,
+        invalidRecords: invalid.length,
+        errors: [...validationErrors, ...transformationErrors].map((e) => e.message,
+        ),
+        warnings: [],
+      },
+      metrics: [], // Would convert transformed data to metrics
+      events,
+      timing: {
+        startTime,
+        endTime: new Date(),
+        duration: Date.now() - startTime.getTime(),
+        stages: { validation: 100, transformation: 50, storage: 25 },
+      },
+    };
   }
 
   async ingestStream(_stream: ReadableStream): Promise<IngestionResult> {

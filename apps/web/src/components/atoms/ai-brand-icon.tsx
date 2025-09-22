@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 import { Sparkles } from 'lucide-react'; // no title prop support on Lucide icons
 import { useState } from 'react'; // React import not needed for JSX (react-jsx)
 

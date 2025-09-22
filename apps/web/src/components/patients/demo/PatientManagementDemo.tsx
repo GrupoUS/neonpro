@@ -10,7 +10,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@neonpro/ui';
+} from '@/components/ui';
 import React, { useState } from 'react';
 
 import {

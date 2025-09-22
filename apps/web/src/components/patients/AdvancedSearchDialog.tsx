@@ -18,7 +18,7 @@ import {
   DialogTitle,
   Input,
   Label,
-} from '@neonpro/ui';
+} from '@/components/ui';
 import { Activity } from 'lucide-react';
 import { useState } from 'react';
 

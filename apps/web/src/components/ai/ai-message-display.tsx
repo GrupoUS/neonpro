@@ -48,7 +48,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 import { formatDateTime } from '@/utils/brazilian-formatters';
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 
 export interface AIMessageDisplayProps {
   /** Message content */

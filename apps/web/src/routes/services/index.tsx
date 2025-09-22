@@ -19,7 +19,7 @@ import {
   SmoothDrawerDescription,
   SmoothDrawerHeader,
   SmoothDrawerTitle,
-} from '@neonpro/ui';
+} from '@/components/ui';
 
 import { ServiceForm } from '@/components/services/ServiceForm';
 import { ServicesDataTable } from '@/components/services/ServicesDataTable';

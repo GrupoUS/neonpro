@@ -1,7 +1,7 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 import { motion } from 'motion/react';
 
 type Direction = 'TOP' | 'LEFT' | 'BOTTOM' | 'RIGHT';

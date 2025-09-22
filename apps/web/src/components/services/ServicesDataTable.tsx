@@ -23,11 +23,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@neonpro/ui';
+} from '@/components/ui';
 
 import { HealthcareLoadingFallback } from '@/lib/lazy-loading';
 import type { Service } from '@/types/service';
-import { formatBRL } from '@neonpro/utils';
+import { formatBRL } from '@/utils';
 
 // Lazy load TanStack Table for better bundle splitting
 const TanStackTable = lazy(() => import('@tanstack/react-table'));

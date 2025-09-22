@@ -15,11 +15,11 @@ import {
   type ProficiencyLevel,
 } from '@/types/professional-services';
 import type { ProfessionalServiceDetailed } from '@/types/professional-services';
-import { cn } from '@neonpro/ui';
-import { Button } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
-import { Input } from '@neonpro/ui';
+import { cn } from '@/components/ui';
+import { Button } from '@/components/ui';
+import { Card } from '@/components/ui';
+import { Badge } from '@/components/ui';
+import { Input } from '@/components/ui';
 import {
   Dialog,
   DialogContent,
@@ -27,8 +27,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@neonpro/ui';
-import { Select } from '@neonpro/ui';
+} from '@/components/ui';
+import { Select } from '@/components/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,7 +36,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@neonpro/ui';
+} from '@/components/ui';
 import {
   BarChart3,
   Edit,

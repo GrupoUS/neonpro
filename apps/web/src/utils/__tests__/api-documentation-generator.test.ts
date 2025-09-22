@@ -15,8 +15,8 @@ describe('API Documentation Generator', () => {
   let generator: APIDocumentationGenerator;
 
   beforeEach(() => {
-    generator = new APIDocumentationGenerator(
-  }
+    generator = new APIDocumentationGenerator();
+  });
 
   describe('API Endpoint Schema Validation', () => {
     it('should validate valid API endpoint', () => {
@@ -55,16 +55,16 @@ describe('API Documentation Generator', () => {
         },
       };
 
-      const result = APIEndpointSchema.safeParse(validEndpoint
+      const result = APIEndpointSchema.safeParse(validEndpoint);
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.id).toBe('test-endpoint')
-        expect(result.data.method).toBe(API_METHODS.GET
-        expect(result.data.category).toBe(API_CATEGORIES.PATIENT_MANAGEMENT
+        expect(result.data.id).toBe('test-endpoint');
+        expect(result.data.method).toBe(API_METHODS.GET);
+        expect(result.data.category).toBe(API_CATEGORIES.PATIENT_MANAGEMENT);
         expect(result.data.authentication.required).toBe(true);
         expect(result.data.authentication.lgpdConsent).toBe(true);
       }
-    }
+    });
 
     it('should reject invalid API endpoint', () => {
       const invalidEndpoint = {
@@ -74,9 +74,9 @@ describe('API Documentation Generator', () => {
         category: 'INVALID_CATEGORY',
       };
 
-      const result = APIEndpointSchema.safeParse(invalidEndpoint
+      const result = APIEndpointSchema.safeParse(invalidEndpoint);
       expect(result.success).toBe(false);
-    }
+    });
 
     it('should validate endpoint parameters', () => {
       const endpointWithParams = {
@@ -111,17 +111,17 @@ describe('API Documentation Generator', () => {
         },
       };
 
-      const result = APIEndpointSchema.safeParse(endpointWithParams
+      const result = APIEndpointSchema.safeParse(endpointWithParams);
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.parameters).toHaveLength(1
-        expect(result.data.parameters![0].name).toBe('id')
-        expect(result.data.parameters![0].type).toBe('path')
+        expect(result.data.parameters).toHaveLength(1);
+        expect(result.data.parameters![0].name).toBe('id');
+        expect(result.data.parameters![0].type).toBe('path');
         expect(result.data.parameters![0].healthcareContext).toBe(
           'Patient identification',
-        
+        );
       }
-    }
+    });
 
     it('should validate request body schema', () => {
       const endpointWithBody = {
@@ -163,149 +163,149 @@ describe('API Documentation Generator', () => {
         },
       };
 
-      const result = APIEndpointSchema.safeParse(endpointWithBody
+      const result = APIEndpointSchema.safeParse(endpointWithBody);
       expect(result.success).toBe(true);
       if (result.success) {
-        expect(result.data.requestBody).toBeDefined(
-        expect(result.data.requestBody!.contentType).toBe('application/json')
+        expect(result.data.requestBody).toBeDefined();
+        expect(result.data.requestBody!.contentType).toBe('application/json');
         expect(result.data.requestBody!.healthcareFields).toContain(
           'patientId',
-        
-        expect(result.data.requestBody!.lgpdFields).toContain('patientId')
+        );
+        expect(result.data.requestBody!.lgpdFields).toContain('patientId');
       }
-    }
-  }
+    });
+  });
 
   describe('Healthcare API Endpoints', () => {
     it('should generate report with healthcare endpoints', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
-      expect(report.endpoints.length).toBeGreaterThan(0
-      expect(report.totalEndpoints).toBe(report.endpoints.length
-      expect(report.categories).toContain(API_CATEGORIES.PATIENT_MANAGEMENT
+      expect(report.endpoints.length).toBeGreaterThan(0);
+      expect(report.totalEndpoints).toBe(report.endpoints.length);
+      expect(report.categories).toContain(API_CATEGORIES.PATIENT_MANAGEMENT);
       expect(report.categories).toContain(
         API_CATEGORIES.APPOINTMENT_SCHEDULING,
-      
-      expect(report.categories).toContain(API_CATEGORIES.AI_FEATURES
-    }
+      );
+      expect(report.categories).toContain(API_CATEGORIES.AI_FEATURES);
+    });
 
     it('should include patient management endpoint', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
       const patientEndpoint = report.endpoints.find(
         e => e.id === 'get-patient',
-      
+      );
 
-      expect(patientEndpoint).toBeDefined(
-      expect(patientEndpoint?.path).toBe('/api/patients/{id}')
-      expect(patientEndpoint?.method).toBe(API_METHODS.GET
-      expect(patientEndpoint?.category).toBe(API_CATEGORIES.PATIENT_MANAGEMENT
-      expect(patientEndpoint?.title).toBe('Get Patient Information')
-      expect(patientEndpoint?.titlePtBr).toBe('Obter Informações do Paciente')
+      expect(patientEndpoint).toBeDefined();
+      expect(patientEndpoint?.path).toBe('/api/patients/{id}');
+      expect(patientEndpoint?.method).toBe(API_METHODS.GET);
+      expect(patientEndpoint?.category).toBe(API_CATEGORIES.PATIENT_MANAGEMENT);
+      expect(patientEndpoint?.title).toBe('Get Patient Information');
+      expect(patientEndpoint?.titlePtBr).toBe('Obter Informações do Paciente');
       expect(patientEndpoint?.authentication.lgpdConsent).toBe(true);
-    }
+    });
 
     it('should include appointment scheduling endpoint', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
       const appointmentEndpoint = report.endpoints.find(
         e => e.id === 'create-appointment',
-      
+      );
 
-      expect(appointmentEndpoint).toBeDefined(
-      expect(appointmentEndpoint?.path).toBe('/api/appointments')
-      expect(appointmentEndpoint?.method).toBe(API_METHODS.POST
+      expect(appointmentEndpoint).toBeDefined();
+      expect(appointmentEndpoint?.path).toBe('/api/appointments');
+      expect(appointmentEndpoint?.method).toBe(API_METHODS.POST);
       expect(appointmentEndpoint?.category).toBe(
         API_CATEGORIES.APPOINTMENT_SCHEDULING,
-      
-      expect(appointmentEndpoint?.title).toBe('Create Appointment')
-      expect(appointmentEndpoint?.titlePtBr).toBe('Criar Consulta')
+      );
+      expect(appointmentEndpoint?.title).toBe('Create Appointment');
+      expect(appointmentEndpoint?.titlePtBr).toBe('Criar Consulta');
       expect(appointmentEndpoint?.requestBody?.healthcareFields).toContain(
         'accessibility',
-      
-    }
+      );
+    });
 
     it('should include AI features endpoint', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
       const aiEndpoint = report.endpoints.find(
         e => e.id === 'ai-no-show-prediction',
-      
+      );
 
-      expect(aiEndpoint).toBeDefined(
-      expect(aiEndpoint?.path).toBe('/api/ai/no-show-prediction')
-      expect(aiEndpoint?.method).toBe(API_METHODS.POST
-      expect(aiEndpoint?.category).toBe(API_CATEGORIES.AI_FEATURES
-      expect(aiEndpoint?.title).toBe('AI No-Show Prediction')
-      expect(aiEndpoint?.titlePtBr).toBe('Predição de Falta com IA')
-      expect(aiEndpoint?.requestBody?.lgpdFields).toContain('patientHistory')
-    }
-  }
+      expect(aiEndpoint).toBeDefined();
+      expect(aiEndpoint?.path).toBe('/api/ai/no-show-prediction');
+      expect(aiEndpoint?.method).toBe(API_METHODS.POST);
+      expect(aiEndpoint?.category).toBe(API_CATEGORIES.AI_FEATURES);
+      expect(aiEndpoint?.title).toBe('AI No-Show Prediction');
+      expect(aiEndpoint?.titlePtBr).toBe('Predição de Falta com IA');
+      expect(aiEndpoint?.requestBody?.lgpdFields).toContain('patientHistory');
+    });
+  });
 
   describe('Healthcare Compliance Features', () => {
     it('should track LGPD compliance', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
-      expect(report.complianceFeatures.lgpdCompliant).toBeGreaterThan(0
+      expect(report.complianceFeatures.lgpdCompliant).toBeGreaterThan(0);
 
       const lgpdEndpoints = report.endpoints.filter(
         e => e.metadata.compliance?.lgpd,
-      
+      );
       expect(lgpdEndpoints.length).toBe(
         report.complianceFeatures.lgpdCompliant,
-      
+      );
 
       lgpdEndpoints.forEach((endpoint: any) => {
         expect(endpoint.authentication.lgpdConsent).toBe(true);
-      }
-    }
+      });
+    });
 
     it('should track ANVISA compliance', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
-      expect(report.complianceFeatures.anvisaCompliant).toBeGreaterThan(0
+      expect(report.complianceFeatures.anvisaCompliant).toBeGreaterThan(0);
 
       const anvisaEndpoints = report.endpoints.filter(
         e => e.metadata.compliance?.anvisa,
-      
+      );
       expect(anvisaEndpoints.length).toBe(
         report.complianceFeatures.anvisaCompliant,
-      
-    }
+      );
+    });
 
     it('should track CFM compliance', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
-      expect(report.complianceFeatures.cfmCompliant).toBeGreaterThan(0
+      expect(report.complianceFeatures.cfmCompliant).toBeGreaterThan(0);
 
       const cfmEndpoints = report.endpoints.filter(
         e => e.metadata.compliance?.cfm,
-      
-      expect(cfmEndpoints.length).toBe(report.complianceFeatures.cfmCompliant
-    }
+      );
+      expect(cfmEndpoints.length).toBe(report.complianceFeatures.cfmCompliant);
+    });
 
     it('should track WCAG compliance', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
-      expect(report.complianceFeatures.wcagCompliant).toBeGreaterThan(0
+      expect(report.complianceFeatures.wcagCompliant).toBeGreaterThan(0);
 
       const wcagEndpoints = report.endpoints.filter(
         e => e.metadata.compliance?.wcag,
-      
+      );
       expect(wcagEndpoints.length).toBe(
         report.complianceFeatures.wcagCompliant,
-      
-    }
-  }
+      );
+    });
+  });
 
   describe('Mobile Optimization', () => {
     it('should track mobile-optimized endpoints', () => {
-      const report = generator.generateReport(
+      const report = generator.generateReport();
 
-      expect(report.mobileOptimized).toBeGreaterThan(0
+      expect(report.mobileOptimized).toBeGreaterThan(0);
 
       const mobileEndpoints = report.endpoints.filter(
         e => e.metadata.mobileOptimized,
-      
-      expect(mobileEndpoints.length).toBe(report.mobileOptimized
-    }
+      );
+      expect(mobileEndpoints.length).toBe(report.mobileOptimized);
+    });
 
     it('should include mobile notes in examples', () => {
       const report = generator.generateReport(

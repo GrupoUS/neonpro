@@ -7,12 +7,12 @@ import {
   useNotificationPreferences,
   useUpdateNotificationPreferences,
 } from '@/hooks/useNotifications';
-import { Button } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
-import { Switch } from '@neonpro/ui';
-import { Label } from '@neonpro/ui';
-import { Separator } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
+import { Button } from '@/components/ui';
+import { Card } from '@/components/ui';
+import { Switch } from '@/components/ui';
+import { Label } from '@/components/ui';
+import { Separator } from '@/components/ui';
+import { Badge } from '@/components/ui';
 import {
   AlertTriangle,
   Bell,

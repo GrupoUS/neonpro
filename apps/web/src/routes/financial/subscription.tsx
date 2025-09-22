@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/useToast';
 import { supabase } from '@/integrations/supabase/client';
 // Explicit extension helps Node ESM/Vercel resolution
 import { cn } from '@/lib/utils';
-import { Button } from '@neonpro/ui';
+import { Button } from '@/components/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { Crown } from 'lucide-react';
 

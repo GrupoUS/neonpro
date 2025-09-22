@@ -1,5 +1,5 @@
-import { Button } from '@neonpro/ui';
-import { cn } from '@neonpro/ui';
+import { Button } from '@/components/ui';
+import { cn } from '@/components/ui';
 import { useState } from 'react';
 
 export function TestShadcnSetup() {

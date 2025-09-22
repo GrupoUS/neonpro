@@ -32,8 +32,8 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from '@neonpro/ui';
-import { cn } from '@neonpro/utils';
+} from '@/components/ui';
+import { cn } from '@/utils';
 import {
   AlertCircle,
   Calendar,

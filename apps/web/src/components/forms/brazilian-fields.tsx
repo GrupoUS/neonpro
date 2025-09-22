@@ -26,8 +26,8 @@ import {
   unformatPhone,
 } from '@/utils/brazilian-formatters';
 import { validateCEP, validateCNPJ } from '@neonpro/shared/validators/brazilian';
-import { cn } from '@neonpro/ui';
-import { formatBRPhone, formatCPF, validateBRPhoneMask, validateCPFMask } from '@neonpro/utils';
+import { cn } from '@/components/ui';
+import { formatBRPhone, formatCPF, validateBRPhoneMask, validateCPFMask } from '@/utils';
 
 export interface BrazilianFieldProps {
   /** Field label */

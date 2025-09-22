@@ -5,8 +5,8 @@
 
 import { ServiceCategoryManager } from '@/components/service-categories/ServiceCategoryManager';
 import { useAuth } from '@/hooks/useAuth';
-import { Card } from '@neonpro/ui';
-import { Button } from '@neonpro/ui';
+import { Card } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
 import { AlertTriangle } from 'lucide-react';

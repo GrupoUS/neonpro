@@ -10,6 +10,8 @@
  * - Brazilian Portuguese descriptions and examples
  */
 
+import { z } from 'zod';
+
 // API Documentation Types
 export const API_METHODS = {
   GET: 'GET',

@@ -22,7 +22,7 @@ import {
   Input,
   Label,
   Textarea,
-} from '@neonpro/ui';
+} from '@/components/ui';
 import { AlertCircle } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 import {

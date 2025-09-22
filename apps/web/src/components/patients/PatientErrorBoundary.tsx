@@ -9,7 +9,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@neonpro/ui';
+} from '@/components/ui';
 import { AlertTriangle } from 'lucide-react';
 import React, { Component } from 'react';
 

@@ -1,11 +1,11 @@
 'use client';
 
 import { useCreateService } from '@/hooks/useServices';
-import { Button } from '@neonpro/ui';
-import { Input } from '@neonpro/ui';
-import { Label } from '@neonpro/ui';
-import { Textarea } from '@neonpro/ui';
-import { Switch } from '@neonpro/ui';
+import { Button } from '@/components/ui';
+import { Input } from '@/components/ui';
+import { Label } from '@/components/ui';
+import { Textarea } from '@/components/ui';
+import { Switch } from '@/components/ui';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@neonpro/ui';
+} from '@/components/ui';
 import { useState } from 'react';
 import { toast } from 'sonner';
 

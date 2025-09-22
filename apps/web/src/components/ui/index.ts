@@ -7,12 +7,12 @@ export * from '../atoms';
 export * from '../molecules';
 
 // Specific re-exports for backward compatibility
-export { Button } from '@neonpro/ui'; // Use Button from UI package
-export { Badge } from '@neonpro/ui';
+export { Button } from '../atoms/button';
+export { Badge } from '../atoms/badge';
 export { Input } from '../atoms/input';
 export { Label } from '../atoms/label';
 
-export { Alert, AlertDescription, AlertTitle } from '@neonpro/ui';
+export { Alert, AlertDescription, AlertTitle } from '../atoms/alert';
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../molecules/table';
 
 // Remaining UI components (not yet reorganized)
@@ -50,5 +50,5 @@ export * from './bento-grid';
 // Toaster (special case)
 export { Toaster } from './toaster';
 
-// NOTE: All button components have been moved to @neonpro/ui package
-// Import buttons using: import { KokonutGradientButton, AceternityHoverBorderGradientButton } from "@neonpro/ui";
+// NOTE: All button components are now available locally
+// Import buttons using: import { KokonutGradientButton, AceternityHoverBorderGradientButton } from '../atoms/button';

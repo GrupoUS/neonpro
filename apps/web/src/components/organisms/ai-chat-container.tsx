@@ -10,8 +10,8 @@ import {
 } from '@/components/ui/ai-chat';
 import { useAIChat } from '@/hooks/useAIChat';
 import { useSubscription } from '@/hooks/useSubscription';
-import { cn } from '@neonpro/ui';
-import { Button } from '@neonpro/ui';
+import { cn } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { Crown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react'; // React import not needed
 // import type { AIAssistantProps } from '@/components/healthcare/types';

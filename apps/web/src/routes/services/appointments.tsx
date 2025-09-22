@@ -11,8 +11,8 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
 import type { CreateAppointmentData } from '@/services/appointments.service';
-import { Card } from '@neonpro/ui';
-import { Button } from '@neonpro/ui';
+import { Card } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { createFileRoute } from '@tanstack/react-router'; // useNavigate removed
 import { isAfter, isSameDay } from 'date-fns';
 import { CalendarCheck2 } from 'lucide-react';

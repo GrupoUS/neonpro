@@ -16,8 +16,8 @@ import {
 } from '@/components/ui/select';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { AuditTrail } from '@/lib/governance-service';
-import { Badge } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
+import { Badge } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 

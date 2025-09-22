@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@neonpro/ui';
+import { Button } from '@/components/ui';
 import {
   AlertTriangle,
   Calendar,

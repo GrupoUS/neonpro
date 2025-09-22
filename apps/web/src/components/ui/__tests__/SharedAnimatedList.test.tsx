@@ -1,4 +1,4 @@
-import { SharedAnimatedList } from '@neonpro/ui';
+import { SharedAnimatedList } from '@/components/ui';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { describe, expect, test } from 'vitest';

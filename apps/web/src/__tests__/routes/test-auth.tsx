@@ -1,6 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
-import { Button } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
+import { Button } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { CheckCircle } from 'lucide-react';
 import { useState } from 'react';

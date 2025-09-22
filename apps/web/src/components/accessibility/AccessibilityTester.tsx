@@ -12,9 +12,9 @@
 
 'use client';
 
-import { Button } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
+import { Button } from '@/components/ui';
+import { Card } from '@/components/ui';
+import { Badge } from '@/components/ui';
 import {
   Accessibility,
   AlertCircle,

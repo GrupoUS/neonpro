@@ -245,7 +245,7 @@ export function useRealtimeDashboard(
 /**
  * Utility function to format currency
  */
-import { formatBRL } from '@neonpro/utils';
+import { formatBRL } from '@/utils';
 
 export function formatCurrency(value: number): string {
   return formatBRL(value);

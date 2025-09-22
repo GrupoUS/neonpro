@@ -4,7 +4,7 @@ import {
   SmoothDrawerContent,
   SmoothDrawerHeader,
   SmoothDrawerTitle,
-} from '@neonpro/ui';
+} from '@/components/ui';
 import { fireEvent, render, screen } from '@testing-library/react';
 import * as React from 'react';
 import { describe, expect, it } from 'vitest';

@@ -8,8 +8,8 @@ import { ErrorBoundary } from '@/components/error-pages/ErrorBoundary';
 import { useAuth } from '@/hooks/useAuth';
 import { usePatient } from '@/hooks/usePatients';
 import { supabase } from '@/integrations/supabase/client';
-import { Card } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
+import { Card } from '@/components/ui';
+import { Badge } from '@/components/ui';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   AlertCircle,
@@ -800,7 +800,7 @@ function TabContentSkeleton() {
 }
 
 // Utility functions for Brazilian formatting
-import { formatBRPhone, formatCPF } from '@neonpro/utils';
+import { formatBRPhone, formatCPF } from '@/utils';
 
 function formatDate(date: string): string {
   return new Date(date).toLocaleDateString('pt-BR');

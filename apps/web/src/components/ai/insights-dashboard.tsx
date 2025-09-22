@@ -52,7 +52,7 @@ import {
   TabsTrigger,
 } from '@/components/ui';
 import { formatDateTime, formatPercentage } from '@/utils/brazilian-formatters';
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 
 export interface AIInsightsDashboardProps {
   /** Time range for insights */

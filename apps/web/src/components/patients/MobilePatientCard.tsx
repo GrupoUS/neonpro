@@ -37,7 +37,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { cn, formatBRPhone } from '@neonpro/utils';
+import { cn, formatBRPhone } from '@/utils';
 
 interface PatientBasicInfo {
   id: string;

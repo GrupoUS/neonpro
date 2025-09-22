@@ -9,7 +9,7 @@
 /**
  * Format CPF with mask (000.000.000-00)
  */
-import { formatBRPhone } from '@neonpro/utils';
+import { formatBRPhone } from '@/utils';
 
 export function formatCPF(cpf: string): string {
   if (!cpf) return '';

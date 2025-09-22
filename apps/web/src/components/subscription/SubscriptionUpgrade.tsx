@@ -5,8 +5,8 @@
 
 import { useSubscription } from '@/hooks/useSubscription';
 import { useToast } from '@/hooks/useToast';
-import { cn } from '@neonpro/ui';
-import { Button } from '@neonpro/ui';
+import { cn } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { Brain } from 'lucide-react';
 import { useState } from 'react';
 

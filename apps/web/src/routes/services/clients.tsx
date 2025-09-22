@@ -8,7 +8,7 @@ import {
   TableRow,
 } from '@/components/molecules/table';
 import { supabase } from '@/integrations/supabase/client';
-import { Card } from '@neonpro/ui';
+import { Card } from '@/components/ui';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';

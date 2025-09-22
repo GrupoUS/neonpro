@@ -9,9 +9,9 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { Badge } from '@neonpro/ui';
-import { UniversalButton } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
+import { Badge } from '@/components/ui';
+import { UniversalButton } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { PauseCircle } from 'lucide-react';
 import React, { useState } from 'react';

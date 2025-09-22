@@ -14,7 +14,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Button } from '@neonpro/ui';
+import { Button } from '@/components/ui';
 import {
   IconCalendar,
   IconCheck,

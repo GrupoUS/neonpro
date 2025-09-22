@@ -14,7 +14,7 @@
 
 'use client';
 
-import { Button } from '@neonpro/ui';
+import { Button } from '@/components/ui';
 import { ChevronDown } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {

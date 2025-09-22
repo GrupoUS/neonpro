@@ -1,5 +1,5 @@
 import { BentoGrid } from '@/components/ui/bento-grid';
-import { Badge } from '@neonpro/ui';
+import { Badge } from '@/components/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import {
   Activity,

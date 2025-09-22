@@ -1,6 +1,6 @@
 import { getCurrentSession } from '@/integrations/supabase/client';
-import { Badge } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
+import { Badge } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { CreditCard } from 'lucide-react';
 

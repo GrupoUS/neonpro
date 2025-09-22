@@ -68,7 +68,7 @@ import {
 } from '@/components/ui';
 
 import { formatDateTime } from '@/utils/brazilian-formatters';
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 
 // Import tRPC hooks for agent integration
 import { useAgentChat, useAgentSessionManager, useKnowledgeBaseManager } from '@/trpc/agent';

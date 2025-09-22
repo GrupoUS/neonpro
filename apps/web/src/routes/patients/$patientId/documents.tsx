@@ -15,10 +15,10 @@ import {
   useDocumentDelete,
   useDocumentUpload,
 } from '@/queries/documents';
-import { Card } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
-import { Button } from '@neonpro/ui';
-import { Input } from '@neonpro/ui';
+import { Card } from '@/components/ui';
+import { Badge } from '@/components/ui';
+import { Button } from '@/components/ui';
+import { Input } from '@/components/ui';
 import { useQuery } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';

@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@neonpro/ui';
+import { Button } from '@/components/ui';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { type AestheticAssessmentData } from '../pdf/AestheticReportPDF';

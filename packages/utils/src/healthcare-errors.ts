@@ -11,7 +11,8 @@
  */
 
 // Error severity levels
-import { TRPCError, TRPCErrorOptions } from '@trpc/server';
+import { TRPCError } from '@trpc/server';
+import type { TRPCError as TRPCErrorType } from '@trpc/server';
 
 export enum ErrorSeverity {
   LOW = 'low',
@@ -400,7 +401,7 @@ export class HealthcareTRPCError extends TRPCError {
   public readonly metadata?: Record<string, unknown>;
 
   constructor(
-    code: TRPCErrorOptions['code'],
+    code: TRPCErrorType['code'],
     message: string,
     healthcareCode?: string,
     metadata?: Record<string, unknown>

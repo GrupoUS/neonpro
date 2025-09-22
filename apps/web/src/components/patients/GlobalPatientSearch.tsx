@@ -15,7 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   ScrollArea,
-} from '@neonpro/ui';
+} from '@/components/ui';
 
 import { useDebounce } from '@/hooks/useDebounce';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
@@ -111,7 +111,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
         if (typeof window !== 'undefined') {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
         }
-      } catch (_error) {
+      } catch (error) {
         console.warn(`Error setting localStorage key "${key}":`, error);
       }
     },

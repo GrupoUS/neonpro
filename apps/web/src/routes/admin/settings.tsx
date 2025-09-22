@@ -22,7 +22,7 @@ import {
   CardHeader,
   CardTitle,
   Switch,
-} from '@neonpro/ui';
+} from '@/components/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Bell } from 'lucide-react';
 import React from 'react';

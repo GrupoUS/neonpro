@@ -13,14 +13,14 @@ import { useTimeSlotValidationWithStatus } from '@/hooks/useTimeSlotValidation';
 import type { TimeSlot } from '@/types/service';
 // TODO: remove if not used
 
-import { Button } from '@neonpro/ui';
-import { Calendar } from '@neonpro/ui';
-import { ScrollArea } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
-import { Input } from '@neonpro/ui';
-import { Label } from '@neonpro/ui';
-import { Textarea } from '@neonpro/ui';
-import { Select } from '@neonpro/ui';
+import { Button } from '@/components/ui';
+import { Calendar } from '@/components/ui';
+import { ScrollArea } from '@/components/ui';
+import { Card } from '@/components/ui';
+import { Input } from '@/components/ui';
+import { Label } from '@/components/ui';
+import { Textarea } from '@/components/ui';
+import { Select } from '@/components/ui';
 import {
   Dialog,
   DialogContent,
@@ -28,7 +28,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@neonpro/ui';
+} from '@/components/ui';
 import { format } from 'date-fns';
 import { Clock } from 'lucide-react';
 import { useEffect, useState } from 'react';

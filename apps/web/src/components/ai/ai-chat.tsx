@@ -53,7 +53,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui';
 import { formatDateTime } from '@/utils/brazilian-formatters';
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 
 export interface AIChatProps {
   /** Patient context for healthcare-specific conversations */

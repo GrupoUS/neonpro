@@ -1,8 +1,8 @@
 import { Progress } from '@/components/ui/progress';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { ComplianceData } from '@/lib/governance-service';
-import { Alert } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
+import { Alert } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { useQuery } from '@tanstack/react-query';
 
 type ComplianceStatus = 'compliant' | 'warning' | 'violation';

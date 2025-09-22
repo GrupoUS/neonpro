@@ -1,6 +1,6 @@
 import { useAuth } from '@/hooks/useAuth';
 import { getCurrentSession } from '@/integrations/supabase/client';
-import { Card } from '@neonpro/ui';
+import { Card } from '@/components/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { BarChart3 } from 'lucide-react';
 
