@@ -22,15 +22,15 @@ const mockLGPDService = {
 };
 
 // Wire route service imports to our mocks
-vi.mock(_'../../../services/patient-service'), () => ({
+vi.mock('../../../services/patient-service', () => ({
   PatientService: vi.fn().mockImplementation(() => mockPatientService),
 }));
 
-vi.mock(_'../../../services/audit-service'), () => ({
+vi.mock('../../../services/audit-service', () => ({
   ComprehensiveAuditService: vi.fn().mockImplementation(() => mockAuditService),
 }));
 
-vi.mock(_'../../../services/lgpd-service'), () => ({
+vi.mock('../../../services/lgpd-service', () => ({
   LGPDService: vi.fn().mockImplementation(() => mockLGPDService),
 }));
 
