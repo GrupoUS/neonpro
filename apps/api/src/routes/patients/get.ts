@@ -5,7 +5,6 @@
  */
 
 import { Hono } from 'hono';
-import { z } from 'zod';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
 import { ComprehensiveAuditService } from '../../services/audit-service';

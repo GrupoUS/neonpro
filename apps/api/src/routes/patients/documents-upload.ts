@@ -5,7 +5,6 @@
  */
 import { Hono } from 'hono';
 import { bodyLimit } from 'hono/body-limit';
-import { z } from 'zod';
 import { requireAuth } from '../../middleware/authn';
 
 const app = new Hono();
@@ -120,7 +119,7 @@ app.post('/:id/documents', requireAuth, async c => {
         );
       }
       return c.json(result, 201);
-    } catch (err: any) {
+    } catch (_err: any) {
       return c.json(
         { success: false, error: err?.message || 'Erro interno' },
         500,

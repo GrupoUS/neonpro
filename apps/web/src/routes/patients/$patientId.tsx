@@ -30,8 +30,6 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { Suspense, useEffect } from 'react';
-import { z } from 'zod';
-
 // Type-safe search params schema with tab navigation
 const patientSearchSchema = z.object({
   tab: z
@@ -189,7 +187,7 @@ function PatientDetailPage() {
               accessed_at: new Date().toISOString(),
             }),
           });
-        } catch (error) {
+        } catch (_error) {
           console.warn('Failed to log patient access:', error);
         }
       };
@@ -638,7 +636,7 @@ function OverviewTab({ patient }: { patient: PatientData }) {
 /**
  * History Tab Component (Placeholder)
  */
-function HistoryTab({ patientId: _patientId }: { patientId: string }) {
+function HistoryTab({ patientId: patientId }: { patientId: string }) {
   return (
     <Card>
       <CardHeader>
@@ -665,7 +663,7 @@ function HistoryTab({ patientId: _patientId }: { patientId: string }) {
 /**
  * Appointments Tab Component (Placeholder)
  */
-function AppointmentsTab({ patientId: _patientId }: { patientId: string }) {
+function AppointmentsTab({ patientId: patientId }: { patientId: string }) {
   return (
     <Card>
       <CardHeader>
@@ -690,7 +688,7 @@ function AppointmentsTab({ patientId: _patientId }: { patientId: string }) {
 /**
  * Documents Tab Component (Placeholder)
  */
-function DocumentsTab({ patientId: _patientId }: { patientId: string }) {
+function DocumentsTab({ patientId: patientId }: { patientId: string }) {
   return (
     <Card>
       <CardHeader>

@@ -48,7 +48,7 @@ describe('Healthcare Errors Module - RED Phase', () => {
     });
 
     it('should handle optional metadata', () => {
-      const metadata = { patientId: '123', userId: '456' };
+      const metadata = { patientId: '123', _userId: '456' };
       const error = new HealthcareError(
         'Error with metadata',
         ErrorCategory.BUSINESS_LOGIC,
@@ -100,7 +100,7 @@ describe('Healthcare Errors Module - RED Phase', () => {
     it('should create authentication-specific errors', () => {
       const error = new HealthcareAuthenticationError(
         'Invalid credentials',
-        { userId: 'user123' },
+        { _userId: 'user123' },
       );
 
       expect(error.category).toBe(ErrorCategory.AUTHENTICATION);
@@ -111,7 +111,7 @@ describe('Healthcare Errors Module - RED Phase', () => {
     it('should sanitize user IDs in metadata', () => {
       const error = new HealthcareAuthenticationError(
         'Login failed for user 123.456.789-00',
-        { userId: '123.456.789-00' },
+        { _userId: '123.456.789-00' },
       );
 
       expect(error.lgpdCompliant).toBe(false);

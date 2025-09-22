@@ -37,7 +37,7 @@ export interface LGPDCRUDOptions {
  */
 export interface DataProcessingContext {
   readonly clinicId: string;
-  readonly userId: string;
+  readonly _userId: string;
   readonly sessionId?: string;
   readonly patientId?: string;
   readonly professionalId?: string;
@@ -143,7 +143,7 @@ export class LGPDComplianceService {
    */
   async createAIUsageRecord(
     usageData: Omit<AIUsageRecord, "id" | "createdAt" | "auditTrail">,
-    context: DataProcessingContext,
+    _context: DataProcessingContext,
     options: LGPDCRUDOptions,
   ): Promise<{
     success: boolean;
@@ -164,7 +164,7 @@ export class LGPDComplianceService {
     // 2. Generate LGPD-compliant audit trail
     const auditTrail = this.createAuditTrail(
       "create_ai_usage",
-      context,
+      _context,
       options,
       { dataProcessed: true, patientInvolved: usageData.patientInvolved },
     );
@@ -173,7 +173,7 @@ export class LGPDComplianceService {
     const record: AIUsageRecord = {
       ...usageData,
       id: this.generateSecureId(),
-      clinicId: usageData.clinicId || context.clinicId,
+      clinicId: usageData.clinicId || _context.clinicId,
       auditTrail,
       createdAt: new Date(),
     };
@@ -190,17 +190,17 @@ export class LGPDComplianceService {
    */
   createAuditTrail(
     action: string,
-    context: DataProcessingContext,
+    _context: DataProcessingContext,
     options: LGPDCRUDOptions,
     metadata: Record<string, unknown> = {},
   ): AuditTrail {
     return {
       action,
       timestamp: new Date(),
-      userId: context.userId,
+      _userId: _context._userId,
       userRole: typeof metadata.userRole === 'string' ? metadata.userRole : undefined,
-      ipAddress: context.ipAddress,
-      userAgent: context.userAgent,
+      ipAddress: _context.ipAddress,
+      userAgent: _context.userAgent,
       consentStatus: options.consentId
         ? ("valid" as const)
         : ("missing" as const),
@@ -209,11 +209,11 @@ export class LGPDComplianceService {
       metadata: {
         legalBasis: options.legalBasis,
         retentionDays: options.retentionDays,
-        clinicId: context.clinicId,
-        sessionId: context.sessionId,
-        patientId: context.patientId,
-        medicalSpecialty: context.medicalSpecialty,
-        processingLocation: context.processingLocation,
+        clinicId: _context.clinicId,
+        sessionId: _context.sessionId,
+        patientId: _context.patientId,
+        medicalSpecialty: _context.medicalSpecialty,
+        processingLocation: _context.processingLocation,
         ...metadata,
       },
     };

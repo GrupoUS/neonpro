@@ -14,12 +14,12 @@ import {
   useContext,
   useEffect,
   useState,
-  ReactNode,
+  ReactNode
 } from "react";
 import {
   HealthcareA11yContext,
   HealthcarePriority,
-  announceToScreenReader,
+  announceToScreenReader
 } from "../../utils/accessibility";
 import { DataSensitivity } from "../../utils/healthcare-validation";
 
@@ -61,7 +61,7 @@ export const defaultHealthcareTheme: HealthcareThemeConfig = {
   reduceMotion: true, // Default to reduced motion for healthcare
   dataSensitivityLevel: DataSensitivity.CONFIDENTIAL,
   auditMode: true, // Default to audit mode for healthcare
-  consentRequired: true,
+  consentRequired: true
 };
 
 // Healthcare theme context
@@ -95,7 +95,7 @@ export function HealthcareThemeProvider({
   children,
   initialTheme = {},
   onThemeChange,
-  persistTheme = true,
+  persistTheme = true
 }: HealthcareThemeProviderProps) {
   // Initialize theme from localStorage or defaults
   const [theme, setTheme] = useState<HealthcareThemeConfig>(() => {
@@ -118,7 +118,7 @@ export function HealthcareThemeProvider({
     patientDataVisible: theme.patientDataMode,
     highContrastMode: theme.highContrast,
     reduceMotion: theme.reduceMotion,
-    screenReaderMode: theme.screenReaderOptimized,
+    screenReaderMode: theme.screenReaderOptimized
   };
 
   // Update theme function
@@ -168,8 +168,8 @@ export function HealthcareThemeProvider({
         : {
             highContrast: true,
             reduceMotion: false, // Allow animations for emergency alerts
-            screenReaderOptimized: true,
-          }),
+            screenReaderOptimized: true
+          })
     });
   };
 
@@ -178,7 +178,7 @@ export function HealthcareThemeProvider({
     updateTheme({
       patientDataMode: !theme.patientDataMode,
       // Ensure audit mode is enabled when viewing patient data
-      auditMode: !theme.patientDataMode ? true : theme.auditMode,
+      auditMode: !theme.patientDataMode ? true : theme.auditMode
     });
   };
 
@@ -189,7 +189,7 @@ export function HealthcareThemeProvider({
       // Auto-enable audit mode for sensitive data
       auditMode:
         level === DataSensitivity.RESTRICTED ||
-        level === DataSensitivity.CONFIDENTIAL,
+        level === DataSensitivity.CONFIDENTIAL
     });
   };
 
@@ -259,7 +259,7 @@ export function HealthcareThemeProvider({
     toggleEmergencyMode,
     togglePatientDataMode,
     setDataSensitivity,
-    accessibility,
+    accessibility
   };
 
   return (

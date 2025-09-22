@@ -14,7 +14,6 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { z } from "zod";
 import { nanoid } from "nanoid";
 
 // ============================================================================
@@ -147,7 +146,7 @@ export const RateLimitContextSchema = z.object({
 
   // Client identification (LGPD-compliant)
   clientId: z.string().describe("Client identifier"),
-  userId: z.string().optional().describe("User identifier (anonymized)"),
+  _userId: z.string().optional().describe("User identifier (anonymized)"),
   sessionId: z.string().optional().describe("Session identifier"),
 
   // Request metadata
@@ -387,7 +386,7 @@ abstract class RateLimitAlgorithmBase {
 
   abstract checkLimit(
     key: string,
-    context: RateLimitContext,
+    _context: RateLimitContext,
   ): Promise<RateLimitResult>;
   abstract reset(key: string): Promise<void>;
   abstract getUsage(key: string): Promise<number>;
@@ -399,7 +398,7 @@ abstract class RateLimitAlgorithmBase {
 class SlidingWindowAlgorithm extends RateLimitAlgorithmBase {
   async checkLimit(
     key: string,
-    context: RateLimitContext,
+    _context: RateLimitContext,
   ): Promise<RateLimitResult> {
     const now = Date.now();
     const windowMs = 60 * 1000; // 1 minute window
@@ -462,7 +461,7 @@ class SlidingWindowAlgorithm extends RateLimitAlgorithmBase {
 class TokenBucketAlgorithm extends RateLimitAlgorithmBase {
   async checkLimit(
     key: string,
-    context: RateLimitContext,
+    _context: RateLimitContext,
   ): Promise<RateLimitResult> {
     const now = Date.now();
     const capacity = this.config.burstSize;
@@ -562,7 +561,7 @@ export class APIRateLimitingService {
         "🚦 [APIRateLimitingService] Healthcare API rate limiting service initialized",
       );
     } catch (error) {
-      console.error("Failed to initialize API rate limiting service:", error);
+      console.error("Failed to initialize API rate limiting _service:", error);
     }
   }
 
@@ -710,7 +709,7 @@ export class APIRateLimitingService {
   /**
    * Check rate limit for a request
    */
-  async checkRateLimit(context: RateLimitContext): Promise<RateLimitResult> {
+  async checkRateLimit(_context: RateLimitContext): Promise<RateLimitResult> {
     try {
       // Classify request and determine tier
       const tier = this.determineRateLimitTier(context);
@@ -730,7 +729,7 @@ export class APIRateLimitingService {
       }
 
       // Apply rate limiting algorithm
-      const result = await algorithm.checkLimit(key, context);
+      const result = await algorithm.checkLimit(key, _context);
 
       // Log rate limiting decision
       await this.logRateLimitDecision(context, result);
@@ -769,7 +768,7 @@ export class APIRateLimitingService {
   /**
    * Determine appropriate rate limit tier for request
    */
-  private determineRateLimitTier(context: RateLimitContext): RateLimitTier {
+  private determineRateLimitTier(_context: RateLimitContext): RateLimitTier {
     // Emergency and patient safety requests get highest priority
     if (context.healthcareContext?.emergencyFlag) {
       return this.config.tiers.find((t) => t.name === "emergency")!;
@@ -827,14 +826,14 @@ export class APIRateLimitingService {
    * Generate rate limit key for request
    */
   private generateRateLimitKey(
-    context: RateLimitContext,
+    _context: RateLimitContext,
     tier: RateLimitTier,
   ): string {
     const parts = [this.config.storage.keyPrefix, tier.name, context.clientId];
 
     // Add user ID if available
-    if (context.userId) {
-      parts.push(context.userId);
+    if (context._userId) {
+      parts.push(context._userId);
     }
 
     // Add facility ID for facility-based limits
@@ -855,7 +854,7 @@ export class APIRateLimitingService {
    * Check for emergency bypass conditions
    */
   private checkEmergencyBypass(
-    context: RateLimitContext,
+    _context: RateLimitContext,
     tier: RateLimitTier,
   ): RateLimitResult {
     let bypassApplied = false;
@@ -910,7 +909,7 @@ export class APIRateLimitingService {
    * Log rate limiting decision
    */
   private async logRateLimitDecision(
-    context: RateLimitContext,
+    _context: RateLimitContext,
     result: RateLimitResult,
   ): Promise<void> {
     // Only log violations and bypasses unless configured otherwise
@@ -949,7 +948,7 @@ export class APIRateLimitingService {
    * Update metrics
    */
   private updateMetrics(
-    context: RateLimitContext,
+    _context: RateLimitContext,
     result: RateLimitResult,
   ): void {
     const metricKey = `${result.tier}:${context.category}`;
@@ -984,7 +983,7 @@ export class APIRateLimitingService {
    * Check alerting thresholds
    */
   private async checkAlertingThresholds(
-    context: RateLimitContext,
+    _context: RateLimitContext,
     result: RateLimitResult,
   ): Promise<void> {
     const usageRatio = result.currentUsage / result.limitValue;
@@ -998,7 +997,7 @@ export class APIRateLimitingService {
    * Send rate limit alert
    */
   private async sendRateLimitAlert(
-    context: RateLimitContext,
+    _context: RateLimitContext,
     result: RateLimitResult,
     usageRatio: number,
   ): Promise<void> {
@@ -1028,8 +1027,7 @@ export class APIRateLimitingService {
     console.log("📊 [APIRateLimitingService] Metrics collected:", {
       timestamp: new Date().toISOString(),
       metricsCount: metricsSnapshot.size,
-      totalMetrics: Array.from(metricsSnapshot.values()).reduce(
-        (sum, m) => sum + m.totalRequests,
+      totalMetrics: Array.from(metricsSnapshot.values()).reduce((sum,_m) => sum + m.totalRequests,
         0,
       ),
     });

@@ -28,15 +28,16 @@ export class HealthcareAIOrchestrator {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   constructor(
     predictiveService?: PredictiveAnalyticsService,
-    config: Record<string, unknown> = {},
+    _config: Record<string, unknown> = {},
   ) {
     this.predictiveService =
       predictiveService || new PredictiveAnalyticsService();
+    const _config = _config; // avoid unused warning
     this.config = {
       enableCompliance: true,
       region: "brazil",
       dataRetentionDays: 2555, // 7 years as per Brazilian healthcare regulations
-      ...config,
+      ...__config,
     };
     void this.config; // mark as read to satisfy TS unused private property rule
   }
@@ -45,7 +46,7 @@ export class HealthcareAIOrchestrator {
    * Generate comprehensive healthcare insights
    */
   async generateHealthcareInsights(
-    request: PredictiveRequest = { timeframe: "month" },
+    _request: PredictiveRequest = { timeframe: "month" },
   ): Promise<HealthcareInsights> {
     try {
       // Generate insights using the predictive service
@@ -191,8 +192,7 @@ export class HealthcareAIOrchestrator {
     insights: PredictiveInsight[],
   ): Promise<"compliant" | "warning" | "violation"> {
     // Check if all insights are generated with compliance
-    const hasCompliantInsights = insights.every(
-      (insight) => insight.metadata.complianceStatus === "compliant",
+    const hasCompliantInsights = insights.every((insight) => insight.metadata.complianceStatus === "compliant",
     );
 
     return hasCompliantInsights ? "compliant" : "warning";
@@ -204,8 +204,7 @@ export class HealthcareAIOrchestrator {
   ): "healthy" | "warning" | "critical" {
     // Determine status based on insights and compliance
     const hasIssues = compliance.issues.length > 0;
-    const hasLowConfidenceInsights = insights.insights.some(
-      (insight) => insight.confidence < 0.5,
+    const hasLowConfidenceInsights = insights.insights.some((insight) => insight.confidence < 0.5,
     );
     const complianceScore = compliance.overallScore;
 

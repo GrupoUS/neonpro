@@ -83,9 +83,9 @@ let viewportState: ViewportState = {
  */
 function detectTouchDevice(): boolean {
   return (
-    'ontouchstart' in window ||
-    navigator.maxTouchPoints > 0 ||
-    'msMaxTouchPoints' in navigator
+    'ontouchstart' in window
+    || navigator.maxTouchPoints > 0
+    || 'msMaxTouchPoints' in navigator
   );
 }
 
@@ -94,12 +94,12 @@ function detectTouchDevice(): boolean {
  */
 function detectMobileDevice(): string {
   const userAgent = navigator.userAgent.toLowerCase();
-  
+
   if (userAgent.includes('iphone')) return 'iphone';
   if (userAgent.includes('ipad')) return 'ipad';
   if (userAgent.includes('android')) return 'android';
   if (userAgent.includes('windows phone')) return 'windows-phone';
-  
+
   return 'unknown';
 }
 
@@ -117,8 +117,9 @@ function getViewportSize(): { width: number; height: number } {
  * Determine current breakpoint based on viewport width
  */
 function determineBreakpoint(width: number): string {
-  const { mobile, mobileLarge, tablet, tabletLarge, desktop, desktopLarge } = HEALTHCARE_BREAKPOINTS;
-  
+  const { mobile: mobile, mobileLarge, tablet, tabletLarge, desktop, desktopLarge } =
+    HEALTHCARE_BREAKPOINTS;
+
   if (width >= desktopLarge) return 'desktop-large';
   if (width >= desktop) return 'desktop';
   if (width >= tabletLarge) return 'tablet-large';
@@ -136,17 +137,17 @@ function applySafeAreaInsets(): void {
   }
 
   const html = document.documentElement;
-  
+
   // Check if the device supports safe area insets
   const supportsSafeArea = CSS.supports('padding-left', 'env(safe-area-inset-left)');
-  
+
   if (supportsSafeArea) {
     // Apply safe area insets to the body
     document.body.style.paddingTop = 'env(safe-area-inset-top)';
     document.body.style.paddingBottom = 'env(safe-area-inset-bottom)';
     document.body.style.paddingLeft = 'env(safe-area-inset-left)';
     document.body.style.paddingRight = 'env(safe-area-inset-right)';
-    
+
     // Store safe area values as CSS variables
     html.style.setProperty('--safe-area-inset-top', 'env(safe-area-inset-top)');
     html.style.setProperty('--safe-area-inset-bottom', 'env(safe-area-inset-bottom)');
@@ -160,7 +161,7 @@ function applySafeAreaInsets(): void {
  */
 function optimizeViewportMetaTag(): void {
   const viewport = document.querySelector('meta[name="viewport"]');
-  
+
   if (viewport) {
     // Enhanced viewport configuration for healthcare applications
     const viewportContent = [
@@ -172,7 +173,7 @@ function optimizeViewportMetaTag(): void {
       'viewport-fit=cover', // Support safe area insets
       'shrink-to-fit=no', // Prevent content shrinking
     ].join(', ');
-    
+
     viewport.setAttribute('content', viewportContent);
   }
 }
@@ -187,17 +188,17 @@ function applyResponsiveEnhancements(): void {
 
   const html = document.documentElement;
   const currentBreakpoint = determineBreakpoint(viewportState.viewportSize.width);
-  
+
   // Update breakpoint attribute
   html.setAttribute('data-breakpoint', currentBreakpoint);
   viewportState.currentBreakpoint = currentBreakpoint;
-  
+
   // Apply healthcare-specific responsive classes
   if (viewportState.config.enableHealthcareUX) {
     html.setAttribute('data-healthcare-responsive', 'true');
     html.setAttribute('data-mobile-optimized', 'true');
   }
-  
+
   // Apply performance optimizations
   if (viewportState.config.enablePerformanceOptimization) {
     // Use containment for better performance on mobile
@@ -218,30 +219,32 @@ function applyTouchOptimizations(): void {
   }
 
   const html = document.documentElement;
-  
+
   // Add touch device detection attributes
   html.setAttribute('data-touch-device', viewportState.isTouchDevice.toString());
   html.setAttribute('data-input-method', viewportState.isTouchDevice ? 'touch' : 'pointer');
-  
+
   // Add mobile device type
   const deviceType = detectMobileDevice();
   if (deviceType !== 'unknown') {
     html.setAttribute('data-device-type', deviceType);
   }
-  
+
   // Apply touch optimization styles
   if (viewportState.isTouchDevice) {
     // Optimize for touch interactions
     html.style.setProperty('--touch-target-size', `${viewportState.config.minTouchTargetSize}px`);
-    
+
     // Prevent zoom on input focus for iOS
     if (viewportState.config.preventZoomOnInput) {
-      const inputs = document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="password"], textarea, select');
+      const inputs = document.querySelectorAll(
+        'input[type="text"], input[type="email"], input[type="tel"], input[type="password"], textarea, select',
+      );
       inputs.forEach(input => {
         (input as HTMLElement).style.fontSize = '16px';
       });
     }
-    
+
     // Add touch-specific event listeners
     setupTouchEventListeners();
   }
@@ -252,53 +255,53 @@ function applyTouchOptimizations(): void {
  */
 function setupTouchEventListeners(): void {
   let lastTouchTime = 0;
-  
+
   // Prevent double-tap zoom on buttons
-  document.addEventListener('touchend', (event) => {
+  document.addEventListener('touchend', event => {
     const currentTime = new Date().getTime();
     const tapLength = currentTime - lastTouchTime;
-    
+
     if (tapLength < 300 && tapLength > 0) {
       // This might be a double-tap
       const target = event.target as HTMLElement;
-      
+
       // Check if target is a button or interactive element
       if (
-        target.tagName === 'BUTTON' ||
-        target.tagName === 'A' ||
-        target.closest('button') ||
-        target.closest('a') ||
-        target.hasAttribute('role') === 'button'
+        target.tagName === 'BUTTON'
+        || target.tagName === 'A'
+        || target.closest('button')
+        || target.closest('a')
+        || target.hasAttribute('role') === 'button'
       ) {
         event.preventDefault();
       }
     }
-    
+
     lastTouchTime = currentTime;
   });
-  
+
   // Handle touch events for better feedback
-  document.addEventListener('touchstart', (event) => {
+  document.addEventListener('touchstart', event => {
     const target = event.target as HTMLElement;
-    
+
     // Add touch feedback to interactive elements
     if (
-      target.tagName === 'BUTTON' ||
-      target.tagName === 'A' ||
-      target.closest('button') ||
-      target.closest('a') ||
-      target.hasAttribute('role') === 'button'
+      target.tagName === 'BUTTON'
+      || target.tagName === 'A'
+      || target.closest('button')
+      || target.closest('a')
+      || target.hasAttribute('role') === 'button'
     ) {
       target.classList.add('touch-active');
     }
   });
-  
-  document.addEventListener('touchend', (event) => {
+
+  document.addEventListener('touchend', event => {
     const target = event.target as HTMLElement;
     target.classList.remove('touch-active');
   });
-  
-  document.addEventListener('touchcancel', (event) => {
+
+  document.addEventListener('touchcancel', event => {
     const target = event.target as HTMLElement;
     target.classList.remove('touch-active');
   });
@@ -309,22 +312,22 @@ function setupTouchEventListeners(): void {
  */
 function setupResizeHandler(): void {
   let resizeTimeout: NodeJS.Timeout;
-  
+
   const handleResize = () => {
     clearTimeout(resizeTimeout);
-    
+
     resizeTimeout = setTimeout(() => {
       // Update viewport size
       viewportState.viewportSize = getViewportSize();
-      
+
       // Re-apply responsive enhancements
       applyResponsiveEnhancements();
-      
+
       // Update touch optimizations if needed
       if (viewportState.config.enableTouchOptimization) {
         applyTouchOptimizations();
       }
-      
+
       // Log viewport changes in development
       if (process.env.NODE_ENV === 'development') {
         console.log('[Mobile Viewport] Viewport updated:', {
@@ -335,7 +338,7 @@ function setupResizeHandler(): void {
       }
     }, 150); // Debounce resize events
   };
-  
+
   window.addEventListener('resize', handleResize);
   window.addEventListener('orientationchange', handleResize);
 }
@@ -349,15 +352,18 @@ function applyHealthcareMobileOptimizations(): void {
   }
 
   const html = document.documentElement;
-  
+
   // Healthcare-specific mobile optimizations
   html.setAttribute('data-healthcare-mobile', 'true');
-  
+
   // Optimize for healthcare workflows on mobile
-  if (viewportState.currentBreakpoint === 'mobile' || viewportState.currentBreakpoint === 'mobile-large') {
+  if (
+    viewportState.currentBreakpoint === 'mobile'
+    || viewportState.currentBreakpoint === 'mobile-large'
+  ) {
     // Mobile-first healthcare UX
     html.setAttribute('data-healthcare-workflow', 'mobile-optimized');
-    
+
     // Ensure touch targets meet healthcare accessibility standards
     const touchTargets = document.querySelectorAll('button, .touch-target, [role="button"]');
     touchTargets.forEach(target => {
@@ -365,7 +371,7 @@ function applyHealthcareMobileOptimizations(): void {
       element.style.minHeight = `${viewportState.config.minTouchTargetSize}px`;
       element.style.minWidth = `${viewportState.config.minTouchTargetSize}px`;
     });
-    
+
     // Optimize form inputs for healthcare data entry
     const formInputs = document.querySelectorAll('input, select, textarea');
     formInputs.forEach(input => {
@@ -374,7 +380,7 @@ function applyHealthcareMobileOptimizations(): void {
       element.style.padding = '12px'; // Adequate touch target size
     });
   }
-  
+
   // Add healthcare-specific CSS variables
   html.style.setProperty('--healthcare-touch-min', `${viewportState.config.minTouchTargetSize}px`);
   html.style.setProperty('--healthcare-spacing-mobile', '1rem');
@@ -413,7 +419,7 @@ export function initializeMobileViewport(config?: Partial<MobileViewportConfig>)
     applyResponsiveEnhancements();
     applyTouchOptimizations();
     applyHealthcareMobileOptimizations();
-    
+
     // Setup event listeners
     setupResizeHandler();
 
@@ -421,7 +427,7 @@ export function initializeMobileViewport(config?: Partial<MobileViewportConfig>)
     viewportState.isInitialized = true;
 
     console.log('[Mobile Viewport] ✅ Mobile viewport optimization completed');
-    
+
     // Log final status
     console.log('[Mobile Viewport] Final Status:', {
       initialized: viewportState.isInitialized,
@@ -430,7 +436,6 @@ export function initializeMobileViewport(config?: Partial<MobileViewportConfig>)
       isTouchDevice: viewportState.isTouchDevice,
       deviceType: detectMobileDevice(),
     });
-
   } catch {
     console.error('[Mobile Viewport] ❌ Initialization failed:', error);
     throw error;
@@ -455,21 +460,24 @@ export function isBreakpoint(breakpoint: string): boolean {
  * Check if viewport is mobile (mobile or mobile-large)
  */
 export function isMobile(): boolean {
-  return viewportState.currentBreakpoint === 'mobile' || viewportState.currentBreakpoint === 'mobile-large';
+  return viewportState.currentBreakpoint === 'mobile'
+    || viewportState.currentBreakpoint === 'mobile-large';
 }
 
 /**
  * Check if viewport is tablet
  */
 export function isTablet(): boolean {
-  return viewportState.currentBreakpoint === 'tablet' || viewportState.currentBreakpoint === 'tablet-large';
+  return viewportState.currentBreakpoint === 'tablet'
+    || viewportState.currentBreakpoint === 'tablet-large';
 }
 
 /**
  * Check if viewport is desktop
  */
 export function isDesktop(): boolean {
-  return viewportState.currentBreakpoint === 'desktop' || viewportState.currentBreakpoint === 'desktop-large';
+  return viewportState.currentBreakpoint === 'desktop'
+    || viewportState.currentBreakpoint === 'desktop-large';
 }
 
 /**
@@ -480,7 +488,7 @@ export function updateViewportConfig(config: Partial<MobileViewportConfig>): voi
     ...viewportState.config,
     ...config,
   };
-  
+
   // Re-apply optimizations with new config
   applyResponsiveEnhancements();
   applyTouchOptimizations();

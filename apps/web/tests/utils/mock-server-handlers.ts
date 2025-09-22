@@ -93,7 +93,7 @@ export const mockServerHandlers = [
       operation: body.operation.action,
       entity: body.operation.entity,
       timestamp: new Date().toISOString(),
-      userId: 'user-123',
+      _userId: 'user-123',
       correlationId: `correlation-${Math.floor(Math.random() * 1000)}`,
       compliance: {
         lgpd: { passed: true, score: 95 },

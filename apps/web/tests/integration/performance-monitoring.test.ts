@@ -54,8 +54,6 @@ import { useResourceTiming } from '@/hooks/use-resource-timing';
 import { useWebVitals } from '@/hooks/use-web-vitals';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { z } from 'zod';
-
 // Import performance monitoring services
 import {
   AlertThreshold,
@@ -101,7 +99,7 @@ const WebVitalsMetricsSchema = z.object({
   timestamp: z.string(),
   page: z.string(),
   sessionId: z.string(),
-  userId: z.string().optional(),
+  _userId: z.string().optional(),
   metadata: z.record(z.any()).optional(),
 });
 
@@ -223,7 +221,7 @@ const PerformanceAlertSchema = z.object({
   timestamp: z.string(),
   page: z.string(),
   sessionId: z.string(),
-  userId: z.string().optional(),
+  _userId: z.string().optional(),
   metadata: z.record(z.any()).optional(),
   acknowledged: z.boolean().default(false),
   resolved: z.boolean().default(false),
@@ -268,7 +266,7 @@ const generateValidWebVitals = () => ({
   timestamp: new Date().toISOString(),
   page: '/dashboard',
   sessionId: 'sess_12345678901234567890123456789012',
-  userId: 'usr_healthcare_12345',
+  _userId: 'usr_healthcare_12345',
   metadata: {
     browser: 'Chrome',
     device: 'desktop',
@@ -405,7 +403,7 @@ const generateValidPerformanceAlert = () => ({
   timestamp: new Date().toISOString(),
   page: '/dashboard',
   sessionId: 'sess_12345678901234567890123456789012',
-  userId: 'usr_healthcare_12345',
+  _userId: 'usr_healthcare_12345',
   metadata: {
     browser: 'Chrome',
     device: 'mobile',
@@ -1152,14 +1150,14 @@ describe('Performance Monitoring Integration Tests', () => {
   describe('Integration with Healthcare Platform', () => {
     it('should integrate with existing authentication system', async () => {
       const userContext = {
-        userId: 'usr_healthcare_12345',
+        _userId: 'usr_healthcare_12345',
         roles: ['doctor', 'admin'],
         permissions: ['view_patients', 'edit_patients'],
       };
 
       vi.spyOn(performanceTracker, 'setUserContext').mockImplementation(
         context => {
-          expect(context.userId).toBe(userContext.userId);
+          expect(context._userId).toBe(userContext._userId);
           expect(context.roles).toEqual(userContext.roles);
         },
       );
@@ -1173,7 +1171,7 @@ describe('Performance Monitoring Integration Tests', () => {
 
     it('should respect LGPD data minimization principles', async () => {
       const sensitiveData = {
-        userId: 'usr_healthcare_12345',
+        _userId: 'usr_healthcare_12345',
         patientId: 'pat_789',
         medicalData: 'sensitive information',
       };
@@ -1184,7 +1182,7 @@ describe('Performance Monitoring Integration Tests', () => {
           // Should redact sensitive information
           return {
             ...data,
-            userId: 'REDACTED',
+            _userId: 'REDACTED',
             patientId: 'REDACTED',
             medicalData: 'REDACTED',
           };
@@ -1193,7 +1191,7 @@ describe('Performance Monitoring Integration Tests', () => {
 
       const sanitized = performanceTracker.sanitizeData(sensitiveData);
 
-      expect(sanitized.userId).toBe('REDACTED');
+      expect(sanitized._userId).toBe('REDACTED');
       expect(sanitized.patientId).toBe('REDACTED');
       expect(sanitized.medicalData).toBe('REDACTED');
     });

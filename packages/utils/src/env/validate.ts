@@ -2,7 +2,7 @@
  * Environment validation utilities for NeonPro
  */
 
-export const validateEnv = (): boolean => {
+export const _validateEnv = (): boolean => {
   const required = [
     "SUPABASE_URL",
     "SUPABASE_ANON_KEY",

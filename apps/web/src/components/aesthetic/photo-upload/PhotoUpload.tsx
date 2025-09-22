@@ -393,7 +393,7 @@ export function PhotoUpload({
           toast.success(`Foto "${file.name}" analisada com sucesso!`);
           onPhotosUploaded?.([photoWithAnalysis]);
           onAnalysisComplete?.(photoWithAnalysis.id, analysis);
-        } catch (error) {
+        } catch (_error) {
           console.error('Upload/Analysis error:', error);
 
           setUploadStates(prev => {
@@ -434,7 +434,7 @@ export function PhotoUpload({
       setUploadedPhotos(prev => prev.filter(p => p.id !== photoId));
       onPhotoRemoved?.(photoId);
       toast.success('Foto removida com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error removing photo:', error);
       toast.error('Erro ao remover foto');
     }

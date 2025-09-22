@@ -83,7 +83,7 @@ export class IntentParserService {
   /**
    * Parse natural language query to extract intent and parameters
    */
-  parseQuery(query: string, userRole: UserRole): {
+  parseQuery(_query: string, userRole: UserRole): {
     intent: QueryIntent;
     parameters: QueryParameters;
     confidence: number;
@@ -107,7 +107,7 @@ export class IntentParserService {
   /**
    * Normalize query text for better matching
    */
-  private normalizeQuery(query: string): string {
+  private normalizeQuery(_query: string): string {
     return query
       .toLowerCase()
       .trim()
@@ -146,7 +146,7 @@ export class IntentParserService {
     }
 
     const bestIntents = Object.entries(intentScores)
-      .filter(([_, score]) => score === maxScore)
+      .filter(([, score]) => score === maxScore)
       .map(([intent]) => intent as QueryIntent);
 
     // If tie, prioritize based on query content
@@ -160,7 +160,7 @@ export class IntentParserService {
   /**
    * Resolve ties between multiple matching intents
    */
-  private resolveIntentTie(query: string, intents: QueryIntent[]): QueryIntent {
+  private resolveIntentTie(_query: string, intents: QueryIntent[]): QueryIntent {
     // Priority order for tie-breaking
     const priorityOrder: QueryIntent[] = [
       'financial',
@@ -181,7 +181,7 @@ export class IntentParserService {
   /**
    * Calculate confidence score for intent detection
    */
-  private calculateConfidence(query: string, intent: QueryIntent): number {
+  private calculateConfidence(_query: string, intent: QueryIntent): number {
     if (intent === 'unknown') {
       return 0.3;
     }
@@ -208,7 +208,7 @@ export class IntentParserService {
   /**
    * Calculate bonus based on query specificity
    */
-  private calculateSpecificityBonus(query: string): number {
+  private calculateSpecificityBonus(_query: string): number {
     let bonus = 0;
 
     // Bonus for specific names
@@ -241,7 +241,7 @@ export class IntentParserService {
    * Extract parameters based on intent and query content
    */
   private extractParameters(
-    query: string,
+    _query: string,
     intent: QueryIntent,
     userRole: UserRole,
   ): QueryParameters {
@@ -269,7 +269,7 @@ export class IntentParserService {
   /**
    * Extract client names from query
    */
-  private extractClientNames(query: string): string[] {
+  private extractClientNames(_query: string): string[] {
     const names: string[] = [];
 
     for (const pattern of this.CLIENT_NAME_PATTERNS) {
@@ -290,7 +290,7 @@ export class IntentParserService {
   /**
    * Extract date ranges from query
    */
-  private extractDateRanges(query: string): DateRange[] {
+  private extractDateRanges(_query: string): DateRange[] {
     const ranges: DateRange[] = [];
     const now = new Date();
 
@@ -345,7 +345,7 @@ export class IntentParserService {
         ranges.push({ start, end });
       } else {
         // Multiple dates - create range from first to last
-        const sorted = specificDates.sort((a, b) => a.getTime() - b.getTime());
+        const sorted = specificDates.sort((a,_b) => a.getTime() - b.getTime());
         ranges.push({
           start: sorted[0],
           end: sorted[sorted.length - 1],
@@ -359,7 +359,7 @@ export class IntentParserService {
   /**
    * Extract specific dates from query
    */
-  private extractSpecificDates(query: string): Date[] {
+  private extractSpecificDates(_query: string): Date[] {
     const dates: Date[] = [];
 
     // DD/MM/YYYY pattern
@@ -380,7 +380,7 @@ export class IntentParserService {
   /**
    * Extract financial parameters from query
    */
-  private extractFinancialParameters(query: string): QueryParameters['financial'] {
+  private extractFinancialParameters(_query: string): QueryParameters['financial'] {
     const financial: QueryParameters['financial'] = {
       type: 'all',
       period: 'month',

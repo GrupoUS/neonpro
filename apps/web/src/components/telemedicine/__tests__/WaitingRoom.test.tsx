@@ -4,12 +4,12 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { WaitingRoom } from '../WaitingRoom';
 
 // Mock the cn utility function
-vi.mock('@/lib/utils', () => ({
+vi.mock(('@/lib/utils', () => ({
   cn: (...classes: string[]) => classes.filter(Boolean).join(' '),
 }));
 
 // Mock hooks used by WaitingRoom
-vi.mock('@/hooks/use-telemedicine', () => ({
+vi.mock(('@/hooks/use-telemedicine', () => ({
   useWaitingRoom: vi.fn(() => ({
     connectionStatus: 'connected',
     joinWaitingRoom: vi.fn(),
@@ -40,8 +40,8 @@ vi.mock('@/hooks/use-telemedicine', () => ({
 }));
 
 // Mock UI components
-vi.mock('@/components/ui', () => ({
-  Button: ({ children, onClick, ...props }: any) => (
+vi.mock(('@/components/ui', () => ({
+  Button: ({ children,onClick, ...props }: any) => (
     <button onClick={onClick} {...props}>
       {children}
     </button>
@@ -54,7 +54,7 @@ vi.mock('@/components/ui', () => ({
   // Avatar components removed - using User icon instead
 }));
 
-describe('WaitingRoom', () => {
+describe(('WaitingRoom', () => {
   const mockProps = {
     currentPatient: {
       id: '1',
@@ -96,21 +96,21 @@ describe('WaitingRoom', () => {
     vi.clearAllMocks();
   });
 
-  test('renders waiting room in loading state', () => {
+  test(('renders waiting room in loading state', () => {
     render(<WaitingRoom {...mockProps} />);
     expect(
       screen.getByText('Conectando à sala de espera...'),
     ).toBeInTheDocument();
   });
 
-  test('displays loading activity indicator', () => {
+  test(('displays loading activity indicator', () => {
     render(<WaitingRoom {...mockProps} />);
     // Should show activity/loading spinner with lucide-activity class
     const activityIcon = document.querySelector('.lucide-activity');
     expect(activityIcon).toBeInTheDocument();
   });
 
-  test('renders with correct appointment and patient props', () => {
+  test(('renders with correct appointment and patient props', () => {
     render(<WaitingRoom {...mockProps} />);
     // Component should render without errors with provided props
     expect(
@@ -118,7 +118,7 @@ describe('WaitingRoom', () => {
     ).toBeInTheDocument();
   });
 
-  test('handles missing props gracefully', () => {
+  test(('handles missing props gracefully', () => {
     render(
       <WaitingRoom appointmentId='test-appointment' patientId='test-patient' />,
     );
@@ -128,7 +128,7 @@ describe('WaitingRoom', () => {
     ).toBeInTheDocument();
   });
 
-  test('displays centered loading layout', () => {
+  test(('displays centered loading layout', () => {
     render(<WaitingRoom {...mockProps} />);
     const loadingContainer = screen
       .getByText('Conectando à sala de espera...')
@@ -136,21 +136,21 @@ describe('WaitingRoom', () => {
     expect(loadingContainer).toHaveClass('text-center');
   });
 
-  test('shows activity spinner during connection', () => {
+  test(('shows activity spinner during connection', () => {
     render(<WaitingRoom {...mockProps} />);
     // Should show activity/loading spinner
     const activityIcon = document.querySelector('.lucide-activity');
     expect(activityIcon).toBeInTheDocument();
   });
 
-  test('renders with proper accessibility attributes', () => {
+  test(('renders with proper accessibility attributes', () => {
     render(<WaitingRoom {...mockProps} />);
     // Activity icon should have aria-hidden
     const activityIcon = document.querySelector('[aria-hidden="true"]');
     expect(activityIcon).toBeInTheDocument();
   });
 
-  test('component structure is correct for loading state', () => {
+  test(('component structure is correct for loading state', () => {
     render(<WaitingRoom {...mockProps} />);
     const container = screen
       .getByText('Conectando à sala de espera...')
@@ -163,7 +163,7 @@ describe('WaitingRoom', () => {
     );
   });
 
-  test('loading text is in Portuguese', () => {
+  test(('loading text is in Portuguese', () => {
     render(<WaitingRoom {...mockProps} />);
     expect(
       screen.getByText('Conectando à sala de espera...'),

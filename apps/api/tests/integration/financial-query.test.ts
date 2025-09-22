@@ -47,9 +47,9 @@ describe('Query Financial Summary - Integration Test', () => {
         body: JSON.stringify({
           query,
           sessionId,
-          context: {
-            userId: 'admin-user-id',
-            role: 'admin',
+          _context: {
+            _userId: 'admin-user-id',
+            _role: 'admin',
           },
         }),
       });
@@ -92,9 +92,9 @@ describe('Query Financial Summary - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-${Math.random()}`,
-            context: {
-              userId: 'admin-user-id',
-              role: 'admin',
+            _context: {
+              _userId: 'admin-user-id',
+              _role: 'admin',
             },
           }),
         });
@@ -119,11 +119,11 @@ describe('Query Financial Summary - Integration Test', () => {
           Authorization: 'Bearer valid-admin-token',
         },
         body: JSON.stringify({
-          query: 'Como está o faturamento?',
+          _query: 'Como está o faturamento?',
           sessionId: 'test-session-structure',
-          context: {
-            userId: 'admin-user-id',
-            role: 'admin',
+          _context: {
+            _userId: 'admin-user-id',
+            _role: 'admin',
           },
         }),
       });
@@ -159,10 +159,10 @@ describe('Query Financial Summary - Integration Test', () => {
           Authorization: 'Bearer valid-admin-token',
         },
         body: JSON.stringify({
-          query: 'Resumo financeiro mensal',
+          _query: 'Resumo financeiro mensal',
           sessionId: 'test-session-metrics',
-          context: {
-            userId: 'admin-user-id',
+          _context: {
+            _userId: 'admin-user-id',
           },
         }),
       });
@@ -190,10 +190,10 @@ describe('Query Financial Summary - Integration Test', () => {
           Authorization: 'Bearer valid-admin-token',
         },
         body: JSON.stringify({
-          query: 'Faturamento detalhado',
+          _query: 'Faturamento detalhado',
           sessionId: 'test-session-actions',
-          context: {
-            userId: 'admin-user-id',
+          _context: {
+            _userId: 'admin-user-id',
           },
         }),
       });
@@ -224,11 +224,11 @@ describe('Query Financial Summary - Integration Test', () => {
           Authorization: 'Bearer valid-admin-token',
         },
         body: JSON.stringify({
-          query: 'Relatório financeiro completo',
+          _query: 'Relatório financeiro completo',
           sessionId: 'test-session-admin',
-          context: {
-            userId: 'admin-user-id',
-            role: 'admin',
+          _context: {
+            _userId: 'admin-user-id',
+            _role: 'admin',
           },
         }),
       });
@@ -245,9 +245,9 @@ describe('Query Financial Summary - Integration Test', () => {
       expect(app).toBeDefined();
 
       const restrictedRoles = [
-        { token: 'valid-doctor-token', role: 'doctor' },
-        { token: 'valid-nurse-token', role: 'nurse' },
-        { token: 'valid-receptionist-token', role: 'receptionist' },
+        { token: 'valid-doctor-token', _role: 'doctor' },
+        { token: 'valid-nurse-token', _role: 'nurse' },
+        { token: 'valid-receptionist-token', _role: 'receptionist' },
       ];
 
       for (const { token, role } of restrictedRoles) {
@@ -258,11 +258,11 @@ describe('Query Financial Summary - Integration Test', () => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            query: 'Faturamento completo da clínica',
+            _query: 'Faturamento completo da clínica',
             sessionId: `test-session-${role}`,
-            context: {
-              userId: `${role}-user-id`,
-              role: role,
+            _context: {
+              _userId: `${role}-user-id`,
+              _role: role,
             },
           }),
         });
@@ -290,11 +290,11 @@ describe('Query Financial Summary - Integration Test', () => {
           Authorization: 'Bearer invalid-role-token',
         },
         body: JSON.stringify({
-          query: 'Todos os dados financeiros',
+          _query: 'Todos os dados financeiros',
           sessionId: 'test-session-unauthorized',
-          context: {
-            userId: 'unauthorized-user',
-            role: 'guest',
+          _context: {
+            _userId: 'unauthorized-user',
+            _role: 'guest',
           },
         }),
       });
@@ -314,10 +314,10 @@ describe('Query Financial Summary - Integration Test', () => {
           Authorization: 'Bearer valid-admin-token',
         },
         body: JSON.stringify({
-          query: 'Receita total do mês',
+          _query: 'Receita total do mês',
           sessionId: 'test-session-aggregation',
-          context: {
-            userId: 'admin-user-id',
+          _context: {
+            _userId: 'admin-user-id',
           },
         }),
       });
@@ -352,8 +352,8 @@ describe('Query Financial Summary - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-period-${Math.random()}`,
-            context: {
-              userId: 'admin-user-id',
+            _context: {
+              _userId: 'admin-user-id',
             },
           }),
         });
@@ -379,10 +379,10 @@ describe('Query Financial Summary - Integration Test', () => {
           Authorization: 'Bearer valid-admin-token',
         },
         body: JSON.stringify({
-          query: 'Como está o faturamento?',
+          _query: 'Como está o faturamento?',
           sessionId: 'test-session-performance',
-          context: {
-            userId: 'admin-user-id',
+          _context: {
+            _userId: 'admin-user-id',
           },
         }),
       });
@@ -415,8 +415,8 @@ describe('Query Financial Summary - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-complex-${Math.random()}`,
-            context: {
-              userId: 'admin-user-id',
+            _context: {
+              _userId: 'admin-user-id',
             },
           }),
         });
@@ -441,10 +441,10 @@ describe('Query Financial Summary - Integration Test', () => {
           Authorization: 'Bearer valid-admin-token',
         },
         body: JSON.stringify({
-          query: 'Relatório financeiro mensal',
+          _query: 'Relatório financeiro mensal',
           sessionId: 'test-session-audit',
-          context: {
-            userId: 'admin-user-id',
+          _context: {
+            _userId: 'admin-user-id',
           },
         }),
       });
@@ -466,10 +466,10 @@ describe('Query Financial Summary - Integration Test', () => {
           Authorization: 'Bearer valid-admin-token',
         },
         body: JSON.stringify({
-          query: 'Resumo financeiro geral',
+          _query: 'Resumo financeiro geral',
           sessionId: 'test-session-privacy',
-          context: {
-            userId: 'admin-user-id',
+          _context: {
+            _userId: 'admin-user-id',
           },
         }),
       });
@@ -498,10 +498,10 @@ describe('Query Financial Summary - Integration Test', () => {
           Authorization: 'Bearer valid-admin-token',
         },
         body: JSON.stringify({
-          query: 'Faturamento em reais',
+          _query: 'Faturamento em reais',
           sessionId: 'test-session-currency',
-          context: {
-            userId: 'admin-user-id',
+          _context: {
+            _userId: 'admin-user-id',
           },
         }),
       });
@@ -524,10 +524,10 @@ describe('Query Financial Summary - Integration Test', () => {
           Authorization: 'Bearer valid-admin-token',
         },
         body: JSON.stringify({
-          query: 'Balanço financeiro',
+          _query: 'Balanço financeiro',
           sessionId: 'test-session-language',
-          context: {
-            userId: 'admin-user-id',
+          _context: {
+            _userId: 'admin-user-id',
           },
         }),
       });

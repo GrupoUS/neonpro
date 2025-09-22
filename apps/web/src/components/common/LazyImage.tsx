@@ -26,7 +26,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   src,
   alt,
   placeholder =
-    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PC9zdmc+',
+    'data:image/svg+xml;base64, PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PC9zdmc+',
   fallback = '/images/placeholder.svg',
   className,
   containerClassName,
@@ -52,7 +52,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
 
     const observer = createIntersectionObserver(
       entries => {
-        entries.forEach(_entry => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             setIsInView(true);
             observer?.disconnect();
@@ -180,9 +180,7 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
     };
 
     return Object.entries(breakpoints)
-      .map(
-        ([size, width]) => `(max-width: ${sizeMap[size as keyof typeof sizeMap]}) ${width}px`,
-      )
+      .map(([size, width]) => `(max-width: ${sizeMap[size as keyof typeof sizeMap]}) ${width}px`)
       .join(', ');
   };
 

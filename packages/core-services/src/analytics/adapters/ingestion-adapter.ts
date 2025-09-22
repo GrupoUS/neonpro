@@ -113,7 +113,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
       eventType: "data_received",
       timestamp: new Date(),
       properties: { configUpdate: true },
-      context: { adapterId: this.adapterId },
+      _context: { adapterId: this.adapterId },
       source: {
         sourceId: this.adapterId,
         sourceType: "config",
@@ -188,7 +188,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     const invalid: any[] = [];
     const errors: IngestionError[] = [];
 
-    data.forEach((record, index) => {
+    data.forEach((record,_index) => {
       let isValid = true;
 
       for (const rule of this.validationRules) {
@@ -204,7 +204,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
                 recordId: index.toString(),
                 field: rule.field,
               },
-              context: {
+              _context: {
                 operation: "validation",
                 timestamp: new Date(),
                 retryCount: 0,
@@ -227,7 +227,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
               recordId: index.toString(),
               field: rule.field,
             },
-            context: {
+            _context: {
               operation: "validation",
               timestamp: new Date(),
               retryCount: 0,
@@ -258,7 +258,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     const transformed: any[] = [];
     const errors: IngestionError[] = [];
 
-    data.forEach((record, index) => {
+    data.forEach((record,_index) => {
       let transformedRecord = { ...record };
 
       for (const rule of this.transformationRules) {
@@ -277,7 +277,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
               recordId: index.toString(),
               field: rule.sourceField,
             },
-            context: {
+            _context: {
               operation: "transformation",
               timestamp: new Date(),
               retryCount: 0,
@@ -357,13 +357,13 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
   }
 
   private getFieldValue(record: any, fieldPath: string): any {
-    return fieldPath.split(".").reduce((obj, key) => obj?.[key], record);
+    return fieldPath.split(".").reduce((obj,_key) => obj?.[key], record);
   }
 
   private setFieldValue(record: any, fieldPath: string, value: any): void {
     const keys = fieldPath.split(".");
     const lastKey = keys.pop()!;
-    const target = keys.reduce((obj, key) => {
+    const target = keys.reduce((obj,_key) => {
       if (!obj[key]) obj[key] = {};
       return obj[key];
     }, record);
@@ -409,7 +409,7 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
       eventType: "data_received",
       timestamp: new Date(),
       properties: { connection: "established" },
-      context: { adapterId: this.adapterId },
+      _context: { adapterId: this.adapterId },
       source: {
         sourceId: this.adapterId,
         sourceType: "database",
@@ -449,12 +449,12 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
         type: "ingestion_processing",
         eventType: "processing_completed",
         timestamp: new Date(),
-        userId: undefined,
+        _userId: undefined,
         sessionId: operationId,
         properties: {
           operation: "batch_processing",
         },
-        context: {
+        _context: {
           adapterId: this.adapterId,
         },
         source: {
@@ -481,8 +481,7 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
         processedRecords: transformed.length,
         validRecords: valid.length,
         invalidRecords: invalid.length,
-        errors: [...validationErrors, ...transformationErrors].map(
-          (e) => e.message,
+        errors: [...validationErrors, ...transformationErrors].map((e) => e.message,
         ),
         warnings: [],
       },

@@ -15,7 +15,7 @@ import { winstonLogger } from "@neonpro/shared/services/structured-logging";
 
 interface SignalingParticipant {
   socketId: string;
-  userId: string;
+  _userId: string;
   sessionId: string;
   participantType: "physician" | "patient" | "observer";
   deviceInfo: {
@@ -99,11 +99,10 @@ export class WebRTCSignalingServer {
       winstonLogger.debug(`Socket connected: ${socket.id}`);
 
       // Handle session join
-      socket.on(
-        "join-session",
+      socket.on("join-session",
         async (data: {
           sessionId: string;
-          userId: string;
+          _userId: string;
           participantType: "physician" | "patient" | "observer";
           deviceInfo: any;
           authToken?: string;
@@ -122,8 +121,7 @@ export class WebRTCSignalingServer {
       );
 
       // Handle WebRTC signaling
-      socket.on(
-        "webrtc-signal",
+      socket.on("webrtc-signal",
         async (signal: {
           type: "offer" | "answer" | "ice-candidate";
           data: any;
@@ -144,8 +142,7 @@ export class WebRTCSignalingServer {
       );
 
       // Handle connection state updates
-      socket.on(
-        "connection-state",
+      socket.on("connection-state",
         async (state: {
           sessionId: string;
           connectionState: RTCPeerConnectionState;
@@ -175,8 +172,7 @@ export class WebRTCSignalingServer {
       });
 
       // Handle heartbeat for connection monitoring
-      socket.on(
-        "heartbeat",
+      socket.on("heartbeat",
         (data: { sessionId: string; timestamp: number }) => {
           socket.emit("heartbeat-ack", { timestamp: Date.now() });
           this.updateParticipantActivity(socket.id, data.sessionId);
@@ -190,8 +186,7 @@ export class WebRTCSignalingServer {
       });
 
       // Handle compliance events
-      socket.on(
-        "compliance-event",
+      socket.on("compliance-event",
         async (event: {
           sessionId: string;
           eventType: string;
@@ -224,7 +219,7 @@ export class WebRTCSignalingServer {
     socket: Socket,
     data: {
       sessionId: string;
-      userId: string;
+      _userId: string;
       participantType: "physician" | "patient" | "observer";
       deviceInfo: any;
       authToken?: string;
@@ -306,7 +301,7 @@ export class WebRTCSignalingServer {
     const existingParticipants = Array.from(room.participants.values())
       .filter((p) => p.socketId !== socket.id)
       .map((p) => ({
-        userId: p.userId,
+        _userId: p.userId,
         participantType: p.participantType,
         socketId: p.socketId,
         deviceInfo: p.deviceInfo,
@@ -369,8 +364,7 @@ export class WebRTCSignalingServer {
     }
 
     // Find target participant's socket
-    const targetParticipant = Array.from(room.participants.values()).find(
-      (p) => p.userId === to,
+    const targetParticipant = Array.from(room.participants.values()).find((p) => p.userId === to,
     );
 
     if (!targetParticipant) {
@@ -393,7 +387,7 @@ export class WebRTCSignalingServer {
         eventType:
           `webrtc_${type}` as import("../types/events").ComplianceEventType,
         description: `WebRTC ${type} sent`,
-        // userId: sender.userId, // not part of type, move to metadata
+        // _userId: sender.userId, // not part of type, move to metadata
         metadata: {
           targetUser: to,
           signalType: type,
@@ -446,7 +440,7 @@ export class WebRTCSignalingServer {
 
     // Broadcast connection state to other participants (for UI updates)
     (socket as any).to(sessionId).emit("participant-connection-state", {
-      userId: participant.userId,
+      _userId: participant.userId,
       connectionState,
       iceConnectionState,
       quality,
@@ -494,7 +488,7 @@ export class WebRTCSignalingServer {
       eventType: "participant_left",
       description: `Participant ${participant.userId} left session`,
       metadata: {
-        userId: participant.userId,
+        _userId: participant.userId,
         participantType: participant.participantType,
         socketId: socket.id,
         duration: Date.now() - participant.joinedAt.getTime(),
@@ -504,7 +498,7 @@ export class WebRTCSignalingServer {
 
     // Notify other participants
     (this.io as any).to(sessionId).emit("participant-left", {
-      userId: participant.userId,
+      _userId: participant.userId,
       participantType: participant.participantType,
       timestamp: new Date().toISOString(),
     });
@@ -561,7 +555,7 @@ export class WebRTCSignalingServer {
       eventType: event.eventType as any,
       description: `Client compliance event: ${event.eventType}`,
       metadata: {
-        userId: participant.userId,
+        _userId: participant.userId,
         participantType: participant.participantType,
         ...event.metadata,
         source: "client",
@@ -575,7 +569,7 @@ export class WebRTCSignalingServer {
    */
   private async validateUserAuthorization(
     sessionId: string,
-    userId: string,
+    _userId: string,
     participantType: "physician" | "patient" | "observer",
   ): Promise<boolean> {
     try {
@@ -692,8 +686,7 @@ export class WebRTCSignalingServer {
    * Gets active sessions count for monitoring
    */
   public getActiveSessionsCount(): number {
-    return Array.from(this.sessionRooms.values()).filter(
-      (room) => room.isActive && room.participants.size > 0,
+    return Array.from(this.sessionRooms.values()).filter((room) => room.isActive && room.participants.size > 0,
     ).length;
   }
 
@@ -701,8 +694,7 @@ export class WebRTCSignalingServer {
    * Gets total participants count for monitoring
    */
   public getTotalParticipantsCount(): number {
-    return Array.from(this.sessionRooms.values()).reduce(
-      (total, room) => total + room.participants.size,
+    return Array.from(this.sessionRooms.values()).reduce((total,_room) => total + room.participants.size,
       0,
     );
   }

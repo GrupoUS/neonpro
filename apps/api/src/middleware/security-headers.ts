@@ -84,7 +84,7 @@ export class SecurityHeadersMiddleware {
 
         // Add security-related custom headers
         if (this.config.customHeaders) {
-          Object.entries(this.config.customHeaders).forEach(([key, value]) => {
+          Object.entries(this.config.customHeaders).forEach(([key,_value]) => {
             res.setHeader(key, value);
           });
         }
@@ -189,7 +189,7 @@ export class SecurityHeadersMiddleware {
     };
 
     return Object.entries(cspDirectives)
-      .map(([directive, value]) => value ? `${directive} ${value}` : directive)
+      .map(([directive,_value]) => value ? `${directive} ${value}` : directive)
       .join('; ');
   }
 

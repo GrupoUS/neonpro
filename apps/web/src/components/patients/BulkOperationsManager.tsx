@@ -95,7 +95,7 @@ export interface BulkOperation {
 export interface AuditEvent {
   id: string;
   timestamp: string;
-  userId: string;
+  _userId: string;
   action: string;
   details: Record<string, any>;
   ipAddress: string;
@@ -194,7 +194,7 @@ export function BulkOperationsManager({
             {
               id: 'audit-1',
               timestamp: new Date(Date.now() - 3600000).toISOString(),
-              userId: 'user-1',
+              _userId: 'user-1',
               action: 'bulk_operation_started',
               details: { operationType: 'activate_patients', patientCount: 25 },
               ipAddress: '192.168.1.1',
@@ -263,7 +263,7 @@ export function BulkOperationsManager({
 
         onOperationComplete?.(currentOp);
         toast.success(`Operação concluída: ${currentOp.title}`);
-      } catch (error) {
+      } catch (_error) {
         console.error('Bulk operation failed:', error);
         setQueue(prev => ({
           ...prev,
@@ -387,7 +387,7 @@ export function BulkOperationsManager({
           {
             id: `audit-${Date.now()}`,
             timestamp: new Date().toISOString(),
-            userId: 'current-user', // Get from auth context
+            _userId: 'current-user', // Get from auth context
             action: 'bulk_operation_created',
             details: {
               operationType: type,
@@ -447,7 +447,7 @@ export function BulkOperationsManager({
                     {
                       id: `audit-${Date.now()}`,
                       timestamp: new Date().toISOString(),
-                      userId: 'current-user',
+                      _userId: 'current-user',
                       action: 'bulk_operation_undone',
                       details: { originalOperationId: operation.id },
                       ipAddress: '127.0.0.1',
@@ -461,7 +461,7 @@ export function BulkOperationsManager({
 
           toast.success(`Operação desfeita: ${operation.title}`);
         });
-      } catch (error) {
+      } catch (_error) {
         console.error('Undo operation failed:', error);
         toast.error(`Falha ao desfazer operação: ${operation.title}`);
       }

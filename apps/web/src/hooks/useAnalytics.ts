@@ -7,7 +7,7 @@ import { useConsent } from '../contexts/ConsentContext';
  * Automatically handles consent changes and analytics initialization
  */
 export function useAnalytics() {
-  const { hasConsent, consentSettings: _consentSettings } = useConsent();
+  const { hasConsent, consentSettings: consentSettings } = useConsent();
 
   useEffect(() => {
     // Initialize analytics if user has granted analytics consent
@@ -135,7 +135,7 @@ export function useInteractionTracking() {
     });
   };
 
-  const trackSearch = (query: string, resultsCount?: number) => {
+  const trackSearch = (_query: string, resultsCount?: number) => {
     trackInteraction({
       element: 'search',
       action: 'search',

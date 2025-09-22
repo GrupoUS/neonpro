@@ -87,8 +87,8 @@ export function useService(id: string) {
         .single();
 
       if (error) {
-        console.error('Error fetching service:', error);
-        throw new Error(`Failed to fetch service: ${error.message}`);
+        console.error('Error fetching _service:', error);
+        throw new Error(`Failed to fetch _service: ${error.message}`);
       }
 
       return data as unknown as Service;
@@ -107,7 +107,7 @@ export function useCreateService() {
     mutationFn: async (
       serviceData: CreateServiceRequest,
     ): Promise<ServiceMutationResponse> => {
-      console.log('🔧 Creating service:', serviceData);
+      console.log('🔧 Creating _service:', serviceData);
 
       const { data, error } = await supabase
         .from('service_types')
@@ -116,8 +116,8 @@ export function useCreateService() {
         .single();
 
       if (error) {
-        console.error('❌ Error creating service:', error);
-        throw new Error(`Failed to create service: ${error.message}`);
+        console.error('❌ Error creating _service:', error);
+        throw new Error(`Failed to create _service: ${error.message}`);
       }
 
       console.log('✅ Service created successfully:', data);
@@ -144,7 +144,7 @@ export function useUpdateService() {
     mutationFn: async (
       serviceData: UpdateServiceRequest,
     ): Promise<ServiceMutationResponse> => {
-      console.log('🔧 Updating service:', serviceData);
+      console.log('🔧 Updating _service:', serviceData);
 
       const { id, ...updateData } = serviceData;
 
@@ -167,8 +167,8 @@ export function useUpdateService() {
         .single();
 
       if (error) {
-        console.error('❌ Error updating service:', error);
-        throw new Error(`Failed to update service: ${error.message}`);
+        console.error('❌ Error updating _service:', error);
+        throw new Error(`Failed to update _service: ${error.message}`);
       }
 
       console.log('✅ Service updated successfully:', data);
@@ -178,7 +178,7 @@ export function useUpdateService() {
         message: 'Serviço atualizado com sucesso!',
       };
     },
-    onSuccess: (_, _variables) => {
+    onSuccess: (_, variables) => {
       // Invalidate and refetch services
       queryClient.invalidateQueries({ queryKey: serviceKeys.lists() });
       queryClient.invalidateQueries({
@@ -196,7 +196,7 @@ export function useDeleteService() {
 
   return useMutation({
     mutationFn: async (id: string): Promise<ServiceMutationResponse> => {
-      console.log('🔧 Deleting service:', id);
+      console.log('🔧 Deleting _service:', id);
 
       const { error } = await supabase
         .from('service_types')
@@ -204,8 +204,8 @@ export function useDeleteService() {
         .eq('id', id);
 
       if (error) {
-        console.error('❌ Error deleting service:', error);
-        throw new Error(`Failed to delete service: ${error.message}`);
+        console.error('❌ Error deleting _service:', error);
+        throw new Error(`Failed to delete _service: ${error.message}`);
       }
 
       console.log('✅ Service deleted successfully');
@@ -276,7 +276,7 @@ export function useCheckAvailability() {
 
         // Add conflicts for existing appointments
         if (existingAppointments && existingAppointments.length > 0) {
-          existingAppointments.forEach(_appointment => {
+          existingAppointments.forEach(appointment => {
             const patient = appointment.patients as any;
             const service = appointment.service_types as any;
             conflicts.push({
@@ -329,7 +329,7 @@ export function useCheckAvailability() {
           conflicts,
           warnings,
         };
-      } catch (error) {
+      } catch (_error) {
         console.error('Error in availability check:', error);
         throw error;
       }
@@ -349,7 +349,7 @@ export function useServiceTimeSlots(
     queryKey: serviceKeys.timeSlots(serviceId, date),
     queryFn: async (): Promise<TimeSlot[]> => {
       console.log(
-        '🔍 Fetching time slots for service:',
+        '🔍 Fetching time slots for _service:',
         serviceId,
         'on date:',
         date,
@@ -364,8 +364,8 @@ export function useServiceTimeSlots(
           .single();
 
         if (serviceError) {
-          console.error('Error fetching service:', serviceError);
-          throw new Error(`Failed to fetch service: ${serviceError.message}`);
+          console.error('Error fetching _service:', serviceError);
+          throw new Error(`Failed to fetch _service: ${serviceError.message}`);
         }
 
         const serviceDuration = service?.duration_minutes || 60;
@@ -439,7 +439,7 @@ export function useServiceTimeSlots(
         }
 
         return slots;
-      } catch (error) {
+      } catch (_error) {
         console.error('Error generating time slots:', error);
         throw error;
       }

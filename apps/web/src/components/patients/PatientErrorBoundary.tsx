@@ -316,7 +316,7 @@ export function usePatientErrorHandler() {
   const [error, setError] = React.useState<Error | null>(null);
   const [errorId, setErrorId] = React.useState<string>('');
 
-  const reportError = React.useCallback((error: Error, context?: string) => {
+  const reportError = React.useCallback((error: Error, _context?: string) => {
     const sanitizedError = new PatientErrorBoundary(
       {} as any,
     ).sanitizeHealthcareError(error);

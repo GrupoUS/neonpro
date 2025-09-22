@@ -22,7 +22,7 @@ export interface ProfessionalAuthorizationResult {
   crmState: string;
   specialties: string[];
   status: 'active' | 'suspended' | 'cancelled' | 'inactive';
-  role: ProfessionalRole;
+  _role: ProfessionalRole;
   permissions: Permission[];
   restrictions: string[];
   telemedicineAuthorized: boolean;
@@ -241,7 +241,7 @@ export class HealthcareProfessionalAuthorizationService {
     professionalId: string,
     operation: string,
     entityType?: string,
-    context?: {
+    _context?: {
       patientId?: string;
       clinicId?: string;
       emergency?: boolean;
@@ -250,7 +250,7 @@ export class HealthcareProfessionalAuthorizationService {
     // Check cache first
     const cachedResult = this.getCachedAuthorization(professionalId);
     if (cachedResult) {
-      return this.validateOperationPermissions(cachedResult, operation, entityType, context);
+      return this.validateOperationPermissions(cachedResult, operation, entityType, _context);
     }
 
     // Get professional data from database
@@ -259,7 +259,7 @@ export class HealthcareProfessionalAuthorizationService {
       include: {
         user: {
           select: {
-            role: true,
+            _role: true,
             status: true,
           },
         },
@@ -341,7 +341,7 @@ export class HealthcareProfessionalAuthorizationService {
     // Cache the result
     this.setCachedAuthorization(professionalId, authorizationResult);
 
-    return this.validateOperationPermissions(authorizationResult, operation, entityType, context);
+    return this.validateOperationPermissions(authorizationResult, operation, entityType, _context);
   }
 
   /**
@@ -451,9 +451,9 @@ export class HealthcareProfessionalAuthorizationService {
     authorization: ProfessionalAuthorizationResult,
     operation: string,
     entityType?: string,
-    context?: { patientId?: string; clinicId?: string; emergency?: boolean },
+    _context?: { patientId?: string; clinicId?: string; emergency?: boolean },
   ): ProfessionalAuthorizationResult {
-    const { permissions, restrictions, role: _role } = authorization;
+    const { permissions, restrictions, _role: role } = authorization;
 
     // Emergency access override
     if (context?.emergency && permissions.includes('emergency_access')) {
@@ -774,7 +774,7 @@ export class HealthcareProfessionalAuthorizationService {
     isAuthorized: boolean;
     lastValidated: Date;
     validationSource: string;
-    role: ProfessionalRole;
+    _role: ProfessionalRole;
     permissions: Permission[];
     restrictions: string[];
   }> {
@@ -783,7 +783,7 @@ export class HealthcareProfessionalAuthorizationService {
       isAuthorized: result.isAuthorized,
       lastValidated: result.lastValidated,
       validationSource: result.validationSource,
-      role: result.role,
+      _role: result.role,
       permissions: result.permissions,
       restrictions: result.restrictions,
     };

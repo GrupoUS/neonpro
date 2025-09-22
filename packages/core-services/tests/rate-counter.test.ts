@@ -30,7 +30,7 @@ describe("RateCounter Service", () => {
   });
 
   describe("Basic rate limiting", () => {
-    it("should allow requests within limit", async () => {
+    it(_"should allow requests within limit",_async () => {
       const userId = "user1";
 
       // First request should be allowed
@@ -46,7 +46,7 @@ describe("RateCounter Service", () => {
       expect(result2.totalRequests).toBe(2);
     });
 
-    it("should block requests when limit exceeded", async () => {
+    it(_"should block requests when limit exceeded",_async () => {
       const userId = "user1";
 
       // Make 10 requests (the limit)
@@ -63,7 +63,7 @@ describe("RateCounter Service", () => {
       expect(result.totalRequests).toBe(10);
     });
 
-    it("should track different users separately", async () => {
+    it(_"should track different users separately",_async () => {
       const user1 = "user1";
       const user2 = "user2";
 
@@ -81,7 +81,7 @@ describe("RateCounter Service", () => {
   });
 
   describe("Sliding window behavior", () => {
-    it("should reset limits after window expires", async () => {
+    it(_"should reset limits after window expires",_async () => {
       const userId = "user1";
 
       // Make 10 requests (exhaust limit)
@@ -124,7 +124,7 @@ describe("RateCounter Service", () => {
       let result = await rateCounter.checkLimit(userId);
       expect(result.allowed).toBe(false);
 
-      // Advance time by half window again (total = full window from first request)
+      // Advance time by half window again (total = full window from first _request)
       vi.advanceTimersByTime(halfWindow);
 
       // First 5 requests should have expired, so 5 more should be allowed
@@ -136,7 +136,7 @@ describe("RateCounter Service", () => {
   });
 
   describe("Multiple rate limits", () => {
-    it("should handle multiple rate limits per user", async () => {
+    it(_"should handle multiple rate limits per user",_async () => {
       const userId = "user1";
       const shortLimit: RateLimit = { windowSizeMs: 5000, maxRequests: 3 }; // 3 per 5 seconds
       const longLimit: RateLimit = { windowSizeMs: 60000, maxRequests: 10 }; // 10 per minute
@@ -173,7 +173,7 @@ describe("RateCounter Service", () => {
       expect(result3.allowed).toBe(true);
     });
 
-    it("should identify the most restrictive limit", async () => {
+    it(_"should identify the most restrictive limit",_async () => {
       const userId = "user1";
       const veryShortLimit: RateLimit = { windowSizeMs: 1000, maxRequests: 1 }; // 1 per second
       const shortLimit: RateLimit = { windowSizeMs: 5000, maxRequests: 5 }; // 5 per 5 seconds
@@ -200,7 +200,7 @@ describe("RateCounter Service", () => {
   });
 
   describe("Rate limit information", () => {
-    it("should provide accurate rate limit information", async () => {
+    it(_"should provide accurate rate limit information",_async () => {
       const userId = "user1";
 
       // Make some requests
@@ -217,13 +217,13 @@ describe("RateCounter Service", () => {
       );
     });
 
-    it("should handle non-existent users", async () => {
+    it(_"should handle non-existent users",_async () => {
       const info = await rateCounter.getRateLimitInfo("nonexistent");
       expect(info.totalRequests).toBe(0);
       expect(info.remainingRequests).toBe(defaultConfig.maxRequests);
     });
 
-    it("should calculate reset time correctly", async () => {
+    it(_"should calculate reset time correctly",_async () => {
       const userId = "user1";
       const startTime = Date.now();
 
@@ -237,7 +237,7 @@ describe("RateCounter Service", () => {
   });
 
   describe("Burst handling", () => {
-    it("should handle burst requests correctly", async () => {
+    it(_"should handle burst requests correctly",_async () => {
       const userId = "user1";
       const burstConfig: RateCounterConfig = {
         ...defaultConfig,
@@ -260,7 +260,7 @@ describe("RateCounter Service", () => {
       burstCounter.cleanup();
     });
 
-    it("should respect both burst and regular limits", async () => {
+    it(_"should respect both burst and regular limits",_async () => {
       const userId = "user1";
       const burstConfig: RateCounterConfig = {
         windowSizeMs: 60000, // 1 minute regular window
@@ -293,7 +293,7 @@ describe("RateCounter Service", () => {
   });
 
   describe("Memory management and cleanup", () => {
-    it("should clean up expired entries", async () => {
+    it(_"should clean up expired entries",_async () => {
       const cleanupConfig: RateCounterConfig = {
         ...defaultConfig,
         cleanupIntervalMs: 1000, // Clean up every second
@@ -335,13 +335,11 @@ describe("RateCounter Service", () => {
   });
 
   describe("Edge cases and error handling", () => {
-    it("should handle invalid user IDs", async () => {
-      expect(async () => await rateCounter.checkLimit("")).not.toThrow();
-      expect(
-        async () => await rateCounter.checkLimit(null as any),
+    it(_"should handle invalid user IDs",_async () => {
+      expect(_async () => await rateCounter.checkLimit("")).not.toThrow();
+      expect(_async () => await rateCounter.checkLimit(null as any),
       ).not.toThrow();
-      expect(
-        async () => await rateCounter.checkLimit(undefined as any),
+      expect(_async () => await rateCounter.checkLimit(undefined as any),
       ).not.toThrow();
     });
 
@@ -360,7 +358,7 @@ describe("RateCounter Service", () => {
       counter.cleanup();
     });
 
-    it("should handle concurrent requests correctly", async () => {
+    it(_"should handle concurrent requests correctly",_async () => {
       const userId = "user1";
 
       // Make multiple concurrent requests
@@ -382,7 +380,7 @@ describe("RateCounter Service", () => {
       expect(info.totalRequests).toBe(5);
     });
 
-    it("should handle time manipulation gracefully", async () => {
+    it(_"should handle time manipulation gracefully",_async () => {
       const userId = "user1";
 
       await rateCounter.checkLimit(userId);
@@ -403,12 +401,12 @@ describe("RateCounter Service", () => {
   });
 
   describe("Performance", () => {
-    it("should handle large numbers of users efficiently", async () => {
+    it(_"should handle large numbers of users efficiently",_async () => {
       const startTime = Date.now();
       const userCount = 1000;
 
       // Create requests for many users
-      const promises = Array.from({ length: userCount }, (_, i) =>
+      const promises = Array.from({ length: userCount },(, i) =>
         rateCounter.checkLimit(`user${i}`),
       );
 
@@ -419,7 +417,7 @@ describe("RateCounter Service", () => {
       expect(duration).toBeLessThan(1000); // 1 second for 1000 users
     });
 
-    it("should have reasonable memory usage", async () => {
+    it(_"should have reasonable memory usage",_async () => {
       const initialMemory = process.memoryUsage().heapUsed;
 
       // Make requests for many users
@@ -465,7 +463,7 @@ describe("RateCounter Service", () => {
       expect(result.limitingFactor?.windowSizeMs).toBe(5 * 60 * 1000);
     });
 
-    it("should handle API key rotation scenarios", async () => {
+    it(_"should handle API key rotation scenarios",_async () => {
       const oldApiKey = "old-api-key";
       const newApiKey = "new-api-key";
 
@@ -479,7 +477,7 @@ describe("RateCounter Service", () => {
       expect(result.remainingRequests).toBe(9); // Fresh limit
     });
 
-    it("should handle medical emergency override patterns", async () => {
+    it(_"should handle medical emergency override patterns",_async () => {
       const userId = "emergency-user";
       const emergencyConfig: RateCounterConfig = {
         ...defaultConfig,

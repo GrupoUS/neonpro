@@ -43,7 +43,7 @@ export const MetricsCache: React.FC<MetricsCacheProps> = ({
       if (onCacheUpdate) {
         onCacheUpdate(stats);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to refresh cache stats:', error);
     } finally {
       setIsRefreshing(false);
@@ -59,7 +59,7 @@ export const MetricsCache: React.FC<MetricsCacheProps> = ({
         keys: [],
         memory: 0,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to clear cache:', error);
     }
   };

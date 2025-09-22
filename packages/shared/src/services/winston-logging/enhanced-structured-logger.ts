@@ -14,7 +14,6 @@
  */
 
 import winston from 'winston';
-import { z } from 'zod';
 import { nanoid } from 'nanoid';
 
 // Import types and services
@@ -56,7 +55,7 @@ const BrazilianHealthcareContextSchema = z.object({
   }).optional(),
   professionalContext: z.object({
     anonymizedProfessionalId: z.string().optional(),
-    role: z.string().optional(),
+    _role: z.string().optional(),
     specialization: z.string().optional(),
     department: z.string().optional(),
     councilNumber: z.string().optional(),
@@ -102,7 +101,7 @@ const WinstonLogEntrySchema = z.object({
   timestamp: z.string().optional(),
   severity: HealthcareSeveritySchema.optional(),
   healthcareContext: BrazilianHealthcareContextSchema.optional(),
-  service: z.string(),
+  _service: z.string(),
   environment: z.string(),
   requestId: z.string().optional(),
   correlationId: z.string().optional(),
@@ -127,7 +126,7 @@ const WinstonLogEntrySchema = z.object({
 });
 
 const EnhancedStructuredLoggingConfigSchema = z.object({
-  service: z.string(),
+  _service: z.string(),
   environment: z.enum(["development", "staging", "production"]).default("development"),
   version: z.string().optional(),
   level: WinstonLogLevelSchema.default("info"),
@@ -260,7 +259,7 @@ export class EnhancedStructuredLogger {
    */
   private validateConfig(config: EnhancedStructuredLoggingConfig): EnhancedStructuredLoggingConfig {
     // Basic validation - could be enhanced with schema validation
-    if (!config.service) {
+    if (!config._service) {
       throw new Error('Service name is required in logging configuration');
     }
     return config;
@@ -333,8 +332,7 @@ export class EnhancedStructuredLogger {
     } else if (this.config.transports.console?.format === 'simple') {
       formats.push(winston.format.simple());
     } else {
-      formats.push(
-        winston.format.printf((info) => {
+      formats.push(_winston.format.printf((info) => {
           const timestamp = info.timestamp ? new Date(info.timestamp as string).toLocaleTimeString() : '';
           const severityEmoji = info.severityEmoji || '';
           const correlationId = info.correlationId ? `[${info.correlationId}]` : '';
@@ -402,8 +400,8 @@ export class EnhancedStructuredLogger {
   /**
    * Set request context
    */
-  setRequestContext(context: any): void {
-    this.requestContext.set('current', context);
+  setRequestContext(_context: any): void {
+    this.requestContext.set('current', _context);
   }
 
   /**
@@ -467,7 +465,7 @@ export class EnhancedStructuredLogger {
       dataClassification,
       containsPII,
       containsPHI,
-      legalBasis: healthcareContext?.brazilianCompliance?.lgpdLegalBasis || 'legitimate_interests',
+      legalBasis: healthcareContext?.brazilianCompliance?.lgpdLegalBasis || 'legitimate_interests_,
       retentionPeriod: this.config.lgpdCompliance.dataRetentionDays,
       requiresConsent: this.config.lgpdCompliance.requireExplicitConsent && (containsPII || containsPHI),
       anonymized: this.config.lgpdCompliance.anonymizeByDefault,
@@ -476,7 +474,7 @@ export class EnhancedStructuredLogger {
                     healthcareContext?.clinicalContext?.requiresAudit,
       brazilianIdentifiers,
       dataMinimizationApplied: this.config.lgpdCompliance.enableDataMinimization,
-      purposeLimitation: healthcareContext?.brazilianCompliance?.lgpdLegalBasis || 'healthcare_provision',
+      purposeLimitation: healthcareContext?.brazilianCompliance?.lgpdLegalBasis || 'healthcare_provision_,
     };
   }
 
@@ -525,7 +523,7 @@ export class EnhancedStructuredLogger {
     severity: HealthcareSeverity,
     message: string,
     data?: any,
-    context?: {
+    _context?: {
       healthcare?: BrazilianHealthcareContext;
       technical?: any;
     }
@@ -539,7 +537,7 @@ export class EnhancedStructuredLogger {
       severity,
       message,
       timestamp: new Date().toISOString(),
-      service: this.config.service,
+      _service: this.config.service,
       environment: this.config.environment,
       correlationId,
       requestId: requestContext.requestId,
@@ -591,7 +589,7 @@ export class EnhancedStructuredLogger {
     );
 
     // Log alert (will be redacted again but that's fine)
-    this.winston.error('CRITICAL_ALERT', {
+    this.winston.error('CRITICAL_ALERT_, {
       originalMessage: alertMessage,
       severity: logEntry.severity,
       correlationId: logEntry.correlationId,
@@ -603,36 +601,36 @@ export class EnhancedStructuredLogger {
   // PUBLIC LOGGING METHODS
   // ============================================================================
 
-  debug(message: string, data?: any, context?: any): void {
-    this.log('debug', 'debug', message, data, context);
+  debug(message: string, data?: any, _context?: any): void {
+    this.log('debug', 'debug', message, data, _context);
   }
 
-  info(message: string, data?: any, context?: any): void {
-    this.log('info', 'info', message, data, context);
+  info(message: string, data?: any, _context?: any): void {
+    this.log('info', 'info', message, data, _context);
   }
 
-  notice(message: string, data?: any, context?: any): void {
-    this.log('verbose', 'notice', message, data, context);
+  notice(message: string, data?: any, _context?: any): void {
+    this.log('verbose', 'notice', message, data, _context);
   }
 
-  warn(message: string, data?: any, context?: any): void {
-    this.log('warn', 'warn', message, data, context);
+  warn(message: string, data?: any, _context?: any): void {
+    this.log('warn', 'warn', message, data, _context);
   }
 
-  error(message: string, error?: Error, data?: any, context?: any): void {
-    this.log('error', 'error', message, { ...data, error }, context);
+  error(message: string, error?: Error, data?: any, _context?: any): void {
+    this.log('error', 'error', message, { ...data, error }, _context);
   }
 
-  critical(message: string, data?: any, context?: any): void {
-    this.log('error', 'critical', message, data, context);
+  critical(message: string, data?: any, _context?: any): void {
+    this.log('error', 'critical', message, data, _context);
   }
 
-  alert(message: string, data?: any, context?: any): void {
-    this.log('error', 'alert', message, data, context);
+  alert(message: string, data?: any, _context?: any): void {
+    this.log('error', 'alert', message, data, _context);
   }
 
-  emergency(message: string, data?: any, context?: any): void {
-    this.log('error', 'emergency', message, data, context);
+  emergency(message: string, data?: any, _context?: any): void {
+    this.log('error', 'emergency', message, data, _context);
   }
 
   // ============================================================================
@@ -673,7 +671,7 @@ export class EnhancedStructuredLogger {
     stage: string,
     message: string,
     data?: any,
-    context?: any
+    _context?: any
   ): void {
     const healthcareContext: BrazilianHealthcareContext = {
       workflowType,
@@ -692,12 +690,12 @@ export class EnhancedStructuredLogger {
    * Log medication event
    */
   logMedicationEvent(
-    action: 'prescribed' | 'administered' | 'verified' | 'adverse_reaction',
+    action: 'prescribed' | 'administered' | 'verified' | 'adverse_reaction_,
     message: string,
     healthcareContext: BrazilianHealthcareContext,
     data?: any
   ): void {
-    const severity = action === 'adverse_reaction' ? 'alert' : 'info';
+    const severity = action === 'adverse_reaction' ? 'alert' : ''info'
 
     this.log(
       this.mapSeverityToLevel(severity),
@@ -741,7 +739,7 @@ export class EnhancedStructuredLogger {
   /**
    * Create child logger with context
    */
-  child(context: any): EnhancedStructuredLogger {
+  child(_context: any): EnhancedStructuredLogger {
     const childLogger = Object.create(this);
     childLogger.config = { ...this.config };
     childLogger.correlationIdStore = new Map(this.correlationIdStore);
@@ -761,7 +759,7 @@ export class EnhancedStructuredLogger {
    */
   getStatistics() {
     return {
-      service: this.config.service,
+      _service: this.config.service,
       environment: this.config.environment,
       level: this.config.level,
       correlationId: this.getCorrelationId(),

@@ -207,7 +207,7 @@ describe("Real-time Notification Model (T036)", () => {
   it("should handle notification preferences", () => {
     const { NotificationPreferences } = require("../notifications");
     const preferences: NotificationPreferences = {
-      userId: "patient-123",
+      _userId: "patient-123",
       channels: {
         whatsapp: { enabled: true, number: "+5511999999999" },
         sms: { enabled: true, number: "+5511999999999" },

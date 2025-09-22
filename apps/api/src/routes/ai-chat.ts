@@ -7,13 +7,12 @@ import { ComplianceLevel, type HealthcareAIContext } from '@neonpro/shared';
 
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
-import { z } from 'zod';
 import { endTimerMs, logMetric, startTimer } from '../services/metrics';
 import { SemanticCacheService } from '../services/semantic-cache';
 
 // Request validation schemas
 const ChatMessageSchema = z.object({
-  role: z.enum(['user', 'assistant', 'system']),
+  _role: z.enum(['user', 'assistant', 'system']),
   content: z.string().min(1),
 });
 
@@ -119,14 +118,14 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
 
     // Build AI messages for our provider system
     const aiMessages: AIMessage[] = [
-      { role: 'system', content: SYSTEM_PROMPT },
+      { _role: 'system', content: SYSTEM_PROMPT },
     ];
 
     // Add existing conversation messages
     if (Array.isArray(messages)) {
       for (const msg of messages) {
         aiMessages.push({
-          role: msg.role,
+          _role: msg.role,
           content: msg.content,
         });
       }
@@ -134,7 +133,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
 
     // Add new text message if provided
     if (text && text.trim().length > 0) {
-      aiMessages.push({ role: 'user', content: text.trim() });
+      aiMessages.push({ _role: 'user', content: text.trim() });
     }
 
     // Extract user prompt for semantic caching
@@ -165,7 +164,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
         );
         if (cacheEntry && cacheEntry.response) {
           cachedResponse = cacheEntry.response;
-          console.log('Cache hit for AI query:', {
+          console.log('Cache hit for AI _query:', {
             sessionId,
             similarity: cacheEntry.similarity,
             originalCost: cacheEntry.originalCost,
@@ -290,7 +289,7 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
                 embedding: [], // Will be generated internally
                 timestamp: new Date(),
                 hits: 0,
-                context: healthcareContext,
+                _context: healthcareContext,
                 similarity: 1.0,
                 originalCost: 0.002, // Estimated cost for GPT-3.5/4 request
                 complianceLevel: ComplianceLevel.RESTRICTED,
@@ -365,7 +364,7 @@ app.post(
   zValidator(
     'json',
     z.object({
-      query: z.string().min(1),
+      _query: z.string().min(1),
       sessionId: z.string(),
     }),
   ),
@@ -415,10 +414,10 @@ app.post(
 
       const messages: AIMessage[] = [
         {
-          role: 'system',
+          _role: 'system',
           content: 'Você é um especialista em estética que sugere tratamentos relevantes.',
         },
-        { role: 'user', content: suggestionPrompt },
+        { _role: 'user', content: suggestionPrompt },
       ];
 
       let suggestions: string[] = [];
@@ -445,7 +444,7 @@ app.post(
       console.log('Search Suggestions:', {
         timestamp: new Date().toISOString(),
         sessionId,
-        query: redactPII(query),
+        _query: redactPII(query),
         suggestionsCount: suggestions.length,
       });
 
@@ -478,10 +477,9 @@ app.get('/health', c => {
 
   return c.json({
     status: 'ok',
-    service: 'neonpro-ai-chat',
+    _service: 'neonpro-ai-chat',
     timestamp: new Date().toISOString(),
-    providers: availableProviders.reduce(
-      (acc, provider) => {
+    providers: availableProviders.reduce((acc,_provider) => {
         acc[provider] = 'available';
         return acc;
       },

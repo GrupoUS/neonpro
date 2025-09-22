@@ -3,24 +3,24 @@
  * Tests for type safety and metadata validation
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { AuditLogger, AuditLogEntry, AIMetadata, HealthcareAccessMetadata } from '../logger';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { AIMetadata, AuditLogEntry, AuditLogger, HealthcareAccessMetadata } from '../logger';
 
 // Mock Supabase
 const mockSupabase = {
   from: vi.fn(),
 };
 
-vi.mock('@supabase/supabase-js', () => ({
+vi.mock('@supabase/supabase-js_, () => ({
   createClient: vi.fn(() => mockSupabase),
 }));
 
-describe('Audit Logger Security Tests', () => {
+describe('Audit Logger Security Tests_, () => {
   let auditLogger: AuditLogger;
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     mockSupabase.from.mockReturnValue({
       insert: vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
@@ -41,8 +41,8 @@ describe('Audit Logger Security Tests', () => {
     vi.clearAllMocks();
   });
 
-  describe('Type Safety', () => {
-    it('should validate AI metadata types', async () => {
+  describe('Type Safety_, () => {
+    it('should validate AI metadata types_,_async () => {
       const aiMetadata: AIMetadata = {
         inputTokens: 100,
         outputTokens: 50,
@@ -57,17 +57,17 @@ describe('Audit Logger Security Tests', () => {
 
       await auditLogger.logAIOperation(
         'user123',
-        'chat_completion',
+        'chat_completion_,
         'gpt-4',
         100,
         50,
-        aiMetadata
+        aiMetadata,
       );
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
     });
 
-    it('should reject invalid AI metadata types', async () => {
+    it('should reject invalid AI metadata types_,_async () => {
       const invalidMetadata = {
         inputTokens: 'invalid', // Should be number
         outputTokens: 'invalid', // Should be number
@@ -79,25 +79,25 @@ describe('Audit Logger Security Tests', () => {
       await expect(
         auditLogger.logAIOperation(
           'user123',
-          'chat_completion',
+          'chat_completion_,
           'gpt-4',
           invalidMetadata.inputTokens as any,
           invalidMetadata.outputTokens as any,
-          invalidMetadata
-        )
+          invalidMetadata,
+        ),
       ).resolves.not.toThrow();
     });
 
-    it('should validate healthcare access metadata', async () => {
+    it('should validate healthcare access metadata_,_async () => {
       const healthcareMetadata: HealthcareAccessMetadata = {
-        dataType: 'patient_record',
+        dataType: 'patient_record_,
         lgpdConsent: true,
         patientId: 'patient123',
         encounterId: 'encounter456',
         facilityId: 'facility789',
         departmentId: 'department101',
         accessReason: 'treatment',
-        retentionPeriod: '10_years',
+        retentionPeriod: '10_years_,
         dataSensitivity: 'restricted',
       };
 
@@ -105,24 +105,24 @@ describe('Audit Logger Security Tests', () => {
         'user123',
         'view',
         'patient123',
-        'patient_record',
+        'patient_record_,
         true,
-        healthcareMetadata
+        healthcareMetadata,
       );
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
     });
   });
 
-  describe('Metadata Serialization Security', () => {
-    it('should safely serialize primitive metadata', async () => {
+  describe('Metadata Serialization Security_, () => {
+    it('should safely serialize primitive metadata_,_async () => {
       const entry: AuditLogEntry = {
-        userId: 'user123',
-        action: 'test_action',
-        resource: 'test_resource',
+        _userId: 'user123_,
+        action: 'test_action_,
+        resource: 'test_resource_,
         success: true,
         metadata: {
-          string_value: 'test',
+          string_value: 'test_,
           number_value: 42,
           boolean_value: true,
           null_value: null,
@@ -131,14 +131,14 @@ describe('Audit Logger Security Tests', () => {
 
       await auditLogger.log(entry);
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
     });
 
-    it('should safely serialize complex objects', async () => {
+    it('should safely serialize complex objects_,_async () => {
       const entry: AuditLogEntry = {
-        userId: 'user123',
-        action: 'test_action',
-        resource: 'test_resource',
+        _userId: 'user123_,
+        action: 'test_action_,
+        resource: 'test_resource_,
         success: true,
         metadata: {
           complex_object: {
@@ -153,17 +153,17 @@ describe('Audit Logger Security Tests', () => {
 
       await auditLogger.log(entry);
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
     });
 
-    it('should handle circular references in metadata', async () => {
+    it('should handle circular references in metadata_,_async () => {
       const circularObject: any = { name: 'test' };
       circularObject.self = circularObject;
 
       const entry: AuditLogEntry = {
-        userId: 'user123',
-        action: 'test_action',
-        resource: 'test_resource',
+        _userId: 'user123_,
+        action: 'test_action_,
+        resource: 'test_resource_,
         success: true,
         metadata: {
           circular_ref: circularObject,
@@ -174,29 +174,29 @@ describe('Audit Logger Security Tests', () => {
       await expect(auditLogger.log(entry)).resolves.not.toThrow();
     });
 
-    it('should sanitize dangerous prototype properties', async () => {
+    it('should sanitize dangerous prototype properties_,_async () => {
       const entry: AuditLogEntry = {
-        userId: 'user123',
-        action: 'test_action',
-        resource: 'test_resource',
+        _userId: 'user123_,
+        action: 'test_action_,
+        resource: 'test_resource_,
         success: true,
         metadata: {
           __proto__: { polluted: true },
           constructor: { prototype: { polluted: true } },
-          normal_value: 'safe',
+          normal_value: 'safe_,
         },
       };
 
       await auditLogger.log(entry);
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
     });
   });
 
-  describe('Input Validation', () => {
-    it('should validate required audit log fields', async () => {
+  describe('Input Validation_, () => {
+    it('should validate required audit log fields_,_async () => {
       const invalidEntry: Partial<AuditLogEntry> = {
-        userId: 'user123',
+        _userId: 'user123_,
         // Missing required action and resource
         success: true,
       };
@@ -205,16 +205,16 @@ describe('Audit Logger Security Tests', () => {
       await expect(auditLogger.log(invalidEntry)).resolves.not.toThrow();
     });
 
-    it('should handle extremely large metadata objects', async () => {
+    it('should handle extremely large metadata objects_,_async () => {
       const largeMetadata = {
-        large_array: Array(10000).fill('large_data'),
-        large_string: 'x'.repeat(1024 * 1024), // 1MB string
+        large_array: Array(10000).fill('large_data_),
+        large_string: 'x_.repeat(1024 * 1024), // 1MB string
       };
 
       const entry: AuditLogEntry = {
-        userId: 'user123',
-        action: 'test_action',
-        resource: 'test_resource',
+        _userId: 'user123_,
+        action: 'test_action_,
+        resource: 'test_resource_,
         success: true,
         metadata: largeMetadata,
       };
@@ -223,28 +223,28 @@ describe('Audit Logger Security Tests', () => {
       await expect(auditLogger.log(entry)).resolves.not.toThrow();
     });
 
-    it('should handle special characters in metadata', async () => {
+    it('should handle special characters in metadata_,_async () => {
       const entry: AuditLogEntry = {
-        userId: 'user123',
-        action: 'test_action',
-        resource: 'test_resource',
+        _userId: 'user123_,
+        action: 'test_action_,
+        resource: 'test_resource_,
         success: true,
         metadata: {
-          special_chars: '!@#$%^&*()_+-={}[]|:";\'<>?,./',
+          special_chars: _!@#$%^&*()_+-={}[]|:";\'<>?,./',
           unicode: '测试 🚀',
-          sql_injection: "SELECT * FROM users",
+          sql_injection: 'SELECT * FROM users_,
           xss: '<script>alert("xss")</script>',
         },
       };
 
       await auditLogger.log(entry);
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
     });
   });
 
-  describe('Database Security', () => {
-    it('should not leak sensitive information in errors', async () => {
+  describe('Database Security_, () => {
+    it('should not leak sensitive information in errors_,_async () => {
       mockSupabase.from.mockReturnValue({
         insert: vi.fn().mockReturnValue({
           select: vi.fn().mockReturnValue({
@@ -254,27 +254,27 @@ describe('Audit Logger Security Tests', () => {
       });
 
       const entry: AuditLogEntry = {
-        userId: 'user123',
-        action: 'test_action',
-        resource: 'test_resource',
+        _userId: 'user123_,
+        action: 'test_action_,
+        resource: 'test_resource_,
         success: true,
         metadata: {
-          sensitive_info: 'secret_data',
+          sensitive_info: 'secret_data_,
         },
       };
 
       await expect(auditLogger.log(entry)).resolves.not.toThrow();
     });
 
-    it('should handle database connection failures gracefully', async () => {
+    it('should handle database connection failures gracefully_,_async () => {
       mockSupabase.from.mockImplementation(() => {
         throw new Error('Connection failed');
       });
 
       const entry: AuditLogEntry = {
-        userId: 'user123',
-        action: 'test_action',
-        resource: 'test_resource',
+        _userId: 'user123_,
+        action: 'test_action_,
+        resource: 'test_resource_,
         success: true,
       };
 
@@ -283,8 +283,8 @@ describe('Audit Logger Security Tests', () => {
     });
   });
 
-  describe('LGPD Compliance', () => {
-    it('should log healthcare data access with LGPD consent', async () => {
+  describe('LGPD Compliance_, () => {
+    it('should log healthcare data access with LGPD consent_,_async () => {
       await auditLogger.logHealthcareAccess(
         'user123',
         'view',
@@ -293,14 +293,14 @@ describe('Audit Logger Security Tests', () => {
         true, // LGPD consent
         {
           accessReason: 'treatment',
-          retentionPeriod: '10_years',
-        }
+          retentionPeriod: '10_years_,
+        },
       );
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
     });
 
-    it('should log healthcare data access without LGPD consent', async () => {
+    it('should log healthcare data access without LGPD consent_,_async () => {
       await auditLogger.logHealthcareAccess(
         'user123',
         'view',
@@ -309,16 +309,16 @@ describe('Audit Logger Security Tests', () => {
         false, // No LGPD consent
         {
           accessReason: 'emergency',
-          retentionPeriod: '24_hours',
-        }
+          retentionPeriod: '24_hours_,
+        },
       );
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
     });
 
-    it('should validate healthcare metadata fields', async () => {
+    it('should validate healthcare metadata fields_,_async () => {
       const validHealthcareMetadata: HealthcareAccessMetadata = {
-        dataType: 'patient_record',
+        dataType: 'patient_record_,
         lgpdConsent: true,
         patientId: 'patient123',
         accessReason: 'treatment',
@@ -328,12 +328,12 @@ describe('Audit Logger Security Tests', () => {
         'user123',
         'view',
         'patient123',
-        'patient_record',
+        'patient_record_,
         true,
-        validHealthcareMetadata
+        validHealthcareMetadata,
       );
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
     });
   });
 });

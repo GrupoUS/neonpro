@@ -25,7 +25,7 @@ export enum ConsentType {
   FUNCTIONAL = "functional",
   ANALYTICS = "analytics",
   MARKETING = "marketing",
-  RESEARCH = "research",
+  RESEARCH = "research"
 }
 
 export enum HealthcareDataType {
@@ -33,7 +33,7 @@ export enum HealthcareDataType {
   MEDICAL = "medical",
   SENSITIVE = "sensitive",
   BIOMETRIC = "biometric",
-  GENETIC = "genetic",
+  GENETIC = "genetic"
 }
 
 export enum DataProcessingPurpose {
@@ -42,7 +42,7 @@ export enum DataProcessingPurpose {
   RESEARCH = "research",
   ADMINISTRATION = "administration",
   LEGAL = "legal",
-  EMERGENCY = "emergency",
+  EMERGENCY = "emergency"
 }
 import {
   announceToScreenReader,
@@ -77,7 +77,7 @@ export interface LGPDConsentBannerProps {
   persistConsent?: boolean;
 
   // Event handlers
-  onConsentGiven?: (consents: Record<ConsentType, boolean>) => void;
+  onConsentGiven?: (consents: Record<ConsentType,boolean>) => void;
   onConsentWithdrawn?: (consentType: ConsentType) => void;
   onPrivacyPolicyView?: () => void;
   onDataProcessingView?: () => void;
@@ -107,28 +107,28 @@ const consentDescriptions: Record<
     title: "Cookies e Dados Essenciais",
     description:
       "Necessários para o funcionamento básico da plataforma de saúde e segurança dos dados.",
-    required: true,
+    required: true
   },
   [ConsentType.FUNCTIONAL]: {
     title: "Funcionalidades Melhoradas",
     description:
-      "Permitem funcionalidades avançadas como salvamento de preferências e configurações médicas.",
+      "Permitem funcionalidades avançadas como salvamento de preferências e configurações médicas."
   },
   [ConsentType.ANALYTICS]: {
     title: "Análise e Melhoria",
     description:
-      "Ajudam a melhorar nossos serviços de saúde através de análises anônimas de uso.",
+      "Ajudam a melhorar nossos serviços de saúde através de análises anônimas de uso."
   },
   [ConsentType.MARKETING]: {
     title: "Comunicação e Marketing",
     description:
-      "Permitem envio de comunicações sobre serviços de saúde e promoções relevantes.",
+      "Permitem envio de comunicações sobre serviços de saúde e promoções relevantes."
   },
   [ConsentType.RESEARCH]: {
     title: "Pesquisa Médica",
     description:
-      "Dados anonimizados para pesquisas científicas e desenvolvimento de tratamentos.",
-  },
+      "Dados anonimizados para pesquisas científicas e desenvolvimento de tratamentos."
+  }
 };
 
 // Data type descriptions
@@ -139,7 +139,7 @@ const dataTypeDescriptions: Record<HealthcareDataType, string> = {
   [HealthcareDataType.SENSITIVE]:
     "Dados sensíveis de saúde (diagnósticos, exames)",
   [HealthcareDataType.BIOMETRIC]: "Dados biométricos",
-  [HealthcareDataType.GENETIC]: "Dados genéticos",
+  [HealthcareDataType.GENETIC]: "Dados genéticos"
 };
 
 // Processing purpose descriptions
@@ -150,7 +150,7 @@ const purposeDescriptions: Record<DataProcessingPurpose, string> = {
   [DataProcessingPurpose.RESEARCH]: "Pesquisa científica e desenvolvimento",
   [DataProcessingPurpose.ADMINISTRATION]: "Administração de serviços de saúde",
   [DataProcessingPurpose.LEGAL]: "Cumprimento de obrigações legais",
-  [DataProcessingPurpose.EMERGENCY]: "Atendimento de emergências médicas",
+  [DataProcessingPurpose.EMERGENCY]: "Atendimento de emergências médicas"
 };
 
 /**
@@ -160,27 +160,10 @@ const purposeDescriptions: Record<DataProcessingPurpose, string> = {
  * consent types, granular control, and accessibility compliance.
  */
 export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
-  variant = "banner",
-  position = "bottom",
-  requiredConsents,
-  optionalConsents = [],
-  dataTypes,
-  processingPurposes,
-  title = "Consentimento para Dados de Saúde",
-  description = "Para oferecer os melhores cuidados de saúde, precisamos do seu consentimento para processar seus dados conforme a LGPD.",
-  privacyPolicyUrl,
-  dataProcessingUrl,
-  contactEmail = "privacidade@neonpro.health",
-  allowGranular = true,
-  showOnce = true,
-  autoShow = true,
-  persistConsent = true,
-  onConsentGiven,
+  variant = "banner", position = "bottom", requiredConsents, optionalConsents = [], dataTypes, processingPurposes, title = "Consentimento para Dados de Saúde", description = "Para oferecer os melhores cuidados de saúde, precisamos do seu consentimento para processar seus dados conforme a LGPD.", privacyPolicyUrl, dataProcessingUrl, contactEmail = "privacidade@neonpro.health", allowGranular = true, showOnce = true, autoShow = true, persistConsent = true, onConsentGiven,
   // TODO: Re-enable when onConsentWithdrawn is actually used
-  // onConsentWithdrawn,
-  onPrivacyPolicyView,
-  onDataProcessingView,
-  className,
+  // onConsentWithdrawn, 
+  onPrivacyPolicyView, onDataProcessingView, className
 }) => {
   // Context and theme
   const { theme } = useHealthcareTheme();
@@ -207,8 +190,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
   });
 
   // All consent types
-  const allConsents = useMemo(
-    () => [...requiredConsents, ...optionalConsents],
+  const allConsents = useMemo(() => [...requiredConsents, ...optionalConsents],
     [requiredConsents, optionalConsents],
   );
 
@@ -227,13 +209,12 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
         const schemaToConsent = {
           dataProcessingConsent: ConsentType.ESSENTIAL,
           marketingConsent: ConsentType.MARKETING,
-          analyticsConsent: ConsentType.ANALYTICS,
+          analyticsConsent: ConsentType.ANALYTICS
         };
 
         const hasAllRequired = requiredConsents.every((consent) => {
           // Find matching schema property for this consent type
-          const schemaKey = Object.entries(schemaToConsent).find(
-            ([_, consentType]) => consentType === consent,
+          const schemaKey = Object.entries(schemaToConsent).find(([, consentType]) => consentType === consent,
           )?.[0];
           return schemaKey
             ? consentData[schemaKey as keyof typeof consentData] === true
@@ -243,8 +224,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
         if (hasAllRequired) {
           // Convert schema data back to consent status for state
           const consentStatus: ConsentStatus = {} as ConsentStatus;
-          Object.entries(schemaToConsent).forEach(
-            ([schemaKey, consentType]) => {
+          Object.entries(schemaToConsent).forEach(([schemaKey,consentType]) => {
               consentStatus[consentType] = Boolean(
                 consentData[schemaKey as keyof typeof consentData],
               );
@@ -291,7 +271,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
 
     setConsentStatus((prev) => ({
       ...prev,
-      [consentType]: granted,
+      [consentType]: granted
     }));
 
     // Announce change
@@ -406,7 +386,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
       "bottom-0 border-t": variant === "banner" && position === "bottom",
 
       // Emergency mode
-      "border-warning bg-warning/5": theme.emergencyMode,
+      "border-warning bg-warning/5": theme.emergencyMode
     },
     className,
   );
@@ -414,7 +394,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
   const contentClasses = cn("p-4 max-w-4xl mx-auto", {
     "p-6": variant === "modal",
     "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 max-w-2xl w-full max-h-[90vh] overflow-y-auto bg-background border rounded-lg shadow-xl":
-      variant === "modal",
+      variant === "modal"
   });
 
   return (
@@ -463,8 +443,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
         </div>
 
         {/* Granular consent options */}
-        {allowGranular && (
-          <div className="mb-4">
+        {allowGranular && (<div className="mb-4">
             <button
               onClick={() => setShowDetails(!showDetails)}
               className="text-sm text-primary hover:underline mb-3 flex items-center gap-1"
@@ -474,14 +453,12 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
               Consentimento
             </button>
 
-            {showDetails && (
-              <div className="space-y-3 border rounded-md p-3">
+            {showDetails && (<div className="space-y-3 border rounded-md p-3">
                 {allConsents.map((consentType) => {
                   const info = consentDescriptions[consentType];
                   const isRequired = requiredConsents.includes(consentType);
 
-                  return (
-                    <div key={consentType} className="flex items-start gap-3">
+                  return (<div key={consentType} className="flex items-start gap-3">
                       <input
                         type="checkbox"
                         id={`consent-${consentType}`}
@@ -497,7 +474,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
                         <label
                           htmlFor={`consent-${consentType}`}
                           className={cn("text-sm font-medium cursor-pointer", {
-                            "cursor-not-allowed opacity-70": isRequired,
+                            "cursor-not-allowed opacity-70": isRequired
                           })}
                         >
                           {info?.title || consentType}
@@ -537,8 +514,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
             Apenas Necessários
           </button>
 
-          {allowGranular && (
-            <button
+          {allowGranular && (<button
               onClick={() => saveConsent(consentStatus)}
               className="px-4 py-2 border border-input rounded-md hover:bg-accent transition-colors"
             >
@@ -553,9 +529,12 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
             {privacyPolicyUrl && (
               <a
                 href={privacyPolicyUrl}
-                target="_blank"
+                target="blank"
                 rel="noopener noreferrer"
-                onClick={onPrivacyPolicyView}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onPrivacyPolicyView?.();
+                }}
                 className="hover:underline"
               >
                 Política de Privacidade
@@ -565,9 +544,12 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
             {dataProcessingUrl && (
               <a
                 href={dataProcessingUrl}
-                target="_blank"
+                target="blank"
                 rel="noopener noreferrer"
-                onClick={onDataProcessingView}
+                onClick={(e) => {
+                  e.preventDefault();
+                  onDataProcessingView?.();
+                }}
                 className="hover:underline"
               >
                 Como Processamos seus Dados
@@ -590,8 +572,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
         </div>
 
         {/* Close button for modal */}
-        {variant === "modal" && (
-          <button
+        {variant === "modal" && (<button
             onClick={() => setIsVisible(false)}
             className="absolute top-4 right-4 text-muted-foreground hover:text-foreground"
             aria-label="Fechar"
@@ -628,13 +609,13 @@ export const useLGPDConsent = () => {
     if (consentData) {
       const updatedConsents = {
         ...consentData.consents,
-        [consentType]: false,
+        [consentType]: false
       } as ConsentStatus;
 
       const updatedData = {
         ...consentData,
         consents: updatedConsents,
-        consentTimestamp: new Date().toISOString(),
+        consentTimestamp: new Date().toISOString()
       };
 
       localStorage.setItem(
@@ -653,6 +634,6 @@ export const useLGPDConsent = () => {
     hasConsent,
     consentData,
     withdrawConsent,
-    hasConsentFor,
+    hasConsentFor
   };
 };

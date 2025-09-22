@@ -19,7 +19,7 @@ async function startServer() {
       const server = createServer(app);
 
       // Initialize WebSocket server for AG-UI Protocol
-      const _wsServer = createWebSocketServer(server);
+      const wsServer = createWebSocketServer(server);
 
       server.listen(port, () => {
         secureLogger.info(`API server listening`, {

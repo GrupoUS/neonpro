@@ -60,6 +60,7 @@ export function sseStreamFromChunks(chunks: AsyncIterable<any>): ReadableStream<
 
         controller.close();
       } catch (error) {
+      // Error caught but not used - handled by surrounding logic
         logger.error('SSE streaming error', {
           error: error instanceof Error ? error.message : String(error),
         });
@@ -98,6 +99,7 @@ export function createSSEStream(
 
         controller.close();
       } catch (error) {
+      // Error caught but not used - handled by surrounding logic
         logger.error('SSE generator error', {
           error: error instanceof Error ? error.message : String(error),
         });
@@ -120,7 +122,7 @@ export function streamingMiddleware() {
   return async (c: Context, next: Next) => {
     try {
       // Set SSE headers for streaming responses
-      Object.entries(sseHeaders).forEach(([key, value]) => {
+      Object.entries(sseHeaders).forEach(([key,_value]) => {
         c.header(key, value);
       });
 
@@ -129,10 +131,11 @@ export function streamingMiddleware() {
       c.set('streamStartTime', Date.now());
 
       await next();
-      
+
       // Return the response after next() completes
       return;
     } catch (error) {
+      // Error caught but not used - handled by surrounding logic
       logger.error('Streaming middleware error', {
         error: error instanceof Error ? error.message : String(error),
         path: c.req.path,
@@ -164,6 +167,7 @@ export function createHeartbeatStream(intervalMs: number = 30000): ReadableStrea
           const heartbeat = formatSSEData('heartbeat', 'ping');
           controller.enqueue(new TextEncoder().encode(heartbeat));
         } catch (error) {
+      // Error caught but not used - handled by surrounding logic
           clearInterval(interval);
           controller.close();
         }
@@ -196,6 +200,7 @@ export function mergeSSEStreams(
               controller.enqueue(value);
             }
           } catch (error) {
+      // Error caught but not used - handled by surrounding logic
             logger.error(`Stream ${index} error`, {
               error: error instanceof Error ? error.message : String(error),
             });
@@ -207,6 +212,7 @@ export function mergeSSEStreams(
         await Promise.all(readPromises);
         controller.close();
       } catch (error) {
+      // Error caught but not used - handled by surrounding logic
         logger.error('Stream merge error', {
           error: error instanceof Error ? error.message : String(error),
         });

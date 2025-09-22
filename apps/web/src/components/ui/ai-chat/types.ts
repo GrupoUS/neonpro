@@ -13,7 +13,7 @@ export interface AIPromptProps {
 }
 
 export interface AIInputSearchProps {
-  onSearch?: (query: string) => void;
+  onSearch?: (_query: string) => void;
   suggestions?: string[];
   placeholder?: string;
   debounceMs?: number;
@@ -45,7 +45,7 @@ export interface AIVoiceProps {
 
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
   clientId?: string;

@@ -38,8 +38,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
 
   // TanStack Query with healthcare-optimized defaults
   const query = useQuery({
-    queryKey,
-    queryFn,
+    queryKey,queryFn,
     staleTime: options.staleTime ?? 5 * 60 * 1000, // 5 minutes
     gcTime: options.gcTime ?? 10 * 60 * 1000, // 10 minutes
     refetchOnWindowFocus: options.refetchOnWindowFocus ?? false,
@@ -54,9 +53,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
   const setupSubscription = useCallback(() => {
     if (!realtimeManager.current || !options.enabled) return undefined;
 
-    const subscription = realtimeManager.current.subscribeToTable(
-      options.tableName,
-      options.filter,
+    const subscription = realtimeManager.current.subscribeToTable(options.tableName, options.filter,
       {
         queryKeys: [queryKey],
         optimisticUpdates: true,
@@ -135,8 +132,7 @@ export function useRealtimeMutation<T extends { id: string }>(
 
       // Optimistically update
       queryClient.setQueryData<T[]>(queryKey, (old) => {
-        return (
-          old?.map((item) =>
+        return (old?.map((item) =>
             item.id === updatedItem.id ? updatedItem : item,
           ) ?? []
         );
@@ -156,8 +152,7 @@ export function useRealtimeMutation<T extends { id: string }>(
     [queryClient, queryKey],
   );
 
-  const invalidate = useCallback(
-    () => queryClient.invalidateQueries({ queryKey }),
+  const invalidate = useCallback(() => queryClient.invalidateQueries({ queryKey }),
     [queryClient, queryKey],
   );
 

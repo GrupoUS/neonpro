@@ -41,8 +41,8 @@ describe('Response Time Performance - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-performance-${Math.random()}`,
-            context: {
-              userId: 'doctor-user-id',
+            _context: {
+              _userId: 'doctor-user-id',
             },
           }),
         });
@@ -78,8 +78,8 @@ describe('Response Time Performance - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-client-perf-${Math.random()}`,
-            context: {
-              userId: 'nurse-user-id',
+            _context: {
+              _userId: 'nurse-user-id',
             },
           }),
         });
@@ -113,8 +113,8 @@ describe('Response Time Performance - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-financial-perf-${Math.random()}`,
-            context: {
-              userId: 'admin-user-id',
+            _context: {
+              _userId: 'admin-user-id',
             },
           }),
         });
@@ -150,8 +150,8 @@ describe('Response Time Performance - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-complex-${Math.random()}`,
-            context: {
-              userId: 'doctor-user-id',
+            _context: {
+              _userId: 'doctor-user-id',
             },
           }),
         });
@@ -185,8 +185,8 @@ describe('Response Time Performance - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-aggregation-${Math.random()}`,
-            context: {
-              userId: 'admin-user-id',
+            _context: {
+              _userId: 'admin-user-id',
             },
           }),
         });
@@ -225,8 +225,8 @@ describe('Response Time Performance - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-concurrent-${index}`,
-            context: {
-              userId: 'doctor-user-id',
+            _context: {
+              _userId: 'doctor-user-id',
             },
           }),
         }).then(response => {
@@ -265,10 +265,10 @@ describe('Response Time Performance - Integration Test', () => {
             Authorization: 'Bearer valid-doctor-token',
           },
           body: JSON.stringify({
-            query: 'Agendamentos de hoje',
+            _query: 'Agendamentos de hoje',
             sessionId: `test-session-load-${i}`,
-            context: {
-              userId: 'doctor-user-id',
+            _context: {
+              _userId: 'doctor-user-id',
             },
           }),
         }).then(response => {
@@ -314,10 +314,10 @@ describe('Response Time Performance - Integration Test', () => {
           Authorization: 'Bearer valid-doctor-token',
         },
         body: JSON.stringify({
-          query: 'Agendamentos para o ano 3000',
+          _query: 'Agendamentos para o ano 3000',
           sessionId: 'test-session-empty-results',
-          context: {
-            userId: 'doctor-user-id',
+          _context: {
+            _userId: 'doctor-user-id',
           },
         }),
       });
@@ -351,8 +351,8 @@ describe('Response Time Performance - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-malformed-${Math.random()}`,
-            context: {
-              userId: 'doctor-user-id',
+            _context: {
+              _userId: 'doctor-user-id',
             },
           }),
         });
@@ -377,11 +377,11 @@ describe('Response Time Performance - Integration Test', () => {
           Authorization: 'Bearer valid-receptionist-token',
         },
         body: JSON.stringify({
-          query: 'Dados financeiros completos',
+          _query: 'Dados financeiros completos',
           sessionId: 'test-session-denied-performance',
-          context: {
-            userId: 'receptionist-user-id',
-            role: 'receptionist',
+          _context: {
+            _userId: 'receptionist-user-id',
+            _role: 'receptionist',
           },
         }),
       });
@@ -407,10 +407,10 @@ describe('Response Time Performance - Integration Test', () => {
           Authorization: 'Bearer valid-doctor-token',
         },
         body: JSON.stringify({
-          query: 'Próximos agendamentos',
+          _query: 'Próximos agendamentos',
           sessionId: 'test-session-metadata',
-          context: {
-            userId: 'doctor-user-id',
+          _context: {
+            _userId: 'doctor-user-id',
           },
         }),
       });

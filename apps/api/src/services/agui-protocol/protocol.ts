@@ -12,13 +12,10 @@ import { WebSocket } from 'ws';
 import {
   AguiContextUpdate,
   AguiErrorCode,
-  AguiErrorMessage,
   AguiFeedbackMessage,
   AguiHealthStatus,
   AguiHelloMessage,
   AguiMessage,
-  AguiMessageMetadata,
-  AguiMessageType,
   AguiProtocolInfo,
   AguiQueryMessage,
   AguiRateLimitInfo,
@@ -47,9 +44,9 @@ export class AguiProtocol extends EventEmitter {
   /**
    * Handle new WebSocket connection
    */
-  async handleConnection(ws: WebSocket, request: any): Promise<void> {
+  async handleConnection(ws: WebSocket, _request: any): Promise<void> {
     const connectionId = uuidv4();
-    const clientIp = this.getClientIp(request);
+    const clientIp = this.getClientIp(_request);
 
     try {
       // Check rate limits
@@ -64,7 +61,7 @@ export class AguiProtocol extends EventEmitter {
         id: connectionId,
         ws,
         clientIp,
-        userId: null,
+        _userId: null,
         sessionId: null,
         authenticated: false,
         connectedAt: new Date(),
@@ -182,7 +179,7 @@ export class AguiProtocol extends EventEmitter {
     // Type-specific validation
     switch (message.type) {
       case 'query':
-        if (!message.payload?.query) {
+        if (!message.payload?._query) {
           return 'Query message must contain a query';
         }
         break;
@@ -233,13 +230,13 @@ export class AguiProtocol extends EventEmitter {
         type: 'hello',
         timestamp: new Date().toISOString(),
         sessionId: message.sessionId,
-        payload: {
+        _payload: {
           version: this.config.version,
           capabilities: this.getCapabilities(),
         },
       });
 
-      this.emit('authenticated', { connection, userId: connection.userId });
+      this.emit('authenticated', { connection, _userId: connection.userId });
     } catch (error) {
       this.sendError(connection.ws, 'INTERNAL_ERROR', 'Failed to process hello message');
     }
@@ -257,15 +254,15 @@ export class AguiProtocol extends EventEmitter {
     const query = message.payload as AguiQueryMessage;
 
     // Check session
-    const session = await this.getOrCreateSession(message.sessionId, connection.userId);
+    const session = await this.getOrCreateSession(message.sessionId, connection._userId);
     connection.sessionId = session.id;
 
     // Emit query event for processing by the agent
     this.emit('query', {
       connection,
       session,
-      query: query.query,
-      context: query.context,
+      _query: query.query,
+      _context: query.context,
       options: query.options,
       messageId: message.id,
     });
@@ -283,7 +280,7 @@ export class AguiProtocol extends EventEmitter {
       rating: feedback.rating,
       feedback: feedback.feedback,
       category: feedback.category,
-      userId: connection.userId,
+      _userId: connection.userId,
     });
   }
 
@@ -297,7 +294,7 @@ export class AguiProtocol extends EventEmitter {
     const update = message.payload as AguiSessionUpdate;
 
     const session = this.sessions.get(update.sessionId);
-    if (!session || session.userId !== connection.userId) {
+    if (!session || session.userId !== connection._userId) {
       this.sendError(connection.ws, 'AUTHORIZATION_FAILED', 'Session not found or access denied');
       return;
     }
@@ -319,9 +316,9 @@ export class AguiProtocol extends EventEmitter {
 
     this.emit('contextUpdate', {
       sessionId: contextUpdate.sessionId,
-      context: contextUpdate.context,
+      _context: contextUpdate.context,
       source: contextUpdate.source,
-      userId: connection.userId,
+      _userId: connection.userId,
     });
   }
 
@@ -337,7 +334,7 @@ export class AguiProtocol extends EventEmitter {
       type: 'response',
       timestamp: new Date().toISOString(),
       sessionId: connection.sessionId || '',
-      payload: response,
+      _payload: response,
       metadata: messageId ? { requestId: messageId } : undefined,
     });
   }
@@ -354,7 +351,7 @@ export class AguiProtocol extends EventEmitter {
       type: 'streaming_chunk',
       timestamp: new Date().toISOString(),
       sessionId: connection.sessionId || '',
-      payload: chunk,
+      _payload: chunk,
     });
   }
 
@@ -372,7 +369,7 @@ export class AguiProtocol extends EventEmitter {
       type: 'error',
       timestamp: new Date().toISOString(),
       sessionId: '',
-      payload: {
+      _payload: {
         code,
         message,
         details,
@@ -401,7 +398,7 @@ export class AguiProtocol extends EventEmitter {
           type: 'status',
           timestamp: new Date().toISOString(),
           sessionId: connection.sessionId || '',
-          payload: status,
+          _payload: status,
         });
       }
     } else {
@@ -411,7 +408,7 @@ export class AguiProtocol extends EventEmitter {
         type: 'status',
         timestamp: new Date().toISOString(),
         sessionId: '',
-        payload: status,
+        _payload: status,
       });
     }
   }
@@ -425,7 +422,7 @@ export class AguiProtocol extends EventEmitter {
       type: 'hello',
       timestamp: new Date().toISOString(),
       sessionId: '',
-      payload: {
+      _payload: {
         version: this.config.version,
         capabilities: this.getCapabilities(),
       },
@@ -441,7 +438,7 @@ export class AguiProtocol extends EventEmitter {
       type: 'pong',
       timestamp: new Date().toISOString(),
       sessionId: connection.sessionId || '',
-      payload: { timestamp: new Date().toISOString() },
+      _payload: { timestamp: new Date().toISOString() },
     });
   }
 
@@ -492,11 +489,11 @@ export class AguiProtocol extends EventEmitter {
    */
   private async authenticate(
     auth: any,
-  ): Promise<{ success: boolean; userId?: string; error?: string }> {
+  ): Promise<{ success: boolean; _userId?: string; error?: string }> {
     try {
       if (auth.type === 'jwt') {
         const decoded = jwt.verify(auth.token, this.config.jwtSecret) as any;
-        return { success: true, userId: decoded.userId };
+        return { success: true, _userId: decoded.userId };
       }
 
       return { success: false, error: 'Unsupported authentication type' };
@@ -508,13 +505,13 @@ export class AguiProtocol extends EventEmitter {
   /**
    * Get or create session
    */
-  private async getOrCreateSession(sessionId: string, userId: string): Promise<AguiSession> {
+  private async getOrCreateSession(sessionId: string, _userId: string): Promise<AguiSession> {
     let session = this.sessions.get(sessionId);
 
     if (!session) {
       session = {
         id: sessionId,
-        userId,
+        userId: _userId,
         context: {},
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -624,10 +621,10 @@ export class AguiProtocol extends EventEmitter {
   /**
    * Get client IP address
    */
-  private getClientIp(request: any): string {
-    return request.headers['x-forwarded-for']
-      || request.connection.remoteAddress
-      || request.socket.remoteAddress;
+  private getClientIp(_request: any): string {
+    return _request.headers['x-forwarded-for']
+      || _request.connection.remoteAddress
+      || _request.socket.remoteAddress;
   }
 
   /**
@@ -723,7 +720,7 @@ interface AguiConnection {
   id: string;
   ws: WebSocket;
   clientIp: string;
-  userId: string | null;
+  _userId: string | null;
   sessionId: string | null;
   authenticated: boolean;
   capabilities?: any[];

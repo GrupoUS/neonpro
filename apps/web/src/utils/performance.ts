@@ -115,7 +115,7 @@ export class PerformanceMonitor {
   }
 
   destroy() {
-    this.observers.forEach(_observer => observer.disconnect());
+    this.observers.forEach(observer => observer.disconnect());
     this.observers = [];
   }
 }

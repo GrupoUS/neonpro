@@ -170,7 +170,7 @@ describe('Contract: Observability API', () => {
         error_type: 'validation_error',
         message: 'Invalid CPF format',
         stack_trace: 'ValidationError: CPF format invalid\n  at validateCPF...',
-        context: {
+        _context: {
           user_id: 'user_123',
           clinic_id: 'clinic_456',
           request_id: 'req_789',
@@ -207,7 +207,7 @@ describe('Contract: Observability API', () => {
       const medicalError = {
         error_type: 'medical_data_access_error',
         message: 'Unauthorized access to patient medical records',
-        context: {
+        _context: {
           patient_id: 'patient_sensitive',
           attempted_action: 'view_medical_history',
           user_role: 'receptionist',
@@ -330,7 +330,7 @@ describe('Contract: Observability API', () => {
         action: 'patient_medical_record_accessed',
         actor: {
           user_id: 'doctor_123',
-          role: 'physician',
+          _role: 'physician',
           clinic_id: 'clinic_456',
         },
         target: {
@@ -338,7 +338,7 @@ describe('Contract: Observability API', () => {
           data_type: 'medical_history',
           sensitivity_level: 'high',
         },
-        context: {
+        _context: {
           consent_verification: 'verified',
           access_reason: 'treatment_planning',
           session_id: 'session_audit_001',
@@ -377,7 +377,7 @@ describe('Contract: Observability API', () => {
         action: 'patient_data_accessed',
         actor: {
           user_id: 'staff_unauthorized',
-          role: 'receptionist',
+          _role: 'receptionist',
           clinic_id: 'clinic_test',
         },
         target: {
@@ -385,7 +385,7 @@ describe('Contract: Observability API', () => {
           data_type: 'financial_records',
           sensitivity_level: 'high',
         },
-        context: {
+        _context: {
           consent_verification: 'not_verified', // Should trigger validation error
           access_reason: 'curiosity',
         },

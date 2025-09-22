@@ -160,7 +160,7 @@ export interface AIInsight {
   // LGPD compliance
   lgpdConsent?: boolean;
   accessLog?: Array<{
-    userId: string;
+    _userId: string;
     action: string;
     timestamp: Date;
     ipAddress?: string;
@@ -363,7 +363,7 @@ export function getInsightsByPatientId(
 ): AIInsight[] {
   return insights
     .filter((insight) => insight.patientId === patientId)
-    .sort((a, b) => b.generatedAt.getTime() - a.generatedAt.getTime());
+    .sort((a,_b) => b.generatedAt.getTime() - a.generatedAt.getTime());
 }
 
 // Get insights by type
@@ -376,8 +376,7 @@ export function getInsightsByType(
 
 // Get validated insights
 export function getValidatedInsights(insights: AIInsight[]): AIInsight[] {
-  return insights.filter(
-    (insight) => insight.status === InsightStatus.VALIDATED,
+  return insights.filter((insight) => insight.status === InsightStatus.VALIDATED,
   );
 }
 
@@ -385,8 +384,7 @@ export function getValidatedInsights(insights: AIInsight[]): AIInsight[] {
 export function getInsightsRequiringValidation(
   insights: AIInsight[],
 ): AIInsight[] {
-  return insights.filter(
-    (insight) =>
+  return insights.filter((insight) =>
       insight.status === InsightStatus.GENERATED ||
       insight.status === InsightStatus.PENDING_REVIEW,
   );

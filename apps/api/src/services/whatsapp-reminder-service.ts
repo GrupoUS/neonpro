@@ -100,7 +100,7 @@ Para confirmar sua presença, responda:
 
 Dúvidas? Entre em contato conosco.
 
-_Esta é uma mensagem automática conforme sua autorização LGPD._`,
+_Esta é uma mensagem automática conforme sua autorização LGPD.`,
       buttons: [
         { id: 'confirm', title: '✅ Confirmar' },
         { id: 'cancel', title: '❌ Cancelar' },
@@ -128,7 +128,7 @@ _Esta é uma mensagem automática conforme sua autorização LGPD._`,
 ❓ Precisa cancelar ou reagendar?
 📞 Entre em contato conosco.
 
-_Mensagem automática - LGPD._`,
+_Mensagem automática - LGPD.`,
     },
     reminder_2h: {
       subject: '🚨 Consulta em 2 horas - {clinicName}',
@@ -197,7 +197,7 @@ To confirm your attendance, reply:
 
 Questions? Contact us.
 
-_This is an automated message per your LGPD authorization._`,
+_This is an automated message per your LGPD authorization.`,
     },
     // ... other English templates
   },
@@ -479,7 +479,7 @@ export class WhatsAppReminderService {
     let subject = template.subject;
     let body = template.body;
 
-    Object.entries(replacements).forEach(([placeholder, value]) => {
+    Object.entries(replacements).forEach(([placeholder,_value]) => {
       subject = subject.replace(new RegExp(placeholder, 'g'), value);
       body = body.replace(new RegExp(placeholder, 'g'), value);
     });
@@ -918,7 +918,7 @@ export class WhatsAppReminderService {
         batch.map(reminder => this.sendAppointmentReminder(reminder)),
       );
 
-      batchResults.forEach((result, index) => {
+      batchResults.forEach((result,_index) => {
         if (result.status === 'fulfilled') {
           success++;
           results.push({
@@ -1074,7 +1074,7 @@ export class WhatsAppReminderService {
       const fallbackUsed = logs.filter(log => log.fallback_used).length;
 
       // Get response count
-      const { data: responses, error: _responseError } = await this.supabase
+      const { data: responses, error: responseError } = await this.supabase
         .from('patient_responses')
         .select('appointment_id')
         .eq('clinic_id', clinicId)
@@ -1083,8 +1083,7 @@ export class WhatsAppReminderService {
       const responseCount = responses?.length || 0;
 
       // Channel breakdown
-      const channelBreakdown = logs.reduce(
-        (acc, log) => {
+      const channelBreakdown = logs.reduce((acc,_log) => {
           acc[log.channel] = (acc[log.channel] || 0) + 1;
           return acc;
         },

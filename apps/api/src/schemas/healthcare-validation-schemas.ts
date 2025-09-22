@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 // =====================================
 // BASE HEALTHCARE SCHEMAS
 // =====================================
@@ -343,7 +341,7 @@ export function validateEntityData(entity: string, data: any): {
         sanitizedData: data,
       };
     }
-  } catch (_error) {
+  } catch (error) {
     return {
       isValid: false,
       errors: ['Erro na validação do esquema'],

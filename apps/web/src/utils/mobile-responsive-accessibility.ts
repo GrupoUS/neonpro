@@ -11,8 +11,6 @@
  * - Brazilian Portuguese accessibility labels
  */
 
-import { z } from 'zod';
-
 // Mobile Breakpoints for Healthcare Applications
 export const RESPONSIVE_BREAKPOINTS = {
   SMALL_MOBILE: 320, // iPhone SE, small Android phones
@@ -80,7 +78,7 @@ export const ResponsiveElementSchema = z.object({
   isAccessible: z.boolean(),
   pattern: z.nativeEnum(HEALTHCARE_RESPONSIVE_PATTERNS).optional(),
   textContent: z.string().optional(),
-  role: z.string().optional(),
+  _role: z.string().optional(),
 });
 
 export type ResponsiveElement = z.infer<typeof ResponsiveElementSchema>;
@@ -179,7 +177,7 @@ export class MobileResponsiveAccessibility {
     const compliantBreakpoints: number[] = [];
     const issues: ResponsiveAccessibilityIssue[] = [];
 
-    testedBreakpoints.forEach(_breakpoint => {
+    testedBreakpoints.forEach(breakpoint => {
       const elementsAtBreakpoint = elements.filter(
         el => el.breakpoint === breakpoint,
       );
@@ -255,7 +253,7 @@ export class MobileResponsiveAccessibility {
     // Test zoom levels: 100%, 150%, 200%
     const zoomLevels = [100, 150, 200];
 
-    zoomLevels.forEach(_zoomLevel => {
+    zoomLevels.forEach(zoomLevel => {
       const scaledElements = elements.map(el => ({
         ...el,
         fontSize: el.fontSize * (zoomLevel / 100),
@@ -694,14 +692,11 @@ export class MobileResponsiveAccessibility {
   private generateRecommendations(): string[] {
     const recommendations: string[] = [];
 
-    const issuesByType = this.issues.reduce(
-      (acc, issue) => {
-        if (!acc[issue.type]) acc[issue.type] = [];
-        acc[issue.type].push(issue);
-        return acc;
-      },
-      {} as Record<string, ResponsiveAccessibilityIssue[]>,
-    );
+    const issuesByType = this.issues.reduce((acc, issue) => {
+      if (!acc[issue.type]) acc[issue.type] = [];
+      acc[issue.type].push(issue);
+      return acc;
+    }, {} as Record<string, ResponsiveAccessibilityIssue[]>);
 
     Object.entries(issuesByType).forEach(([type, issues]) => {
       const criticalCount = issues.filter(

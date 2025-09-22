@@ -187,7 +187,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       const message: ChatMessage = {
         id: "msg-1",
         sessionId: "session-1",
-        role: "user",
+        _role: "user",
         content:
           "Meu nome é João Silva, CPF 123.456.789-00, telefone (11) 99999-8888",
         createdAt: new Date(),
@@ -208,7 +208,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       const message: ChatMessage = {
         id: "msg-2",
         sessionId: "session-1",
-        role: "assistant",
+        _role: "assistant",
         content: "Olá! Como posso ajudá-lo hoje com suas dúvidas sobre saúde?",
         createdAt: new Date(),
         sequenceNumber: 2,
@@ -225,7 +225,7 @@ describe("T009: Message Redaction for AI Chat", () => {
       const message: ChatMessage = {
         id: "msg-3",
         sessionId: "session-1",
-        role: "user",
+        _role: "user",
         content: "Email: test@example.com, CPF: 123.456.789-00",
         createdAt: new Date(),
         sequenceNumber: 3,

@@ -13,7 +13,6 @@
  */
 
 import type { PrismaClient } from '@prisma/client';
-import { z } from 'zod';
 import { generateWithFailover } from '../config/ai';
 
 // No-Show Risk Levels
@@ -208,7 +207,7 @@ export const NoShowPredictionSchema = z.object({
       z.object({
         action: z.string(),
         timestamp: z.date(),
-        userId: z.string(),
+        _userId: z.string(),
       }),
     ),
   }),
@@ -295,7 +294,7 @@ export class NoShowPredictionService {
             {
               action: 'prediction_generated',
               timestamp: new Date(),
-              userId: 'system',
+              _userId: 'system',
             },
           ],
         },
@@ -518,7 +517,7 @@ export class NoShowPredictionService {
       });
     }
 
-    return interventions.sort((a, b) => {
+    return interventions.sort((a,_b) => {
       const priorityOrder: Record<string, number> = {
         high: 3,
         medium: 2,
@@ -646,7 +645,7 @@ CONSULTA:
 FATORES COMPORTAMENTAIS BRASILEIROS:
 ${
       Object.entries(behaviorFactors)
-        .map(([factor, value]) => `- ${factor}: ${(value * 100).toFixed(1)}%`)
+        .map(([factor,_value]) => `- ${factor}: ${(value * 100).toFixed(1)}%`)
         .join('\n')
     }
 
@@ -916,7 +915,7 @@ Responda APENAS em formato JSON:
       .sort(([, a], [, b]) => b - a)
       .slice(0, 5);
 
-    return sortedFactors.map(([factor, impact]) => ({
+    return sortedFactors.map(([factor,_impact]) => ({
       factor: factor as BrazilianBehaviorFactor,
       impact: impact * 2 - 1, // Convert to -1 to 1 scale
       confidence: 0.8, // High confidence for behavior factors
@@ -1097,8 +1096,7 @@ Responda APENAS em formato JSON:
     };
     recommendations: string[];
   }> {
-    const models = Array.from(this.modelPerformanceMetrics.entries()).map(
-      ([key, metrics]) => {
+    const models = Array.from(this.modelPerformanceMetrics.entries()).map(([key,_metrics]) => {
         const [modelType, version] = key.split('_');
         return {
           modelType: modelType as AIModelType,
@@ -1108,13 +1106,11 @@ Responda APENAS em formato JSON:
       },
     );
 
-    const totalPredictions = models.reduce(
-      (sum, model) => sum + model.metrics.totalPredictions,
+    const totalPredictions = models.reduce((sum,_model) => sum + model.metrics.totalPredictions,
       0,
     );
     const averageProcessingTime = models.length > 0
-      ? models.reduce(
-        (sum, model) => sum + model.metrics.averageProcessingTime,
+      ? models.reduce((sum,_model) => sum + model.metrics.averageProcessingTime,
         0,
       ) / models.length
       : 0;

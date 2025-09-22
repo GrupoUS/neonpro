@@ -27,8 +27,8 @@ rlsPatients.use('*', rlsHealthcareMiddleware.patientAccess);
 rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
   try {
     const rlsQuery = c.get('rlsQuery');
-    const _userId = c.get('userId'); // Prefix with _ to indicate intentionally unused
-    const _userRole = c.get('userRole');
+    const userId = c.get('userId');
+    const userRole = c.get('userRole');
 
     if (!rlsQuery) {
       return c.json({ error: 'RLS query builder not available' }, 500);
@@ -53,7 +53,7 @@ rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
 
     // Log successful access
     console.log(
-      `RLS Patient Access: User ${_userId} (${_userRole}) accessed ${
+      `RLS Patient Access: User ${userId} (${userRole}) accessed ${
         patients?.length || 0
       } patients`,
     );
@@ -63,8 +63,8 @@ rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
       meta: {
         count: patients?.length || 0,
         rlsApplied: true,
-        userId: _userId,
-        userRole: _userRole,
+        _userId: userId,
+        userRole: userRole,
       },
     });
   } catch (error) {
@@ -168,7 +168,7 @@ rlsPatients.get(
     try {
       const patientId = c.req.param('patientId');
       const rlsQuery = c.get('rlsQuery');
-      const _userId = c.get('userId');
+      const userId = c.get('userId');
 
       // Query parameters
       const limit = parseInt(c.req.query('limit') || '10');
@@ -198,7 +198,7 @@ rlsPatients.get(
 
       // Log successful access
       console.log(
-        `RLS Appointment Access: User ${_userId} accessed ${
+        `RLS Appointment Access: User ${userId} accessed ${
           appointments?.length || 0
         } appointments for patient ${patientId}`,
       );
@@ -210,7 +210,7 @@ rlsPatients.get(
           patientId,
           rlsApplied: true,
           filters: { status, startDate, endDate },
-          accessedBy: _userId,
+          accessedBy: userId,
         },
       });
     } catch (error) {
@@ -231,7 +231,7 @@ rlsPatients.get(
       const patientId = c.req.param('patientId');
       const purpose = c.req.query('purpose');
       const rlsQuery = c.get('rlsQuery');
-      const _userId = c.get('userId');
+      const userId = c.get('userId');
 
       // Use RLS-aware consent query
       const { data: consentRecords, error } = await rlsQuery.getConsentRecords(
@@ -252,7 +252,7 @@ rlsPatients.get(
 
       // Log successful access
       console.log(
-        `RLS Consent Access: User ${_userId} accessed consent records for patient ${patientId}`,
+        `RLS Consent Access: User ${userId} accessed consent records for patient ${patientId}`,
       );
 
       return c.json({
@@ -262,7 +262,7 @@ rlsPatients.get(
           patientId,
           purpose,
           rlsApplied: true,
-          accessedBy: _userId,
+          accessedBy: userId,
         },
       });
     } catch (error) {

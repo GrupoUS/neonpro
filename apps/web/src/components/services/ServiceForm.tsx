@@ -16,11 +16,14 @@ import { useEffect, useState } from 'react';
 
 import { useCreateService, useUpdateService } from '@/hooks/useServices';
 import type { Service } from '@/types/service';
+import {
+  HealthcareDataSensitivity,
+  validateHealthcareFormData,
+} from '@/utils/healthcare-form-validation';
 import { toast } from 'sonner';
-import { validateHealthcareFormData, HealthcareDataSensitivity } from '@/utils/healthcare-form-validation';
 
 interface ServiceFormProps {
-  service?: Service; // If provided, form is in edit mode
+  _service?: Service; // If provided, form is in edit mode
   onSuccess: () => void;
   clinicId: string;
 }
@@ -117,7 +120,7 @@ export function ServiceForm({
     setIsSubmitting(true);
 
     try {
-      if (isEditMode && service) {
+      if (isEditMode && _service) {
         // Update existing service
         await updateServiceMutation.mutateAsync({
           id: service.id,
@@ -142,8 +145,8 @@ export function ServiceForm({
       }
 
       onSuccess();
-    } catch (error) {
-      console.error('Error saving service:', error);
+    } catch (_error) {
+      console.error('Error saving _service:', error);
       toast.error(
         isEditMode ? 'Erro ao atualizar serviço' : 'Erro ao criar serviço',
       );

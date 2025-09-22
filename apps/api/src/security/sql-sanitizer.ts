@@ -16,7 +16,7 @@ interface SQLOperation {
   table: string;
   columns?: string[];
   conditions?: Record<string, any>;
-  userId?: string;
+  _userId?: string;
   patientId?: string;
 }
 
@@ -186,7 +186,7 @@ class SQLSanitizer {
       logger.error('SQL validation failed', error as Error, {
         operation: operation.type,
         table: operation.table,
-        userId: operation.userId,
+        _userId: operation.userId,
       });
 
       result.errors.push('Internal validation error');
@@ -281,7 +281,7 @@ class SQLSanitizer {
       return result;
     }
 
-    Object.entries(operation.conditions).forEach(([key, value]) => {
+    Object.entries(operation.conditions).forEach(([key,_value]) => {
       // Validate condition keys
       if (this.containsDangerousPatterns(key)) {
         result.errors.push(`Condition key '${key}' contains dangerous patterns`);
@@ -319,7 +319,7 @@ class SQLSanitizer {
     }
 
     // Check if user is authorized
-    if (tableConfig.lgpdProtected && !operation.userId) {
+    if (tableConfig.lgpdProtected && !operation._userId) {
       result.errors.push('Operations on LGPD-protected data require user identification');
       result.riskLevel = 'HIGH';
       result.isValid = false;
@@ -403,7 +403,7 @@ class SQLSanitizer {
     }
 
     logger.auditDataAccess({
-      userId: operation.userId || 'unknown',
+      _userId: operation.userId || 'unknown',
       patientId: operation.patientId,
       operation: `SQL_${operation.type}`,
       dataType: operation.table,
@@ -420,7 +420,7 @@ class SQLSanitizer {
       riskLevel: result.riskLevel,
       errorCount: result.errors.length,
       warningCount: result.warnings.length,
-      userId: operation.userId,
+      _userId: operation.userId,
       patientId: operation.patientId,
     });
   }

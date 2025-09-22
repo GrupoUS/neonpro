@@ -116,7 +116,7 @@ For API support, contact: api-support@neonpro.health
  */
 export function createOpenAPIApp() {
   return new OpenAPIHono<Environment>({
-    defaultHook: (result, c) => {
+    defaultHook: (result,_c) => {
       if (!result.success) {
         return c.json(
           {

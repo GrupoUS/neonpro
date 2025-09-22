@@ -193,7 +193,7 @@ export function testColorContrast(container: HTMLElement): {
   );
   const results: any[] = [];
 
-  textElements.forEach(_element => {
+  textElements.forEach(element => {
     const computedStyle = window.getComputedStyle(element);
     const foreground = computedStyle.color;
     const background = computedStyle.backgroundColor;
@@ -301,7 +301,7 @@ export function testFormAccessibility(container: HTMLElement): {
   let hasErrorMessages = false;
   let hasLabels = false;
 
-  forms.forEach(_form => {
+  forms.forEach(form => {
     const requiredFields = form.querySelectorAll('[required]');
     const errorContainers = form.querySelectorAll(
       '[role="alert"], [aria-live="assertive"]',
@@ -314,7 +314,7 @@ export function testFormAccessibility(container: HTMLElement): {
     hasLabels = hasLabels || labels.length > 0;
 
     // Check if all inputs have labels
-    inputs.forEach(_input => {
+    inputs.forEach(input => {
       const hasLabel = input.hasAttribute('aria-label')
         || input.hasAttribute('aria-labelledby')
         || (input.id && form.querySelector(`label[for="${input.id}"]`));
@@ -327,7 +327,7 @@ export function testFormAccessibility(container: HTMLElement): {
     });
 
     // Check if required fields have proper ARIA attributes
-    requiredFields.forEach(_field => {
+    requiredFields.forEach(field => {
       if (!field.hasAttribute('aria-required')) {
         issues.push(`Required field missing aria-required attribute`);
       }
@@ -358,7 +358,7 @@ export function testTableAccessibility(container: HTMLElement): {
   let hasCaption = false;
   let hasScope = false;
 
-  tables.forEach(_table => {
+  tables.forEach(table => {
     const headers = table.querySelectorAll('th');
     const caption = table.querySelector('caption');
     const scopedHeaders = table.querySelectorAll('th[scope]');
@@ -398,7 +398,7 @@ export function testImageAccessibility(container: HTMLElement): {
   let hasAltText = true;
   let hasDecorativeImages = false;
 
-  images.forEach(_img => {
+  images.forEach(img => {
     const alt = img.getAttribute('alt');
 
     if (!alt) {
@@ -429,7 +429,7 @@ export function testModalAccessibility(container: HTMLElement): {
   );
   const issues: string[] = [];
 
-  modals.forEach(_modal => {
+  modals.forEach(modal => {
     const hasTitle = modal.hasAttribute('aria-labelledby');
     const hasDescription = modal.hasAttribute('aria-describedby');
     const isFocusTrapped = modal.querySelector('[data-focus-trapped]') !== null;

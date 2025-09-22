@@ -87,28 +87,24 @@ export function usePatients(options = {}) {
 
 // Hook para queries de agendamentos
 export function useAppointments(options = {}): any {
-  return useSupabaseQuery(
-    ['appointments'],
-    async () => {
-      const { data, error } = await supabase
-        .from('appointments')
-        .select(
-          `
+  return useSupabaseQuery(['appointments'], async () => {
+    const { data, error } = await supabase
+      .from('appointments')
+      .select(
+        `
           *,
           patient:patients(*),
           professional:professionals(*),
-          service:services(*)
+          _service:services(*)
         `,
-        )
-        .order('start_time', { ascending: true });
+      )
+      .order('start_time', { ascending: true });
 
-      return { data, error };
-    },
-    {
-      staleTime: 2 * 60 * 1000,
-      ...options,
-    },
-  );
+    return { data, error };
+  }, {
+    staleTime: 2 * 60 * 1000,
+    ...options,
+  });
 }
 
 // Hook para agendamentos do dia com real-time
@@ -126,7 +122,7 @@ export function useTodayAppointments(professionalId: string | undefined): any {
           *,
           patient:patients(*),
           professional:professionals(*),
-          service:services(*)
+          _service:services(*)
         `,
         )
         .gte('start_time', `${today}T00:00:00`)
@@ -150,41 +146,36 @@ export function useTodayAppointments(professionalId: string | undefined): any {
 
 // Hook para estatísticas com real-time
 export function useStats() {
-  return useSupabaseRealTimeQuery(
-    ['stats'],
-    'patients',
-    async () => {
-      const [
-        { count: totalPatients },
-        { count: totalAppointments },
-        { count: todayAppointments },
-      ] = await Promise.all([
-        supabase.from('patients').select('*', { count: 'exact', head: true }),
-        supabase
-          .from('appointments')
-          .select('*', { count: 'exact', head: true }),
-        supabase
-          .from('appointments')
-          .select('*', { count: 'exact', head: true })
-          .gte(
-            'start_time',
-            new Date().toISOString().split('T')[0] + 'T00:00:00',
-          ),
-      ]);
+  return useSupabaseRealTimeQuery(['stats'], 'patients', async () => {
+    const [
+      { count: totalPatients },
+      { count: totalAppointments },
+      { count: todayAppointments },
+    ] = await Promise.all([
+      supabase.from('patients').select('*', { count: 'exact', head: true }),
+      supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true }),
+      supabase
+        .from('appointments')
+        .select('*', { count: 'exact', head: true })
+        .gte(
+          'start_time',
+          new Date().toISOString().split('T')[0] + 'T00:00:00',
+        ),
+    ]);
 
-      return {
-        data: {
-          totalPatients: totalPatients || 0,
-          totalAppointments: totalAppointments || 0,
-          todayAppointments: todayAppointments || 0,
-        },
-        error: null,
-      };
-    },
-    {
-      staleTime: 5 * 60 * 1000,
-    },
-  );
+    return {
+      data: {
+        totalPatients: totalPatients || 0,
+        totalAppointments: totalAppointments || 0,
+        todayAppointments: todayAppointments || 0,
+      },
+      error: null,
+    };
+  }, {
+    staleTime: 5 * 60 * 1000,
+  });
 }
 
 // Hook genérico para mutations do Supabase
@@ -238,10 +229,10 @@ export function useSupabaseMutation(
       if (result.error) throw result.error;
       return result.data;
     },
-    onSuccess: (data, _variables) => {
+    onSuccess: (data, variables) => {
       // Invalidar queries relacionadas
       if (options.invalidateQueries) {
-        options.invalidateQueries.forEach(_queryKey => {
+        options.invalidateQueries.forEach(queryKey => {
           queryClient.invalidateQueries({ queryKey });
         });
       }
@@ -257,7 +248,7 @@ export function useSupabaseMutation(
 
       options.onSuccess?.(data);
     },
-    onError: (_error: any) => {
+    onError: (error: any) => {
       console.error(`Error in ${table} mutation:`, error);
 
       // Mostrar toast de erro
@@ -340,9 +331,9 @@ export function useAppointmentMutation(options = {}) {
 export function useRealTimeSubscription(
   table: string,
   callbacks: {
-    onInsert?: (payload: any) => void;
-    onUpdate?: (payload: any) => void;
-    onDelete?: (payload: any) => void;
+    onInsert?: (_payload: any) => void;
+    onUpdate?: (_payload: any) => void;
+    onDelete?: (_payload: any) => void;
   },
   filters?: Record<string, any>,
 ) {

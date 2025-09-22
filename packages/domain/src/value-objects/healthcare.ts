@@ -9,7 +9,7 @@ export interface HealthcareInfo {
   allergies: string[];
   medications: string[];
   medicalConditions: string[];
-  bloodType?: BloodType;
+  bloodType?: import('./gender.js').BloodType;
   organDonor: boolean;
   medicalNotes?: string;
 }

@@ -20,7 +20,7 @@ describe('Chat streaming SLO', () => {
   it('starts streaming within 2s', async () => {
     const start = performance.now();
     const stream = await streamAestheticResponse(
-      [{ role: 'user', content: 'Olá' }],
+      [{ _role: 'user', content: 'Olá' }],
       'client_1',
       'gpt-5-mini',
       'sess',

@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 /**
  * Base patient schema (T084 - Code duplication removal)
  * Core patient fields used across all layers
@@ -14,7 +12,7 @@ export const BasePatientSchema = z.object({
   email: z.string().email("Email inválido").optional().nullable(),
   phone: z.string().optional().nullable(),
   gender: z
-    .enum(["male", "female", "other"], {
+    .enum(["male","female","other"], {
       errorMap: () => ({ message: "Gênero inválido" }),
     })
     .optional(),
@@ -24,7 +22,7 @@ export const BasePatientSchema = z.object({
     .optional()
     .nullable(),
   status: z
-    .enum(["active", "inactive", "pending"], {
+    .enum(["active","inactive","pending"], {
       errorMap: () => ({ message: "Status inválido" }),
     })
     .default("active"),
@@ -101,7 +99,7 @@ export const LGPDConsentSchema = z.object({
   dataProcessing: z.boolean(),
   dataSharing: z.boolean(),
   marketing: z.boolean().default(false),
-  retentionPeriod: z.enum(["5_years", "10_years", "25_years"], {
+  retentionPeriod: z.enum(["5_years","10_years","25_years"], {
     errorMap: () => ({ message: "Período de retenção inválido" }),
   }),
   consentedAt: z.string().datetime().optional(),

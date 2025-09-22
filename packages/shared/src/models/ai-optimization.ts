@@ -22,12 +22,12 @@
  *
  * For detailed migration steps, see the repository CHANGELOG or MIGRATION.md (if available).
  */
-import { z } from "zod";
 import {
   HealthcareDataClassification,
   LGPDDataCategory,
   DataRetentionClass,
 } from "./healthcare-base";
+import { z } from "zod";
 
 // AI Provider Types
 export enum AIProviderOpt {
@@ -444,7 +444,7 @@ export class HealthcareAIOptimizationUtils {
    */
   static generateSemanticHash(
     prompt: string,
-    context: HealthcareAIUseCase,
+    _context: HealthcareAIUseCase,
   ): string {
     // Simple hash implementation - in production, use proper semantic hashing
     const combined = `${prompt}:${context}`;

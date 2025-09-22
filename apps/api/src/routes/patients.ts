@@ -9,7 +9,6 @@ import { Hono } from 'hono';
 import type { Context } from 'hono';
 import { cache } from 'hono/cache';
 import { etag } from 'hono/etag';
-import { z } from 'zod';
 import { badRequest, created, notFound, ok, serverError } from '../utils/responses';
 
 // Consent duration configuration (defaults to 1 year)
@@ -22,7 +21,7 @@ const CONSENT_DURATION_MS = (() => {
 
 // Define context variables interface
 interface Variables {
-  userId: string;
+  _userId: string;
 }
 
 // Create typed Hono instance
@@ -60,13 +59,13 @@ const PatientQuerySchema = z.object({
 
 class PatientService extends BaseService {
   // Add public wrapper method for clinic access validation
-  async checkClinicAccess(userId: string, clinicId: string): Promise<boolean> {
+  async checkClinicAccess(_userId: string, clinicId: string): Promise<boolean> {
     return this.validateClinicAccess(userId, clinicId);
   }
 
   async getPatients(
     clinicId: string,
-    userId: string,
+    _userId: string,
     options: {
       page: number;
       limit: number;
@@ -80,8 +79,7 @@ class PatientService extends BaseService {
         userId,
         tableName: 'patients',
         recordId: clinicId,
-      },
-      async () => {
+      }, async () => {
         const offset = (options.page - 1) * options.limit;
 
         const whereClause: any = {
@@ -113,7 +111,7 @@ class PatientService extends BaseService {
                   startTime: true,
                   status: true,
                   // Remove the invalid service relation for now
-                  // service: {
+                  // _service: {
                   //   select: { name: true },
                   // },
                 },
@@ -144,15 +142,14 @@ class PatientService extends BaseService {
     );
   }
 
-  async getPatientById(patientId: string, userId: string) {
+  async getPatientById(patientId: string, _userId: string) {
     return this.withAuditLog(
       {
         operation: 'GET_PATIENT',
         userId,
         tableName: 'patients',
         recordId: patientId,
-      },
-      async () => {
+      }, async () => {
         const patient = await prisma.patient.findUnique({
           where: { id: patientId },
           include: {
@@ -164,7 +161,7 @@ class PatientService extends BaseService {
                   select: { fullName: true },
                 },
                 // Remove the invalid service relation for now
-                // service: {
+                // _service: {
                 //   select: { name: true, duration: true },
                 // },
               },
@@ -186,7 +183,7 @@ class PatientService extends BaseService {
   }
   async createPatient(
     data: z.infer<typeof PatientCreateSchema>,
-    userId: string,
+    _userId: string,
   ) {
     // Validate LGPD consent if processing personal data
     if (data.cpf || data.email) {
@@ -207,8 +204,7 @@ class PatientService extends BaseService {
         tableName: 'patients',
         recordId: 'new',
         newValues: data,
-      },
-      async () => {
+      }, async () => {
         // Generate medical record number
         const medicalRecordNumber = await this.generateMedicalRecordNumber(
           data.clinicId,
@@ -260,7 +256,7 @@ class PatientService extends BaseService {
 
   async updatePatient(
     data: z.infer<typeof PatientUpdateSchema>,
-    userId: string,
+    _userId: string,
   ) {
     const existingPatient = await prisma.patient.findUnique({
       where: { id: data.id },
@@ -278,8 +274,7 @@ class PatientService extends BaseService {
         recordId: data.id,
         oldValues: existingPatient,
         newValues: data,
-      },
-      async () => {
+      }, async () => {
         const { id, ...updateData } = data;
 
         return prisma.patient.update({
@@ -309,7 +304,7 @@ const validateClinicAccess = async (
   const userId = c.get('userId'); // Now properly typed
   const clinicId = c.req.query('clinicId') || (await c.req.json())?.clinicId;
 
-  if (!userId) {
+  if (!_userId) {
     return c.json({ error: 'Unauthorized' }, 401);
   }
 
@@ -382,7 +377,7 @@ app.get(
     const userId = c.get('userId'); // Now properly typed
 
     try {
-      const patient = await patientService.getPatientById(patientId, userId);
+      const patient = await patientService.getPatientById(patientId, _userId);
 
       // Add LGPD compliance headers
       c.header('X-Data-Classification', 'sensitive');
@@ -415,7 +410,7 @@ app.post(
     const userId = c.get('userId'); // Now properly typed
 
     try {
-      const patient = await patientService.createPatient(data, userId);
+      const patient = await patientService.createPatient(data, _userId);
 
       // Add performance headers
       c.header('X-Created-At', new Date().toISOString());

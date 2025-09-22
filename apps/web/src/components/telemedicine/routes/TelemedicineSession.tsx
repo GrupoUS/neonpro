@@ -3,9 +3,9 @@
  * Manages individual video consultation sessions with real-time WebRTC communication
  */
 
+import { useNavigate } from '@tanstack/react-router';
 import { Activity } from 'lucide-react';
 import React from 'react';
-import { useNavigate } from '@tanstack/react-router';
 
 import { VideoConsultation } from '@/components/telemedicine/VideoConsultation';
 

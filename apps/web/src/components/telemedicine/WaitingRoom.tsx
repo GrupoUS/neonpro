@@ -10,17 +10,11 @@ import {
   AlertTriangle,
   Bell,
   BellOff,
-  Calendar,
   CheckCircle,
-  Clock,
   FileText,
   Heart,
-  Info,
   LogOut,
-  Phone,
   RefreshCw,
-  Ruler,
-  Scale,
   Settings,
   Shield,
   Thermometer,
@@ -44,7 +38,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { Tabs } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 
 import {
@@ -61,13 +54,6 @@ interface WaitingRoomProps {
   onSessionStart?: (sessionId: string) => void;
   onEmergencyEscalation?: () => void;
   className?: string;
-}
-
-interface QueueInfo {
-  position: number;
-  estimatedWaitTime: number;
-  totalInQueue: number;
-  currentlyServingId?: string;
 }
 
 interface VitalSigns {
@@ -101,13 +87,12 @@ export function WaitingRoom({
     joinWaitingRoom,
     leaveWaitingRoom,
     updatePreConsultationData,
-    isJoining,
     isLeaving,
   } = useWaitingRoom({ appointmentId, patientId });
 
   const { queueInfo, refreshPosition } = useQueuePosition(appointmentId);
   const { checkResults, performCheck, isChecking } = usePreConsultationCheck(appointmentId);
-  const { consent, requestConsent, updateConsent } = useSessionConsent(appointmentId);
+  const { consent, updateConsent } = useSessionConsent(appointmentId);
   const { _triageAssessment, performTriage } = useEmergencyTriage(appointmentId);
 
   // State
@@ -119,7 +104,6 @@ export function WaitingRoom({
   });
   const [isPreparationComplete, setIsPreparationComplete] = useState(false);
   const [showVitalsDialog, setShowVitalsDialog] = useState(false);
-  const [showTriageDialog, setShowTriageDialog] = useState(false);
   const [showConsentDialog, setShowConsentDialog] = useState(false);
   const [audioEnabled, setAudioEnabled] = useState(true);
   const [videoEnabled, setVideoEnabled] = useState(true);
@@ -201,7 +185,7 @@ export function WaitingRoom({
       } else {
         setShowTriageDialog(true);
       }
-    } catch (error) {
+    } catch {
       toast.error('Erro ao processar emergência');
     }
   }, [preConsultationData, performTriage, onEmergencyEscalation]);
@@ -222,7 +206,7 @@ export function WaitingRoom({
       onSessionStart?.(sessionId);
 
       toast.success('Iniciando consulta...');
-    } catch (error) {
+    } catch {
       toast.error('Erro ao iniciar consulta');
     }
   }, [
@@ -244,13 +228,6 @@ export function WaitingRoom({
   }, []);
 
   // Handle symptoms update
-  const handleSymptomsUpdate = useCallback((symptoms: string[]) => {
-    setPreConsultationData(prev => ({
-      ...prev,
-      symptoms,
-    }));
-  }, []);
-
   // Handle consent completion
   const handleConsentComplete = useCallback(async () => {
     try {
@@ -261,7 +238,7 @@ export function WaitingRoom({
       });
       setShowConsentDialog(false);
       toast.success('Consentimento registrado');
-    } catch (error) {
+    } catch {
       toast.error('Erro ao registrar consentimento');
     }
   }, [updateConsent]);

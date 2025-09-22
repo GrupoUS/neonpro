@@ -1,6 +1,30 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  Alert,
+  AlertDescription,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  Switch,
+} from '@neonpro/ui';
+import { cn } from '@neonpro/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
@@ -17,46 +41,10 @@ import {
   Share,
   Shield,
   Trash2,
-  User,
   X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  Alert,
-  AlertDescription,
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Checkbox,
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  Separator,
-  Switch,
-  Textarea,
-} from '@neonpro/ui';
-import { cn } from '@neonpro/utils';
 
 // LGPD consent types following Brazilian data protection law
 interface ConsentRecord {
@@ -219,7 +207,7 @@ export function ConsentManagementDialog({
   onConsentUpdate,
   onDataExport,
   onDataErasure,
-  userRole,
+  userRole: _userRole,
   className,
 }: ConsentManagementDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -241,19 +229,16 @@ export function ConsentManagementDialog({
   // Load current consent status
   useEffect(() => {
     if (patientData.consents) {
-      const currentConsents = patientData.consents.reduce(
-        (acc, consent) => {
-          acc[consent.consentType.replace('_', '')] = consent.granted;
-          return acc;
-        },
-        {} as Record<string, boolean>,
-      );
+      const currentConsents = patientData.consents.reduce((acc, consent) => {
+        acc[consent.consentType.replace('_', '')] = consent.granted;
+        return acc;
+      }, {} as Record<string, boolean>);
 
       form.reset(currentConsents as ConsentFormData);
     }
   }, [patientData.consents, form]);
 
-  const handleConsentSubmit = async (_data: any) => {
+  const handleConsentSubmit = async (data: any) => {
     setIsLoading(true);
     try {
       await onConsentUpdate(data);
@@ -416,7 +401,7 @@ export function ConsentManagementDialog({
                             </p>
                             <div className='flex flex-wrap gap-1'>
                               {consent.dataCategories.map(
-                                (category, _index) => (
+                                (category, index) => (
                                   <Badge
                                     key={index}
                                     variant='outline'

@@ -1,9 +1,7 @@
-import type { 
-  ConsentRecord, 
-  ComplianceViolation 
-} from '../entities/consent.js';
-import { 
-  ConsentStatus
+import {
+  type ConsentRecord,
+  ConsentStatus,
+  type ComplianceViolation
 } from '../entities/consent.js';
 
 /**
@@ -152,6 +150,13 @@ export interface ConsentQueryRepository {
    * @returns Compliance report
    */
   generateComplianceReport(clinicId: string, startDate: string, endDate: string): Promise<ComplianceReport>;
+
+  /**
+   * Get consent statistics
+   * @param clinicId Clinic ID
+   * @returns Consent statistics
+   */
+  getStatistics(clinicId: string): Promise<ConsentStatistics>;
 }
 
 /**

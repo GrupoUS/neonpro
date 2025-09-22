@@ -362,7 +362,7 @@ class AccessibilityTestRunner {
       }
 
       // Determine test context based on component category
-      let context: keyof typeof healthcareTestContexts = 'PATIENT_PORTAL';
+      let _context: keyof typeof healthcareTestContexts = 'PATIENT_PORTAL';
       switch (component.category) {
         case 'telemedicine':
           context = 'TELEMEDICINE';
@@ -471,7 +471,7 @@ class AccessibilityTestRunner {
 
       // Also generate human-readable summary
       await this.generateHumanReadableReport();
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to generate accessibility report:', error);
     }
   }
@@ -561,7 +561,7 @@ ${
     try {
       await fs.writeFile(summaryPath, summary);
       console.log(`📋 Human-readable summary generated: ${summaryPath}`);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to generate summary report:', error);
     }
   }

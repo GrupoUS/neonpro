@@ -183,50 +183,50 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  event.respondWith(handleHealthcareRequest(request));
+  event.respondWith(handleHealthcareRequest(_request));
 });
 
 // Handle fetch requests with healthcare-specific logic
-async function handleHealthcareRequest(request) {
+async function handleHealthcareRequest(_request) {
   const url = new URL(request.url);
   const pathname = url.pathname;
 
   try {
     // Emergency endpoints - always try network first, but fallback to cache
     if (isEmergencyEndpoint(pathname)) {
-      return await handleEmergencyRequest(request);
+      return await handleEmergencyRequest(_request);
     }
 
     // Healthcare API endpoints - network first with cache fallback
     if (isHealthcareAPI(pathname)) {
-      return await handleHealthcareAPI(request);
+      return await handleHealthcareAPI(_request);
     }
 
     // Static assets - cache first
     if (isStaticAsset(pathname)) {
-      return await handleStaticAsset(request);
+      return await handleStaticAsset(_request);
     }
 
     // Image requests with healthcare considerations
     if (isImageRequest(pathname)) {
-      return await handleImageRequest(request);
+      return await handleImageRequest(_request);
     }
 
     // Regular API calls - network first
     if (isAPICall(pathname)) {
-      return await handleApiRequest(request);
+      return await handleApiRequest(_request);
     }
 
     // Default: try network, fallback to cache
-    return await handlePageRequest(request);
-  } catch (error) {
-    console.error('[SW] Error handling request:', error);
-    return await handleOfflineFallback(request);
+    return await handlePageRequest(_request);
+  } catch (_error) {
+    console.error('[SW] Error handling _request:', error);
+    return await handleOfflineFallback(_request);
   }
 }
 
 // Handle API requests with network-first strategy
-async function handleApiRequest(request) {
+async function handleApiRequest(_request) {
   const url = new URL(request.url);
 
   // Use network-first for critical API endpoints
@@ -240,34 +240,34 @@ async function handleApiRequest(request) {
     || url.pathname.includes('/realtime')
     || url.pathname.includes('/websocket')
   ) {
-    return fetch(request);
+    return fetch(_request);
   }
 
   return networkFirst(request, API_CACHE);
 }
 
 // Handle static assets with cache-first strategy
-async function handleStaticAsset(request) {
+async function handleStaticAsset(_request) {
   return cacheFirst(request, STATIC_CACHE);
 }
 
 // Handle image requests with stale-while-revalidate strategy
-async function handleImageRequest(request) {
+async function handleImageRequest(_request) {
   return staleWhileRevalidate(request, DYNAMIC_CACHE);
 }
 
 // Handle page requests with network-first strategy
-async function handlePageRequest(request) {
+async function handlePageRequest(_request) {
   return networkFirst(request, DYNAMIC_CACHE);
 }
 
 // Emergency request handler - critical healthcare data
-async function handleEmergencyRequest(request) {
+async function handleEmergencyRequest(_request) {
   const cacheName = EMERGENCY_CACHE;
 
   try {
     // Try network first for fresh emergency data
-    const networkResponse = await fetch(request);
+    const networkResponse = await fetch(_request);
 
     if (networkResponse.ok) {
       // Cache successful emergency responses
@@ -281,7 +281,7 @@ async function handleEmergencyRequest(request) {
     console.log('[SW] Emergency network failed, using cache:', request.url);
 
     // Fallback to cached emergency data
-    const cachedResponse = await caches.match(request);
+    const cachedResponse = await caches.match(_request);
     if (cachedResponse) {
       return cachedResponse;
     }
@@ -292,16 +292,16 @@ async function handleEmergencyRequest(request) {
 }
 
 // Healthcare API handler - patient data with LGPD compliance
-async function handleHealthcareAPI(request) {
+async function handleHealthcareAPI(_request) {
   const cacheName = HEALTHCARE_CACHE;
 
   try {
     // Network first for healthcare data freshness
-    const networkResponse = await fetch(request);
+    const networkResponse = await fetch(_request);
 
     if (networkResponse.ok) {
       // Only cache non-sensitive healthcare responses
-      if (isCacheableHealthcareData(request)) {
+      if (isCacheableHealthcareData(_request)) {
         const cache = await caches.open(cacheName);
         await cache.put(request, networkResponse.clone());
       }
@@ -315,7 +315,7 @@ async function handleHealthcareAPI(request) {
     );
 
     // Check cache for healthcare data
-    const cachedResponse = await caches.match(request);
+    const cachedResponse = await caches.match(_request);
     if (
       cachedResponse
       && !isExpired(cachedResponse, CACHE_CONFIG.healthcare.ttl)
@@ -330,7 +330,7 @@ async function handleHealthcareAPI(request) {
 }
 
 // Offline fallback handler
-async function handleOfflineFallback(request) {
+async function handleOfflineFallback(_request) {
   const url = new URL(request.url);
 
   // HTML pages: show offline page
@@ -364,20 +364,20 @@ async function handleOfflineFallback(request) {
 async function cacheFirst(request, cacheName) {
   try {
     const cache = await caches.open(cacheName);
-    const cachedResponse = await cache.match(request);
+    const cachedResponse = await cache.match(_request);
 
     if (cachedResponse) {
       return cachedResponse;
     }
 
-    const networkResponse = await fetch(request);
+    const networkResponse = await fetch(_request);
 
     if (networkResponse.ok) {
       cache.put(request, networkResponse.clone());
     }
 
     return networkResponse;
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Cache-first strategy failed:', error);
     return new Response('Offline', { status: 503 });
   }
@@ -386,7 +386,7 @@ async function cacheFirst(request, cacheName) {
 // Network-first strategy
 async function networkFirst(request, cacheName) {
   try {
-    const networkResponse = await fetch(request);
+    const networkResponse = await fetch(_request);
 
     if (networkResponse.ok) {
       const cache = await caches.open(cacheName);
@@ -398,7 +398,7 @@ async function networkFirst(request, cacheName) {
     console.log('[SW] Network failed, trying cache:', error.message);
 
     const cache = await caches.open(cacheName);
-    const cachedResponse = await cache.match(request);
+    const cachedResponse = await cache.match(_request);
 
     if (cachedResponse) {
       return cachedResponse;
@@ -411,9 +411,9 @@ async function networkFirst(request, cacheName) {
 // Stale-while-revalidate strategy
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
-  const cachedResponse = await cache.match(request);
+  const cachedResponse = await cache.match(_request);
 
-  const fetchPromise = fetch(request).then(networkResponse => {
+  const fetchPromise = fetch(_request).then(networkResponse => {
     if (networkResponse.ok) {
       cache.put(request, networkResponse.clone());
     }
@@ -480,11 +480,11 @@ async function syncHealthcareForms() {
             });
           });
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('[SW] Failed to sync healthcare form:', form.id, error);
       }
     }
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Background sync failed:', error);
   }
 }
@@ -494,7 +494,7 @@ async function syncPatientData() {
   try {
     // Implement patient data synchronization logic
     console.log('[SW] Patient data sync completed');
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Patient data sync failed:', error);
   }
 }
@@ -573,7 +573,7 @@ function isAPICall(pathname) {
   return pathname.startsWith('/api/');
 }
 
-function isCacheableHealthcareData(request) {
+function isCacheableHealthcareData(_request) {
   const url = new URL(request.url);
 
   // Don't cache sensitive patient data endpoints

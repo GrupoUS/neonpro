@@ -14,6 +14,8 @@
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import * as v from 'valibot';
+import { logger } from '../../lib/logger';
+import { GlobalErrorHandler } from '../../middleware/error-handler';
 import {
   AppointmentSchema,
   getEntitySchema,
@@ -60,7 +62,7 @@ const crudIntentSchema = v.object({
   step: v.literal('intent'),
   operation: v.string([v.picklist(CRUD_OPERATIONS)]),
   entity: v.string([v.picklist(SUPPORTED_ENTITIES)]),
-  data: v.custom((data, ctx) => {
+  data: v.custom((data,_ctx) => {
     // Get the entity from the parent object
     const entity = ctx?.object?.entity;
     const operation = ctx?.object?.operation;
@@ -84,7 +86,7 @@ const crudIntentSchema = v.object({
         issues: [
           {
             type: 'custom',
-            context: ctx,
+            _context: ctx,
             message: `Unsupported entity: ${entity}`,
           },
         ],
@@ -117,7 +119,7 @@ const crudConfirmSchema = v.object({
   step: v.literal('confirm'),
   intentId: v.string([v.uuid('Invalid intent ID')]),
   confirmed: v.boolean(),
-  modifications: v.optional(v.lazy(() =>
+  modifications: v.optional(_v.lazy(() =>
     v.object({
       patientData: v.optional(PatientSchema.partial()),
       appointmentData: v.optional(AppointmentSchema.partial()),
@@ -140,7 +142,7 @@ const crudExecuteSchema = v.object({
   step: v.literal('execute'),
   intentId: v.string([v.uuid('Invalid intent ID')]),
   confirmationId: v.string([v.uuid('Invalid confirmation ID')]),
-  finalData: v.optional(v.lazy(() =>
+  finalData: v.optional(_v.lazy(() =>
     v.object({
       patientData: v.optional(PatientSchema.partial()),
       appointmentData: v.optional(AppointmentSchema.partial()),
@@ -388,8 +390,8 @@ async function generatePreview(
       const current = await getCurrentData(entity, data.id, ctx);
       if (current) {
         preview.changes = Object.entries(data)
-          .filter(([key, value]) => key !== 'id' && current[key] !== value)
-          .map(([key, value]) => ({
+          .filter(([key,_value]) => key !== 'id' && current[key] !== value)
+          .map(([key,_value]) => ({
             field: key,
             oldValue: this.sanitizePreviewValue(current[key], key),
             newValue: this.sanitizePreviewValue(value, key),
@@ -416,7 +418,7 @@ async function generatePreview(
       error: appError.message,
       operation,
       entity,
-      userId: ctx.user?.id,
+      _userId: ctx.user?.id,
     });
 
     return null;
@@ -461,7 +463,7 @@ async function getCurrentData(
       error: appError.message,
       entity,
       id,
-      userId: ctx.user?.id,
+      _userId: ctx.user?.id,
     });
 
     return null;
@@ -479,7 +481,7 @@ export const crudRouter = router({
    */
   crud: healthcareProcedure
     .input(crudRequestSchema)
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ ctx,_input }) => {
       try {
         switch (input.step) {
           case 'intent':
@@ -500,7 +502,7 @@ export const crudRouter = router({
         // Create error audit trail
         await ctx.prisma.auditTrail.create({
           data: {
-            userId: ctx.userId,
+            _userId: ctx.userId,
             clinicId: ctx.clinicId,
             action: AuditAction.CREATE,
             resource: 'ai_crud_operation',
@@ -541,41 +543,29 @@ export const crudRouter = router({
         operationId: v.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx,_input }) => {
       try {
-        // Check if we have a record of this operation
-        const auditRecord = await ctx.prisma.auditTrail.findFirst({
-          where: {
-            additionalInfo: {
-              path: ['operationId'],
-              equals: input.operationId,
-            },
-          },
-          orderBy: {
-            createdAt: 'desc',
-          },
-        });
+        // Use proper operation state management instead of audit trail
+        const operationStateService = createOperationStateService(ctx.prisma);
+        const operationState = await operationStateService.getStateByOperationId(input.operationId);
 
-        if (!auditRecord) {
+        if (!operationState) {
           throw new TRPCError({
             code: 'NOT_FOUND',
             message: 'Operation not found',
           });
         }
 
-        const additionalInfo = JSON.parse(auditRecord.additionalInfo || '{}');
-
         return {
           operationId: input.operationId,
-          status: auditRecord.status === AuditStatus.SUCCESS ? 'completed' : 'failed',
-          step: additionalInfo.step || 'unknown',
-          entity: additionalInfo.entity || 'unknown',
-          operation: additionalInfo.operation || 'unknown',
-          completedAt: auditRecord.createdAt,
-          success: auditRecord.status === AuditStatus.SUCCESS,
-          error: auditRecord.status === AuditStatus.FAILED
-            ? additionalInfo.error
-            : null,
+          status: operationState.status,
+          step: operationState.step,
+          entity: operationState.entity,
+          operation: operationState.operation,
+          completedAt: operationState.completedAt,
+          success: operationState.status === 'completed',
+          error: operationState.errorMessage,
+          metadata: operationState.metadata,
         };
       } catch (error) {
         if (error instanceof TRPCError) {
@@ -693,7 +683,7 @@ async function handleIntentStep(
   // Create audit trail
   await ctx.prisma.auditTrail.create({
     data: {
-      userId: ctx.userId,
+      _userId: ctx.userId,
       clinicId: ctx.clinicId,
       patientId: input.metadata?.patientId,
       action: AuditAction.READ,
@@ -760,30 +750,24 @@ async function handleConfirmStep(
   // Generate unique confirmation ID
   const confirmationId = `confirm-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-  // Check if the intent exists and is valid
-  const intentAudit = await ctx.prisma.auditTrail.findFirst({
-    where: {
-      additionalInfo: {
-        path: ['operationId'],
-        equals: input.intentId,
-      },
-    },
-  });
+  // Check if the intent exists and is valid using proper state management
+  const operationStateService = createOperationStateService(ctx.prisma);
+  const intentState = await operationStateService.getStateByOperationId(input.intentId);
 
-  if (!intentAudit) {
+  if (!intentState) {
     throw new TRPCError({
       code: 'NOT_FOUND',
       message: 'Intent not found or expired',
     });
   }
 
-  const intentData = JSON.parse(intentAudit.additionalInfo || '{}');
+  const intentData = intentState.data;
 
   if (!input.confirmed) {
     // User rejected the operation
     await ctx.prisma.auditTrail.create({
       data: {
-        userId: ctx.userId,
+        _userId: ctx.userId,
         clinicId: ctx.clinicId,
         action: AuditAction.UPDATE,
         resource: 'ai_crud_confirmation',
@@ -827,7 +811,7 @@ async function handleConfirmStep(
   // Create audit trail
   await ctx.prisma.auditTrail.create({
     data: {
-      userId: ctx.userId,
+      _userId: ctx.userId,
       clinicId: ctx.clinicId,
       action: AuditAction.UPDATE,
       resource: 'ai_crud_confirmation',
@@ -873,34 +857,20 @@ async function handleExecuteStep(
   // Generate unique execution ID
   const executionId = `exec-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-  // Verify intent and confirmation exist
-  const intentAudit = await ctx.prisma.auditTrail.findFirst({
-    where: {
-      additionalInfo: {
-        path: ['operationId'],
-        equals: input.intentId,
-      },
-    },
-  });
+  // Verify intent and confirmation exist using proper state management
+  const operationStateService = createOperationStateService(ctx.prisma);
+  const intentState = await operationStateService.getStateByOperationId(input.intentId);
+  const confirmState = await operationStateService.getStateByOperationId(input.confirmationId);
 
-  const confirmAudit = await ctx.prisma.auditTrail.findFirst({
-    where: {
-      additionalInfo: {
-        path: ['confirmationId'],
-        equals: input.confirmationId,
-      },
-    },
-  });
-
-  if (!intentAudit || !confirmAudit) {
+  if (!intentState || !confirmState) {
     throw new TRPCError({
       code: 'NOT_FOUND',
       message: 'Intent or confirmation not found',
     });
   }
 
-  const intentData = JSON.parse(intentAudit.additionalInfo || '{}');
-  const confirmData = JSON.parse(confirmAudit.additionalInfo || '{}');
+  const intentData = intentState.data;
+  const confirmData = confirmState.data;
 
   // Get the data to execute (require finalData explicitly)
   const executionData = input.finalData;
@@ -948,9 +918,9 @@ async function handleExecuteStep(
     // Create audit trail for successful execution
     await ctx.prisma.auditTrail.create({
       data: {
-        userId: ctx.userId,
+        _userId: ctx.userId,
         clinicId: ctx.clinicId,
-        patientId: intentAudit.patientId,
+        patientId: intentData.patientId || input.finalData?.patientData?.id,
         action: mapOperationToAuditAction(intentData.operation),
         resource: intentData.entity,
         resourceType: mapEntityToResourceType(intentData.entity),
@@ -1002,7 +972,7 @@ async function handleExecuteStep(
           executionStep: 'execute',
         },
         ctx.userId,
-        intentAudit.patientId,
+        intentData.patientId || input.finalData?.patientData?.id,
       )
       : GlobalErrorHandler.createError('INTERNAL_ERROR');
 
@@ -1011,7 +981,7 @@ async function handleExecuteStep(
     // Create audit trail for failed execution
     await ctx.prisma.auditTrail.create({
       data: {
-        userId: ctx.userId,
+        _userId: ctx.userId,
         clinicId: ctx.clinicId,
         action: mapOperationToAuditAction(intentData.operation),
         resource: intentData.entity,

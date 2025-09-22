@@ -45,7 +45,7 @@ export const COMPLIANCE_CATEGORIES = {
 } as const;
 
 // Helper functions for audit logging
-export const createAuditContext = (request: any): {
+export const createAuditContext = (_request: any): {
   ipAddress: string;
   userAgent: string;
 } => {

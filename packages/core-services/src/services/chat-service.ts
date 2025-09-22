@@ -37,7 +37,7 @@ export class ChatService {
       const message: ChatMessage = {
         id: crypto.randomUUID(),
         sessionId: session.id,
-        role: "assistant",
+        _role: "assistant",
         content: res.content,
         createdAt: new Date().toISOString(),
         redactionFlags: ["lgpd"],
@@ -67,7 +67,7 @@ export class ChatService {
         const message: Partial<ChatMessage> = {
           id: crypto.randomUUID(),
           sessionId: session.id,
-          role: "assistant",
+          _role: "assistant",
           content: chunk.content,
           createdAt: new Date().toISOString(),
           redactionFlags: ["lgpd"],

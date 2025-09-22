@@ -126,19 +126,19 @@ export function initializeOpenTelemetry(): NodeSDK {
       getNodeAutoInstrumentations({
         // Disable instrumentations that might capture sensitive data
         '@opentelemetry/instrumentation-fs': {
-          enabled: false, // File system operations may contain sensitive paths
+          enabled: false,_// File system operations may contain sensitive paths
         },
         '@opentelemetry/instrumentation-dns': {
-          enabled: false, // DNS lookups not relevant for healthcare
+          enabled: false,_// DNS lookups not relevant for healthcare
         },
         '@opentelemetry/instrumentation-net': {
-          enabled: false, // Low-level network calls not needed
+          enabled: false,_// Low-level network calls not needed
         },
 
         // Configure HTTP instrumentation to redact sensitive headers
         '@opentelemetry/instrumentation-http': {
           enabled: true,
-          requestHook: (span, request) => {
+          requestHook: (span,_request) => {
             // Remove sensitive headers from tracing
             if (request.headers) {
               delete request.headers.authorization;
@@ -180,7 +180,7 @@ export function initializeOpenTelemetry(): NodeSDK {
  */
 export interface HealthcareErrorContext {
   clinicId?: string;
-  userId?: string;
+  _userId?: string;
   userRole?: string;
   requestId?: string;
   endpoint?: string;
@@ -194,10 +194,10 @@ export interface HealthcareErrorContext {
  * Extract safe context from healthcare requests
  */
 export function extractHealthcareContext(
-  request: any,
+  _request: any,
   additionalContext?: Record<string, any>,
 ): HealthcareErrorContext {
-  const context: HealthcareErrorContext = {
+  const _context: HealthcareErrorContext = {
     requestId: request.headers?.['x-request-id']
       || request.headers?.['x-trace-id']
       || undefined,

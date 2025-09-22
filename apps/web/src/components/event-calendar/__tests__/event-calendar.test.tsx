@@ -11,13 +11,13 @@ import { EventCalendar } from '../event-calendar';
 import { CalendarEvent } from '../types';
 
 // Mock healthcare compliance validator
-vi.mock('@/utils/accessibility/healthcare-audit-utils', () => ({
+vi.mock(('@/utils/accessibility/healthcare-audit-utils', () => ({
   validateCalendarEvent: vi.fn().mockReturnValue(true),
   auditEventAccess: vi.fn().mockResolvedValue({ valid: true }),
 }));
 
 // Mock Supabase client
-vi.mock('@/integrations/supabase/client', () => ({
+vi.mock(('@/integrations/supabase/client', () => ({
   supabase: {
     channel: vi.fn().mockReturnValue({
       on: vi.fn().mockReturnThis(),
@@ -26,7 +26,7 @@ vi.mock('@/integrations/supabase/client', () => ({
   },
 }));
 
-describe('EventCalendar Component - Healthcare Compliance', () => {
+describe(('EventCalendar Component - Healthcare Compliance', () => {
   const mockEvents: CalendarEvent[] = [
     {
       id: '1',
@@ -59,7 +59,7 @@ describe('EventCalendar Component - Healthcare Compliance', () => {
   });
 
   // RED TEST 1: Component renders without patient data exposure
-  it('should render calendar without exposing sensitive patient data', () => {
+  it(('should render calendar without exposing sensitive patient data', () => {
     render(
       <EventCalendar
         events={mockEvents}
@@ -78,7 +78,7 @@ describe('EventCalendar Component - Healthcare Compliance', () => {
   });
 
   // RED TEST 2: Event click triggers proper healthcare audit
-  it('should trigger audit logging when event is clicked', async () => {
+  it(_'should trigger audit logging when event is clicked',async () => {
     const { auditEventAccess } = await import(
       '@/utils/accessibility/healthcare-audit-utils'
     );
@@ -109,7 +109,7 @@ describe('EventCalendar Component - Healthcare Compliance', () => {
   });
 
   // RED TEST 3: Event deletion requires proper authorization
-  it('should require confirmation before deleting healthcare events', async () => {
+  it(_'should require confirmation before deleting healthcare events',async () => {
     const mockConfirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
 
     render(
@@ -139,7 +139,7 @@ describe('EventCalendar Component - Healthcare Compliance', () => {
   });
 
   // RED TEST 4: Time zone handling for Brazilian clinics
-  it('should handle Brazilian time zones correctly', () => {
+  it(('should handle Brazilian time zones correctly', () => {
     // Create event in São Paulo time
     const brazilTimeEvent: CalendarEvent = {
       id: '3',
@@ -163,7 +163,7 @@ describe('EventCalendar Component - Healthcare Compliance', () => {
   });
 
   // RED TEST 5: Accessibility compliance for healthcare
-  it('should meet WCAG 2.1 AA+ accessibility requirements', () => {
+  it(('should meet WCAG 2.1 AA+ accessibility requirements', () => {
     render(
       <EventCalendar
         events={mockEvents}
@@ -179,14 +179,14 @@ describe('EventCalendar Component - Healthcare Compliance', () => {
 
     // All interactive elements should be accessible
     const interactiveElements = screen.getAllByRole('button');
-    interactiveElements.forEach(_element => {
+    interactiveElements.forEach(element => {
       expect(element).toHaveAttribute('aria-label');
       expect(element).toHaveAttribute('tabindex');
     });
   });
 
   // RED TEST 6: LGPD compliance - data minimization
-  it('should implement data minimization for event display', () => {
+  it(('should implement data minimization for event display', () => {
     const sensitiveEvent: CalendarEvent = {
       id: '4',
       title: 'Consulta Confidencial',
@@ -219,7 +219,7 @@ describe('EventCalendar Component - Healthcare Compliance', () => {
   });
 
   // GREEN TEST: Event update with proper validation
-  it('should validate event updates for healthcare compliance', async () => {
+  it(_'should validate event updates for healthcare compliance',async () => {
     const updatedEvent: CalendarEvent = {
       id: '1',
       title: 'Consulta Atualizada',
@@ -250,7 +250,7 @@ describe('EventCalendar Component - Healthcare Compliance', () => {
   });
 
   // ERROR CASE: Invalid event data
-  it('should handle invalid event data gracefully', () => {
+  it(('should handle invalid event data gracefully', () => {
     const invalidEvent = {
       id: 'invalid',
       title: '', // Empty title

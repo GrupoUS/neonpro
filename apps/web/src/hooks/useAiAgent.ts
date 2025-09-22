@@ -34,7 +34,7 @@ export interface UseAiAgentOptions {
   initialSessionId?: string;
   /** User context for role-based access */
   userContext: {
-    userId: string;
+    _userId: string;
     userRole: 'admin' | 'professional' | 'assistant' | 'receptionist';
     domain?: string;
   };
@@ -68,8 +68,8 @@ export interface UseAiAgentReturn {
   error: Error | null;
 
   // Actions
-  sendMessage: (query: string, options?: {
-    context?: Record<string, any>;
+  sendMessage: (_query: string, options?: {
+    _context?: Record<string, any>;
     metadata?: Record<string, any>;
   }) => Promise<void>;
   createNewSession: (title?: string) => Promise<string>;
@@ -99,7 +99,7 @@ interface SessionResponse {
   success: boolean;
   session: {
     id: string;
-    userId: string;
+    _userId: string;
     title: string;
     createdAt: string;
     updatedAt: string;
@@ -151,14 +151,14 @@ const apiCall = async (endpoint: string, options: RequestInit = {}): Promise<any
   return response.json();
 };
 
-const sendDataAgentQuery = async (request: DataAgentRequest): Promise<DataAgentResponse> => {
+const sendDataAgentQuery = async (_request: DataAgentRequest): Promise<DataAgentResponse> => {
   return apiCall('/data-agent', {
     method: 'POST',
     body: JSON.stringify(request),
   });
 };
 
-const createSession = async (request: CreateSessionRequest): Promise<SessionResponse> => {
+const createSession = async (_request: CreateSessionRequest): Promise<SessionResponse> => {
   return apiCall('/sessions', {
     method: 'POST',
     body: JSON.stringify(request),
@@ -236,7 +236,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
   const queryClient = useQueryClient();
 
   // Load existing session
-  const { data: _sessionData, isLoading: isLoadingSession, error: sessionError } = useQuery({
+  const { data: sessionData, isLoading: isLoadingSession, error: sessionError } = useQuery({
     queryKey: ['ai-session', currentSessionId],
     queryFn: () => getSession(currentSessionId!),
     enabled: !!currentSessionId,
@@ -263,9 +263,9 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
         // Send pending message if any
         if (pendingMessage) {
           sendMessageMutation.mutate({
-            query: pendingMessage,
-            context: {
-              userId: userContext.userId,
+            _query: pendingMessage,
+            _context: {
+              _userId: userContext.userId,
               domain: userContext.domain,
             },
           });
@@ -288,7 +288,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
       if (optimisticUpdates) {
         const userMessage: ChatMessage = {
           id: `temp_user_${Date.now()}`,
-          role: 'user',
+          _role: 'user',
           content: variables.query,
           timestamp: new Date().toISOString(),
         };
@@ -296,11 +296,11 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
       }
       setError(null);
     },
-    onSuccess: (response, _variables) => {
+    onSuccess: (response, variables) => {
       if (response.success && response.response) {
         const assistantMessage: ChatMessage = {
           id: response.response.id,
-          role: 'assistant',
+          _role: 'assistant',
           content: response.response.message,
           timestamp: new Date().toISOString(),
           data: response.response.data,
@@ -316,7 +316,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
           // Add user message (if not optimistic) and assistant response
           const userMessage: ChatMessage = {
             id: `user_${Date.now()}`,
-            role: 'user',
+            _role: 'user',
             content: variables.query,
             timestamp: new Date().toISOString(),
           };
@@ -350,7 +350,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
       // Add error message to chat
       const errorMessage: ChatMessage = {
         id: `error_${Date.now()}`,
-        role: 'assistant',
+        _role: 'assistant',
         content: 'Desculpe, ocorreu um erro ao processar sua consulta. Tente novamente.',
         timestamp: new Date().toISOString(),
       };
@@ -368,7 +368,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
   });
 
   // Delete session mutation
-  const _deleteSessionMutation = useMutation({
+  const deleteSessionMutation = useMutation({
     mutationFn: deleteSession,
     onSuccess: () => {
       setCurrentSessionId(null);
@@ -391,9 +391,9 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
 
   // Callback functions
   const sendMessage = useCallback(async (
-    query: string,
+    _query: string,
     messageOptions?: {
-      context?: Record<string, any>;
+      _context?: Record<string, any>;
       metadata?: Record<string, any>;
     },
   ) => {
@@ -421,9 +421,9 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
 
     // Send message
     sendMessageMutation.mutate({
-      query: query.trim(),
-      context: {
-        userId: userContext.userId,
+      _query: query.trim(),
+      _context: {
+        _userId: userContext.userId,
         domain: userContext.domain,
         ...messageOptions?.context,
       },
@@ -532,7 +532,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
 
       case 'export_data':
         // Trigger data export
-        console.log('Export data action:', action.payload);
+        console.log('Export data action:', action._payload);
         break;
 
       case 'navigate':

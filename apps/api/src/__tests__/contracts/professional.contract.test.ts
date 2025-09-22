@@ -10,10 +10,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * Ensures type safety, input validation, and output conformity
  */
 
-describe('Professional Contract Testing', () => {
+describe(_'Professional Contract Testing',() => {
   const mockContext = {
-    user: { id: 'user-123', role: 'admin' },
-    auth: { userId: 'user-123', isAuthenticated: true },
+    user: { id: 'user-123', _role: 'admin' },
+    auth: { _userId: 'user-123', isAuthenticated: true },
     prisma: {
       professional: {
         create: vi.fn(),
@@ -48,15 +48,15 @@ describe('Professional Contract Testing', () => {
     },
   };
 
-  const _trpcMsw = createTRPCMsw<AppRouter>();
+  const trpcMsw = createTRPCMsw<AppRouter>();
   const caller = appRouter.createCaller(mockContext);
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  describe('Professional Creation Contract', () => {
-    it('should validate professional creation input and output', async () => {
+  describe(_'Professional Creation Contract',() => {
+    it(_'should validate professional creation input and output',async () => {
       const createInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Maria Silva',
@@ -73,7 +73,7 @@ describe('Professional Contract Testing', () => {
           licenseExpiryDate: '2025-12-31',
         },
         clinicId: 'clinic-456',
-        role: 'doctor',
+        _role: 'doctor',
         permissions: [
           'view_patients',
           'create_appointments',
@@ -90,7 +90,7 @@ describe('Professional Contract Testing', () => {
         crmState: 'SP',
         specializations: ['dermatology', 'aesthetic_medicine'],
         clinicId: 'clinic-456',
-        role: 'doctor',
+        _role: 'doctor',
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -130,12 +130,12 @@ describe('Professional Contract Testing', () => {
       expect(mockContext.audit.logProfessionalAction).toHaveBeenCalledWith({
         action: 'create',
         professionalId: 'prof-789',
-        userId: mockContext.user.id,
+        _userId: mockContext.user.id,
         timestamp: expect.any(Date),
       });
     });
 
-    it('should reject invalid CRM number', async () => {
+    it(_'should reject invalid CRM number',async () => {
       const invalidInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Invalid',
@@ -152,7 +152,7 @@ describe('Professional Contract Testing', () => {
           licenseExpiryDate: '2025-12-31',
         },
         clinicId: 'clinic-456',
-        role: 'doctor',
+        _role: 'doctor',
       };
 
       mockContext.crm.validateLicense.mockResolvedValue({
@@ -165,7 +165,7 @@ describe('Professional Contract Testing', () => {
       ).rejects.toThrow('Invalid CRM number: Invalid CRM format');
     });
 
-    it('should enforce CFM compliance requirements', async () => {
+    it(_'should enforce CFM compliance requirements',async () => {
       const nonCompliantInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Non Compliant',
@@ -182,7 +182,7 @@ describe('Professional Contract Testing', () => {
           licenseExpiryDate: '2025-12-31',
         },
         clinicId: 'clinic-456',
-        role: 'doctor',
+        _role: 'doctor',
       };
 
       mockContext.crm.validateLicense.mockResolvedValue({
@@ -200,8 +200,8 @@ describe('Professional Contract Testing', () => {
     });
   });
 
-  describe('Professional Retrieval Contract', () => {
-    it('should validate professional retrieval by ID', async () => {
+  describe(_'Professional Retrieval Contract',() => {
+    it(_'should validate professional retrieval by ID',async () => {
       const professionalId = 'prof-789';
       const mockProfessional = {
         id: professionalId,
@@ -211,7 +211,7 @@ describe('Professional Contract Testing', () => {
         crmState: 'SP',
         specializations: ['dermatology', 'aesthetic_medicine'],
         clinicId: 'clinic-456',
-        role: 'doctor',
+        _role: 'doctor',
         isActive: true,
         schedule: {
           workingHours: {
@@ -259,7 +259,7 @@ describe('Professional Contract Testing', () => {
       });
     });
 
-    it('should handle professional not found', async () => {
+    it(_'should handle professional not found',async () => {
       const professionalId = 'nonexistent-prof';
 
       mockContext.prisma.professional.findUnique.mockResolvedValue(null);
@@ -270,8 +270,8 @@ describe('Professional Contract Testing', () => {
     });
   });
 
-  describe('Professional Update Contract', () => {
-    it('should validate professional information updates', async () => {
+  describe(_'Professional Update Contract',() => {
+    it(_'should validate professional information updates',async () => {
       const professionalId = 'prof-789';
       const updateInput: ProfessionalInput['update'] = {
         id: professionalId,
@@ -334,7 +334,7 @@ describe('Professional Contract Testing', () => {
       expect(mockContext.audit.logProfessionalAction).toHaveBeenCalledWith({
         action: 'update',
         professionalId,
-        userId: mockContext.user.id,
+        _userId: mockContext.user.id,
         changes: expect.objectContaining({
           phone: '+5511888777666',
           email: 'maria.new@clinic.com',
@@ -343,7 +343,7 @@ describe('Professional Contract Testing', () => {
       });
     });
 
-    it('should prevent unauthorized updates to critical fields', async () => {
+    it(_'should prevent unauthorized updates to critical fields',async () => {
       const professionalId = 'prof-789';
       const unauthorizedUpdate: ProfessionalInput['update'] = {
         id: professionalId,
@@ -369,8 +369,8 @@ describe('Professional Contract Testing', () => {
     });
   });
 
-  describe('Professional Schedule Management Contract', () => {
-    it('should validate schedule updates', async () => {
+  describe(_'Professional Schedule Management Contract',() => {
+    it(_'should validate schedule updates',async () => {
       const scheduleInput: ProfessionalInput['updateSchedule'] = {
         professionalId: 'prof-789',
         schedule: {
@@ -416,7 +416,7 @@ describe('Professional Contract Testing', () => {
       });
     });
 
-    it('should validate schedule conflicts', async () => {
+    it(_'should validate schedule conflicts',async () => {
       const conflictingSchedule: ProfessionalInput['updateSchedule'] = {
         professionalId: 'prof-789',
         schedule: {
@@ -432,8 +432,8 @@ describe('Professional Contract Testing', () => {
     });
   });
 
-  describe('Professional List Contract', () => {
-    it('should validate professional listing with filters', async () => {
+  describe(_'Professional List Contract',() => {
+    it(_'should validate professional listing with filters',async () => {
       const listInput: ProfessionalInput['list'] = {
         page: 1,
         limit: 10,
@@ -441,7 +441,7 @@ describe('Professional Contract Testing', () => {
           clinicId: 'clinic-456',
           specializations: ['dermatology'],
           isActive: true,
-          role: 'doctor',
+          _role: 'doctor',
         },
         orderBy: 'fullName',
         orderDirection: 'asc',
@@ -454,7 +454,7 @@ describe('Professional Contract Testing', () => {
           crmNumber: 'CRM/SP 111111',
           specializations: ['dermatology'],
           isActive: true,
-          role: 'doctor',
+          _role: 'doctor',
         },
         {
           id: 'prof-2',
@@ -462,7 +462,7 @@ describe('Professional Contract Testing', () => {
           crmNumber: 'CRM/SP 222222',
           specializations: ['dermatology', 'aesthetic_medicine'],
           isActive: true,
-          role: 'doctor',
+          _role: 'doctor',
         },
       ];
 
@@ -498,8 +498,8 @@ describe('Professional Contract Testing', () => {
     });
   });
 
-  describe('Professional Qualification Management Contract', () => {
-    it('should validate qualification addition', async () => {
+  describe(_'Professional Qualification Management Contract',() => {
+    it(_'should validate qualification addition',async () => {
       const qualificationInput: ProfessionalInput['addQualification'] = {
         professionalId: 'prof-789',
         qualification: {
@@ -535,7 +535,7 @@ describe('Professional Contract Testing', () => {
       });
     });
 
-    it('should validate qualification expiry monitoring', async () => {
+    it(_'should validate qualification expiry monitoring',async () => {
       const professionalId = 'prof-789';
       const mockExpiringQualifications = [
         {
@@ -566,8 +566,8 @@ describe('Professional Contract Testing', () => {
     });
   });
 
-  describe('Contract Type Safety', () => {
-    it('should enforce input type constraints at compile time', () => {
+  describe(_'Contract Type Safety',() => {
+    it(_'should enforce input type constraints at compile time',() => {
       const validInput: ProfessionalInput['create'] = {
         personalInfo: {
           fullName: 'Dr. Test',
@@ -584,13 +584,13 @@ describe('Professional Contract Testing', () => {
           licenseExpiryDate: '2025-12-31',
         },
         clinicId: 'clinic-456',
-        role: 'doctor',
+        _role: 'doctor',
       };
 
       expect(validInput).toBeDefined();
     });
 
-    it('should enforce output type constraints', () => {
+    it(_'should enforce output type constraints',() => {
       const mockOutput: ProfessionalOutput['getById'] = {
         success: true,
         data: {
@@ -601,7 +601,7 @@ describe('Professional Contract Testing', () => {
           crmState: 'SP',
           specializations: ['dermatology'],
           clinicId: 'clinic-456',
-          role: 'doctor',
+          _role: 'doctor',
           isActive: true,
           createdAt: new Date(),
           updatedAt: new Date(),

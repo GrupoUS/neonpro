@@ -192,8 +192,8 @@ describe("Brazilian Validation Schemas (T037)", () => {
       const result = validatePatientData(invalidPatient);
       expect(result.isValid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
-      expect(result.errors.some((e) => e.field === "cpf")).toBe(true);
-      expect(result.errors.some((e) => e.field === "phone")).toBe(true);
+      expect(_result.errors.some((e) => e.field === "cpf")).toBe(true);
+      expect(_result.errors.some((e) => e.field === "phone")).toBe(true);
     });
   });
 

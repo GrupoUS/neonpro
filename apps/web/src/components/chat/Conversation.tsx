@@ -2,7 +2,7 @@ import { useI18n } from '@/i18n/i18n';
 
 export type ConversationMessage = {
   id: string;
-  role: 'user' | 'assistant' | string;
+  _role: 'user' | 'assistant' | string;
   text: string;
 };
 export type ConversationProps = {

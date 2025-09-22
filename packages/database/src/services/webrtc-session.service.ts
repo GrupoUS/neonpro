@@ -19,7 +19,7 @@ export interface WebRTCConfig {
 
 export interface SessionParticipant {
   id: string;
-  role: "doctor" | "patient" | "observer";
+  _role: "doctor" | "patient" | "observer";
   peerId: string;
   platform: string;
   deviceInfo: any;
@@ -54,7 +54,7 @@ export interface SessionRecording {
   retentionUntil: Date;
   encrypted: boolean;
   accessLog: Array<{
-    userId: string;
+    _userId: string;
     action: string;
     timestamp: Date;
     ipAddress: string;
@@ -680,7 +680,7 @@ export class WebRTCSessionService {
 
   private generateFileHash(_recordingId: string, _duration: number): string {
     // Simulated hash generation - in production, this would be SHA-256 of actual file
-    // const _data = `${recordingId}-${duration}-${Date.now()}`;
+    // const data = `${recordingId}-${duration}-${Date.now()}`;
     return crypto.randomUUID().replace(/-/g, "");
   }
 

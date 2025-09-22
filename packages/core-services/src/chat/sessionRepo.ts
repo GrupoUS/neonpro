@@ -5,7 +5,7 @@ const mem = new Map<string, ChatSession>();
 
 export class SessionRepo {
   async create(
-    userId: string,
+    _userId: string,
     locale: ChatSession["locale"] = "pt-BR",
   ): Promise<ChatSession> {
     const id = crypto.randomUUID();

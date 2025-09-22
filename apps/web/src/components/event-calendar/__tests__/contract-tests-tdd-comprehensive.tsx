@@ -13,7 +13,7 @@ import { EventCalendar } from '../event-calendar';
 import { CalendarEvent } from '../types';
 
 // Mock healthcare compliance utilities
-vi.mock('@/utils/accessibility/healthcare-audit-utils', () => ({
+vi.mock(('@/utils/accessibility/healthcare-audit-utils', () => ({
   validateCalendarEvent: vi.fn().mockReturnValue({ valid: true, score: 0.95 }),
   auditEventAccess: vi
     .fn()
@@ -30,7 +30,7 @@ vi.mock('@/utils/accessibility/healthcare-audit-utils', () => ({
 }));
 
 // Mock Supabase client for real-time updates
-vi.mock('@/integrations/supabase/client', () => ({
+vi.mock(('@/integrations/supabase/client', () => ({
   supabase: {
     channel: vi.fn().mockReturnValue({
       on: vi.fn().mockReturnThis(),
@@ -41,14 +41,14 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Mock performance monitoring
-vi.mock('@/utils/performance-optimizer', () => ({
+vi.mock(('@/utils/performance-optimizer', () => ({
   measureComponentRender: vi
     .fn()
     .mockResolvedValue({ duration: 45, score: 0.92 }),
   optimizeCalendarRendering: vi.fn().mockReturnValue(true),
 }));
 
-describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
+describe(('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   const mockEvents: CalendarEvent[] = [
     {
       id: 'event-1',
@@ -100,8 +100,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T011: Calendar Component Initialization
-  describe('T011 - Calendar Component Initialization', () => {
-    it('should initialize calendar with default month view', () => {
+  describe(('T011 - Calendar Component Initialization', () => {
+    it(('should initialize calendar with default month view', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       const calendar = screen.getByRole('application');
@@ -109,7 +109,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(calendar).toHaveAttribute('aria-label', 'Calendário de eventos');
     });
 
-    it('should initialize with custom initial view', () => {
+    it(('should initialize with custom initial view', () => {
       render(
         <EventCalendar
           events={mockEvents}
@@ -123,7 +123,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(screen.getByText('Dom')).toBeInTheDocument(); // Sunday
     });
 
-    it('should handle empty events array gracefully', () => {
+    it(('should handle empty events array gracefully', () => {
       render(<EventCalendar events={[]} {...mockCallbacks} />);
 
       const calendar = screen.getByRole('application');
@@ -134,8 +134,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T012: Event Display and Rendering
-  describe('T012 - Event Display and Rendering', () => {
-    it('should display events with correct titles and times', () => {
+  describe(('T012 - Event Display and Rendering', () => {
+    it(('should display events with correct titles and times', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       expect(screen.getByText('Consulta Dr. Silva')).toBeInTheDocument();
@@ -144,19 +144,19 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(screen.getByText('14:00')).toBeInTheDocument();
     });
 
-    it('should apply correct color coding to events', () => {
+    it(('should apply correct color coding to events', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       const eventElements = screen.getAllByText(
         /Consulta Dr. Silva|Exame Laboratorial/,
       );
-      eventElements.forEach(_element => {
+      eventElements.forEach(element => {
         const parent = element.closest('[data-color]');
         expect(parent).toBeInTheDocument();
       });
     });
 
-    it('should display all-day events correctly', () => {
+    it(('should display all-day events correctly', () => {
       const allDayEvent: CalendarEvent = {
         id: 'all-day-1',
         title: 'Dia Completo',
@@ -175,7 +175,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
 
   // CONTRACT TEST T013: Healthcare Data Protection (LGPD)
   describe('T013 - Healthcare Data Protection (LGPD)', () => {
-    it('should not expose sensitive patient data in DOM', () => {
+    it(('should not expose sensitive patient data in DOM', () => {
       const sensitiveEvent: CalendarEvent = {
         id: 'sensitive-1',
         title: 'Consulta Confidencial',
@@ -200,7 +200,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(screen.queryByText('maria@email.com')).not.toBeInTheDocument();
     });
 
-    it('should validate LGPD compliance on event operations', async () => {
+    it(_'should validate LGPD compliance on event operations',async () => {
       const { validateLGPDCompliance } = await import(
         '@/utils/accessibility/healthcare-audit-utils'
       );
@@ -221,7 +221,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       });
     });
 
-    it('should implement data minimization principle', () => {
+    it(('should implement data minimization principle', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Only essential information should be visible
@@ -236,7 +236,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
 
   // CONTRACT TEST T014: Healthcare Compliance (ANVISA)
   describe('T014 - Healthcare Compliance (ANVISA)', () => {
-    it('should validate medical device classification for calendar events', async () => {
+    it(_'should validate medical device classification for calendar events',async () => {
       const { validateANVISACompliance } = await import(
         '@/utils/accessibility/healthcare-audit-utils'
       );
@@ -269,7 +269,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       });
     });
 
-    it('should track medical equipment maintenance schedules', () => {
+    it(('should track medical equipment maintenance schedules', () => {
       const maintenanceEvent: CalendarEvent = {
         id: 'maintenance-1',
         title: 'Manutenção Preventiva',
@@ -292,7 +292,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
 
   // CONTRACT TEST T015: Medical Ethics Compliance (CFM)
   describe('T015 - Medical Ethics Compliance (CFM)', () => {
-    it('should validate professional-patient relationship boundaries', async () => {
+    it(_'should validate professional-patient relationship boundaries',async () => {
       const { validateCFMCompliance } = await import(
         '@/utils/accessibility/healthcare-audit-utils'
       );
@@ -314,7 +314,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       });
     });
 
-    it('should enforce appointment duration limits', () => {
+    it(('should enforce appointment duration limits', () => {
       const longEvent: CalendarEvent = {
         id: 'long-1',
         title: 'Consulta Extendida',
@@ -331,7 +331,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       // Duration validation should occur
     });
 
-    it('should prevent duplicate appointment scheduling', () => {
+    it(('should prevent duplicate appointment scheduling', () => {
       const duplicateEvent: CalendarEvent = {
         id: 'duplicate-1',
         title: 'Consulta Duplicada',
@@ -357,7 +357,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
 
   // CONTRACT TEST T016: Accessibility Compliance (WCAG 2.1 AA+)
   describe('T016 - Accessibility Compliance (WCAG 2.1 AA+)', () => {
-    it('should provide proper ARIA labels and roles', () => {
+    it(('should provide proper ARIA labels and roles', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       const calendar = screen.getByRole('application');
@@ -365,12 +365,12 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
 
       // Check for interactive elements with proper accessibility
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(_button => {
+      buttons.forEach(button => {
         expect(button).toHaveAttribute('aria-label');
       });
     });
 
-    it('should support keyboard navigation', () => {
+    it(('should support keyboard navigation', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Test keyboard shortcuts
@@ -389,19 +389,19 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(screen.getByText('Seg')).toBeInTheDocument();
     });
 
-    it('should provide sufficient color contrast', () => {
+    it(('should provide sufficient color contrast', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       const eventElements = screen.getAllByText(
         /Consulta Dr. Silva|Exame Laboratorial/,
       );
-      eventElements.forEach(_element => {
+      eventElements.forEach(element => {
         const computedStyle = window.getComputedStyle(element);
         expect(computedStyle.color).not.toBe('rgb(255, 255, 255)'); // Not white on white
       });
     });
 
-    it('should include screen reader friendly descriptions', () => {
+    it(('should include screen reader friendly descriptions', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Events should have proper descriptions for screen readers
@@ -413,7 +413,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
             || button.textContent?.includes('Exame'),
         );
 
-      events.forEach(_event => {
+      events.forEach(event => {
         expect(event).toHaveAttribute('aria-label');
         const label = event.getAttribute('aria-label');
         expect(label).toMatch(/(Consulta|Exame)/);
@@ -423,8 +423,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T017: Event Interaction and User Actions
-  describe('T017 - Event Interaction and User Actions', () => {
-    it('should handle event click and selection', () => {
+  describe(('T017 - Event Interaction and User Actions', () => {
+    it(('should handle event click and selection', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       const eventElement = screen.getByText('Consulta Dr. Silva');
@@ -434,7 +434,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(screen.getByText('Consulta Dr. Silva')).toBeInTheDocument();
     });
 
-    it('should handle event creation', () => {
+    it(('should handle event creation', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Find and click create button (implementation depends on UI)
@@ -447,7 +447,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       }
     });
 
-    it('should handle event deletion with confirmation', () => {
+    it(('should handle event deletion with confirmation', () => {
       const mockConfirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
 
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
@@ -468,8 +468,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T018: Calendar Navigation Controls
-  describe('T018 - Calendar Navigation Controls', () => {
-    it('should handle previous/next navigation', () => {
+  describe(('T018 - Calendar Navigation Controls', () => {
+    it(('should handle previous/next navigation', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       const prevButton = screen.getByRole('button', { name: /anterior/i });
@@ -483,7 +483,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       fireEvent.click(nextButton);
     });
 
-    it('should handle today button functionality', () => {
+    it(('should handle today button functionality', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       const todayButton = screen.getByRole('button', { name: /hoje/i });
@@ -493,7 +493,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       // Should return to current date
     });
 
-    it('should handle view switching', () => {
+    it(('should handle view switching', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // View switcher should be available
@@ -508,8 +508,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T019: Time Zone and Localization
-  describe('T019 - Time Zone and Localization', () => {
-    it('should handle Brazilian time zones correctly', () => {
+  describe(('T019 - Time Zone and Localization', () => {
+    it(('should handle Brazilian time zones correctly', () => {
       const brazilEvent: CalendarEvent = {
         id: 'brazil-1',
         title: 'Consulta São Paulo',
@@ -524,7 +524,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(screen.getByText('10:00')).toBeInTheDocument();
     });
 
-    it('should display dates in Brazilian Portuguese format', () => {
+    it(('should display dates in Brazilian Portuguese format', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Should display month names in Portuguese
@@ -535,7 +535,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(screen.getByText('Ter')).toBeInTheDocument(); // Tuesday
     });
 
-    it('should handle daylight saving time transitions', () => {
+    it(('should handle daylight saving time transitions', () => {
       const dstEvent: CalendarEvent = {
         id: 'dst-1',
         title: 'Consulta Horário de Verão',
@@ -551,13 +551,13 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T020: Performance and Optimization
-  describe('T020 - Performance and Optimization', () => {
-    it('should meet performance benchmarks for rendering', async () => {
+  describe(('T020 - Performance and Optimization', () => {
+    it(_'should meet performance benchmarks for rendering',async () => {
       const { measureComponentRender } = await import(
         '@/utils/performance-optimizer'
       );
 
-      const largeEventSet = Array.from({ length: 100 }, (_, i) => ({
+      const largeEventSet = Array.from.*}, (_, i) => ({
         id: `event-${i}`,
         title: `Evento ${i}`,
         start: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T10:00:00`),
@@ -572,7 +572,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       });
     });
 
-    it('should optimize calendar rendering for large datasets', async () => {
+    it(_'should optimize calendar rendering for large datasets',async () => {
       const { optimizeCalendarRendering } = await import(
         '@/utils/performance-optimizer'
       );
@@ -584,7 +584,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       });
     });
 
-    it('should implement virtual scrolling for performance', () => {
+    it(('should implement virtual scrolling for performance', () => {
       // This test would check for virtual scrolling implementation
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
@@ -595,8 +595,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T021: Error Handling and Edge Cases
-  describe('T021 - Error Handling and Edge Cases', () => {
-    it('should handle invalid event data gracefully', () => {
+  describe(('T021 - Error Handling and Edge Cases', () => {
+    it(('should handle invalid event data gracefully', () => {
       const invalidEvent = {
         id: 'invalid-1',
         title: '',
@@ -612,19 +612,19 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       }).not.toThrow();
     });
 
-    it('should handle null/undefined events prop', () => {
+    it(('should handle null/undefined events prop', () => {
       expect(() => {
         render(<EventCalendar events={undefined} {...mockCallbacks} />);
       }).not.toThrow();
     });
 
-    it('should handle missing callback functions', () => {
+    it(('should handle missing callback functions', () => {
       expect(() => {
         render(<EventCalendar events={mockEvents} />);
       }).not.toThrow();
     });
 
-    it('should recover from rendering errors', () => {
+    it(('should recover from rendering errors', () => {
       const problematicEvent = {
         id: 'problem-1',
         title: 'Problem Event',
@@ -651,8 +651,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T022: Real-time Updates and Synchronization
-  describe('T022 - Real-time Updates and Synchronization', () => {
-    it('should handle real-time event updates', async () => {
+  describe(('T022 - Real-time Updates and Synchronization', () => {
+    it(_'should handle real-time event updates',async () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Simulate real-time update
@@ -665,7 +665,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(screen.getByText('Consulta Dr. Silva')).toBeInTheDocument();
     });
 
-    it('should synchronize across multiple calendar instances', () => {
+    it(('should synchronize across multiple calendar instances', () => {
       // Test multi-calendar synchronization
       const { rerender } = render(
         <EventCalendar events={mockEvents} {...mockCallbacks} />,
@@ -684,7 +684,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       ).toBeInTheDocument();
     });
 
-    it('should handle conflict resolution for concurrent updates', () => {
+    it(('should handle conflict resolution for concurrent updates', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Test conflict resolution logic
@@ -696,8 +696,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T023: Mobile Responsiveness
-  describe('T023 - Mobile Responsiveness', () => {
-    it('should adapt to mobile screen sizes', () => {
+  describe(('T023 - Mobile Responsiveness', () => {
+    it(('should adapt to mobile screen sizes', () => {
       // Mock mobile viewport
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -713,7 +713,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       // Should have mobile-specific classes or behaviors
     });
 
-    it('should handle touch events on mobile', () => {
+    it(('should handle touch events on mobile', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       const eventElement = screen.getByText('Consulta Dr. Silva');
@@ -725,7 +725,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       // Should handle touch interactions appropriately
     });
 
-    it('should provide mobile-friendly navigation', () => {
+    it(('should provide mobile-friendly navigation', () => {
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         configurable: true,
@@ -741,8 +741,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T024: Integration with External Systems
-  describe('T024 - Integration with External Systems', () => {
-    it('should integrate with Supabase real-time subscriptions', () => {
+  describe(('T024 - Integration with External Systems', () => {
+    it(('should integrate with Supabase real-time subscriptions', () => {
       const { supabase } = require('@/integrations/supabase/client');
 
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
@@ -750,14 +750,14 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(supabase.channel).toHaveBeenCalled();
     });
 
-    it('should handle external calendar imports', () => {
+    it(('should handle external calendar imports', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Test integration with external calendar systems
       // This would test ICS import, Google Calendar sync, etc.
     });
 
-    it('should export calendar data in standard formats', () => {
+    it(('should export calendar data in standard formats', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Test export functionality (ICS, JSON, etc.)
@@ -766,8 +766,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T025: Data Validation and Business Rules
-  describe('T025 - Data Validation and Business Rules', () => {
-    it('should validate event time constraints', () => {
+  describe(('T025 - Data Validation and Business Rules', () => {
+    it(('should validate event time constraints', () => {
       const invalidTimeEvent: CalendarEvent = {
         id: 'invalid-time-1',
         title: 'Consulta Inválida',
@@ -782,7 +782,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(screen.getByText('Consulta Inválida')).toBeInTheDocument();
     });
 
-    it('should enforce business hours constraints', () => {
+    it(('should enforce business hours constraints', () => {
       const afterHoursEvent: CalendarEvent = {
         id: 'after-hours-1',
         title: 'Consulta Fora do Horário',
@@ -797,7 +797,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(screen.getByText('Consulta Fora do Horário')).toBeInTheDocument();
     });
 
-    it('should prevent double-booking for resources', () => {
+    it(('should prevent double-booking for resources', () => {
       const conflictingEvent: CalendarEvent = {
         id: 'conflict-1',
         title: 'Consulta Conflitante',
@@ -821,8 +821,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T026: User Experience and Interaction Design
-  describe('T026 - User Experience and Interaction Design', () => {
-    it('should provide visual feedback for user actions', () => {
+  describe(('T026 - User Experience and Interaction Design', () => {
+    it(('should provide visual feedback for user actions', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       const eventElement = screen.getByText('Consulta Dr. Silva');
@@ -834,7 +834,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       // Should provide visual feedback
     });
 
-    it('should include loading states for async operations', () => {
+    it(('should include loading states for async operations', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Should handle loading states gracefully
@@ -842,7 +842,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(calendar).toBeInTheDocument();
     });
 
-    it('should provide undo/redo functionality', () => {
+    it(('should provide undo/redo functionality', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Test undo/redo capabilities
@@ -851,8 +851,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T027: Security and Authorization
-  describe('T027 - Security and Authorization', () => {
-    it('should implement role-based access control', () => {
+  describe(('T027 - Security and Authorization', () => {
+    it(('should implement role-based access control', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Should validate user permissions for operations
@@ -862,7 +862,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       // Should check authorization levels
     });
 
-    it('should audit all calendar operations', async () => {
+    it(_'should audit all calendar operations',async () => {
       const { auditEventAccess } = await import(
         '@/utils/accessibility/healthcare-audit-utils'
       );
@@ -878,7 +878,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       });
     });
 
-    it('should prevent unauthorized data access', () => {
+    it(('should prevent unauthorized data access', () => {
       const sensitiveEvent: CalendarEvent = {
         id: 'sensitive-2',
         title: 'Consulta Restrita',
@@ -898,8 +898,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T028: Internationalization and Localization
-  describe('T028: Internationalization and Localization', () => {
-    it('should support multiple languages', () => {
+  describe('T028: Internationalization and Localization',() {
+    it(('should support multiple languages', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Should display interface in Portuguese by default
@@ -908,14 +908,14 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       // Should support language switching
     });
 
-    it('should format dates according to locale', () => {
+    it(('should format dates according to locale', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Should use Brazilian date format
       expect(screen.getByText('15/01/2024')).toBeInTheDocument();
     });
 
-    it('should handle right-to-left languages', () => {
+    it(('should handle right-to-left languages', () => {
       // Test RTL support
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
@@ -925,8 +925,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T029: Analytics and Monitoring
-  describe('T029: Analytics and Monitoring', () => {
-    it('should track calendar usage metrics', () => {
+  describe('T029: Analytics and Monitoring',() {
+    it(('should track calendar usage metrics', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Should track user interactions
@@ -936,7 +936,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       // Should log analytics events
     });
 
-    it('should monitor performance metrics', async () => {
+    it(_'should monitor performance metrics',async () => {
       const { measureComponentRender } = await import(
         '@/utils/performance-optimizer'
       );
@@ -948,7 +948,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       });
     });
 
-    it('should provide error reporting', () => {
+    it(('should provide error reporting', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Should handle and report errors gracefully
@@ -958,8 +958,8 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
   });
 
   // CONTRACT TEST T030: Comprehensive Integration Testing
-  describe('T030: Comprehensive Integration Testing', () => {
-    it('should integrate with appointment scheduling system', () => {
+  describe('T030: Comprehensive Integration Testing',() {
+    it(('should integrate with appointment scheduling system', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Should work with appointment booking workflows
@@ -969,7 +969,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       // Should integrate with scheduling logic
     });
 
-    it('should support recurring events', () => {
+    it(('should support recurring events', () => {
       const recurringEvent: CalendarEvent = {
         id: 'recurring-1',
         title: 'Consulta Semanal',
@@ -989,7 +989,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(screen.getByText('Consulta Semanal')).toBeInTheDocument();
     });
 
-    it('should handle calendar sharing and collaboration', () => {
+    it(('should handle calendar sharing and collaboration', () => {
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 
       // Should support sharing and collaboration features
@@ -997,7 +997,7 @@ describe('Contract Tests T011-T030 - Calendar TDD Compliance Suite', () => {
       expect(calendar).toBeInTheDocument();
     });
 
-    it('should provide comprehensive test coverage', () => {
+    it(('should provide comprehensive test coverage', () => {
       // This meta-test ensures all major functionality is tested
       render(<EventCalendar events={mockEvents} {...mockCallbacks} />);
 

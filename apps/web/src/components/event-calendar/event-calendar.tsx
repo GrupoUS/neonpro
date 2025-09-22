@@ -195,7 +195,7 @@ export function EventCalendar({
       }
       setIsEventDialogOpen(false);
       setSelectedEvent(null);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to save event:', error);
       // Error is already handled by the context with toast
     }
@@ -206,7 +206,7 @@ export function EventCalendar({
       await deleteEvent(eventId);
       setIsEventDialogOpen(false);
       setSelectedEvent(null);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to delete event:', error);
       // Error is already handled by the context with toast
     }
@@ -219,7 +219,7 @@ export function EventCalendar({
         start: updatedEvent.start,
         end: updatedEvent.end,
       } as any);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to update event:', error);
       // Error is already handled by the context with toast
     }

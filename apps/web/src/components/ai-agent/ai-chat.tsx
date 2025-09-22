@@ -26,8 +26,8 @@ export function AIChat({ className, initialContext }: AIChatProps) {
   const [chatState, setChatState] = useState<ChatState>({
     messages: [],
     isLoading: false,
-    context: {
-      userId: user?.id || '',
+    _context: {
+      _userId: user?.id || '',
       userRole: user?.role || '',
       domain: initialContext?.domain,
     },
@@ -62,7 +62,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Handle message submission
   const handleSubmit = useCallback(
-    async (_message: any) => {
+    async (message: any) => {
       if (!user) {
         toast({
           title: 'Erro de autenticação',
@@ -84,7 +84,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
           body: JSON.stringify({
             query: message,
             context: {
-              userId: user.id,
+              _userId: user.id,
               userRole: user.role,
               domain: initialContext?.domain,
             },
@@ -102,7 +102,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
         // Add assistant response to chat
         const assistantMessage: ChatMessage = {
           id: `msg_${Date.now()}_assistant`,
-          role: 'assistant',
+          _role: 'assistant',
           content: data.response.message,
           timestamp: new Date().toISOString(),
           data: data.response.data,
@@ -120,7 +120,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
           handleActions(data.response.actions);
         }
       } catch (error) {
-        console.error('Chat error:', _error);
+        console.error('Chat error:', error);
         toast({
           title: 'Erro',
           description: error instanceof Error
@@ -131,7 +131,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
         const errorMessage: ChatMessage = {
           id: `msg_${Date.now()}_error`,
-          role: 'assistant',
+          _role: 'assistant',
           content:
             'Desculpe, ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.',
           timestamp: new Date().toISOString(),
@@ -149,7 +149,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Handle agent actions
   const handleActions = useCallback((actions: AgentAction[]) => {
-    actions.forEach(_action => {
+    actions.forEach(action => {
       switch (action.type) {
         case 'view_details':
           if (action.payload?.clientId) {
@@ -179,7 +179,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Handle data export
   const handleExportData = useCallback(
-    async (_payload: any) => {
+    async (payload: any) => {
       try {
         const response = await fetch('/api/ai/export', {
           method: 'POST',
@@ -219,7 +219,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Custom message renderer
   const renderMessage = useCallback(
-    (_message: any) => {
+    (message: any) => {
       if (message.role === 'system') return null;
 
       return (

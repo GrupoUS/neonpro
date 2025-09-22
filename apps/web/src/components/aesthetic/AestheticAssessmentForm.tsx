@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@neonpro/ui';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { type AestheticAssessmentData } from '../pdf/AestheticReportPDF';
 import PDFExportButtons from '../pdf/PDFExportButtons';
 import { Badge } from '../ui/badge';

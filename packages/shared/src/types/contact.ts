@@ -118,7 +118,7 @@ export interface Contact {
   consentToContact?: boolean;
   consentDate?: Date;
   accessLog?: Array<{
-    userId: string;
+    _userId: string;
     action: string;
     timestamp: Date;
     ipAddress?: string;
@@ -313,8 +313,7 @@ export function getPrimaryContact(contacts: Contact[]): Contact | undefined {
 export function getEmergencyContacts(contacts: Contact[]): Contact[] {
   return contacts
     .filter((contact) => contact.isEmergency)
-    .sort(
-      (a, b) => (a.emergencyPriority || 999) - (b.emergencyPriority || 999),
+    .sort((a,_b) => (a.emergencyPriority || 999) - (b.emergencyPriority || 999),
     );
 }
 

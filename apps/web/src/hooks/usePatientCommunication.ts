@@ -60,7 +60,7 @@ export function useCreateCommunicationTemplate() {
       request,
     }: {
       clinicId: string;
-      request: CreateCommunicationTemplateRequest;
+      _request: CreateCommunicationTemplateRequest;
     }) =>
       patientCommunicationService.createCommunicationTemplate(
         clinicId,
@@ -95,8 +95,8 @@ export function useUpdateCommunicationTemplate() {
       request,
     }: {
       id: string;
-      request: UpdateCommunicationTemplateRequest;
-    }) => patientCommunicationService.updateCommunicationTemplate(id, request),
+      _request: UpdateCommunicationTemplateRequest;
+    }) => patientCommunicationService.updateCommunicationTemplate(id, _request),
 
     onSuccess: () => {
       // Invalidate templates list
@@ -151,8 +151,8 @@ export function useSendMessage() {
       request,
     }: {
       clinicId: string;
-      request: SendMessageRequest;
-    }) => patientCommunicationService.sendMessage(clinicId, request),
+      _request: SendMessageRequest;
+    }) => patientCommunicationService.sendMessage(clinicId, _request),
 
     onSuccess: () => {
       // Invalidate messages list

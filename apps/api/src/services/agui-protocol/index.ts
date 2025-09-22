@@ -11,10 +11,8 @@ export * from './types';
 
 // Re-export commonly used types and classes
 export {
-  AguiErrorMessage,
   AguiHealthStatus,
   AguiMessage,
-  AguiMessageType,
   AguiProtocol,
   AguiQueryMessage,
   AguiResponseMessage,

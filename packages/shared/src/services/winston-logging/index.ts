@@ -34,7 +34,7 @@ export {
 
 // Default configuration for healthcare applications
 const defaultConfig: EnhancedStructuredLoggingConfig = {
-  service: 'neonpro-healthcare',
+  _service: 'neonpro-healthcare',
   environment: (process.env.NODE_ENV as any) || 'development',
   version: process.env.npm_package_version || '2.0.0',
   
@@ -102,29 +102,29 @@ export const enhancedLogger = new EnhancedStructuredLogger(defaultConfig);
 
 // Export convenience functions for direct usage
 export const logger = {
-  debug: (message: string, data?: any, context?: any) => 
-    enhancedLogger.debug(message, data, context),
+  debug: (message: string, data?: any, _context?: any) => 
+    enhancedLogger.debug(message, data, _context),
     
-  info: (message: string, data?: any, context?: any) => 
-    enhancedLogger.info(message, data, context),
+  info: (message: string, data?: any, _context?: any) => 
+    enhancedLogger.info(message, data, _context),
     
-  notice: (message: string, data?: any, context?: any) => 
-    enhancedLogger.notice(message, data, context),
+  notice: (message: string, data?: any, _context?: any) => 
+    enhancedLogger.notice(message, data, _context),
     
-  warn: (message: string, data?: any, context?: any) => 
-    enhancedLogger.warn(message, data, context),
+  warn: (message: string, data?: any, _context?: any) => 
+    enhancedLogger.warn(message, data, _context),
     
-  error: (message: string, error?: Error, data?: any, context?: any) => 
-    enhancedLogger.error(message, error, data, context),
+  error: (message: string, error?: Error, data?: any, _context?: any) => 
+    enhancedLogger.error(message, error, data, _context),
     
-  critical: (message: string, data?: any, context?: any) => 
-    enhancedLogger.critical(message, data, context),
+  critical: (message: string, data?: any, _context?: any) => 
+    enhancedLogger.critical(message, data, _context),
     
-  alert: (message: string, data?: any, context?: any) => 
-    enhancedLogger.alert(message, data, context),
+  alert: (message: string, data?: any, _context?: any) => 
+    enhancedLogger.alert(message, data, _context),
     
-  emergency: (message: string, data?: any, context?: any) => 
-    enhancedLogger.emergency(message, data, context),
+  emergency: (message: string, data?: any, _context?: any) => 
+    enhancedLogger.emergency(message, data, _context),
     
   // Healthcare-specific methods
   logPatientSafetyEvent: (
@@ -139,8 +139,8 @@ export const logger = {
     stage: string,
     message: string,
     data?: any,
-    context?: any
-  ) => enhancedLogger.logClinicalWorkflow(workflowType, stage, message, data, context),
+    _context?: any
+  ) => enhancedLogger.logClinicalWorkflow(workflowType, stage, message, data, _context),
   
   logMedicationEvent: (
     action: 'prescribed' | 'administered' | 'verified' | 'adverse_reaction',
@@ -171,11 +171,11 @@ export const logger = {
 };
 
 // Export factory function for creating custom loggers
-export function createHealthcareLogger(config: Partial<EnhancedStructuredLoggingConfig> & { service: string }): EnhancedStructuredLogger {
+export function createHealthcareLogger(config: Partial<EnhancedStructuredLoggingConfig> & { _service: string }): EnhancedStructuredLogger {
   const mergedConfig = {
     ...defaultConfig,
     ...config,
-    service: config.service, // Ensure service is overridden
+    _service: config.service, // Ensure service is overridden
   };
   
   return new EnhancedStructuredLogger(mergedConfig);

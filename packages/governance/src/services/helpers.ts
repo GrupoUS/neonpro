@@ -6,8 +6,7 @@ export interface RiskExposureInput {
   impact: number;
 }
 export const computeRiskExposure = ({
-  probability,
-  impact,
+  probability,impact,
 }: RiskExposureInput) => probability * impact;
 
 export interface KPIEvalInput {
@@ -40,10 +39,7 @@ export interface PriorityScoreFactors {
 }
 // Simple weighted scoring: higher impact, riskReduction, strategicFit better; lower effort better.
 export const scorePriority = ({
-  impact,
-  effort,
-  riskReduction,
-  strategicFit,
+  impact,effort,_riskReduction,strategicFit,
 }: PriorityScoreFactors) => {
   const base = impact * 2 + riskReduction * 1.5 + strategicFit * 1.2 - effort;
   return base;

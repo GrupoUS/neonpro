@@ -17,7 +17,7 @@ export interface LogEntry {
   message: string;
   timestamp: Date;
   requestId?: string;
-  userId?: string;
+  _userId?: string;
   clinicId?: string;
   patientId?: string;
   operationType?: string;
@@ -52,7 +52,7 @@ function redactSensitiveData(text: string): {
   let redactedText = text;
   const redactedFields: string[] = [];
 
-  Object.entries(HEALTHCARE_PATTERNS).forEach(([field, pattern]) => {
+  Object.entries(HEALTHCARE_PATTERNS).forEach(([field,_pattern]) => {
     if (pattern.test(redactedText)) {
       redactedFields.push(field);
       redactedText = redactedText.replace(
@@ -71,7 +71,7 @@ function redactSensitiveData(text: string): {
 function redactMetadata(metadata: Record<string, any>): Record<string, any> {
   const redacted: Record<string, any> = {};
 
-  Object.entries(metadata).forEach(([key, value]) => {
+  Object.entries(metadata).forEach(([key,_value]) => {
     if (typeof value === 'string') {
       const { redacted: redactedValue } = redactSensitiveData(value);
       redacted[key] = redactedValue;
@@ -91,9 +91,9 @@ function redactMetadata(metadata: Record<string, any>): Record<string, any> {
 function createLogEntry(
   level: LogLevel,
   message: string,
-  context: {
+  _context: {
     requestId?: string;
-    userId?: string;
+    _userId?: string;
     clinicId?: string;
     patientId?: string;
     operationType?: string;
@@ -116,7 +116,7 @@ function createLogEntry(
     message: redactedMessage,
     timestamp: new Date(),
     requestId: context.requestId,
-    userId: context.userId,
+    _userId: context.userId,
     clinicId: context.clinicId,
     patientId: context.patientId ? `[REDACTED_PATIENT_ID]` : undefined,
     operationType: context.operationType,
@@ -174,9 +174,9 @@ class StructuredLogger {
    */
   public debug(
     message: string,
-    context?: Parameters<typeof createLogEntry>[1],
+    _context?: Parameters<typeof createLogEntry>[1],
   ): void {
-    this.log(LogLevel.DEBUG, message, context);
+    this.log(LogLevel.DEBUG, message, _context);
   }
 
   /**
@@ -184,9 +184,9 @@ class StructuredLogger {
    */
   public info(
     message: string,
-    context?: Parameters<typeof createLogEntry>[1],
+    _context?: Parameters<typeof createLogEntry>[1],
   ): void {
-    this.log(LogLevel.INFO, message, context);
+    this.log(LogLevel.INFO, message, _context);
   }
 
   /**
@@ -194,9 +194,9 @@ class StructuredLogger {
    */
   public warn(
     message: string,
-    context?: Parameters<typeof createLogEntry>[1],
+    _context?: Parameters<typeof createLogEntry>[1],
   ): void {
-    this.log(LogLevel.WARN, message, context);
+    this.log(LogLevel.WARN, message, _context);
   }
 
   /**
@@ -204,9 +204,9 @@ class StructuredLogger {
    */
   public error(
     message: string,
-    context?: Parameters<typeof createLogEntry>[1],
+    _context?: Parameters<typeof createLogEntry>[1],
   ): void {
-    this.log(LogLevel.ERROR, message, context);
+    this.log(LogLevel.ERROR, message, _context);
   }
 
   /**
@@ -215,13 +215,13 @@ class StructuredLogger {
   private log(
     level: LogLevel,
     message: string,
-    context?: Parameters<typeof createLogEntry>[1],
+    _context?: Parameters<typeof createLogEntry>[1],
   ): void {
-    const logEntry = createLogEntry(level, message, context);
+    const logEntry = createLogEntry(level, message, _context);
 
     // Add service information
     const logOutput = {
-      service: this.serviceName,
+      _service: this.serviceName,
       version: this.serviceVersion,
       ...logEntry,
     };
@@ -250,7 +250,7 @@ class StructuredLogger {
    * Creates a child logger with additional context
    */
   public child(
-    context: Parameters<typeof createLogEntry>[1],
+    _context: Parameters<typeof createLogEntry>[1],
   ): StructuredLogger {
     const childLogger = Object.create(this);
     childLogger.context = context;

@@ -240,7 +240,7 @@ export class HealthcareLogger {
    * Log data access for LGPD compliance
    */
   public async logDataAccess(
-    userId: string,
+    _userId: string,
     clinicId: string,
     access: DataAccessLog,
   ): Promise<void> {
@@ -279,15 +279,15 @@ export class HealthcareLogger {
    */
   public async logAIInteraction(params: {
     sessionId: string;
-    userId: string;
+    _userId: string;
     clinicId: string;
-    query: string;
+    _query: string;
     response: string;
     patientId?: string;
     dataAccessed?: string[];
     processingTime: number;
   }): Promise<void> {
-    const sanitizedQuery = this.sanitizeQuery(params.query);
+    const sanitizedQuery = this.sanitizeQuery(params._query);
     const sanitizedResponse = this.sanitizeQuery(params.response);
 
     this.logAuditEvent({
@@ -300,7 +300,7 @@ export class HealthcareLogger {
       session_id: params.sessionId,
       result: 'granted',
       metadata: {
-        query: sanitizedQuery,
+        _query: sanitizedQuery,
         response: sanitizedResponse,
         data_accessed: params.dataAccessed,
         processing_time: params.processingTime,
@@ -315,7 +315,7 @@ export class HealthcareLogger {
    */
   public logSessionEvent(
     sessionId: string,
-    userId: string,
+    _userId: string,
     clinicId: string,
     event: 'start' | 'end' | 'timeout' | 'error',
     details?: any,
@@ -337,7 +337,7 @@ export class HealthcareLogger {
    * Log authentication events
    */
   public logAuthEvent(
-    userId: string,
+    _userId: string,
     event: 'login' | 'logout' | 'failed_login' | 'token_refresh',
     details?: any,
   ): void {

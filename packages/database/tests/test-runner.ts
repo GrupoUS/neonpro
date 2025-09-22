@@ -5,13 +5,13 @@
  * health checks, and detailed reporting for healthcare compliance testing.
  */
 
-import { execSync } from 'child_process';
+import { execSync } from 'child_process'
 import * as fs from 'fs';
 import * as path from 'path';
 
 // ES module compatibility
-const __filename = new URL(import.meta.url).pathname;
-const __dirname = path.dirname(__filename);
+const _filename = new URL(import.meta.url).pathname;
+const _dirname = path.dirname(__filename);
 
 interface TestResult {
   name: string;
@@ -263,7 +263,7 @@ class DatabaseTestRunner {
         timestamp: new Date().toISOString()
       };
 
-    } catch (error: any) {
+    } catch (_error: any) {
       const duration = Date.now() - startTime;
       
       return {
@@ -344,11 +344,11 @@ class DatabaseTestRunner {
     console.log('\\n🎯 Final Test Report');
     console.log('═'.repeat(60));
     
-    const totalTests = this.testResults.reduce((sum, suite) => sum + suite.totalTests, 0);
-    const totalPassed = this.testResults.reduce((sum, suite) => sum + suite.passed, 0);
-    const totalFailed = this.testResults.reduce((sum, suite) => sum + suite.failed, 0);
-    const totalSkipped = this.testResults.reduce((sum, suite) => sum + suite.skipped, 0);
-    const totalDuration = this.testResults.reduce((sum, suite) => sum + suite.duration, 0);
+    const totalTests = this.testResults.reduce((sum,_suite) => sum + suite.totalTests, 0);
+    const totalPassed = this.testResults.reduce((sum,_suite) => sum + suite.passed, 0);
+    const totalFailed = this.testResults.reduce((sum,_suite) => sum + suite.failed, 0);
+    const totalSkipped = this.testResults.reduce((sum,_suite) => sum + suite.skipped, 0);
+    const totalDuration = this.testResults.reduce((sum,_suite) => sum + suite.duration, 0);
     const successRate = totalTests > 0 ? (totalPassed / totalTests * 100).toFixed(2) : '0';
 
     console.log(`📊 Overall Results:`);
@@ -415,14 +415,14 @@ class DatabaseTestRunner {
       testResults: this.testResults,
       summary: {
         totalSuites: this.testResults.length,
-        totalTests: this.testResults.reduce((sum, suite) => sum + suite.totalTests, 0),
-        totalPassed: this.testResults.reduce((sum, suite) => sum + suite.passed, 0),
-        totalFailed: this.testResults.reduce((sum, suite) => sum + suite.failed, 0),
-        totalSkipped: this.testResults.reduce((sum, suite) => sum + suite.skipped, 0),
-        totalDuration: this.testResults.reduce((sum, suite) => sum + suite.duration, 0),
-        successRate: this.testResults.reduce((sum, suite) => sum + suite.totalTests, 0) > 0 
-          ? (this.testResults.reduce((sum, suite) => sum + suite.passed, 0) / 
-             this.testResults.reduce((sum, suite) => sum + suite.totalTests, 0) * 100).toFixed(2)
+        totalTests: this.testResults.reduce((sum,_suite) => sum + suite.totalTests, 0),
+        totalPassed: this.testResults.reduce((sum,_suite) => sum + suite.passed, 0),
+        totalFailed: this.testResults.reduce((sum,_suite) => sum + suite.failed, 0),
+        totalSkipped: this.testResults.reduce((sum,_suite) => sum + suite.skipped, 0),
+        totalDuration: this.testResults.reduce((sum,_suite) => sum + suite.duration, 0),
+        successRate: this.testResults.reduce((sum,_suite) => sum + suite.totalTests, 0) > 0 
+          ? (_this.testResults.reduce((sum,_suite) => sum + suite.passed, 0) / 
+             this.testResults.reduce((sum,_suite) => sum + suite.totalTests, 0) * 100).toFixed(2)
           : '0'
       }
     };
@@ -463,7 +463,7 @@ async function runDatabaseTests() {
     runner.saveResultsToFile();
 
     // Exit with appropriate code
-    const totalFailed = results.reduce((sum, suite) => sum + suite.failed, 0);
+    const totalFailed = results.reduce((sum,_suite) => sum + suite.failed, 0);
     process.exit(totalFailed > 0 ? 1 : 0);
 
   } catch (error) {

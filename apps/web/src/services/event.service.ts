@@ -70,7 +70,7 @@ export interface EventFilterOptions {
 
 // Event search options
 export interface EventSearchOptions {
-  query: string;
+  _query: string;
   searchIn?: ['title' | 'description' | 'notes' | 'patient' | 'professional'];
   dateRange?: {
     start: Date;
@@ -558,7 +558,7 @@ export class EventService {
     const eventsByPriority: Record<number, number> = {};
     let totalDuration = 0;
 
-    events.forEach(_event => {
+    events.forEach(event => {
       // Count by status
       const status = event.status || 'unknown';
       eventsByStatus[status] = (eventsByStatus[status] || 0) + 1;

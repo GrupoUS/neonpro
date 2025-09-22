@@ -116,10 +116,10 @@ export function useCreateAppointment() {
       return { previousAppointments, optimisticAppointment };
     },
 
-    onSuccess: (newAppointment, { clinicId: _clinicId }) => {
+    onSuccess: (_newAppointment, { clinicId: clinicId }) => {
       // Replace optimistic data with server data
       queryClient.setQueryData(
-        appointmentKeys.calendar(_clinicId),
+        appointmentKeys.calendar(clinicId),
         (old: CalendarAppointment[] = []) =>
           old.map(apt => (apt.id.startsWith('temp-') ? newAppointment : apt)),
       );
@@ -130,7 +130,7 @@ export function useCreateAppointment() {
       toast.success('Agendamento criado com sucesso!');
     },
 
-    onError: (error, { clinicId }, context) => {
+    onError: (_error, { clinicId }, context) => {
       // Rollback optimistic update
       if (context?.previousAppointments) {
         queryClient.setQueryData(
@@ -143,10 +143,10 @@ export function useCreateAppointment() {
       toast.error(error.message || 'Erro ao criar agendamento');
     },
 
-    onSettled: (_, __, { clinicId: _clinicId }) => {
+    onSettled: (_data, _error, { clinicId: clinicId }) => {
       // Always refetch after mutation
       queryClient.invalidateQueries({
-        queryKey: appointmentKeys.calendar(_clinicId),
+        queryKey: appointmentKeys.calendar(clinicId),
       });
     },
   });
@@ -163,7 +163,7 @@ export function useUpdateAppointment() {
     mutationFn: async ({
       appointmentId,
       updates,
-      clinicId: _clinicId,
+      clinicId: clinicId,
     }: {
       appointmentId: string;
       updates: UpdateAppointmentData;
@@ -213,10 +213,10 @@ export function useUpdateAppointment() {
       return { previousAppointments };
     },
 
-    onSuccess: (updatedAppointment, { clinicId: _clinicId }) => {
+    onSuccess: (_updatedAppointment, { clinicId: clinicId }) => {
       // Replace optimistic data with server data
       queryClient.setQueryData(
-        appointmentKeys.calendar(_clinicId),
+        appointmentKeys.calendar(clinicId),
         (old: CalendarAppointment[] = []) =>
           old.map(apt => apt.id === updatedAppointment.id ? updatedAppointment : apt),
       );
@@ -227,7 +227,7 @@ export function useUpdateAppointment() {
       toast.success('Agendamento atualizado com sucesso!');
     },
 
-    onError: (error, { clinicId }, context) => {
+    onError: (_error, { clinicId }, context) => {
       // Rollback optimistic update
       if (context?.previousAppointments) {
         queryClient.setQueryData(
@@ -240,10 +240,10 @@ export function useUpdateAppointment() {
       toast.error(error.message || 'Erro ao atualizar agendamento');
     },
 
-    onSettled: (_, __, { clinicId: _clinicId }) => {
+    onSettled: (_data, _error, { clinicId: clinicId }) => {
       // Always refetch after mutation
       queryClient.invalidateQueries({
-        queryKey: appointmentKeys.calendar(_clinicId),
+        queryKey: appointmentKeys.calendar(clinicId),
       });
     },
   });
@@ -259,7 +259,7 @@ export function useDeleteAppointment() {
   return useMutation({
     mutationFn: async ({
       appointmentId,
-      clinicId: _clinicId,
+      clinicId: clinicId,
       reason,
     }: {
       appointmentId: string;
@@ -296,14 +296,14 @@ export function useDeleteAppointment() {
       return { previousAppointments };
     },
 
-    onSuccess: (_, { clinicId: _clinicId }) => {
+    onSuccess: (_, { clinicId: clinicId }) => {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
 
       toast.success('Agendamento cancelado com sucesso!');
     },
 
-    onError: (error, { clinicId }, context) => {
+    onError: (_error, { clinicId }, context) => {
       // Rollback optimistic update
       if (context?.previousAppointments) {
         queryClient.setQueryData(
@@ -316,10 +316,10 @@ export function useDeleteAppointment() {
       toast.error(error.message || 'Erro ao cancelar agendamento');
     },
 
-    onSettled: (_, __, { clinicId: _clinicId }) => {
+    onSettled: (_data, _error, { clinicId: clinicId }) => {
       // Always refetch after mutation
       queryClient.invalidateQueries({
-        queryKey: appointmentKeys.calendar(_clinicId),
+        queryKey: appointmentKeys.calendar(clinicId),
       });
     },
   });

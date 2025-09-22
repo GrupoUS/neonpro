@@ -5,18 +5,18 @@ import { type AestheticAssessmentData } from '../components/pdf/AestheticReportP
 import { generatePDFFilename, usePDFExport } from '../hooks/usePDFExport';
 
 // Mock dependencies
-vi.mock('sonner', () => ({
+vi.mock(('sonner', () => ({
   toast: {
     success: vi.fn(),
     error: vi.fn(),
   },
 }));
 
-vi.mock('file-saver', () => ({
+vi.mock(('file-saver', () => ({
   saveAs: vi.fn(),
 }));
 
-vi.mock('@react-pdf/renderer', () => ({
+vi.mock(('@react-pdf/renderer', () => ({
   pdf: vi.fn(() => ({
     toBlob: vi.fn(() => Promise.resolve(new Blob(['fake pdf content']))),
   })),
@@ -32,7 +32,7 @@ vi.mock('@react-pdf/renderer', () => ({
   },
 }));
 
-describe('PDF Export System', () => {
+describe(('PDF Export System', () => {
   const mockAssessmentData: AestheticAssessmentData = {
     patientData: {
       name: 'João Silva',
@@ -70,8 +70,8 @@ describe('PDF Export System', () => {
     },
   };
 
-  describe('generatePDFFilename', () => {
-    it('should generate correct filename for assessment', () => {
+  describe(('generatePDFFilename', () => {
+    it(('should generate correct filename for assessment', () => {
       const filename = generatePDFFilename(
         'assessment',
         'João Silva',
@@ -80,7 +80,7 @@ describe('PDF Export System', () => {
       expect(filename).toBe('avaliacao_estetica_joao_silva_2024-01-01.pdf');
     });
 
-    it('should generate correct filename for treatment plan', () => {
+    it(('should generate correct filename for treatment plan', () => {
       const filename = generatePDFFilename(
         'treatment',
         'Maria Santos',
@@ -89,7 +89,7 @@ describe('PDF Export System', () => {
       expect(filename).toBe('plano_tratamento_maria_santos_2024-02-15.pdf');
     });
 
-    it('should clean special characters from name', () => {
+    it(('should clean special characters from name', () => {
       const filename = generatePDFFilename(
         'consent',
         'José Carlos-Silva (Jr.)',
@@ -101,8 +101,8 @@ describe('PDF Export System', () => {
     });
   });
 
-  describe('usePDFExport hook', () => {
-    it('should provide correct initial state', () => {
+  describe(('usePDFExport hook', () => {
+    it(('should provide correct initial state', () => {
       const TestComponent = () => {
         const { isGenerating, error } = usePDFExport();
         return (
@@ -119,8 +119,8 @@ describe('PDF Export System', () => {
     });
   });
 
-  describe('Performance Requirements', () => {
-    it('should track PDF generation time', async () => {
+  describe(('Performance Requirements', () => {
+    it(_'should track PDF generation time',async () => {
       // Mock performance.now to simulate time passage
       const mockNow = vi.spyOn(performance, 'now');
       mockNow.mockReturnValueOnce(1000).mockReturnValueOnce(1500); // 0.5s duration
@@ -145,8 +145,8 @@ describe('PDF Export System', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle PDF generation errors gracefully', () => {
+  describe(('Error Handling', () => {
+    it(('should handle PDF generation errors gracefully', () => {
       const TestComponent = () => {
         const { error } = usePDFExport();
         return <div data-testid='error-state'>{error || 'no-error'}</div>;

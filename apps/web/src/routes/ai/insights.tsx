@@ -296,7 +296,7 @@ function AIInsightsPage() {
         setInsights(mockInsights);
         setModels(mockModels);
         setTrends(mockTrends);
-      } catch (error) {
+      } catch (_error) {
         setError('Erro ao carregar insights de IA');
         console.error(error);
       } finally {
@@ -307,7 +307,7 @@ function AIInsightsPage() {
     fetchAIInsights();
   }, [timeRange]);
 
-  const getPriorityBadge = (_priority: any) => {
+  const getPriorityBadge = (priority: any) => {
     const variants = {
       low: { variant: 'outline' as const, label: 'Baixa', icon: CheckCircle },
       medium: { variant: 'default' as const, label: 'Média', icon: Clock },
@@ -325,7 +325,7 @@ function AIInsightsPage() {
     return variants[priority as keyof typeof variants] || variants.low;
   };
 
-  const getModelStatusBadge = (_status: any) => {
+  const getModelStatusBadge = (status: any) => {
     const variants = {
       active: {
         variant: 'default' as const,
@@ -351,7 +351,7 @@ function AIInsightsPage() {
     return variants[status as keyof typeof variants] || variants.active;
   };
 
-  const getTypeIcon = (_type: any) => {
+  const getTypeIcon = (type: any) => {
     const icons = {
       health_risk: Heart,
       treatment_optimization: Activity,
@@ -375,17 +375,12 @@ function AIInsightsPage() {
   };
 
   const calculateTotalPatientsImpacted = () => {
-    return insights.reduce(
-      (total, insight) => total + (insight.patientCount || 0),
-      0,
-    );
+    return insights.reduce((total, insight) => total + (insight.patientCount || 0), 0);
   };
 
   const getAverageAccuracy = () => {
     if (models.length === 0) return 0;
-    return Math.round(
-      models.reduce((sum, model) => sum + model.accuracy, 0) / models.length,
-    );
+    return Math.round(models.reduce((sum, model) => sum + model.accuracy, 0) / models.length);
   };
 
   const refreshInsights = () => {
@@ -791,7 +786,7 @@ function AIInsightsPage() {
 
                           {/* Data Visualization */}
                           <div className='grid grid-cols-2 md:grid-cols-5 gap-2'>
-                            {insight.data.labels.map((label, _index) => (
+                            {insight.data.labels.map((label, index) => (
                               <div key={index} className='text-center'>
                                 <div className='text-xs text-muted-foreground'>
                                   {label}
@@ -809,17 +804,15 @@ function AIInsightsPage() {
                               Recomendações:
                             </h4>
                             <ul className='text-sm space-y-1'>
-                              {insight.recommendations.map(
-                                (recommendation, _index) => (
-                                  <li
-                                    key={index}
-                                    className='flex items-start gap-2'
-                                  >
-                                    <CheckCircle className='h-3 w-3 text-green-500 mt-0.5 flex-shrink-0' />
-                                    <span>{recommendation}</span>
-                                  </li>
-                                ),
-                              )}
+                              {insight.recommendations.map((recommendation, index) => (
+                                <li
+                                  key={index}
+                                  className='flex items-start gap-2'
+                                >
+                                  <CheckCircle className='h-3 w-3 text-green-500 mt-0.5 flex-shrink-0' />
+                                  <span>{recommendation}</span>
+                                </li>
+                              ))}
                             </ul>
                           </div>
 
@@ -933,7 +926,7 @@ function AIInsightsPage() {
                 </CardHeader>
                 <CardContent>
                   <div className='space-y-2'>
-                    {trends.map((trend, _index) => (
+                    {trends.map((trend, index) => (
                       <div
                         key={index}
                         className='flex items-center justify-between'

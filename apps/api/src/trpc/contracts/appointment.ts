@@ -11,7 +11,6 @@ import {
   PaginationSchema,
   UpdateAppointmentRequestSchema,
 } from '@neonpro/types';
-import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
 
 export const appointmentRouter = router({
@@ -26,7 +25,7 @@ export const appointmentRouter = router({
     })
     .input(CreateAppointmentRequestSchema)
     .output(AppointmentResponseSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       // Validate patient exists and is active
       const patient = await ctx.prisma.patient.findFirst({
         where: {
@@ -168,7 +167,7 @@ export const appointmentRouter = router({
             priority: input.priority,
             noShowRisk: noShowPrediction.risk,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 
@@ -199,7 +198,7 @@ export const appointmentRouter = router({
       }),
     )
     .output(AppointmentResponseSchema)
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input,_ctx }) => {
       const appointment = await ctx.prisma.appointment.findUnique({
         where: { id: input.id },
         include: {
@@ -286,7 +285,7 @@ export const appointmentRouter = router({
       }),
     )
     .output(AppointmentsListResponseSchema)
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input,_ctx }) => {
       // Validate clinic access
       await validateClinicAccess(ctx.user.id, input.clinicId);
 
@@ -361,7 +360,7 @@ export const appointmentRouter = router({
     })
     .input(UpdateAppointmentRequestSchema)
     .output(AppointmentResponseSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       const currentAppointment = await ctx.prisma.appointment.findUnique({
         where: { id: input.id },
       });
@@ -459,7 +458,7 @@ export const appointmentRouter = router({
             previousStatus: currentAppointment.status,
             newStatus: input.status,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 
@@ -496,7 +495,7 @@ export const appointmentRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       const appointment = await ctx.prisma.appointment.findUnique({
         where: { id: input.id },
         include: {
@@ -555,7 +554,7 @@ export const appointmentRouter = router({
             notifyPatient: input.notifyPatient,
             originalDate: appointment.scheduledDate,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 

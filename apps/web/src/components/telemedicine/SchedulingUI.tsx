@@ -519,26 +519,24 @@ export function SchedulingUI({
                       </p>
                     </div>
                   )
-                  : (
-                    filteredAppointments
-                      .sort((a, b) => a.date.getTime() - b.date.getTime())
-                      .map(appointment => (
-                        <AppointmentCard
-                          key={appointment.id}
-                          appointment={appointment}
-                          onUpdate={onAppointmentUpdate}
-                          onCancel={onAppointmentCancel}
-                          showDate
-                        />
-                      ))
-                  )}
+                  : (_filteredAppointments.sort((a, b) => a.date.getTime() - b.date.getTime())
+                    .map(appointment => (
+                      <AppointmentCard
+                        key={appointment.id}
+                        appointment={appointment}
+                        onUpdate={onAppointmentUpdate}
+                        onCancel={onAppointmentCancel}
+                        showDate
+                      />
+                    )))}
               </div>
             </CardContent>
           </Card>
         )}
     </div>
   );
-} // AppointmentCard Component
+}
+
 interface AppointmentCardProps {
   appointment: TelemedicineAppointment;
   onUpdate?: (appointment: TelemedicineAppointment) => void;
@@ -548,7 +546,7 @@ interface AppointmentCardProps {
 
 function AppointmentCard({
   appointment,
-  onUpdate: _onUpdate,
+  onUpdate: onUpdate,
   onCancel,
   showDate = false,
 }: AppointmentCardProps) {

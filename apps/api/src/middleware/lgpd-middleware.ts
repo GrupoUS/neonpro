@@ -29,7 +29,7 @@ type ProcessingPurpose =
  * LGPD consent record
  */
 interface LGPDConsent {
-  userId: string;
+  _userId: string;
   purpose: ProcessingPurpose;
   status: ConsentStatus;
   grantedAt?: Date;
@@ -56,12 +56,12 @@ interface LGPDConfig {
 class ConsentStore {
   private consents = new Map<string, LGPDConsent[]>();
 
-  async getConsents(userId: string, purpose: ProcessingPurpose): Promise<LGPDConsent[]> {
+  async getConsents(_userId: string, purpose: ProcessingPurpose): Promise<LGPDConsent[]> {
     const userConsents = this.consents.get(userId) || [];
     return userConsents.filter(consent => consent.purpose === purpose);
   }
 
-  async hasValidConsent(userId: string, purpose: ProcessingPurpose): Promise<boolean> {
+  async hasValidConsent(_userId: string, purpose: ProcessingPurpose): Promise<boolean> {
     const consents = await this.getConsents(userId, purpose);
     const now = new Date();
 
@@ -72,12 +72,12 @@ class ConsentStore {
   }
 
   async recordConsent(consent: LGPDConsent): Promise<void> {
-    const userConsents = this.consents.get(consent.userId) || [];
+    const userConsents = this.consents.get(consent._userId) || [];
     userConsents.push(consent);
     this.consents.set(consent.userId, userConsents);
   }
 
-  async withdrawConsent(userId: string, purpose: ProcessingPurpose): Promise<void> {
+  async withdrawConsent(_userId: string, purpose: ProcessingPurpose): Promise<void> {
     const userConsents = this.consents.get(userId) || [];
     userConsents.forEach(consent => {
       if (consent.purpose === purpose && consent.status === 'granted') {
@@ -143,7 +143,7 @@ export function lgpdMiddleware(config: LGPDConfig = {}) {
       const userId = user?.id || c.get('userId');
 
       // Skip LGPD checks for unauthenticated requests
-      if (!userId) {
+      if (!_userId) {
         await next();
         return;
       }
@@ -237,7 +237,7 @@ export function consentMiddleware() {
         const user = c.get('user');
         const userId = user?.id || c.get('userId');
 
-        if (!userId) {
+        if (!_userId) {
           throw new HTTPException(401, { message: 'Authentication required' });
         }
 
@@ -331,13 +331,13 @@ export function dataPortabilityMiddleware() {
         const user = c.get('user');
         const userId = user?.id || c.get('userId');
 
-        if (!userId) {
+        if (!_userId) {
           throw new HTTPException(401, { message: 'Authentication required' });
         }
 
         // Implement actual data export collecting all user data from all systems
         const supabase = createAdminClient();
-        const userData = await this.exportUserData(supabase, userId);
+        const userData = await this.exportUserData(supabase, _userId);
 
         logger.info('LGPD: Data export requested', {
           userId,
@@ -370,13 +370,13 @@ export function dataErasureMiddleware() {
         const user = c.get('user');
         const userId = user?.id || c.get('userId');
 
-        if (!userId) {
+        if (!_userId) {
           throw new HTTPException(401, { message: 'Authentication required' });
         }
 
         // Implement actual data deletion/anonymization following LGPD requirements
         const supabase = createAdminClient();
-        await this.deleteUserData(supabase, userId);
+        await this.deleteUserData(supabase, _userId);
 
         logger.info('LGPD: Data erasure requested', {
           userId,
@@ -406,7 +406,7 @@ export function dataErasureMiddleware() {
 /**
  * Export all user data following LGPD Article 18 requirements
  */
-async function exportUserData(supabase: any, userId: string): Promise<any> {
+async function exportUserData(supabase: any, _userId: string): Promise<any> {
   try {
     const exportedData: any = {
       userId,
@@ -425,7 +425,7 @@ async function exportUserData(supabase: any, userId: string): Promise<any> {
     const { data: profile } = await supabase
       .from('users')
       .select('*')
-      .eq('id', userId)
+      .eq('id', _userId)
       .single();
 
     if (profile) {
@@ -433,7 +433,7 @@ async function exportUserData(supabase: any, userId: string): Promise<any> {
         id: profile.id,
         email: profile.email,
         name: profile.name,
-        role: profile.role,
+        _role: profile.role,
         clinic_id: profile.clinic_id,
         created_at: profile.created_at,
         updated_at: profile.updated_at,
@@ -444,7 +444,7 @@ async function exportUserData(supabase: any, userId: string): Promise<any> {
     const { data: patientData } = await supabase
       .from('patients')
       .select('*')
-      .eq('user_id', userId);
+      .eq('user_id', _userId);
 
     if (patientData && patientData.length > 0) {
       exportedData.data.patientRecords = patientData.map(patient => ({
@@ -505,7 +505,7 @@ async function exportUserData(supabase: any, userId: string): Promise<any> {
         created_at,
         updated_at
       `)
-      .eq('patient_id', userId);
+      .eq('patient_id', _userId);
 
     if (medicalRecords && medicalRecords.length > 0) {
       exportedData.data.medicalRecords = medicalRecords;
@@ -515,7 +515,7 @@ async function exportUserData(supabase: any, userId: string): Promise<any> {
     const { data: consents } = await supabase
       .from('lgpd_consents')
       .select('*')
-      .eq('user_id', userId);
+      .eq('user_id', _userId);
 
     if (consents && consents.length > 0) {
       exportedData.data.consents = consents;
@@ -525,7 +525,7 @@ async function exportUserData(supabase: any, userId: string): Promise<any> {
     const { data: auditLogs } = await supabase
       .from('audit_events')
       .select('*')
-      .eq('user_id', userId)
+      .eq('user_id', _userId)
       .order('created_at', { ascending: false })
       .limit(1000); // Limit to last 1000 records
 
@@ -537,7 +537,7 @@ async function exportUserData(supabase: any, userId: string): Promise<any> {
       userId,
       dataCategories: Object.keys(exportedData.data),
       recordCounts: Object.fromEntries(
-        Object.entries(exportedData.data).map(([key, value]) => [
+        Object.entries(exportedData.data).map(([key,_value]) => [
           key,
           Array.isArray(value) ? value.length : 1,
         ]),
@@ -559,7 +559,7 @@ async function exportUserData(supabase: any, userId: string): Promise<any> {
 /**
  * Delete/anonymize user data following LGPD Article 18 requirements
  */
-async function deleteUserData(supabase: any, userId: string): Promise<void> {
+async function deleteUserData(supabase: any, _userId: string): Promise<void> {
   try {
     const deletionTimestamp = new Date().toISOString();
     let totalRecordsAffected = 0;

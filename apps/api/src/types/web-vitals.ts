@@ -23,7 +23,7 @@ export interface MetricEntry extends WebVitalMetric {
   metric: string;
   originId?: string;
   sessionId: string;
-  userId: string | null;
+  _userId: string | null;
   timestamp: string;
   clinicId: string | null;
   requestId: string;
@@ -31,7 +31,7 @@ export interface MetricEntry extends WebVitalMetric {
 
 export interface SessionInfo {
   sessionId: string;
-  userId: string | null;
+  _userId: string | null;
   startTime: string;
   lastActivity: string;
   metricsCount: number;
@@ -57,7 +57,7 @@ export interface MetricAnalysis {
 
 export interface SessionMetrics {
   sessionId: string;
-  userId: string | null;
+  _userId: string | null;
   startTime: string;
   lastActivity: string;
   metricsCount: number;

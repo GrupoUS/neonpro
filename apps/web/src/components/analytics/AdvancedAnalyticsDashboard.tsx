@@ -111,7 +111,7 @@ export function AdvancedAnalyticsDashboard({
           impact: 'high',
           recommendation:
             'Oferecer pacotes de 3 sessões com desconto de 20% no momento do agendamento.',
-          data: { returnRate: 0.52, avgDays: 21, service: 'Hidratação Facial' },
+          data: { returnRate: 0.52, avgDays: 21, _service: 'Hidratação Facial' },
           createdAt: new Date(),
         },
         {

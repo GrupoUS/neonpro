@@ -178,7 +178,7 @@ describe('Healthcare Response Module - RED Phase', () => {
         },
         audit: {
           requestId: 'req-123',
-          userId: 'user-456',
+          _userId: 'user-456',
           timestamp: new Date().toISOString(),
         },
       };

@@ -49,7 +49,7 @@ export function EventSearchBar({
 
     if (value.trim()) {
       performSearch({
-        query: value,
+        _query: value,
         limit: 8,
         offset: 0,
       });

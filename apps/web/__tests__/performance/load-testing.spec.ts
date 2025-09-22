@@ -59,7 +59,7 @@ class LoadTester {
       const page = await context.newPage();
 
       this.browsers.push(browser);
-      this.contexts.push(context);
+      this.contexts.push(_context);
       this.pages.push(page);
     }
   }

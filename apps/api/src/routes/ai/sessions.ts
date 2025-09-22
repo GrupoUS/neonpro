@@ -32,7 +32,7 @@ const sessionStore = new Map<string, ChatSession>();
 /**
  * Helper function to validate user permissions
  */
-function validateUserSession(payload: any, sessionId: string): { valid: boolean; error?: string } {
+function validateUserSession(_payload: any, sessionId: string): { valid: boolean; error?: string } {
   if (!payload.sub) {
     return { valid: false, error: 'Invalid user token' };
   }
@@ -97,7 +97,7 @@ app.get('/ai/sessions/:sessionId', async c => {
     // Format response
     const response: SessionResponse = {
       sessionId: session.id,
-      userId: session.userId,
+      _userId: session.userId,
       status: session.status,
       messages: session.context.recentMessages || [],
       createdAt: session.createdAt,
@@ -121,7 +121,7 @@ app.get('/ai/sessions/:sessionId', async c => {
 /**
  * Helper function to create a new session
  */
-export function createSession(userId: string, userRole: UserRole, domain: string): ChatSession {
+export function createSession(_userId: string, userRole: UserRole, domain: string): ChatSession {
   const sessionId = crypto.randomUUID();
   const now = new Date();
 
@@ -131,9 +131,9 @@ export function createSession(userId: string, userRole: UserRole, domain: string
     status: 'active',
     createdAt: now,
     lastActivity: now,
-    context: {
+    _context: {
       domain,
-      role: userRole,
+      _role: userRole,
       preferences: {},
       recentIntents: [],
       cachedData: {},
@@ -163,7 +163,7 @@ export function addMessageToSession(
     timestamp: new Date(),
   };
 
-  // Add to recent messages (keep last 10 for context)
+  // Add to recent messages (keep last 10 for _context)
   if (!session.context.recentMessages) {
     session.context.recentMessages = [];
   }
@@ -186,7 +186,7 @@ export function addMessageToSession(
  */
 export function updateSessionContext(
   sessionId: string,
-  context: Partial<ChatSession['context']>,
+  _context: Partial<ChatSession['context']>,
 ): boolean {
   const session = sessionStore.get(sessionId);
   if (!session) {

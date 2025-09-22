@@ -38,7 +38,7 @@ export function useChatStreaming(opts: {
           if (done) break;
           const text = decoder.decode(value);
           // Very simple SSE parsing for data: lines
-          text.split('\n').forEach(_line => {
+          text.split('\n').forEach(line => {
             if (line.startsWith('data:')) {
               const payload = line.slice(5).trim();
               try {
@@ -52,7 +52,7 @@ export function useChatStreaming(opts: {
             }
           });
         }
-      } catch (error) {
+      } catch (_error) {
         setError(error instanceof Error ? error.message : 'Unknown error');
       } finally {
         setStreaming(false);

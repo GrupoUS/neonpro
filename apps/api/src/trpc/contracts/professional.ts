@@ -11,7 +11,6 @@ import {
   ProfessionalsListResponseSchema,
   UpdateProfessionalRequestSchema,
 } from '@neonpro/types/api/contracts';
-import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
 
 export const professionalRouter = router({
@@ -26,7 +25,7 @@ export const professionalRouter = router({
     })
     .input(CreateProfessionalRequestSchema)
     .output(ProfessionalResponseSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       // Validate clinic exists and user has permission
       const clinic = await ctx.prisma.clinic.findUnique({
         where: { id: input.clinicId },
@@ -142,7 +141,7 @@ export const professionalRouter = router({
             licenseNumber: input.licenseNumber,
             specialization: input.specialization,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 
@@ -179,7 +178,7 @@ export const professionalRouter = router({
       }),
     )
     .output(ProfessionalResponseSchema)
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input,_ctx }) => {
       const professional = await ctx.prisma.professional.findUnique({
         where: { id: input.id },
         include: {
@@ -275,7 +274,7 @@ export const professionalRouter = router({
       }),
     )
     .output(ProfessionalsListResponseSchema)
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input,_ctx }) => {
       // Validate clinic access
       await validateClinicAccess(ctx.user.id, input.clinicId);
 
@@ -414,7 +413,7 @@ export const professionalRouter = router({
     })
     .input(UpdateProfessionalRequestSchema)
     .output(ProfessionalResponseSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       const currentProfessional = await ctx.prisma.professional.findUnique({
         where: { id: input.id },
       });
@@ -546,7 +545,7 @@ export const professionalRouter = router({
             changes: getChanges(currentProfessional, input),
             licenseRevalidated: licenseChanged,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 
@@ -604,7 +603,7 @@ export const professionalRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input,_ctx }) => {
       const professional = await ctx.prisma.professional.findUnique({
         where: { id: input.professionalId },
         include: {
@@ -697,7 +696,7 @@ export const professionalRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       const professional = await ctx.prisma.professional.findUnique({
         where: { id: input.id },
       });
@@ -795,7 +794,7 @@ export const professionalRouter = router({
             affectedAppointments,
             reassignToProfessionalId: input.reassignToProfessionalId,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 

@@ -318,9 +318,9 @@ export class ComplianceValidator {
   private static getViolationRiskLevel(
     violations: ComplianceViolation[],
   ): RiskLevel {
-    if (violations.some((v) => v.severity === "CRITICAL")) return "CRITICAL";
-    if (violations.some((v) => v.severity === "HIGH")) return "HIGH";
-    if (violations.some((v) => v.severity === "MEDIUM")) return "MEDIUM";
+    if (_violations.some((v) => v.severity === "CRITICAL")) return "CRITICAL";
+    if (_violations.some((v) => v.severity === "HIGH")) return "HIGH";
+    if (_violations.some((v) => v.severity === "MEDIUM")) return "MEDIUM";
     return "LOW";
   }
 

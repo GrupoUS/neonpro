@@ -27,7 +27,7 @@ export const ApiKeyMetadataSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   clinicId: z.string(),
-  userId: z.string(),
+  _userId: z.string(),
   createdAt: z.date().default(() => new Date()),
   lastUsedAt: z.date().optional(),
   expiresAt: z.date().optional(),
@@ -133,7 +133,7 @@ export async function rotateApiKey(oldKey: string): Promise<ApiKey | null> {
     name: oldApiKey.metadata.name,
     description: oldApiKey.metadata.description,
     clinicId: oldApiKey.metadata.clinicId,
-    userId: oldApiKey.metadata.userId,
+    _userId: oldApiKey.metadata.userId,
     expiresAt: oldApiKey.metadata.expiresAt,
     rateLimit: oldApiKey.metadata.rateLimit,
   });

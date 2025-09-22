@@ -1,15 +1,15 @@
-import { Suspense, lazy } from 'react';
 import { Loader2 } from 'lucide-react';
+import { lazy, Suspense } from 'react';
 
 // Lazy load TanStack Table for better bundle splitting
 const TanStackTable = lazy(() => import('@tanstack/react-table'));
 
 // Loading component for table
 const TableLoading = () => (
-  <div className="flex items-center justify-center p-8">
-    <div className="text-center space-y-2">
-      <Loader2 className="h-6 w-6 animate-spin mx-auto text-blue-600" />
-      <p className="text-sm text-muted-foreground">Carregando tabela...</p>
+  <div className='flex items-center justify-center p-8'>
+    <div className='text-center space-y-2'>
+      <Loader2 className='h-6 w-6 animate-spin mx-auto text-blue-600' />
+      <p className='text-sm text-muted-foreground'>Carregando tabela...</p>
     </div>
   </div>
 );
@@ -107,21 +107,13 @@ function LazyDataTable() {
   } = TanStackTable;
 
   // Custom filter function for multi-column searching
-  const multiColumnFilterFn: FilterFn<Item> = (
-    row,
-    _columnId,
-    filterValue: string,
-  ) => {
+  const multiColumnFilterFn: FilterFn<Item> = (_row, columnId, filterValue: string) => {
     const searchableRowContent = `${row.original.name} ${row.original.email}`.toLowerCase();
     const searchTerm = (filterValue ?? '').toLowerCase();
     return searchableRowContent.includes(searchTerm);
   };
 
-  const statusFilterFn: FilterFn<Item> = (
-    row,
-    columnId,
-    filterValue: string[],
-  ) => {
+  const statusFilterFn: FilterFn<Item> = (_row, columnId, filterValue: string[]) => {
     if (!filterValue?.length) return true;
     const status = row.getValue(columnId) as string;
     return filterValue.includes(status);
@@ -168,7 +160,8 @@ function LazyDataTable() {
       accessorKey: 'location',
       cell: ({ row }) => (
         <div>
-          <span className='text-lg leading-none'>{row.original.flag}</span> {row.getValue('location')}
+          <span className='text-lg leading-none'>{row.original.flag}</span>{' '}
+          {row.getValue('location')}
         </div>
       ),
       size: 180,

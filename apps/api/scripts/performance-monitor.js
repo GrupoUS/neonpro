@@ -221,7 +221,7 @@ class HealthcarePerformanceMonitor {
       } else {
         console.log('📦 Bundle size: No analysis report found');
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to check bundle size:', error.message);
     }
   }

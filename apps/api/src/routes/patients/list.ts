@@ -6,7 +6,6 @@
  */
 
 import { OpenAPIHono } from '@hono/zod-openapi';
-import { z } from 'zod';
 import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
@@ -52,8 +51,8 @@ const listPatientsRoute = createHealthcareRoute({
     'List patients with pagination, filtering, and search capabilities. Includes LGPD compliance and audit logging.',
   dataClassification: 'medical',
   auditRequired: true,
-  request: {
-    query: ListPatientsQuerySchema,
+  _request: {
+    _query: ListPatientsQuerySchema,
   },
   responses: {
     200: {
@@ -226,7 +225,7 @@ app.openapi(
         'X-Healthcare-Context',
         JSON.stringify({
           clinicId,
-          role: healthcareContext.role,
+          _role: healthcareContext.role,
           cfmValidated: healthcareContext.cfmValidated,
         }),
       );

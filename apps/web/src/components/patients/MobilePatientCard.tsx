@@ -9,7 +9,6 @@ import {
   Calendar,
   Clock,
   Eye,
-  EyeOff,
   FileText,
   Heart,
   Mail,
@@ -134,7 +133,13 @@ const RiskIndicator = ({ level }: { level: 'low' | 'medium' | 'high' }) => {
 const ConsentStatus = ({
   consentInfo,
 }: {
-  consentInfo: PatientConsentInfo;
+  consentInfo: {
+    dataProcessing: boolean;
+    marketing: boolean;
+    thirdPartySharing: boolean;
+    consentDate: Date;
+    lastUpdate: Date;
+  };
 }) => {
   const activeConsents = [
     consentInfo.dataProcessing && 'Dados',
@@ -187,7 +192,7 @@ export function MobilePatientCard({
     : '(11) *****-****';
   const displayEmail = canViewSensitiveData ? patient.email : '***@***.com';
 
-  const handleAction = (_action: any) => {
+  const handleAction = (action: any) => {
     onAction?.(action, patient.id);
   };
 
@@ -356,7 +361,7 @@ export function MobilePatientCard({
                     <div>
                       <p className='font-medium text-red-600'>Alergias:</p>
                       <ul className='list-disc list-inside ml-2'>
-                        {healthInfo.allergies.map((allergy, _index) => (
+                        {healthInfo.allergies.map((allergy, index) => (
                           <li key={index}>{allergy}</li>
                         ))}
                       </ul>
@@ -367,7 +372,7 @@ export function MobilePatientCard({
                     <div>
                       <p className='font-medium'>Medicamentos em uso:</p>
                       <ul className='list-disc list-inside ml-2'>
-                        {healthInfo.medications.map((medication, _index) => (
+                        {healthInfo.medications.map((medication, index) => (
                           <li key={index}>{medication}</li>
                         ))}
                       </ul>

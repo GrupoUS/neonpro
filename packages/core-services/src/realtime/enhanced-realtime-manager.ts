@@ -26,9 +26,9 @@ import { HealthcareResilienceService } from "../resilience";
 
 export interface EnhancedRealtimeOptions<T = any> {
   // Base options
-  onInsert?: (payload: T) => void;
-  onUpdate?: (payload: T) => void;
-  onDelete?: (payload: { old: T }) => void;
+  onInsert?: (_payload: T) => void;
+  onUpdate?: (_payload: T) => void;
+  onDelete?: (_payload: { old: T }) => void;
   queryKeys?: string[][];
   optimisticUpdates?: boolean;
   rateLimitMs?: number;
@@ -83,7 +83,7 @@ export class CacheInvalidationStrategy {
   async invalidateForEvent(
     eventType: "INSERT" | "UPDATE" | "DELETE",
     tableName: string,
-    payload: any,
+    _payload: any,
     queryKeys: string[][],
   ): Promise<void> {
     switch (this.strategy) {
@@ -126,7 +126,7 @@ export class CacheInvalidationStrategy {
   private async conservativeInvalidation(
     eventType: string,
     tableName: string,
-    payload: any,
+    _payload: any,
     queryKeys: string[][],
   ): Promise<void> {
     // Only invalidate specific affected queries
@@ -152,7 +152,7 @@ export class CacheInvalidationStrategy {
   private async smartInvalidation(
     eventType: string,
     tableName: string,
-    payload: any,
+    _payload: any,
     queryKeys: string[][],
   ): Promise<void> {
     // Use heuristics to determine optimal invalidation strategy
@@ -187,13 +187,12 @@ export class CacheInvalidationStrategy {
 
   private shouldAggressivelyInvalidate(
     _tableName: string,
-    payload: any,
+    _payload: any,
   ): boolean {
     // Heuristics for when to use aggressive invalidation
     const criticalFields = ["status", "priority", "emergency", "cancelled"];
 
-    return criticalFields.some(
-      (field) =>
+    return criticalFields.some((field) =>
         payload[field] !== undefined &&
         (payload[field] === "emergency" || payload[field] === "high_priority"),
     );
@@ -304,8 +303,7 @@ export class EnhancedRealtimeManager {
 
     return this.supabase
       .channel(channelName)
-      .on(
-        "postgres_changes",
+      .on("postgres_changes",
         {
           event: "*",
           schema: "public",
@@ -330,7 +328,7 @@ export class EnhancedRealtimeManager {
   }
 
   private async handleEnhancedRealtimeEvent<T extends { id: string }>(
-    payload: RealtimePostgresChangesPayload<Record<string, any>>,
+    _payload: RealtimePostgresChangesPayload<Record<string, any>>,
     tableName: string,
     options: EnhancedRealtimeOptions<T>,
   ): Promise<void> {
@@ -367,7 +365,7 @@ export class EnhancedRealtimeManager {
   }
 
   private async processRealtimeEvent<T extends { id: string }>(
-    payload: RealtimePostgresChangesPayload<Record<string, any>>,
+    _payload: RealtimePostgresChangesPayload<Record<string, any>>,
     tableName: string,
     options: EnhancedRealtimeOptions<T>,
   ): Promise<void> {
@@ -607,9 +605,7 @@ export class EnhancedRealtimeManager {
 
       // Test connection with a simple health check
       const healthCheck =
-        await this.resilienceService.executeHealthcareOperation(
-          "supabase-realtime",
-          async () => {
+        await this.resilienceService.executeHealthcareOperation("supabase-realtime", async () => {
             // Test the Supabase connection
             const { data, error } = await this.supabase
               .from("health_checks")
@@ -717,8 +713,7 @@ export class EnhancedRealtimeManager {
   ): Promise<void> {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
-      return (
-        old?.map((item) =>
+      return (old?.map((item) =>
           item.id === updatedRecord.id ? updatedRecord : item,
         ) || []
       );

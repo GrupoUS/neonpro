@@ -56,7 +56,7 @@ export class AuditService {
    * @param request - Audit log data
    * @returns Promise<string> - The ID of the created audit log
    */
-  async createAuditLog(request: AuditLogRequest): Promise<string> {
+  async createAuditLog(_request: AuditLogRequest): Promise<string> {
     try {
       const { data, error } = await this.supabase
         .from("webrtc_audit_logs")
@@ -97,7 +97,7 @@ export class AuditService {
    */
   async logSessionStart(
     sessionId: string,
-    userId: string,
+    _userId: string,
     userRole: "doctor" | "patient" | "nurse" | "admin",
     metadata?: {
       ipAddress?: string;
@@ -132,7 +132,7 @@ export class AuditService {
    */
   async logSessionEnd(
     sessionId: string,
-    userId: string,
+    _userId: string,
     userRole: "doctor" | "patient" | "nurse" | "admin",
     duration: number,
     metadata?: {
@@ -150,7 +150,7 @@ export class AuditService {
       eventType: "session-end",
       userId,
       userRole,
-      dataClassification: typeof metadata?.dataClassification === 'string' ? undefined : metadata?.dataClassification,
+      dataClassification: metadata?.dataClassification,
       description: `${userRole} ended WebRTC session (duration: ${duration}s)${
         metadata?.reason ? ` - ${metadata.reason}` : ""
       }`,
@@ -174,7 +174,7 @@ export class AuditService {
    * @returns Promise<string> - The ID of the created audit log
    */
   async logDataAccess(
-    userId: string,
+    _userId: string,
     userRole: "doctor" | "patient" | "nurse" | "admin",
     dataType: string,
     patientId?: string,
@@ -193,7 +193,7 @@ export class AuditService {
       eventType: "data-access",
       userId,
       userRole,
-      dataClassification: typeof metadata?.dataClassification === 'string' ? undefined : metadata?.dataClassification,
+      dataClassification: metadata?.dataClassification,
       description: `${userRole} accessed ${dataType}${
         patientId ? ` for patient ${patientId}` : ""
       }`,
@@ -218,7 +218,7 @@ export class AuditService {
    * @returns Promise<string> - The ID of the created audit log
    */
   async logConsentVerification(
-    userId: string,
+    _userId: string,
     patientId: string,
     consentType: string,
     isValid: boolean,
@@ -262,7 +262,7 @@ export class AuditService {
    */
   async logSecurityEvent(
     eventType: string,
-    userId: string | null,
+    _userId: string | null,
     severity: "low" | "medium" | "high" | "critical",
     description: string,
     metadata?: {
@@ -278,7 +278,7 @@ export class AuditService {
       action: "CREATE",
       resource: "SYSTEM_CONFIG",
       eventType: `security-${eventType}`,
-      userId: userId || "system",
+      _userId: userId || "system",
       userRole: "system",
       dataClassification: "restricted",
       description,
@@ -341,14 +341,14 @@ export class AuditService {
    * @returns Promise<RTCAuditLogEntry[]> - Array of audit log entries
    */
   async getUserAuditLogs(
-    userId: string,
+    _userId: string,
     limit?: number,
   ): Promise<RTCAuditLogEntry[]> {
     try {
       let query = this.supabase
         .from("webrtc_audit_logs")
         .select("*")
-        .eq("user_id", userId)
+        .eq("user_id", _userId)
         .order("timestamp", { ascending: false });
 
       if (limit) {
@@ -535,7 +535,7 @@ export class AuditService {
     return {
       id: log.id,
       sessionId: log.session_id,
-      userId: log.user_id,
+      _userId: log.user_id,
       action: log.action || this.mapActionToEventType(log.event_type || log.action),
       userRole: log.user_role || "system",
       dataClassification: typeof log.data_classification === 'string' ? log.data_classification : "general",

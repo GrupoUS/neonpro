@@ -66,9 +66,7 @@ export function DayView({
           || (currentDate > eventStart && currentDate < eventEnd)
         );
       })
-      .sort(
-        (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
-      );
+      .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
   }, [currentDate, events]);
 
   // Filter all-day events
@@ -112,7 +110,7 @@ export function DayView({
     // Track columns for overlapping events
     const columns: { event: CalendarEvent; end: Date }[][] = [];
 
-    sortedEvents.forEach(_event => {
+    sortedEvents.forEach(event => {
       const eventStart = new Date(event.start);
       const eventEnd = new Date(event.end);
 

@@ -50,8 +50,7 @@ class FunctionWarmer {
       this.stopWarmup();
     }
 
-    this.warmupInterval = setInterval(
-      () => {
+    this.warmupInterval = setInterval(() => {
         this.performWarmup();
       },
       intervalMinutes * 60 * 1000,
@@ -104,8 +103,7 @@ class FunctionWarmer {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(
-        () => controller.abort(),
+      const timeoutId = setTimeout(() => controller.abort(),
         target.timeout || 5000,
       );
 

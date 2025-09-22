@@ -6,7 +6,7 @@
  */
 
 import * as axe from 'axe-core';
-import { type AxeResults, type Result, type Rule } from 'axe-core';
+import { type AxeResults, type Result } from 'axe-core';
 import * as React from 'react';
 
 // Brazilian healthcare specific rules configuration
@@ -108,7 +108,7 @@ export function initializeAxeCore(): void {
  * Run accessibility scan on specific element or entire page
  */
 export async function runAccessibilityScan(
-  context?: string | Element | axe.ElementContext,
+  _context?: string | Element | axe.ElementContext,
   options?: axe.RunOptions,
 ): Promise<AxeResults> {
   try {
@@ -120,7 +120,7 @@ export async function runAccessibilityScan(
 
     // Process and categorize results for healthcare context
     return processHealthcareResults(results);
-  } catch (error) {
+  } catch (_error) {
     console.error('Accessibility scan failed:', error);
     throw new Error(`Accessibility scan failed: ${error}`);
   }
@@ -311,7 +311,7 @@ export function useAccessibilityTesting() {
     > | null
   >(null);
 
-  const scan = React.useCallback(async (context?: string | Element) => {
+  const scan = React.useCallback(async (_context?: string | Element) => {
     setIsScanning(true);
     try {
       const results = await runAccessibilityScan(context);
@@ -319,7 +319,7 @@ export function useAccessibilityTesting() {
       const generatedReport = generateAccessibilityReport(results);
       setReport(generatedReport);
       return results;
-    } catch (error) {
+    } catch (_error) {
       console.error('Accessibility scan failed:', error);
       throw error;
     } finally {

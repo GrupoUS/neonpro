@@ -13,8 +13,6 @@
  * - LGPD-compliant error handling
  */
 
-import { z } from "zod";
-
 // ============================================================================
 // Types and Interfaces
 // ============================================================================
@@ -97,7 +95,7 @@ export interface ResilienceMetrics {
 export interface ExecutionContext {
   operation: string;
   serviceName: string;
-  userId?: string;
+  _userId?: string;
   patientId?: string;
   isEmergency: boolean;
   requiresAudit: boolean;
@@ -124,7 +122,7 @@ export class EnhancedCircuitBreaker {
 
   async execute<T>(
     operation: () => Promise<T>,
-    context: ExecutionContext,
+    _context: ExecutionContext,
   ): Promise<T> {
     this.totalRequests++;
 
@@ -134,7 +132,7 @@ export class EnhancedCircuitBreaker {
         this.consecutiveSuccesses = 0;
       } else {
         throw new ResilienceError(
-          `Circuit breaker OPEN for service: ${this.serviceName}`,
+          `Circuit breaker OPEN for _service: ${this.serviceName}`,
           "CIRCUIT_BREAKER_OPEN",
           context,
         );
@@ -221,7 +219,7 @@ export class RetryPolicy {
 
   constructor(private readonly config: ResilienceConfig["retry"]) {}
 
-  async shouldRetry(error: Error, context: ExecutionContext): Promise<boolean> {
+  async shouldRetry(error: Error, _context: ExecutionContext): Promise<boolean> {
     this.attempts++;
 
     // Don't retry on certain errors
@@ -310,9 +308,9 @@ export class TimeoutManager {
 
   async executeWithTimeout<T>(
     operation: () => Promise<T>,
-    context: ExecutionContext,
+    _context: ExecutionContext,
   ): Promise<T> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve,_reject) => {
       const timeoutId = setTimeout(() => {
         reject(
           new ResilienceError(
@@ -386,9 +384,8 @@ export class HealthMonitor {
       const startTime = Date.now();
       const isHealthy = await Promise.race([
         healthCheck(),
-        new Promise<boolean>((_, reject) =>
-          setTimeout(
-            () => reject(new Error("Health check timeout")),
+        new Promise<boolean>((_resolve, reject) =>
+          setTimeout(() => reject(new Error("Health check timeout")),
             this.config.timeoutMs,
           ),
         ),
@@ -466,7 +463,7 @@ export class ResilienceFramework {
   async execute<T>(
     serviceName: string,
     operation: () => Promise<T>,
-    context: ExecutionContext,
+    _context: ExecutionContext,
   ): Promise<T> {
     const startTime = Date.now();
     this.metrics.totalRequests++;
@@ -600,7 +597,7 @@ export class ResilienceError extends Error {
   constructor(
     message: string,
     public readonly type: string,
-    public readonly context: ExecutionContext,
+    public readonly _context: ExecutionContext,
   ) {
     super(message);
     this.name = "ResilienceError";

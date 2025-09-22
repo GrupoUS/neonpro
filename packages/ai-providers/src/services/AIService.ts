@@ -2,7 +2,7 @@
 // Focus: enhanced no-show prediction logic, preprocessing (age binning), PII redaction
 
 export interface ServiceContext {
-  userId?: string;
+  _userId?: string;
 }
 
 interface NoShowPredictionRequestBase {

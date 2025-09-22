@@ -168,7 +168,7 @@ export const PRICING_RULE_TEMPLATES = {
 export function calculatePricing(
   basePrice: number,
   rules: PricingRule[],
-  context: {
+  _context: {
     service_id?: string;
     professional_id?: string;
     appointment_date?: Date;
@@ -185,7 +185,7 @@ export function calculatePricing(
     .sort((a, b) => b.priority - a.priority);
 
   for (const rule of sortedRules) {
-    if (shouldApplyRule(rule, context)) {
+    if (shouldApplyRule(rule, _context)) {
       const adjustment = calculateAdjustment(rule.adjustment, currentPrice);
       appliedRules.push({
         rule_id: rule.id,
@@ -210,7 +210,7 @@ export function calculatePricing(
   };
 }
 
-function shouldApplyRule(rule: PricingRule, context: any): boolean {
+function shouldApplyRule(rule: PricingRule, _context: any): boolean {
   // Check service restrictions
   if (
     rule.service_ids?.length

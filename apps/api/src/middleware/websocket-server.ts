@@ -80,7 +80,7 @@ export class WebSocketServerMiddleware {
   /**
    * Handle WebSocket upgrade requests
    */
-  private handleUpgrade(request: any, socket: any, head: Buffer): void {
+  private handleUpgrade(_request: any, socket: any, head: Buffer): void {
     const pathname = new URL(request.url, `http://${request.headers.host}`).pathname;
 
     // Check if the request matches our WebSocket path
@@ -94,7 +94,7 @@ export class WebSocketServerMiddleware {
 
       // Handle the upgrade
       this.wss.handleUpgrade(request, socket, head, ws => {
-        this.wss.emit('connection', ws, request);
+        this.wss.emit('connection', ws, _request);
       });
     } else {
       // Path not found
@@ -108,8 +108,8 @@ export class WebSocketServerMiddleware {
    */
   private setupEventHandlers(): void {
     // Handle new connections
-    this.wss.on('connection', (ws, request) => {
-      this.aguiService.getProtocolInstance().handleConnection(ws, request);
+    this.wss.on('connection', (ws, _request) => {
+      this.aguiService.getProtocolInstance().handleConnection(ws, _request);
     });
 
     // Handle server errors
@@ -162,7 +162,7 @@ export class WebSocketServerMiddleware {
 
     // Session events
     this.aguiService.on('sessionCreated', session => {
-      logger.debug('Session created', { sessionId: session.id, userId: session.userId });
+      logger.debug('Session created', { sessionId: session.id, _userId: session.userId });
     });
 
     this.aguiService.on('sessionUpdated', data => {
@@ -236,7 +236,7 @@ export class WebSocketServerMiddleware {
 
     return {
       server: serverMetrics,
-      service: serviceMetrics,
+      _service: serviceMetrics,
       timestamp: new Date().toISOString(),
     };
   }

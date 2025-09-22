@@ -27,7 +27,7 @@ export abstract class HealthcareError extends Error {
     this.severity = severity;
     this.auditData = {
       ...auditData,
-      userId: auditData.userId || "unknown",
+      _userId: auditData.userId || "unknown",
       clinicId: auditData.clinicId || "unknown",
       ipAddress: auditData.ipAddress || "unknown",
     };
@@ -79,7 +79,7 @@ export class LGPDComplianceError extends HealthcareError {
 export class HealthcareErrorHandler {
   static handleError(
     error: unknown,
-    context: Record<string, any> = {},
+    _context: Record<string, any> = {},
   ): HealthcareError {
     if (error instanceof HealthcareError) {
       return error;

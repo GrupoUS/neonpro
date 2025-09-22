@@ -16,7 +16,7 @@ import React, {
   useState,
   useEffect,
   useRef,
-  useMemo,
+  useMemo
 } from "react";
 import { z } from "zod";
 import { cn } from "../../lib/utils";
@@ -26,12 +26,12 @@ import {
   healthcareValidationSchemas,
   DataSensitivity,
   classifyHealthcareData,
-  healthcareValidationMessages,
+  healthcareValidationMessages
 } from "../../utils/healthcare-validation";
 import {
   announceToScreenReader,
   HealthcarePriority,
-  generateAccessibleId,
+  generateAccessibleId
 } from "../../utils/accessibility";
 
 // Healthcare select option
@@ -124,14 +124,14 @@ const healthcareSelectOptions: Record<
     { value: "psiquiatria", label: "Psiquiatria", medicalCode: "CRM-06" },
     { value: "dermatologia", label: "Dermatologia", medicalCode: "CRM-07" },
     { value: "oftalmologia", label: "Oftalmologia", medicalCode: "CRM-08" },
-    { value: "medicina-geral", label: "Medicina Geral", medicalCode: "CRM-00" },
+    { value: "medicina-geral", label: "Medicina Geral", medicalCode: "CRM-00" }
   ],
 
   gender: [
     { value: "masculino", label: "Masculino" },
     { value: "feminino", label: "Feminino" },
     { value: "nao-binario", label: "Não-binário" },
-    { value: "prefiro-nao-informar", label: "Prefiro não informar" },
+    { value: "prefiro-nao-informar", label: "Prefiro não informar" }
   ],
 
   "blood-type": [
@@ -142,7 +142,7 @@ const healthcareSelectOptions: Record<
     { value: "AB+", label: "AB+", group: "AB" },
     { value: "AB-", label: "AB-", group: "AB" },
     { value: "O+", label: "O+", group: "O" },
-    { value: "O-", label: "O-", group: "O" },
+    { value: "O-", label: "O-", group: "O" }
   ],
 
   "marital-status": [
@@ -151,7 +151,7 @@ const healthcareSelectOptions: Record<
     { value: "divorciado", label: "Divorciado(a)" },
     { value: "viuvo", label: "Viúvo(a)" },
     { value: "uniao-estavel", label: "União Estável" },
-    { value: "separado", label: "Separado(a)" },
+    { value: "separado", label: "Separado(a)" }
   ],
 
   "education-level": [
@@ -163,14 +163,14 @@ const healthcareSelectOptions: Record<
     { value: "superior-completo", label: "Ensino Superior Completo" },
     { value: "pos-graduacao", label: "Pós-graduação" },
     { value: "mestrado", label: "Mestrado" },
-    { value: "doutorado", label: "Doutorado" },
+    { value: "doutorado", label: "Doutorado" }
   ],
 
   "insurance-type": [
     { value: "sus", label: "SUS (Sistema Único de Saúde)" },
     { value: "plano-saude", label: "Plano de Saúde" },
     { value: "particular", label: "Particular" },
-    { value: "convenio", label: "Convênio" },
+    { value: "convenio", label: "Convênio" }
   ],
 
   "urgency-level": [
@@ -178,20 +178,20 @@ const healthcareSelectOptions: Record<
       value: "emergencia",
       label: "Emergência",
       emergencyOption: true,
-      description: "Risco de vida imediato",
+      description: "Risco de vida imediato"
     },
     {
       value: "urgencia",
       label: "Urgência",
-      description: "Necessita atendimento rápido",
+      description: "Necessita atendimento rápido"
     },
     {
       value: "prioridade",
       label: "Prioridade",
-      description: "Atendimento prioritário",
+      description: "Atendimento prioritário"
     },
     { value: "normal", label: "Normal", description: "Atendimento de rotina" },
-    { value: "baixa", label: "Baixa", description: "Pode aguardar" },
+    { value: "baixa", label: "Baixa", description: "Pode aguardar" }
   ],
 
   "consultation-type": [
@@ -200,14 +200,14 @@ const healthcareSelectOptions: Record<
     {
       value: "consulta-urgencia",
       label: "Consulta de Urgência",
-      emergencyOption: true,
+      emergencyOption: true
     },
     { value: "teleconsulta", label: "Teleconsulta" },
     { value: "consulta-especializada", label: "Consulta Especializada" },
-    { value: "segunda-opiniao", label: "Segunda Opinião" },
+    { value: "segunda-opiniao", label: "Segunda Opinião" }
   ],
 
-  generic: [],
+  generic: []
 };
 
 /**
@@ -219,40 +219,10 @@ const healthcareSelectOptions: Record<
 export const HealthcareSelect = forwardRef<
   HTMLSelectElement,
   HealthcareSelectProps
->(
-  (
-    {
-      name,
-      label,
-      options: providedOptions,
-      placeholder = "Selecione uma opção...",
-      allowClear = false,
-      selectType = "generic",
-      dataSensitivity,
-      emergencyField = false,
-      validationSchema,
-      customValidation,
-      validateOnChange = true,
-      validateOnBlur = true,
-      description,
-      helperText,
-      searchable = false,
-      groupOptions = false,
-      onChange,
-      onBlur,
-      onValidationChange,
-      screenReaderDescription,
-      autoFocusOnError = true,
-      variant = "default",
-      size = "default",
-      className,
-      required = false,
-      disabled = false,
-      value,
-      defaultValue,
-      ...props
-    },
-    ref,
+>(({
+      name,label,
+      options: providedOptions,placeholder = "Selecione uma opção...",allowClear = false,selectType = "generic",dataSensitivity,emergencyField = false,validationSchema,customValidation,validateOnChange = true,validateOnBlur = true,description,helperText,searchable = false,groupOptions = false,onChange,onBlur,onValidationChange,screenReaderDescription,autoFocusOnError = true,variant = "default",size = "default",className,required = false,disabled = false,value,defaultValue, ...props
+    }, ref,
   ) => {
     // Context and theme
     const formContext = useHealthcareForm();
@@ -293,8 +263,7 @@ export const HealthcareSelect = forwardRef<
 
       // Filter by search term if searchable
       if (searchable && searchTerm) {
-        options = options.filter(
-          (option) =>
+        options = options.filter((option) =>
             option.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
             option.description
               ?.toLowerCase()
@@ -349,7 +318,7 @@ export const HealthcareSelect = forwardRef<
             "masculino",
             "feminino",
             "nao-binario",
-            "prefiro-nao-informar",
+            "prefiro-nao-informar"
           ]);
         case "blood-type":
           return z.enum(["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]);
@@ -373,8 +342,7 @@ export const HealthcareSelect = forwardRef<
       }
 
       // Check if value exists in options
-      const validOption = effectiveOptions.find(
-        (option) => option.value === valueToValidate,
+      const validOption = effectiveOptions.find((option) => option.value === valueToValidate,
       );
       if (valueToValidate && !validOption) {
         errors.push("Opção inválida selecionada");
@@ -390,9 +358,9 @@ export const HealthcareSelect = forwardRef<
       if (schema) {
         try {
           schema.parse(valueToValidate);
-        } catch (validationError) {
-          if (validationError instanceof z.ZodError) {
-            errors.push(...validationError.errors.map((err) => err.message));
+        } catch (_validationError) {
+          if (_validationError instanceof z.ZodError) {
+            errors.push(..._validationError.errors.map((error) => error.message));
           }
         }
       }
@@ -522,7 +490,7 @@ export const HealthcareSelect = forwardRef<
       {
         "h-8 px-2 py-1 text-xs": size === "sm",
         "h-10 px-3 py-2 text-sm": size === "default",
-        "h-12 px-4 py-3 text-base": size === "lg",
+        "h-12 px-4 py-3 text-base": size === "lg"
       },
 
       // Visual state
@@ -532,20 +500,20 @@ export const HealthcareSelect = forwardRef<
           effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL &&
           !showError,
         "border-destructive bg-destructive/5":
-          effectiveDataSensitivity === DataSensitivity.RESTRICTED && !showError,
+          effectiveDataSensitivity === DataSensitivity.RESTRICTED && !showError
       },
 
       // Variant styles
       {
         "border-warning bg-warning/5": variant === "emergency" && !showError,
-        "border-info bg-info/5": variant === "sensitive" && !showError,
+        "border-info bg-info/5": variant === "sensitive" && !showError
       },
 
       // Focus states
       {
         "ring-2 ring-warning ring-offset-2":
           isFocused && variant === "emergency",
-        "ring-2 ring-info ring-offset-2": isFocused && variant === "sensitive",
+        "ring-2 ring-info ring-offset-2": isFocused && variant === "sensitive"
       },
 
       className,
@@ -563,7 +531,7 @@ export const HealthcareSelect = forwardRef<
             "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
             {
               "text-destructive": showError,
-              "text-warning": variant === "emergency",
+              "text-warning": variant === "emergency"
             },
           )}
         >
@@ -588,8 +556,7 @@ export const HealthcareSelect = forwardRef<
         )}
 
         {/* Search input for searchable mode */}
-        {searchable && (
-          <input
+        {searchable && (<input
             type="text"
             placeholder="Search options..."
             value={searchTerm}
@@ -632,8 +599,7 @@ export const HealthcareSelect = forwardRef<
           )}
 
           {/* Render grouped or flat options */}
-          {groupedOptions ? (
-            <>
+          {groupedOptions ? (<>
               {/* Ungrouped options */}
               {groupedOptions.ungrouped.map((option) => (
                 <option
@@ -642,7 +608,7 @@ export const HealthcareSelect = forwardRef<
                   disabled={option.disabled}
                   className={cn({
                     "font-semibold text-warning": option.emergencyOption,
-                    "text-muted-foreground line-through": option.deprecated,
+                    "text-muted-foreground line-through": option.deprecated
                   })}
                 >
                   {option.label}
@@ -651,9 +617,7 @@ export const HealthcareSelect = forwardRef<
               ))}
 
               {/* Grouped options */}
-              {Object.entries(groupedOptions.groups).map(
-                ([groupName, groupOptions]) => (
-                  <optgroup key={groupName} label={groupName}>
+              {Object.entries(groupedOptions.groups).map(([groupName,groupOptions]) => (<optgroup key={groupName} label={groupName}>
                     {groupOptions.map((option) => (
                       <option
                         key={option.value}
@@ -662,7 +626,7 @@ export const HealthcareSelect = forwardRef<
                         className={cn({
                           "font-semibold text-warning": option.emergencyOption,
                           "text-muted-foreground line-through":
-                            option.deprecated,
+                            option.deprecated
                         })}
                       >
                         {option.label}
@@ -682,7 +646,7 @@ export const HealthcareSelect = forwardRef<
                 disabled={option.disabled}
                 className={cn({
                   "font-semibold text-warning": option.emergencyOption,
-                  "text-muted-foreground line-through": option.deprecated,
+                  "text-muted-foreground line-through": option.deprecated
                 })}
               >
                 {option.label}
@@ -705,14 +669,13 @@ export const HealthcareSelect = forwardRef<
         )}
 
         {/* Error messages */}
-        {showError && (
-          <div
+        {showError && (<div
             id={errorId}
             className="text-sm text-destructive"
             role="alert"
             aria-live="polite"
           >
-            {validationErrors.map((error, index) => (
+            {validationErrors.map((error,index) => (
               <p key={index}>{error}</p>
             ))}
           </div>

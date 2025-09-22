@@ -808,7 +808,7 @@ describe('API Security Performance', () => {
               expiresIn: 3600,
               user: {
                 id: 'user-123',
-                role: 'physician',
+                _role: 'physician',
               },
             }),
           );
@@ -906,7 +906,7 @@ describe('API Security Performance', () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ query: maliciousQuery }),
+        body: JSON.stringify({ _query: maliciousQuery }),
       });
 
       const data = await response.json();

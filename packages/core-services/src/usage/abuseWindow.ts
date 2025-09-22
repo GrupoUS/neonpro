@@ -20,7 +20,7 @@ export interface SlidingWindowConfig {
 
 export interface RequestEntry {
   timestamp: number;
-  userId?: string;
+  _userId?: string;
   ip: string;
   endpoint: string;
   userAgent?: string;
@@ -54,7 +54,7 @@ class SlidingWindow {
   /**
    * Add new request to the window
    */
-  addRequest(request: RequestEntry): void {
+  addRequest(_request: RequestEntry): void {
     this.requests.push(request);
 
     // Keep memory usage bounded
@@ -113,7 +113,7 @@ export class AbuseWindowTracker {
    */
   async checkAndTrackRequest(
     key: TrackingKey,
-    request: Omit<RequestEntry, "timestamp">,
+    _request: Omit<RequestEntry, "timestamp">,
   ): Promise<AbuseDetectionResult> {
     const now = Date.now();
     const keyStr = `${key.type}:${key.value}`;
@@ -364,8 +364,7 @@ export class AbuseWindowTracker {
    */
   private startCleanupTimer(): void {
     // Cleanup every 5 minutes
-    this.cleanupInterval = setInterval(
-      () => {
+    this.cleanupInterval = setInterval(() => {
         this.performCleanup();
       },
       5 * 60 * 1000,

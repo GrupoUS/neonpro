@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { ANVISAComplianceService } from './anvisa-compliance';
 import { LGPDService } from './lgpd-service';
 
@@ -38,7 +37,7 @@ export class HealthcareValidationService {
     operation: 'create' | 'update' | 'delete' | 'read',
     entity: string,
     data: any,
-    context?: {
+    _context?: {
       professionalId?: string;
       patientId?: string;
       organizationId?: string;

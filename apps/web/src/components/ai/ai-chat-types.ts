@@ -15,7 +15,7 @@ export interface BaseMessage {
   /** Message content */
   content: string;
   /** Message role */
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   /** Timestamp */
   timestamp: Date;
   /** Message status */
@@ -187,7 +187,7 @@ export interface MessageReaction {
   /** Emoji or reaction type */
   type: string;
   /** User ID who reacted */
-  userId: string;
+  _userId: string;
   /** Reaction timestamp */
   timestamp: Date;
 }
@@ -272,7 +272,7 @@ export interface SessionParticipant {
   /** Participant ID */
   id: string;
   /** Participant role */
-  role: ParticipantRole;
+  _role: ParticipantRole;
   /** Join timestamp */
   joinedAt: Date;
   /** Leave timestamp */
@@ -465,7 +465,7 @@ export interface AccessibilitySettings {
 
 export interface SearchQuery {
   /** Search query text */
-  query: string;
+  _query: string;
   /** Search scope */
   scope: SearchScope;
   /** Filters */
@@ -566,7 +566,7 @@ export interface SearchResults {
   /** Search execution time */
   executionTime: number;
   /** Search query */
-  query: SearchQuery;
+  _query: SearchQuery;
   /** Suggestions */
   suggestions?: string[];
   /** Facets */
@@ -696,7 +696,7 @@ export type DeleteHandler = (messageId: string) => void;
 export type FlagHandler = (messageId: string) => void;
 export type FileAttachHandler = (files: File[]) => void;
 export type FileRemoveHandler = (fileId: string) => void;
-export type SearchHandler = (query: string) => void;
+export type SearchHandler = (_query: string) => void;
 export type ModelChangeHandler = (model: string) => void;
 export type VoiceToggleHandler = () => void;
 export type SessionActionHandler = (action: string, sessionId: string) => void;
@@ -769,7 +769,7 @@ export interface MessageDisplayProps {
   /** Message content */
   content: string;
   /** Message role */
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   /** Message timestamp */
   timestamp: Date;
   /** Message ID */

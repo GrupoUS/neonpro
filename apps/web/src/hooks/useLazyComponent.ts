@@ -55,7 +55,7 @@ export function useLazyComponent<T extends ComponentType<any>>(
   useEffect(() => {
     const observer = createIntersectionObserver(
       entries => {
-        entries.forEach(_entry => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             setShouldLoad(true);
             if (triggerOnce) {
@@ -101,7 +101,7 @@ export function useComponentPreloader() {
     }
 
     try {
-      const _component = createLazyComponent(importFn, cacheKey);
+      const component = createLazyComponent(importFn, cacheKey);
       preloadedComponents.current.add(cacheKey);
 
       // Trigger the import to cache it
@@ -110,7 +110,7 @@ export function useComponentPreloader() {
       if (process.env.NODE_ENV === 'development') {
         console.log(`[Performance] Preloaded component: ${cacheKey}`);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error(
         `[Performance] Failed to preload component: ${cacheKey}`,
         error,
@@ -143,93 +143,63 @@ export function useComponentPreloader() {
 export const routeComponents = {
   // Patient routes
   patients: () =>
-    createLazyComponent(
-      () =>
-        import('@/routes/patients/dashboard').then(m => ({
-          default: (m as any).Route?.component as ComponentType<any>,
-        })),
-      'patients-route',
-    ),
+    createLazyComponent(() =>
+      import('@/routes/patients/dashboard').then(m => ({
+        default: (m as any).Route?.component as ComponentType<any>,
+      })), 'patients-route'),
   patientProfile: () =>
-    createLazyComponent(
-      () =>
-        import('@/routes/patients/$patientId').then(m => ({
-          default: (m as any).Route?.component as ComponentType<any>,
-        })),
-      'patient-profile-route',
-    ),
+    createLazyComponent(() =>
+      import('@/routes/patients/$patientId').then(m => ({
+        default: (m as any).Route?.component as ComponentType<any>,
+      })), 'patient-profile-route'),
   patientEdit: () =>
-    createLazyComponent(
-      () =>
-        import('@/routes/patients/$patientId/edit').then(m => ({
-          default: (m as any).Route?.component as ComponentType<any>,
-        })),
-      'patient-edit-route',
-    ),
+    createLazyComponent(() =>
+      import('@/routes/patients/$patientId/edit').then(m => ({
+        default: (m as any).Route?.component as ComponentType<any>,
+      })), 'patient-edit-route'),
 
   // Appointment routes
   appointments: () =>
-    createLazyComponent(
-      () =>
-        import('@/routes/appointments/new').then(m => ({
-          default: (m as any).Route?.component as ComponentType<any>,
-        })),
-      'appointments-route',
-    ),
+    createLazyComponent(() =>
+      import('@/routes/appointments/new').then(m => ({
+        default: (m as any).Route?.component as ComponentType<any>,
+      })), 'appointments-route'),
   appointmentNew: () =>
-    createLazyComponent(
-      () =>
-        import('@/routes/appointments/new').then(m => ({
-          default: (m as any).Route?.component as ComponentType<any>,
-        })),
-      'appointment-new-route',
-    ),
+    createLazyComponent(() =>
+      import('@/routes/appointments/new').then(m => ({
+        default: (m as any).Route?.component as ComponentType<any>,
+      })), 'appointment-new-route'),
 
   // Service routes
   services: () =>
-    createLazyComponent(
-      () =>
-        import('@/routes/services/index').then(m => ({
-          default: (m as any).Route?.component as ComponentType<any>,
-        })),
-      'services-route',
-    ),
+    createLazyComponent(() =>
+      import('@/routes/services/index').then(m => ({
+        default: (m as any).Route?.component as ComponentType<any>,
+      })), 'services-route'),
   serviceCategories: () =>
-    createLazyComponent(
-      () =>
-        import('@/routes/services/service-categories').then(m => ({
-          default: (m as any).Route?.component as ComponentType<any>,
-        })),
-      'service-categories-route',
-    ),
+    createLazyComponent(() =>
+      import('@/routes/services/service-categories').then(m => ({
+        default: (m as any).Route?.component as ComponentType<any>,
+      })), 'service-categories-route'),
 
   // AI routes
   aiChat: () =>
-    createLazyComponent(
-      () =>
-        import('@/routes/ai/insights').then(m => ({
-          default: (m as any).Route?.component as ComponentType<any>,
-        })),
-      'ai-chat-route',
-    ),
+    createLazyComponent(() =>
+      import('@/routes/ai/insights').then(m => ({
+        default: (m as any).Route?.component as ComponentType<any>,
+      })), 'ai-chat-route'),
 
   // Admin routes
   governance: () =>
-    createLazyComponent(
-      () =>
-        import('@/routes/admin/governance').then(m => ({
-          default: (m as any).Route?.component as ComponentType<any>,
-        })),
-      'governance-route',
-    ),
+    createLazyComponent(() =>
+      import('@/routes/admin/governance').then(m => ({
+        default: (m as any).Route?.component as ComponentType<any>,
+      })), 'governance-route'),
   reports: () =>
-    createLazyComponent(
-      () =>
-        import('@/routes/admin/reports').then(m => ({
-          default: (m as any).Route?.component as ComponentType<any>,
-        })),
-      'reports-route',
-    ),
+    createLazyComponent(() =>
+      import('@/routes/admin/reports').then(m => ({
+        default: (m as any).Route?.component as ComponentType<any>,
+      })), 'reports-route'),
 };
 
 /**
@@ -242,57 +212,38 @@ export const lazyComponents = {
       () => import('@/components/ai/insights-dashboard'),
       'ai-insights-dashboard',
     ),
-  aiChat: () =>
-    createLazyComponent(
-      () => import('@/components/ai/ai-chat'),
-      'ai-chat-component',
-    ),
+  aiChat: () => createLazyComponent(() => import('@/components/ai/ai-chat'), 'ai-chat-component'),
 
   // Form Components
   patientCreationForm: () =>
-    createLazyComponent(
-      () =>
-        import('@/components/patients/PatientCreationForm').then(m => ({
-          default: (m as any).default,
-        })),
-      'patient-creation-form',
-    ),
+    createLazyComponent(() =>
+      import('@/components/patients/PatientCreationForm').then(m => ({
+        default: (m as any).default,
+      })), 'patient-creation-form'),
   brazilianFields: () =>
-    createLazyComponent(
-      () =>
-        import('@/components/forms/brazilian-fields').then(m => ({
-          default: (m as any).default,
-        })),
-      'brazilian-fields',
-    ),
+    createLazyComponent(() =>
+      import('@/components/forms/brazilian-fields').then(m => ({
+        default: (m as any).default,
+      })), 'brazilian-fields'),
 
   // Complex Components
   appointmentBooking: () =>
-    createLazyComponent(
-      () =>
-        import('@/components/appointment-booking').then(m => ({
-          default: m.AppointmentBooking,
-        })),
-      'appointment-booking',
-    ),
+    createLazyComponent(() =>
+      import('@/components/appointment-booking').then(m => ({
+        default: m.AppointmentBooking,
+      })), 'appointment-booking'),
   eventCalendar: () =>
-    createLazyComponent(
-      () =>
-        import('@/components/event-calendar/event-calendar').then(m => ({
-          default: m.EventCalendar,
-        })),
-      'event-calendar',
-    ),
+    createLazyComponent(() =>
+      import('@/components/event-calendar/event-calendar').then(m => ({
+        default: m.EventCalendar,
+      })), 'event-calendar'),
 
   // Chart Components
   performanceDashboard: () =>
-    createLazyComponent(
-      () =>
-        import('@/components/performance/PerformanceDashboard').then(m => ({
-          default: m.PerformanceDashboard,
-        })),
-      'performance-dashboard',
-    ),
+    createLazyComponent(() =>
+      import('@/components/performance/PerformanceDashboard').then(m => ({
+        default: m.PerformanceDashboard,
+      })), 'performance-dashboard'),
 };
 
 /**

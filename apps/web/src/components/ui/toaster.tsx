@@ -29,7 +29,7 @@ export function showToast(
     default:
       toast(message);
   }
-  listeners.forEach(_l => l(message, variant));
+  listeners.forEach(l => l(message, variant));
 }
 
 export function useToastListener(

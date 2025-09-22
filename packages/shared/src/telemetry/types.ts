@@ -40,7 +40,7 @@ export interface HealthcareTelemetryConfig {
 
 export interface TelemetryContext {
   clinicId?: string;
-  userId?: string;
+  _userId?: string;
   sessionId?: string;
   requestId?: string;
   feature?: string;
@@ -68,7 +68,7 @@ export interface HealthcareMetrics {
 export interface ComplianceEvent {
   eventType: "data_access" | "data_export" | "data_deletion" | "consent_update";
   timestamp: string;
-  userId: string;
+  _userId: string;
   clinicId: string;
   dataClassification: string;
   complianceNotes: string;

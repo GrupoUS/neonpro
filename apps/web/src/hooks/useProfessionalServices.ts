@@ -143,7 +143,7 @@ export function useCreateProfessionalService() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: CreateProfessionalServiceRequest) =>
+    mutationFn: (_request: CreateProfessionalServiceRequest) =>
       professionalServicesService.createProfessionalService(request),
     onSuccess: () => {
       // Invalidate relevant queries
@@ -164,7 +164,7 @@ export function useUpdateProfessionalService() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: UpdateProfessionalServiceRequest) =>
+    mutationFn: (_request: UpdateProfessionalServiceRequest) =>
       professionalServicesService.updateProfessionalService(request),
     onSuccess: () => {
       // Invalidate relevant queries
@@ -205,7 +205,7 @@ export function useBulkAssignServices() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: BulkAssignServicesRequest) =>
+    mutationFn: (_request: BulkAssignServicesRequest) =>
       professionalServicesService.bulkAssignServices(request),
     onSuccess: count => {
       // Invalidate relevant queries
@@ -226,7 +226,7 @@ export function useSetPrimaryProfessional() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: SetPrimaryProfessionalRequest) =>
+    mutationFn: (_request: SetPrimaryProfessionalRequest) =>
       professionalServicesService.setPrimaryProfessional(request),
     onSuccess: () => {
       // Invalidate relevant queries

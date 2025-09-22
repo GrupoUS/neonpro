@@ -16,7 +16,7 @@ describe('Contract: AI Optimization API', () => {
     it('should find similar entries in semantic cache', async () => {
       const cacheQuery = {
         prompt: 'Patient with chest pain and shortness of breath',
-        context: {
+        _context: {
           patientId: 'patient-123',
           isEmergency: false,
           isSensitiveData: true,
@@ -120,7 +120,7 @@ describe('Contract: AI Optimization API', () => {
       const healthcareQuery = {
         prompt: 'Urgent: Patient showing signs of stroke',
         patientId: 'patient-789',
-        context: {
+        _context: {
           isEmergency: true,
           containsUrgentSymptoms: true,
           isSensitiveData: true,
@@ -315,7 +315,7 @@ describe('Contract: AI Optimization API', () => {
     it('should route requests to optimal AI provider', async () => {
       const routingRequest = {
         prompt: 'Analyze patient lab results for cardiac markers',
-        context: {
+        _context: {
           specialty: 'cardiology',
           urgency: 'medium',
           complexity: 'high',
@@ -369,7 +369,7 @@ describe('Contract: AI Optimization API', () => {
         total_cost: 0.035,
         request_id: 'req-123',
         user_id: 'user-456',
-        context: {
+        _context: {
           feature: 'patient_summary',
           patient_id: 'patient-789',
           is_emergency: false,
@@ -411,7 +411,7 @@ describe('Contract: AI Optimization API', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-        query: new URLSearchParams({
+        _query: new URLSearchParams({
           period: '30d',
           group_by: 'feature',
         }).toString(),
@@ -596,7 +596,7 @@ describe('Contract: AI Optimization API', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-        query: new URLSearchParams({
+        _query: new URLSearchParams({
           period: '7d',
           features: 'patient_triage,diagnostic_support',
         }).toString(),
@@ -633,7 +633,7 @@ describe('Contract: AI Optimization API', () => {
     it('should validate AI output for healthcare compliance', async () => {
       const validationRequest = {
         ai_output: 'Based on the patient symptoms and lab results...',
-        context: {
+        _context: {
           patient_id: 'patient-123',
           medical_specialty: 'cardiology',
           urgency_level: 'medium',
@@ -679,7 +679,7 @@ describe('Contract: AI Optimization API', () => {
         headers: {
           authorization: 'Bearer test-token',
         },
-        query: new URLSearchParams({
+        _query: new URLSearchParams({
           period: '30d',
           include_patient_data: 'true',
         }).toString(),
@@ -838,7 +838,7 @@ describe('Contract: AI Optimization API', () => {
           prompt_tokens: 100000, // Unusually high to trigger budget warning
           completion_tokens: 50000,
           total_cost: 9999, // Exceeds typical budget
-          context: {
+          _context: {
             feature: 'test',
             budget_impact: 'critical',
           },

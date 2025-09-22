@@ -54,7 +54,7 @@ export const PDFExportButtons: React.FC<PDFExportButtonsProps> = ({
       );
 
       toast.success('Relatório PDF gerado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error(error);
       toast.error('Erro ao baixar o PDF. Tente novamente.');
     }
@@ -69,7 +69,7 @@ export const PDFExportButtons: React.FC<PDFExportButtonsProps> = ({
           generatedAt={new Date()}
         />,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error(error);
       toast.error('Erro ao visualizar o PDF. Tente novamente.');
     }

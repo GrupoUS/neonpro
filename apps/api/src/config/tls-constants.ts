@@ -1,6 +1,6 @@
 /**
  * TLS and HTTPS Configuration Constants
- * 
+ *
  * This file contains all magic numbers, timeouts, and configuration values
  * used throughout the TLS and HTTPS server implementations.
  * Centralizing these values improves maintainability and makes configuration
@@ -18,7 +18,7 @@ export const TLS_CONSTANTS = {
       'TLS_AES_256_CCM_8_SHA384',
       'TLS_AES_128_CCM_SHA256',
     ] as const,
-    
+
     TLS_1_2: [
       'ECDHE-ECDSA-AES256-GCM-SHA384',
       'ECDHE-RSA-AES256-GCM-SHA384',
@@ -33,7 +33,12 @@ export const TLS_CONSTANTS = {
 
   // Weak ciphers to detect and reject
   WEAK_CIPHERS: [
-    'MD5', 'SHA1', 'RC4', 'DES', '3DES', 'NULL'
+    'MD5',
+    'SHA1',
+    'RC4',
+    'DES',
+    '3DES',
+    'NULL',
   ] as const,
 
   // Security configuration values
@@ -88,7 +93,8 @@ export const HTTPS_CONSTANTS = {
 
   // Security headers
   SECURITY_HEADERS: {
-    CONTENT_SECURITY_POLICY: "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';",
+    CONTENT_SECURITY_POLICY:
+      'default-src \'self\'; script-src \'self\' \'unsafe-inline\' \'unsafe-eval\'; style-src \'self\' \'unsafe-inline\';',
     X_FRAME_OPTIONS: 'DENY',
     X_CONTENT_TYPE_OPTIONS: 'nosniff',
     X_XSS_PROTECTION: '1; mode=block',
@@ -152,7 +158,9 @@ export const LOGGING_CONSTANTS = {
 } as const;
 
 // Type utilities for constants
-export type TLSCipherSuite = typeof TLS_CONSTANTS.CIPHERS.TLS_1_3[number] | typeof TLS_CONSTANTS.CIPHERS.TLS_1_2[number];
+export type TLSCipherSuite =
+  | typeof TLS_CONSTANTS.CIPHERS.TLS_1_3[number]
+  | typeof TLS_CONSTANTS.CIPHERS.TLS_1_2[number];
 export type WeakCipher = typeof TLS_CONSTANTS.WEAK_CIPHERS[number];
 export type ErrorType = typeof ERROR_CONSTANTS.TYPES[keyof typeof ERROR_CONSTANTS.TYPES];
 export type LogEventType = typeof LOGGING_CONSTANTS.EVENTS[keyof typeof LOGGING_CONSTANTS.EVENTS];
@@ -168,5 +176,4 @@ export const isWeakCipher = (cipher: string): cipher is WeakCipher =>
 
 export const getDefaultTLSVersion = () => TLS_CONSTANTS.SECURITY.MIN_TLS_VERSION;
 
-export const formatCipherList = (ciphers: TLSCipherSuite[]): string =>
-  ciphers.join(':');
+export const formatCipherList = (ciphers: TLSCipherSuite[]): string => ciphers.join(':');

@@ -34,7 +34,7 @@ export const aiChatKeys = {
 export interface ChatMessage {
   id: string;
   content: string;
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   timestamp: Date;
   metadata?: {
     provider?: 'openai' | 'anthropic';
@@ -54,7 +54,7 @@ export interface Conversation {
   createdAt: Date;
   updatedAt: Date;
   patientId?: string;
-  context:
+  _context:
     | 'general'
     | 'patient_analysis'
     | 'appointment_booking'
@@ -89,7 +89,7 @@ export function useAIChat(conversationId?: string) {
     {
       conversationId: conversationId || 'new',
       language: 'pt',
-      context: 'general',
+      _context: 'general',
     },
     {
       enabled: true,
@@ -136,7 +136,7 @@ export function useAIChat(conversationId?: string) {
       const optimisticMessage: ChatMessage = {
         id: `temp-${Date.now()}`,
         content: message,
-        role: 'user',
+        _role: 'user',
         timestamp: new Date(),
         metadata: {
           language: 'pt',
@@ -162,7 +162,7 @@ export function useAIChat(conversationId?: string) {
       return { optimisticMessage, conversationId: convId };
     },
 
-    onSuccess: (data, _variables, context) => {
+    onSuccess: (data, variables, context) => {
       // Update conversation with real response
       const convId = context?.conversationId || data.conversationId;
       if (convId) {
@@ -186,7 +186,7 @@ export function useAIChat(conversationId?: string) {
                 {
                   id: data.aiMessageId,
                   content: data.response,
-                  role: 'assistant' as const,
+                  _role: 'assistant' as const,
                   timestamp: new Date(),
                   metadata: {
                     provider: data.provider,
@@ -217,7 +217,7 @@ export function useAIChat(conversationId?: string) {
       }
     },
 
-    onError: (error, _variables, context) => {
+    onError: (error, variables, context) => {
       // Remove optimistic message
       const convId = context?.conversationId;
       if (convId) {
@@ -276,7 +276,7 @@ export function useAINoShowPrediction() {
       });
     },
 
-    onSuccess: (data, _variables) => {
+    onSuccess: (data, variables) => {
       // Cache prediction result
       queryClient.setQueryData(aiChatKeys.predictions(), (_old: any) => {
         const predictions = old || [];
@@ -329,7 +329,7 @@ export function useAIHealthcareInsights() {
       });
     },
 
-    onSuccess: (data, _variables) => {
+    onSuccess: (data, variables) => {
       // Cache insights
       const queryClient = useQueryClient();
       queryClient.setQueryData(
@@ -387,7 +387,7 @@ export function useAIProviderRouting() {
       }
     },
 
-    onError: _error => {
+    onError: error => {
       // Implement failover logic
       const nextProvider = currentProvider === 'openai' ? 'anthropic' : 'openai';
       setCurrentProvider(nextProvider);

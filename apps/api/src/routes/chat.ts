@@ -1,7 +1,6 @@
 import { zValidator } from '@hono/zod-validator';
 import { supabase } from '@neonpro/database';
 import { Hono } from 'hono';
-import { z } from 'zod';
 import { DEFAULT_PRIMARY, streamWithFailover } from '../config/ai';
 
 // OpenAPI contract reference (specs/002-phase-1-ai/contracts/chat-query.openapi.json)
@@ -287,10 +286,10 @@ app.post(
       // Real path: call AI with failover, then bridge to SSE
       const messages = [
         {
-          role: 'system' as const,
+          _role: 'system' as const,
           content: 'Você é um assistente de clínica estética. Responda de forma segura e empática.',
         },
-        { role: 'user' as const, content: question },
+        { _role: 'user' as const, content: question },
       ];
 
       const aiResp = await streamWithFailover({
@@ -428,7 +427,7 @@ app.get('/session/:id', async c => {
         return c.json(
           {
             id: data.id,
-            userId: data.user_id,
+            _userId: data.user_id,
             clinicId: data.clinic_id,
             locale: data.locale
               || (c.req.header('x-locale') as 'pt-BR' | 'en-US')
@@ -458,7 +457,7 @@ app.get('/session/:id', async c => {
       return c.json(
         {
           id: ins.data.id,
-          userId: ins.data.user_id,
+          _userId: ins.data.user_id,
           clinicId: ins.data.clinic_id,
           locale: ins.data.locale,
           startedAt: ins.data.started_at,
@@ -489,7 +488,7 @@ app.post('/explanation', async c => {
     || process.env.AI_MOCK === 'true';
 
   // Parse and validate payload
-  let payload: any = {};
+  let _payload: any = {};
   try {
     payload = await c.req.json();
   } catch {}

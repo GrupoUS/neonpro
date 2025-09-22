@@ -58,7 +58,7 @@ export class WebSocketAgentService {
   }
 
   // Send query to agent
-  async sendQuery(query: string, context?: any): Promise<AgentResponse> {
+  async sendQuery(_query: string, _context?: any): Promise<AgentResponse> {
     if (!this.isConnected) {
       throw new Error('WebSocket not connected');
     }
@@ -74,7 +74,7 @@ export class WebSocketAgentService {
   }
 
   // Send action to agent
-  async sendAction(actionType: string, payload: any): Promise<any> {
+  async sendAction(actionType: string, _payload: any): Promise<any> {
     if (!this.isConnected) {
       throw new Error('WebSocket not connected');
     }
@@ -145,7 +145,7 @@ export class WebSocketAgentService {
     }
 
     // Notify connection handlers
-    this.connectionHandlers.forEach(_handler => handler());
+    this.connectionHandlers.forEach(handler => handler());
   }
 
   private handleMessage(event: MessageEvent) {
@@ -155,13 +155,13 @@ export class WebSocketAgentService {
 
       // Emit to specific handlers
       const handlers = this.messageHandlers.get(messageType) || [];
-      handlers.forEach(_handler => handler(data));
+      handlers.forEach(handler => handler(data));
 
       // Emit to wildcard handlers
       const wildcardHandlers = this.messageHandlers.get('*') || [];
 
-      wildcardHandlers.forEach(_handler => handler(data));
-    } catch (error) {
+      wildcardHandlers.forEach(handler => handler(data));
+    } catch (_error) {
       console.error('Error parsing WebSocket message:', error);
     }
   }
@@ -171,7 +171,7 @@ export class WebSocketAgentService {
     this.isConnected = false;
 
     // Notify disconnection handlers
-    this.disconnectionHandlers.forEach(_handler => handler(event));
+    this.disconnectionHandlers.forEach(handler => handler(event));
 
     // Attempt to reconnect
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
@@ -265,14 +265,14 @@ export function useWebSocketAgent(config?: WebSocketAgentConfig) {
     };
   }, [config]);
 
-  const sendQuery = React.useCallback(async (query: string, context?: any) => {
+  const sendQuery = React.useCallback(async (_query: string, _context?: any) => {
     const service = getWebSocketAgentService(config);
-    return service.sendQuery(query, context);
+    return service.sendQuery(query, _context);
   }, [config]);
 
-  const sendAction = React.useCallback(async (actionType: string, payload: any) => {
+  const sendAction = React.useCallback(async (actionType: string, _payload: any) => {
     const service = getWebSocketAgentService(config);
-    return service.sendAction(actionType, payload);
+    return service.sendAction(actionType, _payload);
   }, [config]);
 
   const sendFeedback = React.useCallback((feedbackType: string, data: any) => {

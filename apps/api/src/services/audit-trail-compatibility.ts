@@ -59,7 +59,7 @@ export class AuditTrailCompatibility {
           createdAt: state.createdAt,
           updatedAt: state.updatedAt,
           // Add other required auditTrail fields
-          userId: state.userId,
+          _userId: state.userId,
           action: 'CRUD_OPERATION',
           resourceType: state.entity.toUpperCase(),
           resourceId: `${state.entity}_${state.operationId}`,
@@ -78,7 +78,7 @@ export class AuditTrailCompatibility {
    * Create audit trail entry for actual audit purposes (not state management)
    */
   async createAuditEntry(params: {
-    userId: string;
+    _userId: string;
     action: string;
     resourceType: string;
     resourceId: string;

@@ -58,7 +58,7 @@ const mockWebVitals = {
   onINP: vi.fn(),
 };
 
-describe('Observability Contracts', () => {
+describe(('Observability Contracts', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Mock global objects
@@ -72,8 +72,8 @@ describe('Observability Contracts', () => {
     vi.restoreAllMocks();
   });
 
-  describe('Sentry Configuration Contract', () => {
-    test('should provide healthcare-compliant Sentry configuration', () => {
+  describe(('Sentry Configuration Contract', () => {
+    test(('should provide healthcare-compliant Sentry configuration', () => {
       // Contract: Healthcare Sentry config must include LGPD compliance
       const expectedConfig = {
         dsn: expect.any(String),
@@ -96,7 +96,7 @@ describe('Observability Contracts', () => {
       });
     });
 
-    test('should redact PII from error reports', () => {
+    test(('should redact PII from error reports', () => {
       // Contract: PII must be redacted for LGPD compliance
       const sensitiveData = {
         cpf: '123.456.789-01',
@@ -119,7 +119,7 @@ describe('Observability Contracts', () => {
       expect(redactedData.phone).toBe('[REDACTED_PHONE]');
     });
 
-    test('should categorize healthcare errors correctly', () => {
+    test(('should categorize healthcare errors correctly', () => {
       // Contract: Healthcare error categories for compliance
       const healthcareErrorCategories = [
         'patient_data_error',
@@ -141,7 +141,7 @@ describe('Observability Contracts', () => {
       expect(Array.isArray(healthcareErrorCategories)).toBe(true);
     });
 
-    test('should include healthcare context in error reports', () => {
+    test(('should include healthcare context in error reports', () => {
       // Contract: Healthcare context for error analysis
       const healthcareContext: HealthcareErrorContext = {
         patient_id: expect.any(String),
@@ -162,8 +162,8 @@ describe('Observability Contracts', () => {
     });
   });
 
-  describe('OpenTelemetry Tracing Contract', () => {
-    test('should provide healthcare-compliant tracing configuration', () => {
+  describe(('OpenTelemetry Tracing Contract', () => {
+    test(('should provide healthcare-compliant tracing configuration', () => {
       // Contract: Tracing config must include healthcare attributes
       const expectedTracingConfig = {
         serviceName: 'neonpro-healthcare-platform',
@@ -186,7 +186,7 @@ describe('Observability Contracts', () => {
       expect(expectedTracingConfig.healthcareCompliance.anvisa).toBe(true);
     });
 
-    test('should create spans with healthcare attributes', () => {
+    test(('should create spans with healthcare attributes', () => {
       // Contract: Healthcare span attributes for compliance
       const healthcareSpanAttributes: HealthcareSpanAttributes = {
         'healthcare.patient.id': expect.any(String),
@@ -207,7 +207,7 @@ describe('Observability Contracts', () => {
       );
     });
 
-    test('should handle span lifecycle for medical workflows', () => {
+    test(('should handle span lifecycle for medical workflows', () => {
       // Contract: Span lifecycle for medical operations
       const spanLifecycle = {
         start: expect.any(Function),
@@ -227,7 +227,7 @@ describe('Observability Contracts', () => {
       expect(typeof spanLifecycle.end).toBe('function');
     });
 
-    test('should provide medical workflow tracing utilities', () => {
+    test(('should provide medical workflow tracing utilities', () => {
       // Contract: Medical workflow tracing helpers
       const workflowTracingUtils = {
         tracePatientOperation: expect.any(Function),
@@ -246,8 +246,8 @@ describe('Observability Contracts', () => {
     });
   });
 
-  describe('Web Vitals Monitoring Contract', () => {
-    test('should provide healthcare-specific performance thresholds', () => {
+  describe(('Web Vitals Monitoring Contract', () => {
+    test(('should provide healthcare-specific performance thresholds', () => {
       // Contract: Healthcare performance thresholds for patient safety
       const healthcareThresholds = {
         emergency: {
@@ -279,7 +279,7 @@ describe('Observability Contracts', () => {
       expect(healthcareThresholds.general.lcp).toBeLessThanOrEqual(2500);
     });
 
-    test('should provide healthcare performance context', () => {
+    test(('should provide healthcare performance context', () => {
       // Contract: Healthcare context for performance analysis
       const performanceContext: HealthcarePerformanceContext = {
         workflow_type: expect.any(String),
@@ -299,7 +299,7 @@ describe('Observability Contracts', () => {
       );
     });
 
-    test('should categorize performance impacts by medical urgency', () => {
+    test(('should categorize performance impacts by medical urgency', () => {
       // Contract: Performance impact categorization
       const urgencyCategories = [
         'emergency_critical',
@@ -324,7 +324,7 @@ describe('Observability Contracts', () => {
       expect(impactLevels).toContain('workflow_disrupting');
     });
 
-    test('should provide performance monitoring callbacks', () => {
+    test(('should provide performance monitoring callbacks', () => {
       // Contract: Performance monitoring callbacks
       const performanceCallbacks = {
         onLCPThresholdExceeded: expect.any(Function),
@@ -353,8 +353,8 @@ describe('Observability Contracts', () => {
     });
   });
 
-  describe('Healthcare Compliance Integration', () => {
-    test('should provide LGPD compliance logging', () => {
+  describe(('Healthcare Compliance Integration', () => {
+    test(('should provide LGPD compliance logging', () => {
       // Contract: LGPD compliance for all observability
       const lgpdCompliance = {
         dataProcessingLogged: true,
@@ -371,7 +371,7 @@ describe('Observability Contracts', () => {
       expect(lgpdCompliance.auditTrailMaintained).toBe(true);
     });
 
-    test('should provide ANVISA cybersecurity compliance', () => {
+    test(('should provide ANVISA cybersecurity compliance', () => {
       // Contract: ANVISA RDC 505/2021 compliance
       const anvisaCompliance = {
         securityMonitoring: true,
@@ -388,7 +388,7 @@ describe('Observability Contracts', () => {
       expect(anvisaCompliance.accessControlLogging).toBe(true);
     });
 
-    test('should integrate with healthcare audit trail', () => {
+    test(('should integrate with healthcare audit trail', () => {
       // Contract: Healthcare audit trail integration
       const auditTrailIntegration = {
         logUserActions: expect.any(Function),

@@ -26,8 +26,6 @@ import {
   User,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { z } from 'zod';
-
 // Type-safe params schema
 const patientParamsSchema = z.object({
   patientId: z.string().min(1),

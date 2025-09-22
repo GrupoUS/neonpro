@@ -15,8 +15,8 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { z } from "zod";
 import { nanoid } from "nanoid";
+import { z } from "zod";
 import type { Context, Next, MiddlewareHandler } from "hono";
 
 // ============================================================================
@@ -458,7 +458,7 @@ export class HealthcareMiddlewareService {
       );
     } catch (error) {
       console.error(
-        "Failed to initialize healthcare middleware service:",
+        "Failed to initialize healthcare middleware _service:",
         error,
       );
     }
@@ -700,7 +700,7 @@ export class HealthcareMiddlewareService {
    */
   private determineComplianceContext(
     c: Context,
-    userContext: any,
+    userContext: HealthcareRequestContext["userContext"],
   ): HealthcareRequestContext["complianceContext"] {
     // Determine legal basis based on request type and user context
     let legalBasis:
@@ -755,7 +755,7 @@ export class HealthcareMiddlewareService {
    */
   private async detectWorkflowContext(
     c: Context,
-    userContext: any,
+    userContext: HealthcareRequestContext["userContext"],
   ): Promise<HealthcareRequestContext["workflowContext"]> {
     const path = c.req.path.toLowerCase();
     const method = c.req.method;
@@ -780,7 +780,7 @@ export class HealthcareMiddlewareService {
       userContext?.userRole === "system_admin";
 
     // Workflow type detection
-    let workflowType: any = "administrative_task";
+    let workflowType: HealthcareRequestContext["workflowContext"]["workflowType"] = "administrative_task";
 
     if (path.includes("/patient") && method === "POST")
       workflowType = "patient_registration";
@@ -825,7 +825,7 @@ export class HealthcareMiddlewareService {
    */
   private async performSecurityValidation(
     c: Context,
-    context: HealthcareRequestContext,
+    _context: HealthcareRequestContext,
   ): Promise<void> {
     if (!this.config.security.enableInputValidation) return;
 
@@ -836,7 +836,7 @@ export class HealthcareMiddlewareService {
 
     // PII detection in request
     if (this.config.security.enablePiiDetection) {
-      await this.detectAndRedactPII(c, context);
+      await this.detectAndRedactPII(c, _context);
     }
 
     // CSRF protection for state-changing operations
@@ -853,7 +853,7 @@ export class HealthcareMiddlewareService {
    */
   private async validateLGPDCompliance(
     c: Context,
-    context: HealthcareRequestContext,
+    _context: HealthcareRequestContext,
   ): Promise<void> {
     // Check if user has required consent for data processing
     if (context.complianceContext.legalBasis === "consent") {
@@ -868,7 +868,7 @@ export class HealthcareMiddlewareService {
 
     // Validate data minimization
     if (this.config.security.enableDataMinimization) {
-      await this.validateDataMinimization(c, context);
+      await this.validateDataMinimization(c, _context);
     }
 
     // Log compliance validation
@@ -882,7 +882,7 @@ export class HealthcareMiddlewareService {
    */
   private async performRateLimitingCheck(
     c: Context,
-    context: HealthcareRequestContext,
+    _context: HealthcareRequestContext,
   ): Promise<void> {
     // TODO: Integrate with API rate limiting service
 
@@ -892,14 +892,14 @@ export class HealthcareMiddlewareService {
       context.workflowContext?.emergencyFlag
     ) {
       console.log(
-        `🚨 [HealthcareMiddlewareService] Emergency bypass for request: ${context.requestId}`,
+        `🚨 [HealthcareMiddlewareService] Emergency bypass for _request: ${context.requestId}`,
       );
       return;
     }
 
     // Simulate rate limiting check
     console.log(
-      `🚦 [HealthcareMiddlewareService] Rate limiting check for request: ${context.requestId}`,
+      `🚦 [HealthcareMiddlewareService] Rate limiting check for _request: ${context.requestId}`,
     );
   }
 
@@ -908,7 +908,7 @@ export class HealthcareMiddlewareService {
    */
   private async injectHealthcareContext(
     c: Context,
-    context: HealthcareRequestContext,
+    _context: HealthcareRequestContext,
   ): Promise<void> {
     // Add healthcare context headers to response
     c.header("x-request-id", context.requestId);
@@ -936,7 +936,7 @@ export class HealthcareMiddlewareService {
   /**
    * Start performance monitoring
    */
-  private startPerformanceMonitoring(context: HealthcareRequestContext): void {
+  private startPerformanceMonitoring(_context: HealthcareRequestContext): void {
     const metrics: RequestMetrics = {
       requestId: context.requestId,
       endpoint: context.technicalContext.endpoint,
@@ -956,7 +956,7 @@ export class HealthcareMiddlewareService {
    */
   private async logRequest(
     c: Context,
-    context: HealthcareRequestContext,
+    _context: HealthcareRequestContext,
   ): Promise<void> {
     const logData = {
       requestId: context.requestId,
@@ -983,7 +983,7 @@ export class HealthcareMiddlewareService {
    */
   private async performPostProcessing(
     c: Context,
-    context: HealthcareRequestContext,
+    _context: HealthcareRequestContext,
     startTime: number,
   ): Promise<void> {
     const endTime = Date.now();
@@ -1018,15 +1018,15 @@ export class HealthcareMiddlewareService {
    */
   private async handleMiddlewareError(
     c: Context,
-    error: any,
-    context: HealthcareRequestContext,
+    error: Error & { code?: string; name?: string },
+    _context: HealthcareRequestContext,
     startTime: number,
   ): Promise<void> {
     const endTime = Date.now();
     const duration = endTime - startTime;
 
     // Update metrics with error
-    if (this.config.performanceMonitoring.enabled && context) {
+    if (this.config.performanceMonitoring.enabled && _context) {
       this.updateRequestMetrics(context.requestId, {
         endTime,
         duration,
@@ -1064,7 +1064,7 @@ export class HealthcareMiddlewareService {
     if (!c.res.ok) {
       // Only if response not already sent
       const statusCode = this.determineErrorStatusCode(error);
-      const errorResponse = this.createErrorResponse(error, context);
+      const errorResponse = this.createErrorResponse(error, _context);
 
       c.json(errorResponse, statusCode as any);
       return;
@@ -1165,11 +1165,11 @@ export class HealthcareMiddlewareService {
    */
   private async detectAndRedactPII(
     c: Context,
-    context: HealthcareRequestContext,
+    _context: HealthcareRequestContext,
   ): Promise<void> {
     // TODO: Implement PII detection and redaction
     console.log(
-      `🔐 [HealthcareMiddlewareService] PII detection for request: ${context.requestId}`,
+      `🔐 [HealthcareMiddlewareService] PII detection for _request: ${context.requestId}`,
     );
   }
 
@@ -1200,7 +1200,7 @@ export class HealthcareMiddlewareService {
    */
   private async validateDataMinimization(
     c: Context,
-    context: HealthcareRequestContext,
+    _context: HealthcareRequestContext,
   ): Promise<void> {
     // Check if request is collecting more data than necessary
     // BUGFIX: Use pre-parsed body to avoid consuming request stream
@@ -1216,10 +1216,9 @@ export class HealthcareMiddlewareService {
       ];
       const requestedFields = Object.keys(body);
 
-      const unnecessarySensitiveFields = sensitiveFields.filter(
-        (field) =>
+      const unnecessarySensitiveFields = sensitiveFields.filter((field) =>
           requestedFields.includes(field) &&
-          !this.isFieldNecessary(field, context),
+          !this.isFieldNecessary(field, _context),
       );
 
       if (unnecessarySensitiveFields.length > 0) {
@@ -1235,7 +1234,7 @@ export class HealthcareMiddlewareService {
    */
   private isFieldNecessary(
     field: string,
-    context: HealthcareRequestContext,
+    _context: HealthcareRequestContext,
   ): boolean {
     const workflowType = context.workflowContext?.workflowType;
 
@@ -1259,7 +1258,7 @@ export class HealthcareMiddlewareService {
    * Log compliance validation
    */
   private async logComplianceValidation(
-    context: HealthcareRequestContext,
+    _context: HealthcareRequestContext,
   ): Promise<void> {
     const complianceLog = {
       requestId: context.requestId,
@@ -1302,7 +1301,7 @@ export class HealthcareMiddlewareService {
    * Handle slow requests
    */
   private async handleSlowRequest(
-    context: HealthcareRequestContext,
+    _context: HealthcareRequestContext,
     duration: number,
   ): Promise<void> {
     const slowRequestData = {
@@ -1329,7 +1328,7 @@ export class HealthcareMiddlewareService {
    */
   private async logResponse(
     c: Context,
-    context: HealthcareRequestContext,
+    _context: HealthcareRequestContext,
     duration: number,
   ): Promise<void> {
     const responseLog = {
@@ -1365,7 +1364,7 @@ export class HealthcareMiddlewareService {
   /**
    * Determine error status code
    */
-  private determineErrorStatusCode(error: any): number {
+  private determineErrorStatusCode(error: Error & { message?: string }): number {
     if (error.message?.includes("LGPD_CONSENT_REQUIRED")) return 403;
     if (error.message?.includes("CSRF_TOKEN_MISSING")) return 403;
     if (error.message?.includes("RATE_LIMIT_EXCEEDED")) return 429;
@@ -1375,7 +1374,7 @@ export class HealthcareMiddlewareService {
   /**
    * Create error response
    */
-  private createErrorResponse(error: any, context?: HealthcareRequestContext) {
+  private createErrorResponse(error: Error & { message?: string }, _context?: HealthcareRequestContext) {
     const baseResponse = {
       error: true,
       message: this.config.errorHandling.enableDetailedErrors
@@ -1416,7 +1415,7 @@ export class HealthcareMiddlewareService {
       console.log("📊 [HealthcareMiddlewareService] Metrics collected:", {
         count: metricsToReport.length,
         averageDuration:
-          metricsToReport.reduce((sum, m) => sum + (m.duration || 0), 0) /
+          metricsToReport.reduce((sum,_m) => sum + (m.duration || 0), 0) /
           metricsToReport.length,
         errorRate:
           metricsToReport.filter((m) => m.errorOccurred).length /

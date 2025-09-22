@@ -3,6 +3,16 @@
 // Extends existing AI provider types for subscription plans and usage tracking
 // Date: 2025-09-15
 
+// Healthcare-compliant metadata types for Enhanced AI
+export interface EnhancedAIMetadata {
+  complianceLevel?: 'standard' | 'enhanced' | 'restricted';
+  dataSensitivity?: 'public' | 'internal' | 'confidential' | 'restricted';
+  auditTrail?: boolean;
+  encryptionLevel?: 'none' | 'basic' | 'advanced' | 'military';
+  retentionPeriod?: number;
+  [key: string]: unknown;
+}
+
 import type {
   AIProvider,
   AIProviderConfig,
@@ -262,7 +272,7 @@ export interface AuditTrail {
     | "training"
     | "audit";
   readonly anonymizationLevel: "none" | "pseudonymized" | "anonymized";
-  readonly metadata?: Record<string, any>;
+  readonly metadata?: EnhancedAIMetadata;
 }
 
 // ================================================

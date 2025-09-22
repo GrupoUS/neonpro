@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { InMemoryPolicyService } from "../../index";
 
 describe("Policy evaluation aggregation", () => {
-  it("aggregates rule results into final status", async () => {
+  it(_"aggregates rule results into final status",_async () => {
     const svc = new InMemoryPolicyService();
     await svc.register({
       id: "POL-1",

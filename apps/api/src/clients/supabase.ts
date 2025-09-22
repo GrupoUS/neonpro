@@ -84,9 +84,9 @@ interface HealthcareAdminClient extends SupabaseClient<Database> {
   };
 
   // LGPD compliance methods
-  exportUserData(userId: string): Promise<any>;
+  exportUserData(_userId: string): Promise<any>;
   deleteUserData(
-    userId: string,
+    _userId: string,
     options?: { cascadeDelete?: boolean },
   ): Promise<void>;
 
@@ -94,7 +94,7 @@ interface HealthcareAdminClient extends SupabaseClient<Database> {
   auth: SupabaseClient<Database>['auth'] & {
     admin: {
       createUser(userMetadata: any): Promise<any>;
-      deleteUser(userId: string): Promise<any>;
+      deleteUser(_userId: string): Promise<any>;
       listUsers(): Promise<any>;
     };
   };
@@ -173,7 +173,7 @@ export function createAdminClient(): HealthcareAdminClient {
   };
 
   // LGPD compliance methods
-  adminClient.exportUserData = async (userId: string): Promise<any> => {
+  adminClient.exportUserData = async (_userId: string): Promise<any> => {
     try {
       // Export all user data for LGPD compliance
       const userDataTables = [
@@ -192,7 +192,7 @@ export function createAdminClient(): HealthcareAdminClient {
           const { data } = await adminClient
             .from(table as any)
             .select('*')
-            .eq('user_id', userId);
+            .eq('user_id', _userId);
           exportData[table] = data || [];
         } catch (error) {
           console.error(
@@ -211,13 +211,13 @@ export function createAdminClient(): HealthcareAdminClient {
         exportDate: new Date().toISOString(),
         data: exportData,
       };
-    } catch (_error) {
+    } catch (error) {
       throw new Error(`Failed to export user data`);
     }
   };
 
   adminClient.deleteUserData = async (
-    userId: string,
+    _userId: string,
     options: { cascadeDelete?: boolean } = {},
   ): Promise<void> => {
     try {
@@ -238,7 +238,7 @@ export function createAdminClient(): HealthcareAdminClient {
           await adminClient
             .from(table as any)
             .delete()
-            .eq('user_id', userId);
+            .eq('user_id', _userId);
         }
       }
 
@@ -246,7 +246,7 @@ export function createAdminClient(): HealthcareAdminClient {
       await adminClient
         .from('profiles' as any)
         .delete()
-        .eq('id', userId);
+        .eq('id', _userId);
       await adminClient.auth.admin.deleteUser(userId);
     } catch (error) {
       throw new Error(`Failed to delete user data: ${error}`);
@@ -261,7 +261,7 @@ export function createAdminClient(): HealthcareAdminClient {
       createUser: async (userMetadata: any) => {
         return await originalAuth.admin.createUser(userMetadata);
       },
-      deleteUser: async (userId: string) => {
+      deleteUser: async (_userId: string) => {
         return await originalAuth.admin.deleteUser(userId);
       },
       listUsers: async () => {
@@ -361,7 +361,7 @@ export const healthcareRLS = {
    * Based on clinic membership and role permissions
    */
   canAccessClinic: async (
-    userId: string,
+    _userId: string,
     clinicId: string,
   ): Promise<boolean> => {
     try {
@@ -371,13 +371,13 @@ export const healthcareRLS = {
       const { data: membership } = await adminClient
         .from('clinic_memberships' as any)
         .select('role, status')
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .eq('clinic_id', clinicId)
         .eq('status', 'active')
         .single();
 
       return !!membership;
-    } catch (_error) {
+    } catch (error) {
       console.error(
         `Failed to check user clinic membership for user ${userId}, clinic ${clinicId}`,
       );
@@ -390,7 +390,7 @@ export const healthcareRLS = {
    * Based on clinic association and healthcare professional permissions
    */
   canAccessPatient: async (
-    userId: string,
+    _userId: string,
     patientId: string,
   ): Promise<boolean> => {
     try {
@@ -400,7 +400,7 @@ export const healthcareRLS = {
       const { data: userClinics } = await adminClient
         .from('clinic_memberships' as any)
         .select('clinic_id')
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .eq('status', 'active');
 
       if (!userClinics?.length) return false;
@@ -431,15 +431,15 @@ export const healthcareRLS = {
  */
 export class RLSQueryBuilder {
   constructor(
-    public userId?: string,
-    public role?: string,
+    public _userId?: string,
+    public _role?: string,
   ) {}
 
   /**
    * Builds patient query with RLS filters applied
    */
   buildPatientQuery(baseQuery: any): any {
-    if (!this.userId) {
+    if (!this._userId) {
       throw new Error('User ID required for RLS patient query');
     }
 
@@ -453,7 +453,7 @@ export class RLSQueryBuilder {
    * Builds clinic query with RLS filters applied
    */
   buildClinicQuery(baseQuery: any): any {
-    if (!this.userId) {
+    if (!this._userId) {
       throw new Error('User ID required for RLS clinic query');
     }
 

@@ -6,15 +6,15 @@
 import { describe, expect, it } from 'vitest';
 import { AccessibilityValidator } from '../../../utils/accessibility-validation';
 
-describe('Accessibility Validation Simple Test', () => {
-  it('should validate accessibility without React components', async () => {
+describe(('Accessibility Validation Simple Test', () => {
+  it(_'should validate accessibility without React components',async () => {
     const validator = new AccessibilityValidator();
 
     // Skip the DOM-based tests for now and focus on the validation logic
     const report = await validator.validateAccessibility(null as any, {
       includeHealthcareAudit: true,
       validateWCAG: true,
-      context: 'registration',
+      _context: 'registration',
     });
 
     expect(report).toBeDefined();
@@ -28,7 +28,7 @@ describe('Accessibility Validation Simple Test', () => {
     expect(Array.isArray(report.recommendations)).toBe(true);
   });
 
-  it('should validate component accessibility', async () => {
+  it(_'should validate component accessibility',async () => {
     const validator = new AccessibilityValidator();
 
     // Skip the DOM-based tests for now and focus on the validation logic
@@ -45,7 +45,7 @@ describe('Accessibility Validation Simple Test', () => {
     expect(Array.isArray(result.recommendations)).toBe(true);
   });
 
-  it('should have WCAG validation criteria', () => {
+  it(('should have WCAG validation criteria', () => {
     const {
       WCAG_21_AA_VALIDATION_CRITERIA,
     } = require('../../../utils/accessibility-validation');
@@ -56,7 +56,7 @@ describe('Accessibility Validation Simple Test', () => {
 
     // Check that we have criteria for all WCAG categories
     const categories = ['perceivable', 'operable', 'understandable', 'robust'];
-    categories.forEach(_category => {
+    categories.forEach(category => {
       const criteriaInCategory = WCAG_21_AA_VALIDATION_CRITERIA.filter(
         criteria => criteria.category === category,
       );
@@ -64,7 +64,7 @@ describe('Accessibility Validation Simple Test', () => {
     });
   });
 
-  it('should generate compliance certificate', () => {
+  it(('should generate compliance certificate', () => {
     const validator = new AccessibilityValidator();
     const mockReport = {
       timestamp: new Date().toISOString(),

@@ -37,11 +37,11 @@ export {
 } from "./utils";
 
 // Placeholder exports - will be populated with actual utilities
-export const auth = {};
-export const components = {};
-export const analytics = {};
-export const performance = {};
-export const compliance = {
+export const _auth = {};
+export const _components = {};
+export const _analytics = {};
+export const _performance = {};
+export const _compliance = {
   lgpdCompliance: (input: string) => {
     // Use dynamic import to keep tree-shaking friendly and avoid CJS require in ESM builds
     // Note: callers should handle async if we switch to true dynamic import later

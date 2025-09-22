@@ -54,7 +54,7 @@ interface BlacklistEntry {
 // Enhanced JWT validation result
 interface JWTValidationResult {
   isValid: boolean;
-  payload?: JwtPayload;
+  _payload?: JwtPayload;
   error?: string;
   errorCode?: string;
   securityLevel: 'none' | 'low' | 'medium' | 'high' | 'critical';
@@ -114,7 +114,7 @@ export class JWTSecurityValidator {
   /**
    * Validate JWT token with comprehensive security checks
    */
-  async validateToken(token: string, context?: Context): Promise<JWTValidationResult> {
+  async validateToken(token: string, _context?: Context): Promise<JWTValidationResult> {
     try {
       // Step 1: Rate limiting check
       const rateLimitResult = this.checkRateLimit(context);
@@ -188,7 +188,7 @@ export class JWTSecurityValidator {
 
       return {
         isValid: true,
-        payload: verifyResult.payload,
+        _payload: verifyResult.payload,
         securityLevel: 'high',
       };
     } catch (error) {
@@ -308,7 +308,7 @@ export class JWTSecurityValidator {
   /**
    * Validate security headers (HTTPS in production)
    */
-  private validateSecurityHeaders(context?: Context): JWTValidationResult {
+  private validateSecurityHeaders(_context?: Context): JWTValidationResult {
     if (!this.config.enforceHttpsInProduction) {
       return { isValid: true, securityLevel: 'medium' };
     }
@@ -386,7 +386,7 @@ export class JWTSecurityValidator {
   /**
    * Validate token claims (aud, iss, exp, etc.)
    */
-  private validateTokenClaims(payload: JwtPayload): JWTValidationResult {
+  private validateTokenClaims(_payload: JwtPayload): JWTValidationResult {
     const { aud, iss, exp, sub } = payload;
 
     // Validate audience claim
@@ -489,7 +489,7 @@ export class JWTSecurityValidator {
   /**
    * Check if token is blacklisted
    */
-  private checkTokenBlacklist(payload: JwtPayload): JWTValidationResult {
+  private checkTokenBlacklist(_payload: JwtPayload): JWTValidationResult {
     const { jti, sub } = payload;
 
     // Clean expired blacklist entries
@@ -510,7 +510,7 @@ export class JWTSecurityValidator {
 
     // Check by user ID (for user-wide token revocation)
     if (sub) {
-      for (const [key, entry] of this.tokenBlacklist.entries()) {
+      for (const [_key, entry] of this.tokenBlacklist.entries()) {
         if (entry.sub === sub && entry.expiresAt > Date.now()) {
           return {
             isValid: false,
@@ -528,9 +528,9 @@ export class JWTSecurityValidator {
   /**
    * Validate healthcare-specific requirements
    */
-  private validateHealthcareRequirements(payload: JwtPayload): JWTValidationResult {
+  private validateHealthcareRequirements(_payload: JwtPayload): JWTValidationResult {
     // Ensure healthcare-specific claims are present if required
-    const { role, permissions } = payload;
+    const { role, permissions: permissions } = payload;
 
     // For healthcare applications, validate user role if present
     if (role && typeof role === 'string') {
@@ -551,8 +551,8 @@ export class JWTSecurityValidator {
   /**
    * Check rate limiting for authentication attempts
    */
-  private checkRateLimit(context?: Context): { allowed: boolean; resetTime?: number } {
-    if (!context) {
+  private checkRateLimit(_context?: Context): { allowed: boolean; resetTime?: number } {
+    if (!_context) {
       return { allowed: true };
     }
 

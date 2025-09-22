@@ -13,8 +13,6 @@
  * - Brazilian Portuguese localization
  */
 
-import { z } from 'zod';
-
 // Production Readiness Configuration Schema
 export const ProductionReadinessConfigSchema = z
   .object({
@@ -350,8 +348,8 @@ export default class ProductionReadinessService {
     const recommendations = new Set<string>();
 
     // Collect all recommendations from validations
-    validations.forEach(_validation => {
-      validation.recommendations.forEach(_rec => recommendations.add(rec));
+    validations.forEach(validation => {
+      validation.recommendations.forEach(rec => recommendations.add(rec));
     });
 
     // Add general healthcare recommendations
@@ -376,8 +374,8 @@ export default class ProductionReadinessService {
   ): ProductionReadinessIssue[] {
     const criticalIssues: ProductionReadinessIssue[] = [];
 
-    validations.forEach(_validation => {
-      validation.issues.forEach(_issue => {
+    validations.forEach(validation => {
+      validation.issues.forEach(issue => {
         if (issue.severity === 'critical' || issue.severity === 'high') {
           criticalIssues.push(issue);
         }
@@ -408,7 +406,7 @@ export default class ProductionReadinessService {
 
     // Add specific items based on validation results
     const failedValidations = validations.filter(v => v.status === 'failed');
-    failedValidations.forEach(_validation => {
+    failedValidations.forEach(validation => {
       checklist.push(`⚠️ Corrigir problemas de ${validation.validationType}`);
     });
 

@@ -179,7 +179,7 @@ export class MockAIProvider {
     return {
       id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       content: mockResponse.response,
-      role: "assistant" as const,
+      _role: "assistant" as const,
       model: this.config.models?.default || "mock-model",
       provider: "mock" as AIProvider,
       usage: {
@@ -223,7 +223,7 @@ export class MockAIProvider {
             const streamChunk = {
               id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
               content: chunk,
-              role: "assistant" as const,
+              _role: "assistant" as const,
               model: "mock-model",
               provider: "mock" as AIProvider,
               isComplete: false,
@@ -241,7 +241,7 @@ export class MockAIProvider {
           const completionChunk = {
             id: `mock_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
             content: "",
-            role: "assistant" as const,
+            _role: "assistant" as const,
             model: "mock-model",
             provider: "mock" as AIProvider,
             isComplete: true,

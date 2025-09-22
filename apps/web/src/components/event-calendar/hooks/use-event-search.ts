@@ -26,26 +26,23 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   const [searchOptions, setSearchOptions] = useState<EventSearchOptions | null>(null);
 
   // Debounced search function
-  const debouncedSearch = useMemo(
-    () =>
-      debounce(async (_options: any) => {
-        try {
-          setIsSearching(true);
-          const result = await searchEvents(options);
-          setSearchResults(result.events);
-          setTotalCount(result.totalCount);
-          setHasMore(result.hasMore);
-        } catch (error) {
-          console.error('Search failed:', error);
-          setSearchResults([]);
-          setTotalCount(0);
-          setHasMore(false);
-        } finally {
-          setIsSearching(false);
-        }
-      }, debounceMs),
-    [searchEvents, debounceMs],
-  );
+  const debouncedSearch = useMemo(() =>
+    debounce(async (_options: any) => {
+      try {
+        setIsSearching(true);
+        const result = await searchEvents(options);
+        setSearchResults(result.events);
+        setTotalCount(result.totalCount);
+        setHasMore(result.hasMore);
+      } catch (_error) {
+        console.error('Search failed:', error);
+        setSearchResults([]);
+        setTotalCount(0);
+        setHasMore(false);
+      } finally {
+        setIsSearching(false);
+      }
+    }, debounceMs), [searchEvents, debounceMs]);
 
   // Perform search
   const performSearch = useCallback(async (_options: any) => {
@@ -73,7 +70,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
       setSearchResults(prev => [...prev, ...result.events]);
       setCurrentPage(newPage);
       setHasMore(result.hasMore);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load more results:', error);
     } finally {
       setIsSearching(false);
@@ -83,7 +80,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   // Quick search with common search patterns
   const quickSearch = useCallback(
     async (
-      query: string,
+      _query: string,
       searchIn?: ('title' | 'description' | 'notes' | 'patient' | 'professional')[],
     ) => {
       const searchOptions: EventSearchOptions = {
@@ -99,7 +96,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
 
   // Search by date range
   const searchByDateRange = useCallback(async (
-    query: string,
+    _query: string,
     startDate: Date,
     endDate: Date,
     searchIn?: ('title' | 'description' | 'notes' | 'patient' | 'professional')[],
@@ -259,7 +256,7 @@ export function useAdvancedEventSearch() {
       if (advancedFilters.notes) searchTerms.push(advancedFilters.notes);
 
       const searchOptions: any = {
-        query: searchTerms.join(' '),
+        _query: searchTerms.join(' '),
         limit: 50,
       };
 
@@ -274,7 +271,7 @@ export function useAdvancedEventSearch() {
       const result = await searchEvents(searchOptions);
       setSearchResults(result.events);
       setTotalCount(result.totalCount);
-    } catch (error) {
+    } catch (_error) {
       console.error('Advanced search failed:', error);
       setSearchResults([]);
       setTotalCount(0);

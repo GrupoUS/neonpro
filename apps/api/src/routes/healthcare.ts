@@ -11,7 +11,6 @@ import { createMiddleware } from 'hono/factory';
 // import removed: jwt was unused
 import { logger } from 'hono/logger';
 import { timing } from 'hono/timing';
-import { z } from 'zod';
 import { supabase } from '../lib/supabase';
 
 // Healthcare-specific types
@@ -19,7 +18,7 @@ type HealthcareEnv = {
   Variables: {
     user: {
       id: string;
-      role: 'admin' | 'professional' | 'coordinator';
+      _role: 'admin' | 'professional' | 'coordinator';
       permissions: string[];
     };
     auditContext: {
@@ -38,8 +37,7 @@ type HealthcareEnv = {
 const healthcare = new Hono<HealthcareEnv>();
 
 // Performance monitoring middleware
-const performanceMiddleware = createMiddleware<HealthcareEnv>(
-  async (c, next) => {
+const performanceMiddleware = createMiddleware<HealthcareEnv>(async (c,_next) => {
     const startTime = Date.now();
     c.set('performanceMetrics', { startTime, dbQueries: 0 });
 
@@ -61,7 +59,7 @@ const performanceMiddleware = createMiddleware<HealthcareEnv>(
 );
 
 // LGPD compliance audit middleware
-const auditMiddleware = createMiddleware<HealthcareEnv>(async (c, next) => {
+const auditMiddleware = createMiddleware<HealthcareEnv>(async (c,_next) => {
   const user = c.get('user');
   const method = c.req.method;
   const path = c.req.path;
@@ -110,8 +108,7 @@ const auditMiddleware = createMiddleware<HealthcareEnv>(async (c, next) => {
 });
 
 // Healthcare role-based authorization middleware
-const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(
-  async (c, next) => {
+const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(async (c,_next) => {
     const token = c.req.header('Authorization')?.replace('Bearer ', '');
 
     if (!token) {
@@ -142,7 +139,7 @@ const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(
 
       c.set('user', {
         id: user.id,
-        role: profile.role,
+        _role: profile.role,
         permissions: profile.permissions || [],
       });
 
@@ -585,7 +582,7 @@ healthcare.get(
         totalPatients: patientsResult.count || 0,
         totalAppointments: appointmentsResult.count || 0,
         totalProcedures: proceduresResult.count || 0,
-        appointmentsByStatus: appointmentsResult.data?.reduce((acc: any, apt) => {
+        appointmentsByStatus: appointmentsResult.data?.reduce((acc: any,_apt) => {
           acc[apt.status] = (acc[apt.status] || 0) + 1;
           return acc;
         }, {}) || {},

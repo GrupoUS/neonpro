@@ -65,7 +65,7 @@ export class PatientCommunicationService {
    */
   static async createCommunicationTemplate(
     clinicId: string,
-    request: CreateCommunicationTemplateRequest,
+    _request: CreateCommunicationTemplateRequest,
   ): Promise<CommunicationTemplate> {
     const { data, error } = await this.sb
       .from('communication_templates')
@@ -91,7 +91,7 @@ export class PatientCommunicationService {
    */
   static async updateCommunicationTemplate(
     id: string,
-    request: UpdateCommunicationTemplateRequest,
+    _request: UpdateCommunicationTemplateRequest,
   ): Promise<CommunicationTemplate> {
     const { data, error } = await this.sb
       .from('communication_templates')
@@ -135,7 +135,7 @@ export class PatientCommunicationService {
    */
   static async sendMessage(
     clinicId: string,
-    request: SendMessageRequest,
+    _request: SendMessageRequest,
   ): Promise<CommunicationMessage> {
     const { data, error } = await this.sb.rpc('send_patient_message', {
       p_clinic_id: clinicId,

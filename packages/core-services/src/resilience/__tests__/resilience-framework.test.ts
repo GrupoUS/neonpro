@@ -46,7 +46,7 @@ describe("Resilience Framework", () => {
   });
 
   describe("Circuit Breaker", () => {
-    test("should start in CLOSED state", () => {
+    test(_"should start in CLOSED state", () => {
       const circuitBreaker = new EnhancedCircuitBreaker(
         "test-service",
         DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.circuitBreaker,
@@ -55,7 +55,7 @@ describe("Resilience Framework", () => {
       expect(circuitBreaker.getState()).toBe(CircuitState.CLOSED);
     });
 
-    test("should open circuit after failure threshold", async () => {
+    test(_"should open circuit after failure threshold",_async () => {
       const circuitBreaker = new EnhancedCircuitBreaker("test-service", {
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.circuitBreaker,
         failureThreshold: 3,
@@ -64,8 +64,7 @@ describe("Resilience Framework", () => {
       // Simulate failures
       for (let i = 0; i < 3; i++) {
         try {
-          await circuitBreaker.execute(
-            () => Promise.reject(new Error("Service failure")),
+          await circuitBreaker.execute(() => Promise.reject(new Error("Service failure")),
             {
               operation: "test",
               serviceName: "test-service",
@@ -81,14 +80,13 @@ describe("Resilience Framework", () => {
       expect(circuitBreaker.getState()).toBe(CircuitState.OPEN);
     });
 
-    test("should allow execution in CLOSED state", async () => {
+    test(_"should allow execution in CLOSED state",_async () => {
       const circuitBreaker = new EnhancedCircuitBreaker(
         "test-service",
         DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.circuitBreaker,
       );
 
-      const result = await circuitBreaker.execute(
-        () => Promise.resolve("success"),
+      const result = await circuitBreaker.execute(() => Promise.resolve("success"),
         {
           operation: "test",
           serviceName: "test-service",
@@ -101,7 +99,7 @@ describe("Resilience Framework", () => {
       expect(circuitBreaker.getState()).toBe(CircuitState.CLOSED);
     });
 
-    test("should reject execution in OPEN state", async () => {
+    test(_"should reject execution in OPEN state",_async () => {
       const circuitBreaker = new EnhancedCircuitBreaker("test-service", {
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.circuitBreaker,
         failureThreshold: 1,
@@ -110,8 +108,7 @@ describe("Resilience Framework", () => {
       // Force open
       circuitBreaker.forceOpen();
 
-      await expect(
-        circuitBreaker.execute(() => Promise.resolve("success"), {
+      await expect(_circuitBreaker.execute(() => Promise.resolve("success"), {
           operation: "test",
           serviceName: "test-service",
           isEmergency: false,
@@ -122,7 +119,7 @@ describe("Resilience Framework", () => {
   });
 
   describe("Retry Policy", () => {
-    test("should retry on retryable errors", async () => {
+    test(_"should retry on retryable errors",_async () => {
       const retryPolicy = new RetryPolicy({
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.retry,
         maxRetries: 2,
@@ -140,7 +137,7 @@ describe("Resilience Framework", () => {
       expect(shouldRetry).toBe(true);
     });
 
-    test("should not retry on non-retryable errors", async () => {
+    test(_"should not retry on non-retryable errors",_async () => {
       const retryPolicy = new RetryPolicy(
         DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.retry,
       );
@@ -156,7 +153,7 @@ describe("Resilience Framework", () => {
       expect(shouldRetry).toBe(false);
     });
 
-    test("should respect max retry limit", async () => {
+    test(_"should respect max retry limit",_async () => {
       const retryPolicy = new RetryPolicy({
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.retry,
         maxRetries: 1,
@@ -171,13 +168,13 @@ describe("Resilience Framework", () => {
       };
 
       // First attempt should retry
-      expect(await retryPolicy.shouldRetry(error, context)).toBe(true);
+      expect(await retryPolicy.shouldRetry(error, _context)).toBe(true);
 
       // Second attempt should not retry
-      expect(await retryPolicy.shouldRetry(error, context)).toBe(false);
+      expect(await retryPolicy.shouldRetry(error, _context)).toBe(false);
     });
 
-    test("should allow more retries for emergencies", async () => {
+    test(_"should allow more retries for emergencies",_async () => {
       const retryPolicy = new RetryPolicy({
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.retry,
         maxRetries: 3,
@@ -203,7 +200,7 @@ describe("Resilience Framework", () => {
       );
     });
 
-    test("should calculate exponential backoff correctly", async () => {
+    test(_"should calculate exponential backoff correctly",_async () => {
       const retryPolicy = new RetryPolicy({
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.retry,
         strategy: RetryStrategy.EXPONENTIAL_BACKOFF,
@@ -238,10 +235,8 @@ describe("Resilience Framework", () => {
   });
 
   describe("Resilience Framework Integration", () => {
-    test("should execute successful operations", async () => {
-      const result = await resilienceFramework.execute(
-        "test-service",
-        () => Promise.resolve("test-result"),
+    test(_"should execute successful operations",_async () => {
+      const result = await resilienceFramework.execute(_"test-service", () => Promise.resolve("test-result"),
         {
           operation: "test",
           serviceName: "test-service",
@@ -258,7 +253,7 @@ describe("Resilience Framework", () => {
       expect(metrics.failedRequests).toBe(0);
     });
 
-    test("should handle failing operations with retries", async () => {
+    test(_"should handle failing operations with retries",_async () => {
       let attemptCount = 0;
       const failingOperation = vi
         .fn()
@@ -312,7 +307,7 @@ describe("Resilience Framework", () => {
       });
     });
 
-    test("should handle healthcare operations with audit logging", async () => {
+    test(_"should handle healthcare operations with audit logging",_async () => {
       const context = {
         operation: "patient-data-access",
         serviceName: "patient-service",
@@ -326,9 +321,7 @@ describe("Resilience Framework", () => {
         requiresConsent: true,
       };
 
-      const result = await healthcareResilience.executeHealthcareOperation(
-        "patient-service",
-        () => Promise.resolve("patient-data"),
+      const result = await healthcareResilience.executeHealthcareOperation(_"patient-service", () => Promise.resolve("patient-data"),
         context,
       );
 
@@ -339,7 +332,7 @@ describe("Resilience Framework", () => {
       expect(metrics.audit.successRate).toBe(1);
     });
 
-    test("should generate compliance reports", () => {
+    test(_"should generate compliance reports", () => {
       const report = healthcareResilience.generateComplianceReport();
 
       expect(report).toHaveProperty("reportPeriod");
@@ -350,7 +343,7 @@ describe("Resilience Framework", () => {
   });
 
   describe("Error Handling", () => {
-    test("should create ResilienceError with proper context", () => {
+    test(_"should create ResilienceError with proper context", () => {
       const context = {
         operation: "test-operation",
         serviceName: "test-service",
@@ -358,11 +351,11 @@ describe("Resilience Framework", () => {
         requiresAudit: false,
       };
 
-      const error = new ResilienceError("Test error", "TIMEOUT", context);
+      const error = new ResilienceError("Test error", "TIMEOUT", _context);
 
       expect(error.message).toBe("Test error");
       expect(error.type).toBe("TIMEOUT");
-      expect(error.context).toBe(context);
+      expect(error._context).toBe(context);
       expect(error.name).toBe("ResilienceError");
     });
   });

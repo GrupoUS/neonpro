@@ -19,7 +19,7 @@ interface PerformanceMetrics {
   avgQueryTime: number;
   totalQueryTime: number;
   slowQueries: Array<{
-    query: string;
+    _query: string;
     duration: number;
     timestamp: Date;
   }>;
@@ -160,7 +160,7 @@ export class HealthcareQueryOptimizer {
   async searchPatientsOptimized(
     clinicId: string,
     searchParams: {
-      query?: string;
+      _query?: string;
       page?: number;
       limit?: number;
       sortBy?: string;
@@ -209,7 +209,7 @@ export class HealthcareQueryOptimizer {
       }
 
       // Add search conditions
-      if (query) {
+      if (_query) {
         whereClause.OR = [
           { fullName: { contains: query, mode: 'insensitive' } },
           { email: { contains: query, mode: 'insensitive' } },
@@ -287,11 +287,11 @@ export class HealthcareQueryOptimizer {
   }> {
     const startTime = Date.now();
     const {
-      professionalId: _professionalId,
-      patientId: _patientId,
-      startDate: _startDate,
-      endDate: _endDate,
-      status: _status,
+      professionalId: professionalId,
+      patientId: patientId,
+      startDate: startDate,
+      endDate: endDate,
+      status: status,
       includePatientDetails = true,
       includeProfessionalDetails = true,
       page = 1,
@@ -404,8 +404,7 @@ export class HealthcareQueryOptimizer {
       for (let i = 0; i < patientsData.length; i += batchSize) {
         const batch = patientsData.slice(i, i + batchSize);
 
-        const batchResults = await Promise.allSettled(
-          batch.map(async (patientData, batchIndex) => {
+        const batchResults = await Promise.allSettled(_batch.map(async (patientData,_batchIndex) => {
             const actualIndex = i + batchIndex;
             try {
               // Ensure patientData is a valid object before spreading
@@ -608,7 +607,7 @@ export class HealthcareQueryOptimizer {
       // Track slow queries
       if (duration > this.config.slowQueryThreshold) {
         this.metrics.slowQueries.push({
-          query: 'Query details would be captured here',
+          _query: 'Query details would be captured here',
           duration,
           timestamp: new Date(),
         });

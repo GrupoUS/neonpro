@@ -44,7 +44,7 @@ export interface AgentAction {
     type: 'navigate' | 'api' | 'modal' | 'external';
     destination?: string;
     method?: string;
-    payload?: any;
+    _payload?: any;
   };
 }
 
@@ -73,7 +73,7 @@ export enum AGUIConnectionState {
 export interface AGUIProtocolConfig {
   websocketUrl: string;
   httpUrl: string;
-  userId: string;
+  _userId: string;
   authToken?: string;
   enableEncryption: boolean;
   heartbeatInterval: number;
@@ -89,7 +89,7 @@ export interface AGUISession {
   created_at: Date;
   last_activity: Date;
   message_count: number;
-  context: any;
+  _context: any;
 }
 
 export class AGUIProtocolClient extends EventEmitter {
@@ -148,7 +148,7 @@ export class AGUIProtocolClient extends EventEmitter {
           this.handleError(new Error('Connection timeout'));
         }
       }, this.config.timeout);
-    } catch (error) {
+    } catch (_error) {
       this.handleError(error);
       throw error;
     }
@@ -224,7 +224,7 @@ export class AGUIProtocolClient extends EventEmitter {
   /**
    * Send session context update
    */
-  async updateSessionContext(context: any): Promise<void> {
+  async updateSessionContext(_context: any): Promise<void> {
     if (!this.session) {
       throw new Error('No active session');
     }
@@ -291,7 +291,7 @@ export class AGUIProtocolClient extends EventEmitter {
       }
 
       this.handleAGUIEvent(aguiEvent);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error handling WebSocket message:', error);
       this.emit('error', error);
     }
@@ -349,7 +349,7 @@ export class AGUIProtocolClient extends EventEmitter {
       created_at: new Date(),
       last_activity: new Date(),
       message_count: 0,
-      context: {},
+      _context: {},
     };
 
     this.setState(AGUIConnectionState.AUTHENTICATED);
@@ -414,7 +414,7 @@ export class AGUIProtocolClient extends EventEmitter {
             reject(new Error('Request timeout'));
           }
         }, this.config.timeout);
-      } catch (error) {
+      } catch (_error) {
         this.pendingRequests.delete(event.id);
         reject(error);
       }

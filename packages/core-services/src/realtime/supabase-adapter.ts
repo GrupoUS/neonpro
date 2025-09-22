@@ -404,11 +404,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
   // Private Helper Methods
   // ============================================================================
 
-  private createRealtimeEvent: typeof createRealtimeEvent = (
-    type,
-    channelId,
-    participant,
-    data,
+  private createRealtimeEvent: typeof createRealtimeEvent = (type, channelId, participant, data,
   ) => {
     return {
       type,
@@ -472,7 +468,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     try {
       // Note: Replace with actual audit service when available
       console.log("Audit event logged:", {
-        userId: event.participant.id,
+        _userId: event.participant.id,
         action: event.type,
         resource: "realtime_channel",
         resourceId: event.channelId,

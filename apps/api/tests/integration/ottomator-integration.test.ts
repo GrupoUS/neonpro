@@ -16,9 +16,9 @@ describe('Ottomator Agent Integration', () => {
   beforeAll(() => {
     // Mock permission context for testing
     permissionContext = {
-      userId: 'test-user-123',
+      _userId: 'test-user-123',
       domain: 'test-clinic',
-      role: 'admin',
+      _role: 'admin',
       permissions: ['read_clients', 'read_appointments', 'read_financial'],
       dataScope: 'all_clients',
       lastAccess: new Date(),

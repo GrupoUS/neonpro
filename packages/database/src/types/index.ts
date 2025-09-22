@@ -111,7 +111,7 @@ export interface SecurityData {
 
 export interface AuditLogData {
   id: string;
-  userId: string;
+  _userId: string;
   action: string;
   resource: string;
   details: any;

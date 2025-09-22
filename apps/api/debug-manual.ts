@@ -15,7 +15,7 @@ console.log('getDocument before adding:', typeof service.getDocument);
 // Try to add the method manually
 (service as any).getDocument = async function(
   documentId: string,
-  userId: string,
+  _userId: string,
 ) {
   console.log('Manual getDocument called');
   return null;

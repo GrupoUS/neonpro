@@ -7,11 +7,8 @@
 import {
   Activity,
   AlertTriangle,
-  Camera,
-  CameraOff,
   Circle,
   Clock,
-  FileText,
   Heart,
   Maximize,
   MessageSquare,
@@ -20,16 +17,12 @@ import {
   Minimize,
   Monitor,
   MonitorOff,
-  Phone,
   PhoneOff,
   Settings,
-  Shield,
   Square,
   Users,
   Video,
   VideoOff,
-  Volume2,
-  VolumeX,
   Wifi,
   WifiOff,
 } from 'lucide-react';
@@ -39,7 +32,6 @@ import { Alert } from '@/components/ui/alert';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -47,10 +39,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { Tabs } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 
 import { useSignalingClient } from '@/hooks/use-signaling-client';
@@ -60,7 +49,6 @@ import {
   useSessionConsent,
   useSessionRecording,
   useTelemedicineSession,
-  useVideoCall,
 } from '@/hooks/use-telemedicine';
 import { useWebRTC } from '@/hooks/use-webrtc';
 
@@ -73,7 +61,7 @@ interface VideoConsultationProps {
 interface ParticipantInfo {
   id: string;
   name: string;
-  role: 'patient' | 'physician' | 'observer';
+  _role: 'patient' | 'physician' | 'observer';
   avatar?: string;
   isConnected: boolean;
   connectionQuality: 'excellent' | 'good' | 'poor' | 'critical';
@@ -85,7 +73,7 @@ export function VideoConsultation({
   className = '',
 }: VideoConsultationProps) {
   // Hooks
-  const { session, updateSession, endSession, isEnding } = useTelemedicineSession({ sessionId });
+  const { session, endSession, isEnding } = useTelemedicineSession({ sessionId });
 
   // WebRTC Integration - Replace old useVideoCall with new comprehensive WebRTC hook
   const {
@@ -98,7 +86,6 @@ export function VideoConsultation({
     toggleAudio,
     startScreenShare,
     stopScreenShare,
-    updateMediaConstraints,
   } = useWebRTC({
     sessionId,
     participantId: session?.patientId || 'unknown',
@@ -141,14 +128,12 @@ export function VideoConsultation({
     enableAI: true,
   });
   const { isRecording, startRecording, stopRecording } = useSessionRecording(sessionId);
-  const { consent, updateConsent } = useSessionConsent(sessionId);
+  const { _consent, _updateConsent } = useSessionConsent(sessionId);
   const { escalateEmergency } = useEmergencyEscalation(sessionId);
 
   // State
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const [isNotesOpen, setIsNotesOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [sessionDuration, setSessionDuration] = useState(0);
   const [participants, setParticipants] = useState<ParticipantInfo[]>([]);
   const [networkQuality, setNetworkQuality] = useState<
@@ -218,14 +203,14 @@ export function VideoConsultation({
         {
           id: session.patientId,
           name: session.metadata.patientName,
-          role: 'patient',
+          _role: 'patient',
           isConnected: webrtcState.isConnected,
           connectionQuality: webrtcState.connectionQuality || 'good',
         },
         {
           id: session.professionalId,
           name: session.metadata.professionalName,
-          role: 'physician',
+          _role: 'physician',
           isConnected: webrtcState.isConnected,
           connectionQuality: webrtcState.connectionQuality || 'good',
         },
@@ -327,7 +312,7 @@ export function VideoConsultation({
         if (chatMessageRef.current) {
           chatMessageRef.current.value = '';
         }
-      } catch (error) {
+      } catch {
         toast.error('Erro ao enviar mensagem');
       }
     },

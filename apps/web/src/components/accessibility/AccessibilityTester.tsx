@@ -65,7 +65,7 @@ export function AccessibilityTester({
     isTesting,
     healthcareCompliance,
     testAccessibility,
-    clearResults: _clearResults,
+    clearResults: clearResults,
   } = useAccessibilityTesting(undefined, {
     enabled,
     runOnMount: autoTest,
@@ -357,74 +357,72 @@ export function AccessibilityTester({
                           </p>
                         </div>
                       )
-                      : (
-                        issues.map((issue, _index) => (
-                          <div
-                            key={`${issue.id}-${index}`}
-                            className='p-3 rounded-lg border-l-4 bg-white'
-                            style={{
-                              borderLeftColor: {
-                                critical: '#dc2626',
-                                serious: '#ea580c',
-                                moderate: '#ca8a04',
-                                minor: '#2563eb',
-                              }[issue.impact],
-                            }}
-                          >
-                            <div className='flex items-start justify-between mb-2'>
-                              <h4 className='font-semibold text-sm'>
-                                {issue.id}
-                              </h4>
-                              <Badge
-                                variant={issue.impact === 'critical'
-                                  ? 'destructive'
-                                  : issue.impact === 'serious'
-                                  ? 'default'
-                                  : 'secondary'}
-                                className='text-xs'
-                              >
-                                {issue.impact}
-                              </Badge>
-                            </div>
-
-                            <p className='text-sm text-gray-700 mb-2'>
-                              {issue.description}
-                            </p>
-
-                            <div className='flex gap-2 flex-wrap'>
-                              {issue.healthcareSpecific && (
-                                <Badge variant='outline' className='text-xs'>
-                                  🏥 Healthcare
-                                </Badge>
-                              )}
-                              {issue.lgpdRelevant && (
-                                <Badge variant='outline' className='text-xs'>
-                                  🇧🇷 LGPD
-                                </Badge>
-                              )}
-                            </div>
-
-                            <details className='mt-2'>
-                              <summary className='text-xs text-blue-600 cursor-pointer'>
-                                Technical details
-                              </summary>
-                              <div className='mt-2 text-xs bg-gray-50 p-2 rounded'>
-                                <p className='font-mono mb-1'>
-                                  {issue.nodes[0]?.html}
-                                </p>
-                                <a
-                                  href={issue.helpUrl}
-                                  target='_blank'
-                                  rel='noopener noreferrer'
-                                  className='text-blue-600 hover:underline'
-                                >
-                                  Learn more →
-                                </a>
-                              </div>
-                            </details>
+                      : (_issues.map((issue, _index) => (
+                        <div
+                          key={`${issue.id}-${index}`}
+                          className='p-3 rounded-lg border-l-4 bg-white'
+                          style={{
+                            borderLeftColor: {
+                              critical: '#dc2626',
+                              serious: '#ea580c',
+                              moderate: '#ca8a04',
+                              minor: '#2563eb',
+                            }[issue.impact],
+                          }}
+                        >
+                          <div className='flex items-start justify-between mb-2'>
+                            <h4 className='font-semibold text-sm'>
+                              {issue.id}
+                            </h4>
+                            <Badge
+                              variant={issue.impact === 'critical'
+                                ? 'destructive'
+                                : issue.impact === 'serious'
+                                ? 'default'
+                                : 'secondary'}
+                              className='text-xs'
+                            >
+                              {issue.impact}
+                            </Badge>
                           </div>
-                        ))
-                      )}
+
+                          <p className='text-sm text-gray-700 mb-2'>
+                            {issue.description}
+                          </p>
+
+                          <div className='flex gap-2 flex-wrap'>
+                            {issue.healthcareSpecific && (
+                              <Badge variant='outline' className='text-xs'>
+                                🏥 Healthcare
+                              </Badge>
+                            )}
+                            {issue.lgpdRelevant && (
+                              <Badge variant='outline' className='text-xs'>
+                                🇧🇷 LGPD
+                              </Badge>
+                            )}
+                          </div>
+
+                          <details className='mt-2'>
+                            <summary className='text-xs text-blue-600 cursor-pointer'>
+                              Technical details
+                            </summary>
+                            <div className='mt-2 text-xs bg-gray-50 p-2 rounded'>
+                              <p className='font-mono mb-1'>
+                                {issue.nodes[0]?.html}
+                              </p>
+                              <a
+                                href={issue.helpUrl}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='text-blue-600 hover:underline'
+                              >
+                                Learn more →
+                              </a>
+                            </div>
+                          </details>
+                        </div>
+                      )))}
                   </div>
                 )}
 
@@ -443,49 +441,47 @@ export function AccessibilityTester({
                           </p>
                         </div>
                       )
-                      : (
-                        colorContrast.elements.map((element, _index) => (
-                          <div
-                            key={index}
-                            className='p-3 rounded-lg border bg-white'
-                          >
-                            <div className='flex items-center justify-between mb-2'>
-                              <h4 className='font-semibold text-sm capitalize'>
-                                {element.element}
-                              </h4>
-                              <div className='flex items-center gap-2'>
-                                <span className='text-xs font-mono'>
-                                  {element.ratio.toFixed(2)}:1
-                                </span>
-                                {element.passes
-                                  ? <CheckCircle className='w-4 h-4 text-green-600' />
-                                  : <AlertCircle className='w-4 h-4 text-red-600' />}
-                              </div>
-                            </div>
-
-                            <div className='flex gap-2 text-xs'>
-                              <div className='flex items-center gap-1'>
-                                <div
-                                  className='w-4 h-4 rounded border'
-                                  style={{ backgroundColor: element.foreground }}
-                                />
-                                <span className='font-mono'>
-                                  {element.foreground}
-                                </span>
-                              </div>
-                              <div className='flex items-center gap-1'>
-                                <div
-                                  className='w-4 h-4 rounded border'
-                                  style={{ backgroundColor: element.background }}
-                                />
-                                <span className='font-mono'>
-                                  {element.background}
-                                </span>
-                              </div>
+                      : (_colorContrast.elements.map((element, _index) => (
+                        <div
+                          key={index}
+                          className='p-3 rounded-lg border bg-white'
+                        >
+                          <div className='flex items-center justify-between mb-2'>
+                            <h4 className='font-semibold text-sm capitalize'>
+                              {element.element}
+                            </h4>
+                            <div className='flex items-center gap-2'>
+                              <span className='text-xs font-mono'>
+                                {element.ratio.toFixed(2)}:1
+                              </span>
+                              {element.passes
+                                ? <CheckCircle className='w-4 h-4 text-green-600' />
+                                : <AlertCircle className='w-4 h-4 text-red-600' />}
                             </div>
                           </div>
-                        ))
-                      )}
+
+                          <div className='flex gap-2 text-xs'>
+                            <div className='flex items-center gap-1'>
+                              <div
+                                className='w-4 h-4 rounded border'
+                                style={{ backgroundColor: element.foreground }}
+                              />
+                              <span className='font-mono'>
+                                {element.foreground}
+                              </span>
+                            </div>
+                            <div className='flex items-center gap-1'>
+                              <div
+                                className='w-4 h-4 rounded border'
+                                style={{ backgroundColor: element.background }}
+                              />
+                              <span className='font-mono'>
+                                {element.background}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )))}
                   </div>
                 )}
 

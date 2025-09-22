@@ -563,7 +563,7 @@ export class UserPlan {
    */
   static createTrial(
     clinicId: string,
-    userId: string,
+    _userId: string,
     trialDays: number = 30,
   ): UserPlan {
     const now = new Date();

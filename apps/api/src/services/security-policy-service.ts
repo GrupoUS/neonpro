@@ -141,8 +141,8 @@ export async function listSecurityPolicies(): Promise<SecurityPolicy[]> {
 /**
  * Evaluate security policies for a given context
  */
-export async function evaluateSecurityPolicies(context: {
-  userId?: string;
+export async function evaluateSecurityPolicies(_context: {
+  _userId?: string;
   patientId?: string;
   clinicId?: string;
   action: string;

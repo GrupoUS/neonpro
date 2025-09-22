@@ -9,7 +9,7 @@ describe('Patients Mobile Integration API', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = await createTestClient({ role: 'admin' });
+    testClient = await createTestClient({ _role: 'admin' });
 
     // Create a test patient first
     const patientData = {

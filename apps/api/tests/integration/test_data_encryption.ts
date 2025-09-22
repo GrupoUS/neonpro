@@ -11,8 +11,6 @@
  */
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { z } from 'zod';
-
 // Test helper for API calls
 async function api(path: string, init?: RequestInit) {
   const { default: app } = await import('../../src/app');
@@ -431,7 +429,7 @@ describe('Patient Data Encryption Integration Tests', () => {
         expect.objectContaining({
           operation: 'decrypt',
           patientId: patient.id,
-          userId: expect.any(String),
+          _userId: expect.any(String),
         }),
       );
     });

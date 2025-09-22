@@ -12,8 +12,6 @@
  * - Brazilian Portuguese localization
  */
 
-import { z } from 'zod';
-
 // Cross-Platform Testing Configuration Schema
 export const CrossPlatformTestingConfigSchema = z
   .object({
@@ -355,10 +353,9 @@ export default class CrossPlatformTestingService {
       wcagAA: accessibilityResults.filter(
         r => r.performanceMetrics.accessibilityScore >= 90,
       ).length,
-      averageScore: accessibilityResults.reduce(
-            (sum, r) => sum + r.performanceMetrics.accessibilityScore,
-            0,
-          ) / accessibilityResults.length || 0,
+      averageScore:
+        accessibilityResults.reduce((sum, r) => sum + r.performanceMetrics.accessibilityScore, 0)
+          / accessibilityResults.length || 0,
     };
 
     const healthcareResults = results.filter(
@@ -446,8 +443,8 @@ export default class CrossPlatformTestingService {
   ): CrossPlatformIssue[] {
     const criticalIssues: CrossPlatformIssue[] = [];
 
-    results.forEach(_result => {
-      result.issues.forEach(_issue => {
+    results.forEach(result => {
+      result.issues.forEach(issue => {
         if (issue.severity === 'critical' || issue.severity === 'high') {
           criticalIssues.push(issue);
         }
@@ -468,7 +465,7 @@ export default class CrossPlatformTestingService {
       Record<string, 'passed' | 'failed' | 'warning'>
     > = {};
 
-    results.forEach(_result => {
+    results.forEach(result => {
       if (!matrix[result.browser]) {
         matrix[result.browser] = {};
       }

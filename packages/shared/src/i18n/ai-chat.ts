@@ -6,7 +6,7 @@ export const aiChatI18n = {
     },
     limit: { reached: "Muitas solicitações. Tente novamente em breve." },
     clarification: {
-      request: "Por favor, especifique o paciente ou o assunto.",
+      _request: "Por favor, especifique o paciente ou o assunto.",
     },
     explanation: { header: "Resumo sem dados sensíveis:" },
     streaming: { started_at: "Iniciado às" },
@@ -14,7 +14,7 @@ export const aiChatI18n = {
   "en-US": {
     refusal: { missing_consent: "Cannot answer without valid consent." },
     limit: { reached: "Too many requests. Please try again shortly." },
-    clarification: { request: "Please specify the patient or subject." },
+    clarification: { _request: "Please specify the patient or subject." },
     explanation: { header: "Summary without sensitive data:" },
     streaming: { started_at: "Started at" },
   },

@@ -32,7 +32,7 @@ describe("AbuseWindowTracker", () => {
   });
 
   describe("Basic Rate Limiting", () => {
-    it("should allow requests within limits", async () => {
+    it(_"should allow requests within limits",_async () => {
       const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const request = {
         ip: "192.168.1.1",
@@ -41,19 +41,19 @@ describe("AbuseWindowTracker", () => {
       };
 
       // First request should be allowed
-      const result1 = await tracker.checkAndTrackRequest(key, request);
+      const result1 = await tracker.checkAndTrackRequest(key, _request);
       expect(result1.allowed).toBe(true);
       expect(result1.remainingRequests).toBe(2); // 3 - 1
       expect(result1.currentRequests).toBe(1);
 
       // Second request should be allowed
-      const result2 = await tracker.checkAndTrackRequest(key, request);
+      const result2 = await tracker.checkAndTrackRequest(key, _request);
       expect(result2.allowed).toBe(true);
       expect(result2.remainingRequests).toBe(1); // 3 - 2
       expect(result2.currentRequests).toBe(2);
     });
 
-    it("should block requests when 60s limit exceeded", async () => {
+    it(_"should block requests when 60s limit exceeded",_async () => {
       const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const request = {
         ip: "192.168.1.1",
@@ -62,36 +62,36 @@ describe("AbuseWindowTracker", () => {
 
       // Make 3 requests (at the limit)
       for (let i = 0; i < 3; i++) {
-        const result = await tracker.checkAndTrackRequest(key, request);
+        const result = await tracker.checkAndTrackRequest(key, _request);
         expect(result.allowed).toBe(true);
       }
 
       // 4th request should be blocked
-      const result = await tracker.checkAndTrackRequest(key, request);
+      const result = await tracker.checkAndTrackRequest(key, _request);
       expect(result.allowed).toBe(false);
       expect(result.windowType).toBe("60s");
       expect(result.limit).toBe(3);
       expect(result.currentRequests).toBe(3);
     });
 
-    it("should block requests when 10m limit exceeded", async () => {
+    it(_"should block requests when 10m limit exceeded",_async () => {
       const key: TrackingKey = { type: "user", value: "user123" };
       const request = {
         ip: "192.168.1.1",
         endpoint: "/api/test",
-        userId: "user123",
+        _userId: "user123",
       };
 
       // Make 5 requests over time (within 60s limit but at 10m limit)
       for (let i = 0; i < 5; i++) {
         vi.advanceTimersByTime(70 * 1000); // 70 seconds between requests
-        const result = await tracker.checkAndTrackRequest(key, request);
+        const result = await tracker.checkAndTrackRequest(key, _request);
         expect(result.allowed).toBe(true);
       }
 
       // 6th request should be blocked by 10m window
       vi.advanceTimersByTime(70 * 1000);
-      const result = await tracker.checkAndTrackRequest(key, request);
+      const result = await tracker.checkAndTrackRequest(key, _request);
       expect(result.allowed).toBe(false);
       expect(result.windowType).toBe("10m");
       expect(result.limit).toBe(5);
@@ -99,7 +99,7 @@ describe("AbuseWindowTracker", () => {
   });
 
   describe("Sliding Window Behavior", () => {
-    it("should allow requests after 60s window slides", async () => {
+    it(_"should allow requests after 60s window slides",_async () => {
       const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const request = {
         ip: "192.168.1.1",
@@ -108,23 +108,23 @@ describe("AbuseWindowTracker", () => {
 
       // Fill up the 60s window
       for (let i = 0; i < 3; i++) {
-        const result = await tracker.checkAndTrackRequest(key, request);
+        const result = await tracker.checkAndTrackRequest(key, _request);
         expect(result.allowed).toBe(true);
       }
 
       // Should be blocked
-      const blockedResult = await tracker.checkAndTrackRequest(key, request);
+      const blockedResult = await tracker.checkAndTrackRequest(key, _request);
       expect(blockedResult.allowed).toBe(false);
 
       // Advance time by 61 seconds
       vi.advanceTimersByTime(61 * 1000);
 
       // Should be allowed again
-      const allowedResult = await tracker.checkAndTrackRequest(key, request);
+      const allowedResult = await tracker.checkAndTrackRequest(key, _request);
       expect(allowedResult.allowed).toBe(true);
     });
 
-    it("should handle partial window sliding correctly", async () => {
+    it(_"should handle partial window sliding correctly",_async () => {
       const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const request = {
         ip: "192.168.1.1",
@@ -132,31 +132,31 @@ describe("AbuseWindowTracker", () => {
       };
 
       // Make 2 requests
-      await tracker.checkAndTrackRequest(key, request);
-      await tracker.checkAndTrackRequest(key, request);
+      await tracker.checkAndTrackRequest(key, _request);
+      await tracker.checkAndTrackRequest(key, _request);
 
       // Wait 30 seconds
       vi.advanceTimersByTime(30 * 1000);
 
       // Make 1 more request (total: 3, should be allowed)
-      const result1 = await tracker.checkAndTrackRequest(key, request);
+      const result1 = await tracker.checkAndTrackRequest(key, _request);
       expect(result1.allowed).toBe(true);
 
       // 4th request should be blocked
-      const result2 = await tracker.checkAndTrackRequest(key, request);
+      const result2 = await tracker.checkAndTrackRequest(key, _request);
       expect(result2.allowed).toBe(false);
 
       // Wait another 31 seconds (61 total)
       vi.advanceTimersByTime(31 * 1000);
 
       // First 2 requests should be out of window, should be allowed
-      const result3 = await tracker.checkAndTrackRequest(key, request);
+      const result3 = await tracker.checkAndTrackRequest(key, _request);
       expect(result3.allowed).toBe(true);
     });
   });
 
   describe("Key Isolation", () => {
-    it("should track different IPs separately", async () => {
+    it(_"should track different IPs separately",_async () => {
       const key1: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const key2: TrackingKey = { type: "ip", value: "192.168.1.2" };
       const request1 = { ip: "192.168.1.1", endpoint: "/api/test" };
@@ -177,14 +177,14 @@ describe("AbuseWindowTracker", () => {
       expect(allowed.allowed).toBe(true);
     });
 
-    it("should track users and IPs separately", async () => {
+    it(_"should track users and IPs separately",_async () => {
       const ipKey: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const userKey: TrackingKey = { type: "user", value: "user123" };
       const ipRequest = { ip: "192.168.1.1", endpoint: "/api/test" };
       const userRequest = {
         ip: "192.168.1.1",
         endpoint: "/api/test",
-        userId: "user123",
+        _userId: "user123",
       };
 
       // Fill up IP limit
@@ -206,16 +206,16 @@ describe("AbuseWindowTracker", () => {
   });
 
   describe("Statistics and Monitoring", () => {
-    it("should provide accurate statistics", async () => {
+    it(_"should provide accurate statistics",_async () => {
       const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const request = { ip: "192.168.1.1", endpoint: "/api/test" };
 
       // Make some requests
-      await tracker.checkAndTrackRequest(key, request);
+      await tracker.checkAndTrackRequest(key, _request);
       vi.advanceTimersByTime(30 * 1000);
-      await tracker.checkAndTrackRequest(key, request);
+      await tracker.checkAndTrackRequest(key, _request);
       vi.advanceTimersByTime(70 * 1000); // Now at 100s
-      await tracker.checkAndTrackRequest(key, request);
+      await tracker.checkAndTrackRequest(key, _request);
 
       const stats = tracker.getStats(key);
       expect(stats.requests60s).toBe(1); // Only the last request in 60s window
@@ -225,13 +225,13 @@ describe("AbuseWindowTracker", () => {
       expect(stats.newestRequest).toBeDefined();
     });
 
-    it("should provide memory usage statistics", async () => {
+    it(_"should provide memory usage statistics",_async () => {
       const key1: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const key2: TrackingKey = { type: "ip", value: "192.168.1.2" };
       const request = { ip: "192.168.1.1", endpoint: "/api/test" };
 
-      await tracker.checkAndTrackRequest(key1, request);
-      await tracker.checkAndTrackRequest(key2, request);
+      await tracker.checkAndTrackRequest(key1, _request);
+      await tracker.checkAndTrackRequest(key2, _request);
 
       const memStats = tracker.getMemoryStats();
       expect(memStats.totalKeys).toBe(2);
@@ -242,7 +242,7 @@ describe("AbuseWindowTracker", () => {
   });
 
   describe("Read-only Operations", () => {
-    it("should check without tracking", async () => {
+    it(_"should check without tracking",_async () => {
       const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const request = { ip: "192.168.1.1", endpoint: "/api/test" };
 
@@ -252,7 +252,7 @@ describe("AbuseWindowTracker", () => {
       expect(result1.currentRequests).toBe(0);
 
       // Track one request
-      await tracker.checkAndTrackRequest(key, request);
+      await tracker.checkAndTrackRequest(key, _request);
 
       // Check without tracking - should show current state
       const result2 = await tracker.checkRequest(key);
@@ -279,34 +279,34 @@ describe("AbuseWindowTracker", () => {
   });
 
   describe("Reset Operations", () => {
-    it("should reset specific key", async () => {
+    it(_"should reset specific key",_async () => {
       const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const request = { ip: "192.168.1.1", endpoint: "/api/test" };
 
       // Make requests to hit limit
       for (let i = 0; i < 3; i++) {
-        await tracker.checkAndTrackRequest(key, request);
+        await tracker.checkAndTrackRequest(key, _request);
       }
 
       // Should be blocked
-      const blocked = await tracker.checkAndTrackRequest(key, request);
+      const blocked = await tracker.checkAndTrackRequest(key, _request);
       expect(blocked.allowed).toBe(false);
 
       // Reset the key
       tracker.resetKey(key);
 
       // Should be allowed again
-      const allowed = await tracker.checkAndTrackRequest(key, request);
+      const allowed = await tracker.checkAndTrackRequest(key, _request);
       expect(allowed.allowed).toBe(true);
     });
 
-    it("should reset all tracking data", async () => {
+    it(_"should reset all tracking data",_async () => {
       const key1: TrackingKey = { type: "ip", value: "192.168.1.1" };
       const key2: TrackingKey = { type: "ip", value: "192.168.1.2" };
       const request = { ip: "192.168.1.1", endpoint: "/api/test" };
 
-      await tracker.checkAndTrackRequest(key1, request);
-      await tracker.checkAndTrackRequest(key2, request);
+      await tracker.checkAndTrackRequest(key1, _request);
+      await tracker.checkAndTrackRequest(key2, _request);
 
       const statsBefore = tracker.getMemoryStats();
       expect(statsBefore.totalKeys).toBe(2);

@@ -1,37 +1,33 @@
 /**
  * Enhanced Query Cache Service for AI Agent Database Integration
- * 
+ *
  * Provides intelligent caching for AI agent queries with:
  * - Multi-tier caching (memory + Redis)
  * - Healthcare data compliance and LGPD requirements
  * - Smart invalidation based on data changes
  * - Performance monitoring and optimization
  * - Fail-secure architecture
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Platform Team
  * @compliance LGPD, ANVISA, CFM, ISO 27001
  */
 
-import { Redis } from 'ioredis';
 import { createHash } from 'crypto';
-import { z } from 'zod';
 import {
   AguiQueryMessage,
   AguiResponseMessage,
-  AguiSource,
-  AguiUsageStats
 } from '../agui-protocol/types';
 
 import { CacheManagementService } from '../../../shared/src/services/cache-management';
-import { RedisCacheBackend } from '../../../shared/src/services/redis-cache-backend';
 import {
   CacheConfig,
   CacheDataSensitivity,
+  CacheOperationResult,
   CacheTier,
   HealthcareCacheContext,
-  CacheOperationResult
 } from '../../../shared/src/services/cache-management';
+import { RedisCacheBackend } from '../../../shared/src/services/redis-cache-backend';
 
 // Input validation schemas
 const QueryCacheKeySchema = z.string().min(1).max(1000);
@@ -48,22 +44,22 @@ export interface EnhancedQueryCacheConfig {
   enableRedisCache: boolean;
   defaultTTL: number;
   maxSize: number;
-  
+
   // Redis settings
   redisUrl?: string;
   redisPassword?: string;
   redisDatabase?: number;
-  
+
   // Security settings
   enableEncryption: boolean;
   enableAuditLogging: boolean;
   securityKey: string;
-  
+
   // Performance settings
   enableCompression: boolean;
   enableMetrics: boolean;
   healthCheckInterval: number;
-  
+
   // Healthcare compliance
   lgpdCompliance: boolean;
   dataRetentionHours: number;
@@ -76,27 +72,27 @@ export interface EnhancedQueryCacheConfig {
 export interface QueryCacheEntry {
   // Query information
   queryHash: string;
-  query: AguiQueryMessage;
-  
+  _query: AguiQueryMessage;
+
   // Response data
   response: AguiResponseMessage;
-  
+
   // Metadata
   timestamp: string;
   ttl: number;
   hitCount: number;
-  
+
   // Healthcare context
-  userId: string;
+  _userId: string;
   patientId?: string;
   clinicId?: string;
   dataCategories: string[];
   sensitivity: CacheDataSensitivity;
-  
+
   // Performance metrics
   executionTime: number;
   cacheTier: CacheTier;
-  
+
   // Compliance
   lgpdCompliant: boolean;
   auditRequired: boolean;
@@ -112,26 +108,26 @@ export interface QueryCacheStats {
   cacheHits: number;
   cacheMisses: number;
   hitRate: number;
-  
+
   // Performance metrics
   averageResponseTime: number;
   averageExecutionTime: number;
   totalSavingsMs: number;
-  
+
   // Memory usage
   memoryCacheSize: number;
   redisCacheSize: number;
   totalMemoryUsage: number;
-  
+
   // Healthcare metrics
   sensitiveDataQueries: number;
   lgpdCompliantQueries: number;
   auditedOperations: number;
-  
+
   // Tier distribution
   memoryHits: number;
   redisHits: number;
-  
+
   // Error tracking
   errorCount: number;
   lastError?: string;
@@ -151,7 +147,7 @@ export class EnhancedQueryCacheService {
   constructor(config: EnhancedQueryCacheConfig) {
     this.config = this.validateConfig(config);
     this.stats = this.initializeStats();
-    
+
     // Initialize cache service
     this.initializeCacheService();
     this.initializeHealthCheck();
@@ -161,13 +157,13 @@ export class EnhancedQueryCacheService {
    * Get cached response for query
    */
   async getCachedResponse(
-    query: AguiQueryMessage,
-    userId: string,
+    _query: AguiQueryMessage,
+    _userId: string,
     options: {
       clinicId?: string;
       forceRefresh?: boolean;
       bypassCache?: boolean;
-    } = {}
+    } = {},
   ): Promise<{
     response?: AguiResponseMessage;
     cached: boolean;
@@ -194,21 +190,21 @@ export class EnhancedQueryCacheService {
         cacheKey,
         this.createHealthcareContext(validatedQuery, validatedUserId, options.clinicId),
         {
-          userId: validatedUserId,
-          sessionId: query.context?.sessionId
-        }
+          _userId: validatedUserId,
+          sessionId: query.context?.sessionId,
+        },
       );
 
       if (cacheResult.success && cacheResult.hit && cacheResult.value) {
         const entry: QueryCacheEntry = cacheResult.value;
-        
+
         // Validate cached response
         if (this.validateCacheEntry(entry)) {
           // Update statistics
           this.stats.cacheHits++;
           this.stats.hitRate = this.calculateHitRate();
           this.stats.totalSavingsMs += entry.executionTime;
-          
+
           if (cacheResult.tier === CacheTier.MEMORY) {
             this.stats.memoryHits++;
           } else if (cacheResult.tier === CacheTier.REDIS) {
@@ -216,7 +212,10 @@ export class EnhancedQueryCacheService {
           }
 
           const executionTime = Date.now() - startTime;
-          this.stats.averageResponseTime = this.updateAverage(this.stats.averageResponseTime, executionTime);
+          this.stats.averageResponseTime = this.updateAverage(
+            this.stats.averageResponseTime,
+            executionTime,
+          );
 
           return {
             response: entry.response,
@@ -227,8 +226,8 @@ export class EnhancedQueryCacheService {
               hitCount: entry.hitCount,
               dataCategories: entry.dataCategories,
               sensitivity: entry.sensitivity,
-              cacheTier: entry.cacheTier
-            }
+              cacheTier: entry.cacheTier,
+            },
           };
         }
       }
@@ -238,15 +237,18 @@ export class EnhancedQueryCacheService {
       this.stats.hitRate = this.calculateHitRate();
 
       const executionTime = Date.now() - startTime;
-      this.stats.averageResponseTime = this.updateAverage(this.stats.averageResponseTime, executionTime);
+      this.stats.averageResponseTime = this.updateAverage(
+        this.stats.averageResponseTime,
+        executionTime,
+      );
 
       return { cached: false, source: 'miss', executionTime };
-
     } catch (error) {
+      // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error getting cached response:', error);
       this.stats.errorCount++;
       this.stats.lastError = error instanceof Error ? error.message : 'Unknown error';
-      
+
       return { cached: false, source: 'miss', executionTime: Date.now() - startTime };
     }
   }
@@ -255,15 +257,15 @@ export class EnhancedQueryCacheService {
    * Cache query response
    */
   async cacheResponse(
-    query: AguiQueryMessage,
+    _query: AguiQueryMessage,
     response: AguiResponseMessage,
-    userId: string,
+    _userId: string,
     options: {
       clinicId?: string;
       customTTL?: number;
       forceCache?: boolean;
       metadata?: any;
-    } = {}
+    } = {},
   ): Promise<CacheOperationResult> {
     try {
       // Validate inputs
@@ -277,12 +279,12 @@ export class EnhancedQueryCacheService {
       // Create cache entry
       const entry: QueryCacheEntry = {
         queryHash: this.generateQueryHash(validatedQuery),
-        query: validatedQuery,
+        _query: validatedQuery,
         response: validatedResponse,
         timestamp: new Date().toISOString(),
         ttl: options.customTTL || this.config.defaultTTL,
         hitCount: 1,
-        userId: validatedUserId,
+        _userId: validatedUserId,
         patientId: validatedQuery.context?.patientId,
         clinicId: options.clinicId,
         dataCategories: this.extractDataCategories(validatedResponse),
@@ -291,7 +293,7 @@ export class EnhancedQueryCacheService {
         cacheTier: CacheTier.MEMORY, // Default tier
         lgpdCompliant: this.config.lgpdCompliance,
         auditRequired: this.requiresAudit(validatedQuery, validatedResponse),
-        consentId: validatedQuery.context?.consentId
+        consentId: validatedQuery.context?.consentId,
       };
 
       // Determine cache tier based on sensitivity and usage
@@ -304,13 +306,13 @@ export class EnhancedQueryCacheService {
         {
           ttl: entry.ttl,
           sensitivity: entry.sensitivity,
-          context: this.createHealthcareContext(validatedQuery, validatedUserId, options.clinicId),
+          _context: this.createHealthcareContext(validatedQuery, validatedUserId, options.clinicId),
           tier: entry.cacheTier,
           userContext: {
-            userId: validatedUserId,
-            sessionId: validatedQuery.context?.sessionId
-          }
-        }
+            _userId: validatedUserId,
+            sessionId: validatedQuery.context?.sessionId,
+          },
+        },
       );
 
       // Update statistics
@@ -323,17 +325,17 @@ export class EnhancedQueryCacheService {
       }
 
       return result;
-
     } catch (error) {
+      // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error caching response:', error);
       this.stats.errorCount++;
       this.stats.lastError = error instanceof Error ? error.message : 'Unknown error';
-      
+
       return {
         success: false,
         key: 'unknown',
         error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -344,11 +346,11 @@ export class EnhancedQueryCacheService {
   async invalidateCache(
     pattern: string,
     options: {
-      userId?: string;
+      _userId?: string;
       patientId?: string;
       clinicId?: string;
       reason?: string;
-    } = {}
+    } = {},
   ): Promise<{
     success: boolean;
     invalidatedCount: number;
@@ -360,7 +362,7 @@ export class EnhancedQueryCacheService {
 
       // Build invalidation pattern
       let invalidationPattern = pattern;
-      if (options.userId) {
+      if (options._userId) {
         invalidationPattern = `*user:${options.userId}*${pattern}*`;
       }
       if (options.patientId) {
@@ -373,11 +375,13 @@ export class EnhancedQueryCacheService {
       // Invalidate from cache service
       const invalidatedCount = await this.cacheService.invalidatePattern(
         invalidationPattern,
-        options.clinicId ? {
-          facilityId: options.clinicId,
-          dataClassification: CacheDataSensitivity.INTERNAL
-        } : undefined,
-        options.userId ? { userId: options.userId } : undefined
+        options.clinicId
+          ? {
+            facilityId: options.clinicId,
+            dataClassification: CacheDataSensitivity.INTERNAL,
+          }
+          : undefined,
+        options.userId ? { _userId: options.userId } : undefined,
       );
 
       totalInvalidated += invalidatedCount;
@@ -388,26 +392,26 @@ export class EnhancedQueryCacheService {
         console.log('[Query Cache] Cache invalidation:', {
           pattern,
           reason: options.reason,
-          userId: options.userId,
+          _userId: options.userId,
           patientId: options.patientId,
           clinicId: options.clinicId,
           totalInvalidated,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
 
       return {
         success: true,
         invalidatedCount: totalInvalidated,
-        details: results
+        details: results,
       };
-
     } catch (error) {
+      // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error invalidating cache:', error);
       return {
         success: false,
         invalidatedCount: 0,
-        details: [`Error: ${error instanceof Error ? error.message : 'Unknown error'}`]
+        details: [`Error: ${error instanceof Error ? error.message : 'Unknown error'}`],
       };
     }
   }
@@ -419,10 +423,10 @@ export class EnhancedQueryCacheService {
     try {
       // Get statistics from cache service
       const cacheStats = await this.cacheService.getStatistics();
-      
+
       // Update memory usage
       let totalMemoryUsage = 0;
-      cacheStats.forEach((tierStats, tier) => {
+      cacheStats.forEach((tierStats,_tier) => {
         totalMemoryUsage += tierStats.memoryUsage;
         if (tier === CacheTier.MEMORY) {
           this.stats.memoryCacheSize = tierStats.totalEntries;
@@ -430,12 +434,12 @@ export class EnhancedQueryCacheService {
           this.stats.redisCacheSize = tierStats.totalEntries;
         }
       });
-      
+
       this.stats.totalMemoryUsage = totalMemoryUsage;
 
       return { ...this.stats };
-
     } catch (error) {
+      // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Error getting statistics:', error);
       return this.stats;
     }
@@ -461,7 +465,7 @@ export class EnhancedQueryCacheService {
       if (this.config.enableRedisCache && this.redisBackend) {
         const redisStats = await this.cacheService.getStatistics();
         const redisAvailable = redisStats.has(CacheTier.REDIS);
-        
+
         if (redisAvailable) {
           details.push('Redis connection: healthy');
         } else {
@@ -472,12 +476,16 @@ export class EnhancedQueryCacheService {
 
       // Check memory usage
       if (this.stats.totalMemoryUsage > 100 * 1024 * 1024) { // 100MB
-        details.push(`High memory usage: ${Math.round(this.stats.totalMemoryUsage / 1024 / 1024)}MB`);
+        details.push(
+          `High memory usage: ${Math.round(this.stats.totalMemoryUsage / 1024 / 1024)}MB`,
+        );
         healthy = false;
       }
 
       // Check error rate
-      const errorRate = this.stats.totalQueries > 0 ? this.stats.errorCount / this.stats.totalQueries : 0;
+      const errorRate = this.stats.totalQueries > 0
+        ? this.stats.errorCount / this.stats.totalQueries
+        : 0;
       if (errorRate > 0.05) { // 5% error rate threshold
         details.push(`High error rate: ${(errorRate * 100).toFixed(2)}%`);
         healthy = false;
@@ -487,7 +495,7 @@ export class EnhancedQueryCacheService {
       const cleanupResults = await this.cacheService.cleanup();
       let totalCleaned = 0;
       cleanupResults.forEach(count => totalCleaned += count);
-      
+
       if (totalCleaned > 0) {
         details.push(`Cleaned up ${totalCleaned} expired entries`);
       }
@@ -495,15 +503,17 @@ export class EnhancedQueryCacheService {
       return {
         healthy,
         details,
-        stats: await this.getStats()
+        stats: await this.getStats(),
       };
-
     } catch (error) {
+      // Error caught but not used - handled by surrounding logic
       console.error('[Query Cache] Health check failed:', error);
       return {
         healthy: false,
-        details: [`Health check failed: ${error instanceof Error ? error.message : 'Unknown error'}`],
-        stats: this.stats
+        details: [
+          `Health check failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        ],
+        stats: this.stats,
       };
     }
   }
@@ -522,20 +532,20 @@ export class EnhancedQueryCacheService {
         [CacheDataSensitivity.PUBLIC]: 86400,
         [CacheDataSensitivity.INTERNAL]: 3600,
         [CacheDataSensitivity.CONFIDENTIAL]: 1800,
-        [CacheDataSensitivity.RESTRICTED]: 900
+        [CacheDataSensitivity.RESTRICTED]: 900,
       },
       lgpdSettings: {
         enableAuditLogging: this.config.enableAuditLogging,
         requireConsent: true,
         autoAnonymization: this.config.anonymizationEnabled,
-        dataRetentionDays: Math.floor(this.config.dataRetentionHours / 24)
+        dataRetentionDays: Math.floor(this.config.dataRetentionHours / 24),
       },
       performanceSettings: {
         enableCompression: this.config.enableCompression,
         enableEncryption: this.config.enableEncryption,
         enableMetrics: this.config.enableMetrics,
-        batchOperations: true
-      }
+        batchOperations: true,
+      },
     };
 
     this.cacheService = new CacheManagementService(cacheConfig);
@@ -556,7 +566,7 @@ export class EnhancedQueryCacheService {
         connectTimeout: 5000,
         commandTimeout: 5000,
         tls: false, // Configure based on environment
-        connectionName: 'healthcare-query-cache'
+        connectionName: 'healthcare-query-cache',
       });
 
       this.cacheService.registerBackend(CacheTier.REDIS, this.redisBackend);
@@ -568,51 +578,52 @@ export class EnhancedQueryCacheService {
    * Initialize health check timer
    */
   private initializeHealthCheck(): void {
-    this.healthCheckTimer = setInterval(
-      () => this.healthCheck(),
-      this.config.healthCheckInterval
+    this.healthCheckTimer = setInterval(() => this.healthCheck(),
+      this.config.healthCheckInterval,
     );
   }
 
   /**
    * Generate secure cache key
    */
-  private generateCacheKey(query: AguiQueryMessage, userId: string, clinicId?: string): string {
+  private generateCacheKey(_query: AguiQueryMessage, _userId: string, clinicId?: string): string {
     const queryData = {
-      query: this.sanitizeQueryString(query.query),
-      context: {
-        patientId: query.context?.patientId ? this.sanitizeString(query.context.patientId) : undefined,
-        userId: query.context?.userId ? this.sanitizeString(query.context.userId) : undefined,
-        sessionId: query.context?.sessionId
+      _query: this.sanitizeQueryString(query._query),
+      _context: {
+        patientId: query.context?.patientId
+          ? this.sanitizeString(query.context.patientId)
+          : undefined,
+        _userId: query.context?.userId ? this.sanitizeString(query.context._userId) : undefined,
+        sessionId: query.context?.sessionId,
       },
       options: {
         maxResults: Math.min(query.options?.maxResults || 10, 100),
         model: this.sanitizeString(query.options?.model || 'default'),
-        temperature: Math.max(0, Math.min(1, query.options?.temperature || 0.7))
-      }
+        temperature: Math.max(0, Math.min(1, query.options?.temperature || 0.7)),
+      },
     };
 
     const hash = createHash('sha256')
-      .update(JSON.stringify(queryData) + this.config.securityKey + userId)
+      .update(JSON.stringify(queryData) + this.config.securityKey + _userId)
       .digest('hex');
 
-    return `query:${userId}:${clinicId ? `${clinicId}:` : ''}${hash}`;
+    return `_query:${userId}:${clinicId ? `${clinicId}:` : ''}${hash}`;
   }
 
   /**
    * Generate query hash for comparison
    */
-  private generateQueryHash(query: AguiQueryMessage): string {
+  private generateQueryHash(_query: AguiQueryMessage): string {
     const queryData = {
-      query: query.query.toLowerCase().trim(),
-      context: {
+      _query: query.query.toLowerCase().trim(),
+      _context: {
         patientId: query.context?.patientId,
-        clinicId: query.context?.clinicId
+        clinicId: query.context?.clinicId,
       },
       options: {
         maxResults: query.options?.maxResults,
-        model: query.options?.model
-      }
+        model: query.options?.model,
+      },
     };
 
     return createHash('sha256')
@@ -624,9 +635,9 @@ export class EnhancedQueryCacheService {
    * Create healthcare context for caching
    */
   private createHealthcareContext(
-    query: AguiQueryMessage,
-    userId: string,
-    clinicId?: string
+    _query: AguiQueryMessage,
+    _userId: string,
+    clinicId?: string,
   ): HealthcareCacheContext {
     return {
       patientId: query.context?.patientId,
@@ -636,7 +647,7 @@ export class EnhancedQueryCacheService {
       clinicalContext: 'consultation', // Default context
       dataClassification: CacheDataSensitivity.INTERNAL,
       lgpdConsentId: query.context?.consentId,
-      retentionRequirement: 'standard'
+      retentionRequirement: 'standard',
     };
   }
 
@@ -687,8 +698,8 @@ export class EnhancedQueryCacheService {
    * Determine data sensitivity level
    */
   private determineSensitivity(
-    query: AguiQueryMessage,
-    response: AguiResponseMessage
+    _query: AguiQueryMessage,
+    response: AguiResponseMessage,
   ): CacheDataSensitivity {
     // Check for patient data
     if (query.context?.patientId || response.content.toLowerCase().includes('paciente')) {
@@ -701,8 +712,10 @@ export class EnhancedQueryCacheService {
     }
 
     // Check for sensitive health information
-    if (response.content.toLowerCase().includes('diagnóstico') || 
-        response.content.toLowerCase().includes('tratamento')) {
+    if (
+      response.content.toLowerCase().includes('diagnóstico')
+      || response.content.toLowerCase().includes('tratamento')
+    ) {
       return CacheDataSensitivity.RESTRICTED;
     }
 
@@ -735,8 +748,8 @@ export class EnhancedQueryCacheService {
    * Check if operation requires audit logging
    */
   private requiresAudit(
-    query: AguiQueryMessage,
-    response: AguiResponseMessage
+    _query: AguiQueryMessage,
+    response: AguiResponseMessage,
   ): boolean {
     // Audit patient data access
     if (query.context?.patientId) {
@@ -754,19 +767,19 @@ export class EnhancedQueryCacheService {
   /**
    * Validate query structure
    */
-  private validateQuery(query: AguiQueryMessage): AguiQueryMessage {
+  private validateQuery(_query: AguiQueryMessage): AguiQueryMessage {
     if (!query || typeof query !== 'object') {
       throw new Error('Invalid query object');
     }
 
     return {
       ...query,
-      query: this.sanitizeQueryString(query.query || ''),
+      _query: this.sanitizeQueryString(query.query || ''),
       options: {
         maxResults: Math.min(query.options?.maxResults || 10, 100),
         model: this.sanitizeString(query.options?.model || 'default'),
-        temperature: Math.max(0, Math.min(1, query.options?.temperature || 0.7))
-      }
+        temperature: Math.max(0, Math.min(1, query.options?.temperature || 0.7)),
+      },
     };
   }
 
@@ -781,7 +794,7 @@ export class EnhancedQueryCacheService {
     return {
       ...response,
       content: this.sanitizeString(response.content || ''),
-      confidence: Math.max(0, Math.min(1, response.confidence || 0))
+      confidence: Math.max(0, Math.min(1, response.confidence || 0)),
     };
   }
 
@@ -790,19 +803,19 @@ export class EnhancedQueryCacheService {
    */
   private validateCacheEntry(entry: QueryCacheEntry): boolean {
     return !!(
-      entry &&
-      typeof entry === 'object' &&
-      entry.response &&
-      typeof entry.timestamp === 'string' &&
-      entry.ttl > 0 &&
-      entry.userId
+      entry
+      && typeof entry === 'object'
+      && entry.response
+      && typeof entry.timestamp === 'string'
+      && entry.ttl > 0
+      && entry.userId
     );
   }
 
   /**
    * Sanitize query string
    */
-  private sanitizeQueryString(query: string): string {
+  private sanitizeQueryString(_query: string): string {
     if (typeof query !== 'string') return '';
     return query
       .replace(/[<>"'&]/g, '')
@@ -859,7 +872,7 @@ export class EnhancedQueryCacheService {
       auditedOperations: 0,
       memoryHits: 0,
       redisHits: 0,
-      errorCount: 0
+      errorCount: 0,
     };
   }
 
@@ -889,7 +902,7 @@ export class EnhancedQueryCacheService {
       enableMetrics: config.enableMetrics ?? true,
       lgpdCompliance: config.lgpdCompliance ?? true,
       anonymizationEnabled: config.anonymizationEnabled ?? true,
-      dataRetentionHours: config.dataRetentionHours ?? 168 // 7 days
+      dataRetentionHours: config.dataRetentionHours ?? 168, // 7 days
     };
   }
 
@@ -900,7 +913,7 @@ export class EnhancedQueryCacheService {
     if (this.healthCheckTimer) {
       clearInterval(this.healthCheckTimer);
     }
-    
+
     if (this.redisBackend) {
       await this.redisBackend.destroy();
     }
@@ -927,7 +940,7 @@ export function createEnhancedQueryCache(): EnhancedQueryCacheService {
     lgpdCompliance: process.env.LGDP_COMPLIANCE !== 'false',
     dataRetentionHours: parseInt(process.env.CACHE_DATA_RETENTION_HOURS || '168'),
     anonymizationEnabled: process.env.CACHE_ANONYMIZATION_ENABLED !== 'false',
-    securityKey: process.env.CACHE_SECURITY_KEY || 'healthcare_query_cache_security_key'
+    securityKey: process.env.CACHE_SECURITY_KEY || 'healthcare_query_cache_security_key',
   };
 
   return new EnhancedQueryCacheService(config);

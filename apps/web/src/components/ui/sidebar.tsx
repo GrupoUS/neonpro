@@ -41,7 +41,7 @@ const SidebarContext = React.createContext<SidebarContextProps | null>(null);
 
 function useSidebar() {
   const context = React.useContext(SidebarContext);
-  if (!context) {
+  if (!_context) {
     throw new Error('useSidebar must be used within a SidebarProvider.');
   }
 
@@ -109,18 +109,15 @@ function SidebarProvider({
   // This makes it easier to style the sidebar with Tailwind classes.
   const state = open ? 'expanded' : 'collapsed';
 
-  const contextValue = React.useMemo<SidebarContextProps>(
-    () => ({
-      state,
-      open,
-      setOpen,
-      isMobile,
-      openMobile,
-      setOpenMobile,
-      toggleSidebar,
-    }),
-    [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar],
-  );
+  const contextValue = React.useMemo<SidebarContextProps>(() => ({
+    state,
+    open,
+    setOpen,
+    isMobile,
+    openMobile,
+    setOpenMobile,
+    toggleSidebar,
+  }), [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]);
 
   return (
     <SidebarContext.Provider value={contextValue}>

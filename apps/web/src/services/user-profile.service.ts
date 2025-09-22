@@ -13,7 +13,7 @@ type StaffMemberRow = Database['public']['Tables']['staff_members']['Row'];
 export interface UserProfile {
   id: string;
   email: string;
-  role: UserRole;
+  _role: UserRole;
   clinicId: string;
   clinicName?: string;
   fullName: string;
@@ -39,7 +39,7 @@ export interface ProfessionalInfo {
 
 export interface StaffInfo {
   id: string;
-  role: string;
+  _role: string;
   specialization: string | null;
   crmNumber: string | null;
   avatarUrl: string | null;
@@ -68,8 +68,8 @@ class UserProfileService {
   /**
    * Get user profile with role and clinic information
    */
-  async getUserProfile(userId: string): Promise<UserProfile> {
-    console.log('🔍 getUserProfile called for userId:', userId);
+  async getUserProfile(_userId: string): Promise<UserProfile> {
+    console.log('🔍 getUserProfile called for _userId:', _userId);
 
     // Handle fallback user case immediately
     if (userId === 'fallback-user') {
@@ -93,7 +93,7 @@ class UserProfileService {
           clinics!inner(id, clinic_name)
         `,
         )
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .eq('is_active', true)
         .single();
 
@@ -112,7 +112,7 @@ class UserProfileService {
       const staffPromise = supabase
         .from('staff_members')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .eq('is_active', true)
         .single();
 
@@ -145,7 +145,7 @@ class UserProfileService {
         authUser.user.email,
       );
       return this.buildPatientProfile(authUser.user);
-    } catch (error) {
+    } catch (_error) {
       console.error('❌ Error fetching user profile:', error);
       // Throw error instead of creating fallback to let caller handle it
       throw error;
@@ -161,7 +161,7 @@ class UserProfileService {
     return {
       id: professional.user_id,
       email: professional.email || '',
-      role: 'professional',
+      _role: 'professional',
       clinicId: professional.clinic_id,
       clinicName: professional.clinics?.clinic_name,
       fullName: professional.full_name,
@@ -187,19 +187,19 @@ class UserProfileService {
    * Build staff profile
    */
   private buildStaffProfile(staff: StaffMemberRow): UserProfile {
-    const permissions = this.getStaffPermissions(staff.role);
+    const permissions = this.getStaffPermissions(staff._role);
     const anyStaff = staff as any;
 
     return {
       id: anyStaff.user_id || '',
       email: anyStaff.email || '',
-      role: this.mapStaffRole(anyStaff.role),
+      _role: this.mapStaffRole(anyStaff._role),
       clinicId: '', // Staff members don't have direct clinic association in current schema
       fullName: anyStaff.full_name || anyStaff.name || '',
       permissions,
       staffInfo: {
         id: anyStaff.id,
-        role: anyStaff.role,
+        _role: anyStaff.role,
         specialization: anyStaff.specialization || '',
         crmNumber: anyStaff.crm_number || '',
         avatarUrl: anyStaff.avatar_url || '',
@@ -216,7 +216,7 @@ class UserProfileService {
     return {
       id: authUser.id,
       email: authUser.email || '',
-      role: 'patient',
+      _role: 'patient',
       clinicId: '', // Patients don't have a fixed clinic association
       fullName: authUser.user_metadata?.full_name || authUser.email || '',
       permissions,
@@ -226,13 +226,13 @@ class UserProfileService {
   /**
    * Create fallback profile for development/testing
    */
-  private createFallbackProfile(userId: string): UserProfile {
+  private createFallbackProfile(_userId: string): UserProfile {
     const permissions = this.getProfessionalPermissions(); // Give full permissions for development
 
     return {
       id: userId,
       email: 'dev@neonpro.com',
-      role: 'professional',
+      _role: 'professional',
       clinicId: '89084c3a-9200-4058-a15a-b440d3c60687', // Default clinic ID
       clinicName: 'Clínica NeonPro',
       fullName: 'Usuário de Desenvolvimento',
@@ -274,7 +274,7 @@ class UserProfileService {
   /**
    * Get permissions for staff role
    */
-  private getStaffPermissions(role: string): UserPermissions {
+  private getStaffPermissions(_role: string): UserPermissions {
     const basePermissions = {
       canViewAllAppointments: false,
       canCreateAppointments: false,
@@ -370,7 +370,7 @@ class UserProfileService {
   /**
    * Get user's accessible clinic IDs
    */
-  async getAccessibleClinics(userId: string): Promise<string[]> {
+  async getAccessibleClinics(_userId: string): Promise<string[]> {
     try {
       const profile = await this.getUserProfile(userId);
       if (!profile) return [];
@@ -378,7 +378,7 @@ class UserProfileService {
       // For now, return single clinic ID
       // In future, could support multi-clinic access
       return profile.clinicId ? [profile.clinicId] : [];
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting accessible clinics:', error);
       return [];
     }

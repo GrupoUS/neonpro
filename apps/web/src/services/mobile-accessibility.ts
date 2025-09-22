@@ -11,7 +11,6 @@
  * - Brazilian Portuguese accessibility compliance
  */
 
-import { z } from 'zod';
 import MobileResponsiveAccessibility, {
   type ResponsiveAccessibilityReport,
   type ResponsiveElement,
@@ -409,10 +408,9 @@ export class MobileAccessibilityService {
       [MOBILE_ACCESSIBILITY_LEVELS.CRITICAL]: 1,
     };
 
-    const averageScore = levels.reduce(
-      (sum, level) => sum + levelScores[level as keyof typeof levelScores],
-      0,
-    ) / levels.length;
+    const averageScore =
+      levels.reduce((sum, level) => sum + levelScores[level as keyof typeof levelScores], 0)
+      / levels.length;
 
     if (averageScore >= 4.5) return MOBILE_ACCESSIBILITY_LEVELS.EXCELLENT;
     if (averageScore >= 3.5) return MOBILE_ACCESSIBILITY_LEVELS.GOOD;

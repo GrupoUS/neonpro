@@ -9,7 +9,7 @@ import { HealthcareLogger } from '../logging/healthcare-logger';
 
 interface SessionData {
   sessionId: string;
-  userId: string;
+  _userId: string;
   clinicId: string;
   userRole: 'doctor' | 'nurse' | 'admin' | 'receptionist' | 'agent';
   metadata: {
@@ -109,7 +109,7 @@ export class SessionManager {
         for (const session of activeSessions) {
           this.sessions.set(session.session_id, {
             sessionId: session.session_id,
-            userId: session.user_id,
+            _userId: session.user_id,
             clinicId: session.clinic_id,
             userRole: session.user_role,
             metadata: session.session_data || {},
@@ -136,14 +136,14 @@ export class SessionManager {
    * Create a new session
    */
   public async createSession(params: {
-    userId: string;
+    _userId: string;
     clinicId: string;
     userRole: string;
     metadata?: any;
     expirationMinutes?: number;
   }): Promise<string> {
     const sessionId = this.generateSessionId();
-    const now = new Date();
+    const _now = new Date();
     const expirationMinutes = Math.min(
       params.expirationMinutes || this.config.defaultExpirationMinutes,
       this.config.maxExpirationMinutes,
@@ -151,11 +151,11 @@ export class SessionManager {
     const expiresAt = new Date(now.getTime() + expirationMinutes * 60 * 1000);
 
     // Check session limits per user
-    await this.enforceSessionLimits(params.userId);
+    await this.enforceSessionLimits(params._userId);
 
     const sessionData: SessionData = {
       sessionId,
-      userId: params.userId,
+      _userId: params.userId,
       clinicId: params.clinicId,
       userRole: params.userRole as any,
       metadata: params.metadata || {},
@@ -204,7 +204,7 @@ export class SessionManager {
 
     this.logger.info('Session created', {
       sessionId,
-      userId: params.userId,
+      _userId: params.userId,
       clinicId: params.clinicId,
       expiresAt: expiresAt.toISOString(),
     });
@@ -241,7 +241,7 @@ export class SessionManager {
       return false;
     }
 
-    const now = new Date();
+    const _now = new Date();
     session.lastActivityAt = now;
 
     // Update in database
@@ -383,7 +383,7 @@ export class SessionManager {
   /**
    * Get all active sessions for a user
    */
-  public getUserSessions(userId: string): SessionData[] {
+  public getUserSessions(_userId: string): SessionData[] {
     return Array.from(this.sessions.values())
       .filter(session => session.userId === userId && session.isActive);
   }
@@ -407,7 +407,7 @@ export class SessionManager {
   /**
    * Enforce session limits per user
    */
-  private async enforceSessionLimits(userId: string): Promise<void> {
+  private async enforceSessionLimits(_userId: string): Promise<void> {
     const userSessions = this.getUserSessions(userId);
 
     if (userSessions.length >= this.config.maxSessionsPerUser) {
@@ -458,7 +458,7 @@ export class SessionManager {
    * Cleanup expired sessions
    */
   private async cleanupExpiredSessions(): Promise<void> {
-    const now = new Date();
+    const _now = new Date();
     const expiredSessions: string[] = [];
 
     // Find expired sessions

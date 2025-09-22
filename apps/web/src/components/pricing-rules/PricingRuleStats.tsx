@@ -24,22 +24,16 @@ export function PricingRuleStats({ clinicId }: PricingRuleStatsProps) {
   const inactiveRules = rules.filter(rule => !rule.is_active);
 
   // Calculate rule type distribution
-  const ruleTypeDistribution = rules.reduce(
-    (acc, rule) => {
-      acc[rule.rule_type] = (acc[rule.rule_type] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
+  const ruleTypeDistribution = rules.reduce((acc, rule) => {
+    acc[rule.rule_type] = (acc[rule.rule_type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
   // Calculate adjustment type distribution
-  const adjustmentTypeDistribution = rules.reduce(
-    (acc, rule) => {
-      acc[rule.adjustment.type] = (acc[rule.adjustment.type] || 0) + 1;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
+  const adjustmentTypeDistribution = rules.reduce((acc, rule) => {
+    acc[rule.adjustment.type] = (acc[rule.adjustment.type] || 0) + 1;
+    return acc;
+  }, {} as Record<string, number>);
 
   const getRuleTypeLabel = (_type: any) => {
     const labels: Record<string, string> = {

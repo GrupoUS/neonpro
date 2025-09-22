@@ -25,7 +25,7 @@ export function useAIChat(clientId?: string) {
   const { user } = useAuth();
 
   // Chat state management
-  const [chatState, setChatState] = useState<ChatState>(() => {
+  const [chatState, setChatState] = useState<any>(() => {
     // Load from session storage on mount
     if (typeof window !== 'undefined') {
       const saved = sessionStorage.getItem(CHAT_SESSION_KEY);
@@ -102,7 +102,7 @@ export function useAIChat(clientId?: string) {
     mutationFn: async (_content: any) => {
       const userMessage: ChatMessage = {
         id: nanoid(),
-        role: 'user',
+        _role: 'user',
         content,
         timestamp: new Date(),
         clientId,
@@ -148,7 +148,7 @@ export function useAIChat(clientId?: string) {
           // Update UI with partial response
           const aiMessage: ChatMessage = {
             id: nanoid(),
-            role: 'assistant',
+            _role: 'assistant',
             content: aiContent,
             timestamp: new Date(),
             clientId,
@@ -165,7 +165,7 @@ export function useAIChat(clientId?: string) {
         // Final state when streaming is complete
         const finalAiMessage: ChatMessage = {
           id: nanoid(),
-          role: 'assistant',
+          _role: 'assistant',
           content: aiContent,
           timestamp: new Date(),
           clientId,
@@ -183,7 +183,7 @@ export function useAIChat(clientId?: string) {
 
         // Log interaction for compliance
         logAIInteraction(sessionId, userMessage.content, aiContent, clientId);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error processing AI stream:', error);
         setChatState(prev => ({
           ...prev,

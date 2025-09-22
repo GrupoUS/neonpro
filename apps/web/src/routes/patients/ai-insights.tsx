@@ -1,50 +1,28 @@
 'use client';
 
-import { AccessiblePatientCard } from '@/components/accessibility/AccessiblePatientCard';
 import { AnimatedModal } from '@/components/ui/animated-modal';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs } from '@/components/ui/tabs';
 import { UniversalButton } from '@/components/ui/universal-button';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { format, formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
-  Activity,
-  AlertCircle,
-  AlertTriangle,
   ArrowLeft,
-  BarChart3,
   Brain,
-  Calendar,
   CheckCircle,
   Clock,
   Download,
-  Eye,
-  FileText,
-  Filter,
   Heart,
   LineChart,
-  Mail,
-  MessageSquare,
-  Phone,
   PieChart,
-  Pill,
-  RefreshCw,
   Shield,
-  Stethoscope,
   Target,
-  TrendingDown,
-  TrendingUp,
   Users,
-  Zap,
 } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 export const Route = createFileRoute('/patients/ai-insights')({
   component: PatientAIInsights,
@@ -131,7 +109,6 @@ function PatientAIInsights() {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedPriority, setSelectedPriority] = useState<string>('all');
-  const [timeRange, setTimeRange] = useState<string>('7d');
   const [selectedInsight, setSelectedInsight] = useState<PatientAIInsight | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { toast } = useToast();
@@ -409,7 +386,7 @@ function PatientAIInsights() {
         setPredictions(mockPredictions);
         setModels(mockModels);
         setTreatments(mockTreatments);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error loading AI insights:', error);
       } finally {
         setLoading(false);
@@ -427,7 +404,7 @@ function PatientAIInsights() {
     });
   }, [insights, selectedCategory, selectedPriority]);
 
-  const getPriorityColor = (_priority: any) => {
+  const getPriorityColor = (priority: any) => {
     switch (priority) {
       case 'critical':
         return 'destructive';
@@ -442,7 +419,7 @@ function PatientAIInsights() {
     }
   };
 
-  const getPriorityLabel = (_priority: any) => {
+  const getPriorityLabel = (priority: any) => {
     switch (priority) {
       case 'critical':
         return 'Crítico';
@@ -457,7 +434,7 @@ function PatientAIInsights() {
     }
   };
 
-  const getStatusColor = (_status: any) => {
+  const getStatusColor = (status: any) => {
     switch (status) {
       case 'active':
         return 'default';
@@ -470,7 +447,7 @@ function PatientAIInsights() {
     }
   };
 
-  const handleInsightAction = async (_insight: any) => {
+  const handleInsightAction = async (insight: any) => {
     toast({
       title: 'Ação de IA executada',
       description: `Iniciando ações para: ${insight.title}`,
@@ -485,7 +462,7 @@ function PatientAIInsights() {
     }, 2000);
   };
 
-  const handleInsightDetails = (_insight: any) => {
+  const handleInsightDetails = (insight: any) => {
     setSelectedInsight(insight);
     setIsModalOpen(true);
   };
@@ -831,7 +808,7 @@ function PatientAIInsights() {
                         Fatores:
                       </p>
                       <ul className='text-sm text-gray-600 list-disc list-inside'>
-                        {prediction.factors.map((factor, _index) => <li key={index}>{factor}</li>)}
+                        {prediction.factors.map((factor, index) => <li key={index}>{factor}</li>)}
                       </ul>
                     </div>
                     <div className='mt-3 p-3 bg-blue-50 rounded'>
@@ -1011,7 +988,7 @@ function PatientAIInsights() {
             <div>
               <h3 className='font-medium mb-2'>Recomendações</h3>
               <ul className='space-y-1 text-sm'>
-                {selectedInsight.recommendations.map((rec, _index) => (
+                {selectedInsight.recommendations.map((rec, index) => (
                   <li key={index} className='flex items-start gap-2'>
                     <CheckCircle className='h-4 w-4 text-green-600 mt-0.5 flex-shrink-0' />
                     <span>{rec}</span>
@@ -1024,7 +1001,7 @@ function PatientAIInsights() {
               <div>
                 <h3 className='font-medium mb-2'>Ações Necessárias</h3>
                 <div className='space-y-2'>
-                  {selectedInsight.actionItems.map((action, _index) => (
+                  {selectedInsight.actionItems.map((action, index) => (
                     <div key={index} className='border rounded p-3'>
                       <div className='flex items-center justify-between mb-1'>
                         <h4 className='font-medium text-sm'>{action.title}</h4>

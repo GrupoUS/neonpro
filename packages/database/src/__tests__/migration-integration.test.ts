@@ -52,12 +52,12 @@ describe("Supabase Migration Integration", () => {
   });
 
   describe("Schema Validation", () => {
-    it("should validate schema successfully", async () => {
+    it(_"should validate schema successfully",_async () => {
       const isValid = await validateSchema();
       expect(isValid).toBe(true);
     });
 
-    it("should check tables exist with mock client", async () => {
+    it(_"should check tables exist with mock client",_async () => {
       // Mock Supabase client
       const mockClient = {
         from: (table: string) => ({
@@ -72,7 +72,7 @@ describe("Supabase Migration Integration", () => {
       expect(tablesExist).toBe(true);
     });
 
-    it("should handle table validation errors", async () => {
+    it(_"should handle table validation errors",_async () => {
       // Mock Supabase client with error
       const mockClient = {
         from: (table: string) => ({
@@ -92,7 +92,7 @@ describe("Supabase Migration Integration", () => {
   });
 
   describe("Database Types", () => {
-    it("should have proper TypeScript types structure", async () => {
+    it(_"should have proper TypeScript types structure",_async () => {
       // Import types dynamically to test structure
       const types = await import("../types/supabase");
       expect(types.Database).toBeDefined();
@@ -102,7 +102,7 @@ describe("Supabase Migration Integration", () => {
       expect(types.Database.public.Tables.patients).toBeDefined();
     });
 
-    it("should export required database functions", async () => {
+    it(_"should export required database functions",_async () => {
       // Import specific functions instead of the entire index
       const { createClient: indexCreateClient } = await import("../client");
       const { validateSchema: indexValidateSchema } = await import("../utils/validation");
@@ -124,7 +124,7 @@ describe("Supabase Migration Integration", () => {
       expect(typeof checkTablesExist).toBe("function");
     });
 
-    it("should validate required enum types exist in schema", async () => {
+    it(_"should validate required enum types exist in schema",_async () => {
       const types = await import("../types/supabase");
       const enums = types.Database.public.Enums;
       expect(enums.appointment_status).toBeDefined();
@@ -181,7 +181,7 @@ describe("Supabase Migration Integration", () => {
   });
 
   describe("Error Handling", () => {
-    it("should handle connection errors gracefully", async () => {
+    it(_"should handle connection errors gracefully",_async () => {
       // Mock a failed connection
       const mockFailingClient = {
         from: () => {
@@ -221,7 +221,7 @@ describe("Supabase Migration Integration", () => {
       expect(duration).toBeLessThan(100);
     });
 
-    it("should handle concurrent client creation", async () => {
+    it(_"should handle concurrent client creation",_async () => {
       const promises = Array.from({ length: 10 }, () =>
         Promise.resolve(createClient()),
       );

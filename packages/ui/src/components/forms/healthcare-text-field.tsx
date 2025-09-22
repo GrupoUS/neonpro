@@ -15,7 +15,7 @@ import React, {
   useId,
   useState,
   useEffect,
-  useRef,
+  useRef
 } from "react";
 import { z } from "zod";
 import { cn } from "../../lib/utils";
@@ -26,11 +26,11 @@ import {
   healthcareValidationSchemas,
   DataSensitivity,
   classifyHealthcareData,
-  healthcareValidationMessages,
+  healthcareValidationMessages
 } from "../../utils/healthcare-validation";
 import {
   announceToScreenReader,
-  HealthcarePriority,
+  HealthcarePriority
 } from "../../utils/accessibility";
 
 // Healthcare field types for automatic validation
@@ -97,37 +97,9 @@ export interface HealthcareTextFieldProps
 export const HealthcareTextField = forwardRef<
   HTMLInputElement,
   HealthcareTextFieldProps
->(
-  (
-    {
-      name,
-      label,
-      fieldType = "generic",
-      dataSensitivity,
-      emergencyField = false,
-      validationSchema,
-      customValidation,
-      validateOnChange = true,
-      validateOnBlur = true,
-      description,
-      placeholder,
-      helperText,
-      mask,
-      onChange,
-      onBlur,
-      onValidationChange,
-      screenReaderDescription,
-      autoFocusOnError = true,
-      variant = "default",
-      size = "default",
-      className,
-      required = false,
-      disabled = false,
-      value,
-      defaultValue,
-      ...props
-    },
-    ref,
+>(({
+      name,label,fieldType = "generic",dataSensitivity,emergencyField = false,validationSchema,customValidation,validateOnChange = true,validateOnBlur = true,description,placeholder,helperText,mask,onChange,onBlur,onValidationChange,screenReaderDescription,autoFocusOnError = true,variant = "default",size = "default",className,required = false,disabled = false,value,defaultValue, ...props
+    }, ref,
   ) => {
     // Context and theme
     const formContext = useHealthcareForm();
@@ -209,7 +181,7 @@ export const HealthcareTextField = forwardRef<
           schema.parse(valueToValidate);
         } catch (validationError) {
           if (validationError instanceof z.ZodError) {
-            errors.push(...validationError.errors.map((err) => err.message));
+            errors.push(...validationError.errors.map((err: z.ZodIssue) => err.message));
           }
         }
       }
@@ -369,7 +341,7 @@ export const HealthcareTextField = forwardRef<
       {
         "h-8 px-2 py-1 text-xs": size === "sm",
         "h-10 px-3 py-2 text-sm": size === "default",
-        "h-12 px-4 py-3 text-base": size === "lg",
+        "h-12 px-4 py-3 text-base": size === "lg"
       },
 
       // Visual state
@@ -379,20 +351,20 @@ export const HealthcareTextField = forwardRef<
           effectiveDataSensitivity === DataSensitivity.CONFIDENTIAL &&
           !showError,
         "border-destructive bg-destructive/5":
-          effectiveDataSensitivity === DataSensitivity.RESTRICTED && !showError,
+          effectiveDataSensitivity === DataSensitivity.RESTRICTED && !showError
       },
 
       // Variant styles
       {
         "border-warning bg-warning/5": variant === "emergency" && !showError,
-        "border-info bg-info/5": variant === "sensitive" && !showError,
+        "border-info bg-info/5": variant === "sensitive" && !showError
       },
 
       // Focus states
       {
         "ring-2 ring-warning ring-offset-2":
           isFocused && variant === "emergency",
-        "ring-2 ring-info ring-offset-2": isFocused && variant === "sensitive",
+        "ring-2 ring-info ring-offset-2": isFocused && variant === "sensitive"
       },
 
       className,
@@ -410,7 +382,7 @@ export const HealthcareTextField = forwardRef<
             "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
             {
               "text-destructive": showError,
-              "text-warning": variant === "emergency",
+              "text-warning": variant === "emergency"
             },
           )}
         >
@@ -472,15 +444,14 @@ export const HealthcareTextField = forwardRef<
         )}
 
         {/* Error messages */}
-        {showError && (
-          <div
+        {showError && (<div
             ref={errorRef}
             id={errorId}
             className="text-sm text-destructive"
             role="alert"
             aria-live="polite"
           >
-            {validationErrors.map((error, index) => (
+            {validationErrors.map((error,index) => (
               <p key={index}>{error}</p>
             ))}
           </div>

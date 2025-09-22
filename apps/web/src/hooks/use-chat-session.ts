@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 export interface ChatSessionInfo {
   id: string;
-  userId: string;
+  _userId: string;
   locale: 'pt-BR' | 'en-US';
   startedAt: string;
   lastActivityAt: string;
@@ -31,7 +31,7 @@ export function useChatSession(sessionId: string, opts?: { mock?: boolean }) {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = (await res.json()) as ChatSessionInfo;
         if (!cancelled) setData(json);
-      } catch (error) {
+      } catch (_error) {
         if (!cancelled) {
           setError(error instanceof Error ? error.message : 'Unknown error');
         }

@@ -12,7 +12,7 @@ import {
 
 // Shared basic types
 interface ServiceContext {
-  userId?: string;
+  _userId?: string;
 }
 
 // KPI Service -------------------------------------------------------------

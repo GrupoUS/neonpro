@@ -21,7 +21,7 @@ export class ExportService {
   private static readonly ACTIVE_JOBS = new Map<string, ExportJob>();
 
   static async createExportJob(
-    userId: string,
+    _userId: string,
     format: 'csv' | 'xlsx',
     filters: ExportFilter,
     pagination: ExportPagination,
@@ -58,11 +58,11 @@ export class ExportService {
 
   static async cancelExportJob(
     jobId: string,
-    userId: string,
+    _userId: string,
   ): Promise<boolean> {
     const job = this.ACTIVE_JOBS.get(jobId);
 
-    if (!job || job.userId !== userId) {
+    if (!job || job.userId !== _userId) {
       return false;
     }
 
@@ -95,12 +95,12 @@ export class ExportService {
   }
 
   static async getExportHistory(
-    userId: string,
+    _userId: string,
     limit: number = 10,
   ): Promise<ExportJob[]> {
     const userJobs = Array.from(this.ACTIVE_JOBS.values())
-      .filter(job => job.userId === userId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .filter(job => job.userId === _userId)
+      .sort((a,_b) => b.createdAt.getTime() - a.createdAt.getTime())
       .slice(0, limit);
 
     return userJobs;
@@ -258,7 +258,7 @@ export class ExportService {
       });
     });
 
-    const _csv = Papa.unparse({
+    const csv = Papa.unparse({
       fields: headers,
       data: csvData,
     });

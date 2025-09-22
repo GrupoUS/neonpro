@@ -5,13 +5,13 @@
 import { supabase } from '@/integrations/supabase/client';
 
 export async function fetchDefaultChatModel(
-  userId: string,
+  _userId: string,
 ): Promise<string | null> {
   try {
     const { data, error } = await supabase
       .from('profiles')
       .select('default_chat_model')
-      .eq('id', userId)
+      .eq('id', _userId)
       .single();
 
     if (error) {
@@ -21,21 +21,21 @@ export async function fetchDefaultChatModel(
     }
 
     return (data as any)?.default_chat_model ?? null;
-  } catch (error) {
+  } catch (_error) {
     console.warn('[chat-settings] fetch default model failed:', error);
     return null;
   }
 }
 
 export async function updateDefaultChatModel(
-  userId: string,
+  _userId: string,
   model: string,
 ): Promise<boolean> {
   try {
     const { error } = await supabase
       .from('profiles')
       .update({ default_chat_model: model } as any)
-      .eq('id', userId);
+      .eq('id', _userId);
 
     if (error) {
       console.warn(
@@ -45,7 +45,7 @@ export async function updateDefaultChatModel(
       return false;
     }
     return true;
-  } catch (error) {
+  } catch (_error) {
     console.warn('[chat-settings] update default model failed:', error);
     return false;
   }

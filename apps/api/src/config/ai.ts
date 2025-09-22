@@ -200,7 +200,7 @@ export async function generateWithFailover(opts: {
   }
 }
 
-export async function getSuggestionsFromAI(query: string, webHints: string[]) {
+export async function getSuggestionsFromAI(_query: string, webHints: string[]) {
   const result = await generateText({
     model: openai(DEFAULT_PRIMARY),
     prompt:

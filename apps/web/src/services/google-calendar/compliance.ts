@@ -11,7 +11,7 @@ export interface ComplianceConfig {
 
 export interface ConsentRecord {
   id: string;
-  userId: string;
+  _userId: string;
   clinicId: string;
   dataTypes: string[];
   purpose: string;
@@ -43,7 +43,7 @@ export class GoogleCalendarComplianceService {
    * Validate LGPD compliance for calendar integration
    */
   async validateLGPDCompliance(
-    userId: string,
+    _userId: string,
     clinicId: string,
   ): Promise<{
     compliant: boolean;
@@ -114,7 +114,7 @@ export class GoogleCalendarComplianceService {
         issues,
         recommendations,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error validating LGPD compliance:', error);
       return {
         compliant: false,
@@ -128,7 +128,7 @@ export class GoogleCalendarComplianceService {
    * Record patient consent for data sharing
    */
   async recordConsent(
-    userId: string,
+    _userId: string,
     clinicId: string,
     dataTypes: string[],
     purpose: string,
@@ -249,7 +249,7 @@ export class GoogleCalendarComplianceService {
         deletedEvents: deletedEvents.count,
         purgedIntegrations: purgedIntegrations.count,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error purging old data:', error);
       throw error;
     }
@@ -351,7 +351,7 @@ export class GoogleCalendarComplianceService {
    * Export data for data subject requests (LGPD Article 18)
    */
   async exportUserData(
-    userId: string,
+    _userId: string,
     clinicId?: string,
   ): Promise<{
     integrations: any[];
@@ -410,7 +410,7 @@ export class GoogleCalendarComplianceService {
    * Delete user data (Right to be forgotten - LGPD Article 18)
    */
   async deleteUserData(
-    userId: string,
+    _userId: string,
     clinicId?: string,
   ): Promise<{
     success: boolean;
@@ -455,7 +455,7 @@ export class GoogleCalendarComplianceService {
         deletedEvents: deletedEvents.count,
         deletedConsents: deletedConsents.count,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error deleting user data:', error);
       return {
         success: false,

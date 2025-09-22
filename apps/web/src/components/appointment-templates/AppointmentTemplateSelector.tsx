@@ -168,18 +168,16 @@ export function AppointmentTemplateSelector({
               )}
               <div className='grid gap-2'>
                 {filteredTemplates.length > 0
-                  ? (
-                    filteredTemplates.map(template => (
-                      <TemplateCard
-                        key={template.id}
-                        template={template}
-                        isSelected={selectedTemplateId === template.id}
-                        onSelect={() => onSelectTemplate(template)}
-                        formatPrice={formatPrice}
-                        formatDuration={formatDuration}
-                      />
-                    ))
-                  )
+                  ? (_filteredTemplates.map(template => (
+                    <TemplateCard
+                      key={template.id}
+                      template={template}
+                      isSelected={selectedTemplateId === template.id}
+                      onSelect={() => onSelectTemplate(template)}
+                      formatPrice={formatPrice}
+                      formatDuration={formatDuration}
+                    />
+                  )))
                   : (
                     <div className='text-center py-8 text-muted-foreground'>
                       <p>Nenhum template encontrado</p>

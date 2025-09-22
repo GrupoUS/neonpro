@@ -4,7 +4,6 @@
  * Implements LGPD Articles 7º, 11º, 18º with Brazilian healthcare compliance
  */
 
-import { z } from 'zod';
 import { createAdminClient } from '../clients/supabase';
 import { LGPDDataCategory, LGPDLegalBasis } from '../middleware/lgpd-compliance';
 

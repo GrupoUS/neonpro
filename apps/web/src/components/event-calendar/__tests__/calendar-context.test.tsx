@@ -67,7 +67,7 @@ const TestComponent = () => {
   );
 };
 
-describe('CalendarProvider', () => {
+describe(('CalendarProvider', () => {
   const mockEvent = {
     id: 'test-event-id',
     title: 'Test Event',
@@ -96,7 +96,7 @@ describe('CalendarProvider', () => {
     vi.restoreAllMocks();
   });
 
-  it('should initialize with default values', () => {
+  it(('should initialize with default values', () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -109,7 +109,7 @@ describe('CalendarProvider', () => {
     expect(screen.getByTestId('current-view')).toHaveTextContent('month');
   });
 
-  it('should load events on mount', async () => {
+  it(_'should load events on mount',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -129,7 +129,7 @@ describe('CalendarProvider', () => {
     });
   });
 
-  it('should handle loading state', async () => {
+  it(_'should handle loading state',async () => {
     vi.mocked(EventService.getEvents).mockImplementationOnce(async () => {
       await new Promise(resolve => setTimeout(resolve, 100));
       return [mockEvent as any];
@@ -148,7 +148,7 @@ describe('CalendarProvider', () => {
     });
   });
 
-  it('should handle error state', async () => {
+  it(_'should handle error state',async () => {
     const errorMessage = 'Failed to load events';
     vi.mocked(EventService.getEvents).mockRejectedValueOnce(new Error(errorMessage));
 
@@ -169,7 +169,7 @@ describe('CalendarProvider', () => {
     expect(toast.error).toHaveBeenCalledWith(errorMessage);
   });
 
-  it('should create event successfully', async () => {
+  it(_'should create event successfully',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -198,7 +198,7 @@ describe('CalendarProvider', () => {
     expect(toast.success).toHaveBeenCalledWith('Event "Test Event" created successfully');
   });
 
-  it('should handle event creation error', async () => {
+  it(_'should handle event creation error',async () => {
     const errorMessage = 'Failed to create event';
     vi.mocked(EventService.createEvent).mockRejectedValueOnce(new Error(errorMessage));
 
@@ -223,7 +223,7 @@ describe('CalendarProvider', () => {
     });
   });
 
-  it('should update event successfully', async () => {
+  it(_'should update event successfully',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -250,7 +250,7 @@ describe('CalendarProvider', () => {
     expect(toast.success).toHaveBeenCalledWith('Event "Test Event" updated successfully');
   });
 
-  it('should delete event successfully', async () => {
+  it(_'should delete event successfully',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -274,7 +274,7 @@ describe('CalendarProvider', () => {
     expect(toast.success).toHaveBeenCalledWith('Event "Test Event" deleted successfully');
   });
 
-  it('should navigate to today', async () => {
+  it(_'should navigate to today',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -295,7 +295,7 @@ describe('CalendarProvider', () => {
     // This is tested implicitly through the context behavior
   });
 
-  it('should change view', async () => {
+  it(_'should change view',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -315,7 +315,7 @@ describe('CalendarProvider', () => {
     expect(screen.getByTestId('current-view')).toHaveTextContent('week');
   });
 
-  it('should refresh events', async () => {
+  it(_'should refresh events',async () => {
     render(
       <CalendarProvider>
         <TestComponent />
@@ -340,7 +340,7 @@ describe('CalendarProvider', () => {
     });
   });
 
-  it('should handle empty events list', async () => {
+  it(_'should handle empty events list',async () => {
     vi.mocked(EventService.getEvents).mockResolvedValueOnce([]);
 
     render(
@@ -356,7 +356,7 @@ describe('CalendarProvider', () => {
     expect(screen.getByTestId('events-count')).toHaveTextContent('0');
   });
 
-  it('should use initial events when provided', async () => {
+  it(_'should use initial events when provided',async () => {
     const initialEvents = [mockEvent as any];
 
     render(
@@ -374,7 +374,7 @@ describe('CalendarProvider', () => {
     });
   });
 
-  it('should apply clinic ID filter when provided', async () => {
+  it(_'should apply clinic ID filter when provided',async () => {
     const defaultClinicId = 'default-clinic-id';
 
     render(

@@ -21,7 +21,7 @@ interface ClinicHeaderProps {
 
 export const ClinicHeader: React.FC<ClinicHeaderProps> = ({
   clinicData,
-  _documentTitle,
+  documentTitle,
   _patientName,
   _generatedAt = new Date(),
 }) => {

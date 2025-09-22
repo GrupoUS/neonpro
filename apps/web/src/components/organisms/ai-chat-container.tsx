@@ -27,7 +27,7 @@ interface AIChatContainerProps extends Partial<AIAssistantProps> {
   showVoiceControls?: boolean;
   showSearchSuggestions?: boolean;
   // Healthcare-specific props
-  context?: 'scheduling' | 'procedures' | 'aftercare' | 'emergency';
+  _context?: 'scheduling' | 'procedures' | 'aftercare' | 'emergency';
   patientId?: string;
   userRole?: 'admin' | 'professional' | 'coordinator';
   lgpdCompliant?: boolean;

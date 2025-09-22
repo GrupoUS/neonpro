@@ -74,9 +74,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui';
-import {
-  useAGUIProtocol,
-} from '@/services/agui-protocol';
+import { useAGUIProtocol } from '@/services/agui-protocol';
 import { formatCurrency, formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
 
@@ -95,7 +93,7 @@ import type {
 export interface DataAgentChatProps {
   /** Current user context for role-based access */
   userContext: {
-    userId: string;
+    _userId: string;
     userRole: 'admin' | 'professional' | 'assistant' | 'receptionist';
     domain?: string; // Clinic/domain identifier
   };
@@ -130,7 +128,7 @@ interface SessionResponse {
   success: boolean;
   session: {
     id: string;
-    userId: string;
+    _userId: string;
     title: string;
     createdAt: string;
     updatedAt: string;
@@ -221,11 +219,11 @@ const submitQuickFeedback = async (
  * Interactive Action Button Component
  * Renders clickable action buttons returned by the AI agent
  */
-const ActionButton: React.FC<{
+const _ActionButton: React.FC<{
   action: AgentAction;
   onExecute: (action: AgentAction) => void;
 }> = ({ action, onExecute }) => {
-  const getIcon = (_iconName: any) => {
+  const getIcon = (iconName: any) => {
     switch (iconName) {
       case 'user':
         return <User className='h-3 w-3' />;
@@ -271,8 +269,6 @@ const MessageFeedback: React.FC<{
   const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-
   const submitQuickFeedbackMutation = useMutation({
     mutationFn: (helpful: boolean) =>
       submitQuickFeedback(sessionId, {
@@ -294,7 +290,7 @@ const MessageFeedback: React.FC<{
     },
   });
 
-  const handleQuickFeedback = (_helpful: any) => {
+  const handleQuickFeedback = (helpful: any) => {
     submitQuickFeedbackMutation.mutate(helpful);
   };
 
@@ -493,7 +489,7 @@ const DataSummaryCard: React.FC<{
       </CardHeader>
       <CardContent className='pt-0'>
         <div className='space-y-2'>
-          {data.slice(0, expanded ? data.length : displayLimit).map((item, _index) =>
+          {data.slice(0, expanded ? data.length : displayLimit).map((item, index) =>
             renderItem(item, index)
           )}
 
@@ -555,7 +551,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
     httpUrl: process.env.NODE_ENV === 'production'
       ? `https://${window.location.host}/api/agents/ag-ui-rag-agent`
       : `http://${window.location.host}/api/agents/ag-ui-rag-agent`,
-    userId: userContext.userId,
+    _userId: userContext.userId,
     authToken: localStorage.getItem('authToken') || undefined,
     enableEncryption: true,
     heartbeatInterval: 30000,
@@ -573,10 +569,10 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
     aguiClient.connect();
 
     // Handle AG-UI Protocol events
-    const handleMessage = (_message: any) => {
+    const handleMessage = (message: any) => {
       const assistantMessage: ChatMessage = {
         id: message.id,
-        role: 'assistant',
+        _role: 'assistant',
         content: message.content,
         timestamp: new Date(message.timestamp || Date.now()),
         actions: message.actions || [],
@@ -587,10 +583,10 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       setIsLoading(false);
     };
 
-    const handleError = (_error: any) => {
+    const handleError = (error: any) => {
       const errorMessage: ChatMessage = {
         id: `error_${Date.now()}`,
-        role: 'assistant',
+        _role: 'assistant',
         content: 'Erro na conexão com o assistente. Verifique sua conexão e tente novamente.',
         timestamp: new Date(),
       };
@@ -598,7 +594,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       setIsLoading(false);
     };
 
-    const handleAuthenticated = (_session: any) => {
+    const handleAuthenticated = (session: any) => {
       console.log('AG-UI Protocol authenticated:', session);
     };
 
@@ -613,7 +609,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   }, [aguiClient, userContext.userId]);
 
   // Update session context when needed
-  const updateAGUISessionContext = useCallback((_context: any) => {
+  const updateAGUISessionContext = useCallback((context: any) => {
     if (aguiSession && aguiClient.isConnected()) {
       aguiClient.updateSessionContext(context).catch(console.error);
     }
@@ -654,7 +650,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       if (response.success && response.response) {
         const assistantMessage: ChatMessage = {
           id: response.response.id,
-          role: 'assistant',
+          _role: 'assistant',
           content: response.response.message,
           timestamp: new Date(response.response.timestamp || Date.now()),
           data: response.response.data,
@@ -679,7 +675,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       console.error('Failed to send message:', error);
       const errorMessage: ChatMessage = {
         id: `error_${Date.now()}`,
-        role: 'assistant',
+        _role: 'assistant',
         content: 'Desculpe, ocorreu um erro ao processar sua consulta. Tente novamente.',
         timestamp: new Date(),
       };
@@ -717,7 +713,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
 
     const userMessage: ChatMessage = {
       id: `user_${Date.now()}`,
-      role: 'user',
+      _role: 'user',
       content: query,
       timestamp: new Date(),
     };
@@ -770,7 +766,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   ]);
 
   // Handle action execution
-  const handleActionExecute = useCallback((_action: any) => {
+  const handleActionExecute = useCallback((action: any) => {
     switch (action.type) {
       case 'view_details':
         if (action.payload?.clientId) {
@@ -786,7 +782,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
 
       case 'export_data':
         // Trigger data export
-        console.log('Export data action:', action.payload);
+        console.log('Export data action:', action._payload);
         break;
 
       case 'navigate':

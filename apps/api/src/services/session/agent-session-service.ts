@@ -17,7 +17,7 @@ export interface SessionConfig {
 }
 
 export interface SessionContext {
-  userId: string;
+  _userId: string;
   patientId?: string;
   userPreferences?: Record<string, any>;
   previousTopics?: string[];
@@ -27,9 +27,9 @@ export interface SessionContext {
 export interface SessionData {
   id: string;
   sessionId: string;
-  userId: string;
+  _userId: string;
   title: string;
-  context: SessionContext;
+  _context: SessionContext;
   createdAt: string;
   updatedAt: string;
   expiresAt: string;
@@ -41,7 +41,7 @@ export interface SessionData {
 
 export interface SessionCreateOptions {
   title?: string;
-  context?: Partial<SessionContext>;
+  _context?: Partial<SessionContext>;
   expirationMs?: number;
   metadata?: Record<string, any>;
 }
@@ -75,7 +75,7 @@ export class AgentSessionService {
    * Create a new session
    */
   async createSession(
-    userId: string,
+    _userId: string,
     options: SessionCreateOptions = {},
   ): Promise<SessionData> {
     try {
@@ -100,7 +100,7 @@ export class AgentSessionService {
         sessionId,
         userId,
         title: options.title || 'AI Assistant Session',
-        context: sessionContext,
+        _context: sessionContext,
         createdAt: now.toISOString(),
         updatedAt: now.toISOString(),
         expiresAt: expiresAt.toISOString(),
@@ -161,12 +161,12 @@ export class AgentSessionService {
   /**
    * Get all active sessions for a user
    */
-  async getUserSessions(userId: string): Promise<SessionData[]> {
+  async getUserSessions(_userId: string): Promise<SessionData[]> {
     try {
       const { data, error } = await this.supabase
         .from('agent_sessions')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .eq('is_active', true)
         .gt('expires_at', new Date().toISOString())
         .order('last_activity', { ascending: false });
@@ -194,7 +194,7 @@ export class AgentSessionService {
     sessionId: string,
     updates: {
       title?: string;
-      context?: Partial<SessionContext>;
+      _context?: Partial<SessionContext>;
       expiresAt?: Date;
       metadata?: Record<string, any>;
     },
@@ -217,7 +217,7 @@ export class AgentSessionService {
       const updatedSession: SessionData = {
         ...session,
         title: updates.title || session.title,
-        context: { ...session.context, ...updates.context },
+        _context: { ...session.context, ...updates.context },
         expiresAt: newExpiresAt.toISOString(),
         metadata: { ...session.metadata, ...updates.metadata },
         updatedAt: new Date().toISOString(),
@@ -394,7 +394,7 @@ export class AgentSessionService {
   /**
    * Get session statistics
    */
-  async getSessionStatistics(userId?: string): Promise<{
+  async getSessionStatistics(_userId?: string): Promise<{
     totalSessions: number;
     activeSessions: number;
     expiredSessions: number;
@@ -407,7 +407,7 @@ export class AgentSessionService {
         .select('*', { count: 'exact' });
 
       if (userId) {
-        query = query.eq('user_id', userId);
+        query = query.eq('user_id', _userId);
       }
 
       const { data: sessions, error, count } = await query;
@@ -430,12 +430,11 @@ export class AgentSessionService {
         .filter(length => length > 0);
 
       const averageSessionLength = sessionLengths.length > 0
-        ? sessionLengths.reduce((sum, length) => sum + length, 0) / sessionLengths.length
+        ? sessionLengths.reduce((sum,_length) => sum + length, 0) / sessionLengths.length
         : 0;
 
       // Get total messages
-      const totalMessages = allSessions.reduce(
-        (sum, session) => sum + (session.message_count || 0),
+      const totalMessages = allSessions.reduce((sum,_session) => sum + (session.message_count || 0),
         0,
       );
 
@@ -468,7 +467,7 @@ export class AgentSessionService {
         session_id: session.sessionId,
         user_id: session.userId,
         title: session.title,
-        context: session.context,
+        _context: session.context,
         created_at: session.createdAt,
         updated_at: session.updatedAt,
         expires_at: session.expiresAt,
@@ -507,9 +506,9 @@ export class AgentSessionService {
     return {
       id: record.id,
       sessionId: record.session_id,
-      userId: record.user_id,
+      _userId: record.user_id,
       title: record.title,
-      context: record.context,
+      _context: record.context,
       createdAt: record.created_at,
       updatedAt: record.updated_at,
       expiresAt: record.expires_at,
@@ -535,7 +534,7 @@ export class AgentSessionService {
   /**
    * Validate concurrent session limit
    */
-  private async validateConcurrentSessionLimit(userId: string): Promise<void> {
+  private async validateConcurrentSessionLimit(_userId: string): Promise<void> {
     const activeSessions = await this.getUserSessions(userId);
 
     if (activeSessions.length >= this.config.maxConcurrentSessions) {

@@ -6,14 +6,14 @@
 
 import { describe, expect, it } from 'vitest';
 
-describe('PatientDocumentUpload', () => {
-  it('can be imported successfully', async () => {
+describe(('PatientDocumentUpload', () => {
+  it(_'can be imported successfully',async () => {
     const module = await import('./PatientDocumentUpload');
     expect(module.PatientDocumentUpload).toBeDefined();
     expect(typeof module.PatientDocumentUpload).toBe('function');
   });
 
-  it('exports expected types', async () => {
+  it(_'exports expected types',async () => {
     const module = await import('./PatientDocumentUpload');
     expect(module.PatientDocumentUpload).toBeDefined();
     // Type definitions are validated by TypeScript compiler

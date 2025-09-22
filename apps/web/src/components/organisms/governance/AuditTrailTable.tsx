@@ -24,7 +24,7 @@ import { useState } from 'react';
 export interface AuditLogEntry {
   id: string;
   timestamp: Date;
-  userId: string;
+  _userId: string;
   userName: string;
   action: AuditAction;
   resource: string;

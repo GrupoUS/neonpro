@@ -5,7 +5,7 @@
 // Interface for patient document data
 interface PatientDocument {
   id: string;
-  userId: string;
+  _userId: string;
   fileName: string;
   fileType: string;
   fileSize: number;
@@ -17,8 +17,8 @@ interface PatientDocument {
 }
 
 export class TempPatientDocumentService {
-  async getDocument(documentId: string, userId: string): Promise<PatientDocument | null> {
-    console.log('getDocument called with:', documentId, userId);
+  async getDocument(documentId: string, _userId: string): Promise<PatientDocument | null> {
+    console.log('getDocument called with:', documentId, _userId);
     return null;
   }
 

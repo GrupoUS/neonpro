@@ -14,7 +14,7 @@ describe('Chat error handling', () => {
       vi.fn(async () => new Response(null, { status: 500 })),
     );
     await expect(
-      streamAestheticResponse([{ role: 'user', content: 'oi' }]),
+      streamAestheticResponse([{ _role: 'user', content: 'oi' }]),
     ).rejects.toThrow(/HTTP 500/);
   });
 
@@ -24,7 +24,7 @@ describe('Chat error handling', () => {
       vi.fn(async () => new Response(null, { status: 429 })),
     );
     await expect(
-      streamAestheticResponse([{ role: 'user', content: 'oi' }]),
+      streamAestheticResponse([{ _role: 'user', content: 'oi' }]),
     ).rejects.toThrow(/HTTP 429/);
   });
 
@@ -34,7 +34,7 @@ describe('Chat error handling', () => {
       vi.fn(async () => new Response(null, { status: 200 })),
     );
     await expect(
-      streamAestheticResponse([{ role: 'user', content: 'oi' }]),
+      streamAestheticResponse([{ _role: 'user', content: 'oi' }]),
     ).rejects.toThrow(/missing body/);
   });
 });

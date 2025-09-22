@@ -116,7 +116,7 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = await createTestClient({ role: 'doctor' });
+    testClient = await createTestClient({ _role: 'doctor' });
 
     // Clear audit logs
     mockCFMSystem.telemedicineAudit.length = 0;

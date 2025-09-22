@@ -175,8 +175,7 @@ function filterEvents(
 
   // Filter by time range
   if (options?.timeRange) {
-    filtered = filtered.filter(
-      (event) =>
+    filtered = filtered.filter((event) =>
         event.timestamp >= options.timeRange!.start &&
         event.timestamp <= options.timeRange!.end,
     );
@@ -224,8 +223,8 @@ function computeTimeRange(
 
   const timestamps = events.map((e) => e.timestamp);
   return {
-    start: new Date(Math.min(...timestamps.map((t) => t.getTime()))),
-    end: new Date(Math.max(...timestamps.map((t) => t.getTime()))),
+    start: new Date(_Math.min(...timestamps.map((t) => t.getTime()))),
+    end: new Date(_Math.max(...timestamps.map((t) => t.getTime()))),
   };
 }
 
@@ -241,24 +240,21 @@ function computePatientFlowKPIs(
   }
 
   // Extract patient-related events
-  const patientEvents = events.filter(
-    (e) =>
+  const patientEvents = events.filter((e) =>
       e.type.includes("patient") ||
       e.type.includes("appointment") ||
       e.type.includes("visit"),
   );
 
   // Compute total visits
-  const totalVisits = patientEvents.filter(
-    (e) => e.type === "patient_visit" || e.type === "appointment_completed",
+  const totalVisits = patientEvents.filter((e) => e.type === "patient_visit" || e.type === "appointment_completed",
   ).length;
 
   // Compute average wait time (mock calculation)
   const waitTimeEvents = patientEvents.filter((e) => e.properties.waitTime);
   const averageWaitTime =
     waitTimeEvents.length > 0
-      ? waitTimeEvents.reduce(
-          (sum, e) => sum + (e.properties.waitTime as number),
+      ? waitTimeEvents.reduce((sum,_e) => sum + (e.properties.waitTime as number),
           0,
         ) / waitTimeEvents.length
       : 0;
@@ -267,8 +263,7 @@ function computePatientFlowKPIs(
   const appointmentEvents = patientEvents.filter((e) =>
     e.type.includes("appointment"),
   );
-  const noShowEvents = appointmentEvents.filter(
-    (e) => e.properties.status === "no_show",
+  const noShowEvents = appointmentEvents.filter((e) => e.properties.status === "no_show",
   );
   const noShowRate =
     appointmentEvents.length > 0
@@ -276,23 +271,19 @@ function computePatientFlowKPIs(
       : 0;
 
   // Compute patient satisfaction (mock from feedback events)
-  const satisfactionEvents = events.filter(
-    (e) => e.type === "patient_feedback",
+  const satisfactionEvents = events.filter((e) => e.type === "patient_feedback",
   );
   const patientSatisfactionScore =
     satisfactionEvents.length > 0
-      ? satisfactionEvents.reduce(
-          (sum, e) => sum + ((e.properties.rating as number) || 0),
+      ? satisfactionEvents.reduce((sum,_e) => sum + ((e.properties.rating as number) || 0),
           0,
         ) / satisfactionEvents.length
       : 0;
 
   // Compute appointment utilization
-  const scheduledAppointments = appointmentEvents.filter(
-    (e) => e.properties.status === "scheduled",
+  const scheduledAppointments = appointmentEvents.filter((e) => e.properties.status === "scheduled",
   );
-  const completedAppointments = appointmentEvents.filter(
-    (e) => e.properties.status === "completed",
+  const completedAppointments = appointmentEvents.filter((e) => e.properties.status === "completed",
   );
   const appointmentUtilization =
     scheduledAppointments.length > 0
@@ -320,8 +311,7 @@ function computeClinicalQualityKPIs(
   }
 
   // Extract clinical events
-  const clinicalEvents = events.filter(
-    (e) =>
+  const clinicalEvents = events.filter((e) =>
       e.type.includes("diagnosis") ||
       e.type.includes("treatment") ||
       e.type.includes("medication") ||
@@ -332,8 +322,7 @@ function computeClinicalQualityKPIs(
   const diagnosisEvents = clinicalEvents.filter((e) =>
     e.type.includes("diagnosis"),
   );
-  const accurateDiagnoses = diagnosisEvents.filter(
-    (e) => e.properties.accuracy === "correct",
+  const accurateDiagnoses = diagnosisEvents.filter((e) => e.properties.accuracy === "correct",
   );
   const diagnosisAccuracy =
     diagnosisEvents.length > 0
@@ -344,8 +333,7 @@ function computeClinicalQualityKPIs(
   const treatmentEvents = clinicalEvents.filter((e) =>
     e.type.includes("treatment"),
   );
-  const completedTreatments = treatmentEvents.filter(
-    (e) => e.properties.status === "completed",
+  const completedTreatments = treatmentEvents.filter((e) => e.properties.status === "completed",
   );
   const treatmentCompletionRate =
     treatmentEvents.length > 0
@@ -354,8 +342,7 @@ function computeClinicalQualityKPIs(
 
   // Compute readmission rate
   const admissionEvents = events.filter((e) => e.type === "patient_admission");
-  const readmissionEvents = admissionEvents.filter(
-    (e) => e.properties.readmission === true,
+  const readmissionEvents = admissionEvents.filter((e) => e.properties.readmission === true,
   );
   const readmissionRate =
     admissionEvents.length > 0
@@ -363,16 +350,14 @@ function computeClinicalQualityKPIs(
       : 0;
 
   // Compute emergency interventions
-  const emergencyInterventions = events.filter(
-    (e) =>
+  const emergencyInterventions = events.filter((e) =>
       e.type === "emergency_intervention" ||
       e.properties.urgency === "emergency",
   ).length;
 
   // Compute medication adherence
   const medicationEvents = events.filter((e) => e.type.includes("medication"));
-  const adherentMedication = medicationEvents.filter(
-    (e) => e.properties.adherence === "high",
+  const adherentMedication = medicationEvents.filter((e) => e.properties.adherence === "high",
   );
   const medicationAdherence =
     medicationEvents.length > 0
@@ -400,8 +385,7 @@ function computeOperationalKPIs(
   }
 
   // Extract operational events
-  const operationalEvents = events.filter(
-    (e) =>
+  const operationalEvents = events.filter((e) =>
       e.type.includes("resource") ||
       e.type.includes("staff") ||
       e.type.includes("equipment") ||
@@ -412,8 +396,7 @@ function computeOperationalKPIs(
   const resourceEvents = operationalEvents.filter((e) =>
     e.type.includes("resource"),
   );
-  const utilizationSum = resourceEvents.reduce(
-    (sum, e) => sum + ((e.properties.utilization as number) || 0),
+  const utilizationSum = resourceEvents.reduce((sum,_e) => sum + ((e.properties.utilization as number) || 0),
     0,
   );
   const resourceUtilization =
@@ -421,8 +404,7 @@ function computeOperationalKPIs(
 
   // Compute staff efficiency
   const staffEvents = operationalEvents.filter((e) => e.type.includes("staff"));
-  const efficiencySum = staffEvents.reduce(
-    (sum, e) => sum + ((e.properties.efficiency as number) || 0),
+  const efficiencySum = staffEvents.reduce((sum,_e) => sum + ((e.properties.efficiency as number) || 0),
     0,
   );
   const staffEfficiency =
@@ -432,8 +414,7 @@ function computeOperationalKPIs(
   const equipmentEvents = operationalEvents.filter((e) =>
     e.type.includes("equipment"),
   );
-  const usageSum = equipmentEvents.reduce(
-    (sum, e) => sum + ((e.properties.usage as number) || 0),
+  const usageSum = equipmentEvents.reduce((sum,_e) => sum + ((e.properties.usage as number) || 0),
     0,
   );
   const equipmentUsage =
@@ -443,8 +424,7 @@ function computeOperationalKPIs(
   const scheduleEvents = operationalEvents.filter((e) =>
     e.type.includes("schedule"),
   );
-  const schedulingSum = scheduleEvents.reduce(
-    (sum, e) => sum + ((e.properties.efficiency as number) || 0),
+  const schedulingSum = scheduleEvents.reduce((sum,_e) => sum + ((e.properties.efficiency as number) || 0),
     0,
   );
   const schedulingEfficiency =
@@ -452,8 +432,7 @@ function computeOperationalKPIs(
 
   // Compute average service time
   const serviceEvents = events.filter((e) => e.properties.serviceTime);
-  const serviceTimeSum = serviceEvents.reduce(
-    (sum, e) => sum + (e.properties.serviceTime as number),
+  const serviceTimeSum = serviceEvents.reduce((sum,_e) => sum + (e.properties.serviceTime as number),
     0,
   );
   const averageServiceTime =
@@ -480,8 +459,7 @@ function computeFinancialKPIs(
   }
 
   // Extract financial events
-  const financialEvents = events.filter(
-    (e) =>
+  const financialEvents = events.filter((e) =>
       e.type.includes("payment") ||
       e.type.includes("revenue") ||
       e.type.includes("cost") ||
@@ -493,20 +471,17 @@ function computeFinancialKPIs(
   const revenueEvents = financialEvents.filter((e) =>
     e.type.includes("revenue"),
   );
-  const totalRevenue = revenueEvents.reduce(
-    (sum, e) => sum + ((e.properties.amount as number) || 0),
+  const totalRevenue = revenueEvents.reduce((sum,_e) => sum + ((e.properties.amount as number) || 0),
     0,
   );
-  const uniquePatients = new Set(
-    revenueEvents.map((e) => e.properties.patientId),
+  const uniquePatients = new Set(_revenueEvents.map((e) => e.properties.patientId),
   ).size;
   const revenuePerPatient =
     uniquePatients > 0 ? totalRevenue / uniquePatients : 0;
 
   // Compute cost per treatment
   const costEvents = financialEvents.filter((e) => e.type.includes("cost"));
-  const totalCosts = costEvents.reduce(
-    (sum, e) => sum + ((e.properties.amount as number) || 0),
+  const totalCosts = costEvents.reduce((sum,_e) => sum + ((e.properties.amount as number) || 0),
     0,
   );
   const treatmentCount = costEvents.length;
@@ -516,8 +491,7 @@ function computeFinancialKPIs(
   const claimEvents = financialEvents.filter((e) =>
     e.type.includes("insurance_claim"),
   );
-  const successfulClaims = claimEvents.filter(
-    (e) => e.properties.status === "approved",
+  const successfulClaims = claimEvents.filter((e) => e.properties.status === "approved",
   );
   const insuranceClaimSuccessRate =
     claimEvents.length > 0
@@ -528,8 +502,7 @@ function computeFinancialKPIs(
   const paymentEvents = financialEvents.filter((e) =>
     e.type.includes("payment"),
   );
-  const collectedPayments = paymentEvents.filter(
-    (e) => e.properties.status === "collected",
+  const collectedPayments = paymentEvents.filter((e) => e.properties.status === "collected",
   );
   const paymentCollectionRate =
     paymentEvents.length > 0
@@ -561,8 +534,7 @@ function computeSystemKPIs(
   }
 
   // Extract system events
-  const systemEvents = events.filter(
-    (e) =>
+  const systemEvents = events.filter((e) =>
       e.type.includes("system") ||
       e.type.includes("error") ||
       e.type.includes("performance") ||
@@ -570,10 +542,9 @@ function computeSystemKPIs(
   );
 
   // Compute data quality score from IngestionEvents
-  const ingestionEvents = events.filter(
-    (e) => "quality" in e,
+  const ingestionEvents = events.filter((e) => "quality" in e,
   ) as IngestionEvent[];
-  const qualitySum = ingestionEvents.reduce((sum, e) => {
+  const qualitySum = ingestionEvents.reduce((sum,_e) => {
     const total = e.quality.validRecords + e.quality.invalidRecords;
     return total > 0 ? sum + e.quality.validRecords / total : sum;
   }, 0);
@@ -584,8 +555,7 @@ function computeSystemKPIs(
 
   // Compute compliance score (mock calculation)
   const complianceEvents = events.filter((e) => e.properties.compliance);
-  const complianceSum = complianceEvents.reduce(
-    (sum, e) => sum + (e.properties.compliance as number),
+  const complianceSum = complianceEvents.reduce((sum,_e) => sum + (e.properties.compliance as number),
     0,
   );
   const complianceScore =
@@ -593,8 +563,7 @@ function computeSystemKPIs(
 
   // Compute system uptime
   const uptimeEvents = systemEvents.filter((e) => e.type.includes("uptime"));
-  const uptimeSum = uptimeEvents.reduce(
-    (sum, e) => sum + ((e.properties.uptime as number) || 100),
+  const uptimeSum = uptimeEvents.reduce((sum,_e) => sum + ((e.properties.uptime as number) || 100),
     0,
   );
   const systemUptime =
@@ -610,8 +579,7 @@ function computeSystemKPIs(
   const performanceEvents = systemEvents.filter((e) =>
     e.type.includes("performance"),
   );
-  const performanceSum = performanceEvents.reduce(
-    (sum, e) => sum + ((e.properties.score as number) || 100),
+  const performanceSum = performanceEvents.reduce((sum,_e) => sum + ((e.properties.score as number) || 100),
     0,
   );
   const performanceScore =
@@ -636,8 +604,7 @@ function computeMetadata(
   filteredEvents: (AnalyticsEvent | IngestionEvent)[],
   timeRange: { start: Date; end: Date },
 ) {
-  const validEvents = filteredEvents.filter(
-    (e) => e.id && e.type && e.timestamp,
+  const validEvents = filteredEvents.filter((e) => e.id && e.type && e.timestamp,
   );
   const invalidEvents = filteredEvents.length - validEvents.length;
 
@@ -730,10 +697,10 @@ export function createMockEvents(count: number = 10): AnalyticsEvent[] {
       id: `mock_event_${i + 1}`,
       type: eventType,
       timestamp: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000), // Last 7 days
-      userId: `user_${Math.floor(Math.random() * 100)}`,
+      _userId: `user_${Math.floor(Math.random() * 100)}`,
       sessionId: `session_${Math.floor(Math.random() * 50)}`,
       properties: generateMockProperties(eventType),
-      context: {
+      _context: {
         userAgent: "Healthcare System",
         ip: "127.0.0.1",
       },

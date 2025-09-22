@@ -105,7 +105,7 @@ export class HealthAnalysisService {
   async gatherPatientAnalysisData(params: {
     patientId: string;
     clinicId: string;
-    userId: string;
+    _userId: string;
     userRole: string;
   }): Promise<PatientAnalysisData> {
     try {
@@ -285,7 +285,7 @@ PADRÕES DE COMPORTAMENTO:
     } catch (error) {
       throw new HealthAnalysisError(
         "AI_SERVICE_ERROR",
-        `Failed to call AI service: ${error instanceof Error ? error.message : "Unknown error"}`,
+        `Failed to call AI _service: ${error instanceof Error ? error.message : "Unknown error"}`,
         "external_service",
         "high",
       );

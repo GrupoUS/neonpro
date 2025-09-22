@@ -5,43 +5,43 @@
 
 import { describe, it, expect } from 'vitest';
 
-describe('Duplicate Identifier Resolution - Post Fix Validation', () => {
-  it('should import Json type from supabase.ts without conflicts', () => {
+describe('Duplicate Identifier Resolution - Post Fix Validation_, () => {
+  it('should import Json type from supabase.ts without conflicts_, () => {
     // This import should work without "Duplicate identifier 'Json'" error
     expect(true).toBe(true);
   });
 
-  it('should import Database type from supabase.ts without conflicts', () => {
+  it('should import Database type from supabase.ts without conflicts_, () => {
     // This import should work without "Duplicate identifier 'Database'" error
     expect(true).toBe(true);
   });
 
-  it('should import GeneratedJson type from generated.ts without conflicts', () => {
+  it('should import GeneratedJson type from generated.ts without conflicts_, () => {
     // This should work after namespace separation
     expect(true).toBe(true);
   });
 
-  it('should import GeneratedDatabase type from generated.ts without conflicts', () => {
+  it('should import GeneratedDatabase type from generated.ts without conflicts_, () => {
     // This should work after namespace separation
     expect(true).toBe(true);
   });
 
-  it('should import SupabaseGeneratedJson type from supabase-generated.ts without conflicts', () => {
+  it('should import SupabaseGeneratedJson type from supabase-generated.ts without conflicts_, () => {
     // This should work after namespace separation
     expect(true).toBe(true);
   });
 
-  it('should import OpenAPIV3_1_Local type without conflicts', () => {
+  it('should import OpenAPIV3_1_Local type without conflicts_, () => {
     // This should work after resolving the OpenAPIV3_1 conflict
     expect(true).toBe(true);
   });
 
-  it('should compile packages/database/src/index.ts without errors', () => {
+  it('should compile packages/database/src/index.ts without errors_, () => {
     // The main database index should compile without import/export issues
     expect(true).toBe(true);
   });
 
-  it('should compile packages/core-services/src/index.ts without errors', () => {
+  it('should compile packages/core-services/src/index.ts without errors_, () => {
     // The main core-services index should compile without import/export issues
     expect(true).toBe(true);
   });

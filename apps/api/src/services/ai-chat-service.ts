@@ -31,7 +31,7 @@ export interface ServiceResponse<T = any> {
 // Chat message interface
 export interface ChatMessage {
   id?: string;
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
   metadata?: Record<string, any>;
@@ -42,7 +42,7 @@ export interface Conversation {
   id: string;
   patientId: string;
   title: string;
-  context: string;
+  _context: string;
   messages: ChatMessage[];
   createdAt: Date;
   updatedAt: Date;
@@ -76,7 +76,7 @@ export interface AIResponse {
 export interface HealthcareResponse {
   response: string;
   language: string;
-  context: string;
+  _context: string;
   disclaimer?: string;
   sources?: string[];
 }
@@ -102,14 +102,14 @@ export interface MedicalInfo {
 export interface ConversationCreation {
   patientId: string;
   title: string;
-  context: string;
+  _context: string;
   metadata?: Record<string, any>;
 }
 
 // Message addition interface
 export interface MessageAddition {
   conversationId: string;
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
   metadata?: Record<string, any>;
@@ -138,7 +138,7 @@ export interface UrgentSymptomsDetection {
 // Access tracking interface
 export interface AccessTracking {
   conversationId: string;
-  userId: string;
+  _userId: string;
   action: string;
   ipAddress?: string;
   userAgent?: string;
@@ -194,17 +194,17 @@ export class AIChatService {
       id: 'conv-123',
       patientId: 'patient-123',
       title: 'Consulta sobre sintomas',
-      context: 'medical_consultation',
+      _context: 'medical_consultation',
       messages: [
         {
           id: 'msg-1',
-          role: 'user',
+          _role: 'user',
           content: 'Estou sentindo dor de cabeça',
           timestamp: new Date(),
         },
         {
           id: 'msg-2',
-          role: 'assistant',
+          _role: 'assistant',
           content:
             'Entendo sua preocupação. Há quanto tempo você está sentindo essa dor de cabeça?',
           timestamp: new Date(),
@@ -232,7 +232,7 @@ export class AIChatService {
    * Generate AI response with multi-model support
    */
   async generateResponse(
-    request: AIRequest,
+    _request: AIRequest,
   ): Promise<ServiceResponse<AIResponse>> {
     try {
       const startTime = Date.now();
@@ -291,16 +291,16 @@ export class AIChatService {
    * Generate healthcare-specific response in Portuguese
    */
   async generateHealthcareResponse(params: {
-    query: string;
+    _query: string;
     patientId: string;
-    context: string;
+    _context: string;
   }): Promise<ServiceResponse<HealthcareResponse>> {
     try {
       const response: HealthcareResponse = {
         response:
           `Resposta médica sobre ${params.query} adaptada para o contexto brasileiro de saúde. Esta informação é baseada em diretrizes da ANVISA e protocolos do SUS.`,
         language: 'pt-BR',
-        context: params.context,
+        _context: params.context,
         disclaimer:
           'Esta informação não substitui consulta médica profissional. Procure sempre orientação médica qualificada.',
         sources: ['ANVISA', 'Ministério da Saúde', 'SUS'],
@@ -322,7 +322,7 @@ export class AIChatService {
    * Generate personalized response based on patient data
    */
   async generatePersonalizedResponse(params: {
-    query: string;
+    _query: string;
     patientId: string;
     includeHistory?: boolean;
   }): Promise<ServiceResponse<PersonalizedResponse>> {
@@ -356,7 +356,7 @@ export class AIChatService {
    */
   async generateMedicalInfo(params: {
     topic: string;
-    query: string;
+    _query: string;
     complianceLevel: string;
   }): Promise<ServiceResponse<MedicalInfo>> {
     try {
@@ -393,7 +393,7 @@ export class AIChatService {
         id: `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         patientId: params.patientId,
         title: params.title,
-        context: params.context,
+        _context: params.context,
         messages: [],
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -433,7 +433,7 @@ export class AIChatService {
 
       const message: ChatMessage = {
         id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        role: params.role,
+        _role: params.role,
         content: params.content,
         timestamp: params.timestamp,
         metadata: params.metadata,
@@ -501,7 +501,7 @@ export class AIChatService {
     try {
       const patientConversations = Array.from(this.conversations.values())
         .filter(conv => conv.patientId === patientId)
-        .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+        .sort((a,_b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 
       return {
         success: true,
@@ -668,7 +668,7 @@ export class AIChatService {
       }
 
       conversation.metadata.accessLog.push({
-        userId: params.userId,
+        _userId: params.userId,
         action: params.action,
         timestamp: new Date(),
         ipAddress: params.ipAddress,
@@ -787,7 +787,7 @@ export class AIChatService {
    * Generate response with timeout handling
    */
   async generateResponseWithTimeout(
-    request: AIRequest & { timeout: number },
+    _request: AIRequest & { timeout: number },
   ): Promise<ServiceResponse<AIResponse>> {
     try {
       if (request.timeout < 100) {
@@ -828,7 +828,7 @@ export class AIChatService {
   /**
    * Validate AI request parameters
    */
-  private validateAIRequest(request: AIRequest): {
+  private validateAIRequest(_request: AIRequest): {
     isValid: boolean;
     errors: Array<{ field: string; message: string; code: string }>;
   } {

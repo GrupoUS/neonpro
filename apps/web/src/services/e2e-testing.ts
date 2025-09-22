@@ -11,8 +11,6 @@
  * - Security testing for healthcare data protection
  */
 
-import { z } from 'zod';
-
 // E2E Testing Types
 export const E2E_TEST_TYPES = {
   HEALTHCARE_WORKFLOW: 'healthcare_workflow',
@@ -724,7 +722,7 @@ export class E2ETestingService {
       // Calculate averages
       overallAccessibilityScore = overallAccessibilityScore / scenario.steps.length;
       overallPerformanceScore = overallPerformanceScore / scenario.steps.length;
-    } catch (error) {
+    } catch (_error) {
       errors.push(`Scenario execution failed: ${error}`);
     }
 
@@ -780,7 +778,7 @@ export class E2ETestingService {
    */
   private async executeStep(
     step: E2ETestStep,
-    scenario: E2ETestScenario,
+    _scenario: E2ETestScenario,
   ): Promise<{
     success: boolean;
     error?: string;
@@ -965,7 +963,7 @@ export class E2ETestingService {
   /**
    * Validate test configuration
    */
-  validateConfig(config: any): boolean {
+  validateConfig(_config: any): boolean {
     try {
       E2ETestConfigSchema.parse(config);
       return true;

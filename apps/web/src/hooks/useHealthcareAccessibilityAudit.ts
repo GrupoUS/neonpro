@@ -17,7 +17,7 @@ import {
 
 interface UseHealthcareAccessibilityAuditOptions extends AccessibilityTestingOptions {
   autoRun?: boolean;
-  context?: Partial<HealthcareAuditContext>;
+  _context?: Partial<HealthcareAuditContext>;
   debounceMs?: number;
   enableRealtimeMonitoring?: boolean;
   reportingIntervalMs?: number;
@@ -41,7 +41,7 @@ export function useHealthcareAccessibilityAudit(
 ) {
   const {
     autoRun = true,
-    context: initialContext,
+    _context: initialContext,
     debounceMs = 500,
     enableRealtimeMonitoring = false,
     reportingIntervalMs = 30000,
@@ -129,7 +129,7 @@ export function useHealthcareAccessibilityAudit(
         }));
 
         return result;
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error during audit';
         setState(prev => ({
           ...prev,
@@ -158,7 +158,7 @@ export function useHealthcareAccessibilityAudit(
 
   // Update audit context
   const updateContext = useCallback(
-    (context: Partial<HealthcareAuditContext>) => {
+    (_context: Partial<HealthcareAuditContext>) => {
       if (auditorRef.current) {
         auditorRef.current.setContext(context);
         // Re-run audit with new context
@@ -255,7 +255,7 @@ export function useHealthcareAccessibilityAudit(
 
     return {
       timestamp: state.result.timestamp,
-      context: state.result.context,
+      _context: state.result.context,
       scores: {
         overall: state.result.accessibilityScore,
         healthcare: state.result.healthcareSpecificScore,
@@ -275,7 +275,7 @@ export function useHealthcareAccessibilityAudit(
   // Simulate user with disability for testing
   const simulateDisabilityProfile = useCallback(
     (profile: 'visual' | 'auditory' | 'motor' | 'cognitive' | 'multiple') => {
-      const context: Partial<HealthcareAuditContext> = {
+      const _context: Partial<HealthcareAuditContext> = {
         userDisabilityProfile: profile,
       };
 
@@ -380,7 +380,7 @@ export function useHealthcareJourneyAudit(
 
   return useHealthcareAccessibilityAudit(targetElement, {
     ...options,
-    context: journeyContext,
+    _context: journeyContext,
   });
 }
 
@@ -402,7 +402,7 @@ export function useEmergencyAccessibilityAudit(
 
   return useHealthcareAccessibilityAudit(targetElement, {
     ...options,
-    context: emergencyContext,
+    _context: emergencyContext,
     enableRealtimeMonitoring: true,
     reportingIntervalMs: 10000, // More frequent monitoring for emergencies
   });

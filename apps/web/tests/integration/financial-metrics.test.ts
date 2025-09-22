@@ -705,7 +705,7 @@ describe('Financial Metrics Integration Tests', () => {
 
       // Act
       const results = await Promise.all(
-        mockMultiClinicRequests.map(request => FinancialMetricsService.calculateMetrics(request)),
+        mockMultiClinicRequests.map(request => FinancialMetricsService.calculateMetrics(_request)),
       );
 
       // Assert

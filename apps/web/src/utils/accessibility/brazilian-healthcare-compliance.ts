@@ -9,8 +9,6 @@
  * Provides automated validation, audit trails, and compliance reporting.
  */
 
-import { healthcareAccessibilityAuditor } from './healthcare-audit-utils';
-
 // Brazilian healthcare compliance standards
 export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
   LGPD: {
@@ -288,7 +286,7 @@ export class BrazilianHealthcareComplianceValidator {
   /**
    * Perform comprehensive compliance validation
    */
-  async validateCompliance(context?: Element | string): Promise<{
+  async validateCompliance(_context?: Element | string): Promise<{
     overallScore: number;
     standards: {
       lgpd: {
@@ -450,7 +448,7 @@ export class BrazilianHealthcareComplianceValidator {
   private async validateStandard(
     standardId: string,
     standard: any,
-    context: Element,
+    _context: Element,
   ): Promise<{
     score: number;
     requirements: Array<{
@@ -481,7 +479,7 @@ export class BrazilianHealthcareComplianceValidator {
     const criticalIssues = [];
     let passedRequirements = 0;
 
-    for (const [reqId, requirement] of Object.entries(standard.requirements)) {
+    for (const [_reqId, requirement] of Object.entries(standard.requirements)) {
       try {
         const req = requirement as any; // Type assertion to handle unknown type
         const passed = req.validation(context);
@@ -518,7 +516,7 @@ export class BrazilianHealthcareComplianceValidator {
             ? 'Requirement validated successfully'
             : `Validation failed: ${req.description}`,
         });
-      } catch (error: unknown) {
+      } catch (_error: unknown) {
         const req = requirement as any;
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         console.error(`Validation failed for ${req.id}:`, error);
@@ -764,7 +762,7 @@ export async function quickBrazilianComplianceCheck(
 }> {
   const context = selector ? document.querySelector(selector) : document;
 
-  if (!context) {
+  if (!_context) {
     return {
       passed: false,
       score: 0,
@@ -793,7 +791,7 @@ export async function quickBrazilianComplianceCheck(
         (issue: any) => `${issue.standard}: ${issue.requirement} - ${issue.description}`,
       ),
     };
-  } catch (error) {
+  } catch (_error) {
     console.error('Quick compliance check failed:', error);
     return {
       passed: false,

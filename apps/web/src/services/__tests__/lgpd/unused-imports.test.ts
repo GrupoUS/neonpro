@@ -6,12 +6,12 @@
 import { execSync } from 'child_process';
 import { describe, expect, it } from 'vitest';
 
-describe('Service Test Files - Unused Type Imports', () => {
-  describe('audit-logging.service.test.ts', () => {
-    it('should FAIL - should have unused type imports that need to be removed', () => {
+describe(('Service Test Files - Unused Type Imports', () => {
+  describe(('audit-logging.service.test.ts', () => {
+    it(('should FAIL - should have unused type imports that need to be removed', () => {
       // RED: This test fails if unused type imports are not detected
       const result = execSync(
-        'cd /home/vibecode/neonpro && npx tsc --noEmit --noUnusedLocals apps/web/src/services/__tests__/lgpd/audit-logging.service.test.ts',
+        'cd /home/vibecode/neonpro && npx tsc --noEmit --noUnusedLocals apps/web/src/services/__tests_/lgpd/audit-logging.service.test.ts',
         { encoding: 'utf8' },
       );
 
@@ -23,10 +23,10 @@ describe('Service Test Files - Unused Type Imports', () => {
       expect(hasUnusedImports).toBe(true);
     });
 
-    it('should FAIL - should detect specific unused type imports', () => {
+    it(('should FAIL - should detect specific unused type imports', () => {
       // RED: This test fails if specific unused imports are not found
       const result = execSync(
-        'cd /home/vibecode/neonpro && npx tsc --noEmit --noUnusedLocals apps/web/src/services/__tests__/lgpd/audit-logging.service.test.ts',
+        'cd /home/vibecode/neonpro && npx tsc --noEmit --noUnusedLocals apps/web/src/services/__tests_/lgpd/audit-logging.service.test.ts',
         { encoding: 'utf8' },
       );
 
@@ -36,11 +36,11 @@ describe('Service Test Files - Unused Type Imports', () => {
     });
   });
 
-  describe('data-minimization.service.test.ts', () => {
-    it('should FAIL - should have unused type imports that need to be removed', () => {
+  describe(('data-minimization.service.test.ts', () => {
+    it(('should FAIL - should have unused type imports that need to be removed', () => {
       // RED: This test fails if unused type imports are not detected
       const result = execSync(
-        'cd /home/vibecode/neonpro && npx tsc --noEmit --noUnusedLocals apps/web/src/services/__tests__/lgpd/data-minimization.service.test.ts',
+        'cd /home/vibecode/neonpro && npx tsc --noEmit --noUnusedLocals apps/web/src/services/__tests_/lgpd/data-minimization.service.test.ts',
         { encoding: 'utf8' },
       );
 
@@ -50,10 +50,10 @@ describe('Service Test Files - Unused Type Imports', () => {
       expect(hasUnusedImports).toBe(true);
     });
 
-    it('should FAIL - should detect specific unused type import', () => {
+    it(('should FAIL - should detect specific unused type import', () => {
       // RED: This test fails if specific unused import is not found
       const result = execSync(
-        'cd /home/vibecode/neonpro && npx tsc --noEmit --noUnusedLocals apps/web/src/services/__tests__/lgpd/data-minimization.service.test.ts',
+        'cd /home/vibecode/neonpro && npx tsc --noEmit --noUnusedLocals apps/web/src/services/__tests_/lgpd/data-minimization.service.test.ts',
         { encoding: 'utf8' },
       );
 

@@ -11,8 +11,6 @@
  * - Brazilian Portuguese accessibility labels
  */
 
-import { z } from 'zod';
-
 // WCAG 2.1 AA+ Touch Target Requirements
 export const WCAG_TOUCH_TARGETS = {
   MINIMUM_SIZE: 44, // 44x44px minimum
@@ -65,7 +63,7 @@ export const TouchTargetSchema = z.object({
   isInteractive: z.boolean(),
   touchPattern: z.nativeEnum(HEALTHCARE_TOUCH_PATTERNS).optional(),
   ariaLabel: z.string().optional(),
-  role: z.string().optional(),
+  _role: z.string().optional(),
 });
 
 export type TouchTarget = z.infer<typeof TouchTargetSchema>;
@@ -163,7 +161,7 @@ export class MobileTouchAccessibility {
     const issues: TouchAccessibilityIssue[] = [];
 
     // Validate each touch target
-    targets.forEach(_target => {
+    targets.forEach(target => {
       const isCompliant = this.validateSingleTouchTarget(target);
       if (isCompliant) {
         compliantTargets++;
@@ -566,14 +564,11 @@ export class MobileTouchAccessibility {
   private generateRecommendations(): string[] {
     const recommendations: string[] = [];
 
-    const issuesByType = this.issues.reduce(
-      (acc, issue) => {
-        if (!acc[issue.type]) acc[issue.type] = [];
-        acc[issue.type].push(issue);
-        return acc;
-      },
-      {} as Record<string, TouchAccessibilityIssue[]>,
-    );
+    const issuesByType = this.issues.reduce((acc, issue) => {
+      if (!acc[issue.type]) acc[issue.type] = [];
+      acc[issue.type].push(issue);
+      return acc;
+    }, {} as Record<string, TouchAccessibilityIssue[]>);
 
     Object.entries(issuesByType).forEach(([type, issues]) => {
       const criticalCount = issues.filter(

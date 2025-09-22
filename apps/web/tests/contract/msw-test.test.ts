@@ -22,7 +22,7 @@ describe('MSW Configuration Test', () => {
       // Basic assertion to verify MSW is working
       expect(response.ok).toBe(true);
       expect(data.success).toBe(true);
-    } catch (error) {
+    } catch (_error) {
       console.error('❌ MSW test failed:', error);
       throw error;
     }
@@ -42,7 +42,7 @@ describe('MSW Configuration Test', () => {
 
       expect(response.status).toBe(401);
       expect(data.success).toBe(false);
-    } catch (error) {
+    } catch (_error) {
       console.error('❌ Auth error test failed:', error);
       throw error;
     }

@@ -12,8 +12,6 @@
 import { createHono, Hono } from 'hono';
 import { hc } from 'hono/client';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { z } from 'zod';
-
 // Import API management utilities and types
 import {
   ApiKey,

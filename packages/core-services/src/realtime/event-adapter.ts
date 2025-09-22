@@ -25,7 +25,7 @@ export interface RealtimeParticipant {
   id: string;
 
   /** Participant role in healthcare context */
-  role: "doctor" | "patient" | "nurse" | "admin";
+  _role: "doctor" | "patient" | "nurse" | "admin";
 
   /** Participant display name */
   name: string;

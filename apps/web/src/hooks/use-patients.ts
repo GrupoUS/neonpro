@@ -24,7 +24,7 @@ export const patientKeys = {
   details: () => [...patientKeys.all, 'detail'] as const,
   detail: (id: string) => [...patientKeys.details(), id] as const,
   consent: (patientId: string) => [...patientKeys.all, 'consent', patientId] as const,
-  search: (query: string) => [...patientKeys.all, 'search', query] as const,
+  search: (_query: string) => [...patientKeys.all, 'search', query] as const,
 };
 
 /**
@@ -158,7 +158,7 @@ export function useCreatePatient() {
       return { previousPatients };
     },
 
-    onSuccess: (data, _variables) => {
+    onSuccess: (data, variables) => {
       // Update cache with real patient data
       queryClient.setQueryData(patientKeys.detail(data.id), data);
 
@@ -176,7 +176,7 @@ export function useCreatePatient() {
       toast.success(`Paciente ${data.fullName} criado com sucesso!`);
     },
 
-    onError: (error, _variables, context) => {
+    onError: (error, variables, context) => {
       // Rollback optimistic update
       if (context?.previousPatients) {
         queryClient.setQueryData(patientKeys.lists(), context.previousPatients);
@@ -233,7 +233,7 @@ export function useUpdatePatient() {
       return { previousPatient };
     },
 
-    onSuccess: (data, _variables) => {
+    onSuccess: (data, variables) => {
       // Update cache with server response
       queryClient.setQueryData(patientKeys.detail(data.id), data);
 
@@ -243,7 +243,7 @@ export function useUpdatePatient() {
       toast.success('Dados do paciente atualizados com sucesso!');
     },
 
-    onError: (error, _variables, context) => {
+    onError: (error, variables, context) => {
       // Rollback optimistic update
       if (context?.previousPatient) {
         queryClient.setQueryData(
@@ -287,7 +287,7 @@ export function useWithdrawPatientConsent() {
       return { confirmed: true };
     },
 
-    onSuccess: (data, _variables) => {
+    onSuccess: (data, variables) => {
       // Remove patient from cache or mark as anonymized
       queryClient.removeQueries({
         queryKey: patientKeys.detail(variables.patientId),
@@ -305,7 +305,7 @@ export function useWithdrawPatientConsent() {
       toast.success('Consentimento retirado e dados anonimizados com sucesso.');
     },
 
-    onError: (error, _variables) => {
+    onError: (error, variables) => {
       if (error.message === 'Operação cancelada pelo usuário') {
         toast.info('Operação cancelada.');
         return;
@@ -345,7 +345,7 @@ export function usePatientConsentStatus(patientId: string) {
  * Hook for debounced patient search with audit logging
  */
 export function usePatientSearch(
-  query: string,
+  _query: string,
   options?: {
     delay?: number;
     minLength?: number;
@@ -442,9 +442,9 @@ export function useBulkPatientOperations() {
       });
     },
 
-    onSuccess: (data, _variables) => {
+    onSuccess: (data, variables) => {
       // Invalidate affected patients
-      variables.patientIds.forEach(_id => {
+      variables.patientIds.forEach(id => {
         queryClient.invalidateQueries({ queryKey: patientKeys.detail(id) });
       });
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });

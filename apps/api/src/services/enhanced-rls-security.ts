@@ -8,7 +8,7 @@ import { HealthcareRateLimitStore, type RateLimitData } from '../middleware/rate
 import { SecurityHeadersService } from './security-headers-service.js';
 
 export interface SecurityContext {
-  userId: string;
+  _userId: string;
   userRole: string;
   clinicId: string;
   professionalId?: string;
@@ -29,7 +29,7 @@ export interface SecurityAlert {
     | 'EMERGENCY_ACCESS';
   severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   description: string;
-  context: SecurityContext;
+  _context: SecurityContext;
   details?: Record<string, any>;
   actionTaken: string;
 }
@@ -37,7 +37,7 @@ export interface SecurityAlert {
 export interface RLSAuditLog {
   id: string;
   timestamp: Date;
-  userId: string;
+  _userId: string;
   operation: 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE';
   tableName: string;
   recordId?: string;
@@ -66,7 +66,7 @@ export class EnhancedRLSSecurityService {
    * Comprehensive security evaluation for RLS access
    */
   async evaluateSecureAccess(
-    context: SecurityContext,
+    _context: SecurityContext,
     tableName: string,
     operation: 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE',
     recordId?: string,
@@ -193,7 +193,7 @@ export class EnhancedRLSSecurityService {
    * Advanced threat detection
    */
   private async assessThreats(
-    context: SecurityContext,
+    _context: SecurityContext,
     tableName: string,
     _operation: string,
   ): Promise<{ threatLevel: number; alerts: SecurityAlert[] }> {
@@ -265,7 +265,7 @@ export class EnhancedRLSSecurityService {
    * Access pattern analysis for anomaly detection
    */
   private async analyzeAccessPatterns(
-    context: SecurityContext,
+    _context: SecurityContext,
     tableName: string,
     operation: string,
   ): Promise<{ securityScore: number; anomalies: string[] }> {
@@ -334,7 +334,7 @@ export class EnhancedRLSSecurityService {
    * Enhanced RLS evaluation with security context
    */
   private async evaluateEnhancedRLS(
-    context: SecurityContext,
+    _context: SecurityContext,
     tableName: string,
     operation: string,
     recordId?: string,
@@ -349,7 +349,7 @@ export class EnhancedRLSSecurityService {
 
       const result = await advancedRLSPolicies.evaluatePolicy(
         {
-          userId: context.userId,
+          _userId: context.userId,
           userRole: context.userRole,
           clinicId: context.clinicId,
           professionalId: context.professionalId,
@@ -394,7 +394,7 @@ export class EnhancedRLSSecurityService {
    * Validate security headers integration
    */
   private async validateSecurityHeadersIntegration(
-    context: SecurityContext,
+    _context: SecurityContext,
   ): Promise<{ scoreModifier: number; issues: string[] }> {
     const issues: string[] = [];
     let scoreModifier = 0;
@@ -446,7 +446,7 @@ export class EnhancedRLSSecurityService {
    * Handle emergency access with enhanced security
    */
   private async handleEmergencyAccess(
-    context: SecurityContext,
+    _context: SecurityContext,
     currentEvaluation: any,
   ): Promise<{
     overrideGranted: boolean;
@@ -595,7 +595,7 @@ export class EnhancedRLSSecurityService {
   }
 
   private async detectUnusualPatterns(
-    context: SecurityContext,
+    _context: SecurityContext,
     _tableName: string,
     _operation: string,
   ): Promise<number> {
@@ -628,7 +628,7 @@ export class EnhancedRLSSecurityService {
   }
 
   private async countRecentAccess(
-    userId: string,
+    _userId: string,
     clinicId: string,
     timeWindowSeconds: number,
   ): Promise<number> {
@@ -637,7 +637,7 @@ export class EnhancedRLSSecurityService {
       const { count } = await this.supabase
         .from('rls_security_audit_logs')
         .select('*', { count: 'exact', head: true })
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .eq('clinic_id', clinicId)
         .gte('timestamp', cutoff.toISOString());
 
@@ -648,14 +648,14 @@ export class EnhancedRLSSecurityService {
   }
 
   private async getRecentAccessSequence(
-    userId: string,
+    _userId: string,
     limit: number,
   ): Promise<any[]> {
     try {
       const { data } = await this.supabase
         .from('rls_security_audit_logs')
         .select('table_name, operation, timestamp')
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .order('timestamp', { ascending: false })
         .limit(limit);
 
@@ -684,7 +684,7 @@ export class EnhancedRLSSecurityService {
   }
 
   private async evaluateRoleConsistency(
-    context: SecurityContext,
+    _context: SecurityContext,
     tableName: string,
     operation: string,
   ): Promise<{ penalty: number; reason: string }> {
@@ -718,7 +718,7 @@ export class EnhancedRLSSecurityService {
   }
 
   private async evaluateGeographicAnomaly(
-    userId: string,
+    _userId: string,
     ipAddress: string,
   ): Promise<number> {
     // Check for geographic access anomalies
@@ -726,7 +726,7 @@ export class EnhancedRLSSecurityService {
       const { data: recentAccess } = await this.supabase
         .from('rls_security_audit_logs')
         .select('ip_address')
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .order('timestamp', { ascending: false })
         .limit(5);
 
@@ -764,7 +764,7 @@ export class EnhancedRLSSecurityService {
   }
 
   private async validateEmergencyJustification(
-    context: SecurityContext,
+    _context: SecurityContext,
   ): Promise<boolean> {
     // Validate emergency access justification
     // In a real implementation, this would check for proper documentation
@@ -772,7 +772,7 @@ export class EnhancedRLSSecurityService {
   }
 
   private async checkEmergencyPrivileges(
-    userId: string,
+    _userId: string,
     userRole: string,
   ): Promise<boolean> {
     // Check if user has emergency access privileges
@@ -805,7 +805,7 @@ export class EnhancedRLSSecurityService {
 
   // Public utility methods
 
-  async getUserSecuritySummary(userId: string): Promise<{
+  async getUserSecuritySummary(_userId: string): Promise<{
     securityScore: number;
     recentAlerts: SecurityAlert[];
     accessPatterns: any;
@@ -816,11 +816,11 @@ export class EnhancedRLSSecurityService {
       const { data: auditData } = await this.supabase
         .from('rls_security_audit_logs')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .gte('timestamp', thirtyDaysAgo.toISOString())
         .order('timestamp', { ascending: false });
 
-      const securityScore = auditData?.reduce((acc, log) => acc + log.security_score, 0)
+      const securityScore = auditData?.reduce((acc,_log) => acc + log.security_score, 0)
         / (auditData?.length || 1);
 
       return {
@@ -831,7 +831,7 @@ export class EnhancedRLSSecurityService {
             type: 'THREAT_DETECTED' as const,
             severity: log.threat_level > 75 ? 'HIGH' : ('MEDIUM' as const),
             description: log.reason,
-            context: {} as SecurityContext,
+            _context: {} as SecurityContext,
             actionTaken: 'Logged for review',
           })) || [],
         accessPatterns: {
@@ -890,9 +890,9 @@ export class EnhancedRLSSecurityService {
           deniedRequests,
           accessDeniedRate: totalRequests > 0 ? (deniedRequests / totalRequests) * 100 : 0,
           highThreatEvents,
-          averageSecurityScore: auditData?.reduce((acc, log) => acc + log.security_score, 0)
+          averageSecurityScore: auditData?.reduce((acc,_log) => acc + log.security_score, 0)
               / totalRequests || 0,
-          averageThreatLevel: auditData?.reduce((acc, log) => acc + log.threat_level, 0)
+          averageThreatLevel: auditData?.reduce((acc,_log) => acc + log.threat_level, 0)
               / totalRequests || 0,
         },
         threats: auditData?.filter(log => log.threat_level >= threatThreshold) || [],

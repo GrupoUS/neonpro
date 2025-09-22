@@ -208,7 +208,7 @@ const measureAccessibilityTest = async (
 const runOptimizedAccessibilityTest = async (
   component: React.ReactElement,
   componentName: string,
-  context: keyof typeof healthcareTestContexts = 'PATIENT_PORTAL',
+  _context: keyof typeof healthcareTestContexts = 'PATIENT_PORTAL',
 ) => {
   const Providers = createTestProviders();
 
@@ -1235,7 +1235,7 @@ export const healthcareAccessibilityHelpers = {
    */
   async testHealthcareAccessibility(
     component: React.ReactElement,
-    context: keyof typeof healthcareTestContexts = 'PATIENT_PORTAL',
+    _context: keyof typeof healthcareTestContexts = 'PATIENT_PORTAL',
   ) {
     const { container } = render(component);
     const testContext = healthcareTestContexts[context];
@@ -1254,7 +1254,7 @@ export const healthcareAccessibilityHelpers = {
     return {
       violations: results.violations,
       passes: results.passes,
-      context: testContext,
+      _context: testContext,
       compliant: results.violations.length === 0,
     };
   },

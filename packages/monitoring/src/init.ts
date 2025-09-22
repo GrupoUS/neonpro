@@ -19,7 +19,7 @@ export function initializeMonitoring(config: MonitoringConfig): void {
   // Initialize logging first
   const logger = createLogger(config.logging);
   logger.info("Monitoring system starting up", {
-    service: config.serviceName,
+    _service: config.serviceName,
     version: config.serviceVersion,
     environment: config.environment,
   });

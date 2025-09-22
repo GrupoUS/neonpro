@@ -1,26 +1,23 @@
 /**
  * Healthcare Form Validation Utilities
- * 
+ *
  * Comprehensive validation system for healthcare forms with LGPD compliance,
  * accessibility features, and Brazilian healthcare standards integration.
  *
  * @fileoverview Healthcare form validation with Brazilian standards compliance
  */
 
-import { z } from 'zod';
-import type { HealthcareFormContext } from '@neonpro/ui';
-
 // Brazilian healthcare data validation schemas
 export const brazilianHealthcareSchemas = {
   // CPF validation (Brazilian tax ID)
   cpf: z.string()
-    .refine((val) => /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(val) || /^\d{11}$/.test(val), {
+    .refine(val => /^\d{3}\.\d{3}\.\d{3}-\d{2}$/.test(val) || /^\d{11}$/.test(val), {
       message: 'CPF deve estar no formato 000.000.000-00 ou 11 dígitos',
     })
-    .refine((val) => {
+    .refine(val => {
       const cleanCPF = val.replace(/\D/g, '');
       if (cleanCPF.length !== 11) return false;
-      
+
       // CPF validation algorithm
       let sum = 0;
       for (let i = 0; i < 9; i++) {
@@ -29,14 +26,14 @@ export const brazilianHealthcareSchemas = {
       let remainder = (sum * 10) % 11;
       if (remainder === 10 || remainder === 11) remainder = 0;
       if (remainder !== parseInt(cleanCPF[9])) return false;
-      
+
       sum = 0;
       for (let i = 0; i < 10; i++) {
         sum += parseInt(cleanCPF[i]) * (11 - i);
       }
       remainder = (sum * 10) % 11;
       if (remainder === 10 || remainder === 11) remainder = 0;
-      
+
       return remainder === parseInt(cleanCPF[10]);
     }, {
       message: 'CPF inválido',
@@ -46,19 +43,19 @@ export const brazilianHealthcareSchemas = {
   crm: z.string()
     .min(4, 'CRM deve ter no mínimo 4 dígitos')
     .max(10, 'CRM deve ter no máximo 10 dígitos')
-    .refine((val) => /^\d+$/.test(val), {
+    .refine(val => /^\d+$/.test(val), {
       message: 'CRM deve conter apenas números',
     }),
 
   // Phone number validation (Brazilian format)
   phoneNumber: z.string()
-    .refine((val) => {
+    .refine(val => {
       const cleanPhone = val.replace(/\D/g, '');
       return cleanPhone.length === 10 || cleanPhone.length === 11;
     }, {
       message: 'Telefone deve ter 10 ou 11 dígitos',
     })
-    .refine((val) => {
+    .refine(val => {
       const cleanPhone = val.replace(/\D/g, '');
       if (cleanPhone.length === 11) {
         return cleanPhone[2] === '9'; // Mobile numbers start with 9
@@ -72,19 +69,19 @@ export const brazilianHealthcareSchemas = {
   medicalRecordNumber: z.string()
     .min(1, 'Número do prontuário é obrigatório')
     .max(50, 'Número do prontuário deve ter no máximo 50 caracteres')
-    .refine((val) => /^[A-Za-z0-9\-/]+$/.test(val), {
+    .refine(val => /^[A-Za-z0-9\-/]+$/.test(val), {
       message: 'Número do prontuário deve conter apenas letras, números, hífens e barras',
     }),
 
   // Date of birth validation
   dateOfBirth: z.string()
-    .refine((val) => {
+    .refine(val => {
       // Support multiple date formats: DD/MM/YYYY, YYYY-MM-DD
       return /^\d{2}\/\d{2}\/\d{4}$/.test(val) || /^\d{4}-\d{2}-\d{2}$/.test(val);
     }, {
       message: 'Data deve estar no formato DD/MM/YYYY ou YYYY-MM-DD',
     })
-    .refine((val) => {
+    .refine(val => {
       let date: Date;
       if (val.includes('/')) {
         const [day, month, year] = val.split('/');
@@ -92,10 +89,10 @@ export const brazilianHealthcareSchemas = {
       } else {
         date = new Date(val);
       }
-      
+
       const now = new Date();
       const minDate = new Date(now.getFullYear() - 120, 0, 1); // Max 120 years old
-      
+
       return !isNaN(date.getTime()) && date <= now && date >= minDate;
     }, {
       message: 'Data de nascimento inválida',
@@ -104,7 +101,7 @@ export const brazilianHealthcareSchemas = {
   // Medical specialty validation
   medicalSpecialty: z.enum([
     'cardiologia',
-    'pediatria', 
+    'pediatria',
     'ginecologia',
     'neurologia',
     'ortopedia',
@@ -120,7 +117,7 @@ export const brazilianHealthcareSchemas = {
   patientName: z.string()
     .min(2, 'Nome do paciente deve ter no mínimo 2 caracteres')
     .max(100, 'Nome do paciente deve ter no máximo 100 caracteres')
-    .refine((val) => /^[A-Za-zÀ-ÿ\s\-']+$/.test(val), {
+    .refine(val => /^[A-Za-zÀ-ÿ\s\-']+$/.test(val), {
       message: 'Nome do paciente deve conter apenas letras, espaços, hífens e apóstrofos',
     }),
 
@@ -141,7 +138,7 @@ export const brazilianHealthcareSchemas = {
   // Consultation type validation
   consultationType: z.enum([
     'primeira-consulta',
-    'retorno', 
+    'retorno',
     'consulta-urgencia',
     'teleconsulta',
     'consulta-especializada',
@@ -161,7 +158,7 @@ export enum HealthcareDataSensitivity {
 
 export enum DataSensitivity {
   PUBLIC = 'public',
-  INTERNAL = 'internal', 
+  INTERNAL = 'internal',
   CONFIDENTIAL = 'confidential',
   RESTRICTED = 'restricted',
 }
@@ -205,7 +202,7 @@ export interface HealthcareFieldConfig {
   required: boolean;
   dataSensitivity: DataSensitivity;
   emergencyField?: boolean;
-  customValidation?: (value: string, context: HealthcareValidationContext) => string | null;
+  customValidation?: (value: string, _context: HealthcareValidationContext) => string | null;
   mask?: string;
   placeholder?: string;
   helperText?: string;
@@ -233,7 +230,7 @@ export interface FormValidationResult {
 export function validateHealthcareField(
   value: string,
   config: HealthcareFieldConfig,
-  context: HealthcareValidationContext
+  _context: HealthcareValidationContext,
 ): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
@@ -260,7 +257,7 @@ export function validateHealthcareField(
   const schema = brazilianHealthcareSchemas[config.type];
   try {
     schema.parse(value);
-  } catch (validationError) {
+  } catch (_validationError) {
     if (validationError instanceof z.ZodError) {
       errors.push(...validationError.errors.map(err => err.message));
     }
@@ -268,7 +265,7 @@ export function validateHealthcareField(
 
   // Custom validation
   if (config.customValidation) {
-    const customError = config.customValidation(value, context);
+    const customError = config.customValidation(value, _context);
     if (customError) {
       errors.push(customError);
     }
@@ -301,7 +298,7 @@ export function validateHealthcareField(
 export function validateHealthcareForm(
   formData: Record<string, string>,
   fieldConfigs: HealthcareFieldConfig[],
-  context: HealthcareValidationContext
+  _context: HealthcareValidationContext,
 ): FormValidationResult {
   const fieldResults: Record<string, ValidationResult> = {};
   const globalErrors: string[] = [];
@@ -311,7 +308,7 @@ export function validateHealthcareForm(
   // Validate each field
   fieldConfigs.forEach(config => {
     const value = formData[config.name] || '';
-    const result = validateHealthcareField(value, config, context);
+    const result = validateHealthcareField(value, config, _context);
     fieldResults[config.name] = result;
   });
 
@@ -323,9 +320,9 @@ export function validateHealthcareForm(
 
   // Check for sensitive data handling
   const hasSensitiveData = Object.values(fieldResults).some(
-    result => result.dataSensitivity === DataSensitivity.RESTRICTED
+    result => result.dataSensitivity === DataSensitivity.RESTRICTED,
   );
-  
+
   if (hasSensitiveData && !context.lgpdCompliant) {
     lgpdIssues.push('Dados sensíveis sem tratamento LGPD adequado');
   }
@@ -337,7 +334,7 @@ export function validateHealthcareForm(
       const value = formData[config.name] || '';
       return !value.trim();
     });
-    
+
     if (missingEmergencyFields.length > 0) {
       globalErrors.push('Campos de emergência obrigatórios não preenchidos');
     }
@@ -350,9 +347,8 @@ export function validateHealthcareForm(
   }
 
   // Check overall validity
-  const isValid = 
-    Object.values(fieldResults).every(result => result.isValid) &&
-    globalErrors.length === 0;
+  const isValid = Object.values(fieldResults).every(result => result.isValid)
+    && globalErrors.length === 0;
 
   return {
     isValid,
@@ -375,7 +371,7 @@ export function validateHealthcareForm(
  */
 export function generateLGPDConsent(
   purposes: string[],
-  retentionPeriod: string = '10 anos'
+  retentionPeriod: string = '10 anos',
 ): LGPDConsent {
   return {
     id: `consent-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -392,21 +388,27 @@ export function generateLGPDConsent(
  */
 export function classifyHealthcareData(fieldType: string): DataSensitivity {
   const sensitiveFields = [
-    'cpf', 'medical-record', 'date-of-birth', 'patient-name'
+    'cpf',
+    'medical-record',
+    'date-of-birth',
+    'patient-name',
   ];
-  
+
   const restrictedFields = [
-    'medical-history', 'diagnosis', 'treatment', 'medication'
+    'medical-history',
+    'diagnosis',
+    'treatment',
+    'medication',
   ];
 
   if (restrictedFields.includes(fieldType)) {
     return DataSensitivity.RESTRICTED;
   }
-  
+
   if (sensitiveFields.includes(fieldType)) {
     return DataSensitivity.CONFIDENTIAL;
   }
-  
+
   return DataSensitivity.INTERNAL;
 }
 

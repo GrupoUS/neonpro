@@ -74,8 +74,7 @@ const app = createHealthcareOpenAPIApp();
 // Apply security middleware stack
 // app.use('*', ...getSecurityMiddlewareStack());
 
-app.use(
-  '*',
+app.use('*',
   cors({
     origin: (origin, callback) => {
       // Allow same-origin requests (no origin header)
@@ -408,7 +407,7 @@ app.get(
 
     logger.security('security_status', 'Security status accessed', {
       requestId,
-      userId: user?.id,
+      _userId: user?.id,
     });
 
     const securityStatus = {
@@ -460,7 +459,7 @@ app.get(
 
     logger.lgpd('compliance_check', 'LGPD compliance status requested', {
       requestId,
-      userId: user?.id,
+      _userId: user?.id,
     });
 
     const complianceData = {

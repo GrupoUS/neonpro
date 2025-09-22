@@ -5,61 +5,61 @@
 
 import { beforeEach, describe, expect, it } from 'vitest';
 
-describe('RealTimeStatusIndicator', () => {
+describe(('RealTimeStatusIndicator', () => {
   beforeEach(() => {
     // Setup for each test
   });
 
-  it('should export the component', () => {
+  it(('should export the component', () => {
     expect(() => {
       const module = require.resolve('../RealTimeStatusIndicator');
       expect(module).toBeDefined();
     }).not.toThrow();
   });
 
-  it('should render connection status', () => {
+  it(('should render connection status', () => {
     const { RealTimeStatusIndicator } = require('../RealTimeStatusIndicator');
     expect(RealTimeStatusIndicator).toBeDefined();
     expect(typeof RealTimeStatusIndicator).toBe('function');
   });
 
-  it('should display metrics when showMetrics is true', () => {
+  it(('should display metrics when showMetrics is true', () => {
     const { RealTimeStatusIndicator } = require('../RealTimeStatusIndicator');
     expect(RealTimeStatusIndicator).toBeDefined();
     expect(typeof RealTimeStatusIndicator).toBe('function');
   });
 
-  it('should render in compact mode', () => {
+  it(('should render in compact mode', () => {
     const { RealTimeStatusIndicator } = require('../RealTimeStatusIndicator');
     expect(RealTimeStatusIndicator).toBeDefined();
     expect(typeof RealTimeStatusIndicator).toBe('function');
   });
 
-  it('should handle different connection states', () => {
+  it(('should handle different connection states', () => {
     const { RealTimeStatusIndicator } = require('../RealTimeStatusIndicator');
     expect(RealTimeStatusIndicator).toBeDefined();
     expect(typeof RealTimeStatusIndicator).toBe('function');
   });
 
-  it('should show detailed metrics tooltip', () => {
+  it(('should show detailed metrics tooltip', () => {
     const { RealTimeStatusIndicator } = require('../RealTimeStatusIndicator');
     expect(RealTimeStatusIndicator).toBeDefined();
     expect(typeof RealTimeStatusIndicator).toBe('function');
   });
 
-  it('should format latency correctly', () => {
+  it(('should format latency correctly', () => {
     const { RealTimeStatusIndicator } = require('../RealTimeStatusIndicator');
     expect(RealTimeStatusIndicator).toBeDefined();
     expect(typeof RealTimeStatusIndicator).toBe('function');
   });
 
-  it('should show performance indicators', () => {
+  it(('should show performance indicators', () => {
     const { RealTimeStatusIndicator } = require('../RealTimeStatusIndicator');
     expect(RealTimeStatusIndicator).toBeDefined();
     expect(typeof RealTimeStatusIndicator).toBe('function');
   });
 
-  it('should support Brazilian Portuguese labels', () => {
+  it(('should support Brazilian Portuguese labels', () => {
     const { RealTimeStatusIndicator } = require('../RealTimeStatusIndicator');
     expect(RealTimeStatusIndicator).toBeDefined();
     expect(typeof RealTimeStatusIndicator).toBe('function');
@@ -71,7 +71,7 @@ describe('RealTimeStatusIndicator', () => {
     expect(typeof RealTimeStatusIndicator).toBe('function');
   });
 
-  it('should be mobile responsive', () => {
+  it(('should be mobile responsive', () => {
     const { RealTimeStatusIndicator } = require('../RealTimeStatusIndicator');
     expect(RealTimeStatusIndicator).toBeDefined();
     expect(typeof RealTimeStatusIndicator).toBe('function');

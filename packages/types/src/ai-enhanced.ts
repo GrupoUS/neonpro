@@ -3,6 +3,16 @@
 // Task T003: Add types (Plan, UsageCounter, Recommendation, DomainDescriptor)
 // ============================================
 
+// Healthcare-compliant metadata types for AI Enhanced
+export interface AIEnhancedMetadata {
+  processingTime?: number;
+  cacheHit?: boolean;
+  modelVersion?: string;
+  requestSource?: string;
+  complianceLevel?: 'standard' | 'enhanced' | 'restricted';
+  [key: string]: unknown;
+}
+
 // This file defines types that directly match the database schema and models
 // It extends the existing enhanced-ai.ts types for specific database entities
 
@@ -389,7 +399,7 @@ export interface AIAnalyzeResponse {
   readonly model: EnhancedAIModel;
   readonly tokensUsed: number;
   readonly latencyMs: number;
-  readonly metadata?: Record<string, any>;
+  readonly metadata?: AIEnhancedMetadata;
 }
 
 export interface AICrudResponse {
@@ -398,7 +408,7 @@ export interface AICrudResponse {
   readonly result?: unknown;
   readonly confirmation?: string;
   readonly tokensUsed: number;
-  readonly metadata?: Record<string, any>;
+  readonly metadata?: AIEnhancedMetadata;
 }
 
 export interface AIUsageResponse {
@@ -425,14 +435,14 @@ export interface AIRecommendationsResponse {
   readonly success: boolean;
   readonly recommendations: Recommendation[];
   readonly total: number;
-  readonly metadata?: Record<string, any>;
+  readonly metadata?: AIEnhancedMetadata;
 }
 
 export interface AIModelsResponse {
   readonly success: boolean;
   readonly models: EnhancedAIModel[];
   readonly availability: Record<EnhancedAIModel, boolean>;
-  readonly metadata?: Record<string, any>;
+  readonly metadata?: AIEnhancedMetadata;
 }
 
 // ================================================

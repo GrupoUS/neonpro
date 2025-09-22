@@ -25,7 +25,7 @@ describe('Integration Test T014: Abuse Detection', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = createTestClient({ role: 'admin' });
+    testClient = createTestClient({ _role: 'admin' });
     clinicId = 'clinic-abuse-test-001';
     professionalCRM = 'CRM/SP 123456';
     suspiciousUserId = 'user-suspicious-001';
@@ -125,7 +125,7 @@ describe('Integration Test T014: Abuse Detection', () => {
           }),
         });
 
-        botRequests.push(request);
+        botRequests.push(_request);
 
         // Wait exactly 1 second between requests (bot-like behavior)
         await new Promise(resolve => setTimeout(resolve, 1000));
@@ -174,7 +174,7 @@ describe('Integration Test T014: Abuse Detection', () => {
           patientId: 'fake-patient-001',
           analysisType: 'unethical_request',
           medicalData: {
-            request: 'Análise para procedimento experimental não aprovado pela ANVISA',
+            _request: 'Análise para procedimento experimental não aprovado pela ANVISA',
             unethicalPurpose: 'Bypass safety regulations',
           },
         },
@@ -183,7 +183,7 @@ describe('Integration Test T014: Abuse Detection', () => {
           analysisType: 'inappropriate_procedure',
           medicalData: {
             patientAge: 16, // Minor requesting adult procedures
-            request: 'Cirurgia plástica estética em menor sem indicação médica',
+            _request: 'Cirurgia plástica estética em menor sem indicação médica',
           },
         },
         {
@@ -191,7 +191,7 @@ describe('Integration Test T014: Abuse Detection', () => {
           professionalCRM: 'FAKE/CRM 999999',
           analysisType: 'fraudulent_request',
           medicalData: {
-            request: 'Prescrição sem qualificação médica válida',
+            _request: 'Prescrição sem qualificação médica válida',
           },
         },
       ];
@@ -207,7 +207,7 @@ describe('Integration Test T014: Abuse Detection', () => {
             'x-user-id': suspiciousUserId,
             ...testClient.headers,
           },
-          body: JSON.stringify(request),
+          body: JSON.stringify(_request),
         });
 
         responses.push({
@@ -551,7 +551,7 @@ describe('Integration Test T014: Abuse Detection', () => {
 
     it('should implement automatic response measures for detected abuse', async () => {
       const abuseResponseConfig = {
-        userId: suspiciousUserId,
+        _userId: suspiciousUserId,
         clinicId,
         abuseLevel: 'high',
         responseMeasures: [

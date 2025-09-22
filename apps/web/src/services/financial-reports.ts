@@ -75,7 +75,7 @@ export class FinancialReportsService {
     period: FinancialReport['period'],
     startDate: Date,
     endDate: Date,
-    userId: string,
+    _userId: string,
   ): Promise<FinancialReport> {
     const reportId = `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
@@ -128,7 +128,7 @@ export class FinancialReportsService {
       setTimeout(() => this.processReportGeneration(reportId, type, startDate, endDate), 0);
 
       return report;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error generating report:', error);
       throw new Error('Failed to generate financial report');
     }
@@ -162,7 +162,7 @@ export class FinancialReportsService {
       await CacheService.set(cacheKey, report, this.CACHE_TTL);
 
       return report;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting report:', error);
       return null;
     }
@@ -176,7 +176,7 @@ export class FinancialReportsService {
       type?: FinancialReport['type'];
       period?: FinancialReport['period'];
       status?: FinancialReport['status'];
-      userId?: string;
+      _userId?: string;
       limit?: number;
     },
   ): Promise<FinancialReport[]> {
@@ -195,8 +195,8 @@ export class FinancialReportsService {
       if (filters?.status) {
         query = query.eq('status', filters.status);
       }
-      if (filters?.userId) {
-        query = query.eq('generated_by', filters.userId);
+      if (filters?._userId) {
+        query = query.eq('generated_by', filters._userId);
       }
       if (filters?.limit) {
         query = query.limit(filters.limit);
@@ -207,7 +207,7 @@ export class FinancialReportsService {
       if (error) throw error;
 
       return (data || []).map(this.mapDatabaseToReport);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error listing reports:', error);
       return [];
     }
@@ -266,7 +266,7 @@ export class FinancialReportsService {
         ...schedule,
         nextRun,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error scheduling report:', error);
       throw new Error('Failed to schedule report');
     }
@@ -299,7 +299,7 @@ export class FinancialReportsService {
 
       // Invalidate cache
       await CacheService.invalidate(`${this.CACHE_PREFIX}_${reportId}`);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error processing report generation:', error);
 
       // Mark report as failed

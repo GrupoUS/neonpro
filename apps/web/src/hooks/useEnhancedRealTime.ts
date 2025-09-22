@@ -35,9 +35,9 @@ export type RealTimeEventType = 'INSERT' | 'UPDATE' | 'DELETE';
 export interface RealTimeSubscriptionOptions {
   tableName: string;
   filter?: string;
-  onInsert?: (payload: any) => void;
-  onUpdate?: (payload: any) => void;
-  onDelete?: (payload: any) => void;
+  onInsert?: (_payload: any) => void;
+  onUpdate?: (_payload: any) => void;
+  onDelete?: (_payload: any) => void;
   enableNotifications?: boolean;
   enableOptimisticUpdates?: boolean;
   rateLimitMs?: number;
@@ -257,7 +257,7 @@ export function useEnhancedRealTime() {
 
   // Cleanup subscriptions
   const cleanup = useCallback(() => {
-    subscriptionsRef.current.forEach(_subscription => {
+    subscriptionsRef.current.forEach(subscription => {
       subscription.unsubscribe();
     });
     subscriptionsRef.current.clear();

@@ -14,8 +14,7 @@
 import { createClient, RealtimeChannel, RealtimeClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
-import { z } from 'zod';
-
+import * as z from 'zod';
 // Enhanced telemedicine subscription schemas
 const TelemedicineMessageSchema = z.object({
   id: z.string().uuid(),
@@ -34,7 +33,7 @@ const TelemedicineMessageSchema = z.object({
 });
 
 const PresenceStateSchema = z.object({
-  userId: z.string().uuid(),
+  _userId: z.string().uuid(),
   sessionId: z.string().uuid(),
   userRole: z.enum(['patient', 'doctor', 'nurse', 'technician', 'admin']),
   status: z.enum(['online', 'away', 'busy', 'offline', 'in_consultation']),
@@ -253,7 +252,7 @@ export class EnhancedTelemedicineRealtime {
     const response = await channel.send({
       type: 'broadcast',
       event: 'encrypted_message',
-      payload: validatedMessage,
+      _payload: validatedMessage,
     });
 
     // Log for LGPD audit compliance
@@ -294,11 +293,11 @@ export class EnhancedTelemedicineRealtime {
     const response = await channel.track(validatedPresence);
 
     // Store locally for monitoring
-    this.presenceStates.set(presence.userId!, validatedPresence);
+    this.presenceStates.set(fullPresence.userId!, validatedPresence);
 
     // Monitor connection quality
-    if (validatedPresence.connectionQuality) {
-      await this.assessConnectionQuality(sessionId, validatedPresence);
+    if (fullPresence.connectionQuality) {
+      await this.assessConnectionQuality(sessionId, fullPresence);
     }
 
     return response === 'ok';
@@ -397,7 +396,7 @@ export class EnhancedTelemedicineRealtime {
 
       // Clean up local presence state
       leftPresences.forEach((presence: any) => {
-        this.presenceStates.delete(presence.userId);
+        this.presenceStates.delete(presence._userId);
       });
     });
   }
@@ -428,7 +427,7 @@ export class EnhancedTelemedicineRealtime {
   ): Promise<void> {
     for (const userId of participants) {
       const initialPresence: PresenceState = {
-        userId,
+        _userId: userId,
         sessionId,
         userRole: 'patient', // Default, should be determined by actual role
         status: 'online',
@@ -494,7 +493,7 @@ export class EnhancedTelemedicineRealtime {
           if (quality === 'poor' && presence.connectionQuality.latency > 300) {
             await this.sendQualityAlert(
               sessionId,
-              userId,
+              presence._userId,
               presence.connectionQuality,
             );
           }
@@ -568,7 +567,7 @@ export class EnhancedTelemedicineRealtime {
    */
   private async sendQualityAlert(
     sessionId: string,
-    userId: string,
+    _userId: string,
     quality: PresenceState['connectionQuality'],
   ): Promise<void> {
     const channel = this.channels.get(sessionId);
@@ -577,9 +576,9 @@ export class EnhancedTelemedicineRealtime {
     await channel.send({
       type: 'broadcast',
       event: 'quality_alert',
-      payload: {
+      _payload: {
         type: 'poor_connection_quality',
-        userId,
+        userId: _userId,
         quality,
         suggestions: [
           'Check your internet connection',
@@ -597,7 +596,7 @@ export class EnhancedTelemedicineRealtime {
    */
   private async sendQualityImprovementSuggestions(
     sessionId: string,
-    userId: string,
+    _userId: string,
     quality: PresenceState['connectionQuality'],
   ): Promise<void> {
     const channel = this.channels.get(sessionId);
@@ -624,8 +623,8 @@ export class EnhancedTelemedicineRealtime {
     await channel.send({
       type: 'broadcast',
       event: 'quality_suggestions',
-      payload: {
-        userId,
+      _payload: {
+        userId: _userId,
         suggestions,
         currentQuality: quality,
         timestamp: new Date().toISOString(),
@@ -648,7 +647,7 @@ export class EnhancedTelemedicineRealtime {
       await channel.send({
         type: 'broadcast',
         event: 'emergency_alert',
-        payload: {
+        _payload: {
           originalMessage: message,
           alertLevel: 'critical',
           timestamp: new Date().toISOString(),
@@ -676,7 +675,7 @@ export class EnhancedTelemedicineRealtime {
     await channel.send({
       type: 'broadcast',
       event: 'message_acknowledgment',
-      payload: {
+      _payload: {
         messageId,
         acknowledgedBy: recipientId,
         timestamp: new Date().toISOString(),

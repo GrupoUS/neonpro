@@ -6,7 +6,7 @@ import React, {
   useContext,
   useEffect,
   useRef,
-  useState,
+  useState
 } from "react";
 import { cn } from "../../utils";
 
@@ -40,8 +40,7 @@ export function Modal({ children }: { children: ReactNode }) {
 }
 
 export const ModalTrigger = ({
-  children,
-  className,
+  children,className
 }: {
   children: ReactNode;
   className?: string;
@@ -61,8 +60,7 @@ export const ModalTrigger = ({
 };
 
 export const ModalBody = ({
-  children,
-  className,
+  children,className
 }: {
   children: ReactNode;
   className?: string;
@@ -79,22 +77,22 @@ export const ModalBody = ({
 
   const modalRef = useRef<HTMLDivElement>(null);
   const { setOpen } = useModal();
-  useOutsideClick(modalRef, () => setOpen(false));
+  useOutsideClick(modalRef,() => setOpen(false));
 
   return (
     <AnimatePresence>
       {open && (
         <motion.div
           initial={{
-            opacity: 0,
+            opacity: 0
           }}
           animate={{
             opacity: 1,
-            backdropFilter: "blur(10px)",
+            backdropFilter: "blur(10px)"
           }}
           exit={{
             opacity: 0,
-            backdropFilter: "blur(0px)",
+            backdropFilter: "blur(0px)"
           }}
           className="fixed [perspective:800px] [transform-style:preserve-3d] inset-0 h-full w-full  flex items-center justify-center z-50"
         >
@@ -110,23 +108,23 @@ export const ModalBody = ({
               opacity: 0,
               scale: 0.5,
               rotateX: 40,
-              y: 40,
+              y: 40
             }}
             animate={{
               opacity: 1,
               scale: 1,
               rotateX: 0,
-              y: 0,
+              y: 0
             }}
             exit={{
               opacity: 0,
               scale: 0.8,
-              rotateX: 10,
+              rotateX: 10
             }}
             transition={{
               type: "spring",
               stiffness: 260,
-              damping: 15,
+              damping: 15
             }}
           >
             <CloseIcon />
@@ -139,8 +137,7 @@ export const ModalBody = ({
 };
 
 export const ModalContent = ({
-  children,
-  className,
+  children,className
 }: {
   children: ReactNode;
   className?: string;
@@ -153,8 +150,7 @@ export const ModalContent = ({
 };
 
 export const ModalFooter = ({
-  children,
-  className,
+  children,className
 }: {
   children: ReactNode;
   className?: string;
@@ -175,15 +171,15 @@ const Overlay = ({ className }: { className?: string }) => {
   return (
     <motion.div
       initial={{
-        opacity: 0,
+        opacity: 0
       }}
       animate={{
         opacity: 1,
-        backdropFilter: "blur(10px)",
+        backdropFilter: "blur(10px)"
       }}
       exit={{
         opacity: 0,
-        backdropFilter: "blur(0px)",
+        backdropFilter: "blur(0px)"
       }}
       className={`fixed inset-0 h-full w-full bg-black bg-opacity-50 z-50 ${className}`}
     ></motion.div>
@@ -192,8 +188,7 @@ const Overlay = ({ className }: { className?: string }) => {
 
 const CloseIcon = () => {
   const { setOpen } = useModal();
-  return (
-    <button
+  return (<button
       onClick={() => setOpen(false)}
       className="absolute top-4 right-4 group"
     >

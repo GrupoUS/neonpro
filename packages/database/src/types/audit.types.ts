@@ -15,9 +15,9 @@ export interface AuditEvent {
  * Compliance check result for LGPD/healthcare regulations
  */
 export interface ComplianceCheck {
-  status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING';
+  status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING'
   riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'; // Legacy support
+  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' // Legacy support
   violations: string[];
   isCompliant: boolean;
   lastChecked?: string;
@@ -29,7 +29,7 @@ export interface ComplianceCheck {
  */
 export interface DataAccessAudit {
   id: string;
-  userId: string;
+  _userId: string;
   patientId: string;
   dataType: string;
   action: 'read' | 'write' | 'delete' | 'export';
@@ -54,7 +54,7 @@ export interface PrivateLogEntry {
  */
 export interface AuditLogRequest {
   sessionId?: string;
-  userId: string;
+  _userId: string;
   action: string;
   eventType?: string; // Legacy support
   userRole?: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
@@ -116,7 +116,7 @@ export interface ComplianceReport {
 export interface AuditSearchCriteria {
   startDate?: string | Date;
   endDate?: string | Date;
-  userId?: string;
+  _userId?: string;
   userIds?: string[]; // Multiple user IDs
   sessionIds?: string[]; // Multiple session IDs
   action?: string;
@@ -128,7 +128,7 @@ export interface AuditSearchCriteria {
   dataClassifications?: MedicalDataClassification[]; // Multiple classifications
   ipAddress?: string;
   clinicId?: string;
-  complianceStatus?: 'compliant' | 'non_compliant' | 'pending';
+  complianceStatus?: 'compliant' | 'non_compliant' | 'pending'
   limit?: number;
   offset?: number;
   sortBy?: 'timestamp' | 'action' | 'userId';
@@ -184,7 +184,7 @@ export interface RTCAuditLogEntry {
   timestamp: Date | string;
   event?: string; // Add missing property
   sessionId?: string;
-  userId: string;
+  _userId: string;
   action: string;
   userRole?: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
   resourceType?: ResourceType; // Make optional
@@ -204,7 +204,7 @@ export interface RTCAuditLogEntry {
   };
   // Add missing properties from service usage
   severity?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING_REVIEW';
+  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING_REVIEW'
   violations?: Array<{ rule: string; description: string; severity: string }> | Record<string, unknown>;
   patientContext?: {
     patientId?: string;

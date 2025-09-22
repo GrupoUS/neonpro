@@ -142,7 +142,7 @@ export function healthcareTelemetryMiddleware() {
 function recordApiMetrics(
   c: Context,
   duration: number,
-  context: Record<string, string | number | boolean>,
+  _context: Record<string, string | number | boolean>,
 ) {
   // Only record metrics in production or when enabled
   if (
@@ -204,7 +204,7 @@ function recordApiError(
   c: Context,
   error: Error,
   duration: number,
-  context: Record<string, string | number | boolean>,
+  _context: Record<string, string | number | boolean>,
 ) {
   try {
     const { metrics } = require("@opentelemetry/api");

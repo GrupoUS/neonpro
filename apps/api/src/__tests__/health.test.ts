@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import app from '../app';
 
-describe('API health endpoints', () => {
+describe('API health endpoints',() => {
   it('GET /health returns ok', async () => {
     const res = await app.request('/health');
     expect(res.status).toBe(200);

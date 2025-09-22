@@ -20,8 +20,6 @@ const auditLogger = {
   warn: () => {},
   error: () => {},
 };
-import { z } from 'zod';
-
 // Security validation schemas
 const SensitiveDataSchema = z.object({
   name: z.string().regex(/^[A-Za-z\s]+$/),
@@ -259,7 +257,7 @@ export class AIRateLimiter {
     }, 60000);
   }
 
-  canMakeRequest(userId: string, clinicId: string): boolean {
+  canMakeRequest(_userId: string, clinicId: string): boolean {
     const key = `${userId}:${clinicId}`;
     const now = Date.now();
     const userRequests = this.requests.get(key) || [];
@@ -354,7 +352,7 @@ export function validateApiKeyRotation(apiKeyInfo: {
  * Logs AI interaction for audit trail compliance
  */
 export function logAIInteraction(interaction: {
-  userId: string;
+  _userId: string;
   patientId?: string;
   clinicId: string;
   provider: string;
@@ -364,7 +362,7 @@ export function logAIInteraction(interaction: {
 }): void {
   auditLogger.logSecurityEvent({
     event: 'ai_interaction',
-    userId: interaction.userId,
+    _userId: interaction.userId,
     patientId: interaction.patientId,
     clinicId: interaction.clinicId,
     provider: interaction.provider,
@@ -432,7 +430,7 @@ export const aiSecurityService = {
   validatePromptSecurity,
   validateMedicalTerminology,
   validateAIOutputSafety,
-  canMakeRequest: (userId: string, clinicId: string) =>
+  canMakeRequest: (_userId: string, clinicId: string) =>
     aiRateLimiter.canMakeRequest(userId, clinicId),
   validateApiKeyRotation,
   logAIInteraction,

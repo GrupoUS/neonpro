@@ -10,25 +10,14 @@
     }
   },
   "include": [
-    "apps/web/src/lib/ai/ai-chat-service.ts",
-    "apps/web/src/hooks/useAdvancedSearch.ts"
+    "apps/web/src/**/*"
   ],
   "exclude": [
     "node_modules",
     "dist",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "apps/web/src/examples/**",
-    "apps/web/src/lib/ai-chat/**",
-    "apps/web/src/lib/prefetching/**",
-    "apps/web/lib/**",
-    "apps/**/lib/**",
-    "packages/**",
-    "apps/web/src/services/**",
-    "apps/web/src/queries/**",
-    "apps/web/src/components/pdf/**",
-    "apps/web/src/routes/**",
-    "apps/web/src/pages/**",
-    "apps/web/src/components/**"
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
   ]
 }

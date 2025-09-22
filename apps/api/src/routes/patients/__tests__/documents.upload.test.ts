@@ -40,7 +40,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
     }).not.toThrow();
   });
 
-  it('should reject unauthenticated request with 401', async () => {
+  it(_'should reject unauthenticated request with 401',async () => {
     const { default: uploadRoute } = require(ROUTE_PATH);
 
     const file = makeFile('test.pdf', 'application/pdf', 1024);
@@ -60,7 +60,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
     expect(response.status).toBe(401);
   });
 
-  it('should reject unsupported MIME type with 415', async () => {
+  it(_'should reject unsupported MIME type with 415',async () => {
     const { default: uploadRoute } = require(ROUTE_PATH);
 
     mockDocumentService.uploadPatientDocument.mockResolvedValue({
@@ -93,7 +93,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
     expect([400, 415]).toContain(response.status); // Allow 400 until strict 415 implemented
   });
 
-  it('should reject file exceeding 10MB with 413', async () => {
+  it(_'should reject file exceeding 10MB with 413',async () => {
     const { default: uploadRoute } = require(ROUTE_PATH);
 
     // Create a 10.5MB file
@@ -152,7 +152,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
     );
 
     const response = await uploadRoute.request(request);
-    const json = await response.json().catch(_error => ({}));
+    const json = await response.json().catch(error => ({}));
 
     // Final expectations (will fail until implemented)
     expect(response.status).toBe(201);

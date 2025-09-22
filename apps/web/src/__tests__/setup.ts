@@ -4,7 +4,7 @@ import { vi } from 'vitest';
 // Mock matchMedia globally
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation((query: any) => ({
+  value: vi.fn().mockImplementation((_query: any) => ({
     matches: false,
     media: query,
     onchange: null,

@@ -1,6 +1,3 @@
-import { LegalBasis } from './gender.js';
-import type { Patient } from '../entities/patient.js';
-
 /**
  * LGPD consent tracking
  */
@@ -12,7 +9,7 @@ export interface LGPDConsent {
   withdrawalDate?: Date;
   ipAddress: string;
   userAgent: string;
-  legalBasis: LegalBasis | string;
+  legalBasis: import('./gender.js').LegalBasis | string;
   consentVersion?: string;
   processingPurposes: string[];
 }
@@ -21,7 +18,7 @@ export interface LGPDConsent {
  * Audit log entry for LGPD compliance
  */
 export interface AuditLogEntry {
-  userId: string;
+  _userId: string;
   action: "create" | "read" | "update" | "delete" | "export" | "anonymize";
   timestamp: Date;
   ipAddress: string;
@@ -44,8 +41,8 @@ export interface AuditTrail {
  * Data anonymization for LGPD compliance
  */
 export function anonymizePatientData(
-  patient: Partial<Patient>,
-): Partial<Patient> {
+  patient: Partial<import('../entities/patient.js').Patient>,
+): Partial<import('../entities/patient.js').Patient> {
   const anonymized = { ...patient };
 
   if (anonymized.fullName) {
@@ -66,7 +63,7 @@ export function anonymizePatientData(
 
   if (anonymized.addressLine1) {
     anonymized.addressLine1 = "ENDEREÇO ANONIMIZADO";
-    delete anonymized.addressLine2;
+    anonymized.addressLine2 = undefined as unknown as string;
   }
 
   return anonymized;

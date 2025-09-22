@@ -15,8 +15,6 @@
 
 import type { PrismaClient } from '@prisma/client';
 import * as crypto from 'crypto';
-import { z } from 'zod';
-
 // NGS2 Security Standards
 export const NGS2_SECURITY_LEVELS = {
   LEVEL_1: 'level_1', // Basic authentication
@@ -186,7 +184,7 @@ export const TelemedicineSessionSchema = z.object({
     z.object({
       action: z.string(),
       timestamp: z.date(),
-      userId: z.string(),
+      _userId: z.string(),
       userRole: z.string(),
       ipAddress: z.string(),
       details: z.record(z.any()),
@@ -201,7 +199,7 @@ export const TelemedicineSessionSchema = z.object({
       z.object({
         name: z.string(),
         phone: z.string(),
-        role: z.string(),
+        _role: z.string(),
         hospital: z.string().optional(),
       }),
     ),
@@ -225,7 +223,7 @@ export type TelemedicineSession = z.infer<typeof TelemedicineSessionSchema>;
 
 // NGS2 Authentication Context
 export const NGS2AuthContextSchema = z.object({
-  userId: z.string(),
+  _userId: z.string(),
   securityLevel: z.nativeEnum(NGS2_SECURITY_LEVELS),
   authenticationMethods: z.array(
     z.enum([
@@ -349,7 +347,7 @@ export class TelemedicineService {
           {
             action: 'session_created',
             timestamp: new Date(),
-            userId: professionalId,
+            _userId: professionalId,
             userRole: 'professional',
             ipAddress: '0.0.0.0', // Will be set from request
             details: {
@@ -382,7 +380,7 @@ export class TelemedicineService {
       });
 
       return session;
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to create telemedicine session: ${errorMessage}`);
     }
@@ -441,7 +439,7 @@ export class TelemedicineService {
       session.auditTrail.push({
         action: 'session_started',
         timestamp: new Date(),
-        userId: authContext.userId,
+        _userId: authContext.userId,
         userRole: 'user',
         ipAddress: '0.0.0.0',
         details: {
@@ -463,7 +461,7 @@ export class TelemedicineService {
         connectionDetails,
         qualityRequirements: QUALITY_THRESHOLDS,
       };
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to start session: ${errorMessage}`);
     }
@@ -666,7 +664,7 @@ export class TelemedicineService {
         timestamp: new Date(),
         isValid: true,
       };
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to create digital prescription: ${errorMessage}`);
     }
@@ -689,7 +687,7 @@ export class TelemedicineService {
     emergencyContacts: Array<{
       name: string;
       phone: string;
-      role: string;
+      _role: string;
       notified: boolean;
     }>;
     nearestHospital?: {
@@ -718,19 +716,19 @@ export class TelemedicineService {
         {
           name: 'SAMU 192',
           phone: '192',
-          role: 'emergency_medical_service',
+          _role: 'emergency_medical_service',
           notified: false,
         },
         {
           name: 'Bombeiros',
           phone: '193',
-          role: 'fire_department',
+          _role: 'fire_department',
           notified: false,
         },
         {
           name: 'Hospital de Referência',
           phone: '+55 11 1234-5678',
-          role: 'reference_hospital',
+          _role: 'reference_hospital',
           notified: false,
         },
       ];
@@ -739,7 +737,7 @@ export class TelemedicineService {
         contact => ({
           name: contact.name,
           phone: contact.phone,
-          role: contact.role,
+          _role: contact.role,
           hospital: contact.role === 'reference_hospital' ? contact.name : undefined,
         }),
       );
@@ -755,7 +753,7 @@ export class TelemedicineService {
       session.auditTrail.push({
         action: 'emergency_escalation_activated',
         timestamp: new Date(),
-        userId: 'system',
+        _userId: 'system',
         userRole: 'system',
         ipAddress: '0.0.0.0',
         details: {
@@ -784,7 +782,7 @@ export class TelemedicineService {
         emergencyContacts: notificationResults,
         nearestHospital,
       };
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Emergency escalation failed: ${errorMessage}`);
     }
@@ -843,7 +841,7 @@ export class TelemedicineService {
       session.auditTrail.push({
         action: 'session_ended',
         timestamp: endTime,
-        userId: endingUserId,
+        _userId: endingUserId,
         userRole: 'user',
         ipAddress: '0.0.0.0',
         details: {
@@ -875,7 +873,7 @@ export class TelemedicineService {
         complianceReport,
         archivalDetails,
       };
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`Failed to end session: ${errorMessage}`);
     }
@@ -928,7 +926,7 @@ export class TelemedicineService {
 
       this.cfmCache.set(professionalId, validation);
       return validation;
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new Error(`CFM validation failed: ${errorMessage}`);
     }
@@ -1126,7 +1124,7 @@ export class TelemedicineService {
     contacts: Array<{
       name: string;
       phone: string;
-      role: string;
+      _role: string;
       notified: boolean;
     }>,
     _escalationLevel: string,
@@ -1136,7 +1134,7 @@ export class TelemedicineService {
     Array<{
       name: string;
       phone: string;
-      role: string;
+      _role: string;
       notified: boolean;
     }>
   > {
@@ -1231,7 +1229,7 @@ export class TelemedicineService {
     const retentionPeriod = this.getRetentionPeriod(session.sessionType);
 
     // Encrypt session data
-    const _encryptedData = this.encryptSessionData(session);
+    const encryptedData = this.encryptSessionData(session);
 
     // In real implementation, store in secure archive
     console.log(`Archiving session ${session.id} with ID ${archiveId}`);
@@ -1299,16 +1297,14 @@ export class TelemedicineService {
   }> {
     const activeSessions = Array.from(this.activeSessions.values());
 
-    const sessionsByType = activeSessions.reduce(
-      (acc, session) => {
+    const sessionsByType = activeSessions.reduce((acc,_session) => {
         acc[session.sessionType] = (acc[session.sessionType] || 0) + 1;
         return acc;
       },
       {} as Record<TelemedicineSessionType, number>,
     );
 
-    const sessionsByStatus = activeSessions.reduce(
-      (acc, session) => {
+    const sessionsByStatus = activeSessions.reduce((acc,_session) => {
         acc[session.status] = (acc[session.status] || 0) + 1;
         return acc;
       },
@@ -1316,8 +1312,7 @@ export class TelemedicineService {
     );
 
     const averageQualityScore = activeSessions.length > 0
-      ? activeSessions.reduce(
-        (sum, session) => sum + session.qualityMetrics.qualityScore,
+      ? activeSessions.reduce((sum,_session) => sum + session.qualityMetrics.qualityScore,
         0,
       ) / activeSessions.length
       : 0;

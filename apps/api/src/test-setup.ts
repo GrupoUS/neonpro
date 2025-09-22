@@ -17,7 +17,7 @@ export const mockAuthMiddleware = (c: Context, next: Next) => {
       401,
     );
   }
-  c.set('user', { id: 'user-123', role: 'healthcare_professional' });
+  c.set('user', { id: 'user-123', _role: 'healthcare_professional' });
   c.set('userId', 'user-123');
   return next();
 };
@@ -51,7 +51,7 @@ export const mockAIAccessMiddleware = (c: Context, next: Next) => {
 export const testUser = {
   id: 'test-user-123',
   email: 'test@example.com',
-  role: 'healthcare_professional',
+  _role: 'healthcare_professional',
   name: 'Test User',
 };
 
@@ -71,7 +71,7 @@ export const testHealthcareProfessional = {
 
 // Test LGPD consent object
 export const testLGPDConsent = {
-  userId: 'test-user-123',
+  _userId: 'test-user-123',
   consentDate: new Date(),
   consentVersion: '1.0',
   purposes: ['healthcare_service', 'ai_assistance'],

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
     "outDir": "./dist",
@@ -31,24 +31,20 @@
     "baseUrl": ".",
     "types": ["node", "vitest", "vitest/globals"],
     "paths": {
-      "@/*": ["./src/*", "apps/web/src/*", "apps/api/src/*"],
+      "@/*": ["./src/*"],
       "@shared/*": ["packages/shared/src/*"],
       "@neonpro/*": ["packages/*/src"],
-      "@models/*": ["./src/models/*"],
-      "@services/*": ["./src/services/*"],
-      "@cli/*": ["./src/cli/*"],
-      "@lib/*": ["./src/lib/*"],
+      "@apps/*": ["apps/*/src"],
       "@tests/*": ["./tools/tests/*"]
     }
   },
   "include": [
     "apps/**/*",
-    "packages/**/*",
+    "packages/**/*", 
     "src/**/*",
     "tools/tests/**/*",
     "*.ts",
-    "*.tsx",
-    "src/types/shims.d.ts"
+    "*.tsx"
   ],
   "exclude": [
     "node_modules",

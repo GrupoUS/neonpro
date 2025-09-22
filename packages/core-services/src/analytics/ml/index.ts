@@ -12,13 +12,13 @@
  * await provider.initialize();
  *
  * const prediction = await provider.predict({
- *   type: 'readmission_risk',
+ *   type: 'readmission_risk_,
  *   features: {
  *     age: 65,
  *     gender: 'male',
- *     medical_history: ['diabetes', 'hypertension'],
- *     current_symptoms: ['chest_pain'],
- *     vital_signs: { bp: '140/90', hr: 80 }
+ *     medical_history: ['diabetes', 'hypertension_],
+ *     current_symptoms: ['chest_pain_],
+ *     vital_signs: { bp: '140/90_, hr: 80 }
  *   }
  * });
  * ```

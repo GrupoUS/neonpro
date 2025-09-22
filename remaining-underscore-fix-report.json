@@ -1,0 +1,14 @@
+{
+  "summary": {
+    "filesProcessed": 800,
+    "filesModified": 667,
+    "totalFixes": 4186,
+    "errors": 0,
+    "duration": 2.32
+  },
+  "errors": [],
+  "performance": {
+    "filesPerSecond": "344.83",
+    "fixesPerSecond": "1804.31"
+  }
+}

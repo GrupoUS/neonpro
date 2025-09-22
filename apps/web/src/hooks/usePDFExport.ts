@@ -74,7 +74,7 @@ export const usePDFExport = (): UsePDFExportReturn => {
       }
 
       return blob;
-    } catch (error) {
+    } catch (_error) {
       const errorMessage = error instanceof Error
         ? error.message
         : 'Erro desconhecido na geração do PDF';
@@ -118,8 +118,8 @@ const normalizeNameForFilename = (name: string): string => {
     .normalize('NFD') // Decompõe acentos
     .replace(/[\u0300-\u036f]/g, '') // Remove marcas diacríticas (acentos)
     .replace(/[^a-zA-Z0-9\s-]/g, '') // Remove caracteres especiais, mantendo espaços e hífens
-    .replace(/[-\s]+/g, '_') // Substitui espaços e hífens por underscore
-    .replace(/_+/g, '_') // Remove underscores duplicados
+    .replace(/[-\s]+/g, '') // Substitui espaços e hífens por underscore
+    .replace(/_+/g, '') // Remove underscores duplicados
     .toLowerCase();
 };
 

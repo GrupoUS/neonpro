@@ -279,8 +279,7 @@ export const NEONPRO_STANDARDS = {
  * function PatientManagement() {
  *   const [patients, setPatients] = useState<MobilePatientData[]>([]);
  *
- *   return (
- *     <MobilePatientList
+ *   return (_*     <MobilePatientList
  *       patients={patients}
  *       onPatientSelect={(id) => console.log('Selected:', id)}
  *       userRole="aesthetician"

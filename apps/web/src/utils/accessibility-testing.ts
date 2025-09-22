@@ -41,7 +41,7 @@ export interface AccessibilityIssue {
 
 export interface AccessibilityTestingOptions {
   includeHealthcareRules?: boolean;
-  context?: string;
+  _context?: string;
 }
 
 export interface AccessibilityTestResult {

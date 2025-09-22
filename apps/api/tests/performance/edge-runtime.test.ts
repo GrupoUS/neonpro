@@ -29,7 +29,7 @@ const mockPrismaAccelerate = {
     waiting: 0,
     size: 10,
   },
-  query: vi.fn(),
+  _query: vi.fn(),
   connect: vi.fn(),
   disconnect: vi.fn(),
 };

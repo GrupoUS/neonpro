@@ -1,8 +1,8 @@
 import { describe, test } from 'vitest';
 import { PatientDocumentService } from '../services/patient-document-service';
 
-describe('Debug Service Import', () => {
-  test('should import service correctly', () => {
+describe('Debug Service Import',() => {
+  test('should import service correctly',() => {
     console.log('PatientDocumentService:', PatientDocumentService);
     console.log(
       'typeof PatientDocumentService:',
@@ -10,7 +10,7 @@ describe('Debug Service Import', () => {
     );
 
     const service = new PatientDocumentService();
-    console.log('service:', service);
+    console.log('_service:', _service);
     console.log('service.constructor.name:', service.constructor.name);
     console.log(
       'Object.getOwnPropertyNames(service):',

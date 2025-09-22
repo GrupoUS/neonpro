@@ -541,11 +541,13 @@ function PatientDashboard() {
 
             {/* Patients listing: show cards on mobile, table on sm+ */}
             <div className='grid grid-cols-1 gap-4 sm:hidden'>
-              {patients.map(p => <PatientCard
-                key={p.id}
-                patient={p}
-                onClick={handlePatientClick}
-              />)}
+              {patients.map(p => (
+                <PatientCard
+                  key={p.id}
+                  patient={p}
+                  onClick={handlePatientClick}
+                />
+              ))}
             </div>
 
             <div className='overflow-x-auto hidden sm:block'>

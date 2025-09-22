@@ -63,8 +63,7 @@ export class ReminderScheduler {
     await this.processScheduledReminders();
 
     // Set up recurring interval
-    this.schedulerInterval = setInterval(
-      async () => {
+    this.schedulerInterval = setInterval(async () => {
         if (this.isRunning) {
           await this.processScheduledReminders();
         }
@@ -531,8 +530,7 @@ export class ReminderScheduler {
         throw error;
       }
 
-      const stats = data.reduce(
-        (acc, reminder) => {
+      const stats = data.reduce((acc,_reminder) => {
           acc.total++;
           acc[reminder.status] = (acc[reminder.status] || 0) + 1;
           if (reminder.processing_time_ms) {

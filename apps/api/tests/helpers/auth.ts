@@ -3,10 +3,10 @@
  * For healthcare compliance testing
  */
 
-export function createTestClient(options: { role: 'admin' | 'user' }) {
+export function createTestClient(options: { _role: 'admin' | 'user' }) {
   return {
-    role: options.role,
-    userId: 'test-user-id',
+    _role: options.role,
+    _userId: 'test-user-id',
     clinicId: 'test-clinic-id',
     headers: {
       'x-user-id': 'test-user-id',

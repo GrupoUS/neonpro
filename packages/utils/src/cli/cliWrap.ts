@@ -163,8 +163,7 @@ export class CLIWrapper {
         },
       });
     } else {
-      const commands = Array.from(this.commands.entries()).map(
-        ([name, cmd]) => ({
+      const commands = Array.from(this.commands.entries()).map(([name, cmd]) => ({
           name,
           description: cmd.description,
         }),

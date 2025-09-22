@@ -35,8 +35,8 @@ const mockPrisma = {
 };
 
 // Mock context for testing
-const createMockContext = (overrides = {}) => ({
-  userId: 'user-123',
+const createMockContext = (_overrides = {}) => ({
+  _userId: 'user-123',
   clinicId: 'clinic-456',
   userRole: 'professional',
   professionalId: 'prof-789',
@@ -50,15 +50,15 @@ const createMockContext = (overrides = {}) => ({
   ...overrides,
 });
 
-describe('Enhanced Healthcare Middleware Chain', () => {
+describe(_'Enhanced Healthcare Middleware Chain'), () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Reset performance timing
     vi.spyOn(performance, 'now').mockReturnValue(0);
   });
 
-  describe('T021: LGPD Audit Middleware', () => {
-    it('should enforce data minimization for patient list operations', async () => {
+  describe('T021: LGPD Audit Middleware'), () => {
+    it(_'should enforce data minimization for patient list operations',async () => {
       const ctx = createMockContext();
       const next = vi.fn().mockResolvedValue([
         {
@@ -96,7 +96,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
       // Should create audit log entry
       expect(mockPrisma.auditTrail.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
-          userId: 'user-123',
+          _userId: 'user-123',
           clinicId: 'clinic-456',
           action: 'VIEW',
           resource: 'patients.list',
@@ -105,7 +105,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
       });
     });
 
-    it('should generate cryptographic proof for sensitive operations', async () => {
+    it(_'should generate cryptographic proof for sensitive operations',async () => {
       const ctx = createMockContext();
       const next = vi.fn().mockResolvedValue({ success: true });
 
@@ -131,8 +131,8 @@ describe('Enhanced Healthcare Middleware Chain', () => {
     });
   });
 
-  describe('T022: CFM Validation Middleware', () => {
-    it('should validate CFM license for medical operations', async () => {
+  describe('T022: CFM Validation Middleware'), () => {
+    it(_'should validate CFM license for medical operations',async () => {
       const ctx = createMockContext();
       const next = vi.fn().mockResolvedValue({ success: true });
 
@@ -182,7 +182,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
       expect(next).toHaveBeenCalled();
     });
 
-    it('should reject operations with invalid CFM license', async () => {
+    it(_'should reject operations with invalid CFM license',async () => {
       const ctx = createMockContext();
       const next = vi.fn();
 
@@ -208,7 +208,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
       expect(next).not.toHaveBeenCalled();
     });
 
-    it('should require ICP-Brasil certificate for telemedicine operations', async () => {
+    it(_'should require ICP-Brasil certificate for telemedicine operations',async () => {
       const ctx = createMockContext();
       const next = vi.fn();
 
@@ -240,8 +240,8 @@ describe('Enhanced Healthcare Middleware Chain', () => {
     });
   });
 
-  describe('T023: Prisma RLS Enforcement Middleware', () => {
-    it('should enforce clinic-based data isolation', async () => {
+  describe('T023: Prisma RLS Enforcement Middleware'), () => {
+    it(_'should enforce clinic-based data isolation',async () => {
       const ctx = createMockContext();
       const next = vi.fn().mockResolvedValue([]);
 
@@ -270,10 +270,10 @@ describe('Enhanced Healthcare Middleware Chain', () => {
       expect(next).toHaveBeenCalled();
       expect(ctx.rlsContext).toBeDefined();
       expect(ctx.rlsContext.clinicId).toBe('clinic-456');
-      expect(ctx.rlsContext.userId).toBe('user-123');
+      expect(ctx.rlsContext._userId).toBe('user-123');
     });
 
-    it('should deny access without clinic context', async () => {
+    it(_'should deny access without clinic context',async () => {
       const ctx = createMockContext({ clinicId: null });
       const next = vi.fn();
 
@@ -292,7 +292,7 @@ describe('Enhanced Healthcare Middleware Chain', () => {
       expect(next).not.toHaveBeenCalled();
     });
 
-    it('should allow emergency access with proper audit', async () => {
+    it(_'should allow emergency access with proper audit',async () => {
       const ctx = createMockContext({
         clinicId: null,
         isEmergency: true,
@@ -315,8 +315,8 @@ describe('Enhanced Healthcare Middleware Chain', () => {
     });
   });
 
-  describe('Performance Requirements', () => {
-    it('should complete middleware chain within 200ms target', async () => {
+  describe(_'Performance Requirements'), () => {
+    it(_'should complete middleware chain within 200ms target',async () => {
       const ctx = createMockContext();
       let callCount = 0;
 

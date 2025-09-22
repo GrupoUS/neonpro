@@ -12,8 +12,6 @@
 import { createHono, Hono } from 'hono';
 import { hc } from 'hono/client';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { z } from 'zod';
-
 // Import security policy services and types
 import {
   applySecurityPolicyToEndpoint,
@@ -68,6 +66,8 @@ vi.mock('@/services/csp-service');
 vi.mock('@/services/rate-limit-service');
 vi.mock('@/services/security-headers-service');
 vi.mock('@/services/audit-service');
+
+import { z } from 'zod';
 
 // Test schemas for contract validation
 const SecurityPolicySchema = z.object({
@@ -247,7 +247,7 @@ const AuditLogSchema = z.object({
   severity: z.enum(['info', 'warning', 'error', 'critical']),
   category: z.enum(['security', 'compliance', 'performance', 'operational']),
   source: z.string(),
-  userId: z.string().optional(),
+  _userId: z.string().optional(),
   sessionId: z.string().optional(),
   ipAddress: z.string().optional(),
   userAgent: z.string().optional(),
@@ -277,7 +277,7 @@ const SecurityEvaluationRequestSchema = z.object({
   queryParams: z.record(z.string()).optional(),
   userContext: z
     .object({
-      userId: z.string().optional(),
+      _userId: z.string().optional(),
       roles: z.array(z.string()).optional(),
       permissions: z.array(z.string()).optional(),
       ipAddress: z.string().optional(),
@@ -536,7 +536,7 @@ const generateValidAuditLog = () => ({
   severity: 'info' as const,
   category: 'security' as const,
   source: 'security-policy-service',
-  userId: 'usr_healthcare_12345',
+  _userId: 'usr_healthcare_12345',
   sessionId: 'sess_67890',
   ipAddress: '192.168.1.100',
   userAgent: 'Mozilla/5.0 (compatible; Healthcare Platform)',
@@ -578,7 +578,7 @@ const generateValidEvaluationRequest = () => ({
     include: 'medical_history',
   },
   userContext: {
-    userId: 'usr_healthcare_12345',
+    _userId: 'usr_healthcare_12345',
     roles: ['doctor', 'admin'],
     permissions: ['read_patients', 'write_patients'],
     ipAddress: '192.168.1.100',
@@ -811,7 +811,7 @@ describe('Security Policies Contract Tests', () => {
       (listSecurityPolicies as Mock).mockResolvedValue(lgpdCompliantPolicies);
 
       const response = await client.api.security.policies.$get({
-        query: { compliance: 'lgpd' },
+        _query: { compliance: 'lgpd' },
       });
 
       expect(response.status).toBe(200);
@@ -1199,7 +1199,7 @@ describe('Security Policies Contract Tests', () => {
       (getAuditLogs as Mock).mockResolvedValue(healthcareAuditLogs);
 
       const response = await client.api.security.audit.logs.$get({
-        query: { compliance: 'healthcare' },
+        _query: { compliance: 'healthcare' },
       });
 
       expect(response.status).toBe(200);

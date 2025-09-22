@@ -21,7 +21,7 @@ export interface Database {
           medical_license: string | null;
           department: string | null;
           phone: string | null;
-          role: string | null;
+          _role: string | null;
           google_provider_id: string | null;
           google_picture: string | null;
           google_verified_email: boolean | null;
@@ -73,7 +73,7 @@ export interface Database {
           medical_license?: string | null;
           department?: string | null;
           phone?: string | null;
-          role?: string | null;
+          _role?: string | null;
           google_provider_id?: string | null;
           google_picture?: string | null;
           google_verified_email?: boolean | null;
@@ -125,7 +125,7 @@ export interface Database {
           medical_license?: string | null;
           department?: string | null;
           phone?: string | null;
-          role?: string | null;
+          _role?: string | null;
           google_provider_id?: string | null;
           google_picture?: string | null;
           google_verified_email?: boolean | null;

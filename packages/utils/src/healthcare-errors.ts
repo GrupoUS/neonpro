@@ -11,7 +11,7 @@
  */
 
 // Error severity levels
-import { TRPCError } from '@trpc/server';
+import { TRPCError, TRPCErrorOptions } from '@trpc/server';
 
 export enum ErrorSeverity {
   LOW = 'low',
@@ -169,7 +169,7 @@ export class HealthcareAuthenticationError extends HealthcareError {
 export class HealthcareAuthorizationError extends HealthcareError {
   constructor(message: string, metadata?: Record<string, unknown>) {
     super(message, ErrorCategory.AUTHORIZATION, ErrorSeverity.HIGH, {
-      code: 'INSUFFICIENT_PERMISSIONS',
+      code: 'INSUFFICIENT_PERMISSIONS_',
       metadata
     });
     this.name = 'HealthcareAuthorizationError';
@@ -207,7 +207,7 @@ export class HealthcareComplianceError extends HealthcareError {
 export class HealthcareSystemError extends HealthcareError {
   constructor(message: string, cause?: Error, metadata?: Record<string, unknown>) {
     super(message, ErrorCategory.SYSTEM, ErrorSeverity.CRITICAL, {
-      code: 'SYSTEM_ERROR',
+      code: 'SYSTEM_ERROR_',
       cause,
       metadata
     });
@@ -334,13 +334,13 @@ export function validateErrorCompliance(
 /**
  * Healthcare-specific error factory functions
  */
-export const HealthcareErrors = {
+export const _HealthcareErrors = {
   patientNotFound: (patientId?: string) =>
     new HealthcareError(
       'Patient not found',
       ErrorCategory.BUSINESS_LOGIC,
       ErrorSeverity.MEDIUM,
-      { code: 'PATIENT_NOT_FOUND', metadata: { patientId } }
+      { code: 'PATIENT_NOT_FOUND_', metadata: { patientId } }
     ),
 
   appointmentConflict: (appointmentId?: string) =>
@@ -348,7 +348,7 @@ export const HealthcareErrors = {
       'Appointment conflict detected',
       ErrorCategory.BUSINESS_LOGIC,
       ErrorSeverity.MEDIUM,
-      { code: 'APPOINTMENT_CONFLICT', metadata: { appointmentId } }
+      { code: 'APPOINTMENT_CONFLICT_', metadata: { appointmentId } }
     ),
 
   medicalRecordAccessDenied: (recordId?: string) =>
@@ -356,7 +356,7 @@ export const HealthcareErrors = {
       'Medical record access denied',
       ErrorCategory.AUTHORIZATION,
       ErrorSeverity.HIGH,
-      { code: 'RECORD_ACCESS_DENIED', metadata: { recordId } }
+      { code: 'RECORD_ACCESS_DENIED_', metadata: { recordId } }
     ),
 
   crmVerificationFailed: (crmNumber?: string) =>
@@ -364,7 +364,7 @@ export const HealthcareErrors = {
       'CRM verification failed',
       ErrorCategory.HEALTHCARE_COMPLIANCE,
       ErrorSeverity.HIGH,
-      { code: 'INVALID_CRM', metadata: { crmNumber } }
+      { code: 'INVALID_CRM_', metadata: { crmNumber } }
     ),
 
   lgpdConsentRequired: (dataType: string) =>
@@ -400,7 +400,7 @@ export class HealthcareTRPCError extends TRPCError {
   public readonly metadata?: Record<string, unknown>;
 
   constructor(
-    code: any,
+    code: TRPCErrorOptions['code'],
     message: string,
     healthcareCode?: string,
     metadata?: Record<string, unknown>
@@ -420,7 +420,7 @@ export class HealthcareTRPCError extends TRPCError {
   public getAuditInfo() {
     return {
       errorId: this.id,
-      code: (this as any).code,
+      code: this.code,
       healthcareCode: this.healthcareCode,
       healthcareContext: this.healthcareContext,
       lgpdCompliant: this.lgpdCompliant,
@@ -442,15 +442,15 @@ export class HealthcareTRPCError extends TRPCError {
   public toJSON() {
     return {
       id: this.id,
-      name: (this as any).name,
-      message: (this as any).message,
-      code: (this as any).code,
+      name: this.name,
+      message: this.message,
+      code: this.code,
       healthcareCode: this.healthcareCode,
       healthcareContext: this.healthcareContext,
       lgpdCompliant: this.lgpdCompliant,
       timestamp: this.timestamp.toISOString(),
       metadata: this.metadata,
-      stack: (this as any).stack,
+      stack: this.stack,
     };
   }
 }
