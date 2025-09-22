@@ -29,11 +29,7 @@
       "@neonpro/utils": ["../../packages/utils/dist"],
       "@neonpro/utils/*": ["../../packages/utils/dist/*"]
     },
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+
   },
   "include": ["src/**/*", ".next/types/**/*.ts"],
   "exclude": [

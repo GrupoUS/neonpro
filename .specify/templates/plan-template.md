@@ -1,3 +1,4 @@
+
 # Implementation Plan: [FEATURE]
 
 **Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
@@ -46,26 +47,7 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-### Aesthetic Clinic Compliance Gates
-- [ ] **Aesthetic Clinic-First Development**: Feature prioritizes client safety and data privacy (LGPD)
-- [ ] **AI-Native Architecture**: Systems designed with AI integration as core requirement
-- [ ] **Test-Driven Aesthetic Clinic**: TDD mandatory for aesthetic-critical features with proper test cases
-- [ ] **Brazilian Regulatory Compliance**: All code complies with LGPD, ANVISA, CFM, COREN, and CBO standards
-- [ ] **Performance for Aesthetic Clinic Environments**: Meets aesthetic clinic-grade performance standards (<200ms appointment response)
-- [ ] **HTTPS Security**: Implements HTTPS Everywhere with TLS 1.3+, HSTS, and comprehensive security headers
-- [ ] **Security & Privacy**: Implements data protection, role-based access control, and audit trails
-- [ ] **Quality Gates**: Aesthetic clinic testing requirements, code quality standards, and performance requirements met
-
-### Technology Stack Validation
-- [ ] Frontend: Uses TanStack Router, Vite, React 19, TypeScript 5.9.2, Tailwind CSS, shadcn/ui v4
-- [ ] Backend: Uses tRPC v11.0.0, Supabase with RLS, comprehensive audit logging
-- [ ] Infrastructure: Uses Turborepo, PNPM, Bun, comprehensive testing with Vitest/Playwright
-
-### Constitutional Compliance Assessment
-- [ ] KISS Principle: Simplest solution chosen that meets aesthetic clinic requirements
-- [ ] YAGNI Principle: Building only what current aesthetic clinic requirements specify
-- [ ] Chain of Thought: Problems broken into sequential steps with aesthetic clinic context validation
-- [ ] A.P.T.E Methodology: Analysis → Planning → Thinking → Execution workflow followed
+[Gates determined based on constitution file]
 
 ## Project Structure
 
@@ -163,7 +145,8 @@ ios/ or android/
    - Quickstart test = story validation steps
 
 5. **Update agent file incrementally** (O(1) operation):
-   - Run `.specify/scripts/bash/update-agent-context.sh qwen` for your AI assistant
+   - Run `.specify/scripts/bash/update-agent-context.sh kilocode`
+     **IMPORTANT**: Execute it exactly as specified above. Do not add or remove any arguments.
    - If exists: Add only NEW tech from current plan
    - Preserve manual additions between markers
    - Update recent changes (keep last 3)
@@ -226,4 +209,4 @@ ios/ or android/
 - [ ] Complexity deviations documented
 
 ---
-*Based on Constitution v1.1.0 - See `.specify/memory/constitution.md`*
+*Based on Constitution v2.1.1 - See `/memory/constitution.md`*

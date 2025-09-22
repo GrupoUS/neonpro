@@ -123,4 +123,8 @@
     "chat.fontFamily": "Cousine Nerd Font",
     "chat.fontSize": 14,
     "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.tsserver.maxTsServerMemory": 4096,
+    "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+    "typescript.preferences.preferTypeOnlyAutoImports": true,
+    "typescript.disableAutomaticTypeAcquisition": true,
 }

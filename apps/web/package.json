@@ -186,6 +186,6 @@
     "vite-bundle-analyzer": "^1.2.3",
     "vitest": "^3.2.4",
     "vitest-axe": "^0.1.0"
-  }
+  },
+  "packageManager": "bun@1.2.22"
 }
-packageManager="bun@1.2.22"

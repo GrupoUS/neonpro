@@ -1,0 +1,10 @@
+{
+  "name": "neonpro-deployment",
+  "version": "1.0.0",
+  "description": "NeonPro Healthcare Platform Deployment",
+  "private": true,
+  "scripts": {
+    "deploy": "vercel deploy",
+    "deploy:prod": "vercel deploy --prod"
+  }
+}
