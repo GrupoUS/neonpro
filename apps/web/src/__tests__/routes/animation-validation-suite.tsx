@@ -1,4 +1,4 @@
-import { Alert } from '@neonpro/ui';
+import { Alert } from '@/components/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 

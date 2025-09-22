@@ -1,6 +1,6 @@
 // import React from 'react'; // Not needed in this component
-import { Badge } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
+import { Badge } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { Link } from '@tanstack/react-router';
 import { CheckCircle } from 'lucide-react';
 import { useState } from 'react';

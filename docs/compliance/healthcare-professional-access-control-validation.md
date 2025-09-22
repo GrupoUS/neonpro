@@ -1,22 +1,22 @@
-# Healthcare Professional Access Control Validation - NeonPro Healthcare Platform
+# Aesthetic Professional Access Control Validation - NeonPro Aesthetic Platform
 
 ## Document Information
 
-- **Version**: 1.0
-- **Last Updated**: 2025-09-18
-- **Document Type**: Access Control Validation Framework
-- **Compliance Framework**: CFM Resolution 2,314/2022, LGPD Article 46
+- **Version**: 2.0
+- **Last Updated**: 2025-09-22
+- **Document Type**: Aesthetic Professional Access Control Framework
+- **Compliance Framework**: Professional Council Regulations, LGPD Article 46
 - **Validation Frequency**: Daily automated + Monthly manual review
-- **Next Review**: 2025-10-18
+- **Next Review**: 2025-10-22
 
 ## Executive Summary
 
-This document establishes comprehensive validation procedures for healthcare professional access controls in compliance with CFM (Conselho Federal de Medicina) regulations and LGPD requirements for Brazilian aesthetic clinic operations.
+This document establishes streamlined validation procedures for aesthetic professional access controls in compliance with Brazilian professional council regulations and LGPD requirements for aesthetic clinic operations. The framework supports all aesthetic professionals including doctors, nurses, aestheticians, and clinic staff.
 
 **Key Requirements:**
 
-- Real-time CFM license validation
-- Role-based access control (RBAC) with specialty verification
+- Real-time professional license validation
+- Role-based access control (RBAC) with aesthetic specialization verification
 - Continuous monitoring and audit logging
 - Automated compliance reporting
 
@@ -24,34 +24,36 @@ This document establishes comprehensive validation procedures for healthcare pro
 
 ## 1. Professional Verification Framework
 
-### CFM License Validation Process
+### Professional License Validation Process
 
 #### Primary Validation Sources
 
-1. **CFM National Registry**: https://portal.cfm.org.br/
-2. **CRM Regional Councils**: State-specific medical councils
-3. **ANS Registry**: National Supplementary Health Agency
-4. **Specialty Board Certifications**: SBCD, SBCP, etc.
+1. **CFM National Registry**: https://portal.cfm.org.br/ (Medical Doctors)
+2. **COREN Registry**: https://portal.coren-sp.gov.br/ (Nurses)
+3. **CFF Registry**: https://www.cff.org.br/ (Pharmacists/Biochemists)
+4. **Aesthetic Professional Certifications**: CNEP, ABEPE, etc.
 
 #### Real-Time Validation Procedure
 
 ```typescript
-interface CFMLicenseValidation {
-  cfm_number: string;
+interface ProfessionalLicenseValidation {
+  license_number: string;
   professional_name: string;
-  specialty: "dermatologia" | "cirurgia_plastica" | "clinica_geral";
+  council_type: "CFM" | "COREN" | "CFF" | "CNEP";
+  specialty: "dermatologia" | "cirurgia_plastica" | "enfermagem_estetica" | "estetica";
   license_status: "active" | "suspended" | "cancelled" | "expired";
   expiration_date: string;
   restrictions: string[];
   authorized_procedures: AestheticProcedure[];
 }
 
-// Daily CFM validation check
-async function validateCFMLicense(
-  cfmNumber: string,
-): Promise<CFMLicenseValidation> {
-  // 1. Query CFM portal API
-  // 2. Verify regional CRM status
+// Daily professional validation check
+async function validateProfessionalLicense(
+  licenseNumber: string,
+  councilType: string,
+): Promise<ProfessionalLicenseValidation> {
+  // 1. Query relevant professional council API
+  // 2. Verify regional council status
   // 3. Check specialty certifications
   // 4. Validate procedure authorizations
   // 5. Update internal database
@@ -64,7 +66,7 @@ async function validateCFMLicense(
 
 ```
 Level 1 - Full Access:
-✅ All patient data access
+✅ All client data access
 ✅ All aesthetic procedures
 ✅ Prescription capabilities
 ✅ Medical decision authority
@@ -78,32 +80,34 @@ Required Validations:
 □ Continuing education compliance
 ```
 
-#### Aesthetic Specialists (Non-Medical)
+#### Aesthetic Professionals (Licensed)
 
 ```
-Level 2 - Limited Access:
-✅ Non-invasive procedures only
-✅ Patient consultation records
-✅ Treatment history (limited)
-❌ Medical prescriptions
-❌ Invasive procedures
+Level 2 - Specialized Access:
+✅ Authorized aesthetic procedures
+✅ Client consultation records
+✅ Treatment history (authorized scope)
+✅ Before/after photo management
+❌ Medical prescriptions (unless authorized)
+❌ Invasive medical procedures
 ❌ Emergency medical decisions
 
 Required Validations:
-□ Professional certification (CNEP, ABEPE)
+□ Professional license (COREN/CFF/CNEP)
 □ Specialized training certificates
 □ Liability insurance verification
 □ Continuing education compliance
 ```
 
-#### Support Staff
+#### Clinic Staff
 
 ```
-Level 3 - Administrative Access:
+Level 3 - Operational Access:
 ✅ Appointment scheduling
-✅ Basic patient contact information
+✅ Basic client contact information
 ✅ Payment processing
-❌ Medical/procedure records
+✅ Photo upload assistance
+❌ Treatment records
 ❌ Sensitive health data
 ❌ Clinical decisions
 
@@ -122,25 +126,26 @@ Required Validations:
 
 #### Medical Procedures Access Matrix
 
-| Procedure Type   | CFM Doctor | Aesthetic Specialist | Support Staff | Patient      |
-| ---------------- | ---------- | -------------------- | ------------- | ------------ |
-| Botox Injections | ✅ Full    | ❌ Prohibited        | ❌ No Access  | 👁️ View Only |
-| Dermal Fillers   | ✅ Full    | ❌ Prohibited        | ❌ No Access  | 👁️ View Only |
-| Chemical Peels   | ✅ Full    | ✅ Level 1-2 Only    | ❌ No Access  | 👁️ View Only |
-| Laser Treatment  | ✅ Full    | ✅ Certified Only    | ❌ No Access  | 👁️ View Only |
-| Facial Cleansing | ✅ Full    | ✅ Full              | ❌ No Access  | 👁️ View Only |
-| Microneedling    | ✅ Full    | ✅ Certified Only    | ❌ No Access  | 👁️ View Only |
+| Procedure Type     | Medical Doctor | Aesthetic Professional | Clinic Staff  | Client       |
+| ------------------ | ------------- | --------------------- | ------------- | ------------ |
+| Botox Injections   | ✅ Full        | ❌ Prohibited         | ❌ No Access   | 👁️ View Only |
+| Dermal Fillers     | ✅ Full        | ❌ Prohibited         | ❌ No Access   | 👁️ View Only |
+| Chemical Peels     | ✅ Full        | ✅ Certified Only     | ❌ No Access   | 👁️ View Only |
+| Laser Treatment    | ✅ Full        | ✅ Certified Only     | ❌ No Access   | 👁️ View Only |
+| Facial Treatments  | ✅ Full        | ✅ Full               | ❌ No Access   | 👁️ View Only |
+| Microneedling      | ✅ Full        | ✅ Certified Only     | ❌ No Access   | 👁️ View Only |
+| Photo Management   | ✅ Full        | ✅ Full               | ✅ Upload Only | 👁️ Own Photos |
 
 #### Data Access Permissions Matrix
 
-| Data Category     | CFM Doctor | Aesthetic Specialist | Support Staff | Patient        |
-| ----------------- | ---------- | -------------------- | ------------- | -------------- |
-| Medical History   | ✅ Full    | 📋 Relevant Only     | ❌ No Access  | 👁️ Own Data    |
-| Procedure Records | ✅ Full    | 👁️ Performed Only    | ❌ No Access  | 👁️ Own Data    |
-| Payment Info      | 👁️ Summary | ❌ No Access         | ✅ Processing | 👁️ Own Data    |
-| Contact Details   | ✅ Full    | 📋 Business Only     | ✅ Basic      | ✅ Own Data    |
-| Clinical Photos   | ✅ Full    | 👁️ Related Only      | ❌ No Access  | 👁️ Own Photos  |
-| Lab Results       | ✅ Full    | ❌ No Access         | ❌ No Access  | 👁️ Own Results |
+| Data Category        | Medical Doctor | Aesthetic Professional | Clinic Staff  | Client          |
+| -------------------- | ------------- | --------------------- | ------------- | --------------- |
+| Treatment History    | ✅ Full        | 👁️ Authorized Only    | ❌ No Access   | 👁️ Own Data     |
+| Procedure Records    | ✅ Full        | 👁️ Performed Only     | ❌ No Access   | 👁️ Own Data     |
+| Payment Info         | 👁️ Summary    | ❌ No Access           | ✅ Processing  | 👁️ Own Data     |
+| Contact Details      | ✅ Full        | 📋 Business Only      | ✅ Basic       | ✅ Own Data      |
+| Before/After Photos  | ✅ Full        | ✅ Full                | ✅ Upload Only | 👁️ Own Photos   |
+| Consultation Notes   | ✅ Full        | 👁️ Related Only       | ❌ No Access   | 👁️ Own Data     |
 
 ### Dynamic Access Control Rules
 
@@ -188,12 +193,12 @@ interface LocationAccessControl {
 
 ```bash
 #!/bin/bash
-# Daily CFM License Validation Script
+# Daily Professional License Validation Script
 
 echo "Starting daily professional validation - $(date)"
 
-# 1. CFM License Status Check
-python3 /scripts/validate_cfm_licenses.py
+# 1. Professional License Status Check
+python3 /scripts/validate_professional_licenses.py
 
 # 2. Specialty Certification Verification
 python3 /scripts/check_specialty_certs.py
@@ -231,13 +236,13 @@ const alerts: ValidationAlert[] = [
     alert_type: "license_expiring",
     professional_id: "CFM123456",
     severity: "high",
-    message: "CFM license expires in 30 days",
+    message: "Professional license expires in 30 days",
     recommended_action: "Contact professional for license renewal",
     auto_remediation: false,
   },
   {
     alert_type: "unauthorized_access",
-    professional_id: "CFM789012",
+    professional_id: "COREN789012",
     severity: "critical",
     message: "Access attempt outside authorized hours",
     recommended_action: "Immediately disable account and investigate",
@@ -294,10 +299,11 @@ interface WeeklyAuditReport {
 
 ```typescript
 interface EmergencyAccess {
-  emergency_type: "patient_safety" | "system_failure" | "data_recovery";
+  emergency_type: "client_safety" | "system_failure" | "data_recovery";
   requesting_professional: string;
-  cfm_license: string;
-  patient_affected: string;
+  professional_license: string;
+  council_type: string;
+  client_affected: string;
   justification: string;
   supervisor_approval: string;
   duration_minutes: number;
@@ -311,7 +317,7 @@ interface EmergencyAccess {
 async function grantEmergencyAccess(
   request: EmergencyAccess,
 ): Promise<boolean> {
-  // 1. Verify CFM license validity
+  // 1. Verify professional license validity
   // 2. Confirm supervisor approval
   // 3. Log emergency access grant
   // 4. Enable temporary elevated permissions
@@ -325,8 +331,8 @@ async function grantEmergencyAccess(
 ```
 Level 1 - Clinic Director: +55 11 9999-1111
 Level 2 - Medical Director: +55 11 9999-2222
-Level 3 - Chief Medical Officer: +55 11 9999-3333
-Level 4 - CFM Regional Council: +55 11 3017-9999
+Level 3 - Clinic Manager: +55 11 9999-3333
+Level 4 - Professional Council: +55 11 3017-9999
 ```
 
 ### Post-Emergency Validation

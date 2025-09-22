@@ -34,9 +34,9 @@
     }
   },
   "scripts": {
-    "build": "tsc -b",
-    "dev": "tsc -w -p tsconfig.json",
-    "type-check": "tsc -p tsconfig.json --noEmit",
+    "build": "bun x tsc -b",
+    "dev": "bun x tsc -w -p tsconfig.json",
+    "type-check": "bun x tsc -p tsconfig.json --noEmit",
     "clean": "rimraf dist",
     "test": "vitest run",
     "test:watch": "vitest",

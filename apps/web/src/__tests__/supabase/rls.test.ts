@@ -91,11 +91,6 @@ describe(('Supabase RLS - Security Auditor Coordinated', () => {
       // Validate LGPD compliance
       if (data && data.length > 0) {
         data.forEach(patient => {
-<<<<<<< HEAD
-          expect(patient.organization_id).toBe(testOrg.id
-=======
-          expect(patient.organization_id).toBe(testOrg.id);
->>>>>>> origin/main
           expect(patient._test_data).toBe(true);
           expect(HealthcareTestValidators.validateLGPDCompliance(patient)).toBe(
             true,

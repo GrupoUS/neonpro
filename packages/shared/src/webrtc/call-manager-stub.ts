@@ -274,8 +274,8 @@ export class RTCCallManagerStub implements RTCCallManager {
       },
       connection: {
         state: session.state,
-        iceConnectionState: "connected" as RTCIceConnectionState,
-        bundlePolicy: "balanced" as RTCBundlePolicy,
+        iceConnectionState: "connected" as "connected" | "disconnected" | "failed",
+        bundlePolicy: "balanced" as "balanced" | "max-bundle" | "max-compat",
         signalStrength: 80 + Math.random() * 20, // 0-100
         bandwidth: {
           available: 2000 + Math.random() * 1000, // kbps

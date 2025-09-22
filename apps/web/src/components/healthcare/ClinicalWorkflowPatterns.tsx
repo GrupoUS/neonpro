@@ -18,7 +18,7 @@
 import { Badge } from '@/components/ui';
 import { NeumorphicCard } from '@/components/ui/neonpro-neumorphic';
 import { formatCPF, formatDateTime } from '@/utils/brazilian-formatters';
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 import {
   Activity,
   AlertCircle,

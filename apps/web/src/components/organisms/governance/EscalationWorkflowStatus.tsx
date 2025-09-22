@@ -8,8 +8,8 @@ import {
 } from '@/components/molecules/table';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { Escalations } from '@/lib/governance-service';
-import { Badge } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
+import { Badge } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { useQuery } from '@tanstack/react-query';
 
 type EscalationPriority = 'low' | 'medium' | 'high' | 'critical';

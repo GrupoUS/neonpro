@@ -114,27 +114,6 @@ describe(('ProfessionalDashboard Component', () => {
       onViewActivity: vi.fn(),
     };
 
-<<<<<<< HEAD
-    render(<ProfessionalDashboard {...props} />
-
-    expect(screen.getByText('Pacientes Hoje')).toBeInTheDocument(
-    expect(screen.getByText('5')).toBeInTheDocument(
-    expect(screen.getByText('Receita do Mês')).toBeInTheDocument(
-  }
-
-  it(('should handle activity click events', () => {
-    const onViewActivity = vi.fn(
-=======
-    render(<ProfessionalDashboard {...props} />);
-
-    expect(screen.getByText('Pacientes Hoje')).toBeInTheDocument();
-    expect(screen.getByText('5')).toBeInTheDocument();
-    expect(screen.getByText('Receita do Mês')).toBeInTheDocument();
-  });
-
-  it(('should handle activity click events', () => {
-    const onViewActivity = vi.fn();
->>>>>>> origin/main
     const props: ProfessionalDashboardProps = {
       metrics: mockMetrics,
       recentActivities: mockActivities,
@@ -147,11 +126,6 @@ describe(('ProfessionalDashboard Component', () => {
       onViewActivity,
     };
 
-<<<<<<< HEAD
-    render(<ProfessionalDashboard {...props} />
-=======
-    render(<ProfessionalDashboard {...props} />);
->>>>>>> origin/main
 
     // This test will help identify the onViewActivity parameter issue
     // The component uses _onViewActivity but interface expects onViewActivity
@@ -170,20 +144,3 @@ describe(('ProfessionalDashboard Component', () => {
       onViewActivity: vi.fn(),
     };
 
-<<<<<<< HEAD
-    render(<ProfessionalDashboard {...props} />
-
-    expect(screen.getByText('Status de Conformidade')).toBeInTheDocument(
-    expect(screen.getByText('LGPD')).toBeInTheDocument(
-    expect(screen.getByText('ANVISA')).toBeInTheDocument(
-  }
-}
-=======
-    render(<ProfessionalDashboard {...props} />);
-
-    expect(screen.getByText('Status de Conformidade')).toBeInTheDocument();
-    expect(screen.getByText('LGPD')).toBeInTheDocument();
-    expect(screen.getByText('ANVISA')).toBeInTheDocument();
-  });
-});
->>>>>>> origin/main

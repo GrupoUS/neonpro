@@ -316,7 +316,7 @@ export class ComplianceValidator {
    * Get risk level based on violations
    */
   private static getViolationRiskLevel(
-    violations: ComplianceViolation[],
+    _violations: ComplianceViolation[],
   ): RiskLevel {
     if (_violations.some((v) => v.severity === "CRITICAL")) return "CRITICAL";
     if (_violations.some((v) => v.severity === "HIGH")) return "HIGH";

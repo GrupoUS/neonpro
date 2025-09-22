@@ -1,7 +1,7 @@
 import { AppointmentBooking } from '@/components/appointment-booking';
 import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
+import { Button } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';

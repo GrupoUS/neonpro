@@ -7,9 +7,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@neonpro/ui';
-import { type SharedAnimatedListItem } from '@neonpro/ui';
-import { ExpandableCard } from '@neonpro/ui';
+} from '@/components/ui';
+import { type SharedAnimatedListItem } from '@/components/ui';
+import { ExpandableCard } from '@/components/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import * as React from 'react';
@@ -23,7 +23,7 @@ export type NormalizedNotification =
     read: boolean;
   };
 
-import { formatBRL } from '@neonpro/utils';
+import { formatBRL } from '@/utils';
 function formatCurrencyBRL(value: number) {
   return formatBRL(value);
 }

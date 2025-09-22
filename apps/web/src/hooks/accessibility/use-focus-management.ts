@@ -1,6 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
-
-import { useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 /**
  * Hook for managing focus accessibility in healthcare applications

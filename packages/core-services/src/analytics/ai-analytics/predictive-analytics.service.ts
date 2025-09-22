@@ -92,15 +92,17 @@ function anonymizeCPF(cpf: string): string {
 }
 
 function anonymizeEmail(email: string): string {
-  const [local, domain] = email.split("@");
-  if (!domain) return "*****@*****.***";
+  const parts = email.split("@");
+  const localPart = parts[0];
+  const domainPart = parts[1];
+  if (!domainPart) return "*****@*****.***";
 
   const anonymizedLocal =
-    local.length > 2
-      ? local.substring(0, 2) + "*".repeat(Math.max(1, local.length - 2))
-      : "*".repeat(local.length);
+    localPart && localPart.length > 2
+      ? localPart.substring(0, 2) + "*".repeat(Math.max(1, localPart.length - 2))
+      : "*".repeat(localPart?.length || 1);
 
-  return `${anonymizedLocal}@${domain}`;
+  return `${anonymizedLocal}@${domainPart}`;
 }
 
 function maskSensitiveFields(
@@ -207,7 +209,7 @@ export class PredictiveAnalyticsService {
     try {
       await this.ensureInitialized();
 
-      let processedData = request.patientData || {};
+      let processedData = _request.patientData || {};
 
       // Apply LGPD anonymization if enabled
       if (this.enableLGPDCompliance) {
@@ -225,7 +227,7 @@ export class PredictiveAnalyticsService {
           vital_signs:
             processedData.vitalSigns || processedData.vitals || "normal",
           appointment_history: processedData.appointmentHistory || "regular",
-          timeframe: request.timeframe,
+          timeframe: _request.timeframe,
         },
       };
 
@@ -244,7 +246,7 @@ export class PredictiveAnalyticsService {
             : result.confidence > 0.5
               ? "medium"
               : "low",
-        description: `No-show risk prediction for ${request.timeframe} timeframe`,
+        description: `No-show risk prediction for ${_request.timeframe} timeframe`,
         recommendation:
           "Send appointment reminders and offer flexible scheduling options to reduce no-show risk",
         createdAt: new Date(),
@@ -276,7 +278,7 @@ export class PredictiveAnalyticsService {
     try {
       await this.ensureInitialized();
 
-      let processedData = request.patientData || {};
+      let processedData = _request.patientData || {};
 
       if (this.enableLGPDCompliance) {
         processedData = maskSensitiveFields(processedData);
@@ -294,7 +296,7 @@ export class PredictiveAnalyticsService {
             processedData.vitalSigns || processedData.vitals || "normal",
           procedure_type: processedData.procedureType || "consultation",
           historical_revenue: processedData.historicalRevenue || 1000,
-          timeframe: request.timeframe,
+          timeframe: _request.timeframe,
         },
       };
 
@@ -313,7 +315,7 @@ export class PredictiveAnalyticsService {
             : result.confidence > 0.5
               ? "medium"
               : "low",
-        description: `Revenue forecast for ${request.timeframe} timeframe`,
+        description: `Revenue forecast for ${_request.timeframe} timeframe`,
         recommendation:
           "Optimize appointment scheduling and implement dynamic pricing strategies to maximize revenue",
         createdAt: new Date(),
@@ -345,7 +347,7 @@ export class PredictiveAnalyticsService {
     try {
       await this.ensureInitialized();
 
-      let processedData = request.patientData || {};
+      let processedData = _request.patientData || {};
 
       if (this.enableLGPDCompliance) {
         processedData = maskSensitiveFields(processedData);
@@ -410,9 +412,9 @@ export class PredictiveAnalyticsService {
       await this.ensureInitialized();
 
       const insights: (PredictiveInsight | null)[] = await Promise.all([
-        this.predictNoShowRisk(request).catch(() => null),
-        this.predictRevenueForecast(request).catch(() => null),
-        this.predictPatientOutcome(request).catch(() => null),
+        this.predictNoShowRisk(_request).catch(() => null),
+        this.predictRevenueForecast(_request).catch(() => null),
+        this.predictPatientOutcome(_request).catch(() => null),
       ]);
 
       // Filter out null results and return valid insights
@@ -421,7 +423,7 @@ export class PredictiveAnalyticsService {
       );
 
       // If no valid insights were generated, throw an error
-      if (_validInsights.length === 0 &&
+      if (validInsights.length === 0 &&
         insights.some((insight) => insight === null)
       ) {
         throw new Error("Failed to generate predictive insights");

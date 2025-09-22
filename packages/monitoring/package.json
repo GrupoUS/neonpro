@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "bun x tsc",
     "dev": "tsc --watch",
     "test": "vitest",
     "test:ui": "vitest --ui",

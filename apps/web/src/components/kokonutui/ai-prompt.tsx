@@ -13,13 +13,13 @@
 import { Textarea } from '@/components/ui/textarea';
 import { useAutoResizeTextarea } from '@/hooks/use-auto-resize-textarea';
 import { cn } from '@/lib/utils.ts';
-import { Button } from '@neonpro/ui';
+import { Button } from '@/components/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@neonpro/ui';
+} from '@/components/ui';
 import { ArrowRight } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useState } from 'react';

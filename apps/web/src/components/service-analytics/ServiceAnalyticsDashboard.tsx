@@ -9,8 +9,8 @@ import {
 } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalyticsDashboard } from '@/hooks/useServiceAnalytics';
-import { Button } from '@neonpro/ui';
-import { formatBRL } from '@neonpro/utils';
+import { Button } from '@/components/ui';
+import { formatBRL } from '@/utils';
 import {
   Activity,
   BarChart3,

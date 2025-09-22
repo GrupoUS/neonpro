@@ -5,13 +5,6 @@ import { InMemoryEscalationService, InMemoryKPIService } from "../../index";
 
 describe("Scenario: KPI provisional aging escalation", () => {
   it(_"escalates after 61 days provisional",_async () => {
-<<<<<<< HEAD
-    const kpiSvc = new InMemoryKPIService(
-    const escSvc = new InMemoryEscalationService(
-=======
-    const kpiSvc = new InMemoryKPIService();
-    const escSvc = new InMemoryEscalationService();
->>>>>>> origin/main
     await kpiSvc.register({
       id: "KPI-NO_SHOW",
       name: "No-show Rate",

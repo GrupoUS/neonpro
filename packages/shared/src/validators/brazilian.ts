@@ -484,7 +484,7 @@ export function createValidationSchema(fields: Record<string, any>): {
         const value = data[fieldName];
 
         // Required field validation
-        if (config.required && (!value || value.toString().trim() === "")) {
+        if (_config.required && (!value || (typeof value === 'string' && value.trim() === ""))) {
           errors.push({
             field: fieldName,
             message: getValidationMessage(fieldName, "required"),
@@ -499,7 +499,7 @@ export function createValidationSchema(fields: Record<string, any>): {
         // Field-specific validation
         switch (fieldName) {
           case "cpf":
-            if (!validateCPF(value)) {
+            if (typeof value === 'string' && !validateCPF(value)) {
               errors.push({
                 field: fieldName,
                 message: getValidationMessage(fieldName, "invalid"),
@@ -610,11 +610,11 @@ export function validateCRM(crm: string, state?: string): boolean {
   const uf = parts[1];
 
   // Check number length (typically 4-6 digits)
-  if (number.length < 4 || number.length > 6) return false;
+  if (!number || number.length < 4 || number.length > 6) return false;
   if (!/^\d+$/.test(number)) return false;
 
   // Check UF
-  if (!BRAZILIAN_STATES.includes(uf)) return false;
+  if (!uf || !BRAZILIAN_STATES.includes(uf)) return false;
 
   // If state provided, verify consistency
   if (state && state !== uf) return false;
@@ -638,11 +638,11 @@ export function validateCRMV(crmv: string, state?: string): boolean {
   const uf = parts[1];
 
   // Check number length (typically 4-6 digits)
-  if (number.length < 4 || number.length > 6) return false;
+  if (!number || number.length < 4 || number.length > 6) return false;
   if (!/^\d+$/.test(number)) return false;
 
   // Check UF
-  if (!BRAZILIAN_STATES.includes(uf)) return false;
+  if (!uf || !BRAZILIAN_STATES.includes(uf)) return false;
 
   // If state provided, verify consistency
   if (state && state !== uf) return false;

@@ -301,7 +301,7 @@ export class ComplianceAuditService {
 
     // Sort by timestamp (newest first) and limit
     return results
-      .sort((a,_b) =>
+      .sort((a,b) =>
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       )
       .slice(0, limit);
@@ -423,7 +423,7 @@ export class ComplianceAuditService {
     return Array.from(this.events.values())
       .filter((event) => event.sessionId === sessionId && event.clinicId === clinicId,
       )
-      .sort((a,_b) =>
+      .sort((a,b) =>
           new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
       );
   }

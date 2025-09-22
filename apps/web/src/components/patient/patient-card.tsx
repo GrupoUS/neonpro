@@ -43,8 +43,8 @@ import {
 import { HealthcareButton } from '@/components/ui/healthcare/healthcare-button';
 import { formatCEP } from '@/utils/brazilian-formatters';
 import { Patient } from '@neonpro/shared/types/patient';
-import { cn } from '@neonpro/ui';
-import { formatBRPhone, formatCPF } from '@neonpro/utils';
+import { cn } from '@/components/ui';
+import { formatBRPhone, formatCPF } from '@/utils';
 
 export interface PatientCardProps {
   /** Patient data */

@@ -5,13 +5,6 @@ import { InMemoryEscalationService, InMemoryKPIService } from "../../index";
 
 describe("Scenario: escalation breach sequence", () => {
   it(_"creates escalation receipt after two evaluate breaches",_async () => {
-<<<<<<< HEAD
-    const kpiSvc = new InMemoryKPIService(
-    const escSvc = new InMemoryEscalationService(
-=======
-    const kpiSvc = new InMemoryKPIService();
-    const escSvc = new InMemoryEscalationService();
->>>>>>> origin/main
     await kpiSvc.register({
       id: "KPI-AI-HALLUCINATION",
       name: "AI Hallucination Rate",

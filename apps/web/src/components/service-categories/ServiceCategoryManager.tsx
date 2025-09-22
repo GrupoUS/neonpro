@@ -9,11 +9,11 @@ import {
   useServiceCategories,
 } from '@/hooks/useServiceCategories';
 import type { ServiceCategory } from '@/types/service-categories';
-import { cn } from '@neonpro/ui';
-import { Button } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
-import { Input } from '@neonpro/ui';
+import { cn } from '@/components/ui';
+import { Button } from '@/components/ui';
+import { Card } from '@/components/ui';
+import { Badge } from '@/components/ui';
+import { Input } from '@/components/ui';
 import {
   Dialog,
   DialogContent,
@@ -21,7 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@neonpro/ui';
+} from '@/components/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,7 +29,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@neonpro/ui';
+} from '@/components/ui';
 import {
   BarChart3,
   Edit,

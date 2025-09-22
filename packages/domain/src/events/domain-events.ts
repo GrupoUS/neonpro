@@ -304,4 +304,4 @@ export class EventFactory {
       }
     } as unknown as T;
   }
-}`'
+}

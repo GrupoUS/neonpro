@@ -11,9 +11,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { useCreatePricingRule, useUpdatePricingRule } from '@/hooks/usePricingRules';
 import type { PricingRule } from '@/types/pricing-rules';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Switch } from '@neonpro/ui';
-import { Input } from '@neonpro/ui';
-import { Button } from '@neonpro/ui';
+import { Switch } from '@/components/ui';
+import { Input } from '@/components/ui';
+import { Button } from '@/components/ui';
 
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';

@@ -101,11 +101,6 @@ describe(('EventService', () => {
 
   describe(('appointmentToEvent', () => {
     it(('should convert appointment to event format', () => {
-<<<<<<< HEAD
-      const result = EventService['appointmentToEvent'](mockAppointment as any
-=======
-      const result = EventService['appointmentToEvent'](mockAppointment as any);
->>>>>>> origin/main
 
       expect(result).toEqual(mockEvent
     }
@@ -120,47 +115,6 @@ describe(('EventService', () => {
 
   describe(('getStatusColor', () => {
     it(('should return correct color for confirmed status', () => {
-<<<<<<< HEAD
-      const color = EventService['getStatusColor']('confirmed')
-      expect(color).toBe('emerald')
-    }
-
-    it(('should return correct color for pending status', () => {
-      const color = EventService['getStatusColor']('pending')
-      expect(color).toBe('orange')
-    }
-
-    it(('should return default color for unknown status', () => {
-      const color = EventService['getStatusColor']('unknown')
-      expect(color).toBe('sky')
-    }
-
-    it(('should return default color for undefined status', () => {
-      const color = EventService['getStatusColor'](undefined
-      expect(color).toBe('sky')
-    }
-  }
-=======
-      const color = EventService['getStatusColor']('confirmed');
-      expect(color).toBe('emerald');
-    });
-
-    it(('should return correct color for pending status', () => {
-      const color = EventService['getStatusColor']('pending');
-      expect(color).toBe('orange');
-    });
-
-    it(('should return default color for unknown status', () => {
-      const color = EventService['getStatusColor']('unknown');
-      expect(color).toBe('sky');
-    });
-
-    it(('should return default color for undefined status', () => {
-      const color = EventService['getStatusColor'](undefined);
-      expect(color).toBe('sky');
-    });
-  });
->>>>>>> origin/main
 
   describe(('validateEvent', () => {
     it(('should validate valid event data', () => {

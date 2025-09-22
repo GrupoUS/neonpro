@@ -41,8 +41,8 @@ import {
   SheetTitle,
   SheetTrigger,
   Skeleton,
-} from '@neonpro/ui';
-import { cn, formatBRPhone } from '@neonpro/utils';
+} from '@/components/ui';
+import { cn, formatBRPhone } from '@/utils';
 
 // Types for LGPD-compliant patient data
 interface MobilePatientData {

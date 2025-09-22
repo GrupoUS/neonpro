@@ -31,13 +31,6 @@ describe('Database Logging - Healthcare Data Compliance_, () => {
   describe('LGPD Compliance - Patient Data Protection_, () => {
     it('should NOT log sensitive patient PII data to console_,_async () => {
       // Setup test environment with sanitized patient data
-<<<<<<< HEAD
-      process.env.SUPABASE_URL = ''https://test.supabase.co')
-      process.env.SUPABASE_SERVICE_ROLE_KEY = ''test-key')
-=======
-      process.env.SUPABASE_URL = ''https://test.supabase.co'
-      process.env.SUPABASE_SERVICE_ROLE_KEY = ''test-key'
->>>>>>> origin/main
       
       const mockPatientData = healthcareFixtures.patientData;
       const sensitiveData = {
@@ -103,11 +96,6 @@ describe('Database Logging - Healthcare Data Compliance_, () => {
 
         const result = await client
           .from('medical_records_)
-<<<<<<< HEAD
-          .insert(mockMedicalRecord
-=======
-          .insert(mockMedicalRecord);
->>>>>>> origin/main
         
         if (result.error) {
           console.error('Failed to insert medical record:', result.error
@@ -186,13 +174,6 @@ describe('Database Logging - Healthcare Data Compliance_, () => {
     it('should NOT log database connection credentials or URLs_,_async () => {
       // Simulate connection error scenarios
       const originalUrl = process.env.SUPABASE_URL;
-<<<<<<< HEAD
-      process.env.SUPABASE_URL = ''https://invalid.supabase.co')
-      process.env.SUPABASE_SERVICE_ROLE_KEY = ''invalid-service-key')
-=======
-      process.env.SUPABASE_URL = ''https://invalid.supabase.co'
-      process.env.SUPABASE_SERVICE_ROLE_KEY = ''invalid-service-key'
->>>>>>> origin/main
 
       try {
         const client = createAdminClient(
@@ -226,19 +207,6 @@ describe('Database Logging - Healthcare Data Compliance_, () => {
         const client = createAdminClient(
         const result = await client
           .from('nonexistent_table_)
-<<<<<<< HEAD
-          .select('*')
-        
-        if (result.error) {
-          console.error('Query failed:', result.error
-          console.error('Table does not exist: nonexistent_table_
-=======
-          .select('*');
-        
-        if (result.error) {
-          console.error('Query failed:', result.error);
-          console.error('Table does not exist: nonexistent_table_);
->>>>>>> origin/main
         }
       } catch (error) {
         console.error('Schema error:', error
@@ -276,11 +244,6 @@ describe('Database Logging - Healthcare Data Compliance_, () => {
         const client = createAdminClient(
         const result = await client
           .from('medical_devices_)
-<<<<<<< HEAD
-          .insert(mockDeviceData
-=======
-          .insert(mockDeviceData);
->>>>>>> origin/main
         
         if (result.error) {
           console.error('Medical device data insertion failed:', result.error
@@ -306,11 +269,6 @@ describe('Database Logging - Healthcare Data Compliance_, () => {
 
   describe('Structured Logging Requirements_, () => {
     it('should use structured logging with proper correlation IDs_,_async () => {
-<<<<<<< HEAD
-      const testCorrelationId = testUtils.generateCorrelationId(
-=======
-      const testCorrelationId = testUtils.generateCorrelationId();
->>>>>>> origin/main
       
       // Simulate an operation that should include correlation ID
       console.log(`Processing request ${testCorrelationId}`
@@ -409,19 +367,6 @@ describe('Database Logging - Healthcare Data Compliance_, () => {
 
   describe('LGPD Data Processing Compliance_, () => {
     it('should validate LGPD compliance for data processing operations_,_async () => {
-<<<<<<< HEAD
-      const lgpdData = complianceTestUtils.generateLGPDCompliantData(
-      const validationResult = complianceTestUtils.validatesLGPDCompliance(
-        lgpdData, 
-        'patient_data_access_
-      
-=======
-      const lgpdData = complianceTestUtils.generateLGPDCompliantData();
-      const validationResult = complianceTestUtils.validatesLGPDCompliance(
-        lgpdData, 
-        'patient_data_access_
-      );
->>>>>>> origin/main
 
       // Test should pass because LGPD validation should be implemented
       expect(validationResult.compliant).toBe(true);

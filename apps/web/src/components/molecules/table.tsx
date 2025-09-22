@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (

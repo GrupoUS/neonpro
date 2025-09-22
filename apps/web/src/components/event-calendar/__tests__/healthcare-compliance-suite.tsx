@@ -11,7 +11,7 @@ import { EventCalendar } from '../event-calendar';
 import { CalendarEvent, CalendarEventExtended, EventColor } from '../types';
 
 // Mock healthcare compliance utilities
-vi.mock(('@/utils/accessibility/healthcare-audit-utils', () => ({
+vi.mock('@/utils/accessibility/healthcare-audit-utils', () => ({
   validateCalendarEvent: vi.fn().mockReturnValue({ valid: true, score: 0.95 }),
   auditEventAccess: vi
     .fn()
@@ -38,7 +38,7 @@ vi.mock(('@/utils/accessibility/healthcare-audit-utils', () => ({
 }));
 
 // Mock professional registry validation
-vi.mock(('@/utils/professional-registry', () => ({
+vi.mock('@/utils/professional-registry', () => ({
   validateProfessionalLicense: vi.fn().mockResolvedValue({
     valid: true,
     license: 'CRM-SP-123456',
@@ -50,13 +50,6 @@ vi.mock(('@/utils/professional-registry', () => ({
   }),
 }));
 
-<<<<<<< HEAD
-describe('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
-  const healthcareEvents: CalendarEventExtended[] = [
-=======
-describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
-  const healthcareEvents: CalendarEvent[] = [
->>>>>>> origin/main
     {
       id: 'healthcare-1',
       title: 'Consulta Cardiológica',
@@ -644,13 +637,6 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
   });
 
   // CROSS-COMPLIANCE INTEGRATION
-<<<<<<< HEAD
-  describe('Cross-Compliance Integration', () => {
-    it('should coordinate between LGPD,ANVISA, and CFM requirements', async () => {
-=======
-  describe(('Cross-Compliance Integration', () => {
-    it(_'should coordinate between LGPD,ANVISA, and CFM requirements',async () => {
->>>>>>> origin/main
       const integratedEvent: CalendarEvent = {
         id: 'integrated-1',
         title: 'Consulta Integrada',

@@ -1,8 +1,8 @@
 import { Input } from '@/components/atoms/input';
 import { Label } from '@/components/atoms/label';
-import { Alert } from '@neonpro/ui';
-import { UniversalButton } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
+import { Alert } from '@/components/ui';
+import { UniversalButton } from '@/components/ui';
+import { Card } from '@/components/ui';
 // Enhanced with permanent shine border effect and smooth animations
 import { showToast } from '@/components/ui/toaster';
 import {

@@ -1,6 +1,6 @@
 import { Progress } from '@/components/ui/progress';
 import { useI18n } from '@/i18n/i18n';
-import { Button } from '@neonpro/ui';
+import { Button } from '@/components/ui';
 
 export type TaskStage = 'queued' | 'running' | 'completed' | 'failed';
 

@@ -6,11 +6,11 @@
 import { useCreateServiceCategory, useUpdateServiceCategory } from '@/hooks/useServiceCategories';
 import type { ServiceCategory } from '@/types/service-categories';
 import { SERVICE_CATEGORY_COLORS } from '@/types/service-categories';
-import { Button } from '@neonpro/ui';
-import { Input } from '@neonpro/ui';
-import { Label } from '@neonpro/ui';
-import { Textarea } from '@neonpro/ui';
-import { Switch } from '@neonpro/ui';
+import { Button } from '@/components/ui';
+import { Input } from '@/components/ui';
+import { Label } from '@/components/ui';
+import { Textarea } from '@/components/ui';
+import { Switch } from '@/components/ui';
 import React, { useState } from 'react';
 
 interface ServiceCategoryFormProps {

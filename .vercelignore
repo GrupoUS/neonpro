@@ -1,54 +1,100 @@
-# Force ignore Next.js detection files
-.next/
-next.config.js
-next.config.mjs
-next.config.ts
-next-env.d.ts
-pages/
-app/layout.tsx
-app/page.tsx
+# Exclude all node_modules directories
+**/node_modules/**
 
-# Ignore build artifacts that might cause conflicts
-apps/web/.next/
-apps/api/dist/
-dist/
-build/
+# Exclude other large directories
+.git
+.gitignore
+.vercel
+.next
+.nuxt
+dist
+build
+out
+.turbo
+.cache
+coverage
+.nyc_output
+.vscode
+.idea
+*.log
+*.tgz
+*.tar.gz
 
-# Ignore files that might interfere with deployment
-node_modules/
+# Test directories
+**/__tests__/**
+**/tests/**
+**/test/**
+**/spec/**
+
+# Documentation (can be large)
+docs/
+*.md
+!README.md
+
+# Large datasets and media
+**/*.csv
+**/*.json
+**/*.xml
+**/datasets/**
+**/media/**
+**/images/**
+**/videos/**
+
+# Temporary files
+.tmp
+.temp
+*.tmp
+*.temp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local environment files
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Ignore test files
-**/*.test.ts
-**/*.test.tsx
-**/*.spec.ts
-**/*.spec.tsx
-__tests__/
-coverage/
+# Build artifacts
+*.tsbuildinfo
+*.swp
+*.swo
+*~
 
-# Ignore development files
-.vscode/
-.idea/
-*.log
-.DS_Store
+# Large cache directories
+**/.cache/**
+**/.webpack/**
+**/.vite/**
 
-# Force ignore any Next.js related files and artifacts
-**/.next/
-**/next.config.*
-**/next-env.d.ts
-**/_next/
-**/public/favicon.ico
-**/public/vercel.svg
-**/app/
-**/pages/
+# Database files
+*.db
+*.sqlite
+*.sqlite3
 
-# Force ignore any cached API responses that might interfere
-**/api/health.json
-**/api/health.html
-**/health.json
-**/health.html
-**/*.next.js
-**/*.next.ts
+# Archive files
+*.zip
+*.rar
+*.7z
+
+# Node.js specific
+.npm
+.yarn-integrity
+.pnpm-debug.log*
+
+# Python specific (if any)
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+venv/
+ENV/
+
+# Rust specific (if any)
+target/
+Cargo.lock
+
+# Package lock files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

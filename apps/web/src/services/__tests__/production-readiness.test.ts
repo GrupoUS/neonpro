@@ -50,11 +50,6 @@ describe(('Production Readiness Service', () => {
 
   describe(('Configuration Validation', () => {
     it(('should validate valid production readiness configuration', () => {
-<<<<<<< HEAD
-      const result = ProductionReadinessConfigSchema.safeParse(config
-=======
-      const result = ProductionReadinessConfigSchema.safeParse(config);
->>>>>>> origin/main
       expect(result.success).toBe(true);
     }
 
@@ -69,27 +64,6 @@ describe(('Production Readiness Service', () => {
     }
 
     it(('should validate healthcare compliance standards', () => {
-<<<<<<< HEAD
-      expect(HEALTHCARE_COMPLIANCE_STANDARDS.LGPD).toBe('LGPD')
-      expect(HEALTHCARE_COMPLIANCE_STANDARDS.ANVISA).toBe('ANVISA')
-      expect(HEALTHCARE_COMPLIANCE_STANDARDS.CFM).toBe('CFM')
-    }
-  }
-
-  describe(('Production Readiness Validation', () => {
-    it(_'should execute comprehensive production readiness validation',async () => {
-      const report = await service.executeValidation(
-=======
-      expect(HEALTHCARE_COMPLIANCE_STANDARDS.LGPD).toBe('LGPD');
-      expect(HEALTHCARE_COMPLIANCE_STANDARDS.ANVISA).toBe('ANVISA');
-      expect(HEALTHCARE_COMPLIANCE_STANDARDS.CFM).toBe('CFM');
-    });
-  });
-
-  describe(('Production Readiness Validation', () => {
-    it(_'should execute comprehensive production readiness validation',async () => {
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       expect(report.executionId).toMatch(/^prod-ready-\d+$/
       expect(report.config).toEqual(config
@@ -106,11 +80,6 @@ describe(('Production Readiness Service', () => {
     }
 
     it(_'should execute deployment validation',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       const deploymentValidation = report.validations.find(
         v => v.validationType === 'deployment',
@@ -131,11 +100,6 @@ describe(('Production Readiness Service', () => {
     }
 
     it(_'should execute security validation',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       const securityValidation = report.validations.find(
         v => v.validationType === 'security',
@@ -151,11 +115,6 @@ describe(('Production Readiness Service', () => {
     }
 
     it(_'should execute performance validation',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       const performanceValidation = report.validations.find(
         v => v.validationType === 'performance',
@@ -170,11 +129,6 @@ describe(('Production Readiness Service', () => {
     }
 
     it(_'should execute compliance validation',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       const complianceValidation = report.validations.find(
         v => v.validationType === 'compliance',
@@ -193,11 +147,6 @@ describe(('Production Readiness Service', () => {
 
   describe(('Production Readiness Statistics', () => {
     it(_'should generate accurate validation statistics',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       expect(report.summary.totalValidations).toBe(5
       expect(report.summary.passedValidations).toBeGreaterThanOrEqual(0
@@ -212,11 +161,6 @@ describe(('Production Readiness Service', () => {
     }
 
     it(_'should calculate healthcare compliance status',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       expect(report.summary.healthcareCompliance).toBeDefined(
       expect(typeof report.summary.healthcareCompliance.lgpd).toBe('boolean')
@@ -225,11 +169,6 @@ describe(('Production Readiness Service', () => {
     }
 
     it(_'should validate production readiness levels',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       const readinessLevel = report.summary.readinessLevel;
       expect([
@@ -242,11 +181,6 @@ describe(('Production Readiness Service', () => {
 
   describe(('Production Readiness Validation', () => {
     it(_'should validate production readiness quality',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       // Validate that validations were executed
       expect(report.summary.totalValidations).toBeGreaterThan(0
@@ -265,11 +199,6 @@ describe(('Production Readiness Service', () => {
     }
 
     it(_'should generate recommendations based on validation results',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       expect(report.recommendations).toBeInstanceOf(Array
       expect(report.recommendations.length).toBeGreaterThan(0
@@ -297,39 +226,11 @@ describe(('Production Readiness Service', () => {
     }
 
     it(_'should identify critical issues for production readiness',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       expect(report.criticalIssues).toBeInstanceOf(Array
 
       // Validate critical issue structure if any exist
       report.criticalIssues.forEach(issue => {
-<<<<<<< HEAD
-        expect(issue.severity).toMatch(/^(critical|high|medium|low)$/
-        expect(issue.category).toBeDefined(
-        expect(issue.issue).toBeDefined(
-        expect(issue.recommendation).toBeDefined(
-        expect(issue.healthcareImpact).toBeInstanceOf(Array
-      }
-    }
-
-    it(_'should provide deployment checklist',async () => {
-      const report = await service.executeValidation(
-=======
-        expect(issue.severity).toMatch(/^(critical|high|medium|low)$/);
-        expect(issue.category).toBeDefined();
-        expect(issue.issue).toBeDefined();
-        expect(issue.recommendation).toBeDefined();
-        expect(issue.healthcareImpact).toBeInstanceOf(Array);
-      });
-    });
-
-    it(_'should provide deployment checklist',async () => {
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       expect(report.deploymentChecklist).toBeInstanceOf(Array
       expect(report.deploymentChecklist.length).toBeGreaterThan(0
@@ -350,11 +251,6 @@ describe(('Production Readiness Service', () => {
 
   describe(('Brazilian Portuguese Localization', () => {
     it(_'should provide Brazilian Portuguese production readiness recommendations',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       // Check for Portuguese content in recommendations
       const hasPortugueseRecommendations = report.recommendations.some(
@@ -370,11 +266,6 @@ describe(('Production Readiness Service', () => {
     }
 
     it(_'should include Portuguese translations in deployment checklist',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       // Check for Portuguese content in deployment checklist
       const hasPortugueseChecklist = report.deploymentChecklist.some(
@@ -390,11 +281,6 @@ describe(('Production Readiness Service', () => {
     }
 
     it(_'should include Portuguese translations in healthcare considerations',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       // Check for Portuguese content in healthcare considerations
       const hasPortugueseHealthcare = report.validations.some(validation =>
@@ -414,11 +300,6 @@ describe(('Production Readiness Service', () => {
 
   describe(('Healthcare Production Readiness Integration', () => {
     it(_'should include healthcare compliance validation in readiness results',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       // Check for healthcare compliance validation
       const hasHealthcareCompliance = report.validations.some(
@@ -430,11 +311,6 @@ describe(('Production Readiness Service', () => {
     }
 
     it(_'should include security validation for healthcare data',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       // Check for security validation with healthcare considerations
       const hasHealthcareSecurity = report.validations.some(
@@ -451,11 +327,6 @@ describe(('Production Readiness Service', () => {
     }
 
     it(_'should include performance validation for healthcare workflows',async () => {
-<<<<<<< HEAD
-      const report = await service.executeValidation(
-=======
-      const report = await service.executeValidation();
->>>>>>> origin/main
 
       // Check for performance validation with healthcare considerations
       const hasHealthcarePerformance = report.validations.some(
@@ -473,57 +344,6 @@ describe(('Production Readiness Service', () => {
 
   describe(('Production Readiness Validation Types', () => {
     it(('should include deployment validation scenarios', () => {
-<<<<<<< HEAD
-      expect(VALIDATION_TYPES.DEPLOYMENT).toBe('deployment')
-      expect(config.validationTypes).toContain('deployment')
-    }
-
-    it(('should include monitoring validation scenarios', () => {
-      expect(VALIDATION_TYPES.MONITORING).toBe('monitoring')
-      expect(config.validationTypes).toContain('monitoring')
-    }
-
-    it(('should include security validation scenarios', () => {
-      expect(VALIDATION_TYPES.SECURITY).toBe('security')
-      expect(config.validationTypes).toContain('security')
-    }
-
-    it(('should include performance validation scenarios', () => {
-      expect(VALIDATION_TYPES.PERFORMANCE).toBe('performance')
-      expect(config.validationTypes).toContain('performance')
-    }
-
-    it(('should include compliance validation scenarios', () => {
-      expect(VALIDATION_TYPES.COMPLIANCE).toBe('compliance')
-      expect(config.validationTypes).toContain('compliance')
-    }
-  }
-=======
-      expect(VALIDATION_TYPES.DEPLOYMENT).toBe('deployment');
-      expect(config.validationTypes).toContain('deployment');
-    });
-
-    it(('should include monitoring validation scenarios', () => {
-      expect(VALIDATION_TYPES.MONITORING).toBe('monitoring');
-      expect(config.validationTypes).toContain('monitoring');
-    });
-
-    it(('should include security validation scenarios', () => {
-      expect(VALIDATION_TYPES.SECURITY).toBe('security');
-      expect(config.validationTypes).toContain('security');
-    });
-
-    it(('should include performance validation scenarios', () => {
-      expect(VALIDATION_TYPES.PERFORMANCE).toBe('performance');
-      expect(config.validationTypes).toContain('performance');
-    });
-
-    it(('should include compliance validation scenarios', () => {
-      expect(VALIDATION_TYPES.COMPLIANCE).toBe('compliance');
-      expect(config.validationTypes).toContain('compliance');
-    });
-  });
->>>>>>> origin/main
 
   describe(('Production Readiness Filtering', () => {
     it(_'should filter validations by type',async () => {

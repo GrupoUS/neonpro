@@ -145,11 +145,6 @@ describe('ResponseFormatter', () => {
         action: 'test',
       },
     ];
-<<<<<<< HEAD
-  }
-=======
-  });
->>>>>>> origin/main
 
   describe('Client Data Formatting', () => {
     it('should format client data as table with results', () => {
@@ -170,70 +165,12 @@ describe('ResponseFormatter', () => {
         },
       ];
 
-<<<<<<< HEAD
-      const result = formatResponse(mockClients, 'client_data', mockActions
-
-      expect(result.type).toBe('table')
-      expect(result.content.title).toBe('Clientes Encontrados')
-      expect(result.content.data).toHaveLength(2
-=======
-      const result = formatResponse(mockClients, 'client_data', mockActions);
-
-      expect(result.type).toBe('table');
-      expect(result.content.title).toBe('Clientes Encontrados');
-      expect(result.content.data).toHaveLength(2);
->>>>>>> origin/main
       expect(result.content.data[0]).toEqual({
         id: 1,
         nome: 'João Silva',
         email: 'joao@example.com',
         telefone: '(11) 9999-8888',
         cadastrado_em: '15/01/2024',
-<<<<<<< HEAD
-      }
-      expect(result.content.columns).toHaveLength(4
-      expect(result.actions).toEqual(mockActions
-    }
-
-    it('should format empty client data with no results message', () => {
-      const result = formatResponse([], 'client_data', mockActions
-
-      expect(result.type).toBe('text')
-      expect(result.content.title).toBe('Nenhum Cliente Encontrado')
-      expect(result.content.text).toBe('Não foram encontrados clientes com os critérios especificados.')
-      expect(result.actions).toHaveLength(1
-      expect(result.actions[0].id).toBe('view_all_clients')
-    }
-
-    it('should format null client data with no results message', () => {
-      const result = formatResponse(null, 'client_data', mockActions
-
-      expect(result.type).toBe('text')
-      expect(result.content.title).toBe('Nenhum Cliente Encontrado')
-    }
-=======
-      });
-      expect(result.content.columns).toHaveLength(4);
-      expect(result.actions).toEqual(mockActions);
-    });
-
-    it('should format empty client data with no results message', () => {
-      const result = formatResponse([], 'client_data', mockActions);
-
-      expect(result.type).toBe('text');
-      expect(result.content.title).toBe('Nenhum Cliente Encontrado');
-      expect(result.content.text).toBe('Não foram encontrados clientes com os critérios especificados.');
-      expect(result.actions).toHaveLength(1);
-      expect(result.actions[0].id).toBe('view_all_clients');
-    });
-
-    it('should format null client data with no results message', () => {
-      const result = formatResponse(null, 'client_data', mockActions);
-
-      expect(result.type).toBe('text');
-      expect(result.content.title).toBe('Nenhum Cliente Encontrado');
-    });
->>>>>>> origin/main
 
     it('should handle client data with missing fields', () => {
       const incompleteClients = [
@@ -245,30 +182,12 @@ describe('ResponseFormatter', () => {
         },
       ];
 
-<<<<<<< HEAD
-      const result = formatResponse(incompleteClients, 'client_data', mockActions
-
-      expect(result.type).toBe('table')
-=======
-      const result = formatResponse(incompleteClients, 'client_data', mockActions);
-
-      expect(result.type).toBe('table');
->>>>>>> origin/main
       expect(result.content.data[0]).toEqual({
         id: 1,
         nome: 'João Silva',
         email: undefined,
         telefone: undefined,
         cadastrado_em: '15/01/2024',
-<<<<<<< HEAD
-      }
-    }
-  }
-=======
-      });
-    });
-  });
->>>>>>> origin/main
 
   describe('Appointment Formatting', () => {
     it('should format appointments as list with results', () => {
@@ -291,21 +210,6 @@ describe('ResponseFormatter', () => {
         },
       ];
 
-<<<<<<< HEAD
-      const result = formatResponse(mockAppointments, 'appointments', mockActions
-
-      expect(result.type).toBe('list')
-      expect(result.content.title).toBe('Agendamentos')
-      expect(result.content.text).toBe('Encontrados 2 agendamentos:')
-      expect(result.content.data).toHaveLength(2
-=======
-      const result = formatResponse(mockAppointments, 'appointments', mockActions);
-
-      expect(result.type).toBe('list');
-      expect(result.content.title).toBe('Agendamentos');
-      expect(result.content.text).toBe('Encontrados 2 agendamentos:');
-      expect(result.content.data).toHaveLength(2);
->>>>>>> origin/main
       expect(result.content.data[0]).toEqual({
         id: 1,
         cliente: 'João Silva',
@@ -313,33 +217,6 @@ describe('ResponseFormatter', () => {
         status: 'confirmed',
         tipo: 'consultation',
         medico: 'Dr. Silva',
-<<<<<<< HEAD
-      }
-      expect(result.actions).toEqual(mockActions
-    }
-
-    it('should format empty appointments with no results message', () => {
-      const result = formatResponse([], 'appointments', mockActions
-
-      expect(result.type).toBe('text')
-      expect(result.content.title).toBe('Nenhum Agendamento Encontrado')
-      expect(result.content.text).toBe('Não foram encontrados agendamentos no período especificado.')
-      expect(result.actions[0].id).toBe('view_today_appointments')
-    }
-=======
-      });
-      expect(result.actions).toEqual(mockActions);
-    });
-
-    it('should format empty appointments with no results message', () => {
-      const result = formatResponse([], 'appointments', mockActions);
-
-      expect(result.type).toBe('text');
-      expect(result.content.title).toBe('Nenhum Agendamento Encontrado');
-      expect(result.content.text).toBe('Não foram encontrados agendamentos no período especificado.');
-      expect(result.actions[0].id).toBe('view_today_appointments');
-    });
->>>>>>> origin/main
 
     it('should handle appointments with missing relationships', () => {
       const appointmentsWithoutRelations = [
@@ -352,23 +229,6 @@ describe('ResponseFormatter', () => {
         },
       ];
 
-<<<<<<< HEAD
-      const result = formatResponse(appointmentsWithoutRelations, 'appointments', mockActions
-
-      expect(result.type).toBe('list')
-      expect(result.content.data[0].cliente).toBe('N/A')
-      expect(result.content.data[0].medico).toBe('N/A')
-    }
-  }
-=======
-      const result = formatResponse(appointmentsWithoutRelations, 'appointments', mockActions);
-
-      expect(result.type).toBe('list');
-      expect(result.content.data[0].cliente).toBe('N/A');
-      expect(result.content.data[0].medico).toBe('N/A');
-    });
-  });
->>>>>>> origin/main
 
   describe('Financial Data Formatting', () => {
     it('should format financial data as chart', () => {
@@ -379,34 +239,10 @@ describe('ResponseFormatter', () => {
         profit: 7000,
       };
 
-<<<<<<< HEAD
-      const result = formatResponse(mockFinancialData, 'financial', mockActions
-
-      expect(result.type).toBe('chart')
-      expect(result.content.title).toBe('Resumo Financeiro')
-      expect(result.content.chart.type).toBe('bar')
-=======
-      const result = formatResponse(mockFinancialData, 'financial', mockActions);
-
-      expect(result.type).toBe('chart');
-      expect(result.content.title).toBe('Resumo Financeiro');
-      expect(result.content.chart.type).toBe('bar');
->>>>>>> origin/main
       expect(result.content.chart.data).toEqual([
         { label: 'Receita', value: 15000 },
         { label: 'Pagamentos', value: 12000 },
         { label: 'Despesas', value: 8000 },
-<<<<<<< HEAD
-      ]
-      expect(result.content.chart.title).toBe('Visão Geral Financeira')
-      expect(result.actions).toEqual(mockActions
-    }
-=======
-      ]);
-      expect(result.content.chart.title).toBe('Visão Geral Financeira');
-      expect(result.actions).toEqual(mockActions);
-    });
->>>>>>> origin/main
 
     it('should handle financial data with missing values', () => {
       const incompleteFinancialData = {
@@ -414,224 +250,35 @@ describe('ResponseFormatter', () => {
         // missing payments and expenses
       };
 
-<<<<<<< HEAD
-      const result = formatResponse(incompleteFinancialData, 'financial', mockActions
-
-      expect(result.type).toBe('chart')
-=======
-      const result = formatResponse(incompleteFinancialData, 'financial', mockActions);
-
-      expect(result.type).toBe('chart');
->>>>>>> origin/main
       expect(result.content.chart.data).toEqual([
         { label: 'Receita', value: 15000 },
         { label: 'Pagamentos', value: 0 },
         { label: 'Despesas', value: 0 },
-<<<<<<< HEAD
-      ]
-    }
-
-    it('should handle null financial data', () => {
-      const result = formatResponse(null, 'financial', mockActions
-
-      expect(result.type).toBe('chart')
-=======
-      ]);
-    });
-
-    it('should handle null financial data', () => {
-      const result = formatResponse(null, 'financial', mockActions);
-
-      expect(result.type).toBe('chart');
->>>>>>> origin/main
       expect(result.content.chart.data).toEqual([
         { label: 'Receita', value: 0 },
         { label: 'Pagamentos', value: 0 },
         { label: 'Despesas', value: 0 },
-<<<<<<< HEAD
-      ]
-    }
-  }
-
-  describe('General Query Formatting', () => {
-    it('should format general queries as text response', () => {
-      const result = formatResponse({}, 'general', mockActions
-
-      expect(result.type).toBe('text')
-      expect(result.content.title).toBe('Assistente Virtual')
-      expect(result.content.text).toBe('Olá! Sou seu assistente virtual. Como posso ajudar você hoje?')
-      expect(result.actions).toEqual(mockActions
-    }
-
-    it('should handle general queries without data', () => {
-      const result = formatResponse(null, 'general', []
-
-      expect(result.type).toBe('text')
-      expect(result.content.title).toBe('Assistente Virtual')
-      expect(result.actions).toEqual([]
-    }
-  }
-
-  describe('Unknown Intent Formatting', () => {
-    it('should format unknown intents with error message', () => {
-      const result = formatResponse({}, 'unknown' as QueryIntent, mockActions
-
-      expect(result.type).toBe('text')
-      expect(result.content.title).toBe('Consulta Não Reconhecida')
-      expect(result.content.text).toBe('Não entendi sua consulta. Por favor, tente reformular.')
-      expect(result.actions).toEqual([]
-    }
-
-    it('should handle unsupported intents gracefully', () => {
-      const result = formatResponse({}, 'unsupported_intent' as QueryIntent, mockActions
-
-      expect(result.type).toBe('text')
-      expect(result.content.title).toBe('Consulta Não Reconhecida')
-    }
-  }
-=======
-      ]);
-    });
-  });
-
-  describe('General Query Formatting', () => {
-    it('should format general queries as text response', () => {
-      const result = formatResponse({}, 'general', mockActions);
-
-      expect(result.type).toBe('text');
-      expect(result.content.title).toBe('Assistente Virtual');
-      expect(result.content.text).toBe('Olá! Sou seu assistente virtual. Como posso ajudar você hoje?');
-      expect(result.actions).toEqual(mockActions);
-    });
-
-    it('should handle general queries without data', () => {
-      const result = formatResponse(null, 'general', []);
-
-      expect(result.type).toBe('text');
-      expect(result.content.title).toBe('Assistente Virtual');
-      expect(result.actions).toEqual([]);
-    });
-  });
-
-  describe('Unknown Intent Formatting', () => {
-    it('should format unknown intents with error message', () => {
-      const result = formatResponse({}, 'unknown' as QueryIntent, mockActions);
-
-      expect(result.type).toBe('text');
-      expect(result.content.title).toBe('Consulta Não Reconhecida');
-      expect(result.content.text).toBe('Não entendi sua consulta. Por favor, tente reformular.');
-      expect(result.actions).toEqual([]);
-    });
-
-    it('should handle unsupported intents gracefully', () => {
-      const result = formatResponse({}, 'unsupported_intent' as QueryIntent, mockActions);
-
-      expect(result.type).toBe('text');
-      expect(result.content.title).toBe('Consulta Não Reconhecida');
-    });
-  });
->>>>>>> origin/main
 
   describe('Response Structure Validation', () => {
     it('should always include response ID', () => {
       const intents: QueryIntent[] = ['client_data', 'appointments', 'financial', 'general', 'unknown'];
       
       intents.forEach(intent => {
-<<<<<<< HEAD
-        const result = formatResponse({}, intent
-        expect(result.id).toBe('test-response-id')
-      }
-    }
-=======
-        const result = formatResponse({}, intent);
-        expect(result.id).toBe('test-response-id');
-      });
-    });
->>>>>>> origin/main
 
     it('should always include valid response type', () => {
       const validTypes = ['table', 'list', 'chart', 'text'];
       const intents: QueryIntent[] = ['client_data', 'appointments', 'financial', 'general', 'unknown'];
       
       intents.forEach(intent => {
-<<<<<<< HEAD
-        const result = formatResponse({}, intent
-        expect(validTypes).toContain(result.type
-      }
-    }
-=======
-        const result = formatResponse({}, intent);
-        expect(validTypes).toContain(result.type);
-      });
-    });
->>>>>>> origin/main
 
     it('should always include content object', () => {
       const intents: QueryIntent[] = ['client_data', 'appointments', 'financial', 'general', 'unknown'];
       
       intents.forEach(intent => {
-<<<<<<< HEAD
-        const result = formatResponse({}, intent
-        expect(result.content).toBeDefined(
-        expect(typeof result.content).toBe('object')
-      }
-    }
-
-    it('should include actions array when provided', () => {
-      const result = formatResponse([], 'client_data', mockActions
-
-      expect(Array.isArray(result.actions)).toBe(true);
-      expect(result.actions).toEqual(mockActions
-    }
-  }
-=======
-        const result = formatResponse({}, intent);
-        expect(result.content).toBeDefined();
-        expect(typeof result.content).toBe('object');
-      });
-    });
-
-    it('should include actions array when provided', () => {
-      const result = formatResponse([], 'client_data', mockActions);
-
-      expect(Array.isArray(result.actions)).toBe(true);
-      expect(result.actions).toEqual(mockActions);
-    });
-  });
->>>>>>> origin/main
 
   describe('Data Type Validation', () => {
     it('should handle non-array data for client data', () => {
       const invalidData = { name: 'Invalid Data' };
-<<<<<<< HEAD
-      const result = formatResponse(invalidData, 'client_data')
-
-      expect(result.type).toBe('text')
-      expect(result.content.title).toBe('Nenhum Cliente Encontrado')
-    }
-
-    it('should handle non-array data for appointments', () => {
-      const invalidData = { datetime: 'Invalid Data' };
-      const result = formatResponse(invalidData, 'appointments')
-
-      expect(result.type).toBe('text')
-      expect(result.content.title).toBe('Nenhum Agendamento Encontrado')
-    }
-=======
-      const result = formatResponse(invalidData, 'client_data');
-
-      expect(result.type).toBe('text');
-      expect(result.content.title).toBe('Nenhum Cliente Encontrado');
-    });
-
-    it('should handle non-array data for appointments', () => {
-      const invalidData = { datetime: 'Invalid Data' };
-      const result = formatResponse(invalidData, 'appointments');
-
-      expect(result.type).toBe('text');
-      expect(result.content.title).toBe('Nenhum Agendamento Encontrado');
-    });
->>>>>>> origin/main
 
     it('should handle invalid date objects', () => {
       const mockClients = [
@@ -644,21 +291,6 @@ describe('ResponseFormatter', () => {
         },
       ];
 
-<<<<<<< HEAD
-      const result = formatResponse(mockClients, 'client_data')
-
-      expect(result.type).toBe('table')
-      expect(result.content.data[0].cadastrado_em).toBe('Invalid Date')
-    }
-  }
-=======
-      const result = formatResponse(mockClients, 'client_data');
-
-      expect(result.type).toBe('table');
-      expect(result.content.data[0].cadastrado_em).toBe('Invalid Date');
-    });
-  });
->>>>>>> origin/main
 
   describe('Localization and Formatting', () => {
     it('should format dates in Brazilian Portuguese format', () => {
@@ -672,17 +304,6 @@ describe('ResponseFormatter', () => {
         },
       ];
 
-<<<<<<< HEAD
-      const result = formatResponse(mockClients, 'client_data')
-
-      expect(result.content.data[0].cadastrado_em).toMatch(/\d{2}\/\d{2}\/\d{4}/
-    }
-=======
-      const result = formatResponse(mockClients, 'client_data');
-
-      expect(result.content.data[0].cadastrado_em).toMatch(/\d{2}\/\d{2}\/\d{4}/);
-    });
->>>>>>> origin/main
 
     it('should format datetime in Brazilian Portuguese format', () => {
       const mockAppointments = [
@@ -696,17 +317,6 @@ describe('ResponseFormatter', () => {
         },
       ];
 
-<<<<<<< HEAD
-      const result = formatResponse(mockAppointments, 'appointments')
-
-      expect(result.content.data[0].data_hora).toMatch(/\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/
-    }
-=======
-      const result = formatResponse(mockAppointments, 'appointments');
-
-      expect(result.content.data[0].data_hora).toMatch(/\d{2}\/\d{2}\/\d{4} \d{2}:\d{2}:\d{2}/);
-    });
->>>>>>> origin/main
 
     it('should use Portuguese labels for all response types', () => {
       const testCases = [
@@ -717,19 +327,6 @@ describe('ResponseFormatter', () => {
       ];
 
       testCases.forEach(({ intent, data, expectedTitle }) => {
-<<<<<<< HEAD
-        const result = formatResponse(data, intent
-        expect(result.content.title).toBe(expectedTitle
-      }
-    }
-  }
-=======
-        const result = formatResponse(data, intent);
-        expect(result.content.title).toBe(expectedTitle);
-      });
-    });
-  });
->>>>>>> origin/main
 
   describe('Performance Tests', () => {
     it('should format responses quickly', () => {
@@ -739,29 +336,6 @@ describe('ResponseFormatter', () => {
         email: `client${i + 1}@example.com`,
         phone: `(11) 9${String(i + 1).padStart(4, '0')}-${String(i + 1).padStart(4, '0')}`,
         created_at: '2024-01-15T10:30:00Z',
-<<<<<<< HEAD
-      })
-
-      const startTime = Date.now(
-      const result = formatResponse(largeClientData, 'client_data')
-      const endTime = Date.now(
-
-      expect(result.type).toBe('table')
-      expect(result.content.data).toHaveLength(1000
-      expect(endTime - startTime).toBeLessThan(100); // Should complete in under 100ms
-    }
-=======
-      }));
-
-      const startTime = Date.now();
-      const result = formatResponse(largeClientData, 'client_data');
-      const endTime = Date.now();
-
-      expect(result.type).toBe('table');
-      expect(result.content.data).toHaveLength(1000);
-      expect(endTime - startTime).toBeLessThan(100); // Should complete in under 100ms
-    });
->>>>>>> origin/main
 
     it('should handle concurrent formatting operations', async () => {
       const testData = [
@@ -772,28 +346,3 @@ describe('ResponseFormatter', () => {
 
       const promises = testData.map(({ intent, data }) => 
         Promise.resolve(formatResponse(data, intent))
-<<<<<<< HEAD
-      
-
-      const results = await Promise.all(promises
-      
-      expect(results.length).toBe(3
-      results.forEach(result => {
-        expect(result.id).toBe('test-response-id')
-      }
-    }
-  }
-}
-=======
-      );
-
-      const results = await Promise.all(promises);
-      
-      expect(results.length).toBe(3);
-      results.forEach(result => {
-        expect(result.id).toBe('test-response-id');
-      });
-    });
-  });
-});
->>>>>>> origin/main

@@ -13,7 +13,7 @@ export default defineConfig({
     env: {
       NODE_ENV: "test",
     },
-    setupFiles: ["./tests/test-setup.ts"],
+    setupFiles: ["./src/tests/setup.ts"],
   },
   resolve: {
     alias: {

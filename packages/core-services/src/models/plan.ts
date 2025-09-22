@@ -202,9 +202,9 @@ export class Plan {
     const recommendations: string[] = [];
 
     // Check token limits
-    if (request.tokens && request.tokens > this.maxTokensPerRequest) {
+    if (_request.tokens && _request.tokens > this.maxTokensPerRequest) {
       issues.push(
-        `Solicitação excede limite de tokens (${request.tokens} > ${this.maxTokensPerRequest})`,
+        `Solicitação excede limite de tokens (${_request.tokens} > ${this.maxTokensPerRequest})`,
       );
       recommendations.push(
         "Reduza o tamanho da consulta ou faça upgrade do plano",
@@ -213,11 +213,11 @@ export class Plan {
 
     // Check concurrent requests
     if (
-      request.concurrentRequests &&
-      request.concurrentRequests > this.concurrentRequests
+      _request.concurrentRequests &&
+      _request.concurrentRequests > this.concurrentRequests
     ) {
       issues.push(
-        `Muitas solicitações simultâneas (${request.concurrentRequests} > ${this.concurrentRequests})`,
+        `Muitas solicitações simultâneas (${_request.concurrentRequests} > ${this.concurrentRequests})`,
       );
       recommendations.push(
         "Aguarde solicitações em andamento finalizarem ou faça upgrade do plano",
@@ -225,8 +225,8 @@ export class Plan {
     }
 
     // Check feature access
-    if (request.features) {
-      for (const feature of request.features) {
+    if (_request.features) {
+      for (const feature of _request.features) {
         if (!this.hasFeature(feature)) {
           issues.push(`Feature não disponível no plano atual: ${feature}`);
           recommendations.push(`Faça upgrade para acessar ${feature}`);
@@ -235,8 +235,8 @@ export class Plan {
     }
 
     // Check model access
-    if (request.models) {
-      for (const model of request.models) {
+    if (_request.models) {
+      for (const model of _request.models) {
         if (!this.hasModelAccess(model)) {
           issues.push(`Modelo AI não disponível no plano atual: ${model}`);
           recommendations.push(`Faça upgrade para acessar ${model}`);
@@ -360,7 +360,7 @@ export class Plan {
       const tier = tiers[i];
       const plan = new Plan(tier);
 
-      if (_desiredFeatures.every((feature) => plan.hasFeature(feature))) {
+      if (desiredFeatures.every((feature) => plan.hasFeature(feature))) {
         recommendedPlan = tier;
         break;
       }

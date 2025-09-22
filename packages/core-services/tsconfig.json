@@ -5,7 +5,8 @@
     "noEmit": false,
     "outDir": "dist",
     "rootDir": "src",
-    "types": ["vitest"]
+    "types": ["vitest"],
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": ["src"],
   "exclude": [
@@ -18,7 +19,6 @@
   "references": [
     { "path": "../types" },
     { "path": "../utils" },
-    { "path": "../config" },
-    { "path": "../shared" }
+    { "path": "../config" }
   ]
 }

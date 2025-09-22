@@ -1157,13 +1157,6 @@ describe('Performance Monitoring Integration Tests', () => {
 
       vi.spyOn(performanceTracker, 'setUserContext').mockImplementation(
         context => {
-<<<<<<< HEAD
-          expect(context._userId).toBe(userContext._userId
-          expect(context.roles).toEqual(userContext.roles
-=======
-          expect(context._userId).toBe(userContext._userId);
-          expect(context.roles).toEqual(userContext.roles);
->>>>>>> origin/main
         },
       
 
@@ -1196,17 +1189,6 @@ describe('Performance Monitoring Integration Tests', () => {
 
       const sanitized = performanceTracker.sanitizeData(sensitiveData
 
-<<<<<<< HEAD
-      expect(sanitized._userId).toBe('REDACTED')
-      expect(sanitized.patientId).toBe('REDACTED')
-      expect(sanitized.medicalData).toBe('REDACTED')
-    }
-=======
-      expect(sanitized._userId).toBe('REDACTED');
-      expect(sanitized.patientId).toBe('REDACTED');
-      expect(sanitized.medicalData).toBe('REDACTED');
-    });
->>>>>>> origin/main
 
     it('should provide role-based performance insights', async () => {
       const roleBasedReports = {

@@ -1,4 +1,4 @@
-import { BloodType } from './gender.js';
+// import { BloodType } from './gender.js'; // TODO: Use when implementing blood type functionality
 
 /**
  * Healthcare-specific information

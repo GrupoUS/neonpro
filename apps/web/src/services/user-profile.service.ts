@@ -199,11 +199,7 @@ class UserProfileService {
       permissions,
       staffInfo: {
         id: anyStaff.id,
-<<<<<<< HEAD
-        _role: anyStaff._role,
-=======
         _role: anyStaff.role,
->>>>>>> origin/main
         specialization: anyStaff.specialization || '',
         crmNumber: anyStaff.crm_number || '',
         avatarUrl: anyStaff.avatar_url || '',

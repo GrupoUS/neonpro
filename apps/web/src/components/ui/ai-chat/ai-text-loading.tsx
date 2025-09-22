@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 import { useEffect, useState } from 'react';
 import type { AITextLoadingProps } from './types';
 

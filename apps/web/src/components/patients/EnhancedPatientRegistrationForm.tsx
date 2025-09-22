@@ -54,8 +54,8 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
-} from '@neonpro/ui';
-import { cn } from '@neonpro/utils';
+} from '@/components/ui';
+import { cn } from '@/utils';
 
 // Import our Brazilian validation schemas
 import {

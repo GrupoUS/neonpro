@@ -535,7 +535,7 @@ export function getRecommendedUpgrade(
     .filter(({ priority }) => priority > currentPriority)
     .sort((a, b) => a.priority - b.priority);
 
-  return availableUpgrades.length > 0 ? availableUpgrades[0].plan : null;
+  return availableUpgrades.length > 0 ? (availableUpgrades[0]?.plan ?? null) : null;
 }
 
 /**

@@ -11,11 +11,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * Covers AI chat, insights, and automation endpoints
  */
 
-<<<<<<< HEAD
-describe('AI Contract Testing',() => {
-=======
-describe(_'AI Contract Testing',() => {
->>>>>>> origin/main
+describe('AI Contract Testing', () => {
   const mockContext = {
     user: { id: 'user-123', _role: 'professional' },
     auth: { _userId: 'user-123', isAuthenticated: true },
@@ -68,24 +64,15 @@ describe(_'AI Contract Testing',() => {
     },
   };
 
-<<<<<<< HEAD
-  const trpcMsw = createTRPCMsw<AppRouter>(
-  const caller = appRouter.createCaller(mockContext
-=======
   const trpcMsw = createTRPCMsw<AppRouter>();
   const caller = appRouter.createCaller(mockContext);
->>>>>>> origin/main
 
   beforeEach(() => {
-    vi.clearAllMocks(
+    vi.clearAllMocks();
+  });
 
-<<<<<<< HEAD
-  describe('AI Chat Session Contract',() => {
-    it('should validate chat session creation',async () => {
-=======
-  describe(_'AI Chat Session Contract',() => {
-    it(_'should validate chat session creation',async () => {
->>>>>>> origin/main
+  describe('AI Chat Session Contract', () => {
+    it('should validate chat session creation', async () => {
       const sessionInput: AIInput['createChatSession'] = {
         _context: {
           type: 'patient_consultation',
@@ -120,9 +107,10 @@ describe(_'AI Contract Testing',() => {
       mockContext.compliance.validatePhiHandling.mockResolvedValue({
         valid: true,
         sanitizationRequired: true,
-      mockContext.prisma.aiChatSession.create.mockResolvedValue(mockSession
+      });
+      mockContext.prisma.aiChatSession.create.mockResolvedValue(mockSession);
 
-      const result = await caller.api.ai.createChatSession(sessionInput
+      const result = await caller.api.ai.createChatSession(sessionInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -134,11 +122,13 @@ describe(_'AI Contract Testing',() => {
             language: 'pt-BR',
           }),
         }),
+      });
 
       // Verify PHI compliance validation
       expect(mockContext.compliance.validatePhiHandling).toHaveBeenCalledWith({
         patientId: 'patient-456',
         phiHandling: 'sanitized',
+      });
 
       // Verify audit logging
       expect(mockContext.audit.logAIInteraction).toHaveBeenCalledWith({
@@ -147,12 +137,10 @@ describe(_'AI Contract Testing',() => {
         _userId: 'user-123',
         patientId: 'patient-456',
         timestamp: expect.any(Date),
+      });
+    });
 
-<<<<<<< HEAD
-    it('should enforce PHI sanitization requirements',async () => {
-=======
-    it(_'should enforce PHI sanitization requirements',async () => {
->>>>>>> origin/main
+    it('should enforce PHI sanitization requirements', async () => {
       const unsafeInput: AIInput['createChatSession'] = {
         _context: {
           type: 'patient_consultation',
@@ -169,20 +157,18 @@ describe(_'AI Contract Testing',() => {
       mockContext.compliance.validatePhiHandling.mockResolvedValue({
         valid: false,
         error: 'Raw PHI handling not permitted',
+      });
 
       await expect(
         caller.api.ai.createChatSession(unsafeInput),
       ).rejects.toThrow(
         'PHI handling validation failed: Raw PHI handling not permitted',
-      
+      );
+    });
+  });
 
-<<<<<<< HEAD
-  describe('AI Chat Message Contract',() => {
-    it('should validate message sending with PHI sanitization',async () => {
-=======
-  describe(_'AI Chat Message Contract',() => {
-    it(_'should validate message sending with PHI sanitization',async () => {
->>>>>>> origin/main
+  describe('AI Chat Message Contract', () => {
+    it('should validate message sending with PHI sanitization', async () => {
       const messageInput: AIInput['sendMessage'] = {
         sessionId: 'session-uuid-123',
         message: {
@@ -224,16 +210,18 @@ describe(_'AI Contract Testing',() => {
       mockContext.ai.sanitizePhiData.mockResolvedValue({
         sanitized: sanitizedContent,
         redactedFields: ['name', 'cpf'],
-      mockContext.ai.validatePromptSafety.mockResolvedValue({ safe: true   }
+      });
+      mockContext.ai.validatePromptSafety.mockResolvedValue({ safe: true });
       mockContext.ai.generateResponse.mockResolvedValue({
         content: mockAIResponse.content,
         confidence: 0.92,
         tokens: 156,
+      });
       mockContext.prisma.aiChatMessage.create
         .mockResolvedValueOnce(mockMessage)
-        .mockResolvedValueOnce(mockAIResponse
+        .mockResolvedValueOnce(mockAIResponse);
 
-      const result = await caller.api.ai.sendMessage(messageInput
+      const result = await caller.api.ai.sendMessage(messageInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -250,22 +238,20 @@ describe(_'AI Contract Testing',() => {
             confidence: 0.92,
           }),
         }),
+      });
 
       // Verify PHI sanitization
       expect(mockContext.ai.sanitizePhiData).toHaveBeenCalledWith(
         messageInput.message.content,
-      
+      );
 
       // Verify safety validation
       expect(mockContext.ai.validatePromptSafety).toHaveBeenCalledWith(
         sanitizedContent,
-      
+      );
+    });
 
-<<<<<<< HEAD
-    it('should reject unsafe message content',async () => {
-=======
-    it(_'should reject unsafe message content',async () => {
->>>>>>> origin/main
+    it('should reject unsafe message content', async () => {
       const unsafeInput: AIInput['sendMessage'] = {
         sessionId: 'session-uuid-123',
         message: {
@@ -277,18 +263,16 @@ describe(_'AI Contract Testing',() => {
       mockContext.ai.validatePromptSafety.mockResolvedValue({
         safe: false,
         reason: 'Malicious intent detected',
+      });
 
       await expect(caller.api.ai.sendMessage(unsafeInput)).rejects.toThrow(
         'Message content rejected: Malicious intent detected',
-      
+      );
+    });
+  });
 
-<<<<<<< HEAD
-  describe('AI No-Show Prediction Contract',() => {
-    it('should validate no-show prediction generation',async () => {
-=======
-  describe(_'AI No-Show Prediction Contract',() => {
-    it(_'should validate no-show prediction generation',async () => {
->>>>>>> origin/main
+  describe('AI No-Show Prediction Contract', () => {
+    it('should validate no-show prediction generation', async () => {
       const predictionInput: AIInput['predictNoShow'] = {
         appointmentId: 'appt-789',
         factors: {
@@ -346,11 +330,12 @@ describe(_'AI Contract Testing',() => {
         confidence: 0.87,
         factors: mockPrediction.factors,
         recommendations: mockPrediction.recommendations,
+      });
       mockContext.prisma.aiNoShowPrediction.create.mockResolvedValue(
         mockPrediction,
-      
+      );
 
-      const result = await caller.api.ai.predictNoShow(predictionInput
+      const result = await caller.api.ai.predictNoShow(predictionInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -370,6 +355,7 @@ describe(_'AI Contract Testing',() => {
             }),
           ]),
         }),
+      });
 
       // Verify AI prediction was called with correct factors
       expect(mockContext.ai.predictNoShow).toHaveBeenCalledWith(
@@ -377,13 +363,10 @@ describe(_'AI Contract Testing',() => {
           patientHistory: predictionInput.factors.patientHistory,
           appointmentDetails: predictionInput.factors.appointmentDetails,
         }),
-      
+      );
+    });
 
-<<<<<<< HEAD
-    it('should handle insufficient data for prediction',async () => {
-=======
-    it(_'should handle insufficient data for prediction',async () => {
->>>>>>> origin/main
+    it('should handle insufficient data for prediction', async () => {
       const insufficientInput: AIInput['predictNoShow'] = {
         appointmentId: 'appt-new-patient',
         factors: {
@@ -404,8 +387,9 @@ describe(_'AI Contract Testing',() => {
         probability: null,
         confidence: 0.3,
         error: 'Insufficient historical data',
+      });
 
-      const result = await caller.api.ai.predictNoShow(insufficientInput
+      const result = await caller.api.ai.predictNoShow(insufficientInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -414,14 +398,12 @@ describe(_'AI Contract Testing',() => {
           confidence: 0.3,
           message: 'Insufficient data for reliable prediction',
         }),
+      });
+    });
+  });
 
-<<<<<<< HEAD
-  describe('AI Insights Generation Contract',() => {
-    it('should validate clinic insights generation',async () => {
-=======
-  describe(_'AI Insights Generation Contract',() => {
-    it(_'should validate clinic insights generation',async () => {
->>>>>>> origin/main
+  describe('AI Insights Generation Contract', () => {
+    it('should validate clinic insights generation', async () => {
       const insightsInput: AIInput['generateInsights'] = {
         clinicId: 'clinic-789',
         scope: 'clinic_performance',
@@ -496,8 +478,9 @@ describe(_'AI Contract Testing',() => {
         insights: mockInsights.insights,
         recommendations: mockInsights.recommendations,
         confidence: 0.91,
+      });
 
-      const result = await caller.api.ai.generateInsights(insightsInput
+      const result = await caller.api.ai.generateInsights(insightsInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -525,12 +508,10 @@ describe(_'AI Contract Testing',() => {
           ]),
           confidence: 0.91,
         }),
+      });
+    });
 
-<<<<<<< HEAD
-    it('should validate patient-specific insights',async () => {
-=======
-    it(_'should validate patient-specific insights',async () => {
->>>>>>> origin/main
+    it('should validate patient-specific insights', async () => {
       const patientInsightsInput: AIInput['generateInsights'] = {
         scope: 'patient_analysis',
         patientId: 'patient-456',
@@ -576,12 +557,14 @@ describe(_'AI Contract Testing',() => {
       mockContext.compliance.validatePhiHandling.mockResolvedValue({
         valid: true,
         privacyCompliant: true,
+      });
       mockContext.ai.generateInsights.mockResolvedValue({
         insights: mockPatientInsights,
         recommendations: [],
         confidence: 0.88,
+      });
 
-      const result = await caller.api.ai.generateInsights(patientInsightsInput
+      const result = await caller.api.ai.generateInsights(patientInsightsInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -597,14 +580,12 @@ describe(_'AI Contract Testing',() => {
             }),
           }),
         }),
+      });
+    });
+  });
 
-<<<<<<< HEAD
-  describe('AI Chat History Contract',() => {
-    it('should validate chat history retrieval with filters',async () => {
-=======
-  describe(_'AI Chat History Contract',() => {
-    it(_'should validate chat history retrieval with filters',async () => {
->>>>>>> origin/main
+  describe('AI Chat History Contract', () => {
+    it('should validate chat history retrieval with filters', async () => {
       const historyInput: AIInput['getChatHistory'] = {
         sessionId: 'session-uuid-123',
         filters: {
@@ -642,9 +623,9 @@ describe(_'AI Contract Testing',() => {
         },
       ];
 
-      mockContext.prisma.aiChatMessage.findMany.mockResolvedValue(mockMessages
+      mockContext.prisma.aiChatMessage.findMany.mockResolvedValue(mockMessages);
 
-      const result = await caller.api.ai.getChatHistory(historyInput
+      const result = await caller.api.ai.getChatHistory(historyInput);
 
       expect(result).toMatchObject({
         success: true,
@@ -664,14 +645,12 @@ describe(_'AI Contract Testing',() => {
             limit: 20,
           }),
         }),
+      });
+    });
+  });
 
-<<<<<<< HEAD
-  describe('Contract Type Safety',() => {
-    it('should enforce AI input type constraints',() => {
-=======
-  describe(_'Contract Type Safety',() => {
-    it(_'should enforce AI input type constraints',() => {
->>>>>>> origin/main
+  describe('Contract Type Safety', () => {
+    it('should enforce AI input type constraints', () => {
       const validChatInput: AIInput['sendMessage'] = {
         sessionId: 'session-123',
         message: {
@@ -700,14 +679,11 @@ describe(_'AI Contract Testing',() => {
         },
       };
 
-      expect(validChatInput).toBeDefined(
-      expect(validPredictionInput).toBeDefined(
+      expect(validChatInput).toBeDefined();
+      expect(validPredictionInput).toBeDefined();
+    });
 
-<<<<<<< HEAD
-    it('should enforce AI output type constraints',() => {
-=======
-    it(_'should enforce AI output type constraints',() => {
->>>>>>> origin/main
+    it('should enforce AI output type constraints', () => {
       const mockChatOutput: AIOutput['sendMessage'] = {
         success: true,
         data: {
@@ -742,7 +718,10 @@ describe(_'AI Contract Testing',() => {
         },
       };
 
-      expect(mockChatOutput).toBeDefined(
+      expect(mockChatOutput).toBeDefined();
       expect(mockChatOutput.success).toBe(true);
-      expect(mockPredictionOutput).toBeDefined(
-      expect(mockPredictionOutput.data.probability).toBe(0.15
+      expect(mockPredictionOutput).toBeDefined();
+      expect(mockPredictionOutput.data.probability).toBe(0.15);
+    });
+  });
+});

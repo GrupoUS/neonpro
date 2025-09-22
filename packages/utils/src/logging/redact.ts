@@ -45,8 +45,10 @@ export function redact(input: string, opts: RedactOptions = {}) {
 
   // Email replacer function
   const emailRepl = opts.emailReplacement || ((match: string) => {
-    const [local, domain] = match.split('@');
-    const maskedLocal = local[0] + '*'.repeat(local.length - 1);
+    const parts = match.split('@');
+    const local = parts[0] || '';
+    const domain = parts[1] || '';
+    const maskedLocal = local[0] + '*'.repeat(Math.max(0, local.length - 1));
     return maskedLocal + '@' + domain;
   });
 

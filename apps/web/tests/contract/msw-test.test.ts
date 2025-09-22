@@ -23,11 +23,6 @@ describe('MSW Configuration Test', () => {
       expect(response.ok).toBe(true);
       expect(data.success).toBe(true);
     } catch (_error) {
-<<<<<<< HEAD
-      console.error('❌ MSW test failed:', error
-=======
-      console.error('❌ MSW test failed:', error);
->>>>>>> origin/main
       throw error;
     }
   }
@@ -47,11 +42,6 @@ describe('MSW Configuration Test', () => {
       expect(response.status).toBe(401
       expect(data.success).toBe(false);
     } catch (_error) {
-<<<<<<< HEAD
-      console.error('❌ Auth error test failed:', error
-=======
-      console.error('❌ Auth error test failed:', error);
->>>>>>> origin/main
       throw error;
     }
   }

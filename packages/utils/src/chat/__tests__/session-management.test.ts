@@ -195,11 +195,6 @@ describe("T010: Session Management for AI Chat", () => {
     }
 
     it(_"should track session metrics",_async () => {
-<<<<<<< HEAD
-      await updateSessionActivity(testSession.id, { messageCount: 3 }
-=======
-      await updateSessionActivity(testSession.id, { messageCount: 3 });
->>>>>>> origin/main
       await updateSessionActivity(testSession.id, { messageCount: 5 }); // +2 messages
 
       const session = await getChatSession(
@@ -290,11 +285,6 @@ describe("T010: Session Management for AI Chat", () => {
       activeSessions = await Promise.all([
         createChatSession({ _userId: "user-1", clinicId: "clinic-456" }),
         createChatSession({ _userId: "user-2", clinicId: "clinic-456" }),
-<<<<<<< HEAD
-      ]
-=======
-      ]);
->>>>>>> origin/main
 
       // Create expired sessions
       expiredSessions = await Promise.all([
@@ -315,11 +305,6 @@ describe("T010: Session Management for AI Chat", () => {
     }
 
     it(_"should clean up expired sessions",_async () => {
-<<<<<<< HEAD
-      const result = await cleanupExpiredSessions(
-=======
-      const result = await cleanupExpiredSessions();
->>>>>>> origin/main
 
       expect(result.cleanedCount).toBe(2
       expect(result.activeCount).toBe(2
@@ -327,11 +312,6 @@ describe("T010: Session Management for AI Chat", () => {
     }
 
     it(_"should archive inactive sessions before cleanup",_async () => {
-<<<<<<< HEAD
-      const archiveResult = await archiveInactiveSessions(
-=======
-      const archiveResult = await archiveInactiveSessions();
->>>>>>> origin/main
 
       expect(archiveResult.archivedCount).toBeGreaterThan(0
       expect(archiveResult.totalProcessed).toBe(4
@@ -379,11 +359,6 @@ describe("T010: Session Management for AI Chat", () => {
         _userId: "user-123",
         clinicId: "clinic-456",
         _role: "patient",
-<<<<<<< HEAD
-      }
-=======
-      });
->>>>>>> origin/main
 
       expect(access.isValid).toBe(true);
       expect(access.permissions).toContain("read"
@@ -395,11 +370,6 @@ describe("T010: Session Management for AI Chat", () => {
         _userId: "doctor-456",
         clinicId: "clinic-456",
         _role: "doctor",
-<<<<<<< HEAD
-      }
-=======
-      });
->>>>>>> origin/main
 
       expect(access.isValid).toBe(true);
       expect(access.permissions).toContain("read"
@@ -411,32 +381,17 @@ describe("T010: Session Management for AI Chat", () => {
         _userId: "user-123",
         clinicId: "other-clinic",
         _role: "patient",
-<<<<<<< HEAD
-      }
-=======
-      });
->>>>>>> origin/main
 
       expect(access.isValid).toBe(false);
       expect(access.reason).toContain("clinic access"
     }
 
     it(_"should log access attempts for audit",_async () => {
-<<<<<<< HEAD
-      const logSpy = vi.spyOn(console, "log").mockImplementation(() => {}
-=======
-      const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
->>>>>>> origin/main
 
       await validateSessionAccess(testSession.id, {
         _userId: "user-123",
         clinicId: "clinic-456",
         _role: "patient",
-<<<<<<< HEAD
-      }
-=======
-      });
->>>>>>> origin/main
 
       expect(logSpy).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -492,11 +447,6 @@ describe("T010: Session Management for AI Chat", () => {
     }
 
     it(_"should prevent operations on ended sessions",_async () => {
-<<<<<<< HEAD
-      await endChatSession(testSession.id, { reason: "user_ended" }
-=======
-      await endChatSession(testSession.id, { reason: "user_ended" });
->>>>>>> origin/main
 
       await expect(
         updateSessionActivity(testSession.id, { messageCount: 1 }),
@@ -504,11 +454,6 @@ describe("T010: Session Management for AI Chat", () => {
     }
 
     it(_"should handle double-end gracefully",_async () => {
-<<<<<<< HEAD
-      await endChatSession(testSession.id, { reason: "user_ended" }
-=======
-      await endChatSession(testSession.id, { reason: "user_ended" });
->>>>>>> origin/main
 
       // Second end should not throw but return existing end state
       const secondEnd = await endChatSession(testSession.id, {
@@ -527,19 +472,6 @@ describe("T010: Session Management for AI Chat", () => {
         createChatSession({ _userId: "user-1", clinicId: "clinic-456" }),
         createChatSession({ _userId: "user-2", clinicId: "clinic-456" }),
         createChatSession({ _userId: "user-3", clinicId: "clinic-789" }),
-<<<<<<< HEAD
-      ]
-    }
-
-    it(_"should calculate clinic session metrics",_async () => {
-      const metrics = await getSessionMetrics("clinic-456"
-=======
-      ]);
-    });
-
-    it(_"should calculate clinic session metrics",_async () => {
-      const metrics = await getSessionMetrics("clinic-456");
->>>>>>> origin/main
 
       expect(metrics).toMatchObject({
         totalSessions: 2,
@@ -586,15 +518,6 @@ describe("T010: Session Management for AI Chat", () => {
     }
 
     it(_"should track data processing consent",_async () => {
-<<<<<<< HEAD
-      expect(testSession.consentStatus).toBe("granted"
-      expect(testSession.consentTimestamp).toBeDefined(
-    }
-=======
-      expect(testSession.consentStatus).toBe("granted");
-      expect(testSession.consentTimestamp).toBeDefined();
-    });
->>>>>>> origin/main
 
     it(_"should handle consent revocation",_async () => {
       const updated = await updateSessionActivity(testSession.id, {

@@ -7,19 +7,11 @@ import { getOttomatorBridge } from '../../apps/api/src/services/ottomator-agent-
 // Mock dependencies
 vi.mock('@supabase/supabase-js', () => ({
   createClient: vi.fn(),
-<<<<<<< HEAD
-})
-
-vi.mock('../../../apps/api/src/services/ottomator-agent-bridge', () => ({
-  getOttomatorBridge: vi.fn(),
-})
-=======
 }));
 
 vi.mock('../../../apps/api/src/services/ottomator-agent-bridge', () => ({
   getOttomatorBridge: vi.fn(),
 }));
->>>>>>> origin/main
 
 describe('AIDataService', () => {
   let aiDataService: AIDataService;
@@ -29,11 +21,6 @@ describe('AIDataService', () => {
 
   beforeEach(() => {
     // Reset all mocks
-<<<<<<< HEAD
-    vi.clearAllMocks(
-=======
-    vi.clearAllMocks();
->>>>>>> origin/main
 
     // Create mock Supabase client
     mockSupabase = {
@@ -47,22 +34,12 @@ describe('AIDataService', () => {
       insert: vi.fn(),
     } as any;
 
-<<<<<<< HEAD
-    (createClient as Mock).mockReturnValue(mockSupabase
-=======
-    (createClient as Mock).mockReturnValue(mockSupabase);
->>>>>>> origin/main
 
     // Mock Ottomator bridge
     mockGetOttomatorBridge = getOttomatorBridge as Mock;
     mockGetOttomatorBridge.mockReturnValue({
       processQuery: vi.fn(),
       isHealthy: vi.fn().mockReturnValue(true),
-<<<<<<< HEAD
-    }
-=======
-    });
->>>>>>> origin/main
 
     // Create test permission context
     mockPermissionContext = {
@@ -72,21 +49,6 @@ describe('AIDataService', () => {
       domain: 'test-clinic',
     };
 
-<<<<<<< HEAD
-    aiDataService = new AIDataService(mockPermissionContext
-  }
-
-  afterEach(() => {
-    vi.clearAllMocks(
-  }
-=======
-    aiDataService = new AIDataService(mockPermissionContext);
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
->>>>>>> origin/main
 
   describe('Constructor', () => {
     it('should initialize Supabase client with correct configuration', () => {
@@ -98,108 +60,15 @@ describe('AIDataService', () => {
             persistSession: false,
           },
         }
-<<<<<<< HEAD
-      
-    }
-
-    it('should store permission context', () => {
-      expect((aiDataService as any).permissionContext).toEqual(mockPermissionContext
-    }
-  }
-=======
-      );
-    });
-
-    it('should store permission context', () => {
-      expect((aiDataService as any).permissionContext).toEqual(mockPermissionContext);
-    });
-  });
->>>>>>> origin/main
 
   describe('Permission Validation', () => {
     it('should allow access to client data with proper permissions', () => {
       const context = { ...mockPermissionContext, permissions: ['read_clients'] };
-<<<<<<< HEAD
-      const service = new AIDataService(context
-      
-      expect(() => (service as any).validatePermission('client_data')).not.toThrow(
-    }
-
-    it('should deny access to client data without proper permissions', () => {
-      const context = { ...mockPermissionContext, permissions: ['read_appointments'] };
-      const service = new AIDataService(context
-      
-      expect(() => (service as any).validatePermission('client_data')).toThrow(
-        'Access denied: Insufficient permissions for client data access')
-      
-    }
-
-    it('should deny access without domain specified', () => {
-      const context = { ...mockPermissionContext, domain: undefined as any };
-      const service = new AIDataService(context
-      
-      expect(() => (service as any).validatePermission('client_data')).toThrow(
-        'Access denied: User domain not specified')
-      
-    }
-
-    it('should allow general queries without specific permissions', () => {
-      const context = { ...mockPermissionContext, permissions: [] };
-      const service = new AIDataService(context
-      
-      expect(() => (service as any).validatePermission('general')).not.toThrow(
-    }
-  }
-=======
-      const service = new AIDataService(context);
-      
-      expect(() => (service as any).validatePermission('client_data')).not.toThrow();
-    });
-
-    it('should deny access to client data without proper permissions', () => {
-      const context = { ...mockPermissionContext, permissions: ['read_appointments'] };
-      const service = new AIDataService(context);
-      
-      expect(() => (service as any).validatePermission('client_data')).toThrow(
-        'Access denied: Insufficient permissions for client data access'
-      );
-    });
-
-    it('should deny access without domain specified', () => {
-      const context = { ...mockPermissionContext, domain: undefined as any };
-      const service = new AIDataService(context);
-      
-      expect(() => (service as any).validatePermission('client_data')).toThrow(
-        'Access denied: User domain not specified'
-      );
-    });
-
-    it('should allow general queries without specific permissions', () => {
-      const context = { ...mockPermissionContext, permissions: [] };
-      const service = new AIDataService(context);
-      
-      expect(() => (service as any).validatePermission('general')).not.toThrow();
-    });
-  });
->>>>>>> origin/main
 
   describe('Audit Logging', () => {
     it('should log successful data access', async () => {
       mockSupabase.from.mockReturnValue({
         insert: vi.fn().mockResolvedValue({ error: null }),
-<<<<<<< HEAD
-      } as any
-
-      await (aiDataService as any).logAccess('client_data', { clientNames: ['test'] }, 5, true
-
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs')
-=======
-      } as any);
-
-      await (aiDataService as any).logAccess('client_data', { clientNames: ['test'] }, 5, true);
-
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
->>>>>>> origin/main
       expect(mockSupabase.insert).toHaveBeenCalledWith({
         user_id: 'test-user-id',
         action: 'ai_agent_client_data',
@@ -209,58 +78,10 @@ describe('AIDataService', () => {
         success: true,
         domain: 'test-clinic',
         timestamp: expect.any(String),
-<<<<<<< HEAD
-      }
-    }
-
-    it('should handle audit logging failures gracefully', async () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {}
-      mockSupabase.from.mockReturnValue({
-        insert: vi.fn().mockRejectedValue(new Error('Database error')),
-      } as any
-
-      await expect((aiDataService as any).logAccess('client_data', {}, 0, false)).resolves.not.toThrow(
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to log audit entry:', expect.any(Error)
-      
-      consoleSpy.mockRestore(
-    }
-  }
-=======
-      });
-    });
-
-    it('should handle audit logging failures gracefully', async () => {
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      mockSupabase.from.mockReturnValue({
-        insert: vi.fn().mockRejectedValue(new Error('Database error')),
-      } as any);
-
-      await expect((aiDataService as any).logAccess('client_data', {}, 0, false)).resolves.not.toThrow();
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to log audit entry:', expect.any(Error));
-      
-      consoleSpy.mockRestore();
-    });
-  });
->>>>>>> origin/main
 
   describe('Domain Filtering', () => {
     it('should apply domain filter to queries', () => {
       const mockQuery = { eq: vi.fn().mockReturnThis() };
-<<<<<<< HEAD
-      const result = (aiDataService as any).withDomainFilter(mockQuery, 'test-domain')
-      
-      expect(mockQuery.eq).toHaveBeenCalledWith('domain', 'test-domain')
-      expect(result).toBe(mockQuery
-    }
-  }
-=======
-      const result = (aiDataService as any).withDomainFilter(mockQuery, 'test-domain');
-      
-      expect(mockQuery.eq).toHaveBeenCalledWith('domain', 'test-domain');
-      expect(result).toBe(mockQuery);
-    });
-  });
->>>>>>> origin/main
 
   describe('getClientsByName', () => {
     const mockParameters: QueryParameters = {
@@ -277,23 +98,6 @@ describe('AIDataService', () => {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         or: vi.fn().mockReturnThis(),
-<<<<<<< HEAD
-      } as any
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: mockData, error: null }
-
-      const result = await aiDataService.getClientsByName(mockParameters
-
-      expect(mockSupabase.from).toHaveBeenCalledWith('clients')
-=======
-      } as any);
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: mockData, error: null });
-
-      const result = await aiDataService.getClientsByName(mockParameters);
-
-      expect(mockSupabase.from).toHaveBeenCalledWith('clients');
->>>>>>> origin/main
       expect(mockSupabase.select).toHaveBeenCalledWith(`
         id,
         name,
@@ -303,15 +107,6 @@ describe('AIDataService', () => {
         birth_date,
         created_at,
         updated_at
-<<<<<<< HEAD
-      `
-      expect(result).toEqual(mockData
-    }
-=======
-      `);
-      expect(result).toEqual(mockData);
-    });
->>>>>>> origin/main
 
     it('should handle case-insensitive name search', async () => {
       const mockData = [{ id: 1, name: 'john doe', email: 'john@example.com' }];
@@ -320,116 +115,22 @@ describe('AIDataService', () => {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         or: vi.fn().mockReturnThis(),
-<<<<<<< HEAD
-      } as any
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: mockData, error: null }
-
-      await aiDataService.getClientsByName({ clientNames: ['John Doe'] }
-
-      expect(mockSupabase.or).toHaveBeenCalledWith('name.ilike.%John Doe%')
-    }
-
-    it('should apply role-based filtering for receptionists', async () => {
-      const receptionistContext = { ...mockPermissionContext, role: 'receptionist' };
-      const service = new AIDataService(receptionistContext
-=======
-      } as any);
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: mockData, error: null });
-
-      await aiDataService.getClientsByName({ clientNames: ['John Doe'] });
-
-      expect(mockSupabase.or).toHaveBeenCalledWith('name.ilike.%John Doe%');
-    });
-
-    it('should apply role-based filtering for receptionists', async () => {
-      const receptionistContext = { ...mockPermissionContext, role: 'receptionist' };
-      const service = new AIDataService(receptionistContext);
->>>>>>> origin/main
 
       mockSupabase.from.mockReturnValue({
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         or: vi.fn().mockReturnThis(),
-<<<<<<< HEAD
-      } as any
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: [], error: null }
-
-      await service.getClientsByName(mockParameters
-
-      // Should call select twice - once for full fields, once for limited fields
-      expect(mockSupabase.select).toHaveBeenLastCalledWith('id, name, email, phone')
-    }
-
-    it('should handle database errors', async () => {
-      const mockError = new Error('Database connection failed')
-=======
-      } as any);
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: [], error: null });
-
-      await service.getClientsByName(mockParameters);
-
-      // Should call select twice - once for full fields, once for limited fields
-      expect(mockSupabase.select).toHaveBeenLastCalledWith('id, name, email, phone');
-    });
-
-    it('should handle database errors', async () => {
-      const mockError = new Error('Database connection failed');
->>>>>>> origin/main
       
       mockSupabase.from.mockReturnValue({
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         or: vi.fn().mockReturnThis(),
-<<<<<<< HEAD
-      } as any
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: null, error: mockError }
-
-      await expect(aiDataService.getClientsByName(mockParameters)).rejects.toThrow(
-        'Failed to retrieve clients: Database connection failed')
-      
-    }
-=======
-      } as any);
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: null, error: mockError });
-
-      await expect(aiDataService.getClientsByName(mockParameters)).rejects.toThrow(
-        'Failed to retrieve clients: Database connection failed'
-      );
-    });
->>>>>>> origin/main
 
     it('should return empty array when no data found', async () => {
       mockSupabase.from.mockReturnValue({
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         or: vi.fn().mockReturnThis(),
-<<<<<<< HEAD
-      } as any
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: null, error: null }
-
-      const result = await aiDataService.getClientsByName(mockParameters
-      
-      expect(result).toEqual([]
-    }
-  }
-=======
-      } as any);
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: null, error: null });
-
-      const result = await aiDataService.getClientsByName(mockParameters);
-      
-      expect(result).toEqual([]);
-    });
-  });
->>>>>>> origin/main
 
   describe('Performance Tests', () => {
     it('should handle large result sets efficiently', async () => {
@@ -437,41 +138,11 @@ describe('AIDataService', () => {
         id: i + 1,
         name: `Client ${i + 1}`,
         email: `client${i + 1}@example.com`,
-<<<<<<< HEAD
-      })
-=======
-      }));
->>>>>>> origin/main
 
       mockSupabase.from.mockReturnValue({
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         or: vi.fn().mockReturnThis(),
-<<<<<<< HEAD
-      } as any
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: largeDataset, error: null }
-
-      const startTime = Date.now(
-      const result = await aiDataService.getClientsByName({ clientNames: ['Client'] }
-      const endTime = Date.now(
-
-      expect(result.length).toBe(1000
-      expect(endTime - startTime).toBeLessThan(100); // Should complete in under 100ms
-    }
-=======
-      } as any);
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: largeDataset, error: null });
-
-      const startTime = Date.now();
-      const result = await aiDataService.getClientsByName({ clientNames: ['Client'] });
-      const endTime = Date.now();
-
-      expect(result.length).toBe(1000);
-      expect(endTime - startTime).toBeLessThan(100); // Should complete in under 100ms
-    });
->>>>>>> origin/main
 
     it('should handle concurrent requests', async () => {
       const mockData = [{ id: 1, name: 'Test Client', email: 'test@example.com' }];
@@ -480,67 +151,16 @@ describe('AIDataService', () => {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         or: vi.fn().mockReturnThis(),
-<<<<<<< HEAD
-      } as any
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: mockData, error: null }
-=======
-      } as any);
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: mockData, error: null });
->>>>>>> origin/main
 
       // Run multiple requests concurrently
       const promises = Array.from({ length: 10 }, () => 
         aiDataService.getClientsByName({ clientNames: ['Test'] })
-<<<<<<< HEAD
-      
-
-      const results = await Promise.all(promises
-      
-      expect(results.length).toBe(10
-      results.forEach(result => {
-        expect(result).toEqual(mockData
-      }
-    }
-  }
-=======
-      );
-
-      const results = await Promise.all(promises);
-      
-      expect(results.length).toBe(10);
-      results.forEach(result => {
-        expect(result).toEqual(mockData);
-      });
-    });
-  });
->>>>>>> origin/main
 
   describe('Edge Cases', () => {
     it('should handle empty client names parameter', async () => {
       mockSupabase.from.mockReturnValue({
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
-<<<<<<< HEAD
-      } as any
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: [], error: null }
-
-      await aiDataService.getClientsByName({ clientNames: [] }
-
-      expect(mockSupabase.or).not.toHaveBeenCalled(
-    }
-=======
-      } as any);
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: [], error: null });
-
-      await aiDataService.getClientsByName({ clientNames: [] });
-
-      expect(mockSupabase.or).not.toHaveBeenCalled();
-    });
->>>>>>> origin/main
 
     it('should handle special characters in client names', async () => {
       const mockData = [{ id: 1, name: "O'Connor", email: 'oconnor@example.com' }];
@@ -549,44 +169,3 @@ describe('AIDataService', () => {
         select: vi.fn().mockReturnThis(),
         eq: vi.fn().mockReturnThis(),
         or: vi.fn().mockReturnThis(),
-<<<<<<< HEAD
-      } as any
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: mockData, error: null }
-
-      await aiDataService.getClientsByName({ clientNames: ["O'Connor"] }
-
-      expect(mockSupabase.or).toHaveBeenCalledWith("name.ilike.%O'Connor%"
-    }
-
-    it('should validate permission before executing query', async () => {
-      const context = { ...mockPermissionContext, permissions: [] };
-      const service = new AIDataService(context
-
-      await expect(service.getClientsByName({ clientNames: ['Test'] })).rejects.toThrow(
-        'Access denied: Insufficient permissions for client data access')
-      
-    }
-  }
-}
-=======
-      } as any);
-
-      (mockSupabase.select as Mock).mockResolvedValue({ data: mockData, error: null });
-
-      await aiDataService.getClientsByName({ clientNames: ["O'Connor"] });
-
-      expect(mockSupabase.or).toHaveBeenCalledWith("name.ilike.%O'Connor%");
-    });
-
-    it('should validate permission before executing query', async () => {
-      const context = { ...mockPermissionContext, permissions: [] };
-      const service = new AIDataService(context);
-
-      await expect(service.getClientsByName({ clientNames: ['Test'] })).rejects.toThrow(
-        'Access denied: Insufficient permissions for client data access'
-      );
-    });
-  });
-});
->>>>>>> origin/main

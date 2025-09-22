@@ -31,8 +31,8 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
-} from '@neonpro/ui';
-import { formatBRPhone } from '@neonpro/utils';
+} from '@/components/ui';
+import { formatBRPhone } from '@/utils';
 import {
   Check,
   ChevronLeft,

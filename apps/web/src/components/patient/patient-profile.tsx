@@ -37,7 +37,7 @@ import {
 } from '@/components/ui';
 import { formatDate, formatDateTime } from '@/utils/brazilian-formatters';
 import { Patient } from '@neonpro/shared/types/patient';
-import { formatBRPhone, formatCPF } from '@neonpro/utils';
+import { formatBRPhone, formatCPF } from '@/utils';
 import { PatientCard } from './patient-card';
 import PatientDataPresentation from './patient-data-presentation';
 import { PatientDataPresentationUtils } from './patient-data-presentation';

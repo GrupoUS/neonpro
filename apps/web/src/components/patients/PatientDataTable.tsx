@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { lazy, Suspense, useId, useMemo, useRef, useState } from 'react';
 
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 import {
   Badge,
   Button,
@@ -63,8 +63,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@neonpro/ui';
-import { EnhancedTable } from '@neonpro/ui';
+} from '@/components/ui';
+import { EnhancedTable } from '@/components/ui';
 
 import { useDataExport } from '@/hooks/useDataExport';
 import {
@@ -108,7 +108,7 @@ const statusFilterFn: FilterFn<PatientTableData> = (row, _columnId, filterValue:
   return filterValue.includes(status);
 };
 
-import { formatBRPhone } from '@neonpro/utils';
+import { formatBRPhone } from '@/utils';
 
 const formatPhone = (phone: string | undefined): string => {
   if (!phone) return '';

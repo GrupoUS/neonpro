@@ -19,7 +19,7 @@
     }
   },
   "scripts": {
-    "build": "prisma generate && tsc -b",
+    "build": "bunx prisma generate && bun x tsc -b",
     "dev": "tsc -w -p tsconfig.json",
     "type-check": "tsc -p tsconfig.json --noEmit",
     "clean": "rimraf dist",

@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { AnimatePresence, motion } from 'motion/react';

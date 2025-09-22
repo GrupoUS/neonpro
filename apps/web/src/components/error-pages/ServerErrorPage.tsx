@@ -4,8 +4,8 @@
  * User-friendly 500 error page for server errors with healthcare-appropriate messaging
  */
 
-import { Button } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
+import { Button } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { Link } from '@tanstack/react-router';
 import { AlertTriangle } from 'lucide-react';
 import { useState } from 'react';

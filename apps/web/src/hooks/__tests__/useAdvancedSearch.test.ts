@@ -17,87 +17,6 @@ describe(('useAdvancedSearch', () => {
   }
 
   it(_'should handle search by name',async () => {
-<<<<<<< HEAD
-    const { useAdvancedSearch } = await import('../useAdvancedSearch')
-    expect(typeof useAdvancedSearch).toBe('function')
-  }
-
-  it(_'should handle search by CPF',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch')
-    expect(typeof useAdvancedSearch).toBe('function')
-  }
-
-  it(_'should handle search by phone',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch')
-    expect(typeof useAdvancedSearch).toBe('function')
-  }
-
-  it(_'should handle search by registration date range',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch')
-    expect(typeof useAdvancedSearch).toBe('function')
-  }
-
-  it(_'should handle search by status filter',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch')
-    expect(typeof useAdvancedSearch).toBe('function')
-  }
-
-  it(_'should provide search performance metrics',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch')
-    expect(typeof useAdvancedSearch).toBe('function')
-  }
-
-  it(_'should debounce search queries for performance',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch')
-    expect(typeof useAdvancedSearch).toBe('function')
-  }
-
-  it(_'should clear search filters',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch')
-    expect(typeof useAdvancedSearch).toBe('function')
-  }
-}
-=======
-    const { useAdvancedSearch } = await import('../useAdvancedSearch');
-    expect(typeof useAdvancedSearch).toBe('function');
-  });
-
-  it(_'should handle search by CPF',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch');
-    expect(typeof useAdvancedSearch).toBe('function');
-  });
-
-  it(_'should handle search by phone',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch');
-    expect(typeof useAdvancedSearch).toBe('function');
-  });
-
-  it(_'should handle search by registration date range',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch');
-    expect(typeof useAdvancedSearch).toBe('function');
-  });
-
-  it(_'should handle search by status filter',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch');
-    expect(typeof useAdvancedSearch).toBe('function');
-  });
-
-  it(_'should provide search performance metrics',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch');
-    expect(typeof useAdvancedSearch).toBe('function');
-  });
-
-  it(_'should debounce search queries for performance',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch');
-    expect(typeof useAdvancedSearch).toBe('function');
-  });
-
-  it(_'should clear search filters',async () => {
-    const { useAdvancedSearch } = await import('../useAdvancedSearch');
-    expect(typeof useAdvancedSearch).toBe('function');
-  });
-});
->>>>>>> origin/main
 
 import { act, renderHook } from '@testing-library/react';
 
@@ -106,11 +25,6 @@ import { useAdvancedSearch } from '../useAdvancedSearch';
 
 describe(('useAdvancedSearch — formatting & validation', () => {
   it(('formatCPF formats progressively and caps length', () => {
-<<<<<<< HEAD
-    const { result } = renderHook(() => useAdvancedSearch()
-=======
-    const { result } = renderHook(() => useAdvancedSearch());
->>>>>>> origin/main
 
     expect(result.current.formatCPF('1')).toBe('1')
     expect(result.current.formatCPF('1234')).toBe('123.4')
@@ -130,11 +44,6 @@ describe(('useAdvancedSearch — formatting & validation', () => {
   }
 
   it(('validateCPF and validatePhone enforce strict masks', () => {
-<<<<<<< HEAD
-    const { result } = renderHook(() => useAdvancedSearch()
-=======
-    const { result } = renderHook(() => useAdvancedSearch());
->>>>>>> origin/main
 
     expect(result.current.validateCPF('123.456.789-01')).toBe(true);
     expect(result.current.validateCPF('12345678901')).toBe(false);
@@ -148,11 +57,6 @@ describe(('useAdvancedSearch — formatting & validation', () => {
 
 describe(('useAdvancedSearch — clearFilters and metrics', () => {
   it(('clearFilters resets all fields to defaults', () => {
-<<<<<<< HEAD
-    const { result } = renderHook(() => useAdvancedSearch()
-=======
-    const { result } = renderHook(() => useAdvancedSearch());
->>>>>>> origin/main
 
     act(() => {
       result.current.setFilters(prev => ({
@@ -171,45 +75,11 @@ describe(('useAdvancedSearch — clearFilters and metrics', () => {
     }
 
     const { filters } = result.current;
-<<<<<<< HEAD
-    expect(filters._query).toBe('')
-    expect(filters.email).toBe('')
-    expect(filters.cpf).toBe('')
-    expect(filters.phone).toBe('')
-    expect(filters.status).toEqual([]
-    expect(filters.dateRange.start).toBeNull(
-    expect(filters.dateRange.end).toBeNull(
-  }
-
-  it(('metrics.totalFilters counts only non-empty values', () => {
-    const { result } = renderHook(() => useAdvancedSearch()
-=======
-    expect(filters._query).toBe('');
-    expect(filters.email).toBe('');
-    expect(filters.cpf).toBe('');
-    expect(filters.phone).toBe('');
-    expect(filters.status).toEqual([]);
-    expect(filters.dateRange.start).toBeNull();
-    expect(filters.dateRange.end).toBeNull();
-  });
-
-  it(('metrics.totalFilters counts only non-empty values', () => {
-    const { result } = renderHook(() => useAdvancedSearch());
->>>>>>> origin/main
 
     // initial state: nothing selected → 0
     expect(result.current.metrics.totalFilters).toBe(0
 
     act(() => {
-<<<<<<< HEAD
-      result.current.setFilters(prev => ({ ...prev, _query: 'john' })
-    }
-    expect(result.current.metrics.totalFilters).toBe(1
-=======
-      result.current.setFilters(prev => ({ ...prev, _query: 'john' }));
-    });
-    expect(result.current.metrics.totalFilters).toBe(1);
->>>>>>> origin/main
 
     act(() => {
       result.current.setFilters(prev => ({

@@ -1,8 +1,8 @@
 import {
   type Gender,
-  type BloodType
+  type BloodType,
+  type ContactMethod
 } from '../value-objects/gender.js';
-import { type ContactMethod } from '../value-objects/healthcare.js';
 import { validateCPF, formatCPF } from '../value-objects/healthcare.js';
 
 /**

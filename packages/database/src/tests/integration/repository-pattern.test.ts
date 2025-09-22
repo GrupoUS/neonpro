@@ -197,49 +197,11 @@ describe("Repository Pattern Integration Tests", () => {
     }
 
     it(_"should get patients by clinic",_async () => {
-<<<<<<< HEAD
-      const result = await patientService.getPatientsByClinic("test-clinic-id"
-      expect(result).toHaveProperty("patients"
-      expect(result).toHaveProperty("total"
-=======
-      const result = await patientService.getPatientsByClinic("test-clinic-id");
-      expect(result).toHaveProperty("patients");
-      expect(result).toHaveProperty("total");
->>>>>>> origin/main
       expect(Array.isArray(result.patients)).toBe(true);
       expect(typeof result.total).toBe("number"
     }
 
     it(_"should search patients",_async () => {
-<<<<<<< HEAD
-      const result = await patientService.searchPatients("John", "test-clinic-id"
-      expect(result).toHaveProperty("patients"
-      expect(result).toHaveProperty("total"
-      expect(Array.isArray(result.patients)).toBe(true);
-    }
-
-    it(_"should count patients",_async () => {
-      const filter: PatientFilters = { clinicId: "test-clinic-id" };
-      const count = await patientService.countPatients(filter
-      expect(typeof count).toBe("number"
-      expect(count).toBeGreaterThanOrEqual(0
-    }
-  }
-=======
-      const result = await patientService.searchPatients("John", "test-clinic-id");
-      expect(result).toHaveProperty("patients");
-      expect(result).toHaveProperty("total");
-      expect(Array.isArray(result.patents)).toBe(true);
-    });
-
-    it(_"should count patients",_async () => {
-      const filter: PatientFilter = { clinicId: "test-clinic-id" };
-      const count = await patientService.countPatients(filter);
-      expect(typeof count).toBe("number");
-      expect(count).toBeGreaterThanOrEqual(0);
-    });
-  });
->>>>>>> origin/main
 
   describe("Error Handling", () => {
     it(_"should handle database errors gracefully",_async () => {
@@ -265,13 +227,6 @@ describe("Repository Pattern Integration Tests", () => {
     }
 
     it(_"should validate birth date",_async () => {
-<<<<<<< HEAD
-      const futureDate = new Date(
-      futureDate.setFullYear(futureDate.getFullYear() + 1
-=======
-      const futureDate = new Date();
-      futureDate.setFullYear(futureDate.getFullYear() + 1);
->>>>>>> origin/main
 
       const _request: CreatePatientRequest = {
         clinicId: "test-clinic-id",

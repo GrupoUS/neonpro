@@ -9,8 +9,8 @@ import {
   Separator,
   Slider,
   Switch,
-} from '@neonpro/ui';
-import { cn } from '@neonpro/utils';
+} from '@/components/ui';
+import { cn } from '@/utils';
 import { Eye, Keyboard, Moon, MousePointer, RotateCcw, Sun, Type, Volume2 } from 'lucide-react';
 import React, { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
 

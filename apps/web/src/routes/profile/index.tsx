@@ -2,8 +2,8 @@ import { Input } from '@/components/atoms/input';
 import { Label } from '@/components/atoms/label';
 import { useAuth } from '@/hooks/useAuth';
 import { getCurrentSession } from '@/integrations/supabase/client';
-import { Button } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
+import { Button } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Camera } from 'lucide-react';
 

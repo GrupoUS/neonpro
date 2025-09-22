@@ -51,7 +51,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui';
 import { formatDate, formatDateTime } from '@/utils/brazilian-formatters';
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 
 export interface NoShowAlertsProps {
   /** Time range for predictions */

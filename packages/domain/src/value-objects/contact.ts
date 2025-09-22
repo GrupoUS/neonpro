@@ -1,4 +1,4 @@
-import type { Address } from './address.js';
+// import type { Address } from './address.js'; // TODO: Use when implementing address functionality
 
 /**
  * Emergency contact information

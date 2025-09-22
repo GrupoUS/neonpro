@@ -88,7 +88,7 @@ export class UsageCounter {
   }
 
   get userId(): string {
-    return this._data.userId;
+    return this._data._userId;
   }
 
   get planCode(): SubscriptionTier {
@@ -208,7 +208,7 @@ export class UsageCounter {
     const usageRecord: AIUsageRecord = {
       id: `usage-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       clinicId: this._data.clinicId,
-      _userId: this._data.userId,
+      userId: this._data._userId,
       sessionId: usage.sessionId,
       modelCode: usage.modelCode,
       provider: this.getProviderForModel(usage.modelCode),
@@ -229,7 +229,7 @@ export class UsageCounter {
       auditTrail: {
         action: "ai_request_processed",
         timestamp: now,
-        _userId: this._data.userId,
+        userId: this._data._userId,
         consentStatus: "valid",
         dataProcessingPurpose: usage.medicalSpecialty
           ? "diagnosis"
@@ -330,7 +330,7 @@ export class UsageCounter {
     return {
       action: "daily_counters_reset",
       timestamp: new Date(),
-      _userId: this._data.userId,
+      _userId: this._data._userId,
       consentStatus: "valid",
       dataProcessingPurpose: "audit",
       anonymizationLevel: "none",
@@ -360,7 +360,7 @@ export class UsageCounter {
     return {
       action: "monthly_counters_reset",
       timestamp: new Date(),
-      _userId: this._data.userId,
+      _userId: this._data._userId,
       consentStatus: "valid",
       dataProcessingPurpose: "audit",
       anonymizationLevel: "none",

@@ -19,9 +19,9 @@ import {
   usePerformanceMonitor,
 } from '@/hooks/usePerformanceMonitor';
 import { cn } from '@/lib/utils';
-import { Card } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
-import { Progress } from '@neonpro/ui';
+import { Card } from '@/components/ui';
+import { Badge } from '@/components/ui';
+import { Progress } from '@/components/ui';
 import {
   IconActivity,
   IconAlertTriangle,

@@ -10,6 +10,8 @@
  * - Brazilian Portuguese descriptions and examples
  */
 
+import { z } from 'zod';
+
 // API Documentation Types
 export const API_METHODS = {
   GET: 'GET',
@@ -641,15 +643,15 @@ export class APIDocumentationGenerator {
    * Generate API documentation report
    */
   generateReport(): APIDocumentationReport {
-    const categories = [...new Set(this.endpoints.map(e => e.category))];
-    const authMethods = [
-      ...new Set(
+    const categories = Array.from(new Set(this.endpoints.map(e => e.category)));
+    const authMethods = Array.from(
+      new Set(
         this.endpoints
           .filter(e => e.authentication.required)
           .map(e => e.authentication.type)
           .filter(Boolean),
       ),
-    ];
+    );
 
     const complianceFeatures = {
       lgpdCompliant: this.endpoints.filter(e => e.metadata.compliance?.lgpd)

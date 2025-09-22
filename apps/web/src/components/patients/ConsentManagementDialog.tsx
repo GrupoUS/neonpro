@@ -23,8 +23,8 @@ import {
   FormItem,
   FormLabel,
   Switch,
-} from '@neonpro/ui';
-import { cn } from '@neonpro/utils';
+} from '@/components/ui';
+import { cn } from '@/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {

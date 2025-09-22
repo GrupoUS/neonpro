@@ -9,10 +9,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsup",
-    "dev": "tsc -w -p tsconfig.json",
+    "build": "bun x tsup",
+    "dev": "bun x tsc -w -p tsconfig.json",
     "lint": "oxlint src --fix",
-    "type-check": "tsc --noEmit",
+    "type-check": "bun x tsc --noEmit",
     "test": "vitest --run",
     "test:watch": "vitest",
     "test:coverage": "vitest --run --coverage"

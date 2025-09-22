@@ -4,9 +4,9 @@
  */
 
 import { usePatient } from '@/hooks/usePatients';
-import { Card } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
-import { Button } from '@neonpro/ui';
+import { Card } from '@/components/ui';
+import { Badge } from '@/components/ui';
+import { Button } from '@/components/ui';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { differenceInDays, format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';

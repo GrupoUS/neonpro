@@ -1,5 +1,5 @@
-import { UniversalButton } from '@neonpro/ui';
-import { Button } from '@neonpro/ui'; // shadcn/ui Button for conflict testing
+import { UniversalButton } from '@/components/ui';
+import { Button } from '@/components/ui'; // shadcn/ui Button for conflict testing
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 

@@ -6,15 +6,15 @@
 import { useAuth } from '@/hooks/useAuth';
 import { usePatient, useUpdatePatient } from '@/hooks/usePatients';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Card } from '@neonpro/ui';
-import { Button } from '@neonpro/ui';
-import { Input } from '@neonpro/ui';
-import { Label } from '@neonpro/ui';
-import { Textarea } from '@neonpro/ui';
-import { Checkbox } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
-import { Separator } from '@neonpro/ui';
-import { formatBRPhone, formatCPF, validateCPFMask } from '@neonpro/utils';
+import { Card } from '@/components/ui';
+import { Button } from '@/components/ui';
+import { Input } from '@/components/ui';
+import { Label } from '@/components/ui';
+import { Textarea } from '@/components/ui';
+import { Checkbox } from '@/components/ui';
+import { Badge } from '@/components/ui';
+import { Separator } from '@/components/ui';
+import { formatBRPhone, formatCPF, validateCPFMask } from '@/utils/brazilian-formatters';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import {
   AlertCircle,

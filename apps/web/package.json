@@ -62,8 +62,6 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@headlessui/react": "^2.2.7",
     "@hookform/resolvers": "^3.10.0",
-    "@neonpro/ui": "workspace:*",
-    "@neonpro/utils": "workspace:*",
     "@prisma/client": "^5.22.0",
     "@radix-ui/react-avatar": "^1.1.10",
     "@radix-ui/react-checkbox": "^1.3.3",
@@ -188,5 +186,6 @@
     "vite-bundle-analyzer": "^1.2.3",
     "vitest": "^3.2.4",
     "vitest-axe": "^0.1.0"
-  }
+  },
+  "packageManager": "bun@1.2.22"
 }

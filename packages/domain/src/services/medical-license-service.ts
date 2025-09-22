@@ -186,11 +186,7 @@ export class MedicalLicenseDomainService {
       };
 
       // Store verification record for audit trail
-<<<<<<< HEAD
-      // await this.storeVerificationRecord(result, _request);
-=======
-      await this.storeVerificationRecord(result, _request);
->>>>>>> origin/main
+      // TODO: Implement verification record storage - await this.storeVerificationRecord(result, request);
 
       return result;
     } catch (error) {
@@ -205,32 +201,28 @@ export class MedicalLicenseDomainService {
    * Validates verification request
    * @param request Verification request
    */
-  private validateVerificationRequest(_request: LicenseVerificationRequest): void {
-<<<<<<< HEAD
-    if (!_request.cfmNumber || !_request.cfmNumber.trim()) {
-=======
+  private validateVerificationRequest(request: LicenseVerificationRequest): void {
     if (!request.cfmNumber || !request.cfmNumber.trim()) {
->>>>>>> origin/main
       throw new Error("CFM number is required");
     }
 
-    if (!_request.physicianState || !_request.physicianState.trim()) {
+    if (!request.physicianState || !request.physicianState.trim()) {
       throw new Error("Physician state is required");
     }
 
     // Validate CFM number format
-    if (!this.validateCFMNumberFormat(_request.cfmNumber)) {
+    if (!this.validateCFMNumberFormat(request.cfmNumber)) {
       throw new Error("Invalid CFM number format");
     }
 
     // Validate state
-    if (!this.isValidState(_request.physicianState)) {
-      throw new Error(`Unsupported state: ${_request.physicianState}`);
+    if (!this.isValidState(request.physicianState)) {
+      throw new Error(`Unsupported state: ${request.physicianState}`);
     }
 
     // Validate requested states if provided
-    if (_request.requestedStates) {
-      for (const state of _request.requestedStates) {
+    if (request.requestedStates) {
+      for (const state of request.requestedStates) {
         if (!this.isValidState(state)) {
           throw new Error(`Unsupported requested state: ${state}`);
         }
@@ -327,11 +319,7 @@ export class MedicalLicenseDomainService {
   private async performManualVerification(cfmNumber: string, state: string): Promise<CFMRegistration> {
     try {
       // Implement manual verification using repository
-<<<<<<< HEAD
-      // const manualData = await this.licenseRepository.getManualVerification(cfmNumber, state);
-=======
-      const manualData = await this.licenseRepository.getManualVerification(cfmNumber, state);
->>>>>>> origin/main
+      // TODO: Implement manual verification logic - await this.licenseRepository.getManualVerification(cfmNumber, state);
 
       // For now, create a pending verification record
       const pendingRegistration: CFMRegistration = {
@@ -377,11 +365,7 @@ export class MedicalLicenseDomainService {
       }
 
       // Get physician's telemedicine authorization data from repository
-<<<<<<< HEAD
-      // let authData = await this.licenseRepository.getTelemedicineAuthorization(cfmNumber);
-=======
-      let authData = await this.licenseRepository.getTelemedicineAuthorization(cfmNumber);
->>>>>>> origin/main
+      // TODO: Implement auth data usage - let _authData = await this.licenseRepository.getTelemedicineAuthorization(cfmNumber);
 
       let authorization: TelemedicineAuthorization;
 

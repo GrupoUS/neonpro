@@ -429,12 +429,8 @@ export class AuditDomainService {
     endDate: Date,
     _clinicId?: string
   ): Promise<ComplianceReport> {
-<<<<<<< HEAD
-=======
-    // Generate report using audit repository
-    const auditLogs = await this.auditRepository.findByDateRange(startDate, endDate, _clinicId);
-    
->>>>>>> origin/main
+// Generate report using audit repository
+    // TODO: Process audit logs for report generation - await this.auditRepository.findByDateRange(startDate, endDate, _clinicId);
     // Create a comprehensive report structure based on audit logs
     const report: ComplianceReport = {
       id: `compliance-report-${Date.now()}`,
@@ -478,11 +474,7 @@ export class AuditDomainService {
    */
   private async checkAccessCompliance(
     _userId: string,
-<<<<<<< HEAD
     _patientId: string,
-=======
-    patientId: string,
->>>>>>> origin/main
     legalBasis?: string
   ): Promise<boolean> {
     // Implement compliance checking logic
@@ -502,11 +494,7 @@ export class AuditDomainService {
    */
   private async checkExportCompliance(
     _userId: string,
-<<<<<<< HEAD
     _dataType: string,
-=======
-    dataType: string,
->>>>>>> origin/main
     recordCount: number,
     legalBasis?: string
   ): Promise<boolean> {

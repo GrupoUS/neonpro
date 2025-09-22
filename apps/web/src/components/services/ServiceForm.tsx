@@ -3,14 +3,14 @@
  * Form for creating and editing services with validation
  */
 
-import { Button } from '@neonpro/ui';
-import { Input } from '@neonpro/ui';
-import { Label } from '@neonpro/ui';
-import { Textarea } from '@neonpro/ui';
-import { Switch } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
-import { TimeSlotPicker } from '@neonpro/ui';
-import { formatBRL, maskBRLInput } from '@neonpro/utils';
+import { Button } from '@/components/ui';
+import { Input } from '@/components/ui';
+import { Label } from '@/components/ui';
+import { Textarea } from '@/components/ui';
+import { Switch } from '@/components/ui';
+import { Card } from '@/components/ui';
+import { TimeSlotPicker } from '@/components/ui';
+import { formatBRL, maskBRLInput } from '@/utils';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 

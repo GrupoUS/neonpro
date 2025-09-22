@@ -103,9 +103,9 @@ export class SessionManager {
 
     const session: UserSession = {
       id: sessionId,
-      _userId: userData.userId,
+      _userId: userData._userId,
       email: userData.email,
-      _role: userData.role || "user",
+      _role: userData._role || "user",
       permissions: userData.permissions || [],
       metadata: userData.metadata || {},
       createdAt: now.toISOString(),
@@ -264,7 +264,7 @@ export function sessionMiddleware(options?: {
     }
 
     if (session && options?.roles && options.roles.length > 0) {
-      if (!session.role || !options.roles.includes(session._role)) {
+      if (!session._role || !options.roles.includes(session._role)) {
         return c.json({ error: "Insufficient permissions" }, 403);
       }
     }
@@ -285,9 +285,9 @@ export function sessionMiddleware(options?: {
       "user",
       session
         ? {
-            id: session.userId,
+            id: session._userId,
             email: session.email,
-            _role: session.role,
+            _role: session._role,
             permissions: session.permissions,
           }
         : null,
@@ -302,7 +302,7 @@ function getCookieValue(cookieHeader: string, name: string): string | null {
   for (const cookie of cookies) {
     const [cookieName, cookieValue] = cookie.split("=");
     if (cookieName === name) {
-      return cookieValue;
+      return cookieValue || null;
     }
   }
   return null;

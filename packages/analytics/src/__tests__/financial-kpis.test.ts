@@ -264,15 +264,6 @@ describe("Financial KPIs", () => {
       const healthScore = calculateFinancialHealthScore([revenueCycleKPI]
 
       const revenueIndicator = healthScore.indicators.find((i) => i.category === "revenue_cycle",
-<<<<<<< HEAD
-      
-      expect(revenueIndicator).toBeDefined(
-      expect(revenueIndicator?.performance).toBe("above"
-=======
-      );
-      expect(revenueIndicator).toBeDefined();
-      expect(revenueIndicator?.performance).toBe("above");
->>>>>>> origin/main
       expect(revenueIndicator?.impact).toBe(0.25); // 25% weight for revenue cycle
     }
   }

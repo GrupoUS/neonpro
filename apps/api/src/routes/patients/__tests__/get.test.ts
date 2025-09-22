@@ -22,15 +22,15 @@ const mockLGPDService = {
 };
 
 // Wire route service imports to our mocks
-vi.mock(_'../../../services/patient-service'), () => ({
+vi.mock('../../../services/patient-service', () => ({
   PatientService: vi.fn().mockImplementation(() => mockPatientService),
 }));
 
-vi.mock(_'../../../services/audit-service'), () => ({
+vi.mock('../../../services/audit-service', () => ({
   ComprehensiveAuditService: vi.fn().mockImplementation(() => mockAuditService),
 }));
 
-vi.mock(_'../../../services/lgpd-service'), () => ({
+vi.mock('../../../services/lgpd-service', () => ({
   LGPDService: vi.fn().mockImplementation(() => mockLGPDService),
 }));
 
@@ -96,24 +96,15 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     vi.restoreAllMocks();
   });
 
-<<<<<<< HEAD
-  it('should export get patient route handler',async () => {
-=======
-  it(_'should export get patient route handler',async () => {
->>>>>>> origin/main
+  it('should export get patient route handler', async () => {
     expect(async () => {
       const module = await import('../get');
       expect(module.default).toBeDefined();
     }).not.toThrow();
   });
 
-<<<<<<< HEAD
   describe('Successful Patient Retrieval', () => {
-    it('should get patient by valid ID',async () => {
-=======
-  describe(_'Successful Patient Retrieval'), () => {
-    it(_'should get patient by valid ID',async () => {
->>>>>>> origin/main
+    it('should get patient by valid ID', async () => {
       const { default: getRoute } = await import('../get');
 
       const mockRequest = {
@@ -134,11 +125,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       expect(data.data.cpf).toBe('123.456.789-00');
     });
 
-<<<<<<< HEAD
-    it('should include complete patient data model',async () => {
-=======
-    it(_'should include complete patient data model',async () => {
->>>>>>> origin/main
+    it('should include complete patient data model', async () => {
       const { default: getRoute } = await import('../get');
 
       const mockRequest = {
@@ -160,11 +147,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       expect(data.data.lgpdConsent.marketing).toBe(true);
     });
 
-<<<<<<< HEAD
-    it('should include LGPD compliance headers',async () => {
-=======
-    it(_'should include LGPD compliance headers',async () => {
->>>>>>> origin/main
+    it('should include LGPD compliance headers', async () => {
       const { default: getRoute } = await import('../get');
 
       const mockRequest = {
@@ -183,11 +166,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       expect(response.headers.get('X-Access-Level')).toBe('full');
     });
 
-<<<<<<< HEAD
-    it('should include cache control headers',async () => {
-=======
-    it(_'should include cache control headers',async () => {
->>>>>>> origin/main
+    it('should include cache control headers', async () => {
       const { default: getRoute } = await import('../get');
 
       const mockRequest = {
@@ -207,13 +186,8 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
   });
 
-<<<<<<< HEAD
   describe('LGPD Compliance and Data Access', () => {
-    it('should validate LGPD data access permissions',async () => {
-=======
-  describe(_'LGPD Compliance and Data Access'), () => {
-    it(_'should validate LGPD data access permissions',async () => {
->>>>>>> origin/main
+    it('should validate LGPD data access permissions', async () => {
       const { default: getRoute } = await import('../get');
 
       const mockRequest = {
@@ -235,11 +209,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       });
     });
 
-<<<<<<< HEAD
-    it('should log data access for audit trail',async () => {
-=======
-    it(_'should log data access for audit trail',async () => {
->>>>>>> origin/main
+    it('should log data access for audit trail', async () => {
       const { default: getRoute } = await import('../get');
 
       const mockRequest = {
@@ -271,11 +241,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       });
     });
 
-<<<<<<< HEAD
-    it('should handle LGPD access denial',async () => {
-=======
-    it(_'should handle LGPD access denial',async () => {
->>>>>>> origin/main
+    it('should handle LGPD access denial', async () => {
       mockLGPDService.validateDataAccess.mockResolvedValue({
         success: false,
         error: 'Acesso negado por política LGPD',
@@ -301,11 +267,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       expect(data.code).toBe('LGPD_ACCESS_DENIED');
     });
 
-<<<<<<< HEAD
-    it('should mask sensitive data based on access level',async () => {
-=======
-    it(_'should mask sensitive data based on access level',async () => {
->>>>>>> origin/main
+    it('should mask sensitive data based on access level', async () => {
       mockLGPDService.validateDataAccess.mockResolvedValue({
         success: true,
         data: { canAccess: true, accessLevel: 'limited' },
@@ -342,11 +304,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       expect(response.headers.get('X-Access-Level')).toBe('limited');
     });
 
-<<<<<<< HEAD
-    it('should validate consent expiration',async () => {
-=======
-    it(_'should validate consent expiration',async () => {
->>>>>>> origin/main
+    it('should validate consent expiration', async () => {
       mockPatientService.getPatientById.mockResolvedValue({
         success: true,
         data: {
@@ -378,13 +336,8 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
   });
 
-<<<<<<< HEAD
   describe('Error Handling', () => {
-    it('should handle patient not found',async () => {
-=======
-  describe(_'Error Handling'), () => {
-    it(_'should handle patient not found',async () => {
->>>>>>> origin/main
+    it('should handle patient not found', async () => {
       mockPatientService.getPatientById.mockResolvedValue({
         success: false,
         error: 'Paciente não encontrado',
@@ -410,11 +363,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       expect(data.code).toBe('PATIENT_NOT_FOUND');
     });
 
-<<<<<<< HEAD
-    it('should handle authentication errors',async () => {
-=======
-    it(_'should handle authentication errors',async () => {
->>>>>>> origin/main
+    it('should handle authentication errors', async () => {
       const { default: getRoute } = await import('../get');
 
       const mockRequest = {
@@ -433,11 +382,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       expect(data.error).toContain('Não autorizado');
     });
 
-<<<<<<< HEAD
-    it('should handle invalid patient ID format',async () => {
-=======
-    it(_'should handle invalid patient ID format',async () => {
->>>>>>> origin/main
+    it('should handle invalid patient ID format', async () => {
       const { default: getRoute } = await import('../get');
 
       const mockRequest = {
@@ -461,11 +406,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       );
     });
 
-<<<<<<< HEAD
-    it('should handle service errors gracefully',async () => {
-=======
-    it(_'should handle service errors gracefully',async () => {
->>>>>>> origin/main
+    it('should handle service errors gracefully', async () => {
       mockPatientService.getPatientById.mockRejectedValue(
         new Error('Database connection failed'),
       );
@@ -488,11 +429,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       expect(data.error).toContain('Erro interno do servidor');
     });
 
-<<<<<<< HEAD
-    it('should handle audit logging failures gracefully',async () => {
-=======
-    it(_'should handle audit logging failures gracefully',async () => {
->>>>>>> origin/main
+    it('should handle audit logging failures gracefully', async () => {
       mockAuditService.logActivity.mockRejectedValue(
         new Error('Audit service unavailable'),
       );
@@ -517,13 +454,8 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
   });
 
-<<<<<<< HEAD
   describe('Performance and Caching', () => {
-    it('should support conditional requests with ETag',async () => {
-=======
-  describe(_'Performance and Caching'), () => {
-    it(_'should support conditional requests with ETag',async () => {
->>>>>>> origin/main
+    it('should support conditional requests with ETag', async () => {
       const { default: getRoute } = await import('../get');
 
       // First request to get ETag
@@ -553,11 +485,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       expect(secondResponse.status).toBe(304); // Not Modified
     });
 
-<<<<<<< HEAD
-    it('should include performance headers',async () => {
-=======
-    it(_'should include performance headers',async () => {
->>>>>>> origin/main
+    it('should include performance headers', async () => {
       const { default: getRoute } = await import('../get');
 
       const mockRequest = {
@@ -575,13 +503,8 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
   });
 
-<<<<<<< HEAD
   describe('Brazilian Healthcare Compliance', () => {
-    it('should include CFM compliance headers',async () => {
-=======
-  describe(_'Brazilian Healthcare Compliance'), () => {
-    it(_'should include CFM compliance headers',async () => {
->>>>>>> origin/main
+    it('should include CFM compliance headers', async () => {
       const { default: getRoute } = await import('../get');
 
       const mockRequest = {
@@ -599,11 +522,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       expect(response.headers.get('X-Healthcare-Context')).toBe('patient_care');
     });
 
-<<<<<<< HEAD
-    it('should validate healthcare professional access',async () => {
-=======
-    it(_'should validate healthcare professional access',async () => {
->>>>>>> origin/main
+    it('should validate healthcare professional access', async () => {
       const { default: getRoute } = await import('../get');
 
       const mockRequest = {
@@ -627,11 +546,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       });
     });
 
-<<<<<<< HEAD
-    it('should include data retention policy headers',async () => {
-=======
-    it(_'should include data retention policy headers',async () => {
->>>>>>> origin/main
+    it('should include data retention policy headers', async () => {
       const { default: getRoute } = await import('../get');
 
       const mockRequest = {
@@ -649,13 +564,8 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
   });
 
-<<<<<<< HEAD
   describe('Access Control and Permissions', () => {
-    it('should validate user access to specific patient',async () => {
-=======
-  describe(_'Access Control and Permissions'), () => {
-    it(_'should validate user access to specific patient',async () => {
->>>>>>> origin/main
+    it('should validate user access to specific patient', async () => {
       const { default: getRoute } = await import('../get');
 
       const mockRequest = {
@@ -675,11 +585,7 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
       });
     });
 
-<<<<<<< HEAD
-    it('should handle insufficient permissions',async () => {
-=======
-    it(_'should handle insufficient permissions',async () => {
->>>>>>> origin/main
+    it('should handle insufficient permissions', async () => {
       mockPatientService.validateAccess.mockResolvedValue({
         success: false,
         error: 'Permissões insuficientes para acessar este paciente',

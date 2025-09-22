@@ -19,7 +19,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { DndContext } from '@dnd-kit/core';
 import type { UniqueIdentifier } from '@dnd-kit/core';
-import { Badge } from '@neonpro/ui';
+import { Badge } from '@/components/ui';
 import {
   IconAlertCircle,
   IconCheck,

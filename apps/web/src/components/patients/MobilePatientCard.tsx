@@ -22,22 +22,22 @@ import {
 import { useState } from 'react';
 
 import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   Badge,
   Button,
   Card,
   CardContent,
   CardHeader,
+  Separator,
+} from '@/components/ui';
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  Separator,
-} from '@neonpro/ui';
-import { cn, formatBRPhone } from '@neonpro/utils';
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn, formatBRPhone } from '@/utils';
 
 interface PatientBasicInfo {
   id: string;

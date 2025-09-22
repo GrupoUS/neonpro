@@ -148,7 +148,7 @@ export class AGUIProtocolClient extends EventEmitter {
           this.handleError(new Error('Connection timeout'));
         }
       }, this.config.timeout);
-    } catch (_error) {
+    } catch (error) {
       this.handleError(error);
       throw error;
     }
@@ -291,7 +291,7 @@ export class AGUIProtocolClient extends EventEmitter {
       }
 
       this.handleAGUIEvent(aguiEvent);
-    } catch (_error) {
+    } catch (error) {
       console.error('Error handling WebSocket message:', error);
       this.emit('error', error);
     }
@@ -414,7 +414,7 @@ export class AGUIProtocolClient extends EventEmitter {
             reject(new Error('Request timeout'));
           }
         }, this.config.timeout);
-      } catch (_error) {
+      } catch (error) {
         this.pendingRequests.delete(event.id);
         reject(error);
       }

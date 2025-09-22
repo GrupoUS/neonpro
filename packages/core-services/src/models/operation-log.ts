@@ -203,7 +203,7 @@ export class OperationLog {
       auditTrail: {
         action: entry.operation,
         timestamp: now,
-        _userId: entry.userId || "system",
+        userId: entry._userId || "system",
         userRole: entry.userRole,
         ipAddress: entry.ipAddress,
         userAgent: entry.userAgent,
@@ -264,7 +264,7 @@ export class OperationLog {
       description: `AI request using ${params.modelCode} model`,
       severity: "info",
       clinicId: params.clinicId,
-      _userId: params.userId,
+      _userId: params._userId,
       sessionId: params.sessionId,
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
@@ -327,7 +327,7 @@ export class OperationLog {
       description: `Plan changed from ${params.fromPlan} to ${params.toPlan}`,
       severity: "info",
       clinicId: params.clinicId,
-      _userId: params.userId,
+      _userId: params._userId,
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
       planCode: params.toPlan,
@@ -371,7 +371,7 @@ export class OperationLog {
             ? "warning"
             : "info",
       clinicId: params.clinicId,
-      _userId: params.userId,
+      _userId: params._userId,
       complianceFrameworks: [params.framework],
       dataProcessingPurpose: "audit",
       personalDataInvolved: params.framework === "LGPD",
@@ -410,7 +410,7 @@ export class OperationLog {
       description: params.description,
       severity: params.severity,
       clinicId: params.clinicId,
-      _userId: params.userId,
+      _userId: params._userId,
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
       complianceFrameworks: ["LGPD"],
@@ -472,7 +472,7 @@ export class OperationLog {
 
     // Apply user filters
     if (filters.userIds && filters.userIds.length > 0) {
-      entries = entries.filter((e) => e.userId && filters.userIds!.includes(e._userId),
+      entries = entries.filter((e) => e._userId && filters.userIds!.includes(e._userId),
       );
     }
 
@@ -525,7 +525,7 @@ export class OperationLog {
     }
 
     // Sort by timestamp (newest first)
-    entries.sort((a,_b) => b.timestamp.getTime() - a.timestamp.getTime());
+    entries.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
 
     // Apply pagination
     if (filters.offset) {
@@ -553,7 +553,7 @@ export class OperationLog {
     limit: number = 50,
   ): OperationLogEntry[] {
     return this.queryLogs({
-      userIds: [userId],
+      userIds: [_userId],
       limit,
     });
   }
@@ -603,7 +603,7 @@ export class OperationLog {
       .filter((agg) => agg.period === period)
       .filter((agg) => !startDate || agg.timestamp >= startDate)
       .filter((agg) => !endDate || agg.timestamp <= endDate)
-      .sort((a,_b) => b.timestamp.getTime() - a.timestamp.getTime());
+      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
   /**

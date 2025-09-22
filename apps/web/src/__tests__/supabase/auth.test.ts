@@ -213,11 +213,6 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
 
   describe(('Session Management and Security', () => {
     test(_'should handle secure session lifecycle',async () => {
-<<<<<<< HEAD
-      const testUser = await testDataGenerator.createAuthenticatedTestUser('patient')
-=======
-      const testUser = await testDataGenerator.createAuthenticatedTestUser('patient');
->>>>>>> origin/main
 
       // Sign in
       const { data: signInData, error: signInError } = await testClient.auth.signInWithPassword({
@@ -276,15 +271,6 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
 
       if (user) {
         // Verify JWT claims
-<<<<<<< HEAD
-        expect(user.aud).toBe('authenticated')
-        expect(user._role).toBe('authenticated')
-        expect(user.email).toBe(testUser.email
-=======
-        expect(user.aud).toBe('authenticated');
-        expect(user._role).toBe('authenticated');
-        expect(user.email).toBe(testUser.email);
->>>>>>> origin/main
 
         // Validate user metadata structure
         expect(user.user_metadata).toBeDefined(
@@ -363,33 +349,11 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
       const { data, error } = await testClient.auth.signInWithPassword({
         email: patientUser.email,
         password: patientUser.password,
-<<<<<<< HEAD
-=======
-      });
-
-      expect(error).toBeNull();
-      expect(data.user).toBeDefined();
-
-      if (data.user?.user_metadata) {
-        expect(data.user.user_metadata._role).toBe('patient');
-        expect(data.user.user_metadata.permissions).toContain('read_own_data');
->>>>>>> origin/main
       }
 
       expect(error).toBeNull(
       expect(data.user).toBeDefined(
 
-<<<<<<< HEAD
-      if (data.user?.user_metadata) {
-        expect(data.user.user_metadata._role).toBe('patient')
-        expect(data.user.user_metadata.permissions).toContain('read_own_data')
-      }
-
-      console.log('✅ Patient role authentication validated')
-    }
-
-=======
->>>>>>> origin/main
     test(_'should validate healthcare professional roles',async () => {
       const roles = ['doctor', 'nurse', 'admin'] as const;
 
@@ -402,38 +366,11 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
         const { data, error } = await testClient.auth.signInWithPassword({
           email: professionalUser.email,
           password: professionalUser.password,
-<<<<<<< HEAD
-=======
-        });
-
-        expect(error).toBeNull();
-        expect(data.user).toBeDefined();
-
-        if (data.user?.user_metadata) {
-          expect(data.user.user_metadata._role).toBe(role);
-          expect(data.user.user_metadata.permissions).toContain(
-            `read_patients_${role}`,
-          );
->>>>>>> origin/main
         }
 
         expect(error).toBeNull(
         expect(data.user).toBeDefined(
 
-<<<<<<< HEAD
-        if (data.user?.user_metadata) {
-          expect(data.user.user_metadata._role).toBe(role
-          expect(data.user.user_metadata.permissions).toContain(
-            `read_patients_${role}`,
-          
-        }
-
-        console.log(`✅ ${role} role authentication validated`
-      }
-    }
-
-=======
->>>>>>> origin/main
     test(_'should enforce organization-scoped authentication',async () => {
       const orgId = 'test-hospital-12345';
       const doctorUser = await testDataGenerator.createTestUser({
@@ -449,20 +386,6 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
 
       expect(error).toBeNull(
 
-<<<<<<< HEAD
-      if (data.user?.user_metadata) {
-        expect(data.user.user_metadata.organization_id).toBe(orgId
-        expect(data.user.user_metadata.permissions).toContain(
-          'read_org_patients',
-        
-      }
-
-      console.log('✅ Organization-scoped authentication validated')
-    }
-  }
-
-=======
->>>>>>> origin/main
   describe(('Password Security and Recovery', () => {
     test(_'should enforce strong password requirements',async () => {
       const weakPasswords = ['123456', 'password', 'abc123', 'test1234'];
@@ -483,11 +406,6 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
     test(_'should handle secure password recovery',async () => {
       const testUser = await testDataGenerator.createTestUser({
         _role: 'patient',
-<<<<<<< HEAD
-      }
-=======
-      });
->>>>>>> origin/main
 
       const { data, error } = await testClient.auth.resetPasswordForEmail(
         testUser.email,
@@ -504,11 +422,6 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
     test(_'should implement account lockout after failed attempts',async () => {
       const testUser = await testDataGenerator.createTestUser({
         _role: 'patient',
-<<<<<<< HEAD
-      }
-=======
-      });
->>>>>>> origin/main
 
       // Simulate multiple failed login attempts
       for (let i = 0; i < 5; i++) {

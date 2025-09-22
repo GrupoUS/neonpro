@@ -416,7 +416,7 @@ export function shouldApplySemanticCache(
   const shouldCache =
     maxSimilarity >= SEMANTIC_CACHE_CONFIG.similarityThresholds.medium;
   const ttlMap = SEMANTIC_CACHE_CONFIG.cacheTtl as Record<string, number>;
-  const ttlMinutes = ttlMap[contextType] ?? ttlMap.generalQueries;
+  const ttlMinutes = ttlMap[contextType] ?? ttlMap.generalQueries ?? 60;
 
   return {
     shouldCache,

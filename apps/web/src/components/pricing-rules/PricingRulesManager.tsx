@@ -21,8 +21,8 @@ import {
   useTogglePricingRule,
 } from '@/hooks/usePricingRules';
 import type { PricingRule } from '@/types/pricing-rules';
-import { Input } from '@neonpro/ui';
-import { Button } from '@neonpro/ui';
+import { Input } from '@/components/ui';
+import { Button } from '@/components/ui';
 import {
   Edit,
   Filter,

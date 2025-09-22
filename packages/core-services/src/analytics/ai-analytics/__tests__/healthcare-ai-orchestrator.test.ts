@@ -26,11 +26,6 @@ describe("HealthcareAIOrchestrator", () => {
 
   describe("generateHealthcareInsights", () => {
     it(_"should generate comprehensive healthcare insights",_async () => {
-<<<<<<< HEAD
-      const insights = await orchestrator.generateHealthcareInsights("month"
-=======
-      const insights = await orchestrator.generateHealthcareInsights("month");
->>>>>>> origin/main
 
       expect(insights).toHaveProperty("category"
       expect(insights).toHaveProperty("insights"
@@ -62,11 +57,6 @@ describe("HealthcareAIOrchestrator", () => {
 
   describe("performComplianceAudit", () => {
     it(_"should perform comprehensive compliance audit",_async () => {
-<<<<<<< HEAD
-      const audit = await orchestrator.performComplianceAudit(
-=======
-      const audit = await orchestrator.performComplianceAudit();
->>>>>>> origin/main
 
       expect(audit).toHaveProperty("lgpdCompliant"
       expect(audit).toHaveProperty("anvisaCompliant"
@@ -84,11 +74,6 @@ describe("HealthcareAIOrchestrator", () => {
     }
 
     it(_"should include Brazilian healthcare compliance checks",_async () => {
-<<<<<<< HEAD
-      const audit = await orchestrator.performComplianceAudit(
-=======
-      const audit = await orchestrator.performComplianceAudit();
->>>>>>> origin/main
 
       const auditText = audit.auditTrail.join(" ").toLowerCase(
       expect(auditText).toContain("anvisa"
@@ -99,11 +84,6 @@ describe("HealthcareAIOrchestrator", () => {
 
   describe("getDashboardData", () => {
     it(_"should return complete dashboard data",_async () => {
-<<<<<<< HEAD
-      const dashboard = await orchestrator.getDashboardData(
-=======
-      const dashboard = await orchestrator.getDashboardData();
->>>>>>> origin/main
 
       expect(dashboard).toHaveProperty("metrics"
       expect(dashboard).toHaveProperty("insights"
@@ -115,11 +95,6 @@ describe("HealthcareAIOrchestrator", () => {
     }
 
     it(_"should determine status correctly",_async () => {
-<<<<<<< HEAD
-      const dashboard = await orchestrator.getDashboardData(
-=======
-      const dashboard = await orchestrator.getDashboardData();
->>>>>>> origin/main
 
       // For stub data, should typically be healthy
       expect(dashboard.status).toBe("healthy"
@@ -128,11 +103,6 @@ describe("HealthcareAIOrchestrator", () => {
 
   describe("getBrazilianHealthcareKPIs", () => {
     it(_"should return Brazilian healthcare KPIs",_async () => {
-<<<<<<< HEAD
-      const kpis = await orchestrator.getBrazilianHealthcareKPIs(
-=======
-      const kpis = await orchestrator.getBrazilianHealthcareKPIs();
->>>>>>> origin/main
 
       expect(kpis).toHaveProperty("anvisa"
       expect(kpis).toHaveProperty("sus"
@@ -155,11 +125,6 @@ describe("HealthcareAIOrchestrator", () => {
     }
 
     it(_"should have valid KPI ranges",_async () => {
-<<<<<<< HEAD
-      const kpis = await orchestrator.getBrazilianHealthcareKPIs(
-=======
-      const kpis = await orchestrator.getBrazilianHealthcareKPIs();
->>>>>>> origin/main
 
       // Compliance rates should be between 0 and 1
       expect(kpis.anvisa.deviceCompliance).toBeGreaterThanOrEqual(0

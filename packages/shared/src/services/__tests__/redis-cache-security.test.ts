@@ -176,13 +176,6 @@ describe('Redis Cache Security Tests_, () => {
         accessCount: 1,
         sensitivity: 'INVALID_SENSITIVITY_, // Invalid enum value
         tier: 'INVALID_TIER_, // Invalid enum value
-<<<<<<< HEAD
-        value: 'test')
-      }
-=======
-        value: 'test'
-      });
->>>>>>> origin/main
 
       mockRedis.get.mockResolvedValue(invalidEnumEntry
 

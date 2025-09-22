@@ -76,7 +76,7 @@ import {
 } from '@/components/ui';
 import { useAGUIProtocol } from '@/services/agui-protocol';
 import { formatCurrency, formatDateTime } from '@/utils/brazilian-formatters';
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 
 // Import our specific types for AI agent integration
 import type {

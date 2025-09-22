@@ -15,7 +15,7 @@
 
 import { type ConnectionStatus, useEnhancedRealTime } from '@/hooks/useEnhancedRealTime';
 import { cn } from '@/lib/utils';
-import { Button } from '@neonpro/ui';
+import { Button } from '@/components/ui';
 import {
   IconActivity,
   IconAlertCircle,

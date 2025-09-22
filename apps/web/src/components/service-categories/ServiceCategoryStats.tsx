@@ -4,8 +4,8 @@
  */
 
 import { useServiceCategories } from '@/hooks/useServiceCategories';
-import { Card } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
+import { Card } from '@/components/ui';
+import { Badge } from '@/components/ui';
 import { BarChart3 } from 'lucide-react';
 
 interface ServiceCategoryStatsProps {

@@ -46,7 +46,7 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip } from '@/components/ui/tooltip';
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 
 export interface AIChatInputProps {
   /** Input value */

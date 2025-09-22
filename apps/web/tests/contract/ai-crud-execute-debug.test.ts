@@ -18,11 +18,6 @@ describe('AI CRUD Execute API Debug Test', () => {
     };
 
     // ACT: Make request to execute CRUD endpoint
-<<<<<<< HEAD
-    const response = await executeCrudOperation(_request
-=======
-    const response = await executeCrudOperation(_request);
->>>>>>> origin/main
 
     // ASSERT: Debug the actual response structure
     console.log('Full API Response:', JSON.stringify(response, null, 2)

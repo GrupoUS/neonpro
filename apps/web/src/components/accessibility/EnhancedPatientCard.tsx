@@ -13,7 +13,7 @@
 
 'use client';
 
-import { Card } from '@neonpro/ui';
+import { Card } from '@/components/ui';
 import { AlertTriangle } from 'lucide-react';
 import React, { useCallback, useMemo } from 'react';
 import {

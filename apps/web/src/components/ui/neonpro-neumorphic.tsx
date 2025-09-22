@@ -13,7 +13,7 @@
 
 'use client';
 
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { forwardRef } from 'react';
 

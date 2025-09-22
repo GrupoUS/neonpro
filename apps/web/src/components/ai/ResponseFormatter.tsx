@@ -76,7 +76,7 @@ import {
   formatDateTime,
   formatPhone,
 } from '@/utils/brazilian-formatters';
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 
 import type { AgentResponse, AppointmentData, ClientData, FinancialData } from '@neonpro/types';
 

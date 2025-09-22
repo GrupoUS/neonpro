@@ -1,8 +1,8 @@
 'use client';
 
 import { HealthcareLoadingFallback } from '@/lib/lazy-loading';
-import { cn } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
+import { cn } from '@/components/ui';
+import { Card } from '@/components/ui';
 import { lazy, Suspense } from 'react';
 
 // Lazy load framer-motion for better bundle splitting

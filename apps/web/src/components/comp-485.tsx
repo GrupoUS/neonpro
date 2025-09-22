@@ -31,7 +31,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 import {
   Badge,
   Button,
@@ -75,7 +75,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@neonpro/ui';
+} from '@/components/ui';
 
 type Item = {
   id: string;

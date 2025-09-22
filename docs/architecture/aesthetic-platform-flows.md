@@ -490,23 +490,213 @@ flowchart TD
 6. **Stakeholder Notification** - Notify relevant professionals, administrators, and compliance officers
 7. **Corrective Action Tracking** - Monitor resolution of compliance issues and preventive measures
 
+## Treatment & Procedure Flows
+
+### 12. Photo Management & Consent Flows
+
+**Purpose**: Comprehensive before/after photo management with LGPD compliance and consent tracking
+
+```mermaid
+sequenceDiagram
+    participant P as Professional
+    participant C as Client
+    participant S as System
+    participant PM as Photo Manager
+    participant L as LGPD Engine
+    participant A as Audit System
+
+    P->>C: Request photo consent for treatment
+    C->>S: Review and sign photo consent forms
+    S->>L: Validate LGPD compliance
+    L->>S: Consent validation confirmed
+    S->>PM: Create photo session record
+    
+    P->>PM: Capture before photos
+    PM->>S: Upload with metadata and consent
+    S->>A: Log photo capture event
+    A->>S: Audit trail created
+    
+    P->>S: Perform aesthetic procedure
+    S->>A: Log procedure details
+    
+    P->>PM: Capture after photos
+    PM->>S: Upload with treatment correlation
+    S->>A: Log complete treatment documentation
+    A->>S: Generate compliance certificate
+```
+
+**Flow Steps**:
+
+1. **Consent Collection** - Granular consent for treatment, marketing, portfolio, and educational use
+2. **Photo Session Management** - Structured photo capture with standardized protocols
+3. **Metadata Association** - Automatic correlation with treatment records and professional details
+4. **Security Processing** - Automated watermarking, encryption, and access controls
+5. **Retention Management** - Scheduled cleanup based on consent expiration and retention policies
+6. **Compliance Monitoring** - Real-time monitoring of photo access and usage
+
+### 13. Multi-Council Professional Validation Flows
+
+**Purpose**: CFM, COREN, CFF, CNEP integration flows for aesthetic professional validation
+
+```mermaid
+flowchart TD
+    A[Professional Registration] --> B{Council Type}
+    B -->|CFM| C[Medical Doctor Validation]
+    B -->|COREN| D[Nursing Validation]
+    B -->|CFF| E[Pharmacy/Biochemistry Validation]
+    B -->|CNEP| F[Aesthetic Professional Validation]
+    
+    C --> G[CFM Portal Integration]
+    D --> H[COREN Registry Check]
+    E --> I[CFF License Verification]
+    F --> J[CNEP Certification Validation]
+    
+    G --> K[Real-time License Status]
+    H --> K
+    I --> K
+    J --> K
+    
+    K --> L{License Valid?}
+    L -->|Yes| M[Specialty Verification]
+    L -->|No| N[Access Restricted]
+    
+    M --> O[Procedure Authorization Matrix]
+    O --> P[Access Level Assignment]
+    P --> Q[Professional Dashboard]
+    
+    N --> R[Compliance Alert]
+    R --> S[Administrator Notification]
+
+    style B fill:#e3f2fd
+    style L fill:#fff3e0
+    style P fill:#e8f5e8
+```
+
+**Flow Steps**:
+
+1. **Council Type Detection** - Automatic identification of professional council type
+2. **Real-time License Validation** - Direct integration with council APIs for current status
+3. **Specialty Certification Verification** - Validation of aesthetic procedure specializations
+4. **Scope of Practice Assessment** - Determination of authorized procedures based on license
+5. **Dynamic Access Control** - Real-time permission updates based on license status
+6. **Compliance Monitoring** - Continuous monitoring of license validity and renewals
+
+### 14. Aesthetic Equipment Integration Flows
+
+**Purpose**: Device management and compliance workflows for aesthetic equipment
+
+```mermaid
+sequenceDiagram
+    participant E as Equipment
+    participant S as System
+    participant T as Technician
+    participant P as Professional
+    participant A as Audit System
+    participant C as Compliance Engine
+
+    E->>S: Equipment status and calibration data
+    S->>C: Validate ANVISA compliance
+    C->>S: Compliance status confirmed
+    S->>A: Log equipment check
+    A->>S: Audit trail created
+    
+    P->>S: Request equipment for procedure
+    S->>E: Verify availability and readiness
+    E->>S: Equipment readiness confirmation
+    S->>P: Grant equipment access
+    
+    T->>E: Perform pre-procedure safety check
+    E->>S: Safety check results
+    S->>C: Validate safety parameters
+    C->>S: Safety verification complete
+    S->>P: Authorize procedure start
+    
+    P->>E: Use equipment for treatment
+    E->>S: Real-time usage data
+    S->>A: Log procedure execution
+    A->>S: Update maintenance schedule
+    C->>S: Monitor compliance during use
+```
+
+**Flow Steps**:
+
+1. **Equipment Registration** - ANVISA compliance verification and device classification
+2. **Calibration Management** - Scheduled maintenance and calibration tracking
+3. **Safety Protocol Validation** - Pre-procedure safety checks and parameter verification
+4. **Usage Monitoring** - Real-time tracking of equipment utilization and performance
+5. **Maintenance Scheduling** - Automated maintenance scheduling based on usage patterns
+6. **Compliance Reporting** - Generation of ANVISA compliance reports and documentation
+
+### 15. Client Marketing & Communication Flows
+
+**Purpose**: Consent-based marketing and communication flows for aesthetic clinic clients
+
+```mermaid
+flowchart TD
+    A[Client Profile] --> B{Marketing Consent}
+    B -->|Consent Given| C[Marketing Campaign Creation]
+    B -->|No Consent| D[Basic Communications Only]
+    
+    C --> E[Content Personalization]
+    E --> F[Channel Selection]
+    F --> G[Message Scheduling]
+    
+    G --> H{Communication Type}
+    H -->|Educational| I[Treatment Information]
+    H -->|Promotional| J[Special Offers]
+    H -->|Follow-up| K[Post-treatment Care]
+    
+    I --> L[Multi-channel Delivery]
+    J --> L
+    K --> L
+    
+    L --> M[Engagement Tracking]
+    M --> N{Response Analysis}
+    N -->|Positive| O[Conversion Tracking]
+    N -->|Negative| P[Optimization]
+    
+    O --> Q[ROI Reporting]
+    P --> R[Strategy Adjustment]
+    
+    D --> S[Transactional Communications]
+    S --> T[Appointment Reminders]
+    S --> U[Treatment Follow-ups]
+
+    style B fill:#e3f2fd
+    style H fill:#fff3e0
+    style N fill:#e8f5e8
+```
+
+**Flow Steps**:
+
+1. **Consent Management** - Granular marketing consent tracking and preference management
+2. **Content Personalization** - AI-driven content customization based on treatment history
+3. **Channel Optimization** - Multi-channel communication (email, SMS, WhatsApp, push)
+4. **Campaign Management** - Automated campaign scheduling and execution
+5. **Engagement Analytics** - Real-time tracking of client engagement and response
+6. **Compliance Monitoring** - LGPD compliance monitoring for marketing communications
+
 ## Summary
 
 This document provides a comprehensive overview of the core platform flows for NeonPro, focusing exclusively on user journeys, workflow sequences, and business process flows specific to Brazilian aesthetic clinics.
 
 ### Key Platform Flows Covered
 
-1. **User Authentication & Authorization** - Multi-role access control with CFM integration
+1. **User Authentication & Authorization** - Multi-role access control with multi-council integration
 2. **Patient Registration & Onboarding** - LGPD-compliant patient lifecycle management
 3. **Professional Dashboard & Workflow** - Comprehensive professional interface flows
 4. **Appointment Scheduling** - AI-powered scheduling with optimization
 5. **Anti-No-Show Engine** - Predictive analytics for appointment retention
 6. **Patient Management** - Complete patient lifecycle workflows
-7. **Professional Authentication** - CFM license validation flows
+7. **Professional Authentication** - Multi-council license validation flows
 8. **LGPD Compliance** - Automated consent and data protection workflows
 9. **Treatment Planning** - Comprehensive treatment planning workflows
 10. **Procedure Execution** - Step-by-step procedure documentation flows
 11. **Real-time Compliance Monitoring** - Continuous regulatory compliance tracking
+12. **Photo Management & Consent** - Before/after photo workflows with LGPD compliance
+13. **Multi-Council Professional Validation** - CFM, COREN, CFF, CNEP integration flows
+14. **Aesthetic Equipment Integration** - Device management and compliance workflows
+15. **Client Marketing & Communication** - Consent-based marketing and communication flows
 
 ### Flow Integration Points
 

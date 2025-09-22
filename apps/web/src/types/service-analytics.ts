@@ -299,7 +299,7 @@ export function calculateCompletionRate(
   return (completed / total) * 100;
 }
 
-import { formatBRL } from '@neonpro/utils';
+import { formatBRL } from '@/utils';
 
 export function formatCurrency(amount: number, _currency = 'BRL'): string {
   // Standardize on BRL formatting across the app for now

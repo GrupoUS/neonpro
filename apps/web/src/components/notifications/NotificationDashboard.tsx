@@ -7,7 +7,7 @@ import {
   useNotificationStats,
   useProcessPendingNotifications,
 } from '@/hooks/useNotificationScheduler';
-import { cn } from '@neonpro/ui';
+import { cn } from '@/components/ui';
 
 // Simple Progress component since it's not in the UI package
 const Progress = ({
@@ -24,9 +24,9 @@ const Progress = ({
     />
   </div>
 );
-import { Button } from '@neonpro/ui';
-import { Card } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
+import { Button } from '@/components/ui';
+import { Card } from '@/components/ui';
+import { Badge } from '@/components/ui';
 import {
   AlertTriangle,
   Bell,

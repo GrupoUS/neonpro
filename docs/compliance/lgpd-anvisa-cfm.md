@@ -1,14 +1,14 @@
-# Healthcare Compliance Documentation (T082)
+# Aesthetic Clinic Compliance Documentation (T082-A)
 
 ## Overview
 
-This document outlines the compliance requirements and implementations for Brazilian healthcare regulations: LGPD (Lei Geral de Proteção de Dados), ANVISA (Agência Nacional de Vigilância Sanitária), and CFM (Conselho Federal de Medicina).
+This document outlines the compliance requirements and implementations for Brazilian aesthetic clinic regulations: LGPD (Lei Geral de Proteção de Dados), ANVISA (Agência Nacional de Vigilância Sanitária) for cosmetic products, and Professional Council regulations for aesthetic practitioners.
 
 ## Table of Contents
 
 1. [LGPD Compliance](#lgpd-compliance)
 2. [ANVISA Compliance](#anvisa-compliance)
-3. [CFM Compliance](#cfm-compliance)
+3. [Professional Council Compliance](#professional-council-compliance)
 4. [Implementation Details](#implementation-details)
 5. [Audit Requirements](#audit-requirements)
 6. [Data Retention Policies](#data-retention-policies)
@@ -19,20 +19,20 @@ This document outlines the compliance requirements and implementations for Brazi
 
 1. **Lawfulness, Fairness, and Transparency**
    - All data processing has a lawful basis
-   - Patients are informed about data usage
+   - Clients are informed about data usage
    - Clear privacy policies in Portuguese
 
 2. **Purpose Limitation**
-   - Data collected only for specified healthcare purposes
+   - Data collected only for specified aesthetic clinic purposes
    - No secondary usage without explicit consent
 
 3. **Data Minimization**
    - Only necessary data is collected
    - Automatic data masking for sensitive fields
-   - Pseudonymization of patient identifiers
+   - Pseudonymization of client identifiers
 
 4. **Accuracy**
-   - Patient data verification mechanisms
+   - Client data verification mechanisms
    - Regular data quality checks
    - Easy update mechanisms
 
@@ -51,19 +51,19 @@ This document outlines the compliance requirements and implementations for Brazi
 The system implements all LGPD rights:
 
 1. **Right to Access**
-   - Endpoint: `GET /api/v2/patients/{id}/data`
-   - Patients can access all their data
+   - Endpoint: `GET /api/v2/clients/{id}/data`
+   - Clients can access all their data
 
 2. **Right to Rectification**
-   - Endpoint: `PATCH /api/v2/patients/{id}`
+   - Endpoint: `PATCH /api/v2/clients/{id}`
    - Update personal information
 
 3. **Right to Erasure**
-   - Endpoint: `DELETE /api/v2/patients/{id}`
+   - Endpoint: `DELETE /api/v2/clients/{id}`
    - Soft delete with 30-day retention
 
 4. **Right to Data Portability**
-   - Endpoint: `GET /api/v2/patients/{id}/export`
+   - Endpoint: `GET /api/v2/clients/{id}/export`
    - Export in machine-readable format
 
 5. **Right to Object**
@@ -81,10 +81,11 @@ The system implements all LGPD rights:
 ```typescript
 interface LGPDConsent {
   id: string;
-  patientId: string;
+  clientId: string;
   dataProcessing: boolean;
   dataSharing: boolean;
   marketing: boolean;
+  photoUsage: boolean;
   retentionPeriod: '5_years' | '10_years' | '25_years';
   consentedAt: Date;
   ipAddress: string;
@@ -96,7 +97,8 @@ const LGPDConsentForm: React.FC = () => {
   const [consents, setConsents] = useState({
     dataProcessing: false,
     dataSharing: false,
-    marketing: false
+    marketing: false,
+    photoUsage: false
   });
 
   const handleSubmit = async () => {
@@ -110,19 +112,24 @@ const LGPDConsentForm: React.FC = () => {
 
   return (
     <form>
-      <h3>Termo de Consentimento LGPD</h3>
+      <h3>Termo de Consentimento LGPD - Clínica Estética</h3>
       <ConsentCheckbox
-        label="Autorizo o tratamento de meus dados para finalidades de saúde"
+        label="Autorizo o tratamento de meus dados para finalidades estéticas"
         checked={consents.dataProcessing}
         onChange={(v) => setConsents(prev => ({ ...prev, dataProcessing: v }))}
       />
       <ConsentCheckbox
-        label="Autorizo o compartilhamento com profissionais de saúde"
+        label="Autorizo o compartilhamento com profissionais estéticos"
         checked={consents.dataSharing}
         onChange={(v) => setConsents(prev => ({ ...prev, dataSharing: v }))}
       />
       <ConsentCheckbox
-        label="Autorizo comunicação sobre serviços de saúde"
+        label="Autorizo o uso de fotos antes/depois para tratamento"
+        checked={consents.photoUsage}
+        onChange={(v) => setConsents(prev => ({ ...prev, photoUsage: v }))}
+      />
+      <ConsentCheckbox
+        label="Autorizo comunicação sobre serviços estéticos"
         checked={consents.marketing}
         onChange={(v) => setConsents(prev => ({ ...prev, marketing: v }))}
       />
@@ -150,18 +157,18 @@ export function maskEmail(email: string): string {
 
 ## ANVISA Compliance
 
-### Medical Device Software Classification
+### Aesthetic Equipment and Cosmetic Product Classification
 
-The system is classified as Class II medical device software according to RDC 185/2001.
+The system handles data for aesthetic equipment and cosmetic products regulated by ANVISA.
 
 ### Risk Management
 
 1. **Risk Analysis**
-   - Regular risk assessments
-   - Impact analysis for potential failures
+   - Regular risk assessments for aesthetic procedures
+   - Impact analysis for equipment failures
    - Mitigation strategies documentation
 
-2. **Software Lifecycle**
+2. **Equipment Lifecycle**
    - Version control with audit trail
    - Change management procedures
    - Validation and verification processes
@@ -198,7 +205,8 @@ interface AuditLog {
   timestamp: Date;
   userId: string;
   userRole: string;
-  cfmNumber: string;
+  professionalLicense: string;
+  councilType: string;
   action: string;
   resource: string;
   resourceId: string;
@@ -222,7 +230,8 @@ class AuditService {
       timestamp: new Date(),
       userId: getCurrentUser().id,
       userRole: getCurrentUser().role,
-      cfmNumber: getCurrentUser().cfmNumber,
+      professionalLicense: getCurrentUser().professionalLicense,
+      councilType: getCurrentUser().councilType,
       ...params,
       ipAddress: getClientIP(),
       userAgent: navigator.userAgent,
@@ -239,32 +248,32 @@ class AuditService {
 ```typescript
 // Validation matrix
 const VALIDATION_MATRIX = {
-  "patient-registration": {
-    requirements: ["REQ-PAT-001", "REQ-PAT-002"],
-    testCases: ["TC-PAT-001", "TC-PAT-002"],
+  "client-registration": {
+    requirements: ["REQ-CLI-001", "REQ-CLI-002"],
+    testCases: ["TC-CLI-001", "TC-CLI-002"],
     risks: ["RISK-001"],
     mitigations: ["MIT-001"],
   },
-  "ai-diagnosis": {
-    requirements: ["REQ-AI-001"],
-    testCases: ["TC-AI-001", "TC-AI-002"],
+  "aesthetic-procedure": {
+    requirements: ["REQ-AES-001"],
+    testCases: ["TC-AES-001", "TC-AES-002"],
     risks: ["RISK-002", "RISK-003"],
     mitigations: ["MIT-002", "MIT-003"],
   },
 };
 ```
 
-## CFM Compliance
+## Professional Council Compliance
 
 ### Professional Ethics
 
-1. **Medical Confidentiality**
+1. **Client Confidentiality**
    - End-to-end encryption
    - Access only to authorized professionals
    - Breach notification procedures
 
 2. **Professional Responsibility**
-   - CFM/CRM number validation
+   - Professional license validation (CFM/COREN/CFF)
    - Scope of practice validation
    - Supervision requirements
 
@@ -273,18 +282,18 @@ const VALIDATION_MATRIX = {
    - Timely documentation
    - Electronic signature requirements
 
-### Telemedicine Guidelines
+### Aesthetic Practice Guidelines
 
-The system follows CFM Resolution 2.314/2022 for telemedicine:
+The system follows professional council guidelines for aesthetic practices:
 
 1. **Informed Consent**
    - Electronic consent forms
-   - Video consent recording
+   - Photo usage consent
    - Language accessibility
 
 2. **Technical Requirements**
-   - Minimum video quality standards
-   - Audio quality requirements
+   - Equipment safety standards
+   - Treatment room requirements
    - Backup systems
 
 3. **Clinical Guidelines**
@@ -297,13 +306,20 @@ The system follows CFM Resolution 2.314/2022 for telemedicine:
 #### Professional Validation
 
 ```typescript
-// CFM number validation
-export async function validateCFMNumber(
-  cfm: string,
+// Professional license validation
+export async function validateProfessionalLicense(
+  license: string,
+  councilType: string,
   state: string,
 ): Promise<boolean> {
-  // Check CFM database
-  const response = await fetch(`https://portal.cfm.org.br/api/medicos/${cfm}`);
+  // Check relevant professional council database
+  const endpoints = {
+    CFM: `https://portal.cfm.org.br/api/medicos/${license}`,
+    COREN: `https://portal.coren-sp.gov.br/api/enfermeiros/${license}`,
+    CFF: `https://www.cff.org.br/api/farmaceuticos/${license}`,
+  };
+  
+  const response = await fetch(endpoints[councilType]);
   const data = await response.json();
 
   return data.situacao === "Ativo" && data.uf === state;
@@ -315,8 +331,10 @@ export function validateScopeOfPractice(
   procedure: string,
 ): boolean {
   const SCOPE_MATRIX = {
-    Cardiologia: ["Eletrocardiograma", "Teste de esforço"],
-    Dermatologia: ["Dermatoscopia", "Biópsia"],
+    "Dermatologia": ["Dermatoscopia", "Biópsia", "Peeling Químico"],
+    "Cirurgia Plástica": ["Botox", "Preenchimento", "Lipoaspiração"],
+    "Enfermagem Estética": ["Limpeza de Pele", "Aplicação de Cosméticos"],
+    "Estética": ["Massagem Facial", "Tratamentos Capilares"],
     // ... other specialties
   };
 
@@ -331,7 +349,8 @@ interface ElectronicSignature {
   id: string;
   documentId: string;
   professionalId: string;
-  cfmNumber: string;
+  professionalLicense: string;
+  councilType: string;
   signature: string;
   timestamp: Date;
   ipAddress: string;
@@ -341,7 +360,7 @@ interface ElectronicSignature {
 class SignatureService {
   async signDocument(
     documentId: string,
-    professional: MedicalProfessional,
+    professional: AestheticProfessional,
   ): Promise<ElectronicSignature> {
     // Create cryptographic signature
     const signature = await crypto.subtle.sign(
@@ -354,7 +373,8 @@ class SignatureService {
       id: generateUUID(),
       documentId,
       professionalId: professional.id,
-      cfmNumber: professional.cfmNumber,
+      professionalLicense: professional.professionalLicense,
+      councilType: professional.councilType,
       signature: arrayBufferToBase64(signature),
       timestamp: new Date(),
       ipAddress: getClientIP(),
@@ -386,9 +406,9 @@ class SignatureService {
    ```typescript
    const ROLES = {
      ADMIN: ["read", "write", "delete", "manage"],
-     DOCTOR: ["read", "write", "diagnose"],
-     NURSE: ["read", "write-notes"],
-     RECEPTIONIST: ["read", "create-appointments"],
+     MEDICAL_DIRECTOR: ["read", "write", "diagnose", "manage_aesthetic_procedures"],
+     AESTHETIC_PROFESSIONAL: ["read", "write", "perform_authorized_procedures"],
+     CLINIC_STAFF: ["read", "create-appointments", "manage_client_data"],
    };
    ```
 
@@ -396,25 +416,32 @@ class SignatureService {
    - Time-based restrictions
    - Location-based access
    - Device trust level
+   - Professional license validation
 
 ## Audit Requirements
 
 ### Mandatory Logs
 
 1. **Access Logs**
-   - All data accesses
+   - All client data accesses
    - Failed authentication attempts
    - Administrative actions
+   - Photo access and management
+   - Before/after treatment photo views
 
 2. **Change Logs**
-   - Data modifications
+   - Client treatment modifications
    - Configuration changes
    - Software updates
+   - Aesthetic procedure records
+   - Photo consent updates
 
 3. **System Logs**
    - Performance metrics
    - Error logs
    - Security events
+   - Equipment integration logs
+   - Treatment workflow events
 
 ### Log Retention
 
@@ -422,16 +449,20 @@ class SignatureService {
 - Audit trails: 25 years
 - System logs: 2 years
 - Error logs: 5 years
+- Photo records: 25 years (client lifetime + retention)
+- Treatment records: 25 years
 
 ## Data Retention Policies
 
-### Patient Data
+### Client Data
 
 | Data Type      | Retention Period | Legal Basis    |
 | -------------- | ---------------- | -------------- |
-| Clinical Data  | 25 years         | CFM Resolution |
+| Treatment Records | 25 years      | CFM Resolution |
+| Before/After Photos | 25 years     | LGPD/Client Consent |
 | Financial Data | 10 years         | Tax Law        |
 | Contact Data   | 5 years          | LGPD           |
+| Consultation Notes | 25 years       | Professional Standards |
 | Audit Logs     | 25 years         | CFM Resolution |
 
 ### Data Deletion
@@ -440,11 +471,14 @@ class SignatureService {
    - Scheduled cleanup jobs
    - Soft delete with grace period
    - Certificate of destruction
+   - Photo management cleanup
 
 2. **Right to be Forgotten**
    - Complete data removal
    - Third-party notifications
    - Backup purging
+   - Photo deletion confirmation
+   - Aesthetic treatment record anonymization
 
 ## Testing and Validation
 
@@ -459,22 +493,32 @@ class SignatureService {
      });
 
      it("should require valid consent", async () => {
-       await expect(savePatientData({})).rejects.toThrow(
+       await expect(saveClientData({})).rejects.toThrow(
          "LGPD consent required",
+       );
+     });
+
+     it("should validate photo consent", async () => {
+       await expect(saveBeforeAfterPhotos({})).rejects.toThrow(
+         "Photo usage consent required",
        );
      });
    });
    ```
 
 2. **Integration Tests**
-   - End-to-end data flow
-   - Audit trail verification
-   - Access control validation
+   - End-to-end aesthetic client data flow
+   - Audit trail verification for treatment procedures
+   - Access control validation for professional roles
+   - Photo management workflow testing
+   - Before/after photo consent validation
 
 3. **Security Tests**
    - Penetration testing
    - Vulnerability scanning
    - Social engineering tests
+   - Photo data protection validation
+   - Aesthetic equipment integration security
 
 ## Continuous Compliance
 
@@ -484,11 +528,15 @@ class SignatureService {
    - Suspicious activity detection
    - Anomaly detection
    - Performance alerts
+   - Photo access monitoring
+   - Aesthetic procedure workflow monitoring
 
 2. **Regular Audits**
    - Quarterly internal audits
    - Annual external audits
    - Surprise inspections
+   - Photo consent compliance reviews
+   - Professional license validation audits
 
 ### Training
 
@@ -496,11 +544,17 @@ class SignatureService {
    - Privacy and security awareness
    - Role-specific procedures
    - Compliance requirements
+   - Photo management and consent procedures
+   - Aesthetic treatment data handling
+   - Professional license maintenance
 
 2. **Ongoing Training**
    - Annual refreshers
    - Policy updates
    - New feature training
+   - LGPD compliance for aesthetic data
+   - Photo security best practices
+   - Aesthetic equipment data protection
 
 ## Incident Response
 
@@ -510,28 +564,39 @@ class SignatureService {
    - Monitoring systems
    - User reports
    - Third-party notifications
+   - Photo data breach alerts
+   - Aesthetic treatment record anomalies
 
 2. **Containment**
    - Immediate isolation
    - Evidence preservation
    - System hardening
+   - Photo access lockdown
+   - Treatment workflow suspension
 
 3. **Notification**
    - ANPD (within 24 hours)
    - Affected individuals
    - Regulatory bodies
+   - Professional councils (if professional data affected)
+   - Equipment vendors (if equipment data compromised)
 
 4. **Recovery**
    - System restoration
    - Data validation
    - Process improvements
+   - Photo integrity verification
+   - Treatment record recovery
 
 ## Conclusion
 
-This compliance framework ensures that the Patient Dashboard meets all Brazilian healthcare regulatory requirements while maintaining high standards of patient care and data protection.
+This compliance framework ensures that the NeonPro Aesthetic Platform meets all Brazilian regulatory requirements for aesthetic clinics while maintaining high standards of client care, photo protection, and data privacy for aesthetic procedures and cosmetic treatments.
 
 ## References
 
 - [LGPD Law 13.709/2018](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm)
 - [ANVISA RDC 185/2001](https://bvsms.saude.gov.br/bvs/saudelegis/anvisa/2001/rdc0185_21_12_2001.html)
 - [CFM Resolution 2.314/2022](https://sistemas.cfm.org.br/normas/arquivos/resolucoes/BR/2022/2314/2022_2314.pdf)
+- [COREN Resolutions](https://portal.coren-sp.gov.br/)
+- [CFF Regulations](https://www.cff.org.br/)
+- [Aesthetic Professional Standards](https://www.cnesp.org.br/)

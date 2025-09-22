@@ -5,7 +5,7 @@
 
 import { useSubscription } from '@/hooks/useSubscription';
 import { cn } from '@/lib/utils';
-import { Badge } from '@neonpro/ui';
+import { Badge } from '@/components/ui';
 import { AlertTriangle } from 'lucide-react';
 import SubscriptionUpgrade from './SubscriptionUpgrade';
 

@@ -907,11 +907,6 @@ describe('API Security Performance', () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ _query: maliciousQuery }),
-<<<<<<< HEAD
-      }
-=======
-      });
->>>>>>> origin/main
 
       const data = await response.json(
       const endTime = performance.now(

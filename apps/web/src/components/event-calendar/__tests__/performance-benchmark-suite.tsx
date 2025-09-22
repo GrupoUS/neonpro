@@ -11,7 +11,7 @@ import { EventCalendar } from '../event-calendar';
 import { CalendarEvent, EventColor } from '../types';
 
 // Mock performance utilities
-vi.mock(('@/utils/performance-optimizer', () => ({
+vi.mock('@/utils/performance-optimizer', () => ({
   measureComponentRender: vi.fn().mockResolvedValue({
     duration: 45,
     score: 0.92,
@@ -36,7 +36,7 @@ vi.mock(('@/utils/performance-optimizer', () => ({
 }));
 
 // Mock React Profiler
-vi.mock(_'react',async () => {
+vi.mock('react', async () => {
   const actual = await vi.importActual('react');
   return {
     ...actual,
@@ -279,13 +279,6 @@ describe(('Performance Benchmark Suite - Calendar Optimization', () => {
       }).toThrow();
     });
 
-<<<<<<< HEAD
-    it('should prevent memory leaks with large datasets', () => {
-      const largeEventSet = Array.from({ length: 100 }, (_, i) => ({
-=======
-    it(('should prevent memory leaks with large datasets', () => {
-      const largeEventSet = Array.from.*}, (_, i) => ({
->>>>>>> origin/main
         id: `memory-test-${i}`,
         title: `Evento ${i}`,
         start: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T10:00:00`),
@@ -456,13 +449,6 @@ describe(('Performance Benchmark Suite - Calendar Optimization', () => {
       // Should handle slow loading gracefully
     });
 
-<<<<<<< HEAD
-    it('should implement efficient data loading', () => {
-      const optimizedEvents = Array.from({ length: 100 }, (_, i) => ({
-=======
-    it(('should implement efficient data loading', () => {
-      const optimizedEvents = Array.from.*}, (_, i) => ({
->>>>>>> origin/main
         id: `optimized-${i}`,
         title: `Evento Otimizado ${i}`,
         start: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T10:00:00`),
@@ -636,15 +622,6 @@ describe(('Performance Benchmark Suite - Calendar Optimization', () => {
   });
 
   // SCALABILITY PERFORMANCE
-<<<<<<< HEAD
-  describe('Scalability Performance', () => {
-    it('should scale with user count', () => {
-      const userEvents = Array.from({ length: 100 }, (_, i) => ({
-=======
-  describe(('Scalability Performance', () => {
-    it(('should scale with user count', () => {
-      const userEvents = Array.from.*}, (_, i) => ({
->>>>>>> origin/main
         id: `user-${i}`,
         title: `Evento Usuário ${i}`,
         start: new Date(
@@ -657,11 +634,6 @@ describe(('Performance Benchmark Suite - Calendar Optimization', () => {
             String(Math.floor(i / 4) + 9).padStart(2, '0')
           }:00`,
         ),
-<<<<<<< HEAD
-        color: ['blue', 'emerald', 'violet', 'rose'][i % 4],
-=======
-        color: ['blue', 'emerald', 'violet', 'rose'][i % 4] as EventColor,
->>>>>>> origin/main
         _userId: `user-${i}`,
       }));
 

@@ -13,9 +13,9 @@ import {
   type AppointmentTemplate,
   type AppointmentTemplateCategory,
 } from '@/types/appointment-templates';
-import { cn } from '@neonpro/ui';
-import { Badge } from '@neonpro/ui';
-import { formatBRL } from '@neonpro/utils';
+import { cn } from '@/components/ui';
+import { Badge } from '@/components/ui';
+import { formatBRL } from '@/utils';
 import { Clock } from 'lucide-react';
 import React, { useState } from 'react';
 
