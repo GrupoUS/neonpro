@@ -28,16 +28,16 @@ export class HealthcareAIOrchestrator {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   constructor(
     predictiveService?: PredictiveAnalyticsService,
-    _config: Record<string, unknown> = {},
+    config: Record<string, unknown> = {},
   ) {
     this.predictiveService =
       predictiveService || new PredictiveAnalyticsService();
-    const _config = _config; // avoid unused warning
+    const configToUse = config; // avoid unused warning
     this.config = {
       enableCompliance: true,
       region: "brazil",
       dataRetentionDays: 2555, // 7 years as per Brazilian healthcare regulations
-      ...__config,
+      ...configToUse,
     };
     void this.config; // mark as read to satisfy TS unused private property rule
   }
