@@ -77,15 +77,12 @@ describe('Contract Tests: AI Sessions Endpoint', () => {
         const data = await response.json(
 
         // Verify response structure
-<<<<<<< HEAD
         expect(data.sessionId).toBe(sessionId
         expect(data._userId).toBeDefined(
         expect(data.messages).toBeDefined(
-=======
         expect(data.sessionId).toBe(sessionId);
         expect(data._userId).toBeDefined();
         expect(data.messages).toBeDefined();
->>>>>>> origin/main
         expect(Array.isArray(data.messages)).toBe(true);
         expect(data.createdAt).toBeDefined(
         expect(data.lastActivity).toBeDefined(
@@ -111,19 +108,16 @@ describe('Contract Tests: AI Sessions Endpoint', () => {
 
         if (data.messages.length > 0) {
           const message = data.messages[0];
-<<<<<<< HEAD
           expect(message).toHaveProperty('id')
           expect(message).toHaveProperty('role')
           expect(['user', 'assistant']).toContain(message._role
           expect(message).toHaveProperty('content')
           expect(message).toHaveProperty('timestamp')
-=======
           expect(message).toHaveProperty('id');
           expect(message).toHaveProperty('role');
           expect(['user', 'assistant']).toContain(message._role);
           expect(message).toHaveProperty('content');
           expect(message).toHaveProperty('timestamp');
->>>>>>> origin/main
 
           // Verify timestamp format
           expect(new Date(message.timestamp)).toBeInstanceOf(Date

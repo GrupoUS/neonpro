@@ -24,13 +24,10 @@ describe('Integration Test T014: Abuse Detection', () => {
   let suspiciousUserId: string;
 
   beforeEach(async () => {
-<<<<<<< HEAD
     await setupTestDatabase(
     testClient = createTestClient({ _role: 'admin' }
-=======
     await setupTestDatabase();
     testClient = createTestClient({ _role: 'admin' });
->>>>>>> origin/main
     clinicId = 'clinic-abuse-test-001';
     professionalCRM = 'CRM/SP 123456';
     suspiciousUserId = 'user-suspicious-001';
@@ -130,11 +127,8 @@ describe('Integration Test T014: Abuse Detection', () => {
           }),
         }
 
-<<<<<<< HEAD
         botRequests.push(_request
-=======
         botRequests.push(_request);
->>>>>>> origin/main
 
         // Wait exactly 1 second between requests (bot-like behavior)
         await new Promise(resolve => setTimeout(resolve, 1000)
@@ -217,11 +211,8 @@ describe('Integration Test T014: Abuse Detection', () => {
             ...testClient.headers,
           },
           body: JSON.stringify(_request),
-<<<<<<< HEAD
         }
-=======
         });
->>>>>>> origin/main
 
         responses.push({
           request,

@@ -27,7 +27,6 @@ describe('Contract: GET /api/v1/chat/session/:id', () => {
         'x-role': 'CLINICAL_STAFF',
         'x-consent': 'true',
       },
-<<<<<<< HEAD
     }
     expect(res.status).toBe(200
     const json = await res.json(
@@ -36,7 +35,6 @@ describe('Contract: GET /api/v1/chat/session/:id', () => {
     expect(json._userId).toBe('u-session')
   }
 }
-=======
     });
     expect(res.status).toBe(200);
     const json = await res.json();
@@ -45,4 +43,3 @@ describe('Contract: GET /api/v1/chat/session/:id', () => {
     expect(json._userId).toBe('u-session');
   });
 });
->>>>>>> origin/main

@@ -2,11 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ErrorSeveritySchema, errorTracker, HealthcareErrorTypeSchema } from '../error-tracking';
 
 // Mock Sentry and OpenTelemetry
-<<<<<<< HEAD
-vi.mock('@sentry/node'), () => ({
-=======
-vi.mock(_'@sentry/node'), () => ({
->>>>>>> origin/main
+vi.mock('@sentry/node', () => ({
+vi.mock(('@sentry/node', () => ({
   captureException: vi.fn(),
   addBreadcrumb: vi.fn(),
   setUser: vi.fn(),
@@ -21,11 +18,8 @@ vi.mock(_'@sentry/node'), () => ({
   ),
 })
 
-<<<<<<< HEAD
-vi.mock('@opentelemetry/api'), () => ({
-=======
-vi.mock(_'@opentelemetry/api'), () => ({
->>>>>>> origin/main
+vi.mock('@opentelemetry/api', () => ({
+vi.mock(('@opentelemetry/api', () => ({
   trace: {
     getTracer: vi.fn(() => ({
       startSpan: vi.fn(() => ({
@@ -41,7 +35,7 @@ vi.mock(_'@opentelemetry/api'), () => ({
   },
 })
 
-describe(_'HealthcareErrorTracker'), () => {
+describe(('HealthcareErrorTracker'), () => {
   beforeEach(() => {
     vi.clearAllMocks(
 
@@ -49,36 +43,27 @@ describe(_'HealthcareErrorTracker'), () => {
     // Reset metrics
     errorTracker['resetMetrics'](
 
-<<<<<<< HEAD
   it('should redact sensitive healthcare data from error messages',async () => {
     const error = new Error('Patient CPF 123.456.789-00 access denied')
-=======
-  it(_'should redact sensitive healthcare data from error messages',async () => {
+  it(('should redact sensitive healthcare data from error messages',async () => {
     const error = new Error('Patient CPF 123.456.789-00 access denied');
->>>>>>> origin/main
     const context = {
       _userId: 'test-user',
       patientId: 'test-patient',
       action: 'data_access' as const,
     };
 
-<<<<<<< HEAD
     await errorTracker.trackError(error, _context
-=======
     await errorTracker.trackError(error, _context);
->>>>>>> origin/main
 
     // Check that metrics were updated
     const metrics = errorTracker.getMetrics(
     expect(metrics.totalErrors).toBe(1
 
-<<<<<<< HEAD
   it('should classify healthcare errors correctly',async () => {
     const unauthorizedError = new Error('Unauthorized access to patient data')
-=======
-  it(_'should classify healthcare errors correctly',async () => {
+  it(('should classify healthcare errors correctly',async () => {
     const unauthorizedError = new Error('Unauthorized access to patient data');
->>>>>>> origin/main
     await errorTracker.trackError(unauthorizedError, {
       _userId: 'test-user',
       action: 'data_access',
@@ -86,13 +71,10 @@ describe(_'HealthcareErrorTracker'), () => {
     const metrics = errorTracker.getMetrics(
     expect(metrics.totalErrors).toBe(1
 
-<<<<<<< HEAD
   it('should handle different error severities',async () => {
     const criticalError = new Error('Database connection failed')
-=======
-  it(_'should handle different error severities',async () => {
+  it(('should handle different error severities',async () => {
     const criticalError = new Error('Database connection failed');
->>>>>>> origin/main
     await errorTracker.trackError(criticalError, {
       _userId: 'test-user',
       action: 'database_query',
@@ -100,15 +82,12 @@ describe(_'HealthcareErrorTracker'), () => {
     const metrics = errorTracker.getMetrics(
     expect(metrics.totalErrors).toBe(1
 
-<<<<<<< HEAD
   it('should export correct types and schemas', () => {
     expect(HealthcareErrorTypeSchema).toBeDefined(
     expect(ErrorSeveritySchema).toBeDefined(
-=======
-  it(_'should export correct types and schemas'), () => {
+  it(('should export correct types and schemas'), () => {
     expect(HealthcareErrorTypeSchema).toBeDefined();
     expect(ErrorSeveritySchema).toBeDefined();
->>>>>>> origin/main
 
     // Test enum values
     expect(HealthcareErrorTypeSchema.enum.data_access_violation).toBe(
@@ -116,15 +95,13 @@ describe(_'HealthcareErrorTracker'), () => {
     
     expect(ErrorSeveritySchema.enum.critical).toBe('critical')
 
-<<<<<<< HEAD
   it('should provide error metrics', () => {
     const metrics = errorTracker.getMetrics(
     expect(metrics).toHaveProperty('totalErrors')
     expect(metrics).toHaveProperty('errorsByType')
     expect(metrics).toHaveProperty('errorsBySeverity')
     expect(metrics).toHaveProperty('lastError')
-=======
-  it(_'should provide error metrics'), () => {
+  it(('should provide error metrics'), () => {
     const metrics = errorTracker.getMetrics();
     expect(metrics).toHaveProperty('totalErrors');
     expect(metrics).toHaveProperty('errorsByType');
@@ -132,4 +109,3 @@ describe(_'HealthcareErrorTracker'), () => {
     expect(metrics).toHaveProperty('lastError');
   });
 });
->>>>>>> origin/main

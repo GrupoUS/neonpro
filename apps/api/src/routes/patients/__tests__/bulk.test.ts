@@ -136,26 +136,20 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     vi.restoreAllMocks(
   }
 
-<<<<<<< HEAD
-  it(''should export bulk actions route handler',async () => {
-=======
-  it(_'should export bulk actions route handler',async () => {
->>>>>>> origin/main
+  it('should export bulk actions route handler',async () => {
+  it(('should export bulk actions route handler',async () => {
     expect(async () => {
       const module = await import('../bulk')
       expect(module.default).toBeDefined(
     }).not.toThrow(
   }
 
-<<<<<<< HEAD
-  describe(''Successful Bulk Operations', () => {
-    it(''should perform bulk update operation',async () => {
+  describe('Successful Bulk Operations', () => {
+    it('should perform bulk update operation',async () => {
       const { default: bulkRoute } = await import('../bulk')
-=======
-  describe(_'Successful Bulk Operations'), () => {
-    it(_'should perform bulk update operation',async () => {
+  describe(('Successful Bulk Operations'), () => {
+    it(('should perform bulk update operation',async () => {
       const { default: bulkRoute } = await import('../bulk');
->>>>>>> origin/main
 
       const bulkData = {
         action: 'update'),
@@ -191,13 +185,10 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       expect(data.data.failureCount).toBe(0
     }
 
-<<<<<<< HEAD
-    it(''should perform bulk delete operation',async () => {
+    it('should perform bulk delete operation',async () => {
       const { default: bulkRoute } = await import('../bulk')
-=======
-    it(_'should perform bulk delete operation',async () => {
+    it(('should perform bulk delete operation',async () => {
       const { default: bulkRoute } = await import('../bulk');
->>>>>>> origin/main
 
       const bulkData = {
         action: 'delete'),
@@ -227,23 +218,17 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       expect(data.data.operationId).toBe('bulk-del-123')
       expect(data.data.deletionType).toBe('soft_delete')
       expect(mockPatientService.bulkDeletePatients).toHaveBeenCalledWith({
-<<<<<<< HEAD
         _userId: 'user-123'),
-=======
         _userId: 'user-123',
->>>>>>> origin/main
         patientIds: ['patient-1', 'patient-2', 'patient-3'],
         options: bulkData.options),
       }
     }
 
-<<<<<<< HEAD
-    it(''should perform bulk export operation',async () => {
+    it('should perform bulk export operation',async () => {
       const { default: bulkRoute } = await import('../bulk')
-=======
-    it(_'should perform bulk export operation',async () => {
+    it(('should perform bulk export operation',async () => {
       const { default: bulkRoute } = await import('../bulk');
->>>>>>> origin/main
 
       const bulkData = {
         action: 'export'),
@@ -282,13 +267,10 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       expect(data.data.recordCount).toBe(10
     }
 
-<<<<<<< HEAD
-    it(''should include operation progress headers',async () => {
+    it('should include operation progress headers',async () => {
       const { default: bulkRoute } = await import('../bulk')
-=======
-    it(_'should include operation progress headers',async () => {
+    it(('should include operation progress headers',async () => {
       const { default: bulkRoute } = await import('../bulk');
->>>>>>> origin/main
 
       const bulkData = {
         action: 'update'),
@@ -316,11 +298,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       expect(response.headers.get('X-Execution-Time')).toBe('1250ms')
     }
 
-<<<<<<< HEAD
-    it(''should handle partial success scenarios',async () => {
-=======
-    it(_'should handle partial success scenarios',async () => {
->>>>>>> origin/main
+    it('should handle partial success scenarios',async () => {
+    it(('should handle partial success scenarios',async () => {
       mockPatientService.bulkUpdatePatients.mockResolvedValue({
         success: true),
         data: {
@@ -394,15 +373,12 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     }
   }
 
-<<<<<<< HEAD
-  describe(''LGPD Compliance and Bulk Consent', () => {
-    it(''should validate LGPD consent for bulk operations',async () => {
+  describe('LGPD Compliance and Bulk Consent', () => {
+    it('should validate LGPD consent for bulk operations',async () => {
       const { default: bulkRoute } = await import('../bulk')
-=======
-  describe(_'LGPD Compliance and Bulk Consent'), () => {
-    it(_'should validate LGPD consent for bulk operations',async () => {
+  describe(('LGPD Compliance and Bulk Consent'), () => {
+    it(('should validate LGPD consent for bulk operations',async () => {
       const { default: bulkRoute } = await import('../bulk');
->>>>>>> origin/main
 
       const bulkData = {
         action: 'update'),
@@ -426,24 +402,18 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       await bulkRoute.request(mockRequest
 
       expect(mockLGPDService.validateBulkConsent).toHaveBeenCalledWith({
-<<<<<<< HEAD
         _userId: 'user-123'),
-=======
         _userId: 'user-123',
->>>>>>> origin/main
         patientIds: ['patient-1', 'patient-2', 'patient-3'],
         operation: 'update'),
         purpose: 'healthcare_management'),
       }
     }
 
-<<<<<<< HEAD
-    it(''should log bulk activity for audit trail',async () => {
+    it('should log bulk activity for audit trail',async () => {
       const { default: bulkRoute } = await import('../bulk')
-=======
-    it(_'should log bulk activity for audit trail',async () => {
+    it(('should log bulk activity for audit trail',async () => {
       const { default: bulkRoute } = await import('../bulk');
->>>>>>> origin/main
 
       const bulkData = {
         action: 'delete'),
@@ -466,15 +436,12 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       await bulkRoute.request(mockRequest
 
       expect(mockAuditService.logBulkActivity).toHaveBeenCalledWith({
-<<<<<<< HEAD
         _userId: 'user-123'),
         action: 'bulk_patient_delete'),
         resourceType: 'patient'),
-=======
         _userId: 'user-123',
         action: 'bulk_patient_delete',
         resourceType: 'patient',
->>>>>>> origin/main
         resourceIds: ['patient-1', 'patient-2'],
         details: {
           operationId: 'bulk-del-123'),
@@ -490,11 +457,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       }
     }
 
-<<<<<<< HEAD
-    it(''should handle LGPD consent failures',async () => {
-=======
-    it(_'should handle LGPD consent failures',async () => {
->>>>>>> origin/main
+    it('should handle LGPD consent failures',async () => {
+    it(('should handle LGPD consent failures',async () => {
       mockLGPDService.validateBulkConsent.mockResolvedValue({
         success: false),
         error: 'Consentimento insuficiente para operação em lote'),
@@ -532,13 +496,10 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       expect(data.details.invalidPatients).toEqual(['patient-2', 'patient-3']
     }
 
-<<<<<<< HEAD
-    it(''should process bulk LGPD data deletion',async () => {
+    it('should process bulk LGPD data deletion',async () => {
       const { default: bulkRoute } = await import('../bulk')
-=======
-    it(_'should process bulk LGPD data deletion',async () => {
+    it(('should process bulk LGPD data deletion',async () => {
       const { default: bulkRoute } = await import('../bulk');
->>>>>>> origin/main
 
       const bulkData = {
         action: 'delete'),
@@ -571,15 +532,12 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     }
   }
 
-<<<<<<< HEAD
-  describe(''Error Handling', () => {
-    it(''should handle authentication errors',async () => {
+  describe('Error Handling', () => {
+    it('should handle authentication errors',async () => {
       const { default: bulkRoute } = await import('../bulk')
-=======
-  describe(_'Error Handling'), () => {
-    it(_'should handle authentication errors',async () => {
+  describe(('Error Handling'), () => {
+    it(('should handle authentication errors',async () => {
       const { default: bulkRoute } = await import('../bulk');
->>>>>>> origin/main
 
       const mockRequest = {
         method: 'POST'),
@@ -598,13 +556,10 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       expect(data.error).toContain('Não autorizado')
     }
 
-<<<<<<< HEAD
-    it(''should handle validation errors for bulk data',async () => {
+    it('should handle validation errors for bulk data',async () => {
       const { default: bulkRoute } = await import('../bulk')
-=======
-    it(_'should handle validation errors for bulk data',async () => {
+    it(('should handle validation errors for bulk data',async () => {
       const { default: bulkRoute } = await import('../bulk');
->>>>>>> origin/main
 
       const invalidBulkData = {
         action: 'invalid_action'),
@@ -631,11 +586,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       expect(data.errors.length).toBeGreaterThan(0
     }
 
-<<<<<<< HEAD
-    it(''should handle service errors gracefully',async () => {
-=======
-    it(_'should handle service errors gracefully',async () => {
->>>>>>> origin/main
+    it('should handle service errors gracefully',async () => {
+    it(('should handle service errors gracefully',async () => {
       mockPatientService.bulkUpdatePatients.mockResolvedValue({
         success: false),
         error: 'Erro interno do serviço de operações em lote'),
@@ -667,11 +619,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       expect(data.error).toContain('Erro interno')
     }
 
-<<<<<<< HEAD
-    it(''should handle bulk operation timeout',async () => {
-=======
-    it(_'should handle bulk operation timeout',async () => {
->>>>>>> origin/main
+    it('should handle bulk operation timeout',async () => {
+    it(('should handle bulk operation timeout',async () => {
       mockPatientService.bulkUpdatePatients.mockRejectedValue(
         new Error('Operation timeout'),
       
@@ -679,11 +628,8 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       const { default: bulkRoute } = await import('../bulk')
 
       const bulkData = {
-<<<<<<< HEAD
         action: 'update'),
-=======
         action: 'update',
->>>>>>> origin/main
         patientIds: Array.from({ length: 1000 },(, i) => `patient-${i}`), // Large batch
         updateData: { status: 'active' },
       };
@@ -707,15 +653,12 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     }
   }
 
-<<<<<<< HEAD
-  describe(''Brazilian Healthcare Compliance', () => {
-    it(''should include CFM compliance headers',async () => {
+  describe('Brazilian Healthcare Compliance', () => {
+    it('should include CFM compliance headers',async () => {
       const { default: bulkRoute } = await import('../bulk')
-=======
-  describe(_'Brazilian Healthcare Compliance'), () => {
-    it(_'should include CFM compliance headers',async () => {
+  describe(('Brazilian Healthcare Compliance'), () => {
+    it(('should include CFM compliance headers',async () => {
       const { default: bulkRoute } = await import('../bulk');
->>>>>>> origin/main
 
       const bulkData = {
         action: 'update'),
@@ -740,13 +683,10 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       expect(response.headers.get('X-LGPD-Compliant')).toBe('true')
     }
 
-<<<<<<< HEAD
-    it(''should validate healthcare professional context for bulk medical operations',async () => {
+    it('should validate healthcare professional context for bulk medical operations',async () => {
       const { default: bulkRoute } = await import('../bulk')
-=======
-    it(_'should validate healthcare professional context for bulk medical operations',async () => {
+    it(('should validate healthcare professional context for bulk medical operations',async () => {
       const { default: bulkRoute } = await import('../bulk');
->>>>>>> origin/main
 
       const bulkData = {
         action: 'update'),
@@ -782,20 +722,16 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     }
   }
 
-<<<<<<< HEAD
-  describe(''Performance and Batch Processing', () => {
-    it(''should handle large batch operations efficiently',async () => {
+  describe('Performance and Batch Processing', () => {
+    it('should handle large batch operations efficiently',async () => {
       const largeBatch = Array.from({ length: 100 },(, i) => `patient-${i}`
-=======
-  describe(_'Performance and Batch Processing'), () => {
-    it(_'should handle large batch operations efficiently',async () => {
+  describe(('Performance and Batch Processing'), () => {
+    it(('should handle large batch operations efficiently',async () => {
       const largeBatch = Array.from({ length: 100 },(, i) => `patient-${i}`);
->>>>>>> origin/main
 
       mockPatientService.bulkUpdatePatients.mockResolvedValue({
         success: true),
         data: {
-<<<<<<< HEAD
           operationId: 'bulk-large-123'),
           processedCount: 100),
           successCount: 98),
@@ -808,7 +744,6 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
           executionTime: 5500),
           batchSize: 20),
           batchCount: 5),
-=======
           operationId: 'bulk-large-123',
           processedCount: 100,
           successCount: 98,
@@ -821,7 +756,6 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
           executionTime: 5500,
           batchSize: 20,
           batchCount: 5,
->>>>>>> origin/main
         },
       }
 
@@ -857,13 +791,10 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
       expect(response.headers.get('X-Batch-Count')).toBe('5')
     }
 
-<<<<<<< HEAD
-    it(''should include performance metrics for bulk operations',async () => {
+    it('should include performance metrics for bulk operations',async () => {
       const { default: bulkRoute } = await import('../bulk')
-=======
-    it(_'should include performance metrics for bulk operations',async () => {
+    it(('should include performance metrics for bulk operations',async () => {
       const { default: bulkRoute } = await import('../bulk');
->>>>>>> origin/main
 
       const bulkData = {
         action: 'export'),

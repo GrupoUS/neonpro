@@ -201,7 +201,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
               message: `Validation failed for rule: ${rule.description}`,
               source: {
                 sourceId: this.adapterId,
-                recordId: _index.toString(),
+                recordId: index.toString(),
                 field: rule.field,
               },
               _context: {
@@ -224,7 +224,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
             message: `Validation rule execution failed: ${error}`,
             source: {
               sourceId: this.adapterId,
-              recordId: _index.toString(),
+              recordId: index.toString(),
               field: rule.field,
             },
             _context: {
@@ -274,7 +274,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
             message: `Transformation failed for rule: ${rule.description}`,
             source: {
               sourceId: this.adapterId,
-              recordId: _index.toString(),
+              recordId: index.toString(),
               field: rule.sourceField,
             },
             _context: {

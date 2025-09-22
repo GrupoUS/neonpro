@@ -577,7 +577,7 @@ export class BillingService {
             paymentDate: i === 1 && paymentStatus === PaymentStatus.PAID
               ? new Date().toISOString()
               : undefined,
-            paymentMethod: _request.paymentMethod,
+            paymentMethod: request.paymentMethod,
           });
         }
       }

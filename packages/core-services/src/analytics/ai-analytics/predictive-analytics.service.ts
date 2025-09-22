@@ -227,7 +227,7 @@ export class PredictiveAnalyticsService {
           vital_signs:
             processedData.vitalSigns || processedData.vitals || "normal",
           appointment_history: processedData.appointmentHistory || "regular",
-          timeframe: _request.timeframe,
+          timeframe: request.timeframe,
         },
       };
 
@@ -296,7 +296,7 @@ export class PredictiveAnalyticsService {
             processedData.vitalSigns || processedData.vitals || "normal",
           procedure_type: processedData.procedureType || "consultation",
           historical_revenue: processedData.historicalRevenue || 1000,
-          timeframe: _request.timeframe,
+          timeframe: request.timeframe,
         },
       };
 

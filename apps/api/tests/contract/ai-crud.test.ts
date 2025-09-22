@@ -30,13 +30,10 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
   let recordId: string;
 
   beforeEach(async () => {
-<<<<<<< HEAD
     await setupTestDatabase(
     testClient = createTestClient({ _role: 'admin' }
-=======
     await setupTestDatabase();
     testClient = createTestClient({ _role: 'admin' });
->>>>>>> origin/main
     patientId = 'test-patient-lgpd-123';
     recordId = 'test-record-456';
   }

@@ -30,13 +30,10 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
   let telemedicineSessionId: string;
 
   beforeEach(async () => {
-<<<<<<< HEAD
     await setupTestDatabase(
     testClient = await createTestClient({ _role: 'admin' }
-=======
     await setupTestDatabase();
     testClient = await createTestClient({ _role: 'admin' });
->>>>>>> origin/main
 
     supabase = createClient<Database>(
       process.env.SUPABASE_URL!,

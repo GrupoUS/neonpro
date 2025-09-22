@@ -26,13 +26,10 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
   let professionalCRM: string;
 
   beforeEach(async () => {
-<<<<<<< HEAD
     await setupTestDatabase(
     testClient = createTestClient({ _role: 'admin' }
-=======
     await setupTestDatabase();
     testClient = createTestClient({ _role: 'admin' });
->>>>>>> origin/main
     patientId = 'patient-recommendations-123';
     professionalCRM = 'CRM/SP 123456';
   }

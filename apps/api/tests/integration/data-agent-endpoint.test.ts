@@ -99,7 +99,7 @@ describe('POST /api/ai/data-agent - Contract Test', () => {
 
       // Missing required fields
       const invalidRequest = {
-        _query: '', // Empty query should be invalid
+        _query: ', // Empty query should be invalid
         // Missing sessionId
       };
 

@@ -78,11 +78,8 @@ describe('Security Headers Validation Test (T051)', () => {
             Authorization: 'Bearer test-token',
           },
           ...(isPostEndpoint && { body: JSON.stringify({ _query: 'test' }) }),
-<<<<<<< HEAD
         }
-=======
         });
->>>>>>> origin/main
 
         const hstsHeader = response.headers.get('strict-transport-security')
         expect(hstsHeader).toBeTruthy(
@@ -120,11 +117,8 @@ describe('Security Headers Validation Test (T051)', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({ _query: 'test healthcare query' }),
-<<<<<<< HEAD
       }
-=======
       });
->>>>>>> origin/main
 
       const cspHeader = response.headers.get('content-security-policy')
       expect(cspHeader).toBeTruthy(
@@ -162,11 +156,8 @@ describe('Security Headers Validation Test (T051)', () => {
             Authorization: 'Bearer test-token',
           },
           ...(isPostEndpoint && { body: JSON.stringify({ _query: 'test' }) }),
-<<<<<<< HEAD
         }
-=======
         });
->>>>>>> origin/main
 
         const xFrameOptions = response.headers.get('x-frame-options')
         expect(xFrameOptions).toBeTruthy(
@@ -231,11 +222,8 @@ describe('Security Headers Validation Test (T051)', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({ _query: 'patient data query' }),
-<<<<<<< HEAD
       }
-=======
       });
->>>>>>> origin/main
 
       const healthcareCompliance = response.headers.get('x-healthcare-compliance')
       expect(healthcareCompliance).toBeTruthy(
@@ -250,11 +238,8 @@ describe('Security Headers Validation Test (T051)', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({ _query: 'healthcare data query' }),
-<<<<<<< HEAD
       }
-=======
       });
->>>>>>> origin/main
 
       const healthcareCompliance = response.headers.get('x-healthcare-compliance')
       expect(healthcareCompliance).toBeTruthy(
@@ -269,11 +254,8 @@ describe('Security Headers Validation Test (T051)', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({ _query: 'sensitive patient information' }),
-<<<<<<< HEAD
       }
-=======
       });
->>>>>>> origin/main
 
       const dataClassification = response.headers.get('x-data-classification')
       if (dataClassification) {
@@ -309,11 +291,8 @@ describe('Security Headers Validation Test (T051)', () => {
             Authorization: 'Bearer test-token',
           },
           ...(endpoint.method === 'POST' && { body: JSON.stringify({ _query: 'test' }) }),
-<<<<<<< HEAD
         }
-=======
         });
->>>>>>> origin/main
 
         for (const header of requiredHeaders) {
           const headerValue = response.headers.get(header

@@ -182,7 +182,7 @@ export class EnhancedQueryCacheService {
         this.createHealthcareContext(validatedQuery, validatedUserId, options.clinicId),
         {
           _userId: validatedUserId,
-          sessionId: _query.context?.sessionId,
+          sessionId: query.context?.sessionId,
         },
       );
 
@@ -579,11 +579,11 @@ export class EnhancedQueryCacheService {
     const queryData = {
       _query: this.sanitizeQueryString(_query._query),
       _context: {
-        patientId: _query._context?.patientId
+        patientId: query._context?.patientId
           ? this.sanitizeString(_query._context.patientId)
           : undefined,
-        _userId: _query._context?._userId, // Already has underscore
-        // sessionId: _query._context?.sessionId, // Property not in AguiQueryContext
+        _userId: query._context?._userId, // Already has underscore
+        // sessionId: query._context?.sessionId, // Property not in AguiQueryContext
       },
       options: {
         maxResults: Math.min(_query.options?.maxResults || 10, 100),
@@ -604,13 +604,13 @@ export class EnhancedQueryCacheService {
    */
   private generateQueryHash(_query: AguiQueryMessage): string {
     const queryData = {
-      _query: _query._query.toLowerCase().trim(),
+      _query: query._query.toLowerCase().trim(),
       _context: {
-        patientId: _query._context?.patientId,
+        patientId: query._context?.patientId,
       },
       options: {
-        maxResults: _query.options?.maxResults,
-        model: _query.options?.model,
+        maxResults: query.options?.maxResults,
+        model: query.options?.model,
       },
     };
 
@@ -628,12 +628,12 @@ export class EnhancedQueryCacheService {
     clinicId?: string,
   ): HealthcareCacheContext {
     return {
-      patientId: _query._context?.patientId,
-      providerId: _userId,
+      patientId: query._context?.patientId,
+      providerId: userId,
       facilityId: clinicId,
       clinicalContext: 'consultation', // Default context
       dataClassification: CacheDataSensitivity.INTERNAL,
-      lgpdConsentId: _query.context?.consentId,
+      lgpdConsentId: query.context?.consentId,
       retentionRequirement: 'standard',
     };
   }
@@ -804,8 +804,7 @@ export class EnhancedQueryCacheService {
    */
   private sanitizeQueryString(_query: string): string {
     if (typeof _query !== 'string') return '';
-    return _query
-      .replace(/[<>"'&]/g, '')
+    return query.replace(/[<>"'&]/g, '')
       .replace(/\s+/g, ' ')
       .trim()
       .substring(0, 1000);

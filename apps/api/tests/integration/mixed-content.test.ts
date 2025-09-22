@@ -54,11 +54,8 @@ describe('Mixed Content Prevention Test (T052)', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({ _query: 'test query' }),
-<<<<<<< HEAD
       }
-=======
       });
->>>>>>> origin/main
 
       const cspHeader = response.headers.get('content-security-policy')
       expect(cspHeader).toBeTruthy(
@@ -84,11 +81,8 @@ describe('Mixed Content Prevention Test (T052)', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({ _query: 'healthcare data query' }),
-<<<<<<< HEAD
       }
-=======
       });
->>>>>>> origin/main
 
       const cspHeader = response.headers.get('content-security-policy')
       expect(cspHeader).toBeTruthy(
@@ -151,7 +145,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
           expect(location).toMatch(/^https:\/\//
         } else if (response.status === 403) {
           const data = await response.json().catch(() => ({})
-          expect(data.error || '').toMatch(/https|secure/i
+          expect(data.error || ').toMatch(/https|secure/i
         }
       }
     }

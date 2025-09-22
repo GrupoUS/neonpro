@@ -16,7 +16,7 @@ export async function setupTestDb() {
  */
 export async function clearTestData(table?: string) {
   // Mock data clearing
-  console.log(`🧹 Clearing test data${table ? ` from ${table}` : ''} (mocked)`);
+  console.log(`🧹 Clearing test data${table ? ` from ${table}` : '} (mocked)`);
   return Promise.resolve();
 }
 

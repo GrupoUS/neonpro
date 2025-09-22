@@ -12,7 +12,7 @@ export class SessionRepo {
     const now = new Date().toISOString();
     const sess: ChatSession = {
       id,
-      userId: _userId,
+      userId: userId,
       locale,
       startedAt: now,
       lastActivityAt: now,

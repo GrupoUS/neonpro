@@ -34,7 +34,7 @@ describe('Architecture Issue Tests', () => {
           const matches = content.match(pattern
           if (matches) {
             expect(`AuditTrail used for state management: ${matches[0]}`).toBe(
-              '',
+              ',
             
           }
         }
@@ -66,7 +66,7 @@ describe('Architecture Issue Tests', () => {
             if (matches) {
               expect(
                 `AuditTrail state management found in ${file}: ${matches[0]}`,
-              ).toBe('')
+              ).toBe(')
             }
           }
         }
@@ -98,7 +98,7 @@ describe('Architecture Issue Tests', () => {
             if (matches) {
               expect(
                 `Mixed audit/state concerns in ${path.basename(filePath)}: ${matches[0]}`,
-              ).toBe('')
+              ).toBe(')
             }
           }
         }
@@ -133,7 +133,7 @@ describe('Architecture Issue Tests', () => {
 
         if (!hasStateTable) {
           expect('Missing dedicated state management tables in schema').toBe(
-            '',
+            ',
           
         }
       }
@@ -169,7 +169,7 @@ describe('Architecture Issue Tests', () => {
 
           if (hasStateFields) {
             expect('AuditTrail table contains inappropriate state fields').toBe(
-              '',
+              ',
             
           }
         }
@@ -189,7 +189,7 @@ describe('Architecture Issue Tests', () => {
       const bothExist = fs.existsSync(aiProviderRouter) && fs.existsSync(aiProviderRouterNew
 
       if (bothExist) {
-        expect('Conflicting AI provider router files found').toBe('')
+        expect('Conflicting AI provider router files found').toBe(')
       }
     }
 
@@ -215,7 +215,7 @@ describe('Architecture Issue Tests', () => {
           for (const pattern of tightCouplingPatterns) {
             const matches = content.match(pattern
             if (matches) {
-              expect(`Tight coupling found in ${file}: ${matches[0]}`).toBe('')
+              expect(`Tight coupling found in ${file}: ${matches[0]}`).toBe(')
             }
           }
         }

@@ -770,7 +770,7 @@ describe('Contract: AI Optimization API', () => {
   describe('Error Handling', () => {
     it('should handle invalid cache entries', async () => {
       const invalidEntry = {
-        prompt: '', // Empty prompt should be invalid
+        prompt: ', // Empty prompt should be invalid
         response: 'Some response',
         metadata: {
           patientId: 'invalid-patient-id',

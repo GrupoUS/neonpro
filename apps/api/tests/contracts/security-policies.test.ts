@@ -347,11 +347,11 @@ const generateValidSecurityPolicyConfig = () => ({
     {
       type: 'csp' as const,
       config: {
-        defaultSrc: ['\'self\''],
-        scriptSrc: ['\'self\'', '\'unsafe-inline\''],
-        styleSrc: ['\'self\'', '\'unsafe-inline\''],
-        imgSrc: ['\'self\'', 'data:', 'https:'],
-        connectSrc: ['\'self\'', 'https://api.neonpro.health'],
+        defaultSrc: ['\'self\'],
+        scriptSrc: ['\'self\', '\'unsafe-inline\'],
+        styleSrc: ['\'self\', '\'unsafe-inline\'],
+        imgSrc: ['\'self\', 'data:', 'https:'],
+        connectSrc: ['\'self\', 'https://api.neonpro.health'],
         reportUri: '/api/security/csp-report',
       },
       action: 'allow' as const,
@@ -425,11 +425,11 @@ const generateValidSecurityPolicy = () => ({
       id: 'rule_1',
       type: 'csp' as const,
       config: {
-        defaultSrc: ['\'self\''],
-        scriptSrc: ['\'self\'', '\'unsafe-inline\''],
-        styleSrc: ['\'self\'', '\'unsafe-inline\''],
-        imgSrc: ['\'self\'', 'data:', 'https:'],
-        connectSrc: ['\'self\'', 'https://api.neonpro.health'],
+        defaultSrc: ['\'self\'],
+        scriptSrc: ['\'self\', '\'unsafe-inline\'],
+        styleSrc: ['\'self\', '\'unsafe-inline\'],
+        imgSrc: ['\'self\', 'data:', 'https:'],
+        connectSrc: ['\'self\', 'https://api.neonpro.health'],
         reportUri: '/api/security/csp-report',
       },
       action: 'allow' as const,
@@ -483,25 +483,25 @@ const generateValidSecurityPolicy = () => ({
 }
 
 const generateValidCSP = () => ({
-  'default-src': ['\'self\''],
-  'script-src': ['\'self\'', '\'unsafe-inline\''],
-  'style-src': ['\'self\'', '\'unsafe-inline\''],
-  'img-src': ['\'self\'', 'data:', 'https:'],
-  'connect-src': ['\'self\'', 'https://api.neonpro.health'],
+  'default-src': ['\'self\'],
+  'script-src': ['\'self\', '\'unsafe-inline\'],
+  'style-src': ['\'self\', '\'unsafe-inline\'],
+  'img-src': ['\'self\', 'data:', 'https:'],
+  'connect-src': ['\'self\', 'https://api.neonpro.health'],
   'font-src': [
-    '\'self\'',
+    '\'self\',
     'https://fonts.googleapis.com',
     'https://fonts.gstatic.com',
   ],
-  'object-src': ['\'none\''],
-  'media-src': ['\'self\''],
-  'frame-src': ['\'none\''],
-  'child-src': ['\'none\''],
-  'worker-src': ['\'self\''],
-  'manifest-src': ['\'self\''],
-  'prefetch-src': ['\'self\''],
-  'form-action': ['\'self\''],
-  'frame-ancestors': ['\'none\''],
+  'object-src': ['\'none\'],
+  'media-src': ['\'self\'],
+  'frame-src': ['\'none\'],
+  'child-src': ['\'none\'],
+  'worker-src': ['\'self\'],
+  'manifest-src': ['\'self\'],
+  'prefetch-src': ['\'self\'],
+  'form-action': ['\'self\'],
+  'frame-ancestors': ['\'none\'],
   'report-uri': '/api/security/csp-report',
   'upgrade-insecure-requests': true,
   'block-all-mixed-content': true,
@@ -706,7 +706,7 @@ describe('Security Policies Contract Tests', () => {
 
     it('should reject request with invalid schema', async () => {
       const invalidConfig = {
-        name: '', // Invalid: empty name
+        name: ', // Invalid: empty name
         rules: [], // Invalid: empty rules
         compliance: {
           lgpd: 'invalid_boolean', // Invalid: should be boolean
@@ -814,11 +814,8 @@ describe('Security Policies Contract Tests', () => {
 
       const response = await client.api.security.policies.$get({
         _query: { compliance: 'lgpd' },
-<<<<<<< HEAD
       }
-=======
       });
->>>>>>> origin/main
 
       expect(response.status).toBe(200
       const data = await response.json(
@@ -1003,18 +1000,18 @@ describe('Security Policies Contract Tests', () => {
       const healthcareCSP = {
         ...generateValidCSP(),
         'connect-src': [
-          '\'self\'',
+          '\'self\',
           'https://api.neonpro.health',
           'https://medical-records.neonpro.health',
         ],
         'script-src': [
-          '\'self\'',
-          '\'unsafe-inline\'',
+          '\'self\',
+          '\'unsafe-inline\',
           'https://cdn.neonpro.health',
         ],
         'style-src': [
-          '\'self\'',
-          '\'unsafe-inline\'',
+          '\'self\',
+          '\'unsafe-inline\',
           'https://fonts.googleapis.com',
         ],
       };
@@ -1062,8 +1059,8 @@ describe('Security Policies Contract Tests', () => {
 
     it('should identify CSP security issues', async () => {
       const insecureCSP = {
-        'default-src': ['\'unsafe-inline\'', '\'unsafe-eval\'', 'http:'], // Insecure
-        'script-src': ['\'unsafe-inline\'', '\'unsafe-eval\''], // Very insecure
+        'default-src': ['\'unsafe-inline\', '\'unsafe-eval\', 'http:'], // Insecure
+        'script-src': ['\'unsafe-inline\', '\'unsafe-eval\'], // Very insecure
       };
 
       const validationResult = {
@@ -1206,11 +1203,8 @@ describe('Security Policies Contract Tests', () => {
 
       const response = await client.api.security.audit.logs.$get({
         _query: { compliance: 'healthcare' },
-<<<<<<< HEAD
       }
-=======
       });
->>>>>>> origin/main
 
       expect(response.status).toBe(200
       const data = await response.json(

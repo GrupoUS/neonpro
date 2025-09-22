@@ -511,7 +511,7 @@ export class AguiProtocol extends EventEmitter {
     if (!session) {
       session = {
         id: sessionId,
-        userId: _userId,
+        userId: userId,
         context: {},
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -622,7 +622,7 @@ export class AguiProtocol extends EventEmitter {
    * Get client IP address
    */
   private getClientIp(_request: any): string {
-    return _request.headers['x-forwarded-for']
+    return request.headers['x-forwarded-for']
       || _request.connection.remoteAddress
       || _request.socket.remoteAddress;
   }

@@ -40,7 +40,7 @@ describe('Security Vulnerability Tests', () => {
               // Fail the test if any hardcoded credentials are found
               expect(
                 `Hardcoded credential found in ${file}: ${matches[0]}`,
-              ).toBe('')
+              ).toBe(')
             }
           }
         }
@@ -68,7 +68,7 @@ describe('Security Vulnerability Tests', () => {
             if (matches) {
               // Fail the test if mock middleware is found in production code
               expect(`Mock middleware found in ${file}: ${matches[0]}`).toBe(
-                '',
+                ',
               
             }
           }
@@ -94,7 +94,7 @@ describe('Security Vulnerability Tests', () => {
             || content.includes('mask')
 
           if (!hasErrorSanitization) {
-            expect(`Missing error sanitization in ${file}`).toBe('')
+            expect(`Missing error sanitization in ${file}`).toBe(')
           }
         }
       }
@@ -121,7 +121,7 @@ describe('Security Vulnerability Tests', () => {
             if (matches) {
               expect(
                 `Unsafe environment variable access in ${file}: ${matches[0]}`,
-              ).toBe('')
+              ).toBe(')
             }
           }
         }
@@ -143,7 +143,7 @@ describe('Security Vulnerability Tests', () => {
           || content.includes('schema')
 
         if (!hasValidation) {
-          expect('Missing input validation in app.ts').toBe('')
+          expect('Missing input validation in app.ts').toBe(')
         }
       }
     }

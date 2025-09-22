@@ -578,7 +578,7 @@ export class EnhancedTelemedicineRealtime {
       event: 'quality_alert',
       _payload: {
         type: 'poor_connection_quality',
-        userId: _userId,
+        userId: userId,
         quality,
         suggestions: [
           'Check your internet connection',
@@ -624,7 +624,7 @@ export class EnhancedTelemedicineRealtime {
       type: 'broadcast',
       event: 'quality_suggestions',
       _payload: {
-        userId: _userId,
+        userId: userId,
         suggestions,
         currentQuality: quality,
         timestamp: new Date().toISOString(),

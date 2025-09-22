@@ -24,13 +24,10 @@ describe('Integration Test T013: Quota Enforcement', () => {
   let quotaManager: any;
 
   beforeEach(async () => {
-<<<<<<< HEAD
     await setupTestDatabase(
     testClient = createTestClient({ _role: 'admin' }
-=======
     await setupTestDatabase();
     testClient = createTestClient({ _role: 'admin' });
->>>>>>> origin/main
     clinicId = 'clinic-quota-test-001';
     professionalCRM = 'CRM/SP 123456';
   }

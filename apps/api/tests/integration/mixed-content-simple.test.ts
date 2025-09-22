@@ -71,7 +71,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
 
       const csp = response.headers.get('Content-Security-Policy')
       expect(csp).toBeDefined(
-      expect(csp).toContain('default-src \'self\'')
+      expect(csp).toContain('default-src \'self\')
       expect(csp).toContain('connect-src \'self\' https:')
     }
 
@@ -80,7 +80,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
 
       const csp = response.headers.get('Content-Security-Policy')
       expect(csp).toBeDefined(
-      expect(csp).toContain('script-src \'self\'')
+      expect(csp).toContain('script-src \'self\')
     }
 
     it('should prevent mixed content in style sources', async () => {
@@ -88,7 +88,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
 
       const csp = response.headers.get('Content-Security-Policy')
       expect(csp).toBeDefined(
-      expect(csp).toContain('style-src \'self\'')
+      expect(csp).toContain('style-src \'self\')
     }
   }
 
@@ -141,7 +141,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
 
       const csp = response.headers.get('Content-Security-Policy')
       expect(csp).toBeDefined(
-      expect(csp).toContain('object-src \'none\'')
+      expect(csp).toContain('object-src \'none\')
     }
   }
 
@@ -151,7 +151,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
 
       const csp = response.headers.get('Content-Security-Policy')
       expect(csp).toBeDefined(
-      expect(csp).toContain('form-action \'self\'')
+      expect(csp).toContain('form-action \'self\')
     }
   }
 
@@ -161,7 +161,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
 
       const csp = response.headers.get('Content-Security-Policy')
       expect(csp).toBeDefined(
-      expect(csp).toContain('frame-ancestors \'none\'')
+      expect(csp).toContain('frame-ancestors \'none\')
     }
 
     it('should include X-Frame-Options header', async () => {

@@ -336,7 +336,7 @@ describe('Response Time Performance - Integration Test', () => {
         '???',
         'asdfghjkl',
         '123456789',
-        '',
+        ',
       ];
 
       for (const query of malformedQueries) {

@@ -190,7 +190,7 @@ describe('Ottomator Agent Integration', () => {
   describe('Error Handling', () => {
     it('should handle empty queries', async () => {
       const response = await dataService.processNaturalLanguageQuery(
-        '',
+        ',
         'test-session',
       
 

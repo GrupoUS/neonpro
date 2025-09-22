@@ -488,7 +488,6 @@ export class HealthcareLogger {
 
       const alertMessage = `
 CRITICAL HEALTHCARE ERROR
-========================
 Code: ${error.code}
 Message: ${error.message}
 Clinic: ${error.clinicId}

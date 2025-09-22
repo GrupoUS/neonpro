@@ -13,23 +13,17 @@ import {
   SensitiveFieldClassification,
 } from '../../services/sensitive-field-analyzer';
 
-<<<<<<< HEAD
 describe('HealthcareSensitiveFieldAnalyzer',() => {
-=======
-describe(_'HealthcareSensitiveFieldAnalyzer',() => {
->>>>>>> origin/main
+describe(('HealthcareSensitiveFieldAnalyzer',() => {
   let analyzer: HealthcareSensitiveFieldAnalyzer;
 
   beforeEach(() => {
     analyzer = new HealthcareSensitiveFieldAnalyzer(
 
-<<<<<<< HEAD
   describe('Sensitive Field Detection',() => {
     it('should detect CPF as critical sensitive field',() => {
-=======
-  describe(_'Sensitive Field Detection',() => {
-    it(_'should detect CPF as critical sensitive field',() => {
->>>>>>> origin/main
+  describe(('Sensitive Field Detection',() => {
+    it(('should detect CPF as critical sensitive field',() => {
       const testData = {
         patient: {
           name: 'John Doe',
@@ -54,11 +48,8 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
       expect(cpfField?.isExposed).toBe(true);
       expect(cpfField?.complianceRisk).toBe('CRITICAL')
 
-<<<<<<< HEAD
     it('should detect medical diagnosis as critical sensitive field',() => {
-=======
-    it(_'should detect medical diagnosis as critical sensitive field',() => {
->>>>>>> origin/main
+    it(('should detect medical diagnosis as critical sensitive field',() => {
       const testData = {
         medical_record: {
           diagnosis: 'Type 2 Diabetes',
@@ -83,11 +74,8 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
       expect(diagnosisField?.isExposed).toBe(true);
       expect(diagnosisField?.complianceRisk).toBe('CRITICAL')
 
-<<<<<<< HEAD
     it('should detect email as medium sensitivity field',() => {
-=======
-    it(_'should detect email as medium sensitivity field',() => {
->>>>>>> origin/main
+    it(('should detect email as medium sensitivity field',() => {
       const testData = {
         contact: {
           email: 'patient@example.com',
@@ -111,11 +99,8 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
       expect(emailField?.isExposed).toBe(true);
       expect(emailField?.complianceRisk).toBe('MEDIUM')
 
-<<<<<<< HEAD
     it('should detect nested sensitive fields',() => {
-=======
-    it(_'should detect nested sensitive fields',() => {
->>>>>>> origin/main
+    it(('should detect nested sensitive fields',() => {
       const testData = {
         patient: {
           personal_info: {
@@ -153,11 +138,8 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
       expect(diagnosisField).toBeDefined(
       expect(medicationsField).toBeDefined(
 
-<<<<<<< HEAD
     it('should detect sensitive fields in arrays',() => {
-=======
-    it(_'should detect sensitive fields in arrays',() => {
->>>>>>> origin/main
+    it(('should detect sensitive fields in arrays',() => {
       const testData = {
         patients: [
           {
@@ -190,13 +172,10 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
       expect(cpfFields).toHaveLength(2
       expect(diagnosisFields).toHaveLength(2
 
-<<<<<<< HEAD
   describe('Masking Detection',() => {
     it('should detect masked CPF values',() => {
-=======
-  describe(_'Masking Detection',() => {
-    it(_'should detect masked CPF values',() => {
->>>>>>> origin/main
+  describe(('Masking Detection',() => {
+    it(('should detect masked CPF values',() => {
       const testData = {
         patient: {
           cpf: '***.456.***-**',
@@ -218,11 +197,8 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
       expect(cpfField?.exposureLevel).toBe('NONE')
       expect(cpfField?.complianceRisk).toBe('LOW')
 
-<<<<<<< HEAD
     it('should detect partially masked values',() => {
-=======
-    it(_'should detect partially masked values',() => {
->>>>>>> origin/main
+    it(('should detect partially masked values',() => {
       const testData = {
         patient: {
           phone: '(11) 9****-8888',
@@ -242,13 +218,10 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
       
       expect(phoneField?.maskingApplied).toBe(true);
 
-<<<<<<< HEAD
   describe('Risk Assessment',() => {
     it('should calculate HIGH risk for multiple exposed sensitive fields',() => {
-=======
-  describe(_'Risk Assessment',() => {
-    it(_'should calculate HIGH risk for multiple exposed sensitive fields',() => {
->>>>>>> origin/main
+  describe(('Risk Assessment',() => {
+    it(('should calculate HIGH risk for multiple exposed sensitive fields',() => {
       const testData = {
         patient: {
           cpf: '123.456.789-00',
@@ -268,11 +241,8 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
       expect(analysis.overallRiskLevel).toBe('HIGH')
       expect(analysis.violationCount).toBeGreaterThan(0
 
-<<<<<<< HEAD
     it('should calculate CRITICAL risk for exposed critical fields',() => {
-=======
-    it(_'should calculate CRITICAL risk for exposed critical fields',() => {
->>>>>>> origin/main
+    it(('should calculate CRITICAL risk for exposed critical fields',() => {
       const testData = {
         patient: {
           cpf: '123.456.789-00',
@@ -290,11 +260,8 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
       expect(analysis.overallRiskLevel).toBe('CRITICAL')
       expect(analysis.violationCount).toBeGreaterThan(0
 
-<<<<<<< HEAD
     it('should calculate LOW risk for properly masked data',() => {
-=======
-    it(_'should calculate LOW risk for properly masked data',() => {
->>>>>>> origin/main
+    it(('should calculate LOW risk for properly masked data',() => {
       const testData = {
         patient: {
           cpf: '***.456.***-**',
@@ -311,13 +278,10 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
 
       expect(analysis.overallRiskLevel).toBe('LOW')
 
-<<<<<<< HEAD
   describe('Recommendations Generation',() => {
     it('should recommend masking for unmasked sensitive fields',() => {
-=======
-  describe(_'Recommendations Generation',() => {
-    it(_'should recommend masking for unmasked sensitive fields',() => {
->>>>>>> origin/main
+  describe(('Recommendations Generation',() => {
+    it(('should recommend masking for unmasked sensitive fields',() => {
       const testData = {
         patient: {
           cpf: '123.456.789-00',
@@ -334,11 +298,8 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
 
       expect(analysis.recommendations).toContain('Apply field masking for cpf')
 
-<<<<<<< HEAD
     it('should recommend encryption for sensitive data',() => {
-=======
-    it(_'should recommend encryption for sensitive data',() => {
->>>>>>> origin/main
+    it(('should recommend encryption for sensitive data',() => {
       const testData = {
         patient: {
           cpf: '123.456.789-00',
@@ -358,11 +319,8 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
         'Enable encryption for diagnosis',
       
 
-<<<<<<< HEAD
     it('should recommend strict access controls for critical data',() => {
-=======
-    it(_'should recommend strict access controls for critical data',() => {
->>>>>>> origin/main
+    it(('should recommend strict access controls for critical data',() => {
       const testData = {
         patient: {
           cpf: '123.456.789-00',
@@ -384,13 +342,10 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
         'Implement strict access controls for genetic_data',
       
 
-<<<<<<< HEAD
   describe('Custom Field Classification',() => {
     it('should allow adding custom sensitive field classifications',() => {
-=======
-  describe(_'Custom Field Classification',() => {
-    it(_'should allow adding custom sensitive field classifications',() => {
->>>>>>> origin/main
+  describe(('Custom Field Classification',() => {
+    it(('should allow adding custom sensitive field classifications',() => {
       const customField: SensitiveFieldClassification = {
         name: 'custom_id',
         category: 'IDENTIFICATION',
@@ -422,13 +377,10 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
       expect(customFieldAnalysis).toBeDefined(
       expect(customFieldAnalysis?.classification.sensitivity).toBe('HIGH')
 
-<<<<<<< HEAD
     it('should allow removing sensitive field classifications',() => {
       analyzer.removeSensitiveField('cpf')
-=======
-    it(_'should allow removing sensitive field classifications',() => {
+    it(('should allow removing sensitive field classifications',() => {
       analyzer.removeSensitiveField('cpf');
->>>>>>> origin/main
 
       const testData = {
         patient: {
@@ -449,13 +401,10 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
       
       expect(cpfField).toBeUndefined(
 
-<<<<<<< HEAD
   describe('Edge Cases',() => {
     it('should handle null and undefined values',() => {
-=======
-  describe(_'Edge Cases',() => {
-    it(_'should handle null and undefined values',() => {
->>>>>>> origin/main
+  describe(('Edge Cases',() => {
+    it(('should handle null and undefined values',() => {
       const testData = {
         patient: {
           name: 'John Doe',
@@ -473,11 +422,8 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
 
       expect(analysis.sensitiveFields).toHaveLength(0
 
-<<<<<<< HEAD
     it('should handle empty objects and arrays',() => {
-=======
-    it(_'should handle empty objects and arrays',() => {
->>>>>>> origin/main
+    it(('should handle empty objects and arrays',() => {
       const testData = {
         patient: {},
         records: [],
@@ -493,11 +439,8 @@ describe(_'HealthcareSensitiveFieldAnalyzer',() => {
 
       expect(analysis.sensitiveFields).toHaveLength(0
 
-<<<<<<< HEAD
     it('should handle primitive values',() => {
-=======
-    it(_'should handle primitive values',() => {
->>>>>>> origin/main
+    it(('should handle primitive values',() => {
       const testData = 'simple string';
       const analysis = analyzer.analyzeAPIResponse(
         testData,

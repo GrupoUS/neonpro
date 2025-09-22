@@ -395,7 +395,7 @@ describe('Chat API Performance Tests', () => {
       const response = await testRequest(app)
         .post('/api/v1/chat/query')
         .send({
-          message: '', // Invalid: empty message
+          message: ', // Invalid: empty message
           _userId: 'error-test-user',
         })
         .expect(400

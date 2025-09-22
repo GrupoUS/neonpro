@@ -420,22 +420,22 @@ export class BulkOperationsService {
     // Mock implementation - in real application, execute actual operation
     switch (_request.operationType) {
       case 'activate':
-        logger.info('Activating entity', { entityType: _request.entityType, entityId });
+        logger.info('Activating entity', { entityType: request.entityType, entityId });
         break;
       case 'deactivate':
-        logger.info('Deactivating entity', { entityType: _request.entityType, entityId });
+        logger.info('Deactivating entity', { entityType: request.entityType, entityId });
         break;
       case 'delete':
-        logger.info('Deleting entity', { entityType: _request.entityType, entityId });
+        logger.info('Deleting entity', { entityType: request.entityType, entityId });
         break;
       case 'update':
-        logger.info('Updating entity', { entityType: _request.entityType, entityId });
+        logger.info('Updating entity', { entityType: request.entityType, entityId });
         break;
       case 'assign_tag':
-        logger.info('Assigning tag to entity', { entityType: _request.entityType, entityId });
+        logger.info('Assigning tag to entity', { entityType: request.entityType, entityId });
         break;
       case 'export':
-        logger.info('Exporting entity', { entityType: _request.entityType, entityId });
+        logger.info('Exporting entity', { entityType: request.entityType, entityId });
         break;
       default:
         throw new Error(`Unsupported operation: ${_request.operationType}`);
@@ -498,11 +498,11 @@ export class BulkOperationsService {
   ): Promise<void> {
     logger.info('Bulk operation started', {
       auditTrailId,
-      operation: _request.operationType,
-      entityType: _request.entityType,
-      count: _request.entityIds.length,
-      user: _request.requesterUserId,
-      clinic: _request.clinicId,
+      operation: request.operationType,
+      entityType: request.entityType,
+      count: request.entityIds.length,
+      user: request.requesterUserId,
+      clinic: request.clinicId,
     });
   }
 
@@ -527,9 +527,9 @@ export class BulkOperationsService {
   ): Promise<void> {
     logger.error('Bulk operation failed', {
       auditTrailId,
-      operation: _request.operationType,
-      entityType: _request.entityType,
-      user: _request.requesterUserId,
+      operation: request.operationType,
+      entityType: request.entityType,
+      user: request.requesterUserId,
       error: error.message,
     });
   }
@@ -577,15 +577,15 @@ export class BulkOperationsService {
       }
 
       logger.debug('User permissions validated', {
-        _userId: _request.requesterUserId,
+        _userId: request.requesterUserId,
         _role: user.role,
-        operationType: _request.operationType,
+        operationType: request.operationType,
         allowedRoles: config.allowedRoles,
       });
     } catch (error) {
       logger.error('User permission validation failed', {
-        _userId: _request.requesterUserId,
-        operationType: _request.operationType,
+        _userId: request.requesterUserId,
+        operationType: request.operationType,
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;
@@ -643,15 +643,15 @@ export class BulkOperationsService {
       }
 
       logger.debug('Clinic access validated', {
-        _userId: _request.requesterUserId,
-        clinicId: _request.clinicId,
-        entityType: _request.entityType,
-        entityCount: _request.entityIds.length,
+        _userId: request.requesterUserId,
+        clinicId: request.clinicId,
+        entityType: request.entityType,
+        entityCount: request.entityIds.length,
       });
     } catch (error) {
       logger.error('Clinic access validation failed', {
-        _userId: _request.requesterUserId,
-        clinicId: _request.clinicId,
+        _userId: request.requesterUserId,
+        clinicId: request.clinicId,
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;
@@ -697,10 +697,10 @@ export class BulkOperationsService {
 
         // Log consent validation for audit purposes
         logger.info('LGPD consent validated for bulk operation', {
-          _userId: _request.requesterUserId,
-          operationType: _request.operationType,
-          entityType: _request.entityType,
-          entityCount: _request.entityIds.length,
+          _userId: request.requesterUserId,
+          operationType: request.operationType,
+          entityType: request.entityType,
+          entityCount: request.entityIds.length,
           patientsWithConsent: patientsWithConsent.size,
         });
       }
@@ -744,9 +744,9 @@ export class BulkOperationsService {
       }
     } catch (error) {
       logger.error('LGPD consent validation failed', {
-        _userId: _request.requesterUserId,
-        operationType: _request.operationType,
-        entityType: _request.entityType,
+        _userId: request.requesterUserId,
+        operationType: request.operationType,
+        entityType: request.entityType,
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;

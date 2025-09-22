@@ -41,7 +41,7 @@ describe('Code Quality Issue Tests', () => {
           if (match1 && match2) {
             expect(
               `Conflicting implementations found: ${match1[0]} and ${match2[0]}`,
-            ).toBe('')
+            ).toBe(')
           }
         }
       }
@@ -69,7 +69,7 @@ describe('Code Quality Issue Tests', () => {
           const uniqueImports = new Set(importLines
 
           if (importLines.length !== uniqueImports.size) {
-            expect(`Duplicate imports found in ${file}`).toBe('')
+            expect(`Duplicate imports found in ${file}`).toBe(')
           }
         }
       }
@@ -104,7 +104,7 @@ describe('Code Quality Issue Tests', () => {
 
             if (inconsistentImports.length > 5) {
               expect(`Potentially inconsistent import styles in ${file}`).toBe(
-                '',
+                ',
               
             }
           }
@@ -149,7 +149,7 @@ describe('Code Quality Issue Tests', () => {
             if (matches && !isTestFile && !isComment) {
               expect(
                 `Mock AI validation found in production code ${file}: ${matches[0]}`,
-              ).toBe('')
+              ).toBe(')
             }
           }
         }
@@ -184,7 +184,7 @@ describe('Code Quality Issue Tests', () => {
             if (matches) {
               expect(
                 `Placeholder AI logic found in ${file}: ${matches[0]}`,
-              ).toBe('')
+              ).toBe(')
             }
           }
         }
@@ -210,7 +210,7 @@ describe('Code Quality Issue Tests', () => {
           const hasErrorHandling = content.includes('catch') || content.includes('error')
 
           if (!hasTryCatch && hasErrorHandling) {
-            expect(`Poor error handling patterns in ${file}`).toBe('')
+            expect(`Poor error handling patterns in ${file}`).toBe(')
           }
         }
       }
@@ -235,7 +235,7 @@ describe('Code Quality Issue Tests', () => {
           if (matches) {
             expect(
               `Console.log statements found in production code ${file}`,
-            ).toBe('')
+            ).toBe(')
           }
         }
       }
@@ -262,7 +262,7 @@ describe('Code Quality Issue Tests', () => {
           // Files should not be larger than 1000 lines
           if (fileSizeInLines > 1000) {
             expect(`File ${file} is too large: ${fileSizeInLines} lines`).toBe(
-              '',
+              ',
             
           }
         }
@@ -286,7 +286,7 @@ describe('Code Quality Issue Tests', () => {
           const hasComments = content.includes('//')
 
           if (!hasJSDoc && !hasComments) {
-            expect(`Missing documentation in ${file}`).toBe('')
+            expect(`Missing documentation in ${file}`).toBe(')
           }
         }
       }

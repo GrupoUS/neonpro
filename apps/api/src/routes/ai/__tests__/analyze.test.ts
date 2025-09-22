@@ -292,15 +292,12 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
         analysisType: 'patient_feedback'),
         data: {
           text:
-<<<<<<< HEAD
             'Estou muito satisfeita com o tratamento de limpeza de pele. Os resultados foram excelentes e superaram minhas expectativas. Houve um leve desconforto durante o procedimento, mas nada insuportável. Gostaria de saber sobre outros tratamentos disponíveis.'),
           patientId: 'patient-123'),
           _context: 'post_treatment_feedback'),
-=======
             'Estou muito satisfeita com o tratamento de limpeza de pele. Os resultados foram excelentes e superaram minhas expectativas. Houve um leve desconforto durante o procedimento, mas nada insuportável. Gostaria de saber sobre outros tratamentos disponíveis.',
           patientId: 'patient-123',
           _context: 'post_treatment_feedback',
->>>>>>> origin/main
         },
         options: {
           analyzeSentiment: true),
@@ -428,7 +425,6 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       
 
       expect(mockLGPDService.validateDataAccess).toHaveBeenCalledWith({
-<<<<<<< HEAD
         _userId: 'user-123'),
         dataType: 'ai_data_analysis'),
         purpose: 'healthcare_analysis'),
@@ -436,7 +432,6 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
         analysisType: 'structured_data'),
       }
     }
-=======
         _userId: 'user-123',
         dataType: 'ai_data_analysis',
         purpose: 'healthcare_analysis',
@@ -444,7 +439,6 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
         analysisType: 'structured_data',
       });
     });
->>>>>>> origin/main
 
     it('should log analysis activity for audit trail', async () => {
       const { default: analyzeRoute } = await import('../analyze')
@@ -468,17 +462,14 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       
 
       expect(mockAuditService.logActivity).toHaveBeenCalledWith({
-<<<<<<< HEAD
         _userId: 'user-123'),
         action: 'ai_data_analysis'),
         resourceType: 'ai_analysis'),
         resourceId: 'img-analysis-456'),
-=======
         _userId: 'user-123',
         action: 'ai_data_analysis',
         resourceType: 'ai_analysis',
         resourceId: 'img-analysis-456',
->>>>>>> origin/main
         details: {
           analysisType: 'medical_image'),
           model: 'gpt-4-vision'),

@@ -10,11 +10,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AccessPolicy, AdvancedRLSPolicies, RLSContext } from '../../security/rls-policies';
 
-<<<<<<< HEAD
 describe('AdvancedRLSPolicies',() => {
-=======
-describe(_'AdvancedRLSPolicies',() => {
->>>>>>> origin/main
+describe(('AdvancedRLSPolicies',() => {
   let rls: AdvancedRLSPolicies;
   let mockSupabase: any;
 
@@ -25,23 +22,17 @@ describe(_'AdvancedRLSPolicies',() => {
     };
 
     // Mock the createServerClient function
-<<<<<<< HEAD
     vi.doMock('../../clients/supabase.js',() => ({
-=======
-    vi.doMock(_'../../clients/supabase.js',() => ({
->>>>>>> origin/main
+    vi.doMock(('../../clients/supabase.js',() => ({
       createServerClient: () => mockSupabase,
     })
 
     rls = new AdvancedRLSPolicies(
 
-<<<<<<< HEAD
   describe('Role Hierarchy',() => {
     it('should define proper role hierarchy',() => {
-=======
-  describe(_'Role Hierarchy',() => {
-    it(_'should define proper role hierarchy',() => {
->>>>>>> origin/main
+  describe(('Role Hierarchy',() => {
+    it(('should define proper role hierarchy',() => {
       const roleHierarchy = (rls as any).ROLE_HIERARCHY;
 
       expect(roleHierarchy.admin).toBe(100
@@ -53,11 +44,8 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(roleHierarchy.patient).toBe(10
       expect(roleHierarchy.anonymous).toBe(0
 
-<<<<<<< HEAD
     it('should define data sensitivity levels',() => {
-=======
-    it(_'should define data sensitivity levels',() => {
->>>>>>> origin/main
+    it(('should define data sensitivity levels',() => {
       const dataSensitivity = (rls as any).DATA_SENSITIVITY;
 
       expect(dataSensitivity.PUBLIC).toBe(0
@@ -66,13 +54,10 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(dataSensitivity.RESTRICTED).toBe(75
       expect(dataSensitivity.HIGHLY_RESTRICTED).toBe(100
 
-<<<<<<< HEAD
   describe('Healthcare Policies',() => {
     it('should have enhanced patient data access policies',() => {
-=======
-  describe(_'Healthcare Policies',() => {
-    it(_'should have enhanced patient data access policies',() => {
->>>>>>> origin/main
+  describe(('Healthcare Policies',() => {
+    it(('should have enhanced patient data access policies',() => {
       const policies = (rls as any).HEALTHCARE_POLICIES;
       const patientPolicy = policies.find(
         (p: AccessPolicy) => p.tableName === 'patients' && p.operation === 'SELECT',
@@ -87,11 +72,8 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(patientPolicy.timeRestrictions?.endHour).toBe(22
       expect(patientPolicy.timeRestrictions?.emergencyBypass).toBe(true);
 
-<<<<<<< HEAD
     it('should have enhanced medical record policies',() => {
-=======
-    it(_'should have enhanced medical record policies',() => {
->>>>>>> origin/main
+    it(('should have enhanced medical record policies',() => {
       const policies = (rls as any).HEALTHCARE_POLICIES;
       const medicalRecordPolicy = policies.find(
         (p: AccessPolicy) => p.tableName === 'medical_records' && p.operation === 'SELECT',
@@ -102,11 +84,8 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(medicalRecordPolicy.auditLevel).toBe('comprehensive')
       expect(medicalRecordPolicy.consentRequired).toBe(true);
 
-<<<<<<< HEAD
     it('should include enhanced security conditions',() => {
-=======
-    it(_'should include enhanced security conditions',() => {
->>>>>>> origin/main
+    it(('should include enhanced security conditions',() => {
       const policies = (rls as any).HEALTHCARE_POLICIES;
       const patientPolicy = policies.find(
         (p: AccessPolicy) => p.tableName === 'patients' && p.operation === 'SELECT',
@@ -117,11 +96,8 @@ describe(_'AdvancedRLSPolicies',() => {
         patientPolicy.conditions.some((c: string) => c.includes('patient_consent_records')),
       ).toBe(true);
 
-<<<<<<< HEAD
   describe('Policy Evaluation',() => {
-=======
-  describe(_'Policy Evaluation',() => {
->>>>>>> origin/main
+  describe(('Policy Evaluation',() => {
     let mockContext: RLSContext;
 
     beforeEach(() => {
@@ -136,13 +112,10 @@ describe(_'AdvancedRLSPolicies',() => {
         justification: 'Medical treatment',
       };
 
-<<<<<<< HEAD
     it('should allow access for authorized roles',async () => {
       mockSupabase.rpc.mockResolvedValue({ data: null, error: null   }
-=======
-    it(_'should allow access for authorized roles',async () => {
+    it(('should allow access for authorized roles',async () => {
       mockSupabase.rpc.mockResolvedValue({ data: null, error: null });
->>>>>>> origin/main
 
       const result = await rls.evaluatePolicy(
         mockContext,
@@ -153,11 +126,8 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(result.allowed).toBe(false); // Will be false due to missing database setup in test
       expect(result.auditRequired).toBe(true);
 
-<<<<<<< HEAD
     it('should deny access for unauthorized roles',async () => {
-=======
-    it(_'should deny access for unauthorized roles',async () => {
->>>>>>> origin/main
+    it(('should deny access for unauthorized roles',async () => {
       mockContext.userRole = 'patient';
       mockSupabase.rpc.mockResolvedValue({ data: null, error: null   }
 
@@ -170,11 +140,8 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(result.allowed).toBe(false);
       expect(result.auditRequired).toBe(true);
 
-<<<<<<< HEAD
     it('should handle emergency access',async () => {
-=======
-    it(_'should handle emergency access',async () => {
->>>>>>> origin/main
+    it(('should handle emergency access',async () => {
       mockContext.emergencyAccess = true;
       mockContext.accessTime = new Date('2024-01-01T23:00:00'); // Outside normal hours
       mockSupabase.rpc.mockResolvedValue({ data: null, error: null   }
@@ -188,13 +155,10 @@ describe(_'AdvancedRLSPolicies',() => {
       // Should allow emergency access regardless of time
       expect(result.emergencyAccess).toBeDefined(
 
-<<<<<<< HEAD
     it('should handle evaluation errors gracefully',async () => {
       mockSupabase.rpc.mockRejectedValue(new Error('Database error')
-=======
-    it(_'should handle evaluation errors gracefully',async () => {
+    it(('should handle evaluation errors gracefully',async () => {
       mockSupabase.rpc.mockRejectedValue(new Error('Database error'));
->>>>>>> origin/main
 
       const result = await rls.evaluatePolicy(
         mockContext,
@@ -206,11 +170,8 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(result.reason).toBe('RLS policy evaluation error')
       expect(result.auditRequired).toBe(true);
 
-<<<<<<< HEAD
   describe('RLS Context Management',() => {
-=======
-  describe(_'RLS Context Management',() => {
->>>>>>> origin/main
+  describe(('RLS Context Management',() => {
     let mockContext: RLSContext;
 
     beforeEach(() => {
@@ -225,13 +186,10 @@ describe(_'AdvancedRLSPolicies',() => {
         justification: 'Medical treatment',
       };
 
-<<<<<<< HEAD
     it('should set RLS context with enhanced security parameters',async () => {
       mockSupabase.rpc.mockResolvedValue({ data: null, error: null   }
-=======
-    it(_'should set RLS context with enhanced security parameters',async () => {
+    it(('should set RLS context with enhanced security parameters',async () => {
       mockSupabase.rpc.mockResolvedValue({ data: null, error: null });
->>>>>>> origin/main
 
       await rls.setRLSContext(mockContext
 
@@ -245,11 +203,8 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(mockSupabase.rpc).toHaveBeenCalledWith('exec_sql', {
         sql: expect.stringContaining('SET app.security_context'),
 
-<<<<<<< HEAD
     it('should calculate access levels correctly',() => {
-=======
-    it(_'should calculate access levels correctly',() => {
->>>>>>> origin/main
+    it(('should calculate access levels correctly',() => {
       const accessLevels = [
         { _role: 'admin', expected: 'full' },
         { _role: 'doctor', expected: 'patient_full' },
@@ -259,19 +214,16 @@ describe(_'AdvancedRLSPolicies',() => {
       ];
 
       accessLevels.forEach(({ role,_expected }) => {
-<<<<<<< HEAD
         const accessLevel = (rls as any).calculateAccessLevel(role
         expect(accessLevel).toBe(expected
 
     it('should handle context setting errors',async () => {
-=======
         const accessLevel = (rls as any).calculateAccessLevel(role);
         expect(accessLevel).toBe(expected);
       });
     });
 
-    it(_'should handle context setting errors',async () => {
->>>>>>> origin/main
+    it(('should handle context setting errors',async () => {
       mockSupabase.rpc.mockRejectedValue(
         new Error('Database connection failed'),
       
@@ -280,15 +232,12 @@ describe(_'AdvancedRLSPolicies',() => {
         'Failed to set RLS context',
       
 
-<<<<<<< HEAD
   describe('Policy Generation',() => {
     it('should generate enhanced SQL policies',() => {
       const policies = rls.generateSupabasePolicies(
-=======
-  describe(_'Policy Generation',() => {
-    it(_'should generate enhanced SQL policies',() => {
+  describe(('Policy Generation',() => {
+    it(('should generate enhanced SQL policies',() => {
       const policies = rls.generateSupabasePolicies();
->>>>>>> origin/main
 
       expect(policies).toHaveLength.greaterThan(0
 
@@ -298,25 +247,19 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(patientPolicy).toContain('Security Level:')
       expect(patientPolicy).toContain('Healthcare Compliance:')
 
-<<<<<<< HEAD
     it('should include time restrictions in generated policies',() => {
       const policies = rls.generateSupabasePolicies(
-=======
-    it(_'should include time restrictions in generated policies',() => {
+    it(('should include time restrictions in generated policies',() => {
       const policies = rls.generateSupabasePolicies();
->>>>>>> origin/main
 
       const patientPolicy = policies.find(p => p.includes('patients_select_enhanced_policy')
       expect(patientPolicy).toContain('EXTRACT(HOUR FROM CURRENT_TIMESTAMP)')
       expect(patientPolicy).toContain('emergencyBypass')
 
-<<<<<<< HEAD
     it('should include IP restrictions for comprehensive policies',() => {
       const policies = rls.generateSupabasePolicies(
-=======
-    it(_'should include IP restrictions for comprehensive policies',() => {
+    it(('should include IP restrictions for comprehensive policies',() => {
       const policies = rls.generateSupabasePolicies();
->>>>>>> origin/main
 
       const medicalRecordPolicy = policies.find(p =>
         p.includes('medical_records_select_enhanced_policy')
@@ -324,39 +267,30 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(medicalRecordPolicy).toContain('current_setting(\'app.client_ip\')')
       expect(medicalRecordPolicy).toContain('192.168.%'); // Private IP ranges
 
-<<<<<<< HEAD
   describe('Helper Methods',() => {
     it('should generate secure session IDs',() => {
       const sessionId = (rls as any).generateSessionId(
       const sessionId2 = (rls as any).generateSessionId(
-=======
-  describe(_'Helper Methods',() => {
-    it(_'should generate secure session IDs',() => {
+  describe(('Helper Methods',() => {
+    it(('should generate secure session IDs',() => {
       const sessionId = (rls as any).generateSessionId();
       const sessionId2 = (rls as any).generateSessionId();
->>>>>>> origin/main
 
       expect(sessionId).toMatch(/^sess_\d+_[a-z0-9]+$/
       expect(sessionId2).not.toBe(sessionId
 
-<<<<<<< HEAD
     it('should generate secure request IDs',() => {
       const requestId = (rls as any).generateRequestId(
       const requestId2 = (rls as any).generateRequestId(
-=======
-    it(_'should generate secure request IDs',() => {
+    it(('should generate secure request IDs',() => {
       const requestId = (rls as any).generateRequestId();
       const requestId2 = (rls as any).generateRequestId();
->>>>>>> origin/main
 
       expect(requestId).toMatch(/^req_\d+_[a-z0-9]+$/
       expect(requestId2).not.toBe(requestId
 
-<<<<<<< HEAD
     it('should log RLS context setting',async () => {
-=======
-    it(_'should log RLS context setting',async () => {
->>>>>>> origin/main
+    it(('should log RLS context setting',async () => {
       const mockContext: RLSContext = {
         _userId: 'test-user-id',
         userRole: 'doctor',
@@ -386,13 +320,10 @@ describe(_'AdvancedRLSPolicies',() => {
         }),
       
 
-<<<<<<< HEAD
   describe('Error Handling and Edge Cases',() => {
     it('should handle missing professional ID for restricted access',async () => {
-=======
-  describe(_'Error Handling and Edge Cases',() => {
-    it(_'should handle missing professional ID for restricted access',async () => {
->>>>>>> origin/main
+  describe(('Error Handling and Edge Cases',() => {
+    it(('should handle missing professional ID for restricted access',async () => {
       const mockContext: RLSContext = {
         _userId: 'test-user-id',
         userRole: 'doctor',
@@ -414,11 +345,8 @@ describe(_'AdvancedRLSPolicies',() => {
       expect(result.allowed).toBe(false);
       expect(result.auditRequired).toBe(true);
 
-<<<<<<< HEAD
     it('should handle empty role list in policies',async () => {
-=======
-    it(_'should handle empty role list in policies',async () => {
->>>>>>> origin/main
+    it(('should handle empty role list in policies',async () => {
       // Create a custom policy with no roles
       const customPolicy: AccessPolicy = {
         tableName: 'test_table',

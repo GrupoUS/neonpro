@@ -278,11 +278,8 @@ describe('Session Management Security Tests', () => {
 
         // This should limit concurrent sessions
         // Currently no concurrent session limit exists
-<<<<<<< HEAD
         const userSessions = sessionManager.getUserSessions(_userId
-=======
         const userSessions = sessionManager.getUserSessions(_userId);
->>>>>>> origin/main
         if (userSessions.length >= maxConcurrentSessions) {
           // Remove oldest session
           const oldestSession = userSessions.reduce((oldest, current) =>
@@ -329,13 +326,10 @@ describe('Session Management Security Tests', () => {
 
         // This should detect and notify about concurrent sessions
         // Currently no concurrent activity detection exists
-<<<<<<< HEAD
         const userSessions = sessionManager.getUserSessions(_userId
         const otherSessions = userSessions.filter(s => s.sessionId !== currentSessionId
-=======
         const userSessions = sessionManager.getUserSessions(_userId);
         const otherSessions = userSessions.filter(s => s.sessionId !== currentSessionId);
->>>>>>> origin/main
 
         if (otherSessions.length > 0 && otherSessions.some(s => s.ipAddress !== requestIp)) {
           concurrentActivityDetected = true;
@@ -548,11 +542,8 @@ describe('Session Management Security Tests', () => {
 
         // This should clean all user sessions on logout
         // Currently only current session is removed
-<<<<<<< HEAD
         const userSessions = sessionManager.getUserSessions(_userId
-=======
         const userSessions = sessionManager.getUserSessions(_userId);
->>>>>>> origin/main
         userSessions.forEach(session => {
           sessionManager.removeSession(session.sessionId
         }
@@ -727,13 +718,10 @@ describe('Session Management Security Tests', () => {
             return c.json({ error: 'Session not found' }, 401
           }
 
-<<<<<<< HEAD
           c.set('sessionId', sessionId
           c.set('userId', session._userId
-=======
           c.set('sessionId', sessionId);
           c.set('userId', session._userId);
->>>>>>> origin/main
         }
 
         return next(
@@ -758,7 +746,7 @@ describe('Session Management Security Tests', () => {
 
 // Helper functions
 function calculateEntropy(str: string): number {
-  const chars = str.split('')
+  const chars = str.split(')
   const charCounts: { [key: string]: number } = {};
 
   chars.forEach(char => {

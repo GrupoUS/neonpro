@@ -72,7 +72,7 @@ vi.mock('@supabase/ssr', () => ({
   })),
 })
 
-describe(_'Supabase Client Implementation - TDD RED Phase'), () => {
+describe(('Supabase Client Implementation - TDD RED Phase'), () => {
   let originalEnv: typeof process.env;
 
   beforeAll(() => {

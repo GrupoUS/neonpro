@@ -473,7 +473,7 @@ describe('AIProviderRouterService', () => {
     it('should validate request structure', async () => {
       const invalidRequest = {
         // Missing required fields
-        prompt: '',
+        prompt: ',
         healthcare_context: {
           // Invalid use_case
           use_case: 'invalid_use_case',

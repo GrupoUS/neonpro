@@ -10,8 +10,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // ES module compatibility
-const _filename = new URL(import.meta.url).pathname;
-const _dirname = path.dirname(__filename);
+const filename = new URL(import.meta.url).pathname;
+const dirname = path.dirname(__filename);
 
 interface TestResult {
   name: string;

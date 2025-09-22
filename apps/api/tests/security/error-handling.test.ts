@@ -83,7 +83,7 @@ describe('Error Handling Security Tests', () => {
         try {
           // Simulate file system error
           throw new Error(
-            'ENOENT: no such file or directory, open \'/home/vibecode/neonpro/apps/api/src/config/secret-keys.json\'',
+            'ENOENT: no such file or directory, open \'/home/vibecode/neonpro/apps/api/src/config/secret-keys.json\',
           
         } catch (error) {
           // This should sanitize file paths
@@ -275,11 +275,8 @@ describe('Error Handling Security Tests', () => {
           // Simulate SQL error
           throw new Error(
             'syntax error at or near "WHERE" in _query: SELECT * FROM patients WHERE name = \'John\' AND age > 25 ORDER BY created_at DESC',
-<<<<<<< HEAD
           
-=======
           );
->>>>>>> origin/main
         } catch (error) {
           // This should sanitize SQL queries
           // Currently SQL queries may be exposed
@@ -432,11 +429,8 @@ describe('Error Handling Security Tests', () => {
 
       app.use('/security-sensitive', async (c, next) => {
         try {
-<<<<<<< HEAD
           return await next(
-=======
           return await next();
->>>>>>> origin/main
         } catch (_error) {
           // This should log security-sensitive errors
           // Currently no specialized security logging exists
@@ -470,11 +464,8 @@ describe('Error Handling Security Tests', () => {
             password: 'plaintext-password',
           };
 
-<<<<<<< HEAD
           throw new Error(`Processing failed for user: ${JSON.stringify(sensitiveData)}`
-=======
           throw new Error(`Processing failed for user: ${JSON.stringify(sensitiveData)}`);
->>>>>>> origin/main
         } catch (_error) {
           // This should sanitize logged data
           // Currently sensitive data may be logged
@@ -541,11 +532,8 @@ describe('Error Handling Security Tests', () => {
 
       app.use('/error-endpoint', async (c, next) => {
         const ip = c.req.header('x-forwarded-for') || 'unknown';
-<<<<<<< HEAD
         const _now = Date.now(
-=======
         const _now = Date.now();
->>>>>>> origin/main
 
         // This should implement progressive delays
         // Currently no delay mechanism exists

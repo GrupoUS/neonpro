@@ -74,13 +74,10 @@ describe('T045: LGPD Compliance Validation Tests', () => {
   let patientId: string;
 
   beforeEach(async () => {
-<<<<<<< HEAD
     await setupTestDatabase(
     testClient = await createTestClient({ _role: 'admin' }
-=======
     await setupTestDatabase();
     testClient = await createTestClient({ _role: 'admin' });
->>>>>>> origin/main
 
     // Clear mock systems
     mockLGPDSystem.auditTrail.length = 0;
@@ -589,7 +586,7 @@ describe('T045: LGPD Compliance Validation Tests', () => {
         const shouldStop = withdrawalRequest.withdrawn_purposes.some(
           purpose =>
             process.type.includes(
-              purpose.replace('_processing', '').replace('_', '_'),
+              purpose.replace('_processing', ').replace('_', '_'),
             ),
         
 

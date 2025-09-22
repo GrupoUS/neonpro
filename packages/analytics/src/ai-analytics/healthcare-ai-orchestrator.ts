@@ -32,7 +32,7 @@ export class HealthcareAIOrchestrator {
   ) {
     this.predictiveService =
       predictiveService || new PredictiveAnalyticsService();
-    const _config = _config; // avoid unused warning
+    const config = _config; // avoid unused warning
     this.config = {
       enableCompliance: true,
       region: "brazil",

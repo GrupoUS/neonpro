@@ -211,11 +211,8 @@ describe('PR #44 Issues - Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(_payload),
-<<<<<<< HEAD
       }
-=======
       });
->>>>>>> origin/main
 
       expect(response.status).not.toBe(200
     }
@@ -231,11 +228,8 @@ describe('PR #44 Issues - Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(_payload),
-<<<<<<< HEAD
       }
-=======
       });
->>>>>>> origin/main
 
       expect(response.status).not.toBe(200
     }
@@ -251,11 +245,8 @@ describe('PR #44 Issues - Integration Tests', () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(_payload),
-<<<<<<< HEAD
       }
-=======
       });
->>>>>>> origin/main
 
       expect(response.status).not.toBe(200
     }

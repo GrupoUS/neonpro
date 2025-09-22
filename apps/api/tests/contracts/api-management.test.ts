@@ -270,13 +270,13 @@ const generateValidSecurityPolicy = () => ({
     {
       type: 'csp' as const,
       config: {
-        defaultSrc: ['\'self\''],
-        scriptSrc: ['\'self\'', '\'unsafe-inline\''],
-        styleSrc: ['\'self\'', '\'unsafe-inline\''],
-        imgSrc: ['\'self\'', 'data:', 'https:'],
-        connectSrc: ['\'self\'', 'https://api.neonpro.health'],
-        frameSrc: ['\'none\''],
-        objectSrc: ['\'none\''],
+        defaultSrc: ['\'self\'],
+        scriptSrc: ['\'self\', '\'unsafe-inline\'],
+        styleSrc: ['\'self\', '\'unsafe-inline\'],
+        imgSrc: ['\'self\', 'data:', 'https:'],
+        connectSrc: ['\'self\', 'https://api.neonpro.health'],
+        frameSrc: ['\'none\'],
+        objectSrc: ['\'none\'],
         reportUri: '/api/security/csp-report',
       },
       priority: 1,
@@ -348,7 +348,7 @@ describe('API Management Contract Tests', () => {
     }
 
     app.get('/api/management/api-keys', async c => {
-      const result = await validateApiKey(c.req.header('Authorization') || '')
+      const result = await validateApiKey(c.req.header('Authorization') || ')
       return c.json(result
     }
 
@@ -367,13 +367,13 @@ describe('API Management Contract Tests', () => {
     }
 
     app.get('/api/management/rate-limit', async c => {
-      const apiKey = c.req.header('x-api-key') || '';
+      const apiKey = c.req.header('x-api-key') || ';
       const result = await checkRateLimit(apiKey
       return c.json(result
     }
 
     app.get('/api/management/quota', async c => {
-      const apiKey = c.req.header('x-api-key') || '';
+      const apiKey = c.req.header('x-api-key') || ';
       const result = await checkQuota(apiKey
       return c.json(result
     }
@@ -424,7 +424,7 @@ describe('API Management Contract Tests', () => {
 
     it('should reject request with invalid schema', async () => {
       const invalidRequest = {
-        name: '', // Invalid: empty name
+        name: ', // Invalid: empty name
         permissions: [], // Invalid: empty permissions
         lgpdConsent: {
           legalBasis: 'invalid_basis', // Invalid: not in enum

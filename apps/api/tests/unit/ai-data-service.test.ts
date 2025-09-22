@@ -135,7 +135,7 @@ describe('AIDataService', () => {
     it('should require domain specification', async () => {
       const noDomainContext = {
         ...mockPermissionContext,
-        domain: '', // Empty domain
+        domain: ', // Empty domain
       };
 
       const noDomainService = new AIDataService(noDomainContext
@@ -424,26 +424,20 @@ describe('AIDataService', () => {
 
       dataService.updatePermissionContext(newContext
 
-<<<<<<< HEAD
       expect(dataService.getPermissionContext()._role).toBe('receptionist')
     }
-=======
       expect(dataService.getPermissionContext()._role).toBe('receptionist');
     });
->>>>>>> origin/main
 
     it('should return copy of permission context', () => {
       const context = dataService.getPermissionContext(
       context.role = 'modified' as any;
 
-<<<<<<< HEAD
       expect(dataService.getPermissionContext()._role).toBe('admin')
     }
   }
 }
-=======
       expect(dataService.getPermissionContext()._role).toBe('admin');
     });
   });
 });
->>>>>>> origin/main

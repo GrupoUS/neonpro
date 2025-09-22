@@ -531,7 +531,7 @@ export class EnhancedStructuredLogger {
       sessionId: requestContext.sessionId,
       traceId: requestContext.traceId,
       spanId: requestContext.spanId,
-      healthcareContext: _context?.healthcare,
+      healthcareContext: context?.healthcare,
       duration: requestContext.duration,
       memoryUsage: process.memoryUsage ? process.memoryUsage().heapUsed : undefined,
       cpuUsage: process.cpuUsage ? process.cpuUsage().user : undefined,
@@ -669,7 +669,7 @@ export class EnhancedStructuredLogger {
     this.info(
       `[WORKFLOW:${workflowType?.toUpperCase()}] ${message}`,
       data,
-      { healthcare: healthcareContext, technical: _context?.technical }
+      { healthcare: healthcareContext, technical: context?.technical }
     );
   }
 

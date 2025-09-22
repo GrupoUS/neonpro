@@ -16,7 +16,7 @@ export class ChatRepository {
     const { data, error } = await this.supabase
       .from("chat_sessions")
       .insert({
-        user_id: _userId,
+        user_id: userId,
         status: "active",
         metadata: metadata || {},
         created_at: new Date().toISOString(),

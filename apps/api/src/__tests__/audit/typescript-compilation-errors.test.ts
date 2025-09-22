@@ -35,14 +35,14 @@ describe('TypeScript Compilation Error Detection', () => {
       // RED: Critical for AI chat functionality in healthcare context
       expect(() => {
         require('@/routes/ai-chat');
-      }).toThrow('Cannot find module \'@neonpro/core-services\'');
+      }).toThrow('Cannot find module \'@neonpro/core-services\');
     });
 
     it('should detect missing @neonpro/database module', () => {
       // RED: Database module required for patient data operations
       expect(() => {
         require('@/routes/patients');
-      }).toThrow('Cannot find module \'@neonpro/database\'');
+      }).toThrow('Cannot find module \'@neonpro/database\');
     });
 
     it('should detect missing trpc helpers', () => {

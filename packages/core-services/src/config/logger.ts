@@ -108,7 +108,7 @@ export class Logger {
     if (!this.config.redactPII) return obj;
 
     // Simple PII redaction - can be enhanced
-    const _piiFields = [
+    const piiFields = [
       "email",
       "phone",
       "ssn",
@@ -150,7 +150,7 @@ export class Logger {
       timestamp: new Date().toISOString(),
       level,
       message,
-      _context: _context ? this.redactPII(_context) : undefined,
+      _context: context ? this.redactPII(_context) : undefined,
       error,
     };
   }

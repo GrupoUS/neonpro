@@ -29,7 +29,7 @@ describe('AI Service Files - Unused Imports', () => {
         && !line.includes('import')
         && !line.includes('from')
         && !line.includes('*')
-        && line.trim() !== '')
+        && line.trim() !== ')
       
       console.log('AgentError usage found:', agentErrorUsage
       expect(agentErrorUsage).toHaveLength(0
@@ -39,7 +39,7 @@ describe('AI Service Files - Unused Imports', () => {
         line.includes('QueryIntent')
         && !line.includes('import')
         && !line.includes('*')
-        && line.trim() !== '')
+        && line.trim() !== ')
       
       expect(queryIntentUsage).toHaveLength(0
     }
@@ -61,7 +61,7 @@ describe('AI Service Files - Unused Imports', () => {
         line.includes('AgentError')
         && !line.includes('import')
         && !line.includes('*')
-        && line.trim() !== '')
+        && line.trim() !== ')
       
       expect(agentErrorUsage).toHaveLength(0
     }

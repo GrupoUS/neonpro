@@ -36,7 +36,7 @@ describe('Route Files - Unused Imports', () => {
         && !line.includes('from')
         && !line.includes('*')
         && !line.startsWith(' ') // Exclude indented lines (part of import blocks)
-        && line.trim() !== '')
+        && line.trim() !== ')
       
       expect(beforeEachUsage).toHaveLength(0
     }

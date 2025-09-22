@@ -93,7 +93,7 @@ describe('Security Headers Validation Test (T051)', () => {
 
       const csp = response.headers.get('Content-Security-Policy')
       expect(csp).toBeDefined(
-      expect(csp).toContain('default-src \'self\'')
+      expect(csp).toContain('default-src \'self\')
     }
 
     it('should include Referrer-Policy header', async () => {
@@ -124,8 +124,8 @@ describe('Security Headers Validation Test (T051)', () => {
 
       const csp = response.headers.get('Content-Security-Policy')
       expect(csp).toBeDefined(
-      expect(csp).toContain('object-src \'none\'')
-      expect(csp).toContain('frame-ancestors \'none\'')
+      expect(csp).toContain('object-src \'none\')
+      expect(csp).toContain('frame-ancestors \'none\')
     }
 
     it('should include healthcare compliance headers', async () => {

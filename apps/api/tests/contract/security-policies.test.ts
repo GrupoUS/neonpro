@@ -15,16 +15,16 @@ describe('Contract: Security Policies API', () => {
   describe('CSP Validation Endpoints', () => {
     it('should validate CSP configuration', async () => {
       const cspConfig = {
-        'default-src': ['\'self\''],
-        'script-src': ['\'self\'', '\'unsafe-inline\''],
-        'style-src': ['\'self\'', '\'unsafe-inline\''],
-        'img-src': ['\'self\'', 'data:', 'https:'],
-        'connect-src': ['\'self\'', 'wss:', 'https:'],
-        'font-src': ['\'self\'', 'data:'],
-        'object-src': ['\'none\''],
-        'base-uri': ['\'self\''],
-        'form-action': ['\'self\''],
-        'frame-ancestors': ['\'none\''],
+        'default-src': ['\'self\'],
+        'script-src': ['\'self\', '\'unsafe-inline\'],
+        'style-src': ['\'self\', '\'unsafe-inline\'],
+        'img-src': ['\'self\', 'data:', 'https:'],
+        'connect-src': ['\'self\', 'wss:', 'https:'],
+        'font-src': ['\'self\', 'data:'],
+        'object-src': ['\'none\'],
+        'base-uri': ['\'self\'],
+        'form-action': ['\'self\'],
+        'frame-ancestors': ['\'none\'],
         'report-uri': '/api/v1/security/csp-report',
       };
 
@@ -160,8 +160,8 @@ describe('Contract: Security Policies API', () => {
         data_classification: 'SENSITIVE_HEALTH',
         lgpd_compliance_categories: ['PERSONAL_DATA', 'HEALTH_DATA'],
         csp_configuration: {
-          'default-src': ['\'self\''],
-          'script-src': ['\'self\''],
+          'default-src': ['\'self\'],
+          'script-src': ['\'self\'],
         },
         rls_policies: ['patient_access_control', 'data_encryption'],
         audit_requirements: {

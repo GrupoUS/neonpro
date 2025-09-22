@@ -5,8 +5,8 @@ import { describe, expect, it } from 'vitest';
 describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
   const trpcContractsPath = join(process.cwd(), 'src/trpc/contracts');
 
-  describe(_'Agent Contract - Unused Imports'), () => {
-    it(_'should detect unused HealthcareTRPCError import'), () => {
+  describe(('Agent Contract - Unused Imports'), () => {
+    it(('should detect unused HealthcareTRPCError import'), () => {
       const filePath = join(trpcContractsPath, 'agent.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -16,7 +16,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
       // This test will fail initially because the import exists but type is not used
       expect(hasHealthcareTRPCErrorImport && !usesHealthcareTRPCError).toBe(false);
 
-    it(_'should detect unused protectedProcedure and router imports'), () => {
+    it(('should detect unused protectedProcedure and router imports'), () => {
       const filePath = join(trpcContractsPath, 'agent.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -32,8 +32,8 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
       ).toBe(false);
   });
 
-  describe(_'AI Contract - Unused Imports'), () => {
-    it(_'should detect unused auditLogger import'), () => {
+  describe(('AI Contract - Unused Imports'), () => {
+    it(('should detect unused auditLogger import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -42,7 +42,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
 
       expect(hasAuditLoggerImport && !usesAuditLogger).toBe(false);
 
-    it(_'should detect unused AIResponseSchema import'), () => {
+    it(('should detect unused AIResponseSchema import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -51,7 +51,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
 
       expect(hasAIResponseSchemaImport && !usesAIResponseSchema).toBe(false);
 
-    it(_'should detect unused LGPDComplianceMiddleware import'), () => {
+    it(('should detect unused LGPDComplianceMiddleware import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -60,7 +60,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
 
       expect(hasLGPDComplianceMiddlewareImport && !usesLGPDComplianceMiddleware).toBe(false);
 
-    it(_'should detect unused shouldRetainAIData import'), () => {
+    it(('should detect unused shouldRetainAIData import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -69,7 +69,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
 
       expect(hasShouldRetainAIDataImport && !usesShouldRetainAIData).toBe(false);
 
-    it(_'should detect unused lgpdDataSubjectService import'), () => {
+    it(('should detect unused lgpdDataSubjectService import'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -78,7 +78,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
 
       expect(hasLgpdDataSubjectServiceImport && !usesLgpdDataSubjectService).toBe(false);
 
-    it(_'should detect unused healthAnalysisService variable'), () => {
+    it(('should detect unused healthAnalysisService variable'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 
@@ -89,7 +89,7 @@ describe('TDD: Unused Imports Detection - TRPC Contracts'), () => {
 
       expect(hasHealthAnalysisServiceVariable && !usesHealthAnalysisService).toBe(false);
 
-    it(_'should detect unused helper functions'), () => {
+    it(('should detect unused helper functions'), () => {
       const filePath = join(trpcContractsPath, 'ai.ts');
       const content = readFileSync(filePath, 'utf8');
 

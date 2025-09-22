@@ -427,7 +427,7 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       const breachDetails = {
         breachType: 'SQL_injection_attempt_,
         vulnerableEndpoint: '/api/v1/patients/search',
-        _payload: _SELECT * FROM patients WHERE name = \'test\' OR 1=1--',
+        _payload: SELECT * FROM patients WHERE name = \'test\' OR 1=1--',
         attackerIp: '192.168.1.100',
         timestamp: '2024-01-15T15:45:00Z',
         affectedRecords: 150,

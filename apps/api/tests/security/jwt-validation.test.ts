@@ -62,7 +62,7 @@ describe('JWT Validation Security Tests', () => {
           iss: 'https://test.supabase.co/auth/v1',
           exp: Math.floor(Date.now() / 1000) + 3600,
         },
-        '',
+        ',
         { algorithm: 'none' },
       
 

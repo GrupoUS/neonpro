@@ -214,7 +214,7 @@ describe('IntentParserService', () => {
     }
 
     it('should handle empty queries', () => {
-      const result = intentParser.parseQuery('', 'admin')
+      const result = intentParser.parseQuery(', 'admin')
 
       expect(result.intent).toBe('general')
       expect(result.confidence).toBeLessThan(0.5
@@ -252,21 +252,18 @@ describe('IntentParserService', () => {
       const roles: UserRole[] = ['admin', 'doctor', 'receptionist'];
 
       roles.forEach(role => {
-<<<<<<< HEAD
         const result = intentParser.parseQuery(query, _role
         expect(result.intent).toBe('client_data')
         expect(result.confidence).toBeGreaterThan(0.7
       }
     }
   }
-=======
         const result = intentParser.parseQuery(query, _role);
         expect(result.intent).toBe('client_data');
         expect(result.confidence).toBeGreaterThan(0.7);
       });
     });
   });
->>>>>>> origin/main
 
   describe('Parameter Validation', () => {
     it('should validate client data parameters', () => {

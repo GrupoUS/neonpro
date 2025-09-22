@@ -202,16 +202,16 @@ export class ConsentFactory {
     
     return {
       id: `consent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      patientId: _request.patientId,
-      consentType: _request.consentType,
+      patientId: request.patientId,
+      consentType: request.consentType,
       status: ConsentStatus.ACTIVE,
-      purpose: _request.purpose,
-      dataTypes: _request.dataTypes,
+      purpose: request.purpose,
+      dataTypes: request.dataTypes,
       grantedAt: now,
-      expiresAt: _request.expiration,
+      expiresAt: request.expiration,
       legalBasis: LegalBasis.CONSENT,
       consentVersion: "1.0.0",
-      metadata: _request.metadata,
+      metadata: request.metadata,
       auditTrail: [
         {
           id: `audit_${Date.now()}`,
@@ -220,9 +220,9 @@ export class ConsentFactory {
           actorId: grantedBy,
           patientIdHash: this.hashPatientId(_request.patientId),
           details: {
-            consentType: _request.consentType,
-            purpose: _request.purpose,
-            dataTypesCount: _request.dataTypes.length,
+            consentType: request.consentType,
+            purpose: request.purpose,
+            dataTypesCount: request.dataTypes.length,
           }
         }
       ]

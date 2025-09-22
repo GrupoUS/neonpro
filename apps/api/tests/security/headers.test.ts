@@ -33,25 +33,25 @@ describe('Healthcare Security Headers', () => {
 
       expect(res.status).toBe(200
       expect(res.headers.get('content-security-policy')).toContain(
-        'default-src \'self\'',
+        'default-src \'self\',
       
       expect(res.headers.get('content-security-policy')).toContain(
-        'script-src \'self\'',
+        'script-src \'self\',
       
       expect(res.headers.get('content-security-policy')).toContain(
-        'style-src \'self\'',
+        'style-src \'self\',
       
       expect(res.headers.get('content-security-policy')).toContain(
-        'img-src \'self\'',
+        'img-src \'self\',
       
       expect(res.headers.get('content-security-policy')).toContain(
-        'connect-src \'self\'',
+        'connect-src \'self\',
       
       expect(res.headers.get('content-security-policy')).toContain(
-        'frame-ancestors \'none\'',
+        'frame-ancestors \'none\',
       
       expect(res.headers.get('content-security-policy')).toContain(
-        'base-uri \'self\'',
+        'base-uri \'self\',
       
     }
 
@@ -347,8 +347,8 @@ describe('Healthcare Security Headers', () => {
       if (isProduction) {
         // Production should have stricter CSP
         const csp = res.headers.get('content-security-policy')
-        expect(csp).not.toContain('\'unsafe-eval\'')
-        expect(csp).not.toContain('\'unsafe-inline\'')
+        expect(csp).not.toContain('\'unsafe-eval\')
+        expect(csp).not.toContain('\'unsafe-inline\')
 
         // Production should enforce HTTPS
         const hsts = res.headers.get('strict-transport-security')
@@ -388,7 +388,7 @@ describe('Healthcare Security Headers', () => {
       // Should prevent XSS attacks on medical interfaces
       const csp = res.headers.get('content-security-policy')
       expect(csp).toBeDefined(
-      expect(csp).toContain('frame-ancestors \'none\'')
+      expect(csp).toContain('frame-ancestors \'none\')
 
       // Should prevent clickjacking of medical controls
       const frameOptions = res.headers.get('x-frame-options')
@@ -450,7 +450,7 @@ describe('Security Headers Integration', () => {
 
           const csp = res.headers.get('content-security-policy')
           if (csp) {
-            expect(csp).toContain('default-src \'self\'')
+            expect(csp).toContain('default-src \'self\')
           }
         }
       } catch (error) {

@@ -278,13 +278,10 @@ describe('Certificate Transparency Validation Test (T053)', () => {
         // Extract expiration date
         const notAfterMatch = certDates.match(/notAfter=(.+)/
         if (notAfterMatch) {
-<<<<<<< HEAD
           const expirationDate = new Date(notAfterMatch[1]
           const _now = new Date(
-=======
           const expirationDate = new Date(notAfterMatch[1]);
           const _now = new Date();
->>>>>>> origin/main
           const daysUntilExpiration = Math.floor(
             (expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
           

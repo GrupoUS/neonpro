@@ -17,11 +17,8 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 // Mock LGPD compliance utilities
-<<<<<<< HEAD
-vi.mock('../../utils/lgpd-compliance'), () => ({
-=======
-vi.mock(_'../../utils/lgpd-compliance'), () => ({
->>>>>>> origin/main
+vi.mock('../../utils/lgpd-compliance', () => ({
+vi.mock(('../../utils/lgpd-compliance', () => ({
   validateDataProcessingConsent: vi.fn(),
   logDataAccess: vi.fn(),
   validateCrossBorderTransfer: vi.fn(),
@@ -29,22 +26,16 @@ vi.mock(_'../../utils/lgpd-compliance'), () => ({
 })
 
 // Mock Brazilian regulatory compliance
-<<<<<<< HEAD
-vi.mock('../../utils/brazilian-compliance'), () => ({
-=======
-vi.mock(_'../../utils/brazilian-compliance'), () => ({
->>>>>>> origin/main
+vi.mock('../../utils/brazilian-compliance', () => ({
+vi.mock(('../../utils/brazilian-compliance', () => ({
   validateANVISACompliance: vi.fn(),
   validateCFMStandards: vi.fn(),
   validateDataResidency: vi.fn(),
 })
 
 // Mock Supabase client with RPC methods
-<<<<<<< HEAD
-vi.mock('../supabase'), () => ({
-=======
-vi.mock(_'../supabase'), () => ({
->>>>>>> origin/main
+vi.mock('../supabase', () => ({
+vi.mock(('../supabase', () => ({
   createAdminClient: vi.fn(() => ({
     rpc: vi.fn((functionName: string, params?: any) => {
       // Mock LGPD export functions
@@ -491,18 +482,15 @@ vi.mock(_'../supabase'), () => ({
   })),
 })
 
-describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements'), () => {
-  describe(_'LGPD Data Protection Rights'), () => {
+describe(('Supabase Security & LGPD Compliance - Security Auditor Requirements'), () => {
+  describe(('LGPD Data Protection Rights'), () => {
     describe('Right to Data Portability (Portabilidade de Dados)', () => {
-<<<<<<< HEAD
       it('should provide structured personal data export in machine-readable format',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-      it(_'should provide structured personal data export in machine-readable format',async () => {
+      it(('should provide structured personal data export in machine-readable format',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const userDataExport = await adminClient.rpc('lgpd_export_user_data', {
           user_id: 'patient-123',
@@ -517,15 +505,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(userDataExport.data.format).toBe('structured_json')
         expect(userDataExport.data.timestamp).toBeDefined(
 
-<<<<<<< HEAD
       it('should include comprehensive healthcare data in export',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-      it(_'should include comprehensive healthcare data in export',async () => {
+      it(('should include comprehensive healthcare data in export',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const exportData = await adminClient.rpc(
           'lgpd_export_healthcare_data',
@@ -542,15 +527,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(exportData.data).toHaveProperty('consent_forms')
         expect(exportData.data).toHaveProperty('professional_interactions')
 
-<<<<<<< HEAD
       it('should validate export request authorization',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-      it(_'should validate export request authorization',async () => {
+      it(('should validate export request authorization',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         // Test unauthorized export attempt
         const unauthorizedExport = adminClient.rpc('lgpd_export_user_data', {
@@ -563,15 +545,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         
 
     describe('Right to Erasure (Direito ao Apagamento)', () => {
-<<<<<<< HEAD
       it('should implement secure and complete data deletion',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-      it(_'should implement secure and complete data deletion',async () => {
+      it(('should implement secure and complete data deletion',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const deletionResult = await adminClient.rpc('lgpd_delete_user_data', {
           user_id: 'patient-123',
@@ -587,15 +566,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(deletionResult.data.deletion_verified).toBe(true);
         expect(deletionResult.data.deletion_timestamp).toBeDefined(
 
-<<<<<<< HEAD
       it('should handle healthcare data retention requirements',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-      it(_'should handle healthcare data retention requirements',async () => {
+      it(('should handle healthcare data retention requirements',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const deletionWithRetention = await adminClient.rpc(
           'lgpd_delete_with_healthcare_retention',
@@ -614,15 +590,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         
         expect(deletionWithRetention.data.retention_period_years).toBe(20
 
-<<<<<<< HEAD
       it('should prevent deletion of legally required healthcare records',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-      it(_'should prevent deletion of legally required healthcare records',async () => {
+      it(('should prevent deletion of legally required healthcare records',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const protectedDeletion = adminClient.rpc('lgpd_delete_user_data', {
           user_id: 'patient-with-legal-hold',
@@ -633,13 +606,10 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         
 
     describe('Consent Management (Gestão de Consentimento)', () => {
-<<<<<<< HEAD
       it('should validate granular consent for data processing',async () => {
         const { createServerClient } = await import('../supabase')
-=======
-      it(_'should validate granular consent for data processing',async () => {
+      it(('should validate granular consent for data processing',async () => {
         const { createServerClient } = await import('../supabase');
->>>>>>> origin/main
         const serverClient = createServerClient({
           getAll: () => [{ name: 'sb-access-token', value: 'token123' }],
           setAll: () => {},
@@ -666,13 +636,10 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
           'aesthetic_analysis',
         
 
-<<<<<<< HEAD
       it('should track consent withdrawal and data processing cessation',async () => {
         const { createServerClient } = await import('../supabase')
-=======
-      it(_'should track consent withdrawal and data processing cessation',async () => {
+      it(('should track consent withdrawal and data processing cessation',async () => {
         const { createServerClient } = await import('../supabase');
->>>>>>> origin/main
         const serverClient = createServerClient({
           getAll: () => [],
           setAll: () => {},
@@ -690,19 +657,16 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(consentWithdrawal.data).toHaveProperty('data_retention_updated')
         expect(consentWithdrawal.data.withdrawal_effective_date).toBeDefined(
 
-<<<<<<< HEAD
   describe('Healthcare PHI Security Requirements', () => {
     describe('Data Encryption and Protection', () => {
       it('should validate encryption at rest for PHI data',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-  describe(_'Healthcare PHI Security Requirements'), () => {
-    describe(_'Data Encryption and Protection'), () => {
-      it(_'should validate encryption at rest for PHI data',async () => {
+  describe(('Healthcare PHI Security Requirements'), () => {
+    describe(('Data Encryption and Protection'), () => {
+      it(('should validate encryption at rest for PHI data',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const encryptionStatus = await adminClient.rpc(
           'validate_phi_encryption',
@@ -719,13 +683,10 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(encryptionStatus.data.encryption_algorithm).toBe('AES-256')
         expect(encryptionStatus.data.key_rotation_enabled).toBe(true);
 
-<<<<<<< HEAD
       it('should validate encryption in transit for all PHI communications',async () => {
         const { createServerClient } = await import('../supabase')
-=======
-      it(_'should validate encryption in transit for all PHI communications',async () => {
+      it(('should validate encryption in transit for all PHI communications',async () => {
         const { createServerClient } = await import('../supabase');
->>>>>>> origin/main
         const serverClient = createServerClient({
           getAll: () => [],
           setAll: () => {},
@@ -741,15 +702,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         
         expect(tlsValidation.data.certificate_valid).toBe(true);
 
-<<<<<<< HEAD
       it('should implement field-level encryption for sensitive PHI',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-      it(_'should implement field-level encryption for sensitive PHI',async () => {
+      it(('should implement field-level encryption for sensitive PHI',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const fieldEncryption = await adminClient.rpc(
           'validate_field_encryption',
@@ -761,15 +719,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(fieldEncryption.data.encrypted_fields).toHaveLength(3
         expect(fieldEncryption.data.encryption_keys_rotated).toBe(true);
 
-<<<<<<< HEAD
     describe('Access Control and Authorization', () => {
       it('should enforce role-based access control for healthcare data',async () => {
         const { createServerClient } = await import('../supabase')
-=======
-    describe(_'Access Control and Authorization'), () => {
-      it(_'should enforce role-based access control for healthcare data',async () => {
+    describe(('Access Control and Authorization'), () => {
+      it(('should enforce role-based access control for healthcare data',async () => {
         const { createServerClient } = await import('../supabase');
->>>>>>> origin/main
         const serverClient = createServerClient({
           getAll: () => [
             { name: 'user-role', value: 'healthcare_professional' },
@@ -791,13 +746,10 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         
         expect(accessValidation.data.audit_logged).toBe(true);
 
-<<<<<<< HEAD
       it('should implement attribute-based access control for complex scenarios',async () => {
         const { createServerClient } = await import('../supabase')
-=======
-      it(_'should implement attribute-based access control for complex scenarios',async () => {
+      it(('should implement attribute-based access control for complex scenarios',async () => {
         const { createServerClient } = await import('../supabase');
->>>>>>> origin/main
         const serverClient = createServerClient({
           getAll: () => [],
           setAll: () => {},
@@ -820,19 +772,16 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(abacValidation.data.policy_evaluation).toBe('permit')
         expect(abacValidation.data.applied_rules).toContain('specialty_match')
 
-<<<<<<< HEAD
   describe('Brazilian Regulatory Compliance', () => {
     describe('ANVISA Medical Device Compliance', () => {
       it('should validate medical device data handling compliance',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-  describe(_'Brazilian Regulatory Compliance'), () => {
-    describe(_'ANVISA Medical Device Compliance'), () => {
-      it(_'should validate medical device data handling compliance',async () => {
+  describe(('Brazilian Regulatory Compliance'), () => {
+    describe(('ANVISA Medical Device Compliance'), () => {
+      it(('should validate medical device data handling compliance',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const anvisaValidation = await adminClient.rpc(
           'validate_anvisa_compliance',
@@ -849,15 +798,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(anvisaValidation.data.compliance_status).toBe('compliant')
         expect(anvisaValidation.data.data_handling_approved).toBe(true);
 
-<<<<<<< HEAD
       it('should enforce ANVISA data retention requirements',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-      it(_'should enforce ANVISA data retention requirements',async () => {
+      it(('should enforce ANVISA data retention requirements',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const retentionValidation = await adminClient.rpc(
           'validate_anvisa_retention',
@@ -872,15 +818,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
           true,
         
 
-<<<<<<< HEAD
     describe('CFM Professional Standards', () => {
       it('should validate healthcare professional access credentials',async () => {
         const { createServerClient } = await import('../supabase')
-=======
-    describe(_'CFM Professional Standards'), () => {
-      it(_'should validate healthcare professional access credentials',async () => {
+    describe(('CFM Professional Standards'), () => {
+      it(('should validate healthcare professional access credentials',async () => {
         const { createServerClient } = await import('../supabase');
->>>>>>> origin/main
         const serverClient = createServerClient({
           getAll: () => [{ name: 'professional-crm', value: '12345-SP' }],
           setAll: () => {},
@@ -898,15 +841,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(cfmValidation.data.specialty_authorized).toBe(true);
         expect(cfmValidation.data.ethical_standing).toBe('active')
 
-<<<<<<< HEAD
       it('should enforce CFM record retention standards',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-      it(_'should enforce CFM record retention standards',async () => {
+      it(('should enforce CFM record retention standards',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const cfmRetention = await adminClient.rpc('validate_cfm_retention', {
           medical_records: 'patient-records-set',
@@ -915,17 +855,14 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(cfmRetention.data.cfm_compliant).toBe(true);
         expect(cfmRetention.data.permanent_retention_required).toBe(false);
 
-<<<<<<< HEAD
     describe('Brazilian Data Residency', () => {
       it('should validate data residency within Brazilian territory',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-    describe(_'Brazilian Data Residency'), () => {
-      it(_'should validate data residency within Brazilian territory',async () => {
+    describe(('Brazilian Data Residency'), () => {
+      it(('should validate data residency within Brazilian territory',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const residencyValidation = await adminClient.rpc(
           'validate_data_residency',
@@ -939,15 +876,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(residencyValidation.data.transfer_restrictions).toBeDefined(
         expect(residencyValidation.data.sovereignty_compliant).toBe(true);
 
-<<<<<<< HEAD
       it('should prevent unauthorized cross-border data transfer',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-      it(_'should prevent unauthorized cross-border data transfer',async () => {
+      it(('should prevent unauthorized cross-border data transfer',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const transferAttempt = adminClient.rpc(
           'attempt_cross_border_transfer',
@@ -961,17 +895,14 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
           'LGPD_UNAUTHORIZED_TRANSFER',
         
 
-<<<<<<< HEAD
   describe('Authentication and Session Security', () => {
     describe('Multi-Factor Authentication', () => {
       it('should enforce MFA for healthcare professional access',async () => {
         const { createServerClient } = await import('../supabase')
-=======
-  describe(_'Authentication and Session Security'), () => {
-    describe(_'Multi-Factor Authentication'), () => {
-      it(_'should enforce MFA for healthcare professional access',async () => {
+  describe(('Authentication and Session Security'), () => {
+    describe(('Multi-Factor Authentication'), () => {
+      it(('should enforce MFA for healthcare professional access',async () => {
         const { createServerClient } = await import('../supabase');
->>>>>>> origin/main
         const serverClient = createServerClient({
           getAll: () => [{ name: 'mfa-verified', value: 'true' }],
           setAll: () => {},
@@ -988,13 +919,10 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(mfaValidation.data.mfa_methods).toContain('totp')
         expect(mfaValidation.data.current_aal).toBe('aal2')
 
-<<<<<<< HEAD
       it('should validate biometric authentication for sensitive operations',async () => {
         const { createServerClient } = await import('../supabase')
-=======
-      it(_'should validate biometric authentication for sensitive operations',async () => {
+      it(('should validate biometric authentication for sensitive operations',async () => {
         const { createServerClient } = await import('../supabase');
->>>>>>> origin/main
         const serverClient = createServerClient({
           getAll: () => [{ name: 'webauthn-verified', value: 'true' }],
           setAll: () => {},
@@ -1011,15 +939,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(biometricValidation.data.device_bound).toBe(true);
         expect(biometricValidation.data.phishing_resistant).toBe(true);
 
-<<<<<<< HEAD
     describe('Session Management and Timeouts', () => {
       it('should enforce healthcare-appropriate session timeouts',async () => {
         const { createServerClient } = await import('../supabase')
-=======
-    describe(_'Session Management and Timeouts'), () => {
-      it(_'should enforce healthcare-appropriate session timeouts',async () => {
+    describe(('Session Management and Timeouts'), () => {
+      it(('should enforce healthcare-appropriate session timeouts',async () => {
         const { createServerClient } = await import('../supabase');
->>>>>>> origin/main
         const serverClient = createServerClient({
           getAll: () => [
             { name: 'session-start', value: Date.now().toString() },
@@ -1040,13 +965,10 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         
         expect(sessionValidation.data.max_session_minutes).toBe(15
 
-<<<<<<< HEAD
       it('should implement concurrent session limits',async () => {
         const { createServerClient } = await import('../supabase')
-=======
-      it(_'should implement concurrent session limits',async () => {
+      it(('should implement concurrent session limits',async () => {
         const { createServerClient } = await import('../supabase');
->>>>>>> origin/main
         const serverClient = createServerClient({
           getAll: () => [],
           setAll: () => {},
@@ -1066,17 +988,14 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
           sessionLimitValidation.data.oldest_session_terminated,
         ).toBeDefined(
 
-<<<<<<< HEAD
   describe('Audit Trails and Compliance Logging', () => {
     describe('Comprehensive Audit Logging', () => {
       it('should log all PHI data access with complete context',async () => {
         const { createServerClient } = await import('../supabase')
-=======
-  describe(_'Audit Trails and Compliance Logging'), () => {
-    describe(_'Comprehensive Audit Logging'), () => {
-      it(_'should log all PHI data access with complete context',async () => {
+  describe(('Audit Trails and Compliance Logging'), () => {
+    describe(('Comprehensive Audit Logging'), () => {
+      it(('should log all PHI data access with complete context',async () => {
         const { createServerClient } = await import('../supabase');
->>>>>>> origin/main
         const serverClient = createServerClient({
           getAll: () => [{ name: 'user-id', value: 'professional-123' }],
           setAll: () => {},
@@ -1100,15 +1019,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
         expect(auditLogs.data[0]).toHaveProperty('ip_address')
         expect(auditLogs.data[0]).toHaveProperty('user_agent')
 
-<<<<<<< HEAD
       it('should maintain immutable audit records',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-      it(_'should maintain immutable audit records',async () => {
+      it(('should maintain immutable audit records',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const auditTampering = adminClient.rpc('attempt_audit_modification', {
           audit_record_id: 'audit-123',
@@ -1116,15 +1032,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
 
         await expect(auditTampering).rejects.toThrow('AUDIT_RECORD_IMMUTABLE')
 
-<<<<<<< HEAD
       it('should generate compliance reports for regulatory audits',async () => {
         const { createAdminClient } = await import('../supabase')
         const adminClient = createAdminClient(
-=======
-      it(_'should generate compliance reports for regulatory audits',async () => {
+      it(('should generate compliance reports for regulatory audits',async () => {
         const { createAdminClient } = await import('../supabase');
         const adminClient = createAdminClient();
->>>>>>> origin/main
 
         const complianceReport = await adminClient.rpc(
           'generate_compliance_report',
@@ -1148,15 +1061,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
           'regulatory_compliance_score',
         
 
-<<<<<<< HEAD
   describe('Data Breach Detection and Response', () => {
     it('should detect and alert on suspicious data access patterns',async () => {
       const { createServerClient } = await import('../supabase')
-=======
-  describe(_'Data Breach Detection and Response'), () => {
-    it(_'should detect and alert on suspicious data access patterns',async () => {
+  describe(('Data Breach Detection and Response'), () => {
+    it(('should detect and alert on suspicious data access patterns',async () => {
       const { createServerClient } = await import('../supabase');
->>>>>>> origin/main
       const serverClient = createServerClient({
         getAll: () => [],
         setAll: () => {},
@@ -1174,15 +1084,12 @@ describe(_'Supabase Security & LGPD Compliance - Security Auditor Requirements')
       expect(breachDetection.data.alert_level).toBe('high')
       expect(breachDetection.data.automatic_response_triggered).toBe(true);
 
-<<<<<<< HEAD
     it('should implement automatic breach notification within LGPD timeframes',async () => {
       const { createAdminClient } = await import('../supabase')
       const adminClient = createAdminClient(
-=======
-    it(_'should implement automatic breach notification within LGPD timeframes',async () => {
+    it(('should implement automatic breach notification within LGPD timeframes',async () => {
       const { createAdminClient } = await import('../supabase');
       const adminClient = createAdminClient();
->>>>>>> origin/main
 
       const breachNotification = await adminClient.rpc('handle_data_breach', {
         breach_type: 'unauthorized_access',

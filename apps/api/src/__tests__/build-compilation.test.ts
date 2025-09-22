@@ -82,23 +82,23 @@ describe('Build Compilation - TDD RED Phase', () => {
       const expectedErrors = [
         {
           file: 'src/lib/logger.ts',
-          error: 'Cannot find module \'@neonpro/utils/logging/logger\'',
+          error: 'Cannot find module \'@neonpro/utils/logging/logger\',
           code: 'TS2307',
         },
         {
           file: 'src/middleware/audit-log.ts',
-          error: 'Property \'clone\' does not exist on type \'HonoRequest\'',
+          error: 'Property \'clone\' does not exist on type \'HonoRequest\',
           code: 'TS2339',
         },
         {
           file: 'src/middleware/audit-log.ts',
-          error: 'Property \'debug\' does not exist on type \'HealthcareLogger\'',
+          error: 'Property \'debug\' does not exist on type \'HealthcareLogger\',
           code: 'TS2339',
         },
         {
           file: 'src/routes/chat.ts',
           error:
-            'Argument of type \'string[]\' is not assignable to parameter of type \'AsyncIterable<any>\'',
+            'Argument of type \'string[]\' is not assignable to parameter of type \'AsyncIterable<any>\',
           code: 'TS2345',
         },
       ];

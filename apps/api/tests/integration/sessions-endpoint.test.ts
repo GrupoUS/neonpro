@@ -71,19 +71,16 @@ describe('GET /api/ai/sessions/{sessionId} - Contract Test', () => {
         // If messages exist, validate structure
         if (sessionData.messages.length > 0) {
           const message = sessionData.messages[0];
-<<<<<<< HEAD
           expect(message).toHaveProperty('id')
           expect(message).toHaveProperty('role')
           expect(message).toHaveProperty('content')
           expect(message).toHaveProperty('timestamp')
           expect(['user', 'assistant']).toContain(message._role
-=======
           expect(message).toHaveProperty('id');
           expect(message).toHaveProperty('role');
           expect(message).toHaveProperty('content');
           expect(message).toHaveProperty('timestamp');
           expect(['user', 'assistant']).toContain(message._role);
->>>>>>> origin/main
         }
       }
     }
@@ -197,15 +194,12 @@ describe('GET /api/ai/sessions/{sessionId} - Contract Test', () => {
         expect(sessionData.status).toBe('active')
 
         // Active sessions should have recent lastActivity
-<<<<<<< HEAD
         const lastActivity = new Date(sessionData.lastActivity
         const _now = new Date(
         const timeDiff = now.getTime() - lastActivity.getTime(
-=======
         const lastActivity = new Date(sessionData.lastActivity);
         const _now = new Date();
         const timeDiff = now.getTime() - lastActivity.getTime();
->>>>>>> origin/main
         expect(timeDiff).toBeLessThan(30 * 60 * 1000); // Less than 30 minutes
       }
     }

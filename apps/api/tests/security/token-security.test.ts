@@ -97,7 +97,7 @@ describe('Token Security Tests', () => {
 
       app.post('/refresh', async c => {
         const auth = c.req.header('authorization')
-        const token = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+        const token = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
 
         if (!token) {
           return c.json({ error: 'Token required' }, 401
@@ -155,7 +155,7 @@ describe('Token Security Tests', () => {
 
       app.post('/refresh', async c => {
         const auth = c.req.header('authorization')
-        const refreshToken = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+        const refreshToken = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
 
         if (!refreshToken) {
           return c.json({ error: 'Refresh token required' }, 401
@@ -202,7 +202,7 @@ describe('Token Security Tests', () => {
     it('SHOULD FAIL: Should invalidate old refresh tokens after rotation', async () => {
       app.post('/refresh', async c => {
         const auth = c.req.header('authorization')
-        const refreshToken = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+        const refreshToken = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
 
         if (!refreshToken) {
           return c.json({ error: 'Refresh token required' }, 401
@@ -337,11 +337,8 @@ describe('Token Security Tests', () => {
       let lastAttemptTime = 0;
 
       app.use('/login', async (c, next) => {
-<<<<<<< HEAD
         const _now = Date.now(
-=======
         const _now = Date.now();
->>>>>>> origin/main
         const timeSinceLastAttempt = now - lastAttemptTime;
 
         // This should implement progressive delays
@@ -520,7 +517,7 @@ describe('Token Security Tests', () => {
 
       app.post('/refresh', async c => {
         const auth = c.req.header('authorization')
-        const refreshToken = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+        const refreshToken = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
 
         if (!refreshToken) {
           return c.json({ error: 'Refresh token required' }, 401
@@ -576,7 +573,7 @@ describe('Token Security Tests', () => {
 
       app.post('/refresh', async c => {
         const auth = c.req.header('authorization')
-        const refreshToken = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : '';
+        const refreshToken = auth?.startsWith('Bearer ') ? auth.slice(7).trim() : ';
 
         if (reuseDetected) {
           // This should implement grace period
