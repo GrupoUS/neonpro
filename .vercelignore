@@ -31,14 +31,14 @@ scripts/
 # Ignore development files
 *.md
 !README.md
+!apps/web/README.md
 *.env.example
 *.env.local
 *.env.development
 *.env.test
 *.env.production.local
 
-# Ignore build artifacts and cache
-**/dist/
+# Ignore build artifacts and cache (except apps/web/dist)
 **/build/
 **/.turbo/
 **/.cache/

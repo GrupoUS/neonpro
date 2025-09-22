@@ -6,9 +6,9 @@
     "createdAt": 1757602560224,
     "framework": null,
     "devCommand": null,
-    "installCommand": "cd apps/web && bun install",
-    "buildCommand": "cd apps/web && bun run build:vercel",
-    "outputDirectory": "apps/web/dist",
+    "installCommand": "bun install",
+    "buildCommand": "bun run build:vercel",
+    "outputDirectory": "dist",
     "rootDirectory": "",
     "directoryListing": false,
     "nodeVersion": "22.x"
