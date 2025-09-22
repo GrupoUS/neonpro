@@ -1,12 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-<<<<<<< HEAD
-    "composite": true,
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vite/client", "vitest/globals", "node", "recharts"],
-    "baseUrl": ".",
-=======
     "target": "ES2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "allowImportingTsExtensions": true,
@@ -23,7 +17,9 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUncheckedIndexedAccess": true,
->>>>>>> origin/main
+    "composite": true,
+    "types": ["vite/client", "vitest/globals", "node", "recharts"],
+    "baseUrl": ".",
     "exactOptionalPropertyTypes": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
