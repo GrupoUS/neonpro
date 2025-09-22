@@ -50,7 +50,7 @@ export class HealthcareAIOrchestrator {
   ): Promise<HealthcareInsights> {
     try {
       // Generate insights using the predictive service
-      const insights = await this.predictiveService.generateInsights(request);
+      const insights = await this.predictiveService.generateInsights(_request);
 
       // Get analytics metrics
       const metrics = await this.predictiveService.getAnalyticsMetrics();
