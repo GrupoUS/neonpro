@@ -145,7 +145,7 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
     // Prepare base audit entry
     const baseAuditEntry: Partial<AuditLogEntry> = {
       timestamp: new Date(),
-      userId,
+      _userId: userId,
       clinicId,
       action,
       resource,

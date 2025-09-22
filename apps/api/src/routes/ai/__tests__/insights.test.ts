@@ -8,23 +8,23 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Backend Services
 const mockAIChatService = {
-  generatePatientInsights: vi.fn(),
-  analyzePatientData: vi.fn(),
-  validateInsightsAccess: vi.fn(),
+  generatePatientInsights: vi.fn(,
+  analyzePatientData: vi.fn(,
+  validateInsightsAccess: vi.fn(,
 };
 
 const mockPatientService = {
-  getPatientData: vi.fn(),
-  validatePatientExists: vi.fn(),
+  getPatientData: vi.fn(,
+  validatePatientExists: vi.fn(,
 };
 
 const mockAuditService = {
-  logActivity: vi.fn(),
+  logActivity: vi.fn(,
 };
 
 const mockLGPDService = {
-  validateDataAccess: vi.fn(),
-  maskSensitiveData: vi.fn(),
+  validateDataAccess: vi.fn(,
+  maskSensitiveData: vi.fn(,
 };
 
 describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
@@ -32,664 +32,664 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     vi.clearAllMocks();
 
     // Inject mocked services into the endpoint
-    const { setServices } = await import('../insights');
+    const { setServices } = await import('../insights'
     setServices({
-      aiChatService: mockAIChatService,
-      patientService: mockPatientService,
-      auditService: mockAuditService,
-      lgpdService: mockLGPDService,
-    });
+      aiChatService: mockAIChatService),
+      patientService: mockPatientService),
+      auditService: mockAuditService),
+      lgpdService: mockLGPDService),
+    }
 
     // Mock successful service responses by default
     mockAIChatService.generatePatientInsights.mockResolvedValue({
-      success: true,
+      success: true),
       data: {
-        patientId: 'patient-123',
+        patientId: 'patient-123'),
         insights: {
           riskAssessment: {
-            overallRisk: 'low',
+            overallRisk: 'low'),
             riskFactors: [
               {
-                factor: 'Histórico de alergias',
-                severity: 'medium',
-                confidence: 0.85,
-                recommendation: 'Realizar teste de alergia antes de procedimentos',
+                factor: 'Histórico de alergias'),
+                severity: 'medium'),
+                confidence: 0.85),
+                recommendation: 'Realizar teste de alergia antes de procedimentos'),
               },
             ],
-            riskScore: 0.25,
+            riskScore: 0.25),
           },
           treatmentRecommendations: [
             {
-              treatment: 'Limpeza de pele profunda',
-              priority: 'high',
-              confidence: 0.92,
-              reasoning: 'Baseado no histórico de acne e tipo de pele oleosa',
-              estimatedCost: 'R$ 150-200',
-              duration: '60 minutos',
+              treatment: 'Limpeza de pele profunda'),
+              priority: 'high'),
+              confidence: 0.92),
+              reasoning: 'Baseado no histórico de acne e tipo de pele oleosa'),
+              estimatedCost: 'R$ 150-200'),
+              duration: '60 minutos'),
             },
             {
-              treatment: 'Hidratação facial',
-              priority: 'medium',
-              confidence: 0.78,
-              reasoning: 'Complementar ao tratamento principal',
-              estimatedCost: 'R$ 80-120',
-              duration: '45 minutos',
+              treatment: 'Hidratação facial'),
+              priority: 'medium'),
+              confidence: 0.78),
+              reasoning: 'Complementar ao tratamento principal'),
+              estimatedCost: 'R$ 80-120'),
+              duration: '45 minutos'),
             },
           ],
           patternAnalysis: {
             treatmentHistory: {
-              mostFrequent: 'Limpeza de pele',
-              frequency: 'mensal',
-              lastTreatment: '2024-01-10T14:30:00Z',
-              adherence: 0.85,
+              mostFrequent: 'Limpeza de pele'),
+              frequency: 'mensal'),
+              lastTreatment: '2024-01-10T14:30:00Z'),
+              adherence: 0.85),
             },
             seasonalPatterns: {
-              preferredSeason: 'inverno',
-              avoidedSeason: 'verão',
-              reasoning: 'Menor exposição solar no inverno',
+              preferredSeason: 'inverno'),
+              avoidedSeason: 'verão'),
+              reasoning: 'Menor exposição solar no inverno'),
             },
           },
           predictiveAnalysis: {
             nextAppointmentPrediction: {
-              suggestedDate: '2024-02-15T14:30:00Z',
-              confidence: 0.88,
-              reasoning: 'Baseado no padrão histórico de agendamentos',
+              suggestedDate: '2024-02-15T14:30:00Z'),
+              confidence: 0.88),
+              reasoning: 'Baseado no padrão histórico de agendamentos'),
             },
             treatmentOutcome: {
-              expectedImprovement: 0.75,
-              timeToResults: '2-3 semanas',
-              confidence: 0.82,
+              expectedImprovement: 0.75),
+              timeToResults: '2-3 semanas'),
+              confidence: 0.82),
             },
           },
         },
         metadata: {
-          generatedAt: '2024-01-16T10:30:00Z',
-          model: 'gpt-4',
-          analysisVersion: '2.1',
-          dataPoints: 45,
-          processingTime: 2500,
-          confidence: 0.87,
+          generatedAt: '2024-01-16T10:30:00Z'),
+          model: 'gpt-4'),
+          analysisVersion: '2.1'),
+          dataPoints: 45),
+          processingTime: 2500),
+          confidence: 0.87),
         },
         complianceInfo: {
-          lgpdCompliant: true,
-          dataRetention: '7-years',
-          consentRequired: true,
-          medicalContext: true,
+          lgpdCompliant: true),
+          dataRetention: '7-years'),
+          consentRequired: true),
+          medicalContext: true),
         },
       },
-    });
+    }
 
     mockPatientService.getPatientData.mockResolvedValue({
-      success: true,
+      success: true),
       data: {
-        id: 'patient-123',
-        name: 'Maria Santos',
-        age: 35,
-        skinType: 'oleosa',
+        id: 'patient-123'),
+        name: 'Maria Santos'),
+        age: 35),
+        skinType: 'oleosa'),
         medicalHistory: ['Acne', 'Melasma'],
         currentTreatments: ['Limpeza de pele'],
         allergies: ['Ácido salicílico'],
         treatmentHistory: [
           {
-            date: '2024-01-10T14:30:00Z',
-            treatment: 'Limpeza de pele',
-            outcome: 'satisfatório',
+            date: '2024-01-10T14:30:00Z'),
+            treatment: 'Limpeza de pele'),
+            outcome: 'satisfatório'),
           },
         ],
       },
-    });
+    }
 
     mockPatientService.validatePatientExists.mockResolvedValue({
-      success: true,
+      success: true),
       data: { exists: true, patientId: 'patient-123' },
-    });
+    }
 
     mockAuditService.logActivity.mockResolvedValue({
-      success: true,
+      success: true),
       data: { auditId: 'audit-insights-123' },
-    });
+    }
 
     mockLGPDService.validateDataAccess.mockResolvedValue({
-      success: true,
+      success: true),
       data: { canAccess: true, accessLevel: 'full' },
-    });
+    }
 
-    mockLGPDService.maskSensitiveData.mockImplementation(data => data);
-  });
+    mockLGPDService.maskSensitiveData.mockImplementation(data => data
+  }
 
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks(
+  }
 
-  it(_'should export AI insights route handler',async () => {
-    const module = await import('../insights');
-    expect(module.default).toBeDefined();
-  });
+  it(''should export AI insights route handler',async () => {
+    const module = await import('../insights'
+    expect(module.default).toBeDefined(
+  }
 
-  describe(_'Successful AI Insights Generation'), () => {
-    it(_'should generate comprehensive patient insights',async () => {
-      const { default: insightsRoute } = await import('../insights');
+  describe(''Successful AI Insights Generation'), () => {
+    it(''should generate comprehensive patient insights',async () => {
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
-      expect(response.status).toBe(200);
-      expect(data.success).toBe(true);
-      expect(data.data.patientId).toBe('patient-123');
-      expect(data.data.insights.riskAssessment).toBeDefined();
-      expect(data.data.insights.treatmentRecommendations).toHaveLength(2);
-      expect(data.data.insights.patternAnalysis).toBeDefined();
-      expect(data.data.insights.predictiveAnalysis).toBeDefined();
-    });
+      expect(response.status).toBe(200
+      expect(data.success).toBe(true
+      expect(data.data.patientId).toBe('patient-123'
+      expect(data.data.insights.riskAssessment).toBeDefined(
+      expect(data.data.insights.treatmentRecommendations).toHaveLength(2
+      expect(data.data.insights.patternAnalysis).toBeDefined(
+      expect(data.data.insights.predictiveAnalysis).toBeDefined(
+    }
 
-    it(_'should generate insights with specific analysis type',async () => {
-      const { default: insightsRoute } = await import('../insights');
+    it(''should generate insights with specific analysis type',async () => {
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request(
-          'http://localhost/patient-123/insights?analysisType=risk_assessment',
+          'http://localhost/patient-123/insights?analysisType=risk_assessment'),
           {
-            method: 'GET',
+            method: 'GET'),
             headers: {
-              authorization: 'Bearer valid-token',
-              'content-type': 'application/json',
+              authorization: 'Bearer valid-token'),
+              'content-type': 'application/json'),
             },
           },
-        ),
-      );
+        ,
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
-      expect(response.status).toBe(200);
-      expect(data.success).toBe(true);
+      expect(response.status).toBe(200
+      expect(data.success).toBe(true
       expect(mockAIChatService.generatePatientInsights).toHaveBeenCalledWith({
-        patientId: 'patient-123',
-        _userId: 'user-123',
-        analysisType: 'risk_assessment',
-        includeRecommendations: true,
-      });
-    });
+        patientId: 'patient-123'),
+        _userId: 'user-123'),
+        analysisType: 'risk_assessment'),
+        includeRecommendations: true),
+      }
+    }
 
-    it(_'should generate insights with time range filter',async () => {
-      const { default: insightsRoute } = await import('../insights');
+    it(''should generate insights with time range filter',async () => {
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request(
-          'http://localhost/patient-123/insights?timeRange=6months&includeHistory=true',
+          'http://localhost/patient-123/insights?timeRange=6months&includeHistory=true'),
           {
-            method: 'GET',
+            method: 'GET'),
             headers: {
-              authorization: 'Bearer valid-token',
-              'content-type': 'application/json',
+              authorization: 'Bearer valid-token'),
+              'content-type': 'application/json'),
             },
           },
-        ),
-      );
+        ,
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
-      expect(response.status).toBe(200);
-      expect(data.success).toBe(true);
+      expect(response.status).toBe(200
+      expect(data.success).toBe(true
       expect(mockAIChatService.generatePatientInsights).toHaveBeenCalledWith({
-        patientId: 'patient-123',
-        _userId: 'user-123',
-        timeRange: '6months',
-        includeHistory: true,
-        includeRecommendations: true,
-      });
-    });
+        patientId: 'patient-123'),
+        _userId: 'user-123'),
+        timeRange: '6months'),
+        includeHistory: true),
+        includeRecommendations: true),
+      }
+    }
 
-    it(_'should include AI insights performance headers',async () => {
-      const { default: insightsRoute } = await import('../insights');
-
-      const response = await insightsRoute.request(
-        new Request('http://localhost/patient-123/insights', {
-          method: 'GET',
-          headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
-          },
-        }),
-      );
-
-      expect(response.status).toBe(200);
-      expect(response.headers.get('X-AI-Model')).toBe('gpt-4');
-      expect(response.headers.get('X-AI-Confidence')).toBe('0.87');
-      expect(response.headers.get('X-AI-Data-Points')).toBe('45');
-      expect(response.headers.get('X-AI-Processing-Time')).toBe('2500ms');
-      expect(response.headers.get('X-Analysis-Version')).toBe('2.1');
-    });
-
-    it(_'should generate insights with healthcare professional context',async () => {
-      const { default: insightsRoute } = await import('../insights');
+    it(''should include AI insights performance headers',async () => {
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
-            'X-Healthcare-Professional': 'CRM-SP-123456',
-            'X-Healthcare-Context': 'treatment_planning',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
-      const data = await response.json();
+      expect(response.status).toBe(200
+      expect(response.headers.get('X-AI-Model')).toBe('gpt-4'
+      expect(response.headers.get('X-AI-Confidence')).toBe('0.87'
+      expect(response.headers.get('X-AI-Data-Points')).toBe('45'
+      expect(response.headers.get('X-AI-Processing-Time')).toBe('2500ms'
+      expect(response.headers.get('X-Analysis-Version')).toBe('2.1'
+    }
 
-      expect(response.status).toBe(200);
-      expect(data.success).toBe(true);
+    it(''should generate insights with healthcare professional context',async () => {
+      const { default: insightsRoute } = await import('../insights'
+
+      const response = await insightsRoute.request(
+        new Request('http://localhost/patient-123/insights', {
+          method: 'GET'),
+          headers: {
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
+            'X-Healthcare-Professional': 'CRM-SP-123456'),
+            'X-Healthcare-Context': 'treatment_planning'),
+          },
+        },
+      
+
+      const data = await response.json(
+
+      expect(response.status).toBe(200
+      expect(data.success).toBe(true
       expect(mockAIChatService.generatePatientInsights).toHaveBeenCalledWith(
         expect.objectContaining({
-          healthcareProfessional: 'CRM-SP-123456',
-          healthcareContext: 'treatment_planning',
-        }),
-      );
-    });
+          healthcareProfessional: 'CRM-SP-123456'),
+          healthcareContext: 'treatment_planning'),
+        },
+      
+    }
 
-    it(_'should cache insights for performance optimization',async () => {
-      const { default: insightsRoute } = await import('../insights');
+    it(''should cache insights for performance optimization',async () => {
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
       expect(response.headers.get('Cache-Control')).toBe(
-        'private, max-age=1800',
-      );
-      expect(response.headers.get('X-Cache-Status')).toBe('miss');
-    });
-  });
+        'private, max-age=1800'),
+      
+      expect(response.headers.get('X-Cache-Status')).toBe('miss'
+    }
+  }
 
-  describe(_'LGPD Compliance and Data Access'), () => {
-    it(_'should validate LGPD data access for patient insights',async () => {
-      const { default: insightsRoute } = await import('../insights');
+  describe(''LGPD Compliance and Data Access'), () => {
+    it(''should validate LGPD data access for patient insights',async () => {
+      const { default: insightsRoute } = await import('../insights'
 
       await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
       expect(mockLGPDService.validateDataAccess).toHaveBeenCalledWith({
-        _userId: 'user-123',
-        patientId: 'patient-123',
-        dataType: 'ai_patient_insights',
-        purpose: 'healthcare_analysis',
-        legalBasis: 'legitimate_interest',
-      });
-    });
+        _userId: 'user-123'),
+        patientId: 'patient-123'),
+        dataType: 'ai_patient_insights'),
+        purpose: 'healthcare_analysis'),
+        legalBasis: 'legitimate_interest'),
+      }
+    }
 
-    it(_'should log insights access for audit trail',async () => {
-      const { default: insightsRoute } = await import('../insights');
+    it(''should log insights access for audit trail',async () => {
+      const { default: insightsRoute } = await import('../insights'
 
       await insightsRoute.request(
         new Request(
-          'http://localhost/patient-123/insights?analysisType=risk_assessment',
+          'http://localhost/patient-123/insights?analysisType=risk_assessment'),
           {
-            method: 'GET',
+            method: 'GET'),
             headers: {
-              authorization: 'Bearer valid-token',
-              'content-type': 'application/json',
-              'X-Real-IP': '192.168.1.100',
-              'User-Agent': 'Mozilla/5.0',
+              authorization: 'Bearer valid-token'),
+              'content-type': 'application/json'),
+              'X-Real-IP': '192.168.1.100'),
+              'User-Agent': 'Mozilla/5.0'),
             },
           },
-        ),
-      );
+        ,
+      
 
       expect(mockAuditService.logActivity).toHaveBeenCalledWith({
-        _userId: 'user-123',
-        action: 'ai_patient_insights_access',
-        resourceType: 'ai_insights',
-        resourceId: 'patient-123',
+        _userId: 'user-123'),
+        action: 'ai_patient_insights_access'),
+        resourceType: 'ai_insights'),
+        resourceId: 'patient-123'),
         details: {
-          analysisType: 'risk_assessment',
-          dataPoints: 45,
-          confidence: 0.87,
-          processingTime: 2500,
-          insightsGenerated: true,
+          analysisType: 'risk_assessment'),
+          dataPoints: 45),
+          confidence: 0.87),
+          processingTime: 2500),
+          insightsGenerated: true),
         },
-        ipAddress: '192.168.1.100',
-        userAgent: 'Mozilla/5.0',
-        complianceContext: 'LGPD',
-        sensitivityLevel: 'critical',
-      });
-    });
+        ipAddress: '192.168.1.100'),
+        userAgent: 'Mozilla/5.0'),
+        complianceContext: 'LGPD'),
+        sensitivityLevel: 'critical'),
+      }
+    }
 
-    it(_'should handle LGPD access denial for insights',async () => {
+    it(''should handle LGPD access denial for insights',async () => {
       mockLGPDService.validateDataAccess.mockResolvedValue({
-        success: false,
-        error: 'Acesso negado para insights de IA por política LGPD',
-        code: 'LGPD_AI_INSIGHTS_DENIED',
-      });
+        success: false),
+        error: 'Acesso negado para insights de IA por política LGPD'),
+        code: 'LGPD_AI_INSIGHTS_DENIED'),
+      }
 
-      const { default: insightsRoute } = await import('../insights');
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
-      expect(response.status).toBe(403);
-      expect(data.success).toBe(false);
-      expect(data.error).toContain('LGPD');
-      expect(data.code).toBe('LGPD_AI_INSIGHTS_DENIED');
-    });
+      expect(response.status).toBe(403
+      expect(data.success).toBe(false
+      expect(data.error).toContain('LGPD'
+      expect(data.code).toBe('LGPD_AI_INSIGHTS_DENIED'
+    }
 
-    it(_'should mask sensitive data in insights based on access level',async () => {
+    it(''should mask sensitive data in insights based on access level',async () => {
       mockLGPDService.validateDataAccess.mockResolvedValue({
-        success: true,
+        success: true),
         data: { canAccess: true, accessLevel: 'limited' },
-      });
+      }
 
       mockLGPDService.maskSensitiveData.mockReturnValue({
         riskAssessment: {
-          overallRisk: 'low',
+          overallRisk: 'low'),
           riskFactors: [
             {
-              factor: 'Histórico de ***',
-              severity: 'medium',
-              confidence: 0.85,
+              factor: 'Histórico de ***'),
+              severity: 'medium'),
+              confidence: 0.85),
             },
           ],
         },
         treatmentRecommendations: [
           {
-            treatment: 'Tratamento recomendado',
-            priority: 'high',
-            estimatedCost: '***',
+            treatment: 'Tratamento recomendado'),
+            priority: 'high'),
+            estimatedCost: '***'),
           },
         ],
-      });
+      }
 
-      const { default: insightsRoute } = await import('../insights');
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer limited-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer limited-token'),
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
       expect(data.data.insights.riskAssessment.riskFactors[0].factor).toContain(
-        '***',
-      );
-      expect(response.headers.get('X-Access-Level')).toBe('limited');
-    });
-  });
+        '***'),
+      
+      expect(response.headers.get('X-Access-Level')).toBe('limited'
+    }
+  }
 
-  describe(_'Error Handling'), () => {
-    it(_'should handle authentication errors',async () => {
-      const { default: insightsRoute } = await import('../insights');
+  describe(''Error Handling'), () => {
+    it(''should handle authentication errors',async () => {
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            'content-type': 'application/json',
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
-      expect(response.status).toBe(401);
-      expect(data.success).toBe(false);
-      expect(data.error).toContain('Não autorizado');
-    });
+      expect(response.status).toBe(401
+      expect(data.success).toBe(false
+      expect(data.error).toContain('Não autorizado'
+    }
 
-    it(_'should handle patient not found errors',async () => {
+    it(''should handle patient not found errors',async () => {
       mockPatientService.validatePatientExists.mockResolvedValue({
-        success: false,
-        error: 'Paciente não encontrado',
-        code: 'PATIENT_NOT_FOUND',
-      });
+        success: false),
+        error: 'Paciente não encontrado'),
+        code: 'PATIENT_NOT_FOUND'),
+      }
 
-      const { default: insightsRoute } = await import('../insights');
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request('http://localhost/nonexistent-patient/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
-      expect(response.status).toBe(404);
-      expect(data.success).toBe(false);
-      expect(data.error).toContain('Paciente não encontrado');
-      expect(data.code).toBe('PATIENT_NOT_FOUND');
-    });
+      expect(response.status).toBe(404
+      expect(data.success).toBe(false
+      expect(data.error).toContain('Paciente não encontrado'
+      expect(data.code).toBe('PATIENT_NOT_FOUND'
+    }
 
-    it(_'should handle AI service errors gracefully',async () => {
+    it(''should handle AI service errors gracefully',async () => {
       mockAIChatService.generatePatientInsights.mockResolvedValue({
-        success: false,
-        error: 'Erro interno do serviço de insights de IA',
-      });
+        success: false),
+        error: 'Erro interno do serviço de insights de IA'),
+      }
 
-      const { default: insightsRoute } = await import('../insights');
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
-      expect(response.status).toBe(500);
-      expect(data.success).toBe(false);
-      expect(data.error).toContain('Erro interno');
-    });
+      expect(response.status).toBe(500
+      expect(data.success).toBe(false
+      expect(data.error).toContain('Erro interno'
+    }
 
-    it(_'should handle insufficient patient data',async () => {
+    it(''should handle insufficient patient data',async () => {
       mockPatientService.getPatientData.mockResolvedValue({
-        success: true,
+        success: true),
         data: {
-          id: 'patient-minimal',
-          name: 'Paciente Novo',
+          id: 'patient-minimal'),
+          name: 'Paciente Novo'),
           // Minimal data - insufficient for insights
         },
-      });
+      }
 
       mockAIChatService.generatePatientInsights.mockResolvedValue({
-        success: false,
-        error: 'Dados insuficientes para gerar insights',
-        code: 'INSUFFICIENT_DATA',
-      });
+        success: false),
+        error: 'Dados insuficientes para gerar insights'),
+        code: 'INSUFFICIENT_DATA'),
+      }
 
-      const { default: insightsRoute } = await import('../insights');
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-minimal/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
-      expect(response.status).toBe(422);
-      expect(data.success).toBe(false);
-      expect(data.error).toContain('Dados insuficientes');
-      expect(data.code).toBe('INSUFFICIENT_DATA');
-    });
-  });
+      expect(response.status).toBe(422
+      expect(data.success).toBe(false
+      expect(data.error).toContain('Dados insuficientes'
+      expect(data.code).toBe('INSUFFICIENT_DATA'
+    }
+  }
 
-  describe(_'Brazilian Healthcare Compliance'), () => {
-    it(_'should include CFM compliance headers',async () => {
-      const { default: insightsRoute } = await import('../insights');
+  describe(''Brazilian Healthcare Compliance'), () => {
+    it(''should include CFM compliance headers',async () => {
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
-      expect(response.headers.get('X-CFM-Compliant')).toBe('true');
-      expect(response.headers.get('X-AI-Medical-Insights')).toBe('generated');
-      expect(response.headers.get('X-LGPD-Compliant')).toBe('true');
-      expect(response.headers.get('X-Medical-AI-Logged')).toBe('true');
-    });
+      expect(response.headers.get('X-CFM-Compliant')).toBe('true'
+      expect(response.headers.get('X-AI-Medical-Insights')).toBe('generated'
+      expect(response.headers.get('X-LGPD-Compliant')).toBe('true'
+      expect(response.headers.get('X-Medical-AI-Logged')).toBe('true'
+    }
 
-    it(_'should validate healthcare professional context for medical insights',async () => {
-      const { default: insightsRoute } = await import('../insights');
+    it(''should validate healthcare professional context for medical insights',async () => {
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request(
-          'http://localhost/patient-123/insights?analysisType=diagnostic_support',
+          'http://localhost/patient-123/insights?analysisType=diagnostic_support'),
           {
-            method: 'GET',
+            method: 'GET'),
             headers: {
-              authorization: 'Bearer valid-token',
-              'content-type': 'application/json',
-              'X-Healthcare-Professional': 'CRM-SP-123456',
-              'X-Healthcare-Context': 'diagnostic_support',
+              authorization: 'Bearer valid-token'),
+              'content-type': 'application/json'),
+              'X-Healthcare-Professional': 'CRM-SP-123456'),
+              'X-Healthcare-Context': 'diagnostic_support'),
             },
           },
-        ),
-      );
+        ,
+      
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
       expect(mockAIChatService.generatePatientInsights).toHaveBeenCalledWith(
         expect.objectContaining({
-          healthcareProfessional: 'CRM-SP-123456',
-          healthcareContext: 'diagnostic_support',
-        }),
-      );
-    });
+          healthcareProfessional: 'CRM-SP-123456'),
+          healthcareContext: 'diagnostic_support'),
+        },
+      
+    }
 
-    it(_'should include data retention policy information',async () => {
-      const { default: insightsRoute } = await import('../insights');
+    it(''should include data retention policy information',async () => {
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
       expect(response.headers.get('X-Data-Retention-Policy')).toBe(
-        '7-years-standard-20-years-medical',
-      );
-      expect(response.headers.get('X-Legal-Basis')).toBe('legitimate_interest');
-      expect(response.headers.get('X-Consent-Required')).toBe('true');
-    });
-  });
+        '7-years-standard-20-years-medical'),
+      
+      expect(response.headers.get('X-Legal-Basis')).toBe('legitimate_interest'
+      expect(response.headers.get('X-Consent-Required')).toBe('true'
+    }
+  }
 
-  describe(_'Performance and Caching'), () => {
-    it(_'should include performance headers',async () => {
-      const { default: insightsRoute } = await import('../insights');
+  describe(''Performance and Caching'), () => {
+    it(''should include performance headers',async () => {
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
-      expect(response.status).toBe(200);
-      expect(response.headers.get('X-Response-Time')).toBeDefined();
-      expect(response.headers.get('X-AI-Processing-Time')).toBe('2500ms');
-      expect(response.headers.get('X-Database-Queries')).toBeDefined();
-    });
+      expect(response.status).toBe(200
+      expect(response.headers.get('X-Response-Time')).toBeDefined(
+      expect(response.headers.get('X-AI-Processing-Time')).toBe('2500ms'
+      expect(response.headers.get('X-Database-Queries')).toBeDefined(
+    }
 
-    it(_'should handle large datasets efficiently',async () => {
+    it(''should handle large datasets efficiently',async () => {
       mockAIChatService.generatePatientInsights.mockResolvedValue({
-        success: true,
+        success: true),
         data: {
-          patientId: 'patient-large-data',
+          patientId: 'patient-large-data'),
           insights: {
             // Large dataset simulation
             riskAssessment: { overallRisk: 'medium' },
             treatmentRecommendations: Array.from({ length: 20 },(, i) => ({
               treatment: `Tratamento ${i + 1}`,
-              priority: 'medium',
-              confidence: 0.8,
-            })),
+              priority: 'medium'),
+              confidence: 0.8),
+            }),
           },
           metadata: {
-            dataPoints: 500,
-            processingTime: 5000,
-            confidence: 0.85,
+            dataPoints: 500),
+            processingTime: 5000),
+            confidence: 0.85),
           },
         },
-      });
+      }
 
-      const { default: insightsRoute } = await import('../insights');
+      const { default: insightsRoute } = await import('../insights'
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-large-data/insights', {
-          method: 'GET',
+          method: 'GET'),
           headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+            authorization: 'Bearer valid-token'),
+            'content-type': 'application/json'),
           },
-        }),
-      );
+        },
+      
 
-      const data = await response.json();
+      const data = await response.json(
 
-      expect(response.status).toBe(200);
-      expect(data.data.insights.treatmentRecommendations).toHaveLength(20);
-      expect(data.data.metadata.dataPoints).toBe(500);
-      expect(response.headers.get('X-AI-Data-Points')).toBe('500');
-    });
-  });
-});
+      expect(response.status).toBe(200
+      expect(data.data.insights.treatmentRecommendations).toHaveLength(20
+      expect(data.data.metadata.dataPoints).toBe(500
+      expect(response.headers.get('X-AI-Data-Points')).toBe('500'
+    }
+  }
+}

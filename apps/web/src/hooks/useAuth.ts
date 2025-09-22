@@ -1,6 +1,6 @@
 import { getCurrentSession, supabase } from '@/integrations/supabase/client';
 import { type UserProfile, userProfileService } from '@/services/user-profile.service';
-import type { Session } from '@supabase/supabase-js';
+import type { Session, User } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 
 export interface AuthState {
@@ -64,7 +64,7 @@ export function useAuth(): AuthState {
               userProfile ? 'Success' : 'Failed',
             );
             setProfile(userProfile);
-          } catch (_profileError) {
+          } catch (profileError) {
             console.error(
               '❌ useAuth: Error loading user profile:',
               profileError,
@@ -79,7 +79,7 @@ export function useAuth(): AuthState {
           // Don't create fallback profile - just set null to allow app to work
           setProfile(null);
         }
-      } catch (_error) {
+      } catch (error) {
         console.error('❌ useAuth: Error getting initial session:', error);
         setSession(null);
         setUser(null);
@@ -116,7 +116,7 @@ export function useAuth(): AuthState {
             profileTimeoutPromise,
           ])) as any;
           setProfile(userProfile);
-        } catch (_profileError) {
+        } catch (profileError) {
           console.error('Error loading user profile:', profileError);
           setProfile(null);
         }
@@ -156,7 +156,7 @@ export function useAuth(): AuthState {
     return profile?.permissions[permission] || false;
   };
 
-  const isRole = (_role: UserProfile['role']): boolean => {
+  const isRole = (role: UserProfile['role']): boolean => {
     return profile?.role === role;
   };
 

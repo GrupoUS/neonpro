@@ -122,7 +122,7 @@ export function streamingMiddleware() {
   return async (c: Context, next: Next) => {
     try {
       // Set SSE headers for streaming responses
-      Object.entries(sseHeaders).forEach(([key,_value]) => {
+      Object.entries(sseHeaders).forEach(([key, value]) => {
         c.header(key, value);
       });
 

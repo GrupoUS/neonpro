@@ -192,10 +192,10 @@ export function authentication() {
 
       // For now, just set a placeholder user but use the token for logging
       console.log('Token received:', token.substring(0, 10) + '...');
-      c.set('user', { id: 'placeholder', _role: 'user_ });
+      c.set('user', { id: 'placeholder', _role: 'user' });
 
       await next();
-    } catch (_error: unknown) {
+    } catch (error: unknown) {
       if (error instanceof Error) {
         console.error('JWT validation error:', error.message);
       }
@@ -315,7 +315,7 @@ export function healthcareDataProtection() {
 
       console.log('[Healthcare Access]', {
         requestId: c.get('requestId'),
-        _userId: user?.id || 'anonymous_,
+        _userId: user?.id || 'anonymous',
         patientId: patientId ? '[REDACTED]' : undefined,
         endpoint: c.req.path,
         method: c.req.method,

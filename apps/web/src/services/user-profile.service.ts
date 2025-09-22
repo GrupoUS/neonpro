@@ -72,9 +72,9 @@ class UserProfileService {
     console.log('🔍 getUserProfile called for _userId:', _userId);
 
     // Handle fallback user case immediately
-    if (userId === 'fallback-user') {
+    if (_userId === 'fallback-user') {
       console.log('🔧 Creating fallback profile for development');
-      return this.createFallbackProfile(userId);
+      return this.createFallbackProfile(_userId);
     }
 
     try {
@@ -145,7 +145,7 @@ class UserProfileService {
         authUser.user.email,
       );
       return this.buildPatientProfile(authUser.user);
-    } catch (_error) {
+    } catch (error) {
       console.error('❌ Error fetching user profile:', error);
       // Throw error instead of creating fallback to let caller handle it
       throw error;
@@ -199,7 +199,7 @@ class UserProfileService {
       permissions,
       staffInfo: {
         id: anyStaff.id,
-        _role: anyStaff.role,
+        _role: anyStaff._role,
         specialization: anyStaff.specialization || '',
         crmNumber: anyStaff.crm_number || '',
         avatarUrl: anyStaff.avatar_url || '',
@@ -226,7 +226,7 @@ class UserProfileService {
   /**
    * Create fallback profile for development/testing
    */
-  private createFallbackProfile(_userId: string): UserProfile {
+  private createFallbackProfile(userId: string): UserProfile {
     const permissions = this.getProfessionalPermissions(); // Give full permissions for development
 
     return {
@@ -287,7 +287,7 @@ class UserProfileService {
       canManageSettings: false,
     };
 
-    switch (role.toLowerCase()) {
+    switch (_role.toLowerCase()) {
       case 'admin':
       case 'clinic_admin':
         return {
@@ -370,7 +370,7 @@ class UserProfileService {
   /**
    * Get user's accessible clinic IDs
    */
-  async getAccessibleClinics(_userId: string): Promise<string[]> {
+  async getAccessibleClinics(userId: string): Promise<string[]> {
     try {
       const profile = await this.getUserProfile(userId);
       if (!profile) return [];
@@ -378,7 +378,7 @@ class UserProfileService {
       // For now, return single clinic ID
       // In future, could support multi-clinic access
       return profile.clinicId ? [profile.clinicId] : [];
-    } catch (_error) {
+    } catch (error) {
       console.error('Error getting accessible clinics:', error);
       return [];
     }

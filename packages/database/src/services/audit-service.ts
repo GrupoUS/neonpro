@@ -62,7 +62,7 @@ export class AuditService {
         .from("webrtc_audit_logs")
         .insert({
           action: request.action || request.eventType || "UNKNOWN",
-          user_id: request.userId,
+          user_id: request._userId,
           resource: request.resource || request.description || "UNKNOWN",
           resource_type: request.resource || "session", // Default resource type
           ip_address: request.ipAddress || "unknown",

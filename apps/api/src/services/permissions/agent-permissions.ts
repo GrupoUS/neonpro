@@ -406,7 +406,7 @@ export class AgentPermissionService {
     }
 
     // Staff can only read agent data, not write/delete
-    if (context.resource.startsWith('agent_') && context.action !== 'read') {
+    if (context.resource.startsWith('agent') && context.action !== 'read') {
       return {
         granted: false,
         reason: 'Staff can only read agent data',
@@ -439,7 +439,7 @@ export class AgentPermissionService {
     }
 
     // Patients can only read their agent sessions and messages
-    if (context.resource.startsWith('agent_') && context.action !== 'read') {
+    if (context.resource.startsWith('agent') && context.action !== 'read') {
       return {
         granted: false,
         reason: 'Patients can only read their agent data',

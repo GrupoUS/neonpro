@@ -45,7 +45,6 @@ export class SecurityUtils {
       .replace(/on\w+\s*=/gi, '')
       .replace(/javascript:/gi, '')
       .replace(/vbscript:/gi, '');
-  }
 
   /**
    * Validate and sanitize email addresses
@@ -334,7 +333,7 @@ export class SecurityUtils {
     const lowercase = 'abcdefghijklmnopqrstuvwxyz';
     const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const numbers = '0123456789';
-    const special = ''!@#$%^&*()_+-=[]{}|;:,.<>?'
+    const special = '!@#$%^&*()_+-=[]{}|;:,.<>?'
 
     const allChars = lowercase + uppercase + numbers + special;
     let password = '';
@@ -352,10 +351,9 @@ export class SecurityUtils {
 
     // Shuffle the password
     return password
-      .split('')
+      .split(')
       .sort(() => Math.random() - 0.5)
       .join('');
-  }
 }
 
 /**

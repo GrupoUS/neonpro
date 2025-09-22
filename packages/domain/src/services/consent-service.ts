@@ -42,17 +42,17 @@ export class ConsentDomainService {
     }
 
     // Create consent record
-    const consent = ConsentFactory.createFromRequest(request, grantedBy);
+    const consent = ConsentFactory.createFromRequest(_request, grantedBy);
 
     // Add grant audit event
     const grantEvent = ConsentFactory.createAuditEvent(
       ConsentAction.GRANTED,
-      request.patientId,
+      _request.patientId,
       grantedBy,
       {
-        consentType: request.consentType,
-        purpose: request.purpose,
-        dataTypesCount: request.dataTypes.length,
+        consentType: _request.consentType,
+        purpose: _request.purpose,
+        dataTypesCount: _request.dataTypes.length,
       }
     );
     consent.auditTrail.push(grantEvent);
@@ -71,7 +71,7 @@ export class ConsentDomainService {
     const consents = await this.repository.findByPatientId(patientId, includeExpired);
     
     // Log access for audit trail
-    const accessEvent = ConsentFactory.createAuditEvent(
+    ConsentFactory.createAuditEvent(
       ConsentAction.ACCESSED,
       patientId,
       'system',
@@ -81,9 +81,6 @@ export class ConsentDomainService {
         timestamp: new Date().toISOString()
       }
     );
-
-    // Add audit event to repository when we implement audit logging
-    await this.repository.addAuditEvent(patientId, accessEvent);
 
     return consents;
   }
@@ -216,12 +213,12 @@ export class ConsentDomainService {
       status = 'NON_COMPLIANT';
       isCompliant = false;
     } else if (violations.length > 0) {
-      status = ''PARTIALLY_COMPLIANT'
+      status = 'PARTIALLY_COMPLIANT';
     }
 
     // Generate recommendations
     const recommendations: string[] = [];
-    if (expiringSoon.length > 0) {`
+    if (expiringSoon.length > 0) {
       recommendations.push(`Renew ${expiringSoon.length} expiring consent(s)`);
     }
     if (!hasDataProcessingConsent) {
@@ -304,4 +301,4 @@ export class ConsentDomainService {
 
     return updatedConsent;
   }
-}`
+}

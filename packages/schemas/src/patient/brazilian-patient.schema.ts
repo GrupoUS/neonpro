@@ -17,6 +17,8 @@ import {
 /**
  * CPF validation schema
  */
+import { z } from "zod";
+
 export const CPFSchema = z
   .string()
   .transform((val) => val.replace(/[^\d]/g, ""))

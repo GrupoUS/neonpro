@@ -251,7 +251,7 @@ export function checkComplianceRequirements(
     // @ts-ignore dynamic index
     const parsed = COMPLIANCE_SCHEMAS[schemaType].parse(data);
     return { valid: true, data: parsed, errors: [] as any[] };
-  } catch (_err: any) {
+  } catch (err: any) {
     if (err?.issues) {
       return { valid: false, data: null, errors: err.issues };
     }

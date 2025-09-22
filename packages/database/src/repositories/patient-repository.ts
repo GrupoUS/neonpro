@@ -2,12 +2,16 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { 
   Patient, 
   PatientRepository as IPatientRepository,
-  PatientFilter,
-  PatientQueryOptions,
-  PatientSearchResult,
-  CreatePatientRequest,
-  UpdatePatientRequest 
+  PatientFilters
 } from "@neonpro/domain";
+import {
+  CreatePatientRequest,
+  UpdatePatientRequest
+} from "@neonpro/types";
+import {
+  PatientQueryOptions,
+  PatientSearchResult
+} from "../types/index.js";
 import { DatabasePatient } from "../types/supabase.js";
 
 /**
@@ -116,7 +120,7 @@ export class PatientRepository implements IPatientRepository {
     }
   }
 
-  async findWithFilter(filter: PatientFilter, options?: PatientQueryOptions): Promise<PatientSearchResult> {
+  async findWithFilter(filter: PatientFilters, options?: PatientQueryOptions): Promise<PatientSearchResult> {
     try {
       let query = this.supabase
         .from("patients")
@@ -135,10 +139,10 @@ export class PatientRepository implements IPatientRepository {
         query = query.eq("gender", filter.gender);
       }
 
-      if (filter.birthDateRange) {
+      if (filter.birthDateFrom && filter.birthDateTo) {
         query = query
-          .gte("birth_date", filter.birthDateRange.start.toISOString())
-          .lte("birth_date", filter.birthDateRange.end.toISOString());
+          .gte("birth_date", filter.birthDateFrom)
+          .lte("birth_date", filter.birthDateTo);
       }
 
       if (filter.search) {
@@ -256,7 +260,7 @@ export class PatientRepository implements IPatientRepository {
         .select("*", { count: "exact" });
 
       // Build search query
-      const searchCondition = `full_name.ilike.%${query}%,email.ilike.%${query}%,cpf.ilike.%${query}%,medical_record_number.ilike.%${query}%`;
+      const searchCondition = `full_name.ilike.%${_query}%,email.ilike.%${_query}%,cpf.ilike.%${_query}%,medical_record_number.ilike.%${_query}%`;
       
       if (clinicId) {
         dbQuery = dbQuery.eq("clinic_id", clinicId);
@@ -302,7 +306,7 @@ export class PatientRepository implements IPatientRepository {
     }
   }
 
-  async count(filter: PatientFilter): Promise<number> {
+  async count(filter: PatientFilters): Promise<number> {
     try {
       let query = this.supabase
         .from("patients")
@@ -320,10 +324,10 @@ export class PatientRepository implements IPatientRepository {
         query = query.eq("gender", filter.gender);
       }
 
-      if (filter.birthDateRange) {
+      if (filter.birthDateFrom && filter.birthDateTo) {
         query = query
-          .gte("birth_date", filter.birthDateRange.start.toISOString())
-          .lte("birth_date", filter.birthDateRange.end.toISOString());
+          .gte("birth_date", filter.birthDateFrom)
+          .lte("birth_date", filter.birthDateTo);
       }
 
       const { count, error } = await query;
@@ -400,49 +404,49 @@ export class PatientRepository implements IPatientRepository {
    */
   private mapCreateRequestToDatabase(_request: CreatePatientRequest): Partial<DatabasePatient> {
     return {
-      clinic_id: request.clinicId,
-      medical_record_number: request.medicalRecordNumber,
-      external_ids: request.externalIds,
-      given_names: request.givenNames,
-      family_name: request.familyName,
-      full_name: request.fullName,
-      preferred_name: request.preferredName,
-      phone_primary: request.phonePrimary,
-      phone_secondary: request.phoneSecondary,
-      email: request.email,
-      address_line1: request.addressLine1,
-      address_line2: request.addressLine2,
-      city: request.city,
-      state: request.state,
-      postal_code: request.postalCode,
-      country: request.country,
-      birth_date: request.birthDate,
-      gender: request.gender,
-      marital_status: request.maritalStatus,
-      is_active: request.isActive !== false,
-      deceased_indicator: request.deceasedIndicator,
-      deceased_date: request.deceasedDate,
-      data_consent_status: request.dataConsentStatus,
-      data_consent_date: request.dataConsentDate,
-      data_retention_until: request.dataRetentionUntil,
-      data_source: request.dataSource,
-      created_by: request.createdBy,
-      photo_url: request.photoUrl,
-      cpf: request.cpf,
-      rg: request.rg,
-      passport_number: request.passportNumber,
-      preferred_contact_method: request.preferredContactMethod,
-      blood_type: request.bloodType,
-      allergies: request.allergies,
-      chronic_conditions: request.chronicConditions,
-      current_medications: request.currentMedications,
-      insurance_provider: request.insuranceProvider,
-      insurance_number: request.insuranceNumber,
-      insurance_plan: request.insurancePlan,
-      emergency_contact_name: request.emergencyContactName,
-      emergency_contact_phone: request.emergencyContactPhone,
-      emergency_contact_relationship: request.emergencyContactRelationship,
-      lgpd_consent_given: request.lgpdConsentGiven || false
+      clinic_id: _request.clinicId,
+      medical_record_number: _request.medicalRecordNumber,
+      external_ids: _request.externalIds,
+      given_names: _request.givenNames,
+      family_name: _request.familyName,
+      full_name: _request.fullName,
+      preferred_name: _request.preferredName,
+      phone_primary: _request.phonePrimary,
+      phone_secondary: _request.phoneSecondary,
+      email: _request.email,
+      address_line1: _request.addressLine1,
+      address_line2: _request.addressLine2,
+      city: _request.city,
+      state: _request.state,
+      postal_code: _request.postalCode,
+      country: _request.country,
+      birth_date: _request.birthDate,
+      gender: _request.gender,
+      marital_status: _request.maritalStatus,
+      is_active: _request.isActive !== false,
+      deceased_indicator: _request.deceasedIndicator,
+      deceased_date: _request.deceasedDate,
+      data_consent_status: _request.dataConsentStatus,
+      data_consent_date: _request.dataConsentDate,
+      data_retention_until: _request.dataRetentionUntil,
+      data_source: _request.dataSource,
+      created_by: _request.createdBy,
+      photo_url: _request.photoUrl,
+      cpf: _request.cpf,
+      rg: _request.rg,
+      passport_number: _request.passportNumber,
+      preferred_contact_method: _request.preferredContactMethod,
+      blood_type: _request.bloodType,
+      allergies: _request.allergies,
+      chronic_conditions: _request.chronicConditions,
+      current_medications: _request.currentMedications,
+      insurance_provider: _request.insuranceProvider,
+      insurance_number: _request.insuranceNumber,
+      insurance_plan: _request.insurancePlan,
+      emergency_contact_name: _request.emergencyContactName,
+      emergency_contact_phone: _request.emergencyContactPhone,
+      emergency_contact_relationship: _request.emergencyContactRelationship,
+      lgpd_consent_given: _request.lgpdConsentGiven || false
     };
   }
 
@@ -452,41 +456,41 @@ export class PatientRepository implements IPatientRepository {
   private mapUpdateRequestToDatabase(_request: UpdatePatientRequest): Partial<DatabasePatient> {
     const updateData: Partial<DatabasePatient> = {};
 
-    if (request.familyName !== undefined) updateData.family_name = request.familyName;
-    if (request.fullName !== undefined) updateData.full_name = request.fullName;
-    if (request.preferredName !== undefined) updateData.preferred_name = request.preferredName;
-    if (request.phonePrimary !== undefined) updateData.phone_primary = request.phonePrimary;
-    if (request.phoneSecondary !== undefined) updateData.phone_secondary = request.phoneSecondary;
-    if (request.email !== undefined) updateData.email = request.email;
-    if (request.addressLine1 !== undefined) updateData.address_line1 = request.addressLine1;
-    if (request.addressLine2 !== undefined) updateData.address_line2 = request.addressLine2;
-    if (request.city !== undefined) updateData.city = request.city;
-    if (request.state !== undefined) updateData.state = request.state;
-    if (request.postalCode !== undefined) updateData.postal_code = request.postalCode;
-    if (request.country !== undefined) updateData.country = request.country;
-    if (request.gender !== undefined) updateData.gender = request.gender;
-    if (request.maritalStatus !== undefined) updateData.marital_status = request.maritalStatus;
-    if (request.isActive !== undefined) updateData.is_active = request.isActive;
-    if (request.deceasedIndicator !== undefined) updateData.deceased_indicator = request.deceasedIndicator;
-    if (request.deceasedDate !== undefined) updateData.deceased_date = request.deceasedDate;
-    if (request.dataConsentStatus !== undefined) updateData.data_consent_status = request.dataConsentStatus;
-    if (request.dataConsentDate !== undefined) updateData.data_consent_date = request.dataConsentDate;
-    if (request.dataRetentionUntil !== undefined) updateData.data_retention_until = request.dataRetentionUntil;
-    if (request.photoUrl !== undefined) updateData.photo_url = request.photoUrl;
-    if (request.rg !== undefined) updateData.rg = request.rg;
-    if (request.passportNumber !== undefined) updateData.passport_number = request.passportNumber;
-    if (request.preferredContactMethod !== undefined) updateData.preferred_contact_method = request.preferredContactMethod;
-    if (request.bloodType !== undefined) updateData.blood_type = request.bloodType;
-    if (request.allergies !== undefined) updateData.allergies = request.allergies;
-    if (request.chronicConditions !== undefined) updateData.chronic_conditions = request.chronicConditions;
-    if (request.currentMedications !== undefined) updateData.current_medications = request.currentMedications;
-    if (request.insuranceProvider !== undefined) updateData.insurance_provider = request.insuranceProvider;
-    if (request.insuranceNumber !== undefined) updateData.insurance_number = request.insuranceNumber;
-    if (request.insurancePlan !== undefined) updateData.insurance_plan = request.insurancePlan;
-    if (request.emergencyContactName !== undefined) updateData.emergency_contact_name = request.emergencyContactName;
-    if (request.emergencyContactPhone !== undefined) updateData.emergency_contact_phone = request.emergencyContactPhone;
-    if (request.emergencyContactRelationship !== undefined) updateData.emergency_contact_relationship = request.emergencyContactRelationship;
-    if (request.lgpdConsentGiven !== undefined) updateData.lgpd_consent_given = request.lgpdConsentGiven;
+    if (_request.familyName !== undefined) updateData.family_name = _request.familyName;
+    if (_request.fullName !== undefined) updateData.full_name = _request.fullName;
+    if (_request.preferredName !== undefined) updateData.preferred_name = _request.preferredName;
+    if (_request.phonePrimary !== undefined) updateData.phone_primary = _request.phonePrimary;
+    if (_request.phoneSecondary !== undefined) updateData.phone_secondary = _request.phoneSecondary;
+    if (_request.email !== undefined) updateData.email = _request.email;
+    if (_request.addressLine1 !== undefined) updateData.address_line1 = _request.addressLine1;
+    if (_request.addressLine2 !== undefined) updateData.address_line2 = _request.addressLine2;
+    if (_request.city !== undefined) updateData.city = _request.city;
+    if (_request.state !== undefined) updateData.state = _request.state;
+    if (_request.postalCode !== undefined) updateData.postal_code = _request.postalCode;
+    if (_request.country !== undefined) updateData.country = _request.country;
+    if (_request.gender !== undefined) updateData.gender = _request.gender;
+    if (_request.maritalStatus !== undefined) updateData.marital_status = _request.maritalStatus;
+    if (_request.isActive !== undefined) updateData.is_active = _request.isActive;
+    if (_request.deceasedIndicator !== undefined) updateData.deceased_indicator = _request.deceasedIndicator;
+    if (_request.deceasedDate !== undefined) updateData.deceased_date = _request.deceasedDate;
+    if (_request.dataConsentStatus !== undefined) updateData.data_consent_status = _request.dataConsentStatus;
+    if (_request.dataConsentDate !== undefined) updateData.data_consent_date = _request.dataConsentDate;
+    if (_request.dataRetentionUntil !== undefined) updateData.data_retention_until = _request.dataRetentionUntil;
+    if (_request.photoUrl !== undefined) updateData.photo_url = _request.photoUrl;
+    if (_request.rg !== undefined) updateData.rg = _request.rg;
+    if (_request.passportNumber !== undefined) updateData.passport_number = _request.passportNumber;
+    if (_request.preferredContactMethod !== undefined) updateData.preferred_contact_method = _request.preferredContactMethod;
+    if (_request.bloodType !== undefined) updateData.blood_type = _request.bloodType;
+    if (_request.allergies !== undefined) updateData.allergies = _request.allergies;
+    if (_request.chronicConditions !== undefined) updateData.chronic_conditions = _request.chronicConditions;
+    if (_request.currentMedications !== undefined) updateData.current_medications = _request.currentMedications;
+    if (_request.insuranceProvider !== undefined) updateData.insurance_provider = _request.insuranceProvider;
+    if (_request.insuranceNumber !== undefined) updateData.insurance_number = _request.insuranceNumber;
+    if (_request.insurancePlan !== undefined) updateData.insurance_plan = _request.insurancePlan;
+    if (_request.emergencyContactName !== undefined) updateData.emergency_contact_name = _request.emergencyContactName;
+    if (_request.emergencyContactPhone !== undefined) updateData.emergency_contact_phone = _request.emergencyContactPhone;
+    if (_request.emergencyContactRelationship !== undefined) updateData.emergency_contact_relationship = _request.emergencyContactRelationship;
+    if (_request.lgpdConsentGiven !== undefined) updateData.lgpd_consent_given = _request.lgpdConsentGiven;
 
     return updateData;
   }

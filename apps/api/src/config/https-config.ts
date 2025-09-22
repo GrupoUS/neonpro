@@ -112,7 +112,7 @@ export function validateTLSConfig(config: HTTPSConfig): boolean {
   }
 
   // Ensure cipher suites include PFS
-  if (!config.ciphers.includes('ECDHE-') && !config.ciphers.includes('TLS_')) {
+  if (!config.ciphers.includes('ECDHE-') && !config.ciphers.includes('TLS')) {
     throw new Error('Perfect Forward Secrecy cipher suites required');
   }
 

@@ -1,14 +1,18 @@
-import { 
+import {
   PatientRepository as IPatientRepository,
   Patient,
-  CreatePatientRequest,
-  UpdatePatientRequest,
-  PatientFilter,
-  PatientSearchResult,
-  PatientQueryOptions,
-  PatientError,
-  PatientValidationError
+  PatientFilters,
+  PatientValidationError,
+  DomainError
 } from "@neonpro/domain";
+import {
+  CreatePatientRequest as ApiCreatePatientRequest,
+  UpdatePatientRequest as ApiUpdatePatientRequest
+} from "@neonpro/types";
+import {
+  PatientQueryOptions,
+  PatientSearchResult
+} from "../types/index.js";
 
 /**
  * Application service for patient management
@@ -21,47 +25,48 @@ export class PatientService {
   /**
    * Create a new patient with validation
    */
-  async createPatient(_request: CreatePatientRequest): Promise<Patient> {
+  async createPatient(_request: ApiCreatePatientRequest): Promise<Patient> {
     try {
       // Validate required fields
-      this.validateCreateRequest(request);
+      this.validateCreateRequest(_request);
 
-      // Check for duplicate medical record number
-      const existingPatient = await this.patientRepository.findByMedicalRecordNumber(request.medicalRecordNumber);
-      if (existingPatient) {
-        throw new PatientValidationError("Medical record number already exists");
+      // Check for duplicate CPF instead (since medicalRecordNumber doesn't exist in API)
+      const existingPatients = await this.patientRepository.findByCPF(_request.cpf);
+      if (existingPatients.length > 0) {
+        throw new PatientValidationError(["Patient with this CPF already exists"]);
       }
 
-      // Validate CPF if provided
-      if (request.cpf && !this.validateCPF(request.cpf)) {
-        throw new PatientValidationError("Invalid CPF format");
+      // Validate CPF (required field)
+      if (!this.validateCPF(_request.cpf)) {
+        throw new PatientValidationError(["Invalid CPF format"]);
       }
 
-      // Create patient
-      const patient = await this.patientRepository.create(request);
+      // Create patient (need to adapt API request to domain format)
+      const domainPatient = this.adaptApiRequestToDomain(_request);
+      const patient = await this.patientRepository.create(domainPatient);
 
       return patient;
     } catch (error) {
       if (error instanceof PatientValidationError) {
         throw error;
       }
-      throw new PatientError(`Failed to create patient: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new DomainError(`Failed to create patient: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_CREATE_ERROR', 500);
     }
   }
 
   /**
    * Update an existing patient
    */
-  async updatePatient(id: string, _request: UpdatePatientRequest): Promise<Patient> {
+  async updatePatient(id: string, _request: ApiUpdatePatientRequest): Promise<Patient> {
     try {
       // Check if patient exists
       const existingPatient = await this.patientRepository.findById(id);
       if (!existingPatient) {
-        throw new PatientValidationError("Patient not found");
+        throw new PatientValidationError(["Patient not found"]);
       }
 
       // Validate CPF if provided
-      if (request.cpf && !this.validateCPF(request.cpf)) {
+      if (_request.cpf && !this.validateCPF(_request.cpf)) {
         throw new PatientValidationError("Invalid CPF format");
       }
 
@@ -73,7 +78,7 @@ export class PatientService {
       if (error instanceof PatientValidationError) {
         throw error;
       }
-      throw new PatientError(`Failed to update patient: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new DomainError(`Failed to update patient: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_UPDATE_ERROR', 500);
     }
   }
 
@@ -84,7 +89,7 @@ export class PatientService {
     try {
       return await this.patientRepository.findById(id);
     } catch (error) {
-      throw new PatientError(`Failed to get patient: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new DomainError(`Failed to get patient: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_GET_ERROR', 500);
     }
   }
 
@@ -92,14 +97,37 @@ export class PatientService {
    * Get patients by clinic with filtering and pagination
    */
   async getPatientsByClinic(
-    clinicId: string, 
+    clinicId: string,
     options?: PatientQueryOptions
   ): Promise<PatientSearchResult> {
     try {
-      const filter: PatientFilter = { clinicId };
-      return await this.patientRepository.findWithFilter(filter, options);
+      const patients = await this.patientRepository.findByClinicId(clinicId);
+
+      // Apply simple filtering (this is a basic implementation)
+      let filteredPatients = patients;
+
+      if (options?.search) {
+        const searchLower = options.search.toLowerCase();
+        filteredPatients = filteredPatients.filter(p =>
+          p.fullName.toLowerCase().includes(searchLower) ||
+          p.email?.toLowerCase().includes(searchLower) ||
+          p.cpf?.includes(searchLower)
+        );
+      }
+
+      // Apply pagination
+      const offset = options?.offset || 0;
+      const limit = options?.limit || 20;
+      const paginatedPatients = filteredPatients.slice(offset, offset + limit);
+
+      return {
+        patients: paginatedPatients,
+        total: filteredPatients.length,
+        limit,
+        offset
+      };
     } catch (error) {
-      throw new PatientError(`Failed to get patients: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new DomainError(`Failed to get patients: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_LIST_ERROR', 500);
     }
   }
 
@@ -107,14 +135,43 @@ export class PatientService {
    * Search patients by query string
    */
   async searchPatients(
-    _query: string, 
-    clinicId?: string, 
+    _query: string,
+    clinicId?: string,
     options?: PatientQueryOptions
   ): Promise<PatientSearchResult> {
     try {
-      return await this.patientRepository.search(query, clinicId, options);
+      let patients: Patient[];
+
+      if (clinicId) {
+        patients = await this.patientRepository.findByClinicId(clinicId);
+      } else {
+        // For now, return empty array when no clinicId is provided
+        // In a real implementation, you might want to search across all clinics
+        patients = [];
+      }
+
+      // Apply search filtering
+      const searchLower = _query.toLowerCase();
+      const filteredPatients = patients.filter(p =>
+        p.fullName.toLowerCase().includes(searchLower) ||
+        p.email?.toLowerCase().includes(searchLower) ||
+        p.cpf?.includes(searchLower) ||
+        p.medicalRecordNumber.toLowerCase().includes(searchLower)
+      );
+
+      // Apply pagination
+      const offset = options?.offset || 0;
+      const limit = options?.limit || 20;
+      const paginatedPatients = filteredPatients.slice(offset, offset + limit);
+
+      return {
+        patients: paginatedPatients,
+        total: filteredPatients.length,
+        limit,
+        offset
+      };
     } catch (error) {
-      throw new PatientError(`Failed to search patients: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new DomainError(`Failed to search patients: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_SEARCH_ERROR', 500);
     }
   }
 
@@ -126,7 +183,7 @@ export class PatientService {
       // Check if patient exists
       const existingPatient = await this.patientRepository.findById(id);
       if (!existingPatient) {
-        throw new PatientValidationError("Patient not found");
+        throw new PatientValidationError(["Patient not found"]);
       }
 
       return await this.patientRepository.delete(id);
@@ -134,78 +191,101 @@ export class PatientService {
       if (error instanceof PatientValidationError) {
         throw error;
       }
-      throw new PatientError(`Failed to delete patient: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new DomainError(`Failed to delete patient: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_DELETE_ERROR', 500);
     }
   }
 
   /**
    * Count patients with optional filtering
    */
-  async countPatients(filter: PatientFilter): Promise<number> {
+  async countPatients(filter: PatientFilters): Promise<number> {
     try {
-      return await this.patientRepository.count(filter);
+      let patients: Patient[];
+
+      if (filter.clinicId) {
+        patients = await this.patientRepository.findByClinicId(filter.clinicId);
+      } else {
+        patients = [];
+      }
+
+      // Apply additional filters
+      let filteredPatients = patients;
+
+      if (filter.isActive !== undefined) {
+        filteredPatients = filteredPatients.filter(p => p.isActive === filter.isActive);
+      }
+
+      if (filter.gender) {
+        filteredPatients = filteredPatients.filter(p => p.gender === filter.gender);
+      }
+
+      if (filter.birthDateFrom && filter.birthDateTo) {
+        filteredPatients = filteredPatients.filter(p => {
+          if (!p.birthDate) return false;
+          const birthDate = new Date(p.birthDate);
+          const fromDate = new Date(filter.birthDateFrom);
+          const toDate = new Date(filter.birthDateTo);
+          return birthDate >= fromDate && birthDate <= toDate;
+        });
+      }
+
+      return filteredPatients.length;
     } catch (error) {
-      throw new PatientError(`Failed to count patients: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new DomainError(`Failed to count patients: ${error instanceof Error ? error.message : 'Unknown error'}`, 'PATIENT_COUNT_ERROR', 500);
     }
   }
 
   /**
    * Validate patient creation request
    */
-  private validateCreateRequest(_request: CreatePatientRequest): void {
-    if (!request.clinicId) {
-      throw new PatientValidationError("Clinic ID is required");
+  private validateCreateRequest(_request: ApiCreatePatientRequest): void {
+    if (!_request.clinicId) {
+      throw new PatientValidationError(["Clinic ID is required"]);
     }
 
-    if (!request.medicalRecordNumber) {
-      throw new PatientValidationError("Medical record number is required");
-    }
-
-    if (!request.givenNames || request.givenNames.length === 0) {
-      throw new PatientValidationError("At least one given name is required");
-    }
-
-    if (!request.familyName) {
-      throw new PatientValidationError("Family name is required");
-    }
-
-    if (!request.fullName) {
+    if (!_request.fullName) {
       throw new PatientValidationError("Full name is required");
     }
 
-    // Validate birth date if provided
-    if (request.birthDate) {
-      const birthDate = new Date(request.birthDate);
-      const now = new Date();
-      
-      if (isNaN(birthDate.getTime())) {
-        throw new PatientValidationError("Invalid birth date format");
-      }
-
-      if (birthDate > now) {
-        throw new PatientValidationError("Birth date cannot be in the future");
-      }
-
-      // Check if person is reasonably old (not older than 150 years)
-      const maxAge = 150;
-      const minDate = new Date(now.getFullYear() - maxAge, now.getMonth(), now.getDate());
-      if (birthDate < minDate) {
-        throw new PatientValidationError("Birth date is too far in the past");
-      }
+    if (!_request.cpf) {
+      throw new PatientValidationError(["CPF is required"]);
     }
 
-    // Validate phone numbers if provided
-    if (request.phonePrimary && !this.validateBrazilianPhone(request.phonePrimary)) {
-      throw new PatientValidationError("Invalid primary phone number format");
+    if (!_request.dateOfBirth) {
+      throw new PatientValidationError(["Date of birth is required"]);
     }
 
-    if (request.phoneSecondary && !this.validateBrazilianPhone(request.phoneSecondary)) {
-      throw new PatientValidationError("Invalid secondary phone number format");
+    if (!_request.lgpdConsent) {
+      throw new PatientValidationError(["LGPD consent is required"]);
+    }
+
+    // Validate birth date
+    const birthDate = new Date(_request.dateOfBirth);
+    const now = new Date();
+
+    if (isNaN(birthDate.getTime())) {
+      throw new PatientValidationError(["Invalid birth date format"]);
+    }
+
+    if (birthDate > now) {
+      throw new PatientValidationError(["Birth date cannot be in the future"]);
+    }
+
+    // Check if person is reasonably old (not older than 150 years)
+    const maxAge = 150;
+    const minDate = new Date(now.getFullYear() - maxAge, now.getMonth(), now.getDate());
+    if (birthDate < minDate) {
+      throw new PatientValidationError(["Birth date is too far in the past"]);
+    }
+
+    // Validate phone number if provided
+    if (_request.phone && !this.validateBrazilianPhone(_request.phone)) {
+      throw new PatientValidationError(["Invalid phone number format"]);
     }
 
     // Validate email if provided
-    if (request.email && !this.validateEmail(request.email)) {
-      throw new PatientValidationError("Invalid email format");
+    if (_request.email && !this.validateEmail(_request.email)) {
+      throw new PatientValidationError(["Invalid email format"]);
     }
   }
 
@@ -280,4 +360,30 @@ export class PatientService {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   }
-}
+
+  /**
+   * Adapt API request to domain format
+   */
+  private adaptApiRequestToDomain(apiRequest: ApiCreatePatientRequest): Omit<Patient, 'id' | 'createdAt' | 'updatedAt'> {
+    const names = apiRequest.fullName.split(' ');
+    const givenNames = names.slice(0, -1);
+    const familyName = names[names.length - 1];
+
+    return {
+      clinicId: apiRequest.clinicId,
+      medicalRecordNumber: `MRN-${Date.now()}`, // Generate one since API doesn't provide it
+      givenNames: givenNames.length > 0 ? givenNames : [givenNames.join(' ') || 'Unknown'],
+      familyName: familyName || 'Unknown',
+      fullName: apiRequest.fullName,
+      cpf: apiRequest.cpf,
+      birthDate: apiRequest.dateOfBirth,
+      email: apiRequest.email,
+      phonePrimary: apiRequest.phone,
+      lgpdConsentGiven: apiRequest.lgpdConsent,
+      allergies: [],
+      chronicConditions: [],
+      currentMedications: [],
+      isActive: true
+    };
+  }
+}}

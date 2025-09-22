@@ -197,7 +197,7 @@ export class LGPDComplianceService {
     return {
       action,
       timestamp: new Date(),
-      _userId: _context._userId,
+      userId: _context._userId,
       userRole: typeof metadata.userRole === 'string' ? metadata.userRole : undefined,
       ipAddress: _context.ipAddress,
       userAgent: _context.userAgent,

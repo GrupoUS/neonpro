@@ -26,10 +26,10 @@ describe('SecurityUtils_, () => {
     });
 
     it('should handle non-string inputs_, () => {
-      expect(SecurityUtils.sanitizeInput(null as any)).toBe('');
-      expect(SecurityUtils.sanitizeInput(undefined as any)).toBe('');
-      expect(SecurityUtils.sanitizeInput(123 as any)).toBe('');
-      expect(SecurityUtils.sanitizeInput({} as any)).toBe('');
+      expect(SecurityUtils.sanitizeInput(null as any)).toBe(');
+      expect(SecurityUtils.sanitizeInput(undefined as any)).toBe(');
+      expect(SecurityUtils.sanitizeInput(123 as any)).toBe(');
+      expect(SecurityUtils.sanitizeInput({} as any)).toBe(');
     });
   });
 
@@ -56,12 +56,12 @@ describe('SecurityUtils_, () => {
         '@domain.com',
         'test@domain',
         'test domain.com',
-        '',
+        ',
       ];
 
       invalidEmails.forEach(email => {
         const sanitized = SecurityUtils.sanitizeEmail(email);
-        expect(sanitized).toBe('');
+        expect(sanitized).toBe(');
       });
     });
   });
@@ -86,12 +86,12 @@ describe('SecurityUtils_, () => {
         '123', // Too short
         '123456789012', // Too long
         'abc1234567', // Contains letters
-        '', // Empty
+        ', // Empty
       ];
 
       invalidPhones.forEach(phone => {
         const sanitized = SecurityUtils.sanitizePhone(phone);
-        expect(sanitized).toBe('');
+        expect(sanitized).toBe(');
       });
     });
   });
@@ -201,7 +201,7 @@ describe('SecurityUtils_, () => {
         'UNION SELECT username, password FROM users',
         'DROP TABLE users',
         'INSERT INTO users VALUES',
-        'UPDATE users SET admin=\'1\'',
+        'UPDATE users SET admin=\'1\',
       ];
 
       maliciousInputs.forEach(input => {
@@ -257,7 +257,7 @@ describe('SecurityUtils_, () => {
     });
 
     it('should handle empty strings_, () => {
-      expect(SecurityUtils.maskSensitiveData('')).toBe('');
+      expect(SecurityUtils.maskSensitiveData(')).toBe(');
     });
   });
 

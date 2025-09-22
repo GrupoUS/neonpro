@@ -26,7 +26,7 @@ describe('Security Logging - Vulnerability Prevention_, () => {
     it('should NOT log raw SQL queries with parameters_, () => {
       const maliciousQueries = [
         'SELECT * FROM patients WHERE name = \'Robert\'); DROP TABLE patients; --',
-        'SELECT * FROM users WHERE email = \'admin@test.com\' OR \'1\'=\'1\'',
+        'SELECT * FROM users WHERE email = \'admin@test.com\' OR \'1\'=\'1\',
         'INSERT INTO audit_logs (action, user_id) VALUES (\'login\', \'admin\'); SELECT * FROM credit_cards_,
       ];
 
@@ -43,7 +43,7 @@ describe('Security Logging - Vulnerability Prevention_, () => {
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls];
       const hasRawSql = allLogs.some(call =>
         JSON.stringify(call).includes('DROP TABLE')
-        || JSON.stringify(call).includes('OR \'1\'=\'1\'')
+        || JSON.stringify(call).includes('OR \'1\'=\'1\')
         || JSON.stringify(call).includes('SELECT * FROM credit_cards_)
         || JSON.stringify(call).includes('Robert\'); DROP TABLE')
       );

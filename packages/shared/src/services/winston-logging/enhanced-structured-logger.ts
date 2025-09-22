@@ -676,13 +676,13 @@ export class EnhancedStructuredLogger {
     const healthcareContext: BrazilianHealthcareContext = {
       workflowType,
       workflowStage: stage,
-      ...context?.healthcare,
+      ..._context?.healthcare,
     };
 
     this.info(
       `[WORKFLOW:${workflowType?.toUpperCase()}] ${message}`,
       data,
-      { healthcare: healthcareContext, technical: context?.technical }
+      { healthcare: healthcareContext, technical: _context?.technical }
     );
   }
 
@@ -690,12 +690,12 @@ export class EnhancedStructuredLogger {
    * Log medication event
    */
   logMedicationEvent(
-    action: 'prescribed' | 'administered' | 'verified' | 'adverse_reaction_,
+    action: 'prescribed' | 'administered' | 'verified' | 'adverse_reaction',
     message: string,
     healthcareContext: BrazilianHealthcareContext,
     data?: any
   ): void {
-    const severity = action === 'adverse_reaction' ? 'alert' : ''info'
+    const severity = action === 'adverse_reaction' ? 'alert' : 'info'
 
     this.log(
       this.mapSeverityToLevel(severity),

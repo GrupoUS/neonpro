@@ -236,7 +236,7 @@ function PatientRegister() {
   };
 
   const formatCPF = (_value: any) => {
-    return value
+    return _value
       .replace(/\D/g, '')
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d)/, '$1.$2')
@@ -244,14 +244,14 @@ function PatientRegister() {
   };
 
   const formatPhone = (_value: any) => {
-    return value
+    return _value
       .replace(/\D/g, '')
       .replace(/(\d{2})(\d)/, '($1) $2')
       .replace(/(\d{5})(\d)/, '$1-$2');
   };
 
   const formatZipCode = (_value: any) => {
-    return value.replace(/\D/g, '').replace(/(\d{5})(\d)/, '$1-$2');
+    return _value.replace(/\D/g, '').replace(/(\d{5})(\d)/, '$1-$2');
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -417,11 +417,11 @@ function PatientRegister() {
   ];
 
   const renderField = (_field: any) => {
-    const value = formData[field.name as keyof PatientFormData];
-    const error = errors[field.name];
-    const fieldId = `field-${field.name}`;
-    const errorId = `error-${field.name}`;
-    const helpId = `help-${field.name}`;
+    const value = formData[_field.name as keyof PatientFormData];
+    const error = errors[_field.name];
+    const fieldId = `field-${_field.name}`;
+    const errorId = `error-${_field.name}`;
+    const helpId = `help-${_field.name}`;
 
     if (field.type === 'select') {
       return (
@@ -459,13 +459,13 @@ function PatientRegister() {
               />
             </SelectTrigger>
             <SelectContent>
-              {field.options?.map((_options?: any) => (
+              {_field.options?.map((_options?: any) => (
                 <SelectItem
-                  key={option.value}
-                  value={option.value}
+                  key={_options.value}
+                  value={_options.value}
                   className='text-base sm:text-sm py-2 sm:py-1'
                 >
-                  {option.label}
+                  {_options.label}
                 </SelectItem>
               ))}
             </SelectContent>

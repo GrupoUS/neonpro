@@ -44,7 +44,7 @@ export class OrchestrationAudit {
 
     const auditEvent: AuditEventInput = {
       action: "query",
-      userId: "orchestrator",
+      _userId: "orchestrator",
       outcome: "success",
       queryType: `orchestration-start-${state.workflow}`,
       latencyMs: 0,
@@ -65,7 +65,7 @@ export class OrchestrationAudit {
 
     const auditEvent: AuditEventInput = {
       action: "suggestions",
-      userId: "orchestrator",
+      _userId: "orchestrator",
       outcome: success ? "success" : "error",
       queryType: `orchestration-complete-${state.workflow}`,
       latencyMs: duration,
@@ -87,7 +87,7 @@ export class OrchestrationAudit {
 
     const auditEvent: AuditEventInput = {
       action: "query",
-      userId: "orchestrator",
+      _userId: "orchestrator",
       outcome: "success",
       queryType: `phase-transition-${toPhase}`,
       sessionId: orchestrationId,
@@ -107,7 +107,7 @@ export class OrchestrationAudit {
 
     const auditEvent: AuditEventInput = {
       action: "explanation",
-      userId: "orchestrator",
+      _userId: "orchestrator",
       outcome: agentResult.status === "success" ? "success" : "error",
       queryType: `agent-${agentResult.agent}`,
       sessionId: orchestrationId,
@@ -130,7 +130,7 @@ export class OrchestrationAudit {
 
     const auditEvent: AuditEventInput = {
       action: "suggestions",
-      userId: "orchestrator",
+      _userId: "orchestrator",
       outcome: status === "passed" ? "success" : "error",
       queryType: `quality-gate-${gateName}`,
       sessionId: orchestrationId,
@@ -145,7 +145,7 @@ export class OrchestrationAudit {
   async logOrchestratorEvent(event: OrchestratorEvent): Promise<void> {
     const auditEvent: AuditEventInput = {
       action: "query",
-      userId: "orchestrator",
+      _userId: "orchestrator",
       outcome: "success",
       queryType: `orchestrator-${event.type}`,
       sessionId: event.orchestrationId,
@@ -168,7 +168,7 @@ export class OrchestrationAudit {
   ): Promise<void> {
     const auditEvent: AuditEventInput = {
       action: "query",
-      userId: "orchestrator",
+      _userId: "orchestrator",
       outcome: "error",
       queryType: `error-${context.operation || "unknown"}`,
       sessionId: orchestrationId,

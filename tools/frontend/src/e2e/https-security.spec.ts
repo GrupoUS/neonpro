@@ -14,7 +14,7 @@
  */
 
 import { test, expect } from '@playwright/test';
-import { securityConfig } from '../config/security.config';
+// import { securityConfig } from '../config/security.config';
 
 test.describe('HTTPS Security Validation', () => {
   let baseUrl: string;
@@ -54,15 +54,15 @@ test.describe('HTTPS Security Validation', () => {
       } catch (error) {
         // In development/test without HTTPS, check for redirect
         if (process.env.NODE_ENV !== 'production') {
-          const response = await request.get(`${baseUrl}/v1/health`);
-          expect(response.status()).toBe(200);
+          const response = await fetch(`${baseUrl}/v1/health`);
+          expect(response.status).toBe(200);
         } else {
           throw error;
         }
       }
     });
 
-    test('should reject insecure protocols', async ({ request }) => {
+    test('should reject insecure protocols', async () => {
       // This test would require actual TLS configuration testing
       // For now, we validate the configuration exists
       test.skip();
@@ -133,7 +133,7 @@ test.describe('HTTPS Security Validation', () => {
     test('should enforce secure cookie attributes', async ({ request }) => {
       // Test cookie security by making a request that might set cookies
       const response = await request.post(`${baseUrl}/api/v1/auth/login`, {
-        json: {
+        data: {
           email: 'test@example.com',
           password: 'testpassword'
         }
@@ -348,7 +348,7 @@ test.describe('HTTPS Security Validation', () => {
         
       } catch (error) {
         // Network errors are acceptable for certificate issues
-        expect(error.message).toMatch(/certificate|tls|ssl/i);
+        expect((error as Error).message).toMatch(/certificate|tls|ssl/i);
       }
     });
 
@@ -363,6 +363,13 @@ test.describe('HTTPS Security Validation', () => {
 });
 
 test.describe('HTTPS Security Integration Tests', () => {
+  let baseUrl: string;
+
+  test.beforeAll(async () => {
+    baseUrl = process.env.NODE_ENV === 'production'
+      ? 'https://localhost:3001'
+      : 'http://localhost:3001';
+  });
   test('should maintain security across all API endpoints', async ({ request }) => {
     const endpoints = [
       '/v1/health',
@@ -406,4 +413,4 @@ test.describe('HTTPS Security Integration Tests', () => {
   });
 });
 
-export default httpsSecuritySpec;
+// Export test suite for module consistency

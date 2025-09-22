@@ -8,10 +8,10 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EventCalendar } from '../event-calendar';
-import { CalendarEvent } from '../types';
+import { CalendarEvent, CalendarEventExtended, EventColor } from '../types';
 
 // Mock healthcare compliance utilities
-vi.mock(('@/utils/accessibility/healthcare-audit-utils', () => ({
+vi.mock('@/utils/accessibility/healthcare-audit-utils', () => ({
   validateCalendarEvent: vi.fn().mockReturnValue({ valid: true, score: 0.95 }),
   auditEventAccess: vi
     .fn()
@@ -38,7 +38,7 @@ vi.mock(('@/utils/accessibility/healthcare-audit-utils', () => ({
 }));
 
 // Mock professional registry validation
-vi.mock(('@/utils/professional-registry', () => ({
+vi.mock('@/utils/professional-registry', () => ({
   validateProfessionalLicense: vi.fn().mockResolvedValue({
     valid: true,
     license: 'CRM-SP-123456',
@@ -50,15 +50,15 @@ vi.mock(('@/utils/professional-registry', () => ({
   }),
 }));
 
-describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
-  const healthcareEvents: CalendarEvent[] = [
+describe('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
+  const healthcareEvents: CalendarEventExtended[] = [
     {
       id: 'healthcare-1',
       title: 'Consulta Cardiológica',
       description: 'Consulta de acompanhamento - pós-operatório',
       start: new Date('2024-01-15T10:00:00'),
       end: new Date('2024-01-15T11:00:00'),
-      color: 'blue' as EventColor,
+      color: 'blue',
       patientId: 'patient-123',
       professionalId: 'prof-456',
       location: 'Consultório 101',
@@ -70,7 +70,7 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       description: 'ECG de rotina - avaliação cardíaca',
       start: new Date('2024-01-15T14:00:00'),
       end: new Date('2024-01-15T14:30:00'),
-      color: 'emerald' as EventColor,
+      color: 'emerald',
       patientId: 'patient-123',
       professionalId: 'prof-789',
       location: 'Sala de Exames',
@@ -82,7 +82,7 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       description: 'Manutenção preventiva - monitor cardíaco',
       start: new Date('2024-01-16T09:00:00'),
       end: new Date('2024-01-16T10:00:00'),
-      color: 'violet' as EventColor,
+      color: 'violet',
       medicalDevice: {
         classification: 'II',
         manufacturer: 'Medical Tech Inc',
@@ -103,14 +103,14 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
   });
 
   // LGPD COMPLIANCE TESTS
-  describe(('LGPD Compliance - Lei Geral de Proteção de Dados', () => {
-    it(('should implement data minimization for patient information', () => {
+  describe('LGPD Compliance - Lei Geral de Proteção de Dados', () => {
+    it('should implement data minimization for patient information', () => {
       const sensitiveEvent: CalendarEvent = {
         id: 'lgpd-1',
         title: 'Consulta Confidencial',
         start: new Date('2024-01-15T16:00:00'),
         end: new Date('2024-01-15T17:00:00'),
-        color: 'rose' as EventColor,
+        color: 'rose',
         patientData: {
           name: 'Maria Santos Silva',
           cpf: '123.456.789-00',
@@ -137,7 +137,7 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       expect(screen.queryByText('Rua das Flores, 123')).not.toBeInTheDocument();
     });
 
-    it(_'should validate LGPD compliance on event access',async () => {
+    it('should validate LGPD compliance on event access', async () => {
       const { validateLGPDCompliance, auditEventAccess } = await import(
         '@/utils/accessibility/healthcare-audit-utils'
       );
@@ -168,13 +168,13 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       });
     });
 
-    it(('should enforce data retention policies', () => {
+    it('should enforce data retention policies', () => {
       const oldEvent: CalendarEvent = {
         id: 'old-1',
         title: 'Consulta Antiga',
         start: new Date('2020-01-15T10:00:00'), // 4 years ago
         end: new Date('2020-01-15T11:00:00'),
-        color: 'orange' as EventColor,
+        color: 'orange',
         patientId: 'patient-old-123',
       };
 
@@ -186,13 +186,13 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       // Should trigger retention validation
     });
 
-    it(_'should implement patient consent management',async () => {
+    it('should implement patient consent management', async () => {
       const consentEvent: CalendarEvent = {
         id: 'consent-1',
         title: 'Consulta com Consentimento',
         start: new Date('2024-01-15T17:00:00'),
         end: new Date('2024-01-15T18:00:00'),
-        color: 'blue' as EventColor,
+        color: 'blue',
         patientId: 'patient-consent-123',
         consent: {
           id: 'consent-456',
@@ -214,7 +214,7 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       // Should validate consent status
     });
 
-    it(('should handle data subject rights requests', () => {
+    it('should handle data subject rights requests', () => {
       render(<EventCalendar events={healthcareEvents} {...mockCallbacks} />);
 
       // Should support LGPD data subject rights:
@@ -225,13 +225,13 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       // - Right to information
     });
 
-    it(('should implement encryption for sensitive data', () => {
+    it('should implement encryption for sensitive data', () => {
       const encryptedEvent: CalendarEvent = {
         id: 'encrypted-1',
         title: 'Consulta Criptografada',
         start: new Date('2024-01-15T18:00:00'),
         end: new Date('2024-01-15T19:00:00'),
-        color: 'violet' as EventColor,
+        color: 'violet',
         patientId: 'encrypted-patient-123',
         encryptedData: {
           diagnosis: 'encrypted_diagnosis_data',
@@ -250,8 +250,8 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
   });
 
   // ANVISA COMPLIANCE TESTS
-  describe(('ANVISA Compliance - Agência Nacional de Vigilância Sanitária', () => {
-    it(_'should validate medical device classification',async () => {
+  describe('ANVISA Compliance - Agência Nacional de Vigilância Sanitária', () => {
+    it('should validate medical device classification', async () => {
       const { validateANVISACompliance } = await import(
         '@/utils/accessibility/healthcare-audit-utils'
       );
@@ -262,7 +262,7 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
         description: 'Calibração anual de monitor cardíaco',
         start: new Date('2024-01-15T15:00:00'),
         end: new Date('2024-01-15T16:00:00'),
-        color: 'orange' as EventColor,
+        color: 'orange',
         medicalDevice: {
           classification: 'II',
           manufacturer: 'Medical Devices Brazil',
@@ -292,7 +292,7 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       });
     });
 
-    it(('should track medical equipment maintenance schedules', () => {
+    it('should track medical equipment maintenance schedules', () => {
       const maintenanceEvents: CalendarEvent[] = [
         {
           id: 'maintenance-1',
@@ -300,7 +300,7 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
           description: 'Manutenção preventiva mensal',
           start: new Date('2024-01-15T09:00:00'),
           end: new Date('2024-01-15T10:00:00'),
-          color: 'emerald' as EventColor,
+          color: 'emerald',
           maintenanceType: 'preventive',
           equipmentId: 'equip-123',
           frequency: 'monthly',
@@ -311,7 +311,7 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
           description: 'Reparo emergencial',
           start: new Date('2024-01-15T14:00:00'),
           end: new Date('2024-01-15T16:00:00'),
-          color: 'rose' as EventColor,
+          color: 'rose',
           maintenanceType: 'corrective',
           equipmentId: 'equip-456',
           urgency: 'high',
@@ -326,14 +326,14 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       // Should validate maintenance compliance
     });
 
-    it(('should handle medical device recall situations', () => {
+    it('should handle medical device recall situations', () => {
       const recallEvent: CalendarEvent = {
         id: 'recall-1',
         title: 'Recall Equipamento',
         description: 'Recall urgente - lote defeituoso',
         start: new Date('2024-01-15T16:00:00'),
         end: new Date('2024-01-15T18:00:00'),
-        color: 'rose' as EventColor,
+        color: 'rose',
         medicalDevice: {
           classification: 'II',
           manufacturer: 'Defective Devices Inc',
@@ -355,14 +355,14 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       // Should handle recall procedures appropriately
     });
 
-    it(('should validate sterilization procedures', () => {
+    it('should validate sterilization procedures', () => {
       const sterilizationEvent: CalendarEvent = {
         id: 'sterilization-1',
         title: 'Esterilização Equipamento',
         description: 'Esterilização autoclave - equipamento cirúrgico',
         start: new Date('2024-01-15T11:00:00'),
         end: new Date('2024-01-15T12:00:00'),
-        color: 'violet' as EventColor,
+        color: 'violet',
         medicalProcedure: {
           type: 'sterilization',
           method: 'autoclave',
@@ -384,14 +384,14 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       // Should validate sterilization parameters
     });
 
-    it(('should track quality control procedures', () => {
+    it('should track quality control procedures', () => {
       const qualityControlEvent: CalendarEvent = {
         id: 'qc-1',
         title: 'Controle de Qualidade',
         description: 'Inspeção de qualidade - produção',
         start: new Date('2024-01-15T13:00:00'),
         end: new Date('2024-01-15T15:00:00'),
-        color: 'blue' as EventColor,
+        color: 'blue',
         qualityControl: {
           type: 'production_inspection',
           standard: 'ISO-13485',
@@ -412,8 +412,8 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
   });
 
   // CFM COMPLIANCE TESTS
-  describe(('CFM Compliance - Conselho Federal de Medicina', () => {
-    it(_'should validate professional license and credentials',async () => {
+  describe('CFM Compliance - Conselho Federal de Medicina', () => {
+    it('should validate professional license and credentials', async () => {
       const { validateProfessionalLicense } = await import(
         '@/utils/professional-registry'
       );
@@ -434,13 +434,13 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       });
     });
 
-    it(('should enforce appointment duration limits', () => {
+    it('should enforce appointment duration limits', () => {
       const excessiveDurationEvent: CalendarEvent = {
         id: 'excessive-1',
         title: 'Consulta Excessivamente Longa',
         start: new Date('2024-01-15T10:00:00'),
         end: new Date('2024-01-15T14:00:00'), // 4 hours
-        color: 'rose' as EventColor,
+        color: 'rose',
         patientId: 'patient-123',
         professionalId: 'prof-456',
         specialty: 'Cardiologia',
@@ -456,14 +456,14 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       // Should validate CFM duration guidelines
     });
 
-    it(('should prevent simultaneous appointments for same professional', () => {
+    it('should prevent simultaneous appointments for same professional', () => {
       const conflictingEvents: CalendarEvent[] = [
         {
           id: 'conflict-1',
           title: 'Consulta Dr. Silva - Paciente A',
           start: new Date('2024-01-15T10:00:00'),
           end: new Date('2024-01-15T11:00:00'),
-          color: 'blue' as EventColor,
+          color: 'blue',
           patientId: 'patient-a',
           professionalId: 'prof-456',
           specialty: 'Cardiologia',
@@ -473,7 +473,7 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
           title: 'Consulta Dr. Silva - Paciente B',
           start: new Date('2024-01-15T10:30:00'),
           end: new Date('2024-01-15T11:30:00'),
-          color: 'blue' as EventColor,
+          color: 'blue',
           patientId: 'patient-b',
           professionalId: 'prof-456', // Same professional
           specialty: 'Cardiologia',
@@ -491,7 +491,7 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       // Should handle professional scheduling conflicts
     });
 
-    it(_'should validate professional-patient relationship boundaries',async () => {
+    it('should validate professional-patient relationship boundaries', async () => {
       const { validateCFMCompliance } = await import(
         '@/utils/accessibility/healthcare-audit-utils'
       );
@@ -514,14 +514,14 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       });
     });
 
-    it(('should enforce telemedicine regulations', () => {
+    it('should enforce telemedicine regulations', () => {
       const telemedicineEvent: CalendarEvent = {
         id: 'telemedicine-1',
         title: 'Teleconsulta Cardiológica',
         description: 'Consulta remota via telemedicina',
         start: new Date('2024-01-15T15:00:00'),
         end: new Date('2024-01-15T16:00:00'),
-        color: 'violet' as EventColor,
+        color: 'violet',
         patientId: 'patient-tele-123',
         professionalId: 'prof-456',
         specialty: 'Cardiologia',
@@ -540,14 +540,14 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       // Should validate CFM telemedicine regulations
     });
 
-    it(('should handle prescription management', () => {
+    it('should handle prescription management', () => {
       const prescriptionEvent: CalendarEvent = {
         id: 'prescription-1',
         title: 'Renovação Receita',
         description: 'Renovação de receita controlada',
         start: new Date('2024-01-15T16:00:00'),
         end: new Date('2024-01-15T17:00:00'),
-        color: 'orange' as EventColor,
+        color: 'orange',
         patientId: 'patient-rx-123',
         professionalId: 'prof-456',
         specialty: 'Cardiologia',
@@ -570,14 +570,14 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       // Should validate prescription regulations
     });
 
-    it(('should maintain professional confidentiality', () => {
+    it('should maintain professional confidentiality', () => {
       const confidentialEvent: CalendarEvent = {
         id: 'confidential-1',
         title: 'Discussão de Caso',
         description: 'Discussão de caso complexo entre profissionais',
         start: new Date('2024-01-15T18:00:00'),
         end: new Date('2024-01-15T19:00:00'),
-        color: 'rose' as EventColor,
+        color: 'rose',
         isConfidential: true,
         participants: ['prof-456', 'prof-789'],
         discussionTopic: 'Caso clínico complexo',
@@ -596,8 +596,8 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
   });
 
   // COMPREHENSIVE AUDIT TRAIL TESTING
-  describe(('Comprehensive Audit Trail', () => {
-    it(_'should generate complete audit trail for all operations',async () => {
+  describe('Comprehensive Audit Trail', () => {
+    it('should generate complete audit trail for all operations', async () => {
       const { generateAuditTrail } = await import(
         '@/utils/accessibility/healthcare-audit-utils'
       );
@@ -623,14 +623,14 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       });
     });
 
-    it(('should maintain immutable audit records', () => {
+    it('should maintain immutable audit records', () => {
       render(<EventCalendar events={healthcareEvents} {...mockCallbacks} />);
 
       // Should ensure audit records cannot be tampered with
       // This is critical for healthcare compliance
     });
 
-    it(('should provide audit reporting capabilities', () => {
+    it('should provide audit reporting capabilities', () => {
       render(<EventCalendar events={healthcareEvents} {...mockCallbacks} />);
 
       // Should support audit report generation
@@ -639,15 +639,15 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
   });
 
   // CROSS-COMPLIANCE INTEGRATION
-  describe(('Cross-Compliance Integration', () => {
-    it(_'should coordinate between LGPD,ANVISA, and CFM requirements',async () => {
+  describe('Cross-Compliance Integration', () => {
+    it('should coordinate between LGPD,ANVISA, and CFM requirements', async () => {
       const integratedEvent: CalendarEvent = {
         id: 'integrated-1',
         title: 'Consulta Integrada',
         description: 'Consulta com equipamento médico e dados sensíveis',
         start: new Date('2024-01-15T17:00:00'),
         end: new Date('2024-01-15T18:00:00'),
-        color: 'blue' as EventColor,
+        color: 'blue',
         patientId: 'patient-integrated-123',
         professionalId: 'prof-456',
         specialty: 'Cardiologia',
@@ -668,13 +668,13 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       // Should coordinate all three compliance frameworks
     });
 
-    it(('should handle compliance violations appropriately', () => {
+    it('should handle compliance violations appropriately', () => {
       const violationEvent: CalendarEvent = {
         id: 'violation-1',
         title: 'Potencial Violação',
         start: new Date('2024-01-15T19:00:00'),
         end: new Date('2024-01-15T20:00:00'),
-        color: 'rose' as EventColor,
+        color: 'rose',
         // This should trigger compliance violation detection
         complianceRisk: 'high',
       };
@@ -687,7 +687,7 @@ describe(('Healthcare Compliance Suite - LGPD,ANVISA, CFM', () => {
       // Should handle violations with appropriate alerts and actions
     });
 
-    it(('should provide compliance documentation', () => {
+    it('should provide compliance documentation', () => {
       render(<EventCalendar events={healthcareEvents} {...mockCallbacks} />);
 
       // Should generate compliance documentation for:

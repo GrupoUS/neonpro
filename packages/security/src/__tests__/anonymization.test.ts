@@ -57,8 +57,8 @@ describe('LGPD Anonymization Utils - Core Masking Functions_, () => {
     });
 
     test('should handle empty input_, () => {
-      expect(maskCPF('')).toBe('');
-      expect(maskCPF(undefined as any)).toBe('');
+      expect(maskCPF(')).toBe(');
+      expect(maskCPF(undefined as any)).toBe(');
     });
   });
 
@@ -528,10 +528,10 @@ describe('LGPD Anonymization Utils - Configuration and Constants_, () => {
 
 describe('LGPD Anonymization Utils - Edge Cases and Error Handling_, () => {
   test('should handle null and undefined inputs gracefully_, () => {
-    expect(maskCPF(null as any)).toBe('');
+    expect(maskCPF(null as any)).toBe(');
     expect(maskEmail(undefined as any)).toBe(undefined);
-    expect(maskPhone('')).toBe('');
-    expect(maskName(null as any)).toBe('');
+    expect(maskPhone(')).toBe(');
+    expect(maskName(null as any)).toBe(');
   });
 
   test('should handle empty patient data_, () => {

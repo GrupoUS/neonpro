@@ -45,7 +45,7 @@ export interface AIVoiceProps {
 
 export interface ChatMessage {
   id: string;
-  _role: 'user' | 'assistant' | 'system';
+  role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
   clientId?: string;

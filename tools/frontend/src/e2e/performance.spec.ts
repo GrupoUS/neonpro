@@ -41,7 +41,7 @@ test.describe('Performance Requirements Validation', () => {
         let response;
         if (endpoint.method === 'POST') {
           response = await request.post(`${baseUrl}${endpoint.path}`, {
-            json: {
+            data: {
               query: 'test query',
               context: { test: true }
             }
@@ -172,7 +172,7 @@ test.describe('Performance Requirements Validation', () => {
         const startTime = performance.now();
         
         const response = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
-          json: {
+          data: {
             query: aiQuery.query,
             context: {
               test: true,
@@ -208,7 +208,7 @@ test.describe('Performance Requirements Validation', () => {
       const startTime = performance.now();
       
       const response = await request.post(`${baseUrl}/api/v2/ai/chat`, {
-        json: streamingQuery
+        data: streamingQuery
       });
       
       const endTime = performance.now();
@@ -228,7 +228,7 @@ test.describe('Performance Requirements Validation', () => {
       
       const queryPromises = Array(concurrentQueries).fill(null).map((_, index) => 
         request.post(`${baseUrl}/api/v2/ai/data-agent`, {
-          json: {
+          data: {
             query: `Test query ${index + 1}: list patient appointments`,
             context: { testId: index + 1 }
           }
@@ -328,14 +328,14 @@ test.describe('Performance Requirements Validation', () => {
           const originalWebSocket = window.WebSocket;
           window.WebSocket = function(url: string, protocols?: string | string[]) {
             const ws = new originalWebSocket(url, protocols);
-            
+
             ws.addEventListener('open', () => {
               const endTime = performance.now();
               resolve(endTime - startTime);
             });
-            
+
             return ws;
-          };
+          } as any;
           
           // Trigger WebSocket connection
           setTimeout(() => resolve(0), 5000); // Timeout after 5 seconds
@@ -510,7 +510,7 @@ test.describe('Performance Requirements Validation', () => {
       }
     });
 
-    test('should track performance degradation', async ({ request }) => {
+    test('should track performance degradation', async () => {
       // This would test performance monitoring and alerting
       test.info().annotations.push({
         type: 'note',
@@ -541,9 +541,9 @@ test.describe('Performance Requirements Validation', () => {
       });
 
       // Validate Core Web Vitals thresholds
-      expect(webVitals.lcp).toBeLessThanOrEqual(2500); // LCP ≤2.5s
-      expect(webVitals.fid).toBeLessThanOrEqual(100);   // FID ≤100ms
-      expect(webVitals.cls).toBeLessThanOrEqual(0.1);  // CLS ≤0.1
+      expect((webVitals as any).lcp).toBeLessThanOrEqual(2500); // LCP ≤2.5s
+      expect((webVitals as any).fid).toBeLessThanOrEqual(100);   // FID ≤100ms
+      expect((webVitals as any).cls).toBeLessThanOrEqual(0.1);  // CLS ≤0.1
     });
   });
 
@@ -591,4 +591,4 @@ test.describe('Performance Requirements Validation', () => {
   });
 });
 
-export default performanceSpec;
+// Export test suite for module consistency

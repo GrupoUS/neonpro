@@ -263,9 +263,9 @@ class DatabaseTestRunner {
         timestamp: new Date().toISOString()
       };
 
-    } catch (_error: any) {
+    } catch (error: any) {
       const duration = Date.now() - startTime;
-      
+
       return {
         suite: suiteName,
         tests: [{

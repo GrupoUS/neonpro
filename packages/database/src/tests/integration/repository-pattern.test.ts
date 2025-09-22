@@ -3,12 +3,14 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { RepositoryContainer } from "../../containers/repository-container.js";
 import { PatientService } from "../../application/patient-service.js";
 import { 
-  CreatePatientRequest, 
-  UpdatePatientRequest,
-  PatientFilter,
   PatientError,
   PatientValidationError 
 } from "@neonpro/domain";
+import { 
+  CreatePatientRequest, 
+  UpdatePatientRequest,
+  PatientFilters
+} from "@neonpro/types";
 
 // Mock Supabase client for testing
 const createMockSupabaseClient = () => {
@@ -116,7 +118,7 @@ describe("Repository Pattern Integration Tests", () => {
         lgpdConsentGiven: true
       };
 
-      const patient = await patientService.createPatient(request);
+      const patient = await patientService.createPatient(_request);
       expect(patient).toBeDefined();
       expect(patient.id).toBe("test-patient-id");
     });
@@ -148,7 +150,7 @@ describe("Repository Pattern Integration Tests", () => {
         lgpdConsentGiven: true
       };
 
-      await expect(patientService.createPatient(request))
+      await expect(patientService.createPatient(_request))
         .rejects.toThrow("Invalid CPF format");
     });
 
@@ -164,7 +166,7 @@ describe("Repository Pattern Integration Tests", () => {
         lgpdConsentGiven: true
       };
 
-      await expect(patientService.createPatient(request))
+      await expect(patientService.createPatient(_request))
         .rejects.toThrow("Invalid primary phone number format");
     });
 
@@ -180,7 +182,7 @@ describe("Repository Pattern Integration Tests", () => {
         lgpdConsentGiven: true
       };
 
-      await expect(patientService.createPatient(request))
+      await expect(patientService.createPatient(_request))
         .rejects.toThrow("Invalid email format");
     });
 
@@ -206,11 +208,11 @@ describe("Repository Pattern Integration Tests", () => {
       const result = await patientService.searchPatients("John", "test-clinic-id");
       expect(result).toHaveProperty("patients");
       expect(result).toHaveProperty("total");
-      expect(Array.isArray(result.patents)).toBe(true);
+      expect(Array.isArray(result.patients)).toBe(true);
     });
 
     it(_"should count patients",_async () => {
-      const filter: PatientFilter = { clinicId: "test-clinic-id" };
+      const filter: PatientFilters = { clinicId: "test-clinic-id" };
       const count = await patientService.countPatients(filter);
       expect(typeof count).toBe("number");
       expect(count).toBeGreaterThanOrEqual(0);
@@ -255,7 +257,7 @@ describe("Repository Pattern Integration Tests", () => {
         lgpdConsentGiven: true
       };
 
-      await expect(patientService.createPatient(request))
+      await expect(patientService.createPatient(_request))
         .rejects.toThrow("Birth date cannot be in the future");
     });
 

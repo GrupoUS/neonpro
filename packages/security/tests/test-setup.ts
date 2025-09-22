@@ -51,7 +51,7 @@ export const securityTestUtils = {
       '--',
       '/*',
       '*/',
-      'xp_cmdshell_,
+      'xp_cmdshell',
       'INSERT INTO',
       'UPDATE SET',
       'DELETE FROM',
@@ -96,15 +96,15 @@ export const securityTestUtils = {
   // Check for CSRF token exposure
   hasCsrfTokenExposure: (output: string[][]) => {
     const csrfPatterns = [
-      'csrf_token_,
+      'csrf_token',
       'csrf-token',
       'csrfToken',
       'cross-site',
       'forgery',
       'token',
       'secret',
-      'session_token_,
-      'authenticity_token_,
+      'session_token',
+      'authenticity_token',
     ];
 
     return output.some(log =>
@@ -189,10 +189,10 @@ export const securityTestUtils = {
   // Check for encryption key exposure
   hasEncryptionKeyExposure: (output: string[][]) => {
     const encryptionPatterns = [
-      'private_key_,
-      'public_key_,
-      'secret_key_,
-      'encryption_key_,
+      'private_key',
+      'public_key',
+      'secret_key',
+      'encryption_key',
       'aes',
       'rsa',
       'sha256',
@@ -218,10 +218,10 @@ export const securityTestUtils = {
   // Check for rate limiting configuration exposure
   hasRateLimitConfigExposure: (output: string[][]) => {
     const rateLimitPatterns = [
-      'rate_limit_,
-      'max_requests_,
+      'rate_limit',
+      'max_requests',
       'window',
-      'ban_duration_,
+      'ban_duration',
       'redis',
       'cache',
       'throttle',

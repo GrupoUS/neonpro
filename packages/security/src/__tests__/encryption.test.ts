@@ -27,7 +27,7 @@ describe('EncryptionManager_, () => {
       expect(encryptionManager.validateKey(validKey)).toBe(true);
 
       expect(encryptionManager.validateKey('invalid')).toBe(false);
-      expect(encryptionManager.validateKey('')).toBe(false);
+      expect(encryptionManager.validateKey(')).toBe(false);
       expect(encryptionManager.validateKey('short')).toBe(false);
     });
   });
