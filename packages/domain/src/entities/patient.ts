@@ -233,10 +233,10 @@ export class PatientError extends Error {
   }
 }
 
-export class PatientValidationError extends PatientError {
+export class PatientEntityValidationError extends PatientError {
   constructor(message: string, public field: string, public value?: any) {
     super(message, 'VALIDATION_ERROR', { field, value });
-    this.name = 'PatientValidationError';
+    this.name = 'PatientEntityValidationError';
   }
 }
 

@@ -44,17 +44,17 @@ export class ConsentDomainService {
     }
 
     // Create consent record
-    const consent = ConsentFactory.createFromRequest(request, grantedBy);
+    const consent = ConsentFactory.createFromRequest(_request, grantedBy);
 
     // Add grant audit event
     const grantEvent = ConsentFactory.createAuditEvent(
       ConsentAction.GRANTED,
-      request.patientId,
+      _request.patientId,
       grantedBy,
       {
-        consentType: request.consentType,
-        purpose: request.purpose,
-        dataTypesCount: request.dataTypes.length,
+        consentType: _request.consentType,
+        purpose: _request.purpose,
+        dataTypesCount: _request.dataTypes.length,
       }
     );
     consent.auditTrail.push(grantEvent);
