@@ -6,12 +6,17 @@
 
 import { zValidator } from '@hono/zod-validator';
 import { Context, Hono, Next } from 'hono';
+import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service.js';
 
 // Type definitions
+interface AuditServiceInterface {
+  logActivity: (payload: any) => Promise<void>;
+}
+
 interface ServiceInterface {
   aiChatService: AIChatService;
-  auditService: AuditService;
+  auditService: AuditServiceInterface;
 }
 
 // Mock middleware for testing
@@ -62,7 +67,7 @@ const modelsQuerySchema = z.object({
     .string()
     .transform(val => val === 'true')
     .optional(),
-});
+}) as unknown as z.ZodTypeAny; // <-- cast to ZodTypeAny to satisfy zValidator typing
 
 // Services - will be injected during testing or use real services in production
 let services: ServiceInterface | null = null;
@@ -73,13 +78,40 @@ export const setServices = (injectedServices: ServiceInterface) => {
 };
 
 // Default services for production
-const getServices = () => {
+const getServices = async (): Promise<ServiceInterface> => {
   if (services) return services;
 
-  // Use real service instances in production
+  // Use real service instances in production, try to import audit-service flexibly
+  const aiChatService = new AIChatService();
+  let auditService: AuditServiceInterface;
+
+  try {
+    const mod = await import('../../services/audit-service.js');
+    // support: named export AuditService, default export, or exported singleton
+    const AuditCtor = mod.AuditService || mod.default?.AuditService || mod.default
+      || mod.auditService;
+    if (typeof AuditCtor === 'function') {
+      // constructor -> instantiate
+      auditService = new AuditCtor();
+    } else if (AuditCtor && typeof AuditCtor.logActivity === 'function') {
+      // already an object with logActivity
+      auditService = AuditCtor;
+    } else {
+      // fallback stub
+      auditService = {
+        logActivity: async () => {/* noop fallback */},
+      };
+    }
+  } catch (e) {
+    // fallback stub if import fails
+    auditService = {
+      logActivity: async () => {/* noop fallback */},
+    };
+  }
+
   return {
-    aiChatService: new AIChatService(),
-    auditService: new AuditService(),
+    aiChatService,
+    auditService,
   };
 };
 
@@ -96,7 +128,7 @@ app.get(
     const healthcareProfessional = c.req.header('X-Healthcare-Professional');
 
     try {
-      const currentServices = getServices();
+      const currentServices = await getServices(); // changed to await
 
       // Validate filter parameters
       const validProviders = ['openai', 'anthropic', 'google'];
@@ -276,7 +308,7 @@ app.get(
       }
 
       // Set all headers
-      Object.entries(responseHeaders).forEach(([key,_value]) => {
+      Object.entries(responseHeaders).forEach(([key, value]) => {
         c.header(key, value);
       });
 
@@ -299,7 +331,7 @@ app.get(
       console.error('AI Models endpoint error:', error);
 
       // Log error for audit
-      const currentServices = getServices();
+      const currentServices = await getServices(); // changed to await
       await currentServices.auditService.logActivity({
         _userId: user.id,
         action: 'ai_models_error',

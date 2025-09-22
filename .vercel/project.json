@@ -1,1 +1,16 @@
-{"projectId":"prj_2d3tEP931RoNtiIGSlJ1EXL0EaFY","orgId":"team_bjVDLqo42Gb3p28RelxJia6x","projectName":"neonpro"}
+{
+  "projectId": "prj_2d3tEP931RoNtiIGSlJ1EXL0EaFY",
+  "orgId": "team_bjVDLqo42Gb3p28RelxJia6x",
+  "projectName": "neonpro",
+  "settings": {
+    "createdAt": 1757602560224,
+    "framework": null,
+    "devCommand": null,
+    "installCommand": "cd apps/web && bun install",
+    "buildCommand": "cd apps/web && bun run build:vercel",
+    "outputDirectory": "apps/web/dist",
+    "rootDirectory": "",
+    "directoryListing": false,
+    "nodeVersion": "22.x"
+  }
+}

@@ -1,100 +1,82 @@
-# Exclude all node_modules directories
-**/node_modules/**
+# Vercel Ignore for Monorepo Deployment - Allowlist Strategy
+# This ensures only the web app is deployed, reducing payload from 6,323 files to ~400 files
 
-# Exclude other large directories
-.git
-.gitignore
-.vercel
-.next
-.nuxt
-dist
-build
-out
-.turbo
-.cache
-coverage
-.nyc_output
-.vscode
-.idea
-*.log
-*.tgz
-*.tar.gz
+# Ignore everything at root
+/*
 
-# Test directories
-**/__tests__/**
-**/tests/**
-**/test/**
-**/spec/**
+# Allow only web app and essential files
+!apps/web/
+!package.json
+!bun.lockb
+!pnpm-lock.yaml
+!yarn.lock
+!package-lock.json
+!vercel.json
+!tsconfig.base.json
 
-# Documentation (can be large)
+# Ignore all other apps
+apps/api/
+apps/tools/
+
+# Ignore all packages
+packages/
+
+# Ignore documentation and scripts
 docs/
+scripts/
+.kilocode/
+.specify/
+.config/
+
+# Ignore development files
 *.md
 !README.md
+*.env.example
+*.env.local
+*.env.development
+*.env.test
+*.env.production.local
 
-# Large datasets and media
-**/*.csv
-**/*.json
-**/*.xml
-**/datasets/**
-**/media/**
-**/images/**
-**/videos/**
+# Ignore build artifacts and cache
+**/dist/
+**/build/
+**/.turbo/
+**/.cache/
+**/node_modules/
+**/.next/
+**/.nuxt/
+**/coverage/
+**/.nyc_output/
 
-# Temporary files
-.tmp
-.temp
-*.tmp
-*.temp
-
-# OS files
+# Ignore IDE and OS files
+.vscode/
+.idea/
 .DS_Store
 Thumbs.db
 
-# Local environment files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# Ignore log files
+*.log
+logs/
 
-# Build artifacts
-*.tsbuildinfo
+# Ignore temporary files
+*.tmp
+*.temp
 *.swp
-*.swo
 *~
 
-# Large cache directories
-**/.cache/**
-**/.webpack/**
-**/.vite/**
+# Ignore testing files
+**/*.test.*
+**/*.spec.*
+**/__tests__/
+**/e2e/
+**/playwright-report/
+**/test-results/
 
-# Database files
-*.db
-*.sqlite
-*.sqlite3
+# Ignore bundle analysis
+**/bundle-analysis.html
+**/stats.html
 
-# Archive files
-*.zip
-*.rar
-*.7z
-
-# Node.js specific
-.npm
-.yarn-integrity
-.pnpm-debug.log*
-
-# Python specific (if any)
-__pycache__/
-*.py[cod]
-*$py.class
-.Python
-venv/
-ENV/
-
-# Rust specific (if any)
-target/
-Cargo.lock
-
-# Package lock files
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
+# Ignore git files
+.git/
+.gitignore
+.gitattributes

@@ -2,7 +2,7 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
 import { createHash } from 'crypto';
 import path from 'path';
-import { visualizer } from 'rollup-plugin-visualizer';
+// import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 
 // Healthcare SRI Plugin for Vite
@@ -52,18 +52,18 @@ export default defineConfig(({ mode }) => {
       healthcareSRIPlugin(),
 
       // Bundle analyzer for performance monitoring (only when ANALYZE=true)
-      ...(isAnalyze
-        ? [
-          visualizer({
-            filename: 'dist/bundle-analysis.html',
-            open: false,
-            gzipSize: true,
-            brotliSize: true,
-            template: 'treemap',
-            title: 'NeonPro Healthcare Platform - Bundle Analysis',
-          }),
-        ]
-        : []),
+      // ...(isAnalyze
+      //   ? [
+      //       visualizer({
+      //         filename: 'dist/bundle-analysis.html',
+      //         open: false,
+      //         gzipSize: true,
+      //         brotliSize: true,
+      //         template: 'treemap',
+      //         title: 'NeonPro Healthcare Platform - Bundle Analysis',
+      //       }),
+      //     ]
+      //   : []),
     ],
 
     resolve: {

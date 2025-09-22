@@ -130,5 +130,18 @@
       "tmp@<=0.2.3": ">=0.2.4",
       "tar-fs@>=2.0.0 <2.1.3": ">=2.1.3"
     }
-  }
+  },
+  "main": "create_agent_tables_simple.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GrupoUS/neonpro.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GrupoUS/neonpro/issues"
+  },
+  "homepage": "https://github.com/GrupoUS/neonpro#readme"
 }
