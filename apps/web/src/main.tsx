@@ -39,7 +39,7 @@ function showErrorBanner(message: string) {
 
 if ((import.meta as any).env?.DEV) {
   window.addEventListener('error', e => showErrorBanner(e.message));
-  window.addEventListener('unhandledrejection', (_e: any) => {
+  window.addEventListener('unhandledrejection', (e: any) => {
     const reason: any = (e as any).reason;
     showErrorBanner(
       typeof reason === 'string' ? reason : (reason?.message ?? String(reason)),
@@ -56,7 +56,7 @@ if ((import.meta as any).env?.DEV) {
 clientCSPManager;
 
 // Healthcare SRI-enabled resource loading utility
-function _loadResourceWithSRI(
+function loadResourceWithSRI(
   url: string,
   type: 'script' | 'style',
   integrity?: string,
@@ -200,7 +200,7 @@ async function bootstrap() {
                     enableLogging: process.env.NODE_ENV !== 'production',
                   }}
                 >
-                  <RouterProvider router={router} />
+                  {router && <RouterProvider router={router} />}
                 </CSPProvider>
               </ConsentProvider>
             </ErrorBoundary>
@@ -218,8 +218,8 @@ async function bootstrap() {
         console.log('[Performance] Core Web Vitals:', metrics);
       }, 2000);
     }
-  } catch (err: any) {
-    console.error(error);
+  } catch (_err: any) {
+    console.error(err);
     if ((import.meta as any).env?.DEV) {
       showErrorBanner(err?.message ?? String(err));
     }

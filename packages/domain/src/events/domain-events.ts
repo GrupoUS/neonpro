@@ -28,7 +28,7 @@ export interface PatientCreatedEvent extends DomainEvent {
 }
 
 export interface PatientUpdatedEvent extends DomainEvent {
-  eventType: 'PatientUpdated';
+  eventType: 'PatientUpdated'
   aggregateType: 'Patient';
   data: {
     patientId: string;
@@ -38,7 +38,7 @@ export interface PatientUpdatedEvent extends DomainEvent {
 }
 
 export interface PatientDeletedEvent extends DomainEvent {
-  eventType: 'PatientDeleted';
+  eventType: 'PatientDeleted'
   aggregateType: 'Patient';
   data: {
     patientId: string;
@@ -48,12 +48,12 @@ export interface PatientDeletedEvent extends DomainEvent {
 }
 
 export interface PatientAnonymizedEvent extends DomainEvent {
-  eventType: 'PatientAnonymized';
+  eventType: 'PatientAnonymized'
   aggregateType: 'Patient';
   data: {
     patientId: string;
     anonymizedBy: string;
-    reason: 'gdpr_request' | 'data_retention' | 'other';
+    reason: 'gdpr_request' | 'data_retention' | 'other'
   };
 }
 
@@ -61,7 +61,7 @@ export interface PatientAnonymizedEvent extends DomainEvent {
  * Appointment domain events
  */
 export interface AppointmentCreatedEvent extends DomainEvent {
-  eventType: 'AppointmentCreated';
+  eventType: 'AppointmentCreated'
   aggregateType: 'Appointment';
   data: {
     appointmentId: string;
@@ -76,7 +76,7 @@ export interface AppointmentCreatedEvent extends DomainEvent {
 }
 
 export interface AppointmentUpdatedEvent extends DomainEvent {
-  eventType: 'AppointmentUpdated';
+  eventType: 'AppointmentUpdated'
   aggregateType: 'Appointment';
   data: {
     appointmentId: string;
@@ -86,7 +86,7 @@ export interface AppointmentUpdatedEvent extends DomainEvent {
 }
 
 export interface AppointmentCancelledEvent extends DomainEvent {
-  eventType: 'AppointmentCancelled';
+  eventType: 'AppointmentCancelled'
   aggregateType: 'Appointment';
   data: {
     appointmentId: string;
@@ -99,7 +99,7 @@ export interface AppointmentCancelledEvent extends DomainEvent {
 }
 
 export interface AppointmentRescheduledEvent extends DomainEvent {
-  eventType: 'AppointmentRescheduled';
+  eventType: 'AppointmentRescheduled'
   aggregateType: 'Appointment';
   data: {
     appointmentId: string;
@@ -114,7 +114,7 @@ export interface AppointmentRescheduledEvent extends DomainEvent {
 }
 
 export interface AppointmentCompletedEvent extends DomainEvent {
-  eventType: 'AppointmentCompleted';
+  eventType: 'AppointmentCompleted'
   aggregateType: 'Appointment';
   data: {
     appointmentId: string;
@@ -129,7 +129,7 @@ export interface AppointmentCompletedEvent extends DomainEvent {
 }
 
 export interface AppointmentNoShowEvent extends DomainEvent {
-  eventType: 'AppointmentNoShow';
+  eventType: 'AppointmentNoShow'
   aggregateType: 'Appointment';
   data: {
     appointmentId: string;
@@ -144,7 +144,7 @@ export interface AppointmentNoShowEvent extends DomainEvent {
  * Consent domain events
  */
 export interface ConsentCreatedEvent extends DomainEvent {
-  eventType: 'ConsentCreated';
+  eventType: 'ConsentCreated'
   aggregateType: 'Consent';
   data: {
     consentId: string;
@@ -159,7 +159,7 @@ export interface ConsentCreatedEvent extends DomainEvent {
 }
 
 export interface ConsentGrantedEvent extends DomainEvent {
-  eventType: 'ConsentGranted';
+  eventType: 'ConsentGranted'
   aggregateType: 'Consent';
   data: {
     consentId: string;
@@ -170,7 +170,7 @@ export interface ConsentGrantedEvent extends DomainEvent {
 }
 
 export interface ConsentRevokedEvent extends DomainEvent {
-  eventType: 'ConsentRevoked';
+  eventType: 'ConsentRevoked'
   aggregateType: 'Consent';
   data: {
     consentId: string;
@@ -182,7 +182,7 @@ export interface ConsentRevokedEvent extends DomainEvent {
 }
 
 export interface ConsentExpiredEvent extends DomainEvent {
-  eventType: 'ConsentExpired';
+  eventType: 'ConsentExpired'
   aggregateType: 'Consent';
   data: {
     consentId: string;
@@ -193,7 +193,7 @@ export interface ConsentExpiredEvent extends DomainEvent {
 }
 
 export interface ConsentRenewedEvent extends DomainEvent {
-  eventType: 'ConsentRenewed';
+  eventType: 'ConsentRenewed'
   aggregateType: 'Consent';
   data: {
     consentId: string;
@@ -206,11 +206,11 @@ export interface ConsentRenewedEvent extends DomainEvent {
 }
 
 export interface ComplianceCheckedEvent extends DomainEvent {
-  eventType: 'ComplianceChecked';
+  eventType: 'ComplianceChecked'
   aggregateType: 'Patient';
   data: {
     patientId: string;
-    status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT';
+    status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT'
     riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
     violationCount: number;
     checkedBy: string;
@@ -219,7 +219,7 @@ export interface ComplianceCheckedEvent extends DomainEvent {
 }
 
 export interface ComplianceViolationEvent extends DomainEvent {
-  eventType: 'ComplianceViolation';
+  eventType: 'ComplianceViolation'
   aggregateType: 'Patient';
   data: {
     patientId: string;
@@ -288,7 +288,7 @@ export class EventFactory {
     eventType: string,
     aggregateId: string,
     aggregateType: string,
-    data: T['data'],
+    data: T extends { data: infer D } ? D : never,
     metadata?: Record<string, any>
   ): T {
     return {
@@ -298,8 +298,10 @@ export class EventFactory {
       aggregateId,
       aggregateType,
       version: 1,
-      data,
-      metadata
-    } as T;
+      metadata: {
+        ...metadata,
+        data
+      }
+    } as unknown as T;
   }
-}
+}`'

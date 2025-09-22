@@ -4,8 +4,8 @@
  */
 
 import { logger } from '@/utils/secure-logger';
-import { createServerClient } from '../clients/supabase.js';
-import { type SecurityAlert } from './enhanced-rls-security.js';
+import { createServerClient } from '../clients/supabase';
+import { type SecurityAlert } from './enhanced-rls-security';
 
 export interface SecurityMetrics {
   timestamp: Date;
@@ -178,9 +178,9 @@ export class SecurityMonitoringDashboardService {
         timestamp: new Date(),
         totalRequests: data?.length || 0,
         deniedRequests: data?.filter(log => !log.access_granted).length || 0,
-        securityScore: data?.reduce((acc, log) => acc + log.security_score, 0)
+        securityScore: data?.reduce((acc,_log) => acc + log.security_score, 0)
             / (data?.length || 1) || 0,
-        threatLevel: data?.reduce((acc, log) => acc + log.threat_level, 0)
+        threatLevel: data?.reduce((acc,_log) => acc + log.threat_level, 0)
             / (data?.length || 1) || 0,
         alerts: data
           ?.filter(log => log.threat_level > 50)
@@ -188,8 +188,8 @@ export class SecurityMonitoringDashboardService {
             type: 'THREAT_DETECTED' as const,
             severity: log.threat_level > 75 ? 'HIGH' : ('MEDIUM' as const),
             description: log.reason,
-            context: {
-              userId: log.user_id,
+            _context: {
+              _userId: log.user_id,
               userRole: '',
               clinicId: '',
               sessionId: '',
@@ -344,7 +344,7 @@ export class SecurityMonitoringDashboardService {
         const data = byEndpoint[endpoint];
         data.avgThreat = logs
           .filter(log => log.table_name === endpoint)
-          .reduce((acc, log) => acc + log.threat_level, 0) / data.requests;
+          .reduce((acc,_log) => acc + log.threat_level, 0) / data.requests;
       });
 
       return {
@@ -429,8 +429,8 @@ export class SecurityMonitoringDashboardService {
       const logs = data || [];
 
       const uniqueUsers = new Set(logs.map(log => log.user_id));
-      const avgSecurityScore = logs.reduce((acc, log) => acc + log.security_score, 0) / logs.length;
-      const avgThreatLevel = logs.reduce((acc, log) => acc + log.threat_level, 0) / logs.length;
+      const avgSecurityScore = logs.reduce((acc,_log) => acc + log.security_score, 0) / logs.length;
+      const avgThreatLevel = logs.reduce((acc,_log) => acc + log.threat_level, 0) / logs.length;
 
       return {
         totalEndpoints: 15, // Mock data
@@ -512,7 +512,7 @@ export class SecurityMonitoringDashboardService {
       report.summary.securityIncidents = logs.filter(
         log => log.threat_level > 70,
       ).length;
-      report.summary.avgSecurityScore = logs.reduce((acc, log) => acc + log.security_score, 0)
+      report.summary.avgSecurityScore = logs.reduce((acc,_log) => acc + log.security_score, 0)
         / logs.length;
       report.summary.maxThreatLevel = Math.max(
         ...logs.map(log => log.threat_level),
@@ -547,8 +547,7 @@ export class SecurityMonitoringDashboardService {
    */
   private startRealTimeMonitoring(): void {
     // Set up periodic cache cleanup
-    setInterval(
-      () => {
+    setInterval(() => {
         this.cleanupMetricsCache();
       },
       5 * 60 * 1000,
@@ -586,7 +585,7 @@ export class SecurityMonitoringDashboardService {
           table: 'security_alerts',
         },
         payload => {
-          logger.info('🚨 Real-time security alert', payload);
+          logger.info('🚨 Real-time security alert', _payload);
           // Trigger real-time notifications
           this.handleRealTimeAlert(payload.new);
         },
@@ -621,7 +620,7 @@ export class SecurityMonitoringDashboardService {
    * Invalidate metrics cache for clinic
    */
   private invalidateMetricsCache(clinicId?: string): void {
-    const prefix = `metrics_${clinicId || 'all'}_`;
+    const prefix = `metrics_${clinicId || 'all'}`;
 
     for (const key of this.metricsCache.keys()) {
       if (key.startsWith(prefix)) {
@@ -728,7 +727,7 @@ export class SecurityMonitoringDashboardService {
       }
     });
 
-    return Object.entries(threatTypes).map(([type, data]) => ({
+    return Object.entries(threatTypes).map(([type,_data]) => ({
       type,
       severity: data.maxThreat > 75 ? 'HIGH' : data.maxThreat > 50 ? 'MEDIUM' : 'LOW',
       count: data.count,
@@ -772,7 +771,7 @@ export class SecurityMonitoringDashboardService {
     }
 
     // Check for low security scores
-    const avgSecurityScore = logs.reduce((acc, log) => acc + log.security_score, 0) / logs.length;
+    const avgSecurityScore = logs.reduce((acc,_log) => acc + log.security_score, 0) / logs.length;
     if (avgSecurityScore < 70) {
       issues.push(`Low average security score: ${avgSecurityScore.toFixed(1)}`);
       score -= 10;
@@ -829,8 +828,7 @@ export class SecurityMonitoringDashboardService {
       }
     });
 
-    const suspiciousIPs = Object.entries(ipCounts).filter(
-      ([, count]) => count > 100,
+    const suspiciousIPs = Object.entries(ipCounts).filter(([,_count]) => count > 100,
     );
     if (suspiciousIPs.length > 0) {
       recommendations.push(

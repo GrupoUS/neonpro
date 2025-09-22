@@ -19,7 +19,7 @@ export function metric(
   return ms;
 }
 
-export function structuredLog(event: string, payload: Record<string, unknown>) {
+export function structuredLog(event: string, _payload: Record<string, unknown>) {
   // Delegate to metrics logger to keep JSON format consistent
   logMetric({ type: 'log', event, ...payload });
 }

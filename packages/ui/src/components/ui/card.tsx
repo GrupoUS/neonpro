@@ -15,23 +15,11 @@ const Card = React.forwardRef<
     shineColor?: string | string[];
     borderWidth?: number;
   }
->(
-  (
-    {
-      className,
-      magic = false,
-      disableShine = false,
-      enableShineBorder,
-      shineDuration = 8,
-      shineColor = "#AC9469",
-      borderWidth = 1,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
-    const __show = enableShineBorder ?? (magic || !disableShine);
-    if (__show) {
+>(({
+  className, magic = false, disableShine = false, enableShineBorder, shineDuration = 8, shineColor = "#AC9469", borderWidth = 1, children, ...props
+}, ref) => {
+    const show = enableShineBorder ?? (magic || !disableShine);
+    if (show) {
       const duration = Math.max(0.1, shineDuration ?? 8);
       const colorValue = Array.isArray(shineColor)
         ? (shineColor[0] ?? "#AC9469")
@@ -48,7 +36,7 @@ const Card = React.forwardRef<
             {
               "--shine-duration": `${duration}s`,
               "--shine-color": colorValue,
-              "--border-width": `${borderWidth}px`,
+              "--border-width": `${borderWidth}px`
             } as React.CSSProperties
           }
           {...props}
@@ -150,5 +138,5 @@ export {
   CardFooter,
   CardTitle,
   CardDescription,
-  CardContent,
+  CardContent
 };

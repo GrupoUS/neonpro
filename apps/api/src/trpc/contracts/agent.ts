@@ -5,8 +5,6 @@
  * Following healthcare compliance standards (LGPD/ANVISA/CFM)
  */
 
-import { z } from 'zod';
-
 /**
  * Core Agent Types
  */
@@ -43,7 +41,7 @@ export type AgentMessageRole = z.infer<typeof AgentMessageRoleSchema>;
 
 export const CreateAgentMessageSchema = z.object({
   session_id: z.string().uuid(),
-  role: AgentMessageRoleSchema,
+  _role: AgentMessageRoleSchema,
   content: z.string(),
   metadata: z.record(z.unknown()).optional(),
   attachments: z
@@ -61,7 +59,7 @@ export const CreateAgentMessageSchema = z.object({
 export const AgentMessageResponseSchema = z.object({
   id: z.string().uuid(),
   session_id: z.string().uuid(),
-  role: AgentMessageRoleSchema,
+  _role: AgentMessageRoleSchema,
   content: z.string(),
   metadata: z.record(z.unknown()),
   attachments: z.array(
@@ -133,12 +131,12 @@ export const ListAgentMessagesSchema = z.object({
   session_id: z.string().uuid(),
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(100).default(50),
-  role: AgentMessageRoleSchema.optional(),
+  _role: AgentMessageRoleSchema.optional(),
 });
 
 export const SearchKnowledgeBaseSchema = z.object({
   agent_type: AgentTypeSchema,
-  query: z.string().min(1),
+  _query: z.string().min(1),
   limit: z.number().int().min(1).max(20).default(10),
   threshold: z.number().min(0).max(1).default(0.7),
 });
@@ -148,7 +146,7 @@ export const SearchKnowledgeBaseSchema = z.object({
  */
 export const RAGQuerySchema = z.object({
   session_id: z.string().uuid(),
-  query: z.string().min(1),
+  _query: z.string().min(1),
   context_filter: z
     .object({
       date_range: z
@@ -165,7 +163,7 @@ export const RAGQuerySchema = z.object({
 });
 
 export const RAGResponseSchema = z.object({
-  query: z.string(),
+  _query: z.string(),
   results: z.array(
     z.object({
       id: z.string(),
@@ -175,7 +173,7 @@ export const RAGResponseSchema = z.object({
       metadata: z.record(z.unknown()),
     }),
   ),
-  context: z.string(),
+  _context: z.string(),
   response: z.string(),
   tokens_used: z.number().int().min(0),
   processing_time: z.number().min(0),
@@ -186,7 +184,7 @@ export const RAGResponseSchema = z.object({
  */
 export const AgentActionSchema = z.object({
   type: z.enum(['message', 'action', 'navigation', 'data_request']),
-  payload: z.record(z.unknown()),
+  _payload: z.record(z.unknown()),
   timestamp: z.date(),
 });
 

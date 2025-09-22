@@ -31,7 +31,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = await createTestClient({ role: 'admin' });
+    testClient = await createTestClient({ _role: 'admin' });
 
     supabase = createClient<Database>(
       process.env.SUPABASE_URL!,

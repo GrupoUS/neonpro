@@ -1,14 +1,9 @@
-import { 
-  Gender, 
-  PatientStatus, 
-  LegalBasis, 
-  BloodType,
-  ContactMethod 
+import {
+  type Gender,
+  type BloodType
 } from '../value-objects/gender.js';
-import { Address } from '../value-objects/address.js';
-import { EmergencyContact } from '../value-objects/contact.js';
-import { HealthcareInfo, validateCPF, formatCPF } from '../value-objects/healthcare.js';
-import { LGPDConsent, AuditTrail } from '../value-objects/lgpd.js';
+import { type ContactMethod } from '../value-objects/healthcare.js';
+import { validateCPF, formatCPF } from '../value-objects/healthcare.js';
 
 /**
  * Consolidated Patient Entity - Single source of truth for patient data
@@ -177,6 +172,7 @@ export class PatientFactory {
       allergies: [],
       chronicConditions: [],
       currentMedications: [],
+      lgpdConsentGiven: false,
     });
   }
 }

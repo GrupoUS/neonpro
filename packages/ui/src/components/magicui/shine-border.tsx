@@ -100,7 +100,7 @@ export function ShineBorder({
       `shine-border--${pattern}`,
       `shine-border--${intensity}`,
       `shine-border--${speed}`,
-      shineColor ? "" : `shine-border--${theme}`,
+      shineColor ? "" : `shine-border--${theme}`
     ],
     className,
   );
@@ -118,7 +118,7 @@ export function ShineBorder({
               : shineColor
             : undefined,
           borderRadius: `${borderRadius}px`,
-          padding: `${borderWidth}px`,
+          padding: `${borderWidth}px`
         } as React.CSSProperties
       }
       {...props}
@@ -128,7 +128,7 @@ export function ShineBorder({
         className="relative z-[1] flex h-full w-full items-center justify-center overflow-hidden"
         style={{
           backgroundColor: background,
-          borderRadius: `${Math.max(0, borderRadius - borderWidth)}px`,
+          borderRadius: `${Math.max(0, borderRadius - borderWidth)}px`
         }}
       >
         {children}

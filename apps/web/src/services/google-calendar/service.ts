@@ -36,7 +36,7 @@ export class GoogleCalendarService {
    * Initialize Google Calendar integration for a user and clinic
    */
   async initializeIntegration(
-    userId: string,
+    _userId: string,
     clinicId: string,
     code: string,
     lgpdConsent: boolean = false,
@@ -89,7 +89,7 @@ export class GoogleCalendarService {
         integration,
         calendarId: primaryCalendar.id,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error initializing Google Calendar integration:', error);
       throw error;
     }
@@ -98,7 +98,7 @@ export class GoogleCalendarService {
   /**
    * Get integration for user and clinic
    */
-  async getIntegration(userId: string, clinicId: string) {
+  async getIntegration(_userId: string, clinicId: string) {
     return await this.prisma.googleCalendarIntegration.findUnique({
       where: {
         userId_clinicId: {
@@ -114,7 +114,7 @@ export class GoogleCalendarService {
    */
   async syncAppointment(
     appointment: AppointmentData,
-    userId: string,
+    _userId: string,
     clinicId: string,
     operation: 'CREATE' | 'UPDATE' | 'DELETE' = 'CREATE',
   ): Promise<{
@@ -229,7 +229,7 @@ export class GoogleCalendarService {
         success: true,
         googleEventId: result.id,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error(
         `Error ${operation} appointment in Google Calendar:`,
         error,
@@ -268,7 +268,7 @@ export class GoogleCalendarService {
    * Sync changes from Google Calendar to local appointments
    */
   async syncFromGoogle(
-    userId: string,
+    _userId: string,
     clinicId: string,
     syncToken?: string,
   ): Promise<{
@@ -336,7 +336,7 @@ export class GoogleCalendarService {
         nextSyncToken: result.nextSyncToken,
         changes,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error syncing from Google Calendar:', error);
       throw error;
     }
@@ -450,7 +450,7 @@ export class GoogleCalendarService {
           userAgent: 'neonpro-service', // In real app, get from request
         },
       });
-    } catch (logError) {
+    } catch (_logError) {
       // Log the logging failure without throwing to avoid breaking the main flow
       const message = logError instanceof Error ? logError.message : String(logError);
       console.error('Error logging sync operation:', message);
@@ -461,7 +461,7 @@ export class GoogleCalendarService {
   /**
    * Disconnect integration
    */
-  async disconnect(userId: string, clinicId: string): Promise<boolean> {
+  async disconnect(_userId: string, clinicId: string): Promise<boolean> {
     try {
       const integration = await this.getIntegration(userId, clinicId);
 
@@ -489,7 +489,7 @@ export class GoogleCalendarService {
       });
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error disconnecting Google Calendar:', error);
       return false;
     }

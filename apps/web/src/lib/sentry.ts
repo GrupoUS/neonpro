@@ -286,7 +286,7 @@ function ensureInitialized() {
 
 function categorizeError(
   error: Error,
-  context?: HealthcareErrorContext,
+  _context?: HealthcareErrorContext,
 ): HealthcareErrorCategory {
   const message = error.message.toLowerCase();
   const stack = (error.stack ?? '').toLowerCase();
@@ -320,11 +320,11 @@ function categorizeError(
 
 export function trackHealthcareError(
   error: Error,
-  context: HealthcareErrorContext = {},
+  _context: HealthcareErrorContext = {},
 ) {
   ensureInitialized();
 
-  const category = categorizeError(error, context);
+  const category = categorizeError(error, _context);
 
   Sentry.withScope(scope => {
     scope.setTag('healthcare.error.category', category);
@@ -372,7 +372,7 @@ export function trackHealthcareError(
 export async function trackHealthcarePerformance<T>(
   operationName: string,
   operation: () => Promise<T>,
-  context: HealthcareErrorContext = {},
+  _context: HealthcareErrorContext = {},
 ): Promise<T> {
   ensureInitialized();
 
@@ -403,7 +403,7 @@ export async function trackHealthcarePerformance<T>(
           );
         });
         return result;
-      } catch (error) {
+      } catch (_error) {
         trackHealthcareError(error as Error, {
           ...context,
           feature: operationName,
@@ -416,7 +416,7 @@ export async function trackHealthcarePerformance<T>(
 
 export function captureHealthcareError(
   error: Error,
-  context: HealthcareErrorContext = {},
+  _context: HealthcareErrorContext = {},
 ) {
-  trackHealthcareError(error, context);
+  trackHealthcareError(error, _context);
 }

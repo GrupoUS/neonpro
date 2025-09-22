@@ -7,7 +7,6 @@
 
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
-import { z } from 'zod';
 import { auditLog } from '../../middleware/audit-log';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
@@ -69,7 +68,7 @@ const searchInvoicesSchema = z.object({
   status: z.nativeEnum(PaymentStatus).optional(),
   dateFrom: z.string().datetime().optional(),
   dateTo: z.string().datetime().optional(),
-  query: z.string().optional(),
+  _query: z.string().optional(),
   page: z.string().transform(Number).default('1'),
   limit: z.string().transform(Number).default('20'),
   sortBy: z.string().optional(),
@@ -96,7 +95,7 @@ billing.post(
       const invoiceData = c.req.valid('json');
       const userId = c.get('userId');
 
-      const result = await billingService.createInvoice(invoiceData, userId);
+      const result = await billingService.createInvoice(invoiceData, _userId);
 
       if (!result.success) {
         return badRequest(
@@ -127,7 +126,7 @@ billing.get('/invoices/:id', async c => {
       return badRequest(c, 'ID da fatura é obrigatório');
     }
 
-    const result = await billingService.getInvoice(invoiceId, userId);
+    const result = await billingService.getInvoice(invoiceId, _userId);
 
     if (!result.success) {
       if (result.error?.includes('não encontrada')) {
@@ -167,7 +166,7 @@ billing.get(
         dateTo: searchParams.dateTo ? new Date(searchParams.dateTo) : undefined,
       };
 
-      const result = await billingService.searchInvoices(options, userId);
+      const result = await billingService.searchInvoices(options, _userId);
 
       if (!result.success) {
         return badRequest(c, result.error || 'Erro ao buscar faturas');
@@ -239,7 +238,7 @@ billing.delete('/invoices/:id', async c => {
       return badRequest(c, 'ID da fatura é obrigatório');
     }
 
-    const result = await billingService.cancelInvoice(invoiceId, userId);
+    const result = await billingService.cancelInvoice(invoiceId, _userId);
 
     if (!result.success) {
       if (result.error?.includes('não encontrada')) {
@@ -313,7 +312,7 @@ billing.get('/invoices/:id/payments', async c => {
       return badRequest(c, 'ID da fatura é obrigatório');
     }
 
-    const result = await billingService.getPaymentHistory(invoiceId, userId);
+    const result = await billingService.getPaymentHistory(invoiceId, _userId);
 
     if (!result.success) {
       if (result.error?.includes('não encontrada')) {

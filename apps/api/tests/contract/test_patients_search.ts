@@ -11,12 +11,11 @@
 
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { z } from 'zod';
 import { app } from '../../src/app';
 
 // Search request schema validation
 const SearchPatientsRequestSchema = z.object({
-  query: z.string().optional(),
+  _query: z.string().optional(),
   filters: z
     .object({
       name: z.string().optional(),
@@ -84,7 +83,7 @@ const SearchPatientsResponseSchema = z.object({
     hasMore: z.boolean(),
   }),
   searchMetadata: z.object({
-    query: z.string().optional(),
+    _query: z.string().optional(),
     searchTime: z.number().max(300), // Performance requirement: <300ms
     indexUsed: z.boolean(),
     suggestions: z.array(z.string()).optional(),
@@ -179,7 +178,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
   describe('Basic Search Functionality', () => {
     it('should perform global text search with correct schema', async () => {
       const searchRequest = {
-        query: 'Maria',
+        _query: 'Maria',
         options: {
           maxResults: 10,
         },
@@ -222,7 +221,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
 
     it('should search by partial CPF patterns', async () => {
       const searchRequest = {
-        query: '123.456',
+        _query: '123.456',
         options: {
           fuzzyMatching: true,
         },
@@ -348,7 +347,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
   describe('Complex Search Scenarios', () => {
     it('should combine multiple filters', async () => {
       const searchRequest = {
-        query: 'Silva',
+        _query: 'Silva',
         filters: {
           gender: 'female',
           state: 'SP',
@@ -374,7 +373,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
 
     it('should handle empty search results gracefully', async () => {
       const searchRequest = {
-        query: 'NonExistentPatientName',
+        _query: 'NonExistentPatientName',
       };
 
       const response = await request(app)
@@ -390,7 +389,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
 
     it('should provide search suggestions for no results', async () => {
       const searchRequest = {
-        query: 'Mria', // Typo in Maria
+        _query: 'Mria', // Typo in Maria
         options: {
           fuzzyMatching: true,
         },
@@ -415,7 +414,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
   describe('Sorting and Pagination', () => {
     it('should sort by relevance score', async () => {
       const searchRequest = {
-        query: 'Silva',
+        _query: 'Silva',
         options: {
           sortBy: 'relevance',
           sortOrder: 'desc',
@@ -482,7 +481,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
       const response = await request(app)
         .post('/api/v2/patients/search')
         .set(testAuthHeaders)
-        .send({ query: 'Maria' })
+        .send({ _query: 'Maria' })
         .expect(200);
 
       const duration = Date.now() - startTime;
@@ -495,7 +494,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
 
     it('should respond within 300ms for complex searches', async () => {
       const complexSearchRequest = {
-        query: 'Silva',
+        _query: 'Silva',
         filters: {
           gender: 'female',
           ageRange: { min: 25, max: 45 },
@@ -525,7 +524,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
       const response = await request(app)
         .post('/api/v2/patients/search')
         .set(testAuthHeaders)
-        .send({ query: 'Maria' })
+        .send({ _query: 'Maria' })
         .expect(200);
 
       expect(response.body.searchMetadata.indexUsed).toBe(true);
@@ -545,7 +544,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
         const response = await request(app)
           .post('/api/v2/patients/search')
           .set(testAuthHeaders)
-          .send({ query: cpfVariation })
+          .send({ _query: cpfVariation })
           .expect(200);
 
         if (response.body.results.length > 0) {
@@ -566,7 +565,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
         const response = await request(app)
           .post('/api/v2/patients/search')
           .set(testAuthHeaders)
-          .send({ query: phoneVariation })
+          .send({ _query: phoneVariation })
           .expect(200);
 
         if (response.body.results.length > 0) {
@@ -580,7 +579,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
     it('should return 401 for missing authentication', async () => {
       await request(app)
         .post('/api/v2/patients/search')
-        .send({ query: 'test' })
+        .send({ _query: 'test' })
         .expect(401);
     });
 
@@ -605,7 +604,7 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
 
     it('should handle malformed search queries', async () => {
       const malformedRequest = {
-        query: '', // Empty query
+        _query: '', // Empty query
         filters: null, // Null filters
       };
 
@@ -622,18 +621,18 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
       const response = await request(app)
         .post('/api/v2/patients/search')
         .set(testAuthHeaders)
-        .send({ query: 'Maria' })
+        .send({ _query: 'Maria' })
         .expect(200);
 
       expect(response.body.searchMetadata).toBeDefined();
-      expect(response.body.searchMetadata.query).toBe('Maria');
+      expect(response.body.searchMetadata._query).toBe('Maria');
       expect(response.body.searchMetadata.searchTime).toBeDefined();
       expect(response.body.searchMetadata.indexUsed).toBeDefined();
     });
 
     it('should track query complexity', async () => {
       const complexQuery = {
-        query: 'Silva Santos',
+        _query: 'Silva Santos',
         filters: {
           gender: 'female',
           ageRange: { min: 30, max: 50 },

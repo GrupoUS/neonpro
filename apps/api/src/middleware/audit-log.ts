@@ -6,7 +6,7 @@ import { logger } from '../lib/logger';
  */
 interface AuditLogEntry {
   timestamp: Date;
-  userId?: string;
+  _userId?: string;
   clinicId?: string;
   action: string;
   resource: string;
@@ -171,7 +171,7 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
           console.warn('Could not read request body for audit logging:', bodyError);
         }
         requestBody = sanitizeData(requestBody, sensitiveFields);
-      } catch (_error) {
+      } catch (error) {
         // Ignore errors when reading request body
       }
     }

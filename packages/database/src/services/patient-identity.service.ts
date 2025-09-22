@@ -309,8 +309,7 @@ export class PatientIdentityService {
       return "biometric";
     }
 
-    if (
-      verifiedDocs.length >= 2 &&
+    if (_verifiedDocs.length >= 2 &&
       verifiedDocs.some((doc) => doc.type === "cpf")
     ) {
       return "enhanced";
@@ -360,8 +359,7 @@ export class PatientIdentityService {
     const verifiedDocs = documents.filter((doc) => doc.verified);
 
     // Must have at least one verified primary document (CPF or RG)
-    const hasPrimaryDoc = verifiedDocs.some(
-      (doc) => doc.type === "cpf" || doc.type === "rg",
+    const hasPrimaryDoc = verifiedDocs.some((doc) => doc.type === "cpf" || doc.type === "rg",
     );
 
     // Must have adequate verification level

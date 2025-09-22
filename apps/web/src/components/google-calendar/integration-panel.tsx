@@ -19,7 +19,7 @@ import { GoogleCalendarConnectButton } from './connect-button';
 import { SyncSettings } from './sync-settings';
 
 interface GoogleCalendarIntegrationPanelProps {
-  userId: string;
+  _userId: string;
   clinicId: string;
 }
 

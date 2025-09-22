@@ -440,7 +440,7 @@ export class LGPDService {
     try {
       const patientConsents = Array.from(this.consents.values())
         .filter(consent => consent.patientId === patientId)
-        .sort((a, b) => b.consentDate.getTime() - a.consentDate.getTime());
+        .sort((a,_b) => b.consentDate.getTime() - a.consentDate.getTime());
 
       const currentConsent = patientConsents.find(consent => !consent.withdrawalDate) || null;
       const history = patientConsents.flatMap(
@@ -490,7 +490,7 @@ export class LGPDService {
       });
 
       const requestId = `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      this.dataSubjectRequests.set(requestId, request);
+      this.dataSubjectRequests.set(requestId, _request);
 
       // LGPD requires response within 15 days
       const estimatedCompletion = new Date();
@@ -674,15 +674,13 @@ export class LGPDService {
 
       const summary = {
         totalActivities: activities.length,
-        byLegalBasis: activities.reduce(
-          (acc, activity) => {
+        byLegalBasis: activities.reduce((acc,_activity) => {
             acc[activity.legalBasis] = (acc[activity.legalBasis] || 0) + 1;
             return acc;
           },
           {} as Record<string, number>,
         ),
-        byPurpose: activities.reduce(
-          (acc, activity) => {
+        byPurpose: activities.reduce((acc,_activity) => {
             acc[activity.purpose] = (acc[activity.purpose] || 0) + 1;
             return acc;
           },
@@ -1221,7 +1219,7 @@ export class LGPDService {
    * Validate data access for LGPD compliance
    */
   async validateDataAccess(_params: {
-    userId: string;
+    _userId: string;
     dataType: string;
     purpose: string;
     legalBasis: string;

@@ -278,7 +278,7 @@ describe('Session Management Security Tests', () => {
 
         // This should limit concurrent sessions
         // Currently no concurrent session limit exists
-        const userSessions = sessionManager.getUserSessions(userId);
+        const userSessions = sessionManager.getUserSessions(_userId);
         if (userSessions.length >= maxConcurrentSessions) {
           // Remove oldest session
           const oldestSession = userSessions.reduce((oldest, current) =>
@@ -325,7 +325,7 @@ describe('Session Management Security Tests', () => {
 
         // This should detect and notify about concurrent sessions
         // Currently no concurrent activity detection exists
-        const userSessions = sessionManager.getUserSessions(userId);
+        const userSessions = sessionManager.getUserSessions(_userId);
         const otherSessions = userSessions.filter(s => s.sessionId !== currentSessionId);
 
         if (otherSessions.length > 0 && otherSessions.some(s => s.ipAddress !== requestIp)) {
@@ -539,7 +539,7 @@ describe('Session Management Security Tests', () => {
 
         // This should clean all user sessions on logout
         // Currently only current session is removed
-        const userSessions = sessionManager.getUserSessions(userId);
+        const userSessions = sessionManager.getUserSessions(_userId);
         userSessions.forEach(session => {
           sessionManager.removeSession(session.sessionId);
         });
@@ -715,7 +715,7 @@ describe('Session Management Security Tests', () => {
           }
 
           c.set('sessionId', sessionId);
-          c.set('userId', session.userId);
+          c.set('userId', session._userId);
         }
 
         return next();

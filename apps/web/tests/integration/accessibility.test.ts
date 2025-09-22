@@ -20,8 +20,6 @@ import { act, renderHook } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
-import { z } from 'zod';
-
 // Import accessibility services
 import {
   AccessibilityChecker,
@@ -92,7 +90,7 @@ const AccessibilityViolationSchema = z.object({
   timestamp: z.string(),
   page: z.string(),
   component: z.string().optional(),
-  context: z.record(z.any()).optional(),
+  _context: z.record(z.any()).optional(),
 });
 
 const ContrastResultSchema = z.object({
@@ -114,7 +112,7 @@ const KeyboardNavigationResultSchema = z.object({
   focusableElements: z.array(z.object({
     selector: z.string(),
     label: z.string(),
-    role: z.string().optional(),
+    _role: z.string().optional(),
     tabIndex: z.number(),
     interactive: z.boolean(),
   })),
@@ -144,7 +142,7 @@ const ScreenReaderResultSchema = z.object({
     timestamp: z.string(),
   })),
   landmarks: z.array(z.object({
-    role: z.string(),
+    _role: z.string(),
     label: z.string(),
     description: z.string().optional(),
   })),
@@ -269,7 +267,7 @@ const generateValidAccessibilityViolation = () => ({
   timestamp: new Date().toISOString(),
   page: '/patients/new',
   component: 'PatientForm',
-  context: {
+  _context: {
     formType: 'patient_registration',
     userAgent: 'Chrome/91.0',
   },
@@ -296,14 +294,14 @@ const generateValidKeyboardNavigationResult = () => ({
     {
       selector: 'input[name="patient-name"]',
       label: 'Patient Name',
-      role: 'textbox',
+      _role: 'textbox',
       tabIndex: 0,
       interactive: true,
     },
     {
       selector: 'button[type="submit"]',
       label: 'Submit Form',
-      role: 'button',
+      _role: 'button',
       tabIndex: 0,
       interactive: true,
     },
@@ -336,12 +334,12 @@ const generateValidScreenReaderResult = () => ({
   ],
   landmarks: [
     {
-      role: 'main',
+      _role: 'main',
       label: 'Patient Registration Form',
       description: 'Form for registering new patients',
     },
     {
-      role: 'navigation',
+      _role: 'navigation',
       label: 'Main Navigation',
     },
   ],
@@ -712,7 +710,7 @@ describe('Accessibility Testing Integration Tests', () => {
       const ariaTest = {
         element: '<div role="alert" aria-live="polite">Important message</div>',
         attributes: {
-          role: 'alert',
+          _role: 'alert',
           'aria-live': 'polite',
         },
         valid: true,
@@ -724,7 +722,7 @@ describe('Accessibility Testing Integration Tests', () => {
       const result = await accessibilityChecker.validateAria('div[role="alert"]');
 
       expect(result.valid).toBe(true);
-      expect(result.attributes.role).toBe('alert');
+      expect(result.attributes._role).toBe('alert');
       expect(result.attributes['aria-live']).toBe('polite');
     });
 

@@ -54,7 +54,7 @@ const DATA_MINIMIZATION_RULES = {
  */
 function generateCryptographicProof(
   data: any,
-  userId: string,
+  _userId: string,
   timestamp: Date,
 ): {
   hash: string;
@@ -170,11 +170,7 @@ function applyDataMinimization(
  */
 
 export const lgpdAuditMiddleware = async ({
-  ctx,
-  next,
-  path,
-  type,
-  input,
+  ctx,next,_path,type,_input,
 }: any) => {
   const start = performance.now();
   let auditEntry: any = null;
@@ -192,7 +188,7 @@ export const lgpdAuditMiddleware = async ({
 
     // Generate cryptographic proof for sensitive operations
     let cryptographicProof = null;
-    if (isSensitiveData && ctx.userId) {
+    if (isSensitiveData && ctx._userId) {
       cryptographicProof = generateCryptographicProof(
         { path, type, input: input || {} },
         ctx.userId,
@@ -203,7 +199,7 @@ export const lgpdAuditMiddleware = async ({
     // Pre-execution audit entry creation
     if (ctx.userId && (isPatientData || isSensitiveData)) {
       auditEntry = {
-        userId: ctx.userId,
+        _userId: ctx.userId,
         clinicId: ctx.clinicId,
         action: type === 'query' ? AuditAction.VIEW : AuditAction.CREATE,
         resource: path,

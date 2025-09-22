@@ -11,9 +11,9 @@ import {
 import { QueryClient } from "@tanstack/react-query";
 
 export interface RealtimeSubscriptionOptions<T = any> {
-  onInsert?: (payload: T) => void;
-  onUpdate?: (payload: T) => void;
-  onDelete?: (payload: { old: T }) => void;
+  onInsert?: (_payload: T) => void;
+  onUpdate?: (_payload: T) => void;
+  onDelete?: (_payload: { old: T }) => void;
   queryKeys?: string[][];
   optimisticUpdates?: boolean;
   rateLimitMs?: number;
@@ -55,8 +55,7 @@ export class RealtimeManager {
 
     const channel = this.supabase
       .channel(channelName)
-      .on(
-        "postgres_changes",
+      .on("postgres_changes",
         {
           event: "*",
           schema: "public",
@@ -105,7 +104,7 @@ export class RealtimeManager {
   }
 
   private async handleRealtimeEvent<T extends { id: string }>(
-    payload: RealtimePostgresChangesPayload<Record<string, any>>,
+    _payload: RealtimePostgresChangesPayload<Record<string, any>>,
     tableName: string,
     options: RealtimeSubscriptionOptions<T>,
   ) {
@@ -133,8 +132,7 @@ export class RealtimeManager {
 
       // Invalidate related queries for data consistency
       if (options.queryKeys) {
-        await Promise.all(
-          options.queryKeys.map((queryKey) =>
+        await Promise.all(options.queryKeys.map((queryKey) =>
             this.queryClient.invalidateQueries({ queryKey }),
           ),
         );
@@ -167,8 +165,7 @@ export class RealtimeManager {
 
     // Update list cache
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
-      return (
-        old?.map((item) =>
+      return (old?.map((item) =>
           item.id === updatedRecord.id ? updatedRecord : item,
         ) || []
       );
@@ -240,14 +237,14 @@ export class RealtimeManager {
 
     const channel = this.supabase
       .channel(channelName)
-      .on("presence", { event: "sync" }, () => {
+      .on('presence', { event: "sync" }, () => {
         const state = channel.presenceState();
         console.log("Presence sync:", state);
       })
-      .on("presence", { event: "join" }, ({ key, newPresences }) => {
+      .on('presence', { event: "join" }, ({ key, newPresences }) => {
         console.log("User joined:", key, newPresences);
       })
-      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
+      .on('presence', { event: "leave" }, ({ key, leftPresences }) => {
         console.log("User left:", key, leftPresences);
       })
       .subscribe(async (status) => {

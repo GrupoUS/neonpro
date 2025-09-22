@@ -4,7 +4,7 @@
 export const runtime = 'edge';
 export const preferredRegion = 'auto';
 
-export default async function handler(request: Request) {
+export default async function handler(_request: Request) {
   const url = new URL(request.url);
   const pathname = url.pathname;
 

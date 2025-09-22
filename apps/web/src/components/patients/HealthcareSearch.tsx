@@ -2,25 +2,6 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  AlertCircle,
-  Calendar,
-  CheckCircle,
-  FileText,
-  Filter,
-  Loader2,
-  Mail,
-  MapPin,
-  Phone,
-  Search,
-  Shield,
-  User,
-  X,
-} from 'lucide-react';
-import { useCallback, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
-import {
   Badge,
   Button,
   Card,
@@ -53,6 +34,23 @@ import {
   TabsTrigger,
 } from '@neonpro/ui';
 import { cn } from '@neonpro/utils';
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  FileText,
+  Filter,
+  Loader2,
+  Mail,
+  MapPin,
+  Phone,
+  Search,
+  Shield,
+  User,
+  X,
+} from 'lucide-react';
+import { useCallback, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 // Brazilian document validation schemas
 const cpfSchema = z

@@ -8,7 +8,7 @@ import { createClient } from '@supabase/supabase-js';
 
 export interface AuditLogEntry {
   id?: string;
-  userId: string;
+  _userId: string;
   action: string;
   resource: string;
   resourceId?: string;
@@ -115,7 +115,7 @@ export class AuditLogger {
    * Log a successful operation
    */
   async success(
-    userId: string,
+    _userId: string,
     action: string,
     resource: string,
     metadata?: Record<string, unknown>,
@@ -133,7 +133,7 @@ export class AuditLogger {
    * Log a failed operation
    */
   async error(
-    userId: string,
+    _userId: string,
     action: string,
     resource: string,
     errorMessage: string,
@@ -153,7 +153,7 @@ export class AuditLogger {
    * Log healthcare data access (LGPD compliant)
    */
   async logHealthcareAccess(
-    userId: string,
+    _userId: string,
     action: string,
     patientId: string,
     dataType: string,
@@ -163,7 +163,7 @@ export class AuditLogger {
     await this.log({
       userId,
       action: `healthcare_data_${action}`,
-      resource: 'patient_data',
+      resource: 'patient_data_,
       resourceId: patientId,
       metadata: {
         ...metadata,
@@ -180,7 +180,7 @@ export class AuditLogger {
    * Log AI/ML operations
    */
   async logAIOperation(
-    userId: string,
+    _userId: string,
     action: string,
     model: string,
     inputTokens?: number,
@@ -219,7 +219,7 @@ export class AuditLogger {
     await this.log({
       userId,
       action: `ai_${action}`,
-      resource: 'ai_model',
+      resource: 'ai_model_,
       resourceId: model,
       metadata: aiMetadata as Record<string, unknown>,
       success: true,
@@ -247,7 +247,7 @@ export class AuditLogger {
     // Serialize metadata safely
     const serializedMetadata = this.serializeMetadata(entry.metadata);
 
-    const { error } = await this.supabase.from('audit_logs').insert({
+    const { error } = await this.supabase.from('audit_logs_).insert({
       user_id: entry.userId,
       action: entry.action,
       resource_type: entry.resource,
@@ -255,7 +255,7 @@ export class AuditLogger {
       new_values: serializedMetadata as any,
       ip_address: entry.ipAddress || null,
       user_agent: entry.userAgent,
-      lgpd_basis: entry.lgpdCompliant ? 'legitimate_interest' : null,
+      lgpd_basis: entry.lgpdCompliant ? 'legitimate_interest_ : null,
       created_at: entry.timestamp?.toISOString(),
     });
 
@@ -273,12 +273,14 @@ export class AuditLogger {
     try {
       // Create a safe copy of the metadata
       const safeMetadata: Record<string, unknown> = {};
-      
+
       // Only include primitive types and safe objects
       for (const [key, value] of Object.entries(metadata)) {
         if (value === null || value === undefined) {
           safeMetadata[key] = null;
-        } else if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        } else if (
+          typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean'
+        ) {
           safeMetadata[key] = value;
         } else if (typeof value === 'object') {
           // For objects, try to stringify them safely

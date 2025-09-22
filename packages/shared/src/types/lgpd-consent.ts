@@ -79,7 +79,7 @@ export interface ConsentHistory {
   changes?: string[];
   ipAddress?: string;
   userAgent?: string;
-  userId?: string;
+  _userId?: string;
 }
 
 // Data subject request
@@ -141,7 +141,7 @@ export interface LGPDConsent {
   // History and audit
   history?: ConsentHistory[];
   accessLog?: Array<{
-    userId: string;
+    _userId: string;
     action: string;
     timestamp: Date;
     ipAddress?: string;
@@ -358,10 +358,9 @@ export function getConsentByPatientId(
   patientId: string,
 ): LGPDConsent | undefined {
   return consents
-    .filter(
-      (consent) => consent.patientId === patientId && !consent.withdrawalDate,
+    .filter((consent) => consent.patientId === patientId && !consent.withdrawalDate,
     )
-    .sort((a, b) => b.consentDate.getTime() - a.consentDate.getTime())[0];
+    .sort((a,_b) => b.consentDate.getTime() - a.consentDate.getTime())[0];
 }
 
 // Get expired consents

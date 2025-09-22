@@ -32,8 +32,8 @@ const mockConfirmRequest = {
       riskLevel: 'LOW',
     },
   },
-  context: {
-    userId: 'user-123',
+  _context: {
+    _userId: 'user-123',
     sessionId: 'session-456',
   },
 };
@@ -42,7 +42,7 @@ const invalidConfirmRequest = {
   intentId: 'invalid-intent',
   token: 'invalid-token',
   confirmation: {},
-  context: {},
+  _context: {},
 };
 
 describe('AI CRUD Confirm Phase - Contract Tests', () => {
@@ -360,7 +360,7 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
       // RED: Test expects session continuity validation
       const sessionMismatchRequest = {
         ...mockConfirmRequest,
-        context: {
+        _context: {
           ...mockConfirmRequest.context,
           sessionId: 'different-session',
         },
@@ -452,14 +452,14 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
         entity: 'patients',
         operation: 'create',
         data: { name: 'Test Patient' },
-        context: mockConfirmRequest.context,
+        _context: mockConfirmRequest.context,
       });
 
       const confirmResponse = await confirmCrudIntent({
         intentId: intentResponse.intentId,
         token: intentResponse.token,
         confirmation: mockConfirmRequest.confirmation,
-        context: mockConfirmRequest.context,
+        _context: mockConfirmRequest.context,
       });
 
       expect(confirmResponse.success).toBe(true);

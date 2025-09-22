@@ -200,7 +200,7 @@ export class PredictiveAnalyticsService {
    * Predict appointment no-show risk with LGPD-compliant anonymization
    */
   async predictNoShowRisk(
-    request: PredictiveRequest,
+    _request: PredictiveRequest,
   ): Promise<PredictiveInsight | null> {
     try {
       await this.ensureInitialized();
@@ -269,7 +269,7 @@ export class PredictiveAnalyticsService {
    * Predict revenue forecast with compliance
    */
   async predictRevenueForecast(
-    request: PredictiveRequest,
+    _request: PredictiveRequest,
   ): Promise<PredictiveInsight | null> {
     try {
       await this.ensureInitialized();
@@ -338,7 +338,7 @@ export class PredictiveAnalyticsService {
    * Predict patient outcome
    */
   async predictPatientOutcome(
-    request: PredictiveRequest,
+    _request: PredictiveRequest,
   ): Promise<PredictiveInsight | null> {
     try {
       await this.ensureInitialized();
@@ -402,7 +402,7 @@ export class PredictiveAnalyticsService {
    * Generate comprehensive predictive insights
    */
   async generateInsights(
-    request: PredictiveRequest,
+    _request: PredictiveRequest,
   ): Promise<PredictiveInsight[]> {
     try {
       await this.ensureInitialized();
@@ -419,8 +419,7 @@ export class PredictiveAnalyticsService {
       );
 
       // If no valid insights were generated, throw an error
-      if (
-        validInsights.length === 0 &&
+      if (_validInsights.length === 0 &&
         insights.some((insight) => insight === null)
       ) {
         throw new Error("Failed to generate predictive insights");

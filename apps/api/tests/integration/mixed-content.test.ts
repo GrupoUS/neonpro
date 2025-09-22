@@ -53,7 +53,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
           'Content-Type': 'application/json',
           Authorization: 'Bearer test-token',
         },
-        body: JSON.stringify({ query: 'test query' }),
+        body: JSON.stringify({ _query: 'test query' }),
       });
 
       const cspHeader = response.headers.get('content-security-policy');
@@ -79,7 +79,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
           'Content-Type': 'application/json',
           Authorization: 'Bearer test-token',
         },
-        body: JSON.stringify({ query: 'healthcare data query' }),
+        body: JSON.stringify({ _query: 'healthcare data query' }),
       });
 
       const cspHeader = response.headers.get('content-security-policy');
@@ -132,7 +132,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
           },
           ...(isPostEndpoint && {
             body: JSON.stringify({
-              query: 'sensitive patient data query',
+              _query: 'sensitive patient data query',
             }),
           }),
         });
@@ -158,7 +158,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          query: 'show me client data with images',
+          _query: 'show me client data with images',
         }),
       });
 
@@ -189,7 +189,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          query: 'patient medical records with attachments',
+          _query: 'patient medical records with attachments',
         }),
       });
 
@@ -259,7 +259,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          query: 'external integrations status',
+          _query: 'external integrations status',
         }),
       });
 
@@ -323,7 +323,7 @@ describe('Mixed Content Prevention Test (T052)', () => {
           'X-Test-Mixed-Content': 'true', // Test header to simulate mixed content detection
         },
         body: JSON.stringify({
-          query: 'test mixed content detection',
+          _query: 'test mixed content detection',
         }),
       });
 

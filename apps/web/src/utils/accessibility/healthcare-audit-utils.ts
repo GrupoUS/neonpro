@@ -5,8 +5,6 @@
  * WCAG 2.1 AA+ requirements, and healthcare-specific validation patterns.
  */
 
-import { generateAccessibilityReport } from './axe-core-integration';
-
 // Brazilian healthcare compliance standards
 export const BRAZILIAN_HEALTHCARE_STANDARDS = {
   LGPD: {
@@ -79,7 +77,7 @@ export const HEALTHCARE_AUDIT_RULES = {
       const medicalInfo = element.querySelectorAll(
         '[data-sensitive="medical"], [data-medical="true"]',
       );
-      medicalInfo.forEach(_info => {
+      medicalInfo.forEach(info => {
         if (
           !info.hasAttribute('aria-label')
           && !info.hasAttribute('aria-labelledby')
@@ -113,7 +111,7 @@ export const HEALTHCARE_AUDIT_RULES = {
       const emergencyElements = element.querySelectorAll(
         '[data-emergency="true"], .emergency',
       );
-      emergencyElements.forEach(_el => {
+      emergencyElements.forEach(el => {
         if (!el.hasAttribute('aria-label')) {
           el.setAttribute('aria-label', 'Emergency information');
         }
@@ -147,7 +145,7 @@ export const HEALTHCARE_AUDIT_RULES = {
       const medicalForms = element.querySelectorAll(
         'form[data-medical="true"], .medical-form',
       );
-      medicalForms.forEach(_form => {
+      medicalForms.forEach(form => {
         const inputs = form.querySelectorAll('input, select, textarea');
         inputs.forEach((input, _index) => {
           if (!input.hasAttribute('id')) {
@@ -182,7 +180,7 @@ export const HEALTHCARE_AUDIT_RULES = {
       const prescriptionElements = element.querySelectorAll(
         '[data-prescription="true"], .prescription',
       );
-      prescriptionElements.forEach(_el => {
+      prescriptionElements.forEach(el => {
         if (!el.hasAttribute('aria-label')) {
           const medicationName = el
             .querySelector('.medication-name')
@@ -224,11 +222,11 @@ export const HEALTHCARE_AUDIT_RULES = {
       const appointmentElements = element.querySelectorAll(
         '[data-appointment="true"], .appointment-scheduler',
       );
-      appointmentElements.forEach(_el => {
+      appointmentElements.forEach(el => {
         const dateInputs = el.querySelectorAll(
           'input[type="date"], input[type="time"]',
         );
-        dateInputs.forEach(_input => {
+        dateInputs.forEach(input => {
           if (
             !input.hasAttribute('aria-label')
             && input instanceof HTMLInputElement
@@ -283,7 +281,7 @@ export class HealthcareAccessibilityAuditor {
   /**
    * Perform comprehensive healthcare accessibility audit
    */
-  async performComprehensiveAudit(context?: Element | string): Promise<{
+  async performComprehensiveAudit(_context?: Element | string): Promise<{
     summary: {
       overallScore: number;
       criticalIssues: number;
@@ -370,10 +368,7 @@ export class HealthcareAccessibilityAuditor {
     }
 
     // Calculate overall score
-    const totalChecks = results.categoryResults.reduce(
-      (sum, cat) => sum + cat.issues.length,
-      0,
-    );
+    const totalChecks = results.categoryResults.reduce((sum, cat) => sum + cat.issues.length, 0);
     const passedChecks = results.categoryResults.reduce(
       (sum, cat) => sum + cat.issues.filter((issue: any) => issue.passed).length,
       0,
@@ -398,7 +393,7 @@ export class HealthcareAccessibilityAuditor {
   private async auditCategory(
     categoryId: string,
     category: (typeof HEALTHCARE_AUDIT_CATEGORIES)[keyof typeof HEALTHCARE_AUDIT_CATEGORIES],
-    context: Element,
+    _context: Element,
   ): Promise<{
     category: string;
     score: number;
@@ -431,7 +426,7 @@ export class HealthcareAccessibilityAuditor {
         if (passed) {
           passedChecks++;
         }
-      } catch (error) {
+      } catch (_error) {
         console.error(`Audit rule ${ruleId} failed:`, error);
 
         issues.push({
@@ -459,7 +454,7 @@ export class HealthcareAccessibilityAuditor {
   /**
    * Validate Brazilian healthcare compliance
    */
-  private async validateHealthcareCompliance(context: Element): Promise<{
+  private async validateHealthcareCompliance(_context: Element): Promise<{
     lgpd: boolean;
     anvisa: boolean;
     cfm: boolean;
@@ -474,7 +469,7 @@ export class HealthcareAccessibilityAuditor {
   /**
    * Validate LGPD compliance
    */
-  private validateLGPDCompliance(context: Element): boolean {
+  private validateLGPDCompliance(_context: Element): boolean {
     const lgpdElements = context.querySelectorAll(
       '[data-lgpd="true"], [data-sensitive="personal"]',
     );
@@ -503,7 +498,7 @@ export class HealthcareAccessibilityAuditor {
   /**
    * Validate ANVISA compliance
    */
-  private validateANVISACompliance(context: Element): boolean {
+  private validateANVISACompliance(_context: Element): boolean {
     const anvisaElements = context.querySelectorAll(
       '[data-anvisa="true"], [data-medical-device="true"]',
     );
@@ -524,7 +519,7 @@ export class HealthcareAccessibilityAuditor {
   /**
    * Validate CFM compliance
    */
-  private validateCFMCompliance(context: Element): boolean {
+  private validateCFMCompliance(_context: Element): boolean {
     const cfmElements = context.querySelectorAll(
       '[data-cfm="true"], [data-professional="medical"]',
     );
@@ -642,7 +637,7 @@ export class HealthcareAccessibilityAuditor {
   /**
    * Apply automatic fixes for common accessibility issues
    */
-  async applyAutomaticFixes(context?: Element): Promise<{
+  async applyAutomaticFixes(_context?: Element): Promise<{
     fixed: number;
     failed: number;
     fixes: Array<{
@@ -660,7 +655,7 @@ export class HealthcareAccessibilityAuditor {
     let fixed = 0;
     let failed = 0;
 
-    for (const [ruleId, rule] of Object.entries(this.rules)) {
+    for (const [_ruleId, rule] of Object.entries(this.rules)) {
       try {
         rule.fix(elementContext);
         fixes.push({
@@ -670,7 +665,7 @@ export class HealthcareAccessibilityAuditor {
           message: `Applied fix for ${rule.name}`,
         });
         fixed++;
-      } catch (error) {
+      } catch (_error) {
         fixes.push({
           rule: rule.id,
           element: 'document',
@@ -741,7 +736,7 @@ export async function quickHealthcareAccessibilityCheck(
 }> {
   const context = selector ? document.querySelector(selector) : document;
 
-  if (!context) {
+  if (!_context) {
     return {
       passed: false,
       score: 0,
@@ -771,7 +766,7 @@ export async function quickHealthcareAccessibilityCheck(
       issues: results.categoryResults.flatMap((cat: any) => cat.issues),
       healthcareCompliance: results.summary.healthcareCompliance,
     };
-  } catch (error) {
+  } catch (_error) {
     console.error('Quick healthcare accessibility check failed:', error);
     return {
       passed: false,

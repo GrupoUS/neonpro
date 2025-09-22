@@ -6,10 +6,7 @@ export interface SeparatorProps extends React.HTMLAttributes<HTMLDivElement> {
   decorative?: boolean;
 }
 
-export const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(
-  (
-    { className, orientation = "horizontal", decorative = true, ...props },
-    ref,
+export const Separator = React.forwardRef<HTMLDivElement, SeparatorProps>(({ className,orientation = "horizontal",decorative = true, ...props }, ref,
   ) => {
     return (
       <div

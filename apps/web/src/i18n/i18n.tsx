@@ -26,14 +26,11 @@ export function I18nProvider({
 }) {
   const [locale, setLocale] = useState<LocaleKey>(defaultLocale);
   const dict = DICTS[locale] || ptBR;
-  const value = useMemo(
-    () => ({
-      locale,
-      setLocale,
-      t: (k: string) => dict[k] ?? k,
-    }),
-    [locale],
-  );
+  const value = useMemo(() => ({
+    locale,
+    setLocale,
+    t: (k: string) => dict[k] ?? k,
+  }), [locale]);
   return <I18nCtx.Provider value={value}>{children}</I18nCtx.Provider>;
 }
 

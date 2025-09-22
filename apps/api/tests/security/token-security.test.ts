@@ -337,7 +337,7 @@ describe('Token Security Tests', () => {
       let lastAttemptTime = 0;
 
       app.use('/login', async (c, next) => {
-        const now = Date.now();
+        const _now = Date.now();
         const timeSinceLastAttempt = now - lastAttemptTime;
 
         // This should implement progressive delays

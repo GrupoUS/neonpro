@@ -13,18 +13,18 @@
 
 // Query performance metrics
 export interface QueryMetrics {
-  query: string;
+  _query: string;
   duration: number;
   rowsAffected: number;
   timestamp: Date;
   endpoint: string;
-  userId?: string;
+  _userId?: string;
   clinicId?: string;
 }
 
 // Query optimization recommendations
 export interface QueryOptimization {
-  query: string;
+  _query: string;
   issues: string[];
   recommendations: string[];
   estimatedImprovement: number; // Percentage
@@ -77,7 +77,7 @@ export class QueryPerformanceMonitor {
     // Log slow queries
     if (metrics.duration > this.slowQueryThreshold) {
       console.warn('Slow query detected:', {
-        query: metrics.query.substring(0, 100) + '...',
+        _query: metrics.query.substring(0, 100) + '...',
         duration: metrics.duration,
         endpoint: metrics.endpoint,
         timestamp: metrics.timestamp,
@@ -98,7 +98,7 @@ export class QueryPerformanceMonitor {
   } {
     const totalQueries = this.metrics.length;
     const averageDuration = totalQueries > 0
-      ? this.metrics.reduce((sum, m) => sum + m.duration, 0) / totalQueries
+      ? this.metrics.reduce((sum,_m) => sum + m.duration, 0) / totalQueries
       : 0;
 
     const slowQueries = this.metrics.filter(
@@ -137,7 +137,7 @@ export class QueryPerformanceMonitor {
 
     // Group similar queries
     this.metrics.forEach(metric => {
-      const queryPattern = this.extractQueryPattern(metric.query);
+      const queryPattern = this.extractQueryPattern(metric._query);
       if (!queryGroups.has(queryPattern)) {
         queryGroups.set(queryPattern, []);
       }
@@ -146,7 +146,7 @@ export class QueryPerformanceMonitor {
 
     // Analyze each query group
     queryGroups.forEach((queries, pattern) => {
-      const avgDuration = queries.reduce((sum, q) => sum + q.duration, 0) / queries.length;
+      const avgDuration = queries.reduce((sum,_q) => sum + q.duration, 0) / queries.length;
       const frequency = queries.length;
 
       const issues: string[] = [];
@@ -194,7 +194,7 @@ export class QueryPerformanceMonitor {
 
       if (issues.length > 0) {
         optimizations.push({
-          query: pattern,
+          _query: pattern,
           issues,
           recommendations,
           estimatedImprovement: Math.min(estimatedImprovement, 80),
@@ -212,7 +212,7 @@ export class QueryPerformanceMonitor {
   /**
    * Extract query pattern for grouping
    */
-  private extractQueryPattern(query: string): string {
+  private extractQueryPattern(_query: string): string {
     return query
       .replace(/\$\d+/g, '?') // Replace parameters
       .replace(/\d+/g, 'N') // Replace numbers
@@ -334,8 +334,8 @@ export class HealthcareQueryOptimizer {
    * Optimize patient data queries for LGPD compliance
    */
   optimizePatientQuery(
-    query: string,
-    userId: string,
+    _query: string,
+    _userId: string,
     clinicId: string,
   ): string {
     let optimizedQuery = query;

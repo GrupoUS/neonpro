@@ -351,15 +351,15 @@ constraints:
 
 ## Phase 3.5: Polish
 
-- [ ] T037 [P] Unit tests for AIDataService in tests/unit/ai-data-service.test.ts
-- [ ] T038 [P] Unit tests for intent parser in tests/unit/intent-parser.test.ts
-- [ ] T039 [P] Unit tests for response formatting in tests/unit/response-formatter.test.ts
-- [ ] T040 [P] E2E tests for chat interface in tests/e2e/ai-chat.spec.ts
+- [x] T037 [P] Unit tests for AIDataService in tests/unit/ai-data-service.test.ts
+- [x] T038 [P] Unit tests for intent parser in tests/unit/intent-parser.test.ts
+- [x] T039 [P] Unit tests for response formatting in tests/unit/response-formatter.test.ts
+- [x] T040 [P] E2E tests for chat interface in tests/e2e/ai-chat.spec.ts
 - [x] T041 Performance optimization for database queries (<2s response)
 - [x] T042 Add caching for frequently accessed data
-- [ ] T043 Update documentation in docs/features/ai-agent-database-integration.md
-- [ ] T044 Update API documentation in docs/apis/ai-agent-api.md
-- [ ] T045 Run quickstart.md validation scenarios
+- [x] T043 Update documentation in docs/features/ai-agent-database-integration.md
+- [x] T044 Update API documentation in docs/apis/ai-agent-api.md
+- [x] T045 Run quickstart.md validation scenarios
 
 ## Dependencies
 

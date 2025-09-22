@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma';
 import { type LGPDOperationResult } from '../types/lgpd.js';
 import { createHealthcareError } from './createHealthcareError.js';
@@ -93,7 +92,7 @@ export class LGPDConsentService {
    * Complies with LGPD Art. 8 (consent requirements)
    */
   async recordConsent(
-    request: ConsentRequest,
+    _request: ConsentRequest,
   ): Promise<LGPDOperationResult & { consentId?: string }> {
     try {
       // Validate patient exists
@@ -129,7 +128,7 @@ export class LGPDConsentService {
       // Create new consent record
       const consentRecord = await this.prisma.auditTrail.create({
         data: {
-          userId: request.patientId,
+          _userId: request.patientId,
           action: 'CONSENT_GRANTED',
           entityType: 'LGPD_CONSENT',
           entityId: this.generateConsentId(),
@@ -153,7 +152,7 @@ export class LGPDConsentService {
       // Create audit trail entry
       await this.prisma.auditTrail.create({
         data: {
-          userId: request.patientId,
+          _userId: request.patientId,
           action: 'LGPD_CONSENT_RECORD',
           entityType: 'CONSENT_MANAGEMENT',
           entityId: consentRecord.id,
@@ -188,13 +187,13 @@ export class LGPDConsentService {
    * Withdraws patient consent (right to withdraw under LGPD Art. 8, §5)
    */
   async withdrawConsent(
-    request: ConsentWithdrawalRequest,
+    _request: ConsentWithdrawalRequest,
   ): Promise<LGPDOperationResult> {
     try {
       const consent = await this.prisma.auditTrail.findFirst({
         where: {
           id: request.consentId,
-          userId: request.patientId,
+          _userId: request.patientId,
           metadata: {
             path: ['status'],
             equals: 'ACTIVE',
@@ -229,7 +228,7 @@ export class LGPDConsentService {
       // Create audit trail entry for withdrawal
       await this.prisma.auditTrail.create({
         data: {
-          userId: request.patientId,
+          _userId: request.patientId,
           action: 'CONSENT_WITHDRAWN',
           entityType: 'CONSENT_MANAGEMENT',
           entityId: consent.id,
@@ -271,7 +270,7 @@ export class LGPDConsentService {
   async getPatientConsents(patientId: string): Promise<LGPDConsentRecord[]> {
     const consents = await this.prisma.auditTrail.findMany({
       where: {
-        userId: patientId,
+        _userId: patientId,
         action: 'CONSENT_GRANTED',
         metadata: {
           path: ['status'],
@@ -330,7 +329,7 @@ export class LGPDConsentService {
       const consents = await this.getPatientConsents(patientId);
       const auditEntries = await this.prisma.auditTrail.findMany({
         where: {
-          userId: patientId,
+          _userId: patientId,
           action: {
             in: ['CONSENT_GRANTED', 'CONSENT_WITHDRAWN', 'LGPD_CONSENT_RECORD'],
           },
@@ -379,7 +378,7 @@ export class LGPDConsentService {
   ): Promise<any> {
     return this.prisma.auditTrail.findFirst({
       where: {
-        userId: patientId,
+        _userId: patientId,
         action: 'CONSENT_GRANTED',
         metadata: {
           path: ['purpose'],

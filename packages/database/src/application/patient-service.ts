@@ -21,7 +21,7 @@ export class PatientService {
   /**
    * Create a new patient with validation
    */
-  async createPatient(request: CreatePatientRequest): Promise<Patient> {
+  async createPatient(_request: CreatePatientRequest): Promise<Patient> {
     try {
       // Validate required fields
       this.validateCreateRequest(request);
@@ -52,7 +52,7 @@ export class PatientService {
   /**
    * Update an existing patient
    */
-  async updatePatient(id: string, request: UpdatePatientRequest): Promise<Patient> {
+  async updatePatient(id: string, _request: UpdatePatientRequest): Promise<Patient> {
     try {
       // Check if patient exists
       const existingPatient = await this.patientRepository.findById(id);
@@ -66,7 +66,7 @@ export class PatientService {
       }
 
       // Update patient
-      const updatedPatient = await this.patientRepository.update(id, request);
+      const updatedPatient = await this.patientRepository.update(id, _request);
 
       return updatedPatient;
     } catch (error) {
@@ -107,7 +107,7 @@ export class PatientService {
    * Search patients by query string
    */
   async searchPatients(
-    query: string, 
+    _query: string, 
     clinicId?: string, 
     options?: PatientQueryOptions
   ): Promise<PatientSearchResult> {
@@ -152,7 +152,7 @@ export class PatientService {
   /**
    * Validate patient creation request
    */
-  private validateCreateRequest(request: CreatePatientRequest): void {
+  private validateCreateRequest(_request: CreatePatientRequest): void {
     if (!request.clinicId) {
       throw new PatientValidationError("Clinic ID is required");
     }

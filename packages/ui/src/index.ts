@@ -138,7 +138,7 @@ export {
   DashboardLayout,
 } from "./components/ui/dashboard-layout";
 export {
-  DraggableCardBody,
+  DraggableCard,
   DraggableCardContainer,
 } from "./components/ui/draggable-card";
 export {

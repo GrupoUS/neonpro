@@ -123,8 +123,7 @@ export function validateAIConfig(config: AIConfig): {
   const errors: string[] = [];
 
   // Check if at least one provider is enabled
-  const enabledProviders = Object.entries(config.providers).filter(
-    ([, providerConfig]) => providerConfig.enabled,
+  const enabledProviders = Object.entries(config.providers).filter(([,_providerConfig]) => providerConfig.enabled,
   );
 
   if (enabledProviders.length === 0) {
@@ -187,7 +186,7 @@ export function resetAIConfig(): void {
 // Helper functions for provider selection
 export function getEnabledProviders(config: AIConfig): AIProvider[] {
   return Object.entries(config.providers)
-    .filter(([, providerConfig]) => providerConfig.enabled)
+    .filter(([,_providerConfig]) => providerConfig.enabled)
     .map(([provider]) => provider as AIProvider);
 }
 

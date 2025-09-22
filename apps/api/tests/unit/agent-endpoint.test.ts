@@ -64,7 +64,7 @@ describe('Contract Tests: AI Agent Endpoint', () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          query: 'Quais os próximos agendamentos?',
+          _query: 'Quais os próximos agendamentos?',
         }),
       });
 
@@ -82,10 +82,10 @@ describe('Contract Tests: AI Agent Endpoint', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          query: 'Me mostre os clientes cadastrados',
+          _query: 'Me mostre os clientes cadastrados',
           sessionId: 'test-session-123',
-          context: {
-            userId: 'user-789',
+          _context: {
+            _userId: 'user-789',
           },
         }),
       });
@@ -109,7 +109,7 @@ describe('Contract Tests: AI Agent Endpoint', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          query: 'Quais os próximos agendamentos?',
+          _query: 'Quais os próximos agendamentos?',
           sessionId: 'test-session-123',
         }),
       });
@@ -132,7 +132,7 @@ describe('Contract Tests: AI Agent Endpoint', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          query: 'Como está o faturamento?',
+          _query: 'Como está o faturamento?',
           sessionId: 'test-session-123',
         }),
       });
@@ -154,7 +154,7 @@ describe('Contract Tests: AI Agent Endpoint', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          query: 'Agendamentos da Maria amanhã?',
+          _query: 'Agendamentos da Maria amanhã?',
           sessionId: 'test-session-123',
         }),
       });
@@ -181,17 +181,17 @@ describe('Contract Tests: AI Agent Endpoint', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          query: 'Me mostre os clientes',
+          _query: 'Me mostre os clientes',
           sessionId: 'test-session-123',
-          context: {
-            userId: 'user-789',
+          _context: {
+            _userId: 'user-789',
             previousMessages: [
               {
-                role: 'user',
+                _role: 'user',
                 content: 'Olá',
               },
               {
-                role: 'assistant',
+                _role: 'assistant',
                 content: 'Olá! Como posso ajudar?',
               },
             ],
@@ -212,7 +212,7 @@ describe('Contract Tests: AI Agent Endpoint', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          query: 'INVALID_QUERY_THAT_SHOULD_FAIL',
+          _query: 'INVALID_QUERY_THAT_SHOULD_FAIL',
           sessionId: 'test-session-123',
         }),
       });

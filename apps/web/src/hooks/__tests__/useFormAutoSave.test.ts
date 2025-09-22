@@ -29,12 +29,12 @@ const mockFormData = {
   cpf: '123.456.789-01',
 };
 
-describe('useFormAutoSave', () => {
+describe(('useFormAutoSave', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should save form data to localStorage after debounce delay', async () => {
+  it(_'should save form data to localStorage after debounce delay',async () => {
     const formKey = 'patient-registration-form';
     const { result } = renderHook(() => useFormAutoSave(formKey));
 
@@ -58,7 +58,7 @@ describe('useFormAutoSave', () => {
     );
   });
 
-  it('should load saved form data from localStorage', () => {
+  it(('should load saved form data from localStorage', () => {
     const formKey = 'patient-registration-form';
     const savedData = {
       data: mockFormData,
@@ -75,7 +75,7 @@ describe('useFormAutoSave', () => {
     expect(result.current.lastSaved).toEqual(new Date(savedData.timestamp));
   });
 
-  it('should clear saved form data', () => {
+  it(('should clear saved form data', () => {
     const formKey = 'patient-registration-form';
     const { result } = renderHook(() => useFormAutoSave(formKey));
 
@@ -88,7 +88,7 @@ describe('useFormAutoSave', () => {
     );
   });
 
-  it('should handle corrupted localStorage data gracefully', () => {
+  it(('should handle corrupted localStorage data gracefully', () => {
     const formKey = 'patient-registration-form';
     mockLocalStorage.getItem.mockReturnValue('invalid-json');
 
@@ -98,7 +98,7 @@ describe('useFormAutoSave', () => {
     expect(result.current.hasSavedData).toBe(false);
   });
 
-  it('should not save data if form data is empty', () => {
+  it(('should not save data if form data is empty', () => {
     const formKey = 'patient-registration-form';
     const { result } = renderHook(() => useFormAutoSave(formKey));
 
@@ -113,7 +113,7 @@ describe('useFormAutoSave', () => {
     expect(mockLocalStorage.setItem).not.toHaveBeenCalled();
   });
 
-  it('should provide form recovery status', () => {
+  it(('should provide form recovery status', () => {
     const formKey = 'patient-registration-form';
     const savedData = {
       data: mockFormData,
@@ -129,7 +129,7 @@ describe('useFormAutoSave', () => {
     expect(result.current.recoveryAge).toBeLessThan(60000); // Less than 1 minute
   });
 
-  it('should expire old saved data', () => {
+  it(('should expire old saved data', () => {
     const formKey = 'patient-registration-form';
     const oldData = {
       data: mockFormData,

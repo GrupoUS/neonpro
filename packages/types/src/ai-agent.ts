@@ -3,6 +3,92 @@
  * Shared types for API and Web applications
  */
 
+// Healthcare-compliant constraint types for AI Agent
+export interface QueryEntities {
+  names?: string[];
+  dates?: string[];
+  locations?: string[];
+  medicalTerms?: string[];
+  [key: string]: unknown;
+}
+
+export interface ResponseData {
+  id?: string;
+  name?: string;
+  value?: string | number;
+  date?: string;
+  status?: string;
+  [key: string]: unknown;
+}
+
+export interface ChartMetadata {
+  color?: string;
+  label?: string;
+  category?: string;
+  timestamp?: string;
+  [key: string]: unknown;
+}
+
+export interface ActionParameters {
+  id?: string;
+  type?: string;
+  filters?: Record<string, unknown>;
+  pagination?: {
+    page: number;
+    limit: number;
+  };
+  [key: string]: unknown;
+}
+
+export interface UserPreferences {
+  language?: string;
+  timezone?: string;
+  dateFormat?: string;
+  theme?: 'light' | 'dark' | 'auto';
+  notifications?: {
+    email: boolean;
+    push: boolean;
+    sms: boolean;
+  };
+  [key: string]: unknown;
+}
+
+export interface CachedData {
+  patients?: Array<{
+    id: string;
+    name: string;
+    lastVisit?: string;
+  }>;
+  appointments?: Array<{
+    id: string;
+    date: string;
+    status: string;
+  }>;
+  [key: string]: unknown;
+}
+
+export interface MessageData {
+  type?: string;
+  entity?: string;
+  action?: string;
+  [key: string]: unknown;
+}
+
+export interface MessageMetadata {
+  source?: string;
+  priority?: 'low' | 'medium' | 'high';
+  category?: string;
+  [key: string]: unknown;
+}
+
+export interface ActionPayload {
+  targetId?: string;
+  actionType?: string;
+  parameters?: Record<string, unknown>;
+  timestamp?: string;
+  [key: string]: unknown;
+}
+
 export interface UserQuery {
   /** Unique identifier (UUID) */
   id: string;
@@ -23,8 +109,7 @@ export interface UserQuery {
 }
 
 export type QueryIntent =
-  | 'client_data'
-  | 'appointments'
+  | 'client_data' | 'appointments'
   | 'financial'
   | 'general'
   | 'unknown';
@@ -42,7 +127,7 @@ export interface QueryParameters {
     period?: 'today' | 'week' | 'month' | 'year' | 'custom';
   };
   /** Raw extracted entities for further processing */
-  rawEntities?: Record<string, any>;
+  rawEntities?: QueryEntities;
 }
 
 export interface DateRange {
@@ -64,7 +149,7 @@ export interface ResponseMetadata {
   /** Processing duration in ms */
   processingTime?: number;
   /** Additional metadata */
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface AgentResponse {
@@ -99,7 +184,7 @@ export interface ResponseContent {
   /** Plain text description */
   text?: string;
   /** Structured data for tables/lists */
-  data?: any[];
+  data?: ResponseData[];
   /** Column definitions for tabular data */
   columns?: TableColumn[];
   /** Chart configuration */
@@ -124,7 +209,7 @@ export interface TableColumn {
   /** Column width (CSS) */
   width?: string;
   /** Format function for display */
-  format?: (value: any) => string;
+  format?: (value: unknown) => string;
 }
 
 export interface ChartConfig {
@@ -145,13 +230,13 @@ export interface ChartConfig {
 export interface ChartDataPoint {
   label: string;
   value: number;
-  metadata?: Record<string, any>;
+  metadata?: ChartMetadata;
 }
 
 export interface ChartAxis {
   title?: string;
   type?: 'category' | 'number' | 'time';
-  format?: (value: any) => string;
+  format?: (value: unknown) => string;
 }
 
 export interface InteractiveAction {
@@ -164,7 +249,7 @@ export interface InteractiveAction {
   /** Action handler function name */
   action: string;
   /** Action-specific parameters */
-  parameters?: Record<string, any>;
+  parameters?: ActionParameters;
   /** Whether action requires confirmation */
   confirm?: boolean;
   /** Confirmation message */
@@ -203,11 +288,11 @@ export interface SessionContext {
   /** User role for permission checking */
   role: UserRole;
   /** Active filters or preferences */
-  preferences?: Record<string, any>;
+  preferences?: UserPreferences;
   /** Recent conversation history */
   recentIntents?: QueryIntent[];
   /** Cached data for context */
-  cachedData?: Record<string, any>;
+  cachedData?: CachedData;
 }
 
 export type UserRole =
@@ -234,24 +319,16 @@ export interface PermissionContext {
 }
 
 export type Permission =
-  | 'read_clients'
-  | 'write_clients'
-  | 'read_appointments'
-  | 'write_appointments'
-  | 'read_financial'
-  | 'write_financial'
-  | 'read_medical'
-  | 'write_medical'
-  | 'manage_users'
-  | 'view_analytics';
+  | 'read_clients' | 'write_clients'
+  | 'read_appointments' | 'write_appointments'
+  | 'read_financial' | 'write_financial'
+  | 'read_medical' | 'write_medical'
+  | 'manage_users' | 'view_analytics';
 
 export type DataScope =
-  | 'own_clients'
-  | 'all_clients'
-  | 'financial_read'
-  | 'financial_write'
-  | 'medical_read'
-  | 'medical_write';
+  | 'own_clients' | 'all_clients'
+  | 'financial_read' | 'financial_write'
+  | 'medical_read' | 'medical_write';
 
 export interface AgentQueryRequest {
   /** Natural language query from user */
@@ -277,11 +354,11 @@ export interface ChatMessage {
   /** When the message was sent */
   timestamp: Date;
   /** Optional structured data */
-  data?: Record<string, any>;
+  data?: MessageData;
   /** Optional interactive actions */
   actions?: AgentAction[];
   /** Optional metadata */
-  metadata?: Record<string, any>;
+  metadata?: MessageMetadata;
 }
 
 export interface AgentAction {
@@ -290,5 +367,5 @@ export interface AgentAction {
   icon?: string;
   primary?: boolean;
   type: 'view_details' | 'create_appointment' | 'export_data' | 'navigate' | 'refresh';
-  payload?: Record<string, any>;
+  payload?: ActionPayload;
 }

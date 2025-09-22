@@ -56,7 +56,7 @@ export class ComplianceAuditService {
       type: ActorType;
       name?: string;
       email?: string;
-      role?: string;
+      _role?: string;
     };
     resource: {
       type: string;
@@ -253,9 +253,7 @@ export class ComplianceAuditService {
     filters?: AuditSearchFilters,
     limit: number = 100,
   ): Promise<GenericAuditEvent[]> {
-    let results = Array.from(this.events.values()).filter(
-      (event) => event.clinicId === clinicId,
-    );
+    let results = Array.from(this.events.values()).filter((event) => event.clinicId === clinicId);
 
     if (filters) {
       if (filters.action) {
@@ -268,8 +266,7 @@ export class ComplianceAuditService {
         results = results.filter((e) => e.actor.id === filters.actorId);
       }
       if (filters.resourceType) {
-        results = results.filter(
-          (e) => e.resource.type === filters.resourceType,
+        results = results.filter((e) => e.resource.type === filters.resourceType,
         );
       }
       if (filters.resourceId) {
@@ -279,8 +276,7 @@ export class ComplianceAuditService {
         results = results.filter((e) => e.riskLevel === filters.riskLevel);
       }
       if (filters.complianceStatus) {
-        results = results.filter(
-          (e) => e.complianceStatus === filters.complianceStatus,
+        results = results.filter((e) => e.complianceStatus === filters.complianceStatus,
         );
       }
       if (filters.framework) {
@@ -298,16 +294,14 @@ export class ComplianceAuditService {
         results = results.filter((e) => e.sessionId === filters.sessionId);
       }
       if (filters.consentRefId) {
-        results = results.filter(
-          (e) => e.consentRef?.id === filters.consentRefId,
+        results = results.filter((e) => e.consentRef?.id === filters.consentRefId,
         );
       }
     }
 
     // Sort by timestamp (newest first) and limit
     return results
-      .sort(
-        (a, b) =>
+      .sort((a,_b) =>
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       )
       .slice(0, limit);
@@ -427,11 +421,9 @@ export class ComplianceAuditService {
    */
   getSessionEvents(sessionId: string, clinicId: string): GenericAuditEvent[] {
     return Array.from(this.events.values())
-      .filter(
-        (event) => event.sessionId === sessionId && event.clinicId === clinicId,
+      .filter((event) => event.sessionId === sessionId && event.clinicId === clinicId,
       )
-      .sort(
-        (a, b) =>
+      .sort((a,_b) =>
           new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
       );
   }
@@ -442,8 +434,7 @@ export class ComplianceAuditService {
   private cleanupOldEvents(): void {
     if (this.events.size <= this.config.maxMemoryEvents) return;
 
-    const events = Array.from(this.events.entries()).sort(
-      ([, a], [, b]) =>
+    const events = Array.from(this.events.entries()).sort(([, a], [, b]) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
 

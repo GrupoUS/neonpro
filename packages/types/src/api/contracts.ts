@@ -3,9 +3,98 @@
  * tRPC v11 API contracts with comprehensive type safety
  */
 
-import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
+import { TRPCError } from '@trpc/server';
 
+// Healthcare-compliant constraint types for API contracts
+export interface HealthcareErrorMetadata {
+  patientId?: string;
+  appointmentId?: string;
+  professionalId?: string;
+  clinicId?: string;
+  timestamp?: string;
+  severity?: 'low' | 'medium' | 'high' | 'critical';
+  category?: string;
+  [key: string]: unknown;
+}
+
+export interface ClinicSettings {
+  timezone?: string;
+  language?: string;
+  dateFormat?: string;
+  notifications?: {
+    email: boolean;
+    sms: boolean;
+    push: boolean;
+  };
+  appointment?: {
+    defaultDuration: number;
+    allowOverlap: boolean;
+    bufferTime: number;
+  };
+  billing?: {
+    currency: string;
+    autoInvoice: boolean;
+  };
+  [key: string]: unknown;
+}
+
+export interface ClinicData {
+  id: string;
+  name: string;
+  cnpj?: string;
+  healthLicenseNumber?: string;
+  address?: {
+    street: string;
+    number: string;
+    city: string;
+    state: string;
+    zip: string;
+  };
+  settings?: ClinicSettings;
+  createdAt?: string;
+  updatedAt?: string;
+  isActive?: boolean;
+}
+
+// Zod schemas for validation
+export const ClinicSettingsSchema = z.object({
+  timezone: z.string().optional(),
+  language: z.string().optional(),
+  dateFormat: z.string().optional(),
+  notifications: z.object({
+    email: z.boolean(),
+    sms: z.boolean(),
+    push: z.boolean(),
+  }).optional(),
+  appointment: z.object({
+    defaultDuration: z.number(),
+    allowOverlap: z.boolean(),
+    bufferTime: z.number(),
+  }).optional(),
+  billing: z.object({
+    currency: z.string(),
+    autoInvoice: z.boolean(),
+  }).optional(),
+}).passthrough();
+
+export const ClinicDataSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  cnpj: z.string().optional(),
+  healthLicenseNumber: z.string().optional(),
+  address: z.object({
+    street: z.string(),
+    number: z.string(),
+    city: z.string(),
+    state: z.string(),
+    zip: z.string(),
+  }).optional(),
+  settings: ClinicSettingsSchema.optional(),
+  createdAt: z.string().optional(),
+  updatedAt: z.string().optional(),
+  isActive: z.boolean().optional(),
+});
 // =======================
 // Base API Response Types
 // =======================
@@ -74,7 +163,7 @@ export const ErrorResponseSchema = BaseResponseSchema.extend({
   error: z.object({
     code: z.string(),
     message: z.string(),
-    details: z.record(z.any()).optional(),
+    details: z.record(z.unknown()).optional(),
     stack: z.string().optional(),
   }),
   success: z.literal(false),
@@ -403,15 +492,13 @@ export const HealthcareErrorCodes = z.enum([
 export class HealthcareTRPCError extends TRPCError {
   constructor(
     code:
-      | 'BAD_REQUEST'
-      | 'UNAUTHORIZED'
+      | 'BAD_REQUEST' | 'UNAUTHORIZED'
       | 'FORBIDDEN'
-      | 'NOT_FOUND'
-      | 'INTERNAL_SERVER_ERROR'
+      | 'NOT_FOUND' | 'INTERNAL_SERVER_ERROR'
       | 'TOO_MANY_REQUESTS',
     message: string,
     healthcareCode: z.infer<typeof HealthcareErrorCodes>,
-    metadata?: Record<string, any>,
+    metadata?: HealthcareErrorMetadata,
   ) {
     super({
       code,
@@ -432,13 +519,13 @@ export class HealthcareTRPCError extends TRPCError {
 export class HealthcareError extends Error {
   public status: string;
   public codeName?: string;
-  public meta?: Record<string, any>;
+  public meta?: HealthcareErrorMetadata;
 
   constructor(
     status: string,
     message: string,
     codeName?: string,
-    meta?: Record<string, any>,
+    meta?: HealthcareErrorMetadata,
   ) {
     super(message);
     this.name = 'HealthcareError';
@@ -505,7 +592,7 @@ export const CreateClinicRequestSchema = z.object({
     state: z.string().length(2),
     zip: z.string().optional(),
   }),
-  settings: z.record(z.any()).optional(),
+  settings: z.record(z.unknown()).optional(),
 });
 
 export const UpdateClinicRequestSchema = z
@@ -523,13 +610,13 @@ export const UpdateClinicRequestSchema = z
         zip: z.string().optional(),
       })
       .optional(),
-    settings: z.record(z.any()).optional(),
+    settings: z.record(z.unknown()).optional(),
   })
   .strict();
 
 export const ClinicResponseSchema = z.object({
   success: z.literal(true),
-  data: z.any(),
+  data: z.record(z.unknown()),
   message: z.string().optional(),
   timestamp: z.string().optional(),
   requestId: z.string().optional(),
@@ -538,7 +625,7 @@ export const ClinicResponseSchema = z.object({
 export const ClinicsListResponseSchema = z.object({
   success: z.literal(true),
   data: z.object({
-    clinics: z.array(z.any()),
+    clinics: z.array(z.record(z.unknown())),
     pagination: z.object({
       page: z.number(),
       limit: z.number(),

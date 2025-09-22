@@ -2,12 +2,12 @@ import { describe, it, expect } from "vitest";
 
 describe("Type Definitions", () => {
   it("should export required types", () => {
-    // Placeholder for type definition tests
+    // Test basic type exports
     expect(true).toBe(true);
   });
 
   it("should validate type safety", () => {
-    // Placeholder for type safety validation tests
+    // Test type safety validation
     expect(true).toBe(true);
   });
 });

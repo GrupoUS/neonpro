@@ -10,9 +10,9 @@
 
 import { describe, expect, it } from 'vitest';
 
-describe('TypeScript Compilation Error Detection', () => {
-  describe('Database Type Conflicts', () => {
-    it('should detect Database type redeclaration in supabase.ts', () => {
+describe('TypeScript Compilation Error Detection',() => {
+  describe('Database Type Conflicts',() => {
+    it('should detect Database type redeclaration in supabase.ts',() => {
       // RED: This test must fail until Database type conflicts are resolved
       // Critical for healthcare data integrity
       expect(() => {
@@ -21,7 +21,7 @@ describe('TypeScript Compilation Error Detection', () => {
       }).toThrow('Identifier \'Database\' has already been declared');
     });
 
-    it('should detect Json type redeclaration conflicts', () => {
+    it(_'should detect Json type redeclaration conflicts'), () => {
       // RED: Json type conflicts break database serialization
       expect(() => {
         const { Json } = require('@/types/supabase');
@@ -30,22 +30,22 @@ describe('TypeScript Compilation Error Detection', () => {
     });
   });
 
-  describe('Module Resolution Issues', () => {
-    it('should detect missing @neonpro/core-services module', () => {
+  describe(_'Module Resolution Issues'), () => {
+    it(_'should detect missing @neonpro/core-services module'), () => {
       // RED: Critical for AI chat functionality in healthcare context
       expect(() => {
         require('@/routes/ai-chat');
       }).toThrow('Cannot find module \'@neonpro/core-services\'');
     });
 
-    it('should detect missing @neonpro/database module', () => {
+    it(_'should detect missing @neonpro/database module'), () => {
       // RED: Database module required for patient data operations
       expect(() => {
         require('@/routes/patients');
       }).toThrow('Cannot find module \'@neonpro/database\'');
     });
 
-    it('should detect missing trpc helpers', () => {
+    it(_'should detect missing trpc helpers'), () => {
       // RED: Required for contract testing in healthcare APIs
       expect(() => {
         require('../helpers/trpc-context');
@@ -53,8 +53,8 @@ describe('TypeScript Compilation Error Detection', () => {
     });
   });
 
-  describe('Contract API Type Mismatches', () => {
-    it('should detect missing createChatSession method in AI contract', () => {
+  describe(_'Contract API Type Mismatches'), () => {
+    it(_'should detect missing createChatSession method in AI contract'), () => {
       // RED: Critical for telemedicine AI chat functionality
       const aiContract = {
         chat: jest.fn(),
@@ -65,7 +65,7 @@ describe('TypeScript Compilation Error Detection', () => {
       expect(aiContract.createChatSession).toBeDefined();
     });
 
-    it('should detect missing sendMessage method', () => {
+    it(_'should detect missing sendMessage method'), () => {
       // RED: Required for real-time patient communication
       const aiContract = {
         chat: jest.fn(),
@@ -76,7 +76,7 @@ describe('TypeScript Compilation Error Detection', () => {
       expect(aiContract.sendMessage).toBeDefined();
     });
 
-    it('should detect missing predictNoShow method', () => {
+    it(_'should detect missing predictNoShow method'), () => {
       // RED: Critical for healthcare appointment management
       const aiContract = {
         chat: jest.fn(),
@@ -88,8 +88,8 @@ describe('TypeScript Compilation Error Detection', () => {
     });
   });
 
-  describe('tRPC Export Issues', () => {
-    it('should detect missing createCallerFactory export', () => {
+  describe(_'tRPC Export Issues'), () => {
+    it(_'should detect missing createCallerFactory export'), () => {
       // RED: Required for tRPC testing in healthcare contracts
       expect(() => {
         const { createCallerFactory } = require('@trpc/server');
@@ -98,8 +98,8 @@ describe('TypeScript Compilation Error Detection', () => {
     });
   });
 
-  describe('Error Tracking Export Issues', () => {
-    it('should detect ErrorTrackingManager export', () => {
+  describe(_'Error Tracking Export Issues'), () => {
+    it(_'should detect ErrorTrackingManager export'), () => {
       // RED: Critical for healthcare error compliance and audit trails
       expect(() => {
         const { ErrorTrackingManager } = require('@/lib/error-tracking');
@@ -108,15 +108,15 @@ describe('TypeScript Compilation Error Detection', () => {
     });
   });
 
-  describe('Syntax Error Detection', () => {
-    it('should detect parenthesis/semicolon syntax errors', () => {
+  describe(_'Syntax Error Detection'), () => {
+    it(_'should detect parenthesis/semicolon syntax errors'), () => {
       // RED: Syntax errors break healthcare API functionality
       const syntaxErrorPatterns = [
         'Expected ")" but found ";"',
         'Expected ";" but found ")"',
       ];
 
-      syntaxErrorPatterns.forEach(pattern => {
+      syntaxErrorPatterns.forEach(_pattern => {
         expect(() => {
           // Simulate syntax error detection
           throw new Error(pattern);
@@ -125,8 +125,8 @@ describe('TypeScript Compilation Error Detection', () => {
     });
   });
 
-  describe('Contract Test Export Issues', () => {
-    it('should detect missing default exports in contract tests', () => {
+  describe(_'Contract Test Export Issues'), () => {
+    it(_'should detect missing default exports in contract tests'), () => {
       // RED: Contract tests are required for healthcare API validation
       const contractModules = [
         './ai.contract.test',
@@ -136,7 +136,7 @@ describe('TypeScript Compilation Error Detection', () => {
         './professional.contract.test',
       ];
 
-      contractModules.forEach(module => {
+      contractModules.forEach(_module => {
         expect(() => {
           // This should fail due to missing default exports
           const contractTest = require(module);
@@ -146,8 +146,8 @@ describe('TypeScript Compilation Error Detection', () => {
     });
   });
 
-  describe('Timeout Issues in Tests', () => {
-    it('should detect timeout issues in healthcare behavior detection', () => {
+  describe(_'Timeout Issues in Tests'), () => {
+    it(_'should detect timeout issues in healthcare behavior detection'), () => {
       // RED: Healthcare abuse detection must not timeout
       const timeoutTest = async () => {
         // Simulate timeout in abuse detection
@@ -159,8 +159,8 @@ describe('TypeScript Compilation Error Detection', () => {
     });
   });
 
-  describe('LGPD Compliance Type Safety', () => {
-    it('should ensure LGPD types are properly exported', () => {
+  describe(_'LGPD Compliance Type Safety'), () => {
+    it(_'should ensure LGPD types are properly exported'), () => {
       // RED: LGPD compliance requires proper type definitions
       expect(() => {
         const { LGPDComplianceError } = require('@/types/errors');
@@ -168,7 +168,7 @@ describe('TypeScript Compilation Error Detection', () => {
       }).not.toThrow();
     });
 
-    it('should validate error severity types', () => {
+    it(_'should validate error severity types'), () => {
       // RED: Error severity is critical for healthcare incident response
       const { ErrorSeverity } = require('@/types/error-severity');
 
@@ -179,8 +179,8 @@ describe('TypeScript Compilation Error Detection', () => {
     });
   });
 
-  describe('Healthcare Security Types', () => {
-    it('should validate security header types', () => {
+  describe(_'Healthcare Security Types'), () => {
+    it(_'should validate security header types'), () => {
       // RED: Security headers are mandatory for healthcare data protection
       expect(() => {
         const {

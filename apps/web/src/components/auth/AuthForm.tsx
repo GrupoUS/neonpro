@@ -12,15 +12,17 @@ import {
   signUpWithEmail,
 } from '@/integrations/supabase/client';
 import { type AuthFormData, authFormSchema, emailSchema } from '@/lib/validations/auth';
+import {
+  HealthcareDataSensitivity,
+  validateBrazilianProfessionalData,
+  validateHealthcareFormData,
+} from '@/utils/healthcare-form-validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { validateHealthcareFormData, HealthcareDataSensitivity, validateBrazilianProfessionalData } from '@/utils/healthcare-form-validation';
 import { IconBrandGoogle } from '@tabler/icons-react';
 import { useRouter } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react'; // React import not needed with new JSX transform
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-
 export type AuthMode = 'sign-in' | 'sign-up' | 'forgot';
 
 export interface AuthFormProps {
@@ -80,7 +82,7 @@ export function AuthForm({
       setError(null);
       const { error } = await signInWithProvider('google', onSuccessRedirectTo);
       if (error) setError(error.message);
-    } catch (e: any) {
+    } catch (_e: any) {
       setError(e?.message ?? 'Erro inesperado');
     } finally {
       setIsLoading(false);
@@ -97,7 +99,7 @@ export function AuthForm({
       );
       if (error) return setError(error.message);
       router.navigate({ to: onSuccessRedirectTo });
-    } catch (e: any) {
+    } catch (_e: any) {
       setError(e?.message ?? 'Falha ao entrar');
     } finally {
       setIsLoading(false);
@@ -144,7 +146,7 @@ export function AuthForm({
         to: '/auth/confirm',
         search: { email: data.email } as any,
       });
-    } catch (e: any) {
+    } catch (_e: any) {
       setError(e?.message ?? 'Falha ao criar conta');
     } finally {
       setIsLoading(false);
@@ -159,7 +161,7 @@ export function AuthForm({
       if (error) return setError(error.message);
       showToast('Enviamos um link de recuperação para seu e-mail.', 'success');
       setMode('sign-in');
-    } catch (e: any) {
+    } catch (_e: any) {
       setError(e?.message ?? 'Falha ao solicitar recuperação');
     } finally {
       setIsLoading(false);

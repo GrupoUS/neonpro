@@ -12,7 +12,6 @@
 
 import { TRPCError } from '@trpc/server';
 import * as v from 'valibot';
-import { z } from 'zod';
 import {
   healthcareProcedure,
   patientProcedure,
@@ -71,7 +70,7 @@ export const healthcareServicesRouter = router({
         }),
       ),
     )
-    .mutation(async ({ input, ctx }) => {
+   .mutation(async ({ input, ctx }) => {
       try {
         if (!lgpdService) {
           throw new TRPCError({
@@ -94,7 +93,7 @@ export const healthcareServicesRouter = router({
             action: AuditAction.CREATE,
             resourceType: ResourceType.PATIENT_DATA,
             resource: record.id,
-            userId: ctx.userId,
+            _userId: ctx.userId,
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.LOW,
             ipAddress: ctx.auditMeta.ipAddress,
@@ -141,7 +140,7 @@ export const healthcareServicesRouter = router({
         }),
       ),
     )
-    .mutation(async ({ input, ctx }) => {
+   .mutation(async ({ input, ctx }) => {
       try {
         if (!lgpdService) {
           throw new TRPCError({
@@ -163,7 +162,7 @@ export const healthcareServicesRouter = router({
             action: AuditAction.UPDATE,
             resourceType: ResourceType.PATIENT_CONSENT,
             resource: withdrawalRecord.id,
-            userId: ctx.userId,
+            _userId: ctx.userId,
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.HIGH, // Consent withdrawal is high risk
             ipAddress: ctx.auditMeta.ipAddress,
@@ -204,7 +203,7 @@ export const healthcareServicesRouter = router({
         }),
       ),
     )
-    .mutation(async ({ input, ctx }) => {
+   .mutation(async ({ input, ctx }) => {
       try {
         if (!lgpdService) {
           throw new TRPCError({
@@ -225,7 +224,7 @@ export const healthcareServicesRouter = router({
             action: AuditAction.UPDATE,
             resourceType: ResourceType.PATIENT_DATA,
             resource: input.patientId,
-            userId: ctx.userId,
+            _userId: ctx.userId,
             status: result.success ? AuditStatus.SUCCESS : AuditStatus.FAILURE,
             riskLevel: RiskLevel.HIGH,
             ipAddress: ctx.auditMeta.ipAddress,
@@ -267,7 +266,7 @@ export const healthcareServicesRouter = router({
         }),
       ),
     )
-    .query(async ({ input, ctx }) => {
+   .query(async ({ input, ctx }) => {
       try {
         if (!lgpdService) {
           throw new TRPCError({
@@ -286,7 +285,7 @@ export const healthcareServicesRouter = router({
             action: AuditAction.READ,
             resourceType: ResourceType.COMPLIANCE_REPORT,
             resource: input.patientId || 'all',
-            userId: ctx.userId,
+            _userId: ctx.userId,
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.LOW,
             ipAddress: ctx.auditMeta.ipAddress,
@@ -335,7 +334,7 @@ export const healthcareServicesRouter = router({
         }),
       ),
     )
-    .mutation(async ({ input, ctx }) => {
+   .mutation(async ({ input, ctx }) => {
       try {
         if (!noShowService) {
           throw new TRPCError({
@@ -361,7 +360,7 @@ export const healthcareServicesRouter = router({
             action: AuditAction.CREATE,
             resourceType: ResourceType.AI_PREDICTION,
             resourceId: prediction.id,
-            userId: ctx.userId,
+            _userId: ctx.userId,
 
             status: AuditStatus.SUCCESS,
             riskLevel: prediction.riskLevel === 'very_high'
@@ -415,7 +414,7 @@ export const healthcareServicesRouter = router({
           action: AuditAction.READ,
           resourceType: ResourceType.AI_MODEL_PERFORMANCE,
           resourceId: 'no_show_prediction',
-          userId: ctx.userId,
+          _userId: ctx.userId,
 
           status: AuditStatus.SUCCESS,
           details: {
@@ -492,7 +491,7 @@ export const healthcareServicesRouter = router({
             action: AuditAction.CREATE,
             resourceType: ResourceType.TELEMEDICINE_SESSION,
             resourceId: session.id,
-            userId: ctx.userId,
+            _userId: ctx.userId,
 
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.MEDIUM, // Telemedicine requires security monitoring
@@ -531,7 +530,7 @@ export const healthcareServicesRouter = router({
         v.object({
           sessionId: v.string(),
           authContext: v.object({
-            userId: v.string(),
+            _userId: v.string(),
             securityLevel: v.string(),
             authenticationMethods: v.array(v.string()),
             sessionExpiry: v.string(), // ISO date string
@@ -573,7 +572,7 @@ export const healthcareServicesRouter = router({
             action: AuditAction.UPDATE,
             resourceType: ResourceType.TELEMEDICINE_SESSION,
             resourceId: input.sessionId,
-            userId: ctx.userId,
+            _userId: ctx.userId,
 
             status: result.success ? AuditStatus.SUCCESS : AuditStatus.FAILURE,
             riskLevel: authContext.riskScore > 70 ? RiskLevel.HIGH : RiskLevel.MEDIUM,
@@ -645,7 +644,7 @@ export const healthcareServicesRouter = router({
             action: AuditAction.UPDATE,
             resourceType: ResourceType.TELEMEDICINE_SESSION,
             resourceId: input.sessionId,
-            userId: ctx.userId,
+            _userId: ctx.userId,
 
             status: AuditStatus.SUCCESS,
             riskLevel: result.shouldEscalate ? RiskLevel.HIGH : RiskLevel.LOW,
@@ -727,7 +726,7 @@ export const healthcareServicesRouter = router({
             action: AuditAction.CREATE,
             resourceType: ResourceType.PRESCRIPTION,
             resourceId: result.prescriptionId,
-            userId: ctx.userId,
+            _userId: ctx.userId,
 
             status: result.isValid ? AuditStatus.SUCCESS : AuditStatus.FAILURE,
             riskLevel: RiskLevel.HIGH, // Prescriptions are high-risk operations
@@ -804,7 +803,7 @@ export const healthcareServicesRouter = router({
             action: AuditAction.UPDATE,
             resourceType: ResourceType.TELEMEDICINE_SESSION,
             resourceId: input.sessionId,
-            userId: ctx.userId,
+            _userId: ctx.userId,
 
             status: result.success ? AuditStatus.SUCCESS : AuditStatus.FAILURE,
             riskLevel: RiskLevel.CRITICAL, // Emergency escalations are critical
@@ -886,7 +885,7 @@ export const healthcareServicesRouter = router({
             action: AuditAction.UPDATE,
             resourceType: ResourceType.TELEMEDICINE_SESSION,
             resourceId: input.sessionId,
-            userId: ctx.userId,
+            _userId: ctx.userId,
 
             status: result.success ? AuditStatus.SUCCESS : AuditStatus.FAILURE,
             riskLevel: !result.complianceReport.cfmCompliant
@@ -944,7 +943,7 @@ export const healthcareServicesRouter = router({
           action: AuditAction.READ,
           resourceType: ResourceType.TELEMEDICINE_SESSION,
           resourceId: 'summary',
-          userId: ctx.userId,
+          _userId: ctx.userId,
 
           status: AuditStatus.SUCCESS,
           details: {
@@ -994,7 +993,7 @@ export const healthcareServicesRouter = router({
           action: AuditAction.DELETE,
           resourceType: ResourceType.PATIENT_DATA,
           resourceId: 'retention_enforcement',
-          userId: ctx.userId,
+          _userId: ctx.userId,
 
           status: result.errors.length === 0
             ? AuditStatus.SUCCESS
@@ -1076,8 +1075,7 @@ export const healthcareServicesRouter = router({
       }
 
       dashboardData.overallComplianceScore = scores.length > 0
-        ? Math.round(
-          scores.reduce((sum, score) => sum + score, 0) / scores.length,
+        ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length,
         )
         : 0;
 
@@ -1099,7 +1097,7 @@ export const healthcareServicesRouter = router({
           action: AuditAction.READ,
           resourceType: ResourceType.COMPLIANCE_REPORT,
           resourceId: 'dashboard',
-          userId: ctx.userId,
+          _userId: ctx.userId,
 
           status: AuditStatus.SUCCESS,
           details: {

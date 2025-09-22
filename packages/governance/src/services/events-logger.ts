@@ -3,7 +3,7 @@
 
 export interface GovernanceEvent {
   timestamp: Date;
-  service: string;
+  _service: string;
   action: string;
   resourceId?: string;
   metadata?: Record<string, any>;
@@ -54,7 +54,7 @@ export class ConsoleEventLogger implements EventLogger {
     metadata?: Record<string, any>,
   ): void {
     this.log({
-      service: "KPIService",
+      _service: "KPIService",
       action: "kpi.evaluated",
       resourceId: kpiId,
       metadata: { value, status, ...metadata },
@@ -69,7 +69,7 @@ export class ConsoleEventLogger implements EventLogger {
     reason: string,
   ): void {
     this.log({
-      service: "EscalationService",
+      _service: "EscalationService",
       action: "escalation.triggered",
       resourceId: escalationId,
       metadata: { pathId, kpiId, reason },
@@ -84,7 +84,7 @@ export class ConsoleEventLogger implements EventLogger {
     factors: Record<string, number>,
   ): void {
     this.log({
-      service: "PrioritizationService",
+      _service: "PrioritizationService",
       action: "priority.scored",
       resourceId: featureId,
       metadata: { score, priority, factors },
@@ -99,7 +99,7 @@ export class ConsoleEventLogger implements EventLogger {
     total: number,
   ): void {
     this.log({
-      service: "PolicyService",
+      _service: "PolicyService",
       action: "policy.evaluated",
       resourceId: policyId,
       metadata: { status, passed, total },

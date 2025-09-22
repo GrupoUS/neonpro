@@ -11,8 +11,6 @@
  */
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { z } from 'zod';
-
 // Test helper for API calls
 async function api(path: string, init?: RequestInit) {
   const { default: app } = await import('../../../src/app');
@@ -70,7 +68,7 @@ const LGPDConsentSchema = z.object({
     z.object({
       action: z.enum(['granted', 'withdrawn', 'modified', 'expired']),
       timestamp: z.string().datetime(),
-      userId: z.string().uuid().optional(),
+      _userId: z.string().uuid().optional(),
       reason: z.string().optional(),
       changes: z.object({}).optional(),
     }),

@@ -1,7 +1,7 @@
 import { AnimatedModal } from '@/components/ui/animated-modal';
-import { Badge } from '@/components/ui/badge';
+
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -190,8 +190,7 @@ function PatientRegister() {
       newErrors.address_zip_code = 'CEP é obrigatório';
     } else if (
       !/^\d{5}-?\d{3}$/.test(
-        formData.address_zip_code
-          .replace(/\D/g, '')
+        formData.address_zip_code.replace(/\D/g, '')
           .replace(/(\d{5})(\d{3})/, '$1-$2'),
       )
     ) {
@@ -460,7 +459,7 @@ function PatientRegister() {
               />
             </SelectTrigger>
             <SelectContent>
-              {field.options?.map((option: any) => (
+              {field.options?.map((_options?: any) => (
                 <SelectItem
                   key={option.value}
                   value={option.value}

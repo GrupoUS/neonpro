@@ -488,7 +488,7 @@ function PatientDashboard() {
     {
       accessorKey: 'riskScore',
       header: 'Risco',
-      cell: (_info: any) => {
+      cell: (info: any) => {
         const score = info.getValue();
         let variant: 'default' | 'destructive' | 'outline' | 'secondary' = 'default';
         let label = 'Baixo';
@@ -507,7 +507,7 @@ function PatientDashboard() {
     {
       accessorKey: 'lastVisit',
       header: 'Última Consulta',
-      cell: (_info: any) => {
+      cell: (info: any) => {
         const date = info.getValue();
         return date
           ? format(new Date(date), 'dd/MM/yyyy', { locale: ptBR })
@@ -517,7 +517,7 @@ function PatientDashboard() {
     {
       id: 'actions',
       header: 'Ações',
-      cell: (_info: any) => {
+      cell: (info: any) => {
         const patient = info.row.original;
         return (
           <div className='flex gap-2'>

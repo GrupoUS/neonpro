@@ -9,6 +9,7 @@ This package provides comprehensive circuit breaker patterns designed specifical
 ## Features
 
 ### Core Circuit Breaker
+
 - **Configurable thresholds**: Failure counts, timeouts, retry policies
 - **Three-state logic**: CLOSED, OPEN, HALF_OPEN with automatic recovery
 - **Healthcare compliance**: Fail-secure modes and audit logging
@@ -16,12 +17,14 @@ This package provides comprehensive circuit breaker patterns designed specifical
 - **Comprehensive metrics**: Request tracking, performance monitoring
 
 ### Health Checking
+
 - **Service monitoring**: Automated health checks for external dependencies
 - **Healthcare validation**: Compliance-specific health validation
 - **Real-time alerts**: Immediate notification of service degradation
 - **Performance tracking**: Response time and uptime monitoring
 
 ### Integration Support
+
 - **Zero-config setup**: Pre-configured for healthcare workloads
 - **Easy integration**: Drop-in replacement for existing service calls
 - **TypeScript support**: Full type safety and IntelliSense
@@ -48,7 +51,7 @@ try {
       method: 'GET',
       service: 'patient-service',
       timestamp: new Date(),
-    }
+    },
   );
   console.log('Operation successful:', result);
 } catch (error) {
@@ -59,7 +62,7 @@ try {
 ### Healthcare-Specific Configuration
 
 ```typescript
-import { CircuitBreakerService, CircuitBreakerConfig } from './circuit-breaker-service';
+import { CircuitBreakerConfig, CircuitBreakerService } from './circuit-breaker-service';
 
 const healthcareConfig: CircuitBreakerConfig = {
   failureThreshold: 3, // Lower threshold for critical services
@@ -88,7 +91,11 @@ const circuitBreaker = new CircuitBreakerService(healthcareConfig);
 ### Health Monitoring
 
 ```typescript
-import { ExternalServiceHealthChecker, HEALTHCARE_HEALTH_CONFIG, ServiceDependency } from './health-checker';
+import {
+  ExternalServiceHealthChecker,
+  HEALTHCARE_HEALTH_CONFIG,
+  ServiceDependency,
+} from './health-checker';
 
 // Create health checker
 const healthChecker = new ExternalServiceHealthChecker(HEALTHCARE_HEALTH_CONFIG);
@@ -110,7 +117,7 @@ console.log('Overall health:', healthStatus.overall);
 console.log('Services:', Object.keys(healthStatus.services));
 
 // Listen for health events
-healthChecker.onEvent((event) => {
+healthChecker.onEvent(event => {
   console.log('Health event:', {
     type: event.type,
     service: event.serviceName,
@@ -123,7 +130,7 @@ healthChecker.onEvent((event) => {
 ### Integration with Existing Services
 
 ```typescript
-import { withCircuitBreakerProtection, setupHealthMonitoring } from './integration-example';
+import { setupHealthMonitoring, withCircuitBreakerProtection } from './integration-example';
 
 // Protect existing API calls
 const result = await withCircuitBreakerProtection(
@@ -136,7 +143,7 @@ const result = await withCircuitBreakerProtection(
     method: 'GET',
     service: 'patient-service',
     timestamp: new Date(),
-  }
+  },
 );
 
 // Set up health monitoring for multiple services
@@ -172,21 +179,21 @@ interface CircuitBreakerConfig {
   failureThreshold: number; // Number of failures before opening circuit
   resetTimeout: number; // Milliseconds to wait before attempting reset
   monitoringPeriod: number; // Time window for failure counting
-  
+
   // Retry configuration
   maxRetries: number;
   retryDelay: number; // Base delay for exponential backoff
   retryBackoffMultiplier: number;
-  
+
   // Timeout configuration
   requestTimeout: number; // Individual request timeout
   overallTimeout: number; // Overall operation timeout
-  
+
   // Healthcare-specific settings
   healthcareCritical: boolean; // Whether this service is healthcare-critical
   failSecureMode: boolean; // Deny access on failure if true
   auditLogging: boolean; // Enable detailed audit logging
-  
+
   // Custom fallback
   customFallback?: (error: Error, context?: any) => Promise<any>;
 }
@@ -337,7 +344,7 @@ const healthcareFallback = async (error, context) => {
       timestamp: new Date().toISOString(),
     };
   }
-  
+
   return {
     error: 'SERVICE_UNAVAILABLE',
     message: 'Service temporarily unavailable. Please try again later.',
@@ -359,8 +366,8 @@ const criticalServices = [
 
 criticalServices.forEach(serviceName => {
   const circuitBreaker = createCircuitBreaker(serviceName, HEALTHCARE_CIRCUIT_CONFIG);
-  
-  circuitBreaker.onEvent((event) => {
+
+  circuitBreaker.onEvent(event => {
     if (event.type === 'STATE_CHANGE' && event.toState === 'OPEN') {
       // Alert operations team
       sendAlert(`${serviceName} circuit breaker opened`);
@@ -381,15 +388,15 @@ try {
     case 'Service unavailable - healthcare critical operation blocked':
       // Handle healthcare service unavailability
       return safeErrorResponse();
-      
+
     case 'Service temporarily unavailable due to high failure rate':
       // Handle circuit open state
       return fallbackResponse();
-      
+
     case 'Operation timeout':
       // Handle timeout scenarios
       return timeoutResponse();
-      
+
     default:
       // Handle other errors
       throw error;
@@ -425,7 +432,7 @@ test('should open circuit after failure threshold', async () => {
     failureThreshold: 3,
     resetTimeout: 1000,
   });
-  
+
   // Fail 3 times
   for (let i = 0; i < 3; i++) {
     try {
@@ -434,7 +441,7 @@ test('should open circuit after failure threshold', async () => {
       // Expected
     }
   }
-  
+
   expect(circuitBreaker.getState()).toBe('OPEN');
 });
 ```
@@ -445,7 +452,7 @@ test('should open circuit after failure threshold', async () => {
 // Test health monitoring
 test('should monitor service health', async () => {
   const healthChecker = new ExternalServiceHealthChecker(HEALTHCARE_HEALTH_CONFIG);
-  
+
   healthChecker.registerService({
     name: 'test-service',
     type: 'api',
@@ -455,7 +462,7 @@ test('should monitor service health', async () => {
     dataSensitivity: 'low',
     requiredFor: ['testing'],
   });
-  
+
   const healthStatus = healthChecker.getComprehensiveHealthStatus();
   expect(healthStatus.services['test-service']).toBeDefined();
 });
@@ -482,16 +489,19 @@ test('should monitor service health', async () => {
 ### Common Issues
 
 **Circuit stays OPEN**
+
 - Check service health and availability
 - Verify reset timeout configuration
 - Monitor error rates and patterns
 
 **High false-positive rate**
+
 - Adjust failure threshold for your service characteristics
 - Consider implementing more sophisticated health checks
 - Review timeout configurations
 
 **Memory usage growing**
+
 - Check for unregistered services
 - Verify metrics retention settings
 - Monitor event listener cleanup
@@ -500,7 +510,7 @@ test('should monitor service health', async () => {
 
 ```typescript
 // Enable detailed logging
-circuitBreaker.onEvent((event) => {
+circuitBreaker.onEvent(event => {
   console.log('Circuit Breaker Event:', {
     type: event.type,
     timestamp: event.timestamp,
@@ -510,7 +520,7 @@ circuitBreaker.onEvent((event) => {
 });
 
 // Monitor health checks
-healthChecker.onEvent((event) => {
+healthChecker.onEvent(event => {
   console.log('Health Check Event:', {
     type: event.type,
     service: event.serviceName,

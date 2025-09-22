@@ -28,7 +28,7 @@ describe("Realtime Event Adapter", () => {
   let eventHandlers: RealtimeEventHandlers;
   let capturedEvents: RealtimeEvent[] = [];
 
-  beforeEach(async () => {
+  beforeEach(_async () => {
     capturedEvents = [];
 
     eventHandlers = {
@@ -53,7 +53,7 @@ describe("Realtime Event Adapter", () => {
     await adapter.initialize();
   });
 
-  afterEach(async () => {
+  afterEach(_async () => {
     await adapter.cleanup();
   });
 
@@ -73,7 +73,7 @@ describe("Realtime Event Adapter", () => {
   });
 
   describe("Adapter Lifecycle", () => {
-    it("should initialize successfully", async () => {
+    it(_"should initialize successfully",_async () => {
       const freshAdapter = createRealtimeAdapter(
         defaultConfigs.mock(),
       ) as MockRealtimeAdapter;
@@ -81,12 +81,12 @@ describe("Realtime Event Adapter", () => {
       await freshAdapter.cleanup();
     });
 
-    it("should cleanup successfully", async () => {
+    it(_"should cleanup successfully",_async () => {
       await expect(adapter.cleanup()).resolves.toBeUndefined();
       expect(adapter.getActiveChannels()).toEqual([]);
     });
 
-    it("should get health status", async () => {
+    it(_"should get health status",_async () => {
       const health = await adapter.getHealth();
       expect(health).toEqual({
         status: "healthy",
@@ -103,7 +103,7 @@ describe("Realtime Event Adapter", () => {
     const participant = {
       id: "participant-1",
       name: "Dr. Silva",
-      role: "doctor" as const,
+      _role: "doctor" as const,
       status: "connected" as const,
       capabilities: {
         audio: true,
@@ -113,7 +113,7 @@ describe("Realtime Event Adapter", () => {
       },
     };
 
-    it("should join channel successfully", async () => {
+    it(_"should join channel successfully",_async () => {
       await adapter.joinChannel(channelId, participant, {
         clinicId: "clinic-123",
         sessionId: "session-456",
@@ -133,7 +133,7 @@ describe("Realtime Event Adapter", () => {
       expect(joinEvent!.data?.welcomeMessage).toContain("Dr. Silva");
     });
 
-    it("should leave channel successfully", async () => {
+    it(_"should leave channel successfully",_async () => {
       // First join
       await adapter.joinChannel(channelId, participant);
 
@@ -153,7 +153,7 @@ describe("Realtime Event Adapter", () => {
       expect(leaveEvent!.data?.duration).toBeGreaterThanOrEqual(0);
     });
 
-    it("should update participant status", async () => {
+    it(_"should update participant status",_async () => {
       // First join
       await adapter.joinChannel(channelId, participant);
 
@@ -166,8 +166,7 @@ describe("Realtime Event Adapter", () => {
 
       // Verify status change event
       expect(eventHandlers.onStatusChange).toHaveBeenCalledTimes(1);
-      const statusEvent = capturedEvents.find(
-        (e) => e.type === "status_change",
+      const statusEvent = capturedEvents.find((e) => e.type === "status_change",
       );
       expect(statusEvent).toBeTruthy();
       expect(statusEvent!.data?.previousStatus).toBe("connected");
@@ -179,11 +178,11 @@ describe("Realtime Event Adapter", () => {
       expect(updatedParticipant!.status).toBe("reconnecting");
     });
 
-    it("should handle multiple participants", async () => {
+    it(_"should handle multiple participants",_async () => {
       const participant2 = {
         id: "participant-2",
         name: "Patient João",
-        role: "patient" as const,
+        _role: "patient" as const,
         status: "connected" as const,
         capabilities: {
           audio: true,
@@ -257,7 +256,7 @@ describe("Realtime Event Adapter", () => {
   describe("Mock-Specific Features", () => {
     const channelId = "mock-test-channel";
 
-    it("should simulate network latency", async () => {
+    it(_"should simulate network latency",_async () => {
       const participant = adapter.createMockParticipant();
       adapter.setSimulatedLatency(100);
 
@@ -268,7 +267,7 @@ describe("Realtime Event Adapter", () => {
       expect(duration).toBeGreaterThanOrEqual(90); // Allow for some timing variance
     });
 
-    it("should maintain event log", async () => {
+    it(_"should maintain event log",_async () => {
       const participant = adapter.createMockParticipant();
       adapter.clearEventLog();
 
@@ -287,7 +286,7 @@ describe("Realtime Event Adapter", () => {
       expect(eventLog[2].type).toBe("leave");
     });
 
-    it("should simulate disconnection", async () => {
+    it(_"should simulate disconnection",_async () => {
       const participant = adapter.createMockParticipant();
       await adapter.joinChannel(channelId, participant);
 
@@ -302,7 +301,7 @@ describe("Realtime Event Adapter", () => {
       );
     });
 
-    it("should simulate reconnection", async () => {
+    it(_"should simulate reconnection",_async () => {
       const participant = adapter.createMockParticipant();
       await adapter.joinChannel(channelId, participant);
 
@@ -319,7 +318,7 @@ describe("Realtime Event Adapter", () => {
   });
 
   describe("Error Handling", () => {
-    it("should handle initialization errors", async () => {
+    it(_"should handle initialization errors",_async () => {
       const freshAdapter = createRealtimeAdapter(
         defaultConfigs.mock(),
       ) as MockRealtimeAdapter;
@@ -331,10 +330,10 @@ describe("Realtime Event Adapter", () => {
       ).rejects.toThrow("not initialized");
     });
 
-    it("should handle invalid participant data", async () => {
+    it(_"should handle invalid participant data",_async () => {
       const invalidParticipant = {
         id: "",
-        role: "doctor",
+        _role: "doctor",
         name: "",
         status: "connected",
       } as any;
@@ -344,7 +343,7 @@ describe("Realtime Event Adapter", () => {
       ).rejects.toThrow("Invalid participant data");
     });
 
-    it("should handle non-existent channel operations", async () => {
+    it(_"should handle non-existent channel operations",_async () => {
       // Should not throw, but log warning
       await expect(
         adapter.leaveChannel("non-existent", "participant-1"),
@@ -360,14 +359,14 @@ describe("Realtime Event Adapter", () => {
   });
 
   describe("Integration Scenarios", () => {
-    it("should handle complete healthcare session flow", async () => {
+    it(_"should handle complete healthcare session flow",_async () => {
       const channelId = "healthcare-session-789";
 
       // Create healthcare participants
       const doctor = adapter.createMockParticipant({
         id: "dr-silva-123",
         name: "Dr. Maria Silva",
-        role: "doctor",
+        _role: "doctor",
         capabilities: {
           audio: true,
           video: true,
@@ -379,7 +378,7 @@ describe("Realtime Event Adapter", () => {
       const patient = adapter.createMockParticipant({
         id: "patient-joao-456",
         name: "João Santos",
-        role: "patient",
+        _role: "patient",
         capabilities: {
           audio: true,
           video: true,
@@ -391,7 +390,7 @@ describe("Realtime Event Adapter", () => {
       const nurse = adapter.createMockParticipant({
         id: "nurse-ana-789",
         name: "Ana Costa",
-        role: "nurse",
+        _role: "nurse",
         capabilities: {
           audio: true,
           video: false,

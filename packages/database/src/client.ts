@@ -60,6 +60,7 @@ const createOptimizedSupabaseClient = (): SupabaseClient => {
       global: {
         headers: {
           "x-application-name": "neonpro-healthcare",
+          "x-client-info": "neonpro-database-client",
         },
       },
     },

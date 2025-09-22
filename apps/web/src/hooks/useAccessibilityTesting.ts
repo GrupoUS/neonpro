@@ -9,7 +9,6 @@
  * - Performance-optimized testing
  */
 
-import { AxeResults } from '@axe-core/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   AccessibilityIssue,
@@ -128,7 +127,7 @@ export function useAccessibilityTesting(
         && result.violations.length > 0
       ) {
         console.group('🔍 Accessibility Issues Found');
-        result.violations.forEach(_violation => {
+        result.violations.forEach(violation => {
           console.warn(
             `[${violation.impact.toUpperCase()}] ${violation.description}`,
           );
@@ -163,7 +162,7 @@ export function useAccessibilityTesting(
           `Critical issues threshold exceeded: ${criticalIssues} critical issues (max: ${threshold.maxCriticalIssues})`,
         );
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Accessibility testing failed:', error);
     } finally {
       setIsTesting(false);
@@ -307,7 +306,7 @@ export function useAccessibilityMonitor() {
           healthcareViolations,
           lgpdViolations,
         });
-      } catch (error) {
+      } catch (_error) {
         console.error('Accessibility monitoring failed:', error);
       }
     };
@@ -380,7 +379,7 @@ export function useKeyboardNavigationTest() {
       }
 
       // Check for interactive elements with proper roles
-      if (element.tagName === 'BUTTON' && !role) {
+      if (element.tagName === 'BUTTON' && !_role) {
         // Buttons don't need explicit roles, but we should check they're accessible
         if (!element.textContent?.trim() && !ariaLabel) {
           issues.push(`Button ${index} lacks accessible name`);
@@ -410,7 +409,7 @@ export function useKeyboardNavigationTest() {
 
       if (issues.length > 0) {
         console.warn('Issues found:');
-        issues.forEach(_issue => console.warn(`  ❌ ${issue}`));
+        issues.forEach(issue => console.warn(`  ❌ ${issue}`));
       } else {
         console.log('✅ No keyboard navigation issues found');
       }

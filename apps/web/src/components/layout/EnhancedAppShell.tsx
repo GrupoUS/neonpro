@@ -176,7 +176,7 @@ const useHealthcareRealtimeSubscriptions = () => {
           filter: `clinic_id=eq.${user.id}`,
         },
         payload => {
-          console.log('Patient healthcare update:', payload);
+          console.log('Patient healthcare update:', _payload);
 
           // Invalidate relevant queries
           queryClient.invalidateQueries({ queryKey: ['patients'] });
@@ -212,7 +212,7 @@ const useHealthcareRealtimeSubscriptions = () => {
           filter: `clinic_id=eq.${user.id}`,
         },
         payload => {
-          console.log('Appointment healthcare update:', payload);
+          console.log('Appointment healthcare update:', _payload);
 
           queryClient.invalidateQueries({ queryKey: ['appointments'] });
           queryClient.invalidateQueries({ queryKey: ['appointment-stats'] });
@@ -255,7 +255,7 @@ const useHealthcareRealtimeSubscriptions = () => {
           filter: `clinic_id=eq.${user.id}`,
         },
         payload => {
-          console.log('Medical records update:', payload);
+          console.log('Medical records update:', _payload);
 
           // Sensitive data - invalidate with compliance
           queryClient.invalidateQueries({ queryKey: ['medical-records'] });
@@ -375,13 +375,13 @@ const useSessionMonitoring = () => {
       'touchstart',
       'click',
     ];
-    activityEvents.forEach(_event => {
+    activityEvents.forEach(event => {
       window.addEventListener(event, handleActivity, { passive: true });
     });
 
     return () => {
       clearInterval(interval);
-      activityEvents.forEach(_event => {
+      activityEvents.forEach(event => {
         window.removeEventListener(event, handleActivity);
       });
     };

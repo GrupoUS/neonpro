@@ -327,7 +327,7 @@ export function ReminderManagement({
       .replace(/{CLINIC_PHONE}/g, '(11) 99999-9999');
   };
 
-  const _handleSaveTemplate = (_template: any) => {
+  const handleSaveTemplate = (_template: any) => {
     if (editingTemplate) {
       setTemplates(prev => prev.map(t => (t.id === template.id ? template : t)));
     } else {

@@ -171,7 +171,7 @@ export function CalendarProvider({
   }, [loadEventsForCurrentView]);
 
   // Toggle visibility of a color
-  const toggleColorVisibility = useCallback((_color: any) => {
+  const toggleColorVisibility = useCallback((color: string) => {
     setVisibleColors(prev => {
       if (prev.includes(color)) {
         return prev.filter(c => c !== color);
@@ -188,7 +188,7 @@ export function CalendarProvider({
   }, [visibleColors]);
 
   // Event CRUD operations
-  const createEvent = useCallback(async (_eventData: any) => {
+  const createEvent = useCallback(async (eventData: CreateEventData) => {
     setLoading(true);
     setError(null);
 
@@ -216,13 +216,13 @@ export function CalendarProvider({
       const errorMessage = error instanceof Error ? error.message : 'Failed to create event';
       setError(errorMessage);
       toast.error(errorMessage);
-      throw err;
+      throw error;
     } finally {
       setLoading(false);
     }
   }, [defaultClinicId, currentFilters, loadEventsForCurrentView]);
 
-  const updateEvent = useCallback(async (_eventData: any) => {
+  const updateEvent = useCallback(async (eventData: UpdateEventData) => {
     setLoading(true);
     setError(null);
 
@@ -241,13 +241,13 @@ export function CalendarProvider({
       const errorMessage = error instanceof Error ? error.message : 'Failed to update event';
       setError(errorMessage);
       toast.error(errorMessage);
-      throw err;
+      throw error;
     } finally {
       setLoading(false);
     }
   }, []);
 
-  const deleteEvent = useCallback(async (_id: any) => {
+  const deleteEvent = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
 
@@ -266,7 +266,7 @@ export function CalendarProvider({
       const errorMessage = error instanceof Error ? error.message : 'Failed to delete event';
       setError(errorMessage);
       toast.error(errorMessage);
-      throw err;
+      throw error;
     } finally {
       setLoading(false);
     }
@@ -277,7 +277,7 @@ export function CalendarProvider({
   }, [loadEventsForCurrentView]);
 
   // Event filtering and search
-  const applyFilters = useCallback((_filters: any) => {
+  const applyFilters = useCallback((filters: EventFilterOptions) => {
     setCurrentFilters(filters);
     // The actual filtering will happen in the loadEventsForCurrentView effect
   }, []);
@@ -286,7 +286,7 @@ export function CalendarProvider({
     setCurrentFilters(null);
   }, []);
 
-  const searchEvents = useCallback(async (_options: any) => {
+  const searchEvents = useCallback(async (options: EventSearchOptions) => {
     try {
       const result = await EventService.searchEvents(options);
       return result;
@@ -294,12 +294,12 @@ export function CalendarProvider({
       const errorMessage = error instanceof Error ? error.message : 'Failed to search events';
       setError(errorMessage);
       toast.error(errorMessage);
-      throw err;
+      throw error;
     }
   }, []);
 
   // Calendar navigation
-  const navigateToDate = useCallback((_date: any) => {
+  const navigateToDate = useCallback((date: Date) => {
     setCurrentDate(date);
   }, []);
 

@@ -190,7 +190,7 @@ describe('AI Optimization Contract Tests', () => {
     it('SHOULD cache similar queries and return cached responses', async () => {
       const mockCacheEntry: CacheEntry = {
         id: 'cache-123',
-        query: 'What are the benefits of aesthetic treatments?',
+        _query: 'What are the benefits of aesthetic treatments?',
         queryVector: new Array(1536).fill(0).map(() => Math.random()),
         response: 'Aesthetic treatments can improve confidence and well-being...',
         metadata: {
@@ -371,8 +371,8 @@ describe('AI Optimization Contract Tests', () => {
     it('MUST audit all AI interactions', () => {
       const mockAuditEntry = {
         timestamp: Date.now(),
-        userId: 'user-123',
-        query: 'aesthetic treatment recommendations',
+        _userId: 'user-123',
+        _query: 'aesthetic treatment recommendations',
         provider: 'openai',
         cost: 0.02,
         cached: false,

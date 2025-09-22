@@ -32,7 +32,7 @@ export interface Environment {
   Variables: {
     requestId?: string;
     startTime?: number;
-    userId?: string;
+    _userId?: string;
     userRole?: string;
   };
 }

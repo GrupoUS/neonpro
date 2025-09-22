@@ -8,11 +8,11 @@ export type SuggestionItem = {
 
 export type SuggestionsProps = {
   items: SuggestionItem[];
-  role: string;
+  _role: string;
   clinic: string;
   filter?: (args: {
     item: SuggestionItem;
-    role: string;
+    _role: string;
     clinic: string;
   }) => boolean;
   onPick?: (item: SuggestionItem) => void;

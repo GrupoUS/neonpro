@@ -10,7 +10,7 @@ import { agentRouter } from '../../src/routes/ai/data-agent';
 vi.mock('../../src/services/ai-data-service', () => ({
   AIDataService: {
     getInstance: () => ({
-      getClientsByName: async (name: string, userId: string) => {
+      getClientsByName: async (name: string, _userId: string) => {
         // Simulate RLS - only return data user has access to
         if (userId === 'admin-user') {
           return {
@@ -35,7 +35,7 @@ vi.mock('../../src/services/ai-data-service', () => ({
           throw new Error('Access denied');
         }
       },
-      getAppointmentsByDate: async (date: string, userId: string) => {
+      getAppointmentsByDate: async (date: string, _userId: string) => {
         // Simulate RLS for appointments
         if (userId === 'admin-user' || userId === 'regular-user') {
           return {
@@ -54,7 +54,7 @@ vi.mock('../../src/services/ai-data-service', () => ({
           throw new Error('Access denied');
         }
       },
-      getFinancialSummary: async (period: string, userId: string) => {
+      getFinancialSummary: async (period: string, _userId: string) => {
         // Financial data restricted to admins
         if (userId === 'admin-user') {
           return {
@@ -118,11 +118,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer admin-token',
         },
         body: JSON.stringify({
-          query: 'Me mostre todos os clientes',
+          _query: 'Me mostre todos os clientes',
           sessionId: 'test-session-admin-1',
-          context: {
-            userId: 'admin-user',
-            role: 'admin',
+          _context: {
+            _userId: 'admin-user',
+            _role: 'admin',
           },
         }),
       });
@@ -141,11 +141,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer user-token',
         },
         body: JSON.stringify({
-          query: 'Me mostre os clientes',
+          _query: 'Me mostre os clientes',
           sessionId: 'test-session-user-1',
-          context: {
-            userId: 'regular-user',
-            role: 'user',
+          _context: {
+            _userId: 'regular-user',
+            _role: 'user',
           },
         }),
       });
@@ -164,11 +164,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer invalid-token',
         },
         body: JSON.stringify({
-          query: 'Clientes',
+          _query: 'Clientes',
           sessionId: 'test-session-unauth-1',
-          context: {
-            userId: 'unauthorized-user',
-            role: 'guest',
+          _context: {
+            _userId: 'unauthorized-user',
+            _role: 'guest',
           },
         }),
       });
@@ -187,11 +187,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer admin-token',
         },
         body: JSON.stringify({
-          query: 'Como está o faturamento?',
+          _query: 'Como está o faturamento?',
           sessionId: 'test-session-admin-2',
-          context: {
-            userId: 'admin-user',
-            role: 'admin',
+          _context: {
+            _userId: 'admin-user',
+            _role: 'admin',
           },
         }),
       });
@@ -211,11 +211,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer user-token',
         },
         body: JSON.stringify({
-          query: 'Faturamento do mês',
+          _query: 'Faturamento do mês',
           sessionId: 'test-session-user-2',
-          context: {
-            userId: 'regular-user',
-            role: 'user',
+          _context: {
+            _userId: 'regular-user',
+            _role: 'user',
           },
         }),
       });
@@ -235,11 +235,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer admin-token',
         },
         body: JSON.stringify({
-          query: 'Agendamentos de hoje',
+          _query: 'Agendamentos de hoje',
           sessionId: 'test-session-admin-3',
-          context: {
-            userId: 'admin-user',
-            role: 'admin',
+          _context: {
+            _userId: 'admin-user',
+            _role: 'admin',
           },
         }),
       });
@@ -256,11 +256,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer user-token',
         },
         body: JSON.stringify({
-          query: 'Meus agendamentos',
+          _query: 'Meus agendamentos',
           sessionId: 'test-session-user-3',
-          context: {
-            userId: 'regular-user',
-            role: 'user',
+          _context: {
+            _userId: 'regular-user',
+            _role: 'user',
           },
         }),
       });
@@ -278,7 +278,7 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer token',
         },
         body: JSON.stringify({
-          query: 'Clientes',
+          _query: 'Clientes',
           sessionId: 'test-session-no-context-1',
           // No context provided
         }),
@@ -298,11 +298,11 @@ describe('Integration Tests: Access Control', () => {
           // No Authorization header
         },
         body: JSON.stringify({
-          query: 'Clientes',
+          _query: 'Clientes',
           sessionId: 'test-session-no-auth-1',
-          context: {
-            userId: 'admin-user',
-            role: 'admin',
+          _context: {
+            _userId: 'admin-user',
+            _role: 'admin',
           },
         }),
       });
@@ -319,11 +319,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer other-domain-token',
         },
         body: JSON.stringify({
-          query: 'Clientes',
+          _query: 'Clientes',
           sessionId: 'test-session-other-domain-1',
-          context: {
-            userId: 'other-domain-user',
-            role: 'admin',
+          _context: {
+            _userId: 'other-domain-user',
+            _role: 'admin',
             domain: 'other-clinic',
           },
         }),
@@ -345,11 +345,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer audit-token',
         },
         body: JSON.stringify({
-          query: 'Clientes',
+          _query: 'Clientes',
           sessionId: 'test-session-audit-1',
-          context: {
-            userId: 'audit-user',
-            role: 'user',
+          _context: {
+            _userId: 'audit-user',
+            _role: 'user',
           },
         }),
       });
@@ -368,11 +368,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer user-token',
         },
         body: JSON.stringify({
-          query: 'Todos os dados financeiros', // Admin-only query
+          _query: 'Todos os dados financeiros', // Admin-only query
           sessionId: 'test-session-escalation-1',
-          context: {
-            userId: 'regular-user',
-            role: 'admin', // Trying to escalate role
+          _context: {
+            _userId: 'regular-user',
+            _role: 'admin', // Trying to escalate role
           },
         }),
       });
@@ -393,11 +393,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer user-token',
         },
         body: JSON.stringify({
-          query: 'Clientes da clínica B', // User should not see other clinics
+          _query: 'Clientes da clínica B', // User should not see other clinics
           sessionId: 'test-session-rls-1',
-          context: {
-            userId: 'regular-user',
-            role: 'user',
+          _context: {
+            _userId: 'regular-user',
+            _role: 'user',
             clinicId: 'clinic-a',
           },
         }),
@@ -422,11 +422,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer session-token',
         },
         body: JSON.stringify({
-          query: 'Clientes',
+          _query: 'Clientes',
           sessionId: 'invalid-session-xyz', // Invalid session format
-          context: {
-            userId: 'admin-user',
-            role: 'admin',
+          _context: {
+            _userId: 'admin-user',
+            _role: 'admin',
           },
         }),
       });
@@ -445,11 +445,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer user-token',
         },
         body: JSON.stringify({
-          query: 'Clientes',
+          _query: 'Clientes',
           sessionId: 'admin-session-123', // Using admin's session with user token
-          context: {
-            userId: 'regular-user',
-            role: 'user',
+          _context: {
+            _userId: 'regular-user',
+            _role: 'user',
           },
         }),
       });
@@ -468,11 +468,11 @@ describe('Integration Tests: Access Control', () => {
           Authorization: 'Bearer expired-token',
         },
         body: JSON.stringify({
-          query: 'Clientes',
+          _query: 'Clientes',
           sessionId: 'expired-session-123',
-          context: {
-            userId: 'admin-user',
-            role: 'admin',
+          _context: {
+            _userId: 'admin-user',
+            _role: 'admin',
             sessionExpiry: new Date(Date.now() - 3600000).toISOString(), // Expired 1 hour ago
           },
         }),

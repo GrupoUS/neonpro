@@ -122,17 +122,17 @@ class HealthcareCacheManager {
   async clearHealthcareCaches(): Promise<void> {
     try {
       const cacheNames = await caches.keys();
-      
+
       // Clear only healthcare-related caches
-      const healthcareCaches = cacheNames.filter(name => 
-        name.startsWith('neonpro-healthcare-') ||
-        name.includes('patient-') ||
-        name.includes('medical-') ||
-        name.includes('appointment-')
+      const healthcareCaches = cacheNames.filter(name =>
+        name.startsWith('neonpro-healthcare-')
+        || name.includes('patient-')
+        || name.includes('medical-')
+        || name.includes('appointment-')
       );
 
       await Promise.all(healthcareCaches.map(name => caches.delete(name)));
-      
+
       console.log('[Healthcare Cache] Cleared healthcare-specific caches:', healthcareCaches);
     } catch {
       console.error('[Healthcare Cache] Failed to clear healthcare caches:', error);
@@ -145,12 +145,12 @@ class HealthcareCacheManager {
   async cacheHealthcareData(
     url: string,
     data: any,
-    strategy: HealthcareCacheStrategy
+    strategy: HealthcareCacheStrategy,
   ): Promise<void> {
     try {
       const cacheName = `neonpro-healthcare-${strategy}`;
       const cache = await caches.open(cacheName);
-      
+
       // Create response with healthcare headers
       const response = new Response(JSON.stringify(data), {
         headers: {
@@ -162,7 +162,7 @@ class HealthcareCacheManager {
       });
 
       await cache.put(url, response);
-      
+
       console.log(`[Healthcare Cache] Cached ${strategy} data for:`, url);
     } catch {
       console.error('[Healthcare Cache] Failed to cache healthcare data:', error);
@@ -174,13 +174,13 @@ class HealthcareCacheManager {
    */
   async getCachedHealthcareData(
     url: string,
-    strategy: HealthcareCacheStrategy
+    strategy: HealthcareCacheStrategy,
   ): Promise<any | null> {
     try {
       const cacheName = `neonpro-healthcare-${strategy}`;
       const cache = await caches.open(cacheName);
       const response = await cache.match(url);
-      
+
       if (!response) {
         return null;
       }
@@ -190,7 +190,7 @@ class HealthcareCacheManager {
       if (cacheTimestamp) {
         const age = (Date.now() - parseInt(cacheTimestamp)) / 1000;
         const maxAge = this.config.strategies[strategy].maxAge;
-        
+
         if (age > maxAge) {
           // Cache expired
           await cache.delete(url);
@@ -217,12 +217,12 @@ class HealthcareCacheManager {
       }
 
       const registration = await navigator.serviceWorker.ready;
-      
+
       // Register sync tags for healthcare data
       await registration.sync.register('sync-patient-data');
       await registration.sync.register('sync-medical-records');
       await registration.sync.register('sync-appointments');
-      
+
       console.log('[Healthcare Cache] Background sync registered for healthcare data');
     } catch {
       console.error('[Healthcare Cache] Failed to setup background sync:', error);
@@ -235,7 +235,7 @@ class HealthcareCacheManager {
   async activateEmergencyMode(): Promise<void> {
     try {
       console.log('[Healthcare Cache] Activating emergency mode...');
-      
+
       // Cache critical emergency resources
       const emergencyResources = [
         '/emergency-contact',
@@ -245,7 +245,7 @@ class HealthcareCacheManager {
       ];
 
       const emergencyCache = await caches.open('neonpro-emergency-resources');
-      
+
       // Pre-cache emergency resources
       const promises = emergencyResources.map(url =>
         fetch(url).then(response => {
@@ -256,7 +256,7 @@ class HealthcareCacheManager {
       );
 
       await Promise.all(promises);
-      
+
       console.log('[Healthcare Cache] Emergency mode activated - critical resources cached');
     } catch {
       console.error('[Healthcare Cache] Failed to activate emergency mode:', error);
@@ -268,7 +268,7 @@ class HealthcareCacheManager {
  * Enhanced service worker registration with healthcare features
  */
 export async function registerHealthcareServiceWorker(
-  config?: Partial<HealthcareCacheConfig>
+  config?: Partial<HealthcareCacheConfig>,
 ): Promise<ServiceWorkerRegistrationState> {
   if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
     console.log('[Healthcare SW] Service workers not supported');
@@ -311,7 +311,7 @@ export async function registerHealthcareServiceWorker(
     updateRegistrationState(registration);
 
     console.log('[Healthcare SW] ✅ Healthcare service worker registered successfully');
-    
+
     return registrationState;
   } catch {
     console.error('[Healthcare SW] ❌ Registration failed:', error);
@@ -326,17 +326,17 @@ function setupHealthcareServiceWorkerListeners(registration: ServiceWorkerRegist
   // Handle service worker updates
   registration.addEventListener('updatefound', () => {
     const newWorker = registration.installing;
-    
+
     if (newWorker) {
       registrationState.isInstalling = true;
-      
+
       newWorker.addEventListener('statechange', () => {
         updateRegistrationState(registration);
-        
+
         if (
-          newWorker.state === 'installed' &&
-          registration.active &&
-          navigator.serviceWorker.controller
+          newWorker.state === 'installed'
+          && registration.active
+          && navigator.serviceWorker.controller
         ) {
           // New service worker available
           showHealthcareUpdateNotification();
@@ -348,32 +348,32 @@ function setupHealthcareServiceWorkerListeners(registration: ServiceWorkerRegist
   // Listen for controller changes
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     console.log('[Healthcare SW] Controller changed - page reload may be required');
-    
+
     // For healthcare applications, we might want to prevent automatic reload
     // and let the user decide when to update
   });
 
   // Listen for messages from service worker
-  navigator.serviceWorker.addEventListener('message', (event) => {
+  navigator.serviceWorker.addEventListener('message', event => {
     const { type, data } = event.data;
-    
+
     switch (type) {
       case 'HEALTHCARE_DATA_SYNC':
         console.log('[Healthcare SW] Healthcare data synced:', data);
         break;
-        
+
       case 'EMERGENCY_MODE_ACTIVATED':
         console.log('[Healthcare SW] Emergency mode activated');
         break;
-        
+
       case 'CACHE_UPDATED':
         console.log('[Healthcare SW] Cache updated:', data);
         break;
-        
+
       case 'PRIVACY_COMPLIANCE':
         console.log('[Healthcare SW] Privacy compliance check:', data);
         break;
-        
+
       default:
         console.log('[Healthcare SW] Message from service worker:', event.data);
     }
@@ -395,14 +395,15 @@ function updateRegistrationState(registration: ServiceWorkerRegistration): void 
  */
 function showHealthcareUpdateNotification(): void {
   console.log('[Healthcare SW] New version available with healthcare updates');
-  
+
   // For healthcare applications, we need to be careful about updates
   // We should notify the user but not interrupt critical workflows
-  
+
   if (typeof window !== 'undefined' && 'Notification' in window) {
     if (Notification.permission === 'granted') {
       new Notification('NeonPro Healthcare Update Available', {
-        body: 'Uma nova versão com melhorias de saúde está disponível. Atualize quando conveniente.',
+        body:
+          'Uma nova versão com melhorias de saúde está disponível. Atualize quando conveniente.',
         icon: '/neonpro-favicon.svg',
         tag: 'healthcare-update',
         requireInteraction: false, // Don't interrupt critical work
@@ -421,11 +422,11 @@ export async function requestHealthcareNotificationPermission(): Promise<Notific
 
   if (Notification.permission === 'default') {
     const permission = await Notification.requestPermission();
-    
+
     if (permission === 'granted') {
       console.log('[Healthcare SW] Healthcare notifications permission granted');
     }
-    
+
     return permission;
   }
 
@@ -478,10 +479,10 @@ export async function unregisterHealthcareServiceWorker(): Promise<boolean> {
     const registration = await navigator.serviceWorker.getRegistration();
     if (registration) {
       const result = await registration.unregister();
-      
+
       // Clear healthcare caches
       await clearHealthcareCaches();
-      
+
       console.log('[Healthcare SW] Healthcare service worker unregistered:', result);
       return result;
     }
@@ -496,8 +497,8 @@ export async function unregisterHealthcareServiceWorker(): Promise<boolean> {
 if (typeof window !== 'undefined') {
   // Auto-register in production or when explicitly enabled
   if (
-    process.env.NODE_ENV === 'production' ||
-    process.env.VITE_ENABLE_HEALTHCARE_SW
+    process.env.NODE_ENV === 'production'
+    || process.env.VITE_ENABLE_HEALTHCARE_SW
   ) {
     registerHealthcareServiceWorker().catch(console.error);
   }

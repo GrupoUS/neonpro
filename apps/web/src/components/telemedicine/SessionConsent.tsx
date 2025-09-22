@@ -107,7 +107,7 @@ interface ConsentSection {
 export function SessionConsent({
   sessionId,
   patientId,
-  _professionalId,
+  professionalId,
   onConsentComplete,
   onConsentRevoke,
   mode = 'initial',
@@ -119,11 +119,11 @@ export function SessionConsent({
   );
 
   // Session consent management
-  const _sessionConsent = useSessionConsent(sessionId);
+  const sessionConsent = useSessionConsent(sessionId);
 
   // LGPD consent management
-  const _lgpdConsent = useLGPDConsent({
-    userId: patientId,
+  const lgpdConsent = useLGPDConsent({
+    _userId: patientId,
     patientId,
     sessionId,
     clinicId: '', // This would be passed as a prop
@@ -288,7 +288,7 @@ export function SessionConsent({
   // Calculate progress
   useEffect(() => {
     const requiredSections = consentSections.filter(s => s.required);
-    const _completedRequired = requiredSections.filter(
+    const completedRequired = requiredSections.filter(
       s => consentData[s.id as keyof ConsentData] === true,
     ).length;
 

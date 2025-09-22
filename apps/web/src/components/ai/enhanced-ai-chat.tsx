@@ -71,11 +71,7 @@ import { formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
 
 // Import tRPC hooks for agent integration
-import {
-  useAgentChat,
-  useAgentSessionManager,
-  useKnowledgeBaseManager,
-} from '@/trpc/agent';
+import { useAgentChat, useAgentSessionManager, useKnowledgeBaseManager } from '@/trpc/agent';
 
 // Types
 export interface EnhancedAIChatProps {
@@ -121,7 +117,7 @@ export interface EnhancedAIChatProps {
 
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
   model?: string;
@@ -265,16 +261,16 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   const {
     currentSessionId,
     startNewSession,
-    _endCurrentSession,
-    isCreating: _isAgentCreating,
+    endCurrentSession,
+    isCreating: isAgentCreating,
   } = useAgentSessionManager();
 
   const {
     messages: agentMessages,
     sendMessage: sendAgentMessage,
-    _performRAGSearch,
+    performRAGSearch,
     isSending: isAgentSending,
-    _isSearchingRAG,
+    isSearchingRAG,
   } = useAgentChat(currentSessionId);
 
   // Knowledge base search
@@ -328,7 +324,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
       };
 
       recognition.start();
-    } catch (error) {
+    } catch (_error) {
       console.error('Voice recognition error:', error);
       setVoiceState('error');
     }
@@ -340,7 +336,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
 
   // Search functionality
   const handleSearch = useCallback(
-    async (_query: any) => {
+    async (query: any) => {
       if (!query.trim()) {
         setSearchResults([]);
         return;
@@ -361,9 +357,9 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
             limit: 5,
           });
 
-          const knowledgeMessages: ChatMessage[] = knowledgeResults.data?.map((entry, _index) => ({
+          const knowledgeMessages: ChatMessage[] = knowledgeResults.data?.map((entry, index) => ({
             id: `knowledge-${index}`,
-            role: 'system',
+            _role: 'system',
             content: entry.content,
             timestamp: new Date(),
             metadata: {
@@ -472,10 +468,10 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   );
 
   // Render message content with markdown support
-  const renderMessageContent = useCallback((_content: any) => {
+  const renderMessageContent = useCallback((content: any) => {
     return (
       <div className='prose prose-sm max-w-none dark:prose-invert'>
-        {content.split('\n').map((line, _index) => (
+        {content.split('\n').map((line, index) => (
           <p key={index} className='mb-2 last:mb-0'>
             {line}
           </p>

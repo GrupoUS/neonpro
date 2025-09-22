@@ -43,8 +43,8 @@ export interface PaginationOptions {
 
 // Enhanced search options interface with healthcare context
 export interface SearchOptions extends PaginationOptions {
-  userId: string;
-  query?: string;
+  _userId: string;
+  _query?: string;
   search?: string;
   filters?: Record<string, any>;
   healthcareContext?: string;
@@ -99,7 +99,7 @@ export interface PatientSummary {
   };
 } // Access tracking interface
 export interface AccessInfo {
-  userId: string;
+  _userId: string;
   action: string;
   ipAddress?: string;
   userAgent?: string;
@@ -132,7 +132,7 @@ export class PatientService {
   /**
    * Set healthcare context for the service
    */
-  withContext(context: HealthcareContext): PatientService {
+  withContext(_context: HealthcareContext): PatientService {
     return new PatientService(context);
   }
 
@@ -526,13 +526,13 @@ export class PatientService {
    */
 
   async searchPatients(
-    query: string,
+    _query: string,
     options?: SearchOptions,
   ): Promise<ServiceResponse<Patient[]>> {
     try {
       // Use the enhanced listPatients method for search
       const searchOptions: SearchOptions = {
-        userId: options?.userId || '',
+        _userId: options?.userId || '',
         page: options?.page || 1,
         limit: options?.limit || 50,
         search: query,
@@ -797,8 +797,8 @@ export class PatientService {
       initialized: !!this.prismaClient,
       hasContext: !!this.prismaClient.currentContext,
       clinicId: this.prismaClient.currentContext?.clinicId,
-      userId: this.prismaClient.currentContext?.userId,
-      role: this.prismaClient.currentContext?.role,
+      _userId: this.prismaClient.currentContext?.userId,
+      _role: this.prismaClient.currentContext?.role,
       version: '2.0.0', // Updated version for Prisma integration
       features: [
         'crud_operations',

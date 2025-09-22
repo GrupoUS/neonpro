@@ -20,9 +20,9 @@ import { createAdminClient, healthcareRLS } from './supabase.js';
 
 // Healthcare context interface for RLS
 interface HealthcareContext {
-  userId?: string;
+  _userId?: string;
   clinicId?: string;
-  role?: 'admin' | 'professional' | 'assistant' | 'patient';
+  _role?: 'admin' | 'professional' | 'assistant' | 'patient';
   permissions?: string[];
   cfmValidated?: boolean;
 }
@@ -85,7 +85,7 @@ interface HealthcarePrismaClient extends PrismaClient {
   };
 
   // Healthcare context management
-  withContext(context: HealthcareContext): HealthcarePrismaClient;
+  withContext(_context: HealthcareContext): HealthcarePrismaClient;
   validateContext(): Promise<boolean>;
 
   // LGPD compliance methods
@@ -173,7 +173,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
 
   // Healthcare context management
   healthcarePrisma.withContext = function(
-    context: HealthcareContext,
+    _context: HealthcareContext,
   ): HealthcarePrismaClient {
     const newInstance = Object.create(this);
     newInstance.currentContext = context;
@@ -199,7 +199,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       ) {
         const professional = await this.professional.findFirst({
           where: {
-            userId: this.currentContext.userId,
+            _userId: this.currentContext.userId,
             clinicId: this.currentContext.clinicId,
             isActive: true,
           },
@@ -560,7 +560,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
   ): Promise<void> {
     try {
       const auditData = {
-        userId: this.currentContext?.userId || 'system',
+        _userId: this.currentContext?.userId || 'system',
         clinicId: this.currentContext?.clinicId,
         action: action as any,
         resource: `${resourceType}:${resourceId}`,
@@ -572,7 +572,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
         status: 'SUCCESS' as any,
         riskLevel: details.riskLevel || ('LOW' as any),
         additionalInfo: JSON.stringify({
-          context: this.currentContext,
+          _context: this.currentContext,
           details,
           timestamp: new Date().toISOString(),
         }),
@@ -715,7 +715,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
         action: params.action,
         model: params.model,
         error: error.message,
-        context: healthcarePrisma.currentContext,
+        _context: healthcarePrisma.currentContext,
       });
 
       throw error;
@@ -752,7 +752,7 @@ export function getHealthcarePrismaClient(): HealthcarePrismaClient {
  * Create a new Prisma client instance with healthcare context
  */
 export function createPrismaWithContext(
-  context: HealthcareContext,
+  _context: HealthcareContext,
 ): HealthcarePrismaClient {
   const client = createHealthcarePrismaClient();
   return client.withContext(context);
@@ -762,9 +762,9 @@ export function createPrismaWithContext(
  * Helper function to validate and create healthcare context from request
  */
 export function createHealthcareContextFromRequest(
-  userId: string,
+  _userId: string,
   clinicId: string,
-  role: HealthcareContext['role'],
+  _role: HealthcareContext['role'],
   additionalData: Partial<HealthcareContext> = {},
 ): HealthcareContext {
   return {

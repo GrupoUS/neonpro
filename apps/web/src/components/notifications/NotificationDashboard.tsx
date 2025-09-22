@@ -58,7 +58,7 @@ export function NotificationDashboard({
     try {
       await processPendingMutation.mutateAsync();
       refetch(); // Refresh stats after processing
-    } catch (error) {
+    } catch (_error) {
       console.error('Error processing pending notifications:', error);
     }
   };

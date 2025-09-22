@@ -6,7 +6,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 export interface LGPDComplianceContext {
-  userId: string;
+  _userId: string;
   clinicId?: string;
   patientId?: string;
   action: 'read' | 'write' | 'delete';
@@ -16,7 +16,7 @@ export interface LGPDComplianceContext {
 
 export interface AuditLogEntry {
   id: string;
-  userId: string;
+  _userId: string;
   action: string;
   resourceType: string;
   resourceId?: string;
@@ -40,13 +40,13 @@ export class LGPDComplianceService {
   /**
    * Validate data access request against LGPD principles
    */
-  async validateDataAccess(context: LGPDComplianceContext): Promise<boolean> {
+  async validateDataAccess(_context: LGPDComplianceContext): Promise<boolean> {
     try {
       // Check if user has valid professional credentials
       const { data: professional, error } = await this.supabase
         .from('professionals')
         .select('id, clinic_id, is_active')
-        .eq('user_id', context.userId)
+        .eq('user_id', context._userId)
         .single();
 
       if (error || !professional?.is_active) {
@@ -95,12 +95,12 @@ export class LGPDComplianceService {
    * Log data access for audit trail
    */
   async logDataAccess(
-    context: LGPDComplianceContext,
+    _context: LGPDComplianceContext,
     success: boolean,
     metadata?: Record<string, any>,
   ): Promise<void> {
     const auditEntry: Omit<AuditLogEntry, 'id' | 'timestamp'> = {
-      userId: context.userId,
+      _userId: context.userId,
       action: `${context.action}_${context.resourceType}`,
       resourceType: context.resourceType,
       resourceId: context.patientId,
@@ -125,13 +125,13 @@ export class LGPDComplianceService {
    * Log LGPD violations
    */
   private async logViolation(
-    context: LGPDComplianceContext,
+    _context: LGPDComplianceContext,
     reason: string,
   ): Promise<void> {
     try {
       await this.supabase.from('audit_logs').insert([
         {
-          userId: context.userId,
+          _userId: context.userId,
           action: 'lgpd_violation',
           resourceType: context.resourceType,
           resourceId: context.patientId,
@@ -197,7 +197,7 @@ export class LGPDComplianceService {
         for (const patient of expiredPatients) {
           await this.logDataAccess(
             {
-              userId: 'system',
+              _userId: 'system',
               clinicId: patient.clinic_id,
               patientId: patient.id,
               action: 'delete',
@@ -241,7 +241,7 @@ export class LGPDComplianceService {
 
       return data.id;
     } catch (error) {
-      console.error('Failed to create access request:', error);
+      console.error('Failed to create access _request:', error);
       throw error;
     }
   }

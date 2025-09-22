@@ -6,10 +6,10 @@ import type { ServiceContext } from "../types";
 
 // Mock types and dependencies if needed
 describe("Enhanced No-Show Prediction", () => {
-  const mockContext: ServiceContext = { userId: "test" };
+  const mockContext: ServiceContext = { _userId: "test" };
 
   describe("preprocessNoShowData", () => {
-    it("should bin patientAge in preprocessNoShowData", async () => {
+    it(_"should bin patientAge in preprocessNoShowData",_async () => {
       // Note: To test private method, we can use (aiService as any)['preprocessNoShowData'] or expose it for testing
       // For now, test via public API once implemented
       const data = {
@@ -27,7 +27,7 @@ describe("Enhanced No-Show Prediction", () => {
   });
 
   describe("makePrediction", () => {
-    it("should use enhanced logic with flag true and achieve confidence >0.8", async () => {
+    it(_"should use enhanced logic with flag true and achieve confidence >0.8",_async () => {
       const request = {
         type: "appointment_noshow",
         data: {
@@ -47,7 +47,7 @@ describe("Enhanced No-Show Prediction", () => {
       expect(response).toHaveProperty("anonymizedFeatures");
     });
 
-    it("should fallback to mock logic with flag false", async () => {
+    it(_"should fallback to mock logic with flag false",_async () => {
       const request = {
         type: "appointment_noshow",
         data: {
@@ -66,7 +66,7 @@ describe("Enhanced No-Show Prediction", () => {
       expect(response).not.toHaveProperty("enhanced");
     });
 
-    it("should not leak PII in output for LGPD compliance", async () => {
+    it(_"should not leak PII in output for LGPD compliance",_async () => {
       const request = {
         type: "appointment_noshow",
         data: {
@@ -83,7 +83,7 @@ describe("Enhanced No-Show Prediction", () => {
       expect(response).not.toHaveProperty("patientAge"); // Should be binned or omitted (will fail until implemented)
     });
 
-    it("should handle edge case for new patient with no history", async () => {
+    it(_"should handle edge case for new patient with no history",_async () => {
       const request = {
         type: "appointment_noshow",
         data: {

@@ -16,7 +16,6 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { z } from 'zod';
 import { aiProviderRouter } from '../../services/ai-provider-router';
 import { auditService } from '../../services/audit-service';
 import { complianceService } from '../../services/compliance-service';
@@ -27,7 +26,7 @@ import { semanticCacheService } from '../../services/semantic-cache-service';
 const CacheEntrySchema = z.object({
   id: z.string(),
   key: z.string(),
-  query: z.string(),
+  _query: z.string(),
   response: z.object({
     content: z.string(),
     tokens: z.number(),
@@ -182,8 +181,8 @@ const mockAIProvider = {
 
 // Test data generators
 const generateValidCacheQuery = () => ({
-  query: 'What are the common symptoms of diabetes in elderly patients?',
-  context: {
+  _query: 'What are the common symptoms of diabetes in elderly patients?',
+  _context: {
     patientId: 'patient_789',
     sessionId: 'session_456',
     department: 'endocrinology',
@@ -199,7 +198,7 @@ const generateValidCacheQuery = () => ({
 
 const generateValidCacheEntry = () => ({
   key: 'cache_key_123',
-  query: 'Common diabetes symptoms in elderly',
+  _query: 'Common diabetes symptoms in elderly',
   response: {
     content:
       'Common symptoms of diabetes in elderly patients include increased thirst, frequent urination, unexplained weight loss, fatigue, blurred vision, slow-healing sores, and frequent infections...',
@@ -328,7 +327,7 @@ describe('AI Semantic Caching Integration Tests', () => {
       expect(retrieveResult.success).toBe(true);
       expect(retrieveResult.entry).toEqual(
         expect.objectContaining({
-          query: cacheEntry.query,
+          _query: cacheEntry.query,
           response: cacheEntry.response,
         }),
       );
@@ -341,7 +340,7 @@ describe('AI Semantic Caching Integration Tests', () => {
     it('should handle cache misses gracefully', async () => {
       const query = 'Unique query not in cache';
 
-      const result = await semanticCacheService.retrieve(query);
+      const result = await semanticCacheService.retrieve(_query);
       expect(result.success).toBe(false);
       expect(result.error).toBe('CACHE_MISS');
 
@@ -379,7 +378,7 @@ describe('AI Semantic Caching Integration Tests', () => {
       await new Promise(resolve => setTimeout(resolve, 1100));
 
       // Attempt retrieval after expiration
-      const result = await semanticCacheService.retrieve(queryData.query);
+      const result = await semanticCacheService.retrieve(queryData._query);
       expect(result.success).toBe(false);
       expect(result.error).toBe('CACHE_EXPIRED');
     });
@@ -397,7 +396,7 @@ describe('AI Semantic Caching Integration Tests', () => {
       // Store original query
       const cacheEntry = generateValidCacheEntry();
       await semanticCacheService.store(
-        { ...generateValidCacheQuery(), query: originalQuery },
+        { ...generateValidCacheQuery(), _query: originalQuery },
         cacheEntry,
       );
 
@@ -437,7 +436,7 @@ describe('AI Semantic Caching Integration Tests', () => {
     it('should handle healthcare context in similarity matching', async () => {
       const queryData = {
         ...generateValidCacheQuery(),
-        context: {
+        _context: {
           ...generateValidCacheQuery().context,
           department: 'cardiology',
           dataCategory: 'treatment' as const,
@@ -533,7 +532,7 @@ describe('AI Semantic Caching Integration Tests', () => {
 
       // Store some entries
       const entries = Array.from({ length: 5 }, () => ({
-        query: generateValidCacheQuery(),
+        _query: generateValidCacheQuery(),
         entry: generateValidCacheEntry(),
       }));
 
@@ -548,7 +547,7 @@ describe('AI Semantic Caching Integration Tests', () => {
 
       // Verify entries are invalidated
       for (const { query } of entries) {
-        const retrieveResult = await semanticCacheService.retrieve(query.query);
+        const retrieveResult = await semanticCacheService.retrieve(query._query);
         expect(retrieveResult.success).toBe(false);
       }
     });
@@ -558,9 +557,9 @@ describe('AI Semantic Caching Integration Tests', () => {
 
       // Store patient-specific entries
       const patientEntries = Array.from({ length: 3 }, () => ({
-        query: {
+        _query: {
           ...generateValidCacheQuery(),
-          context: {
+          _context: {
             ...generateValidCacheQuery().context,
             patientId,
           },
@@ -630,7 +629,7 @@ describe('AI Semantic Caching Integration Tests', () => {
     it('should handle healthcare data anonymization', async () => {
       const sensitiveQuery = {
         ...generateValidCacheQuery(),
-        context: {
+        _context: {
           ...generateValidCacheQuery().context,
           patientId: 'patient_789',
           dataCategory: 'diagnostic' as const,
@@ -759,7 +758,7 @@ describe('AI Semantic Caching Integration Tests', () => {
       // Verify AI provider was called
       expect(mockAIProvider.generateResponse).toHaveBeenCalledWith(
         expect.objectContaining({
-          query: queryData.query,
+          _query: queryData.query,
           healthcareContext: queryData.context,
         }),
       );

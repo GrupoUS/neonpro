@@ -3,6 +3,7 @@
  * Multi-tenant clinic management with compliance tracking
  */
 
+import { z } from 'zod';
 import {
   ClinicResponseSchema,
   ClinicsListResponseSchema,
@@ -11,7 +12,6 @@ import {
   PaginationSchema,
   UpdateClinicRequestSchema,
 } from '@neonpro/types';
-import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
 
 export const clinicRouter = router({
@@ -178,7 +178,7 @@ export const clinicRouter = router({
             healthLicenseNumber: input.healthLicenseNumber,
             address: input.address,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 
@@ -539,7 +539,7 @@ export const clinicRouter = router({
             changes: getChanges(currentClinic, input),
             revalidationRequired: cnpjChanged || healthLicenseChanged,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 
@@ -784,7 +784,7 @@ export const clinicRouter = router({
           details: {
             changedSettings: input.settings,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 

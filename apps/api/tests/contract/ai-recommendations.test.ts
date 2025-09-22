@@ -27,7 +27,7 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = createTestClient({ role: 'admin' });
+    testClient = createTestClient({ _role: 'admin' });
     patientId = 'patient-recommendations-123';
     professionalCRM = 'CRM/SP 123456';
   });

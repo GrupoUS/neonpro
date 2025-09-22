@@ -231,13 +231,13 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should export AI models route handler', async () => {
+  it(_'should export AI models route handler',async () => {
     const module = await import('../models');
     expect(module.default).toBeDefined();
   });
 
-  describe('Successful AI Models Listing', () => {
-    it('should list all available AI models', async () => {
+  describe(_'Successful AI Models Listing'), () => {
+    it(_'should list all available AI models',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -264,7 +264,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       ]);
     });
 
-    it('should filter models by provider', async () => {
+    it(_'should filter models by provider',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -282,12 +282,12 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(mockAIChatService.getAvailableModels).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         filters: { provider: 'openai' },
       });
     });
 
-    it('should filter models by capability', async () => {
+    it(_'should filter models by capability',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -305,12 +305,12 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(mockAIChatService.getAvailableModels).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         filters: { capability: 'image_analysis' },
       });
     });
 
-    it('should filter models by status', async () => {
+    it(_'should filter models by status',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -328,12 +328,12 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(mockAIChatService.getAvailableModels).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         filters: { status: 'available' },
       });
     });
 
-    it('should include detailed model information', async () => {
+    it(_'should include detailed model information',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -356,7 +356,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(data.data.models[0].features).toBeDefined();
     });
 
-    it('should include model health information', async () => {
+    it(_'should include model health information',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -378,7 +378,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(mockAIChatService.getModelHealth).toHaveBeenCalled();
     });
 
-    it('should include usage metrics', async () => {
+    it(_'should include usage metrics',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -400,7 +400,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(mockAIChatService.getModelMetrics).toHaveBeenCalled();
     });
 
-    it('should include model performance headers', async () => {
+    it(_'should include model performance headers',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -426,8 +426,8 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
   });
 
-  describe('Model Recommendations', () => {
-    it('should provide model recommendations based on use case', async () => {
+  describe(_'Model Recommendations'), () => {
+    it(_'should provide model recommendations based on use case',async () => {
       mockAIChatService.getAvailableModels.mockResolvedValueOnce({
         success: true,
         data: {
@@ -470,7 +470,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       );
     });
 
-    it('should provide fallback model suggestions', async () => {
+    it(_'should provide fallback model suggestions',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -488,14 +488,14 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(mockAIChatService.getAvailableModels).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         includeFallbacks: true,
       });
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle authentication errors', async () => {
+  describe(_'Error Handling'), () => {
+    it(_'should handle authentication errors',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -514,7 +514,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(data.error).toContain('Não autorizado');
     });
 
-    it('should handle service errors gracefully', async () => {
+    it(_'should handle service errors gracefully',async () => {
       mockAIChatService.getAvailableModels.mockResolvedValue({
         success: false,
         error: 'Erro interno do serviço de modelos de IA',
@@ -539,7 +539,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(data.error).toContain('Erro interno');
     });
 
-    it('should handle invalid filter parameters', async () => {
+    it(_'should handle invalid filter parameters',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -559,7 +559,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(data.error).toContain('Parâmetros de filtro inválidos');
     });
 
-    it('should handle model service unavailability', async () => {
+    it(_'should handle model service unavailability',async () => {
       mockAIChatService.getAvailableModels.mockRejectedValue(
         new Error('Model service unavailable'),
       );
@@ -586,8 +586,8 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
   });
 
-  describe('Audit and Logging', () => {
-    it('should log model access for audit trail', async () => {
+  describe(_'Audit and Logging'), () => {
+    it(_'should log model access for audit trail',async () => {
       const { default: modelsRoute } = await import('../models');
 
       await modelsRoute.request(
@@ -603,7 +603,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       );
 
       expect(mockAuditService.logActivity).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         action: 'ai_models_access',
         resourceType: 'ai_models',
         resourceId: 'models_list',
@@ -621,8 +621,8 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
     });
   });
 
-  describe('Brazilian Healthcare Compliance', () => {
-    it('should include CFM compliance headers', async () => {
+  describe(_'Brazilian Healthcare Compliance'), () => {
+    it(_'should include CFM compliance headers',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -640,7 +640,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(response.headers.get('X-LGPD-Compliant')).toBe('true');
     });
 
-    it('should filter models for healthcare context', async () => {
+    it(_'should filter models for healthcare context',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -656,15 +656,15 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
 
       expect(response.status).toBe(200);
       expect(mockAIChatService.getAvailableModels).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         healthcareContext: true,
         healthcareProfessional: 'CRM-SP-123456',
       });
     });
   });
 
-  describe('Performance and Caching', () => {
-    it('should include performance headers', async () => {
+  describe(_'Performance and Caching'), () => {
+    it(_'should include performance headers',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(
@@ -683,7 +683,7 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(response.headers.get('X-Database-Queries')).toBeDefined();
     });
 
-    it('should handle model status monitoring', async () => {
+    it(_'should handle model status monitoring',async () => {
       const { default: modelsRoute } = await import('../models');
 
       const response = await modelsRoute.request(

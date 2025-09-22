@@ -58,10 +58,7 @@ export function WeekView({
     return eachDayOfInterval({ start: weekStart, end: weekEnd });
   }, [currentDate]);
 
-  const weekStart = useMemo(
-    () => startOfWeek(currentDate, { weekStartsOn: 0 }),
-    [currentDate],
-  );
+  const weekStart = useMemo(() => startOfWeek(currentDate, { weekStartsOn: 0 }), [currentDate]);
 
   const hours = useMemo(() => {
     const dayStart = startOfDay(currentDate);
@@ -133,7 +130,7 @@ export function WeekView({
       // Track columns for overlapping events
       const columns: { event: CalendarEvent; end: Date }[][] = [];
 
-      sortedEvents.forEach(_event => {
+      sortedEvents.forEach(event => {
         const eventStart = new Date(event.start);
         const eventEnd = new Date(event.end);
 

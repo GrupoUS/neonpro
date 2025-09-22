@@ -4,7 +4,6 @@
  * Healthcare-specific retention policies and cleanup automation
  */
 
-import { z } from 'zod';
 import { createAdminClient } from '../clients/supabase';
 import { LGPDDataCategory } from '../middleware/lgpd-compliance';
 
@@ -877,7 +876,7 @@ export class DataRetentionService {
         .select('recordsProcessed')
         .gte('startTime', yesterday.toISOString());
 
-      const totalRecordsProcessed24h = executions?.reduce((sum, exec) =>
+      const totalRecordsProcessed24h = executions?.reduce((sum,_exec) =>
         sum + exec.recordsProcessed, 0) || 0;
 
       // Calculate policies by category

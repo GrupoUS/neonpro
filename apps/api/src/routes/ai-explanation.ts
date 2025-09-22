@@ -1,7 +1,5 @@
 import { zValidator } from '@hono/zod-validator';
 import { Hono } from 'hono';
-import { z } from 'zod';
-
 const app = new Hono();
 
 const ExplanationRequest = z
@@ -10,7 +8,7 @@ const ExplanationRequest = z
     messages: z
       .array(
         z.object({
-          role: z.enum(['user', 'assistant', 'system']),
+          _role: z.enum(['user', 'assistant', 'system']),
           content: z.string(),
         }),
       )

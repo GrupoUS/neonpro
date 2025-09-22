@@ -16,7 +16,7 @@ import { AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 
 interface SyncSettingsProps {
-  userId: string;
+  _userId: string;
   clinicId: string;
   integrationId?: string;
 }

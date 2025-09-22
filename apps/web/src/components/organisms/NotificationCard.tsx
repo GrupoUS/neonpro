@@ -60,7 +60,7 @@ export default function NotificationCard({
   maxItems = 8,
 }: NotificationCardProps) {
   const navigate = useNavigate();
-  const [readIds, setReadIds] = React.useState<Set<string>>(() => getReadStore());
+  const [readIds, setReadIds] = React.useState<string[]>(() => getReadStore());
 
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['dashboardNotifications'],

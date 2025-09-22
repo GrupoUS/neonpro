@@ -244,7 +244,7 @@ export class AestheticAIAnalysisService {
             model: this.config.model,
             messages: [
               {
-                role: 'user',
+                _role: 'user',
                 content: [
                   {
                     type: 'text',
@@ -277,7 +277,7 @@ export class AestheticAIAnalysisService {
 
       // Validate and normalize the analysis result
       return this.validateAnalysis(analysisResult);
-    } catch (error) {
+    } catch (_error) {
       console.error('AI Analysis error:', error);
       // Fallback to mock analysis in case of API failure
       return this.getMockAnalysis(analysisType);
@@ -293,7 +293,7 @@ export class AestheticAIAnalysisService {
     const suggestions: TreatmentSuggestion[] = [];
 
     // Analyze concerns and match with treatments
-    analysis.concerns.forEach(_concern => {
+    analysis.concerns.forEach(concern => {
       const concernLower = concern.toLowerCase();
 
       // Match treatments based on concerns
@@ -344,8 +344,8 @@ export class AestheticAIAnalysisService {
     });
 
     // Remove duplicates and add unique IDs
-    const uniqueSuggestions = suggestions.filter(
-      (suggestion, index, self) => index === self.findIndex(s => s.id === suggestion.id),
+    const uniqueSuggestions = suggestions.filter((suggestion, index, self) =>
+      index === self.findIndex(s => s.id === suggestion.id)
     );
 
     // Sort by priority and confidence
@@ -517,13 +517,10 @@ export class AestheticAIAnalysisService {
 
     // Aggregate results
     const allConcerns = analyses.flatMap(a => a.concerns);
-    const concernCounts = allConcerns.reduce(
-      (acc, concern) => {
-        acc[concern] = (acc[concern] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
+    const concernCounts = allConcerns.reduce((acc, concern) => {
+      acc[concern] = (acc[concern] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
     const primaryConcerns = Object.entries(concernCounts)
       .sort(([, a], [, b]) => b - a)
@@ -535,8 +532,8 @@ export class AestheticAIAnalysisService {
 
     // Generate combined treatment suggestions
     const allSuggestions = analyses.flatMap(a => this.generateTreatmentSuggestions(a));
-    const uniqueSuggestions = allSuggestions.filter(
-      (suggestion, index, self) => index === self.findIndex(s => s.id === suggestion.id),
+    const uniqueSuggestions = allSuggestions.filter((suggestion, index, self) =>
+      index === self.findIndex(s => s.id === suggestion.id)
     );
 
     return {

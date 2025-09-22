@@ -13,11 +13,24 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
-import { Card } from '@/components/ui/card';
-import { Dialog } from '@/components/ui/dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { AIAgentService } from '@/services/ai-agent';
@@ -25,7 +38,16 @@ import { AgentAction } from '@/types/ai-agent';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import { ptBR } from 'date-fns/locale';
-import { CalendarIcon } from 'lucide-react';
+import {
+  AlertCircle,
+  CalendarIcon,
+  Download,
+  ExternalLink,
+  FileText,
+  Plus,
+  RefreshCw,
+  User,
+} from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 
 interface ActionHandlersProps {
@@ -476,7 +498,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
     },
   });
 
-  const handleAction = useCallback(async (_action: any) => {
+  const handleAction = useCallback(async (action: any) => {
     switch (action.type) {
       case 'view_details':
         if (action.payload?.clientId) {
@@ -550,7 +572,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
     return csvRows.join('\n');
   };
 
-  const getActionIcon = (_iconName: any) => {
+  const getActionIcon = (iconName: any) => {
     switch (iconName) {
       case 'user':
         return <User className='h-4 w-4' />;

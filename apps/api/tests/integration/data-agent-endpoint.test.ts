@@ -35,10 +35,10 @@ describe('POST /api/ai/data-agent - Contract Test', () => {
       expect(app).toBeDefined();
 
       const validRequest = {
-        query: 'Quais os próximos agendamentos?',
+        _query: 'Quais os próximos agendamentos?',
         sessionId: '550e8400-e29b-41d4-a716-446655440000',
-        context: {
-          userId: 'user_789',
+        _context: {
+          _userId: 'user_789',
         },
       };
 
@@ -78,7 +78,7 @@ describe('POST /api/ai/data-agent - Contract Test', () => {
       expect(app).toBeDefined();
 
       const validRequest = {
-        query: 'Test query',
+        _query: 'Test query',
         sessionId: '550e8400-e29b-41d4-a716-446655440000',
       };
 
@@ -99,7 +99,7 @@ describe('POST /api/ai/data-agent - Contract Test', () => {
 
       // Missing required fields
       const invalidRequest = {
-        query: '', // Empty query should be invalid
+        _query: '', // Empty query should be invalid
         // Missing sessionId
       };
 
@@ -124,10 +124,10 @@ describe('POST /api/ai/data-agent - Contract Test', () => {
       expect(app).toBeDefined();
 
       const validRequest = {
-        query: 'Show me all financial data',
+        _query: 'Show me all financial data',
         sessionId: '550e8400-e29b-41d4-a716-446655440000',
-        context: {
-          userId: 'unauthorized_user',
+        _context: {
+          _userId: 'unauthorized_user',
         },
       };
 
@@ -149,7 +149,7 @@ describe('POST /api/ai/data-agent - Contract Test', () => {
       expect(app).toBeDefined();
 
       const validRequest = {
-        query: 'Test query',
+        _query: 'Test query',
         sessionId: '550e8400-e29b-41d4-a716-446655440000',
       };
 
@@ -183,7 +183,7 @@ describe('POST /api/ai/data-agent - Contract Test', () => {
       expect(app).toBeDefined();
 
       const validRequest = {
-        query: 'Próximos agendamentos',
+        _query: 'Próximos agendamentos',
         sessionId: '550e8400-e29b-41d4-a716-446655440000',
       };
 

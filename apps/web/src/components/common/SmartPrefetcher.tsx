@@ -137,7 +137,7 @@ export function SmartPrefetcher({
 
       const observer = new IntersectionObserver(
         entries => {
-          entries.forEach(_entry => {
+          entries.forEach(entry => {
             if (entry.isIntersecting) {
               executePrefetch();
               observer.disconnect();

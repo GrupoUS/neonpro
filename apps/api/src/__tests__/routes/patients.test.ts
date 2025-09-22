@@ -49,7 +49,7 @@ const mockLGPDService = {
   logDataAccess: vi.fn(),
 };
 
-describe("patient Management API - NeonPro Healthcare", () => {
+describe(_"patient Management API - NeonPro Healthcare",() => {
   // Mock patient data
   const mockPatient = {
     id: "patient-123",
@@ -77,8 +77,8 @@ describe("patient Management API - NeonPro Healthcare", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
-  describe("pOST /patients - Create Patient", () => {
-    it("should create patient with valid Brazilian healthcare data", async () => {
+  describe(_"pOST /patients - Create Patient",() => {
+    it(_"should create patient with valid Brazilian healthcare data",async () => {
       const newPatientData = {
         name: "João da Silva",
         cpf: "98765432100",
@@ -113,7 +113,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
         json: vi.fn(),
         get: vi
           .fn()
-          .mockReturnValue({ userId: "doctor-123", tenantId: "clinic-abc" }),
+          .mockReturnValue({ _userId: "doctor-123", tenantId: "clinic-abc" }),
       } as unknown as Context;
 
       const createPatientHandler = async (c: Context) => {
@@ -180,7 +180,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
       expect(mockPrisma.auditLog.create).toHaveBeenCalled();
     });
 
-    it("should reject patient creation with invalid CPF", async () => {
+    it(_"should reject patient creation with invalid CPF",async () => {
       const invalidPatientData = {
         name: "Test Patient",
         cpf: "12345678999", // Invalid CPF
@@ -197,7 +197,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
         json: vi.fn(),
         get: vi
           .fn()
-          .mockReturnValue({ userId: "doctor-123", tenantId: "clinic-abc" }),
+          .mockReturnValue({ _userId: "doctor-123", tenantId: "clinic-abc" }),
       } as unknown as Context;
 
       const createPatientHandler = async (c: Context) => {
@@ -207,7 +207,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
           await mockPrisma.auditLog.create({
             data: {
               action: "PATIENT_CREATION_FAILED",
-              userId: c.get("user").userId,
+              _userId: c.get("user").userId,
               tenantId: c.get("user").tenantId,
               metadata: { reason: "INVALID_CPF", cpf: patientData.cpf },
               timestamp: new Date(),
@@ -234,7 +234,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
       expect(mockPrisma.auditLog.create).toHaveBeenCalledWith({
         data: {
           action: "PATIENT_CREATION_FAILED",
-          userId: "doctor-123",
+          _userId: "doctor-123",
           tenantId: "clinic-abc",
           metadata: { reason: "INVALID_CPF", cpf: "12345678999" },
           timestamp: expect.any(Date),
@@ -242,7 +242,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
       });
     });
 
-    it("should require LGPD consent for patient creation", async () => {
+    it(_"should require LGPD consent for patient creation",async () => {
       const patientWithoutConsent = {
         name: "Patient Test",
         cpf: "12345678900",
@@ -294,8 +294,8 @@ describe("patient Management API - NeonPro Healthcare", () => {
       );
     });
   });
-  describe("gET /patients/:id - Get Patient", () => {
-    it("should retrieve patient with data masking based on user role", async () => {
+  describe("gET /patients/:id - Get Patient",() => {
+    it(_"should retrieve patient with data masking based on user role",async () => {
       const fullPatientData = { ...mockPatient };
       const maskedPatientData = {
         ...mockPatient,
@@ -313,8 +313,8 @@ describe("patient Management API - NeonPro Healthcare", () => {
         },
         json: vi.fn(),
         get: vi.fn().mockReturnValue({
-          userId: "nurse-123",
-          role: "NURSE",
+          _userId: "nurse-123",
+          _role: "NURSE",
           tenantId: "clinic-abc",
         }),
       } as unknown as Context;
@@ -338,7 +338,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
 
         // Apply data masking based on user role
         const responseData = role === "NURSE"
-          ? mockLGPDService.maskSensitiveData(patient, role)
+          ? mockLGPDService.maskSensitiveData(patient, _role)
           : patient;
 
         // Log data access
@@ -372,7 +372,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
       expect(mockLGPDService.logDataAccess).toHaveBeenCalled();
     });
 
-    it("should enforce tenant isolation for patient access", async () => {
+    it(_"should enforce tenant isolation for patient access",async () => {
       mockPrisma.patient.findUnique.mockResolvedValue(undefined); // Patient not found in user's tenant
 
       const mockContext = {
@@ -381,7 +381,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
         },
         json: vi.fn(),
         get: vi.fn().mockReturnValue({
-          userId: "doctor-123",
+          _userId: "doctor-123",
           tenantId: "clinic-abc",
         }),
       } as unknown as Context;
@@ -423,8 +423,8 @@ describe("patient Management API - NeonPro Healthcare", () => {
     });
   });
 
-  describe("pUT /patients/:id - Update Patient", () => {
-    it("should update patient with audit trail", async () => {
+  describe("pUT /patients/:id - Update Patient",() => {
+    it(_"should update patient with audit trail",async () => {
       const updateData = {
         phone: "11977777777",
         email: "newemail@example.com",
@@ -442,7 +442,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
         json: vi.fn(),
         get: vi
           .fn()
-          .mockReturnValue({ userId: "doctor-123", tenantId: "clinic-abc" }),
+          .mockReturnValue({ _userId: "doctor-123", tenantId: "clinic-abc" }),
       } as unknown as Context;
 
       const updatePatientHandler = async (c: Context) => {
@@ -490,7 +490,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
       expect(mockPrisma.auditLog.create).toHaveBeenCalledWith({
         data: {
           action: "PATIENT_UPDATED",
-          userId: "doctor-123",
+          _userId: "doctor-123",
           tenantId: "clinic-abc",
           resourceId: "patient-123",
           metadata: {
@@ -504,7 +504,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
   });
 
   describe("dELETE /patients/:id - Delete Patient (LGPD Right to Erasure)", () => {
-    it("should soft delete patient with LGPD compliance", async () => {
+    it(_"should soft delete patient with LGPD compliance",async () => {
       mockPrisma.patient.update.mockResolvedValue({
         ...mockPatient,
         isActive: false,
@@ -514,7 +514,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
       mockPrisma.auditLog.create.mockResolvedValue({
         id: "audit-123",
         action: "PATIENT_DELETED_LGPD",
-        userId: "admin-123",
+        _userId: "admin-123",
         tenantId: "clinic-abc",
         resourceId: "patient-123",
         metadata: {
@@ -532,7 +532,7 @@ describe("patient Management API - NeonPro Healthcare", () => {
         json: vi.fn(),
         get: vi
           .fn()
-          .mockReturnValue({ userId: "admin-123", tenantId: "clinic-abc" }),
+          .mockReturnValue({ _userId: "admin-123", tenantId: "clinic-abc" }),
       } as unknown as Context;
 
       const deletePatientHandler = async (c: Context) => {

@@ -103,7 +103,7 @@ import type {
 export interface DataAgentChatAccessibilityProps {
   /** Current user context for role-based access */
   userContext: {
-    userId: string;
+    _userId: string;
     userRole: 'admin' | 'professional' | 'assistant' | 'receptionist';
     domain?: string; // Clinic/domain identifier
   };

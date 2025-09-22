@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import app from '../routes/ai-chat';
 
-describe('chat v5 stream', () => {
+describe('chat v5 stream',() => {
   it('accepts text-only payload and responds 200', async () => {
     const res = await app.request('/stream', {
       method: 'POST',

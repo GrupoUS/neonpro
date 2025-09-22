@@ -249,7 +249,7 @@ export class PatientRepository implements IPatientRepository {
     }
   }
 
-  async search(query: string, clinicId?: string, options?: PatientQueryOptions): Promise<PatientSearchResult> {
+  async search(_query: string, clinicId?: string, options?: PatientQueryOptions): Promise<PatientSearchResult> {
     try {
       let dbQuery = this.supabase
         .from("patients")
@@ -398,7 +398,7 @@ export class PatientRepository implements IPatientRepository {
   /**
    * Maps create request to database format
    */
-  private mapCreateRequestToDatabase(request: CreatePatientRequest): Partial<DatabasePatient> {
+  private mapCreateRequestToDatabase(_request: CreatePatientRequest): Partial<DatabasePatient> {
     return {
       clinic_id: request.clinicId,
       medical_record_number: request.medicalRecordNumber,
@@ -449,7 +449,7 @@ export class PatientRepository implements IPatientRepository {
   /**
    * Maps update request to database format
    */
-  private mapUpdateRequestToDatabase(request: UpdatePatientRequest): Partial<DatabasePatient> {
+  private mapUpdateRequestToDatabase(_request: UpdatePatientRequest): Partial<DatabasePatient> {
     const updateData: Partial<DatabasePatient> = {};
 
     if (request.familyName !== undefined) updateData.family_name = request.familyName;

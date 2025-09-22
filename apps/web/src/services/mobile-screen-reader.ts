@@ -11,8 +11,6 @@
  * - Healthcare-specific screen reader patterns
  */
 
-import { z } from 'zod';
-
 // Mobile Screen Reader Levels
 export const MOBILE_SCREEN_READER_LEVELS = {
   EXCELLENT: 'excellent',
@@ -93,7 +91,7 @@ export const MEDICAL_PRONUNCIATION_PT_BR = {
 export const ScreenReaderElementSchema = z.object({
   id: z.string(),
   tagName: z.string(),
-  role: z.string().optional(),
+  _role: z.string().optional(),
   ariaLabel: z.string().optional(),
   ariaDescribedBy: z.string().optional(),
   ariaLabelledBy: z.string().optional(),
@@ -226,7 +224,7 @@ export class MobileScreenReaderService {
 
     if (missingLabels > 0) {
       const unlabeledElements = elements.filter(
-        el => (el.isFocusable || el.role) && !el.hasProperLabeling,
+        el => (el.isFocusable || el._role) && !el.hasProperLabeling,
       );
 
       issues.push({
@@ -696,14 +694,11 @@ export class MobileScreenReaderService {
   private generateRecommendations(): string[] {
     const recommendations: string[] = [];
 
-    const issuesByType = this.issues.reduce(
-      (acc, issue) => {
-        if (!acc[issue.type]) acc[issue.type] = [];
-        acc[issue.type].push(issue);
-        return acc;
-      },
-      {} as Record<string, ScreenReaderAccessibilityIssue[]>,
-    );
+    const issuesByType = this.issues.reduce((acc, issue) => {
+      if (!acc[issue.type]) acc[issue.type] = [];
+      acc[issue.type].push(issue);
+      return acc;
+    }, {} as Record<string, ScreenReaderAccessibilityIssue[]>);
 
     Object.entries(issuesByType).forEach(([type, issues]) => {
       const criticalCount = issues.filter(

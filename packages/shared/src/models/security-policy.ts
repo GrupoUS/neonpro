@@ -6,8 +6,6 @@
  * Based on 002-platform-architecture-improvements data-model.md specification
  */
 
-import { z } from "zod";
-
 // ============================================================================
 // Core Security Policy Types
 // ============================================================================
@@ -603,7 +601,7 @@ export interface AuditPolicy {
     // Log data requirements
     logData: {
       timestamp: boolean;
-      userId: boolean;
+      _userId: boolean;
       sessionId: boolean;
       ipAddress: boolean;
       userAgent: boolean;

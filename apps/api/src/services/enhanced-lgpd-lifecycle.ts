@@ -14,8 +14,6 @@
 
 import type { PrismaClient } from '@prisma/client';
 import * as crypto from 'crypto';
-import { z } from 'zod';
-
 // Data Lifecycle Stages
 export const DATA_LIFECYCLE_STAGES = {
   COLLECTION: 'collection',
@@ -113,7 +111,7 @@ export const DataProcessingRecordSchema = z.object({
     z.object({
       action: z.string(),
       timestamp: z.date(),
-      userId: z.string(),
+      _userId: z.string(),
       details: z.record(z.any()),
     }),
   ),
@@ -160,7 +158,7 @@ export const ConsentWithdrawalRecordSchema = z.object({
     z.object({
       action: z.string(),
       timestamp: z.date(),
-      userId: z.string(),
+      _userId: z.string(),
       details: z.record(z.any()),
     }),
   ),
@@ -344,7 +342,7 @@ export class EnhancedLGPDLifecycleService {
         {
           action: 'record_created',
           timestamp: processingDate,
-          userId: 'system',
+          _userId: 'system',
           details: { legalBasis, processingPurpose },
         },
       ],
@@ -451,7 +449,7 @@ export class EnhancedLGPDLifecycleService {
         {
           action: 'consent_withdrawn',
           timestamp: withdrawalDate,
-          userId: patientId,
+          _userId: patientId,
           details: { method: withdrawalMethod, reason: withdrawalReason },
         },
       ],
@@ -507,7 +505,7 @@ export class EnhancedLGPDLifecycleService {
           record.auditTrail.push({
             action: 'data_anonymized',
             timestamp: new Date(),
-            userId: 'system',
+            _userId: 'system',
             details: { method, success: true },
           });
 
@@ -644,16 +642,14 @@ export class EnhancedLGPDLifecycleService {
       record => !patientId || record.patientId === patientId,
     );
 
-    const recordsByStage = records.reduce(
-      (acc, record) => {
+    const recordsByStage = records.reduce((acc,_record) => {
         acc[record.lifecycleStage] = (acc[record.lifecycleStage] || 0) + 1;
         return acc;
       },
       {} as Record<DataLifecycleStage, number>,
     );
 
-    const recordsByCategory = records.reduce(
-      (acc, record) => {
+    const recordsByCategory = records.reduce((acc,_record) => {
         acc[record.dataCategory] = (acc[record.dataCategory] || 0) + 1;
         return acc;
       },
@@ -906,7 +902,7 @@ export class EnhancedLGPDLifecycleService {
       record.auditTrail.push({
         action: 'data_deleted',
         timestamp: new Date(),
-        userId: 'system',
+        _userId: 'system',
         details: { reason: 'retention_period_expired' },
       });
 

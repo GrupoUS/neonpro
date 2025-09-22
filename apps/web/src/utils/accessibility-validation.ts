@@ -604,7 +604,7 @@ export class AccessibilityValidator {
     options: {
       includeHealthcareAudit?: boolean;
       validateWCAG?: boolean;
-      context?:
+      _context?:
         | 'registration'
         | 'appointment'
         | 'treatment'
@@ -618,7 +618,7 @@ export class AccessibilityValidator {
       context = 'registration',
     } = options;
 
-    const _validationStart = Date.now();
+    const validationStart = Date.now();
 
     // Run healthcare accessibility audit
     let healthcareAuditResult: HealthcareAccessibilityAuditResult | null = null;

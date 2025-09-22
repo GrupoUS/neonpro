@@ -20,7 +20,7 @@ export class RateCounterService {
     return Date.now();
   }
 
-  touch(userId: string) {
+  touch(_userId: string) {
     const n = this.now();
     const prev = this.store.get(userId) ?? { c5: 0, c60: 0, t5: n, t60: n };
     // decay 5m window
@@ -40,7 +40,7 @@ export class RateCounterService {
     return { fiveMin: prev.c5, oneHour: prev.c60 };
   }
 
-  get(userId: string) {
+  get(_userId: string) {
     const n = this.now();
     const v = this.store.get(userId);
     if (!v) return { fiveMin: 0, oneHour: 0 };
@@ -58,7 +58,7 @@ export class RateCounterService {
     return { fiveMin: copy.c5, oneHour: copy.c60 };
   }
 
-  withinLimits(userId: string, max5 = 10, max60 = 30) {
+  withinLimits(_userId: string, max5 = 10, max60 = 30) {
     const { fiveMin, oneHour } = this.get(userId);
     return fiveMin < max5 && oneHour < max60;
   }

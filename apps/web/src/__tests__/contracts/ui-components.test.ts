@@ -15,7 +15,7 @@ const MockButton = (props: any) => {
   }, children);
 };
 
-const _MockForm = (props: any) => {
+const MockForm = (props: any) => {
   const { children, onSubmit, ...restProps } = props;
   return React.createElement('form', {
     onSubmit,
@@ -24,7 +24,7 @@ const _MockForm = (props: any) => {
   }, children);
 };
 
-const _MockInput = (props: any) => {
+const MockInput = (props: any) => {
   const { type = 'text', value, onChange, placeholder, required, ...restProps } = props;
   return React.createElement('input', {
     type,
@@ -37,7 +37,7 @@ const _MockInput = (props: any) => {
   });
 };
 
-const _MockModal = (props: any) => {
+const MockModal = (props: any) => {
   const { isOpen, onClose, children, ...restProps } = props;
   if (!isOpen) return null;
   return React.createElement('div', {
@@ -59,7 +59,7 @@ const _MockModal = (props: any) => {
   ]);
 };
 
-const _MockChart = (props: any) => {
+const MockChart = (props: any) => {
   const { data, type = 'bar', ...restProps } = props;
   return React.createElement('div', {
     'data-testid': 'mock-chart',
@@ -69,7 +69,7 @@ const _MockChart = (props: any) => {
 };
 
 // Continue with rest of the test file...
-describe('UI Components Contract Tests', () => {
+describe(('UI Components Contract Tests', () => {
   beforeEach(() => {
     // Setup
   });
@@ -78,7 +78,7 @@ describe('UI Components Contract Tests', () => {
     cleanup();
   });
 
-  it('should render MockButton correctly', () => {
+  it(('should render MockButton correctly', () => {
     render(React.createElement(MockButton, {
       onClick: vi.fn(),
     }, 'Test Button'));

@@ -95,7 +95,7 @@ export function useCreateAppointmentTemplate() {
     }: {
       templateData: CreateAppointmentTemplateData;
       clinicId: string;
-      userId: string;
+      _userId: string;
     }) => {
       return appointmentTemplatesService.createAppointmentTemplate(
         templateData,
@@ -134,7 +134,7 @@ export function useUpdateAppointmentTemplate() {
     }: {
       templateId: string;
       updateData: UpdateAppointmentTemplateData;
-      userId: string;
+      _userId: string;
     }) => {
       return appointmentTemplatesService.updateAppointmentTemplate(
         templateId,
@@ -241,14 +241,11 @@ export function useAppointmentTemplateCategories(clinicId?: string) {
 
   return {
     data: templates
-      ? templates.reduce(
-        (acc, template) => {
-          const category = template.category;
-          acc[category] = (acc[category] || 0) + 1;
-          return acc;
-        },
-        {} as Record<string, number>,
-      )
+      ? templates.reduce((acc, template) => {
+        const category = template.category;
+        acc[category] = (acc[category] || 0) + 1;
+        return acc;
+      }, {} as Record<string, number>)
       : undefined,
     isLoading: !templates,
   };

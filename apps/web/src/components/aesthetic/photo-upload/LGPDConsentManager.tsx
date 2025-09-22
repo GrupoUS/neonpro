@@ -70,7 +70,7 @@ export interface ConsentHistory {
 
 interface LGPDConsentManagerProps {
   patientId?: string;
-  userId: string;
+  _userId: string;
   onConsentChange: (consent: LGPDConsentData) => void;
   onConsentWithdraw?: (field: keyof LGPDConsentData, reason?: string) => void;
   initialConsent?: Partial<LGPDConsentData>;

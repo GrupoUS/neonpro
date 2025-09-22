@@ -458,8 +458,7 @@ export class CFMComplianceService {
 
       const averageComplianceScore =
         sessions?.length > 0
-          ? sessions.reduce(
-              (sum, s) => sum + (s.ngs2_compliance_score || 0),
+          ? sessions.reduce((sum,_s) => sum + (s.ngs2_compliance_score || 0),
               0,
             ) / sessions.length
           : 100;
@@ -515,7 +514,7 @@ export class CFMComplianceService {
     // In production, this would use proper key management (HSM)
     const array = new Uint8Array(32);
     crypto.getRandomValues(array);
-    return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
+    return Array.from(_array,(byte) => byte.toString(16).padStart(2, "0")).join(
       "",
     );
   }

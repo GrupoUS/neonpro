@@ -3,8 +3,6 @@
  * Centralized validation schemas for the NeonPro platform
  */
 
-import { z } from "zod";
-
 // Patient schemas
 export * from "./patient/base-patient.schema";
 export * from "./patient/brazilian-patient.schema";

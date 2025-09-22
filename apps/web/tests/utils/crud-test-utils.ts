@@ -15,8 +15,8 @@ export interface CrudIntentRequest {
   entity: string;
   operation: string;
   data: Record<string, any>;
-  context: {
-    userId: string;
+  _context: {
+    _userId: string;
     sessionId: string;
     timestamp?: string;
   };
@@ -30,8 +30,8 @@ export interface CrudConfirmRequest {
     transformations?: Record<string, any>;
     compliance?: Record<string, any>;
   };
-  context: {
-    userId: string;
+  _context: {
+    _userId: string;
     sessionId: string;
   };
 }
@@ -45,15 +45,15 @@ export interface CrudExecuteRequest {
     data: Record<string, any>;
     metadata?: Record<string, any>;
   };
-  context: {
-    userId: string;
+  _context: {
+    _userId: string;
     sessionId: string;
     correlationId?: string;
   };
 }
 
 // Validation functions
-export function validateIntentRequest(request: any): request is CrudIntentRequest {
+export function validateIntentRequest(_request: any): request is CrudIntentRequest {
   return (
     request
     && typeof request.entity === 'string'
@@ -65,7 +65,7 @@ export function validateIntentRequest(request: any): request is CrudIntentReques
   );
 }
 
-export function validateConfirmRequest(request: any): request is CrudConfirmRequest {
+export function validateConfirmRequest(_request: any): request is CrudConfirmRequest {
   return (
     request
     && typeof request.intentId === 'string'
@@ -78,7 +78,7 @@ export function validateConfirmRequest(request: any): request is CrudConfirmRequ
   );
 }
 
-export function validateExecuteRequest(request: any): request is CrudExecuteRequest {
+export function validateExecuteRequest(_request: any): request is CrudExecuteRequest {
   return (
     request
     && typeof request.confirmId === 'string'
@@ -95,7 +95,7 @@ export function validateExecuteRequest(request: any): request is CrudExecuteRequ
 
 // API client functions
 export async function createCrudIntent(
-  request: CrudIntentRequest,
+  _request: CrudIntentRequest,
   timeout: number = 5000,
 ): Promise<any> {
   const controller = new AbortController();
@@ -104,7 +104,7 @@ export async function createCrudIntent(
   try {
     let bodyString;
     try {
-      bodyString = JSON.stringify(request);
+      bodyString = JSON.stringify(_request);
     } catch (e) {
       // Handle circular references and other JSON stringify errors
       const error = new Error('Invalid JSON') as any;
@@ -165,7 +165,7 @@ export async function createCrudIntent(
 }
 
 export async function confirmCrudIntent(
-  request: CrudConfirmRequest,
+  _request: CrudConfirmRequest,
   timeout: number = 5000,
 ): Promise<any> {
   const controller = new AbortController();
@@ -178,7 +178,7 @@ export async function confirmCrudIntent(
         'Content-Type': 'application/json',
         Authorization: 'Bearer test-token',
       },
-      body: JSON.stringify(request),
+      body: JSON.stringify(_request),
       signal: controller.signal,
     });
 
@@ -221,7 +221,7 @@ export async function confirmCrudIntent(
 }
 
 export async function executeCrudOperation(
-  request: CrudExecuteRequest,
+  _request: CrudExecuteRequest,
   timeout: number = 5000,
 ): Promise<any> {
   const controller = new AbortController();
@@ -234,7 +234,7 @@ export async function executeCrudOperation(
         'Content-Type': 'application/json',
         Authorization: 'Bearer test-token',
       },
-      body: JSON.stringify(request),
+      body: JSON.stringify(_request),
       signal: controller.signal,
     });
 
@@ -503,7 +503,7 @@ export function expectComplianceValidation(response: any, framework: 'lgpd' | 'c
 export function expectAuditTrail(response: any) {
   expect(response.auditTrail).toBeDefined();
   expect(response.auditTrail.timestamp).toBeDefined();
-  expect(response.auditTrail.userId).toBeDefined();
+  expect(response.auditTrail._userId).toBeDefined();
   expect(response.auditTrail.operation).toBeDefined();
 }
 
@@ -1314,7 +1314,7 @@ export class LGPDScoringSystem {
   /**
    * Validate audit trail configuration
    */
-  validateAuditTrailConfiguration(config: any): {
+  validateAuditTrailConfiguration(_config: any): {
     valid: boolean;
     completenessScore: number;
     regulatoryCompliance: boolean;

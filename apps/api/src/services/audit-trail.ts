@@ -6,8 +6,6 @@
  * with patient data access tracking and security event monitoring
  */
 
-import { z } from 'zod';
-
 // ============================================================================
 // Audit Event Types & Categories
 // ============================================================================
@@ -110,7 +108,7 @@ export interface AuditEvent {
 
   // Actor information
   actor: {
-    userId?: string;
+    _userId?: string;
     userType:
       | 'patient'
       | 'healthcare_professional'
@@ -118,7 +116,7 @@ export interface AuditEvent {
       | 'system'
       | 'ai_agent';
     userName?: string;
-    role?: string;
+    _role?: string;
     professionalRegistration?: string;
     sessionId?: string;
   };
@@ -314,7 +312,7 @@ export interface AuditQueryFilters {
   fromDate?: Date;
   toDate?: Date;
   eventTypes?: AuditEventType[];
-  userId?: string;
+  _userId?: string;
   patientId?: string;
   severity?: AuditSeverity;
   outcome?: AuditOutcome;
@@ -527,7 +525,7 @@ export class AuditTrailService {
    * Log patient data access
    */
   async logPatientDataAccess(
-    userId: string,
+    _userId: string,
     userType: AuditEvent['actor']['userType'],
     patientId: string,
     dataType: string,
@@ -571,7 +569,7 @@ export class AuditTrailService {
    * Log emergency access
    */
   async logEmergencyAccess(
-    userId: string,
+    _userId: string,
     patientId: string,
     justification: string,
     accessType: 'break_glass' | 'emergency_override',
@@ -620,7 +618,7 @@ export class AuditTrailService {
   async logSecurityViolation(
     violationType: string,
     description: string,
-    userId?: string,
+    _userId?: string,
     technicalContext: Partial<AuditEvent['technicalContext']> = {},
     additionalData: Record<string, any> = {},
   ): Promise<void> {
@@ -667,7 +665,7 @@ export class AuditTrailService {
     await this.logEvent(
       AuditEventType.DATA_SUBJECT_REQUEST,
       {
-        userId: dataSubjectId,
+        _userId: dataSubjectId,
         userType: 'patient',
       },
       {
@@ -709,7 +707,7 @@ export class AuditTrailService {
     await this.logEvent(
       AuditEventType.AUDIT_LOG_EXPORT,
       {
-        userId: 'system', // This would be the requesting user
+        _userId: 'system', // This would be the requesting user
         userType: 'admin',
       },
       {
@@ -1004,7 +1002,7 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
       await auditService.logEvent(
         AuditEventType.SYSTEM_CONFIGURATION_CHANGE,
         {
-          userId: userId || 'anonymous',
+          _userId: userId || 'anonymous',
           userType: 'healthcare_professional',
           sessionId,
         },

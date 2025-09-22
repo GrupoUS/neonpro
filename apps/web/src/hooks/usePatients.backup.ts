@@ -18,7 +18,7 @@ export const patientKeys = {
   list: (clinicId: string, filters?: any) => [...patientKeys.lists(), clinicId, filters] as const,
   details: () => [...patientKeys.all, 'detail'] as const,
   detail: (id: string) => [...patientKeys.details(), id] as const,
-  search: (clinicId: string, query: string) =>
+  search: (clinicId: string, _query: string) =>
     [...patientKeys.all, 'search', clinicId, query] as const,
   history: (patientId: string) => [...patientKeys.all, 'history', patientId] as const,
 };
@@ -28,12 +28,12 @@ export const patientKeys = {
  */
 export function useSearchPatients(
   clinicId: string,
-  query: string,
+  _query: string,
   options?: Omit<UseQueryOptions<Patient[], Error>, 'queryKey' | 'queryFn'>,
 ) {
   return useQuery({
-    queryKey: patientKeys.search(clinicId, query),
-    queryFn: () => patientService.searchPatients(clinicId, query),
+    queryKey: patientKeys.search(clinicId, _query),
+    queryFn: () => patientService.searchPatients(clinicId, _query),
     staleTime: 30 * 1000, // 30 seconds - patient search should be fresh
     gcTime: 2 * 60 * 1000, // 2 minutes
     enabled: !!clinicId && query.length >= 2, // Only search with 2+ characters
@@ -82,7 +82,7 @@ export function useCreatePatient() {
       return patientService.createPatient(data, clinicId, user.id);
     },
 
-    onSuccess: (newPatient, { clinicId }) => {
+    onSuccess: (_newPatient, { clinicId }) => {
       // Invalidate patient lists and searches
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
       queryClient.invalidateQueries({
@@ -107,7 +107,7 @@ export function useCreatePatient() {
  */
 export function useDebouncedPatientSearch(
   clinicId: string,
-  query: string,
+  _query: string,
   delay = 300,
 ) {
   const [debouncedQuery, setDebouncedQuery] = React.useState(query);
@@ -139,11 +139,11 @@ export function usePrefetchPatients() {
     });
   };
 
-  const prefetchPatientSearch = (clinicId: string, query: string) => {
+  const prefetchPatientSearch = (clinicId: string, _query: string) => {
     if (query.length >= 2) {
       queryClient.prefetchQuery({
-        queryKey: patientKeys.search(clinicId, query),
-        queryFn: () => patientService.searchPatients(clinicId, query),
+        queryKey: patientKeys.search(clinicId, _query),
+        queryFn: () => patientService.searchPatients(clinicId, _query),
         staleTime: 30 * 1000,
       });
     }
@@ -233,7 +233,7 @@ export function usePatientsTable(
           filter: `clinic_id=eq.${clinicId}`,
         },
         payload => {
-          console.log('Patient real-time update:', payload);
+          console.log('Patient real-time update:', _payload);
 
           // Invalidate queries to refresh data
           queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
@@ -423,7 +423,7 @@ export function useUpdatePatient() {
       };
     },
 
-    onSuccess: (updatedPatient, { clinicId }) => {
+    onSuccess: (_updatedPatient, { clinicId }) => {
       // Update cache
       queryClient.setQueryData(
         patientKeys.detail(updatedPatient.id),
@@ -541,7 +541,7 @@ export function useBulkDeletePatients() {
 
     onSuccess: (_, { patientIds, clinicId }) => {
       // Remove from cache
-      patientIds.forEach(_id => {
+      patientIds.forEach(id => {
         queryClient.removeQueries({ queryKey: patientKeys.detail(id) });
       });
 

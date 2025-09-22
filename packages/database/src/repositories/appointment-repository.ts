@@ -472,7 +472,7 @@ export class AppointmentRepository implements IAppointmentRepository {
   /**
    * Maps create request to database format
    */
-  private mapCreateRequestToDatabase(request: CreateAppointmentRequest): any {
+  private mapCreateRequestToDatabase(_request: CreateAppointmentRequest): any {
     return {
       clinic_id: request.clinicId,
       patient_id: request.patientId,
@@ -494,7 +494,7 @@ export class AppointmentRepository implements IAppointmentRepository {
   /**
    * Maps update request to database format
    */
-  private mapUpdateRequestToDatabase(request: UpdateAppointmentRequest): any {
+  private mapUpdateRequestToDatabase(_request: UpdateAppointmentRequest): any {
     const updateData: any = {};
 
     if (request.status !== undefined) updateData.status = request.status;

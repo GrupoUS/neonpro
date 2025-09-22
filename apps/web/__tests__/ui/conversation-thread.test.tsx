@@ -7,8 +7,8 @@ import { Conversation } from '@/components/chat/Conversation';
 describe('Conversation thread (T018)', () => {
   test('renders list and can reset history', async () => {
     const messages = [
-      { id: '1', role: 'user', text: 'Olá' },
-      { id: '2', role: 'assistant', text: 'Como posso ajudar?' },
+      { id: '1', _role: 'user', text: 'Olá' },
+      { id: '2', _role: 'assistant', text: 'Como posso ajudar?' },
     ];
     const onReset = vi.fn();
 

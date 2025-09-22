@@ -7,8 +7,6 @@
  */
 
 import { Hono } from 'hono';
-import { z } from 'zod';
-
 // Mock middleware for testing - will be replaced with actual middleware
 const requireAuth = async (c: any, next: any) => {
   c.set('user', { id: 'user-123' });

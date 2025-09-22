@@ -68,7 +68,7 @@ export interface GenericAuditEvent {
     type: ActorType;
     name?: string;
     email?: string;
-    role?: string;
+    _role?: string;
   };
   /** When the action occurred */
   timestamp: string;

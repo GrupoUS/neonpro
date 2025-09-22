@@ -76,13 +76,13 @@ export interface TelemetryEvent {
   severity: TelemetrySeverity;
 
   // Source information
-  service: string;
+  _service: string;
   version: string;
   environment: "development" | "staging" | "production";
   hostname?: string;
 
   // User context (LGPD-compliant)
-  userId?: string; // Hashed/anonymized ID
+  _userId?: string; // Hashed/anonymized ID
   sessionId?: string;
   userRole?: "patient" | "professional" | "admin" | "system";
   department?: string;
@@ -243,9 +243,8 @@ export interface ComplianceEvent extends Omit<TelemetryEvent, "eventType"> {
 // Event validation and utilities
 export class TelemetryEventValidator {
   static validate(event: Partial<TelemetryEvent>): boolean {
-    const required = ["id", "eventType", "timestamp", "severity", "service"];
-    return required.every(
-      (field) => event[field as keyof TelemetryEvent] !== undefined,
+    const required = ["id", "eventType", "timestamp", "severity", "_service"];
+    return required.every((field) => event[field as keyof TelemetryEvent] !== undefined,
     );
   }
 
@@ -259,8 +258,8 @@ export class TelemetryEventValidator {
       sanitized.network.ipAddress = this.hashPII(sanitized.network.ipAddress);
     }
 
-    if (sanitized.userId) {
-      sanitized.userId = this.hashPII(sanitized.userId);
+    if (sanitized._userId) {
+      sanitized._userId = this.hashPII(sanitized._userId);
     }
 
     if (sanitized.healthcareContext?.patientIdHash) {
@@ -282,13 +281,13 @@ export class TelemetryEventValidator {
 export class TelemetryEventBuilder {
   private event: Partial<TelemetryEvent> = {};
 
-  constructor(eventType: TelemetryEventType, service: string) {
+  constructor(eventType: TelemetryEventType, _service: string) {
     this.event = {
       id: crypto.randomUUID(),
       eventType,
       timestamp: new Date(),
       severity: TelemetrySeverity.INFO,
-      service,
+      _service,
       version: "1.0.0",
       environment: (process.env.NODE_ENV as any) || "development",
       healthcareContext: {
@@ -314,7 +313,7 @@ export class TelemetryEventBuilder {
     userId: string,
     role?: "patient" | "professional" | "admin" | "system",
   ): this {
-    this.event.userId = TelemetryEventValidator.hashPII(userId);
+    this.event._userId = TelemetryEventValidator.hashPII(userId);
     if (role) this.event.userRole = role;
     return this;
   }
@@ -377,7 +376,7 @@ export class TelemetryEventBuilder {
       !event.eventType ||
       !event.timestamp ||
       !event.severity ||
-      !event.service
+      !event._service
     ) {
       throw new Error("TelemetryEvent missing required fields after build");
     }

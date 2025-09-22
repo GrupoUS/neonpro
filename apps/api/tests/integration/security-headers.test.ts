@@ -77,7 +77,7 @@ describe('Security Headers Validation Test (T051)', () => {
             'Content-Type': 'application/json',
             Authorization: 'Bearer test-token',
           },
-          ...(isPostEndpoint && { body: JSON.stringify({ query: 'test' }) }),
+          ...(isPostEndpoint && { body: JSON.stringify({ _query: 'test' }) }),
         });
 
         const hstsHeader = response.headers.get('strict-transport-security');
@@ -115,7 +115,7 @@ describe('Security Headers Validation Test (T051)', () => {
           'Content-Type': 'application/json',
           Authorization: 'Bearer test-token',
         },
-        body: JSON.stringify({ query: 'test healthcare query' }),
+        body: JSON.stringify({ _query: 'test healthcare query' }),
       });
 
       const cspHeader = response.headers.get('content-security-policy');
@@ -153,7 +153,7 @@ describe('Security Headers Validation Test (T051)', () => {
             'Content-Type': 'application/json',
             Authorization: 'Bearer test-token',
           },
-          ...(isPostEndpoint && { body: JSON.stringify({ query: 'test' }) }),
+          ...(isPostEndpoint && { body: JSON.stringify({ _query: 'test' }) }),
         });
 
         const xFrameOptions = response.headers.get('x-frame-options');
@@ -218,7 +218,7 @@ describe('Security Headers Validation Test (T051)', () => {
           'Content-Type': 'application/json',
           Authorization: 'Bearer test-token',
         },
-        body: JSON.stringify({ query: 'patient data query' }),
+        body: JSON.stringify({ _query: 'patient data query' }),
       });
 
       const healthcareCompliance = response.headers.get('x-healthcare-compliance');
@@ -233,7 +233,7 @@ describe('Security Headers Validation Test (T051)', () => {
           'Content-Type': 'application/json',
           Authorization: 'Bearer test-token',
         },
-        body: JSON.stringify({ query: 'healthcare data query' }),
+        body: JSON.stringify({ _query: 'healthcare data query' }),
       });
 
       const healthcareCompliance = response.headers.get('x-healthcare-compliance');
@@ -248,7 +248,7 @@ describe('Security Headers Validation Test (T051)', () => {
           'Content-Type': 'application/json',
           Authorization: 'Bearer test-token',
         },
-        body: JSON.stringify({ query: 'sensitive patient information' }),
+        body: JSON.stringify({ _query: 'sensitive patient information' }),
       });
 
       const dataClassification = response.headers.get('x-data-classification');
@@ -284,7 +284,7 @@ describe('Security Headers Validation Test (T051)', () => {
             'Content-Type': 'application/json',
             Authorization: 'Bearer test-token',
           },
-          ...(endpoint.method === 'POST' && { body: JSON.stringify({ query: 'test' }) }),
+          ...(endpoint.method === 'POST' && { body: JSON.stringify({ _query: 'test' }) }),
         });
 
         for (const header of requiredHeaders) {

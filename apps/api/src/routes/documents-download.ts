@@ -14,7 +14,6 @@
 import { Hono } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 
-import { z } from 'zod';
 import { requireAuth } from '../middleware/auth';
 import { PatientDocumentService } from '../services/patient-document-service';
 import { auditLogger } from '../utils/audit-logger';
@@ -25,7 +24,7 @@ interface DocumentDownloadContext {
     user: {
       id: string;
       email: string;
-      role: string;
+      _role: string;
     };
   };
 }
@@ -103,7 +102,7 @@ app.get('/:documentId/download', requireAuth(), async c => {
       action: 'download',
       documentId: document.id,
       patientId: document.patient_id,
-      userId: user.id,
+      _userId: user.id,
       userEmail: user.email,
       userRole: user.role,
       metadata: {
@@ -133,7 +132,7 @@ app.get('/:documentId/download', requireAuth(), async c => {
         action: 'download_failed',
         documentId: document.id,
         patientId: document.patient_id,
-        userId: user.id,
+        _userId: user.id,
         userEmail: user.email,
         userRole: user.role,
         metadata: {
@@ -191,7 +190,7 @@ app.get('/:documentId/download', requireAuth(), async c => {
       action: 'download_success',
       documentId: document.id,
       patientId: document.patient_id,
-      userId: user.id,
+      _userId: user.id,
       userEmail: user.email,
       userRole: user.role,
       metadata: {
@@ -254,7 +253,7 @@ app.get('/:documentId/preview', requireAuth(), async c => {
       action: 'preview',
       documentId: document.id,
       patientId: document.patient_id,
-      userId: user.id,
+      _userId: user.id,
       userEmail: user.email,
       userRole: user.role,
       metadata: {

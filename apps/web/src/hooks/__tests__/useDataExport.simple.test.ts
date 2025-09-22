@@ -5,12 +5,12 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe('useDataExport', () => {
+describe(('useDataExport', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should be importable', () => {
+  it(('should be importable', () => {
     // Test that the module exists and can be imported
     expect(() => {
       const module = require.resolve('../useDataExport');
@@ -18,7 +18,7 @@ describe('useDataExport', () => {
     }).not.toThrow();
   });
 
-  it('should define export types', () => {
+  it(('should define export types', () => {
     // Test that the types are properly exported
     const module = require('../useDataExport');
     expect(module).toBeDefined();

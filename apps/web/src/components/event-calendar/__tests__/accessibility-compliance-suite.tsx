@@ -74,13 +74,13 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
 
       // All images should have alt text
       const images = screen.queryAllByRole('img');
-      images.forEach(_img => {
+      images.forEach(img => {
         expect(img).toHaveAttribute('alt');
       });
 
       // Icons should have aria-labels
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(_button => {
+      buttons.forEach(button => {
         if (button.querySelector('svg')) {
           expect(button).toHaveAttribute('aria-label');
         }
@@ -102,7 +102,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       const eventElements = screen.getAllByText(
         /Consulta Acessível|Exame Acessível/,
       );
-      eventElements.forEach(_element => {
+      eventElements.forEach(element => {
         // Should be readable without color cues
         const computedStyle = window.getComputedStyle(element);
         expect(computedStyle.fontSize).not.toBe('0px');
@@ -128,7 +128,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       const eventElements = screen.getAllByText(
         /Consulta Acessível|Exame Acessível/,
       );
-      eventElements.forEach(_element => {
+      eventElements.forEach(element => {
         expect(checkColorContrast).toHaveBeenCalledWith(
           expect.objectContaining({
             element: element,
@@ -189,7 +189,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
 
       // Check for visible focus indicators
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(_button => {
+      buttons.forEach(button => {
         expect(button).toHaveAttribute('tabindex');
       });
     });
@@ -221,7 +221,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
 
       // Should have clear and simple language
       const textElements = screen.getAllByText(/Consulta|Exame|Data|Hora/);
-      textElements.forEach(_element => {
+      textElements.forEach(element => {
         expect(element.textContent).toBeDefined();
       });
     });
@@ -234,7 +234,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should have consistent response
 
       const navigationButtons = screen.getAllByRole('button');
-      navigationButtons.forEach(_button => {
+      navigationButtons.forEach(button => {
         expect(button).toBeVisible();
       });
     });
@@ -283,7 +283,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       const eventElements = screen.getAllByText(
         /Consulta Acessível|Exame Acessível/,
       );
-      eventElements.forEach(_element => {
+      eventElements.forEach(element => {
         // Should be accessible via JavaScript APIs
         expect(element).toBeInTheDocument();
       });
@@ -332,7 +332,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
         'combobox',
         'checkbox',
       );
-      formElements.forEach(_element => {
+      formElements.forEach(element => {
         expect(element).toHaveAttribute('aria-label');
       });
     });
@@ -345,7 +345,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should provide visible focus indicators
 
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(_button => {
+      buttons.forEach(button => {
         expect(button).toHaveAttribute('tabindex');
 
         // Test focus management
@@ -362,7 +362,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should not overlap content
 
       const calendar = screen.getByRole('application');
-      const _originalStyle = window.getComputedStyle(calendar);
+      const originalStyle = window.getComputedStyle(calendar);
 
       // Simulate text zoom
       Object.defineProperty(document.documentElement, 'style', {
@@ -384,7 +384,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       const eventElements = screen.getAllByText(
         /Consulta Acessível|Exame Acessível/,
       );
-      eventElements.forEach(_element => {
+      eventElements.forEach(element => {
         // Should be distinguishable without color
         const textContent = element.textContent;
         expect(textContent).toBeTruthy();
@@ -416,7 +416,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should provide proper table summaries
 
       const tables = screen.queryAllByRole('table');
-      tables.forEach(_table => {
+      tables.forEach(table => {
         expect(table).toBeInTheDocument();
       });
     });
@@ -547,7 +547,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
   // PERFORMANCE AND ACCESSIBILITY
   describe('Performance and Accessibility', () => {
     it('should maintain accessibility with large datasets', () => {
-      const largeEventSet = Array.from({ length: 50 }, (_, i) => ({
+      const largeEventSet = Array.from.*}, (_, i) => ({
         id: `large-event-${i}`,
         title: `Evento Grande ${i}`,
         start: new Date(`2024-01-${String(i + 1).padStart(2, '0')}T10:00:00`),
@@ -616,7 +616,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should provide alternative formats
     });
 
-    it('should support accessible emergency information', () => {
+    it(('should support accessible emergency information', () => {
       const emergencyEvent: CalendarEvent = {
         id: 'emergency-accessible-1',
         title: 'Emergência Acessível',
@@ -639,7 +639,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should support emergency protocols
     });
 
-    it('should provide accessible consent forms', () => {
+    it(('should provide accessible consent forms', () => {
       const consentEvent: CalendarEvent = {
         id: 'consent-accessible-1',
         title: 'Formulário de Consentimento Acessível',

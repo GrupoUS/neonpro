@@ -68,7 +68,7 @@ export interface OperationLogEntry {
 
   // User and Context
   readonly clinicId: string;
-  readonly userId?: string;
+  readonly _userId?: string;
   readonly sessionId?: string;
   readonly userRole?: string;
   readonly ipAddress?: string;
@@ -203,7 +203,7 @@ export class OperationLog {
       auditTrail: {
         action: entry.operation,
         timestamp: now,
-        userId: entry.userId || "system",
+        _userId: entry.userId || "system",
         userRole: entry.userRole,
         ipAddress: entry.ipAddress,
         userAgent: entry.userAgent,
@@ -240,7 +240,7 @@ export class OperationLog {
    */
   logAIRequest(params: {
     clinicId: string;
-    userId: string;
+    _userId: string;
     sessionId?: string;
     modelCode: EnhancedAIModel;
     planCode: SubscriptionTier;
@@ -264,7 +264,7 @@ export class OperationLog {
       description: `AI request using ${params.modelCode} model`,
       severity: "info",
       clinicId: params.clinicId,
-      userId: params.userId,
+      _userId: params.userId,
       sessionId: params.sessionId,
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
@@ -314,7 +314,7 @@ export class OperationLog {
    */
   logPlanChange(params: {
     clinicId: string;
-    userId: string;
+    _userId: string;
     fromPlan: SubscriptionTier;
     toPlan: SubscriptionTier;
     reason: string;
@@ -327,7 +327,7 @@ export class OperationLog {
       description: `Plan changed from ${params.fromPlan} to ${params.toPlan}`,
       severity: "info",
       clinicId: params.clinicId,
-      userId: params.userId,
+      _userId: params.userId,
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
       planCode: params.toPlan,
@@ -353,7 +353,7 @@ export class OperationLog {
    */
   logComplianceCheck(params: {
     clinicId: string;
-    userId?: string;
+    _userId?: string;
     framework: ComplianceFramework;
     checkType: string;
     result: "pass" | "fail" | "warning";
@@ -371,7 +371,7 @@ export class OperationLog {
             ? "warning"
             : "info",
       clinicId: params.clinicId,
-      userId: params.userId,
+      _userId: params.userId,
       complianceFrameworks: [params.framework],
       dataProcessingPurpose: "audit",
       personalDataInvolved: params.framework === "LGPD",
@@ -395,7 +395,7 @@ export class OperationLog {
    */
   logSecurityEvent(params: {
     clinicId: string;
-    userId?: string;
+    _userId?: string;
     eventType: string;
     severity: OperationSeverity;
     description: string;
@@ -410,12 +410,12 @@ export class OperationLog {
       description: params.description,
       severity: params.severity,
       clinicId: params.clinicId,
-      userId: params.userId,
+      _userId: params.userId,
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
       complianceFrameworks: ["LGPD"],
       dataProcessingPurpose: "audit",
-      personalDataInvolved: Boolean(params.userId),
+      personalDataInvolved: Boolean(params._userId),
       sensitiveDataLevel:
         params.threatLevel === "critical" ? "critical" : "medium",
       anonymizationApplied: true,
@@ -472,8 +472,7 @@ export class OperationLog {
 
     // Apply user filters
     if (filters.userIds && filters.userIds.length > 0) {
-      entries = entries.filter(
-        (e) => e.userId && filters.userIds!.includes(e.userId),
+      entries = entries.filter((e) => e.userId && filters.userIds!.includes(e._userId),
       );
     }
 
@@ -503,8 +502,7 @@ export class OperationLog {
 
     // Apply error filter
     if (filters.errorOnly) {
-      entries = entries.filter(
-        (e) =>
+      entries = entries.filter((e) =>
           e.severity === "error" || e.severity === "critical" || e.errorDetails,
       );
     }
@@ -519,8 +517,7 @@ export class OperationLog {
     // Apply text search
     if (filters.searchQuery) {
       const query = filters.searchQuery.toLowerCase();
-      entries = entries.filter(
-        (e) =>
+      entries = entries.filter((e) =>
           e.operation.toLowerCase().includes(query) ||
           e.description.toLowerCase().includes(query) ||
           e.tags.some((tag) => tag.toLowerCase().includes(query)),
@@ -528,7 +525,7 @@ export class OperationLog {
     }
 
     // Sort by timestamp (newest first)
-    entries.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    entries.sort((a,_b) => b.timestamp.getTime() - a.timestamp.getTime());
 
     // Apply pagination
     if (filters.offset) {
@@ -552,7 +549,7 @@ export class OperationLog {
    * Gets recent log entries for a user
    */
   getRecentUserActivity(
-    userId: string,
+    _userId: string,
     limit: number = 50,
   ): OperationLogEntry[] {
     return this.queryLogs({
@@ -606,7 +603,7 @@ export class OperationLog {
       .filter((agg) => agg.period === period)
       .filter((agg) => !startDate || agg.timestamp >= startDate)
       .filter((agg) => !endDate || agg.timestamp <= endDate)
-      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+      .sort((a,_b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
   /**

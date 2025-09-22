@@ -1,7 +1,9 @@
 import { TRPCError } from '@trpc/server';
-import { z } from 'zod';
 import { logger } from '../../lib/logger';
-import { middleware } from '../trpc';
+import { initTRPC } from '@trpc/server';
+
+const t = initTRPC.create();
+const { middleware } = t;
 
 /**
  * CFM (Conselho Federal de Medicina) Validation Middleware
@@ -68,7 +70,7 @@ const cfmValidationSchema = z.object({
  *
  * Validates medical operations according to CFM regulations
  */
-export const cfmValidationMiddleware = middleware(async ({ ctx, next, path }) => {
+export const cfmValidationMiddleware = middleware(async ({ ctx,next,_path }) => {
   try {
     // Check if this operation requires CFM validation
     if (!requiresCFMValidation(path)) {
@@ -77,7 +79,7 @@ export const cfmValidationMiddleware = middleware(async ({ ctx, next, path }) =>
 
     logger.info('CFM validation started', {
       path,
-      userId: ctx.user?.id,
+      _userId: ctx.user?.id,
       timestamp: new Date().toISOString(),
     });
 
@@ -99,7 +101,7 @@ export const cfmValidationMiddleware = middleware(async ({ ctx, next, path }) =>
 
     logger.info('CFM validation completed successfully', {
       path,
-      userId: ctx.user?.id,
+      _userId: ctx.user?.id,
       timestamp: new Date().toISOString(),
     });
 
@@ -107,7 +109,7 @@ export const cfmValidationMiddleware = middleware(async ({ ctx, next, path }) =>
   } catch (error) {
     logger.error('CFM validation failed', {
       path,
-      userId: ctx.user?.id,
+      _userId: ctx.user?.id,
       error: error instanceof Error ? error.message : 'Unknown error',
       timestamp: new Date().toISOString(),
     });
@@ -175,7 +177,7 @@ async function validateProfessionalCredentials(ctx: any): Promise<void> {
     )
   ) {
     logger.warn('Professional lacks required specialization', {
-      userId: user.id,
+      _userId: user.id,
       specializations: user.professionalData?.specializations,
       required: requiredSpecializations,
     });
@@ -221,7 +223,7 @@ async function validateTelemedicineCompliance(ctx: any, path: string): Promise<v
     logger.warn('Cross-state telemedicine operation detected', {
       professionalCrmState: crmState,
       patientState,
-      userId: user.id,
+      _userId: user.id,
       path,
     });
 
@@ -235,7 +237,7 @@ async function validateTelemedicineCompliance(ctx: any, path: string): Promise<v
   }
 
   logger.info('Telemedicine compliance validated', {
-    userId: user.id,
+    _userId: user.id,
     path,
     crmState,
     patientState,
@@ -333,7 +335,7 @@ async function validateEmergencyProtocols(ctx: any): Promise<void> {
   if (!procedureData.emergencyProtocols?.isDocumented) {
     logger.warn('Emergency protocols not documented for procedure', {
       procedureId: procedureData.id,
-      userId: ctx.user?.id,
+      _userId: ctx.user?.id,
     });
   }
 
@@ -354,7 +356,7 @@ export async function auditCFMCompliance(ctx: any, operation: string, result: an
   try {
     const auditData = {
       timestamp: new Date().toISOString(),
-      userId: ctx.user?.id,
+      _userId: ctx.user?.id,
       operation,
       crmNumber: ctx.user?.professionalData?.crm?.number,
       crmState: ctx.user?.professionalData?.crm?.state,
@@ -376,7 +378,7 @@ export async function auditCFMCompliance(ctx: any, operation: string, result: an
   } catch (error) {
     logger.error('CFM compliance audit failed', {
       operation,
-      userId: ctx.user?.id,
+      _userId: ctx.user?.id,
       error: error instanceof Error ? error.message : 'Unknown error',
     });
 

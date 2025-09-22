@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 import {
   useShineBorderAnimation,
-  type HoverGradientTheme,
+  type HoverGradientTheme
 } from "../../hooks/useShineBorderAnimation";
 
 interface HoverBorderGradientProps extends React.HTMLAttributes<HTMLElement> {
@@ -43,7 +43,7 @@ export function HoverBorderGradient({
     hoverGradientTheme: theme,
     hoverClockwise: clockwise,
     hoverDuration: duration,
-    hoverGradientColors: customColors,
+    hoverGradientColors: customColors
   });
 
   return (
@@ -71,7 +71,7 @@ export function HoverBorderGradient({
           width: "100%",
           height: "100%",
           background: hoverGradient.backgroundStyle,
-          transition: `background ${duration}s linear`,
+          transition: `background ${duration}s linear`
         }}
       />
 

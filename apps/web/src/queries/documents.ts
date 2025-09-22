@@ -118,7 +118,7 @@ export const useDocumentUpload = () => {
 
       return response.json();
     },
-    onSuccess: (_, _variables) => {
+    onSuccess: (_, variables) => {
       // Invalidate document list for this patient
       queryClient.invalidateQueries({
         queryKey: ['patient-documents', variables.patientId],
@@ -153,7 +153,7 @@ export const useDocumentDelete = () => {
 
       return { success: true };
     },
-    onSuccess: (_, _variables) => {
+    onSuccess: (_, variables) => {
       // Invalidate document list for this patient
       queryClient.invalidateQueries({
         queryKey: ['patient-documents', variables.patientId],
@@ -188,7 +188,7 @@ export const downloadDocument = async (
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
-  } catch (error) {
+  } catch (_error) {
     console.error('Download error:', error);
     throw error;
   }

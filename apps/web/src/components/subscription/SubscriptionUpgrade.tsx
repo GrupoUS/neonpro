@@ -54,7 +54,7 @@ export default function SubscriptionUpgrade({
       toast(
         'Redirecionando para pagamento - Você será redirecionado para completar sua assinatura Pro.',
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Error opening payment link:', error);
       toast('Erro ao processar upgrade - Tente novamente em alguns instantes.');
     } finally {

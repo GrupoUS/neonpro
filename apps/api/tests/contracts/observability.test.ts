@@ -49,7 +49,7 @@ interface ObservabilityContract {
 // Test data generation helpers
 const generateValidPerformanceTelemetry = () => ({
   sessionId: 'sess_12345abc',
-  userId: 'usr_anon_67890',
+  _userId: 'usr_anon_67890',
   metrics: [
     {
       name: 'LCP',
@@ -65,7 +65,7 @@ const generateValidPerformanceTelemetry = () => ({
       unit: 'score',
     },
   ],
-  context: {
+  _context: {
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
     viewport: '1920x1080',
     connection: '4g',
@@ -86,7 +86,7 @@ const generateValidPerformanceTelemetry = () => ({
 
 const generateValidErrorTelemetry = () => ({
   sessionId: 'sess_12345abc',
-  userId: 'usr_anon_67890',
+  _userId: 'usr_anon_67890',
   error: {
     message: 'Component failed to render',
     stack: 'Error: Component failed to render\n    at Component.render (component.js:45:12)',
@@ -96,7 +96,7 @@ const generateValidErrorTelemetry = () => ({
     fingerprint: 'component-render-failure',
     tags: { component: 'PatientChart' },
   },
-  context: {
+  _context: {
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
     viewport: '1920x1080',
   },
@@ -201,8 +201,8 @@ describe('Observability API Contract Tests', () => {
     it('MUST validate required performance telemetry fields', async () => {
       const invalidData = {
         // Missing required sessionId and metrics
-        userId: 'usr_anon_67890',
-        context: {},
+        _userId: 'usr_anon_67890',
+        _context: {},
       };
 
       const response = await mockApiCall('/telemetry/performance', {
@@ -614,8 +614,8 @@ describe('Observability API Contract Tests', () => {
       expect(telemetryData.sessionId).toMatch(/^sess_[a-zA-Z0-9]{8,}$/);
 
       // Validate user ID format (if provided)
-      if (telemetryData.userId) {
-        expect(telemetryData.userId).toMatch(/^usr_(anon_)?[a-zA-Z0-9]{8,}$/);
+      if (telemetryData._userId) {
+        expect(telemetryData._userId).toMatch(/^usr_(anon_)?[a-zA-Z0-9]{8,}$/);
       }
     });
   });
@@ -673,7 +673,7 @@ describe('Observability API Contract Tests', () => {
 });
 
 // Mock helper functions
-async function mockApiCall(endpoint: string, options: any) {
+async function mockApiCall(endpoint: string, _options?: any) {
   // This would be replaced with actual fetch calls to the API
   // For contract testing, we validate the interface and requirements
 

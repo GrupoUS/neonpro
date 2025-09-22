@@ -10,7 +10,7 @@ export interface AguiMessage {
   type: AguiMessageType;
   timestamp: string;
   sessionId: string;
-  payload: Record<string, any>;
+  _payload: Record<string, any>;
   metadata?: AguiMessageMetadata;
 }
 
@@ -30,7 +30,7 @@ export type AguiMessageType =
   | 'streaming_end';
 
 export interface AguiMessageMetadata {
-  userId: string;
+  _userId: string;
   patientId?: string;
   requestId?: string;
   version: string;
@@ -56,14 +56,14 @@ export interface AguiAuthentication {
 }
 
 export interface AguiQueryMessage {
-  query: string;
-  context?: AguiQueryContext;
+  _query: string;
+  _context?: AguiQueryContext;
   options?: AguiQueryOptions;
 }
 
 export interface AguiQueryContext {
   patientId?: string;
-  userId: string;
+  _userId: string;
   sessionHistory?: AguiSessionMessage[];
   userPreferences?: Record<string, any>;
   previousTopics?: string[];
@@ -110,7 +110,7 @@ export interface AguiAction {
   type: 'schedule_appointment' | 'view_patient' | 'generate_report' | 'update_record';
   label: string;
   description?: string;
-  payload: Record<string, any>;
+  _payload: Record<string, any>;
   requiresConfirmation?: boolean;
 }
 
@@ -153,7 +153,7 @@ export interface AguiSessionUpdate {
   sessionId: string;
   updates: {
     title?: string;
-    context?: Record<string, any>;
+    _context?: Record<string, any>;
     expiresAt?: string;
     metadata?: Record<string, any>;
   };
@@ -168,7 +168,7 @@ export interface AguiFeedbackMessage {
 
 export interface AguiContextUpdate {
   sessionId: string;
-  context: Record<string, any>;
+  _context: Record<string, any>;
   source: 'user' | 'system' | 'ai';
 }
 
@@ -183,9 +183,9 @@ export interface AguiStreamingChunk {
 // Session management types
 export interface AguiSession {
   id: string;
-  userId: string;
+  _userId: string;
   title?: string;
-  context: Record<string, any>;
+  _context: Record<string, any>;
   createdAt: string;
   updatedAt: string;
   expiresAt?: string;
@@ -196,7 +196,7 @@ export interface AguiSession {
 
 export interface AguiSessionMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: string;
   metadata?: Record<string, any>;
@@ -243,7 +243,7 @@ export interface CopilotRequest {
   type: 'query' | 'command' | 'feedback';
   content: string;
   sessionId: string;
-  userId: string;
+  _userId: string;
   metadata?: Record<string, any>;
 }
 
@@ -252,7 +252,7 @@ export interface CopilotResponse {
   type: 'response' | 'error' | 'status';
   content: string;
   sessionId: string;
-  userId: string;
+  _userId: string;
   timestamp: string;
   metadata?: {
     processingTime?: number;

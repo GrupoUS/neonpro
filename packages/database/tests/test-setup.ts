@@ -12,7 +12,7 @@ import * as path from 'path';
 // Load test environment variables
 beforeAll(() => {
   // Set NODE_ENV first to ensure test environment is detected
-  process.env.NODE_ENV = 'test';
+  process.env.NODE_ENV = 'test'
   
   // Load .env.test file for test environment
   const envPath = path.resolve(__dirname, '../.env.test');
@@ -352,7 +352,7 @@ export const complianceTestUtils = {
    * Generate LGPD-compliant test data
    */
   generateLGPDCompliantData: () => ({
-    userId: 'test-user-123',
+    _userId: 'test-user-123',
     purpose: 'healthcare_analysis',
     legalBasis: 'legitimate_interest',
     retentionPeriod: 365,

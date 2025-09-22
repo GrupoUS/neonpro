@@ -123,8 +123,7 @@ export class SemanticCacheService {
     }
 
     // Normalizar embedding
-    const magnitude = Math.sqrt(
-      embedding.reduce((sum, val) => sum + val * val, 0),
+    const magnitude = Math.sqrt(_embedding.reduce((sum,_val) => sum + val * val, 0),
     );
     return embedding.map(val => val / magnitude);
   }
@@ -165,7 +164,7 @@ export class SemanticCacheService {
    */
   async findSimilarEntry(
     prompt: string,
-    context: HealthcareAIContext,
+    _context: HealthcareAIContext,
   ): Promise<SemanticCacheEntry | null> {
     if (!this.config.enabled) {
       return null;
@@ -257,7 +256,7 @@ export class SemanticCacheService {
 
       if (bestMatch) {
         // 🚨 SECURITY FIX: Final validation before returning sensitive data
-        if (!this.validatePatientAccess(bestMatch, context)) {
+        if (!this.validatePatientAccess(bestMatch, _context)) {
           console.error(
             'LGPD Violation Prevented: Unauthorized patient data access attempt',
           );
@@ -576,7 +575,7 @@ export class SemanticCacheService {
    */
   private validatePatientAccess(
     entry: SemanticCacheEntry,
-    context: HealthcareAIContext,
+    _context: HealthcareAIContext,
   ): boolean {
     // Verificar se o patient ID do contexto bate com a entrada
     if (!context.patientId || !entry.metadata.patientId) {
@@ -655,10 +654,10 @@ export class SemanticCacheService {
   /**
    * Otimiza consultas de saúde
    */
-  optimizeHealthcareQuery(query: {
+  optimizeHealthcareQuery(_query: {
     prompt: string;
     patientId?: string;
-    context: HealthcareAIContext;
+    _context: HealthcareAIContext;
     maxAgeMs?: number;
   }): {
     cacheKey: string;
@@ -697,14 +696,14 @@ export class SemanticCacheService {
     prompt: string;
     patientId?: string;
     strategy: string;
-    context: HealthcareAIContext;
+    _context: HealthcareAIContext;
   }): string {
     const { prompt, patientId, strategy, context } = params;
 
-    let key = `${strategy}_`;
+    let key = `${strategy}`;
 
     if (patientId) {
-      key += `patient_${patientId}_`;
+      key += `patient_${patientId}`;
     }
 
     if (context.isEmergency) {
@@ -712,7 +711,7 @@ export class SemanticCacheService {
     }
 
     if (context.category) {
-      key += `${context.category}_`;
+      key += `${context.category}`;
     }
 
     key += this.generateHash(prompt);

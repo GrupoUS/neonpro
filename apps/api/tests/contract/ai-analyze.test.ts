@@ -26,7 +26,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = createTestClient({ role: 'admin' });
+    testClient = createTestClient({ _role: 'admin' });
     patientId = 'test-patient-123';
   });
 

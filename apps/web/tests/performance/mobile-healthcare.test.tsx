@@ -1,7 +1,7 @@
-import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
@@ -129,9 +129,11 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
       );
 
       const PatientDashboard = () =>
-        React.createElement('div', { 'data-testid': 'patient-dashboard' },
+        React.createElement(
+          'div',
+          { 'data-testid': 'patient-dashboard' },
           React.createElement('h1', null, 'Pacientes'),
-          React.createElement('div', { 'data-testid': 'patient-list' }, 'Loading...')
+          React.createElement('div', { 'data-testid': 'patient-list' }, 'Loading...'),
         );
 
       render(

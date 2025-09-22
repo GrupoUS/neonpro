@@ -4,7 +4,7 @@ import { InMemoryEscalationService, InMemoryKPIService } from "../../index";
 // Scenario: two consecutive breaches trigger escalation path receipt
 
 describe("Scenario: escalation breach sequence", () => {
-  it("creates escalation receipt after two evaluate breaches", async () => {
+  it(_"creates escalation receipt after two evaluate breaches",_async () => {
     const kpiSvc = new InMemoryKPIService();
     const escSvc = new InMemoryEscalationService();
     await kpiSvc.register({

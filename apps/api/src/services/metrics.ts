@@ -14,7 +14,7 @@ export interface HealthcareMetric {
   value: number;
   metadata: Record<string, any>;
   clinicId?: string;
-  userId?: string;
+  _userId?: string;
   complianceFlags: {
     lgpd_compliant: boolean;
     cfm_validated: boolean;
@@ -152,9 +152,9 @@ export class HealthcareMetricsService {
     type: HealthcareMetricType,
     value: number,
     metadata: Record<string, any> = {},
-    context: {
+    _context: {
       clinicId?: string;
-      userId?: string;
+      _userId?: string;
       complianceFlags?: Partial<HealthcareMetric['complianceFlags']>;
     } = {},
   ): Promise<{ success: boolean; metricId?: string; error?: string }> {
@@ -166,7 +166,7 @@ export class HealthcareMetricsService {
         value,
         metadata,
         clinicId: context.clinicId,
-        userId: context.userId,
+        _userId: context.userId,
         complianceFlags: {
           lgpd_compliant: context.complianceFlags?.lgpd_compliant ?? true,
           cfm_validated: context.complianceFlags?.cfm_validated ?? true,
@@ -331,11 +331,11 @@ export class HealthcareMetricsService {
       const aggregation: MetricAggregation = {
         type,
         period,
-        value: values.reduce((sum, v) => sum + v, 0),
+        value: values.reduce((sum,_v) => sum + v, 0),
         count: data.length,
         min: Math.min(...values),
         max: Math.max(...values),
-        avg: values.reduce((sum, v) => sum + v, 0) / values.length,
+        avg: values.reduce((sum,_v) => sum + v, 0) / values.length,
         complianceRate: (compliantCount / data.length) * 100,
         timestamp: endTime,
       };

@@ -299,7 +299,7 @@ export const ClinicalWorkflowStepper: React.FC<{
     const stepErrors: string[] = [];
 
     if (step.validationRules) {
-      step.validationRules.forEach(_rule => {
+      step.validationRules.forEach(rule => {
         const value = data[rule.field];
 
         switch (rule.rule) {

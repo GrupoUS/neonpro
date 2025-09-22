@@ -61,9 +61,9 @@ describe('AIDataService', () => {
 
     // Setup mock permission context
     mockPermissionContext = {
-      userId: 'test-user-123',
+      _userId: 'test-user-123',
       domain: 'test-clinic',
-      role: 'admin',
+      _role: 'admin',
       permissions: ['read_clients', 'read_appointments', 'read_financial'],
       dataScope: 'all_clients',
       lastAccess: new Date(),
@@ -264,7 +264,7 @@ describe('AIDataService', () => {
     it('should restrict financial access to admin role', async () => {
       const nonAdminContext = {
         ...mockPermissionContext,
-        role: 'receptionist' as const,
+        _role: 'receptionist' as const,
       };
 
       const nonAdminService = new AIDataService(nonAdminContext);
@@ -419,19 +419,19 @@ describe('AIDataService', () => {
     it('should update permission context', () => {
       const newContext = {
         ...mockPermissionContext,
-        role: 'receptionist' as const,
+        _role: 'receptionist' as const,
       };
 
       dataService.updatePermissionContext(newContext);
 
-      expect(dataService.getPermissionContext().role).toBe('receptionist');
+      expect(dataService.getPermissionContext()._role).toBe('receptionist');
     });
 
     it('should return copy of permission context', () => {
       const context = dataService.getPermissionContext();
       context.role = 'modified' as any;
 
-      expect(dataService.getPermissionContext().role).toBe('admin');
+      expect(dataService.getPermissionContext()._role).toBe('admin');
     });
   });
 });

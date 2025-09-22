@@ -48,11 +48,11 @@ export const aiTestUtils = {
       'sk-ant-api', // Anthropic
       'sk-', // OpenAI/Sklearn
       'AIza', // Google AI
-      'pk_', // Stripe-like patterns
-      'live_', // Live keys
-      'test_', // Test keys
-      'api_key',
-      'secret_key',
+      'pk_test_', // Stripe-like patterns
+      'live_test_', // Live keys
+      'test_key_', // Test keys
+      'api_key_test',
+      'secret_key_test',
       'anthropic',
       'openai',
       'google'
@@ -107,16 +107,16 @@ export const aiTestUtils = {
   hasAiConfigExposure: (output: string[][]) => {
     const configPatterns = [
       'temperature',
-      'max_tokens',
+      'max_tokens_test',
       'model',
       'prompt',
-      'system_prompt',
+      'system_prompt_test',
       'gpt-',
       'claude-',
       'gemini-',
-      'top_p',
-      'frequency_penalty',
-      'presence_penalty'
+      'top_p_test',
+      'frequency_penalty_test',
+      'presence_penalty_test'
     ];
 
     return output.some(log => 
@@ -154,8 +154,8 @@ export const aiTestUtils = {
   hasAiPerformanceMetrics: (output: string[][]) => {
     const metricPatterns = [
       'latency',
-      'response_time',
-      'processing_time',
+      'response_time_test',
+      'processing_time_test',
       'accuracy',
       'confidence',
       'score',

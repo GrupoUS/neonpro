@@ -6,10 +6,8 @@
 import {
   DataAgentRequest,
   DataAgentRequestSchema,
-  DataAgentResponse,
   DataAgentResponseSchema,
   safeValidate,
-  ValidDataAgentRequest,
   ValidDataAgentResponse,
 } from '@neonpro/types';
 
@@ -26,24 +24,24 @@ export class AIAgentService {
    * Send query to AI agent
    */
   async sendQuery(
-    query: string,
-    context?: {
-      userId?: string;
+    _query: string,
+    _context?: {
+      _userId?: string;
       domain?: string;
       limit?: number;
       filters?: Record<string, any>;
     },
   ): Promise<ValidDataAgentResponse> {
     try {
-      const request: DataAgentRequest = {
+      const _request: DataAgentRequest = {
         query,
         context,
       };
 
       // Validate request
-      const validatedRequest = safeValidate(DataAgentRequestSchema, request);
+      const validatedRequest = safeValidate(DataAgentRequestSchema, _request);
       if (!validatedRequest.success) {
-        throw new Error(`Invalid request: ${validatedRequest.error.message}`);
+        throw new Error(`Invalid _request: ${validatedRequest.error.message}`);
       }
 
       const response = await fetch(`${this.baseUrl}/ai/data-agent`, {
@@ -68,7 +66,7 @@ export class AIAgentService {
       }
 
       return validatedResponse.data;
-    } catch (error) {
+    } catch (_error) {
       console.error('AI Agent service error:', error);
       throw error;
     }
@@ -77,7 +75,7 @@ export class AIAgentService {
   /**
    * Export data
    */
-  async exportData(payload: {
+  async exportData(_payload: {
     type: 'clients' | 'appointments' | 'financial';
     filters?: Record<string, any>;
     format?: 'xlsx' | 'csv' | 'pdf';
@@ -97,7 +95,7 @@ export class AIAgentService {
       }
 
       return await response.blob();
-    } catch (error) {
+    } catch (_error) {
       console.error('Export error:', error);
       throw error;
     }
@@ -115,7 +113,7 @@ export class AIAgentService {
       const response = await fetch(`${this.baseUrl}/ai/health`);
       const data = await response.json();
       return data;
-    } catch (error) {
+    } catch (_error) {
       console.error('Health check error:', error);
       return {
         status: 'unhealthy',
@@ -127,7 +125,7 @@ export class AIAgentService {
   /**
    * Get suggestions based on query
    */
-  async getSuggestions(query: string): Promise<string[]> {
+  async getSuggestions(_query: string): Promise<string[]> {
     try {
       const response = await fetch(`${this.baseUrl}/ai/suggestions`, {
         method: 'POST',
@@ -144,7 +142,7 @@ export class AIAgentService {
 
       const data = await response.json();
       return data.suggestions || [];
-    } catch (error) {
+    } catch (_error) {
       console.error('Suggestions error:', error);
       return [];
     }

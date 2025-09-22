@@ -95,7 +95,7 @@ export function useCreateServiceTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: CreateServiceTemplateRequest) =>
+    mutationFn: (_request: CreateServiceTemplateRequest) =>
       serviceTemplatesService.createServiceTemplate(request),
     onSuccess: () => {
       // Invalidate relevant queries
@@ -116,7 +116,7 @@ export function useUpdateServiceTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: UpdateServiceTemplateRequest) =>
+    mutationFn: (_request: UpdateServiceTemplateRequest) =>
       serviceTemplatesService.updateServiceTemplate(request),
     onSuccess: data => {
       // Invalidate relevant queries
@@ -167,7 +167,7 @@ export function useAddTemplateItems() {
       templateId: string;
       items: CreateServiceTemplateItemRequest[];
     }) => serviceTemplatesService.addTemplateItems(templateId, items),
-    onSuccess: (_, _variables) => {
+    onSuccess: (_, variables) => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
       queryClient.invalidateQueries({
@@ -189,7 +189,7 @@ export function useUpdateTemplateItem() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: UpdateServiceTemplateItemRequest) =>
+    mutationFn: (_request: UpdateServiceTemplateItemRequest) =>
       serviceTemplatesService.updateTemplateItem(request),
     onSuccess: () => {
       // Invalidate relevant queries
@@ -249,7 +249,7 @@ export function useDuplicateServiceTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (request: DuplicateServiceTemplateRequest) =>
+    mutationFn: (_request: DuplicateServiceTemplateRequest) =>
       serviceTemplatesService.duplicateServiceTemplate(request),
     onSuccess: () => {
       // Invalidate relevant queries

@@ -17,7 +17,6 @@
  */
 
 import {
-  AlertTriangle,
   Bot,
   CheckCircle,
   Clock,
@@ -32,9 +31,9 @@ import {
   User,
   Volume2,
 } from 'lucide-react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Avatar } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 import { Badge } from '@/components/ui/badge';
 
@@ -48,8 +47,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-
-
 import { formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
 
@@ -57,7 +54,7 @@ export interface AIMessageDisplayProps {
   /** Message content */
   content: string;
   /** Message role */
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   /** Message timestamp */
   timestamp: Date;
   /** Message ID */
@@ -114,7 +111,7 @@ export interface AIMessageDisplayProps {
 }
 
 // Simple markdown renderer (safe implementation)
-const renderMarkdown = (content: string, isStreaming = false) => {
+const renderMarkdown = (content: string, _isStreaming = false) => {
   if (!content) return null;
 
   // Basic markdown processing - replace with a proper markdown library in production
@@ -199,7 +196,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
   processingTime,
   healthcareContext = false,
   sources = [],
-  metadata = {},
+  metadata: _metadata = {},
   userAvatar,
   assistantAvatar,
   showTimestamp = true,
@@ -207,7 +204,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
   showActions = true,
   compact = false,
   testId = 'ai-message-display',
-  onMessageAction,
+  onMessageAction: _onMessageAction, // alias to avoid unused-parameter lint error
   onCopy,
   onSpeak,
   onEdit,
@@ -217,7 +214,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
   // State
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(content);
-  const [isCopied, setIsCopied] = useState(false);
+  const [_isCopied, setIsCopied] = useState(false);
   const [showSources, setShowSources] = useState(false);
 
   // Refs

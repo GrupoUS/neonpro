@@ -117,153 +117,151 @@ const initialState: DashboardState = {
 
 export type DashboardStore = DashboardState & DashboardActions;
 
-export const useDashboardStore = create<DashboardStore>()(
-  subscribeWithSelector(
-    immer((set, get) => ({
-      ...initialState,
+export const useDashboardStore = create<DashboardStore>()(_subscribeWithSelector(
+  immer((set, get) => ({
+    ...initialState,
 
-      // Data actions
-      setData: (data: DashboardData) =>
-        set(state => {
-          state.data = data;
-          state.lastUpdated = new Date();
-          state.error = null;
-        }),
+    // Data actions
+    setData: (data: DashboardData) =>
+      set(state => {
+        state.data = data;
+        state.lastUpdated = new Date();
+        state.error = null;
+      }),
 
-      setLoading: (loading: boolean) =>
-        set(state => {
-          state.loading = loading;
-        }),
+    setLoading: (loading: boolean) =>
+      set(state => {
+        state.loading = loading;
+      }),
 
-      setError: (error: string | null) =>
-        set(state => {
-          state.error = error;
-          state.loading = false;
-        }),
+    setError: (error: string | null) =>
+      set(state => {
+        state.error = error;
+        state.loading = false;
+      }),
 
-      clearData: () =>
-        set(state => {
-          state.data = null;
-          state.lastUpdated = null;
-          state.error = null;
-        }), // Filter actions
-      setFilters: (filters: Partial<DashboardFilters>) =>
-        set(state => {
-          state.filters = { ...state.filters, ...filters };
-          state.activePreset = null; // Clear active preset when manually changing filters
-        }),
+    clearData: () =>
+      set(state => {
+        state.data = null;
+        state.lastUpdated = null;
+        state.error = null;
+      }), // Filter actions
+    setFilters: (filters: Partial<DashboardFilters>) =>
+      set(state => {
+        state.filters = { ...state.filters, ...filters };
+        state.activePreset = null; // Clear active preset when manually changing filters
+      }),
 
-      resetFilters: () =>
-        set(state => {
-          state.filters = createDefaultFilters();
-          state.activePreset = 'ultimo-mes';
-        }),
+    resetFilters: () =>
+      set(state => {
+        state.filters = createDefaultFilters();
+        state.activePreset = 'ultimo-mes';
+      }),
 
-      applyFilterPreset: (presetName: string) =>
-        set(state => {
-          const preset = state.filterPresets[presetName];
-          if (preset) {
-            state.filters = { ...preset };
-            state.activePreset = presetName;
-          }
-        }),
+    applyFilterPreset: (presetName: string) =>
+      set(state => {
+        const preset = state.filterPresets[presetName];
+        if (preset) {
+          state.filters = { ...preset };
+          state.activePreset = presetName;
+        }
+      }),
 
-      saveFilterPreset: (name: string, filters: DashboardFilters) =>
-        set(state => {
-          state.filterPresets[name] = { ...filters };
-        }),
+    saveFilterPreset: (name: string, filters: DashboardFilters) =>
+      set(state => {
+        state.filterPresets[name] = { ...filters };
+      }),
 
-      deleteFilterPreset: (name: string) =>
-        set(state => {
-          delete state.filterPresets[name];
-          if (state.activePreset === name) {
-            state.activePreset = null;
-          }
-        }),
+    deleteFilterPreset: (name: string) =>
+      set(state => {
+        delete state.filterPresets[name];
+        if (state.activePreset === name) {
+          state.activePreset = null;
+        }
+      }),
 
-      // Real-time actions
-      enableRealTime: () =>
-        set(state => {
-          state.realTimeEnabled = true;
-          state.filters.includeRealTime = true;
-        }),
+    // Real-time actions
+    enableRealTime: () =>
+      set(state => {
+        state.realTimeEnabled = true;
+        state.filters.includeRealTime = true;
+      }),
 
-      disableRealTime: () =>
-        set(state => {
-          state.realTimeEnabled = false;
-          state.filters.includeRealTime = false;
-        }),
+    disableRealTime: () =>
+      set(state => {
+        state.realTimeEnabled = false;
+        state.filters.includeRealTime = false;
+      }),
 
-      setRealTimeData: (data: RealTimeMetrics) =>
-        set(state => {
-          state.realTimeData = data;
-        }),
+    setRealTimeData: (data: RealTimeMetrics) =>
+      set(state => {
+        state.realTimeData = data;
+      }),
 
-      setAutoRefreshInterval: (interval: number) =>
-        set(state => {
-          state.autoRefreshInterval = Math.max(10000, interval); // Minimum 10 seconds
-        }), // UI actions
-      setPeriod: (period: 'daily' | 'weekly' | 'monthly' | 'yearly') =>
-        set(state => {
-          state.selectedPeriod = period;
-          state.filters.period = period;
+    setAutoRefreshInterval: (interval: number) =>
+      set(state => {
+        state.autoRefreshInterval = Math.max(10000, interval); // Minimum 10 seconds
+      }), // UI actions
+    setPeriod: (period: 'daily' | 'weekly' | 'monthly' | 'yearly') =>
+      set(state => {
+        state.selectedPeriod = period;
+        state.filters.period = period;
 
-          // Update date range based on period
-          const now = new Date();
-          const startDate = new Date();
+        // Update date range based on period
+        const now = new Date();
+        const startDate = new Date();
 
-          switch (period) {
-            case 'daily':
-              startDate.setDate(now.getDate() - 30); // Last 30 days
-              break;
-            case 'weekly':
-              startDate.setDate(now.getDate() - 7 * 12); // Last 12 weeks
-              break;
-            case 'monthly':
-              startDate.setMonth(now.getMonth() - 12); // Last 12 months
-              break;
-            case 'yearly':
-              startDate.setFullYear(now.getFullYear() - 5); // Last 5 years
-              break;
-          }
+        switch (period) {
+          case 'daily':
+            startDate.setDate(now.getDate() - 30); // Last 30 days
+            break;
+          case 'weekly':
+            startDate.setDate(now.getDate() - 7 * 12); // Last 12 weeks
+            break;
+          case 'monthly':
+            startDate.setMonth(now.getMonth() - 12); // Last 12 months
+            break;
+          case 'yearly':
+            startDate.setFullYear(now.getFullYear() - 5); // Last 5 years
+            break;
+        }
 
-          state.filters.startDate = startDate;
-          state.filters.endDate = now;
-        }),
+        state.filters.startDate = startDate;
+        state.filters.endDate = now;
+      }),
 
-      toggleComparison: () =>
-        set(state => {
-          state.comparisonMode = !state.comparisonMode;
-          state.filters.includeComparisons = state.comparisonMode;
-        }),
+    toggleComparison: () =>
+      set(state => {
+        state.comparisonMode = !state.comparisonMode;
+        state.filters.includeComparisons = state.comparisonMode;
+      }),
 
-      expandSection: (sectionId: string) =>
-        set(state => {
-          if (!state.expandedSections.includes(sectionId)) {
-            state.expandedSections.push(sectionId);
-          }
-        }),
+    expandSection: (sectionId: string) =>
+      set(state => {
+        if (!state.expandedSections.includes(sectionId)) {
+          state.expandedSections.push(sectionId);
+        }
+      }),
 
-      collapseSection: (sectionId: string) =>
-        set(state => {
-          state.expandedSections = state.expandedSections.filter(id => id !== sectionId);
-        }),
+    collapseSection: (sectionId: string) =>
+      set(state => {
+        state.expandedSections = state.expandedSections.filter(id => id !== sectionId);
+      }),
 
-      setViewMode: (mode: 'cards' | 'charts' | 'table') =>
-        set(state => {
-          state.viewMode = mode;
-        }),
+    setViewMode: (mode: 'cards' | 'charts' | 'table') =>
+      set(state => {
+        state.viewMode = mode;
+      }),
 
-      // Utility actions
-      refresh: () =>
-        set(state => {
-          state.lastUpdated = null; // This will trigger a refetch
-        }),
+    // Utility actions
+    refresh: () =>
+      set(state => {
+        state.lastUpdated = null; // This will trigger a refetch
+      }),
 
-      reset: () => set(() => ({ ...initialState })),
-    })),
-  ),
-);
+    reset: () => set(() => ({ ...initialState })),
+  })),
+));
 
 // Selectors for common patterns
 export const useDashboardData = () => useDashboardStore(state => state.data);

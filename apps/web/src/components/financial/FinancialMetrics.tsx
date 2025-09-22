@@ -68,7 +68,7 @@ export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
       if (onMetricsUpdate) {
         onMetricsUpdate(result);
       }
-    } catch (error) {
+    } catch (_error) {
       setError(error instanceof Error ? error.message : 'Failed to load metrics');
     } finally {
       setIsLoading(false);

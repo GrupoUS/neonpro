@@ -9,9 +9,9 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { HealthcareLogger } from '../logging/healthcare-logger';
 
 interface UserPermissions {
-  userId: string;
+  _userId: string;
   clinicId: string;
-  role: 'doctor' | 'nurse' | 'admin' | 'receptionist' | 'agent';
+  _role: 'doctor' | 'nurse' | 'admin' | 'receptionist' | 'agent';
   permissions: {
     canAccessPatients: boolean;
     canModifyPatients: boolean;
@@ -29,7 +29,7 @@ interface DataAccessRequest {
   resourceId?: string;
   patientId?: string;
   clinicId: string;
-  userId: string;
+  _userId: string;
   sessionId: string;
 }
 
@@ -77,11 +77,11 @@ export class SupabaseConnector {
    * Get user permissions with role-based access control
    */
   private async getUserPermissions(
-    userId: string,
+    _userId: string,
     clinicId: string,
   ): Promise<UserPermissions | null> {
     const cacheKey = `${userId}-${clinicId}`;
-    const now = Date.now();
+    const _now = Date.now();
 
     // Check cache (5 minute expiry)
     if (this.permissionsCache.has(cacheKey) && this.cacheExpiry.get(cacheKey)! > now) {
@@ -104,7 +104,7 @@ export class SupabaseConnector {
           is_active,
           permissions
         `)
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .eq('clinic_id', clinicId)
         .eq('is_active', true)
         .single();
@@ -121,7 +121,7 @@ export class SupabaseConnector {
       const permissions: UserPermissions = {
         userId,
         clinicId,
-        role: professional.role,
+        _role: professional.role,
         permissions: {
           canAccessPatients: this.getRolePermission(professional.role, 'read', 'patients'),
           canModifyPatients: this.getRolePermission(professional.role, 'write', 'patients'),
@@ -158,7 +158,7 @@ export class SupabaseConnector {
   /**
    * Get role-based permissions for specific actions
    */
-  private getRolePermission(role: string, action: string, resource: string): boolean {
+  private getRolePermission(_role: string, action: string, resource: string): boolean {
     const rolePermissions: Record<string, Record<string, string[]>> = {
       doctor: {
         read: ['patients', 'medical_records', 'appointments', 'audit_logs'],
@@ -188,7 +188,7 @@ export class SupabaseConnector {
   /**
    * Validate data access request
    */
-  private async validateDataAccess(request: DataAccessRequest): Promise<boolean> {
+  private async validateDataAccess(_request: DataAccessRequest): Promise<boolean> {
     const permissions = await this.getUserPermissions(request.userId, request.clinicId);
 
     if (!permissions) {
@@ -254,7 +254,7 @@ export class SupabaseConnector {
    * Validate patient-specific access (LGPD compliance)
    */
   private async validatePatientAccess(
-    userId: string,
+    _userId: string,
     patientId: string,
     clinicId: string,
   ): Promise<boolean> {
@@ -299,7 +299,7 @@ export class SupabaseConnector {
    */
   public async setAISessionContext(
     sessionId: string,
-    userId: string,
+    _userId: string,
     clinicId: string,
   ): Promise<void> {
     if (!this.supabase) {
@@ -343,11 +343,11 @@ export class SupabaseConnector {
    */
   public async getPatientData(
     patientId: string,
-    userId: string,
+    _userId: string,
     clinicId: string,
     sessionId: string,
   ): Promise<any> {
-    const request: DataAccessRequest = {
+    const _request: DataAccessRequest = {
       action: 'read',
       resourceType: 'patient',
       resourceId: patientId,
@@ -402,11 +402,11 @@ export class SupabaseConnector {
    */
   public async getAppointmentData(
     clinicId: string,
-    userId: string,
+    _userId: string,
     sessionId: string,
     filters?: any,
   ): Promise<any> {
-    const request: DataAccessRequest = {
+    const _request: DataAccessRequest = {
       action: 'read',
       resourceType: 'appointment',
       clinicId,
@@ -480,8 +480,8 @@ export class SupabaseConnector {
   /**
    * Get clinic summary data for AI context
    */
-  public async getClinicSummary(clinicId: string, userId: string, sessionId: string): Promise<any> {
-    const request: DataAccessRequest = {
+  public async getClinicSummary(clinicId: string, _userId: string, sessionId: string): Promise<any> {
+    const _request: DataAccessRequest = {
       action: 'read',
       resourceType: 'appointment',
       clinicId,
@@ -541,7 +541,7 @@ export class SupabaseConnector {
   /**
    * Clear permissions cache (useful for role changes)
    */
-  public clearPermissionsCache(userId?: string, clinicId?: string): void {
+  public clearPermissionsCache(_userId?: string, clinicId?: string): void {
     if (userId && clinicId) {
       const cacheKey = `${userId}-${clinicId}`;
       this.permissionsCache.delete(cacheKey);

@@ -379,14 +379,11 @@ export const filterTemplatesBySearch = (
 export const groupTemplatesByType = (
   templates: ServiceTemplate[],
 ): Record<ServiceTemplateType, ServiceTemplate[]> => {
-  return templates.reduce(
-    (groups, template) => {
-      if (!groups[template.template_type]) {
-        groups[template.template_type] = [];
-      }
-      groups[template.template_type].push(template);
-      return groups;
-    },
-    {} as Record<ServiceTemplateType, ServiceTemplate[]>,
-  );
+  return templates.reduce((groups, template) => {
+    if (!groups[template.template_type]) {
+      groups[template.template_type] = [];
+    }
+    groups[template.template_type].push(template);
+    return groups;
+  }, {} as Record<ServiceTemplateType, ServiceTemplate[]>);
 };

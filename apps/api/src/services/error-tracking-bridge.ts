@@ -42,7 +42,7 @@ class LegacyErrorTracker {
    */
   captureException(
     error: Error,
-    context: Partial<LegacyErrorContext> = {},
+    _context: Partial<LegacyErrorContext> = {},
     extra?: Record<string, any>,
   ): string {
     if (!this.config.enabled) {
@@ -66,7 +66,7 @@ class LegacyErrorTracker {
   captureMessage(
     message: string,
     level: LegacyErrorEvent['level'] = 'info',
-    context: Partial<LegacyErrorContext> = {},
+    _context: Partial<LegacyErrorContext> = {},
     extra?: Record<string, any>,
   ): string {
     if (!this.config.enabled) {
@@ -127,7 +127,7 @@ class LegacyErrorTracker {
    */
   async trackError(
     error: Error,
-    context: Partial<LegacyErrorContext> = {},
+    _context: Partial<LegacyErrorContext> = {},
   ): Promise<string> {
     if (!this.config.enabled) {
       return 'disabled';
@@ -141,7 +141,7 @@ class LegacyErrorTracker {
    */
   async logAuditEvent(
     event: { action: string; subject?: string; metadata?: Record<string, any> },
-    context: Partial<LegacyErrorContext> = {},
+    _context: Partial<LegacyErrorContext> = {},
   ): Promise<void> {
     if (!this.config.enabled) return;
     // Map to breadcrumb + structured context; defer to healthcare tracker if audit API exists later
@@ -166,7 +166,7 @@ class LegacyErrorTracker {
    * Extract context from Hono request (legacy compatibility)
    */
   extractContextFromHono(c: any): LegacyErrorContext {
-    const context: LegacyErrorContext = {
+    const _context: LegacyErrorContext = {
       requestId: c.get('requestId'),
       method: c.req.method,
       endpoint: c.req.path,
@@ -200,7 +200,7 @@ class LegacyErrorTracker {
    * Set user context (legacy compatibility)
    */
   setUserContext(user: { id: string; email?: string; name?: string }): void {
-    this.addBreadcrumb('User context set', 'info', { userId: user.id });
+    this.addBreadcrumb('User context set', 'info', { _userId: user.id });
     this.healthcareTracker.setUserContext(user.id);
   }
 
@@ -284,7 +284,7 @@ class LegacyErrorTracker {
   private convertContext(legacyContext: Partial<LegacyErrorContext>) {
     return {
       requestId: legacyContext.requestId,
-      userId: legacyContext.userId,
+      _userId: legacyContext.userId,
       userAgent: legacyContext.userAgent,
       ip: legacyContext.ip,
       endpoint: legacyContext.endpoint,
@@ -314,7 +314,7 @@ export function getLegacyErrorTracker(
 export function initializeLegacyErrorTracking(
   config?: Partial<LegacyConfig>,
 ): Promise<void> {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve,_reject) => {
     try {
       const tracker = getLegacyErrorTracker(config);
 

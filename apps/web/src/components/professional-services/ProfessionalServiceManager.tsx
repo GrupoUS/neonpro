@@ -81,11 +81,9 @@ export function ProfessionalServiceManager({
 
   // Filter assignments based on search and filters
   const filteredAssignments = assignments?.filter(assignment => {
-    const matchesSearch = assignment.professional_name
-      .toLowerCase()
+    const matchesSearch = assignment.professional_name.toLowerCase()
       .includes(searchQuery.toLowerCase())
-      || assignment.service_name
-        .toLowerCase()
+      || assignment.service_name.toLowerCase()
         .includes(searchQuery.toLowerCase());
 
     const matchesProficiency = proficiencyFilter === 'all'
@@ -108,7 +106,7 @@ export function ProfessionalServiceManager({
     ) {
       try {
         await deleteProfessionalService.mutateAsync(assignment.id);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error deleting assignment:', error);
       }
     }
@@ -120,7 +118,7 @@ export function ProfessionalServiceManager({
         service_id: assignment.service_id,
         professional_id: assignment.professional_id,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error setting primary professional:', error);
     }
   };

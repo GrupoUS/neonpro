@@ -1,13 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock crypto.randomUUID
-Object.defineProperty(global, 'crypto', {
+Object.defineProperty(_global,_'crypto', {
   value: {
     randomUUID: vi.fn(() => 'test-uuid-123'),
   },
 });
 
-describe('Healthcare Metrics Service', () => {
+describe(_'Healthcare Metrics Service'), () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -16,8 +16,8 @@ describe('Healthcare Metrics Service', () => {
     vi.restoreAllMocks();
   });
 
-  describe('Service Initialization', () => {
-    it('should initialize HealthcareMetricsService correctly', async () => {
+  describe(_'Service Initialization'), () => {
+    it(_'should initialize HealthcareMetricsService correctly',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
@@ -29,8 +29,8 @@ describe('Healthcare Metrics Service', () => {
     });
   });
 
-  describe('Method Signatures', () => {
-    it('should have correct method signatures', async () => {
+  describe(_'Method Signatures'), () => {
+    it(_'should have correct method signatures',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
@@ -42,7 +42,7 @@ describe('Healthcare Metrics Service', () => {
       expect(service.getComplianceDashboard.length).toBe(1); // clinicId is optional but still counted
     });
 
-    it('should verify recordMetric method signature', async () => {
+    it(_'should verify recordMetric method signature',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
@@ -50,7 +50,7 @@ describe('Healthcare Metrics Service', () => {
       expect(service.recordMetric.length).toBe(2); // type, value (metadata and context have defaults)
     });
 
-    it('should verify getKPIStatus method signature', async () => {
+    it(_'should verify getKPIStatus method signature',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
@@ -58,7 +58,7 @@ describe('Healthcare Metrics Service', () => {
       expect(service.getKPIStatus.length).toBe(1); // kpiId (period has default)
     });
 
-    it('should verify getMetricAggregation method signature', async () => {
+    it(_'should verify getMetricAggregation method signature',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
@@ -67,8 +67,8 @@ describe('Healthcare Metrics Service', () => {
     });
   });
 
-  describe('Compliance Dashboard', () => {
-    it('should generate compliance dashboard structure', async () => {
+  describe(_'Compliance Dashboard'), () => {
+    it(_'should generate compliance dashboard structure',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
@@ -77,7 +77,7 @@ describe('Healthcare Metrics Service', () => {
       expect(service.getComplianceDashboard.length).toBe(1);
     });
 
-    it('should filter dashboard by clinic ID', async () => {
+    it(_'should filter dashboard by clinic ID',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
@@ -87,8 +87,8 @@ describe('Healthcare Metrics Service', () => {
     });
   });
 
-  describe('Helper Methods', () => {
-    it('should create and measure timer correctly', async () => {
+  describe(_'Helper Methods'), () => {
+    it(_'should create and measure timer correctly',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
@@ -102,7 +102,7 @@ describe('Healthcare Metrics Service', () => {
       expect(duration).toBeGreaterThanOrEqual(0);
     });
 
-    it('should log metric to console', async () => {
+    it(_'should log metric to console',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
@@ -114,7 +114,7 @@ describe('Healthcare Metrics Service', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should handle console logging errors gracefully', async () => {
+    it(_'should handle console logging errors gracefully',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
@@ -128,8 +128,8 @@ describe('Healthcare Metrics Service', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should have error handling methods available', async () => {
+  describe(_'Error Handling'), () => {
+    it(_'should have error handling methods available',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
@@ -139,7 +139,7 @@ describe('Healthcare Metrics Service', () => {
       expect(typeof service.getMetricAggregation).toBe('function');
     });
 
-    it('should handle method signatures correctly', async () => {
+    it(_'should handle method signatures correctly',async () => {
       const { HealthcareMetricsService } = await import('../metrics');
       const service = new HealthcareMetricsService();
 
@@ -151,7 +151,7 @@ describe('Healthcare Metrics Service', () => {
     });
   });
 
-  it('should export HealthcareMetricsService class', async () => {
+  it(_'should export HealthcareMetricsService class',async () => {
     const { HealthcareMetricsService } = await import('../metrics');
     expect(HealthcareMetricsService).toBeDefined();
     expect(typeof HealthcareMetricsService).toBe('function');

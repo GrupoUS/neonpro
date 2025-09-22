@@ -132,12 +132,10 @@ export class RTCCallManagerStub implements RTCCallManager {
     }
 
     // Remove participant from session
-    session.participants = session.participants.filter(
-      (p) => p.id !== participantId,
+    session.participants = session.participants.filter((p) => p.id !== participantId,
     );
     const sessionParticipants = this.participants.get(sessionId) || [];
-    const updatedParticipants = sessionParticipants.filter(
-      (p) => p.id !== participantId,
+    const updatedParticipants = sessionParticipants.filter((p) => p.id !== participantId,
     );
     this.participants.set(sessionId, updatedParticipants);
 

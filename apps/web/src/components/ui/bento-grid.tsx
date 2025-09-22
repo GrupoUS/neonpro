@@ -1,9 +1,9 @@
 'use client';
 
+import { HealthcareLoadingFallback } from '@/lib/lazy-loading';
 import { cn } from '@neonpro/ui';
 import { Card } from '@neonpro/ui';
 import { lazy, Suspense } from 'react';
-import { LibraryLoading } from '@/lib/utils';
 
 // Lazy load framer-motion for better bundle splitting
 const FramerMotion = lazy(() => import('framer-motion'));
@@ -64,7 +64,7 @@ export function BentoGrid({
 
   if (useKokonutUI) {
     return (
-      <Suspense fallback={<LibraryLoading message="Carregando grade..." />}>
+      <Suspense fallback={<HealthcareLoadingFallback />}>
         <BentoGridMotion
           className={className}
           children={children}
@@ -104,7 +104,7 @@ function BentoGridMotion({
   densityStyles: Record<string, string>;
 }) {
   const { motion, useReducedMotion } = FramerMotion as any;
-  
+
   const shouldReduceMotion = useReducedMotion();
 
   const gridAnimation = {
@@ -187,20 +187,27 @@ export function BentoGridItem({
   } as const;
 
   return (
-    <Suspense fallback={<div className={cn(
-      'group relative overflow-hidden cursor-pointer',
-      'transition-all duration-300 ease-in-out',
-      elevationStyles[elevation],
-      emphasisStyles[emphasis],
-      'focus-within:ring-2 focus-within:ring-[#AC9469]/50 focus-within:ring-offset-2',
-      variantStyles[variant],
-      sizeStyles[size],
-      className,
-    )} aria-label={title ? `${title} card` : 'Bento grid item'}>
-      <div className="flex items-center justify-center h-full">
-        <LibraryLoading message="Carregando item..." />
-      </div>
-    </div>}>
+    <Suspense
+      fallback={
+        <div
+          className={cn(
+            'group relative overflow-hidden cursor-pointer',
+            'transition-all duration-300 ease-in-out',
+            elevationStyles[elevation],
+            emphasisStyles[emphasis],
+            'focus-within:ring-2 focus-within:ring-[#AC9469]/50 focus-within:ring-offset-2',
+            variantStyles[variant],
+            sizeStyles[size],
+            className,
+          )}
+          aria-label={title ? `${title} card` : 'Bento grid item'}
+        >
+          <div className='flex items-center justify-center h-full'>
+            <HealthcareLoadingFallback />
+          </div>
+        </div>
+      }
+    >
       <BentoGridItemMotion
         title={title}
         description={description}
@@ -250,7 +257,7 @@ function BentoGridItemMotion({
   emphasisStyles: Record<string, string>;
 }) {
   const { motion, useReducedMotion } = FramerMotion as any;
-  
+
   const shouldReduceMotion = useReducedMotion();
   const enableMotion = motionProp !== 'off' && !shouldReduceMotion;
 

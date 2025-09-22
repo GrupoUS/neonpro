@@ -13,14 +13,8 @@
 
 import { endOfDay, format, isSameDay, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import {
-  AlertTriangle,
-  Calendar,
-  CheckCircle,
-  Clock,
-  User,
-} from 'lucide-react';
-import React, { useCallback, useEffect, useState } from 'react';
+import { AlertTriangle, Calendar, CheckCircle, Clock, User } from 'lucide-react';
+import React, { useCallback, useState } from 'react';
 
 import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -34,14 +28,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
 import {
   Select,
   SelectContent,
@@ -59,7 +45,10 @@ import {
 } from '@/hooks/use-appointments';
 import { usePatientsList } from '@/hooks/use-patients';
 import { cn } from '@/lib/utils';
-import { validateHealthcareFormData, HealthcareDataSensitivity } from '@/utils/healthcare-form-validation';
+import {
+  HealthcareDataSensitivity,
+  validateHealthcareFormData,
+} from '@/utils/healthcare-form-validation';
 
 interface AppointmentBookingProps {
   initialDate?: Date;
@@ -105,7 +94,7 @@ export function AppointmentBooking({
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
   const [selectedTime, setSelectedTime] = useState<string>('');
   const [isBookingDialogOpen, setIsBookingDialogOpen] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState<string>(
+  const [selectedPatient, _setSelectedPatient] = useState<string>(
     patientId || '',
   );
 
@@ -190,7 +179,7 @@ export function AppointmentBooking({
       onBookingComplete?.(result);
       setIsBookingDialogOpen(false);
       setSelectedTime('');
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to book appointment:', error);
     }
   };

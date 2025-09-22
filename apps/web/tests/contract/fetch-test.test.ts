@@ -21,7 +21,7 @@ describe('Basic Fetch Test', () => {
       console.log('🌐 Response received:', !!data);
 
       expect(response.ok).toBe(true);
-    } catch (error) {
+    } catch (_error) {
       console.error('❌ Real HTTP request failed:', error);
       throw error;
     }

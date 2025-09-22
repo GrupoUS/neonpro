@@ -50,7 +50,7 @@ describe("Ingestion Types and Adapters", () => {
         },
         metadata: {},
         clinicId: "clinic_123",
-        userId: "user_456",
+        _userId: "user_456",
       };
 
       expect(isIngestionEvent(validEvent)).toBe(true);
@@ -209,7 +209,7 @@ describe("Ingestion Types and Adapters", () => {
       expect(adapter.isConnected()).toBe(false);
     });
 
-    it("should handle connection lifecycle", async () => {
+    it(_"should handle connection lifecycle",_async () => {
       expect(adapter.isConnected()).toBe(false);
 
       await adapter.connect();
@@ -245,7 +245,7 @@ describe("Ingestion Types and Adapters", () => {
         },
         metadata: {},
         clinicId: "test_clinic",
-        userId: "test_user",
+        _userId: "test_user",
       };
 
       (adapter as any).emitEvent(testEvent);
@@ -256,7 +256,7 @@ describe("Ingestion Types and Adapters", () => {
       expect(mockHandler).toHaveBeenCalledTimes(1); // Should not be called again
     });
 
-    it("should manage validation rules", async () => {
+    it(_"should manage validation rules",_async () => {
       const validationRule: ValidationRule = {
         ruleId: "test_rule",
         description: "Test validation",
@@ -270,7 +270,7 @@ describe("Ingestion Types and Adapters", () => {
       expect((adapter as any).validationRules).toContain(validationRule);
     });
 
-    it("should manage transformation rules", async () => {
+    it(_"should manage transformation rules",_async () => {
       const transformationRule: TransformationRule = {
         transformId: "test_transform",
         description: "Test transformation",
@@ -286,7 +286,7 @@ describe("Ingestion Types and Adapters", () => {
       );
     });
 
-    it("should provide health status", async () => {
+    it(_"should provide health status",_async () => {
       const healthStatus = await adapter.getHealthStatus();
 
       expect(healthStatus.status).toMatch(/^(healthy|degraded|unhealthy)$/);
@@ -374,14 +374,14 @@ describe("Ingestion Types and Adapters", () => {
       dbAdapter = new DatabaseIngestionAdapter("db_adapter", mockConfig);
     });
 
-    it("should connect to database source", async () => {
+    it(_"should connect to database source",_async () => {
       expect(dbAdapter.isConnected()).toBe(false);
 
       await dbAdapter.connect();
       expect(dbAdapter.isConnected()).toBe(true);
     });
 
-    it("should ingest batch data", async () => {
+    it(_"should ingest batch data",_async () => {
       await dbAdapter.connect();
 
       const testData = [
@@ -397,7 +397,7 @@ describe("Ingestion Types and Adapters", () => {
       expect(result.timing.duration).toBeGreaterThan(0);
     });
 
-    it("should provide database-specific metrics", async () => {
+    it(_"should provide database-specific metrics",_async () => {
       const metrics = await dbAdapter.getMetrics();
 
       expect(metrics.period).toBeDefined();
@@ -438,14 +438,14 @@ describe("Ingestion Types and Adapters", () => {
       apiAdapter = new APIIngestionAdapter("api_adapter", mockConfig);
     });
 
-    it("should connect to API source", async () => {
+    it(_"should connect to API source",_async () => {
       expect(apiAdapter.isConnected()).toBe(false);
 
       await apiAdapter.connect();
       expect(apiAdapter.isConnected()).toBe(true);
     });
 
-    it("should provide API-specific metrics", async () => {
+    it(_"should provide API-specific metrics",_async () => {
       const metrics = await apiAdapter.getMetrics();
 
       expect(metrics.throughput.recordsPerSecond).toBeGreaterThan(0);
@@ -531,7 +531,7 @@ describe("Ingestion Types and Adapters", () => {
           recordId: "record_123",
           field: "patientId",
         },
-        context: {
+        _context: {
           operation: "validation",
           timestamp: new Date(),
           retryCount: 0,

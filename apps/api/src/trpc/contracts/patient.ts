@@ -12,7 +12,6 @@ import {
   PatientsListResponseSchema,
   UpdatePatientRequestSchema,
 } from '@neonpro/types/api/contracts';
-import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
 
 export const patientRouter = router({
@@ -27,7 +26,7 @@ export const patientRouter = router({
     })
     .input(CreatePatientRequestSchema)
     .output(PatientResponseSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       // Validate LGPD consent
       if (!input.lgpdConsent) {
         throw new HealthcareTRPCError(
@@ -84,7 +83,7 @@ export const patientRouter = router({
             ipAddress: ctx.ip,
             userAgent: ctx.userAgent,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 
@@ -108,7 +107,7 @@ export const patientRouter = router({
     })
     .input(GetPatientRequestSchema)
     .output(PatientResponseSchema)
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input,_ctx }) => {
       // Check clinic access
       await validateClinicAccess(ctx.user.id, input.id);
 
@@ -142,7 +141,7 @@ export const patientRouter = router({
             includeAppointments: input.includeAppointments,
             includeMedicalHistory: input.includeMedicalHistory,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 
@@ -165,7 +164,7 @@ export const patientRouter = router({
     })
     .input(ListPatientsRequestSchema)
     .output(PatientsListResponseSchema)
-    .query(async ({ input, ctx }) => {
+    .query(async ({ input,_ctx }) => {
       // Validate clinic access
       await validateClinicAccess(ctx.user.id, input.clinicId);
 
@@ -223,7 +222,7 @@ export const patientRouter = router({
     })
     .input(UpdatePatientRequestSchema)
     .output(PatientResponseSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       // Get current patient data for change tracking
       const currentPatient = await ctx.prisma.patient.findUnique({
         where: { id: input.id },
@@ -272,7 +271,7 @@ export const patientRouter = router({
               changes,
               updateReason: input.updateReason || 'Patient data update',
             },
-            userId: ctx.user.id,
+            _userId: ctx.user.id,
           },
         });
       }
@@ -309,7 +308,7 @@ export const patientRouter = router({
         requestId: z.string().optional(),
       }),
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input,_ctx }) => {
       const patient = await ctx.prisma.patient.findUnique({
         where: { id: input.id },
       });
@@ -346,7 +345,7 @@ export const patientRouter = router({
             deletionType: 'soft_delete',
             reason: input.reason,
           },
-          userId: ctx.user.id,
+          _userId: ctx.user.id,
         },
       });
 
@@ -408,7 +407,7 @@ function calculateDataRetention(): string {
 }
 
 async function validateClinicAccess(
-  userId: string,
+  _userId: string,
   clinicId: string,
 ): Promise<void> {
   // Implementation depends on your authorization system

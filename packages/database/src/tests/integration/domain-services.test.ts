@@ -73,8 +73,8 @@ describe("Domain Services Integration Tests", () => {
   });
 
   describe("ConsentDomainService", () => {
-    it("should create consent with proper validation", async () => {
-      const request: ConsentRequest = {
+    it(_"should create consent with proper validation",_async () => {
+      const _request: ConsentRequest = {
         patientId: "test-patient-id",
         consentType: ConsentType.DATA_PROCESSING,
         purpose: "Healthcare treatment",
@@ -90,8 +90,8 @@ describe("Domain Services Integration Tests", () => {
       expect(consent.status).toBe(ConsentStatus.ACTIVE);
     });
 
-    it("should validate consent data types", async () => {
-      const request: ConsentRequest = {
+    it(_"should validate consent data types",_async () => {
+      const _request: ConsentRequest = {
         patientId: "test-patient-id",
         consentType: ConsentType.DATA_PROCESSING,
         purpose: "Healthcare treatment",
@@ -103,7 +103,7 @@ describe("Domain Services Integration Tests", () => {
         .rejects.toThrow();
     });
 
-    it("should check compliance for patient", async () => {
+    it(_"should check compliance for patient",_async () => {
       const complianceCheck = await consentService.checkCompliance("test-patient-id");
       expect(complianceCheck).toBeDefined();
       expect(complianceCheck).toHaveProperty("isCompliant");
@@ -112,24 +112,24 @@ describe("Domain Services Integration Tests", () => {
       expect(Array.isArray(complianceCheck.violations)).toBe(true);
     });
 
-    it("should revoke consent properly", async () => {
+    it(_"should revoke consent properly",_async () => {
       const revokedConsent = await consentService.revokeConsent("test-consent-id");
       expect(revokedConsent).toBeDefined();
       expect(revokedConsent.status).toBe(ConsentStatus.REVOKED);
       expect(revokedConsent.revokedAt).toBeDefined();
     });
 
-    it("should find consents by patient", async () => {
+    it(_"should find consents by patient",_async () => {
       const consents = await consentService.findConsentsByPatient("test-patient-id");
       expect(Array.isArray(consents)).toBe(true);
     });
 
-    it("should get active consents for patient", async () => {
+    it(_"should get active consents for patient",_async () => {
       const activeConsents = await consentService.getActiveConsents("test-patient-id");
       expect(Array.isArray(activeConsents)).toBe(true);
     });
 
-    it("should check for specific consent type", async () => {
+    it(_"should check for specific consent type",_async () => {
       const hasConsent = await consentService.hasActiveConsent("test-patient-id", ConsentType.DATA_PROCESSING);
       expect(typeof hasConsent).toBe("boolean");
     });
@@ -157,7 +157,7 @@ describe("Domain Services Integration Tests", () => {
   });
 
   describe("Cross-Service Integration", () => {
-    it("should work with audit service integration", async () => {
+    it(_"should work with audit service integration",_async () => {
       const auditService = container.getAuditService();
       expect(auditService).toBeDefined();
       expect(typeof auditService.createAuditLog).toBe("function");

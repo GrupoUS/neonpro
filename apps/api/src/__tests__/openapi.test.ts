@@ -8,8 +8,8 @@
 import { describe, expect, it } from 'vitest';
 import app from '../app';
 
-describe('OpenAPI Integration', () => {
-  describe('Documentation Endpoints', () => {
+describe('OpenAPI Integration',() => {
+  describe('Documentation Endpoints',() => {
     it('should serve OpenAPI JSON schema at /openapi.json', async () => {
       const response = await app.request('/openapi.json');
 
@@ -77,7 +77,7 @@ describe('OpenAPI Integration', () => {
     });
   });
 
-  describe('OpenAPI Route Validation', () => {
+  describe('OpenAPI Route Validation',() => {
     it('should validate health route schema', async () => {
       const response = await app.request('/health');
 
@@ -131,7 +131,7 @@ describe('OpenAPI Integration', () => {
     });
   });
 
-  describe('LGPD Compliance in OpenAPI', () => {
+  describe('LGPD Compliance in OpenAPI',() => {
     it('should document LGPD consent requirements for patient routes', async () => {
       const response = await app.request('/openapi.json');
       const schema = await response.json();
@@ -161,7 +161,7 @@ describe('OpenAPI Integration', () => {
     });
   });
 
-  describe('Healthcare Validation in OpenAPI', () => {
+  describe('Healthcare Validation in OpenAPI',() => {
     it('should use healthcare-specific field validation', async () => {
       const response = await app.request('/openapi.json');
       const schema = await response.json();
@@ -176,7 +176,7 @@ describe('OpenAPI Integration', () => {
     });
   });
 
-  describe('Error Handling', () => {
+  describe('Error Handling',() => {
     it('should return validation errors in OpenAPI format', async () => {
       // This would test actual validation errors when invalid data is sent
       // For now, we verify the error format is documented

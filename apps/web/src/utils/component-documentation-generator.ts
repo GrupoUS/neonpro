@@ -10,8 +10,6 @@
  * - Integration with T081-T083 accessibility and compliance systems
  */
 
-import { z } from 'zod';
-
 // Component Documentation Types
 export const COMPONENT_TYPES = {
   FUNCTIONAL: 'functional',

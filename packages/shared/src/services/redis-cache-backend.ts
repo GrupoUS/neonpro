@@ -15,15 +15,14 @@
 
 import { Redis } from 'ioredis';
 import { createHash } from 'crypto';
-import { 
-  CacheBackend, 
-  CacheEntry, 
-  CacheStatistics, 
-  CacheConfig, 
+import { z } from 'zod';
+import {
+  CacheBackend,
+  CacheEntry,
+  CacheStatistics,
+  CacheConfig,
   CacheDataSensitivity,
   CacheTier,
-  CacheOperationResult,
-  HealthcareCacheContext 
 } from './cache-management';
 
 /**
@@ -443,8 +442,7 @@ export class RedisCacheBackend implements CacheBackend {
    * Initialize health check timer
    */
   private initializeHealthCheck(): void {
-    this.healthCheckTimer = setInterval(
-      () => this.healthCheck(),
+    this.healthCheckTimer = setInterval(() => this.healthCheck(),
       60000 // Check every minute
     );
   }
@@ -474,7 +472,7 @@ export class RedisCacheBackend implements CacheBackend {
     try {
       return await Promise.race([
         operation(),
-        new Promise<never>((_, reject) => 
+        new Promise<never>((, reject) => 
           setTimeout(() => reject(new Error('Redis operation timeout')), 5000)
         )
       ]);
@@ -558,7 +556,7 @@ export class RedisCacheBackend implements CacheBackend {
   /**
    * Validate parsed data against Zod schema
    */
-  private validateWithSchema(data: any): { success: boolean; data?: CacheEntry; error?: string } {
+  private validateWithSchema(data: unknown): { success: boolean; data?: CacheEntry; error?: string } {
     try {
       // Import schema dynamically to avoid circular dependencies
       const { CacheEntrySchema } = require('./cache-management');
@@ -572,7 +570,7 @@ export class RedisCacheBackend implements CacheBackend {
           error: result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')
         };
       }
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Schema validation unavailable' };
     }
   }
@@ -580,7 +578,7 @@ export class RedisCacheBackend implements CacheBackend {
   /**
    * Normalize date strings to Date objects
    */
-  private normalizeDates(data: any): CacheEntry {
+  private normalizeDates(data: unknown): CacheEntry {
     const normalized = { ...data };
     
     if (typeof normalized.createdAt === 'string') {
@@ -599,7 +597,7 @@ export class RedisCacheBackend implements CacheBackend {
   /**
    * Validate cache entry structure (legacy fallback)
    */
-  private validateCacheEntry(entry: any): boolean {
+  private validateCacheEntry(entry: unknown): boolean {
     return !!(
       entry &&
       typeof entry === 'object' &&

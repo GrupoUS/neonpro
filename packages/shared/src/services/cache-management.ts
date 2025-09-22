@@ -87,7 +87,7 @@ export type HealthcareCacheContext = z.infer<
  */
 export const CacheEntrySchema = z.object({
   key: z.string(),
-  value: z.any(),
+  value: z.unknown(),
 
   // Metadata
   createdAt: z.date(),
@@ -120,7 +120,7 @@ export const CacheEntrySchema = z.object({
   upstream: z.string().optional(),
 
   // Metadata
-  metadata: z.record(z.any()).default({}),
+  metadata: z.record(z.unknown()).default({}),
 });
 
 export type CacheEntry = z.infer<typeof CacheEntrySchema>;
@@ -200,7 +200,7 @@ export const CacheOperationResultSchema = z.object({
   // Metadata
   timestamp: z.date().default(() => new Date()),
   tier: z.nativeEnum(CacheTier).optional(),
-  metadata: z.record(z.any()).default({}),
+  metadata: z.record(z.unknown()).default({}),
 });
 
 export type CacheOperationResult = z.infer<typeof CacheOperationResultSchema>;
@@ -255,7 +255,7 @@ export const CacheAuditEventSchema = z.object({
   sensitivity: z.nativeEnum(CacheDataSensitivity),
 
   // User context
-  userId: z.string().optional(),
+  _userId: z.string().optional(),
   sessionId: z.string().optional(),
   ipAddress: z.string().optional(),
 
@@ -272,7 +272,7 @@ export const CacheAuditEventSchema = z.object({
   auditReason: z.string().optional(),
 
   // Metadata
-  metadata: z.record(z.any()).default({}),
+  metadata: z.record(z.unknown()).default({}),
 });
 
 export type CacheAuditEvent = z.infer<typeof CacheAuditEventSchema>;
@@ -343,7 +343,7 @@ export interface CacheBackend {
 export function calculateHealthcareTTL(
   sensitivity: CacheDataSensitivity,
   config: CacheConfig,
-  context?: HealthcareCacheContext,
+  _context?: HealthcareCacheContext,
 ): number {
   const basePolicy = config.healthcareRetentionPolicy;
   let ttl = basePolicy[sensitivity] || config.defaultTTL;
@@ -370,7 +370,7 @@ export function calculateHealthcareTTL(
  */
 export function requiresEncryption(
   sensitivity: CacheDataSensitivity,
-  context?: HealthcareCacheContext,
+  _context?: HealthcareCacheContext,
 ): boolean {
   // Always encrypt restricted data
   if (sensitivity === CacheDataSensitivity.RESTRICTED) {
@@ -396,7 +396,7 @@ export function requiresEncryption(
 export function requiresAuditLogging(
   operation: string,
   sensitivity: CacheDataSensitivity,
-  context?: HealthcareCacheContext,
+  _context?: HealthcareCacheContext,
 ): boolean {
   // Always audit restricted data
   if (sensitivity === CacheDataSensitivity.RESTRICTED) {
@@ -424,7 +424,7 @@ export function requiresAuditLogging(
  */
 export function generateHealthcareCacheKey(
   baseKey: string,
-  context?: HealthcareCacheContext,
+  _context?: HealthcareCacheContext,
   userScope?: string,
 ): string {
   const parts = [baseKey];
@@ -446,7 +446,7 @@ export function generateHealthcareCacheKey(
   }
 
   if (context?.clinicalContext) {
-    parts.push(`context:${context.clinicalContext}`);
+    parts.push(`_context:${context.clinicalContext}`);
   }
 
   return parts.join(":");
@@ -702,14 +702,12 @@ export class InMemoryCacheBackend implements CacheBackend {
   }
 
   private updateSensitivityStats(): void {
-    this.stats.sensitiveDataEntries = Array.from(this.entries.values()).filter(
-      (entry) =>
+    this.stats.sensitiveDataEntries = Array.from(this.entries.values()).filter((entry) =>
         entry.sensitivity === CacheDataSensitivity.CONFIDENTIAL ||
         entry.sensitivity === CacheDataSensitivity.RESTRICTED,
     ).length;
 
-    this.stats.lgpdCompliantEntries = Array.from(this.entries.values()).filter(
-      (entry) => entry.lgpdCompliant,
+    this.stats.lgpdCompliantEntries = Array.from(this.entries.values()).filter((entry) => entry.lgpdCompliant,
     ).length;
   }
 }
@@ -745,9 +743,9 @@ export class CacheManagementService {
    */
   async get(
     key: string,
-    context?: HealthcareCacheContext,
+    _context?: HealthcareCacheContext,
     userContext?: {
-      userId?: string;
+      _userId?: string;
       sessionId?: string;
       ipAddress?: string;
     },
@@ -770,7 +768,7 @@ export class CacheManagementService {
           const latency = Date.now() - startTime;
 
           // Check permissions
-          if (!this.checkPermissions(entry, userContext?.userId)) {
+          if (!this.checkPermissions(entry, userContext?._userId)) {
             continue;
           }
 
@@ -788,7 +786,7 @@ export class CacheManagementService {
               key: scopedKey,
               tier,
               sensitivity: entry.sensitivity,
-              userId: userContext?.userId,
+              _userId: userContext?.userId,
               sessionId: userContext?.sessionId,
               ipAddress: userContext?.ipAddress,
               healthcareContext: context,
@@ -836,14 +834,14 @@ export class CacheManagementService {
    */
   async set(
     key: string,
-    value: any,
+    value: unknown,
     options: {
       ttl?: number;
       sensitivity?: CacheDataSensitivity;
-      context?: HealthcareCacheContext;
+      _context?: HealthcareCacheContext;
       tier?: CacheTier;
       userContext?: {
-        userId?: string;
+        _userId?: string;
         sessionId?: string;
         ipAddress?: string;
       };
@@ -869,7 +867,7 @@ export class CacheManagementService {
 
       // Calculate TTL
       const calculatedTTL =
-        ttl || calculateHealthcareTTL(sensitivity, this.config, context);
+        ttl || calculateHealthcareTTL(sensitivity, this.config, _context);
 
       // Create cache entry
       const entry: CacheEntry = {
@@ -886,8 +884,8 @@ export class CacheManagementService {
         permissions: [],
         tags: [],
         lgpdCompliant: !context?.patientId || !!context?.lgpdConsentId,
-        auditRequired: requiresAuditLogging("set", sensitivity, context),
-        encryptionRequired: requiresEncryption(sensitivity, context),
+        auditRequired: requiresAuditLogging("set", sensitivity, _context),
+        encryptionRequired: requiresEncryption(sensitivity, _context),
         tier,
         metadata: {},
       };
@@ -912,7 +910,7 @@ export class CacheManagementService {
           key: scopedKey,
           tier,
           sensitivity,
-          userId: userContext?.userId,
+          _userId: userContext?.userId,
           sessionId: userContext?.sessionId,
           ipAddress: userContext?.ipAddress,
           healthcareContext: context,
@@ -948,9 +946,9 @@ export class CacheManagementService {
    */
   async delete(
     key: string,
-    context?: HealthcareCacheContext,
+    _context?: HealthcareCacheContext,
     userContext?: {
-      userId?: string;
+      _userId?: string;
       sessionId?: string;
       ipAddress?: string;
     },
@@ -978,7 +976,7 @@ export class CacheManagementService {
       const latency = Date.now() - startTime;
 
       // Audit if required
-      if (deleted && context) {
+      if (deleted && _context) {
         await this.logAudit({
           eventId: crypto.randomUUID(),
           timestamp: new Date(),
@@ -986,7 +984,7 @@ export class CacheManagementService {
           key: scopedKey,
           tier: deletedTier!,
           sensitivity: CacheDataSensitivity.INTERNAL, // Default
-          userId: userContext?.userId,
+          _userId: userContext?.userId,
           sessionId: userContext?.sessionId,
           ipAddress: userContext?.ipAddress,
           healthcareContext: context,
@@ -1018,9 +1016,9 @@ export class CacheManagementService {
    */
   async invalidatePattern(
     pattern: string,
-    context?: HealthcareCacheContext,
+    _context?: HealthcareCacheContext,
     userContext?: {
-      userId?: string;
+      _userId?: string;
       sessionId?: string;
       ipAddress?: string;
     },
@@ -1099,9 +1097,9 @@ export class CacheManagementService {
   /**
    * Check permissions for cache entry access
    */
-  private checkPermissions(entry: CacheEntry, userId?: string): boolean {
+  private checkPermissions(entry: CacheEntry, _userId?: string): boolean {
     // Owner can always access
-    if (entry.ownerId === userId) {
+    if (entry.ownerId === _userId) {
       return true;
     }
 
@@ -1136,7 +1134,7 @@ export class CacheManagementService {
    * Get audit log
    */
   getAuditLog(filters?: {
-    userId?: string;
+    _userId?: string;
     sessionId?: string;
     operation?: string;
     sensitivity?: CacheDataSensitivity;
@@ -1144,7 +1142,7 @@ export class CacheManagementService {
     endDate?: Date;
   }): CacheAuditEvent[] {
     return this.auditLog.filter((event) => {
-      if (filters?.userId && event.userId !== filters.userId) return false;
+      if (filters?.userId && event.userId !== filters._userId) return false;
       if (filters?.sessionId && event.sessionId !== filters.sessionId)
         return false;
       if (filters?.operation && event.operation !== filters.operation)
@@ -1179,7 +1177,7 @@ export class HealthcareCachePatterns {
   async cachePatientData(
     patientId: string,
     dataType: string,
-    data: any,
+    data: unknown,
     options: {
       providerId?: string;
       facilityId?: string;
@@ -1198,7 +1196,7 @@ export class HealthcareCachePatterns {
     return this.cache.set(key, data, {
       sensitivity: CacheDataSensitivity.CONFIDENTIAL,
       ttl: options.ttl,
-      context: {
+      _context: {
         patientId,
         providerId: options.providerId,
         facilityId: options.facilityId,
@@ -1215,7 +1213,7 @@ export class HealthcareCachePatterns {
    */
   async cacheClinicalSession(
     sessionId: string,
-    sessionData: any,
+    sessionData: unknown,
     options: {
       patientId?: string;
       providerId?: string;
@@ -1232,7 +1230,7 @@ export class HealthcareCachePatterns {
     return this.cache.set(key, sessionData, {
       sensitivity: CacheDataSensitivity.CONFIDENTIAL,
       ttl: 3600, // 1 hour for clinical sessions
-      context: {
+      _context: {
         patientId: options.patientId,
         providerId: options.providerId,
         clinicalContext: options.clinicalContext || "consultation",
@@ -1247,7 +1245,7 @@ export class HealthcareCachePatterns {
    */
   async cacheEmergencyData(
     emergencyId: string,
-    data: any,
+    data: unknown,
     options: {
       patientId?: string;
       facilityId?: string;
@@ -1260,7 +1258,7 @@ export class HealthcareCachePatterns {
       sensitivity: CacheDataSensitivity.RESTRICTED,
       ttl: options.ttl || 1800, // 30 minutes for emergency data
       tier: CacheTier.MEMORY, // Keep in fastest tier
-      context: {
+      _context: {
         patientId: options.patientId,
         facilityId: options.facilityId,
         clinicalContext: "emergency",

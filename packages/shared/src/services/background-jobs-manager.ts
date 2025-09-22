@@ -57,7 +57,7 @@ export class JobManager {
   /**
    * Create and enqueue a job
    */
-  async createJob(request: CreateJobRequest): Promise<string> {
+  async createJob(_request: CreateJobRequest): Promise<string> {
     // Validate healthcare context
     if (request.healthcareContext) {
       const validation = validateHealthcareContext(
@@ -66,7 +66,7 @@ export class JobManager {
       );
       if (!validation.isValid) {
         throw new Error(
-          `Invalid healthcare context: ${validation.errors.join(", ")}`,
+          `Invalid healthcare _context: ${validation.errors.join(", ")}`,
         );
       }
     }
@@ -83,7 +83,7 @@ export class JobManager {
       type: request.type,
       priority: request.priority || JobPriority.MEDIUM,
       status: JobStatus.PENDING,
-      payload: request.payload,
+      _payload: request.payload,
       createdAt: new Date(),
       scheduledAt: request.scheduledAt,
       attemptCount: 0,
@@ -102,7 +102,7 @@ export class JobManager {
     // Validate payload with handler if available
     const handler = this.handlers.get(request.type);
     if (handler) {
-      const isValidPayload = await handler.validatePayload(request.payload);
+      const isValidPayload = await handler.validatePayload(request._payload);
       if (!isValidPayload) {
         throw new Error(`Invalid payload for job type: ${request.type}`);
       }
@@ -595,7 +595,7 @@ export abstract class BaseHealthcareJobHandler implements JobHandler {
     return this.supportedTypes;
   }
 
-  async validatePayload(payload: Record<string, any>): Promise<boolean> {
+  async validatePayload(_payload: Record<string, any>): Promise<boolean> {
     // Basic validation - override in specific handlers
     return typeof payload === "object" && payload !== null;
   }
@@ -681,7 +681,7 @@ export class PatientDataSyncHandler extends BaseHealthcareJobHandler {
   }
 
   override async validatePayload(
-    payload: Record<string, any>,
+    _payload: Record<string, any>,
   ): Promise<boolean> {
     return !!(
       payload.patientId &&
@@ -691,7 +691,7 @@ export class PatientDataSyncHandler extends BaseHealthcareJobHandler {
   }
 
   override async getEstimatedExecutionTime(
-    payload: Record<string, any>,
+    _payload: Record<string, any>,
   ): Promise<number> {
     // Estimate based on data volume
     const estimatedRecords = payload.estimatedRecords || 100;
@@ -779,7 +779,7 @@ export class EmergencyNotificationHandler extends BaseHealthcareJobHandler {
   }
 
   override async validatePayload(
-    payload: Record<string, any>,
+    _payload: Record<string, any>,
   ): Promise<boolean> {
     return !!(
       payload.alertType &&
@@ -789,7 +789,7 @@ export class EmergencyNotificationHandler extends BaseHealthcareJobHandler {
   }
 
   override async getEstimatedExecutionTime(
-    payload: Record<string, any>,
+    _payload: Record<string, any>,
   ): Promise<number> {
     const recipients = payload.recipients || [];
     return Math.max(1000, recipients.length * 100); // 100ms per recipient
@@ -882,13 +882,13 @@ export class ComplianceAuditHandler extends BaseHealthcareJobHandler {
   }
 
   override async validatePayload(
-    payload: Record<string, any>,
+    _payload: Record<string, any>,
   ): Promise<boolean> {
     return !!(payload.auditType && payload.scope);
   }
 
   override async getEstimatedExecutionTime(
-    payload: Record<string, any>,
+    _payload: Record<string, any>,
   ): Promise<number> {
     const scope = payload.scope || "facility";
     const baseTime =
@@ -955,12 +955,10 @@ export class DataRetentionCleanupHandler extends BaseHealthcareJobHandler {
         result: {
           cleanupId: job.jobId,
           cleanupResults,
-          totalRecordsFound: cleanupResults.reduce(
-            (sum, r) => sum + r.recordsFound,
+          totalRecordsFound: cleanupResults.reduce((sum,_r) => sum + r.recordsFound,
             0,
           ),
-          totalRecordsProcessed: cleanupResults.reduce(
-            (sum, r) => sum + r.recordsProcessed,
+          totalRecordsProcessed: cleanupResults.reduce((sum,_r) => sum + r.recordsProcessed,
             0,
           ),
           dryRun,
@@ -969,14 +967,12 @@ export class DataRetentionCleanupHandler extends BaseHealthcareJobHandler {
         auditEvents,
         metrics: {
           executionTime: dataTypes.length * 2000,
-          bytesProcessed: cleanupResults.reduce(
-            (sum, r) => sum + r.recordsProcessed * 1024,
+          bytesProcessed: cleanupResults.reduce((sum,_r) => sum + r.recordsProcessed * 1024,
             0,
           ),
         },
         metadata: {
-          totalRecordsProcessed: cleanupResults.reduce(
-            (sum, r) => sum + r.recordsProcessed,
+          totalRecordsProcessed: cleanupResults.reduce((sum,_r) => sum + r.recordsProcessed,
             0,
           ),
         },
@@ -993,7 +989,7 @@ export class DataRetentionCleanupHandler extends BaseHealthcareJobHandler {
   }
 
   override async validatePayload(
-    payload: Record<string, any>,
+    _payload: Record<string, any>,
   ): Promise<boolean> {
     return !!(
       payload.dataTypes &&

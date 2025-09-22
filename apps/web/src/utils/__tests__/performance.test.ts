@@ -14,7 +14,7 @@ import {
 } from '../performance';
 
 // Mock web-vitals
-vi.mock('web-vitals', () => ({
+vi.mock(('web-vitals', () => ({
   onCLS: vi.fn(callback => callback({ value: 0.1 })),
   onFCP: vi.fn(callback => callback({ value: 1200 })),
   onINP: vi.fn(callback => callback({ value: 100 })),
@@ -61,8 +61,8 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-describe('PerformanceMonitor', () => {
-  it('should initialize web vitals monitoring', () => {
+describe(('PerformanceMonitor', () => {
+  it(('should initialize web vitals monitoring', () => {
     const monitor = new PerformanceMonitor();
 
     expect(monitor).toBeDefined();
@@ -75,13 +75,13 @@ describe('PerformanceMonitor', () => {
     });
   });
 
-  it('should initialize performance observer', () => {
+  it(('should initialize performance observer', () => {
     new PerformanceMonitor();
 
     expect(global.PerformanceObserver).toHaveBeenCalled();
   });
 
-  it('should report metrics in development', () => {
+  it(('should report metrics in development', () => {
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'development';
 
@@ -96,7 +96,7 @@ describe('PerformanceMonitor', () => {
     process.env.NODE_ENV = originalEnv;
   });
 
-  it('should destroy observers on cleanup', () => {
+  it(('should destroy observers on cleanup', () => {
     const monitor = new PerformanceMonitor();
     const disconnectSpy = vi.fn();
 
@@ -110,8 +110,8 @@ describe('PerformanceMonitor', () => {
   });
 });
 
-describe('createIntersectionObserver', () => {
-  it('should create intersection observer when supported', () => {
+describe(('createIntersectionObserver', () => {
+  it(('should create intersection observer when supported', () => {
     const callback = vi.fn();
     const options = { threshold: 0.5 };
 
@@ -127,7 +127,7 @@ describe('createIntersectionObserver', () => {
     );
   });
 
-  it('should return null when not supported', () => {
+  it(('should return null when not supported', () => {
     // @ts-ignore
     delete global.IntersectionObserver;
 
@@ -137,7 +137,7 @@ describe('createIntersectionObserver', () => {
     expect(observer).toBeNull();
   });
 
-  it('should use default options', () => {
+  it(('should use default options', () => {
     const callback = vi.fn();
 
     createIntersectionObserver(callback);
@@ -152,8 +152,8 @@ describe('createIntersectionObserver', () => {
   });
 });
 
-describe('Resource preloading', () => {
-  it('should preload resources', () => {
+describe(('Resource preloading', () => {
+  it(('should preload resources', () => {
     preloadResource('/test.js', 'script');
 
     const link = document.querySelector(
@@ -164,7 +164,7 @@ describe('Resource preloading', () => {
     expect(link.as).toBe('script');
   });
 
-  it('should preload resources with crossorigin', () => {
+  it(('should preload resources with crossorigin', () => {
     preloadResource('/test.css', 'style', 'anonymous');
 
     const link = document.querySelector(
@@ -174,7 +174,7 @@ describe('Resource preloading', () => {
     expect(link.crossOrigin).toBe('anonymous');
   });
 
-  it('should prefetch resources', () => {
+  it(('should prefetch resources', () => {
     prefetchResource('/next-page.js');
 
     const link = document.querySelector(
@@ -184,7 +184,7 @@ describe('Resource preloading', () => {
     expect(link.href).toContain('/next-page.js');
   });
 
-  it('should handle server-side rendering', () => {
+  it(('should handle server-side rendering', () => {
     const originalDocument = global.document;
     // @ts-ignore
     delete global.document;
@@ -196,8 +196,8 @@ describe('Resource preloading', () => {
   });
 });
 
-describe('Bundle analysis', () => {
-  it('should log bundle size in development', () => {
+describe(('Bundle analysis', () => {
+  it(('should log bundle size in development', () => {
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'development';
 
@@ -216,7 +216,7 @@ describe('Bundle analysis', () => {
     process.env.NODE_ENV = originalEnv;
   });
 
-  it('should not log in production', () => {
+  it(('should not log in production', () => {
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'production';
 
@@ -228,8 +228,8 @@ describe('Bundle analysis', () => {
   });
 });
 
-describe('Memory monitoring', () => {
-  it('should monitor memory usage when supported', () => {
+describe(('Memory monitoring', () => {
+  it(('should monitor memory usage when supported', () => {
     const mockMemory = {
       usedJSHeapSize: 50 * 1048576, // 50MB
       totalJSHeapSize: 100 * 1048576, // 100MB
@@ -255,7 +255,7 @@ describe('Memory monitoring', () => {
     process.env.NODE_ENV = originalEnv;
   });
 
-  it('should return undefined when not supported', () => {
+  it(('should return undefined when not supported', () => {
     // @ts-ignore
     delete global.performance;
 
@@ -264,7 +264,7 @@ describe('Memory monitoring', () => {
     expect(usage).toBeUndefined();
   });
 
-  it('should handle missing memory API', () => {
+  it(('should handle missing memory API', () => {
     // @ts-ignore
     global.performance = {};
 

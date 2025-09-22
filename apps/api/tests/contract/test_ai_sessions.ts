@@ -11,8 +11,6 @@
  */
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { z } from 'zod';
-
 // Test helper for API calls
 async function api(path: string, init?: RequestInit) {
   const { default: app } = await import('../../src/app');
@@ -25,7 +23,7 @@ const CreateSessionRequestSchema = z.object({
   patientId: z.string().uuid().optional(),
   model: z.enum(['gpt-4o', 'claude-3-sonnet', 'gemini-pro', 'local-llama']),
   provider: z.enum(['openai', 'anthropic', 'google', 'local']),
-  context: z.object({
+  _context: z.object({
     healthcare: z.object({
       specialty: z.string(),
       crmNumber: z.string().optional(),
@@ -53,7 +51,7 @@ const SessionResponseSchema = z.object({
   model: z.string(),
   provider: z.string(),
   status: z.enum(['active', 'pending', 'error']),
-  context: z.object({
+  _context: z.object({
     healthcare: z.object({
       specialty: z.string(),
       crmNumber: z.string().optional(),
@@ -108,7 +106,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
       const sessionRequest = {
         model: 'gpt-4o',
         provider: 'openai',
-        context: {
+        _context: {
           healthcare: {
             specialty: 'dermatologia',
             crmNumber: 'CRM-123456',
@@ -146,7 +144,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
         patientId: '550e8400-e29b-41d4-a716-446655440000',
         model: 'claude-3-sonnet',
         provider: 'anthropic',
-        context: {
+        _context: {
           healthcare: {
             specialty: 'medicina_estetica',
             crmNumber: 'CRM-789012',
@@ -181,7 +179,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
         const sessionRequest = {
           model,
           provider,
-          context: {
+          _context: {
             healthcare: {
               specialty: 'medicina_geral',
             },
@@ -209,7 +207,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
       const sessionRequest = {
         model: 'gpt-4o',
         provider: 'openai',
-        context: {
+        _context: {
           healthcare: { specialty: 'dermatologia' },
           lgpdConsent: {
             dataProcessing: true,
@@ -232,7 +230,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
       const sessionRequest = {
         model: 'invalid-model',
         provider: 'invalid-provider',
-        context: {
+        _context: {
           healthcare: { specialty: 'dermatologia' },
           lgpdConsent: {
             dataProcessing: true,
@@ -255,7 +253,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
       const sessionRequest = {
         model: 'gpt-4o',
         provider: 'openai',
-        context: {
+        _context: {
           healthcare: { specialty: 'dermatologia' },
           lgpdConsent: {
             dataProcessing: false,
@@ -282,7 +280,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
       const sessionRequest = {
         model: 'gpt-4o',
         provider: 'openai',
-        context: {
+        _context: {
           healthcare: { specialty: 'dermatologia' },
           lgpdConsent: {
             dataProcessing: true,
@@ -309,7 +307,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
       const sessionRequest = {
         model: 'gpt-4o',
         provider: 'openai',
-        context: {
+        _context: {
           healthcare: {
             specialty: 'dermatologia',
             crmNumber: 'CRM-123456',
@@ -338,7 +336,7 @@ describe('POST /api/v2/ai/chat/sessions - Contract Tests', () => {
       const sessionRequest = {
         model: 'gpt-4o',
         provider: 'openai',
-        context: {
+        _context: {
           healthcare: { specialty: 'medicina_estetica' },
           lgpdConsent: {
             dataProcessing: true,

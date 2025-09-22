@@ -2,9 +2,9 @@ import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { describe, expect, it } from 'vitest';
 
-describe('TDD: Import Resolution Issues - RED Phase', () => {
-  describe('Path Alias Validation', () => {
-    it('should validate @ alias resolves to src directory', () => {
+describe('TDD: Import Resolution Issues - RED Phase',() {
+  describe(('Path Alias Validation', () => {
+    it(('should validate @ alias resolves to src directory', () => {
       const viteConfigPath = join(process.cwd(), 'vite.config.ts');
       const content = readFileSync(viteConfigPath, 'utf8');
 
@@ -16,14 +16,14 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasAliasConfig && hasProperReplacement).toBe(true);
     });
 
-    it('should validate @ alias is used consistently across components', () => {
+    it(('should validate @ alias is used consistently across components', () => {
       const files = [
         'src/components/ui/button.tsx',
         'src/components/ui/card.tsx',
         'src/components/ui/input.tsx',
       ];
 
-      files.forEach(_file => {
+      files.forEach(file => {
         if (existsSync(join(process.cwd(), file))) {
           const content = readFileSync(join(process.cwd(), file), 'utf8');
           const usesAliasImport = content.includes('from \'@/') || content.includes('from \'@/');
@@ -32,7 +32,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       });
     });
 
-    it('should validate workspace package aliases are properly configured', () => {
+    it(('should validate workspace package aliases are properly configured', () => {
       const viteConfigPath = join(process.cwd(), 'vite.config.ts');
       const content = readFileSync(viteConfigPath, 'utf8');
 
@@ -50,7 +50,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasAllWorkspaceAliases).toBe(true);
     });
 
-    it('should validate workspace package aliases point to correct paths', () => {
+    it(('should validate workspace package aliases point to correct paths', () => {
       const viteConfigPath = join(process.cwd(), 'vite.config.ts');
       const content = readFileSync(viteConfigPath, 'utf8');
 
@@ -62,8 +62,8 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
     });
   });
 
-  describe('Workspace Package Resolution', () => {
-    it('should validate @neonpro/ui package is properly imported', () => {
+  describe(('Workspace Package Resolution', () => {
+    it(('should validate @neonpro/ui package is properly imported', () => {
       const dashboardPath = join(process.cwd(), 'src/routes/dashboard/main.tsx');
       const content = readFileSync(dashboardPath, 'utf8');
 
@@ -75,7 +75,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasUiImport || !usesUiComponents).toBe(true);
     });
 
-    it('should validate @neonpro/utils package is properly imported', () => {
+    it(('should validate @neonpro/utils package is properly imported', () => {
       const dashboardPath = join(process.cwd(), 'src/routes/dashboard/main.tsx');
       const content = readFileSync(dashboardPath, 'utf8');
 
@@ -86,7 +86,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasUtilsImport || !usesUtils).toBe(true);
     });
 
-    it('should validate workspace packages exist in correct locations', () => {
+    it(('should validate workspace packages exist in correct locations', () => {
       const packages = [
         '../../packages/ui/src',
         '../../packages/utils/src',
@@ -94,13 +94,13 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
         '../../packages/types/src',
       ];
 
-      packages.forEach(_packagePath => {
+      packages.forEach(packagePath => {
         const fullPath = join(process.cwd(), packagePath);
         expect(existsSync(fullPath)).toBe(true);
       });
     });
 
-    it('should validate workspace packages have proper index files', () => {
+    it(('should validate workspace packages have proper index files', () => {
       const packageIndexFiles = [
         '../../packages/ui/src/index.ts',
         '../../packages/utils/src/index.ts',
@@ -108,15 +108,15 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
         '../../packages/types/src/index.ts',
       ];
 
-      packageIndexFiles.forEach(_indexPath => {
+      packageIndexFiles.forEach(indexPath => {
         const fullPath = join(process.cwd(), indexPath);
         expect(existsSync(fullPath)).toBe(true);
       });
     });
   });
 
-  describe('TypeScript Path Mapping Validation', () => {
-    it('should validate tsconfig.json has proper path mappings', () => {
+  describe(('TypeScript Path Mapping Validation', () => {
+    it(('should validate tsconfig.json has proper path mappings', () => {
       const tsConfigPath = join(process.cwd(), 'tsconfig.json');
       const content = readFileSync(tsConfigPath, 'utf8');
 
@@ -127,7 +127,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasPathsSection && hasWorkspaceMappings).toBe(true);
     });
 
-    it('should validate tsconfig.json paths point to correct locations', () => {
+    it(('should validate tsconfig.json paths point to correct locations', () => {
       const tsConfigPath = join(process.cwd(), 'tsconfig.json');
       const content = readFileSync(tsConfigPath, 'utf8');
 
@@ -138,7 +138,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasCorrectUiPath && hasCorrectUtilsPath && hasCorrectSharedPath).toBe(true);
     });
 
-    it('should validate TypeScript baseUrl is properly configured', () => {
+    it(('should validate TypeScript baseUrl is properly configured', () => {
       const tsConfigPath = join(process.cwd(), 'tsconfig.json');
       const content = readFileSync(tsConfigPath, 'utf8');
 
@@ -149,15 +149,15 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
     });
   });
 
-  describe('Import Statement Consistency', () => {
-    it('should validate consistent import patterns across the codebase', () => {
+  describe(('Import Statement Consistency', () => {
+    it(('should validate consistent import patterns across the codebase', () => {
       const testFiles = [
         'src/routes/dashboard/main.tsx',
         'src/routes/patients/ai-insights.tsx',
         'src/components/ui/button.tsx',
       ];
 
-      testFiles.forEach(_file => {
+      testFiles.forEach(file => {
         const fullPath = join(process.cwd(), file);
         if (existsSync(fullPath)) {
           const content = readFileSync(fullPath, 'utf8');
@@ -171,13 +171,13 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       });
     });
 
-    it('should validate no mixed import types in same file', () => {
+    it(('should validate no mixed import types in same file', () => {
       const testFiles = [
         'src/routes/dashboard/main.tsx',
         'src/routes/patients/ai-insights.tsx',
       ];
 
-      testFiles.forEach(_file => {
+      testFiles.forEach(file => {
         const fullPath = join(process.cwd(), file);
         if (existsSync(fullPath)) {
           const content = readFileSync(fullPath, 'utf8');
@@ -191,13 +191,13 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       });
     });
 
-    it('should validate proper React import patterns', () => {
+    it(('should validate proper React import patterns', () => {
       const testFiles = [
         'src/routes/dashboard/main.tsx',
         'src/routes/patients/ai-insights.tsx',
       ];
 
-      testFiles.forEach(_file => {
+      testFiles.forEach(file => {
         const fullPath = join(process.cwd(), file);
         if (existsSync(fullPath)) {
           const content = readFileSync(fullPath, 'utf8');
@@ -214,8 +214,8 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
     });
   });
 
-  describe('Module Resolution Edge Cases', () => {
-    it('should validate file extensions are properly handled', () => {
+  describe(('Module Resolution Edge Cases', () => {
+    it(('should validate file extensions are properly handled', () => {
       const viteConfigPath = join(process.cwd(), 'vite.config.ts');
       const content = readFileSync(viteConfigPath, 'utf8');
 
@@ -226,7 +226,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasExtensionsConfig && hasProperExtensions).toBe(true);
     });
 
-    it('should validate module resolution strategy is correct', () => {
+    it(('should validate module resolution strategy is correct', () => {
       const tsConfigPath = join(process.cwd(), 'tsconfig.json');
       const content = readFileSync(tsConfigPath, 'utf8');
 
@@ -237,7 +237,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
       expect(hasModuleResolution && usesBundlerResolution).toBe(true);
     });
 
-    it('should validate allowImportingTsExtensions is properly configured', () => {
+    it(('should validate allowImportingTsExtensions is properly configured', () => {
       const tsConfigPath = join(process.cwd(), 'tsconfig.json');
       const content = readFileSync(tsConfigPath, 'utf8');
 

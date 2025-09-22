@@ -11,9 +11,9 @@ export interface UserQuery {
   /** Session identifier for conversation context */
   sessionId: string;
   /** User who submitted the query */
-  userId: string;
+  _userId: string;
   /** Natural language text input */
-  query: string;
+  _query: string;
   /** Parsed intent classification */
   intent: QueryIntent;
   /** Extracted parameters from the query */
@@ -181,7 +181,7 @@ export interface ChatSession {
   /** Session identifier (UUID) */
   id: string;
   /** User identifier */
-  userId: string;
+  _userId: string;
   /** Session status */
   status: SessionStatus;
   /** When the session started */
@@ -189,7 +189,7 @@ export interface ChatSession {
   /** Last interaction timestamp */
   lastActivity: Date;
   /** Conversation context object */
-  context: SessionContext;
+  _context: SessionContext;
   /** Number of messages in session */
   messageCount: number;
 }
@@ -203,7 +203,7 @@ export interface SessionContext {
   /** User's current domain */
   domain: string;
   /** User role for permission checking */
-  role: UserRole;
+  _role: UserRole;
   /** Active filters or preferences */
   preferences?: Record<string, any>;
   /** Recent conversation history */
@@ -220,11 +220,11 @@ export type UserRole =
 
 export interface PermissionContext {
   /** User identifier */
-  userId: string;
+  _userId: string;
   /** Organization/clinic domain */
   domain: string;
   /** User role */
-  role: UserRole;
+  _role: UserRole;
   /** Specific permissions array */
   permissions: Permission[];
   /** Data access scope */
@@ -257,13 +257,13 @@ export type DataScope =
 
 export interface AgentQueryRequest {
   /** Natural language query from user */
-  query: string;
+  _query: string;
   /** Unique session identifier for conversation context */
   sessionId: string;
   /** Optional conversation context */
-  context?: {
+  _context?: {
     /** User identifier */
-    userId?: string;
+    _userId?: string;
     /** Recent conversation history */
     previousMessages?: ChatMessage[];
   };
@@ -273,7 +273,7 @@ export interface ChatMessage {
   /** Unique identifier (UUID) */
   id: string;
   /** Message role */
-  role: 'user' | 'assistant';
+  _role: 'user' | 'assistant';
   /** Message content */
   content: string;
   /** When the message was sent */
@@ -290,7 +290,7 @@ export interface SessionResponse {
   /** Session identifier */
   sessionId: string;
   /** User identifier */
-  userId: string;
+  _userId: string;
   /** Session status */
   status: SessionStatus;
   /** Conversation messages */
@@ -384,10 +384,10 @@ export interface ChatState {
 }
 
 export interface DataAgentRequest {
-  query: string;
+  _query: string;
   sessionId?: string;
   userContext: {
-    userId: string;
+    _userId: string;
     userRole: 'admin' | 'professional' | 'assistant' | 'receptionist';
     domain?: string;
   };
@@ -438,5 +438,5 @@ export interface AgentAction {
   icon?: string;
   primary?: boolean;
   type: 'view_details' | 'create_appointment' | 'export_data' | 'navigate' | 'refresh';
-  payload?: Record<string, any>;
+  _payload?: Record<string, any>;
 }

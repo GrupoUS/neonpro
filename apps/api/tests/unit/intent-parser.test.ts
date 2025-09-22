@@ -47,15 +47,15 @@ describe('IntentParserService', () => {
     it('should extract client names from queries', () => {
       const testCases = [
         {
-          query: 'Informações do cliente João Silva',
+          _query: 'Informações do cliente João Silva',
           expectedNames: ['João Silva'],
         },
         {
-          query: 'Dados dos pacientes Maria Santos e Ana Costa',
+          _query: 'Dados dos pacientes Maria Santos e Ana Costa',
           expectedNames: ['Maria Santos', 'Ana Costa'],
         },
         {
-          query: 'Cliente Pedro',
+          _query: 'Cliente Pedro',
           expectedNames: ['Pedro'],
         },
       ];
@@ -95,15 +95,15 @@ describe('IntentParserService', () => {
     it('should extract date ranges from appointment queries', () => {
       const testCases = [
         {
-          query: 'Agendamentos de hoje',
+          _query: 'Agendamentos de hoje',
           expectedPeriod: 'today',
         },
         {
-          query: 'Consultas desta semana',
+          _query: 'Consultas desta semana',
           expectedPeriod: 'week',
         },
         {
-          query: 'Agenda do próximo mês',
+          _query: 'Agenda do próximo mês',
           expectedPeriod: 'month',
         },
       ];
@@ -151,19 +151,19 @@ describe('IntentParserService', () => {
     it('should extract financial periods', () => {
       const testCases = [
         {
-          query: 'Faturamento de hoje',
+          _query: 'Faturamento de hoje',
           expectedPeriod: 'today',
         },
         {
-          query: 'Receitas desta semana',
+          _query: 'Receitas desta semana',
           expectedPeriod: 'week',
         },
         {
-          query: 'Balanço do mês',
+          _query: 'Balanço do mês',
           expectedPeriod: 'month',
         },
         {
-          query: 'Resultado anual',
+          _query: 'Resultado anual',
           expectedPeriod: 'year',
         },
       ];
@@ -177,15 +177,15 @@ describe('IntentParserService', () => {
     it('should extract financial types', () => {
       const testCases = [
         {
-          query: 'Receitas do mês',
+          _query: 'Receitas do mês',
           expectedType: 'revenue',
         },
         {
-          query: 'Despesas da semana',
+          _query: 'Despesas da semana',
           expectedType: 'expenses',
         },
         {
-          query: 'Pagamentos recebidos',
+          _query: 'Pagamentos recebidos',
           expectedType: 'payments',
         },
       ];
@@ -252,7 +252,7 @@ describe('IntentParserService', () => {
       const roles: UserRole[] = ['admin', 'doctor', 'receptionist'];
 
       roles.forEach(role => {
-        const result = intentParser.parseQuery(query, role);
+        const result = intentParser.parseQuery(query, _role);
         expect(result.intent).toBe('client_data');
         expect(result.confidence).toBeGreaterThan(0.7);
       });

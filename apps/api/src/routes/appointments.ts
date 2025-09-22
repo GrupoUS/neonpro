@@ -110,7 +110,6 @@ appointments.get('/patient/:patientId', async c => {
 });
 
 import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
 import { badRequest, created, notFound } from '../utils/responses';
 
 // Schemas

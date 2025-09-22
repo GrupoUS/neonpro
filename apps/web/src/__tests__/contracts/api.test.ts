@@ -13,7 +13,7 @@
 
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
-describe('Backend API Contracts', () => {
+describe(('Backend API Contracts', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -22,8 +22,8 @@ describe('Backend API Contracts', () => {
     vi.restoreAllMocks();
   });
 
-  describe('tRPC Endpoint Contract', () => {
-    test('should define tRPC router structure for healthcare API', () => {
+  describe(('tRPC Endpoint Contract', () => {
+    test(('should define tRPC router structure for healthcare API', () => {
       // Contract: tRPC router structure with healthcare-specific procedures
       const tRPCRouterContract = {
         patients: {
@@ -64,7 +64,7 @@ describe('Backend API Contracts', () => {
         },
         aiChat: {
           sendMessage: {
-            input: 'z.object({ message: z.string(), context: z.object({}) })',
+            input: 'z.object({ message: z.string(), _context: z.object({}) })',
             output: 'z.object({ response: z.string(), sources: z.array(z.string()) })',
             middleware: ['auth', 'aiSafety', 'contentFilter', 'auditLog'],
           },
@@ -89,7 +89,7 @@ describe('Backend API Contracts', () => {
       );
     });
 
-    test('should provide tRPC middleware contract definitions', () => {
+    test(('should provide tRPC middleware contract definitions', () => {
       // Contract: tRPC middleware for healthcare compliance
       interface tRPCMiddlewareContract {
         name: string;
@@ -183,7 +183,7 @@ describe('Backend API Contracts', () => {
       );
     });
 
-    test('should provide tRPC error handling contract', () => {
+    test(('should provide tRPC error handling contract', () => {
       // Contract: Standardized error handling for healthcare APIs
       interface tRPCErrorContract {
         code: string;
@@ -268,8 +268,8 @@ describe('Backend API Contracts', () => {
     });
   });
 
-  describe('Patient Data API Contract', () => {
-    test('should define patient data schema contract', () => {
+  describe(('Patient Data API Contract', () => {
+    test(('should define patient data schema contract', () => {
       // Contract: Patient data schema for Brazilian healthcare
       const patientDataContract = {
         required_fields: [
@@ -345,7 +345,7 @@ describe('Backend API Contracts', () => {
       ).toBe(true);
     });
 
-    test('should provide patient API endpoint contracts', () => {
+    test(('should provide patient API endpoint contracts', () => {
       // Contract: Patient API endpoints with healthcare requirements
       interface PatientAPIEndpointContract {
         method: string;
@@ -461,7 +461,7 @@ describe('Backend API Contracts', () => {
       expect(deleteEndpoint?.response_time_sla).toBe(2000);
     });
 
-    test('should provide patient data transformation contracts', () => {
+    test(('should provide patient data transformation contracts', () => {
       // Contract: Patient data transformation for different contexts
       const patientDataTransformationContract = {
         public_view: {
@@ -540,8 +540,8 @@ describe('Backend API Contracts', () => {
     });
   });
 
-  describe('Medical Record API Contract', () => {
-    test('should define medical record schema contract', () => {
+  describe(('Medical Record API Contract', () => {
+    test(('should define medical record schema contract', () => {
       // Contract: Medical record schema for Brazilian healthcare
       const medicalRecordContract = {
         record_types: [
@@ -630,7 +630,7 @@ describe('Backend API Contracts', () => {
       ).toBe('20_years_minimum');
     });
 
-    test('should provide medical record API endpoint contracts', () => {
+    test(('should provide medical record API endpoint contracts', () => {
       // Contract: Medical record API endpoints with professional validation
       interface MedicalRecordAPIContract {
         method: string;
@@ -735,7 +735,7 @@ describe('Backend API Contracts', () => {
       );
     });
 
-    test('should provide medical record versioning contract', () => {
+    test(('should provide medical record versioning contract', () => {
       // Contract: Medical record versioning for compliance and audit
       const medicalRecordVersioningContract = {
         versioning_strategy: 'immutable_append_only',
@@ -775,8 +775,7 @@ describe('Backend API Contracts', () => {
         medicalRecordVersioningContract.immutability_rules.original_record,
       ).toBe('never_deleted_or_modified');
       expect(
-        medicalRecordVersioningContract.audit_requirements
-          .integrity_verification,
+        medicalRecordVersioningContract.audit_requirements.integrity_verification,
       ).toBe('cryptographic_hash_chain');
       expect(
         medicalRecordVersioningContract.retention_policy.active_records,
@@ -784,8 +783,8 @@ describe('Backend API Contracts', () => {
     });
   });
 
-  describe('AI Chat API Contract', () => {
-    test('should define AI chat safety contract', () => {
+  describe(('AI Chat API Contract', () => {
+    test(('should define AI chat safety contract', () => {
       // Contract: AI chat safety for healthcare context
       const aiChatSafetyContract = {
         content_filtering: {
@@ -877,7 +876,7 @@ describe('Backend API Contracts', () => {
       ).toBe('5_minutes_maximum');
     });
 
-    test('should provide AI chat API endpoint contracts', () => {
+    test(('should provide AI chat API endpoint contracts', () => {
       // Contract: AI chat API endpoints with safety and compliance
       interface AIChatAPIContract {
         method: string;
@@ -982,7 +981,7 @@ describe('Backend API Contracts', () => {
       );
     });
 
-    test('should provide AI conversation context contract', () => {
+    test(('should provide AI conversation context contract', () => {
       // Contract: AI conversation context for healthcare quality
       const aiConversationContextContract = {
         context_types: {
@@ -1074,8 +1073,8 @@ describe('Backend API Contracts', () => {
     });
   });
 
-  describe('Authentication and Authorization Contract', () => {
-    test('should define healthcare professional authentication contract', () => {
+  describe(('Authentication and Authorization Contract', () => {
+    test(('should define healthcare professional authentication contract', () => {
       // Contract: Authentication for healthcare professionals
       const healthcareProfessionalAuthContract = {
         authentication_methods: {
@@ -1134,8 +1133,7 @@ describe('Backend API Contracts', () => {
           .mfa_required,
       ).toBe(true);
       expect(
-        healthcareProfessionalAuthContract.professional_validation
-          .license_verification.crm_validation,
+        healthcareProfessionalAuthContract.professional_validation.license_verification.crm_validation,
       ).toBe('cfm_realtime_api');
       expect(
         healthcareProfessionalAuthContract.session_management.security_features
@@ -1143,7 +1141,7 @@ describe('Backend API Contracts', () => {
       ).toBe(3);
     });
 
-    test('should provide authorization role-based access contract', () => {
+    test(('should provide authorization role-based access contract', () => {
       // Contract: Role-based access control for healthcare system
       interface HealthcareRoleContract {
         role_name: string;
@@ -1280,7 +1278,7 @@ describe('Backend API Contracts', () => {
       expect(adminRole?.audit_level).toBe('comprehensive');
     });
 
-    test('should provide API endpoint authorization contract', () => {
+    test(('should provide API endpoint authorization contract', () => {
       // Contract: API endpoint authorization requirements
       interface APIEndpointAuthorizationContract {
         endpoint: string;

@@ -26,7 +26,7 @@ interface Experiment06CalendarIntegrationProps {
   onEventDelete: (eventId: string) => void;
   onNewConsultation?: () => void;
   className?: string;
-  userId?: string;
+  _userId?: string;
   userRole?: string;
   clinicId?: string;
 }
@@ -161,7 +161,7 @@ export function Experiment06CalendarIntegration({
             })),
           });
         }
-      } catch (error) {
+      } catch (_error) {
         console.error(
           'LGPD: Error processing appointments with compliance:',
           err,
@@ -200,7 +200,7 @@ export function Experiment06CalendarIntegration({
   const calendarEvents = useMemo(() => {
     try {
       return minimizedAppointments.map(mapMinimizedAppointmentToCalendarEvent);
-    } catch (error) {
+    } catch (_error) {
       setError('Erro ao converter agendamentos para eventos do calendário');
       console.error(
         'Error mapping minimized appointments to calendar events:',
@@ -254,7 +254,7 @@ export function Experiment06CalendarIntegration({
 
       // Proceed with update
       onEventUpdate(event, updates);
-    } catch (error) {
+    } catch (_error) {
       console.error(error);
       setError(error instanceof Error ? error.message : 'Erro ao atualizar evento');
     } finally {
@@ -303,7 +303,7 @@ export function Experiment06CalendarIntegration({
 
       // Proceed with deletion
       onEventDelete(eventId);
-    } catch (error) {
+    } catch (_error) {
       console.error(error);
       setError(error instanceof Error ? error.message : 'Erro ao excluir evento');
     } finally {
@@ -330,7 +330,7 @@ export function Experiment06CalendarIntegration({
         );
 
         onNewConsultation();
-      } catch (error) {
+      } catch (_error) {
         console.error(error);
         // Don't block the action for audit logging failures
         onNewConsultation();

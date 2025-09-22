@@ -31,8 +31,6 @@ import {
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
-
 // Type-safe params schema
 const patientParamsSchema = z.object({
   patientId: z.string().min(1),
@@ -239,7 +237,7 @@ function PatientEditPage() {
         to: '/patients/$patientId',
         params: { patientId },
       });
-    } catch (error: any) {
+    } catch (_error: any) {
       toast.error(error.message || 'Erro ao atualizar paciente');
     }
   };

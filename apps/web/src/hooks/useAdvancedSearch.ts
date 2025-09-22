@@ -1,7 +1,7 @@
 import { type Dispatch, type SetStateAction, useMemo, useState } from 'react';
 
 export type AdvancedFilters = {
-  query?: string;
+  _query?: string;
   email?: string;
   cpf?: string;
   phone?: string;
@@ -83,7 +83,7 @@ export function useAdvancedSearch(
 
   const clearFilters = () =>
     setFilters({
-      query: '',
+      _query: '',
       email: '',
       cpf: '',
       phone: '',

@@ -76,22 +76,19 @@ export function AccessibleHealthcareForm({
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   // Create accessible field hooks for each form field
-  const fieldHooks = fields.reduce(
-    (acc, field) => {
-      acc[field.name] = useAccessibleField(field.name, {
-        required: field.required,
-        validate: field.validate,
-      });
-      return acc;
-    },
-    {} as Record<string, ReturnType<typeof useAccessibleField>>,
-  );
+  const fieldHooks = fields.reduce((acc, field) => {
+    acc[field.name] = useAccessibleField(field.name, {
+      required: field.required,
+      validate: field.validate,
+    });
+    return acc;
+  }, {} as Record<string, ReturnType<typeof useAccessibleField>>);
 
   const validateForm = useCallback(() => {
     let isValid = true;
     const errors: string[] = [];
 
-    fields.forEach(_field => {
+    fields.forEach(field => {
       const fieldHook = fieldHooks[field.name];
       const fieldIsValid = fieldHook.validateField();
 
@@ -136,20 +133,17 @@ export function AccessibleHealthcareForm({
 
       try {
         // Collect form data
-        const formData = fields.reduce(
-          (acc, field) => {
-            acc[field.name] = fieldHooks[field.name].value;
-            return acc;
-          },
-          {} as Record<string, string>,
-        );
+        const formData = fields.reduce((acc, field) => {
+          acc[field.name] = fieldHooks[field.name].value;
+          return acc;
+        }, {} as Record<string, string>);
 
         await onSubmit(formData);
 
         setSubmitSuccess(true);
         announceFormSuccess('Formulário enviado com sucesso');
         announceLive('Formulário enviado com sucesso!', 'polite');
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error ? error.message : 'Erro ao enviar formulário';
         setSubmitError(errorMessage);
         announceFormError('envio', errorMessage);

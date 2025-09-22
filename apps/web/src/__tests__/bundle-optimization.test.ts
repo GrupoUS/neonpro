@@ -1,20 +1,20 @@
 /**
  * Bundle Optimization Validation Tests
- * 
+ *
  * Tests to validate that bundle size optimizations are working correctly
  * and that lazy-loaded components function properly.
- * 
+ *
  * TDD compliance: RED-GREEN-REFACTOR methodology
  * Healthcare compliance: LGPD, ANVISA, CFM maintained throughout
  */
 
 import { render, screen, waitFor } from '@testing-library/react';
 import React, { Suspense } from 'react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Import optimized components
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { VideoConsultation } from '@/components/telemedicine';
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { LibraryLoading } from '@/lib/utils';
 
 describe('Bundle Optimization Tests', () => {
@@ -40,9 +40,11 @@ describe('Bundle Optimization Tests', () => {
       };
 
       render(
-        <ChartContainer config={chartConfig}>
-          <div>Test Chart Content</div>
-        </ChartContainer>
+        React.createElement(
+          ChartContainer,
+          { config: chartConfig },
+          React.createElement('div', null, 'Test Chart Content'),
+        ),
       );
 
       // Should render loading state initially
@@ -55,10 +57,10 @@ describe('Bundle Optimization Tests', () => {
     });
 
     it('should handle chart tooltip lazy loading', async () => {
-      const tooltipContent = (
-        <ChartTooltipContent>
-          <div>Tooltip Content</div>
-        </ChartTooltipContent>
+      const tooltipContent = React.createElement(
+        ChartTooltipContent,
+        null,
+        React.createElement('div', null, 'Tooltip Content'),
       );
 
       render(tooltipContent);
@@ -71,9 +73,15 @@ describe('Bundle Optimization Tests', () => {
   describe('Telemedicine Component Lazy Loading', () => {
     it('should render VideoConsultation with loading state', async () => {
       render(
-        <Suspense fallback={<LibraryLoading message="Carregando telemedicina..." />}>
-          <VideoConsultation sessionId="test-session" />
-        </Suspense>
+        React.createElement(
+          Suspense,
+          {
+            fallback: React.createElement(LibraryLoading, {
+              message: 'Carregando telemedicina...',
+            }),
+          },
+          React.createElement(VideoConsultation, { sessionId: 'test-session' }),
+        ),
       );
 
       // Should render loading state
@@ -88,15 +96,19 @@ describe('Bundle Optimization Tests', () => {
 
   describe('Loading Components', () => {
     it('should render LibraryLoading component', () => {
-      render(<LibraryLoading message="Test Loading" />);
-      
+      render(
+        React.createElement(LibraryLoading, { message: 'Test Loading' }),
+      );
+
       expect(screen.getByText('Test Loading')).toBeInTheDocument();
       expect(screen.getByRole('status')).toBeInTheDocument();
     });
 
     it('should use default message when none provided', () => {
-      render(<LibraryLoading />);
-      
+      render(
+        React.createElement(LibraryLoading),
+      );
+
       expect(screen.getByText('Carregando...')).toBeInTheDocument();
     });
   });
@@ -105,7 +117,7 @@ describe('Bundle Optimization Tests', () => {
     it('should validate bundle size reduction', () => {
       // This test validates that our optimizations are working
       // In a real CI/CD environment, this would check actual bundle sizes
-      
+
       // Mock bundle size data (in a real scenario, this would come from build output)
       const bundleSizes = {
         'vendor-misc': 14171568, // Current size in bytes
@@ -124,9 +136,13 @@ describe('Bundle Optimization Tests', () => {
       Object.entries(bundleSizes).forEach(([chunk, currentSize]) => {
         const targetSize = targetSizes[chunk as keyof typeof targetSizes];
         const reduction = ((currentSize - targetSize) / currentSize) * 100;
-        
-        console.log(\`\${chunk}: \${Math.round(currentSize / 1024 / 1024 * 100) / 100}MB → \${Math.round(targetSize / 1024 / 1024 * 100) / 100}MB (\${Math.round(reduction)}% reduction)\`);
-        
+
+        console.log(
+          `${chunk}: ${Math.round((currentSize / 1024 / 1024) * 100) / 100}MB → ${
+            Math.round((targetSize / 1024 / 1024) * 100) / 100
+          }MB (${Math.round(reduction)}% reduction)`,
+        );
+
         // For now, this is informational - in production, we'd enforce targets
         expect(currentSize).toBeGreaterThan(0);
         expect(targetSize).toBeLessThan(currentSize);
@@ -135,20 +151,20 @@ describe('Bundle Optimization Tests', () => {
 
     it('should validate code splitting effectiveness', () => {
       // This test validates that our code splitting strategy is working
-      
+
       // Expected chunks that should exist after optimization
       const expectedChunks = [
-        'vendor-charts',      // Recharts and D3
-        'vendor-tables',      // TanStack Table
-        'vendor-forms',       // React Hook Form + Zod
-        'vendor-dates',       // Date-fns
-        'vendor-ui-base',     // Radix UI base
+        'vendor-charts', // Recharts and D3
+        'vendor-tables', // TanStack Table
+        'vendor-forms', // React Hook Form + Zod
+        'vendor-dates', // Date-fns
+        'vendor-ui-base', // Radix UI base
         'feature-telemedicine', // Telemedicine feature chunks
       ];
 
       // In a real scenario, we'd validate these chunks exist in the build output
       expectedChunks.forEach(chunk => {
-        console.log(\`Validating chunk exists: \${chunk}\`);
+        console.log(`Validating chunk exists: ${chunk}`);
         // This would check file system in real CI/CD
         expect(chunk).toBeTruthy();
       });
@@ -199,9 +215,11 @@ describe('Bundle Optimization Tests', () => {
       // For now, we'll just validate the test structure
       expect(() => {
         render(
-          <ChartContainer config={{}}>
-            <div>Test Content</div>
-          </ChartContainer>
+          React.createElement(
+            ChartContainer,
+            { config: {} },
+            React.createElement('div', null, 'Test Content'),
+          ),
         );
       }).not.toThrow();
     });

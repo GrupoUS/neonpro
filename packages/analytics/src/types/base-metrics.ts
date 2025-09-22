@@ -21,7 +21,7 @@ export interface AnalyticsEvent {
   timestamp: Date;
 
   /** User identifier (anonymized) */
-  userId?: string;
+  _userId?: string;
 
   /** Session identifier */
   sessionId?: string;
@@ -30,7 +30,7 @@ export interface AnalyticsEvent {
   properties: Record<string, unknown>;
 
   /** Event context */
-  context?: Record<string, unknown>;
+  _context?: Record<string, unknown>;
 }
 
 /**
@@ -197,7 +197,7 @@ export interface MetricDataPoint {
   value: number;
 
   /** Optional context for this specific data point */
-  context?: Record<string, unknown>;
+  _context?: Record<string, unknown>;
 }
 
 /**
@@ -442,13 +442,13 @@ export function createMockAnalyticsEvent(
     id: "mock_event_" + Math.random().toString(36).substr(2, 9),
     type: "page_view",
     timestamp: new Date(),
-    userId: "mock_user_" + Math.random().toString(36).substr(2, 6),
+    _userId: "mock_user_" + Math.random().toString(36).substr(2, 6),
     sessionId: "mock_session_" + Math.random().toString(36).substr(2, 6),
     properties: {
       page: "/dashboard",
       action: "view",
     },
-    context: {
+    _context: {
       userAgent: "Mock Browser",
       ip: "127.0.0.1",
     },
@@ -521,10 +521,10 @@ export function aggregateMetrics(
 
   switch (aggregation) {
     case "sum":
-      return values.reduce((sum, val) => sum + val, 0);
+      return values.reduce((sum,_val) => sum + val, 0);
 
     case "average":
-      return values.reduce((sum, val) => sum + val, 0) / values.length;
+      return values.reduce((sum,_val) => sum + val, 0) / values.length;
 
     case "count":
       return values.length;
@@ -536,7 +536,7 @@ export function aggregateMetrics(
       return Math.max(...values);
 
     case "median":
-      const sorted = values.sort((a, b) => a - b);
+      const sorted = values.sort((a,_b) => a - b);
       const mid = Math.floor(sorted.length / 2);
       return sorted.length % 2 === 0
         ? (sorted[mid - 1] + sorted[mid]) / 2
@@ -544,7 +544,7 @@ export function aggregateMetrics(
 
     case "percentile":
       // Default to 95th percentile
-      const sortedValues = values.sort((a, b) => a - b);
+      const sortedValues = values.sort((a,_b) => a - b);
       const index = Math.ceil(0.95 * sortedValues.length) - 1;
       return sortedValues[index];
 
@@ -552,6 +552,6 @@ export function aggregateMetrics(
       return values[values.length - 1];
 
     default:
-      return values.reduce((sum, val) => sum + val, 0) / values.length;
+      return values.reduce((sum,_val) => sum + val, 0) / values.length;
   }
 }

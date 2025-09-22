@@ -40,7 +40,7 @@ describe('Chat API Performance Tests', () => {
         .send({
           message: 'Hello, this is a test message for performance testing',
           sessionId: 'perf-test-session',
-          userId: 'perf-test-user',
+          _userId: 'perf-test-user',
           consent: {
             dataProcessing: true,
             aiInteraction: true,
@@ -68,7 +68,7 @@ describe('Chat API Performance Tests', () => {
         .send({
           message: 'Test session creation',
           sessionId: 'perf-session-test',
-          userId: 'perf-user',
+          _userId: 'perf-user',
           consent: {
             dataProcessing: true,
             aiInteraction: true,
@@ -99,9 +99,9 @@ describe('Chat API Performance Tests', () => {
       const response = await testRequest(app)
         .post('/api/v1/chat/explanation')
         .send({
-          query: 'Explain hypertension treatment',
-          context: 'patient care',
-          userId: 'perf-user',
+          _query: 'Explain hypertension treatment',
+          _context: 'patient care',
+          _userId: 'perf-user',
           consent: {
             dataProcessing: true,
             aiInteraction: true,
@@ -155,7 +155,7 @@ describe('Chat API Performance Tests', () => {
             .send({
               message: `Concurrent test message ${i}`,
               sessionId: `concurrent-session-${i}`,
-              userId: `concurrent-user-${i}`,
+              _userId: `concurrent-user-${i}`,
               consent: {
                 dataProcessing: true,
                 aiInteraction: true,
@@ -304,7 +304,7 @@ describe('Chat API Performance Tests', () => {
         .send({
           message: 'Stream performance test',
           sessionId: 'stream-perf-session',
-          userId: 'stream-perf-user',
+          _userId: 'stream-perf-user',
           streaming: true,
           consent: {
             dataProcessing: true,
@@ -365,7 +365,7 @@ describe('Chat API Performance Tests', () => {
           .send({
             message: `DB connection test ${i}`,
             sessionId: `db-conn-session-${i}`,
-            userId: `db-conn-user-${i}`,
+            _userId: `db-conn-user-${i}`,
             consent: {
               dataProcessing: true,
               aiInteraction: true,
@@ -396,7 +396,7 @@ describe('Chat API Performance Tests', () => {
         .post('/api/v1/chat/query')
         .send({
           message: '', // Invalid: empty message
-          userId: 'error-test-user',
+          _userId: 'error-test-user',
         })
         .expect(400);
 
@@ -507,7 +507,7 @@ describe('Chat API Performance Tests', () => {
               .send({
                 message: `Peak hour message ${msgIndex} from user ${user}`,
                 sessionId: `peak-session-${user}`,
-                userId: `peak-user-${user}`,
+                _userId: `peak-user-${user}`,
                 consent: {
                   dataProcessing: true,
                   aiInteraction: true,

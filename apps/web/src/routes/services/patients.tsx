@@ -16,8 +16,6 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Activity } from 'lucide-react';
 import { Suspense, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { z } from 'zod';
-
 // Type-safe search params for filtering and pagination
 const patientsSearchSchema = z.object({
   page: z.number().min(1).optional().default(1),
@@ -108,7 +106,7 @@ function PatientsPage() {
         const result = await testSupabaseConnection();
         setConnectionTest(result);
         console.log('🔧 Connection test result:', result);
-      } catch (error) {
+      } catch (_error) {
         console.error('🔧 Connection test failed:', error);
         setConnectionTest({ success: false, error: 'Test failed to run' });
       }

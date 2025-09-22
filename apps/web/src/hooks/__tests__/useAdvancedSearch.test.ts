@@ -5,53 +5,53 @@
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe('useAdvancedSearch', () => {
+describe(('useAdvancedSearch', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should export the hook function', async () => {
+  it(_'should export the hook function',async () => {
     // Test that the module exists and can be imported
     const mod = await import('../useAdvancedSearch');
     expect(mod.useAdvancedSearch).toBeTypeOf('function');
   });
 
-  it('should handle search by name', async () => {
+  it(_'should handle search by name',async () => {
     const { useAdvancedSearch } = await import('../useAdvancedSearch');
     expect(typeof useAdvancedSearch).toBe('function');
   });
 
-  it('should handle search by CPF', async () => {
+  it(_'should handle search by CPF',async () => {
     const { useAdvancedSearch } = await import('../useAdvancedSearch');
     expect(typeof useAdvancedSearch).toBe('function');
   });
 
-  it('should handle search by phone', async () => {
+  it(_'should handle search by phone',async () => {
     const { useAdvancedSearch } = await import('../useAdvancedSearch');
     expect(typeof useAdvancedSearch).toBe('function');
   });
 
-  it('should handle search by registration date range', async () => {
+  it(_'should handle search by registration date range',async () => {
     const { useAdvancedSearch } = await import('../useAdvancedSearch');
     expect(typeof useAdvancedSearch).toBe('function');
   });
 
-  it('should handle search by status filter', async () => {
+  it(_'should handle search by status filter',async () => {
     const { useAdvancedSearch } = await import('../useAdvancedSearch');
     expect(typeof useAdvancedSearch).toBe('function');
   });
 
-  it('should provide search performance metrics', async () => {
+  it(_'should provide search performance metrics',async () => {
     const { useAdvancedSearch } = await import('../useAdvancedSearch');
     expect(typeof useAdvancedSearch).toBe('function');
   });
 
-  it('should debounce search queries for performance', async () => {
+  it(_'should debounce search queries for performance',async () => {
     const { useAdvancedSearch } = await import('../useAdvancedSearch');
     expect(typeof useAdvancedSearch).toBe('function');
   });
 
-  it('should clear search filters', async () => {
+  it(_'should clear search filters',async () => {
     const { useAdvancedSearch } = await import('../useAdvancedSearch');
     expect(typeof useAdvancedSearch).toBe('function');
   });
@@ -62,8 +62,8 @@ import { act, renderHook } from '@testing-library/react';
 // New enhanced tests for formatting, validation, clearing, and metrics
 import { useAdvancedSearch } from '../useAdvancedSearch';
 
-describe('useAdvancedSearch — formatting & validation', () => {
-  it('formatCPF formats progressively and caps length', () => {
+describe(('useAdvancedSearch — formatting & validation', () => {
+  it(('formatCPF formats progressively and caps length', () => {
     const { result } = renderHook(() => useAdvancedSearch());
 
     expect(result.current.formatCPF('1')).toBe('1');
@@ -83,7 +83,7 @@ describe('useAdvancedSearch — formatting & validation', () => {
     expect(result.current.formatPhone('1198765432100')).toBe('(11) 98765-4321');
   });
 
-  it('validateCPF and validatePhone enforce strict masks', () => {
+  it(('validateCPF and validatePhone enforce strict masks', () => {
     const { result } = renderHook(() => useAdvancedSearch());
 
     expect(result.current.validateCPF('123.456.789-01')).toBe(true);
@@ -96,14 +96,14 @@ describe('useAdvancedSearch — formatting & validation', () => {
   });
 });
 
-describe('useAdvancedSearch — clearFilters and metrics', () => {
-  it('clearFilters resets all fields to defaults', () => {
+describe(('useAdvancedSearch — clearFilters and metrics', () => {
+  it(('clearFilters resets all fields to defaults', () => {
     const { result } = renderHook(() => useAdvancedSearch());
 
     act(() => {
       result.current.setFilters(prev => ({
         ...prev,
-        query: 'abc',
+        _query: 'abc',
         email: 'user@example.com',
         cpf: '123.456.789-01',
         phone: '(11) 98765-4321',
@@ -117,7 +117,7 @@ describe('useAdvancedSearch — clearFilters and metrics', () => {
     });
 
     const { filters } = result.current;
-    expect(filters.query).toBe('');
+    expect(filters._query).toBe('');
     expect(filters.email).toBe('');
     expect(filters.cpf).toBe('');
     expect(filters.phone).toBe('');
@@ -126,14 +126,14 @@ describe('useAdvancedSearch — clearFilters and metrics', () => {
     expect(filters.dateRange.end).toBeNull();
   });
 
-  it('metrics.totalFilters counts only non-empty values', () => {
+  it(('metrics.totalFilters counts only non-empty values', () => {
     const { result } = renderHook(() => useAdvancedSearch());
 
     // initial state: nothing selected → 0
     expect(result.current.metrics.totalFilters).toBe(0);
 
     act(() => {
-      result.current.setFilters(prev => ({ ...prev, query: 'john' }));
+      result.current.setFilters(prev => ({ ...prev, _query: 'john' }));
     });
     expect(result.current.metrics.totalFilters).toBe(1);
 

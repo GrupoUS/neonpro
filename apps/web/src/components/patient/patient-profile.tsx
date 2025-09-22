@@ -16,19 +16,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useParams } from '@tanstack/react-router';
-import {
-  Activity,
-  AlertTriangle,
-  Brain,
-  Calendar,
-  FileText,
-  Mail,
-  MapPin,
-  Phone,
-  Shield,
-  Stethoscope,
-  User,
-} from 'lucide-react';
+import { Activity, AlertTriangle, Brain, FileText, Shield, Stethoscope, User } from 'lucide-react';
 import { Suspense, useMemo, useState } from 'react';
 
 import {
@@ -50,9 +38,8 @@ import {
 import { formatDate, formatDateTime } from '@/utils/brazilian-formatters';
 import { Patient } from '@neonpro/shared/types/patient';
 import { formatBRPhone, formatCPF } from '@neonpro/utils';
-import { cn } from '@neonpro/ui';
 import { PatientCard } from './patient-card';
-import PatientDataPresentation, { PatientDataField } from './patient-data-presentation';
+import PatientDataPresentation from './patient-data-presentation';
 import { PatientDataPresentationUtils } from './patient-data-presentation';
 
 export interface PatientProfileProps {
@@ -222,8 +209,8 @@ const AIInsightsSection = ({
                 <div className='space-y-2'>
                   <span className='text-sm font-medium'>Fatores de Risco:</span>
                   <ul className='text-sm text-muted-foreground space-y-1'>
-                    {riskAssessment.factors &&
-                      riskAssessment.factors
+                    {riskAssessment.factors
+                      && riskAssessment.factors
                         .slice(0, 3)
                         .map((factor: string, index: number) => (
                           <li key={index} className='flex items-start gap-2'>
@@ -249,36 +236,36 @@ const AIInsightsSection = ({
           </CardHeader>
           <CardContent>
             <div className='space-y-3'>
-              {recommendations &&
-                recommendations.slice(0, 4).map((rec: any, index: number) => (
-                <div
-                  key={index}
-                  className='flex items-start gap-3 p-3 bg-muted/50 rounded-lg'
-                >
-                  <div className='w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0' />
-                  <div className='space-y-1'>
-                    <p className='text-sm font-medium'>
-                      {rec.title || rec.recommendation}
-                    </p>
-                    {rec.description && (
-                      <p className='text-xs text-muted-foreground'>
-                        {rec.description}
+              {recommendations
+                && recommendations.slice(0, 4).map((rec: any, index: number) => (
+                  <div
+                    key={index}
+                    className='flex items-start gap-3 p-3 bg-muted/50 rounded-lg'
+                  >
+                    <div className='w-2 h-2 bg-primary rounded-full mt-2 flex-shrink-0' />
+                    <div className='space-y-1'>
+                      <p className='text-sm font-medium'>
+                        {rec.title || rec.recommendation}
                       </p>
-                    )}
-                    {rec.priority && (
-                      <Badge
-                        variant={rec.priority === 'high' ? 'destructive' : 'secondary'}
-                      >
-                        {rec.priority === 'high'
-                          ? 'Alta Prioridade'
-                          : rec.priority === 'medium'
-                          ? 'Média Prioridade'
-                          : 'Baixa Prioridade'}
-                      </Badge>
-                    )}
+                      {rec.description && (
+                        <p className='text-xs text-muted-foreground'>
+                          {rec.description}
+                        </p>
+                      )}
+                      {rec.priority && (
+                        <Badge
+                          variant={rec.priority === 'high' ? 'destructive' : 'secondary'}
+                        >
+                          {rec.priority === 'high'
+                            ? 'Alta Prioridade'
+                            : rec.priority === 'medium'
+                            ? 'Média Prioridade'
+                            : 'Baixa Prioridade'}
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </CardContent>
         </Card>
@@ -295,37 +282,37 @@ const AIInsightsSection = ({
           </CardHeader>
           <CardContent>
             <div className='grid gap-4 sm:grid-cols-2'>
-              {trends &&
-                Object.entries(trends)
+              {trends
+                && Object.entries(trends)
                   .slice(0, 4)
                   .map(([key, trend]: [string, any]) => (
-                  <div key={key} className='space-y-2'>
-                    <div className='flex items-center justify-between'>
-                      <span className='text-sm font-medium capitalize'>
-                        {key.replace(/([A-Z])/g, ' $1').toLowerCase()}
-                      </span>
-                      <Badge
-                        variant={trend.direction === 'improving'
-                          ? 'default'
-                          : trend.direction === 'declining'
-                          ? 'destructive'
-                          : 'secondary'}
-                        className='text-xs'
-                      >
-                        {trend.direction === 'improving'
-                          ? '↗ Melhorando'
-                          : trend.direction === 'declining'
-                          ? '↘ Piorando'
-                          : '→ Estável'}
-                      </Badge>
+                    <div key={key} className='space-y-2'>
+                      <div className='flex items-center justify-between'>
+                        <span className='text-sm font-medium capitalize'>
+                          {key.replace(/([A-Z])/g, ' $1').toLowerCase()}
+                        </span>
+                        <Badge
+                          variant={trend.direction === 'improving'
+                            ? 'default'
+                            : trend.direction === 'declining'
+                            ? 'destructive'
+                            : 'secondary'}
+                          className='text-xs'
+                        >
+                          {trend.direction === 'improving'
+                            ? '↗ Melhorando'
+                            : trend.direction === 'declining'
+                            ? '↘ Piorando'
+                            : '→ Estável'}
+                        </Badge>
+                      </div>
+                      {trend.value && (
+                        <p className='text-xs text-muted-foreground'>
+                          Valor atual: {trend.value}
+                        </p>
+                      )}
                     </div>
-                    {trend.value && (
-                      <p className='text-xs text-muted-foreground'>
-                        Valor atual: {trend.value}
-                      </p>
-                    )}
-                  </div>
-                ))}
+                  ))}
             </div>
           </CardContent>
         </Card>
@@ -398,7 +385,7 @@ export const PatientProfile = ({
       'privacy_toggle',
       fieldId,
       'current_user', // In real app, this would be the actual user ID
-      { isVisible }
+      { isVisible },
     );
     console.log('Privacy toggle audit log:', auditLog);
 
@@ -412,7 +399,7 @@ export const PatientProfile = ({
       'consent_update',
       consentType,
       'current_user', // In real app, this would be the actual user ID
-      { granted }
+      { granted },
     );
     console.log('Consent update audit log:', auditLog);
 
@@ -618,9 +605,10 @@ export const PatientProfile = ({
                       {
                         id: 'medications',
                         label: 'Medicamentos',
-                        value: patient.healthcareInfo?.medications?.map((med: any) =>
-                          `${med.name}${med.dosage ? ` - ${med.dosage}` : ''}`
-                        ).join(', ') || 'Nenhum informado',
+                        value:
+                          patient.healthcareInfo?.medications?.map((med: any) =>
+                            `${med.name}${med.dosage ? ` - ${med.dosage}` : ''}`
+                          ).join(', ') || 'Nenhum informado',
                         type: 'medical-record',
                         sensitivity: 'high',
                       },
@@ -631,7 +619,10 @@ export const PatientProfile = ({
                         type: 'medical-record',
                         sensitivity: 'critical',
                       },
-                      ...(patient.healthcareInfo?.conditions?.map((condition: any, index: number) => ({
+                      ...(patient.healthcareInfo?.conditions?.map((
+                        condition: any,
+                        index: number,
+                      ) => ({
                         id: `condition-${index}`,
                         label: `Condição ${index + 1}`,
                         value: `${condition.name}: ${condition.status || 'Ativa'}`,

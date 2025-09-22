@@ -208,7 +208,7 @@ export async function forceErrorTracking(
 
   // Send to Sentry
   if (errorTrackingConfig.sentry.enabled) {
-    const { withScope, captureException, setLevel: _setLevel } = await import(
+    const { withScope, captureException, setLevel: setLevel } = await import(
       '@sentry/node'
     );
     withScope(scope => {

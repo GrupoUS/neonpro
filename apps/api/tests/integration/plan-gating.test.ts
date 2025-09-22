@@ -25,7 +25,7 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = createTestClient({ role: 'admin' });
+    testClient = createTestClient({ _role: 'admin' });
     freeClinicId = 'clinic-free-br-001';
     premiumClinicId = 'clinic-premium-br-002';
     enterpriseClinicId = 'clinic-enterprise-br-003';

@@ -52,7 +52,7 @@ app.post('/create-portal-session', async c => {
     // Get user ID from request body
     const { userId } = await c.req.json();
 
-    if (!userId) {
+    if (!_userId) {
       return c.json({ error: 'User ID is required' }, 400);
     }
 
@@ -60,7 +60,7 @@ app.post('/create-portal-session', async c => {
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .select('stripe_customer_id, email')
-      .eq('id', userId)
+      .eq('id', _userId)
       .single();
 
     if (profileError || !profile) {
@@ -176,7 +176,7 @@ app.post('/create-customer', async c => {
     const { error: updateError } = await supabase
       .from('profiles')
       .update({ stripe_customer_id: customer.id })
-      .eq('id', userId);
+      .eq('id', _userId);
 
     if (updateError) {
       console.error(
@@ -210,7 +210,7 @@ app.post('/create-customer', async c => {
 app.get('/health', c => {
   return c.json({
     status: 'healthy',
-    service: 'stripe-portal',
+    _service: 'stripe-portal',
     timestamp: new Date().toISOString(),
   });
 });

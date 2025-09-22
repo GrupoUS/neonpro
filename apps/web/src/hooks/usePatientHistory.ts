@@ -72,10 +72,10 @@ export function useCreateMedicalRecord() {
     }: {
       patientId: string;
       clinicId: string;
-      request: CreateMedicalRecordRequest;
-    }) => patientHistoryService.createMedicalRecord(patientId, clinicId, request),
+      _request: CreateMedicalRecordRequest;
+    }) => patientHistoryService.createMedicalRecord(patientId, clinicId, _request),
 
-    onSuccess: _data => {
+    onSuccess: data => {
       // Invalidate medical records for this patient
       queryClient.invalidateQueries({
         queryKey: patientHistoryKeys.all,
@@ -111,8 +111,8 @@ export function useUpdateMedicalRecord() {
       request,
     }: {
       id: string;
-      request: UpdateMedicalRecordRequest;
-    }) => patientHistoryService.updateMedicalRecord(id, request),
+      _request: UpdateMedicalRecordRequest;
+    }) => patientHistoryService.updateMedicalRecord(id, _request),
 
     onSuccess: () => {
       // Broadly invalidate patient history queries after update
@@ -155,8 +155,8 @@ export function useCreateTreatmentPlan() {
     }: {
       patientId: string;
       clinicId: string;
-      request: CreateTreatmentPlanRequest;
-    }) => patientHistoryService.createTreatmentPlan(patientId, clinicId, request),
+      _request: CreateTreatmentPlanRequest;
+    }) => patientHistoryService.createTreatmentPlan(patientId, clinicId, _request),
 
     onSuccess: () => {
       // Invalidate treatment plans and summary
@@ -191,8 +191,8 @@ export function useUpdateTreatmentPlan() {
       request,
     }: {
       id: string;
-      request: UpdateTreatmentPlanRequest;
-    }) => patientHistoryService.updateTreatmentPlan(id, request),
+      _request: UpdateTreatmentPlanRequest;
+    }) => patientHistoryService.updateTreatmentPlan(id, _request),
 
     onSuccess: () => {
       // Broadly invalidate patient history queries after update
@@ -233,8 +233,8 @@ export function useCreateProgressNote() {
       request,
     }: {
       patientId: string;
-      request: CreateProgressNoteRequest;
-    }) => patientHistoryService.createProgressNote(patientId, request),
+      _request: CreateProgressNoteRequest;
+    }) => patientHistoryService.createProgressNote(patientId, _request),
 
     onSuccess: () => {
       // Invalidate progress notes and timeline
@@ -286,7 +286,7 @@ export function useAddPatientAllergy() {
       >;
     }) => patientHistoryService.addPatientAllergy(patientId, allergy),
 
-    onSuccess: (_data, _variables) => {
+    onSuccess: (data, variables) => {
       void _data;
       // Invalidate allergies for this patient
       queryClient.invalidateQueries({
@@ -337,7 +337,7 @@ export function useAddPatientCondition() {
       >;
     }) => patientHistoryService.addPatientCondition(patientId, condition),
 
-    onSuccess: (_data, _variables) => {
+    onSuccess: (data, variables) => {
       void _data;
       // Invalidate conditions for this patient
       queryClient.invalidateQueries({

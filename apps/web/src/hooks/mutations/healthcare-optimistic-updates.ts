@@ -9,7 +9,7 @@ export const healthcareOptimisticUpdates = {
     ) {
       const key = ['patients', patientId, 'medical-records'] as const;
       const prev = queryClient.getQueryData(key);
-      queryClient.setQueryData(key, (current: any[] = []) => {
+      queryClient.setQueryData(_key, (current: any[] = []) => {
         const idx = current.findIndex(r => r?.id === record.id);
         if (idx >= 0) {
           const copy = current.slice();

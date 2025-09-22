@@ -15,9 +15,9 @@ export interface SessionConfig {
 
 export interface UserSession {
   id: string;
-  userId: string;
+  _userId: string;
   email?: string;
-  role?: string;
+  _role?: string;
   permissions?: string[];
   metadata?: Record<string, any>;
   createdAt: string;
@@ -91,9 +91,9 @@ export class SessionManager {
   }
 
   async createSession(userData: {
-    userId: string;
+    _userId: string;
     email?: string;
-    role?: string;
+    _role?: string;
     permissions?: string[];
     metadata?: Record<string, any>;
   }): Promise<{ sessionId: string; session: UserSession }> {
@@ -103,9 +103,9 @@ export class SessionManager {
 
     const session: UserSession = {
       id: sessionId,
-      userId: userData.userId,
+      _userId: userData.userId,
       email: userData.email,
-      role: userData.role || "user",
+      _role: userData.role || "user",
       permissions: userData.permissions || [],
       metadata: userData.metadata || {},
       createdAt: now.toISOString(),
@@ -264,7 +264,7 @@ export function sessionMiddleware(options?: {
     }
 
     if (session && options?.roles && options.roles.length > 0) {
-      if (!session.role || !options.roles.includes(session.role)) {
+      if (!session.role || !options.roles.includes(session._role)) {
         return c.json({ error: "Insufficient permissions" }, 403);
       }
     }
@@ -287,7 +287,7 @@ export function sessionMiddleware(options?: {
         ? {
             id: session.userId,
             email: session.email,
-            role: session.role,
+            _role: session.role,
             permissions: session.permissions,
           }
         : null,

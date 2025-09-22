@@ -92,7 +92,7 @@ export class AIDataService {
   /**
    * Apply domain filter to queries for RLS enforcement
    */
-  private withDomainFilter(query: any, domain: string) {
+  private withDomainFilter(_query: any, domain: string) {
     return query.eq('domain', domain);
   }
 
@@ -226,7 +226,7 @@ export class AIDataService {
     const { financial } = parameters;
 
     // Admin and certain roles can see financial data
-    if (!['admin'].includes(this.permissionContext.role)) {
+    if (!['admin'].includes(this.permissionContext._role)) {
       throw new Error('Access denied: Insufficient permissions for financial data access');
     }
 
@@ -361,7 +361,7 @@ export class AIDataService {
    */
   async getDataScope(): Promise<{
     domain: string;
-    role: string;
+    _role: string;
     permissions: string[];
     dataScope: string;
   }> {
@@ -375,7 +375,7 @@ export class AIDataService {
         permissions,
         data_scope
       `)
-      .eq('user_id', userId)
+      .eq('user_id', _userId)
       .single();
 
     if (error) {
@@ -384,7 +384,7 @@ export class AIDataService {
 
     return {
       domain: data.domain,
-      role: data.role,
+      _role: data.role,
       permissions: data.permissions,
       dataScope: data.data_scope,
     };
@@ -436,9 +436,9 @@ export class AIDataService {
    * Process natural language query through ottomator-agents
    */
   async processNaturalLanguageQuery(
-    query: string,
+    _query: string,
     sessionId: string,
-    context?: {
+    _context?: {
       patientId?: string;
       previousQueries?: string[];
     },
@@ -448,14 +448,14 @@ export class AIDataService {
 
       if (!ottomatorBridge.isAgentHealthy()) {
         // Fallback to direct database queries if ottomator agent is not available
-        return this.fallbackQueryProcessing(query, sessionId, context);
+        return this.fallbackQueryProcessing(query, sessionId, _context);
       }
 
       const ottomatorQuery: OttomatorQuery = {
         query,
         sessionId,
-        userId: this.permissionContext.userId,
-        context: {
+        _userId: this.permissionContext.userId,
+        _context: {
           patientId: context?.patientId,
           clinicId: this.permissionContext.domain,
           previousQueries: context?.previousQueries,
@@ -473,7 +473,7 @@ export class AIDataService {
       console.error('Ottomator agent query failed:', error);
 
       // Fallback to direct processing
-      return this.fallbackQueryProcessing(query, sessionId, context);
+      return this.fallbackQueryProcessing(query, sessionId, _context);
     }
   }
 
@@ -481,9 +481,9 @@ export class AIDataService {
    * Fallback query processing when ottomator-agents is not available
    */
   private async fallbackQueryProcessing(
-    query: string,
+    _query: string,
     sessionId: string,
-    context?: {
+    _context?: {
       patientId?: string;
       previousQueries?: string[];
     },
@@ -573,7 +573,7 @@ export class AIDataService {
   /**
    * Simple intent detection for fallback processing
    */
-  private detectQueryIntent(query: string): QueryIntent {
+  private detectQueryIntent(_query: string): QueryIntent {
     const lowerQuery = query.toLowerCase();
 
     if (lowerQuery.includes('cliente') || lowerQuery.includes('paciente')) {

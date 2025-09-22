@@ -138,7 +138,7 @@ export class TelemedicineServer {
     this.app.use(express.urlencoded({ extended: true }));
 
     // Request logging for compliance
-    this.app.use((req, _res, next) => {
+    this.app.use((req,res,next) => {
       const sessionId = req.headers["x-session-id"] as string;
 
       if (sessionId) {
@@ -170,7 +170,7 @@ export class TelemedicineServer {
    */
   private setupRoutes(): void {
     // Health check
-    this.app.get("/health", (_req, res) => {
+    this.app.get("/health",(req, res) => {
       res.json({
         status: "healthy",
         timestamp: new Date().toISOString(),
@@ -818,7 +818,7 @@ export class TelemedicineServer {
     res: express.Response,
   ): Promise<void> {
     try {
-      const { sessionId: _sessionId } = req.params;
+      const { sessionId: sessionId } = req.params;
 
       // This would implement secure recording download
       res.status(501).json({ error: "Recording download not implemented" });
@@ -871,7 +871,7 @@ export class TelemedicineServer {
         error: any,
         _req: express.Request,
         res: express.Response,
-        _next: express.NextFunction,
+        next: express.NextFunction,
       ) => {
         console.error("Global error handler:", error);
 

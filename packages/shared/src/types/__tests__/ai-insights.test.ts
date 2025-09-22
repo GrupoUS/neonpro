@@ -145,7 +145,7 @@ describe("AI Insights Model (T035)", () => {
 
   it("should support Brazilian healthcare context", () => {
     const { BrazilianHealthcareContext } = require("../ai-insights");
-    const context: BrazilianHealthcareContext = {
+    const _context: BrazilianHealthcareContext = {
       anvisa: {
         medicationCodes: ["123456789"],
         deviceCodes: ["987654321"],

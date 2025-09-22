@@ -11,8 +11,6 @@
  */
 
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { z } from 'zod';
-
 // Test helper for API calls
 async function api(path: string, init?: RequestInit) {
   const { default: app } = await import('../../src/app');

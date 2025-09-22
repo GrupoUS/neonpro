@@ -13,7 +13,7 @@ import './healthcare-compliance-suite';
 import './accessibility-compliance-suite';
 import './performance-benchmark-suite';
 
-describe('Calendar Test Runner - Comprehensive Validation', () => {
+describe(('Calendar Test Runner - Comprehensive Validation', () => {
   beforeAll(() => {
     console.log('🚀 Starting Calendar Test Suite Execution');
     console.log('📋 Test Suites:');
@@ -32,22 +32,22 @@ describe('Calendar Test Runner - Comprehensive Validation', () => {
     console.log('   - 90%+ Performance Benchmarks Achieved');
   });
 
-  it('should validate comprehensive test coverage', () => {
+  it(('should validate comprehensive test coverage', () => {
     // Meta-test to ensure all test suites are properly integrated
     expect(true).toBe(true);
   });
 
-  it('should validate healthcare compliance integration', () => {
+  it(('should validate healthcare compliance integration', () => {
     // Validate that healthcare compliance is properly integrated
     expect(true).toBe(true);
   });
 
-  it('should validate accessibility compliance integration', () => {
+  it(('should validate accessibility compliance integration', () => {
     // Validate that accessibility compliance is properly integrated
     expect(true).toBe(true);
   });
 
-  it('should validate performance optimization integration', () => {
+  it(('should validate performance optimization integration', () => {
     // Validate that performance optimization is properly integrated
     expect(true).toBe(true);
   });

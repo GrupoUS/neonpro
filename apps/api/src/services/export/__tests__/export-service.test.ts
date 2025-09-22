@@ -3,7 +3,7 @@ import { ExportService } from '../export-service';
 import { ExportLGPDCompliance } from '../lgpd-compliance';
 import { ExportFilter, ExportPagination, LGPDComplianceOptions } from '../types';
 
-describe('ExportService', () => {
+describe(_'ExportService'), () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
@@ -13,8 +13,8 @@ describe('ExportService', () => {
     vi.useRealTimers();
   });
 
-  describe('createExportJob', () => {
-    it('should create an export job with pending status', async () => {
+  describe(_'createExportJob'), () => {
+    it(_'should create an export job with pending status',async () => {
       const userId = 'user123';
       const format = 'csv';
       const filters: ExportFilter = { search: 'test' };
@@ -53,7 +53,7 @@ describe('ExportService', () => {
       expect(job.updatedAt).toBeInstanceOf(Date);
     });
 
-    it('should process export job asynchronously', async () => {
+    it(_'should process export job asynchronously',async () => {
       const userId = 'user123';
       const format = 'csv';
       const filters: ExportFilter = {};
@@ -87,8 +87,8 @@ describe('ExportService', () => {
     });
   });
 
-  describe('getExportJob', () => {
-    it('should return existing job', async () => {
+  describe(_'getExportJob'), () => {
+    it(_'should return existing job',async () => {
       const userId = 'user123';
       const format = 'csv';
       const filters: ExportFilter = {};
@@ -113,14 +113,14 @@ describe('ExportService', () => {
       expect(retrievedJob).toEqual(job);
     });
 
-    it('should return null for non-existent job', async () => {
+    it(_'should return null for non-existent job',async () => {
       const job = await ExportService.getExportJob('non-existent-id');
       expect(job).toBeNull();
     });
   });
 
-  describe('cancelExportJob', () => {
-    it('should cancel processing job', async () => {
+  describe(_'cancelExportJob'), () => {
+    it(_'should cancel processing job',async () => {
       const userId = 'user123';
       const format = 'csv';
       const filters: ExportFilter = {};
@@ -141,14 +141,14 @@ describe('ExportService', () => {
         lgpdOptions,
       );
 
-      const success = await ExportService.cancelExportJob(job.id, userId);
+      const success = await ExportService.cancelExportJob(job.id, _userId);
       expect(success).toBe(true);
 
       const cancelledJob = await ExportService.getExportJob(job.id);
       expect(cancelledJob?.status).toBe('cancelled');
     });
 
-    it('should not cancel job from different user', async () => {
+    it(_'should not cancel job from different user',async () => {
       const userId = 'user123';
       const format = 'csv';
       const filters: ExportFilter = {};
@@ -177,8 +177,8 @@ describe('ExportService', () => {
     });
   });
 
-  describe('getExportFormats', () => {
-    it('should return available export formats', async () => {
+  describe(_'getExportFormats'), () => {
+    it(_'should return available export formats',async () => {
       const formats = await ExportService.getExportFormats();
 
       expect(formats).toEqual([
@@ -194,8 +194,8 @@ describe('ExportService', () => {
     });
   });
 
-  describe('getExportFields', () => {
-    it('should return available export fields', async () => {
+  describe(_'getExportFields'), () => {
+    it(_'should return available export fields',async () => {
       const fields = await ExportService.getExportFields();
 
       expect(fields).toHaveLength(15);
@@ -209,8 +209,8 @@ describe('ExportService', () => {
     });
   });
 
-  describe('getExportHistory', () => {
-    it('should return user export history', async () => {
+  describe(_'getExportHistory'), () => {
+    it(_'should return user export history',async () => {
       const userId = 'user123';
 
       await ExportService.createExportJob(
@@ -244,12 +244,12 @@ describe('ExportService', () => {
       const history = await ExportService.getExportHistory(userId, 10);
 
       expect(history).toHaveLength(2);
-      expect(history[0].userId).toBe(userId);
+      expect(history[0]._userId).toBe(userId);
       expect(history[0].format).toBe('xlsx');
       expect(history[1].format).toBe('csv');
     });
 
-    it('should respect limit parameter', async () => {
+    it(_'should respect limit parameter',async () => {
       const userId = 'user123';
 
       for (let i = 0; i < 5; i++) {
@@ -273,8 +273,8 @@ describe('ExportService', () => {
     });
   });
 
-  describe('getExportMetrics', () => {
-    it('should return metrics for completed job', async () => {
+  describe(_'getExportMetrics'), () => {
+    it(_'should return metrics for completed job',async () => {
       const userId = 'user123';
       const format = 'csv';
       const filters: ExportFilter = {};
@@ -311,14 +311,14 @@ describe('ExportService', () => {
       expect(metrics?.processingTime).toBeGreaterThanOrEqual(0);
     });
 
-    it('should return null for non-existent job', async () => {
+    it(_'should return null for non-existent job',async () => {
       const metrics = await ExportService.getExportMetrics('non-existent-id');
       expect(metrics).toBeNull();
     });
   });
 
-  describe('cleanupExpiredJobs', () => {
-    it('should remove expired jobs', async () => {
+  describe(_'cleanupExpiredJobs'), () => {
+    it(_'should remove expired jobs',async () => {
       const userId = 'user123';
       const format = 'csv';
       const filters: ExportFilter = {};

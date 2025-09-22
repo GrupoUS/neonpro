@@ -29,8 +29,8 @@ const mockExecuteRequest = {
       validated: true,
     },
   },
-  context: {
-    userId: 'user-123',
+  _context: {
+    _userId: 'user-123',
     sessionId: 'session-456',
     correlationId: 'correlation-789',
   },
@@ -40,7 +40,7 @@ const invalidExecuteRequest = {
   confirmId: 'invalid-confirm',
   executionToken: 'invalid-token',
   operation: {},
-  context: {},
+  _context: {},
 };
 
 describe('AI CRUD Execute Phase - Contract Tests', () => {
@@ -278,7 +278,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               timestamp: new Date().toISOString(),
               operation: 'CREATE',
               entity: 'patients',
-              userId: body.context.userId,
+              _userId: body.context.userId,
               correlationId: body.context?.correlationId || 'correlation-789',
               success: true,
               duration: 156,
@@ -378,7 +378,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
             timestamp: new Date().toISOString(),
             operation: body.operation.action.toUpperCase(),
             entity: body.operation.entity,
-            userId: body.context.userId,
+            _userId: body.context.userId,
             correlationId: body.context?.correlationId || 'correlation-789',
             success: true,
             flowContext: {
@@ -662,7 +662,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
       // RED: Test expects correlation ID maintenance
       const requestWithCorrelation = {
         ...mockExecuteRequest,
-        context: {
+        _context: {
           ...mockExecuteRequest.context,
           correlationId: 'test-correlation-123',
         },
@@ -872,7 +872,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
       // RED: Test expects flow context maintenance
       const contextAwareRequest = {
         ...mockExecuteRequest,
-        context: {
+        _context: {
           ...mockExecuteRequest.context,
           flowContext: {
             intentTimestamp: '2025-09-20T10:00:00Z',

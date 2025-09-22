@@ -26,8 +26,8 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
   const [chatState, setChatState] = useState<ChatState>({
     messages: [],
     isLoading: false,
-    context: {
-      userId: user?.id || '',
+    _context: {
+      _userId: user?.id || '',
       userRole: user?.role || '',
       domain: initialContext?.domain,
     },
@@ -53,7 +53,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
         // Add assistant response to chat
         const assistantMessage: ChatMessage = {
           id: `msg_${Date.now()}_assistant`,
-          role: 'assistant',
+          _role: 'assistant',
           content: lastMessage.content || lastMessage.message || '',
           timestamp: lastMessage.timestamp || new Date().toISOString(),
           data: lastMessage.data,
@@ -75,7 +75,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
       case 'error':
         const errorMessage: ChatMessage = {
           id: `msg_${Date.now()}_error`,
-          role: 'assistant',
+          _role: 'assistant',
           content: lastMessage.message || 'Ocorreu um erro ao processar sua solicitação',
           timestamp: lastMessage.timestamp || new Date().toISOString(),
         };
@@ -101,7 +101,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
             ...prev.messages,
             {
               id: `msg_${Date.now()}_system`,
-              role: 'system',
+              _role: 'system',
               content: 'Conectado ao assistente NeonPro',
               timestamp: new Date().toISOString(),
             },
@@ -113,7 +113,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Handle message submission
   const handleSubmit = useCallback(
-    async (_message: any) => {
+    async (message: any) => {
       if (!user) {
         toast({
           title: 'Erro de autenticação',
@@ -135,7 +135,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
       // Add user message to chat
       const userMessage: ChatMessage = {
         id: `msg_${Date.now()}_user`,
-        role: 'user',
+        _role: 'user',
         content: message,
         timestamp: new Date().toISOString(),
       };
@@ -149,17 +149,17 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
       try {
         // Send query via WebSocket
         await sendQuery(message, {
-          userId: user.id,
+          _userId: user.id,
           userRole: user.role,
           domain: initialContext?.domain,
           professionalId: initialContext?.professionalId,
         });
-      } catch {
-        console.error('WebSocket error:', _error);
+      } catch (error) {
+        console.error('WebSocket error:', error);
 
         const errorMessage: ChatMessage = {
           id: `msg_${Date.now()}_error`,
-          role: 'assistant',
+          _role: 'assistant',
           content: 'Desculpe, ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente.',
           timestamp: new Date().toISOString(),
         };
@@ -182,7 +182,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Handle agent actions
   const handleActions = useCallback((actions: AgentAction[]) => {
-    actions.forEach(_action => {
+    actions.forEach(action => {
       switch (action.type) {
         case 'view_details':
           if (action.payload?.clientId) {
@@ -200,7 +200,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
           }
           break;
         case 'export_data':
-          handleExportData(action.payload);
+          handleExportData(action._payload);
           break;
         case 'refresh':
           // Refresh current view
@@ -212,7 +212,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Handle data export
   const handleExportData = useCallback(
-    async (_payload: any) => {
+    async (payload: any) => {
       try {
         // Send export action via WebSocket
         await sendAction('export_data', payload);
@@ -234,7 +234,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Custom message renderer
   const renderMessage = useCallback(
-    (_message: any) => {
+    (message: any) => {
       if (message.role === 'system') {
         return (
           <div key={message.id} className='text-center py-2'>

@@ -6,7 +6,6 @@
 
 import { zValidator } from '@hono/zod-validator';
 import { Context, Hono, Next } from 'hono';
-import { z } from 'zod';
 import { AIChatService } from '../../../services/ai-chat-service.js';
 import { ComprehensiveAuditService } from '../../../services/audit-service.js';
 import { LGPDService } from '../../../services/lgpd-service.js';
@@ -32,7 +31,7 @@ const mockAuthMiddleware = (c: Context, next: Next) => {
       401,
     );
   }
-  c.set('user', { id: 'user-123', role: 'healthcare_professional' });
+  c.set('user', { id: 'user-123', _role: 'healthcare_professional' });
   return next();
 };
 
@@ -90,7 +89,7 @@ const v1AnalyzeRequestSchema = z
         allergies: z.string().optional(),
         complexCase: z.boolean().optional(),
         multipleSymptoms: z.array(z.string()).optional(),
-        request: z.string().optional(),
+        _request: z.string().optional(),
         unethicalPurpose: z.string().optional(),
         patientAge: z.number().optional(),
         requestType: z.string().optional(),
@@ -270,7 +269,7 @@ const convertV1ToV2Request = (v1Request: any) => {
     data: {
       patientId: v1Request.patientId,
       text: JSON.stringify(v1Request.medicalData || {}),
-      context: JSON.stringify({
+      _context: JSON.stringify({
         brazilianContext: v1Request.brazilianContext,
         compliance: v1Request.compliance,
         ethicalConsiderations: v1Request.ethicalConsiderations,
@@ -372,7 +371,7 @@ app.post(
 
       // LGPD validation
       const lgpdValidation = await currentServices.lgpdService.validateDataAccess({
-        userId: user.id,
+        _userId: user.id,
         dataType: 'ai_data_analysis',
         purpose: 'healthcare_analysis',
         legalBasis: 'legitimate_interest',
@@ -393,7 +392,7 @@ app.post(
 
       // Prepare analysis request for V2 service
       const analysisRequest = {
-        userId: user.id,
+        _userId: user.id,
         analysisType: v2RequestData.analysisType,
         data: v2RequestData.data,
         options: v2RequestData.options,
@@ -442,7 +441,7 @@ app.post(
 
       // Log activity for audit trail
       await currentServices.auditService.logActivity({
-        userId: user.id,
+        _userId: user.id,
         action: 'ai_data_analysis_v1',
         resourceType: 'ai_analysis',
         resourceId: analysisResponse.data.analysisId,
@@ -494,7 +493,7 @@ app.post(
       // Log error for audit
       const currentServices = getServices();
       await currentServices.auditService.logActivity({
-        userId: user.id,
+        _userId: user.id,
         action: 'ai_analysis_error_v1',
         resourceType: 'ai_analysis',
         resourceId: 'error',

@@ -9,7 +9,7 @@ import React from 'react';
 import { vi } from 'vitest';
 
 // Mock auth to appear authenticated in tests
-vi.mock('@/hooks/useAuth', () => ({
+vi.mock(('@/hooks/useAuth', () => ({
   useAuth: () => ({
     user: { id: 'test-user', email: 'test@example.com' },
     session: { user: { id: 'test-user', email: 'test@example.com' } },
@@ -22,7 +22,7 @@ vi.mock('@/hooks/useAuth', () => ({
 }));
 
 // Mock supabase queries used by the dashboard to return empty results quickly
-vi.mock('@/integrations/supabase/client', () => {
+vi.mock(('@/integrations/supabase/client', () => {
   const makeChain = (_result: any) => {
     const p: any = Promise.resolve(result);
     p.select = () => p;
@@ -68,8 +68,8 @@ function Wrapper() {
   );
 }
 
-describe('Dashboard route', () => {
-  it('renders cards and metrics placeholders without crashing', async () => {
+describe(('Dashboard route', () => {
+  it(_'renders cards and metrics placeholders without crashing',async () => {
     render(<Wrapper />);
 
     // Headings (wait for auth + data to settle)

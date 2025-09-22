@@ -34,7 +34,7 @@ export interface SecurityTest {
   description: string;
   severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   enabled: boolean;
-  testFunction: (context: SecurityTestContext) => Promise<SecurityTestResult>;
+  testFunction: (_context: SecurityTestContext) => Promise<SecurityTestResult>;
 }
 
 export interface SecurityTestContext {
@@ -42,7 +42,7 @@ export interface SecurityTestContext {
   baseUrl: string;
   testUser: {
     id: string;
-    role: string;
+    _role: string;
     clinicId: string;
     token?: string;
   };
@@ -283,7 +283,7 @@ export class HealthcareSecurityTestFramework {
 
   // Run all security tests
   async runAllTests(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult[]> {
     this.results = [];
 
@@ -323,7 +323,7 @@ export class HealthcareSecurityTestFramework {
   // Run single security test
   private async runSingleTest(
     test: SecurityTest,
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     const startTime = Date.now();
 
@@ -333,8 +333,7 @@ export class HealthcareSecurityTestFramework {
       const result = await Promise.race([
         test.testFunction(context),
         new Promise<SecurityTestResult>((_, reject) =>
-          setTimeout(
-            () => reject(new Error('Test timeout')),
+          setTimeout(() => reject(new Error('Test timeout')),
             this.config.timeout,
           )
         ),
@@ -398,7 +397,7 @@ export class HealthcareSecurityTestFramework {
 
   // Test implementations
   private async testHSTSHeader(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     const issues: SecurityIssue[] = [];
     const recommendations: string[] = [];
@@ -471,7 +470,7 @@ export class HealthcareSecurityTestFramework {
   }
 
   private async testCSPHeader(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     const issues: SecurityIssue[] = [];
     const recommendations: string[] = [];
@@ -535,7 +534,7 @@ export class HealthcareSecurityTestFramework {
   }
 
   private async testXSSHeaders(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     const issues: SecurityIssue[] = [];
     const recommendations: string[] = [];
@@ -792,7 +791,7 @@ export class HealthcareSecurityTestFramework {
         totalTests: this.results.length,
         passedTests: this.results.filter(r => r.passed).length,
         failedTests: this.results.filter(r => !r.passed).length,
-        averageScore: this.results.reduce((sum, r) => sum + r.score, 0)
+        averageScore: this.results.reduce((sum,_r) => sum + r.score, 0)
           / this.results.length,
         criticalIssues: this.results
           .flatMap(r => r.issues)
@@ -817,8 +816,7 @@ export class HealthcareSecurityTestFramework {
   // Get security score
   getSecurityScore(): number {
     if (this.results.length === 0) return 0;
-    return (
-      this.results.reduce((sum, r) => sum + r.score, 0) / this.results.length
+    return (this.results.reduce((sum, r) => sum + r.score, 0) / this.results.length
     );
   }
 }

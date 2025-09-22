@@ -5,7 +5,7 @@ import React from 'react';
 import { vi } from 'vitest';
 import NotificationCard from '../NotificationCard';
 
-vi.mock('@/integrations/supabase/client', () => {
+vi.mock(('@/integrations/supabase/client', () => {
   // Build a tiny chainable mock for supabase.from().select().order().limit()
   const mkChain = (rows: any[]) => ({
     select: vi.fn().mockReturnValue({
@@ -60,8 +60,8 @@ vi.mock('@tanstack/react-router', async importOriginal => {
   };
 });
 
-describe('NotificationCard', () => {
-  test('renders aggregated notifications and navigates on click', async () => {
+describe(('NotificationCard', () => {
+  test(_'renders aggregated notifications and navigates on click',async () => {
     const qc = new QueryClient();
     render(
       <QueryClientProvider client={qc}>

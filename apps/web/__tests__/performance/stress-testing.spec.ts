@@ -105,7 +105,7 @@ class StressTester {
             });
 
             this.browsers.push(browser);
-            this.contexts.push(context);
+            this.contexts.push(_context);
             this.pages.push(page);
 
             // Login immediately
@@ -517,7 +517,7 @@ test.describe('Patient Dashboard Stress Testing', () => {
           await stressTester.cleanup();
           stressTester = new StressTester();
         }
-      } catch (error) {
+      } catch (_error) {
         console.error(`Failed at ${userCount} users: ${error.message}`);
         break;
       }

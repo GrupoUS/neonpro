@@ -111,7 +111,7 @@ class ProfessionalServicesService {
 
     if (error) {
       throw new Error(
-        `Failed to fetch professionals by service: ${error.message}`,
+        `Failed to fetch professionals by _service: ${error.message}`,
       );
     }
 
@@ -122,7 +122,7 @@ class ProfessionalServicesService {
    * Create a new professional-service relationship
    */
   async createProfessionalService(
-    request: CreateProfessionalServiceRequest,
+    _request: CreateProfessionalServiceRequest,
   ): Promise<ProfessionalService> {
     const { data, error } = await (supabase as any)
       .from('professional_services' as any)
@@ -140,7 +140,7 @@ class ProfessionalServicesService {
 
     if (error) {
       throw new Error(
-        `Failed to create professional service: ${error.message}`,
+        `Failed to create professional _service: ${error.message}`,
       );
     }
 
@@ -151,7 +151,7 @@ class ProfessionalServicesService {
    * Update a professional-service relationship
    */
   async updateProfessionalService(
-    request: UpdateProfessionalServiceRequest,
+    _request: UpdateProfessionalServiceRequest,
   ): Promise<ProfessionalService> {
     const updateData: Partial<ProfessionalService> = {};
 
@@ -178,7 +178,7 @@ class ProfessionalServicesService {
 
     if (error) {
       throw new Error(
-        `Failed to update professional service: ${error.message}`,
+        `Failed to update professional _service: ${error.message}`,
       );
     }
 
@@ -196,7 +196,7 @@ class ProfessionalServicesService {
 
     if (error) {
       throw new Error(
-        `Failed to delete professional service: ${error.message}`,
+        `Failed to delete professional _service: ${error.message}`,
       );
     }
   }
@@ -205,7 +205,7 @@ class ProfessionalServicesService {
    * Bulk assign services to a professional
    */
   async bulkAssignServices(
-    request: BulkAssignServicesRequest,
+    _request: BulkAssignServicesRequest,
   ): Promise<number> {
     const { data, error } = await (supabase as any).rpc(
       'bulk_assign_services_to_professional' as any,
@@ -228,7 +228,7 @@ class ProfessionalServicesService {
    * Set primary professional for a service
    */
   async setPrimaryProfessional(
-    request: SetPrimaryProfessionalRequest,
+    _request: SetPrimaryProfessionalRequest,
   ): Promise<boolean> {
     const { data, error } = await (supabase as any).rpc(
       'set_primary_professional_for_service' as any,
@@ -263,13 +263,10 @@ class ProfessionalServicesService {
     ).length;
 
     // Calculate proficiency distribution
-    const proficiencyDistribution = professionalServices.reduce(
-      (acc, ps) => {
-        acc[ps.proficiency_level] = (acc[ps.proficiency_level] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
+    const proficiencyDistribution = professionalServices.reduce((acc, ps) => {
+      acc[ps.proficiency_level] = (acc[ps.proficiency_level] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
     // Calculate average hourly rate
     const ratesWithValues = professionalServices

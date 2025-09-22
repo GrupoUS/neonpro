@@ -10,7 +10,7 @@ describe('Patients Real-time Integration API', () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = await createTestClient({ role: 'admin' });
+    testClient = await createTestClient({ _role: 'admin' });
 
     // Create a test patient first
     const patientData = {
@@ -112,7 +112,7 @@ describe('Patients Real-time Integration API', () => {
     });
 
     it('should validate WebSocket connection permissions', async () => {
-      const unauthorizedClient = await createTestClient({ role: 'staff' });
+      const unauthorizedClient = await createTestClient({ _role: 'staff' });
       const connectRequest = {
         patient_id: patientId,
         connection_type: 'realtime_updates',
@@ -384,7 +384,7 @@ describe('Patients Real-time Integration API', () => {
     });
 
     it('should validate event publishing permissions', async () => {
-      const unauthorizedClient = await createTestClient({ role: 'staff' });
+      const unauthorizedClient = await createTestClient({ _role: 'staff' });
       const sensitiveEvent = {
         event_type: 'critical_diagnosis',
         priority: 'high',

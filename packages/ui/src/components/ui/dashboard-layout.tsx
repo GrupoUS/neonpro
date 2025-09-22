@@ -18,7 +18,7 @@ export function DashboardCard({
   children,
   className = "",
   enableTilt = true,
-  cardId = `card-${Math.random()}`,
+  cardId = `card-${Math.random()}`
 }: DashboardCardProps) {
   const { updateCardPosition, getCardPosition, gridConfig } =
     usePersistedDashboardLayout();
@@ -58,24 +58,23 @@ export function DashboardCard({
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
       animate={{
         x: position.x,
-        y: position.y,
-      }}
+        y: position.y}}
       onDragStart={() => setIsDragging(true)}
       onDragEnd={handleDragEnd}
       whileDrag={{
         scale: 1.05,
         rotate: 2,
         zIndex: 10,
-        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)",
+        boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)"
       }}
       transition={{
         type: "spring",
         stiffness: 500,
-        damping: 30,
+        damping: 30
       }}
       className={`cursor-grab active:cursor-grabbing ${className} ${isDragging ? "z-50" : "z-10"}`}
       style={{
-        position: "absolute",
+        position: "absolute"
       }}
     >
       {/* Snap grid visual feedback (only during drag) */}
@@ -87,7 +86,7 @@ export function DashboardCard({
               linear-gradient(to right, #ac9469 1px, transparent 1px),
               linear-gradient(to bottom, #ac9469 1px, transparent 1px)
             `,
-            backgroundSize: `${gridConfig.snapSize}px ${gridConfig.snapSize}px`,
+            backgroundSize: `${gridConfig.snapSize}px ${gridConfig.snapSize}px`
           }}
         />
       )}
@@ -107,14 +106,14 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({
   children,
-  className = "",
+  className = ""
 }: DashboardLayoutProps) {
   const { resetLayout, updateContainerSize, autoDistributeCards, gridConfig } =
     usePersistedDashboardLayout();
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Extract card IDs from children
-  const cardIds = React.Children.toArray(children).map((child, index) => {
+  const cardIds = React.Children.toArray(children).map((child,index) => {
     if (React.isValidElement(child)) {
       return (
         child.key?.toString() ||
@@ -171,7 +170,7 @@ export function DashboardLayout({
 
       {/* Dashboard Content - Cards with absolute positioning */}
       <div className="relative w-full h-full pt-14">
-        {React.Children.map(children, (child, index) => {
+        {React.Children.map(children,(child,index) => {
           if (React.isValidElement(child)) {
             // Generate consistent ID for each card
             const cardId =

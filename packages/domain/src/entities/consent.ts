@@ -34,7 +34,7 @@ export interface ConsentRequest {
   purpose: string;
   dataTypes: string[];
   expiration?: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown> | undefined;
   requestorId?: string;
   requestorRole?: string;
 }
@@ -50,13 +50,13 @@ export interface ConsentRecord {
   purpose: string;
   dataTypes: string[];
   grantedAt: string;
-  expiresAt?: string;
+  expiresAt?: string | undefined;
   revokedAt?: string;
   revokedBy?: string;
   revocationReason?: string;
   legalBasis: LegalBasis;
   consentVersion: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown> | undefined;
   auditTrail: ConsentAuditEvent[];
 }
 
@@ -70,7 +70,7 @@ export interface ConsentAuditEvent {
   actorId: string;
   actorRole?: string;
   patientIdHash: string;
-  details?: Record<string, unknown>;
+  details?: Record<string, unknown> | undefined;
 }
 
 /**
@@ -123,19 +123,19 @@ export class ConsentValidator {
   /**
    * Validate consent request
    */
-  static validateRequest(request: ConsentRequest): string[] {
+  static validateRequest(_request: ConsentRequest): string[] {
     const errors: string[] = [];
     
-    if (!request.patientId) errors.push('Patient ID is required');
-    if (!request.consentType) errors.push('Consent type is required');
-    if (!request.purpose) errors.push('Purpose is required');
-    if (!request.dataTypes || request.dataTypes.length === 0) {
+    if (!_request.patientId) errors.push('Patient ID is required');
+    if (!_request.consentType) errors.push('Consent type is required');
+    if (!_request.purpose) errors.push('Purpose is required');
+    if (!_request.dataTypes || _request.dataTypes.length === 0) {
       errors.push('At least one data type must be specified');
     }
-    
+
     // Validate expiration date is in the future
-    if (request.expiration) {
-      const expirationDate = new Date(request.expiration);
+    if (_request.expiration) {
+      const expirationDate = new Date(_request.expiration);
       if (expirationDate <= new Date()) {
         errors.push('Expiration date must be in the future');
       }
@@ -197,32 +197,32 @@ export class ConsentFactory {
   /**
    * Create a new consent record from request
    */
-  static createFromRequest(request: ConsentRequest, grantedBy: string): ConsentRecord {
+  static createFromRequest(_request: ConsentRequest, grantedBy: string): ConsentRecord {
     const now = new Date().toISOString();
     
     return {
       id: `consent_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      patientId: request.patientId,
-      consentType: request.consentType,
+      patientId: _request.patientId,
+      consentType: _request.consentType,
       status: ConsentStatus.ACTIVE,
-      purpose: request.purpose,
-      dataTypes: request.dataTypes,
+      purpose: _request.purpose,
+      dataTypes: _request.dataTypes,
       grantedAt: now,
-      expiresAt: request.expiration,
+      expiresAt: _request.expiration,
       legalBasis: LegalBasis.CONSENT,
       consentVersion: "1.0.0",
-      metadata: request.metadata,
+      metadata: _request.metadata,
       auditTrail: [
         {
           id: `audit_${Date.now()}`,
           timestamp: now,
           action: ConsentAction.CREATED,
           actorId: grantedBy,
-          patientIdHash: this.hashPatientId(request.patientId),
+          patientIdHash: this.hashPatientId(_request.patientId),
           details: {
-            consentType: request.consentType,
-            purpose: request.purpose,
-            dataTypesCount: request.dataTypes.length,
+            consentType: _request.consentType,
+            purpose: _request.purpose,
+            dataTypesCount: _request.dataTypes.length,
           }
         }
       ]
@@ -254,7 +254,7 @@ export class ConsentFactory {
   private static hashPatientId(patientId: string): string {
     // Simple hash for demo - in production use proper crypto hash
     const hash = Array.from(patientId)
-      .reduce((acc, char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0)
+      .reduce((acc,_char) => ((acc << 5) - acc + char.charCodeAt(0)) | 0, 0)
       .toString(16);
     return `patient_${hash.slice(-8)}`;
   }

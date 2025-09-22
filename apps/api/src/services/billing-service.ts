@@ -8,8 +8,6 @@
  */
 
 import { randomUUID } from 'crypto';
-import { z } from 'zod';
-
 // Brazilian tax and billing enums
 export enum BillingType {
   SUS = 'sus',
@@ -326,8 +324,7 @@ export class BillingService {
       }
 
       // Calculate totals
-      const subtotal = billingData.items.reduce(
-        (sum, item) => sum + item.totalValue,
+      const subtotal = billingData.items.reduce((sum,_item) => sum + item.totalValue,
         0,
       );
       const discounts = billingData.discounts || 0;
@@ -482,7 +479,7 @@ export class BillingService {
 
       // Sorting
       if (options.sortBy) {
-        allBillings.sort((a, b) => {
+        allBillings.sort((a,_b) => {
           const aValue = (a as any)[options.sortBy!];
           const bValue = (b as any)[options.sortBy!];
 
@@ -526,7 +523,7 @@ export class BillingService {
    * Process payment
    */
   async processPayment(
-    request: PaymentProcessingRequest,
+    _request: PaymentProcessingRequest,
   ): Promise<ServiceResponse<{ paymentId: string; status: PaymentStatus }>> {
     try {
       const billing = this.billings.get(request.billingId);
@@ -654,32 +651,31 @@ export class BillingService {
       // Calculate summary
       const totalRevenue = billings
         .filter(b => b.paymentStatus === PaymentStatus.PAID)
-        .reduce((sum, b) => sum + b.total, 0);
+        .reduce((sum,_b) => sum + b.total, 0);
 
       const totalPending = billings
         .filter(b => b.paymentStatus === PaymentStatus.PENDING)
-        .reduce((sum, b) => sum + b.total, 0);
+        .reduce((sum,_b) => sum + b.total, 0);
 
       const totalPaid = totalRevenue;
 
       const totalOverdue = billings
         .filter(b => b.paymentStatus === PaymentStatus.OVERDUE)
-        .reduce((sum, b) => sum + b.total, 0);
+        .reduce((sum,_b) => sum + b.total, 0);
 
       const averageTicket = billings.length > 0
-        ? billings.reduce((sum, b) => sum + b.total, 0) / billings.length
+        ? billings.reduce((sum,_b) => sum + b.total, 0) / billings.length
         : 0;
 
       // Revenue by type
-      const revenueByType = Object.values(BillingType).reduce(
-        (acc, type) => {
+      const revenueByType = Object.values(BillingType).reduce((acc,_type) => {
           acc[type] = billings
             .filter(
               b =>
                 b.billingType === type
                 && b.paymentStatus === PaymentStatus.PAID,
             )
-            .reduce((sum, b) => sum + b.total, 0);
+            .reduce((sum,_b) => sum + b.total, 0);
           return acc;
         },
         {} as Record<BillingType, number>,
@@ -746,8 +742,8 @@ export class BillingService {
       });
 
     return Object.entries(monthRevenue)
-      .map(([month, revenue]) => ({ month, revenue }))
-      .sort((a, b) => a.month.localeCompare(b.month));
+      .map(([month,_revenue]) => ({ month, revenue }))
+      .sort((a,_b) => a.month.localeCompare(b.month));
   }
 
   /**
@@ -772,8 +768,8 @@ export class BillingService {
       });
 
     return Object.entries(procedureStats)
-      .map(([procedure, stats]) => ({ procedure, ...stats }))
-      .sort((a, b) => b.revenue - a.revenue)
+      .map(([procedure,_stats]) => ({ procedure, ...stats }))
+      .sort((a,_b) => b.revenue - a.revenue)
       .slice(0, 10);
   }
 

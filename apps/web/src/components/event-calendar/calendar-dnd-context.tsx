@@ -299,7 +299,7 @@ export function CalendarDndProvider({
           end: newEnd,
         });
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in drag end handler:', error);
     } finally {
       // Always reset state

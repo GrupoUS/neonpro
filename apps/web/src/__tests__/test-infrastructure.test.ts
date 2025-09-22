@@ -2,22 +2,22 @@ import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { describe, expect, it } from 'vitest';
 
-describe('TDD: Test Infrastructure Issues - RED Phase', () => {
-  describe('Test Setup Validation', () => {
-    it('should validate test setup files exist and are properly configured', () => {
+describe('TDD: Test Infrastructure Issues - RED Phase',() {
+  describe(('Test Setup Validation', () => {
+    it(('should validate test setup files exist and are properly configured', () => {
       const setupFiles = [
-        'src/__tests__/setup.ts',
+        'src/__tests_/setup.ts',
         'tests/setup.ts',
       ];
 
-      setupFiles.forEach(_setupFile => {
+      setupFiles.forEach(setupFile => {
         const fullPath = join(process.cwd(), setupFile);
         expect(existsSync(fullPath)).toBe(true);
       });
     });
 
-    it('should validate test setup includes proper mocking', () => {
-      const setupPath = join(process.cwd(), 'src/__tests__/setup.ts');
+    it(('should validate test setup includes proper mocking', () => {
+      const setupPath = join(process.cwd(), 'src/__tests_/setup.ts');
       const content = readFileSync(setupPath, 'utf8');
 
       const hasMatchMediaMock = content.includes('matchMedia')
@@ -31,7 +31,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       expect(hasMatchMediaMock && hasNavigationMock && hasJestDomSetup).toBe(true);
     });
 
-    it('should validate test setup includes proper globals', () => {
+    it(('should validate test setup includes proper globals', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
@@ -42,7 +42,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       expect(hasGlobalsConfig && hasEnvironmentConfig).toBe(true);
     });
 
-    it('should validate test setup includes proper polyfills', () => {
+    it(('should validate test setup includes proper polyfills', () => {
       const testSetupPath = join(process.cwd(), 'tests/setup.ts');
       const content = readFileSync(testSetupPath, 'utf8');
 
@@ -59,8 +59,8 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
     });
   });
 
-  describe('Test Configuration Validation', () => {
-    it('should validate vitest configuration has proper test environment', () => {
+  describe(('Test Configuration Validation', () => {
+    it(('should validate vitest configuration has proper test environment', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
@@ -68,13 +68,13 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
         && content.includes('jsdom');
 
       const hasProperSetupFiles = content.includes('setupFiles')
-        && content.includes('src/__tests__/setup.ts')
+        && content.includes('src/__tests_/setup.ts')
         && content.includes('tests/setup.ts');
 
       expect(hasJsdomEnvironment && hasProperSetupFiles).toBe(true);
     });
 
-    it('should validate vitest configuration has proper test patterns', () => {
+    it(('should validate vitest configuration has proper test patterns', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
@@ -89,7 +89,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       expect(hasIncludePatterns && hasExcludePatterns).toBe(true);
     });
 
-    it('should validate vitest configuration has proper timeouts', () => {
+    it(('should validate vitest configuration has proper timeouts', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
@@ -102,7 +102,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       expect(hasTestTimeout && hasHookTimeout).toBe(true);
     });
 
-    it('should validate vitest configuration has proper coverage settings', () => {
+    it(('should validate vitest configuration has proper coverage settings', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
@@ -118,8 +118,8 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
     });
   });
 
-  describe('Coverage Requirements', () => {
-    it('should validate coverage configuration meets healthcare standards', () => {
+  describe(('Coverage Requirements', () => {
+    it(('should validate coverage configuration meets healthcare standards', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
@@ -134,7 +134,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       expect(hasV8Provider && hasMultipleReporters).toBe(true);
     });
 
-    it('should validate coverage exclusions are properly configured', () => {
+    it(('should validate coverage exclusions are properly configured', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
@@ -145,7 +145,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       expect(hasProperExclusions).toBe(true);
     });
 
-    it('should validate test coverage thresholds are defined', () => {
+    it(('should validate test coverage thresholds are defined', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
@@ -155,7 +155,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       expect(hasCoverageSection).toBe(true);
     });
 
-    it('should validate coverage reporting is comprehensive', () => {
+    it(('should validate coverage reporting is comprehensive', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
@@ -171,8 +171,8 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
     });
   });
 
-  describe('Test Organization and Structure', () => {
-    it('should validate test files are properly organized', () => {
+  describe(('Test Organization and Structure', () => {
+    it(('should validate test files are properly organized', () => {
       const testDirectories = [
         'src/__tests__',
         'tests',
@@ -181,35 +181,35 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
         'tests/accessibility',
       ];
 
-      testDirectories.forEach(_dir => {
+      testDirectories.forEach(dir => {
         const fullPath = join(process.cwd(), dir);
         expect(existsSync(fullPath)).toBe(true);
       });
     });
 
-    it('should validate test naming conventions are followed', () => {
+    it(('should validate test naming conventions are followed', () => {
       const testFiles = [
-        'src/__tests__/build-compatibility.test.ts',
-        'src/__tests__/import-resolution.test.ts',
-        'src/__tests__/eslint-compliance.test.ts',
-        'src/__tests__/test-infrastructure.test.ts',
+        'src/__tests_/build-compatibility.test.ts',
+        'src/__tests_/import-resolution.test.ts',
+        'src/__tests_/eslint-compliance.test.ts',
+        'src/__tests_/test-infrastructure.test.ts',
       ];
 
-      testFiles.forEach(_file => {
+      testFiles.forEach(file => {
         const fullPath = join(process.cwd(), file);
         expect(existsSync(fullPath)).toBe(true);
       });
     });
 
-    it('should validate test file patterns are consistent', () => {
+    it(('should validate test file patterns are consistent', () => {
       const testFiles = [
-        'src/__tests__/build-compatibility.test.ts',
-        'src/__tests__/import-resolution.test.ts',
-        'src/__tests__/eslint-compliance.test.ts',
-        'src/__tests__/test-infrastructure.test.ts',
+        'src/__tests_/build-compatibility.test.ts',
+        'src/__tests_/import-resolution.test.ts',
+        'src/__tests_/eslint-compliance.test.ts',
+        'src/__tests_/test-infrastructure.test.ts',
       ];
 
-      testFiles.forEach(_file => {
+      testFiles.forEach(file => {
         const fullPath = join(process.cwd(), file);
         if (existsSync(fullPath)) {
           const content = readFileSync(fullPath, 'utf8');
@@ -223,15 +223,15 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       });
     });
 
-    it('should validate test isolation is maintained', () => {
+    it(('should validate test isolation is maintained', () => {
       const testFiles = [
-        'src/__tests__/build-compatibility.test.ts',
-        'src/__tests__/import-resolution.test.ts',
-        'src/__tests__/eslint-compliance.test.ts',
-        'src/__tests__/test-infrastructure.test.ts',
+        'src/__tests_/build-compatibility.test.ts',
+        'src/__tests_/import-resolution.test.ts',
+        'src/__tests_/eslint-compliance.test.ts',
+        'src/__tests_/test-infrastructure.test.ts',
       ];
 
-      testFiles.forEach(_file => {
+      testFiles.forEach(file => {
         const fullPath = join(process.cwd(), file);
         if (existsSync(fullPath)) {
           const content = readFileSync(fullPath, 'utf8');
@@ -246,8 +246,8 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
     });
   });
 
-  describe('Mock and Test Utilities', () => {
-    it('should validate mock server is properly configured', () => {
+  describe(('Mock and Test Utilities', () => {
+    it(('should validate mock server is properly configured', () => {
       const testSetupPath = join(process.cwd(), 'tests/setup.ts');
       const content = readFileSync(testSetupPath, 'utf8');
 
@@ -261,20 +261,20 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       expect(hasServerImport && hasServerLifecycle).toBe(true);
     });
 
-    it('should validate mock utilities are available', () => {
+    it(('should validate mock utilities are available', () => {
       const mocksPath = join(process.cwd(), 'tests/mocks');
       const mockFiles = [
         'server.ts',
         'handlers.ts',
       ];
 
-      mockFiles.forEach(_mockFile => {
+      mockFiles.forEach(mockFile => {
         const fullPath = join(mocksPath, mockFile);
         expect(existsSync(fullPath)).toBe(true);
       });
     });
 
-    it('should validate test utilities are properly organized', () => {
+    it(('should validate test utilities are properly organized', () => {
       const utilsPath = join(process.cwd(), 'tests/utils');
       const utilFiles = [
         'test-helpers.ts',
@@ -282,13 +282,13 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
         'mock-data.ts',
       ];
 
-      utilFiles.forEach(_utilFile => {
+      utilFiles.forEach(utilFile => {
         const fullPath = join(utilsPath, utilFile);
         expect(existsSync(fullPath)).toBe(true);
       });
     });
 
-    it('should validate test data factories are available', () => {
+    it(('should validate test data factories are available', () => {
       const testSetupPath = join(process.cwd(), 'tests/setup.ts');
       const content = readFileSync(testSetupPath, 'utf8');
 
@@ -300,8 +300,8 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
     });
   });
 
-  describe('Integration Test Setup', () => {
-    it('should validate integration test configuration', () => {
+  describe(('Integration Test Setup', () => {
+    it(('should validate integration test configuration', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
@@ -312,7 +312,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       expect(hasIntegrationPatterns).toBe(true);
     });
 
-    it('should validate E2E test configuration exists', () => {
+    it(('should validate E2E test configuration exists', () => {
       const playwrightConfigPath = join(process.cwd(), 'playwright.config.ts');
       const e2ePath = join(process.cwd(), 'e2e');
 
@@ -322,7 +322,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       expect(hasPlaywrightConfig && hasE2EDirectory).toBe(true);
     });
 
-    it('should validate accessibility test setup', () => {
+    it(('should validate accessibility test setup', () => {
       const accessibilityPath = join(process.cwd(), 'tests/accessibility');
       const accessibilityFiles = [
         'axe-integration.test.ts',
@@ -332,7 +332,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
 
       const hasAccessibilityDirectory = existsSync(accessibilityPath);
 
-      accessibilityFiles.forEach(_file => {
+      accessibilityFiles.forEach(file => {
         const fullPath = join(accessibilityPath, file);
         expect(existsSync(fullPath)).toBe(true);
       });
@@ -340,7 +340,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       expect(hasAccessibilityDirectory).toBe(true);
     });
 
-    it('should validate performance test setup', () => {
+    it(('should validate performance test setup', () => {
       const performancePath = join(process.cwd(), 'tests/performance');
       const performanceFiles = [
         'performance-monitoring.test.ts',
@@ -349,7 +349,7 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
 
       const hasPerformanceDirectory = existsSync(performancePath);
 
-      performanceFiles.forEach(_file => {
+      performanceFiles.forEach(file => {
         const fullPath = join(performancePath, file);
         expect(existsSync(fullPath)).toBe(true);
       });

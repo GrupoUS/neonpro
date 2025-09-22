@@ -11,8 +11,7 @@ import { describe, expect, it } from 'vitest';
 
 function DrawerHarness() {
   const [open, setOpen] = React.useState(false);
-  return (
-    <div>
+  return (<div>
       <Button onClick={() => setOpen(true)} aria-label='open'>
         Open
       </Button>
@@ -28,8 +27,8 @@ function DrawerHarness() {
   );
 }
 
-describe('SmoothDrawer accessibility', () => {
-  it('opens with focusable dialog and closes on ESC restoring focus', async () => {
+describe(('SmoothDrawer accessibility', () => {
+  it(_'opens with focusable dialog and closes on ESC restoring focus',async () => {
     render(<DrawerHarness />);
 
     const trigger = screen.getByRole('button', { name: /open/i });

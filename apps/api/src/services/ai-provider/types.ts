@@ -44,7 +44,7 @@ export interface ProviderHealthCheck {
 export interface RoutingRequest {
   // Request content
   prompt: string;
-  messages?: Array<{ role: string; content: string }>;
+  messages?: Array<{ _role: string; content: string }>;
 
   // Healthcare context
   healthcare_context: {

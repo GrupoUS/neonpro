@@ -70,7 +70,7 @@ interface EnhancedSidebarContextProps {
   expandedSections: Set<string>;
   toggleSection: (sectionId: string) => void;
   searchQuery: string;
-  setSearchQuery: (query: string) => void;
+  setSearchQuery: (_query: string) => void;
   keyboardHelpVisible: boolean;
   setKeyboardHelpVisible: (visible: boolean) => void;
   userPreferences: UserPreferences;
@@ -95,7 +95,7 @@ const EnhancedSidebarContext = createContext<
 
 export const useEnhancedSidebar = () => {
   const context = useContext(EnhancedSidebarContext);
-  if (!context) {
+  if (!_context) {
     throw new Error(
       'useEnhancedSidebar must be used within a EnhancedSidebarProvider',
     );
@@ -236,88 +236,85 @@ export function EnhancedSidebar({
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
   // Default sidebar sections for Brazilian healthcare context
-  const defaultSections: SidebarSection[] = useMemo(
-    () => [
-      {
-        id: 'main',
-        label: 'Principal',
-        icon: <IconHome className='h-5 w-5' />,
-        expanded: true,
-        items: [
-          {
-            label: 'Dashboard',
-            href: '/dashboard',
-            icon: <IconHome className='h-4 w-4' />,
-            hotkey: 'Ctrl+D',
-            description: 'Visão geral da clínica',
-          },
-          {
-            label: 'Busca Global',
-            href: '/search',
-            icon: <IconSearch className='h-4 w-4' />,
-            hotkey: 'Ctrl+K',
-            description: 'Buscar pacientes e agendamentos',
-          },
-        ],
-      },
-      {
-        id: 'clinical',
-        label: 'Clínica',
-        icon: <IconUser className='h-5 w-5' />,
-        expanded: true,
-        items: [
-          {
-            label: 'Pacientes',
-            href: '/patients',
-            icon: <IconUser className='h-4 w-4' />,
-            hotkey: 'Ctrl+P',
-            description: 'Gerenciar pacientes',
-          },
-          {
-            label: 'Agenda',
-            href: '/appointments',
-            icon: <IconBell className='h-4 w-4' />,
-            hotkey: 'Ctrl+A',
-            description: 'Agendamentos e calendário',
-          },
-          {
-            label: 'Serviços',
-            href: '/services',
-            icon: <IconSettings className='h-4 w-4' />,
-            hotkey: 'Ctrl+S',
-            description: 'Serviços e procedimentos',
-          },
-        ],
-      },
-      {
-        id: 'admin',
-        label: 'Administrativo',
-        icon: <IconSettings className='h-5 w-5' />,
-        expanded: false,
-        items: [
-          {
-            label: 'Financeiro',
-            href: '/financial',
-            icon: <IconMoon className='h-4 w-4' />,
-            description: 'Financeiro e faturamento',
-          },
-          {
-            label: 'Documentos',
-            href: '/documents',
-            icon: <IconSun className='h-4 w-4' />,
-            description: 'Documentos e arquivos',
-          },
-          {
-            label: 'Relatórios',
-            href: '/reports',
-            icon: <IconBell className='h-4 w-4' />,
-            description: 'Relatórios e análises',
-          },
-        ],
-      },
-    ],
-    [],
-  );
+  const defaultSections: SidebarSection[] = useMemo(() => [
+    {
+      id: 'main',
+      label: 'Principal',
+      icon: <IconHome className='h-5 w-5' />,
+      expanded: true,
+      items: [
+        {
+          label: 'Dashboard',
+          href: '/dashboard',
+          icon: <IconHome className='h-4 w-4' />,
+          hotkey: 'Ctrl+D',
+          description: 'Visão geral da clínica',
+        },
+        {
+          label: 'Busca Global',
+          href: '/search',
+          icon: <IconSearch className='h-4 w-4' />,
+          hotkey: 'Ctrl+K',
+          description: 'Buscar pacientes e agendamentos',
+        },
+      ],
+    },
+    {
+      id: 'clinical',
+      label: 'Clínica',
+      icon: <IconUser className='h-5 w-5' />,
+      expanded: true,
+      items: [
+        {
+          label: 'Pacientes',
+          href: '/patients',
+          icon: <IconUser className='h-4 w-4' />,
+          hotkey: 'Ctrl+P',
+          description: 'Gerenciar pacientes',
+        },
+        {
+          label: 'Agenda',
+          href: '/appointments',
+          icon: <IconBell className='h-4 w-4' />,
+          hotkey: 'Ctrl+A',
+          description: 'Agendamentos e calendário',
+        },
+        {
+          label: 'Serviços',
+          href: '/services',
+          icon: <IconSettings className='h-4 w-4' />,
+          hotkey: 'Ctrl+S',
+          description: 'Serviços e procedimentos',
+        },
+      ],
+    },
+    {
+      id: 'admin',
+      label: 'Administrativo',
+      icon: <IconSettings className='h-5 w-5' />,
+      expanded: false,
+      items: [
+        {
+          label: 'Financeiro',
+          href: '/financial',
+          icon: <IconMoon className='h-4 w-4' />,
+          description: 'Financeiro e faturamento',
+        },
+        {
+          label: 'Documentos',
+          href: '/documents',
+          icon: <IconSun className='h-4 w-4' />,
+          description: 'Documentos e arquivos',
+        },
+        {
+          label: 'Relatórios',
+          href: '/reports',
+          icon: <IconBell className='h-4 w-4' />,
+          description: 'Relatórios e análises',
+        },
+      ],
+    },
+  ], []);
 
   const sections = customSections || defaultSections;
 
@@ -346,7 +343,7 @@ export function EnhancedSidebar({
     (_event: any) => {
       if (!userPreferences.keyboardShortcuts) return;
 
-      const action = Object.entries(KEYBOARD_SHORTCUTS).find(([_, config]) => {
+      const action = Object.entries(KEYBOARD_SHORTCUTS).find(([, config]) => {
         const ctrlKey = config.ctrl || false;
         const shiftKey = config.shift || false;
         const altKey = config.alt || false;

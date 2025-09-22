@@ -47,8 +47,8 @@ describe('Query Upcoming Appointments - Integration Test', () => {
         body: JSON.stringify({
           query,
           sessionId,
-          context: {
-            userId: 'doctor-user-id',
+          _context: {
+            _userId: 'doctor-user-id',
           },
         }),
       });
@@ -90,8 +90,8 @@ describe('Query Upcoming Appointments - Integration Test', () => {
           body: JSON.stringify({
             query,
             sessionId: `test-session-${Math.random()}`,
-            context: {
-              userId: 'doctor-user-id',
+            _context: {
+              _userId: 'doctor-user-id',
             },
           }),
         });
@@ -116,10 +116,10 @@ describe('Query Upcoming Appointments - Integration Test', () => {
           Authorization: 'Bearer valid-doctor-token',
         },
         body: JSON.stringify({
-          query: 'Quais os próximos agendamentos?',
+          _query: 'Quais os próximos agendamentos?',
           sessionId: 'test-session-structure',
-          context: {
-            userId: 'doctor-user-id',
+          _context: {
+            _userId: 'doctor-user-id',
           },
         }),
       });
@@ -153,10 +153,10 @@ describe('Query Upcoming Appointments - Integration Test', () => {
           Authorization: 'Bearer valid-doctor-token',
         },
         body: JSON.stringify({
-          query: 'Próximos agendamentos',
+          _query: 'Próximos agendamentos',
           sessionId: 'test-session-actions',
-          context: {
-            userId: 'doctor-user-id',
+          _context: {
+            _userId: 'doctor-user-id',
           },
         }),
       });
@@ -188,10 +188,10 @@ describe('Query Upcoming Appointments - Integration Test', () => {
           Authorization: 'Bearer valid-clinic-a-token',
         },
         body: JSON.stringify({
-          query: 'Quais os próximos agendamentos?',
+          _query: 'Quais os próximos agendamentos?',
           sessionId: 'test-session-domain',
-          context: {
-            userId: 'clinic-a-user',
+          _context: {
+            _userId: 'clinic-a-user',
             domain: 'clinic-a',
           },
         }),
@@ -214,9 +214,9 @@ describe('Query Upcoming Appointments - Integration Test', () => {
 
       // Test different roles
       const roles = [
-        { token: 'valid-doctor-token', role: 'doctor', shouldSeeAll: true },
-        { token: 'valid-nurse-token', role: 'nurse', shouldSeeAll: true },
-        { token: 'valid-receptionist-token', role: 'receptionist', shouldSeeAll: false },
+        { token: 'valid-doctor-token', _role: 'doctor', shouldSeeAll: true },
+        { token: 'valid-nurse-token', _role: 'nurse', shouldSeeAll: true },
+        { token: 'valid-receptionist-token', _role: 'receptionist', shouldSeeAll: false },
       ];
 
       for (const { token, role, shouldSeeAll } of roles) {
@@ -227,11 +227,11 @@ describe('Query Upcoming Appointments - Integration Test', () => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            query: 'Próximos agendamentos',
+            _query: 'Próximos agendamentos',
             sessionId: `test-session-${role}`,
-            context: {
-              userId: `${role}-user-id`,
-              role: role,
+            _context: {
+              _userId: `${role}-user-id`,
+              _role: role,
             },
           }),
         });
@@ -263,10 +263,10 @@ describe('Query Upcoming Appointments - Integration Test', () => {
           Authorization: 'Bearer valid-doctor-token',
         },
         body: JSON.stringify({
-          query: 'Quais os próximos agendamentos?',
+          _query: 'Quais os próximos agendamentos?',
           sessionId: 'test-session-performance',
-          context: {
-            userId: 'doctor-user-id',
+          _context: {
+            _userId: 'doctor-user-id',
           },
         }),
       });
@@ -288,10 +288,10 @@ describe('Query Upcoming Appointments - Integration Test', () => {
           Authorization: 'Bearer valid-doctor-token',
         },
         body: JSON.stringify({
-          query: 'Próximos agendamentos',
+          _query: 'Próximos agendamentos',
           sessionId: 'test-session-metadata',
-          context: {
-            userId: 'doctor-user-id',
+          _context: {
+            _userId: 'doctor-user-id',
           },
         }),
       });
@@ -316,10 +316,10 @@ describe('Query Upcoming Appointments - Integration Test', () => {
           Authorization: 'Bearer valid-doctor-token',
         },
         body: JSON.stringify({
-          query: 'Agendamentos de hoje',
+          _query: 'Agendamentos de hoje',
           sessionId: 'test-session-locale',
-          context: {
-            userId: 'doctor-user-id',
+          _context: {
+            _userId: 'doctor-user-id',
           },
         }),
       });
@@ -347,10 +347,10 @@ describe('Query Upcoming Appointments - Integration Test', () => {
           Authorization: 'Bearer valid-empty-schedule-token',
         },
         body: JSON.stringify({
-          query: 'Agendamentos para amanhã',
+          _query: 'Agendamentos para amanhã',
           sessionId: 'test-session-empty',
-          context: {
-            userId: 'empty-schedule-user',
+          _context: {
+            _userId: 'empty-schedule-user',
           },
         }),
       });

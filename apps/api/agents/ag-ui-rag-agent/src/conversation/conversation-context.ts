@@ -4,7 +4,7 @@ import { SessionManager } from '../session/session-manager';
 
 export interface ConversationMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  _role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
   metadata?: {
@@ -19,12 +19,12 @@ export interface ConversationMessage {
 export interface ConversationContext {
   id: string;
   sessionId: string;
-  userId: string;
+  _userId: string;
   clinicId: string;
   patientId?: string;
   title: string;
   messages: ConversationMessage[];
-  context?: {
+  _context?: {
     currentIntent?: string;
     patientContext?: any;
     medicalHistory?: any;
@@ -40,7 +40,7 @@ export interface ConversationContext {
 
 export interface ConversationCreateParams {
   sessionId: string;
-  userId: string;
+  _userId: string;
   clinicId: string;
   patientId?: string;
   title?: string;
@@ -52,7 +52,7 @@ export interface ConversationUpdateParams {
   patientId?: string;
   title?: string;
   status?: 'active' | 'archived' | 'deleted';
-  context?: any;
+  _context?: any;
   expiresAt?: Date;
 }
 
@@ -76,12 +76,12 @@ export class ConversationContextManager {
     try {
       // Validate session
       const session = await this.sessionManager.getSession(params.sessionId);
-      if (!session || session.userId !== params.userId) {
+      if (!session || session.userId !== params._userId) {
         throw new Error('Invalid session for conversation creation');
       }
 
       const conversationId = `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const now = new Date();
+      const _now = new Date();
       const expiresAt = params.expirationHours
         ? new Date(now.getTime() + params.expirationHours * 60 * 60 * 1000)
         : undefined;
@@ -89,12 +89,12 @@ export class ConversationContextManager {
       const conversation: ConversationContext = {
         id: conversationId,
         sessionId: params.sessionId,
-        userId: params.userId,
+        _userId: params.userId,
         clinicId: params.clinicId,
         patientId: params.patientId,
         title: params.title || 'New Conversation',
         messages: [],
-        context: params.initialContext || {},
+        _context: params.initialContext || {},
         status: 'active',
         createdAt: now,
         updatedAt: now,
@@ -112,7 +112,7 @@ export class ConversationContextManager {
           patient_id: params.patientId,
           title: conversation.title,
           messages: [],
-          context: params.initialContext || {},
+          _context: params.initialContext || {},
           status: 'active',
           expires_at: expiresAt?.toISOString(),
         })
@@ -123,7 +123,7 @@ export class ConversationContextManager {
         await this.logger.logError('conversation_creation_failed', {
           error: error.message,
           sessionId: params.sessionId,
-          userId: params.userId,
+          _userId: params.userId,
         });
         throw new Error(`Failed to create conversation: ${error.message}`);
       }
@@ -152,12 +152,12 @@ export class ConversationContextManager {
 
   async getConversation(
     conversationId: string,
-    userId: string,
+    _userId: string,
   ): Promise<ConversationContext | null> {
     try {
       // Check memory cache first
       const cached = this.activeContexts.get(conversationId);
-      if (cached && cached.userId === userId) {
+      if (cached && cached.userId === _userId) {
         return cached;
       }
 
@@ -166,7 +166,7 @@ export class ConversationContextManager {
         .from('ai_conversation_contexts')
         .select('*')
         .eq('id', conversationId)
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .single();
 
       if (error) {
@@ -179,12 +179,12 @@ export class ConversationContextManager {
       const conversation: ConversationContext = {
         id: data.id,
         sessionId: data.session_id,
-        userId: data.user_id,
+        _userId: data.user_id,
         clinicId: data.clinic_id,
         patientId: data.patient_id,
         title: data.title,
         messages: data.messages || [],
-        context: data.context || {},
+        _context: data.context || {},
         status: data.status,
         createdAt: new Date(data.created_at),
         updatedAt: new Date(data.updated_at),
@@ -217,11 +217,11 @@ export class ConversationContextManager {
 
   async updateConversation(
     conversationId: string,
-    userId: string,
+    _userId: string,
     updates: ConversationUpdateParams,
   ): Promise<ConversationContext> {
     try {
-      const conversation = await this.getConversation(conversationId, userId);
+      const conversation = await this.getConversation(conversationId, _userId);
       if (!conversation) {
         throw new Error('Conversation not found');
       }
@@ -239,12 +239,12 @@ export class ConversationContextManager {
           title: updates.title,
           patient_id: updates.patientId,
           status: updates.status,
-          context: updates.context,
+          _context: updates.context,
           expires_at: updates.expiresAt?.toISOString(),
           updated_at: new Date().toISOString(),
         })
         .eq('id', conversationId)
-        .eq('user_id', userId);
+        .eq('user_id', _userId);
 
       if (error) {
         throw new Error(`Failed to update conversation: ${error.message}`);
@@ -280,11 +280,11 @@ export class ConversationContextManager {
 
   async addMessage(
     conversationId: string,
-    userId: string,
+    _userId: string,
     message: Omit<ConversationMessage, 'id' | 'timestamp'>,
   ): Promise<ConversationContext> {
     try {
-      const conversation = await this.getConversation(conversationId, userId);
+      const conversation = await this.getConversation(conversationId, _userId);
       if (!conversation) {
         throw new Error('Conversation not found');
       }
@@ -306,7 +306,7 @@ export class ConversationContextManager {
           updated_at: conversation.updatedAt.toISOString(),
         })
         .eq('id', conversationId)
-        .eq('user_id', userId);
+        .eq('user_id', _userId);
 
       if (error) {
         throw new Error(`Failed to add message: ${error.message}`);
@@ -320,7 +320,7 @@ export class ConversationContextManager {
         resource: 'ai_conversation_contexts',
         conversationId,
         messageId: newMessage.id,
-        role: message.role,
+        _role: message.role,
         success: true,
       });
 
@@ -339,11 +339,11 @@ export class ConversationContextManager {
 
   async updateContext(
     conversationId: string,
-    userId: string,
-    context: any,
+    _userId: string,
+    _context: any,
   ): Promise<ConversationContext> {
     try {
-      const conversation = await this.getConversation(conversationId, userId);
+      const conversation = await this.getConversation(conversationId, _userId);
       if (!conversation) {
         throw new Error('Conversation not found');
       }
@@ -355,7 +355,7 @@ export class ConversationContextManager {
       };
 
       return await this.updateConversation(conversationId, userId, {
-        context: updatedContext,
+        _context: updatedContext,
       });
     } catch (error) {
       await this.logger.logError('context_update_error', {
@@ -368,12 +368,12 @@ export class ConversationContextManager {
     }
   }
 
-  async getUserConversations(userId: string, clinicId: string): Promise<ConversationContext[]> {
+  async getUserConversations(_userId: string, clinicId: string): Promise<ConversationContext[]> {
     try {
       const { data, error } = await this.supabase
         .from('ai_conversation_contexts')
         .select('*')
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .eq('clinic_id', clinicId)
         .in('status', ['active', 'archived'])
         .order('updated_at', { ascending: false });
@@ -385,12 +385,12 @@ export class ConversationContextManager {
       const conversations: ConversationContext[] = data.map(conv => ({
         id: conv.id,
         sessionId: conv.session_id,
-        userId: conv.user_id,
+        _userId: conv.user_id,
         clinicId: conv.clinic_id,
         patientId: conv.patient_id,
         title: conv.title,
         messages: conv.messages || [],
-        context: conv.context || {},
+        _context: conv.context || {},
         status: conv.status,
         createdAt: new Date(conv.created_at),
         updatedAt: new Date(conv.updated_at),
@@ -423,7 +423,7 @@ export class ConversationContextManager {
     }
   }
 
-  async deleteConversation(conversationId: string, userId: string): Promise<void> {
+  async deleteConversation(conversationId: string, _userId: string): Promise<void> {
     try {
       // Soft delete by marking as deleted
       await this.updateConversation(conversationId, userId, {

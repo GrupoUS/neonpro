@@ -12,8 +12,6 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { z } from 'zod';
-
 // Mobile Keyboard Navigation Levels
 export const MOBILE_KEYBOARD_LEVELS = {
   EXCELLENT: 'excellent',

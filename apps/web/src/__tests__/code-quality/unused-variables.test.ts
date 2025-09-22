@@ -100,11 +100,11 @@ function checkUnusedCatchParameters(
   };
 }
 
-describe('TDD Orchestrator - Code Quality: Variables and Error Handling', () => {
+describe('TDD Orchestrator - Code Quality: Variables and Error Handling',() {
   const webSrcPath = join(process.cwd(), 'src');
 
-  describe('Phase 1: RED - Failing Tests for Variable Usage', () => {
-    it('should have no unused variables in insights-enhanced.tsx', () => {
+  describe('Phase 1: RED - Failing Tests for Variable Usage',() {
+    it(('should have no unused variables in insights-enhanced.tsx', () => {
       const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
       const result = checkUnusedVariables(filePath);
 
@@ -119,7 +119,7 @@ describe('TDD Orchestrator - Code Quality: Variables and Error Handling', () => 
       }
     });
 
-    it('should have proper error handling in insights-enhanced.tsx', () => {
+    it(('should have proper error handling in insights-enhanced.tsx', () => {
       const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
       const result = checkUnusedCatchParameters(filePath);
 
@@ -136,8 +136,8 @@ describe('TDD Orchestrator - Code Quality: Variables and Error Handling', () => 
       }
     });
   });
-  describe('Error Handling Standards', () => {
-    it('should use proper error handling patterns', () => {
+  describe(('Error Handling Standards', () => {
+    it(('should use proper error handling patterns', () => {
       const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
       const content = readFileSync(filePath, 'utf-8');
 
@@ -151,7 +151,7 @@ describe('TDD Orchestrator - Code Quality: Variables and Error Handling', () => 
       // During REFACTOR phase, we'll improve error handling patterns
     });
 
-    it('should follow TypeScript strict mode requirements', () => {
+    it(('should follow TypeScript strict mode requirements', () => {
       // This test validates TypeScript compliance
       const filePath = join(webSrcPath, 'routes/ai/insights-enhanced.tsx');
       const content = readFileSync(filePath, 'utf-8');
@@ -164,8 +164,8 @@ describe('TDD Orchestrator - Code Quality: Variables and Error Handling', () => 
     });
   });
 
-  describe('TDD Quality Gates', () => {
-    it('should pass all import quality checks after GREEN phase', () => {
+  describe(('TDD Quality Gates', () => {
+    it(('should pass all import quality checks after GREEN phase', () => {
       // This test will be used to validate GREEN phase completion
       const files = [
         'hooks/useFinancialMetrics.ts',

@@ -107,18 +107,15 @@ describe("CrudIntentParser", () => {
       const result = parser.parseIntent(input);
 
       expect(result.entities.length).toBeGreaterThan(0);
-      expect(
-        result.entities.some(
+      expect(_result.entities.some(
           (e) => e.type === "PERSON" && e.value === "John Doe",
         ),
       ).toBe(true);
-      expect(
-        result.entities.some(
+      expect(_result.entities.some(
           (e) => e.type === "EMAIL" && e.value === "john@doe.com",
         ),
       ).toBe(true);
-      expect(
-        result.entities.some(
+      expect(_result.entities.some(
           (e) => e.type === "ENTITY_TYPE" && e.value === "patient",
         ),
       ).toBe(true);
@@ -129,22 +126,17 @@ describe("CrudIntentParser", () => {
         "get all patients where status equals active and age is greater than 18";
       const result = parser.parseIntent(input);
 
-      expect(
-        result.entities.some(
+      expect(_result.entities.some(
           (e) => e.type === "ENTITY_TYPE" && e.value === "patients",
         ),
       ).toBe(true);
-      expect(
-        result.entities.some((e) => e.type === "FIELD" && e.value === "status"),
+      expect(_result.entities.some((e) => e.type === "FIELD" && e.value === "status"),
       ).toBe(true);
-      expect(
-        result.entities.some((e) => e.type === "VALUE" && e.value === "active"),
+      expect(_result.entities.some((e) => e.type === "VALUE" && e.value === "active"),
       ).toBe(true);
-      expect(
-        result.entities.some((e) => e.type === "FIELD" && e.value === "age"),
+      expect(_result.entities.some((e) => e.type === "FIELD" && e.value === "age"),
       ).toBe(true);
-      expect(
-        result.entities.some((e) => e.type === "VALUE" && e.value === "18"),
+      expect(_result.entities.some((e) => e.type === "VALUE" && e.value === "18"),
       ).toBe(true);
     });
 
@@ -158,7 +150,7 @@ describe("CrudIntentParser", () => {
 
       inputs.forEach((input) => {
         const result = parser.parseIntent(input);
-        expect(result.entities.some((e) => e.type === "DATE")).toBe(true);
+        expect(_result.entities.some((e) => e.type === "DATE")).toBe(true);
       });
     });
 
@@ -167,13 +159,11 @@ describe("CrudIntentParser", () => {
         "find patient with email admin@clinic.com or phone +5511999887766";
       const result = parser.parseIntent(input);
 
-      expect(
-        result.entities.some(
+      expect(_result.entities.some(
           (e) => e.type === "EMAIL" && e.value === "admin@clinic.com",
         ),
       ).toBe(true);
-      expect(
-        result.entities.some(
+      expect(_result.entities.some(
           (e) => e.type === "PHONE" && e.value === "+5511999887766",
         ),
       ).toBe(true);
@@ -188,8 +178,7 @@ describe("CrudIntentParser", () => {
 
       expect(result.arguments.filters.length).toBe(2);
 
-      const statusFilter = result.arguments.filters.find(
-        (f) => f.field === "status",
+      const statusFilter = result.arguments.filters.find((f) => f.field === "status",
       );
       expect(statusFilter).toBeDefined();
       expect(statusFilter?.operator).toBe("equals");
@@ -217,7 +206,7 @@ describe("CrudIntentParser", () => {
         { text: "list 20 users maximum", limit: 20 },
       ];
 
-      inputs.forEach(({ text, limit }) => {
+      inputs.forEach(({ text,_limit }) => {
         const result = parser.parseIntent(text);
         expect(result.arguments.limit).toBeDefined();
         expect(result.arguments.limit?.count).toBe(limit);
@@ -241,16 +230,14 @@ describe("CrudIntentParser", () => {
       const result = parser.parseIntent(input);
 
       expect(result.intent).toBe("READ");
-      expect(
-        result.entities.some(
+      expect(_result.entities.some(
           (e) => e.type === "ENTITY_TYPE" && e.value === "patients",
         ),
       ).toBe(true);
 
       // Check filters
       expect(result.arguments.filters.length).toBeGreaterThan(0);
-      expect(
-        result.arguments.filters.some(
+      expect(_result.arguments.filters.some(
           (f) => f.field === "status" && f.value === "active",
         ),
       ).toBe(true);
@@ -329,8 +316,8 @@ describe("CrudIntentParser", () => {
       const input = "get all procedures for clinic São Paulo";
       const result = customParser.parseIntent(input);
 
-      expect(result.entities.some((e) => e.type === "PROCEDURE")).toBe(true);
-      expect(result.entities.some((e) => e.type === "CLINIC")).toBe(true);
+      expect(_result.entities.some((e) => e.type === "PROCEDURE")).toBe(true);
+      expect(_result.entities.some((e) => e.type === "CLINIC")).toBe(true);
     });
   });
 });

@@ -209,7 +209,7 @@ export function useLiveRegion() {
   const liveRegionProps = {
     'aria-live': priority,
     'aria-atomic': true,
-    role: 'status',
+    _role: 'status',
     className: 'sr-only',
   };
 
@@ -290,7 +290,7 @@ export function useAccessibleField(
   const errorProps = error
     ? {
       id: errorId.current,
-      role: 'alert',
+      _role: 'alert',
       'aria-live': 'assertive' as const,
       'aria-atomic': true,
     }
@@ -421,7 +421,7 @@ export function useAccessibleTable<T>(
 
   const getColumnHeaderProps = useCallback(
     (column: (typeof columns)[0]) => ({
-      role: 'columnheader',
+      _role: 'columnheader',
       scope: 'col' as const,
       tabIndex: column.sortable ? 0 : undefined,
       onClick: column.sortable ? () => handleSort(column.key) : undefined,
@@ -446,7 +446,7 @@ export function useAccessibleTable<T>(
 
   const tableProps = {
     id: tableId.current,
-    role: 'table',
+    _role: 'table',
     'aria-labelledby': captionId.current,
   };
 

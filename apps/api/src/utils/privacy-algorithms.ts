@@ -248,7 +248,7 @@ export class PrivacyAlgorithms {
 
       return this.addDifferentialPrivacy(queryResult, epsilon, sensitivity);
     } catch (error) {
-      console.error('Error applying differential privacy to query:', error);
+      console.error('Error applying differential privacy to _query:', error);
       return queryResult;
     }
   }

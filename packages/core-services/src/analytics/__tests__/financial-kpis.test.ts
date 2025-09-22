@@ -263,8 +263,7 @@ describe("Financial KPIs", () => {
 
       const healthScore = calculateFinancialHealthScore([revenueCycleKPI]);
 
-      const revenueIndicator = healthScore.indicators.find(
-        (i) => i.category === "revenue_cycle",
+      const revenueIndicator = healthScore.indicators.find((i) => i.category === "revenue_cycle",
       );
       expect(revenueIndicator).toBeDefined();
       expect(revenueIndicator?.performance).toBe("above");

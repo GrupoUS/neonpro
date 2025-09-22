@@ -72,8 +72,8 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-describe('WCAG Contrast Calculations', () => {
-  it('should calculate correct contrast ratios', () => {
+describe(('WCAG Contrast Calculations', () => {
+  it(('should calculate correct contrast ratios', () => {
     // Black on white should have high contrast
     const blackWhiteRatio = calculateContrastRatio('#000000', '#ffffff');
     expect(blackWhiteRatio).toBe(21);
@@ -87,7 +87,7 @@ describe('WCAG Contrast Calculations', () => {
     expect(sameColorRatio).toBe(1);
   });
 
-  it('should correctly identify WCAG AA compliance', () => {
+  it(('should correctly identify WCAG AA compliance', () => {
     // High contrast combinations
     expect(meetsContrastRequirement('#000000', '#ffffff', 'AA', false)).toBe(
       true,
@@ -105,7 +105,7 @@ describe('WCAG Contrast Calculations', () => {
     );
   });
 
-  it('should correctly identify WCAG AAA compliance', () => {
+  it(('should correctly identify WCAG AAA compliance', () => {
     // High contrast should meet AAA
     expect(meetsContrastRequirement('#000000', '#ffffff', 'AAA', false)).toBe(
       true,
@@ -118,8 +118,8 @@ describe('WCAG Contrast Calculations', () => {
   });
 });
 
-describe('Accessible ID Generation', () => {
-  it('should generate unique IDs', () => {
+describe(('Accessible ID Generation', () => {
+  it(('should generate unique IDs', () => {
     const id1 = generateAccessibleId();
     const id2 = generateAccessibleId();
 
@@ -128,14 +128,14 @@ describe('Accessible ID Generation', () => {
     expect(id2).toMatch(/^a11y-[a-z0-9]+$/);
   });
 
-  it('should use custom prefix', () => {
+  it(('should use custom prefix', () => {
     const id = generateAccessibleId('custom');
     expect(id).toMatch(/^custom-[a-z0-9]+$/);
   });
 });
 
-describe('Healthcare Form ARIA', () => {
-  it('should create proper ARIA attributes for required fields', () => {
+describe(('Healthcare Form ARIA', () => {
+  it(('should create proper ARIA attributes for required fields', () => {
     const aria = createHealthcareFormAria('patientName', true, false);
 
     expect(aria['aria-required']).toBe(true);
@@ -143,7 +143,7 @@ describe('Healthcare Form ARIA', () => {
     expect(aria.id).toMatch(/^patientName-[a-z0-9]+$/);
   });
 
-  it('should create proper ARIA attributes for fields with errors', () => {
+  it(('should create proper ARIA attributes for fields with errors', () => {
     const aria = createHealthcareFormAria(
       'email',
       false,
@@ -156,32 +156,32 @@ describe('Healthcare Form ARIA', () => {
     expect(aria['aria-describedby']).toMatch(/^email-[a-z0-9]+-error$/);
   });
 
-  it('should include Brazilian Portuguese labels', () => {
+  it(('should include Brazilian Portuguese labels', () => {
     const aria = createHealthcareFormAria('patientData', false, false);
     expect(aria['aria-label']).toBe(ACCESSIBILITY_LABELS_PT_BR.patientData);
   });
 });
 
-describe('Live Region ARIA', () => {
-  it('should create polite live region by default', () => {
+describe(('Live Region ARIA', () => {
+  it(('should create polite live region by default', () => {
     const aria = createLiveRegionAria();
 
     expect(aria['aria-live']).toBe('polite');
     expect(aria['aria-atomic']).toBe(false);
-    expect(aria.role).toBe('status');
+    expect(aria._role).toBe('status');
   });
 
-  it('should create assertive live region when specified', () => {
+  it(('should create assertive live region when specified', () => {
     const aria = createLiveRegionAria('assertive', true);
 
     expect(aria['aria-live']).toBe('assertive');
     expect(aria['aria-atomic']).toBe(true);
-    expect(aria.role).toBe('status');
+    expect(aria._role).toBe('status');
   });
 });
 
-describe('Focus Manager', () => {
-  it('should save and restore focus', () => {
+describe(('Focus Manager', () => {
+  it(('should save and restore focus', () => {
     const restoreFocus = FocusManager.saveFocus();
 
     // Simulate focus change
@@ -195,7 +195,7 @@ describe('Focus Manager', () => {
     expect(mockFocus).toHaveBeenCalled();
   });
 
-  it('should move focus to element with announcement', () => {
+  it(('should move focus to element with announcement', () => {
     const element = { focus: mockFocus };
     const spy = vi.spyOn(FocusManager, 'announceToScreenReader');
 
@@ -205,7 +205,7 @@ describe('Focus Manager', () => {
     expect(spy).toHaveBeenCalledWith('Test announcement');
   });
 
-  it('should announce to screen readers', () => {
+  it(('should announce to screen readers', () => {
     vi.useFakeTimers();
     const spy = vi.spyOn(document.body, 'appendChild');
     const removeSpy = vi.spyOn(document.body, 'removeChild');
@@ -222,8 +222,8 @@ describe('Focus Manager', () => {
   });
 });
 
-describe('Keyboard Navigation', () => {
-  it('should handle grid navigation correctly', () => {
+describe(('Keyboard Navigation', () => {
+  it(('should handle grid navigation correctly', () => {
     const onNavigate = vi.fn();
     const event = new KeyboardEvent('keydown', { key: 'ArrowRight' });
 
@@ -232,7 +232,7 @@ describe('Keyboard Navigation', () => {
     expect(onNavigate).toHaveBeenCalledWith(1);
   });
 
-  it('should handle list navigation correctly', () => {
+  it(('should handle list navigation correctly', () => {
     const onNavigate = vi.fn();
     const event = new KeyboardEvent('keydown', { key: 'ArrowDown' });
 
@@ -241,7 +241,7 @@ describe('Keyboard Navigation', () => {
     expect(onNavigate).toHaveBeenCalledWith(1);
   });
 
-  it('should handle Home and End keys', () => {
+  it(('should handle Home and End keys', () => {
     const onNavigate = vi.fn();
 
     // Test Home key
@@ -255,7 +255,7 @@ describe('Keyboard Navigation', () => {
     expect(onNavigate).toHaveBeenCalledWith(4);
   });
 
-  it('should handle wrapping in list navigation', () => {
+  it(('should handle wrapping in list navigation', () => {
     const onNavigate = vi.fn();
 
     // Test wrap from last to first
@@ -265,8 +265,8 @@ describe('Keyboard Navigation', () => {
   });
 });
 
-describe('Screen Reader Utils', () => {
-  it('should format healthcare data correctly', () => {
+describe(('Screen Reader Utils', () => {
+  it(('should format healthcare data correctly', () => {
     const formatted = ScreenReaderUtils.formatHealthcareData(
       'Pressão arterial',
       '120/80',
@@ -275,7 +275,7 @@ describe('Screen Reader Utils', () => {
     expect(formatted).toBe('Pressão arterial: 120/80 mmHg');
   });
 
-  it('should format dates for Brazilian Portuguese', () => {
+  it(('should format dates for Brazilian Portuguese', () => {
     const date = new Date('2024-01-15');
     const formatted = ScreenReaderUtils.formatDateForScreenReader(date);
 
@@ -283,21 +283,21 @@ describe('Screen Reader Utils', () => {
     expect(formatted).toContain('2024');
   });
 
-  it('should format time for Brazilian Portuguese', () => {
+  it(('should format time for Brazilian Portuguese', () => {
     const date = new Date('2024-01-15T14:30:00');
     const formatted = ScreenReaderUtils.formatTimeForScreenReader(date);
 
     expect(formatted).toMatch(/14:30/);
   });
 
-  it('should create accessible table captions', () => {
+  it(('should create accessible table captions', () => {
     const caption = ScreenReaderUtils.createTableCaption('Pacientes', 10, 5);
     expect(caption).toBe('Pacientes. Tabela com 10 linhas e 5 colunas.');
   });
 });
 
-describe('User Preferences', () => {
-  it('should detect reduced motion preference', () => {
+describe(('User Preferences', () => {
+  it(('should detect reduced motion preference', () => {
     // Mock reduced motion preference
     window.matchMedia = vi.fn().mockImplementation(query => ({
       matches: query === '(prefers-reduced-motion: reduce)',
@@ -313,7 +313,7 @@ describe('User Preferences', () => {
     expect(prefersReducedMotion()).toBe(true);
   });
 
-  it('should detect high contrast preference', () => {
+  it(('should detect high contrast preference', () => {
     // Mock high contrast preference
     window.matchMedia = vi.fn().mockImplementation(query => ({
       matches: query === '(prefers-contrast: high)',
@@ -330,33 +330,33 @@ describe('User Preferences', () => {
   });
 });
 
-describe('Error Messages', () => {
-  it('should create accessible error messages', () => {
+describe(('Error Messages', () => {
+  it(('should create accessible error messages', () => {
     const error = createAccessibleErrorMessage('email', 'Email inválido');
 
     expect(error.id).toMatch(/^email-error-[a-z0-9]+$/);
     expect(error.message).toBe('Email inválido');
-    expect(error.ariaAttributes.role).toBe('alert');
+    expect(error.ariaAttributes._role).toBe('alert');
     expect(error.ariaAttributes['aria-live']).toBe('assertive');
     expect(error.ariaAttributes['aria-atomic']).toBe('true');
   });
 });
 
-describe('Constants and Labels', () => {
-  it('should have correct WCAG contrast ratios', () => {
+describe(('Constants and Labels', () => {
+  it(('should have correct WCAG contrast ratios', () => {
     expect(WCAG_CONTRAST_RATIOS.AA_NORMAL).toBe(4.5);
     expect(WCAG_CONTRAST_RATIOS.AA_LARGE).toBe(3.0);
     expect(WCAG_CONTRAST_RATIOS.AAA_NORMAL).toBe(7.0);
     expect(WCAG_CONTRAST_RATIOS.AAA_LARGE).toBe(4.5);
   });
 
-  it('should have healthcare-specific ARIA roles', () => {
+  it(('should have healthcare-specific ARIA roles', () => {
     expect(HEALTHCARE_ARIA_ROLES.patientInfo).toBe('region');
     expect(HEALTHCARE_ARIA_ROLES.emergencyAlert).toBe('alert');
     expect(HEALTHCARE_ARIA_ROLES.appointmentSchedule).toBe('grid');
   });
 
-  it('should have Brazilian Portuguese accessibility labels', () => {
+  it(('should have Brazilian Portuguese accessibility labels', () => {
     expect(ACCESSIBILITY_LABELS_PT_BR.mainNavigation).toBe(
       'Navegação principal',
     );

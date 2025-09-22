@@ -66,7 +66,7 @@ function SettingsPage() {
     })();
   }, [user?.id]);
 
-  const handleSelectDefault = async (_model: any) => {
+  const handleSelectDefault = async (model: any) => {
     setDefaultModel(model);
     try {
       localStorage.setItem('neonpro-default-chat-model', model);
@@ -79,8 +79,8 @@ function SettingsPage() {
   };
 
   // Provider visibility toggles
-  const [hiddenProviders, setHidden] = React.useState<ProviderKey[]>(() => getHiddenProviders());
-  const toggleProvider = (_key: any) => {
+  const [hiddenProviders, setHidden] = React.useState(() => getHiddenProviders());
+  const toggleProvider = (key: any) => {
     const next = hiddenProviders.includes(key)
       ? hiddenProviders.filter(p => p !== key)
       : [...hiddenProviders, key];

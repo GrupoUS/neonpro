@@ -210,7 +210,7 @@ describe('PR #44 Issues - Integration Tests', () => {
       const response = await app.request('/api/trpc/intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(_payload),
       });
 
       expect(response.status).not.toBe(200);
@@ -226,7 +226,7 @@ describe('PR #44 Issues - Integration Tests', () => {
       const response = await app.request('/api/trpc/confirm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(_payload),
       });
 
       expect(response.status).not.toBe(200);
@@ -242,7 +242,7 @@ describe('PR #44 Issues - Integration Tests', () => {
       const response = await app.request('/api/trpc/execute', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(_payload),
       });
 
       expect(response.status).not.toBe(200);

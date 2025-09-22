@@ -42,7 +42,7 @@ export interface ConnectionQuality {
 }
 
 export interface PresenceUser {
-  userId: string;
+  _userId: string;
   userRole: 'patient' | 'doctor' | 'nurse' | 'technician' | 'admin';
   status: 'online' | 'away' | 'busy' | 'offline' | 'in_consultation';
   connectionQuality?: ConnectionQuality;
@@ -241,7 +241,7 @@ export function useRealtimeTelemedicine(
         });
 
         return newSession;
-      } catch (error: any) {
+      } catch (_error: any) {
         console.error('Failed to create telemedicine session:', error);
         optionsRef.current.onError?.(error);
         toast.error('Falha ao iniciar sessão', {
@@ -300,7 +300,7 @@ export function useRealtimeTelemedicine(
         optionsRef.current.onMessageReceived?.(newMessage);
 
         return result.success;
-      } catch (error: any) {
+      } catch (_error: any) {
         console.error('Failed to send message:', error);
         optionsRef.current.onError?.(error);
         toast.error('Falha ao enviar mensagem', {
@@ -342,7 +342,7 @@ export function useRealtimeTelemedicine(
       try {
         const result = await updatePresenceMutation.mutateAsync({
           sessionId: session.sessionId,
-          userId: user.id,
+          _userId: user.id,
           userRole: 'patient', // Would be determined by user role
           status,
           deviceInfo,
@@ -353,7 +353,7 @@ export function useRealtimeTelemedicine(
         setPresenceUsers(prev => {
           const updated = prev.filter(u => u.userId !== user.id);
           const newPresence: PresenceUser = {
-            userId: user.id,
+            _userId: user.id,
             userRole: 'patient', // Would be determined by user role
             status,
             deviceInfo,
@@ -371,7 +371,7 @@ export function useRealtimeTelemedicine(
         optionsRef.current.onPresenceUpdate?.(presenceUsers);
 
         return result.success;
-      } catch (error: any) {
+      } catch (_error: any) {
         console.error('Failed to update presence:', error);
         optionsRef.current.onError?.(error);
         return false;
@@ -426,7 +426,7 @@ export function useRealtimeTelemedicine(
         });
 
         return alert;
-      } catch (error: any) {
+      } catch (_error: any) {
         console.error('Failed to send emergency alert:', error);
         optionsRef.current.onError?.(error);
         toast.error('Falha ao enviar alerta de emergência', {
@@ -473,7 +473,7 @@ export function useRealtimeTelemedicine(
         });
 
         return result.success;
-      } catch (error: any) {
+      } catch (_error: any) {
         console.error('Failed to end session:', error);
         optionsRef.current.onError?.(error);
         toast.error('Falha ao finalizar sessão', {

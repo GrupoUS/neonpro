@@ -9,7 +9,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 interface MockRealtimeParticipant {
   id: string;
   name: string;
-  role: "doctor" | "patient" | "nurse" | "admin";
+  _role: "doctor" | "patient" | "nurse" | "admin";
   status: "connecting" | "connected" | "disconnected" | "reconnecting";
   capabilities: {
     audio: boolean;
@@ -157,7 +157,7 @@ class TestMockRealtimeAdapter {
     return {
       id,
       name: `User ${id.slice(-4)}`,
-      role: "patient",
+      _role: "patient",
       status: "connected",
       capabilities: {
         audio: true,
@@ -174,7 +174,7 @@ describe("Realtime Event Adapter (Basic)", () => {
   let adapter: TestMockRealtimeAdapter;
   let capturedEvents: MockRealtimeEvent[] = [];
 
-  beforeEach(async () => {
+  beforeEach(_async () => {
     capturedEvents = [];
     adapter = new TestMockRealtimeAdapter();
 
@@ -194,18 +194,18 @@ describe("Realtime Event Adapter (Basic)", () => {
     await adapter.initialize();
   });
 
-  afterEach(async () => {
+  afterEach(_async () => {
     await adapter.cleanup();
   });
 
   describe("Adapter Lifecycle", () => {
-    it("should initialize successfully", async () => {
+    it(_"should initialize successfully",_async () => {
       const freshAdapter = new TestMockRealtimeAdapter();
       await expect(freshAdapter.initialize()).resolves.toBeUndefined();
       await freshAdapter.cleanup();
     });
 
-    it("should cleanup successfully", async () => {
+    it(_"should cleanup successfully",_async () => {
       await expect(adapter.cleanup()).resolves.toBeUndefined();
       expect(adapter.getActiveChannels()).toEqual([]);
     });
@@ -214,11 +214,11 @@ describe("Realtime Event Adapter (Basic)", () => {
   describe("Channel Management", () => {
     const channelId = "test-channel-123";
 
-    it("should join channel successfully", async () => {
+    it(_"should join channel successfully",_async () => {
       const participant = adapter.createMockParticipant({
         id: "participant-1",
         name: "Dr. Silva",
-        role: "doctor",
+        _role: "doctor",
       });
 
       await adapter.joinChannel(channelId, participant);
@@ -236,7 +236,7 @@ describe("Realtime Event Adapter (Basic)", () => {
       expect(joinEvent!.data?.welcomeMessage).toContain("Dr. Silva");
     });
 
-    it("should leave channel successfully", async () => {
+    it(_"should leave channel successfully",_async () => {
       const participant = adapter.createMockParticipant();
 
       // First join
@@ -256,7 +256,7 @@ describe("Realtime Event Adapter (Basic)", () => {
       expect(leaveEvent!.data?.reason).toBe("Test leave");
     });
 
-    it("should update participant status", async () => {
+    it(_"should update participant status",_async () => {
       const participant = adapter.createMockParticipant();
 
       // First join
@@ -270,8 +270,7 @@ describe("Realtime Event Adapter (Basic)", () => {
       );
 
       // Verify status change event
-      const statusEvent = capturedEvents.find(
-        (e) => e.type === "status_change",
+      const statusEvent = capturedEvents.find((e) => e.type === "status_change",
       );
       expect(statusEvent).toBeTruthy();
       expect(statusEvent!.data?.previousStatus).toBe("connected");
@@ -283,17 +282,17 @@ describe("Realtime Event Adapter (Basic)", () => {
       expect(updatedParticipant!.status).toBe("reconnecting");
     });
 
-    it("should handle multiple participants", async () => {
+    it(_"should handle multiple participants",_async () => {
       const participant1 = adapter.createMockParticipant({
         id: "participant-1",
         name: "Dr. Silva",
-        role: "doctor",
+        _role: "doctor",
       });
 
       const participant2 = adapter.createMockParticipant({
         id: "participant-2",
         name: "Patient João",
-        role: "patient",
+        _role: "patient",
       });
 
       // Join both participants
@@ -315,7 +314,7 @@ describe("Realtime Event Adapter (Basic)", () => {
   });
 
   describe("Error Handling", () => {
-    it("should handle initialization errors", async () => {
+    it(_"should handle initialization errors",_async () => {
       const freshAdapter = new TestMockRealtimeAdapter();
       const participant = adapter.createMockParticipant();
 
@@ -325,7 +324,7 @@ describe("Realtime Event Adapter (Basic)", () => {
       ).rejects.toThrow("not initialized");
     });
 
-    it("should handle non-existent channel operations", async () => {
+    it(_"should handle non-existent channel operations",_async () => {
       // Should not throw, but should handle gracefully
       await expect(
         adapter.leaveChannel("non-existent", "participant-1"),
@@ -341,7 +340,7 @@ describe("Realtime Event Adapter (Basic)", () => {
   });
 
   describe("Event Logging", () => {
-    it("should maintain event log", async () => {
+    it(_"should maintain event log",_async () => {
       const participant = adapter.createMockParticipant();
       const channelId = "test-channel";
 
@@ -364,14 +363,14 @@ describe("Realtime Event Adapter (Basic)", () => {
   });
 
   describe("Healthcare Session Scenario", () => {
-    it("should handle complete healthcare session flow", async () => {
+    it(_"should handle complete healthcare session flow",_async () => {
       const channelId = "healthcare-session-789";
 
       // Create healthcare participants
       const doctor = adapter.createMockParticipant({
         id: "dr-silva-123",
         name: "Dr. Maria Silva",
-        role: "doctor",
+        _role: "doctor",
         capabilities: {
           audio: true,
           video: true,
@@ -383,7 +382,7 @@ describe("Realtime Event Adapter (Basic)", () => {
       const patient = adapter.createMockParticipant({
         id: "patient-joao-456",
         name: "João Santos",
-        role: "patient",
+        _role: "patient",
         capabilities: {
           audio: true,
           video: true,
@@ -395,7 +394,7 @@ describe("Realtime Event Adapter (Basic)", () => {
       const nurse = adapter.createMockParticipant({
         id: "nurse-ana-789",
         name: "Ana Costa",
-        role: "nurse",
+        _role: "nurse",
         capabilities: {
           audio: true,
           video: false,

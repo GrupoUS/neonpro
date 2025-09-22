@@ -115,7 +115,7 @@ export interface Appointment {
 
   // LGPD compliance
   accessLog?: Array<{
-    userId: string;
+    _userId: string;
     action: string;
     timestamp: Date;
     ipAddress?: string;
@@ -319,8 +319,7 @@ export function getAppointmentsInRange(
   startDate: Date,
   endDate: Date,
 ): Appointment[] {
-  return appointments.filter(
-    (appointment) =>
+  return appointments.filter((appointment) =>
       appointment.startTime >= startDate && appointment.startTime <= endDate,
   );
 }
@@ -335,13 +334,12 @@ export function getUpcomingAppointments(
   futureDate.setDate(futureDate.getDate() + days);
 
   return appointments
-    .filter(
-      (appointment) =>
+    .filter((appointment) =>
         appointment.startTime >= now &&
         appointment.startTime <= futureDate &&
         appointment.status !== AppointmentStatus.CANCELLED,
     )
-    .sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+    .sort((a,_b) => a.startTime.getTime() - b.startTime.getTime());
 }
 
 // Check if appointment needs reminder
@@ -355,8 +353,7 @@ export function needsReminder(appointment: Appointment): boolean {
   const hoursUntilAppointment =
     (appointmentTime.getTime() - now.getTime()) / (1000 * 60 * 60);
 
-  return appointment.reminderSettings.timeBefore.some(
-    (hours) => Math.abs(hoursUntilAppointment - hours) < 0.5, // Within 30 minutes of reminder time
+  return appointment.reminderSettings.timeBefore.some((hours) => Math.abs(hoursUntilAppointment - hours) < 0.5, // Within 30 minutes of reminder time
   );
 }
 

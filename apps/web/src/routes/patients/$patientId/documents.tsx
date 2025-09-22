@@ -42,8 +42,6 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { z } from 'zod';
-
 // Type-safe params schema
 const patientParamsSchema = z.object({
   patientId: z.string().min(1),
@@ -227,7 +225,7 @@ function PatientDocumentsPage() {
       await deleteMutation.mutateAsync({ patientId, documentId });
       setSelectedDocuments(prev => prev.filter(id => id !== documentId));
       toast.success('Documento excluído com sucesso');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error deleting document:', error);
       toast.error('Erro ao excluir documento');
     }
@@ -248,13 +246,13 @@ function PatientDocumentsPage() {
         tags,
       });
       toast.success('Documento enviado com sucesso');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error uploading document:', error);
       toast.error('Erro ao enviar documento');
     }
   };
 
-  // Filter documents based on search (now handled by query)
+  // Filter documents based on search (now handled by _query)
   const filteredDocuments = documents.filter(doc => {
     const matchesSearch = searchQuery === ''
       || doc.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -586,7 +584,7 @@ function DocumentCard({
       setIsDownloading(true);
       await downloadDocument(patientId, document.id, document.name);
       toast.success('Download concluído');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error downloading document:', error);
       toast.error('Erro ao baixar documento');
     } finally {
@@ -605,7 +603,7 @@ function DocumentCard({
     try {
       setIsDeleting(true);
       onDelete(document.id);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error deleting document:', error);
       toast.error('Erro ao excluir documento');
     } finally {

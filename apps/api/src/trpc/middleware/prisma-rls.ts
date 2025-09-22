@@ -21,7 +21,7 @@ type RLSPolicy =
   | 'emergency_override';
 
 interface RLSContext {
-  userId: string;
+  _userId: string;
   clinicId: string;
   userRole: string;
   professionalId?: string;
@@ -69,7 +69,7 @@ const RLS_POLICIES = {
     model: string,
     operation: string,
   ): RLSPolicyResult => {
-    if (!ctx.userId) {
+    if (!ctx._userId) {
       return {
         allowed: false,
         errorMessage: 'User authentication required',
@@ -261,7 +261,7 @@ function extractOperationType(path: string, type: string): string {
  */
 function createRLSContext(ctx: any): RLSContext {
   return {
-    userId: ctx.userId,
+    _userId: ctx.userId,
     clinicId: ctx.clinicId,
     userRole: ctx.userRole || 'user',
     professionalId: ctx.professionalId,
@@ -415,7 +415,7 @@ function createRLSEnforcedPrisma(
                     rlsWhere: rlsResult.where,
                     user: rlsContext.userId,
                     clinic: rlsContext.clinicId,
-                    role: rlsContext.userRole,
+                    _role: rlsContext.userRole,
                   });
                 }
 
@@ -442,17 +442,14 @@ function createRLSEnforcedPrisma(
  * ensuring proper multi-tenant data isolation and user context validation.
  */
 export const prismaRLSMiddleware = async ({
-  ctx,
-  next,
-  path,
-  _type,
+  ctx,next,_path,type,
   _input,
 }: any) => {
   const start = performance.now();
 
   try {
     // Skip RLS for public operations and health checks
-    if (path === 'health' || path.startsWith('public.') || !ctx.userId) {
+    if (path === 'health' || path.startsWith('public.') || !ctx._userId) {
       return next();
     }
 
@@ -496,10 +493,10 @@ export const prismaRLSMiddleware = async ({
     const duration = performance.now() - start;
 
     // Log RLS failures for security auditing
-    if (ctx.userId) {
+    if (ctx._userId) {
       await ctx.prisma.auditTrail.create({
         data: {
-          userId: ctx.userId,
+          _userId: ctx.userId,
           clinicId: ctx.clinicId,
           action: 'VIEW',
           resource: path,

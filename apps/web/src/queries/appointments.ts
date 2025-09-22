@@ -46,7 +46,7 @@ export const appointmentsQueryOptions: any = ({
           patient:patients(*),
           professional:professionals(*),
           clinic:clinics(*),
-          service:services(*)
+          _service:services(*)
         `,
         { count: 'exact' },
       );
@@ -109,7 +109,7 @@ export const appointmentQueryOptions: any = (id: string) =>
           patient:patients(*),
           professional:professionals(*),
           clinic:clinics(*),
-          service:services(*),
+          _service:services(*),
           consent_records:consent_records(*)
         `,
         )
@@ -138,7 +138,7 @@ export const todayAppointmentsQueryOptions: any = (professionalId?: string) =>
           *,
           patient:patients(*),
           professional:professionals(*),
-          service:services(*)
+          _service:services(*)
         `,
         )
         .gte('start_time', `${today}T00:00:00`)
@@ -179,7 +179,7 @@ export const weeklyAppointmentsQueryOptions: any = (professionalId?: string) =>
           *,
           patient:patients(*),
           professional:professionals(*),
-          service:services(*)
+          _service:services(*)
         `,
         )
         .gte('start_time', startOfWeek.toISOString())

@@ -5,7 +5,6 @@
  */
 
 import { Hono } from 'hono';
-import { z } from 'zod';
 import { requireAuth } from '../../middleware/authn';
 import { dataProtection } from '../../middleware/lgpd-middleware';
 import { LGPDService } from '../../services/lgpd-service';
@@ -79,7 +78,7 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
     const userAgent = c.req.header('User-Agent') || 'unknown';
     const healthcareProfessional = c.req.header('X-Healthcare-Professional');
     const lgpdRequest = c.req.header('X-LGPD-Request');
-    const _adminOverride = c.req.header('X-Admin-Override');
+    const adminOverride = c.req.header('X-Admin-Override');
     const medicalDeviceData = c.req.header('X-Medical-Device-Data');
 
     // Get patient data first

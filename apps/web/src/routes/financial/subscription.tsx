@@ -26,7 +26,7 @@ function SubscriptionPage() {
     try {
       await refetch();
       toast('Status atualizado - Informações da assinatura foram atualizadas.');
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to refresh subscription status:', error);
       toast(
         'Erro ao atualizar - Não foi possível atualizar o status da assinatura.',
@@ -53,7 +53,7 @@ function SubscriptionPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId: user.id }),
+        body: JSON.stringify({ _userId: user.id }),
       });
 
       const data = await response.json();
@@ -66,7 +66,7 @@ function SubscriptionPage() {
           `Erro - ${data.error || 'Não foi possível abrir o portal do cliente.'}`,
         );
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Error opening customer portal:', error);
       toast('Erro - Falha ao conectar com o portal do cliente.');
     }

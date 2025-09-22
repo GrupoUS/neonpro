@@ -17,7 +17,7 @@ import type { Context } from 'hono';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Hono context for SSR integration testing
-const _mockHonoContext = {
+const mockHonoContext = {
   req: {
     header: vi.fn(),
     cookie: vi.fn(),
@@ -30,10 +30,10 @@ const _mockHonoContext = {
   var: {},
 } as unknown as Context;
 
-describe('Supabase Architecture Validation - Architect Review', () => {
-  describe('Client Instantiation Architecture Patterns', () => {
-    describe('Three-Tier Client Architecture', () => {
-      it('should implement proper separation of concerns between client types', async () => {
+describe(_'Supabase Architecture Validation - Architect Review'), () => {
+  describe(_'Client Instantiation Architecture Patterns'), () => {
+    describe(_'Three-Tier Client Architecture'), () => {
+      it(_'should implement proper separation of concerns between client types',async () => {
         const { createAdminClient, createServerClient, createUserClient } = await import(
           '../supabase'
         );
@@ -55,7 +55,7 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         expect(serverClient.supabaseKey).toBe(userClient.supabaseKey); // Both use anon key
       });
 
-      it('should enforce proper client usage boundaries', async () => {
+      it(_'should enforce proper client usage boundaries',async () => {
         const { createAdminClient, createServerClient } = await import(
           '../supabase'
         );
@@ -73,8 +73,8 @@ describe('Supabase Architecture Validation - Architect Review', () => {
       });
     });
 
-    describe('Client Factory Pattern Implementation', () => {
-      it('should implement singleton pattern for admin client', async () => {
+    describe(_'Client Factory Pattern Implementation'), () => {
+      it(_'should implement singleton pattern for admin client',async () => {
         const { createAdminClient } = await import('../supabase');
 
         const adminClient1 = createAdminClient();
@@ -85,7 +85,7 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         expect(adminClient1.connectionPool).toBe(adminClient2.connectionPool);
       });
 
-      it('should implement factory pattern for server clients with context isolation', async () => {
+      it(_'should implement factory pattern for server clients with context isolation',async () => {
         const { createServerClient } = await import('../supabase');
 
         const cookies1 = {
@@ -107,9 +107,9 @@ describe('Supabase Architecture Validation - Architect Review', () => {
     });
   });
 
-  describe('Connection Pooling and Resource Management', () => {
-    describe('Connection Pool Architecture', () => {
-      it('should implement intelligent connection pooling for serverless environments', async () => {
+  describe(_'Connection Pooling and Resource Management'), () => {
+    describe(_'Connection Pool Architecture'), () => {
+      it(_'should implement intelligent connection pooling for serverless environments',async () => {
         const { createAdminClient } = await import('../supabase');
 
         const adminClient = createAdminClient();
@@ -122,7 +122,7 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         expect(typeof adminClient.connectionPool.release).toBe('function');
       });
 
-      it('should implement connection reuse strategies', async () => {
+      it(_'should implement connection reuse strategies',async () => {
         const { createAdminClient } = await import('../supabase');
 
         const adminClient = createAdminClient();
@@ -135,7 +135,7 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         expect(connectionSpy).toHaveBeenCalledTimes(1); // Connection reused
       });
 
-      it('should handle connection cleanup on process termination', async () => {
+      it(_'should handle connection cleanup on process termination',async () => {
         const { createAdminClient } = await import('../supabase');
 
         const adminClient = createAdminClient();
@@ -148,8 +148,8 @@ describe('Supabase Architecture Validation - Architect Review', () => {
       });
     });
 
-    describe('Resource Management Patterns', () => {
-      it('should implement proper resource lifecycle management', async () => {
+    describe(_'Resource Management Patterns'), () => {
+      it(_'should implement proper resource lifecycle management',async () => {
         const { createServerClient } = await import('../supabase');
 
         const serverClient = createServerClient({
@@ -165,7 +165,7 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         );
       });
 
-      it('should implement memory-efficient cursor-based pagination', async () => {
+      it(_'should implement memory-efficient cursor-based pagination',async () => {
         const { createAdminClient } = await import('../supabase');
 
         const adminClient = createAdminClient();
@@ -182,16 +182,16 @@ describe('Supabase Architecture Validation - Architect Review', () => {
     });
   });
 
-  describe('RLS Implementation for Multi-Tenant Healthcare', () => {
-    describe('Tenant Isolation Architecture', () => {
-      it('should implement clinic-based tenant isolation through RLS', async () => {
+  describe(_'RLS Implementation for Multi-Tenant Healthcare'), () => {
+    describe(_'Tenant Isolation Architecture'), () => {
+      it(_'should implement clinic-based tenant isolation through RLS',async () => {
         const { RLSQueryBuilder } = await import('../supabase');
 
         const builder = new RLSQueryBuilder(
           'professional-123',
           'healthcare_professional',
         );
-        builder.setTenantContext({ clinicId: 'clinic-456', role: 'doctor' });
+        builder.setTenantContext({ clinicId: 'clinic-456', _role: 'doctor' });
 
         const patientQuery = builder.buildQuery('patients', 'select');
 
@@ -201,7 +201,7 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         expect(patientQuery.securityLevel).toBe('tenant_isolated');
       });
 
-      it('should validate RLS policy enforcement at query level', async () => {
+      it(_'should validate RLS policy enforcement at query level',async () => {
         const { createServerClient } = await import('../supabase');
 
         const serverClient = createServerClient({
@@ -224,8 +224,8 @@ describe('Supabase Architecture Validation - Architect Review', () => {
       });
     });
 
-    describe('Healthcare Data Access Patterns', () => {
-      it('should implement hierarchical access control for healthcare roles', async () => {
+    describe(_'Healthcare Data Access Patterns'), () => {
+      it(_'should implement hierarchical access control for healthcare roles',async () => {
         const { RLSQueryBuilder } = await import('../supabase');
 
         const doctorBuilder = new RLSQueryBuilder('doctor-123', 'doctor');
@@ -249,7 +249,7 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         expect(adminQuery.restrictedFields).toContain('medical_diagnosis');
       });
 
-      it('should implement time-based access restrictions', async () => {
+      it(_'should implement time-based access restrictions',async () => {
         const { RLSQueryBuilder } = await import('../supabase');
 
         const builder = new RLSQueryBuilder(
@@ -278,9 +278,9 @@ describe('Supabase Architecture Validation - Architect Review', () => {
     });
   });
 
-  describe('Authentication Flow Architecture for Brazilian Compliance', () => {
-    describe('Multi-Factor Authentication Integration', () => {
-      it('should implement MFA-aware client configuration', async () => {
+  describe(_'Authentication Flow Architecture for Brazilian Compliance'), () => {
+    describe(_'Multi-Factor Authentication Integration'), () => {
+      it(_'should implement MFA-aware client configuration',async () => {
         const { createServerClient } = await import('../supabase');
 
         const serverClient = createServerClient({
@@ -301,7 +301,7 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         );
       });
 
-      it('should enforce step-up authentication for sensitive operations', async () => {
+      it(_'should enforce step-up authentication for sensitive operations',async () => {
         const { createServerClient } = await import('../supabase');
 
         const serverClient = createServerClient({
@@ -320,8 +320,8 @@ describe('Supabase Architecture Validation - Architect Review', () => {
       });
     });
 
-    describe('Brazilian Digital Certificate Integration', () => {
-      it('should support ICP-Brasil certificate authentication', async () => {
+    describe(_'Brazilian Digital Certificate Integration'), () => {
+      it(_'should support ICP-Brasil certificate authentication',async () => {
         const { createServerClient } = await import('../supabase');
 
         const serverClient = createServerClient({
@@ -341,9 +341,9 @@ describe('Supabase Architecture Validation - Architect Review', () => {
     });
   });
 
-  describe('SSR Cookie Management for Hono.js Integration', () => {
-    describe('Cookie Handling Architecture', () => {
-      it('should implement secure cookie management for SSR contexts', async () => {
+  describe(_'SSR Cookie Management for Hono.js Integration'), () => {
+    describe(_'Cookie Handling Architecture'), () => {
+      it(_'should implement secure cookie management for SSR contexts',async () => {
         const { createServerClient } = await import('../supabase');
 
         const cookieManager = {
@@ -363,7 +363,7 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         expect(serverClient.cookieManager.secure).toBe(true);
       });
 
-      it('should implement cookie chunking for large session data', async () => {
+      it(_'should implement cookie chunking for large session data',async () => {
         const { createServerClient } = await import('../supabase');
 
         const largeCookieData = 'x'.repeat(8192); // Large session data
@@ -383,8 +383,8 @@ describe('Supabase Architecture Validation - Architect Review', () => {
       });
     });
 
-    describe('Hono.js Context Integration', () => {
-      it('should integrate seamlessly with Hono middleware patterns', async () => {
+    describe(_'Hono.js Context Integration'), () => {
+      it(_'should integrate seamlessly with Hono middleware patterns',async () => {
         const { createServerClient } = await import('../supabase');
 
         // Mock Hono middleware context
@@ -400,16 +400,16 @@ describe('Supabase Architecture Validation - Architect Review', () => {
 
         const honoIntegration = createServerClient.forHono(honoContext);
 
-        expect(honoIntegration.context).toBe(honoContext);
+        expect(honoIntegration._context).toBe(honoContext);
         expect(honoIntegration.cookieExtraction.automatic).toBe(true);
         expect(typeof honoIntegration.middleware).toBe('function');
       });
     });
   });
 
-  describe('Error Handling and Resilience Patterns', () => {
-    describe('Circuit Breaker Architecture', () => {
-      it('should implement circuit breaker for database connections', async () => {
+  describe(_'Error Handling and Resilience Patterns'), () => {
+    describe(_'Circuit Breaker Architecture'), () => {
+      it(_'should implement circuit breaker for database connections',async () => {
         const { createAdminClient } = await import('../supabase');
 
         const adminClient = createAdminClient();
@@ -421,7 +421,7 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         expect(adminClient.circuitBreaker.state).toBe('closed');
       });
 
-      it('should implement exponential backoff retry strategy', async () => {
+      it(_'should implement exponential backoff retry strategy',async () => {
         const { createAdminClient } = await import('../supabase');
 
         const adminClient = createAdminClient();
@@ -434,8 +434,8 @@ describe('Supabase Architecture Validation - Architect Review', () => {
       });
     });
 
-    describe('Graceful Degradation Patterns', () => {
-      it('should implement graceful degradation for non-critical features', async () => {
+    describe(_'Graceful Degradation Patterns'), () => {
+      it(_'should implement graceful degradation for non-critical features',async () => {
         const { createServerClient } = await import('../supabase');
 
         const serverClient = createServerClient({
@@ -457,9 +457,9 @@ describe('Supabase Architecture Validation - Architect Review', () => {
     });
   });
 
-  describe('Performance and Scalability Architecture', () => {
-    describe('Query Optimization Patterns', () => {
-      it('should implement intelligent query caching', async () => {
+  describe(_'Performance and Scalability Architecture'), () => {
+    describe(_'Query Optimization Patterns'), () => {
+      it(_'should implement intelligent query caching',async () => {
         const { createServerClient } = await import('../supabase');
 
         const serverClient = createServerClient({
@@ -475,7 +475,7 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         expect(typeof queryCache.invalidate).toBe('function');
       });
 
-      it('should implement query batching for efficiency', async () => {
+      it(_'should implement query batching for efficiency',async () => {
         const { createAdminClient } = await import('../supabase');
 
         const adminClient = createAdminClient();
@@ -488,8 +488,8 @@ describe('Supabase Architecture Validation - Architect Review', () => {
       });
     });
 
-    describe('Horizontal Scaling Support', () => {
-      it('should support read replica routing', async () => {
+    describe(_'Horizontal Scaling Support'), () => {
+      it(_'should support read replica routing',async () => {
         const { createAdminClient } = await import('../supabase');
 
         const adminClient = createAdminClient();
@@ -502,9 +502,9 @@ describe('Supabase Architecture Validation - Architect Review', () => {
     });
   });
 
-  describe('Monitoring and Observability Architecture', () => {
-    describe('Telemetry Integration', () => {
-      it('should implement comprehensive telemetry collection', async () => {
+  describe(_'Monitoring and Observability Architecture'), () => {
+    describe(_'Telemetry Integration'), () => {
+      it(_'should implement comprehensive telemetry collection',async () => {
         const { createAdminClient } = await import('../supabase');
 
         const adminClient = createAdminClient();
@@ -516,7 +516,7 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         expect(typeof telemetry.recordMetric).toBe('function');
       });
 
-      it('should implement health check endpoints', async () => {
+      it(_'should implement health check endpoints',async () => {
         const { createAdminClient } = await import('../supabase');
 
         const adminClient = createAdminClient();

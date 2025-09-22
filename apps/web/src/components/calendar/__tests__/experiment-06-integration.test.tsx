@@ -11,14 +11,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Experiment06CalendarIntegration } from '../experiment-06-integration';
 
 // Mock healthcare audit utilities
-vi.mock('@/utils/accessibility/healthcare-audit-utils', () => ({
+vi.mock(('@/utils/accessibility/healthcare-audit-utils', () => ({
   validateCalendarIntegration: vi.fn().mockReturnValue(true),
   auditAppointmentAccess: vi.fn().mockResolvedValue({ valid: true }),
   logCalendarAction: vi.fn().mockResolvedValue({ success: true }),
 }));
 
 // Mock Supabase real-time
-vi.mock('@/integrations/supabase/client', () => ({
+vi.mock(('@/integrations/supabase/client', () => ({
   supabase: {
     channel: vi.fn().mockReturnValue({
       on: vi.fn().mockReturnThis(),
@@ -37,11 +37,10 @@ vi.mock('@/integrations/supabase/client', () => ({
 }));
 
 // Mock BigCalendar component
-vi.mock('@/components/big-calendar', () => ({
-  BigCalendar: vi.fn(({ events, onEventUpdate, onEventDelete }) => (
+vi.mock(('@/components/big-calendar', () => ({
+  BigCalendar: vi.fn(({ events,onEventUpdate, onEventDelete }) => (
     <div data-testid='big-calendar'>
-      {events.map((event: any) => (
-        <div key={event.id} data-event-id={event.id} className='calendar-event'>
+      {events.map((event: any) => (<div key={event.id} data-event-id={event.id} className='calendar-event'>
           <div className='event-title'>{event.title}</div>
           <button
             onClick={() =>
@@ -63,7 +62,7 @@ vi.mock('@/components/big-calendar', () => ({
   )),
 }));
 
-describe('Experiment06CalendarIntegration - Healthcare Compliance', () => {
+describe(('Experiment06CalendarIntegration - Healthcare Compliance', () => {
   const mockAppointments: Appointment[] = [
     {
       id: 'apt-1',
@@ -106,7 +105,7 @@ describe('Experiment06CalendarIntegration - Healthcare Compliance', () => {
   });
 
   // RED TEST 1: Proper appointment to calendar event conversion
-  it('should convert appointments to calendar events with LGPD compliance', () => {
+  it(('should convert appointments to calendar events with LGPD compliance', () => {
     render(
       <Experiment06CalendarIntegration
         appointments={mockAppointments}
@@ -132,7 +131,7 @@ describe('Experiment06CalendarIntegration - Healthcare Compliance', () => {
   });
 
   // RED TEST 2: Event update triggers audit trail
-  it('should audit all calendar modifications for compliance', async () => {
+  it(_'should audit all calendar modifications for compliance',async () => {
     const { logCalendarAction } = await import(
       '@/utils/accessibility/healthcare-audit-utils'
     );
@@ -165,7 +164,7 @@ describe('Experiment06CalendarIntegration - Healthcare Compliance', () => {
   });
 
   // RED TEST 3: Event deletion with healthcare validation
-  it('should validate deletion permissions for healthcare events', async () => {
+  it(_'should validate deletion permissions for healthcare events',async () => {
     const { auditAppointmentAccess } = await import(
       '@/utils/accessibility/healthcare-audit-utils'
     );
@@ -200,7 +199,7 @@ describe('Experiment06CalendarIntegration - Healthcare Compliance', () => {
   });
 
   // RED TEST 4: Brazilian healthcare color coding compliance
-  it('should maintain consistent healthcare color coding', () => {
+  it(('should maintain consistent healthcare color coding', () => {
     render(
       <Experiment06CalendarIntegration
         appointments={mockAppointments}
@@ -227,7 +226,7 @@ describe('Experiment06CalendarIntegration - Healthcare Compliance', () => {
   });
 
   // RED TEST 5: Time zone handling for Brazilian regions
-  it('should handle different Brazilian time zones correctly', () => {
+  it(('should handle different Brazilian time zones correctly', () => {
     const saoPauloAppointment: Appointment = {
       ...mockAppointments[0],
       id: 'apt-sp',
@@ -250,7 +249,7 @@ describe('Experiment06CalendarIntegration - Healthcare Compliance', () => {
   });
 
   // RED TEST 6: LGPD data minimization in event display
-  it('should minimize data exposure in calendar display', () => {
+  it(('should minimize data exposure in calendar display', () => {
     const appointmentWithSensitiveData: Appointment = {
       ...mockAppointments[0],
       id: 'apt-sensitive',
@@ -279,7 +278,7 @@ describe('Experiment06CalendarIntegration - Healthcare Compliance', () => {
   });
 
   // GREEN TEST: Real-time subscription handling
-  it('should handle real-time updates from Supabase', async () => {
+  it(_'should handle real-time updates from Supabase',async () => {
     const mockSubscription = vi.fn();
     const { supabase } = await import('@/integrations/supabase/client');
 
@@ -304,7 +303,7 @@ describe('Experiment06CalendarIntegration - Healthcare Compliance', () => {
   });
 
   // GREEN TEST: New consultation button accessibility
-  it('should provide accessible new consultation button', () => {
+  it(('should provide accessible new consultation button', () => {
     render(
       <Experiment06CalendarIntegration
         appointments={mockAppointments}
@@ -323,7 +322,7 @@ describe('Experiment06CalendarIntegration - Healthcare Compliance', () => {
   });
 
   // ERROR CASE: Empty appointments array
-  it('should handle empty appointments gracefully', () => {
+  it(('should handle empty appointments gracefully', () => {
     render(
       <Experiment06CalendarIntegration
         appointments={[]}
@@ -341,7 +340,7 @@ describe('Experiment06CalendarIntegration - Healthcare Compliance', () => {
   });
 
   // ERROR CASE: Invalid appointment data
-  it('should handle malformed appointment data', () => {
+  it(('should handle malformed appointment data', () => {
     const invalidAppointment = {
       id: 'invalid',
       title: 'Consulta Inválida',

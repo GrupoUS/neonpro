@@ -47,7 +47,7 @@ function PatientRegister() {
   const navigate = useNavigate();
 
   // Handle successful patient creation
-  const handlePatientCreated = (_patient: any) => {
+  const handlePatientCreated = (patient: any) => {
     setRecentlyCreated(patient.id);
     setIsWizardOpen(false);
 

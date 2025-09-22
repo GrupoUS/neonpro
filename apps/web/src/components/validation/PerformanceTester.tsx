@@ -3,7 +3,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
 import {
   Activity,
   AlertTriangle,
@@ -13,7 +12,6 @@ import {
   Gauge,
   Heart,
   Shield,
-  Smartphone,
   Timer,
   TrendingUp,
   XCircle,
@@ -174,7 +172,7 @@ const simulateAppointmentBooking = async (): Promise<number> => {
   // Simulate form interactions and validation
   const steps = ['date-selection', 'time-selection', 'service-selection', 'confirmation'];
 
-  for (const step of steps) {
+  for (const _step of steps) {
     await new Promise(resolve => setTimeout(resolve, Math.random() * 300 + 100));
   }
 
@@ -215,7 +213,7 @@ export const PerformanceTester: React.FC = () => {
       observersRef.current.forEach(observer => {
         try {
           observer.disconnect();
-        } catch (error) {
+        } catch (_error) {
           console.warn('Error disconnecting observer:', error);
         }
       });
@@ -320,7 +318,7 @@ export const PerformanceTester: React.FC = () => {
         // Try to observe interaction events - this may fail in browsers that don't support INP
         inpObserver.observe({ entryTypes: ['event'] });
         observers.push(inpObserver);
-      } catch (error) {
+      } catch (_error) {
         console.warn('INP observation not supported:', error);
       }
 
@@ -340,13 +338,13 @@ export const PerformanceTester: React.FC = () => {
 
       // Store all observers for cleanup
       observersRef.current = observers;
-    } catch (error) {
+    } catch (_error) {
       console.warn('Performance observers setup failed:', error);
       // Clean up any observers that were created before the error
       observers.forEach(observer => {
         try {
           observer.disconnect();
-        } catch (error) {
+        } catch (_error) {
           console.warn('Error disconnecting observer during cleanup:', error);
         }
       });
@@ -438,7 +436,7 @@ export const PerformanceTester: React.FC = () => {
         } else if (scenario.id === 'patient_data_load') {
           updateMetric('DATA_LOAD', duration);
         }
-      } catch (error) {
+      } catch (_error) {
         results.push({
           id: scenario.id,
           name: scenario.name,

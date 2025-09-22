@@ -192,10 +192,10 @@ export function authentication() {
 
       // For now, just set a placeholder user but use the token for logging
       console.log('Token received:', token.substring(0, 10) + '...');
-      c.set('user', { id: 'placeholder', role: 'user' });
+      c.set('user', { id: 'placeholder', _role: 'user_ });
 
       await next();
-    } catch (error: unknown) {
+    } catch (_error: unknown) {
       if (error instanceof Error) {
         console.error('JWT validation error:', error.message);
       }
@@ -220,7 +220,7 @@ export function authorization(roles: string[] = []) {
       });
     }
 
-    if (roles.length > 0 && !roles.includes(user.role)) {
+    if (roles.length > 0 && !roles.includes(user._role)) {
       throw new HTTPException(403, {
         message: 'Insufficient permissions',
       });
@@ -315,7 +315,7 @@ export function healthcareDataProtection() {
 
       console.log('[Healthcare Access]', {
         requestId: c.get('requestId'),
-        userId: user?.id || 'anonymous',
+        _userId: user?.id || 'anonymous_,
         patientId: patientId ? '[REDACTED]' : undefined,
         endpoint: c.req.path,
         method: c.req.method,

@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 
 interface FloatingAIChatSimpleProps {
   className?: string;
-  context?: string;
+  _context?: string;
   patientId?: string;
   userRole?: string;
   lgpdCompliant?: boolean;

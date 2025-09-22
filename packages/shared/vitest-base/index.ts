@@ -46,7 +46,7 @@ export const createVitestConfig = (options: VitestBaseOptions = {}) => {
 
   // Standard exclude patterns for healthcare applications
   const defaultExclude = [
-    'node_modules/',
+    'node_modules/**',
     'dist/',
     'build/',
     '**/*.d.ts',
@@ -69,7 +69,7 @@ export const createVitestConfig = (options: VitestBaseOptions = {}) => {
       
       // Setup files for test environment
       setupFiles: [
-        ...(packageName ? [resolve(__dirname, '..', '..', 'tests', 'setup', `${packageName}.setup.ts`)] : []),
+        ...(packageName ? [resolve(__dirname, '..', '..', 'tests', 'setup/', `${packageName}.setup.ts`)] : []),
         ...setupFiles,
       ],
       

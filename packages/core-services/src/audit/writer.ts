@@ -5,7 +5,7 @@ export type AuditOutcome = "success" | "refusal" | "limit" | "error";
 
 export interface AuditEventInput {
   action: "query" | "explanation" | "suggestions";
-  userId: string;
+  _userId: string;
   clinicId?: string;
   sessionId?: string | null;
   consentStatus?: "valid" | "missing" | "n/a";

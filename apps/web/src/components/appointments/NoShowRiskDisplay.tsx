@@ -142,12 +142,9 @@ export function NoShowRiskDisplay({
 
   // Auto-refresh risk data every 30 minutes
   useEffect(() => {
-    const interval = setInterval(
-      () => {
-        refetchRisk();
-      },
-      30 * 60 * 1000,
-    );
+    const interval = setInterval(() => {
+      refetchRisk();
+    }, 30 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, [refetchRisk]);
@@ -573,7 +570,7 @@ export function NoShowRiskDisplay({
                     getInsights({
                       patientId,
                       appointmentId,
-                      context: 'no_show_prevention',
+                      _context: 'no_show_prevention',
                     })}
                   disabled={gettingInsights}
                   className='mb-4'

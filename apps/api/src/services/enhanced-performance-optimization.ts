@@ -245,7 +245,7 @@ export class EnhancedPerformanceOptimizationService {
   async searchPatientsEnhanced(
     _clinicId: string,
     searchParams: {
-      query?: string;
+      _query?: string;
       page?: number;
       limit?: number;
       sortBy?: string;
@@ -578,8 +578,7 @@ export class EnhancedPerformanceOptimizationService {
         const batch = items.slice(i, i + batchSize);
 
         // Process batch with concurrency control
-        const batchResults = await Promise.allSettled(
-          batch.map(async (item, batchIndex) => {
+        const batchResults = await Promise.allSettled(_batch.map(async (item,_batchIndex) => {
             const actualIndex = i + batchIndex;
             try {
               const result = await processFn(item, actualIndex);
@@ -719,7 +718,7 @@ export class EnhancedPerformanceOptimizationService {
       cacheHitRate: number;
       slowQueryCount: number;
     };
-    slowQueries?: Array<{ query: string; duration: number; timestamp: Date }>;
+    slowQueries?: Array<{ _query: string; duration: number; timestamp: Date }>;
     cacheStats?: Record<
       string,
       { hits: number; misses: number; hitRate: number }
@@ -771,7 +770,7 @@ export class EnhancedPerformanceOptimizationService {
     fn: () => Promise<T>,
     timeoutMs: number,
   ): Promise<T> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve,_reject) => {
       const timer = setTimeout(() => {
         reject(new Error(`Query timeout after ${timeoutMs}ms`));
       }, timeoutMs);
@@ -781,7 +780,7 @@ export class EnhancedPerformanceOptimizationService {
           clearTimeout(timer);
           resolve(result);
         })
-        .catch(_error => {
+        .catch(error => {
           clearTimeout(timer);
           reject(error);
         });
@@ -1041,7 +1040,7 @@ export class EnhancedPerformanceOptimizationService {
       { hits: number; misses: number; hitRate: number }
     > = {};
 
-    this.cacheStats.forEach((value, key) => {
+    this.cacheStats.forEach((value,_key) => {
       const total = value.hits + value.misses;
       stats[key] = {
         hits: value.hits,
@@ -1092,8 +1091,7 @@ export class EnhancedPerformanceOptimizationService {
 
   private initializePerformanceMonitoring(): void {
     // Set up periodic performance monitoring
-    setInterval(
-      () => {
+    setInterval(() => {
         this.cleanupPerformanceMetrics();
       },
       5 * 60 * 1000,
@@ -1102,7 +1100,7 @@ export class EnhancedPerformanceOptimizationService {
 
   private cleanupPerformanceMetrics(): void {
     // Remove old metrics data
-    const _cutoff = Date.now() - 60 * 60 * 1000; // Keep last hour
+    const cutoff = Date.now() - 60 * 60 * 1000; // Keep last hour
 
     for (const [_key, _metrics] of this.performanceMetrics.entries()) {
       // Implement cleanup logic based on your requirements

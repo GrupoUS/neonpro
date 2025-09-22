@@ -6,7 +6,7 @@
 export const testUser = {
   id: '123e4567-e89b-12d3-a456-426614174000',
   email: 'test@example.com',
-  role: 'patient',
+  _role: 'patient',
   permissions: ['read', 'write'],
 };
 
@@ -14,7 +14,7 @@ export const testUser = {
 export const testProfessional = {
   id: '123e4567-e89b-12d3-a456-426614174001',
   email: 'doctor@example.com',
-  role: 'professional',
+  _role: 'professional',
   permissions: ['read', 'write', 'admin'],
   clinicId: '123e4567-e89b-12d3-a456-426614174002',
 };
@@ -47,7 +47,7 @@ export function createTestAuthContext(user = testUser) {
  * Create mock user for integration tests
  */
 export async function createMockUser(
-  role: 'patient' | 'professional' = 'patient',
+  _role: 'patient' | 'professional' = 'patient',
 ) {
   if (role === 'professional') {
     return testProfessional;
@@ -81,7 +81,7 @@ export async function createMockPatient() {
  * Setup test authentication
  */
 export async function setupTestAuth(
-  userId: string,
+  _userId: string,
 ): Promise<Record<string, string>> {
   return {
     Authorization: `Bearer test-token`,

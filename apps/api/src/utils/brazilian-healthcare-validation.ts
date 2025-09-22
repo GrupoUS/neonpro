@@ -3,8 +3,6 @@
  * Validates healthcare-specific data according to Brazilian regulations
  */
 
-import { z } from 'zod';
-
 // CPF validation
 export const validateCPF = (cpf: string): boolean => {
   if (!cpf) return false;

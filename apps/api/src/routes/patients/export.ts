@@ -1,6 +1,5 @@
 import { Hono } from 'hono';
 import { jwt } from 'hono/jwt';
-import { z } from 'zod';
 import { ExportService } from '../../services/export/export-service';
 
 import { ExportFilter, ExportPagination, LGPDComplianceOptions } from '../../services/export/types';
@@ -54,7 +53,7 @@ exportRouter.post(
   async c => {
     try {
       const userId = c.get('jwtPayload').sub;
-      if (!userId) {
+      if (!_userId) {
         return c.json({ error: 'Usuário não autenticado' }, 401);
       }
 
@@ -131,7 +130,7 @@ exportRouter.get(
   async c => {
     try {
       const userId = c.get('jwtPayload').sub;
-      if (!userId) {
+      if (!_userId) {
         return c.json({ error: 'Usuário não autenticado' }, 401);
       }
 
@@ -142,7 +141,7 @@ exportRouter.get(
         return c.json({ error: 'Exportação não encontrada' }, 404);
       }
 
-      if (job.userId !== userId) {
+      if (job.userId !== _userId) {
         return c.json({ error: 'Acesso não autorizado' }, 403);
       }
 
@@ -178,12 +177,12 @@ exportRouter.delete(
   async c => {
     try {
       const userId = c.get('jwtPayload').sub;
-      if (!userId) {
+      if (!_userId) {
         return c.json({ error: 'Usuário não autenticado' }, 401);
       }
 
       const jobId = c.req.param('jobId');
-      const success = await ExportService.cancelExportJob(jobId, userId);
+      const success = await ExportService.cancelExportJob(jobId, _userId);
 
       if (!success) {
         return c.json(
@@ -215,7 +214,7 @@ exportRouter.get(
   async c => {
     try {
       const userId = c.get('jwtPayload').sub;
-      if (!userId) {
+      if (!_userId) {
         return c.json({ error: 'Usuário não autenticado' }, 401);
       }
 
@@ -226,7 +225,7 @@ exportRouter.get(
         return c.json({ error: 'Exportação não encontrada' }, 404);
       }
 
-      if (job.userId !== userId) {
+      if (job.userId !== _userId) {
         return c.json({ error: 'Acesso não autorizado' }, 403);
       }
 
@@ -267,7 +266,7 @@ exportRouter.get(
   async c => {
     try {
       const userId = c.get('jwtPayload').sub;
-      if (!userId) {
+      if (!_userId) {
         return c.json({ error: 'Usuário não autenticado' }, 401);
       }
 
@@ -297,14 +296,14 @@ exportRouter.get(
   async c => {
     try {
       const userId = c.get('jwtPayload').sub;
-      if (!userId) {
+      if (!_userId) {
         return c.json({ error: 'Usuário não autenticado' }, 401);
       }
 
       const jobId = c.req.param('jobId');
       const job = await ExportService.getExportJob(jobId);
 
-      if (!job || job.userId !== userId) {
+      if (!job || job.userId !== _userId) {
         return c.json({ error: 'Exportação não encontrada' }, 404);
       }
 

@@ -61,7 +61,7 @@ interface AnvisaReportResponse {
 }
 
 export default async function handler(
-  request: Request,
+  _request: Request,
 ): Promise<Response> {
   if (request.method !== 'POST') {
     return new Response(
@@ -126,7 +126,7 @@ export default async function handler(
         'X-Report-Type': 'adverse-event',
       },
     });
-  } catch (error) {
+  } catch (_error) {
     console.error('Erro ao processar evento adverso:', error);
 
     return new Response(

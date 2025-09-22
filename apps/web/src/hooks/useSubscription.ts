@@ -97,7 +97,7 @@ export function useSubscription() {
           filter: `id=eq.${user.id}`,
         },
         payload => {
-          console.log('Profile subscription updated:', payload);
+          console.log('Profile subscription updated:', _payload);
           // Refetch subscription data when profile changes
           refetch();
         },
@@ -111,7 +111,7 @@ export function useSubscription() {
           filter: `customer_id=eq.${user.id}`,
         },
         payload => {
-          console.log('Subscription record updated:', payload);
+          console.log('Subscription record updated:', _payload);
           // Refetch subscription data when subscription changes
           refetch();
         },

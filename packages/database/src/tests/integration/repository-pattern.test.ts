@@ -105,8 +105,8 @@ describe("Repository Pattern Integration Tests", () => {
   });
 
   describe("PatientService with Repository Pattern", () => {
-    it("should create patient with validation", async () => {
-      const request: CreatePatientRequest = {
+    it(_"should create patient with validation",_async () => {
+      const _request: CreatePatientRequest = {
         clinicId: "test-clinic-id",
         medicalRecordNumber: "MRN-001",
         givenNames: ["John"],
@@ -121,7 +121,7 @@ describe("Repository Pattern Integration Tests", () => {
       expect(patient.id).toBe("test-patient-id");
     });
 
-    it("should validate required fields for patient creation", async () => {
+    it(_"should validate required fields for patient creation",_async () => {
       const invalidRequest: CreatePatientRequest = {
         clinicId: "",
         medicalRecordNumber: "",
@@ -136,8 +136,8 @@ describe("Repository Pattern Integration Tests", () => {
         .rejects.toThrow(PatientValidationError);
     });
 
-    it("should validate CPF format", async () => {
-      const request: CreatePatientRequest = {
+    it(_"should validate CPF format",_async () => {
+      const _request: CreatePatientRequest = {
         clinicId: "test-clinic-id",
         medicalRecordNumber: "MRN-002",
         givenNames: ["Jane"],
@@ -152,8 +152,8 @@ describe("Repository Pattern Integration Tests", () => {
         .rejects.toThrow("Invalid CPF format");
     });
 
-    it("should validate Brazilian phone format", async () => {
-      const request: CreatePatientRequest = {
+    it(_"should validate Brazilian phone format",_async () => {
+      const _request: CreatePatientRequest = {
         clinicId: "test-clinic-id",
         medicalRecordNumber: "MRN-003",
         givenNames: "Bob".split(" "),
@@ -168,8 +168,8 @@ describe("Repository Pattern Integration Tests", () => {
         .rejects.toThrow("Invalid primary phone number format");
     });
 
-    it("should validate email format", async () => {
-      const request: CreatePatientRequest = {
+    it(_"should validate email format",_async () => {
+      const _request: CreatePatientRequest = {
         clinicId: "test-clinic-id",
         medicalRecordNumber: "MRN-004",
         givenNames: "Alice".split(" "),
@@ -184,7 +184,7 @@ describe("Repository Pattern Integration Tests", () => {
         .rejects.toThrow("Invalid email format");
     });
 
-    it("should update patient with validation", async () => {
+    it(_"should update patient with validation",_async () => {
       const updateRequest: UpdatePatientRequest = {
         familyName: "Smith-Johnson",
         email: "alice.smith@example.com"
@@ -194,7 +194,7 @@ describe("Repository Pattern Integration Tests", () => {
       expect(patient).toBeDefined();
     });
 
-    it("should get patients by clinic", async () => {
+    it(_"should get patients by clinic",_async () => {
       const result = await patientService.getPatientsByClinic("test-clinic-id");
       expect(result).toHaveProperty("patients");
       expect(result).toHaveProperty("total");
@@ -202,14 +202,14 @@ describe("Repository Pattern Integration Tests", () => {
       expect(typeof result.total).toBe("number");
     });
 
-    it("should search patients", async () => {
+    it(_"should search patients",_async () => {
       const result = await patientService.searchPatients("John", "test-clinic-id");
       expect(result).toHaveProperty("patients");
       expect(result).toHaveProperty("total");
       expect(Array.isArray(result.patents)).toBe(true);
     });
 
-    it("should count patients", async () => {
+    it(_"should count patients",_async () => {
       const filter: PatientFilter = { clinicId: "test-clinic-id" };
       const count = await patientService.countPatients(filter);
       expect(typeof count).toBe("number");
@@ -218,7 +218,7 @@ describe("Repository Pattern Integration Tests", () => {
   });
 
   describe("Error Handling", () => {
-    it("should handle database errors gracefully", async () => {
+    it(_"should handle database errors gracefully",_async () => {
       // Mock a database error
       const errorSupabase = {
         from: () => ({
@@ -240,11 +240,11 @@ describe("Repository Pattern Integration Tests", () => {
         .rejects.toThrow(PatientError);
     });
 
-    it("should validate birth date", async () => {
+    it(_"should validate birth date",_async () => {
       const futureDate = new Date();
       futureDate.setFullYear(futureDate.getFullYear() + 1);
 
-      const request: CreatePatientRequest = {
+      const _request: CreatePatientRequest = {
         clinicId: "test-clinic-id",
         medicalRecordNumber: "MRN-005",
         givenNames: ["Future"],
@@ -259,7 +259,7 @@ describe("Repository Pattern Integration Tests", () => {
         .rejects.toThrow("Birth date cannot be in the future");
     });
 
-    it("should handle missing patient for update", async () => {
+    it(_"should handle missing patient for update",_async () => {
       const updateRequest: UpdatePatientRequest = {
         familyName: "Updated"
       };
@@ -268,7 +268,7 @@ describe("Repository Pattern Integration Tests", () => {
         .rejects.toThrow("Patient not found");
     });
 
-    it("should handle missing patient for deletion", async () => {
+    it(_"should handle missing patient for deletion",_async () => {
       await expect(patientService.deletePatient("non-existent-id"))
         .rejects.toThrow("Patient not found");
     });

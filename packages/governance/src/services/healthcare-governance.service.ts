@@ -122,7 +122,7 @@ export class HealthcareGovernanceService
         resource: "healthcare_metric",
         resourceType: "REPORT",
         resourceId: data.id,
-        userId: "system", // TODO: Get from context
+        _userId: "system", // TODO: Get from context
         ipAddress: "127.0.0.1", // TODO: Get from context
         userAgent: "system", // TODO: Get from context
         status: "SUCCESS",
@@ -182,7 +182,7 @@ export class HealthcareGovernanceService
         resource: "healthcare_metric",
         resourceType: "REPORT",
         resourceId: update.id,
-        userId: "system", // TODO: Get from context
+        _userId: "system", // TODO: Get from context
         ipAddress: "127.0.0.1", // TODO: Get from context
         userAgent: "system", // TODO: Get from context
         status: "SUCCESS",
@@ -222,7 +222,7 @@ export class HealthcareGovernanceService
         resource: "healthcare_metric",
         resourceType: "REPORT",
         resourceId: id,
-        userId: "system", // TODO: Get from context
+        _userId: "system", // TODO: Get from context
         ipAddress: "127.0.0.1", // TODO: Get from context
         userAgent: "system", // TODO: Get from context
         status: "SUCCESS",
@@ -630,7 +630,7 @@ export class HealthcareGovernanceService
         resource: entry.resource,
         resourceType: entry.resourceType,
         resourceId: entry.resourceId,
-        userId: entry.userId,
+        _userId: entry.userId,
         clinicId: entry.clinicId,
         patientId: entry.patientId,
         ipAddress: entry.ipAddress,
@@ -669,8 +669,7 @@ export class HealthcareGovernanceService
       const alerts = await this.getHealthcareAlerts(clinicId, {
         status: "ACTIVE",
       });
-      const criticalAlerts = alerts.filter(
-        (alert) => alert.severity === "CRITICAL",
+      const criticalAlerts = alerts.filter((alert) => alert.severity === "CRITICAL",
       ).length;
 
       // Calculate compliance scores
@@ -679,8 +678,7 @@ export class HealthcareGovernanceService
 
       // Get CFM and ANVISA specific compliance
       const cfmMetrics = metrics.filter((m) => m.complianceFramework === "CFM");
-      const anvisaMetrics = metrics.filter(
-        (m) => m.complianceFramework === "ANVISA",
+      const anvisaMetrics = metrics.filter((m) => m.complianceFramework === "ANVISA",
       );
 
       const cfmComplianceScore = this.calculateComplianceScore(cfmMetrics);
@@ -690,8 +688,7 @@ export class HealthcareGovernanceService
       return {
         overallComplianceScore,
         criticalAlerts,
-        activeViolations: alerts.filter(
-          (alert) => alert.alertType === "COMPLIANCE_VIOLATION",
+        activeViolations: alerts.filter((alert) => alert.alertType === "COMPLIANCE_VIOLATION",
         ).length,
         patientSafetyScore,
         cfmComplianceStatus: {
@@ -863,12 +860,11 @@ export class HealthcareGovernanceService
       return Math.min(performance * 100, 100);
     });
 
-    return scores.reduce((sum, score) => sum + score, 0) / scores.length;
+    return scores.reduce((sum,_score) => sum + score, 0) / scores.length;
   }
 
   private calculatePatientSafetyScore(metrics: HealthcareMetric[]): number {
-    const safetyMetrics = metrics.filter(
-      (m) => m.category === "PATIENT_SAFETY",
+    const safetyMetrics = metrics.filter((m) => m.category === "PATIENT_SAFETY",
     );
     return this.calculateComplianceScore(safetyMetrics);
   }
@@ -912,8 +908,7 @@ export class HealthcareGovernanceService
     const recommendations: string[] = [];
 
     // Check for low-performing metrics
-    const lowPerformingMetrics = metrics.filter(
-      (m) => m.currentValue < m.threshold,
+    const lowPerformingMetrics = metrics.filter((m) => m.currentValue < m.threshold,
     );
     if (lowPerformingMetrics.length > 0) {
       recommendations.push(
@@ -922,8 +917,7 @@ export class HealthcareGovernanceService
     }
 
     // Check for high-risk metrics
-    const highRiskMetrics = metrics.filter(
-      (m) => m.riskLevel === "HIGH" || m.riskLevel === "CRITICAL",
+    const highRiskMetrics = metrics.filter((m) => m.riskLevel === "HIGH" || m.riskLevel === "CRITICAL",
     );
     if (highRiskMetrics.length > 0) {
       recommendations.push(

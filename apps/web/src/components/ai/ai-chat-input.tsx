@@ -96,7 +96,7 @@ export interface AIChatInputProps {
   /** On file remove */
   onFileRemove?: (fileId: string) => void;
   /** On search */
-  onSearch?: (query: string) => void;
+  onSearch?: (_query: string) => void;
   /** Healthcare compliance */
   healthcareCompliance?: {
     lgpdCompliant: boolean;

@@ -5,7 +5,7 @@ import {
   CardContent,
   CardDescription,
   CardHeader,
-  CardTitle,
+  CardTitle
 } from "../ui/card";
 
 import { Progress } from "../ui/progress";
@@ -15,7 +15,7 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
+  SelectValue
 } from "../ui/select";
 import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
@@ -27,7 +27,7 @@ import {
   Loader2,
   CheckCircle,
   XCircle,
-  Clock,
+  Clock
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -66,47 +66,47 @@ interface ExportButtonProps {
   className?: string;
 }
 
-const EXPORT_FORMATS = [
+const EXPORTFORMATS = [
   {
     value: "csv",
     label: "CSV",
     icon: FileText,
-    description: "Valores separados por vírgula",
+    description: "Valores separados por vírgula"
   },
   {
     value: "xlsx",
     label: "Excel",
     icon: FileSpreadsheet,
-    description: "Formato Excel nativo",
-  },
+    description: "Formato Excel nativo"
+  }
 ];
 
-const LGPD_OPTIONS = [
+const LGPDOPTIONS = [
   { id: "anonymize", label: "Anonimizar dados sensíveis", default: true },
   { id: "consent", label: "Exigir consentimento do paciente", default: true },
   {
     id: "excludeRestricted",
     label: "Excluir campos restritos",
-    default: false,
-  },
+    default: false
+  }
 ];
 
 export function ExportButton({
   patientIds,
   filters,
   onExportComplete,
-  className,
+  className
 }: ExportButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFormat, setSelectedFormat] = useState<"csv" | "xlsx">("csv");
-  const [_selectedFields, _setSelectedFields] = useState<string[]>([]);
+  const [selectedFields, setSelectedFields] = useState<string[]>([]);
   const [lgpdOptions, setLgpdOptions] = useState({
     anonymize: true,
     consent: true,
-    excludeRestricted: false,
+    excludeRestricted: false
   });
   const [currentJob, setCurrentJob] = useState<ExportJob | null>(null);
-  const [_exportHistory, _setExportHistory] = useState<ExportJob[]>([]);
+  const [exportHistory, setExportHistory] = useState<ExportJob[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleExport = async () => {
@@ -117,23 +117,23 @@ export function ExportButton({
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`
         },
         body: JSON.stringify({
           format: selectedFormat,
           filters: filters || {},
           pagination: {
             page: 1,
-            limit: patientIds?.length || 1000,
+            limit: patientIds?.length || 1000
           },
           lgpdOptions: {
             anonymizeSensitiveFields: lgpdOptions.anonymize,
             excludeRestrictedFields: lgpdOptions.excludeRestricted,
-            purpose: "DATA_EXPORT",
+            purpose: "DATAEXPORT",
             retentionDays: 30,
-            consentRequired: lgpdOptions.consent,
-          },
-        }),
+            consentRequired: lgpdOptions.consent
+          }
+        })
       });
 
       const result = await response.json();
@@ -162,8 +162,8 @@ export function ExportButton({
       try {
         const response = await fetch(`/api/patients/export/${jobId}`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+            Authorization: `Bearer ${localStorage.getItem("token")}`
+          }
         });
 
         const result = await response.json();
@@ -194,8 +194,8 @@ export function ExportButton({
     try {
       const response = await fetch(job.result.downloadUrl, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
       });
 
       if (response.ok) {
@@ -239,8 +239,7 @@ export function ExportButton({
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
   };
 
-  return (
-    <div className={className}>
+  return (<div className={className}>
       <Button
         onClick={() => setIsOpen(!isOpen)}
         variant="outline"
@@ -344,7 +343,7 @@ export function ExportButton({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {EXPORT_FORMATS.map((format) => (
+                      {EXPORTFORMATS.map((format) => (
                         <SelectItem key={format.value} value={format.value}>
                           <div className="flex items-center gap-2">
                             <format.icon className="h-4 w-4" />
@@ -366,7 +365,7 @@ export function ExportButton({
                 <div>
                   <Label>Opções LGPD</Label>
                   <div className="space-y-2 mt-2">
-                    {LGPD_OPTIONS.map((option) => (
+                    {LGPDOPTIONS.map((option) => (
                       <div
                         key={option.id}
                         className="flex items-center space-x-2"
@@ -379,7 +378,7 @@ export function ExportButton({
                           onCheckedChange={(checked: boolean) =>
                             setLgpdOptions((prev) => ({
                               ...prev,
-                              [option.id]: !!checked,
+                              [option.id]: !!checked
                             }))
                           }
                         />

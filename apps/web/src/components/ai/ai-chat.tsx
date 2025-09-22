@@ -92,7 +92,7 @@ export interface AIChatProps {
 
 interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant';
+  _role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
   model?: string;
@@ -214,7 +214,7 @@ export const AIChat = ({
       if (response.success && response.data) {
         const assistantMessage: ChatMessage = {
           id: response.data.messageId || Date.now().toString(),
-          role: 'assistant',
+          _role: 'assistant',
           content: response.data.response || response.data.message,
           timestamp: new Date(),
           model: selectedModel,
@@ -234,7 +234,7 @@ export const AIChat = ({
       console.error('Chat error:', error);
       const errorMessage: ChatMessage = {
         id: Date.now().toString(),
-        role: 'assistant',
+        _role: 'assistant',
         content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.',
         timestamp: new Date(),
         model: selectedModel,
@@ -259,7 +259,7 @@ export const AIChat = ({
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
-      role: 'user',
+      _role: 'user',
       content: inputMessage.trim(),
       timestamp: new Date(),
     };

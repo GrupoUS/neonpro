@@ -53,7 +53,7 @@ describe('Enhanced Session Manager Security Tests', () => {
       const session = sessionManager.getSession(sessionId);
       expect(session).toBeDefined();
       expect(session?.sessionId).toBe(sessionId);
-      expect(session?.userId).toBe(testUserId);
+      expect(session?._userId).toBe(testUserId);
     });
 
     it('should validate session ID format', () => {
@@ -171,7 +171,7 @@ describe('Enhanced Session Manager Security Tests', () => {
       // New session should exist with same metadata
       const newSession = sessionManager.getSession(newSessionId);
       expect(newSession).toBeDefined();
-      expect(newSession?.userId).toBe(testUserId);
+      expect(newSession?._userId).toBe(testUserId);
       expect(newSession?.ipAddress).toBe(testIP);
       expect(newSession?.sessionId).toBe(newSessionId);
     });
@@ -421,7 +421,7 @@ describe('Enhanced Session Manager Security Tests', () => {
 
       // Session state should be preserved
       const session = sessionManager.getSession(sessionId);
-      expect(session?.userId).toBe(testUserId);
+      expect(session?._userId).toBe(testUserId);
       expect(session?.ipAddress).toBe(testIP);
       expect(session?.permissions).toEqual(['read', 'write']);
       expect(session?.refreshCount).toBe(2); // Should track refresh count

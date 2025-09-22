@@ -43,7 +43,7 @@ describe("Structured Logging Service", () => {
 
     // Basic test configuration
     mockConfig = {
-      service: "test-service",
+      _service: "test-service",
       enabled: true,
       level: "debug" as LogLevel,
       outputs: {
@@ -98,7 +98,7 @@ describe("Structured Logging Service", () => {
     it("should create a logger instance with valid configuration", () => {
       const stats = testLogger.getStatistics();
       expect(stats.isInitialized).toBe(true);
-      expect(stats.config.service).toBe("test-service");
+      expect(stats.config._service).toBe("test-service");
       expect(stats.config.enabled).toBe(true);
     });
 
@@ -170,7 +170,7 @@ describe("Structured Logging Service", () => {
         },
         professionalContext: {
           anonymizedProfessionalId: "anon_prof_456",
-          role: "nurse",
+          _role: "nurse",
           specialization: "emergency_care",
           department: "emergency",
         },
@@ -501,7 +501,7 @@ describe("Structured Logging Service", () => {
 
       expect(stats.bufferSize).toBe(2);
       expect(stats.isInitialized).toBe(true);
-      expect(stats.config.service).toBe("test-service");
+      expect(stats.config._service).toBe("test-service");
     });
   });
 
@@ -534,7 +534,7 @@ describe("Structured Logging Service", () => {
       };
 
       testLogger.error("Custom error occurred", customError as any, {
-        context: "custom",
+        _context: "custom",
       });
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
@@ -621,7 +621,7 @@ describe("Structured Logging Service", () => {
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.technicalContext.service).toBe("test-service");
+      expect(logEntry.technicalContext._service).toBe("test-service");
       expect(logEntry.technicalContext.environment).toBeDefined();
       expect(logEntry.processingMetadata?.source).toBe("test-service");
     });
@@ -680,7 +680,7 @@ describe("Structured Logging Service", () => {
       const stats = defaultLogger.getStatistics();
 
       expect(stats.isInitialized).toBe(true);
-      expect(stats.config.service).toBe("neonpro-platform");
+      expect(stats.config._service).toBe("neonpro-platform");
       expect(stats.config.healthcareCompliance.enablePIIRedaction).toBe(true);
     });
 
@@ -726,7 +726,7 @@ describe("Structured Logging Service", () => {
 
       const professionalContext = {
         anonymizedProfessionalId: "anon_prof_001",
-        role: "doctor",
+        _role: "doctor",
         specialization: "general_practice",
       };
 

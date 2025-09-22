@@ -14,8 +14,6 @@
 
 import { SpanStatusCode, trace } from '@opentelemetry/api';
 import * as Sentry from '@sentry/node';
-import { z } from 'zod';
-
 // Healthcare data patterns for redaction
 const HEALTHCARE_PATTERNS = {
   cpf: /\b\d{3}\.?\d{3}\.?\d{3}-?\d{2}\b/g,
@@ -36,7 +34,7 @@ type ErrorSeverity = z.infer<typeof ErrorSeveritySchema>;
 
 // Error context schema
 const ErrorContextSchema = z.object({
-  userId: z.string().optional(),
+  _userId: z.string().optional(),
   patientId: z.string().optional(),
   clinicId: z.string().optional(),
   operationType: z
@@ -80,7 +78,7 @@ interface RedactedError {
   redactedFields: string[];
   severity: ErrorSeverity;
   type: HealthcareErrorType;
-  context: ErrorContext;
+  _context: ErrorContext;
   stack?: string;
   cause?: Error;
 }
@@ -139,7 +137,7 @@ class HealthcareErrorTracker {
     let redactedText = text;
     const redactedFields: string[] = [];
 
-    Object.entries(HEALTHCARE_PATTERNS).forEach(([field, pattern]) => {
+    Object.entries(HEALTHCARE_PATTERNS).forEach(([field,_pattern]) => {
       if (pattern.test(redactedText)) {
         redactedFields.push(field);
         redactedText = redactedText.replace(
@@ -157,7 +155,7 @@ class HealthcareErrorTracker {
    */
   private classifyError(
     error: Error,
-    context: ErrorContext,
+    _context: ErrorContext,
   ): HealthcareErrorType {
     const message = error.message.toLowerCase();
     const stack = error.stack?.toLowerCase() || '';
@@ -295,7 +293,7 @@ class HealthcareErrorTracker {
   /**
    * Redacts sensitive data from error context
    */
-  private redactErrorContext(context: ErrorContext): ErrorContext {
+  private redactErrorContext(_context: ErrorContext): ErrorContext {
     const redactedContext = { ...context };
 
     // Redact IP address (keep only first two octets)
@@ -332,7 +330,7 @@ class HealthcareErrorTracker {
   ): Record<string, unknown> {
     const redacted: Record<string, unknown> = {};
 
-    Object.entries(metadata).forEach(([key, value]) => {
+    Object.entries(metadata).forEach(([key,_value]) => {
       if (typeof value === 'string') {
         const { redacted: redactedValue } = this.redactHealthcareData(value);
         redacted[key] = redactedValue;
@@ -351,7 +349,7 @@ class HealthcareErrorTracker {
    */
   public createRedactedError(
     error: Error,
-    context: Partial<ErrorContext> = {},
+    _context: Partial<ErrorContext> = {},
   ): RedactedError {
     // Validate and normalize context
     const validatedContext = ErrorContextSchema.parse(context);
@@ -381,7 +379,7 @@ class HealthcareErrorTracker {
       redactedFields,
       severity,
       type: errorType,
-      context: redactedContext,
+      _context: redactedContext,
       stack: redactedStack,
       cause: (error as any).cause instanceof Error
         ? (error as any).cause
@@ -394,14 +392,14 @@ class HealthcareErrorTracker {
    */
   public async trackError(
     error: Error,
-    context: Partial<ErrorContext> = {},
+    _context: Partial<ErrorContext> = {},
   ): Promise<void> {
     return this.tracer.startActiveSpan(
       'track-healthcare-error',
       async span => {
         try {
           // Create redacted error
-          const redactedError = this.createRedactedError(error, context);
+          const redactedError = this.createRedactedError(error, _context);
 
           // Update metrics
           this.updateMetrics(redactedError);
@@ -508,7 +506,7 @@ class HealthcareErrorTracker {
       message: redactedError.message,
       error_type: redactedError.type,
       redacted_fields: redactedError.redactedFields,
-      context: {
+      _context: {
         clinic_id: redactedError.context.clinicId,
         operation_type: redactedError.context.operationType,
         endpoint: redactedError.context.endpoint,
@@ -559,19 +557,19 @@ class HealthcareErrorTracker {
    */
   public createErrorMiddleware() {
     return async (error: Error, c: any) => {
-      const context: Partial<ErrorContext> = {
+      const _context: Partial<ErrorContext> = {
         endpoint: `${c.req.method} ${c.req.path}`,
         userAgent: c.req.header('user-agent'),
         ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
         requestId: c.req.header('x-request-id'),
-        userId: c.get('userId'),
+        _userId: c.get('userId'),
         clinicId: c.get('clinicId'),
       };
 
-      await this.trackError(error, context);
+      await this.trackError(error, _context);
 
       // Don't expose internal error details to client
-      const redactedError = this.createRedactedError(error, context);
+      const redactedError = this.createRedactedError(error, _context);
 
       return c.json(
         {
@@ -601,9 +599,9 @@ export { ErrorSeveritySchema, HealthcareErrorTypeSchema };
 // Export utility functions
 export function trackError(
   error: Error,
-  context?: Partial<ErrorContext>,
+  _context?: Partial<ErrorContext>,
 ): Promise<void> {
-  return errorTracker.trackError(error, context);
+  return errorTracker.trackError(error, _context);
 }
 
 export function getErrorMetrics(): ErrorMetrics {

@@ -5,7 +5,7 @@ import type { Environment } from './environment';
 
 declare module 'hono' {
   interface ContextVariableMap {
-    userId?: string;
+    _userId?: string;
     userRole?: string;
     clinicId?: string;
     patientId?: string;

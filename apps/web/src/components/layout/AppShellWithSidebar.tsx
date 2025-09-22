@@ -48,7 +48,7 @@ const usePatientRealtimeSubscription = () => {
           filter: `clinic_id=eq.${user.id}`, // Filtrar por clínica do usuário
         },
         payload => {
-          console.log('Patient change:', payload);
+          console.log('Patient change:', _payload);
 
           // Invalidar queries relacionadas a pacientes
           queryClient.invalidateQueries({ queryKey: ['patients'] });
@@ -88,7 +88,7 @@ const useAppointmentRealtimeSubscription = () => {
           filter: `clinic_id=eq.${user.id}`, // Filtrar por clínica do usuário
         },
         payload => {
-          console.log('Appointment change:', payload);
+          console.log('Appointment change:', _payload);
 
           // Invalidar queries relacionadas a agendamentos
           queryClient.invalidateQueries({ queryKey: ['appointments'] });

@@ -153,7 +153,7 @@ export const getClientByIdRoute = createRoute({
       BearerAuth: [],
     },
   ],
-  request: {
+  _request: {
     params: ClientIdParamSchema,
   },
   responses: {
@@ -206,7 +206,7 @@ export const getClientAppointmentsRoute = createRoute({
       BearerAuth: [],
     },
   ],
-  request: {
+  _request: {
     params: ClientIdParamSchema,
   },
   responses: {
@@ -284,7 +284,7 @@ export const getPatientByIdRoute = createRoute({
       BearerAuth: [],
     },
   ],
-  request: {
+  _request: {
     params: PatientIdParamSchema,
   },
   responses: {
@@ -350,7 +350,7 @@ export const createPatientRoute = createRoute({
       BearerAuth: [],
     },
   ],
-  request: {
+  _request: {
     body: {
       content: {
         'application/json': {
@@ -410,7 +410,7 @@ export const updatePatientRoute = createRoute({
       BearerAuth: [],
     },
   ],
-  request: {
+  _request: {
     params: PatientIdParamSchema,
     body: {
       content: {

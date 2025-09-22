@@ -378,12 +378,9 @@ export function EmergencyEscalation({
 
     // Start contacting emergency services
     for (const contact of contacts) {
-      setTimeout(
-        () => {
-          contactEmergencyService(contact);
-        },
-        contact.type === 'samu' ? 0 : 5000,
-      ); // SAMU first, others after 5s
+      setTimeout(() => {
+        contactEmergencyService(contact);
+      }, contact.type === 'samu' ? 0 : 5000); // SAMU first, others after 5s
     }
 
     onEmergencyActivated(emergencyData);

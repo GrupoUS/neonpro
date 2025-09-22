@@ -66,9 +66,9 @@ const validateTimestampToken = (token: string): boolean => {
 const validateRetentionPeriod = (period: string): boolean => {
   // Healthcare-specific retention periods or ISO 8601 duration
   const healthcareRetentions = [
-    "20_years", // Medical records (20 years in Brazil)
-    "5_years", // General healthcare data
-    "10_years", // Prescription records
+    "20(years)", // Medical records (20 years in Brazil)
+    "5(years)", // General healthcare data
+    "10(years)", // Prescription records
     "permanent", // Some legal requirements
     "patient_lifetime", // Lifetime + 20 years
     "indefinite", // With legal basis

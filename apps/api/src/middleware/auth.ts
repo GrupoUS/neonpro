@@ -13,7 +13,7 @@ import { logger } from '../lib/logger';
 interface User {
   id: string;
   email: string;
-  role: string;
+  _role: string;
   clinicId: string;
   name: string;
   permissions: string[];
@@ -41,7 +41,7 @@ async function validateToken(token: string): Promise<User | null> {
     return {
       id: 'test-user-id',
       email: 'test@example.com',
-      role: 'admin',
+      _role: 'admin',
       clinicId: 'test-clinic-id',
       name: 'Test User',
       permissions: ['read', 'write', 'admin'],
@@ -92,8 +92,8 @@ export function auth() {
       c.set('clinicId', user.clinicId);
 
       logger.debug('User authenticated', {
-        userId: user.id,
-        role: user.role,
+        _userId: user.id,
+        _role: user.role,
         path: c.req.path,
         method: c.req.method,
       });
@@ -162,9 +162,9 @@ export function requireRole(allowedRoles: string | string[]) {
       });
     }
 
-    if (!roles.includes(user.role)) {
+    if (!roles.includes(user._role)) {
       logger.warn('Access denied - insufficient role', {
-        userId: user.id,
+        _userId: user.id,
         userRole: user.role,
         requiredRoles: roles,
         path: c.req.path,
@@ -201,7 +201,7 @@ export function requirePermission(requiredPermissions: string | string[]) {
 
     if (!hasPermission) {
       logger.warn('Access denied - insufficient permissions', {
-        userId: user.id,
+        _userId: user.id,
         userPermissions: user.permissions,
         requiredPermissions: permissions,
         path: c.req.path,
@@ -233,7 +233,7 @@ export function requireClinicAccess() {
 
     if (requestedClinicId && requestedClinicId !== user.clinicId) {
       logger.warn('Access denied - clinic mismatch', {
-        userId: user.id,
+        _userId: user.id,
         userClinicId: user.clinicId,
         requestedClinicId,
         path: c.req.path,

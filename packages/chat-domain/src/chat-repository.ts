@@ -10,7 +10,7 @@ export class ChatRepository {
   }
 
   async createSession(
-    userId: string,
+    _userId: string,
     metadata?: Record<string, any>,
   ): Promise<ChatSession> {
     const { data, error } = await this.supabase
@@ -154,11 +154,11 @@ export class ChatRepository {
     });
   }
 
-  async getActiveSessions(userId: string): Promise<ChatSession[]> {
+  async getActiveSessions(_userId: string): Promise<ChatSession[]> {
     const { data, error } = await this.supabase
       .from("chat_sessions")
       .select("*")
-      .eq("user_id", userId)
+      .eq("user_id", _userId)
       .eq("status", "active")
       .order("updated_at", { ascending: false });
 

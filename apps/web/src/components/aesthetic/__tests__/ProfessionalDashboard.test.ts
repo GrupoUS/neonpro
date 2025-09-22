@@ -3,13 +3,13 @@
  * RED PHASE: Identify TypeScript compilation errors
  */
 
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { ProfessionalDashboard } from '../ProfessionalDashboard';
-import type { 
-  DashboardMetrics, 
-  RecentActivity, 
-  ComplianceAlert, 
-  ProfessionalDashboardProps 
+import type {
+  ComplianceAlert,
+  DashboardMetrics,
+  ProfessionalDashboardProps,
+  RecentActivity,
 } from '../ProfessionalDashboard';
 
 // Mock data for testing
@@ -19,23 +19,23 @@ const mockMetrics: DashboardMetrics = {
   revenue: {
     today: 2500,
     month: 45000,
-    currency: 'BRL'
+    currency: 'BRL',
   },
   procedures: {
     completed: 12,
     scheduled: 8,
-    pending: 3
+    pending: 3,
   },
   compliance: {
     lgpdCompliance: 95,
     anvisaCompliance: 88,
-    auditScore: 92
+    auditScore: 92,
   },
   satisfaction: {
     averageRating: 4.8,
     totalReviews: 89,
-    npsScore: 72
-  }
+    npsScore: 72,
+  },
 };
 
 const mockActivities: RecentActivity[] = [
@@ -49,8 +49,8 @@ const mockActivities: RecentActivity[] = [
     status: 'completed',
     procedureType: 'Consulta',
     price: 300,
-    currency: 'BRL'
-  }
+    currency: 'BRL',
+  },
 ];
 
 const mockAlerts: ComplianceAlert[] = [
@@ -59,8 +59,8 @@ const mockAlerts: ComplianceAlert[] = [
     type: 'warning',
     title: 'Atualização LGPD',
     description: 'Nova regulamentação LGPD entra em vigor em 30 dias',
-    actionRequired: 'Atualizar políticas de privacidade'
-  }
+    actionRequired: 'Atualizar políticas de privacidade',
+  },
 ];
 
 const mockAppointments = [
@@ -71,19 +71,19 @@ const mockAppointments = [
     procedure: 'Limpeza de pele',
     time: '2024-01-15T14:00:00Z',
     duration: '30 min',
-    type: 'procedure' as const
-  }
+    type: 'procedure' as const,
+  },
 ];
 
 const mockProfessionalInfo = {
   name: 'Dra. Ana Costa',
   specialization: 'Dermatologia Estética',
   registrationNumber: 'CRM/SP 123456',
-  clinic: 'NeonPro Aesthetic Clinic'
+  clinic: 'NeonPro Aesthetic Clinic',
 };
 
-describe('ProfessionalDashboard Component', () => {
-  it('should render without crashing', () => {
+describe(('ProfessionalDashboard Component', () => {
+  it(('should render without crashing', () => {
     const props: ProfessionalDashboardProps = {
       metrics: mockMetrics,
       recentActivities: mockActivities,
@@ -93,7 +93,7 @@ describe('ProfessionalDashboard Component', () => {
       onNavigateToPatients: vi.fn(),
       onNavigateToSchedule: vi.fn(),
       onNavigateToCompliance: vi.fn(),
-      onViewActivity: vi.fn()
+      onViewActivity: vi.fn(),
     };
 
     expect(() => {
@@ -101,7 +101,7 @@ describe('ProfessionalDashboard Component', () => {
     }).not.toThrow();
   });
 
-  it('should display dashboard metrics correctly', () => {
+  it(('should display dashboard metrics correctly', () => {
     const props: ProfessionalDashboardProps = {
       metrics: mockMetrics,
       recentActivities: mockActivities,
@@ -111,17 +111,17 @@ describe('ProfessionalDashboard Component', () => {
       onNavigateToPatients: vi.fn(),
       onNavigateToSchedule: vi.fn(),
       onNavigateToCompliance: vi.fn(),
-      onViewActivity: vi.fn()
+      onViewActivity: vi.fn(),
     };
 
     render(<ProfessionalDashboard {...props} />);
-    
+
     expect(screen.getByText('Pacientes Hoje')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
     expect(screen.getByText('Receita do Mês')).toBeInTheDocument();
   });
 
-  it('should handle activity click events', () => {
+  it(('should handle activity click events', () => {
     const onViewActivity = vi.fn();
     const props: ProfessionalDashboardProps = {
       metrics: mockMetrics,
@@ -132,16 +132,16 @@ describe('ProfessionalDashboard Component', () => {
       onNavigateToPatients: vi.fn(),
       onNavigateToSchedule: vi.fn(),
       onNavigateToCompliance: vi.fn(),
-      onViewActivity
+      onViewActivity,
     };
 
     render(<ProfessionalDashboard {...props} />);
-    
+
     // This test will help identify the onViewActivity parameter issue
     // The component uses _onViewActivity but interface expects onViewActivity
   });
 
-  it('should display compliance status correctly', () => {
+  it(('should display compliance status correctly', () => {
     const props: ProfessionalDashboardProps = {
       metrics: mockMetrics,
       recentActivities: mockActivities,
@@ -151,11 +151,11 @@ describe('ProfessionalDashboard Component', () => {
       onNavigateToPatients: vi.fn(),
       onNavigateToSchedule: vi.fn(),
       onNavigateToCompliance: vi.fn(),
-      onViewActivity: vi.fn()
+      onViewActivity: vi.fn(),
     };
 
     render(<ProfessionalDashboard {...props} />);
-    
+
     expect(screen.getByText('Status de Conformidade')).toBeInTheDocument();
     expect(screen.getByText('LGPD')).toBeInTheDocument();
     expect(screen.getByText('ANVISA')).toBeInTheDocument();

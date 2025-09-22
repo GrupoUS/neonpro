@@ -1,13 +1,9 @@
-import { Express, Request, Response } from 'express';
+import { Express, Response } from 'express';
 import http from 'http';
 import https from 'https';
 import { HealthcareLogger } from '../logging/healthcare-logger';
 import { CertificateConfig, TLSConfigManager } from './tls-config';
-import { 
-  HTTPS_CONSTANTS, 
-  ERROR_CONSTANTS, 
-  LOGGING_CONSTANTS 
-} from './tls-constants';
+import { ERROR_CONSTANTS, HTTPS_CONSTANTS, LOGGING_CONSTANTS } from './tls-constants';
 
 export interface HTTPSServerConfig {
   port: number;
@@ -32,12 +28,12 @@ export interface ServerMetrics {
 
 /**
  * HTTPS Server Manager
- * 
+ *
  * A comprehensive HTTPS server management class that provides secure server
  * configuration, monitoring, and lifecycle management for healthcare applications.
  * Implements security best practices including HSTS, security headers, and proper
  * certificate management for HIPAA compliance.
- * 
+ *
  * Features:
  * - Automatic HTTPS server creation with TLS configuration
  * - HTTP to HTTPS redirection
@@ -46,7 +42,7 @@ export interface ServerMetrics {
  * - Comprehensive metrics and monitoring
  * - Graceful shutdown handling
  * - Connection and error management
- * 
+ *
  * @example
  * ```typescript
  * const serverManager = new HTTPSServerManager({
@@ -60,7 +56,7 @@ export interface ServerMetrics {
  *   redirectHTTP: true,
  *   httpPort: 80
  * }, logger);
- * 
+ *
  * const server = serverManager.createServer(app);
  * await serverManager.start();
  * ```
@@ -77,7 +73,7 @@ export class HTTPSServerManager {
   constructor(config: HTTPSServerConfig, logger: HealthcareLogger) {
     // Validate input configuration
     this.validateServerConfig(config);
-    
+
     this.config = config;
     this.logger = logger;
     this.tlsManager = TLSConfigManager.getInstance();
@@ -137,7 +133,10 @@ export class HTTPSServerManager {
       throw new Error('HTTP port is required when redirectHTTP is enabled');
     }
 
-    if (config.httpPort && (typeof config.httpPort !== 'number' || config.httpPort < 1 || config.httpPort > 65535)) {
+    if (
+      config.httpPort
+      && (typeof config.httpPort !== 'number' || config.httpPort < 1 || config.httpPort > 65535)
+    ) {
       throw new Error('HTTP port must be a valid number between 1 and 65535');
     }
   }
@@ -204,7 +203,7 @@ export class HTTPSServerManager {
         this.metrics.activeConnections--;
       });
 
-      this.httpsServer.on('request', (req, res) => {
+      this.httpsServer.on('request', (req,_res) => {
         this.metrics.httpsRequests++;
         const startTime = Date.now();
 
@@ -298,7 +297,8 @@ export class HTTPSServerManager {
 
     // Configure timeouts
     server.timeout = this.config.timeout || HTTPS_CONSTANTS.SERVER.TIMEOUT;
-    server.keepAliveTimeout = this.config.keepAliveTimeout || HTTPS_CONSTANTS.SERVER.KEEP_ALIVE_TIMEOUT;
+    server.keepAliveTimeout = this.config.keepAliveTimeout
+      || HTTPS_CONSTANTS.SERVER.KEEP_ALIVE_TIMEOUT;
     server.headersTimeout = HTTPS_CONSTANTS.SERVER.HEADERS_TIMEOUT;
 
     // Handle server errors
@@ -311,7 +311,7 @@ export class HTTPSServerManager {
     });
 
     // Handle client errors
-    server.on('clientError', (error, socket) => {
+    server.on('clientError', (error,_socket) => {
       this.logger.logError(LOGGING_CONSTANTS.EVENTS.CLIENT_ERROR, {
         error: error instanceof Error ? error.message : 'Unknown error',
         remoteAddress: socket.remoteAddress,
@@ -367,8 +367,7 @@ export class HTTPSServerManager {
       const stopPromises: Promise<void>[] = [];
 
       if (this.httpsServer) {
-        stopPromises.push(
-          new Promise<void>(closeResolve => {
+        stopPromises.push( new Promise<void>(closeResolve => {
             this.httpsServer!.close(() => {
               this.logger.logSystemEvent(LOGGING_CONSTANTS.EVENTS.HTTPS_SERVER_STOPPED, {
                 port: this.config.port,
@@ -381,8 +380,7 @@ export class HTTPSServerManager {
       }
 
       if (this.httpServer) {
-        stopPromises.push(
-          new Promise<void>(closeResolve => {
+        stopPromises.push( new Promise<void>(closeResolve => {
             this.httpServer!.close(() => {
               this.logger.logSystemEvent('http_redirect_server_stopped', {
                 port: this.config.httpPort,
@@ -447,7 +445,7 @@ export class HTTPSServerManager {
     const hstsValue = `max-age=${HTTPS_CONSTANTS.HSTS.MAX_AGE}${
       HTTPS_CONSTANTS.HSTS.INCLUDE_SUBDOMAINS ? '; includeSubDomains' : ''
     }${HTTPS_CONSTANTS.HSTS.PRELOAD ? '; preload' : ''}`;
-    
+
     res.setHeader('Strict-Transport-Security', hstsValue);
   }
 
@@ -457,13 +455,13 @@ export class HTTPSServerManager {
    */
   private addSecurityHeaders(res: Response): void {
     const headers = HTTPS_CONSTANTS.SECURITY_HEADERS;
-    
+
     res.setHeader('Content-Security-Policy', headers.CONTENT_SECURITY_POLICY);
     res.setHeader('X-Frame-Options', headers.X_FRAME_OPTIONS);
     res.setHeader('X-Content-Type-Options', headers.X_CONTENT_TYPE_OPTIONS);
     res.setHeader('X-XSS-Protection', headers.X_XSS_PROTECTION);
     res.setHeader('Referrer-Policy', headers.REFERRER_POLICY);
-    
+
     // Remove server info header for security
     res.removeHeader('X-Powered-By');
   }

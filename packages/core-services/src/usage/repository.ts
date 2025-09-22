@@ -17,7 +17,7 @@ import type { UsageCounterData, SubscriptionTier } from "@neonpro/types";
  * Extended metadata interface for healthcare usage tracking
  */
 export interface UsageMetadata {
-  userId: string;
+  _userId: string;
   planCode: SubscriptionTier;
   concurrentRequests: number;
   totalRequests: number;
@@ -73,7 +73,7 @@ export interface SupabaseClient {
 
 export interface UsageCounterCreateData {
   clinicId: string;
-  userId: string;
+  _userId: string;
   planCode: SubscriptionTier;
   monthlyQueries?: number;
   dailyQueries?: number;
@@ -104,7 +104,7 @@ export interface UsageCounterUpdateData {
 
 export interface UsageCounterFilters {
   clinicId?: string;
-  userId?: string;
+  _userId?: string;
   planCode?: SubscriptionTier;
   periodStart?: Date;
   lastActivityAfter?: Date;
@@ -113,7 +113,7 @@ export interface UsageCounterFilters {
 
 export interface DailyUsageUpsertParams {
   clinicId: string;
-  userId: string;
+  _userId: string;
   planCode: SubscriptionTier;
   increment?: {
     monthlyQueries?: number;
@@ -200,7 +200,7 @@ export class UsageCounterRepository {
       // Update existing counter
       const updateData: Partial<UsageCounterDatabaseRow> = {
         metadata: {
-          ...(existing.metadata || {}),
+          ...existing.metadata,
           last_activity: now.toISOString(),
         },
       };
@@ -292,7 +292,7 @@ export class UsageCounterRepository {
       // Create new counter
       const createData: UsageCounterCreateData = {
         clinicId: params.clinicId,
-        userId: params.userId,
+        _userId: params.userId,
         planCode: params.planCode,
         monthlyQueries: params.increment?.monthlyQueries || 0,
         dailyQueries: params.increment?.dailyQueries || 0,
@@ -373,8 +373,8 @@ export class UsageCounterRepository {
     if (filters.clinicId) {
       query = query.eq("entity_type", "clinic").eq("entity_id", filters.clinicId);
     }
-    if (filters.userId) {
-      query = query.eq("metadata->>user_id", filters.userId);
+    if (filters._userId) {
+      query = query.eq("metadata->>user_id", filters._userId);
     }
     if (filters.planCode) {
       query = query.eq("plan_code", filters.planCode);
@@ -457,7 +457,7 @@ export class UsageCounterRepository {
    */
   async resetDailyCounters(
     clinicId: string,
-    userId: string,
+    _userId: string,
   ): Promise<UsageCounterData> {
     const now = new Date();
 
@@ -466,7 +466,7 @@ export class UsageCounterRepository {
       .update({
         daily_queries: 0,
         metadata: {
-          ...(await this.getExistingMetadata(clinicId, userId)),
+          ...(await this.getExistingMetadata(clinicId, _userId)),
           last_reset: now.toISOString(),
         },
         updated_at: now.toISOString(),
@@ -488,7 +488,7 @@ export class UsageCounterRepository {
    */
   async resetMonthlyCounters(
     clinicId: string,
-    userId: string,
+    _userId: string,
   ): Promise<UsageCounterData> {
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -500,7 +500,7 @@ export class UsageCounterRepository {
         daily_queries: 0,
         current_cost_usd: 0,
         metadata: {
-          ...(await this.getExistingMetadata(clinicId, userId)),
+          ...(await this.getExistingMetadata(clinicId, _userId)),
           period_start: monthStart.toISOString(),
           last_reset: now.toISOString(),
         },

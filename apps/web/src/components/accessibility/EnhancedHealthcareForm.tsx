@@ -122,16 +122,13 @@ export function EnhancedHealthcareForm({
   >({});
 
   // Create accessible field hooks for each form field
-  const fieldHooks = fields.reduce(
-    (acc, field) => {
-      acc[field.name] = useAccessibleField(field.name, {
-        required: field.required,
-        validate: field.validate,
-      });
-      return acc;
-    },
-    {} as Record<string, ReturnType<typeof useAccessibleField>>,
-  );
+  const fieldHooks = fields.reduce((acc, field) => {
+    acc[field.name] = useAccessibleField(field.name, {
+      required: field.required,
+      validate: field.validate,
+    });
+    return acc;
+  }, {} as Record<string, ReturnType<typeof useAccessibleField>>);
 
   const formatFieldValue = useCallback(
     (field: MedicalFormField, value: string): string => {
@@ -157,7 +154,7 @@ export function EnhancedHealthcareForm({
     const warnings: Record<string, string> = {};
 
     // Validate each field
-    fields.forEach(_field => {
+    fields.forEach(field => {
       const fieldHook = fieldHooks[field.name];
       const fieldValue = formatFieldValue(field, fieldHook.value);
 
@@ -177,7 +174,7 @@ export function EnhancedHealthcareForm({
     });
 
     // Apply healthcare-specific validation rules
-    validationRules.forEach(_rule => {
+    validationRules.forEach(rule => {
       const fieldHook = fieldHooks[rule.field];
       const fieldValue = fieldHook?.value || '';
 
@@ -258,20 +255,17 @@ export function EnhancedHealthcareForm({
 
       try {
         // Collect form data
-        const formData = fields.reduce(
-          (acc, field) => {
-            acc[field.name] = fieldHooks[field.name].value;
-            return acc;
-          },
-          {} as Record<string, string>,
-        );
+        const formData = fields.reduce((acc, field) => {
+          acc[field.name] = fieldHooks[field.name].value;
+          return acc;
+        }, {} as Record<string, string>);
 
         await onSubmit(formData);
 
         setSubmitSuccess(true);
         announceFormSuccess('Formulário de saúde enviado com sucesso');
         announceLive('Formulário de saúde enviado com sucesso!', 'polite');
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error
           ? error.message
           : 'Erro ao enviar formulário de saúde';

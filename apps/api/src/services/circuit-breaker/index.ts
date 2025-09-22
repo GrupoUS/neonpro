@@ -11,42 +11,42 @@
 
 // Core circuit breaker service
 export {
-  CircuitBreakerService,
-  CircuitBreakerRegistry,
   CircuitBreakerConfig,
+  CircuitBreakerEvent,
   CircuitBreakerMetrics,
+  CircuitBreakerRegistry,
+  CircuitBreakerService,
   CircuitState,
+  createCircuitBreaker,
+  HEALTHCARE_CIRCUIT_CONFIG,
   HealthStatus,
   RequestContext,
-  CircuitBreakerEvent,
-  HEALTHCARE_CIRCUIT_CONFIG,
   STANDARD_CIRCUIT_CONFIG,
-  createCircuitBreaker,
   withCircuitBreaker,
 } from './circuit-breaker-service';
 
 // Health checking system
 export {
-  ExternalServiceHealthChecker,
-  HealthCheckConfig,
-  ServiceDependency,
   ComprehensiveHealthStatus,
-  ServiceHealth,
-  ServiceMetrics,
+  createHealthChecker,
+  ExternalServiceHealthChecker,
+  HEALTHCARE_HEALTH_CONFIG,
+  HealthCheckConfig,
   HealthCheckEvent,
   HealthIncident,
-  HEALTHCARE_HEALTH_CONFIG,
+  ServiceDependency,
+  ServiceHealth,
+  ServiceMetrics,
   STANDARD_HEALTH_CONFIG,
-  createHealthChecker,
 } from './health-checker';
 
 // Integration examples and utilities
 export {
   AguiServiceWithCircuitBreaker,
-  GoogleCalendarServiceWithCircuitBreaker,
   AIAgentServiceWithCircuitBreaker,
-  withCircuitBreakerProtection,
+  GoogleCalendarServiceWithCircuitBreaker,
   setupHealthMonitoring,
+  withCircuitBreakerProtection,
 } from './integration-example';
 
 // Default exports
@@ -55,4 +55,5 @@ export { default as ExternalServiceHealthChecker } from './health-checker';
 
 // Package version and info
 export const CIRCUIT_BREAKER_VERSION = '1.0.0';
-export const CIRCUIT_BREAKER_DESCRIPTION = 'Healthcare-compliant circuit breaker patterns for external service reliability';
+export const CIRCUIT_BREAKER_DESCRIPTION =
+  'Healthcare-compliant circuit breaker patterns for external service reliability';

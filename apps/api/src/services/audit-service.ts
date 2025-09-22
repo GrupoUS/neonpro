@@ -25,7 +25,7 @@ export interface AuditEventData {
   action: string;
   result: 'success' | 'failure' | 'blocked' | 'alert';
   message: string;
-  userId?: string;
+  _userId?: string;
   sessionId?: string;
   ipAddress?: string;
   userAgent?: string;
@@ -51,7 +51,7 @@ export class AuditEvent {
   severity: AuditSeverity;
   category: string;
   source: string;
-  userId?: string;
+  _userId?: string;
   sessionId?: string;
   ipAddress?: string;
   userAgent?: string;
@@ -69,7 +69,7 @@ export class AuditEvent {
     this.severity = data.severity;
     this.category = data.category;
     this.source = data.source;
-    this.userId = data.userId;
+    this._userId = data._userId;
     this.sessionId = data.sessionId;
     this.ipAddress = data.ipAddress;
     this.userAgent = data.userAgent;
@@ -89,7 +89,7 @@ export interface AuditLogData {
   severity: AuditSeverity;
   category: string;
   source: string;
-  userId?: string;
+  _userId?: string;
   sessionId?: string;
   ipAddress?: string;
   userAgent?: string;
@@ -111,7 +111,7 @@ export class AuditLog {
   severity: AuditSeverity;
   category: string;
   source: string;
-  userId?: string;
+  _userId?: string;
   sessionId?: string;
   ipAddress?: string;
   userAgent?: string;
@@ -132,7 +132,7 @@ export class AuditLog {
     this.severity = data.severity;
     this.category = data.category;
     this.source = data.source;
-    this.userId = data.userId;
+    this._userId = data._userId;
     this.sessionId = data.sessionId;
     this.ipAddress = data.ipAddress;
     this.userAgent = data.userAgent;
@@ -168,7 +168,7 @@ export function logSecurityEvent(data: AuditEventData): AuditEvent {
       eventType: event.eventType,
       category: event.category,
       source: event.source,
-      userId: event.userId,
+      _userId: event.userId,
       resource: event.resource,
       compliance: event.compliance,
     });
@@ -181,7 +181,7 @@ export function logSecurityEvent(data: AuditEventData): AuditEvent {
  * Get audit logs with filtering
  */
 export function getAuditLogs(filters: {
-  userId?: string;
+  _userId?: string;
   category?: string;
   severity?: AuditSeverity;
   startDate?: Date;
@@ -201,7 +201,7 @@ export function getAuditLogs(filters: {
  */
 export const HealthcareAuditEvents = {
   patientDataAccess: (data: {
-    userId: string;
+    _userId: string;
     patientId: string;
     action: string;
     result: 'success' | 'failure' | 'blocked';
@@ -212,7 +212,7 @@ export const HealthcareAuditEvents = {
       severity: data.result === 'blocked' ? AuditSeverity.WARNING : AuditSeverity.INFO,
       category: 'healthcare',
       source: 'patient-service',
-      userId: data.userId,
+      _userId: data.userId,
       action: data.action,
       result: data.result,
       message: `Patient data ${data.action} ${data.result === 'success' ? 'successful' : 'failed'}`,
@@ -222,7 +222,7 @@ export const HealthcareAuditEvents = {
     }),
 
   medicalRecordUpdate: (data: {
-    userId: string;
+    _userId: string;
     patientId: string;
     recordType: string;
     changes: string[];
@@ -232,7 +232,7 @@ export const HealthcareAuditEvents = {
       severity: AuditSeverity.INFO,
       category: 'healthcare',
       source: 'medical-records-service',
-      userId: data.userId,
+      _userId: data.userId,
       action: 'update',
       result: 'success',
       message: 'Medical record updated',
@@ -272,7 +272,7 @@ export class ComprehensiveAuditService {
    * Log an activity/event for audit purposes
    */
   async logActivity(data: {
-    userId: string;
+    _userId: string;
     action: string;
     resource?: string;
     details?: Record<string, any>;
@@ -284,7 +284,7 @@ export class ComprehensiveAuditService {
       severity: data.severity || AuditSeverity.INFO,
       category: 'ai',
       source: 'ai-service',
-      userId: data.userId,
+      _userId: data.userId,
       action: data.action,
       result: data.result || 'success',
       message: `AI activity: ${data.action}`,

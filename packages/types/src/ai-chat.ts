@@ -1,4 +1,15 @@
 // Types for Phase 1 AI Chat
+
+// Healthcare-compliant metadata types for AI Chat
+export interface ChatSessionMetadata {
+  deviceType?: string;
+  browser?: string;
+  location?: string;
+  sessionDuration?: number;
+  messageCount?: number;
+  [key: string]: unknown;
+}
+
 export type ChatRole = "user" | "assistant" | "system";
 
 export type ChatSessionStatus = "active" | "closed" | "error";
@@ -11,7 +22,7 @@ export interface ChatSession {
   startedAt: string; // ISO
   lastActivityAt: string; // ISO
   status?: ChatSessionStatus;
-  metadata?: Record<string, any>;
+  metadata?: ChatSessionMetadata;
   createdAt?: string;
   updatedAt?: string;
   endedAt?: string | null;
@@ -25,7 +36,7 @@ export interface ChatMessage {
   redactionFlags?: string[];
   createdAt: string; // ISO
   provider?: string;
-  metadata?: Record<string, any>;
+  metadata?: ChatSessionMetadata;
 }
 
 export type AuditOutcome = "success" | "refusal" | "error" | "limit";
@@ -49,5 +60,5 @@ export interface AuditEvent {
   outcome: AuditOutcome;
   latencyMs: number;
   createdAt: string; // ISO
-  metadata?: Record<string, any>;
+  metadata?: ChatSessionMetadata;
 }

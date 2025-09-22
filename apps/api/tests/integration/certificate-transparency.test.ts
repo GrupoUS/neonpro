@@ -192,7 +192,7 @@ describe('Certificate Transparency Validation Test (T053)', () => {
           Authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          query: 'healthcare compliance check',
+          _query: 'healthcare compliance check',
         }),
       });
 
@@ -222,7 +222,7 @@ describe('Certificate Transparency Validation Test (T053)', () => {
           },
           ...(isPostEndpoint && {
             body: JSON.stringify({
-              query: 'patient medical records',
+              _query: 'patient medical records',
             }),
           }),
         });
@@ -279,7 +279,7 @@ describe('Certificate Transparency Validation Test (T053)', () => {
         const notAfterMatch = certDates.match(/notAfter=(.+)/);
         if (notAfterMatch) {
           const expirationDate = new Date(notAfterMatch[1]);
-          const now = new Date();
+          const _now = new Date();
           const daysUntilExpiration = Math.floor(
             (expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
           );

@@ -62,7 +62,7 @@ app.post('/subscribe', async c => {
     const tokenPayload = c.get('jwtPayload');
     const userId = tokenPayload.sub;
 
-    if (!userId) {
+    if (!_userId) {
       return c.json({
         success: false,
         error: 'User ID not found in token',
@@ -121,7 +121,7 @@ app.post('/subscribe', async c => {
       success: true,
       data: {
         subscriptionId: subscription.id,
-        userId: subscription.userId,
+        _userId: subscription.userId,
         sessionId: subscription.sessionId,
         eventTypes: Array.from(subscription.eventTypes),
         isActive: subscription.isActive,
@@ -158,7 +158,7 @@ app.delete('/unsubscribe/:subscriptionId', async c => {
     const tokenPayload = c.get('jwtPayload');
     const userId = tokenPayload.sub;
 
-    if (!userId) {
+    if (!_userId) {
       return c.json({
         success: false,
         error: 'User ID not found in token',
@@ -306,7 +306,7 @@ app.get('/subscriptions', async c => {
     const tokenPayload = c.get('jwtPayload');
     const userId = tokenPayload.sub;
 
-    if (!userId) {
+    if (!_userId) {
       return c.json({
         success: false,
         error: 'User ID not found in token',
@@ -348,7 +348,7 @@ app.get('/subscriptions', async c => {
       success: true,
       data: subscriptions.map(sub => ({
         id: sub.id,
-        userId: sub.userId,
+        _userId: sub.userId,
         sessionId: sub.sessionId,
         eventTypes: Array.from(sub.eventTypes),
         isActive: sub.isActive,
@@ -378,7 +378,7 @@ app.get('/subscriptions', async c => {
 app.get('/health', c => {
   return c.json({
     status: 'healthy',
-    service: 'realtime-subscriptions',
+    _service: 'realtime-subscriptions',
     timestamp: new Date().toISOString(),
     version: '1.0.0',
   });

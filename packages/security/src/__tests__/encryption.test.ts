@@ -5,7 +5,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { EncryptionManager, KeyManager } from '../encryption';
 
-describe('EncryptionManager', () => {
+describe('EncryptionManager_, () => {
   let encryptionManager: EncryptionManager;
   let testKey: string;
 
@@ -14,15 +14,15 @@ describe('EncryptionManager', () => {
     testKey = encryptionManager.generateKey();
   });
 
-  describe('Key Generation', () => {
-    it('should generate a valid encryption key', () => {
+  describe('Key Generation_, () => {
+    it('should generate a valid encryption key_, () => {
       const key = encryptionManager.generateKey();
       expect(key).toBeDefined();
       expect(typeof key).toBe('string');
       expect(encryptionManager.validateKey(key)).toBe(true);
     });
 
-    it('should validate keys correctly', () => {
+    it('should validate keys correctly_, () => {
       const validKey = encryptionManager.generateKey();
       expect(encryptionManager.validateKey(validKey)).toBe(true);
 
@@ -32,8 +32,8 @@ describe('EncryptionManager', () => {
     });
   });
 
-  describe('Data Encryption/Decryption', () => {
-    it('should encrypt and decrypt data correctly', () => {
+  describe('Data Encryption/Decryption_, () => {
+    it('should encrypt and decrypt data correctly_, () => {
       const plaintext = 'Sensitive healthcare data';
       const encrypted = encryptionManager.encryptData(plaintext, testKey);
       const decrypted = encryptionManager.decryptData(encrypted, testKey);
@@ -44,7 +44,7 @@ describe('EncryptionManager', () => {
       expect(decrypted).toBe(plaintext);
     });
 
-    it('should handle different data types', () => {
+    it('should handle different data types_, () => {
       const testCases = [
         'Simple text',
         'Text with numbers 123',
@@ -60,7 +60,7 @@ describe('EncryptionManager', () => {
       });
     });
 
-    it('should throw error for invalid key', () => {
+    it('should throw error for invalid key_, () => {
       const plaintext = 'Test data';
 
       expect(() => {
@@ -72,15 +72,15 @@ describe('EncryptionManager', () => {
       }).toThrow('Invalid decryption key');
     });
 
-    it('should throw error for invalid encrypted data', () => {
+    it('should throw error for invalid encrypted data_, () => {
       expect(() => {
         encryptionManager.decryptData('invalid', testKey);
       }).toThrow();
     });
   });
 
-  describe('Object Encryption/Decryption', () => {
-    it('should encrypt and decrypt object fields', () => {
+  describe('Object Encryption/Decryption_, () => {
+    it('should encrypt and decrypt object fields_, () => {
       const obj = {
         name: 'John Doe',
         cpf: '12345678900',
@@ -108,7 +108,7 @@ describe('EncryptionManager', () => {
       expect(decrypted.active).toBe(obj.active);
     });
 
-    it('should not encrypt non-sensitive fields', () => {
+    it('should not encrypt non-sensitive fields_, () => {
       const obj = {
         name: 'John Doe',
         cpf: '12345678900',
@@ -127,7 +127,7 @@ describe('EncryptionManager', () => {
       expect(encrypted.cpf).not.toBe(obj.cpf); // Encrypted
     });
 
-    it('should handle missing fields gracefully', () => {
+    it('should handle missing fields gracefully_, () => {
       const obj = {
         name: 'John Doe',
         age: 30,
@@ -152,8 +152,8 @@ describe('EncryptionManager', () => {
     });
   });
 
-  describe('Data Hashing', () => {
-    it('should generate consistent hashes', () => {
+  describe('Data Hashing_, () => {
+    it('should generate consistent hashes_, () => {
       const data = 'Test data';
       const hash1 = encryptionManager.hashData(data);
       const hash2 = encryptionManager.hashData(data);
@@ -163,7 +163,7 @@ describe('EncryptionManager', () => {
       expect(hash1).toBe(hash2);
     });
 
-    it('should generate different hashes for different data', () => {
+    it('should generate different hashes for different data_, () => {
       const data1 = 'Test data 1';
       const data2 = 'Test data 2';
       const hash1 = encryptionManager.hashData(data1);
@@ -172,7 +172,7 @@ describe('EncryptionManager', () => {
       expect(hash1).not.toBe(hash2);
     });
 
-    it('should compare hashes correctly', () => {
+    it('should compare hashes correctly_, () => {
       const data = 'Test data';
       const hash = encryptionManager.hashData(data);
 
@@ -182,7 +182,7 @@ describe('EncryptionManager', () => {
   });
 });
 
-describe('KeyManager', () => {
+describe('KeyManager_, () => {
   let keyManager: KeyManager;
   let testKeyId: string;
   let testKey: string;
@@ -195,20 +195,20 @@ describe('KeyManager', () => {
     testKey = new EncryptionManager().generateKey();
   });
 
-  describe('Key Storage', () => {
-    it('should store and retrieve keys', () => {
+  describe('Key Storage_, () => {
+    it('should store and retrieve keys_, () => {
       keyManager.storeKey(testKeyId, testKey);
       const retrievedKey = keyManager.getKey(testKeyId);
 
       expect(retrievedKey).toBe(testKey);
     });
 
-    it('should return null for non-existent keys', () => {
+    it('should return null for non-existent keys_, () => {
       const retrievedKey = keyManager.getKey('non-existent');
       expect(retrievedKey).toBeNull();
     });
 
-    it('should handle key expiration', () => {
+    it('should handle key expiration_, () => {
       const expiredKey = 'expired-key';
       const expirationDate = new Date(Date.now() - 1000); // 1 second ago
 
@@ -218,7 +218,7 @@ describe('KeyManager', () => {
       expect(retrievedKey).toBeNull();
     });
 
-    it('should remove keys', () => {
+    it('should remove keys_, () => {
       keyManager.storeKey(testKeyId, testKey);
       expect(keyManager.getKey(testKeyId)).toBe(testKey);
 
@@ -226,7 +226,7 @@ describe('KeyManager', () => {
       expect(keyManager.getKey(testKeyId)).toBeNull();
     });
 
-    it('should list all stored keys', () => {
+    it('should list all stored keys_, () => {
       keyManager.storeKey('key1', 'value1');
       keyManager.storeKey('key2', 'value2');
       keyManager.storeKey('key3', 'value3');
@@ -239,8 +239,8 @@ describe('KeyManager', () => {
     });
   });
 
-  describe('Key Rotation', () => {
-    it('should rotate keys and keep old key for TTL', () => {
+  describe('Key Rotation_, () => {
+    it('should rotate keys and keep old key for TTL_, () => {
       const oldKey = testKey;
       keyManager.storeKey(testKeyId, oldKey);
 
@@ -256,7 +256,7 @@ describe('KeyManager', () => {
       expect(keyManager.getKey(`${testKeyId}_old`)).toBe(oldKey);
     });
 
-    it('should work even when no old key exists', () => {
+    it('should work even when no old key exists_, () => {
       const newKey = keyManager.rotateKey(testKeyId, 3600);
 
       expect(newKey).toBeDefined();
@@ -265,8 +265,8 @@ describe('KeyManager', () => {
     });
   });
 
-  describe('Cleanup', () => {
-    it('should clean up expired keys', () => {
+  describe('Cleanup_, () => {
+    it('should clean up expired keys_, () => {
       // Store keys with different expiration times
       keyManager.storeKey('expired1', 'value1', new Date(Date.now() - 1000));
       keyManager.storeKey('expired2', 'value2', new Date(Date.now() - 1000));

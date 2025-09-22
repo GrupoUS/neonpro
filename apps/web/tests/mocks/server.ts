@@ -41,7 +41,7 @@ export const handlers = [
     }
 
     // Validate request structure (basic checks first)
-    if (!body.entity || !body.operation || !body.context) {
+    if (!body.entity || !body.operation || !body._context) {
       const error = new Error('Missing required fields');
       error.code = 'VALIDATION_ERROR';
       error.details = { timestamp: new Date().toISOString() };
@@ -55,7 +55,7 @@ export const handlers = [
     }
 
     // Validate authentication context (should come before other validations)
-    if (!body.context.userId) {
+    if (!body.context._userId) {
       const error = new Error('Authentication required');
       error.code = 'AUTH_ERROR';
       error.details = { timestamp: new Date().toISOString() };
@@ -307,7 +307,7 @@ export const handlers = [
       auditTrail: {
         requestId: 'req-123',
         timestamp: new Date().toISOString(),
-        userId: body.context.userId,
+        _userId: body.context.userId,
         sessionId: body.context.sessionId,
         entity: body.entity,
         operation: body.operation,
@@ -1173,7 +1173,7 @@ export const handlers = [
         operation: operationType,
         entity: body.operation?.entity || 'patients',
         timestamp: new Date().toISOString(),
-        userId: body.context?.userId || 'user-123',
+        _userId: body.context?.userId || 'user-123',
         correlationId: body.context?.correlationId || body.correlationId || 'correlation-789',
         compliance: {
           lgpd: { passed: true, score: 95 },

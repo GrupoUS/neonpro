@@ -6,7 +6,7 @@ export interface EmergencyContact {
   relationship: string;
   phone: string;
   email?: string;
-  address?: Address;
+  address?: import('./address.js').Address;
 }
 
 /**

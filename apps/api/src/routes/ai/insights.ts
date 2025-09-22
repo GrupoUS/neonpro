@@ -6,7 +6,6 @@
 
 import { zValidator } from '@hono/zod-validator';
 import { Context, Hono, Next } from 'hono';
-import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service.js';
 
 import { LGPDService } from '../../services/lgpd-service.js';
@@ -58,7 +57,7 @@ interface RiskFactor {
 interface QueryParams {
   includeHistory?: string;
   medicalSpecialty?: string;
-  context?: string;
+  _context?: string;
 }
 
 interface InsightsResponse {
@@ -104,7 +103,7 @@ const mockAuthMiddleware = (c: Context, next: Next) => {
     );
   }
 
-  c.set('user', { id: 'user-123', role: 'healthcare_professional' });
+  c.set('user', { id: 'user-123', _role: 'healthcare_professional' });
   return next();
 };
 
@@ -120,7 +119,7 @@ const CACHE_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
 const getCacheKey = (
   patientId: string,
   queryParams: QueryParams,
-  userId: string,
+  _userId: string,
   medicalSpecialty?: string,
 ) => {
   return `insights:${patientId}:${userId}:${JSON.stringify(queryParams)}:${
@@ -191,7 +190,7 @@ const insightsQuerySchema = z.object({
     .string()
     .transform(val => val === 'true')
     .optional(),
-  context: z.string().optional(), // Add support for context parameter
+  _context: z.string().optional(), // Add support for context parameter
 });
 
 // Services - will be injected during testing or use real services in production
@@ -216,10 +215,7 @@ const getServices = () => {
 };
 
 app.get(
-  '/patient/:patientId',
-  mockAuthMiddleware,
-  mockLGPDMiddleware,
-  zValidator('param', pathSchema, (result, c) => {
+  '/patient/:patientId',mockAuthMiddleware,_mockLGPDMiddleware,_zValidator('param',pathSchema,(result,_c) => {
     if (!result.success) {
       return c.json(
         {
@@ -283,7 +279,7 @@ app.get(
 
       // Validate LGPD data access for patient insights
       const lgpdValidation = await currentServices.lgpdService.validateDataAccess({
-        userId: user.id,
+        _userId: user.id,
         patientId,
         dataType: 'ai_patient_insights',
         purpose: 'healthcare_analysis',
@@ -302,9 +298,9 @@ app.get(
       }
 
       // Generate patient insights
-      const _insightsRequest = {
+      const insightsRequest = {
         patientId,
-        userId: user.id,
+        _userId: user.id,
         analysisType: queryParams.analysisType,
         timeRange: queryParams.timeRange,
         includeHistory: queryParams.includeHistory,
@@ -435,7 +431,7 @@ app.get(
       // Log activity for audit trail
       const processingTime = Date.now() - startTime;
       await currentServices.auditService.logActivity({
-        userId: user.id,
+        _userId: user.id,
         action: 'ai_patient_insights_access',
         resourceType: 'ai_insights',
         resourceId: patientId,
@@ -500,7 +496,7 @@ app.get(
       responseHeaders['X-Database-Queries'] = '3';
 
       // Set all headers
-      Object.entries(responseHeaders).forEach(([key, value]) => {
+      Object.entries(responseHeaders).forEach(([key,_value]) => {
         c.header(key, value);
       });
 
@@ -528,7 +524,7 @@ app.get(
       // Log error for audit
       const currentServices = getServices();
       await currentServices.auditService.logActivity({
-        userId: user.id,
+        _userId: user.id,
         action: 'ai_insights_error',
         resourceType: 'ai_insights',
         resourceId: patientId,
@@ -651,7 +647,7 @@ app.post(
 
       // Log activity for audit trail
       await currentServices.auditService.logActivity({
-        userId: user.id,
+        _userId: user.id,
         action: 'ai_no_show_prediction',
         resourceType: 'ai_prediction',
         resourceId: 'no_show_batch',
@@ -677,7 +673,7 @@ app.post(
         'Cache-Control': 'private, max-age=300',
       };
 
-      Object.entries(responseHeaders).forEach(([key, value]) => {
+      Object.entries(responseHeaders).forEach(([key,_value]) => {
         c.header(key, value);
       });
 

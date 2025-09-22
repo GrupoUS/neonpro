@@ -113,7 +113,7 @@ export interface LGPDAuditEvent {
     | 'data_export'
     | 'data_deletion';
   dataSubjectId: string;
-  userId: string;
+  _userId: string;
   clinicId: string;
   purpose: LGPDProcessingPurpose;
   legalBasis: LGPDLegalBasis;
@@ -424,7 +424,7 @@ export class LGPDComplianceValidator {
         eventId: auditEventId,
         eventType: 'data_access', // This would vary based on the right
         dataSubjectId,
-        userId: requestDetails.requestedBy,
+        _userId: requestDetails.requestedBy,
         clinicId: this.prisma.currentContext?.clinicId || '',
         purpose: LGPDProcessingPurpose.REGULATORY_COMPLIANCE,
         legalBasis: LGPDLegalBasis.LEGAL_OBLIGATION,
@@ -451,7 +451,7 @@ export class LGPDComplianceValidator {
         eventId: auditEventId,
         eventType: 'data_access',
         dataSubjectId,
-        userId: requestDetails.requestedBy,
+        _userId: requestDetails.requestedBy,
         clinicId: this.prisma.currentContext?.clinicId || '',
         purpose: LGPDProcessingPurpose.REGULATORY_COMPLIANCE,
         legalBasis: LGPDLegalBasis.LEGAL_OBLIGATION,

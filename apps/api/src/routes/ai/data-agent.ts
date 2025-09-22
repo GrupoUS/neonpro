@@ -1,4 +1,4 @@
-import { AgentQueryRequest, AgentResponse, InteractiveAction, QueryIntent, UserRole } from '@neonpro/types';
+import { AgentQueryRequest, InteractiveAction, QueryIntent, UserRole } from '@neonpro/types';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { jwt } from 'hono/jwt';
@@ -102,7 +102,7 @@ app.post('/ai/data-agent', async c => {
     const permissionContext = {
       userId,
       domain: userDomain,
-      role: userRole,
+      _role: userRole,
       permissions: payload.permissions || [],
       dataScope: payload.dataScope || 'own_clients',
       lastAccess: new Date(),
@@ -161,7 +161,7 @@ app.post('/ai/data-agent', async c => {
             label: suggestion,
             type: 'button' as const,
             action: 'suggest_query',
-            parameters: { query: suggestion },
+            parameters: { _query: suggestion },
           })),
           metadata: {
             processingTime: Date.now() - startTime,

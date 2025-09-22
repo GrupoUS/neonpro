@@ -294,7 +294,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
           text:
             'Estou muito satisfeita com o tratamento de limpeza de pele. Os resultados foram excelentes e superaram minhas expectativas. Houve um leve desconforto durante o procedimento, mas nada insuportável. Gostaria de saber sobre outros tratamentos disponíveis.',
           patientId: 'patient-123',
-          context: 'post_treatment_feedback',
+          _context: 'post_treatment_feedback',
         },
         options: {
           analyzeSentiment: true,
@@ -422,7 +422,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       );
 
       expect(mockLGPDService.validateDataAccess).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         dataType: 'ai_data_analysis',
         purpose: 'healthcare_analysis',
         legalBasis: 'legitimate_interest',
@@ -452,7 +452,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       );
 
       expect(mockAuditService.logActivity).toHaveBeenCalledWith({
-        userId: 'user-123',
+        _userId: 'user-123',
         action: 'ai_data_analysis',
         resourceType: 'ai_analysis',
         resourceId: 'img-analysis-456',
@@ -698,7 +698,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       const largeData = {
         analysisType: 'structured_data',
         data: {
-          patientHistory: Array.from({ length: 100 }, (_, i) => ({
+          patientHistory: Array.from({ length: 100 },(, i) => ({
             date: `2024-01-${String(i + 1).padStart(2, '0')}`,
             treatment: `Tratamento ${i + 1}`,
             outcome: 'satisfatório',

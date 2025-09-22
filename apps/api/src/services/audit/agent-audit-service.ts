@@ -10,7 +10,7 @@ import { createClient } from '@supabase/supabase-js';
 
 export interface AuditEvent {
   id: string;
-  userId: string;
+  _userId: string;
   sessionId?: string;
   action: string;
   resource: string;
@@ -30,7 +30,7 @@ export interface AuditEvent {
 }
 
 export interface AuditQueryOptions {
-  userId?: string;
+  _userId?: string;
   sessionId?: string;
   action?: string;
   resource?: string;
@@ -75,7 +75,7 @@ export class AgentAuditService {
    * Log data access attempt
    */
   async logDataAccess(params: {
-    userId: string;
+    _userId: string;
     sessionId?: string;
     action: 'read' | 'write' | 'delete';
     resource: string;
@@ -90,7 +90,7 @@ export class AgentAuditService {
     const sensitivityLevel = this.determineSensitivityLevel(params.resource, params.patientId);
 
     await this.logEvent({
-      userId: params.userId,
+      _userId: params.userId,
       sessionId: params.sessionId,
       action: `${params.action}:${params.resource}`,
       resource: params.resource,
@@ -105,7 +105,7 @@ export class AgentAuditService {
         accessMethod: 'api',
       },
       compliance: {
-        lgpdConsentVerified: await this.verifyLgpdConsent(params.userId),
+        lgpdConsentVerified: await this.verifyLgpdConsent(params._userId),
         dataAccessReason: this.determineAccessReason(params.action, params.resource),
         dataRetentionPolicy: this.getRetentionPolicy(params.resource),
         patientId: params.patientId,
@@ -118,9 +118,9 @@ export class AgentAuditService {
    * Log AI agent query
    */
   async logAgentQuery(params: {
-    userId: string;
+    _userId: string;
     sessionId: string;
-    query: string;
+    _query: string;
     responseLength: number;
     processingTimeMs: number;
     success: boolean;
@@ -134,10 +134,10 @@ export class AgentAuditService {
     ipAddress?: string;
     userAgent?: string;
   }): Promise<void> {
-    const containsPhi = this.containsProtectedHealthInfo(params.query);
+    const containsPhi = this.containsProtectedHealthInfo(params._query);
 
     await this.logEvent({
-      userId: params.userId,
+      _userId: params.userId,
       sessionId: params.sessionId,
       action: 'ai_query',
       resource: 'agent_session',
@@ -153,10 +153,10 @@ export class AgentAuditService {
         sources: params.sources,
         containsPhi,
         aiModel: 'gpt-4', // Could be configured
-        queryType: this.categorizeQuery(params.query),
+        queryType: this.categorizeQuery(params._query),
       },
       compliance: {
-        lgpdConsentVerified: await this.verifyLgpdConsent(params.userId),
+        lgpdConsentVerified: await this.verifyLgpdConsent(params._userId),
         dataAccessReason: 'ai_assistant_interaction',
         dataRetentionPolicy: '30_days',
         patientIds: params.patientIds,
@@ -169,7 +169,7 @@ export class AgentAuditService {
    * Log session management events
    */
   async logSessionEvent(params: {
-    userId: string;
+    _userId: string;
     sessionId: string;
     action: 'create' | 'update' | 'delete' | 'expire';
     success: boolean;
@@ -179,7 +179,7 @@ export class AgentAuditService {
     userAgent?: string;
   }): Promise<void> {
     await this.logEvent({
-      userId: params.userId,
+      _userId: params.userId,
       sessionId: params.sessionId,
       action: `session_${params.action}`,
       resource: 'agent_session',
@@ -192,7 +192,7 @@ export class AgentAuditService {
         sessionAction: params.action,
       },
       compliance: {
-        lgpdConsentVerified: await this.verifyLgpdConsent(params.userId),
+        lgpdConsentVerified: await this.verifyLgpdConsent(params._userId),
         dataAccessReason: 'session_management',
         dataRetentionPolicy: '24_hours',
       },
@@ -203,7 +203,7 @@ export class AgentAuditService {
    * Log permission check events
    */
   async logPermissionCheck(params: {
-    userId: string;
+    _userId: string;
     sessionId?: string;
     permission: string;
     granted: boolean;
@@ -214,7 +214,7 @@ export class AgentAuditService {
     userAgent?: string;
   }): Promise<void> {
     await this.logEvent({
-      userId: params.userId,
+      _userId: params.userId,
       sessionId: params.sessionId,
       action: 'permission_check',
       resource: params.resource || 'permissions',
@@ -249,8 +249,8 @@ export class AgentAuditService {
         .select('*', { count: 'exact' });
 
       // Apply filters
-      if (options.userId) {
-        query = query.eq('user_id', options.userId);
+      if (options._userId) {
+        query = query.eq('user_id', options._userId);
       }
 
       if (options.sessionId) {
@@ -316,7 +316,7 @@ export class AgentAuditService {
    * Get audit statistics
    */
   async getAuditStatistics(options: {
-    userId?: string;
+    _userId?: string;
     startDate?: string;
     endDate?: string;
   } = {}): Promise<{
@@ -332,8 +332,8 @@ export class AgentAuditService {
         .from('agent_audit_log')
         .select('action, table_name, success, compliance_metadata', { count: 'exact' });
 
-      if (options.userId) {
-        query = query.eq('user_id', options.userId);
+      if (options._userId) {
+        query = query.eq('user_id', options._userId);
       }
 
       if (options.startDate) {
@@ -384,13 +384,13 @@ export class AgentAuditService {
 
       // Get top actions and resources
       const topActions = Array.from(actionCounts.entries())
-        .map(([action, count]) => ({ action, count }))
-        .sort((a, b) => b.count - a.count)
+        .map(([action,_count]) => ({ action, count }))
+        .sort((a,_b) => b.count - a.count)
         .slice(0, 10);
 
       const topResources = Array.from(resourceCounts.entries())
-        .map(([resource, count]) => ({ resource, count }))
-        .sort((a, b) => b.count - a.count)
+        .map(([resource,_count]) => ({ resource, count }))
+        .sort((a,_b) => b.count - a.count)
         .slice(0, 10);
 
       return {
@@ -553,7 +553,7 @@ export class AgentAuditService {
   private mapAuditRecord(record: any): AuditEvent {
     return {
       id: record.id,
-      userId: record.user_id,
+      _userId: record.user_id,
       sessionId: record.session_id,
       action: record.action,
       resource: record.table_name,
@@ -592,12 +592,12 @@ export class AgentAuditService {
   /**
    * Verify LGPD consent for a user
    */
-  private async verifyLgpdConsent(userId: string): Promise<boolean> {
+  private async verifyLgpdConsent(_userId: string): Promise<boolean> {
     try {
       const { data } = await this.supabase
         .from('user_lgpd_consents')
         .select('id')
-        .eq('user_id', userId)
+        .eq('user_id', _userId)
         .eq('consent_type', 'data_processing')
         .eq('granted', true)
         .gt('expires_at', new Date().toISOString())
@@ -670,7 +670,7 @@ export class AgentAuditService {
   /**
    * Categorize AI query type
    */
-  private categorizeQuery(query: string): string {
+  private categorizeQuery(_query: string): string {
     const lowerQuery = query.toLowerCase();
 
     if (lowerQuery.includes('agendamento') || lowerQuery.includes('appointment')) {

@@ -67,7 +67,7 @@ export interface ChannelConfig {
 
 // Notification preferences
 export interface NotificationPreferences {
-  userId: string;
+  _userId: string;
   channels: {
     whatsapp: ChannelConfig;
     sms: ChannelConfig;
@@ -177,7 +177,7 @@ export interface Notification {
 
   // LGPD compliance
   accessLog?: Array<{
-    userId: string;
+    _userId: string;
     action: string;
     timestamp: Date;
     ipAddress?: string;
@@ -425,7 +425,7 @@ export function getNotificationsByRecipient(
 ): Notification[] {
   return notifications
     .filter((notification) => notification.recipientId === recipientId)
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    .sort((a,_b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
 // Get notifications by type
@@ -440,8 +440,7 @@ export function getNotificationsByType(
 export function getPendingNotifications(
   notifications: Notification[],
 ): Notification[] {
-  return notifications.filter(
-    (notification) =>
+  return notifications.filter((notification) =>
       notification.status === NotificationStatus.PENDING ||
       notification.status === NotificationStatus.SCHEDULED,
   );
@@ -451,8 +450,7 @@ export function getPendingNotifications(
 export function getFailedNotifications(
   notifications: Notification[],
 ): Notification[] {
-  return notifications.filter(
-    (notification) =>
+  return notifications.filter((notification) =>
       notification.status === NotificationStatus.FAILED &&
       (notification.attempts || 0) < 3, // Max 3 retry attempts
   );

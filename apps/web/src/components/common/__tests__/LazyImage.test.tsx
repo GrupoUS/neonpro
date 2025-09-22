@@ -29,13 +29,13 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-describe('LazyImage', () => {
+describe(('LazyImage', () => {
   const defaultProps = {
     src: '/test-image.jpg',
     alt: 'Test image',
   };
 
-  it('should render with placeholder initially', () => {
+  it(('should render with placeholder initially', () => {
     render(<LazyImage {...defaultProps} />);
 
     const img = screen.getByRole('img');
@@ -46,7 +46,7 @@ describe('LazyImage', () => {
     );
   });
 
-  it('should load image when in view', async () => {
+  it(_'should load image when in view',async () => {
     render(<LazyImage {...defaultProps} />);
 
     // Simulate intersection
@@ -60,7 +60,7 @@ describe('LazyImage', () => {
     });
   });
 
-  it('should load image immediately when priority is true', () => {
+  it(('should load image immediately when priority is true', () => {
     render(<LazyImage {...defaultProps} priority />);
 
     const img = screen.getByRole('img');
@@ -68,7 +68,7 @@ describe('LazyImage', () => {
     expect(mockObserve).not.toHaveBeenCalled();
   });
 
-  it('should load image immediately when loading is eager', () => {
+  it(('should load image immediately when loading is eager', () => {
     render(<LazyImage {...defaultProps} loading='eager' />);
 
     const img = screen.getByRole('img');
@@ -76,7 +76,7 @@ describe('LazyImage', () => {
     expect(mockObserve).not.toHaveBeenCalled();
   });
 
-  it('should show loading state initially', () => {
+  it(('should show loading state initially', () => {
     render(<LazyImage {...defaultProps} />);
 
     const loadingIndicator = screen
@@ -85,7 +85,7 @@ describe('LazyImage', () => {
     expect(loadingIndicator).toBeInTheDocument();
   });
 
-  it('should hide loading state when image loads', async () => {
+  it(_'should hide loading state when image loads',async () => {
     render(<LazyImage {...defaultProps} priority />);
 
     const img = screen.getByRole('img');
@@ -96,7 +96,7 @@ describe('LazyImage', () => {
     });
   });
 
-  it('should show error state when image fails to load', async () => {
+  it(_'should show error state when image fails to load',async () => {
     render(<LazyImage {...defaultProps} priority />);
 
     const img = screen.getByRole('img');
@@ -108,7 +108,7 @@ describe('LazyImage', () => {
     });
   });
 
-  it('should use custom fallback image', async () => {
+  it(_'should use custom fallback image',async () => {
     render(
       <LazyImage {...defaultProps} fallback='/custom-fallback.jpg' priority />,
     );
@@ -121,7 +121,7 @@ describe('LazyImage', () => {
     });
   });
 
-  it('should call onLoad callback', async () => {
+  it(_'should call onLoad callback',async () => {
     const onLoad = vi.fn();
     render(<LazyImage {...defaultProps} onLoad={onLoad} priority />);
 
@@ -133,7 +133,7 @@ describe('LazyImage', () => {
     });
   });
 
-  it('should call onError callback', async () => {
+  it(_'should call onError callback',async () => {
     const onError = vi.fn();
     render(<LazyImage {...defaultProps} onError={onError} priority />);
 
@@ -145,14 +145,14 @@ describe('LazyImage', () => {
     });
   });
 
-  it('should apply custom className', () => {
+  it(('should apply custom className', () => {
     render(<LazyImage {...defaultProps} className='custom-class' />);
 
     const img = screen.getByRole('img');
     expect(img).toHaveClass('custom-class');
   });
 
-  it('should apply custom containerClassName', () => {
+  it(('should apply custom containerClassName', () => {
     render(
       <LazyImage {...defaultProps} containerClassName='custom-container' />,
     );
@@ -161,7 +161,7 @@ describe('LazyImage', () => {
     expect(container).toHaveClass('custom-container');
   });
 
-  it('should set srcSet when in view', async () => {
+  it(_'should set srcSet when in view',async () => {
     const srcSet = '/test-image-400.jpg 400w, /test-image-800.jpg 800w';
     render(<LazyImage {...defaultProps} srcSet={srcSet} />);
 
@@ -179,7 +179,7 @@ describe('LazyImage', () => {
     });
   });
 
-  it('should disconnect observer when component unmounts', () => {
+  it(('should disconnect observer when component unmounts', () => {
     const { unmount } = render(<LazyImage {...defaultProps} />);
 
     unmount();
@@ -187,7 +187,7 @@ describe('LazyImage', () => {
     expect(mockDisconnect).toHaveBeenCalled();
   });
 
-  it('should handle missing IntersectionObserver', () => {
+  it(('should handle missing IntersectionObserver', () => {
     // @ts-ignore
     delete global.IntersectionObserver;
 
@@ -195,7 +195,7 @@ describe('LazyImage', () => {
   });
 });
 
-describe('ResponsiveImage', () => {
+describe(('ResponsiveImage', () => {
   const defaultProps = {
     src: '/test-image.jpg',
     alt: 'Test image',
@@ -206,14 +206,14 @@ describe('ResponsiveImage', () => {
     },
   };
 
-  it('should render LazyImage when no WebP/AVIF sources', () => {
+  it(('should render LazyImage when no WebP/AVIF sources', () => {
     render(<ResponsiveImage {...defaultProps} />);
 
     const img = screen.getByRole('img');
     expect(img).toHaveAttribute('alt', 'Test image');
   });
 
-  it('should render picture element with WebP source', () => {
+  it(('should render picture element with WebP source', () => {
     render(<ResponsiveImage {...defaultProps} webpSrc='/test-image.webp' />);
 
     const picture = screen.getByRole('img').closest('picture');
@@ -223,7 +223,7 @@ describe('ResponsiveImage', () => {
     expect(webpSource).toBeInTheDocument();
   });
 
-  it('should render picture element with AVIF source', () => {
+  it(('should render picture element with AVIF source', () => {
     render(<ResponsiveImage {...defaultProps} avifSrc='/test-image.avif' />);
 
     const picture = screen.getByRole('img').closest('picture');
@@ -233,7 +233,7 @@ describe('ResponsiveImage', () => {
     expect(avifSource).toBeInTheDocument();
   });
 
-  it('should render both AVIF and WebP sources in correct order', () => {
+  it(('should render both AVIF and WebP sources in correct order', () => {
     render(
       <ResponsiveImage
         {...defaultProps}
@@ -250,7 +250,7 @@ describe('ResponsiveImage', () => {
     expect(sources?.[1]).toHaveAttribute('type', 'image/webp');
   });
 
-  it('should generate srcSet for different breakpoints', () => {
+  it(('should generate srcSet for different breakpoints', () => {
     render(<ResponsiveImage {...defaultProps} webpSrc='/test-image.webp' />);
 
     const webpSource = screen
@@ -271,7 +271,7 @@ describe('ResponsiveImage', () => {
     );
   });
 
-  it('should generate sizes attribute', () => {
+  it(('should generate sizes attribute', () => {
     render(<ResponsiveImage {...defaultProps} webpSrc='/test-image.webp' />);
 
     const webpSource = screen

@@ -201,7 +201,7 @@ export class SecurityHeadersService {
    * Generate security headers based on healthcare context
    */
   generateSecurityHeaders(
-    context: HealthcareSecurityContext,
+    _context: HealthcareSecurityContext,
   ): SecurityHeadersResult {
     try {
       const config = this.selectConfig(context);
@@ -320,7 +320,7 @@ export class SecurityHeadersService {
    * Select appropriate security configuration based on context
    */
   private selectConfig(
-    context: HealthcareSecurityContext,
+    _context: HealthcareSecurityContext,
   ): SecurityHeaderConfig {
     if (context.sensitivityLevel === 'critical' || context.handlesMedicalData) {
       return this.configs.medical_data;
@@ -434,7 +434,7 @@ export class SecurityHeadersService {
   private calculateSecurityScore(
     appliedHeaders: string[],
     missingHeaders: string[],
-    context: HealthcareSecurityContext,
+    _context: HealthcareSecurityContext,
   ): number {
     let score = 100;
 
@@ -478,7 +478,7 @@ export class SecurityHeadersService {
    * Generate context-specific security recommendations
    */
   private generateContextRecommendations(
-    context: HealthcareSecurityContext,
+    _context: HealthcareSecurityContext,
   ): string[] {
     const recommendations: string[] = [];
 
@@ -521,7 +521,7 @@ export class SecurityHeadersService {
         referrer: string;
       };
     },
-    request: {
+    _request: {
       headers: Record<string, string>;
       ip: string;
     },
@@ -722,7 +722,7 @@ export class SecurityHeadersService {
     return async (c: any, next: any) => {
       try {
         // Extract healthcare context from request
-        const context: HealthcareSecurityContext = {
+        const _context: HealthcareSecurityContext = {
           isHealthcareEndpoint: this.isHealthcareEndpoint(c.req.url),
           handlesMedicalData: this.handlesMedicalData(c.req.url),
           requiresPatientAuth: this.requiresPatientAuth(c.req.url),
@@ -739,7 +739,7 @@ export class SecurityHeadersService {
         const securityResult = this.generateSecurityHeaders(context);
 
         // Apply headers to response
-        Object.entries(securityResult.headers).forEach(([key, value]) => {
+        Object.entries(securityResult.headers).forEach(([key,_value]) => {
           c.header(key, value);
         });
 

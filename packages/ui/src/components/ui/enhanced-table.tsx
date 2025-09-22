@@ -6,7 +6,7 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "./table";
 
 // Note: keep props non-generic to avoid unused generic type errors in consumers
@@ -42,7 +42,7 @@ export function EnhancedTable(props: EnhancedTableProps) {
     renderToolbar,
     renderPagination,
     onRowClick,
-    stopRowClickPredicate,
+    stopRowClickPredicate
   } = props;
 
   const colSpan = columnsCount ?? table?.getAllLeafColumns?.().length ?? 1;
@@ -69,7 +69,7 @@ export function EnhancedTable(props: EnhancedTableProps) {
                   style={{
                     width: header.getSize?.()
                       ? `${header.getSize()}px`
-                      : undefined,
+                      : undefined
                   }}
                 >
                   {header.isPlaceholder
@@ -100,8 +100,7 @@ export function EnhancedTable(props: EnhancedTableProps) {
                 className={onRowClick ? "cursor-pointer" : undefined}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
-                {row.getVisibleCells().map((cell: any) => (
-                  <TableCell
+                {row.getVisibleCells().map((cell: any) => (<TableCell
                     key={cell.id}
                     onClick={(e) => {
                       if (

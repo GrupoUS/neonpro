@@ -492,9 +492,9 @@ export function HealthcareAccessibilityAuditor({
                             <div>
                               <strong>Implementation Steps:</strong>
                               <ul className='list-disc list-inside text-muted-foreground'>
-                                {rec.implementationSteps.map(
-                                  (step, stepIndex) => <li key={stepIndex}>{step}</li>,
-                                )}
+                                {rec.implementationSteps.map((step, stepIndex) => (
+                                  <li key={stepIndex}>{step}</li>
+                                ))}
                               </ul>
                             </div>
 
@@ -566,9 +566,9 @@ export function HealthcareAccessibilityAuditor({
                         <div>
                           <strong>Requirements:</strong>
                           <ul className='list-disc list-inside ml-2'>
-                            {standard.accessibilityRequirements.map(
-                              (req, reqIndex) => <li key={reqIndex}>{req}</li>,
-                            )}
+                            {standard.accessibilityRequirements.map((req, reqIndex) => (
+                              <li key={reqIndex}>{req}</li>
+                            ))}
                           </ul>
                         </div>
                       </div>

@@ -46,9 +46,8 @@ import {
   User,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { type ControllerRenderProps, type FieldPath, useForm } from 'react-hook-form';
+import { type ControllerRenderProps, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { z } from 'zod';
 import { FileUploadIntegration, type UploadedFile } from './FileUploadIntegration';
 
 // Step 1: Basic Information Schema
@@ -241,21 +240,18 @@ export function PatientRegistrationWizard({
         && autoSave.recoveryAge < 24 * 60 * 60 * 1000
       ) {
         const ageInMinutes = Math.floor(autoSave.recoveryAge / (1000 * 60));
-        toast.info(
-          `Dados salvos automaticamente há ${ageInMinutes} minutos. Deseja recuperar?`,
-          {
-            action: {
-              label: 'Recuperar',
-              onClick: () => {
-                if (autoSave.savedData) {
-                  form.reset(autoSave.savedData as PatientRegistrationData);
-                  toast.success('Dados recuperados com sucesso!');
-                }
-              },
+        toast.info(`Dados salvos automaticamente há ${ageInMinutes} minutos. Deseja recuperar?`, {
+          action: {
+            label: 'Recuperar',
+            onClick: () => {
+              if (autoSave.savedData) {
+                form.reset(autoSave.savedData as PatientRegistrationData);
+                toast.success('Dados recuperados com sucesso!');
+              }
             },
-            duration: 10000,
           },
-        );
+          duration: 10000,
+        });
       }
     }
   }, [open, autoSave, form]);
@@ -290,13 +286,13 @@ export function PatientRegistrationWizard({
     }
   };
 
-  const handleStepClick = async (_stepId: any) => {
+  const handleStepClick = async (stepId: any) => {
     if (stepId <= currentStep || completedSteps.includes(stepId - 1)) {
       setCurrentStep(stepId);
     }
   };
 
-  const onSubmit = async (_data: any) => {
+  const onSubmit = async (data: any) => {
     setIsSubmitting(true);
 
     try {
@@ -402,7 +398,7 @@ export function PatientRegistrationWizard({
 
         {/* Step Navigation */}
         <div className='flex justify-between items-center py-4 border-b'>
-          {STEPS.map((step, _index) => {
+          {STEPS.map(step => {
             const Icon = step.icon;
             const isActive = step.id === currentStep;
             const isCompleted = completedSteps.includes(step.id);
@@ -626,19 +622,19 @@ function ContactAddressStep({ form }: { form: any }) {
   const [isLoadingCep, setIsLoadingCep] = useState(false);
 
   // Format phone number as user types (shared helper)
-  const formatPhone = (_value: any) => {
+  const formatPhone = (value: any) => {
     const cleanPhone = value.replace(/\D/g, '');
     return formatBRPhone(cleanPhone);
   };
 
   // Format CEP as user types
-  const formatCep = (_value: any) => {
+  const formatCep = (value: any) => {
     const cleanCep = value.replace(/\D/g, '');
     return cleanCep.replace(/(\d{5})(\d{3})/, '$1-$2');
   };
 
   // Lookup address by CEP
-  const lookupCep = async (_cep: any) => {
+  const lookupCep = async (cep: any) => {
     const cleanCep = cep.replace(/\D/g, '');
     if (cleanCep.length !== 8) return;
 
@@ -895,13 +891,13 @@ function ContactAddressStep({ form }: { form: any }) {
 
 function DocumentsStep({ form }: { form: any }) {
   // Format CPF as user types
-  const formatCpf = (_value: any) => {
+  const formatCpf = (value: any) => {
     const cleanCpf = value.replace(/\D/g, '');
     return cleanCpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   };
 
   // Validate CPF algorithm
-  const validateCpf = (_cpf: any) => {
+  const validateCpf = (cpf: any) => {
     const cleanCpf = cpf.replace(/\D/g, '');
     if (cleanCpf.length !== 11) return false;
 

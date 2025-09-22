@@ -14,8 +14,8 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { z } from "zod";
 import { nanoid } from "nanoid";
+import { z } from "zod";
 import type { Context } from "hono";
 import type {
   HealthcareRole,
@@ -123,8 +123,8 @@ export const AuthorizationContextSchema = z.object({
   // Subject (who is requesting access)
   subject: z
     .object({
-      userId: z.string().describe("User identifier"),
-      role: z.string().describe("User healthcare role"),
+      _userId: z.string().describe("User identifier"),
+      _role: z.string().describe("User healthcare role"),
       permissions: z.array(z.string()).describe("User permissions"),
       attributes: z.record(z.any()).describe("User attributes"),
       facilityId: z.string().optional().describe("User facility"),
@@ -148,7 +148,7 @@ export const AuthorizationContextSchema = z.object({
       ),
       owner: z
         .object({
-          userId: z.string().optional().describe("Resource owner"),
+          _userId: z.string().optional().describe("Resource owner"),
           facilityId: z.string().optional().describe("Owner facility"),
           departmentId: z.string().optional().describe("Owner department"),
         })
@@ -184,7 +184,7 @@ export const AuthorizationContextSchema = z.object({
         ])
         .describe("Operation type"),
       scope: z.enum(["basic", "full", "admin"]).describe("Operation scope"),
-      context: z.string().optional().describe("Operation context"),
+      _context: z.string().optional().describe("Operation context"),
       urgency: z
         .enum(["routine", "urgent", "critical", "emergency"])
         .describe("Operation urgency"),
@@ -192,7 +192,7 @@ export const AuthorizationContextSchema = z.object({
     })
     .describe("Authorization action"),
 
-  // Environment (context of the request)
+  // Environment (context of the _request)
   environment: z
     .object({
       timestamp: z.string().datetime().describe("Request timestamp"),
@@ -590,12 +590,12 @@ export class HealthcareAuthorizationRules {
    * Patient data access rules
    */
   static evaluatePatientDataAccess(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
     const { subject, resource, action, environment } = context;
     const reasons: string[] = [];
-    const obligations: any[] = [];
-    const advice: any[] = [];
+    const obligations: AuthorizationDecision["obligations"] = [];
+    const advice: AuthorizationDecision["advice"] = [];
     let decision: "permit" | "deny" = "deny";
 
     // Emergency access override
@@ -625,10 +625,10 @@ export class HealthcareAuthorizationRules {
     }
 
     // Healthcare provider access to assigned patients
-    if (["doctor", "nurse", "specialist"].includes(subject.role)) {
+    if (["doctor", "nurse", "specialist"].includes(subject._role)) {
       if (
         resource.attributes.assignedProvider === subject.userId ||
-        resource.attributes.careTeam?.includes(subject.userId)
+        resource.attributes.careTeam?.includes(subject._userId)
       ) {
         decision = "permit";
         reasons.push("Assigned healthcare provider access");
@@ -637,7 +637,7 @@ export class HealthcareAuthorizationRules {
 
     // Department-based access
     if (subject.departmentId === resource.owner?.departmentId) {
-      if (["doctor", "nurse", "technician"].includes(subject.role)) {
+      if (["doctor", "nurse", "technician"].includes(subject._role)) {
         decision = "permit";
         reasons.push("Department-based access authorization");
       }
@@ -645,7 +645,7 @@ export class HealthcareAuthorizationRules {
 
     // Facility-based access for administrative roles
     if (subject.facilityId === resource.owner?.facilityId) {
-      if (["department_head", "compliance_officer"].includes(subject.role)) {
+      if (["department_head", "compliance_officer"].includes(subject._role)) {
         decision = "permit";
         reasons.push("Facility-based administrative access");
       }
@@ -653,7 +653,7 @@ export class HealthcareAuthorizationRules {
 
     // Minor patient protection
     if (resource.attributes.patientAge && resource.attributes.patientAge < 18) {
-      if (!["patient", "caregiver"].includes(subject.role)) {
+      if (!["patient", "caregiver"].includes(subject._role)) {
         obligations.push({
           type: "consent",
           description:
@@ -670,16 +670,16 @@ export class HealthcareAuthorizationRules {
    * Medication access rules
    */
   static evaluateMedicationAccess(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
     const { subject, action } = context;
     const reasons: string[] = [];
-    const obligations: any[] = [];
+    const obligations: AuthorizationDecision["obligations"] = [];
     let decision: "permit" | "deny" = "deny";
 
     // Prescribing privileges
     if (action.operation === "create" || action.operation === "write") {
-      if (["doctor", "specialist"].includes(subject.role)) {
+      if (["doctor", "specialist"].includes(subject._role)) {
         decision = "permit";
         reasons.push("Prescribing privileges for medical provider");
         obligations.push({
@@ -692,7 +692,7 @@ export class HealthcareAuthorizationRules {
 
     // Medication administration
     if (action.operation === "execute") {
-      if (["nurse", "pharmacist"].includes(subject.role)) {
+      if (["nurse", "pharmacist"].includes(subject._role)) {
         decision = "permit";
         reasons.push("Medication administration authorization");
         obligations.push({
@@ -716,7 +716,7 @@ export class HealthcareAuthorizationRules {
    * Laboratory data access rules
    */
   static evaluateLabDataAccess(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
     const { subject, action } = context;
     const reasons: string[] = [];
@@ -733,7 +733,7 @@ export class HealthcareAuthorizationRules {
 
     // Healthcare providers can read results
     if (
-      ["doctor", "nurse", "specialist"].includes(subject.role) &&
+      ["doctor", "nurse", "specialist"].includes(subject._role) &&
       action.operation === "read"
     ) {
       decision = "permit";
@@ -753,11 +753,11 @@ export class HealthcareAuthorizationRules {
    * Administrative function access rules
    */
   static evaluateAdminAccess(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
     const { subject, action } = context;
     const reasons: string[] = [];
-    const obligations: any[] = [];
+    const obligations: AuthorizationDecision["obligations"] = [];
     let decision: "permit" | "deny" = "deny";
 
     // System administration
@@ -797,12 +797,12 @@ export class HealthcareAuthorizationRules {
    * Emergency access rules
    */
   static evaluateEmergencyAccess(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
     const { subject, environment } = context;
     const reasons: string[] = [];
-    const obligations: any[] = [];
-    const advice: any[] = [];
+    const obligations: AuthorizationDecision["obligations"] = [];
+    const advice: AuthorizationDecision["advice"] = [];
     let decision: "permit" | "deny" = "deny";
 
     // Emergency responder access
@@ -839,12 +839,12 @@ export class HealthcareAuthorizationRules {
    * LGPD compliance rules
    */
   static evaluateLGPDCompliance(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Partial<AuthorizationDecision> {
     const { subject, resource, action, compliance } = context;
     const reasons: string[] = [];
-    const obligations: any[] = [];
-    const advice: any[] = [];
+    const obligations: AuthorizationDecision["obligations"] = [];
+    const advice: AuthorizationDecision["advice"] = [];
     let decision: "permit" | "deny" = "permit"; // Start with permit, apply restrictions
 
     // Consent validation
@@ -1072,7 +1072,7 @@ export class HealthcareAuthorizationEngine {
    * Main authorization decision method
    */
   async authorize(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Promise<AuthorizationDecision> {
     const startTime = Date.now();
     const contextId = `authz_${nanoid(12)}`;
@@ -1140,7 +1140,7 @@ export class HealthcareAuthorizationEngine {
    * Evaluate authorization decision
    */
   private async evaluateAuthorization(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
     contextId: string,
   ): Promise<AuthorizationDecision> {
     const startTime = Date.now();
@@ -1149,9 +1149,9 @@ export class HealthcareAuthorizationEngine {
     let finalDecision: "permit" | "deny" | "not_applicable" | "indeterminate" =
       this.config.decisionEngine.defaultDecision;
     const allReasons: string[] = [];
-    const allObligations: any[] = [];
-    const allAdvice: any[] = [];
-    const conditions: any[] = [];
+    const allObligations: AuthorizationDecision["obligations"] = [];
+    const allAdvice: AuthorizationDecision["advice"] = [];
+    const conditions: AuthorizationDecision["conditions"] = [];
 
     // Risk assessment
     const riskScore = await this.assessRisk(context);
@@ -1246,7 +1246,7 @@ export class HealthcareAuthorizationEngine {
    * Evaluate resource-specific authorization rules
    */
   private async evaluateResourceSpecificRules(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): Promise<Partial<AuthorizationDecision>> {
     const resourceType = context.resource.type;
 
@@ -1303,7 +1303,7 @@ export class HealthcareAuthorizationEngine {
   /**
    * Assess risk for authorization decision
    */
-  private async assessRisk(context: AuthorizationContext): Promise<number> {
+  private async assessRisk(_context: AuthorizationContext): Promise<number> {
     if (!this.config.security.enableRiskAssessment) {
       return 0;
     }
@@ -1387,8 +1387,8 @@ export class HealthcareAuthorizationEngine {
       correlationId,
 
       subject: {
-        userId: authSession.userId,
-        role: authSession.userProfile.role,
+        _userId: authSession.userId,
+        _role: authSession.userProfile.role,
         permissions: authSession.userProfile.permissions,
         attributes: {
           facilityId: authSession.userProfile.facilityId,
@@ -1602,7 +1602,7 @@ export class HealthcareAuthorizationEngine {
    * Get cached authorization decision
    */
   private getCachedDecision(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
   ): AuthorizationDecision | null {
     const cacheKey = this.generateCacheKey(context);
     const cached = this.decisionCache.get(cacheKey);
@@ -1618,7 +1618,7 @@ export class HealthcareAuthorizationEngine {
    * Cache authorization decision
    */
   private cacheDecision(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
     decision: AuthorizationDecision,
   ): void {
     const cacheKey = this.generateCacheKey(context);
@@ -1630,7 +1630,7 @@ export class HealthcareAuthorizationEngine {
   /**
    * Generate cache key for context
    */
-  private generateCacheKey(context: AuthorizationContext): string {
+  private generateCacheKey(_context: AuthorizationContext): string {
     const key = `${context.subject.userId}:${context.subject.role}:${context.resource.type}:${context.resource.id}:${context.action.operation}:${context.action.scope}`;
     return Buffer.from(key).toString("base64");
   }
@@ -1676,7 +1676,7 @@ export class HealthcareAuthorizationEngine {
    * Log authorization decision
    */
   private async logAuthorizationDecision(
-    context: AuthorizationContext,
+    _context: AuthorizationContext,
     decision: AuthorizationDecision,
     startTime: number,
   ): Promise<void> {
@@ -1684,8 +1684,8 @@ export class HealthcareAuthorizationEngine {
       contextId: decision.contextId,
       requestId: context.requestId,
       sessionId: context.sessionId,
-      userId: context.subject.userId,
-      role: context.subject.role,
+      _userId: context.subject.userId,
+      _role: context.subject.role,
       resourceType: context.resource.type,
       resourceId: context.resource.id,
       operation: context.action.operation,

@@ -21,7 +21,6 @@ import {
   HealthcareDataClassification,
   LGPDDataCategory,
 } from '@neonpro/shared';
-import { z } from 'zod';
 import { AuditTrailService } from './audit-trail';
 import { SemanticCacheService } from './semantic-cache';
 
@@ -128,7 +127,7 @@ export class AIProviderRouterService {
   /**
    * Route AI request through optimal provider with healthcare compliance
    */
-  async routeRequest(request: RoutingRequest): Promise<RoutingResponse> {
+  async routeRequest(_request: RoutingRequest): Promise<RoutingResponse> {
     const start_time = Date.now();
 
     try {
@@ -197,7 +196,7 @@ export class AIProviderRouterService {
    * 🚨 EMERGENCY: Handle emergency requests with special routing
    */
   private async handleEmergencyRequest(
-    request: RoutingRequest,
+    _request: RoutingRequest,
     start_time: number,
   ): Promise<RoutingResponse> {
     const all_configs = this.config_manager.getAllProviderConfigs();
@@ -208,7 +207,7 @@ export class AIProviderRouterService {
     }
 
     // Sort by latency for fastest response
-    emergency_providers.sort((a, b) => {
+    emergency_providers.sort((a,_b) => {
       const health_a = this.health_monitor.getProviderHealth(
         a.provider,
       ) as ProviderHealthCheck;
@@ -239,7 +238,7 @@ export class AIProviderRouterService {
    * Select optimal provider based on routing strategy and constraints
    */
   private async selectProvider(
-    request: RoutingRequest,
+    _request: RoutingRequest,
   ): Promise<ProviderConfig> {
     const available_providers = this.getAvailableProviders(request);
 
@@ -249,7 +248,7 @@ export class AIProviderRouterService {
 
     switch (request.routing_config.strategy) {
       case RoutingStrategy.COST_OPTIMIZED:
-        return this.selectCostOptimizedProvider(available_providers, request);
+        return this.selectCostOptimizedProvider(available_providers, _request);
 
       case RoutingStrategy.LATENCY_OPTIMIZED:
         return this.selectLatencyOptimizedProvider(
@@ -270,10 +269,10 @@ export class AIProviderRouterService {
         );
 
       case RoutingStrategy.EMERGENCY_PRIORITY:
-        return this.selectEmergencyProvider(available_providers, request);
+        return this.selectEmergencyProvider(available_providers, _request);
 
       case RoutingStrategy.LOAD_BALANCED:
-        return this.selectLoadBalancedProvider(available_providers, request);
+        return this.selectLoadBalancedProvider(available_providers, _request);
 
       default:
         return available_providers[0]; // Default to first available
@@ -283,7 +282,7 @@ export class AIProviderRouterService {
   /**
    * Get providers available for healthcare context
    */
-  private getAvailableProviders(request: RoutingRequest): ProviderConfig[] {
+  private getAvailableProviders(_request: RoutingRequest): ProviderConfig[] {
     const all_configs = this.config_manager.getAllProviderConfigs();
     const providers: ProviderConfig[] = [];
 
@@ -308,7 +307,7 @@ export class AIProviderRouterService {
 
       // Check cost constraints
       if (request.routing_config.max_cost_usd) {
-        const estimated_cost = this.estimateProviderCost(config, request);
+        const estimated_cost = this.estimateProviderCost(config, _request);
         if (estimated_cost > request.routing_config.max_cost_usd) {
           continue;
         }
@@ -335,10 +334,10 @@ export class AIProviderRouterService {
    */
   private estimateProviderCost(
     provider: ProviderConfig,
-    request: RoutingRequest,
+    _request: RoutingRequest,
   ): number {
     // Get the best model for this request
-    const model = this.selectBestModelForProvider(provider, request);
+    const model = this.selectBestModelForProvider(provider, _request);
     if (!model) return Infinity;
 
     // Estimate tokens
@@ -360,13 +359,13 @@ export class AIProviderRouterService {
    */
   private selectCostOptimizedProvider(
     providers: ProviderConfig[],
-    request: RoutingRequest,
+    _request: RoutingRequest,
   ): ProviderConfig {
     let best_provider = providers[0];
-    let lowest_cost = this.estimateProviderCost(best_provider, request);
+    let lowest_cost = this.estimateProviderCost(best_provider, _request);
 
     for (const provider of providers.slice(1)) {
-      const cost = this.estimateProviderCost(provider, request);
+      const cost = this.estimateProviderCost(provider, _request);
       if (cost < lowest_cost) {
         lowest_cost = cost;
         best_provider = provider;
@@ -439,14 +438,14 @@ export class AIProviderRouterService {
    */
   private selectHealthcareSpecificProvider(
     providers: ProviderConfig[],
-    request: RoutingRequest,
+    _request: RoutingRequest,
   ): ProviderConfig {
     // Healthcare-specific scoring based on use case and compliance
     let best_provider = providers[0];
-    let best_score = this.calculateHealthcareScore(best_provider, request);
+    let best_score = this.calculateHealthcareScore(best_provider, _request);
 
     for (const provider of providers.slice(1)) {
-      const score = this.calculateHealthcareScore(provider, request);
+      const score = this.calculateHealthcareScore(provider, _request);
       if (score > best_score) {
         best_score = score;
         best_provider = provider;
@@ -482,7 +481,7 @@ export class AIProviderRouterService {
     _request: RoutingRequest,
   ): ProviderConfig {
     // Simple round-robin based on current health metrics
-    const sorted_providers = providers.sort((a, b) => {
+    const sorted_providers = providers.sort((a,_b) => {
       const health_a = this.health_monitor.getProviderHealth(
         a.provider,
       ) as ProviderHealthCheck;
@@ -505,7 +504,7 @@ export class AIProviderRouterService {
    */
   private calculateHealthcareScore(
     provider: ProviderConfig,
-    request: RoutingRequest,
+    _request: RoutingRequest,
   ): number {
     let score = 0;
 
@@ -524,7 +523,7 @@ export class AIProviderRouterService {
     }
 
     // Cost efficiency score (20% weight)
-    const cost = this.estimateProviderCost(provider, request);
+    const cost = this.estimateProviderCost(provider, _request);
     score += Math.max(0, (0.1 - cost) / 0.1) * 20;
 
     // Use case specific bonus (10% weight)
@@ -580,7 +579,7 @@ export class AIProviderRouterService {
    * Execute provider request with fallback handling
    */
   private async executeProviderRequest(
-    request: RoutingRequest,
+    _request: RoutingRequest,
     provider: ProviderConfig,
     start_time: number,
   ): Promise<RoutingResponse> {
@@ -678,7 +677,7 @@ export class AIProviderRouterService {
    */
   private selectBestModelForProvider(
     provider: ProviderConfig,
-    request: RoutingRequest,
+    _request: RoutingRequest,
   ): AIModelConfig | null {
     const eligible_models = provider.models.filter(model => {
       // Check model category
@@ -696,7 +695,7 @@ export class AIProviderRouterService {
 
       // Check cost constraints
       if (request.routing_config.max_cost_usd) {
-        const estimated_cost = this.estimateModelCost(model, request);
+        const estimated_cost = this.estimateModelCost(model, _request);
         if (estimated_cost > request.routing_config.max_cost_usd) {
           return false;
         }
@@ -717,9 +716,9 @@ export class AIProviderRouterService {
     if (eligible_models.length === 0) return null;
 
     // Select best model based on cost-performance ratio
-    return eligible_models.sort((a, b) => {
-      const cost_a = this.estimateModelCost(a, request);
-      const cost_b = this.estimateModelCost(b, request);
+    return eligible_models.sort((a,_b) => {
+      const cost_a = this.estimateModelCost(a, _request);
+      const cost_b = this.estimateModelCost(b, _request);
       const latency_a = a.performance_config.max_latency_ms;
       const latency_b = b.performance_config.max_latency_ms;
 
@@ -736,7 +735,7 @@ export class AIProviderRouterService {
    */
   private estimateModelCost(
     model: AIModelConfig,
-    request: RoutingRequest,
+    _request: RoutingRequest,
   ): number {
     const input_tokens = Math.ceil(request.prompt.length / 4);
     const estimated_output_tokens = Math.min(
@@ -757,7 +756,7 @@ export class AIProviderRouterService {
   private async callProviderAPI(
     provider: ProviderConfig,
     model: AIModelConfig,
-    request: RoutingRequest,
+    _request: RoutingRequest,
   ): Promise<RoutingResponse> {
     const api_start = Date.now();
 
@@ -847,7 +846,7 @@ export class AIProviderRouterService {
    * Check semantic cache for similar requests
    */
   private async checkSemanticCache(
-    request: RoutingRequest,
+    _request: RoutingRequest,
   ): Promise<RoutingResponse | null> {
     if (!request.healthcare_context.patient_id) {
       return null; // Cannot cache without patient context
@@ -908,7 +907,7 @@ export class AIProviderRouterService {
    * Cache successful response
    */
   private async cacheResponse(
-    request: RoutingRequest,
+    _request: RoutingRequest,
     response: RoutingResponse,
   ): Promise<void> {
     if (
@@ -937,7 +936,7 @@ export class AIProviderRouterService {
    * Determine if response should be cached
    */
   private shouldCacheResponse(
-    request: RoutingRequest,
+    _request: RoutingRequest,
     response: RoutingResponse,
   ): boolean {
     // Don't cache emergency requests
@@ -1079,8 +1078,7 @@ export class AIProviderRouterService {
    */
   getAvailableProvidersList(): AIProvider[] {
     const enabled_configs = this.config_manager.getEnabledProviders();
-    return enabled_configs
-      .map(config => config.provider)
+    return enabled_configs.map(config => config.provider)
       .filter(provider => {
         return this.health_monitor.isProviderAvailable(provider);
       });

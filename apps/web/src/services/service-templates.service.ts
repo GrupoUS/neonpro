@@ -160,7 +160,7 @@ class ServiceTemplatesService {
    * Create a new service template
    */
   async createServiceTemplate(
-    request: CreateServiceTemplateRequest,
+    _request: CreateServiceTemplateRequest,
   ): Promise<ServiceTemplate> {
     const { data, error } = await this.sb
       .from('service_templates')
@@ -195,7 +195,7 @@ class ServiceTemplatesService {
    * Update a service template
    */
   async updateServiceTemplate(
-    request: UpdateServiceTemplateRequest,
+    _request: UpdateServiceTemplateRequest,
   ): Promise<ServiceTemplate> {
     const updateData: Partial<ServiceTemplate> = {};
 
@@ -285,7 +285,7 @@ class ServiceTemplatesService {
    * Update a template item
    */
   async updateTemplateItem(
-    request: UpdateServiceTemplateItemRequest,
+    _request: UpdateServiceTemplateItemRequest,
   ): Promise<void> {
     const updateData: any = {};
 
@@ -344,7 +344,7 @@ class ServiceTemplatesService {
    * Duplicate a service template
    */
   async duplicateServiceTemplate(
-    request: DuplicateServiceTemplateRequest,
+    _request: DuplicateServiceTemplateRequest,
   ): Promise<string> {
     const { data, error } = await this.sb.rpc('duplicate_service_template', {
       p_template_id: request.template_id,
@@ -385,13 +385,10 @@ class ServiceTemplatesService {
     );
 
     // Calculate price type distribution
-    const priceTypes = templates.reduce(
-      (acc, template) => {
-        acc[template.price_type] = (acc[template.price_type] || 0) + 1;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
+    const priceTypes = templates.reduce((acc, template) => {
+      acc[template.price_type] = (acc[template.price_type] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
 
     // Calculate averages
     const averagePrice = totalTemplates > 0

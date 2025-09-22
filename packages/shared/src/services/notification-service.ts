@@ -14,7 +14,6 @@
  * @compliance LGPD, ANVISA SaMD, Healthcare Standards
  */
 
-import { z } from "zod";
 import { nanoid } from "nanoid";
 import {
   apiRateLimitingService,
@@ -201,7 +200,7 @@ export const HealthcareNotificationContextSchema = z.object({
         .string()
         .optional()
         .describe("Healthcare professional ID"),
-      role: z.string().optional().describe("Professional role"),
+      _role: z.string().optional().describe("Professional role"),
       department: z.string().optional().describe("Department or unit"),
       onCallStatus: z.boolean().optional().describe("Currently on-call"),
       escalationLevel: z
@@ -636,7 +635,7 @@ export class NotificationService {
         "📢 [NotificationService] Healthcare notification service initialized securely",
       );
     } catch (error) {
-      console.error("Failed to initialize notification service:", error);
+      console.error("Failed to initialize notification _service:", error);
     }
   }
 
@@ -1368,7 +1367,7 @@ export class NotificationService {
       category: "notification_delivery" as any, // Map to healthcare request category
       priority: notification.priority as any, // Map priority levels
       clientId: "notification-service",
-      userId: notification.recipientId,
+      _userId: notification.recipientId,
       sessionId: nanoid(),
       endpoint: `/notifications/${notification.id}/deliver`,
       httpMethod: "POST",
@@ -1500,8 +1499,7 @@ export class NotificationService {
   ): Promise<void> {
     const lastAttempt = notification.deliveryAttempts
       .filter((attempt) => attempt.channel === channel)
-      .sort(
-        (a, b) =>
+      .sort((a,_b) =>
           new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
       )[0];
 

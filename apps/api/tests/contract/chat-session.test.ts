@@ -32,6 +32,6 @@ describe('Contract: GET /api/v1/chat/session/:id', () => {
     const json = await res.json();
     expect(json.id).toBe(sessionId);
     expect(json.locale).toMatch(/pt-BR|en-US/);
-    expect(json.userId).toBe('u-session');
+    expect(json._userId).toBe('u-session');
   });
 });

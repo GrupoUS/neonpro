@@ -187,7 +187,7 @@ export function FileUploadIntegration({
 
   // Handle file selection
   const handleFiles = useCallback(
-    async (_files: any) => {
+    async (files: any) => {
       if (disabled) return;
 
       const fileArray = Array.from(files);
@@ -283,7 +283,7 @@ export function FileUploadIntegration({
   );
 
   // Handle file removal (simplified for now)
-  const handleRemoveFile = async (_fileId: any) => {
+  const handleRemoveFile = async (fileId: any) => {
     try {
       // TODO: Implement actual file removal from Supabase storage
       setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
@@ -334,7 +334,7 @@ export function FileUploadIntegration({
   );
 
   // Get file type info
-  const getFileTypeInfo = (_mimeType: any) => {
+  const getFileTypeInfo = (mimeType: any) => {
     return (
       HEALTHCARE_FILE_TYPES[mimeType as keyof typeof HEALTHCARE_FILE_TYPES]
       || HEALTHCARE_FILE_TYPES.default

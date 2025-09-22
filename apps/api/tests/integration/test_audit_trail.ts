@@ -11,8 +11,6 @@
  */
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { z } from 'zod';
-
 // Test helper for API calls
 async function api(path: string, init?: RequestInit) {
   const { default: app } = await import('../../src/app');
@@ -42,7 +40,7 @@ const AuditEventSchema = z.object({
     'security_event',
   ]),
   timestamp: z.string().datetime(),
-  userId: z.string().uuid(),
+  _userId: z.string().uuid(),
   userRole: z.string(),
   userCrm: z.string().optional(),
   patientId: z.string().uuid().optional(),
@@ -97,7 +95,7 @@ const AuditReportSchema = z.object({
   }),
   topUsers: z.array(
     z.object({
-      userId: z.string(),
+      _userId: z.string(),
       userName: z.string(),
       eventCount: z.number(),
       riskScore: z.number(),
@@ -168,7 +166,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
         expect.objectContaining({
           eventType: 'patient_access',
           patientId: testPatientId,
-          userId: expect.any(String),
+          _userId: expect.any(String),
           action: 'view_patient_record',
           details: expect.objectContaining({
             ipAddress: '192.168.1.100',
@@ -505,7 +503,7 @@ describe('Healthcare Audit Trail Integration Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify({
           timeRange: '10m',
-          userId: testUserId,
+          _userId: testUserId,
         }),
       });
 

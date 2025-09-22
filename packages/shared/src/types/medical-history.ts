@@ -142,7 +142,7 @@ export interface MedicalHistory {
 
   // LGPD compliance
   accessLog?: Array<{
-    userId: string;
+    _userId: string;
     action: string;
     timestamp: Date;
     ipAddress?: string;
@@ -338,5 +338,5 @@ export function getRecentMedicalHistory(
 
   return histories
     .filter((history) => history.date >= cutoffDate)
-    .sort((a, b) => b.date.getTime() - a.date.getTime());
+    .sort((a,_b) => b.date.getTime() - a.date.getTime());
 }

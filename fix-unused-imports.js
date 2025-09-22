@@ -10,7 +10,8 @@ console.log('🔧 Fixing unused imports and variables automatically...');
 let oxlintOutput;
 try {
   oxlintOutput = execSync('cd /home/vibecode/neonpro/apps/web && npx oxlint src 2>&1', { encoding: 'utf8' });
-} catch (error) {
+} catch (_error) {
+      // Error caught but not used - handled by surrounding logic
   // oxlint returns exit code 1 when there are warnings, but we still get the output
   oxlintOutput = error.stdout || error.output?.[1] || '';
 }
@@ -158,12 +159,14 @@ try {
   const afterOutput = execSync('cd /home/vibecode/neonpro/apps/web && npx oxlint src 2>&1 | grep "is imported but never used" | wc -l', { encoding: 'utf8' });
   const remainingCount = parseInt(afterOutput.trim());
   console.log(`📊 Remaining unused imports: ${remainingCount} (reduced from 524)`);
-} catch (error) {
+} catch (_error) {
+      // Error caught but not used - handled by surrounding logic
   try {
     const afterOutput = execSync('cd /home/vibecode/neonpro/apps/web && npx oxlint src 2>&1 | grep "is imported but never used" | wc -l', { encoding: 'utf8', stdio: 'pipe' });
     const remainingCount = parseInt(afterOutput.trim());
     console.log(`📊 Remaining unused imports: ${remainingCount} (reduced from 524)`);
-  } catch (error2) {
+  } catch (_error2) {
+      // Error caught but not used - handled by surrounding logic
     console.log('ℹ️  Could not count remaining issues');
   }
 }

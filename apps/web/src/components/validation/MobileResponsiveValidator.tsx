@@ -330,7 +330,6 @@ export const MobileResponsiveValidator: React.FC = () => {
 
     for (let i = 0; i < viewports.length; i++) {
       const viewport = viewports[i];
-      const config = VIEWPORT_BREAKPOINTS[viewport];
 
       // Simulate viewport change (in real implementation, would use browser dev tools API)
       setCurrentViewport(viewport);
@@ -422,7 +421,7 @@ export const MobileResponsiveValidator: React.FC = () => {
       <CardContent>
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
           {Object.entries(performanceMetrics).map(([metric, value]) => {
-            const { status, color } = getPerformanceStatus(
+            const { status } = getPerformanceStatus(
               metric as keyof PerformanceMetrics,
               value,
             );

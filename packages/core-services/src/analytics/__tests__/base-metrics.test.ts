@@ -68,7 +68,7 @@ describe("Base Metrics", () => {
       validEvent = createMockAnalyticsEvent({
         eventType: "metric_created",
         clinicId: "clinic_123",
-        userId: "user_456",
+        _userId: "user_456",
       });
     });
 
@@ -77,7 +77,7 @@ describe("Base Metrics", () => {
       expect(validEvent.id).toBeDefined();
       expect(validEvent.eventType).toBe("metric_created");
       expect(validEvent.clinicId).toBe("clinic_123");
-      expect(validEvent.userId).toBe("user_456");
+      expect(validEvent._userId).toBe("user_456");
       expect(validEvent.timestamp).toBeInstanceOf(Date);
     });
 

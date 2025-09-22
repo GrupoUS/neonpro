@@ -10,7 +10,6 @@ import {
   calendarLGPDConsentService,
   type ConsentValidationResult,
   DataMinimizationLevel,
-  type MinimizedCalendarAppointment,
 } from '@/services/lgpd/calendar-consent.service';
 import { calendarDataMinimizationService } from '@/services/lgpd/data-minimization.service';
 import { parseISO } from 'date-fns';
@@ -59,7 +58,7 @@ export interface UpdateAppointmentData {
 // LGPD-compliant appointment request
 export interface LGPDCompliantAppointmentRequest {
   patientId: string;
-  userId: string;
+  _userId: string;
   userRole: string;
   clinicId: string;
   purpose:
@@ -90,7 +89,7 @@ class AppointmentService {
    * Get appointments for calendar view with comprehensive LGPD compliance
    */
   async getAppointments(
-    request: LGPDCompliantAppointmentRequest & {
+    _request: LGPDCompliantAppointmentRequest & {
       startDate?: Date;
       endDate?: Date;
     },
@@ -298,7 +297,7 @@ class AppointmentService {
           legalBasis: consentResult.legalBasis,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('LGPD: Error in getAppointments:', error);
 
       // Log compliance failure
@@ -317,7 +316,7 @@ class AppointmentService {
    */
   async createAppointment(
     data: CreateAppointmentData,
-    request: LGPDCompliantAppointmentRequest,
+    _request: LGPDCompliantAppointmentRequest,
   ): Promise<AppointmentServiceResponse<CalendarAppointment>> {
     const startTime = Date.now();
 
@@ -471,7 +470,7 @@ class AppointmentService {
           legalBasis: consentResult.legalBasis,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('LGPD: Error in createAppointment:', error);
 
       // Log compliance failure
@@ -492,7 +491,7 @@ class AppointmentService {
   async updateAppointment(
     appointmentId: string,
     updates: UpdateAppointmentData,
-    request: LGPDCompliantAppointmentRequest,
+    _request: LGPDCompliantAppointmentRequest,
   ): Promise<AppointmentServiceResponse<CalendarAppointment>> {
     const startTime = Date.now();
 
@@ -652,7 +651,7 @@ class AppointmentService {
           legalBasis: consentResult.legalBasis,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('LGPD: Error in updateAppointment:', error);
 
       // Log compliance failure
@@ -672,7 +671,7 @@ class AppointmentService {
    */
   async deleteAppointment(
     appointmentId: string,
-    request: LGPDCompliantAppointmentRequest,
+    _request: LGPDCompliantAppointmentRequest,
     reason?: string,
   ): Promise<AppointmentServiceResponse<void>> {
     const startTime = Date.now();
@@ -753,7 +752,7 @@ class AppointmentService {
           legalBasis: consentResult.legalBasis,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('LGPD: Error in deleteAppointment:', error);
 
       // Log compliance failure
@@ -773,7 +772,7 @@ class AppointmentService {
    */
   private async applyDataMinimization(
     appointments: CalendarAppointment[],
-    userId: string,
+    _userId: string,
     userRole: string,
     consentResult: ConsentValidationResult,
   ): Promise<CalendarAppointment[]> {
@@ -804,7 +803,7 @@ class AppointmentService {
         notes: undefined, // Notes are typically minimized out
         priority: undefined,
       }));
-    } catch (error) {
+    } catch (_error) {
       console.error('Error applying data minimization:', error);
       // Return original data if minimization fails
       return appointments;
@@ -816,9 +815,9 @@ class AppointmentService {
    */
   private async logDataAccess(
     action: string,
-    request: LGPDCompliantAppointmentRequest,
+    _request: LGPDCompliantAppointmentRequest,
     consentResult: ConsentValidationResult,
-    metadata?: any,
+    _metadata?: any,
   ): Promise<string> {
     try {
       return await calendarLGPDAuditService.logConsentValidation(
@@ -829,7 +828,7 @@ class AppointmentService {
         consentResult,
         `appointment_${action}`,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Error logging data access:', error);
       return 'error_logging';
     }
@@ -840,7 +839,7 @@ class AppointmentService {
    */
   private async logComplianceFailure(
     operation: string,
-    request: LGPDCompliantAppointmentRequest,
+    _request: LGPDCompliantAppointmentRequest,
     error: string,
     metadata?: any,
   ): Promise<void> {
@@ -869,7 +868,7 @@ class AppointmentService {
           timestamp: new Date().toISOString(),
         },
       );
-    } catch (logError) {
+    } catch (_logError) {
       console.error('Error logging compliance failure:', logError);
     }
   }
@@ -907,7 +906,7 @@ class AppointmentService {
       }
 
       return (data || []).length > 0;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error in checkAppointmentConflict:', error);
       return false;
     }
@@ -919,7 +918,7 @@ class AppointmentService {
   private async logAppointmentAction(
     action: string,
     appointmentId: string,
-    userId: string,
+    _userId: string,
     metadata?: any,
   ): Promise<void> {
     try {
@@ -931,7 +930,7 @@ class AppointmentService {
         new_values: metadata || {},
         created_at: new Date().toISOString(),
       } as any);
-    } catch (error) {
+    } catch (_error) {
       console.error('Error logging appointment action:', error);
       // Don't throw error for audit logging failures
     }

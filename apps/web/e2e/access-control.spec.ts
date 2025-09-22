@@ -1,18 +1,18 @@
 /**
  * Role-Based Access Control E2E Tests
- * 
+ *
  * Validates RBAC implementation for healthcare scenarios:
- * - Admin role: Full system access
- * - Healthcare Provider role: Clinical data access
- * - Patient role: Limited personal data access
+ * - Admin _role: Full system access
+ * - Healthcare Provider _role: Clinical data access
+ * - Patient _role: Limited personal data access
  * - Permission enforcement and data isolation
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Platform Team
  * @compliance LGPD, ANVISA, CFM, ISO 27001
  */
 
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
 const baseUrl = process.env.BASE_URL || 'https://localhost:3000';
 
@@ -21,55 +21,53 @@ const testUsers = {
   admin: {
     email: 'admin@test.com',
     password: 'admin123',
-    expectedPermissions: ['read:all', 'write:all', 'delete:all', 'manage:users']
+    expectedPermissions: ['read:all', 'write:all', 'delete:all', 'manage:users'],
   },
   doctor: {
-    email: 'doctor@test.com', 
+    email: 'doctor@test.com',
     password: 'doctor123',
-    expectedPermissions: ['read:patients', 'read:appointments', 'write:clinical_notes']
+    expectedPermissions: ['read:patients', 'read:appointments', 'write:clinical_notes'],
   },
   nurse: {
     email: 'nurse@test.com',
-    password: 'nurse123', 
-    expectedPermissions: ['read:patients', 'read:appointments']
+    password: 'nurse123',
+    expectedPermissions: ['read:patients', 'read:appointments'],
   },
   receptionist: {
     email: 'receptionist@test.com',
     password: 'receptionist123',
-    expectedPermissions: ['read:appointments', 'write:appointments']
-  }
+    expectedPermissions: ['read:appointments', 'write:appointments'],
+  },
 };
 
 // Test patient data
 const testPatientId = 'test-patient-123';
-const testPatientData = {
+const _testPatientData = {
   name: 'Maria Silva',
   email: 'maria@example.com',
-  domain: 'test-clinic'
+  domain: 'test-clinic',
 };
 
 test.describe('Role-Based Access Control', () => {
-  
   test.describe('Authentication & Authorization', () => {
-    
     test('should authenticate admin user with full permissions', async ({ request }) => {
       // Login as admin
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.admin.email,
-          password: testUsers.admin.password
-        }
+          password: testUsers.admin.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
       expect(token).toBeDefined();
-      
+
       // Access admin-only endpoint
       const adminResponse = await request.get(`${baseUrl}/v1/security/status`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       expect(adminResponse.status()).toBe(200);
     });
 
@@ -78,18 +76,18 @@ test.describe('Role-Based Access Control', () => {
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.doctor.email,
-          password: testUsers.doctor.password
-        }
+          password: testUsers.doctor.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
-      
+
       // Access patient data (should be allowed)
       const patientResponse = await request.get(`${baseUrl}/api/v2/patients/${testPatientId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       expect([200, 404]).toContain(patientResponse.status()); // 404 if patient doesn't exist
     });
 
@@ -98,18 +96,18 @@ test.describe('Role-Based Access Control', () => {
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.receptionist.email,
-          password: testUsers.receptionist.password
-        }
+          password: testUsers.receptionist.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
-      
+
       // Try to access financial data (should be denied)
       const financialResponse = await request.get(`${baseUrl}/api/v1/billing/summary`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       expect([401, 403]).toContain(financialResponse.status());
     });
 
@@ -117,35 +115,34 @@ test.describe('Role-Based Access Control', () => {
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: 'invalid@test.com',
-          password: 'wrongpassword'
-        }
+          password: 'wrongpassword',
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(401);
     });
   });
 
   test.describe('Healthcare Provider Role Permissions', () => {
-    
     test('should access patient records', async ({ request }) => {
       // Login as doctor
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.doctor.email,
-          password: testUsers.doctor.password
-        }
+          password: testUsers.doctor.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
-      
+
       // Access patient list
       const patientsResponse = await request.get(`${baseUrl}/api/v2/patients`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       expect(patientsResponse.status()).toBe(200);
-      
+
       const patients = await patientsResponse.json();
       expect(Array.isArray(patients)).toBe(true);
     });
@@ -155,18 +152,18 @@ test.describe('Role-Based Access Control', () => {
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.nurse.email,
-          password: testUsers.nurse.password
-        }
+          password: testUsers.nurse.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
-      
+
       // Access appointments
       const appointmentsResponse = await request.get(`${baseUrl}/api/v1/appointments`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       expect(appointmentsResponse.status()).toBe(200);
     });
 
@@ -175,20 +172,20 @@ test.describe('Role-Based Access Control', () => {
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.doctor.email,
-          password: testUsers.doctor.password
-        }
+          password: testUsers.doctor.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
-      
+
       // Access patients - should only return patients from doctor's domain
       const patientsResponse = await request.get(`${baseUrl}/api/v2/patients`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       expect(patientsResponse.status()).toBe(200);
-      
+
       const patients = await patientsResponse.json();
       // Verify all patients belong to the same domain as the user
       patients.forEach((patient: any) => {
@@ -198,26 +195,25 @@ test.describe('Role-Based Access Control', () => {
   });
 
   test.describe('Admin Role Permissions', () => {
-    
     test('should access security monitoring', async ({ request }) => {
       // Login as admin
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.admin.email,
-          password: testUsers.admin.password
-        }
+          password: testUsers.admin.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
-      
+
       // Access security monitoring
       const securityResponse = await request.get(`${baseUrl}/v1/security/status`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       expect(securityResponse.status()).toBe(200);
-      
+
       const securityData = await securityResponse.json();
       expect(securityData).toHaveProperty('encryption');
       expect(securityData).toHaveProperty('healthcareCompliance');
@@ -228,20 +224,20 @@ test.describe('Role-Based Access Control', () => {
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.admin.email,
-          password: testUsers.admin.password
-        }
+          password: testUsers.admin.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
-      
+
       // Access LGPD compliance data
       const complianceResponse = await request.get(`${baseUrl}/v1/compliance/lgpd`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       expect(complianceResponse.status()).toBe(200);
-      
+
       const compliance = await complianceResponse.json();
       expect(compliance).toHaveProperty('lgpdCompliance');
     });
@@ -251,20 +247,20 @@ test.describe('Role-Based Access Control', () => {
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.admin.email,
-          password: testUsers.admin.password
-        }
+          password: testUsers.admin.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
-      
+
       // Access HTTPS monitoring
       const monitoringResponse = await request.get(`${baseUrl}/v1/monitoring/https`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       expect(monitoringResponse.status()).toBe(200);
-      
+
       const monitoring = await monitoringResponse.json();
       expect(monitoring).toHaveProperty('status');
       expect(monitoring).toHaveProperty('performance');
@@ -272,30 +268,29 @@ test.describe('Role-Based Access Control', () => {
   });
 
   test.describe('AI Agent Access Control', () => {
-    
     test('should enforce permissions on AI queries', async ({ request }) => {
       // Login as receptionist (limited permissions)
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.receptionist.email,
-          password: testUsers.receptionist.password
-        }
+          password: testUsers.receptionist.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
-      
+
       // Attempt to query sensitive financial data via AI agent
       const aiResponse = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
         data: {
-          query: 'Me mostre todos os dados financeiros',
-          sessionId: 'test-session'
-        }
+          _query: 'Me mostre todos os dados financeiros',
+          sessionId: 'test-session',
+        },
       });
-      
+
       expect(aiResponse.status()).toBe(200);
-      
+
       const aiResult = await aiResponse.json();
       // Should receive access denied message instead of actual data
       expect(aiResult.content).toMatch(/acesso|não|permitido|negado/i);
@@ -306,24 +301,24 @@ test.describe('Role-Based Access Control', () => {
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.doctor.email,
-          password: testUsers.doctor.password
-        }
+          password: testUsers.doctor.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
-      
+
       // Query for appointments (should be allowed)
       const aiResponse = await request.post(`${baseUrl}/api/v2/ai/data-agent`, {
-        headers: { 'Authorization': `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
         data: {
-          query: 'Quais os próximos agendamentos?',
-          sessionId: 'test-session'
-        }
+          _query: 'Quais os próximos agendamentos?',
+          sessionId: 'test-session',
+        },
       });
-      
+
       expect(aiResponse.status()).toBe(200);
-      
+
       const aiResult = await aiResponse.json();
       expect(aiResult).toHaveProperty('content');
       expect(aiResult).toHaveProperty('type');
@@ -334,20 +329,20 @@ test.describe('Role-Based Access Control', () => {
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.doctor.email,
-          password: testUsers.doctor.password
-        }
+          password: testUsers.doctor.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token, sessionId } = await loginResponse.json();
-      
+
       // Access session data
       const sessionResponse = await request.get(`${baseUrl}/api/v2/ai/sessions/${sessionId}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       expect(sessionResponse.status()).toBe(200);
-      
+
       const session = await sessionResponse.json();
       expect(session).toHaveProperty('id');
       expect(session).toHaveProperty('isActive');
@@ -355,26 +350,25 @@ test.describe('Role-Based Access Control', () => {
   });
 
   test.describe('Permission Validation', () => {
-    
     test('should enforce row-level security (RLS)', async ({ request }) => {
       // Login as doctor from domain 'test-clinic'
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.doctor.email,
-          password: testUsers.doctor.password
-        }
+          password: testUsers.doctor.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
-      
+
       // Access patients - should only see patients from same domain
       const patientsResponse = await request.get(`${baseUrl}/api/v2/patients`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       expect(patientsResponse.status()).toBe(200);
-      
+
       const patients = await patientsResponse.json();
       // Verify RLS is working (all patients should be from accessible domain)
       patients.forEach((patient: any) => {
@@ -387,20 +381,20 @@ test.describe('Role-Based Access Control', () => {
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.doctor.email,
-          password: testUsers.doctor.password
-        }
+          password: testUsers.doctor.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
-      
+
       // Access patient data - should not include sensitive fields in list view
       const patientsResponse = await request.get(`${baseUrl}/api/v2/patients`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       expect(patientsResponse.status()).toBe(200);
-      
+
       const patients = await patientsResponse.json();
       if (patients.length > 0) {
         const patient = patients[0];
@@ -416,20 +410,20 @@ test.describe('Role-Based Access Control', () => {
       const loginResponse = await request.post(`${baseUrl}/api/auth/login`, {
         data: {
           email: testUsers.admin.email,
-          password: testUsers.admin.password
-        }
+          password: testUsers.admin.password,
+        },
       });
-      
+
       expect(loginResponse.status()).toBe(200);
       const { token } = await loginResponse.json();
-      
+
       // Access sensitive data
       const complianceResponse = await request.get(`${baseUrl}/v1/compliance/lgpd`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       expect(complianceResponse.status()).toBe(200);
-      
+
       // In a real test, we would verify audit logs were created
       // For now, just validate the request was successful
       const compliance = await complianceResponse.json();

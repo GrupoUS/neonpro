@@ -152,7 +152,7 @@ async function ensureMigrationsTable(prisma: PrismaClient): Promise<void> {
     const result = (await prisma.$queryRaw`
       SELECT EXISTS (
         SELECT FROM information_schema.tables 
-        WHERE table_schema = 'public' 
+        WHERE table_schema = 'public_ 
         AND table_name = ${MIGRATION_TABLE}
       )
     `) as any[];

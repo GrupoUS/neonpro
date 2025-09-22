@@ -2,37 +2,22 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import {
-  AlertCircle,
-  Calendar,
-  Clock,
-  History,
-  Loader2,
-  MapPin,
-  Phone,
-  Search,
-  Star,
-  X,
-} from 'lucide-react';
+import { AlertCircle, Calendar, Clock, History, Search, Star, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import {
   Badge,
   Button,
-  Card,
-  CardContent,
   cn,
   Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
   ScrollArea,
-  Separator,
 } from '@neonpro/ui';
 
 import { useDebounce } from '@/hooks/useDebounce';
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useSearchPerformance } from '@/hooks/usePerformanceMonitor';
 
@@ -112,8 +97,8 @@ function useLocalStorage<T>(key: string, initialValue: T) {
     try {
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
-      console.warn(`Error reading localStorage key "${key}":`, error);
+    } catch (_error) {
+      console.warn(`Error reading localStorage key "${key}":`, _error);
       return initialValue;
     }
   });
@@ -126,7 +111,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
         if (typeof window !== 'undefined') {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
         }
-      } catch (error) {
+      } catch (_error) {
         console.warn(`Error setting localStorage key "${key}":`, error);
       }
     },
@@ -216,10 +201,10 @@ export function GlobalPatientSearch({
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [isFocused, setIsFocused] = useState(false);
+  const [_isFocused, _setIsFocused] = useState(false);
 
   const debouncedQuery = useDebounce(query, 300);
-  const { measureSearch, searchResponseTime, searchStatus, isSearchHealthy } =
+  const { measureSearch: measureSearch, searchResponseTime, searchStatus, isSearchHealthy } =
     useSearchPerformance();
 
   // Search history
@@ -338,44 +323,6 @@ export function GlobalPatientSearch({
     cacheTime: 10 * 60 * 1000, // 10 minutes cache
   });
 
-  // Keyboard shortcuts
-  useKeyboardShortcuts(
-    {
-      '/': e => {
-        e.preventDefault();
-        inputRef.current?.focus();
-      },
-      Escape: () => {
-        setIsOpen(false);
-        setQuery('');
-      },
-      ArrowDown: e => {
-        if (isOpen && searchResults && searchResults.length > 0) {
-          e.preventDefault();
-          setSelectedIndex(prev => Math.min(prev + 1, searchResults.length - 1));
-        }
-      },
-      ArrowUp: e => {
-        if (isOpen) {
-          e.preventDefault();
-          setSelectedIndex(prev => Math.max(prev - 1, -1));
-        }
-      },
-      Enter: e => {
-        if (
-          isOpen
-          && selectedIndex >= 0
-          && searchResults
-          && searchResults[selectedIndex]
-        ) {
-          e.preventDefault();
-          handlePatientSelect(searchResults[selectedIndex]);
-        }
-      },
-    },
-    [isOpen, searchResults, selectedIndex],
-  );
-
   // Filter and sort results
   const filteredResults = useMemo(() => {
     if (!searchResults) return [];
@@ -387,7 +334,7 @@ export function GlobalPatientSearch({
 
   // Handle patient selection
   const handlePatientSelect = useCallback(
-    (_patient: any) => {
+    (patient: any) => {
       onPatientSelect?.(patient);
 
       // Navigate to patient details if no handler provided
@@ -409,7 +356,7 @@ export function GlobalPatientSearch({
   );
 
   // Handle search history item click
-  const handleHistoryClick = useCallback((_historyItem: any) => {
+  const handleHistoryClick = useCallback((historyItem: any) => {
     setQuery(historyItem.query);
     inputRef.current?.focus();
   }, []);
@@ -419,24 +366,6 @@ export function GlobalPatientSearch({
     setSearchHistory([]);
     toast.success('Histórico de busca limpo');
   }, [setSearchHistory]);
-
-  // Keyboard shortcuts hook
-  function useKeyboardShortcuts(
-    shortcuts: Record<string, (e: KeyboardEvent) => void>,
-    deps: any[] = [],
-  ) {
-    useEffect(() => {
-      const handleKeyDown = (_e: any) => {
-        const handler = shortcuts[e.key];
-        if (handler) {
-          handler(e);
-        }
-      };
-
-      window.addEventListener('keydown', handleKeyDown);
-      return () => window.removeEventListener('keydown', handleKeyDown);
-    }, deps);
-  }
 
   // Update top queries for analytics
   function updateTopQueries(
@@ -518,7 +447,7 @@ export function GlobalPatientSearch({
           </p>
           {patient.phone && (
             <p className='text-xs text-gray-500 dark:text-gray-400 flex items-center'>
-              <Phone className='h-3 w-3 mr-1' />
+              <Search className='h-3 w-3 mr-1' />
               {patient.highlightedFields.phone || patient.phone}
             </p>
           )}
@@ -650,31 +579,29 @@ export function GlobalPatientSearch({
                 </div>
               )
               : query && query.length >= 2
-              ? (
-                filteredResults.length > 0
-                  ? (
-                    <div className='divide-y'>
-                      {filteredResults.map((patient, _index) => (
-                        <SearchResultItem
-                          key={patient.id}
-                          patient={patient}
-                          index={index}
-                        />
-                      ))}
-                    </div>
-                  )
-                  : (
-                    <div className='p-8 text-center'>
-                      <Search className='h-12 w-12 mx-auto mb-4 text-gray-400' />
-                      <h3 className='text-sm font-medium mb-2'>
-                        Nenhum paciente encontrado
-                      </h3>
-                      <p className='text-sm text-gray-500'>
-                        Tente buscar por nome, CPF, telefone ou email
-                      </p>
-                    </div>
-                  )
-              )
+              ? (filteredResults.length > 0
+                ? (
+                  <div className='divide-y'>
+                    {filteredResults.map((patient, index) => (
+                      <SearchResultItem
+                        key={patient.id}
+                        patient={patient}
+                        index={index}
+                      />
+                    ))}
+                  </div>
+                )
+                : (
+                  <div className='p-8 text-center'>
+                    <Search className='h-12 w-12 mx-auto mb-4 text-gray-400' />
+                    <h3 className='text-sm font-medium mb-2'>
+                      Nenhum paciente encontrado
+                    </h3>
+                    <p className='text-sm text-gray-500'>
+                      Tente buscar por nome, CPF, telefone ou email
+                    </p>
+                  </div>
+                ))
               : searchHistory.length > 0
               ? (
                 <div className='divide-y'>
@@ -693,7 +620,7 @@ export function GlobalPatientSearch({
                       </Button>
                     </div>
                     <div className='space-y-1'>
-                      {searchHistory.slice(0, 5).map((item, _index) => (
+                      {searchHistory.slice(0, 5).map((item, index) => (
                         <div
                           key={index}
                           className='flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded cursor-pointer'

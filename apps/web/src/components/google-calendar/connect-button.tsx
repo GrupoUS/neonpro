@@ -8,7 +8,7 @@ import { AlertTriangle2 } from 'lucide-react';
 import { useState } from 'react';
 
 interface GoogleCalendarConnectButtonProps {
-  userId: string;
+  _userId: string;
   clinicId: string;
   isConnected?: boolean;
   onConnect?: () => void;
