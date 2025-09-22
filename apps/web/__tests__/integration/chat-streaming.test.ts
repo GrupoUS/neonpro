@@ -14,23 +14,23 @@ describe('Chat streaming SLO', () => {
     vi.stubGlobal(
       'fetch',
       vi.fn(async () => new Response(new Blob(['ok']), { status: 200 })),
-    );
-  });
+    
+  }
 
   it('starts streaming within 2s', async () => {
-    const start = performance.now();
+    const start = performance.now(
     const stream = await streamAestheticResponse(
       [{ _role: 'user', content: 'Olá' }],
       'client_1',
       'gpt-5-mini',
       'sess',
-    );
-    const reader = stream.getReader();
+    
+    const reader = stream.getReader(
 
-    const firstChunk = await reader.read();
+    const firstChunk = await reader.read(
     const firstByteMs = performance.now() - start;
 
     expect(firstChunk.done).toBe(false);
-    expect(firstByteMs).toBeLessThanOrEqual(2000);
-  });
-});
+    expect(firstByteMs).toBeLessThanOrEqual(2000
+  }
+}

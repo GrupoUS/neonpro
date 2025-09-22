@@ -34,44 +34,44 @@ describe(('Supabase RLS - Security Auditor Coordinated', () => {
       lgpdCompliant: true,
       auditTrail: true,
       healthcareMode: true,
-    });
+    }
 
-    serviceClient = createServiceRoleClient();
-    testDataGenerator = new HealthcareTestDataGenerator();
+    serviceClient = createServiceRoleClient(
+    testDataGenerator = new HealthcareTestDataGenerator(
 
     // Create test organization and patient
-    testOrg = await testDataGenerator.createTestOrganization();
-    testPatient = await testDataGenerator.createTestPatient(testOrg.id);
+    testOrg = await testDataGenerator.createTestOrganization(
+    testPatient = await testDataGenerator.createTestPatient(testOrg.id
     testDoctor = await testDataGenerator.createTestUser({
       _role: 'doctor',
       organization_id: testOrg.id,
       permissions: ['read_patients', 'write_consultations'],
-    });
+    }
 
-    console.log('🧪 RLS Test Environment Setup Complete');
-  });
+    console.log('🧪 RLS Test Environment Setup Complete')
+  }
 
   afterAll(async () => {
     // security-auditor: Mandatory cleanup
-    await testDataGenerator.cleanupTestData();
-    console.log('🔒 RLS Test Environment Cleaned Up');
-  });
+    await testDataGenerator.cleanupTestData(
+    console.log('🔒 RLS Test Environment Cleaned Up')
+  }
 
   describe(('Patient Data RLS Enforcement', () => {
     test(_'should enforce organization-level data isolation',async () => {
       // security-auditor: Test data isolation
-      const startTime = performance.now();
+      const startTime = performance.now(
 
       const { data, error } = await testClient
         .from('patients')
         .select('*')
-        .eq('organization_id', testOrg.id);
+        .eq('organization_id', testOrg.id
 
       const responseTime = performance.now() - startTime;
 
       // Validate response
-      expect(error).toBeNull();
-      expect(data).toBeInstanceOf(Array);
+      expect(error).toBeNull(
+      expect(data).toBeInstanceOf(Array
 
       // security-auditor: Validate performance and data boundaries
       expect(
@@ -91,16 +91,16 @@ describe(('Supabase RLS - Security Auditor Coordinated', () => {
       // Validate LGPD compliance
       if (data && data.length > 0) {
         data.forEach(patient => {
-          expect(patient.organization_id).toBe(testOrg.id);
+          expect(patient.organization_id).toBe(testOrg.id
           expect(patient._test_data).toBe(true);
           expect(HealthcareTestValidators.validateLGPDCompliance(patient)).toBe(
             true,
-          );
-        });
+          
+        }
       }
 
-      console.log('✅ Organization-level data isolation validated');
-    });
+      console.log('✅ Organization-level data isolation validated')
+    }
 
     test(_'should deny cross-organization access',async () => {
       // security-auditor: Test unauthorized access prevention
@@ -109,74 +109,74 @@ describe(('Supabase RLS - Security Auditor Coordinated', () => {
       const { data, error } = await testClient
         .from('patients')
         .select('*')
-        .eq('organization_id', unauthorizedOrgId);
+        .eq('organization_id', unauthorizedOrgId
 
       // Should either return error or empty results (both are valid RLS behaviors)
-      const isAccessDenied = error?.code === 'PGRST116'
-        || error?.code === '42501'
-        || (data && data.length === 0);
+      const isAccessDenied = error?.code === 'PGRST116')
+        || error?.code === '42501')
+        || (data && data.length === 0
 
-      expect(isAccessDenied).toBeTruthy();
+      expect(isAccessDenied).toBeTruthy(
 
-      console.log('✅ Cross-organization access properly denied');
-    });
+      console.log('✅ Cross-organization access properly denied')
+    }
 
     test(_'should deny access without authentication',async () => {
       // security-auditor: Unauthenticated access test
       const unauthenticatedClient = createTestSupabaseClient({
         lgpdCompliant: true,
-      });
+      }
 
       const { data, error } = await unauthenticatedClient
         .from('patients')
-        .select('*');
+        .select('*')
 
       // Should deny access for unauthenticated users
-      expect(error).toBeTruthy();
-      expect(data).toBeNull();
+      expect(error).toBeTruthy(
+      expect(data).toBeNull(
 
-      console.log('✅ Unauthenticated access properly denied');
-    });
+      console.log('✅ Unauthenticated access properly denied')
+    }
 
     test(_'should enforce patient count limits per organization',async () => {
       // security-auditor: Resource limit validation
       const { data, error } = await testClient
         .from('patients')
         .select('*', { count: 'exact' })
-        .eq('organization_id', testOrg.id);
+        .eq('organization_id', testOrg.id
 
-      expect(error).toBeNull();
+      expect(error).toBeNull(
 
       // Validate reasonable limits for test environment
       if (data) {
         expect(data.length).toBeLessThanOrEqual(1000); // Reasonable limit
-        console.log(`✅ Patient count within limits: ${data.length} patients`);
+        console.log(`✅ Patient count within limits: ${data.length} patients`
       }
-    });
-  });
+    }
+  }
 
   describe(('Healthcare-Specific RLS Policies', () => {
     test(_'should enforce doctor-patient relationship access',async () => {
       // security-auditor: Role-based access validation
-      const startTime = performance.now();
+      const startTime = performance.now(
 
       // Mock authentication as doctor
       const authResult = await testClient.auth.signInWithPassword({
         email: testDoctor.email,
         password: testDoctor.password,
-      });
+      }
 
-      expect(authResult.error).toBeNull();
+      expect(authResult.error).toBeNull(
 
       const { data, error } = await testClient
         .from('patients')
         .select('*')
-        .eq('organization_id', testOrg.id);
+        .eq('organization_id', testOrg.id
 
       const responseTime = performance.now() - startTime;
 
-      expect(error).toBeNull();
-      expect(data).toBeDefined();
+      expect(error).toBeNull(
+      expect(data).toBeDefined(
       expect(
         HealthcareTestValidators.validatePerformance(
           responseTime,
@@ -184,8 +184,8 @@ describe(('Supabase RLS - Security Auditor Coordinated', () => {
         ),
       ).toBe(true);
 
-      console.log('✅ Doctor-patient relationship access validated');
-    });
+      console.log('✅ Doctor-patient relationship access validated')
+    }
 
     test(_'should restrict patient access to own records only',async () => {
       // security-auditor: Patient self-access validation
@@ -193,31 +193,31 @@ describe(('Supabase RLS - Security Auditor Coordinated', () => {
         _role: 'patient',
         patient_id: testPatient.id,
         organization_id: testOrg.id,
-      });
+      }
 
       // Mock authentication as patient
       await testClient.auth.signInWithPassword({
         email: patientUser.email,
         password: patientUser.password,
-      });
+      }
 
       const { data, error } = await testClient
         .from('patients')
         .select('*')
-        .eq('id', testPatient.id);
+        .eq('id', testPatient.id
 
-      expect(error).toBeNull();
-      expect(data).toHaveLength(1);
+      expect(error).toBeNull(
+      expect(data).toHaveLength(1
 
       if (data && data[0]) {
-        expect(data[0].id).toBe(testPatient.id);
+        expect(data[0].id).toBe(testPatient.id
         expect(HealthcareTestValidators.validateLGPDCompliance(data[0])).toBe(
           true,
-        );
+        
       }
 
-      console.log('✅ Patient self-access validation completed');
-    });
+      console.log('✅ Patient self-access validation completed')
+    }
 
     test(_'should prevent nurses from accessing other departments',async () => {
       // security-auditor: Department-level isolation
@@ -225,12 +225,12 @@ describe(('Supabase RLS - Security Auditor Coordinated', () => {
         _role: 'nurse',
         organization_id: testOrg.id,
         permissions: ['read_patients_department_cardiology'],
-      });
+      }
 
       await testClient.auth.signInWithPassword({
         email: nurseUser.email,
         password: nurseUser.password,
-      });
+      }
 
       // Try to access patients from different department
       const { data, error } = await testClient
@@ -239,11 +239,11 @@ describe(('Supabase RLS - Security Auditor Coordinated', () => {
         .eq('department', 'neurology'); // Different department
 
       // Should either deny access or return empty results
-      const isAccessRestricted = error || (data && data.length === 0);
-      expect(isAccessRestricted).toBeTruthy();
+      const isAccessRestricted = error || (data && data.length === 0
+      expect(isAccessRestricted).toBeTruthy(
 
-      console.log('✅ Department-level access restriction validated');
-    });
+      console.log('✅ Department-level access restriction validated')
+    }
 
     test(_'should enforce emergency access policies',async () => {
       // security-auditor: Emergency access validation
@@ -251,23 +251,23 @@ describe(('Supabase RLS - Security Auditor Coordinated', () => {
         _role: 'doctor',
         organization_id: testOrg.id,
         permissions: ['emergency_access', 'read_all_patients'],
-      });
+      }
 
-      const startTime = performance.now();
+      const startTime = performance.now(
 
       await testClient.auth.signInWithPassword({
         email: emergencyUser.email,
         password: emergencyUser.password,
-      });
+      }
 
       const { data, error } = await testClient
         .from('patients')
         .select('*')
-        .eq('emergency_contact_required', true);
+        .eq('emergency_contact_required', true
 
       const responseTime = performance.now() - startTime;
 
-      expect(error).toBeNull();
+      expect(error).toBeNull(
       // Emergency access should be fast (≤50ms)
       expect(
         HealthcareTestValidators.validatePerformance(
@@ -276,9 +276,9 @@ describe(('Supabase RLS - Security Auditor Coordinated', () => {
         ),
       ).toBe(true);
 
-      console.log('✅ Emergency access policies validated');
-    });
-  });
+      console.log('✅ Emergency access policies validated')
+    }
+  }
 
   describe(('Data Anonymization and Privacy', () => {
     test(_'should anonymize sensitive data in non-privileged queries',async () => {
@@ -287,53 +287,53 @@ describe(('Supabase RLS - Security Auditor Coordinated', () => {
         _role: 'admin',
         organization_id: testOrg.id,
         permissions: ['read_patients_basic'],
-      });
+      }
 
       await testClient.auth.signInWithPassword({
         email: limitedUser.email,
         password: limitedUser.password,
-      });
+      }
 
       const { data, error } = await testClient
         .from('patients_view') // Assume this view anonymizes data
         .select('id, full_name, masked_cpf, created_at')
-        .eq('organization_id', testOrg.id);
+        .eq('organization_id', testOrg.id
 
-      expect(error).toBeNull();
+      expect(error).toBeNull(
 
       if (data && data.length > 0) {
         data.forEach(patient => {
           // Validate CPF is masked
           if (patient.masked_cpf) {
-            expect(patient.masked_cpf).toMatch(/\*\*\*\.\*\*\*\.\*\*\*-\d{2}/);
+            expect(patient.masked_cpf).toMatch(/\*\*\*\.\*\*\*\.\*\*\*-\d{2}/
           }
           expect(HealthcareTestValidators.validateLGPDCompliance(patient)).toBe(
             true,
-          );
-        });
+          
+        }
       }
 
-      console.log('✅ Data anonymization validated');
-    });
+      console.log('✅ Data anonymization validated')
+    }
 
     test(_'should audit all patient data access',async () => {
       // security-auditor: Audit trail validation
       const auditUser = await testDataGenerator.createTestUser({
         _role: 'doctor',
         organization_id: testOrg.id,
-      });
+      }
 
       await testClient.auth.signInWithPassword({
         email: auditUser.email,
         password: auditUser.password,
-      });
+      }
 
       // Perform patient data query
       await testClient
         .from('patients')
         .select('*')
         .eq('id', testPatient.id)
-        .limit(1);
+        .limit(1
 
       // Check if audit log was created (mock implementation)
       const { data: auditLogs } = await serviceClient
@@ -343,12 +343,12 @@ describe(('Supabase RLS - Security Auditor Coordinated', () => {
         .eq('table_name', 'patients')
         .eq('action', 'SELECT')
         .order('created_at', { ascending: false })
-        .limit(1);
+        .limit(1
 
       // In mock implementation, this would be validated differently
-      console.log('✅ Audit trail creation verified (mock)');
-    });
-  });
+      console.log('✅ Audit trail creation verified (mock)')
+    }
+  }
 
   describe(('RLS Policy Configuration Validation', () => {
     test(_'should validate RLS policies are enabled on all healthcare tables',async () => {
@@ -365,21 +365,21 @@ describe(('Supabase RLS - Security Auditor Coordinated', () => {
         const { data: policies, error } = await serviceClient.rpc(
           'get_rls_policies',
           { table_name: tableName },
-        );
+        
 
         // Mock validation - in real implementation would check actual policies
-        console.log(`✅ RLS policies validated for table: ${tableName}`);
+        console.log(`✅ RLS policies validated for table: ${tableName}`
       }
-    });
+    }
 
     test(_'should validate organization isolation policies',async () => {
       // security-auditor: Organization isolation validation
       const { data: orgPolicies, error } = await serviceClient.rpc(
         'validate_organization_policies',
-      );
+      
 
       // Mock validation - would verify organization-based RLS
-      console.log('✅ Organization isolation policies validated');
-    });
-  });
-});
+      console.log('✅ Organization isolation policies validated')
+    }
+  }
+}

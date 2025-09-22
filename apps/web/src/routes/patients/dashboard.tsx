@@ -13,7 +13,6 @@ import { Progress } from '@/components/ui/progress';
 import { UniversalButton } from '@/components/ui/universal-button';
 import { useToast } from '@/hooks/use-toast';
 import { usePatientStats } from '@/hooks/usePatientStats';
-import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
 import { cn } from '@/lib/utils';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { format, isThisWeek, isToday, subDays } from 'date-fns';

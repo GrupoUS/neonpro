@@ -61,11 +61,11 @@ import {
 } from '@/services/audit-service';
 
 // Mock external dependencies
-vi.mock('@/services/security-policy-service');
-vi.mock('@/services/csp-service');
-vi.mock('@/services/rate-limit-service');
-vi.mock('@/services/security-headers-service');
-vi.mock('@/services/audit-service');
+vi.mock('@/services/security-policy-service')
+vi.mock('@/services/csp-service')
+vi.mock('@/services/rate-limit-service')
+vi.mock('@/services/security-headers-service')
+vi.mock('@/services/audit-service')
 
 import { z } from 'zod';
 
@@ -135,7 +135,7 @@ const SecurityPolicySchema = z.object({
       }),
     )
     .optional(),
-});
+}
 
 const SecurityPolicyConfigSchema = z.object({
   name: z.string().min(1).max(100),
@@ -185,7 +185,7 @@ const SecurityPolicyConfigSchema = z.object({
     iso27001: z.boolean().default(false),
     soc2: z.boolean().default(false),
   }),
-});
+}
 
 const CSPSchema = z.object({
   'default-src': z.array(z.string()),
@@ -210,7 +210,7 @@ const CSPSchema = z.object({
   'upgrade-insecure-requests': z.boolean().optional(),
   'block-all-mixed-content': z.boolean().optional(),
   sandbox: z.array(z.string()).optional(),
-});
+}
 
 const RateLimitRuleSchema = z.object({
   id: z.string(),
@@ -238,7 +238,7 @@ const RateLimitRuleSchema = z.object({
   action: z.enum(['allow', 'deny', 'throttle', 'queue']),
   priority: z.number().min(1).max(10),
   metadata: z.record(z.any()).optional(),
-});
+}
 
 const AuditLogSchema = z.object({
   id: z.string(),
@@ -266,7 +266,7 @@ const AuditLogSchema = z.object({
   retentionPeriod: z.number().optional(),
   isRedacted: z.boolean().default(false),
   redactionReason: z.string().optional(),
-});
+}
 
 const SecurityEvaluationRequestSchema = z.object({
   policyId: z.string(),
@@ -284,7 +284,7 @@ const SecurityEvaluationRequestSchema = z.object({
       userAgent: z.string().optional(),
     })
     .optional(),
-});
+}
 
 const SecurityEvaluationResponseSchema = z.object({
   requestId: z.string(),
@@ -321,7 +321,7 @@ const SecurityEvaluationResponseSchema = z.object({
       )
       .optional(),
   }),
-});
+}
 
 const ErrorResponseSchema = z.object({
   error: z.object({
@@ -334,7 +334,7 @@ const ErrorResponseSchema = z.object({
     method: z.string(),
     severity: z.enum(['low', 'medium', 'high', 'critical']).optional(),
   }),
-});
+}
 
 // Test data generators
 const generateValidSecurityPolicyConfig = () => ({
@@ -409,7 +409,7 @@ const generateValidSecurityPolicyConfig = () => ({
     iso27001: true,
     soc2: true,
   },
-});
+}
 
 const generateValidSecurityPolicy = () => ({
   id: 'sp_12345678901234567890123456789012',
@@ -478,7 +478,7 @@ const generateValidSecurityPolicy = () => ({
       timestamp: new Date().toISOString(),
     },
   ],
-});
+}
 
 const generateValidCSP = () => ({
   'default-src': ['\'self\''],
@@ -503,7 +503,7 @@ const generateValidCSP = () => ({
   'report-uri': '/api/security/csp-report',
   'upgrade-insecure-requests': true,
   'block-all-mixed-content': true,
-});
+}
 
 const generateValidRateLimitRule = () => ({
   id: 'rl_12345678901234567890123456789012',
@@ -527,7 +527,7 @@ const generateValidRateLimitRule = () => ({
     category: 'api_protection',
     healthcareCompliance: true,
   },
-});
+}
 
 const generateValidAuditLog = () => ({
   id: 'audit_12345678901234567890123456789012',
@@ -558,7 +558,7 @@ const generateValidAuditLog = () => ({
   },
   retentionPeriod: 365, // days
   isRedacted: false,
-});
+}
 
 const generateValidEvaluationRequest = () => ({
   policyId: 'sp_12345678901234567890123456789012',
@@ -584,7 +584,7 @@ const generateValidEvaluationRequest = () => ({
     ipAddress: '192.168.1.100',
     userAgent: 'Mozilla/5.0 (compatible; Healthcare Platform)',
   },
-});
+}
 
 describe('Security Policies Contract Tests', () => {
   let app: Hono;
@@ -592,115 +592,115 @@ describe('Security Policies Contract Tests', () => {
 
   beforeEach(() => {
     // Create Hono app for testing
-    app = createHono();
+    app = createHono(
 
     // Setup security policy routes
     app.post('/api/security/policies', async c => {
-      const body = await c.req.json();
-      const validated = SecurityPolicyConfigSchema.parse(body);
-      const result = await createSecurityPolicy(validated);
-      return c.json(result, 201);
-    });
+      const body = await c.req.json(
+      const validated = SecurityPolicyConfigSchema.parse(body
+      const result = await createSecurityPolicy(validated
+      return c.json(result, 201
+    }
 
     app.get('/api/security/policies', async c => {
-      const result = await listSecurityPolicies();
-      return c.json(result);
-    });
+      const result = await listSecurityPolicies(
+      return c.json(result
+    }
 
     app.get('/api/security/policies/:id', async c => {
-      const id = c.req.param('id');
-      const result = await evaluateSecurityPolicy(id);
-      return c.json(result);
-    });
+      const id = c.req.param('id')
+      const result = await evaluateSecurityPolicy(id
+      return c.json(result
+    }
 
     app.put('/api/security/policies/:id', async c => {
-      const id = c.req.param('id');
-      const body = await c.req.json();
-      const validated = SecurityPolicyConfigSchema.parse(body);
-      const result = await updateSecurityPolicy(id, validated);
-      return c.json(result);
-    });
+      const id = c.req.param('id')
+      const body = await c.req.json(
+      const validated = SecurityPolicyConfigSchema.parse(body
+      const result = await updateSecurityPolicy(id, validated
+      return c.json(result
+    }
 
     app.delete('/api/security/policies/:id', async c => {
-      const id = c.req.param('id');
-      const result = await deleteSecurityPolicy(id);
-      return c.json(result);
-    });
+      const id = c.req.param('id')
+      const result = await deleteSecurityPolicy(id
+      return c.json(result
+    }
 
     app.post('/api/security/policies/:id/evaluate', async c => {
-      const id = c.req.param('id');
-      const body = await c.req.json();
-      const validated = SecurityEvaluationRequestSchema.parse(body);
-      const result = await evaluateSecurityPolicy(id, validated);
-      return c.json(result);
-    });
+      const id = c.req.param('id')
+      const body = await c.req.json(
+      const validated = SecurityEvaluationRequestSchema.parse(body
+      const result = await evaluateSecurityPolicy(id, validated
+      return c.json(result
+    }
 
     app.post('/api/security/policies/:id/apply', async c => {
-      const id = c.req.param('id');
-      const endpoint = c.req.query('endpoint');
-      const result = await applySecurityPolicyToEndpoint(id, endpoint);
-      return c.json(result);
-    });
+      const id = c.req.param('id')
+      const endpoint = c.req.query('endpoint')
+      const result = await applySecurityPolicyToEndpoint(id, endpoint
+      return c.json(result
+    }
 
     app.get('/api/security/csp', async c => {
-      const result = await generateCSP();
-      return c.json(result);
-    });
+      const result = await generateCSP(
+      return c.json(result
+    }
 
     app.post('/api/security/csp/validate', async c => {
-      const body = await c.req.json();
-      const result = await validateCSP(body);
-      return c.json(result);
-    });
+      const body = await c.req.json(
+      const result = await validateCSP(body
+      return c.json(result
+    }
 
     app.get('/api/security/rate-limit/rules', async c => {
-      const result = await getRateLimitMetrics();
-      return c.json(result);
-    });
+      const result = await getRateLimitMetrics(
+      return c.json(result
+    }
 
     app.get('/api/security/audit/logs', async c => {
-      const result = await getAuditLogs();
-      return c.json(result);
-    });
+      const result = await getAuditLogs(
+      return c.json(result
+    }
 
     app.post('/api/security/compliance/check', async c => {
-      const body = await c.req.json();
-      const result = await validateSecurityPolicyCompliance(body.policyId);
-      return c.json(result);
-    });
+      const body = await c.req.json(
+      const result = await validateSecurityPolicyCompliance(body.policyId
+      return c.json(result
+    }
 
     // Create test client
-    client = hc<typeof app>('http://localhost:3000');
+    client = hc<typeof app>('http://localhost:3000')
 
     // Reset all mocks
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks(
+  }
 
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks(
+  }
 
   describe('POST /api/security/policies - Create Security Policy', () => {
     it('should create a new security policy with valid configuration', async () => {
-      const policyConfig = generateValidSecurityPolicyConfig();
-      const expectedResponse = generateValidSecurityPolicy();
+      const policyConfig = generateValidSecurityPolicyConfig(
+      const expectedResponse = generateValidSecurityPolicy(
 
-      (createSecurityPolicy as Mock).mockResolvedValue(expectedResponse);
+      (createSecurityPolicy as Mock).mockResolvedValue(expectedResponse
 
       const response = await client.api.security.policies.$post({
         json: policyConfig,
-      });
+      }
 
-      expect(response.status).toBe(201);
-      const data = await response.json();
+      expect(response.status).toBe(201
+      const data = await response.json(
 
       // Validate response schema
-      const validatedData = SecurityPolicySchema.parse(data);
-      expect(validatedData).toEqual(expectedResponse);
+      const validatedData = SecurityPolicySchema.parse(data
+      expect(validatedData).toEqual(expectedResponse
 
       // Verify mock was called with correct data
-      expect(createSecurityPolicy).toHaveBeenCalledWith(policyConfig);
-    });
+      expect(createSecurityPolicy).toHaveBeenCalledWith(policyConfig
+    }
 
     it('should reject request with invalid schema', async () => {
       const invalidConfig = {
@@ -713,15 +713,15 @@ describe('Security Policies Contract Tests', () => {
 
       const response = await client.api.security.policies.$post({
         json: invalidConfig,
-      });
+      }
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
+      expect(response.status).toBe(400
+      const data = await response.json(
 
       // Validate error response schema
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('VALIDATION_ERROR');
-    });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('VALIDATION_ERROR')
+    }
 
     it('should enforce healthcare compliance requirements', async () => {
       const nonCompliantConfig = {
@@ -745,14 +745,14 @@ describe('Security Policies Contract Tests', () => {
 
       const response = await client.api.security.policies.$post({
         json: nonCompliantConfig,
-      });
+      }
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
+      expect(response.status).toBe(400
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('HEALTHCARE_COMPLIANCE_REQUIRED');
-    });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('HEALTHCARE_COMPLIANCE_REQUIRED')
+    }
 
     it('should validate rule priorities', async () => {
       const configWithInvalidPriorities = {
@@ -775,71 +775,71 @@ describe('Security Policies Contract Tests', () => {
 
       const response = await client.api.security.policies.$post({
         json: configWithInvalidPriorities,
-      });
+      }
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
+      expect(response.status).toBe(400
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('INVALID_RULE_PRIORITY');
-    });
-  });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('INVALID_RULE_PRIORITY')
+    }
+  }
 
   describe('GET /api/security/policies - List Security Policies', () => {
     it('should return list of security policies', async () => {
       const expectedPolicies = [generateValidSecurityPolicy()];
 
-      (listSecurityPolicies as Mock).mockResolvedValue(expectedPolicies);
+      (listSecurityPolicies as Mock).mockResolvedValue(expectedPolicies
 
-      const response = await client.api.security.policies.$get({});
+      const response = await client.api.security.policies.$get({}
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       expect(Array.isArray(data)).toBe(true);
       if (data.length > 0) {
-        const validatedData = SecurityPolicySchema.parse(data[0]);
-        expect(validatedData).toEqual(expectedPolicies[0]);
+        const validatedData = SecurityPolicySchema.parse(data[0]
+        expect(validatedData).toEqual(expectedPolicies[0]
       }
 
-      expect(listSecurityPolicies).toHaveBeenCalled();
-    });
+      expect(listSecurityPolicies).toHaveBeenCalled(
+    }
 
     it('should filter policies by compliance framework', async () => {
       const lgpdCompliantPolicies = [generateValidSecurityPolicy()];
 
-      (listSecurityPolicies as Mock).mockResolvedValue(lgpdCompliantPolicies);
+      (listSecurityPolicies as Mock).mockResolvedValue(lgpdCompliantPolicies
 
       const response = await client.api.security.policies.$get({
         _query: { compliance: 'lgpd' },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       // All returned policies should be LGPD compliant
       data.forEach(policy => {
         expect(policy.compliance.lgpd).toBe(true);
-      });
-    });
+      }
+    }
 
     it('should handle empty policy list', async () => {
-      (listSecurityPolicies as Mock).mockResolvedValue([]);
+      (listSecurityPolicies as Mock).mockResolvedValue([]
 
-      const response = await client.api.security.policies.$get({});
+      const response = await client.api.security.policies.$get({}
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       expect(Array.isArray(data)).toBe(true);
-      expect(data).toHaveLength(0);
-    });
-  });
+      expect(data).toHaveLength(0
+    }
+  }
 
   describe('POST /api/security/policies/:id/evaluate - Evaluate Security Policy', () => {
     it('should evaluate security policy against request', async () => {
       const policyId = 'sp_12345678901234567890123456789012';
-      const evaluationRequest = generateValidEvaluationRequest();
+      const evaluationRequest = generateValidEvaluationRequest(
       const expectedResponse = {
         requestId: 'eval_12345678901234567890123456789012',
         policyId,
@@ -867,31 +867,31 @@ describe('Security Policies Contract Tests', () => {
         },
       };
 
-      (evaluateSecurityPolicy as Mock).mockResolvedValue(expectedResponse);
+      (evaluateSecurityPolicy as Mock).mockResolvedValue(expectedResponse
 
       const response = await client.api.security.policies[':id'].evaluate.$post(
         {
           param: { id: policyId },
           json: evaluationRequest,
         },
-      );
+      
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       // Validate response schema
-      const validatedData = SecurityEvaluationResponseSchema.parse(data);
-      expect(validatedData).toEqual(expectedResponse);
+      const validatedData = SecurityEvaluationResponseSchema.parse(data
+      expect(validatedData).toEqual(expectedResponse
 
       expect(evaluateSecurityPolicy).toHaveBeenCalledWith(
         policyId,
         evaluationRequest,
-      );
-    });
+      
+    }
 
     it('should handle policy evaluation with high risk', async () => {
       const policyId = 'sp_12345678901234567890123456789012';
-      const evaluationRequest = generateValidEvaluationRequest();
+      const evaluationRequest = generateValidEvaluationRequest(
       const highRiskResponse = {
         requestId: 'eval_12345678901234567890123456789012',
         policyId,
@@ -930,24 +930,24 @@ describe('Security Policies Contract Tests', () => {
         },
       };
 
-      (evaluateSecurityPolicy as Mock).mockResolvedValue(highRiskResponse);
+      (evaluateSecurityPolicy as Mock).mockResolvedValue(highRiskResponse
 
       const response = await client.api.security.policies[':id'].evaluate.$post(
         {
           param: { id: policyId },
           json: evaluationRequest,
         },
-      );
+      
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      const validatedData = SecurityEvaluationResponseSchema.parse(data);
-      expect(validatedData.decision).toBe('deny');
-      expect(validatedData.riskScore).toBeGreaterThan(80);
-      expect(validatedData.rulesTriggered).toHaveLength(1);
-      expect(validatedData.rulesTriggered[0].severity).toBe('high');
-    });
+      const validatedData = SecurityEvaluationResponseSchema.parse(data
+      expect(validatedData.decision).toBe('deny')
+      expect(validatedData.riskScore).toBeGreaterThan(80
+      expect(validatedData.rulesTriggered).toHaveLength(1
+      expect(validatedData.rulesTriggered[0].severity).toBe('high')
+    }
 
     it('should reject invalid evaluation request', async () => {
       const policyId = 'sp_12345678901234567890123456789012';
@@ -965,33 +965,33 @@ describe('Security Policies Contract Tests', () => {
           param: { id: policyId },
           json: invalidRequest,
         },
-      );
+      
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
+      expect(response.status).toBe(400
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('VALIDATION_ERROR');
-    });
-  });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('VALIDATION_ERROR')
+    }
+  }
 
   describe('GET /api/security/csp - Get CSP Configuration', () => {
     it('should return current CSP configuration', async () => {
-      const expectedCSP = generateValidCSP();
+      const expectedCSP = generateValidCSP(
 
-      (generateCSP as Mock).mockResolvedValue(expectedCSP);
+      (generateCSP as Mock).mockResolvedValue(expectedCSP
 
-      const response = await client.api.security.csp.$get({});
+      const response = await client.api.security.csp.$get({}
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       // Validate response schema
-      const validatedData = CSPSchema.parse(data);
-      expect(validatedData).toEqual(expectedCSP);
+      const validatedData = CSPSchema.parse(data
+      expect(validatedData).toEqual(expectedCSP
 
-      expect(generateCSP).toHaveBeenCalled();
-    });
+      expect(generateCSP).toHaveBeenCalled(
+    }
 
     it('should include healthcare-specific CSP directives', async () => {
       const healthcareCSP = {
@@ -1013,23 +1013,23 @@ describe('Security Policies Contract Tests', () => {
         ],
       };
 
-      (generateCSP as Mock).mockResolvedValue(healthcareCSP);
+      (generateCSP as Mock).mockResolvedValue(healthcareCSP
 
-      const response = await client.api.security.csp.$get({});
+      const response = await client.api.security.csp.$get({}
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      expect(data['connect-src']).toContain('https://api.neonpro.health');
+      expect(data['connect-src']).toContain('https://api.neonpro.health')
       expect(data['connect-src']).toContain(
         'https://medical-records.neonpro.health',
-      );
-    });
-  });
+      
+    }
+  }
 
   describe('POST /api/security/csp/validate - Validate CSP', () => {
     it('should validate CSP configuration', async () => {
-      const cspConfig = generateValidCSP();
+      const cspConfig = generateValidCSP(
       const validationResult = {
         isValid: true,
         issues: [],
@@ -1038,21 +1038,21 @@ describe('Security Policies Contract Tests', () => {
         healthcareCompliance: true,
       };
 
-      (validateCSP as Mock).mockResolvedValue(validationResult);
+      (validateCSP as Mock).mockResolvedValue(validationResult
 
       const response = await client.api.security.csp.validate.$post({
         json: cspConfig,
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       expect(data.isValid).toBe(true);
-      expect(data.issues).toHaveLength(0);
+      expect(data.issues).toHaveLength(0
       expect(data.healthcareCompliance).toBe(true);
 
-      expect(validateCSP).toHaveBeenCalledWith(cspConfig);
-    });
+      expect(validateCSP).toHaveBeenCalledWith(cspConfig
+    }
 
     it('should identify CSP security issues', async () => {
       const insecureCSP = {
@@ -1085,25 +1085,25 @@ describe('Security Policies Contract Tests', () => {
         healthcareCompliance: false,
       };
 
-      (validateCSP as Mock).mockResolvedValue(validationResult);
+      (validateCSP as Mock).mockResolvedValue(validationResult
 
       const response = await client.api.security.csp.validate.$post({
         json: insecureCSP,
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       expect(data.isValid).toBe(false);
-      expect(data.issues).toHaveLength(2);
+      expect(data.issues).toHaveLength(2
       expect(data.healthcareCompliance).toBe(false);
-      expect(data.score).toBeLessThan(50);
-    });
-  });
+      expect(data.score).toBeLessThan(50
+    }
+  }
 
   describe('GET /api/security/rate-limit/rules - Rate Limit Rules', () => {
     it('should return rate limit rules and metrics', async () => {
-      const rateLimitRule = generateValidRateLimitRule();
+      const rateLimitRule = generateValidRateLimitRule(
       const metrics = {
         currentRequests: 45,
         limit: 100,
@@ -1113,22 +1113,22 @@ describe('Security Policies Contract Tests', () => {
         rules: [rateLimitRule],
       };
 
-      (getRateLimitMetrics as Mock).mockResolvedValue(metrics);
+      (getRateLimitMetrics as Mock).mockResolvedValue(metrics
 
-      const response = await client.api.security['rate-limit'].rules.$get({});
+      const response = await client.api.security['rate-limit'].rules.$get({}
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      expect(data.currentRequests).toBe(45);
-      expect(data.remaining).toBe(55);
+      expect(data.currentRequests).toBe(45
+      expect(data.remaining).toBe(55
       expect(Array.isArray(data.rules)).toBe(true);
 
       if (data.rules.length > 0) {
-        const validatedRule = RateLimitRuleSchema.parse(data.rules[0]);
-        expect(validatedRule).toEqual(rateLimitRule);
+        const validatedRule = RateLimitRuleSchema.parse(data.rules[0]
+        expect(validatedRule).toEqual(rateLimitRule
       }
-    });
+    }
 
     it('should include healthcare-specific rate limiting', async () => {
       const healthcareRateLimitRule = {
@@ -1159,60 +1159,60 @@ describe('Security Policies Contract Tests', () => {
         limit: 50,
         remaining: 25,
         rules: [healthcareRateLimitRule],
-      });
+      }
 
-      const response = await client.api.security['rate-limit'].rules.$get({});
+      const response = await client.api.security['rate-limit'].rules.$get({}
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       const rule = data.rules[0];
       expect(rule.metadata.healthcareData).toBe(true);
       expect(rule.metadata.patientDataAccess).toBe(true);
       expect(rule.metadata.lgpdCompliance).toBe(true);
-    });
-  });
+    }
+  }
 
   describe('GET /api/security/audit/logs - Audit Logs', () => {
     it('should return security audit logs', async () => {
       const auditLogs = [generateValidAuditLog()];
 
-      (getAuditLogs as Mock).mockResolvedValue(auditLogs);
+      (getAuditLogs as Mock).mockResolvedValue(auditLogs
 
-      const response = await client.api.security.audit.logs.$get({});
+      const response = await client.api.security.audit.logs.$get({}
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       expect(Array.isArray(data)).toBe(true);
       if (data.length > 0) {
-        const validatedLog = AuditLogSchema.parse(data[0]);
-        expect(validatedLog).toEqual(auditLogs[0]);
+        const validatedLog = AuditLogSchema.parse(data[0]
+        expect(validatedLog).toEqual(auditLogs[0]
       }
 
-      expect(getAuditLogs).toHaveBeenCalled();
-    });
+      expect(getAuditLogs).toHaveBeenCalled(
+    }
 
     it('should filter audit logs by healthcare compliance', async () => {
       const healthcareAuditLogs = [generateValidAuditLog()];
 
-      (getAuditLogs as Mock).mockResolvedValue(healthcareAuditLogs);
+      (getAuditLogs as Mock).mockResolvedValue(healthcareAuditLogs
 
       const response = await client.api.security.audit.logs.$get({
         _query: { compliance: 'healthcare' },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       // All logs should have healthcare compliance information
       data.forEach(log => {
-        expect(log.compliance).toBeDefined();
+        expect(log.compliance).toBeDefined(
         expect(log.compliance.lgpd).toBe(true);
         expect(log.compliance.anvisa).toBe(true);
         expect(log.compliance.cfm).toBe(true);
-      });
-    });
+      }
+    }
 
     it('should handle log redaction for sensitive data', async () => {
       const redactedAuditLog = {
@@ -1226,18 +1226,18 @@ describe('Security Policies Contract Tests', () => {
         },
       };
 
-      (getAuditLogs as Mock).mockResolvedValue([redactedAuditLog]);
+      (getAuditLogs as Mock).mockResolvedValue([redactedAuditLog]
 
-      const response = await client.api.security.audit.logs.$get({});
+      const response = await client.api.security.audit.logs.$get({}
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       const log = data[0];
       expect(log.isRedacted).toBe(true);
-      expect(log.redactionReason).toBe('lgpd_compliance');
-    });
-  });
+      expect(log.redactionReason).toBe('lgpd_compliance')
+    }
+  }
 
   describe('POST /api/security/compliance/check - Compliance Check', () => {
     it('should perform comprehensive compliance check', async () => {
@@ -1264,23 +1264,23 @@ describe('Security Policies Contract Tests', () => {
 
       (validateSecurityPolicyCompliance as Mock).mockResolvedValue(
         complianceResult,
-      );
+      
 
       const response = await client.api.security.compliance.check.$post({
         json: { policyId },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      expect(data.overallScore).toBe(95);
+      expect(data.overallScore).toBe(95
       expect(data.frameworks.lgpd.compliant).toBe(true);
-      expect(data.frameworks.lgpd.score).toBe(100);
+      expect(data.frameworks.lgpd.score).toBe(100
       expect(data.frameworks.hipaa.compliant).toBe(false);
       expect(Array.isArray(data.recommendations)).toBe(true);
 
-      expect(validateSecurityPolicyCompliance).toHaveBeenCalledWith(policyId);
-    });
+      expect(validateSecurityPolicyCompliance).toHaveBeenCalledWith(policyId
+    }
 
     it('should identify compliance violations', async () => {
       const policyId = 'sp_non_compliant_12345678901234567890123456789012';
@@ -1335,22 +1335,22 @@ describe('Security Policies Contract Tests', () => {
 
       (validateSecurityPolicyCompliance as Mock).mockResolvedValue(
         nonCompliantResult,
-      );
+      
 
       const response = await client.api.security.compliance.check.$post({
         json: { policyId },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
-      expect(data.overallScore).toBeLessThan(50);
+      expect(data.overallScore).toBeLessThan(50
       expect(data.frameworks.lgpd.compliant).toBe(false);
       expect(data.frameworks.anvisa.compliant).toBe(false);
-      expect(data.criticalIssues).toHaveLength(2);
-      expect(data.criticalIssues[0].severity).toBe('critical');
-    });
-  });
+      expect(data.criticalIssues).toHaveLength(2
+      expect(data.criticalIssues[0].severity).toBe('critical')
+    }
+  }
 
   describe('Healthcare-Specific Security Requirements', () => {
     it('should enforce healthcare data protection', async () => {
@@ -1389,20 +1389,20 @@ describe('Security Policies Contract Tests', () => {
         rules: healthcarePolicyConfig.rules,
       };
 
-      (createSecurityPolicy as Mock).mockResolvedValue(expectedResponse);
+      (createSecurityPolicy as Mock).mockResolvedValue(expectedResponse
 
       const response = await client.api.security.policies.$post({
         json: healthcarePolicyConfig,
-      });
+      }
 
-      expect(response.status).toBe(201);
-      const data = await response.json();
+      expect(response.status).toBe(201
+      const data = await response.json(
 
       expect(data.rules[0].config.healthcareData).toBe(true);
       expect(data.rules[1].config.validateHealthcareData).toBe(true);
-      expect(data.rules[1].config.restrictedFields).toContain('ssn');
-      expect(data.rules[1].config.restrictedFields).toContain('cpf');
-    });
+      expect(data.rules[1].config.restrictedFields).toContain('ssn')
+      expect(data.rules[1].config.restrictedFields).toContain('cpf')
+    }
 
     it('should validate LGPD compliance requirements', async () => {
       const lgpdValidationResult = {
@@ -1436,27 +1436,27 @@ describe('Security Policies Contract Tests', () => {
         },
         recommendations: [],
         lastChecked: new Date().toISOString(),
-      });
+      }
 
       const response = await client.api.security.compliance.check.$post({
         json: { policyId: 'sp_lgpd_12345678901234567890123456789012' },
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       expect(data.frameworks.lgpd.compliant).toBe(true);
       expect(data.frameworks.lgpd.details.consentManagement.compliant).toBe(
         true,
-      );
+      
       expect(data.frameworks.lgpd.details.dataRights.deletion).toBe(true);
-    });
-  });
+    }
+  }
 
   describe('Performance and Scalability', () => {
     it('should handle concurrent policy evaluations', async () => {
       const policyId = 'sp_12345678901234567890123456789012';
-      const evaluationRequest = generateValidEvaluationRequest();
+      const evaluationRequest = generateValidEvaluationRequest(
       const expectedResponse = {
         requestId: 'eval_12345678901234567890123456789012',
         policyId,
@@ -1474,7 +1474,7 @@ describe('Security Policies Contract Tests', () => {
         },
       };
 
-      (evaluateSecurityPolicy as Mock).mockResolvedValue(expectedResponse);
+      (evaluateSecurityPolicy as Mock).mockResolvedValue(expectedResponse
 
       // Simulate 10 concurrent requests
       const concurrentRequests = Array(10)
@@ -1484,21 +1484,21 @@ describe('Security Policies Contract Tests', () => {
             param: { id: policyId },
             json: evaluationRequest,
           })
-        );
+        
 
-      const responses = await Promise.all(concurrentRequests);
+      const responses = await Promise.all(concurrentRequests
 
       // All requests should succeed
       responses.forEach(response => {
-        expect(response.status).toBe(200);
-      });
+        expect(response.status).toBe(200
+      }
 
-      expect(evaluateSecurityPolicy).toHaveBeenCalledTimes(10);
-    });
+      expect(evaluateSecurityPolicy).toHaveBeenCalledTimes(10
+    }
 
     it('should respond within performance SLA', async () => {
       const policyId = 'sp_12345678901234567890123456789012';
-      const evaluationRequest = generateValidEvaluationRequest();
+      const evaluationRequest = generateValidEvaluationRequest(
       const expectedResponse = {
         requestId: 'eval_12345678901234567890123456789012',
         policyId,
@@ -1518,23 +1518,23 @@ describe('Security Policies Contract Tests', () => {
 
       (evaluateSecurityPolicy as Mock).mockImplementation(async () => {
         // Simulate processing time within SLA
-        await new Promise(resolve => setTimeout(resolve, 15));
+        await new Promise(resolve => setTimeout(resolve, 15)
         return expectedResponse;
-      });
+      }
 
-      const startTime = Date.now();
+      const startTime = Date.now(
       const response = await client.api.security.policies[':id'].evaluate.$post(
         {
           param: { id: policyId },
           json: evaluationRequest,
         },
-      );
-      const endTime = Date.now();
+      
+      const endTime = Date.now(
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
       expect(endTime - startTime).toBeLessThan(100); // Should respond within 100ms
-    });
-  });
+    }
+  }
 
   describe('Error Handling and Resilience', () => {
     it('should handle policy not found errors', async () => {
@@ -1542,18 +1542,18 @@ describe('Security Policies Contract Tests', () => {
 
       (evaluateSecurityPolicy as Mock).mockRejectedValue(
         new Error('Security policy not found'),
-      );
+      
 
       const response = await client.api.security.policies[':id'].$get({
         param: { id: nonExistentId },
-      });
+      }
 
-      expect(response.status).toBe(404);
-      const data = await response.json();
+      expect(response.status).toBe(404
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('SECURITY_POLICY_NOT_FOUND');
-    });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('SECURITY_POLICY_NOT_FOUND')
+    }
 
     it('should handle malformed CSP configurations', async () => {
       const malformedCSP = {
@@ -1563,73 +1563,73 @@ describe('Security Policies Contract Tests', () => {
 
       (validateCSP as Mock).mockRejectedValue(
         new Error('Invalid CSP configuration'),
-      );
+      
 
       const response = await client.api.security.csp.validate.$post({
         json: malformedCSP,
-      });
+      }
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
+      expect(response.status).toBe(400
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('INVALID_CSP_CONFIGURATION');
-    });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('INVALID_CSP_CONFIGURATION')
+    }
 
     it('should include detailed error information with severity levels', async () => {
       const policyId = 'sp_error_test_12345678901234567890123456789012';
 
       (createSecurityPolicy as Mock).mockRejectedValue(
         new Error('Database connection failed'),
-      );
+      
 
       const response = await client.api.security.policies.$post({
         json: generateValidSecurityPolicyConfig(),
-      });
+      }
 
-      expect(response.status).toBe(500);
-      const data = await response.json();
+      expect(response.status).toBe(500
+      const data = await response.json(
 
-      const errorData = ErrorResponseSchema.parse(data);
-      expect(errorData.error.code).toBe('INTERNAL_SERVER_ERROR');
-      expect(errorData.error.severity).toBe('high');
-      expect(errorData.error.requestId).toBeDefined();
-      expect(errorData.error.timestamp).toBeDefined();
-    });
-  });
+      const errorData = ErrorResponseSchema.parse(data
+      expect(errorData.error.code).toBe('INTERNAL_SERVER_ERROR')
+      expect(errorData.error.severity).toBe('high')
+      expect(errorData.error.requestId).toBeDefined(
+      expect(errorData.error.timestamp).toBeDefined(
+    }
+  }
 
   describe('Contract Compliance and Validation', () => {
     it('should validate all required fields in security policies', async () => {
-      const policy = generateValidSecurityPolicy();
+      const policy = generateValidSecurityPolicy(
 
-      (listSecurityPolicies as Mock).mockResolvedValue([policy]);
+      (listSecurityPolicies as Mock).mockResolvedValue([policy]
 
-      const response = await client.api.security.policies.$get({});
+      const response = await client.api.security.policies.$get({}
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       const policyData = data[0];
 
       // Validate required fields
-      expect(policyData).toHaveProperty('id');
-      expect(policyData).toHaveProperty('name');
-      expect(policyData).toHaveProperty('version');
-      expect(policyData).toHaveProperty('status');
-      expect(policyData).toHaveProperty('priority');
-      expect(policyData).toHaveProperty('rules');
-      expect(policyData).toHaveProperty('compliance');
-      expect(policyData).toHaveProperty('createdAt');
-      expect(policyData).toHaveProperty('updatedAt');
+      expect(policyData).toHaveProperty('id')
+      expect(policyData).toHaveProperty('name')
+      expect(policyData).toHaveProperty('version')
+      expect(policyData).toHaveProperty('status')
+      expect(policyData).toHaveProperty('priority')
+      expect(policyData).toHaveProperty('rules')
+      expect(policyData).toHaveProperty('compliance')
+      expect(policyData).toHaveProperty('createdAt')
+      expect(policyData).toHaveProperty('updatedAt')
 
       // Validate data types
-      expect(typeof policyData.priority).toBe('number');
+      expect(typeof policyData.priority).toBe('number')
       expect(Array.isArray(policyData.rules)).toBe(true);
-      expect(typeof policyData.compliance).toBe('object');
-    });
+      expect(typeof policyData.compliance).toBe('object')
+    }
 
     it('should follow OpenAPI specification patterns', async () => {
-      const evaluationRequest = generateValidEvaluationRequest();
+      const evaluationRequest = generateValidEvaluationRequest(
       const evaluationResponse = {
         requestId: 'eval_12345678901234567890123456789012',
         policyId: evaluationRequest.policyId,
@@ -1647,36 +1647,36 @@ describe('Security Policies Contract Tests', () => {
         },
       };
 
-      (evaluateSecurityPolicy as Mock).mockResolvedValue(evaluationResponse);
+      (evaluateSecurityPolicy as Mock).mockResolvedValue(evaluationResponse
 
       const response = await client.api.security.policies[':id'].evaluate.$post(
         {
           param: { id: evaluationRequest.policyId },
           json: evaluationRequest,
         },
-      );
+      
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       // Validate OpenAPI compliance
-      expect(data).toHaveProperty('requestId');
-      expect(data).toHaveProperty('policyId');
-      expect(data).toHaveProperty('decision');
-      expect(data).toHaveProperty('confidence');
-      expect(data).toHaveProperty('rulesEvaluated');
-      expect(data).toHaveProperty('riskScore');
-      expect(data).toHaveProperty('evaluatedAt');
-      expect(data).toHaveProperty('compliance');
+      expect(data).toHaveProperty('requestId')
+      expect(data).toHaveProperty('policyId')
+      expect(data).toHaveProperty('decision')
+      expect(data).toHaveProperty('confidence')
+      expect(data).toHaveProperty('rulesEvaluated')
+      expect(data).toHaveProperty('riskScore')
+      expect(data).toHaveProperty('evaluatedAt')
+      expect(data).toHaveProperty('compliance')
 
       // Validate data types and constraints
-      expect(typeof data.confidence).toBe('number');
-      expect(data.confidence).toBeGreaterThanOrEqual(0);
-      expect(data.confidence).toBeLessThanOrEqual(1);
-      expect(typeof data.riskScore).toBe('number');
-      expect(data.riskScore).toBeGreaterThanOrEqual(0);
-      expect(data.riskScore).toBeLessThanOrEqual(100);
-    });
+      expect(typeof data.confidence).toBe('number')
+      expect(data.confidence).toBeGreaterThanOrEqual(0
+      expect(data.confidence).toBeLessThanOrEqual(1
+      expect(typeof data.riskScore).toBe('number')
+      expect(data.riskScore).toBeGreaterThanOrEqual(0
+      expect(data.riskScore).toBeLessThanOrEqual(100
+    }
 
     it('should maintain backward compatibility with response formats', async () => {
       const legacyPolicy = {
@@ -1685,20 +1685,20 @@ describe('Security Policies Contract Tests', () => {
         evaluationResults: undefined,
       };
 
-      (listSecurityPolicies as Mock).mockResolvedValue([legacyPolicy]);
+      (listSecurityPolicies as Mock).mockResolvedValue([legacyPolicy]
 
-      const response = await client.api.security.policies.$get({});
+      const response = await client.api.security.policies.$get({}
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       // Should handle missing optional fields gracefully
-      expect(data[0].evaluationResults).toBeUndefined();
+      expect(data[0].evaluationResults).toBeUndefined(
 
       // Core required fields should still be present
-      expect(data[0]).toHaveProperty('id');
-      expect(data[0]).toHaveProperty('name');
-      expect(data[0]).toHaveProperty('compliance');
-    });
-  });
-});
+      expect(data[0]).toHaveProperty('id')
+      expect(data[0]).toHaveProperty('name')
+      expect(data[0]).toHaveProperty('compliance')
+    }
+  }
+}

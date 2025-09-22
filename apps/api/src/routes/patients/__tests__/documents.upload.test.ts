@@ -20,7 +20,7 @@ const mockDocumentService = {
 
 // Helper to build a small File (assuming WHATWG File available in test env)
 function makeFile(name: string, type: string, sizeBytes: number) {
-  const data = new Uint8Array(sizeBytes).fill(65); // 'A'
+  const data = new Uint8Array(sizeBytes).fill(65); // 'A')
   return new File([data], name, { type }
 }
 
@@ -29,7 +29,7 @@ const ROUTE_PATH = '../documents-upload';
 
 describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(
   }
 
   it('should export the upload documents route module (placeholder)', () => {
@@ -156,7 +156,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
 
     // Final expectations (will fail until implemented)
     expect(response.status).toBe(201
-    expect(json.success).toBe(true
-    expect(json.data.filename).toBe('report.pdf'
+    expect(json.success).toBe(true);
+    expect(json.data.filename).toBe('report.pdf')
   }
 }

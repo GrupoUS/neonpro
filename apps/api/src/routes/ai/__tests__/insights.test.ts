@@ -29,10 +29,10 @@ const mockLGPDService = {
 
 describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
   beforeEach(async () => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(
 
     // Inject mocked services into the endpoint
-    const { setServices } = await import('../insights'
+    const { setServices } = await import('../insights')
     setServices({
       aiChatService: mockAIChatService),
       patientService: mockPatientService),
@@ -162,13 +162,13 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
   }
 
   it(''should export AI insights route handler',async () => {
-    const module = await import('../insights'
+    const module = await import('../insights')
     expect(module.default).toBeDefined(
   }
 
-  describe(''Successful AI Insights Generation'), () => {
+  describe(''Successful AI Insights Generation', () => {
     it(''should generate comprehensive patient insights',async () => {
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -183,8 +183,8 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.success).toBe(true
-      expect(data.data.patientId).toBe('patient-123'
+      expect(data.success).toBe(true);
+      expect(data.data.patientId).toBe('patient-123')
       expect(data.data.insights.riskAssessment).toBeDefined(
       expect(data.data.insights.treatmentRecommendations).toHaveLength(2
       expect(data.data.insights.patternAnalysis).toBeDefined(
@@ -192,7 +192,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     }
 
     it(''should generate insights with specific analysis type',async () => {
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request(
@@ -210,7 +210,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.success).toBe(true
+      expect(data.success).toBe(true);
       expect(mockAIChatService.generatePatientInsights).toHaveBeenCalledWith({
         patientId: 'patient-123'),
         _userId: 'user-123'),
@@ -220,7 +220,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     }
 
     it(''should generate insights with time range filter',async () => {
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request(
@@ -238,7 +238,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.success).toBe(true
+      expect(data.success).toBe(true);
       expect(mockAIChatService.generatePatientInsights).toHaveBeenCalledWith({
         patientId: 'patient-123'),
         _userId: 'user-123'),
@@ -249,7 +249,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     }
 
     it(''should include AI insights performance headers',async () => {
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -262,15 +262,15 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       
 
       expect(response.status).toBe(200
-      expect(response.headers.get('X-AI-Model')).toBe('gpt-4'
-      expect(response.headers.get('X-AI-Confidence')).toBe('0.87'
-      expect(response.headers.get('X-AI-Data-Points')).toBe('45'
-      expect(response.headers.get('X-AI-Processing-Time')).toBe('2500ms'
-      expect(response.headers.get('X-Analysis-Version')).toBe('2.1'
+      expect(response.headers.get('X-AI-Model')).toBe('gpt-4')
+      expect(response.headers.get('X-AI-Confidence')).toBe('0.87')
+      expect(response.headers.get('X-AI-Data-Points')).toBe('45')
+      expect(response.headers.get('X-AI-Processing-Time')).toBe('2500ms')
+      expect(response.headers.get('X-Analysis-Version')).toBe('2.1')
     }
 
     it(''should generate insights with healthcare professional context',async () => {
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -287,7 +287,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.success).toBe(true
+      expect(data.success).toBe(true);
       expect(mockAIChatService.generatePatientInsights).toHaveBeenCalledWith(
         expect.objectContaining({
           healthcareProfessional: 'CRM-SP-123456'),
@@ -297,7 +297,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     }
 
     it(''should cache insights for performance optimization',async () => {
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -313,13 +313,13 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(response.headers.get('Cache-Control')).toBe(
         'private, max-age=1800'),
       
-      expect(response.headers.get('X-Cache-Status')).toBe('miss'
+      expect(response.headers.get('X-Cache-Status')).toBe('miss')
     }
   }
 
-  describe(''LGPD Compliance and Data Access'), () => {
+  describe(''LGPD Compliance and Data Access', () => {
     it(''should validate LGPD data access for patient insights',async () => {
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -341,7 +341,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     }
 
     it(''should log insights access for audit trail',async () => {
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       await insightsRoute.request(
         new Request(
@@ -384,7 +384,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
         code: 'LGPD_AI_INSIGHTS_DENIED'),
       }
 
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -399,9 +399,9 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(403
-      expect(data.success).toBe(false
-      expect(data.error).toContain('LGPD'
-      expect(data.code).toBe('LGPD_AI_INSIGHTS_DENIED'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('LGPD')
+      expect(data.code).toBe('LGPD_AI_INSIGHTS_DENIED')
     }
 
     it(''should mask sensitive data in insights based on access level',async () => {
@@ -430,7 +430,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
         ],
       }
 
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -448,13 +448,13 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(data.data.insights.riskAssessment.riskFactors[0].factor).toContain(
         '***'),
       
-      expect(response.headers.get('X-Access-Level')).toBe('limited'
+      expect(response.headers.get('X-Access-Level')).toBe('limited')
     }
   }
 
-  describe(''Error Handling'), () => {
+  describe(''Error Handling', () => {
     it(''should handle authentication errors',async () => {
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -468,8 +468,8 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(401
-      expect(data.success).toBe(false
-      expect(data.error).toContain('Não autorizado'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Não autorizado')
     }
 
     it(''should handle patient not found errors',async () => {
@@ -479,7 +479,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
         code: 'PATIENT_NOT_FOUND'),
       }
 
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/nonexistent-patient/insights', {
@@ -494,9 +494,9 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(404
-      expect(data.success).toBe(false
-      expect(data.error).toContain('Paciente não encontrado'
-      expect(data.code).toBe('PATIENT_NOT_FOUND'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Paciente não encontrado')
+      expect(data.code).toBe('PATIENT_NOT_FOUND')
     }
 
     it(''should handle AI service errors gracefully',async () => {
@@ -505,7 +505,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
         error: 'Erro interno do serviço de insights de IA'),
       }
 
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -520,8 +520,8 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(500
-      expect(data.success).toBe(false
-      expect(data.error).toContain('Erro interno'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Erro interno')
     }
 
     it(''should handle insufficient patient data',async () => {
@@ -540,7 +540,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
         code: 'INSUFFICIENT_DATA'),
       }
 
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-minimal/insights', {
@@ -555,15 +555,15 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(422
-      expect(data.success).toBe(false
-      expect(data.error).toContain('Dados insuficientes'
-      expect(data.code).toBe('INSUFFICIENT_DATA'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Dados insuficientes')
+      expect(data.code).toBe('INSUFFICIENT_DATA')
     }
   }
 
-  describe(''Brazilian Healthcare Compliance'), () => {
+  describe(''Brazilian Healthcare Compliance', () => {
     it(''should include CFM compliance headers',async () => {
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -575,14 +575,14 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
         },
       
 
-      expect(response.headers.get('X-CFM-Compliant')).toBe('true'
-      expect(response.headers.get('X-AI-Medical-Insights')).toBe('generated'
-      expect(response.headers.get('X-LGPD-Compliant')).toBe('true'
-      expect(response.headers.get('X-Medical-AI-Logged')).toBe('true'
+      expect(response.headers.get('X-CFM-Compliant')).toBe('true')
+      expect(response.headers.get('X-AI-Medical-Insights')).toBe('generated')
+      expect(response.headers.get('X-LGPD-Compliant')).toBe('true')
+      expect(response.headers.get('X-Medical-AI-Logged')).toBe('true')
     }
 
     it(''should validate healthcare professional context for medical insights',async () => {
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request(
@@ -609,7 +609,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
     }
 
     it(''should include data retention policy information',async () => {
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -625,14 +625,14 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(response.headers.get('X-Data-Retention-Policy')).toBe(
         '7-years-standard-20-years-medical'),
       
-      expect(response.headers.get('X-Legal-Basis')).toBe('legitimate_interest'
-      expect(response.headers.get('X-Consent-Required')).toBe('true'
+      expect(response.headers.get('X-Legal-Basis')).toBe('legitimate_interest')
+      expect(response.headers.get('X-Consent-Required')).toBe('true')
     }
   }
 
-  describe(''Performance and Caching'), () => {
+  describe(''Performance and Caching', () => {
     it(''should include performance headers',async () => {
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-123/insights', {
@@ -646,7 +646,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
 
       expect(response.status).toBe(200
       expect(response.headers.get('X-Response-Time')).toBeDefined(
-      expect(response.headers.get('X-AI-Processing-Time')).toBe('2500ms'
+      expect(response.headers.get('X-AI-Processing-Time')).toBe('2500ms')
       expect(response.headers.get('X-Database-Queries')).toBeDefined(
     }
 
@@ -672,7 +672,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
         },
       }
 
-      const { default: insightsRoute } = await import('../insights'
+      const { default: insightsRoute } = await import('../insights')
 
       const response = await insightsRoute.request(
         new Request('http://localhost/patient-large-data/insights', {
@@ -689,7 +689,7 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       expect(response.status).toBe(200
       expect(data.data.insights.treatmentRecommendations).toHaveLength(20
       expect(data.data.metadata.dataPoints).toBe(500
-      expect(response.headers.get('X-AI-Data-Points')).toBe('500'
+      expect(response.headers.get('X-AI-Data-Points')).toBe('500')
     }
   }
 }

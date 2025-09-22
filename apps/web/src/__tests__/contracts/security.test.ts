@@ -16,16 +16,16 @@ import type { SRIViolationReport } from '../../lib/security/sri';
 
 describe(('Security Contracts', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(
     global.window = {
       location: { hostname: 'test.neonpro.com.br' },
       navigator: { userAgent: 'test-agent' },
     } as any;
-  });
+  }
 
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks(
+  }
 
   describe(('Content Security Policy Contract', () => {
     test(('should provide healthcare-compliant CSP configuration', () => {
@@ -48,10 +48,10 @@ describe(('Security Contracts', () => {
 
       // Test: Required CSP directives for healthcare
       expectedCSPDirectives.forEach(directive => {
-        expect(typeof directive).toBe('string');
-        expect(directive.length).toBeGreaterThan(0);
-      });
-    });
+        expect(typeof directive).toBe('string')
+        expect(directive.length).toBeGreaterThan(0
+      }
+    }
 
     test(('should block unsafe sources for patient data protection', () => {
       // Contract: No unsafe-eval or unsafe-inline in production for patient data security
@@ -63,10 +63,10 @@ describe(('Security Contracts', () => {
       };
 
       // Test: Security restrictions for production
-      expect(productionCSP['object-src']).toContain('\'none\'');
-      expect(productionCSP['script-src']).toContain('\'self\'');
-      expect(productionCSP['style-src']).toContain('\'self\'');
-    });
+      expect(productionCSP['object-src']).toContain('\'none\'')
+      expect(productionCSP['script-src']).toContain('\'self\'')
+      expect(productionCSP['style-src']).toContain('\'self\'')
+    }
 
     test(('should provide CSP violation reporting for healthcare compliance', () => {
       // Contract: CSP violations must be reported for security monitoring
@@ -87,11 +87,11 @@ describe(('Security Contracts', () => {
       // Test: CSP violation report structure
       expect(cspViolationReport['document-uri']).toBe(
         'https://neonpro.com.br/patients',
-      );
-      expect(cspViolationReport['violated-directive']).toBe('script-src');
-      expect(cspViolationReport['disposition']).toBe('enforce');
-      expect(typeof cspViolationReport['line-number']).toBe('number');
-    });
+      
+      expect(cspViolationReport['violated-directive']).toBe('script-src')
+      expect(cspViolationReport['disposition']).toBe('enforce')
+      expect(typeof cspViolationReport['line-number']).toBe('number')
+    }
 
     test(('should categorize CSP violations by healthcare impact', () => {
       // Contract: CSP violations categorized by medical workflow impact
@@ -109,13 +109,13 @@ describe(('Security Contracts', () => {
       // Test: Violation categorization
       expect(violationCategories.patient_safety_critical).toContain(
         'script-src on /emergency',
-      );
+      
       expect(violationCategories.workflow_disrupting).toContain(
         'style-src on /medical',
-      );
-      expect(severityLevels).toContain('critical');
-      expect(severityLevels).toContain('high');
-    });
+      
+      expect(severityLevels).toContain('critical')
+      expect(severityLevels).toContain('high')
+    }
 
     test(('should provide healthcare-specific security headers', () => {
       // Contract: Additional security headers for healthcare compliance
@@ -132,12 +132,12 @@ describe(('Security Contracts', () => {
       };
 
       // Test: Healthcare security headers
-      expect(healthcareHeaders['X-LGPD-Compliant']).toBe('true');
-      expect(healthcareHeaders['X-Healthcare-Secure']).toBe('true');
-      expect(healthcareHeaders['X-Patient-Data-Protected']).toBe('true');
-      expect(healthcareHeaders['X-Frame-Options']).toBe('DENY');
-    });
-  });
+      expect(healthcareHeaders['X-LGPD-Compliant']).toBe('true')
+      expect(healthcareHeaders['X-Healthcare-Secure']).toBe('true')
+      expect(healthcareHeaders['X-Patient-Data-Protected']).toBe('true')
+      expect(healthcareHeaders['X-Frame-Options']).toBe('DENY')
+    }
+  }
 
   describe(('Subresource Integrity Contract', () => {
     test(('should provide SRI hash generation for healthcare-critical resources', () => {
@@ -154,14 +154,14 @@ describe(('Security Contracts', () => {
 
       // Test: Critical resources and algorithms
       criticalResources.forEach(resource => {
-        expect(typeof resource).toBe('string');
+        expect(typeof resource).toBe('string')
         expect(resource.endsWith('.js')).toBe(true);
-      });
+      }
 
       sriAlgorithms.forEach(algorithm => {
-        expect(['sha256', 'sha384', 'sha512']).toContain(algorithm);
-      });
-    });
+        expect(['sha256', 'sha384', 'sha512']).toContain(algorithm
+      }
+    }
 
     test(('should validate SRI hash format and structure', () => {
       // Contract: SRI hash must follow standard format
@@ -172,8 +172,8 @@ describe(('Security Contracts', () => {
       // Test: SRI hash format validation
       expect(sriHashPattern.test(validSRIHash)).toBe(true);
       expect(validSRIHash.startsWith('sha384-')).toBe(true);
-      expect(validSRIHash.length).toBeGreaterThan(10);
-    });
+      expect(validSRIHash.length).toBeGreaterThan(10
+    }
 
     test(('should provide SRI violation reporting for security monitoring', () => {
       // Contract: SRI violations must be reported with healthcare context
@@ -193,13 +193,13 @@ describe(('Security Contracts', () => {
       };
 
       // Test: SRI violation report structure
-      expect(sriViolationReport.url).toContain('chart.js');
-      expect(sriViolationReport.algorithm).toBe('sha384');
+      expect(sriViolationReport.url).toContain('chart.js')
+      expect(sriViolationReport.algorithm).toBe('sha384')
       expect(sriViolationReport.healthcareContext.isCritical).toBe(true);
       expect(sriViolationReport.healthcareContext.medicalWorkflowImpact).toBe(
         'critical',
-      );
-    });
+      
+    }
 
     test(('should categorize resources by healthcare criticality', () => {
       // Contract: Resource categorization for priority-based SRI enforcement
@@ -212,12 +212,12 @@ describe(('Security Contracts', () => {
       };
 
       // Test: Resource categorization
-      expect(resourceCategories.medical_charts).toContain('chart.js');
-      expect(resourceCategories.security).toContain('argon2');
-      expect(resourceCategories.data_validation).toContain('zod');
-      expect(resourceCategories.ui_critical).toContain('react');
-      expect(resourceCategories.monitoring).toContain('sentry');
-    });
+      expect(resourceCategories.medical_charts).toContain('chart.js')
+      expect(resourceCategories.security).toContain('argon2')
+      expect(resourceCategories.data_validation).toContain('zod')
+      expect(resourceCategories.ui_critical).toContain('react')
+      expect(resourceCategories.monitoring).toContain('sentry')
+    }
 
     test(('should provide dynamic SRI validation for CDN resources', () => {
       // Contract: Runtime SRI validation for dynamic resource loading
@@ -230,15 +230,15 @@ describe(('Security Contracts', () => {
       };
 
       // Test: SRI validation method contracts
-      expect(typeof sriValidationMethods.generateSRIHash).toBe('function');
+      expect(typeof sriValidationMethods.generateSRIHash).toBe('function')
       expect(typeof sriValidationMethods.validateResourceIntegrity).toBe(
         'function',
-      );
-      expect(typeof sriValidationMethods.fetchAndGenerateSRI).toBe('function');
-      expect(typeof sriValidationMethods.isHealthcareCritical).toBe('function');
-      expect(typeof sriValidationMethods.handleSRIViolation).toBe('function');
-    });
-  });
+      
+      expect(typeof sriValidationMethods.fetchAndGenerateSRI).toBe('function')
+      expect(typeof sriValidationMethods.isHealthcareCritical).toBe('function')
+      expect(typeof sriValidationMethods.handleSRIViolation).toBe('function')
+    }
+  }
 
   describe(('Healthcare Security Configuration Contract', () => {
     test(('should provide comprehensive healthcare security configuration', () => {
@@ -259,12 +259,12 @@ describe(('Security Contracts', () => {
       };
 
       // Test: Healthcare security configuration structure
-      expect(healthcareSecurityConfig.environment).toBe('production');
+      expect(healthcareSecurityConfig.environment).toBe('production')
       expect(healthcareSecurityConfig.enableCSP).toBe(true);
       expect(healthcareSecurityConfig.enableSRI).toBe(true);
       expect(healthcareSecurityConfig.healthcareCompliance.lgpd).toBe(true);
       expect(healthcareSecurityConfig.healthcareCompliance.anvisa).toBe(true);
-    });
+    }
 
     test(('should provide rate limiting configuration for healthcare endpoints', () => {
       // Contract: Rate limiting for different healthcare endpoint categories
@@ -292,11 +292,11 @@ describe(('Security Contracts', () => {
       };
 
       // Test: Rate limiting configuration
-      expect(healthcareRateLimits.patient_data.max).toBe(100);
-      expect(healthcareRateLimits.medical_records.max).toBe(50);
-      expect(healthcareRateLimits.ai_chat.max).toBe(20);
-      expect(healthcareRateLimits.emergency.max).toBe(200);
-    });
+      expect(healthcareRateLimits.patient_data.max).toBe(100
+      expect(healthcareRateLimits.medical_records.max).toBe(50
+      expect(healthcareRateLimits.ai_chat.max).toBe(20
+      expect(healthcareRateLimits.emergency.max).toBe(200
+    }
 
     test(('should provide security middleware for Express and Hono', () => {
       // Contract: Security middleware compatibility
@@ -315,12 +315,12 @@ describe(('Security Contracts', () => {
       };
 
       // Test: Middleware contracts
-      expect(typeof middlewareTypes.express).toBe('function');
-      expect(typeof middlewareTypes.hono).toBe('function');
-      expect(typeof middlewareTypes.validator).toBe('function');
+      expect(typeof middlewareTypes.express).toBe('function')
+      expect(typeof middlewareTypes.hono).toBe('function')
+      expect(typeof middlewareTypes.validator).toBe('function')
       expect(middlewareFeatures.securityHeaders).toBe(true);
       expect(middlewareFeatures.lgpdCompliance).toBe(true);
-    });
+    }
 
     test(('should provide healthcare endpoint security validation', () => {
       // Contract: Healthcare endpoint security validation
@@ -341,11 +341,11 @@ describe(('Security Contracts', () => {
       // Test: Security validation contracts
       expect(securityValidationOptions.requirePatientConsent).toBe(true);
       expect(securityValidationOptions.requireLGPDCompliance).toBe(true);
-      expect(securityValidationOptions.allowedMethods).toContain('GET');
-      expect(securityValidationOptions.allowedMethods).toContain('POST');
-      expect(typeof securityContext.timestamp).toBe('string');
-    });
-  });
+      expect(securityValidationOptions.allowedMethods).toContain('GET')
+      expect(securityValidationOptions.allowedMethods).toContain('POST')
+      expect(typeof securityContext.timestamp).toBe('string')
+    }
+  }
 
   describe(('Compliance and Audit Trail Contract', () => {
     test(('should provide LGPD compliance logging', () => {
@@ -361,14 +361,14 @@ describe(('Security Contracts', () => {
       };
 
       // Test: LGPD compliance function contracts
-      expect(typeof lgpdCompliance.logDataProcessing).toBe('function');
-      expect(typeof lgpdCompliance.logConsentGiven).toBe('function');
-      expect(typeof lgpdCompliance.logConsentWithdrawn).toBe('function');
-      expect(typeof lgpdCompliance.logDataAccess).toBe('function');
+      expect(typeof lgpdCompliance.logDataProcessing).toBe('function')
+      expect(typeof lgpdCompliance.logConsentGiven).toBe('function')
+      expect(typeof lgpdCompliance.logConsentWithdrawn).toBe('function')
+      expect(typeof lgpdCompliance.logDataAccess).toBe('function')
       expect(typeof lgpdCompliance.generateDataProcessingReport).toBe(
         'function',
-      );
-    });
+      
+    }
 
     test(('should provide ANVISA cybersecurity compliance', () => {
       // Contract: ANVISA RDC 505/2021 cybersecurity compliance
@@ -382,11 +382,11 @@ describe(('Security Contracts', () => {
       };
 
       // Test: ANVISA compliance function contracts
-      expect(typeof anvisaCompliance.logSecurityEvent).toBe('function');
-      expect(typeof anvisaCompliance.logAccessControl).toBe('function');
-      expect(typeof anvisaCompliance.logDataIntegrity).toBe('function');
-      expect(typeof anvisaCompliance.generateSecurityReport).toBe('function');
-    });
+      expect(typeof anvisaCompliance.logSecurityEvent).toBe('function')
+      expect(typeof anvisaCompliance.logAccessControl).toBe('function')
+      expect(typeof anvisaCompliance.logDataIntegrity).toBe('function')
+      expect(typeof anvisaCompliance.generateSecurityReport).toBe('function')
+    }
 
     test(('should provide security audit trail', () => {
       // Contract: Comprehensive security audit trail
@@ -406,12 +406,12 @@ describe(('Security Contracts', () => {
       const auditEventSeverities = ['low', 'medium', 'high', 'critical'];
 
       // Test: Audit trail event types and severities
-      expect(auditTrailEvents).toContain('csp_violation');
-      expect(auditTrailEvents).toContain('patient_data_access');
-      expect(auditTrailEvents).toContain('compliance_violation');
-      expect(auditEventSeverities).toContain('critical');
-      expect(auditEventSeverities).toContain('high');
-    });
+      expect(auditTrailEvents).toContain('csp_violation')
+      expect(auditTrailEvents).toContain('patient_data_access')
+      expect(auditTrailEvents).toContain('compliance_violation')
+      expect(auditEventSeverities).toContain('critical')
+      expect(auditEventSeverities).toContain('high')
+    }
 
     test(('should provide security monitoring integration', () => {
       // Contract: Security monitoring system integration
@@ -431,15 +431,15 @@ describe(('Security Contracts', () => {
       // Test: Monitoring integration contracts
       expect(typeof monitoringIntegration.sentry.captureSecurityEvent).toBe(
         'function',
-      );
+      
       expect(
         typeof monitoringIntegration.customAuditSystem.logSecurityEvent,
-      ).toBe('function');
+      ).toBe('function')
       expect(
         typeof monitoringIntegration.customAuditSystem.alertSecurityTeam,
-      ).toBe('function');
-    });
-  });
-});
+      ).toBe('function')
+    }
+  }
+}
 
 export default {};

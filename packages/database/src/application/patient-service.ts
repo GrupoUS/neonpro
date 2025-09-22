@@ -67,7 +67,7 @@ export class PatientService {
 
       // Validate CPF if provided
       if (_request.cpf && !this.validateCPF(_request.cpf)) {
-        throw new PatientValidationError("Invalid CPF format");
+        throw new PatientValidationError(["Invalid CPF format"]);
       }
 
       // Update patient
@@ -244,7 +244,7 @@ export class PatientService {
     }
 
     if (!_request.fullName) {
-      throw new PatientValidationError("Full name is required");
+      throw new PatientValidationError(["Full name is required"]);
     }
 
     if (!_request.cpf) {
@@ -385,5 +385,5 @@ export class PatientService {
       currentMedications: [],
       isActive: true
     };
-  }
-}}
+  };
+}

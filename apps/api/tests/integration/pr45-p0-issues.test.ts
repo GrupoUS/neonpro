@@ -18,49 +18,49 @@ describe('P0-1: AI CRUD Missing Imports', () => {
     // This test should fail because getServices is not defined
     await expect(async () => {
       try {
-        const aiCrudModule = await import('../../src/routes/v1/ai/crud');
+        const aiCrudModule = await import('../../src/routes/v1/ai/crud')
 
         // The module should throw an error or reference error when getServices is called
         const app = aiCrudModule.default;
 
         // Try to trigger a route that calls getServices
-        const testApp = new Hono();
-        testApp.route('/crud', app);
+        const testApp = new Hono(
+        testApp.route('/crud', app
 
         // This should fail due to missing getServices function
-        await testApp.request('/crud/entities');
+        await testApp.request('/crud/entities')
       } catch (error) {
         if (
           error instanceof ReferenceError && error.message.includes('getServices is not defined')
         ) {
           throw error; // Re-throw to make test fail as expected
         }
-        throw new Error(`Expected ReferenceError for getServices, got: ${error}`);
+        throw new Error(`Expected ReferenceError for getServices, got: ${error}`
       }
-    }).rejects.toThrow('getServices is not defined');
-  });
+    }).rejects.toThrow('getServices is not defined')
+  }
 
   it('should fail to use GET handlers due to missing mockAuthMiddleware', async () => {
     // This test should fail because GET handlers need auth middleware but it's missing
     await expect(async () => {
       try {
-        const aiCrudModule = await import('../../src/routes/v1/ai/crud');
+        const aiCrudModule = await import('../../src/routes/v1/ai/crud')
         const app = aiCrudModule.default;
 
         // Try to make a GET request without proper auth middleware setup
-        const testApp = new Hono();
-        testApp.route('/crud', app);
+        const testApp = new Hono(
+        testApp.route('/crud', app
 
         // This should fail because auth middleware is not properly imported/defined
         const response = await testApp.request('/crud/entities', {
           method: 'GET',
-        });
+        }
 
         // The response should indicate auth failure or middleware error
         if (response.status === 500) {
-          const body = await response.json();
+          const body = await response.json(
           if (body.error?.includes('requireAuth') || body.error?.includes('mockAuthMiddleware')) {
-            throw new Error('Auth middleware not properly imported');
+            throw new Error('Auth middleware not properly imported')
           }
         }
       } catch (error) {
@@ -68,16 +68,16 @@ describe('P0-1: AI CRUD Missing Imports', () => {
           throw error; // Re-throw to make test fail as expected
         }
       }
-    }).rejects.toThrow(/requireAuth|mockAuthMiddleware/);
-  });
-});
+    }).rejects.toThrow(/requireAuth|mockAuthMiddleware/
+  }
+}
 
 // Test for P0-2: Financial Security Vulnerability
 describe('P0-2: Financial Security Vulnerability', () => {
   it('should detect weak encryption using btoa instead of proper crypto', async () => {
     const { FinancialSecurityService } = await import(
-      '../../../web/src/services/financial-security'
-    );
+      '../../../web/src/services/financial-security')
+    
 
     // Test data to encrypt
     const sensitiveData = {
@@ -88,27 +88,27 @@ describe('P0-2: Financial Security Vulnerability', () => {
     };
 
     // This should fail because btoa is not proper encryption
-    const encrypted = await FinancialSecurityService.encryptData(sensitiveData, 'financial_data');
+    const encrypted = await FinancialSecurityService.encryptData(sensitiveData, 'financial_data')
 
     // btoa is base64 encoding, not encryption - it should be reversible without a key
     // This test should fail because the current implementation is insecure
     expect(() => {
       // Try to decode without proper decryption
-      const decoded = atob(encrypted);
-      const parsed = JSON.parse(decoded);
+      const decoded = atob(encrypted
+      const parsed = JSON.parse(decoded
 
       // If we can decode it without a key, it's not properly encrypted
-      expect(parsed.creditCard).toBe(sensitiveData.creditCard);
-    }).not.toThrow();
+      expect(parsed.creditCard).toBe(sensitiveData.creditCard
+    }).not.toThrow(
 
     // This assertion should fail because btoa is not proper encryption
     expect(encrypted).not.toContain('encrypted'); // Should fail - btoa doesn't add encryption markers
-  });
+  }
 
   it('should detect that btoa/atob are not suitable for sensitive data', async () => {
     const { FinancialSecurityService } = await import(
-      '../../../web/src/services/financial-security'
-    );
+      '../../../web/src/services/financial-security')
+    
 
     // Test that the current implementation uses btoa/atob
     const originalBtoa = global.btoa;
@@ -118,23 +118,23 @@ describe('P0-2: Financial Security Vulnerability', () => {
     let btoaUsed = false;
     global.btoa = vi.fn(data => {
       btoaUsed = true;
-      return originalBtoa(data);
-    });
+      return originalBtoa(data
+    }
 
     let atobUsed = false;
     global.atob = vi.fn(data => {
       atobUsed = true;
-      return originalAtob(data);
-    });
+      return originalAtob(data
+    }
 
     try {
       const sensitiveData = { patientId: 'test-123', financialData: 'sensitive' };
 
       // This should use btoa (which is insecure)
-      await FinancialSecurityService.encryptData(sensitiveData, 'test');
+      await FinancialSecurityService.encryptData(sensitiveData, 'test')
 
       // This should use atob (which is insecure)
-      await FinancialSecurityService.decryptData('eyJwYXRpZW50SWQiOiJ0ZXN0LTEyMyJ9', 'test-user');
+      await FinancialSecurityService.decryptData('eyJwYXRpZW50SWQiOiJ0ZXN0LTEyMyJ9', 'test-user')
 
       // These should be true, indicating the vulnerability
       expect(btoaUsed).toBe(true); // Should fail - indicates btoa usage
@@ -144,14 +144,14 @@ describe('P0-2: Financial Security Vulnerability', () => {
       global.btoa = originalBtoa;
       global.atob = originalAtob;
     }
-  });
-});
+  }
+}
 
 // Test for P0-3: Duplicate Test Server Handlers
 describe('P0-3: Duplicate Test Server Handlers', () => {
   it('should detect duplicate handlers in test server causing conflicts', async () => {
-    const { setupServer } = await import('msw/node');
-    const { http, HttpResponse } = await import('msw');
+    const { setupServer } = await import('msw/node')
+    const { http, HttpResponse } = await import('msw')
 
     // This test should fail because there are duplicate handlers for the same endpoint
     let handlerCount = 0;
@@ -171,27 +171,27 @@ describe('P0-3: Duplicate Test Server Handlers', () => {
             endpointCounts[key] = (endpointCounts[key] || 0) + 1;
           }
         }
-      });
+      }
 
       // Check for duplicates
-      const duplicates = Object.entries(endpointCounts).filter(([_, count]) => count > 1);
+      const duplicates = Object.entries(endpointCounts).filter(([_, count]) => count > 1
       if (duplicates.length > 0) {
         throw new Error(
           `Duplicate handlers detected: ${duplicates.map(([key]) => key).join(', ')}`,
-        );
+        
       }
 
       handlerCount = handlers.length;
-      return originalSetupServer(...handlers);
-    });
+      return originalSetupServer(...handlers
+    }
 
     vi.mock('msw/node', () => ({
       setupServer: mockSetupServer,
-    }));
+    })
 
     // Try to import the server which should have duplicate handlers
     try {
-      await import('../../../web/tests/mocks/server');
+      await import('../../../web/tests/mocks/server')
 
       // If we get here, no duplicates were detected (which is wrong)
       // This should fail because duplicates exist
@@ -201,16 +201,16 @@ describe('P0-3: Duplicate Test Server Handlers', () => {
         throw error; // Re-throw to make test fail as expected
       }
     }
-  });
-});
+  }
+}
 
 // Test for P0-4: Operation ID Uniqueness Issue
 describe('P0-4: Operation ID Uniqueness Issue', () => {
   it('should detect non-unique operation_id field in database updates', async () => {
-    const { PrismaClient } = await import('@prisma/client');
+    const { PrismaClient } = await import('@prisma/client')
     const { createOperationStateService } = await import(
-      '../../src/services/operation-state-service'
-    );
+      '../../src/services/operation-state-service')
+    
 
     // Mock Prisma client to simulate the issue
     const mockPrisma = {
@@ -228,7 +228,7 @@ describe('P0-4: Operation ID Uniqueness Issue', () => {
     };
 
     // Test the update method that uses non-unique operation_id
-    const service = createOperationStateService(mockPrisma as any);
+    const service = createOperationStateService(mockPrisma as any
 
     // This should demonstrate the issue with using operation_id as the update key
     const operationId = 'test-operation-123';
@@ -238,7 +238,7 @@ describe('P0-4: Operation ID Uniqueness Issue', () => {
       id: 'state-1',
       operation_id: operationId,
       status: 'pending',
-    });
+    }
 
     // The update method uses operation_id in the where clause, which is not unique
     await expect(
@@ -246,7 +246,7 @@ describe('P0-4: Operation ID Uniqueness Issue', () => {
         status: 'completed',
         step: 'execute',
       }),
-    ).rejects.toThrow('Cannot update using non-unique field operation_id');
+    ).rejects.toThrow('Cannot update using non-unique field operation_id')
 
     // Verify that the update call uses operation_id (which is the problem)
     expect(mockPrisma.operationState.update).toHaveBeenCalledWith({
@@ -254,12 +254,12 @@ describe('P0-4: Operation ID Uniqueness Issue', () => {
         operation_id: operationId, // This should fail - operation_id is not unique
       },
       data: expect.any(Object),
-    });
-  });
+    }
+  }
 
   it('should detect that operation_id is not a unique constraint in the database', async () => {
     // This test simulates the database schema issue
-    const { PrismaClient } = await import('@prisma/client');
+    const { PrismaClient } = await import('@prisma/client')
 
     // Mock the database schema inspection
     const mockPrisma = {
@@ -285,14 +285,14 @@ describe('P0-4: Operation ID Uniqueness Issue', () => {
         JOIN information_schema.key_column_usage ku 
           ON tc.constraint_name = ku.constraint_name
           AND tc.table_schema = ku.table_schema
-        WHERE tc.constraint_type = 'UNIQUE'
-          AND tc.table_name = 'operation_states'
+        WHERE tc.constraint_type = 'UNIQUE')
+          AND tc.table_name = 'operation_states')
       ) pk ON c.column_name = pk.column_name
-      WHERE c.table_name = 'operation_states'
+      WHERE c.table_name = 'operation_states')
     `;
 
     // This should fail because operation_id is not unique
-    const operationIdColumn = schemaInfo.find((col: any) => col.column_name === 'operation_id');
+    const operationIdColumn = schemaInfo.find((col: any) => col.column_name === 'operation_id')
     expect(operationIdColumn?.is_unique).toBe(false); // Should fail - should be true
-  });
-});
+  }
+}

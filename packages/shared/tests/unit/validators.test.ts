@@ -23,8 +23,8 @@ describe("Brazilian Validators - T078", () => {
 
       validCPFs.forEach((cpf) => {
         expect(validateCPF(cpf)).toBe(true);
-      });
-    });
+      }
+    }
 
     it("should reject invalid CPF formats", () => {
       const invalidCPFs = [
@@ -40,9 +40,9 @@ describe("Brazilian Validators - T078", () => {
 
       invalidCPFs.forEach((cpf) => {
         expect(validateCPF(cpf)).toBe(false);
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe("validateCNPJ", () => {
     it("should validate correct CNPJ numbers", () => {
@@ -54,8 +54,8 @@ describe("Brazilian Validators - T078", () => {
 
       validCNPJs.forEach((cnpj) => {
         expect(validateCNPJ(cnpj)).toBe(true);
-      });
-    });
+      }
+    }
 
     it("should reject invalid CNPJ formats", () => {
       const invalidCNPJs = [
@@ -71,9 +71,9 @@ describe("Brazilian Validators - T078", () => {
 
       invalidCNPJs.forEach((cnpj) => {
         expect(validateCNPJ(cnpj)).toBe(false);
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe("validatePhone", () => {
     it("should validate correct Brazilian phone numbers", () => {
@@ -87,8 +87,8 @@ describe("Brazilian Validators - T078", () => {
 
       validPhones.forEach((phone) => {
         expect(validatePhone(phone)).toBe(true);
-      });
-    });
+      }
+    }
 
     it("should reject invalid phone formats", () => {
       const invalidPhones = [
@@ -103,9 +103,9 @@ describe("Brazilian Validators - T078", () => {
 
       invalidPhones.forEach((phone) => {
         expect(validatePhone(phone)).toBe(false);
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe("validateCEP", () => {
     it("should validate correct CEP numbers", () => {
@@ -113,8 +113,8 @@ describe("Brazilian Validators - T078", () => {
 
       validCEPs.forEach((cep) => {
         expect(validateCEP(cep)).toBe(true);
-      });
-    });
+      }
+    }
 
     it("should reject invalid CEP formats", () => {
       const invalidCEPs = [
@@ -129,72 +129,72 @@ describe("Brazilian Validators - T078", () => {
 
       invalidCEPs.forEach((cep) => {
         expect(validateCEP(cep)).toBe(false);
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe("cleanDocument", () => {
     it("should remove formatting from CPF", () => {
-      expect(cleanDocument("123.456.789-09")).toBe("12345678909");
-    });
+      expect(cleanDocument("123.456.789-09")).toBe("12345678909"
+    }
 
     it("should remove formatting from CNPJ", () => {
-      expect(cleanDocument("12.345.678/0001-95")).toBe("12345678000195");
-    });
+      expect(cleanDocument("12.345.678/0001-95")).toBe("12345678000195"
+    }
 
     it("should handle already clean documents", () => {
-      expect(cleanDocument("12345678909")).toBe("12345678909");
-    });
+      expect(cleanDocument("12345678909")).toBe("12345678909"
+    }
 
     it("should handle empty/null inputs", () => {
-      expect(cleanDocument("")).toBe("");
-      expect(cleanDocument(null)).toBe("");
-    });
-  });
+      expect(cleanDocument("")).toBe(""
+      expect(cleanDocument(null)).toBe(""
+    }
+  }
 
   describe("formatCPF", () => {
     it("should format CPF correctly", () => {
-      expect(formatCPF("12345678909")).toBe("123.456.789-09");
-    });
+      expect(formatCPF("12345678909")).toBe("123.456.789-09"
+    }
 
     it("should handle already formatted CPF", () => {
-      expect(formatCPF("123.456.789-09")).toBe("123.456.789-09");
-    });
-  });
+      expect(formatCPF("123.456.789-09")).toBe("123.456.789-09"
+    }
+  }
 
   describe("formatCNPJ", () => {
     it("should format CNPJ correctly", () => {
-      expect(formatCNPJ("12345678000195")).toBe("12.345.678/0001-95");
-    });
+      expect(formatCNPJ("12345678000195")).toBe("12.345.678/0001-95"
+    }
 
     it("should handle already formatted CNPJ", () => {
-      expect(formatCNPJ("12.345.678/0001-95")).toBe("12.345.678/0001-95");
-    });
-  });
+      expect(formatCNPJ("12.345.678/0001-95")).toBe("12.345.678/0001-95"
+    }
+  }
 
   describe("formatPhone", () => {
     it("should format mobile phone correctly", () => {
-      expect(formatPhone("11999998888")).toBe("(11) 99999-8888");
-    });
+      expect(formatPhone("11999998888")).toBe("(11) 99999-8888"
+    }
 
     it("should format landline correctly", () => {
-      expect(formatPhone("2125551234")).toBe("(21) 2555-1234");
-    });
+      expect(formatPhone("2125551234")).toBe("(21) 2555-1234"
+    }
 
     it("should handle already formatted phone", () => {
-      expect(formatPhone("(11) 99999-8888")).toBe("(11) 99999-8888");
-    });
-  });
+      expect(formatPhone("(11) 99999-8888")).toBe("(11) 99999-8888"
+    }
+  }
 
   describe("formatCEP", () => {
     it("should format CEP correctly", () => {
-      expect(formatCEP("01310100")).toBe("01310-100");
-    });
+      expect(formatCEP("01310100")).toBe("01310-100"
+    }
 
     it("should handle already formatted CEP", () => {
-      expect(formatCEP("01310-100")).toBe("01310-100");
-    });
-  });
+      expect(formatCEP("01310-100")).toBe("01310-100"
+    }
+  }
 
   describe("edge cases", () => {
     it("should handle malformed input gracefully", () => {
@@ -202,16 +202,16 @@ describe("Brazilian Validators - T078", () => {
       expect(validateCNPJ("not-a-cnpj")).toBe(false);
       expect(validatePhone("not-a-phone")).toBe(false);
       expect(validateCEP("not-a-cep")).toBe(false);
-    });
+    }
 
     it("should handle special characters", () => {
       expect(validateCPF("123.456.789-09!")).toBe(false);
       expect(validatePhone("(11) 9999-8888 ext. 123")).toBe(false);
-    });
+    }
 
     it("should handle whitespace", () => {
       expect(validateCPF(" 123.456.789-09 ")).toBe(false);
       expect(validatePhone(" (11) 99999-8888 ")).toBe(true);
-    });
-  });
-});
+    }
+  }
+}

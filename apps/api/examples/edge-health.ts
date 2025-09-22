@@ -5,7 +5,7 @@ export const runtime = 'edge';
 export const preferredRegion = 'auto';
 
 export default async function handler(_request: Request) {
-  const url = new URL(request.url);
+  const url = new URL(_request.url);
   const pathname = url.pathname;
 
   // Basic health check optimized for Edge runtime
@@ -16,7 +16,7 @@ export default async function handler(_request: Request) {
     runtime: 'edge',
     region: process.env.VERCEL_REGION || 'auto',
     path: pathname,
-    method: request.method,
+    method: _request.method,
 
     // Edge runtime capabilities
     features: {

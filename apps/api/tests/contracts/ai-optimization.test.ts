@@ -93,14 +93,14 @@ describe('AI Optimization Contract Tests', () => {
         circuitBreakerEnabled: true,
       },
     };
-  });
+  }
 
   describe('Multi-Provider Routing', () => {
     it('MUST support multiple AI providers', () => {
-      expect(aiOptimization.routing.providers).toContain('openai');
-      expect(aiOptimization.routing.providers).toContain('anthropic');
-      expect(aiOptimization.routing.providers.length).toBeGreaterThanOrEqual(2);
-    });
+      expect(aiOptimization.routing.providers).toContain('openai')
+      expect(aiOptimization.routing.providers).toContain('anthropic')
+      expect(aiOptimization.routing.providers.length).toBeGreaterThanOrEqual(2
+    }
 
     it('MUST implement intelligent routing strategy', () => {
       const validStrategies = [
@@ -108,17 +108,17 @@ describe('AI Optimization Contract Tests', () => {
         'performance-optimized',
         'balanced',
       ];
-      expect(validStrategies).toContain(aiOptimization.routing.strategy);
-    });
+      expect(validStrategies).toContain(aiOptimization.routing.strategy
+    }
 
     it('MUST provide automatic failover capabilities', () => {
       expect(aiOptimization.routing.failover).toBe(true);
       expect(aiOptimization.routing.loadBalancing).toBe(true);
-    });
+    }
 
     it('MUST track provider latency and performance', () => {
       expect(aiOptimization.routing.latencyTracking).toBe(true);
-    });
+    }
 
     it('SHOULD route requests based on provider availability', async () => {
       // Mock provider status check
@@ -126,17 +126,17 @@ describe('AI Optimization Contract Tests', () => {
         openai: { available: true, latency: 200 },
         anthropic: { available: false, latency: null },
         azure: { available: true, latency: 150 },
-      });
+      }
 
-      const availableProviders = await mockProviderStatus();
+      const availableProviders = await mockProviderStatus(
       const activeProviders = Object.entries(availableProviders)
         .filter(([_, status]) => status.available)
-        .map(([provider]) => provider);
+        .map(([provider]) => provider
 
-      expect(activeProviders).toContain('openai');
-      expect(activeProviders).toContain('azure');
-      expect(activeProviders).not.toContain('anthropic');
-    });
+      expect(activeProviders).toContain('openai')
+      expect(activeProviders).toContain('azure')
+      expect(activeProviders).not.toContain('anthropic')
+    }
 
     it('SHOULD select optimal provider based on cost and performance', () => {
       const mockProviderMetrics = {
@@ -149,7 +149,7 @@ describe('AI Optimization Contract Tests', () => {
       const costOptimal = Object.entries(mockProviderMetrics).sort(
         ([, a], [, b]) => a.cost - b.cost,
       )[0][0];
-      expect(costOptimal).toBe('anthropic');
+      expect(costOptimal).toBe('anthropic')
 
       // Performance-optimized should prefer lower latency + high success rate
       const perfOptimal = Object.entries(mockProviderMetrics).sort(
@@ -157,35 +157,35 @@ describe('AI Optimization Contract Tests', () => {
           a.avgLatency * (2 - a.successRate)
           - b.avgLatency * (2 - b.successRate),
       )[0][0];
-      expect(perfOptimal).toBe('azure');
-    });
-  });
+      expect(perfOptimal).toBe('azure')
+    }
+  }
 
   describe('Semantic Caching', () => {
     it('MUST enable semantic caching by default', () => {
       expect(aiOptimization.caching.enabled).toBe(true);
-    });
+    }
 
     it('MUST configure appropriate cache TTL', () => {
-      expect(aiOptimization.caching.ttl).toBeGreaterThan(0);
+      expect(aiOptimization.caching.ttl).toBeGreaterThan(0
       expect(aiOptimization.caching.ttl).toBeLessThanOrEqual(86400000); // Max 24 hours
-    });
+    }
 
     it('MUST set similarity threshold for cache hits', () => {
-      expect(aiOptimization.caching.similarityThreshold).toBeGreaterThan(0.7);
+      expect(aiOptimization.caching.similarityThreshold).toBeGreaterThan(0.7
       expect(aiOptimization.caching.similarityThreshold).toBeLessThanOrEqual(
         1.0,
-      );
-    });
+      
+    }
 
     it('MUST limit cache size to prevent memory issues', () => {
-      expect(aiOptimization.caching.maxCacheSize).toBeGreaterThan(0);
-      expect(aiOptimization.caching.maxCacheSize).toBeLessThanOrEqual(10000);
-    });
+      expect(aiOptimization.caching.maxCacheSize).toBeGreaterThan(0
+      expect(aiOptimization.caching.maxCacheSize).toBeLessThanOrEqual(10000
+    }
 
     it('SHOULD enable compression for cache entries', () => {
       expect(aiOptimization.caching.compressionEnabled).toBe(true);
-    });
+    }
 
     it('SHOULD cache similar queries and return cached responses', async () => {
       const mockCacheEntry: CacheEntry = {
@@ -203,17 +203,17 @@ describe('AI Optimization Contract Tests', () => {
       };
 
       const similarQuery = 'What benefits do aesthetic procedures provide?';
-      const mockSimilarityCheck = vi.fn().mockResolvedValue(0.92);
+      const mockSimilarityCheck = vi.fn().mockResolvedValue(0.92
 
-      const similarity = await mockSimilarityCheck();
+      const similarity = await mockSimilarityCheck(
       expect(similarity).toBeGreaterThan(
         aiOptimization.caching.similarityThreshold,
-      );
+      
 
       // Should return cached response for similar query
       const shouldUseCache = similarity > aiOptimization.caching.similarityThreshold;
       expect(shouldUseCache).toBe(true);
-    });
+    }
 
     it('SHOULD invalidate expired cache entries', () => {
       const mockCacheEntry = {
@@ -223,30 +223,30 @@ describe('AI Optimization Contract Tests', () => {
 
       const isExpired = Date.now() - mockCacheEntry.timestamp > mockCacheEntry.ttl;
       expect(isExpired).toBe(true);
-    });
-  });
+    }
+  }
 
   describe('Cost Optimization', () => {
     it('MUST enforce budget limits', () => {
       expect(
         aiOptimization.costOptimization.budgetLimits.daily,
-      ).toBeGreaterThan(0);
+      ).toBeGreaterThan(0
       expect(
         aiOptimization.costOptimization.budgetLimits.monthly,
-      ).toBeGreaterThan(0);
+      ).toBeGreaterThan(0
       expect(
         aiOptimization.costOptimization.budgetLimits.perRequest,
-      ).toBeGreaterThan(0);
-    });
+      ).toBeGreaterThan(0
+    }
 
     it('MUST track costs across providers', () => {
       expect(aiOptimization.costOptimization.costTracking).toBe(true);
       expect(aiOptimization.costOptimization.providerCostComparison).toBe(true);
-    });
+    }
 
     it('MUST provide automatic fallback when budget exceeded', () => {
       expect(aiOptimization.costOptimization.automaticFallback).toBe(true);
-    });
+    }
 
     it('SHOULD prevent requests when budget limits exceeded', async () => {
       const mockCostTracker = {
@@ -267,7 +267,7 @@ describe('AI Optimization Contract Tests', () => {
       mockCostTracker.dailySpent = 105;
       const isDailyBudgetExceededAfter = mockCostTracker.dailySpent >= mockCostTracker.dailyLimit;
       expect(isDailyBudgetExceededAfter).toBe(true);
-    });
+    }
 
     it('SHOULD track cost per request and provider', () => {
       const mockCostMetrics: CostMetrics = {
@@ -283,37 +283,37 @@ describe('AI Optimization Contract Tests', () => {
         monthlySpend: 345.67,
       };
 
-      expect(mockCostMetrics.totalCost).toBeGreaterThan(0);
+      expect(mockCostMetrics.totalCost).toBeGreaterThan(0
       expect(mockCostMetrics.avgCostPerRequest).toBeLessThan(
         aiOptimization.costOptimization.budgetLimits.perRequest,
-      );
+      
       expect(mockCostMetrics.providerCosts.anthropic.avgCost).toBeLessThan(
         mockCostMetrics.providerCosts.azure.avgCost,
-      );
-    });
-  });
+      
+    }
+  }
 
   describe('Performance Requirements', () => {
     it('MUST meet maximum latency requirements', () => {
-      expect(aiOptimization.performance.maxLatency).toBeLessThanOrEqual(5000);
-    });
+      expect(aiOptimization.performance.maxLatency).toBeLessThanOrEqual(5000
+    }
 
     it('MUST support required throughput', () => {
       expect(
         aiOptimization.performance.throughputTarget,
-      ).toBeGreaterThanOrEqual(100);
-    });
+      ).toBeGreaterThanOrEqual(100
+    }
 
     it('MUST limit concurrent requests', () => {
-      expect(aiOptimization.performance.concurrencyLimit).toBeGreaterThan(0);
+      expect(aiOptimization.performance.concurrencyLimit).toBeGreaterThan(0
       expect(aiOptimization.performance.concurrencyLimit).toBeLessThanOrEqual(
         20,
-      );
-    });
+      
+    }
 
     it('MUST enable circuit breaker protection', () => {
       expect(aiOptimization.performance.circuitBreakerEnabled).toBe(true);
-    });
+    }
 
     it('SHOULD monitor performance metrics', async () => {
       const mockPerformanceMetrics: PerformanceMetrics = {
@@ -329,15 +329,15 @@ describe('AI Optimization Contract Tests', () => {
 
       expect(mockPerformanceMetrics.avgLatency).toBeLessThan(
         aiOptimization.performance.maxLatency,
-      );
+      
       expect(mockPerformanceMetrics.throughput).toBeGreaterThanOrEqual(
         aiOptimization.performance.throughputTarget,
-      );
-      expect(mockPerformanceMetrics.successRate).toBeGreaterThan(0.99);
+      
+      expect(mockPerformanceMetrics.successRate).toBeGreaterThan(0.99
       expect(mockPerformanceMetrics.concurrentRequests).toBeLessThanOrEqual(
         aiOptimization.performance.concurrencyLimit,
-      );
-    });
+      
+    }
 
     it('SHOULD activate circuit breaker on consecutive failures', () => {
       const mockCircuitBreaker = {
@@ -349,9 +349,9 @@ describe('AI Optimization Contract Tests', () => {
 
       const shouldOpen = mockCircuitBreaker.failureCount >= mockCircuitBreaker.failureThreshold;
       expect(shouldOpen).toBe(true);
-      expect(mockCircuitBreaker.status).toBe('open');
-    });
-  });
+      expect(mockCircuitBreaker.status).toBe('open')
+    }
+  }
 
   describe('Healthcare Compliance', () => {
     it('MUST sanitize healthcare data in AI requests', async () => {
@@ -363,10 +363,10 @@ describe('AI Optimization Contract Tests', () => {
       };
 
       expect(mockHealthcareQuery.sanitizationApplied).toBe(true);
-      expect(mockHealthcareQuery.sanitized).not.toContain('João Silva');
-      expect(mockHealthcareQuery.sanitized).not.toContain('123.456.789-00');
-      expect(mockHealthcareQuery.piiDetected.length).toBeGreaterThan(0);
-    });
+      expect(mockHealthcareQuery.sanitized).not.toContain('João Silva')
+      expect(mockHealthcareQuery.sanitized).not.toContain('123.456.789-00')
+      expect(mockHealthcareQuery.piiDetected.length).toBeGreaterThan(0
+    }
 
     it('MUST audit all AI interactions', () => {
       const mockAuditEntry = {
@@ -381,9 +381,9 @@ describe('AI Optimization Contract Tests', () => {
       };
 
       expect(mockAuditEntry.complianceChecked).toBe(true);
-      expect(mockAuditEntry.timestamp).toBeGreaterThan(0);
-      expect(mockAuditEntry.provider).toBeTruthy();
-    });
+      expect(mockAuditEntry.timestamp).toBeGreaterThan(0
+      expect(mockAuditEntry.provider).toBeTruthy(
+    }
 
     it('MUST respect data retention policies', () => {
       const mockDataRetention = {
@@ -394,10 +394,10 @@ describe('AI Optimization Contract Tests', () => {
       };
 
       expect(mockDataRetention.auditLogs).toBeGreaterThanOrEqual(2555); // 7 years minimum
-      expect(mockDataRetention.queries).toBeGreaterThan(0);
-      expect(mockDataRetention.responses).toBeGreaterThan(0);
-    });
-  });
+      expect(mockDataRetention.queries).toBeGreaterThan(0
+      expect(mockDataRetention.responses).toBeGreaterThan(0
+    }
+  }
 
   describe('Integration Contracts', () => {
     it('MUST integrate with existing authentication system', () => {
@@ -409,9 +409,9 @@ describe('AI Optimization Contract Tests', () => {
       };
 
       expect(mockAuthIntegration.requiresAuth).toBe(true);
-      expect(mockAuthIntegration.supportsRoles).toContain('professional');
+      expect(mockAuthIntegration.supportsRoles).toContain('professional')
       expect(mockAuthIntegration.apiKeyValidation).toBe(true);
-    });
+    }
 
     it('MUST provide monitoring and alerting hooks', () => {
       const mockMonitoringConfig = {
@@ -428,9 +428,9 @@ describe('AI Optimization Contract Tests', () => {
       expect(mockMonitoringConfig.metricsEnabled).toBe(true);
       expect(mockMonitoringConfig.alertThresholds.latency).toBeLessThan(
         aiOptimization.performance.maxLatency,
-      );
+      
       expect(mockMonitoringConfig.sentryIntegration).toBe(true);
-    });
+    }
 
     it('MUST support graceful degradation', async () => {
       const mockDegradationScenarios = [
@@ -441,12 +441,12 @@ describe('AI Optimization Contract Tests', () => {
       ];
 
       mockDegradationScenarios.forEach(scenario => {
-        expect(scenario.fallback).toBeTruthy();
-        expect(scenario.scenario).toBeTruthy();
-      });
-    });
-  });
-});
+        expect(scenario.fallback).toBeTruthy(
+        expect(scenario.scenario).toBeTruthy(
+      }
+    }
+  }
+}
 
 /**
  * Contract Test Summary for T012:

@@ -13,13 +13,13 @@ const mockSupabase = {
 
 vi.mock('@supabase/supabase-js_, () => ({
   createClient: vi.fn(() => mockSupabase),
-}));
+})
 
 describe('Audit Logger Security Tests_, () => {
   let auditLogger: AuditLogger;
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(
 
     mockSupabase.from.mockReturnValue({
       insert: vi.fn().mockReturnValue({
@@ -27,19 +27,19 @@ describe('Audit Logger Security Tests_, () => {
           single: vi.fn().mockResolvedValue({ data: null, error: null }),
         }),
       }),
-    });
+    }
 
     auditLogger = new AuditLogger({
       enableConsoleLogging: false,
       enableDatabaseLogging: true,
       supabaseUrl: 'https://test.supabase.co',
       supabaseKey: 'test-key',
-    });
-  });
+    }
+  }
 
   afterEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks(
+  }
 
   describe('Type Safety_, () => {
     it('should validate AI metadata types_,_async () => {
@@ -62,10 +62,10 @@ describe('Audit Logger Security Tests_, () => {
         100,
         50,
         aiMetadata,
-      );
+      
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
-    });
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
+    }
 
     it('should reject invalid AI metadata types_,_async () => {
       const invalidMetadata = {
@@ -85,8 +85,8 @@ describe('Audit Logger Security Tests_, () => {
           invalidMetadata.outputTokens as any,
           invalidMetadata,
         ),
-      ).resolves.not.toThrow();
-    });
+      ).resolves.not.toThrow(
+    }
 
     it('should validate healthcare access metadata_,_async () => {
       const healthcareMetadata: HealthcareAccessMetadata = {
@@ -108,11 +108,11 @@ describe('Audit Logger Security Tests_, () => {
         'patient_record_,
         true,
         healthcareMetadata,
-      );
+      
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
-    });
-  });
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
+    }
+  }
 
   describe('Metadata Serialization Security_, () => {
     it('should safely serialize primitive metadata_,_async () => {
@@ -129,10 +129,10 @@ describe('Audit Logger Security Tests_, () => {
         },
       };
 
-      await auditLogger.log(entry);
+      await auditLogger.log(entry
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
-    });
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
+    }
 
     it('should safely serialize complex objects_,_async () => {
       const entry: AuditLogEntry = {
@@ -151,10 +151,10 @@ describe('Audit Logger Security Tests_, () => {
         },
       };
 
-      await auditLogger.log(entry);
+      await auditLogger.log(entry
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
-    });
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
+    }
 
     it('should handle circular references in metadata_,_async () => {
       const circularObject: any = { name: 'test' };
@@ -171,8 +171,8 @@ describe('Audit Logger Security Tests_, () => {
       };
 
       // Should handle circular references without throwing
-      await expect(auditLogger.log(entry)).resolves.not.toThrow();
-    });
+      await expect(auditLogger.log(entry)).resolves.not.toThrow(
+    }
 
     it('should sanitize dangerous prototype properties_,_async () => {
       const entry: AuditLogEntry = {
@@ -187,11 +187,11 @@ describe('Audit Logger Security Tests_, () => {
         },
       };
 
-      await auditLogger.log(entry);
+      await auditLogger.log(entry
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
-    });
-  });
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
+    }
+  }
 
   describe('Input Validation_, () => {
     it('should validate required audit log fields_,_async () => {
@@ -202,8 +202,8 @@ describe('Audit Logger Security Tests_, () => {
       };
 
       // @ts-expect-error - Testing invalid input
-      await expect(auditLogger.log(invalidEntry)).resolves.not.toThrow();
-    });
+      await expect(auditLogger.log(invalidEntry)).resolves.not.toThrow(
+    }
 
     it('should handle extremely large metadata objects_,_async () => {
       const largeMetadata = {
@@ -220,8 +220,8 @@ describe('Audit Logger Security Tests_, () => {
       };
 
       // Should handle large objects gracefully
-      await expect(auditLogger.log(entry)).resolves.not.toThrow();
-    });
+      await expect(auditLogger.log(entry)).resolves.not.toThrow(
+    }
 
     it('should handle special characters in metadata_,_async () => {
       const entry: AuditLogEntry = {
@@ -237,11 +237,11 @@ describe('Audit Logger Security Tests_, () => {
         },
       };
 
-      await auditLogger.log(entry);
+      await auditLogger.log(entry
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
-    });
-  });
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
+    }
+  }
 
   describe('Database Security_, () => {
     it('should not leak sensitive information in errors_,_async () => {
@@ -251,7 +251,7 @@ describe('Audit Logger Security Tests_, () => {
             single: vi.fn().mockRejectedValue(new Error('Database connection failed')),
           }),
         }),
-      });
+      }
 
       const entry: AuditLogEntry = {
         _userId: 'user123_,
@@ -263,13 +263,13 @@ describe('Audit Logger Security Tests_, () => {
         },
       };
 
-      await expect(auditLogger.log(entry)).resolves.not.toThrow();
-    });
+      await expect(auditLogger.log(entry)).resolves.not.toThrow(
+    }
 
     it('should handle database connection failures gracefully_,_async () => {
       mockSupabase.from.mockImplementation(() => {
-        throw new Error('Connection failed');
-      });
+        throw new Error('Connection failed')
+      }
 
       const entry: AuditLogEntry = {
         _userId: 'user123_,
@@ -279,9 +279,9 @@ describe('Audit Logger Security Tests_, () => {
       };
 
       // Should handle database errors gracefully
-      await expect(auditLogger.log(entry)).resolves.not.toThrow();
-    });
-  });
+      await expect(auditLogger.log(entry)).resolves.not.toThrow(
+    }
+  }
 
   describe('LGPD Compliance_, () => {
     it('should log healthcare data access with LGPD consent_,_async () => {
@@ -295,10 +295,10 @@ describe('Audit Logger Security Tests_, () => {
           accessReason: 'treatment',
           retentionPeriod: '10_years_,
         },
-      );
+      
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
-    });
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
+    }
 
     it('should log healthcare data access without LGPD consent_,_async () => {
       await auditLogger.logHealthcareAccess(
@@ -311,10 +311,10 @@ describe('Audit Logger Security Tests_, () => {
           accessReason: 'emergency',
           retentionPeriod: '24_hours_,
         },
-      );
+      
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
-    });
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
+    }
 
     it('should validate healthcare metadata fields_,_async () => {
       const validHealthcareMetadata: HealthcareAccessMetadata = {
@@ -331,9 +331,9 @@ describe('Audit Logger Security Tests_, () => {
         'patient_record_,
         true,
         validHealthcareMetadata,
-      );
+      
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_);
-    });
-  });
-});
+      expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs_
+    }
+  }
+}

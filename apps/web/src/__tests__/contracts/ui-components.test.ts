@@ -12,7 +12,7 @@ const MockButton = (props: any) => {
     className: `btn btn-${variant}`,
     'data-testid': 'mock-button',
     ...restProps,
-  }, children);
+  }, children
 };
 
 const MockForm = (props: any) => {
@@ -21,7 +21,7 @@ const MockForm = (props: any) => {
     onSubmit,
     'data-testid': 'mock-form',
     ...restProps,
-  }, children);
+  }, children
 };
 
 const MockInput = (props: any) => {
@@ -34,7 +34,7 @@ const MockInput = (props: any) => {
     required,
     'data-testid': 'mock-input',
     ...restProps,
-  });
+  }
 };
 
 const MockModal = (props: any) => {
@@ -56,7 +56,7 @@ const MockModal = (props: any) => {
       }, '×'),
       children,
     ]),
-  ]);
+  ]
 };
 
 const MockChart = (props: any) => {
@@ -65,26 +65,26 @@ const MockChart = (props: any) => {
     'data-testid': 'mock-chart',
     className: `chart chart-${type}`,
     ...restProps,
-  }, data ? `Chart: ${data.length} items` : 'No data');
+  }, data ? `Chart: ${data.length} items` : 'No data')
 };
 
 // Continue with rest of the test file...
 describe(('UI Components Contract Tests', () => {
   beforeEach(() => {
     // Setup
-  });
+  }
 
   afterEach(() => {
-    cleanup();
-  });
+    cleanup(
+  }
 
   it(('should render MockButton correctly', () => {
     render(React.createElement(MockButton, {
       onClick: vi.fn(),
-    }, 'Test Button'));
+    }, 'Test Button')
 
-    expect(screen.getByTestId('mock-button')).toBeInTheDocument();
-  });
+    expect(screen.getByTestId('mock-button')).toBeInTheDocument(
+  }
 
   // Add more tests as needed...
-});
+}

@@ -29,24 +29,24 @@ describe(('Supabase Performance Tests', () => {
       lgpdCompliant: true,
       performanceTracking: true,
       connectionPooling: true,
-    });
-    testDataGenerator = new HealthcareTestDataGenerator();
+    }
+    testDataGenerator = new HealthcareTestDataGenerator(
 
-    console.log('🧪 Performance Test Environment Setup Complete');
-  });
+    console.log('🧪 Performance Test Environment Setup Complete')
+  }
 
   afterAll(async () => {
-    await testDataGenerator.cleanupTestData();
+    await testDataGenerator.cleanupTestData(
 
     // Generate performance report
-    console.log('\n📊 Performance Test Summary:');
+    console.log('\n📊 Performance Test Summary:')
     const avgResponseTime = performanceMetrics.reduce((sum, m) => sum + m.responseTime, 0)
       / performanceMetrics.length;
-    console.log(`Average Response Time: ${avgResponseTime.toFixed(2)}ms`);
-    console.log(`Total Operations Tested: ${performanceMetrics.length}`);
+    console.log(`Average Response Time: ${avgResponseTime.toFixed(2)}ms`
+    console.log(`Total Operations Tested: ${performanceMetrics.length}`
 
-    console.log('⚡ Performance Test Environment Cleaned Up');
-  });
+    console.log('⚡ Performance Test Environment Cleaned Up')
+  }
 
   const recordMetrics = (
     operation: string,
@@ -63,7 +63,7 @@ describe(('Supabase Performance Tests', () => {
         operationType as any,
       ),
     };
-    performanceMetrics.push(metric);
+    performanceMetrics.push(metric
     return metric;
   };
 
@@ -73,7 +73,7 @@ describe(('Supabase Performance Tests', () => {
       const testPatients = await testDataGenerator.createBulkTestData(
         'patients',
         1000,
-      );
+      
 
       const optimizationTests = [
         {
@@ -123,29 +123,29 @@ describe(('Supabase Performance Tests', () => {
       ];
 
       for (const test of optimizationTests) {
-        const startTime = performance.now();
-        const { error } = await test.query();
+        const startTime = performance.now(
+        const { error } = await test.query(
         const responseTime = performance.now() - startTime;
 
-        expect(error).toBeNull();
+        expect(error).toBeNull(
 
         const metric = recordMetrics(
           test.name,
           responseTime,
           test.expectedType,
-        );
+        
         expect(metric.passed).toBe(true);
 
-        console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`);
+        console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`
       }
-    });
+    }
 
     test(_'should validate appointment scheduling query performance',async () => {
       // security-auditor: Scheduling performance validation
       const testDoctors = await testDataGenerator.createBulkTestData(
         'doctors',
         50,
-      );
+      
       const schedulingTests = [
         {
           name: 'Doctor Availability Check',
@@ -187,26 +187,26 @@ describe(('Supabase Performance Tests', () => {
       ];
 
       for (const test of schedulingTests) {
-        const startTime = performance.now();
-        const { error } = await test.query();
+        const startTime = performance.now(
+        const { error } = await test.query(
         const responseTime = performance.now() - startTime;
 
-        expect(error).toBeNull();
+        expect(error).toBeNull(
 
         const metric = recordMetrics(
           test.name,
           responseTime,
           test.expectedType,
-        );
+        
         expect(metric.passed).toBe(true);
 
-        console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`);
+        console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`
       }
-    });
+    }
 
     test(_'should validate medical records query optimization',async () => {
       // architect-review: Medical records performance
-      const testPatient = await testDataGenerator.createTestPatient();
+      const testPatient = await testDataGenerator.createTestPatient(
       const medicalRecordsTests = [
         {
           name: 'Patient Medical History',
@@ -247,23 +247,23 @@ describe(('Supabase Performance Tests', () => {
       ];
 
       for (const test of medicalRecordsTests) {
-        const startTime = performance.now();
-        const { error } = await test.query();
+        const startTime = performance.now(
+        const { error } = await test.query(
         const responseTime = performance.now() - startTime;
 
-        expect(error).toBeNull();
+        expect(error).toBeNull(
 
         const metric = recordMetrics(
           test.name,
           responseTime,
           test.expectedType,
-        );
+        
         expect(metric.passed).toBe(true);
 
-        console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`);
+        console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`
       }
-    });
-  });
+    }
+  }
 
   describe(('Connection Management Performance', () => {
     test(_'should validate connection pooling under load',async () => {
@@ -273,32 +273,32 @@ describe(('Supabase Performance Tests', () => {
       for (const connectionCount of concurrentConnections) {
         const operationPromises = Array.from(
           { length: connectionCount },async (, i) => {
-            const startTime = performance.now();
+            const startTime = performance.now(
             const { error } = await testClient
               .from('patients')
               .select('count')
-              .single();
+              .single(
 
             const responseTime = performance.now() - startTime;
             return { operation: i, responseTime, error };
           },
-        );
+        
 
-        const results = await Promise.all(operationPromises);
+        const results = await Promise.all(operationPromises
 
         // All operations should succeed
         results.forEach((result, _index) => {
-          expect(result.error).toBeNull();
+          expect(result.error).toBeNull(
           recordMetrics(
             `Connection Pool - ${connectionCount} concurrent - Op ${index}`,
             result.responseTime,
             'general_query',
-          );
-        });
+          
+        }
 
         const avgResponseTime = results.reduce((sum, r) => sum + r.responseTime, 0)
           / results.length;
-        const maxResponseTime = Math.max(...results.map(r => r.responseTime));
+        const maxResponseTime = Math.max(...results.map(r => r.responseTime)
 
         console.log(
           `✅ ${connectionCount} concurrent connections: avg=${avgResponseTime.toFixed(2)}ms, max=${
@@ -306,9 +306,9 @@ describe(('Supabase Performance Tests', () => {
               2,
             )
           }ms`,
-        );
+        
       }
-    });
+    }
 
     test(_'should validate connection recovery and failover',async () => {
       // security-auditor: Connection resilience validation
@@ -319,7 +319,7 @@ describe(('Supabase Performance Tests', () => {
             // Simulate timeout scenario
             const timeoutPromise = new Promise(resolve =>
               setTimeout(() => resolve({ data: null, error: null }), 1000)
-            );
+            
             return await timeoutPromise;
           },
         },
@@ -333,7 +333,7 @@ describe(('Supabase Performance Tests', () => {
               const { data, error } = await testClient
                 .from('patients')
                 .select('count')
-                .single();
+                .single(
               if (!error) return { data, error, attempts };
             }
             return { data: null, error: 'Max retries exceeded', attempts };
@@ -342,14 +342,14 @@ describe(('Supabase Performance Tests', () => {
       ];
 
       for (const test of recoveryTests) {
-        const startTime = performance.now();
-        const result = await test.operation();
+        const startTime = performance.now(
+        const result = await test.operation(
         const responseTime = performance.now() - startTime;
 
-        recordMetrics(test.name, responseTime, 'general_query');
-        console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`);
+        recordMetrics(test.name, responseTime, 'general_query')
+        console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`
       }
-    });
+    }
 
     test(_'should validate connection cleanup and resource management',async () => {
       // architect-review: Resource management validation
@@ -365,23 +365,23 @@ describe(('Supabase Performance Tests', () => {
       ];
 
       for (const test of resourceTests) {
-        const startTime = performance.now();
+        const startTime = performance.now(
 
         // Perform multiple operations
         for (let i = 0; i < test.operations; i++) {
-          await testClient.from('patients').select('count').single();
+          await testClient.from('patients').select('count').single(
         }
 
         const responseTime = performance.now() - startTime;
         const avgTimePerOperation = responseTime / test.operations;
 
-        recordMetrics(test.name, avgTimePerOperation, 'general_query');
+        recordMetrics(test.name, avgTimePerOperation, 'general_query')
         console.log(
           `✅ ${test.name}: ${test.operations} ops, avg=${avgTimePerOperation.toFixed(2)}ms/op`,
-        );
+        
       }
-    });
-  });
+    }
+  }
 
   describe(('Caching Strategy Performance', () => {
     test(_'should validate query result caching',async () => {
@@ -403,40 +403,40 @@ describe(('Supabase Performance Tests', () => {
 
       for (const test of cacheTests) {
         // First request (cache miss)
-        const startTime1 = performance.now();
-        const { error: error1 } = await test.query();
+        const startTime1 = performance.now(
+        const { error: error1 } = await test.query(
         const responseTime1 = performance.now() - startTime1;
 
-        expect(error1).toBeNull();
+        expect(error1).toBeNull(
         recordMetrics(
           `${test.name} - Cache Miss`,
           responseTime1,
           'general_query',
-        );
+        
 
         // Second request (cache hit)
-        const startTime2 = performance.now();
-        const { error: error2 } = await test.query();
+        const startTime2 = performance.now(
+        const { error: error2 } = await test.query(
         const responseTime2 = performance.now() - startTime2;
 
-        expect(error2).toBeNull();
+        expect(error2).toBeNull(
         recordMetrics(
           `${test.name} - Cache Hit`,
           responseTime2,
           'general_query',
-        );
+        
 
         // Third request (cache hit)
-        const startTime3 = performance.now();
-        const { error: error3 } = await test.query();
+        const startTime3 = performance.now(
+        const { error: error3 } = await test.query(
         const responseTime3 = performance.now() - startTime3;
 
-        expect(error3).toBeNull();
+        expect(error3).toBeNull(
         recordMetrics(
           `${test.name} - Cache Hit 2`,
           responseTime3,
           'general_query',
-        );
+        
 
         console.log(
           `✅ ${test.name}: miss=${responseTime1.toFixed(2)}ms, hit1=${
@@ -444,49 +444,49 @@ describe(('Supabase Performance Tests', () => {
               2,
             )
           }ms, hit2=${responseTime3.toFixed(2)}ms`,
-        );
+        
       }
-    });
+    }
 
     test(_'should validate cache invalidation strategies',async () => {
       // security-auditor: Cache invalidation validation
-      const testDoctor = await testDataGenerator.createTestDoctor();
+      const testDoctor = await testDataGenerator.createTestDoctor(
 
       // Query doctor data (cache population)
-      const startTime1 = performance.now();
+      const startTime1 = performance.now(
       await testClient
         .from('doctors')
         .select('*')
         .eq('id', testDoctor.id)
-        .single();
+        .single(
       const responseTime1 = performance.now() - startTime1;
 
       recordMetrics(
         'Doctor Data - Initial Load',
         responseTime1,
         'general_query',
-      );
+      
 
       // Update doctor data (should invalidate cache)
       await testClient
         .from('doctors')
         .update({ specialization: 'Updated Specialization' })
-        .eq('id', testDoctor.id);
+        .eq('id', testDoctor.id
 
       // Query again (cache should be invalidated)
-      const startTime2 = performance.now();
+      const startTime2 = performance.now(
       await testClient
         .from('doctors')
         .select('*')
         .eq('id', testDoctor.id)
-        .single();
+        .single(
       const responseTime2 = performance.now() - startTime2;
 
       recordMetrics(
         'Doctor Data - Post Update',
         responseTime2,
         'general_query',
-      );
+      
 
       console.log(
         `✅ Cache Invalidation: initial=${responseTime1.toFixed(2)}ms, post-update=${
@@ -494,8 +494,8 @@ describe(('Supabase Performance Tests', () => {
             2,
           )
         }ms`,
-      );
-    });
+      
+    }
 
     test(_'should validate distributed cache performance',async () => {
       // architect-review: Distributed caching validation
@@ -503,23 +503,23 @@ describe(('Supabase Performance Tests', () => {
         {
           name: 'Cross-Session Data Consistency',
           test: async () => {
-            const client1 = createTestSupabaseClient();
-            const client2 = createTestSupabaseClient();
+            const client1 = createTestSupabaseClient(
+            const client2 = createTestSupabaseClient(
 
             // Client 1 queries data
-            const startTime1 = performance.now();
+            const startTime1 = performance.now(
             const { data: data1 } = await client1
               .from('organizations')
               .select('*')
-              .limit(10);
+              .limit(10
             const responseTime1 = performance.now() - startTime1;
 
             // Client 2 queries same data
-            const startTime2 = performance.now();
+            const startTime2 = performance.now(
             const { data: data2 } = await client2
               .from('organizations')
               .select('*')
-              .limit(10);
+              .limit(10
             const responseTime2 = performance.now() - startTime2;
 
             return {
@@ -539,10 +539,10 @@ describe(('Supabase Performance Tests', () => {
               'medical_specializations',
             ];
 
-            const startTime = performance.now();
+            const startTime = performance.now(
             await Promise.all(
               warmingQueries.map(table => testClient.from(table).select('*').limit(50)),
-            );
+            
             const responseTime = performance.now() - startTime;
 
             return { responseTime, queriesWarmed: warmingQueries.length };
@@ -551,12 +551,12 @@ describe(('Supabase Performance Tests', () => {
       ];
 
       for (const test of distributedCacheTests) {
-        const result = await test.test();
-        recordMetrics(test.name, result.responseTime, 'general_query');
-        console.log(`✅ ${test.name}: ${result.responseTime.toFixed(2)}ms`);
+        const result = await test.test(
+        recordMetrics(test.name, result.responseTime, 'general_query')
+        console.log(`✅ ${test.name}: ${result.responseTime.toFixed(2)}ms`
       }
-    });
-  });
+    }
+  }
 
   describe(('Real-time Performance Monitoring', () => {
     test(_'should validate real-time subscription performance',async () => {
@@ -580,7 +580,7 @@ describe(('Supabase Performance Tests', () => {
       ];
 
       for (const test of subscriptionTests) {
-        const startTime = performance.now();
+        const startTime = performance.now(
 
         // Mock subscription setup
         const subscription = testClient
@@ -595,30 +595,30 @@ describe(('Supabase Performance Tests', () => {
               console.log(
                 `Real-time update received for ${test.table}:`,
                 payload,
-              );
+              
             },
           )
-          .subscribe();
+          .subscribe(
 
         const responseTime = performance.now() - startTime;
         recordMetrics(
           `${test.name} - Subscription Setup`,
           responseTime,
           'general_query',
-        );
+        
 
         // Clean up subscription
-        await testClient.removeChannel(subscription);
+        await testClient.removeChannel(subscription
 
         console.log(
           `✅ ${test.name}: subscription setup in ${responseTime.toFixed(2)}ms`,
-        );
+        
       }
-    });
+    }
 
     test(_'should validate real-time data synchronization latency',async () => {
       // architect-review: Synchronization latency validation
-      const testData = await testDataGenerator.createTestAppointment();
+      const testData = await testDataGenerator.createTestAppointment(
 
       const latencyTests = [
         {
@@ -637,36 +637,36 @@ describe(('Supabase Performance Tests', () => {
       ];
 
       for (const test of latencyTests) {
-        const updateStartTime = performance.now();
+        const updateStartTime = performance.now(
 
         // Perform update
         await testClient
           .from(test.table)
           .update(test.update)
-          .eq('id', testData.id);
+          .eq('id', testData.id
 
         // Simulate real-time notification processing
-        await new Promise(resolve => setTimeout(resolve, 10)); // Simulated network latency
+        await new Promise(resolve => setTimeout(resolve, 10); // Simulated network latency
 
         const totalLatency = performance.now() - updateStartTime;
         recordMetrics(
           `${test.name} - Sync Latency`,
           totalLatency,
           'critical_query',
-        );
+        
 
         console.log(
           `✅ ${test.name}: sync latency ${totalLatency.toFixed(2)}ms`,
-        );
+        
       }
-    });
+    }
 
     test(_'should validate concurrent real-time operations',async () => {
       // security-auditor: Concurrent real-time validation
       const concurrentOperations = 20;
       const operationPromises = Array.from(
         { length: concurrentOperations },async (, i) => {
-          const startTime = performance.now();
+          const startTime = performance.now(
 
           // Simulate concurrent real-time operations
           const operations = [
@@ -675,29 +675,29 @@ describe(('Supabase Performance Tests', () => {
             testClient.from('patients').select('*').limit(1),
           ];
 
-          await Promise.all(operations);
+          await Promise.all(operations
 
           const responseTime = performance.now() - startTime;
           return { operation: i, responseTime };
         },
-      );
+      
 
-      const results = await Promise.all(operationPromises);
+      const results = await Promise.all(operationPromises
 
       results.forEach((result, _index) => {
         recordMetrics(
           `Concurrent Real-time Op ${index}`,
           result.responseTime,
           'general_query',
-        );
-      });
+        
+      }
 
       const avgResponseTime = results.reduce((sum, r) => sum + r.responseTime, 0) / results.length;
       console.log(
         `✅ ${concurrentOperations} concurrent real-time ops: avg=${avgResponseTime.toFixed(2)}ms`,
-      );
-    });
-  });
+      
+    }
+  }
 
   describe(('Load Testing Scenarios', () => {
     test(_'should validate peak hour simulation',async () => {
@@ -710,7 +710,7 @@ describe(('Supabase Performance Tests', () => {
 
       const userOperations = Array.from(
         { length: peakLoadSimulation.concurrentUsers },async (, userId) => {
-          const userStartTime = performance.now();
+          const userStartTime = performance.now(
           const operations = [];
 
           for (let i = 0; i < peakLoadSimulation.operationsPerUser; i++) {
@@ -719,37 +719,37 @@ describe(('Supabase Performance Tests', () => {
               case 0:
                 operations.push(
                   testClient.from('patients').select('count').single(),
-                );
+                
                 break;
               case 1:
                 operations.push(
                   testClient.from('appointments').select('count').single(),
-                );
+                
                 break;
               case 2:
                 operations.push(
                   testClient.from('doctors').select('count').single(),
-                );
+                
                 break;
             }
           }
 
-          await Promise.all(operations);
+          await Promise.all(operations
           const userResponseTime = performance.now() - userStartTime;
 
           return { userId, responseTime: userResponseTime };
         },
-      );
+      
 
-      const results = await Promise.all(userOperations);
+      const results = await Promise.all(userOperations
 
       results.forEach(result => {
         recordMetrics(
           `Peak Load User ${result.userId}`,
           result.responseTime,
           'general_query',
-        );
-      });
+        
+      }
 
       const avgUserTime = results.reduce((sum, r) => sum + r.responseTime, 0) / results.length;
       console.log(
@@ -758,8 +758,8 @@ describe(('Supabase Performance Tests', () => {
             2,
           )
         }ms/user`,
-      );
-    });
+      
+    }
 
     test(_'should validate data-intensive operation performance',async () => {
       // security-auditor: Data-intensive validation
@@ -776,7 +776,7 @@ describe(('Supabase Performance Tests', () => {
                 appointments(id, appointment_date, status)
               `,
               )
-              .limit(100);
+              .limit(100
           },
         },
         {
@@ -788,7 +788,7 @@ describe(('Supabase Performance Tests', () => {
                 Date.now() - 365 * 24 * 60 * 60 * 1000,
               ).toISOString(),
               date_to: new Date().toISOString(),
-            });
+            }
           },
         },
         {
@@ -801,21 +801,21 @@ describe(('Supabase Performance Tests', () => {
                 'appointment_date',
                 new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
               )
-              .limit(1000);
+              .limit(1000
           },
         },
       ];
 
       for (const test of dataIntensiveTests) {
-        const startTime = performance.now();
-        const { data, error } = await test.operation();
+        const startTime = performance.now(
+        const { data, error } = await test.operation(
         const responseTime = performance.now() - startTime;
 
-        expect(error).toBeNull();
-        recordMetrics(test.name, responseTime, 'general_query');
+        expect(error).toBeNull(
+        recordMetrics(test.name, responseTime, 'general_query')
 
-        console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`);
+        console.log(`✅ ${test.name}: ${responseTime.toFixed(2)}ms`
       }
-    });
-  });
-});
+    }
+  }
+}

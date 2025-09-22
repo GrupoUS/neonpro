@@ -23,20 +23,20 @@ describe('AI Chat — streaming pipeline (Phase 1)', () => {
       createdAt: new Date().toISOString(),
     };
 
-    expect(session.id).toBe('s1');
-    expect(msg._role).toBe('user');
+    expect(session.id).toBe('s1')
+    expect(msg._role).toBe('user')
     // Env flag should be boolean
-    expect(typeof aiConfig.AI_CHAT_MOCK_MODE).toBe('boolean');
-  });
+    expect(typeof aiConfig.AI_CHAT_MOCK_MODE).toBe('boolean')
+  }
 
   it(_'streaming util yields chunks in mock mode',async () => {
-    const mod = await import('@/lib/ai-chat/streaming');
-    const itr = await mod.startChatStream({ sessionId: 's1', text: 'Olá' });
+    const mod = await import('@/lib/ai-chat/streaming')
+    const itr = await mod.startChatStream({ sessionId: 's1', text: 'Olá' }
     const out: string[] = [];
     for await (const ev of itr) {
-      if (ev.type === 'text') out.push(ev.delta);
+      if (ev.type === 'text') out.push(ev.delta
       if (ev.type === 'done') break;
     }
-    expect(out.join('')).toContain('estéticos');
-  });
-});
+    expect(out.join('')).toContain('estéticos')
+  }
+}

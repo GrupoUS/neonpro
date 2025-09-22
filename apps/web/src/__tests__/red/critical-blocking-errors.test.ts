@@ -21,8 +21,8 @@ import { expect, test } from 'vitest';
 test('clinic.ts import should fail with middleware runtime error (observed)', async () => {
   await expect(
     import('../../../../api/src/trpc/contracts/clinic'),
-  ).rejects.toThrow(/is not a function|middleware/i);
-});
+  ).rejects.toThrow(/is not a function|middleware/i
+}
 
 /**
  * 2) AccessibilityTester.tsx
@@ -31,8 +31,8 @@ test('clinic.ts import should fail with middleware runtime error (observed)', as
 test('AccessibilityTester.tsx import should fail due to transform/compile error (observed)', async () => {
   await expect(
     import('../../components/accessibility/AccessibilityTester'),
-  ).rejects.toThrow(/must be initialized|Transform failed|ERROR:/i);
-});
+  ).rejects.toThrow(/must be initialized|Transform failed|ERROR:/i
+}
 
 /**
  * 3) DataAgentChat.tsx
@@ -41,10 +41,10 @@ test('AccessibilityTester.tsx import should fail due to transform/compile error 
  * current (non-failing) state for this module in RED phase.
  */
 test(_'DataAgentChat.tsx import currently resolves and exports DataAgentChat',async () => {
-  const mod = await import('../../components/ai/DataAgentChat');
+  const mod = await import('../../components/ai/DataAgentChat')
   // Expect an exported function/component named DataAgentChat (or default)
-  expect(mod.DataAgentChat || mod.default).toBeDefined();
-});
+  expect(mod.DataAgentChat || mod.default).toBeDefined(
+}
 
 /**
  * 4) security-logging.test.ts
@@ -54,19 +54,19 @@ test(_'DataAgentChat.tsx import currently resolves and exports DataAgentChat',as
 test('security-logging.test.ts should fail to load (module not found) — observed', async () => {
   await expect(
     import('../../../../tests/security/security-logging.test'),
-  ).rejects.toThrow(/Cannot find module|no such file/i);
-});
+  ).rejects.toThrow(/Cannot find module|no such file/i
+}
 
 /**
  * 5) ai-agent.ts (types)
  * Observed: import succeeded previously. Document current exports (type-guards).
  */
 test(_'ai-agent.ts import currently resolves and exports type-guard helpers',async () => {
-  const mod = await import('../../types/ai-agent');
-  expect(typeof (mod.isAgentResponse)).toBe('function');
-  expect(typeof (mod.isUserQuery)).toBe('function');
-  expect(typeof (mod.isInteractiveAction)).toBe('function');
-});
+  const mod = await import('../../types/ai-agent')
+  expect(typeof (mod.isAgentResponse)).toBe('function')
+  expect(typeof (mod.isUserQuery)).toBe('function')
+  expect(typeof (mod.isInteractiveAction)).toBe('function')
+}
 
 /**
  * 6) crud-test-utils.ts
@@ -75,5 +75,5 @@ test(_'ai-agent.ts import currently resolves and exports type-guard helpers',asy
 test('crud-test-utils.ts import should fail to load (module not found) — observed', async () => {
   await expect(
     import('../../../../tools/testing-toolkit/src/crud-test-utils'),
-  ).rejects.toThrow(/Cannot find module|no such file|ENOENT/i);
-});
+  ).rejects.toThrow(/Cannot find module|no such file|ENOENT/i
+}

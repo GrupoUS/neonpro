@@ -16,9 +16,9 @@
 import { describe, expect, it } from 'vitest';
 
 async function api(path: string, init?: RequestInit) {
-  const { default: app } = await import('../../src/app');
-  const url = new URL(`http://local.test${path}`);
-  return app.request(url, init);
+  const { default: app } = await import('../../src/app')
+  const url = new URL(`http://local.test${path}`
+  return app.request(url, init
 }
 
 describe('Contract: API Management', () => {
@@ -30,12 +30,12 @@ describe('Contract: API Management', () => {
           accept: 'application/json',
           'x-api-key': 'test-api-key',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
 
       // OpenAPI specification validation
       expect(data).toMatchObject({
@@ -59,7 +59,7 @@ describe('Contract: API Management', () => {
           schemas: expect.any(Object),
           securitySchemes: expect.any(Object),
         }),
-      });
+      }
 
       // Healthcare-specific extensions
       expect(data.info).toMatchObject({
@@ -71,16 +71,16 @@ describe('Contract: API Management', () => {
         }),
         'x-data-classification': 'protected_health_information',
         'x-audit-level': 'high',
-      });
-    });
+      }
+    }
 
     it('should include healthcare-specific security schemes', async () => {
       const res = await api('/api/openapi.json', {
         method: 'GET',
         headers: { accept: 'application/json' },
-      });
+      }
 
-      const data = await res.json();
+      const data = await res.json(
 
       expect(data.components.securitySchemes).toMatchObject({
         BearerAuth: expect.objectContaining({
@@ -100,16 +100,16 @@ describe('Contract: API Management', () => {
           scheme: 'bearer',
           description: expect.stringContaining('clinic'),
         }),
-      });
-    });
+      }
+    }
 
     it('should validate healthcare data models in schemas', async () => {
       const res = await api('/api/openapi.json', {
         method: 'GET',
         headers: { accept: 'application/json' },
-      });
+      }
 
-      const data = await res.json();
+      const data = await res.json(
       const schemas = data.components.schemas;
 
       // Validate patient schema includes healthcare fields
@@ -131,7 +131,7 @@ describe('Contract: API Management', () => {
               type: 'object',
             }),
           }),
-        });
+        }
       }
 
       // Validate appointment schema includes healthcare fields
@@ -153,10 +153,10 @@ describe('Contract: API Management', () => {
               type: 'string',
             }),
           }),
-        });
+        }
       }
-    });
-  });
+    }
+  }
 
   describe('Schema Validation API', () => {
     it('should validate patient data schema with Brazilian rules', async () => {
@@ -191,12 +191,12 @@ describe('Contract: API Management', () => {
           'x-clinic-id': 'clinic_test',
         },
         body: JSON.stringify(validPatientData),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         valid: true,
         schema_version: expect.any(String),
@@ -206,8 +206,8 @@ describe('Contract: API Management', () => {
           anvisa: true,
           data_classification: 'personal',
         },
-      });
-    });
+      }
+    }
 
     it('should reject invalid CPF format', async () => {
       const invalidPatientData = {
@@ -224,11 +224,11 @@ describe('Contract: API Management', () => {
           'x-clinic-id': 'clinic_test',
         },
         body: JSON.stringify(invalidPatientData),
-      });
+      }
 
-      expect(res.status).toBe(422);
+      expect(res.status).toBe(422
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         valid: false,
         errors: expect.arrayContaining(
@@ -238,8 +238,8 @@ describe('Contract: API Management', () => {
             code: 'invalid_cpf',
           }),
         ),
-      });
-    });
+      }
+    }
 
     it('should enforce LGPD consent validation', async () => {
       const patientDataWithoutConsent = {
@@ -257,11 +257,11 @@ describe('Contract: API Management', () => {
           'x-clinic-id': 'clinic_test',
         },
         body: JSON.stringify(patientDataWithoutConsent),
-      });
+      }
 
-      expect(res.status).toBe(422);
+      expect(res.status).toBe(422
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         valid: false,
         compliance_errors: expect.arrayContaining(
@@ -273,32 +273,32 @@ describe('Contract: API Management', () => {
             ),
           }),
         ),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('API Documentation Endpoints', () => {
     it('should serve interactive API documentation', async () => {
       const res = await api('/api/docs', {
         method: 'GET',
         headers: { accept: 'text/html' },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
-      expect(res.headers.get('content-type')).toMatch(/text\/html/);
-    });
+      expect(res.status).toBe(200
+      expect(res.headers.get('content-type')).toMatch(/text\/html/
+    }
 
     it('should provide healthcare-specific API examples', async () => {
       const res = await api('/api/docs/examples', {
         method: 'GET',
         headers: { accept: 'application/json' },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         examples: expect.objectContaining({
           patient_registration: expect.any(Object),
@@ -311,19 +311,19 @@ describe('Contract: API Management', () => {
           audit_logging: 'enabled',
           consent_required: true,
         },
-      });
-    });
+      }
+    }
 
     it('should validate endpoint healthcare compliance', async () => {
       const res = await api('/api/docs/compliance', {
         method: 'GET',
         headers: { accept: 'application/json' },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         compliance_summary: expect.objectContaining({
           total_endpoints: expect.any(Number),
@@ -342,9 +342,9 @@ describe('Contract: API Management', () => {
             }),
           }),
         ),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Contract Validation Middleware', () => {
     it('should validate API contract compliance for patient endpoints', async () => {
@@ -370,12 +370,12 @@ describe('Contract: API Management', () => {
           'x-contract-version': '2.0',
         },
         body: JSON.stringify(patientCreationPayload),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         contract_valid: true,
         version: '2.0',
@@ -385,8 +385,8 @@ describe('Contract: API Management', () => {
           response: true,
           healthcare_extensions: true,
         },
-      });
-    });
+      }
+    }
 
     it('should detect contract violations and provide fixes', async () => {
       const invalidPayload = {
@@ -402,11 +402,11 @@ describe('Contract: API Management', () => {
           'x-clinic-id': 'clinic_contract_test',
         },
         body: JSON.stringify(invalidPayload),
-      });
+      }
 
-      expect(res.status).toBe(422);
+      expect(res.status).toBe(422
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         contract_valid: false,
         violations: expect.arrayContaining(
@@ -418,8 +418,8 @@ describe('Contract: API Management', () => {
             suggested_fix: expect.any(String),
           }),
         ),
-      });
-    });
+      }
+    }
 
     it('should enforce healthcare data handling contracts', async () => {
       const res = await api('/api/v2/contracts/healthcare-validation', {
@@ -434,12 +434,12 @@ describe('Contract: API Management', () => {
           data_sensitivity: 'high',
           consent_verified: true,
         }),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         healthcare_contract_valid: true,
         compliance_check: {
@@ -454,9 +454,9 @@ describe('Contract: API Management', () => {
           },
         },
         audit_required: expect.any(Boolean),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Healthcare Compliance Validation', () => {
     it('should validate LGPD compliance for all endpoints', async () => {
@@ -465,12 +465,12 @@ describe('Contract: API Management', () => {
         headers: {
           'x-clinic-id': 'clinic_compliance_test',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         lgpd_compliant: true,
         validation_results: expect.objectContaining({
@@ -488,8 +488,8 @@ describe('Contract: API Management', () => {
             portability: expect.oneOf([true, false]),
           }),
         }),
-      });
-    });
+      }
+    }
 
     it('should validate ANVISA compliance for medical data', async () => {
       const res = await api('/api/compliance/anvisa/validate', {
@@ -497,12 +497,12 @@ describe('Contract: API Management', () => {
         headers: {
           'x-clinic-id': 'clinic_compliance_test',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         anvisa_compliant: true,
         medical_device_data: expect.objectContaining({
@@ -514,8 +514,8 @@ describe('Contract: API Management', () => {
           protocol_management: expect.oneOf([true, false]),
           safety_reporting: expect.oneOf([true, false]),
         }),
-      });
-    });
+      }
+    }
 
     it('should generate compliance reports', async () => {
       const res = await api('/api/compliance/report', {
@@ -532,12 +532,12 @@ describe('Contract: API Management', () => {
             end: '2024-12-31',
           },
         }),
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         report_id: expect.any(String),
         generated_at: expect.any(String),
@@ -550,9 +550,9 @@ describe('Contract: API Management', () => {
           LGPD: expect.any(Object),
           ANVISA: expect.any(Object),
         }),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Rate Limiting and Security', () => {
     it('should enforce API rate limits', async () => {
@@ -563,23 +563,23 @@ describe('Contract: API Management', () => {
             'x-api-key': 'test-key',
             'x-client-id': 'test-client',
           },
-        }));
+        })
 
-      const responses = await Promise.all(requests);
-      const rateLimitedResponse = responses.find(r => r.status === 429);
+      const responses = await Promise.all(requests
+      const rateLimitedResponse = responses.find(r => r.status === 429
 
-      expect(rateLimitedResponse).toBeDefined();
+      expect(rateLimitedResponse).toBeDefined(
 
       if (rateLimitedResponse) {
         expect(
           rateLimitedResponse.headers.get('X-RateLimit-Limit'),
-        ).toBeTruthy();
+        ).toBeTruthy(
         expect(rateLimitedResponse.headers.get('X-RateLimit-Remaining')).toBe(
           '0',
-        );
-        expect(rateLimitedResponse.headers.get('Retry-After')).toBeTruthy();
+        
+        expect(rateLimitedResponse.headers.get('Retry-After')).toBeTruthy(
       }
-    });
+    }
 
     it('should validate API key authentication', async () => {
       const res = await api('/api/openapi.json', {
@@ -587,16 +587,16 @@ describe('Contract: API Management', () => {
         headers: {
           'x-api-key': 'invalid-key',
         },
-      });
+      }
 
-      expect(res.status).toBe(401);
+      expect(res.status).toBe(401
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         error: 'authentication_failed',
         message: expect.stringContaining('API key'),
-      });
-    });
+      }
+    }
 
     it('should audit API management operations', async () => {
       const res = await api('/api/audit/management', {
@@ -605,12 +605,12 @@ describe('Contract: API Management', () => {
           'x-clinic-id': 'clinic_audit_test',
           'x-user-id': 'admin_user',
         },
-      });
+      }
 
       expect(res.ok).toBe(true);
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(200
 
-      const data = await res.json();
+      const data = await res.json(
       expect(data).toMatchObject({
         audit_log_available: true,
         operations_tracked: expect.arrayContaining([
@@ -621,7 +621,7 @@ describe('Contract: API Management', () => {
           'rate_limit_violation',
         ]),
         retention_period_days: expect.any(Number),
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

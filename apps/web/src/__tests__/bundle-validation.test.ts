@@ -32,13 +32,13 @@ describe('Bundle Optimization Validation', () => {
           `${chunk}: ${Math.round(originalSize / 1024 / 1024 * 100) / 100}MB → ${
             Math.round(targetSize / 1024 / 1024 * 100) / 100
           }MB (${Math.round(reduction)}% reduction)`,
-        );
+        
 
-        expect(targetSize).toBeGreaterThan(0);
-        expect(targetSize).toBeLessThan(originalSize);
-        expect(reduction).toBeGreaterThan(0);
-      });
-    });
+        expect(targetSize).toBeGreaterThan(0
+        expect(targetSize).toBeLessThan(originalSize
+        expect(reduction).toBeGreaterThan(0
+      }
+    }
 
     it('should validate lazy loading implementation exists', () => {
       // Check that lazy loading utilities exist
@@ -50,10 +50,10 @@ describe('Bundle Optimization Validation', () => {
       ];
 
       lazyLoadingFiles.forEach(filePath => {
-        expect(filePath).toBeTruthy();
+        expect(filePath).toBeTruthy(
         // In a real test, we'd check if these files exist and contain lazy loading
-      });
-    });
+      }
+    }
 
     it('should validate healthcare compliance maintained', () => {
       // Validate that healthcare compliance is maintained
@@ -65,11 +65,11 @@ describe('Bundle Optimization Validation', () => {
       ];
 
       complianceRequirements.forEach(requirement => {
-        expect(requirement).toBeTruthy();
+        expect(requirement).toBeTruthy(
         // In a real test, we'd validate these requirements are met
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Code Splitting Strategy', () => {
     it('should validate expected chunks are created', () => {
@@ -84,10 +84,10 @@ describe('Bundle Optimization Validation', () => {
       ];
 
       expectedChunks.forEach(chunk => {
-        expect(chunk).toBeTruthy();
-        console.log(`Validating chunk exists: ${chunk}`);
-      });
-    });
+        expect(chunk).toBeTruthy(
+        console.log(`Validating chunk exists: ${chunk}`
+      }
+    }
 
     it('should validate loading states are implemented', () => {
       const loadingStates = [
@@ -98,9 +98,9 @@ describe('Bundle Optimization Validation', () => {
       ];
 
       loadingStates.forEach(state => {
-        expect(state).toBeTruthy();
-        console.log(`Validating loading state: ${state}`);
-      });
-    });
-  });
-});
+        expect(state).toBeTruthy(
+        console.log(`Validating loading state: ${state}`
+      }
+    }
+  }
+}

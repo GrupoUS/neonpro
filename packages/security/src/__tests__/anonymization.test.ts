@@ -28,162 +28,162 @@ describe('LGPD Anonymization Utils - Core Masking Functions_, () => {
   describe('maskCPF_, () => {
     test('should mask CPF with default format_, () => {
       const cpf = '12345678901';
-      const masked = maskCPF(cpf);
+      const masked = maskCPF(cpf
 
-      expect(masked).toBe('***.***.***-**');
-      expect(masked).toMatch(/^\*{3}\.\*{3}\.\*{3}-\*{2}$/);
-    });
+      expect(masked).toBe('***.***.***-**')
+      expect(masked).toMatch(/^\*{3}\.\*{3}\.\*{3}-\*{2}$/
+    }
 
     test('should mask formatted CPF_, () => {
       const cpf = '123.456.789-01';
-      const masked = maskCPF(cpf);
+      const masked = maskCPF(cpf
 
-      expect(masked).toBe('***.***.***-**');
-    });
+      expect(masked).toBe('***.***.***-**')
+    }
 
     test('should handle invalid CPF format_, () => {
       const cpf = '123456789'; // Too short
-      const masked = maskCPF(cpf);
+      const masked = maskCPF(cpf
 
       expect(masked).toBe(cpf); // Should return original if invalid
-    });
+    }
 
     test('should respect preserveFormat option_, () => {
       const cpf = '12345678901';
-      const masked = maskCPF(cpf, { preserveFormat: false });
+      const masked = maskCPF(cpf, { preserveFormat: false }
 
-      expect(masked).toBe('***********');
-      expect(masked.length).toBe(11);
-    });
+      expect(masked).toBe('***********')
+      expect(masked.length).toBe(11
+    }
 
     test('should handle empty input_, () => {
-      expect(maskCPF(')).toBe(');
-      expect(maskCPF(undefined as any)).toBe(');
-    });
-  });
+      expect(maskCPF(')).toBe(')
+      expect(maskCPF(undefined as any)).toBe(')
+    }
+  }
 
   describe('maskCNPJ_, () => {
     test('should mask CNPJ with default format_, () => {
       const cnpj = '12345678000195';
-      const masked = maskCNPJ(cnpj);
+      const masked = maskCNPJ(cnpj
 
-      expect(masked).toBe('**.***.***/****-**');
-      expect(masked).toMatch(/^\*{2}\.\*{3}\.\*{3}\/\*{4}-\*{2}$/);
-    });
+      expect(masked).toBe('**.***.***/****-**')
+      expect(masked).toMatch(/^\*{2}\.\*{3}\.\*{3}\/\*{4}-\*{2}$/
+    }
 
     test('should mask formatted CNPJ_, () => {
       const cnpj = '12.345.678/0001-95';
-      const masked = maskCNPJ(cnpj);
+      const masked = maskCNPJ(cnpj
 
-      expect(masked).toBe('**.***.***/****-**');
-    });
+      expect(masked).toBe('**.***.***/****-**')
+    }
 
     test('should handle invalid CNPJ format_, () => {
       const cnpj = '12345678000'; // Too short
-      const masked = maskCNPJ(cnpj);
+      const masked = maskCNPJ(cnpj
 
       expect(masked).toBe(cnpj); // Should return original if invalid
-    });
+    }
 
     test('should respect preserveFormat option_, () => {
       const cnpj = '12345678000195';
-      const masked = maskCNPJ(cnpj, { preserveFormat: false });
+      const masked = maskCNPJ(cnpj, { preserveFormat: false }
 
-      expect(masked).toBe('**************');
-      expect(masked.length).toBe(14);
-    });
-  });
+      expect(masked).toBe('**************')
+      expect(masked.length).toBe(14
+    }
+  }
 
   describe('maskEmail_, () => {
     test('should mask email with default settings_, () => {
       const email = 'joao.silva@hospital.com';
-      const masked = maskEmail(email);
+      const masked = maskEmail(email
 
-      expect(masked).toBe('j*********@hospital.com');
+      expect(masked).toBe('j*********@hospital.com')
       expect(masked.split('@')[1]).toBe('hospital.com'); // Domain preserved
-    });
+    }
 
     test('should handle short email local part_, () => {
       const email = 'a@test.com';
-      const masked = maskEmail(email);
+      const masked = maskEmail(email
 
-      expect(masked).toBe('***@test.com');
-    });
+      expect(masked).toBe('***@test.com')
+    }
 
     test('should respect visibleStart option_, () => {
       const email = 'joao.silva@hospital.com';
-      const masked = maskEmail(email, { visibleStart: 3 });
+      const masked = maskEmail(email, { visibleStart: 3 }
 
-      expect(masked).toBe('joa*******@hospital.com');
-    });
+      expect(masked).toBe('joa*******@hospital.com')
+    }
 
     test('should handle invalid email format_, () => {
       const email = 'invalid-email';
-      const masked = maskEmail(email);
+      const masked = maskEmail(email
 
       expect(masked).toBe(email); // Should return original if invalid
-    });
-  });
+    }
+  }
 
   describe('maskPhone_, () => {
     test('should mask mobile phone (11 digits)', () => {
       const phone = '11987654321';
-      const masked = maskPhone(phone);
+      const masked = maskPhone(phone
 
-      expect(masked).toBe('(11) 9****-****');
-    });
+      expect(masked).toBe('(11) 9****-****')
+    }
 
     test('should mask landline phone (10 digits)', () => {
       const phone = '1133334444';
-      const masked = maskPhone(phone);
+      const masked = maskPhone(phone
 
-      expect(masked).toBe('(11) ****-****');
-    });
+      expect(masked).toBe('(11) ****-****')
+    }
 
     test('should handle formatted phone_, () => {
       const phone = '(11) 98765-4321';
-      const masked = maskPhone(phone);
+      const masked = maskPhone(phone
 
-      expect(masked).toBe('(11) 9****-****');
-    });
+      expect(masked).toBe('(11) 9****-****')
+    }
 
     test('should respect preserveFormat option_, () => {
       const phone = '11987654321';
-      const masked = maskPhone(phone, { preserveFormat: false });
+      const masked = maskPhone(phone, { preserveFormat: false }
 
-      expect(masked).toBe('119********');
-    });
-  });
+      expect(masked).toBe('119********')
+    }
+  }
 
   describe('maskName_, () => {
     test('should mask simple name_, () => {
       const name = 'João Silva';
-      const masked = maskName(name);
+      const masked = maskName(name
 
-      expect(masked).toBe('J*** S****');
-    });
+      expect(masked).toBe('J*** S****')
+    }
 
     test('should handle single name_, () => {
       const name = 'João';
-      const masked = maskName(name);
+      const masked = maskName(name
 
-      expect(masked).toBe('J***');
-    });
+      expect(masked).toBe('J***')
+    }
 
     test('should handle multiple names_, () => {
       const name = 'João Carlos da Silva Santos';
-      const masked = maskName(name);
+      const masked = maskName(name
 
-      expect(masked).toBe('J*** C***** d* S**** S*****');
-    });
+      expect(masked).toBe('J*** C***** d* S**** S*****')
+    }
 
     test('should respect visibleStart option_, () => {
       const name = 'João Silva';
-      const masked = maskName(name, { visibleStart: 0 });
+      const masked = maskName(name, { visibleStart: 0 }
 
-      expect(masked).toBe('**** *****');
-    });
-  });
+      expect(masked).toBe('**** *****')
+    }
+  }
 
   describe('maskAddress_, () => {
     test('should mask address object_, () => {
@@ -197,16 +197,16 @@ describe('LGPD Anonymization Utils - Core Masking Functions_, () => {
         zipCode: '01234567',
       };
 
-      const masked = maskAddress(address);
+      const masked = maskAddress(address
 
-      expect(masked?.street).toBe('**********');
-      expect(masked?.number).toBe('***');
-      expect(masked?.complement).toBe('*******');
-      expect(masked?.neighborhood).toBe('********');
+      expect(masked?.street).toBe('**********')
+      expect(masked?.number).toBe('***')
+      expect(masked?.complement).toBe('*******')
+      expect(masked?.neighborhood).toBe('********')
       expect(masked?.city).toBe('São Paulo'); // Preserved
       expect(masked?.state).toBe('SP'); // Preserved
-      expect(masked?.zipCode).toBe('01******');
-    });
+      expect(masked?.zipCode).toBe('01******')
+    }
 
     test('should handle partial address_, () => {
       const address = {
@@ -214,19 +214,19 @@ describe('LGPD Anonymization Utils - Core Masking Functions_, () => {
         city: 'São Paulo',
       };
 
-      const masked = maskAddress(address);
+      const masked = maskAddress(address
 
-      expect(masked?.street).toBe('**********');
-      expect(masked?.city).toBe('São Paulo');
-      expect(masked?.number).toBeUndefined();
-    });
+      expect(masked?.street).toBe('**********')
+      expect(masked?.city).toBe('São Paulo')
+      expect(masked?.number).toBeUndefined(
+    }
 
     test('should handle null/undefined address_, () => {
-      expect(maskAddress(null)).toBeNull();
-      expect(maskAddress(undefined)).toBeUndefined();
-    });
-  });
-});
+      expect(maskAddress(null)).toBeNull(
+      expect(maskAddress(undefined)).toBeUndefined(
+    }
+  }
+}
 
 describe('LGPD Anonymization Utils - High-Level Functions_, () => {
   let samplePatient: PatientData;
@@ -254,75 +254,75 @@ describe('LGPD Anonymization Utils - High-Level Functions_, () => {
         medications: ['Metformina', 'Losartana'],
       },
     };
-  });
+  }
 
   describe('maskPatientData_, () => {
     test('should mask patient data with basic compliance level_, () => {
-      const result = maskPatientData(samplePatient, 'basic');
+      const result = maskPatientData(samplePatient, 'basic')
 
-      expect(result.data.name).toBe('J*** S**** S******');
-      expect(result.data.cpf).toBe('***.***.***-**');
-      expect(result.data.email).toBe('j******************@email.com');
-      expect(result.data.phone).toBe('(11) 9****-****');
+      expect(result.data.name).toBe('J*** S**** S******')
+      expect(result.data.cpf).toBe('***.***.***-**')
+      expect(result.data.email).toBe('j******************@email.com')
+      expect(result.data.phone).toBe('(11) 9****-****')
       expect(result.data.birthDate).toBe('1985-06-15'); // Not masked in basic
       expect(result.data.address).toBe(samplePatient.address); // Not masked in basic
 
-      expect(result.metadata.complianceLevel).toBe('basic');
-      expect(result.metadata.fieldsAnonymized).toContain('cpf');
-      expect(result.metadata.fieldsAnonymized).toContain('email');
-      expect(result.metadata.fieldsAnonymized).toContain('phone');
-      expect(result.metadata.fieldsAnonymized).toContain('name');
-    });
+      expect(result.metadata.complianceLevel).toBe('basic')
+      expect(result.metadata.fieldsAnonymized).toContain('cpf')
+      expect(result.metadata.fieldsAnonymized).toContain('email')
+      expect(result.metadata.fieldsAnonymized).toContain('phone')
+      expect(result.metadata.fieldsAnonymized).toContain('name')
+    }
 
     test('should mask patient data with enhanced compliance level_, () => {
-      const result = maskPatientData(samplePatient, 'enhanced');
+      const result = maskPatientData(samplePatient, 'enhanced')
 
-      expect(result.data.name).toBe('**** ***** ******');
-      expect(result.data.birthDate).toBe('1985-**-**');
-      expect(result.data.address?.street).toBe('**********');
+      expect(result.data.name).toBe('**** ***** ******')
+      expect(result.data.birthDate).toBe('1985-**-**')
+      expect(result.data.address?.street).toBe('**********')
       expect(result.data.address?.city).toBe('São Paulo'); // Preserved for statistics
 
-      expect(result.metadata.complianceLevel).toBe('enhanced');
-      expect(result.metadata.fieldsAnonymized).toContain('address');
-      expect(result.metadata.fieldsAnonymized).toContain('birthDate');
-    });
+      expect(result.metadata.complianceLevel).toBe('enhanced')
+      expect(result.metadata.fieldsAnonymized).toContain('address')
+      expect(result.metadata.fieldsAnonymized).toContain('birthDate')
+    }
 
     test('should mask patient data with full anonymization_, () => {
-      const result = maskPatientData(samplePatient, 'full_anonymization_);
+      const result = maskPatientData(samplePatient, 'full_anonymization_
 
-      expect(result.data.name).toBe('ANONIMIZADO');
+      expect(result.data.name).toBe('ANONIMIZADO')
       expect(result.data.birthDate).toBe('1970-1990'); // Age group
-      expect(result.data.address?.street).toBe('ANONIMIZADO');
+      expect(result.data.address?.street).toBe('ANONIMIZADO')
       expect(result.data.address?.city).toBe('São Paulo'); // Preserved for statistics
       expect(result.data.id).toBeUndefined(); // Removed
 
-      expect(result.metadata.complianceLevel).toBe('full_anonymization_);
-      expect(result.metadata.fieldsAnonymized).toContain('id');
-    });
+      expect(result.metadata.complianceLevel).toBe('full_anonymization_
+      expect(result.metadata.fieldsAnonymized).toContain('id')
+    }
 
     test('should include proper metadata_, () => {
-      const result = maskPatientData(samplePatient);
+      const result = maskPatientData(samplePatient
 
       expect(result.metadata).toMatchObject({
         method: 'maskPatientData',
         complianceLevel: 'basic',
         version: ANONYMIZATION_VERSION,
-      });
-      expect(result.metadata.anonymizedAt).toBeDefined();
-      expect(result.metadata.fieldsAnonymized).toBeInstanceOf(Array);
-    });
+      }
+      expect(result.metadata.anonymizedAt).toBeDefined(
+      expect(result.metadata.fieldsAnonymized).toBeInstanceOf(Array
+    }
 
     test('should handle missing fields gracefully_, () => {
       const partialPatient: PatientData = {
         name: 'João Silva',
       };
 
-      const result = maskPatientData(partialPatient);
+      const result = maskPatientData(partialPatient
 
-      expect(result.data.name).toBe('J*** S****');
-      expect(result.metadata.fieldsAnonymized).toEqual(['name']);
-    });
-  });
+      expect(result.data.name).toBe('J*** S****')
+      expect(result.metadata.fieldsAnonymized).toEqual(['name']
+    }
+  }
 
   describe('anonymizePersonalData_, () => {
     test('should anonymize specified fields_, () => {
@@ -333,13 +333,13 @@ describe('LGPD Anonymization Utils - High-Level Functions_, () => {
         department: 'Cardiology',
       };
 
-      const anonymized = anonymizePersonalData(data, ['name', 'cpf']);
+      const anonymized = anonymizePersonalData(data, ['name', 'cpf']
 
-      expect(anonymized.name).toBe('J*** S****');
-      expect(anonymized.cpf).toBe('***.***.***-**');
+      expect(anonymized.name).toBe('J*** S****')
+      expect(anonymized.cpf).toBe('***.***.***-**')
       expect(anonymized.age).toBe(35); // Not anonymized
       expect(anonymized.department).toBe('Cardiology'); // Not anonymized
-    });
+    }
 
     test('should use default fields when none specified_, () => {
       const data = {
@@ -349,13 +349,13 @@ describe('LGPD Anonymization Utils - High-Level Functions_, () => {
         age: 35,
       };
 
-      const anonymized = anonymizePersonalData(data);
+      const anonymized = anonymizePersonalData(data
 
-      expect(anonymized.name).toBe('J*** S****');
-      expect(anonymized.cpf).toBe('***.***.***-**');
-      expect(anonymized.email).toBe('j***@test.com');
+      expect(anonymized.name).toBe('J*** S****')
+      expect(anonymized.cpf).toBe('***.***.***-**')
+      expect(anonymized.email).toBe('j***@test.com')
       expect(anonymized.age).toBe(35); // Not in default fields
-    });
+    }
 
     test('should handle non-string values_, () => {
       const data = {
@@ -368,14 +368,14 @@ describe('LGPD Anonymization Utils - High-Level Functions_, () => {
         'name',
         'metadata',
         'tags',
-      ]);
+      ]
 
-      expect(anonymized.name).toBe('J*** S****');
-      expect(anonymized.metadata).toBe('ANONIMIZADO');
-      expect(anonymized.tags).toBe('ANONIMIZADO');
-    });
-  });
-});
+      expect(anonymized.name).toBe('J*** S****')
+      expect(anonymized.metadata).toBe('ANONIMIZADO')
+      expect(anonymized.tags).toBe('ANONIMIZADO')
+    }
+  }
+}
 
 describe('LGPD Anonymization Utils - Utility Functions_, () => {
   describe('isDataAnonymized_, () => {
@@ -388,7 +388,7 @@ describe('LGPD Anonymization Utils - Utility Functions_, () => {
       };
 
       expect(isDataAnonymized(anonymizedData)).toBe(true);
-    });
+    }
 
     test('should identify non-anonymized data_, () => {
       const nonAnonymizedData = {
@@ -399,7 +399,7 @@ describe('LGPD Anonymization Utils - Utility Functions_, () => {
       };
 
       expect(isDataAnonymized(nonAnonymizedData)).toBe(false);
-    });
+    }
 
     test('should handle data with ANONIMIZADO markers_, () => {
       const anonymizedData = {
@@ -409,7 +409,7 @@ describe('LGPD Anonymization Utils - Utility Functions_, () => {
       };
 
       expect(isDataAnonymized(anonymizedData)).toBe(true);
-    });
+    }
 
     test('should handle partial anonymization_, () => {
       const partiallyAnonymizedData = {
@@ -419,8 +419,8 @@ describe('LGPD Anonymization Utils - Utility Functions_, () => {
       };
 
       expect(isDataAnonymized(partiallyAnonymizedData)).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('generatePrivacyReport_, () => {
     test('should generate compliance report for well-anonymized data_, () => {
@@ -445,12 +445,12 @@ describe('LGPD Anonymization Utils - Utility Functions_, () => {
         },
       };
 
-      const report = generatePrivacyReport(original, anonymized);
+      const report = generatePrivacyReport(original, anonymized
 
       expect(report.lgpdCompliant).toBe(true);
-      expect(report.complianceScore).toBeGreaterThanOrEqual(85);
-      expect(report.risks).toHaveLength(0);
-    });
+      expect(report.complianceScore).toBeGreaterThanOrEqual(85
+      expect(report.risks).toHaveLength(0
+    }
 
     test('should identify risks in poorly anonymized data_, () => {
       const original = {
@@ -472,13 +472,13 @@ describe('LGPD Anonymization Utils - Utility Functions_, () => {
         },
       };
 
-      const report = generatePrivacyReport(original, poorlyAnonymized);
+      const report = generatePrivacyReport(original, poorlyAnonymized
 
       expect(report.lgpdCompliant).toBe(false);
-      expect(report.complianceScore).toBeLessThan(85);
-      expect(report.risks.length).toBeGreaterThan(0);
-      expect(report.risks[0]).toContain('name');
-    });
+      expect(report.complianceScore).toBeLessThan(85
+      expect(report.risks.length).toBeGreaterThan(0
+      expect(report.risks[0]).toContain('name')
+    }
 
     test('should provide recommendations for improvement_, () => {
       const original = {
@@ -500,53 +500,53 @@ describe('LGPD Anonymization Utils - Utility Functions_, () => {
         },
       };
 
-      const report = generatePrivacyReport(original, partiallyAnonymized);
+      const report = generatePrivacyReport(original, partiallyAnonymized
 
-      expect(report.recommendations.length).toBeGreaterThan(0);
-    });
-  });
-});
+      expect(report.recommendations.length).toBeGreaterThan(0
+    }
+  }
+}
 
 describe('LGPD Anonymization Utils - Configuration and Constants_, () => {
   test('should have default masking options for all compliance levels_, () => {
-    expect(DEFAULT_MASKING_OPTIONS).toHaveProperty('basic_);
-    expect(DEFAULT_MASKING_OPTIONS).toHaveProperty('enhanced_);
-    expect(DEFAULT_MASKING_OPTIONS).toHaveProperty('full_anonymization_);
+    expect(DEFAULT_MASKING_OPTIONS).toHaveProperty('basic_
+    expect(DEFAULT_MASKING_OPTIONS).toHaveProperty('enhanced_
+    expect(DEFAULT_MASKING_OPTIONS).toHaveProperty('full_anonymization_
 
-    expect(DEFAULT_MASKING_OPTIONS.basic.maskChar).toBe('*_);
-    expect(DEFAULT_MASKING_OPTIONS.enhanced.visibleStart).toBe(0);
+    expect(DEFAULT_MASKING_OPTIONS.basic.maskChar).toBe('*_
+    expect(DEFAULT_MASKING_OPTIONS.enhanced.visibleStart).toBe(0
     expect(DEFAULT_MASKING_OPTIONS.full_anonymization.preserveFormat).toBe(
       false,
-    );
-  });
+    
+  }
 
   test('should export version constant_, () => {
-    expect(ANONYMIZATION_VERSION).toBeDefined();
-    expect(typeof ANONYMIZATION_VERSION).toBe('string_);
-  });
-});
+    expect(ANONYMIZATION_VERSION).toBeDefined(
+    expect(typeof ANONYMIZATION_VERSION).toBe('string_
+  }
+}
 
 describe('LGPD Anonymization Utils - Edge Cases and Error Handling_, () => {
   test('should handle null and undefined inputs gracefully_, () => {
-    expect(maskCPF(null as any)).toBe(');
-    expect(maskEmail(undefined as any)).toBe(undefined);
-    expect(maskPhone(')).toBe(');
-    expect(maskName(null as any)).toBe(');
-  });
+    expect(maskCPF(null as any)).toBe(')
+    expect(maskEmail(undefined as any)).toBe(undefined
+    expect(maskPhone(')).toBe(')
+    expect(maskName(null as any)).toBe(')
+  }
 
   test('should handle empty patient data_, () => {
     const emptyPatient: PatientData = {};
-    const result = maskPatientData(emptyPatient);
+    const result = maskPatientData(emptyPatient
 
-    expect(result.data).toEqual({});
-    expect(result.metadata.fieldsAnonymized).toHaveLength(0);
-  });
+    expect(result.data).toEqual({}
+    expect(result.metadata.fieldsAnonymized).toHaveLength(0
+  }
 
   test('should handle invalid phone numbers_, () => {
     expect(maskPhone('123')).toBe('123'); // Too short
     expect(maskPhone('abc')).toBe('abc'); // Non-numeric
     expect(maskPhone('123456789012345')).toBe('123456789012345'); // Too long
-  });
+  }
 
   test('should handle different birth date formats_, () => {
     const patient: PatientData = {
@@ -554,9 +554,9 @@ describe('LGPD Anonymization Utils - Edge Cases and Error Handling_, () => {
       birthDate: '1985-06-15',
     };
 
-    const result = maskPatientData(patient, 'enhanced');
-    expect(result.data.birthDate).toBe('1985-**-**');
-  });
+    const result = maskPatientData(patient, 'enhanced')
+    expect(result.data.birthDate).toBe('1985-**-**')
+  }
 
   test('should handle age groups correctly in full anonymization_, () => {
     const testCases = [
@@ -568,8 +568,8 @@ describe('LGPD Anonymization Utils - Edge Cases and Error Handling_, () => {
 
     testCases.forEach(({ birthDate, expected }) => {
       const patient: PatientData = { name: 'Test', birthDate };
-      const result = maskPatientData(patient, 'full_anonymization_);
-      expect(result.data.birthDate).toBe(expected);
-    });
-  });
-});
+      const result = maskPatientData(patient, 'full_anonymization_
+      expect(result.data.birthDate).toBe(expected
+    }
+  }
+}

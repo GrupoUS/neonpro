@@ -8,24 +8,24 @@ import path from 'path';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('Code Quality Issue Tests', () => {
-  const apiSrcPath = path.join(__dirname, '../../../../src');
-  const servicesPath = path.join(apiSrcPath, 'services');
+  const apiSrcPath = path.join(__dirname, '../../../../src')
+  const servicesPath = path.join(apiSrcPath, 'services')
 
   describe('Conflicting Imports', () => {
     it('should not have conflicting AI provider router implementations', () => {
       // This test should fail due to conflicting implementations
-      const aiProviderRouter = path.join(servicesPath, 'ai-provider-router.ts');
+      const aiProviderRouter = path.join(servicesPath, 'ai-provider-router.ts')
       const aiProviderRouterNew = path.join(
         servicesPath,
         'ai-provider-router-new.ts',
-      );
+      
 
       if (
         fs.existsSync(aiProviderRouter)
         && fs.existsSync(aiProviderRouterNew)
       ) {
-        const content1 = fs.readFileSync(aiProviderRouter, 'utf8');
-        const content2 = fs.readFileSync(aiProviderRouterNew, 'utf8');
+        const content1 = fs.readFileSync(aiProviderRouter, 'utf8')
+        const content2 = fs.readFileSync(aiProviderRouterNew, 'utf8')
 
         // Check for similar class/function names that would cause conflicts
         const similarPatterns = [
@@ -35,17 +35,17 @@ describe('Code Quality Issue Tests', () => {
         ];
 
         for (const pattern of similarPatterns) {
-          const match1 = content1.match(pattern);
-          const match2 = content2.match(pattern);
+          const match1 = content1.match(pattern
+          const match2 = content2.match(pattern
 
           if (match1 && match2) {
             expect(
               `Conflicting implementations found: ${match1[0]} and ${match2[0]}`,
-            ).toBe('');
+            ).toBe('')
           }
         }
       }
-    });
+    }
 
     it('should not have duplicate import statements', () => {
       // This test should fail if there are duplicate imports
@@ -55,7 +55,7 @@ describe('Code Quality Issue Tests', () => {
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file);
+        const filePath = path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
           const content = fs.readFileSync(filePath, 'utf8');
 
@@ -63,17 +63,17 @@ describe('Code Quality Issue Tests', () => {
           const importLines = content
             .split('\n')
             .filter(line => line.trim().startsWith('import '))
-            .map(line => line.trim());
+            .map(line => line.trim()
 
           // Check for duplicates
-          const uniqueImports = new Set(importLines);
+          const uniqueImports = new Set(importLines
 
           if (importLines.length !== uniqueImports.size) {
-            expect(`Duplicate imports found in ${file}`).toBe('');
+            expect(`Duplicate imports found in ${file}`).toBe('')
           }
         }
       }
-    });
+    }
 
     it('should have consistent import styles', () => {
       // This test should fail if import styles are inconsistent
@@ -83,35 +83,35 @@ describe('Code Quality Issue Tests', () => {
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file);
+        const filePath = path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
           const content = fs.readFileSync(filePath, 'utf8');
 
           // Check for mixed import styles (named vs default)
-          const hasNamedImports = content.includes('import {');
-          const hasDefaultImports = content.includes('import .* from');
+          const hasNamedImports = content.includes('import {')
+          const hasDefaultImports = content.includes('import .* from')
 
           // This is not necessarily wrong, but should be consistent
           if (hasNamedImports && hasDefaultImports) {
             // Check if the inconsistency is problematic
             const importLines = content
               .split('\n')
-              .filter(line => line.trim().startsWith('import '));
+              .filter(line => line.trim().startsWith('import ')
 
             const inconsistentImports = importLines.filter(
               line => line.includes('{') && !line.includes('type'),
-            );
+            
 
             if (inconsistentImports.length > 5) {
               expect(`Potentially inconsistent import styles in ${file}`).toBe(
                 '',
-              );
+              
             }
           }
         }
       }
-    });
-  });
+    }
+  }
 
   describe('Mock AI Validation', () => {
     it('should not have mock AI validation in production code', () => {
@@ -135,26 +135,26 @@ describe('Code Quality Issue Tests', () => {
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file);
+        const filePath = path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
           const content = fs.readFileSync(filePath, 'utf8');
 
           for (const pattern of mockPatterns) {
-            const matches = content.match(pattern);
+            const matches = content.match(pattern
 
             // Filter out test files and comments
-            const isTestFile = filePath.includes('.test.') || filePath.includes('.spec.');
-            const isComment = matches && content.includes('//') && content.includes(matches[0]);
+            const isTestFile = filePath.includes('.test.') || filePath.includes('.spec.')
+            const isComment = matches && content.includes('//') && content.includes(matches[0]
 
             if (matches && !isTestFile && !isComment) {
               expect(
                 `Mock AI validation found in production code ${file}: ${matches[0]}`,
-              ).toBe('');
+              ).toBe('')
             }
           }
         }
       }
-    });
+    }
 
     it('should not have placeholder AI logic', () => {
       // This test should fail if placeholder AI logic is found
@@ -175,22 +175,22 @@ describe('Code Quality Issue Tests', () => {
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file);
+        const filePath = path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
           const content = fs.readFileSync(filePath, 'utf8');
 
           for (const pattern of placeholderPatterns) {
-            const matches = content.match(pattern);
+            const matches = content.match(pattern
             if (matches) {
               expect(
                 `Placeholder AI logic found in ${file}: ${matches[0]}`,
-              ).toBe('');
+              ).toBe('')
             }
           }
         }
       }
-    });
-  });
+    }
+  }
 
   describe('Error Handling Quality', () => {
     it('should have proper error handling patterns', () => {
@@ -201,20 +201,20 @@ describe('Code Quality Issue Tests', () => {
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file);
+        const filePath = path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
           const content = fs.readFileSync(filePath, 'utf8');
 
           // Check for proper error handling
-          const hasTryCatch = content.includes('try {') && content.includes('catch');
-          const hasErrorHandling = content.includes('catch') || content.includes('error');
+          const hasTryCatch = content.includes('try {') && content.includes('catch')
+          const hasErrorHandling = content.includes('catch') || content.includes('error')
 
           if (!hasTryCatch && hasErrorHandling) {
-            expect(`Poor error handling patterns in ${file}`).toBe('');
+            expect(`Poor error handling patterns in ${file}`).toBe('')
           }
         }
       }
-    });
+    }
 
     it('should not have console.log statements in production code', () => {
       // This test should fail if console.log statements are found
@@ -224,23 +224,23 @@ describe('Code Quality Issue Tests', () => {
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file);
+        const filePath = path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
           const content = fs.readFileSync(filePath, 'utf8');
 
           // Check for console.log statements (excluding test files)
           const consoleLogPattern = /console\.log/;
-          const matches = content.match(consoleLogPattern);
+          const matches = content.match(consoleLogPattern
 
           if (matches) {
             expect(
               `Console.log statements found in production code ${file}`,
-            ).toBe('');
+            ).toBe('')
           }
         }
       }
-    });
-  });
+    }
+  }
 
   describe('Code Structure', () => {
     it('should not have overly large files', () => {
@@ -251,23 +251,23 @@ describe('Code Quality Issue Tests', () => {
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file);
+        const filePath = path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
-          const stats = fs.statSync(filePath);
+          const stats = fs.statSync(filePath
           const fileSizeInBytes = stats.size;
           const fileSizeInLines = fs
-            .readFileSync(filePath, 'utf8')
+            .readFileSync(filePath, 'utf8');
             .split('\n').length;
 
           // Files should not be larger than 1000 lines
           if (fileSizeInLines > 1000) {
             expect(`File ${file} is too large: ${fileSizeInLines} lines`).toBe(
               '',
-            );
+            
           }
         }
       }
-    });
+    }
 
     it('should have proper code documentation', () => {
       // This test should fail if documentation is missing
@@ -277,19 +277,19 @@ describe('Code Quality Issue Tests', () => {
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file);
+        const filePath = path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
           const content = fs.readFileSync(filePath, 'utf8');
 
           // Check for basic documentation
-          const hasJSDoc = content.includes('/**');
-          const hasComments = content.includes('//');
+          const hasJSDoc = content.includes('/**')
+          const hasComments = content.includes('//')
 
           if (!hasJSDoc && !hasComments) {
-            expect(`Missing documentation in ${file}`).toBe('');
+            expect(`Missing documentation in ${file}`).toBe('')
           }
         }
       }
-    });
-  });
-});
+    }
+  }
+}

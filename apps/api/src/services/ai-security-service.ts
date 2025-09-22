@@ -5,22 +5,17 @@
  * ensuring LGPD compliance, data protection, and medical safety.
  */
 
-// TODO: Fix import path issue with @neonpro/security auditLogger
-// import { AuditLogger } from '@neonpro/security';
-// const auditLogger = new AuditLogger({
-//   enableConsoleLogging: true,
-//   enableDatabaseLogging: false,
-//   logLevel: 'info',
-// });
+import { z } from 'zod';
 
-// Temporary mock for startup
+// Temporary mock for startup - TODO: Replace with actual @neonpro/security auditLogger
 const auditLogger = {
-  log: () => {},
-  info: () => {},
-  warn: () => {},
-  error: () => {},
+  log: (..._args: any[]) => {},
+  info: (..._args: any[]) => {},
+  warn: (..._args: any[]) => {},
+  error: (..._args: any[]) => {},
+  logError: (..._args: any[]) => {},
+  logSecurityEvent: (..._args: any[]) => {},
 };
-// Security validation schemas
 const SensitiveDataSchema = z.object({
   name: z.string().regex(/^[A-Za-z\s]+$/),
   cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/),
@@ -258,7 +253,7 @@ export class AIRateLimiter {
   }
 
   canMakeRequest(_userId: string, clinicId: string): boolean {
-    const key = `${userId}:${clinicId}`;
+    const key = `${_userId}:${clinicId}`;
     const now = Date.now();
     const userRequests = this.requests.get(key) || [];
 
@@ -275,7 +270,7 @@ export class AIRateLimiter {
     if (minuteRequests.length >= RATE_LIMITS.requestsPerMinute) {
       auditLogger.logSecurityEvent({
         event: 'ai_rate_limit_exceeded_minute',
-        userId,
+        _userId,
         clinicId,
         requestsInMinute: minuteRequests.length,
         timestamp: new Date().toISOString(),
@@ -287,7 +282,7 @@ export class AIRateLimiter {
     if (recentRequests.length >= RATE_LIMITS.requestsPerHour) {
       auditLogger.logSecurityEvent({
         event: 'ai_rate_limit_exceeded_hour',
-        userId,
+        _userId,
         clinicId,
         requestsInHour: recentRequests.length,
         timestamp: new Date().toISOString(),
@@ -304,7 +299,8 @@ export class AIRateLimiter {
 
   private cleanupOldRequests(): void {
     const now = Date.now();
-    for (const [key, requests] of this.requests.entries()) {
+    const entries = Array.from(this.requests.entries());
+    for (const [key, requests] of entries) {
       const recentRequests = requests.filter(
         time => now - time < 60 * 60 * 1000,
       );
@@ -362,7 +358,7 @@ export function logAIInteraction(interaction: {
 }): void {
   auditLogger.logSecurityEvent({
     event: 'ai_interaction',
-    _userId: interaction.userId,
+    _userId: interaction._userId,
     patientId: interaction.patientId,
     clinicId: interaction.clinicId,
     provider: interaction.provider,
@@ -431,7 +427,7 @@ export const aiSecurityService = {
   validateMedicalTerminology,
   validateAIOutputSafety,
   canMakeRequest: (_userId: string, clinicId: string) =>
-    aiRateLimiter.canMakeRequest(userId, clinicId),
+    aiRateLimiter.canMakeRequest(_userId, clinicId),
   validateApiKeyRotation,
   logAIInteraction,
   shouldRetainAIData,

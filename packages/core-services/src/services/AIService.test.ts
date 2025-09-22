@@ -19,12 +19,12 @@ describe("Enhanced No-Show Prediction", () => {
         previousNoShows: 0,
       };
 
-      const aiService = new AIService();
+      const aiService = new AIService(
       const processed = (aiService as any)["preprocessNoShowData"](data); // Temporary for RED phase; later use public method
 
       expect(processed.patientAge).toBe("0-30"); // Binned as per design (will fail until implemented)
-    });
-  });
+    }
+  }
 
   describe("makePrediction", () => {
     it(_"should use enhanced logic with flag true and achieve confidence >0.8",_async () => {
@@ -39,13 +39,13 @@ describe("Enhanced No-Show Prediction", () => {
         // enhanced: true, // Not yet in type, but we'll add to request for enhanced path (will fail until implemented)
       };
 
-      const aiService = new AIService();
-      const response = await aiService.makePrediction(request, mockContext);
+      const aiService = new AIService(
+      const response = await aiService.makePrediction(request, mockContext
 
-      expect(response.confidence).toBeGreaterThan(0.8);
-      expect(response).toHaveProperty("enhanced", true);
-      expect(response).toHaveProperty("anonymizedFeatures");
-    });
+      expect(response.confidence).toBeGreaterThan(0.8
+      expect(response).toHaveProperty("enhanced", true
+      expect(response).toHaveProperty("anonymizedFeatures"
+    }
 
     it(_"should fallback to mock logic with flag false",_async () => {
       const request = {
@@ -59,12 +59,12 @@ describe("Enhanced No-Show Prediction", () => {
         // enhanced: false, // Will fail until implemented
       };
 
-      const aiService = new AIService();
-      const response = await aiService.makePrediction(request, mockContext);
+      const aiService = new AIService(
+      const response = await aiService.makePrediction(request, mockContext
 
       expect(response.confidence).toBe(0.89); // Existing mock confidence
-      expect(response).not.toHaveProperty("enhanced");
-    });
+      expect(response).not.toHaveProperty("enhanced"
+    }
 
     it(_"should not leak PII in output for LGPD compliance",_async () => {
       const request = {
@@ -76,12 +76,12 @@ describe("Enhanced No-Show Prediction", () => {
         // enhanced: true, // Will fail until implemented
       };
 
-      const aiService = new AIService();
-      const response = await aiService.makePrediction(request, mockContext);
+      const aiService = new AIService(
+      const response = await aiService.makePrediction(request, mockContext
 
-      expect(response).not.toHaveProperty("patientId");
+      expect(response).not.toHaveProperty("patientId"
       expect(response).not.toHaveProperty("patientAge"); // Should be binned or omitted (will fail until implemented)
-    });
+    }
 
     it(_"should handle edge case for new patient with no history",_async () => {
       const request = {
@@ -95,10 +95,10 @@ describe("Enhanced No-Show Prediction", () => {
         // enhanced: true, // Will fail until implemented
       };
 
-      const aiService = new AIService();
-      const response = await aiService.makePrediction(request, mockContext);
+      const aiService = new AIService(
+      const response = await aiService.makePrediction(request, mockContext
 
       expect(response.confidence).toBeGreaterThan(0.5); // Reasonable for new patient (will fail until implemented)
-    });
-  });
-});
+    }
+  }
+}

@@ -33,9 +33,9 @@ vi.mock(('@/components/event-calendar/event-calendar', () => ({
         key: 'add-btn',
         onClick: () => onEventAdd?.({}),
       }, 'Add Event'),
-    ]);
+    ]
   }),
-}));
+})
 
 // Rest of your test implementation...
 describe(('LGPD Calendar Integration Tests', () => {
@@ -47,16 +47,16 @@ describe(('LGPD Calendar Integration Tests', () => {
         queries: { retry: false },
         mutations: { retry: false },
       },
-    });
-    vi.clearAllMocks();
-  });
+    }
+    vi.clearAllMocks(
+  }
 
   afterEach(() => {
-    queryClient.clear();
-  });
+    queryClient.clear(
+  }
 
   it(('should render calendar component with proper data handling', () => {
     // Your test implementation here
     expect(true).toBe(true); // Placeholder
-  });
-});
+  }
+}

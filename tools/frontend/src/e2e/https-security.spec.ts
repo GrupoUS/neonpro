@@ -14,7 +14,6 @@
  */
 
 import { test, expect } from '@playwright/test';
-// import { securityConfig } from '../config/security.config';
 
 test.describe('HTTPS Security Validation', () => {
   let baseUrl: string;

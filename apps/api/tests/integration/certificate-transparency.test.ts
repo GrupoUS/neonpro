@@ -24,27 +24,27 @@ describe('Certificate Transparency Validation Test (T053)', () => {
   const testDomain = process.env.TEST_DOMAIN || 'localhost';
 
   beforeAll(async () => {
-    server = createServer(app.fetch);
+    server = createServer(app.fetch
     await new Promise<void>(resolve => {
       server.listen(0, () => {
         const address = server.address() as AddressInfo;
         baseUrl = `http://localhost:${address.port}`;
-        resolve();
-      });
-    });
-  });
+        resolve(
+      }
+    }
+  }
 
   afterAll(() => {
     if (server) {
-      server.close();
+      server.close(
     }
-  });
+  }
 
   describe('Certificate Transparency Log Validation', () => {
     it('should validate certificate is logged in CT logs', async () => {
       // Skip this test in local development
       if (testDomain === 'localhost') {
-        console.log('Skipping CT validation for localhost');
+        console.log('Skipping CT validation for localhost')
         return;
       }
 
@@ -53,15 +53,15 @@ describe('Certificate Transparency Validation Test (T053)', () => {
         const certInfo = execSync(
           `openssl s_client -connect ${testDomain}:443 -servername ${testDomain} < /dev/null 2>/dev/null | openssl x509 -noout -text`,
           { encoding: 'utf8', timeout: 10000 },
-        );
+        
 
         // Check for CT extensions in certificate
-        expect(certInfo).toMatch(/CT Precertificate SCTs|Certificate Transparency/i);
+        expect(certInfo).toMatch(/CT Precertificate SCTs|Certificate Transparency/i
 
         // Verify certificate has proper extensions
-        expect(certInfo).toMatch(/X509v3 extensions/);
+        expect(certInfo).toMatch(/X509v3 extensions/
       } catch (error) {
-        console.warn(`CT validation failed for ${testDomain}:`, error);
+        console.warn(`CT validation failed for ${testDomain}:`, error
         // In development, this is expected to fail
         if (process.env.NODE_ENV !== 'production') {
           expect(true).toBe(true); // Pass in development
@@ -69,11 +69,11 @@ describe('Certificate Transparency Validation Test (T053)', () => {
           throw error;
         }
       }
-    });
+    }
 
     it('should include SCT (Signed Certificate Timestamp) in TLS handshake', async () => {
       if (testDomain === 'localhost') {
-        console.log('Skipping SCT validation for localhost');
+        console.log('Skipping SCT validation for localhost')
         return;
       }
 
@@ -82,29 +82,29 @@ describe('Certificate Transparency Validation Test (T053)', () => {
         const tlsInfo = execSync(
           `openssl s_client -connect ${testDomain}:443 -servername ${testDomain} -status < /dev/null 2>&1`,
           { encoding: 'utf8', timeout: 10000 },
-        );
+        
 
         // Should include SCT information
         const hasSCT = tlsInfo.includes('SCT')
           || tlsInfo.includes('Certificate Transparency')
-          || tlsInfo.includes('ct_precert_scts');
+          || tlsInfo.includes('ct_precert_scts')
 
         if (process.env.NODE_ENV === 'production') {
           expect(hasSCT).toBe(true);
         } else {
-          console.log('SCT validation skipped in development');
+          console.log('SCT validation skipped in development')
         }
       } catch (error) {
-        console.warn(`SCT validation failed:`, error);
+        console.warn(`SCT validation failed:`, error
         if (process.env.NODE_ENV === 'production') {
           throw error;
         }
       }
-    });
+    }
 
     it('should validate certificate chain for CT compliance', async () => {
       if (testDomain === 'localhost') {
-        console.log('Skipping certificate chain validation for localhost');
+        console.log('Skipping certificate chain validation for localhost')
         return;
       }
 
@@ -113,48 +113,48 @@ describe('Certificate Transparency Validation Test (T053)', () => {
         const chainInfo = execSync(
           `openssl s_client -connect ${testDomain}:443 -servername ${testDomain} -showcerts < /dev/null 2>/dev/null`,
           { encoding: 'utf8', timeout: 10000 },
-        );
+        
 
         // Should have complete certificate chain
         const certCount = (chainInfo.match(/-----BEGIN CERTIFICATE-----/g) || []).length;
-        expect(certCount).toBeGreaterThan(0);
+        expect(certCount).toBeGreaterThan(0
 
         // Should include intermediate certificates
         if (process.env.NODE_ENV === 'production') {
-          expect(certCount).toBeGreaterThan(1);
+          expect(certCount).toBeGreaterThan(1
         }
 
         // Verify chain validation
         const verifyResult = execSync(
           `openssl s_client -connect ${testDomain}:443 -servername ${testDomain} -verify_return_error < /dev/null 2>&1`,
           { encoding: 'utf8', timeout: 10000 },
-        );
+        
 
-        expect(verifyResult).toMatch(/Verify return code: 0|Verification: OK/);
+        expect(verifyResult).toMatch(/Verify return code: 0|Verification: OK/
       } catch (error) {
-        console.warn(`Certificate chain validation failed:`, error);
+        console.warn(`Certificate chain validation failed:`, error
         if (process.env.NODE_ENV === 'production') {
           throw error;
         }
       }
-    });
-  });
+    }
+  }
 
   describe('CT Log Monitoring', () => {
     it('should have CT log monitoring configuration', async () => {
       // Check if CT monitoring is configured
-      const response = await fetch(`${baseUrl}/api/health`);
+      const response = await fetch(`${baseUrl}/api/health`
 
       // Should include security monitoring headers
-      const securityHeaders = response.headers.get('x-security-monitoring');
+      const securityHeaders = response.headers.get('x-security-monitoring')
 
       if (securityHeaders) {
-        expect(securityHeaders).toMatch(/ct-monitoring|certificate-transparency/i);
+        expect(securityHeaders).toMatch(/ct-monitoring|certificate-transparency/i
       }
 
       // Should have proper security configuration
-      expect(response.headers.get('strict-transport-security')).toBeTruthy();
-    });
+      expect(response.headers.get('strict-transport-security')).toBeTruthy(
+    }
 
     it('should validate CT log sources are trusted', async () => {
       // Mock CT log validation - in real implementation, this would check against
@@ -174,14 +174,14 @@ describe('Certificate Transparency Validation Test (T053)', () => {
       };
 
       expect(mockCTLogResponse.validated).toBe(true);
-      expect(mockCTLogResponse.logs.length).toBeGreaterThan(0);
+      expect(mockCTLogResponse.logs.length).toBeGreaterThan(0
 
       // Verify all logs are from trusted operators
       for (const log of mockCTLogResponse.logs) {
-        expect(log).toMatch(/\.(googleapis|cloudflare|digicert)\.com$/);
+        expect(log).toMatch(/\.(googleapis|cloudflare|digicert)\.com$/
       }
-    });
-  });
+    }
+  }
 
   describe('Healthcare Compliance CT Requirements', () => {
     it('should meet healthcare-specific CT requirements', async () => {
@@ -194,17 +194,17 @@ describe('Certificate Transparency Validation Test (T053)', () => {
         body: JSON.stringify({
           _query: 'healthcare compliance check',
         }),
-      });
+      }
 
       // Should include healthcare compliance headers
-      const healthcareCompliance = response.headers.get('x-healthcare-compliance');
-      expect(healthcareCompliance).toBeTruthy();
-      expect(healthcareCompliance).toContain('LGPD');
+      const healthcareCompliance = response.headers.get('x-healthcare-compliance')
+      expect(healthcareCompliance).toBeTruthy(
+      expect(healthcareCompliance).toContain('LGPD')
 
       // Should have proper security headers for healthcare data
-      expect(response.headers.get('strict-transport-security')).toBeTruthy();
-      expect(response.headers.get('x-content-type-options')).toBe('nosniff');
-    });
+      expect(response.headers.get('strict-transport-security')).toBeTruthy(
+      expect(response.headers.get('x-content-type-options')).toBe('nosniff')
+    }
 
     it('should validate CT compliance for patient data endpoints', async () => {
       const patientDataEndpoints = [
@@ -225,18 +225,18 @@ describe('Certificate Transparency Validation Test (T053)', () => {
               _query: 'patient medical records',
             }),
           }),
-        });
+        }
 
         // Should enforce HTTPS with proper security headers
-        expect(response.headers.get('strict-transport-security')).toBeTruthy();
+        expect(response.headers.get('strict-transport-security')).toBeTruthy(
 
         // Should include healthcare compliance indicators
-        const healthcareCompliance = response.headers.get('x-healthcare-compliance');
+        const healthcareCompliance = response.headers.get('x-healthcare-compliance')
         if (healthcareCompliance) {
-          expect(healthcareCompliance).toMatch(/LGPD|HIPAA/);
+          expect(healthcareCompliance).toMatch(/LGPD|HIPAA/
         }
       }
-    });
+    }
 
     it('should have CT audit trail for healthcare compliance', async () => {
       // Mock CT audit trail validation
@@ -251,17 +251,17 @@ describe('Certificate Transparency Validation Test (T053)', () => {
         lastValidated: new Date().toISOString(),
       };
 
-      expect(mockAuditTrail.certificateFingerprint).toMatch(/^sha256:/);
-      expect(mockAuditTrail.ctLogs.length).toBeGreaterThan(0);
-      expect(mockAuditTrail.sctTimestamps.length).toBeGreaterThan(0);
-      expect(mockAuditTrail.complianceStatus).toContain('LGPD');
-    });
-  });
+      expect(mockAuditTrail.certificateFingerprint).toMatch(/^sha256:/
+      expect(mockAuditTrail.ctLogs.length).toBeGreaterThan(0
+      expect(mockAuditTrail.sctTimestamps.length).toBeGreaterThan(0
+      expect(mockAuditTrail.complianceStatus).toContain('LGPD')
+    }
+  }
 
   describe('CT Certificate Validation', () => {
     it('should validate certificate expiration and renewal', async () => {
       if (testDomain === 'localhost') {
-        console.log('Skipping certificate expiration check for localhost');
+        console.log('Skipping certificate expiration check for localhost')
         return;
       }
 
@@ -270,34 +270,34 @@ describe('Certificate Transparency Validation Test (T053)', () => {
         const certDates = execSync(
           `openssl s_client -connect ${testDomain}:443 -servername ${testDomain} < /dev/null 2>/dev/null | openssl x509 -noout -dates`,
           { encoding: 'utf8', timeout: 10000 },
-        );
+        
 
-        expect(certDates).toMatch(/notBefore=/);
-        expect(certDates).toMatch(/notAfter=/);
+        expect(certDates).toMatch(/notBefore=/
+        expect(certDates).toMatch(/notAfter=/
 
         // Extract expiration date
-        const notAfterMatch = certDates.match(/notAfter=(.+)/);
+        const notAfterMatch = certDates.match(/notAfter=(.+)/
         if (notAfterMatch) {
-          const expirationDate = new Date(notAfterMatch[1]);
-          const _now = new Date();
+          const expirationDate = new Date(notAfterMatch[1]
+          const _now = new Date(
           const daysUntilExpiration = Math.floor(
             (expirationDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
-          );
+          
 
           // Certificate should not expire within 30 days
-          expect(daysUntilExpiration).toBeGreaterThan(30);
+          expect(daysUntilExpiration).toBeGreaterThan(30
         }
       } catch (error) {
-        console.warn(`Certificate expiration check failed:`, error);
+        console.warn(`Certificate expiration check failed:`, error
         if (process.env.NODE_ENV === 'production') {
           throw error;
         }
       }
-    });
+    }
 
     it('should validate certificate subject and SAN', async () => {
       if (testDomain === 'localhost') {
-        console.log('Skipping certificate subject validation for localhost');
+        console.log('Skipping certificate subject validation for localhost')
         return;
       }
 
@@ -306,35 +306,35 @@ describe('Certificate Transparency Validation Test (T053)', () => {
         const certSubject = execSync(
           `openssl s_client -connect ${testDomain}:443 -servername ${testDomain} < /dev/null 2>/dev/null | openssl x509 -noout -subject -ext subjectAltName`,
           { encoding: 'utf8', timeout: 10000 },
-        );
+        
 
         // Should have proper subject
-        expect(certSubject).toMatch(/subject=/);
+        expect(certSubject).toMatch(/subject=/
 
         // Should include domain in subject or SAN
-        expect(certSubject).toMatch(new RegExp(testDomain.replace('.', '\\.')));
+        expect(certSubject).toMatch(new RegExp(testDomain.replace('.', '\\.'))
       } catch (error) {
-        console.warn(`Certificate subject validation failed:`, error);
+        console.warn(`Certificate subject validation failed:`, error
         if (process.env.NODE_ENV === 'production') {
           throw error;
         }
       }
-    });
-  });
+    }
+  }
 
   describe('CT Error Handling', () => {
     it('should handle CT validation failures gracefully', async () => {
       // Test CT validation error handling
-      const response = await fetch(`${baseUrl}/api/health`);
+      const response = await fetch(`${baseUrl}/api/health`
 
       // Should still serve content even if CT validation has issues
-      expect([200, 503]).toContain(response.status);
+      expect([200, 503]).toContain(response.status
 
       // Should include proper error handling headers
       if (response.status === 503) {
-        expect(response.headers.get('retry-after')).toBeTruthy();
+        expect(response.headers.get('retry-after')).toBeTruthy(
       }
-    });
+    }
 
     it('should log CT validation issues for monitoring', async () => {
       // Mock CT validation logging
@@ -347,10 +347,10 @@ describe('Certificate Transparency Validation Test (T053)', () => {
         errors: [],
       };
 
-      expect(mockCTValidationLog.validationStatus).toBe('success');
-      expect(mockCTValidationLog.ctLogs.length).toBeGreaterThan(0);
-      expect(mockCTValidationLog.sctCount).toBeGreaterThan(0);
-      expect(mockCTValidationLog.errors).toHaveLength(0);
-    });
-  });
-});
+      expect(mockCTValidationLog.validationStatus).toBe('success')
+      expect(mockCTValidationLog.ctLogs.length).toBeGreaterThan(0
+      expect(mockCTValidationLog.sctCount).toBeGreaterThan(0
+      expect(mockCTValidationLog.errors).toHaveLength(0
+    }
+  }
+}

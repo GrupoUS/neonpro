@@ -30,8 +30,8 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
   let sessionId: string;
 
   beforeEach(async () => {
-    await setupTestDatabase();
-    testClient = await createTestClient({ _role: 'admin' });
+    await setupTestDatabase(
+    testClient = await createTestClient({ _role: 'admin' }
 
     // Setup MSW server for external AI service mocking
     const trpcMsw = createTRPCMsw<AppRouter>({
@@ -39,7 +39,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
         input: superjson,
         output: superjson,
       },
-    });
+    }
 
     server = setupServer(
       // Mock OpenAI GPT-4 API
@@ -65,7 +65,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
             completion_tokens: 42,
             total_tokens: 192,
           },
-        });
+        }
       }),
       // Mock Anthropic Claude API fallback
       http.post('https://api.anthropic.com/v1/messages', () => {
@@ -86,7 +86,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
             input_tokens: 120,
             output_tokens: 38,
           },
-        });
+        }
       }),
       // Mock patient data anonymization service
       http.post('https://api.neonpro.com.br/internal/anonymize', () => {
@@ -115,7 +115,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
           },
           anonymization_level: 'high',
           lgpd_compliance: true,
-        });
+        }
       }),
       // Mock Brazilian weather service for no-show prediction
       http.get('https://api.openweathermap.org/data/2.5/weather', () => {
@@ -123,11 +123,11 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
           weather: [{ main: 'Rain', description: 'chuva moderada' }],
           main: { temp: 18.5, humidity: 85 },
           name: 'São Paulo',
-        });
+        }
       }),
-    );
+    
 
-    server.listen();
+    server.listen(
 
     // Create tRPC client
     trpcClient = createTRPCClient<AppRouter>({
@@ -140,16 +140,16 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
         }),
       ],
       transformer: superjson,
-    });
+    }
 
     // Create test patient for AI analysis
     patientId = `test_patient_${Date.now()}`;
-  });
+  }
 
   afterEach(async () => {
-    server.close();
-    await cleanupTestDatabase();
-  });
+    server.close(
+    await cleanupTestDatabase(
+  }
 
   describe('Portuguese Medical Terminology Support', () => {
     it('should process medical queries in Portuguese with proper terminology', async () => {
@@ -173,7 +173,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
       // This should fail until ai.predict router is implemented
       await expect(
         trpcClient.ai.predict.mutation(medicalQuery),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
 
       // Expected implementation should return:
       // {
@@ -187,7 +187,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
       //   },
       //   recommendations: {
       //     pt: 'Envie lembrete via WhatsApp 24h antes. Ofereça reagendamento em caso de chuva forte.',
-      //     en: 'Send WhatsApp reminder 24h before. Offer rescheduling in case of heavy rain.'
+      //     en: 'Send WhatsApp reminder 24h before. Offer rescheduling in case of heavy rain.')
       //   },
       //   audit_trail: {
       //     anonymization_applied: true,
@@ -196,7 +196,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
       //     lgpd_compliance: true
       //   }
       // }
-    });
+    }
 
     it('should handle specialized aesthetic medicine terminology', async () => {
       const aestheticQuery = {
@@ -214,11 +214,11 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
 
       await expect(
         trpcClient.ai.analyzeAestheticRisk.mutation(aestheticQuery),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
 
       // Expected specialized response for aesthetic medicine
-    });
-  });
+    }
+  }
 
   describe('Multi-Provider AI Routing', () => {
     it('should route to OpenAI GPT-4 for primary healthcare analysis', async () => {
@@ -243,18 +243,18 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
 
       await expect(
         trpcClient.ai.routeProvider.mutation(primaryQuery),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
 
       // Should route to OpenAI and include routing decision in response
-    });
+    }
 
     it('should fallback to Anthropic Claude when OpenAI is unavailable', async () => {
       // Mock OpenAI failure
       server.use(
         http.post('https://api.openai.com/v1/chat/completions', () => {
-          return new Response(null, { status: 503 });
+          return new Response(null, { status: 503 }
         }),
-      );
+      
 
       const fallbackQuery = {
         patient_id: patientId,
@@ -272,10 +272,10 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
 
       await expect(
         trpcClient.ai.routeProvider.mutation(fallbackQuery),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
 
       // Should automatically fallback to Claude and log the provider switch
-    });
+    }
 
     it('should balance load between providers based on capacity', async () => {
       const loadBalancingQuery = {
@@ -290,11 +290,11 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
 
       await expect(
         trpcClient.ai.batchAnalysis.mutation(loadBalancingQuery),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
 
       // Should distribute requests across providers and return aggregated results
-    });
-  });
+    }
+  }
 
   describe('Patient Data Anonymization', () => {
     it('should anonymize patient data before sending to external AI services', async () => {
@@ -322,7 +322,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
 
       await expect(
         trpcClient.ai.anonymizedAnalysis.mutation(sensitiveQuery),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
 
       // Expected behavior:
       // 1. Strip all PII (name, CPF, phone, email, address)
@@ -330,7 +330,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
       // 3. Create demographic profiles instead of individual data
       // 4. Generate audit trail of anonymization process
       // 5. Ensure LGPD compliance throughout
-    });
+    }
 
     it('should maintain data utility while ensuring privacy compliance', async () => {
       const utilityQuery = {
@@ -342,11 +342,11 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
 
       await expect(
         trpcClient.ai.validateAnonymization.mutation(utilityQuery),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
 
       // Should balance privacy protection with analytical usefulness
-    });
-  });
+    }
+  }
 
   describe('Brazilian Patient Behavior Patterns', () => {
     it('should analyze regional behavioral patterns for no-show prediction', async () => {
@@ -369,7 +369,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
 
       await expect(
         trpcClient.ai.analyzeBrazilianPatterns.mutation(regionalQuery),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
 
       // Should incorporate Brazilian cultural factors:
       // - Holiday impact (Carnival, June festivals, Christmas)
@@ -377,7 +377,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
       // - Traffic patterns in major cities
       // - Cultural attitudes toward healthcare
       // - Economic factors affecting healthcare decisions
-    });
+    }
 
     it('should factor in cultural events and holidays', async () => {
       const culturalQuery = {
@@ -393,11 +393,11 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
 
       await expect(
         trpcClient.ai.analyzeCulturalImpact.mutation(culturalQuery),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
 
       // Should adjust predictions based on Brazilian cultural calendar
-    });
-  });
+    }
+  }
 
   describe('LGPD Compliance and Audit Trails', () => {
     it('should generate comprehensive audit trails for AI interactions', async () => {
@@ -412,7 +412,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
 
       await expect(
         trpcClient.ai.auditTrail.query(auditQuery),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
 
       // Expected audit trail should include:
       // - What data was processed
@@ -422,7 +422,7 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
       // - Data retention schedule
       // - User consent status
       // - Processing purpose and outcomes
-    });
+    }
 
     it('should respect patient AI processing preferences', async () => {
       const preferencesQuery = {
@@ -444,11 +444,11 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
 
       await expect(
         trpcClient.ai.respectPreferences.mutation(preferencesQuery),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
 
       // Should honor patient preferences throughout AI processing
-    });
-  });
+    }
+  }
 
   describe('Performance and Reliability Requirements', () => {
     it('should respond within 500ms for real-time predictions', async () => {
@@ -458,16 +458,16 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
         max_response_time_ms: 500,
       };
 
-      const startTime = Date.now();
+      const startTime = Date.now(
 
       await expect(
         trpcClient.ai.quickPredict.mutation(performanceQuery),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
 
       // When implemented, should complete within 500ms
-      // const endTime = Date.now();
-      // expect(endTime - startTime).toBeLessThan(500);
-    });
+      // const endTime = Date.now(
+      // expect(endTime - startTime).toBeLessThan(500
+    }
 
     it('should handle high concurrent AI requests efficiently', async () => {
       const concurrentRequests = Array(100)
@@ -476,15 +476,15 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
           patient_id: `concurrent_test_${i}`,
           _query: `Previsão ${i + 1}`,
           priority: i < 20 ? 'high' : 'normal',
-        }));
+        })
 
       await expect(
         Promise.all(
           concurrentRequests.map(req => trpcClient.ai.predict.mutation(req)),
         ),
-      ).rejects.toThrow();
+      ).rejects.toThrow(
 
       // Should handle concurrent load without degradation
-    });
-  });
-});
+    }
+  }
+}

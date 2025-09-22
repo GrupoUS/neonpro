@@ -254,8 +254,8 @@ export const securityTestUtils = {
       'trojan',
       'ransomware',
       'phishing',
-      'data_leak_,
-      'security_incident_,
+      'data_leak',
+      'security_incident',
     ];
 
     return output.some(log =>
@@ -289,13 +289,13 @@ export const securityTestUtils = {
   hasNetworkConfigExposure: (output: string[][]) => {
     const networkPatterns = [
       'firewall',
-      'security_group_,
+      'security_group',
       'vpc',
       'subnet',
       'gateway',
       'router',
       'switch',
-      'load_balancer_,
+      'load_balancer',
       'cdn',
       'dns',
       'proxy',

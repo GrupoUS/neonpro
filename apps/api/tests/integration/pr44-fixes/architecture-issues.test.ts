@@ -8,16 +8,16 @@ import path from 'path';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('Architecture Issue Tests', () => {
-  const apiSrcPath = path.join(__dirname, '../../../../src');
-  const servicesPath = path.join(apiSrcPath, 'services');
+  const apiSrcPath = path.join(__dirname, '../../../../src')
+  const servicesPath = path.join(apiSrcPath, 'services')
 
   describe('AuditTrail Misuse Detection', () => {
     it('should not use AuditTrail for state management', () => {
       // This test should fail if AuditTrail is being used for state management
-      const auditTrailService = path.join(servicesPath, 'audit-trail.ts');
+      const auditTrailService = path.join(servicesPath, 'audit-trail.ts')
 
       if (fs.existsSync(auditTrailService)) {
-        const content = fs.readFileSync(auditTrailService, 'utf8');
+        const content = fs.readFileSync(auditTrailService, 'utf8')
 
         // Check for state management patterns in AuditTrail
         const stateManagementPatterns = [
@@ -31,15 +31,15 @@ describe('Architecture Issue Tests', () => {
         ];
 
         for (const pattern of stateManagementPatterns) {
-          const matches = content.match(pattern);
+          const matches = content.match(pattern
           if (matches) {
             expect(`AuditTrail used for state management: ${matches[0]}`).toBe(
               '',
-            );
+            
           }
         }
       }
-    });
+    }
 
     it('should have dedicated state management tables', () => {
       // This test should fail if dedicated state tables are missing
@@ -49,7 +49,7 @@ describe('Architecture Issue Tests', () => {
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file);
+        const filePath = path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
           const content = fs.readFileSync(filePath, 'utf8');
 
@@ -62,24 +62,24 @@ describe('Architecture Issue Tests', () => {
           ];
 
           for (const pattern of auditTrailStatePatterns) {
-            const matches = content.match(pattern);
+            const matches = content.match(pattern
             if (matches) {
               expect(
                 `AuditTrail state management found in ${file}: ${matches[0]}`,
-              ).toBe('');
+              ).toBe('')
             }
           }
         }
       }
-    });
+    }
 
     it('should have proper separation of concerns between audit and state', () => {
       // This test should fail if audit and state management are mixed
-      const aiProviderRouter = path.join(servicesPath, 'ai-provider-router.ts');
+      const aiProviderRouter = path.join(servicesPath, 'ai-provider-router.ts')
       const aiProviderRouterNew = path.join(
         servicesPath,
         'ai-provider-router-new.ts',
-      );
+      
 
       for (const filePath of [aiProviderRouter, aiProviderRouterNew]) {
         if (fs.existsSync(filePath)) {
@@ -94,17 +94,17 @@ describe('Architecture Issue Tests', () => {
           ];
 
           for (const pattern of mixedConcernsPatterns) {
-            const matches = content.match(pattern);
+            const matches = content.match(pattern
             if (matches) {
               expect(
                 `Mixed audit/state concerns in ${path.basename(filePath)}: ${matches[0]}`,
-              ).toBe('');
+              ).toBe('')
             }
           }
         }
       }
-    });
-  });
+    }
+  }
 
   describe('Database Architecture', () => {
     it('should have proper database schema for state management', () => {
@@ -112,10 +112,10 @@ describe('Architecture Issue Tests', () => {
       const schemaPath = path.join(
         __dirname,
         '../../../../../../packages/database/prisma/schema.prisma',
-      );
+      
 
       if (fs.existsSync(schemaPath)) {
-        const content = fs.readFileSync(schemaPath, 'utf8');
+        const content = fs.readFileSync(schemaPath, 'utf8')
 
         // Check for state management tables
         const stateTables = [
@@ -129,30 +129,30 @@ describe('Architecture Issue Tests', () => {
           table =>
             content.includes(`model ${table}`)
             || content.includes(`model ${table.toLowerCase()}`),
-        );
+        
 
         if (!hasStateTable) {
           expect('Missing dedicated state management tables in schema').toBe(
             '',
-          );
+          
         }
       }
-    });
+    }
 
     it('should not overload AuditTrail table with state data', () => {
       // This test should fail if AuditTrail table is being used for state
       const schemaPath = path.join(
         __dirname,
         '../../../../../../packages/database/prisma/schema.prisma',
-      );
+      
 
       if (fs.existsSync(schemaPath)) {
-        const content = fs.readFileSync(schemaPath, 'utf8');
+        const content = fs.readFileSync(schemaPath, 'utf8')
 
         // Check if AuditTrail table has state-related fields that shouldn't be there
         const auditTrailSection = content.match(
           /model AuditTrail \{[\s\S]*?\}/,
-        );
+        
 
         if (auditTrailSection) {
           const auditTrailSchema = auditTrailSection[0];
@@ -165,33 +165,33 @@ describe('Architecture Issue Tests', () => {
             'cacheState',
           ];
 
-          const hasStateFields = stateFields.some(field => auditTrailSchema.includes(field));
+          const hasStateFields = stateFields.some(field => auditTrailSchema.includes(field)
 
           if (hasStateFields) {
             expect('AuditTrail table contains inappropriate state fields').toBe(
               '',
-            );
+            
           }
         }
       }
-    });
-  });
+    }
+  }
 
   describe('Service Architecture', () => {
     it('should not have duplicate AI provider router services', () => {
       // This test should fail due to the conflicting ai-provider-router files
-      const aiProviderRouter = path.join(servicesPath, 'ai-provider-router.ts');
+      const aiProviderRouter = path.join(servicesPath, 'ai-provider-router.ts')
       const aiProviderRouterNew = path.join(
         servicesPath,
         'ai-provider-router-new.ts',
-      );
+      
 
-      const bothExist = fs.existsSync(aiProviderRouter) && fs.existsSync(aiProviderRouterNew);
+      const bothExist = fs.existsSync(aiProviderRouter) && fs.existsSync(aiProviderRouterNew
 
       if (bothExist) {
-        expect('Conflicting AI provider router files found').toBe('');
+        expect('Conflicting AI provider router files found').toBe('')
       }
-    });
+    }
 
     it('should have proper service dependency injection', () => {
       // This test should fail if services have tight coupling
@@ -201,7 +201,7 @@ describe('Architecture Issue Tests', () => {
       ];
 
       for (const file of filesToCheck) {
-        const filePath = path.join(servicesPath, file);
+        const filePath = path.join(servicesPath, file
         if (fs.existsSync(filePath)) {
           const content = fs.readFileSync(filePath, 'utf8');
 
@@ -213,13 +213,13 @@ describe('Architecture Issue Tests', () => {
           ];
 
           for (const pattern of tightCouplingPatterns) {
-            const matches = content.match(pattern);
+            const matches = content.match(pattern
             if (matches) {
-              expect(`Tight coupling found in ${file}: ${matches[0]}`).toBe('');
+              expect(`Tight coupling found in ${file}: ${matches[0]}`).toBe('')
             }
           }
         }
       }
-    });
-  });
-});
+    }
+  }
+}

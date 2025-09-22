@@ -24,15 +24,15 @@ describe('Integration Test T013: Quota Enforcement', () => {
   let quotaManager: any;
 
   beforeEach(async () => {
-    await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
+    await setupTestDatabase(
+    testClient = createTestClient({ _role: 'admin' }
     clinicId = 'clinic-quota-test-001';
     professionalCRM = 'CRM/SP 123456';
-  });
+  }
 
   afterEach(async () => {
-    await cleanupTestDatabase();
-  });
+    await cleanupTestDatabase(
+  }
 
   describe('Daily and Monthly Quota Limits', () => {
     it('should enforce daily AI request quotas per clinic', async () => {
@@ -56,7 +56,7 @@ describe('Integration Test T013: Quota Enforcement', () => {
             plan: 'premium',
           },
         }),
-      });
+      }
 
       // Generate requests exceeding daily limit
       for (let i = 0; i < dailyLimit + 10; i++) {
@@ -74,22 +74,22 @@ describe('Integration Test T013: Quota Enforcement', () => {
               quotaCheck: true,
             }),
           }),
-        );
+        
       }
 
       // TDD RED: Quota enforcement not implemented - MUST FAIL
-      const responses = await Promise.all(requests);
+      const responses = await Promise.all(requests
 
       // First dailyLimit requests should succeed
       for (let i = 0; i < dailyLimit; i++) {
-        expect(responses[i].status).toBe(200);
+        expect(responses[i].status).toBe(200
       }
 
       // Subsequent requests should be quota-limited
       for (let i = dailyLimit; i < responses.length; i++) {
-        expect(responses[i].status).toBe(429);
+        expect(responses[i].status).toBe(429
 
-        const error = await responses[i].json();
+        const error = await responses[i].json(
         expect(error).toMatchObject({
           error: 'QUOTA_DIARIA_EXCEDIDA',
           message: expect.stringContaining('limite diário'),
@@ -104,9 +104,9 @@ describe('Integration Test T013: Quota Enforcement', () => {
             estimatedOverageCost: expect.any(Number),
           },
           locale: 'pt-BR',
-        });
+        }
       }
-    });
+    }
 
     it('should enforce monthly quota limits with rollover tracking', async () => {
       const monthlyLimit = 1000;
@@ -130,7 +130,7 @@ describe('Integration Test T013: Quota Enforcement', () => {
             },
           },
         }),
-      });
+      }
 
       // Test requests near monthly limit
       const requests = [];
@@ -149,22 +149,22 @@ describe('Integration Test T013: Quota Enforcement', () => {
               quotaTracking: 'monthly',
             }),
           }),
-        );
+        
       }
 
       // TDD RED: Monthly quota enforcement not implemented - MUST FAIL
-      const responses = await Promise.all(requests);
+      const responses = await Promise.all(requests
 
       // First 50 requests should succeed (950 + 50 = 1000)
       for (let i = 0; i < 50; i++) {
-        expect(responses[i].status).toBe(200);
+        expect(responses[i].status).toBe(200
       }
 
       // Remaining requests should be blocked
       for (let i = 50; i < responses.length; i++) {
-        expect(responses[i].status).toBe(429);
+        expect(responses[i].status).toBe(429
 
-        const error = await responses[i].json();
+        const error = await responses[i].json(
         expect(error).toMatchObject({
           error: 'QUOTA_MENSAL_EXCEDIDA',
           message: expect.stringContaining('limite mensal'),
@@ -177,10 +177,10 @@ describe('Integration Test T013: Quota Enforcement', () => {
             },
           },
           locale: 'pt-BR',
-        });
+        }
       }
-    });
-  });
+    }
+  }
 
   describe('Model-Specific Quota Management', () => {
     it('should enforce different quotas for different AI models based on cost', async () => {
@@ -204,7 +204,7 @@ describe('Integration Test T013: Quota Enforcement', () => {
           currency: 'BRL',
           costTracking: true,
         }),
-      });
+      }
 
       // Test GPT-4 quota (most expensive, lowest limit)
       const gpt4Requests = [];
@@ -223,22 +223,22 @@ describe('Integration Test T013: Quota Enforcement', () => {
               analysisType: 'premium_analysis',
             }),
           }),
-        );
+        
       }
 
       // TDD RED: Model-specific quotas not implemented - MUST FAIL
-      const gpt4Responses = await Promise.all(gpt4Requests);
+      const gpt4Responses = await Promise.all(gpt4Requests
 
       // First 10 GPT-4 requests should succeed
       for (let i = 0; i < 10; i++) {
-        expect(gpt4Responses[i].status).toBe(200);
+        expect(gpt4Responses[i].status).toBe(200
       }
 
       // Remaining GPT-4 requests should be blocked
       for (let i = 10; i < gpt4Responses.length; i++) {
-        expect(gpt4Responses[i].status).toBe(429);
+        expect(gpt4Responses[i].status).toBe(429
 
-        const error = await gpt4Responses[i].json();
+        const error = await gpt4Responses[i].json(
         expect(error).toMatchObject({
           error: 'QUOTA_MODELO_EXCEDIDA',
           message: expect.stringContaining('GPT-4'),
@@ -251,9 +251,9 @@ describe('Integration Test T013: Quota Enforcement', () => {
           },
           alternatives: expect.arrayContaining(['gpt-3.5-turbo', 'claude-3']),
           locale: 'pt-BR',
-        });
+        }
       }
-    });
+    }
 
     it('should provide automatic model fallback when quota exceeded', async () => {
       const fallbackRequest = {
@@ -273,11 +273,11 @@ describe('Integration Test T013: Quota Enforcement', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(fallbackRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         analysisId: expect.any(String),
         modelUsed: expect.oneOf(['claude-3', 'gpt-3.5-turbo']),
@@ -294,9 +294,9 @@ describe('Integration Test T013: Quota Enforcement', () => {
           actualQuality: expect.any(Number),
           qualityDifference: expect.any(Number),
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Rate Limiting and Burst Protection', () => {
     it('should enforce rate limits to prevent API abuse', async () => {
@@ -317,11 +317,11 @@ describe('Integration Test T013: Quota Enforcement', () => {
           clinicId,
           rateLimitConfig,
         }),
-      });
+      }
 
       // Send burst of requests
       const burstRequests = [];
-      const startTime = Date.now();
+      const startTime = Date.now(
 
       for (let i = 0; i < 20; i++) {
         burstRequests.push(
@@ -338,23 +338,23 @@ describe('Integration Test T013: Quota Enforcement', () => {
               timestamp: Date.now(),
             }),
           }),
-        );
+        
       }
 
       // TDD RED: Rate limiting not implemented - MUST FAIL
-      const responses = await Promise.all(burstRequests);
-      const endTime = Date.now();
+      const responses = await Promise.all(burstRequests
+      const endTime = Date.now(
 
       // First 15 requests should succeed (burst limit)
       for (let i = 0; i < 15; i++) {
-        expect(responses[i].status).toBe(200);
+        expect(responses[i].status).toBe(200
       }
 
       // Remaining requests should be rate limited
       for (let i = 15; i < responses.length; i++) {
-        expect(responses[i].status).toBe(429);
+        expect(responses[i].status).toBe(429
 
-        const error = await responses[i].json();
+        const error = await responses[i].json(
         expect(error).toMatchObject({
           error: 'LIMITE_TAXA_EXCEDIDO',
           message: expect.stringContaining('muitas requisições'),
@@ -365,11 +365,11 @@ describe('Integration Test T013: Quota Enforcement', () => {
             resetTime: expect.any(String),
           },
           locale: 'pt-BR',
-        });
+        }
       }
 
       expect(endTime - startTime).toBeLessThan(5000); // Burst handled quickly
-    });
+    }
 
     it('should implement healthcare-specific rate limiting for patient safety', async () => {
       const healthcareRateLimits = {
@@ -391,7 +391,7 @@ describe('Integration Test T013: Quota Enforcement', () => {
           healthcareRateLimits,
           patientSafetyMode: true,
         }),
-      });
+      }
 
       const patientId = 'safety-patient-001';
       const requests = [];
@@ -413,22 +413,22 @@ describe('Integration Test T013: Quota Enforcement', () => {
               procedureType: 'aesthetic_consultation',
             }),
           }),
-        );
+        
       }
 
       // TDD RED: Healthcare rate limiting not implemented - MUST FAIL
-      const responses = await Promise.all(requests);
+      const responses = await Promise.all(requests
 
       // First 5 requests should succeed
       for (let i = 0; i < 5; i++) {
-        expect(responses[i].status).toBe(200);
+        expect(responses[i].status).toBe(200
       }
 
       // Remaining requests should be limited for patient safety
       for (let i = 5; i < responses.length; i++) {
-        expect(responses[i].status).toBe(429);
+        expect(responses[i].status).toBe(429
 
-        const error = await responses[i].json();
+        const error = await responses[i].json(
         expect(error).toMatchObject({
           error: 'LIMITE_SEGURANCA_PACIENTE',
           message: expect.stringContaining('segurança do paciente'),
@@ -444,10 +444,10 @@ describe('Integration Test T013: Quota Enforcement', () => {
             recommendedAction: 'wait_before_next_analysis',
           },
           locale: 'pt-BR',
-        });
+        }
       }
-    });
-  });
+    }
+  }
 
   describe('Cost-Based Quota Management', () => {
     it('should enforce budget limits in Brazilian Reais', async () => {
@@ -470,7 +470,7 @@ describe('Integration Test T013: Quota Enforcement', () => {
           budgetConfig,
           currency: 'BRL',
         }),
-      });
+      }
 
       // Generate expensive AI requests
       const expensiveRequests = [];
@@ -490,11 +490,11 @@ describe('Integration Test T013: Quota Enforcement', () => {
               costTracking: true,
             }),
           }),
-        );
+        
       }
 
       // TDD RED: Budget enforcement not implemented - MUST FAIL
-      const responses = await Promise.all(expensiveRequests);
+      const responses = await Promise.all(expensiveRequests
 
       let totalCost = 0;
       let budgetExceeded = false;
@@ -503,14 +503,14 @@ describe('Integration Test T013: Quota Enforcement', () => {
         const response = responses[i];
 
         if (totalCost < 100.0) {
-          expect(response.status).toBe(200);
+          expect(response.status).toBe(200
 
-          const result = await response.json();
+          const result = await response.json(
           totalCost += result.costBRL || 5.0; // Estimate cost per request
         } else {
-          expect(response.status).toBe(429);
+          expect(response.status).toBe(429
 
-          const error = await response.json();
+          const error = await response.json(
           expect(error).toMatchObject({
             error: 'ORCAMENTO_EXCEDIDO',
             message: expect.stringContaining('orçamento diário'),
@@ -521,13 +521,13 @@ describe('Integration Test T013: Quota Enforcement', () => {
               overspendProtection: true,
             },
             locale: 'pt-BR',
-          });
+          }
           budgetExceeded = true;
         }
       }
 
       expect(budgetExceeded).toBe(true);
-    });
+    }
 
     it('should provide cost optimization recommendations', async () => {
       const costOptimizationRequest = {
@@ -545,11 +545,11 @@ describe('Integration Test T013: Quota Enforcement', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(costOptimizationRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         currentCosts: {
           totalBRL: expect.any(Number),
@@ -574,9 +574,9 @@ describe('Integration Test T013: Quota Enforcement', () => {
           estimatedSavings: expect.any(Number),
           qualityMaintenance: expect.any(Number),
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Quota Analytics and Reporting', () => {
     it('should provide detailed quota usage analytics', async () => {
@@ -595,11 +595,11 @@ describe('Integration Test T013: Quota Enforcement', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(analyticsRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         quotaUsage: {
           daily: expect.any(Array),
@@ -620,7 +620,7 @@ describe('Integration Test T013: Quota Enforcement', () => {
         },
         alerts: expect.any(Array),
         recommendations: expect.any(Array),
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

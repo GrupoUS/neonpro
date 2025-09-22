@@ -7,18 +7,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AccessibilityAuditService_LEVELS } from '../accessibility-audit';
 
 // Mock DOM methods
-const mockGetComputedStyle = vi.fn();
+const mockGetComputedStyle = vi.fn(
 
 beforeEach(() => {
   // Mock window.getComputedStyle
   Object.defineProperty(window, 'getComputedStyle', {
     value: mockGetComputedStyle,
     writable: true,
-  });
+  }
 
   // Mock document methods
-  document.querySelector = vi.fn();
-  document.querySelectorAll = vi.fn();
+  document.querySelector = vi.fn(
+  document.querySelectorAll = vi.fn(
 
   // Mock document.documentElement
   Object.defineProperty(document, 'documentElement', {
@@ -26,7 +26,7 @@ beforeEach(() => {
       getAttribute: vi.fn().mockReturnValue('pt-BR'),
     },
     writable: true,
-  });
+  }
 
   // Default mock for getComputedStyle
   mockGetComputedStyle.mockReturnValue({
@@ -37,19 +37,19 @@ beforeEach(() => {
     outline: '2px solid blue',
     boxShadow: 'none',
     border: 'none',
-  });
-});
+  }
+}
 
 afterEach(() => {
-  vi.clearAllMocks();
-});
+  vi.clearAllMocks(
+}
 
 describe(('AccessibilityAuditService', () => {
   let auditService: AccessibilityAuditService;
   let mockElement: HTMLElement;
 
   beforeEach(() => {
-    auditService = new AccessibilityAuditService();
+    auditService = new AccessibilityAuditService(
 
     // Create mock element
     mockElement = {
@@ -61,40 +61,40 @@ describe(('AccessibilityAuditService', () => {
       hasAttribute: vi.fn(),
       getAttribute: vi.fn(),
     } as any;
-  });
+  }
 
   describe(('performAudit', () => {
     it(_'should perform comprehensive accessibility audit',async () => {
       // Mock empty element (no issues)
-      mockElement.querySelectorAll = vi.fn().mockReturnValue([]);
+      mockElement.querySelectorAll = vi.fn().mockReturnValue([]
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
-      expect(result).toBeDefined();
-      expect(result.score).toBeGreaterThanOrEqual(0);
-      expect(result.score).toBeLessThanOrEqual(100);
+      expect(result).toBeDefined(
+      expect(result.score).toBeGreaterThanOrEqual(0
+      expect(result.score).toBeLessThanOrEqual(100
       expect(result.level).toBeOneOf([
         WCAG_LEVELS.A,
         WCAG_LEVELS.AA,
         WCAG_LEVELS.AAA,
-      ]);
+      ]
       expect(Array.isArray(result.issues)).toBe(true);
-      expect(result.summary).toBeDefined();
-      expect(result.healthcareCompliance).toBeDefined();
+      expect(result.summary).toBeDefined(
+      expect(result.healthcareCompliance).toBeDefined(
       expect(Array.isArray(result.recommendations)).toBe(true);
-      expect(result.testResults).toBeDefined();
-    });
+      expect(result.testResults).toBeDefined(
+    }
 
     it(_'should use document.body when no element provided',async () => {
       const bodySpy = vi
         .spyOn(document.body, 'querySelectorAll')
-        .mockReturnValue([] as any);
+        .mockReturnValue([] as any
 
-      await auditService.performAudit();
+      await auditService.performAudit(
 
-      expect(bodySpy).toHaveBeenCalled();
-    });
-  });
+      expect(bodySpy).toHaveBeenCalled(
+    }
+  }
 
   describe(('Color Contrast Audit', () => {
     it(_'should detect color contrast issues',async () => {
@@ -116,7 +116,7 @@ describe(('AccessibilityAuditService', () => {
         if (selector.includes('h1, h2')) return [];
         if (selector.includes('lgpd')) return [];
         return [];
-      });
+      }
 
       // Mock poor contrast colors
       mockGetComputedStyle.mockReturnValue({
@@ -127,15 +127,15 @@ describe(('AccessibilityAuditService', () => {
         outline: '2px solid blue',
         boxShadow: 'none',
         border: 'none',
-      });
+      }
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
       expect(result.testResults.colorContrast).toBe(false);
       expect(
         result.issues.some(issue => issue.title.includes('Contraste de cor insuficiente')),
       ).toBe(true);
-    });
+    }
 
     it(_'should pass with good contrast',async () => {
       // Mock element with good contrast
@@ -156,7 +156,7 @@ describe(('AccessibilityAuditService', () => {
         if (selector.includes('h1, h2')) return [];
         if (selector.includes('lgpd')) return [];
         return [];
-      });
+      }
 
       // Mock good contrast colors (black on white)
       mockGetComputedStyle.mockReturnValue({
@@ -167,16 +167,16 @@ describe(('AccessibilityAuditService', () => {
         outline: '2px solid blue',
         boxShadow: 'none',
         border: 'none',
-      });
+      }
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
       expect(result.testResults.colorContrast).toBe(true);
       expect(
         result.issues.filter(issue => issue.title.includes('Contraste de cor insuficiente')),
-      ).toHaveLength(0);
-    });
-  });
+      ).toHaveLength(0
+    }
+  }
 
   describe(('Keyboard Navigation Audit', () => {
     it(_'should detect keyboard navigation issues',async () => {
@@ -203,17 +203,17 @@ describe(('AccessibilityAuditService', () => {
         if (selector.includes('h1, h2')) return [];
         if (selector.includes('lgpd')) return [];
         return [];
-      });
+      }
 
-      mockElement.querySelector = vi.fn().mockReturnValue(null);
+      mockElement.querySelector = vi.fn().mockReturnValue(null
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
       expect(result.testResults.keyboardNavigation).toBe(false);
       expect(
         result.issues.some(issue => issue.title.includes('não acessível via teclado')),
       ).toBe(true);
-    });
+    }
 
     it(_'should detect missing focus indicators',async () => {
       // Mock button without focus styles
@@ -232,9 +232,9 @@ describe(('AccessibilityAuditService', () => {
         if (selector.includes('h1, h2')) return [];
         if (selector.includes('lgpd')) return [];
         return [];
-      });
+      }
 
-      mockElement.querySelector = vi.fn().mockReturnValue(null);
+      mockElement.querySelector = vi.fn().mockReturnValue(null
 
       // Mock getComputedStyle for :focus pseudo-element
       mockGetComputedStyle.mockReturnValue({
@@ -245,16 +245,16 @@ describe(('AccessibilityAuditService', () => {
         outline: 'none', // No focus indicator
         boxShadow: 'none',
         border: 'none',
-      });
+      }
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
       expect(result.testResults.focusManagement).toBe(false);
       expect(
         result.issues.some(issue => issue.title.includes('Indicador de foco ausente')),
       ).toBe(true);
-    });
-  });
+    }
+  }
 
   describe(('ARIA Labels Audit', () => {
     it(_'should detect missing ARIA labels',async () => {
@@ -270,18 +270,18 @@ describe(('AccessibilityAuditService', () => {
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
         if (selector.includes('input')) return [mockInput];
         return [];
-      });
+      }
 
       // Mock no associated label
-      mockElement.querySelector = vi.fn().mockReturnValue(null);
+      mockElement.querySelector = vi.fn().mockReturnValue(null
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
       expect(result.testResults.ariaLabels).toBe(false);
       expect(
         result.issues.some(issue => issue.title.includes('sem rótulo acessível')),
       ).toBe(true);
-    });
+    }
 
     it(_'should pass with proper ARIA labels',async () => {
       // Mock input with aria-label
@@ -298,16 +298,16 @@ describe(('AccessibilityAuditService', () => {
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
         if (selector.includes('input')) return [mockInput];
         return [];
-      });
+      }
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
       expect(result.testResults.ariaLabels).toBe(true);
       expect(
         result.issues.filter(issue => issue.title.includes('sem rótulo acessível')),
-      ).toHaveLength(0);
-    });
-  });
+      ).toHaveLength(0
+    }
+  }
 
   describe(('Screen Reader Support Audit', () => {
     it(_'should detect images without alt text',async () => {
@@ -323,15 +323,15 @@ describe(('AccessibilityAuditService', () => {
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
         if (selector === 'img') return [mockImage];
         return [];
-      });
+      }
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
       expect(result.testResults.screenReaderSupport).toBe(false);
       expect(
         result.issues.some(issue => issue.title.includes('sem texto alternativo')),
       ).toBe(true);
-    });
+    }
 
     it(_'should pass with proper alt text',async () => {
       // Mock image with alt attribute
@@ -346,16 +346,16 @@ describe(('AccessibilityAuditService', () => {
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
         if (selector === 'img') return [mockImage];
         return [];
-      });
+      }
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
       expect(result.testResults.screenReaderSupport).toBe(true);
       expect(
         result.issues.filter(issue => issue.title.includes('sem texto alternativo')),
-      ).toHaveLength(0);
-    });
-  });
+      ).toHaveLength(0
+    }
+  }
 
   describe(('Healthcare Compliance Audit', () => {
     it(_'should detect missing LGPD consent indicators',async () => {
@@ -365,15 +365,15 @@ describe(('AccessibilityAuditService', () => {
           return [];
         }
         return [];
-      });
+      }
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
       expect(
         result.issues.some(issue => issue.title.includes('consentimento LGPD ausentes')),
       ).toBe(true);
       expect(result.healthcareCompliance.lgpdCompliant).toBe(false);
-    });
+    }
 
     it(_'should pass with LGPD consent indicators',async () => {
       // Mock element with LGPD indicators
@@ -388,21 +388,21 @@ describe(('AccessibilityAuditService', () => {
           return [mockConsentElement];
         }
         return [];
-      });
+      }
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
       expect(
         result.issues.filter(issue => issue.title.includes('consentimento LGPD ausentes')),
-      ).toHaveLength(0);
+      ).toHaveLength(0
       expect(result.healthcareCompliance.lgpdCompliant).toBe(true);
-    });
-  });
+    }
+  }
 
   describe(('Brazilian Standards Audit', () => {
     it(_'should detect missing Portuguese language declaration',async () => {
       // Mock no Portuguese language
-      mockElement.closest = vi.fn().mockReturnValue(null);
+      mockElement.closest = vi.fn().mockReturnValue(null
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
         if (selector === '*') return [];
         if (selector.includes('button') || selector.includes('input')) {
@@ -412,20 +412,20 @@ describe(('AccessibilityAuditService', () => {
         if (selector.includes('h1, h2')) return [];
         if (selector.includes('lgpd')) return [];
         return [];
-      });
-      mockElement.querySelector = vi.fn().mockReturnValue(null);
-      document.documentElement.getAttribute = vi.fn().mockReturnValue('en');
+      }
+      mockElement.querySelector = vi.fn().mockReturnValue(null
+      document.documentElement.getAttribute = vi.fn().mockReturnValue('en')
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
       expect(
         result.issues.some(issue => issue.title.includes('português não declarado')),
       ).toBe(true);
-    });
+    }
 
     it(_'should pass with Portuguese language declaration',async () => {
       // Mock Portuguese language
-      mockElement.closest = vi.fn().mockReturnValue({ lang: 'pt-BR' });
+      mockElement.closest = vi.fn().mockReturnValue({ lang: 'pt-BR' }
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
         if (selector === '*') return [];
         if (selector.includes('button') || selector.includes('input')) {
@@ -435,17 +435,17 @@ describe(('AccessibilityAuditService', () => {
         if (selector.includes('h1, h2')) return [];
         if (selector.includes('lgpd')) return [];
         return [];
-      });
-      mockElement.querySelector = vi.fn().mockReturnValue(null);
-      document.documentElement.getAttribute = vi.fn().mockReturnValue('pt-BR');
+      }
+      mockElement.querySelector = vi.fn().mockReturnValue(null
+      document.documentElement.getAttribute = vi.fn().mockReturnValue('pt-BR')
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
       expect(
         result.issues.filter(issue => issue.title.includes('português não declarado')),
-      ).toHaveLength(0);
-    });
-  });
+      ).toHaveLength(0
+    }
+  }
 
   describe(('Audit Result Generation', () => {
     it(_'should calculate correct score and level',async () => {
@@ -455,16 +455,16 @@ describe(('AccessibilityAuditService', () => {
           return [{ tagName: 'DIV' }]; // Mock LGPD consent
         }
         return [];
-      });
-      mockElement.querySelector = vi.fn().mockReturnValue(null);
-      mockElement.closest = vi.fn().mockReturnValue({ lang: 'pt-BR' });
+      }
+      mockElement.querySelector = vi.fn().mockReturnValue(null
+      mockElement.closest = vi.fn().mockReturnValue({ lang: 'pt-BR' }
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
-      expect(result.score).toBe(100);
-      expect(result.level).toBe(WCAG_LEVELS.AAA);
-      expect(result.summary.total).toBe(0);
-    });
+      expect(result.score).toBe(100
+      expect(result.level).toBe(WCAG_LEVELS.AAA
+      expect(result.summary.total).toBe(0
+    }
 
     it(_'should provide healthcare compliance assessment',async () => {
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
@@ -472,20 +472,20 @@ describe(('AccessibilityAuditService', () => {
           return [{ tagName: 'DIV' }];
         }
         return [];
-      });
-      mockElement.querySelector = vi.fn().mockReturnValue(null);
-      mockElement.closest = vi.fn().mockReturnValue({ lang: 'pt-BR' });
+      }
+      mockElement.querySelector = vi.fn().mockReturnValue(null
+      mockElement.closest = vi.fn().mockReturnValue({ lang: 'pt-BR' }
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
-      expect(result.healthcareCompliance).toBeDefined();
-      expect(typeof result.healthcareCompliance.lgpdCompliant).toBe('boolean');
+      expect(result.healthcareCompliance).toBeDefined(
+      expect(typeof result.healthcareCompliance.lgpdCompliant).toBe('boolean')
       expect(typeof result.healthcareCompliance.anvisaCompliant).toBe(
         'boolean',
-      );
-      expect(typeof result.healthcareCompliance.cfmCompliant).toBe('boolean');
+      
+      expect(typeof result.healthcareCompliance.cfmCompliant).toBe('boolean')
       expect(Array.isArray(result.healthcareCompliance.issues)).toBe(true);
-    });
+    }
 
     it(_'should provide actionable recommendations',async () => {
       mockElement.querySelectorAll = vi.fn().mockImplementation(selector => {
@@ -493,14 +493,14 @@ describe(('AccessibilityAuditService', () => {
           return [{ tagName: 'DIV' }];
         }
         return [];
-      });
-      mockElement.querySelector = vi.fn().mockReturnValue(null);
-      mockElement.closest = vi.fn().mockReturnValue({ lang: 'pt-BR' });
+      }
+      mockElement.querySelector = vi.fn().mockReturnValue(null
+      mockElement.closest = vi.fn().mockReturnValue({ lang: 'pt-BR' }
 
-      const result = await auditService.performAudit(mockElement);
+      const result = await auditService.performAudit(mockElement
 
       expect(Array.isArray(result.recommendations)).toBe(true);
-      expect(result.recommendations.length).toBeLessThanOrEqual(10);
-    });
-  });
-});
+      expect(result.recommendations.length).toBeLessThanOrEqual(10
+    }
+  }
+}

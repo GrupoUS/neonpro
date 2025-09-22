@@ -23,41 +23,41 @@ describe("Supabase Connectivity Tests", () => {
     };
 
     if (!config.url || !config.anonKey) {
-      throw new Error("Missing Supabase configuration for tests");
+      throw new Error("Missing Supabase configuration for tests"
     }
 
-    supabase = createClient<Database>(config.url, config.anonKey);
+    supabase = createClient<Database>(config.url, config.anonKey
 
     if (config.serviceRoleKey) {
-      adminSupabase = createClient<Database>(config.url, config.serviceRoleKey);
+      adminSupabase = createClient<Database>(config.url, config.serviceRoleKey
     }
-  });
+  }
 
   describe("Basic Connection", () => {
     it("should establish connection to Supabase", async () => {
       const { data, error } = await supabase
         .from("clinics")
-        .select("count", { count: "exact", head: true });
+        .select("count", { count: "exact", head: true }
 
-      expect(error).toBeNull();
-      expect(data).toBeDefined();
-    });
+      expect(error).toBeNull(
+      expect(data).toBeDefined(
+    }
 
     it("should connect with service role key", async () => {
       if (!adminSupabase) {
         console.warn(
           "Skipping service role test - no service role key configured",
-        );
+        
         return;
       }
 
       const { data, error } = await adminSupabase
         .from("clinics")
-        .select("count", { count: "exact", head: true });
+        .select("count", { count: "exact", head: true }
 
-      expect(error).toBeNull();
-      expect(data).toBeDefined();
-    });
+      expect(error).toBeNull(
+      expect(data).toBeDefined(
+    }
 
     it("should have valid database schema", async () => {
       // Test critical tables exist
@@ -66,27 +66,27 @@ describe("Supabase Connectivity Tests", () => {
       for (const table of tables) {
         const { error } = await supabase
           .from(table as any)
-          .select("*", { count: "exact", head: true });
+          .select("*", { count: "exact", head: true }
 
-        expect(error).toBeNull();
+        expect(error).toBeNull(
       }
-    });
-  });
+    }
+  }
 
   describe("Database Operations", () => {
     it("should handle SELECT operations", async () => {
       const { data, error } = await supabase
         .from("clinics")
         .select("id, name, created_at")
-        .limit(1);
+        .limit(1
 
-      expect(error).toBeNull();
+      expect(error).toBeNull(
       expect(Array.isArray(data)).toBe(true);
-    });
+    }
 
     it("should handle INSERT operations", async () => {
       if (!adminSupabase) {
-        console.warn("Skipping INSERT test - requires service role access");
+        console.warn("Skipping INSERT test - requires service role access"
         return;
       }
 
@@ -102,45 +102,45 @@ describe("Supabase Connectivity Tests", () => {
         .from("clinics")
         .insert(testClinic)
         .select()
-        .single();
+        .single(
 
-      expect(error).toBeNull();
-      expect(data).toBeDefined();
-      expect(data?.name).toBe(testClinic.name);
+      expect(error).toBeNull(
+      expect(data).toBeDefined(
+      expect(data?.name).toBe(testClinic.name
 
       // Cleanup
       if (data?.id) {
-        await adminSupabase.from("clinics").delete().eq("id", data.id);
+        await adminSupabase.from("clinics").delete().eq("id", data.id
       }
-    });
-  });
+    }
+  }
 
   describe("Connection Performance", () => {
     it("should complete queries within acceptable time limits", async () => {
-      const startTime = Date.now();
+      const startTime = Date.now(
 
       const { data, error } = await supabase
         .from("clinics")
         .select("id, name")
-        .limit(10);
+        .limit(10
 
-      const endTime = Date.now();
+      const endTime = Date.now(
       const duration = endTime - startTime;
 
-      expect(error).toBeNull();
+      expect(error).toBeNull(
       expect(duration).toBeLessThan(5000); // 5 seconds max
-    });
-  });
+    }
+  }
 
   describe("Error Handling", () => {
     it("should handle invalid table queries gracefully", async () => {
       const { data, error } = await supabase
         .from("nonexistent_table" as any)
-        .select("*");
+        .select("*"
 
-      expect(error).toBeDefined();
-      expect(data).toBeNull();
-      expect(error?.message).toContain("relation");
-    });
-  });
-});
+      expect(error).toBeDefined(
+      expect(data).toBeNull(
+      expect(error?.message).toContain("relation"
+    }
+  }
+}

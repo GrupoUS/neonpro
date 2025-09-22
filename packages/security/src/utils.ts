@@ -45,6 +45,7 @@ export class SecurityUtils {
       .replace(/on\w+\s*=/gi, '')
       .replace(/javascript:/gi, '')
       .replace(/vbscript:/gi, '');
+  }
 
   /**
    * Validate and sanitize email addresses
@@ -351,9 +352,10 @@ export class SecurityUtils {
 
     // Shuffle the password
     return password
-      .split(')
+      .split('')
       .sort(() => Math.random() - 0.5)
       .join('');
+  }
 }
 
 /**

@@ -20,11 +20,11 @@ vi.mock(('web-vitals', () => ({
   onINP: vi.fn(callback => callback({ value: 100 })),
   onLCP: vi.fn(callback => callback({ value: 2500 })),
   onTTFB: vi.fn(callback => callback({ value: 800 })),
-}));
+})
 
 // Mock DOM APIs
-const mockIntersectionObserver = vi.fn();
-const mockPerformanceObserver = vi.fn();
+const mockIntersectionObserver = vi.fn(
+const mockPerformanceObserver = vi.fn(
 
 beforeEach(() => {
   // Reset DOM
@@ -35,112 +35,112 @@ beforeEach(() => {
   global.IntersectionObserver = vi
     .fn()
     .mockImplementation((callback, options) => {
-      mockIntersectionObserver.mockImplementation(callback);
+      mockIntersectionObserver.mockImplementation(callback
       return {
         observe: vi.fn(),
         disconnect: vi.fn(),
         unobserve: vi.fn(),
       };
-    });
+    }
 
   // Mock PerformanceObserver
   global.PerformanceObserver = vi.fn().mockImplementation(callback => {
-    mockPerformanceObserver.mockImplementation(callback);
+    mockPerformanceObserver.mockImplementation(callback
     return {
       observe: vi.fn(),
       disconnect: vi.fn(),
     };
-  });
+  }
 
   // Mock console methods
-  vi.spyOn(console, 'log').mockImplementation(() => {});
-  vi.spyOn(console, 'table').mockImplementation(() => {});
-});
+  vi.spyOn(console, 'log').mockImplementation(() => {}
+  vi.spyOn(console, 'table').mockImplementation(() => {}
+}
 
 afterEach(() => {
-  vi.clearAllMocks();
-});
+  vi.clearAllMocks(
+}
 
 describe(('PerformanceMonitor', () => {
   it(('should initialize web vitals monitoring', () => {
-    const monitor = new PerformanceMonitor();
+    const monitor = new PerformanceMonitor(
 
-    expect(monitor).toBeDefined();
+    expect(monitor).toBeDefined(
     expect(monitor.getMetrics()).toEqual({
       cls: 0.1,
       fcp: 1200,
       inp: 100,
       lcp: 2500,
       ttfb: 800,
-    });
-  });
+    }
+  }
 
   it(('should initialize performance observer', () => {
-    new PerformanceMonitor();
+    new PerformanceMonitor(
 
-    expect(global.PerformanceObserver).toHaveBeenCalled();
-  });
+    expect(global.PerformanceObserver).toHaveBeenCalled(
+  }
 
   it(('should report metrics in development', () => {
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'development';
 
-    new PerformanceMonitor();
+    new PerformanceMonitor(
 
-    expect(console.log).toHaveBeenCalledWith('[Performance] CLS: 0.10ms');
-    expect(console.log).toHaveBeenCalledWith('[Performance] FCP: 1200.00ms');
-    expect(console.log).toHaveBeenCalledWith('[Performance] INP: 100.00ms');
-    expect(console.log).toHaveBeenCalledWith('[Performance] LCP: 2500.00ms');
-    expect(console.log).toHaveBeenCalledWith('[Performance] TTFB: 800.00ms');
+    expect(console.log).toHaveBeenCalledWith('[Performance] CLS: 0.10ms')
+    expect(console.log).toHaveBeenCalledWith('[Performance] FCP: 1200.00ms')
+    expect(console.log).toHaveBeenCalledWith('[Performance] INP: 100.00ms')
+    expect(console.log).toHaveBeenCalledWith('[Performance] LCP: 2500.00ms')
+    expect(console.log).toHaveBeenCalledWith('[Performance] TTFB: 800.00ms')
 
     process.env.NODE_ENV = originalEnv;
-  });
+  }
 
   it(('should destroy observers on cleanup', () => {
-    const monitor = new PerformanceMonitor();
-    const disconnectSpy = vi.fn();
+    const monitor = new PerformanceMonitor(
+    const disconnectSpy = vi.fn(
 
     // Mock observer with disconnect method
     monitor['observers'] = [{ disconnect: disconnectSpy } as any];
 
-    monitor.destroy();
+    monitor.destroy(
 
-    expect(disconnectSpy).toHaveBeenCalled();
-    expect(monitor['observers']).toHaveLength(0);
-  });
-});
+    expect(disconnectSpy).toHaveBeenCalled(
+    expect(monitor['observers']).toHaveLength(0
+  }
+}
 
 describe(('createIntersectionObserver', () => {
   it(('should create intersection observer when supported', () => {
-    const callback = vi.fn();
+    const callback = vi.fn(
     const options = { threshold: 0.5 };
 
-    const observer = createIntersectionObserver(callback, options);
+    const observer = createIntersectionObserver(callback, options
 
-    expect(observer).toBeDefined();
+    expect(observer).toBeDefined(
     expect(global.IntersectionObserver).toHaveBeenCalledWith(
       callback,
       expect.objectContaining({
         rootMargin: '50px',
         threshold: 0.5,
       }),
-    );
-  });
+    
+  }
 
   it(('should return null when not supported', () => {
     // @ts-ignore
     delete global.IntersectionObserver;
 
-    const callback = vi.fn();
-    const observer = createIntersectionObserver(callback);
+    const callback = vi.fn(
+    const observer = createIntersectionObserver(callback
 
-    expect(observer).toBeNull();
-  });
+    expect(observer).toBeNull(
+  }
 
   it(('should use default options', () => {
-    const callback = vi.fn();
+    const callback = vi.fn(
 
-    createIntersectionObserver(callback);
+    createIntersectionObserver(callback
 
     expect(global.IntersectionObserver).toHaveBeenCalledWith(
       callback,
@@ -148,53 +148,53 @@ describe(('createIntersectionObserver', () => {
         rootMargin: '50px',
         threshold: 0.1,
       }),
-    );
-  });
-});
+    
+  }
+}
 
 describe(('Resource preloading', () => {
   it(('should preload resources', () => {
-    preloadResource('/test.js', 'script');
+    preloadResource('/test.js', 'script')
 
     const link = document.querySelector(
       'link[rel="preload"]',
     ) as HTMLLinkElement;
-    expect(link).toBeDefined();
-    expect(link.href).toContain('/test.js');
-    expect(link.as).toBe('script');
-  });
+    expect(link).toBeDefined(
+    expect(link.href).toContain('/test.js')
+    expect(link.as).toBe('script')
+  }
 
   it(('should preload resources with crossorigin', () => {
-    preloadResource('/test.css', 'style', 'anonymous');
+    preloadResource('/test.css', 'style', 'anonymous')
 
     const link = document.querySelector(
       'link[rel="preload"]',
     ) as HTMLLinkElement;
-    expect(link).toBeDefined();
-    expect(link.crossOrigin).toBe('anonymous');
-  });
+    expect(link).toBeDefined(
+    expect(link.crossOrigin).toBe('anonymous')
+  }
 
   it(('should prefetch resources', () => {
-    prefetchResource('/next-page.js');
+    prefetchResource('/next-page.js')
 
     const link = document.querySelector(
       'link[rel="prefetch"]',
     ) as HTMLLinkElement;
-    expect(link).toBeDefined();
-    expect(link.href).toContain('/next-page.js');
-  });
+    expect(link).toBeDefined(
+    expect(link.href).toContain('/next-page.js')
+  }
 
   it(('should handle server-side rendering', () => {
     const originalDocument = global.document;
     // @ts-ignore
     delete global.document;
 
-    expect(() => preloadResource('/test.js', 'script')).not.toThrow();
-    expect(() => prefetchResource('/test.js')).not.toThrow();
+    expect(() => preloadResource('/test.js', 'script')).not.toThrow(
+    expect(() => prefetchResource('/test.js')).not.toThrow(
 
     global.document = originalDocument;
-  });
-});
+  }
+}
 
 describe(('Bundle analysis', () => {
   it(('should log bundle size in development', () => {
@@ -208,25 +208,25 @@ describe(('Bundle analysis', () => {
       <link rel="stylesheet" href="/style1.css">
     `;
 
-    logBundleSize();
+    logBundleSize(
 
-    expect(console.log).toHaveBeenCalledWith('Scripts:', 2);
-    expect(console.log).toHaveBeenCalledWith('Stylesheets:', 1);
+    expect(console.log).toHaveBeenCalledWith('Scripts:', 2
+    expect(console.log).toHaveBeenCalledWith('Stylesheets:', 1
 
     process.env.NODE_ENV = originalEnv;
-  });
+  }
 
   it(('should not log in production', () => {
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'production';
 
-    logBundleSize();
+    logBundleSize(
 
-    expect(console.log).not.toHaveBeenCalled();
+    expect(console.log).not.toHaveBeenCalled(
 
     process.env.NODE_ENV = originalEnv;
-  });
-});
+  }
+}
 
 describe(('Memory monitoring', () => {
   it(('should monitor memory usage when supported', () => {
@@ -242,34 +242,34 @@ describe(('Memory monitoring', () => {
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'development';
 
-    const usage = monitorMemoryUsage();
+    const usage = monitorMemoryUsage(
 
     expect(usage).toEqual({
       used: 50,
       total: 100,
       limit: 200,
-    });
+    }
 
-    expect(console.log).toHaveBeenCalledWith('Memory Usage (MB):', usage);
+    expect(console.log).toHaveBeenCalledWith('Memory Usage (MB):', usage
 
     process.env.NODE_ENV = originalEnv;
-  });
+  }
 
   it(('should return undefined when not supported', () => {
     // @ts-ignore
     delete global.performance;
 
-    const usage = monitorMemoryUsage();
+    const usage = monitorMemoryUsage(
 
-    expect(usage).toBeUndefined();
-  });
+    expect(usage).toBeUndefined(
+  }
 
   it(('should handle missing memory API', () => {
     // @ts-ignore
     global.performance = {};
 
-    const usage = monitorMemoryUsage();
+    const usage = monitorMemoryUsage(
 
-    expect(usage).toBeUndefined();
-  });
-});
+    expect(usage).toBeUndefined(
+  }
+}

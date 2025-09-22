@@ -13,13 +13,13 @@ const mockSupabase = {
 
 vi.mock('@supabase/supabase-js_, () => ({
   createClient: vi.fn(() => mockSupabase),
-}));
+})
 
 describe('Usage Counter Repository Security Tests_, () => {
   let repository: UsageCounterRepository;
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(
     
     // Mock successful database operations
     mockSupabase.from.mockReturnValue({
@@ -59,17 +59,17 @@ describe('Usage Counter Repository Security Tests_, () => {
       delete: vi.fn().mockReturnValue({
         eq: vi.fn().mockResolvedValue({ error: null }),
       }),
-    });
+    }
 
     repository = new UsageCounterRepository(
       'https://test.supabase.co',
-      'test-key'
-    );
-  });
+      'test-key')
+    
+  }
 
   afterEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks(
+  }
 
   function createMockDatabaseRow(): UsageCounterDatabaseRow {
     return {
@@ -126,10 +126,10 @@ describe('Usage Counter Repository Security Tests_, () => {
         securityEvents: 0,
       };
 
-      expect(metadata._userId).toBe('user123_);
-      expect(metadata.planCode).toBe('premium');
-      expect(metadata.healthcareComplianceScore).toBe(0.95);
-    });
+      expect(metadata._userId).toBe('user123_
+      expect(metadata.planCode).toBe('premium')
+      expect(metadata.healthcareComplianceScore).toBe(0.95
+    }
 
     it('should validate healthcare-specific metadata fields_,_async () => {
       const createData = {
@@ -148,12 +148,12 @@ describe('Usage Counter Repository Security Tests_, () => {
         errorRate: 0.02,
       };
 
-      const result = await repository.create(createData);
+      const result = await repository.create(createData
 
-      expect(result).toBeDefined();
-      expect(result.clinicId).toBe('clinic123');
-      expect(result.metadata?.healthcareComplianceScore).toBeDefined();
-    });
+      expect(result).toBeDefined(
+      expect(result.clinicId).toBe('clinic123')
+      expect(result.metadata?.healthcareComplianceScore).toBeDefined(
+    }
 
     it('should handle optional healthcare security fields_,_async () => {
       const metadata: Partial<UsageMetadata> = {
@@ -173,14 +173,14 @@ describe('Usage Counter Repository Security Tests_, () => {
       };
 
       // Should handle optional fields gracefully
-      expect(metadata.securityEvents).toBe(0);
-      expect(metadata.patientDataAccessCount).toBe(25);
-    });
-  });
+      expect(metadata.securityEvents).toBe(0
+      expect(metadata.patientDataAccessCount).toBe(25
+    }
+  }
 
   describe('Database Operations Security_, () => {
     it('should safely handle database row mapping_,_async () => {
-      const mockRow = createMockDatabaseRow();
+      const mockRow = createMockDatabaseRow(
       
       // Mock the findByUserAndClinic method to return our test data
       vi.spyOn(repository, 'findByUserAndClinic' as any).mockResolvedValue({
@@ -201,7 +201,7 @@ describe('Usage Counter Repository Security Tests_, () => {
         periodStart: new Date('2024-01-01T00:00:00Z'),
         lastActivity: new Date('2024-01-01T12:00:00Z'),
         lastReset: new Date('2024-01-01T00:00:00Z'),
-      });
+      }
 
       const result = await repository.dailyUpsert({
         clinicId: 'clinic123',
@@ -221,11 +221,11 @@ describe('Usage Counter Repository Security Tests_, () => {
           errorRate: 0.01,
           concurrentRequests: 6,
         },
-      });
+      }
 
-      expect(result).toBeDefined();
-      expect(result.clinicId).toBe('clinic123');
-    });
+      expect(result).toBeDefined(
+      expect(result.clinicId).toBe('clinic123')
+    }
 
     it('should handle database errors gracefully_,_async () => {
       mockSupabase.from.mockReturnValue({
@@ -234,7 +234,7 @@ describe('Usage Counter Repository Security Tests_, () => {
             single: vi.fn().mockRejectedValue(new Error('Database connection failed')),
           }),
         }),
-      });
+      }
 
       const createData = {
         clinicId: 'clinic123',
@@ -245,8 +245,8 @@ describe('Usage Counter Repository Security Tests_, () => {
         currentCostUsd: 0.05,
       };
 
-      await expect(repository.create(createData)).rejects.toThrow('Database connection failed');
-    });
+      await expect(repository.create(createData)).rejects.toThrow('Database connection failed')
+    }
 
     it('should validate numeric field parsing_,_async () => {
       const rowWithStrings: UsageCounterDatabaseRow = {
@@ -257,13 +257,13 @@ describe('Usage Counter Repository Security Tests_, () => {
       };
 
       // Mock the mapping method directly
-      const result = (repository as any).mapDatabaseToModel(rowWithStrings);
+      const result = (repository as any).mapDatabaseToModel(rowWithStrings
 
-      expect(typeof result.currentCostUsd).toBe('number');
-      expect(typeof result.averageLatencyMs).toBe('number');
-      expect(typeof result.cacheHitRate).toBe('number');
-    });
-  });
+      expect(typeof result.currentCostUsd).toBe('number')
+      expect(typeof result.averageLatencyMs).toBe('number')
+      expect(typeof result.cacheHitRate).toBe('number')
+    }
+  }
 
   describe('Healthcare Data Security_, () => {
     it('should track patient data access count_,_async () => {
@@ -279,11 +279,11 @@ describe('Usage Counter Repository Security Tests_, () => {
         healthcareComplianceScore: 0.95,
       };
 
-      const result = await repository.create(createData);
+      const result = await repository.create(createData
 
-      expect(result.metadata?.patientDataAccessCount).toBe(25);
-      expect(result.metadata?.healthcareComplianceScore).toBe(0.95);
-    });
+      expect(result.metadata?.patientDataAccessCount).toBe(25
+      expect(result.metadata?.healthcareComplianceScore).toBe(0.95
+    }
 
     it('should validate healthcare compliance score range_,_async () => {
       const createData = {
@@ -297,9 +297,9 @@ describe('Usage Counter Repository Security Tests_, () => {
       };
 
       // Should handle invalid scores gracefully
-      const result = await repository.create(createData);
-      expect(result).toBeDefined();
-    });
+      const result = await repository.create(createData
+      expect(result).toBeDefined(
+    }
 
     it('should track security events in healthcare context_,_async () => {
       const createData = {
@@ -313,12 +313,12 @@ describe('Usage Counter Repository Security Tests_, () => {
         auditLogEntries: 100,
       };
 
-      const result = await repository.create(createData);
+      const result = await repository.create(createData
 
-      expect(result.metadata?.securityEvents).toBe(2);
-      expect(result.metadata?.auditLogEntries).toBe(100);
-    });
-  });
+      expect(result.metadata?.securityEvents).toBe(2
+      expect(result.metadata?.auditLogEntries).toBe(100
+    }
+  }
 
   describe('Input Validation_, () => {
     it('should validate numeric inputs_,_async () => {
@@ -332,9 +332,9 @@ describe('Usage Counter Repository Security Tests_, () => {
       };
 
       // Should handle invalid values gracefully
-      const result = await repository.create(invalidData);
-      expect(result).toBeDefined();
-    });
+      const result = await repository.create(invalidData
+      expect(result).toBeDefined(
+    }
 
     it('should handle extremely large values_,_async () => {
       const largeValueData = {
@@ -348,9 +348,9 @@ describe('Usage Counter Repository Security Tests_, () => {
       };
 
       // Should handle large values without overflow
-      const result = await repository.create(largeValueData);
-      expect(result).toBeDefined();
-    });
+      const result = await repository.create(largeValueData
+      expect(result).toBeDefined(
+    }
 
     it('should validate date strings_,_async () => {
       const createData = {
@@ -367,10 +367,10 @@ describe('Usage Counter Repository Security Tests_, () => {
       };
 
       // Should handle invalid date formats gracefully
-      const result = await repository.create(createData);
-      expect(result).toBeDefined();
-    });
-  });
+      const result = await repository.create(createData
+      expect(result).toBeDefined(
+    }
+  }
 
   describe('Privacy and Compliance_, () => {
     it('should not expose sensitive data in error messages_,_async () => {
@@ -380,7 +380,7 @@ describe('Usage Counter Repository Security Tests_, () => {
             single: vi.fn().mockRejectedValue(new Error('Invalid data format')),
           }),
         }),
-      });
+      }
 
       const sensitiveData = {
         clinicId: 'clinic123',
@@ -392,8 +392,8 @@ describe('Usage Counter Repository Security Tests_, () => {
 
       await expect(repository.create(sensitiveData as any)).rejects.not.toThrow(
         /sensitive_health_information/
-      );
-    });
+      
+    }
 
     it('should maintain data retention policies_,_async () => {
       const createData = {
@@ -406,9 +406,9 @@ describe('Usage Counter Repository Security Tests_, () => {
         dataRetentionDays: 365, // Specific retention period
       };
 
-      const result = await repository.create(createData);
+      const result = await repository.create(createData
 
-      expect(result.metadata?.dataRetentionDays).toBe(365);
-    });
-  });
-});
+      expect(result.metadata?.dataRetentionDays).toBe(365
+    }
+  }
+}

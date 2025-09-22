@@ -10,39 +10,39 @@ describe('EncryptionManager_, () => {
   let testKey: string;
 
   beforeEach(() => {
-    encryptionManager = new EncryptionManager();
-    testKey = encryptionManager.generateKey();
-  });
+    encryptionManager = new EncryptionManager(
+    testKey = encryptionManager.generateKey(
+  }
 
   describe('Key Generation_, () => {
     it('should generate a valid encryption key_, () => {
-      const key = encryptionManager.generateKey();
-      expect(key).toBeDefined();
-      expect(typeof key).toBe('string');
+      const key = encryptionManager.generateKey(
+      expect(key).toBeDefined(
+      expect(typeof key).toBe('string')
       expect(encryptionManager.validateKey(key)).toBe(true);
-    });
+    }
 
     it('should validate keys correctly_, () => {
-      const validKey = encryptionManager.generateKey();
+      const validKey = encryptionManager.generateKey(
       expect(encryptionManager.validateKey(validKey)).toBe(true);
 
       expect(encryptionManager.validateKey('invalid')).toBe(false);
       expect(encryptionManager.validateKey(')).toBe(false);
       expect(encryptionManager.validateKey('short')).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('Data Encryption/Decryption_, () => {
     it('should encrypt and decrypt data correctly_, () => {
       const plaintext = 'Sensitive healthcare data';
-      const encrypted = encryptionManager.encryptData(plaintext, testKey);
-      const decrypted = encryptionManager.decryptData(encrypted, testKey);
+      const encrypted = encryptionManager.encryptData(plaintext, testKey
+      const decrypted = encryptionManager.decryptData(encrypted, testKey
 
-      expect(encrypted).toBeDefined();
-      expect(typeof encrypted).toBe('string');
-      expect(encrypted).not.toBe(plaintext);
-      expect(decrypted).toBe(plaintext);
-    });
+      expect(encrypted).toBeDefined(
+      expect(typeof encrypted).toBe('string')
+      expect(encrypted).not.toBe(plaintext
+      expect(decrypted).toBe(plaintext
+    }
 
     it('should handle different data types_, () => {
       const testCases = [
@@ -54,30 +54,30 @@ describe('EncryptionManager_, () => {
       ];
 
       testCases.forEach(text => {
-        const encrypted = encryptionManager.encryptData(text, testKey);
-        const decrypted = encryptionManager.decryptData(encrypted, testKey);
-        expect(decrypted).toBe(text);
-      });
-    });
+        const encrypted = encryptionManager.encryptData(text, testKey
+        const decrypted = encryptionManager.decryptData(encrypted, testKey
+        expect(decrypted).toBe(text
+      }
+    }
 
     it('should throw error for invalid key_, () => {
       const plaintext = 'Test data';
 
       expect(() => {
-        encryptionManager.encryptData(plaintext, 'invalid');
-      }).toThrow('Invalid encryption key');
+        encryptionManager.encryptData(plaintext, 'invalid')
+      }).toThrow('Invalid encryption key')
 
       expect(() => {
-        encryptionManager.decryptData('encrypted', 'invalid');
-      }).toThrow('Invalid decryption key');
-    });
+        encryptionManager.decryptData('encrypted', 'invalid')
+      }).toThrow('Invalid decryption key')
+    }
 
     it('should throw error for invalid encrypted data_, () => {
       expect(() => {
-        encryptionManager.decryptData('invalid', testKey);
-      }).toThrow();
-    });
-  });
+        encryptionManager.decryptData('invalid', testKey
+      }).toThrow(
+    }
+  }
 
   describe('Object Encryption/Decryption_, () => {
     it('should encrypt and decrypt object fields_, () => {
@@ -94,19 +94,19 @@ describe('EncryptionManager_, () => {
         obj,
         testKey,
         sensitiveFields,
-      );
+      
       const decrypted = encryptionManager.decryptObject(
         encrypted,
         testKey,
         sensitiveFields,
-      );
+      
 
-      expect(decrypted.name).toBe(obj.name);
-      expect(decrypted.cpf).toBe(obj.cpf);
-      expect(decrypted.email).toBe(obj.email);
-      expect(decrypted.age).toBe(obj.age);
-      expect(decrypted.active).toBe(obj.active);
-    });
+      expect(decrypted.name).toBe(obj.name
+      expect(decrypted.cpf).toBe(obj.cpf
+      expect(decrypted.email).toBe(obj.email
+      expect(decrypted.age).toBe(obj.age
+      expect(decrypted.active).toBe(obj.active
+    }
 
     it('should not encrypt non-sensitive fields_, () => {
       const obj = {
@@ -120,12 +120,12 @@ describe('EncryptionManager_, () => {
         obj,
         testKey,
         sensitiveFields,
-      );
+      
 
       expect(encrypted.name).toBe(obj.name); // Not encrypted
       expect(encrypted.age).toBe(obj.age); // Not encrypted
       expect(encrypted.cpf).not.toBe(obj.cpf); // Encrypted
-    });
+    }
 
     it('should handle missing fields gracefully_, () => {
       const obj = {
@@ -138,49 +138,49 @@ describe('EncryptionManager_, () => {
         obj,
         testKey,
         sensitiveFields,
-      );
+      
       const decrypted = encryptionManager.decryptObject(
         encrypted,
         testKey,
         sensitiveFields,
-      );
+      
 
-      expect(decrypted.name).toBe(obj.name);
-      expect(decrypted.age).toBe(obj.age);
-      expect(decrypted.cpf).toBeUndefined();
-      expect(decrypted.email).toBeUndefined();
-    });
-  });
+      expect(decrypted.name).toBe(obj.name
+      expect(decrypted.age).toBe(obj.age
+      expect(decrypted.cpf).toBeUndefined(
+      expect(decrypted.email).toBeUndefined(
+    }
+  }
 
   describe('Data Hashing_, () => {
     it('should generate consistent hashes_, () => {
       const data = 'Test data';
-      const hash1 = encryptionManager.hashData(data);
-      const hash2 = encryptionManager.hashData(data);
+      const hash1 = encryptionManager.hashData(data
+      const hash2 = encryptionManager.hashData(data
 
-      expect(hash1).toBeDefined();
-      expect(typeof hash1).toBe('string');
-      expect(hash1).toBe(hash2);
-    });
+      expect(hash1).toBeDefined(
+      expect(typeof hash1).toBe('string')
+      expect(hash1).toBe(hash2
+    }
 
     it('should generate different hashes for different data_, () => {
       const data1 = 'Test data 1';
       const data2 = 'Test data 2';
-      const hash1 = encryptionManager.hashData(data1);
-      const hash2 = encryptionManager.hashData(data2);
+      const hash1 = encryptionManager.hashData(data1
+      const hash2 = encryptionManager.hashData(data2
 
-      expect(hash1).not.toBe(hash2);
-    });
+      expect(hash1).not.toBe(hash2
+    }
 
     it('should compare hashes correctly_, () => {
       const data = 'Test data';
-      const hash = encryptionManager.hashData(data);
+      const hash = encryptionManager.hashData(data
 
       expect(encryptionManager.compareHash(data, hash)).toBe(true);
       expect(encryptionManager.compareHash('Different data', hash)).toBe(false);
-    });
-  });
-});
+    }
+  }
+}
 
 describe('KeyManager_, () => {
   let keyManager: KeyManager;
@@ -190,97 +190,97 @@ describe('KeyManager_, () => {
   beforeEach(() => {
     // Reset singleton for each test
     (KeyManager as any).instance = null;
-    keyManager = KeyManager.getInstance();
+    keyManager = KeyManager.getInstance(
     testKeyId = 'test-key';
-    testKey = new EncryptionManager().generateKey();
-  });
+    testKey = new EncryptionManager().generateKey(
+  }
 
   describe('Key Storage_, () => {
     it('should store and retrieve keys_, () => {
-      keyManager.storeKey(testKeyId, testKey);
-      const retrievedKey = keyManager.getKey(testKeyId);
+      keyManager.storeKey(testKeyId, testKey
+      const retrievedKey = keyManager.getKey(testKeyId
 
-      expect(retrievedKey).toBe(testKey);
-    });
+      expect(retrievedKey).toBe(testKey
+    }
 
     it('should return null for non-existent keys_, () => {
-      const retrievedKey = keyManager.getKey('non-existent');
-      expect(retrievedKey).toBeNull();
-    });
+      const retrievedKey = keyManager.getKey('non-existent')
+      expect(retrievedKey).toBeNull(
+    }
 
     it('should handle key expiration_, () => {
       const expiredKey = 'expired-key';
       const expirationDate = new Date(Date.now() - 1000); // 1 second ago
 
-      keyManager.storeKey(testKeyId, expiredKey, expirationDate);
-      const retrievedKey = keyManager.getKey(testKeyId);
+      keyManager.storeKey(testKeyId, expiredKey, expirationDate
+      const retrievedKey = keyManager.getKey(testKeyId
 
-      expect(retrievedKey).toBeNull();
-    });
+      expect(retrievedKey).toBeNull(
+    }
 
     it('should remove keys_, () => {
-      keyManager.storeKey(testKeyId, testKey);
-      expect(keyManager.getKey(testKeyId)).toBe(testKey);
+      keyManager.storeKey(testKeyId, testKey
+      expect(keyManager.getKey(testKeyId)).toBe(testKey
 
-      keyManager.removeKey(testKeyId);
-      expect(keyManager.getKey(testKeyId)).toBeNull();
-    });
+      keyManager.removeKey(testKeyId
+      expect(keyManager.getKey(testKeyId)).toBeNull(
+    }
 
     it('should list all stored keys_, () => {
-      keyManager.storeKey('key1', 'value1');
-      keyManager.storeKey('key2', 'value2');
-      keyManager.storeKey('key3', 'value3');
+      keyManager.storeKey('key1', 'value1')
+      keyManager.storeKey('key2', 'value2')
+      keyManager.storeKey('key3', 'value3')
 
-      const keys = keyManager.listKeys();
-      expect(keys).toContain('key1');
-      expect(keys).toContain('key2');
-      expect(keys).toContain('key3');
-      expect(keys.length).toBe(3);
-    });
-  });
+      const keys = keyManager.listKeys(
+      expect(keys).toContain('key1')
+      expect(keys).toContain('key2')
+      expect(keys).toContain('key3')
+      expect(keys.length).toBe(3
+    }
+  }
 
   describe('Key Rotation_, () => {
     it('should rotate keys and keep old key for TTL_, () => {
       const oldKey = testKey;
-      keyManager.storeKey(testKeyId, oldKey);
+      keyManager.storeKey(testKeyId, oldKey
 
       const newKey = keyManager.rotateKey(testKeyId, 3600); // 1 hour TTL
 
-      expect(newKey).toBeDefined();
-      expect(newKey).not.toBe(oldKey);
+      expect(newKey).toBeDefined(
+      expect(newKey).not.toBe(oldKey
 
       // New key should be retrievable
-      expect(keyManager.getKey(testKeyId)).toBe(newKey);
+      expect(keyManager.getKey(testKeyId)).toBe(newKey
 
       // Old key should be available with old key ID
-      expect(keyManager.getKey(`${testKeyId}_old`)).toBe(oldKey);
-    });
+      expect(keyManager.getKey(`${testKeyId}_old`)).toBe(oldKey
+    }
 
     it('should work even when no old key exists_, () => {
-      const newKey = keyManager.rotateKey(testKeyId, 3600);
+      const newKey = keyManager.rotateKey(testKeyId, 3600
 
-      expect(newKey).toBeDefined();
-      expect(keyManager.getKey(testKeyId)).toBe(newKey);
-      expect(keyManager.getKey(`${testKeyId}_old`)).toBeNull();
-    });
-  });
+      expect(newKey).toBeDefined(
+      expect(keyManager.getKey(testKeyId)).toBe(newKey
+      expect(keyManager.getKey(`${testKeyId}_old`)).toBeNull(
+    }
+  }
 
   describe('Cleanup_, () => {
     it('should clean up expired keys_, () => {
       // Store keys with different expiration times
-      keyManager.storeKey('expired1', 'value1', new Date(Date.now() - 1000));
-      keyManager.storeKey('expired2', 'value2', new Date(Date.now() - 1000));
-      keyManager.storeKey('valid', 'value3', new Date(Date.now() + 1000));
+      keyManager.storeKey('expired1', 'value1', new Date(Date.now() - 1000)
+      keyManager.storeKey('expired2', 'value2', new Date(Date.now() - 1000)
+      keyManager.storeKey('valid', 'value3', new Date(Date.now() + 1000)
 
-      expect(keyManager.listKeys().length).toBe(3);
+      expect(keyManager.listKeys().length).toBe(3
 
-      keyManager.cleanup();
+      keyManager.cleanup(
 
-      const remainingKeys = keyManager.listKeys();
-      expect(remainingKeys).toContain('valid');
-      expect(remainingKeys).not.toContain('expired1');
-      expect(remainingKeys).not.toContain('expired2');
-      expect(remainingKeys.length).toBe(1);
-    });
-  });
-});
+      const remainingKeys = keyManager.listKeys(
+      expect(remainingKeys).toContain('valid')
+      expect(remainingKeys).not.toContain('expired1')
+      expect(remainingKeys).not.toContain('expired2')
+      expect(remainingKeys.length).toBe(1
+    }
+  }
+}

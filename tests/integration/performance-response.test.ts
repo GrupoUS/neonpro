@@ -8,25 +8,25 @@ describe('Performance Test: <2s Response Time', () => {
   let baseUrl: string;
 
   beforeAll(async () => {
-    const app = createApp();
-    server = createServer(app);
+    const app = createApp(
+    server = createServer(app
     await new Promise<void>((resolve) => {
       server.listen(0, () => {
         const address = server.address() as AddressInfo;
         baseUrl = `http://localhost:${address.port}`;
-        resolve();
-      });
-    });
-  });
+        resolve(
+      }
+    }
+  }
 
   afterAll(() => {
     if (server) {
-      server.close();
+      server.close(
     }
-  });
+  }
 
   it('T020 should respond to simple queries in under 2 seconds', async () => {
-    const startTime = Date.now();
+    const startTime = Date.now(
     
     const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
       method: 'POST',
@@ -43,19 +43,19 @@ describe('Performance Test: <2s Response Time', () => {
           permissions: ['basic'],
         },
       }),
-    });
+    }
 
-    const endTime = Date.now();
+    const endTime = Date.now(
     const responseTime = endTime - startTime;
 
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(200
     expect(responseTime).toBeLessThan(2000); // Less than 2 seconds
     
-    console.log(`Simple query response time: ${responseTime}ms`);
-  });
+    console.log(`Simple query response time: ${responseTime}ms`
+  }
 
   it('T020 should respond to appointment queries in under 2 seconds', async () => {
-    const startTime = Date.now();
+    const startTime = Date.now(
     
     const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
       method: 'POST',
@@ -72,19 +72,19 @@ describe('Performance Test: <2s Response Time', () => {
           permissions: ['read:appointments'],
         },
       }),
-    });
+    }
 
-    const endTime = Date.now();
+    const endTime = Date.now(
     const responseTime = endTime - startTime;
 
-    expect(response.status).toBe(200);
-    expect(responseTime).toBeLessThan(2000);
+    expect(response.status).toBe(200
+    expect(responseTime).toBeLessThan(2000
     
-    console.log(`Appointment query response time: ${responseTime}ms`);
-  });
+    console.log(`Appointment query response time: ${responseTime}ms`
+  }
 
   it('T020 should respond to client queries in under 2 seconds', async () => {
-    const startTime = Date.now();
+    const startTime = Date.now(
     
     const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
       method: 'POST',
@@ -101,19 +101,19 @@ describe('Performance Test: <2s Response Time', () => {
           permissions: ['read:clients'],
         },
       }),
-    });
+    }
 
-    const endTime = Date.now();
+    const endTime = Date.now(
     const responseTime = endTime - startTime;
 
-    expect(response.status).toBe(200);
-    expect(responseTime).toBeLessThan(2000);
+    expect(response.status).toBe(200
+    expect(responseTime).toBeLessThan(2000
     
-    console.log(`Client query response time: ${responseTime}ms`);
-  });
+    console.log(`Client query response time: ${responseTime}ms`
+  }
 
   it('T020 should respond to financial queries in under 2 seconds', async () => {
-    const startTime = Date.now();
+    const startTime = Date.now(
     
     const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
       method: 'POST',
@@ -130,22 +130,22 @@ describe('Performance Test: <2s Response Time', () => {
           permissions: ['read:financial'],
         },
       }),
-    });
+    }
 
-    const endTime = Date.now();
+    const endTime = Date.now(
     const responseTime = endTime - startTime;
 
-    expect(response.status).toBe(200);
-    expect(responseTime).toBeLessThan(2000);
+    expect(response.status).toBe(200
+    expect(responseTime).toBeLessThan(2000
     
-    console.log(`Financial query response time: ${responseTime}ms`);
-  });
+    console.log(`Financial query response time: ${responseTime}ms`
+  }
 
   it('T020 should maintain performance under consecutive requests', async () => {
     const responseTimes: number[] = [];
     
     for (let i = 0; i < 5; i++) {
-      const startTime = Date.now();
+      const startTime = Date.now(
       
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
         method: 'POST',
@@ -162,29 +162,29 @@ describe('Performance Test: <2s Response Time', () => {
             permissions: ['basic'],
           },
         }),
-      });
+      }
 
-      const endTime = Date.now();
+      const endTime = Date.now(
       const responseTime = endTime - startTime;
-      responseTimes.push(responseTime);
+      responseTimes.push(responseTime
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
     }
 
     // All requests should be under 2 seconds
     responseTimes.forEach((time, index) => {
-      expect(time).toBeLessThan(2000);
-      console.log(`Consecutive request ${index + 1} response time: ${time}ms`);
-    });
+      expect(time).toBeLessThan(2000
+      console.log(`Consecutive request ${index + 1} response time: ${time}ms`
+    }
 
     // Average should be reasonable (under 1.5 seconds)
     const averageTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
-    expect(averageTime).toBeLessThan(1500);
-    console.log(`Average response time: ${averageTime}ms`);
-  });
+    expect(averageTime).toBeLessThan(1500
+    console.log(`Average response time: ${averageTime}ms`
+  }
 
   it('T020 should handle complex queries within time limit', async () => {
-    const startTime = Date.now();
+    const startTime = Date.now(
     
     const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
       method: 'POST',
@@ -201,14 +201,14 @@ describe('Performance Test: <2s Response Time', () => {
           permissions: ['read:appointments', 'read:patients'],
         },
       }),
-    });
+    }
 
-    const endTime = Date.now();
+    const endTime = Date.now(
     const responseTime = endTime - startTime;
 
-    expect(response.status).toBe(200);
-    expect(responseTime).toBeLessThan(2000);
+    expect(response.status).toBe(200
+    expect(responseTime).toBeLessThan(2000
     
-    console.log(`Complex query response time: ${responseTime}ms`);
-  });
-});
+    console.log(`Complex query response time: ${responseTime}ms`
+  }
+}

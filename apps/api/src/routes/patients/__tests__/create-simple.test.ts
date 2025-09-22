@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-describe(''Simple Create Route Test'), () => {
+describe(''Simple Create Route Test', () => {
   it(''should create simple working route',async () => {
     // Use real Hono directly without OpenAPIHono
-    const { Hono } = await import('hono'
+    const { Hono } = await import('hono')
 
     const app = new Hono(
 
@@ -39,6 +39,6 @@ describe(''Simple Create Route Test'), () => {
 
     console.log('Simple test response:', data
     expect(response.status).toBe(201
-    expect(data.success).toBe(true
+    expect(data.success).toBe(true);
   }
 }

@@ -24,25 +24,25 @@ describe("Compliance Validators", () => {
         expect(LGPDValidator.requiresConsent("ACCESS")).toBe(true);
         expect(LGPDValidator.requiresConsent("PRESCRIBE")).toBe(true);
         expect(LGPDValidator.requiresConsent("DIAGNOSE")).toBe(true);
-      });
+      }
 
       it("should not require consent for non-data operations", () => {
         expect(LGPDValidator.requiresConsent("LOGIN")).toBe(false);
         expect(LGPDValidator.requiresConsent("LOGOUT")).toBe(false);
         expect(LGPDValidator.requiresConsent("BACKUP")).toBe(false);
-      });
-    });
+      }
+    }
 
     describe("validateConsent", () => {
       it("should return violation when no consent provided", () => {
-        const violations = LGPDValidator.validateConsent();
-        expect(violations).toHaveLength(1);
-        expect(violations[0].framework).toBe("LGPD");
-        expect(violations[0].severity).toBe("HIGH");
+        const violations = LGPDValidator.validateConsent(
+        expect(violations).toHaveLength(1
+        expect(violations[0].framework).toBe("LGPD"
+        expect(violations[0].severity).toBe("HIGH"
         expect(violations[0].description).toContain(
           "No consent reference provided",
-        );
-      });
+        
+      }
 
       it("should return violation for inactive consent", () => {
         const consentRef: ConsentReference = {
@@ -53,13 +53,13 @@ describe("Compliance Validators", () => {
           framework: "LGPD",
         };
 
-        const violations = LGPDValidator.validateConsent(consentRef);
-        expect(violations).toHaveLength(1);
-        expect(violations[0].severity).toBe("CRITICAL");
+        const violations = LGPDValidator.validateConsent(consentRef
+        expect(violations).toHaveLength(1
+        expect(violations[0].severity).toBe("CRITICAL"
         expect(violations[0].description).toContain(
           "Consent status is REVOKED",
-        );
-      });
+        
+      }
 
       it("should return violation for expired consent", () => {
         const consentRef: ConsentReference = {
@@ -71,11 +71,11 @@ describe("Compliance Validators", () => {
           framework: "LGPD",
         };
 
-        const violations = LGPDValidator.validateConsent(consentRef);
-        expect(violations).toHaveLength(1);
-        expect(violations[0].severity).toBe("HIGH");
-        expect(violations[0].description).toContain("Consent has expired");
-      });
+        const violations = LGPDValidator.validateConsent(consentRef
+        expect(violations).toHaveLength(1
+        expect(violations[0].severity).toBe("HIGH"
+        expect(violations[0].description).toContain("Consent has expired"
+      }
 
       it("should return no violations for valid consent", () => {
         const consentRef: ConsentReference = {
@@ -87,10 +87,10 @@ describe("Compliance Validators", () => {
           framework: "LGPD",
         };
 
-        const violations = LGPDValidator.validateConsent(consentRef);
-        expect(violations).toHaveLength(0);
-      });
-    });
+        const violations = LGPDValidator.validateConsent(consentRef
+        expect(violations).toHaveLength(0
+      }
+    }
 
     describe("assessRisk", () => {
       it("should assess CRITICAL risk for DELETE actions", () => {
@@ -106,8 +106,8 @@ describe("Compliance Validators", () => {
           frameworks: ["LGPD"],
         };
 
-        expect(LGPDValidator.assessRisk(auditEvent)).toBe("CRITICAL");
-      });
+        expect(LGPDValidator.assessRisk(auditEvent)).toBe("CRITICAL"
+      }
 
       it("should assess HIGH risk for medical actions", () => {
         const auditEvent: GenericAuditEvent = {
@@ -122,8 +122,8 @@ describe("Compliance Validators", () => {
           frameworks: ["LGPD"],
         };
 
-        expect(LGPDValidator.assessRisk(auditEvent)).toBe("HIGH");
-      });
+        expect(LGPDValidator.assessRisk(auditEvent)).toBe("HIGH"
+      }
 
       it("should assess HIGH risk for system actors", () => {
         const auditEvent: GenericAuditEvent = {
@@ -138,8 +138,8 @@ describe("Compliance Validators", () => {
           frameworks: ["LGPD"],
         };
 
-        expect(LGPDValidator.assessRisk(auditEvent)).toBe("HIGH");
-      });
+        expect(LGPDValidator.assessRisk(auditEvent)).toBe("HIGH"
+      }
 
       it("should assess MEDIUM risk for admin actors", () => {
         const auditEvent: GenericAuditEvent = {
@@ -154,8 +154,8 @@ describe("Compliance Validators", () => {
           frameworks: ["LGPD"],
         };
 
-        expect(LGPDValidator.assessRisk(auditEvent)).toBe("MEDIUM");
-      });
+        expect(LGPDValidator.assessRisk(auditEvent)).toBe("MEDIUM"
+      }
 
       it("should assess LOW risk for normal patient actions", () => {
         const auditEvent: GenericAuditEvent = {
@@ -170,10 +170,10 @@ describe("Compliance Validators", () => {
           frameworks: ["LGPD"],
         };
 
-        expect(LGPDValidator.assessRisk(auditEvent)).toBe("LOW");
-      });
-    });
-  });
+        expect(LGPDValidator.assessRisk(auditEvent)).toBe("LOW"
+      }
+    }
+  }
 
   describe("ANVISAValidator", () => {
     describe("requiresTracking", () => {
@@ -182,13 +182,13 @@ describe("Compliance Validators", () => {
         expect(ANVISAValidator.requiresTracking("DIAGNOSE")).toBe(true);
         expect(ANVISAValidator.requiresTracking("MODIFY")).toBe(true);
         expect(ANVISAValidator.requiresTracking("DELETE")).toBe(true);
-      });
+      }
 
       it("should not require tracking for non-medical actions", () => {
         expect(ANVISAValidator.requiresTracking("READ")).toBe(false);
         expect(ANVISAValidator.requiresTracking("LOGIN")).toBe(false);
-      });
-    });
+      }
+    }
 
     describe("validateMedicalAction", () => {
       it("should return violation for unauthorized medical action", () => {
@@ -204,14 +204,14 @@ describe("Compliance Validators", () => {
           frameworks: ["ANVISA"],
         };
 
-        const violations = ANVISAValidator.validateMedicalAction(auditEvent);
-        expect(violations.length).toBeGreaterThanOrEqual(1);
-        expect(violations[0].framework).toBe("ANVISA");
-        expect(violations[0].severity).toBe("CRITICAL");
+        const violations = ANVISAValidator.validateMedicalAction(auditEvent
+        expect(violations.length).toBeGreaterThanOrEqual(1
+        expect(violations[0].framework).toBe("ANVISA"
+        expect(violations[0].severity).toBe("CRITICAL"
         expect(violations[0].description).toContain(
           "unauthorized actor PATIENT",
-        );
-      });
+        
+      }
 
       it("should return violation for incomplete identification", () => {
         const auditEvent: GenericAuditEvent = {
@@ -226,13 +226,13 @@ describe("Compliance Validators", () => {
           frameworks: ["ANVISA"],
         };
 
-        const violations = ANVISAValidator.validateMedicalAction(auditEvent);
-        expect(violations).toHaveLength(1);
-        expect(violations[0].severity).toBe("HIGH");
+        const violations = ANVISAValidator.validateMedicalAction(auditEvent
+        expect(violations).toHaveLength(1
+        expect(violations[0].severity).toBe("HIGH"
         expect(violations[0].description).toContain(
           "Incomplete medical professional identification",
-        );
-      });
+        
+      }
 
       it("should return no violations for valid medical action", () => {
         const auditEvent: GenericAuditEvent = {
@@ -252,11 +252,11 @@ describe("Compliance Validators", () => {
           frameworks: ["ANVISA"],
         };
 
-        const violations = ANVISAValidator.validateMedicalAction(auditEvent);
-        expect(violations).toHaveLength(0);
-      });
-    });
-  });
+        const violations = ANVISAValidator.validateMedicalAction(auditEvent
+        expect(violations).toHaveLength(0
+      }
+    }
+  }
 
   describe("CFMValidator", () => {
     describe("validateTelemedicine", () => {
@@ -274,13 +274,13 @@ describe("Compliance Validators", () => {
           metadata: { telemedicineAuthorized: false },
         };
 
-        const violations = CFMValidator.validateTelemedicine(auditEvent);
+        const violations = CFMValidator.validateTelemedicine(auditEvent
         expect(violations).toHaveLength(2); // Both authorization and consent violations
-        expect(violations[0].framework).toBe("CFM");
+        expect(violations[0].framework).toBe("CFM"
         expect(violations[0].description).toContain(
           "without proper authorization",
-        );
-      });
+        
+      }
 
       it("should return violation for telemedicine without consent", () => {
         const auditEvent: GenericAuditEvent = {
@@ -297,12 +297,12 @@ describe("Compliance Validators", () => {
           // No consentRef
         };
 
-        const violations = CFMValidator.validateTelemedicine(auditEvent);
-        expect(violations).toHaveLength(1);
+        const violations = CFMValidator.validateTelemedicine(auditEvent
+        expect(violations).toHaveLength(1
         expect(violations[0].description).toContain(
           "without explicit patient consent",
-        );
-      });
+        
+      }
 
       it("should return no violations for valid telemedicine", () => {
         const consentRef: ConsentReference = {
@@ -327,10 +327,10 @@ describe("Compliance Validators", () => {
           metadata: { telemedicineAuthorized: true },
         };
 
-        const violations = CFMValidator.validateTelemedicine(auditEvent);
-        expect(violations).toHaveLength(0);
-      });
-    });
+        const violations = CFMValidator.validateTelemedicine(auditEvent
+        expect(violations).toHaveLength(0
+      }
+    }
 
     describe("validatePrescription", () => {
       it("should return violation for prescription by non-doctor", () => {
@@ -346,13 +346,13 @@ describe("Compliance Validators", () => {
           frameworks: ["CFM"],
         };
 
-        const violations = CFMValidator.validatePrescription(auditEvent);
-        expect(violations.length).toBeGreaterThanOrEqual(1);
-        expect(violations[0].severity).toBe("CRITICAL");
+        const violations = CFMValidator.validatePrescription(auditEvent
+        expect(violations.length).toBeGreaterThanOrEqual(1
+        expect(violations[0].severity).toBe("CRITICAL"
         expect(violations[0].description).toContain(
           "Prescription by non-doctor",
-        );
-      });
+        
+      }
 
       it("should return violation for incomplete prescription documentation", () => {
         const auditEvent: GenericAuditEvent = {
@@ -368,13 +368,13 @@ describe("Compliance Validators", () => {
           metadata: {}, // Missing prescriptionId and patientId
         };
 
-        const violations = CFMValidator.validatePrescription(auditEvent);
-        expect(violations).toHaveLength(1);
-        expect(violations[0].severity).toBe("HIGH");
+        const violations = CFMValidator.validatePrescription(auditEvent
+        expect(violations).toHaveLength(1
+        expect(violations[0].severity).toBe("HIGH"
         expect(violations[0].description).toContain(
           "Incomplete prescription documentation",
-        );
-      });
+        
+      }
 
       it("should return no violations for valid prescription", () => {
         const auditEvent: GenericAuditEvent = {
@@ -393,11 +393,11 @@ describe("Compliance Validators", () => {
           },
         };
 
-        const violations = CFMValidator.validatePrescription(auditEvent);
-        expect(violations).toHaveLength(0);
-      });
-    });
-  });
+        const violations = CFMValidator.validatePrescription(auditEvent
+        expect(violations).toHaveLength(0
+      }
+    }
+  }
 
   describe("ComplianceValidator", () => {
     describe("validateEvent", () => {
@@ -415,13 +415,13 @@ describe("Compliance Validators", () => {
           // No consent provided
         };
 
-        const result = ComplianceValidator.validateEvent(auditEvent);
+        const result = ComplianceValidator.validateEvent(auditEvent
 
-        expect(result.complianceStatus).toBe("NON_COMPLIANT");
-        expect(result.violations).toHaveLength(1);
-        expect(result.violations[0].framework).toBe("LGPD");
-        expect(result.riskLevel).toBeDefined();
-      });
+        expect(result.complianceStatus).toBe("NON_COMPLIANT"
+        expect(result.violations).toHaveLength(1
+        expect(result.violations[0].framework).toBe("LGPD"
+        expect(result.riskLevel).toBeDefined(
+      }
 
       it("should validate event against multiple frameworks", () => {
         const auditEvent: GenericAuditEvent = {
@@ -436,17 +436,17 @@ describe("Compliance Validators", () => {
           frameworks: ["LGPD", "ANVISA", "CFM"],
         };
 
-        const result = ComplianceValidator.validateEvent(auditEvent);
+        const result = ComplianceValidator.validateEvent(auditEvent
 
-        expect(result.complianceStatus).toBe("NON_COMPLIANT");
-        expect(result.violations.length).toBeGreaterThan(1);
+        expect(result.complianceStatus).toBe("NON_COMPLIANT"
+        expect(result.violations.length).toBeGreaterThan(1
 
         // Should have violations from multiple frameworks
-        const frameworks = result.violations.map((v) => v.framework);
-        expect(frameworks).toContain("LGPD");
-        expect(frameworks).toContain("ANVISA");
-        expect(frameworks).toContain("CFM");
-      });
+        const frameworks = result.violations.map((v) => v.framework
+        expect(frameworks).toContain("LGPD"
+        expect(frameworks).toContain("ANVISA"
+        expect(frameworks).toContain("CFM"
+      }
 
       it("should return compliant status for valid event", () => {
         const consentRef: ConsentReference = {
@@ -470,11 +470,11 @@ describe("Compliance Validators", () => {
           consentRef,
         };
 
-        const result = ComplianceValidator.validateEvent(auditEvent);
+        const result = ComplianceValidator.validateEvent(auditEvent
 
-        expect(result.complianceStatus).toBe("COMPLIANT");
-        expect(result.violations).toHaveLength(0);
-      });
+        expect(result.complianceStatus).toBe("COMPLIANT"
+        expect(result.violations).toHaveLength(0
+      }
 
       it("should add audit event ID to violations", () => {
         const auditEvent: GenericAuditEvent = {
@@ -489,42 +489,42 @@ describe("Compliance Validators", () => {
           frameworks: ["LGPD"],
         };
 
-        const result = ComplianceValidator.validateEvent(auditEvent);
+        const result = ComplianceValidator.validateEvent(auditEvent
 
-        expect(result.violations.length).toBeGreaterThan(0);
+        expect(result.violations.length).toBeGreaterThan(0
         result.violations.forEach((violation) => {
-          expect(violation.auditEventId).toBe("audit-specific-id");
-        });
-      });
-    });
+          expect(violation.auditEventId).toBe("audit-specific-id"
+        }
+      }
+    }
 
     describe("requiresConsent", () => {
       it("should require consent for LGPD framework", () => {
         expect(ComplianceValidator.requiresConsent("READ", ["LGPD"])).toBe(
           true,
-        );
+        
         expect(ComplianceValidator.requiresConsent("CREATE", ["LGPD"])).toBe(
           true,
-        );
-      });
+        
+      }
 
       it("should require consent for GDPR framework", () => {
         expect(ComplianceValidator.requiresConsent("READ", ["GDPR"])).toBe(
           true,
-        );
+        
         expect(ComplianceValidator.requiresConsent("CREATE", ["GDPR"])).toBe(
           true,
-        );
-      });
+        
+      }
 
       it("should not require consent for other frameworks", () => {
         expect(ComplianceValidator.requiresConsent("READ", ["ANVISA"])).toBe(
           false,
-        );
+        
         expect(ComplianceValidator.requiresConsent("READ", ["CFM"])).toBe(
           false,
-        );
-      });
+        
+      }
 
       it("should require consent if any framework requires it", () => {
         expect(
@@ -533,7 +533,7 @@ describe("Compliance Validators", () => {
         expect(
           ComplianceValidator.requiresConsent("READ", ["ANVISA", "CFM"]),
         ).toBe(false);
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

@@ -22,14 +22,14 @@ vi.mock('ioredis_, () => ({
     connect: vi.fn(),
     on: vi.fn(),
   })),
-}));
+})
 
 describe('Redis Cache Security Tests_, () => {
   let redisBackend: RedisCacheBackend;
 
   beforeEach(() => {
     // Reset all mocks
-    vi.clearAllMocks();
+    vi.clearAllMocks(
     
     // Create cache config
     const config: CacheConfig = {
@@ -58,26 +58,26 @@ describe('Redis Cache Security Tests_, () => {
     redisBackend = new RedisCacheBackend(config, {
       url: 'redis://localhost:6379',
       keyPrefix: 'test:',
-    });
+    }
 
     // Simulate successful connection
     (redisBackend as any).isConnected = true;
-  });
+  }
 
   afterEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks(
+  }
 
   describe('JSON Parsing Security_, () => {
     it('should handle malformed JSON safely_,_async () => {
       // Setup mock to return malformed JSON
-      mockRedis.get.mockResolvedValue('{ invalid json }');
+      mockRedis.get.mockResolvedValue('{ invalid json }')
 
       // This should not throw an error, but should handle gracefully
-      const result = await redisBackend.get('test-key');
+      const result = await redisBackend.get('test-key')
       
-      expect(result).toBeNull();
-    });
+      expect(result).toBeNull(
+    }
 
     it('should handle prototype pollution attempts_,_async () => {
       // Simulate prototype pollution payload
@@ -90,33 +90,33 @@ describe('Redis Cache Security Tests_, () => {
         value: 'test',
         __proto__: { polluted: true },
         constructor: { prototype: { polluted: true } }
-      });
+      }
 
-      mockRedis.get.mockResolvedValue(maliciousPayload);
+      mockRedis.get.mockResolvedValue(maliciousPayload
 
-      const result = await redisBackend.get('test-key');
+      const result = await redisBackend.get('test-key')
       
       // Should return null due to validation failure
-      expect(result).toBeNull();
+      expect(result).toBeNull(
       
       // Should not pollute Object.prototype
-      expect(({} as any).polluted).toBeUndefined();
-    });
+      expect(({} as any).polluted).toBeUndefined(
+    }
 
     it('should reject cache entries with missing required fields_,_async () => {
       // Missing required fields
       const incompleteEntry = JSON.stringify({
         key: 'test',
         // Missing createdAt, lastAccessedAt, accessCount, sensitivity
-        value: 'test'
-      });
+        value: 'test')
+      }
 
-      mockRedis.get.mockResolvedValue(incompleteEntry);
+      mockRedis.get.mockResolvedValue(incompleteEntry
 
-      const result = await redisBackend.get('test-key');
+      const result = await redisBackend.get('test-key')
       
-      expect(result).toBeNull();
-    });
+      expect(result).toBeNull(
+    }
 
     it('should validate data types strictly_,_async () => {
       // Invalid data types
@@ -126,24 +126,24 @@ describe('Redis Cache Security Tests_, () => {
         lastAccessedAt: 'not-a-date',
         accessCount: 'not-a-number',
         sensitivity: 'invalid-sensitivity',
-        value: 'test'
-      });
+        value: 'test')
+      }
 
-      mockRedis.get.mockResolvedValue(invalidTypesEntry);
+      mockRedis.get.mockResolvedValue(invalidTypesEntry
 
-      const result = await redisBackend.get('test-key');
+      const result = await redisBackend.get('test-key')
       
-      expect(result).toBeNull();
-    });
+      expect(result).toBeNull(
+    }
 
     it('should handle JSON parsing errors gracefully_,_async () => {
       // Setup mock to throw JSON parsing error
-      mockRedis.get.mockResolvedValue('unclosed json string {');
+      mockRedis.get.mockResolvedValue('unclosed json string {')
 
-      const result = await redisBackend.get('test-key');
+      const result = await redisBackend.get('test-key')
       
-      expect(result).toBeNull();
-    });
+      expect(result).toBeNull(
+    }
 
     it('should validate nested objects in healthcare context_,_async () => {
       // Invalid healthcare context
@@ -156,16 +156,16 @@ describe('Redis Cache Security Tests_, () => {
         value: 'test',
         healthcareContext: {
           patientId: 123, // Should be string
-          dataClassification: 'invalid-classification'
+          dataClassification: 'invalid-classification')
         }
-      });
+      }
 
-      mockRedis.get.mockResolvedValue(invalidHealthcareEntry);
+      mockRedis.get.mockResolvedValue(invalidHealthcareEntry
 
-      const result = await redisBackend.get('test-key');
+      const result = await redisBackend.get('test-key')
       
-      expect(result).toBeNull();
-    });
+      expect(result).toBeNull(
+    }
 
     it('should validate enum values strictly_,_async () => {
       // Invalid enum values
@@ -176,40 +176,40 @@ describe('Redis Cache Security Tests_, () => {
         accessCount: 1,
         sensitivity: 'INVALID_SENSITIVITY_, // Invalid enum value
         tier: 'INVALID_TIER_, // Invalid enum value
-        value: 'test'
-      });
+        value: 'test')
+      }
 
-      mockRedis.get.mockResolvedValue(invalidEnumEntry);
+      mockRedis.get.mockResolvedValue(invalidEnumEntry
 
-      const result = await redisBackend.get('test-key');
+      const result = await redisBackend.get('test-key')
       
-      expect(result).toBeNull();
-    });
-  });
+      expect(result).toBeNull(
+    }
+  }
 
   describe('Input Validation Security_, () => {
     it('should validate cache keys against injection_,_async () => {
       // Potential Redis command injection
       const maliciousKey = 'test*; FLUSHALL; test';
       
-      await expect(redisBackend.get(maliciousKey)).resolves.not.toThrow();
+      await expect(redisBackend.get(maliciousKey)).resolves.not.toThrow(
       
       // Should sanitize the key properly
       expect(mockRedis.get).toHaveBeenCalledWith(
         expect.stringMatching(/^[a-f0-9:]+$/) // Only hex and colon characters
-      );
-    });
+      
+    }
 
     it('should handle special characters in keys_,_async () => {
       const specialCharKey = 'test/key@user#id';
       
-      await redisBackend.get(specialCharKey);
+      await redisBackend.get(specialCharKey
       
       // Should hash special characters properly
       expect(mockRedis.get).toHaveBeenCalledWith(
         expect.stringMatching(/^[a-f0-9:]+$/)
-      );
-    });
+      
+    }
 
     it('should validate TTL values_,_async () => {
       const entry: CacheEntry = {
@@ -222,16 +222,16 @@ describe('Redis Cache Security Tests_, () => {
         ttl: -1, // Invalid negative TTL
       };
 
-      await expect(redisBackend.set('test', entry)).resolves.not.toThrow();
+      await expect(redisBackend.set('test', entry)).resolves.not.toThrow(
       
       // Should normalize invalid TTL to default
       expect(mockRedis.setex).toHaveBeenCalledWith(
         expect.any(String),
         expect.any(Number), // Should be positive
         expect.any(String)
-      );
-    });
-  });
+      
+    }
+  }
 
   describe('Memory Safety_, () => {
     it('should handle circular references gracefully_,_async () => {
@@ -249,8 +249,8 @@ describe('Redis Cache Security Tests_, () => {
       };
 
       // Should handle circular reference without infinite recursion
-      await expect(redisBackend.set('test', entry)).resolves.not.toThrow();
-    });
+      await expect(redisBackend.set('test', entry)).resolves.not.toThrow(
+    }
 
     it('should prevent memory leaks from large objects_,_async () => {
       // Create a very large object
@@ -264,7 +264,7 @@ describe('Redis Cache Security Tests_, () => {
       };
 
       // Should handle large object without memory issues
-      await expect(redisBackend.set('test', largeObject as any)).resolves.not.toThrow();
-    });
-  });
-});
+      await expect(redisBackend.set('test', largeObject as any)).resolves.not.toThrow(
+    }
+  }
+}

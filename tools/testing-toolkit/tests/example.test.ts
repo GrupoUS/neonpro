@@ -19,39 +19,39 @@ describe('NeonPro Testing Toolkit Examples', () => {
         agents: ['architect-review', 'tdd-orchestrator', 'code-reviewer'],
         compliance: ['LGPD'],
         coverageThreshold: 90,
-      });
-    });
+      }
+    }
 
     it('should demonstrate RED phase', async () => {
       const result = await cycle.redPhase(() => {
         // This should fail initially (RED phase)
-        throw new Error('Test not implemented yet');
-      });
+        throw new Error('Test not implemented yet')
+      }
 
       expect(result).toBe(true); // RED phase expects failure
-    });
+    }
 
     it('should demonstrate GREEN phase', async () => {
       await cycle.redPhase(() => {
-        throw new Error('Test not implemented yet');
-      });
+        throw new Error('Test not implemented yet')
+      }
 
       const result = await cycle.greenPhase(() => {
         // Minimal implementation to pass tests
         return { authenticated: true };
-      });
+      }
 
       expect(result).toBe(true);
-    });
+    }
 
     it('should demonstrate REFACTOR phase', async () => {
       await cycle.redPhase(() => {
-        throw new Error('Test not implemented yet');
-      });
+        throw new Error('Test not implemented yet')
+      }
 
       await cycle.greenPhase(() => {
         return { authenticated: true };
-      });
+      }
 
       const result = await cycle.refactorPhase(() => {
         // Improved implementation
@@ -60,11 +60,11 @@ describe('NeonPro Testing Toolkit Examples', () => {
           user: { id: '123', role: 'patient' },
           auditTrail: [{ action: 'login', timestamp: new Date() }],
         };
-      });
+      }
 
       expect(result).toBe(true);
-    });
-  });
+    }
+  }
 
   describe('Agent Coordination Example', () => {
     it('should coordinate agents in parallel', async () => {
@@ -77,17 +77,17 @@ describe('NeonPro Testing Toolkit Examples', () => {
           'code-quality',
           'security-scan',
         ],
-      });
+      }
 
-      const results = await coordinator.execute();
+      const results = await coordinator.execute(
 
-      expect(results).toHaveLength(3);
+      expect(results).toHaveLength(3
       expect(results.every(r => r.agent)).toBe(true);
 
-      const summary = coordinator.getSummary();
-      expect(summary.pattern).toBe('parallel');
-      expect(summary.agents).toHaveLength(3);
-    });
+      const summary = coordinator.getSummary(
+      expect(summary.pattern).toBe('parallel')
+      expect(summary.agents).toHaveLength(3
+    }
 
     it('should coordinate agents sequentially', async () => {
       // Resolvido: Problema de importação do AgentCoordinator
@@ -95,20 +95,20 @@ describe('NeonPro Testing Toolkit Examples', () => {
         pattern: 'sequential',
         agents: ['architect-review', 'code-reviewer'],
         qualityGates: ['architecture-compliance', 'code-quality'],
-      });
+      }
 
-      const results = await coordinator.execute();
+      const results = await coordinator.execute(
 
-      expect(results).toHaveLength(2);
+      expect(results).toHaveLength(2
 
-      const summary = coordinator.getSummary();
-      expect(summary.pattern).toBe('sequential');
-    });
-  });
+      const summary = coordinator.getSummary(
+      expect(summary.pattern).toBe('sequential')
+    }
+  }
 
   describe('LGPD Compliance Example', () => {
     it('should validate LGPD compliant data', () => {
-      const testData = createMockLGPDData();
+      const testData = createMockLGPDData(
 
       expect(LGPDValidator.validateConsent(testData)).toBe(true);
       expect(LGPDValidator.validateAuditTrail(testData)).toBe(true);
@@ -118,42 +118,42 @@ describe('NeonPro Testing Toolkit Examples', () => {
         'name',
         'email',
         'cpf',
-      ]);
+      ]
       expect(result.isCompliant).toBe(true);
-      expect(result.violations).toHaveLength(0);
-    });
+      expect(result.violations).toHaveLength(0
+    }
 
     it('should detect LGPD violations', () => {
       const invalidData = createMockLGPDData({
         consentGiven: false,
         auditTrail: [],
-      });
+      }
 
       const result = LGPDValidator.validateCompliance(invalidData, [
         'name',
         'email',
         'cpf',
-      ]);
+      ]
       expect(result.isCompliant).toBe(false);
-      expect(result.violations.length).toBeGreaterThan(0);
-      expect(result.recommendations.length).toBeGreaterThan(0);
-    });
+      expect(result.violations.length).toBeGreaterThan(0
+      expect(result.recommendations.length).toBeGreaterThan(0
+    }
 
     it('should use custom LGPD matchers', () => {
-      const compliantData = createMockLGPDData();
+      const compliantData = createMockLGPDData(
       const nonCompliantData = createMockLGPDData({
         consentGiven: false,
         dataProcessingPurpose: '', // Empty string should fail
         auditTrail: undefined as any, // Missing audit trail
-      });
+      }
 
-      expect(compliantData).toBeCompliantWithLGPD();
-      expect(compliantData).toHaveAuditTrail();
+      expect(compliantData).toBeCompliantWithLGPD(
+      expect(compliantData).toHaveAuditTrail(
 
       // Test that non-compliant data fails the matcher
-      expect(nonCompliantData).not.toBeCompliantWithLGPD();
-    });
-  });
+      expect(nonCompliantData).not.toBeCompliantWithLGPD(
+    }
+  }
 
   describe('Integration with MSW', () => {
     it('should mock API responses', async () => {
@@ -164,26 +164,26 @@ describe('NeonPro Testing Toolkit Examples', () => {
           email: 'test@example.com',
           password: 'password',
         }),
-      });
+      }
 
-      const data = await response.json();
+      const data = await response.json(
 
-      expect(response.status).toBe(200);
-      expect(data).toHaveProperty('token');
-      expect(data.user.email).toBe('test@example.com');
-    });
+      expect(response.status).toBe(200
+      expect(data).toHaveProperty('token')
+      expect(data.user.email).toBe('test@example.com')
+    }
 
     it('should validate LGPD compliance in API responses', async () => {
-      const response = await fetch('http://localhost/api/patients/test-patient-789');
+      const response = await fetch('http://localhost/api/patients/test-patient-789')
       expect(response.ok).toBe(true);
 
-      const patient = await response.json();
+      const patient = await response.json(
       expect(patient.consent_given).toBe(true);
-      expect(patient.data_processing_purpose).toBeTruthy();
+      expect(patient.data_processing_purpose).toBeTruthy(
       expect(Array.isArray(patient.audit_trail)).toBe(true);
-    });
-  });
-});
+    }
+  }
+}
 
 describe('TDD Suite Creator Example', () => {
   createTDDSuite(
@@ -200,7 +200,7 @@ describe('TDD Suite Creator Example', () => {
       greenPhase: () => {
         // Minimal implementation
         const user = { id: '123', email: 'test@example.com' };
-        expect(user.id).toBe('123');
+        expect(user.id).toBe('123')
       },
       refactorPhase: () => {
         // Improved implementation
@@ -213,5 +213,5 @@ describe('TDD Suite Creator Example', () => {
         expect(user.lgpdCompliant).toBe(true);
       },
     },
-  );
-});
+  
+}

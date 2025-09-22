@@ -25,14 +25,14 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
   let patientId: string;
 
   beforeEach(async () => {
-    await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
+    await setupTestDatabase(
+    testClient = createTestClient({ _role: 'admin' }
     patientId = 'test-patient-123';
-  });
+  }
 
   afterEach(async () => {
-    await cleanupTestDatabase();
-  });
+    await cleanupTestDatabase(
+  }
 
   describe('Healthcare AI Analysis Contract', () => {
     it('should accept medical data analysis request with Brazilian context', async () => {
@@ -66,11 +66,11 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(analysisRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         analysisId: expect.any(String),
         recommendations: expect.arrayContaining([
@@ -93,8 +93,8 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
           auditTrail: expect.any(String),
         },
         portugueseContent: expect.any(Boolean),
-      });
-    });
+      }
+    }
 
     it('should handle multi-model AI routing for complex cases', async () => {
       const complexAnalysisRequest = {
@@ -121,18 +121,18 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(complexAnalysisRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         modelUsed: expect.any(String),
         modelFallbackUsed: expect.any(Boolean),
         analysisQuality: expect.any(Number),
         processingTime: expect.any(Number),
-      });
-    });
+      }
+    }
 
     it('should enforce LGPD data protection during analysis', async () => {
       const lgpdAnalysisRequest = {
@@ -153,19 +153,19 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(lgpdAnalysisRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result.dataProtection).toMatchObject({
         anonymized: true,
         pseudonymized: true,
         dataMinimized: true,
         consentVerified: true,
         retentionPeriod: expect.any(String),
-      });
-    });
+      }
+    }
 
     it('should validate CFM medical ethics compliance', async () => {
       const cfmAnalysisRequest = {
@@ -188,18 +188,18 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(cfmAnalysisRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result.cfmCompliance).toMatchObject({
         ethicallyApproved: true,
         professionalValidated: true,
         medicalSupervision: true,
         patientConsentDocumented: true,
-      });
-    });
+      }
+    }
 
     it('should handle Portuguese error messages for Brazilian users', async () => {
       const invalidRequest = {
@@ -215,23 +215,23 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(invalidRequest),
-      });
+      }
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(400
 
-      const error = await response.json();
+      const error = await response.json(
       expect(error).toMatchObject({
         error: expect.stringContaining('Paciente'),
         message: expect.stringMatching(/português/i),
         code: 'INVALID_PATIENT_DATA',
         locale: 'pt-BR',
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Performance and Quality Requirements', () => {
     it('should complete analysis within 5 seconds for standard cases', async () => {
-      const startTime = Date.now();
+      const startTime = Date.now(
 
       const standardRequest = {
         patientId,
@@ -246,13 +246,13 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(standardRequest),
-      });
+      }
 
       const processingTime = Date.now() - startTime;
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
       expect(processingTime).toBeLessThan(5000); // 5 seconds max
-    });
+    }
 
     it('should provide cost estimates in Brazilian Reais with PIX payment option', async () => {
       const costAnalysisRequest = {
@@ -270,11 +270,11 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(costAnalysisRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result.costEstimate).toMatchObject({
         currency: 'BRL',
         totalAmount: expect.any(Number),
@@ -286,7 +286,7 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
             fees: expect.any(Number),
           }),
         ]),
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

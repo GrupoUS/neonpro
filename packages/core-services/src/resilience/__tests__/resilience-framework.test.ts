@@ -38,28 +38,28 @@ describe("Resilience Framework", () => {
   beforeEach(() => {
     resilienceFramework = new ResilienceFramework(
       DEFAULT_HEALTHCARE_RESILIENCE_CONFIG,
-    );
-  });
+    
+  }
 
   afterEach(() => {
-    resilienceFramework.resetMetrics();
-  });
+    resilienceFramework.resetMetrics(
+  }
 
   describe("Circuit Breaker", () => {
     test(_"should start in CLOSED state", () => {
       const circuitBreaker = new EnhancedCircuitBreaker(
         "test-service",
         DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.circuitBreaker,
-      );
+      
 
-      expect(circuitBreaker.getState()).toBe(CircuitState.CLOSED);
-    });
+      expect(circuitBreaker.getState()).toBe(CircuitState.CLOSED
+    }
 
     test(_"should open circuit after failure threshold",_async () => {
       const circuitBreaker = new EnhancedCircuitBreaker("test-service", {
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.circuitBreaker,
         failureThreshold: 3,
-      });
+      }
 
       // Simulate failures
       for (let i = 0; i < 3; i++) {
@@ -71,20 +71,20 @@ describe("Resilience Framework", () => {
               isEmergency: false,
               requiresAudit: false,
             },
-          );
+          
         } catch (error) {
           // Expected failures
         }
       }
 
-      expect(circuitBreaker.getState()).toBe(CircuitState.OPEN);
-    });
+      expect(circuitBreaker.getState()).toBe(CircuitState.OPEN
+    }
 
     test(_"should allow execution in CLOSED state",_async () => {
       const circuitBreaker = new EnhancedCircuitBreaker(
         "test-service",
         DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.circuitBreaker,
-      );
+      
 
       const result = await circuitBreaker.execute(() => Promise.resolve("success"),
         {
@@ -93,20 +93,20 @@ describe("Resilience Framework", () => {
           isEmergency: false,
           requiresAudit: false,
         },
-      );
+      
 
-      expect(result).toBe("success");
-      expect(circuitBreaker.getState()).toBe(CircuitState.CLOSED);
-    });
+      expect(result).toBe("success"
+      expect(circuitBreaker.getState()).toBe(CircuitState.CLOSED
+    }
 
     test(_"should reject execution in OPEN state",_async () => {
       const circuitBreaker = new EnhancedCircuitBreaker("test-service", {
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.circuitBreaker,
         failureThreshold: 1,
-      });
+      }
 
       // Force open
-      circuitBreaker.forceOpen();
+      circuitBreaker.forceOpen(
 
       await expect(_circuitBreaker.execute(() => Promise.resolve("success"), {
           operation: "test",
@@ -114,9 +114,9 @@ describe("Resilience Framework", () => {
           isEmergency: false,
           requiresAudit: false,
         }),
-      ).rejects.toThrow("Circuit breaker OPEN");
-    });
-  });
+      ).rejects.toThrow("Circuit breaker OPEN"
+    }
+  }
 
   describe("Retry Policy", () => {
     test(_"should retry on retryable errors",_async () => {
@@ -124,42 +124,42 @@ describe("Resilience Framework", () => {
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.retry,
         maxRetries: 2,
         strategy: RetryStrategy.IMMEDIATE,
-      });
+      }
 
-      const error = new Error("Network timeout");
+      const error = new Error("Network timeout"
       const shouldRetry = await retryPolicy.shouldRetry(error, {
         operation: "test",
         serviceName: "test-service",
         isEmergency: false,
         requiresAudit: false,
-      });
+      }
 
       expect(shouldRetry).toBe(true);
-    });
+    }
 
     test(_"should not retry on non-retryable errors",_async () => {
       const retryPolicy = new RetryPolicy(
         DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.retry,
-      );
+      
 
-      const error = new Error("Unauthorized access");
+      const error = new Error("Unauthorized access"
       const shouldRetry = await retryPolicy.shouldRetry(error, {
         operation: "test",
         serviceName: "test-service",
         isEmergency: false,
         requiresAudit: false,
-      });
+      }
 
       expect(shouldRetry).toBe(false);
-    });
+    }
 
     test(_"should respect max retry limit",_async () => {
       const retryPolicy = new RetryPolicy({
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.retry,
         maxRetries: 1,
-      });
+      }
 
-      const error = new Error("Network timeout");
+      const error = new Error("Network timeout"
       const context = {
         operation: "test",
         serviceName: "test-service",
@@ -172,15 +172,15 @@ describe("Resilience Framework", () => {
 
       // Second attempt should not retry
       expect(await retryPolicy.shouldRetry(error, _context)).toBe(false);
-    });
+    }
 
     test(_"should allow more retries for emergencies",_async () => {
       const retryPolicy = new RetryPolicy({
         ...DEFAULT_HEALTHCARE_RESILIENCE_CONFIG.retry,
         maxRetries: 3,
-      });
+      }
 
-      const error = new Error("Network timeout");
+      const error = new Error("Network timeout"
       const emergencyContext = {
         operation: "emergency-test",
         serviceName: "test-service",
@@ -197,8 +197,8 @@ describe("Resilience Framework", () => {
       // 6th attempt should fail
       expect(await retryPolicy.shouldRetry(error, emergencyContext)).toBe(
         false,
-      );
-    });
+      
+    }
 
     test(_"should calculate exponential backoff correctly",_async () => {
       const retryPolicy = new RetryPolicy({
@@ -207,7 +207,7 @@ describe("Resilience Framework", () => {
         baseDelayMs: 1000,
         maxDelayMs: 10000,
         jitter: false,
-      });
+      }
 
       // Force 3 attempts
       await retryPolicy.shouldRetry(new Error("test"), {
@@ -215,24 +215,24 @@ describe("Resilience Framework", () => {
         serviceName: "test-service",
         isEmergency: false,
         requiresAudit: false,
-      });
+      }
       await retryPolicy.shouldRetry(new Error("test"), {
         operation: "test",
         serviceName: "test-service",
         isEmergency: false,
         requiresAudit: false,
-      });
+      }
       await retryPolicy.shouldRetry(new Error("test"), {
         operation: "test",
         serviceName: "test-service",
         isEmergency: false,
         requiresAudit: false,
-      });
+      }
 
-      const delay = await retryPolicy.getDelay();
+      const delay = await retryPolicy.getDelay(
       expect(delay).toBe(4000); // 1000 * 2^2 (3rd attempt)
-    });
-  });
+    }
+  }
 
   describe("Resilience Framework Integration", () => {
     test(_"should execute successful operations",_async () => {
@@ -243,15 +243,15 @@ describe("Resilience Framework", () => {
           isEmergency: false,
           requiresAudit: false,
         },
-      );
+      
 
-      expect(result).toBe("test-result");
+      expect(result).toBe("test-result"
 
-      const metrics = resilienceFramework.getMetrics();
-      expect(metrics.totalRequests).toBe(1);
-      expect(metrics.successfulRequests).toBe(1);
-      expect(metrics.failedRequests).toBe(0);
-    });
+      const metrics = resilienceFramework.getMetrics(
+      expect(metrics.totalRequests).toBe(1
+      expect(metrics.successfulRequests).toBe(1
+      expect(metrics.failedRequests).toBe(0
+    }
 
     test(_"should handle failing operations with retries",_async () => {
       let attemptCount = 0;
@@ -263,7 +263,7 @@ describe("Resilience Framework", () => {
         .mockImplementationOnce(() =>
           Promise.reject(new Error("Second failure")),
         )
-        .mockImplementationOnce(() => Promise.resolve("success"));
+        .mockImplementationOnce(() => Promise.resolve("success")
 
       const result = await resilienceFramework.execute(
         "test-service",
@@ -274,17 +274,17 @@ describe("Resilience Framework", () => {
           isEmergency: false,
           requiresAudit: false,
         },
-      );
+      
 
-      expect(result).toBe("success");
-      expect(failingOperation).toHaveBeenCalledTimes(3);
+      expect(result).toBe("success"
+      expect(failingOperation).toHaveBeenCalledTimes(3
 
-      const metrics = resilienceFramework.getMetrics();
-      expect(metrics.totalRequests).toBe(1);
-      expect(metrics.successfulRequests).toBe(1);
-      expect(metrics.retryAttempts).toBe(2);
-    });
-  });
+      const metrics = resilienceFramework.getMetrics(
+      expect(metrics.totalRequests).toBe(1
+      expect(metrics.successfulRequests).toBe(1
+      expect(metrics.retryAttempts).toBe(2
+    }
+  }
 
   describe("Healthcare Resilience Service", () => {
     let healthcareResilience: HealthcareResilienceService;
@@ -304,8 +304,8 @@ describe("Resilience Framework", () => {
           telemedicinePriority: true,
           minimumConnectionQuality: 0.7,
         },
-      });
-    });
+      }
+    }
 
     test(_"should handle healthcare operations with audit logging",_async () => {
       const context = {
@@ -323,24 +323,24 @@ describe("Resilience Framework", () => {
 
       const result = await healthcareResilience.executeHealthcareOperation(_"patient-service", () => Promise.resolve("patient-data"),
         context,
-      );
+      
 
-      expect(result).toBe("patient-data");
+      expect(result).toBe("patient-data"
 
-      const metrics = healthcareResilience.getHealthcareMetrics();
-      expect(metrics.audit.totalOperations).toBe(1);
-      expect(metrics.audit.successRate).toBe(1);
-    });
+      const metrics = healthcareResilience.getHealthcareMetrics(
+      expect(metrics.audit.totalOperations).toBe(1
+      expect(metrics.audit.successRate).toBe(1
+    }
 
     test(_"should generate compliance reports", () => {
-      const report = healthcareResilience.generateComplianceReport();
+      const report = healthcareResilience.generateComplianceReport(
 
-      expect(report).toHaveProperty("reportPeriod");
-      expect(report).toHaveProperty("lgpdCompliance");
-      expect(report).toHaveProperty("serviceAvailability");
-      expect(report).toHaveProperty("recommendations");
-    });
-  });
+      expect(report).toHaveProperty("reportPeriod"
+      expect(report).toHaveProperty("lgpdCompliance"
+      expect(report).toHaveProperty("serviceAvailability"
+      expect(report).toHaveProperty("recommendations"
+    }
+  }
 
   describe("Error Handling", () => {
     test(_"should create ResilienceError with proper context", () => {
@@ -351,12 +351,12 @@ describe("Resilience Framework", () => {
         requiresAudit: false,
       };
 
-      const error = new ResilienceError("Test error", "TIMEOUT", _context);
+      const error = new ResilienceError("Test error", "TIMEOUT", _context
 
-      expect(error.message).toBe("Test error");
-      expect(error.type).toBe("TIMEOUT");
-      expect(error._context).toBe(context);
-      expect(error.name).toBe("ResilienceError");
-    });
-  });
-});
+      expect(error.message).toBe("Test error"
+      expect(error.type).toBe("TIMEOUT"
+      expect(error._context).toBe(context
+      expect(error.name).toBe("ResilienceError"
+    }
+  }
+}

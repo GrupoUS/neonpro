@@ -25,10 +25,10 @@ const mockLGPDService = {
 
 describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
   beforeEach(async () => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(
 
     // Inject mocked services into the endpoint
-    const { setServices } = await import('../analyze'
+    const { setServices } = await import('../analyze')
     setServices({
       aiChatService: mockAIChatService),
       auditService: mockAuditService),
@@ -188,13 +188,13 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
   }
 
   it('should export AI analyze route handler', async () => {
-    const module = await import('../analyze'
+    const module = await import('../analyze')
     expect(module.default).toBeDefined(
   }
 
   describe('Successful AI Analysis Operations', () => {
     it('should analyze structured patient data', async () => {
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const analysisData = {
         analysisType: 'structured_data'),
@@ -238,15 +238,15 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.success).toBe(true
-      expect(data.data.analysisId).toBe('analysis-123'
-      expect(data.data.analysisType).toBe('structured_data'
+      expect(data.success).toBe(true);
+      expect(data.data.analysisId).toBe('analysis-123')
+      expect(data.data.analysisType).toBe('structured_data')
       expect(data.data.results.insights).toHaveLength(2
       expect(data.data.results.recommendations).toHaveLength(2
     }
 
     it('should analyze medical images', async () => {
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const analysisData = {
         analysisType: 'medical_image'),
@@ -276,8 +276,8 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.success).toBe(true
-      expect(data.data.analysisType).toBe('medical_image'
+      expect(data.success).toBe(true);
+      expect(data.data.analysisType).toBe('medical_image')
       expect(data.data.results.imageAnalysis.findings).toHaveLength(2
       expect(
         data.data.results.imageAnalysis.findings[0].coordinates),
@@ -286,7 +286,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     }
 
     it('should analyze patient feedback text', async () => {
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const analysisData = {
         analysisType: 'patient_feedback'),
@@ -317,14 +317,14 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.success).toBe(true
-      expect(data.data.results.sentimentAnalysis.overall).toBe('positive'
+      expect(data.success).toBe(true);
+      expect(data.data.results.sentimentAnalysis.overall).toBe('positive')
       expect(data.data.results.keyTopics).toHaveLength(2
       expect(data.data.results.actionableInsights).toHaveLength(3
     }
 
     it('should include AI analysis performance headers', async () => {
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const analysisData = {
         analysisType: 'structured_data'),
@@ -343,11 +343,11 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       
 
       expect(response.status).toBe(200
-      expect(response.headers.get('X-AI-Model')).toBe('gpt-4'
-      expect(response.headers.get('X-AI-Confidence')).toBe('0.87'
-      expect(response.headers.get('X-AI-Processing-Time')).toBe('1800ms'
-      expect(response.headers.get('X-Analysis-Type')).toBe('structured_data'
-      expect(response.headers.get('X-Analysis-Version')).toBe('3.2'
+      expect(response.headers.get('X-AI-Model')).toBe('gpt-4')
+      expect(response.headers.get('X-AI-Confidence')).toBe('0.87')
+      expect(response.headers.get('X-AI-Processing-Time')).toBe('1800ms')
+      expect(response.headers.get('X-Analysis-Type')).toBe('structured_data')
+      expect(response.headers.get('X-Analysis-Version')).toBe('3.2')
     }
 
     it('should handle multi-modal analysis', async () => {
@@ -370,7 +370,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
         },
       }
 
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const analysisData = {
         analysisType: 'multi_modal'),
@@ -395,7 +395,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.data.analysisType).toBe('multi_modal'
+      expect(data.data.analysisType).toBe('multi_modal')
       expect(data.data.results.crossModalConfidence).toBe(0.91
       expect(mockAIChatService.analyzeMultiModal).toHaveBeenCalled(
     }
@@ -403,7 +403,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
 
   describe('LGPD Compliance and Data Access', () => {
     it('should validate LGPD data access for AI analysis', async () => {
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const analysisData = {
         analysisType: 'structured_data'),
@@ -431,7 +431,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
     }
 
     it('should log analysis activity for audit trail', async () => {
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const analysisData = {
         analysisType: 'medical_image'),
@@ -477,7 +477,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
         code: 'LGPD_AI_ANALYSIS_DENIED'),
       }
 
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const analysisData = {
         analysisType: 'structured_data'),
@@ -498,15 +498,15 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(403
-      expect(data.success).toBe(false
-      expect(data.error).toContain('LGPD'
-      expect(data.code).toBe('LGPD_AI_ANALYSIS_DENIED'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('LGPD')
+      expect(data.code).toBe('LGPD_AI_ANALYSIS_DENIED')
     }
   }
 
   describe('Error Handling', () => {
     it('should handle authentication errors', async () => {
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const response = await analyzeRoute.request(
         new Request('http://localhost/', {
@@ -521,12 +521,12 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(401
-      expect(data.success).toBe(false
-      expect(data.error).toContain('Não autorizado'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Não autorizado')
     }
 
     it('should handle validation errors for analysis data', async () => {
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const invalidAnalysisData = {
         // Missing required fields
@@ -547,7 +547,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(400
-      expect(data.success).toBe(false
+      expect(data.success).toBe(false);
       // Zod validation errors are returned in different format
       expect(data.error || data.message).toBeDefined(
     }
@@ -558,7 +558,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
         error: 'Erro interno do serviço de análise de IA'),
       }
 
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const analysisData = {
         analysisType: 'structured_data'),
@@ -579,12 +579,12 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(500
-      expect(data.success).toBe(false
-      expect(data.error).toContain('Erro interno'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Erro interno')
     }
 
     it('should handle unsupported analysis types', async () => {
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const analysisData = {
         analysisType: 'unsupported_type'),
@@ -605,7 +605,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(400
-      expect(data.success).toBe(false
+      expect(data.success).toBe(false);
       // Zod validation error for invalid enum
       expect(data.error).toBeDefined(
     }
@@ -613,7 +613,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
 
   describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers', async () => {
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const analysisData = {
         analysisType: 'medical_image'),
@@ -631,14 +631,14 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
         },
       
 
-      expect(response.headers.get('X-CFM-Compliant')).toBe('true'
-      expect(response.headers.get('X-AI-Medical-Analysis')).toBe('performed'
-      expect(response.headers.get('X-LGPD-Compliant')).toBe('true'
-      expect(response.headers.get('X-Medical-AI-Logged')).toBe('true'
+      expect(response.headers.get('X-CFM-Compliant')).toBe('true')
+      expect(response.headers.get('X-AI-Medical-Analysis')).toBe('performed')
+      expect(response.headers.get('X-LGPD-Compliant')).toBe('true')
+      expect(response.headers.get('X-Medical-AI-Logged')).toBe('true')
     }
 
     it('should validate healthcare professional context for medical analysis', async () => {
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const analysisData = {
         analysisType: 'diagnostic_support'),
@@ -670,7 +670,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
 
   describe('Performance and Data Handling', () => {
     it('should include performance headers', async () => {
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const analysisData = {
         analysisType: 'structured_data'),
@@ -690,7 +690,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
 
       expect(response.status).toBe(200
       expect(response.headers.get('X-Response-Time')).toBeDefined(
-      expect(response.headers.get('X-AI-Processing-Time')).toBe('1800ms'
+      expect(response.headers.get('X-AI-Processing-Time')).toBe('1800ms')
       expect(response.headers.get('X-Database-Queries')).toBeDefined(
     }
 
@@ -719,7 +719,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
         },
       }
 
-      const { default: analyzeRoute } = await import('../analyze'
+      const { default: analyzeRoute } = await import('../analyze')
 
       const response = await analyzeRoute.request(
         new Request('http://localhost/', {
@@ -736,7 +736,7 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
 
       expect(response.status).toBe(200
       expect(data.data.metadata.dataPoints).toBe(100
-      expect(response.headers.get('X-AI-Data-Points')).toBe('100'
+      expect(response.headers.get('X-AI-Data-Points')).toBe('100')
     }
   }
 }

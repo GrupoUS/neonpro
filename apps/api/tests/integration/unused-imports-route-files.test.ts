@@ -9,7 +9,7 @@ import * as path from 'path';
 import { describe, expect, it } from 'vitest';
 
 describe('Route Files - Unused Imports', () => {
-  const projectRoot = path.resolve(__dirname, '../../../../');
+  const projectRoot = path.resolve(__dirname, '../../../../')
 
   const routeFiles = [
     'apps/api/tests/integration/pr44-fixes/architecture-issues.test.ts',
@@ -20,14 +20,14 @@ describe('Route Files - Unused Imports', () => {
 
   describe.each(routeFiles)('%s', filePath => {
     it('should have unused import beforeEach', () => {
-      const fullPath = path.join(projectRoot, filePath);
-      const content = fs.readFileSync(fullPath, 'utf-8');
+      const fullPath = path.join(projectRoot, filePath
+      const content = fs.readFileSync(fullPath, 'utf-8')
 
       // Check that unused import has been removed
-      expect(content).not.toContain('beforeEach');
+      expect(content).not.toContain('beforeEach')
 
       // Verify beforeEach is not used in the code
-      const lines = content.split('\n');
+      const lines = content.split('\n')
 
       // beforeEach should not be used anywhere except import
       const beforeEachUsage = lines.filter(line =>
@@ -36,9 +36,9 @@ describe('Route Files - Unused Imports', () => {
         && !line.includes('from')
         && !line.includes('*')
         && !line.startsWith(' ') // Exclude indented lines (part of import blocks)
-        && line.trim() !== ''
-      );
-      expect(beforeEachUsage).toHaveLength(0);
-    });
-  });
-});
+        && line.trim() !== '')
+      
+      expect(beforeEachUsage).toHaveLength(0
+    }
+  }
+}

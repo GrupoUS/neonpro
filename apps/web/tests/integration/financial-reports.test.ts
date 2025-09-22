@@ -17,14 +17,14 @@ vi.mock('@/lib/supabase', () => ({
       from: vi.fn(),
     },
   },
-}));
+})
 
 vi.mock('@/hooks/use-toast', () => ({
   useToast: () => ({
     toast: vi.fn(),
     dismiss: vi.fn(),
   }),
-}));
+})
 
 // Mock financial reports services
 vi.mock('@/services/financial-reports', () => ({
@@ -39,7 +39,7 @@ vi.mock('@/services/financial-reports', () => ({
     deleteReport: vi.fn(),
     getReportStatus: vi.fn(),
   },
-}));
+})
 
 vi.mock('@/services/report-scheduler', () => ({
   ReportScheduler: {
@@ -50,7 +50,7 @@ vi.mock('@/services/report-scheduler', () => ({
     pauseSchedule: vi.fn(),
     resumeSchedule: vi.fn(),
   },
-}));
+})
 
 vi.mock('@/services/report-export', () => ({
   ReportExportService: {
@@ -61,7 +61,7 @@ vi.mock('@/services/report-export', () => ({
     getExportHistory: vi.fn(),
     scheduleExport: vi.fn(),
   },
-}));
+})
 
 // Mock components that should exist but don't yet (TDD RED)
 vi.mock('@/components/financial/FinancialReports', () => ({
@@ -71,32 +71,32 @@ vi.mock('@/components/financial/FinancialReports', () => ({
       { 'data-testid': 'financial-reports' },
       'Financial Reports Component',
     ),
-}));
+})
 
 vi.mock('@/components/financial/ReportGenerator', () => ({
   ReportGenerator: () =>
     React.createElement('div', { 'data-testid': 'report-generator' }, 'Report Generator Component'),
-}));
+})
 
 vi.mock('@/components/financial/ReportScheduler', () => ({
   ReportScheduler: () =>
     React.createElement('div', { 'data-testid': 'report-scheduler' }, 'Report Scheduler Component'),
-}));
+})
 
 vi.mock('@/components/financial/ReportExporter', () => ({
   ReportExporter: () =>
     React.createElement('div', { 'data-testid': 'report-exporter' }, 'Report Exporter Component'),
-}));
+})
 
 vi.mock('@/components/financial/ReportTemplates', () => ({
   ReportTemplates: () =>
     React.createElement('div', { 'data-testid': 'report-templates' }, 'Report Templates Component'),
-}));
+})
 
 vi.mock('@/components/financial/ReportHistory', () => ({
   ReportHistory: () =>
     React.createElement('div', { 'data-testid': 'report-history' }, 'Report History Component'),
-}));
+})
 
 // Types that should exist but don't yet (TDD RED)
 interface FinancialReport {
@@ -220,7 +220,7 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         gcTime: 0,
       },
     },
-  });
+  }
 
   return React.createElement(
     BrowserRouter,
@@ -230,7 +230,7 @@ const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       { client: queryClient },
       children,
     ),
-  );
+  
 };
 
 describe('Financial Reports Integration Tests', () => {
@@ -244,14 +244,14 @@ describe('Financial Reports Integration Tests', () => {
           gcTime: 0,
         },
       },
-    });
-    vi.clearAllMocks();
-  });
+    }
+    vi.clearAllMocks(
+  }
 
   afterEach(() => {
-    queryClient.clear();
-    vi.resetAllMocks();
-  });
+    queryClient.clear(
+    vi.resetAllMocks(
+  }
 
   describe('Report Generation Integration', () => {
     it('should generate a basic revenue report', async () => {
@@ -298,18 +298,18 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service response
-      const { FinancialReportsService } = await import('@/services/financial-reports');
-      vi.mocked(FinancialReportsService.generateReport).mockResolvedValue(mockGeneratedReport);
+      const { FinancialReportsService } = await import('@/services/financial-reports')
+      vi.mocked(FinancialReportsService.generateReport).mockResolvedValue(mockGeneratedReport
 
       // Act
-      const result = await FinancialReportsService.generateReport(mockReportConfig);
+      const result = await FinancialReportsService.generateReport(mockReportConfig
 
       // Assert
-      expect(result).toEqual(mockGeneratedReport);
-      expect(result.data.totalRevenue).toBe(25000);
-      expect(result.metadata.accuracy).toBeGreaterThan(0.95);
-      expect(result.status).toBe('completed');
-    });
+      expect(result).toEqual(mockGeneratedReport
+      expect(result.data.totalRevenue).toBe(25000
+      expect(result.metadata.accuracy).toBeGreaterThan(0.95
+      expect(result.status).toBe('completed')
+    }
 
     it('should generate a comprehensive profit and loss report', async () => {
       // Arrange
@@ -387,17 +387,17 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service response
-      const { FinancialReportsService } = await import('@/services/financial-reports');
-      vi.mocked(FinancialReportsService.generateReport).mockResolvedValue(mockPLReport);
+      const { FinancialReportsService } = await import('@/services/financial-reports')
+      vi.mocked(FinancialReportsService.generateReport).mockResolvedValue(mockPLReport
 
       // Act
-      const result = await FinancialReportsService.generateReport(mockPLReportConfig);
+      const result = await FinancialReportsService.generateReport(mockPLReportConfig
 
       // Assert
-      expect(result.data.profit.net).toBe(25000);
-      expect(result.data.comparisons.yearOverYear.growth).toBe(0.154);
-      expect(result.data.forecast.nextQuarter.confidence).toBeGreaterThan(0.8);
-    });
+      expect(result.data.profit.net).toBe(25000
+      expect(result.data.comparisons.yearOverYear.growth).toBe(0.154
+      expect(result.data.forecast.nextQuarter.confidence).toBeGreaterThan(0.8
+    }
 
     it('should generate custom reports with dynamic templates', async () => {
       // Arrange
@@ -501,21 +501,21 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service responses
-      const { FinancialReportsService } = await import('@/services/financial-reports');
-      vi.mocked(FinancialReportsService.getReportTemplates).mockResolvedValue([mockCustomTemplate]);
-      vi.mocked(FinancialReportsService.createCustomReport).mockResolvedValue(mockCustomReport);
+      const { FinancialReportsService } = await import('@/services/financial-reports')
+      vi.mocked(FinancialReportsService.getReportTemplates).mockResolvedValue([mockCustomTemplate]
+      vi.mocked(FinancialReportsService.createCustomReport).mockResolvedValue(mockCustomReport
 
       // Act
-      const templates = await FinancialReportsService.getReportTemplates();
-      const result = await FinancialReportsService.createCustomReport(mockCustomReportConfig);
+      const templates = await FinancialReportsService.getReportTemplates(
+      const result = await FinancialReportsService.createCustomReport(mockCustomReportConfig
 
       // Assert
-      expect(templates).toHaveLength(1);
-      expect(templates[0].type).toBe('custom');
-      expect(result.type).toBe('custom');
-      expect(result.data.sections).toHaveLength(1);
-    });
-  });
+      expect(templates).toHaveLength(1
+      expect(templates[0].type).toBe('custom')
+      expect(result.type).toBe('custom')
+      expect(result.data.sections).toHaveLength(1
+    }
+  }
 
   describe('Report Export Integration', () => {
     it('should export reports to PDF format', async () => {
@@ -564,17 +564,17 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service responses
-      const { ReportExportService } = await import('@/services/report-export');
-      vi.mocked(ReportExportService.exportToPdf).mockResolvedValue(mockExportResult);
+      const { ReportExportService } = await import('@/services/report-export')
+      vi.mocked(ReportExportService.exportToPdf).mockResolvedValue(mockExportResult
 
       // Act
-      const result = await ReportExportService.exportToPdf(mockReport, mockExportConfig);
+      const result = await ReportExportService.exportToPdf(mockReport, mockExportConfig
 
       // Assert
-      expect(result.filename).toContain('.pdf');
-      expect(result.metadata.pages).toBe(15);
-      expect(result.url).toContain('https://storage.example.com');
-    });
+      expect(result.filename).toContain('.pdf')
+      expect(result.metadata.pages).toBe(15
+      expect(result.url).toContain('https://storage.example.com')
+    }
 
     it('should export reports to Excel with multiple sheets', async () => {
       // Arrange
@@ -629,17 +629,17 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service responses
-      const { ReportExportService } = await import('@/services/report-export');
-      vi.mocked(ReportExportService.exportToExcel).mockResolvedValue(mockExcelExportResult);
+      const { ReportExportService } = await import('@/services/report-export')
+      vi.mocked(ReportExportService.exportToExcel).mockResolvedValue(mockExcelExportResult
 
       // Act
-      const result = await ReportExportService.exportToExcel(mockReport, mockExcelExportConfig);
+      const result = await ReportExportService.exportToExcel(mockReport, mockExcelExportConfig
 
       // Assert
-      expect(result.filename).toContain('.xlsx');
-      expect(result.metadata.sheets).toHaveLength(5);
-      expect(result.metadata.charts).toBe(8);
-    });
+      expect(result.filename).toContain('.xlsx')
+      expect(result.metadata.sheets).toHaveLength(5
+      expect(result.metadata.charts).toBe(8
+    }
 
     it('should handle bulk export of multiple reports', async () => {
       // Arrange
@@ -705,18 +705,18 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service responses
-      const { ReportExportService } = await import('@/services/report-export');
-      vi.mocked(ReportExportService.exportToPdf).mockResolvedValue(mockBulkExportResult);
+      const { ReportExportService } = await import('@/services/report-export')
+      vi.mocked(ReportExportService.exportToPdf).mockResolvedValue(mockBulkExportResult
 
       // Act
-      const result = await ReportExportService.exportToPdf(mockReports, mockBulkExportConfig);
+      const result = await ReportExportService.exportToPdf(mockReports, mockBulkExportConfig
 
       // Assert
-      expect(result.metadata.totalReports).toBe(2);
+      expect(result.metadata.totalReports).toBe(2
       expect(result.metadata.tableOfContents).toBe(true);
-      expect(result.size).toBeGreaterThan(4000000);
-    });
-  });
+      expect(result.size).toBeGreaterThan(4000000
+    }
+  }
 
   describe('Report Scheduling Integration', () => {
     it('should create a monthly recurring report schedule', async () => {
@@ -747,18 +747,18 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service responses
-      const { ReportScheduler } = await import('@/services/report-scheduler');
-      vi.mocked(ReportScheduler.createSchedule).mockResolvedValue(mockCreatedSchedule);
+      const { ReportScheduler } = await import('@/services/report-scheduler')
+      vi.mocked(ReportScheduler.createSchedule).mockResolvedValue(mockCreatedSchedule
 
       // Act
-      const result = await ReportScheduler.createSchedule(mockScheduleConfig);
+      const result = await ReportScheduler.createSchedule(mockScheduleConfig
 
       // Assert
-      expect(result.frequency).toBe('monthly');
+      expect(result.frequency).toBe('monthly')
       expect(result.isActive).toBe(true);
-      expect(result.recipients).toHaveLength(2);
-      expect(result.nextRun).toBeInstanceOf(Date);
-    });
+      expect(result.recipients).toHaveLength(2
+      expect(result.nextRun).toBeInstanceOf(Date
+    }
 
     it('should handle weekly report scheduling with specific days', async () => {
       // Arrange
@@ -788,41 +788,41 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service responses
-      const { ReportScheduler } = await import('@/services/report-scheduler');
-      vi.mocked(ReportScheduler.createSchedule).mockResolvedValue(mockWeeklyScheduleResult);
+      const { ReportScheduler } = await import('@/services/report-scheduler')
+      vi.mocked(ReportScheduler.createSchedule).mockResolvedValue(mockWeeklyScheduleResult
 
       // Act
-      const result = await ReportScheduler.createSchedule(mockWeeklySchedule);
+      const result = await ReportScheduler.createSchedule(mockWeeklySchedule
 
       // Assert
-      expect(result.frequency).toBe('weekly');
-      expect(result.dayOfWeek).toBe(1);
-      expect(result.deliveryMethod).toBe('both');
-    });
+      expect(result.frequency).toBe('weekly')
+      expect(result.dayOfWeek).toBe(1
+      expect(result.deliveryMethod).toBe('both')
+    }
 
     it('should manage schedule lifecycle operations', async () => {
       // Arrange
       const scheduleId = 'schedule-001';
 
       // Mock service responses
-      const { ReportScheduler } = await import('@/services/report-scheduler');
-      vi.mocked(ReportScheduler.pauseSchedule).mockResolvedValue(true);
-      vi.mocked(ReportScheduler.resumeSchedule).mockResolvedValue(true);
-      vi.mocked(ReportScheduler.deleteSchedule).mockResolvedValue(true);
+      const { ReportScheduler } = await import('@/services/report-scheduler')
+      vi.mocked(ReportScheduler.pauseSchedule).mockResolvedValue(true
+      vi.mocked(ReportScheduler.resumeSchedule).mockResolvedValue(true
+      vi.mocked(ReportScheduler.deleteSchedule).mockResolvedValue(true
 
       // Act & Assert - Pause
-      const pauseResult = await ReportScheduler.pauseSchedule(scheduleId);
+      const pauseResult = await ReportScheduler.pauseSchedule(scheduleId
       expect(pauseResult).toBe(true);
 
       // Act & Assert - Resume
-      const resumeResult = await ReportScheduler.resumeSchedule(scheduleId);
+      const resumeResult = await ReportScheduler.resumeSchedule(scheduleId
       expect(resumeResult).toBe(true);
 
       // Act & Assert - Delete
-      const deleteResult = await ReportScheduler.deleteSchedule(scheduleId);
+      const deleteResult = await ReportScheduler.deleteSchedule(scheduleId
       expect(deleteResult).toBe(true);
-    });
-  });
+    }
+  }
 
   describe('Data Accuracy and Validation Integration', () => {
     it('should validate report data integrity', async () => {
@@ -871,18 +871,18 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service responses
-      const { FinancialReportsService } = await import('@/services/financial-reports');
-      vi.mocked(FinancialReportsService.validateReportData).mockResolvedValue(mockValidationResult);
+      const { FinancialReportsService } = await import('@/services/financial-reports')
+      vi.mocked(FinancialReportsService.validateReportData).mockResolvedValue(mockValidationResult
 
       // Act
-      const result = await FinancialReportsService.validateReportData(mockReportData);
+      const result = await FinancialReportsService.validateReportData(mockReportData
 
       // Assert
       expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
-      expect(result.warnings).toHaveLength(1);
-      expect(result.dataQuality.completeness).toBeGreaterThan(0.95);
-    });
+      expect(result.errors).toHaveLength(0
+      expect(result.warnings).toHaveLength(1
+      expect(result.dataQuality.completeness).toBeGreaterThan(0.95
+    }
 
     it('should detect and report data inconsistencies', async () => {
       // Arrange
@@ -925,19 +925,19 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service responses
-      const { FinancialReportsService } = await import('@/services/financial-reports');
+      const { FinancialReportsService } = await import('@/services/financial-reports')
       vi.mocked(FinancialReportsService.validateReportData).mockResolvedValue(
         mockValidationWithErrors,
-      );
+      
 
       // Act
-      const result = await FinancialReportsService.validateReportData(mockInconsistentData);
+      const result = await FinancialReportsService.validateReportData(mockInconsistentData
 
       // Assert
       expect(result.isValid).toBe(false);
-      expect(result.errors).toHaveLength(2);
-      expect(result.dataQuality.consistency).toBeLessThan(0.8);
-    });
+      expect(result.errors).toHaveLength(2
+      expect(result.dataQuality.consistency).toBeLessThan(0.8
+    }
 
     it('should perform cross-validation with external data sources', async () => {
       // Arrange
@@ -982,7 +982,7 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service responses
-      const { FinancialReportsService } = await import('@/services/financial-reports');
+      const { FinancialReportsService } = await import('@/services/financial-reports')
       vi.mocked(FinancialReportsService.validateReportData).mockResolvedValue({
         ...mockCrossValidationResult,
         isValid: true,
@@ -994,16 +994,16 @@ describe('Financial Reports Integration Tests', () => {
           consistency: 0.95,
           timeliness: 0.98,
         },
-      });
+      }
 
       // Act
-      const result = await FinancialReportsService.validateReportData(mockCrossValidationConfig);
+      const result = await FinancialReportsService.validateReportData(mockCrossValidationConfig
 
       // Assert
-      expect(result.dataQuality.accuracy).toBe(0.94);
+      expect(result.dataQuality.accuracy).toBe(0.94
       expect(result.isValid).toBe(true);
-    });
-  });
+    }
+  }
 
   describe('Report History and Audit Trail Integration', () => {
     it('should maintain comprehensive report history', async () => {
@@ -1056,17 +1056,17 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service responses
-      const { FinancialReportsService } = await import('@/services/financial-reports');
-      vi.mocked(FinancialReportsService.getReportHistory).mockResolvedValue(mockReportHistory);
+      const { FinancialReportsService } = await import('@/services/financial-reports')
+      vi.mocked(FinancialReportsService.getReportHistory).mockResolvedValue(mockReportHistory
 
       // Act
-      const result = await FinancialReportsService.getReportHistory(mockHistoryQuery);
+      const result = await FinancialReportsService.getReportHistory(mockHistoryQuery
 
       // Assert
-      expect(result.reports).toHaveLength(2);
-      expect(result.aggregations.averageAccuracy).toBe(0.985);
-      expect(result.aggregations.totalExports).toBe(5);
-    });
+      expect(result.reports).toHaveLength(2
+      expect(result.aggregations.averageAccuracy).toBe(0.985
+      expect(result.aggregations.totalExports).toBe(5
+    }
 
     it('should track report generation performance over time', async () => {
       // Arrange
@@ -1098,18 +1098,18 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service responses
-      const { FinancialReportsService } = await import('@/services/financial-reports');
-      vi.mocked(FinancialReportsService.getReportHistory).mockResolvedValue(mockPerformanceHistory);
+      const { FinancialReportsService } = await import('@/services/financial-reports')
+      vi.mocked(FinancialReportsService.getReportHistory).mockResolvedValue(mockPerformanceHistory
 
       // Act
-      const result = await FinancialReportsService.getReportHistory(mockPerformanceQuery);
+      const result = await FinancialReportsService.getReportHistory(mockPerformanceQuery
 
       // Assert
-      expect(result.timeSeries).toHaveLength(12);
-      expect(result.trends.accuracyImprovement).toBeGreaterThan(0);
-      expect(result.benchmarks.currentPerformance).toBe('above_target');
-    });
-  });
+      expect(result.timeSeries).toHaveLength(12
+      expect(result.trends.accuracyImprovement).toBeGreaterThan(0
+      expect(result.benchmarks.currentPerformance).toBe('above_target')
+    }
+  }
 
   describe('Error Handling and Edge Cases', () => {
     it('should handle report generation failures gracefully', async () => {
@@ -1125,16 +1125,16 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service error
-      const { FinancialReportsService } = await import('@/services/financial-reports');
+      const { FinancialReportsService } = await import('@/services/financial-reports')
       vi.mocked(FinancialReportsService.generateReport).mockRejectedValue(
         new Error('Clinic not found: invalid-clinic'),
-      );
+      
 
       // Act & Assert
       await expect(
         FinancialReportsService.generateReport(mockFailingReportConfig),
-      ).rejects.toThrow('Clinic not found: invalid-clinic');
-    });
+      ).rejects.toThrow('Clinic not found: invalid-clinic')
+    }
 
     it('should handle export failures with retry mechanism', async () => {
       // Arrange
@@ -1157,7 +1157,7 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock export service with retry logic
-      const { ReportExportService } = await import('@/services/report-export');
+      const { ReportExportService } = await import('@/services/report-export')
       vi.mocked(ReportExportService.exportToPdf)
         .mockRejectedValueOnce(new Error('Storage service unavailable'))
         .mockRejectedValueOnce(new Error('Storage service unavailable'))
@@ -1168,7 +1168,7 @@ describe('Financial Reports Integration Tests', () => {
           url: 'https://storage.example.com/reports/revenue-report.pdf',
           expiresAt: new Date(Date.now() + 86400000),
           metadata: { pages: 10, generationTime: 3500, retryCount: 2 },
-        });
+        }
 
       // Act
       let result;
@@ -1182,7 +1182,7 @@ describe('Financial Reports Integration Tests', () => {
             includeCharts: true,
             includeRawData: false,
             compression: true,
-          });
+          }
           break;
         } catch (error) {
           retryCount++;
@@ -1191,10 +1191,10 @@ describe('Financial Reports Integration Tests', () => {
       }
 
       // Assert
-      expect(result).toBeDefined();
-      expect(result!.metadata.retryCount).toBe(2);
-      expect(ReportExportService.exportToPdf).toHaveBeenCalledTimes(3);
-    });
+      expect(result).toBeDefined(
+      expect(result!.metadata.retryCount).toBe(2
+      expect(ReportExportService.exportToPdf).toHaveBeenCalledTimes(3
+    }
 
     it('should validate report size limits and optimization', async () => {
       // Arrange
@@ -1220,17 +1220,17 @@ describe('Financial Reports Integration Tests', () => {
       };
 
       // Mock service responses
-      const { FinancialReportsService } = await import('@/services/financial-reports');
+      const { FinancialReportsService } = await import('@/services/financial-reports')
       vi.mocked(FinancialReportsService.generateReport).mockRejectedValue(
         new Error(
           `Report size (${mockSizeValidation.estimatedSize} bytes) exceeds maximum allowed (${mockSizeValidation.maxAllowedSize} bytes)`,
         ),
-      );
+      
 
       // Act & Assert
       await expect(
         FinancialReportsService.generateReport(mockLargeReportConfig),
-      ).rejects.toThrow('Report size');
-    });
-  });
-});
+      ).rejects.toThrow('Report size')
+    }
+  }
+}

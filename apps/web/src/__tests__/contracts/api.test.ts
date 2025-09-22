@@ -15,12 +15,12 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
 
 describe(('Backend API Contracts', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks(
+  }
 
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks(
+  }
 
   describe(('tRPC Endpoint Contract', () => {
     test(('should define tRPC router structure for healthcare API', () => {
@@ -77,17 +77,17 @@ describe(('Backend API Contracts', () => {
       };
 
       // Test: tRPC router structure
-      expect(tRPCRouterContract.patients.list.middleware).toContain('auth');
+      expect(tRPCRouterContract.patients.list.middleware).toContain('auth')
       expect(tRPCRouterContract.patients.create.middleware).toContain(
         'lgpdConsent',
-      );
+      
       expect(tRPCRouterContract.medicalRecords.create.middleware).toContain(
         'professionalValidation',
-      );
+      
       expect(tRPCRouterContract.aiChat.sendMessage.middleware).toContain(
         'aiSafety',
-      );
-    });
+      
+    }
 
     test(('should provide tRPC middleware contract definitions', () => {
       // Contract: tRPC middleware for healthcare compliance
@@ -162,26 +162,26 @@ describe(('Backend API Contracts', () => {
       ];
 
       // Test: Middleware contract structure
-      const authMiddleware = middlewareContracts.find(m => m.name === 'auth');
+      const authMiddleware = middlewareContracts.find(m => m.name === 'auth')
       expect(authMiddleware?.healthcare_specific).toBe(true);
       expect(authMiddleware?.compliance_requirements).toContain(
         'CFM_LICENSE_VALIDATION',
-      );
+      
 
       const lgpdMiddleware = middlewareContracts.find(
         m => m.name === 'lgpdConsent',
-      );
+      
       expect(lgpdMiddleware?.error_handling.error_codes).toContain(
         'CONSENT_REQUIRED',
-      );
+      
 
       const aiSafetyMiddleware = middlewareContracts.find(
         m => m.name === 'aiSafety',
-      );
+      
       expect(aiSafetyMiddleware?.compliance_requirements).toContain(
         'MEDICAL_CONTENT_FILTER',
-      );
-    });
+      
+    }
 
     test(('should provide tRPC error handling contract', () => {
       // Contract: Standardized error handling for healthcare APIs
@@ -190,9 +190,9 @@ describe(('Backend API Contracts', () => {
         http_status: number;
         message: string;
         healthcare_category:
-          | 'medical'
-          | 'compliance'
-          | 'security'
+          | 'medical')
+          | 'compliance')
+          | 'security')
           | 'technical';
         audit_required: boolean;
         patient_notification: boolean;
@@ -250,23 +250,23 @@ describe(('Backend API Contracts', () => {
       // Test: Error contract structure
       const lgpdError = errorContracts.find(
         e => e.code === 'LGPD_CONSENT_REQUIRED',
-      );
-      expect(lgpdError?.healthcare_category).toBe('compliance');
+      
+      expect(lgpdError?.healthcare_category).toBe('compliance')
       expect(lgpdError?.patient_notification).toBe(true);
 
       const medicalAccessError = errorContracts.find(
         e => e.code === 'MEDICAL_RECORD_ACCESS_DENIED',
-      );
+      
       expect(medicalAccessError?.escalation_required).toBe(true);
       expect(medicalAccessError?.audit_required).toBe(true);
 
       const aiSafetyError = errorContracts.find(
         e => e.code === 'AI_UNSAFE_CONTENT',
-      );
-      expect(aiSafetyError?.healthcare_category).toBe('medical');
-      expect(aiSafetyError?.http_status).toBe(422);
-    });
-  });
+      
+      expect(aiSafetyError?.healthcare_category).toBe('medical')
+      expect(aiSafetyError?.http_status).toBe(422
+    }
+  }
 
   describe(('Patient Data API Contract', () => {
     test(('should define patient data schema contract', () => {
@@ -333,17 +333,17 @@ describe(('Backend API Contracts', () => {
       };
 
       // Test: Patient data contract structure
-      expect(patientDataContract.required_fields).toContain('cpf');
+      expect(patientDataContract.required_fields).toContain('cpf')
       expect(patientDataContract.required_fields).toContain(
         'lgpd_consent_status',
-      );
+      
       expect(patientDataContract.validation_rules.cpf.encryption).toBe(
         'AES-256-GCM',
-      );
+      
       expect(
         patientDataContract.lgpd_compliance.right_to_erasure.supported,
       ).toBe(true);
-    });
+    }
 
     test(('should provide patient API endpoint contracts', () => {
       // Contract: Patient API endpoints with healthcare requirements
@@ -444,22 +444,22 @@ describe(('Backend API Contracts', () => {
       // Test: Patient API endpoint contracts
       const listEndpoint = patientAPIContracts.find(
         e => e.method === 'GET' && e.path === '/api/v1/patients',
-      );
+      
       expect(listEndpoint?.lgpd_consent_required).toBe(false);
-      expect(listEndpoint?.rate_limit).toBe(60);
+      expect(listEndpoint?.rate_limit).toBe(60
 
       const createEndpoint = patientAPIContracts.find(
         e => e.method === 'POST',
-      );
+      
       expect(createEndpoint?.lgpd_consent_required).toBe(true);
-      expect(createEndpoint?.error_codes).toContain('LGPD_CONSENT_REQUIRED');
+      expect(createEndpoint?.error_codes).toContain('LGPD_CONSENT_REQUIRED')
 
       const deleteEndpoint = patientAPIContracts.find(
         e => e.method === 'DELETE',
-      );
-      expect(deleteEndpoint?.rate_limit).toBe(5);
-      expect(deleteEndpoint?.response_time_sla).toBe(2000);
-    });
+      
+      expect(deleteEndpoint?.rate_limit).toBe(5
+      expect(deleteEndpoint?.response_time_sla).toBe(2000
+    }
 
     test(('should provide patient data transformation contracts', () => {
       // Contract: Patient data transformation for different contexts
@@ -525,20 +525,20 @@ describe(('Backend API Contracts', () => {
       // Test: Patient data transformation contracts
       expect(
         patientDataTransformationContract.public_view.excluded_fields,
-      ).toContain('cpf');
+      ).toContain('cpf')
       expect(
         patientDataTransformationContract.professional_view.transformation_rules
           .cpf,
-      ).toBe('mask_middle_digits');
+      ).toBe('mask_middle_digits')
       expect(
         patientDataTransformationContract.authorized_view.included_fields,
-      ).toBe('all_fields');
+      ).toBe('all_fields')
       expect(
         patientDataTransformationContract.export_view.transformation_rules
           .identifiers,
-      ).toBe('pseudonymized');
-    });
-  });
+      ).toBe('pseudonymized')
+    }
+  }
 
   describe(('Medical Record API Contract', () => {
     test(('should define medical record schema contract', () => {
@@ -618,17 +618,17 @@ describe(('Backend API Contracts', () => {
       };
 
       // Test: Medical record contract structure
-      expect(medicalRecordContract.record_types).toContain('consultation');
+      expect(medicalRecordContract.record_types).toContain('consultation')
       expect(medicalRecordContract.required_fields.all_records).toContain(
         'digital_signature',
-      );
+      
       expect(
         medicalRecordContract.validation_rules.digital_signature.certificate,
-      ).toBe('ICP_Brasil_A3');
+      ).toBe('ICP_Brasil_A3')
       expect(
         medicalRecordContract.compliance_requirements.retention_period,
-      ).toBe('20_years_minimum');
-    });
+      ).toBe('20_years_minimum')
+    }
 
     test(('should provide medical record API endpoint contracts', () => {
       // Contract: Medical record API endpoints with professional validation
@@ -717,23 +717,23 @@ describe(('Backend API Contracts', () => {
       // Test: Medical record API contracts
       const listEndpoint = medicalRecordAPIContracts.find(
         e => e.method === 'GET' && e.path.includes('patient'),
-      );
+      
       expect(listEndpoint?.professional_license_validation).toBe(true);
       expect(listEndpoint?.cfm_compliance).toBe(true);
 
       const createEndpoint = medicalRecordAPIContracts.find(
         e => e.method === 'POST',
-      );
+      
       expect(createEndpoint?.digital_signature_required).toBe(true);
       expect(createEndpoint?.anvisa_compliance).toBe(true);
 
       const updateEndpoint = medicalRecordAPIContracts.find(
         e => e.method === 'PUT',
-      );
+      
       expect(updateEndpoint?.audit_requirements).toContain(
         'original_record_preservation',
-      );
-    });
+      
+    }
 
     test(('should provide medical record versioning contract', () => {
       // Contract: Medical record versioning for compliance and audit
@@ -770,18 +770,18 @@ describe(('Backend API Contracts', () => {
       // Test: Medical record versioning contract
       expect(medicalRecordVersioningContract.versioning_strategy).toBe(
         'immutable_append_only',
-      );
+      
       expect(
         medicalRecordVersioningContract.immutability_rules.original_record,
-      ).toBe('never_deleted_or_modified');
+      ).toBe('never_deleted_or_modified')
       expect(
         medicalRecordVersioningContract.audit_requirements.integrity_verification,
-      ).toBe('cryptographic_hash_chain');
+      ).toBe('cryptographic_hash_chain')
       expect(
         medicalRecordVersioningContract.retention_policy.active_records,
-      ).toBe('permanent_retention');
-    });
-  });
+      ).toBe('permanent_retention')
+    }
+  }
 
   describe(('AI Chat API Contract', () => {
     test(('should define AI chat safety contract', () => {
@@ -865,16 +865,16 @@ describe(('Backend API Contracts', () => {
       // Test: AI chat safety contract
       expect(
         aiChatSafetyContract.content_filtering.medical_advice_detection.action,
-      ).toBe('block_and_alert');
+      ).toBe('block_and_alert')
       expect(
         aiChatSafetyContract.compliance_monitoring.lgpd_privacy_protection
           .retention_limit,
-      ).toBe('30_days_conversation_history');
+      ).toBe('30_days_conversation_history')
       expect(
         aiChatSafetyContract.professional_oversight.human_in_the_loop
           .response_time,
-      ).toBe('5_minutes_maximum');
-    });
+      ).toBe('5_minutes_maximum')
+    }
 
     test(('should provide AI chat API endpoint contracts', () => {
       // Contract: AI chat API endpoints with safety and compliance
@@ -963,23 +963,23 @@ describe(('Backend API Contracts', () => {
       ];
 
       // Test: AI chat API contracts
-      const sendMessageEndpoint = aiChatAPIContracts.find(e => e.path.includes('send-message'));
+      const sendMessageEndpoint = aiChatAPIContracts.find(e => e.path.includes('send-message')
       expect(sendMessageEndpoint?.content_filtering).toBe(true);
       expect(sendMessageEndpoint?.safety_requirements).toContain(
         'medical_advice_detection',
-      );
+      
 
-      const escalateEndpoint = aiChatAPIContracts.find(e => e.path.includes('escalate'));
-      expect(escalateEndpoint?.rate_limit).toBe(5);
+      const escalateEndpoint = aiChatAPIContracts.find(e => e.path.includes('escalate')
+      expect(escalateEndpoint?.rate_limit).toBe(5
       expect(escalateEndpoint?.safety_requirements).toContain(
         'emergency_detection',
-      );
+      
 
-      const safetyReportEndpoint = aiChatAPIContracts.find(e => e.path.includes('safety-report'));
+      const safetyReportEndpoint = aiChatAPIContracts.find(e => e.path.includes('safety-report')
       expect(safetyReportEndpoint?.safety_requirements).toContain(
         'supervisor_access_only',
-      );
-    });
+      
+    }
 
     test(('should provide AI conversation context contract', () => {
       // Contract: AI conversation context for healthcare quality
@@ -1061,17 +1061,17 @@ describe(('Backend API Contracts', () => {
       expect(
         aiConversationContextContract.context_types.patient_context
           .excluded_data,
-      ).toContain('specific_diagnoses');
+      ).toContain('specific_diagnoses')
       expect(
         aiConversationContextContract.quality_assurance.response_accuracy
           .medical_information,
-      ).toBe('fact_checked_against_medical_databases');
+      ).toBe('fact_checked_against_medical_databases')
       expect(
         aiConversationContextContract.quality_assurance.safety_validation
           .emergency_detection,
-      ).toBe('real_time_pattern_matching');
-    });
-  });
+      ).toBe('real_time_pattern_matching')
+    }
+  }
 
   describe(('Authentication and Authorization Contract', () => {
     test(('should define healthcare professional authentication contract', () => {
@@ -1134,12 +1134,12 @@ describe(('Backend API Contracts', () => {
       ).toBe(true);
       expect(
         healthcareProfessionalAuthContract.professional_validation.license_verification.crm_validation,
-      ).toBe('cfm_realtime_api');
+      ).toBe('cfm_realtime_api')
       expect(
         healthcareProfessionalAuthContract.session_management.security_features
           .concurrent_session_limit,
-      ).toBe(3);
-    });
+      ).toBe(3
+    }
 
     test(('should provide authorization role-based access contract', () => {
       // Contract: Role-based access control for healthcare system
@@ -1154,9 +1154,9 @@ describe(('Backend API Contracts', () => {
           compliance: string[];
         };
         data_access_level:
-          | 'public'
-          | 'professional'
-          | 'authorized'
+          | 'public')
+          | 'professional')
+          | 'authorized')
           | 'restricted';
         audit_level: 'standard' | 'enhanced' | 'comprehensive';
         session_restrictions: {
@@ -1252,31 +1252,31 @@ describe(('Backend API Contracts', () => {
       // Test: Healthcare role contracts
       const physicianRole = healthcareRoleContracts.find(
         r => r.role_name === 'attending_physician',
-      );
-      expect(physicianRole?.professional_license_required).toContain('CRM');
-      expect(physicianRole?.permissions.medical_records).toContain('prescribe');
-      expect(physicianRole?.data_access_level).toBe('authorized');
+      
+      expect(physicianRole?.professional_license_required).toContain('CRM')
+      expect(physicianRole?.permissions.medical_records).toContain('prescribe')
+      expect(physicianRole?.data_access_level).toBe('authorized')
 
       const nurseRole = healthcareRoleContracts.find(
         r => r.role_name === 'nurse',
-      );
+      
       expect(nurseRole?.permissions.patient_data).toContain(
         'update_basic_info',
-      );
+      
       expect(nurseRole?.session_restrictions.ip_restrictions).toBe(true);
 
       const receptionistRole = healthcareRoleContracts.find(
         r => r.role_name === 'receptionist',
-      );
-      expect(receptionistRole?.data_access_level).toBe('public');
-      expect(receptionistRole?.permissions.medical_records).toEqual([]);
+      
+      expect(receptionistRole?.data_access_level).toBe('public')
+      expect(receptionistRole?.permissions.medical_records).toEqual([]
 
       const adminRole = healthcareRoleContracts.find(
         r => r.role_name === 'clinic_administrator',
-      );
-      expect(adminRole?.permissions.system_admin).toContain('user_management');
-      expect(adminRole?.audit_level).toBe('comprehensive');
-    });
+      
+      expect(adminRole?.permissions.system_admin).toContain('user_management')
+      expect(adminRole?.audit_level).toBe('comprehensive')
+    }
 
     test(('should provide API endpoint authorization contract', () => {
       // Contract: API endpoint authorization requirements
@@ -1373,39 +1373,39 @@ describe(('Backend API Contracts', () => {
       // Test: API endpoint authorization contracts
       const medicalRecordsGetEndpoint = apiEndpointAuthContracts.find(
         e => e.endpoint.includes('medical-records') && e.method === 'GET',
-      );
+      
       expect(medicalRecordsGetEndpoint?.required_roles).toContain(
         'attending_physician',
-      );
+      
       expect(medicalRecordsGetEndpoint?.additional_checks).toContain(
         'lgpd_consent_check',
-      );
+      
 
       const medicalRecordsPostEndpoint = apiEndpointAuthContracts.find(
         e => e.endpoint === '/api/v1/medical-records' && e.method === 'POST',
-      );
+      
       expect(medicalRecordsPostEndpoint?.required_permissions).toContain(
         'digital_signature',
-      );
+      
       expect(medicalRecordsPostEndpoint?.audit_requirements).toContain(
         'cfm_compliance_check',
-      );
+      
 
-      const aiChatEndpoint = apiEndpointAuthContracts.find(e => e.endpoint.includes('ai-chat'));
-      expect(aiChatEndpoint?.rate_limits.per_role.receptionist).toBe(20);
-      expect(aiChatEndpoint?.audit_requirements).toContain('safety_monitoring');
+      const aiChatEndpoint = apiEndpointAuthContracts.find(e => e.endpoint.includes('ai-chat')
+      expect(aiChatEndpoint?.rate_limits.per_role.receptionist).toBe(20
+      expect(aiChatEndpoint?.audit_requirements).toContain('safety_monitoring')
 
       const systemUsersEndpoint = apiEndpointAuthContracts.find(e =>
         e.endpoint.includes('system/users')
-      );
+      
       expect(systemUsersEndpoint?.required_roles).toEqual([
         'clinic_administrator',
-      ]);
+      ]
       expect(systemUsersEndpoint?.additional_checks).toContain(
         'admin_approval',
-      );
-    });
-  });
-});
+      
+    }
+  }
+}
 
 export default {};

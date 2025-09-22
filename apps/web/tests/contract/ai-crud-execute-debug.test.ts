@@ -18,14 +18,14 @@ describe('AI CRUD Execute API Debug Test', () => {
     };
 
     // ACT: Make request to execute CRUD endpoint
-    const response = await executeCrudOperation(_request);
+    const response = await executeCrudOperation(_request
 
     // ASSERT: Debug the actual response structure
-    console.log('Full API Response:', JSON.stringify(response, null, 2));
+    console.log('Full API Response:', JSON.stringify(response, null, 2)
 
     // Just check it's not empty
-    expect(response).toBeDefined();
-  });
+    expect(response).toBeDefined(
+  }
 
   it('should debug error response structure', async () => {
     // ARRANGE: Create an invalid request to see error structure
@@ -36,12 +36,12 @@ describe('AI CRUD Execute API Debug Test', () => {
 
     // ACT: Make invalid request to see error response
     try {
-      await executeCrudOperation(invalidRequest);
+      await executeCrudOperation(invalidRequest
     } catch (error) {
-      console.log('Error Response:', JSON.stringify(error, null, 2));
-      expect(error).toBeDefined();
+      console.log('Error Response:', JSON.stringify(error, null, 2)
+      expect(error).toBeDefined(
     }
-  });
+  }
 
   it('should debug XSS sanitization', async () => {
     // ARRANGE: Create request with XSS payload
@@ -59,10 +59,10 @@ describe('AI CRUD Execute API Debug Test', () => {
     };
 
     // ACT: Make request with XSS payload
-    const response = await executeCrudOperation(xssRequest);
+    const response = await executeCrudOperation(xssRequest
 
     // ASSERT: Debug what actually happens with XSS
-    console.log('XSS Response:', JSON.stringify(response, null, 2));
-    expect(response).toBeDefined();
-  });
-});
+    console.log('XSS Response:', JSON.stringify(response, null, 2)
+    expect(response).toBeDefined(
+  }
+}

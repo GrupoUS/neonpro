@@ -33,7 +33,7 @@ vi.mock(('@/integrations/supabase/client', () => ({
       })),
     })),
   },
-}));
+})
 
 // Mock date-fns functions
 vi.mock(('date-fns', () => ({
@@ -58,7 +58,7 @@ vi.mock(('date-fns', () => ({
   endOfMonth: vi.fn(date => new Date(date.getFullYear(), date.getMonth() + 1, 0)),
   parseISO: vi.fn(isoString => new Date(isoString)),
   format: vi.fn((date, formatString) => date.toString()),
-}));
+})
 
 describe(('EventService', () => {
   const mockAppointment = {
@@ -96,45 +96,45 @@ describe(('EventService', () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks(
+  }
 
   describe(('appointmentToEvent', () => {
     it(('should convert appointment to event format', () => {
-      const result = EventService['appointmentToEvent'](mockAppointment as any);
+      const result = EventService['appointmentToEvent'](mockAppointment as any
 
-      expect(result).toEqual(mockEvent);
-    });
+      expect(result).toEqual(mockEvent
+    }
 
     it(('should handle appointment without status', () => {
       const appointmentWithoutStatus = { ...mockAppointment, status: null };
-      const result = EventService['appointmentToEvent'](appointmentWithoutStatus as any);
+      const result = EventService['appointmentToEvent'](appointmentWithoutStatus as any
 
-      expect(result.color).toBe('sky');
-    });
-  });
+      expect(result.color).toBe('sky')
+    }
+  }
 
   describe(('getStatusColor', () => {
     it(('should return correct color for confirmed status', () => {
-      const color = EventService['getStatusColor']('confirmed');
-      expect(color).toBe('emerald');
-    });
+      const color = EventService['getStatusColor']('confirmed')
+      expect(color).toBe('emerald')
+    }
 
     it(('should return correct color for pending status', () => {
-      const color = EventService['getStatusColor']('pending');
-      expect(color).toBe('orange');
-    });
+      const color = EventService['getStatusColor']('pending')
+      expect(color).toBe('orange')
+    }
 
     it(('should return default color for unknown status', () => {
-      const color = EventService['getStatusColor']('unknown');
-      expect(color).toBe('sky');
-    });
+      const color = EventService['getStatusColor']('unknown')
+      expect(color).toBe('sky')
+    }
 
     it(('should return default color for undefined status', () => {
-      const color = EventService['getStatusColor'](undefined);
-      expect(color).toBe('sky');
-    });
-  });
+      const color = EventService['getStatusColor'](undefined
+      expect(color).toBe('sky')
+    }
+  }
 
   describe(('validateEvent', () => {
     it(('should validate valid event data', () => {
@@ -144,11 +144,11 @@ describe(('EventService', () => {
         end: new Date('2024-01-15T11:00:00.000Z'),
       };
 
-      const result = EventService.validateEvent(eventData);
+      const result = EventService.validateEvent(eventData
 
       expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
-    });
+      expect(result.errors).toHaveLength(0
+    }
 
     it(('should reject event without title', () => {
       const eventData = {
@@ -157,11 +157,11 @@ describe(('EventService', () => {
         end: new Date('2024-01-15T11:00:00.000Z'),
       };
 
-      const result = EventService.validateEvent(eventData);
+      const result = EventService.validateEvent(eventData
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Event title is required');
-    });
+      expect(result.errors).toContain('Event title is required')
+    }
 
     it(('should reject event with end time before start time', () => {
       const eventData = {
@@ -170,11 +170,11 @@ describe(('EventService', () => {
         end: new Date('2024-01-15T10:00:00.000Z'),
       };
 
-      const result = EventService.validateEvent(eventData);
+      const result = EventService.validateEvent(eventData
 
       expect(result.isValid).toBe(false);
-      expect(result.errors).toContain('Event start time must be before end time');
-    });
+      expect(result.errors).toContain('Event start time must be before end time')
+    }
 
     it(('should warn about short duration events', () => {
       const eventData = {
@@ -183,11 +183,11 @@ describe(('EventService', () => {
         end: new Date('2024-01-15T10:02:00.000Z'),
       };
 
-      const result = EventService.validateEvent(eventData);
+      const result = EventService.validateEvent(eventData
 
       expect(result.isValid).toBe(true);
-      expect(result.warnings).toContain('Event duration is less than 5 minutes');
-    });
+      expect(result.warnings).toContain('Event duration is less than 5 minutes')
+    }
 
     it(('should warn about long duration events', () => {
       const eventData = {
@@ -196,11 +196,11 @@ describe(('EventService', () => {
         end: new Date('2024-01-15T19:00:00.000Z'),
       };
 
-      const result = EventService.validateEvent(eventData);
+      const result = EventService.validateEvent(eventData
 
       expect(result.isValid).toBe(true);
-      expect(result.warnings).toContain('Event duration exceeds 8 hours');
-    });
+      expect(result.warnings).toContain('Event duration exceeds 8 hours')
+    }
 
     it(('should warn about events outside business hours', () => {
       const eventData = {
@@ -209,19 +209,19 @@ describe(('EventService', () => {
         end: new Date('2024-01-16T01:00:00.000Z'),
       };
 
-      const result = EventService.validateEvent(eventData);
+      const result = EventService.validateEvent(eventData
 
       expect(result.isValid).toBe(true);
-      expect(result.warnings).toContain('Event is scheduled outside normal business hours');
-    });
-  });
+      expect(result.warnings).toContain('Event is scheduled outside normal business hours')
+    }
+  }
 
   describe(('createEvent', () => {
     it(_'should create event successfully',async () => {
       const mockInsert = vi.fn().mockResolvedValue({
         data: mockAppointment,
         error: null,
-      });
+      }
 
       (supabase.from as Mock).mockReturnValue({
         insert: vi.fn().mockReturnValue({
@@ -229,7 +229,7 @@ describe(('EventService', () => {
             single: mockInsert,
           }),
         }),
-      });
+      }
 
       const eventData = {
         title: 'Test Event',
@@ -238,11 +238,11 @@ describe(('EventService', () => {
         clinicId: 'test-clinic-id',
       };
 
-      const result = await EventService.createEvent(eventData);
+      const result = await EventService.createEvent(eventData
 
-      expect(result).toEqual(mockEvent);
-      expect(supabase.from).toHaveBeenCalledWith('appointments');
-    });
+      expect(result).toEqual(mockEvent
+      expect(supabase.from).toHaveBeenCalledWith('appointments')
+    }
 
     it(_'should throw error for invalid event data',async () => {
       const eventData = {
@@ -252,16 +252,16 @@ describe(('EventService', () => {
         clinicId: 'test-clinic-id',
       };
 
-      await expect(EventService.createEvent(eventData)).rejects.toThrow('Validation failed');
-    });
-  });
+      await expect(EventService.createEvent(eventData)).rejects.toThrow('Validation failed')
+    }
+  }
 
   describe(('getEventById', () => {
     it(_'should return event by ID',async () => {
       const mockSelect = vi.fn().mockResolvedValue({
         data: mockAppointment,
         error: null,
-      });
+      }
 
       (supabase.from as Mock).mockReturnValue({
         select: vi.fn().mockReturnValue({
@@ -269,18 +269,18 @@ describe(('EventService', () => {
             single: mockSelect,
           }),
         }),
-      });
+      }
 
-      const result = await EventService.getEventById('test-appointment-id');
+      const result = await EventService.getEventById('test-appointment-id')
 
-      expect(result).toEqual(mockEvent);
-    });
+      expect(result).toEqual(mockEvent
+    }
 
     it(_'should return null for non-existent event',async () => {
       const mockSelect = vi.fn().mockResolvedValue({
         data: null,
         error: { code: 'PGRST116' },
-      });
+      }
 
       (supabase.from as Mock).mockReturnValue({
         select: vi.fn().mockReturnValue({
@@ -288,20 +288,20 @@ describe(('EventService', () => {
             single: mockSelect,
           }),
         }),
-      });
+      }
 
-      const result = await EventService.getEventById('non-existent-id');
+      const result = await EventService.getEventById('non-existent-id')
 
-      expect(result).toBeNull();
-    });
-  });
+      expect(result).toBeNull(
+    }
+  }
 
   describe(('updateEvent', () => {
     it(_'should update event successfully',async () => {
       const mockUpdate = vi.fn().mockResolvedValue({
         data: { ...mockAppointment, title: 'Updated Event' },
         error: null,
-      });
+      }
 
       (supabase.from as Mock).mockReturnValue({
         update: vi.fn().mockReturnValue({
@@ -311,34 +311,34 @@ describe(('EventService', () => {
             }),
           }),
         }),
-      });
+      }
 
       const updateData = {
         id: 'test-appointment-id',
         title: 'Updated Event',
       };
 
-      const result = await EventService.updateEvent(updateData);
+      const result = await EventService.updateEvent(updateData
 
-      expect(result.title).toBe('Updated Event');
-    });
-  });
+      expect(result.title).toBe('Updated Event')
+    }
+  }
 
   describe(('deleteEvent', () => {
     it(_'should delete event successfully',async () => {
       const mockDelete = vi.fn().mockResolvedValue({
         error: null,
-      });
+      }
 
       (supabase.from as Mock).mockReturnValue({
         delete: vi.fn().mockReturnValue({
           eq: mockDelete,
         }),
-      });
+      }
 
-      await expect(EventService.deleteEvent('test-appointment-id')).resolves.not.toThrow();
-    });
-  });
+      await expect(EventService.deleteEvent('test-appointment-id')).resolves.not.toThrow(
+    }
+  }
 
   describe(('getEvents', () => {
     it(_'should return events with filters',async () => {
@@ -355,7 +355,7 @@ describe(('EventService', () => {
 
       (supabase.from as Mock).mockReturnValue({
         select: vi.fn().mockReturnValue(mockQuery),
-      });
+      }
 
       const filters = {
         dateRange: {
@@ -365,12 +365,12 @@ describe(('EventService', () => {
         status: ['confirmed'],
       };
 
-      const result = await EventService.getEvents(filters);
+      const result = await EventService.getEvents(filters
 
-      expect(result).toHaveLength(1);
-      expect(result[0]).toEqual(mockEvent);
-    });
-  });
+      expect(result).toHaveLength(1
+      expect(result[0]).toEqual(mockEvent
+    }
+  }
 
   describe(('searchEvents', () => {
     it(_'should search events with query',async () => {
@@ -388,7 +388,7 @@ describe(('EventService', () => {
 
       (supabase.from as Mock).mockReturnValue({
         select: vi.fn().mockReturnValue(mockQuery),
-      });
+      }
 
       const searchOptions = {
         _query: 'test',
@@ -396,13 +396,13 @@ describe(('EventService', () => {
         offset: 0,
       };
 
-      const result = await EventService.searchEvents(searchOptions);
+      const result = await EventService.searchEvents(searchOptions
 
-      expect(result.events).toHaveLength(1);
-      expect(result.totalCount).toBe(1);
+      expect(result.events).toHaveLength(1
+      expect(result.totalCount).toBe(1
       expect(result.hasMore).toBe(false);
-    });
-  });
+    }
+  }
 
   describe(('checkConflicts', () => {
     it(_'should detect conflicting events',async () => {
@@ -423,15 +423,15 @@ describe(('EventService', () => {
 
       (supabase.from as Mock).mockReturnValue({
         select: vi.fn().mockReturnValue(mockQuery),
-      });
+      }
 
-      const start = new Date('2024-01-15T10:00:00.000Z');
-      const end = new Date('2024-01-15T11:00:00.000Z');
+      const start = new Date('2024-01-15T10:00:00.000Z')
+      const end = new Date('2024-01-15T11:00:00.000Z')
 
-      const conflicts = await EventService.checkConflicts(start, end);
+      const conflicts = await EventService.checkConflicts(start, end
 
-      expect(conflicts).toHaveLength(1);
-    });
+      expect(conflicts).toHaveLength(1
+    }
 
     it(_'should not detect conflicts when excludeEventId is provided',async () => {
       const mockQuery = {
@@ -445,16 +445,16 @@ describe(('EventService', () => {
 
       (supabase.from as Mock).mockReturnValue({
         select: vi.fn().mockReturnValue(mockQuery),
-      });
+      }
 
-      const start = new Date('2024-01-15T10:00:00.000Z');
-      const end = new Date('2024-01-15T11:00:00.000Z');
+      const start = new Date('2024-01-15T10:00:00.000Z')
+      const end = new Date('2024-01-15T11:00:00.000Z')
 
-      const conflicts = await EventService.checkConflicts(start, end, 'test-appointment-id');
+      const conflicts = await EventService.checkConflicts(start, end, 'test-appointment-id')
 
-      expect(conflicts).toHaveLength(0);
-    });
-  });
+      expect(conflicts).toHaveLength(0
+    }
+  }
 
   describe(('getEventStatistics', () => {
     it(_'should calculate event statistics',async () => {
@@ -469,13 +469,13 @@ describe(('EventService', () => {
 
       (supabase.from as Mock).mockReturnValue({
         select: vi.fn().mockReturnValue(mockQuery),
-      });
+      }
 
-      const stats = await EventService.getEventStatistics();
+      const stats = await EventService.getEventStatistics(
 
-      expect(stats.totalEvents).toBe(1);
-      expect(stats.eventsByStatus.confirmed).toBe(1);
-      expect(stats.eventsByPriority[2]).toBe(1);
-    });
-  });
-});
+      expect(stats.totalEvents).toBe(1
+      expect(stats.eventsByStatus.confirmed).toBe(1
+      expect(stats.eventsByPriority[2]).toBe(1
+    }
+  }
+}

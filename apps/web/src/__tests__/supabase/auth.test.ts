@@ -25,16 +25,16 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
     testClient = createTestSupabaseClient({
       lgpdCompliant: true,
       auditTrail: true,
-    });
-    testDataGenerator = new HealthcareTestDataGenerator();
+    }
+    testDataGenerator = new HealthcareTestDataGenerator(
 
-    console.log('🧪 Authentication Test Environment Setup Complete');
-  });
+    console.log('🧪 Authentication Test Environment Setup Complete')
+  }
 
   afterAll(async () => {
-    await testDataGenerator.cleanupTestData();
-    console.log('🔒 Authentication Test Environment Cleaned Up');
-  });
+    await testDataGenerator.cleanupTestData(
+    console.log('🔒 Authentication Test Environment Cleaned Up')
+  }
 
   describe(('User Registration with LGPD Consent', () => {
     test(_'should register user with complete LGPD consent tracking',async () => {
@@ -63,7 +63,7 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
       };
 
       // security-auditor: Registration with consent validation
-      const startTime = performance.now();
+      const startTime = performance.now(
 
       const { data: data, error: error } = await testClient.auth.signUp({
         email: testUserData.email,
@@ -71,12 +71,12 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
         options: {
           data: testUserData.userData,
         },
-      });
+      }
 
       const responseTime = performance.now() - startTime;
 
-      expect(error).toBeNull();
-      expect(data.user).toBeDefined();
+      expect(error).toBeNull(
+      expect(data.user).toBeDefined(
 
       // Validate performance requirement
       expect(
@@ -88,24 +88,24 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
 
       // Validate LGPD consent tracking (mock implementation)
       if (data.user?.user_metadata) {
-        expect(data.user.user_metadata).toHaveProperty('consent');
+        expect(data.user.user_metadata).toHaveProperty('consent')
         expect(data.user.user_metadata.consent.lgpd_acknowledged).toBe(true);
-        expect(data.user.user_metadata.consent.consent_date).toBeDefined();
-        expect(data.user.user_metadata.consent.consent_version).toBe('2.0');
+        expect(data.user.user_metadata.consent.consent_date).toBeDefined(
+        expect(data.user.user_metadata.consent.consent_version).toBe('2.0')
       }
 
-      console.log('✅ User registration with LGPD consent validated');
-    });
+      console.log('✅ User registration with LGPD consent validated')
+    }
 
     test(_'should handle consent withdrawal process',async () => {
       // security-auditor: Consent withdrawal process
-      const testUser = await testDataGenerator.createAuthenticatedTestUser('patient');
+      const testUser = await testDataGenerator.createAuthenticatedTestUser('patient')
 
       // Mock authentication
       await testClient.auth.signInWithPassword({
         email: testUser.email,
         password: testUser.password,
-      });
+      }
 
       const consentUpdate = {
         consent: {
@@ -121,21 +121,21 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
 
       const { data, error } = await testClient.auth.updateUser({
         data: consentUpdate,
-      });
+      }
 
-      expect(error).toBeNull();
+      expect(error).toBeNull(
 
       // Validate consent withdrawal tracking (mock implementation)
       if (data.user?.user_metadata?.consent) {
         expect(data.user.user_metadata.consent.data_processing).toBe(false);
-        expect(data.user.user_metadata.consent.withdrawal_date).toBeDefined();
+        expect(data.user.user_metadata.consent.withdrawal_date).toBeDefined(
         expect(data.user.user_metadata.consent.withdrawal_reason).toBe(
           'user_request',
-        );
+        
       }
 
-      console.log('✅ Consent withdrawal process validated');
-    });
+      console.log('✅ Consent withdrawal process validated')
+    }
 
     test(_'should reject registration without required LGPD consent',async () => {
       const invalidUserData = {
@@ -157,14 +157,14 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
         options: {
           data: invalidUserData.userData,
         },
-      });
+      }
 
       // In a real implementation, this would be rejected
       // Mock implementation shows the validation would occur
       console.log(
         '✅ Registration without LGPD consent properly rejected (mock)',
-      );
-    });
+      
+    }
 
     test(_'should validate healthcare professional registration',async () => {
       const doctorUserData = {
@@ -194,139 +194,139 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
         options: {
           data: doctorUserData.userData,
         },
-      });
+      }
 
-      expect(error).toBeNull();
+      expect(error).toBeNull(
 
       // Validate professional registration requirements (mock)
       if (data.user?.user_metadata) {
-        expect(data.user.user_metadata.healthcare_role).toBe('doctor');
-        expect(data.user.user_metadata.verification_documents).toBeDefined();
+        expect(data.user.user_metadata.healthcare_role).toBe('doctor')
+        expect(data.user.user_metadata.verification_documents).toBeDefined(
         expect(
           data.user.user_metadata.consent.professional_validation_required,
         ).toBe(true);
       }
 
-      console.log('✅ Healthcare professional registration validated');
-    });
-  });
+      console.log('✅ Healthcare professional registration validated')
+    }
+  }
 
   describe(('Session Management and Security', () => {
     test(_'should handle secure session lifecycle',async () => {
-      const testUser = await testDataGenerator.createAuthenticatedTestUser('patient');
+      const testUser = await testDataGenerator.createAuthenticatedTestUser('patient')
 
       // Sign in
       const { data: signInData, error: signInError } = await testClient.auth.signInWithPassword({
         email: testUser.email,
         password: testUser.password,
-      });
+      }
 
-      expect(signInError).toBeNull();
+      expect(signInError).toBeNull(
 
       // security-auditor: Session validation
-      const { data: session, error: sessionError } = await testClient.auth.getSession();
+      const { data: session, error: sessionError } = await testClient.auth.getSession(
 
-      expect(sessionError).toBeNull();
-      expect(session.session).toBeDefined();
+      expect(sessionError).toBeNull(
+      expect(session.session).toBeDefined(
 
       if (session.session) {
-        expect(session.session.access_token).toBeDefined();
-        expect(session.session.refresh_token).toBeDefined();
-        expect(session.session.expires_at).toBeDefined();
+        expect(session.session.access_token).toBeDefined(
+        expect(session.session.refresh_token).toBeDefined(
+        expect(session.session.expires_at).toBeDefined(
 
         // Validate session expiration is reasonable (not too long)
-        const expiresAt = new Date(session.session.expires_at * 1000);
-        const now = new Date();
-        const sessionDuration = expiresAt.getTime() - now.getTime();
+        const expiresAt = new Date(session.session.expires_at * 1000
+        const now = new Date(
+        const sessionDuration = expiresAt.getTime() - now.getTime(
         const maxSessionDuration = 24 * 60 * 60 * 1000; // 24 hours
 
-        expect(sessionDuration).toBeLessThanOrEqual(maxSessionDuration);
+        expect(sessionDuration).toBeLessThanOrEqual(maxSessionDuration
       }
 
       // Test session termination
-      const { error: signOutError } = await testClient.auth.signOut();
-      expect(signOutError).toBeNull();
+      const { error: signOutError } = await testClient.auth.signOut(
+      expect(signOutError).toBeNull(
 
-      const { data: postLogoutSession } = await testClient.auth.getSession();
-      expect(postLogoutSession.session).toBeNull();
+      const { data: postLogoutSession } = await testClient.auth.getSession(
+      expect(postLogoutSession.session).toBeNull(
 
-      console.log('✅ Session lifecycle management validated');
-    });
+      console.log('✅ Session lifecycle management validated')
+    }
 
     test(_'should enforce session security policies',async () => {
       // security-auditor: Session security validation
-      const testUser = await testDataGenerator.createAuthenticatedTestUser('doctor');
+      const testUser = await testDataGenerator.createAuthenticatedTestUser('doctor')
 
       await testClient.auth.signInWithPassword({
         email: testUser.email,
         password: testUser.password,
-      });
+      }
 
       const {
         data: { user },
         error,
-      } = await testClient.auth.getUser();
+      } = await testClient.auth.getUser(
 
-      expect(error).toBeNull();
-      expect(user).toBeDefined();
+      expect(error).toBeNull(
+      expect(user).toBeDefined(
 
       if (user) {
         // Verify JWT claims
-        expect(user.aud).toBe('authenticated');
-        expect(user._role).toBe('authenticated');
-        expect(user.email).toBe(testUser.email);
+        expect(user.aud).toBe('authenticated')
+        expect(user._role).toBe('authenticated')
+        expect(user.email).toBe(testUser.email
 
         // Validate user metadata structure
-        expect(user.user_metadata).toBeDefined();
-        expect(user.user_metadata.healthcare_role).toBeDefined();
+        expect(user.user_metadata).toBeDefined(
+        expect(user.user_metadata.healthcare_role).toBeDefined(
       }
 
-      console.log('✅ Session security policies validated');
-    });
+      console.log('✅ Session security policies validated')
+    }
 
     test(_'should handle concurrent session limits',async () => {
       // security-auditor: Concurrent session validation
-      const testUser = await testDataGenerator.createAuthenticatedTestUser('nurse');
+      const testUser = await testDataGenerator.createAuthenticatedTestUser('nurse')
 
       // Simulate multiple device login attempts
-      const client1 = createTestSupabaseClient();
-      const client2 = createTestSupabaseClient();
+      const client1 = createTestSupabaseClient(
+      const client2 = createTestSupabaseClient(
 
       const login1 = await client1.auth.signInWithPassword({
         email: testUser.email,
         password: testUser.password,
-      });
+      }
 
       const login2 = await client2.auth.signInWithPassword({
         email: testUser.email,
         password: testUser.password,
-      });
+      }
 
       // Both should succeed in mock implementation
       // In real implementation, there might be concurrent session limits
-      expect(login1.error).toBeNull();
-      expect(login2.error).toBeNull();
+      expect(login1.error).toBeNull(
+      expect(login2.error).toBeNull(
 
-      console.log('✅ Concurrent session handling validated');
-    });
+      console.log('✅ Concurrent session handling validated')
+    }
 
     test(_'should track authentication events for audit',async () => {
       // security-auditor: Authentication audit validation
-      const testUser = await testDataGenerator.createAuthenticatedTestUser('admin');
+      const testUser = await testDataGenerator.createAuthenticatedTestUser('admin')
 
-      const startTime = performance.now();
+      const startTime = performance.now(
 
       // Successful login
       await testClient.auth.signInWithPassword({
         email: testUser.email,
         password: testUser.password,
-      });
+      }
 
       // Failed login attempt
       await testClient.auth.signInWithPassword({
         email: testUser.email,
         password: 'wrong-password',
-      });
+      }
 
       const responseTime = performance.now() - startTime;
 
@@ -339,32 +339,32 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
       ).toBe(true);
 
       // In real implementation, these events would be logged
-      console.log('✅ Authentication event auditing validated (mock)');
-    });
-  });
+      console.log('✅ Authentication event auditing validated (mock)')
+    }
+  }
 
   describe(('Role-Based Authentication', () => {
     test(_'should validate patient role authentication',async () => {
       const patientUser = await testDataGenerator.createTestUser({
         _role: 'patient',
         permissions: ['read_own_data', 'update_profile', 'book_appointments'],
-      });
+      }
 
       const { data, error } = await testClient.auth.signInWithPassword({
         email: patientUser.email,
         password: patientUser.password,
-      });
-
-      expect(error).toBeNull();
-      expect(data.user).toBeDefined();
-
-      if (data.user?.user_metadata) {
-        expect(data.user.user_metadata._role).toBe('patient');
-        expect(data.user.user_metadata.permissions).toContain('read_own_data');
       }
 
-      console.log('✅ Patient role authentication validated');
-    });
+      expect(error).toBeNull(
+      expect(data.user).toBeDefined(
+
+      if (data.user?.user_metadata) {
+        expect(data.user.user_metadata._role).toBe('patient')
+        expect(data.user.user_metadata.permissions).toContain('read_own_data')
+      }
+
+      console.log('✅ Patient role authentication validated')
+    }
 
     test(_'should validate healthcare professional roles',async () => {
       const roles = ['doctor', 'nurse', 'admin'] as const;
@@ -373,26 +373,26 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
         const professionalUser = await testDataGenerator.createTestUser({
           role,
           permissions: [`read_patients_${role}`, 'write_medical_records'],
-        });
+        }
 
         const { data, error } = await testClient.auth.signInWithPassword({
           email: professionalUser.email,
           password: professionalUser.password,
-        });
-
-        expect(error).toBeNull();
-        expect(data.user).toBeDefined();
-
-        if (data.user?.user_metadata) {
-          expect(data.user.user_metadata._role).toBe(role);
-          expect(data.user.user_metadata.permissions).toContain(
-            `read_patients_${role}`,
-          );
         }
 
-        console.log(`✅ ${role} role authentication validated`);
+        expect(error).toBeNull(
+        expect(data.user).toBeDefined(
+
+        if (data.user?.user_metadata) {
+          expect(data.user.user_metadata._role).toBe(role
+          expect(data.user.user_metadata.permissions).toContain(
+            `read_patients_${role}`,
+          
+        }
+
+        console.log(`✅ ${role} role authentication validated`
       }
-    });
+    }
 
     test(_'should enforce organization-scoped authentication',async () => {
       const orgId = 'test-hospital-12345';
@@ -400,25 +400,25 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
         _role: 'doctor',
         organization_id: orgId,
         permissions: ['read_org_patients', 'write_org_consultations'],
-      });
+      }
 
       const { data, error } = await testClient.auth.signInWithPassword({
         email: doctorUser.email,
         password: doctorUser.password,
-      });
-
-      expect(error).toBeNull();
-
-      if (data.user?.user_metadata) {
-        expect(data.user.user_metadata.organization_id).toBe(orgId);
-        expect(data.user.user_metadata.permissions).toContain(
-          'read_org_patients',
-        );
       }
 
-      console.log('✅ Organization-scoped authentication validated');
-    });
-  });
+      expect(error).toBeNull(
+
+      if (data.user?.user_metadata) {
+        expect(data.user.user_metadata.organization_id).toBe(orgId
+        expect(data.user.user_metadata.permissions).toContain(
+          'read_org_patients',
+        
+      }
+
+      console.log('✅ Organization-scoped authentication validated')
+    }
+  }
 
   describe(('Password Security and Recovery', () => {
     test(_'should enforce strong password requirements',async () => {
@@ -428,52 +428,52 @@ describe(('Supabase Authentication - LGPD Compliant', () => {
         const { data: data, error: error } = await testClient.auth.signUp({
           email: `test-weak-${Date.now()}@neonpro-test.com`,
           password: weakPassword,
-        });
+        }
 
         // In real implementation, weak passwords would be rejected
         console.log(
           `✅ Weak password "${weakPassword}" properly rejected (mock)`,
-        );
+        
       }
-    });
+    }
 
     test(_'should handle secure password recovery',async () => {
       const testUser = await testDataGenerator.createTestUser({
         _role: 'patient',
-      });
+      }
 
       const { data, error } = await testClient.auth.resetPasswordForEmail(
         testUser.email,
         {
           redirectTo: 'https://neonpro.com/reset-password',
         },
-      );
+      
 
       // Mock implementation - would send password recovery email
-      expect(error).toBeNull();
-      console.log('✅ Password recovery process validated (mock)');
-    });
+      expect(error).toBeNull(
+      console.log('✅ Password recovery process validated (mock)')
+    }
 
     test(_'should implement account lockout after failed attempts',async () => {
       const testUser = await testDataGenerator.createTestUser({
         _role: 'patient',
-      });
+      }
 
       // Simulate multiple failed login attempts
       for (let i = 0; i < 5; i++) {
         await testClient.auth.signInWithPassword({
           email: testUser.email,
           password: 'wrong-password',
-        });
+        }
       }
 
       // 6th attempt should be blocked (in real implementation)
       const { data, error } = await testClient.auth.signInWithPassword({
         email: testUser.email,
         password: 'wrong-password',
-      });
+      }
 
-      console.log('✅ Account lockout mechanism validated (mock)');
-    });
-  });
-});
+      console.log('✅ Account lockout mechanism validated (mock)')
+    }
+  }
+}

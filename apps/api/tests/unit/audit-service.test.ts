@@ -24,18 +24,18 @@ describe('Audit Service Module - RED Phase', () => {
         action: 'policy_evaluation',
         result: 'success',
         message: 'Security policy evaluation completed successfully',
-      });
+      }
 
-      expect(event).toBeDefined();
-      expect(event.eventType).toBe('security_policy_evaluation');
-      expect(event.severity).toBe(AuditSeverity.INFO);
-      expect(event.category).toBe('security');
-      expect(event.source).toBe('security-policy-service');
-      expect(event.action).toBe('policy_evaluation');
-      expect(event.result).toBe('success');
-      expect(event.message).toBe('Security policy evaluation completed successfully');
-      expect(event.timestamp).toBeInstanceOf(Date);
-    });
+      expect(event).toBeDefined(
+      expect(event.eventType).toBe('security_policy_evaluation')
+      expect(event.severity).toBe(AuditSeverity.INFO
+      expect(event.category).toBe('security')
+      expect(event.source).toBe('security-policy-service')
+      expect(event.action).toBe('policy_evaluation')
+      expect(event.result).toBe('success')
+      expect(event.message).toBe('Security policy evaluation completed successfully')
+      expect(event.timestamp).toBeInstanceOf(Date
+    }
 
     it('should handle optional properties', () => {
       const event = new AuditEvent({
@@ -52,15 +52,15 @@ describe('Audit Service Module - RED Phase', () => {
         userAgent: 'Mozilla/5.0...',
         resource: '/api/login',
         details: { loginMethod: 'password' },
-      });
+      }
 
-      expect(event._userId).toBe('user123');
-      expect(event.sessionId).toBe('session456');
-      expect(event.ipAddress).toBe('192.168.1.100');
-      expect(event.userAgent).toBe('Mozilla/5.0...');
-      expect(event.resource).toBe('/api/login');
-      expect(event.details).toEqual({ loginMethod: 'password' });
-    });
+      expect(event._userId).toBe('user123')
+      expect(event.sessionId).toBe('session456')
+      expect(event.ipAddress).toBe('192.168.1.100')
+      expect(event.userAgent).toBe('Mozilla/5.0...')
+      expect(event.resource).toBe('/api/login')
+      expect(event.details).toEqual({ loginMethod: 'password' }
+    }
 
     it('should support healthcare compliance information', () => {
       const event = new AuditEvent({
@@ -76,15 +76,15 @@ describe('Audit Service Module - RED Phase', () => {
           anvisa: true,
           cfm: true,
         },
-      });
+      }
 
       expect(event.compliance).toEqual({
         lgpd: true,
         anvisa: true,
         cfm: true,
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('AuditLog', () => {
     it('should create audit logs with proper structure', () => {
@@ -117,35 +117,35 @@ describe('Audit Service Module - RED Phase', () => {
         },
         retentionPeriod: 365,
         isRedacted: false,
-      });
+      }
 
-      expect(log).toBeDefined();
-      expect(log.id).toBe('audit_12345678901234567890123456789012');
-      expect(log.eventType).toBe('security_policy_evaluation');
-      expect(log.severity).toBe(AuditSeverity.INFO);
-      expect(log.category).toBe('security');
-      expect(log._userId).toBe('usr_healthcare_12345');
-      expect(log.sessionId).toBe('sess_67890');
-      expect(log.ipAddress).toBe('192.168.1.100');
-      expect(log.resource).toBe('/api/healthcare/patients');
-      expect(log.action).toBe('policy_evaluation');
-      expect(log.result).toBe('success');
-      expect(log.message).toBe('Security policy evaluation completed successfully');
+      expect(log).toBeDefined(
+      expect(log.id).toBe('audit_12345678901234567890123456789012')
+      expect(log.eventType).toBe('security_policy_evaluation')
+      expect(log.severity).toBe(AuditSeverity.INFO
+      expect(log.category).toBe('security')
+      expect(log._userId).toBe('usr_healthcare_12345')
+      expect(log.sessionId).toBe('sess_67890')
+      expect(log.ipAddress).toBe('192.168.1.100')
+      expect(log.resource).toBe('/api/healthcare/patients')
+      expect(log.action).toBe('policy_evaluation')
+      expect(log.result).toBe('success')
+      expect(log.message).toBe('Security policy evaluation completed successfully')
       expect(log.details).toEqual({
         policyId: 'sp_12345678901234567890123456789012',
         decision: 'allow',
         riskScore: 15,
         rulesEvaluated: 5,
         rulesTriggered: 1,
-      });
+      }
       expect(log.compliance).toEqual({
         lgpd: true,
         anvisa: true,
         cfm: true,
-      });
-      expect(log.retentionPeriod).toBe(365);
+      }
+      expect(log.retentionPeriod).toBe(365
       expect(log.isRedacted).toBe(false);
-    });
+    }
 
     it('should handle redacted audit logs', () => {
       const redactedLog = new AuditLog({
@@ -171,15 +171,15 @@ describe('Audit Service Module - RED Phase', () => {
           cfm: true,
         },
         retentionPeriod: 30,
-      });
+      }
 
       expect(redactedLog.isRedacted).toBe(true);
-      expect(redactedLog.redactionReason).toBe('lgpd_compliance');
-      expect(redactedLog.details.policyId).toBe('REDACTED');
+      expect(redactedLog.redactionReason).toBe('lgpd_compliance')
+      expect(redactedLog.details.policyId).toBe('REDACTED')
       expect(redactedLog.compliance.lgpd).toBe(false);
-      expect(redactedLog.retentionPeriod).toBe(30);
-    });
-  });
+      expect(redactedLog.retentionPeriod).toBe(30
+    }
+  }
 
   describe('createAuditTrail', () => {
     it('should create audit trail for healthcare operations', () => {
@@ -205,28 +205,28 @@ describe('Audit Service Module - RED Phase', () => {
         },
       };
 
-      const auditTrail = createAuditTrail(auditData);
+      const auditTrail = createAuditTrail(auditData
 
-      expect(auditTrail).toBeDefined();
-      expect(auditTrail.eventType).toBe('patient_record_update');
-      expect(auditTrail.severity).toBe(AuditSeverity.INFO);
-      expect(auditTrail.category).toBe('healthcare');
-      expect(auditTrail._userId).toBe('doctor123');
-      expect(auditTrail.resource).toBe('/api/patients/123/records');
-      expect(auditTrail.action).toBe('update');
-      expect(auditTrail.result).toBe('success');
-      expect(auditTrail.message).toBe('Patient medical record updated');
+      expect(auditTrail).toBeDefined(
+      expect(auditTrail.eventType).toBe('patient_record_update')
+      expect(auditTrail.severity).toBe(AuditSeverity.INFO
+      expect(auditTrail.category).toBe('healthcare')
+      expect(auditTrail._userId).toBe('doctor123')
+      expect(auditTrail.resource).toBe('/api/patients/123/records')
+      expect(auditTrail.action).toBe('update')
+      expect(auditTrail.result).toBe('success')
+      expect(auditTrail.message).toBe('Patient medical record updated')
       expect(auditTrail.details).toEqual({
         patientId: 'patient123',
         recordType: 'medical_history',
         changes: ['diagnosis', 'treatment'],
-      });
+      }
       expect(auditTrail.compliance).toEqual({
         lgpd: true,
         anvisa: true,
         cfm: true,
-      });
-    });
+      }
+    }
 
     it('should handle security events with proper severity', () => {
       const securityEvent = {
@@ -252,14 +252,14 @@ describe('Audit Service Module - RED Phase', () => {
         },
       };
 
-      const auditTrail = createAuditTrail(securityEvent);
+      const auditTrail = createAuditTrail(securityEvent
 
-      expect(auditTrail.severity).toBe(AuditSeverity.CRITICAL);
-      expect(auditTrail.category).toBe('security');
-      expect(auditTrail.result).toBe('failure');
-      expect(auditTrail.details.riskScore).toBe(95);
-    });
-  });
+      expect(auditTrail.severity).toBe(AuditSeverity.CRITICAL
+      expect(auditTrail.category).toBe('security')
+      expect(auditTrail.result).toBe('failure')
+      expect(auditTrail.details.riskScore).toBe(95
+    }
+  }
 
   describe('logSecurityEvent', () => {
     it('should log security events with proper formatting', () => {
@@ -281,15 +281,15 @@ describe('Audit Service Module - RED Phase', () => {
         },
       };
 
-      const logResult = logSecurityEvent(securityEvent);
+      const logResult = logSecurityEvent(securityEvent
 
-      expect(logResult).toBeDefined();
-      expect(logResult.eventType).toBe('suspicious_activity');
-      expect(logResult.severity).toBe(AuditSeverity.HIGH);
-      expect(logResult.category).toBe('security');
-      expect(logResult.result).toBe('alert');
-      expect(logResult.details.accessCount).toBe(50);
-    });
+      expect(logResult).toBeDefined(
+      expect(logResult.eventType).toBe('suspicious_activity')
+      expect(logResult.severity).toBe(AuditSeverity.HIGH
+      expect(logResult.category).toBe('security')
+      expect(logResult.result).toBe('alert')
+      expect(logResult.details.accessCount).toBe(50
+    }
 
     it('should handle different security event types', () => {
       const events = [
@@ -323,14 +323,14 @@ describe('Audit Service Module - RED Phase', () => {
       ];
 
       events.forEach(event => {
-        const logResult = logSecurityEvent(event);
-        expect(logResult).toBeDefined();
-        expect(logResult.eventType).toBe(event.eventType);
-        expect(logResult.severity).toBe(event.severity);
-        expect(logResult.category).toBe('security');
-      });
-    });
-  });
+        const logResult = logSecurityEvent(event
+        expect(logResult).toBeDefined(
+        expect(logResult.eventType).toBe(event.eventType
+        expect(logResult.severity).toBe(event.severity
+        expect(logResult.category).toBe('security')
+      }
+    }
+  }
 
   describe('getAuditLogs', () => {
     it('should retrieve audit logs with filtering', () => {
@@ -342,10 +342,10 @@ describe('Audit Service Module - RED Phase', () => {
         endDate: new Date('2024-12-31'),
       };
 
-      const auditLogs = getAuditLogs(filters);
+      const auditLogs = getAuditLogs(filters
 
-      expect(auditLogs).toBeDefined();
-    });
+      expect(auditLogs).toBeDefined(
+    }
 
     it('should support different filter combinations', () => {
       const filterCombinations = [
@@ -356,10 +356,10 @@ describe('Audit Service Module - RED Phase', () => {
       ];
 
       filterCombinations.forEach(filters => {
-        const logs = getAuditLogs(filters);
-        expect(logs).toBeDefined();
-      });
-    });
+        const logs = getAuditLogs(filters
+        expect(logs).toBeDefined(
+      }
+    }
 
     it('should handle empty filter results', () => {
       const emptyFilters = {
@@ -368,26 +368,26 @@ describe('Audit Service Module - RED Phase', () => {
         endDate: new Date('2025-01-02'),
       };
 
-      const logs = getAuditLogs(emptyFilters);
+      const logs = getAuditLogs(emptyFilters
 
-      expect(logs).toBeDefined();
+      expect(logs).toBeDefined(
       expect(Array.isArray(logs)).toBe(true);
-    });
-  });
+    }
+  }
 
   describe('AuditSeverity enum', () => {
     it('should have all required severity levels', () => {
-      expect(AuditSeverity.INFO).toBe('info');
-      expect(AuditSeverity.WARNING).toBe('warning');
-      expect(AuditSeverity.ERROR).toBe('error');
-      expect(AuditSeverity.CRITICAL).toBe('critical');
-    });
+      expect(AuditSeverity.INFO).toBe('info')
+      expect(AuditSeverity.WARNING).toBe('warning')
+      expect(AuditSeverity.ERROR).toBe('error')
+      expect(AuditSeverity.CRITICAL).toBe('critical')
+    }
 
     it('should support severity level comparisons', () => {
-      expect(AuditSeverity.CRITICAL).toBe('critical');
-      expect(AuditSeverity.ERROR).toBe('error');
-      expect(AuditSeverity.WARNING).toBe('warning');
-      expect(AuditSeverity.INFO).toBe('info');
-    });
-  });
-});
+      expect(AuditSeverity.CRITICAL).toBe('critical')
+      expect(AuditSeverity.ERROR).toBe('error')
+      expect(AuditSeverity.WARNING).toBe('warning')
+      expect(AuditSeverity.INFO).toBe('info')
+    }
+  }
+}

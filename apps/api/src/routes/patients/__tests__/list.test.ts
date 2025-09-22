@@ -23,17 +23,17 @@ const mockLGPDService = {
 
 // Mock middleware
 const mockRequireAuth = vi.fn((c,_next) => {
-  c.set('userId', 'user-123');
-  return _next();
-});
+  c.set('userId', 'user-123')
+  return _next(
+}
 
-const mockLGPDMiddleware = vi.fn((c, _next) => _next());
+const mockLGPDMiddleware = vi.fn((c, _next) => _next()
 
 describe('GET /api/v2/patients endpoint (T043)', () => {
   // let app: Hono;
 
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(
 
     // Mock successful service responses by default
     mockPatientService.listPatients.mockResolvedValue({
@@ -68,33 +68,33 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
           totalPages: 1,
         },
       },
-    });
+    }
 
     mockAuditService.logActivity.mockResolvedValue({
       success: true,
       data: { auditId: 'audit-123' },
-    });
+    }
 
     mockLGPDService.validateDataAccess.mockResolvedValue({
       success: true,
       data: { canAccess: true },
-    });
-  });
+    }
+  }
 
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks(
+  }
 
   it('should export list patients route handler', () => {
     expect(() => {
-      const module = require('../list');
-      expect(module.default).toBeDefined();
-    }).not.toThrow();
-  });
+      const module = require('../list')
+      expect(module.default).toBeDefined(
+    }).not.toThrow(
+  }
 
   describe('Successful Patient Listing', () => {
     it('should list patients with default pagination',async () => {
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       // Mock request
       const mockRequest = {
@@ -106,21 +106,21 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      const response = await listRoute.request(mockRequest
+      const data = await response.json(
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
       expect(data.success).toBe(true);
       expect(Array.isArray(data.data.patients)).toBe(true);
-      expect(data.data.patients).toHaveLength(2);
-      expect(data.data.pagination).toBeDefined();
-      expect(data.data.pagination.page).toBe(1);
-      expect(data.data.pagination.limit).toBe(20);
-      expect(data.data.pagination.total).toBe(2);
-    });
+      expect(data.data.patients).toHaveLength(2
+      expect(data.data.pagination).toBeDefined(
+      expect(data.data.pagination.page).toBe(1
+      expect(data.data.pagination.limit).toBe(20
+      expect(data.data.pagination.total).toBe(2
+    }
 
     it('should list patients with custom pagination',async () => {
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -130,21 +130,21 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      const response = await listRoute.request(mockRequest
+      const data = await response.json(
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
       expect(mockPatientService.listPatients).toHaveBeenCalledWith({
         _userId: 'user-123',
         page: 2,
         limit: 10,
         search: undefined,
         filters: {},
-      });
-    });
+      }
+    }
 
     it('should list patients with search query',async () => {
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -154,21 +154,21 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      const response = await listRoute.request(mockRequest
+      const data = await response.json(
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
       expect(mockPatientService.listPatients).toHaveBeenCalledWith({
         _userId: 'user-123',
         page: 1,
         limit: 20,
         search: 'João',
         filters: {},
-      });
-    });
+      }
+    }
 
     it('should list patients with status filter',async () => {
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -178,10 +178,10 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      const response = await listRoute.request(mockRequest
+      const data = await response.json(
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
       expect(mockPatientService.listPatients).toHaveBeenCalledWith({
         _userId: 'user-123',
         page: 1,
@@ -191,11 +191,11 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
           status: 'active',
           gender: 'male',
         },
-      });
-    });
+      }
+    }
 
     it('should include LGPD compliance headers',async () => {
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -205,15 +205,15 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
+      const response = await listRoute.request(mockRequest
 
-      expect(response.headers.get('X-Data-Classification')).toBe('sensitive');
-      expect(response.headers.get('X-LGPD-Compliant')).toBe('true');
-      expect(response.headers.get('X-Audit-Logged')).toBe('true');
-    });
+      expect(response.headers.get('X-Data-Classification')).toBe('sensitive')
+      expect(response.headers.get('X-LGPD-Compliant')).toBe('true')
+      expect(response.headers.get('X-Audit-Logged')).toBe('true')
+    }
 
     it('should include pagination headers',async () => {
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -223,17 +223,17 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
+      const response = await listRoute.request(mockRequest
 
-      expect(response.headers.get('X-Total-Count')).toBe('2');
-      expect(response.headers.get('X-Page')).toBe('1');
-      expect(response.headers.get('X-Total-Pages')).toBe('1');
-    });
-  });
+      expect(response.headers.get('X-Total-Count')).toBe('2')
+      expect(response.headers.get('X-Page')).toBe('1')
+      expect(response.headers.get('X-Total-Pages')).toBe('1')
+    }
+  }
 
   describe('LGPD Compliance and Audit Logging', () => {
     it('should log data access for audit trail',async () => {
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -243,7 +243,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      await listRoute.request(mockRequest);
+      await listRoute.request(mockRequest
 
       expect(mockAuditService.logActivity).toHaveBeenCalledWith({
         _userId: 'user-123',
@@ -258,11 +258,11 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         },
         ipAddress: expect.any(String),
         userAgent: expect.any(String),
-      });
-    });
+      }
+    }
 
     it('should validate LGPD data access permissions',async () => {
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -272,23 +272,23 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      await listRoute.request(mockRequest);
+      await listRoute.request(mockRequest
 
       expect(mockLGPDService.validateDataAccess).toHaveBeenCalledWith({
         _userId: 'user-123',
         dataType: 'patient_list',
         purpose: 'healthcare_management',
         legalBasis: 'legitimate_interest',
-      });
-    });
+      }
+    }
 
     it('should handle LGPD access denial',async () => {
       mockLGPDService.validateDataAccess.mockResolvedValue({
         success: false,
         error: 'Acesso negado por política LGPD',
-      });
+      }
 
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -298,13 +298,13 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      const response = await listRoute.request(mockRequest
+      const data = await response.json(
 
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(403
       expect(data.success).toBe(false);
-      expect(data.error).toContain('LGPD');
-    });
+      expect(data.error).toContain('LGPD')
+    }
 
     it('should mask sensitive data based on user permissions',async () => {
       mockPatientService.listPatients.mockResolvedValue({
@@ -322,9 +322,9 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
           ],
           pagination: { page: 1, limit: 20, total: 1, totalPages: 1 },
         },
-      });
+      }
 
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -334,18 +334,18 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      const response = await listRoute.request(mockRequest
+      const data = await response.json(
 
-      expect(response.status).toBe(200);
-      expect(data.data.patients[0].cpf).toBe('***.***.***-**');
-      expect(data.data.patients[0].email).toBe('j***@example.com');
-    });
-  });
+      expect(response.status).toBe(200
+      expect(data.data.patients[0].cpf).toBe('***.***.***-**')
+      expect(data.data.patients[0].email).toBe('j***@example.com')
+    }
+  }
 
   describe('Error Handling', () => {
     it('should handle authentication errors',async () => {
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -355,16 +355,16 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      const response = await listRoute.request(mockRequest
+      const data = await response.json(
 
-      expect(response.status).toBe(401);
+      expect(response.status).toBe(401
       expect(data.success).toBe(false);
-      expect(data.error).toContain('Não autorizado');
-    });
+      expect(data.error).toContain('Não autorizado')
+    }
 
     it('should handle invalid pagination parameters',async () => {
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -374,21 +374,21 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      const response = await listRoute.request(mockRequest
+      const data = await response.json(
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(400
       expect(data.success).toBe(false);
-      expect(data.errors).toBeDefined();
-    });
+      expect(data.errors).toBeDefined(
+    }
 
     it('should handle service errors gracefully',async () => {
       mockPatientService.listPatients.mockResolvedValue({
         success: false,
         error: 'Erro interno do serviço',
-      });
+      }
 
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -398,20 +398,20 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      const response = await listRoute.request(mockRequest
+      const data = await response.json(
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(500
       expect(data.success).toBe(false);
-      expect(data.error).toContain('Erro interno');
-    });
+      expect(data.error).toContain('Erro interno')
+    }
 
     it('should handle database connection errors',async () => {
       mockPatientService.listPatients.mockRejectedValue(
         new Error('Database connection failed'),
-      );
+      
 
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -421,18 +421,18 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      const response = await listRoute.request(mockRequest
+      const data = await response.json(
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(500
       expect(data.success).toBe(false);
-      expect(data.error).toContain('Erro interno do servidor');
-    });
-  });
+      expect(data.error).toContain('Erro interno do servidor')
+    }
+  }
 
   describe('Performance and Caching', () => {
     it('should include performance headers',async () => {
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -442,13 +442,13 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
+      const response = await listRoute.request(mockRequest
 
-      expect(response.headers.get('X-Response-Time')).toBeDefined();
+      expect(response.headers.get('X-Response-Time')).toBeDefined(
       expect(response.headers.get('Cache-Control')).toBe(
         'private, max-age=300',
-      );
-    });
+      
+    }
 
     it('should handle large result sets efficiently',async () => {
       const largePatientList = Array.from({ length: 100 }, (_, i) => ({
@@ -458,7 +458,7 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         email: `patient${i}@example.com`,
         phone: `(11) 9999${i.toString().padStart(4, '0')}`,
         birthDate: '1990-01-01',
-      }));
+      })
 
       mockPatientService.listPatients.mockResolvedValue({
         success: true,
@@ -466,9 +466,9 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
           patients: largePatientList,
           pagination: { page: 1, limit: 100, total: 100, totalPages: 1 },
         },
-      });
+      }
 
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -478,17 +478,17 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
-      const data = await response.json();
+      const response = await listRoute.request(mockRequest
+      const data = await response.json(
 
-      expect(response.status).toBe(200);
-      expect(data.data.patients).toHaveLength(100);
-    });
-  });
+      expect(response.status).toBe(200
+      expect(data.data.patients).toHaveLength(100
+    }
+  }
 
   describe('Brazilian Healthcare Compliance', () => {
     it('should validate Brazilian healthcare data access',async () => {
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -499,18 +499,18 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
+      const response = await listRoute.request(mockRequest
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
       expect(mockPatientService.listPatients).toHaveBeenCalledWith(
         expect.objectContaining({
           healthcareContext: 'medical_consultation',
         }),
-      );
-    });
+      
+    }
 
     it('should include CFM compliance headers',async () => {
-      const { default: listRoute } = require('../list');
+      const { default: listRoute } = require('../list')
 
       const mockRequest = {
         method: 'GET',
@@ -520,10 +520,10 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
         }),
       };
 
-      const response = await listRoute.request(mockRequest);
+      const response = await listRoute.request(mockRequest
 
-      expect(response.headers.get('X-CFM-Compliant')).toBe('true');
-      expect(response.headers.get('X-Medical-Record-Access')).toBe('logged');
-    });
-  });
-});
+      expect(response.headers.get('X-CFM-Compliant')).toBe('true')
+      expect(response.headers.get('X-Medical-Record-Access')).toBe('logged')
+    }
+  }
+}

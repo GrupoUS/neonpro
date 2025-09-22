@@ -15,8 +15,8 @@ describe('Integration Tests: Unused Variables/Parameters', () => {
       // This test should now pass since parameters are properly prefixed
       expect('unused parameters have been prefixed with underscore').toBe(
         'unused parameters have been prefixed with underscore',
-      );
-    });
+      
+    }
 
     it('should verify all function parameters are used or prefixed with underscore', () => {
       // This test verifies that all function parameters in the test file
@@ -26,7 +26,7 @@ describe('Integration Tests: Unused Variables/Parameters', () => {
       ];
 
       // This should now pass since all parameters are properly prefixed
-      expect(unusedParams).toEqual([]);
-    });
-  });
-});
+      expect(unusedParams).toEqual([]
+    }
+  }
+}

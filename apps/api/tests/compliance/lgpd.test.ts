@@ -54,8 +54,8 @@ describe('LGPD Compliance for Healthcare Data', () => {
   let testApp: any;
 
   beforeAll(() => {
-    testApp = testClient(app);
-  });
+    testApp = testClient(app
+  }
 
   describe('Art. 9-11: Legal Basis for Data Processing', () => {
     it('should require explicit consent for non-essential patient data', async () => {
@@ -66,19 +66,19 @@ describe('LGPD Compliance for Healthcare Data', () => {
         purposes: ['aesthetic_consultation', 'newsletter', 'clinical_study'],
       };
 
-      const res = await testApp['v1/compliance/lgpd']?.$get?.();
+      const res = await testApp['v1/compliance/lgpd']?.$get?.(
 
       if (res) {
-        expect(res.status).toBe(200);
-        const data = await res.json();
+        expect(res.status).toBe(200
+        const data = await res.json(
 
         // Should require granular consent
         expect(data.lgpdCompliance.dataProcessing.lawfulBasis).toContain(
           'consent',
-        );
-        expect(data.lgpdCompliance.dataSubjectRights.consent).toBeDefined();
+        
+        expect(data.lgpdCompliance.dataSubjectRights.consent).toBeDefined(
       }
-    });
+    }
 
     it('should process patient data based on vital interests in emergencies', async () => {
       const emergencyScenario = {
@@ -89,15 +89,15 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       // Emergency processing should be allowed without explicit consent
-      const res = await testApp['v1/compliance/lgpd']?.$get?.();
+      const res = await testApp['v1/compliance/lgpd']?.$get?.(
 
       if (res) {
-        const data = await res.json();
+        const data = await res.json(
         expect(data.lgpdCompliance.dataProcessing.lawfulBasis).toContain(
           'vital_interest',
-        );
+        
       }
-    });
+    }
 
     it('should process data for legitimate interests with proper balancing', async () => {
       const legitimateInterestScenario = {
@@ -107,16 +107,16 @@ describe('LGPD Compliance for Healthcare Data', () => {
         riskAssessment: 'low_risk',
       };
 
-      const res = await testApp['v1/compliance/lgpd']?.$get?.();
+      const res = await testApp['v1/compliance/lgpd']?.$get?.(
 
       if (res) {
-        const data = await res.json();
+        const data = await res.json(
         expect(data.lgpdCompliance.dataProcessing.lawfulBasis).toContain(
           'legitimate_interest',
-        );
+        
       }
-    });
-  });
+    }
+  }
 
   describe('Art. 18: Data Subject Rights', () => {
     it('should provide complete patient data access (Right to Access)', async () => {
@@ -150,15 +150,15 @@ describe('LGPD Compliance for Healthcare Data', () => {
         requestTimestamp: new Date().toISOString(),
       };
 
-      expect(mockAccessResponse.patientData).toBeDefined();
+      expect(mockAccessResponse.patientData).toBeDefined(
       expect(Object.keys(mockAccessResponse.patientData)).toEqual(
         expect.arrayContaining([
           'personalData',
           'medicalRecords',
           'appointments',
         ]),
-      );
-    });
+      
+    }
 
     it('should allow patient data rectification (Right to Rectification)', async () => {
       const rectificationRequest = {
@@ -175,8 +175,8 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       // Should validate and apply corrections
-      expect(rectificationRequest.corrections).toBeDefined();
-      expect(rectificationRequest.justification).toBe('patient_reported_error');
+      expect(rectificationRequest.corrections).toBeDefined(
+      expect(rectificationRequest.justification).toBe('patient_reported_error')
 
       // Audit trail should record the change
       const auditEntry = {
@@ -187,9 +187,9 @@ describe('LGPD Compliance for Healthcare Data', () => {
         timestamp: new Date().toISOString(),
       };
 
-      expect(auditEntry.action).toBe('data_rectification');
-      expect(auditEntry.changes).toBeDefined();
-    });
+      expect(auditEntry.action).toBe('data_rectification')
+      expect(auditEntry.changes).toBeDefined(
+    }
 
     it('should enable patient data erasure (Right to be Forgotten)', async () => {
       const erasureRequest = {
@@ -208,12 +208,12 @@ describe('LGPD Compliance for Healthcare Data', () => {
         anonymizationOptions: ['pseudonymization', 'aggregation'],
       };
 
-      expect(erasureAssessment.erasableData.length).toBeGreaterThan(0);
-      expect(erasureAssessment.retainedData).toContain('medical_records');
+      expect(erasureAssessment.erasableData.length).toBeGreaterThan(0
+      expect(erasureAssessment.retainedData).toContain('medical_records')
       expect(erasureAssessment.retentionReasons).toContain(
         'medical_care_continuity',
-      );
-    });
+      
+    }
 
     it('should provide data portability for patient records', async () => {
       const portabilityRequest = {
@@ -242,10 +242,10 @@ describe('LGPD Compliance for Healthcare Data', () => {
         digitalSignature: 'sha256-hash-of-data',
       };
 
-      expect(portableData.format).toBe('FHIR_R4');
-      expect(portableData.patient.resourceType).toBe('Patient');
-      expect(portableData.digitalSignature).toBeDefined();
-    });
+      expect(portableData.format).toBe('FHIR_R4')
+      expect(portableData.patient.resourceType).toBe('Patient')
+      expect(portableData.digitalSignature).toBeDefined(
+    }
 
     it('should allow objection to data processing', async () => {
       const objectionRequest = {
@@ -265,12 +265,12 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
       expect(processingSuspension.suspendedActivities).toContain(
         'marketing_campaigns',
-      );
+      
       expect(processingSuspension.continuedActivities).toContain(
         'medical_care',
-      );
-    });
-  });
+      
+    }
+  }
 
   describe('Consent Management (Art. 8)', () => {
     it('should require granular consent for different data uses', async () => {
@@ -299,11 +299,11 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
       // Each consent should be separately granular
       Object.values(consentOptions).forEach(consent => {
-        expect(consent.description).toBeDefined();
-        expect(consent.lawfulBasis).toBeDefined();
-        expect(typeof consent.required).toBe('boolean');
-      });
-    });
+        expect(consent.description).toBeDefined(
+        expect(consent.lawfulBasis).toBeDefined(
+        expect(typeof consent.required).toBe('boolean')
+      }
+    }
 
     it('should enable easy consent withdrawal', async () => {
       const withdrawalRequest = {
@@ -323,9 +323,9 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
       expect(withdrawalProcessing.immediateActions).toContain(
         'stop_marketing_emails',
-      );
+      
       expect(withdrawalProcessing.effectiveImmediately).toBe(true);
-    });
+    }
 
     it('should handle consent for minors (under 18)', async () => {
       const minorPatient = {
@@ -347,9 +347,9 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       expect(minorConsent.requiresGuardianConsent).toBe(true);
-      expect(minorConsent.specialProtections).toContain('enhanced_security');
-    });
-  });
+      expect(minorConsent.specialProtections).toContain('enhanced_security')
+    }
+  }
 
   describe('Art. 46: Security and Risk Management', () => {
     it('should implement encryption for sensitive patient data', async () => {
@@ -371,10 +371,10 @@ describe('LGPD Compliance for Healthcare Data', () => {
         },
       };
 
-      expect(securityMeasures.dataAtRest.encryption).toBe('AES-256-GCM');
-      expect(securityMeasures.dataInTransit.encryption).toBe('TLS_1.3');
+      expect(securityMeasures.dataAtRest.encryption).toBe('AES-256-GCM')
+      expect(securityMeasures.dataInTransit.encryption).toBe('TLS_1.3')
       expect(securityMeasures.databaseSecurity.auditLogging).toBe(true);
-    });
+    }
 
     it('should maintain comprehensive audit logs', async () => {
       const auditLogEntry = {
@@ -392,12 +392,12 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       // Audit logs should be immutable and comprehensive
-      expect(auditLogEntry.timestamp).toBeDefined();
-      expect(auditLogEntry.action).toBe('patient_data_access');
-      expect(auditLogEntry.patientId).toBeDefined();
-      expect(auditLogEntry.dataAccessed).toBeInstanceOf(Array);
-      expect(auditLogEntry.purpose).toBeDefined();
-    });
+      expect(auditLogEntry.timestamp).toBeDefined(
+      expect(auditLogEntry.action).toBe('patient_data_access')
+      expect(auditLogEntry.patientId).toBeDefined(
+      expect(auditLogEntry.dataAccessed).toBeInstanceOf(Array
+      expect(auditLogEntry.purpose).toBeDefined(
+    }
 
     it('should implement access controls and role-based permissions', async () => {
       const accessControlMatrix = {
@@ -439,12 +439,12 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
       // Each role should have defined permissions and restrictions
       Object.values(accessControlMatrix.roles).forEach(role => {
-        expect(role.permissions).toBeInstanceOf(Array);
-        expect(role.restrictions).toBeInstanceOf(Array);
-        expect(role.permissions.length).toBeGreaterThan(0);
-      });
-    });
-  });
+        expect(role.permissions).toBeInstanceOf(Array
+        expect(role.restrictions).toBeInstanceOf(Array
+        expect(role.permissions.length).toBeGreaterThan(0
+      }
+    }
+  }
 
   describe('Art. 48: Data Breach Notification', () => {
     it('should detect and classify data breaches', async () => {
@@ -483,10 +483,10 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
       expect(breachResponse.immediateActions).toContain(
         'isolate_affected_systems',
-      );
+      
       expect(breachResponse.notifications.anpd.required).toBe(true);
-      expect(breachResponse.notifications.anpd.deadline).toBe('72_hours');
-    });
+      expect(breachResponse.notifications.anpd.deadline).toBe('72_hours')
+    }
 
     it('should maintain breach notification procedures', async () => {
       const notificationProcedure = {
@@ -514,15 +514,15 @@ describe('LGPD Compliance for Healthcare Data', () => {
         },
       };
 
-      expect(notificationProcedure.anpdNotification.deadline).toBe(72);
+      expect(notificationProcedure.anpdNotification.deadline).toBe(72
       expect(notificationProcedure.anpdNotification.requiredInfo).toContain(
         'nature_of_breach',
-      );
+      
       expect(notificationProcedure.patientNotification.method).toContain(
         'email',
-      );
-    });
-  });
+      
+    }
+  }
 
   describe('Data Minimization and Purpose Limitation', () => {
     it('should collect only necessary patient data', async () => {
@@ -540,17 +540,17 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       // Essential data should be minimal for each purpose
-      expect(dataCollectionPolicy.essential.consultation).toHaveLength(4);
-      expect(dataCollectionPolicy.optional.marketing).toHaveLength(2);
+      expect(dataCollectionPolicy.essential.consultation).toHaveLength(4
+      expect(dataCollectionPolicy.optional.marketing).toHaveLength(2
 
       // Should not collect unnecessary data
       expect(dataCollectionPolicy.essential.consultation).not.toContain(
         'income',
-      );
+      
       expect(dataCollectionPolicy.essential.consultation).not.toContain(
         'political_opinions',
-      );
-    });
+      
+    }
 
     it('should enforce data retention limits', async () => {
       const retentionPolicy = {
@@ -578,10 +578,10 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
       // Each data type should have defined retention periods
       Object.values(retentionPolicy).forEach(policy => {
-        expect(policy.duration).toBeDefined();
-        expect(policy.justification).toBeDefined();
-      });
-    });
+        expect(policy.duration).toBeDefined(
+        expect(policy.justification).toBeDefined(
+      }
+    }
 
     it('should implement automated data deletion', async () => {
       const deletionSchedule = {
@@ -598,11 +598,11 @@ describe('LGPD Compliance for Healthcare Data', () => {
         recovery: 'no_recovery_after_deletion',
       };
 
-      expect(deletionSchedule.daily).toContain('expired_sessions');
-      expect(deletionProcess.verification).toBe('multiple_approval_required');
-      expect(deletionProcess.recovery).toBe('no_recovery_after_deletion');
-    });
-  });
+      expect(deletionSchedule.daily).toContain('expired_sessions')
+      expect(deletionProcess.verification).toBe('multiple_approval_required')
+      expect(deletionProcess.recovery).toBe('no_recovery_after_deletion')
+    }
+  }
 
   describe('Cross-Border Data Transfer', () => {
     it('should restrict international patient data transfers', async () => {
@@ -621,14 +621,14 @@ describe('LGPD Compliance for Healthcare Data', () => {
         },
       };
 
-      expect(transferPolicy.allowedCountries).toContain('European_Union');
+      expect(transferPolicy.allowedCountries).toContain('European_Union')
       expect(transferPolicy.requirements.patientConsent).toBe(
         'explicit_consent_required',
-      );
+      
       expect(transferPolicy.exceptions.medicalEmergency).toBe(
         'vital_interests',
-      );
-    });
+      
+    }
 
     it('should validate data transfer safeguards', async () => {
       const transferSafeguards = {
@@ -640,11 +640,11 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       Object.values(transferSafeguards).forEach(safeguard => {
-        expect(safeguard).toBeDefined();
-        expect(typeof safeguard).toBe('string');
-      });
-    });
-  });
+        expect(safeguard).toBeDefined(
+        expect(typeof safeguard).toBe('string')
+      }
+    }
+  }
 
   describe('Patient Privacy Rights Implementation', () => {
     it('should provide privacy dashboard for patients', async () => {
@@ -675,16 +675,16 @@ describe('LGPD Compliance for Healthcare Data', () => {
         },
       };
 
-      expect(privacyDashboard.dataOverview.dataTypes).toContain('medical');
+      expect(privacyDashboard.dataOverview.dataTypes).toContain('medical')
       expect(privacyDashboard.consentManagement.withdrawableConsents).toContain(
         'marketing',
-      );
+      
       expect(privacyDashboard.dataRequests.availableRequests).toContain(
         'data_access',
-      );
-    });
-  });
-});
+      
+    }
+  }
+}
 
 describe('LGPD Compliance Integration Testing', () => {
   it('should maintain LGPD compliance across system updates', async () => {
@@ -698,10 +698,10 @@ describe('LGPD Compliance Integration Testing', () => {
     };
 
     Object.values(complianceChecklist).forEach(requirement => {
-      expect(requirement).toBeDefined();
-      expect(typeof requirement).toBe('string');
-    });
-  });
+      expect(requirement).toBeDefined(
+      expect(typeof requirement).toBe('string')
+    }
+  }
 
   it('should provide LGPD compliance reporting', async () => {
     const complianceReport = {
@@ -720,9 +720,9 @@ describe('LGPD Compliance Integration Testing', () => {
       ],
     };
 
-    expect(complianceReport.metrics.complianceScore).toBe('100%');
+    expect(complianceReport.metrics.complianceScore).toBe('100%')
     expect(complianceReport.recommendations).toContain(
       'continue_current_practices',
-    );
-  });
-});
+    
+  }
+}

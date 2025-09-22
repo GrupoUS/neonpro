@@ -56,7 +56,7 @@ describe("Ingestion Types and Adapters", () => {
       expect(isIngestionEvent(validEvent)).toBe(true);
       expect(isIngestionEvent({})).toBe(false);
       expect(isIngestionEvent(null)).toBe(false);
-    });
+    }
 
     it("should validate IngestionConfig objects", () => {
       const validConfig: IngestionConfig = {
@@ -84,7 +84,7 @@ describe("Ingestion Types and Adapters", () => {
 
       expect(isIngestionConfig(validConfig)).toBe(true);
       expect(isIngestionConfig({})).toBe(false);
-    });
+    }
 
     it("should validate ValidationRule objects", () => {
       const validRule: ValidationRule = {
@@ -98,8 +98,8 @@ describe("Ingestion Types and Adapters", () => {
 
       expect(isValidationRule(validRule)).toBe(true);
       expect(isValidationRule({})).toBe(false);
-    });
-  });
+    }
+  }
 
   describe("BaseIngestionAdapter", () => {
     let adapter: TestIngestionAdapter;
@@ -115,7 +115,7 @@ describe("Ingestion Types and Adapters", () => {
       }
 
       async ingestBatch(data: any[]): Promise<IngestionResult> {
-        const startTime = new Date();
+        const startTime = new Date(
         const operationId = `test_${Date.now()}`;
 
         return {
@@ -141,7 +141,7 @@ describe("Ingestion Types and Adapters", () => {
       }
 
       async ingestStream(stream: ReadableStream): Promise<IngestionResult> {
-        return this.ingestBatch([]);
+        return this.ingestBatch([]
       }
 
       async getMetrics(): Promise<IngestionMonitoringMetrics> {
@@ -200,30 +200,30 @@ describe("Ingestion Types and Adapters", () => {
         },
       };
 
-      adapter = new TestIngestionAdapter("test_adapter", mockConfig);
-    });
+      adapter = new TestIngestionAdapter("test_adapter", mockConfig
+    }
 
     it("should initialize correctly", () => {
-      expect(adapter.adapterId).toBe("test_adapter");
-      expect(adapter.config).toBe(mockConfig);
+      expect(adapter.adapterId).toBe("test_adapter"
+      expect(adapter.config).toBe(mockConfig
       expect(adapter.isConnected()).toBe(false);
-    });
+    }
 
     it(_"should handle connection lifecycle",_async () => {
       expect(adapter.isConnected()).toBe(false);
 
-      await adapter.connect();
+      await adapter.connect(
       expect(adapter.isConnected()).toBe(true);
 
-      await adapter.disconnect();
+      await adapter.disconnect(
       expect(adapter.isConnected()).toBe(false);
-    });
+    }
 
     it("should manage event listeners", () => {
-      const mockHandler = vi.fn();
+      const mockHandler = vi.fn(
       const eventType: IngestionEventType = "data_received";
 
-      adapter.addEventListener(eventType, mockHandler);
+      adapter.addEventListener(eventType, mockHandler
 
       // Trigger an event
       const testEvent: IngestionEvent = {
@@ -248,13 +248,13 @@ describe("Ingestion Types and Adapters", () => {
         _userId: "test_user",
       };
 
-      (adapter as any).emitEvent(testEvent);
-      expect(mockHandler).toHaveBeenCalledWith(testEvent);
+      (adapter as any).emitEvent(testEvent
+      expect(mockHandler).toHaveBeenCalledWith(testEvent
 
-      adapter.removeEventListener(eventType, mockHandler);
-      (adapter as any).emitEvent(testEvent);
+      adapter.removeEventListener(eventType, mockHandler
+      (adapter as any).emitEvent(testEvent
       expect(mockHandler).toHaveBeenCalledTimes(1); // Should not be called again
-    });
+    }
 
     it(_"should manage validation rules",_async () => {
       const validationRule: ValidationRule = {
@@ -266,9 +266,9 @@ describe("Ingestion Types and Adapters", () => {
         onError: "reject",
       };
 
-      await adapter.addValidationRule(validationRule);
-      expect((adapter as any).validationRules).toContain(validationRule);
-    });
+      await adapter.addValidationRule(validationRule
+      expect((adapter as any).validationRules).toContain(validationRule
+    }
 
     it(_"should manage transformation rules",_async () => {
       const transformationRule: TransformationRule = {
@@ -280,20 +280,20 @@ describe("Ingestion Types and Adapters", () => {
         logic: { mapping: { old: "new" } },
       };
 
-      await adapter.addTransformationRule(transformationRule);
+      await adapter.addTransformationRule(transformationRule
       expect((adapter as any).transformationRules).toContain(
         transformationRule,
-      );
-    });
+      
+    }
 
     it(_"should provide health status",_async () => {
-      const healthStatus = await adapter.getHealthStatus();
+      const healthStatus = await adapter.getHealthStatus(
 
-      expect(healthStatus.status).toMatch(/^(healthy|degraded|unhealthy)$/);
-      expect(healthStatus.lastCheck).toBeInstanceOf(Date);
-      expect(healthStatus.details).toBeDefined();
+      expect(healthStatus.status).toMatch(/^(healthy|degraded|unhealthy)$/
+      expect(healthStatus.lastCheck).toBeInstanceOf(Date
+      expect(healthStatus.details).toBeDefined(
       expect(Array.isArray(healthStatus.errors)).toBe(true);
-    });
+    }
 
     it("should validate data using validation rules", () => {
       const testData = [
@@ -312,12 +312,12 @@ describe("Ingestion Types and Adapters", () => {
       };
 
       (adapter as any).validationRules = [validationRule];
-      const result = (adapter as any).validateData(testData);
+      const result = (adapter as any).validateData(testData
 
-      expect(result.valid).toHaveLength(1);
-      expect(result.invalid).toHaveLength(2);
-      expect(result.errors).toHaveLength(2);
-    });
+      expect(result.valid).toHaveLength(1
+      expect(result.invalid).toHaveLength(2
+      expect(result.errors).toHaveLength(2
+    }
 
     it("should transform data using transformation rules", () => {
       const testData = [
@@ -335,13 +335,13 @@ describe("Ingestion Types and Adapters", () => {
       };
 
       (adapter as any).transformationRules = [transformationRule];
-      const result = (adapter as any).transformData(testData);
+      const result = (adapter as any).transformData(testData
 
-      expect(result.transformed).toHaveLength(2);
-      expect(result.transformed[0]).toHaveProperty("newField");
-      expect(result.transformed[0]).toHaveProperty("otherField", "keep1");
-    });
-  });
+      expect(result.transformed).toHaveLength(2
+      expect(result.transformed[0]).toHaveProperty("newField"
+      expect(result.transformed[0]).toHaveProperty("otherField", "keep1"
+    }
+  }
 
   describe("DatabaseIngestionAdapter", () => {
     let dbAdapter: DatabaseIngestionAdapter;
@@ -371,41 +371,41 @@ describe("Ingestion Types and Adapters", () => {
         },
       };
 
-      dbAdapter = new DatabaseIngestionAdapter("db_adapter", mockConfig);
-    });
+      dbAdapter = new DatabaseIngestionAdapter("db_adapter", mockConfig
+    }
 
     it(_"should connect to database source",_async () => {
       expect(dbAdapter.isConnected()).toBe(false);
 
-      await dbAdapter.connect();
+      await dbAdapter.connect(
       expect(dbAdapter.isConnected()).toBe(true);
-    });
+    }
 
     it(_"should ingest batch data",_async () => {
-      await dbAdapter.connect();
+      await dbAdapter.connect(
 
       const testData = [
         { id: 1, name: "Record 1" },
         { id: 2, name: "Record 2" },
       ];
 
-      const result = await dbAdapter.ingestBatch(testData);
+      const result = await dbAdapter.ingestBatch(testData
 
-      expect(result.status).toMatch(/^(success|partial_success|failure)$/);
-      expect(result.summary.totalRecords).toBe(2);
-      expect(result.operationId).toBeDefined();
-      expect(result.timing.duration).toBeGreaterThan(0);
-    });
+      expect(result.status).toMatch(/^(success|partial_success|failure)$/
+      expect(result.summary.totalRecords).toBe(2
+      expect(result.operationId).toBeDefined(
+      expect(result.timing.duration).toBeGreaterThan(0
+    }
 
     it(_"should provide database-specific metrics",_async () => {
-      const metrics = await dbAdapter.getMetrics();
+      const metrics = await dbAdapter.getMetrics(
 
-      expect(metrics.period).toBeDefined();
-      expect(metrics.throughput.recordsPerSecond).toBeGreaterThan(0);
-      expect(metrics.performance.uptime).toBeGreaterThan(0);
-      expect(metrics.quality.dataQualityScore).toBeGreaterThan(0);
-    });
-  });
+      expect(metrics.period).toBeDefined(
+      expect(metrics.throughput.recordsPerSecond).toBeGreaterThan(0
+      expect(metrics.performance.uptime).toBeGreaterThan(0
+      expect(metrics.quality.dataQualityScore).toBeGreaterThan(0
+    }
+  }
 
   describe("APIIngestionAdapter", () => {
     let apiAdapter: APIIngestionAdapter;
@@ -435,24 +435,24 @@ describe("Ingestion Types and Adapters", () => {
         },
       };
 
-      apiAdapter = new APIIngestionAdapter("api_adapter", mockConfig);
-    });
+      apiAdapter = new APIIngestionAdapter("api_adapter", mockConfig
+    }
 
     it(_"should connect to API source",_async () => {
       expect(apiAdapter.isConnected()).toBe(false);
 
-      await apiAdapter.connect();
+      await apiAdapter.connect(
       expect(apiAdapter.isConnected()).toBe(true);
-    });
+    }
 
     it(_"should provide API-specific metrics",_async () => {
-      const metrics = await apiAdapter.getMetrics();
+      const metrics = await apiAdapter.getMetrics(
 
-      expect(metrics.throughput.recordsPerSecond).toBeGreaterThan(0);
-      expect(metrics.performance.errorRate).toBeGreaterThanOrEqual(0);
-      expect(metrics.performance.errorRate).toBeLessThanOrEqual(1);
-    });
-  });
+      expect(metrics.throughput.recordsPerSecond).toBeGreaterThan(0
+      expect(metrics.performance.errorRate).toBeGreaterThanOrEqual(0
+      expect(metrics.performance.errorRate).toBeLessThanOrEqual(1
+    }
+  }
 
   describe("Data Quality Assessment", () => {
     it("should assess data quality dimensions", () => {
@@ -483,12 +483,12 @@ describe("Ingestion Types and Adapters", () => {
         ],
       };
 
-      expect(assessment.dimensions.completeness).toBeGreaterThan(90);
-      expect(assessment.overallScore).toBeGreaterThan(0);
-      expect(assessment.issues).toHaveLength(1);
-      expect(assessment.recommendations).toHaveLength(2);
-    });
-  });
+      expect(assessment.dimensions.completeness).toBeGreaterThan(90
+      expect(assessment.overallScore).toBeGreaterThan(0
+      expect(assessment.issues).toHaveLength(1
+      expect(assessment.recommendations).toHaveLength(2
+    }
+  }
 
   describe("Compliance Validation", () => {
     it("should validate compliance with healthcare regulations", () => {
@@ -513,12 +513,12 @@ describe("Ingestion Types and Adapters", () => {
         complianceScore: 80.0,
       };
 
-      expect(validation.framework).toBe("LGPD");
-      expect(validation.status).toMatch(/^(compliant|non_compliant|warning)$/);
-      expect(validation.complianceScore).toBeGreaterThan(0);
-      expect(validation.violations).toHaveLength(1);
-    });
-  });
+      expect(validation.framework).toBe("LGPD"
+      expect(validation.status).toMatch(/^(compliant|non_compliant|warning)$/
+      expect(validation.complianceScore).toBeGreaterThan(0
+      expect(validation.violations).toHaveLength(1
+    }
+  }
 
   describe("Error Handling", () => {
     it("should handle and categorize ingestion errors", () => {
@@ -546,10 +546,10 @@ describe("Ingestion Types and Adapters", () => {
         },
       };
 
-      expect(error.type).toBe("validation_error");
+      expect(error.type).toBe("validation_error"
       expect(error.recovery?.recoverable).toBe(true);
-      expect(error.recovery?.suggestions).toHaveLength(3);
-    });
+      expect(error.recovery?.suggestions).toHaveLength(3
+    }
 
     it("should handle different error types", () => {
       const errorTypes: IngestionErrorType[] = [
@@ -565,10 +565,10 @@ describe("Ingestion Types and Adapters", () => {
       ];
 
       errorTypes.forEach((errorType) => {
-        expect(typeof errorType).toBe("string");
-      });
-    });
-  });
+        expect(typeof errorType).toBe("string"
+      }
+    }
+  }
 
   describe("Monitoring Metrics", () => {
     it("should track comprehensive monitoring metrics", () => {
@@ -604,11 +604,11 @@ describe("Ingestion Types and Adapters", () => {
         },
       };
 
-      expect(metrics.throughput.recordsPerSecond).toBeGreaterThan(0);
-      expect(metrics.performance.uptime).toBeGreaterThan(95);
-      expect(metrics.quality.dataQualityScore).toBeGreaterThan(90);
-    });
-  });
+      expect(metrics.throughput.recordsPerSecond).toBeGreaterThan(0
+      expect(metrics.performance.uptime).toBeGreaterThan(95
+      expect(metrics.quality.dataQualityScore).toBeGreaterThan(90
+    }
+  }
 
   describe("Stream Configuration", () => {
     it("should configure real-time data streams", () => {
@@ -638,11 +638,11 @@ describe("Ingestion Types and Adapters", () => {
         },
       };
 
-      expect(streamConfig.source.type).toBe("websocket");
+      expect(streamConfig.source.type).toBe("websocket"
       expect(streamConfig.processing.batchProcessing).toBe(true);
       expect(streamConfig.reliability.acknowledgments).toBe(true);
-    });
-  });
+    }
+  }
 
   describe("Webhook Configuration", () => {
     it("should configure webhook endpoints for external systems", () => {
@@ -675,9 +675,9 @@ describe("Ingestion Types and Adapters", () => {
         },
       };
 
-      expect(webhookConfig.endpoint.method).toBe("POST");
-      expect(webhookConfig.triggers.eventTypes).toContain("compliance_error");
-      expect(webhookConfig.delivery.retryAttempts).toBe(5);
-    });
-  });
-});
+      expect(webhookConfig.endpoint.method).toBe("POST"
+      expect(webhookConfig.triggers.eventTypes).toContain("compliance_error"
+      expect(webhookConfig.delivery.retryAttempts).toBe(5
+    }
+  }
+}

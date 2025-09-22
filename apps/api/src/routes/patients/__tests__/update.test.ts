@@ -34,7 +34,7 @@ const mockBrazilianValidator = {
 
 describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(
 
     // Mock successful service responses by default
     mockPatientService.updatePatient.mockResolvedValue({
@@ -109,14 +109,14 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
   it(''should export update patient route handler',async () => {
     expect(async () => {
-      const module = await import('../update'
+      const module = await import('../update')
       expect(module.default).toBeDefined(
     }).not.toThrow(
   }
 
-  describe(''Successful Patient Update'), () => {
+  describe(''Successful Patient Update', () => {
     it(''should update patient with complete data',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         name: 'João Silva Santos'),
@@ -150,14 +150,14 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.success).toBe(true
-      expect(data.data.name).toBe('João Silva Santos'
-      expect(data.data.email).toBe('joao.santos@example.com'
-      expect(data.data.auditTrail.lastChanges).toContain('name'
+      expect(data.success).toBe(true);
+      expect(data.data.name).toBe('João Silva Santos')
+      expect(data.data.email).toBe('joao.santos@example.com')
+      expect(data.data.auditTrail.lastChanges).toContain('name')
     }
 
     it(''should update patient with partial data',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         phone: '(11) 77777-7777'),
@@ -180,7 +180,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.success).toBe(true
+      expect(data.success).toBe(true);
       expect(mockPatientService.updatePatient).toHaveBeenCalledWith({
         patientId: 'patient-123'),
         _userId: 'user-123'),
@@ -192,7 +192,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     }
 
     it(''should send notification after successful update',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         email: 'newemail@example.com'),
@@ -225,7 +225,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     }
 
     it(''should include Last-Modified header',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         name: 'João Silva Santos'),
@@ -245,13 +245,13 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
       expect(response.status).toBe(200
       expect(response.headers.get('Last-Modified')).toBeDefined(
-      expect(response.headers.get('X-Updated-Fields')).toBe('name'
+      expect(response.headers.get('X-Updated-Fields')).toBe('name')
     }
   }
 
-  describe(''Change Tracking and Audit Trail'), () => {
+  describe(''Change Tracking and Audit Trail', () => {
     it(''should log patient update activity with change details',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         name: 'João Silva Santos'),
@@ -296,7 +296,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     }
 
     it(''should track sensitive data changes separately',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         cpf: '987.654.321-00'),
@@ -330,7 +330,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     }
 
     it(''should validate change permissions before update',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         name: 'João Silva Santos'),
@@ -357,9 +357,9 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     }
   }
 
-  describe(''Brazilian Data Validation'), () => {
+  describe(''Brazilian Data Validation', () => {
     it(''should validate updated CPF format',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         cpf: '987.654.321-00'),
@@ -385,7 +385,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     it(''should reject invalid CPF update',async () => {
       mockBrazilianValidator.validateCPF.mockReturnValue(false
 
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         cpf: '111.111.111-11', // Invalid CPF
@@ -405,7 +405,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(400
-      expect(data.success).toBe(false
+      expect(data.success).toBe(false);
       expect(data.errors).toContainEqual(
         expect.objectContaining({
           field: 'cpf'),
@@ -415,7 +415,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     }
 
     it(''should validate updated phone number format',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         phone: '(11) 77777-7777'),
@@ -439,7 +439,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     }
 
     it(''should validate updated address CEP',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         address: {
@@ -468,9 +468,9 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     }
   }
 
-  describe(''LGPD Consent Updates'), () => {
+  describe(''LGPD Consent Updates', () => {
     it(''should validate LGPD consent updates',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         lgpdConsent: {
@@ -499,7 +499,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     }
 
     it(''should update consent record after successful update',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         name: 'João Silva Santos'),
@@ -529,7 +529,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
     }
 
     it(''should handle consent withdrawal',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         lgpdConsent: {
@@ -554,11 +554,11 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       expect(response.headers.get('X-Consent-Withdrawn')).toBe(
         'data_processing'),
       
-      expect(response.headers.get('X-Data-Retention-Review')).toBe('required'
+      expect(response.headers.get('X-Data-Retention-Review')).toBe('required')
     }
   }
 
-  describe(''Error Handling'), () => {
+  describe(''Error Handling', () => {
     it(''should handle patient not found',async () => {
       mockPatientService.updatePatient.mockResolvedValue({
         success: false),
@@ -566,7 +566,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         code: 'PATIENT_NOT_FOUND'),
       }
 
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         name: 'João Silva Santos'),
@@ -586,13 +586,13 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(404
-      expect(data.success).toBe(false
-      expect(data.error).toContain('não encontrado'
-      expect(data.code).toBe('PATIENT_NOT_FOUND'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('não encontrado')
+      expect(data.code).toBe('PATIENT_NOT_FOUND')
     }
 
     it(''should handle authentication errors',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const mockRequest = {
         method: 'PUT'),
@@ -607,12 +607,12 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(401
-      expect(data.success).toBe(false
-      expect(data.error).toContain('Não autorizado'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Não autorizado')
     }
 
     it(''should handle validation errors',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const invalidData = {
         email: 'invalid-email-format'),
@@ -634,8 +634,8 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(400
-      expect(data.success).toBe(false
-      expect(Array.isArray(data.errors)).toBe(true
+      expect(data.success).toBe(false);
+      expect(Array.isArray(data.errors)).toBe(true);
       expect(data.errors.length).toBeGreaterThan(0
     }
 
@@ -646,7 +646,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         code: 'INSUFFICIENT_PERMISSIONS'),
       }
 
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         name: 'João Silva Santos'),
@@ -666,9 +666,9 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(403
-      expect(data.success).toBe(false
-      expect(data.error).toContain('Permissões insuficientes'
-      expect(data.code).toBe('INSUFFICIENT_PERMISSIONS'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Permissões insuficientes')
+      expect(data.code).toBe('INSUFFICIENT_PERMISSIONS')
     }
 
     it(''should handle LGPD update restrictions',async () => {
@@ -678,7 +678,7 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
         code: 'LGPD_UPDATE_DENIED'),
       }
 
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         cpf: '987.654.321-00'),
@@ -698,15 +698,15 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(403
-      expect(data.success).toBe(false
-      expect(data.error).toContain('LGPD'
-      expect(data.code).toBe('LGPD_UPDATE_DENIED'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('LGPD')
+      expect(data.code).toBe('LGPD_UPDATE_DENIED')
     }
   }
 
-  describe(''Brazilian Healthcare Compliance'), () => {
+  describe(''Brazilian Healthcare Compliance', () => {
     it(''should include CFM compliance headers',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         healthcareInfo: {
@@ -726,13 +726,13 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
       const response = await updateRoute.request(mockRequest
 
-      expect(response.headers.get('X-CFM-Compliant')).toBe('true'
-      expect(response.headers.get('X-Medical-Record-Updated')).toBe('true'
-      expect(response.headers.get('X-LGPD-Compliant')).toBe('true'
+      expect(response.headers.get('X-CFM-Compliant')).toBe('true')
+      expect(response.headers.get('X-Medical-Record-Updated')).toBe('true')
+      expect(response.headers.get('X-LGPD-Compliant')).toBe('true')
     }
 
     it(''should validate healthcare professional context for medical updates',async () => {
-      const { default: updateRoute } = await import('../update'
+      const { default: updateRoute } = await import('../update')
 
       const updateData = {
         healthcareInfo: {

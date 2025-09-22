@@ -37,9 +37,9 @@ describe("Structured Logging Service", () => {
 
   beforeEach(() => {
     // Mock console methods
-    vi.spyOn(console, "log").mockImplementation(() => {});
-    vi.spyOn(console, "warn").mockImplementation(() => {});
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "log").mockImplementation(() => {}
+    vi.spyOn(console, "warn").mockImplementation(() => {}
+    vi.spyOn(console, "error").mockImplementation(() => {}
 
     // Basic test configuration
     mockConfig = {
@@ -77,8 +77,8 @@ describe("Structured Logging Service", () => {
       },
     };
 
-    testLogger = new StructuredLogger(mockConfig as any);
-  });
+    testLogger = new StructuredLogger(mockConfig as any
+  }
 
   afterEach(() => {
     // Restore console methods
@@ -87,8 +87,8 @@ describe("Structured Logging Service", () => {
     console.error = originalConsole.error;
 
     // Clean up logger
-    testLogger.destroy();
-  });
+    testLogger.destroy(
+  }
 
   // ============================================================================
   // BASIC FUNCTIONALITY TESTS
@@ -96,59 +96,59 @@ describe("Structured Logging Service", () => {
 
   describe("Basic Logging Functionality", () => {
     it("should create a logger instance with valid configuration", () => {
-      const stats = testLogger.getStatistics();
+      const stats = testLogger.getStatistics(
       expect(stats.isInitialized).toBe(true);
-      expect(stats.config._service).toBe("test-service");
+      expect(stats.config._service).toBe("test-service"
       expect(stats.config.enabled).toBe(true);
-    });
+    }
 
     it("should log messages at different levels", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
-      testLogger.debug("Debug message");
-      testLogger.info("Info message");
-      testLogger.notice("Notice message");
-      testLogger.warn("Warning message");
-      testLogger.error("Error message");
+      testLogger.debug("Debug message"
+      testLogger.info("Info message"
+      testLogger.notice("Notice message"
+      testLogger.warn("Warning message"
+      testLogger.error("Error message"
 
-      expect(logSpy).toHaveBeenCalledTimes(5);
-    });
+      expect(logSpy).toHaveBeenCalledTimes(5
+    }
 
     it("should respect minimum log level filtering", () => {
       const warnLogger = new StructuredLogger({
         ...mockConfig,
         level: "warn",
-      } as any);
+      } as any
 
-      const logSpy = vi.spyOn(warnLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(warnLogger as any, "addToBuffer"
 
       warnLogger.debug("Debug message"); // Should be filtered
       warnLogger.info("Info message"); // Should be filtered
       warnLogger.warn("Warning message"); // Should pass
       warnLogger.error("Error message"); // Should pass
 
-      expect(logSpy).toHaveBeenCalledTimes(2);
-      warnLogger.destroy();
-    });
+      expect(logSpy).toHaveBeenCalledTimes(2
+      warnLogger.destroy(
+    }
 
     it("should generate unique log entry IDs", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
-      testLogger.info("Message 1");
-      testLogger.info("Message 2");
+      testLogger.info("Message 1"
+      testLogger.info("Message 2"
 
-      expect(logSpy).toHaveBeenCalledTimes(2);
+      expect(logSpy).toHaveBeenCalledTimes(2
 
       const call1 = logSpy.mock.calls[0][0] as LogEntry;
       const call2 = logSpy.mock.calls[1][0] as LogEntry;
 
-      expect(call1.id).toBeDefined();
-      expect(call2.id).toBeDefined();
-      expect(call1.id).not.toBe(call2.id);
-      expect(call1.id).toMatch(/^log_/);
-      expect(call2.id).toMatch(/^log_/);
-    });
-  });
+      expect(call1.id).toBeDefined(
+      expect(call2.id).toBeDefined(
+      expect(call1.id).not.toBe(call2.id
+      expect(call1.id).toMatch(/^log_/
+      expect(call2.id).toMatch(/^log_/
+    }
+  }
 
   // ============================================================================
   // HEALTHCARE CONTEXT TESTS
@@ -156,7 +156,7 @@ describe("Structured Logging Service", () => {
 
   describe("Healthcare Context Integration", () => {
     it("should handle healthcare workflow context", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
       const healthcareContext: HealthcareContext = {
         workflowType: "patient_registration",
@@ -180,19 +180,19 @@ describe("Structured Logging Service", () => {
         "Patient registration started",
         {},
         { healthcare: healthcareContext },
-      );
+      
 
-      expect(logSpy).toHaveBeenCalledTimes(1);
+      expect(logSpy).toHaveBeenCalledTimes(1
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.healthcareContext).toEqual(healthcareContext);
-      expect(logEntry.tags).toContain("workflow:patient_registration");
-      expect(logEntry.tags).toContain("criticality:routine");
-    });
+      expect(logEntry.healthcareContext).toEqual(healthcareContext
+      expect(logEntry.tags).toContain("workflow:patient_registration"
+      expect(logEntry.tags).toContain("criticality:routine"
+    }
 
     it("should log patient safety events correctly", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
-      const flushSpy = vi.spyOn(testLogger as any, "flush");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
+      const flushSpy = vi.spyOn(testLogger as any, "flush"
 
       const healthcareContext: HealthcareContext = {
         workflowType: "medication_management",
@@ -208,41 +208,41 @@ describe("Structured Logging Service", () => {
         "critical",
         healthcareContext,
         { medicationId: "med_123", allergyType: "severe" },
-      );
+      
 
-      expect(logSpy).toHaveBeenCalledTimes(1);
+      expect(logSpy).toHaveBeenCalledTimes(1
       expect(flushSpy).toHaveBeenCalledTimes(1); // Critical events trigger immediate flush
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
-      expect(logEntry.level).toBe("alert");
-      expect(logEntry.message).toContain("[PATIENT SAFETY]");
+      expect(logEntry.level).toBe("alert"
+      expect(logEntry.message).toContain("[PATIENT SAFETY]"
       expect(logEntry.data?.patientSafetyEvent).toBe(true);
-      expect(logEntry.data?.severity).toBe("critical");
-    });
+      expect(logEntry.data?.severity).toBe("critical"
+    }
 
     it("should log clinical workflow events", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
       testLogger.logClinicalWorkflow(
         "medical_consultation",
         "diagnosis_phase",
         "Diagnostic imaging requested",
         { imagingType: "xray", urgency: "routine" },
-      );
+      
 
-      expect(logSpy).toHaveBeenCalledTimes(1);
+      expect(logSpy).toHaveBeenCalledTimes(1
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.message).toContain("[WORKFLOW:MEDICAL_CONSULTATION]");
+      expect(logEntry.message).toContain("[WORKFLOW:MEDICAL_CONSULTATION]"
       expect(logEntry.healthcareContext?.workflowType).toBe(
         "medical_consultation",
-      );
-      expect(logEntry.healthcareContext?.workflowStage).toBe("diagnosis_phase");
-    });
+      
+      expect(logEntry.healthcareContext?.workflowStage).toBe("diagnosis_phase"
+    }
 
     it("should log medication events with proper classification", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
-      const flushSpy = vi.spyOn(testLogger as any, "flush");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
+      const flushSpy = vi.spyOn(testLogger as any, "flush"
 
       const healthcareContext: HealthcareContext = {
         workflowType: "medication_management",
@@ -257,7 +257,7 @@ describe("Structured Logging Service", () => {
         "Medication administered successfully",
         healthcareContext,
         { medicationId: "med_456", dosage: "5mg" },
-      );
+      
 
       // Adverse reaction
       testLogger.logMedicationEvent(
@@ -265,21 +265,21 @@ describe("Structured Logging Service", () => {
         "Patient experienced mild nausea",
         healthcareContext,
         { medicationId: "med_456", reactionType: "gastrointestinal" },
-      );
+      
 
-      expect(logSpy).toHaveBeenCalledTimes(2);
+      expect(logSpy).toHaveBeenCalledTimes(2
       expect(flushSpy).toHaveBeenCalledTimes(1); // Only adverse reaction triggers flush
 
       const normalLog = logSpy.mock.calls[0][0] as LogEntry;
       const adverseLog = logSpy.mock.calls[1][0] as LogEntry;
 
-      expect(normalLog.level).toBe("info");
-      expect(adverseLog.level).toBe("alert");
-      expect(adverseLog.message).toContain("[MEDICATION:ADVERSE_REACTION]");
-    });
+      expect(normalLog.level).toBe("info"
+      expect(adverseLog.level).toBe("alert"
+      expect(adverseLog.message).toContain("[MEDICATION:ADVERSE_REACTION]"
+    }
 
     it("should log emergency response events with timing", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
       const healthcareContext: HealthcareContext = {
         workflowType: "emergency_response",
@@ -295,7 +295,7 @@ describe("Structured Logging Service", () => {
         15000, // 15 seconds
         "Emergency team dispatched",
         healthcareContext,
-      );
+      
 
       // Slow response (over 30 seconds)
       testLogger.logEmergencyResponse(
@@ -303,17 +303,17 @@ describe("Structured Logging Service", () => {
         45000, // 45 seconds
         "Emergency team delayed",
         healthcareContext,
-      );
+      
 
-      expect(logSpy).toHaveBeenCalledTimes(2);
+      expect(logSpy).toHaveBeenCalledTimes(2
 
       const fastLog = logSpy.mock.calls[0][0] as LogEntry;
       const slowLog = logSpy.mock.calls[1][0] as LogEntry;
 
-      expect(fastLog.level).toBe("alert");
+      expect(fastLog.level).toBe("alert"
       expect(slowLog.level).toBe("critical"); // Delayed response is critical
-    });
-  });
+    }
+  }
 
   // ============================================================================
   // LGPD COMPLIANCE AND PII REDACTION TESTS
@@ -321,68 +321,68 @@ describe("Structured Logging Service", () => {
 
   describe("LGPD Compliance and PII Redaction", () => {
     it("should detect and redact CPF numbers", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
       testLogger.info("Patient CPF: 123.456.789-00 registered", {
         patientData: {
           cpf: "12345678900",
           name: "Patient Name",
         },
-      });
+      }
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.message).toContain("[REDACTED]");
-      expect(logEntry.message).not.toContain("123.456.789-00");
-      expect(logEntry.data?.patientData?.cpf).toBe("[REDACTED]");
-      expect(logEntry.data?.patientData?.name).toBe("[REDACTED]");
-    });
+      expect(logEntry.message).toContain("[REDACTED]"
+      expect(logEntry.message).not.toContain("123.456.789-00"
+      expect(logEntry.data?.patientData?.cpf).toBe("[REDACTED]"
+      expect(logEntry.data?.patientData?.name).toBe("[REDACTED]"
+    }
 
     it("should detect and redact email addresses", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
       testLogger.info("User email: patient@example.com submitted form", {
         email: "patient@example.com",
-      });
+      }
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.message).toContain("[REDACTED]");
-      expect(logEntry.message).not.toContain("patient@example.com");
-      expect(logEntry.data?.email).toBe("[REDACTED]");
-    });
+      expect(logEntry.message).toContain("[REDACTED]"
+      expect(logEntry.message).not.toContain("patient@example.com"
+      expect(logEntry.data?.email).toBe("[REDACTED]"
+    }
 
     it("should detect and redact phone numbers", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
       testLogger.info("Patient phone: (11) 99999-9999", {
         phone: "11999999999",
-      });
+      }
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.message).toContain("[REDACTED]");
-      expect(logEntry.data?.phone).toBe("[REDACTED]");
-    });
+      expect(logEntry.message).toContain("[REDACTED]"
+      expect(logEntry.data?.phone).toBe("[REDACTED]"
+    }
 
     it("should detect and redact passwords and tokens", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
       testLogger.info("Authentication failed", {
         password: "secret123",
         token: "jwt_token_here",
         authDetails: "password=secret123 token=abc123",
-      });
+      }
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.data?.password).toBe("[REDACTED]");
-      expect(logEntry.data?.token).toBe("[REDACTED]");
-      expect(logEntry.data?.authDetails).toContain("[REDACTED]");
-    });
+      expect(logEntry.data?.password).toBe("[REDACTED]"
+      expect(logEntry.data?.token).toBe("[REDACTED]"
+      expect(logEntry.data?.authDetails).toContain("[REDACTED]"
+    }
 
     it("should determine correct LGPD compliance metadata", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
       // Log with patient context (should be confidential)
       testLogger.info(
@@ -395,42 +395,42 @@ describe("Structured Logging Service", () => {
             },
           },
         },
-      );
+      
 
       // Emergency log (should be restricted)
-      testLogger.emergency("Life-threatening emergency");
+      testLogger.emergency("Life-threatening emergency"
 
-      expect(logSpy).toHaveBeenCalledTimes(2);
+      expect(logSpy).toHaveBeenCalledTimes(2
 
       const patientLog = logSpy.mock.calls[0][0] as LogEntry;
       const emergencyLog = logSpy.mock.calls[1][0] as LogEntry;
 
-      expect(patientLog.lgpdCompliance.dataClassification).toBe("confidential");
+      expect(patientLog.lgpdCompliance.dataClassification).toBe("confidential"
       expect(patientLog.lgpdCompliance.auditRequired).toBe(true);
-      expect(patientLog.lgpdCompliance.legalBasis).toBe("legitimate_interests");
+      expect(patientLog.lgpdCompliance.legalBasis).toBe("legitimate_interests"
 
-      expect(emergencyLog.lgpdCompliance.dataClassification).toBe("restricted");
+      expect(emergencyLog.lgpdCompliance.dataClassification).toBe("restricted"
       expect(emergencyLog.lgpdCompliance.auditRequired).toBe(true);
-    });
+    }
 
     it("should handle PII detection correctly", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
       // Log without PII
-      testLogger.info("System status normal", { status: "ok" });
+      testLogger.info("System status normal", { status: "ok" }
 
       // Log with PII
-      testLogger.info("User action", { email: "user@example.com" });
+      testLogger.info("User action", { email: "user@example.com" }
 
-      expect(logSpy).toHaveBeenCalledTimes(2);
+      expect(logSpy).toHaveBeenCalledTimes(2
 
       const normalLog = logSpy.mock.calls[0][0] as LogEntry;
       const piiLog = logSpy.mock.calls[1][0] as LogEntry;
 
       expect(normalLog.lgpdCompliance.containsPII).toBe(false);
       expect(piiLog.lgpdCompliance.containsPII).toBe(true);
-    });
-  });
+    }
+  }
 
   // ============================================================================
   // PERFORMANCE AND BATCHING TESTS
@@ -438,36 +438,36 @@ describe("Structured Logging Service", () => {
 
   describe("Performance and Batching", () => {
     it("should buffer logs until batch size is reached", () => {
-      const flushSpy = vi.spyOn(testLogger as any, "flush");
+      const flushSpy = vi.spyOn(testLogger as any, "flush"
 
       // Log 4 messages (below batch size of 5)
       for (let i = 0; i < 4; i++) {
-        testLogger.info(`Message ${i}`);
+        testLogger.info(`Message ${i}`
       }
 
-      expect(flushSpy).not.toHaveBeenCalled();
+      expect(flushSpy).not.toHaveBeenCalled(
 
       // Log 5th message (reaches batch size)
-      testLogger.info("Message 4");
+      testLogger.info("Message 4"
 
-      expect(flushSpy).toHaveBeenCalledTimes(1);
-    });
+      expect(flushSpy).toHaveBeenCalledTimes(1
+    }
 
     it("should flush immediately for critical events", () => {
-      const flushSpy = vi.spyOn(testLogger as any, "flush");
+      const flushSpy = vi.spyOn(testLogger as any, "flush"
 
-      testLogger.critical("Critical system failure");
-      expect(flushSpy).toHaveBeenCalledTimes(1);
+      testLogger.critical("Critical system failure"
+      expect(flushSpy).toHaveBeenCalledTimes(1
 
-      testLogger.alert("Patient safety alert");
-      expect(flushSpy).toHaveBeenCalledTimes(2);
+      testLogger.alert("Patient safety alert"
+      expect(flushSpy).toHaveBeenCalledTimes(2
 
-      testLogger.emergency("Emergency situation");
-      expect(flushSpy).toHaveBeenCalledTimes(3);
-    });
+      testLogger.emergency("Emergency situation"
+      expect(flushSpy).toHaveBeenCalledTimes(3
+    }
 
     it("should manage buffer overflow correctly", () => {
-      const warnSpy = vi.spyOn(console, "warn");
+      const warnSpy = vi.spyOn(console, "warn"
 
       // Create logger with very small buffer
       const smallBufferLogger = new StructuredLogger({
@@ -478,32 +478,32 @@ describe("Structured Logging Service", () => {
           flushInterval: 10000,
           enableAsync: false,
         },
-      } as any);
+      } as any
 
       // Fill buffer beyond capacity
       for (let i = 0; i < 5; i++) {
-        smallBufferLogger.info(`Message ${i}`);
+        smallBufferLogger.info(`Message ${i}`
       }
 
       expect(warnSpy).toHaveBeenCalledWith(
         "Log buffer overflow, dropping oldest entries",
-      );
+      
 
-      smallBufferLogger.destroy();
-    });
+      smallBufferLogger.destroy(
+    }
 
     it("should provide accurate statistics", () => {
       // Add some logs to buffer
-      testLogger.info("Message 1");
-      testLogger.info("Message 2");
+      testLogger.info("Message 1"
+      testLogger.info("Message 2"
 
-      const stats = testLogger.getStatistics();
+      const stats = testLogger.getStatistics(
 
-      expect(stats.bufferSize).toBe(2);
+      expect(stats.bufferSize).toBe(2
       expect(stats.isInitialized).toBe(true);
-      expect(stats.config._service).toBe("test-service");
-    });
-  });
+      expect(stats.config._service).toBe("test-service"
+    }
+  }
 
   // ============================================================================
   // ERROR HANDLING TESTS
@@ -511,22 +511,22 @@ describe("Structured Logging Service", () => {
 
   describe("Error Handling", () => {
     it("should handle Error objects correctly", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
-      const testError = new Error("Test error");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
+      const testError = new Error("Test error"
       testError.stack = "Error stack trace";
 
-      testLogger.error("Operation failed", testError, { operation: "test" });
+      testLogger.error("Operation failed", testError, { operation: "test" }
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.error).toBeDefined();
-      expect(logEntry.error?.name).toBe("Error");
-      expect(logEntry.error?.message).toBe("Test error");
-      expect(logEntry.error?.stack).toBe("Error stack trace");
-    });
+      expect(logEntry.error).toBeDefined(
+      expect(logEntry.error?.name).toBe("Error"
+      expect(logEntry.error?.message).toBe("Test error"
+      expect(logEntry.error?.stack).toBe("Error stack trace"
+    }
 
     it("should handle custom error objects", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
       const customError = {
         name: "CustomError",
         message: "Custom error message",
@@ -535,34 +535,34 @@ describe("Structured Logging Service", () => {
 
       testLogger.error("Custom error occurred", customError as any, {
         _context: "custom",
-      });
+      }
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.error?.name).toBe("CustomError");
-      expect(logEntry.error?.code).toBe("CUSTOM_001");
-    });
+      expect(logEntry.error?.name).toBe("CustomError"
+      expect(logEntry.error?.code).toBe("CUSTOM_001"
+    }
 
     it("should continue logging even if individual log processing fails", () => {
-      const errorSpy = vi.spyOn(console, "error");
+      const errorSpy = vi.spyOn(console, "error"
 
       // Mock a failure in log processing
       const originalCreateLogEntry = (testLogger as any).createLogEntry;
       (testLogger as any).createLogEntry = vi.fn().mockImplementation(() => {
-        throw new Error("Log processing failed");
-      });
+        throw new Error("Log processing failed"
+      }
 
-      testLogger.info("This should fail silently");
+      testLogger.info("This should fail silently"
 
       expect(errorSpy).toHaveBeenCalledWith(
         "Failed to log message:",
         expect.any(Error),
-      );
+      
 
       // Restore original method
       (testLogger as any).createLogEntry = originalCreateLogEntry;
-    });
-  });
+    }
+  }
 
   // ============================================================================
   // TECHNICAL CONTEXT TESTS
@@ -570,7 +570,7 @@ describe("Structured Logging Service", () => {
 
   describe("Technical Context Integration", () => {
     it("should include technical context in log entries", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
       const technicalContext: Partial<TechnicalContext> = {
         requestId: "req_123",
@@ -591,41 +591,41 @@ describe("Structured Logging Service", () => {
         {
           technical: technicalContext,
         },
-      );
+      
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.technicalContext.requestId).toBe("req_123");
-      expect(logEntry.technicalContext.sessionId).toBe("session_456");
-      expect(logEntry.technicalContext.correlationId).toBe("corr_789");
-      expect(logEntry.technicalContext.traceId).toBe("trace_abc");
-      expect(logEntry.technicalContext.spanId).toBe("span_def");
-      expect(logEntry.technicalContext.performance?.duration).toBe(150);
-    });
+      expect(logEntry.technicalContext.requestId).toBe("req_123"
+      expect(logEntry.technicalContext.sessionId).toBe("session_456"
+      expect(logEntry.technicalContext.correlationId).toBe("corr_789"
+      expect(logEntry.technicalContext.traceId).toBe("trace_abc"
+      expect(logEntry.technicalContext.spanId).toBe("span_def"
+      expect(logEntry.technicalContext.performance?.duration).toBe(150
+    }
 
     it("should generate request and thread IDs when not provided", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
-      testLogger.info("Message without context");
+      testLogger.info("Message without context"
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.technicalContext.requestId).toMatch(/^req_/);
-      expect(logEntry.processingMetadata?.threadId).toMatch(/^thread_/);
-    });
+      expect(logEntry.technicalContext.requestId).toMatch(/^req_/
+      expect(logEntry.processingMetadata?.threadId).toMatch(/^thread_/
+    }
 
     it("should include environment and service information", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
-      testLogger.info("Environment test");
+      testLogger.info("Environment test"
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.technicalContext._service).toBe("test-service");
-      expect(logEntry.technicalContext.environment).toBeDefined();
-      expect(logEntry.processingMetadata?.source).toBe("test-service");
-    });
-  });
+      expect(logEntry.technicalContext._service).toBe("test-service"
+      expect(logEntry.technicalContext.environment).toBeDefined(
+      expect(logEntry.processingMetadata?.source).toBe("test-service"
+    }
+  }
 
   // ============================================================================
   // TAG GENERATION TESTS
@@ -633,7 +633,7 @@ describe("Structured Logging Service", () => {
 
   describe("Tag Generation", () => {
     it("should generate appropriate tags based on context", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
       testLogger.warn(
         "Warning message",
@@ -649,27 +649,27 @@ describe("Structured Logging Service", () => {
             environment: "production",
           },
         },
-      );
+      
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.tags).toContain("warn");
-      expect(logEntry.tags).toContain("workflow:emergency_response");
-      expect(logEntry.tags).toContain("criticality:critical");
-      expect(logEntry.tags).toContain("env:production");
-    });
+      expect(logEntry.tags).toContain("warn"
+      expect(logEntry.tags).toContain("workflow:emergency_response"
+      expect(logEntry.tags).toContain("criticality:critical"
+      expect(logEntry.tags).toContain("env:production"
+    }
 
     it("should handle missing context gracefully in tag generation", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
-      testLogger.info("Simple message");
+      testLogger.info("Simple message"
 
       const logEntry = logSpy.mock.calls[0][0] as LogEntry;
 
-      expect(logEntry.tags).toContain("info");
+      expect(logEntry.tags).toContain("info"
       expect(logEntry.tags.length).toBe(1); // Only level tag
-    });
-  });
+    }
+  }
 
   // ============================================================================
   // LOGGER LIFECYCLE TESTS
@@ -677,38 +677,38 @@ describe("Structured Logging Service", () => {
 
   describe("Logger Lifecycle", () => {
     it("should initialize correctly with default configuration", () => {
-      const stats = defaultLogger.getStatistics();
+      const stats = defaultLogger.getStatistics(
 
       expect(stats.isInitialized).toBe(true);
-      expect(stats.config._service).toBe("neonpro-platform");
+      expect(stats.config._service).toBe("neonpro-platform"
       expect(stats.config.healthcareCompliance.enablePIIRedaction).toBe(true);
-    });
+    }
 
     it("should destroy logger and clean up resources", () => {
-      const stats1 = testLogger.getStatistics();
+      const stats1 = testLogger.getStatistics(
       expect(stats1.isInitialized).toBe(true);
 
-      testLogger.destroy();
+      testLogger.destroy(
 
-      const stats2 = testLogger.getStatistics();
+      const stats2 = testLogger.getStatistics(
       expect(stats2.isInitialized).toBe(false);
-      expect(stats2.bufferSize).toBe(0);
-    });
+      expect(stats2.bufferSize).toBe(0
+    }
 
     it("should handle disabled logger gracefully", () => {
       const disabledLogger = new StructuredLogger({
         ...mockConfig,
         enabled: false,
-      } as any);
+      } as any
 
-      const stats = disabledLogger.getStatistics();
+      const stats = disabledLogger.getStatistics(
 
       // Should create logger instance but not initialize
       expect(stats.config.enabled).toBe(false);
 
-      disabledLogger.destroy();
-    });
-  });
+      disabledLogger.destroy(
+    }
+  }
 
   // ============================================================================
   // INTEGRATION TESTS
@@ -716,7 +716,7 @@ describe("Structured Logging Service", () => {
 
   describe("Integration Scenarios", () => {
     it("should handle complete patient consultation workflow", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
 
       const patientContext = {
         anonymizedPatientId: "anon_patient_workflow_001",
@@ -742,7 +742,7 @@ describe("Structured Logging Service", () => {
             professionalContext,
           },
         },
-      );
+      
 
       // 2. Appointment start
       testLogger.logClinicalWorkflow(
@@ -756,7 +756,7 @@ describe("Structured Logging Service", () => {
             professionalContext,
           },
         },
-      );
+      
 
       // 3. Medication prescribed
       testLogger.logMedicationEvent(
@@ -768,24 +768,24 @@ describe("Structured Logging Service", () => {
           professionalContext,
         },
         { medicationId: "med_hypertension_001", dosage: "10mg" },
-      );
+      
 
-      expect(logSpy).toHaveBeenCalledTimes(3);
+      expect(logSpy).toHaveBeenCalledTimes(3
 
       // Verify all logs have consistent patient context
-      const logs = logSpy.mock.calls.map((call) => call[0] as LogEntry);
+      const logs = logSpy.mock.calls.map((call) => call[0] as LogEntry
       logs.forEach((log) => {
         expect(log.healthcareContext?.patientContext?.anonymizedPatientId).toBe(
           "anon_patient_workflow_001",
-        );
+        
         expect(log.lgpdCompliance.containsPII).toBe(false); // Should be anonymized
-        expect(log.lgpdCompliance.dataClassification).toBe("confidential");
-      });
-    });
+        expect(log.lgpdCompliance.dataClassification).toBe("confidential"
+      }
+    }
 
     it("should handle emergency scenario with proper escalation", () => {
-      const logSpy = vi.spyOn(testLogger as any, "addToBuffer");
-      const flushSpy = vi.spyOn(testLogger as any, "flush");
+      const logSpy = vi.spyOn(testLogger as any, "addToBuffer"
+      const flushSpy = vi.spyOn(testLogger as any, "flush"
 
       const emergencyContext: HealthcareContext = {
         workflowType: "emergency_response",
@@ -803,7 +803,7 @@ describe("Structured Logging Service", () => {
           vitalSigns: { heartRate: 0, bloodPressure: "0/0" },
         },
         { healthcare: emergencyContext },
-      );
+      
 
       // 2. Emergency response
       testLogger.logEmergencyResponse(
@@ -812,7 +812,7 @@ describe("Structured Logging Service", () => {
         "Code blue team activated",
         emergencyContext,
         { teamSize: 4, equipment: ["defibrillator", "oxygen"] },
-      );
+      
 
       // 3. Critical medication administered
       testLogger.logMedicationEvent(
@@ -820,17 +820,17 @@ describe("Structured Logging Service", () => {
         "Emergency epinephrine administered",
         emergencyContext,
         { medicationId: "epi_emergency", route: "IV", dosage: "1mg" },
-      );
+      
 
-      expect(logSpy).toHaveBeenCalledTimes(3);
+      expect(logSpy).toHaveBeenCalledTimes(3
       expect(flushSpy).toHaveBeenCalledTimes(3); // All should trigger immediate flush
 
-      const logs = logSpy.mock.calls.map((call) => call[0] as LogEntry);
+      const logs = logSpy.mock.calls.map((call) => call[0] as LogEntry
       logs.forEach((log) => {
-        expect(["alert", "critical"]).toContain(log.level);
-        expect(log.lgpdCompliance.dataClassification).toBe("restricted");
+        expect(["alert", "critical"]).toContain(log.level
+        expect(log.lgpdCompliance.dataClassification).toBe("restricted"
         expect(log.lgpdCompliance.auditRequired).toBe(true);
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

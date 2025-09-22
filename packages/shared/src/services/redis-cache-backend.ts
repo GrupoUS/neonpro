@@ -472,7 +472,7 @@ export class RedisCacheBackend implements CacheBackend {
     try {
       return await Promise.race([
         operation(),
-        new Promise<never>((, reject) => 
+        new Promise<never>((resolve, reject) => 
           setTimeout(() => reject(new Error('Redis operation timeout')), 5000)
         )
       ]);

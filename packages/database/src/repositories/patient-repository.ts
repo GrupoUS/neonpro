@@ -64,6 +64,22 @@ export class PatientRepository implements IPatientRepository {
     }
   }
 
+  async findByCPF(cpf: string): Promise<Patient[]> {
+    try {
+      const { data, error } = await this.supabase
+        .from("patients")
+        .select("*")
+        .eq("cpf", cpf);
+
+      if (error || !data) return [];
+
+      return data.map(patient => this.mapDatabasePatientToDomain(patient));
+    } catch (error) {
+      console.error("PatientRepository.findByCPF error:", error);
+      return [];
+    }
+  }
+
   async findByClinicId(clinicId: string, options?: PatientQueryOptions): Promise<PatientSearchResult> {
     try {
       let query = this.supabase

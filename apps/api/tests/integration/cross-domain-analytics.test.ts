@@ -24,8 +24,8 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
   let professionalNetwork: string[];
 
   beforeEach(async () => {
-    await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
+    await setupTestDatabase(
+    testClient = createTestClient({ _role: 'admin' }
     clinicNetwork = [
       'clinic-sp-001',
       'clinic-rj-002',
@@ -47,11 +47,11 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
       'CRM/PR 567890',
       'CRM/CE 234567',
     ];
-  });
+  }
 
   afterEach(async () => {
-    await cleanupTestDatabase();
-  });
+    await cleanupTestDatabase(
+  }
 
   describe('Multi-Clinic Network Analytics', () => {
     it('should aggregate analytics across clinic network while maintaining LGPD compliance', async () => {
@@ -84,11 +84,11 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(networkAnalyticsRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         networkAnalytics: {
           totalClinics: clinicNetwork.length,
@@ -133,8 +133,8 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
           personalDataRemoved: true,
           aggregatedOnly: true,
         },
-      });
-    });
+      }
+    }
 
     it('should provide benchmark comparisons across similar clinics', async () => {
       const benchmarkRequest = {
@@ -165,11 +165,11 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(benchmarkRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         benchmarkAnalysis: {
           targetClinic: {
@@ -213,9 +213,9 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
             dataMinimized: true,
           },
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Professional Network Analytics', () => {
     it('should analyze professional usage patterns across medical specialties', async () => {
@@ -248,11 +248,11 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
           },
           body: JSON.stringify(professionalAnalyticsRequest),
         },
-      );
+      
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         professionalNetworkAnalytics: {
           totalProfessionals: professionalNetwork.length,
@@ -290,8 +290,8 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
           patientPrivacyProtected: true,
           medicalSupervisionDocumented: true,
         },
-      });
-    });
+      }
+    }
 
     it('should track knowledge sharing and collaboration patterns', async () => {
       const collaborationAnalyticsRequest = {
@@ -323,11 +323,11 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(collaborationAnalyticsRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         collaborationAnalytics: {
           networkSize: expect.any(Number),
@@ -363,9 +363,9 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
           informationFlow: expect.any(Object),
           regionalSpecializations: expect.any(Object),
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Seasonal and Market Trend Analytics', () => {
     it('should analyze seasonal patterns in Brazilian aesthetic market', async () => {
@@ -397,11 +397,11 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(seasonalAnalyticsRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         seasonalAnalytics: {
           timeframe: '24_months',
@@ -451,8 +451,8 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
             seasonalContrasts: expect.any(Object),
           }),
         }),
-      });
-    });
+      }
+    }
 
     it('should provide predictive analytics for market trends', async () => {
       const predictiveAnalyticsRequest = {
@@ -488,11 +488,11 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(predictiveAnalyticsRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         predictiveAnalytics: {
           predictionHorizon: '12_months',
@@ -546,9 +546,9 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
           regulatoryChanges: expect.any(Array),
           competitiveThreats: expect.any(Array),
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('LGPD-Compliant Cross-Domain Data Integration', () => {
     it('should integrate data across domains while maintaining privacy', async () => {
@@ -585,11 +585,11 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(privacyPreservingRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         privacyPreservingAnalytics: {
           domainsIntegrated: 4,
@@ -631,7 +631,7 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
           consentValidated: true,
           auditTrailMaintained: true,
         },
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

@@ -24,21 +24,21 @@ describe('Integration Test T014: Abuse Detection', () => {
   let suspiciousUserId: string;
 
   beforeEach(async () => {
-    await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
+    await setupTestDatabase(
+    testClient = createTestClient({ _role: 'admin' }
     clinicId = 'clinic-abuse-test-001';
     professionalCRM = 'CRM/SP 123456';
     suspiciousUserId = 'user-suspicious-001';
-  });
+  }
 
   afterEach(async () => {
-    await cleanupTestDatabase();
-  });
+    await cleanupTestDatabase(
+  }
 
   describe('Rapid Request Pattern Detection', () => {
     it('should detect and flag rapid-fire API requests as potential abuse', async () => {
       const rapidRequests = [];
-      const startTime = Date.now();
+      const startTime = Date.now(
 
       // Generate 100 rapid requests in quick succession
       for (let i = 0; i < 100; i++) {
@@ -58,12 +58,12 @@ describe('Integration Test T014: Abuse Detection', () => {
               requestIndex: i,
             }),
           }),
-        );
+        
       }
 
       // TDD RED: Abuse detection not implemented - MUST FAIL
-      const responses = await Promise.all(rapidRequests);
-      const endTime = Date.now();
+      const responses = await Promise.all(rapidRequests
+      const endTime = Date.now(
       const duration = endTime - startTime;
 
       // Some requests should be successful initially
@@ -77,7 +77,7 @@ describe('Integration Test T014: Abuse Detection', () => {
         } else if (response.status === 429) {
           blockedRequests++;
 
-          const error = await response.json();
+          const error = await response.json(
           expect(error).toMatchObject({
             error: 'ABUSO_DETECTADO_REQUISICOES_RAPIDAS',
             message: expect.stringContaining('padrão suspeito'),
@@ -93,15 +93,15 @@ describe('Integration Test T014: Abuse Detection', () => {
               ethicalReviewRequired: true,
             },
             locale: 'pt-BR',
-          });
+          }
           abuseDetected = true;
         }
       }
 
       expect(abuseDetected).toBe(true);
-      expect(blockedRequests).toBeGreaterThan(0);
+      expect(blockedRequests).toBeGreaterThan(0
       expect(duration).toBeLessThan(10000); // Should be detected quickly
-    });
+    }
 
     it('should detect automated bot-like behavior patterns', async () => {
       const botRequests = [];
@@ -123,21 +123,21 @@ describe('Integration Test T014: Abuse Detection', () => {
             timestamp: Date.now() + i * 1000, // Exact 1-second intervals
             requestSource: 'automated_script',
           }),
-        });
+        }
 
-        botRequests.push(_request);
+        botRequests.push(_request
 
         // Wait exactly 1 second between requests (bot-like behavior)
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1000)
       }
 
       // TDD RED: Bot detection not implemented - MUST FAIL
-      const responses = await Promise.all(botRequests);
+      const responses = await Promise.all(botRequests
 
       let botDetected = false;
       for (const response of responses) {
         if (response.status === 403) {
-          const error = await response.json();
+          const error = await response.json(
           expect(error).toMatchObject({
             error: 'COMPORTAMENTO_BOT_DETECTADO',
             message: expect.stringContaining('comportamento automatizado'),
@@ -157,15 +157,15 @@ describe('Integration Test T014: Abuse Detection', () => {
               cfmNotification: true,
             },
             locale: 'pt-BR',
-          });
+          }
           botDetected = true;
           break;
         }
       }
 
       expect(botDetected).toBe(true);
-    });
-  });
+    }
+  }
 
   describe('Content-Based Abuse Detection', () => {
     it('should detect inappropriate or unethical content requests', async () => {
@@ -208,18 +208,18 @@ describe('Integration Test T014: Abuse Detection', () => {
             ...testClient.headers,
           },
           body: JSON.stringify(_request),
-        });
+        }
 
         responses.push({
           request,
           response,
           result: response.status === 403 ? await response.json() : null,
-        });
+        }
       }
 
       // All inappropriate requests should be blocked
       responses.forEach(({ request, response, result }) => {
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403
         expect(result).toMatchObject({
           error: 'CONTEUDO_INAPROPRIADO_DETECTADO',
           message: expect.stringContaining('conteúdo inapropriado'),
@@ -233,9 +233,9 @@ describe('Integration Test T014: Abuse Detection', () => {
           },
           reportedToAuthorities: true,
           locale: 'pt-BR',
-        });
-      });
-    });
+        }
+      }
+    }
 
     it('should detect attempts to bypass medical supervision requirements', async () => {
       const bypassAttempts = [
@@ -271,15 +271,15 @@ describe('Integration Test T014: Abuse Detection', () => {
             ...testClient.headers,
           },
           body: JSON.stringify(attempt),
-        });
+        }
 
-        responses.push(response);
+        responses.push(response
       }
 
       responses.forEach(async response => {
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403
 
-        const error = await response.json();
+        const error = await response.json(
         expect(error).toMatchObject({
           error: 'TENTATIVA_BYPASS_SUPERVISAO',
           message: expect.stringContaining('supervisão médica'),
@@ -296,10 +296,10 @@ describe('Integration Test T014: Abuse Detection', () => {
             ethicalViolation: true,
           },
           locale: 'pt-BR',
-        });
-      });
-    });
-  });
+        }
+      }
+    }
+  }
 
   describe('Data Extraction and Privacy Abuse', () => {
     it('should detect attempts to extract patient data inappropriately', async () => {
@@ -336,15 +336,15 @@ describe('Integration Test T014: Abuse Detection', () => {
             ...testClient.headers,
           },
           body: JSON.stringify(attempt),
-        });
+        }
 
-        responses.push(response);
+        responses.push(response
       }
 
       responses.forEach(async response => {
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403
 
-        const error = await response.json();
+        const error = await response.json(
         expect(error).toMatchObject({
           error: 'TENTATIVA_EXTRACAO_DADOS',
           message: expect.stringContaining('extração não autorizada'),
@@ -365,9 +365,9 @@ describe('Integration Test T014: Abuse Detection', () => {
             timestamp: expect.any(String),
           },
           locale: 'pt-BR',
-        });
-      });
-    });
+        }
+      }
+    }
 
     it('should detect suspicious pattern in patient data access', async () => {
       const suspiciousAccessPattern = [];
@@ -392,17 +392,17 @@ describe('Integration Test T014: Abuse Detection', () => {
               },
             }),
           }),
-        );
+        
       }
 
       // TDD RED: Suspicious access pattern detection not implemented - MUST FAIL
-      const responses = await Promise.all(suspiciousAccessPattern);
+      const responses = await Promise.all(suspiciousAccessPattern
 
       let suspiciousActivityDetected = false;
       for (const response of responses.slice(15)) {
         // Check later responses
         if (response.status === 403) {
-          const error = await response.json();
+          const error = await response.json(
           expect(error).toMatchObject({
             error: 'PADRAO_ACESSO_SUSPEITO',
             message: expect.stringContaining('padrão de acesso'),
@@ -418,15 +418,15 @@ describe('Integration Test T014: Abuse Detection', () => {
               alertSent: true,
             },
             locale: 'pt-BR',
-          });
+          }
           suspiciousActivityDetected = true;
           break;
         }
       }
 
       expect(suspiciousActivityDetected).toBe(true);
-    });
-  });
+    }
+  }
 
   describe('Professional Ethics and CFM Compliance', () => {
     it('should detect violations of CFM ethical guidelines', async () => {
@@ -464,15 +464,15 @@ describe('Integration Test T014: Abuse Detection', () => {
             ...testClient.headers,
           },
           body: JSON.stringify(violation),
-        });
+        }
 
-        responses.push(response);
+        responses.push(response
       }
 
       responses.forEach(async response => {
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(403
 
-        const error = await response.json();
+        const error = await response.json(
         expect(error).toMatchObject({
           error: 'VIOLACAO_ETICA_CFM',
           message: expect.stringContaining('diretrizes éticas'),
@@ -492,10 +492,10 @@ describe('Integration Test T014: Abuse Detection', () => {
             reportingRequired: true,
           },
           locale: 'pt-BR',
-        });
-      });
-    });
-  });
+        }
+      }
+    }
+  }
 
   describe('Abuse Reporting and Response', () => {
     it('should generate comprehensive abuse reports for authorities', async () => {
@@ -515,11 +515,11 @@ describe('Integration Test T014: Abuse Detection', () => {
           includeAuditTrail: true,
           reportingAuthorities: ['cfm', 'lgpd_dpo', 'clinic_administration'],
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         abuseReport: {
           incidentId: abuseIncidentId,
@@ -546,8 +546,8 @@ describe('Integration Test T014: Abuse Detection', () => {
           recommended: expect.any(Array),
           timeline: expect.any(String),
         },
-      });
-    });
+      }
+    }
 
     it('should implement automatic response measures for detected abuse', async () => {
       const abuseResponseConfig = {
@@ -570,11 +570,11 @@ describe('Integration Test T014: Abuse Detection', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(abuseResponseConfig),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         responseActions: {
           userSuspension: {
@@ -603,7 +603,7 @@ describe('Integration Test T014: Abuse Detection', () => {
           timeline: expect.any(String),
           reviewCriteria: expect.any(Array),
         },
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

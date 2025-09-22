@@ -16,15 +16,15 @@ describe('IntentParserService', () => {
   let intentParser: IntentParserService;
 
   beforeEach(() => {
-    intentParser = new IntentParserService();
-  });
+    intentParser = new IntentParserService(
+  }
 
   describe('Constructor and Initialization', () => {
     it('should initialize successfully', () => {
-      expect(intentParser).toBeDefined();
-      expect(intentParser).toBeInstanceOf(IntentParserService);
-    });
-  });
+      expect(intentParser).toBeDefined(
+      expect(intentParser).toBeInstanceOf(IntentParserService
+    }
+  }
 
   describe('Client Data Intent Detection', () => {
     it('should detect client data intent from Portuguese queries', () => {
@@ -38,11 +38,11 @@ describe('IntentParserService', () => {
       ];
 
       queries.forEach(query => {
-        const result = intentParser.parseQuery(query, 'admin');
-        expect(result.intent).toBe('client_data');
-        expect(result.confidence).toBeGreaterThan(0.7);
-      });
-    });
+        const result = intentParser.parseQuery(query, 'admin')
+        expect(result.intent).toBe('client_data')
+        expect(result.confidence).toBeGreaterThan(0.7
+      }
+    }
 
     it('should extract client names from queries', () => {
       const testCases = [
@@ -61,18 +61,18 @@ describe('IntentParserService', () => {
       ];
 
       testCases.forEach(({ query, expectedNames }) => {
-        const result = intentParser.parseQuery(query, 'admin');
-        expect(result.parameters.clientNames).toEqual(expectedNames);
-      });
-    });
+        const result = intentParser.parseQuery(query, 'admin')
+        expect(result.parameters.clientNames).toEqual(expectedNames
+      }
+    }
 
     it('should handle queries without specific client names', () => {
-      const result = intentParser.parseQuery('Lista todos os clientes', 'admin');
+      const result = intentParser.parseQuery('Lista todos os clientes', 'admin')
 
-      expect(result.intent).toBe('client_data');
-      expect(result.parameters.clientNames).toEqual([]);
-    });
-  });
+      expect(result.intent).toBe('client_data')
+      expect(result.parameters.clientNames).toEqual([]
+    }
+  }
 
   describe('Appointment Intent Detection', () => {
     it('should detect appointment intent from Portuguese queries', () => {
@@ -86,11 +86,11 @@ describe('IntentParserService', () => {
       ];
 
       queries.forEach(query => {
-        const result = intentParser.parseQuery(query, 'admin');
-        expect(result.intent).toBe('appointments');
-        expect(result.confidence).toBeGreaterThan(0.7);
-      });
-    });
+        const result = intentParser.parseQuery(query, 'admin')
+        expect(result.intent).toBe('appointments')
+        expect(result.confidence).toBeGreaterThan(0.7
+      }
+    }
 
     it('should extract date ranges from appointment queries', () => {
       const testCases = [
@@ -109,11 +109,11 @@ describe('IntentParserService', () => {
       ];
 
       testCases.forEach(({ query, expectedPeriod }) => {
-        const result = intentParser.parseQuery(query, 'admin');
-        expect(result.parameters.dateRanges).toBeDefined();
-        expect(result.parameters.dateRanges?.length).toBeGreaterThan(0);
-      });
-    });
+        const result = intentParser.parseQuery(query, 'admin')
+        expect(result.parameters.dateRanges).toBeDefined(
+        expect(result.parameters.dateRanges?.length).toBeGreaterThan(0
+      }
+    }
 
     it('should handle specific date mentions', () => {
       const queries = [
@@ -123,12 +123,12 @@ describe('IntentParserService', () => {
       ];
 
       queries.forEach(query => {
-        const result = intentParser.parseQuery(query, 'admin');
-        expect(result.intent).toBe('appointments');
-        expect(result.parameters.dateRanges).toBeDefined();
-      });
-    });
-  });
+        const result = intentParser.parseQuery(query, 'admin')
+        expect(result.intent).toBe('appointments')
+        expect(result.parameters.dateRanges).toBeDefined(
+      }
+    }
+  }
 
   describe('Financial Intent Detection', () => {
     it('should detect financial intent from Portuguese queries', () => {
@@ -142,11 +142,11 @@ describe('IntentParserService', () => {
       ];
 
       queries.forEach(query => {
-        const result = intentParser.parseQuery(query, 'admin');
-        expect(result.intent).toBe('financial');
-        expect(result.confidence).toBeGreaterThan(0.7);
-      });
-    });
+        const result = intentParser.parseQuery(query, 'admin')
+        expect(result.intent).toBe('financial')
+        expect(result.confidence).toBeGreaterThan(0.7
+      }
+    }
 
     it('should extract financial periods', () => {
       const testCases = [
@@ -169,10 +169,10 @@ describe('IntentParserService', () => {
       ];
 
       testCases.forEach(({ query, expectedPeriod }) => {
-        const result = intentParser.parseQuery(query, 'admin');
-        expect(result.parameters.financial?.period).toBe(expectedPeriod);
-      });
-    });
+        const result = intentParser.parseQuery(query, 'admin')
+        expect(result.parameters.financial?.period).toBe(expectedPeriod
+      }
+    }
 
     it('should extract financial types', () => {
       const testCases = [
@@ -191,11 +191,11 @@ describe('IntentParserService', () => {
       ];
 
       testCases.forEach(({ query, expectedType }) => {
-        const result = intentParser.parseQuery(query, 'admin');
-        expect(result.parameters.financial?.type).toBe(expectedType);
-      });
-    });
-  });
+        const result = intentParser.parseQuery(query, 'admin')
+        expect(result.parameters.financial?.type).toBe(expectedType
+      }
+    }
+  }
 
   describe('General Intent Detection', () => {
     it('should classify unclear queries as general', () => {
@@ -208,43 +208,43 @@ describe('IntentParserService', () => {
       ];
 
       queries.forEach(query => {
-        const result = intentParser.parseQuery(query, 'admin');
-        expect(result.intent).toBe('general');
-      });
-    });
+        const result = intentParser.parseQuery(query, 'admin')
+        expect(result.intent).toBe('general')
+      }
+    }
 
     it('should handle empty queries', () => {
-      const result = intentParser.parseQuery('', 'admin');
+      const result = intentParser.parseQuery('', 'admin')
 
-      expect(result.intent).toBe('general');
-      expect(result.confidence).toBeLessThan(0.5);
-    });
+      expect(result.intent).toBe('general')
+      expect(result.confidence).toBeLessThan(0.5
+    }
 
     it('should handle very short queries', () => {
-      const result = intentParser.parseQuery('ok', 'admin');
+      const result = intentParser.parseQuery('ok', 'admin')
 
-      expect(result.intent).toBe('general');
-      expect(result.confidence).toBeLessThan(0.5);
-    });
-  });
+      expect(result.intent).toBe('general')
+      expect(result.confidence).toBeLessThan(0.5
+    }
+  }
 
   describe('Role-Based Intent Modification', () => {
     it('should adjust confidence based on user role', () => {
       const query = 'Resumo financeiro completo';
 
-      const adminResult = intentParser.parseQuery(query, 'admin');
-      const receptionistResult = intentParser.parseQuery(query, 'receptionist');
+      const adminResult = intentParser.parseQuery(query, 'admin')
+      const receptionistResult = intentParser.parseQuery(query, 'receptionist')
 
-      expect(adminResult.confidence).toBeGreaterThan(receptionistResult.confidence);
-    });
+      expect(adminResult.confidence).toBeGreaterThan(receptionistResult.confidence
+    }
 
     it('should restrict financial queries for non-admin roles', () => {
       const query = 'Balanço financeiro detalhado';
 
-      const receptionistResult = intentParser.parseQuery(query, 'receptionist');
+      const receptionistResult = intentParser.parseQuery(query, 'receptionist')
 
-      expect(receptionistResult.confidence).toBeLessThan(0.8);
-    });
+      expect(receptionistResult.confidence).toBeLessThan(0.8
+    }
 
     it('should allow client queries for all roles', () => {
       const query = 'Lista de clientes';
@@ -252,12 +252,12 @@ describe('IntentParserService', () => {
       const roles: UserRole[] = ['admin', 'doctor', 'receptionist'];
 
       roles.forEach(role => {
-        const result = intentParser.parseQuery(query, _role);
-        expect(result.intent).toBe('client_data');
-        expect(result.confidence).toBeGreaterThan(0.7);
-      });
-    });
-  });
+        const result = intentParser.parseQuery(query, _role
+        expect(result.intent).toBe('client_data')
+        expect(result.confidence).toBeGreaterThan(0.7
+      }
+    }
+  }
 
   describe('Parameter Validation', () => {
     it('should validate client data parameters', () => {
@@ -265,11 +265,11 @@ describe('IntentParserService', () => {
         clientNames: ['João Silva', 'Maria Santos'],
       };
 
-      const validation = intentParser.validateParameters(validParams, 'client_data');
+      const validation = intentParser.validateParameters(validParams, 'client_data')
 
       expect(validation.valid).toBe(true);
-      expect(validation.errors).toHaveLength(0);
-    });
+      expect(validation.errors).toHaveLength(0
+    }
 
     it('should validate appointment parameters', () => {
       const validParams = {
@@ -279,11 +279,11 @@ describe('IntentParserService', () => {
         }],
       };
 
-      const validation = intentParser.validateParameters(validParams, 'appointments');
+      const validation = intentParser.validateParameters(validParams, 'appointments')
 
       expect(validation.valid).toBe(true);
-      expect(validation.errors).toHaveLength(0);
-    });
+      expect(validation.errors).toHaveLength(0
+    }
 
     it('should validate financial parameters', () => {
       const validParams = {
@@ -293,11 +293,11 @@ describe('IntentParserService', () => {
         },
       };
 
-      const validation = intentParser.validateParameters(validParams, 'financial');
+      const validation = intentParser.validateParameters(validParams, 'financial')
 
       expect(validation.valid).toBe(true);
-      expect(validation.errors).toHaveLength(0);
-    });
+      expect(validation.errors).toHaveLength(0
+    }
 
     it('should reject invalid date ranges', () => {
       const invalidParams = {
@@ -307,11 +307,11 @@ describe('IntentParserService', () => {
         }],
       };
 
-      const validation = intentParser.validateParameters(invalidParams, 'appointments');
+      const validation = intentParser.validateParameters(invalidParams, 'appointments')
 
       expect(validation.valid).toBe(false);
-      expect(validation.errors.length).toBeGreaterThan(0);
-    });
+      expect(validation.errors.length).toBeGreaterThan(0
+    }
 
     it('should reject invalid financial periods', () => {
       const invalidParams = {
@@ -321,58 +321,58 @@ describe('IntentParserService', () => {
         },
       };
 
-      const validation = intentParser.validateParameters(invalidParams, 'financial');
+      const validation = intentParser.validateParameters(invalidParams, 'financial')
 
       expect(validation.valid).toBe(false);
-      expect(validation.errors.length).toBeGreaterThan(0);
-    });
-  });
+      expect(validation.errors.length).toBeGreaterThan(0
+    }
+  }
 
   describe('Edge Cases and Error Handling', () => {
     it('should handle queries with special characters', () => {
       const query = 'Cliente @#$%^&*() João';
 
-      const result = intentParser.parseQuery(query, 'admin');
+      const result = intentParser.parseQuery(query, 'admin')
 
-      expect(result).toBeDefined();
-      expect(result.intent).toBeDefined();
-    });
+      expect(result).toBeDefined(
+      expect(result.intent).toBeDefined(
+    }
 
     it('should handle very long queries', () => {
       const longQuery = 'A'.repeat(1000) + ' clientes ativos';
 
-      const result = intentParser.parseQuery(longQuery, 'admin');
+      const result = intentParser.parseQuery(longQuery, 'admin')
 
-      expect(result).toBeDefined();
-      expect(result.intent).toBe('client_data');
-    });
+      expect(result).toBeDefined(
+      expect(result.intent).toBe('client_data')
+    }
 
     it('should handle mixed language queries', () => {
       const query = 'Show me clientes ativos today';
 
-      const result = intentParser.parseQuery(query, 'admin');
+      const result = intentParser.parseQuery(query, 'admin')
 
-      expect(result).toBeDefined();
-      expect(result.intent).toBe('client_data');
-    });
+      expect(result).toBeDefined(
+      expect(result.intent).toBe('client_data')
+    }
 
     it('should handle queries with numbers', () => {
       const query = 'Cliente número 12345';
 
-      const result = intentParser.parseQuery(query, 'admin');
+      const result = intentParser.parseQuery(query, 'admin')
 
-      expect(result.intent).toBe('client_data');
-      expect(result.parameters).toBeDefined();
-    });
+      expect(result.intent).toBe('client_data')
+      expect(result.parameters).toBeDefined(
+    }
 
     it('should maintain consistent confidence scoring', () => {
       const query = 'Agendamentos de hoje';
 
-      const result1 = intentParser.parseQuery(query, 'admin');
-      const result2 = intentParser.parseQuery(query, 'admin');
+      const result1 = intentParser.parseQuery(query, 'admin')
+      const result2 = intentParser.parseQuery(query, 'admin')
 
-      expect(result1.confidence).toBe(result2.confidence);
-      expect(result1.intent).toBe(result2.intent);
-    });
-  });
-});
+      expect(result1.confidence).toBe(result2.confidence
+      expect(result1.intent).toBe(result2.intent
+    }
+  }
+}

@@ -9,11 +9,11 @@ async function api(path: string, init?: RequestInit) {
   process.env.SUPABASE_SERVICE_ROLE_KEY ??= 'service_role_test_key';
   process.env.NEXT_PUBLIC_SUPABASE_URL ??= 'http://localhost:54321';
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??= 'anon_test_key';
-  const { default: chat } = await import('../../src/routes/chat');
-  const app = new Hono();
-  app.route('/v1/chat', chat);
-  const url = new URL(`http://local.test${path}`);
-  return app.request(url, init);
+  const { default: chat } = await import('../../src/routes/chat')
+  const app = new Hono(
+  app.route('/v1/chat', chat
+  const url = new URL(`http://local.test${path}`
+  return app.request(url, init
 }
 
 describe('Integration: PII redaction (logs)', () => {
@@ -34,12 +34,12 @@ describe('Integration: PII redaction (logs)', () => {
         'x-consent': 'true',
       },
       body: JSON.stringify(body),
-    });
+    }
 
-    expect(res.status).toBe(200);
-    const text = await res.text();
-    expect(text.length).toBeGreaterThan(0);
+    expect(res.status).toBe(200
+    const text = await res.text(
+    expect(text.length).toBeGreaterThan(0
     // We cannot read logs here; rely on implementation which uses sanitizeForAI fallback regex
     // This test ensures the route works end-to-end even with PII-like inputs
-  });
-});
+  }
+}

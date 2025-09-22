@@ -8,22 +8,22 @@ describe('Contract Test: POST /api/ai/sessions/{sessionId}/feedback', () => {
   let baseUrl: string;
 
   beforeAll(async () => {
-    const app = createApp();
-    server = createServer(app);
+    const app = createApp(
+    server = createServer(app
     await new Promise<void>((resolve) => {
       server.listen(0, () => {
         const address = server.address() as AddressInfo;
         baseUrl = `http://localhost:${address.port}`;
-        resolve();
-      });
-    });
-  });
+        resolve(
+      }
+    }
+  }
 
   afterAll(() => {
     if (server) {
-      server.close();
+      server.close(
     }
-  });
+  }
 
   it('T011 should return 400 for missing rating parameter', async () => {
     const response = await fetch(`${baseUrl}/api/ai/sessions/test-session-123/feedback`, {
@@ -33,12 +33,12 @@ describe('Contract Test: POST /api/ai/sessions/{sessionId}/feedback', () => {
         'Authorization': 'Bearer test-token',
       },
       body: JSON.stringify({}),
-    });
+    }
 
-    expect(response.status).toBe(400);
-    const data = await response.json();
-    expect(data.error).toBe('Rating parameter is required');
-  });
+    expect(response.status).toBe(400
+    const data = await response.json(
+    expect(data.error).toBe('Rating parameter is required')
+  }
 
   it('T011 should return 404 for non-existent session', async () => {
     const response = await fetch(`${baseUrl}/api/ai/sessions/non-existent-session/feedback`, {
@@ -50,12 +50,12 @@ describe('Contract Test: POST /api/ai/sessions/{sessionId}/feedback', () => {
       body: JSON.stringify({
         rating: 5,
       }),
-    });
+    }
 
-    expect(response.status).toBe(404);
-    const data = await response.json();
-    expect(data.error).toBe('Session not found');
-  });
+    expect(response.status).toBe(404
+    const data = await response.json(
+    expect(data.error).toBe('Session not found')
+  }
 
   it('T011 should return 401 for missing authentication', async () => {
     const response = await fetch(`${baseUrl}/api/ai/sessions/test-session-123/feedback`, {
@@ -66,10 +66,10 @@ describe('Contract Test: POST /api/ai/sessions/{sessionId}/feedback', () => {
       body: JSON.stringify({
         rating: 4,
       }),
-    });
+    }
 
-    expect(response.status).toBe(401);
-  });
+    expect(response.status).toBe(401
+  }
 
   it('T011 should return 200 for valid feedback submission', async () => {
     const response = await fetch(`${baseUrl}/api/ai/sessions/test-session-123/feedback`, {
@@ -83,14 +83,14 @@ describe('Contract Test: POST /api/ai/sessions/{sessionId}/feedback', () => {
         message: 'Excellent response, very helpful!',
         categories: ['accuracy', 'helpfulness'],
       }),
-    });
+    }
 
-    expect(response.status).toBe(200);
-    const data = await response.json();
-    expect(data).toHaveProperty('feedbackId');
-    expect(data).toHaveProperty('sessionId', 'test-session-123');
-    expect(data.rating).toBe(5);
-  });
+    expect(response.status).toBe(200
+    const data = await response.json(
+    expect(data).toHaveProperty('feedbackId')
+    expect(data).toHaveProperty('sessionId', 'test-session-123')
+    expect(data.rating).toBe(5
+  }
 
   it('T011 should validate rating range (1-5)', async () => {
     const response = await fetch(`${baseUrl}/api/ai/sessions/test-session-123/feedback`, {
@@ -103,12 +103,12 @@ describe('Contract Test: POST /api/ai/sessions/{sessionId}/feedback', () => {
         rating: 10, // Invalid rating
         message: 'Test feedback',
       }),
-    });
+    }
 
-    expect(response.status).toBe(400);
-    const data = await response.json();
-    expect(data.error).toBe('Rating must be between 1 and 5');
-  });
+    expect(response.status).toBe(400
+    const data = await response.json(
+    expect(data.error).toBe('Rating must be between 1 and 5')
+  }
 
   it('T011 should handle detailed feedback with healthcare context', async () => {
     const response = await fetch(`${baseUrl}/api/ai/sessions/test-session-123/feedback`, {
@@ -126,11 +126,11 @@ describe('Contract Test: POST /api/ai/sessions/{sessionId}/feedback', () => {
           suggestion: 'Include more specific medical codes',
         },
       }),
-    });
+    }
 
-    expect(response.status).toBe(200);
-    const data = await response.json();
-    expect(data.categories).toContain('medical_knowledge');
+    expect(response.status).toBe(200
+    const data = await response.json(
+    expect(data.categories).toContain('medical_knowledge')
     expect(data.metadata.healthcareDomain).toBe(true);
-  });
-});
+  }
+}

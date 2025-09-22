@@ -530,8 +530,8 @@ export class HealthcareError extends Error {
     super(message);
     this.name = 'HealthcareError';
     this.status = status;
-    this.codeName = codeName;
-    this.meta = meta;
+    if (codeName !== undefined) this.codeName = codeName;
+    if (meta !== undefined) this.meta = meta;
     // preserve prototype chain
     Object.setPrototypeOf(this, new.target.prototype);
   }

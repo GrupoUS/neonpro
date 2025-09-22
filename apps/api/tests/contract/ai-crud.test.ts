@@ -30,15 +30,15 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
   let recordId: string;
 
   beforeEach(async () => {
-    await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
+    await setupTestDatabase(
+    testClient = createTestClient({ _role: 'admin' }
     patientId = 'test-patient-lgpd-123';
     recordId = 'test-record-456';
-  });
+  }
 
   afterEach(async () => {
-    await cleanupTestDatabase();
-  });
+    await cleanupTestDatabase(
+  }
 
   describe('CREATE Operations with LGPD Compliance', () => {
     it('should create patient AI record with data minimization', async () => {
@@ -80,11 +80,11 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(createRequest),
-      });
+      }
 
-      expect(response.status).toBe(201);
+      expect(response.status).toBe(201
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         recordId: expect.any(String),
         operation: 'CREATE',
@@ -99,8 +99,8 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           version: 1,
           dataClassification: 'sensitive_personal',
         },
-      });
-    });
+      }
+    }
 
     it('should enforce consent requirements during creation', async () => {
       const createWithoutConsentRequest = {
@@ -127,19 +127,19 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(createWithoutConsentRequest),
-      });
+      }
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(400
 
-      const error = await response.json();
+      const error = await response.json(
       expect(error).toMatchObject({
         error: 'LGPD_CONSENT_REQUIRED',
         message: expect.stringContaining('consentimento'),
         code: 'LGPD_001',
         locale: 'pt-BR',
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('READ Operations with Access Control', () => {
     it('should read patient data with audit logging', async () => {
@@ -166,11 +166,11 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(readRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         data: expect.any(Object),
         accessLog: {
@@ -184,8 +184,8 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           purposeValidated: true,
           dataMinimized: true,
         },
-      });
-    });
+      }
+    }
 
     it('should return pseudonymized data when requested', async () => {
       const pseudonymizedReadRequest = {
@@ -210,11 +210,11 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(pseudonymizedReadRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         data: {
           pseudonymId: expect.any(String),
@@ -226,11 +226,11 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           directIdentifiersRemoved: true,
           purposeLimited: true,
         },
-      });
+      }
 
-      expect(result.data).not.toHaveProperty('personalData');
-    });
-  });
+      expect(result.data).not.toHaveProperty('personalData')
+    }
+  }
 
   describe('UPDATE Operations with Versioning', () => {
     it('should update record with version control and consent validation', async () => {
@@ -263,11 +263,11 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(updateRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         recordId,
         operation: 'UPDATE',
@@ -284,8 +284,8 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           updateReason: expect.any(String),
           timestamp: expect.any(String),
         },
-      });
-    });
+      }
+    }
 
     it('should reject updates without valid consent', async () => {
       const invalidUpdateRequest = {
@@ -309,19 +309,19 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(invalidUpdateRequest),
-      });
+      }
 
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(403
 
-      const error = await response.json();
+      const error = await response.json(
       expect(error).toMatchObject({
         error: 'LGPD_CONSENT_INVALID',
         message: expect.stringContaining('consentimento'),
         code: 'LGPD_002',
         locale: 'pt-BR',
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('DELETE Operations with Right to Erasure', () => {
     it('should implement LGPD right to erasure (Art. 18, V)', async () => {
@@ -352,11 +352,11 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(deleteRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         recordId,
         operation: 'DELETE',
@@ -372,8 +372,8 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           verification: 'cpf_validation',
           retentionPeriodExpired: expect.any(Boolean),
         },
-      });
-    });
+      }
+    }
 
     it('should handle selective deletion with data preservation requirements', async () => {
       const selectiveDeleteRequest = {
@@ -402,11 +402,11 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(selectiveDeleteRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         recordId,
         operation: 'SELECTIVE_DELETE',
@@ -417,9 +417,9 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           medicalDataPreserved: true,
           legalBasisDocumented: true,
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Cross-operation LGPD Compliance', () => {
     it('should maintain complete audit trail across all operations', async () => {
@@ -443,11 +443,11 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(auditRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         recordId,
         auditTrail: expect.arrayContaining([
@@ -464,7 +464,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           dataIntegrity: true,
           accessibilityForDataSubject: true,
         },
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

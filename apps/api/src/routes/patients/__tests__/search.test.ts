@@ -23,7 +23,7 @@ const mockLGPDService = {
 
 describe('POST /api/v2/patients/search endpoint (T048)', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(
 
     // Mock successful service responses by default
     mockPatientService.searchPatients.mockResolvedValue({
@@ -82,15 +82,15 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
   afterEach(() => {
     vi.restoreAllMocks(
 
-  it('should export search patients route handler'), () => {
+  it('should export search patients route handler', () => {
     expect(() => {
-      const module = require('../search'
+      const module = require('../search')
       expect(module.default).toBeDefined(
     }).not.toThrow(
 
-  describe('Successful Patient Search'), () => {
+  describe('Successful Patient Search', () => {
     it('should perform full-text search with default parameters',async () => {
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'João Silva'),
@@ -111,15 +111,15 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.success).toBe(true
-      expect(Array.isArray(data.data.patients)).toBe(true
+      expect(data.success).toBe(true);
+      expect(Array.isArray(data.data.patients)).toBe(true);
       expect(data.data.patients).toHaveLength(2
       expect(data.data.pagination).toBeDefined(
       expect(data.data.searchMetadata).toBeDefined(
-      expect(data.data.searchMetadata._query).toBe('João Silva'
+      expect(data.data.searchMetadata._query).toBe('João Silva')
 
     it('should perform structured search with filters',async () => {
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         filters: {
@@ -156,14 +156,14 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.success).toBe(true
+      expect(data.success).toBe(true);
       expect(mockPatientService.searchPatients).toHaveBeenCalledWith({
         _userId: 'user-123'),
         searchCriteria: searchData),
         searchType: 'structured'),
 
     it('should perform fuzzy search for names',async () => {
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'Joao Silva', // Missing accent
@@ -188,14 +188,14 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.success).toBe(true
+      expect(data.success).toBe(true);
       expect(mockPatientService.searchPatients).toHaveBeenCalledWith({
         _userId: 'user-123'),
         searchCriteria: searchData),
         searchType: 'fuzzy'),
 
     it('should include search performance headers',async () => {
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'João'),
@@ -215,11 +215,11 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
 
       expect(response.status).toBe(200
       expect(response.headers.get('X-Search-Time')).toBeDefined(
-      expect(response.headers.get('X-Results-Count')).toBe('2'
-      expect(response.headers.get('X-Search-Type')).toBe('fulltext'
+      expect(response.headers.get('X-Results-Count')).toBe('2')
+      expect(response.headers.get('X-Search-Type')).toBe('fulltext')
 
     it('should support advanced search with multiple criteria',async () => {
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'João'),
@@ -256,15 +256,15 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.success).toBe(true
+      expect(data.success).toBe(true);
       expect(mockPatientService.searchPatients).toHaveBeenCalledWith({
         _userId: 'user-123'),
         searchCriteria: searchData),
         searchType: 'advanced'),
 
-  describe('LGPD Compliance and Data Access'), () => {
+  describe('LGPD Compliance and Data Access', () => {
     it('should validate LGPD data access permissions for search',async () => {
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'João'),
@@ -290,7 +290,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         searchCriteria: searchData),
 
     it('should log search activity for audit trail',async () => {
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'João Silva'),
@@ -334,7 +334,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         error: 'Acesso negado por política LGPD'),
         code: 'LGPD_SEARCH_DENIED'),
 
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'João'),
@@ -354,9 +354,9 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(403
-      expect(data.success).toBe(false
-      expect(data.error).toContain('LGPD'
-      expect(data.code).toBe('LGPD_SEARCH_DENIED'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('LGPD')
+      expect(data.code).toBe('LGPD_SEARCH_DENIED')
 
     it('should mask sensitive data based on access level',async () => {
       mockLGPDService.validateDataAccess.mockResolvedValue({
@@ -376,7 +376,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         },
       ]
 
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'João'),
@@ -396,13 +396,13 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(200
-      expect(data.data.patients[0].cpf).toBe('***.***.***-**'
-      expect(data.data.patients[0].email).toBe('j***@example.com'
-      expect(response.headers.get('X-Access-Level')).toBe('limited'
+      expect(data.data.patients[0].cpf).toBe('***.***.***-**')
+      expect(data.data.patients[0].email).toBe('j***@example.com')
+      expect(response.headers.get('X-Access-Level')).toBe('limited')
 
-  describe('Error Handling'), () => {
+  describe('Error Handling', () => {
     it('should handle authentication errors',async () => {
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const mockRequest = {
         method: 'POST'),
@@ -417,11 +417,11 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(401
-      expect(data.success).toBe(false
-      expect(data.error).toContain('Não autorizado'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Não autorizado')
 
     it('should handle validation errors for search criteria',async () => {
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const invalidSearchData = {
         // Missing required query or filters
@@ -445,8 +445,8 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(400
-      expect(data.success).toBe(false
-      expect(Array.isArray(data.errors)).toBe(true
+      expect(data.success).toBe(false);
+      expect(Array.isArray(data.errors)).toBe(true);
       expect(data.errors.length).toBeGreaterThan(0
 
     it('should handle service errors gracefully',async () => {
@@ -454,7 +454,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         success: false),
         error: 'Erro interno do serviço de busca'),
 
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'João'),
@@ -474,15 +474,15 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(500
-      expect(data.success).toBe(false
-      expect(data.error).toContain('Erro interno'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Erro interno')
 
     it('should handle search timeout errors',async () => {
       mockPatientService.searchPatients.mockRejectedValue(
         new Error('Search timeout'),
       
 
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'João'),
@@ -502,12 +502,12 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
       const data = await response.json(
 
       expect(response.status).toBe(500
-      expect(data.success).toBe(false
-      expect(data.error).toContain('Erro interno do servidor'
+      expect(data.success).toBe(false);
+      expect(data.error).toContain('Erro interno do servidor')
 
-  describe('Brazilian Healthcare Compliance'), () => {
+  describe('Brazilian Healthcare Compliance', () => {
     it('should include CFM compliance headers',async () => {
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'João'),
@@ -525,12 +525,12 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
 
       const response = await searchRoute.request(mockRequest
 
-      expect(response.headers.get('X-CFM-Compliant')).toBe('true'
-      expect(response.headers.get('X-Medical-Record-Search')).toBe('logged'
-      expect(response.headers.get('X-LGPD-Compliant')).toBe('true'
+      expect(response.headers.get('X-CFM-Compliant')).toBe('true')
+      expect(response.headers.get('X-Medical-Record-Search')).toBe('logged')
+      expect(response.headers.get('X-LGPD-Compliant')).toBe('true')
 
     it('should validate healthcare professional context for medical searches',async () => {
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'João'),
@@ -561,9 +561,9 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
         }),
       
 
-  describe('Performance and Caching'), () => {
+  describe('Performance and Caching', () => {
     it('should include performance metrics in response',async () => {
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'João'),
@@ -613,7 +613,7 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
           },
         },
 
-      const { default: searchRoute } = require('../search'
+      const { default: searchRoute } = require('../search')
 
       const searchData = {
         _query: 'Patient'),
@@ -639,4 +639,4 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
       expect(response.status).toBe(200
       expect(data.data.patients).toHaveLength(50
       expect(data.data.pagination.total).toBe(500
-      expect(response.headers.get('X-Total-Count')).toBe('500'
+      expect(response.headers.get('X-Total-Count')).toBe('500')

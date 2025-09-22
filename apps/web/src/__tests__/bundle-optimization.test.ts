@@ -20,8 +20,8 @@ import { LibraryLoading } from '@/lib/utils';
 describe('Bundle Optimization Tests', () => {
   beforeEach(() => {
     // Reset any mocked modules
-    vi.clearAllMocks();
-  });
+    vi.clearAllMocks(
+  }
 
   describe('Chart Component Lazy Loading', () => {
     it('should render chart with loading state', async () => {
@@ -45,30 +45,30 @@ describe('Bundle Optimization Tests', () => {
           { config: chartConfig },
           React.createElement('div', null, 'Test Chart Content'),
         ),
-      );
+      
 
       // Should render loading state initially
-      expect(screen.getByText(/Carregando gráfico/i)).toBeInTheDocument();
+      expect(screen.getByText(/Carregando gráfico/i)).toBeInTheDocument(
 
       // After lazy loading, content should be visible
       await waitFor(() => {
-        expect(screen.getByText('Test Chart Content')).toBeInTheDocument();
-      });
-    });
+        expect(screen.getByText('Test Chart Content')).toBeInTheDocument(
+      }
+    }
 
     it('should handle chart tooltip lazy loading', async () => {
       const tooltipContent = React.createElement(
         ChartTooltipContent,
         null,
         React.createElement('div', null, 'Tooltip Content'),
-      );
+      
 
-      render(tooltipContent);
+      render(tooltipContent
 
       // Should render tooltip content
-      expect(screen.getByText('Tooltip Content')).toBeInTheDocument();
-    });
-  });
+      expect(screen.getByText('Tooltip Content')).toBeInTheDocument(
+    }
+  }
 
   describe('Telemedicine Component Lazy Loading', () => {
     it('should render VideoConsultation with loading state', async () => {
@@ -82,36 +82,36 @@ describe('Bundle Optimization Tests', () => {
           },
           React.createElement(VideoConsultation, { sessionId: 'test-session' }),
         ),
-      );
+      
 
       // Should render loading state
-      expect(screen.getByText(/Carregando telemedicina/i)).toBeInTheDocument();
+      expect(screen.getByText(/Carregando telemedicina/i)).toBeInTheDocument(
 
       // Component should eventually load (though in test environment it may not fully initialize)
       await waitFor(() => {
-        expect(screen.queryByText(/Carregando telemedicina/i)).not.toBeInTheDocument();
-      }, { timeout: 5000 });
-    });
-  });
+        expect(screen.queryByText(/Carregando telemedicina/i)).not.toBeInTheDocument(
+      }, { timeout: 5000 }
+    }
+  }
 
   describe('Loading Components', () => {
     it('should render LibraryLoading component', () => {
       render(
         React.createElement(LibraryLoading, { message: 'Test Loading' }),
-      );
+      
 
-      expect(screen.getByText('Test Loading')).toBeInTheDocument();
-      expect(screen.getByRole('status')).toBeInTheDocument();
-    });
+      expect(screen.getByText('Test Loading')).toBeInTheDocument(
+      expect(screen.getByRole('status')).toBeInTheDocument(
+    }
 
     it('should use default message when none provided', () => {
       render(
         React.createElement(LibraryLoading),
-      );
+      
 
-      expect(screen.getByText('Carregando...')).toBeInTheDocument();
-    });
-  });
+      expect(screen.getByText('Carregando...')).toBeInTheDocument(
+    }
+  }
 
   describe('Performance Metrics', () => {
     it('should validate bundle size reduction', () => {
@@ -141,13 +141,13 @@ describe('Bundle Optimization Tests', () => {
           `${chunk}: ${Math.round((currentSize / 1024 / 1024) * 100) / 100}MB → ${
             Math.round((targetSize / 1024 / 1024) * 100) / 100
           }MB (${Math.round(reduction)}% reduction)`,
-        );
+        
 
         // For now, this is informational - in production, we'd enforce targets
-        expect(currentSize).toBeGreaterThan(0);
-        expect(targetSize).toBeLessThan(currentSize);
-      });
-    });
+        expect(currentSize).toBeGreaterThan(0
+        expect(targetSize).toBeLessThan(currentSize
+      }
+    }
 
     it('should validate code splitting effectiveness', () => {
       // This test validates that our code splitting strategy is working
@@ -164,12 +164,12 @@ describe('Bundle Optimization Tests', () => {
 
       // In a real scenario, we'd validate these chunks exist in the build output
       expectedChunks.forEach(chunk => {
-        console.log(`Validating chunk exists: ${chunk}`);
+        console.log(`Validating chunk exists: ${chunk}`
         // This would check file system in real CI/CD
-        expect(chunk).toBeTruthy();
-      });
-    });
-  });
+        expect(chunk).toBeTruthy(
+      }
+    }
+  }
 
   describe('Healthcare Compliance', () => {
     it('should maintain LGPD compliance with lazy loading', () => {
@@ -183,9 +183,9 @@ describe('Bundle Optimization Tests', () => {
       // This would test that lazy-loaded components still handle PHI properly
       expect(() => {
         // Simulate lazy-loaded component handling sensitive data
-        JSON.stringify(mockPatientData);
-      }).not.toThrow();
-    });
+        JSON.stringify(mockPatientData
+      }).not.toThrow(
+    }
 
     it('should maintain CFM compliance with lazy loading', () => {
       // Validate that medical components maintain compliance when lazy-loaded
@@ -199,17 +199,17 @@ describe('Bundle Optimization Tests', () => {
       // This would test that lazy-loaded telemedicine components maintain compliance
       expect(() => {
         // Simulate lazy-loaded medical session handling
-        JSON.stringify(mockSessionData);
-      }).not.toThrow();
-    });
-  });
+        JSON.stringify(mockSessionData
+      }).not.toThrow(
+    }
+  }
 
   describe('Error Handling', () => {
     it('should handle lazy loading errors gracefully', async () => {
       // Mock a failed lazy import
       vi.doMock('recharts', () => {
-        throw new Error('Failed to load module');
-      });
+        throw new Error('Failed to load module')
+      }
 
       // This test would validate error boundaries around lazy-loaded components
       // For now, we'll just validate the test structure
@@ -220,8 +220,8 @@ describe('Bundle Optimization Tests', () => {
             { config: {} },
             React.createElement('div', null, 'Test Content'),
           ),
-        );
-      }).not.toThrow();
-    });
-  });
-});
+        
+      }).not.toThrow(
+    }
+  }
+}

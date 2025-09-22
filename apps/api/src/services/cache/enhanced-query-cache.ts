@@ -1,19 +1,15 @@
 /**
  * Enhanced Query Cache Service for AI Agent Database Integration
  *
- * Provides intelligent caching for AI agent queries with:
- * - Multi-tier caching (memory + Redis)
- * - Healthcare data compliance and LGPD requirements
- * - Smart invalidation based on data changes
- * - Performance monitoring and optimization
- * - Fail-secure architecture
+ * Provides intelligent caching with multi-tier architecture, healthcare compliance,
+ * smart invalidation, and performance monitoring.
  *
  * @version 1.0.0
- * @author NeonPro Platform Team
  * @compliance LGPD, ANVISA, CFM, ISO 27001
  */
 
 import { createHash } from 'crypto';
+import { z } from 'zod';
 import {
   AguiQueryMessage,
   AguiResponseMessage,
@@ -29,7 +25,6 @@ import {
 } from '../../../shared/src/services/cache-management';
 import { RedisCacheBackend } from '../../../shared/src/services/redis-cache-backend';
 
-// Input validation schemas
 const QueryCacheKeySchema = z.string().min(1).max(1000);
 const UserIdSchema = z.string().min(1).max(255);
 const QueryTTLSchema = z.number().min(1).max(86400); // Max 24 hours
@@ -175,8 +170,8 @@ export class EnhancedQueryCacheService {
 
     try {
       // Validate inputs
-      const validatedUserId = UserIdSchema.parse(userId);
-      const validatedQuery = this.validateQuery(query);
+      const validatedUserId = UserIdSchema.parse(_userId);
+      const validatedQuery = this.validateQuery(_query);
 
       if (options.bypassCache) {
         return { cached: false, source: 'miss', executionTime: Date.now() - startTime };
@@ -191,7 +186,6 @@ export class EnhancedQueryCacheService {
         this.createHealthcareContext(validatedQuery, validatedUserId, options.clinicId),
         {
           _userId: validatedUserId,
-          sessionId: query.context?.sessionId,
         },
       );
 
@@ -269,8 +263,8 @@ export class EnhancedQueryCacheService {
   ): Promise<CacheOperationResult> {
     try {
       // Validate inputs
-      const validatedUserId = UserIdSchema.parse(userId);
-      const validatedQuery = this.validateQuery(query);
+      const validatedUserId = UserIdSchema.parse(_userId);
+      const validatedQuery = this.validateQuery(_query);
       const validatedResponse = this.validateResponse(response);
 
       // Generate cache key
@@ -285,7 +279,7 @@ export class EnhancedQueryCacheService {
         ttl: options.customTTL || this.config.defaultTTL,
         hitCount: 1,
         _userId: validatedUserId,
-        patientId: validatedQuery.context?.patientId,
+        patientId: validatedQuery._context?.patientId,
         clinicId: options.clinicId,
         dataCategories: this.extractDataCategories(validatedResponse),
         sensitivity: this.determineSensitivity(validatedQuery, validatedResponse),
@@ -293,7 +287,6 @@ export class EnhancedQueryCacheService {
         cacheTier: CacheTier.MEMORY, // Default tier
         lgpdCompliant: this.config.lgpdCompliance,
         auditRequired: this.requiresAudit(validatedQuery, validatedResponse),
-        consentId: validatedQuery.context?.consentId,
       };
 
       // Determine cache tier based on sensitivity and usage
@@ -310,7 +303,6 @@ export class EnhancedQueryCacheService {
           tier: entry.cacheTier,
           userContext: {
             _userId: validatedUserId,
-            sessionId: validatedQuery.context?.sessionId,
           },
         },
       );
@@ -363,7 +355,7 @@ export class EnhancedQueryCacheService {
       // Build invalidation pattern
       let invalidationPattern = pattern;
       if (options._userId) {
-        invalidationPattern = `*user:${options.userId}*${pattern}*`;
+        invalidationPattern = `*user:${options._userId}*${pattern}*`;
       }
       if (options.patientId) {
         invalidationPattern = `*patient:${options.patientId}*${pattern}*`;
@@ -381,7 +373,7 @@ export class EnhancedQueryCacheService {
             dataClassification: CacheDataSensitivity.INTERNAL,
           }
           : undefined,
-        options.userId ? { _userId: options.userId } : undefined,
+        options._userId ? { _userId: options._userId } : undefined,
       );
 
       totalInvalidated += invalidatedCount;
@@ -392,7 +384,7 @@ export class EnhancedQueryCacheService {
         console.log('[Query Cache] Cache invalidation:', {
           pattern,
           reason: options.reason,
-          _userId: options.userId,
+          _userId: options._userId,
           patientId: options.patientId,
           clinicId: options.clinicId,
           totalInvalidated,
@@ -428,9 +420,9 @@ export class EnhancedQueryCacheService {
       let totalMemoryUsage = 0;
       cacheStats.forEach((tierStats,_tier) => {
         totalMemoryUsage += tierStats.memoryUsage;
-        if (tier === CacheTier.MEMORY) {
+        if (_tier === CacheTier.MEMORY) {
           this.stats.memoryCacheSize = tierStats.totalEntries;
-        } else if (tier === CacheTier.REDIS) {
+        } else if (_tier === CacheTier.REDIS) {
           this.stats.redisCacheSize = tierStats.totalEntries;
         }
       });
@@ -588,18 +580,18 @@ export class EnhancedQueryCacheService {
    */
   private generateCacheKey(_query: AguiQueryMessage, _userId: string, clinicId?: string): string {
     const queryData = {
-      _query: this.sanitizeQueryString(query._query),
+      _query: this.sanitizeQueryString(_query._query),
       _context: {
-        patientId: query.context?.patientId
-          ? this.sanitizeString(query.context.patientId)
+        patientId: _query._context?.patientId
+          ? this.sanitizeString(_query._context.patientId)
           : undefined,
-        _userId: query.context?.userId ? this.sanitizeString(query.context._userId) : undefined,
-        sessionId: query.context?.sessionId,
+        _userId: _query._context?._userId, // Already has underscore
+        // sessionId: _query._context?.sessionId, // Property not in AguiQueryContext
       },
       options: {
-        maxResults: Math.min(query.options?.maxResults || 10, 100),
-        model: this.sanitizeString(query.options?.model || 'default'),
-        temperature: Math.max(0, Math.min(1, query.options?.temperature || 0.7)),
+        maxResults: Math.min(_query.options?.maxResults || 10, 100),
+        model: this.sanitizeString(_query.options?.model || 'default'),
+        temperature: Math.max(0, Math.min(1, _query.options?.temperature || 0.7)),
       },
     };
 
@@ -607,7 +599,7 @@ export class EnhancedQueryCacheService {
       .update(JSON.stringify(queryData) + this.config.securityKey + _userId)
       .digest('hex');
 
-    return `_query:${userId}:${clinicId ? `${clinicId}:` : ''}${hash}`;
+    return `_query:${_userId}:${clinicId ? `${clinicId}:` : ''}${hash}`;
   }
 
   /**
@@ -615,14 +607,13 @@ export class EnhancedQueryCacheService {
    */
   private generateQueryHash(_query: AguiQueryMessage): string {
     const queryData = {
-      _query: query.query.toLowerCase().trim(),
+      _query: _query._query.toLowerCase().trim(),
       _context: {
-        patientId: query.context?.patientId,
-        clinicId: query.context?.clinicId,
+        patientId: _query._context?.patientId,
       },
       options: {
-        maxResults: query.options?.maxResults,
-        model: query.options?.model,
+        maxResults: _query.options?.maxResults,
+        model: _query.options?.model,
       },
     };
 
@@ -640,13 +631,11 @@ export class EnhancedQueryCacheService {
     clinicId?: string,
   ): HealthcareCacheContext {
     return {
-      patientId: query.context?.patientId,
-      providerId: userId,
+      patientId: _query._context?.patientId,
+      providerId: _userId,
       facilityId: clinicId,
-      departmentId: query.context?.departmentId,
       clinicalContext: 'consultation', // Default context
       dataClassification: CacheDataSensitivity.INTERNAL,
-      lgpdConsentId: query.context?.consentId,
       retentionRequirement: 'standard',
     };
   }
@@ -691,7 +680,7 @@ export class EnhancedQueryCacheService {
       categories.push('financial_data');
     }
 
-    return [...new Set(categories)];
+    return Array.from(new Set(categories));
   }
 
   /**
@@ -702,7 +691,7 @@ export class EnhancedQueryCacheService {
     response: AguiResponseMessage,
   ): CacheDataSensitivity {
     // Check for patient data
-    if (query.context?.patientId || response.content.toLowerCase().includes('paciente')) {
+    if (_query._context?.patientId || response.content.toLowerCase().includes('paciente')) {
       return CacheDataSensitivity.CONFIDENTIAL;
     }
 
@@ -752,12 +741,12 @@ export class EnhancedQueryCacheService {
     response: AguiResponseMessage,
   ): boolean {
     // Audit patient data access
-    if (query.context?.patientId) {
+    if (_query._context?.patientId) {
       return true;
     }
 
     // Audit sensitive queries
-    if (this.determineSensitivity(query, response) === CacheDataSensitivity.RESTRICTED) {
+    if (this.determineSensitivity(_query, response) === CacheDataSensitivity.RESTRICTED) {
       return true;
     }
 
@@ -768,17 +757,17 @@ export class EnhancedQueryCacheService {
    * Validate query structure
    */
   private validateQuery(_query: AguiQueryMessage): AguiQueryMessage {
-    if (!query || typeof query !== 'object') {
+    if (!_query || typeof _query !== 'object') {
       throw new Error('Invalid query object');
     }
 
     return {
-      ...query,
-      _query: this.sanitizeQueryString(query.query || ''),
+      ..._query,
+      _query: this.sanitizeQueryString(_query._query || ''),
       options: {
-        maxResults: Math.min(query.options?.maxResults || 10, 100),
-        model: this.sanitizeString(query.options?.model || 'default'),
-        temperature: Math.max(0, Math.min(1, query.options?.temperature || 0.7)),
+        maxResults: Math.min(_query.options?.maxResults || 10, 100),
+        model: this.sanitizeString(_query.options?.model || 'default'),
+        temperature: Math.max(0, Math.min(1, _query.options?.temperature || 0.7)),
       },
     };
   }
@@ -808,7 +797,7 @@ export class EnhancedQueryCacheService {
       && entry.response
       && typeof entry.timestamp === 'string'
       && entry.ttl > 0
-      && entry.userId
+      && entry._userId
     );
   }
 
@@ -816,8 +805,8 @@ export class EnhancedQueryCacheService {
    * Sanitize query string
    */
   private sanitizeQueryString(_query: string): string {
-    if (typeof query !== 'string') return '';
-    return query
+    if (typeof _query !== 'string') return '';
+    return _query
       .replace(/[<>"'&]/g, '')
       .replace(/\s+/g, ' ')
       .trim()

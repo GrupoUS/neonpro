@@ -60,17 +60,17 @@ const mockWebVitals = {
 
 describe(('Observability Contracts', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.clearAllMocks(
     // Mock global objects
     global.window = {
       location: { hostname: 'test.neonpro.com.br' },
       navigator: { userAgent: 'test-agent' },
     } as any;
-  });
+  }
 
   afterEach(() => {
-    vi.restoreAllMocks();
-  });
+    vi.restoreAllMocks(
+  }
 
   describe(('Sentry Configuration Contract', () => {
     test(('should provide healthcare-compliant Sentry configuration', () => {
@@ -93,8 +93,8 @@ describe(('Observability Contracts', () => {
         environment: expect.any(String),
         beforeSend: expect.any(Function),
         beforeBreadcrumb: expect.any(Function),
-      });
-    });
+      }
+    }
 
     test(('should redact PII from error reports', () => {
       // Contract: PII must be redacted for LGPD compliance
@@ -113,11 +113,11 @@ describe(('Observability Contracts', () => {
       };
 
       // Test: PII redaction function contract
-      expect(typeof redactedData).toBe('object');
-      expect(redactedData.cpf).toBe('[REDACTED_CPF]');
-      expect(redactedData.email).toBe('[REDACTED_EMAIL]');
-      expect(redactedData.phone).toBe('[REDACTED_PHONE]');
-    });
+      expect(typeof redactedData).toBe('object')
+      expect(redactedData.cpf).toBe('[REDACTED_CPF]')
+      expect(redactedData.email).toBe('[REDACTED_EMAIL]')
+      expect(redactedData.phone).toBe('[REDACTED_PHONE]')
+    }
 
     test(('should categorize healthcare errors correctly', () => {
       // Contract: Healthcare error categories for compliance
@@ -132,14 +132,14 @@ describe(('Observability Contracts', () => {
         'data_integrity_error',
       ];
 
-      const testError = new Error('Patient data validation failed');
+      const testError = new Error('Patient data validation failed')
 
       // Test: Error categorization contract
-      expect(healthcareErrorCategories).toContain('patient_data_error');
-      expect(healthcareErrorCategories).toContain('medical_workflow_error');
-      expect(healthcareErrorCategories).toContain('compliance_violation');
+      expect(healthcareErrorCategories).toContain('patient_data_error')
+      expect(healthcareErrorCategories).toContain('medical_workflow_error')
+      expect(healthcareErrorCategories).toContain('compliance_violation')
       expect(Array.isArray(healthcareErrorCategories)).toBe(true);
-    });
+    }
 
     test(('should include healthcare context in error reports', () => {
       // Contract: Healthcare context for error analysis
@@ -153,14 +153,14 @@ describe(('Observability Contracts', () => {
       };
 
       // Test: Healthcare context structure
-      expect(typeof healthcareContext.patient_id).toBe('string');
-      expect(typeof healthcareContext.medical_context).toBe('string');
-      expect(typeof healthcareContext.workflow_step).toBe('string');
+      expect(typeof healthcareContext.patient_id).toBe('string')
+      expect(typeof healthcareContext.medical_context).toBe('string')
+      expect(typeof healthcareContext.workflow_step).toBe('string')
       expect(Array.isArray(healthcareContext.compliance_requirements)).toBe(
         true,
-      );
-    });
-  });
+      
+    }
+  }
 
   describe(('OpenTelemetry Tracing Contract', () => {
     test(('should provide healthcare-compliant tracing configuration', () => {
@@ -181,10 +181,10 @@ describe(('Observability Contracts', () => {
       // Test: Tracing configuration structure
       expect(expectedTracingConfig.serviceName).toBe(
         'neonpro-healthcare-platform',
-      );
+      
       expect(expectedTracingConfig.healthcareCompliance.lgpd).toBe(true);
       expect(expectedTracingConfig.healthcareCompliance.anvisa).toBe(true);
-    });
+    }
 
     test(('should create spans with healthcare attributes', () => {
       // Contract: Healthcare span attributes for compliance
@@ -201,11 +201,11 @@ describe(('Observability Contracts', () => {
       expect(healthcareSpanAttributes['healthcare.compliance.lgpd']).toBe(true);
       expect(typeof healthcareSpanAttributes['healthcare.patient.id']).toBe(
         'string',
-      );
+      
       expect(typeof healthcareSpanAttributes['healthcare.workflow.type']).toBe(
         'string',
-      );
-    });
+      
+    }
 
     test(('should handle span lifecycle for medical workflows', () => {
       // Contract: Span lifecycle for medical operations
@@ -219,13 +219,13 @@ describe(('Observability Contracts', () => {
       };
 
       // Test: Span lifecycle methods exist
-      expect(typeof spanLifecycle.start).toBe('function');
-      expect(typeof spanLifecycle.addEvent).toBe('function');
-      expect(typeof spanLifecycle.setAttributes).toBe('function');
-      expect(typeof spanLifecycle.recordException).toBe('function');
-      expect(typeof spanLifecycle.setStatus).toBe('function');
-      expect(typeof spanLifecycle.end).toBe('function');
-    });
+      expect(typeof spanLifecycle.start).toBe('function')
+      expect(typeof spanLifecycle.addEvent).toBe('function')
+      expect(typeof spanLifecycle.setAttributes).toBe('function')
+      expect(typeof spanLifecycle.recordException).toBe('function')
+      expect(typeof spanLifecycle.setStatus).toBe('function')
+      expect(typeof spanLifecycle.end).toBe('function')
+    }
 
     test(('should provide medical workflow tracing utilities', () => {
       // Contract: Medical workflow tracing helpers
@@ -240,11 +240,11 @@ describe(('Observability Contracts', () => {
       // Test: Workflow tracing utilities
       expect(typeof workflowTracingUtils.tracePatientOperation).toBe(
         'function',
-      );
-      expect(typeof workflowTracingUtils.traceAIInteraction).toBe('function');
-      expect(typeof workflowTracingUtils.traceMedicalRecord).toBe('function');
-    });
-  });
+      
+      expect(typeof workflowTracingUtils.traceAIInteraction).toBe('function')
+      expect(typeof workflowTracingUtils.traceMedicalRecord).toBe('function')
+    }
+  }
 
   describe(('Web Vitals Monitoring Contract', () => {
     test(('should provide healthcare-specific performance thresholds', () => {
@@ -274,10 +274,10 @@ describe(('Observability Contracts', () => {
       };
 
       // Test: Healthcare performance thresholds
-      expect(healthcareThresholds.emergency.lcp).toBeLessThanOrEqual(1000);
-      expect(healthcareThresholds.patient_care.lcp).toBeLessThanOrEqual(2000);
-      expect(healthcareThresholds.general.lcp).toBeLessThanOrEqual(2500);
-    });
+      expect(healthcareThresholds.emergency.lcp).toBeLessThanOrEqual(1000
+      expect(healthcareThresholds.patient_care.lcp).toBeLessThanOrEqual(2000
+      expect(healthcareThresholds.general.lcp).toBeLessThanOrEqual(2500
+    }
 
     test(('should provide healthcare performance context', () => {
       // Contract: Healthcare context for performance analysis
@@ -291,13 +291,13 @@ describe(('Observability Contracts', () => {
       };
 
       // Test: Performance context structure
-      expect(typeof performanceContext.workflow_type).toBe('string');
-      expect(typeof performanceContext.patient_safety_impact).toBe('string');
-      expect(typeof performanceContext.urgency_level).toBe('string');
+      expect(typeof performanceContext.workflow_type).toBe('string')
+      expect(typeof performanceContext.patient_safety_impact).toBe('string')
+      expect(typeof performanceContext.urgency_level).toBe('string')
       expect(Array.isArray(performanceContext.compliance_requirements)).toBe(
         true,
-      );
-    });
+      
+    }
 
     test(('should categorize performance impacts by medical urgency', () => {
       // Contract: Performance impact categorization
@@ -318,11 +318,11 @@ describe(('Observability Contracts', () => {
       ];
 
       // Test: Categorization arrays
-      expect(urgencyCategories).toContain('emergency_critical');
-      expect(urgencyCategories).toContain('urgent_care');
-      expect(impactLevels).toContain('patient_safety_critical');
-      expect(impactLevels).toContain('workflow_disrupting');
-    });
+      expect(urgencyCategories).toContain('emergency_critical')
+      expect(urgencyCategories).toContain('urgent_care')
+      expect(impactLevels).toContain('patient_safety_critical')
+      expect(impactLevels).toContain('workflow_disrupting')
+    }
 
     test(('should provide performance monitoring callbacks', () => {
       // Contract: Performance monitoring callbacks
@@ -337,21 +337,21 @@ describe(('Observability Contracts', () => {
       // Test: Callback functions exist
       expect(typeof performanceCallbacks.onLCPThresholdExceeded).toBe(
         'function',
-      );
+      
       expect(typeof performanceCallbacks.onFIDThresholdExceeded).toBe(
         'function',
-      );
+      
       expect(typeof performanceCallbacks.onCLSThresholdExceeded).toBe(
         'function',
-      );
+      
       expect(typeof performanceCallbacks.onPerformanceDegradation).toBe(
         'function',
-      );
+      
       expect(typeof performanceCallbacks.onPatientSafetyImpact).toBe(
         'function',
-      );
-    });
-  });
+      
+    }
+  }
 
   describe(('Healthcare Compliance Integration', () => {
     test(('should provide LGPD compliance logging', () => {
@@ -369,7 +369,7 @@ describe(('Observability Contracts', () => {
       expect(lgpdCompliance.consentTracked).toBe(true);
       expect(lgpdCompliance.piiRedacted).toBe(true);
       expect(lgpdCompliance.auditTrailMaintained).toBe(true);
-    });
+    }
 
     test(('should provide ANVISA cybersecurity compliance', () => {
       // Contract: ANVISA RDC 505/2021 compliance
@@ -386,7 +386,7 @@ describe(('Observability Contracts', () => {
       expect(anvisaCompliance.incidentTracking).toBe(true);
       expect(anvisaCompliance.vulnerabilityAssessment).toBe(true);
       expect(anvisaCompliance.accessControlLogging).toBe(true);
-    });
+    }
 
     test(('should integrate with healthcare audit trail', () => {
       // Contract: Healthcare audit trail integration
@@ -399,14 +399,14 @@ describe(('Observability Contracts', () => {
       };
 
       // Test: Audit trail functions
-      expect(typeof auditTrailIntegration.logUserActions).toBe('function');
-      expect(typeof auditTrailIntegration.logDataAccess).toBe('function');
-      expect(typeof auditTrailIntegration.logSystemEvents).toBe('function');
-      expect(typeof auditTrailIntegration.logComplianceEvents).toBe('function');
-      expect(typeof auditTrailIntegration.generateAuditReport).toBe('function');
-    });
-  });
-});
+      expect(typeof auditTrailIntegration.logUserActions).toBe('function')
+      expect(typeof auditTrailIntegration.logDataAccess).toBe('function')
+      expect(typeof auditTrailIntegration.logSystemEvents).toBe('function')
+      expect(typeof auditTrailIntegration.logComplianceEvents).toBe('function')
+      expect(typeof auditTrailIntegration.generateAuditReport).toBe('function')
+    }
+  }
+}
 
 export default {
   mockSentry,

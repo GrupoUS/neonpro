@@ -23,15 +23,15 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
   let professionalCRM: string;
 
   beforeEach(async () => {
-    await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
+    await setupTestDatabase(
+    testClient = createTestClient({ _role: 'admin' }
     clinicId = 'clinic-br-001';
     professionalCRM = 'CRM/SP 123456';
-  });
+  }
 
   afterEach(async () => {
-    await cleanupTestDatabase();
-  });
+    await cleanupTestDatabase(
+  }
 
   describe('Basic Usage Analytics', () => {
     it('should retrieve overall AI usage statistics for clinic', async () => {
@@ -41,7 +41,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
         metrics: 'all',
         currency: 'BRL',
         locale: 'pt-BR',
-      });
+      }
 
       // TDD RED: Usage analytics endpoint doesn't exist - MUST FAIL
       const response = await fetch(`/api/v1/ai/usage?${usageQuery}`, {
@@ -50,11 +50,11 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           'Content-Type': 'application/json',
           ...testClient.headers,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         period: '30_dias',
         clinicId,
@@ -86,8 +86,8 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           aggregatedOnly: true,
           noPersonalData: true,
         },
-      });
-    });
+      }
+    }
 
     it('should provide professional-specific usage analytics', async () => {
       const professionalQuery = new URLSearchParams({
@@ -95,7 +95,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
         period: '7_dias',
         includePatientCount: 'false', // LGPD compliance
         anonymizeData: 'true',
-      });
+      }
 
       // TDD RED: Professional analytics not implemented - MUST FAIL
       const response = await fetch(`/api/v1/ai/usage?${professionalQuery}`, {
@@ -104,11 +104,11 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           'Content-Type': 'application/json',
           ...testClient.headers,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         professionalCRM,
         period: '7_dias',
@@ -133,9 +133,9 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           aggregatedMetricsOnly: true,
           purposeLimited: true,
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Cost and Billing Analytics', () => {
     it('should track AI usage costs in Brazilian Reais with payment breakdown', async () => {
@@ -145,7 +145,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
         includeBilling: 'true',
         currency: 'BRL',
         paymentMethods: 'PIX,cartao_credito',
-      });
+      }
 
       // TDD RED: Cost tracking in BRL not implemented - MUST FAIL
       const response = await fetch(`/api/v1/ai/usage?${costQuery}`, {
@@ -154,11 +154,11 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           'Content-Type': 'application/json',
           ...testClient.headers,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         billing: {
           currency: 'BRL',
@@ -187,15 +187,15 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           includesICMS: false, // State tax (not applicable for services)
           taxRate: expect.any(Number),
         },
-      });
-    });
+      }
+    }
 
     it('should provide plan-based usage limits and remaining quotas', async () => {
       const quotaQuery = new URLSearchParams({
         clinicId,
         plan: 'premium',
         includeQuotas: 'true',
-      });
+      }
 
       // TDD RED: Plan-based quotas not implemented - MUST FAIL
       const response = await fetch(`/api/v1/ai/usage?${quotaQuery}`, {
@@ -204,11 +204,11 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           'Content-Type': 'application/json',
           ...testClient.headers,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         plan: 'premium',
         quotas: {
@@ -235,9 +235,9 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           quotaResetSoon: expect.any(Boolean),
           upgradeRecommended: expect.any(Boolean),
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Brazilian Healthcare Specific Analytics', () => {
     it('should provide regional usage patterns for Brazilian states', async () => {
@@ -246,7 +246,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
         scope: 'regional',
         brazilianStates: 'SP,RJ,MG,RS',
         includeRegionalTrends: 'true',
-      });
+      }
 
       // TDD RED: Regional analytics not implemented - MUST FAIL
       const response = await fetch(`/api/v1/ai/usage?${regionalQuery}`, {
@@ -255,11 +255,11 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           'Content-Type': 'application/json',
           ...testClient.headers,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         regionalAnalytics: {
           byState: expect.objectContaining({
@@ -285,8 +285,8 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           noLocationTracking: true,
           aggregatedOnly: true,
         },
-      });
-    });
+      }
+    }
 
     it('should track CFM compliance metrics for medical professionals', async () => {
       const cfmQuery = new URLSearchParams({
@@ -294,7 +294,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
         complianceScope: 'cfm',
         includeEthicsMetrics: 'true',
         period: '30_dias',
-      });
+      }
 
       // TDD RED: CFM compliance tracking not implemented - MUST FAIL
       const response = await fetch(`/api/v1/ai/usage?${cfmQuery}`, {
@@ -303,11 +303,11 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           'Content-Type': 'application/json',
           ...testClient.headers,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         cfmCompliance: {
           ethicsScore: expect.any(Number), // 0-100
@@ -325,9 +325,9 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           missingConsents: expect.any(Number),
           auditRequirements: expect.any(Array),
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Performance and Quality Metrics', () => {
     it('should provide AI model performance analytics', async () => {
@@ -336,7 +336,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
         metrics: 'performance',
         includeModelComparison: 'true',
         period: '7_dias',
-      });
+      }
 
       // TDD RED: Performance analytics not implemented - MUST FAIL
       const response = await fetch(`/api/v1/ai/usage?${performanceQuery}`, {
@@ -345,11 +345,11 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           'Content-Type': 'application/json',
           ...testClient.headers,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         performance: {
           averageResponseTime: expect.any(Number),
@@ -375,14 +375,14 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           costEfficiencyRating: expect.any(Number),
           performanceImprovements: expect.any(Array),
         },
-      });
-    });
+      }
+    }
 
     it('should handle Portuguese localized error messages', async () => {
       const invalidQuery = new URLSearchParams({
         clinicId: 'invalid-clinic',
         period: 'invalid-period',
-      });
+      }
 
       // TDD RED: Portuguese error handling not implemented - MUST FAIL
       const response = await fetch(`/api/v1/ai/usage?${invalidQuery}`, {
@@ -391,11 +391,11 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           'Content-Type': 'application/json',
           ...testClient.headers,
         },
-      });
+      }
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(400
 
-      const error = await response.json();
+      const error = await response.json(
       expect(error).toMatchObject({
         error: 'INVALID_CLINIC_OR_PERIOD',
         message: expect.stringContaining('clínica'),
@@ -405,9 +405,9 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
         suggestions: expect.arrayContaining([
           expect.stringContaining('período'),
         ]),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Data Export and Reporting', () => {
     it('should export usage data in LGPD-compliant format', async () => {
@@ -417,7 +417,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
         format: 'json',
         lgpdCompliant: 'true',
         purpose: 'audit_reporting',
-      });
+      }
 
       // TDD RED: LGPD-compliant export not implemented - MUST FAIL
       const response = await fetch(`/api/v1/ai/usage?${exportQuery}`, {
@@ -426,11 +426,11 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           'Content-Type': 'application/json',
           ...testClient.headers,
         },
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         exportData: {
           generatedAt: expect.any(String),
@@ -450,7 +450,7 @@ describe('Contract Test T010: GET /api/v1/ai/usage', () => {
           dataClassification: 'aggregated_analytics',
           retentionPeriod: expect.any(String),
         },
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

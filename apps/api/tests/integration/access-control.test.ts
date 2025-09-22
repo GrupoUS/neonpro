@@ -32,7 +32,7 @@ vi.mock('../../src/services/ai-data-service', () => ({
             columns: [],
           };
         } else {
-          throw new Error('Access denied');
+          throw new Error('Access denied')
         }
       },
       getAppointmentsByDate: async (date: string, _userId: string) => {
@@ -51,7 +51,7 @@ vi.mock('../../src/services/ai-data-service', () => ({
             columns: [],
           };
         } else {
-          throw new Error('Access denied');
+          throw new Error('Access denied')
         }
       },
       getFinancialSummary: async (period: string, _userId: string) => {
@@ -69,12 +69,12 @@ vi.mock('../../src/services/ai-data-service', () => ({
             columns: [],
           };
         } else {
-          throw new Error('Access denied: Insufficient permissions');
+          throw new Error('Access denied: Insufficient permissions')
         }
       },
     }),
   },
-}));
+})
 
 describe('Integration Tests: Access Control', () => {
   let server: any;
@@ -83,31 +83,31 @@ describe('Integration Tests: Access Control', () => {
 
   beforeAll(async () => {
     // Create Hono app with agent route
-    app = new Hono();
-    app.route('/api/ai/data-agent', agentRouter);
+    app = new Hono(
+    app.route('/api/ai/data-agent', agentRouter
 
     // Start test server
     server = createServer({
       fetch: app.fetch,
       port: 0,
-    });
+    }
 
     await new Promise(resolve => {
       server.listen(0, () => {
-        const address = server.address();
+        const address = server.address(
         if (address && typeof address === 'object') {
           baseUrl = `http://localhost:${address.port}`;
         }
-        resolve(true);
-      });
-    });
-  });
+        resolve(true
+      }
+    }
+  }
 
   afterAll(async () => {
     if (server) {
-      await new Promise(resolve => server.close(resolve));
+      await new Promise(resolve => server.close(resolve)
     }
-  });
+  }
 
   describe('Role-Based Access Control', () => {
     it('should allow admin user to access all client data', async () => {
@@ -125,13 +125,13 @@ describe('Integration Tests: Access Control', () => {
             _role: 'admin',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
       expect(data.success).toBe(true);
       expect(data.response.data.length).toBe(2); // Admin sees all clients
-    });
+    }
 
     it('should restrict regular user to their assigned clients', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -148,13 +148,13 @@ describe('Integration Tests: Access Control', () => {
             _role: 'user',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
       expect(data.success).toBe(true);
       expect(data.response.data.length).toBe(1); // Regular user sees only their client
-    });
+    }
 
     it('should deny access to unauthorized user', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -171,13 +171,13 @@ describe('Integration Tests: Access Control', () => {
             _role: 'guest',
           },
         }),
-      });
+      }
 
       expect(response.status).toBe(200); // Still 200, but with error
-      const data = await response.json();
+      const data = await response.json(
       expect(data.success).toBe(false);
-      expect(data.error.message).toContain('Access denied');
-    });
+      expect(data.error.message).toContain('Access denied')
+    }
 
     it('should allow admin user to access financial data', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -194,14 +194,14 @@ describe('Integration Tests: Access Control', () => {
             _role: 'admin',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
       expect(data.success).toBe(true);
-      expect(data.response.type).toBe('summary');
-      expect(data.response.summary.totalRevenue).toBe(5000);
-    });
+      expect(data.response.type).toBe('summary')
+      expect(data.response.summary.totalRevenue).toBe(5000
+    }
 
     it('should deny regular user access to financial data', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -218,13 +218,13 @@ describe('Integration Tests: Access Control', () => {
             _role: 'user',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
       expect(data.success).toBe(false);
-      expect(data.error.message).toContain('Insufficient permissions');
-    });
+      expect(data.error.message).toContain('Insufficient permissions')
+    }
 
     it('should allow both admin and regular users to access appointments', async () => {
       // Admin user
@@ -242,10 +242,10 @@ describe('Integration Tests: Access Control', () => {
             _role: 'admin',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      let data = await response.json();
+      expect(response.status).toBe(200
+      let data = await response.json(
       expect(data.success).toBe(true);
 
       // Regular user
@@ -263,12 +263,12 @@ describe('Integration Tests: Access Control', () => {
             _role: 'user',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      data = await response.json();
+      expect(response.status).toBe(200
+      data = await response.json(
       expect(data.success).toBe(true);
-    });
+    }
 
     it('should handle missing user context gracefully', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -282,13 +282,13 @@ describe('Integration Tests: Access Control', () => {
           sessionId: 'test-session-no-context-1',
           // No context provided
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
       expect(data.success).toBe(false);
-      expect(data.error.message).toContain('Missing user context');
-    });
+      expect(data.error.message).toContain('Missing user context')
+    }
 
     it('should validate authentication token', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -305,10 +305,10 @@ describe('Integration Tests: Access Control', () => {
             _role: 'admin',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(401);
-    });
+      expect(response.status).toBe(401
+    }
 
     it('should enforce domain-specific access', async () => {
       // User from different domain should not access data
@@ -327,13 +327,13 @@ describe('Integration Tests: Access Control', () => {
             domain: 'other-clinic',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
       expect(data.success).toBe(false);
-      expect(data.error.message).toContain('Domain access denied');
-    });
+      expect(data.error.message).toContain('Domain access denied')
+    }
 
     it('should audit access attempts', async () => {
       // This test verifies that access attempts are logged
@@ -352,12 +352,12 @@ describe('Integration Tests: Access Control', () => {
             _role: 'user',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
       // The implementation should log this access attempt
       // For test purposes, we just verify the request was processed
-    });
+    }
 
     it('should handle permission escalation attempts', async () => {
       // Attempt to access admin data with regular user token
@@ -375,14 +375,14 @@ describe('Integration Tests: Access Control', () => {
             _role: 'admin', // Trying to escalate role
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
       expect(data.success).toBe(false);
       // Should detect token/role mismatch
-      expect(data.error.message).toContain('Role verification failed');
-    });
+      expect(data.error.message).toContain('Role verification failed')
+    }
 
     it('should respect Row Level Security (RLS) policies', async () => {
       // Test that RLS is enforced at the database level
@@ -401,17 +401,17 @@ describe('Integration Tests: Access Control', () => {
             clinicId: 'clinic-a',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
       expect(data.success).toBe(true);
       // Should return empty or only clinic-a clients
       expect(
         data.response.data.every((c: any) => !c.name.includes('clínica B')),
       ).toBe(true);
-    });
-  });
+    }
+  }
 
   describe('Session-based Access Control', () => {
     it('should validate session integrity', async () => {
@@ -429,13 +429,13 @@ describe('Integration Tests: Access Control', () => {
             _role: 'admin',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
       // Should detect invalid session
       expect(data.success).toBe(false);
-    });
+    }
 
     it('should prevent session hijacking', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -452,13 +452,13 @@ describe('Integration Tests: Access Control', () => {
             _role: 'user',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
       expect(data.success).toBe(false);
-      expect(data.error.message).toContain('Session mismatch');
-    });
+      expect(data.error.message).toContain('Session mismatch')
+    }
 
     it('should expire sessions after timeout', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -476,12 +476,12 @@ describe('Integration Tests: Access Control', () => {
             sessionExpiry: new Date(Date.now() - 3600000).toISOString(), // Expired 1 hour ago
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
       expect(data.success).toBe(false);
-      expect(data.error.message).toContain('Session expired');
-    });
-  });
-});
+      expect(data.error.message).toContain('Session expired')
+    }
+  }
+}

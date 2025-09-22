@@ -17,11 +17,11 @@ import { join } from 'path';
 describe('PR 54 Error Detection - RED Phase', () => {
   describe('JSX Syntax Error Detection', () => {
     it('should detect JSX syntax errors in bundle-optimization-simple.test.ts', () => {
-      const filePath = join(__dirname, '../apps/web/src/__tests__/bundle-optimization-simple.test.ts');
+      const filePath = join(__dirname, '../apps/web/src/__tests__/bundle-optimization-simple.test.ts')
       
       // Skip test if file doesn't exist
       if (!existsSync(filePath)) {
-        console.log(`File not found: ${filePath}`);
+        console.log(`File not found: ${filePath}`
         expect(true).toBe(true);
         return;
       }
@@ -36,14 +36,14 @@ describe('PR 54 Error Detection - RED Phase', () => {
         /={\(.*?\)}>/g, // JSX props with functions
       ];
 
-      const hasJsx = jsxPatterns.some(pattern => pattern.test(content));
+      const hasJsx = jsxPatterns.some(pattern => pattern.test(content)
       
       // This should FAIL because .ts files shouldn't have JSX
       expect(hasJsx).toBe(false);
-    });
+    }
 
     it('should detect missing closing parentheses in describe blocks', () => {
-      const filePath = join(__dirname, '../apps/web/src/__tests__/bundle-optimization-simple.test.ts');
+      const filePath = join(__dirname, '../apps/web/src/__tests__/bundle-optimization-simple.test.ts')
       
       if (!existsSync(filePath)) {
         expect(true).toBe(true);
@@ -59,16 +59,16 @@ describe('PR 54 Error Detection - RED Phase', () => {
       ];
 
       const hasMalformedBlocks = malformedDescribePatterns.some(pattern => {
-        const matches = content.match(pattern);
+        const matches = content.match(pattern
         return matches && matches.length > 0;
-      });
+      }
 
       // This should FAIL because there are malformed blocks
       expect(hasMalformedBlocks).toBe(false);
-    });
+    }
 
     it('should detect JSX syntax errors in chart-css-syntax.test.ts', () => {
-      const filePath = join(__dirname, '../apps/web/src/__tests__/chart-css-syntax.test.ts');
+      const filePath = join(__dirname, '../apps/web/src/__tests__/chart-css-syntax.test.ts')
       
       if (!existsSync(filePath)) {
         expect(true).toBe(true);
@@ -84,16 +84,16 @@ describe('PR 54 Error Detection - RED Phase', () => {
         /<\/[^>]+>/g, // Closing tags
       ];
 
-      const hasJsx = jsxPatterns.some(pattern => pattern.test(content));
+      const hasJsx = jsxPatterns.some(pattern => pattern.test(content)
       
       // This should FAIL because .ts files shouldn't have JSX
       expect(hasJsx).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('POST Request Format Detection', () => {
     it('should detect incorrect POST request format in performance.spec.ts', () => {
-      const filePath = join(__dirname, '../apps/web/e2e/performance.spec.ts');
+      const filePath = join(__dirname, '../apps/web/e2e/performance.spec.ts')
       
       if (!existsSync(filePath)) {
         expect(true).toBe(true);
@@ -102,16 +102,16 @@ describe('PR 54 Error Detection - RED Phase', () => {
 
       const content = readFileSync(filePath, 'utf8');
       
-      // Detect incorrect POST request format using 'data' instead of 'json'
+      // Detect incorrect POST request format using 'data' instead of 'json')
       const incorrectPostPattern = /request\.post\([^,]+,\s*{[^}]*data\s*:/g;
-      const hasIncorrectFormat = incorrectPostPattern.test(content);
+      const hasIncorrectFormat = incorrectPostPattern.test(content
       
-      // This should FAIL because POST requests should use 'json', not 'data'
+      // This should FAIL because POST requests should use 'json', not 'data')
       expect(hasIncorrectFormat).toBe(false);
-    });
+    }
 
     it('should detect inconsistent query parameter naming', () => {
-      const filePath = join(__dirname, '../apps/web/e2e/performance.spec.ts');
+      const filePath = join(__dirname, '../apps/web/e2e/performance.spec.ts')
       
       if (!existsSync(filePath)) {
         expect(true).toBe(true);
@@ -120,7 +120,7 @@ describe('PR 54 Error Detection - RED Phase', () => {
 
       const content = readFileSync(filePath, 'utf8');
       
-      // Detect inconsistent use of 'query' vs '_query'
+      // Detect inconsistent use of 'query' vs '_query')
       const queryMatches = (content.match(/query:/g) || []).length;
       const underscoreQueryMatches = (content.match(/_query:/g) || []).length;
       
@@ -128,12 +128,12 @@ describe('PR 54 Error Detection - RED Phase', () => {
       
       // This should FAIL because naming should be consistent
       expect(hasInconsistentNaming).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('Variable Reference Consistency Detection', () => {
     it('should detect unused underscore prefix variables', () => {
-      const filePath = join(__dirname, '../apps/web/src/__tests__/bundle-optimization-simple.test.ts');
+      const filePath = join(__dirname, '../apps/web/src/__tests__/bundle-optimization-simple.test.ts')
       
       if (!existsSync(filePath)) {
         expect(true).toBe(true);
@@ -148,13 +148,13 @@ describe('PR 54 Error Detection - RED Phase', () => {
       
       const hasUnusedUnderscore = matches.some(match => {
         const varName = match[1];
-        return varName.startsWith('_') && !content.includes(varName.substring(1));
-      });
+        return varName.startsWith('_') && !content.includes(varName.substring(1)
+      }
       
       // This should FAIL because underscore variables should be used consistently
       expect(hasUnusedUnderscore).toBe(false);
-    });
-  });
+    }
+  }
 
   describe('File Extension Validation', () => {
     it('should detect .ts files that contain JSX content', () => {
@@ -164,21 +164,21 @@ describe('PR 54 Error Detection - RED Phase', () => {
       ];
 
       const invalidFiles = testFiles.filter(file => {
-        const filePath = join(__dirname, '../', file);
+        const filePath = join(__dirname, '../', file
         if (!existsSync(filePath)) return false;
         
         const content = readFileSync(filePath, 'utf8');
         return /<[^>]+>/.test(content); // Contains JSX
-      });
+      }
 
       // This should FAIL because JSX files should have .tsx extension
-      expect(invalidFiles.length).toBe(0);
-    });
-  });
+      expect(invalidFiles.length).toBe(0
+    }
+  }
 
   describe('Bundle Validation Issues', () => {
     it('should detect bundle validation tests with mock data', () => {
-      const filePath = join(__dirname, '../apps/web/src/__tests__/bundle-validation.test.ts');
+      const filePath = join(__dirname, '../apps/web/src/__tests__/bundle-validation.test.ts')
       
       if (!existsSync(filePath)) {
         expect(true).toBe(true);
@@ -189,10 +189,10 @@ describe('PR 54 Error Detection - RED Phase', () => {
       
       // Detect mock data that should be real validation
       const mockDataPattern = /mock.*bundle.*size|bundle.*size.*mock/gi;
-      const hasMockData = mockDataPattern.test(content);
+      const hasMockData = mockDataPattern.test(content
       
       // This should FAIL because bundle validation should use real data
       expect(hasMockData).toBe(false);
-    });
-  });
-});
+    }
+  }
+}

@@ -10,16 +10,16 @@ describe('Financial Metrics API Debug Test', () => {
     // ACT: Make request to financial metrics endpoint
     const response = await fetch(
       makeAbsoluteUrl(`/api/financial/metrics?type=${type}&timeframe=${timeframe}`),
-    );
+    
 
     // ASSERT: Debug the actual response structure
     expect(response.ok).toBe(true);
-    expect(response.status).toBe(200);
+    expect(response.status).toBe(200
 
-    const data = await response.json();
-    console.log('Full API Response:', JSON.stringify(data, null, 2));
+    const data = await response.json(
+    console.log('Full API Response:', JSON.stringify(data, null, 2)
 
     // Just check it's not empty
-    expect(data).toBeDefined();
-  });
-});
+    expect(data).toBeDefined(
+  }
+}

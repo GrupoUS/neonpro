@@ -33,70 +33,70 @@ describe("Realtime Event Adapter", () => {
 
     eventHandlers = {
       onJoin: vi.fn((event) => {
-        capturedEvents.push(event);
+        capturedEvents.push(event
       }),
       onLeave: vi.fn((event) => {
-        capturedEvents.push(event);
+        capturedEvents.push(event
       }),
       onStatusChange: vi.fn((event) => {
-        capturedEvents.push(event);
+        capturedEvents.push(event
       }),
       onPresenceSync: vi.fn((event) => {
-        capturedEvents.push(event);
+        capturedEvents.push(event
       }),
       onError: vi.fn(),
     };
 
-    const config = defaultConfigs.mock();
+    const config = defaultConfigs.mock(
     adapter = createRealtimeAdapter(config) as MockRealtimeAdapter;
-    adapter.setEventHandlers(eventHandlers);
-    await adapter.initialize();
-  });
+    adapter.setEventHandlers(eventHandlers
+    await adapter.initialize(
+  }
 
   afterEach(_async () => {
-    await adapter.cleanup();
-  });
+    await adapter.cleanup(
+  }
 
   describe("Factory Function", () => {
     it("should create mock adapter", () => {
-      const config = defaultConfigs.mock();
-      const mockAdapter = createRealtimeAdapter(config);
-      expect(mockAdapter).toBeInstanceOf(MockRealtimeAdapter);
-    });
+      const config = defaultConfigs.mock(
+      const mockAdapter = createRealtimeAdapter(config
+      expect(mockAdapter).toBeInstanceOf(MockRealtimeAdapter
+    }
 
     it("should throw error for unsupported provider", () => {
       const config = { ...defaultConfigs.mock(), provider: "invalid" as any };
       expect(() => createRealtimeAdapter(config)).toThrow(
         "Unsupported provider: invalid",
-      );
-    });
-  });
+      
+    }
+  }
 
   describe("Adapter Lifecycle", () => {
     it(_"should initialize successfully",_async () => {
       const freshAdapter = createRealtimeAdapter(
         defaultConfigs.mock(),
       ) as MockRealtimeAdapter;
-      await expect(freshAdapter.initialize()).resolves.toBeUndefined();
-      await freshAdapter.cleanup();
-    });
+      await expect(freshAdapter.initialize()).resolves.toBeUndefined(
+      await freshAdapter.cleanup(
+    }
 
     it(_"should cleanup successfully",_async () => {
-      await expect(adapter.cleanup()).resolves.toBeUndefined();
-      expect(adapter.getActiveChannels()).toEqual([]);
-    });
+      await expect(adapter.cleanup()).resolves.toBeUndefined(
+      expect(adapter.getActiveChannels()).toEqual([]
+    }
 
     it(_"should get health status",_async () => {
-      const health = await adapter.getHealth();
+      const health = await adapter.getHealth(
       expect(health).toEqual({
         status: "healthy",
         latency: expect.any(Number),
         activeChannels: 0,
         totalParticipants: 0,
         lastHeartbeat: expect.any(String),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe("Channel Management", () => {
     const channelId = "test-channel-123";
@@ -117,66 +117,66 @@ describe("Realtime Event Adapter", () => {
       await adapter.joinChannel(channelId, participant, {
         clinicId: "clinic-123",
         sessionId: "session-456",
-      });
+      }
 
       // Verify channel state
-      const channelState = adapter.getChannelState(channelId);
-      expect(channelState).toBeTruthy();
-      expect(channelState!.participants.size).toBe(1);
-      expect(channelState!.participants.get(participant.id)).toBeTruthy();
+      const channelState = adapter.getChannelState(channelId
+      expect(channelState).toBeTruthy(
+      expect(channelState!.participants.size).toBe(1
+      expect(channelState!.participants.get(participant.id)).toBeTruthy(
 
       // Verify join event
-      expect(eventHandlers.onJoin).toHaveBeenCalledTimes(1);
-      const joinEvent = capturedEvents.find((e) => e.type === "join");
-      expect(joinEvent).toBeTruthy();
-      expect(joinEvent!.participant.id).toBe(participant.id);
-      expect(joinEvent!.data?.welcomeMessage).toContain("Dr. Silva");
-    });
+      expect(eventHandlers.onJoin).toHaveBeenCalledTimes(1
+      const joinEvent = capturedEvents.find((e) => e.type === "join"
+      expect(joinEvent).toBeTruthy(
+      expect(joinEvent!.participant.id).toBe(participant.id
+      expect(joinEvent!.data?.welcomeMessage).toContain("Dr. Silva"
+    }
 
     it(_"should leave channel successfully",_async () => {
       // First join
-      await adapter.joinChannel(channelId, participant);
+      await adapter.joinChannel(channelId, participant
 
       // Then leave
-      await adapter.leaveChannel(channelId, participant.id, "Test leave");
+      await adapter.leaveChannel(channelId, participant.id, "Test leave"
 
       // Verify channel cleanup
-      const channelState = adapter.getChannelState(channelId);
+      const channelState = adapter.getChannelState(channelId
       expect(channelState).toBeNull(); // Channel should be cleaned up when empty
 
       // Verify leave event
-      expect(eventHandlers.onLeave).toHaveBeenCalledTimes(1);
-      const leaveEvent = capturedEvents.find((e) => e.type === "leave");
-      expect(leaveEvent).toBeTruthy();
-      expect(leaveEvent!.participant.id).toBe(participant.id);
-      expect(leaveEvent!.data?.reason).toBe("Test leave");
-      expect(leaveEvent!.data?.duration).toBeGreaterThanOrEqual(0);
-    });
+      expect(eventHandlers.onLeave).toHaveBeenCalledTimes(1
+      const leaveEvent = capturedEvents.find((e) => e.type === "leave"
+      expect(leaveEvent).toBeTruthy(
+      expect(leaveEvent!.participant.id).toBe(participant.id
+      expect(leaveEvent!.data?.reason).toBe("Test leave"
+      expect(leaveEvent!.data?.duration).toBeGreaterThanOrEqual(0
+    }
 
     it(_"should update participant status",_async () => {
       // First join
-      await adapter.joinChannel(channelId, participant);
+      await adapter.joinChannel(channelId, participant
 
       // Update status
       await adapter.updateParticipantStatus(
         channelId,
         participant.id,
         "reconnecting",
-      );
+      
 
       // Verify status change event
-      expect(eventHandlers.onStatusChange).toHaveBeenCalledTimes(1);
+      expect(eventHandlers.onStatusChange).toHaveBeenCalledTimes(1
       const statusEvent = capturedEvents.find((e) => e.type === "status_change",
-      );
-      expect(statusEvent).toBeTruthy();
-      expect(statusEvent!.data?.previousStatus).toBe("connected");
-      expect(statusEvent!.data?.newStatus).toBe("reconnecting");
+      
+      expect(statusEvent).toBeTruthy(
+      expect(statusEvent!.data?.previousStatus).toBe("connected"
+      expect(statusEvent!.data?.newStatus).toBe("reconnecting"
 
       // Verify participant state
-      const channelState = adapter.getChannelState(channelId);
-      const updatedParticipant = channelState!.participants.get(participant.id);
-      expect(updatedParticipant!.status).toBe("reconnecting");
-    });
+      const channelState = adapter.getChannelState(channelId
+      const updatedParticipant = channelState!.participants.get(participant.id
+      expect(updatedParticipant!.status).toBe("reconnecting"
+    }
 
     it(_"should handle multiple participants",_async () => {
       const participant2 = {
@@ -193,50 +193,50 @@ describe("Realtime Event Adapter", () => {
       };
 
       // Join both participants
-      await adapter.joinChannel(channelId, participant);
-      await adapter.joinChannel(channelId, participant2);
+      await adapter.joinChannel(channelId, participant
+      await adapter.joinChannel(channelId, participant2
 
       // Verify channel state
-      const channelState = adapter.getChannelState(channelId);
-      expect(channelState!.participants.size).toBe(2);
-      expect(channelState!.metadata.totalParticipants).toBe(2);
+      const channelState = adapter.getChannelState(channelId
+      expect(channelState!.participants.size).toBe(2
+      expect(channelState!.metadata.totalParticipants).toBe(2
 
       // Leave one participant
-      await adapter.leaveChannel(channelId, participant.id);
+      await adapter.leaveChannel(channelId, participant.id
 
       // Verify remaining participant
-      const updatedState = adapter.getChannelState(channelId);
-      expect(updatedState!.participants.size).toBe(1);
+      const updatedState = adapter.getChannelState(channelId
+      expect(updatedState!.participants.size).toBe(1
       expect(updatedState!.participants.has(participant2.id)).toBe(true);
-    });
-  });
+    }
+  }
 
   describe("Event Validation", () => {
     it("should validate participant data", () => {
-      const validParticipant = adapter.createMockParticipant();
+      const validParticipant = adapter.createMockParticipant(
       expect(validateParticipant(validParticipant)).toBe(true);
 
       const invalidParticipant = { ...validParticipant, id: "" };
       expect(validateParticipant(invalidParticipant as any)).toBe(false);
-    });
+    }
 
     it("should create valid realtime events", () => {
-      const participant = adapter.createMockParticipant();
+      const participant = adapter.createMockParticipant(
       const event = createRealtimeEvent("join", "test-channel", participant, {
         test: true,
-      });
+      }
 
-      expect(event.type).toBe("join");
-      expect(event.channelId).toBe("test-channel");
-      expect(event.participant).toBe(participant);
+      expect(event.type).toBe("join"
+      expect(event.channelId).toBe("test-channel"
+      expect(event.participant).toBe(participant
       expect(event.data?.test).toBe(true);
-      expect(event.metadata.eventId).toBeTruthy();
-      expect(event.timestamp).toBeTruthy();
-    });
+      expect(event.metadata.eventId).toBeTruthy(
+      expect(event.timestamp).toBeTruthy(
+    }
 
     it("should validate healthcare compliance", () => {
-      const participant = adapter.createMockParticipant();
-      const compliantEvent = createRealtimeEvent("join", "test", participant);
+      const participant = adapter.createMockParticipant(
+      const compliantEvent = createRealtimeEvent("join", "test", participant
       compliantEvent.metadata.compliance.lgpdLogged = true;
       compliantEvent.metadata.compliance.sensitiveData = false;
 
@@ -246,89 +246,89 @@ describe("Realtime Event Adapter", () => {
         "join",
         "test",
         participant,
-      );
+      
       nonCompliantEvent.metadata.compliance.lgpdLogged = false;
 
       expect(isHealthcareCompliant(nonCompliantEvent)).toBe(false);
-    });
-  });
+    }
+  }
 
   describe("Mock-Specific Features", () => {
     const channelId = "mock-test-channel";
 
     it(_"should simulate network latency",_async () => {
-      const participant = adapter.createMockParticipant();
-      adapter.setSimulatedLatency(100);
+      const participant = adapter.createMockParticipant(
+      adapter.setSimulatedLatency(100
 
-      const start = Date.now();
-      await adapter.joinChannel(channelId, participant);
+      const start = Date.now(
+      await adapter.joinChannel(channelId, participant
       const duration = Date.now() - start;
 
       expect(duration).toBeGreaterThanOrEqual(90); // Allow for some timing variance
-    });
+    }
 
     it(_"should maintain event log",_async () => {
-      const participant = adapter.createMockParticipant();
-      adapter.clearEventLog();
+      const participant = adapter.createMockParticipant(
+      adapter.clearEventLog(
 
-      await adapter.joinChannel(channelId, participant);
+      await adapter.joinChannel(channelId, participant
       await adapter.updateParticipantStatus(
         channelId,
         participant.id,
         "reconnecting",
-      );
-      await adapter.leaveChannel(channelId, participant.id);
+      
+      await adapter.leaveChannel(channelId, participant.id
 
-      const eventLog = adapter.getEventLog();
-      expect(eventLog).toHaveLength(3);
-      expect(eventLog[0].type).toBe("join");
-      expect(eventLog[1].type).toBe("status_change");
-      expect(eventLog[2].type).toBe("leave");
-    });
+      const eventLog = adapter.getEventLog(
+      expect(eventLog).toHaveLength(3
+      expect(eventLog[0].type).toBe("join"
+      expect(eventLog[1].type).toBe("status_change"
+      expect(eventLog[2].type).toBe("leave"
+    }
 
     it(_"should simulate disconnection",_async () => {
-      const participant = adapter.createMockParticipant();
-      await adapter.joinChannel(channelId, participant);
+      const participant = adapter.createMockParticipant(
+      await adapter.joinChannel(channelId, participant
 
       // Start disconnection simulation (doesn't wait for auto-leave)
-      adapter.simulateDisconnection(channelId, participant.id);
+      adapter.simulateDisconnection(channelId, participant.id
 
       // Check immediate status change
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      const channelState = adapter.getChannelState(channelId);
+      await new Promise((resolve) => setTimeout(resolve, 100)
+      const channelState = adapter.getChannelState(channelId
       expect(channelState!.participants.get(participant.id)!.status).toBe(
         "disconnected",
-      );
-    });
+      
+    }
 
     it(_"should simulate reconnection",_async () => {
-      const participant = adapter.createMockParticipant();
-      await adapter.joinChannel(channelId, participant);
+      const participant = adapter.createMockParticipant(
+      await adapter.joinChannel(channelId, participant
 
       // Start reconnection simulation
-      adapter.simulateReconnection(channelId, participant.id);
+      adapter.simulateReconnection(channelId, participant.id
 
       // Check reconnecting status
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      let channelState = adapter.getChannelState(channelId);
+      await new Promise((resolve) => setTimeout(resolve, 100)
+      let channelState = adapter.getChannelState(channelId
       expect(channelState!.participants.get(participant.id)!.status).toBe(
         "reconnecting",
-      );
-    });
-  });
+      
+    }
+  }
 
   describe("Error Handling", () => {
     it(_"should handle initialization errors",_async () => {
       const freshAdapter = createRealtimeAdapter(
         defaultConfigs.mock(),
       ) as MockRealtimeAdapter;
-      const participant = adapter.createMockParticipant();
+      const participant = adapter.createMockParticipant(
 
       // Try to join without initialization
       await expect(
         freshAdapter.joinChannel("test", participant),
-      ).rejects.toThrow("not initialized");
-    });
+      ).rejects.toThrow("not initialized"
+    }
 
     it(_"should handle invalid participant data",_async () => {
       const invalidParticipant = {
@@ -340,23 +340,23 @@ describe("Realtime Event Adapter", () => {
 
       await expect(
         adapter.joinChannel("test", invalidParticipant),
-      ).rejects.toThrow("Invalid participant data");
-    });
+      ).rejects.toThrow("Invalid participant data"
+    }
 
     it(_"should handle non-existent channel operations",_async () => {
       // Should not throw, but log warning
       await expect(
         adapter.leaveChannel("non-existent", "participant-1"),
-      ).resolves.toBeUndefined();
+      ).resolves.toBeUndefined(
       await expect(
         adapter.updateParticipantStatus(
           "non-existent",
           "participant-1",
           "connected",
         ),
-      ).resolves.toBeUndefined();
-    });
-  });
+      ).resolves.toBeUndefined(
+    }
+  }
 
   describe("Integration Scenarios", () => {
     it(_"should handle complete healthcare session flow",_async () => {
@@ -373,7 +373,7 @@ describe("Realtime Event Adapter", () => {
           screenShare: true,
           chat: true,
         },
-      });
+      }
 
       const patient = adapter.createMockParticipant({
         id: "patient-joao-456",
@@ -385,7 +385,7 @@ describe("Realtime Event Adapter", () => {
           screenShare: false,
           chat: true,
         },
-      });
+      }
 
       const nurse = adapter.createMockParticipant({
         id: "nurse-ana-789",
@@ -397,56 +397,56 @@ describe("Realtime Event Adapter", () => {
           screenShare: false,
           chat: true,
         },
-      });
+      }
 
       // 1. Doctor joins first
       await adapter.joinChannel(channelId, doctor, {
         clinicId: "hospital-central",
         sessionId: "consultation-2024-001",
-      });
+      }
 
       // 2. Patient joins
       await adapter.joinChannel(channelId, patient, {
         clinicId: "hospital-central",
         sessionId: "consultation-2024-001",
-      });
+      }
 
       // 3. Nurse joins
       await adapter.joinChannel(channelId, nurse, {
         clinicId: "hospital-central",
         sessionId: "consultation-2024-001",
-      });
+      }
 
       // Verify all participants present
-      const channelState = adapter.getChannelState(channelId);
-      expect(channelState!.participants.size).toBe(3);
+      const channelState = adapter.getChannelState(channelId
+      expect(channelState!.participants.size).toBe(3
 
       // 4. Patient has connection issues
       await adapter.updateParticipantStatus(
         channelId,
         patient.id,
         "reconnecting",
-      );
-      await adapter.updateParticipantStatus(channelId, patient.id, "connected");
+      
+      await adapter.updateParticipantStatus(channelId, patient.id, "connected"
 
       // 5. Nurse leaves early
-      await adapter.leaveChannel(channelId, nurse.id, "Shift ended");
+      await adapter.leaveChannel(channelId, nurse.id, "Shift ended"
 
       // 6. Session ends
       await adapter.leaveChannel(
         channelId,
         patient.id,
         "Consultation complete",
-      );
-      await adapter.leaveChannel(channelId, doctor.id, "Session ended");
+      
+      await adapter.leaveChannel(channelId, doctor.id, "Session ended"
 
       // Verify session cleanup
-      expect(adapter.getChannelState(channelId)).toBeNull();
-      expect(adapter.getActiveChannels()).toEqual([]);
+      expect(adapter.getChannelState(channelId)).toBeNull(
+      expect(adapter.getActiveChannels()).toEqual([]
 
       // Verify event sequence
-      const eventLog = adapter.getEventLog();
-      const eventTypes = eventLog.map((e) => e.type);
+      const eventLog = adapter.getEventLog(
+      const eventTypes = eventLog.map((e) => e.type
       expect(eventTypes).toEqual([
         "join", // doctor
         "join", // patient
@@ -456,7 +456,7 @@ describe("Realtime Event Adapter", () => {
         "leave", // nurse
         "leave", // patient
         "leave", // doctor
-      ]);
-    });
-  });
-});
+      ]
+    }
+  }
+}

@@ -335,7 +335,7 @@ test.describe('Performance Requirements Validation', () => {
             });
 
             return ws;
-          } as any;
+          } as unknown as typeof WebSocket;
           
           // Trigger WebSocket connection
           setTimeout(() => resolve(0), 5000); // Timeout after 5 seconds

@@ -5,22 +5,22 @@ import { InMemoryEscalationService, InMemoryKPIService } from "../../index";
 
 describe("Scenario: escalation breach sequence", () => {
   it(_"creates escalation receipt after two evaluate breaches",_async () => {
-    const kpiSvc = new InMemoryKPIService();
-    const escSvc = new InMemoryEscalationService();
+    const kpiSvc = new InMemoryKPIService(
+    const escSvc = new InMemoryEscalationService(
     await kpiSvc.register({
       id: "KPI-AI-HALLUCINATION",
       name: "AI Hallucination Rate",
       provisional: true,
-    });
+    }
     // Simulate first breach evaluation
-    await kpiSvc.evaluate("KPI-AI-HALLUCINATION");
+    await kpiSvc.evaluate("KPI-AI-HALLUCINATION"
     // Second breach triggers escalation
-    await kpiSvc.evaluate("KPI-AI-HALLUCINATION");
+    await kpiSvc.evaluate("KPI-AI-HALLUCINATION"
     const receipt = await escSvc.trigger({
       pathId: "ESC-001",
       kpiId: "KPI-AI-HALLUCINATION",
       reason: "Two consecutive breaches",
-    });
-    expect(receipt.pathId).toBe("ESC-001");
-  });
-});
+    }
+    expect(receipt.pathId).toBe("ESC-001"
+  }
+}

@@ -31,27 +31,27 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
       lgpdCompliant: true,
       auditTrail: true,
       securityMonitoring: true,
-    });
-    testDataGenerator = new HealthcareTestDataGenerator();
+    }
+    testDataGenerator = new HealthcareTestDataGenerator(
 
-    console.log('🧪 Audit Trail Test Environment Setup Complete');
-  });
+    console.log('🧪 Audit Trail Test Environment Setup Complete')
+  }
 
   afterAll(async () => {
-    await testDataGenerator.cleanupTestData();
+    await testDataGenerator.cleanupTestData(
 
     // Generate audit summary
-    console.log('\n📊 Audit Trail Test Summary:');
-    console.log(`Total Audit Events Generated: ${auditEvents.length}`);
+    console.log('\n📊 Audit Trail Test Summary:')
+    console.log(`Total Audit Events Generated: ${auditEvents.length}`
     console.log(
       `LGPD Compliance Events: ${auditEvents.filter(e => e.event_type.includes('lgpd')).length}`,
-    );
+    
     console.log(
       `Security Events: ${auditEvents.filter(e => e.event_type.includes('security')).length}`,
-    );
+    
 
-    console.log('🔍 Audit Trail Test Environment Cleaned Up');
-  });
+    console.log('🔍 Audit Trail Test Environment Cleaned Up')
+  }
 
   const recordAuditEvent = (event: Partial<AuditEvent>) => {
     const auditEvent: AuditEvent = {
@@ -69,27 +69,27 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
       compliance_context: event.compliance_context || 'healthcare',
       ...event,
     };
-    auditEvents.push(auditEvent);
+    auditEvents.push(auditEvent
     return auditEvent;
   };
 
   describe(('LGPD Compliance Auditing', () => {
     test(_'should log data access events with LGPD context',async () => {
       // security-auditor: LGPD compliance validation
-      const testPatient = await testDataGenerator.createTestPatient();
-      const testDoctor = await testDataGenerator.createAuthenticatedTestUser('doctor');
+      const testPatient = await testDataGenerator.createTestPatient(
+      const testDoctor = await testDataGenerator.createAuthenticatedTestUser('doctor')
 
       // Simulate doctor accessing patient data
-      const startTime = performance.now();
+      const startTime = performance.now(
       const { data, error } = await testClient
         .from('patients')
         .select('id, full_name, cpf, medical_records(*)')
         .eq('id', testPatient.id)
-        .single();
+        .single(
 
       const responseTime = performance.now() - startTime;
 
-      expect(error).toBeNull();
+      expect(error).toBeNull(
       expect(
         HealthcareTestValidators.validatePerformance(
           responseTime,
@@ -115,22 +115,22 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
           third_party_sharing: false,
         },
         compliance_context: 'lgpd_healthcare',
-      });
+      }
 
-      expect(auditEvent.event_type).toBe('lgpd_data_access');
+      expect(auditEvent.event_type).toBe('lgpd_data_access')
       expect(auditEvent.details.legal_basis).toBe(
         'legitimate_interest_healthcare',
-      );
-      expect(auditEvent.details.data_categories).toContain('health_data');
+      
+      expect(auditEvent.details.data_categories).toContain('health_data')
 
-      console.log('✅ LGPD data access logging validated');
-    });
+      console.log('✅ LGPD data access logging validated')
+    }
 
     test(_'should track consent management activities',async () => {
       // security-auditor: Consent tracking validation
       const testUser = await testDataGenerator.createTestUser({
         _role: 'patient',
-      });
+      }
 
       const consentActivities = [
         {
@@ -183,13 +183,13 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
           action: activity.action,
           details: activity.details,
           compliance_context: 'lgpd_consent',
-        });
+        }
 
-        expect(auditEvent.action).toBe(activity.action);
-        expect(auditEvent.event_type).toBe('lgpd_consent_management');
-        console.log(`✅ Consent activity "${activity.action}" logged`);
+        expect(auditEvent.action).toBe(activity.action
+        expect(auditEvent.event_type).toBe('lgpd_consent_management')
+        console.log(`✅ Consent activity "${activity.action}" logged`
       }
-    });
+    }
 
     test(_'should validate data processing activities documentation',async () => {
       // security-auditor: Processing activities validation
@@ -240,20 +240,20 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
           action: 'document_processing_activity',
           details: activity,
           compliance_context: 'lgpd_ropa', // Record of Processing Activities
-        });
+        }
 
-        expect(auditEvent.details.legal_basis).toBeDefined();
-        expect(auditEvent.details.data_categories).toBeDefined();
-        expect(auditEvent.details.security_measures).toBeDefined();
+        expect(auditEvent.details.legal_basis).toBeDefined(
+        expect(auditEvent.details.data_categories).toBeDefined(
+        expect(auditEvent.details.security_measures).toBeDefined(
         console.log(
           `✅ Processing activity "${activity.activity_name}" documented`,
-        );
+        
       }
-    });
+    }
 
     test(_'should track data subject rights requests',async () => {
       // security-auditor: Data subject rights validation
-      const testPatient = await testDataGenerator.createTestPatient();
+      const testPatient = await testDataGenerator.createTestPatient(
 
       const dataSubjectRequests = [
         {
@@ -309,27 +309,27 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
           action: request.request_type,
           details: request.details,
           compliance_context: 'lgpd_dsr', // Data Subject Rights
-        });
+        }
 
-        expect(auditEvent.action).toBe(request.request_type);
-        expect(auditEvent.details.status).toBeDefined();
+        expect(auditEvent.action).toBe(request.request_type
+        expect(auditEvent.details.status).toBeDefined(
         console.log(
           `✅ Data subject request "${request.request_type}" tracked`,
-        );
+        
       }
-    });
-  });
+    }
+  }
 
   describe(('Data Access Logging', () => {
     test(_'should log detailed healthcare data access patterns',async () => {
       // security-auditor: Healthcare data access validation
-      const testPatient = await testDataGenerator.createTestPatient();
+      const testPatient = await testDataGenerator.createTestPatient(
       const testDoctor = await testDataGenerator.createTestUser({
         _role: 'doctor',
-      });
+      }
       const testNurse = await testDataGenerator.createTestUser({
         _role: 'nurse',
-      });
+      }
 
       const accessScenarios = [
         {
@@ -364,17 +364,17 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
       ];
 
       for (const scenario of accessScenarios) {
-        const startTime = performance.now();
+        const startTime = performance.now(
 
         // Simulate data access
         const { data, error } = await testClient
           .from('medical_records')
           .select('*')
           .eq('patient_id', testPatient.id)
-          .limit(10);
+          .limit(10
 
         const responseTime = performance.now() - startTime;
-        expect(error).toBeNull();
+        expect(error).toBeNull(
 
         const auditEvent = recordAuditEvent({
           user_id: scenario.user.id,
@@ -394,21 +394,21 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
             data_minimization_applied: true,
             records_count: data?.length || 0,
           },
-        });
+        }
 
-        expect(auditEvent.details.access_type).toBe(scenario.access_type);
+        expect(auditEvent.details.access_type).toBe(scenario.access_type
         expect(auditEvent.details.emergency_access).toBe(
           scenario.emergency_access,
-        );
+        
         console.log(
           `✅ Healthcare data access "${scenario.access_type}" logged`,
-        );
+        
       }
-    });
+    }
 
     test(_'should track cross-organizational data sharing',async () => {
       // security-auditor: Inter-organizational access validation
-      const testPatient = await testDataGenerator.createTestPatient();
+      const testPatient = await testDataGenerator.createTestPatient(
       const externalRequest = {
         requesting_organization: 'Hospital São Paulo',
         requesting_doctor_crm: 'CRM/SP-654321',
@@ -436,13 +436,13 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
         },
         ip_address: '10.20.30.40', // External organization IP
         compliance_context: 'lgpd_international_transfer',
-      });
+      }
 
-      expect(auditEvent.event_type).toBe('inter_organizational_access');
+      expect(auditEvent.event_type).toBe('inter_organizational_access')
       expect(auditEvent.details.access_granted).toBe(true);
-      expect(auditEvent.details.compliance_verification).toBeDefined();
-      console.log('✅ Cross-organizational data sharing logged');
-    });
+      expect(auditEvent.details.compliance_verification).toBeDefined(
+      console.log('✅ Cross-organizational data sharing logged')
+    }
 
     test(_'should monitor bulk data operations',async () => {
       // security-auditor: Bulk operations monitoring
@@ -486,18 +486,18 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
             organizational_safeguards: ['approval_workflow', 'audit_review'],
             compliance_impact_assessment: operation.records_affected > 1000,
           },
-        });
+        }
 
-        expect(auditEvent.action).toBe(operation.operation_type);
+        expect(auditEvent.action).toBe(operation.operation_type
         expect(auditEvent.details.records_affected).toBe(
           operation.records_affected,
-        );
+        
         console.log(
           `✅ Bulk operation "${operation.operation_type}" monitored`,
-        );
+        
       }
-    });
-  });
+    }
+  }
 
   describe(('Security Event Tracking', () => {
     test(_'should detect and log suspicious access patterns',async () => {
@@ -562,21 +562,21 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
             detection_method: 'automated_ml_algorithm',
             confidence_score: 0.85,
             investigation_required: event.details.risk_level === 'high',
-            escalation_level: event.details.risk_level === 'high'
-              ? 'security_team'
+            escalation_level: event.details.risk_level === 'high')
+              ? 'security_team')
               : 'supervisor',
             mitigation_actions: event.details.automated_response,
           },
           compliance_context: 'security_monitoring',
-        });
+        }
 
-        expect(auditEvent.event_type).toBe('security_anomaly_detection');
-        expect(auditEvent.details.risk_level).toBeDefined();
+        expect(auditEvent.event_type).toBe('security_anomaly_detection')
+        expect(auditEvent.details.risk_level).toBeDefined(
         console.log(
           `✅ Security anomaly "${event.event_type}" detected and logged`,
-        );
+        
       }
-    });
+    }
 
     test(_'should track privilege escalation and administrative actions',async () => {
       // security-auditor: Administrative actions validation
@@ -631,13 +631,13 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
             rollback_procedure_available: true,
             notification_sent_to: ['compliance_team', 'affected_users'],
           },
-        });
+        }
 
-        expect(auditEvent.action).toBe(action.action_type);
+        expect(auditEvent.action).toBe(action.action_type
         expect(auditEvent.details.approval_workflow_completed).toBe(true);
-        console.log(`✅ Administrative action "${action.action_type}" tracked`);
+        console.log(`✅ Administrative action "${action.action_type}" tracked`
       }
-    });
+    }
 
     test(_'should monitor system integration and API usage',async () => {
       // security-auditor: API monitoring validation
@@ -691,18 +691,18 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
             data_sensitivity_level: apiEvent.api_endpoint.includes(
                 'medical-records',
               )
-              ? 'high'
+              ? 'high')
               : 'medium',
             compliance_flags: apiEvent.records_returned > 1000 ? ['bulk_access'] : [],
           },
-        });
+        }
 
-        expect(auditEvent.event_type).toBe('api_usage_monitoring');
-        expect(auditEvent.details.response_time_ms).toBeDefined();
-        console.log(`✅ API usage "${apiEvent.api_endpoint}" monitored`);
+        expect(auditEvent.event_type).toBe('api_usage_monitoring')
+        expect(auditEvent.details.response_time_ms).toBeDefined(
+        console.log(`✅ API usage "${apiEvent.api_endpoint}" monitored`
       }
-    });
-  });
+    }
+  }
 
   describe(('Compliance Reporting', () => {
     test(_'should generate LGPD compliance reports',async () => {
@@ -759,15 +759,15 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
         action: 'generate_lgpd_report',
         details: complianceReport,
         compliance_context: 'lgpd_annual_reporting',
-      });
+      }
 
-      expect(auditEvent.details.metrics.total_data_subjects).toBe(50000);
+      expect(auditEvent.details.metrics.total_data_subjects).toBe(50000
       expect(auditEvent.details.processing_activities.total_activities).toBe(
         12,
-      );
-      expect(auditEvent.details.recommendations).toHaveLength(3);
-      console.log('✅ LGPD compliance report generated');
-    });
+      
+      expect(auditEvent.details.recommendations).toHaveLength(3
+      console.log('✅ LGPD compliance report generated')
+    }
 
     test(_'should generate ANVISA regulatory reports',async () => {
       // security-auditor: ANVISA reporting validation
@@ -811,17 +811,17 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
         action: 'generate_anvisa_report',
         details: anvisaReport,
         compliance_context: 'anvisa_rdc_786_2023',
-      });
+      }
 
       expect(auditEvent.details.healthcare_institution.cnes_code).toBe(
         '2077469',
-      );
+      
       expect(auditEvent.details.health_data_metrics.patient_consultations).toBe(
         15000,
-      );
-      expect(auditEvent.details.adverse_events.security_breaches).toBe(0);
-      console.log('✅ ANVISA regulatory report generated');
-    });
+      
+      expect(auditEvent.details.adverse_events.security_breaches).toBe(0
+      console.log('✅ ANVISA regulatory report generated')
+    }
 
     test(_'should validate audit trail completeness and integrity',async () => {
       // security-auditor: Audit integrity validation
@@ -861,15 +861,15 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
         action: 'validate_audit_integrity',
         details: auditIntegrityCheck,
         compliance_context: 'audit_validation',
-      });
+      }
 
       expect(auditEvent.details.validation_results.no_tampering_detected).toBe(
         true,
-      );
-      expect(auditEvent.details.metrics.integrity_score).toBe(100);
-      console.log('✅ Audit trail integrity validated');
-    });
-  });
+      
+      expect(auditEvent.details.metrics.integrity_score).toBe(100
+      console.log('✅ Audit trail integrity validated')
+    }
+  }
 
   describe(('Data Retention and Deletion', () => {
     test(_'should validate retention policy enforcement',async () => {
@@ -922,17 +922,17 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
             records_anonymized: 5,
             policy_exceptions: 0,
           },
-        });
+        }
 
         expect(auditEvent.details.retention_period).toBe(
           policy.retention_period,
-        );
+        
         expect(auditEvent.details.automated_enforcement).toBe(true);
         console.log(
           `✅ Retention policy for "${policy.data_category}" enforced`,
-        );
+        
       }
-    });
+    }
 
     test(_'should track secure data deletion processes',async () => {
       // security-auditor: Secure deletion validation
@@ -979,14 +979,14 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
             compliance_notification_sent: true,
             irreversibility_confirmed: true,
           },
-        });
+        }
 
-        expect(auditEvent.details.deletion_method).toBeDefined();
+        expect(auditEvent.details.deletion_method).toBeDefined(
         expect(auditEvent.details.irreversibility_confirmed).toBe(true);
-        console.log(`✅ Secure deletion "${scenario.deletion_type}" tracked`);
+        console.log(`✅ Secure deletion "${scenario.deletion_type}" tracked`
       }
-    });
-  });
+    }
+  }
 
   describe(('Breach Detection and Response', () => {
     test(_'should detect and respond to potential data breaches',async () => {
@@ -1039,15 +1039,15 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
             investigation_status: 'ongoing',
             forensic_analysis_required: scenario.severity === 'critical',
           },
-        });
+        }
 
         expect(auditEvent.details.response_team_notified).toBe(true);
-        expect(auditEvent.details.incident_id).toBeDefined();
+        expect(auditEvent.details.incident_id).toBeDefined(
         console.log(
           `✅ Security breach "${scenario.breach_type}" detected and response initiated`,
-        );
+        
       }
-    });
+    }
 
     test(_'should validate incident response procedures',async () => {
       // security-auditor: Incident response validation
@@ -1097,13 +1097,13 @@ describe(('Supabase Audit Trail - LGPD Compliance', () => {
         action: 'execute_response_procedures',
         details: incidentResponse,
         compliance_context: 'incident_response_lgpd',
-      });
+      }
 
-      expect(auditEvent.details.actions_taken).toHaveLength(4);
+      expect(auditEvent.details.actions_taken).toHaveLength(4
       expect(
         auditEvent.details.impact_assessment.estimated_records_affected,
-      ).toBe(1500);
-      console.log('✅ Incident response procedures validated');
-    });
-  });
-});
+      ).toBe(1500
+      console.log('✅ Incident response procedures validated')
+    }
+  }
+}

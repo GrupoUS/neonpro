@@ -26,15 +26,15 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
   let professionalCRM: string;
 
   beforeEach(async () => {
-    await setupTestDatabase();
-    testClient = createTestClient({ _role: 'admin' });
+    await setupTestDatabase(
+    testClient = createTestClient({ _role: 'admin' }
     patientId = 'patient-recommendations-123';
     professionalCRM = 'CRM/SP 123456';
-  });
+  }
 
   afterEach(async () => {
-    await cleanupTestDatabase();
-  });
+    await cleanupTestDatabase(
+  }
 
   describe('AI-Powered Aesthetic Recommendations', () => {
     it('should generate personalized procedure recommendations for Brazilian patients', async () => {
@@ -88,11 +88,11 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(recommendationRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         recommendationId: expect.any(String),
         patientId,
@@ -137,8 +137,8 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           lgpdProtected: true,
           ethicallyApproved: true,
         },
-      });
-    });
+      }
+    }
 
     it('should handle complex multi-procedure treatment plans', async () => {
       const complexRecommendationRequest = {
@@ -170,11 +170,11 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(complexRecommendationRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         treatmentPlan: {
           phases: expect.arrayContaining([
@@ -202,9 +202,9 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           timeOptimized: true,
           resultsOptimized: true,
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Brazilian Market-Specific Features', () => {
     it('should provide regional pricing and availability for different Brazilian states', async () => {
@@ -232,11 +232,11 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(regionalRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         regionalAnalysis: {
           currentLocation: {
@@ -263,8 +263,8 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           installmentOptions: expect.any(Array),
           seasonalPromotions: expect.any(Array),
         },
-      });
-    });
+      }
+    }
 
     it('should incorporate Brazilian cultural beauty standards and preferences', async () => {
       const culturalRequest = {
@@ -291,11 +291,11 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(culturalRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         culturalAdaptation: {
           beautyStandardsConsidered: 'brazilian_contemporary',
@@ -310,9 +310,9 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
             socialAcceptance: expect.any(String),
           }),
         ]),
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('CFM Medical Ethics and Professional Standards', () => {
     it('should validate medical professional oversight and ethical compliance', async () => {
@@ -337,11 +337,11 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(ethicsValidationRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         ethicsCompliance: {
           cfmApproved: true,
@@ -368,8 +368,8 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           finalAuthority: 'medical_professional',
           recommendationConfidence: expect.any(Number),
         },
-      });
-    });
+      }
+    }
 
     it('should ensure informed consent and patient autonomy in recommendations', async () => {
       const consentValidationRequest = {
@@ -397,11 +397,11 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(consentValidationRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         informedConsentValidation: {
           risksExplained: true,
@@ -422,9 +422,9 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           dated: true,
           signed: true,
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('ANVISA Medical Device Classification', () => {
     it('should classify and validate medical devices used in recommendations', async () => {
@@ -458,11 +458,11 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(deviceClassificationRequest),
-      });
+      }
 
-      expect(response.status).toBe(200);
+      expect(response.status).toBe(200
 
-      const result = await response.json();
+      const result = await response.json(
       expect(result).toMatchObject({
         anvisaCompliance: {
           devicesClassified: true,
@@ -489,9 +489,9 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           certificationsValid: true,
           registrationsCurrent: true,
         },
-      });
-    });
-  });
+      }
+    }
+  }
 
   describe('Error Handling and Validation', () => {
     it('should handle invalid patient data with Portuguese error messages', async () => {
@@ -511,11 +511,11 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(invalidRequest),
-      });
+      }
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(400
 
-      const error = await response.json();
+      const error = await response.json(
       expect(error).toMatchObject({
         error: 'DADOS_PACIENTE_INVALIDOS',
         message: expect.stringContaining('dados do paciente'),
@@ -528,8 +528,8 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
         suggestions: expect.arrayContaining([
           expect.stringContaining('verificar'),
         ]),
-      });
-    });
+      }
+    }
 
     it('should validate professional authorization and specialization', async () => {
       const unauthorizedRequest = {
@@ -546,17 +546,17 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
           ...testClient.headers,
         },
         body: JSON.stringify(unauthorizedRequest),
-      });
+      }
 
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(403
 
-      const error = await response.json();
+      const error = await response.json(
       expect(error).toMatchObject({
         error: 'PROFISSIONAL_NAO_AUTORIZADO',
         message: expect.stringContaining('especialização'),
         code: 'RECOMMENDATIONS_002',
         locale: 'pt-BR',
-      });
-    });
-  });
-});
+      }
+    }
+  }
+}

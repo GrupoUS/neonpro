@@ -30,13 +30,13 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
   let telemedicineSessionId: string;
 
   beforeEach(async () => {
-    await setupTestDatabase();
-    testClient = await createTestClient({ _role: 'admin' });
+    await setupTestDatabase(
+    testClient = await createTestClient({ _role: 'admin' }
 
     supabase = createClient<Database>(
       process.env.SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    );
+    
 
     // Setup MSW server for external service mocking
     server = setupServer(
@@ -55,7 +55,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           },
           situacao_etica: 'REGULAR',
           ultima_atualizacao: '2024-01-15T10:00:00Z',
-        });
+        }
       }),
       // Mock ICP-Brasil certificate validation
       http.post('https://validador.iti.gov.br/api/validar-certificado', () => {
@@ -73,7 +73,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           },
           status_revogacao: 'NAO_REVOGADO',
           timestamp_validacao: new Date().toISOString(),
-        });
+        }
       }),
       // Mock NGS2 security validation service
       http.post('https://api.ngs2.gov.br/validacao-seguranca', () => {
@@ -84,7 +84,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
           auditoria: 'TRILHA_COMPLETA_ATIVADA',
           compliance_score: 98,
           certificacao: 'NGS2_CERTIFICADO_VALIDO',
-        });
+        }
       }),
       // Mock video conferencing service (WebRTC signaling)
       http.post('https://api.telemedicina-segura.com.br/session/create', () => {
@@ -108,21 +108,21 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             audit_logging: 'ENABLED',
             data_residency: 'BRAZIL_ONLY',
           },
-        });
+        }
       }),
-    );
+    
 
-    server.listen();
+    server.listen(
 
     doctorId = `doctor_cfm_${Date.now()}`;
     patientId = `patient_cfm_${Date.now()}`;
     telemedicineSessionId = `telem_${Date.now()}`;
-  });
+  }
 
   afterEach(async () => {
-    server.close();
-    await cleanupTestDatabase();
-  });
+    server.close(
+    await cleanupTestDatabase(
+  }
 
   describe('Medical Professional License Validation', () => {
     it('should validate CFM license in real-time before telemedicine session', async () => {
@@ -149,14 +149,14 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             },
             body: JSON.stringify(licenseValidation),
           },
-        );
+        
 
         if (!response.ok) {
-          throw new Error(`License validation failed: ${response.status}`);
+          throw new Error(`License validation failed: ${response.status}`
         }
 
-        return response.json();
-      }).rejects.toThrow();
+        return response.json(
+      }).rejects.toThrow(
 
       // Expected implementation should:
       // 1. Query CFM portal in real-time
@@ -166,7 +166,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       // 5. Validate ethical standing
       // 6. Generate compliance certificate
       // 7. Cache validation with appropriate TTL
-    });
+    }
 
     it('should verify medical specialty authorization for specific procedures', async () => {
       const specialtyValidation = {
@@ -198,14 +198,14 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             },
             body: JSON.stringify(specialtyValidation),
           },
-        );
+        
 
-        return response.json();
-      }).rejects.toThrow();
+        return response.json(
+      }).rejects.toThrow(
 
       // Should verify RQE and specialty-specific authorizations
-    });
-  });
+    }
+  }
 
   describe('ICP-Brasil Certificate Management', () => {
     it('should validate ICP-Brasil digital certificate for medical professionals', async () => {
@@ -235,10 +235,10 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             },
             body: JSON.stringify(certificateValidation),
           },
-        );
+        
 
-        return response.json();
-      }).rejects.toThrow();
+        return response.json(
+      }).rejects.toThrow(
 
       // Expected validation process:
       // 1. Verify certificate chain to trusted ICP-Brasil root
@@ -247,7 +247,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       // 4. Confirm certificate purpose matches usage
       // 5. Verify doctor identity matches CFM records
       // 6. Generate cryptographic validation proof
-    });
+    }
 
     it('should handle certificate renewal and transition periods', async () => {
       const certificateTransition = {
@@ -276,14 +276,14 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             },
             body: JSON.stringify(certificateTransition),
           },
-        );
+        
 
-        return response.json();
-      }).rejects.toThrow();
+        return response.json(
+      }).rejects.toThrow(
 
       // Should manage smooth certificate transitions without service disruption
-    });
-  });
+    }
+  }
 
   describe('NGS2 Security Standards Compliance', () => {
     it('should enforce NGS2 Level 3 security for telemedicine sessions', async () => {
@@ -312,10 +312,10 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             },
             body: JSON.stringify(ngs2Compliance),
           },
-        );
+        
 
-        return response.json();
-      }).rejects.toThrow();
+        return response.json(
+      }).rejects.toThrow(
 
       // Should implement all NGS2 Level 3 security controls:
       // 1. Strong authentication (multi-factor)
@@ -325,7 +325,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       // 5. Session management and timeout
       // 6. Data integrity verification
       // 7. Incident response capability
-    });
+    }
 
     it('should maintain security compliance throughout session lifecycle', async () => {
       const sessionSecurityMonitoring = {
@@ -356,14 +356,14 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             },
             body: JSON.stringify(sessionSecurityMonitoring),
           },
-        );
+        
 
-        return response.json();
-      }).rejects.toThrow();
+        return response.json(
+      }).rejects.toThrow(
 
       // Should provide continuous security monitoring and alerting
-    });
-  });
+    }
+  }
 
   describe('Telemedicine Session Management', () => {
     it('should create secure telemedicine session with CFM compliance', async () => {
@@ -399,10 +399,10 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             },
             body: JSON.stringify(sessionCreation),
           },
-        );
+        
 
-        return response.json();
-      }).rejects.toThrow();
+        return response.json(
+      }).rejects.toThrow(
 
       // Expected session creation should:
       // 1. Validate doctor's CFM license and specialties
@@ -412,7 +412,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       // 5. Prepare digital prescription infrastructure
       // 6. Configure session recording (if consented)
       // 7. Generate session compliance certificate
-    });
+    }
 
     it('should enforce patient consent requirements for telemedicine', async () => {
       const patientConsentValidation = {
@@ -454,14 +454,14 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             },
             body: JSON.stringify(patientConsentValidation),
           },
-        );
+        
 
-        return response.json();
-      }).rejects.toThrow();
+        return response.json(
+      }).rejects.toThrow(
 
       // Should handle granular consent management for telemedicine
-    });
-  });
+    }
+  }
 
   describe('Digital Prescription and Electronic Signature', () => {
     it('should generate CFM-compliant digital prescriptions', async () => {
@@ -508,10 +508,10 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             },
             body: JSON.stringify(digitalPrescription),
           },
-        );
+        
 
-        return response.json();
-      }).rejects.toThrow();
+        return response.json(
+      }).rejects.toThrow(
 
       // Should generate legally valid digital prescriptions:
       // 1. Include all CFM-required fields
@@ -521,7 +521,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       // 5. Integrate with ANVISA systems if required
       // 6. Provide patient access portal
       // 7. Enable pharmacy verification
-    });
+    }
 
     it('should validate prescription authenticity and prevent fraud', async () => {
       const prescriptionValidation = {
@@ -552,14 +552,14 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             },
             body: JSON.stringify(prescriptionValidation),
           },
-        );
+        
 
-        return response.json();
-      }).rejects.toThrow();
+        return response.json(
+      }).rejects.toThrow(
 
       // Should provide comprehensive prescription validation for pharmacies
-    });
-  });
+    }
+  }
 
   describe('Audit Trail and Compliance Reporting', () => {
     it('should generate comprehensive CFM compliance audit trail', async () => {
@@ -592,10 +592,10 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             },
             body: JSON.stringify(auditTrailGeneration),
           },
-        );
+        
 
-        return response.json();
-      }).rejects.toThrow();
+        return response.json(
+      }).rejects.toThrow(
 
       // Expected audit trail should document:
       // 1. All telemedicine sessions with participants and outcomes
@@ -605,7 +605,7 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       // 5. Digital prescription generation and validation
       // 6. System security events and incidents
       // 7. Compliance violations and remediation actions
-    });
+    }
 
     it('should monitor real-time CFM compliance metrics', async () => {
       const complianceMonitoring = {
@@ -638,12 +638,12 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
             },
             body: JSON.stringify(complianceMonitoring),
           },
-        );
+        
 
-        return response.json();
-      }).rejects.toThrow();
+        return response.json(
+      }).rejects.toThrow(
 
       // Should provide continuous compliance monitoring and alerting
-    });
-  });
-});
+    }
+  }
+}

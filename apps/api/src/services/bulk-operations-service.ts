@@ -128,50 +128,50 @@ export class BulkOperationsService {
 
     try {
       // 1. Validate request
-      await this.validateBulkRequest(request);
+      await this.validateBulkRequest(_request);
 
       // 2. Check rate limits
-      this.enforceRateLimit(request.requesterUserId, request.operationType);
+      this.enforceRateLimit(_request.requesterUserId, _request.operationType);
 
       // 3. Get safety configuration
-      const config = SAFETY_CONFIGURATIONS[request.operationType];
+      const config = SAFETY_CONFIGURATIONS[_request.operationType];
 
       // 4. Validate batch size
-      if (request.entityIds.length > config.maxBatchSize) {
+      if (_request.entityIds.length > config.maxBatchSize) {
         throw new Error(
-          `Batch size ${request.entityIds.length} exceeds maximum ${config.maxBatchSize} for ${request.operationType}`,
+          `Batch size ${_request.entityIds.length} exceeds maximum ${config.maxBatchSize} for ${_request.operationType}`,
         );
       }
 
       // 5. Validate confirmation if required
-      if (config.requireConfirmation && !request.confirmationToken) {
+      if (config.requireConfirmation && !_request.confirmationToken) {
         throw new Error('Confirmation token required for this operation');
       }
 
       // 6. Validate reason if required
-      if (config.requireReason && !request.reason) {
+      if (config.requireReason && !_request.reason) {
         throw new Error('Reason required for this operation');
       }
 
       // 7. Log operation start
-      await this.logOperationStart(request, auditTrailId);
+      await this.logOperationStart(_request, auditTrailId);
 
       // 8. Execute operation with retry logic
-      const result = await this.executeWithRetry(request, auditTrailId);
+      const result = await this.executeWithRetry(_request, auditTrailId);
 
       // 9. Store undo information if enabled
       if (config.enableUndo && result.success) {
         const undoToken = this.generateUndoToken();
         await this.storeUndoInformation(
           undoToken,
-          request,
+          _request,
           config.undoWindowMs,
         );
         result.undoToken = undoToken;
       }
 
       // 10. Log operation completion
-      await this.logOperationCompletion(request, result, auditTrailId);
+      await this.logOperationCompletion(_request, result, auditTrailId);
 
       result.processingTimeMs = Date.now() - startTime;
       return result;
@@ -251,9 +251,9 @@ export class BulkOperationsService {
   ): Promise<void> {
     // Validate required fields
     if (
-      !request.operationType
-      || !request.entityType
-      || !request.entityIds?.length
+      !_request.operationType
+      || !_request.entityType
+      || !_request.entityIds?.length
     ) {
       throw new Error(
         'Invalid bulk operation _request: missing required fields',
@@ -261,12 +261,12 @@ export class BulkOperationsService {
     }
 
     // Validate operation type
-    if (!SAFETY_CONFIGURATIONS[request.operationType]) {
-      throw new Error(`Unsupported operation type: ${request.operationType}`);
+    if (!SAFETY_CONFIGURATIONS[_request.operationType]) {
+      throw new Error(`Unsupported operation type: ${_request.operationType}`);
     }
 
     // Validate entity IDs format (basic UUID check)
-    const invalidIds = request.entityIds.filter(
+    const invalidIds = _request.entityIds.filter(
       id => !id || typeof id !== 'string' || id.length < 10,
     );
     if (invalidIds.length > 0) {
@@ -274,7 +274,7 @@ export class BulkOperationsService {
     }
 
     // Validate user permissions against allowedRoles
-    await this.validateUserPermissions(request);
+    await this.validateUserPermissions(_request);
 
     // Validate clinic access permissions
     await this.validateClinicAccess(request);
@@ -359,17 +359,17 @@ export class BulkOperationsService {
     };
 
     // Process entities in batches to avoid memory issues
-    const batchSize = Math.min(request.entityIds.length, 10);
+    const batchSize = Math.min(_request.entityIds.length, 10);
     const originalData: Record<string, any> = {};
 
-    for (let i = 0; i < request.entityIds.length; i += batchSize) {
-      const batch = request.entityIds.slice(i, i + batchSize);
+    for (let i = 0; i < _request.entityIds.length; i += batchSize) {
+      const batch = _request.entityIds.slice(i, i + batchSize);
 
       for (const entityId of batch) {
         try {
           // Store original data for undo functionality
           const originalEntityData = await this.getEntityData(
-            request.entityType,
+            _request.entityType,
             entityId,
           );
           originalData[entityId] = originalEntityData;
@@ -418,27 +418,27 @@ export class BulkOperationsService {
     entityId: string,
   ): Promise<void> {
     // Mock implementation - in real application, execute actual operation
-    switch (request.operationType) {
+    switch (_request.operationType) {
       case 'activate':
-        logger.info('Activating entity', { entityType: request.entityType, entityId });
+        logger.info('Activating entity', { entityType: _request.entityType, entityId });
         break;
       case 'deactivate':
-        logger.info('Deactivating entity', { entityType: request.entityType, entityId });
+        logger.info('Deactivating entity', { entityType: _request.entityType, entityId });
         break;
       case 'delete':
-        logger.info('Deleting entity', { entityType: request.entityType, entityId });
+        logger.info('Deleting entity', { entityType: _request.entityType, entityId });
         break;
       case 'update':
-        logger.info('Updating entity', { entityType: request.entityType, entityId });
+        logger.info('Updating entity', { entityType: _request.entityType, entityId });
         break;
       case 'assign_tag':
-        logger.info('Assigning tag to entity', { entityType: request.entityType, entityId });
+        logger.info('Assigning tag to entity', { entityType: _request.entityType, entityId });
         break;
       case 'export':
-        logger.info('Exporting entity', { entityType: request.entityType, entityId });
+        logger.info('Exporting entity', { entityType: _request.entityType, entityId });
         break;
       default:
-        throw new Error(`Unsupported operation: ${request.operationType}`);
+        throw new Error(`Unsupported operation: ${_request.operationType}`);
     }
 
     // Simulate processing time and potential failures
@@ -498,11 +498,11 @@ export class BulkOperationsService {
   ): Promise<void> {
     logger.info('Bulk operation started', {
       auditTrailId,
-      operation: request.operationType,
-      entityType: request.entityType,
-      count: request.entityIds.length,
-      user: request.requesterUserId,
-      clinic: request.clinicId,
+      operation: _request.operationType,
+      entityType: _request.entityType,
+      count: _request.entityIds.length,
+      user: _request.requesterUserId,
+      clinic: _request.clinicId,
     });
   }
 
@@ -527,9 +527,9 @@ export class BulkOperationsService {
   ): Promise<void> {
     logger.error('Bulk operation failed', {
       auditTrailId,
-      operation: request.operationType,
-      entityType: request.entityType,
-      user: request.requesterUserId,
+      operation: _request.operationType,
+      entityType: _request.entityType,
+      user: _request.requesterUserId,
       error: error.message,
     });
   }
@@ -555,37 +555,37 @@ export class BulkOperationsService {
   private async validateUserPermissions(_request: BulkOperationRequest): Promise<void> {
     try {
       const supabase = createAdminClient();
-      const config = SAFETY_CONFIGURATIONS[request.operationType];
+      const config = SAFETY_CONFIGURATIONS[_request.operationType];
 
       // Get user details including role
       const { data: user, error } = await supabase
         .from('users')
         .select('id, role, clinic_id')
-        .eq('id', request.requesterUserId)
+        .eq('id', _request.requesterUserId)
         .single();
 
       if (error || !user) {
-        throw new Error(`User not found: ${request.requesterUserId}`);
+        throw new Error(`User not found: ${_request.requesterUserId}`);
       }
 
       // Check if user role is allowed for this operation
       if (!config.allowedRoles.includes(user._role)) {
         throw new Error(
-          `User role '${user.role}' is not authorized for ${request.operationType} operations. `
+          `User role '${user.role}' is not authorized for ${_request.operationType} operations. `
             + `Allowed roles: ${config.allowedRoles.join(', ')}`,
         );
       }
 
       logger.debug('User permissions validated', {
-        _userId: request.requesterUserId,
+        _userId: _request.requesterUserId,
         _role: user.role,
-        operationType: request.operationType,
+        operationType: _request.operationType,
         allowedRoles: config.allowedRoles,
       });
     } catch (error) {
       logger.error('User permission validation failed', {
-        _userId: request.requesterUserId,
-        operationType: request.operationType,
+        _userId: _request.requesterUserId,
+        operationType: _request.operationType,
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;
@@ -603,35 +603,35 @@ export class BulkOperationsService {
       const { data: userClinic, error } = await supabase
         .from('users')
         .select('clinic_id')
-        .eq('id', request.requesterUserId)
+        .eq('id', _request.requesterUserId)
         .single();
 
       if (error || !userClinic) {
-        throw new Error(`User clinic assignment not found: ${request.requesterUserId}`);
+        throw new Error(`User clinic assignment not found: ${_request.requesterUserId}`);
       }
 
       // Validate clinic access
-      if (userClinic.clinic_id !== request.clinicId) {
+      if (userClinic.clinic_id !== _request.clinicId) {
         throw new Error(
-          `User does not have access to clinic ${request.clinicId}. `
+          `User does not have access to clinic ${_request.clinicId}. `
             + `User's clinic: ${userClinic.clinic_id}`,
         );
       }
 
       // For patient-specific operations, validate patient belongs to clinic
-      if (request.entityType === 'patient' && request.entityIds.length > 0) {
+      if (_request.entityType === 'patient' && _request.entityIds.length > 0) {
         const { data: patients, error: patientError } = await supabase
           .from('patients')
           .select('id, clinic_id')
-          .in('id', request.entityIds.slice(0, 100)) // Limit to 100 for performance
-          .eq('clinic_id', request.clinicId);
+          .in('id', _request.entityIds.slice(0, 100)) // Limit to 100 for performance
+          .eq('clinic_id', _request.clinicId);
 
         if (patientError) {
           throw new Error(`Failed to validate patient clinic access: ${patientError.message}`);
         }
 
         const accessiblePatients = patients?.map(p => p.id) || [];
-        const inaccessiblePatients = request.entityIds.filter(id =>
+        const inaccessiblePatients = _request.entityIds.filter(id =>
           !accessiblePatients.includes(id)
         );
 
@@ -643,15 +643,15 @@ export class BulkOperationsService {
       }
 
       logger.debug('Clinic access validated', {
-        _userId: request.requesterUserId,
-        clinicId: request.clinicId,
-        entityType: request.entityType,
-        entityCount: request.entityIds.length,
+        _userId: _request.requesterUserId,
+        clinicId: _request.clinicId,
+        entityType: _request.entityType,
+        entityCount: _request.entityIds.length,
       });
     } catch (error) {
       logger.error('Clinic access validation failed', {
-        _userId: request.requesterUserId,
-        clinicId: request.clinicId,
+        _userId: _request.requesterUserId,
+        clinicId: _request.clinicId,
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;
@@ -665,18 +665,18 @@ export class BulkOperationsService {
     try {
       // Skip LGPD validation for certain operation types that are legal obligations
       const exemptOperations = ['activate', 'deactivate'];
-      if (exemptOperations.includes(request.operationType)) {
+      if (exemptOperations.includes(_request.operationType)) {
         return;
       }
 
       const supabase = createAdminClient();
 
       // For patient data operations, validate patient consent
-      if (request.entityType === 'patient' && request.entityIds.length > 0) {
+      if (_request.entityType === 'patient' && _request.entityIds.length > 0) {
         const { data: consents, error } = await supabase
           .from('lgpd_consents')
           .select('*')
-          .in('patient_id', request.entityIds.slice(0, 50)) // Limit for performance
+          .in('patient_id', _request.entityIds.slice(0, 50)) // Limit for performance
           .eq('status', 'granted')
           .gt('expires_at', new Date().toISOString());
 
@@ -685,30 +685,30 @@ export class BulkOperationsService {
         }
 
         const patientsWithConsent = new Set(consents?.map(c => c.patient_id) || []);
-        const patientsWithoutConsent = request.entityIds.filter(id => !patientsWithConsent.has(id));
+        const patientsWithoutConsent = _request.entityIds.filter(id => !patientsWithConsent.has(id));
 
         if (patientsWithoutConsent.length > 0) {
           throw new Error(
-            `LGPD compliance error: ${patientsWithoutConsent.length} patients lack valid consent for bulk ${request.operationType} operation`,
+            `LGPD compliance error: ${patientsWithoutConsent.length} patients lack valid consent for bulk ${_request.operationType} operation`,
           );
         }
 
         // Log consent validation for audit purposes
         logger.info('LGPD consent validated for bulk operation', {
-          _userId: request.requesterUserId,
-          operationType: request.operationType,
-          entityType: request.entityType,
-          entityCount: request.entityIds.length,
+          _userId: _request.requesterUserId,
+          operationType: _request.operationType,
+          entityType: _request.entityType,
+          entityCount: _request.entityIds.length,
           patientsWithConsent: patientsWithConsent.size,
         });
       }
 
       // For appointment operations, validate through patient consent
-      if (request.entityType === 'appointment' && request.entityIds.length > 0) {
+      if (_request.entityType === 'appointment' && _request.entityIds.length > 0) {
         const { data: appointments, error } = await supabase
           .from('appointments')
           .select('patient_id')
-          .in('id', request.entityIds.slice(0, 100));
+          .in('id', _request.entityIds.slice(0, 100));
 
         if (error) {
           throw new Error(`Failed to validate appointment consent: ${error.message}`);
@@ -742,9 +742,9 @@ export class BulkOperationsService {
       }
     } catch (error) {
       logger.error('LGPD consent validation failed', {
-        _userId: request.requesterUserId,
-        operationType: request.operationType,
-        entityType: request.entityType,
+        _userId: _request.requesterUserId,
+        operationType: _request.operationType,
+        entityType: _request.entityType,
         error: error instanceof Error ? error.message : String(error),
       });
       throw error;

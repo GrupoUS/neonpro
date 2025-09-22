@@ -13,31 +13,31 @@ describe('Contract Tests: AI Agent Endpoint', () => {
 
   beforeAll(async () => {
     // Create Hono app with agent route
-    app = new Hono();
-    app.route('/api/ai/data-agent', agentRouter);
+    app = new Hono(
+    app.route('/api/ai/data-agent', agentRouter
 
     // Start test server
     server = createServer({
       fetch: app.fetch,
       port: 0, // Let OS choose port
-    });
+    }
 
     await new Promise(resolve => {
       server.listen(0, () => {
-        const address = server.address();
+        const address = server.address(
         if (address && typeof address === 'object') {
           baseUrl = `http://localhost:${address.port}`;
         }
-        resolve(true);
-      });
-    });
-  });
+        resolve(true
+      }
+    }
+  }
 
   afterAll(async () => {
     if (server) {
-      await new Promise(resolve => server.close(resolve));
+      await new Promise(resolve => server.close(resolve)
     }
-  });
+  }
 
   describe('POST /api/ai/data-agent', () => {
     it('should return 400 for missing query parameter', async () => {
@@ -49,13 +49,13 @@ describe('Contract Tests: AI Agent Endpoint', () => {
         body: JSON.stringify({
           sessionId: 'test-session-123',
         }),
-      });
+      }
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
-      expect(data.error).toBeDefined();
-      expect(data.error.code).toBe('BAD_REQUEST');
-    });
+      expect(response.status).toBe(400
+      const data = await response.json(
+      expect(data.error).toBeDefined(
+      expect(data.error.code).toBe('BAD_REQUEST')
+    }
 
     it('should return 400 for missing sessionId parameter', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -66,13 +66,13 @@ describe('Contract Tests: AI Agent Endpoint', () => {
         body: JSON.stringify({
           _query: 'Quais os próximos agendamentos?',
         }),
-      });
+      }
 
-      expect(response.status).toBe(400);
-      const data = await response.json();
-      expect(data.error).toBeDefined();
-      expect(data.error.code).toBe('BAD_REQUEST');
-    });
+      expect(response.status).toBe(400
+      const data = await response.json(
+      expect(data.error).toBeDefined(
+      expect(data.error.code).toBe('BAD_REQUEST')
+    }
 
     it('should return 200 for valid client query request', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -88,18 +88,18 @@ describe('Contract Tests: AI Agent Endpoint', () => {
             _userId: 'user-789',
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       // Verify response structure
       expect(data.success).toBe(true);
-      expect(data.response).toBeDefined();
-      expect(data.response.id).toBeDefined();
-      expect(data.response.type).toBeDefined();
-      expect(data.response.content).toBeDefined();
-    });
+      expect(data.response).toBeDefined(
+      expect(data.response.id).toBeDefined(
+      expect(data.response.type).toBeDefined(
+      expect(data.response.content).toBeDefined(
+    }
 
     it('should return 200 for valid appointment query request', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -112,17 +112,17 @@ describe('Contract Tests: AI Agent Endpoint', () => {
           _query: 'Quais os próximos agendamentos?',
           sessionId: 'test-session-123',
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       // Verify response structure
       expect(data.success).toBe(true);
-      expect(data.response).toBeDefined();
-      expect(data.response.id).toBeDefined();
-      expect(data.response.type).toBe('list');
-    });
+      expect(data.response).toBeDefined(
+      expect(data.response.id).toBeDefined(
+      expect(data.response.type).toBe('list')
+    }
 
     it('should return 200 for valid financial query request', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -135,16 +135,16 @@ describe('Contract Tests: AI Agent Endpoint', () => {
           _query: 'Como está o faturamento?',
           sessionId: 'test-session-123',
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       // Verify response structure
       expect(data.success).toBe(true);
-      expect(data.response).toBeDefined();
-      expect(data.response.type).toBeDefined();
-    });
+      expect(data.response).toBeDefined(
+      expect(data.response.type).toBeDefined(
+    }
 
     it('should include actions in response when applicable', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -157,21 +157,21 @@ describe('Contract Tests: AI Agent Endpoint', () => {
           _query: 'Agendamentos da Maria amanhã?',
           sessionId: 'test-session-123',
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
 
       // Verify actions structure
-      expect(data.actions).toBeDefined();
+      expect(data.actions).toBeDefined(
       expect(Array.isArray(data.actions)).toBe(true);
 
       if (data.actions.length > 0) {
-        expect(data.actions[0]).toHaveProperty('id');
-        expect(data.actions[0]).toHaveProperty('label');
-        expect(data.actions[0]).toHaveProperty('type');
+        expect(data.actions[0]).toHaveProperty('id')
+        expect(data.actions[0]).toHaveProperty('label')
+        expect(data.actions[0]).toHaveProperty('type')
       }
-    });
+    }
 
     it('should handle context parameter correctly', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -197,12 +197,12 @@ describe('Contract Tests: AI Agent Endpoint', () => {
             ],
           },
         }),
-      });
+      }
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(200
+      const data = await response.json(
       expect(data.success).toBe(true);
-    });
+    }
 
     it('should return error response for processing failures', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
@@ -215,16 +215,16 @@ describe('Contract Tests: AI Agent Endpoint', () => {
           _query: 'INVALID_QUERY_THAT_SHOULD_FAIL',
           sessionId: 'test-session-123',
         }),
-      });
+      }
 
       expect(response.status).toBe(200); // Still 200, but with error in response
-      const data = await response.json();
+      const data = await response.json(
 
       // Should return success: false for processing errors
       expect(data.success).toBe(false);
-      expect(data.error).toBeDefined();
-      expect(data.error.code).toBeDefined();
-      expect(data.error.message).toBeDefined();
-    });
-  });
-});
+      expect(data.error).toBeDefined(
+      expect(data.error.code).toBeDefined(
+      expect(data.error.message).toBeDefined(
+    }
+  }
+}

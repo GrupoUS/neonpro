@@ -29,18 +29,18 @@ describe("Clinical KPIs", () => {
         safetyCategory: "medication_safety",
         incidentCount: 5,
         totalEvents: 200,
-      });
+      }
 
       expect(isClinicalKPI(kpi)).toBe(true);
       expect(isPatientSafetyKPI(kpi)).toBe(true);
-    });
+    }
 
     it("should reject invalid clinical KPIs", () => {
       expect(isClinicalKPI({})).toBe(false);
       expect(isClinicalKPI(null)).toBe(false);
       expect(isClinicalKPI({ id: "test", name: "test" })).toBe(false);
-    });
-  });
+    }
+  }
 
   describe("Patient Safety KPI", () => {
     let safetyKPI: PatientSafetyKPI;
@@ -53,32 +53,32 @@ describe("Clinical KPIs", () => {
         safetyCategory: "patient_falls",
         incidentCount: 3,
         totalEvents: 250,
-      });
-    });
+      }
+    }
 
     it("should create a valid patient safety KPI", () => {
-      expect(safetyKPI.category).toBe("patient_safety");
-      expect(safetyKPI.name).toBe("fall_rate");
-      expect(safetyKPI.value).toBe(1.2);
-      expect(safetyKPI.safetyCategory).toBe("patient_falls");
-      expect(safetyKPI.incidentCount).toBe(3);
-      expect(safetyKPI.totalEvents).toBe(250);
-    });
+      expect(safetyKPI.category).toBe("patient_safety"
+      expect(safetyKPI.name).toBe("fall_rate"
+      expect(safetyKPI.value).toBe(1.2
+      expect(safetyKPI.safetyCategory).toBe("patient_falls"
+      expect(safetyKPI.incidentCount).toBe(3
+      expect(safetyKPI.totalEvents).toBe(250
+    }
 
     it("should calculate safety rate correctly", () => {
-      expect(safetyKPI.safetyRate).toBeCloseTo(1.2, 1);
-    });
+      expect(safetyKPI.safetyRate).toBeCloseTo(1.2, 1
+    }
 
     it("should include incident details", () => {
-      expect(safetyKPI.incidentDetails).toBeDefined();
-      expect(safetyKPI.incidentDetails.reportingMechanism).toBe("electronic");
+      expect(safetyKPI.incidentDetails).toBeDefined(
+      expect(safetyKPI.incidentDetails.reportingMechanism).toBe("electronic"
       expect(safetyKPI.incidentDetails.investigationRequired).toBe(true);
-    });
+    }
 
     it("should have appropriate risk level for safety incidents", () => {
-      expect(["MEDIUM", "HIGH"]).toContain(safetyKPI.riskLevel);
-    });
-  });
+      expect(["MEDIUM", "HIGH"]).toContain(safetyKPI.riskLevel
+    }
+  }
 
   describe("Quality of Care KPI", () => {
     let qualityKPI: QualityOfCareKPI;
@@ -90,35 +90,35 @@ describe("Clinical KPIs", () => {
         clinicId: "clinic_123",
         qualityDimension: "care_coordination",
         measurementStandard: "CFM",
-      });
-    });
+      }
+    }
 
     it("should create a valid quality of care KPI", () => {
-      expect(qualityKPI.category).toBe("quality_of_care");
-      expect(qualityKPI.qualityDimension).toBe("care_coordination");
-      expect(qualityKPI.measurementStandard).toBe("CFM");
-    });
+      expect(qualityKPI.category).toBe("quality_of_care"
+      expect(qualityKPI.qualityDimension).toBe("care_coordination"
+      expect(qualityKPI.measurementStandard).toBe("CFM"
+    }
 
     it("should include evidence-based practice tracking", () => {
-      expect(qualityKPI.evidenceBasedPractice).toBeDefined();
+      expect(qualityKPI.evidenceBasedPractice).toBeDefined(
       expect(
         qualityKPI.evidenceBasedPractice.guidelineCompliance,
-      ).toBeGreaterThanOrEqual(0);
+      ).toBeGreaterThanOrEqual(0
       expect(
         qualityKPI.evidenceBasedPractice.guidelineCompliance,
-      ).toBeLessThanOrEqual(100);
-    });
+      ).toBeLessThanOrEqual(100
+    }
 
     it("should track patient-centered care metrics", () => {
-      expect(qualityKPI.patientCenteredCare).toBeDefined();
+      expect(qualityKPI.patientCenteredCare).toBeDefined(
       expect(
         qualityKPI.patientCenteredCare.sharedDecisionMaking,
-      ).toBeGreaterThanOrEqual(0);
+      ).toBeGreaterThanOrEqual(0
       expect(
         qualityKPI.patientCenteredCare.culturalSensitivity,
-      ).toBeGreaterThanOrEqual(0);
-    });
-  });
+      ).toBeGreaterThanOrEqual(0
+    }
+  }
 
   describe("Patient Outcome KPI", () => {
     let outcomeKPI: PatientOutcomeKPI;
@@ -135,29 +135,29 @@ describe("Clinical KPIs", () => {
           current: 92.5,
           trend: "improving",
         },
-      });
-    });
+      }
+    }
 
     it("should create a valid patient outcome KPI", () => {
-      expect(outcomeKPI.category).toBe("patient_outcomes");
-      expect(outcomeKPI.outcomeType).toBe("clinical_outcome");
-      expect(outcomeKPI.measurement.current).toBe(92.5);
-      expect(outcomeKPI.measurement.trend).toBe("improving");
-    });
+      expect(outcomeKPI.category).toBe("patient_outcomes"
+      expect(outcomeKPI.outcomeType).toBe("clinical_outcome"
+      expect(outcomeKPI.measurement.current).toBe(92.5
+      expect(outcomeKPI.measurement.trend).toBe("improving"
+    }
 
     it("should calculate outcome improvement correctly", () => {
       const improvement =
         outcomeKPI.measurement.current - outcomeKPI.measurement.baseline;
-      expect(improvement).toBe(7.5);
-    });
+      expect(improvement).toBe(7.5
+    }
 
     it("should track progress toward target", () => {
       const progressToTarget =
         (outcomeKPI.measurement.current - outcomeKPI.measurement.baseline) /
-        (outcomeKPI.measurement.target - outcomeKPI.measurement.baseline);
-      expect(progressToTarget).toBeCloseTo(0.75, 2);
-    });
-  });
+        (outcomeKPI.measurement.target - outcomeKPI.measurement.baseline
+      expect(progressToTarget).toBeCloseTo(0.75, 2
+    }
+  }
 
   describe("Infection Control KPI", () => {
     it("should track infection rates and prevention measures", () => {
@@ -196,11 +196,11 @@ describe("Clinical KPIs", () => {
         },
       };
 
-      expect(infectionKPI.infectionType).toBe("healthcare_associated");
-      expect(infectionKPI.preventionMeasures).toContain("hand_hygiene");
-      expect(infectionKPI.surveillanceData.surveillanceType).toBe("active");
-    });
-  });
+      expect(infectionKPI.infectionType).toBe("healthcare_associated"
+      expect(infectionKPI.preventionMeasures).toContain("hand_hygiene"
+      expect(infectionKPI.surveillanceData.surveillanceType).toBe("active"
+    }
+  }
 
   describe("Patient Satisfaction KPI", () => {
     it("should track patient experience metrics", () => {
@@ -242,11 +242,11 @@ describe("Clinical KPIs", () => {
         },
       };
 
-      expect(satisfactionKPI.satisfactionDimensions.communication).toBe(4.5);
-      expect(satisfactionKPI.surveyMetadata.responseRate).toBe(78.5);
-      expect(satisfactionKPI.surveyMetadata.sampleSize).toBe(150);
-    });
-  });
+      expect(satisfactionKPI.satisfactionDimensions.communication).toBe(4.5
+      expect(satisfactionKPI.surveyMetadata.responseRate).toBe(78.5
+      expect(satisfactionKPI.surveyMetadata.sampleSize).toBe(150
+    }
+  }
 
   describe("Clinical Quality Score Calculation", () => {
     it("should calculate comprehensive clinical quality score", () => {
@@ -280,25 +280,25 @@ describe("Clinical KPIs", () => {
         }),
       ];
 
-      const qualityScore = calculateClinicalQualityScore(clinicalKPIs);
+      const qualityScore = calculateClinicalQualityScore(clinicalKPIs
 
-      expect(qualityScore.score).toBeGreaterThan(0);
-      expect(qualityScore.score).toBeLessThanOrEqual(100);
+      expect(qualityScore.score).toBeGreaterThan(0
+      expect(qualityScore.score).toBeLessThanOrEqual(100
       expect(qualityScore.level).toMatch(
         /^(excellent|good|fair|needs_improvement)$/,
-      );
-      expect(qualityScore.dimensions).toBeDefined();
-      expect(qualityScore.dimensions.length).toBeGreaterThan(0);
-    });
+      
+      expect(qualityScore.dimensions).toBeDefined(
+      expect(qualityScore.dimensions.length).toBeGreaterThan(0
+    }
 
     it("should handle empty KPI array gracefully", () => {
-      const qualityScore = calculateClinicalQualityScore([]);
+      const qualityScore = calculateClinicalQualityScore([]
 
-      expect(qualityScore.score).toBe(0);
-      expect(qualityScore.level).toBe("needs_improvement");
-      expect(qualityScore.dimensions).toHaveLength(0);
-    });
-  });
+      expect(qualityScore.score).toBe(0
+      expect(qualityScore.level).toBe("needs_improvement"
+      expect(qualityScore.dimensions).toHaveLength(0
+    }
+  }
 
   describe("Clinical Compliance Validation", () => {
     it("should validate ANVISA compliance for clinical metrics", () => {
@@ -309,14 +309,14 @@ describe("Clinical KPIs", () => {
         safetyCategory: "medication_safety",
         incidentCount: 8,
         totalEvents: 250,
-      });
+      }
 
-      const compliance = validateClinicalCompliance(clinicalKPI);
+      const compliance = validateClinicalCompliance(clinicalKPI
 
-      expect(compliance.compliant).toBeDefined();
-      expect(compliance.requirements).toBeInstanceOf(Array);
-      expect(compliance.recommendations).toBeInstanceOf(Array);
-    });
+      expect(compliance.compliant).toBeDefined(
+      expect(compliance.requirements).toBeInstanceOf(Array
+      expect(compliance.recommendations).toBeInstanceOf(Array
+    }
 
     it("should validate CFM compliance for medical practice", () => {
       const qualityKPI = createQualityOfCareKPI({
@@ -325,17 +325,17 @@ describe("Clinical KPIs", () => {
         clinicId: "clinic_123",
         qualityDimension: "clinical_effectiveness",
         measurementStandard: "CFM",
-      });
+      }
 
-      const compliance = validateClinicalCompliance(qualityKPI);
+      const compliance = validateClinicalCompliance(qualityKPI
 
       expect(compliance.requirements).toContain(
         "Medical practice must follow CFM ethical guidelines",
-      );
+      
       expect(compliance.recommendations).toContain(
         "Regular clinical audit recommended",
-      );
-    });
+      
+    }
 
     it("should validate LGPD compliance for patient data", () => {
       const outcomeKPI = createPatientOutcomeKPI({
@@ -349,18 +349,18 @@ describe("Clinical KPIs", () => {
           current: 87.3,
           trend: "stable",
         },
-      });
+      }
 
-      const compliance = validateClinicalCompliance(outcomeKPI);
+      const compliance = validateClinicalCompliance(outcomeKPI
 
       expect(compliance.requirements).toContain(
         "Patient data consent required for outcome tracking",
-      );
+      
       expect(compliance.recommendations).toContain(
         "Consider anonymization for quality improvement analytics",
-      );
-    });
-  });
+      
+    }
+  }
 
   describe("Clinical Category Validation", () => {
     it("should validate all clinical categories", () => {
@@ -380,11 +380,11 @@ describe("Clinical KPIs", () => {
       ];
 
       categories.forEach((category) => {
-        expect(typeof category).toBe("string");
-        expect(category.length).toBeGreaterThan(0);
-      });
-    });
-  });
+        expect(typeof category).toBe("string"
+        expect(category.length).toBeGreaterThan(0
+      }
+    }
+  }
 
   describe("Brazilian Healthcare Context", () => {
     it("should handle SUS (Sistema Único de Saúde) metrics", () => {
@@ -394,11 +394,11 @@ describe("Clinical KPIs", () => {
         clinicId: "clinic_123",
         qualityDimension: "accessibility",
         measurementStandard: "Ministry_of_Health",
-      });
+      }
 
-      expect(susKPI.healthcareContext.payerMix?.sus).toBeDefined();
-      expect(susKPI.measurementStandard).toBe("Ministry_of_Health");
-    });
+      expect(susKPI.healthcareContext.payerMix?.sus).toBeDefined(
+      expect(susKPI.measurementStandard).toBe("Ministry_of_Health"
+    }
 
     it("should track ANS (Agência Nacional de Saúde Suplementar) quality indicators", () => {
       const ansKPI = createQualityOfCareKPI({
@@ -407,12 +407,12 @@ describe("Clinical KPIs", () => {
         clinicId: "clinic_123",
         qualityDimension: "clinical_effectiveness",
         measurementStandard: "ANS",
-      });
+      }
 
-      expect(ansKPI.measurementStandard).toBe("ANS");
+      expect(ansKPI.measurementStandard).toBe("ANS"
       expect(
         ansKPI.healthcareContext.payerMix?.private_insurance,
-      ).toBeDefined();
-    });
-  });
-});
+      ).toBeDefined(
+    }
+  }
+}
