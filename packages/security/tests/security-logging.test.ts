@@ -6,6 +6,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SecureLogger } from '../src/utils';
 
 // Mock console methods to capture logging output
 const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -16,6 +17,13 @@ const mockConsoleInfo = vi.spyOn(console, 'info').mockImplementation(() => {});
 describe('Security Logging - Vulnerability Prevention', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Initialize secure logging for these tests
+    SecureLogger.initialize();
+  });
+
+  afterEach(() => {
+    // Restore original console methods
+    SecureLogger.restore();
   });
 
   afterEach(() => {

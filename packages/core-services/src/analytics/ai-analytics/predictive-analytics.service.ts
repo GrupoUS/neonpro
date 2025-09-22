@@ -149,8 +149,10 @@ export class PredictiveAnalyticsService {
     this.modelProvider = mlProvider || new StubModelProvider();
     this.enableLGPDCompliance = enableLGPDCompliance;
 
-    // Initialize the provider
-    this.initializeProvider();
+    // Initialize the provider asynchronously
+    this.initializeProvider().catch(error => {
+      console.warn("Failed to initialize ML provider during construction:", error);
+    });
   }
 
   private async initializeProvider(): Promise<void> {

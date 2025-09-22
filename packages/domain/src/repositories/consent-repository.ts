@@ -1,9 +1,9 @@
-import { 
+import type { 
   ConsentRecord, 
-  ConsentRequest, 
-  ConsentStatus, 
-  ComplianceCheck,
   ComplianceViolation 
+} from '../entities/consent.js';
+import { 
+  ConsentStatus
 } from '../entities/consent.js';
 
 /**

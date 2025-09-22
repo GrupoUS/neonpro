@@ -7,7 +7,7 @@ import {
   PatientSearchResult,
   PatientQueryOptions,
   PatientError,
-  PatientValidationError
+  PatientEntityValidationError
 } from "@neonpro/domain";
 
 /**

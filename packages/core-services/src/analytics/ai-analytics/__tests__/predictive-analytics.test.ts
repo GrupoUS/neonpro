@@ -97,7 +97,19 @@ describe("PredictiveAnalyticsService", () => {
         predict: async () => {
           throw new Error("ML Provider failed");
         },
-        isAvailable: () => true,
+        initialize: async () => {
+          throw new Error("Initialization failed");
+        },
+        metadata: {
+          id: "failing-provider",
+          name: "Failing Provider",
+          version: "1.0.0",
+          type: "failing",
+          description: "Failing provider for testing",
+          trainedAt: new Date(),
+          supportedTypes: ["no_show_risk", "revenue_forecast", "patient_outcome"],
+          requiredFeatures: ["age", "gender"],
+        },
       };
 
       const serviceWithFailingProvider = new PredictiveAnalyticsService(

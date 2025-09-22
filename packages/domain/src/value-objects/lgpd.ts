@@ -48,8 +48,8 @@ export function anonymizePatientData(
 ): Partial<Patient> {
   const anonymized = { ...patient };
 
-  if (anonymized.name) {
-    anonymized.name = `ANON_${Date.now()}`;
+  if (anonymized.fullName) {
+    anonymized.fullName = `ANON_${Date.now()}`;
   }
 
   if (anonymized.cpf) {
@@ -66,7 +66,7 @@ export function anonymizePatientData(
 
   if (anonymized.addressLine1) {
     anonymized.addressLine1 = "ENDEREÇO ANONIMIZADO";
-    anonymized.addressLine2 = undefined;
+    delete anonymized.addressLine2;
   }
 
   return anonymized;

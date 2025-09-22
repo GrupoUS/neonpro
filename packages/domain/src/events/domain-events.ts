@@ -8,7 +8,8 @@ export interface DomainEvent {
   aggregateId: string;
   aggregateType: string;
   version: number;
-  metadata?: Record<string, any>;
+  data?: Record<string, any>;
+  metadata: Record<string, any> | undefined;
 }
 
 /**
@@ -288,7 +289,7 @@ export class EventFactory {
     eventType: string,
     aggregateId: string,
     aggregateType: string,
-    data: T['data'],
+    data: T extends { data: infer D } ? D : never,
     metadata?: Record<string, any>
   ): T {
     return {
@@ -300,6 +301,6 @@ export class EventFactory {
       version: 1,
       data,
       metadata
-    } as T;
+    } as unknown as T;
   }
 }

@@ -1,5 +1,6 @@
-import { DomainEvent, DomainEventBus } from '../events/domain-events.js';
-import { 
+import type { 
+  DomainEvent, 
+  DomainEventBus,
   PatientCreatedEvent, 
   PatientUpdatedEvent, 
   PatientDeletedEvent,
@@ -67,16 +68,16 @@ export interface AuditLogEntry {
   userId: string;
   userRole: string;
   resourceType: string;
-  resourceId?: string;
+  resourceId: string | undefined;
   action: string;
   description: string;
-  ipAddress?: string;
-  userAgent?: string;
-  clinicId?: string;
-  dataClassification?: MedicalDataClassification;
-  severity?: AuditSeverity;
-  metadata?: Record<string, unknown>;
-  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT';
+  ipAddress: string | undefined;
+  userAgent: string | undefined;
+  clinicId: string | undefined;
+  dataClassification: MedicalDataClassification | undefined;
+  severity: AuditSeverity | undefined;
+  metadata: Record<string, unknown> | undefined;
+  complianceStatus: 'COMPLIANT' | 'NON_COMPLIANT' | undefined;
 }
 
 /**
@@ -163,17 +164,18 @@ export class AuditDomainService {
       resourceId: patientId,
       action: 'READ',
       description: `${userRole} accessed patient data: ${reason}`,
-      ipAddress: metadata?.ipAddress,
-      userAgent: metadata?.userAgent,
-      clinicId: metadata?.clinicId,
-      dataClassification: metadata?.dataClassification || MedicalDataClassification.SENSITIVE,
+      ipAddress: metadata?.ipAddress ?? undefined,
+      userAgent: metadata?.userAgent ?? undefined,
+      clinicId: metadata?.clinicId ?? undefined,
+      dataClassification: metadata?.dataClassification ?? MedicalDataClassification.SENSITIVE,
       severity: AuditSeverity.LOW,
       metadata: {
         reason,
         patientId,
         legalBasis: metadata?.legalBasis,
         timestamp: new Date().toISOString()
-      }
+      },
+      complianceStatus: undefined
     };
 
     // Check compliance
@@ -231,17 +233,19 @@ export class AuditDomainService {
       userId: userId || 'system',
       userRole: 'system',
       resourceType: 'SYSTEM',
+      resourceId: undefined,
       action: eventType,
       description,
-      ipAddress: metadata?.ipAddress,
-      userAgent: metadata?.userAgent,
-      clinicId: metadata?.clinicId,
+      ipAddress: metadata?.ipAddress ?? undefined,
+      userAgent: metadata?.userAgent ?? undefined,
+      clinicId: metadata?.clinicId ?? undefined,
       dataClassification: MedicalDataClassification.RESTRICTED,
       severity,
       metadata: {
         severity,
         ...metadata?.additionalData
-      }
+      },
+      complianceStatus: undefined
     };
 
     // Publish domain event
@@ -301,11 +305,12 @@ export class AuditDomainService {
       userId,
       userRole,
       resourceType: 'DATA_EXPORT',
+      resourceId: undefined,
       action: 'EXPORT',
       description: `${userRole} exported ${recordCount} ${dataType} records in ${format} format`,
-      ipAddress: metadata?.ipAddress,
-      userAgent: metadata?.userAgent,
-      clinicId: metadata?.clinicId,
+      ipAddress: metadata?.ipAddress ?? undefined,
+      userAgent: metadata?.userAgent ?? undefined,
+      clinicId: metadata?.clinicId ?? undefined,
       dataClassification: MedicalDataClassification.SENSITIVE,
       severity: AuditSeverity.MEDIUM,
       metadata: {
@@ -314,7 +319,8 @@ export class AuditDomainService {
         format,
         patientIds: metadata?.patientIds,
         legalBasis: metadata?.legalBasis
-      }
+      },
+      complianceStatus: undefined
     };
 
     // Check export compliance
@@ -373,16 +379,17 @@ export class AuditDomainService {
       resourceId: patientId,
       action: 'ANONYMIZE',
       description: `Patient data anonymized: ${reason}`,
-      ipAddress: metadata?.ipAddress,
-      userAgent: metadata?.userAgent,
-      clinicId: metadata?.clinicId,
+      ipAddress: metadata?.ipAddress ?? undefined,
+      userAgent: metadata?.userAgent ?? undefined,
+      clinicId: metadata?.clinicId ?? undefined,
       dataClassification: MedicalDataClassification.RESTRICTED,
       severity: AuditSeverity.HIGH,
       metadata: {
         reason,
         patientId,
         fieldsAnonymized: metadata?.fieldsAnonymized
-      }
+      },
+      complianceStatus: undefined
     };
 
     // Publish domain event
@@ -411,7 +418,7 @@ export class AuditDomainService {
    * @param criteria Search criteria
    * @returns Array of matching audit log entries
    */
-  async searchAuditLogs(criteria: AuditSearchCriteria): Promise<AuditLogEntry[]> {
+  async searchAuditLogs(_criteria: AuditSearchCriteria): Promise<AuditLogEntry[]> {
     // TODO: Implement search using audit repository
     // return await this.auditRepository.search(criteria);
     
@@ -429,7 +436,7 @@ export class AuditDomainService {
   async generateComplianceReport(
     startDate: Date,
     endDate: Date,
-    clinicId?: string
+    _clinicId?: string
   ): Promise<ComplianceReport> {
     // TODO: Generate report using audit repository
     // const auditLogs = await this.auditRepository.findByDateRange(startDate, endDate, clinicId);
@@ -476,9 +483,9 @@ export class AuditDomainService {
    * @returns True if access is compliant
    */
   private async checkAccessCompliance(
-    userId: string,
-    patientId: string,
-    legalBasis?: string
+    _userId: string,
+    _patientId: string,
+    _legalBasis?: string
   ): Promise<boolean> {
     // TODO: Implement compliance checking logic
     // This would check if user has proper consent, authorization, etc.
@@ -496,10 +503,10 @@ export class AuditDomainService {
    * @returns True if export is compliant
    */
   private async checkExportCompliance(
-    userId: string,
-    dataType: string,
-    recordCount: number,
-    legalBasis?: string
+    _userId: string,
+    _dataType: string,
+    _recordCount: number,
+    _legalBasis?: string
   ): Promise<boolean> {
     // TODO: Implement export compliance checking
     // This would check if user has proper authorization for data export
@@ -562,43 +569,43 @@ export class AuditDomainService {
     }
   }
 
-  private async handlePatientCreated(event: PatientCreatedEvent): Promise<void> {
+  private async handlePatientCreated(_event: PatientCreatedEvent): Promise<void> {
     // TODO: Create audit log for patient creation
   }
 
-  private async handlePatientUpdated(event: PatientUpdatedEvent): Promise<void> {
+  private async handlePatientUpdated(_event: PatientUpdatedEvent): Promise<void> {
     // TODO: Create audit log for patient update
   }
 
-  private async handlePatientDeleted(event: PatientDeletedEvent): Promise<void> {
+  private async handlePatientDeleted(_event: PatientDeletedEvent): Promise<void> {
     // TODO: Create audit log for patient deletion
   }
 
-  private async handleAppointmentCreated(event: AppointmentCreatedEvent): Promise<void> {
+  private async handleAppointmentCreated(_event: AppointmentCreatedEvent): Promise<void> {
     // TODO: Create audit log for appointment creation
   }
 
-  private async handleAppointmentCancelled(event: AppointmentCancelledEvent): Promise<void> {
+  private async handleAppointmentCancelled(_event: AppointmentCancelledEvent): Promise<void> {
     // TODO: Create audit log for appointment cancellation
   }
 
-  private async handleAppointmentCompleted(event: AppointmentCompletedEvent): Promise<void> {
+  private async handleAppointmentCompleted(_event: AppointmentCompletedEvent): Promise<void> {
     // TODO: Create audit log for appointment completion
   }
 
-  private async handleConsentCreated(event: ConsentCreatedEvent): Promise<void> {
+  private async handleConsentCreated(_event: ConsentCreatedEvent): Promise<void> {
     // TODO: Create audit log for consent creation
   }
 
-  private async handleConsentRevoked(event: ConsentRevokedEvent): Promise<void> {
+  private async handleConsentRevoked(_event: ConsentRevokedEvent): Promise<void> {
     // TODO: Create audit log for consent revocation
   }
 
-  private async handleComplianceChecked(event: ComplianceCheckedEvent): Promise<void> {
+  private async handleComplianceChecked(_event: ComplianceCheckedEvent): Promise<void> {
     // TODO: Create audit log for compliance check
   }
 
-  private async handleComplianceViolation(event: ComplianceViolationEvent): Promise<void> {
+  private async handleComplianceViolation(_event: ComplianceViolationEvent): Promise<void> {
     // TODO: Create audit log for compliance violation
   }
 }

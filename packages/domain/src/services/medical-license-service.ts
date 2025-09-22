@@ -590,8 +590,8 @@ export class MedicalLicenseDomainService {
    * @param requestedStates Requested states
    * @returns Authorized states
    */
-  private calculateAuthorizedStates(state: string, requestedStates: string[]): string[] {
-    const stateCouncil = this.stateCouncils.find(council => council.state === state.toUpperCase());
+  private calculateAuthorizedStates(_state: string, _requestedStates: string[]): string[] {
+    const stateCouncil = this.stateCouncils.find(council => council.state === _state.toUpperCase());
     
     if (!stateCouncil || !stateCouncil.telemedicineRegulations.allowed) {
       return [];
@@ -599,7 +599,7 @@ export class MedicalLicenseDomainService {
 
     // By default, authorize only the registered state
     // Some states may have reciprocity agreements
-    const authorizedStates = [state.toUpperCase()];
+    const authorizedStates = [_state.toUpperCase()];
 
     // TODO: Implement reciprocity logic based on state regulations
     // This would check for interstate telemedicine agreements
@@ -660,7 +660,7 @@ export class MedicalLicenseDomainService {
    * @param requestedStates Requested states
    * @returns True if supervision is required
    */
-  private requiresSupervision(state: string, requestedStates: string[]): boolean {
+  private requiresSupervision(_state: string, _requestedStates: string[]): boolean {
     // This would be based on state regulations and physician experience
     // For now, return false as default
     return false;
@@ -672,7 +672,7 @@ export class MedicalLicenseDomainService {
    * @param state Physician's state
    * @returns Cached registration data or null
    */
-  private async getCachedRegistration(cfmNumber: string, state: string): Promise<CFMRegistration | null> {
+  private async getCachedRegistration(_cfmNumber: string, _state: string): Promise<CFMRegistration | null> {
     // TODO: Implement cache retrieval using repository
     // return await this.licenseRepository.getCachedRegistration(cfmNumber, state);
     return null;
@@ -694,7 +694,7 @@ export class MedicalLicenseDomainService {
    * Updates registration cache
    * @param registration CFM registration data
    */
-  private async updateRegistrationCache(registration: CFMRegistration): Promise<void> {
+  private async updateRegistrationCache(_registration: CFMRegistration): Promise<void> {
     // TODO: Implement cache update using repository
     // await this.licenseRepository.updateRegistrationCache(registration);
   }
@@ -704,7 +704,7 @@ export class MedicalLicenseDomainService {
    * @param cfmNumber CFM registration number
    * @param state Physician's state
    */
-  private async flagForManualReview(cfmNumber: string, state: string): Promise<void> {
+  private async flagForManualReview(_cfmNumber: string, _state: string): Promise<void> {
     // TODO: Implement manual review flag using repository
     // await this.licenseRepository.flagForManualReview(cfmNumber, state);
   }

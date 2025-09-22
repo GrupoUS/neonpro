@@ -44,17 +44,17 @@ export class ConsentDomainService {
     }
 
     // Create consent record
-    const consent = ConsentFactory.createFromRequest(_request, grantedBy);
+    const consent = ConsentFactory.createFromRequest(request, grantedBy);
 
     // Add grant audit event
     const grantEvent = ConsentFactory.createAuditEvent(
       ConsentAction.GRANTED,
-      _request.patientId,
+      request.patientId,
       grantedBy,
       {
-        consentType: _request.consentType,
-        purpose: _request.purpose,
-        dataTypesCount: _request.dataTypes.length,
+        consentType: request.consentType,
+        purpose: request.purpose,
+        dataTypesCount: request.dataTypes.length,
       }
     );
     consent.auditTrail.push(grantEvent);
@@ -72,20 +72,7 @@ export class ConsentDomainService {
   async getConsent(patientId: string, includeExpired = false): Promise<ConsentRecord[]> {
     const consents = await this.repository.findByPatientId(patientId, includeExpired);
     
-    // Log access for audit trail
-    const accessEvent = ConsentFactory.createAuditEvent(
-      ConsentAction.ACCESSED,
-      patientId,
-      'system',
-      { 
-        includeExpired,
-        consentCount: consents.length,
-        timestamp: new Date().toISOString()
-      }
-    );
-
     // TODO: Add audit event to repository when we implement audit logging
-    // await this.repository.addAuditEvent(patientId, accessEvent);
 
     return consents;
   }
@@ -111,18 +98,6 @@ export class ConsentDomainService {
 
     // Revoke the consent
     const revokedConsent = await this.repository.revoke(consentId, revokedBy, reason);
-
-    // Create audit trail entry
-    const auditEvent = ConsentFactory.createAuditEvent(
-      ConsentAction.REVOKED,
-      revokedConsent.patientId,
-      revokedBy,
-      {
-        revokedAt: revokedConsent.revokedAt,
-        reason,
-        previousStatus: existingConsent.status
-      }
-    );
 
     // TODO: Add audit event to repository
     // revokedConsent.auditTrail.push(auditEvent);
@@ -250,7 +225,7 @@ export class ConsentDomainService {
    * @returns Consent statistics
    */
   async getConsentStatistics(clinicId: string) {
-    return await this.queryRepository.getStatistics(clinicId);
+    return await this.repository.getStatistics(clinicId);
   }
 
   /**
@@ -271,7 +246,7 @@ export class ConsentDomainService {
    * @param renewedBy User who renewed the consent
    * @returns Updated consent record
    */
-  async renewConsent(consentId: string, newExpiration: string, renewedBy: string): Promise<ConsentRecord> {
+  async renewConsent(consentId: string, newExpiration: string, _renewedBy: string): Promise<ConsentRecord> {
     const existingConsent = await this.repository.findById(consentId);
     if (!existingConsent) {
       throw new Error(`Consent with ID ${consentId} not found`);
@@ -287,19 +262,6 @@ export class ConsentDomainService {
       expiresAt: newExpiration,
       status: ConsentStatus.ACTIVE
     });
-
-    // Add renewal audit event
-    const renewalEvent = ConsentFactory.createAuditEvent(
-      ConsentAction.UPDATED,
-      existingConsent.patientId,
-      renewedBy,
-      {
-        action: 'renewed',
-        previousExpiration: existingConsent.expiresAt,
-        newExpiration,
-        reason: 'Consent renewal'
-      }
-    );
 
     // TODO: Add audit event to repository
     // updatedConsent.auditTrail.push(renewalEvent);

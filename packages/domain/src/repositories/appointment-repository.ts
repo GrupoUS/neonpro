@@ -1,9 +1,11 @@
-import { 
+import type { 
   Appointment, 
+  AppointmentCalendarView 
+} from '../entities/appointment.js';
+import { 
   AppointmentStatus, 
   AppointmentType,
-  AppointmentPriority,
-  AppointmentCalendarView 
+  AppointmentPriority
 } from '../entities/appointment.js';
 
 /**

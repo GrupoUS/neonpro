@@ -241,14 +241,19 @@ export class ConsentFactory {
     actorId: string,
     details?: Record<string, unknown>
   ): ConsentAuditEvent {
-    return {
+    const auditEvent: ConsentAuditEvent = {
       id: `audit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       timestamp: new Date().toISOString(),
       action,
       actorId,
       patientIdHash: this.hashPatientId(patientId),
-      details: details
     };
+    
+    if (details !== undefined) {
+      auditEvent.details = details;
+    }
+    
+    return auditEvent;
   }
 
   /**
