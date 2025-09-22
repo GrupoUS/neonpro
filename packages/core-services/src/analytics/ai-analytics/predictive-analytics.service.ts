@@ -92,15 +92,15 @@ function anonymizeCPF(cpf: string): string {
 }
 
 function anonymizeEmail(email: string): string {
-  const [local, domain] = email.split("@");
-  if (!domain) return "*****@*****.***";
+  const [localPart, domainPart] = email.split("@");
+  if (!domainPart) return "*****@*****.***";
 
   const anonymizedLocal =
-    local.length > 2
-      ? local.substring(0, 2) + "*".repeat(Math.max(1, local.length - 2))
-      : "*".repeat(local.length);
+    localPart.length > 2
+      ? localPart.substring(0, 2) + "*".repeat(Math.max(1, localPart.length - 2))
+      : "*".repeat(localPart.length);
 
-  return `${anonymizedLocal}@${domain}`;
+  return `${anonymizedLocal}@${domainPart}`;
 }
 
 function maskSensitiveFields(
