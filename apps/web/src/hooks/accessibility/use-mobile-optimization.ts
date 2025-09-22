@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
 
+import { useState, useEffect, useCallback } from 'react';
+
 /**
  * Hook for mobile optimization in healthcare applications
- * Provides touch-friendly interactions and responsive behavior
+ * Provides touch-friendly interactions and responsive behavior with WCAG 2.1 AA+ compliance
+ * 
+ * @returns Mobile optimization utilities and device detection
  */
 export function useMobileOptimization() {
   const [isMobile, setIsMobile] = useState(false);

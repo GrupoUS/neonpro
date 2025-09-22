@@ -89,7 +89,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
   });
 
   describe("Pharmaceutical Barcode Validation (EAN-13)", () => {
-    it("should validate correct EAN-13 barcodes") => {
+    it("should validate correct EAN-13 barcodes", () => {
       // Valid EAN-13 codes with correct check digits
       const validBarcodes = [
         "7891234567895", // Valid EAN-13
@@ -103,7 +103,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       });
     });
 
-    it("should reject invalid barcode formats") => {
+    it("should reject invalid barcode formats", () => {
       const invalidBarcodes = [
         "123456789012", // Too short
         "12345678901234", // Too long
@@ -118,8 +118,8 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
     });
   });
 
-  describe("Dosage Validation") => {
-    it("should validate correct dosage formats") => {
+  describe("Dosage Validation", () => {
+    it("should validate correct dosage formats", () => {
       const validDosages = [
         "500mg",
         "5ml",
@@ -142,13 +142,13 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       });
     });
 
-    it("should reject invalid dosage formats") => {
+    it("should reject invalid dosage formats", () => {
       const invalidDosages = [
         "mg", // Missing quantity
         "500", // Missing unit
         "muito", // Vague quantity
         "500 xyz", // Invalid unit
-        ", // Empty
+        "", // Empty
       ];
 
       invalidDosages.forEach((dosage) => {
@@ -159,7 +159,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
   });
 
   describe("Frequency Validation (Posologia)", () => {
-    it("should validate correct frequency formats") => {
+    it("should validate correct frequency formats", () => {
       const validFrequencies = [
         "1x ao dia",
         "2x ao dia",
@@ -182,7 +182,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       });
     });
 
-    it("should reject invalid frequency formats") => {
+    it("should reject invalid frequency formats", () => {
       const invalidFrequencies = [
         "sempre",
         "quando quiser",
@@ -197,8 +197,8 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
     });
   });
 
-  describe("Duration Validation") => {
-    it("should validate correct duration formats") => {
+  describe("Duration Validation", () => {
+    it("should validate correct duration formats", () => {
       const validDurations = [
         "7 dias",
         "2 semanas",
@@ -217,7 +217,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       });
     });
 
-    it("should reject invalid duration formats") => {
+    it("should reject invalid duration formats", () => {
       const invalidDurations = [
         "pouco tempo",
         "muito",
@@ -232,8 +232,8 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
     });
   });
 
-  describe("Prescription Expiration Validation") => {
-    it("should validate correct expiration dates") => {
+  describe("Prescription Expiration Validation", () => {
+    it("should validate correct expiration dates", () => {
       const now = new Date();
       const issueDate = now.toISOString().split("T")[0]; // Date only format YYYY-MM-DD
       const validExpiration = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
@@ -249,7 +249,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       expect(result.success).toBe(true);
     });
 
-    it("should reject expired prescriptions at issue") => {
+    it("should reject expired prescriptions at issue", () => {
       const now = new Date();
       const issueDate = now.toISOString().split("T")[0];
       const expiredDate = new Date(now.getTime() - 24 * 60 * 60 * 1000)
@@ -265,7 +265,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       expect(result.success).toBe(false);
     });
 
-    it("should reject prescriptions with excessive validity period") => {
+    it("should reject prescriptions with excessive validity period", () => {
       const now = new Date();
       const issueDate = now.toISOString().split("T")[0];
       const tooLongExpiration = new Date(
@@ -284,8 +284,8 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
     });
   });
 
-  describe("Medication Price Validation") => {
-    it("should validate correct medication prices") => {
+  describe("Medication Price Validation", () => {
+    it("should validate correct medication prices", () => {
       const validPrices = [0, 10.5, 999.99, 500];
 
       validPrices.forEach((price) => {
@@ -297,7 +297,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       });
     });
 
-    it("should reject invalid medication prices") => {
+    it("should reject invalid medication prices", () => {
       const invalidPrices = [-1, 1000000, NaN, Infinity];
 
       invalidPrices.forEach((price) => {
@@ -307,8 +307,8 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
     });
   });
 
-  describe("Medication Information Schema") => {
-    it("should validate complete medication information") => {
+  describe("Medication Information Schema", () => {
+    it("should validate complete medication information", () => {
       const validMedication = {
         name: "Paracetamol 500mg",
         active_principle: "Paracetamol",
@@ -331,7 +331,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       expect(result.success).toBe(true);
     });
 
-    it("should reject medication with invalid fields") => {
+    it("should reject medication with invalid fields", () => {
       const invalidMedication = {
         name: "P", // Too short
         active_principle: "Paracetamol",
@@ -350,8 +350,8 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
     });
   });
 
-  describe("Prescription Instructions Schema") => {
-    it("should validate complete prescription instructions") => {
+  describe("Prescription Instructions Schema", () => {
+    it("should validate complete prescription instructions", () => {
       const validInstructions = {
         dosage: "500mg",
         frequency: "1x ao dia",
@@ -372,7 +372,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       expect(result.success).toBe(true);
     });
 
-    it("should reject instructions with invalid quantity") => {
+    it("should reject instructions with invalid quantity", () => {
       const invalidInstructions = {
         dosage: "500mg",
         frequency: "1x ao dia",
@@ -390,8 +390,8 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
     });
   });
 
-  describe("Digital Certificate Schema") => {
-    it("should validate complete digital certificate") => {
+  describe("Digital Certificate Schema", () => {
+    it("should validate complete digital certificate", () => {
       const validCertificate = {
         certificate_id: "123e4567-e89b-12d3-a456-426614174000",
         certificate_type: "a3",
@@ -411,7 +411,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       expect(result.success).toBe(true);
     });
 
-    it("should reject certificate with invalid CRM format") => {
+    it("should reject certificate with invalid CRM format", () => {
       const invalidCertificate = {
         certificate_id: "123e4567-e89b-12d3-a456-426614174000",
         certificate_type: "a3",
@@ -432,8 +432,8 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
     });
   });
 
-  describe("Prescription Creation Schema") => {
-    it("should validate complete prescription creation") => {
+  describe("Prescription Creation Schema", () => {
+    it("should validate complete prescription creation", () => {
       const now = new Date();
       const expiration = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
@@ -485,7 +485,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       expect(result.success).toBe(true);
     });
 
-    it("should reject prescription without required compliance verification") => {
+    it("should reject prescription without required compliance verification", () => {
       const now = new Date();
       const expiration = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
@@ -540,7 +540,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       expect(result.success).toBe(false);
     });
 
-    it("should reject prescription with controlled substance violations") => {
+    it("should reject prescription with controlled substance violations", () => {
       const now = new Date();
       const expiration = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
 
@@ -596,9 +596,9 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
     });
   });
 
-  describe("Helper Functions") => {
-    describe("validateControlledSubstanceCompliance") => {
-      it("should validate compliant controlled substance prescription") => {
+  describe("Helper Functions", () => {
+    describe("validateControlledSubstanceCompliance", () => {
+      it("should validate compliant controlled substance prescription", () => {
         const medications = [
           {
             medication: {
@@ -617,7 +617,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
         expect(result.errors).toHaveLength(0);
       });
 
-      it("should reject non-compliant controlled substance prescription") => {
+      it("should reject non-compliant controlled substance prescription", () => {
         const medications = [
           {
             medication: {
@@ -637,8 +637,8 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       });
     });
 
-    describe("generatePrescriptionNumber") => {
-      it("should generate valid prescription number format") => {
+    describe("generatePrescriptionNumber", () => {
+      it("should generate valid prescription number format", () => {
         const clinicId = "123e4567-e89b-12d3-a456-426614174000";
         const professionalCRM = "123456/SP";
         const issueDate = "2024-01-15T10:30:00.000Z";
@@ -650,9 +650,9 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
         );
 
         // Should follow format: CLINICPREFIX-CRMNUM-YYYYMMDD-SEQUENCE
-        expect(prescriptionNumber).toMatch((/^[A-Z0-9]{6}-\d+-\d{8}-\d{4}$/);
-        expect(prescriptionNumber).toContain(("123456"); // CRM number
-        expect(prescriptionNumber).toContain(("20240115"); // Date
+        expect(prescriptionNumber).toMatch(/^[A-Z0-9]{6}-\d+-\d{8}-\d{4}$/);
+        expect(prescriptionNumber).toContain("123456"); // CRM number
+        expect(prescriptionNumber).toContain("20240115"); // Date
       });
     });
 
@@ -680,7 +680,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
         expect(new Date(expirationDate)).toEqual(expectedExpiration);
       });
 
-      it("should calculate correct expiration for antibiotics") => {
+      it("should calculate correct expiration for antibiotics", () => {
         const issueDate = "2024-01-01T00:00:00.000Z";
         const expirationDate = calculateExpirationDate(issueDate, "antibiotic");
 
@@ -690,7 +690,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
         expect(new Date(expirationDate)).toEqual(expectedExpiration);
       });
 
-      it("should calculate correct expiration for insulin") => {
+      it("should calculate correct expiration for insulin", () => {
         const issueDate = "2024-01-01T00:00:00.000Z";
         const expirationDate = calculateExpirationDate(issueDate, "insulin");
 
@@ -702,8 +702,8 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
     });
   });
 
-  describe("Enum Schemas") => {
-    it("should validate prescription status values") => {
+  describe("Enum Schemas", () => {
+    it("should validate prescription status values", () => {
       const validStatuses = [
         "draft",
         "issued",
@@ -718,7 +718,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       });
     });
 
-    it("should validate medication type values") => {
+    it("should validate medication type values", () => {
       const validTypes = [
         "common",
         "generic",
@@ -733,7 +733,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       });
     });
 
-    it("should validate administration route values") => {
+    it("should validate administration route values", () => {
       const validRoutes = [
         "oral",
         "intramuscular",
@@ -749,8 +749,8 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
     });
   });
 
-  describe("Query Schema") => {
-    it("should validate complete prescription query") => {
+  describe("Query Schema", () => {
+    it("should validate complete prescription query", () => {
       const validQuery = {
         clinic_id: "123e4567-e89b-12d3-a456-426614174000",
         patient_id: "223e4567-e89b-12d3-a456-426614174000",
@@ -770,7 +770,7 @@ describe("Digital Prescription Validation - TDD RED Phase", () => {
       expect(result.success).toBe(true);
     });
 
-    it("should reject query with invalid sort parameters") => {
+    it("should reject query with invalid sort parameters", () => {
       const invalidQuery = {
         sort_by: "invalid_field",
         sort_order: "invalid_order",

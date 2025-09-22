@@ -29,7 +29,7 @@ export class ConsentRepository implements IConsentRepository {
 
   async findById(id: string): Promise<ConsentRecord | null> {
     try {
-      return await this.performanceService.optimizedQuery(_"consent_records","select",_async (client) => {
+      return await this.performanceService.optimizedQuery("consent_records","select",async (client) => {
           const { data, error } = await client
             .from("consent_records")
             .select(`
@@ -256,7 +256,7 @@ export class ConsentRepository implements IConsentRepository {
       }
 
       // Fetch the updated records
-      return await this.performanceService.optimizedQuery(_"consent_records","select",_async (client) => {
+      return await this.performanceService.optimizedQuery("consent_records","select",async (client) => {
           const { data, error } = await client
             .from("consent_records")
             .select(`
@@ -282,7 +282,7 @@ export class ConsentRepository implements IConsentRepository {
 
   async getActiveConsents(patientId: string): Promise<ConsentRecord[]> {
     try {
-      return await this.performanceService.optimizedQuery(_"consent_records","select",_async (client) => {
+      return await this.performanceService.optimizedQuery("consent_records","select",async (client) => {
           const now = new Date().toISOString();
           const { data, error } = await client
             .from("consent_records")
@@ -311,7 +311,7 @@ export class ConsentRepository implements IConsentRepository {
 
   async hasActiveConsent(patientId: string, consentType: ConsentType): Promise<boolean> {
     try {
-      return await this.performanceService.optimizedQuery(_"consent_records","select",_async (client) => {
+      return await this.performanceService.optimizedQuery("consent_records","select",async (client) => {
           const now = new Date().toISOString();
           const { data, error } = await client
             .from("consent_records")

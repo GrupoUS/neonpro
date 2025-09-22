@@ -95,11 +95,11 @@ export class WebRTCSignalingServer {
    * Sets up Socket.IO event handlers for WebRTC signaling
    */
   private setupSocketHandlers(): void {
-    this.io.on(_"connection", (socket: Socket) => {
+    this.io.on("connection", (socket: Socket) => {
       winstonLogger.debug(`Socket connected: ${socket.id}`);
 
       // Handle session join
-      socket.on(_"join-session",
+      socket.on("join-session",
         async (data: {
           sessionId: string;
           _userId: string;
@@ -121,7 +121,7 @@ export class WebRTCSignalingServer {
       );
 
       // Handle WebRTC signaling
-      socket.on(_"webrtc-signal",
+      socket.on("webrtc-signal",
         async (signal: {
           type: "offer" | "answer" | "ice-candidate";
           data: any;
@@ -142,7 +142,7 @@ export class WebRTCSignalingServer {
       );
 
       // Handle connection state updates
-      socket.on(_"connection-state",
+      socket.on("connection-state",
         async (state: {
           sessionId: string;
           connectionState: RTCPeerConnectionState;
@@ -163,7 +163,7 @@ export class WebRTCSignalingServer {
       );
 
       // Handle session leave
-      socket.on(_"leave-session", async (data: { sessionId: string }) => {
+      socket.on("leave-session", async (data: { sessionId: string }) => {
         try {
           await this.handleLeaveSession(socket, data.sessionId);
         } catch (error) {
@@ -172,7 +172,7 @@ export class WebRTCSignalingServer {
       });
 
       // Handle heartbeat for connection monitoring
-      socket.on(_"heartbeat",
+      socket.on("heartbeat",
         (data: { sessionId: string; timestamp: number }) => {
           socket.emit("heartbeat-ack", { timestamp: Date.now() });
           this.updateParticipantActivity(socket.id, data.sessionId);
@@ -180,13 +180,13 @@ export class WebRTCSignalingServer {
       );
 
       // Handle disconnect
-      socket.on(_"disconnect", (reason: string) => {
+      socket.on("disconnect", (reason: string) => {
         winstonLogger.debug(`Socket disconnected: ${socket.id}, reason: ${reason}`);
         this.handleDisconnect(socket);
       });
 
       // Handle compliance events
-      socket.on(_"compliance-event",
+      socket.on("compliance-event",
         async (event: {
           sessionId: string;
           eventType: string;

@@ -613,8 +613,9 @@ export function calculatePayerMixDiversity(
   }));
 
   // Calculate Herfindahl-Hirschman Index for concentration
-  const hhi = proportions.reduce((sum,_{ proportion }) => sum + proportion * proportion,
-    0,
+  const hhi = proportions.reduce(
+    (sum, { proportion }) => sum + proportion * proportion,
+    0
   );
   const diversityScore = (1 - hhi) * 100;
 

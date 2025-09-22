@@ -38,7 +38,7 @@ export class ConsentDomainService {
     // Validate request
     const validationErrors = ConsentValidator.validateRequest(_request);
     if (validationErrors.length > 0) {
-      throw new Error(`Invalid consent _request: ${validationErrors.join(', _)}`);
+      throw new Error(`Invalid consent request: ${validationErrors.join(', ')}`);
     }
 
     // Create consent record
@@ -98,12 +98,12 @@ export class ConsentDomainService {
   async revokeConsent(consentId: string, revokedBy: string, reason?: string): Promise<ConsentRecord> {
     // Get existing consent
     const existingConsent = await this.repository.findById(consentId);
-    if (!existingConsent) {`
+    if (!existingConsent) {
       throw new Error(`Consent with ID ${consentId} not found`);
     }
 
     // Check if consent is already revoked
-    if (existingConsent.status === 'REVOKED') {`
+    if (existingConsent.status === 'REVOKED') {
       throw new Error(`Consent ${consentId} is already revoked`);
     }
 
@@ -158,10 +158,10 @@ export class ConsentDomainService {
     for (const consent of consents) {
       if (consent.expiresAt && new Date(consent.expiresAt) < now) {
         if (consent.status !== 'EXPIRED') {
-          violations.push({`
+          violations.push({
             id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-            type: 'EXPIRED_CONSENT_NOT_MARKED_,
-            severity: 'MEDIUM',`
+            type: 'EXPIRED_CONSENT_NOT_MARKED',
+            severity: 'MEDIUM',
             description: `Consent ${consent.id} has expired but is not marked as expired`,
             affectedConsentId: consent.id,
             recommendation: 'Mark consent as expired or renew consent',
@@ -181,10 +181,10 @@ export class ConsentDomainService {
     );
 
     if (expiringSoon.length > 0) {
-      violations.push({`
+      violations.push({
         id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        type: 'CONSENT_EXPIRING_SOON_,
-        severity: 'LOW',`
+        type: 'CONSENT_EXPIRING_SOON',
+        severity: 'LOW',
         description: `${expiringSoon.length} consent(s) expiring within 30 days`,
         recommendation: 'Renew expiring consents',
         resolved: false
@@ -193,14 +193,14 @@ export class ConsentDomainService {
 
     // Check for missing essential consents (data processing)
     const hasDataProcessingConsent = consents.some(consent =>
-      consent.consentType === 'data_processing_ &&
+      consent.consentType === 'data_processing' &&
       consent.status === 'ACTIVE'
     );
 
     if (!hasDataProcessingConsent) {
-      violations.push({`
+      violations.push({
         id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        type: 'MISSING_DATA_PROCESSING_CONSENT_,
+        type: 'MISSING_DATA_PROCESSING_CONSENT',
         severity: 'HIGH',
         description: 'Patient does not have active data processing consent',
         recommendation: 'Obtain data processing consent immediately',
@@ -211,9 +211,9 @@ export class ConsentDomainService {
     }
 
     // Determine overall compliance status
-    let status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT' = ''COMPLIANT'
+    let status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PARTIALLY_COMPLIANT' = 'COMPLIANT';
     if (violations.some(v => v.severity === 'HIGH' || v.severity === 'CRITICAL')) {
-      status = ''NON_COMPLIANT'
+      status = 'NON_COMPLIANT';
       isCompliant = false;
     } else if (violations.length > 0) {
       status = ''PARTIALLY_COMPLIANT'
@@ -271,7 +271,7 @@ export class ConsentDomainService {
    */
   async renewConsent(consentId: string, newExpiration: string, renewedBy: string): Promise<ConsentRecord> {
     const existingConsent = await this.repository.findById(consentId);
-    if (!existingConsent) {`
+    if (!existingConsent) {
       throw new Error(`Consent with ID ${consentId} not found`);
     }
 

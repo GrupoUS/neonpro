@@ -283,7 +283,7 @@ class HttpClient {
     });
 
     // Cleanup
-    controller.signal.addEventListener(('abort', () => {
+    controller.signal.addEventListener('abort', () => {
       signals.forEach(signal => signal.removeEventListener('abort', onAbort));
     });
 

@@ -285,13 +285,13 @@ export class AIServiceManagement {
   private initializeProviders(): void {
     // In a real implementation, this would initialize actual AI providers
     // For now, we'll create placeholder entries
-    this.providers.set(_"openai", {
+    this.providers.set("openai", {
       generateAnswer: async () => {
         throw new Error("OpenAI provider not implemented");
       },
     });
 
-    this.providers.set(_"anthropic", {
+    this.providers.set("anthropic", {
       generateAnswer: async () => {
         throw new Error("Anthropic provider not implemented");
       },

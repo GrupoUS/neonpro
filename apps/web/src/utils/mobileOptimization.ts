@@ -211,7 +211,7 @@ export const initializeMobileOptimizations = () => {
 
   // Apply optimizations when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener(('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
       addResourceHints();
       applyMobileOptimizations();
       deferNonCriticalResources();

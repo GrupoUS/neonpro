@@ -97,7 +97,7 @@ interface Appointment {
   patientName: string;
   patientPhone: string;
   providerName: string;
-  _service: string;
+  service: string;
   date: string;
   time: string;
   status: 'scheduled' | 'confirmed' | 'in-progress' | 'completed' | 'cancelled' | 'no-show';
@@ -122,7 +122,7 @@ interface Treatment {
 interface FinancialData {
   dailyRevenue: Array<{ date: string; revenue: number }>;
   monthlyRevenue: Array<{ month: string; revenue: number; projection: number }>;
-  serviceBreakdown: Array<{ _service: string; revenue: number; count: number }>;
+  serviceBreakdown: Array<{ service: string; revenue: number; count: number }>;
   expenses: Array<{ category: string; amount: number; budget: number }>;
 }
 
@@ -193,7 +193,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
       patientName: 'Ana Silva Santos',
       patientPhone: '(11) 98765-4321',
       providerName: 'Dra. Ana Silva',
-      _service: 'Botox',
+      service: 'Botox',
       date: new Date().toISOString(),
       time: '09:00',
       status: 'confirmed',
@@ -206,7 +206,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
       patientName: 'Carla Oliveira',
       patientPhone: '(11) 91234-5678',
       providerName: 'Dr. Carlos Santos',
-      _service: 'Preenchimento Facial',
+      service: 'Preenchimento Facial',
       date: new Date().toISOString(),
       time: '10:30',
       status: 'in-progress',
@@ -219,7 +219,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
       patientName: 'Mariana Costa',
       patientPhone: '(11) 99876-5432',
       providerName: 'Dra. Maria Costa',
-      _service: 'Consulta de Retorno',
+      service: 'Consulta de Retorno',
       date: new Date().toISOString(),
       time: '14:00',
       status: 'scheduled',
@@ -232,7 +232,7 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
       patientName: 'Roberto Ferreira',
       patientPhone: '(11) 97654-3210',
       providerName: 'Dra. Ana Silva',
-      _service: 'Tratamento a Laser',
+      service: 'Tratamento a Laser',
       date: new Date().toISOString(),
       time: '15:30',
       status: 'completed',
@@ -293,10 +293,10 @@ export const HealthcareDashboard: React.FC<HealthcareDashboardProps> = ({
     })),
     serviceBreakdown: [
       { service: 'Botox', revenue: 85000, count: 85 },
-      { _service: 'Preenchimento', revenue: 95000, count: 65 },
-      { _service: 'Laser', revenue: 65000, count: 95 },
-      { _service: 'Peeling', revenue: 25000, count: 45 },
-      { _service: 'Outros', revenue: 15400, count: 28 },
+      { service: 'Preenchimento', revenue: 95000, count: 65 },
+      { service: 'Laser', revenue: 65000, count: 95 },
+      { service: 'Peeling', revenue: 25000, count: 45 },
+      { service: 'Outros', revenue: 15400, count: 28 },
     ],
     expenses: [
       { category: 'Salários', amount: 85000, budget: 90000 },

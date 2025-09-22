@@ -199,7 +199,7 @@ export class DatabasePerformanceService {
    */
   async optimizeExpirationCheck(
     table: string,
-    dateColumn: string = 'expires_at_,
+    dateColumn: string = 'expires_at',
     statusColumn: string = 'status',
     activeStatus: string = 'ACTIVE',
     expiredStatus: string = 'EXPIRED'
@@ -224,7 +224,7 @@ export class DatabasePerformanceService {
       }
 
       this.logPerformance({
-        _query: 'optimize_expiration_check_,
+        query: 'optimize_expiration_check',
         duration,
         timestamp: new Date().toISOString(),
         success: true,
@@ -240,7 +240,7 @@ export class DatabasePerformanceService {
       const duration = performance.now() - startTime;
       
       this.logPerformance({
-        _query: 'optimize_expiration_check_,
+        query: 'optimize_expiration_check',
         duration,
         timestamp: new Date().toISOString(),
         success: false,

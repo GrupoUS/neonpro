@@ -338,7 +338,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     // Set up presence tracking - simplified for compatibility
     try {
       // Use type assertion to bypass strict typing
-      (channel as any).on(_"presence", () => {
+      (channel as any).on("presence", () => {
         this.handlePresenceSync(channelId, channel as any);
       });
     } catch (e) {
@@ -382,7 +382,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     this.healthStatus.activeChannels = this.channels.size;
     this.healthStatus.totalParticipants = Array.from(
       this.channelStates.values(),
-    ).reduce((total,_state) => total + state.participants.size, 0);
+    ).reduce((total, state) => total + state.participants.size, 0);
     this.healthStatus.lastHeartbeat = now;
 
     // Simple latency check - simplified for compatibility
@@ -404,7 +404,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
   // Private Helper Methods
   // ============================================================================
 
-  private createRealtimeEvent: typeof createRealtimeEvent = (_type,channelId,_participant,data,
+  private createRealtimeEvent: typeof createRealtimeEvent = (type, channelId, participant, data,
   ) => {
     return {
       type,

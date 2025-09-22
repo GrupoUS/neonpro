@@ -533,7 +533,7 @@ export function useAGUIProtocol(config: AGUIProtocolConfig) {
   useEffect(() => {
     client.on('stateChange', setState);
     client.on('authenticated', setSession);
-    client.on(('disconnected', () => setSession(null));
+    client.on('disconnected', () => setSession(null));
 
     return () => {
       client.removeAllListeners();

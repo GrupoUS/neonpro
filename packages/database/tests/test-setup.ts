@@ -12,10 +12,10 @@ import * as path from 'path';
 // Load test environment variables
 beforeAll(() => {
   // Set NODE_ENV first to ensure test environment is detected
-  process.env.NODE_ENV = ''test'
+  process.env.NODE_ENV = 'test'
   
   // Load .env.test file for test environment
-  const envPath = path.resolve(__dirname, '../.env.test_);
+  const envPath = path.resolve(__dirname, '../.env.test');
   dotenv.config({ path: envPath });
   
   // Set default test environment variables if not provided
@@ -49,35 +49,35 @@ afterEach(() => {
 function setDefaultTestEnvVars() {
   const defaults = {
     // Supabase configuration
-    NEXT_PUBLIC_SUPABASE_URL: 'http://localhost:54321_,
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key_,
-    SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key_,
-    SUPABASE_JWT_SECRET: 'test-jwt-secret_,
-    SUPABASE_PROJECT_ID: 'test-project_,
-    SUPABASE_URL: 'http://localhost:54321_,
-    SUPABASE_ANON_KEY: 'test-anon-key_,
+    NEXT_PUBLIC_SUPABASE_URL: 'http://localhost:54321',
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
+    SUPABASE_SERVICE_ROLE_KEY: 'test-service-role-key',
+    SUPABASE_JWT_SECRET: 'test-jwt-secret',
+    SUPABASE_PROJECT_ID: 'test-project',
+    SUPABASE_URL: 'http://localhost:54321',
+    SUPABASE_ANON_KEY: 'test-anon-key',
     
     // Database configuration
-    DATABASE_URL: 'postgresql://postgres:test@localhost:5432/neonpro_test_,
-    SUPABASE_DB_URL: 'postgresql://postgres:test@localhost:5432/neonpro_test_,
+    DATABASE_URL: 'postgresql://postgres:test@localhost:5432/neonpro_test',
+    SUPABASE_DB_URL: 'postgresql://postgres:test@localhost:5432/neonpro_test',
     
     // JWT configuration
-    JWT_SECRET: 'test-jwt-secret-for-testing-only_,
-    JWT_REFRESH_SECRET: 'test-jwt-refresh-secret-for-testing-only_,
+    JWT_SECRET: 'test-jwt-secret-for-testing-only',
+    JWT_REFRESH_SECRET: 'test-jwt-refresh-secret-for-testing-only',
     
     // API configuration
-    API_URL: 'http://localhost:3000_,
+    API_URL: 'http://localhost:3000',
     PORT: '3000',
     
     // Healthcare compliance
-    LGPD_ENABLED: 'true_,
-    ANVISA_COMPLIANCE: 'true_,
-    CFM_VALIDATION_ENABLED: 'true_,
+    LGPD_ENABLED: 'true',
+    ANVISA_COMPLIANCE: 'true',
+    CFM_VALIDATION_ENABLED: 'true',
     
     // Logging configuration for tests
-    LOG_LEVEL: 'error_, // Only log errors in tests
-    STRUCTURED_LOGGING: 'true_,
-    SANITIZE_LOGS: 'true_,
+    LOG_LEVEL: 'error', // Only log errors in tests
+    STRUCTURED_LOGGING: 'true',
+    SANITIZE_LOGS: 'true',
   };
 
   Object.entries(defaults).forEach(([key, value]) => {
@@ -99,17 +99,17 @@ function mockExternalServices() {
   vi.spyOn(console, 'debug').mockImplementation(() => {});
   
   // Mock external API calls
-  vi.mock('@supabase/supabase-js_, () => ({
+  vi.mock('@supabase/supabase-js', () => ({
     createClient: vi.fn(),
   }));
 
-  vi.mock('@supabase/ssr_, () => ({
+  vi.mock('@supabase/ssr', () => ({
     createBrowserClient: vi.fn(),
     createServerClient: vi.fn(),
   }));
   
   // Mock database connections
-  vi.mock('../src/client_, () => ({
+  vi.mock('../src/client', () => ({
     createClient: vi.fn(() => ({
       from: vi.fn(),
       select: vi.fn(),
@@ -166,14 +166,14 @@ export const healthcareFixtures = {
     name: 'Test Patient',
     email: 'test.patient@example.com',
     phone: '+55 11 99999-9999',
-    date_of_birth: '1990-01-01_,
+    date_of_birth: '1990-01-01',
     address: {
       street: 'Test Street',
       number: '123',
       neighborhood: 'Test Neighborhood',
       city: 'Test City',
       state: 'TS',
-      postal_code: '12345-678_,
+      postal_code: '12345-678',
     },
   },
 
@@ -182,8 +182,8 @@ export const healthcareFixtures = {
    */
   medicalRecordData: {
     id: 'test-record-123',
-    patient_id: 'test-patient-123_,
-    record_type: 'consultation_,
+    patient_id: 'test-patient-123',
+    record_type: 'consultation',
     diagnosis: 'Test Diagnosis',
     treatment: 'Test Treatment',
     notes: 'Test medical notes',
@@ -194,10 +194,10 @@ export const healthcareFixtures = {
    */
   appointmentData: {
     id: 'test-appointment-123',
-    patient_id: 'test-patient-123_,
-    professional_id: 'test-professional-123_,
-    clinic_id: 'test-clinic-123_,
-    appointment_time: '2024-01-15T10:00:00Z_,
+    patient_id: 'test-patient-123',
+    professional_id: 'test-professional-123',
+    clinic_id: 'test-clinic-123',
+    appointment_time: '2024-01-15T10:00:00Z',
     duration: 30,
     status: 'scheduled',
     type: 'consultation',
@@ -211,8 +211,8 @@ export const healthcareFixtures = {
     name: 'Dr. Test Professional',
     email: 'dr.test@example.com',
     specialty: 'Test Specialty',
-    license_number: 'TEST-12345_,
-    clinic_id: 'test-clinic-123_,
+    license_number: 'TEST-12345',
+    clinic_id: 'test-clinic-123',
   },
 };
 
@@ -352,9 +352,9 @@ export const complianceTestUtils = {
    * Generate LGPD-compliant test data
    */
   generateLGPDCompliantData: () => ({
-    _userId: 'test-user-123_,
-    purpose: 'healthcare_analysis_,
-    legalBasis: 'legitimate_interest_,
+    _userId: 'test-user-123',
+    purpose: 'healthcare_analysis',
+    legalBasis: 'legitimate_interest',
     retentionPeriod: 365,
     dataClassification: 'sensitive',
   }),
@@ -411,7 +411,7 @@ export const databaseTestUtils = {
   /**
    * Mock database errors
    */
-  createDatabaseError: (message: string, code: string = 'DB_ERROR_) => ({
+  createDatabaseError: (message: string, code: string = 'DB_ERROR') => ({
     message,
     code,
     hint: 'Test error hint',

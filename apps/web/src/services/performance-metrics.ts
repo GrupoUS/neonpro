@@ -287,7 +287,7 @@ export class PerformanceMetricsService {
         observer.observe({ entryTypes: ['longtask'] });
 
         // Simplified TTI estimation
-        window.addEventListener(('load', () => {
+        window.addEventListener('load', () => {
           setTimeout(() => {
             const navigationEntry = performance.getEntriesByType(
               'navigation',

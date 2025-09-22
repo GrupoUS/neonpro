@@ -155,7 +155,7 @@ export class StubModelProvider implements ModelProvider {
     for (let i = 0; i < input.inputs.length; i += maxConcurrency) {
       const batch = input.inputs.slice(i, i + maxConcurrency);
 
-      const batchPromises = batch.map(_async (predInput) => {
+      const batchPromises = batch.map(async (predInput) => {
         try {
           const result = await this.predict(predInput);
           successful++;

@@ -303,18 +303,20 @@ export class EnhancedRealtimeManager {
 
     return this.supabase
       .channel(channelName)
-      .on(_"postgres_changes",
+      .on("postgres_changes",
         {
           event: "*",
           schema: "public",
-          table: tableName,filter,_},
+          table: tableName,
+          filter,
+        },
         async (
-          _payload: RealtimePostgresChangesPayload<Record<string,_any>>,
+          payload: RealtimePostgresChangesPayload<Record<string, any>>,
         ) => {
           await this.handleEnhancedRealtimeEvent(payload, tableName, options);
         },
       )
-      .subscribe(_async (status) => {
+      .subscribe(async (status) => {
         await this.handleSubscriptionStatus(
           status,
           channelName,
@@ -603,7 +605,7 @@ export class EnhancedRealtimeManager {
 
       // Test connection with a simple health check
       const healthCheck =
-        await this.resilienceService.executeHealthcareOperation(_"supabase-realtime",_async () => {
+        await this.resilienceService.executeHealthcareOperation("supabase-realtime", async () => {
             // Test the Supabase connection
             const { data, error } = await this.supabase
               .from("health_checks")
@@ -699,7 +701,7 @@ export class EnhancedRealtimeManager {
     newRecord: T,
   ): Promise<void> {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
-    this.queryClient.setQueryData(_[tableName], (old: T[] | undefined) => {
+    this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
       return old ? [...old, newRecord] : [newRecord];
     });
     this.queryClient.setQueryData([tableName, newRecord.id], newRecord);
@@ -710,8 +712,8 @@ export class EnhancedRealtimeManager {
     updatedRecord: T,
   ): Promise<void> {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
-    this.queryClient.setQueryData(_[tableName], (old: T[] | undefined) => {
-      return (_old?.map((item) =>
+    this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
+      return (old?.map((item) =>
           item.id === updatedRecord.id ? updatedRecord : item,
         ) || []
       );
@@ -724,7 +726,7 @@ export class EnhancedRealtimeManager {
     deletedRecord: T,
   ): Promise<void> {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
-    this.queryClient.setQueryData(_[tableName], (old: T[] | undefined) => {
+    this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
       return old?.filter((item) => item.id !== deletedRecord.id) || [];
     });
     this.queryClient.removeQueries({ queryKey: [tableName, deletedRecord.id] });
@@ -796,7 +798,7 @@ export class EnhancedRealtimeManager {
   }
 
   unsubscribeAll(): void {
-    this.channels.forEach((channel,_name) => {
+    this.channels.forEach((channel, name) => {
       this.supabase.removeChannel(channel);
       this.clearFallbackPolling(name);
       console.log(`Unsubscribed from enhanced ${name}`);

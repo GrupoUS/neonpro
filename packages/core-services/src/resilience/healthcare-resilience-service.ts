@@ -101,11 +101,13 @@ export class HealthcareResilienceService {
       this.getEffectiveConfig(context);
 
       // Execute with resilience framework
-      const result = await this.resilienceFramework.execute(_serviceName,_async () => {
+      const result = await this.resilienceFramework.execute(
+        serviceName,
+        async () => {
           retries++;
           return await operation();
         },
-        this.adaptContext(context),
+        this.adaptContext(context)
       );
 
       success = true;
@@ -115,7 +117,7 @@ export class HealthcareResilienceService {
       success = false;
 
       // Apply healthcare-specific error handling
-      await this.handleHealthcareError(err as Error, _context);
+      await this.handleHealthcareError(err as Error, context);
 
       throw err;
     } finally {

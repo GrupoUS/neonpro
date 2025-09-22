@@ -610,7 +610,7 @@ export class UsageCounterRepository {
 
     return {
       clinicId: row.entity_id,
-      _userId: metadata.userId || ',
+      userId: metadata.userId || '',
       planCode: metadata.planCode || 'basic',
       monthlyQueries: row.monthly_queries || 0,
       dailyQueries: row.daily_queries || 0,

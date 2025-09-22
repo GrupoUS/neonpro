@@ -90,6 +90,11 @@ export interface LicenseVerificationRequest {
  * Domain Service for Medical License Verification
  */
 export class MedicalLicenseDomainService {
+  private licenseRepository: any;
+
+  constructor(licenseRepository?: any) {
+    this.licenseRepository = licenseRepository;
+  }
   // State Regional Medical Councils configuration
   private readonly stateCouncils: StateRegionalCouncil[] = [
     {
@@ -672,9 +677,18 @@ export class MedicalLicenseDomainService {
    * @param state Physician's state
    * @returns Cached registration data or null
    */
-  private async getCachedRegistration(_cfmNumber: string, _state: string): Promise<CFMRegistration | null> {
-    // Implement cache retrieval using repository
-    return await this.licenseRepository.getCachedRegistration(cfmNumber, state);
+  private async getCachedRegistration(cfmNumber: string, state: string): Promise<CFMRegistration | null> {
+    if (!this.licenseRepository?.getCachedRegistration) {
+      console.warn('License repository not available for cached registration lookup');
+      return null;
+    }
+    
+    try {
+      return await this.licenseRepository.getCachedRegistration(cfmNumber, state);
+    } catch (error) {
+      console.warn(`Failed to get cached registration for ${cfmNumber}:`, error);
+      return null;
+    }
   }
 
   /**
@@ -693,9 +707,17 @@ export class MedicalLicenseDomainService {
    * Updates registration cache
    * @param registration CFM registration data
    */
-  private async updateRegistrationCache(_registration: CFMRegistration): Promise<void> {
-    // Implement cache update using repository
-    await this.licenseRepository.updateRegistrationCache(registration);
+  private async updateRegistrationCache(registration: CFMRegistration): Promise<void> {
+    if (!this.licenseRepository?.updateRegistrationCache) {
+      console.warn('License repository not available for cache update');
+      return;
+    }
+    
+    try {
+      await this.licenseRepository.updateRegistrationCache(registration);
+    } catch (error) {
+      console.warn(`Failed to update cache for ${registration.cfmNumber}:`, error);
+    }
   }
 
   /**
@@ -703,9 +725,17 @@ export class MedicalLicenseDomainService {
    * @param cfmNumber CFM registration number
    * @param state Physician's state
    */
-  private async flagForManualReview(_cfmNumber: string, _state: string): Promise<void> {
-    // Implement manual review flag using repository
-    await this.licenseRepository.flagForManualReview(cfmNumber, state);
+  private async flagForManualReview(cfmNumber: string, state: string): Promise<void> {
+    if (!this.licenseRepository?.flagForManualReview) {
+      console.warn('License repository not available for manual review flag');
+      return;
+    }
+    
+    try {
+      await this.licenseRepository.flagForManualReview(cfmNumber, state);
+    } catch (error) {
+      console.warn(`Failed to flag for manual review ${cfmNumber}:`, error);
+    }
   }
 
   /**

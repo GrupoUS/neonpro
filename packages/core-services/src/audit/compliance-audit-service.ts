@@ -434,7 +434,7 @@ export class ComplianceAuditService {
   private cleanupOldEvents(): void {
     if (this.events.size <= this.config.maxMemoryEvents) return;
 
-    const events = Array.from(this.events.entries()).sort(([,_a],_[,_b]) =>
+    const events = Array.from(this.events.entries()).sort(([, a], [, b]) =>
         new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
     );
 

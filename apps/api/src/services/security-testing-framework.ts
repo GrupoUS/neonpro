@@ -300,10 +300,10 @@ export class HealthcareSecurityTestFramework {
     const batchSize = this.config.parallelTests;
     for (let i = 0; i < enabledTests.length; i += batchSize) {
       const batch = enabledTests.slice(i, i + batchSize);
-      const batchPromises = batch.map(test => this.runSingleTest(test, _context));
+      const batchPromises = batch.map(test => this.runSingleTest(test, context));
       const batchResults = await Promise.allSettled(batchPromises);
 
-      batchResults.forEach((result,_index) => {
+      batchResults.forEach((result, index) => {
         if (result.status === 'fulfilled') {
           this.results.push(result.value);
         } else {
@@ -816,7 +816,7 @@ export class HealthcareSecurityTestFramework {
   // Get security score
   getSecurityScore(): number {
     if (this.results.length === 0) return 0;
-    return (_this.results.reduce((sum,_r) => sum + r.score, 0) / this.results.length
+    return (this.results.reduce((sum, r) => sum + r.score, 0) / this.results.length
     );
   }
 }

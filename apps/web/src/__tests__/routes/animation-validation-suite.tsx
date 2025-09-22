@@ -288,7 +288,7 @@ function AnimationValidationSuite() {
       {results.length > 0 && (<Card className='p-6'>
           <h2 className='text-xl font-semibold mb-4'>Validation Results</h2>
           <div className='space-y-3'>
-            {results.map((result, _index) => (
+            {results.map((result, index) => (
               <div
                 key={index}
                 className='flex items-center justify-between p-3 rounded-lg border'
@@ -318,7 +318,7 @@ function AnimationValidationSuite() {
       <Card className='p-6'>
         <h2 className='text-xl font-semibold mb-4'>Animation Test Grid</h2>
         <div className='grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4'>
-          {Array.from.*}, (_, i) => (
+          {Array.from({ length: animationCount[0] }, (_, i) => (
             <UniversalButton
               key={i}
               variant='outline'

@@ -59,9 +59,11 @@ export class RealtimeManager {
         {
           event: "*",
           schema: "public",
-          table: tableName,filter,_},
+          table: tableName,
+          filter,
+        },
         async (
-          _payload: RealtimePostgresChangesPayload<Record<string,_any>>,
+          payload: RealtimePostgresChangesPayload<Record<string, any>>,
         ) => {
           // Rate limiting for healthcare data
           if (this.shouldRateLimit(channelName, options.rateLimitMs || 100)) {
@@ -130,7 +132,7 @@ export class RealtimeManager {
 
       // Invalidate related queries for data consistency
       if (options.queryKeys) {
-        await Promise.all(_options.queryKeys.map((queryKey) =>
+        await Promise.all(options.queryKeys.map((queryKey) =>
             this.queryClient.invalidateQueries({ queryKey }),
           ),
         );
@@ -147,7 +149,7 @@ export class RealtimeManager {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
 
     // Optimistically update cache with new record
-    this.queryClient.setQueryData(_[tableName], (old: T[] | undefined) => {
+    this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
       return old ? [...old, newRecord] : [newRecord];
     });
 
@@ -162,8 +164,8 @@ export class RealtimeManager {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
 
     // Update list cache
-    this.queryClient.setQueryData(_[tableName], (old: T[] | undefined) => {
-      return (_old?.map((item) =>
+    this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
+      return (old?.map((item) =>
           item.id === updatedRecord.id ? updatedRecord : item,
         ) || []
       );
@@ -180,7 +182,7 @@ export class RealtimeManager {
     await this.queryClient.cancelQueries({ queryKey: [tableName] });
 
     // Remove from list cache
-    this.queryClient.setQueryData(_[tableName], (old: T[] | undefined) => {
+    this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
       return old?.filter((item) => item.id !== deletedRecord.id) || [];
     });
 
@@ -245,7 +247,7 @@ export class RealtimeManager {
       .on('presence', { event: "leave" }, ({ key, leftPresences }) => {
         console.log("User left:", key, leftPresences);
       })
-      .subscribe(_async (status) => {
+      .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
           await channel.track(initialState);
         }
@@ -272,7 +274,7 @@ export class RealtimeManager {
    * Unsubscribe from all channels
    */
   unsubscribeAll() {
-    this.channels.forEach((channel,_name) => {
+    this.channels.forEach((channel, name) => {
       this.supabase.removeChannel(channel);
       console.log(`Unsubscribed from ${name}`);
     });

@@ -4,8 +4,8 @@
  */
 
 import { logger } from '@/utils/secure-logger';
-import { createServerClient } from '../clients/supabase.js';
-import { type SecurityAlert } from './enhanced-rls-security.js';
+import { createServerClient } from '../clients/supabase';
+import { type SecurityAlert } from './enhanced-rls-security';
 
 export interface SecurityMetrics {
   timestamp: Date;

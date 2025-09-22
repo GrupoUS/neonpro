@@ -11,7 +11,7 @@ import { EventCalendar } from '../event-calendar';
 import { CalendarEvent } from '../types';
 
 // Mock accessibility utilities
-vi.mock(('@/utils/accessibility/healthcare-audit-utils', () => ({
+vi.mock('@/utils/accessibility/healthcare-audit-utils', () => ({
   validateWCAGCompliance: vi.fn().mockReturnValue({
     compliant: true,
     violations: [],
@@ -31,7 +31,7 @@ vi.mock(('@/utils/accessibility/healthcare-audit-utils', () => ({
   }),
 }));
 
-describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
+describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
   const accessibleEvents: CalendarEvent[] = [
     {
       id: 'accessible-1',
@@ -68,8 +68,8 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
   });
 
   // PERCEIVABLE PRINCIPLE (1.0)
-  describe(('1. Perceivable - Information must be presentable to users in ways they can perceive', () => {
-    it(('should provide text alternatives for non-text content', () => {
+  describe('1. Perceivable - Information must be presentable to users in ways they can perceive', () => {
+    it('should provide text alternatives for non-text content', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // All images should have alt text
@@ -87,7 +87,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       });
     });
 
-    it(('should provide alternatives for time-based media', () => {
+    it('should provide alternatives for time-based media', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Calendar should work without animations
@@ -95,7 +95,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       expect(calendar).toBeInTheDocument();
     });
 
-    it(('should create content that can be presented in different ways', () => {
+    it('should create content that can be presented in different ways', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should maintain meaning when styles are changed
@@ -109,7 +109,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       });
     });
 
-    it(('should help users avoid and correct mistakes', () => {
+    it('should help users avoid and correct mistakes', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide clear error identification
@@ -117,7 +117,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should provide context-sensitive help
     });
 
-    it(('should make it easier for users to see and hear content', () => {
+    it('should make it easier for users to see and hear content', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should have sufficient color contrast
@@ -140,8 +140,8 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
   });
 
   // OPERABLE PRINCIPLE (2.0)
-  describe(('2. Operable - Interface components must be operable by all users', () => {
-    it(_'should make all functionality available from a keyboard',async () => {
+  describe('2. Operable - Interface components must be operable by all users', () => {
+    it('should make all functionality available from a keyboard', async () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       const {
@@ -163,21 +163,21 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       });
     });
 
-    it(('should provide users enough time to read and use content', () => {
+    it('should provide users enough time to read and use content', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should not have time limits on reading content
       // Should provide controls for time-based content
     });
 
-    it(('should not cause seizures and physical reactions', () => {
+    it('should not cause seizures and physical reactions', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should not flash more than 3 times per second
       // Should not include flashing content
     });
 
-    it(('should provide ways to help users navigate and find content', () => {
+    it('should provide ways to help users navigate and find content', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should have page titles
@@ -194,7 +194,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       });
     });
 
-    it(('should make it easier to use inputs other than keyboard', () => {
+    it('should make it easier to use inputs other than keyboard', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should handle touch events appropriately
@@ -211,8 +211,8 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
   });
 
   // UNDERSTANDABLE PRINCIPLE (3.0)
-  describe(('3. Understandable - Information and UI operation must be understandable', () => {
-    it(('should make text content readable and understandable', () => {
+  describe('3. Understandable - Information and UI operation must be understandable', () => {
+    it('should make text content readable and understandable', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should specify language of page
@@ -226,7 +226,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       });
     });
 
-    it(('should make Web pages appear and operate in predictable ways', () => {
+    it('should make Web pages appear and operate in predictable ways', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should have consistent navigation
@@ -239,7 +239,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       });
     });
 
-    it(('should help users avoid and correct mistakes', () => {
+    it('should help users avoid and correct mistakes', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide clear labels and instructions
@@ -254,8 +254,8 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
   });
 
   // ROBUST PRINCIPLE (4.0)
-  describe(('4. Robust - Content must be robust enough for various assistive technologies', () => {
-    it(('should be compatible with current and future user agents', () => {
+  describe('4. Robust - Content must be robust enough for various assistive technologies', () => {
+    it('should be compatible with current and future user agents', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should use valid HTML
@@ -273,7 +273,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       expect(validateScreenReader).toHaveBeenCalled();
     });
 
-    it(('should ensure accessibility of APIs', () => {
+    it('should ensure accessibility of APIs', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should ensure accessibility of JavaScript APIs
@@ -291,8 +291,8 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
   });
 
   // SPECIFIC WCAG 2.1 AA+ REQUIREMENTS
-  describe(('Specific WCAG 2.1 AA+ Requirements', () => {
-    it(_'should meet WCAG 2.1 Level AA success criteria',async () => {
+  describe('Specific WCAG 2.1 AA+ Requirements', () => {
+    it('should meet WCAG 2.1 Level AA success criteria', async () => {
       const {
         validateWCAGCompliance,
       } = require('@/utils/accessibility/healthcare-audit-utils');
@@ -309,7 +309,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       });
     });
 
-    it(('should support screen reader announcements', () => {
+    it('should support screen reader announcements', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should have proper ARIA live regions
@@ -320,7 +320,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       expect(calendar).toHaveAttribute('aria-live', 'polite');
     });
 
-    it(('should provide accessible form controls', () => {
+    it('should provide accessible form controls', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should have proper form labels
@@ -337,7 +337,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       });
     });
 
-    it(('should handle focus management properly', () => {
+    it('should handle focus management properly', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should manage focus appropriately
@@ -354,7 +354,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       });
     });
 
-    it(('should support resizable text', () => {
+    it('should support resizable text', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should handle text resizing gracefully
@@ -374,7 +374,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       expect(calendar).toBeInTheDocument();
     });
 
-    it(('should provide accessible color coding', () => {
+    it('should provide accessible color coding', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should not rely solely on color
@@ -391,7 +391,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       });
     });
 
-    it(('should support accessible navigation', () => {
+    it('should support accessible navigation', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide landmark roles
@@ -408,7 +408,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       }
     });
 
-    it(('should handle accessible tables', () => {
+    it('should handle accessible tables', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide proper table headers
@@ -421,7 +421,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       });
     });
 
-    it(('should support accessible modal dialogs', () => {
+    it('should support accessible modal dialogs', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should handle modal dialogs appropriately
@@ -435,7 +435,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should handle dialog accessibility
     });
 
-    it(('should provide accessible error handling', () => {
+    it('should provide accessible error handling', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide clear error messages
@@ -445,7 +445,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should handle error states accessibly
     });
 
-    it(('should support accessible animations', () => {
+    it('should support accessible animations', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should respect reduced motion preferences
@@ -467,7 +467,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       });
     });
 
-    it(('should provide accessible mobile experience', () => {
+    it('should provide accessible mobile experience', () => {
       // Mock mobile viewport
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -491,7 +491,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       expect(calendar).toBeInTheDocument();
     });
 
-    it(('should support accessible printing', () => {
+    it('should support accessible printing', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide print styles
@@ -503,7 +503,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       expect(printStyles).toBeDefined();
     });
 
-    it(('should provide accessible keyboard shortcuts', () => {
+    it('should provide accessible keyboard shortcuts', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide documented keyboard shortcuts
@@ -523,7 +523,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       fireEvent.keyDown(calendar, { key: 'Escape' }); // Close dialog
     });
 
-    it(('should ensure accessible date and time inputs', () => {
+    it('should ensure accessible date and time inputs', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide accessible date inputs
@@ -533,7 +533,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Test date/time accessibility
     });
 
-    it(('should provide accessible help and documentation', () => {
+    it('should provide accessible help and documentation', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide accessible help text
@@ -545,8 +545,8 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
   });
 
   // PERFORMANCE AND ACCESSIBILITY
-  describe(('Performance and Accessibility', () => {
-    it(('should maintain accessibility with large datasets', () => {
+  describe('Performance and Accessibility', () => {
+    it('should maintain accessibility with large datasets', () => {
       const largeEventSet = Array.from.*}, (_, i) => ({
         id: `large-event-${i}`,
         title: `Evento Grande ${i}`,
@@ -566,7 +566,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       expect(buttons.length).toBeGreaterThan(0);
     });
 
-    it(('should provide accessible loading states', () => {
+    it('should provide accessible loading states', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide accessible loading indicators
@@ -576,7 +576,7 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should handle loading states accessibly
     });
 
-    it(('should support accessible error recovery', () => {
+    it('should support accessible error recovery', () => {
       render(<EventCalendar events={accessibleEvents} {...mockCallbacks} />);
 
       // Should provide accessible error messages
@@ -588,8 +588,8 @@ describe(('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
   });
 
   // HEALTHCARE-SPECIFIC ACCESSIBILITY
-  describe(('Healthcare-Specific Accessibility', () => {
-    it(('should provide accessible medical information', () => {
+  describe('Healthcare-Specific Accessibility', () => {
+    it('should provide accessible medical information', () => {
       const medicalEvent: CalendarEvent = {
         id: 'medical-accessible-1',
         title: 'Consulta Acessível',

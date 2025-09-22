@@ -8,7 +8,7 @@ import { patientAccessMiddleware, rlsHealthcareMiddleware } from '../middleware/
 // Define context variables type for better TypeScript support
 type Variables = {
   rlsQuery: RLSQueryBuilder;
-  _userId: string;
+  userId: string;
   userRole: string;
   clinicId?: string;
   patientId?: string;
@@ -27,7 +27,7 @@ rlsPatients.use('*', rlsHealthcareMiddleware.patientAccess);
 rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
   try {
     const rlsQuery = c.get('rlsQuery');
-    const userId = c.get('userId'); // Prefix with _ to indicate intentionally unused
+    const userId = c.get('userId');
     const userRole = c.get('userRole');
 
     if (!rlsQuery) {
@@ -53,7 +53,7 @@ rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
 
     // Log successful access
     console.log(
-      `RLS Patient Access: User ${_userId} (${_userRole}) accessed ${
+      `RLS Patient Access: User ${userId} (${userRole}) accessed ${
         patients?.length || 0
       } patients`,
     );
@@ -198,7 +198,7 @@ rlsPatients.get(
 
       // Log successful access
       console.log(
-        `RLS Appointment Access: User ${_userId} accessed ${
+        `RLS Appointment Access: User ${userId} accessed ${
           appointments?.length || 0
         } appointments for patient ${patientId}`,
       );
@@ -252,7 +252,7 @@ rlsPatients.get(
 
       // Log successful access
       console.log(
-        `RLS Consent Access: User ${_userId} accessed consent records for patient ${patientId}`,
+        `RLS Consent Access: User ${userId} accessed consent records for patient ${patientId}`,
       );
 
       return c.json({

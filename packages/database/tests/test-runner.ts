@@ -5,7 +5,7 @@
  * health checks, and detailed reporting for healthcare compliance testing.
  */
 
-import { execSync } from ''child_process'
+import { execSync } from 'child_process'
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -76,9 +76,9 @@ class DatabaseTestRunner {
 
     // Check for required environment variables
     const requiredEnvVars = [
-      'SUPABASE_URL_,
-      'SUPABASE_SERVICE_ROLE_KEY_,
-      'JWT_SECRET_
+      'SUPABASE_URL',
+      'SUPABASE_SERVICE_ROLE_KEY',
+      'JWT_SECRET'
     ];
 
     const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
@@ -241,7 +241,7 @@ class DatabaseTestRunner {
       // Run vitest with specific pattern
       const command = `npx vitest run --pattern "${pattern}" --reporter=verbose --json`;
       const output = execSync(command, {
-        cwd: path.join(__dirname, '../.._),
+        cwd: path.join(__dirname, '../..'),
         encoding: 'utf-8',
         timeout: 60000, // 60 second timeout
         stdio: 'pipe'

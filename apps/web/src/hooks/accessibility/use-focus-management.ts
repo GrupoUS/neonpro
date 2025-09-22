@@ -1,8 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { useRef, useState, useCallback } from 'react';
+
 /**
  * Hook for managing focus accessibility in healthcare applications
  * Provides WCAG 2.1 AA+ compliant focus management
+ * 
+ * @template T - HTMLElement type for the container ref
+ * @returns Focus management utilities
  */
 export function useFocusManagement<T extends HTMLElement>() {
   const ref = useRef<T>(null);
@@ -109,11 +114,23 @@ export function useFocusManagement<T extends HTMLElement>() {
 /**
  * Hook for managing ARIA announcements for screen readers
  */
+export interface ScreenReaderAnnouncement {
+  message: string;
+  priority: 'polite' | 'assertive';
+  timestamp: number;
+}
+
 export function useScreenReaderAnnouncer() {
-  const [announcements, setAnnouncements] = useState<string[]>([]);
+  const [announcements, setAnnouncements] = useState<ScreenReaderAnnouncement[]>([]);
 
   const announce = useCallback((message: string, priority: 'polite' | 'assertive' = 'polite') => {
-    setAnnouncements(prev => [...prev, { message, priority, timestamp: Date.now() }]);
+    const newAnnouncement: ScreenReaderAnnouncement = {
+      message,
+      priority,
+      timestamp: Date.now()
+    };
+    
+    setAnnouncements(prev => [...prev, newAnnouncement]);
 
     // Clear after announcement
     setTimeout(() => {

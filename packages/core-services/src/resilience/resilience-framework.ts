@@ -384,7 +384,7 @@ export class HealthMonitor {
       const startTime = Date.now();
       const isHealthy = await Promise.race([
         healthCheck(),
-        new Promise<boolean>((, reject) =>
+        new Promise<boolean>((_resolve, reject) =>
           setTimeout(() => reject(new Error("Health check timeout")),
             this.config.timeoutMs,
           ),
@@ -480,7 +480,7 @@ export class ResilienceFramework {
       }
 
       // Execute with circuit breaker protection
-      const result = await circuitBreaker.execute(_async () => {
+      const result = await circuitBreaker.execute(async () => {
         const retryPolicy = new RetryPolicy(this.config.retry);
 
         while (true) {
@@ -511,7 +511,7 @@ export class ResilienceFramework {
             }
           }
         }
-      }, _context);
+      }, context);
 
       // Update metrics
       const latency = Date.now() - startTime;
