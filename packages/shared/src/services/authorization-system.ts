@@ -964,6 +964,8 @@ export class HealthcareAuthorizationEngine {
       this.setupCacheManagement();
       this.setupPerformanceMonitoring();
       this.isInitialized = true;
+      this.stats.isInitialized = true;
+      this.stats.policiesLoaded = this.policies.size;
 
       authorizationLogger.info(
         "Healthcare authorization engine initialized",
@@ -1356,6 +1358,39 @@ export class HealthcareAuthorizationEngine {
     }
 
     return Math.min(riskScore, 10); // Cap at 10
+  }
+
+  // ============================================================================
+  // PUBLIC METHODS
+  // ============================================================================
+
+  /**
+   * Get authorization engine statistics
+   */
+  getStatistics() {
+    this.stats.cacheSize = this.decisionCache.size;
+    this.stats.policiesLoaded = this.policies.size;
+    this.stats.isInitialized = this.isInitialized;
+    
+    return {
+      ...this.stats,
+      config: this.config,
+    };
+  }
+
+  /**
+   * Destroy the authorization engine and clean up resources
+   */
+  destroy(): void {
+    this.decisionCache.clear();
+    this.policies.clear();
+    this.isInitialized = false;
+    this.stats.isInitialized = false;
+    
+    authorizationLogger.info(
+      "Healthcare authorization engine destroyed",
+      { component: 'authorization-system', timestamp: new Date().toISOString() },
+    );
   }
 
   // ============================================================================

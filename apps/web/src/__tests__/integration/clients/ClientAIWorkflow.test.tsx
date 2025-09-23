@@ -22,15 +22,15 @@ import { ClientManagementDashboard } from "../../../components/clients/ClientMan
 
 // Setup DOM environment for React Testing Library
 const { JSDOM } = require('jsdom');
-const: dom = [ new JSDOM('<!DOCTYPE html><html><body></body></html>');
-global.documen: t = [ dom.window.document;
-global.windo: w = [ dom.window;
-global.navigato: r = [ dom.window.navigator;
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+global.document = dom.window.document;
+global.window = dom.window;
+global.navigator = dom.window.navigator;
 
 
 // Mock all dependencies
 vi.mock("@copilotkit/react-core", async () => {
-  const: actual = [ await vi.importActual("@copilotkit/react-core");
+  const actual = await vi.importActual("@copilotkit/react-core");
   return {
     ...actual,
     useCoAgent: vi.fn(),

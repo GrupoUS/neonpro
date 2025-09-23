@@ -230,7 +230,7 @@ const _ContraindicationAnalysisOutputSchema = z.object({
 /**
  * Treatment guidelines output schema
  */
-const TreatmentGuidelinesOutputSchema = z.object({
+const _TreatmentGuidelinesOutputSchema = z.object({
   guidelines: z.object({
     procedureId: z.string(),
     indications: z.array(z.string()),
@@ -271,7 +271,7 @@ const TreatmentGuidelinesOutputSchema = z.object({
 /**
  * Outcome prediction output schema
  */
-const OutcomePredictionOutputSchema = z.object({
+const _OutcomePredictionOutputSchema = z.object({
   efficacy: z.number().min(0).max(1),
   satisfaction: z.number().min(0).max(1),
   risks: z.array(z.object({
@@ -290,7 +290,7 @@ const OutcomePredictionOutputSchema = z.object({
 /**
  * Progress monitoring output schema
  */
-const ProgressMonitoringOutputSchema = z.object({
+const _ProgressMonitoringOutputSchema = z.object({
   progress: z.enum(['ahead', 'on_track', 'behind', 'concerns']),
   recommendations: z.array(z.string()),
   adjustments: z.array(z.object({
@@ -312,7 +312,7 @@ const ProgressMonitoringOutputSchema = z.object({
  */
 async function validateCFMCompliance(
   recommendationData: any,
-  ctx: any
+  _ctx: any
 ): Promise<{
   compliant: boolean;
   warnings: string[];
@@ -818,7 +818,7 @@ export const aiClinicalSupportRouter = router({
         }
 
         // Anonymize patient data for AI processing
-        const anonymizedData = anonymizePatientDataForAI(patient);
+        const _anonymizedData = anonymizePatientDataForAI(patient);
 
         // Predict outcomes
         const prediction = await aiClinicalService.predictTreatmentOutcomes(

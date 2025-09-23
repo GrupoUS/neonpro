@@ -196,12 +196,12 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
           if (!this.applyValidationRule(record, rule)) {
             isValid = false;
             errors.push({
-              errorId: `validation_${Date.now()}_${index}`,
+              errorId: `validation_${Date.now()}_${_index}`,
               type: "validation_error",
               message: `Validation failed for rule: ${rule.description}`,
               source: {
                 sourceId: this.adapterId,
-                recordId: index.toString(),
+                recordId: _index.toString(),
                 field: rule.field,
               },
               _context: {
@@ -220,12 +220,12 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
           void _error;
           isValid = false;
           errors.push({
-            errorId: `validation_error_${Date.now()}_${index}`,
+            errorId: `validation_error_${Date.now()}_${_index}`,
             type: "validation_error",
-            message: `Validation rule execution failed: ${error}`,
+            message: `Validation rule execution failed: ${_error}`,
             source: {
               sourceId: this.adapterId,
-              recordId: index.toString(),
+              recordId: _index.toString(),
               field: rule.field,
             },
             _context: {
@@ -271,12 +271,12 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
         } catch (_error) {
           void _error;
           errors.push({
-            errorId: `transformation_error_${Date.now()}_${index}`,
+            errorId: `transformation_error_${Date.now()}_${_index}`,
             type: "transformation_error",
             message: `Transformation failed for rule: ${rule.description}`,
             source: {
               sourceId: this.adapterId,
-              recordId: index.toString(),
+              recordId: _index.toString(),
               field: rule.sourceField,
             },
             _context: {
@@ -359,15 +359,15 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
   }
 
   private getFieldValue(record: any, fieldPath: string): any {
-    return fieldPath.split(".").reduce((obj, _key) => obj?.[key], record);
+    return fieldPath.split(".").reduce((obj, _key) => obj?.[_key], record);
   }
 
   private setFieldValue(record: any, fieldPath: string, value: any): void {
     const keys = fieldPath.split(".");
     const lastKey = keys.pop()!;
     const target = keys.reduce((obj, _key) => {
-      if (!obj[key]) obj[key] = {};
-      return obj[key];
+      if (!obj[_key]) obj[_key] = {};
+      return obj[_key];
     }, record);
     target[lastKey] = value;
   }

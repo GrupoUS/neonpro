@@ -8,11 +8,11 @@ import { describe, expect, it } from "vitest";
 describe("Brazilian Validation Schemas (T037)", () => {
   it("should export validation functions", () => {
     expect(() => {
-      const module = require("../brazilian"
-      expect(module.validateCPF).toBeDefined(
-      expect(module.validateCNPJ).toBeDefined(
-      expect(module.validateCEP).toBeDefined(
-    }).not.toThrow(
+      const module = require("../brazilian");
+      expect(module.validateCPF).toBeDefined();
+      expect(module.validateCNPJ).toBeDefined();
+      expect(module.validateCEP).toBeDefined();
+    }).not.toThrow();
   }
 
   describe("CPF Validation", () => {

@@ -16,7 +16,7 @@
 
 import { webcrypto } from "node:crypto";
 import { z } from "zod";
-import { logHealthcareError, sessionLogger } from '../logging/healthcare-logger';
+import { logHealthcareError, createHealthcareLogger } from '../logging/healthcare-logger';
 
 // Ensure crypto is available in both Node.js and browser environments
 const crypto = globalThis.crypto || webcrypto;
@@ -372,7 +372,7 @@ export function generateCSRFToken(): string {
       array[i] = Math.floor(Math.random() * 256);
     }
   }
-  return Array.from(_array, (byte) => byte.toString(16).padStart(2, "0")).join(
+  return Array.from(array, (byte) => byte.toString(16).padStart(2, "0")).join(
     "",
   );
 }
@@ -894,7 +894,7 @@ export class SessionManagementService {
     // Log activity
     await this.logActivity({
       sessionId,
-      _userId: session.userId,
+      _userId: session._userId,
       eventType: "session_refreshed",
       timestamp: now,
       ipAddress: session.ipAddress,
@@ -936,7 +936,7 @@ export class SessionManagementService {
     // Log activity
     await this.logActivity({
       sessionId,
-      _userId: session.userId,
+      _userId: session._userId,
       eventType: "session_terminated",
       timestamp: now,
       ipAddress: session.ipAddress,
@@ -971,7 +971,7 @@ export class SessionManagementService {
     // Log activity
     await this.logActivity({
       sessionId,
-      _userId: session.userId,
+      _userId: session._userId,
       eventType: "session_revoked",
       timestamp: now,
       ipAddress: session.ipAddress,
@@ -1006,7 +1006,7 @@ export class SessionManagementService {
     // Log activity
     await this.logActivity({
       sessionId,
-      _userId: session.userId,
+      _userId: session._userId,
       eventType: "session_expired",
       timestamp: now,
       ipAddress: session.ipAddress,
@@ -1025,7 +1025,7 @@ export class SessionManagementService {
    * Get user sessions
    */
   async getUserSessions(_userId: string): Promise<SessionData[]> {
-    return this.store.getUserSessions(userId);
+    return this.store.getUserSessions(_userId);
   }
 
   /**
@@ -1035,7 +1035,7 @@ export class SessionManagementService {
     _userId: string,
     reason?: string,
   ): Promise<void> {
-    const sessions = await this.store.getUserSessions(userId);
+    const sessions = await this.store.getUserSessions(_userId);
     const activeSessions = sessions.filter(
       (s) => s.status === SessionStatus.ACTIVE,
     );
@@ -1087,7 +1087,7 @@ export class SessionManagementService {
   getActivityLog(sessionId?: string, _userId?: string): SessionActivityEvent[] {
     return this.activityLog.filter((event) => {
       if (sessionId && event.sessionId !== sessionId) return false;
-      if (userId && event.userId !== _userId) return false;
+      if (_userId && event._userId !== _userId) return false;
       return true;
     });
   }
@@ -1102,11 +1102,11 @@ export class SessionManagementService {
     userAgent: string,
   ): Promise<SessionData> {
     // Terminate all existing sessions
-    await this.terminateAllUserSessions(userId, "emergency_access_enabled");
+    await this.terminateAllUserSessions(_userId, "emergency_access_enabled");
 
     // Create emergency session
     const emergencySession = await this.createSession({
-      userId,
+      _userId,
       userType: SessionType.EMERGENCY,
       securityLevel: SessionSecurityLevel.CRITICAL,
       ipAddress,
@@ -1123,7 +1123,7 @@ export class SessionManagementService {
     // Log emergency access
     await this.logActivity({
       sessionId: emergencySession.sessionId,
-      userId,
+      _userId,
       eventType: "emergency_access",
       timestamp: new Date(),
       ipAddress,
@@ -1176,7 +1176,7 @@ export class InMemorySessionStore implements SessionStore {
 
   async getUserSessions(_userId: string): Promise<SessionData[]> {
     return Array.from(this.sessions.values())
-      .filter((session) => session.userId === _userId)
+      .filter((session) => session._userId === _userId)
       .map((session) => ({ ...session }));
   }
 

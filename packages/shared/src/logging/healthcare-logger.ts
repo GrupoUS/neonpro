@@ -167,6 +167,7 @@ export function createHealthcareLogger(service: string, options: winston.LoggerO
 export const databaseLogger = createHealthcareLogger('database');
 export const apiLogger = createHealthcareLogger('api');
 export const securityLogger = createHealthcareLogger('security');
+export const middlewareLogger = createHealthcareLogger('middleware');
 export const auditLogger = createHealthcareLogger('audit', {
   level: 'audit',
   transports: [

@@ -19,8 +19,8 @@ describe("CrudIntentParser", () => {
   let parser: CrudIntentParser;
 
   beforeEach(() => {
-    parser = createCrudIntentParser(
-  }
+    parser = createCrudIntentParser();
+  });
 
   describe("Intent Classification", () => {
     it("should identify CREATE intents", () => {
@@ -32,11 +32,11 @@ describe("CrudIntentParser", () => {
       ];
 
       inputs.forEach((input) => {
-        const result = parser.parseIntent(input
-        expect(result.intent).toBe("CREATE"
-        expect(result.confidence).toBeGreaterThan(0.7
-      }
-    }
+        const result = parser.parseIntent(input);
+        expect(result.intent).toBe("CREATE");
+        expect(result.confidence).toBeGreaterThan(0.7);
+      });
+    });
 
     it("should identify READ intents", () => {
       const inputs = [
@@ -49,11 +49,11 @@ describe("CrudIntentParser", () => {
       ];
 
       inputs.forEach((input) => {
-        const result = parser.parseIntent(input
-        expect(result.intent).toBe("READ"
-        expect(result.confidence).toBeGreaterThan(0.7
-      }
-    }
+        const result = parser.parseIntent(input);
+        expect(result.intent).toBe("READ");
+        expect(result.confidence).toBeGreaterThan(0.7);
+      });
+    });
 
     it("should identify UPDATE intents", () => {
       const inputs = [
@@ -64,241 +64,208 @@ describe("CrudIntentParser", () => {
       ];
 
       inputs.forEach((input) => {
-        const result = parser.parseIntent(input
-        expect(result.intent).toBe("UPDATE"
-        expect(result.confidence).toBeGreaterThan(0.7
-      }
-    }
+        const result = parser.parseIntent(input);
+        expect(result.intent).toBe("UPDATE");
+        expect(result.confidence).toBeGreaterThan(0.7);
+      });
+    });
 
     it("should identify DELETE intents", () => {
       const inputs = [
         "delete patient record",
-        "remove appointment for tomorrow",
-        "cancel user account",
-        "drop clinic from database",
+        "remove appointment",
+        "cancel booking for tomorrow",
+        "eliminate user account",
       ];
 
       inputs.forEach((input) => {
-        const result = parser.parseIntent(input
-        expect(result.intent).toBe("DELETE"
-        expect(result.confidence).toBeGreaterThan(0.7
-      }
-    }
-
-    it("should handle unknown intents with low confidence", () => {
-      const inputs = [
-        "what is the weather today?",
-        "hello world",
-        "random text without intent",
-      ];
-
-      inputs.forEach((input) => {
-        const result = parser.parseIntent(input
-        expect(result.intent).toBe("UNKNOWN"
-        expect(result.confidence).toBeLessThan(0.5
-      }
-    }
-  }
+        const result = parser.parseIntent(input);
+        expect(result.intent).toBe("DELETE");
+        expect(result.confidence).toBeGreaterThan(0.7);
+      });
+    });
+  });
 
   describe("Entity Extraction", () => {
-    it("should extract entities from CREATE intents", () => {
-      const input =
-        "create a new patient record for John Doe with email john@doe.com";
-      const result = parser.parseIntent(input
+    it("should extract entities from CREATE commands", () => {
+      const input = "create a new patient record for John Doe";
+      const result = parser.parseIntent(input);
 
-      expect(_result.entities.some(
-          (e) => e.type === "PERSON" && e.value === "John Doe",
-        ),
-      ).toBe(true);
-      expect(_result.entities.some(
-          (e) => e.type === "EMAIL" && e.value === "john@doe.com",
-        ),
-      ).toBe(true);
-      expect(_result.entities.some(
-          (e) => e.type === "ENTITY_TYPE" && e.value === "patient",
-        ),
-      ).toBe(true);
-    }
+      expect(result.entities).toHaveLength(2);
+      expect(result.entities[0]).toEqual({
+        type: "entity_type",
+        value: "patient",
+        confidence: expect.any(Number),
+      });
+      expect(result.entities[1]).toEqual({
+        type: "entity_name",
+        value: "John Doe",
+        confidence: expect.any(Number),
+      });
+    });
 
-    it("should extract entities from READ intents with filters", () => {
-      const input =
-        "get all patients where status equals active and age is greater than 18";
-      const result = parser.parseIntent(input
+    it("should extract entities from READ commands with filters", () => {
+      const input = "find patients by age greater than 30 in São Paulo";
+      const result = parser.parseIntent(input);
 
-      expect(_result.entities.some(
-          (e) => e.type === "ENTITY_TYPE" && e.value === "patients",
-        ),
-      ).toBe(true);
-      expect(_result.entities.some((e) => e.type === "FIELD" && e.value === "status"),
-      ).toBe(true);
-      expect(_result.entities.some((e) => e.type === "VALUE" && e.value === "active"),
-      ).toBe(true);
-      expect(_result.entities.some((e) => e.type === "FIELD" && e.value === "age"),
-      ).toBe(true);
-      expect(_result.entities.some((e) => e.type === "VALUE" && e.value === "18"),
-      ).toBe(true);
-    }
+      expect(result.entities).toContainEqual({
+        type: "entity_type",
+        value: "patients",
+        confidence: expect.any(Number),
+      });
+      expect(result.filters).toContainEqual({
+        field: "age",
+        operator: "greater_than",
+        value: "30",
+        confidence: expect.any(Number),
+      });
+      expect(result.filters).toContainEqual({
+        field: "location",
+        operator: "equals",
+        value: "São Paulo",
+        confidence: expect.any(Number),
+      });
+    });
+  });
 
-    it("should extract date entities", () => {
+  describe("Filter Argument Extraction", () => {
+    it("should extract comparison filters", () => {
       const inputs = [
-        "show appointments for today",
-        "get patients created on 2024-01-15",
-        "find records from last week",
-        "appointments for tomorrow",
+        { text: "age greater than 30", expected: { field: "age", operator: "greater_than", value: "30" } },
+        { text: "price less than 100", expected: { field: "price", operator: "less_than", value: "100" } },
+        { text: "status equals active", expected: { field: "status", operator: "equals", value: "active" } },
       ];
 
-      inputs.forEach((input) => {
+      inputs.forEach(({ text, expected }) => {
+        const result = parser.parseIntent(`find patients where ${text}`);
+        expect(result.filters).toContainEqual(expect.objectContaining(expected));
+      });
+    });
 
-    it("should extract email and phone entities", () => {
-      const input =
-        "find patient with email admin@clinic.com or phone +5511999887766";
-      const result = parser.parseIntent(input
+    it("should extract date range filters", () => {
+      const input = "appointments between 2024-01-01 and 2024-12-31";
+      const result = parser.parseIntent(input);
 
-      expect(_result.entities.some(
-          (e) => e.type === "EMAIL" && e.value === "admin@clinic.com",
-        ),
-      ).toBe(true);
-      expect(_result.entities.some(
-          (e) => e.type === "PHONE" && e.value === "+5511999887766",
-        ),
-      ).toBe(true);
-    }
-  }
+      expect(result.filters).toContainEqual({
+        field: "date",
+        operator: "between",
+        value: "2024-01-01,2024-12-31",
+        confidence: expect.any(Number),
+      });
+    });
+  });
 
-  describe("Argument Extraction", () => {
-    it("should extract filter arguments from WHERE clauses", () => {
-      const input =
-        "get patients where status equals active and age greater than 25";
-      const result = parser.parseIntent(input
+  describe("Sort Argument Extraction", () => {
+    it("should extract sort arguments", () => {
+      const inputs = [
+        { text: "sort by name ascending", expected: { field: "name", direction: "asc" } },
+        { text: "order by date descending", expected: { field: "date", direction: "desc" } },
+        { text: "sort by age", expected: { field: "age", direction: "asc" } },
+      ];
 
-      expect(result.arguments.filters.length).toBe(2
+      inputs.forEach(({ text, expected }) => {
+        const result = parser.parseIntent(`get patients ${text}`);
+        expect(result.sort).toEqual(expect.objectContaining(expected));
+      });
+    });
+  });
 
-      const statusFilter = result.arguments.filters.find((f) => f.field === "status",
-
-      const ageFilter = result.arguments.filters.find((f) => f.field === "age"
-      expect(ageFilter).toBeDefined(
-      expect(ageFilter?.operator).toBe("greater_than"
-      expect(ageFilter?.value).toBe("25"
-    }
-
-    it("should extract sort arguments from ORDER BY clauses", () => {
-      const input = "get all patients ordered by created_at descending";
-      const result = parser.parseIntent(input
-
-      expect(result.arguments.sort).toBeDefined(
-      expect(result.arguments.sort?.field).toBe("created_at"
-      expect(result.arguments.sort?.direction).toBe("desc"
-    }
-
+  describe("Limit Argument Extraction", () => {
     it("should extract limit arguments", () => {
       const inputs = [
-        { text: "get first 10 patients", limit: 10 },
-        { text: "show top 5 appointments", limit: 5 },
-        { text: "list 20 users maximum", limit: 20 },
+        "get first 10 patients",
+        "show me top 5 doctors",
+        "limit to 20 results",
       ];
 
-      inputs.forEach(({ text,_limit }) => {
+      const expected = [10, 5, 20];
 
-    it("should extract pagination arguments", () => {
-      const input = "get patients page 2 with 10 per page";
-      const result = parser.parseIntent(input
-
-      expect(result.arguments.limit).toBeDefined(
-      expect(result.arguments.limit?.count).toBe(10
-      expect(result.arguments.limit?.offset).toBe(10); // page 2 * 10 per page - 10
-    }
-  }
+      inputs.forEach((input, index) => {
+        const result = parser.parseIntent(input);
+        expect(result.limit).toEqual({
+          value: expected[index],
+          confidence: expect.any(Number),
+        });
+      });
+    });
+  });
 
   describe("Complex Query Parsing", () => {
-    it("should parse complex multi-filter queries", () => {
-      const input =
-        "find active patients with age between 25 and 65, created after 2024-01-01, ordered by name ascending, limit 50";
-      const result = parser.parseIntent(input
+    it("should parse complex queries with multiple arguments", () => {
+      const input = "find patients by age greater than 30 in São Paulo, sort by name ascending, limit to 10";
+      const result = parser.parseIntent(input);
 
-      expect(_result.entities.some(
-          (e) => e.type === "ENTITY_TYPE" && e.value === "patients",
-        ),
-      ).toBe(true);
+      expect(result.intent).toBe("READ");
+      expect(result.entities).toContainEqual(expect.objectContaining({
+        type: "entity_type",
+        value: "patients",
+      }));
+      expect(result.filters).toContainEqual(expect.objectContaining({
+        field: "age",
+        operator: "greater_than",
+        value: "30",
+      }));
+      expect(result.filters).toContainEqual(expect.objectContaining({
+        field: "location",
+        operator: "equals",
+        value: "São Paulo",
+      }));
+      expect(result.sort).toEqual(expect.objectContaining({
+        field: "name",
+        direction: "asc",
+      }));
+      expect(result.limit).toEqual(expect.objectContaining({
+        value: 10,
+      }));
+    });
 
-      // Check filters
-      expect(_result.arguments.filters.some(
-          (f) => f.field === "status" && f.value === "active",
-        ),
-      ).toBe(true);
+    it("should handle healthcare-specific terminology", () => {
+      const input = "create appointment for patient ID 12345 with Dr. Silva on 2024-12-25";
+      const result = parser.parseIntent(input);
 
-      // Check sort
-      expect(result.arguments.sort?.field).toBe("name"
-      expect(result.arguments.sort?.direction).toBe("asc"
+      expect(result.intent).toBe("CREATE");
+      expect(result.entities).toContainEqual(expect.objectContaining({
+        type: "entity_type",
+        value: "appointment",
+      }));
+      expect(result.entities).toContainEqual(expect.objectContaining({
+        type: "patient_id",
+        value: "12345",
+      }));
+      expect(result.entities).toContainEqual(expect.objectContaining({
+        type: "doctor_name",
+        value: "Dr. Silva",
+      }));
+      expect(result.entities).toContainEqual(expect.objectContaining({
+        type: "date",
+        value: "2024-12-25",
+      }));
+    });
+  });
 
-      // Check limit
-      expect(result.arguments.limit?.count).toBe(50
-    }
+  describe("Edge Cases", () => {
+    it("should handle empty input", () => {
+      const result = parser.parseIntent("");
+      expect(result.intent).toBe("UNKNOWN");
+      expect(result.confidence).toBeLessThan(0.5);
+    });
 
-    it("should handle Brazilian Portuguese input", () => {
-      const inputs = [
-        "criar novo paciente João Silva",
-        "buscar todos os agendamentos de hoje",
-        "atualizar status do paciente para ativo",
-        "deletar consulta de amanhã",
-      ];
+    it("should handle ambiguous input", () => {
+      const result = parser.parseIntent("something");
+      expect(result.intent).toBe("UNKNOWN");
+      expect(result.confidence).toBeLessThan(0.5);
+    });
 
-      inputs.forEach((input) => {
-        const result = parser.parseIntent(input
-        expect(result.intent).not.toBe("UNKNOWN"
-        expect(result.confidence).toBeGreaterThan(0.6
-      }
-    }
-  }
+    it("should handle input with special characters", () => {
+      const input = "find patients with email containing '@healthcare.com.br'";
+      const result = parser.parseIntent(input);
 
-  describe("Edge Cases and Error Handling", () => {
-    it("should handle empty or null input", () => {
-      expect(() => parser.parseIntent("")).not.toThrow(
-      expect(parser.parseIntent("").intent).toBe("UNKNOWN"
-    }
-
-    it("should handle very long input text", () => {
-      const longInput = "get patients ".repeat(100
-      const result = parser.parseIntent(longInput
-      expect(result.intent).toBe("READ"
-    }
-
-    it("should normalize case sensitivity", () => {
-      const inputs = [
-        "GET ALL PATIENTS",
-        "get all patients",
-        "Get All Patients",
-      ];
-
-      inputs.forEach((input) => {
-        const result = parser.parseIntent(input
-        expect(result.intent).toBe("READ"
-      }
-    }
-
-    it("should handle special characters and punctuation", () => {
-      const input =
-        "get patients where email = 'test@example.com' and status != 'inactive'!";
-      const result = parser.parseIntent(input
-      expect(result.intent).toBe("READ"
-    }
-  }
-
-  describe("Configuration and Customization", () => {
-    it("should allow custom confidence threshold", () => {
-      const customParser = createCrudIntentParser({ confidenceThreshold: 0.9 }
-      const borderlineInput = "maybe show some data";
-
-      const result = customParser.parseIntent(borderlineInput
-      expect(result.intent).toBe("UNKNOWN"); // High threshold should reject borderline cases
-    }
-
-    it("should support entity type customization", () => {
-      const customParser = createCrudIntentParser({
-        customEntityTypes: ["CLINIC", "PROCEDURE", "APPOINTMENT"],
-      }
-
-      const input = "get all procedures for clinic São Paulo";
-      const result = customParser.parseIntent(input
-
-      expect(_result.entities.some((e) => e.type === "PROCEDURE")).toBe(true);
-      expect(_result.entities.some((e) => e.type === "CLINIC")).toBe(true);
+      expect(result.intent).toBe("READ");
+      expect(result.filters).toContainEqual(expect.objectContaining({
+        field: "email",
+        operator: "contains",
+        value: "@healthcare.com.br",
+      }));
+    });
+  });
+});

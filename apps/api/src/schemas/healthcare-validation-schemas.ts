@@ -210,7 +210,7 @@ export const MedicalRecordSchema = z
         'ATESTADO',
         'DECLARACAO',
       ],
-      'Tipo de registro inválido',
+      { message: 'Tipo de registro inválido' },
     ),
     content: z
       .string()
@@ -387,7 +387,7 @@ export const ProfessionalSchema = z.object({
       'RADIOLOGIA',
       'PATOLOGIA',
     ],
-    'Especialidade inválida',
+    { message: 'Especialidade inválida' },
   ),
   email: z.string().email('Email inválido'),
   phone: z.string().regex(/^\d{10,11}$/, 'Telefone deve ter 10-11 dígitos'),
@@ -407,15 +407,15 @@ export const ProfessionalSchema = z.object({
 export function getEntitySchema<T = unknown>(entity: string): z.ZodSchema<T> {
   switch (entity) {
     case 'patients':
-      return PatientSchema;
+      return PatientSchema as unknown as z.ZodSchema<T>;
     case 'appointments':
-      return AppointmentSchema;
+      return AppointmentSchema as unknown as z.ZodSchema<T>;
     case 'medical_records':
-      return MedicalRecordSchema;
+      return MedicalRecordSchema as unknown as z.ZodSchema<T>;
     case 'prescriptions':
-      return PrescriptionSchema;
+      return PrescriptionSchema as unknown as z.ZodSchema<T>;
     case 'professionals':
-      return ProfessionalSchema;
+      return ProfessionalSchema as unknown as z.ZodSchema<T>;
     default:
       // Fallback schema for unknown entities
       return z
@@ -424,7 +424,7 @@ export function getEntitySchema<T = unknown>(entity: string): z.ZodSchema<T> {
           createdAt: z.date().optional(),
           updatedAt: z.date().optional(),
         })
-        .passthrough();
+        .passthrough() as unknown as z.ZodSchema<T>;
   }
 }
 
@@ -449,7 +449,7 @@ export function validateEntityData<T>(
         isValid: true,
         errors: [],
         warnings: [],
-        sanitizedData: result.data,
+        sanitizedData: result.data as T,
       };
     } else {
       const errors = result.error.errors.map(
@@ -463,7 +463,7 @@ export function validateEntityData<T>(
         sanitizedData: data,
       };
     }
-  } catch { void _error;
+  } catch {
     return {
       isValid: false,
       errors: ['Erro na validação do esquema'],
@@ -480,7 +480,11 @@ export function validateEntityData<T>(
 /**
  * CPF validation algorithm
  */
-function validateCPF(cpf: string): boolean {
+export function validateCPF(cpf: string): boolean {
+  if (!cpf || typeof cpf !== 'string') {
+    return false;
+  }
+  
   cpf = cpf.replace(/\D/g, '');
 
   if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
@@ -493,7 +497,7 @@ function validateCPF(cpf: string): boolean {
   }
   let remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cpf[9])) return false;
+  if (remainder !== parseInt(cpf.charAt(9))) return false;
 
   sum = 0;
   for (let i = 0; i < 10; i++) {
@@ -501,7 +505,7 @@ function validateCPF(cpf: string): boolean {
   }
   remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cpf[10])) return false;
+  if (remainder !== parseInt(cpf.charAt(10))) return false;
 
   return true;
 }

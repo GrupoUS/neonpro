@@ -66,7 +66,7 @@ class SimpleSyntaxFixer {
       });
 
       // Fix 5: Common missing colons in object properties
-      fixed = fixed.replace(/(\w+)\s*([A-Z_a-z][A-Z_a-z0-9]*)\s*[=\[]/g, '$1: $2 = [');
+      fixed = fixed.replace(/(\w+)\s*([A-Z_a-z][A-Z_a-z0-9]*)\s*[=[]/g, '$1: $2 = [');
 
       if (madeChanges || fixed !== content) {
         fs.writeFileSync(filePath, fixed, 'utf-8');

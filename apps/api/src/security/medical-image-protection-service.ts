@@ -16,7 +16,7 @@ import { logger } from '../lib/logger';
 import crypto from 'crypto';
 import sharp from 'sharp';
 import { ExifTool } from 'exiftool-vendored';
-import { createHash, randomBytes, createCipheriv, createDecipheriv } from 'crypto';
+import { createHash, createCipheriv, createDecipheriv } from 'crypto';
 
 // Image Security Configuration
 const IMAGE_SECURITY_CONFIG = {
@@ -798,17 +798,17 @@ export class MedicalImageProtectionService {
   }
 
   private async checkAccessPermissions(
-    imageId: string,
-    userId: string,
-    userIP: string,
-    userAgent: string,
+    _imageId: string,
+    _userId: string,
+    _userIP: string,
+    _userAgent: string,
   ): Promise<void> {
     // Implement access control logic based on user roles and permissions
     // For now, allow access
     return;
   }
 
-  private async retrieveEncryptedImage(imageId: string): Promise<Buffer> {
+  private async retrieveEncryptedImage(_imageId: string): Promise<Buffer> {
     // In production, this would retrieve from secure storage
     throw new Error('Storage retrieval not implemented');
   }

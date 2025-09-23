@@ -41,7 +41,7 @@ const aestheticSchedulingService = new EnhancedAestheticSchedulingService();
  * Validate ANVISA compliance for aesthetic procedures
  * Ensures procedures follow Brazilian aesthetic medicine regulations
  */
-async function validateANVISACompliance(
+async function _validateANVISACompliance(
   procedureDetails: any,
   ctx: any
 ): Promise<{
@@ -130,7 +130,7 @@ async function validateAestheticProcedureRequest(
   // Age validation for aesthetic procedures
   if (patient.age && patient.age < 18) {
     const adultRequiredProcedures = ['injectable', 'surgical', 'laser'];
-    const hasAdultProcedure = request.procedures.some((procId: string) => {
+    const hasAdultProcedure = request.procedures.some((_procId: string) => {
       // This would check against procedure database
       return adultRequiredProcedures.includes('injectable'); // Simplified check
     });

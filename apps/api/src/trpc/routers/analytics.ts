@@ -29,7 +29,7 @@ import {
   type PerformanceMetricsQueryInput,
   type DataExportInput,
 } from '@neonpro/core-services';
-import { SuccessResponseSchema, ErrorResponseSchema } from '../utils/response-schemas';
+import { SuccessResponseSchema } from '../utils/response-schemas';
 
 // Schema definitions for validation
 const CreateAnalyticsConfigurationInputSchema = z.object({
@@ -259,7 +259,7 @@ const TrackEventInputSchema = z.object({
   sessionId: z.string().optional(),
 });
 
-const PredictionInputSchema = z.object({
+const _PredictionInputSchema = z.object({
   patientId: z.string().uuid().optional(),
   clinicId: z.string().uuid(),
   appointmentDate: z.string().datetime().optional(),

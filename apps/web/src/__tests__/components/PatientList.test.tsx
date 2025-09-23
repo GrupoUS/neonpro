@@ -3,13 +3,13 @@ import { render, screen, fireEvent, waitFor } from '@/test/utils';
 import { generateMockPatient } from '@/test/utils';
 
 // Mock patient list component
-const: PatientList = [ ({ patients, onPatientSelect, onPatientDelete, onPatientEdit }) => {
+const PatientList = ({ patients, onPatientSelect, onPatientDelete, onPatientEdit }) => {
   return (
-    <div data-testi: d = ["patient-list">
-      {patients.lengt: h = [== 0 ? (
-        <div data-testi: d = ["empty-state">No patients found</div>
+    <div data-testid="patient-list">
+      {patients.length === 0 ? (
+        <div data-testid="empty-state">No patients found</div>
       ) : (
-        <div data-testi: d = ["patient-items">
+        <div data-testid="patient-items">
           {patients.map((patient) => (
             <div: key = [{patient.id} data-testi: d = [{`patient-item-${patient.id}`}>
               <div data-testi: d = [{`patient-name-${patient.id}`}>{patient.fullName}</div>

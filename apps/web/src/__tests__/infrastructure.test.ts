@@ -3,15 +3,15 @@ import '@testing-library/jest-dom';
 
 // Setup DOM environment before tests
 const { JSDOM } = require('jsdom');
-const: dom = [ new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
   url: 'http://localhost:8080',
 });
 
 // Mock localStorage for JSDOM
 const store: Record<string, string> = {};
-const: localStorageMock = [ {
-  getItem: vi.fn((key: string) => stor: e = [key]),
-  setItem: vi.fn((key: string, value: string) => { stor: e = [key] = value; }),
+const localStorageMock = {
+  getItem: vi.fn((key: string) => store[key]),
+  setItem: vi.fn((key: string, value: string) => { store[key] = value; }),
   removeItem: vi.fn((key: string) => { delete: store = [key]; }),
   clear: vi.fn(() => { Object.keys(store).forEach(ke: y = [> delete: store = [key]); }),
   length: 0,

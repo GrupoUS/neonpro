@@ -15,7 +15,7 @@
  */
 
 import { z } from "zod";
-import { logHealthcareError, cacheLogger } from '../logging/healthcare-logger';
+import { logHealthcareError, auditLogger } from '../logging/healthcare-logger';
 
 // ============================================================================
 // TYPES & SCHEMAS
@@ -350,16 +350,16 @@ export function calculateHealthcareTTL(
   let ttl = basePolicy[sensitivity] || config.defaultTTL;
 
   // Adjust based on clinical context
-  if (context?.clinicalContext === "emergency") {
+  if (_context?.clinicalContext === "emergency") {
     ttl = Math.min(ttl, 1800); // Max 30 minutes for emergency data
-  } else if (context?.clinicalContext === "surgery") {
+  } else if (_context?.clinicalContext === "surgery") {
     ttl = Math.min(ttl, 3600); // Max 1 hour for surgical data
   }
 
   // Adjust based on retention requirement
-  if (context?.retentionRequirement === "session") {
+  if (_context?.retentionRequirement === "session") {
     ttl = Math.min(ttl, 3600); // Max 1 hour for session data
-  } else if (context?.retentionRequirement === "temporary") {
+  } else if (_context?.retentionRequirement === "temporary") {
     ttl = Math.min(ttl, 900); // Max 15 minutes for temporary data
   }
 
@@ -379,12 +379,12 @@ export function requiresEncryption(
   }
 
   // Encrypt confidential patient data
-  if (sensitivity === CacheDataSensitivity.CONFIDENTIAL && context?.patientId) {
+  if (sensitivity === CacheDataSensitivity.CONFIDENTIAL && _context?.patientId) {
     return true;
   }
 
   // Encrypt emergency clinical data
-  if (context?.clinicalContext === "emergency") {
+  if (_context?.clinicalContext === "emergency") {
     return true;
   }
 
@@ -405,14 +405,14 @@ export function requiresAuditLogging(
   }
 
   // Audit patient data access
-  if (context?.patientId && ["get", "set"].includes(operation)) {
+  if (_context?.patientId && ["get", "set"].includes(operation)) {
     return true;
   }
 
   // Audit clinical operations
   if (
-    context?.clinicalContext &&
-    context.clinicalContext !== "administrative"
+    _context?.clinicalContext &&
+    _context.clinicalContext !== "administrative"
   ) {
     return true;
   }
@@ -434,20 +434,20 @@ export function generateHealthcareCacheKey(
     parts.push(`user:${userScope}`);
   }
 
-  if (context?.patientId) {
-    parts.push(`patient:${context.patientId}`);
+  if (_context?.patientId) {
+    parts.push(`patient:${_context.patientId}`);
   }
 
-  if (context?.providerId) {
-    parts.push(`provider:${context.providerId}`);
+  if (_context?.providerId) {
+    parts.push(`provider:${_context.providerId}`);
   }
 
-  if (context?.facilityId) {
-    parts.push(`facility:${context.facilityId}`);
+  if (_context?.facilityId) {
+    parts.push(`facility:${_context.facilityId}`);
   }
 
-  if (context?.clinicalContext) {
-    parts.push(`_context:${context.clinicalContext}`);
+  if (_context?.clinicalContext) {
+    parts.push(`context:${_context.clinicalContext}`);
   }
 
   return parts.join(":");
@@ -466,6 +466,8 @@ export function anonymizeCacheEntry(entry: CacheEntry): CacheEntry {
       patientId: undefined,
       providerId: undefined,
       lgpdConsentId: undefined,
+      dataClassification: CacheDataSensitivity.PUBLIC, // Required field
+      retentionRequirement: "standard", // Required field
     },
     metadata: {},
   };
@@ -616,7 +618,7 @@ export class InMemoryCacheBackend implements CacheBackend {
     const now = new Date();
     let cleanedCount = 0;
 
-    for (const [key, entry] of this.entries.entries()) {
+    for (const [key, entry] of Array.from(this.entries.entries())) {
       if (entry.expiresAt && entry.expiresAt < now) {
         this.entries.delete(key);
         this.updateAccessOrder(key, true);
@@ -660,7 +662,7 @@ export class InMemoryCacheBackend implements CacheBackend {
     let minAccessCount = Infinity;
     let lfuKey = "";
 
-    for (const [key, entry] of this.entries.entries()) {
+    for (const [key, entry] of Array.from(this.entries.entries())) {
       if (entry.accessCount < minAccessCount) {
         minAccessCount = entry.accessCount;
         lfuKey = key;
@@ -692,7 +694,7 @@ export class InMemoryCacheBackend implements CacheBackend {
 
   private getCurrentMemoryUsage(): number {
     let total = 0;
-    for (const entry of this.entries.values()) {
+    for (const entry of Array.from(this.entries.values())) {
       total += entry.size || 0;
     }
     return total;
@@ -759,12 +761,12 @@ export class CacheManagementService {
       // Generate scoped key
       const scopedKey = generateHealthcareCacheKey(
         key,
-        context,
-        userContext?.userId,
+        _context,
+        userContext?._userId,
       );
 
       // Try each tier in order
-      for (const [_tier, backend] of this.backends.entries()) {
+      for (const [tier, backend] of Array.from(this.backends.entries())) {
         const entry = await backend.get(scopedKey);
 
         if (entry) {
@@ -779,7 +781,7 @@ export class CacheManagementService {
           const auditRequired = requiresAuditLogging(
             "get",
             entry.sensitivity,
-            context,
+            _context,
           );
           if (auditRequired) {
             await this.logAudit({
@@ -789,25 +791,25 @@ export class CacheManagementService {
               key: scopedKey,
               tier,
               sensitivity: entry.sensitivity,
-              _userId: userContext?.userId,
+              _userId: userContext?._userId,
               sessionId: userContext?.sessionId,
               ipAddress: userContext?.ipAddress,
-              healthcareContext: context,
+              healthcareContext: _context,
               success: true,
               latency,
               lgpdCompliant: entry.lgpdCompliant,
+              metadata: { operation: "get", cacheHit: true }, // Required metadata field
             });
           }
 
           return {
-            success: true,
             key: scopedKey,
-            value: entry.value,
-            hit: true,
-            latency,
-            size: entry.size,
-            auditLogged: auditRequired,
+            timestamp: new Date(),
+            metadata: { operation: "get", cacheHit: true, size: entry.size },
+            success: true,
             lgpdCompliant: entry.lgpdCompliant,
+            auditLogged: auditRequired,
+            latency,
             tier,
           };
         }
@@ -816,17 +818,25 @@ export class CacheManagementService {
       // Cache miss
       const latency = Date.now() - startTime;
       return {
-        success: true,
         key: scopedKey,
-        hit: false,
+        timestamp: new Date(),
+        metadata: { operation: "get", cacheHit: false },
+        success: true,
+        lgpdCompliant: true,
+        auditLogged: false,
         latency,
       };
     } catch (error) {
       const latency = Date.now() - startTime;
       return {
-        success: false,
         key,
+        timestamp: new Date(),
+        metadata: { operation: "get", error: error instanceof Error ? error.message : "Unknown error" },
+        success: false,
+        lgpdCompliant: true,
+        auditLogged: false,
         error: error instanceof Error ? error.message : "Unknown error",
+        errorCode: "CACHE_GET_ERROR",
         latency,
       };
     }
@@ -856,7 +866,7 @@ export class CacheManagementService {
       const {
         ttl,
         sensitivity = CacheDataSensitivity.INTERNAL,
-        context,
+        _context,
         tier = CacheTier.MEMORY,
         userContext,
       } = options;
@@ -864,8 +874,8 @@ export class CacheManagementService {
       // Generate scoped key
       const scopedKey = generateHealthcareCacheKey(
         key,
-        context,
-        userContext?.userId,
+        _context,
+        userContext?._userId,
       );
 
       // Calculate TTL
@@ -882,11 +892,11 @@ export class CacheManagementService {
         ttl: calculatedTTL,
         expiresAt: new Date(Date.now() + calculatedTTL * 1000),
         sensitivity,
-        healthcareContext: context,
-        ownerId: userContext?.userId,
+        healthcareContext: _context,
+        ownerId: userContext?._userId,
         permissions: [],
         tags: [],
-        lgpdCompliant: !context?.patientId || !!context?.lgpdConsentId,
+        lgpdCompliant: !_context?.patientId || !!_context?.lgpdConsentId,
         auditRequired: requiresAuditLogging("set", sensitivity, _context),
         encryptionRequired: requiresEncryption(sensitivity, _context),
         tier,
@@ -913,32 +923,38 @@ export class CacheManagementService {
           key: scopedKey,
           tier,
           sensitivity,
-          _userId: userContext?.userId,
+          _userId: userContext?._userId,
           sessionId: userContext?.sessionId,
           ipAddress: userContext?.ipAddress,
-          healthcareContext: context,
+          healthcareContext: _context,
           success: true,
           latency,
           lgpdCompliant: entry.lgpdCompliant,
+          metadata: { operation: "set", size: entry.size }, // Required metadata field
         });
       }
 
       return {
-        success: true,
         key: scopedKey,
-        value,
-        latency,
-        size: entry.size,
-        auditLogged: entry.auditRequired,
+        timestamp: new Date(),
+        metadata: { operation: "set", size: entry.size },
+        success: true,
         lgpdCompliant: entry.lgpdCompliant,
+        auditLogged: entry.auditRequired,
+        latency,
         tier,
       };
     } catch (error) {
       const latency = Date.now() - startTime;
       return {
-        success: false,
         key,
+        timestamp: new Date(),
+        metadata: { operation: "get", error: error instanceof Error ? error.message : "Unknown error" },
+        success: false,
+        lgpdCompliant: true,
+        auditLogged: false,
         error: error instanceof Error ? error.message : "Unknown error",
+        errorCode: "CACHE_GET_ERROR",
         latency,
       };
     }
@@ -961,18 +977,18 @@ export class CacheManagementService {
     try {
       const scopedKey = generateHealthcareCacheKey(
         key,
-        context,
-        userContext?.userId,
+        _context,
+        userContext?._userId,
       );
       let deleted = false;
       let deletedTier: CacheTier | undefined;
 
       // Try to delete from all tiers
-      for (const [_tier, backend] of this.backends.entries()) {
+      for (const [_tier, backend] of Array.from(this.backends.entries())) {
         const result = await backend.delete(scopedKey);
         if (result) {
           deleted = true;
-          deletedTier = tier;
+          deletedTier = _tier;
         }
       }
 
@@ -987,28 +1003,38 @@ export class CacheManagementService {
           key: scopedKey,
           tier: deletedTier!,
           sensitivity: CacheDataSensitivity.INTERNAL, // Default
-          _userId: userContext?.userId,
+          _userId: userContext?._userId,
           sessionId: userContext?.sessionId,
           ipAddress: userContext?.ipAddress,
-          healthcareContext: context,
+          healthcareContext: _context,
           success: true,
           latency,
+          lgpdCompliant: true, // Required field
+          metadata: { operation: "delete" }, // Required metadata field
         });
       }
 
       return {
-        success: deleted,
         key: scopedKey,
+        timestamp: new Date(),
+        metadata: { operation: "delete", deleted },
+        success: deleted,
+        lgpdCompliant: true,
+        auditLogged: !!_context,
         latency,
-        auditLogged: !!context,
         tier: deletedTier,
       };
     } catch (error) {
       const latency = Date.now() - startTime;
       return {
-        success: false,
         key,
+        timestamp: new Date(),
+        metadata: { operation: "get", error: error instanceof Error ? error.message : "Unknown error" },
+        success: false,
+        lgpdCompliant: true,
+        auditLogged: false,
         error: error instanceof Error ? error.message : "Unknown error",
+        errorCode: "CACHE_GET_ERROR",
         latency,
       };
     }
@@ -1028,11 +1054,11 @@ export class CacheManagementService {
   ): Promise<number> {
     let invalidatedCount = 0;
 
-    for (const [_tier, backend] of this.backends.entries()) {
+    for (const [_tier, backend] of Array.from(this.backends.entries())) {
       const keys = await backend.getKeys(pattern);
 
       for (const key of keys) {
-        const result = await this.delete(key, context, userContext);
+        const result = await this.delete(key, _context, userContext);
         if (result.success) {
           invalidatedCount++;
         }
@@ -1048,9 +1074,9 @@ export class CacheManagementService {
   async getStatistics(): Promise<Map<CacheTier, CacheStatistics>> {
     const stats = new Map<CacheTier, CacheStatistics>();
 
-    for (const [_tier, backend] of this.backends.entries()) {
+    for (const [_tier, backend] of Array.from(this.backends.entries())) {
       const tierStats = await backend.getStats();
-      stats.set(tier, tierStats);
+      stats.set(_tier, tierStats);
     }
 
     return stats;
@@ -1062,9 +1088,9 @@ export class CacheManagementService {
   async cleanup(): Promise<Map<CacheTier, number>> {
     const results = new Map<CacheTier, number>();
 
-    for (const [_tier, backend] of this.backends.entries()) {
+    for (const [_tier, backend] of Array.from(this.backends.entries())) {
       const cleanedCount = await backend.cleanup();
-      results.set(tier, cleanedCount);
+      results.set(_tier, cleanedCount);
     }
 
     return results;
@@ -1076,7 +1102,7 @@ export class CacheManagementService {
   async lgpdCleanup(): Promise<number> {
     let anonymizedCount = 0;
 
-    for (const [_tier, backend] of this.backends.entries()) {
+    for (const [_tier, backend] of Array.from(this.backends.entries())) {
       const sensitiveEntries = await backend.getEntriesBySensitivity(
         CacheDataSensitivity.RESTRICTED,
       );
@@ -1107,7 +1133,7 @@ export class CacheManagementService {
     }
 
     // Check if user has required permissions
-    if (userId && entry.permissions.includes(userId)) {
+    if (_userId && entry.permissions.includes(_userId)) {
       return true;
     }
 
@@ -1129,7 +1155,7 @@ export class CacheManagementService {
 
     // In a real implementation, this would integrate with your audit system
     if (this.config.lgpdSettings.enableAuditLogging) {
-      cacheLogger.info("Cache audit event logged", {
+      auditLogger.info("Cache audit event logged", {
         ...validatedEvent,
         timestamp: new Date().toISOString()
       });
@@ -1148,7 +1174,7 @@ export class CacheManagementService {
     endDate?: Date;
   }): CacheAuditEvent[] {
     return this.auditLog.filter((event) => {
-      if (filters?.userId && event.userId !== filters._userId) return false;
+      if (filters?._userId && event._userId !== filters._userId) return false;
       if (filters?.sessionId && event.sessionId !== filters.sessionId)
         return false;
       if (filters?.operation && event.operation !== filters.operation)
@@ -1282,6 +1308,7 @@ export class HealthcareCachePatterns {
     return this.cache.invalidatePattern(pattern, {
       patientId,
       dataClassification: CacheDataSensitivity.CONFIDENTIAL,
+      retentionRequirement: "standard", // Required field
     });
   }
 
@@ -1293,6 +1320,7 @@ export class HealthcareCachePatterns {
     return this.cache.invalidatePattern(pattern, {
       providerId,
       dataClassification: CacheDataSensitivity.INTERNAL,
+      retentionRequirement: "standard", // Required field
     });
   }
 }

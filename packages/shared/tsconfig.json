@@ -7,6 +7,9 @@
     "rootDir": "./src",
     "noUnusedLocals": false,
     "noUnusedParameters": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "downlevelIteration": true,
     "paths": {
       "@neonpro/core-services": ["../core-services/dist"]
     }

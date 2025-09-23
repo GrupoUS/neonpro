@@ -2,9 +2,9 @@ import { test, expect, vi } from 'vitest';
 import { JSDOM } from 'jsdom';
 
 // Setup DOM for this test
-const: dom = [ new JSDOM('<!DOCTYPE html><html><body></body></html>');
-global.documen: t = [ dom.window.document;
-global.windo: w = [ dom.window;
+const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>');
+global.document = dom.window.document;
+global.window = dom.window;
 
 test('Test Execution Summary - Infrastructure Validation', () => {
   // Validate DOM environment

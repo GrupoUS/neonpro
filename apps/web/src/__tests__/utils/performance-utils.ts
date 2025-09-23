@@ -10,7 +10,7 @@
  * - Mobile responsiveness testing
  */
 
-import { render, RenderOptions } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { ReactElement } from 'react';
 
 // Performance metrics interfaces
@@ -171,7 +171,7 @@ export async function measureLoadTime<T>(
 // Memory usage measurement
 export async function measureMemoryUsage<T>(
   testFn: () => Promise<T> | T,
-  duration: number = 5000
+  _duration: number = 5000
 ): Promise<MemoryMetrics> {
   const startMemory = performance.memory?.usedJSHeapSize || 0;
   let peakMemory = startMemory;
@@ -232,7 +232,7 @@ export async function simulateConcurrentUsers(options: {
   const totalWeight = actions.reduce((sum, action) => sum + (action.weight || 1), 0);
   
   // Create user simulation functions
-  const userSimulations = Array(userCount).fill(null).map(async (_, userIndex) => {
+  const userSimulations = Array(userCount).fill(null).map(async (_, _userIndex) => {
     const userResults: Array<{ success: boolean; responseTime: number }> = [];
     const startTime = Date.now();
     
@@ -260,16 +260,17 @@ export async function simulateConcurrentUsers(options: {
             await measureRenderTime(() => render(selectedAction.component!));
             success = true;
           } else if (selectedAction.type === 'api' && selectedAction.endpoint) {
+            const method = selectedAction.method || 'GET';
             const response = await fetch(selectedAction.endpoint, {
-              method: selectedAction.method || 'GET',
+              method,
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: selectedAction.payload ? JSON.stringify(selectedAction.payload) : undefined
+              ...(method !== 'GET' && selectedAction.payload ? { body: JSON.stringify(selectedAction.payload) } : {})
             });
             success = response.ok;
           }
-        } catch (error) {
+        } catch {
           success = false;
         }
         
@@ -554,7 +555,7 @@ export function setupPerformanceMonitoring() {
       const memory = performance.memory;
       if (memory) {
         const usedMB = memory.usedJSHeapSize / (1024 * 1024);
-        const totalMB = memory.totalJSHeapSize / (1024 * 1024);
+        const _totalMB = memory.totalJSHeapSize / (1024 * 1024);
         const limitMB = memory.jsHeapSizeLimit / (1024 * 1024);
         
         if (usedMB > limitMB * 0.9) {

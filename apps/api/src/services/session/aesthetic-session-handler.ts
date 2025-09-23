@@ -1115,7 +1115,7 @@ export class AestheticSessionHandler {
   private async initializeTreatmentWorkflow(
     sessionId: string,
     treatmentType: string,
-    clientProfile: AestheticClientProfile,
+    _clientProfile: AestheticClientProfile,
   ): Promise<TreatmentWorkflow> {
     const workflow: TreatmentWorkflow = {
       id: this.generateWorkflowId(),

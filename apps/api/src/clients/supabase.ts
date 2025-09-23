@@ -377,9 +377,10 @@ export const healthcareRLS = {
         .single();
 
       return !!membership;
-    } catch (_error) {
+    } catch (error) {
       console.error(
-        `Failed to check user clinic membership for user ${_userId}, clinic ${clinicId}`,
+        `Failed to check user clinic membership for user ${_userId}, clinic ${clinicId}:`,
+        error,
       );
       return false;
     }

@@ -355,7 +355,7 @@ export class EnhancedAIDataService extends AIDataService {
     message?: string;
   }> {
     try {
-      const { data: data, error } = await this.supabase
+      const { data: _data, error } = await this.supabase
         .from('clients')
         .select('count', { count: 'exact', head: true })
         .limit(1);

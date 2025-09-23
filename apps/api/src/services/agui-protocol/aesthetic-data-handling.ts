@@ -933,7 +933,7 @@ export class AestheticDataHandlingService {
   private async verifyDataSubjectConsent(
     dataSubjectId: string,
     purpose: string,
-    action: string
+    _action: string
   ): Promise<boolean> {
     const dataSubject = this.dataSubjects.get(dataSubjectId);
     if (!dataSubject) {

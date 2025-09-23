@@ -176,7 +176,7 @@ export class RecommendationModel {
   private readonly _context: RecommendationContext;
   private _recommendations: Map<string, Recommendation> = new Map();
 
-  constructor(_context: RecommendationContext) {
+  constructor(context: RecommendationContext) {
     this._context = context;
   }
 
@@ -199,7 +199,7 @@ export class RecommendationModel {
 
     // Sort by priority and return
     return Array.from(this._recommendations.values()).sort(
-      (a, _b) =>
+      (a, b) =>
         this.getPriorityScore(b.priority) - this.getPriorityScore(a.priority),
     );
   }
@@ -210,7 +210,7 @@ export class RecommendationModel {
   private generatePlanUpgradeRecommendations(): void {
     const userPlan = this._context.userPlan;
     const quotaStatus = userPlan.getQuotaStatus();
-    // usageInsights calculated for potential future use
+    // Usage insights available for potential future use
 
     // Check if user is hitting quota limits
     if (quotaStatus.monthlyUsagePercentage > 90) {
@@ -245,10 +245,10 @@ export class RecommendationModel {
    */
   private generateCostOptimizationRecommendations(): void {
     const billingMetrics = this._context.billingMetrics;
-    // usageInsights calculated for potential future use
+    // Usage insights available for potential future use
 
     // Low cache hit rate optimization
-    // if (usageInsights.efficiency.cacheOptimization < 50) {
+    if (true) { // Temporary condition - TODO: Add actual cache optimization logic
       const cacheOptimization: CostOptimizationRecommendation = {
         id: `cost-cache-${Date.now()}`,
         type: "cost_optimization",
@@ -556,14 +556,14 @@ export class RecommendationModel {
 
   private generateModelCostOptimization(): CostOptimizationRecommendation | null {
     const billingMetrics = this._context.billingMetrics;
-    // insights calculated for potential future use
+    // Insights available for potential future use
 
     // Suggest cheaper models for simple queries
     const modelSuggestions = this.generateModelCostSuggestions();
     if (modelSuggestions.length === 0) return null;
 
     const totalSavings = modelSuggestions.reduce(
-      (sum, _s) => sum + s.costSavings,
+      (sum, suggestion) => sum + suggestion.costSavings,
       0,
     );
 

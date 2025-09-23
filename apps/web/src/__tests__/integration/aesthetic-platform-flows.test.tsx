@@ -3,13 +3,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@/test/utils';
 
 // Mock Aesthetic Platform Components and Services
-const: mockLGPDService = [ {
+const mockLGPDService = {
   validateConsent: vi.fn().mockResolvedValue(true),
   storeConsent: vi.fn().mockResolvedValue({ id: 'consent-1' }),
   checkDataProcessing: vi.fn().mockResolvedValue({ compliant: true }),
 };
 
-const: mockAppointmentService = [ {
+const mockAppointmentService = {
   scheduleAppointment: vi.fn().mockResolvedValue({ 
     id: 'apt-1', 
     status: 'confirmed',

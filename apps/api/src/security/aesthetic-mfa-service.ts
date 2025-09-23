@@ -740,7 +740,7 @@ export class AestheticMFAService {
   }
 
   // Database operations (simplified for this example)
-  private async getUserMFAStatus(userId: string): Promise<MFAStatus> {
+  private async getUserMFAStatus(_userId: string): Promise<MFAStatus> {
     // In production, this would query the database
     return MFA_STATUS.NOT_SETUP;
   }
@@ -817,25 +817,25 @@ export class AestheticMFAService {
       .eq('user_id', userId);
   }
 
-  private async isSuspiciousIP(ipAddress: string): Promise<boolean> {
+  private async isSuspiciousIP(_ipAddress: string): Promise<boolean> {
     // Check against known malicious IP databases
     // For now, return false
     return false;
   }
 
-  private async isUnusualUserAgent(userId: string, userAgent: string): Promise<boolean> {
+  private async isUnusualUserAgent(_userId: string, _userAgent: string): Promise<boolean> {
     // Check if user agent is unusual for this user
     // For now, return false
     return false;
   }
 
-  private async isGeolocationAnomaly(userId: string, ipAddress: string): Promise<boolean> {
+  private async isGeolocationAnomaly(_userId: string, _ipAddress: string): Promise<boolean> {
     // Check if IP address is from unusual location for this user
     // For now, return false
     return false;
   }
 
-  private async isTimeAnomaly(userId: string): Promise<boolean> {
+  private async isTimeAnomaly(_userId: string): Promise<boolean> {
     // Check if login time is unusual for this user
     // For now, return false
     return false;

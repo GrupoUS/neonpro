@@ -458,8 +458,8 @@ export class HealthcareMiddlewareService {
         "Healthcare middleware service initialized",
         { component: 'healthcare-middleware', timestamp: new Date().toISOString() },
       );
-    } catch (_error) {
-      void _error;
+    } catch (error) {
+      void error;
       logHealthcareError('healthcare-middleware', error, { method: 'initialize' });
     }
   }
@@ -587,10 +587,10 @@ export class HealthcareMiddlewareService {
 
         // Phase 8: Post-processing
         await this.performPostProcessing(c, requestContext, startTime);
-      } catch (_error) {
-      void _error;
+      } catch (error) {
+      void error;
         // Error handling
-        await this.handleMiddlewareError(c, error, requestContext!, startTime);
+        await this.handleMiddlewareError(_c, error, requestContext!, startTime);
       }
     };
   }
@@ -603,19 +603,19 @@ export class HealthcareMiddlewareService {
   ): Promise<HealthcareRequestContext> {
     const requestId = `req_${nanoid(12)}`;
     const correlationId =
-      c.req.header("x-correlation-id") || `corr_${nanoid(8)}`;
+      _c.req.header("x-correlation-id") || `corr_${nanoid(8)}`;
 
     // Extract user context from headers/auth
-    const userContext = await this.extractUserContext(c);
+    const userContext = await this.extractUserContext(_c);
 
     // Extract technical context
-    const technicalContext = this.extractTechnicalContext(c);
+    const technicalContext = this.extractTechnicalContext(_c);
 
     // Determine compliance context
-    const complianceContext = this.determineComplianceContext(c, userContext);
+    const complianceContext = this.determineComplianceContext(_c, userContext);
 
     // Detect healthcare workflow context
-    const workflowContext = await this.detectWorkflowContext(c, userContext);
+    const workflowContext = await this.detectWorkflowContext(_c, userContext);
 
     const requestContext: HealthcareRequestContext = {
       requestId,
@@ -714,8 +714,8 @@ export class HealthcareMiddlewareService {
 
     // Healthcare operations are typically legitimate interest
     if (
-      c.req.path.includes("/emergency") ||
-      c.req.path.includes("/patient-safety")
+      _c.req.path.includes("/emergency") ||
+      _c.req.path.includes("/patient-safety")
     ) {
       legalBasis = "vital_interests";
     }
@@ -727,11 +727,11 @@ export class HealthcareMiddlewareService {
       | "confidential"
       | "restricted" = "internal";
 
-    if (c.req.path.includes("/patient") || c.req.path.includes("/medical")) {
+    if (_c.req.path.includes("/patient") || _c.req.path.includes("/medical")) {
       dataClassification = "confidential";
     }
 
-    if (c.req.path.includes("/emergency") || c.req.path.includes("/critical")) {
+    if (_c.req.path.includes("/emergency") || _c.req.path.includes("/critical")) {
       dataClassification = "restricted";
     }
 
@@ -758,8 +758,8 @@ export class HealthcareMiddlewareService {
     _c: Context,
     _userContext: HealthcareRequestContext["userContext"],
   ): Promise<HealthcareRequestContext["workflowContext"]> {
-    const path = c.req.path.toLowerCase();
-    const method = c.req.method;
+    const path = _c.req.path.toLowerCase();
+    const method = _c.req.method;
 
     // Emergency detection
     const emergencyFlag =
@@ -778,7 +778,7 @@ export class HealthcareMiddlewareService {
     const criticalSystemFlag =
       path.includes("/monitoring") ||
       path.includes("/alert") ||
-      userContext?.userRole === "system_admin";
+      _userContext?.userRole === "system_admin";
 
     // Workflow type detection
     let workflowType: HealthcareRequestContext["workflowContext"]["workflowType"] =
@@ -826,7 +826,7 @@ export class HealthcareMiddlewareService {
    * Perform security validation
    */
   private async performSecurityValidation(
-    _c: Context,
+    c: Context,
     _context: HealthcareRequestContext,
   ): Promise<void> {
     if (!this.config.security.enableInputValidation) return;

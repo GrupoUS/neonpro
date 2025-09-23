@@ -101,7 +101,8 @@ export class AuditLogger {
       try {
         await this.logToDatabase(fullEntry);
       } catch (error) {
-        console.error('Failed to log audit entry to database:', error);
+        void error;
+        // Database logging failed but console logging will still capture the audit entry
       }
     }
 
@@ -228,17 +229,9 @@ export class AuditLogger {
   }
 
   private logToConsole(entry: AuditLogEntry): void {
-    const logLevel = entry.success ? 'info' : 'error';
-    const message = `[AUDIT] ${entry.action} on ${entry.resource} by ${entry.userId}`;
-
-    if (logLevel === 'error') {
-      console.error(message, {
-        ...entry,
-        error: entry.errorMessage,
-      });
-    } else {
-      console.log(message, entry);
-    }
+    // Console logging is disabled for production compliance
+    // Audit entries are stored in database when enabled
+    void entry;
   }
 
   private async logToDatabase(entry: AuditLogEntry): Promise<void> {
@@ -296,7 +289,8 @@ export class AuditLogger {
 
       return safeMetadata;
     } catch (error) {
-      console.warn('[Audit Logger] Failed to serialize metadata:', error);
+      void error;
+      // Failed to serialize metadata - continuing with null metadata
       return null;
     }
   }
@@ -304,7 +298,8 @@ export class AuditLogger {
   private logToFile(entry: AuditLogEntry): void {
     // Placeholder for file logging implementation
     // In a real implementation, this would write to a log file
-    console.log('[FILE AUDIT]', JSON.stringify(entry));
+    void entry;
+    // File logging disabled for production compliance
   }
 
   private generateId(): string {

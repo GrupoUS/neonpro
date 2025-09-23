@@ -330,7 +330,7 @@ export class UsageCounter {
     return {
       action: "daily_counters_reset",
       timestamp: new Date(),
-      _userId: this._data._userId,
+      userId: this._data._userId,
       consentStatus: "valid",
       dataProcessingPurpose: "audit",
       anonymizationLevel: "none",
@@ -360,7 +360,7 @@ export class UsageCounter {
     return {
       action: "monthly_counters_reset",
       timestamp: new Date(),
-      _userId: this._data._userId,
+      userId: this._data._userId,
       consentStatus: "valid",
       dataProcessingPurpose: "audit",
       anonymizationLevel: "none",
@@ -443,15 +443,15 @@ export class UsageCounter {
     );
 
     const totalCostUsd = relevantRequests.reduce(
-      (sum, _req) => sum + req.costUsd,
+      (sum, req) => sum + req.costUsd,
       0,
     );
     const totalTokens = relevantRequests.reduce(
-      (sum, _req) => sum + req.totalTokens,
+      (sum, req) => sum + req.totalTokens,
       0,
     );
     const cacheSavingsUsd = relevantRequests.reduce(
-      (sum, _req) => sum + req.cacheSavingsUsd,
+      (sum, req) => sum + req.cacheSavingsUsd,
       0,
     );
 
@@ -486,7 +486,7 @@ export class UsageCounter {
   ): UsageAggregation[] {
     return Array.from(this._aggregations.values())
       .filter((agg) => agg.period === period)
-      .sort((a, _b) => b.timestamp.getTime() - a.timestamp.getTime());
+      .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
   // ================================================
@@ -568,7 +568,7 @@ export class UsageCounter {
 
     const maxCount = Math.max(...hourCounts);
     return hourCounts
-      .map((count, _hour) => ({ hour, count }))
+      .map((count, hour) => ({ hour, count }))
       .filter(({ count }) => count > maxCount * 0.7)
       .map(({ hour }) => hour);
   }
@@ -582,7 +582,7 @@ export class UsageCounter {
     });
 
     return Array.from(modelCounts.entries())
-      .sort((a, _b) => b[1] - a[1])
+      .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
       .map(([model]) => model);
   }
@@ -598,7 +598,7 @@ export class UsageCounter {
     });
 
     return Array.from(specialtyCounts.entries())
-      .sort((a, _b) => b[1] - a[1])
+      .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
       .map(([specialty]) => specialty);
   }
@@ -745,7 +745,7 @@ export class UsageCounter {
 
     const data: UsageCounterData = {
       clinicId,
-      userId,
+      _userId,
       planCode,
       monthlyQueries: 0,
       dailyQueries: 0,

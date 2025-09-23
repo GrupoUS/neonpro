@@ -20,20 +20,15 @@ import { Badge } from '../ui/badge';
 import { Alert, AlertDescription } from '../ui/alert';
 import {
   Eye,
-  EyeOff,
   Volume2,
   VolumeX,
   Keyboard,
   Moon,
   Sun,
-  ZoomIn,
-  ZoomOut,
   RotateCcw,
   Accessibility,
   ChevronDown,
   ChevronUp,
-  SkipForward,
-  SkipBack,
   Play,
   Pause
 } from 'lucide-react';
@@ -253,7 +248,7 @@ export const AccessibilitySettingsPanel: React.FC = () => {
     }
   }, []);
 
-  const highContrastTheme: HighContrastTheme = {
+  const _highContrastTheme: HighContrastTheme = {
     primary: '#000000',
     secondary: '#ffffff',
     background: '#ffffff',
@@ -265,7 +260,7 @@ export const AccessibilitySettingsPanel: React.FC = () => {
     error: '#ff0000'
   };
 
-  const fontSizeMap = {
+  const _fontSizeMap = {
     small: '14px',
     medium: '16px',
     large: '18px',

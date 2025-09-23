@@ -26,44 +26,20 @@ import {
   AlertTriangle,
   CheckCircle,
   Heart,
-  Thermometer,
   Activity,
   Shield,
   Sun,
   Snowflake,
   Droplets,
   Coffee,
-  // Moon,
-  // Zap,
-  // RefreshCw,
-  // Download,
-  // Share2,
-  // Plus,
-  // Edit,
-  // Save,
   X,
   Users,
-  // MessageCircle,
   Phone,
-  // Video,
-  MapPin
+  MapPin,
+  RefreshCw
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-
-// Import missing icons
-import {
-  RefreshCw,
-  Download,
-  Share2,
-  Plus,
-  Edit,
-  Save,
-  Moon,
-  Zap,
-  MessageCircle,
-  Video
-} from 'lucide-react';
 
 interface RecoveryPlanningProps {
   appointmentId?: string;
@@ -80,7 +56,7 @@ export function RecoveryPlanning({
 }: RecoveryPlanningProps) {
   const [selectedProcedure, setSelectedProcedure] = useState<string>('');
   const [activeTab, setActiveTab] = useState('planning');
-  const [isCreatingPlan, setIsCreatingPlan] = useState(false);
+  const [_isCreatingPlan, _setIsCreatingPlan] = useState(false);
   const [customInstructions] = useState({
     phase: '',
     title: '',

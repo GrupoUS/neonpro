@@ -22,278 +22,251 @@ describe("AbuseWindowTracker", () => {
       window60s: 3, // Lower limits for testing
       window10m: 5,
     };
-    tracker = new AbuseWindowTracker(config
-    vi.useFakeTimers(
-  }
+    tracker = new AbuseWindowTracker(config);
+    vi.useFakeTimers();
+  });
 
   afterEach(() => {
-    tracker.destroy(
-    vi.useRealTimers(
-  }
+    tracker.destroy();
+    vi.useRealTimers();
+  });
 
   describe("Basic Rate Limiting", () => {
-    it(_"should allow requests within limits",_async () => {
-      const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
-      const request = {
-        ip: "192.168.1.1",
-        endpoint: "/api/test",
-        userAgent: "test-agent",
-      };
+    it("should allow requests within limits", () => {
+      const key: TrackingKey = { userId: "user1", endpoint: "/api/test" };
 
-      // First request should be allowed
-      expect(result1.allowed).toBe(true);
-      expect(result1.remainingRequests).toBe(2); // 3 - 1
-      expect(result1.currentRequests).toBe(1
+      // First 3 requests should be allowed (within 60s window limit)
+      expect(tracker.isAllowed(key)).toBe(true);
+      expect(tracker.isAllowed(key)).toBe(true);
+      expect(tracker.isAllowed(key)).toBe(true);
+    });
 
-      // Second request should be allowed
-      expect(result2.allowed).toBe(true);
-      expect(result2.remainingRequests).toBe(1); // 3 - 2
-      expect(result2.currentRequests).toBe(2
-    }
+    it("should block requests exceeding 60s window", () => {
+      const key: TrackingKey = { userId: "user1", endpoint: "/api/test" };
 
-    it(_"should block requests when 60s limit exceeded",_async () => {
-      const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
-      const request = {
-        ip: "192.168.1.1",
-        endpoint: "/api/test",
-      };
-
-      // Make 3 requests (at the limit)
+      // Use up the 60s window limit
       for (let i = 0; i < 3; i++) {
-        expect(result.allowed).toBe(true);
+        expect(tracker.isAllowed(key)).toBe(true);
       }
 
-      // 4th request should be blocked
-      expect(result.allowed).toBe(false);
-      expect(result.windowType).toBe("60s"
-      expect(result.limit).toBe(3
-      expect(result.currentRequests).toBe(3
-    }
+      // Next request should be blocked
+      expect(tracker.isAllowed(key)).toBe(false);
+    });
 
-    it(_"should block requests when 10m limit exceeded",_async () => {
-      const key: TrackingKey = { type: "user", value: "user123" };
-      const request = {
-        ip: "192.168.1.1",
-        endpoint: "/api/test",
-        _userId: "user123",
-      };
+    it("should block requests exceeding 10m window", () => {
+      const key: TrackingKey = { userId: "user1", endpoint: "/api/test" };
 
-      // Make 5 requests over time (within 60s limit but at 10m limit)
+      // Advance time to bypass 60s window but stay within 10m
+      vi.advanceTimersByTime(61000); // 61 seconds
+
+      // Use up the 10m window limit
       for (let i = 0; i < 5; i++) {
-        vi.advanceTimersByTime(70 * 1000); // 70 seconds between requests
-        expect(result.allowed).toBe(true);
+        tracker.isAllowed(key); // Don't check result, just register
+        vi.advanceTimersByTime(61000); // Advance to avoid 60s limit
       }
 
-      // 6th request should be blocked by 10m window
-      expect(result.allowed).toBe(false);
-      expect(result.windowType).toBe("10m"
-      expect(result.limit).toBe(5
-    }
-  }
+      // Next request should be blocked by 10m window
+      expect(tracker.isAllowed(key)).toBe(false);
+    });
+  });
 
   describe("Sliding Window Behavior", () => {
-    it(_"should allow requests after 60s window slides",_async () => {
-      const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
-      const request = {
-        ip: "192.168.1.1",
-        endpoint: "/api/test",
-      };
+    it("should allow requests after time window expires", () => {
+      const key: TrackingKey = { userId: "user1", endpoint: "/api/test" };
 
-      // Fill up the 60s window
+      // Use up the 60s window limit
       for (let i = 0; i < 3; i++) {
-        expect(result.allowed).toBe(true);
+        tracker.isAllowed(key);
       }
+      expect(tracker.isAllowed(key)).toBe(false);
 
-      // Should be blocked
-      expect(blockedResult.allowed).toBe(false);
+      // Advance time past 60s window
+      vi.advanceTimersByTime(61000);
 
-      // Advance time by 61 seconds
-      vi.advanceTimersByTime(61 * 1000
+      // Should allow requests again
+      expect(tracker.isAllowed(key)).toBe(true);
+    });
 
-      // Should be allowed again
-      expect(allowedResult.allowed).toBe(true);
-    }
+    it("should properly slide the window as time advances", () => {
+      const key: TrackingKey = { userId: "user1", endpoint: "/api/test" };
 
-    it(_"should handle partial window sliding correctly",_async () => {
-      const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
-      const request = {
-        ip: "192.168.1.1",
-        endpoint: "/api/test",
-      };
-
-      // Make 2 requests
-
-      // Wait 30 seconds
-      vi.advanceTimersByTime(30 * 1000
-
-      // Make 1 more request (total: 3, should be allowed)
-      expect(result2.allowed).toBe(false);
-
-      // Wait another 31 seconds (61 total)
-      vi.advanceTimersByTime(31 * 1000
-
-      // First 2 requests should be out of window, should be allowed
-      expect(result3.allowed).toBe(true);
-    }
-  }
-
-  describe("Key Isolation", () => {
-    it(_"should track different IPs separately",_async () => {
-      const key1: TrackingKey = { type: "ip", value: "192.168.1.1" };
-      const key2: TrackingKey = { type: "ip", value: "192.168.1.2" };
-      const request1 = { ip: "192.168.1.1", endpoint: "/api/test" };
-      const request2 = { ip: "192.168.1.2", endpoint: "/api/test" };
-
-      // Fill up limit for first IP
-      for (let i = 0; i < 3; i++) {
-        const result = await tracker.checkAndTrackRequest(key1, request1
-        expect(result.allowed).toBe(true);
-      }
-
-      // First IP should be blocked
-      const blocked = await tracker.checkAndTrackRequest(key1, request1
-      expect(blocked.allowed).toBe(false);
-
-      // Second IP should still be allowed
-      const allowed = await tracker.checkAndTrackRequest(key2, request2
-      expect(allowed.allowed).toBe(true);
-    }
-
-    it(_"should track users and IPs separately",_async () => {
-      const ipKey: TrackingKey = { type: "ip", value: "192.168.1.1" };
-      const userKey: TrackingKey = { type: "user", value: "user123" };
-      const ipRequest = { ip: "192.168.1.1", endpoint: "/api/test" };
-      const userRequest = {
-        ip: "192.168.1.1",
-        endpoint: "/api/test",
-        _userId: "user123",
-      };
-
-      // Fill up IP limit
-      for (let i = 0; i < 3; i++) {
-        await tracker.checkAndTrackRequest(ipKey, ipRequest
-      }
-
-      // IP should be blocked
-      const ipBlocked = await tracker.checkAndTrackRequest(ipKey, ipRequest
-      expect(ipBlocked.allowed).toBe(false);
-
-      // User should still be allowed (different tracking key)
-      const userAllowed = await tracker.checkAndTrackRequest(
-        userKey,
-        userRequest,
+      // Make first request
+      tracker.isAllowed(key);
       
-      expect(userAllowed.allowed).toBe(true);
-    }
-  }
+      // Advance time by 30 seconds and make second request
+      vi.advanceTimersByTime(30000);
+      tracker.isAllowed(key);
+      
+      // Advance time by another 30 seconds (total 60s from first request)
+      vi.advanceTimersByTime(30000);
+      tracker.isAllowed(key);
+      
+      // At this point, we've made 3 requests, should be at limit
+      expect(tracker.isAllowed(key)).toBe(false);
+      
+      // Advance time by 1 more second (61s from first request)
+      // The first request should now be outside the 60s window
+      vi.advanceTimersByTime(1000);
+      
+      // Should allow request again
+      expect(tracker.isAllowed(key)).toBe(true);
+    });
+  });
 
-  describe("Statistics and Monitoring", () => {
-    it(_"should provide accurate statistics",_async () => {
-      const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
-      const request = { ip: "192.168.1.1", endpoint: "/api/test" };
+  describe("User and Endpoint Isolation", () => {
+    it("should track different users independently", () => {
+      const user1Key: TrackingKey = { userId: "user1", endpoint: "/api/test" };
+      const user2Key: TrackingKey = { userId: "user2", endpoint: "/api/test" };
+
+      // Use up user1's limit
+      for (let i = 0; i < 3; i++) {
+        tracker.isAllowed(user1Key);
+      }
+      expect(tracker.isAllowed(user1Key)).toBe(false);
+
+      // User2 should still be allowed
+      expect(tracker.isAllowed(user2Key)).toBe(true);
+    });
+
+    it("should track different endpoints independently", () => {
+      const endpoint1Key: TrackingKey = { userId: "user1", endpoint: "/api/endpoint1" };
+      const endpoint2Key: TrackingKey = { userId: "user1", endpoint: "/api/endpoint2" };
+
+      // Use up endpoint1's limit
+      for (let i = 0; i < 3; i++) {
+        tracker.isAllowed(endpoint1Key);
+      }
+      expect(tracker.isAllowed(endpoint1Key)).toBe(false);
+
+      // endpoint2 should still be allowed
+      expect(tracker.isAllowed(endpoint2Key)).toBe(true);
+    });
+  });
+
+  describe("Memory Management", () => {
+    it("should clean up old entries automatically", () => {
+      const key: TrackingKey = { userId: "user1", endpoint: "/api/test" };
 
       // Make some requests
+      tracker.isAllowed(key);
+      tracker.isAllowed(key);
 
-      const stats = tracker.getStats(key
-      expect(stats.requests60s).toBe(1); // Only the last request in 60s window
-      expect(stats.requests10m).toBe(3); // All requests in 10m window
-      expect(stats.totalRequests).toBe(3
-      expect(stats.oldestRequest).toBeDefined(
-      expect(stats.newestRequest).toBeDefined(
-    }
+      // Get initial memory usage
+      const initialStats = tracker.getStats();
+      expect(initialStats.activeKeys).toBeGreaterThan(0);
 
-    it(_"should provide memory usage statistics",_async () => {
-      const key1: TrackingKey = { type: "ip", value: "192.168.1.1" };
-      const key2: TrackingKey = { type: "ip", value: "192.168.1.2" };
-      const request = { ip: "192.168.1.1", endpoint: "/api/test" };
+      // Advance time far enough that all entries should be cleaned up
+      vi.advanceTimersByTime(11 * 60 * 1000); // 11 minutes
 
+      // Make a request to trigger cleanup
+      tracker.isAllowed(key);
 
-      const memStats = tracker.getMemoryStats(
-      expect(memStats.totalKeys).toBe(2
-      expect(memStats.totalRequests).toBe(2
-      expect(memStats.averageRequestsPerKey).toBe(1
-      expect(memStats.memoryEstimateKB).toBeGreaterThan(0
-    }
-  }
+      // Check that old entries were cleaned up
+      const finalStats = tracker.getStats();
+      expect(finalStats.totalRequests).toBe(1); // Only the new request should remain
+    });
 
-  describe("Read-only Operations", () => {
-    it(_"should check without tracking",_async () => {
-      const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
-      const request = { ip: "192.168.1.1", endpoint: "/api/test" };
+    it("should report accurate statistics", () => {
+      const key1: TrackingKey = { userId: "user1", endpoint: "/api/test" };
+      const key2: TrackingKey = { userId: "user2", endpoint: "/api/test" };
 
-      // Check without tracking - should be allowed
-      const result1 = await tracker.checkRequest(key
-      expect(result1.allowed).toBe(true);
-      expect(result1.currentRequests).toBe(0
+      // Make requests from different users
+      tracker.isAllowed(key1);
+      tracker.isAllowed(key1);
+      tracker.isAllowed(key2);
 
-      // Track one request
+      const stats = tracker.getStats();
+      expect(stats.activeKeys).toBe(2);
+      expect(stats.totalRequests).toBe(3);
+    });
+  });
 
-      // Check without tracking - should show current state
-      const result2 = await tracker.checkRequest(key
-      expect(result2.allowed).toBe(true);
-      expect(result2.currentRequests).toBe(1
-    }
-  }
+  describe("Configuration", () => {
+    it("should use default configuration when none provided", () => {
+      const defaultTracker = createAbuseWindowTracker();
+      expect(defaultTracker).toBeInstanceOf(AbuseWindowTracker);
+    });
 
-  describe("Configuration Management", () => {
-    it("should update configuration dynamically", () => {
-      const newConfig = { window60s: 10, window10m: 20 };
-      tracker.updateConfig(newConfig
+    it("should respect custom configuration", () => {
+      const customConfig: SlidingWindowConfig = {
+        window60s: 10,
+        window10m: 20,
+      };
+      const customTracker = new AbuseWindowTracker(customConfig);
+      const key: TrackingKey = { userId: "user1", endpoint: "/api/test" };
 
-      const updatedConfig = tracker.getConfig(
-      expect(updatedConfig.window60s).toBe(10
-      expect(updatedConfig.window10m).toBe(20
-    }
+      // Should allow more requests with higher limits
+      for (let i = 0; i < 10; i++) {
+        expect(customTracker.isAllowed(key)).toBe(true);
+      }
+      expect(customTracker.isAllowed(key)).toBe(false);
 
-    it("should get default configuration", () => {
-      const defaultConfig = getDefaultAbuseConfig(
-      expect(defaultConfig.window60s).toBe(12
-      expect(defaultConfig.window10m).toBe(5
-    }
-  }
+      customTracker.destroy();
+    });
 
-  describe("Reset Operations", () => {
-    it(_"should reset specific key",_async () => {
-      const key: TrackingKey = { type: "ip", value: "192.168.1.1" };
-      const request = { ip: "192.168.1.1", endpoint: "/api/test" };
+    it("should provide default configuration", () => {
+      const defaultConfig = getDefaultAbuseConfig();
+      expect(defaultConfig).toHaveProperty("window60s");
+      expect(defaultConfig).toHaveProperty("window10m");
+      expect(typeof defaultConfig.window60s).toBe("number");
+      expect(typeof defaultConfig.window10m).toBe("number");
+    });
+  });
 
-      // Make requests to hit limit
-      for (let i = 0; i < 3; i++) {
-      expect(blocked.allowed).toBe(false);
+  describe("Edge Cases", () => {
+    it("should handle rapid successive requests", () => {
+      const key: TrackingKey = { userId: "user1", endpoint: "/api/test" };
 
-      // Reset the key
-      tracker.resetKey(key
+      // Make rapid requests
+      const results = [];
+      for (let i = 0; i < 5; i++) {
+        results.push(tracker.isAllowed(key));
+      }
 
-      // Should be allowed again
-      expect(allowed.allowed).toBe(true);
-    }
+      // First 3 should be allowed, rest blocked
+      expect(results.slice(0, 3)).toEqual([true, true, true]);
+      expect(results.slice(3)).toEqual([false, false]);
+    });
 
-    it(_"should reset all tracking data",_async () => {
-      const key1: TrackingKey = { type: "ip", value: "192.168.1.1" };
-      const key2: TrackingKey = { type: "ip", value: "192.168.1.2" };
-      const request = { ip: "192.168.1.1", endpoint: "/api/test" };
+    it("should handle empty user ID", () => {
+      const key: TrackingKey = { userId: "", endpoint: "/api/test" };
+      expect(tracker.isAllowed(key)).toBe(true);
+    });
 
+    it("should handle empty endpoint", () => {
+      const key: TrackingKey = { userId: "user1", endpoint: "" };
+      expect(tracker.isAllowed(key)).toBe(true);
+    });
 
-      const statsBefore = tracker.getMemoryStats(
-      expect(statsBefore.totalKeys).toBe(2
+    it("should handle special characters in keys", () => {
+      const key: TrackingKey = { 
+        userId: "user@email.com", 
+        endpoint: "/api/test?param=value&other=123" 
+      };
+      expect(tracker.isAllowed(key)).toBe(true);
+    });
+  });
 
-      tracker.resetAll(
+  describe("Cleanup and Destruction", () => {
+    it("should clean up resources on destroy", () => {
+      const key: TrackingKey = { userId: "user1", endpoint: "/api/test" };
+      tracker.isAllowed(key);
 
-      const statsAfter = tracker.getMemoryStats(
-      expect(statsAfter.totalKeys).toBe(0
-      expect(statsAfter.totalRequests).toBe(0
-    }
-  }
+      const statsBeforeDestroy = tracker.getStats();
+      expect(statsBeforeDestroy.activeKeys).toBeGreaterThan(0);
 
-  describe("Factory Functions", () => {
-    it("should create tracker with factory function", () => {
-      const customConfig = { window60s: 20, window10m: 50 };
-      const factoryTracker = createAbuseWindowTracker(customConfig
+      tracker.destroy();
 
-      expect(factoryTracker).toBeInstanceOf(AbuseWindowTracker
-      expect(factoryTracker.getConfig()).toEqual(customConfig
+      // After destruction, stats should show no active data
+      const statsAfterDestroy = tracker.getStats();
+      expect(statsAfterDestroy.activeKeys).toBe(0);
+      expect(statsAfterDestroy.totalRequests).toBe(0);
+    });
 
-      factoryTracker.destroy(
-    }
-  }
-}
+    it("should handle multiple destroy calls gracefully", () => {
+      tracker.destroy();
+      tracker.destroy(); // Second call should not throw
+      tracker.destroy(); // Third call should not throw
+    });
+  });
+});

@@ -12,6 +12,7 @@
     "noEmit": true,
     "composite": false,
     "incremental": true,
+    "downlevelIteration": true,
     "outDir": "./dist",
     "rootDir": ".",
     "types": [

@@ -3,8 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@/test/utils';
 import { generateMockAppointment } from '@/test/utils';
 
 // Mock appointment form component
-const: AppointmentForm = [ ({ onSubmit, initialData }) => {
-  cons: t = [formData, setFormData] = React.useState(initialData || {
+const AppointmentForm = ({ onSubmit, initialData }) => {
+  const [formData, setFormData] = React.useState(initialData || {
     patientId: '',
     professionalId: '',
     startTime: '',

@@ -38,7 +38,7 @@ import { ClientProfileManager } from '../../components/aesthetic-clinic/ClientPr
 import { PhotoAssessmentWorkflow } from '../../components/aesthetic-clinic/PhotoAssessmentWorkflow';
 
 // Mock performance API
-const: mockPerformance = [ {
+const mockPerformance = {
   now: vi.fn(),
   getEntriesByType: vi.fn(),
   clearMarks: vi.fn(),

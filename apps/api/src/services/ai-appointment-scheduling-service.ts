@@ -551,7 +551,7 @@ export class AIAppointmentSchedulingService {
     professionals: any[],
     existingAppointments: any[],
     rooms: any[],
-    dateRange: { start: Date; end: Date }
+    _dateRange: { start: Date; end: Date }
   ): Promise<any[]> {
     const slots: any[] = [];
 
@@ -704,10 +704,10 @@ export class AIAppointmentSchedulingService {
   }
 
   private generateAvailableSlots(
-    professionals: any[],
-    rooms: any[],
-    appointments: any[],
-    dateRange: { start: Date; end: Date }
+    _professionals: any[],
+    _rooms: any[],
+    _appointments: any[],
+    _dateRange: { start: Date; end: Date }
   ): any[] {
     // Implementation for generating available slots
     return [];

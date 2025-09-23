@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 // Simple test component
-const: SimpleComponent = [ () => {
+const SimpleComponent = () => {
   return <div>Simple Test</div>;
 };
 

@@ -703,7 +703,7 @@ Equipe {{clinicName}}`,
   }
 
   // Provider Implementations
-  private async sendEmail(message: NotificationMessage): Promise<any> {
+  private async sendEmail(_message: NotificationMessage): Promise<any> {
     // Mock email sending
     return {
       trackingId: this.generateTrackingId(),
@@ -712,7 +712,7 @@ Equipe {{clinicName}}`,
     };
   }
 
-  private async sendSMS(message: NotificationMessage): Promise<any> {
+  private async sendSMS(_message: NotificationMessage): Promise<any> {
     // Mock SMS sending
     return {
       trackingId: this.generateTrackingId(),
@@ -721,7 +721,7 @@ Equipe {{clinicName}}`,
     };
   }
 
-  private async sendWhatsApp(message: NotificationMessage): Promise<any> {
+  private async sendWhatsApp(_message: NotificationMessage): Promise<any> {
     // Mock WhatsApp sending
     return {
       trackingId: this.generateTrackingId(),

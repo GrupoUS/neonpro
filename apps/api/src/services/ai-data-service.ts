@@ -32,7 +32,7 @@ export class AIDataService {
    * Validate user has permission for the requested operation
    */
   private validatePermission(intent: QueryIntent): void {
-    const { /* role, */ permissions, /* domain */ } = this.permissionContext;
+    const { permissions } = this.permissionContext;
 
     switch (intent) {
       case 'client_data':
@@ -371,7 +371,7 @@ export class AIDataService {
     permissions: string[];
     dataScope: string;
   }> {
-    const { /* userId */ } = this.permissionContext;
+    // const { userId } = this.permissionContext;
 
     const { data, error } = await this.supabase
       .from('user_permissions')
@@ -407,7 +407,7 @@ export class AIDataService {
     database: string;
   }> {
     try {
-      const { data, error } = await this.supabase
+      const { data: _data, error } = await this.supabase
         .from('audit_logs')
         .select('count')
         .limit(1);
@@ -496,7 +496,7 @@ export class AIDataService {
    */
   private async fallbackQueryProcessing(
     _query: string,
-    sessionId: string,
+    _sessionId: string,
     _context?: {
       patientId?: string;
       previousQueries?: string[];

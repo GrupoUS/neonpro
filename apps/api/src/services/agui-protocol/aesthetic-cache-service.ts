@@ -85,7 +85,7 @@ export class AestheticCacheService {
       ttl: 300, // 5 minutes
       priority: 'high',
       condition: (data) => data.category && data.skinType,
-      prefetchFn: async (key) => {
+      prefetchFn: async (_key) => {
         // Mock prefetch logic
         return { prefetched: true, timestamp: Date.now() };
       }
@@ -97,7 +97,7 @@ export class AestheticCacheService {
       ttl: 600, // 10 minutes
       priority: 'medium',
       condition: (data) => data.clientId && data.lastActivity,
-      prefetchFn: async (key) => {
+      prefetchFn: async (_key) => {
         // Mock prefetch logic
         return { prefetched: true, timestamp: Date.now() };
       }
@@ -109,7 +109,7 @@ export class AestheticCacheService {
       ttl: 60, // 1 minute
       priority: 'high',
       condition: (data) => data.location && data.date,
-      prefetchFn: async (key) => {
+      prefetchFn: async (_key) => {
         // Mock prefetch logic
         return { prefetched: true, timestamp: Date.now() };
       }
@@ -121,7 +121,7 @@ export class AestheticCacheService {
       ttl: 1800, // 30 minutes
       priority: 'low',
       condition: (data) => data.treatmentId,
-      prefetchFn: async (key) => {
+      prefetchFn: async (_key) => {
         // Mock prefetch logic
         return { prefetched: true, timestamp: Date.now() };
       }

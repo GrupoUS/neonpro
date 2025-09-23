@@ -46,7 +46,7 @@ const BatchInput = z.object({
   notes: z.string().optional(),
 });
 
-const InventoryTransactionInput = z.object({
+const _InventoryTransactionInput = z.object({
   productId: z.string().uuid("Invalid product ID"),
   batchId: z.string().uuid().optional(),
   quantity: z.number().nonzero("Quantity cannot be zero"),
@@ -72,7 +72,7 @@ const PurchaseOrderInput = z.object({
   notes: z.string().optional(),
 });
 
-const PurchaseOrderItemInput = z.object({
+const _PurchaseOrderItemInput = z.object({
   productId: z.string().uuid("Invalid product ID"),
   quantityOrdered: z.number().positive("Quantity ordered must be positive"),
   unitCost: z.number().min(0, "Unit cost must be non-negative"),
@@ -84,7 +84,7 @@ const UpdateProductInput = ProductInput.partial().extend({
   id: z.string().uuid("Invalid product ID"),
 });
 
-const UpdateBatchInput = z.object({
+const _UpdateBatchInput = z.object({
   id: z.string().uuid("Invalid batch ID"),
   currentQuantity: z.number().min(0, "Current quantity must be non-negative"),
   notes: z.string().optional(),

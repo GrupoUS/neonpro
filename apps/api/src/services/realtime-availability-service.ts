@@ -533,7 +533,7 @@ export class RealtimeAvailabilityService {
 
   private async detectResourceConflicts(
     appointments: any[],
-    dateRange: { start: Date; end: Date }
+    _dateRange: { start: Date; end: Date }
   ): Promise<AvailabilityConflict[]> {
     const conflicts: AvailabilityConflict[] = [];
 
@@ -784,10 +784,10 @@ export class RealtimeAvailabilityService {
   }
 
   private async optimizeTimeSlot(
-    clinicId: string,
-    professionalId: string,
-    slot: any,
-    currentAvailability: RealTimeAvailability[]
+    _clinicId: string,
+    _professionalId: string,
+    _slot: any,
+    _currentAvailability: RealTimeAvailability[]
   ): Promise<{ start: Date; end: Date } | null> {
     // Use AI to optimize the time slot
     // This would integrate with the AI scheduling service
@@ -795,7 +795,7 @@ export class RealtimeAvailabilityService {
     return null;
   }
 
-  private async resolveConflict(conflict: AvailabilityConflict): Promise<boolean> {
+  private async resolveConflict(_conflict: AvailabilityConflict): Promise<boolean> {
     // Attempt to resolve the conflict based on the suggested resolution
     // This would integrate with the appointment management system
     // For now, return false to indicate it couldn't be automatically resolved
@@ -841,7 +841,7 @@ export class RealtimeAvailabilityService {
     }
   }
 
-  private isUpdateRelevant(update: AvailabilityUpdate, subscription: AvailabilitySubscription): boolean {
+  private isUpdateRelevant(_update: AvailabilityUpdate, _subscription: AvailabilitySubscription): boolean {
     // Check if the update is relevant to the subscription
     // This would implement more sophisticated filtering logic
     return true;
@@ -849,7 +849,7 @@ export class RealtimeAvailabilityService {
 
   private async sendUpdateToSubscription(
     subscription: AvailabilitySubscription,
-    update: AvailabilityUpdate
+    _update: AvailabilityUpdate
   ): Promise<void> {
     try {
       const availability = await this.getRealTimeAvailability(subscription.clinicId, {

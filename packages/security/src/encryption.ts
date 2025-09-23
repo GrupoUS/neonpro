@@ -4,15 +4,15 @@
  * @version 1.0.0
  */
 
-import crypto from "crypto";
+import * as crypto from "crypto";
 
 // Type for GCM cipher with getAuthTag method
-interface CipherGCM extends crypto.Cipher {
+interface CipherGCM extends crypto.Cipheriv {
   getAuthTag(): Buffer;
 }
 
 // Type for GCM decipher with setAuthTag method
-interface DecipherGCM extends crypto.Decipher {
+interface DecipherGCM extends crypto.Decipheriv {
   setAuthTag(tag: Buffer): void;
 }
 
@@ -160,7 +160,8 @@ export class EncryptionManager {
           );
         } catch (error) {
           // Field might not be encrypted, leave as is
-          console.warn(`Failed to decrypt field ${field}:`, error);
+          void error;
+          // Note: Decryption failures are expected for non-encrypted fields
         }
       }
     }
@@ -288,11 +289,11 @@ export class KeyManager {
    */
   cleanup(): void {
     const now = new Date();
-    for (const [keyId, metadata] of this.keyMetadata.entries()) {
+    this.keyMetadata.forEach((metadata, keyId) => {
       if (metadata.expiresAt && now > metadata.expiresAt) {
         this.removeKey(keyId);
       }
-    }
+    });
   }
 }
 

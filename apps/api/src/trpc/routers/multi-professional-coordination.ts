@@ -903,7 +903,7 @@ export const multiProfessionalCoordinationRouter = createTRPCRouter({
   checkOverdueReferrals: {
     input: z.object({}),
     output: SuccessResponseSchema(z.array(ProfessionalReferralSchema)),
-    resolve: async ({ input, ctx: _ctx }) => {
+    resolve: async ({ input: _input, ctx: _ctx }) => {
       try {
         const coordinationService = new MultiProfessionalCoordinationService({
           supabaseUrl: process.env.SUPABASE_URL!,

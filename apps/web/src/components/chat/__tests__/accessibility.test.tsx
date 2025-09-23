@@ -51,7 +51,7 @@ jest.mock('../NeonProChatProvider', () => ({
 
 describe('Accessibility Tests', () => {
   describe('AccessibleChatMessage', () => {
-    const: mockMessage = [ {
+    const mockMessage = {
       id: '1',
       content: 'Olá! Como posso ajudar você hoje?',
       role: 'assistant' as const,

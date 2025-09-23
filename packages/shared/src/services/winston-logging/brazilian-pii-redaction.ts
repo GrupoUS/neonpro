@@ -253,7 +253,7 @@ export class BrazilianPIIRedactionService {
 
     // Apply custom patterns
     this.customPatterns.forEach((pattern, _type) => {
-      redactedText = redactedText.replace(pattern, `[CUSTOM-REDACTED:${type}]`);
+      redactedText = redactedText.replace(pattern, `[CUSTOM-REDACTED:${_type}]`);
     });
 
     return redactedText;
@@ -413,13 +413,14 @@ export class BrazilianPIIRedactionService {
       }
     });
 
-    Object.entries(HEALTHCARE_PATTERNS).forEach(([type, config]) => {
+    Object.keys(HEALTHCARE_PATTERNS).forEach(type => {
+      const config = HEALTHCARE_PATTERNS[type as keyof typeof HEALTHCARE_PATTERNS];
       if (config.pattern.test(text)) {
         types.push(type);
       }
     });
 
-    return [...new Set(types)]; // Remove duplicates
+    return Array.from(new Set(types)); // Remove duplicates
   }
 
   /**

@@ -18,7 +18,6 @@ import {
   PaymentRequestSchema,
   PaymentResponseSchema,
   AnalyticsQuerySchema,
-  AnalyticsResponseSchema,
   FraudAlertSchema,
   AuditTrailSchema,
   LGPDComplianceRequestSchema,
@@ -28,7 +27,6 @@ import {
   FinancialOperationResponseSchema,
   FinancialAnalyticsResponseSchema,
   FinancialMessageListResponseSchema,
-  FinancialErrorResponseSchema,
 } from '../contracts/financial-agent';
 import { FinancialAIAgent } from '../../services/financial-ai-agent/financial-ai-agent';
 import { PredictiveAnalyticsService } from '../../services/financial-ai-agent/predictive-analytics';
