@@ -8,6 +8,8 @@
  * @version 1.0.0
  */
 
+import { logHealthcareError, analyticsLogger } from '../../../../shared/src/logging/healthcare-logger';
+
 /**
  * Simple IngestionEvent interface for EventCollector
  * (Different from the complex IngestionEvent in types/ingestion.ts)
@@ -385,11 +387,12 @@ export class EventCollector {
       this.config.onError(error, event);
     } else {
       // Default error handling - could be enhanced with proper logging
-      console.error(
-        "[EventCollector] Error:",
-        error.message,
-        event ? `Event: ${event.eventType}` : "",
-      );
+      logHealthcareError('analytics', error, {
+        method: 'handleError',
+        component: 'EventCollector',
+        eventType: event?.eventType,
+        severity: 'medium'
+      });
     }
   }
 
@@ -405,8 +408,13 @@ export class EventCollector {
       collector: "EventCollector",
     };
 
-    // For now, just log to console - in production this would go to audit system
-    console.log("[AUDIT]", JSON.stringify(auditEntry));
+    // Log audit entry for compliance
+    analyticsLogger.info("[AUDIT]", {
+      auditEntry,
+      timestamp: auditEntry.timestamp,
+      action: auditEntry.action,
+      collector: auditEntry.collector
+    });
   }
 }
 

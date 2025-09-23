@@ -5,6 +5,7 @@ import type {
   StreamChunk,
   AIProvider,
 } from "@neonpro/types";
+import { logHealthcareError, analyticsLogger } from '../../../shared/src/logging/healthcare-logger';
 
 export type AIProviderType = AIProvider | "mock";
 
@@ -78,9 +79,12 @@ export class AIProviderFactory {
       case "anthropic":
       case "google":
       default:
-        console.warn(
-          `Provider ${providerName} not implemented. Falling back to mock provider.`,
-        );
+        analyticsLogger.warn(`Provider ${providerName} not implemented. Falling back to mock provider.`, {
+          providerName,
+          severity: 'low',
+          component: 'AIProviderFactory',
+          action: 'provider_fallback'
+        });
         return new MockProvider();
     }
   }
@@ -102,7 +106,13 @@ export class AIProviderFactory {
         };
       } catch (error) {
         lastError = error as Error;
-        console.warn(`Provider ${providerName} failed:`, error);
+        logHealthcareError('analytics', error as Error, {
+          method: 'generateWithFailover',
+          component: 'AIProviderFactory',
+          providerName,
+          severity: 'medium',
+          operation: 'provider_failover'
+        });
       }
     }
 
@@ -134,7 +144,13 @@ export class AIProviderFactory {
         return;
       } catch (error) {
         lastError = error as Error;
-        console.warn(`Streaming provider ${providerName} failed:`, error);
+        logHealthcareError('analytics', error as Error, {
+          method: 'generateStreamWithFailover',
+          component: 'AIProviderFactory',
+          providerName,
+          severity: 'medium',
+          operation: 'streaming_provider_failover'
+        });
       }
     }
 

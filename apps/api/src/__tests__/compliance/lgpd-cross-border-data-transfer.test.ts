@@ -63,7 +63,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
     }
   };
 
-  const mockTransferRequest = {
+  const _mockTransferRequest = {
     dataType: 'patient_records',
     destination: 'United States',
     purpose: 'cloud_backup',
@@ -779,7 +779,7 @@ describe('LGPD Cross-Border Data Transfer', () => {
     });
 
     it('should handle international deletion requests', async () => {
-      const internationalDeletion = {
+      const _internationalDeletion = {
         patientId: 'patient-123',
         dataType: 'all_data',
         internationalLocations: ['US', 'EU', 'UK'],

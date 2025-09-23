@@ -5,7 +5,7 @@
 
 import { AestheticClinicPerformanceOptimizer } from "./aesthetic-clinic-performance-optimizer";
 import { WebSocketOptimizer } from "./websocket-optimizer";
-import { ErrorMapper } from "@neonpro/shared/errors";
+// import { ErrorMapper } from "@neonpro/shared/errors";
 
 export interface SecurityValidationResult {
   isValid: boolean;
@@ -712,13 +712,13 @@ export class SecurityComplianceValidator {
     const highViolations = validation.violations.filter(v => v.severity === "high");
 
     return [
-      ...criticalViolations.map((violation, index) => ({
+      ...criticalViolations.map((violation, _index) => ({
         priority: "Immediate",
         action: `Fix critical security issue: ${violation.description}`,
         owner: "Security Team",
         deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week
       })),
-      ...highViolations.map((violation, index) => ({
+      ...highViolations.map((violation, _index) => ({
         priority: "High",
         action: `Address security issue: ${violation.description}`,
         owner: "Development Team",

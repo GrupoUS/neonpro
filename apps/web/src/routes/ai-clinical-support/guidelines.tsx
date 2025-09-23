@@ -29,12 +29,12 @@ export const Route = createFileRoute("/ai-clinical-support/guidelines/")({
 function TreatmentGuidelinesPage() {
   const loaderData = useLoaderData({ from: "/ai-clinical-support/guidelines/" });
   
-  const { data: procedures } = useQuery({
+  const { data: _procedures } = useQuery({
     queryKey: ["aesthetic-procedures"],
     queryFn: () => api.aestheticScheduling.getAestheticProcedures(),
   });
 
-  const { data: categories } = useQuery({
+  const { data: _categories } = useQuery({
     queryKey: ["guideline-categories"],
     queryFn: () => api.aestheticScheduling.getGuidelineCategories(),
   });

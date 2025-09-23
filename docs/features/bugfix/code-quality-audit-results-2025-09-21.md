@@ -24,8 +24,8 @@
 #### Phase 2: Automated Tools Application
 
 ```bash
-pnpm --filter @neonpro/web oxlint:fix
-pnpm --filter @neonpro/web lint:fix
+bun --filter @neonpro/web oxlint:fix
+bun --filter @neonpro/web lint:fix
 ```
 
 **Result**: Significant automated error reduction

@@ -84,6 +84,7 @@
     "*.tsx",
     "types/**/*"
   ]
+  ,
   "exclude": [
     "node_modules",
     "dist",

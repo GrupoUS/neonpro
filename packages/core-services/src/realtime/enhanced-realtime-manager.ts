@@ -18,6 +18,7 @@ import {
   SupabaseClient,
 } from "@supabase/supabase-js";
 import { QueryClient } from "@tanstack/react-query";
+import { logHealthcareError, realtimeLogger } from '../../../shared/src/logging/healthcare-logger';
 import { HealthcareResilienceService } from "../resilience";
 
 // ============================================================================
@@ -357,7 +358,12 @@ export class EnhancedRealtimeManager {
       this.updateAverageLatency(latency);
     } catch (error) {
       this.metrics.failedEvents++;
-      console.error("Error handling enhanced realtime event:", error);
+      logHealthcareError('realtime', error as Error, {
+        method: 'handleEnhancedRealtimeEvent',
+        component: 'EnhancedRealtimeManager',
+        tableName,
+        severity: 'high'
+      });
 
       // Attempt recovery for emergency data
       if (options.isEmergencyData) {
@@ -442,7 +448,13 @@ export class EnhancedRealtimeManager {
         this.connectionHealth.consecutiveFailures++;
         this.metrics.connectionDrops++;
 
-        console.error(`❌ Enhanced realtime error for ${tableName}:`, status);
+        logHealthcareError('realtime', new Error(status), {
+          method: 'setupRealtimeSubscription',
+          component: 'EnhancedRealtimeManager',
+          tableName,
+          severity: 'high',
+          status
+        });
 
         // Enable fallback polling if configured
         if (options.fallbackPollingEnabled) {
@@ -481,7 +493,13 @@ export class EnhancedRealtimeManager {
         await this.performFallbackPolling(tableName, filter, options);
         this.metrics.fallbackPollingEvents++;
       } catch (error) {
-        console.error("Fallback polling error:", error);
+        logHealthcareError('realtime', error as Error, {
+          method: 'setupFallbackPolling',
+          component: 'EnhancedRealtimeManager',
+          tableName,
+          severity: 'medium',
+          operation: 'fallback_polling'
+        });
       }
     }, intervalMs);
 
@@ -670,7 +688,12 @@ export class EnhancedRealtimeManager {
         );
       }
     } catch (error) {
-      console.error("Realtime health check failed:", error);
+      logHealthcareError('realtime', error as Error, {
+        method: 'checkHealth',
+        component: 'EnhancedRealtimeManager',
+        severity: 'medium',
+        operation: 'health_check'
+        });
       this.connectionHealth.isConnected = false;
       this.connectionHealth.quality = "disconnected";
       this.connectionHealth.consecutiveFailures++;

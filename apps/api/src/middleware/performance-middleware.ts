@@ -5,7 +5,7 @@
 
 import { Request, Response, NextFunction } from "express";
 import { AestheticClinicPerformanceOptimizer } from "../services/performance/aesthetic-clinic-performance-optimizer";
-import { ErrorMapper } from "@neonpro/shared/errors";
+// import { ErrorMapper } from "@neonpro/shared/errors";
 
 export interface PerformanceMetrics {
   requestId: string;
@@ -302,7 +302,7 @@ export class PerformanceMonitor {
   /**
    * Get data from cache
    */
-  private async getFromCache(key: string): Promise<any> {
+  private async getFromCache(_key: string): Promise<any> {
     // This would integrate with your cache system
     // For now, using the optimizer's cache
     return null;
@@ -311,7 +311,7 @@ export class PerformanceMonitor {
   /**
    * Set data to cache
    */
-  private async setToCache(key: string, data: any, ttl: number): Promise<void> {
+  private async setToCache(_key: string, _data: any, _ttl: number): Promise<void> {
     // This would integrate with your cache system
     // For now, using the optimizer's cache
   }

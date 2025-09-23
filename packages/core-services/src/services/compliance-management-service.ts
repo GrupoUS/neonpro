@@ -3,9 +3,9 @@
  * Handles LGPD, ANVISA, and Professional Council compliance requirements
  */
 
-import { 
-  ComplianceCategory, 
-  ComplianceRequirement, 
+import {
+  ComplianceCategory,
+  ComplianceRequirement,
   ComplianceAssessment,
   DataConsentRecord,
   DataSubjectRequest,
@@ -24,6 +24,7 @@ import {
   type ComplianceAlertInput,
   type ComplianceReportInput
 } from '@neonpro/types';
+import { logHealthcareError, complianceLogger } from '../../../shared/src/logging/healthcare-logger';
 
 export class ComplianceManagementService {
   private supabase: any;
@@ -495,7 +496,9 @@ export class ComplianceManagementService {
     }
 
     // Generate the report data asynchronously
-    this.generateReportData(data.id).catch(console.error);
+    this.generateReportData(data.id).catch(error => {
+      logHealthcareError('compliance', error, { method: 'generateReportDataAsync', reportId: data.id });
+    });
 
     return data;
   }
@@ -541,7 +544,7 @@ export class ComplianceManagementService {
       if (updateError) throw updateError;
 
     } catch (error) {
-      console.error('Error generating report data:', error);
+      logHealthcareError('compliance', error, { method: 'generateReportData', reportId });
       
       // Mark report as failed
       await this.supabase
@@ -717,7 +720,7 @@ export class ComplianceManagementService {
       await this.generateScheduledAssessments(clinicId);
       
     } catch (error) {
-      console.error('Error running automated compliance checks:', error);
+      logHealthcareError('compliance', error, { method: 'runAutomatedComplianceChecks', clinicId });
     }
   }
 
@@ -726,7 +729,7 @@ export class ComplianceManagementService {
       .rpc('check_license_expiry');
 
     if (error) {
-      console.error('Error checking license expiry:', error);
+      logHealthcareError('compliance', error, { method: 'checkLicenseExpiryAlerts', clinicId });
       return;
     }
 
@@ -750,7 +753,7 @@ export class ComplianceManagementService {
       .rpc('check_anvisa_compliance');
 
     if (error) {
-      console.error('Error checking ANVISA compliance:', error);
+      logHealthcareError('compliance', error, { method: 'checkANVISAComplianceAlerts', clinicId });
       return;
     }
 
@@ -774,7 +777,7 @@ export class ComplianceManagementService {
       .rpc('check_consent_expiry');
 
     if (error) {
-      console.error('Error checking consent expiry:', error);
+      logHealthcareError('compliance', error, { method: 'checkConsentExpiryAlerts', clinicId });
       return;
     }
 
@@ -849,7 +852,7 @@ export class ComplianceManagementService {
       }]);
 
     if (error) {
-      console.error('Error logging compliance action:', error);
+      logHealthcareError('compliance', error, { method: 'logComplianceAction', actionType: action.actionType });
     }
   }
 
@@ -952,7 +955,7 @@ export class ComplianceManagementService {
       .eq('is_active', true);
 
     if (error) {
-      console.error('Error fetching retention policies:', error);
+      logHealthcareError('compliance', error, { method: 'processScheduledDataRetention', clinicId });
       return;
     }
 
@@ -971,7 +974,7 @@ export class ComplianceManagementService {
           .single();
 
         if (jobError) {
-          console.error('Error creating retention job:', jobError);
+          logHealthcareError('compliance', jobError, { method: 'processScheduledDataRetention', policyId: policy.id, clinicId });
           continue;
         }
 
@@ -979,7 +982,7 @@ export class ComplianceManagementService {
         await this.executeRetentionPolicy(policy, clinicId, job.id);
 
       } catch (error) {
-        console.error(`Error processing retention policy ${policy.id}:`, error);
+        logHealthcareError('compliance', error, { method: 'processScheduledDataRetention', policyId: policy.id, clinicId });
       }
     }
   }
@@ -1026,7 +1029,7 @@ export class ComplianceManagementService {
       }
 
     } catch (error) {
-      console.error(`Error executing retention policy ${policy.id}:`, error);
+      logHealthcareError('compliance', error, { method: 'executeRetentionPolicy', policyId: policy.id, clinicId, jobId });
       
       if (jobId) {
         await this.supabase

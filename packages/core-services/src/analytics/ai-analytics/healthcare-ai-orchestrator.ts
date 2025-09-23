@@ -16,6 +16,7 @@ import type {
   HealthcareComplianceAudit,
   BrazilianHealthcareKPIs,
 } from "./types";
+import { logHealthcareError, analyticsLogger } from '../../../../shared/src/logging/healthcare-logger';
 
 // ============================================================================
 // Healthcare AI Orchestrator Implementation
@@ -66,7 +67,11 @@ export class HealthcareAIOrchestrator {
         generatedAt: new Date(),
       };
     } catch (error) {
-      console.error("Error generating healthcare insights:", error);
+      logHealthcareError('analytics', error, {
+        method: 'generateHealthcareInsights',
+        component: 'HealthcareAIOrchestrator',
+        severity: 'high'
+      });
       throw new Error("Failed to generate healthcare insights");
     }
   }
@@ -107,7 +112,12 @@ export class HealthcareAIOrchestrator {
         nextAuditDue: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
       };
     } catch (error) {
-      console.error("Error performing compliance audit:", error);
+      logHealthcareError('analytics', error, {
+        method: 'performComplianceAudit',
+        component: 'HealthcareAIOrchestrator',
+        severity: 'high',
+        operation: 'compliance_audit'
+      });
       // Return default compliant status for graceful error handling with proper Brazilian terms
       return {
         lgpdCompliant: true,

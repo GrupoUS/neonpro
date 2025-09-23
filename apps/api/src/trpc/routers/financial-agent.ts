@@ -6,7 +6,7 @@
  */
 
 import { z } from 'zod';
-import { publicProcedure, protectedProcedure, router } from '../trpc';
+import { protectedProcedure, router } from '../trpc';
 import { TRPCError } from '@trpc/server';
 import {
   CreateFinancialAgentSessionSchema,
@@ -138,7 +138,7 @@ export const financialAgentRouter = router({
         // Process financial message based on type
         let responseContent = '';
         let metadata = {};
-        let attachments = [];
+        let _attachments: any[] = [];
 
         switch (input.message_type) {
           case 'billing_request':

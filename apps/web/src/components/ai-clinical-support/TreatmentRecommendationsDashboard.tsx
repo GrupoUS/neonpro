@@ -1,32 +1,26 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { 
   TreatmentRecommendation, 
-  PatientAssessment 
 } from '@/types/ai-clinical-support';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
+// import { Progress } from '@/components/ui/progress';
+// import { Separator } from '@/components/ui/separator';
 import { 
   Star, 
   AlertTriangle, 
   Clock, 
-  CheckCircle, 
-  XCircle, 
   TrendingUp,
   DollarSign,
   Calendar,
-  Heart,
   Activity,
-  Zap,
-  Shield,
   Lightbulb,
   FileText
 } from 'lucide-react';
@@ -46,7 +40,7 @@ export function TreatmentRecommendationsDashboard({
 }: TreatmentRecommendationsDashboardProps) {
   const [selectedRecommendations, setSelectedRecommendations] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('recommended');
-  const [showAlternatives, setShowAlternatives] = useState(false);
+  const [showAlternatives] = useState(false);
 
   // Fetch treatment recommendations
   const { data: recommendations, isLoading, error } = useQuery({

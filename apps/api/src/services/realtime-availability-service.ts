@@ -318,7 +318,7 @@ export class RealtimeAvailabilityService {
     improvements: string[];
   }> {
     try {
-      const aiService = AIAppointmentSchedulingService.getInstance();
+      const _aiService = AIAppointmentSchedulingService.getInstance();
 
       // Get current availability and conflicts
       const currentAvailability = await this.getRealTimeAvailability(clinicId, {

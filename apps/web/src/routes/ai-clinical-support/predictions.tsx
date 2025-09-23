@@ -33,17 +33,17 @@ export const Route = createFileRoute("/ai-clinical-support/predictions/")({
 function TreatmentPredictionPage() {
   const loaderData = useLoaderData({ from: "/ai-clinical-support/predictions/" });
   
-  const { data: patient } = useQuery({
+  const { data: _patient } = useQuery({
     queryKey: ["patient", loaderData.patientId],
     queryFn: () => api.patients.getById(loaderData.patientId),
   });
 
-  const { data: procedures } = useQuery({
+  const { data: _procedures } = useQuery({
     queryKey: ["aesthetic-procedures"],
     queryFn: () => api.aestheticScheduling.getAestheticProcedures(),
   });
 
-  const { data: treatmentHistory } = useQuery({
+  const { data: _treatmentHistory } = useQuery({
     queryKey: ["patient-treatment-history", loaderData.patientId],
     queryFn: () => api.aiClinicalSupport.getPatientTreatmentHistory({
       patientId: loaderData.patientId,

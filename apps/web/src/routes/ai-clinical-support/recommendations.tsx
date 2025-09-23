@@ -30,7 +30,7 @@ export const Route = createFileRoute("/ai-clinical-support/recommendations/")({
 function TreatmentRecommendationsPage() {
   const loaderData = useLoaderData({ from: "/ai-clinical-support/recommendations/" });
   
-  const { data: patient } = useQuery({
+  const { data: _patient } = useQuery({
     queryKey: ["patient", loaderData.patientId],
     queryFn: () => api.patients.getById(loaderData.patientId),
   });

@@ -1,6 +1,8 @@
 // Event logger utility for governance services observability
 // Console JSON logging for development; replace with structured logging in production
 
+import { governanceLogger } from '../../../../shared/src/logging/healthcare-logger';
+
 export interface GovernanceEvent {
   timestamp: Date;
   _service: string;
@@ -44,7 +46,14 @@ export class ConsoleEventLogger implements EventLogger {
       ...event,
       timestamp: new Date(),
     };
-    console.log(JSON.stringify(fullEvent, null, 2));
+    // Log governance event with structured logging
+    governanceLogger.info("governance_event", {
+      event: fullEvent,
+      service: fullEvent.service,
+      action: fullEvent.action,
+      severity: fullEvent.severity || "info",
+      timestamp: fullEvent.timestamp
+    });
   }
 
   logKPIEvaluated(

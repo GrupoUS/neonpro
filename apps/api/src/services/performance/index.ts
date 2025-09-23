@@ -329,7 +329,7 @@ export const PerformanceUtils = {
    * Calculate performance score from metrics
    */
   calculatePerformanceScore(metrics: any): number {
-    const weights = {
+    const _weights = {
       responseTime: 0.3,
       cacheHitRate: 0.2,
       errorRate: 0.2,

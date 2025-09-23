@@ -16,17 +16,17 @@ import { LGPDDataService } from '../../services/lgpd-data-subject-service';
 import { LGPDService } from '../../services/lgpd-service';
 import { AestheticComplianceService } from '../../services/agui-protocol/aesthetic-compliance-service';
 import type {
-  AuditLogEntry,
-  ComplianceViolation,
-  ServiceResponse
+  // AuditLogEntry,
+  // ComplianceViolation,
+  // ServiceResponse
 } from '../../services/lgpd-service';
 
 describe('LGPD Data Breach Detection and Notification Tests', () => {
   let complianceService: LGPDComplianceService;
-  let dataSubjectService: LGPDDataService;
-  let lgpdService: LGPDService;
-  let aestheticService: AestheticComplianceService;
-  let mockSupabase: any;
+  let _dataSubjectService: LGPDDataService;
+  let _lgpdService: LGPDService;
+  let _aestheticService: AestheticComplianceService;
+  let _mockSupabase: any;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -581,7 +581,7 @@ describe('LGPD Data Breach Detection and Notification Tests', () => {
         }
       ];
 
-      for (const { breach_type, max_deadline_hours, test_scenario } of deadlineTests) {
+      for (const { breach_type, max_deadline_hours, test_scenario: _test_scenario } of deadlineTests) {
         const deadlineCompliance = await complianceService['validateNotificationDeadline']({
           breachType: breach_type,
           detectedAt: new Date(),

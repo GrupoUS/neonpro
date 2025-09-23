@@ -9,7 +9,7 @@ export interface HealthcareComponentProps {
   readonly lgpdCompliant: boolean;
   readonly onAuditLog?: (
     action: string,
-    details?: Record<string, _any>,
+    details?: Record<string, any>,
   ) => void;
 }
 

@@ -32,7 +32,7 @@ import { ResearchDataService } from '@/services/research-data-service';
 
 describe('LGPD Data Anonymization and Pseudonymization', () => {
   let dataMaskingService: DataMaskingService;
-  let enhancedService: EnhancedLGPDService;
+  let _enhancedService: EnhancedLGPDService;
   let lgpdService: LGPDService;
   let securityAudit: SecurityAuditService;
   let anonymizationService: DataAnonymizationService;
@@ -93,7 +93,7 @@ describe('LGPD Data Anonymization and Pseudonymization', () => {
     }
   ];
 
-  const mockSensitiveDataset = [
+  const _mockSensitiveDataset = [
     {
       patientId: 'patient-001',
       photos: ['face-before.jpg', 'face-after.jpg'],
@@ -265,7 +265,7 @@ describe('LGPD Data Anonymization and Pseudonymization', () => {
     });
 
     it('should validate k-anonymity compliance', async () => {
-      const kAnonymityResult = {
+      const _kAnonymityResult = {
         kValue: 5,
         equivalenceClasses: 12,
         minClassSize: 5,

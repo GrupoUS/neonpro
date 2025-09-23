@@ -6,7 +6,7 @@
 import { Server as WebSocketServer } from "ws";
 import { EventEmitter } from "events";
 import { AestheticClinicPerformanceOptimizer } from "./aesthetic-clinic-performance-optimizer";
-import { ErrorMapper } from "@neonpro/shared/errors";
+// import { ErrorMapper } from "@neonpro/shared/errors";
 
 export interface WebSocketConnection {
   id: string;
@@ -584,7 +584,7 @@ export class WebSocketOptimizer extends EventEmitter {
    * Send heartbeat to all connections
    */
   private sendHeartbeat(): void {
-    const now = Date.now();
+    const _now = Date.now();
     
     for (const connection of this.connections.values()) {
       if (!connection.isActive) continue;
@@ -604,7 +604,7 @@ export class WebSocketOptimizer extends EventEmitter {
    * Clean up inactive connections
    */
   private cleanupInactiveConnections(): void {
-    const now = Date.now();
+    const _now = Date.now();
     const timeout = this.config.connectionTimeout;
     
     for (const connection of this.connections.values()) {
@@ -694,7 +694,7 @@ export class WebSocketOptimizer extends EventEmitter {
 
   private updateThroughputMetrics(bytesSent: number): void {
     // Update throughput metrics
-    const now = Date.now();
+    const _now = Date.now();
     this.metrics.throughput.messagesPerSecond++;
     this.metrics.throughput.bytesPerSecond += bytesSent;
   }
@@ -720,7 +720,7 @@ export class WebSocketOptimizer extends EventEmitter {
     this.metrics.throughput.bytesPerSecond = 0;
     
     // Calculate message rate
-    const now = Date.now();
+    const _now = Date.now();
     this.metrics.messageRate = this.metrics.totalMessages / (now / 1000);
   }
 

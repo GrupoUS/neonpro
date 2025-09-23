@@ -23,6 +23,7 @@ import {
   ComplianceReportFilters,
   AuditTrailEntry,
 } from "@neonpro/types";
+import { logHealthcareError, governanceLogger } from '../../../../shared/src/logging/healthcare-logger';
 import {
   HealthcareMetricRecord,
   PatientSafetyKPIRecord,
@@ -77,7 +78,7 @@ export class HealthcareGovernanceService
 
       return this.mapHealthcareMetrics(data || []);
     } catch (error) {
-      console.error("Error fetching healthcare metrics:", error);
+      logHealthcareError('governance', error, { method: 'getHealthcareMetrics', filters });
       if (error instanceof Error) {
         throw new Error(`Failed to fetch healthcare metrics: ${error.message}`);
       }
@@ -137,7 +138,7 @@ export class HealthcareGovernanceService
 
       return this.mapHealthcareMetric(data);
     } catch (error) {
-      console.error("Error creating healthcare metric:", error);
+      logHealthcareError('governance', error, { method: 'createHealthcareMetric', metric });
       if (error instanceof Error) {
         throw new Error(`Failed to create healthcare metric: ${error.message}`);
       }
@@ -197,7 +198,7 @@ export class HealthcareGovernanceService
 
       return this.mapHealthcareMetric(data);
     } catch (error) {
-      console.error("Error updating healthcare metric:", error);
+      logHealthcareError('governance', error, { method: 'updateHealthcareMetric', update });
       if (error instanceof Error) {
         throw new Error(`Failed to update healthcare metric: ${error.message}`);
       }
@@ -235,7 +236,7 @@ export class HealthcareGovernanceService
         },
       });
     } catch (error) {
-      console.error("Error deleting healthcare metric:", error);
+      logHealthcareError('governance', error, { method: 'deleteHealthcareMetric', metricId });
       if (error instanceof Error) {
         throw new Error(`Failed to delete healthcare metric: ${error.message}`);
       }
@@ -260,7 +261,7 @@ export class HealthcareGovernanceService
 
       return this.mapPatientSafetyKPIs(data || []);
     } catch (error) {
-      console.error("Error fetching patient safety KPIs:", error);
+      logHealthcareError('governance', error, { method: 'getPatientSafetyKPIs', clinicId });
       throw error;
     }
   }
@@ -290,7 +291,7 @@ export class HealthcareGovernanceService
 
       return this.mapPatientSafetyKPI(data);
     } catch (error) {
-      console.error("Error updating patient safety KPI:", error);
+      logHealthcareError('governance', error, { method: 'updatePatientSafetyKPI', kpiId, update });
       throw error;
     }
   }
@@ -330,7 +331,7 @@ export class HealthcareGovernanceService
 
       return this.mapHealthcarePolicies(data || []);
     } catch (error) {
-      console.error("Error fetching healthcare policies:", error);
+      logHealthcareError('governance', error, { method: 'getHealthcarePolicies', filters });
       throw error;
     }
   }
@@ -365,7 +366,7 @@ export class HealthcareGovernanceService
 
       return this.mapHealthcarePolicy(data);
     } catch (error) {
-      console.error("Error creating healthcare policy:", error);
+      logHealthcareError('governance', error, { method: 'createHealthcarePolicy', policy });
       throw error;
     }
   }
@@ -393,7 +394,7 @@ export class HealthcareGovernanceService
 
       return this.mapHealthcarePolicy(data);
     } catch (error) {
-      console.error("Error updating healthcare policy:", error);
+      logHealthcareError('governance', error, { method: 'updateHealthcarePolicy', policyId, update });
       throw error;
     }
   }
@@ -439,7 +440,7 @@ export class HealthcareGovernanceService
 
       return this.mapHealthcareAlerts(data || []);
     } catch (error) {
-      console.error("Error fetching healthcare alerts:", error);
+      logHealthcareError('governance', error, { method: 'getHealthcareAlerts', filters });
       throw error;
     }
   }
@@ -477,7 +478,7 @@ export class HealthcareGovernanceService
 
       return this.mapHealthcareAlert(data);
     } catch (error) {
-      console.error("Error creating healthcare alert:", error);
+      logHealthcareError('governance', error, { method: 'createHealthcareAlert', alert });
       throw error;
     }
   }
@@ -505,7 +506,7 @@ export class HealthcareGovernanceService
 
       return this.mapHealthcareAlert(data);
     } catch (error) {
-      console.error("Error updating healthcare alert:", error);
+      logHealthcareError('governance', error, { method: 'updateHealthcareAlert', alertId, update });
       throw error;
     }
   }
@@ -575,7 +576,7 @@ export class HealthcareGovernanceService
 
       return report;
     } catch (error) {
-      console.error("Error generating compliance report:", error);
+      logHealthcareError('governance', error, { method: 'generateComplianceReport', filters });
       throw error;
     }
   }
@@ -614,7 +615,7 @@ export class HealthcareGovernanceService
 
       return this.mapComplianceReports(data || []);
     } catch (error) {
-      console.error("Error fetching compliance reports:", error);
+      logHealthcareError('governance', error, { method: 'getComplianceReports', filters });
       throw error;
     }
   }
@@ -647,7 +648,7 @@ export class HealthcareGovernanceService
 
       return auditEntry;
     } catch (error) {
-      console.error("Error creating healthcare audit entry:", error);
+      logHealthcareError('governance', error, { method: 'createHealthcareAuditEntry', audit });
       if (error instanceof Error) {
         throw new Error(
           `Failed to create healthcare audit entry: ${error.message}`,
@@ -719,7 +720,7 @@ export class HealthcareGovernanceService
         },
       };
     } catch (error) {
-      console.error("Error getting healthcare dashboard data:", error);
+      logHealthcareError('governance', error, { method: 'getHealthcareDashboardData', clinicId });
       throw error;
     }
   }

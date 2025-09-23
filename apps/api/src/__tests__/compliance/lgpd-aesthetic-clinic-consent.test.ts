@@ -14,7 +14,7 @@ import { LGPDService } from '../../services/lgpd-service';
 import { AestheticComplianceService } from '../../services/agui-protocol/aesthetic-compliance-service';
 import type { 
   LGPDConsentData, 
-  LGPDConsentVerification,
+  // LGPDConsentVerification,
   ConsentCreation,
   ConsentUpdate,
   ConsentRevocation 
@@ -23,7 +23,7 @@ import type {
 describe('LGPD Aesthetic Clinic Consent Compliance Tests', () => {
   let lgpdService: LGPDService;
   let aestheticService: AestheticComplianceService;
-  let mockSupabase: any;
+  let _mockSupabase: any;
 
   beforeEach(() => {
     vi.clearAllMocks();

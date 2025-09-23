@@ -81,6 +81,9 @@ export interface PatientData {
   email?: string;
   birthDate?: string;
   gender?: string;
+  cep?: string;
+  crm_state?: string;
+  crmv_state?: string;
   [key: string]: unknown;
 }
 
@@ -441,7 +444,8 @@ export function validateBrazilianAddress(
   const requiredFields = ["street", "neighborhood", "city", "state", "cep"];
 
   requiredFields.forEach((field) => {
-    if (!address[field] || address[field].trim() === "") {
+    const fieldValue = address[field as keyof BrazilianAddress];
+    if (!fieldValue || (typeof fieldValue === "string" && fieldValue.trim() === "")) {
       errors.push({
         field,
         message: `${field} é obrigatório`,
@@ -482,12 +486,12 @@ export function createValidationSchema(fields: Record<string, any>): {
     validate: (data: PatientData | BrazilianAddress): ValidationResult => {
       const errors: ValidationError[] = [];
 
-      Object.entries(fields).forEach(([fieldName, _config]) => {
-        const value = data[fieldName];
+      Object.entries(fields).forEach(([fieldName, config]) => {
+        const value = data[fieldName as keyof (PatientData | BrazilianAddress)];
 
         // Required field validation
         if (
-          _config.required &&
+          config.required &&
           (!value || (typeof value === "string" && value.trim() === ""))
         ) {
           errors.push({

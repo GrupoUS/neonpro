@@ -248,7 +248,7 @@ export const createPerformanceDashboardRoutes = (
       res.setHeader("Connection", "keep-alive");
       
       const sendMetrics = () => {
-        const metrics = optimizer.getPerformanceMetrics();
+        const _metrics = optimizer.getPerformanceMetrics();
         const stats = monitor.getStatistics();
         
         res.write(`data: ${JSON.stringify({
@@ -503,7 +503,7 @@ function generateQueryRecommendations(stats: any) {
 /**
  * Get cache statistics
  */
-function getCacheStatistics(optimizer: AestheticClinicPerformanceOptimizer) {
+function getCacheStatistics(_optimizer: AestheticClinicPerformanceOptimizer) {
   // This would need to be implemented in the optimizer
   return {
     totalEntries: 0,
@@ -522,7 +522,7 @@ async function generatePerformanceInsights(
   optimizer: AestheticClinicPerformanceOptimizer,
   monitor: PerformanceMonitor,
 ) {
-  const metrics = optimizer.getPerformanceMetrics();
+  const _metrics = optimizer.getPerformanceMetrics();
   const stats = monitor.getStatistics();
   
   const insights = [];
@@ -653,7 +653,7 @@ async function getPerformanceHealth(
 /**
  * Get image optimization metrics
  */
-function getImageOptimizationMetrics(optimizer: AestheticClinicPerformanceOptimizer) {
+function getImageOptimizationMetrics(_optimizer: AestheticClinicPerformanceOptimizer) {
   // This would need to be implemented in the optimizer
   return {
     totalImages: 0,

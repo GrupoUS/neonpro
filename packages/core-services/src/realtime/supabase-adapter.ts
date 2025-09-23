@@ -370,7 +370,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       },
     });
 
-    console.log(`Subscribed to channel: ${channelId}`);
+    realtimeLogger.info(`Subscribed to channel: ${channelId}`, { channelId });
   }
 
   async unsubscribeFromChannel(channelId: string): Promise<void> {
@@ -381,7 +381,7 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
     }
 
     this.channelStates.delete(channelId);
-    console.log(`Unsubscribed from channel: ${channelId}`);
+    realtimeLogger.info(`Unsubscribed from channel: ${channelId}`, { channelId });
   }
 
   async getHealth() {
@@ -475,15 +475,15 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       }
     } catch (_error) {
       void _error;
-      console.error(`Error emitting event ${event.type}:`, error);
+      logHealthcareError('realtime', error, { method: 'emitEvent', eventType: event.type, channelId: event.channelId });
     }
   }
 
   private async logAuditEvent(event: RealtimeEvent): Promise<void> {
     try {
       // Note: Replace with actual audit service when available
-      console.log("Audit event logged:", {
-        _userId: event.participant.id,
+      realtimeLogger.info('Audit event logged', {
+        userId: event.participant.id,
         action: event.type,
         resource: "realtime_channel",
         resourceId: event.channelId,
@@ -498,12 +498,12 @@ export class SupabaseRealtimeAdapter implements RealtimeEventAdapter {
       event.metadata.compliance.lgpdLogged = true;
     } catch (_error) {
       void _error;
-      console.error("Failed to log audit event:", error);
+      logHealthcareError('realtime', error, { method: 'logAuditEvent', eventType: event.type });
     }
   }
 
   private async handleError(error: RealtimeAdapterError): Promise<void> {
-    console.error("SupabaseRealtimeAdapter error:", error);
+    logHealthcareError('realtime', error, { method: 'handleError', errorCode: error.code, severity: error.severity });
 
     // Update health status for critical errors
     if (error.severity === "critical") {

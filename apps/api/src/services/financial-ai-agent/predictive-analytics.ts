@@ -6,7 +6,7 @@
  */
 
 import { z } from 'zod';
-import { FinancialSummary, Billing } from '../billing-service';
+import { Billing } from '../billing-service';
 
 /**
  * Advanced Analytics Types

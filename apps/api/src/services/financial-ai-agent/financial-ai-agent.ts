@@ -240,7 +240,7 @@ export class FinancialAIAgent {
         },
         message: 'Cobrança inteligente criada com sucesso',
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Intelligent billing creation failed:', error);
       return {
         success: false,
@@ -349,7 +349,7 @@ export class FinancialAIAgent {
             await this.sendAnomalyAlert(result);
           }
         }
-      } catch (error) {
+      } catch (_error) {
         console.error(`Anomaly detector ${detectorName} failed:`, error);
       }
     }
@@ -370,7 +370,7 @@ export class FinancialAIAgent {
             await this.sendFraudAlert(result);
           }
         }
-      } catch (error) {
+      } catch (_error) {
         console.error(`Fraud detection rule ${ruleName} failed:`, error);
       }
     }
@@ -385,17 +385,17 @@ export class FinancialAIAgent {
     return null; // Placeholder
   }
 
-  private async detectRevenueDrop(billing: Billing): Promise<AnomalyDetection | null> {
+  private async detectRevenueDrop(_billing: Billing): Promise<AnomalyDetection | null> {
     // Implement revenue drop detection logic
     return null; // Placeholder
   }
 
-  private async detectBillingPatternAnomaly(billing: Billing): Promise<AnomalyDetection | null> {
+  private async detectBillingPatternAnomaly(_billing: Billing): Promise<AnomalyDetection | null> {
     // Implement billing pattern anomaly detection
     return null; // Placeholder
   }
 
-  private async detectPaymentAnomaly(billing: Billing): Promise<AnomalyDetection | null> {
+  private async detectPaymentAnomaly(_billing: Billing): Promise<AnomalyDetection | null> {
     // Implement payment anomaly detection
     return null; // Placeholder
   }
@@ -403,22 +403,22 @@ export class FinancialAIAgent {
   /**
    * Fraud Detection Methods
    */
-  private async detectRapidFireBilling(billing: Billing): Promise<FraudDetectionAlert | null> {
+  private async detectRapidFireBilling(_billing: Billing): Promise<FraudDetectionAlert | null> {
     // Detect unusually rapid billing from same patient/professional
     return null; // Placeholder
   }
 
-  private async detectUnusualPaymentMethods(billing: Billing): Promise<FraudDetectionAlert | null> {
+  private async detectUnusualPaymentMethods(_billing: Billing): Promise<FraudDetectionAlert | null> {
     // Detect unusual payment method patterns
     return null; // Placeholder
   }
 
-  private async detectSuspiciousDiscounts(billing: Billing): Promise<FraudDetectionAlert | null> {
+  private async detectSuspiciousDiscounts(_billing: Billing): Promise<FraudDetectionAlert | null> {
     // Detect suspicious discount patterns
     return null; // Placeholder
   }
 
-  private async detectDuplicateBilling(billing: Billing): Promise<FraudDetectionAlert | null> {
+  private async detectDuplicateBilling(_billing: Billing): Promise<FraudDetectionAlert | null> {
     // Detect potential duplicate billing
     return null; // Placeholder
   }
@@ -471,7 +471,7 @@ export class FinancialAIAgent {
         data: prediction,
         message: 'Predição financeira gerada com sucesso',
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Financial prediction failed:', error);
       return {
         success: false,
@@ -611,7 +611,7 @@ export class FinancialAIAgent {
         data: this.config,
         message: 'Configuração atualizada com sucesso',
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         success: false,
         error: 'Configuração inválida',

@@ -15,7 +15,7 @@ import type {
   RetentionReview,
   ProcessingActivity,
   ComplianceReport,
-  ServiceResponse
+  // ServiceResponse
 } from '../../services/lgpd-service';
 
 describe('LGPD Data Retention and Deletion Policy Compliance Tests', () => {

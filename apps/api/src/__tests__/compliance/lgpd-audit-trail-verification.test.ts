@@ -18,15 +18,15 @@ import { AestheticComplianceService } from '../../services/agui-protocol/aesthet
 import type {
   AuditLogEntry,
   ProcessingActivity,
-  ServiceResponse
+  // ServiceResponse
 } from '../../services/lgpd-service';
 
 describe('LGPD Audit Trail Verification and Integrity Tests', () => {
   let lgpdService: LGPDService;
   let complianceService: LGPDComplianceService;
-  let dataSubjectService: LGPDDataService;
-  let aestheticService: AestheticComplianceService;
-  let mockSupabase: any;
+  let _dataSubjectService: LGPDDataService;
+  let _aestheticService: AestheticComplianceService;
+  let _mockSupabase: any;
 
   beforeEach(() => {
     vi.clearAllMocks();

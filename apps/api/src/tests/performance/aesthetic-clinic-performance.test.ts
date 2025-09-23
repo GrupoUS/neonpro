@@ -7,7 +7,7 @@ import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from
 import { AestheticClinicPerformanceOptimizer } from "../../services/performance/aesthetic-clinic-performance-optimizer";
 import { PerformanceMonitor } from "../../middleware/performance-middleware";
 import { createSupabaseClient } from "../../config/supabase";
-import { ErrorMapper } from "@neonpro/shared/errors";
+// import { ErrorMapper } from "@neonpro/shared/errors";
 
 // Performance test configuration
 const PERFORMANCE_THRESHOLDS = {
@@ -418,7 +418,7 @@ describe("Aesthetic Clinic Performance Tests", () => {
       
       try {
         await optimizer.getOptimizedClientProfile("non-existent-client");
-      } catch (error) {
+      } catch (_error) {
         // Expected error
       }
 
@@ -567,7 +567,7 @@ export class PerformanceBenchmark {
       try {
         await config.scenario();
         results.successfulRequests++;
-      } catch (error) {
+      } catch (_error) {
         results.failedRequests++;
       }
       

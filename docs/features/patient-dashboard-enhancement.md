@@ -1,45 +1,45 @@
 ---
-title: "Patient Dashboard Enhancement with MCP & Shadcn UI"
+title: "Client Dashboard Enhancement with MCP & Shadcn UI"
 version: 1.0.0
 status: planned
 created: 2025-01-15
 last_updated: 2025-01-15
 complexity: 7.5
 estimated_effort: 7_days
-compliance: [LGPD, ANVISA, WCAG_2_1_AA]
-tags: [feature, patient-management, ui-enhancement, shadcn, mcp, accessibility]
+compliance: [LGPD, Cosmetic Regulations, WCAG_2_1_AA]
+tags: [feature, client-management, ui-enhancement, shadcn, mcp, accessibility]
 related:
   - ../architecture/source-tree.md
   - ../architecture/tech-stack.md
-  - ../apis/patients.md
-  - ../database-schema/patients.md
+  - ../apis/clients.md
+  - ../database-schema/clients.md
 ---
 
-# 🏥 Patient Dashboard Enhancement with MCP & Shadcn UI
+# 🏥 Client Dashboard Enhancement with MCP & Shadcn UI
 
 ## 📋 Executive Summary
 
 ### Feature Overview & Business Context
 
-The Patient Dashboard Enhancement project modernizes the existing patient management interface using the **Modular Component Pattern (MCP)** and **shadcn/ui** component system. This enhancement addresses current UX limitations while establishing a scalable foundation for future healthcare modules.
+The Client Dashboard Enhancement project modernizes the existing client management interface using the **Modular Component Pattern (MCP)** and **shadcn/ui** component system. This enhancement addresses current UX limitations while establishing a scalable foundation for future aesthetic clinic modules.
 
 **Business Value**:
 
-- **50% reduction** in patient data entry time through enhanced forms
-- **Enhanced accessibility** compliance (WCAG 2.1 AA+) for inclusive healthcare access
+- **50% reduction** in client data entry time through enhanced forms
+- **Enhanced accessibility** compliance (WCAG 2.1 AA+) for inclusive aesthetic clinic access
 - **Improved data accuracy** through real-time validation and smart defaults
-- **Mobile-responsive design** enabling point-of-care data access
-- **LGPD/ANVISA compliance** maintaining Brazilian healthcare regulatory standards
+- **Mobile-responsive design** enabling point-of-service data access
+- **LGPD/Cosmetic Regulations compliance** maintaining Brazilian aesthetic clinic regulatory standards
 
 **Target Users**:
 
-- **Primary**: Clinic administrators and healthcare staff managing patient data
-- **Secondary**: Patients accessing their own dashboard information
-- **Stakeholders**: Clinic owners, healthcare regulators, IT administrators
+- **Primary**: Clinic administrators and aesthetic professionals managing client data
+- **Secondary**: Clients accessing their own dashboard information
+- **Stakeholders**: Clinic owners, aesthetic professional regulators, IT administrators
 
 ### Strategic Alignment
 
-This enhancement aligns with NeonPro's mission to provide **simple, compliant, and efficient** healthcare management tools for Brazilian aesthetic clinics while establishing patterns for future module development.
+This enhancement aligns with NeonPro's mission to provide **simple, compliant, and efficient** aesthetic clinic management tools for Brazilian aesthetic clinics while establishing patterns for future module development.
 
 ## 🏗️ Technical Architecture Decisions
 
@@ -62,7 +62,7 @@ This enhancement aligns with NeonPro's mission to provide **simple, compliant, a
 2. **Molecular Components**: Form fields, table cells, action groups
 3. **Organism Components**: Data tables, forms, navigation panels
 4. **Template Components**: Page layouts, dashboard grids
-5. **Page Components**: Complete patient management interfaces
+5. **Page Components**: Complete client management interfaces
 
 ### Registry Configuration & Component System
 
@@ -87,14 +87,14 @@ apps/web/src/components/
 │   ├── form.tsx                  # Form components with validation
 │   ├── sidebar.tsx               # Collapsible navigation sidebar
 │   └── dialog.tsx                # Modal and drawer components
-├── patient/                      # Patient-specific components (MCP)
-│   ├── PatientDataTable.tsx      # Enhanced table with advanced features
-│   ├── PatientRegistrationForm.tsx # Multi-step registration wizard
-│   ├── PatientQuickActions.tsx   # Bulk actions and quick operations
-│   └── PatientDetailDrawer.tsx   # Mobile-optimized patient details
+├── client/                      # Client-specific components (MCP)
+│   ├── ClientDataTable.tsx      # Enhanced table with advanced features
+│   ├── ClientRegistrationForm.tsx # Multi-step registration wizard
+│   ├── ClientQuickActions.tsx   # Bulk actions and quick operations
+│   └── ClientDetailDrawer.tsx   # Mobile-optimized client details
 └── layout/                       # Layout and navigation components
-    ├── DashboardSidebar.tsx      # Main navigation with patient context
-    ├── PatientBreadcrumb.tsx     # Context-aware breadcrumb navigation
+    ├── DashboardSidebar.tsx      # Main navigation with client context
+    ├── ClientBreadcrumb.tsx     # Context-aware breadcrumb navigation
     └── CommandPalette.tsx        # Global search and quick actions
 ```
 
@@ -102,25 +102,25 @@ apps/web/src/components/
 
 **Data Flow Strategy**:
 
-- **Server State**: TanStack Query for patient data, caching, optimistic updates
+- **Server State**: TanStack Query for client data, caching, optimistic updates
 - **Client State**: Zustand for UI state, form state, navigation state
 - **Form State**: React Hook Form for complex multi-step forms
 - **URL State**: TanStack Router for search params, pagination, filters
 
 ```typescript
 // State management pattern example
-interface PatientDashboardState {
+interface ClientDashboardState {
   // Server state (TanStack Query)
-  patients: UseQueryResult<Patient[], Error>;
-  patientDetail: UseQueryResult<PatientDetail, Error>;
+  clients: UseQueryResult<Client[], Error>;
+  clientDetail: UseQueryResult<ClientDetail, Error>;
 
   // Client state (Zustand)
-  selectedPatients: string[];
-  tableFilters: PatientFilters;
+  selectedClients: string[];
+  tableFilters: ClientFilters;
   sidebarCollapsed: boolean;
 
   // Form state (React Hook Form)
-  registrationForm: UseFormReturn<PatientRegistration>;
+  registrationForm: UseFormReturn<ClientRegistration>;
 }
 ```
 
@@ -156,18 +156,18 @@ interface PatientDashboardState {
 {
   "phase": 2,
   "duration": "3 days",
-  "focus": "core_patient_management_features",
+  "focus": "core_client_management_features",
   "deliverables": [
-    "Advanced PatientDataTable with filtering/sorting",
-    "Multi-step patient registration wizard",
+    "Advanced ClientDataTable with filtering/sorting",
+    "Multi-step client registration wizard",
     "Real-time form validation with Brazilian standards",
-    "File upload system for patient documents",
+    "File upload system for client documents",
     "Bulk actions and multi-selection capabilities"
   ],
   "success_criteria": [
-    "Table performance <200ms for 1000+ patient records",
+    "Table performance <200ms for 1000+ client records",
     "Form validation includes CPF, phone, email formats",
-    "File upload supports common medical document formats",
+    "File upload supports common aesthetic document formats",
     "Bulk actions work reliably with optimistic updates"
   ]
 }
@@ -198,40 +198,40 @@ interface PatientDashboardState {
 
 ### Core Component Specifications
 
-**PatientDataTable Enhancement**:
+**ClientDataTable Enhancement**:
 
 ```typescript
-interface PatientDataTableProps {
+interface ClientDataTableProps {
   // Data management
-  data: Patient[];
+  data: Client[];
   loading?: boolean;
   error?: Error | null;
 
   // Advanced features
-  filters: PatientFilters;
+  filters: ClientFilters;
   sorting: SortingState;
   pagination: PaginationState;
   selection: RowSelectionState;
 
   // Actions
-  onPatientSelect: (patient: Patient) => void;
-  onBulkAction: (action: BulkAction, patientIds: string[]) => void;
-  onFilterChange: (filters: PatientFilters) => void;
+  onClientSelect: (client: Client) => void;
+  onBulkAction: (action: BulkAction, clientIds: string[]) => void;
+  onFilterChange: (filters: ClientFilters) => void;
   onExport: (format: ExportFormat) => void;
 
   // Customization
-  columns?: ColumnDef<Patient>[];
+  columns?: ColumnDef<Client>[];
   actions?: TableAction[];
   density?: "comfortable" | "compact";
 }
 ```
 
-**PatientRegistrationForm Wizard**:
+**ClientRegistrationForm Wizard**:
 
 ```typescript
-interface PatientRegistrationFormProps {
+interface ClientRegistrationFormProps {
   // Form configuration
-  initialData?: Partial<PatientRegistration>;
+  initialData?: Partial<ClientRegistration>;
   steps: FormStep[];
   validationSchema: ZodSchema;
 
@@ -241,8 +241,8 @@ interface PatientRegistrationFormProps {
   showProgress?: boolean;
 
   // Callbacks
-  onSubmit: (data: PatientRegistration) => Promise<void>;
-  onSave: (data: Partial<PatientRegistration>) => Promise<void>;
+  onSubmit: (data: ClientRegistration) => Promise<void>;
+  onSave: (data: Partial<ClientRegistration>) => Promise<void>;
   onCancel: () => void;
 
   // Brazilian compliance
@@ -254,34 +254,34 @@ interface PatientRegistrationFormProps {
 
 ## 📊 API Endpoints & Data Models
 
-### Patient Data Management Endpoints
+### Client Data Management Endpoints
 
-Following NeonPro's source tree organization (`apps/api/src/routes/patients/`):
+Following NeonPro's source tree organization (`apps/api/src/routes/clients/`):
 
 ```typescript
-// Patient CRUD operations
-GET    /api/patients              // List patients with filtering/pagination
-POST   /api/patients              // Create new patient
-GET    /api/patients/:id          // Get patient details
-PUT    /api/patients/:id          // Update patient information
-DELETE /api/patients/:id          // Soft delete patient
+// Client CRUD operations
+GET    /api/clients              // List clients with filtering/pagination
+POST   /api/clients              // Create new client
+GET    /api/clients/:id          // Get client details
+PUT    /api/clients/:id          // Update client information
+DELETE /api/clients/:id          // Soft delete client
 
-// Advanced patient operations
-POST   /api/patients/bulk         // Bulk operations (update, delete, export)
-GET    /api/patients/search       // Global patient search
-POST   /api/patients/:id/documents // Upload patient documents
-GET    /api/patients/export       // Export patient data (CSV, PDF)
+// Advanced client operations
+POST   /api/clients/bulk         // Bulk operations (update, delete, export)
+GET    /api/clients/search       // Global client search
+POST   /api/clients/:id/documents // Upload client documents
+GET    /api/clients/export       // Export client data (CSV, PDF)
 
 // Real-time subscriptions (Supabase)
-WEBSOCKET /realtime/patients      // Real-time patient updates
+WEBSOCKET /realtime/clients      // Real-time client updates
 ```
 
 ### Data Model Enhancements
 
-**Patient Entity** (aligned with `packages/types/src/Patient.ts`):
+**Client Entity** (aligned with `packages/types/src/Client.ts`):
 
 ```typescript
-interface Patient {
+interface Client {
   // Core identification
   id: string;
   cpf: string; // Brazilian tax ID (validated)
@@ -294,15 +294,15 @@ interface Patient {
   phone: BrazilianPhone;
   address: BrazilianAddress;
 
-  // Medical information
+  // Aesthetic information
   birth_date: Date;
   gender: Gender;
-  medical_history?: MedicalHistory[];
-  allergies?: string[];
-  medications?: Medication[];
+  aesthetic_history?: AestheticHistory[];
+  skin_type?: string;
+  treatment_concerns?: string[];
 
-  // Healthcare provider data
-  insurance?: InsuranceInfo;
+  // Aesthetic clinic provider data
+  preferred_professional?: string;
   emergency_contact: EmergencyContact;
 
   // Compliance & audit
@@ -317,7 +317,7 @@ interface Patient {
 **Form Validation Schemas** (using Zod):
 
 ```typescript
-const PatientRegistrationSchema = z.object({
+const ClientRegistrationSchema = z.object({
   // Personal information
   full_name: z.string().min(2).max(100),
   cpf: z.string().refine(validateCPF, "CPF inválido"),
@@ -365,27 +365,27 @@ const PatientRegistrationSchema = z.object({
 
 ### Component Testing Specifications
 
-**PatientDataTable Tests**:
+**ClientDataTable Tests**:
 
 ```typescript
 // apps/web/src/components/patient/__tests__/PatientDataTable.test.tsx
-describe("PatientDataTable", () => {
+describe("ClientDataTable", () => {
   describe("Rendering", () => {
-    it("displays patient data correctly");
+    it("displays client data correctly");
     it("shows loading state appropriately");
     it("handles empty state gracefully");
     it("renders accessibility attributes");
   });
 
   describe("Filtering & Sorting", () => {
-    it("filters patients by name, CPF, email");
+    it("filters clients by name, CPF, email");
     it("sorts by all sortable columns");
     it("persists filter state in URL");
     it("combines multiple filters correctly");
   });
 
   describe("Selection & Actions", () => {
-    it("selects individual patients");
+    it("selects individual clients");
     it("handles bulk selection");
     it("executes bulk actions safely");
     it("shows confirmation for destructive actions");
@@ -403,8 +403,8 @@ describe("PatientDataTable", () => {
 **Form Testing Requirements**:
 
 ```typescript
-// Patient registration form tests
-describe("PatientRegistrationForm", () => {
+// Client registration form tests
+describe("ClientRegistrationForm", () => {
   describe("Brazilian Compliance", () => {
     it("validates CPF format and checksum");
     it("validates Brazilian phone numbers");
@@ -420,7 +420,7 @@ describe("PatientRegistrationForm", () => {
   });
 
   describe("File Upload", () => {
-    it("accepts valid medical document formats");
+    it("accepts valid aesthetic document formats");
     it("rejects invalid file types");
     it("handles file size limitations");
     it("shows upload progress feedback");
@@ -456,10 +456,10 @@ describe("PatientRegistrationForm", () => {
 **Data Protection Requirements**:
 
 - **Explicit Consent**: Multi-level consent for data processing and marketing
-- **Data Minimization**: Collect only necessary patient information
-- **Right to Deletion**: Implement patient data removal workflows
-- **Data Portability**: Export patient data in standard formats
-- **Audit Trail**: Log all patient data access and modifications
+- **Data Minimization**: Collect only necessary client information
+- **Right to Deletion**: Implement client data removal workflows
+- **Data Portability**: Export client data in standard formats
+- **Audit Trail**: Log all client data access and modifications
 
 **Implementation Strategy**:
 
@@ -475,8 +475,8 @@ interface LGPDConsent {
 }
 
 // Audit trail implementation
-interface PatientAuditLog {
-  patient_id: string;
+interface ClientAuditLog {
+  client_id: string;
   action: "create" | "read" | "update" | "delete" | "export";
   user_id: string;
   timestamp: Date;
@@ -490,9 +490,9 @@ interface PatientAuditLog {
 
 **Aesthetic Clinic Regulations**:
 
-- **Patient Record Standards**: Structured medical history and treatment records
-- **Document Retention**: 10-year minimum retention for patient records
-- **Professional Identification**: Track which healthcare professional accessed records
+- **Client Record Standards**: Structured aesthetic history and treatment records
+- **Document Retention**: 10-year minimum retention for client records
+- **Professional Identification**: Track which aesthetic professional accessed records
 - **Regulatory Reporting**: Generate compliance reports for ANVISA audits
 
 ### WCAG 2.1 AA+ Accessibility Standards
@@ -540,11 +540,11 @@ const AccessibilityChecklist = {
     </TableRow>
   </TableHeader>
   <TableBody>
-    {patients.map((patient) => (
-      <TableRow key={patient.id} role="row" aria-rowindex={index + 1}>
-        <TableCell role="gridcell">{patient.full_name}</TableCell>
-        <TableCell role="gridcell">{formatCPF(patient.cpf)}</TableCell>
-        <TableCell role="gridcell">{formatPhone(patient.phone)}</TableCell>
+    {clients.map((client) => (
+      <TableRow key={client.id} role="row" aria-rowindex={index + 1}>
+        <TableCell role="gridcell">{client.full_name}</TableCell>
+        <TableCell role="gridcell">{formatCPF(client.cpf)}</TableCell>
+        <TableCell role="gridcell">{formatPhone(client.phone)}</TableCell>
       </TableRow>
     ))}
   </TableBody>
@@ -593,7 +593,7 @@ const AccessibilityChecklist = {
 **Supabase Integration** (`packages/database/src/`):
 
 ```typescript
-// Real-time patient updates
+// Real-time client updates
 const usePatientSubscription = (patientId: string) => {
   return useSupabaseSubscription(
     "patients",

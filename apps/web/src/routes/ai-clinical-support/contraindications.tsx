@@ -33,12 +33,12 @@ export const Route = createFileRoute("/ai-clinical-support/contraindications/")(
 function ContraindicationAnalysisPage() {
   const loaderData = useLoaderData({ from: "/ai-clinical-support/contraindications/" });
   
-  const { data: patient } = useQuery({
+  const { data: _patient } = useQuery({
     queryKey: ["patient", loaderData.patientId],
     queryFn: () => api.patients.getById(loaderData.patientId),
   });
 
-  const { data: procedures } = useQuery({
+  const { data: _procedures } = useQuery({
     queryKey: ["aesthetic-procedures"],
     queryFn: () => api.aestheticScheduling.getAestheticProcedures(),
   });

@@ -23,6 +23,7 @@ import {
   DataCategory as LGPDDataCategory,
   HealthcareAIUseCase,
 } from "@neonpro/shared";
+import { logHealthcareError, resilienceLogger } from '../../../shared/src/logging/healthcare-logger';
 
 // ============================================================================
 // Healthcare-Specific Types
@@ -213,11 +214,14 @@ export class HealthcareResilienceService {
     // 3. Notify emergency services if needed
     // 4. Log emergency event for compliance
 
-    console.error("EMERGENCY PROTOCOL TRIGGERED:", {
+    // Log emergency protocol for compliance
+    resilienceLogger.error("EMERGENCY PROTOCOL TRIGGERED", {
       error: error.message,
       operation: context.operation,
       patientId: context.patientId,
       timestamp: new Date().toISOString(),
+      severity: "critical",
+      category: "emergency",
     });
   }
 
@@ -226,11 +230,14 @@ export class HealthcareResilienceService {
     _context: HealthcareExecutionContext,
   ): Promise<void> {
     // Security review for sensitive data handling errors
-    console.warn("SECURITY REVIEW INITIATED:", {
+    // Log security review for compliance
+    resilienceLogger.warn("SECURITY REVIEW INITIATED", {
       error: error.message,
       dataClassification: context.dataClassification,
       lgpdCategories: context.lgpdCategories,
       timestamp: new Date().toISOString(),
+      severity: "high",
+      category: "security",
     });
   }
 
@@ -239,11 +246,14 @@ export class HealthcareResilienceService {
     _context: HealthcareExecutionContext,
   ): Promise<void> {
     // LGPD compliance notification
-    console.warn("DATA PROTECTION ERROR:", {
+    // Log data protection error for LGPD compliance
+    resilienceLogger.warn("DATA PROTECTION ERROR", {
       error: error.message,
       lgpdCategories: context.lgpdCategories,
       patientId: context.patientId,
       timestamp: new Date().toISOString(),
+      severity: "high",
+      category: "data_protection",
     });
   }
 

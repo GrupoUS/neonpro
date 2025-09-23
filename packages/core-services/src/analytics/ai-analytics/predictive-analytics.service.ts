@@ -11,6 +11,7 @@ import type {
   PredictionResult,
 } from "../ml/interfaces";
 import { StubModelProvider } from "../ml/stub-provider";
+import { logHealthcareError, analyticsLogger } from '../../../../shared/src/logging/healthcare-logger';
 
 // ============================================================================
 // Types and Interfaces
@@ -154,10 +155,12 @@ export class PredictiveAnalyticsService {
 
     // Initialize the provider asynchronously
     this.initializeProvider().catch((error) => {
-      console.warn(
-        "Failed to initialize ML provider during construction:",
-        error,
-      );
+      logHealthcareError('analytics', error, {
+        method: 'initializeProvider',
+        component: 'PredictiveAnalyticsService',
+        severity: 'medium',
+        message: 'Failed to initialize ML provider during construction'
+      });
     });
   }
 
@@ -166,7 +169,12 @@ export class PredictiveAnalyticsService {
       await this.modelProvider.initialize();
       this.initialized = true;
     } catch (error) {
-      console.warn("Failed to initialize ML provider:", error);
+      logHealthcareError('analytics', error, {
+        method: 'initializeProvider',
+        component: 'PredictiveAnalyticsService',
+        severity: 'medium',
+        message: 'Failed to initialize ML provider'
+      });
       this.initialized = false;
     }
   }
@@ -199,7 +207,11 @@ export class PredictiveAnalyticsService {
         lastUpdated: new Date().toISOString(),
       };
     } catch (error) {
-      console.error("Error getting analytics metrics:", error);
+      logHealthcareError('analytics', error, {
+        method: 'getAnalyticsMetrics',
+        component: 'PredictiveAnalyticsService',
+        severity: 'high'
+      });
       throw new Error("Failed to generate analytics metrics");
     }
   }
@@ -268,7 +280,12 @@ export class PredictiveAnalyticsService {
         },
       };
     } catch (error) {
-      console.error("Error predicting no-show risk:", error);
+      logHealthcareError('analytics', error, {
+        method: 'predictNoShowRisk',
+        component: 'PredictiveAnalyticsService',
+        severity: 'high',
+        predictionType: 'no_show_risk'
+      });
       return null;
     }
   }
@@ -337,7 +354,12 @@ export class PredictiveAnalyticsService {
         },
       };
     } catch (error) {
-      console.error("Error forecasting revenue:", error);
+      logHealthcareError('analytics', error, {
+        method: 'predictRevenueForecast',
+        component: 'PredictiveAnalyticsService',
+        severity: 'high',
+        predictionType: 'revenue_forecast'
+      });
       return null;
     }
   }
@@ -401,7 +423,12 @@ export class PredictiveAnalyticsService {
         },
       };
     } catch (error) {
-      console.error("Error predicting patient outcome:", error);
+      logHealthcareError('analytics', error, {
+        method: 'predictPatientOutcome',
+        component: 'PredictiveAnalyticsService',
+        severity: 'high',
+        predictionType: 'patient_outcome'
+      });
       return null;
     }
   }
@@ -436,7 +463,12 @@ export class PredictiveAnalyticsService {
 
       return validInsights;
     } catch (error) {
-      console.error("Error generating insights:", error);
+      logHealthcareError('analytics', error, {
+        method: 'generateInsights',
+        component: 'PredictiveAnalyticsService',
+        severity: 'high',
+        operation: 'insight_generation'
+      });
       throw error; // Re-throw for proper error handling
     }
   }

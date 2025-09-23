@@ -85,7 +85,7 @@ export function ProtectedRoute({
   }
 
   // Verificar role obrigatória
-  if (requiredRole && user.role !== requiredRole) {
+  if (requiredRole && user._role !== requiredRole) {
     return <DefaultUnauthorizedFallback />;
   }
 
@@ -94,7 +94,7 @@ export function ProtectedRoute({
     // TODO: Implementar sistema de permissões mais robusto
     // Por enquanto, apenas verifica se é admin para qualquer permissão especial
     const hasPermissions =
-      user.role === "admin" ||
+      user._role === "admin" ||
       requiredPermissions.every((permission) => {
         // Lógica de permissões específica pode ser implementada aqui
         return true; // Placeholder
@@ -135,14 +135,14 @@ export function withAuth<P extends object>(
 export function usePermissions() {
   const { user } = useAuth();
 
-  const hasRole = (_role: string): boolean => {
-    return user?.role === role;
+  const hasRole = (requiredRole: string): boolean => {
+    return user?._role === requiredRole;
   };
 
-  const hasPermission = (_permission: string): boolean => {
+  const hasPermission = (permission: string): boolean => {
     // TODO: Implementar lógica de permissões mais sofisticada
     // Por enquanto, admin tem todas as permissões
-    if (user?.role === "admin") {
+    if (user?._role === "admin") {
       return true;
     }
 

@@ -62,7 +62,7 @@ export default defineConfig({
 
     // Geolocation for clinic location testing
     geolocation: { latitude: -23.5505, longitude: -46.6333 }, // São Paulo
-    permissions: ["geolocation"],
+    permissions: ["geolocation"], // consolidated above; remove duplicates below
 
     // User agent for realistic testing
     userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
@@ -74,7 +74,7 @@ export default defineConfig({
 
     // Test isolation
     serviceWorkers: "block",
-    permissions: ["camera", "microphone", "notifications"],
+    // permissions: ["camera", "microphone", "notifications"],
   },
 
   // Browser projects optimized for clinic testing

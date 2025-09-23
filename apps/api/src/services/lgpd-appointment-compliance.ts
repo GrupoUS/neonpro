@@ -665,7 +665,7 @@ export class LGPDAppointmentComplianceService {
     });
   }
 
-  private async verifyPatientIdentity(patientId: string): Promise<void> {
+  private async verifyPatientIdentity(_patientId: string): Promise<void> {
     // Implement robust patient identity verification
     // This could include multi-factor authentication, document verification, etc.
   }
@@ -871,7 +871,7 @@ export class LGPDAppointmentComplianceService {
     });
   }
 
-  private async reportIntegrityBreach(consentId: string): Promise<void> {
+  private async reportIntegrityBreach(_consentId: string): Promise<void> {
     // Report document integrity breach
     await this.reportPrivacyIncident({
       type: 'data_breach',
@@ -885,7 +885,7 @@ export class LGPDAppointmentComplianceService {
 
   private async notifyAffectedPatients(incident: LGPDPrivacyIncident): Promise<void> {
     // Notify affected patients about privacy incident
-    for (const patientId of incident.affectedPatients) {
+    for (const _patientId of incident.affectedPatients) {
       // Send notification via preferred communication method
       // This would integrate with your notification system
     }
@@ -995,7 +995,7 @@ export class LGPDAppointmentComplianceService {
     };
   }
 
-  private async calculateComplianceMetrics(clinicId: string, period: { start: Date; end: Date }) {
+  private async calculateComplianceMetrics(_clinicId: string, _period: { start: Date; end: Date }) {
     // Calculate compliance metrics based on historical data
     return {
       consentRate: 0.85, // Placeholder
@@ -1025,7 +1025,7 @@ export class LGPDAppointmentComplianceService {
     return recommendations;
   }
 
-  private async identifyLowConsentAreas(clinicId: string, period: { start: Date; end: Date }): Promise<string[]> {
+  private async identifyLowConsentAreas(_clinicId: string, _period: { start: Date; end: Date }): Promise<string[]> {
     // Identify areas with low consent rates
     return [];
   }
